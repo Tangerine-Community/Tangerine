@@ -47,7 +47,7 @@ class Config
 		$this->USERS      = "_users";
 		$this->SESSION    = "_session";
 		$this->REPLICATE  = "_replicate";
-		$this->APP_DOCS   = "_design/tangerine\nTangerineSettings\nConfig\nTemplates";
+		$this->APP_DOCS   = "_design/ojai\nconfiguration\nsettings\ntemplates";
 
 		$this->SERVER_URL       = $this->HTTP . $this->SERVER . ":" . $this->PORT . "/";
 		$this->USER_DB_URL      = $this->SERVER_URL . $this->USERS;
