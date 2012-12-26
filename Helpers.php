@@ -6,18 +6,26 @@
 class Helpers
 {
 
+
 	/**
 	 * Take an attempt report and respond in JSON
 	 * @param Attempt the result of some action to communicate.
 	 */
 	public function respond_json( $attempt )
 	{
+		$origin = isset( $_SERVER['HTTP_ORIGIN'] ) ? $_SERVER['HTTP_ORIGIN'] : "*";
 		header( "Content-type: application/json" );
-		header( "Access-Control-Allow-Origin: http://tangerine.iriscouch.com");
+		header('Access-Control-Allow-Origin: ' . $origin);
+    	header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+    	header('Access-Control-Max-Age: 1000');
+    	header('Access-Control-Allow-Headers: Content-Type');
 		echo $attempt->toJson();
 	}
 
 
+	/*
+	 * Get a post variable
+	 */
 	public function get_variable( $key = '' )
 	{
 		return isset( $_POST[$key] ) ? $_POST[$key] : null;
@@ -37,9 +45,10 @@ class Helpers
 		if ( isset( $_POST[$key] ) ) return $_POST[$key];
 
 		// fail
-		Helpers::respond_jsonp( new Attempt( false, 'error', 'Please provide $human_name.' ) );
-
+		Helpers::respond_json( new Attempt( 'error', "Please provide $human_name." ) );
+		die();
 	}
+
 
 	/**
 	 * Returns only pure hay.
@@ -59,6 +68,15 @@ class Helpers
 	}
 
 
+	/*
+	 * Returns a password based on a characterset
+	 */
+	public function calc_password( $length = 10 )
+	{
+		return implode( array_rand( array_flip( str_split( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" ) ), $length ) );
+	} // END of calcPassword
+
+
 	/**
 	 * Makes strings safe for most purposes.
 	 *
@@ -75,6 +93,8 @@ class Helpers
 		return $result;
 	}
 
+
 }
+
 
 ?>
