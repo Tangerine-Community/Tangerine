@@ -19,6 +19,8 @@ require_once( "./Helpers.php" );   // useful methods
  * "main"
  */
 
+$attempt = new Attempt( 'success', "Robbert 0.1" );
+
 $action = Helpers::require_variable('action', 'an action');
 
 /*
@@ -42,6 +44,10 @@ if ( $action )
 				"name" => $user_name,
 				"pass" => $user_pass
 			));
+
+			$user->read();
+
+			if ( $user->is_authenticated() ) throw new Exception( $user->get_name() . " is already a user." );
 
 			$user->save();
 
@@ -85,7 +91,6 @@ if ( $action )
 			$group->create();
 			$group->upgrade();
 			$group->add_admin( $user );
-			$group->add_reader( $user );
 
 			$attempt = new Attempt( 'success', 'Group created.' );
 
@@ -242,7 +247,7 @@ if ( $action )
 			// Assert group's existence
 			$group->read();
 
-			if ( ! $group->is_admin( $admin_user ) ) throw new Exception( "You must be an admin to add readers." );
+			if ( ! $group->is_admin( $admin_user ) ) throw new Exception( "You must be an admin to add members." );
 
 			$group->add_reader( $user );
 
@@ -255,7 +260,7 @@ if ( $action )
 
     // END of add_reader
 
-	}else if ( $action == "remove_reader" )
+	} else if ( $action == "remove_reader" )
 	{
 
 		/*
@@ -295,22 +300,120 @@ if ( $action )
 			// Assert group's existence
 			$group->read();
 
-			if ( ! $group->is_admin( $admin_user ) ) throw new Exception( "You must be an admin to remove readers." );
+			if ( ! $group->is_admin( $admin_user ) ) throw new Exception( "You must be an admin to remove members." );
 
 			$group->remove_reader( $user );
 
-			$attempt = new Attempt( 'success', 'Removed admin ' . $user->get_name() . ' from ' . $group->get_name() . '.' );
+			$attempt = new Attempt( 'success', 'Removed member ' . $user->get_name() . ' from ' . $group->get_name() . '.' );
 
 		} catch ( Exception $e )
 		{
 			$attempt = new Attempt( 'error', $e->getMessage() );
 		}
 
-	}
+    // END of remove_reader
+
+	} else if ( $action == "remove_group" )
+	{
+
+		/*
+		 * Remove a group.
+		 */
+
+		$group_name = Helpers::require_variable('group', 'a group name');
+
+		$user_name = Helpers::require_variable('auth_u', 'a username');
+		$user_pass = Helpers::require_variable('auth_p', 'user authentication');
+
+		// Verify group and user
+		try
+		{
+
+			// Authenticate user making request
+			$user = new User( array(
+				"name" => $user_name,
+				"pass" => $user_pass
+			));
+
+			if ( ! $user->authenticate() ) throw new Exception( "Authentication failed." );
+
+			$group = new Group( array( "name" => $group_name ) );
+
+			// Assert group's existence
+			$group->read();
+
+		} catch ( Exception $e )
+		{
+			Helpers::respond_json( new Attempt( 'error', $e->getMessage() ) );
+			die();
+		}
+
+		/*
+		 * Try to remove user as admin and reader.
+		 * If successful, they will not remove group, only themselves.
+		 * If they are still admins it's because they were the only one left.
+		 *   They will then proceed to destroy the group.
+		 */
+
+		try
+		{
+			$group->remove_admin( $user ); 
+		} catch ( Exception $e )
+		{
+			// Do nothing
+		}
+
+		try
+		{
+			$group->remove_reader( $user );
+		} catch ( Exception $e )
+		{
+			// Do nothing
+		}
+
+		// If user was removed, then say so and quit.
+		if ( !$group->is_admin( $user ) && !$group->is_reader( $user ) )
+		{
+			Helpers::respond_json( new Attempt( 'success', "{$user->get_name()} removed from {$group->get_name()}." ) );
+			die();
+		}
+
+		try
+		{
+
+			// If user is still admin, destroy group
+			$group->destroy( $user );
+
+			$attempt = new Attempt( 'success', 'Group ' . $group->get_name() . ' removed permanently by ' . $user->get_name() . ".");
+
+		} catch ( Exception $e )
+		{
+			Helpers::respond_json( new Attempt( 'error', $e->getMessage() ) );
+			die();
+		}
+
+	// END of remove_group
+
+	} else if ( $action == "am_admin" )
+	{
+
+		$group_name = Helpers::require_variable('group', 'a group name');
+		$user_name  = Helpers::require_variable('user', 'a user to remove');
+
+		$group = new Group( array( "name" => $group_name ) );
+		$user  = new User( array( "name" => $user_name, "admin" => true ) );
+
+		$group->read();
+		$user->read();
+
+		$is_authorized = $group->is_admin( $user ) ? "yes" : "no";
+
+		$attempt = new Attempt( 'success', $is_authorized );
+
+	} // END of am_admin
 
 }
 
 Helpers::respond_json( $attempt );
-
 
 ?>
