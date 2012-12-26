@@ -66,7 +66,7 @@ class User
 			$this->admin_mode = true;
 			$options['pass']  = "";
 		}
-		
+
 		$this->set_name( $options['name'] );
 		$this->pass = $options['pass'];
 		$this->groups = array();
@@ -183,17 +183,14 @@ class User
 	public function authenticate()
 	{
 
-		$response_raw = h\Request::post( $this->config->SESSION_URL )
+		$response_raw = h\Request::get( $this->doc_url )
 			->sendsJson()
-			->body( array(
-				"name"     => $this->name,
-				"password" => $this->pass
-			))
+			->authenticateWith( $this->name, $this->pass )
 			->send();
-	
+
 		$response = json_decode( $response_raw, true );
 
-		$this->is_auth = isset( $response['ok'] ) ? true : false;
+		$this->is_auth = isset( $response['_id'] ) ? true : false;
 
 		return $this->is_auth;
 
@@ -230,6 +227,7 @@ class User
 	} // END of read
 
 
+
 	/**
 	 * Creates a user in the _user database.
 	 */
@@ -244,6 +242,8 @@ class User
 			"type"     => "user",
 			"roles"    => array()
 		);
+
+		$full_url = $this->config->USER_DB_URL . "/" . $this->doc_name;
 
 		if ( $this->admin_mode == false ) $new_fields['password'] = $this->pass;
 
@@ -260,7 +260,7 @@ class User
 
 			$new_doc = $old_doc;
 
-			$response = h\Request::post( $this->config->USER_DB_URL )
+			$response = h\Request::put( $full_url )
 				->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
 				->sendsJson()
 				->body( json_encode( $new_doc ) )
@@ -271,7 +271,7 @@ class User
 
 			$new_doc = $new_fields;
 
-			$response = h\Request::put( $this->config->USER_DB_URL )
+			$response = h\Request::put( $full_url )
 				->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
 				->sendsJson()
 				->body( json_encode( $new_doc ) )
@@ -282,6 +282,27 @@ class User
 		return json_decode( $response, true );
 
 	} // END of save
+
+
+	/**
+	 * Removes user from _users database 
+	 * @return associative array of the Httpful response
+	 */	
+	public function destroy ()
+	{
+
+		$this->read();
+
+		$full_url = $this->config->USER_DB_URL . "/" . $this->doc_name;
+		$full_url .= "?rev=" . $this->doc["_rev"];
+
+		$delete_response = h\Request::delete( $full_url )
+			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+			->send();
+
+		return json_decode( $delete_response, true);
+
+	} // END of destroy_user
 
 }
 
