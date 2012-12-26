@@ -91,7 +91,7 @@ class Group
 	/**
 	 * Mildly sanitizes name's characters and updates the member variables for url and doc.
 	 * @param string $name
-	 * @return \Group for quick chaining
+	 * @return \Group for chaining
 	 */
 	public function set_name ( $name )
 	{
@@ -191,9 +191,66 @@ class Group
 			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
 			->send();
 
+		$this->add_uploader();
+
 		return json_decode( $post_response, true );
 
 	} // END of update_design_docs
+
+
+	/**
+	 * Adds a special user prefixed with uploader that will remain a reader in
+	 * this group for uploading purposes of mobile Tangerines.
+	 */
+	public function add_uploader()
+	{
+
+		// calc new username and password
+		$uploader_name = "uploader-" . $this->get_name();
+		$uploader_pass = Helpers::calc_password(10);
+
+		$uploader_user = new User( array(
+			"name" => $uploader_name,
+			"pass" => $uploader_pass // in case we need to save later
+		));
+
+		// If read with no error, authenticated flag will be set.
+		$uploader_user->read();
+
+		// If authenticate, we're done, there's already a user.
+		if ( $uploader_user->is_authenticated() )
+		{
+			return true;
+		}
+
+		// If not, then make a user, add them as a reader
+		$test = $uploader_user->save();
+
+		$this->add_reader( $uploader_user, false );
+
+		$settings_doc_response = h\Request::get( $this->group_db_url . "/settings" )
+			->sendsJson()
+			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+			->send();
+
+		$settings = json_decode( $settings_doc_response, true );
+
+		if ( ! isset( $settings['upPass'] ) || $settings['upPass'] == "pass" )
+		{
+
+			$settings['upPass']    = $uploader_pass;
+			$settings['groupName'] = $this->group_db;
+			$settings_doc_response = h\Request::put( $this->group_db_url . "/settings" )
+				->sendsJson()
+				->body( json_encode ( $settings ) )
+				->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+				->send();
+
+		} else {
+			throw new RuntimeException( "Group already has an uploader" );
+		}
+
+	} // END of add_uploader
 
 
 	/**
@@ -213,14 +270,18 @@ class Group
 		/*
 		 * Your papers check out sir, deleting database.
 		 */
+		date_default_timezone_set('UTC');
+		$deleted_db_name = "deleted-" . $this->config->GROUP_PREFIX . $this->name . "-" . date("Ymd-Hi");
+		$data =  array(
+			"create_target" => true,
+			"source" => $this->group_db,
+			"target" => $deleted_db_name
+		);
 
 		// stash a copy
 		$post_response = h\Request::post( $this->config->REPLICATE_URL )
 			->sendsJson()
-			->body( json_encode( array(
-				"source" => $this->group_db,
-				"target" => $this->config->SERVER_URL . "deleted-" . $this->config->GROUP_PREFIX . $this->name,
-				"create_target" => true )))
+			->body( json_encode( $data ) )
 			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
 			->send();
 
@@ -230,8 +291,10 @@ class Group
 
 		$delete_response = json_decode( $delete_response_raw, true );
 
+		// If the database was deleted, remove user's references to it
 		if ( ! isset( $delete_response['error'] ) )
 		{
+
 			$this->isExtant = false;
 			$user_categories = array(
 				$security_doc['admins']['names'],
@@ -241,9 +304,17 @@ class Group
 			foreach ( $user_categories as $category )
 				foreach ( $category as $user )
 				{
-					$user = new User( array( "name" => $admin, "admin" => true ));
-					$user->remove_group( $this );
+					$notify_user = new User( array( "name" => $user, "admin" => true ));
+					$notify_user->remove_group( $this );
 				}
+
+			// Remove the uploader user
+			$uploader_user = new User( array( 
+				"name" => "uploader-" . $this->get_name(),
+				"admin" => true
+			));
+			$uploader_user->destroy();
+
 
 		}
 
@@ -258,7 +329,7 @@ class Group
 	 * @param $user User to be added to the group as an admin.
 	 * @return the response 
 	 */
-	public function add_admin( User $user = null )
+	public function add_admin( User $user = null, $reflexive = true )
 	{
 
 		if ( $user == null ) throw new UnexpectedValueException("User must be provided.");
@@ -274,7 +345,6 @@ class Group
 		// add them
 		array_push( $old_doc['admins']['names'], $user_name );
 
-
 		$new_doc = $old_doc;
 
 		// Send
@@ -286,7 +356,7 @@ class Group
 		$put_response = json_decode( $put_response_raw, true );
 
 		// if there was no error, update the user as well
-		if ( ! isset( $put_response['error'] ) ) $user->add_group( $this );
+		if ( ! isset( $put_response['error'] ) && $reflexive ) $user->add_group( $this );
 
 		return $put_response;
 
@@ -296,7 +366,7 @@ class Group
 	/**
 	 * Removes an admin user from a group's database's security doc.
 	 */
-	public function remove_admin( User $user = null )
+	public function remove_admin( User $user = null, $reflexive = true )
 	{
 
 		// Assert specified user.
@@ -332,7 +402,7 @@ class Group
 		if ( ! isset( $put_response['error'] ) )
 		{
 			// only remove the group from the user's group list, if they're neither an admin nor reader.
-			if ( ! ( in_array( $user_name, $new_doc['admins']['names'] ) || in_array( $user_name, $new_doc['members']['names'] ) ) )
+			if ( ! ( in_array( $user_name, $new_doc['admins']['names'] ) || in_array( $user_name, $new_doc['members']['names'] ) ) && $reflexive )
 				$user->remove_group( $this );
 		}
 
@@ -346,7 +416,7 @@ class Group
 	 * Adds a reader to the group's security doc.
 	 * @return associative array of the Httpful response
 	 */
-	public function add_reader( User $user = null )
+	public function add_reader( User $user = null, $reflexive = true )
 	{
 
 		if ($user == null)  throw new UnexpectedValueException( "No user required." );
@@ -373,7 +443,7 @@ class Group
 		$put_response = json_decode( $put_response_raw, true );
 
 		// if there was no error, update the user as well
-		if ( ! isset( $put_response['error'] ) ) $user->add_group( $this );
+		if ( ! isset( $put_response['error'] ) && $reflexive ) $user->add_group( $this );
 
 		return $put_response;
 
@@ -383,9 +453,10 @@ class Group
 	/**
 	 * Removes reader from the group's security doc.
 	 * Note: will not remove last reader. That would make it a reader party.
+	 * One reader always remains, the uploader
 	 * @return associative array of the Httpful response
 	 */
-	public function remove_reader( User $user = null, $backup_user = null )
+	public function remove_reader( User $user = null, $reflexive = true )
 	{
 
 		// Assert specified user.
@@ -400,8 +471,8 @@ class Group
 		if ( ! in_array( $user_name, $old_doc['members']['names'] ) )
 			throw new InvalidArgumentException($user_name . " is not a reader.");
 
-		// If the last reader is being removed, add the backup user as a reader.
-		if ( count($old_doc['members']['names']) <= 1) array_push( $old_doc['members']['names'], $backup_user->get_name() );
+		// old strategy: If the last reader is being removed, add the backup user as a reader.
+		// if ( count($old_doc['members']['names']) <= 1) array_push( $old_doc['members']['names'], $backup_user->get_name() );
 
 		// Update security doc
 		$new_doc = $old_doc;
@@ -421,7 +492,7 @@ class Group
 		if ( ! isset( $put_response['error'] ) )
 		{
 			// only remove the group from the user's group list, if they're neither an admin nor reader.
-			if ( ! ( in_array( $user_name, $new_doc['admins']['names'] ) && in_array( $user_name, $new_doc['members']['names'] ) ) )
+			if ( ! ( in_array( $user_name, $new_doc['admins']['names'] ) && in_array( $user_name, $new_doc['members']['names'] ) ) && $reflexive )
 				$user->remove_group( $this );
 		}
 
