@@ -9,7 +9,6 @@ ini_set( 'display_errors', true );
  */
 
 require_once( "./Config.php" );    // `Config` static class
-require_once( "./Tangerine.php" ); // main tangerine interactions
 require_once( "./Group.php" );     // Tangerine Group handling
 require_once( "./User.php" );      // Tangerine User handling
 require_once( "./Attempt.php" );   // success error reporting
