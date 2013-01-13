@@ -42,6 +42,8 @@ class Config
 
 		$this->GROUP_PREFIX = "group-";
 
+		$this->D_DOC = "ojai";
+
 		// special dbs and docs
 		$this->SECURITY   = "_security";
 		$this->USERS      = "_users";
@@ -49,6 +51,7 @@ class Config
 		$this->REPLICATE  = "_replicate";
 		$this->APP_DOCS   = "_design/ojai\nconfiguration\nsettings\ntemplates";
 
+		$this->SERVER_HOST      = $this->HTTP . $this->SERVER;
 		$this->SERVER_URL       = $this->HTTP . $this->SERVER . ":" . $this->PORT . "/";
 		$this->USER_DB_URL      = $this->SERVER_URL . $this->USERS;
 		$this->SESSION_URL      = $this->SERVER_URL . $this->SESSION;
