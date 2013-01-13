@@ -1,6 +1,6 @@
 <?php
 
-require_once( "./httpful-0.2.0.phar" ); use \Httpful as h; // awesome http library
+require_once( "./bootstrap.php" ); use \Httpful as h; // awesome http library
 
 /**
  * Handles all Tangerine-group level interactions.
@@ -240,6 +240,9 @@ class Group
 
 			$settings['upPass']    = $uploader_pass;
 			$settings['groupName'] = $this->group_db;
+			$settings['groupDDoc'] = $this->config->D_DOC;
+			$settings['groupHost'] = $this->config->SERVER_HOST;
+
 			$settings_doc_response = h\Request::put( $this->group_db_url . "/settings" )
 				->sendsJson()
 				->body( json_encode ( $settings ) )
