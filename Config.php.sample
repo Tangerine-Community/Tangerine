@@ -57,21 +57,20 @@ class Config
 
 	}
 
-
-	public function user_doc_name( $name )
+	public function user_doc_name( $name = "")
 	{
 		return "org.couchdb.user:" . $name;
 	}
 
-	public function user_doc_url( $name, $server_handle )
+	public function user_doc_url( $name = "", $server_handle = null)
 	{
 		return doc_url( $this->user_doc_name( $name ), "_users", $server_handle );
 	}
 
-	public function deleted_db_name( $name )
+	public function deleted_db_name( $name = "" )
 	{
 		date_default_timezone_set( 'America/New_York' );
-		return "deleted-" . $this->config->GROUP_PREFIX . $this->name . "-" . date( "Ymd-Hi" );
+		return "deleted-" . $this->GROUP_PREFIX . $name . "-" . date( "Ymd-Hi" );
 	}
 
 	public function doc_url( $doc_name = "", $db_name = "", $server_handle = null, $admin = false )
