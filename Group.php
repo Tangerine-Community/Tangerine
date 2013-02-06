@@ -151,8 +151,8 @@ class Group
 
 		$rep_doc = json_encode(array(
 			"_id" => $this->name . "_backup",
-			"source" => $con->group_db_url($this->name, "main"),
-			"target" => $con->group_db_url($this->name, "local", true),
+			"source" => $con->group_db_url($this->name, "main", true),
+			"target" => $con->group_db_url($this->name, "backup", true),
 			"continuous" => true,
 			"create_target" => true
 		));
