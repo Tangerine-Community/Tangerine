@@ -74,7 +74,7 @@ class User
 	private function set_name( $name )
 	{
 
-		$this->name     = $name;
+		$this->name = $name;
 
 		return $this;
 
@@ -191,7 +191,7 @@ class User
 	public function read()
 	{
 
-		$response_raw = h\Request::get( $this->config->user_doc_url( $name, "main" ) )
+		$response_raw = h\Request::get( $this->config->user_doc_url( $this->name, "main" ) )
 			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
 			->sendsJson()
 			->send();
@@ -247,7 +247,7 @@ class User
 
 			$new_doc = $old_doc;
 
-			$response = h\Request::put( $this->config->user_doc_url( $name, "main" ) )
+			$response = h\Request::put( $this->config->user_doc_url( $this->name, "main" ) )
 				->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 				->sendsJson()
 				->body( json_encode( $new_doc ) )
@@ -258,7 +258,7 @@ class User
 
 			$new_doc = $new_fields;
 
-			$response = h\Request::put( $this->config->user_doc_url( $name, "main" ) )
+			$response = h\Request::put( $this->config->user_doc_url( $this->name, "main" ) )
 				->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 				->sendsJson()
 				->body( json_encode( $new_doc ) )
@@ -284,7 +284,7 @@ class User
 
 		$rev = "?rev=" . $this->doc["_rev"];
 
-		$delete_response = h\Request::delete( $con->user_doc_url( $name, "main" ) . $rev )
+		$delete_response = h\Request::delete( $con->user_doc_url( $$this->name, "main" ) . $rev )
 			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->send();
 

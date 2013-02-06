@@ -231,14 +231,14 @@ class Group
 
 		$this->add_reader( $uploader_user, false );
 
-		$settings_doc_response = h\Request::get( $con->group_doc_name("settings", $this->name, "main") )
+		$settings_doc_response = h\Request::get( $con->group_doc_url("settings", $this->name, "main") )
 			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->sendsJson()
 			->send();
 
 		$settings = json_decode( $settings_doc_response, true );
 
-		if ( ! isset( $settings['upPass'] ) || $settings['upPass'] == "default" )
+		if ( ! isset( $settings['upPass'] ) || $settings['upPass'] == "pass" )
 		{
 
 			$settings['upPass']    = $uploader_pass;
@@ -246,11 +246,17 @@ class Group
 			$settings['groupDDoc'] = $con->D_DOC;
 			$settings['groupHost'] = $con->SERVERS['main'];
 
-			$settings_doc_response = h\Request::put( $con->group_doc_name( "settings", $this->name, "main" ) )
+			$settings_doc_response = h\Request::put( $con->group_doc_url("settings", $this->name, "main") )
 				->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 				->sendsJson()
-				->body( json_encode ( $settings ) )
+				->body( json_encode( $settings ) )
 				->send();
+
+			$fp = fopen("robbert.log", "w");
+			fwrite($fp, $settings );
+			fclose($fp);
+
+
 
 		} else {
 			throw new RuntimeException( "Group already has an uploader" );
