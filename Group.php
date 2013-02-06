@@ -182,7 +182,7 @@ class Group
 
 		$data = json_encode( array(
 			"source" => $this->config->TRUNK,
-			"target" => $con->group_db_name("test"),
+			"target" => $con->group_db_name( $this->name ),
 			"doc_ids" => explode( "\n", $con->APP_DOCS )
 		));
 
