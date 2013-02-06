@@ -158,7 +158,7 @@ class Group
 		));
 
 		// Create a new backup replication
-		$replication_response = h\Request::post( $con->db_url("_replicator", "local") )
+		$replication_response = h\Request::post( $con->db_url("_replicator", "backup") )
 			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->sendsJson()
 			->body( $rep_doc )
