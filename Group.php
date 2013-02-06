@@ -36,25 +36,6 @@ class Group
 	 */
 	private $isExtant;
 
-
-	/**
-	 * @var string Name of group database.
-	 */
-	private $group_db;
-
-
-	/**
-	 * @var $name
-	 */
-	private $group_db_url;
-
-
-	/**
-	 * @var string URL for group's security doc. Updated by Group::set_name()
-	 */
-	private $security_doc_url;
-
-
 	/**
 	 * @var Config configuration object
 	 */
@@ -62,12 +43,14 @@ class Group
 
 
 	/**
-	 * Constructor, _soft-overloaded._
+	 * Constructor, _soft-overloaded_
 	 * if name set, will attempt to fetch.
 	 *   if successful, will simply read.
 	 */
 	public function __construct( $options = array() )
 	{
+
+		echo "making new group";
 
 		$this->config = new Config();
 		$this->isExtant = null;
@@ -98,10 +81,6 @@ class Group
 
 		$this->name = Helpers::safety_dance($name);
 
-		$this->group_db         = $this->config->GROUP_PREFIX     . $this->name;
-		$this->group_db_url     = $this->config->GROUP_PREFIX_URL . $this->name;
-		$this->security_doc_url = $this->group_db_url . "/" . $this->config->SECURITY;
-
 		return $this;
 
 	} // END of set_name
@@ -123,8 +102,10 @@ class Group
 	public function read()
 	{
 
-		$response = h\Request::get( $this->group_db_url )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+		$con = $this->config;
+
+		$response = h\Request::get( $con->group_db_url( $this->name, "main" ) )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->send();
 
 		if ($response->code == 200)
@@ -149,8 +130,10 @@ class Group
 	public function create()
 	{
 
-		$put_response = h\Request::put( $this->group_db_url )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+		$con = $this->config;
+
+		$put_response = h\Request::put( $con->group_db_url( $this->name, "main" ) )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->send();
 
 		$response = json_decode( $put_response , true );
@@ -167,9 +150,27 @@ class Group
 			}
 		}
 
+
+		$rep_doc = json_encode(array(
+			"_id" => $this->name . "_backup",
+			"source" => $con->group_db_url($this->name, "main"),
+			"target" => $con->group_db_url($this->name, "local", true),
+			"continuous" => true,
+			"create_target" => true
+		));
+
+		// Create a new backup replication
+		$replication_response = h\Request::post( $con->db_url("_replicator", "local") )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->sendsJson()
+			->body( $rep_doc )
+			->send();
+
 		return $response;
 
 	} // END of create
+
+
 
 
 	/**
@@ -179,16 +180,18 @@ class Group
 	public function upgrade()
 	{
 
+		$con = $this->config;
+
 		$data = json_encode( array(
 			"source" => $this->config->TRUNK,
-			"target" => $this->group_db,
-			"doc_ids" => explode( "\n", $this->config->APP_DOCS )
+			"target" => $con->group_db_name("test"),
+			"doc_ids" => explode( "\n", $con->APP_DOCS )
 		));
 
-		$post_response = h\Request::post( $this->config->REPLICATE_URL )
+		$post_response = h\Request::post( $con->db_url("_replicate", "main") )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->sendsJson()
 			->body( $data )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
 			->send();
 
 		$this->add_uploader();
@@ -205,9 +208,11 @@ class Group
 	public function add_uploader()
 	{
 
+		$con = $this->config;
+
 		// calc new username and password
 		$uploader_name = "uploader-" . $this->get_name();
-		$uploader_pass = Helpers::calc_password(10);
+		$uploader_pass = Helpers::calc_password(16);
 
 		$uploader_user = new User( array(
 			"name" => $uploader_name,
@@ -228,25 +233,25 @@ class Group
 
 		$this->add_reader( $uploader_user, false );
 
-		$settings_doc_response = h\Request::get( $this->group_db_url . "/settings" )
+		$settings_doc_response = h\Request::get( $con->group_doc_name("settings", $this->name, "main") )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->sendsJson()
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
 			->send();
 
 		$settings = json_decode( $settings_doc_response, true );
 
-		if ( ! isset( $settings['upPass'] ) || $settings['upPass'] == "pass" )
+		if ( ! isset( $settings['upPass'] ) || $settings['upPass'] == "default" )
 		{
 
 			$settings['upPass']    = $uploader_pass;
-			$settings['groupName'] = $this->group_db;
-			$settings['groupDDoc'] = $this->config->D_DOC;
-			$settings['groupHost'] = $this->config->SERVER_HOST;
+			$settings['groupName'] = $this->name;
+			$settings['groupDDoc'] = $con->D_DOC;
+			$settings['groupHost'] = $con->SERVERS['main'];
 
-			$settings_doc_response = h\Request::put( $this->group_db_url . "/settings" )
+			$settings_doc_response = h\Request::put( $con->group_doc_name( "settings", $this->name, "main" ) )
+				->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 				->sendsJson()
 				->body( json_encode ( $settings ) )
-				->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
 				->send();
 
 		} else {
@@ -262,34 +267,34 @@ class Group
 	public function destroy( User $user = null)
 	{
 
+		$con = $this->config;
+
 		// assert non-null user
 		if ( $user == null ) throw new InvalidArgumentException('Method requires an user.');
 
 		// assert admin user
 		$security_doc = $this->get_security_doc();
-		if ( ! in_array( $user->get_name(), $security_doc['admins']['names'] ) )
+		if ( ! in_array( $user->get_name(), $security_doc['admins']['names'] ) && count($security_doc['admins']['names']) == 1)
 			throw new InvalidArgumentException('User must be group admin.');
 
 		/*
 		 * Your papers check out sir, deleting database.
 		 */
-		date_default_timezone_set('UTC');
-		$deleted_db_name = "deleted-" . $this->config->GROUP_PREFIX . $this->name . "-" . date("Ymd-Hi");
 		$data =  array(
 			"create_target" => true,
-			"source" => $this->group_db,
-			"target" => $deleted_db_name
+			"source" => $con->group_db_name( $this->name, "main" ),
+			"target" => $con->deleted_db_name( $this->name )
 		);
 
 		// stash a copy
-		$post_response = h\Request::post( $this->config->REPLICATE_URL )
+		$post_response = h\Request::post( $con->db_url("_replicate", "main") )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->sendsJson()
 			->body( json_encode( $data ) )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
 			->send();
 
-		$delete_response_raw = h\Request::delete( $this->group_db_url )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+		$delete_response_raw = h\Request::delete( $con->group_db_url( $this->name, "main" ) )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->send();
 
 		$delete_response = json_decode( $delete_response_raw, true );
@@ -318,6 +323,22 @@ class Group
 			));
 			$uploader_user->destroy();
 
+			/*
+			 * remove the backup entry in _replicator
+			 */
+			$replicator_response = json_decode(
+				h\Request::get(
+					$con->doc_url($this->name."_backup", "_replicator", "local", true)
+				)->send()
+			, true);
+
+			$rev = "?rev=".$replicator_response['_rev'];
+
+			$delete_response_raw = h\Request::delete( 
+				$con->doc_url($this->name."_backup", "_replicator", "local", true) . $rev
+			)
+				->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+				->send();
 
 		}
 
@@ -350,13 +371,8 @@ class Group
 
 		$new_doc = $old_doc;
 
-		// Send
-		$put_response_raw = h\Request::put( $this->security_doc_url )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
-			->body( json_encode( $new_doc ) )
-			->send();
-
-		$put_response = json_decode( $put_response_raw, true );
+		// Send request
+		$put_response = json_decode( $this->set_security_doc( $new_doc ), true);
 
 		// if there was no error, update the user as well
 		if ( ! isset( $put_response['error'] ) && $reflexive ) $user->add_group( $this );
@@ -392,14 +408,8 @@ class Group
 		if ( in_array( $user_name, $new_doc['admins']['names'] ) )
 			$new_doc['admins']['names'] = Helpers::array_without( $user_name, $new_doc['admins']['names'] );
 
-
 		// Send request
-		$put_response_raw = h\Request::put( $this->security_doc_url )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
-			->body( json_encode( $new_doc ) )
-			->send();
-
-		$put_response = json_decode( $put_response_raw, true );
+		$put_response = json_decode( $this->set_security_doc( $new_doc ), true);
 
 		// if there was no error, update the user as well
 		if ( ! isset( $put_response['error'] ) )
@@ -437,13 +447,8 @@ class Group
 
 		$new_doc = $old_doc;
 
-		// Send
-		$put_response_raw = h\Request::put( $this->security_doc_url )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
-			->body( json_encode( $new_doc ) )
-			->send();
-
-		$put_response = json_decode( $put_response_raw, true );
+		// Send request
+		$put_response = json_decode( $this->set_security_doc( $new_doc ), true);
 
 		// if there was no error, update the user as well
 		if ( ! isset( $put_response['error'] ) && $reflexive ) $user->add_group( $this );
@@ -482,14 +487,8 @@ class Group
 		if ( in_array( $user_name, $new_doc['members']['names'] ) )
 			$new_doc['members']['names'] = Helpers::array_without( $user_name, $new_doc['members']['names'] );
 
-
 		// Send request
-		$put_response_raw = h\Request::put( $this->security_doc_url )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
-			->body( json_encode( $new_doc ) )
-			->send();
-
-		$put_response = json_decode( $put_response_raw, true );
+		$put_response = json_decode( $this->set_security_doc( $new_doc ), true);
 
 		// if there was no error, update the user as well
 		if ( ! isset( $put_response['error'] ) )
@@ -515,9 +514,12 @@ class Group
 
 		if ( ! isset( $this->name ) ) throw new LogicException( "Group name has not been set yet." );
 
-		$response_raw = h\Request::get( $this->security_doc_url )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+		$con = $this->config;
+
+		$response_raw = h\Request::get( $con->group_doc_url("_security", $this->name, "main") )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->send();
+
 		$response = json_decode( $response_raw, true );
 
 		// If no doc set or if database doesn't exist, return blank structure of security doc
@@ -534,18 +536,36 @@ class Group
 	} // END of get_security_doc
 
 
+	/**
+	 * This saves the supplied security doc to the group's database.
+	 * @param new_doc Must be a complete CouchDB doc
+	 * @return httpful/Response object.
+	 */
+	public function set_security_doc( $new_doc = null )
+	{
+		if ( $new_doc == null ) throw InvalidArgumentException("Cowardly refusing to save a blank security doc.");
+		$con = $this->config;
+
+		return h\Request::put( $con->group_doc_url("_security", $this->name, "main") )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->sendsJson()
+			->body( json_encode( $new_doc ) )
+			->send();
+
+	} // END of set_security_doc
+
 	public function is_admin( User $user )
 	{
 		$security_doc = $this->get_security_doc();
 		return in_array( $user->get_name(), $security_doc['admins']['names'] );
-	} // END of is_admin
+	}
 
 
 	public function is_reader( User $user )
 	{
 		$security_doc = $this->get_security_doc();
 		return in_array( $user->get_name(), $security_doc['members']['names'] );
-	} // END of is_admin
+	}
 
 
 	/**

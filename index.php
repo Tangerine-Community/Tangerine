@@ -1,18 +1,18 @@
 <?php
 
 // debug
-error_reporting( E_ALL );
-ini_set( 'display_errors', true );
+//error_reporting( E_ALL );
+//ini_set( 'display_errors', true );
 
 /*
  * includes
  */
 
-require_once( "./Config.php" );    // `Config` static class
-require_once( "./Group.php" );     // Tangerine Group handling
-require_once( "./User.php" );      // Tangerine User handling
-require_once( "./Attempt.php" );   // success error reporting
-require_once( "./Helpers.php" );   // useful methods
+require_once( "Config.php" );    // `Config` static class
+require_once( "Attempt.php" );   // success error reporting
+require_once( "Helpers.php" );   // useful methods
+require_once( "Group.php" );     // Tangerine Group handling
+require_once( "User.php" );      // Tangerine User handling
 
 /*
  * "main"
@@ -312,11 +312,12 @@ if ( $action )
 
     // END of remove_reader
 
-	} else if ( $action == "remove_group" )
+	} else if ( $action == "leave_group" )
 	{
 
 		/*
-		 * Remove a group.
+		 * Leave a group
+		 * If last member of group, remove group.
 		 */
 
 		$group_name = Helpers::require_variable('group', 'a group name');
@@ -339,6 +340,7 @@ if ( $action )
 			$group = new Group( array( "name" => $group_name ) );
 
 			// Assert group's existence
+			// This will throw an error otherwise.
 			$group->read();
 
 		} catch ( Exception $e )
@@ -410,6 +412,9 @@ if ( $action )
 		$attempt = new Attempt( 'success', $is_authorized );
 
 	} // END of am_admin
+	else {
+		echo "no action";
+	}
 
 }
 

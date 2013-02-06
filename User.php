@@ -22,16 +22,6 @@ class User
 	private $pass;
 
 	/**
-	 * @var string The user's document name.
-	 */
-	private $doc_name;
-
-	/**
-	 * @var string The full user's document url.
-	 */
-	private $doc_url;
-
-	/**
 	 * @var Config A configuration object.
 	 */
 	private $config;
@@ -85,8 +75,6 @@ class User
 	{
 
 		$this->name     = $name;
-		$this->doc_name = "org.couchdb.user:" . $name;
-		$this->doc_url  = $this->config->USER_DB_URL . "/org.couchdb.user:" . $name;
 
 		return $this;
 
@@ -99,7 +87,7 @@ class User
 	 */
 	public function get_name()
 	{
-		if ( !isset( $this->name ) ) throw new LogicException("User object has no name yet."); 
+		if ( ! isset( $this->name ) ) throw new LogicException("User object has no name yet.");
 		return $this->name;
 	} // END of get_name
 
@@ -183,9 +171,9 @@ class User
 	public function authenticate()
 	{
 
-		$response_raw = h\Request::get( $this->doc_url )
-			->sendsJson()
+		$response_raw = h\Request::get( $this->config->user_doc_url( $name, "main" ) )
 			->authenticateWith( $this->name, $this->pass )
+			->sendsJson()
 			->send();
 
 		$response = json_decode( $response_raw, true );
@@ -203,8 +191,9 @@ class User
 	public function read()
 	{
 
-		$response_raw = h\Request::get( $this->doc_url )
+		$response_raw = h\Request::get( $this->config->user_doc_url( $name, "main" ) )
 			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+			->sendsJson()
 			->send();
 
 		$response = json_decode( $response_raw, true );
@@ -234,16 +223,16 @@ class User
 	public function save()
 	{
 
+		$con = $this->config;
+
 		// Prepare doc
 		$new_fields = array(
-			"_id"      => $this->doc_name,
+			"_id"      => $con->user_doc_name( $this->name ),
 			"name"     => $this->name,
 			"groups"   => $this->groups,
 			"type"     => "user",
 			"roles"    => array()
 		);
-
-		$full_url = $this->config->USER_DB_URL . "/" . $this->doc_name;
 
 		if ( $this->admin_mode == false ) $new_fields['password'] = $this->pass;
 
@@ -254,14 +243,12 @@ class User
 			$old_doc = $this->doc;
 
 			foreach ( $new_fields as $field_key => $field_value )
-			{
 				$old_doc[$field_key] = $field_value;
-			}
 
 			$new_doc = $old_doc;
 
-			$response = h\Request::put( $full_url )
-				->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+			$response = h\Request::put( $this->config->user_doc_url( $name, "main" ) )
+				->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 				->sendsJson()
 				->body( json_encode( $new_doc ) )
 				->send();
@@ -271,8 +258,8 @@ class User
 
 			$new_doc = $new_fields;
 
-			$response = h\Request::put( $full_url )
-				->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+			$response = h\Request::put( $this->config->user_doc_url( $name, "main" ) )
+				->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 				->sendsJson()
 				->body( json_encode( $new_doc ) )
 				->send();
@@ -291,13 +278,14 @@ class User
 	public function destroy ()
 	{
 
+		$con = $this->config;
+
 		$this->read();
 
-		$full_url = $this->config->USER_DB_URL . "/" . $this->doc_name;
-		$full_url .= "?rev=" . $this->doc["_rev"];
+		$rev = "?rev=" . $this->doc["_rev"];
 
-		$delete_response = h\Request::delete( $full_url )
-			->authenticateWith( $this->config->ADMIN_U, $this->config->ADMIN_P )
+		$delete_response = h\Request::delete( $con->user_doc_url( $name, "main" ) . $rev )
+			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->send();
 
 		return json_decode( $delete_response, true);

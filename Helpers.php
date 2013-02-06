@@ -14,11 +14,11 @@ class Helpers
 	public function respond_json( $attempt )
 	{
 		$origin = isset( $_SERVER['HTTP_ORIGIN'] ) ? $_SERVER['HTTP_ORIGIN'] : "*";
-		header( "Content-type: application/json" );
-		header('Access-Control-Allow-Origin: ' . $origin);
-    	header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-    	header('Access-Control-Max-Age: 1000');
-    	header('Access-Control-Allow-Headers: Content-Type');
+		header( 'Access-Control-Allow-Origin: *' );
+		header( 'Access-Control-Allow-Methods: POST, GET, OPTIONS' );
+		header( 'Access-Control-Max-Age: 10000' );
+		header( 'Access-Control-Allow-Headers: *' );
+		header( 'Content-type: application/json' );
 		echo $attempt->toJson();
 	}
 
@@ -73,7 +73,7 @@ class Helpers
 	 */
 	public function calc_password( $length = 10 )
 	{
-		return implode( array_rand( array_flip( str_split( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" ) ), $length ) );
+		return implode( array_rand( array_flip( str_split( "abcdefghijklmnopqrstuvwxyz" ) ), $length ) );
 	} // END of calcPassword
 
 
