@@ -50,8 +50,6 @@ class Group
 	public function __construct( $options = array() )
 	{
 
-		echo "making new group";
-
 		$this->config = new Config();
 		$this->isExtant = null;
 

@@ -171,7 +171,7 @@ class User
 	public function authenticate()
 	{
 
-		$response_raw = h\Request::get( $this->config->user_doc_url( $name, "main" ) )
+		$response_raw = h\Request::get( $this->config->user_doc_url( $this->name, "main" ) )
 			->authenticateWith( $this->name, $this->pass )
 			->sendsJson()
 			->send();
