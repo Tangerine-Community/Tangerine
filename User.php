@@ -1,7 +1,6 @@
 <?php
 
 require_once( "./bootstrap.php" ); use \Httpful as h; // awesome http library
-require_once( "./Config.php" );    // `Config` static class
 
 class User
 {
@@ -44,7 +43,7 @@ class User
 	public function __construct( array $options = array() )
 	{
 
-		$this->config = new Config();
+		$this->config = new ConfigHelper();
 
 		if (! isset( $options['admin'] ) )
 		{

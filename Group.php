@@ -50,7 +50,7 @@ class Group
 	public function __construct( $options = array() )
 	{
 
-		$this->config = new Config();
+		$this->config = new ConfigHelper();
 		$this->isExtant = null;
 
 		if ( isset( $options['name'] ) )
@@ -64,7 +64,6 @@ class Group
 				$this->isExtant = false;
 			}
 		}
-
 
 	} // END of __construct
 
@@ -169,8 +168,6 @@ class Group
 	} // END of create
 
 
-
-
 	/**
 	 * Replicates design docs from tangerine trunk to the current group db.
 	 * Will create them if not there.
@@ -238,6 +235,7 @@ class Group
 
 		$settings = json_decode( $settings_doc_response, true );
 
+		// @TODO break this out into a new method. Issue #4
 		if ( ! isset( $settings['upPass'] ) || $settings['upPass'] == "pass" )
 		{
 

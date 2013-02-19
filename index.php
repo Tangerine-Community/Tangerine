@@ -9,6 +9,8 @@
  */
 
 require_once( "Config.php" );    // `Config` static class
+require_once( "ConfigHelper.php" );    // `Config` static class
+
 require_once( "Attempt.php" );   // success error reporting
 require_once( "Helpers.php" );   // useful methods
 require_once( "Group.php" );     // Tangerine Group handling
