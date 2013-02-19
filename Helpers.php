@@ -72,7 +72,9 @@ class Helpers
 	 */
 	public function calc_password( $length = 10 )
 	{
-		return implode( array_rand( array_flip( str_split( "abcdefghijklmnopqrstuvwxyz" ) ), $length ) );
+		$result = "";
+		while ($length--) { $result .= array_rand( array_flip( str_split( "abcdefghijklmnopqrstuvwxyz" ) ) ); }; 
+		return $result;
 	} // END of calcPassword
 
 
