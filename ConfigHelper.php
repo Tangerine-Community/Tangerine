@@ -32,7 +32,7 @@ class ConfigHelper
 
 	public function user_doc_url( $name = "", $server_handle = null)
 	{
-		return doc_url( $this->user_doc_name( $name ), "_users", $server_handle );
+		return $this->doc_url( $this->user_doc_name( $name ), "_users", $server_handle );
 	}
 
 	public function deleted_db_name( $name = "" )
@@ -75,7 +75,7 @@ class ConfigHelper
 		$user_pass = "";
 		if ( $admin ) $user_pass = $this->constants->ADMIN_U . ":" . $this->constants->ADMIN_P . "@";
 
-		$host = $this->HTTP . $user_pass . $this->constants->SERVERS[$server_handle];
+		$host = $this->constants->HTTP . $user_pass . $this->constants->SERVERS[$server_handle];
 
 		// @faultpoint, this works because iriscouch uses port 80
 		if ( $server_handle == "local" )

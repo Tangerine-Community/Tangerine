@@ -415,7 +415,7 @@ if ( $action )
 
 	} // END of am_admin
 	else {
-		echo "no action";
+		// No action
 	}
 
 }

@@ -285,7 +285,7 @@ class User
 
 		$rev = "?rev=" . $this->doc["_rev"];
 
-		$delete_response = h\Request::delete( $con->user_doc_url( $$this->name, "main" ) . $rev )
+		$delete_response = h\Request::delete( $con->user_doc_url( $this->name, "main" ) . $rev )
 			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->send();
 

@@ -102,7 +102,7 @@ class Group
 		$con = $this->config;
 
 		$response = h\Request::get( $con->group_db_url( $this->name, "main" ) )
-			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->send();
 
 		if ($response->code == 200)
@@ -131,7 +131,7 @@ class Group
 
 		// Create a blank database
 		$put_response = h\Request::put( $con->group_db_url( $this->name, "main" ) )
-			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->send();
 
 		$response = json_decode( $put_response , true );
@@ -159,7 +159,7 @@ class Group
 
 		// Create a new backup replication
 		$replication_response = h\Request::post( $con->db_url("_replicator", "backup") )
-			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->sendsJson()
 			->body( $rep_doc )
 			->send();
@@ -251,12 +251,6 @@ class Group
 				->body( json_encode( $settings ) )
 				->send();
 
-			$fp = fopen("robbert.log", "w");
-			fwrite($fp, $settings );
-			fclose($fp);
-
-
-
 		} else {
 			throw new RuntimeException( "Group already has an uploader" );
 		}
@@ -331,14 +325,14 @@ class Group
 			 */
 			$replicator_response = json_decode(
 				h\Request::get(
-					$con->doc_url($this->name."_backup", "_replicator", "local", true)
+					$con->doc_url($this->name."_backup", "_replicator", "backup", true)
 				)->send()
 			, true);
 
 			$rev = "?rev=".$replicator_response['_rev'];
 
 			$delete_response_raw = h\Request::delete( 
-				$con->doc_url($this->name."_backup", "_replicator", "local", true) . $rev
+				$con->doc_url($this->name."_backup", "_replicator", "backup", true) . $rev
 			)
 				->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 				->send();
