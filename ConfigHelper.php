@@ -8,7 +8,20 @@ class ConfigHelper
 	public function __construct()
 	{
 
-		$this->config = new Config();
+		$this->constants = new Config();
+
+		$c = $this->constants;
+
+		if ( ! isset( $c->HTTP ) )          throw new LogicException('Config missing HTTP.');
+		if ( ! isset( $c->ADMIN_U ) )       throw new LogicException('Config missing ADMIN_U.');
+		if ( ! isset( $c->ADMIN_P ) )       throw new LogicException('Config missing ADMIN_P.');
+		if ( ! isset( $c->SERVERS ) )       throw new LogicException('Config missing SERVERS.');
+		if ( ! isset( $c->PORT ) )          throw new LogicException('Config missing PORT.');
+		if ( ! isset( $c->TRUNK ) )         throw new LogicException('Config missing TRUNK.');
+		if ( ! isset( $c->GROUP_PREFIX ) )  throw new LogicException('Config missing GROUP_PREFIX.');
+		if ( ! isset( $c->BACKUP_PREFIX ) ) throw new LogicException('Config missing BACKUP_PREFIX.');
+		if ( ! isset( $c->D_DOC ) )         throw new LogicException('Config missing D_DOC.');
+		if ( ! isset( $c->APP_DOCS ) )      throw new LogicException('Config missing APP_DOCS.');
 
 	}
 
@@ -25,7 +38,7 @@ class ConfigHelper
 	public function deleted_db_name( $name = "" )
 	{
 		date_default_timezone_set( 'America/New_York' );
-		return "deleted-" . $this->config->GROUP_PREFIX . $name . "-" . date( "Ymd-Hi" );
+		return "deleted-" . $this->constants->GROUP_PREFIX . $name . "-" . date( "Ymd-Hi" );
 	}
 
 	public function doc_url( $doc_name = "", $db_name = "", $server_handle = null, $admin = false )
@@ -45,7 +58,7 @@ class ConfigHelper
 
 	public function group_db_name( $group_name = "", $server_handle = null )
 	{
-		$prefix = ( strstr( $server_handle, "backup" ) ) ? $this->config->BACKUP_PREFIX : $this->config->GROUP_PREFIX;
+		$prefix = ( strstr( $server_handle, "backup" ) ) ? $this->constants->BACKUP_PREFIX : $this->constants->GROUP_PREFIX;
 		return $prefix . $group_name;
 	}
 
@@ -57,16 +70,16 @@ class ConfigHelper
 	public function get_host( $server_handle = "", $admin = false )
 	{
 
-		if ( ! isset( $this->config->SERVERS[$server_handle] ) ) throw new InvalidArgumentException('Server handle does not exist.');
+		if ( ! isset( $this->constants->SERVERS[$server_handle] ) ) throw new InvalidArgumentException('Server handle does not exist.');
 
 		$user_pass = "";
-		if ( $admin ) $user_pass = $this->config->ADMIN_U . ":" . $this->config->ADMIN_P . "@";
+		if ( $admin ) $user_pass = $this->constants->ADMIN_U . ":" . $this->constants->ADMIN_P . "@";
 
-		$host = $this->HTTP . $user_pass . $this->config->SERVERS[$server_handle];
+		$host = $this->HTTP . $user_pass . $this->constants->SERVERS[$server_handle];
 
 		// @faultpoint, this works because iriscouch uses port 80
 		if ( $server_handle == "local" )
-			$host .= ":" . $this->config->PORT;
+			$host .= ":" . $this->constants->PORT;
 
 		return $host;
 

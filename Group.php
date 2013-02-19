@@ -93,7 +93,7 @@ class Group
 	
 
 	/**
-	 * Attempt to create the group.
+	 * Attempt to read the group.
 	 * @return array Parsed json response from group's database.
 	 */
 	public function read()
@@ -129,6 +129,7 @@ class Group
 
 		$con = $this->config;
 
+		// Create a blank database
 		$put_response = h\Request::put( $con->group_db_url( $this->name, "main" ) )
 			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
 			->send();
@@ -147,7 +148,7 @@ class Group
 			}
 		}
 
-
+		// Data for continuous backup replication
 		$rep_doc = json_encode(array(
 			"_id" => $this->name . "_backup",
 			"source" => $con->group_db_url($this->name, "main", true),
@@ -177,21 +178,21 @@ class Group
 
 		$con = $this->config;
 
-		$data = json_encode( array(
-			"source" => $this->config->TRUNK,
+		$replicate_data = json_encode( array(
+			"source" => $con->constants->TRUNK,
 			"target" => $con->group_db_name( $this->name ),
-			"doc_ids" => explode( "\n", $con->APP_DOCS )
+			"doc_ids" => explode( "\n", $con->constants->APP_DOCS )
 		));
 
-		$post_response = h\Request::post( $con->db_url("_replicate", "main") )
-			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+		$replicate_response = h\Request::post( $con->db_url("_replicate", "main") )
+			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->sendsJson()
-			->body( $data )
+			->body( $replicate_data )
 			->send();
 
 		$this->add_uploader();
 
-		return json_decode( $post_response, true );
+		return json_decode( $replicate_response, true );
 
 	} // END of update_design_docs
 
@@ -229,7 +230,7 @@ class Group
 		$this->add_reader( $uploader_user, false );
 
 		$settings_doc_response = h\Request::get( $con->group_doc_url("settings", $this->name, "main") )
-			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->sendsJson()
 			->send();
 
@@ -241,11 +242,11 @@ class Group
 
 			$settings['upPass']    = $uploader_pass;
 			$settings['groupName'] = $this->name;
-			$settings['groupDDoc'] = $con->D_DOC;
-			$settings['groupHost'] = $con->SERVERS['main'];
+			$settings['groupDDoc'] = $con->constants->D_DOC;
+			$settings['groupHost'] = $con->constants->SERVERS['main'];
 
 			$settings_doc_response = h\Request::put( $con->group_doc_url("settings", $this->name, "main") )
-				->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+				->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 				->sendsJson()
 				->body( json_encode( $settings ) )
 				->send();
@@ -290,13 +291,13 @@ class Group
 
 		// stash a copy
 		$post_response = h\Request::post( $con->db_url("_replicate", "main") )
-			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->sendsJson()
 			->body( json_encode( $data ) )
 			->send();
 
 		$delete_response_raw = h\Request::delete( $con->group_db_url( $this->name, "main" ) )
-			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->send();
 
 		$delete_response = json_decode( $delete_response_raw, true );
@@ -339,7 +340,7 @@ class Group
 			$delete_response_raw = h\Request::delete( 
 				$con->doc_url($this->name."_backup", "_replicator", "local", true) . $rev
 			)
-				->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+				->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 				->send();
 
 		}
@@ -519,7 +520,7 @@ class Group
 		$con = $this->config;
 
 		$response_raw = h\Request::get( $con->group_doc_url("_security", $this->name, "main") )
-			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->send();
 
 		$response = json_decode( $response_raw, true );
@@ -549,7 +550,7 @@ class Group
 		$con = $this->config;
 
 		return h\Request::put( $con->group_doc_url("_security", $this->name, "main") )
-			->authenticateWith( $con->ADMIN_U, $con->ADMIN_P )
+			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 			->sendsJson()
 			->body( json_encode( $new_doc ) )
 			->send();
