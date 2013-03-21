@@ -77,8 +77,8 @@ class ConfigHelper
 
 		$host = $this->constants->HTTP . $user_pass . $this->constants->SERVERS[$server_handle];
 
-		// @faultpoint, this works because iriscouch uses port 80
-		if ( $server_handle == "local" )
+		// @faultpoint, @setup, @todo, this works because iriscouch uses port 80
+		if ( ! strstr( $this->constants->SERVERS[$server_handle], "iriscouch" ) )
 			$host .= ":" . $this->constants->PORT;
 
 		return $host;
