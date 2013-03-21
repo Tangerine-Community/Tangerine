@@ -401,7 +401,7 @@ if ( $action )
 	{
 
 		$group_name = Helpers::require_variable('group', 'a group name');
-		$user_name  = Helpers::require_variable('user', 'a user to remove');
+		$user_name  = Helpers::require_variable('user', 'a user to validate');
 
 		$group = new Group( array( "name" => $group_name ) );
 		$user  = new User( array( "name" => $user_name, "admin" => true ) );
