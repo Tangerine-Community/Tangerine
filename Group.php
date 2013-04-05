@@ -243,7 +243,7 @@ class Group
 			$settings['upPass']    = $uploader_pass;
 			$settings['groupName'] = $this->name;
 			$settings['groupDDoc'] = $con->constants->D_DOC;
-			$settings['groupHost'] = $con->constants->SERVERS['main'];
+			$settings['groupHost'] = $con->get_host('main');
 
 			$settings_doc_response = h\Request::put( $con->group_doc_url("settings", $this->name, "main") )
 				->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )

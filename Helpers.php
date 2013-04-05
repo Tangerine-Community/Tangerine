@@ -11,7 +11,7 @@ class Helpers
 	 * Take an attempt report and respond in JSON
 	 * @param Attempt the result of some action to communicate.
 	 */
-	public function respond_json( $attempt )
+	public static function respond_json( $attempt )
 	{
 		header( 'Access-Control-Allow-Origin: *' );
 		header( 'Access-Control-Allow-Methods: HEAD, POST, GET, OPTIONS' );
@@ -25,7 +25,7 @@ class Helpers
 	/*
 	 * Get a post variable
 	 */
-	public function get_variable( $key = '' )
+	public static function get_variable( $key = '' )
 	{
 		return isset( $_POST[$key] ) ? $_POST[$key] : null;
 	}
@@ -34,7 +34,7 @@ class Helpers
 	/**
 	 * Helper function throws an 
 	 */
-	public function require_variable( $key = null, $human_name = null )
+	public static function require_variable( $key = null, $human_name = null )
 	{
 
 		if ( $key        == null ) throw new InvalidArgumentException("You wanted _what_ variable now?");
@@ -52,7 +52,7 @@ class Helpers
 	/**
 	 * Returns only pure hay.
 	 */
-	public function array_without( $needle, array $haystack )
+	public static function array_without( $needle, array $haystack )
 	{
 
 		$needles = is_array( $needle ) ? $needle : array( $needle );
@@ -70,7 +70,7 @@ class Helpers
 	/*
 	 * Returns a password based on a characterset
 	 */
-	public function calc_password( $length = 10 )
+	public static function calc_password( $length = 10 )
 	{
 		$result = "";
 		while ($length--) { $result .= array_rand( array_flip( str_split( "abcdefghijklmnopqrstuvwxyz" ) ) ); }; 
@@ -86,7 +86,7 @@ class Helpers
 	 * @param string $value Potentially hazardous string.
 	 * @return string Safe string.
 	 */
-	public function safety_dance( $value )
+	public static function safety_dance( $value )
 	{
 		$result = $value;
 		$result = preg_replace('/[^a-zA-Z0-9_]/', "", $result);
