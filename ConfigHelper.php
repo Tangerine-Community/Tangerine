@@ -12,16 +12,17 @@ class ConfigHelper
 
 		$c = $this->constants;
 
-		if ( ! isset( $c->HTTP ) )          throw new LogicException('Config missing HTTP.');
-		if ( ! isset( $c->ADMIN_U ) )       throw new LogicException('Config missing ADMIN_U.');
-		if ( ! isset( $c->ADMIN_P ) )       throw new LogicException('Config missing ADMIN_P.');
-		if ( ! isset( $c->SERVERS ) )       throw new LogicException('Config missing SERVERS.');
-		if ( ! isset( $c->PORT ) )          throw new LogicException('Config missing PORT.');
-		if ( ! isset( $c->TRUNK ) )         throw new LogicException('Config missing TRUNK.');
-		if ( ! isset( $c->GROUP_PREFIX ) )  throw new LogicException('Config missing GROUP_PREFIX.');
-		if ( ! isset( $c->BACKUP_PREFIX ) ) throw new LogicException('Config missing BACKUP_PREFIX.');
-		if ( ! isset( $c->D_DOC ) )         throw new LogicException('Config missing D_DOC.');
-		if ( ! isset( $c->APP_DOCS ) )      throw new LogicException('Config missing APP_DOCS.');
+		if ( ! isset( $c->HTTP ) )            throw new LogicException('Config missing HTTP.');
+		if ( ! isset( $c->ADMIN_U ) )         throw new LogicException('Config missing ADMIN_U.');
+		if ( ! isset( $c->ADMIN_P ) )         throw new LogicException('Config missing ADMIN_P.');
+		if ( ! isset( $c->SERVERS ) )         throw new LogicException('Config missing SERVERS.');
+		if ( ! isset( $c->PORT ) )            throw new LogicException('Config missing PORT.');
+		if ( ! isset( $c->TRUNK ) )           throw new LogicException('Config missing TRUNK.');
+		if ( ! isset( $c->GROUP_PREFIX ) )    throw new LogicException('Config missing GROUP_PREFIX.');
+		if ( ! isset( $c->BACKUP_SUFFIX ) )   throw new LogicException('Config missing BACKUP_PREFIX.');
+		if ( ! isset( $c->SERVER_NICKNAME ) ) throw new LogicException('Config missing SERVER_NICKNAME.');
+		if ( ! isset( $c->D_DOC ) )           throw new LogicException('Config missing D_DOC.');
+		if ( ! isset( $c->APP_DOCS ) )        throw new LogicException('Config missing APP_DOCS.');
 
 	}
 
@@ -58,8 +59,14 @@ class ConfigHelper
 
 	public function group_db_name( $group_name = "", $server_handle = null )
 	{
-		$prefix = ( strstr( $server_handle, "backup" ) ) ? $this->constants->BACKUP_PREFIX : $this->constants->GROUP_PREFIX;
-		return $prefix . $group_name;
+
+		if ( strstr( $server_handle, "backup" ) )
+		{
+			return $this->constants->SERVER_NICKNAME . "_" . $group_name . "_" . $this->constants->BACKUP_SUFFIX;
+		} else
+		{
+			return $this->constants->GROUP_PREFIX . $group_name;
+		}
 	}
 
 	public function group_db_url( $group_name = "", $server_handle = null, $admin = false )

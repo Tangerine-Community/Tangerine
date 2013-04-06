@@ -35,12 +35,14 @@ class Config
 			"backup" => ""
 		);
 
+		$this->SERVER_NICKNAME = "";
+
 		$this->PORT = "5984";
 
 		// DBs
 		$this->TRUNK         = "tangerine";
 		$this->GROUP_PREFIX  = "group-";
-		$this->BACKUP_PREFIX = "backup-";
+		$this->BACKUP_SUFFIX = "backup-";
 
 		$this->D_DOC = "ojai";
 

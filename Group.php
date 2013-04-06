@@ -150,7 +150,7 @@ class Group
 
 		// Data for continuous backup replication
 		$rep_doc = json_encode(array(
-			"_id" => $con->SERVER_NICKNAME . "_" . $this->name . "_backup",
+			"_id" => $con->constants->SERVER_NICKNAME . "_" . $this->name . "_" . $con->constants->BACKUP_SUFFIX,
 			"source" => $con->group_db_url($this->name, "main", true),
 			"target" => $con->group_db_url($this->name, "backup", true),
 			"continuous" => true,
