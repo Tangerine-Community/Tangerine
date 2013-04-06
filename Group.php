@@ -323,16 +323,17 @@ class Group
 			/*
 			 * remove the backup entry in _replicator
 			 */
+			$backup_name = $con->constants->SERVER_NICKNAME . "_" . $this->name . "_" . $con->constants->BACKUP_SUFFIX;
 			$replicator_response = json_decode(
 				h\Request::get(
-					$con->doc_url($this->name."_backup", "_replicator", "backup", true)
+					$con->doc_url($backup_name, "_replicator", "backup", true)
 				)->send()
 			, true);
 
 			$rev = "?rev=".$replicator_response['_rev'];
 
 			$delete_response_raw = h\Request::delete( 
-				$con->doc_url($this->name."_backup", "_replicator", "backup", true) . $rev
+				$con->doc_url($backup_name, "_replicator", "backup", true) . $rev
 			)
 				->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
 				->send();
