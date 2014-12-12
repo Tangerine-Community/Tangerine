@@ -1,6 +1,6 @@
 <?php
 
-require_once( "./bootstrap.php" ); use \Httpful as h; // awesome http library
+include_once('./httpful.phar'); use \Httpful as h; // awesome http library
 
 /**
  * Handles all Tangerine-group level interactions.
@@ -149,20 +149,20 @@ class Group
 		}
 
 		// Data for continuous backup replication
-		$rep_doc = json_encode(array(
-			"_id" => $con->constants->SERVER_NICKNAME . "_" . $this->name . "_" . $con->constants->BACKUP_SUFFIX,
-			"source" => $con->group_db_url($this->name, "main", true),
-			"target" => $con->group_db_url($this->name, "backup", true),
-			"continuous" => true,
-			"create_target" => true
-		));
+		#$rep_doc = json_encode(array(
+		#	"_id" => $con->constants->SERVER_NICKNAME . "_" . $this->name . "_" . $con->constants->BACKUP_SUFFIX,
+		#	"source" => $con->group_db_url($this->name, "main", true),
+		#	"target" => $con->group_db_url($this->name, "backup", true),
+		#	"continuous" => true,
+		#	"create_target" => true
+		#));
 
 		// Create a new backup replication
-		$replication_response = h\Request::post( $con->db_url("_replicator", "backup") )
-			->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
-			->sendsJson()
-			->body( $rep_doc )
-			->send();
+		#$replication_response = h\Request::post( $con->db_url("_replicator", "backup") )
+		#	->authenticateWith( $con->constants->ADMIN_U, $con->constants->ADMIN_P )
+		#	->sendsJson()
+		#	->body( $rep_doc )
+		#	->send();
 
 		return $response;
 

@@ -400,19 +400,24 @@ if ( $action )
 	} else if ( $action == "am_admin" )
 	{
 
-		$group_name = Helpers::require_variable('group', 'a group name');
-		$user_name  = Helpers::require_variable('user', 'a user to validate');
+		try {
+			$group_name = Helpers::require_variable('group', 'a group name');
+			$user_name  = Helpers::require_variable('user', 'a user to validate');
 
-		$group = new Group( array( "name" => $group_name ) );
-		$user  = new User( array( "name" => $user_name, "admin" => true ) );
+			$group = new Group( array( "name" => $group_name ) );
+			$user  = new User( array( "name" => $user_name, "admin" => true ) );
 
-		$group->read();
-		$user->read();
+			$group->read();
+			$user->read();
 
-		$is_authorized = $group->is_admin( $user ) ? "yes" : "no";
+			$is_authorized = $group->is_admin( $user ) ? "yes" : "no";
 
-		$attempt = new Attempt( 'success', $is_authorized );
-
+			$attempt = new Attempt( 'success', $is_authorized );
+                } catch ( Exception $e )
+                {
+                        Helpers::respond_json( new Attempt( 'error', $e->getMessage() ) );
+                        die();
+                }
 	} // END of am_admin
 	else {
 		// No action

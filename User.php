@@ -1,6 +1,6 @@
 <?php
 
-require_once( "./bootstrap.php" ); use \Httpful as h; // awesome http library
+include_once('./httpful.phar'); use \Httpful as h; // awesome http library
 
 class User
 {
