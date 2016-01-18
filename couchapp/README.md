@@ -1,0 +1,1 @@
+This helper couchapp gives robbert provides one view in CouchDB's `_users` database.
