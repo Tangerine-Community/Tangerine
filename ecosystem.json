@@ -1,0 +1,58 @@
+{
+  "apps" : [
+    {
+      "name"       : "robbert",
+      "script"     : "robbert/index.js",
+      "cwd"        : "./robbert/",
+      "error_file" : "../logs/robbert-error.log",
+      "out_file"   : "../logs/robbert.log",
+      "pid_file"   : "../pids/robbert.pid"
+    },
+    {
+      "name"      : "tree",
+      "script"    : "tree/index.js",
+      "cwd"        : "./tree/",
+      "error_file" : "../logs/tree-error.log",
+      "out_file"   : "../logs/tree.log",
+      "pid_file"   : "../pids/tree.pid"
+    },
+    {
+      "name"       : "brockman",
+      "cwd"        : "./brockman",
+      "script"     : "brockman/Brockman.rb",
+      "args"       : ["-p", "4446"],
+      "error_file" : "../logs/brockman-error.log",
+      "out_file"   : "../logs/brockman.log",
+      "pid_file"   : "../pids/brockman.pid"
+    },
+    {
+      "name"      : "cors-bulk-docs",
+      "cwd"        : "./cors-bulk-docs/",
+      "script"    : "cors-bulk-docs/index.js",
+      "error_file" : "../logs/cors-bulk-docs-error.log",
+      "out_file"   : "../logs/cors-bulk-docs.log",
+      "pid_file"   : "../pids/cors-bulk-docs.pid"
+    }
+  ],
+  "deploy" : {
+    "production" : {
+      "user" : "node",
+      "host" : ["localhost"],
+      "ref"  : "origin/master",
+      "repo" : "git@github.com:Tangerine-Community/tangerine-server.git",
+      "path" : "/www",
+      "post-deploy" : "npm install && pm2 startOrRestart ecosystem.json",
+      "env" : {
+        "T_COUCH_HOST" : "localhost",
+        "T_COUCH_PORT" : 5984,
+        "T_ADMIN" : "admin",
+        "T_PASS" : "password",
+        "T_ROBBERT_PORT" : 4444,
+        "T_TREE_PORT" : 4445,
+        "T_BROCKMAN_PORT" : 4446,
+        "T_CORS_BULK_DOCS_PORT" : 4447,
+        "NODE_ENV" : "production"
+      }
+    }
+  }
+}

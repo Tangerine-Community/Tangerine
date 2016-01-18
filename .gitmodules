@@ -1,0 +1,15 @@
+[submodule "robbert"]
+	path = robbert
+	url = https://github.com/also-engineering/robbert
+[submodule "tree"]
+	path = tree
+	url = https://github.com/also-engineering/tree
+[submodule "decompressor"]
+	path = decompressor
+	url = https://github.com/also-engineering/decompressor
+[submodule "brockman"]
+	path = brockman
+	url = https://github.com/also-engineering/brockman
+[submodule "editor"]
+	path = editor
+	url = https://github.com/also-engineering/editor

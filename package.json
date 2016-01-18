@@ -1,0 +1,19 @@
+{
+  "name": "tangerine-server",
+  "version": "0.0.0",
+  "description": "Base Tangerine config and services.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Tangerine-Community/Tangerine-server.git"
+  },
+  "author": "ict-admin@rti.org",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Tangerine-Community/Tangerine-server/issues"
+  },
+  "homepage": "https://github.com/Tangerine-Community/Tangerine-server#readme"
+}
