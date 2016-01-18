@@ -1,7 +1,10 @@
+git submodule init
+git submodule update
+
 sudo apt-get update
 
 # install nginx
-sudo apt-get install nginx=1.8.0 -y
+sudo apt-get install nginx -y
 
 if [ ! -a /etc/nginx/tangerine.conf ]; then
   sudo cp ./tangerine.conf /etc/nginx
