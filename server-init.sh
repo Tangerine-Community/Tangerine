@@ -2,14 +2,33 @@ git submodule init
 git submodule update
 
 sudo apt-get update
+updated_recently=TRUE
 
 # install nginx
-sudo apt-get install nginx -y
+which_nginx=`which nginx`
+if [ ! -z "$which_nginx" ]; then
+  echo "nginx already installed"
+else
+  sudo apt-get install nginx -y
+fi
 
 if [ ! -a /etc/nginx/tangerine.conf ]; then
   sudo cp ./tangerine.conf /etc/nginx
   sudo echo 'include tangerine.conf;' >> /etc/nginx/nginx.conf
 fi
+
+# couchdb
+which_couchdb=`which couchdb`
+if [ ! -z "$which_couchdb" ]; then
+  echo "CouchDB already installed"
+else
+  sudo apt-get install python-software-properties -y
+  sudo apt-add-repository ppa:couchdb/stable
+  sudo apt-get update
+  sudo apt-get install couchdb couchdb-bin couchdb-common -y
+  sudo service couchdb restart
+fi
+
 
 # node
 which_npm=`which npm`
@@ -43,4 +62,8 @@ if [ -a ./editor/server-init.sh ]; then
   ./editor/server-init.sh
 fi
 
+sudo service couchdb restart
+
 pm2 start ecosystem.json
+
+
