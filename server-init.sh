@@ -49,10 +49,10 @@ fi
 
 # pm2
 which_pm2=`which pm2`
-if [ -z "$which_pm2" ]; then
-  sudo npm install -g pm2
-elif [ ! -z "$which_npm" ]; then
+if [ ! -z "$which_pm2" ]; then
   echo "pm2 already installed"
+else
+  sudo npm install -g pm2
 fi
 
 if [ -a ./tree/server-init.sh ]; then
