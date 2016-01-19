@@ -17,7 +17,7 @@ vim tangerine.conf # add your domain name
 ./server-init.sh
 ```
 
-Once executed there are a couple of prompts that are hard to automate surrounding the installation of the Android SDK. 
+Once executed there are a couple of prompts that are hard to automate surrounding the installation of the Android SDK.
 
 # Updating on the server
 

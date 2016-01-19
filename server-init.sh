@@ -15,9 +15,19 @@ else
   sudo apt-get install nginx -y
 fi
 
+# nginx config
 if [ ! -a /etc/nginx/sites-enabled/tangerine.conf ]; then
   sudo cp ./tangerine.conf /etc/nginx/sites-enabled
   sudo rm /etc/nginx/sites-enabled/default
+  # increase the size limit of posts
+  sed "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
+fi
+
+# link .tangerine's env vars
+line=$(grep /.tangerine ~/.profile)
+if [ $? -eq 1 ]; then
+  dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  echo "source $dir/.tangerine" > ~/.profile
 fi
 
 # couchdb
@@ -30,7 +40,6 @@ else
   sudo apt-get update
   sudo apt-get install couchdb couchdb-bin couchdb-common -y
 fi
-
 
 # node
 which_node=`which node`
@@ -74,6 +83,6 @@ fi
 
 sudo service couchdb restart
 
+sudo env PATH=$PATH:/usr/local/bin pm2 startup -u `whoami`
+
 pm2 start ecosystem.json
-
-

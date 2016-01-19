@@ -43,6 +43,7 @@
       "path" : "/www",
       "post-deploy" : "npm install && pm2 startOrRestart ecosystem.json",
       "env" : {
+        // Please change .tangerine to match
         "T_COUCH_HOST" : "localhost",
         "T_COUCH_PORT" : 5984,
         "T_ADMIN" : "admin",
