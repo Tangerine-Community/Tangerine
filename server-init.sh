@@ -1,8 +1,11 @@
 git submodule init
 git submodule update
 
-sudo apt-get update
-updated_recently=TRUE
+# apt-get update
+if ! $updated_recently; then
+  sudo apt-get update
+  export updated_recently=TRUE
+fi
 
 # install nginx
 which_nginx=`which nginx`
