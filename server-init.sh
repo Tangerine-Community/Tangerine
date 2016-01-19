@@ -43,4 +43,6 @@ else
   sudo pip install couchapp
 fi
 
-cd couchapp && couchapp push
+
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $dir/couchapp && couchapp push
