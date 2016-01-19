@@ -12,9 +12,8 @@ else
   sudo apt-get install nginx -y
 fi
 
-if [ ! -a /etc/nginx/tangerine.conf ]; then
-  sudo cp ./tangerine.conf /etc/nginx
-  sudo echo 'include tangerine.conf;' >> /etc/nginx/nginx.conf
+if [ ! -a /etc/nginx/sites-enabled/tangerine.conf ]; then
+  sudo cp ./tangerine.conf /etc/nginx/sites-enabled
 fi
 
 # couchdb
@@ -26,19 +25,26 @@ else
   sudo apt-add-repository ppa:couchdb/stable
   sudo apt-get update
   sudo apt-get install couchdb couchdb-bin couchdb-common -y
-  sudo service couchdb restart
 fi
 
 
 # node
+which_node=`which_node`
+if [ ! -z "$which_node" ]; then
+  echo "node already installed"
+else
+  sudo apt-get install nodejs nodejs-legacy -y
+fi
+
+# npm
 which_npm=`which npm`
-if [ -z "$which_npm" ]; then
-  sudo apt-get install nodejs npm -y
-elif [ ! -z "$which_npm" ]; then
+if [ ! -z "$which_npm" ]; then
   echo "npm already installed"
+elif [ ! -z "$which_npm" ]; then
+  sudo apt-get install npm -y
 fi
 
-# node
+# pm2
 which_pm2=`which pm2`
 if [ -z "$which_pm2" ]; then
   sudo npm install -g pm2
