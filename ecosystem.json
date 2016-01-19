@@ -26,12 +26,12 @@
       "pid_file"   : "../pids/brockman.pid"
     },
     {
-      "name"      : "cors-bulk-docs",
-      "cwd"        : "./cors-bulk-docs/",
-      "script"    : "cors-bulk-docs/index.js",
-      "error_file" : "../logs/cors-bulk-docs-error.log",
-      "out_file"   : "../logs/cors-bulk-docs.log",
-      "pid_file"   : "../pids/cors-bulk-docs.pid"
+      "name"      : "decompressor",
+      "cwd"        : "./decompressor/",
+      "script"    : "decompressor/index.js",
+      "error_file" : "../logs/decompressor-error.log",
+      "out_file"   : "../logs/decompressor.log",
+      "pid_file"   : "../pids/decompressor.pid"
     }
   ],
   "deploy" : {

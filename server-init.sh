@@ -56,8 +56,8 @@ if [ -a ./tree/server-init.sh ]; then
   ./tree/server-init.sh
 fi
 
-if [ -a ./cors-bulk-docs/server-init.sh ]; then
-  ./cors-bulk-docs/server-init.sh
+if [ -a ./decompressor/server-init.sh ]; then
+  ./decompressor/server-init.sh
 fi
 
 if [ -a ./brockman/server-init.sh ]; then
