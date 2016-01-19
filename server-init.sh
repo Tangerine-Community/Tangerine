@@ -32,7 +32,7 @@ fi
 
 
 # node
-which_node=`which_node`
+which_node=`which node`
 if [ ! -z "$which_node" ]; then
   echo "node already installed"
 else
