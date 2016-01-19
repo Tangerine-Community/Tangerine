@@ -50,7 +50,7 @@ fi
 # pm2
 which_pm2=`which pm2`
 if [ -z "$which_pm2" ]; then
-  npm install -g pm2
+  sudo npm install -g pm2
 elif [ ! -z "$which_npm" ]; then
   echo "pm2 already installed"
 fi
