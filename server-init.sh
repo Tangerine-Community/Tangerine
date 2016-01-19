@@ -17,6 +17,7 @@ fi
 
 if [ ! -a /etc/nginx/sites-enabled/tangerine.conf ]; then
   sudo cp ./tangerine.conf /etc/nginx/sites-enabled
+  sudo rm /etc/nginx/sites-enabled/default
 fi
 
 # couchdb
