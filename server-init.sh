@@ -29,7 +29,7 @@ line=$(grep /.tangerine ~/.profile)
 if [ $? -eq 1 ]; then
   dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   cp $dir/.tangerine ~
-  echo "source .tangerine" > ~/.profile
+  echo "source .tangerine" >> ~/.profile
   vim ~/.tangerine
   source ~/.tangerine
 fi
