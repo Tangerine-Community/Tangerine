@@ -31,6 +31,7 @@ if [ $? -eq 1 ]; then
   cp $dir/.tangerine ~
   echo "source .tangerine" > ~/.profile
   vim ~/.tangerine
+  source ~/.tangerine
 fi
 
 # couchdb
