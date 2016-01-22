@@ -28,10 +28,9 @@ fi
 line=$(grep /.tangerine ~/.profile)
 if [ $? -eq 1 ]; then
   dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-  cp $dir/.tangerine ~
-  echo "source .tangerine" >> ~/.profile
-  vim ~/.tangerine
-  source ~/.tangerine
+
+  sudo cp $dir/tangerine-env-vars.sh /etc/profile.d/
+  source /etc/profile
 fi
 
 # couchdb
@@ -43,6 +42,10 @@ else
   sudo apt-add-repository ppa:couchdb/stable
   sudo apt-get update
   sudo apt-get install couchdb couchdb-bin couchdb-common -y
+
+  # create server admin
+  sudo -E sh -c 'echo "$T_ADMIN = $T_PASS"' > /etc/couchdb/local.ini
+
 fi
 
 # node
@@ -84,4 +87,4 @@ sudo service couchdb restart
 
 sudo env PATH=$PATH:/usr/local/bin pm2 startup -u `whoami`
 
-pm2 start ecosystem.json
+rvmsudo -E bash -c 'pm2 start ecosystem.json'
