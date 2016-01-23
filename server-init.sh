@@ -1,6 +1,8 @@
 #!/usr/bin/env bash -v
 # robbert
 
+set -v # set verbose
+
 # apt-get update
 if ! $updated_recently; then
   sudo apt-get update
@@ -8,8 +10,7 @@ if ! $updated_recently; then
 fi
 
 # node
-which_node=`which node`
-if [ ! -z "$which_node" ]; then
+if [ ! -z "`which node`" ]; then
   echo "node already installed"
 else
   curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
@@ -19,16 +20,14 @@ fi
 npm install
 
 # curl
-which_curl=`which curl`
-if [ ! -z "$which_curl" ]; then
+if [ ! -z "`which curl`" ]; then
   echo "curl already installed"
 else
   sudo apt-get install curl -y
 fi
 
 # couchapp
-which_couchapp=`which couchapp`
-if [ ! -z "$which_couchapp" ]; then
+if [ ! -z "`which couchapp`" ]; then
   echo "couchapp already installed"
 else
   sudo apt-get install python-dev -y
