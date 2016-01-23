@@ -1,12 +1,13 @@
-git submodule init
-git submodule update
+#!/usr/bin/env bash -v
+# server
+
+git submodule init && git submodule update
 
 # apt-get update
 if ! $updated_recently; then
   sudo apt-get update
   export updated_recently=TRUE
 fi
-
 
 # install tangerine's env vars
 if [ ! -f /etc/profile.d/tangerine-env-vars.sh ]; then
@@ -17,8 +18,7 @@ if [ ! -f /etc/profile.d/tangerine-env-vars.sh ]; then
 fi
 
 # install nginx
-which_nginx=`which nginx`
-if [ ! -z "$which_nginx" ]; then
+if [ ! -z "`which nginx`" ]; then
   echo "nginx already installed"
 else
   sudo apt-get install nginx -y
@@ -35,8 +35,7 @@ fi
 
 
 # couchdb
-which_couchdb=`which couchdb`
-if [ ! -z "$which_couchdb" ]; then
+if [ ! -z "`which couchdb`" ]; then
   echo "CouchDB already installed"
 else
   sudo apt-get install python-software-properties -y
@@ -50,8 +49,7 @@ else
 fi
 
 # node
-which_node=`which node`
-if [ ! -z "$which_node" ]; then
+if [ ! -z "`which node`" ]; then
   echo "node already installed"
 else
   curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
@@ -61,8 +59,7 @@ fi
 
 
 # pm2
-which_pm2=`which pm2`
-if [ ! -z "$which_pm2" ]; then
+if [ ! -z "`which pm2`" ]; then
   echo "pm2 already installed"
 else
   sudo npm install -g pm2
@@ -88,4 +85,8 @@ sudo service couchdb restart
 
 sudo env PATH=$PATH:/usr/local/bin pm2 startup -u `whoami`
 
-rvmsudo -E bash -c 'pm2 start ecosystem.json'
+if [ ! -z "`which rvmsudo`" ]; then
+  rvmsudo -E bash -c 'pm2 start ecosystem.json'
+else
+  sudo -E bash -c 'pm2 start ecosystem.json'
+fi
