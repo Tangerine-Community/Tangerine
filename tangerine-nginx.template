@@ -10,7 +10,7 @@ server {
   }
 
   # Make site accessible from http://localhost/
-  server_name localhost;
+  server_name INSERT_HOSTNAME;
 
   # security robot
   location /robbert {

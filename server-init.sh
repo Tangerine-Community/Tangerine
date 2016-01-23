@@ -7,6 +7,15 @@ if ! $updated_recently; then
   export updated_recently=TRUE
 fi
 
+
+# install tangerine's env vars
+if [ -f /etc/profile.d/tangerine-env-vars.sh ]; then
+  dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+  vim $dir/tangerine-env-vars.sh
+  sudo cp $dir/tangerine-env-vars.sh /etc/profile.d/
+  source /etc/profile
+fi
+
 # install nginx
 which_nginx=`which nginx`
 if [ ! -z "$which_nginx" ]; then
@@ -17,21 +26,13 @@ fi
 
 # nginx config
 if [ ! -a /etc/nginx/sites-enabled/tangerine.conf ]; then
-  sudo cp ./tangerine.conf /etc/nginx/sites-enabled
+  sudo -E sed "s/\INSERT_HOSTNAME/"$T_HOSTNAME"/g" tangerine-nginx.template > /etc/nginx/sites-enabled/tangerine.conf
   sudo rm /etc/nginx/sites-enabled/default
   # increase the size limit of posts
   sudo sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
   sudo service nginx restart
 fi
 
-# link .tangerine's env vars
-line=$(grep /.tangerine ~/.profile)
-if [ $? -eq 1 ]; then
-  dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-  sudo cp $dir/tangerine-env-vars.sh /etc/profile.d/
-  source /etc/profile
-fi
 
 # couchdb
 which_couchdb=`which couchdb`
