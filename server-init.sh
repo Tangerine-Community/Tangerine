@@ -1,3 +1,4 @@
+#!/usr/bin/env bash -v
 # robbert
 
 # apt-get update
