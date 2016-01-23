@@ -1,5 +1,7 @@
-#!/usr/bin/env bash -v
+#!/usr/bin/env bash
 # server
+
+set -v
 
 git submodule init && git submodule update
 
