@@ -9,7 +9,7 @@ fi
 
 
 # install tangerine's env vars
-if [ -f /etc/profile.d/tangerine-env-vars.sh ]; then
+if [ ! -f /etc/profile.d/tangerine-env-vars.sh ]; then
   dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   vim $dir/tangerine-env-vars.sh
   sudo cp $dir/tangerine-env-vars.sh /etc/profile.d/
