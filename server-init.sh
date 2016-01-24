@@ -46,7 +46,7 @@ else
   sudo apt-get install couchdb couchdb-bin couchdb-common -y
 
   # create server admin
-  sudo -E sh -c 'echo "$T_ADMIN = $T_PASS"' > /etc/couchdb/local.ini
+  sudo -E sh -c 'echo "$T_ADMIN = $T_PASS" > /etc/couchdb/local.ini'
 
 fi
 
@@ -85,9 +85,10 @@ fi
 
 sudo service couchdb restart
 
-sudo env PATH=$PATH:/usr/local/bin pm2 startup -u `whoami`
+sudo env PATH=$PATH:/usr/local/bin pm2 startup -u $USER
 
-if [ ! -z "`which rvmsudo`" ]; then
+if [ -d "/home/$USER/.rvm" ]; then
+  source $(rvm 2.2.0 do rvm env --path)
   rvmsudo -E bash -c 'pm2 start ecosystem.json'
 else
   sudo -E bash -c 'pm2 start ecosystem.json'
