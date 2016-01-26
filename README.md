@@ -9,7 +9,9 @@ adduser inst
 usermod inst -a -G sudo
 su inst
 sudo apt-get update && sudo apt-get install git
-cd ~ && git clone http://github.com/also-engineering/server.git && cd server && ./server-init.sh
+cd ~ && git clone http://github.com/also-engineering/server.git && cd server
+vim ./tangerine-env-vars.sh
+./server-init.sh
 ```
 
 Once executed there are a couple of prompts that are hard to automate surrounding the installation of the Android SDK.
