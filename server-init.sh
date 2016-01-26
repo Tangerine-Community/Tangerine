@@ -43,7 +43,7 @@ else
   sudo apt-get install python-software-properties -y
   sudo apt-add-repository ppa:couchdb/stable
   sudo apt-get update
-  sudo apt-get install couchdb couchdb-bin couchdb-common -y
+  echo | sudo apt-get install couchdb couchdb-bin couchdb-common -y
 
   # create server admin
   sudo -E sh -c 'echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini'
