@@ -88,7 +88,7 @@ sudo service couchdb restart
 sudo env PM2_HOME="/home/$USER/.pm2" PATH=$PATH:/usr/local/bin pm2 startup -u $USER
 
 if [ -d "/home/$USER/.rvm" ]; then
-  source $(rvm 2.2.0 do rvm env --path)
+  source /home/$USER/.rvm/scripts/rvm
   rvmsudo -E bash -c "pm2 start ecosystem.json -u $USER"
 else
   sudo -E bash -c "pm2 start ecosystem.json -u $USER"
