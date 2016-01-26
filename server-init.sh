@@ -28,7 +28,7 @@ fi
 
 # nginx config
 if [ ! -a /etc/nginx/sites-enabled/tangerine.conf ]; then
-  sudo -E sed "s/\INSERT_HOSTNAME/"$T_HOSTNAME"/g" tangerine-nginx.template > /etc/nginx/sites-enabled/tangerine.conf
+  sudo -E sed "s/\INSERT_HOSTNAME/"$T_HOSTNAME"/g tangerine-nginx.template > /etc/nginx/sites-enabled/tangerine.conf"
   sudo rm /etc/nginx/sites-enabled/default
   # increase the size limit of posts
   sudo sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
@@ -46,7 +46,7 @@ else
   sudo apt-get install couchdb couchdb-bin couchdb-common -y
 
   # create server admin
-  sudo -E sh -c 'echo "$T_ADMIN = $T_PASS" > /etc/couchdb/local.ini'
+  sudo -E sh -c 'echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini'
 
 fi
 
@@ -85,11 +85,11 @@ fi
 
 sudo service couchdb restart
 
-sudo env PATH=$PATH:/usr/local/bin pm2 startup -u $USER
+sudo env PM2_HOME="/home/$USER/.pm2" PATH=$PATH:/usr/local/bin pm2 startup -u $USER
 
 if [ -d "/home/$USER/.rvm" ]; then
   source $(rvm 2.2.0 do rvm env --path)
-  rvmsudo -E bash -c 'pm2 start ecosystem.json'
+  rvmsudo -E bash -c "pm2 start ecosystem.json -u $USER"
 else
-  sudo -E bash -c 'pm2 start ecosystem.json'
+  sudo -E bash -c "pm2 start ecosystem.json -u $USER"
 fi
