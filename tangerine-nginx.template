@@ -1,4 +1,3 @@
-# nginx doesn't support environment variables. What the fuck.
 server {
 
   listen 80;
@@ -10,12 +9,12 @@ server {
   }
 
   # Make site accessible from http://localhost/
-  server_name INSERT_HOSTNAME;
+  server_name T_HOSTNAME;
 
   # security robot
   location /robbert {
     rewrite /robbert/(.*) /$1 break;
-    proxy_pass http://localhost:4444;
+    proxy_pass http://localhost:T_ROBBERT_PORT;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection 'upgrade';
@@ -26,7 +25,7 @@ server {
   # apk making tree
   location /tree {
     rewrite /tree/(.*) /$1 break;
-    proxy_pass http://localhost:4445;
+    proxy_pass http://localhost:T_TREE_PORT;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection 'upgrade';
@@ -37,7 +36,7 @@ server {
   # brockman reporter
   location /brockman {
     rewrite /brockman/(.*) /$1 break;
-    proxy_pass http://localhost:4446;
+    proxy_pass http://localhost:T_BROCKMAN_PORT;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection 'upgrade';
@@ -48,7 +47,7 @@ server {
   # decompressor upload helper
   location /decompressor {
     rewrite /decompressor/(.*) /$1 break;
-    proxy_pass http://127.0.0.1:4447;
+    proxy_pass http://localhost:T_DECOMPRESSOR_PORT;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection 'upgrade';
@@ -56,13 +55,11 @@ server {
     proxy_cache_bypass $http_upgrade;
   }
 
-
-
   # CouchDB Proxy
   location ^~ /db {
     rewrite /db/(.*) /$1 break;
     index index.html index.htm;
-    proxy_pass http://localhost:5984;
+    proxy_pass http://T_COUCH_HOST:T_COUCH_PORT;
     proxy_redirect    off;
     proxy_set_header  Host $host;
     proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;

@@ -14,7 +14,6 @@ fi
 # install tangerine's env vars
 if [ ! -f /etc/profile.d/tangerine-env-vars.sh ]; then
   dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-  vim $dir/tangerine-env-vars.sh
   sudo cp $dir/tangerine-env-vars.sh /etc/profile.d/
   source /etc/profile
 fi
@@ -28,13 +27,20 @@ fi
 
 # nginx config
 if [ ! -a /etc/nginx/sites-enabled/tangerine.conf ]; then
-  sudo -E sed "s/\INSERT_HOSTNAME/"$T_HOSTNAME"/g tangerine-nginx.template > /etc/nginx/sites-enabled/tangerine.conf"
+  sudo -E sh -c "sed \"s/\T_HOSTNAME/$T_HOSTNAME/g;
+    s/T_COUCH_HOST/$T_COUCH_HOST/g;
+    s/T_COUCH_PORT/$T_COUCH_PORT/g;
+    s/T_ROBBERT_PORT/$T_ROBBERT_PORT/g;
+    s/T_TREE_PORT/$T_TREE_PORT/g;
+    s/T_BROCKMAN_PORT/$T_BROCKMAN_PORT/g;
+    s/T_DECOMPRESSOR_PORT/$T_DECOMPRESSOR_PORT/g\" tangerine-nginx.template > /etc/nginx/sites-available/tangerine.conf"
+  sudo ln -s /etc/nginx/sites-available/tangerine.conf /etc/nginx/sites-enabled/tangerine.conf
+
   sudo rm /etc/nginx/sites-enabled/default
   # increase the size limit of posts
   sudo sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
   sudo service nginx restart
 fi
-
 
 # couchdb
 if [ ! -z "`which couchdb`" ]; then
