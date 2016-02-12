@@ -6,23 +6,27 @@ Tangerine's security robot, Robbert, helps enforce database-level security. robb
 Installation
 ============
 
-Simply clone and point your http server to the directory.
+Daemonize it:
+```
+docker run -d --name couchdb klaemo/couchdb
+docker run -d --env-file ./env.list couchdb:couchdb rjsteinert/tangerine-robbert
+```
+
+Play around in the container:
+```
+docker run -it --entrypoint=/bin/bash --env-file ./env.list rjsteinert/tangerine-robbert
+```
 
 Requirements
 ============
+- docker
 
-PHP and an http server.
 
 Configuration
 =============
 
-First 
+Copy env.list.default to env.list, edit as needed.
 
-    $ cp Config.sample.php Config.php
-
-and fill in the server names. 
-
-If your ports are at all confusing or non-standard please have a look at ConfigHelper.php and see if it will give you the addresses you expect.
 
 Usage
 =====
