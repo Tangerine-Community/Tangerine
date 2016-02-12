@@ -1,0 +1,55 @@
+{
+
+    "login"      : "Iniciar sesión",
+    "logout"     : "Cerrar sesión",
+    "username"   : "Nombre de usuario",
+    "enumerator" : "Enumerator",
+    "enumerator name" : "Nombre de enumerator",
+    "password"   : "Contraseña",
+
+    "next"       : "Siguiente",
+    "previous"   : "Anterior",
+    "back"       : "Volver",
+    "add"        : "Agregar",
+    "edit"       : "Editar",
+    "save"       : "Salvar",
+    "delete"     : "Borrar",
+    "confirm"    : "Confirmar",
+    "cancel"     : "Cancelar",
+
+    "week"       : "Semana",
+    "year"       : "Año",
+    "name"       : "Nombre",
+    "age"        : "Edad",
+    "gender"     : "Sexo",
+    "grade"      : "Grado",
+    "stream"     : "Grupo",
+    "none"       : "Ningúno",
+    "curriculum" : "Currículo",
+    "select a curriculum" : "Elija un currículo",
+    "class status" : "Status de clase",
+
+    "starting date" : "Fecha de inicio",
+    "student"       : "estudiante",
+    "students"      : "estudiantes",
+    "edit student"  : "Editar $t(student)",
+
+    "basic info" : "Información basico",
+
+    "confirm"        : "Confirmar",
+    "select student" : "Elija un $t(student)",
+    "add student"    : "Añadar $t(student)",
+    "register student"   : "Registrar $t(student)",
+    "select report type" : "Elija tipo de informe",
+
+    "class"        : "Class",
+    "classes"      : "Clases",
+    "class editor" : "Editor de clases",
+    "register new student" : "Registrar un $t(student)",
+    "remove student" : "¿Quita el $t(student)?",
+    
+    "basic threshold" : "Basic threshold",
+    "class to date" : "Class to date"
+    
+
+}

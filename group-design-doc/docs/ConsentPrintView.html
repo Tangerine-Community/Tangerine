@@ -1,0 +1,31 @@
+<!DOCTYPE html>  <html> <head>   <title>ConsentPrintView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               ConsentPrintView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">ConsentPrintView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@confirmedNonConsent = </span><span class="kc">false</span>
+    <span class="vi">@model  = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
+    <span class="vi">@parent = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">parent</span>
+  
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="k">if</span> <span class="nx">@format</span> <span class="o">is</span> <span class="s">&quot;stimuli&quot;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">    &lt;form&gt;</span>
+<span class="s">      &lt;div class=&#39;question&#39;&gt;</span>
+<span class="s">        &lt;label&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;prompt&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&#39;Does the child consent?&#39;</span><span class="si">}</span><span class="s">&lt;/label&gt;</span>
+<span class="s">        &lt;div class=&#39;messages&#39;&gt;&lt;/div&gt;</span>
+<span class="s">        &lt;div class=&#39;non_consent_form confirmation&#39;&gt;</span>
+<span class="s">          &lt;div&gt;Click to confirm consent not obtained.&lt;/div&gt;</span>
+<span class="s">          &lt;button id=&#39;non_consent_confirm&#39;&gt;Confirm&lt;/button&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div id=&#39;consent_options&#39; class=&#39;buttonset&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;consent_yes&#39;&gt;Yes, continue&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;consent_yes&#39; type=&#39;radio&#39; name=&#39;participant_consents&#39; value=&#39;yes&#39;&gt;</span>
+<span class="s">          &lt;label for=&#39;consent_no&#39;&gt;No, stop&lt;/label&gt;</span>
+<span class="s">          &lt;input id=&#39;consent_no&#39; type=&#39;radio&#39; name=&#39;participant_consents&#39; value=&#39;no&#39;&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">    &lt;/form&gt;</span>
+<span class="s">    &quot;</span>
+
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

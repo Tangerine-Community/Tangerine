@@ -1,0 +1,43 @@
+<!DOCTYPE html>  <html> <head>   <title>SurveyPrintView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               SurveyPrintView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">SurveyPrintView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@model         = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
+    <span class="vi">@parent        = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">parent</span>
+    <span class="vi">@isObservation = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">isObservation</span>
+    <span class="vi">@questionViews = </span><span class="p">[]</span>
+    <span class="vi">@answered      = </span><span class="p">[]</span>
+    <span class="vi">@questions     = </span><span class="k">new</span> <span class="nx">Questions</span>
+    <span class="nx">@questions</span><span class="p">.</span><span class="nx">fetch</span>
+      <span class="nv">key: </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;assessmentId&quot;</span>
+      <span class="nv">success: </span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">=&gt;</span>
+        <span class="vi">@questions = </span><span class="k">new</span> <span class="nx">Questions</span><span class="p">(</span><span class="nx">@questions</span><span class="p">.</span><span class="nx">where</span> <span class="p">{</span> <span class="nv">subtestId : </span><span class="nx">@model</span><span class="p">.</span><span class="nx">id</span> <span class="p">})</span>
+        <span class="nx">@questions</span><span class="p">.</span><span class="nx">sort</span><span class="p">()</span>
+        <span class="nx">@render</span><span class="p">()</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nx">@format</span> <span class="o">is</span> <span class="s">&quot;stimuli&quot;</span>
+      <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+      <span class="k">return</span>
+
+    <span class="nv">notAskedCount = </span><span class="mi">0</span>
+    <span class="nx">@questions</span><span class="p">.</span><span class="nx">sort</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">models</span><span class="o">?</span>
+      <span class="k">for</span> <span class="nx">question</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">models</span>
+
+        <span class="nv">oneView = </span><span class="k">new</span> <span class="nx">QuestionPrintView</span> 
+          <span class="nv">model         : </span><span class="nx">question</span>
+          <span class="nv">parent        : </span><span class="nx">@</span>
+          <span class="nv">isObservation : </span><span class="nx">@isObservation</span>
+        <span class="nx">oneView</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;rendered&quot;</span><span class="p">,</span> <span class="nx">@onQuestionRendered</span>
+
+        <span class="nx">oneView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+        <span class="nx">@questionViews</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">oneView</span>
+        <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="nx">oneView</span><span class="p">.</span><span class="nx">el</span>
+
+    <span class="k">if</span> <span class="nx">@questions</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="nx">notAskedCount</span> <span class="k">then</span> <span class="nx">@parent</span><span class="p">.</span><span class="nx">next</span><span class="o">?</span><span class="p">()</span>
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+  <span class="nv">onQuestionRendered: </span><span class="o">=&gt;</span>
+    <span class="nx">@trigger</span> <span class="s">&quot;subRendered&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

@@ -1,0 +1,47 @@
+<!DOCTYPE html>  <html> <head>   <title>SubtestPrintView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               SubtestPrintView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">SubtestPrintView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@protoViews  = </span><span class="nx">Tangerine</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">prototypeViews</span>
+    <span class="vi">@model       = </span><span class="nx">options</span><span class="p">.</span><span class="nx">model</span>
+    <span class="vi">@parent      = </span><span class="nx">options</span><span class="p">.</span><span class="nx">parent</span>
+    <span class="vi">@format      = </span><span class="nx">options</span><span class="p">.</span><span class="nx">format</span>
+
+    <span class="vi">@prototypeRendered = </span><span class="kc">false</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+      
+    <span class="nv">enumeratorHelp = </span><span class="k">if</span> <span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;enumeratorHelp&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> <span class="k">then</span> <span class="s">&quot;&lt;div class=&#39;enumerator_help_print&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;enumeratorHelp&#39;</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
+    <span class="nv">studentDialog  = </span><span class="k">if</span> <span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;studentDialog&quot;</span><span class="p">)</span>  <span class="o">||</span> <span class="s">&quot;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> <span class="k">then</span> <span class="s">&quot;&lt;div class=&#39;student_dialog_print&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;studentDialog&#39;</span><span class="si">}</span><span class="s">&lt;/div&gt;&quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
+    <span class="nv">skipButton = </span><span class="s">&quot;&lt;button class=&#39;skip navigation&#39;&gt;Skip&lt;/button&gt;&quot;</span>
+    <span class="nv">skippable = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;skippable&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">||</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;skippable&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;true&quot;</span>
+
+    <span class="k">if</span> <span class="nx">@format</span> <span class="o">is</span> <span class="s">&quot;content&quot;</span>
+
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">        &lt;h2&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;name&#39;</span><span class="si">}</span><span class="s">&lt;/h2&gt;</span>
+<span class="s">        Enumerator Help:&lt;br/&gt;</span>
+<span class="s">        </span><span class="si">#{</span><span class="nx">enumeratorHelp</span><span class="si">}</span><span class="s"></span>
+<span class="s">        Student Dialog:&lt;br/&gt;</span>
+<span class="s">        </span><span class="si">#{</span><span class="nx">studentDialog</span><span class="si">}</span><span class="s"></span>
+<span class="s">        &lt;div class=&#39;format-</span><span class="si">#{</span><span class="nx">format</span><span class="si">}</span><span class="s">&#39; id=&#39;prototype_wrapper&#39;&gt;&lt;/div&gt;</span>
+<span class="s">        &lt;hr/&gt;</span>
+<span class="s">      &quot;</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">append</span> <span class="s">&quot;</span>
+<span class="s">      &lt;div id=&#39;prototype_wrapper&#39;&gt;&lt;/div&gt;</span>
+<span class="s">    &quot;</span>
+  </pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Use prototype specific views here</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="vi">@prototypeView = </span><span class="k">new</span> <span class="nb">window</span><span class="p">[</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;prototype&#39;</span><span class="p">).</span><span class="nx">humanize</span><span class="p">()</span> <span class="o">+</span> <span class="s">&#39;PrintView&#39;</span><span class="p">]</span>
+      <span class="nv">model: </span><span class="nx">@model</span>
+      <span class="nv">parent: </span><span class="nx">@</span>
+    <span class="nx">@prototypeView</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;rendered&quot;</span><span class="p">,</span>    <span class="o">=&gt;</span> <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+    <span class="nx">@prototypeView</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;subRendered&quot;</span><span class="p">,</span> <span class="o">=&gt;</span> <span class="nx">@trigger</span> <span class="s">&quot;subRendered&quot;</span>
+    <span class="nx">@prototypeView</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;showNext&quot;</span><span class="p">,</span>    <span class="o">=&gt;</span> <span class="nx">@showNext</span><span class="p">()</span>
+    <span class="nx">@prototypeView</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;hideNext&quot;</span><span class="p">,</span>    <span class="o">=&gt;</span> <span class="nx">@hideNext</span><span class="p">()</span>
+    <span class="nx">@prototypeView</span><span class="p">.</span><span class="nx">setElement</span><span class="p">(</span><span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#prototype_wrapper&#39;</span><span class="p">))</span>
+    <span class="vi">@prototypeView.format = </span><span class="nx">@format</span>
+    <span class="nx">@prototypeView</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+    <span class="vi">@prototypeRendered = </span><span class="kc">true</span>
+
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

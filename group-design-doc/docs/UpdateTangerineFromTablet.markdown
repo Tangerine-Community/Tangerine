@@ -1,0 +1,1 @@
+Login as an admin first then look in the upper right corner, there's your username, it says "admin" tap that and it'll take you to the manage page under the application section you'll see an update button once that's done, it'll restart tangerine and you'll be using the new software

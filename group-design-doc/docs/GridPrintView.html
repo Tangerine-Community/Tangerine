@@ -1,0 +1,82 @@
+<!DOCTYPE html>  <html> <head>   <title>GridPrintView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               GridPrintView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">GridPrintView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+    <span class="vi">@model         = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
+    <span class="vi">@parent        = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">parent</span>
+
+  <span class="nv">className: </span><span class="s">&quot;grid_prototype&quot;</span>
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="k">switch</span> <span class="nx">@format</span>
+      <span class="k">when</span> <span class="s">&quot;content&quot;</span> <span class="k">then</span> <span class="nx">@renderContent</span><span class="p">()</span>
+      <span class="k">when</span> <span class="s">&quot;stimuli&quot;</span> <span class="k">then</span> <span class="nx">@renderStimuli</span><span class="p">()</span>
+      <span class="k">when</span> <span class="s">&quot;backup&quot;</span>  <span class="k">then</span> <span class="nx">@renderBackup</span><span class="p">()</span>
+    <span class="nx">@parent</span><span class="p">.</span><span class="nx">trigger</span> <span class="s">&quot;rendered&quot;</span><span class="p">,</span> <span class="nx">@</span>
+
+  
+  <span class="nv">renderStimuli: </span><span class="o">-&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">      &lt;div id=&#39;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s">&#39; class=&#39;print-page&#39;&gt;</span>
+<span class="s">        &lt;table&gt;</span>
+<span class="s">          &lt;tr&gt;</span>
+<span class="s">            </span><span class="si">#{</span>
+              <span class="nv">index = </span><span class="mi">0</span>
+              <span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">),</span> <span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="o">=&gt;</span>
+                <span class="nx">index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="nv">itemText = </span><span class="s">&quot;&lt;td class=&#39;item&#39;&gt;</span><span class="si">#{</span><span class="nx">item</span><span class="si">}</span><span class="s">&lt;/td&gt;&quot;</span>
+                <span class="k">if</span> <span class="nx">index</span> <span class="o">%</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;columns&quot;</span><span class="p">)</span> <span class="o">is</span> <span class="mi">0</span> <span class="k">then</span> <span class="nx">itemText</span> <span class="o">+=</span> <span class="s">&quot;&lt;/tr&gt;&lt;tr&gt;&quot;</span> <span class="k">else</span> <span class="s">&quot;&quot;</span>
+                <span class="nx">itemText</span>
+              <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+            <span class="si">}</span><span class="s"></span>
+<span class="s">          &lt;/tr&gt;</span>
+<span class="s">        &lt;/table&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">    &quot;</span>
+
+    <span class="nx">_</span><span class="p">.</span><span class="nx">delay</span> <span class="o">=&gt;</span>
+      <span class="nv">overflow = </span><span class="mi">100</span>
+      <span class="k">while</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">scrollWidth</span> <span class="o">&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s"> table&quot;</span><span class="p">).</span><span class="nx">innerWidth</span><span class="p">()</span> <span class="o">and</span>  <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">scrollHeight</span> <span class="o">&gt;</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s"> table&quot;</span><span class="p">).</span><span class="nx">innerHeight</span><span class="p">()</span>
+        <span class="k">break</span> <span class="k">if</span> <span class="p">(</span><span class="nx">overflow</span><span class="o">-=</span><span class="mi">1</span><span class="p">)</span> <span class="o">is</span> <span class="mi">0</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s">&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">scrollWidth</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span> <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s"> table&quot;</span><span class="p">).</span><span class="nx">innerWidth</span><span class="p">()</span>
+        <span class="nv">currentSize = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s"> td&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s">&quot;font-size&quot;</span><span class="p">)</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s"> td&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s">&quot;font-size&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">currentSize</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="si">}</span><span class="s">px&quot;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>More hackiness</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">navigation&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">footer&quot;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+      <span class="nv">currentSize = </span><span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s"> td&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s">&quot;font-size&quot;</span><span class="p">)</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="s">&quot;_id&quot;</span><span class="si">}</span><span class="s"> td&quot;</span><span class="p">).</span><span class="nx">css</span><span class="p">(</span><span class="s">&quot;font-size&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">#{</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">currentSize</span><span class="p">)</span><span class="o">-</span><span class="mi">10</span><span class="si">}</span><span class="s">px&quot;</span><span class="p">)</span>
+    <span class="p">,</span><span class="mi">1000</span>
+
+  <span class="nv">renderContent: </span><span class="o">-&gt;</span>
+    <span class="nv">fields = </span><span class="s">&quot;autostop</span>
+<span class="s">    captureAfterSeconds</span>
+<span class="s">    captureItemAtTime</span>
+<span class="s">    columns</span>
+<span class="s">    endOfLine</span>
+<span class="s">    fontSize</span>
+<span class="s">    layoutMode</span>
+<span class="s">    order</span>
+<span class="s">    randomize</span>
+<span class="s">    timer</span>
+<span class="s">    variableName&quot;</span>
+
+    <span class="nv">fields = </span><span class="nx">fields</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="sr">/\ +/</span><span class="p">)</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">      Properties:&lt;br/&gt;</span>
+<span class="s">      &lt;table&gt;</span>
+<span class="s">      </span><span class="si">#{</span>
+        <span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">fields</span><span class="p">,</span> <span class="p">(</span><span class="nx">field</span><span class="p">)</span> <span class="o">=&gt;</span>
+          <span class="s">&quot;&lt;tr&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">field</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;td&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span> <span class="nx">field</span><span class="si">}</span><span class="s">&lt;/td&gt;&lt;/tr&gt;&quot;</span>
+        <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+      <span class="si">}</span><span class="s"></span>
+<span class="s">      &lt;/table&gt;</span>
+<span class="s">      Items:&lt;br/&gt;</span>
+<span class="s">      </span><span class="si">#{</span>
+        <span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;items&quot;</span><span class="p">),</span> <span class="nf">(item) -&gt;</span>
+          <span class="nx">item</span>
+        <span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span>
+      <span class="si">}</span><span class="s"></span>
+<span class="s">    &quot;</span>
+    
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

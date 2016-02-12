@@ -1,0 +1,20 @@
+[
+  // filenames matching these regexps will not be pushed to the database
+  // uncomment to activate; separate entries with ","
+  ".*~$",
+  ".*\\.swp$",
+  // ".*\\.bak$"
+  "Vagrantfile",
+  "features*",
+  ".*\\.coffee$",
+  ".*\\.map$",
+  ".*\\.min\\.js$",
+  "scripts",
+  "docs",
+  ".DS_Store",
+  "Makefile",
+  "file.watchr",
+  "listen.rb"
+
+
+]

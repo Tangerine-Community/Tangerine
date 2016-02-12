@@ -1,0 +1,247 @@
+<!DOCTYPE html>  <html> <head>   <title>ObservationPrintView.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               ObservationPrintView.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">ObservationPrintView</span> <span class="k">extends</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span>
+
+
+  <span class="nv">events:</span>
+    <span class="s">&quot;click .start_time&quot;</span> <span class="o">:</span> <span class="s">&quot;startObservations&quot;</span>
+    <span class="s">&quot;click .stop_time&quot;</span>  <span class="o">:</span> <span class="s">&quot;stopObservations&quot;</span>
+    <span class="s">&quot;click .done&quot;</span> <span class="o">:</span> <span class="s">&quot;completeObservation&quot;</span>
+
+  <span class="nv">initialize: </span><span class="nf">(options) -&gt;</span>
+
+    <span class="vi">@model  = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">model</span>
+    <span class="vi">@parent = </span><span class="nx">@options</span><span class="p">.</span><span class="nx">parent</span>
+
+
+
+  <span class="nv">initializeSurvey: </span><span class="o">-&gt;</span>
+    <span class="nx">@onClose</span><span class="p">()</span> <span class="k">if</span> <span class="nx">@survey</span><span class="o">?</span> <span class="c1"># if we&#39;re REinitializing close the old views first</span>
+    
+    <span class="nv">attributes = </span><span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;surveyAttributes&#39;</span><span class="p">),</span> <span class="p">{</span> <span class="s">&quot;_id&quot;</span> <span class="o">:</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">id</span> <span class="p">})</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>1-indexed array, convenient because the 0th observation doesn't take place, but the nth does.
+makes an array of identical models based on the above attributes</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">models = </span><span class="p">(</span><span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span> <span class="nx">attributes</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;totalSeconds&#39;</span><span class="p">)</span><span class="o">/</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;intervalLength&#39;</span><span class="p">))])</span>
+    <span class="nx">models</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    
+    <span class="vi">@skippableView = </span><span class="k">new</span> <span class="nx">SurveyRunView</span>
+      <span class="s">&quot;model&quot;</span>         <span class="o">:</span> <span class="nx">models</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="s">&quot;parent&quot;</span>        <span class="o">:</span> <span class="nx">@</span>
+      <span class="s">&quot;isObservation&quot;</span> <span class="o">:</span> <span class="kc">true</span>
+
+    
+    <span class="vi">@survey =</span>
+      <span class="s">&quot;models&quot;</span>    <span class="o">:</span> <span class="nx">models</span>
+      <span class="s">&quot;results&quot;</span>   <span class="o">:</span> <span class="p">[]</span>
+
+  <span class="nv">initializeFlags: </span><span class="o">-&gt;</span>
+    <span class="vi">@iAm =</span>
+      <span class="s">&quot;counting&quot;</span> <span class="o">:</span> <span class="kc">false</span>
+      <span class="s">&quot;recording&quot;</span> <span class="o">:</span> <span class="kc">false</span>
+    <span class="vi">@iHavent =</span>
+      <span class="s">&quot;warned&quot;</span> <span class="o">:</span> <span class="kc">true</span>
+    <span class="vi">@iHave =</span>
+      <span class="s">&quot;runOnce&quot;</span> <span class="o">:</span> <span class="kc">false</span>
+      <span class="s">&quot;finished&quot;</span> <span class="o">:</span> <span class="kc">false</span>
+    <span class="vi">@my =</span>
+      <span class="s">&quot;time&quot;</span> <span class="o">:</span>
+        <span class="s">&quot;start&quot;</span>   <span class="o">:</span> <span class="mi">0</span>
+        <span class="s">&quot;elapsed&quot;</span> <span class="o">:</span> <span class="mi">0</span>
+      <span class="s">&quot;observation&quot;</span> <span class="o">:</span>
+        <span class="s">&quot;index&quot;</span>     <span class="o">:</span> <span class="mi">0</span>
+        <span class="s">&quot;oldIndex&quot;</span>  <span class="o">:</span> <span class="mi">0</span>
+        <span class="s">&quot;completed&quot;</span> <span class="o">:</span> <span class="mi">0</span>
+        <span class="s">&quot;total&quot;</span>     <span class="o">:</span> <span class="nb">parseInt</span><span class="p">(</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;totalSeconds&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;intervalLength&#39;</span><span class="p">)</span> <span class="p">)</span>
+
+
+  <span class="nv">startObservations: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>don't respond for these reasons</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@iAm</span><span class="p">.</span><span class="nx">counting</span> <span class="o">||</span> <span class="nx">@iHave</span><span class="p">.</span><span class="nx">runOnce</span> <span class="k">then</span> <span class="k">return</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.stop_button_wrapper, .next_display, .completed_display&quot;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&quot;confirmation&quot;</span><span class="p">)</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.start_button_wrapper&quot;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&quot;confirmation&quot;</span><span class="p">)</span>
+    <span class="vi">@timerInterval   = </span><span class="nx">setInterval</span> <span class="nx">@tick</span><span class="p">,</span> <span class="mi">1000</span>
+    <span class="vi">@iAm.counting    = </span><span class="kc">true</span>
+    <span class="vi">@my.time.start   = </span><span class="nx">@getTime</span><span class="p">()</span>
+    <span class="vi">@my.time.elapsed = </span><span class="mi">0</span>
+
+  <span class="nv">stopObservations: </span><span class="nf">(e) -&gt;</span>
+    <span class="nx">clearInterval</span> <span class="nx">@timerInterval</span>
+    <span class="nv">fromClick = </span><span class="nx">e</span><span class="o">?</span>
+    <span class="nv">isntPrematureStop = </span><span class="o">!</span> <span class="nx">e</span><span class="o">?</span>
+    <span class="k">if</span> <span class="nx">e</span><span class="o">?</span> 
+      <span class="nx">@trigger</span> <span class="s">&quot;showNext&quot;</span>
+
+    <span class="k">if</span> <span class="nx">isntPrematureStop</span> <span class="o">&amp;&amp;</span> <span class="o">not</span> <span class="nx">@iHave</span><span class="p">.</span><span class="nx">finished</span>
+      <span class="k">if</span> <span class="nx">@iAm</span><span class="p">.</span><span class="nx">recording</span>
+        <span class="nx">@resetObservationFlags</span><span class="p">()</span>
+        <span class="nx">@saveCurrentSurvey</span><span class="p">()</span>
+      <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span><span class="o">++</span>
+      <span class="nx">@renderSurvey</span><span class="p">()</span>
+    <span class="k">else</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.stop_button_wrapper&quot;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&quot;confirmation&quot;</span><span class="p">)</span>
+      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Observations finished&quot;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.next_display&quot;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&quot;confirmation&quot;</span><span class="p">)</span>
+    <span class="vi">@iHave.finished = </span><span class="kc">true</span>
+    <span class="vi">@iHave.runOnce = </span><span class="kc">true</span>
+    </pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>runs every second the timer is running</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">tick: </span><span class="o">=&gt;</span>
+    <span class="vi">@my.time.elapsed = </span><span class="nx">@getTime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">start</span>
+    <span class="nx">@checkIfOver</span><span class="p">()</span>
+    <span class="nx">@updateObservationIndex</span><span class="p">()</span>
+    <span class="nx">@updateProgressDisplay</span><span class="p">()</span>
+    <span class="nx">@checkSurveyDisplay</span><span class="p">()</span>
+    <span class="nx">@checkObservationPace</span><span class="p">()</span>
+    <span class="nx">@checkWarning</span><span class="p">()</span>
+
+  <span class="nv">checkObservationPace: </span><span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>if we're still entering observations and it's time for the next one</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@iAm</span><span class="p">.</span><span class="nx">recording</span> <span class="o">&amp;&amp;</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">completed</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span> <span class="o">!=</span> <span class="mi">0</span> <span class="c1"># starts at 0, then goes to 1</span>
+      <span class="vi">@iHave.forcedProgression = </span><span class="kc">true</span>
+      <span class="nx">@resetObservationFlags</span><span class="p">()</span>
+      <span class="nx">@saveCurrentSurvey</span><span class="p">()</span>
+      <span class="nx">@renderSurvey</span><span class="p">()</span>
+
+  <span class="nv">checkWarning: </span><span class="o">=&gt;</span>
+    <span class="nv">projectedIndex = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span> <span class="p">(</span><span class="nx">@my</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">elapsed</span> <span class="o">+</span> <span class="nx">@warningSeconds</span><span class="p">)</span> <span class="o">/</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;intervalLength&#39;</span><span class="p">)</span> <span class="p">)</span>
+    <span class="nv">iShouldWarn = </span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span> <span class="o">&lt;</span> <span class="nx">projectedIndex</span> <span class="o">&amp;&amp;</span> <span class="o">!</span> <span class="nx">@iHave</span><span class="p">.</span><span class="nx">finished</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>if we're still entering observations, warn the user</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@iAm</span><span class="p">.</span><span class="nx">recording</span> <span class="o">&amp;&amp;</span> <span class="nx">@iHavent</span><span class="p">.</span><span class="nx">warned</span> <span class="o">&amp;&amp;</span> <span class="nx">iShouldWarn</span> <span class="o">&amp;&amp;</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span> <span class="o">!=</span> <span class="mi">0</span> <span class="c1"># first one doesn&#39;t count</span>
+      <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Observation ending soon&quot;</span>
+      <span class="vi">@iHavent.warned = </span><span class="kc">false</span>
+  
+  <span class="nv">gridWasAutostopped: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="kc">false</span>
+
+  <span class="nv">checkIfOver: </span><span class="o">=&gt;</span>
+    <span class="k">if</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">elapsed</span> <span class="o">&gt;=</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;totalSeconds&quot;</span><span class="p">)</span>
+      <span class="nx">@stopObservations</span><span class="p">()</span>
+
+  <span class="nv">checkSurveyDisplay: </span><span class="o">=&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>change, needs to display new survey</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">if</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">oldIndex</span> <span class="o">!=</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">@iHave</span><span class="p">.</span><span class="nx">finished</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">@iAm</span><span class="p">.</span><span class="nx">recording</span>
+      <span class="nx">@renderSurvey</span><span class="p">()</span>
+      <span class="vi">@my.observation.oldIndex = </span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span>
+
+  <span class="nv">updateObservationIndex: </span><span class="o">=&gt;</span>
+    <span class="vi">@my.observation.index = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">floor</span><span class="p">(</span> <span class="p">(</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">elapsed</span> <span class="p">)</span> <span class="o">/</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;intervalLength&#39;</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span> <span class="o">&gt;</span> <span class="nx">@survey</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span>
+      <span class="vi">@my.observation.index = </span><span class="nx">@survey</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span>
+
+  <span class="nv">updateProgressDisplay: </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>backbone.js, y u no have data bindings? abstract more</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.current_observation&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.completed_count&quot;</span><span class="p">).</span><span class="nx">html</span>     <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">completed</span>
+
+    <span class="nv">timeTillNext = </span><span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(((</span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;intervalLength&#39;</span><span class="p">))</span> <span class="o">-</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">elapsed</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.time_till_next&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">timeTillNext</span>
+
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">@iAm</span><span class="p">.</span><span class="nx">recording</span> <span class="o">&amp;&amp;</span> <span class="o">not</span> <span class="nx">@iHave</span><span class="p">.</span><span class="nx">finished</span>
+      <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.next_display, .completed_display&quot;</span><span class="p">).</span><span class="nx">removeClass</span> <span class="s">&quot;confirmation&quot;</span> 
+
+  <span class="nv">resetObservationFlags: </span><span class="o">-&gt;</span>
+    <span class="vi">@iAm.recording  = </span><span class="kc">false</span>
+    <span class="vi">@iHavent.warned = </span><span class="kc">true</span>
+
+  <span class="nv">getTime: </span><span class="o">-&gt;</span> <span class="nb">parseInt</span><span class="p">(</span> <span class="p">(</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">()</span> <span class="p">).</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span> <span class="p">)</span>
+
+  <span class="nv">completeObservation: </span><span class="nf">(option) -&gt;</span>
+
+    <span class="k">if</span> <span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">isValid</span><span class="p">()</span>
+      <span class="nx">@saveCurrentSurvey</span><span class="p">()</span>
+      <span class="nx">@trigger</span> <span class="s">&quot;showNext&quot;</span> <span class="k">if</span> <span class="nx">@iHave</span><span class="p">.</span><span class="nx">finished</span>
+    <span class="k">else</span>
+      <span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">showErrors</span><span class="p">()</span>
+
+    <span class="nx">@tick</span><span class="p">()</span> <span class="c1"># update displays</span>
+
+
+
+
+  <span class="nv">saveCurrentSurvey: </span><span class="o">=&gt;</span>
+    <span class="nx">@resetObservationFlags</span><span class="p">()</span>
+    <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">completed</span><span class="o">++</span>
+    <span class="nx">@survey</span><span class="p">.</span><span class="nx">results</span><span class="p">.</span><span class="nx">push</span>
+      <span class="nv">observationNumber : </span><span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">index</span> <span class="c1"># view&#39;s index</span>
+      <span class="nv">data              : </span><span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">getResult</span><span class="p">()</span>
+      <span class="nv">saveTime          : </span><span class="nx">@my</span><span class="p">.</span><span class="nx">time</span><span class="p">.</span><span class="nx">elapsed</span>
+    <span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;.done&quot;</span><span class="p">).</span><span class="nx">remove</span><span class="p">()</span>
+
+
+  <span class="nv">render: </span><span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="k">if</span> <span class="nx">@format</span> <span class="o">is</span> <span class="s">&quot;stimuli&quot;</span>
+
+    <span class="nx">@trigger</span> <span class="s">&quot;hideNext&quot;</span>
+    <span class="nv">totalSeconds = </span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;totalSeconds&quot;</span><span class="p">)</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">html</span> <span class="s">&quot;</span>
+<span class="s">      &lt;div class=&#39;timer_wrapper&#39;&gt;</span>
+<span class="s">        &lt;div class=&#39;progress clearfix&#39;&gt;</span>
+<span class="s">          &lt;span class=&#39;completed_display confirmation&#39;&gt;Completed &lt;div class=&#39;info_box completed_count&#39;&gt;</span><span class="si">#{</span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">completed</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;/span&gt;</span>
+<span class="s">          &lt;span class=&#39;next_display confirmation&#39;&gt;Next observation &lt;div class=&#39;info_box time_till_next&#39;&gt;</span><span class="si">#{</span><span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&#39;intervalLength&#39;</span><span class="p">)</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;/span&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;div&gt;</span>
+<span class="s">          &lt;div class=&#39;start_button_wrapper&#39;&gt;&lt;button class=&#39;start_time command&#39;&gt;Start&lt;/button&gt;&lt;/div&gt;</span>
+<span class="s">          &lt;div class=&#39;stop_button_wrapper confirmation&#39;&gt;&lt;button class=&#39;stop_time command&#39;&gt;Abort &lt;i&gt;all&lt;/i&gt; observations&lt;/button&gt;&lt;/div&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">      &lt;/div&gt;</span>
+<span class="s">      &lt;div id=&#39;current_survey&#39;&gt;&lt;/div&gt;</span>
+<span class="s">    &quot;</span>
+
+    <span class="nx">@trigger</span> <span class="s">&quot;rendered&quot;</span>
+
+  <span class="nv">renderSurvey: </span><span class="nf">(e) -&gt;</span>
+    <span class="k">if</span> <span class="o">not</span> <span class="nx">@iAm</span><span class="p">.</span><span class="nx">counting</span> <span class="k">then</span> <span class="k">return</span>
+    <span class="vi">@iAm.recording = </span><span class="kc">true</span>
+    
+    <span class="vi">@survey.view  = </span><span class="k">new</span> <span class="nx">SurveyRunView</span>
+      <span class="s">&quot;model&quot;</span>         <span class="o">:</span> <span class="nx">@survey</span><span class="p">.</span><span class="nx">models</span><span class="p">[</span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span><span class="p">]</span>
+      <span class="s">&quot;parent&quot;</span>        <span class="o">:</span> <span class="nx">@</span>
+      <span class="s">&quot;isObservation&quot;</span> <span class="o">:</span> <span class="kc">true</span>
+    <span class="vi">@survey.view.index = </span><span class="nx">do</span> <span class="o">=&gt;</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span> <span class="c1"># add an index for reference</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>listen for render events, pass them up</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="kc">on</span> <span class="s">&quot;rendered subRendered&quot;</span><span class="p">,</span> <span class="o">=&gt;</span> <span class="nx">@trigger</span> <span class="s">&quot;subRendered&quot;</span>
+
+    <span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">render</span><span class="p">()</span>
+
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_survey&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="s">&quot;&lt;span class=&#39;observation_display confirmation&#39;&gt;Observation &lt;div class=&#39;info_box current_observation&#39;&gt;</span><span class="si">#{</span><span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">index</span><span class="si">}</span><span class="s">&lt;/div&gt;&lt;/span&gt;&quot;</span><span class="p">)</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_survey&quot;</span><span class="p">).</span><span class="nx">append</span> <span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">el</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_survey&quot;</span><span class="p">).</span><span class="nx">append</span> <span class="s">&quot;&lt;button class=&#39;command done&#39;&gt;Done with &lt;i&gt;this&lt;/i&gt; observation&lt;/button&gt;&quot;</span>
+    
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;</span><span class="err">#</span><span class="s">current_survey&quot;</span><span class="p">).</span><span class="nx">scrollTo</span> <span class="mi">250</span><span class="p">,</span> <span class="o">=&gt;</span> 
+      <span class="k">if</span> <span class="nx">@iHave</span><span class="p">.</span><span class="nx">forcedProgression</span>
+        <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Please continue with the next observation.&quot;</span>
+        <span class="vi">@iHave.forcedProgression = </span><span class="kc">false</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="nx">@iHave</span><span class="p">.</span><span class="nx">finished</span>
+        <span class="nx">Utils</span><span class="p">.</span><span class="nx">midAlert</span> <span class="s">&quot;Please enter last observation&quot;</span>
+
+
+  <span class="nv">onClose: </span><span class="o">-&gt;</span>
+    <span class="nx">@survey</span><span class="p">.</span><span class="nx">view</span><span class="o">?</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
+    <span class="nx">@skippableView</span><span class="p">.</span><span class="nx">close</span><span class="p">()</span>
+
+  <span class="nv">getResult: </span><span class="o">-&gt;</span>
+    <span class="p">{</span>
+      <span class="s">&quot;surveys&quot;</span>               <span class="o">:</span> <span class="nx">@survey</span><span class="p">.</span><span class="nx">results</span>
+      <span class="s">&quot;variableName&quot;</span>          <span class="o">:</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;variableName&quot;</span><span class="p">)</span>
+      <span class="s">&quot;totalTime&quot;</span>             <span class="o">:</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;totalTime&quot;</span><span class="p">)</span>
+      <span class="s">&quot;intervalLength&quot;</span>        <span class="o">:</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s">&quot;intervalTime&quot;</span><span class="p">)</span>
+      <span class="s">&quot;completedObservations&quot;</span> <span class="o">:</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">completed</span>
+    <span class="p">}</span>
+
+  <span class="nv">getSum: </span><span class="o">-&gt;</span>
+    <span class="p">{</span>
+      <span class="s">&quot;total&quot;</span> <span class="o">:</span> <span class="nx">@my</span><span class="p">.</span><span class="nx">observation</span><span class="p">.</span><span class="nx">completed</span> 
+    <span class="p">}</span>
+
+  <span class="nv">getSkipped: </span><span class="o">-&gt;</span>
+    <span class="nv">viewResult = </span><span class="nx">@skippableView</span><span class="p">.</span><span class="nx">getSkipped</span><span class="p">()</span>
+    <span class="nv">skippedResults = </span><span class="p">[]</span>
+    <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..(</span><span class="nx">@survey</span><span class="p">.</span><span class="nx">models</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+      <span class="nx">skippedResults</span><span class="p">.</span><span class="nx">push</span>
+        <span class="nv">observationNumber : </span><span class="nx">i</span> <span class="c1"># view&#39;s index</span>
+        <span class="nv">data              : </span><span class="nx">viewResult</span>
+        <span class="nv">saveTime          : </span><span class="s">&quot;skipped&quot;</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="s">&quot;surveys&quot;</span>               <span class="o">:</span> <span class="nx">skippedResults</span>
+      <span class="s">&quot;variableName&quot;</span>          <span class="o">:</span> <span class="s">&quot;skipped&quot;</span>
+      <span class="s">&quot;totalTime&quot;</span>             <span class="o">:</span> <span class="s">&quot;skipped&quot;</span>
+      <span class="s">&quot;intervalLength&quot;</span>        <span class="o">:</span> <span class="s">&quot;skipped&quot;</span>
+      <span class="s">&quot;completedObservations&quot;</span> <span class="o">:</span> <span class="s">&quot;skipped&quot;</span>
+    <span class="p">}</span>
+
+  <span class="nv">isValid: </span><span class="o">-&gt;</span>
+    <span class="nx">@iHave</span><span class="p">.</span><span class="nx">finished</span>
+
+  <span class="nv">showErrors: </span><span class="o">-&gt;</span>
+    <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&quot;messages&quot;</span><span class="p">).</span><span class="nx">html</span> <span class="nx">@validator</span><span class="p">.</span><span class="nx">getErrors</span><span class="p">().</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span>
+
+  <span class="nv">updateNavigation: </span><span class="o">-&gt;</span>
+    <span class="nx">Tangerine</span><span class="p">.</span><span class="nx">nav</span><span class="p">.</span><span class="nx">setStudent</span> <span class="nx">@$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;#participant_id&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
