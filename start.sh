@@ -1,4 +1,4 @@
 cd couchapp
 couchapp push
 cd ..
-npm start
+node index.js
