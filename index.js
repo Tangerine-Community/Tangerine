@@ -3,6 +3,7 @@
 const unirest    = require('unirest');
 const express    = require('express');
 const HttpStatus = require('http-status-codes');
+const proxy      = require('express-http-proxy');
 
 // for json parsing in recieved requests
 const bodyParser = require('body-parser');
@@ -30,6 +31,18 @@ app.use(requestLogger);     // add some logging
 app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).send('Something broke!');
+});
+
+app.use('/db', proxy('couchdb:5984', {
+  forwardPath: function(req, res) {
+    return require('url').parse(req.url).path;
+  }
+}));
+
+// App routes
+app.get('/app/:gid/*', function(req, res){
+  var path = req.params[0] ? req.params[0] : 'index.html';
+  res.sendfile(path, {root: './app'});
 });
 
 // User routes
