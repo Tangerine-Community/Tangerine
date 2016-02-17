@@ -53,6 +53,7 @@ else
 
   # create server admin
   sudo -E sh -c 'echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini'
+  sudo service couchdb restart
 
 fi
 
@@ -89,7 +90,6 @@ if [ -a ./editor/server-init.sh ]; then
   ./editor/server-init.sh
 fi
 
-sudo service couchdb restart
 
 sudo env PM2_HOME="/home/$USER/.pm2" PATH=$PATH:/usr/local/bin pm2 startup -u $USER
 
