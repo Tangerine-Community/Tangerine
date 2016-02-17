@@ -4,3 +4,6 @@
 [submodule "brockman"]
 	path = brockman
 	url = git@github.com:Tangerine-Community/Tangerine-brockman.git
+[submodule "decompressor"]
+	path = decompressor
+	url = git@github.com:Tangerine-Community/Tangerine-decompressor.git
