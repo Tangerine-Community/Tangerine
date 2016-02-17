@@ -10,3 +10,6 @@
 [submodule "robbert"]
 	path = robbert
 	url = git@github.com:Tangerine-Community/Tangerine-robbert.git
+[submodule "tree"]
+	path = tree
+	url = git@github.com:Tangerine-Community/Tangerine-tree.git
