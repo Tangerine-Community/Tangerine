@@ -7,3 +7,6 @@
 [submodule "decompressor"]
 	path = decompressor
 	url = git@github.com:Tangerine-Community/Tangerine-decompressor.git
+[submodule "robbert"]
+	path = robbert
+	url = git@github.com:Tangerine-Community/Tangerine-robbert.git
