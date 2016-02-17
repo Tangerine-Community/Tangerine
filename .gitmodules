@@ -1,0 +1,3 @@
+[submodule "editor"]
+	path = editor
+	url = git@github.com:Tangerine-Community/Tangerine-editor.git
