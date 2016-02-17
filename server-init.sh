@@ -93,6 +93,10 @@ if [ -a ./editor/server-init.sh ]; then
   ./editor/server-init.sh
 fi
 
+if [ -a ./robbert/server-init.sh ]; then
+  ./robbert/server-init.sh
+fi
+
 
 sudo env PM2_HOME="/home/$USER/.pm2" PATH=$PATH:/usr/local/bin pm2 startup -u $USER
 
