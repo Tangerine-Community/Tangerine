@@ -4,22 +4,19 @@ This repo is meant to contain submodules references to each component required f
 
 # Getting started
 
-Make a user, give it sudo powers, switch to that user
+Spin up an Ubuntu 14.04 machine and then ssh into it.
+
+Update apt, get git, clone this repo.
 
 ```shell
-adduser inst && usermod inst -a -G sudo && su inst
+sudo apt-get update && sudo apt-get install git -y && cd ~ && git clone http://github.com/Tangerine-Community/Tangerine-server.git && cd Tangerine-server
 ```
 
-Update apt, get git, clone this repo
+Copy the `tangerine-env-vars.sh.defaults` file to `tangerine-env-vars.sh`. Edit some configuration variables. Make sure T_HOSTNAME is the hostname that your app will be visited at. If you want to set the T_HOSTNAME to the IP address of the machine, you might do the following.
 
 ```shell
-sudo apt-get update && sudo apt-get install git -y && cd ~ && git clone http://github.com/also-engineering/server.git && cd server
-```
-
-Edit some configuration variables.
-
-```shell
-vim ./tangerine-env-vars.sh
+IP_ADDRESS=$(ifconfig eth0 | grep "inet addr" | awk '{print $2}' | awk -F ':' '{print $2}')
+sed "s/T_HOSTNAME=localhost/T_HOSTNAME=$IP_ADDRESS/" tangerine-env-vars.sh.defaults > tangerine-env-vars.sh
 ```
 
 Kick it off
@@ -28,7 +25,7 @@ Kick it off
 ./server-init.sh
 ```
 
-When this finishes you should be able to go to the hostname that you provided during configuration, which should redirect you to the appropriate CouchApp url.
+When this finishes you should be able to go to the hostname that you provided during configuration, which should redirect you to the appropriate CouchApp url. A default user of user1:password has been created for you. Log in and create a group.
 
 # Updating on the server
 
