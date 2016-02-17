@@ -1,3 +1,6 @@
 [submodule "editor"]
 	path = editor
 	url = git@github.com:Tangerine-Community/Tangerine-editor.git
+[submodule "brockman"]
+	path = brockman
+	url = git@github.com:Tangerine-Community/Tangerine-brockman.git
