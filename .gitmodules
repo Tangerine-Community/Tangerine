@@ -1,15 +1,15 @@
 [submodule "editor"]
 	path = editor
-	url = git@github.com:Tangerine-Community/Tangerine-editor.git
+	url = https://github.com/Tangerine-Community/Tangerine-editor.git 
 [submodule "brockman"]
 	path = brockman
-	url = git@github.com:Tangerine-Community/Tangerine-brockman.git
+	url = https://github.com/Tangerine-Community/Tangerine-brockman.git 
 [submodule "decompressor"]
 	path = decompressor
-	url = git@github.com:Tangerine-Community/Tangerine-decompressor.git
+	url = https://github.com/Tangerine-Community/Tangerine-decompressor.git 
 [submodule "robbert"]
 	path = robbert
-	url = git@github.com:Tangerine-Community/Tangerine-robbert.git
+	url = https://github.com/Tangerine-Community/Tangerine-robbert.git 
 [submodule "tree"]
 	path = tree
-	url = git@github.com:Tangerine-Community/Tangerine-tree.git
+	url = https://github.com/Tangerine-Community/Tangerine-tree.git 
