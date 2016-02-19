@@ -14,7 +14,7 @@ Run the image.
 docker run -d --name tangerine-server-container -p 80:80 tangerine-server-image
 ```
 
-Now add an entry to our `/etc/hosts` file to point to the IP address your Docker is running so that it responds at the hostname of `tangerine`.  Then go to `http://tangerine/` in your browser.
+Now add an entry to our `/etc/hosts` file to point to the IP address of your Docker so that it responds at the hostname of `local.tangerinecentral.org`.  Then go to `http://local.tangerinecentral.org/` in your browser.
 
 Get into a running container to play around.
 ```
