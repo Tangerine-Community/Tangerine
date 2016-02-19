@@ -2,7 +2,32 @@
 
 This repo is meant to contain submodules references to each component required for the tangerine server, removing some manual steps to Tangerine server installation.
 
-# Getting started
+# Gettings started with Docker
+
+Build the image yourself.
+```
+docker build tangerine-server-image .
+```
+
+Run the image.
+```
+docker run -d --name tangerine-server-container -p 80:80 tangerine-server-image
+```
+
+Now add an entry to our `/etc/hosts` file to point to the IP address your Docker is running so that it responds at the hostname of `tangerine`.  Then go to `http://tangerine/` in your browser.
+
+Get into a running container to play around.
+```
+docker exec -it tangerine-server-container /bin/bash 
+```
+
+Is the container crashing on start so the above isn't working? Override the entrypoint command to start the container with just `/bin/bash`. 
+```
+docker run -it tangerine-server-image /bin/bash
+```
+
+
+# Getting started without Docker
 
 Spin up an Ubuntu 14.04 machine and then ssh into it.
 
