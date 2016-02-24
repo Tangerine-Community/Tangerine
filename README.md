@@ -6,12 +6,12 @@ This repo is meant to contain submodules references to each component required f
 
 Build the image yourself.
 ```
-docker build tangerine-server-image .
+docker build -t tangerine/tangerine-server .
 ```
 
 Run the image.
 ```
-docker run -d --name tangerine-server-container -p 80:80 tangerine-server-image
+docker run -d --name tangerine-server-container -p 80:80 tangerine/tangerine-server
 ```
 
 Now add an entry to our `/etc/hosts` file to point to the IP address of your Docker so that it responds at the hostname of `local.tangerinecentral.org`.  Then go to `http://local.tangerinecentral.org/` in your browser.
@@ -23,7 +23,7 @@ docker exec -it tangerine-server-container /bin/bash
 
 Is the container crashing on start so the above isn't working? Override the entrypoint command to start the container with just `/bin/bash`. 
 ```
-docker run -it tangerine-server-image /bin/bash
+docker run -it --entrypoint=/bin/bash tangerine/tangerine-server
 ```
 
 
