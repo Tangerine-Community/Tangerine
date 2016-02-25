@@ -1,5 +1,5 @@
 # these are the things you're most likely to want to change
-export T_HOSTNAME=localhost
+export T_HOSTNAME=local.tangerinecentral.org
 export T_ADMIN=admin
 export T_PASS=password
 

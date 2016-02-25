@@ -3,13 +3,13 @@
 
 set -v
 
-git submodule init && git submodule update
-
 # apt-get update
 if ! $updated_recently; then
   sudo apt-get update
   export updated_recently=TRUE
 fi
+
+git submodule init && git submodule update
 
 # install tangerine's env vars
 if [ ! -f /etc/profile.d/tangerine-env-vars.sh ]; then
@@ -46,14 +46,20 @@ fi
 if [ ! -z "`which couchdb`" ]; then
   echo "CouchDB already installed"
 else
-  sudo apt-get install python-software-properties -y
+  sudo apt-get install software-properties-common -y
   sudo apt-add-repository ppa:couchdb/stable
   sudo apt-get update
-  echo | sudo apt-get install couchdb couchdb-bin couchdb-common -y
+  sudo apt-get install couchdb -y
+  sudo chown -R couchdb:couchdb /usr/lib/couchdb /usr/share/couchdb /etc/couchdb /usr/bin/couchdb
+  sudo chmod -R 0770 /usr/lib/couchdb /usr/share/couchdb /etc/couchdb /usr/bin/couchdb
+  sudo mkdir /var/run/couchdb
+  sudo chown -R couchdb /var/run/couchdb
+  couchdb -k
+  couchdb -b
 
   # create server admin
   sudo -E sh -c 'echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini'
-  sudo service couchdb restart
+  couchdb -b
 
   # Add the first user.
   curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:user1" --data-binary '{"_id": "org.couchdb.user:user1","name": "user1","roles": [],"type": "user","password": "password"}'
@@ -97,12 +103,6 @@ if [ -a ./robbert/server-init.sh ]; then
   ./robbert/server-init.sh
 fi
 
+npm install -g pm2
 
-sudo env PM2_HOME="/home/$USER/.pm2" PATH=$PATH:/usr/local/bin pm2 startup -u $USER
-
-if [ -d "/home/$USER/.rvm" ]; then
-  source /home/$USER/.rvm/scripts/rvm
-  rvmsudo -E bash -c "pm2 start ecosystem.json -u $USER"
-else
-  sudo -E bash -c "pm2 start ecosystem.json -u $USER"
-fi
+echo "all done"
