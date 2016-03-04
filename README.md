@@ -41,7 +41,6 @@ Is the container crashing on start so the above isn't working? Override the entr
 docker run -it --entrypoint=/bin/bash tangerine/tangerine-server
 ```
 
-
 # Getting started without Docker
 
 Spin up an Ubuntu 14.04 machine and then ssh into it.
