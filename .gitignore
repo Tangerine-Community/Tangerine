@@ -1,2 +1,7 @@
 tanerine-env-vars.sh
 .idea
+
+couchdb.stdout
+
+couchdb.stderr
+
