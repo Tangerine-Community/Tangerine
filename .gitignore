@@ -4,4 +4,5 @@ tanerine-env-vars.sh
 couchdb.stdout
 
 couchdb.stderr
+node_modules
 
