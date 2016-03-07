@@ -1,0 +1,16 @@
+source 'https://rubygems.org'
+
+gem 'capybara'
+gem 'rspec'
+gem 'selenium-webdriver'
+gem 'poltergeist'
+gem 'rest-client'
+
+
+#group :test, :development do
+  #gem 'sqlite3'
+#end
+
+#group :test do
+#  gem 'rack-test'
+#end

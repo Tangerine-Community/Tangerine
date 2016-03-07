@@ -1,0 +1,29 @@
+{
+  "name": "decompressor",
+  "version": "0.0.0",
+  "description": "Recieves compressed uploads from Tangerine-client.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tangerine-Community/decompressor.git"
+  },
+  "author": "ict-admin@rti.org",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Tangerine-Community/decompressor/issues"
+  },
+  "homepage": "https://github.com/Tangerine-Community/decompressor#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "cookie-parser": "^1.4.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "http-status-codes": "^1.0.5",
+    "lz-string": "^1.3.3",
+    "unirest": "^0.4.2",
+    "winston": "^2.1.1"
+  }
+}

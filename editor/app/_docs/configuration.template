@@ -1,0 +1,119 @@
+{
+   "_id" : "configuration",
+
+
+   "local" : {
+      "host": "INSERT_HOSTNAME/db",
+      "dbName" : "tangerine"
+   },
+
+   "update" : {
+      "dbName" : "update",
+      "host"   : "INSERT_HOSTNAME/db",
+      "login"  : ""
+   },
+
+   "subnet" : {
+      "base" : "192.168.1."
+   },
+
+   "trunk" : {
+      "dbName" : "tangerine",
+      "host" : "INSERT_HOSTNAME/db"
+   },
+
+   "groupDBPrefix" : "group-",
+   "port" : 5984,
+
+   "tree"    : "http://INSERT_HOSTNAME/tree",
+   "robbert" : "http://INSERT_HOSTNAME/robbert",
+
+   "defaults" : {
+      "settings" : {
+         "groupDDoc" : "ojai",
+         "language" : "en-US",
+         "log" : [""],
+         "groupName" : "",
+         "groupHost" : "http://INSERT_HOSTNAME/db",
+         "upPass" : "pass"
+      }
+   },
+   "reports" : [
+      {
+         "reportType" : "progress",
+         "name" : "progress graph",
+         "menuView" : "ProgressMenuView"
+      },
+      {
+         "reportType" : "mastery",
+         "name" : "mastery check table",
+         "menuView" : "MasteryCheckMenuView"
+      },
+      {
+         "name" : "class grouping table",
+         "menuView" : "KlassGroupingMenuView"
+      },
+      {
+         "name" : "csv",
+         "menuView" : "CsvMenuView",
+         "context" : "server"
+      }
+   ],
+
+   "prototypeViews" : {
+      "grid" : {
+         "run" : "GridRunView",
+         "edit" : "GridEditView"
+      },
+      "location" : {
+         "run" : "LocationRunView",
+         "edit" : "LocationEditView"
+      },
+      "datetime" : {
+         "run" : "DatetimeRunView",
+         "edit" : "DatetimeEditView"
+      },
+      "observation" : {
+         "run" : "ObservationRunView",
+         "edit" : "ObservationEditView"
+      },
+      "survey" : {
+         "run" : "SurveyRunView",
+         "edit" : "SurveyEditView"
+      },
+      "gps" : {
+         "run" : "GpsRunView",
+         "edit" : "GpsEditView"
+      },
+      "id" : {
+         "run" : "IdRunView",
+         "edit" : "IdEditView"
+      },
+      "consent" : {
+         "run" : "ConsentRunView",
+         "edit" : "ConsentEditView"
+      }
+   },
+
+   "printFormats" : [
+      {
+         "name" : "Content",
+         "key" : "content"
+      },
+      {
+         "name" : "Stimuli",
+         "key" : "stimuli"
+      },
+      {
+         "name" : "Backup",
+         "key" : "backup"
+      },
+      {
+         "name" : "Metadata",
+         "key" : "metadata"
+      }
+   ],
+
+   "collection" : "config"
+
+}

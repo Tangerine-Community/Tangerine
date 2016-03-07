@@ -26,6 +26,11 @@ Push up your new image.
 docker push tangerine/tangerine-server 
 ```
 
+If you get an error when pushing to your own repository, login first
+```
+docker login
+```
+
 Get into a running container to play around.
 ```
 docker exec -it tangerine-server-container /bin/bash 
@@ -35,7 +40,6 @@ Is the container crashing on start so the above isn't working? Override the entr
 ```
 docker run -it --entrypoint=/bin/bash tangerine/tangerine-server
 ```
-
 
 # Getting started without Docker
 

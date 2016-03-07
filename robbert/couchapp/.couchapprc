@@ -1,0 +1,8 @@
+{
+  "comment" : "These defaults should change according to your environment.",
+  "env" : {
+    "default" : {
+      "db" : "http://$T_ADMIN:$T_PASS@localhost/db/_users"
+    }
+  }
+}

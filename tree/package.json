@@ -1,0 +1,30 @@
+{
+  "name": "tree",
+  "version": "0.0.0",
+  "description": "APK maker for Tangerine",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tangerine-Community/tree.git"
+  },
+  "author": "RTI International <ict-admin@rti.org>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Tangerine-Community/tree/issues"
+  },
+  "homepage": "https://github.com/Tangerine-Community/tree#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "cookie-parser": "^1.4.0",
+    "del": "^2.2.0",
+    "express": "^4.13.3",
+    "fs-extra": "^0.26.3",
+    "http-status-codes": "^1.0.5",
+    "shelljs": "^0.5.3",
+    "unirest": "^0.4.2",
+    "winston": "^2.1.1"
+  }
+}

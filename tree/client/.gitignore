@@ -1,0 +1,20 @@
+.project
+*.swp
+*.tmp
+.DS_store
+
+# Cordova
+platforms/
+plugins/
+
+# npm
+node_modules/
+
+bundler
+bundle/
+bundle/
+.bundle/
+
+# gulp build artifacts
+tmp/js/*
+tmp/min/*
