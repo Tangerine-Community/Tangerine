@@ -30,7 +30,9 @@ fi
 if [ ! -z "`which couchapp`" ]; then
   echo "couchapp already installed"
 else
-  sudo apt-get install python-dev -y
+  sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main"
+  sudo apt-get update
+  sudo apt-get install build-essential python-dev -y
   curl -O https://bootstrap.pypa.io/get-pip.py
   sudo python get-pip.py
   sudo pip install couchapp
