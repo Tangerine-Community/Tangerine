@@ -26,6 +26,8 @@ else
   sudo pip install couchapp
 fi
 
+couchdb -k
+couchdb -b
 
 # node
 if [ ! -z "`which node`" ]; then
