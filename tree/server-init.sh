@@ -47,7 +47,6 @@ else
   sudo apt-get -qqy install libncurses5:i386 libstdc++6:i386 zlib1g:i386
 fi
 
-
 # node
 if [ ! -z "`which node`" ]; then
   echo "node already installed"
@@ -55,10 +54,6 @@ else
   curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
   sudo apt-get install -y nodejs
 fi
-
-
-# git submodule init
-# git submodule update
 
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo pwd = $(pwd)
