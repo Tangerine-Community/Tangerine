@@ -9,8 +9,6 @@ if ! $updated_recently; then
   export updated_recently=TRUE
 fi
 
-# git submodule init && git submodule update
-
 # install tangerine's env vars
 #if [ ! -f /etc/profile.d/tangerine-env-vars.sh ]; then
 #  dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -72,6 +70,9 @@ fi
 #  curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:user1" --data-binary '{"_id": "org.couchdb.user:user1","name": "user1","roles": [],"type": "user","password": "password"}'
 #
 #fi
+
+couchdb -k
+couchdb -b
 
 # node
 if [ ! -z "`which node`" ]; then
