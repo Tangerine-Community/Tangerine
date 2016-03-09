@@ -38,6 +38,11 @@ else
   sudo pip install couchapp
 fi
 
+sudo service nginx restart
+
+couchdb -k
+couchdb -b
+
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir
 npm install
