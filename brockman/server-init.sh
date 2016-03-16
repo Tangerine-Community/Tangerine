@@ -4,10 +4,10 @@
 set -v # set verbose
 
 # apt-get update
-if ! $updated_recently; then
-  sudo apt-get update
-  export updated_recently=TRUE
-fi
+# if ! $updated_recently; then
+sudo apt-get update
+export updated_recently=TRUE
+#fi
 
 
 # curl
