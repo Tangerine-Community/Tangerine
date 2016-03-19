@@ -58,11 +58,13 @@ fi
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo pwd = $(pwd)
 cd $dir
-npm install
+sudo npm install
 
 cd client
 echo pwd = $(pwd)
 
-npm install
-
+sudo npm install
+# workaround for sudo
+sudo npm run postinstall
+echo "USER is $USER"
 sudo chown -R $USER ~
