@@ -1,0 +1,15 @@
+{
+  "_id": "acl",
+  "groups": [
+    {
+      "name": "Starter group",
+      "creator": "admin",
+      "users": ["admin", "user1"],
+      "permissions": [
+          "Create new group",
+          "Edit group's own content",
+          "Create group content"
+      ]
+    }
+  ]
+}
