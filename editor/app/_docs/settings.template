@@ -1,0 +1,12 @@
+{
+  "_id": "settings",
+  "language": "en-US",
+  "upPass": "pass",
+  "groupName": "",
+  "groupHost": "http://INSERT_HOSTNAME/db",
+  "groupDDoc": "ojai",
+  "log": [
+    ""
+  ],
+  "instanceId": "necd-vhga-yymg"
+}
