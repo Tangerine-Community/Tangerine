@@ -29,6 +29,15 @@ function newGroup(req, res) {
 
   Acl('Create new group',req.couchAuth.body.userCtx.name, 'global', function(err, hasPermission) { 
 
+    if (err) {
+      logger.warn('Group creation failed: Internal error.');
+      logger.warn(err)
+      return res.status(HttpStatus.UNAUTHORIZED)
+        .json({
+          message : 'There was an error. Try again later.'
+        });
+    }
+
     if (hasPermission == false) {
       logger.warn('Group creation failed: Insufficient permission.');
       return res.status(HttpStatus.UNAUTHORIZED)
