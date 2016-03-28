@@ -15,6 +15,8 @@ cd /root/Tangerine-server/editor/app
 sed "s/\INSERT_HOSTNAME/"$TS_URL"/g" _docs/configuration.template > _docs/configuration.json
 sed "s/\INSERT_HOSTNAME/"$TS_URL"/g" _docs/settings.template > _docs/settings.json
 couchapp push
+cd /root/Tangerine-server/robbert/couchapp
+couchapp push
 #updated=$(curl -s http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/settings | sed -En "s/local.tangerinecentral.org/$TS_URL/p")
 #curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/settings" --data-binary $updated
 cd /root/Tangerine-server
