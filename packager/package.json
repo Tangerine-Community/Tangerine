@@ -1,0 +1,32 @@
+{
+  "name": "configurator",
+  "version": "0.0.0",
+  "description": "APK configurator for Tangerine",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tangerine-Community/configurator.git"
+  },
+  "author": "RTI International <ict-admin@rti.org>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Tangerine-Community/configurator/issues"
+  },
+  "homepage": "https://github.com/Tangerine-Community/configurator#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "cookie-parser": "^1.4.0",
+    "del": "^2.2.0",
+    "express": "^4.13.3",
+    "fs-extra": "^0.26.3",
+    "http-status-codes": "^1.0.5",
+    "shelljs": "^0.5.3",
+    "unirest": "^0.4.2",
+    "url-join": "0.0.1",
+    "winston": "^2.1.1"
+  }
+}
