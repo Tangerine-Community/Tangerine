@@ -2,11 +2,7 @@
 
 const Conf = require('../Conf');
 
-const Token = require('../Token');
-
 const logger = require('../logger');
-
-const treeload = require('../treeload')
 
 require('shelljs/global');
 
@@ -95,15 +91,6 @@ let getAssessment = function(req, res) {
     // sanitize the group name
     const groupName = group.replace(/[^a-zA-Z0-9_\-]/, '')
     console.log("groupName: " + groupName)
-
-    // make a token
-    // const token = Token.make();
-
-    // load the json packs
-    // cd(`${__dirname}/../client`);
-    // const preload = exec(`npm run treeload --group=${groupName}`);
-    // let output = treeload(groupName)
-
 
     let JSON_HEADERS = {
       'Accept'       : 'application/json',

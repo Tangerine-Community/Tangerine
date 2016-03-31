@@ -4,7 +4,6 @@
   "description": "Assessment packager for Tangerine",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
     "start": "node index.js"
   },
   "repository": {
