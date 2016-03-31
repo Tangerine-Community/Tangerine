@@ -132,86 +132,67 @@ var logger = new winston.Logger({
 
 
 let treeload = function(groupName) {
-    // Summarize this job
-    logger.info(groupName)
-    let assessments = ""
-    const SOURCE_GROUP = `http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/group-${groupName}`;
+        // Summarize this job
+        logger.info(groupName)
+        let assessments = ""
+        const SOURCE_GROUP = `http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/group-${groupName}`;
+        // delete any old packs if they're there
+        del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])
+            .then( function (paths) {
+                if ( paths.length !== 0 ) {
+                    logger.debug(`Old json packs deleted: ${paths.map((p)=>p.substring(Conf.PACK_PATH.length)).join(', ')}`);
+                }
+            })
+            .then(function checkGroupExistence() {
+                return get(SOURCE_GROUP);
+            })
+            .then(function getIds() {
+                // Get a list of _ids for the assessments not archived
+                return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/assessmentsNotArchived"))
+            })
+            .then(function getAllDocs(res) {
+                // transform them to dKeys
+                let dKeyQuery = {
+                    keys: res.body.rows.map((row) => row.id.substr(-5))
+            };
 
-    // delete any old packs if they're there
-  del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])
-      .then( function (paths) {
-        if ( paths.length !== 0 ) {
-          logger.debug(`Old json packs deleted: ${paths.map((p)=>p.substring(Conf.PACK_PATH.length)).join(', ')}`);
-        }
-      })
-      .then(function checkGroupExistence() {
-        return get(SOURCE_GROUP);
-      })
-      .then(function getIds() {
-        // Get a list of _ids for the assessments not archived
-        return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/assessmentsNotArchived"))
-      })
-      .then(function getAllDocs(res) {
-        // transform them to dKeys
-        let dKeyQuery = {
-          keys: res.body.rows.map((row) => row.id.substr(-5))
-      };
+                // get a list of docs associated with those assessments
+                return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byDKey?"), dKeyQuery)
+            })
+            .then(function getIdList(res) {
 
-        // get a list of docs associated with those assessments
-        return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byDKey"), dKeyQuery)
-      })
-      .then(function packLoop(res) {
+                var idList = res.body.rows.map((row) => row.id);
+                idList.push("settings");
+                let idListQuery = {
+                    keys: idList,
+                    include_docs:true
+                }
+                post(urljoin(SOURCE_GROUP, "/_all_docs?include_docs=true"), idListQuery)
+                    .then(function(res){
 
-        var idList = res.body.rows.map((row) => row.id);
-        idList.push("settings");
-
-        var packIndex = 0;
-        var padding = "0000";
-
-        let doOne = function() {
-          // get X doc ids
-          let ids = idList.splice(0, Conf.PACK_DOC_SIZE);
-
-          // get n docs
-          get(urljoin(SOURCE_GROUP,`/_all_docs?include_docs=true&keys=${JSON.stringify(ids)}`))
-              .then(function(res){
-
-                let fileName = Path.join(Conf.PACK_PATH, `/pack${(padding + packIndex).substr(-4)}.json`);
-                let docs = res.body.rows.map( (row) => row.doc );
-                let body = JSON.stringify({
-                  docs: docs
-                });
-                  assessments = assessments + body
-
-                fs.writeFile(fileName, body, function(err) {
-                  if (err) {
-                    console.log(err.stack)
-                    logger.error(err);
-                    return process.exit(1);
-                  }
-
-                  let moreDocsAvailable = ids.length !== 0;
-                  if (moreDocsAvailable) {
-                    packIndex++;
-                    return doOne();
-                  } else {
-                    logger.info(`Done ${packIndex+1} packs written.`);
-                    console.log("assessments: " + assessments)
-                    // return process.exit(0);
-                  }
-                });
-
-              }); // END of get _all_docs
-
-        }; // END of doOne
-
-        doOne();
-
-      })
-      .catch(function noGroup(err) {
-        console.log(err.stack)
-        logger.error(err.msg);
-      });
+                        let fileName = Path.join(Conf.PACK_PATH, `/pack${groupName}.json`);
+                        // console.log("res.body: " + JSON.stringify(res.body.rows))
+                        let docs = res.body.rows.map( (row) => row.doc );
+                        let body = JSON.stringify({
+                            docs: docs
+                        });
+                        assessments = assessments + body
+                        // console.log("assessments:ready assessments" + JSON.stringify(docs))
+                        console.log("assessments:ready")
+                        fs.writeFile(fileName, body, function(err) {
+                            if (err) {
+                                console.log(err.stack)
+                                logger.error(err);
+                                // return process.exit(1);
+                            }
+                        })
+                        return assessments;
+                    }); // END of get _all_docs
+            })
+            .catch(function noGroup(err) {
+                console.log(err.stack)
+                logger.error(err.msg);
+            })
 }
 
 module.exports = treeload;

@@ -34,7 +34,13 @@ app.get('/', function(req, res){ res.status(HttpStatus.OK).send(`<body><canvas i
 
 // make an apk
 // app.post('/:group', require('./routes/getAssessments'));
-app.get('/:group', require('./routes/getAssessments'));
+app.get('/:group', function(req, res) {
+
+  let assessments = require('./routes/getAssessments')
+  return assessments(req, res);
+}
+);
+// app.get('/:group', function(req, res, next) { res.json({"foo": "bar"})});
 
 
 // cd(Conf.APP_ROOT_PATH);
