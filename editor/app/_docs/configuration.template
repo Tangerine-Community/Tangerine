@@ -25,7 +25,7 @@
    "groupDBPrefix" : "group-",
    "port" : 5984,
 
-   "tree"    : "http://INSERT_HOSTNAME/tree",
+   "tree"    : "INSERT_TREE_URL",
    "robbert" : "http://INSERT_HOSTNAME/robbert",
 
    "defaults" : {

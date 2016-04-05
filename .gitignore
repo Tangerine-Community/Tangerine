@@ -5,4 +5,5 @@ couchdb.stdout
 
 couchdb.stderr
 node_modules
+editor/tmp
 

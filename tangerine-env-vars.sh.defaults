@@ -2,6 +2,8 @@
 export T_HOSTNAME=local.tangerinecentral.org
 export T_ADMIN=admin
 export T_PASS=password
+export T_TREE_HOSTNAME=bigtree.tangerinecentral.org
+export T_TREE_URL=http://bigtree.tangerinecentral.org
 
 # these not so much
 export T_COUCH_HOST=localhost
