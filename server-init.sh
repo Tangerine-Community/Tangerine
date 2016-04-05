@@ -91,9 +91,9 @@ fi
 
 cd /root/Tangerine-server
 
-if [ -a ./tree/server-init.sh ]; then
-  ./tree/server-init.sh
-fi
+#if [ -a ./tree/server-init.sh ]; then
+#  ./tree/server-init.sh
+#fi
 
 if [ -a ./decompressor/server-init.sh ]; then
   ./decompressor/server-init.sh

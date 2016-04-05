@@ -586,7 +586,7 @@ class TangerineTree
     $.ajax
       type     : "POST"
       crossDomain : true
-      url      : Tangerine.config.get("tree") + "make/#{Tangerine.settings.get('groupName')}"
+      url      : Tangerine.config.get("tree") + "make/#{Tangerine.settings.get('hostname')}/#{Tangerine.settings.get('groupName')}"
       dataType : "json"
       data     : options
       success: ( data ) =>
