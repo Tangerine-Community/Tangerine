@@ -14,6 +14,7 @@ curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HO
 cd /root/Tangerine-server/editor/app
 sed "s/\INSERT_HOSTNAME/"$TS_URL"/g" _docs/configuration.template > _docs/configuration.json
 sed "s/\INSERT_HOSTNAME/"$TS_URL"/g" _docs/settings.template > _docs/settings.json
+sed "s/\INSERT_TREE_URL/"$T_TREE_URL"/g" _docs/settings.template > _docs/settings.json
 couchapp push
 cd /root/Tangerine-server/robbert/couchapp
 couchapp push
