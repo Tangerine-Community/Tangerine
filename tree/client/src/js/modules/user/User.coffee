@@ -92,7 +92,9 @@ class User extends Backbone.Model
 
   # attempt to restore a user's login state from couch session
   sessionRefresh: (callbacks) =>
+    hostname = Tangerine.settings.get('hostname')
     $.couch.session
+      hostname: hostname
       success: (response) =>
         if response.userCtx.name?
           @myName  = response.userCtx.name

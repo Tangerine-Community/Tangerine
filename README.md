@@ -71,7 +71,15 @@ When this finishes you should be able to go to the hostname that you provided du
 
 # Updating on the server
 
-`git pull && git submodule update`
+`git pull`
+
+# Modfying the source code
+
+Fork the repository and update your fork
+
+    git remote show Tangerine-Community
+    git checkout master
+    git pull Tangerine-Community master
 
 # Considerations
 

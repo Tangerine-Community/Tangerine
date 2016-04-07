@@ -112,7 +112,7 @@
         {
           data = AuthSession;
         }
-      } 
+      }
       return $.ajax({
         type: "GET", 
         url: this.urlPrefix + "/_session",
@@ -124,6 +124,11 @@
         complete: function(req) {
           var resp = $.parseJSON(req.responseText);
           if (req.status == 200) {
+            if (typeof options.hostname != "undefined")
+            {
+              AuthSession = $.cookie( "AuthSession" );
+              $.cookie("AuthSession:" + options.hostname, AuthSession, {path: "/", domain: "tangerinecentral.org"});
+            }
             if (options.success) options.success(resp);
           } else if (options.error) {
             options.error(req.status, resp.error, resp.reason);
