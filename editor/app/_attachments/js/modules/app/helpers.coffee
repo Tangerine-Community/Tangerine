@@ -709,7 +709,12 @@ class TangerineTree
     delete options.success
     delete options.error
 
+    authSession = $.cookie "AuthSession"
+
     options.user = Tangerine.user.name()
+    options.AuthSession = authSession
+
+    console.log("authSession: " + authSession)
 
     $.ajax
       type     : 'POST'
