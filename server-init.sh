@@ -111,6 +111,10 @@ fi
    ./robbert/server-init.sh
  fi
 
+# if [ -a ./packager/server-init.sh ]; then
+#   ./packager/server-init.sh
+# fi
+
 npm install -g pm2
 
 echo "all done"

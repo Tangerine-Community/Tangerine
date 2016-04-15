@@ -25,6 +25,14 @@
       "out_file"   : "../logs/decompressor.log",
       "pid_file"   : "../pids/decompressor.pid"
     }
+//    {
+//      "name"      : "packager",
+//      "cwd"        : "./packager/",
+//      "script"    : "packager/index.js",
+//      "error_file" : "../logs/packager-error.log",
+//      "out_file"   : "../logs/packager.log",
+//      "pid_file"   : "../pids/packager.pid"
+//    }
   ],
   "deploy" : {
     "production" : {
@@ -44,6 +52,7 @@
         "T_TREE_PORT" : 4445,
         "T_BROCKMAN_PORT" : 4446,
         "T_CORS_BULK_DOCS_PORT" : 4447,
+        "T_PACKAGER_PORT" : 4448,
         "NODE_ENV" : "production"
       }
     }

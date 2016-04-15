@@ -31,7 +31,7 @@ class AssessmentImportView extends Backbone.View
             newAssessment.on "status", @updateActivity
             newAssessment.updateFromServer dKeys
           error: (a, b) ->
-            Utils.midAlert "Import error"
+            Utils.midAlert "Import error" 
 
   verify: ->
     Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass

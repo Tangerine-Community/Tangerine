@@ -7,11 +7,13 @@ class User extends Backbone.Model
   initialize: (options) ->
     @myRoles  = []
     @myName = null
+    @myPass = null
 
   ###
     Accessors
   ###
   name:  -> @myName  || null
+  myPass:  -> @myPass  || null
   roles: -> @myRoles || null
   recentUsers: -> ($.cookie("recentUsers")||'').split(",")
 
@@ -39,14 +41,17 @@ class User extends Backbone.Model
     , { admin : [], member : [] }
 
   login: ( name, pass, callbacks = {}) =>
+#    console.log("User.login: " + pass)
     Tangerine.log.app "User-login-attempt", name
     $.couch.login
       name     : name
       password : pass
       success: ( user ) =>
+#        console.log("assigning @myPass:" + pass)
         @intent = ""
         @myName = name
         @pass = pass
+        @myPass = pass
         @myRoles  = user.roles
         Tangerine.log.app "User-login-success", name
         @fetch
@@ -110,6 +115,7 @@ class User extends Backbone.Model
       success: =>
         $.removeCookie "AuthSession"
         @myName  = null
+        @myPass  = null
         @pass = null
         @myRoles = []
         @clear()
