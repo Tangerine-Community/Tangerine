@@ -12,11 +12,13 @@ let warns = [];
 let requireVars = [
   {
     key: 'T_ADMIN',
-    desc: 'CouchDB admin user name.'
+    desc: 'CouchDB admin user name.',
+    defaultValue: "admin"
   },
   {
     key: 'T_PASS',
-    desc: 'CouchDB admin password.'
+    desc: 'CouchDB admin password.',
+    defaultValue: "password"
   },
   {
     key: 'T_COUCH_PORT',
@@ -30,8 +32,8 @@ let requireVars = [
   },
 
   {
-    key: 'T_CONFIG_PORT',
-    desc: 'Port for the Configure service.',
+    key: 'T_PACKAGER_PORT',
+    desc: 'Port for the Packager service.',
     defaultValue: 4448
   },
   {
@@ -71,7 +73,7 @@ requireVars.forEach(function processEnvVars(el){
 // Halt program if errors
 var missingSettings = Boolean(errors.length !== 0);
 if (missingSettings) {
-  console.log(`Tree requires these environment variables:\n
+  console.log(`Packager requires these environment variables:\n
 ${errors.map((el) => `${el.key}\t\t${el.desc}`).join('\n')}
 `);
   process.exit(1);

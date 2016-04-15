@@ -18,9 +18,8 @@ const HttpStatus = require('http-status-codes');
 
 const app = express();
 
-
 // parse requests with json bodies
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
 // use cookies
 app.use(cookieParser());
@@ -47,7 +46,7 @@ app.get('/:group', function(req, res) {
 // const mkdirResult = mkdir('-p', `apks`);
 
 // kick it off
-const server = app.listen(Settings.T_CONFIG_PORT, function () {
+const server = app.listen(Settings.T_PACKAGER_PORT, function () {
   const host = server.address().address;
   const port = server.address().port;
   console.log('Packager: http://%s:%s', host, port);

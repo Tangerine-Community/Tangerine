@@ -15,4 +15,4 @@ You can also set other parameters; see Settings.js.
     
 ## Browse to generate
 
-http://localhost:4448/sweet_tree
+http://localhost:4448/group-sweet_pea?host=www.host.com?username=username&password=password

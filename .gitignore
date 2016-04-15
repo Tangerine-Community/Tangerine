@@ -7,3 +7,9 @@ couchdb.stderr
 node_modules
 editor/tmp
 
+
+editor/app/_docs/settings.json
+
+brockman/Brockman.log
+
+editor/app/_docs/configuration.json

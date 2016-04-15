@@ -53,8 +53,14 @@ let Settings = require('../Settings.js');
 /** */
 let getAssessment = function(req, res) {
 
+    console.log("req.params: " + JSON.stringify(req.params));
+    console.log("req.query: " + JSON.stringify(req.query));
   // assert a group name
   const group = req.params.group;
+  const host = req.query.host;
+  const username = req.query.username;
+  const password = req.query.password;
+
   const emptyGroup = !group || group == ''
   if (emptyGroup) {
     return res
@@ -105,11 +111,12 @@ let getAssessment = function(req, res) {
     let get = function(url){
       logger.debug(`GET ${url}`);
       return new Promise(function(resolve, reject){
+          console.log("username: " + username)
         unirest.get(url)
             .auth({
-              user: Settings.T_ADMIN,
-              pass: Settings.T_PASS,
-              sendImmediately: true
+              user: username,
+              pass: password,
+              sendImmediately: false
             })
             .headers(JSON_HEADERS)
             .end(function(res){
@@ -155,8 +162,9 @@ let getAssessment = function(req, res) {
     // Summarize this job
     logger.info(groupName)
     let assessments = ""
-    const SOURCE_GROUP = `http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/group-${groupName}`;
-
+    // const SOURCE_GROUP = `http://${username}:${password}@${host}/${groupName}`;
+    const SOURCE_GROUP = `http://${host}/${groupName}`;
+    console.log("SOURCE_GROUP: " + SOURCE_GROUP)
     // delete any old packs if they're there
     del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])
         .then( function (paths) {
