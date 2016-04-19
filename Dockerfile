@@ -1,6 +1,7 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
 FROM tangerine/docker-tangerine-support
-ENV TS_URL local.tangerinecentral.org
+ENV T_HOST_NAME local.tangerinecentral.org
+ENV T_PROTOCOL https
 ENV T_NEW_ADMIN admin
 ENV T_NEW_ADMIN_PASS password
 ENV T_USER1 user1

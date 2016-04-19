@@ -3,8 +3,8 @@
   "language": "en-US",
   "upPass": "pass",
   "groupName": "",
-  "hostname": "INSERT_HOSTNAME",
-  "groupHost": "http://INSERT_HOSTNAME/db",
+  "hostname": "INSERT_HOST_NAME",
+  "groupHost": "INSERT_PROTOCOL://INSERT_HOST_NAME/db",
   "groupDDoc": "ojai",
   "log": [
     ""

@@ -9,12 +9,11 @@ couchdb -b
 service nginx start
 echo "We will relax while the couch gets ready."
 while true; do nc -vz $T_COUCH_HOST 5984 > /dev/null && break; done
-echo "TS_URL = $TS_URL"
 echo "Sending http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1"
 curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1" --data-binary '{"_id": "'"org.couchdb.user:$T_USER1"'","name": "'"$T_USER1"'","roles": [],"type": "user","password": "'"$T_USER1_PASSWORD"'"}'
 cd /root/Tangerine-server/editor/app
-sed "s#INSERT_HOSTNAME#"$TS_URL"#g" _docs/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" > _docs/configuration.json
-sed "s#INSERT_HOSTNAME#"$TS_URL"#g" _docs/settings.template > _docs/settings.json 
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/configuration.json
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/settings.json 
 couchapp push
 cd /root/Tangerine-server/robbert/couchapp
 couchapp push
