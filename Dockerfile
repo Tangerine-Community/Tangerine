@@ -9,6 +9,8 @@ ENV T_USER1_PASSWORD password
 ENV T_TREE_HOSTNAME bigtree.tangerinecentral.org
 ENV T_TREE_URL http://bigtree.tangerinecentral.org
 
+EXPOSE 80
+
 ADD ./ /root/Tangerine-server
 RUN /root/Tangerine-server/server-init.sh
 
