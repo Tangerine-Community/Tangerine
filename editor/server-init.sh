@@ -43,9 +43,6 @@ dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir
 npm install
 
-# using % instead of / for sed because there are /'s in url.
-sed "s%INSERT_HOSTNAME%$T_HOSTNAME%g;s%INSERT_TREE_URL%$T_TREE_URL%g" app/_docs/configuration.template > app/_docs/configuration.json
-
 npm start init
 
 cd app
