@@ -1,0 +1,8 @@
+T_VOLUMES="/home/ubuntu/data/"
+T_PROTOCOL="http"
+T_NEW_ADMIN="admin"
+T_NEW_ADMIN_PASS="password"
+T_USER1="user1"
+T_USER1_PASSWORD="password"
+T_TREE_HOSTNAME="bigtree.tangerinecentral.org"
+T_TREE_URL="http://bigtree.tangerinecentral.org"
