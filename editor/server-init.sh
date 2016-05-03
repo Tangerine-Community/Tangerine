@@ -13,6 +13,8 @@ else
   sudo pip install couchapp
 fi
 
+couchdb -k
+couchdb -b
 
 # hand it over to the gulp file
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

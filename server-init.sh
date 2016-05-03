@@ -89,7 +89,7 @@ else
   sudo npm install -g pm2
 fi
 
-cd /root/Tangerine-server
+cd /tangerine-server
 
 #if [ -a ./tree/server-init.sh ]; then
 #  ./tree/server-init.sh

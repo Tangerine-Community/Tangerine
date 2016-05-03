@@ -13,7 +13,7 @@ Now add an entry to our `/etc/hosts` file to point to the IP address of your Doc
 
 Sandbox time! Run the prebuilt image but override it with your local code. Here's an example that works on R.J.'s laptop. The path to the code folder will be different for you. Just make sure you make that an absolute path, not relative like `./`. 
 ```
-docker run -d --name tangerine-server-container -p 80:80 --volume /Users/rsteinert/Github/Tangerine-Community/Tangerine-server/:/root/Tangerine-server tangerine/tangerine-server
+docker run -d --name tangerine-server-container -p 80:80 --volume /Users/rsteinert/Github/Tangerine-Community/Tangerine-server/:/tangerine-server tangerine/tangerine-server
 ```
 
 Build the image yourself.
