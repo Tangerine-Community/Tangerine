@@ -1,4 +1,6 @@
 
+set -v
+
 # Install some core utilities
 apt-get update && apt-get -y install \
     software-properties-common \
