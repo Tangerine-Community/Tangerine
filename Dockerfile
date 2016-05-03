@@ -14,6 +14,14 @@ ENV T_USER1_PASSWORD password
 ENV T_TREE_HOSTNAME bigtree.tangerinecentral.org
 ENV T_TREE_URL http://bigtree.tangerinecentral.org
 
+ENV T_ADMIN admin
+ENV T_PASS password
+ENV T_COUCH_HOST localhost
+ENV T_COUCH_PORT 5984
+ENV T_ROBBERT_PORT 4444
+ENV T_TREE_PORT 4445
+ENV T_BROCKMAN_PORT 4446
+ENV T_DECOMPRESSOR_PORT 4447
 
 # Install some core utilities
 RUN apt-get update && apt-get -y install \
