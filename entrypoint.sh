@@ -19,4 +19,5 @@ cd /tangerine-server/robbert/couchapp
 couchapp push
 #updated=$(curl -s http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/settings | sed -En "s/local.tangerinecentral.org/$TS_URL/p")
 #curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/settings" --data-binary $updated
-pm2 start --no-daemon /tangerine-server/ecosystem.json
+cd /tangerine-server
+pm2 start --no-daemon ecosystem.json
