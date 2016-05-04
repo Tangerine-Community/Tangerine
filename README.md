@@ -28,7 +28,7 @@ docker run -d \
   tangerine/tangerine-server:latest
 ```
 
-To upgrade your server, run the following commands proceeded by the same docker run command from above.
+To upgrade your server, run the following commands followed by the same docker run command from above.
 ```
 docker stop tangerine-server-container
 docker rm tangerine-server-container
