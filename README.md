@@ -1,40 +1,87 @@
 # Tangerine-server
 
-This repo is meant to contain submodules references to each component required for the tangerine server, removing some manual steps to Tangerine server installation.
+## Getting started
 
-# Gettings started with Docker
-
-Run the prebuilt image.
+To run this server, [install docker](https://docker.io) and then run the following command with strings encapsulated in angle brackets replaced with your own custom settings.  
 ```
-docker run -d --name tangerine-server-container -p 80:80 tangerine/tangerine-server
-```
-
-Now add an entry to our `/etc/hosts` file to point to the IP address of your Docker so that it responds at the hostname of `local.tangerinecentral.org`.  Then go to `http://local.tangerinecentral.org/` in your browser.
-
-Sandbox time! Run the prebuilt image but override it with your local code. Here's an example that works on R.J.'s laptop. The path to the code folder will be different for you. Just make sure you make that an absolute path, not relative like `./`. 
-```
-docker run -d --name tangerine-server-container -p 80:80 --volume /Users/rsteinert/Github/Tangerine-Community/Tangerine-server/:/tangerine-server tangerine/tangerine-server
-```
-
-Build the image yourself.
-```
-docker build -t tangerine/tangerine-server .
+docker run -d \
+  --env "T_PROTOCOL=<protocol to reach the server, either http or https>" \
+  --env "T_USER1=<username for the first user>" \
+  --env "T_USER1_PASSWORD=<password for the first user>" \
+  --env "T_HOST_NAME=<url of the server without protocol>" \
+  --volume <path to a folder to save data>:/var/lib/couchdb \
+  -p 80:80 \
+  --name tangerine-server-container \
+  tangerine/tangerine-server:latest
 ```
 
-Push up your new image.
+For example...
 ```
-docker push tangerine/tangerine-server 
+docker run -d \
+  --env "T_PROTOCOL=http" \
+  --env "T_USER1=user1" \
+  --env "T_USER1_PASSWORD=mysecretpassword" \
+  --env "T_HOST_NAME=192.168.99.100" \
+  --volume /Users/rsteinert/Docker/tangerine-server-container/couchdb:/var/lib/couchdb \
+  -p 80:80 \
+  --name tangerine-server-container \
+  tangerine/tangerine-server:latest
 ```
 
-If you get an error when pushing to your own repository, login first
+To upgrade your server, run the following commands proceeded by the same docker run command from above.
 ```
-docker login
-```
-Run the container with environment variables that also has data volumes for couchdb and logs.
-```
-docker run -d -p 80:80  --name tangerine-server-container -e "TS_URL=ping.tangerinecentral.org"  -e "T_NEW_ADMIN=freaky"  -e "T_NEW_ADMIN_PASS=password" -e "T_USER1=foo" -e "T_USER1_PASSWORD=bar" -v /var/lib/couchdb -v /var/log tangerine/tangerine-server
+docker stop tangerine-server-container
+docker rm tangerine-server-container
+docker pull tangerine/tanerine-server:latest
 ```
 
+
+## Developers 
+
+To develop on Mac or Windows, this project requires a working knowledge of `docker` and `docker-machine`. While you can issue Docker commands from Windows or Mac, Docker containers cannot run directly run on those platforms (yet) so it requires connecting to another machine running Linux using the `docker-machine` command. To learn Docker, check out the [self-paced training on docker.io](https://training.docker.com/self-paced-training). 
+
+Now that your `docker` command is connected to Linux machine, get the code, build it, and run it. This first build will take up to 30 minutes depending on your Internet connection, processor power, and memory of your host machine. Future builds will be much faster because of the "Docker cache" you will be building on this first run. 
+```
+git clone git@github.com:Tangerine-Community/Tangerine-server.git
+cd Tangerine-server
+docker build tangerine/tangerine-server:test .
+docker run -d \
+  --env "T_PROTOCOL=<protocol to reach the server, either http or https>" \
+  --env "T_USER1=<username for the first user>" \
+  --env "T_USER1_PASSWORD=<password for the first user>" \
+  --env "T_HOST_NAME=<url of the server without protocol>" \
+  --volume <path to a folder to save data>:/var/lib/couchdb \
+  -p 80:80 \
+  --name tangerine-server-container \
+  tangerine/tangerine-server:test
+```
+
+Now that you've built and run an image tagged as `test`, view your server from a web browser to confirm it is working and follow the logs with the following command.
+
+```
+docker logs -f tangerine-server-container
+```
+
+If all is well, you can stop following the logs with `ctrl-c` and it's now time to make a code change and see that reflected in your browser. For example, edit `./editor/app/_attachments/index.html` and change the text in the `<title>` tag to be something like `<title>Hello Tangerine</title>`. If you reload your your browser you'll notice that the title tag has not changed. That's because the code your browser is viewing is based on the built image we made before the code change. To see our that change in the code we'll need to build and run the image again. 
+
+```
+docker build tangerine/tangerine-server:test .
+docker stop tangerine-server-container
+docker rm tangerine-server-container
+docker run -d \
+  --env "T_PROTOCOL=<protocol to reach the server, either http or https>" \
+  --env "T_USER1=<username for the first user>" \
+  --env "T_USER1_PASSWORD=<password for the first user>" \
+  --env "T_HOST_NAME=<url of the server without protocol>" \
+  --volume <path to a folder to save data>:/var/lib/couchdb \
+  -p 80:80 \
+  --name tangerine-server-container \
+  tangerine/tangerine-server:test
+```
+
+Now follow the logs again and check your browser. If all is well, you should now see the title of the web page as "Hello Tangerine".
+
+## Other notes
 You can also specify the tree service:
 
     -e "T_TREE_URL=http://cktree.tangerinecentral.org"
@@ -49,47 +96,3 @@ Is the container crashing on start so the above isn't working? Override the entr
 docker run -it --entrypoint=/bin/bash tangerine/tangerine-server
 ```
 
-# Getting started without Docker
-
-Spin up an Ubuntu 14.04 machine and then ssh into it.
-
-Update apt, get git, clone this repo.
-
-```shell
-sudo apt-get update && sudo apt-get install git -y && cd ~ && git clone http://github.com/Tangerine-Community/Tangerine-server.git && cd Tangerine-server
-```
-
-Copy the `tangerine-env-vars.sh.defaults` file to `tangerine-env-vars.sh`. Edit some configuration variables. Make sure T_HOSTNAME is the hostname that your app will be visited at. If you want to set the T_HOSTNAME to the IP address of the machine, you might do the following.
-
-```shell
-IP_ADDRESS=$(ifconfig eth0 | grep "inet addr" | awk '{print $2}' | awk -F ':' '{print $2}')
-sed "s/T_HOSTNAME=localhost/T_HOSTNAME=$IP_ADDRESS/" tangerine-env-vars.sh.defaults > tangerine-env-vars.sh
-```
-
-Kick it off
-
-```shell
-./server-init.sh
-```
-
-When this finishes you should be able to go to the hostname that you provided during configuration, which should redirect you to the appropriate CouchApp url. A default user of user1:password has been created for you. Log in and create a group.
-
-# Updating on the server
-
-`git pull`
-
-# Modfying the source code
-
-Fork the repository and update your fork
-
-    git remote show Tangerine-Community
-    git checkout master
-    git pull Tangerine-Community master
-
-# Considerations
-
-This repo can be thought of as an example for a deployment script. It relies heavily on submodules, so if you're doing development you will need to fork your own submodules, and `git add https://github.com/your-org/submodule` to fit this.
-
-For example. Once you have set up your server with the scripts in this repo, you can then replace any of the repos with whatever repo you like.
-
-Happy coding!
