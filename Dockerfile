@@ -44,4 +44,4 @@ RUN /tangerine-server/3-compile-code.sh
 
 EXPOSE 80
 
-ENTRYPOINT /tangerine-server/entrypoint.sh
+ENTRYPOINT /tangerine-server/4-entrypoint.sh
