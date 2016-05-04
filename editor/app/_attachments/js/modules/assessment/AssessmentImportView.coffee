@@ -176,7 +176,7 @@ class AssessmentImportView extends Backbone.View
 
           <input id='d_key' value=''>
           #{groupSelector || ''}<br>
-          <button class='import command'>Import</button> #{groupImport || ""}<br>
+          <button class='import command'>Import</button> <br>
           <small>Server connection: <span id='server_connection'>#{@serverStatus}</span></small>
         </div>
         <div class='confirmation status'>
