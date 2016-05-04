@@ -44,7 +44,7 @@ Now that your `docker` command is connected to Linux machine, get the code, buil
 ```
 git clone git@github.com:Tangerine-Community/Tangerine-server.git
 cd Tangerine-server
-docker build tangerine/tangerine-server:test .
+docker build -t tangerine/tangerine-server:test .
 docker run -d \
   --env "T_PROTOCOL=<protocol to reach the server, either http or https>" \
   --env "T_USER1=<username for the first user>" \
