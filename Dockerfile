@@ -39,8 +39,10 @@ ADD ./2-install-application-dependencies.sh /tangerine-server/2-install-applicat
 RUN /tangerine-server/2-install-application-dependencies.sh
 
 # Stage 3
-ADD ./ /tangerine-server
+ADD ./editor /tangerine-server/editor
+ADD ./3-compile-code.sh /tangerine-server/3-compile-code.sh
 RUN /tangerine-server/3-compile-code.sh
+ADD ./ /tangerine-server
 
 EXPOSE 80
 
