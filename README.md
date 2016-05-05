@@ -44,7 +44,7 @@ Now that your `docker` command is connected to Linux machine, get the code, buil
 ```
 git clone git@github.com:Tangerine-Community/Tangerine-server.git
 cd Tangerine-server
-docker build -t tangerine/tangerine-server:test .
+docker build -t tangerine/tangerine-server:local .
 docker run -d \
   --env "T_PROTOCOL=<protocol to reach the server, either http or https>" \
   --env "T_USER1=<username for the first user>" \
@@ -53,10 +53,10 @@ docker run -d \
   --volume <path to a folder to save data>:/var/lib/couchdb \
   -p 80:80 \
   --name tangerine-server-container \
-  tangerine/tangerine-server:test
+  tangerine/tangerine-server:local
 ```
 
-Now that you've built and run an image tagged as `test`, view your server from a web browser to confirm it is working and follow the logs with the following command.
+Now that you've built and run an image tagged as `local`, view your server from a web browser to confirm it is working and follow the logs with the following command.
 
 ```
 docker logs -f tangerine-server-container
@@ -65,7 +65,7 @@ docker logs -f tangerine-server-container
 If all is well, you can stop following the logs with `ctrl-c` and it's now time to make a code change and see that reflected in your browser. For example, edit `./editor/app/_attachments/index.html` and change the text in the `<title>` tag to be something like `<title>Hello Tangerine</title>`. If you reload your your browser you'll notice that the title tag has not changed. That's because the code your browser is viewing is based on the built image we made before the code change. To see our that change in the code we'll need to build and run the image again. 
 
 ```
-docker build tangerine/tangerine-server:test .
+docker build tangerine/tangerine-server:local .
 docker stop tangerine-server-container
 docker rm tangerine-server-container
 docker run -d \
@@ -76,7 +76,7 @@ docker run -d \
   --volume <path to a folder to save data>:/var/lib/couchdb \
   -p 80:80 \
   --name tangerine-server-container \
-  tangerine/tangerine-server:test
+  tangerine/tangerine-server:local
 ```
 
 Now follow the logs again and check your browser. If all is well, you should now see the title of the web page as "Hello Tangerine".
