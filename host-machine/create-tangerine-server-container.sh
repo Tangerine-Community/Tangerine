@@ -1,7 +1,5 @@
 set -v
 source ./config.sh
-docker stop tangerine-server-container
-docker rm tangerine-server-container
 docker run -d \
   --name tangerine-server-container \
   --env "T_PROTOCOL=$T_PROTOCOL" \
