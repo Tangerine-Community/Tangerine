@@ -61,27 +61,26 @@ app.post('/check/:group', bodyParser.json(), function(req, res) {
 
 // accept a call to _bulk_docs
 app.post('/upload/:group',
-  bodyParser.text({
-    limit: 20e6 // 20MB
-  }),
-  function(req, res) {
-
-    const group = req.params.group;
-
-    const compressedData = req.body;
-    const decompressed = LZString.decompressFromBase64(compressedData);
-
-    const url = `http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/group-${group}/_bulk_docs`
-
-    unirest.post(url).headers(JSON_OPTS)
-      .type('json')
-      .send(decompressed)
-      .end(function(response){
-        res.status(response.status)
-          .json(response.body);
-      });
-
-  }
+    function(req, res) {
+        var data = '';
+        req.on('data', function(chunk) {
+            data += chunk;
+        });
+        req.on('end', function() {
+            const group = req.params.group;
+            const formData = data.substring(0, data.length - 2)
+            const decompressed = LZString.decompressFromBase64(formData);
+            const json = JSON.parse(decompressed);
+            const url = `http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/group-${group}/_bulk_docs`
+            unirest.post(url).headers(JSON_OPTS)
+                .type('json')
+                .send(json)
+                .end(function(response){
+                    res.status(response.status)
+                        .json(response.body);
+                });
+        });
+    }
 );
 
 // kick it off
