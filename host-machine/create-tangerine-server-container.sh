@@ -3,8 +3,8 @@ source ./config.sh
 docker run -d \
   --name tangerine-server-container \
   --env "T_PROTOCOL=$T_PROTOCOL" \
-  --env "T_NEW_ADMIN=$T_NEW_ADMIN" \
-  --env "T_NEW_ADMIN_PASS=$T_NEW_ADMIN_PASS" \
+  --env "T_ADMIN=$T_ADMIN" \
+  --env "T_PASS=$T_PASS" \
   --env "T_USER1=$T_USER1" \
   --env "T_USER1_PASSWORD=$T_USER1_PASSWORD" \
   --env "T_TREE_HOSTNAME=$T_TREE_HOSTNAME" \

@@ -2,8 +2,8 @@
 #sudo mkdir /var/run/couchdb
 set -v
 sudo chown -R couchdb /var/run/couchdb
-echo "Setting up new admin for this TSI - T_ADMIN = $T_ADMIN T_NEW_ADMIN = $T_NEW_ADMIN TS_URL = $TS_URL"
-sudo -E sh -c 'echo "$T_NEW_ADMIN = $T_NEW_ADMIN_PASS" >> /etc/couchdb/local.ini'
+echo "Setting up new admin for this TSI - T_ADMIN = $T_ADMIN T_ADMIN = $T_ADMIN TS_URL = $TS_URL"
+sudo -E sh -c 'echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini'
 couchdb -k
 couchdb -b
 service nginx start

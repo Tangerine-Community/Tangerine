@@ -63,7 +63,7 @@ var server = app.listen(Settings.T_ROBBERT_PORT, function() {
 });
 
 // Update all group databases with most recent code from the tangerine database.
-var couchUrl = 'http://' + process.env.T_NEW_ADMIN + ':' + process.env.T_NEW_ADMIN_PASS + '@127.0.0.1:5984/'
+var couchUrl = 'http://' + process.env.T_ADMIN + ':' + process.env.T_PASS + '@127.0.0.1:5984/'
 var databases = []
 var groupDatabases = []
 unirest.get(couchUrl + '_all_dbs').send().end(function(response) { 
