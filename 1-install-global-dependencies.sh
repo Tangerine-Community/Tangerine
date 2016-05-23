@@ -74,6 +74,7 @@ chmod -R 0770 /usr/lib/couchdb /usr/share/couchdb /etc/couchdb /usr/bin/couchdb
 mkdir /var/run/couchdb
 chown -R couchdb /var/run/couchdb
 sed -i -e "s#\[couch_httpd_auth\]#\[couch_httpd_auth\]\ntimeout=9999999#" /etc/couchdb/local.ini
+sed -i 's#;bind_address = 127.0.0.1#bind_address = 0.0.0.0#' /etc/couchdb/local.ini
 couchdb -k
 couchdb -b
 
