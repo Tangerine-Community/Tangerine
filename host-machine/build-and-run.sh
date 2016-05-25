@@ -3,7 +3,6 @@ docker build -t tangerine/tangerine-server:local ../
 docker kill tangerine-server-container
 docker rm tangerine-server-container
 source ./config.sh
-echo $T_ADMIN
 docker run -d \
   --name tangerine-server-container \
   --env "T_PROTOCOL=$T_PROTOCOL" \
