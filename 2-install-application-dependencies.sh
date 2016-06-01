@@ -2,7 +2,6 @@
 set -v
 
 cd /tangerine-server/brockman
-# bundle install --path vendor/bundle
 /bin/bash -l -c "bundle install --path vendor/bundle"
 
 cd /tangerine-server/decompressor

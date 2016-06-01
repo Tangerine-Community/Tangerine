@@ -98,5 +98,5 @@ curl -L https://get.rvm.io | bash -s stable
 /bin/bash -l -c "rvm install ruby-2.2.0-dev"
 /bin/bash -l -c "rvm --default use ruby-2.2.0"
 /bin/bash -c "source /usr/local/rvm/bin/rvm && gem install bundler --no-ri --no-rdoc "
-
+export PATH=$PATH:/usr/local/rvm/rubies/ruby-2.2.0/bin/
 
