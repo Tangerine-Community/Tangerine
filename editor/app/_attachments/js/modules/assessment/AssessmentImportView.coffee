@@ -122,7 +122,7 @@ class AssessmentImportView extends Backbone.View
       @updateProgress null
     else if status == "import error"
       clearInterval @activeTaskInterval
-      @activity = "Import error: #{message}"
+      @activity = "Import error: " + JSON.stringify(message)
 
     @updateProgress()
 
@@ -151,13 +151,11 @@ class AssessmentImportView extends Backbone.View
   render: ->
 
 
-    legacyOption = "<option data-group='IrisCouch'>tangerine.iriscouch.com</option>" if String(window.location.href).indexOf("databases")
 
     groupSelector = "
       <select id='group'>
         <option data-group='NONE' selected='selected'>Please select a group</option>
-        #{legacyOption || ""}
-        #{("<option data-group='#{group}'>#{group}</option>" for group in Tangerine.user.getArray('groups')).join('')}
+        #{Tangerine.user.groups().admin.map( (group) -> "<option data-group='#{_.escape(group)}'>#{group}</option>").join('')}
       </select>
     "
 
