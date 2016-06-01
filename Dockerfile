@@ -25,8 +25,9 @@ ENV T_DECOMPRESSOR_PORT 4447
 ADD ./1-install-global-dependencies.sh /tangerine-server/1-install-global-dependencies.sh 
 ADD ./tangerine.conf /tangerine-server/tangerine.conf 
 RUN /tangerine-server/1-install-global-dependencies.sh
-ENV PATH /usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
+ENV PATH /usr/local/rvm/rubies/ruby-2.2.0/bin:/usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV GEM_PATH /usr/local/rvm/rubies/ruby-2.2.0
+ENV GEM_HOME /usr/local/rvm/rubies/ruby-2.2.0
 # Stage 2
 ADD ./brockman/Gemfile /tangerine-server/brockman/Gemfile
 ADD ./brockman/Gemfile.lock /tangerine-server/brockman/Gemfile.lock

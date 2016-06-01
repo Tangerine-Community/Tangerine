@@ -1,8 +1,9 @@
 
 set -v
-
+echo $PATH
+gem install bundler --no-ri --no-rdoc
 cd /tangerine-server/brockman
-/bin/bash -l -c "bundle install --path vendor/bundle"
+bundle install --path vendor/bundle
 
 cd /tangerine-server/decompressor
 npm install
