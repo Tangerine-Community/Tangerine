@@ -24,6 +24,10 @@ class Subtest extends Backbone.Model
     order        = options.order || 0
     
     newSubtest = @clone()
+    # @todo Backbone.Model.clone is choking on what we're giving it. 
+    # The result is something strange. It seems like the cloned model 
+    # is packed into the resulting attributes property.  
+    newSubtest = newSubtest.attributes
     newId = Utils.guid()
 
 
