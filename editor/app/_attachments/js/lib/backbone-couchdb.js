@@ -294,7 +294,7 @@ Backbone.Model = (function(superClass) {
 
   Model.prototype.clone = function() {
     var new_model;
-    new_model = new this.constructor(this);
+    new_model = new this.constructor(this.attributes);
     if (new_model.attributes._id) {
       delete new_model.attributes._id;
     }
