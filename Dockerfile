@@ -22,27 +22,29 @@ ENV T_BROCKMAN_PORT 4446
 ENV T_DECOMPRESSOR_PORT 4447
 
 # Stage 1
-ADD ./1-install-global-dependencies.sh /tangerine-server/1-install-global-dependencies.sh 
+ADD ./build-scripts/1-install-global-dependencies.sh /tangerine-server/build-scripts/1-install-global-dependencies.sh 
 ADD ./tangerine.conf /tangerine-server/tangerine.conf 
+RUN /tangerine-server/build-scripts/1-install-global-dependencies.sh
 RUN /tangerine-server/1-install-global-dependencies.sh
 ENV PATH /usr/local/rvm/rubies/ruby-2.2.0/bin:/usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV GEM_PATH /usr/local/rvm/rubies/ruby-2.2.0
 ENV GEM_HOME /usr/local/rvm/rubies/ruby-2.2.0
+
 # Stage 2
 ADD ./brockman/Gemfile /tangerine-server/brockman/Gemfile
 ADD ./brockman/Gemfile.lock /tangerine-server/brockman/Gemfile.lock
 ADD ./robbert/package.json /tangerine-server/robbert/package.json
 ADD ./editor/package.json /tangerine-server/editor/package.json
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
-ADD ./2-install-application-dependencies.sh /tangerine-server/2-install-application-dependencies.sh
-RUN /tangerine-server/2-install-application-dependencies.sh
+ADD ./build-scripts/2-install-application-dependencies.sh /tangerine-server/build-scripts/2-install-application-dependencies.sh
+RUN /tangerine-server/build-scripts/2-install-application-dependencies.sh
 
 # Stage 3
 ADD ./editor /tangerine-server/editor
-ADD ./3-compile-code.sh /tangerine-server/3-compile-code.sh
-RUN /tangerine-server/3-compile-code.sh
+ADD ./build-scripts/3-compile-code.sh /tangerine-server/build-scripts/3-compile-code.sh
+RUN /tangerine-server/build-scripts/3-compile-code.sh
 ADD ./ /tangerine-server
 
 EXPOSE 80
 
-ENTRYPOINT /tangerine-server/4-entrypoint.sh
+ENTRYPOINT /tangerine-server/build-scripts/4-entrypoint.sh
