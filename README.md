@@ -2,7 +2,7 @@
 This is one of two main Tangerine software repositories, the other is Tangerine-client. You will want to run this if you are planning on running a Tangerine server for editing assessments and uploading data from tablets.  
 
 ## Getting started
-Install on a server with the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
+To install on a server, install Docker on your server and then run the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
 ```
 wget <latest release, choose tar.gz option>
 tar xvf <the tarball>
@@ -10,15 +10,10 @@ cd <the now uncompressed tangerine folder>
 cp config.defaults.sh config.sh
 # Edit the config.sh file to match your desired settings. Try `nano config.sh`. 
 # You must edit all of the variables in the "Required to change" section. 
-./start.sh
+./install.sh
 ```
 
-To upgrade your server, run the following commands. 
-```
-cd Tangerine-server
-./upgrade.sh
-```
-
+If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine-server folder. To upgrade your server, run the `./upgrade.sh` script. 
 
 ## Develop on Tangerine 
 To develop on Mac or Windows, this project requires a working knowledge of `docker` and `docker-machine`. While you can issue Docker commands from Windows or Mac, Docker containers cannot run directly run on those platforms (yet) so it requires connecting to another machine running Linux using the `docker-machine` command. To learn Docker, check out the [self-paced training on docker.io](https://training.docker.com/self-paced-training). 
