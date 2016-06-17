@@ -2,25 +2,9 @@
 This is one of two main Tangerine software repositories, the other is Tangerine-client. You will want to run this if you are planning on running a Tangerine server for editing assessments and uploading data from tablets.  
 
 ## Getting started
-<<<<<<< HEAD
-
-To run this server, [install docker](https://docker.io) and then run the following command with strings encapsulated in 
-angle brackets replaced with your own custom settings.  
+Install on a server with the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
 ```
-docker run -d \
-  --env "T_PROTOCOL=<protocol to reach the server, either http or https>" \
-  --env "T_USER1=<username for the first user>" \
-  --env "T_USER1_PASSWORD=<password for the first user>" \
-  --env "T_HOST_NAME=<url of the server without protocol>" \
-  --volume <path to a folder to save data>:/var/lib/couchdb \
-  -p 80:80 \
-  --name tangerine-server-container \
-  tangerine/tangerine-server:latest
-=======
-To run this server, [install docker](https://docker.io) and then run the following. If you are planning on developing, skip this section. 
->>>>>>> build-scripts-in-build-script-folder
-```
-git clone https://github.com/Tangerine-Community/Tangerine-server.git
+wget <latest release, choose tar.gz option>
 cd Tangerine-server
 cp config.defaults.sh config.sh
 # Edit the config.sh file to match your desired settings. Try `nano config.sh`. 

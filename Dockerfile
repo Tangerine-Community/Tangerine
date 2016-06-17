@@ -25,7 +25,6 @@ ENV T_DECOMPRESSOR_PORT 4447
 ADD ./build-scripts/1-install-global-dependencies.sh /tangerine-server/build-scripts/1-install-global-dependencies.sh 
 ADD ./tangerine.conf /tangerine-server/tangerine.conf 
 RUN /tangerine-server/build-scripts/1-install-global-dependencies.sh
-RUN /tangerine-server/1-install-global-dependencies.sh
 ENV PATH /usr/local/rvm/rubies/ruby-2.2.0/bin:/usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV GEM_PATH /usr/local/rvm/rubies/ruby-2.2.0
 ENV GEM_HOME /usr/local/rvm/rubies/ruby-2.2.0
