@@ -1,7 +1,7 @@
 # Tangerine-server
 This is one of two main Tangerine software repositories, the other is Tangerine-client. You will want to run this if you are planning on running a Tangerine server for editing assessments and uploading data from tablets.  
 
-## Getting started
+## Installation
 To install on a server, install Docker on your server and then run the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
 ```
 wget <latest release, choose tar.gz option>
