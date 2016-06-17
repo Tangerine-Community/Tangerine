@@ -1,4 +1,15 @@
+#!/bin/bash
+
 set -v
+source ./config.defaults.sh
+if [ -f "./config.sh" ]
+then
+  source ./config.sh
+fi
+
+docker build -t tangerine/tangerine-server:local ../
+docker kill tangerine-server-container
+docker rm tangerine-server-container
 source ./config.sh
 docker run -d \
   --name tangerine-server-container \
@@ -11,5 +22,7 @@ docker run -d \
   --env "T_TREE_URL=$T_TREE_URL" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   -p 80:80 \
+  -p 5984:5984 \
   --volume $T_VOLUMES/tangerine-server/couchdb/:/var/lib/couchdb \
-  tangerine/tangerine-server:$1
+  tangerine/tangerine-server:local
+docker logs -f tangerine-server-container
