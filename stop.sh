@@ -1,2 +1,2 @@
 #!/bin/bash
-docker stop hub
+docker stop tangerine-server-container
