@@ -2,7 +2,7 @@
 This is one of two main Tangerine software repositories, the other is Tangerine-client. You will want to run this if you are planning on running a Tangerine server for editing assessments and uploading data from tablets.  
 
 ## Installation
-To install on a server, install Docker on your server and then run the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
+The easiest way to get started is to create an Ubuntu 14.04 Droplet on [Digital Ocean](https://digitalocean.com), SSH into it from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
 ```
 wget <latest release, choose tar.gz option>
 tar xvf <the tarball>
@@ -12,6 +12,8 @@ cp config.defaults.sh config.sh
 # You must edit all of the variables in the "Required to change" section. 
 ./install.sh
 ```
+
+Now visit your Tangerine-server installation at the IP address or hostname of your installation.
 
 If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine-server folder. To upgrade your server, run the `./upgrade.sh` script. 
 
