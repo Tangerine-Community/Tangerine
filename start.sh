@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker start hub
+docker start tangerine-server-container
