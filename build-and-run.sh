@@ -7,7 +7,7 @@ then
   source ./config.sh
 fi
 
-docker build -t tangerine/tangerine-server:local ../
+docker build -t tangerine/tangerine-server:local .
 docker kill tangerine-server-container
 docker rm tangerine-server-container
 source ./config.sh

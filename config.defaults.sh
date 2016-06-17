@@ -10,9 +10,9 @@ T_HOST_NAME='xxx.x.x.x'
 T_USER1="user1"
 T_USER1_PASSWORD="password"
 
-# T_NEW_ADMIN is the admin user for your database. Make sure to change this so the outside world does not have access.
-T_NEW_ADMIN="admin"
-T_NEW_ADMIN_PASS="password"
+# T_ADMIN is the admin user for your database. Make sure to change this so the outside world does not have access.
+T_ADMIN="admin"
+T_PASS="password"
 
 #
 # Optional to change
