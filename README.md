@@ -1,4 +1,5 @@
 # Tangerine-server
+This is one of two main Tangerine software repositories, the other is Tangerine-client. You will want to run this if you are planning on running a Tangerine server for editing assessments and uploading data from tablets.  
 
 ## Getting started
 To run this server, [install docker](https://docker.io) and then run the following. If you are planning on developing, skip this section. 
@@ -19,7 +20,6 @@ cd Tangerine-server
 
 
 ## Develop on Tangerine 
-
 To develop on Mac or Windows, this project requires a working knowledge of `docker` and `docker-machine`. While you can issue Docker commands from Windows or Mac, Docker containers cannot run directly run on those platforms (yet) so it requires connecting to another machine running Linux using the `docker-machine` command. To learn Docker, check out the [self-paced training on docker.io](https://training.docker.com/self-paced-training). 
 
 Now that your `docker` command is connected to Linux machine it's time to get the code, but before you download the code, you will want to "fork it". Go to https://github.com/Tangerine-Community/Tangerine-server and click on the "Fork" button. Choose to fork the repository into your own personal Github account. From your forked version of the code, copy the clone URL and issue the following commands.
