@@ -5,7 +5,8 @@ This is one of two main Tangerine software repositories, the other is Tangerine-
 Install on a server with the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
 ```
 wget <latest release, choose tar.gz option>
-cd Tangerine-server
+tar xvf <the tarball>
+cd <the now uncompressed tangerine folder>
 cp config.defaults.sh config.sh
 # Edit the config.sh file to match your desired settings. Try `nano config.sh`. 
 # You must edit all of the variables in the "Required to change" section. 
