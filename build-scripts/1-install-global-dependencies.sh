@@ -78,9 +78,6 @@ sed -i 's#;bind_address = 127.0.0.1#bind_address = 0.0.0.0#' /etc/couchdb/local.
 couchdb -k
 couchdb -b
 
-# create server admin
-sh -c 'echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini'
-
 # couchapp
 # add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main"
 apt-get install build-essential python-dev -y 
