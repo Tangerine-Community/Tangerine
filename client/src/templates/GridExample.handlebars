@@ -1,0 +1,18 @@
+<h3>{{name}}</h3>
+{{#unless untimed}}
+<div class='timer_wrapper'>
+    <button class='start_time time'>{{ui.text.start}}</button>
+    <div class='timer'>{{timer}}</div>
+</div>
+{{/unless}}
+{{#if layoutMode_fixed}}
+<table class='grid {{disabling}} {{displayRtl}}'>
+{{{startRow @index columns}}}
+    {{#each items}}
+        {{{startCell @index}}}
+            <td>
+                <button data-label='{{label}}' data-index='{{@index}}' class='grid_element {{fontSizeClass}}' {{fontStyle}}>{{gridLabel ../items ../itemMap @index}}</button>
+            </td>
+    {{/each}}
+{{/if}}
+{{{endRow @index}}}

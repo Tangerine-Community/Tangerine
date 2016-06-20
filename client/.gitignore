@@ -1,0 +1,29 @@
+.project
+*.swp
+*.tmp
+.DS_store
+
+# Cordova
+platforms/
+plugins/
+
+# npm
+node_modules/
+bower_components/
+npm-debug.log
+
+# gulp build artifacts
+tmp/js/*
+tmp/min/*
+lib.js
+app.js
+src/compiled/*
+
+# tangerine's packs
+src/js/init/pack*.json
+test/packs.json
+src/packs.json
+
+
+.idea
+
