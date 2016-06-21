@@ -550,6 +550,20 @@
         })
       )
 
+
+      it('Should download the assessment config', (done)->
+        this.$fixture.empty().appendTo(this.$container);
+        T_ADMIN="username"
+        T_PASS="password"
+        group = "sweet_tree"
+        success = () ->
+          console.log("It's all good")
+          done()
+        error = (message) ->
+          console.log("Error: " + message)
+        assessments = Utils.getAssessments(T_ADMIN, T_PASS, group, success, error)
+      )
+
   dbs.split(',').forEach((db) ->
     # dbType = /^http/.test(db) ? 'http' : 'local'
     tests db

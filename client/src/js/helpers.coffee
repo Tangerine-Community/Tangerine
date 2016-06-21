@@ -656,8 +656,89 @@ class Utils
         Tangerine.db.bulkDocs res, (error, doc) ->
           if error then callback(error) else callback()
 
+  @getAssessments: (T_ADMIN, T_PASS, group, success, error) ->
+
+    SOURCE_GROUP = "http://" + T_ADMIN + ":" + T_PASS + "@databases.tangerinecentral.org/group-" + group;
 
 
+    # helper method for json get requests
+    # needs opts.url.
+    # Chain handlers to .end(f)
+    get = (opts) ->
+      data = opts.data || {};
+      return $.getJSON(opts.url)
+#        .header('Accept', 'application/json')
+#        .header('Content-Type', 'application/json');
+
+
+    # helper method for json post requests
+    # needs opts.data and opts.url.
+    # Chain handlers to .end(f)
+    post = (opts) ->
+      data = opts.data || {};
+      return $.post(
+        url: opts.url
+        dataType: 'json'
+        data: data
+      )
+#      .header('Accept', 'application/json')
+#      .header('Content-Type', 'application/json')
+#      .send(data)
+
+    assessments = ""
+    get({url: SOURCE_GROUP}).done((res) ->
+      if res.code != 200
+        console.log(res.code)
+        console.log(res.rawbody)
+        error(res.rawbody)
+    )
+    post(
+      url: SOURCE_GROUP + "/_design/ojai/_view/assessmentsNotArchived"
+      ).done((res) ->
+#       transform them to dKeys
+      list_query_data =
+          keys: res.body.rows.map( (row) ->
+            return row.id.substr(-5)
+            )
+#      get a list of files associated with those assessments
+        post(
+          url: SOURCE_GROUP + "/_design/ojai/_view/byDKey",
+          data: list_query_data
+        ).done((res) ->
+          id_list = res.body.rows.map((row) ->
+            return row.id;
+          )
+          id_list.push("settings")
+          pack_number = 0;
+          padding = "0000";
+
+          fse.ensureDirSync(PACK_PATH); # make sure the directory is there
+          doOne() ->
+            ids = id_list.splice(0, PACK_DOC_SIZE); # get X doc ids
+            #get n docs
+            get(
+              url: SOURCE_GROUP + "/_all_docs?include_docs=true&keys=" + JSON.stringify(ids)
+            )
+            .done((res) ->
+#              file_name = PACK_PATH + "/pack" + (padding + pack_number).substr(-4) + ".json";
+              docs = res.body.rows.map((row) ->
+                return row.doc;
+                )
+              body = JSON.stringify(
+                docs: docs
+                )
+              assessments = assessments + body
+              console.log(pack_number + " added to assessments");
+              if ids.length != 0
+                pack_number++;
+                doOne()
+              else
+                console.log("All done")
+
+            ) # END of get _all_docs
+          doOne()
+          ) # END of byDKey callback
+    ) # END of assessmentsNotArchived callback
 
 # Robbert interface
 class Robbert

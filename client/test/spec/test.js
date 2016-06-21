@@ -1007,7 +1007,7 @@
           }
         });
       });
-      return it('Should pass to the Kiswahili page and display only the first question (focusmode)', function(done) {
+      it('Should pass to the Kiswahili page and display only the first question (focusmode)', function(done) {
         var assessment, id;
         this.$fixture.empty().appendTo(this.$container);
         id = "122a745b-e619-d4c0-29cd-3e9e27645632";
@@ -1082,6 +1082,60 @@
             return view.render();
           }
         });
+      });
+      it('Should skip to Subtask 3', function(done) {
+        var assessment, id;
+        this.timeout(30000);
+        this.$fixture.empty().appendTo(this.$container);
+        id = "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9";
+        assessment = new Assessment({
+          "_id": id
+        });
+        return assessment.deepFetch({
+          error: function(err) {
+            console.log("Catch Error: " + JSON.stringify(err));
+            return done(err);
+          },
+          success: function(record) {
+            var view, viewOptions;
+            Tangerine.assessment = assessment;
+            viewOptions = {
+              model: assessment,
+              el: this.$fixture
+            };
+            view = new AssessmentCompositeView(viewOptions);
+            view.once("render", function() {
+              var buttons;
+              view.once("render", function() {
+                var buttons, levelZero;
+                levelZero = view.$el.find('#level_0');
+                view.once("render", function() {
+                  return done();
+                });
+                buttons = view.$el.find('.subtest-next');
+                return $(buttons[0]).click();
+              });
+              buttons = view.$el.find('.subtest-next');
+              return $(buttons[0]).click();
+            });
+            return view.render();
+          }
+        });
+      });
+      return it('Should download the assessment config', function(done) {
+        var T_ADMIN, T_PASS, assessments, error, group, success;
+        this.$fixture.empty().appendTo(this.$container);
+        T_ADMIN = "username";
+        T_PASS = "password";
+        group = "sweet_tree";
+        success = function() {
+          console.log("It's all good");
+          return done();
+        };
+        error = function(message) {
+          return console.log("Error: " + message);
+        };
+        return assessments = Utils.getAssessments(T_ADMIN, T_PASS, group, success, error);
       });
     });
   };

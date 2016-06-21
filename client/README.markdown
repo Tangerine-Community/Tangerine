@@ -96,7 +96,7 @@ Enter the username and password on the commandline:
 
 If you already have loaded data in your local pouch, you'll need to follow the instruction on clearing your pouch instance later in this document.
  
-There is another way to pre-load data into your dev environment; however, it it more gered twoards writing tests:
+There is another way to pre-load data into your dev environment; however, it it more geared towards writing tests:
 
 `./scripts/compilepacks.js` will compile development Assessment packs used for testing to `./test/packs.json`.  
 
