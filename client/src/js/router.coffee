@@ -19,7 +19,7 @@ class Router extends Backbone.Router
 
   routes:
     'widget'   : 'widgetLoad'
-    'widget-play' : 'widgetPlay'
+    'widget-play/:id' : 'widgetPlay'
     'login'    : 'login'
     'register' : 'register'
     'logout'   : 'logout'
