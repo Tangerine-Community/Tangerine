@@ -1,0 +1,122 @@
+[
+  {
+    "_id": "18d0b903-581d-fd5c-1dc5-ee5a0edccc1b",
+    "_rev": "1-c5047b732144954e78784934e5b008ed",
+    "prompt": "Q2 focus",
+    "name": "q2_focus",
+    "hint": "multiple responses allowed",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "df78e138-538a-df42-1157-7ace1d49ad27",
+    "assessmentId": "af072ff9-e325-c518-7ecd-c04f5ed4ec00",
+    "id": "a3304d1f-ca37-02d9-c6e0-b50830264622",
+    "editedBy": "tangerine",
+    "updated": "Wed Dec 16 2015 17:55:11 GMT-0600 (CST)",
+    "hash": "nry9eKMnOEygDiOHZyF+ZN6WF0A=",
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "19b061c7-7493-6410-7ef2-d383d7367764",
+    "_rev": "1-75fb41ca019f409e13d7b3ef46045375",
+    "prompt": "Q1 focus",
+    "name": "q1_focus",
+    "hint": "",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "True",
+        "value": "1"
+      },
+      {
+        "label": "False",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "df78e138-538a-df42-1157-7ace1d49ad27",
+    "assessmentId": "af072ff9-e325-c518-7ecd-c04f5ed4ec00",
+    "id": "a4473f9f-fd84-1838-fdcf-af9b1c6d3526",
+    "editedBy": "tangerine",
+    "updated": "Wed Dec 16 2015 17:55:11 GMT-0600 (CST)",
+    "hash": "jbe2FJjHDTPFZDhIIE+8XdYmsbc=",
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "af072ff9-e325-c518-7ecd-c04f5ed4ec00",
+    "_rev": "1-b8f607d5955e96f526305f8d528b2415",
+    "name": "FocusMode Test",
+    "assessmentId": "af072ff9-e325-c518-7ecd-c04f5ed4ec00",
+    "archived": false,
+    "editedBy": "tangerine",
+    "updated": "Wed Dec 16 2015 17:54:40 GMT-0600 (CST)",
+    "hash": "UICfBgFBcUBlOHnDHXMYxz7sre0=",
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "collection": "assessment"
+  },
+  {
+    "_id": "df78e138-538a-df42-1157-7ace1d49ad27",
+    "_rev": "2-c18d1eb18d59449aac238fe742d38a5b",
+    "studentDialog": "",
+    "enumeratorHelp": "",
+    "transitionComment": "",
+    "skippable": false,
+    "order": 0,
+    "prototype": "survey",
+    "gridLinkId": "",
+    "name": "Standard Survey in Focus Mode",
+    "assessmentId": "af072ff9-e325-c518-7ecd-c04f5ed4ec00",
+    "items": [
+      "metamorphosis",
+      "erudite",
+      "precocious"
+    ],
+    "columns": 0,
+    "autostop": 0,
+    "timer": 60,
+    "locations": [],
+    "editedBy": "tangerine",
+    "updated": "Wed Dec 16 2015 17:55:12 GMT-0600 (CST)",
+    "hash": "XIZTm9Uv6SYmugvXUPATUvdvdWI=",
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "collection": "subtest",
+    "rtl": false,
+    "backButton": true,
+    "language": "",
+    "displayCode": "",
+    "fontFamily": "",
+    "autostopLimit": 0,
+    "focusMode": true
+  }
+]
