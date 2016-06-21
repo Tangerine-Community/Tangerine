@@ -421,7 +421,6 @@ class Router extends Backbone.Router
             vm.show new AssessmentRunView model: assessment
 
   widgetLoad: () ->
-    Tangerine.db = new PouchDB("tangerine-" + Date.now() + Math.random(), {storage: 'temporary'})
     assessmentDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
     assessmentId = ''
     resultId = ''

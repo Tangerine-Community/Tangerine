@@ -9,7 +9,7 @@
         $(document).ready(function() {
           $.get('embedded-widget-assessment.json', function(response) {
             var $assessmentWidget = $(document.createElement('iframe'))
-            $assessmentWidget.attr('src', '../index-dev.html')
+            $assessmentWidget.attr('src', '../index.html#widget')
             $assessmentWidget.attr('data-assessment', JSON.stringify(response))
             $assessmentWidget.attr('data-result', '{}')
             $assessmentWidget.attr('width', 400)
