@@ -18,6 +18,8 @@ class Router extends Backbone.Router
       callback.apply(this, args);
 
   routes:
+    'widget'   : 'widgetLoad'
+    'widget-play' : 'widgetPlay'
     'login'    : 'login'
     'register' : 'register'
     'logout'   : 'logout'
@@ -417,6 +419,51 @@ class Router extends Backbone.Router
         assessment.deepFetch
           success : ->
             vm.show new AssessmentRunView model: assessment
+
+  widgetLoad: () ->
+    Tangerine.db = new PouchDB("tangerine-" + Date.now() + Math.random(), {storage: 'temporary'})
+    assessmentDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
+    assessmentId = ''
+    resultId = ''
+    i = 0
+    insertRecord = ->
+      Tangerine.db
+        .put(assessmentDocs[i])
+        .then( (response) ->
+          i++
+          if assessmentDocs[i]
+            # Catch the Assessment ID that will be passing by here.
+            if assessmentDocs[i].collection == 'assessment'
+              assessmentId = assessmentDocs[i]._id
+            insertRecord()
+          else
+            Backbone.history.navigate('#widget-play/' + assessmentId, {trigger: true})
+        )
+        .catch( (error) ->
+          alert("Oops. Something went wrong \n\n" + error)
+        )
+    insertRecord()
+
+  widgetPlay: (id) ->
+    router = this
+    router.navigateAwayMessage = t("Router.message.quit_assessment")
+    assessment = new Assessment "_id" : id
+    assessment.deepFetch
+      success : ->
+        dashboardLayout = new DashboardLayout();
+        Tangerine.app.rm.get('mainRegion').show dashboardLayout
+        dashboardLayout.contentRegion.reset()
+        assessmentCompositeView = new AssessmentCompositeView
+          assessment: assessment
+        assessmentCompositeView.on('render', () =>
+          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
+          evt = document.createEvent("Event");
+          evt.initEvent("result-save", true, false);
+          window.frameElement.dispatchEvent(evt)
+        )
+        dashboardLayout.contentRegion.show(assessmentCompositeView)
+      error: (model, err, cb) ->
+        console.log JSON.stringify err
 
   runMar: (id) ->
     router = this

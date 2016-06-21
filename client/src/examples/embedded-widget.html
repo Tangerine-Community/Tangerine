@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+      <title>Tangerine Embedded Widget Example</title>
+      <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+
+      <script type="text/javascript">
+        $(document).ready(function() {
+          $.get('embedded-widget-assessment.json', function(response) {
+            var $assessmentWidget = $(document.createElement('iframe'))
+            $assessmentWidget.attr('src', '../index-dev.html')
+            $assessmentWidget.attr('data-assessment', JSON.stringify(response))
+            $assessmentWidget.attr('data-result', '{}')
+            $assessmentWidget.attr('width', 400)
+            $assessmentWidget.attr('height', 500)
+            $assessmentWidget.on('result-save', function(event) {
+              $('.result').html(event.target.getAttribute('data-result'))
+            })
+            $('.assessment').html($assessmentWidget)
+          })
+        })
+      </script>
+    </head>
+
+    <body>
+      <h1>Embedded Assessment Example</h1>
+      <h2> Assessment Widget </h2>
+      <div class="assessment"></div>
+      <h2>Output of result</h2>
+      <div class="result"></div>
+    </body>
+
+</html>
