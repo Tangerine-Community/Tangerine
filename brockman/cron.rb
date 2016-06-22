@@ -12,7 +12,7 @@
 # 3. tutorTrips by workflowId
 # The union of the latter two will give a list of 
 
-require_relative 'settings.rb'
+require_relative 'config.rb'
 require_relative 'helpers/Couch'
 require_relative 'helpers/CouchIterator'
 
@@ -28,7 +28,7 @@ END
 
 puts header
 
-dbs = [ 'group-fake_tutor_2', 'group-tutor_feb_25' ]
+dbs = [ 'group-tutor_feb_25' ]
 years  = [ 2013, 2014 ]
 months = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
 workflowIds = ["00b0a09a-2a9f-baca-2acb-c6264d4247cb","c835fc38-de99-d064-59d3-e772ccefcf7d"]

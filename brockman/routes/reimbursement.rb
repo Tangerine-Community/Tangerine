@@ -108,6 +108,8 @@ class Brockman < Sinatra::Base
           #init container for users
           result['users'][countyName]                   ||= {}
           result['users'][countyName][zoneName]         ||= {}
+
+          puts "#{countyName}\t#{subCountyName}\t#{zoneName}\t#{zone['quota']}"
         }
       } 
     }
@@ -211,6 +213,7 @@ class Brockman < Sinatra::Base
 
         allRows += workflowResponse['rows']
       }
+      #byworkflowidresponse = couch.postRequest({ :view => "tutorTrips", :data => { "keys" => workflowKey }, :parseJson => true } )
 
       tripsFromWorkflow = allRows.map{ |e| e['value'] }
       tripIds           = tripIds & tripsFromWorkflow
@@ -288,6 +291,9 @@ class Brockman < Sinatra::Base
         result['visits']['byCounty'][countyName]['visits']                      += 1 
         result['visits']['byCounty'][countyName]['zones'][zoneName]['visits']   += 1
       end
+
+      #puts 'Outputting visits - byCounty'
+      #puts result['visits']['byCounty']
 
     }
 
@@ -571,8 +577,7 @@ class Brockman < Sinatra::Base
               month   = $('#month-select').val().toLowerCase()
               county  = $('#county-select').val().toLowerCase()
               zone  = $('#zone-select').val().toLowerCase()
-              
-              //Callback for reloading the page - swap commented lines for dev/prod
+
               document.location = 'http://#{$settings[:host]}/_csv/reimbursement/#{group}/#{workflowIds}/'+year+'/'+month+'/'+county+'/'+zone+'.html';
               //document.location = 'http://localhost:9292/reimbursement/#{group}/#{workflowIds}/'+year+'/'+month+'/'+county+'/'+zone+'.html';
             });
