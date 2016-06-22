@@ -1,6 +1,6 @@
 env:
   global:
-    - REPO="/Tangerine-Community/Tangerine/client"
+    - REPO="client"
     - CI_HOME=`pwd`/$REPO
 language: node_js
 node_js:
