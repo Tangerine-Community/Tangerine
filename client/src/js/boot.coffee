@@ -19,7 +19,13 @@ Tangerine.bootSequence =
     Pouch configuration
     ###
 
-    Tangerine.db = new PouchDB(Tangerine.conf.db_name)
+    if (window.location.hash == '#widget')
+      # This is a widget and we should keep our memory temporary.
+      Tangerine.db = new PouchDB("tangerine-" + Date.now() + Math.random(), {storage: 'temporary'})
+    else 
+      # This is not a widget and we'll hang onto our long term memory.
+      Tangerine.db = new PouchDB(Tangerine.conf.db_name)
+
     Backbone.sync = BackbonePouch.sync
       db: Tangerine.db
       fetch: 'view'
