@@ -118,7 +118,8 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
       for level, i in @levels
         previousLevel = ''
         if previous
-          previousLevel = previous.location[i]
+          if previous.location
+            previousLevel = previous.location[i]
         html += "
           <div class='label_value'>
             <label for='level_#{i}'>#{level}</label><br>
@@ -137,7 +138,8 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
 
         previousLevel = ''
         if previous
-          previousLevel = previous.location[i]
+          if previous.location
+            previousLevel = previous.location[i]
         
         levelOptions = @getOptions(i, previousLevel)
 

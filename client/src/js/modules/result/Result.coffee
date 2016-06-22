@@ -63,9 +63,10 @@ class Result extends Backbone.Model
     return null
 
   getByHash: ( hash ) ->
-    for subtest in @get("subtestData")
-      if hash is subtest.subtestHash
-        return subtest.data
+    if (hash?)
+      for subtest in @get("subtestData")
+        if hash is subtest.subtestHash
+          return subtest.data
     return null
 
   getGridScore: (id) ->

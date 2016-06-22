@@ -3,6 +3,7 @@
 /*
  * Downloads documents from a CouchDB server and puts them into json "pack" files.
  * Change group_name to the group your Tangerine will connect to and download from.
+ * ./preload.js T_ADMIN=username T_PASS=password protocol=https hostname=www.server.org group_name=test123
  */
 
 var group_name = "rti_tanzania_2016_test";
@@ -12,34 +13,21 @@ var fse = require('fs-extra'); // for mkdirp
 var unirest = require('unirest'); // a REST client
 var del = require('del'); // 
 
-
 /*
  * parse arguments...kinda
  * arguments    argv
- * --g=9.2      { g : "9.2" }
- * -g this      { g : "this" }
- * -s           { s : true }
- * --s --thing  { s : true, thing : true }
+ * T_ADMIN=username      { T_ADMIN : "username" }
  */
 var rawrgv = [];
 argv = {};
 
-if (process.env.npm_config_argv) {
-  // when called by NPM
-  rawrgv = JSON.parse(process.env.npm_config_argv).original;
-} else {
-  // print process.argv
-  //rawrgv = process.argv
-  process.argv.forEach(function (val, index, array) {
-    console.log(index + ': ' + val);
-    var split = val.split("=");
-    var key = split[0];
-    var value = split[1];
-    argv[key] = value;
-  });
-  //rawrgv = JSON.parse(process.env);
-}
-
+process.argv.forEach(function (val, index, array) {
+  console.log(index + ': ' + val);
+  var split = val.split("=");
+  var key = split[0];
+  var value = split[1];
+  argv[key] = value;
+});
 
 rawrgv.forEach(function(el, i){
   if (~el.indexOf("--") && ~el.indexOf("=")) {
@@ -72,11 +60,13 @@ var PACK_PATH = __dirname + '/../src/js/init';
 
 //if ( ! ( process.env.T_ADMIN && process.env.T_PASS ) ) {
 if ( ! ( argv.T_ADMIN && argv.T_PASS ) ) {
-  console.log("T_ADMIN and T_PASS env variables need to be set.");
+  console.log("T_ADMIN and T_PASS args need to be set.");
   process.exit(1);
 }
 
-var SOURCE_GROUP = "http://" + argv.T_ADMIN + ":" + argv.T_PASS + "@databases.tangerinecentral.org/group-" + group_name;
+var SOURCE_GROUP = argv.protocol + "://" + argv.T_ADMIN + ":" + argv.T_PASS + "@" + argv.hostname+"/group-" + argv.group_name;
+
+console.log("SOURCE_GROUP:" + SOURCE_GROUP);
 
 // helper method for json post requests
 // needs opts.data and opts.url.
