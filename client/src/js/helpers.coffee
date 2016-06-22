@@ -209,7 +209,12 @@ class Utils
     if Tangerine.settings.get("groupHost") == "localhost"
       allDocsUrl = "http://#{Tangerine.settings.get("groupHost")}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
     else
+      if a.host == "databases.tangerinecentral.org"
       allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
+      else if a.host == "databases-qa.tangerinecentral.org"
+        allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
+      else
+        allDocsUrl = "#{a.protocol}//#{a.host}/decompressor/check/#{Tangerine.settings.get('groupName')}"
 
     $("#upload_results").append(t("Utils.message.checkingServer") + '&nbsp' + docList.length + '<br/>')
 
@@ -217,8 +222,9 @@ class Utils
       url: allDocsUrl
       type: "POST"
       dataType: "json"
-      data:
-        keys: JSON.stringify(docList)
+      contentType: "application/json"
+      data: JSON.stringify
+        keys: docList
         user: Tangerine.settings.upUser
         pass: Tangerine.settings.upPass
       error: (e) ->
@@ -249,7 +255,12 @@ class Utils
           if Tangerine.settings.get("groupHost") == "localhost"
             bulkDocsUrl = "http://#{Tangerine.settings.get("groupHost")}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
           else
+            if a.host == "databases.tangerinecentral.org"
             bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
+            else if a.host == "databases-qa.tangerinecentral.org"
+              bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
+            else
+              bulkDocsUrl = "#{a.protocol}//#{a.host}/decompressor/upload/#{Tangerine.settings.get('groupName')}"
 
           $.ajax
             type : "POST"
