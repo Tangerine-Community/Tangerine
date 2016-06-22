@@ -174,6 +174,7 @@ gulp.task('version', function(cb) {
           if (err !== null) { console.log(err); }
           cb();
         });
+      gulp.src([conf.tmpMinDir + '/version.js']).pipe(gulp.dest('./www/compiled'));
     });
   });
 
@@ -204,6 +205,7 @@ gulp.task('build:locales', function(){
     .pipe(uglify())                   // make it small
     .pipe(concat('locales.js'))       // turn it into one file
     .pipe(gulp.dest(conf.tmpMinDir))  // send it here
+    .pipe(gulp.dest('./www/compiled'))  // send it here
     .pipe(connect.reload());          // reload anyone watching
 
 });
@@ -282,12 +284,12 @@ gulp.task('prepare-index-dev', function () {
       //console.log(file);
       gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest('./www/compiled'));
       gulp.src(['./tmp/min/templates.js']).pipe(gulp.dest('./www/compiled'));
-      gulp.src([conf.tmpMinDir + '/version.js'])
-          //.pipe(debug({title: 'unicorn:', minimal: false}))
-          .pipe(gulp.dest('./www/compiled'));
-      gulp.src([conf.tmpMinDir + '/locales.js'])
-          //.pipe(debug({minimal: false}))
-          .pipe(gulp.dest('./www/compiled'));
+      // gulp.src([conf.tmpMinDir + '/version.js'])
+      //     //.pipe(debug({title: 'unicorn:', minimal: false}))
+      //     .pipe(gulp.dest('./www/compiled'));
+      // gulp.src([conf.tmpMinDir + '/locales.js'])
+      //     //.pipe(debug({minimal: false}))
+      //     .pipe(gulp.dest('./www/compiled'));
       var template = gulp.src('./www/index-dev-template.html');
       //var target = gulp.src('./www/index-dev.html');
       // It's not necessary to read the files (will speed up things), we're only after their paths:
