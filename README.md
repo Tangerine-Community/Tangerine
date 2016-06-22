@@ -4,7 +4,10 @@
 
 Digitize your EGMA and EGRA data collection with Tangerine. All results you collect can be exported as a spreadsheet.
 
-This is one of two main Tangerine software repositories, the other is Tangerine-client. You will want to run this if you are planning on running a Tangerine server for editing assessments and uploading data from tablets.  
+This is one of two main Tangerine software repositories, the other is docker-tangerine-tree. The docker-tangerine-tree repository will soon be included with this one.
+You will want to use this repository if you are planning on running a Tangerine server for editing assessments and uploading data from tablets.  
+
+The client directory contains the code for the client app used for data entry. It has its own build process and is not yet integrated with server.
 
 ## Installation
 
