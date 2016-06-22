@@ -1,6 +1,6 @@
 # Tangerine client
 
-![Tangerine](http://www.tangerinecentral.org/sites/default/files/tangerine-logo-150.png)
+[![Tangerine](http://static1.squarespace.com/static/55c4e56fe4b0852b09fa2f29/t/55c4ec18e4b0f8bc41c735ae/1461960019800/?format=1500w)
 
 [![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine.svg)](https://travis-ci.org/Tangerine-Community/Tangerine-client)
 
@@ -13,8 +13,9 @@ scale, country-level, district-level or classroom-level. Tangerine is designed f
 [Early Grade Reading Assessments](https://www.eddataglobal.org/reading/) but flexible and  powerful enough to 
 handle any survey's requirements.
 
-Please visit the [wiki](https://github.com/Tangerine-Community/Tangerine/wiki) for the most up to date development guides
-and references and [Tangerine Central](http://www.tanerinecentral.org) for much more information and news.
+Please visit the [main Tangerine repository](https://github.com/Tangerine-Community/Tangerine) for the most up to date development guides
+for building Tangerine server, an important component of Tangerine, as well as [Tangerine Central](http://www.tanerinecentral.org) 
+for much more information and news. There is a [Tangerine chat on Glitter](https://gitter.im/Tangerine-Community/Tangerine) for help too. 
 
 Tangerine client is a single page application (SPA) that saves data locally using [PouchDB](https://pouchdb.com/) and synchronises 
 with [Apache CouchDB](http://couchdb.apache.org/). This SPA is built using the Backbone framework [Marionette.js](http://marionettejs.com/) 
