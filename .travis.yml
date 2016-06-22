@@ -5,9 +5,15 @@ env:
 language: node_js
 node_js:
   - "node"
-before_install: npm install -g grunt-cli
+before_install:
+  - echo TRAVIS_BUILD_DIR: $TRAVIS_BUILD_DIR
+  - echo CI_HOME: $CI_HOME
+  - cd $CI_HOME
+  - npm install -g grunt-cli
 install: npm install
 before_script:
+  - echo CI_HOME: $CI_HOME
+  - cd $CI_HOME
   - npm install -g bower
   - bower install
 notifications:
