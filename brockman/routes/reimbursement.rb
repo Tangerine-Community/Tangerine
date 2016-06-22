@@ -571,8 +571,7 @@ class Brockman < Sinatra::Base
               month   = $('#month-select').val().toLowerCase()
               county  = $('#county-select').val().toLowerCase()
               zone  = $('#zone-select').val().toLowerCase()
-              
-              //Callback for reloading the page - swap commented lines for dev/prod
+
               document.location = 'http://#{$settings[:host]}/_csv/reimbursement/#{group}/#{workflowIds}/'+year+'/'+month+'/'+county+'/'+zone+'.html';
               //document.location = 'http://localhost:9292/reimbursement/#{group}/#{workflowIds}/'+year+'/'+month+'/'+county+'/'+zone+'.html';
             });
