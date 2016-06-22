@@ -1,21 +1,24 @@
-# Tangerine
+# Tangerine client
 
 ![Tangerine](http://www.tangerinecentral.org/sites/default/files/tangerine-logo-150.png)
 
-[![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine-client.svg)](https://travis-ci.org/Tangerine-Community/Tangerine-client)
+[![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine.svg)](https://travis-ci.org/Tangerine-Community/Tangerine-client)
 
-[![Stories in Ready](https://badge.waffle.io/Tangerine-Community/Tangerine-client.png?label=ready&title=Ready)](https://waffle.io/Tangerine-Community/Tangerine-client)
+[![Stories in Ready](https://badge.waffle.io/Tangerine-Community/Tangerine.png?label=ready&title=Ready)](https://waffle.io/Tangerine-Community/Tangerine-client)
 
 ## Assess students with tablets or your phone
 
-Tangerine is an application for assessing students on any scale, country-level, district-level or classroom-level.
-Tangerine is designed for [Early Grade Reading Assessments](https://www.eddataglobal.org/reading/) but flexible and powerful enough to handle any survey's requirements.
+This directory is for the client application for Tangerine. Tangerine is an application for assessing students on any 
+scale, country-level, district-level or classroom-level. Tangerine is designed for 
+[Early Grade Reading Assessments](https://www.eddataglobal.org/reading/) but flexible and  powerful enough to 
+handle any survey's requirements.
 
 Please visit the [wiki](https://github.com/Tangerine-Community/Tangerine/wiki) for the most up to date development guides
 and references and [Tangerine Central](http://www.tanerinecentral.org) for much more information and news.
 
-Alternatively put, Tangerine is a [CouchApp](http://couchapp.org/page/index) that uses
-[Apache CouchDB](http://couchdb.apache.org/) built with [Backbone.js](http://backbonejs.org/), [LessCSS](http://lesscss.org/) written in [CoffeeScript](http://coffeescript.org/) augmented with [Sinatra](http://www.sinatrarb.com/) and PHP.
+Tangerine client is a single page application (SPA) that saves data locally using [PouchDB](https://pouchdb.com/) and synchronises 
+with [Apache CouchDB](http://couchdb.apache.org/). This SPA is built using the Backbone framework [Marionette.js](http://marionettejs.com/) 
+and is written in [CoffeeScript](http://coffeescript.org/).
 
 ## Following this project
 
