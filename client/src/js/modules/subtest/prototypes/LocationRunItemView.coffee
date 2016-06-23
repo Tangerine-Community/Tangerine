@@ -1,6 +1,6 @@
 class LocationRunItemView extends Backbone.Marionette.ItemView
 
-  className: "LocationRunView"
+  className: "LocationRunItemView"
 
   events:
     "click .school_list li" : "autofill"

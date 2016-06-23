@@ -400,6 +400,7 @@ conf.fileOrder = [
   'ObservationRunView',
 
   'GpsRunView',
+  'GpsRunItemView',
 
   'Result',
   'Results',
