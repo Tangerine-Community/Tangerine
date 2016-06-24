@@ -19,7 +19,7 @@ T_PASS="password"
 #
 
 # TANGERINE_SERVER_VERSION is the version that the start.sh and uprgrade.sh script will use when installing Tangerine-server.
-TANGERINE_SERVER_VERSION="latest"
+TANGERINE_VERSION="latest"
 # If you are not on an Ubuntu system, change this to be a path of somewhere else to store data.
 T_VOLUMES="/home/ubuntu/data/"
 # If you have set up SSL on your server, you must change this to "https".
