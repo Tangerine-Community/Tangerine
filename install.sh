@@ -7,7 +7,7 @@ then
   source ./config.sh
 fi
 
-docker pull tangerine/tangerine-server:$TANGERINE_SERVER_VERSION
+docker pull tangerine/tangerine:$TANGERINE_VERSION
 docker run -d \
   --name tangerine-server-container \
   --env "T_PROTOCOL=$T_PROTOCOL" \
@@ -20,4 +20,4 @@ docker run -d \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   -p 80:80 \
   --volume $T_VOLUMES/tangerine-server/couchdb/:/var/lib/couchdb \
-  tangerine/tangerine-server:$TANGERINE_SERVER_VERSION
+  tangerine/tangerine:$TANGERINE_VERSION
