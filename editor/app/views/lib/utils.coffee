@@ -5,10 +5,10 @@ gridValueMap =
     "skipped" : "999" # skipped
 
 surveyValueMap =
-    C : "1"   # checked
-    U : "0"   # unchecked
-    N : "."   # not asked
-    S : "999" # skipped
+    "checked" : "1"   # checked
+    "unchecked" : "0"   # unchecked
+    "not asked" : "."   # not asked
+    "skipped" : "999" # skipped
 
 
 translatedGridValue = ( databaseValue = "no_record" ) ->
