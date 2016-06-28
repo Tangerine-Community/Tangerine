@@ -65,11 +65,9 @@ ADD ./.git /tangerine-server/.git
 # Compile editor.
 ADD ./editor /tangerine-server/editor
 RUN cd /tangerine-server/editor && npm start init
-# Compile client.
+# Compile client. Run twice otherwise compile is incomplete. See #74.
 ADD ./client /tangerine-server/client
-RUN cd /tangerine-server/client && npm run gulp init
-# Run twice otherwise compile is incomplete. See #74.
-RUN cd /tangerine-server/client && npm run gulp init
+RUN cd /tangerine-server/client && npm run gulp init && npm run gulp init
 # Add all of the rest of the code.
 ADD ./ /tangerine-server
 
