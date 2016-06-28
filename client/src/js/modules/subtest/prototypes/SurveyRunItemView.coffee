@@ -85,7 +85,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
   updateQuestionVisibility: ->
 
-    return unless @model.get("focusMode")
+    return unless @model.get("focusMode")? && @model.get("focusMode") is true
 
     if @questionIndex == @questionViews.length
 #      $("#summary_container").html "

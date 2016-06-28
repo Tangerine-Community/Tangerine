@@ -9,7 +9,7 @@ $cordova platform add android@5.X.X --save
 # install plugins
 
 # crosswalk for older browser versioni compatibility 
-$cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="org.xwalk:xwalk_core_library_beta:18+" --save
+$cordova plugin add cordova-plugin-crosswalk-webview --save --variable XWALK_VERSION="19+"
 
 # location services
 $cordova plugin add cordova-plugin-geolocation --save
@@ -18,3 +18,5 @@ $cordova plugin add cordova-plugin-geolocation --save
 $cordova plugin add cordova-plugin-whitelist --save
 
 npm run gulp init
+
+$cordova build android

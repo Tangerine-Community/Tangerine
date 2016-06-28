@@ -13,7 +13,9 @@ Digitize your EGMA and EGRA data collection with Tangerine. Create your Assessme
 This is one of two main Tangerine software repositories, the other is docker-tangerine-tree. The docker-tangerine-tree repository will soon be included with this one.
 You will want to use this repository if you are planning on running a Tangerine server for editing assessments and uploading data from tablets.  
 
-The client directory contains the code for the client app used for data entry. It has its own build process and is not yet integrated with server.
+The client directory contains the code for the client app used for data entry. It has its own build process and is not yet 
+integrated with server. Develop with this client code and copy it to the client directory in docker-tangerine-tree, and 
+then tag the docker-tangerine-tree repository.
 
 ## Installation
 
@@ -86,4 +88,17 @@ Please note: you must create a new group when you wish to view your changes.
 
 Be sure to commit your code ASAP. Once your container is gone; any uncommitted changes will also be gone.
 
+# Configuring the client app
+
+As mentioned above, you should develope client here and copy to docker-tangerine-tree. If you are running docker-tangerine-tree 
+on your own server, you must configure the relevant urls in the Content-Security-Policy section of index.html:
+
+````
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src *;
+          style-src 'self' 'unsafe-inline';
+          script-src 'self' https://*.tangerinecentral.org 'unsafe-inline' 'unsafe-eval' ;
+          img-src 'self' data:;
+          connect-src 'self' https://*.tangerinecentral.org data: blob: filesystem:">
+````
 
