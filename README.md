@@ -8,7 +8,7 @@
 
 [![Join the chat at https://gitter.im/Tangerine-Community/Tangerine](https://badges.gitter.im/Tangerine-Community/Tangerine.svg)](https://gitter.im/Tangerine-Community/Tangerine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Digitize your EGMA and EGRA data collection with Tangerine. All results you collect can be exported as a spreadsheet. Tangerine has been used by over 30 organizations to conduct over 1 million assessments and surveys in over 50 countries and in 100 languages.
+Digitize your EGMA and EGRA data collection with Tangerine. Create your Assessments online, conduct them offline with the Tangerine Android App. All results you collect can be exported as a spreadsheet. Tangerine has been used by over 30 organizations to conduct over 1 million assessments and surveys in over 50 countries and in 100 languages.
 
 This is one of two main Tangerine software repositories, the other is docker-tangerine-tree. The docker-tangerine-tree repository will soon be included with this one.
 You will want to use this repository if you are planning on running a Tangerine server for editing assessments and uploading data from tablets.  
