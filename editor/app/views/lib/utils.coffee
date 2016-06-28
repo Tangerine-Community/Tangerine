@@ -1,8 +1,8 @@
 gridValueMap =
-    C : "1"   # correct
-    I : "0"   # incorrect
-    M : "."   # missing
-    S : "999" # skipped
+    "correct" : "1"   # correct
+    "incorrect" : "0"   # incorrect
+    "missing" : "."   # missing
+    "skipped" : "999" # skipped
 
 surveyValueMap =
     C : "1"   # checked
