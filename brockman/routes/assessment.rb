@@ -39,8 +39,8 @@ class Brockman < Sinatra::Base
     csvRows = []
 
     resultIds = couch.postRequest({
-      :view => "byParentId",
-      :data => {"keys"=>["r#{assessmentId}"]},
+      :view => "results",
+      :data => {"keys"=>[assessmentId]},
       :parseJson => true
     })['rows'].map{ |el| el['id'] }
 
