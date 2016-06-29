@@ -1,6 +1,14 @@
 {
   "apps" : [
     {
+      "name"      : "tree",
+      "script"    : "/Tangerine-tree/tree/index.js",
+      "cwd"        : "./tree/",
+      "error_file" : "tree-error.log",
+      "out_file"   : "tree.log",
+      "pid_file"   : "tree.pid"
+    },
+    {
       "name"       : "robbert",
       "script"     : "robbert/index.js",
       "cwd"        : "./robbert/",
