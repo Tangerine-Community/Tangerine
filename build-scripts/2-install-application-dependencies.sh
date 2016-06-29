@@ -30,7 +30,7 @@ cd /tangerine-server/tree
 npm install
 
 # handle for the cordova executable
-cordova=../node_modules/.bin/cordova
+cordova=./node_modules/.bin/cordova
 
 # install the android platform
 $cordova platform add android@5.X.X --save
