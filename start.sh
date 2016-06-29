@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker start tangerine-server-container
+docker start tangerine-container

@@ -9,7 +9,7 @@ fi
 
 docker pull tangerine/tangerine:$TANGERINE_VERSION
 docker run -d \
-  --name tangerine-server-container \
+  --name tangerine-container \
   --env "T_PROTOCOL=$T_PROTOCOL" \
   --env "T_ADMIN=$T_ADMIN" \
   --env "T_PASS=$T_PASS" \
@@ -19,5 +19,5 @@ docker run -d \
   --env "T_TREE_URL=$T_TREE_URL" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   -p 80:80 \
-  --volume $T_VOLUMES/tangerine-server/couchdb/:/var/lib/couchdb \
+  --volume $T_VOLUMES/tangerine/couchdb/:/var/lib/couchdb \
   tangerine/tangerine:$TANGERINE_VERSION

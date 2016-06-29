@@ -7,12 +7,12 @@ then
   source ./config.sh
 fi
 
-docker build -t tangerine/tangerine-server:local .
-docker kill tangerine-server-container
-docker rm tangerine-server-container
+docker build -t tangerine/tangerine:local .
+docker kill tangerine-container
+docker rm tangerine-container
 source ./config.sh
 docker run -d \
-  --name tangerine-server-container \
+  --name tangerine-container \
   --env "T_PROTOCOL=$T_PROTOCOL" \
   --env "T_ADMIN=$T_ADMIN" \
   --env "T_PASS=$T_PASS" \
@@ -23,6 +23,6 @@ docker run -d \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   -p 80:80 \
   -p 5984:5984 \
-  --volume $T_VOLUMES/tangerine-server/couchdb/:/var/lib/couchdb \
-  tangerine/tangerine-server:local
-docker logs -f tangerine-server-container
+  --volume $T_VOLUMES/tangerine/couchdb/:/var/lib/couchdb \
+  tangerine/tangerine:local
+docker logs -f tangerine-container

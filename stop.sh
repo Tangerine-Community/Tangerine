@@ -1,2 +1,2 @@
 #!/bin/bash
-docker stop tangerine-server-container
+docker stop tangerine-container
