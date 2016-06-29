@@ -11,18 +11,45 @@ Simply clone and point your http server to the directory.
 Requirements
 ============
 
-PHP and an http server.
+Nodejs and Couchdb
 
 Configuration
 =============
 
-First 
+Normally you would let Docker configure this for you; however, if you are doing development on editor, you may wish to bootstrap this independently. 
 
-    $ cp Config.sample.php Config.php
+Add the following to index.js:
 
-and fill in the server names. 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Content-Type, *");
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
-If your ports are at all confusing or non-standard please have a look at ConfigHelper.php and see if it will give you the addresses you expect.
+
+Add the environment variables describe in ../editor/README.md. 
+
+Set the port for Robbert:
+```
+export T_ROBBERT_PORT=4444
+```
+
+Install the dependencies
+````
+npm install
+npm install nano
+
+````
+
+Run the app:
+
+````
+node index.js
+````
+
 
 Usage
 =====

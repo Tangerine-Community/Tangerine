@@ -33,25 +33,52 @@ Then clone this repo.
 
 ## Config
 
-The folowing files may need to be configured to match our or your development environment.
+Add the following to your .bashrc or .zshrc:
 
-  .couchapprc
+export T_ADMIN=admin
+export T_PASS=password
+export T_COUCH_HOST=localhost
+export T_COUCH_PORT=5984
+export T_HOST_NAME=localhost
+export T_TREE_URL=localhost
+export T_PROTOCOL=http
+
+The .couchapprc uses the first four variables. 
+
+The folowing files need to be configured to match our or your development environment.
+
   app/_docs/configuration
+  app/_docs/settings
+  
+Normally the values in those files are setup by the Dockerfile install process; however, if you are doing developement, 
+it may be easier to run the following script and do development locally instead of in a docker container:
 
-## Fire it up!
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/configuration.json
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/settings.json 
 
-Quickly
+You may need to tweak those settings: your Couchdb instance may not map to /db. 
+If your db does not map to /db, also change the following lines in boot.coffee:
 
-  1. Start CouchDB
-  2. `cd app`
-  3. `couchapp push`
-  4. goto `http://localhost:5984/tangerine/_design/ojai/index.html`
+````
 
-Normally
+$.couch.urlPrefix = ''
 
-  1. Start CouchDB
-  2. `cd app`
-  3. `./listen.rb`
+Tangerine.db_name    = window.location.pathname.split("/")[1]
+Backbone.couch_connector.config.base_url  = "#{urlParser.protocol}//#{urlParser.host}/"
+
+````
+
+Run the following commands to initialize the codebase:
+
+````
+npm install
+npm start init
+````
+## Run
+
+````
+npm watch
+````
  
 ----
 
