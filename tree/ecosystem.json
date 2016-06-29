@@ -1,0 +1,31 @@
+{
+  "apps" : [
+    {
+      "name"      : "tree",
+      "script"    : "tree/index.js",
+      "cwd"        : "./tree/",
+      "error_file" : "tree-error.log",
+      "out_file"   : "tree.log",
+      "pid_file"   : "tree.pid"
+    }
+  ],
+  "deploy" : {
+    "production" : {
+      "user" : "node",
+      "host" : ["localhost"],
+      "ref"  : "origin/master",
+      "repo" : "git@github.com:Tangerine-Community/docker-tangerine-tree.git",
+      "path" : "/www",
+      "post-deploy" : "npm install && pm2 startOrRestart ecosystem.json",
+      "env" : {
+        // Please change .tangerine to match
+        "T_COUCH_HOST" : "localhost",
+        "T_COUCH_PORT" : 5984,
+        "T_ADMIN" : "admin",
+        "T_PASS" : "password",
+        "T_TREE_PORT" : 4445,
+        "NODE_ENV" : "production"
+      }
+    }
+  }
+}
