@@ -16,6 +16,9 @@ const couchAuth = require('./middlewares/couchAuth');
 // basic logging
 const requestLogger = require('./middlewares/requestLogger');
 
+// proxy for couchdb
+var proxy = require('express-http-proxy');
+
 const Conf = require('./Conf');
 const Settings = require('./Settings');
 const User = require('./User');
@@ -30,6 +33,26 @@ app.use(requestLogger);     // add some logging
 app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).send('Something broke!');
+});
+
+var couchProxy = proxy('localhost:5984', {
+  forwardPath: function (req, res) {
+    var path = require('url').parse(req.url).path;
+    console.log("path:" + path);
+    return path;
+  }
+});
+
+app.use('/app/:group', express.static(__dirname + '/../editor/app/_attachments/'));
+var mountpoint = '/db';
+app.use(mountpoint, couchProxy);
+
+app.use(mountpoint, function(req, res) {
+  if (req.originalUrl === mountpoint) {
+    res.redirect(301, req.originalUrl + '/');
+  } else {
+    couchProxy;
+  }
 });
 
 // User routes
