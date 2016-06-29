@@ -33,7 +33,7 @@ let Path = require('path');
 Object.defineProperty(Conf, "PACK_DOC_SIZE", {value: 50, writeable: false, configurable: false, enumerable: true});
 
 // Where the json docs will go
-Object.defineProperty(Conf, "PACK_PATH", {value: `${__dirname}/../client/src/js/init`, writeable: false, configurable: false, enumerable: true})
+Object.defineProperty(Conf, "PACK_PATH", {value: `/tangerine-server/client/src/js/init`, writeable: false, configurable: false, enumerable: true})
 
 /** Handle environment variables. */
 let Settings = require('../client/scripts/Settings');
