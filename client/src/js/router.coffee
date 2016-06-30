@@ -422,6 +422,7 @@ class Router extends Backbone.Router
 
   widgetLoad: () ->
     assessmentDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
+    console.log("assessmentDocs: " + JSON.stringify(assessmentDocs))
     assessmentId = ''
     resultId = ''
     i = 0
@@ -432,13 +433,16 @@ class Router extends Backbone.Router
           i++
           if assessmentDocs[i]
             # Catch the Assessment ID that will be passing by here.
-            if assessmentDocs[i].collection == 'assessment'
+            if assessmentDocs[i].collection == 'subtest'
               assessmentId = assessmentDocs[i]._id
             insertRecord()
           else
+            console.log("movin' along to" + assessmentId)
             Backbone.history.navigate('#widget-play/' + assessmentId, {trigger: true})
         )
         .catch( (error) ->
+          console.log("error: " + error)
+          console.log("stack: " + error.stack)
           alert("Oops. Something went wrong \n\n" + error)
         )
     insertRecord()
@@ -449,17 +453,19 @@ class Router extends Backbone.Router
     assessment = new Assessment "_id" : id
     assessment.deepFetch
       success : ->
+        console.log("assessment: " + JSON.stringify(assessment))
         dashboardLayout = new DashboardLayout();
         Tangerine.app.rm.get('mainRegion').show dashboardLayout
         dashboardLayout.contentRegion.reset()
         assessmentCompositeView = new AssessmentCompositeView
           assessment: assessment
-        assessmentCompositeView.on('render', () =>
-          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
-          evt = document.createEvent("Event");
-          evt.initEvent("result-save", true, false);
-          window.frameElement.dispatchEvent(evt)
-        )
+#        assessmentCompositeView.on('render', () =>
+#          console.log("rendering assessmentCompositeView")
+#          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
+#          evt = document.createEvent("Event");
+#          evt.initEvent("result-save", true, false);
+#          window.frameElement.dispatchEvent(evt)
+#        )
         dashboardLayout.contentRegion.show(assessmentCompositeView)
       error: (model, err, cb) ->
         console.log JSON.stringify err

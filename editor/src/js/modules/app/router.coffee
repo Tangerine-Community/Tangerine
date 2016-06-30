@@ -425,9 +425,9 @@ class Router extends Backbone.Router
       isAuthenticated: ->
         assessment = new Assessment
           "_id" : id
-        assessment.fetch
+        assessment.deepFetch
           success : ( model ) ->
-            view = new AssessmentRunView model: model
+            view = new WidgetRunView model: model
             vm.show view
 
   print: ( assessmentId, format ) ->

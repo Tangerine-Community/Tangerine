@@ -55,7 +55,7 @@ app.use(function(err, req, res, next) {
 });
 
 app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
-
+app.use('/client', express.static(__dirname + '/../client/src/'));
 
 // User routes
 app.get('/user/:name',    require('./routes/user/get-user'));
