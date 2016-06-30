@@ -43,7 +43,7 @@ var couchProxy = proxy('localhost:5984', {
   }
 });
 
-app.use('/app/:group', express.static(__dirname + '/../editor/app/_attachments/'));
+app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
 var mountpoint = '/db';
 app.use(mountpoint, couchProxy);
 
