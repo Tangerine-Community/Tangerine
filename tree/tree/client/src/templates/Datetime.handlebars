@@ -1,0 +1,15 @@
+<div class='question'>
+    <table>
+        <tr>
+            <td><label for='year'>{{labels.text.year}}</label><input id='year' value='{{formElements.year}}'></td>
+            <td>
+                <label for='month'>{{labels.text.month}}</label><br>
+                <select id='month' value='{{formElements.month}}'>{{#monthDropdown formElements.months formElements.month}}{{/monthDropdown}}</select>
+            </td>
+            <td><label for='day'>{{labels.text.day}}</label><input id='day' type='day' value='{{formElements.day}}'></td>
+        </tr>
+        <tr>
+            <td><label for='time'>{{labels.text.time}}</label><br><input type='text' id='time' value='{{formElements.time}}'></td>
+        </tr>
+    </table>
+</div>
