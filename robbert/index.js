@@ -26,15 +26,6 @@ const Group = require('./Group');
 
 const app = express();
 
-app.use(bodyParser.json()); // use json
-app.use(cookieParser());    // use cookies
-app.use(couchAuth);         // use couchdb cookie authentication
-app.use(requestLogger);     // add some logging
-app.use(function(err, req, res, next) {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
 var couchProxy = proxy('localhost:5984', {
   forwardPath: function (req, res) {
     var path = require('url').parse(req.url).path;
@@ -43,7 +34,6 @@ var couchProxy = proxy('localhost:5984', {
   }
 });
 
-app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
 var mountpoint = '/db';
 app.use(mountpoint, couchProxy);
 
@@ -54,6 +44,18 @@ app.use(mountpoint, function(req, res) {
     couchProxy;
   }
 });
+
+app.use(bodyParser.json()); // use json
+app.use(cookieParser());    // use cookies
+app.use(couchAuth);         // use couchdb cookie authentication
+app.use(requestLogger);     // add some logging
+app.use(function(err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+
+app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
+
 
 // User routes
 app.get('/user/:name',    require('./routes/user/get-user'));

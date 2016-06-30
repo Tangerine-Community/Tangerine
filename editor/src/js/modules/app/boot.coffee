@@ -17,7 +17,7 @@ Tangerine.bootSequence =
     $.couch.urlPrefix = '/db'
 
     Tangerine.db_name    = window.location.pathname.split("/")[2]
-    Tangerine.design_doc = _.last(String(window.location).split("_design/")).split("/")[0]
+    Tangerine.design_doc = "ojai"
 
     # Local tangerine database handle
     Tangerine.$db = $.couch.db(Tangerine.db_name)
