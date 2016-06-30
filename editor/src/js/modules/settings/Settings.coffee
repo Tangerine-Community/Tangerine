@@ -59,6 +59,12 @@ class Settings extends Backbone.Model
       list  : "_design/#{designDoc}/_list/"
       index : "_design/#{designDoc}/index.html"
 
+    @spa =
+      view  : "db/_design/#{designDoc}/_view/"
+      show  : "db/_design/#{designDoc}/_show/"
+      list  : "db/_design/#{designDoc}/_list/"
+      index : "index.html"
+
     @groupCouch =
       view  : "_design/#{groupDDoc}/_view/"
       show  : "_design/#{groupDDoc}/_show/"
@@ -81,7 +87,7 @@ class Settings extends Backbone.Model
     else
       groupName = @config.get("groupDBPrefix") + groupName
 
-    return "#{groupHost}#{port}/#{groupName}/#{@couch.index}#{hash}"
+    return "#{groupHost}#{port}/app/#{groupName}/#{@spa.index}#{hash}"
 
   urlHost  : ( location ) -> "#{@location[location].url}"
 
