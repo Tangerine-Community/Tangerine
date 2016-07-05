@@ -35,6 +35,9 @@ app.get('/', function(req, res){ res.status(HttpStatus.OK).send(`<body><canvas i
 // make an apk
 app.post('/:group', require('./routes/makeApk'));
 
+// make a zip
+app.post('/make/zip/:group', require('./routes/makeZip'));
+
 // get an apk
 app.get('/:token',  require('./routes/getApk'));
 

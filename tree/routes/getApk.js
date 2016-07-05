@@ -41,21 +41,27 @@ const getApk = function(req, res){
 
   // differentiate between default requests and requests for x86 apks.
   const x86Request = token.indexOf('.x86') !== -1;
-  let apkPath = '';
+  const zipRequest = token.indexOf('.zip') !== -1;
+  let packagePath = '';
   let downloadName = '';
 
   if (x86Request) {
-    apkPath = Path.join(Conf.APP_ROOT_PATH, 'apks', `${token.substr(0,token.length-4)}-x86`);
+    packagePath = Path.join(Conf.APP_ROOT_PATH, 'apks', `${token.substr(0,token.length-4)}-x86`);
     downloadName = 'tangerine-x86.apk';
-  } else {
-    apkPath = Path.join(Conf.APP_ROOT_PATH, 'apks', token);
+  } 
+  else if (zipRequest) {
+    packagePath = Path.join(Conf.APP_ROOT_PATH, 'apks', `${token.substr(0,token.length-4)}.zip`);
+    downloadName = 'tangerine.zip';
+  } 
+  else {
+    packagePath = Path.join(Conf.APP_ROOT_PATH, 'apks', token);
     downloadName = 'tangerine.apk';
   }
 
   // see if the file is there
-  fs.access(apkPath, fs.F_OK, function(err) {
+  fs.access(packagePath, fs.F_OK, function(err) {
     if (!err) {
-      res.download(apkPath, downloadName);
+      res.download(packagePath, downloadName);
     } else {
       res.status(HttpStatus.NOT_FOUND)
         .json({
