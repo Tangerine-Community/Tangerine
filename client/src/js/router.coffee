@@ -433,7 +433,7 @@ class Router extends Backbone.Router
           i++
           if assessmentDocs[i]
             # Catch the Assessment ID that will be passing by here.
-            if assessmentDocs[i].collection == 'subtest'
+            if assessmentDocs[i].collection == 'assessment'
               assessmentId = assessmentDocs[i]._id
             insertRecord()
           else

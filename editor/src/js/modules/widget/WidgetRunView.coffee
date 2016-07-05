@@ -1,3 +1,4 @@
+# WidgetRunView takes a list of subtests and the assessment as the model, stringifies it, and renders the Tangerine client widget.
 class WidgetRunView extends Backbone.View
 
   className : "WidgetRunView"

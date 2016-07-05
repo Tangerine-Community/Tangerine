@@ -420,14 +420,18 @@ class Router extends Backbone.Router
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
 
+#  WidgetRunView takes a list of subtests and the assessment.
   run: (id) ->
     Tangerine.user.verify
       isAuthenticated: ->
         assessment = new Assessment
           "_id" : id
-        assessment.deepFetch
+        assessment.fetch
           success : ( model ) ->
-            view = new WidgetRunView model: model
+            subtests = model.subtests
+#            Add the assessment to the list.
+            subtests.push(assessment)
+            view = new WidgetRunView model: subtests
             vm.show view
 
   print: ( assessmentId, format ) ->
