@@ -7,6 +7,7 @@ class WidgetRunView extends Backbone.View
     @model = options.model
 
   render: ->
+    $('#footer').hide()
     @$el.html '<div class="assessment"></div>
       <h2>Output of result</h2>
       <div class="result"></div>'
@@ -15,8 +16,9 @@ class WidgetRunView extends Backbone.View
     @$assessmentWidget.attr('src', '/client/index.html#widget')
     @$assessmentWidget.attr('data-assessment', JSON.stringify(@model))
     @$assessmentWidget.attr('data-result', '{}')
-    @$assessmentWidget.attr('width', 800)
+    @$assessmentWidget.attr('width', '100%')
     @$assessmentWidget.attr('height', 600)
+    @$assessmentWidget.attr('id', 'client-widget')
     @$assessmentWidget.on('result-save', (event) ->
       $('.result').html(event.target.getAttribute('data-result'))
     )

@@ -1,4 +1,15 @@
 class Router extends Backbone.Router
+#  before: () ->
+#    console.log('before')
+#    $('#footer').show()
+#
+#  after: () ->
+#    console.log('after');
+  execute: (callback, args, name) ->
+    $('#footer').show()
+    if (callback)
+      callback.apply(this, args)
+
   routes:
     'login'    : 'login'
     'register' : 'register'
