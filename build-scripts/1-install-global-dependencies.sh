@@ -44,6 +44,7 @@ curl -sL https://deb.nodesource.com/setup_4.x | bash -
 apt-get -y install nodejs
 
 npm install -g pm2
+npm install -g bower
 
 # install nginx
 apt-get -y install nginx
