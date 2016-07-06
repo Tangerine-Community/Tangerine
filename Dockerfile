@@ -36,13 +36,21 @@ ADD ./robbert/package.json /tangerine-server/robbert/package.json
 ADD ./editor/package.json /tangerine-server/editor/package.json
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 ADD ./build-scripts/2-install-application-dependencies.sh /tangerine-server/build-scripts/2-install-application-dependencies.sh
+ADD ./client/bower.json /tangerine-server/client/bower.json
+ADD ./client/package.json /tangerine-server/client/package.json
 RUN /tangerine-server/build-scripts/2-install-application-dependencies.sh
 
 # Stage 3
 ADD ./editor /tangerine-server/editor
+ADD ./client /tangerine-server/client
+# Add the git repo so compile processes can pick up version number
+ADD ./.git /tangerine-server/.git 
 ADD ./build-scripts/3-compile-code.sh /tangerine-server/build-scripts/3-compile-code.sh
 RUN /tangerine-server/build-scripts/3-compile-code.sh
 ADD ./ /tangerine-server
+
+# @todo Client's TangerineVersion compilation in Gulpfile.js is failing so we need to run it again here.
+RUN cd /tangerine-server/client && npm run gulp init && cd /
 
 EXPOSE 80
 
