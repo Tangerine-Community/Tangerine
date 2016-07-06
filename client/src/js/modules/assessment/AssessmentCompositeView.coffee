@@ -18,7 +18,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # for Backbone.Marionette.CompositeView
   getChildView: (model) ->
-    console.log("getChildView model: " + JSON.stringify(model))
     model.parent = @
     if !model.questions
       model.questions     = new Questions()
@@ -213,8 +212,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     if options.assessment
       @model = options.assessment
       @assessment = options.assessment
-      console.log("options.assessment - @model:" + JSON.stringify(@model))
-      console.log("options.assessment - @assessment:" + JSON.stringify(@assessment))
     else
       @assessment = @model
       console.log("@model:" + JSON.stringify(@model))

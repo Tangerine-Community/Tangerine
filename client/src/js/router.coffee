@@ -422,7 +422,6 @@ class Router extends Backbone.Router
 
   widgetLoad: () ->
     assessmentDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
-    console.log("assessmentDocs: " + JSON.stringify(assessmentDocs))
     assessmentId = ''
     resultId = ''
     i = 0
@@ -437,7 +436,6 @@ class Router extends Backbone.Router
               assessmentId = assessmentDocs[i]._id
             insertRecord()
           else
-            console.log("movin' along to" + assessmentId)
             Backbone.history.navigate('#widget-play/' + assessmentId, {trigger: true})
         )
         .catch( (error) ->
@@ -453,7 +451,6 @@ class Router extends Backbone.Router
     assessment = new Assessment "_id" : id
     assessment.deepFetch
       success : ->
-        console.log("assessment: " + JSON.stringify(assessment))
         dashboardLayout = new DashboardLayout();
         Tangerine.app.rm.get('mainRegion').show dashboardLayout
         dashboardLayout.contentRegion.reset()
