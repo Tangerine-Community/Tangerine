@@ -4,7 +4,7 @@
   "upPass": "pass",
   "groupName": "",
   "hostname": "INSERT_HOST_NAME",
-  "groupHost": "INSERT_PROTOCOL://INSERT_HOST_NAME/db",
+  "groupHost": "INSERT_PROTOCOL://INSERT_HOST_NAME",
   "groupDDoc": "ojai",
   "log": [
     ""
