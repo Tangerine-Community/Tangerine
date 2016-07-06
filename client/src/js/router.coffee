@@ -439,6 +439,8 @@ class Router extends Backbone.Router
             Backbone.history.navigate('#widget-play/' + assessmentId, {trigger: true})
         )
         .catch( (error) ->
+          console.log("error: " + error)
+          console.log("stack: " + error.stack)
           alert("Oops. Something went wrong \n\n" + error)
         )
     insertRecord()
@@ -454,12 +456,13 @@ class Router extends Backbone.Router
         dashboardLayout.contentRegion.reset()
         assessmentCompositeView = new AssessmentCompositeView
           assessment: assessment
-        assessmentCompositeView.on('render', () =>
-          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
-          evt = document.createEvent("Event");
-          evt.initEvent("result-save", true, false);
-          window.frameElement.dispatchEvent(evt)
-        )
+#        assessmentCompositeView.on('render', () =>
+#          console.log("rendering assessmentCompositeView")
+#          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
+#          evt = document.createEvent("Event");
+#          evt.initEvent("result-save", true, false);
+#          window.frameElement.dispatchEvent(evt)
+#        )
         dashboardLayout.contentRegion.show(assessmentCompositeView)
       error: (model, err, cb) ->
         console.log JSON.stringify err

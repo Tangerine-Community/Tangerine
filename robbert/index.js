@@ -16,12 +16,34 @@ const couchAuth = require('./middlewares/couchAuth');
 // basic logging
 const requestLogger = require('./middlewares/requestLogger');
 
+// proxy for couchdb
+var proxy = require('express-http-proxy');
+
 const Conf = require('./Conf');
 const Settings = require('./Settings');
 const User = require('./User');
 const Group = require('./Group');
 
 const app = express();
+
+var couchProxy = proxy('localhost:5984', {
+  forwardPath: function (req, res) {
+    var path = require('url').parse(req.url).path;
+    console.log("path:" + path);
+    return path;
+  }
+});
+
+var mountpoint = '/db';
+app.use(mountpoint, couchProxy);
+
+app.use(mountpoint, function(req, res) {
+  if (req.originalUrl === mountpoint) {
+    res.redirect(301, req.originalUrl + '/');
+  } else {
+    couchProxy;
+  }
+});
 
 app.use(bodyParser.json()); // use json
 app.use(cookieParser());    // use cookies
@@ -31,6 +53,9 @@ app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
+
+app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
+app.use('/client', express.static(__dirname + '/../client/src/'));
 
 // User routes
 app.get('/user/:name',    require('./routes/user/get-user'));
