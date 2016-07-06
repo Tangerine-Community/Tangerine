@@ -18,5 +18,5 @@ npm install nano
 
 cd /tangerine-server/client
 npm install
-bower install
+bower install --allow-root 
 
