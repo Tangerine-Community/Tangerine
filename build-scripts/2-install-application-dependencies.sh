@@ -16,3 +16,7 @@ npm install
 # explicitly install because npm doesn't care that it's included in package.json as a dependency 
 npm install nano
 
+cd /tangerine-server/client
+npm install
+bower install
+
