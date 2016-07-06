@@ -77,7 +77,9 @@ app.delete('/group/:group/:user', require('./routes/group/leave-group'));
 
 
 // landing
-app.get('/', function(req, res){ res.status(HttpStatus.OK).send(`<body><canvas id='big-img' width='200' height='200' style='width:404px;height:404px;margin:auto;top:0;left:0;right:0;bottom:0;position:absolute;'></canvas></body><script>var img;(img = new Image()).src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAECAYAAABGM/VAAAAAP0lEQVQIW2NkYGBgyMvL+w+iQWDSpEmMjBUVFf+fPXvGICUlBRb89u0bA1gwbv9+hhnm5gwZJ0+CaUZkrTAjABn8FuBBBHgOAAAAAElFTkSuQmCC';var big = document.getElementById('big-img').getContext('2d');big.imageSmoothingEnabled = false;big.drawImage(img,0,0,8,8,0,0,200,200);</script>`); });
+app.get('/', function(req, res){
+  res.redirect('/app/tangerine/index.html')
+})
 
 // kick it off
 var server = app.listen(Settings.T_ROBBERT_PORT, function() {
