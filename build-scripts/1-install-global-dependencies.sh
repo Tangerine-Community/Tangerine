@@ -80,14 +80,7 @@ cd /opt && \
 # Forces a platform add in order to preload libraries
 npm update && \
     npm install -g npm && \
-    npm install -g cordova && \
-    cd /tmp && \
-    cordova create fakeapp && \
-    cd /tmp/fakeapp && \
-    cordova platform add android@5.X.X && \
-    cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+" && \
-    cordova build android && \
-    cd
+    npm install -g cordova 
 
 # Install Couchdb
 apt-get -y install software-properties-common
