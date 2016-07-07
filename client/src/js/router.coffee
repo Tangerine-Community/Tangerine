@@ -463,6 +463,14 @@ class Router extends Backbone.Router
 #          evt.initEvent("result-save", true, false);
 #          window.frameElement.dispatchEvent(evt)
 #        )
+#        assessmentCompositeView.on('result-save-final', () =>
+        assessmentCompositeView.on('result:saved', () =>
+#          console.log("assessmentCompositeView result-save-final")
+          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
+          evt = document.createEvent("Event");
+          evt.initEvent("result-save-final", true, false);
+          window.frameElement.dispatchEvent(evt)
+        )
         dashboardLayout.contentRegion.show(assessmentCompositeView)
       error: (model, err, cb) ->
         console.log JSON.stringify err

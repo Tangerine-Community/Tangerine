@@ -248,6 +248,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       @subtestViews.push new SubtestRunItemView
         model  : model
         parent : @
+    this.listenTo(Backbone, 'result:saved', @triggerSaved);
 
     # Figure out the @orderMap which is either derived from the assessment, the
     # result with a prior orderMap, or lastly no specified order map in which case
@@ -298,6 +299,10 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     ui.text = @text
     @model.set('ui', ui)
     @.on "nextQuestionRendered", => @nextQuestionRenderedBoom()
+
+  triggerSaved: ->
+    console.log("it has been saved.")
+    @trigger "result:saved"
 
   # @todo Documentation
   setChromeData:->
@@ -462,6 +467,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
           subtestId   : currentView.model.id
           prototype   : currentView.model.get "prototype"
           sum         : getSum
+#      console.log("triggering result-save-final-1")
+#      @trigger "result-save-final"
       @reset increment
 
     else
@@ -474,6 +481,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         sum         : getSum
       ,
         success : =>
+#          console.log("triggering result-save-final-2")
+#          @trigger "result-save-final"
           @reset increment
 
   # @todo Documentation

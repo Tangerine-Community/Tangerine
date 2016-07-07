@@ -35,6 +35,9 @@ ResultItemView =  Backbone.Marionette.CompositeView.extend
 
       $button = @$el.find("button.save")
 
+#      console.log("triggering result-save-final-1-resultView")
+      Backbone.trigger('result:saved');
+
       $button.removeClass('save').addClass('another').html @text.another
     else
       Utils.midAlert "Save error"

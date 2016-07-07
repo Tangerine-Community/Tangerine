@@ -235,3 +235,7 @@ Tangerine.locales["en-US"] =
         "retrying" : "Retrying..."
         "searching" : "Searching..."
         "not_supported" : "Your system does not support geolocations."
+
+    "WidgetRunView" :
+      "button" :
+        "save" : "Save result to server"
