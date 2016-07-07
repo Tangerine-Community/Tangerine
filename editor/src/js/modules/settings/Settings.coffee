@@ -41,7 +41,7 @@ class Settings extends Backbone.Model
         db  : "http://#{trunk.host}/#{trunk.dbName}/"
       group:
         url : "#{groupHost}/"
-        db  : "#{groupHost}/#{prefix}#{groupName}/"
+        db  : "#{groupHost}/db/#{prefix}#{groupName}/"
       update :
         url : "http://#{update.host}/"
         db  : "http://#{update.host}/#{update.dbName}/"
