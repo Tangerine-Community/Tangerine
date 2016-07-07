@@ -14,7 +14,8 @@ class DashboardView extends Backbone.View
       resultDetails.hide()
     else
       resultId = $(event.target).text()
-      $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc resultId,
+#      $.couch.db(document.location.pathname.match(/^\/(.*?)\//).pop()).openDoc resultId,
+      $.couch.db(Tangerine.settings.groupDB).openDoc resultId,
         success: (result) =>
           resultDetails.html "<pre>#{@syntaxHighlight(result)}</pre>"
           resultDetails.css
