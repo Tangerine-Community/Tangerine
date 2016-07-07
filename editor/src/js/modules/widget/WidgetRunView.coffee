@@ -15,14 +15,22 @@ class WidgetRunView extends Backbone.View
   i18n: ->
     @text =
       "save"               : t("WidgetRunView.button.save")
+      "saved"               : t("WidgetRunView.button.saved")
+
+  save: ->
+    console.log("save to Couchdb")
+    assessment = $('.assessment-widget-result').html()
+#    result = JSON.parse assessment
+    @model = new Result JSON.parse assessment
+    if @model.save()
+      Tangerine.activity = ""
+      Utils.midAlert @text.saved
 
   render: ->
     $('#footer').hide()
     @$el.html "<div class='assessment'></div>
       <p><button id='saveToCouchDB' class='saveToCouchDB'>#{@text.save}</button></p>
       <div class='assessment-widget-result'></div>"
-    $('#saveToCouchDB').hide()
-
     @$assessmentWidget = $(document.createElement('iframe'))
     @$assessmentWidget.attr('src', '/client/index.html#widget')
     @$assessmentWidget.attr('data-assessment', JSON.stringify(@model))
@@ -36,19 +44,7 @@ class WidgetRunView extends Backbone.View
       $('.assessment-widget-result').html(event.target.getAttribute('data-result'))
     )
 
-    save: ->
-      console.log("save to Couchdb")
-
-    @$assessmentWidget.on('load', (event) ->
-      console.log("loaded")
-      iframe = $('#client-widget').contents();
-      iframe.find(".save").click((event) ->
-        console.log("saved iframe")
-      )
-    )
-
     @$el.find(".assessment").append(@$assessmentWidget)
     @trigger "rendered"
 
     return
-

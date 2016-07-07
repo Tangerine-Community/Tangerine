@@ -239,3 +239,4 @@ Tangerine.locales["en-US"] =
     "WidgetRunView" :
       "button" :
         "save" : "Save result to server"
+        "saved" : "Result saved to Couchdb"
