@@ -57,6 +57,8 @@ RUN cd /tangerine-server/editor && npm start init
 # Compile client.
 ADD ./client /tangerine-server/client
 RUN cd /tangerine-server/client && npm run gulp init
+# Run twice otherwise compile is incomplete. See #74.
+RUN cd /tangerine-server/client && npm run gulp init
 # Add all of the rest of the code.
 ADD ./ /tangerine-server
 
