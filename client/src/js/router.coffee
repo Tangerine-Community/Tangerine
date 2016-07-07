@@ -456,16 +456,7 @@ class Router extends Backbone.Router
         dashboardLayout.contentRegion.reset()
         assessmentCompositeView = new AssessmentCompositeView
           assessment: assessment
-#        assessmentCompositeView.on('render', () =>
-#          console.log("rendering assessmentCompositeView")
-#          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
-#          evt = document.createEvent("Event");
-#          evt.initEvent("result-save", true, false);
-#          window.frameElement.dispatchEvent(evt)
-#        )
-#        assessmentCompositeView.on('result-save-final', () =>
         assessmentCompositeView.on('result:saved', () =>
-#          console.log("assessmentCompositeView result-save-final")
           window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
           evt = document.createEvent("Event");
           evt.initEvent("result-save-final", true, false);

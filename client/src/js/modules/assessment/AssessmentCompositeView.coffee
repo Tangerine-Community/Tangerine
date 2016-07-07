@@ -482,7 +482,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       ,
         success : =>
 #          console.log("triggering result-save-final-2")
-#          @trigger "result-save-final"
+          @trigger "result-save-final"
           @reset increment
 
   # @todo Documentation

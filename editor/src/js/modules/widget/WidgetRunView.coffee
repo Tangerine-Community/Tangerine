@@ -1,4 +1,6 @@
 # WidgetRunView takes a list of subtests and the assessment as the model, stringifies it, and renders the Tangerine client widget.
+# It listens for a result-save-final event from the widget, which is created by the widgetPlay route in widget's router
+# by the result:saved event thrown by AssessmentCompositeView from ResultItemView.
 class WidgetRunView extends Backbone.View
 
   className : "WidgetRunView"
@@ -33,42 +35,9 @@ class WidgetRunView extends Backbone.View
       $('#saveToCouchDB').show()
       $('.assessment-widget-result').html(event.target.getAttribute('data-result'))
     )
-    @$assessmentWidget.on('click', (event) ->
-      console.log("click")
-    )
-#    @$assessmentWidget.on('result-saved', (event) ->
-#      console.log("saved")
-#    )
 
     save: ->
       console.log("save to Couchdb")
-
-#    @$assessmentWidget.on('load', (event) ->
-#      console.log("loaded")
-##      this.listenTo($('body', $('#client-widget').contents()).find(".save"))
-#      $(".save").click((event) ->
-#        console.log('Clicked! ' + event.pageX + ' - ' + event.pageY);
-#      );
-##      trigger rendered here?
-#      $('#client-widget').find(".save").click(() ->
-#          alert("test")
-#        )
-#      document.getElementById('client-widget').contentWindow.$('.save').click((event) ->
-#        console.log('Clicked save! ' + event.pageX + ' - ' + event.pageY);
-#      );
-##      document.getElementById('client-widget').contentWindow.$('.save')
-##      $('body', $('#client-widget').contents()).click((event) ->
-##        console.log('Clicked! ' + event.pageX + ' - ' + event.pageY);
-##      );
-#      iframe = $('#client-widget').contents();
-##      iframe.on('result-saved', (event) ->
-#      iframe.find(".save").click((event) ->
-#        console.log("saved iframe")
-#      )
-##      iframe.find(".save").click(() ->
-##        alert("test")
-##      )
-#    )
 
     @$assessmentWidget.on('load', (event) ->
       console.log("loaded")

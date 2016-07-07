@@ -45,11 +45,14 @@ class DashboardView extends Backbone.View
     Tangerine.router.navigate("dashboard/groupBy/#{$("#groupBy").val()}/assessment/#{$("#assessment").val()}/shiftHours/#{$("#shiftHours").val()}", true)
 
   initialize: (options) ->
+    console.log("view.options: " + JSON.stringify(options))
     @groupBy = options.groupBy
     @key = options.assessment
+    console.log("@key: " + JSON.stringify(@key))
     @shiftHours = options.shiftHours || 0
 
   render: =>
+    console.log("@key: " + JSON.stringify(@key))
 
     if @key is "All"
       $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResults",
@@ -176,39 +179,39 @@ class DashboardView extends Backbone.View
       </style>
     "
 
-    @$el.find("table#results").tablesorter
-      widgets: ['zebra']
-      sortList: [[0,0]]
-      textExtraction: (node) ->
-        sortValue = $(node).find(".sort-value").text()
-        if sortValue != ""
-          sortValue
-        else
-          $(node).text()
-
-    @$el.find("#advancedOptions").append "Select which dates to show<br/>"
-    _(dates).keys().sort().map( (sortingDate) =>
-      displayDate = dates[sortingDate]
-      dateCheckbox = $("<label for='#{sortingDate}'>#{displayDate}</label><input name='#{sortingDate}' id='#{sortingDate}' type='checkbox' checked='true'/>")
-      dateCheckbox.click ->
-        $(".#{sortingDate}").toggle()
-      @$el.find("#advancedOptions").append dateCheckbox
-    )
-
-    $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResults",
-      group: true
-      success: (result) =>
-        $("select#assessment").html "<option>All</option>" +
-        _.map(result.rows, (row) =>
-          "<option value='#{row.key}' #{if row.key is @key then "selected='true'" else ""}>#{row.key}</option>"
-        ).join("")
-        _.each result.rows, (row) =>
-          return unless row.key?
-          $.couch.db(Tangerine.db_name).openDoc row.key,
-            success: (result) =>
-              $("option[value=#{row.key}]").html result.name
-            error: (result) =>
-              $("option[value=#{row.key}]").html "Unknown assessment"
+#    @$el.find("table#results").tablesorter
+#      widgets: ['zebra']
+#      sortList: [[0,0]]
+#      textExtraction: (node) ->
+#        sortValue = $(node).find(".sort-value").text()
+#        if sortValue != ""
+#          sortValue
+#        else
+#          $(node).text()
+#
+#    @$el.find("#advancedOptions").append "Select which dates to show<br/>"
+#    _(dates).keys().sort().map( (sortingDate) =>
+#      displayDate = dates[sortingDate]
+#      dateCheckbox = $("<label for='#{sortingDate}'>#{displayDate}</label><input name='#{sortingDate}' id='#{sortingDate}' type='checkbox' checked='true'/>")
+#      dateCheckbox.click ->
+#        $(".#{sortingDate}").toggle()
+#      @$el.find("#advancedOptions").append dateCheckbox
+#    )
+#
+#    $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/dashboardResults",
+#      group: true
+#      success: (result) =>
+#        $("select#assessment").html "<option>All</option>" +
+#        _.map(result.rows, (row) =>
+#          "<option value='#{row.key}' #{if row.key is @key then "selected='true'" else ""}>#{row.key}</option>"
+#        ).join("")
+#        _.each result.rows, (row) =>
+#          return unless row.key?
+#          $.couch.db(Tangerine.db_name).openDoc row.key,
+#            success: (result) =>
+#              $("option[value=#{row.key}]").html result.name
+#            error: (result) =>
+#              $("option[value=#{row.key}]").html "Unknown assessment"
 
 
     @trigger "rendered"

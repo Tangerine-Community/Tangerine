@@ -87,6 +87,7 @@ class Router extends Backbone.Router
 
   dashboard: (options) ->
     options = options?.split(/\//)
+    console.log("options: " + options)
     #default view options
     reportViewOptions =
       assessment: "All"
@@ -97,8 +98,8 @@ class Router extends Backbone.Router
       unless index % 2
         reportViewOptions[option] = options[index+1]
 
-    view = new DashboardView()
-    view.options = reportViewOptions
+    view = new DashboardView  reportViewOptions
+
     vm.show view
 
   landing: ->
