@@ -9,6 +9,14 @@
       "pid_file"   : "../pids/robbert.pid"
     },
     {
+      "name"      : "tree",
+      "script"    : "tree/index.js",
+      "cwd"        : "./tree/",
+      "error_file" : "tree-error.log",
+      "out_file"   : "tree.log",
+      "pid_file"   : "tree.pid"
+    },
+    {
       "name"       : "brockman",
       "cwd"        : "./brockman",
       "script"     : "brockman/Brockman.rb",
@@ -25,14 +33,6 @@
       "out_file"   : "../logs/decompressor.log",
       "pid_file"   : "../pids/decompressor.pid"
     }
-//    {
-//      "name"      : "packager",
-//      "cwd"        : "./packager/",
-//      "script"    : "packager/index.js",
-//      "error_file" : "../logs/packager-error.log",
-//      "out_file"   : "../logs/packager.log",
-//      "pid_file"   : "../pids/packager.pid"
-//    }
   ],
   "deploy" : {
     "production" : {

@@ -24,6 +24,14 @@ ENV T_DECOMPRESSOR_PORT 4447
 #
 # Stage 1 - Install global dependecies
 #
+ENV ANDROID_SDK_FILENAME android-sdk_r24.4.1-linux.tgz
+ENV ANDROID_SDK_URL http://dl.google.com/android/${ANDROID_SDK_FILENAME}
+# Support from Ice Cream Sandwich, 4.0.3 - 4.0.4, to Marshmallow version 6.0
+ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23
+# https://developer.android.com/studio/releases/build-tools.html
+ENV ANDROID_BUILD_TOOLS_VERSION 23.0.3
+ENV ANDROID_HOME /opt/android-sdk-linux
+ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 ADD ./build-scripts/1-install-global-dependencies.sh /tangerine-server/build-scripts/1-install-global-dependencies.sh 
 ADD ./tangerine.conf /tangerine-server/tangerine.conf 
 RUN /tangerine-server/build-scripts/1-install-global-dependencies.sh
@@ -39,6 +47,9 @@ ADD ./brockman/Gemfile /tangerine-server/brockman/Gemfile
 ADD ./brockman/Gemfile.lock /tangerine-server/brockman/Gemfile.lock
 ADD ./robbert/package.json /tangerine-server/robbert/package.json
 ADD ./editor/package.json /tangerine-server/editor/package.json
+ADD ./tree/package.json /tangerine-server/tree/package.json
+ADD ./client/package.json /tangerine-server/client/package.json
+ADD ./client/bower.json /tangerine-server/client/bower.json
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 ADD ./build-scripts/2-install-application-dependencies.sh /tangerine-server/build-scripts/2-install-application-dependencies.sh
 ADD ./client/bower.json /tangerine-server/client/bower.json
@@ -54,13 +65,14 @@ ADD ./.git /tangerine-server/.git
 # Compile editor.
 ADD ./editor /tangerine-server/editor
 RUN cd /tangerine-server/editor && npm start init
-# Compile client.
+# Compile client. Run twice otherwise compile is incomplete. See #74.
 ADD ./client /tangerine-server/client
-RUN cd /tangerine-server/client && npm run gulp init
-# Run twice otherwise compile is incomplete. See #74.
-RUN cd /tangerine-server/client && npm run gulp init
+RUN cd /tangerine-server/client && npm run gulp init && npm run gulp init
 # Add all of the rest of the code.
 ADD ./ /tangerine-server
+
+VOLUME /tangerine-server/tree/apks
+VOLUME /var/lib/couchb/ 
 
 EXPOSE 80
 
