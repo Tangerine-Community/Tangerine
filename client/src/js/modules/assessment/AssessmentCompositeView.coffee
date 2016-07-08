@@ -467,8 +467,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
           subtestId   : currentView.model.id
           prototype   : currentView.model.get "prototype"
           sum         : getSum
-#      console.log("triggering result-save-final-1")
-#      @trigger "result-save-final"
       @reset increment
 
     else
@@ -481,8 +479,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         sum         : getSum
       ,
         success : =>
-#          console.log("triggering result-save-final-2")
-          @trigger "result-save-final"
           @reset increment
 
   # @todo Documentation
