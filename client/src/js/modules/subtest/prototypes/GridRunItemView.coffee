@@ -491,13 +491,18 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
       @updateMode "last"
 
-
-    if @captureItemAtTime && !@gotIntermediate && !@minuteMessage && @timeElapsed >= @captureAfterSeconds
+#    Dealing with browser compat issues
+    captureItemAtTime = @captureItemAtTime == true || @captureItemAtTime == "true"
+    gotIntermediate = @gotIntermediate == true || @gotIntermediate == "true"
+    minuteMessage = @minuteMessage == true || @minuteMessage == "true"
+    timeElapsed = (@timeElapsed >= parseInt(@captureAfterSeconds))
+#    console.log("FALS captureItemAtTime: " + captureItemAtTime + " !gotIntermediate: " + !gotIntermediate + " !minuteMessage: " + !minuteMessage + " timeElapsed: " + timeElapsed)
+    if (captureItemAtTime && !gotIntermediate && !minuteMessage && timeElapsed) == true
+#      console.log("TRUE captureItemAtTime: " + captureItemAtTime + " !gotIntermediate: " + !gotIntermediate + " !minuteMessage: " + !minuteMessage + " timeElapsed: " + timeElapsed)
       Utils.flash "yellow"
       Utils.midAlert t("please select the item the child is currently attempting")
       @minuteMessage = true
       @mode = "minuteItem"
-
 
   updateMode: ( mode = null ) =>
 # dont' change the mode if the time has never been started
