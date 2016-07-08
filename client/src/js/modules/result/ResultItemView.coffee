@@ -7,6 +7,8 @@ ResultItemView =  Backbone.Marionette.CompositeView.extend
     'click .another' : 'another'
 
   another: ->
+    console.log("result:another")
+    Backbone.trigger('result:another');
     d = new Date();
     timestamp = d.getTime();
     Tangerine.router.navigateAwayMessage = false
@@ -35,7 +37,6 @@ ResultItemView =  Backbone.Marionette.CompositeView.extend
 
       $button = @$el.find("button.save")
 
-#      console.log("triggering result-save-final-1-resultView")
       Backbone.trigger('result:saved');
 
       $button.removeClass('save').addClass('another').html @text.another

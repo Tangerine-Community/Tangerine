@@ -1,6 +1,7 @@
 # WidgetRunView takes a list of subtests and the assessment as the model, stringifies it, and renders the Tangerine client widget.
-# It listens for a result-save-final event from the widget, which is created by the widgetPlay route in widget's router
-# by the result:saved event thrown by AssessmentCompositeView from ResultItemView.
+# It listens for a result:saved:widget event from the client widget, which is created by the widgetPlay route in widget's router
+# by the result:saved event thrown by AssessmentCompositeView from ResultItemView. It also listens for the result:saved:widget
+# event to refresh the page when the user chooses "Perform another assessment"
 class WidgetRunView extends Backbone.View
 
   className : "WidgetRunView"
@@ -38,10 +39,14 @@ class WidgetRunView extends Backbone.View
     @$assessmentWidget.attr('width', '100%')
     @$assessmentWidget.attr('height', 600)
     @$assessmentWidget.attr('id', 'client-widget')
-    @$assessmentWidget.on('result-save-final', (event) ->
+    @$assessmentWidget.on('result:save:widget', (event) ->
       console.log("Final save")
       $('#saveToCouchDB').show()
       $('.assessment-widget-result').html(event.target.getAttribute('data-result'))
+    )
+    @$assessmentWidget.on('result:another:widget', (event) ->
+      console.log("Give me another.")
+      document.location.reload()
     )
 
     @$el.find(".assessment").append(@$assessmentWidget)

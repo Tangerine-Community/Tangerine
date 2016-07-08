@@ -9,6 +9,8 @@
 # ensure that there is only one model in `AssessmentCompositeView.collection` for
 # `AssessmentCompositeView.render` to render. Which Model should be in that
 # `AssessmentCompositeView.collection` is determined by `AssessmentCompositeView.index`.
+# Listens for "result:saved" and "result:another" events triggered by the ResultItemView subtest and makes it
+# available for consumption (via triggerSaved and triggerAnother) by external users such as Widget.
 
 
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
@@ -249,6 +251,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         model  : model
         parent : @
     this.listenTo(Backbone, 'result:saved', @triggerSaved);
+    this.listenTo(Backbone, 'result:another', @triggerAnother);
 
     # Figure out the @orderMap which is either derived from the assessment, the
     # result with a prior orderMap, or lastly no specified order map in which case
@@ -301,8 +304,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @.on "nextQuestionRendered", => @nextQuestionRenderedBoom()
 
   triggerSaved: ->
-    console.log("it has been saved.")
+    console.log("Reslt has been saved to internal PouchDB.")
     @trigger "result:saved"
+
+  triggerAnother: ->
+    console.log("User wishes to do another Assessment.")
+    @trigger "result:another"
 
   # @todo Documentation
   setChromeData:->
