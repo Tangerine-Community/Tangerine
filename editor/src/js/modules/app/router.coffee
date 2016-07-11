@@ -436,15 +436,30 @@ class Router extends Backbone.Router
   run: (id) ->
     Tangerine.user.verify
       isAuthenticated: ->
-        assessment = new Assessment
-          "_id" : id
-        assessment.fetch
-          success : ( model ) ->
-            subtests = model.subtests
-#            Add the assessment to the list.
-            subtests.push(assessment)
-            view = new WidgetRunView model: subtests
-            vm.show view
+        dKey = JSON.stringify(id.substr(-5, 5))
+        url = Tangerine.settings.urlView("group", "byDKey")
+        $.ajax
+          url: url,
+          type: "GET"
+          dataType: "json"
+          data: key: dKey
+          error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
+          success: (data) =>
+            docList = []
+            for datum in data.rows
+              docList.push datum.id
+              keyList = _.uniq(docList)
+            Tangerine.$db.allDocs
+              keys : keyList
+              include_docs:true
+              success: (response) ->
+                docs = []
+                for row in response.rows
+                  docs.push row.doc
+#                body =
+#                  docs: docs
+                view = new WidgetRunView model: docs
+                vm.show view
 
   print: ( assessmentId, format ) ->
     Tangerine.user.verify
