@@ -81,6 +81,23 @@ app.get('/', function(req, res){
   res.redirect('/app/tangerine/index.html')
 })
 
+// CSV output for results. Returns cached response if there are the same number of results.
+app.get('/_csv/:groupId/:assessmentId',  function (req, res)  { 
+  couchdb(req.groupId).view('results', {key: req.assessmentId}, function(results){
+    var cached = cache.get(`${req.groupId}-${req.assessmentId}-${results.total_rows}`)
+    if (cached !== undefined) {
+      res.send(cached)
+    }
+    else {
+      couchdb(req.groupId).view('results', {key: req.assessmentId, include_docs: true}, function(results){
+        var response = json2csv(results.docs)
+        res.send(response)
+        cache.get(`${req.groupId}-${req.assessmentId}-${results.total_rows}`, response)
+      })
+    }
+  })
+})
+
 // kick it off
 var server = app.listen(Settings.T_ROBBERT_PORT, function() {
   var host = server.address().address;
