@@ -9,8 +9,8 @@ ENV T_HOST_NAME local.tangerinecentral.org
 ENV T_PROTOCOL https
 ENV T_USER1 user1
 ENV T_USER1_PASSWORD password
-ENV T_TREE_HOSTNAME bigtree.tangerinecentral.org
-ENV T_TREE_URL https://bigtree.tangerinecentral.org
+ENV T_TREE_HOSTNAME / 
+ENV T_TREE_URL /tree 
 
 ENV T_ADMIN admin
 ENV T_PASS password

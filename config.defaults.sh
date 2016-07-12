@@ -25,5 +25,5 @@ T_VOLUMES="/home/ubuntu/data/"
 # If you have set up SSL on your server, you must change this to "https".
 T_PROTOCOL="http"
 # If you would like to run your own Tree server, you can change that here.
-T_TREE_HOSTNAME="bigtree.tangerinecentral.org"
-T_TREE_URL="http://bigtree.tangerinecentral.org"
+T_TREE_HOSTNAME="/"
+T_TREE_URL="/tree"
