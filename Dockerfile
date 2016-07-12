@@ -50,6 +50,10 @@ ADD ./editor/package.json /tangerine-server/editor/package.json
 ADD ./tree/package.json /tangerine-server/tree/package.json
 ADD ./client/package.json /tangerine-server/client/package.json
 ADD ./client/bower.json /tangerine-server/client/bower.json
+ADD ./client/config.xml /tangerine-server/client/config.xml
+# @todo Adding the entire client directory so that cordova installation doesn't fail because we can't figure out the right combination
+# of things to add here so it doesn't complain about not being a cordova project. This is bad news for build caches.
+ADD ./client /tangerine-server/client
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 ADD ./build-scripts/2-install-application-dependencies.sh /tangerine-server/build-scripts/2-install-application-dependencies.sh
 ADD ./client/bower.json /tangerine-server/client/bower.json
@@ -70,6 +74,8 @@ ADD ./client /tangerine-server/client
 RUN cd /tangerine-server/client && npm run gulp init && npm run gulp init
 # Add all of the rest of the code.
 ADD ./ /tangerine-server
+
+ENV GRADLE_OPTS -Dorg.gradle.jvmargs=-Xmx2048m
 
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/ 
