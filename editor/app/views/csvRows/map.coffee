@@ -101,7 +101,7 @@ The only real behavior worth mentioning here is
     else if prototype == "complete"
       result = result.concat [
         cell subtest, "additional_comments", subtest.data.comment
-        cell subtest, "end_time"           , subtest.data.endTime
+        cell subtest, "end_time"           , subtest.data.end_time
       ]
 
     else if prototype == "datetime"
