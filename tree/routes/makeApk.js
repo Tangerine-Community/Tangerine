@@ -139,16 +139,22 @@ const makeApk = function(req, res) {
                     console.log("APK built; moving APK, token: " + token)
 
                     // move the apk to the right directory
-                    const moveApk = mv(Conf.APK_PATH, `apks/${token}`);
-                    if (notOk(moveApk, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
+                    const execer = require('child_process').exec;
+                    execer(`mv ${Conf.APK_PATH} ${Conf.APP_ROOT_PATH}/apks/${token}`, (error, stdout, stderr) => {
+                      if (error) {
+                        console.error(`exec error: ${error}`);
+                        return;
+                      }
+                      console.log(`stdout: ${stdout}`);
+                      console.log(`stderr: ${stderr}`);
+                      res.status(HttpStatus.OK).json({
+                          token : token
+                      });
+                    })
 
                     // move the x86 apk to the right directory
                     // const moveX86Apk = mv(Conf.X86_APK_PATH, `apks/${token}-x86`);
                     // if (notOk(moveX86Apk, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
-
-                    res.status(HttpStatus.OK).json({
-                        token : token
-                    });
                 }
             })
 

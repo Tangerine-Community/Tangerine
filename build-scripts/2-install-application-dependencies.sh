@@ -25,10 +25,6 @@ cd /tangerine-server/client
 npm install
 bower install --allow-root 
 
-# Install tree
-cd /tangerine-server/tree
-npm install
-
 # handle for the cordova executable
 cordova=./node_modules/.bin/cordova
 
@@ -48,3 +44,9 @@ $cordova plugin add cordova-plugin-whitelist --save
 
 # fix for Error: setgid group id does not exist
 sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js
+
+# Install tree
+cd /tangerine-server/tree
+npm install
+
+
