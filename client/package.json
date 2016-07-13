@@ -4,7 +4,6 @@
   "description": "data collection system.",
   "main": "index.js",
   "scripts": {
-    "postinstall": " cd scripts && ./postinstall.sh",
     "build:apk": "cordova build -- --gradleArg=-PcdvBuildArch=arm android 2>&1",
     "test": "grunt test",
     "clean": "rm -rf platforms plugins node_modules",
@@ -20,7 +19,8 @@
     "gulp": "gulp",
     "debug": "gulp index-dev & gulp default",
     "debug-test": "gulp debug & http-server ./ -p 9000 --silent",
-    "debug-gulp": "iron-node node_modules/gulp/bin/gulp.js"
+    "debug-gulp": "iron-node node_modules/gulp/bin/gulp.js",
+    "tree-postinstall": " cd scripts && ./tree-postinstall.sh"
   },
   "repository": {
     "type": "git",

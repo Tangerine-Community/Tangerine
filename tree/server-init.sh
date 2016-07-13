@@ -67,6 +67,6 @@ echo pwd = $(pwd)
 
 npm install
 # workaround for sudo
-npm run postinstall
+npm run tree-postinstall
 # fix for Error: setgid group id does not exist
 sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js
