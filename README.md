@@ -21,7 +21,11 @@ then tag the docker-tangerine-tree repository.
 
 See [installation demonstration video](https://vimeo.com/171423878).
 
-The easiest way to get started is to create an Ubuntu 14.04 Droplet on [Digital Ocean](https://digitalocean.com), SSH into it from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
+The easiest way to get started is to create an Ubuntu 14.04 Droplet on [Digital Ocean](https://digitalocean.com). 
+
+We also have [instructions for AWS](docs/INSTALLATION_AWS.md) which include the following steps.
+
+SSH into it from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
 ```
 wget <latest release, choose tar.gz option>
 tar xvf <the tarball>
