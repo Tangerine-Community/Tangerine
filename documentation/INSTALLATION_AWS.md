@@ -16,9 +16,15 @@ Root Device Type: ebs Virtualization type: hvm
 
 ### AWS Instance details
 
-Instance Type|ECUs|vCPUs|Memory (GiB)|Instance Storage (GB)
--------------|----|-----|------------|
-t2.medium|Variable|2|4|EBS only
+<table>
+<tr>
+<th>Instance Type</th><th>ECUs</th><th>vCPUs</th><th>Memory (GiB)</th><th>Instance Storage (GB)</th>
+</tr>
+<tr>
+<td>t2.medium</td><td>Variable</td><td>2</td><td>4</td><td>EBS only</td>
+</tr>
+</table>
+
 
 Storage : default (8 GiB)
 
