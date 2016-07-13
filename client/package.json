@@ -4,6 +4,7 @@
   "description": "data collection system.",
   "main": "index.js",
   "scripts": {
+    "postinstall": " cd scripts && ./postinstall.sh",
     "build:apk": "cordova build -- --gradleArg=-PcdvBuildArch=arm android 2>&1",
     "test": "grunt test",
     "clean": "rm -rf platforms plugins node_modules",
