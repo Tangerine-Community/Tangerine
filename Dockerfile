@@ -83,7 +83,17 @@ RUN cd /tangerine-server/client \
 RUN cd /tangerine-server/client \
     && bower install --allow-root  
 RUN cd /tangerine-server/client \
-    && npm run postinstall 
+    && ./node_modules/.bin/cordova platform add android@5.X.X --save
+RUN cd /tangerine-server/client \
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --save --variable XWALK_VERSION="19+"
+RUN cd /tangerine-server/client \
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save
+# Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
+RUN cd /tangerine-server/client \
+    && npm install cordova-plugin-whitelist
+# Now it should be safe.
+RUN cd /tangerine-server/client \
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save
 
 # Install decompressor.
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
