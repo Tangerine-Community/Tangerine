@@ -88,11 +88,10 @@ RUN cd /tangerine-server/client \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --save --variable XWALK_VERSION="19+"
 RUN cd /tangerine-server/client \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save
+
 # Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 RUN cd /tangerine-server/client \
-    && npm install cordova-plugin-whitelist
-# Now it should be safe.
-RUN cd /tangerine-server/client \
+    && npm install cordova-plugin-whitelist \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save
 
 # Install decompressor.
