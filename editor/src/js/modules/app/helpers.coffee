@@ -801,8 +801,8 @@ class TangerineTree
                 success = options.success
                 error   = options.error
 
-#                console.log("docs:" + JSON.stringify(body))
-                options.docs = body
+                payload = JSON.stringify(body)
+#                console.log("payload:" + JSON.stringify(body))
 
                 delete options.success
                 delete options.error
@@ -812,7 +812,8 @@ class TangerineTree
                   crossDomain : true
                   url      : "#{Tangerine.config.get('tree')}/group-#{Tangerine.settings.get('groupName')}/#{Tangerine.settings.get('hostname')}"
                   dataType : 'json'
-                  data     : options
+                  contentType: "application/json"
+                  data     : payload
                   success: ( data ) =>
                     success data
                   error: ( data ) =>
@@ -822,8 +823,6 @@ class TangerineTree
       error: (a, b) ->
         console.log("a: " + a)
         Utils.midAlert "Import error"
-
-
 
 
 ##UI helpers
