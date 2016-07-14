@@ -33,9 +33,120 @@ ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,an
 ENV ANDROID_BUILD_TOOLS_VERSION 23.0.3
 ENV ANDROID_HOME /opt/android-sdk-linux
 ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-ADD ./build-scripts/1-install-global-dependencies.sh /tangerine-server/build-scripts/1-install-global-dependencies.sh 
 ADD ./tangerine.conf /tangerine-server/tangerine.conf 
-RUN /tangerine-server/build-scripts/1-install-global-dependencies.sh
+ADD ./tangerine-env-vars.sh.defaults /tangerine-server/tangerine-env-vars.sh.defaults 
+# Install some core utilities
+RUN apt-get update && apt-get -y install \
+    software-properties-common \
+    python-software-properties \
+    bzip2 unzip \
+    openssh-client \
+    git \
+    lib32stdc++6 \
+    lib32z1 \
+    curl \
+    wget \
+    vim \
+    nano \
+    wget \
+    links \
+    curl \
+    rsync \
+    bc \
+    git \
+    git-core \
+    apt-transport-https \
+    libxml2 \
+    libxml2-dev \
+    libcurl4-openssl-dev \
+    openssl \
+    sqlite3 \
+    libsqlite3-dev \
+    gawk \
+    libreadline6-dev \
+    libyaml-dev \
+    autoconf \
+    libgdbm-dev \
+    libncurses5-dev \
+    automake \
+    libtool \
+    bison \
+    libffi-dev
+
+
+RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
+RUN apt-get -y install nodejs
+
+RUN npm install -g pm2
+RUN npm install -g bower
+
+# install nginx
+RUN apt-get -y install nginx
+
+# COPY tangerine-nginx.template /tangerine-server/tangerine-nginx.template
+RUN cp /tangerine-server/tangerine.conf /etc/nginx/sites-available/tangerine.conf
+
+# nginx config
+RUN ln -s /etc/nginx/sites-available/tangerine.conf /etc/nginx/sites-enabled/tangerine.conf
+RUN rm /etc/nginx/sites-enabled/default
+  # increase the size limit of posts
+RUN sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
+
+RUN cp /tangerine-server/tangerine-env-vars.sh.defaults /tangerine-server/tangerine-env-vars.sh
+# dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+RUN cp /tangerine-server/tangerine-env-vars.sh /etc/profile.d/
+# source /etc/profile
+
+# get top to work
+RUN echo -e "\nexport TERM=xterm" >> ~/.bashrc
+
+# Install jd7
+RUN apt-get -y install default-jdk
+
+# Installs Android SDK
+RUN cd /opt && \
+    wget -q $ANDROID_SDK_URL && \
+    tar -xzf $ANDROID_SDK_FILENAME && \
+    rm $ANDROID_SDK_FILENAME && \
+    echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
+
+# Installs Cordova
+# Forces a platform add in order to preload libraries
+RUN npm update && \
+    npm install -g npm && \
+    npm install -g cordova 
+
+# Install Couchdb
+RUN apt-get -y install software-properties-common
+RUN apt-add-repository -y ppa:couchdb/stable
+RUN apt-get update && apt-get -y install couchdb
+RUN chown -R couchdb:couchdb /usr/lib/couchdb /usr/share/couchdb /etc/couchdb /usr/bin/couchdb
+RUN chmod -R 0770 /usr/lib/couchdb /usr/share/couchdb /etc/couchdb /usr/bin/couchdb
+RUN mkdir /var/run/couchdb
+RUN chown -R couchdb /var/run/couchdb
+RUN sed -i -e "s#\[couch_httpd_auth\]#\[couch_httpd_auth\]\ntimeout=9999999#" /etc/couchdb/local.ini
+RUN sed -i 's#;bind_address = 127.0.0.1#bind_address = 0.0.0.0#' /etc/couchdb/local.ini
+RUN couchdb -k
+RUN couchdb -b
+
+# couchapp
+# add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) main"
+RUN apt-get install build-essential python-dev -y 
+RUN curl -O https://bootstrap.pypa.io/get-pip.py
+RUN python get-pip.py
+RUN pip install couchapp
+
+## Ruby
+RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
+RUN curl -L https://get.rvm.io | bash -s stable
+#Set env just in case
+RUN /bin/bash -l -c "rvm requirements"
+# install ruby
+RUN /bin/bash -l -c "rvm install ruby-2.2.0"
+RUN /bin/bash -l -c "rvm install ruby-2.2.0-dev"
+RUN /bin/bash -l -c "rvm --default use ruby-2.2.0"
+RUN /bin/bash -c "source /usr/local/rvm/bin/rvm && gem install bundler --no-ri --no-rdoc "
+
 ENV PATH /usr/local/rvm/rubies/ruby-2.2.0/bin:/usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV GEM_PATH /usr/local/rvm/rubies/ruby-2.2.0
 ENV GEM_HOME /usr/local/rvm/rubies/ruby-2.2.0
