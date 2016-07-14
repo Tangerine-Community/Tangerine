@@ -137,8 +137,7 @@ Tangerine.bootSequence =
                 db.put({"_id":"initialized"}).then( -> callback() )
             success: (res) ->
               packNumber++
-
-              db.bulkDocs res.docs, (error, doc) ->
+              db.bulkDocs res, (error, doc) ->
                 if error
                   return alert "could not save initialization document: #{error}"
                 doOne()
