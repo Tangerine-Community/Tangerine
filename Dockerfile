@@ -1,8 +1,6 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
 FROM ubuntu:14.04 
 
-RUN touch /cache_break_er 
-
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
@@ -97,17 +95,17 @@ RUN cd /tangerine-server/decompressor \
 # Stage 3 Compile 
 # 
 
-# Add the git repo so compile processes can pick up version number.
-ADD ./.git /tangerine-server/.git 
-# Compile client. Run twice otherwise compile is incomplete. See #74.
-ADD ./client /tangerine-server/client
-RUN cd /tangerine-server/client && npm run gulp init
-# Compile editor.
-ADD ./editor /tangerine-server/editor
-RUN cd /tangerine-server/editor && npm start init
 # Add all of the rest of the code.
 ADD ./ /tangerine-server
-
+# Add the git repo so compile processes can pick up version number.
+# ADD ./.git /tangerine-server/.git 
+# Compile client. Run twice otherwise compile is incomplete. See #74.
+# ADD ./client /tangerine-server/client
+RUN cd /tangerine-server/client && npm run gulp init
+RUN cd /tangerine-server/client && npm run gulp init
+# Compile editor.
+# ADD ./editor /tangerine-server/editor
+RUN cd /tangerine-server/editor && npm start init
 
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/ 
