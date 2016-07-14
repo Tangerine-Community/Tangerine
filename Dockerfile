@@ -71,14 +71,21 @@ RUN cd /tangerine-server/tree \
 # Install client.
 ADD ./client/package.json /tangerine-server/client/package.json
 ADD ./client/bower.json /tangerine-server/client/bower.json
+ADD ./client/scripts/postinstall.sh /tangerine-server/client/scripts/postinstall.sh
+ADD ./client/Gruntfile.js /tangerine-server/client/Gruntfile.js
+ADD ./client/Gulpfile.js /tangerine-server/client/Gulpfile.js
+ADD ./client/config.xml /tangerine-server/client/config.xml
+RUN mkdir /tangerine-server/client/src
+ADD ./client/www /tangerine-server/client/www
+ADD ./client/res /tangerine-server/client/res
 RUN cd /tangerine-server/client \
-    && sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js \
-    && npm install \
-    && bower install --allow-root \ 
-    && npm run cordova platform add android@5.X.X --save \
-    && npm run cordova plugin add cordova-plugin-crosswalk-webview --save --variable XWALK_VERSION="19+" \
-    && npm run cordova plugin add cordova-plugin-geolocation --save \
-    && npm run cordova plugin add cordova-plugin-whitelist --save 
+    && sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js 
+RUN cd /tangerine-server/client \
+    && npm install 
+RUN cd /tangerine-server/client \
+    && bower install --allow-root  
+RUN cd /tangerine-server/client \
+    && npm run postinstall 
 
 # Install decompressor.
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
