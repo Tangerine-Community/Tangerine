@@ -79,6 +79,14 @@ npm start init
 ````
 npm watch
 ````
+
+## Debug
+
+````
+npm run debug
+````
+
+Then go to http://localhost:4444/app/group-foo/index-dev.html and you can do proper debugging.
  
 ----
 
