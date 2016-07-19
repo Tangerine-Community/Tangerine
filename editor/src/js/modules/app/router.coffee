@@ -399,6 +399,7 @@ class Router extends Backbone.Router
               "Teachers"
               "Curricula"
               "Assessments"
+              "LessonPlans"
             ]
             complete: (options) ->
               vm.show new AssessmentsMenuView options

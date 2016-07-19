@@ -1,0 +1,7 @@
+var Tangerine;
+
+Tangerine = {
+  locales: {}
+};
+
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFwcC9nbG9iYWxzLmNvZmZlZSJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSxJQUFBOztBQUFBLFNBQUEsR0FBWTtFQUNWLE9BQUEsRUFBUyxFQURDIiwiZmlsZSI6ImFwcC9nbG9iYWxzLmpzIiwic291cmNlUm9vdCI6Ii9zb3VyY2UvIiwic291cmNlc0NvbnRlbnQiOlsiVGFuZ2VyaW5lID0ge1xuICBsb2NhbGVzOiB7fVxufSJdfQ==

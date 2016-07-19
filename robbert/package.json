@@ -4,7 +4,8 @@
   "description": "security bot for tangerine",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/index.js"
+    "test": "mocha tests/index.js",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

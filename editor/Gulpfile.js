@@ -20,11 +20,16 @@ var flatten = require('gulp-flatten');  // For removing directory strcuture
 var cache   = require('gulp-cached');   // For speedy redos
 
 var sourcemaps = require('gulp-sourcemaps'); // for debugging
+var inject = require('gulp-inject-string');  // to create index-dev.html
+var rename = require('gulp-rename');  // to create index-dev.html
 
 var less = require('gulp-less'); // for compiling less files
 
 var git = require('gulp-git'); // for versioning
 
+// cause i don't like mondays
+var wait = require('gulp-wait')
+var mapStream = require('map-stream');
 
 /*
  * configuration
@@ -32,18 +37,19 @@ var git = require('gulp-git'); // for versioning
 
 // (more at EOF)
 var conf = {
-  coffeeGlob     : './src/js/modules/**/*.coffee',
-  localeGlob     : './src/locales/*.coffee',
-  jsGlob         : './tmp/js/*.js',
-  tmpMinDir      : './tmp/min',
-  tmpJsDir       : './tmp/js',
-  srcDir         : './src/js',
-  appFile        : 'app.js',
-  libFile        : 'lib.js',
-  libGlob        : './src/js/lib/**/*.js',
-  lessFile       : './src/css/tangerine.less',
-  cssDir         : './src/css',
-  viewGlob       : './app/views/**/*.coffee'
+    coffeeGlob     : './src/js/modules/**/*.coffee',
+    localeGlob     : './src/locales/*.coffee',
+    jsGlob         : './tmp/js/*.js',
+    tmpMinDir      : './tmp/min',
+    tmpJsDir       : './tmp/js',
+    srcDir         : './src/js',
+    appFile        : 'app.js',
+    libFile        : 'lib.js',
+    libGlob        : './src/js/lib/**/*.js',
+    lessFile       : './src/css/tangerine.less',
+    cssDir         : './src/css',
+    viewGlob       : './app/views/**/*.coffee',
+    compiledDir    : './src/compiled'
 };
 
 // Helper function helps display logs
@@ -85,7 +91,7 @@ gulp.task('build:js', ['version'], function() {
     .pipe(c)                      // compile
     .pipe(sourcemaps.write())     // append the maps to the file
     .pipe(flatten())              // flatten nested subdirectories
-    .pipe(gulp.dest(conf.tmpJsDir)); // put result in this location
+    .pipe(gulp.dest(conf.tmpJsDir)) // put result in this location
 
 });
 
@@ -173,6 +179,7 @@ gulp.task('version', function(cb) {
           if (err !== null) { console.log(err); }
           cb();
         });
+      gulp.src([conf.tmpMinDir + '/version.js']).pipe(gulp.dest(conf.compiledDir));
     });
   });
 
@@ -201,7 +208,8 @@ gulp.task('build:locales', function(){
     .pipe(c)                          // compile coffeescript
     .pipe(uglify())                   // make it small
     .pipe(concat('locales.js'))       // turn it into one file
-    .pipe(gulp.dest(conf.tmpMinDir)); // send it here
+    .pipe(gulp.dest(conf.tmpMinDir)) // send it here
+    .pipe(gulp.dest(conf.compiledDir)); // also put result in this location
 
 });
 
@@ -232,11 +240,63 @@ gulp.task('clean', function(done){
 
 });
 
+gulp.task('prepare-index-dev', function () {
 
+  var prepFiles = function () {
+
+    return mapStream(function (file, cb) {
+      console.log("running prepFiles")
+      // gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest(conf.compiledDir));
+      gulp.src([conf.tmpJsDir + '/*.js']).pipe(gulp.dest(conf.compiledDir));
+      var template = gulp.src('./src/index-dev-template.html');
+      // It's not necessary to read the files (will speed up things), we're only after their paths:
+      var JsSources = conf.fileOrder;
+      var libSources = conf.libFiles;
+      var JsSourcesString = ""
+      var arrayLength = JsSources.length;
+      for (var i = 0; i < arrayLength; i++) {
+        var prop = JsSources[i];
+        // modify the string
+        var filename = "compiled/" + prop + ".js";
+        var scriptString = "<script src='" + filename + "'></script>\n";
+        JsSourcesString += scriptString
+      }
+      //console.log("JsSourcesString: " + JsSourcesString)
+      var libSourcesString = ""
+      var arrayLength = libSources.length;
+      for (var i = 0; i < arrayLength; i++) {
+        var prop = libSources[i];
+        // modify the string
+        var filename = prop.replace("./src/", "")
+        var scriptString = "<script src='" + filename + "'></script>\n";
+        libSourcesString += scriptString
+      }
+
+      template.pipe(inject.after("<!-- inject:js -->\n", JsSourcesString))
+          .pipe(inject.after("<!-- lib:js -->\n", libSourcesString))
+          //.pipe(debug({title: 'unicorny:', minimal: false}))
+          .pipe(rename('index-dev.html'))
+          .pipe(gulp.dest('./src')).on('error', function(err) { // on error
+        log(err);                   // log
+        //target.end();                    // end stream so we don't freeze the program
+      });
+      return cb(null, file)
+    })
+  }
+
+  //var stat = function () {
+  fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
+    gulp.src(conf.tmpMinDir + '/version.js')
+        .pipe(wait(2000))
+        .pipe(prepFiles());
+  });
+});
 
 gulp.task('init', ['clean', 'version', 'build:locales', 'build:views', 'build:app.js', 'build:lib.js']);
 
 gulp.task('default', ['init', 'watch']);
+
+gulp.task('index-dev', ['prepare-index-dev']);
 
 
 conf.fileOrder = [
@@ -342,6 +402,11 @@ conf.fileOrder = [
   'CurriculumListElementView',
   'CurriculaView',
 
+  'LessonPlan',
+  'LessonPlans',
+  'LessonPlansListView',
+  'LessonPlanListElementView',
+
   'Teacher',
   'Teachers',
   'TeachersView',
@@ -354,8 +419,6 @@ conf.fileOrder = [
 
   'User',
   'Users',
-  'TabletUser',
-  'TabletUsers',
 
   'LoginView',
   'AccountView',

@@ -93,19 +93,25 @@ class AssessmentsMenuView extends Backbone.View
       assessment  : t("AssessmentMenuView.label.assessment")
       assessments : t("AssessmentMenuView.label.assessments")
       curriculum  : t("AssessmentMenuView.label.curriculum")
+      lesson_plan  : t("AssessmentMenuView.label.lesson_plan")
 
 
   initialize: (options) ->
 
+    console.log("ptions: " + JSON.stringify(options))
     @i18n()
 
     @[key] = value for key, value of options
 
     @assessments.each (assessment) => assessment.on "new", @addAssessment
     @curricula.each   (curriculum) => curriculum.on "new", @addCurriculum
+    @lessonPlans.each   (lessonPlan) => lessonPlan.on "new", @addLessonPlan
 
     @curriculaListView = new CurriculaListView
       "curricula" : @curricula
+
+    @lessonPlansListView = new LessonPlansListView
+      "lessonPlans" : @lessonPlans
 
     @assessmentsView = new AssessmentsView
       "assessments" : @assessments
@@ -156,11 +162,13 @@ class AssessmentsMenuView extends Backbone.View
               <select id='new_type'>
                 <option value='assessment'>#{@text.assessment}</option>
                 <option value='curriculum'>#{@text.curriculum}</option>
+                <option value='lesson_plan'>#{@text.lesson_plan}</option>
               </select><br>
               <button class='new_save command'>#{@text.save}</button> <button class='new_cancel command'>#{@text.cancel}</button>
             </div>
           </div>
           <div id='assessments_container'></div>
+          <div id='lessonPlans_container'></div>
         </section>
 
         #{containers.join('')}
@@ -169,6 +177,7 @@ class AssessmentsMenuView extends Backbone.View
     else
       html += "
         <div id='assessments_container'></div>
+        <div id='lessonPlans_container'></div>
       </section>
       "
 
@@ -179,6 +188,9 @@ class AssessmentsMenuView extends Backbone.View
 
     @curriculaListView.setElement( @$el.find("#curricula_container") )
     @curriculaListView.render()
+
+    @lessonPlansListView.setElement( @$el.find("#lessonPlans_container") )
+    @lessonPlansListView.render()
 
     @usersMenuView.setElement( @$el.find("#users_menu_container") )
     @usersMenuView.render()
@@ -218,6 +230,10 @@ class AssessmentsMenuView extends Backbone.View
     @curricula.add newOne
     newOne.on "new", @addCurriculum
 
+  addLessonPlan: (newOne) =>
+    @lessonPlans.add newOne
+    newOne.on "new", @addLessonPlan
+
   # Making a new assessment
   newToggle: -> @$el.find('.new_form, .new').toggle(); false
 
@@ -253,6 +269,12 @@ class AssessmentsMenuView extends Backbone.View
         "_id"          : newId
         "curriculumId" : newId
       callback = @addCurriculum
+    else if newType == "lesson_plan"
+      newObject = new LessonPlan
+        "name"         : name
+        "_id"          : newId
+        "lessonPlanId" : newId
+      callback = @addLessonPlan
 
     newObject.save null,
       success : =>

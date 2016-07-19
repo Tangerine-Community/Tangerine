@@ -96,6 +96,7 @@ Tangerine.locales["en-US"] =
         "assessment" : "Assessment"
         "assessments" : "Assessments"
         "curriculum" : "Curriculum"
+        "lesson_plan" : "Lesson Plan"
 
     "GridRunView" :
       "label" :
