@@ -92,7 +92,7 @@ gulp.task('build:js', ['version'], function() {
     .pipe(sourcemaps.write())     // append the maps to the file
     .pipe(flatten())              // flatten nested subdirectories
     .pipe(gulp.dest(conf.tmpJsDir)) // put result in this location
-
+    .pipe(gulp.dest(conf.compiledDir)); // also put result in this location
 });
 
 
@@ -406,6 +406,8 @@ conf.fileOrder = [
   'LessonPlans',
   'LessonPlansListView',
   'LessonPlanListElementView',
+  'LessonPlanEditView',
+  'LessonPlanRunView',
 
   'Teacher',
   'Teachers',

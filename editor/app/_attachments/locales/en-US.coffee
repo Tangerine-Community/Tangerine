@@ -235,3 +235,9 @@ Tangerine.locales["en-US"] =
         "retrying" : "Retrying..."
         "searching" : "Searching..."
         "not_supported" : "Your system does not support geolocations."
+
+    "LessonPlanRunView" :
+      "label" :
+        "title" : "title"
+        "lesson_text" : "lesson_text"
+

@@ -92,6 +92,10 @@
       "consent" : {
          "run" : "ConsentRunView",
          "edit" : "ConsentEditView"
+      },
+      "lessonPlan" : {
+         "run" : "LessonPlanRunView",
+         "edit" : "LessonPlanEditView"
       }
    },
 

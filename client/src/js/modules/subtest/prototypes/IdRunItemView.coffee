@@ -51,6 +51,24 @@ class IdRunItemView extends Backbone.Marionette.ItemView
     @trigger "rendered"
     @trigger "ready"
 
+  onShow: ->
+    displayCode = @model.getString("displayCode")
+
+    if not _.isEmptyString(displayCode)
+      displaycodeFixed = displayCode
+      if _.size(Tangerine.displayCode_migrations) > 0
+        for k,v of Tangerine.displayCode_migrations
+          displaycodeFixed = displaycodeFixed.replace(k,v)
+      try
+        CoffeeScript.eval.apply(@, [displaycodeFixed])
+      catch error
+        name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+        message = error.message
+        alert "#{name}\n\n#{message}"
+        console.log "displaycodeFixed Error: " + JSON.stringify(error)
+
+    @prototypeView?.updateExecuteReady?(true)
+
   getResult: ->
     result =  { 'participant_id' : @$el.find("#participant_id").val() }
     hash = @model.get("hash") if @model.has("hash")

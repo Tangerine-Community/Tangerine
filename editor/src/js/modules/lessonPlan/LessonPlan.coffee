@@ -18,3 +18,9 @@ class LessonPlan extends Backbone.Model
           oldSuccess? @
 
     Assessment.__super__.fetch.call @, options
+
+  isActive: -> return not @isArchived()
+
+  isArchived: ->
+    archived = @get("archived")
+    return archived == "true" or archived == true

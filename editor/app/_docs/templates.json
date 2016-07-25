@@ -42,10 +42,17 @@
     },
     "gps": {
       "prototype" : "gps"
+    },
+    "lessonPlan" : {
+      "prototype" : "lessonPlan"
     }
   },
 
   "subtestTemplates" : {
+    "lessonPlan":
+    {
+      "Lesson Planner": {}
+    },
     "gps":
     {
       "GPS Coordinates": {}

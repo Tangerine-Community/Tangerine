@@ -95,10 +95,8 @@ class AssessmentsMenuView extends Backbone.View
       curriculum  : t("AssessmentMenuView.label.curriculum")
       lesson_plan  : t("AssessmentMenuView.label.lesson_plan")
 
-
   initialize: (options) ->
 
-    console.log("ptions: " + JSON.stringify(options))
     @i18n()
 
     @[key] = value for key, value of options
@@ -112,13 +110,13 @@ class AssessmentsMenuView extends Backbone.View
 
     @lessonPlansListView = new LessonPlansListView
       "lessonPlans" : @lessonPlans
+      "parent"      : @
 
     @assessmentsView = new AssessmentsView
       "assessments" : @assessments
       "parent"      : @
 
     @usersMenuView = new UsersMenuView
-
 
   render: =>
 

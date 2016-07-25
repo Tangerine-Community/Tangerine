@@ -35,6 +35,7 @@ class SubtestEditView extends Backbone.View
     @config     = Tangerine.config.subtest
 
     @prototypeViews  = Tangerine.config.get "prototypeViews"
+    console.log("@model.get 'prototype': " + @model.get 'prototype')
     @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
       model: @model
       parent: @

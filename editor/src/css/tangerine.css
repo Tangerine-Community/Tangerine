@@ -1002,6 +1002,33 @@ ul.assessment_list li.AssessmentListElementView .non_admin span {
   display: inline-block;
   vertical-align: middle;
 }
+ul.assessment_list li.LessonPlanListElementView {
+  list-style: none;
+  margin-top: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #888;
+  font-size: 20px;
+}
+ul.assessment_list li.LessonPlanListElementView button.name,
+ul.assessment_list li.LessonPlanListElementView button.admin_name {
+  border: none;
+  background: transparent;
+}
+ul.assessment_list li.LessonPlanListElementView button.name:focus,
+ul.assessment_list li.LessonPlanListElementView button.admin_name:focus {
+  outline: black dotted 1px;
+}
+ul.assessment_list li.LessonPlanListElementView li {
+  vertical-align: middle;
+  display: inline-block;
+}
+ul.assessment_list li.LessonPlanListElementView .sub_menus {
+  margin-left: 40px;
+}
+ul.assessment_list li.LessonPlanListElementView .non_admin span {
+  display: inline-block;
+  vertical-align: middle;
+}
 ul.assessment_list .archived_assessment {
   color: #888;
 }
@@ -2332,6 +2359,10 @@ body[rtl] {
   border-bottom-left-radius: 0;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
+}
+/* WidgetRunView save button*/
+#saveToCouchDB {
+  display: none;
 }
 /*
  * Table sorter

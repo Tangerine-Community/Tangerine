@@ -881,13 +881,6 @@ span.delete_confirm
   display: none;
 }
 
-.WidgetRunView
-{
-  #assessment-widget-result
-
-}
-
-
 /*
  * AssessmentPrintView
  */
@@ -1033,6 +1026,50 @@ ul.assessment_list
   padding-left: 0px;
   
   li.AssessmentListElementView
+  {
+    list-style: none;
+    margin-top: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid @grey;
+    font-size: @h2;
+
+    button.name,
+    button.admin_name
+    {
+      border: none;
+      background: transparent;
+    }
+
+    button.name:focus,
+    button.admin_name:focus
+    {
+      outline: black dotted 1px;
+    }
+
+    li
+    {
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    .sub_menus
+    {
+      margin-left: 40px;
+    }
+
+    .non_admin
+    {
+      span
+      {
+        display: inline-block;
+        vertical-align: middle;
+      }
+    }
+
+  }
+
+
+  li.LessonPlanListElementView
   {
     list-style: none;
     margin-top: 20px;
@@ -2333,6 +2370,10 @@ body[rtl]
 
 }
 
+/* WidgetRunView save button*/
+#saveToCouchDB {
+  display: none;
+}
 
 /*
  * Table sorter

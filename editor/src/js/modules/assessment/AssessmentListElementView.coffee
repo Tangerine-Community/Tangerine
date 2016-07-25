@@ -52,7 +52,6 @@ class AssessmentListElementView extends Backbone.View
     route   = $target.attr("href")
     Tangerine.router.navigate(route, true)
 
-
   duplicate: ->
     newName = "Copy of " + @model.get("name")
     @model.duplicate { name : newName }, null, null, (assessment) =>
