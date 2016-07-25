@@ -128,8 +128,8 @@ gulp.task('build:app.js', ['minify:js'], function() {
 function push() {
   require('child_process').exec('cd app && couchapp push',
     function (error, stdout, stderr) {
-      console.log('stdout: ' + stdout);
-      console.log('stderr: ' + stderr);
+      // console.log('stdout: ' + stdout);
+      // console.log('stderr: ' + stderr);
       if (error !== null) {
         console.log('exec error: ' + error);
       }

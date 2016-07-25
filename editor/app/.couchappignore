@@ -4,5 +4,7 @@
   "tests.*",
   ".*\\.DS_Store$",
   ".*couchapprc\\.sample$",
-  ".*\\.gitignore$"
+  ".*\\.gitignore$",
+  "_docs/configuration.template",
+  "_docs/settings.template"
 ]
