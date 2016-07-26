@@ -21,7 +21,9 @@ Tangerine.bootSequence =
 
     if (window.location.hash == '#widget')
       # This is a widget and we should keep our memory temporary.
-      Tangerine.db = new PouchDB("tangerine-" + Date.now() + Math.random(), {storage: 'temporary'})
+      dbname = "tangerine-" + Date.now() + Math.random()
+      console.log("dbname:" + dbname)
+      Tangerine.db = new PouchDB(dbname, {storage: 'temporary'})
     else 
       # This is not a widget and we'll hang onto our long term memory.
       Tangerine.db = new PouchDB(Tangerine.conf.db_name)
@@ -113,37 +115,42 @@ Tangerine.bootSequence =
 
       ).then ->
 
-        #
-        # Load Packs that Tree creates for an APK, then load the Packs we use for
-        # development purposes.
-        #
+        if (window.location.hash != '#widget')
 
-        packNumber = 0
+          #
+          # Load Packs that Tree creates for an APK, then load the Packs we use for
+          # development purposes.
+          #
 
-        # Recursive function that will iterate through js/init/pack000[0-x] until
-        # there is no longer a returned pack.
-        doOne = ->
+          packNumber = 0
 
-          paddedPackNumber = ("0000" + packNumber).slice(-4)
+          # Recursive function that will iterate through js/init/pack000[0-x] until
+          # there is no longer a returned pack.
+          doOne = ->
 
-          $.ajax
-            dataType: "json"
-            url: "js/init/pack#{paddedPackNumber}.json"
-            error: (res) ->
-              # No more pack? We're all done here.
-              if res.status is 404
-                # Mark this database as initialized so that this process does not
-                # run again on page refresh, then load Development Packs.
-                db.put({"_id":"initialized"}).then( -> callback() )
-            success: (res) ->
-              packNumber++
-              db.bulkDocs res, (error, doc) ->
-                if error
-                  return alert "could not save initialization document: #{error}"
-                doOne()
+            paddedPackNumber = ("0000" + packNumber).slice(-4)
 
-        # kick off recursive process
-        doOne()
+            $.ajax
+              dataType: "json"
+              url: "js/init/pack#{paddedPackNumber}.json"
+              error: (res) ->
+                # No more pack? We're all done here.
+                if res.status is 404
+                  # Mark this database as initialized so that this process does not
+                  # run again on page refresh, then load Development Packs.
+                  db.put({"_id":"initialized"}).then( -> callback() )
+              success: (res) ->
+                packNumber++
+                db.bulkDocs res, (error, doc) ->
+                  if error
+                    return alert "could not save initialization document: #{error}"
+                  doOne()
+
+          # kick off recursive process
+          doOne()
+        else
+          console.log("init empty db for widget.")
+          db.put({"_id":"initialized"}).then( -> callback() )
 
   # Put this version's information in the footer
   versionTag: ( callback ) ->

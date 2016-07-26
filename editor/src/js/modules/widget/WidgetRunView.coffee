@@ -37,7 +37,7 @@ class WidgetRunView extends Backbone.View
     @$assessmentWidget.attr('data-assessment', JSON.stringify(@model))
     @$assessmentWidget.attr('data-result', '{}')
     @$assessmentWidget.attr('width', '100%')
-    @$assessmentWidget.attr('height', 600)
+    @$assessmentWidget.attr('height', 800)
     @$assessmentWidget.attr('id', 'client-widget')
     @$assessmentWidget.on('result:save:widget', (event) ->
       console.log("Final save")
