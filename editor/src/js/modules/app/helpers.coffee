@@ -1,3 +1,79 @@
+
+
+class Backbone.ChildModel extends Backbone.Model
+
+  save: (attributes, options={}) =>
+    options.success = $.noop unless options.success?
+    options.error = $.noop unless options.error?
+    @set attributes
+    options.childSelf = @
+    @parent.childSave(options)
+
+
+class Backbone.ChildCollection extends Backbone.Collection
+
+
+class Backbone.ParentModel extends Backbone.Model
+
+  Child: null
+  ChildCollection: null
+
+  constructor: (options) ->
+    @collection = new @ChildCollection()
+    @collection.on "remove", => @updateAttributes()
+    super(options)
+
+  getLength: -> @collection.length || @attributes.children.length
+
+  fetch: (options) ->
+    oldSuccess = options.success
+    delete options.success
+    
+    options.success = (model, response, options) =>
+      childrenModels = []
+      for child in @getChildren()
+        childModel = new @Child(child)
+        childModel.parent = @
+        childrenModels.push childModel
+      @collection.reset childrenModels
+      @collection.sort()
+      oldSuccess(model, response, options)
+
+    super(options)
+
+  getChildren: ->
+    @getArray("children")
+
+  updateAttributes: ->
+    @attributes.children = []
+    for model in @collection.models
+      @attributes.children.push model.attributes
+
+  updateCollection: =>
+    @collection.reset(@attributes.children)
+    @collection.each (child) =>
+      child.parent = @
+
+  newChild: (attributes={}, options) =>
+    newChild = new @Child
+    newChild.set("_id", Utils.guid())
+    newChild.parent = @
+    @collection.add(newChild, options)
+    newChild.save attributes,
+      success: =>
+        
+
+  childSave: (options = {}) =>
+    oldSuccess = options.success
+    delete options.success
+    options.success = (a, b, c) =>
+      oldSuccess.apply(options.childSelf, [a, b, c])
+    @updateAttributes()
+
+    @save null, options
+
+
+
 #
 # Skip logic
 #

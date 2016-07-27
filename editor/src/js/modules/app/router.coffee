@@ -11,6 +11,11 @@ class Router extends Backbone.Router
       callback.apply(this, args)
 
   routes:
+
+    'workflow/edit/:workflowId' : 'workflowEdit'
+    'workflow/run/:workflowId'  : 'workflowRun'
+    'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
+
     'login'    : 'login'
     'register' : 'register'
     'logout'   : 'logout'
@@ -73,6 +78,80 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+
+
+  workflowEdit: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            view = new WorkflowEditView workflow : workflow
+            vm.show view
+
+  workflowRun: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            workflow.updateCollection()
+            view = new WorkflowRunView
+              workflow: workflow
+            vm.show view
+
+  workflowResume: ( workflowId, tripId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            Tangerine.$db.view Tangerine.design_doc+"/tripsAndUsers",
+              key: tripId
+              include_docs: true
+              success: (data) ->
+                index = Math.max(data.rows.length - 1, 0)
+
+                # add old results
+                steps = []
+                for j in [0..index]
+                  steps.push {result : new Result data.rows[j].doc}
+
+                assessmentResumeIndex = data.rows[index]?.doc?.subtestData?.length || 0
+
+                ###
+                  if data.rows[index]?.doc?.order_map?
+                  # save the order map of previous randomization
+                  orderMap = result.get("order_map").slice() # clone array
+                  # restore the previous ordermap
+                  view.orderMap = orderMap
+
+                ###
+
+                workflow = new Workflow "_id" : workflowId
+                workflow.fetch
+                  success: ->
+
+                    incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete")
+
+                    incomplete[workflowId] = _(incomplete[workflowId]).without tripId
+
+                    Tangerine.user.getPreferences("tutor-workflows", "incomplete", incomplete)
+
+                    workflow.updateCollection()
+                    view = new WorkflowRunView
+                      assessmentResumeIndex : assessmentResumeIndex
+                      workflow: workflow
+                      tripId  : tripId
+                      index   : index
+                      steps   : steps
+                    vm.show view
+
+
+
 
 
   admin: (options) ->
