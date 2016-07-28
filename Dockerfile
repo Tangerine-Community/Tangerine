@@ -94,6 +94,11 @@ RUN cd /tangerine-server/client \
     && npm install cordova-plugin-whitelist \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save
 
+# Install Tangerine CLI
+ADD ./cli/package.json /tangerine-server/cli/package.json
+RUN cd /tangerine-server/cli \
+    && npm install
+
 # Install decompressor.
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
@@ -104,17 +109,20 @@ RUN cd /tangerine-server/decompressor \
 # Stage 3 Compile 
 # 
 
-# Add all of the rest of the code.
+# @todo Add all of the rest of the code too early because otherwise client compile doesn't pick up on the git repository it needs.
 ADD ./ /tangerine-server
 # Add the git repo so compile processes can pick up version number.
-# ADD ./.git /tangerine-server/.git 
+ADD ./.git /tangerine-server/.git
 # Compile client. Run twice otherwise compile is incomplete. See #74.
-# ADD ./client /tangerine-server/client
+ADD ./client /tangerine-server/client
 RUN cd /tangerine-server/client && npm run gulp init
 RUN cd /tangerine-server/client && npm run gulp init
 # Compile editor.
-# ADD ./editor /tangerine-server/editor
+ADD ./editor /tangerine-server/editor
 RUN cd /tangerine-server/editor && npm start init
+# Engage the Tangerine CLI so we can run commands like `sudo tangerine make-me-a-sandwich`.
+ADD ./cli /tangerine-server/cli
+RUN cd /tangerine-server/cli && npm link
 
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/ 
