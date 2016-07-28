@@ -62,6 +62,7 @@ class Router extends Backbone.Router
 
     'restart/:id'   : 'restart'
     'edit/:id'      : 'edit'
+    'editLP/:id'      : 'editLP'
     'results/:id'   : 'results'
     'import'        : 'import'
 
@@ -426,6 +427,18 @@ class Router extends Backbone.Router
         assessment.fetch
           success : ( model ) ->
             view = new AssessmentEditView model: model
+            vm.show view
+      isUser: ->
+        Tangerine.router.landing()
+
+  editLP: (id) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        lessonPlan = new LessonPlan
+          "_id" : id
+        lessonPlan.fetch
+          success : ( model ) ->
+            view = new LessonPlanEditView model: model
             vm.show view
       isUser: ->
         Tangerine.router.landing()

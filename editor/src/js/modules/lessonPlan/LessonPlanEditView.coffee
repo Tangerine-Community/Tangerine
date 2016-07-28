@@ -1,6 +1,6 @@
-class AssessmentEditView extends Backbone.View
+class LessonPlanEditView extends Backbone.View
 
-  className : 'assessment_edit_view'
+  className : 'lessonPlan_edit_view'
 
   events :
     'click #archive_buttons input' : 'save'
@@ -17,6 +17,7 @@ class AssessmentEditView extends Backbone.View
   initialize: (options) ->
     @model = options.model
     @subtestListEditView = new SubtestListEditView
+      "lessonPlan" : @model
       "assessment" : @model
 
     @model.subtests.on "change remove", @subtestListEditView.render
@@ -26,17 +27,17 @@ class AssessmentEditView extends Backbone.View
     if @updateModel()
       @model.save null,
         success: =>
-          Utils.midAlert "#{@model.get("name")} saved" 
+          Utils.midAlert "#{@model.get("name")} saved"
         error: =>
-          Utils.midAlert "Assessment save error. Please try again."
+          Utils.midAlert "LessonPlan save error. Please try again."
 
   goBack: -> Tangerine.router.navigate "assessments", true
 
   updateModel: =>
 
-    #
-    # parse acceptable random sequences
-    #
+#
+# parse acceptable random sequences
+#
 
     subtestCount = @model.subtests.models.length
 
@@ -52,14 +53,14 @@ class AssessmentEditView extends Backbone.View
         sequence[j] = parseInt(element)
         rangeError = true if sequence[j] < 0 or sequence[j] >= subtestCount
         emptyError = true if isNaN(sequence[j])
-      
+
       sequences[i] = sequence
-      
+
       # detect errors
       tooManyError = true if sequence.length > subtestCount
       tooFewError  = true if sequence.length < subtestCount
       doublesError = true if sequence.length != _.uniq(sequence).length
-    
+
     # show errors if they exist and sequences exist
     if not _.isEmpty _.reject( _.flatten(sequences), (e) -> return isNaN(e)) # remove unparsable empties, don't _.compact. will remove 0s
       sequenceErrors = []
@@ -70,22 +71,28 @@ class AssessmentEditView extends Backbone.View
       if doublesError then sequenceErrors.push "Some sequences contain doubles."
 
       if sequenceErrors.length == 0
-        # if there's no errors, clean up the textarea content
+# if there's no errors, clean up the textarea content
         validatedSequences = (sequence.join(", ") for sequence in sequences).join("\n")
         @$el.find("#sequences").val(validatedSequences)
       else # if there's errors, they can still save. Just show a warning
         alert "Warning\n\n#{sequenceErrors.join("\n")}"
 
-    # nothing resembling a valid sequence was found
+# nothing resembling a valid sequence was found
     else
       @$el.find("#sequences").val("") # clean text area
 
     @model.set
       sequences : sequences
       archived  : @$el.find("#archive_buttons input:checked").val() == "true"
-      name      : @$el.find("#assessment_name").val()
-      dKey      : @$el.find("#assessment_d_key").val()
-      assessmentId : @model.id
+      name      : @$el.find("#lessonPlan_name").val()
+      dKey      : @$el.find("#lessonPlan_d_key").val()
+      lessonPlan_title      : @$el.find("#lessonPlan_title").val()
+      lessonPlan_lesson_text      : @$el.find("#lessonPlan_lesson_text").val()
+      lessonPlan_subject      : @$el.find("#lessonPlan_subject").val()
+      lessonPlan_grade      : @$el.find("#lessonPlan_grade").val()
+      lessonPlan_week      : @$el.find("#lessonPlan_week").val()
+      lessonPlan_day      : @$el.find("#lessonPlan_day").val()
+      lessonPlanId : @model.id
     return true
 
   toggleNewSubtestForm: (event) ->
@@ -97,21 +104,21 @@ class AssessmentEditView extends Backbone.View
     false
 
   saveNewSubtest: (event) =>
-    
+
     if event.type != "click" && event.which != 13
       return true
-    
+
     # if no subtest type selected, show error
     if @$el.find("#subtest_type_select option:selected").val() == "none"
       Utils.midAlert "Please select a subtest type"
       return false
-    
+
     # general template
     newAttributes = Tangerine.templates.get("subtest")
-    
+
     # prototype template
     prototypeTemplate = Tangerine.templates.get("prototypes")[@$el.find("#subtest_type_select").val()]
-    
+
     # bit more specific template
     useType = @$el.find("#subtest_type_select :selected").attr 'data-template'
     useTypeTemplate = Tangerine.templates.get("subtestTemplates")[@$el.find("#subtest_type_select").val()][useType]
@@ -120,20 +127,26 @@ class AssessmentEditView extends Backbone.View
     newAttributes = $.extend newAttributes, useTypeTemplate
     newAttributes = $.extend newAttributes,
       name         : @$el.find("#new_subtest_name").val()
-      assessmentId : @model.id
+      lessonPlanId : @model.id
       order        : @model.subtests.length
     newSubtest = @model.subtests.create newAttributes
     @toggleNewSubtestForm()
     return false
-  
+
   render: =>
+    lessonPlan_title    = @model.getString("title")
+    lessonPlan_lesson_text    = @model.getString("lessonPlan_lesson_text")
+    lessonPlan_subject    = @model.getString("lessonPlan_subject")
+    lessonPlan_grade    = @model.getString("lessonPlan_grade")
+    lessonPlan_week    = @model.getString("lessonPlan_week")
+    lessonPlan_day    = @model.getString("lessonPlan_day")
     sequences = ""
-    if @model.has("sequences") 
+    if @model.has("sequences")
       sequences = @model.get("sequences")
       sequences = sequences.join("\n")
 
       if _.isArray(sequences)
-        for sequences, i in sequences 
+        for sequences, i in sequences
           sequences[i] = sequences.join(", ")
 
     subtestLegend = @updateSubtestLegend()
@@ -152,23 +165,56 @@ class AssessmentEditView extends Backbone.View
       subtestTypeSelect += "</optgroup>"
     subtestTypeSelect += "</select>"
 
-    
     @$el.html "
       <button class='back navigation'>Back</button>
-        <h1>Assessment Builder</h1>
+        <h1>LessonPlan Builder</h1>
       <div id='basic'>
-        <label for='assessment_name'>Name</label>
-        <input id='assessment_name' value='#{@model.escape("name")}'>
+        <label for='lessonPlan_name'>Name</label>
+        <input id='lessonPlan_name' value='#{@model.escape("name")}'>
 
-        <label for='assessment_d_key' title='This key is used to import the assessment from a tablet.'>Download Key</label><br>
+        <label for='lessonPlan_d_key' title='This key is used to import the lessonPlan from a tablet.'>Download Key</label><br>
         <div class='info_box'>#{@model.id.substr(-5,5)}</div>
       </div>
 
-      <label title='Only active assessments will be displayed in the main assessment list.'>Status</label><br>
+      <label title='Only active lessonPlans will be displayed in the main lessonPlan list.'>Status</label><br>
       <div id='archive_buttons' class='buttonset'>
         <input type='radio' id='archive_false' name='archive' value='false' #{notArchiveChecked}><label for='archive_false'>Active</label>
         <input type='radio' id='archive_true'  name='archive' value='true'  #{archiveChecked}><label for='archive_true'>Archived</label>
       </div>
+
+      <div class='label_value'>
+        <label for='lessonPlan_title'>LessonPlan Title</label>
+        <input id='lessonPlan_title' value='#{lessonPlan_title}'>
+      </div>
+      <div class='menu_box'>
+      <div class='label_value'>
+      <label for='lessonPlan_lesson_text' title='Lesson Text.'>LessonPlan Text</label>
+              <textarea id='lessonPlan_lesson_text'>#{lessonPlan_lesson_text}</textarea>
+      </div>
+         </div>
+      <div class='label_value'>
+      <label for='lessonPlan_subject'>LessonPlan subject</label><br>
+        <div class='menu_box'>
+          <select id='lessonPlan_subject'>
+            <option value=''>None</option>
+            <option value='1'>Engish</option>
+            <option value='2'>Kiswahili</option>
+          </select>
+        </div>
+      </div>
+        <div class='label_value'>
+        <label for='lessonPlan_grade'>LessonPlan Grade</label>
+      <input id='lessonPlan_grade' value='#{lessonPlan_grade}'>
+      </div>
+        <div class='label_value'>
+        <label for='lessonPlan_week'>LessonPlan Week</label>
+      <input id='lessonPlan_week' value='#{lessonPlan_week}'>
+      </div>
+        <div class='label_value'>
+        <label for='lessonPlan_day'>LessonPlan Day</label>
+      <input id='lessonPlan_day' value='#{lessonPlan_day}'>
+      </div>
+
       <h2>Subtests</h2>
       <div class='menu_box'>
         <div>
@@ -189,7 +235,7 @@ class AssessmentEditView extends Backbone.View
       </div>
       <h2>Options</h2>
       <div class='label_value'>
-        <label for='sequences' title='This is a list of acceptable orders of subtests, which will be randomly selected each time an assessment is run. Subtest indicies are separated by commas, new lines separate sequences. '>Random Sequences</label>
+        <label for='sequences' title='This is a list of acceptable orders of subtests, which will be randomly selected each time an lessonPlan is run. Subtest indicies are separated by commas, new lines separate sequences. '>Random Sequences</label>
         <div id='subtest_legend'>#{subtestLegend}</div>
         <textarea id='sequences'>#{sequences}</textarea>
       </div>
@@ -199,7 +245,7 @@ class AssessmentEditView extends Backbone.View
     # render new subtest views
     @subtestListEditView.setElement(@$el.find("#subtest_list"))
     @subtestListEditView.render()
-    
+
     # make it sortable
     @$el.find("#subtest_list").sortable
       handle : '.sortable_handle'
@@ -212,7 +258,7 @@ class AssessmentEditView extends Backbone.View
 
     @trigger "rendered"
 
-  
+
   updateSubtestLegend: =>
     subtestLegend = ""
     @model.subtests.each (subtest, i) ->

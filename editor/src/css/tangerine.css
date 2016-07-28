@@ -1080,6 +1080,26 @@ ul.assessment_list .assessment_menu {
   display: block;
   height: 36px;
 }
+.sp_edit_l_p {
+  background-position: 0   0 !important;
+  text-indent: -999em;
+  letter-spacing: -999em;
+  overflow: hidden;
+  width: 36px;
+  height: 36px;
+  background: url('sprites.png') no-repeat;
+  border: 0;
+  cursor: pointer !important;
+  margin: 0 6px 0 0;
+}
+.sp_edit_l_p a {
+  display: block;
+  height: 36px;
+}
+.sp_edit_l_p button {
+  display: block;
+  height: 36px;
+}
 .sp_results {
   background-position: -36px 0 !important;
   text-indent: -999em;

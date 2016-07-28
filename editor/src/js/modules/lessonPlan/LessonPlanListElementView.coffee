@@ -162,7 +162,7 @@ class LessonPlanListElementView extends Backbone.View
 
     toggleButton     = "<div class='assessment_menu_toggle sp_right'><div></div></div>"
     name             = "<button class='name clickable'>#{@model.get('name')}</button>"
-    adminName        = "<button class='admin_name clickable #{archiveClass}'>#{@model.get('name')}</button>"
+    adminName        = "<button class='admin_name clickable #{archiveClass}'>#{@model.get('lessonPlan_title')}</button>"
     adminResultCount = "<label class='result_count small_grey no_help' title='Result count. Click to update.'>Results <b>#{@resultCount}</b></label>"
     resultCount      = "<span class='result_count no_help'>Results <b>#{@resultCount}</b></span>"
     selected         = " selected='selected'"
@@ -196,7 +196,7 @@ class LessonPlanListElementView extends Backbone.View
         </div>
         #{@ul
         cssClass : "assessment_menu"
-        links : ["run", "dataEntry", "results", "edit", "sync", "print" ]
+        links : ["run", "dataEntry", "results", "editLP", "sync", "print" ]
         other : @spriteEvents("li", "duplicate", "assessment_delete") + downloadKey
       }
         <div class='sub_menus'>
@@ -215,7 +215,7 @@ class LessonPlanListElementView extends Backbone.View
 
         #{@ul
         cssClass: "assessment_menu"
-        links : ["run","results","edit","sync","print"]
+        links : ["run","results","editLP","sync","print"]
         other : @spriteEvents("li", "duplicate", "assessment_delete") + downloadKey
       }
         <div class='sub_menus'>
