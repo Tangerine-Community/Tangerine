@@ -104,7 +104,7 @@ unirest.get(couchUrl + '_all_dbs').send().end(function(response) {
     var packet = {
       "source": couchUrl + "tangerine",
       "target": couchUrl + database,
-      "doc_ids": ["_design/ojai", "configuration"]
+      "doc_ids": ["_design/ojai", "configuration", "settings"]
     }
     unirest.post(couchUrl + '_replicate')
     .headers({'Accept': 'application/json', 'Content-Type': 'application/json'})
