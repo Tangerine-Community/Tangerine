@@ -9,6 +9,8 @@ These instruction require some knowledge of AWS and Linux.
 
 Login to AWS and Launch a new instance with Ubuntu 14.04 using a t2.medium server with 4 GiB memory. 
 
+Volume should be larger than the 8GB default. 24GB would be useful.
+
 ### Server details
 Ubuntu Server 14.04 LTS (HVM), SSD Volume Type - ami-fce3c696 <br/>
 Ubuntu Server 14.04 LTS (HVM), EBS General Purpose (SSD) Volume Type.<br/>
@@ -57,7 +59,7 @@ Commands I used in following those instructions:
     apt-cache policy docker-engine
 
 
-That last command verifies you are puling from the correct repo
+That last command verifies you are pulling from the correct repo
 
 Install dependencies for docker
 
