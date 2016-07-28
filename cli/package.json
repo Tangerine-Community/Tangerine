@@ -1,0 +1,20 @@
+{
+  "name": "tangerine-cli",
+  "version": "0.0.0",
+  "description": "A CLI for Tangerine",
+  "main": "tangerine.js",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "fs-extra": "^0.26.4",
+    "single-line-log": "^1.0.1",
+    "unirest": "^0.4.2",
+    "walkdir": "0.0.11"
+  },
+  "bin": {
+    "tangerine": "./tangerine.js"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "tangerine.js"
+  }
+}
