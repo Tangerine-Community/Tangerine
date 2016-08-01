@@ -798,10 +798,6 @@ progress {
 }
 .subtest-back {
   float: left;
-  display:none;
-}
-.skip {
-  display:none;
 }
 button {
   margin: 10px 0px;
@@ -2919,4 +2915,18 @@ button.ui-button::-moz-focus-inner {
 .ui-menu .ui-menu-icon {
   position: static;
   float: right;
+}
+/* LessonPlan */
+.lesson-language {
+  font-weight: normal;
+  font-size: 2.4em;
+  float: left;
+  margin-right: 0.5em;
+  margin-bottom: 0.3em;
+}
+.lesson-info {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: grey;
+  line-height: 0.9em;
 }

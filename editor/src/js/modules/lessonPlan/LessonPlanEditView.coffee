@@ -88,11 +88,14 @@ class LessonPlanEditView extends Backbone.View
       dKey      : @$el.find("#lessonPlan_d_key").val()
       lessonPlan_title      : @$el.find("#lessonPlan_title").val()
       lessonPlan_lesson_text      : @$el.find("#lessonPlan_lesson_text").val()
-      lessonPlan_subject      : @$el.find("#lessonPlan_subject").val()
+#      lessonPlan_subject      : @$el.find("#lessonPlan_subject").val()
+      lessonPlan_subject      : @$el.find("#lessonPlan_subject_buttons input:checked").val()
       lessonPlan_grade      : @$el.find("#lessonPlan_grade").val()
       lessonPlan_week      : @$el.find("#lessonPlan_week").val()
       lessonPlan_day      : @$el.find("#lessonPlan_day").val()
+#      lessonPlan_image      : @$el.find("#lessonPlan_image").val()
       lessonPlanId : @model.id
+      assessmentId : @model.id
     return true
 
   toggleNewSubtestForm: (event) ->
@@ -128,13 +131,14 @@ class LessonPlanEditView extends Backbone.View
     newAttributes = $.extend newAttributes,
       name         : @$el.find("#new_subtest_name").val()
       lessonPlanId : @model.id
+      assessmentId : @model.id
       order        : @model.subtests.length
     newSubtest = @model.subtests.create newAttributes
     @toggleNewSubtestForm()
     return false
 
   render: =>
-    lessonPlan_title    = @model.getString("title")
+    lessonPlan_title    = @model.getString("lessonPlan_title")
     lessonPlan_lesson_text    = @model.getString("lessonPlan_lesson_text")
     lessonPlan_subject    = @model.getString("lessonPlan_subject")
     lessonPlan_grade    = @model.getString("lessonPlan_grade")
@@ -154,6 +158,9 @@ class LessonPlanEditView extends Backbone.View
     arch = @model.get('archived')
     archiveChecked    = if (arch == true or arch == 'true') then "checked" else ""
     notArchiveChecked = if archiveChecked then "" else "checked"
+
+    lessonPlan_subject_Engish    = if (lessonPlan_subject == '1') then "checked" else ""
+    lessonPlan_subject_Kiswahili = if (lessonPlan_subject == '2') then "checked" else ""
 
     # list of "templates"
     subtestTypeSelect = "<select id='subtest_type_select'>
@@ -186,21 +193,18 @@ class LessonPlanEditView extends Backbone.View
         <label for='lessonPlan_title'>LessonPlan Title</label>
         <input id='lessonPlan_title' value='#{lessonPlan_title}'>
       </div>
+
       <div class='menu_box'>
-      <div class='label_value'>
-      <label for='lessonPlan_lesson_text' title='Lesson Text.'>LessonPlan Text</label>
-              <textarea id='lessonPlan_lesson_text'>#{lessonPlan_lesson_text}</textarea>
-      </div>
-         </div>
-      <div class='label_value'>
-      <label for='lessonPlan_subject'>LessonPlan subject</label><br>
-        <div class='menu_box'>
-          <select id='lessonPlan_subject'>
-            <option value=''>None</option>
-            <option value='1'>Engish</option>
-            <option value='2'>Kiswahili</option>
-          </select>
+        <div class='label_value'>
+          <label for='lessonPlan_lesson_text' title='Lesson Text.'>LessonPlan Text</label>
+          <textarea id='lessonPlan_lesson_text'>#{lessonPlan_lesson_text}</textarea>
         </div>
+      </div>
+
+      <label title='You must choose one of these subjects.' for='lessonPlan_subject_buttons'>LessonPlan subject</label><br>
+      <div id='lessonPlan_subject_buttons' class='buttonset'>
+        <input type='radio' id='lessonPlan_subject_Engish' name='lessonPlan_subject' value='1' #{lessonPlan_subject_Engish}><label for='lessonPlan_subject_Engish'>Engish</label>
+        <input type='radio' id='lessonPlan_subject_Kiswahili'  name='lessonPlan_subject' value='2'  #{lessonPlan_subject_Kiswahili}><label for='lessonPlan_subject_Kiswahili'>Kiswahili</label>
       </div>
         <div class='label_value'>
         <label for='lessonPlan_grade'>LessonPlan Grade</label>

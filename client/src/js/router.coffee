@@ -20,6 +20,7 @@ class Router extends Backbone.Router
   routes:
     'widget'   : 'widgetLoad'
     'widget-play/:id' : 'widgetPlay'
+    'widget-play/:type/:id' : 'widgetPlay'
     'login'    : 'login'
     'register' : 'register'
     'logout'   : 'logout'
@@ -429,15 +430,17 @@ class Router extends Backbone.Router
       Tangerine.db
         .put(assessmentDocs[i])
         .then( (response) ->
+            # Catch the Assessment ID that will be passing by here.
+          if assessmentDocs[i].collection == 'assessment' || assessmentDocs[i].collection == 'lessonPlan'
+            type = assessmentDocs[i].collection
+#          if typeof(assessmentDocs[i].assessmentId) != 'undefined'
+            assessmentId = assessmentDocs[i]._id
           i++
           if assessmentDocs[i]
-            # Catch the Assessment ID that will be passing by here.
-            if assessmentDocs[i].collection == 'assessment'
-              assessmentId = assessmentDocs[i]._id
             insertRecord()
           else
-            Backbone.history.navigate('#widget-play/' + assessmentId, {trigger: true})
-        )
+            Backbone.history.navigate('#widget-play/' + type + '/' + assessmentId, {trigger: true})
+      )
         .catch( (error) ->
           console.log("error: " + error)
           console.log("stack: " + error.stack)
@@ -445,7 +448,8 @@ class Router extends Backbone.Router
         )
     insertRecord()
 
-  widgetPlay: (id) ->
+  widgetPlay: (type, id) ->
+    console.log("type:" + type)
     router = this
     router.navigateAwayMessage = t("Router.message.quit_assessment")
     assessment = new Assessment "_id" : id
@@ -454,20 +458,24 @@ class Router extends Backbone.Router
         dashboardLayout = new DashboardLayout();
         Tangerine.app.rm.get('mainRegion').show dashboardLayout
         dashboardLayout.contentRegion.reset()
-        assessmentCompositeView = new AssessmentCompositeView
-          assessment: assessment
-        assessmentCompositeView.on('result:saved', () =>
-          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
+        if type == 'assessment'
+          view = new AssessmentCompositeView
+            assessment: assessment
+        else if type == 'lessonPlan'
+          view = new LessonPlanItemView
+            model: assessment
+        view.on('result:saved', () =>
+          window.frameElement.setAttribute('data-result', JSON.stringify(view.result.toJSON()))
           evt = document.createEvent("Event");
           evt.initEvent("result:save:widget", true, false);
           window.frameElement.dispatchEvent(evt)
         )
-        assessmentCompositeView.on('result:another', () =>
+        view.on('result:another', () =>
           evt = document.createEvent("Event");
           evt.initEvent("result:another:widget", true, false);
           window.frameElement.dispatchEvent(evt)
         )
-        dashboardLayout.contentRegion.show(assessmentCompositeView)
+        dashboardLayout.contentRegion.show(view)
       error: (model, err, cb) ->
         console.log JSON.stringify err
 

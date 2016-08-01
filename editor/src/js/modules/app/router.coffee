@@ -447,7 +447,7 @@ class Router extends Backbone.Router
     Tangerine.router.navigate "run/#{name}", true
 
 #  WidgetRunView takes a list of subtests and the assessment.
-  run: (id) ->
+  run: (id, klass) ->
     Tangerine.user.verify
       isAuthenticated: ->
         dKey = JSON.stringify(id.substr(-5, 5))

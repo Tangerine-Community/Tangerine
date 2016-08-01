@@ -41,8 +41,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview = LocationRunItemView
       else if  (prototypeName == 'ConsentRunItemView')
         currentSubview = ConsentRunItemView
-      else if  (prototypeName == 'LessonPlanRunView')
-        currentSubview = LessonPlanRunView
+      else if  (prototypeName == 'LessonPlanRunItemView')
+        currentSubview = LessonPlanRunItemView
       else
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")
