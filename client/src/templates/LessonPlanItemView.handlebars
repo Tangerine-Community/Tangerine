@@ -3,12 +3,7 @@
 <div class="image-container"><img src="images/{{lessonPlan_image}}"></div>
 <div class="lesson-text">{{{lessonPlan_lesson_text}}}</div>
 {{#each elements}}
-    {{#each models}}
-        Model Index: {{@key}} Value = {{this}}<br>
-    {{/each}}
+    {{{html}}}
+{{/each}}
 
-    Element Index: {{@key}} Value = {{this}}<br>
-{{/each}}
-{{#each this}}
-    Index: {{@index}} Value = {{this}}<br>
-{{/each}}
+

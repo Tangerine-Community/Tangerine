@@ -459,12 +459,8 @@ class Router extends Backbone.Router
           dashboardLayout = new DashboardLayout();
           Tangerine.app.rm.get('mainRegion').show dashboardLayout
           dashboardLayout.contentRegion.reset()
-          if type == 'assessment'
-            view = new AssessmentCompositeView
-              assessment: assessment
-          else if type == 'lessonPlan'
-            view = new LessonPlanItemView
-              model: assessment
+          view = new AssessmentCompositeView
+            assessment: assessment
           view.on('result:saved', () =>
             window.frameElement.setAttribute('data-result', JSON.stringify(view.result.toJSON()))
             evt = document.createEvent("Event");
