@@ -798,10 +798,10 @@ progress {
 }
 .subtest-back {
   float: left;
-  display:none;
+  display: none;
 }
 .skip {
-  display:none;
+  display: none;
 }
 button {
   margin: 10px 0px;
