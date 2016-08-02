@@ -444,7 +444,10 @@ conf.fileOrder = [
   'CurriculumListElementView',
   'CurriculaView',
 
-  'LessonPlanRunItemView',
+  'Element',
+  'Elements',
+
+  'LessonPlan',
   'LessonPlanItemView',
 
   'Teacher',

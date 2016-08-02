@@ -7,6 +7,9 @@
       "order"             : 0,
       "skippable"         : false
   },
+  "element": {
+      "order"             : 0
+  },
   "prototypes" : {
     "grid" : {
       "prototype" : "grid",
@@ -47,7 +50,21 @@
       "prototype" : "lessonPlan"
     }
   },
-
+  "elementTypes"  : {
+    "media" : {
+      "prototype" : "media",
+      "element" : "image",
+      "name" : "",
+      "type" : ["image", "sound", "video"],
+      "description" : "",
+      "path" : ""
+     },
+    "html" : {
+      "prototype" : "html",
+      "element" : "html",
+      "data" : ""
+     }
+  },
   "subtestTemplates" : {
     "lessonPlan":
     {

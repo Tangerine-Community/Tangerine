@@ -7,7 +7,7 @@ class LessonPlan extends Backbone.Model
   initialize: ( options={} ) ->
 # this collection doesn't get saved
 # changes update the subtest view, it keeps order
-    @subtests = new Subtests
+    @elements = new Elements
 # @getResultCount()
 
   calcDKey: => @id.substr(-5, 5)
@@ -40,16 +40,16 @@ class LessonPlan extends Backbone.Model
 
 
 # Hijacked success() for later
-# fetchs all subtests for the assessment
+# fetchs all elements for the lessonPlan
   fetch: (options) =>
     oldSuccess = options.success
     options.success = (model) =>
-      allSubtests = new Subtests
-      allSubtests.fetch
-        key: "s" + @id
+      allElements = new Elements
+      allElements.fetch
+        key: "e" + @id
         success: (collection) =>
-          @subtests = collection
-          @subtests.ensureOrder()
+          @elements = collection
+          @elements.ensureOrder()
           oldSuccess? @
 
     Assessment.__super__.fetch.call @, options
@@ -204,7 +204,7 @@ class LessonPlan extends Backbone.Model
   duplicate: ->
 
     questions = new Questions
-    subtests  = new Subtests
+    elements  = new Elements
 
     modelsToSave = []
 
@@ -228,10 +228,10 @@ class LessonPlan extends Backbone.Model
     getQuestions = ->
       questions.fetch
         key: "q" + oldModel.id
-        success: -> getSubtests()
+        success: -> getElements()
 
-    getSubtests = ->
-      subtests.fetch
+    getElements = ->
+      elements.fetch
         key: "s" + oldModel.id
         success: -> processDocs()
 
@@ -239,8 +239,8 @@ class LessonPlan extends Backbone.Model
 
       subtestIdMap = {}
 
-      # link new subtests to new assessment
-      for subtest in subtests.models
+      # link new elements to new assessment
+      for subtest in elements.models
 
         oldSubtestId = subtest.id
         newSubtestId = Utils.guid()
@@ -254,12 +254,12 @@ class LessonPlan extends Backbone.Model
 
         modelsToSave.push (new Subtest(newAttributes)).stamp().attributes
 
-      # update the links to other subtests
+      # update the links to other elements
       for subtest in modelsToSave
         if subtest.gridLinkId? and subtest.gridLinkId != ""
           subtest.gridLinkId = subtestIdMap[subtest.gridLinkId]
 
-      # link questions to new subtests
+      # link questions to new elements
       for question in questions.models
 
         $.extend(true, newAttributes = {}, question.attributes)

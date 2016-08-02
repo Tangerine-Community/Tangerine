@@ -67,6 +67,7 @@ class Router extends Backbone.Router
     'import'        : 'import'
 
     'subtest/:id'       : 'editSubtest'
+    'element/:id'       : 'editElement'
 
     'question/:id' : 'editQuestion'
     'dashboard' : 'dashboard'
@@ -674,6 +675,28 @@ class Router extends Backbone.Router
                 view = new SubtestEditView
                   model      : model
                   assessment : assessment
+                vm.show view
+      isUser: ->
+        Tangerine.router.landing()
+
+  #
+  # Elements
+  #
+  editElement: (id) ->
+    Tangerine.user.verify
+      isAdmin: ->
+        id = Utils.cleanURL id
+        element = new Element _id : id
+        element.fetch
+          success: (model, response) ->
+            lessonPlan = new LessonPlan
+              "_id" : element.get("assessmentId")
+            lessonPlan.fetch
+              success: ->
+                view = new ElementEditView
+                  model      : model
+                  assessment : lessonPlan
+                  lessonPlan : lessonPlan
                 vm.show view
       isUser: ->
         Tangerine.router.landing()

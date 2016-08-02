@@ -99,6 +99,13 @@
       }
    },
 
+   "elementViews" : {
+      "html" : {
+         "run" : "HtmlRunView",
+         "edit" : "HtmlEditView"
+      }
+   },
+
    "printFormats" : [
       {
          "name" : "Content",

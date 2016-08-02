@@ -5,23 +5,23 @@ class LessonPlanEditView extends Backbone.View
   events :
     'click #archive_buttons input' : 'save'
     'click .back'                  : 'goBack'
-    'click .new_subtest_button'    : 'toggleNewSubtestForm'
-    'click .new_subtest_cancel'    : 'toggleNewSubtestForm'
+    'click .new_element_button'    : 'toggleNewElementForm'
+    'click .new_element_cancel'    : 'toggleNewElementForm'
 
-    'keypress #new_subtest_name'   : 'saveNewSubtest'
-    'click .new_subtest_save'      : 'saveNewSubtest'
+    'keypress #new_element_name'   : 'saveNewElement'
+    'click .new_element_save'      : 'saveNewElement'
 
     'change #basic input'          : 'save'
     'click .save'                  : 'save'
 
   initialize: (options) ->
     @model = options.model
-    @subtestListEditView = new SubtestListEditView
+    @elementListEditView = new ElementListEditView
       "lessonPlan" : @model
       "assessment" : @model
 
-    @model.subtests.on "change remove", @subtestListEditView.render
-    @model.subtests.on "all", @updateSubtestLegend
+    @model.elements.on "change remove", @elementListEditView.render
+    @model.elements.on "all", @updateElementLegend
 
   save: =>
     if @updateModel()
@@ -39,7 +39,7 @@ class LessonPlanEditView extends Backbone.View
 # parse acceptable random sequences
 #
 
-    subtestCount = @model.subtests.models.length
+    elementCount = @model.elements.models.length
 
     # remove everything except numbers, commas and new lines
     sequencesValue = @$el.find("#sequences").val().replace(/[^0-9,\n]/g,"")
@@ -51,23 +51,23 @@ class LessonPlanEditView extends Backbone.View
       sequence = sequence.split(",")
       for element, j in sequence
         sequence[j] = parseInt(element)
-        rangeError = true if sequence[j] < 0 or sequence[j] >= subtestCount
+        rangeError = true if sequence[j] < 0 or sequence[j] >= elementCount
         emptyError = true if isNaN(sequence[j])
 
       sequences[i] = sequence
 
       # detect errors
-      tooManyError = true if sequence.length > subtestCount
-      tooFewError  = true if sequence.length < subtestCount
+      tooManyError = true if sequence.length > elementCount
+      tooFewError  = true if sequence.length < elementCount
       doublesError = true if sequence.length != _.uniq(sequence).length
 
     # show errors if they exist and sequences exist
     if not _.isEmpty _.reject( _.flatten(sequences), (e) -> return isNaN(e)) # remove unparsable empties, don't _.compact. will remove 0s
       sequenceErrors = []
       if emptyError   then sequenceErrors.push "Some sequences contain empty values."
-      if rangeError   then sequenceErrors.push "Some numbers do not reference a subtest from the legend."
-      if tooManyError then sequenceErrors.push "Some sequences are longer than the total number of all subtests."
-      if tooFewError  then sequenceErrors.push "Some sequences are shorter than the total number of all subtests."
+      if rangeError   then sequenceErrors.push "Some numbers do not reference a element from the legend."
+      if tooManyError then sequenceErrors.push "Some sequences are longer than the total number of all elements."
+      if tooFewError  then sequenceErrors.push "Some sequences are shorter than the total number of all elements."
       if doublesError then sequenceErrors.push "Some sequences contain doubles."
 
       if sequenceErrors.length == 0
@@ -98,43 +98,44 @@ class LessonPlanEditView extends Backbone.View
       assessmentId : @model.id
     return true
 
-  toggleNewSubtestForm: (event) ->
-    @$el.find(".new_subtest_form, .new_subtest_button").toggle()
+  toggleNewElementForm: (event) ->
+    @$el.find(".new_element_form, .new_element_button").toggle()
 
-    @$el.find("#new_subtest_name").val("")
-    @$el.find("#subtest_type_select").val("none")
+    @$el.find("#new_element_name").val("")
+    @$el.find("#element_type_select").val("none")
 
     false
 
-  saveNewSubtest: (event) =>
+  saveNewElement: (event) =>
 
     if event.type != "click" && event.which != 13
       return true
 
-    # if no subtest type selected, show error
-    if @$el.find("#subtest_type_select option:selected").val() == "none"
-      Utils.midAlert "Please select a subtest type"
+    # if no element type selected, show error
+    if @$el.find("#element_type_select option:selected").val() == "none"
+      Utils.midAlert "Please select an element type"
       return false
 
     # general template
-    newAttributes = Tangerine.templates.get("subtest")
+    newAttributes = Tangerine.templates.get("element")
 
     # prototype template
-    prototypeTemplate = Tangerine.templates.get("prototypes")[@$el.find("#subtest_type_select").val()]
+    prototypeTemplate = Tangerine.templates.get("elementTypes")[@$el.find("#element_type_select").val()]
 
     # bit more specific template
-    useType = @$el.find("#subtest_type_select :selected").attr 'data-template'
-    useTypeTemplate = Tangerine.templates.get("subtestTemplates")[@$el.find("#subtest_type_select").val()][useType]
+#    useType = @$el.find("#element_type_select :selected").attr 'data-template'
+#    useTypeTemplate = Tangerine.templates.get("elementTemplates")[@$el.find("#element_type_select").val()][useType]
+    useTypeTemplate = Tangerine.templates.get("element");
 
     newAttributes = $.extend newAttributes, prototypeTemplate
     newAttributes = $.extend newAttributes, useTypeTemplate
     newAttributes = $.extend newAttributes,
-      name         : @$el.find("#new_subtest_name").val()
+      name         : @$el.find("#new_element_name").val()
       lessonPlanId : @model.id
       assessmentId : @model.id
-      order        : @model.subtests.length
-    newSubtest = @model.subtests.create newAttributes
-    @toggleNewSubtestForm()
+      order        : @model.elements.length
+    newElement = @model.elements.create newAttributes
+    @toggleNewElementForm()
     return false
 
   render: =>
@@ -153,7 +154,7 @@ class LessonPlanEditView extends Backbone.View
         for sequences, i in sequences
           sequences[i] = sequences.join(", ")
 
-    subtestLegend = @updateSubtestLegend()
+    elementLegend = @updateElementLegend()
 
     arch = @model.get('archived')
     archiveChecked    = if (arch == true or arch == 'true') then "checked" else ""
@@ -163,14 +164,14 @@ class LessonPlanEditView extends Backbone.View
     lessonPlan_subject_Kiswahili = if (lessonPlan_subject == '2') then "checked" else ""
 
     # list of "templates"
-    subtestTypeSelect = "<select id='subtest_type_select'>
-      <option value='none' disabled='disabled' selected='selected'>Please select a subtest type</option>"
-    for key, value of Tangerine.templates.get("subtestTemplates")
-      subtestTypeSelect += "<optgroup label='#{key.humanize()}'>"
-      for subKey, subValue of value
-        subtestTypeSelect += "<option value='#{key}' data-template='#{subKey}'>#{subKey}</option>"
-      subtestTypeSelect += "</optgroup>"
-    subtestTypeSelect += "</select>"
+    elementTypeSelect = "<select id='element_type_select'>
+      <option value='none' disabled='disabled' selected='selected'>Please select a element type</option>"
+    for key, value of Tangerine.templates.get("elementTypes")
+#      elementTypeSelect += "<optgroup label='#{key.humanize()}'>"
+#      for subKey, subValue of value
+        elementTypeSelect += "<option value='#{key}' data-template='#{key}'>#{key.humanize()}</option>"
+#      elementTypeSelect += "</optgroup>"
+    elementTypeSelect += "</select>"
 
     @$el.html "
       <button class='back navigation'>Back</button>
@@ -219,58 +220,58 @@ class LessonPlanEditView extends Backbone.View
       <input id='lessonPlan_day' value='#{lessonPlan_day}'>
       </div>
 
-      <h2>Subtests</h2>
+      <h2>Elements</h2>
       <div class='menu_box'>
         <div>
-        <ul id='subtest_list'>
+        <ul id='element_list'>
         </ul>
         </div>
-        <button class='new_subtest_button command'>Add Subtest</button>
-        <div class='new_subtest_form confirmation'>
+        <button class='new_element_button command'>Add Element</button>
+        <div class='new_element_form confirmation'>
           <div class='menu_box'>
-            <h2>New Subtest</h2>
-            <label for='subtest_type_select'>Type</label><br>
-            #{subtestTypeSelect}<br>
-            <label for='new_subtest_name'>Name</label><br>
-            <input type='text' id='new_subtest_name'>
-            <button class='new_subtest_save command'>Add</button> <button class='new_subtest_cancel command'>Cancel</button>
+            <h2>New Element</h2>
+            <label for='element_type_select'>Type</label><br>
+            #{elementTypeSelect}<br>
+            <label for='new_element_name'>Name</label><br>
+            <input type='text' id='new_element_name'>
+            <button class='new_element_save command'>Add</button> <button class='new_element_cancel command'>Cancel</button>
           </div>
         </div>
       </div>
       <h2>Options</h2>
       <div class='label_value'>
-        <label for='sequences' title='This is a list of acceptable orders of subtests, which will be randomly selected each time an lessonPlan is run. Subtest indicies are separated by commas, new lines separate sequences. '>Random Sequences</label>
-        <div id='subtest_legend'>#{subtestLegend}</div>
+        <label for='sequences' title='This is a list of acceptable orders of elements, which will be randomly selected each time an lessonPlan is run. Element indicies are separated by commas, new lines separate sequences. '>Random Sequences</label>
+        <div id='element_legend'>#{elementLegend}</div>
         <textarea id='sequences'>#{sequences}</textarea>
       </div>
       <button class='save command'>Save</button>
       "
 
-    # render new subtest views
-    @subtestListEditView.setElement(@$el.find("#subtest_list"))
-    @subtestListEditView.render()
+    # render new element views
+    @elementListEditView.setElement(@$el.find("#element_list"))
+    @elementListEditView.render()
 
     # make it sortable
-    @$el.find("#subtest_list").sortable
+    @$el.find("#element_list").sortable
       handle : '.sortable_handle'
       start: (event, ui) -> ui.item.addClass "drag_shadow"
       stop:  (event, ui) -> ui.item.removeClass "drag_shadow"
       update : (event, ui) =>
-        for id, i in ($(li).attr("data-id") for li in @$el.find("#subtest_list li"))
-          @model.subtests.get(id).set({"order":i},{silent:true}).save(null,{silent:true})
-        @model.subtests.sort()
+        for id, i in ($(li).attr("data-id") for li in @$el.find("#element_list li"))
+          @model.elements.get(id).set({"order":i},{silent:true}).save(null,{silent:true})
+        @model.elements.sort()
 
     @trigger "rendered"
 
 
-  updateSubtestLegend: =>
-    subtestLegend = ""
-    @model.subtests.each (subtest, i) ->
-      subtestLegend += "<div class='small_grey'>#{i} - #{subtest.get("name")}</div><br>"
-    $subtestWrapper = @$el.find("#subtest_legend")
-    $subtestWrapper.html(subtestLegend) if $subtestWrapper.length != 0
-    return subtestLegend
+  updateElementLegend: =>
+    elementLegend = ""
+    @model.elements.each (element, i) ->
+      elementLegend += "<div class='small_grey'>#{i} - #{element.get("name")}</div><br>"
+    $elementWrapper = @$el.find("#element_legend")
+    $elementWrapper.html(elementLegend) if $elementWrapper.length != 0
+    return elementLegend
 
   onClose: ->
-    @subtestListEditView.close()
+    @elementListEditView.close()
     

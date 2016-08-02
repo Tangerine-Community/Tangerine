@@ -452,30 +452,42 @@ class Router extends Backbone.Router
     console.log("type:" + type)
     router = this
     router.navigateAwayMessage = t("Router.message.quit_assessment")
-    assessment = new Assessment "_id" : id
-    assessment.deepFetch
-      success : ->
-        dashboardLayout = new DashboardLayout();
-        Tangerine.app.rm.get('mainRegion').show dashboardLayout
-        dashboardLayout.contentRegion.reset()
-        if type == 'assessment'
-          view = new AssessmentCompositeView
-            assessment: assessment
-        else if type == 'lessonPlan'
+    if type == 'assessment'
+      assessment = new Assessment "_id" : id
+      assessment.deepFetch
+        success : ->
+          dashboardLayout = new DashboardLayout();
+          Tangerine.app.rm.get('mainRegion').show dashboardLayout
+          dashboardLayout.contentRegion.reset()
+          if type == 'assessment'
+            view = new AssessmentCompositeView
+              assessment: assessment
+          else if type == 'lessonPlan'
+            view = new LessonPlanItemView
+              model: assessment
+          view.on('result:saved', () =>
+            window.frameElement.setAttribute('data-result', JSON.stringify(view.result.toJSON()))
+            evt = document.createEvent("Event");
+            evt.initEvent("result:save:widget", true, false);
+            window.frameElement.dispatchEvent(evt)
+          )
+          view.on('result:another', () =>
+            evt = document.createEvent("Event");
+            evt.initEvent("result:another:widget", true, false);
+            window.frameElement.dispatchEvent(evt)
+          )
+          dashboardLayout.contentRegion.show(view)
+    else if type == 'lessonPlan'
+      lessonPlan = new LessonPlan "_id" : id
+      lessonPlan.deepFetch
+        success : ->
+          dashboardLayout = new DashboardLayout();
+          Tangerine.app.rm.get('mainRegion').show dashboardLayout
+          dashboardLayout.contentRegion.reset()
+          lessonPlan.set("elements",lessonPlan.elements)
           view = new LessonPlanItemView
-            model: assessment
-        view.on('result:saved', () =>
-          window.frameElement.setAttribute('data-result', JSON.stringify(view.result.toJSON()))
-          evt = document.createEvent("Event");
-          evt.initEvent("result:save:widget", true, false);
-          window.frameElement.dispatchEvent(evt)
-        )
-        view.on('result:another', () =>
-          evt = document.createEvent("Event");
-          evt.initEvent("result:another:widget", true, false);
-          window.frameElement.dispatchEvent(evt)
-        )
-        dashboardLayout.contentRegion.show(view)
+            model: lessonPlan
+          dashboardLayout.contentRegion.show(view)
       error: (model, err, cb) ->
         console.log JSON.stringify err
 

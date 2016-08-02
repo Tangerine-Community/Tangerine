@@ -21,3 +21,7 @@
   else if doc.collection is 'assessment'
 
     emit 'a' + id, rev
+
+  else if doc.collection is 'element'
+
+    emit 'e' + id, rev
