@@ -1,3 +1,155 @@
+class Backbone.EditView extends Backbone.View
+
+  events :
+    "click .edit_in_place" : "editInPlace"
+    "focusout .editing"    : "editing"
+    "keyup    .editing"    : "editing"
+    "keydown  .editing"    : "editing"
+
+  getEditable: (options) =>
+
+    model        = options.model
+    attribute    = options.attribute
+    name         = options.name        || "Value"
+    placeholder  = options.placeholder || "none"
+    prepare      = options.prepare
+
+    @preparations                     = {} unless @preparations?
+    @preparations[model.id]           = {} unless @preparations[model.id]?
+    @preparations[model.id][attribute.key] = prepare
+
+    @htmlGenCatelog = {} unless @htmlGenCatelog?
+    @htmlGenCatelog[model.id] = {} unless @htmlGenCatelog[model.id]?
+    @htmlGenCatelog[model.id][attribute.key] = htmlFunction = do (model, attribute, name, placeholder) -> 
+      -> 
+
+        key    = attribute.key
+        escape = attribute.escape
+        type   = attribute.type || ''
+
+        # cook the value
+        value = if model.has(key) then model.get(key) else placeholder
+        value = placeholder if _(value).isEmptyString()
+
+        value = _(value).escape() if escape
+        untitled = " data-untitled='true' " if value is placeholder
+
+        # what is it
+        editOrNot   = if attribute.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
+
+        numberOrNot = if _.isNumber(value) then "data-is-number='true'" else "data-is-number='false'" 
+
+        result = "<div class='edit_in_place #{key}-edit-in-place' id='#{model.id}-#{key}'><span data-model-id='#{model.id}' data-type='#{type}' data-key='#{key}' data-value='#{value}' data-name='#{name}' #{editOrNot} #{numberOrNot} #{untitled||''}>#{value}</span></div>"
+
+        return result
+
+    return htmlFunction()
+
+
+  editInPlace: (event) =>
+
+    return if @alreadyEditing
+    @alreadyEditing = true
+
+    # save state
+    # replace with text area
+    # on save, save and re-replace
+    $span = $(event.target)
+
+    $parent  = $span.parent()
+
+    return if $span.hasClass("editing")
+
+    guid     = Utils.guid()
+
+    key      = $span.attr("data-key")
+    name     = $span.attr("data-name")
+    type     = $span.attr("data-type")
+    isNumber = $span.attr("data-is-number") == "true"
+
+    modelId  = $span.attr("data-model-id")
+    model    = @models.get(modelId)
+
+    oldValue = model.get(key) || ""
+    oldValue = "" if $span.attr("data-untitled") == "true"
+
+    $target = $(event.target)
+    classes = ($target.attr("class") || "").replace("settings","")
+    margins = $target.css("margin")
+
+    transferVariables = "data-is-number='#{isNumber}' data-key='#{key}' data-model-id='#{modelId}' "
+
+    if type is "boolean"
+      $span
+
+    # sets width/height with style attribute
+    rows = 1 + oldValue.count("\n")
+    rows = parseInt(Math.max(oldValue.length / 30, rows))
+    $parent.html("<textarea placeholder='#{name}' id='#{guid}' rows='#{rows}' #{transferVariables} class='editing #{classes} #{key}-editing' style='margin:#{margins}' data-name='#{name}'>#{oldValue}</textarea>")
+    # style='width:#{oldWidth}px; height: #{oldHeight}px;'
+    $textarea = $("##{guid}")
+    $textarea.select()
+
+  editing: (event) =>
+
+    return false if event.which == 13 and event.type == "keyup"
+
+    $target = $(event.target)
+
+    $parent = $target.parent()
+
+    key        = $target.attr("data-key")
+    isNumber   = $target.attr("data-is-number") == "true"
+
+    modelId    = $target.attr("data-model-id")
+    name       = $target.attr("data-name")
+
+    model      = @models.get(modelId)
+    oldValue   = model.get(key)
+
+    newValue = $target.val()
+    newValue = if isNumber then parseInt(newValue) else newValue
+
+    if event.which == 27 or event.type == "focusout"
+      @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
+      @alreadyEditing = false
+      return
+
+    # act normal, unless it's an enter key on keydown
+    keyDown = event.type is "keydown"
+    enter   = event.which is 13
+    altKey  = event.altKey
+
+    return true if enter and altKey
+    return true unless enter and keyDown
+
+    @alreadyEditing = false
+
+    # If there was a change, save it
+    if String(newValue) != String(oldValue)
+      attributes = {}
+      attributes[key] = newValue
+      if @preparations?[modelId]?[key]?
+        try
+          attributes[key+"-cooked"] = @preparations[modelId][key](newValue)
+        catch e
+          Utils.sticky("Problem cooking value<br>#{e.message}")
+          return
+      model.save attributes,
+        success: =>
+          Utils.topAlert "#{name} saved"
+          @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
+        error: =>
+          alert "Please try to save again, it didn't work that time."
+          @render()
+    else
+      @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
+
+    # this ensures we do not insert a newline character when we press enter
+    return false
+
+
+
 
 
 class Backbone.ChildModel extends Backbone.Model
