@@ -133,7 +133,7 @@ class AssessmentsMenuView extends Backbone.View
     containers.push "<section id='klass_container' class='KlassesView'></section>"         if @klasses.length isnt 0
     containers.push "<section id='teachers_container' class='TeachersView'></section>"     if @teachers.length isnt 0
     containers.push "<section id='users_menu_container' class='UsersMenuView'></section>"
-      containers.push "<section id='workflow_menu_container' class='WorkflowMenuView'></section>"
+    containers.push "<section id='workflow_menu_container' class='WorkflowMenuView'></section>"
 
 
 
