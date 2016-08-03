@@ -223,7 +223,7 @@ class ElementEditView extends Backbone.View
 
   afterRender: ->
     @elementEditor?.afterRender?()
-
+    CKEDITOR.replace("html")
 
   onClose: ->
     @elementEditor.close?()
