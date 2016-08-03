@@ -60,6 +60,8 @@ cp config.defaults.sh
 ./build-and-run.sh
 ```
 
+Tip: To speed up your first run of `build-and-run.sh`, take advantage of Docker Cache by downloading an already built image and copy it to the `tangerine/tangerine:local` tag that the `build-and-run.sh` script will build. Ex. `docker pull tangerine/tangerine:master; docker tag tangerine/tangerine:master tangerine/tangerine:local`. Note that this only works with Docker 1.9 and earlier because in newer versions of Docker, `docker pull` [does not pull the Docker Cache](https://github.com/docker/docker/issues/20316)..  
+
 Now that you've built and run an image tagged as `local`, view your server from a web browser to confirm it is working. When you visit the site in a web browser, you will see output to your terminal indicating there is activity on the server. 
 
 You are now ready to start modifying code. We use the Edit-Build-Run workflow. That means everytime you edit code, you will build and run the code with the `build-and-run.sh` script. If you make an edit that breaks the build, you will see that in the output in your terminal. If all is well, you can stop following the logs with `ctrl-c` and it's now time to make a code change and see that reflected in your browser. For example, edit `./editor/app/_attachments/index.html` and change the text in the `<title>` tag to be something like `<title>Hello Tangerine</title>`. If you reload your your browser you'll notice that the title tag has not changed. That's because the code your browser is viewing is based on the built image we made before the code change. To see our change run `./build-and-run.sh` again. 
