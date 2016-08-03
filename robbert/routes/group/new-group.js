@@ -47,6 +47,16 @@ function newGroup(req, res) {
     }
 
     const groupName = req.body.name;
+
+    if (groupName === undefined) {
+      logger.warn('Group creation failed: No name provided.');
+      logger.warn(req.body)
+      return res.status(HttpStatus.UNAUTHORIZED)
+        .json({
+          message : 'Group creation failed: No name provided'
+        });
+    }
+
     const nameFromCookie = req.couchAuth.body.userCtx.name;
 
     const requestingUser = new User({
