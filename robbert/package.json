@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Tangerine-Community/robbert#readme",
   "dependencies": {
     "body-parser": "^1.14.1",
+    "basic-auth": "^1.0.4",
     "cookie-parser": "^1.4.0",
     "expect.js": "^0.3.1",
     "express": "^4.13.3",

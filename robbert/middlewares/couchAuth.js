@@ -2,6 +2,7 @@
 
 const Conf = require('../Conf');
 const unirest = require('unirest');
+const basicAuth = require('basic-auth')
 
 function couchAuth(req,res,next){
 
@@ -11,22 +12,30 @@ function couchAuth(req,res,next){
   };
 
   const sessionCookie = req.cookies.AuthSession;
+  const credentials = basicAuth(req)
+  
+  if (credentials !== undefined) { 
+    unirest.get(`http://${credentials.name}:${credentials.pass}@127.0.0.1:5984/_users/org.couchdb.user:${credentials.name}/`)
+      .end(function handleAuthResponse( authResponse ) {
+        req.couchAuth = {body:{userCtx:JSON.parse(authResponse.body)}}
+        next();
+      });
 
-  // early exit
-  // if there's no session cookie, just mock a response
-  if (sessionCookie === undefined) {
+  }
+  else if (sessionCookie === undefined) {
     req.couchAuth = {body:{userCtx:{name:'',roles:[]}}};
     return next();
   }
-
-  // ask couchdb who this is
-  authHeaders.Cookie = `AuthSession=${sessionCookie}`;
-  unirest.get(Conf.noAuthSessionUrl)
-    .headers(authHeaders)
-    .end(function handleAuthResponse( authResponse ) {
-      req.couchAuth = authResponse;
-      next();
-    });
+  else {
+    // ask couchdb who this is
+    authHeaders.Cookie = `AuthSession=${sessionCookie}`;
+    unirest.get(Conf.noAuthSessionUrl)
+      .headers(authHeaders)
+      .end(function handleAuthResponse( authResponse ) {
+        req.couchAuth = authResponse;
+        next();
+      });
+  }
 }
 
 module.exports = couchAuth;
