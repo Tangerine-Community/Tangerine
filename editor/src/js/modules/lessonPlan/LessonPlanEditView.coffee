@@ -127,6 +127,11 @@ class LessonPlanEditView extends Backbone.View
 #    useTypeTemplate = Tangerine.templates.get("elementTemplates")[@$el.find("#element_type_select").val()][useType]
     useTypeTemplate = Tangerine.templates.get("element");
 
+#    fileObject = $(':input[type="file"]')[0].files[0];
+    file = document.getElementById("files").files[0]
+    fd = new FormData()
+    fd.append("file", file)
+
     newAttributes = $.extend newAttributes, prototypeTemplate
     newAttributes = $.extend newAttributes, useTypeTemplate
     newAttributes = $.extend newAttributes,
@@ -134,7 +139,52 @@ class LessonPlanEditView extends Backbone.View
       lessonPlanId : @model.id
       assessmentId : @model.id
       order        : @model.elements.length
-    newElement = @model.elements.create newAttributes
+      fileType        : file.type
+#      file  :fileObject
+
+#        files : @$el.find("#_attachments").val()
+    #    formData: false
+
+    options =
+      success: (model, resp) =>
+        console.log("created: " + JSON.stringify(resp) + " Model: " + JSON.stringify(model))
+#        url = "#{Backbone.couch_connector.config.base_url}/#{Tangerine.settings.groupDB}/#{resp._id}/#{fileObject.name}?rev=#{resp._rev}"
+        url = "#{Tangerine.config.get('robbert')}/files"
+        console.log("url: " + url)
+#        $.ajax
+#          url: url
+#          type: 'PUT'
+#          success: (result) ->
+#            console.log("result: " + JSON.stringify(result))
+#          error: (result) ->
+#            console.log("result: " +  JSON.stringify(result))
+
+#        fileObject = new Blob(['hello world'], {type: 'text/plain'})
+        console.log("fileObject size: " + file.size)
+        xhr = new XMLHttpRequest();
+
+        # define our finish fn
+        loaded = ()->
+          console.log('finished uploading')
+#          $("#addFile").one "click", handler
+
+        xhr.addEventListener 'load', loaded, false
+        progressBar = document.querySelector('progress');
+        xhr.upload.onprogress = (e) =>
+          if e.lengthComputable
+            progressBar.value = (e.loaded / e.total) * 100;
+            progressBar.textContent = progressBar.value;
+
+#        xhr.open('PUT', url, true);
+        xhr.open('POST', url, true);
+        xhr.send(fd);
+      error: (model, err) =>
+        console.log("Error: " + JSON.stringify(err) + " Model: " + JSON.stringify(model))
+    newElement = @model.elements.create newAttributes, options
+    newElement.on('progress', (evt) ->
+      console.log(evt)
+    )
+
     @toggleNewElementForm()
     return false
 
@@ -222,6 +272,7 @@ class LessonPlanEditView extends Backbone.View
 
       <h2>Elements</h2>
       <div class='menu_box'>
+        <progress min='0' max='100' value='0'></progress>
         <div>
         <ul id='element_list'>
         </ul>
@@ -234,6 +285,7 @@ class LessonPlanEditView extends Backbone.View
             #{elementTypeSelect}<br>
             <label for='new_element_name'>Name</label><br>
             <input type='text' id='new_element_name'>
+            <input type='file' name='files' id='files' multiple='multiple' />
             <button class='new_element_save command'>Add</button> <button class='new_element_cancel command'>Cancel</button>
           </div>
         </div>

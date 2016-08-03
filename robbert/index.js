@@ -19,6 +19,10 @@ const requestLogger = require('./middlewares/requestLogger');
 // proxy for couchdb
 var proxy = require('express-http-proxy');
 
+var busboy = require('connect-busboy'); //middleware for form/file upload
+var path = require('path');     //used for file path
+
+
 const Conf = require('./Conf');
 const Settings = require('./Settings');
 const User = require('./User');
@@ -56,6 +60,12 @@ app.use(function(err, req, res, next) {
 
 app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
 app.use('/client', express.static(__dirname + '/../client/src/'));
+
+// File uploads
+app.use(busboy());
+// app.use(express.static(path.join(__dirname, '../client/src/lesson_plan_media')));
+
+app.post('/files',    require('./routes/file/upload'));
 
 // User routes
 app.get('/user/:name',    require('./routes/user/get-user'));

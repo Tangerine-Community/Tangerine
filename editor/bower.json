@@ -1,0 +1,19 @@
+{
+  "name": "tangerine-editor",
+  "description": "App for editing assessments",
+  "main": "index.js",
+  "authors": [
+    "RTI International <ict-admin@rti.org>"
+  ],
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/Tangerine-Community/Tangerine",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {}
+}

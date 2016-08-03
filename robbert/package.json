@@ -19,10 +19,12 @@
   "homepage": "https://github.com/Tangerine-Community/robbert#readme",
   "dependencies": {
     "body-parser": "^1.14.1",
+    "connect-busboy": "0.0.2",
     "cookie-parser": "^1.4.0",
     "expect.js": "^0.3.1",
     "express": "^4.13.3",
     "express-http-proxy": "^0.7.2",
+    "fs-extra": "^0.30.0",
     "http-status-codes": "^1.0.5",
     "mocha": "^2.3.4",
     "nano": "^6.2.0",
