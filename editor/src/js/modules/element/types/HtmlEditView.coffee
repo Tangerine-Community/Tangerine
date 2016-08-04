@@ -10,7 +10,7 @@ class HtmlEditView extends Backbone.View
 
   save: ->
     @model.set
-      "html" : @$el.find("#html").val()
+      "html" : CKEDITOR.instances.html.getData()
 
   render: ->
     html = @model.get("html") || ""

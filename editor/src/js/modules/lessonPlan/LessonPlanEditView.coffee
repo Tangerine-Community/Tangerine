@@ -103,6 +103,7 @@ class LessonPlanEditView extends Backbone.View
 
     @$el.find("#new_element_name").val("")
     @$el.find("#element_type_select").val("none")
+    @$el.find("#files").toggle()
 
     false
 

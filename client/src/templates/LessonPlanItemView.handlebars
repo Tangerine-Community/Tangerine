@@ -5,13 +5,24 @@
 <h1>Elements</h1>
 {{#each elements}}
     {{#if image}}
-        <img src="lesson_plan_media/{{{fileName}}}"/>
+        <div><img src="lesson_plan_media/{{{fileName}}}"/></div>
         <!--{{{fileName}}}-->
         <!--{{{fileSize}}}-->
         <!--{{{fileType}}}-->
         <!--{{{name}}}-->
         <!--{{{element}}}-->
+    {{else if audio}}
+        <audio controls>
+            <source src="lesson_plan_media/{{{fileName}}}" type="{{{fileType}}}">
+            Your browser does not support the audio tag.
+        </audio>
+    {{else if video}}
+        <video controls>
+            <source src="lesson_plan_media/{{{fileName}}}" type="{{{fileType}}}">
+        </video>
     {{else}}
-       TEXT HERE:  {{{html}}}
+       <div>{{{html}}}</div>
     {{/if}}
 {{/each}}
+
+

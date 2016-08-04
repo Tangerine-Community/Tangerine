@@ -410,6 +410,8 @@ conf.fileOrder = [
 
   'HtmlEditView',
   'HtmlRunView',
+  'MediaEditView',
+  'MediaRunView',
 
   'LessonPlan',
   'LessonPlans',
