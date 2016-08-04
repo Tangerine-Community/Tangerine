@@ -71,7 +71,7 @@ class Assessment extends Backbone.Model
 
     localDKey = Tangerine.settings.location.group.db+Tangerine.settings.couch.view + "byDKey"
 
-    sourceDKey = Tangerine.settings.get("groupHost") + "/"+sourceDB+"/"+Tangerine.settings.couch.view + "byDKey"
+    sourceDKey = Tangerine.settings.get("groupHost") + "/db/"+sourceDB+"/"+Tangerine.settings.couch.view + "byDKey"
 
     $.ajax
       url: sourceDKey,

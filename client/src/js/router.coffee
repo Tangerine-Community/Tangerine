@@ -426,13 +426,16 @@ class Router extends Backbone.Router
     assessmentId = ''
     resultId = ''
     i = 0
+    type = null
     insertRecord = ->
+#      console.log("i: " + i + " assessmentDocs[i]: " + JSON.stringify(assessmentDocs[i]))
       Tangerine.db
         .put(assessmentDocs[i])
         .then( (response) ->
             # Catch the Assessment ID that will be passing by here.
           if assessmentDocs[i].collection == 'assessment' || assessmentDocs[i].collection == 'lessonPlan'
             type = assessmentDocs[i].collection
+            console.log("type:" + type)
 #          if typeof(assessmentDocs[i].assessmentId) != 'undefined'
             assessmentId = assessmentDocs[i]._id
           i++
@@ -440,7 +443,7 @@ class Router extends Backbone.Router
             insertRecord()
           else
             Backbone.history.navigate('#widget-play/' + type + '/' + assessmentId, {trigger: true})
-      )
+        )
         .catch( (error) ->
           console.log("error: " + error)
           console.log("stack: " + error.stack)

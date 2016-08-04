@@ -20,4 +20,5 @@ docker run -d \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   -p 80:80 \
   --volume $T_VOLUMES/tangerine/couchdb/:/var/lib/couchdb \
+  --volume $T_VOLUMES/tangerine/apks/:/tangerine-server/tree/apks \
   tangerine/tangerine:$TANGERINE_VERSION

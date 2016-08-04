@@ -127,7 +127,7 @@ class LessonPlanEditView extends Backbone.View
 #    useTypeTemplate = Tangerine.templates.get("elementTemplates")[@$el.find("#element_type_select").val()][useType]
     useTypeTemplate = Tangerine.templates.get("element");
 
-#    fileObject = $(':input[type="file"]')[0].files[0];
+#    file = $(':input[type="file"]')[0].files[0];
     file = document.getElementById("files").files[0]
     fd = new FormData()
     fd.append("file", file)
@@ -140,7 +140,8 @@ class LessonPlanEditView extends Backbone.View
       assessmentId : @model.id
       order        : @model.elements.length
       fileType        : file.type
-#      file  :fileObject
+      fileName  :file.name
+      fileSize  :file.size
 
 #        files : @$el.find("#_attachments").val()
     #    formData: false
@@ -148,7 +149,7 @@ class LessonPlanEditView extends Backbone.View
     options =
       success: (model, resp) =>
         console.log("created: " + JSON.stringify(resp) + " Model: " + JSON.stringify(model))
-#        url = "#{Backbone.couch_connector.config.base_url}/#{Tangerine.settings.groupDB}/#{resp._id}/#{fileObject.name}?rev=#{resp._rev}"
+#        url = "#{Backbone.couch_connector.config.base_url}/#{Tangerine.settings.groupDB}/#{resp._id}/#{file.name}?rev=#{resp._rev}"
         url = "#{Tangerine.config.get('robbert')}/files"
         console.log("url: " + url)
 #        $.ajax
@@ -159,8 +160,8 @@ class LessonPlanEditView extends Backbone.View
 #          error: (result) ->
 #            console.log("result: " +  JSON.stringify(result))
 
-#        fileObject = new Blob(['hello world'], {type: 'text/plain'})
-        console.log("fileObject size: " + file.size)
+#        file = new Blob(['hello world'], {type: 'text/plain'})
+        console.log("file size: " + file.size)
         xhr = new XMLHttpRequest();
 
         # define our finish fn
