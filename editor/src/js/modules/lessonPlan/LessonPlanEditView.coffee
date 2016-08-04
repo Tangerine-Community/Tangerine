@@ -123,67 +123,70 @@ class LessonPlanEditView extends Backbone.View
     prototypeTemplate = Tangerine.templates.get("elementTypes")[@$el.find("#element_type_select").val()]
 
     # bit more specific template
-#    useType = @$el.find("#element_type_select :selected").attr 'data-template'
-#    useTypeTemplate = Tangerine.templates.get("elementTemplates")[@$el.find("#element_type_select").val()][useType]
     useTypeTemplate = Tangerine.templates.get("element");
 
-#    file = $(':input[type="file"]')[0].files[0];
     file = document.getElementById("files").files[0]
-    fd = new FormData()
-    fd.append("file", file)
+    if typeof file != 'undefined'
+      fd = new FormData()
+      fd.append("file", file)
 
     newAttributes = $.extend newAttributes, prototypeTemplate
     newAttributes = $.extend newAttributes, useTypeTemplate
     newAttributes = $.extend newAttributes,
       name         : @$el.find("#new_element_name").val()
+      element         : @$el.find("#element_type_select").val()
       lessonPlanId : @model.id
       assessmentId : @model.id
       order        : @model.elements.length
-      fileType        : file.type
-      fileName  :file.name
-      fileSize  :file.size
 
-#        files : @$el.find("#_attachments").val()
-    #    formData: false
+    if typeof file != 'undefined'
+      newAttributes = $.extend newAttributes,
+        fileType  : file.type
+        fileName  : file.name
+        fileSize  : file.size
 
-    options =
-      success: (model, resp) =>
-        console.log("created: " + JSON.stringify(resp) + " Model: " + JSON.stringify(model))
-#        url = "#{Backbone.couch_connector.config.base_url}/#{Tangerine.settings.groupDB}/#{resp._id}/#{file.name}?rev=#{resp._rev}"
-        url = "#{Tangerine.config.get('robbert')}/files"
-        console.log("url: " + url)
-#        $.ajax
-#          url: url
-#          type: 'PUT'
-#          success: (result) ->
-#            console.log("result: " + JSON.stringify(result))
-#          error: (result) ->
-#            console.log("result: " +  JSON.stringify(result))
+    if typeof file == 'undefined'
+      options =
+        success: (model, resp) =>
+          console.log("Model created.")
+        error: (model, err) =>
+          console.log("Error: " + JSON.stringify(err) + " Model: " + JSON.stringify(model))
+    else
+      options =
+        success: (model, resp) =>
+  #        console.log("created: " + JSON.stringify(resp) + " Model: " + JSON.stringify(model))
+          url = "#{Tangerine.config.get('robbert')}/files"
+          xhr = new XMLHttpRequest();
+          xhr.upload.onerror = (e) =>
+            console.log("Error Uploading image: " + JSON.stringify(e))
+          xhr.onreadystatechange = () =>
+            if xhr.readyState == 4
+              if xhr.status == 200
+                console.log(xhr.responseText)
+              else
+                console.log("There was an error uploading the file: " + xhr.responseText + " Status: " + xhr.status)
+                alert("There was an error uploading the file: " + xhr.responseText + " Status: " + xhr.status)
+          xhr.onerror =  () =>
+            alert("There was an error uploading the file: " + xhr.responseText + " Status: " + xhr.status)
 
-#        file = new Blob(['hello world'], {type: 'text/plain'})
-        console.log("file size: " + file.size)
-        xhr = new XMLHttpRequest();
+          # define our finish fn
+          loaded = ()->
+  #          console.log('finished uploading')
+          xhr.addEventListener 'load', loaded, false
+          progressBar = document.querySelector('progress');
+          xhr.upload.onprogress = (e) =>
+            if e.lengthComputable
+              progressBar.value = (e.loaded / e.total) * 100;
+              progressBar.textContent = progressBar.value;
+              console.log("progress: " + progressBar.value)
+          xhr.open('POST', url, true);
+          xhr.send(fd);
+        error: (model, err) =>
+          console.log("Error: " + JSON.stringify(err) + " Model: " + JSON.stringify(model))
 
-        # define our finish fn
-        loaded = ()->
-          console.log('finished uploading')
-#          $("#addFile").one "click", handler
-
-        xhr.addEventListener 'load', loaded, false
-        progressBar = document.querySelector('progress');
-        xhr.upload.onprogress = (e) =>
-          if e.lengthComputable
-            progressBar.value = (e.loaded / e.total) * 100;
-            progressBar.textContent = progressBar.value;
-
-#        xhr.open('PUT', url, true);
-        xhr.open('POST', url, true);
-        xhr.send(fd);
-      error: (model, err) =>
-        console.log("Error: " + JSON.stringify(err) + " Model: " + JSON.stringify(model))
     newElement = @model.elements.create newAttributes, options
     newElement.on('progress', (evt) ->
-      console.log(evt)
+      console.log("Logging newElement: " + evt)
     )
 
     @toggleNewElementForm()

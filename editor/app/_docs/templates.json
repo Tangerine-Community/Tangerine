@@ -53,9 +53,8 @@
   "elementTypes"  : {
     "media" : {
       "prototype" : "media",
-      "element" : "image",
+      "element" : "media",
       "name" : "",
-      "type" : ["image", "sound", "video"],
       "description" : "",
       "path" : ""
      },

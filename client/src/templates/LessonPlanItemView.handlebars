@@ -2,8 +2,16 @@
 <div class="lesson-info">Class {{lessonPlan_grade}}<br>Week {{lessonPlan_week}} Day{{lessonPlan_day}}</div>
 <div class="image-container"><img src="images/{{lessonPlan_image}}"></div>
 <div class="lesson-text">{{{lessonPlan_lesson_text}}}</div>
+<h1>Elements</h1>
 {{#each elements}}
-    {{{html}}}
+    {{#if image}}
+        <img src="lesson_plan_media/{{{fileName}}}"/>
+        <!--{{{fileName}}}-->
+        <!--{{{fileSize}}}-->
+        <!--{{{fileType}}}-->
+        <!--{{{name}}}-->
+        <!--{{{element}}}-->
+    {{else}}
+       TEXT HERE:  {{{html}}}
+    {{/if}}
 {{/each}}
-
-

@@ -103,6 +103,10 @@
       "html" : {
          "run" : "HtmlRunView",
          "edit" : "HtmlEditView"
+      },
+      "media" : {
+         "run" : "MediaRunView",
+         "edit" : "MediaEditView"
       }
    },
 

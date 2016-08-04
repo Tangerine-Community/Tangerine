@@ -65,6 +65,7 @@ class ElementListElementView extends Backbone.View
   render: ->
     elementName   = "<span class='name'>#{@model.get("name")}</span>"
     element     = "<span class='small_grey'>#{@model.get("element")}</span>"
+    fileType     = "<span class='small_grey'>#{@model.get("fileType")}</span>"
     iconDrag      = "<img src='images/icon_drag.png' title='Drag to reorder' class='icon sortable_handle'>"
     iconEdit      = "<img src='images/icon_edit.png' title='Edit' class='icon icon_edit'>"
     iconDelete    = "<img src='images/icon_delete.png' title='Delete' class='icon icon_delete'>"
@@ -77,6 +78,7 @@ class ElementListElementView extends Backbone.View
       <td>
         #{elementName}
         #{element}
+        #{fileType}
         #{iconEdit}
         #{copyIcon}
         #{iconDelete}

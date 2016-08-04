@@ -30,6 +30,12 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
 
     if (@model)
       elements = this.model.elements.toJSON()
+      for element in elements
+        do (element) ->
+          if element.element == 'media'
+            typeArr = element.fileType.split("/")
+            typename = typeArr[0]
+            element[typename] = typename
       lessonPlan = @serializeModel.apply(@, args);
       lessonPlan.elements = elements
       return lessonPlan

@@ -63,7 +63,6 @@ app.use('/client', express.static(__dirname + '/../client/src/'));
 
 // File uploads
 app.use(busboy());
-// app.use(express.static(path.join(__dirname, '../client/src/lesson_plan_media')));
 
 app.post('/files',    require('./routes/file/upload'));
 
