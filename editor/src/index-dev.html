@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tangerine</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <meta charset="utf-8">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon-precomposed" href="images/TangerineIcon.png"/>
+
+    <link rel="stylesheet" href="css/tangerine.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/jquery-ui.css">
+
+    <script>
+      window.PRODUCTION = true;
+    </script>
+
+  </head>
+
+  <body class="server">
+    <div id="navigation" class="clearfix"></div>
+    <div id="content_wrapper"><div id="content"></div></div>
+    <div id="footer"><div id="watermark"><img src="images/tangerine_logo_89.png"></div></div>
+
+<!--<script src="js/lib.js"></script>-->
+
+<!-- lib:js -->
+<script src='js/lib/modernizr.js'></script>
+<script src='js/lib/jquery.js'></script>
+<script src='js/lib/underscore.js'></script>
+<script src='js/lib/sha1.js'></script>
+<script src='js/lib/i18next.js'></script>
+<script src='js/lib/jquery.couch.js'></script>
+<script src='js/lib/jquery.cookie.js'></script>
+<script src='js/lib/jquery.tablesorter.js'></script>
+<script src='js/lib/jquery.flot.js'></script>
+<script src='js/lib/excanvas.js'></script>
+<script src='js/lib/jquery.ui.core.js'></script>
+<script src='js/lib/jquery.ui.widget.js'></script>
+<script src='js/lib/jquery.ui.position.js'></script>
+<script src='js/lib/jquery.ui.menu.js'></script>
+<script src='js/lib/jquery.ui.autocomplete.js'></script>
+<script src='js/lib/jquery.ui.mouse.js'></script>
+<script src='js/lib/jquery.ui.sortable.js'></script>
+<script src='js/lib/jquery.ui.accordion.js'></script>
+<script src='js/lib/jquery.ui.button.js'></script>
+<script src='js/lib/jquery.ui.progressbar.js'></script>
+<script src='js/lib/inflection.js'></script>
+<script src='js/lib/backbone.js'></script>
+<script src='js/lib/moment.js'></script>
+<script src='js/lib/backbone-couchdb.js'></script>
+<script src='js/lib/transcriptionCheckdigit.js'></script>
+<script src='js/lib/base64.js'></script>
+<script src='js/lib/jstz.js'></script>
+<script src='js/lib/ckeditor.js'></script>
+<script src='js/lib/coffee-script.js'></script>
+
+<!-- endinject -->
+<!-- inject:js -->
+<script src='compiled/globals.js'></script>
+<script src='compiled/version.js'></script>
+<script src='compiled/helpers.js'></script>
+<script src='compiled/ButtonView.js'></script>
+<script src='compiled/Assessment.js'></script>
+<script src='compiled/Assessments.js'></script>
+<script src='compiled/AssessmentsView.js'></script>
+<script src='compiled/AssessmentListElementView.js'></script>
+<script src='compiled/AssessmentsMenuView.js'></script>
+<script src='compiled/AssessmentEditView.js'></script>
+<script src='compiled/AssessmentRunView.js'></script>
+<script src='compiled/AssessmentImportView.js'></script>
+<script src='compiled/AssessmentSyncView.js'></script>
+<script src='compiled/AssessmentDataEntryView.js'></script>
+<script src='compiled/WidgetRunView.js'></script>
+<script src='compiled/Subtest.js'></script>
+<script src='compiled/Subtests.js'></script>
+<script src='compiled/SubtestListEditView.js'></script>
+<script src='compiled/SubtestListElementView.js'></script>
+<script src='compiled/SubtestEditView.js'></script>
+<script src='compiled/SubtestRunView.js'></script>
+<script src='compiled/ConsentRunView.js'></script>
+<script src='compiled/ConsentEditView.js'></script>
+<script src='compiled/DatetimeRunView.js'></script>
+<script src='compiled/DatetimeEditView.js'></script>
+<script src='compiled/LocationRunView.js'></script>
+<script src='compiled/LocationEditView.js'></script>
+<script src='compiled/SurveyRunView.js'></script>
+<script src='compiled/SurveyEditView.js'></script>
+<script src='compiled/IdRunView.js'></script>
+<script src='compiled/IdEditView.js'></script>
+<script src='compiled/GridRunView.js'></script>
+<script src='compiled/GridEditView.js'></script>
+<script src='compiled/ObservationRunView.js'></script>
+<script src='compiled/ObservationEditView.js'></script>
+<script src='compiled/GpsRunView.js'></script>
+<script src='compiled/GpsEditView.js'></script>
+<script src='compiled/GpsPrintView.js'></script>
+<script src='compiled/Result.js'></script>
+<script src='compiled/Results.js'></script>
+<script src='compiled/ResultView.js'></script>
+<script src='compiled/ResultsView.js'></script>
+<script src='compiled/TabletManagerView.js'></script>
+<script src='compiled/ResultSumView.js'></script>
+<script src='compiled/DashboardView.js'></script>
+<script src='compiled/AdminView.js'></script>
+<script src='compiled/Question.js'></script>
+<script src='compiled/Questions.js'></script>
+<script src='compiled/QuestionRunView.js'></script>
+<script src='compiled/QuestionEditView.js'></script>
+<script src='compiled/QuestionsEditView.js'></script>
+<script src='compiled/QuestionsEditListElementView.js'></script>
+<script src='compiled/Klass.js'></script>
+<script src='compiled/KlassView.js'></script>
+<script src='compiled/KlassEditView.js'></script>
+<script src='compiled/Klasses.js'></script>
+<script src='compiled/KlassesView.js'></script>
+<script src='compiled/KlassListElementView.js'></script>
+<script src='compiled/KlassSubtestRunView.js'></script>
+<script src='compiled/KlassSubtestResultView.js'></script>
+<script src='compiled/KlassMenuView.js'></script>
+<script src='compiled/KlassPartlyView.js'></script>
+<script src='compiled/KlassResult.js'></script>
+<script src='compiled/KlassResults.js'></script>
+<script src='compiled/KlassSubtestEditView.js'></script>
+<script src='compiled/KlassGroupingView.js'></script>
+<script src='compiled/KlassGroupingMenuView.js'></script>
+<script src='compiled/MasteryCheckView.js'></script>
+<script src='compiled/MasteryCheckMenuView.js'></script>
+<script src='compiled/ProgressView.js'></script>
+<script src='compiled/ProgressMenuView.js'></script>
+<script src='compiled/CsvMenuView.js'></script>
+<script src='compiled/Curriculum.js'></script>
+<script src='compiled/CurriculumView.js'></script>
+<script src='compiled/Curricula.js'></script>
+<script src='compiled/CurriculaView.js'></script>
+<script src='compiled/CurriculaListView.js'></script>
+<script src='compiled/CurriculumListElementView.js'></script>
+<script src='compiled/CurriculaView.js'></script>
+<script src='compiled/Teacher.js'></script>
+<script src='compiled/Teachers.js'></script>
+<script src='compiled/TeachersView.js'></script>
+<script src='compiled/RegisterTeacherView.js'></script>
+<script src='compiled/Student.js'></script>
+<script src='compiled/Students.js'></script>
+<script src='compiled/StudentListElementView.js'></script>
+<script src='compiled/StudentEditView.js'></script>
+<script src='compiled/User.js'></script>
+<script src='compiled/Users.js'></script>
+<script src='compiled/TabletUser.js'></script>
+<script src='compiled/TabletUsers.js'></script>
+<script src='compiled/LoginView.js'></script>
+<script src='compiled/AccountView.js'></script>
+<script src='compiled/GroupsView.js'></script>
+<script src='compiled/UsersMenuView.js'></script>
+<script src='compiled/AssessmentPrintView.js'></script>
+<script src='compiled/QuestionPrintView.js'></script>
+<script src='compiled/GridPrintView.js'></script>
+<script src='compiled/ConsentPrintView.js'></script>
+<script src='compiled/DatetimePrintView.js'></script>
+<script src='compiled/IdPrintView.js'></script>
+<script src='compiled/LocationPrintView.js'></script>
+<script src='compiled/SurveyPrintView.js'></script>
+<script src='compiled/ObservationPrintView.js'></script>
+<script src='compiled/SubtestPrintView.js'></script>
+<script src='compiled/Config.js'></script>
+<script src='compiled/Log.js'></script>
+<script src='compiled/Template.js'></script>
+<script src='compiled/Settings.js'></script>
+<script src='compiled/SettingsView.js'></script>
+<script src='compiled/ViewManager.js'></script>
+<script src='compiled/NavigationView.js'></script>
+<script src='compiled/router.js'></script>
+<script src='compiled/locales.js'></script>
+<script src='compiled/boot.js'></script>
+
+<!-- endinject -->
+</body>
+
+</html>
+
+
+

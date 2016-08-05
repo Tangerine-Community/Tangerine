@@ -20,3 +20,5 @@ bundle
 robbert/npm-debug.log
 
 editor/npm-debug.log
+
+editor/src/compiled/*

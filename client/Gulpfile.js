@@ -41,6 +41,9 @@ var debug = require('gulp-debug');
 var wait = require('gulp-wait')
 var mapStream = require('map-stream');
 
+var mochaPhantomJS = require('gulp-mocha-phantomjs');
+
+var exec = require('child_process').exec;
 
 /*
  * configuration
@@ -75,9 +78,9 @@ function log(err) {
   var line        = err.code.split('\n')[err.location.first_line];
 
   var message = '' +
-    err.name     + ': ' + err.message + '\n' +
-    err.filename + ': ' + line_number + '\n' +
-    line;
+      err.name     + ': ' + err.message + '\n' +
+      err.filename + ': ' + line_number + '\n' +
+      line;
 
   notify(message);
   console.log(message);
@@ -110,24 +113,24 @@ gulp.task('build:js', ['version'], function() {
   });
 
   return gulp.src(conf.coffeeGlob)
-    .pipe(cache('coffee'))        // cache files
-    .pipe(sourcemaps.init())      // start making maps
-    .pipe(c)                      // compile
-    .pipe(sourcemaps.write())     // append the maps to the file
-    .pipe(flatten())              // flatten nested subdirectories
-    .pipe(gulp.dest(conf.tmpJsDir)) // put result in this location
-    .pipe(gulp.dest('./www/compiled')); // also put result in this location
+      .pipe(cache('coffee'))        // cache files
+      .pipe(sourcemaps.init())      // start making maps
+      .pipe(c)                      // compile
+      .pipe(sourcemaps.write())     // append the maps to the file
+      .pipe(flatten())              // flatten nested subdirectories
+      .pipe(gulp.dest(conf.tmpJsDir)) // put result in this location
+      .pipe(gulp.dest('./www/compiled')); // also put result in this location
 });
 
 // Minify Javascript
 gulp.task('minify:js', ['build:js', 'handlebars'], function() {
 
   return gulp.src(conf.jsGlob)
-    .pipe(sourcemaps.init({loadMaps: true})) // pass along old sourcemaps
+      .pipe(sourcemaps.init({loadMaps: true})) // pass along old sourcemaps
       .pipe(cache('min'))                    // cache files
       .pipe(uglify())                        // uglify
-    .pipe(sourcemaps.write())                // append sourcemaps
-    .pipe(gulp.dest(conf.tmpMinDir));        // output to this directory
+      .pipe(sourcemaps.write())                // append sourcemaps
+      .pipe(gulp.dest(conf.tmpMinDir));        // output to this directory
 
 });
 
@@ -136,11 +139,11 @@ gulp.task('minify:js', ['build:js', 'handlebars'], function() {
 gulp.task('build:app.js', ['minify:js'], function() {
 
   return gulp.src(conf.minFileOrder)
-    .pipe(sourcemaps.init({loadMaps: true})) // pass in old sourcemaps
-    .pipe(concat(conf.appFile))              // concat all minified files
-    .pipe(sourcemaps.write())                // append sourcemaps
-    .pipe(gulp.dest(conf.srcDir))            // put everything here
-    .pipe(connect.reload());                 // reload anyone watching
+      .pipe(sourcemaps.init({loadMaps: true})) // pass in old sourcemaps
+      .pipe(concat(conf.appFile))              // concat all minified files
+      .pipe(sourcemaps.write())                // append sourcemaps
+      .pipe(gulp.dest(conf.srcDir))            // put everything here
+      .pipe(connect.reload());                 // reload anyone watching
 
 });
 
@@ -148,13 +151,13 @@ gulp.task('build:app.js', ['minify:js'], function() {
 // just concat all the required library files
 gulp.task('build:lib.js', function() {
   return gulp.src(conf.libFiles)
-    .pipe(cache('lib'))// cache files
-    .pipe(sourcemaps.init())        // start sourcemapping
-    .pipe(concat(conf.libFile))     // concat libraries
-    //.pipe(uglify())                 // make'em small
-    .pipe(sourcemaps.write())       // append sourcemaps
-    .pipe(gulp.dest(conf.srcDir))   // write to dir
-    .pipe(connect.reload());        // reload anyone watching
+      .pipe(cache('lib'))// cache files
+      .pipe(sourcemaps.init())        // start sourcemapping
+      .pipe(concat(conf.libFile))     // concat libraries
+      //.pipe(uglify())                 // make'em small
+      .pipe(sourcemaps.write())       // append sourcemaps
+      .pipe(gulp.dest(conf.srcDir))   // write to dir
+      .pipe(connect.reload());        // reload anyone watching
 });
 
 
@@ -165,15 +168,15 @@ gulp.task('version', function(cb) {
     git.exec({ args: 'rev-parse --short HEAD' }, function(err, build) {
       build = build.replace(/\n/, '');
       var body = 'window.TangerineVersion = ' + JSON.stringify({
-        buildVersion : build,
-        version      : version
-      });
+            buildVersion : build,
+            version      : version
+          });
       var filename = conf.tmpMinDir + '/version.js';
       fs.writeFile( filename, body,
-        function(err) {
-          if (err !== null) { console.log(err); }
-          cb();
-        });
+          function(err) {
+            if (err !== null) { console.log(err); }
+            cb();
+          });
       gulp.src([conf.tmpMinDir + '/version.js']).pipe(gulp.dest('./www/compiled'));
     });
   });
@@ -184,9 +187,9 @@ gulp.task('version', function(cb) {
 // Handle less files
 gulp.task('build:less', function () {
   return gulp.src(conf.lessFile)
-    .pipe(less())                      // compile less
-    .pipe(gulp.dest(conf.cssDir))      // output directory
-    .pipe(connect.reload());           // reload anyone watching
+      .pipe(less())                      // compile less
+      .pipe(gulp.dest(conf.cssDir))      // output directory
+      .pipe(connect.reload());           // reload anyone watching
 
 });
 
@@ -201,16 +204,16 @@ gulp.task('build:locales', function(){
   });
 
   gulp.src('./src/locales/*.coffee')  // handle translation documents
-    .pipe(c)                          // compile coffeescript
-    .pipe(uglify())                   // make it small
-    .pipe(concat('locales.js'))       // turn it into one file
-    .pipe(gulp.dest(conf.tmpMinDir))  // send it here
-    .pipe(gulp.dest('./www/compiled'))  // send it here
-    .pipe(connect.reload());          // reload anyone watching
+      .pipe(c)                          // compile coffeescript
+      .pipe(uglify())                   // make it small
+      .pipe(concat('locales.js'))       // turn it into one file
+      .pipe(gulp.dest(conf.tmpMinDir))  // send it here
+      .pipe(gulp.dest('./www/compiled'))  // send it here
+      .pipe(connect.reload());          // reload anyone watching
 
 });
 
-// Compile translations
+// Compile coffeescript in test
 gulp.task('coffee:test', function(){
 
   var c = coffee({bare: true}); // get a coffeescript stream
@@ -220,32 +223,32 @@ gulp.task('coffee:test', function(){
   });
 
   gulp.src('./test/spec/*.coffee')  // handle translation documents
-    .pipe(c)                          // compile coffeescript
-    .pipe(gulp.dest(conf.testDir))  // send it here
+      .pipe(c)                          // compile coffeescript
+      .pipe(gulp.dest(conf.testDir))  // send it here
 });
 
 // Pre compile handlebars template
 gulp.task('handlebars', function(){
 
   gulp.src(conf.handlebarsGlob)
-    .pipe(handlebars({
-      handlebars: require('handlebars') // Do this to specify out version 4.0.4
-    }))
-    .pipe(wrap('Handlebars.template(<%= contents %>)'))
-    .pipe(declare({
-      namespace: 'JST',
-      noRedeclare: true, // Avoid duplicate declarations
-    }))
-    .pipe(concat('templates.js'))
-    .pipe(gulp.dest(conf.tmpMinDir))
-    .pipe(gulp.dest('./www/compiled')); // also put result in this location
+      .pipe(handlebars({
+        handlebars: require('handlebars') // Do this to specify out version 4.0.4
+      }))
+      .pipe(wrap('Handlebars.template(<%= contents %>)'))
+      .pipe(declare({
+        namespace: 'JST',
+        noRedeclare: true, // Avoid duplicate declarations
+      }))
+      .pipe(concat('templates.js'))
+      .pipe(gulp.dest(conf.tmpMinDir))
+      .pipe(gulp.dest('./www/compiled')); // also put result in this location
 
 
   // automatically refreshing is commented out
-    // because with our dependencies it's causing
-    // the reload to happen twice, once here and then
-    // once when the build:app.js is done
-    //.pipe(connect.reload());          // reload anyone watching
+  // because with our dependencies it's causing
+  // the reload to happen twice, once here and then
+  // once when the build:app.js is done
+  //.pipe(connect.reload());          // reload anyone watching
 
 });
 
@@ -301,20 +304,20 @@ gulp.task('prepare-index-dev', function () {
       var arrayLength = JsSources.length;
       for (var i = 0; i < arrayLength; i++) {
         var prop = JsSources[i];
-          // modify the string
-          var filename = "compiled/" + prop + ".js";
-          var scriptString = "<script src='" + filename + "'></script>\n";
-          JsSourcesString += scriptString
+        // modify the string
+        var filename = "compiled/" + prop + ".js";
+        var scriptString = "<script src='" + filename + "'></script>\n";
+        JsSourcesString += scriptString
       }
       //console.log("JsSourcesString: " + JsSourcesString)
       var libSourcesString = ""
       var arrayLength = libSources.length;
       for (var i = 0; i < arrayLength; i++) {
         var prop = libSources[i];
-          // modify the string
-          var filename = prop.replace("./src/", "")
-          var scriptString = "<script src='" + filename + "'></script>\n";
-          libSourcesString += scriptString
+        // modify the string
+        var filename = prop.replace("./src/", "")
+        var scriptString = "<script src='" + filename + "'></script>\n";
+        libSourcesString += scriptString
       }
 
       template.pipe(inject.after("<!-- inject:js -->\n", JsSourcesString))
@@ -322,28 +325,40 @@ gulp.task('prepare-index-dev', function () {
           //.pipe(debug({title: 'unicorny:', minimal: false}))
           .pipe(rename('index-dev.html'))
           .pipe(gulp.dest('./www')).on('error', function(err) { // on error
-            log(err);                   // log
-            //target.end();                    // end stream so we don't freeze the program
-          });
+        log(err);                   // log
+        //target.end();                    // end stream so we don't freeze the program
+      });
       return cb(null, file)
     })
   }
 
   //var stat = function () {
-    fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
-      gulp.src(conf.tmpMinDir + '/version.js')
-          .pipe(wait(2000))
-          .pipe(prepFiles());
-    });
+  fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
+    gulp.src(conf.tmpMinDir + '/version.js')
+        .pipe(wait(2000))
+        .pipe(prepFiles());
+  });
 });
 
+gulp.task('compile_packs', function(done){
+  exec('./scripts/compilepacks.js', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    done(err);
+  });
+});
 
+gulp.task('run_tests', function(done){
+  gulp.src('test/index.html').pipe(mochaPhantomJS());
+});
 
 gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js']);
 
 gulp.task('default', ['webserver', 'init', 'watch']);
 gulp.task('index-dev', ['prepare-index-dev']);
-
+gulp.task('test', ['compile_packs', 'coffee:test', 'run_tests']);
+gulp.task('testWatch', ['compile_packs', 'coffee:test', 'run_tests', 'watch']);
+gulp.task('coffeeW', ['coffee:test', 'watch']);
 
 conf.fileOrder = [
 
