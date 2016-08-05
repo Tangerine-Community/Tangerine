@@ -92,6 +92,7 @@ class AssessmentsMenuView extends Backbone.View
       cancel           : t("AssessmentMenuView.button.cancel")
       assessment  : t("AssessmentMenuView.label.assessment")
       assessments : t("AssessmentMenuView.label.assessments")
+      instruments : t("AssessmentMenuView.label.instruments")
       curriculum  : t("AssessmentMenuView.label.curriculum")
       lesson_plan  : t("AssessmentMenuView.label.lesson_plan")
 
@@ -146,7 +147,7 @@ class AssessmentsMenuView extends Backbone.View
       #{resultsButton}
       #{groupHandle}
       <section>
-        <h1>#{@text.assessments}</h1>
+        <h1>#{@text.instruments}</h1>
     "
 
     if isAdmin
@@ -270,6 +271,7 @@ class AssessmentsMenuView extends Backbone.View
     else if newType == "lesson_plan"
       newObject = new LessonPlan
         "name"         : name
+        "lessonPlan_title"         : name
         "_id"          : newId
         "lessonPlanId" : newId
       callback = @addLessonPlan

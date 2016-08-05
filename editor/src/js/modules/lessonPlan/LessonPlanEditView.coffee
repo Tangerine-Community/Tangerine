@@ -103,7 +103,7 @@ class LessonPlanEditView extends Backbone.View
 
     @$el.find("#new_element_name").val("")
     @$el.find("#element_type_select").val("none")
-    @$el.find("#files").toggle()
+
 
     false
 
@@ -166,36 +166,37 @@ class LessonPlanEditView extends Backbone.View
                 console.log(xhr.responseText)
               else
                 console.log("There was an error uploading the file: " + xhr.responseText + " Status: " + xhr.status)
-                alert("There was an error uploading the file: " + xhr.responseText + " Status: " + xhr.status)
-          xhr.onerror =  () =>
-            alert("There was an error uploading the file: " + xhr.responseText + " Status: " + xhr.status)
+#                alert("There was an error uploading the file: " + xhr.responseText + " Status: " + xhr.status)
+          xhr.onerror =  (err) =>
+            console.log("There was an error uploading the file: " + err)
+#            alert("There was an error uploading the file: " + xhr.responseText + " Status: " + xhr.status)
 
           # define our finish fn
           loaded = ()->
   #          console.log('finished uploading')
           xhr.addEventListener 'load', loaded, false
-          progressBar = document.querySelector('progress');
-          xhr.upload.onprogress = (e) =>
-            if e.lengthComputable
-              progressBar.value = (e.loaded / e.total) * 100;
-              progressBar.textContent = progressBar.value;
-              console.log("progress: " + progressBar.value)
+#          progressBar = document.querySelector('progress');
+#          xhr.upload.onprogress = (e) =>
+#            if e.lengthComputable
+#              progressBar.value = (e.loaded / e.total) * 100;
+#              progressBar.textContent = progressBar.value;
+#              console.log("progress: " + progressBar.value)
           xhr.open('POST', url, true);
           xhr.send(fd);
         error: (model, err) =>
           console.log("Error: " + JSON.stringify(err) + " Model: " + JSON.stringify(model))
 
     newElement = @model.elements.create newAttributes, options
-    newElement.on('progress', (evt) ->
-      console.log("Logging newElement: " + evt)
-    )
+#    newElement.on('progress', (evt) ->
+#      console.log("Logging newElement: " + evt)
+#    )
 
     @toggleNewElementForm()
     return false
 
   render: =>
     lessonPlan_title    = @model.getString("lessonPlan_title")
-    lessonPlan_lesson_text    = @model.getString("lessonPlan_lesson_text")
+#    lessonPlan_lesson_text    = @model.getString("lessonPlan_lesson_text")
     lessonPlan_subject    = @model.getString("lessonPlan_subject")
     lessonPlan_grade    = @model.getString("lessonPlan_grade")
     lessonPlan_week    = @model.getString("lessonPlan_week")
@@ -250,13 +251,6 @@ class LessonPlanEditView extends Backbone.View
         <input id='lessonPlan_title' value='#{lessonPlan_title}'>
       </div>
 
-      <div class='menu_box'>
-        <div class='label_value'>
-          <label for='lessonPlan_lesson_text' title='Lesson Text.'>LessonPlan Text</label>
-          <textarea id='lessonPlan_lesson_text'>#{lessonPlan_lesson_text}</textarea>
-        </div>
-      </div>
-
       <label title='You must choose one of these subjects.' for='lessonPlan_subject_buttons'>LessonPlan subject</label><br>
       <div id='lessonPlan_subject_buttons' class='buttonset'>
         <input type='radio' id='lessonPlan_subject_Engish' name='lessonPlan_subject' value='1' #{lessonPlan_subject_Engish}><label for='lessonPlan_subject_Engish'>Engish</label>
@@ -277,7 +271,9 @@ class LessonPlanEditView extends Backbone.View
 
       <h2>Elements</h2>
       <div class='menu_box'>
+<!--
         <progress min='0' max='100' value='0'></progress>
+-->
         <div>
         <ul id='element_list'>
         </ul>
