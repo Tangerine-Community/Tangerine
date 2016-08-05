@@ -25,5 +25,6 @@ docker run -d \
   -p 5984:5984 \
   --volume $T_VOLUMES/tangerine/couchdb/:/var/lib/couchdb \
   --volume $T_VOLUMES/tangerine/apks/:/tangerine-server/tree/apks \
+  --volume $T_VOLUMES/tangerine/lesson_plan_media/:/tangerine-server/client/src/lesson_plan_media \
   tangerine/tangerine:local
 docker logs -f tangerine-container

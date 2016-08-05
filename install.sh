@@ -21,4 +21,5 @@ docker run -d \
   -p 80:80 \
   --volume $T_VOLUMES/tangerine/couchdb/:/var/lib/couchdb \
   --volume $T_VOLUMES/tangerine/apks/:/tangerine-server/tree/apks \
+  --volume $T_VOLUMES/tangerine/lesson_plan_media/:/tangerine-server/client/src/lesson_plan_media \
   tangerine/tangerine:$TANGERINE_VERSION
