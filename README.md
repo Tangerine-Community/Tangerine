@@ -84,11 +84,12 @@ Go to the code for editor:
 
 ````
 cd /tangerine-server/editor
-npm start default
+npm run debug
 
 ````
 
-This npm command will run the default gulp command and watch for changes in your code. 
+This npm command will run the debug gulp command and watch for changes 
+in your code. You may access the app from the index-dev.html page, which makes debugging much easier.
 
 SSH into another console to your server , docker exec into the same instance, edit your code. 
 
@@ -96,7 +97,49 @@ Please note: you must create a new group when you wish to view your changes.
 
 Be sure to commit your code ASAP. Once your container is gone; any uncommitted changes will also be gone.
 
-## Configuring the client app
+### Developing code on your local development environment
+
+Lastly, you can develop some parts of the Tangerine codebase without spinning up a docker container. Instructions for modifying parts of Tangerine follow:
+
+#### Editor
+
+Editor is served as a single page application by Robbert. Before launching Robbert, add the following variables to your environment:
+
+    T_ADMIN=Couch db admin
+    T_PASSWORD=Couch password
+    T_ROBBERT_PORT=4444
+    T_HOSTNAME=localhost
+    T_PROTOCOL=http
+ 
+If this is the first time launching editor, you must init the app. Go to the code for editor:
+
+````
+cd /tangerine-server/editor
+npm install
+cd /tangerine-server/editor/app
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/configuration.json
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/settings.json 
+couchapp push
+npm run debug
+````
+
+This npm command will run the debug gulp command and watch for changes 
+in your code. You may access the app from the index-dev.html page, which makes debugging much easier.
+Push the Robbert couchapp to populate byRoleKey view to the _users database:
+
+    cd /tangerine-server/robbert/couchapp
+    couchapp push
+ 
+Launch Robbert:
+
+````
+cd /tangerine-server/robbert
+npm install
+npm start 
+
+````
+
+# Configuring the client app
 
 As mentioned above, you should develope client here and copy to docker-tangerine-tree. If you are running docker-tangerine-tree 
 on your own server, you must configure the relevant urls in the Content-Security-Policy section of index.html:
