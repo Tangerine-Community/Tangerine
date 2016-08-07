@@ -41,6 +41,9 @@ var debug = require('gulp-debug');
 var wait = require('gulp-wait')
 var mapStream = require('map-stream');
 
+var mochaPhantomJS = require('gulp-mocha-phantomjs');
+
+var exec = require('child_process').exec;
 
 /*
  * configuration
@@ -210,7 +213,7 @@ gulp.task('build:locales', function(){
 
 });
 
-// Compile translations
+// Compile coffeescript in test
 gulp.task('coffee:test', function(){
 
   var c = coffee({bare: true}); // get a coffeescript stream
@@ -337,13 +340,27 @@ gulp.task('prepare-index-dev', function () {
     });
 });
 
+// Tasks for gulp tests
+gulp.task('compile_packs', function(done){
+  exec('./scripts/compilepacks.js', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    done(err);
+  });
+});
 
+gulp.task('run_tests', function(done){
+  gulp.src('test/index.html').pipe(mochaPhantomJS());
+});
 
 gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js']);
 
 gulp.task('default', ['webserver', 'init', 'watch']);
 gulp.task('index-dev', ['prepare-index-dev']);
-
+// gulp tests
+gulp.task('test', ['compile_packs', 'coffee:test', 'run_tests']);
+gulp.task('testWatch', ['compile_packs', 'coffee:test', 'run_tests', 'watch']);
+gulp.task('coffeeW', ['coffee:test', 'watch']);
 
 conf.fileOrder = [
 

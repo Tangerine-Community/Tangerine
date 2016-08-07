@@ -16,7 +16,8 @@ Tangerine.bootSequence =
 
     $.couch.urlPrefix = '/db'
 
-    Tangerine.db_name    = window.location.pathname.split("/")[2]
+    locationPath = window.location.pathname.split("/")
+    Tangerine.db_name    = locationPath[2]
     Tangerine.design_doc = "ojai"
 
     # Local tangerine database handle
@@ -47,7 +48,11 @@ Tangerine.bootSequence =
 
     Tangerine.config = new Config "_id" : "configuration"
     Tangerine.config.fetch
-      error   : -> alert "Could not fetch configuration"
+      error   : ->
+        console.log "Could not fetch configuration; need to login."
+#        redirect to login
+        rootPath = window.location.origin
+        window.location = rootPath
       success : callback
 
 

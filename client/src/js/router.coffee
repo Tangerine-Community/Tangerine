@@ -8,12 +8,12 @@ class Router extends Backbone.Router
   # Override Backbone.Router.execute
   execute: (callback, args, name) ->
     # Implement support for Router.navigateAwayMessage
-    if this.navigateAwayMessage isnt false
-      if !confirm this.navigateAwayMessage
-        return false
-      else
-        this.navigateAwayMessage = false
-        Tangerine.router.landing(true)
+#    if this.navigateAwayMessage isnt false
+#      if !confirm this.navigateAwayMessage
+#        return false
+#      else
+#        this.navigateAwayMessage = false
+#        Tangerine.router.landing(true)
     if (callback)
       callback.apply(this, args);
 
@@ -422,34 +422,43 @@ class Router extends Backbone.Router
             vm.show new AssessmentRunView model: assessment
 
   widgetLoad: () ->
-    assessmentDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
-    assessmentId = ''
-    resultId = ''
-    i = 0
-    type = null
-    insertRecord = ->
-#      console.log("i: " + i + " assessmentDocs[i]: " + JSON.stringify(assessmentDocs[i]))
-      Tangerine.db
-        .put(assessmentDocs[i])
-        .then( (response) ->
-            # Catch the Assessment ID that will be passing by here.
-          if assessmentDocs[i].collection == 'assessment' || assessmentDocs[i].collection == 'lessonPlan'
-            type = assessmentDocs[i].collection
-            console.log("type:" + type)
-#          if typeof(assessmentDocs[i].assessmentId) != 'undefined'
-            assessmentId = assessmentDocs[i]._id
-          i++
-          if assessmentDocs[i]
-            insertRecord()
-          else
-            Backbone.history.navigate('#widget-play/' + type + '/' + assessmentId, {trigger: true})
-        )
-        .catch( (error) ->
-          console.log("error: " + error)
-          console.log("stack: " + error.stack)
-          alert("Oops. Something went wrong \n\n" + error)
-        )
-    insertRecord()
+    if typeof Tangerine.widgetLoaded == 'undefined'
+      assessmentDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
+      assessmentId = ''
+      resultId = ''
+      i = 0
+      type = null
+      insertRecord = ->
+  #      console.log("i: " + i + " assessmentDocs[i]: " + JSON.stringify(assessmentDocs[i]))
+        Tangerine.db
+          .put(assessmentDocs[i])
+          .then( (response) ->
+              # Catch the Assessment ID that will be passing by here.
+            if assessmentDocs[i].collection == 'assessment' || assessmentDocs[i].collection == 'lessonPlan'
+              type = assessmentDocs[i].collection
+              console.log("type:" + type)
+  #          if typeof(assessmentDocs[i].assessmentId) != 'undefined'
+              assessmentId = assessmentDocs[i]._id
+            i++
+            if assessmentDocs[i]
+              insertRecord()
+            else
+              Tangerine.widgetLoaded = true
+              Backbone.history.navigate('#widget-play/' + type + '/' + assessmentId, {trigger: true})
+          )
+          .catch( (error) ->
+            console.log("error: " + error)
+            console.log("stack: " + error.stack)
+            alert("Oops. Something went wrong \n\n" + error)
+          )
+      insertRecord()
+    else
+#      User hit the back button, go to the main listing.
+#      Tangerine.router.landing()
+      rootPath = window.location.origin
+      pathname = window.location.pathname
+#      window.location = rootPath + pathname + "#assessments"
+      window.location = "http://bbc.co.uk"
 
   widgetPlay: (type, id) ->
     console.log("type:" + type)

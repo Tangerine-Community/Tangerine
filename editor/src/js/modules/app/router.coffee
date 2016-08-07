@@ -106,7 +106,7 @@ class Router extends Backbone.Router
 
   landing: ->
 
-    if ~String(window.location.href).indexOf("tangerine/_design") # in main group?
+    if ~String(window.location.href).indexOf("app/tangerine") # in main group?
       Tangerine.router.navigate "groups", true
     else
       Tangerine.router.navigate "assessments", true
