@@ -497,7 +497,8 @@ class Router extends Backbone.Router
               "Workflows"
             ]
 
-            collections.push if "server" == Tangerine.settings.get("context") then "Users" else "TabletUsers"
+            # collections.push if "server" == Tangerine.settings.get("context") then "Users" else "TabletUsers"
+            collections.push "Users"
 
             Utils.loadCollections
               collections: collections
