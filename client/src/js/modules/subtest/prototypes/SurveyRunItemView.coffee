@@ -311,6 +311,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     options = _.extend({model: child}, childViewOptions);
     childView = new ChildViewClass(options)
     required = child.getNumber "linkedGridScore"
+    # @todo The following two lines may be duplicate code because this was already decided in this.childViewOptions
     isNotAsked = ( ( required != 0 && @parent.getGridScore() < required ) || @parent.gridWasAutostopped() ) && @parent.getGridScore() != false
     child.set  "notAsked", isNotAsked
     if isNotAsked then @notAskedCount++
@@ -330,11 +331,15 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     labels = {}
     labels.text = @text
     model.set('labels', labels)
+    # @todo Do we really want to store the `notAsked` state in the Model and then only pass it in as an unreferenced property??
+    required = parseInt(model.get("linkedGridScore")) || 0
+    isNotAsked = ((required != 0 && this.parent.getGridScore() < required) || this.parent.gridWasAutostopped()) && this.parent.getGridScore() != false
+    model.set('notAsked', isNotAsked)
     options =
       model         : model
       parent        : @
       dataEntry     : @dataEntry
-      notAsked      : model.get "notAsked"
+      notAsked      : model.get('notAsked') 
       isObservation : @isObservation
       answer        : answer
       index  : index
