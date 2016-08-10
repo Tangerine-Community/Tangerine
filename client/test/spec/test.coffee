@@ -289,6 +289,54 @@
         })
       )
 
+      it('Should hide questions that qualify to be not_asked according to Question.attribute.linkedGridScore', (done)->
+        this.$fixture.empty().appendTo(this.$container);
+        id = "3db976ef-6ca0-252d-e055-14a6d2555f84"
+        assessment = new Assessment "_id" : id
+        assessment.deepFetch({
+          error: (err)->
+            console.log "Catch Error: " + JSON.stringify err
+            done(err)
+          success: (record) ->
+            Tangerine.assessment = assessment
+            viewOptions =
+              model: assessment
+              el: this.$fixture
+            view = new AssessmentCompositeView viewOptions
+            view.once("render", () ->
+              # Click through to the next subtest that we will actually test.
+              startTimeButton = (view.$el.find('.start_time'))[0]
+              $(startTimeButton).click()
+              # grid = (view.$el.find('button'))[0]
+              # gridButton = ($(grid).find('button'))[0]
+              # $(gridButton).click()
+
+              setTimeout(() ->
+                # Stop the assessment.
+                stopTimeButton = (view.$el.find('.stop_time'))[0]
+                $(stopTimeButton).click()
+                # Engage "Last attempted" selection mode.
+                lastAttemptedButton = (view.$el.find( "div.button:contains('Last attempted')" ))[0]
+                $(lastAttemptedButton).click()
+                if (!$(lastAttemptedButton).hasClass('selected'))
+                  # @todo This always happens in this test when it shouldn't.
+                  console.log(lastAttemptedButton.outerHTML)
+                # Click the "last attempted item"
+                lastItem = view.$el.find('button[data-index="9"]')
+                $(lastItem).click()
+                if (!$(lastItem).hasClass('element_last'))
+                  # @todo This also always happens when it shouldn't.
+                  console.log($(lastItem).html())
+                # Click through to the next subtest
+                subTestNextButton = (view.$el.find('.subtest-next'))[0]
+                $(subTestNextButton).click()
+                # @todo Now check the next subtest, the second and third question should be hidden and then we should be able to click next without an error.
+              , 1000)
+            )
+            view.render();
+        })
+      )
+
       it('Should default to one school if there is only one option', (done)->
         this.$fixture.empty().appendTo(this.$container);
         id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
