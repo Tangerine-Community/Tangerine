@@ -330,11 +330,13 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     labels = {}
     labels.text = @text
     model.set('labels', labels)
+    required = parseInt(model.get("linkedGridScore")) || 0
+    isNotAsked = ((required != 0 && this.parent.getGridScore() < required) || this.parent.gridWasAutostopped()) && this.parent.getGridScore() != false
     options =
       model         : model
       parent        : @
       dataEntry     : @dataEntry
-      notAsked      : model.get "notAsked"
+      notAsked      : isNotAsked 
       isObservation : @isObservation
       answer        : answer
       index  : index
