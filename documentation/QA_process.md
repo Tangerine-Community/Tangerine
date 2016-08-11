@@ -8,6 +8,8 @@
 3. Now create a group through the editor app in the browser and load up some assessments with `docker exec tangerine-container tangerine push-backup --path /tangerine-server/client/test/packs --url http://user1:password@127.0.0.1:5984/group-g1`. Need other specific assessments? Follow the steps for [Copying Assessments across TSIs](https://github.com/ICTatRTI/Tangerine-Team/blob/master/copying-assessments-across-TSIs.md).
 4. Alert your QA testers that the server is now ready, make sure to send them credentials of the first user.
 
+Tip: If you are doing QA on an updated clone of a server, make sure to modify the `settings` document for each group to point to the URL of your new server. 
+
 
 ## Helpful commands    
 
