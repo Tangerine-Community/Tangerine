@@ -25,6 +25,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @answered      = []
     @renderCount   = 0
     @notAskedCount = 0
+    @notAskedIds = []
     vm =
       currentView: Tangerine.progress.currentSubview
 #    @childViewOptions =
@@ -314,7 +315,9 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     # @todo The following two lines may be duplicate code because this was already decided in this.childViewOptions
     isNotAsked = ( ( required != 0 && @parent.getGridScore() < required ) || @parent.gridWasAutostopped() ) && @parent.getGridScore() != false
     child.set  "notAsked", isNotAsked
-    if isNotAsked then @notAskedCount++
+    if isNotAsked 
+      @notAskedCount++
+      @notAskedIds = _.union(@notAskedIds, [child.id])
     Marionette.MonitorDOMRefresh(childView);
     @questionViews[childViewOptions.index] = childView
 
@@ -382,7 +385,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @updateQuestionVisibility()
     @updateProgressButtons()
 
-    if @questions.length == @notAskedCount
+    if @questions.length == @notAskedIds.length
       if Tangerine.settings.get("context") != "class"
         @parent.next?()
       else
