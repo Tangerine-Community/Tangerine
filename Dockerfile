@@ -5,8 +5,8 @@ FROM ubuntu:14.04
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-ENV T_HOST_NAME local.tangerinecentral.org
-ENV T_PROTOCOL https
+ENV T_HOST_NAME 127.0.0.1 
+ENV T_PROTOCOL http
 ENV T_USER1 user1
 ENV T_USER1_PASSWORD password
 ENV T_TREE_HOSTNAME / 
@@ -82,12 +82,6 @@ RUN cd /tangerine-server/client \
     && npm install 
 RUN cd /tangerine-server/client \
     && bower install --allow-root  
-RUN cd /tangerine-server/client \
-    && ./node_modules/.bin/cordova platform add android@5.X.X --save
-RUN cd /tangerine-server/client \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --save --variable XWALK_VERSION="19+"
-RUN cd /tangerine-server/client \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save
 
 # Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 RUN cd /tangerine-server/client \
