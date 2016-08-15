@@ -48,4 +48,14 @@ echo ""
 echo ""
 echo "Start the pm2 process"
 cd /tangerine-server
-pm2 start --no-daemon ecosystem.json
+pm2 start --no-daemon ecosystem.json &
+echo ""
+echo ""
+echo ""
+echo "Monitoring for editor chages..."
+cd /tangerine-server/editor && npm run debug &
+echo ""
+echo ""
+echo ""
+echo "Monitoring for client chages..."
+cd /tangerine-server/client && npm run debug
