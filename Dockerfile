@@ -13,7 +13,7 @@ ENV T_TREE_HOSTNAME /
 ENV T_TREE_URL /tree 
 
 # Set to "development" for live code reload of editor and client.
-ENV T_RUN_MODE = "production"
+ENV T_RUN_MODE production
 
 ENV T_ADMIN admin
 ENV T_PASS password
