@@ -457,8 +457,7 @@ class Router extends Backbone.Router
 #      Tangerine.router.landing()
       rootPath = window.location.origin
       pathname = window.location.pathname
-#      window.location = rootPath + pathname + "#assessments"
-      window.location = "http://bbc.co.uk"
+      window.location = rootPath + pathname + "#assessments"
 
   widgetPlay: (type, id) ->
     console.log("type:" + type)
