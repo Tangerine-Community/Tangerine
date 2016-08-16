@@ -9,6 +9,7 @@ fi
 docker pull tangerine/tangerine:$TANGERINE_VERSION
 docker run \
   -p 80:80 \
+  --env 'T_RUN_MODE="development"' \
   --env "T_ADMIN=$T_ADMIN" \
   --env "T_PASS=$T_PASS" \
   --env "T_USER1=$T_USER1" \

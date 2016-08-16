@@ -46,16 +46,27 @@ service nginx reload
 echo ""
 echo ""
 echo ""
-echo "Start the pm2 process"
-cd /tangerine-server
-pm2 start --no-daemon ecosystem.json &
-echo ""
-echo ""
-echo ""
-echo "Monitoring for editor chages..."
-cd /tangerine-server/editor && npm run debug &
-echo ""
-echo ""
-echo ""
-echo "Monitoring for client chages..."
-cd /tangerine-server/client && npm run debug
+
+if [ "$T_RUN_MODE" = "production" ]
+then
+	echo "Start the pm2 process"
+	cd /tangerine-server
+	pm2 start --no-daemon ecosystem.json
+fi
+
+if [ "$T_RUN_MODE" = "development" ]
+then
+	echo "Start the pm2 process"
+	cd /tangerine-server
+	pm2 start --no-daemon ecosystem.json &
+	echo ""
+	echo ""
+	echo ""
+	echo "Monitoring for editor chages..."
+	cd /tangerine-server/editor && npm run debug &
+	echo ""
+	echo ""
+	echo ""
+	echo "Monitoring for client chages..."
+	cd /tangerine-server/client && npm run debug
+fi
