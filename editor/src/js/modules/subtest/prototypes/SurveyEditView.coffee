@@ -26,7 +26,7 @@ class SurveyEditView extends Backbone.View
         @questionsEditView.on "question-edit", (questionId) => @trigger "question-edit", questionId
         @questionsEditView.questions.on "change", @renderQuestions
         @renderQuestions()
-      erorr: (a, b) =>
+      error: (a, b) =>
         Utils.working false
         Utils.midAlert "Error<br>Could not load questions<br>#{a}, #{b}", 5000
 
