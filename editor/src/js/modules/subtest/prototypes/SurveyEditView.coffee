@@ -203,3 +203,23 @@ class SurveyEditView extends Backbone.View
         linkSelect += "</select></div></div>"
         @$el.find('#grid_link').html linkSelect
 
+    subtestsSecondTry = new Subtests
+    subtestsTwo.fetch
+      key: "s" + @model.get "assessmentId"
+      success: (collection) =>
+        collection = collection.where
+          prototype    : 'grid' # only grids can provide scores
+
+        linkSelect = "
+          <div class='label_value'>
+            <label for='link_select'>Linked to grid</label><br>
+            <div class='menu_box'>
+              <select id='link_select'>
+              <option value=''>None</option>"
+        for subtest in collection
+          @itemNumberByLinkId = {} if not @itemNumberByLinkId?
+          @itemNumberByLinkId[subtest.id] = subtest.get("items").length
+          linkSelect += "<option value='#{subtest.id}' #{if (gridLinkId == subtest.id) then 'selected' else ''}>#{subtest.get 'name'}</option>"
+        linkSelect += "</select></div></div>"
+        @$el.find('#grid_link').html linkSelect
+
