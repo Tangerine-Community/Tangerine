@@ -26,7 +26,7 @@ class SurveyEditView extends Backbone.View
         @questionsEditView.on "question-edit", (questionId) => @trigger "question-edit", questionId
         @questionsEditView.questions.on "change", @renderQuestions
         @renderQuestions()
-      erorr: (a, b) =>
+      error: (a, b) =>
         Utils.working false
         Utils.midAlert "Error<br>Could not load questions<br>#{a}, #{b}", 5000
 
@@ -185,6 +185,29 @@ class SurveyEditView extends Backbone.View
     # get linked grid options
     subtests = new Subtests
     subtests.fetch
+      key: "s" + @model.get "assessmentId"
+      success: (collection) =>
+        collection = collection.where
+          prototype    : 'grid' # only grids can provide scores
+
+        linkSelect = "
+          <div class='label_value'>
+            <label for='link_select'>Linked to grid</label><br>
+            <div class='menu_box'>
+              <select id='link_select'>
+              <option value=''>None</option>"
+        for subtest in collection
+          @itemNumberByLinkId = {} if not @itemNumberByLinkId?
+          @itemNumberByLinkId[subtest.id] = subtest.get("items").length
+          linkSelect += "<option value='#{subtest.id}' #{if (gridLinkId == subtest.id) then 'selected' else ''}>#{subtest.get 'name'}</option>"
+        linkSelect += "</select></div></div>"
+        @$el.find('#grid_link').html linkSelect
+
+    # @todo The first attempt at fetching subtests never hits its success callback. Debugging this it's not clear why this is the case. 
+    # This second try does however work. If the first one does start working again, this second try should not affect the overall state
+    # of the application.
+    subtestsSecondTry = new Subtests
+    subtestsSecondTry.fetch
       key: "s" + @model.get "assessmentId"
       success: (collection) =>
         collection = collection.where
