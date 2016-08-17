@@ -203,8 +203,11 @@ class SurveyEditView extends Backbone.View
         linkSelect += "</select></div></div>"
         @$el.find('#grid_link').html linkSelect
 
+    # @todo The first attempt at fetching subtests never hits its success callback. Debugging this it's not clear why this is the case. 
+    # This second try does however work. If the first one does start working again, this second try should not affect the overall state
+    # of the application.
     subtestsSecondTry = new Subtests
-    subtestsTwo.fetch
+    subtestsSecondTry.fetch
       key: "s" + @model.get "assessmentId"
       success: (collection) =>
         collection = collection.where
