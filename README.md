@@ -29,7 +29,7 @@ cd <the now uncompressed tangerine folder>
 cp config.defaults.sh config.sh
 # Edit the config.sh file to match your desired settings. Try `nano config.sh`. 
 # You must edit all of the variables in the "Required to change" section. 
-./install.sh
+./start.sh
 ```
 
 Now visit your Tangerine-server installation at the IP address or hostname of your installation.
