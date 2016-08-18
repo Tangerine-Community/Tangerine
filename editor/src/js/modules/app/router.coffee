@@ -657,10 +657,23 @@ class Router extends Backbone.Router
               "_id" : subtest.get("assessmentId")
             assessment.fetch
               success: ->
-                view = new SubtestEditView
-                  model      : model
-                  assessment : assessment
-                vm.show view
+
+                # @todo The first attempt at fetching subtests never hits its success callback. Debugging this it's not clear why this is the case. 
+                # This second try does however work. If the first one does start working again, this second try should not affect the overall state
+                # of the application.
+                subtestsPrimeThePump = new Subtests
+                subtestsPrimeThePump.fetch
+                  key: "s" + assessment.id
+                subtests = new Subtests 
+                subtests.fetch
+                  key: "s" + assessment.id
+                  success: (collection) =>
+                    view = new SubtestEditView
+                      model      : model
+                      subtests   : subtests 
+                      assessment : assessment
+                    vm.show view
+
       isUser: ->
         Tangerine.router.landing()
 

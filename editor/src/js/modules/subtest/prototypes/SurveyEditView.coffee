@@ -11,6 +11,7 @@ class SurveyEditView extends Backbone.View
   initialize: ( options ) ->
     @model = options.model
     @parent = options.parent
+    @subtests = options.subtests
     @model.questions = new Questions
     @questionsEditView = new QuestionsEditView
       questions : @model.questions
@@ -182,47 +183,20 @@ class SurveyEditView extends Backbone.View
 
     @renderQuestions()
 
-    # get linked grid options
-    subtests = new Subtests
-    subtests.fetch
-      key: "s" + @model.get "assessmentId"
-      success: (collection) =>
-        collection = collection.where
-          prototype    : 'grid' # only grids can provide scores
+    # show linked grid options
+    gridSubtests = @subtests.where
+      prototype    : 'grid' # only grids can provide scores
 
-        linkSelect = "
-          <div class='label_value'>
-            <label for='link_select'>Linked to grid</label><br>
-            <div class='menu_box'>
-              <select id='link_select'>
-              <option value=''>None</option>"
-        for subtest in collection
-          @itemNumberByLinkId = {} if not @itemNumberByLinkId?
-          @itemNumberByLinkId[subtest.id] = subtest.get("items").length
-          linkSelect += "<option value='#{subtest.id}' #{if (gridLinkId == subtest.id) then 'selected' else ''}>#{subtest.get 'name'}</option>"
-        linkSelect += "</select></div></div>"
-        @$el.find('#grid_link').html linkSelect
-
-    # @todo The first attempt at fetching subtests never hits its success callback. Debugging this it's not clear why this is the case. 
-    # This second try does however work. If the first one does start working again, this second try should not affect the overall state
-    # of the application.
-    subtestsSecondTry = new Subtests
-    subtestsSecondTry.fetch
-      key: "s" + @model.get "assessmentId"
-      success: (collection) =>
-        collection = collection.where
-          prototype    : 'grid' # only grids can provide scores
-
-        linkSelect = "
-          <div class='label_value'>
-            <label for='link_select'>Linked to grid</label><br>
-            <div class='menu_box'>
-              <select id='link_select'>
-              <option value=''>None</option>"
-        for subtest in collection
-          @itemNumberByLinkId = {} if not @itemNumberByLinkId?
-          @itemNumberByLinkId[subtest.id] = subtest.get("items").length
-          linkSelect += "<option value='#{subtest.id}' #{if (gridLinkId == subtest.id) then 'selected' else ''}>#{subtest.get 'name'}</option>"
-        linkSelect += "</select></div></div>"
-        @$el.find('#grid_link').html linkSelect
+    linkSelect = "
+      <div class='label_value'>
+        <label for='link_select'>Linked to grid</label><br>
+        <div class='menu_box'>
+          <select id='link_select'>
+          <option value=''>None</option>"
+    for subtest in gridSubtests 
+      @itemNumberByLinkId = {} if not @itemNumberByLinkId?
+      @itemNumberByLinkId[subtest.id] = subtest.get("items").length
+      linkSelect += "<option value='#{subtest.id}' #{if (gridLinkId == subtest.id) then 'selected' else ''}>#{subtest.get 'name'}</option>"
+    linkSelect += "</select></div></div>"
+    @$el.find('#grid_link').html linkSelect
 

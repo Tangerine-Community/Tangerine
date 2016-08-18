@@ -34,10 +34,9 @@ class SubtestEditView extends Backbone.View
     @assessment = options.assessment
     @config     = Tangerine.config.subtest
 
+    options.parent = @
     @prototypeViews  = Tangerine.config.get "prototypeViews"
-    @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']]
-      model: @model
-      parent: @
+    @prototypeEditor = new window[@prototypeViews[@model.get 'prototype']['edit']] options
 
     @prototypeEditor.on "question-edit", (questionId) =>
       @save
