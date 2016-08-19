@@ -468,6 +468,9 @@ _.isEmptyString = ( aString ) ->
   return true if aString.replace(/\s*/, '') == ''
   return false
 
+_.prototype.isEmptyString = ->
+  _.isEmptyString(@_wrapped)
+
 _.indexBy = ( propertyName, objectArray ) ->
   result = {}
   for oneObject in objectArray
@@ -476,6 +479,25 @@ _.indexBy = ( propertyName, objectArray ) ->
       result[key] = [] if not result[key]?
       result[key].push(oneObject)
   return result
+
+_.prototype.indexBy = ( index ) ->
+
+  anArray = @_wrapped
+  anArray = @_wrapped.models if @_wrapped.models?
+
+  _.indexBy(index, anArray)
+
+_.prototype.tally = ->
+  _.tally(@_wrapped)
+
+_.tally = ( anArray ) ->
+  counts = {}
+  for element in anArray
+    if element?
+      counts[element] = 0 unless counts[element]?
+      counts[element]++
+  counts
+
 
 
 class Utils
