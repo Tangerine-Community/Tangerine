@@ -1,4 +1,4 @@
-class Workflow extends Backbone.Model
+class Workflow extends Backbone.ParentModel
 
   url : "workflow"
 
