@@ -10,6 +10,7 @@ docker pull tangerine/tangerine:$TANGERINE_VERSION
 docker kill tangerine-container 
 docker rm tangerine-container
 docker run \
+  -it \
   --name tangerine-container \
   -p 80:80 \
   --env "T_RUN_MODE=development" \
@@ -21,6 +22,9 @@ docker run \
   --env "T_PROTOCOL=$T_PROTOCOL" \
   --volume $T_VOLUMES/couchdb/:/var/lib/couchdb \
   --volume $T_VOLUMES/apks/:/tangerine-server/tree/apks \
-  --volume $(pwd)/editor/src/js:/tangerine-server/editor/src/js \
-  --volume $(pwd)/client/src/js:/tangerine-server/client/src/js \
+  --volume $(pwd)/editor/src:/tangerine-server/editor/src \
+  --volume $(pwd)/editor/app:/tangerine-server/editor/app \
+  --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \
+  --volume $(pwd)/client/src:/tangerine-server/client/src \
+  --volume $(pwd)/client/Gulpfile.js:/tangerine-server/client/Gulpfile.js \
   tangerine/tangerine:$TANGERINE_VERSION
