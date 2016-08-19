@@ -1,4 +1,5 @@
 # Eventually we'll make Backbone.User based on this.
+
 # $.couch.session needs to be async: false
 class User extends Backbone.Model
 
@@ -153,6 +154,25 @@ class User extends Backbone.Model
           callbacks.success?(userDoc)
         error: =>
           callbacks.error?(userDoc)
+
+
+
+  ###
+
+  Preferences
+
+  ###
+
+  setPreferences: ( domain = "general", key = '', value = '' ) ->
+    preferences = @get("preferences") || {}
+    preferences[domain] = {} unless preferences[domain]?
+    preferences[domain][key] = value
+    @save("preferences": preferences)
+
+  getPreferences: ( domain = "general", key = "" ) ->
+    prefs = @get("preferences")
+    return prefs?[domain] || null if key is ""
+    return prefs?[domain]?[key] || null
 
 
 
