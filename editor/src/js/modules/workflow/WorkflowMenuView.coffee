@@ -111,9 +111,6 @@ class WorkflowMenuView extends Backbone.View
 
     return unless @ready is true
 
-    if Tangerine.settings.get("context") isnt "server"
-      return @renderMobile()
-
     htmlWorkflows = ""
 
     for workflow in @workflows.models
