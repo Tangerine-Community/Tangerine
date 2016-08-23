@@ -51,7 +51,7 @@ module.exports = function(options, callback) {
       res.body.rows.forEach(function(row) {
         data.push(row.doc)
       })
-      return callback(null, JSON.stringify(data, null, 2))
+      return callback(null, data)
     })
   })
 
