@@ -880,3 +880,261 @@ Handlebars.registerHelper('monthDropdown', (months, currentMonth)->
     return out
   renderOption(month, currentMonth) for month in months
 )
+
+#--&          ---*              ---*
+#
+###
+########   Port from tangerine-legacy:kenya-ntp
+###
+#
+#--&                ---*             ---*
+
+class Backbone.EditView extends Backbone.View
+
+  events :
+    "click .edit_in_place" : "editInPlace"
+    "focusout .editing"    : "editing"
+    "keyup    .editing"    : "editing"
+    "keydown  .editing"    : "editing"
+
+  getEditable: (options) =>
+
+    model        = options.model
+    attribute    = options.attribute
+    name         = options.name        || "Value"
+    placeholder  = options.placeholder || "none"
+    prepare      = options.prepare
+
+    @preparations                     = {} unless @preparations?
+    @preparations[model.id]           = {} unless @preparations[model.id]?
+    @preparations[model.id][attribute.key] = prepare
+
+    @htmlGenCatelog = {} unless @htmlGenCatelog?
+    @htmlGenCatelog[model.id] = {} unless @htmlGenCatelog[model.id]?
+    @htmlGenCatelog[model.id][attribute.key] = htmlFunction = do (model, attribute, name, placeholder) -> 
+      -> 
+
+        key    = attribute.key
+        escape = attribute.escape
+        type   = attribute.type || ''
+
+        # cook the value
+        value = if model.has(key) then model.get(key) else placeholder
+        value = placeholder if _(value).isEmptyString()
+
+        value = _(value).escape() if escape
+        untitled = " data-untitled='true' " if value is placeholder
+
+        # what is it
+        editOrNot   = if attribute.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
+
+        numberOrNot = if _.isNumber(value) then "data-is-number='true'" else "data-is-number='false'" 
+
+        result = "<div class='edit_in_place #{key}-edit-in-place' id='#{model.id}-#{key}'><span data-model-id='#{model.id}' data-type='#{type}' data-key='#{key}' data-value='#{value}' data-name='#{name}' #{editOrNot} #{numberOrNot} #{untitled||''}>#{value}</span></div>"
+
+        return result
+
+    return htmlFunction()
+
+
+  editInPlace: (event) =>
+
+    return if @alreadyEditing
+    @alreadyEditing = true
+
+    # save state
+    # replace with text area
+    # on save, save and re-replace
+    $span = $(event.target)
+
+    $parent  = $span.parent()
+
+    return if $span.hasClass("editing")
+
+    guid     = Utils.guid()
+
+    key      = $span.attr("data-key")
+    name     = $span.attr("data-name")
+    type     = $span.attr("data-type")
+    isNumber = $span.attr("data-is-number") == "true"
+
+    modelId  = $span.attr("data-model-id")
+    model    = @models.get(modelId)
+
+    oldValue = model.get(key) || ""
+    oldValue = "" if $span.attr("data-untitled") == "true"
+
+    $target = $(event.target)
+    classes = ($target.attr("class") || "").replace("settings","")
+    margins = $target.css("margin")
+
+    transferVariables = "data-is-number='#{isNumber}' data-key='#{key}' data-model-id='#{modelId}' "
+
+    if type is "boolean"
+      $span
+
+    # sets width/height with style attribute
+    rows = 1 oldValue.count("\n")
+    rows = parseInt(Math.max(oldValue.length / 30, rows))
+    $parent.html("<textarea placeholder='#{name}' id='#{guid}' rows='#{rows}' #{transferVariables} class='editing #{classes} #{key}-editing' style='margin:#{margins}' data-name='#{name}'>#{oldValue}</textarea>")
+    # style='width:#{oldWidth}px; height: #{oldHeight}px;'
+    $textarea = $("##{guid}")
+    $textarea.select()
+
+  editing: (event) =>
+
+    return false if event.which == 13 and event.type == "keyup"
+
+    $target = $(event.target)
+
+    $parent = $target.parent()
+
+    key        = $target.attr("data-key")
+    isNumber   = $target.attr("data-is-number") == "true"
+
+    modelId    = $target.attr("data-model-id")
+    name       = $target.attr("data-name")
+
+    model      = @models.get(modelId)
+    oldValue   = model.get(key)
+
+    newValue = $target.val()
+    newValue = if isNumber then parseInt(newValue) else newValue
+
+    if event.which == 27 or event.type == "focusout"
+      @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
+      @alreadyEditing = false
+      return
+
+    # act normal, unless it's an enter key on keydown
+    keyDown = event.type is "keydown"
+    enter   = event.which is 13
+    altKey  = event.altKey
+
+    return true if enter and altKey
+    return true unless enter and keyDown
+
+    @alreadyEditing = false
+
+    # If there was a change, save it
+    if String(newValue) != String(oldValue)
+      attributes = {}
+      attributes[key] = newValue
+      if @preparations?[modelId]?[key]?
+        try
+          attributes[key+"-cooked"] = @preparations[modelId][key](newValue)
+        catch e
+          Utils.sticky("Problem cooking value<br>#{e.message}")
+          return
+      model.save attributes,
+        success: =>
+          Utils.topAlert "#{name} saved"
+          @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
+        error: =>
+          alert "Please try to save again, it didn't work that time."
+          @render()
+    else
+      @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
+
+    # this ensures we do not insert a newline character when we press enter
+    return false
+
+
+
+
+
+class Backbone.ChildModel extends Backbone.Model
+
+  save: (attributes, options={}) =>
+    options.success = $.noop unless options.success?
+    options.error = $.noop unless options.error?
+    @set attributes
+    options.childSelf = @
+    @parent.childSave(options)
+
+
+class Backbone.ChildCollection extends Backbone.Collection
+
+
+class Backbone.ParentModel extends Backbone.Model
+
+  Child: null
+  ChildCollection: null
+
+  constructor: (options) ->
+    @collection = new @ChildCollection()
+    @collection.on "remove", => @updateAttributes()
+    super(options)
+
+  getLength: -> @collection.length || @attributes.children.length
+
+  fetch: (options) ->
+    oldSuccess = options.success
+    delete options.success
+    
+    options.success = (model, response, options) =>
+      childrenModels = []
+      for child in @getChildren()
+        childModel = new @Child(child)
+        childModel.parent = @
+        childrenModels.push childModel
+      @collection.reset childrenModels
+      @collection.sort()
+      oldSuccess(model, response, options)
+
+    super(options)
+
+  getChildren: ->
+    @getArray("children")
+
+  updateAttributes: ->
+    @attributes.children = []
+    for model in @collection.models
+      @attributes.children.push model.attributes
+
+  updateCollection: =>
+    @collection.reset(@attributes.children)
+    @collection.each (child) =>
+      child.parent = @
+
+  newChild: (attributes={}, options) =>
+    newChild = new @Child
+    newChild.set("_id", Utils.guid())
+    newChild.parent = @
+    @collection.add(newChild, options)
+    newChild.save attributes,
+      success: =>
+        
+
+  childSave: (options = {}) =>
+    oldSuccess = options.success
+    delete options.success
+    options.success = (a, b, c) =>
+      oldSuccess.apply(options.childSelf, [a, b, c])
+    @updateAttributes()
+
+    @save null, options
+
+
+_.prototype.isEmptyString = ->
+  _.isEmptyString(@_wrapped)
+
+_.prototype.indexBy = ( index ) ->
+
+  anArray = @_wrapped
+  anArray = @_wrapped.models if @_wrapped.models?
+
+  _.indexBy(index, anArray)
+
+_.prototype.tally = ->
+  _.tally(@_wrapped)
+
+_.tally = ( anArray ) ->
+  counts = {}
+  for element in anArray
+    if element?
+      counts[element] = 0 unless counts[element]?
+      counts[element]++
+  counts
+
+
