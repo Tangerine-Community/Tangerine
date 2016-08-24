@@ -10,4 +10,6 @@ class Feedbacks extends Backbone.Collection
 
   model : Feedback
   url : "feedback"
-
+  pouch:
+    viewOptions:
+      key : 'feedback'
