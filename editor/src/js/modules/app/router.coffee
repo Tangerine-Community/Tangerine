@@ -484,10 +484,7 @@ class Router extends Backbone.Router
                   view = new WorkflowMenuView
                     workflows : workflows
                     feedbacks : feedbacks
-
-                  return vm.show view
-
-              return
+                  vm.show view
 
             collections = [
               "Klasses"
