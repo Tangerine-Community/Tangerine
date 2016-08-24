@@ -196,8 +196,8 @@ class LessonPlanListElementView extends Backbone.View
         </div>
         #{@ul
         cssClass : "assessment_menu"
-        links : ["run", "dataEntry", "results", "editLP", "sync", "print" ]
-        other : @spriteEvents("li", "duplicate", "assessment_delete") + downloadKey
+        links : ["run", "editLP" ]
+        other : @spriteEvents("li", "assessment_delete") + downloadKey
       }
         <div class='sub_menus'>
           #{deleteConfirm}
@@ -215,8 +215,8 @@ class LessonPlanListElementView extends Backbone.View
 
         #{@ul
         cssClass: "assessment_menu"
-        links : ["run","results","editLP","sync","print"]
-        other : @spriteEvents("li", "duplicate", "assessment_delete") + downloadKey
+        links : ["run","editLP"]
+        other : @spriteEvents("li","assessment_delete") + downloadKey
       }
         <div class='sub_menus'>
           #{deleteConfirm}

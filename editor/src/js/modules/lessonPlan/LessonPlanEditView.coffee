@@ -3,6 +3,7 @@ class LessonPlanEditView extends Backbone.View
   className : 'lessonPlan_edit_view'
 
   events :
+    'change #element_type_select'  : 'addElement'
     'click #archive_buttons input' : 'save'
     'click .back'                  : 'goBack'
     'click .new_element_button'    : 'toggleNewElementForm'
@@ -22,6 +23,15 @@ class LessonPlanEditView extends Backbone.View
 
     @model.elements.on "change remove", @elementListEditView.render
     @model.elements.on "all", @updateElementLegend
+
+  addElement: () ->
+    value = $('#element_type_select').val()
+    if value == 'media'  
+      $('#files').show()
+      $('#html_div').hide()
+    if value == 'html' 
+      $('#html_div').show()
+      $('#files').hide()
 
   save: =>
     if @updateModel()
@@ -84,7 +94,7 @@ class LessonPlanEditView extends Backbone.View
     @model.set
       sequences : sequences
       archived  : @$el.find("#archive_buttons input:checked").val() == "true"
-      name      : @$el.find("#lessonPlan_name").val()
+      name      : @$el.find("#lessonPlan_title").val()
       dKey      : @$el.find("#lessonPlan_d_key").val()
       lessonPlan_title      : @$el.find("#lessonPlan_title").val()
       lessonPlan_lesson_text      : @$el.find("#lessonPlan_lesson_text").val()
@@ -131,6 +141,8 @@ class LessonPlanEditView extends Backbone.View
       fd = new FormData()
       fd.append("file", file)
 
+   
+
     newAttributes = $.extend newAttributes, prototypeTemplate
     newAttributes = $.extend newAttributes, useTypeTemplate
     newAttributes = $.extend newAttributes,
@@ -139,6 +151,12 @@ class LessonPlanEditView extends Backbone.View
       lessonPlanId : @model.id
       assessmentId : @model.id
       order        : @model.elements.length
+
+    if CKEDITOR.instances.html.getData() != 'undefined'
+      @model.set
+        "html" : CKEDITOR.instances.html.getData()
+      newAttributes = $.extend newAttributes,
+        html: @model.get('html')
 
     if typeof file != 'undefined'
       newAttributes = $.extend newAttributes,
@@ -228,13 +246,13 @@ class LessonPlanEditView extends Backbone.View
         elementTypeSelect += "<option value='#{key}' data-template='#{key}'>#{key.humanize()}</option>"
 #      elementTypeSelect += "</optgroup>"
     elementTypeSelect += "</select>"
+    html = @model.get("html") || ""
 
     @$el.html "
       <button class='back navigation'>Back</button>
         <h1>LessonPlan Builder</h1>
       <div id='basic'>
-        <label for='lessonPlan_name'>Name</label>
-        <input id='lessonPlan_name' value='#{@model.escape("name")}'>
+      
 
         <label for='lessonPlan_d_key' title='This key is used to import the lessonPlan from a tablet.'>Download Key</label><br>
         <div class='info_box'>#{@model.id.substr(-5,5)}</div>
@@ -287,12 +305,16 @@ class LessonPlanEditView extends Backbone.View
             <label for='new_element_name'>Name</label><br>
             <input type='text' id='new_element_name'>
             <input type='file' name='files' id='files' multiple='multiple' />
+            <div id='html_div' class='label_value'>
+              <label for='html'>Html</label>
+              <textarea id='html'>#{html}</textarea>
+            </div>
             <button class='new_element_save command'>Add</button> <button class='new_element_cancel command'>Cancel</button>
           </div>
         </div>
       </div>
-      <h2>Options</h2>
-      <div class='label_value'>
+      <h2></h2>
+      <div class='label_value' style='display: none;'> 
         <label for='sequences' title='This is a list of acceptable orders of elements, which will be randomly selected each time an lessonPlan is run. Element indicies are separated by commas, new lines separate sequences. '>Random Sequences</label>
         <div id='element_legend'>#{elementLegend}</div>
         <textarea id='sequences'>#{sequences}</textarea>
@@ -327,4 +349,9 @@ class LessonPlanEditView extends Backbone.View
 
   onClose: ->
     @elementListEditView.close()
-    
+  
+  afterRender: ->
+    @elementEditor?.afterRender?()
+    CKEDITOR.replace("html")
+    $('#files').hide()
+    $('#html_div').hide()
