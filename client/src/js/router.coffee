@@ -515,14 +515,26 @@ class Router extends Backbone.Router
   assessments: ->
     Tangerine.user.verify
       isAuthenticated: ->
-        assessments = new Assessments
-        assessments.fetch
+
+        (workflows = new Workflows).fetch
           success: ->
-#            vm.show new AssessmentsMenuView
-#              assessments : assessments
-            assessmentsView = new AssessmentsMenuView
-              assessments : assessments
-            Tangerine.app.rm.get('mainRegion').show assessmentsView
+            # If there are workflows, only show workflows, otherwise show assessments.
+            # @todo We should make this a setting.
+            if workflows.length > 0
+              feedbacks = new Feedbacks feedbacks
+              feedbacks.fetch
+                success: ->
+                  view = new WorkflowMenuView
+                    workflows : workflows
+                    feedbacks : feedbacks
+                  Tangerine.app.rm.get('mainRegion').show view
+            else
+              assessments = new Assessments
+              assessments.fetch
+                success: ->
+                  assessmentsView = new AssessmentsMenuView
+                    assessments : assessments
+                  Tangerine.app.rm.get('mainRegion').show assessmentsView
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
