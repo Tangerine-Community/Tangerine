@@ -1,1 +1,1 @@
-Tangerine.version = "0.3.4-6-g9c44e8c";Tangerine.build = "9c44e8c";
+Tangerine.version = "0.4.0";Tangerine.build = "6214ef2";

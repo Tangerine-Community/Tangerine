@@ -1,0 +1,17 @@
+# This is our production compose file - not changed for docker-sync or similar
+
+version: "2"
+services:
+  app-rsync:
+    build: .
+    container_name: 'tangerine-container'
+    ports:
+        - "80:80"
+    environment:
+        - T_RUN_MODE=development
+        - T_ADMIN=$T_ADMIN
+        - T_PASS=$T_PASS
+        - T_USER1=$T_USER1
+        - T_USER1_PASSWORD=$T_USER1_PASSWORD
+        - T_HOST_NAME=$T_HOST_NAME
+        - T_PROTOCOL=$T_PROTOCOL
