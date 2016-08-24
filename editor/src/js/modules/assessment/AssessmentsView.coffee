@@ -55,11 +55,7 @@ class AssessmentsView extends Backbone.View
 
     @subviews = archivedViews.concat activeViews
 
-    # escape if no assessments in non-public list
-    if @subviews.length == 0
-      @$el.html "<p class='grey'>No assessments yet. Click <b>new</b> to get started.</p>"
-      return @trigger "rendered"
-
+   
 
     # templating and components
 
