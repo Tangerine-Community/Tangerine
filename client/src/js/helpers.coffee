@@ -974,7 +974,7 @@ class Backbone.EditView extends Backbone.View
       $span
 
     # sets width/height with style attribute
-    rows = 1 oldValue.count("\n")
+    rows = 1 + oldValue.count("\n")
     rows = parseInt(Math.max(oldValue.length / 30, rows))
     $parent.html("<textarea placeholder='#{name}' id='#{guid}' rows='#{rows}' #{transferVariables} class='editing #{classes} #{key}-editing' style='margin:#{margins}' data-name='#{name}'>#{oldValue}</textarea>")
     # style='width:#{oldWidth}px; height: #{oldHeight}px;'
