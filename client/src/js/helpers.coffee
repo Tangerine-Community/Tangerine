@@ -881,14 +881,6 @@ Handlebars.registerHelper('monthDropdown', (months, currentMonth)->
   renderOption(month, currentMonth) for month in months
 )
 
-#--&          ---*              ---*
-#
-###
-########   Port from tangerine-legacy:kenya-ntp
-###
-#
-#--&                ---*             ---*
-
 class Backbone.EditView extends Backbone.View
 
   events :
