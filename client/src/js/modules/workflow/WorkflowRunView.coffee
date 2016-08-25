@@ -220,20 +220,23 @@ class WorkflowRunView extends Backbone.View
       success: =>
         assessment = @currentStep.getTypeModel()
 
-        view = new AssessmentRunView 
-          model      : assessment
-          inWorkflow : true
-          tripId     : @tripId
-          workflowId : @workflow.id
+        assessment.deepFetch 
+          success: =>
+            view = new AssessmentCompositeView 
+              assessment : assessment
+              inWorkflow : true
+              tripId     : @tripId
+              workflowId : @workflow.id
 
-        if @assessmentResumeIndex?
-          view.index = @assessmentResumeIndex
-          delete @assessmentResumeIndex
+            if @assessmentResumeIndex?
+              view.index = @assessmentResumeIndex
+              delete @assessmentResumeIndex
 
 
-        @steps[@index].view   = view
-        @steps[@index].result = view.getResult()
-        @showView view
+            @steps[@index].view   = view
+            # @steps[@index].result = view.getResult()
+            @steps[@index].result = view.result
+            @showView view
 
 
   renderCurriculum: ->
