@@ -234,8 +234,14 @@ class LessonPlanEditView extends Backbone.View
     archiveChecked    = if (arch == true or arch == 'true') then "checked" else ""
     notArchiveChecked = if archiveChecked then "" else "checked"
 
-    lessonPlan_subject_Engish    = if (lessonPlan_subject == '1') then "checked" else ""
-    lessonPlan_subject_Kiswahili = if (lessonPlan_subject == '2') then "checked" else ""
+    lessonPlan_subject_Afaan_Oromo    = if (lessonPlan_subject == '1') then "checked" else ""
+    lessonPlan_subject_Af_Somali = if (lessonPlan_subject == '2') then "checked" else ""
+    lessonPlan_subject_Amharic = if (lessonPlan_subject == '3') then "checked" else ""
+    lessonPlan_subject_Hadiyyisa = if (lessonPlan_subject == '4') then "checked" else ""
+    lessonPlan_subject_Sidaamu_Afoo = if (lessonPlan_subject == '5') then "checked" else ""
+    lessonPlan_subject_Tigrinya = if (lessonPlan_subject == '6') then "checked" else ""
+    lessonPlan_subject_Wolayttatto = if (lessonPlan_subject == '7') then "checked" else ""
+
 
     # list of "templates"
     elementTypeSelect = "<select id='element_type_select'>
@@ -271,8 +277,13 @@ class LessonPlanEditView extends Backbone.View
 
       <label title='You must choose one of these subjects.' for='lessonPlan_subject_buttons'>LessonPlan subject</label><br>
       <div id='lessonPlan_subject_buttons' class='buttonset'>
-        <input type='radio' id='lessonPlan_subject_Engish' name='lessonPlan_subject' value='1' #{lessonPlan_subject_Engish}><label for='lessonPlan_subject_Engish'>Engish</label>
-        <input type='radio' id='lessonPlan_subject_Kiswahili'  name='lessonPlan_subject' value='2'  #{lessonPlan_subject_Kiswahili}><label for='lessonPlan_subject_Kiswahili'>Kiswahili</label>
+        <input type='radio' id='lessonPlan_subject_Afaan_Oromo' name='lessonPlan_subject' value='1' #{lessonPlan_subject_Afaan_Oromo}><label for='lessonPlan_subject_Afaan_Oromo'>Afaan Oromo</label>
+        <input type='radio' id='lessonPlan_subject_Af_Somali'  name='lessonPlan_subject' value='2'  #{lessonPlan_subject_Af_Somali}><label for='lessonPlan_subject_Af_Somali'>Af-Somali</label>
+        <input type='radio' id='lessonPlan_subject_Amharic'  name='lessonPlan_subject' value='3'  #{lessonPlan_subject_Amharic}><label for='lessonPlan_subject_Amharic'>Amharic</label>
+        <input type='radio' id='lessonPlan_subject_Hadiyyisa'  name='lessonPlan_subject' value='4'  #{lessonPlan_subject_Hadiyyisa}><label for='lessonPlan_subject_Hadiyyisa'>Hadiyyisa</label>
+        <input type='radio' id='lessonPlan_subject_Sidaamu_Afoo'  name='lessonPlan_subject' value='5'  #{lessonPlan_subject_Sidaamu_Afoo}><label for='lessonPlan_subject_Sidaamu_Afoo'>Sidaamu Afoo</label>
+        <input type='radio' id='lessonPlan_subject_Tigrinya'  name='lessonPlan_subject' value='6'  #{lessonPlan_subject_Tigrinya}><label for='lessonPlan_subject_Tigrinya'>Tigrinya</label>
+        <input type='radio' id='lessonPlan_subject_Wolayttatto'  name='lessonPlan_subject' value='7'  #{lessonPlan_subject_Wolayttatto}><label for='lessonPlan_subject_Wolayttatto'>Wolayttatto</label>
       </div>
         <div class='label_value'>
         <label for='lessonPlan_grade'>LessonPlan Grade</label>

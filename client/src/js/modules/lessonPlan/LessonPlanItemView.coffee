@@ -6,9 +6,20 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
   onBeforeRender: () ->
     console.log("onBeforeRender")
     if @model.get("lessonPlan_subject") == '1'
-      lessonPlan_subject_full = 'English'
-    else
-      lessonPlan_subject_full = 'Kiswahili'
+      lessonPlan_subject_full = 'Afaan_Oromo'
+    else if @model.get("lessonPlan_subject") == '2'
+      lessonPlan_subject_full = 'Af_Somali'
+    else if @model.get("lessonPlan_subject") == '3'
+      lessonPlan_subject_full = 'Amharic'
+    else if @model.get("lessonPlan_subject") == '4'
+      lessonPlan_subject_full = 'Hadiyyisa'
+    else if @model.get("lessonPlan_subject") == '5'
+      lessonPlan_subject_full = 'Sidaamu_Afoo'
+    else if @model.get("lessonPlan_subject") == '6'
+      lessonPlan_subject_full = 'Tigrinya'
+    else if @model.get("lessonPlan_subject") == '7'
+     lessonPlan_subject_full = 'Wolayttatto'
+
     @model.set("lessonPlan_subject_full", lessonPlan_subject_full)
 
 #    // Serialize the model or collection for the view. If a model is
