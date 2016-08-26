@@ -140,8 +140,7 @@ class LessonPlanEditView extends Backbone.View
     if typeof file != 'undefined'
       fd = new FormData()
       fd.append("file", file)
-
-   
+      fd.append("groupName", Tangerine.settings.get("groupName"))
 
     newAttributes = $.extend newAttributes, prototypeTemplate
     newAttributes = $.extend newAttributes, useTypeTemplate
