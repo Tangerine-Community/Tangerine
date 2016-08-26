@@ -206,6 +206,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @i18n()
 
     @on "before:render", @setChromeData
+    @on "assessment:reset", =>
+      if (@index + 1) == @subtestViews.length
+        this.trigger('assessment:complete')
 
     # Set @assessment and @model
     #
@@ -389,7 +392,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # @todo Documentation
   step: (increment) ->
-
+    this.trigger "assessment:step"
     if @abortAssessment
       currentView = Tangerine.progress.currentSubview
       @saveResult( currentView )
@@ -446,6 +449,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     # Now that we have our model we want to render, assign that model to the
     # Composite View's Collection as the ONLY model to render.
     @collection.models = [model]
+    @.trigger('assessment:reset')
     @render()
     window.scrollTo 0, 0
 
