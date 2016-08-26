@@ -3,24 +3,22 @@
 <div class="lesson-text">{{{lessonPlan_lesson_text}}}</div>
 {{#each elements}}
     {{#if image}}
-        <div><img src="lesson_plan_media/{{{fileName}}}"/></div>
+        <div><img style="width:100%;height:auto;" src="lesson_plan_media/{{{fileName}}}"/></div>
         <!--{{{fileName}}}-->
         <!--{{{fileSize}}}-->
         <!--{{{fileType}}}-->
         <!--{{{name}}}-->
         <!--{{{element}}}-->
     {{else if audio}}
-        <audio controls>
+        <audio controls style="width:100%;height:auto;">
             <source src="lesson_plan_media/{{{fileName}}}" type="{{{fileType}}}">
             Your browser does not support the audio tag.
         </audio>
     {{else if video}}
-        <video controls>
+        <video controls style="width:100%;height:auto;"> 
             <source src="lesson_plan_media/{{{fileName}}}" type="{{{fileType}}}">
         </video>
     {{else}}
        <div>{{{html}}}</div>
     {{/if}}
 {{/each}}
-
-

@@ -209,6 +209,8 @@ class LessonPlanEditView extends Backbone.View
 #    )
 
     @toggleNewElementForm()
+    $("#files").val('');
+    CKEDITOR.instances['html'].setData("");
     return false
 
   render: =>
