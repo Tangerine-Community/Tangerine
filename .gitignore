@@ -22,3 +22,5 @@ robbert/npm-debug.log
 editor/npm-debug.log
 
 client/src/lesson_plan_media/
+
+data/couchdb

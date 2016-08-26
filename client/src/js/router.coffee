@@ -401,13 +401,11 @@ class Router extends Backbone.Router
   assessments: ->
     Tangerine.user.verify
       isAuthenticated: ->
-        assessments = new Assessments
-        assessments.fetch
+        lessonPlans = new LessonPlans
+        lessonPlans.fetch
           success: ->
-#            vm.show new AssessmentsMenuView
-#              assessments : assessments
             assessmentsView = new AssessmentsMenuView
-              assessments : assessments
+              lessonPlans : lessonPlans
             Tangerine.app.rm.get('mainRegion').show assessmentsView
 
   restart: (name) ->
@@ -454,10 +452,10 @@ class Router extends Backbone.Router
       insertRecord()
     else
 #      User hit the back button, go to the main listing.
-#      Tangerine.router.landing()
-      rootPath = window.location.origin
-      pathname = window.location.pathname
-      window.location = rootPath + pathname + "#assessments"
+      Tangerine.router.landing()
+#      rootPath = window.location.origin
+#      pathname = window.location.pathname
+#      window.location = rootPath + pathname + "#assessments"
 
   widgetPlay: (type, id) ->
     console.log("type:" + type)
@@ -495,23 +493,36 @@ class Router extends Backbone.Router
           view = new LessonPlanItemView
             model: lessonPlan
           dashboardLayout.contentRegion.show(view)
-      error: (model, err, cb) ->
-        console.log JSON.stringify err
+        error: (model, err, cb) ->
+          console.log JSON.stringify err
 
   runMar: (id) ->
     router = this
     Tangerine.user.verify
       isAuthenticated: ->
         router.navigateAwayMessage = t("Router.message.quit_assessment")
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch
+#        assessment = new Assessment "_id" : id
+#        assessment.deepFetch
+#          success : ->
+#            dashboardLayout = new DashboardLayout();
+#            Tangerine.app.rm.get('mainRegion').show dashboardLayout
+#            dashboardLayout.contentRegion.reset()
+#            assessmentCompositeView = new AssessmentCompositeView
+#              assessment: assessment
+#            dashboardLayout.contentRegion.show(assessmentCompositeView)
+#          error: (model, err, cb) ->
+#            console.log JSON.stringify err
+
+        lessonPlan = new LessonPlan "_id" : id
+        lessonPlan.deepFetch
           success : ->
             dashboardLayout = new DashboardLayout();
             Tangerine.app.rm.get('mainRegion').show dashboardLayout
             dashboardLayout.contentRegion.reset()
-            assessmentCompositeView = new AssessmentCompositeView
-              assessment: assessment
-            dashboardLayout.contentRegion.show(assessmentCompositeView)
+            lessonPlan.set("elements",lessonPlan.elements)
+            view = new LessonPlanItemView
+              model: lessonPlan
+            dashboardLayout.contentRegion.show(view)
           error: (model, err, cb) ->
             console.log JSON.stringify err
 

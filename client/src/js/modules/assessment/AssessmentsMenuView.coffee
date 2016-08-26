@@ -62,10 +62,11 @@ class AssessmentsMenuView extends Backbone.View
 
     @[key] = value for key, value of options
       
-    @assessments.each (assessment) => assessment.on "new", @addAssessment
+#    @assessments.each (assessment) => assessment.on "new", @addAssessment
+    @lessonPlans.each   (lessonPlan) => lessonPlan.on "new", @addLessonPlan
 
-    @assessmentsView = new AssessmentsView
-      "assessments" : @assessments
+    @lessonPlansListView = new LessonPlansListView
+      "lessonPlans" : @lessonPlans
       "parent"      : @
 
 
@@ -84,27 +85,23 @@ class AssessmentsMenuView extends Backbone.View
 
     html = "
       <section>
-        <h1>#{@text.assessments}</h1>
+        <h1>Lesson Plans</h1>
     "
 
     html += "
-        <div id='assessments_container'></div>
+        <div id='lessonPlans_container'></div>
       </section>
-      <br>
-      #{uploadButton}
-      #{saveToDiskButton}
-      <div id='upload_results'></div>
     "
 
     @$el.html html
 
-    @assessmentsView.setElement( @$el.find("#assessments_container") )
-    @assessmentsView.render()
+    @lessonPlansListView.setElement( @$el.find("#lessonPlans_container") )
+    @lessonPlansListView.render()
 
 
   # ViewManager
   closeViews: ->
-    @assessmentsView.close()
+    @lessonPlansListView.close()
 
   onClose: ->
     @closeViews()

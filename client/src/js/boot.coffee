@@ -104,6 +104,10 @@ Tangerine.bootSequence =
                 emit "element-#{doc.assessmentId}"
 
               # Belongs to relationship
+              if doc.collection is 'lessonPlan'
+                emit "lessonPlan-#{doc.lessonPlanId}"
+
+              # Belongs to relationship
               else if doc.collection is 'question'
                 emit "question-#{doc.subtestId}"
 

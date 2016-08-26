@@ -49,24 +49,30 @@ The folowing files need to be configured to match our or your development enviro
 
   app/_docs/configuration
   app/_docs/settings
-  
+
+## Local development without a Docker container:
+
 Normally the values in those files are setup by the Dockerfile install process; however, if you are doing developement, 
-it may be easier to run the following script and do development locally instead of in a docker container:
+it may be easier to run the following script and do development locally instead of in a docker container. 
+You'll need to point to your robbert instance.
+
+export T_HOST_NAME=localhost:4444
 
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/configuration.json
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/settings.json 
 
-You may need to tweak those settings: your Couchdb instance may not map to /db. 
-If your db does not map to /db, also change the following lines in boot.coffee:
+Add the following parameters to your Couchdb config (You can do this in futon with the "Add Section" link):
 
 ````
 
-$.couch.urlPrefix = ''
-
-Tangerine.db_name    = window.location.pathname.split("/")[1]
-Backbone.couch_connector.config.base_url  = "#{urlParser.protocol}//#{urlParser.host}/"
+httpd_global_handlers
+db	{couch_httpd_proxy, handle_proxy_req, <<"http://localhost:5984/">>}
 
 ````
+
+Restart your CouchDB instance.
+
+This maps any requests going to /db/ back to the root of your couch.
 
 Run the following commands to initialize the codebase:
 
