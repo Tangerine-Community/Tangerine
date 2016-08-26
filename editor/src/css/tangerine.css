@@ -2947,3 +2947,8 @@ button.ui-button::-moz-focus-inner {
   position: static;
   float: right;
 }
+
+#client-widget{
+  position: absolute;
+  overflow: visible;
+}
