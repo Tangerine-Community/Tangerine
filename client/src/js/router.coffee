@@ -24,6 +24,7 @@ class Router extends Backbone.Router
     'register' : 'register'
     'logout'   : 'logout'
     'account'  : 'account'
+    'bandwidth' :'bandwidth' 
 
     'transfer' : 'transfer'
 
@@ -96,6 +97,12 @@ class Router extends Backbone.Router
             view = new AdminView
               groups : groups
             vm.show view
+
+  bandwidth: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        view = new BandwidthCheckView
+        vm.show view
 
   dashboard: (options) ->
     options = options?.split(/\//)

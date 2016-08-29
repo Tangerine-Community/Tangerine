@@ -383,6 +383,8 @@ conf.fileOrder = [
   'AssessmentSyncView',
   'AssessmentDataEntryView',
 
+  'BandwidthCheckView',
+
   'Subtest',
   'Subtests',
   'SubtestRunView',
@@ -550,5 +552,7 @@ conf.libFiles = [
   './src/js/lib/jstz.js',
   './src/js/lib/lz-string.js',
   './src/js/lib/ckeditor.js',
+  './src/js/lib/boomerang.js',
+  './src/js/lib/boomerang-plugin-bw-custom.js',
   './src/js/lib/coffee-script.js' // This file tends to like to be last
 ];
