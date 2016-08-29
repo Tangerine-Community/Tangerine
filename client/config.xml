@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="org.rti.tangerine" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Tangerine</name>
+    <name>IMLP</name>
     <description>
-        Mobile data collection system.
+        Lesson Planner system.
     </description>
     <author email="ict-admin@rti.org" href="github.com/Tangerine-Community/Tangerine">
         Tangerine dream team
