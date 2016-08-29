@@ -39,6 +39,7 @@ class WidgetRunView extends Backbone.View
     @$assessmentWidget.attr('width', '100%')
     @$assessmentWidget.attr('height', '100%')
     @$assessmentWidget.attr('id', 'client-widget')
+    @$assessmentWidget.attr('groupName', Tangerine.settings.get("groupName"))
     @$assessmentWidget.on('result:save:widget', (event) ->
       console.log("Final save")
       $('#saveToCouchDB').show()

@@ -422,6 +422,9 @@ class Router extends Backbone.Router
   widgetLoad: () ->
     if typeof Tangerine.widgetLoaded == 'undefined'
       assessmentDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
+      groupName = window.frameElement.getAttribute('groupName')
+      if Tangerine.settings.get("groupName") == ""
+        Tangerine.settings.set("groupName", groupName)
       assessmentId = ''
       resultId = ''
       i = 0

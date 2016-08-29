@@ -4,7 +4,8 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
   template: JST["LessonPlanItemView"],
 
   onBeforeRender: () ->
-    console.log("onBeforeRender")
+#    console.log("onBeforeRender")
+    @model.set("groupName", Tangerine.settings.get("groupName"))
     if @model.get("lessonPlan_subject") == '1'
       lessonPlan_subject_full = 'Afaan_Oromo'
     else if @model.get("lessonPlan_subject") == '2'
@@ -44,6 +45,7 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
       for element in elements
         do (element) ->
           if element.element == 'media'
+            element.groupName = Tangerine.settings.get("groupName")
             typeArr = element.fileType.split("/")
             typename = typeArr[0]
             element[typename] = typename

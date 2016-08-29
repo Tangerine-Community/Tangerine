@@ -14,15 +14,16 @@ class MediaEditView extends Backbone.View
 
   render: ->
     #media = @model.get("media") || ""
+    groupName = Tangerine.settings.get("groupName")
     fileName = @model.get("fileName")
     fileType = @model.get("fileType")
     typeArr = fileType.split("/")
     typeName = typeArr[0]
     mediaString = ''
     if typeName == 'image'
-      mediaString = '<img id="media_' +fileName+ '" style="max-width:99%;width:100%;height:auto;" src="/client/lesson_plan_media/' +fileName+ '"/>'
+      mediaString = '<img id="media_' +fileName+ '" style="max-width:99%;width:100%;height:auto;" src="/client/lesson_plan_media/' + groupName + '/' +fileName+ '"/>'
     if typeName == 'audio' || typeName == 'video'
-      mediaString = '<' +typeName+ ' controls style="max-width:99%;width:100%;height:auto;" id="media_' +typeName+ '"><source src="/client/lesson_plan_media/' +fileName+ '" type="' +fileType+ '"/></' +typeName+ '>'
+      mediaString = '<' +typeName+ ' controls style="max-width:99%;width:100%;height:auto;" id="media_' +typeName+ '"><source src="/client/lesson_plan_media/' + groupName + '/' +fileName+ '" type="' +fileType+ '"/></' +typeName+ '>'
     
     @$el.html "
       <div class='label_value'>
