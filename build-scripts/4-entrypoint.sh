@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+cd /tangerine-server/client && npm run build:apk
 echo ""
 echo ""
 echo ""
