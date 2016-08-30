@@ -88,6 +88,7 @@ RUN cd /tangerine-server/client \
 
 # Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 RUN cd /tangerine-server/client \
+    && cordova platform add android \
     && npm install cordova-plugin-whitelist \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save
 
