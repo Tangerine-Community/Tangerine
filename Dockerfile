@@ -88,9 +88,10 @@ RUN cd /tangerine-server/client \
 
 # Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 RUN cd /tangerine-server/client \
-    && cordova platform add android \
+    && ./node_modules/.bin/cordova platform add android@5.X.X \
     && npm install cordova-plugin-whitelist \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+" && \
 
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
@@ -115,6 +116,8 @@ ADD ./.git /tangerine-server/.git
 ADD ./client /tangerine-server/client
 RUN cd /tangerine-server/client && npm run gulp init
 RUN cd /tangerine-server/client && npm run gulp init
+RUN cd /tangerine-server/client && npm run build:apk 
+
 # Compile editor.
 ADD ./editor /tangerine-server/editor
 RUN cd /tangerine-server/editor && npm start init
