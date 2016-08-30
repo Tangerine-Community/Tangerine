@@ -15,6 +15,18 @@ class WorkflowRunView extends Backbone.View
     @steps = [] unless @steps?
     @currentStep = @workflow.stepModelByIndex @index
     @subViewRendered = false
+    # When a new subview is shown, set listener for when it is done so we can
+    # save the result and go to the next step.
+    @on 'workflow:showView', =>
+      view = @steps[@index].view
+      view.on "assessment:complete", =>
+        view.result.set 'tripId', @tripId
+        view.result.set 'workflowId', @workflow.id
+        view.result.save()
+        if (@index + 1) == @workflow.getLength()
+          @renderEnd()
+          return @trigger "workflow:done"
+        @nextStep()
 
   shouldSkip: ->
     currentStep = @workflow.stepModelByIndex @index
@@ -66,6 +78,9 @@ class WorkflowRunView extends Backbone.View
     @nextStep()
 
   nextStep: =>
+    ###
+    # RJ: Commenting this out because it looks like this View depends on children
+    # Views to modify their parent in ways we can't expect them to.
     itExists        = @subView?
     itIsRendered    = @subViewRendered
     itIsntDone      = not @subViewDone
@@ -76,6 +91,7 @@ class WorkflowRunView extends Backbone.View
     return false if !itIsRendered
     return @subView.next() if itExists and itIsntDone and itsAnAssessment
     return @subView.save() if itExists and itIsntDone and itsANewObject
+    ###
 
     @subViewRendered = false
     @subViewDone = false
@@ -90,7 +106,9 @@ class WorkflowRunView extends Backbone.View
     # handled with "if currentStep is null"
     @index = Math.min @index + 1, @workflow.getLength()
 
-    @render() if oldIndex isnt @index
+    # RJ: Also commented out for reasons stated above.
+    #@render() if oldIndex isnt @index
+    @render()
 
     @checkIncompletes()
 
@@ -220,20 +238,23 @@ class WorkflowRunView extends Backbone.View
       success: =>
         assessment = @currentStep.getTypeModel()
 
-        view = new AssessmentRunView 
-          model      : assessment
-          inWorkflow : true
-          tripId     : @tripId
-          workflowId : @workflow.id
+        assessment.deepFetch 
+          success: =>
+            view = new AssessmentCompositeView 
+              assessment : assessment
+              inWorkflow : true
+              tripId     : @tripId
+              workflowId : @workflow.id
 
-        if @assessmentResumeIndex?
-          view.index = @assessmentResumeIndex
-          delete @assessmentResumeIndex
+            if @assessmentResumeIndex?
+              view.index = @assessmentResumeIndex
+              delete @assessmentResumeIndex
 
 
-        @steps[@index].view   = view
-        @steps[@index].result = view.getResult()
-        @showView view
+            @steps[@index].view   = view
+            # @steps[@index].result = view.getResult()
+            @steps[@index].result = view.result
+            @showView view
 
 
   renderCurriculum: ->
@@ -319,6 +340,7 @@ class WorkflowRunView extends Backbone.View
     @$button?.remove?()
 
   showView: (subView, header = '') ->
+    @trigger 'workflow:showView'
     header = "<h1>#{header}</h1>" if header isnt ''
     @subView = subView
     @$el.find("#header-container").html header
