@@ -161,14 +161,8 @@ Tangerine.bootSequence =
   # these do tend to change depending on the particular install of the
   fetchSettings : ( callback ) ->
     Tangerine.settings = new Settings "_id" : "settings"
-    Tangerine.settings.fetch
-      success: callback
-      error: ->
-        Tangerine.settings.save Tangerine.defaults.settings,
-          error: ->
-            console.error arguments
-            alert "Could not save default settings"
-          success: callback
+    Tangerine.settings.fetch()
+    Tangerine.settings.on('sync', callback)
 
   # for upgrades
   guaranteeInstanceId: ( callback ) ->
