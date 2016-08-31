@@ -713,7 +713,7 @@ class TangerineTree
 #        dKeys = _.compact(doc.id.substr(-5, 5) for doc in data.rows).concat(keyList).join(" ")
         dKeys = data.rows.map((row) => row.id.substr(-5))
         dKeyQuery =
-          keys: dKeys
+          keys: JSON.stringify(dKeys)
         console.log("dKeyQuery:" + JSON.stringify(dKeyQuery))
         url = Tangerine.settings.urlView("group", "byDKey")
         console.log("url: " + url)
@@ -722,7 +722,7 @@ class TangerineTree
           type: "POST"
           contentType: "application/json"
           dataType: "json"
-          data: JSON.stringify(dKeyQuery)
+          data: dKeyQuery
           success: (data) =>
             console.log("data: " + JSON.stringify(data))
             keyList = []

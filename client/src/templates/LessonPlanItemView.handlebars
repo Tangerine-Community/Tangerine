@@ -9,16 +9,18 @@
         <!--{{{fileType}}}-->
         <!--{{{name}}}-->
         <!--{{{element}}}-->
+        </br>
     {{else if audio}}
         <audio controls style="width:100%;height:auto;">
             <source src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}" type="{{{fileType}}}">
             Your browser does not support the audio tag.
         </audio>
     {{else if video}}
-        <video controls style="width:100%;height:auto;"> 
+        <video controls style="width:100%;height:auto;">
             <source src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}" type="{{{fileType}}}">
         </video>
     {{else}}
        <div>{{{html}}}</div>
     {{/if}}
+    </br>
 {{/each}}
