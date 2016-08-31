@@ -43,6 +43,9 @@ apt-get update && apt-get -y install \
 curl -sL https://deb.nodesource.com/setup_4.x | bash -
 apt-get -y install nodejs
 
+node -v
+npm -v
+
 npm install -g pm2
 npm install -g bower
 
