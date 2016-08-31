@@ -163,7 +163,7 @@ gulp.task('build:lib.js', function() {
 
 // Update version.js
 gulp.task('version', function(cb) {
-  git.exec({ args: 'describe --tags' }, function(err, version) {
+  git.exec({ args: 'describe --all' }, function(err, version) {
     version = version.replace(/\n/, '');
     git.exec({ args: 'rev-parse --short HEAD' }, function(err, build) {
       build = build.replace(/\n/, '');

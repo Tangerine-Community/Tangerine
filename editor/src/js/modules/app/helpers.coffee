@@ -771,7 +771,8 @@ class TangerineTree
             docList = []
             for datum in data.rows
               docList.push datum.id
-              keyList = _.uniq(docList)
+            keyList = _.uniq(docList)
+            keyList.push("settings");
             Tangerine.$db.allDocs
               keys : keyList
               include_docs:true

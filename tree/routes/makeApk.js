@@ -35,6 +35,10 @@ Object.defineProperty(Conf, "PACK_DOC_SIZE", {value: 50, writeable: false, confi
 // Where the json docs will go
 Object.defineProperty(Conf, "PACK_PATH", {value: `/tangerine-server/client/src/js/init`, writeable: false, configurable: false, enumerable: true})
 
+// Where the get the media assets
+Object.defineProperty(Conf, "MEDIA_PATH", {value: `/tangerine-server/client/lesson_plan_media/`, writeable: true, configurable: false, enumerable: true})
+Object.defineProperty(Conf, "APK_MEDIA_PATH", {value: `/tangerine-server/client/merges/android/lesson_plan_media/`, writeable: true, configurable: false, enumerable: true})
+
 /** Handle environment variables. */
 let Settings = require('../client/scripts/Settings');
 
@@ -65,7 +69,7 @@ const makeApk = function(req, res) {
     const groupNameRaw = req.params.group;
     const hostname = req.params[0];
     const docs = req.body.docs
-    console.log("docs: " + JSON.stringify(docs));
+    // console.log("docs: " + JSON.stringify(docs));
     const emptyGroup = !groupNameRaw || groupNameRaw == ''
     if (emptyGroup) {
         return res
@@ -128,9 +132,27 @@ const makeApk = function(req, res) {
                 } else {
                     console.log("building the apk for " + groupName);
 
+                    // Copy groupMediaPath
+                    let groupNameTruncated = groupName.replace("group-", "")
+                    let groupMediaPath = Path.join(Conf.MEDIA_PATH, groupNameTruncated);
+                    let groupAPKMediaPath = Path.join(Conf.APK_MEDIA_PATH,  groupNameTruncated);
+
+                    fse.remove(Conf.APK_MEDIA_PATH, function (err) {
+                        if (err) return console.error(err)
+                        console.log('Removed ' + Conf.APK_MEDIA_PATH)
+                        fse.ensureDir(Conf.APK_MEDIA_PATH, function (err) {
+                            if (err) return console.error(err)
+                            // dir has now been created, including the directory it is to be placed in
+
+                    console.log("Copyging groupMediaPath:" + groupMediaPath + " to groupAPKMediaPath:" + groupAPKMediaPath);
+                    fse.copy(groupMediaPath, groupAPKMediaPath, function (err) {
+                        if (err) return console.error(err)
+                        console.log('Successfully copied the groupMediaPath dir.')
+
                     // build the apk
                     cd(`${__dirname}/../client`);
                     const buildApk = exec(`npm run build:apk`);
+                    //     const buildApk = exec(`cordova build -- --gradleArg=-PcdvBuildArch=arm android 2>&1`);
                     if (notOk(buildApk, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
 
                     // Make sure the directory is there
@@ -151,12 +173,16 @@ const makeApk = function(req, res) {
                           token : token
                       });
                     })
+                    })
+                    })
+                    }); // copies directory, even if it has subdirectories or files
 
                     // move the x86 apk to the right directory
                     // const moveX86Apk = mv(Conf.X86_APK_PATH, `apks/${token}-x86`);
                     // if (notOk(moveX86Apk, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
                 }
-            })
+
+        })
 
         })
         .catch(function noGroup(err) {

@@ -12,7 +12,7 @@ var fs = require('fs-extra');       //File System - for file manipulation
 var upload = function (req, res, next) {
 
     var fstream, savedFile, groupName;
-    var lpPath = __dirname + '/../../../client/src/lesson_plan_media/';
+    var lpPath = __dirname + '/../../../client/lesson_plan_media/';
     var tmpDir = lpPath + 'tmp/';
     fs.ensureDir(tmpDir, function (err) {
         // if (err) return console.error(err)

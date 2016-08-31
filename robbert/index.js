@@ -60,6 +60,7 @@ app.use(function(err, req, res, next) {
 
 app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
 app.use('/client', express.static(__dirname + '/../client/src/'));
+app.use('/client/lesson_plan_media', express.static(__dirname + '/../client/lesson_plan_media/'));
 
 // File uploads
 app.use(busboy());

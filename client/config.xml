@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.rti.tangerine" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="org.rti.tangerine.imlp" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>IMLP</name>
     <description>
         Lesson Planner system.
@@ -8,7 +8,14 @@
         Tangerine dream team
     </author>
     <content src="index.html" />
-    <icon src="res/icon.png" />
+    <platform name="android">
+        <icon src="res/drawable-ldpi/icon.png" density="ldpi"/>
+        <icon src="res/drawable-mdpi/icon.png" density="mdpi"/>
+        <icon src="res/drawable-hdpi/icon.png" density="hdpi"/>
+        <icon src="res/drawable-xhdpi/icon.png" density="xhdpi"/>
+        <icon src="res/drawable-xxhdpi/icon.png" density="xxhdpi"/>
+        <icon src="res/drawable-xxxhdpi/icon.png" density="xxxhdpi"/>
+    </platform>
     <allow-navigation href="tangerinecentral.org" />
     <allow-intent href="*" />
     <access origin="*" />
