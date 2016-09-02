@@ -2279,6 +2279,105 @@ body[rtl]
     font-weight: normal;
   }
 }
+
+/*
+ * Bandwidth Check
+ */
+.BandwidthCheckView {
+  .bandwidth-begin-btn {
+    display:inline-block;
+  }
+
+  .bandwidth-cancel-btn {
+    display:none;
+  }
+
+  .grid {
+    padding: 0 !important;
+  }
+  
+  .test-results {
+    display: none;
+    margin: 10px 0 5px 0;
+
+    .status-bar {
+      display: block;
+      background-color: #CCC;
+      height: 40px;
+      padding: 2px;     
+      border-radius: 5px;
+
+      span {
+        display: inline-block;
+        height: 100%;
+        width: 100%;
+        border-radius: 3px;
+        transition: width .4s ease-in-out; 
+        text-align: center;
+        line-height: 1.75;
+      }
+
+      &.stripes {
+        span {
+          background-size: 30px 30px;
+          background-image: linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
+                          transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
+                          transparent 75%, transparent);            
+      
+          -webkit-animation: animate-stripes 3s linear infinite;
+          -moz-animation: animate-stripes 3s linear infinite;
+          -o-animation: animate-stripes 3s linear infinite;
+          animation: animate-stripes 3s linear infinite;
+        }
+      }
+
+      &.blue {
+        span {
+          background-color: #0075F4;
+          color: #F6F6F6;
+        }
+      }
+
+      &.Poor {
+        span {
+          background-color: #E82F2F;
+          color: #F6F6F6;
+        }
+      }
+
+      &.Fair {
+        span {
+          background-color: #f6c637;
+          color: #F6F6F6;
+        }
+      }
+
+      &.Good {
+        span {
+          background-color: #4D740C;
+          color: #F6F6F6;
+        }
+      }
+    }
+  }
+}
+
+@-webkit-keyframes animate-stripes{
+    0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+}
+@-moz-keyframes animate-stripes{
+    0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+}
+@-o-keyframes animate-stripes{
+    0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+}
+@keyframes animate-stripes {
+    0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+}
+//end bandwith including webkit stuff above
+
+
+
 /*
  * ButtonView
  */
