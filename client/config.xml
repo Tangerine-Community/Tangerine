@@ -8,6 +8,14 @@
         Tangerine dream team
     </author>
     <content src="index.html" />
+    <platform name="android">
+        <icon src="res/drawable-ldpi/icon.png" density="ldpi"/>
+        <icon src="res/drawable-mdpi/icon.png" density="mdpi"/>
+        <icon src="res/drawable-hdpi/icon.png" density="hdpi"/>
+        <icon src="res/drawable-xhdpi/icon.png" density="xhdpi"/>
+        <icon src="res/drawable-xxhdpi/icon.png" density="xxhdpi"/>
+        <icon src="res/drawable-xxxhdpi/icon.png" density="xxxhdpi"/>
+    </platform>
     <allow-navigation href="tangerinecentral.org" />
     <allow-intent href="*" />
     <access origin="*" />
