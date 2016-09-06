@@ -4,8 +4,8 @@ This CLI provides an interface to some useful utitilies for Tangerine.
 
 ## Install
 ```
-git clone https://github.com/Tangerine-Community/Tangerine-CLI.git
-cd Tangerine-CLI
+git clone https://github.com/Tangerine-Community/Tangerine.git
+cd Tangerine/cli
 npm link
 tangerine --help
 ```
