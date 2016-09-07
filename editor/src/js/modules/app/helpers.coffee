@@ -950,126 +950,68 @@ class Robbert
 # Tree interface
 class TangerineTree
   
-  @generateJsonAndMAke: ->
-
-    url = Tangerine.settings.urlView "group", "assessmentsNotArchived"
-    console.log("url: " + url)
-
-    $.ajax
-      url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
-      dataType: "json"
-      success: (data) =>
-        console.log("data: " + JSON.stringify(data))
-#        dKeys = _.compact(doc.id.substr(-5, 5) for doc in data.rows).concat(keyList).join(" ")
-        dKeys = data.rows.map((row) => row.id.substr(-5))
-        dKeyQuery =
-          keys: dKeys
-        console.log("dKeyQuery:" + JSON.stringify(dKeyQuery))
-        url = Tangerine.settings.urlView("group", "byDKey")
-        console.log("url: " + url)
-        $.ajax
-          url: Tangerine.settings.urlView("group", "byDKey"),
-          type: "POST"
-          contentType: "application/json"
-          dataType: "json"
-          data: JSON.stringify(dKeyQuery)
-          success: (data) =>
-            console.log("data: " + JSON.stringify(data))
-            keyList = []
-#            for datum in data.rows
-#              keyList.push datum.key
-            keyList = data.rows.map((row) => row.id);
-            keyList = _.uniq(keyList)
-            keyList.push("settings");
-            console.log("keyList: " + JSON.stringify(keyList));
-#            keyListQuery = {
-#              keys: keyList,
-#              include_docs:true
-#            }
-            Tangerine.$db.allDocs
-              keys : keyList
-              success: (response) ->
-  #              let docs = response.body.rows.map( (row) => row.doc );
-                docs = []
-                for row in response.rows
-                  docs.push row.doc
-                body =
-                  docs: docs
-                return body
-      error: (a, b) ->
-        console.log("a: " + a)
-        Utils.midAlert "Import error"
-
   @make: (options) ->
-
+    # Gather a list of document IDs we'll need and then hit allDocs with that as a keys list.
+    keyList = []
     Utils.working true
-    url = Tangerine.settings.urlView "group", "assessmentsNotArchived"
-#    console.log("url: " + url)
-
-    $.ajax
-      url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
-      dataType: "json"
-      success: (data) =>
-#        console.log("data: " + JSON.stringify(data))
-        #        dKeys = _.compact(doc.id.substr(-5, 5) for doc in data.rows).concat(keyList).join(" ")
-        dKeys = data.rows.map((row) => row.id.substr(-5))
-        dKeyQuery =
-          keys: dKeys
-#        console.log("dKeyQuery:" + JSON.stringify(dKeyQuery))
-        url = Tangerine.settings.urlView("group", "byDKey")
-#        console.log("url: " + url)
+    # Add all Worklfow IDs to the list.
+    workflows = new Workflows
+    workflows.fetch 
+      success: =>
+        workflows.models.forEach (workflow) =>
+          keyList.push workflow.id
+        # Add all Assessment IDs to the list.
+        url = Tangerine.settings.urlView "group", "assessmentsNotArchived"
         $.ajax
-          url: Tangerine.settings.urlView("group", "byDKey"),
-          type: "POST"
-          contentType: "application/json"
+          url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
           dataType: "json"
-          data: JSON.stringify(dKeyQuery)
           success: (data) =>
-#            console.log("data: " + JSON.stringify(data))
-            keyList = []
-            #            for datum in data.rows
-            #              keyList.push datum.key
-            keyList = data.rows.map((row) => row.id);
-            keyList = _.uniq(keyList)
-            keyList.push("settings");
-#            console.log("keyList: " + JSON.stringify(keyList));
-            #            keyListQuery = {
-            #              keys: keyList,
-            #              include_docs:true
-            #            }
-            Tangerine.$db.allDocs
-              keys : keyList
-              include_docs:true
-              success: (response) ->
-#                console.log("response: " + JSON.stringify(response))
-#              let docs = response.body.rows.map( (row) => row.doc );
-                docs = []
-                for row in response.rows
-                  docs.push row.doc
-                body =
-                  docs: docs
-                success = options.success
-                error   = options.error
+            # Add all things related to those Assessments to the list.
+            dKeys = data.rows.map((row) => row.id.substr(-5))
+            dKeyQuery =
+              keys: dKeys
+            url = Tangerine.settings.urlView("group", "byDKey")
+            $.ajax
+              url: Tangerine.settings.urlView("group", "byDKey"),
+              type: "POST"
+              contentType: "application/json"
+              dataType: "json"
+              data: JSON.stringify(dKeyQuery)
+              success: (data) =>
+                moreKeys = data.rows.map((row) => row.id);
+                keyList = keyList.concat(moreKeys)
+                keyList = _.uniq(keyList)
+                keyList.push("settings");
+                Tangerine.$db.allDocs
+                  keys : keyList
+                  include_docs:true
+                  success: (response) ->
+                    docs = []
+                    for row in response.rows
+                      docs.push row.doc
+                    body =
+                      docs: docs
+                    success = options.success
+                    error   = options.error
 
-                payload = JSON.stringify(body)
-#                console.log("payload:" + JSON.stringify(body))
+                    payload = JSON.stringify(body)
 
-                delete options.success
-                delete options.error
+                    delete options.success
+                    delete options.error
 
-                $.ajax
-                  type     : 'POST'
-                  crossDomain : true
-                  url      : "#{Tangerine.config.get('tree')}/group-#{Tangerine.settings.get('groupName')}/#{Tangerine.settings.get('hostname')}"
-                  dataType : 'json'
-                  contentType: "application/json"
-                  data     : payload
-                  success: ( data ) =>
-                    success data
-                  error: ( data ) =>
-                    error data, JSON.parse(data.responseText)
-                  complete: ->
-                    Utils.working false
+                    $.ajax
+                      type     : 'POST'
+                      crossDomain : true
+                      url      : "#{Tangerine.config.get('tree')}/group-#{Tangerine.settings.get('groupName')}/#{Tangerine.settings.get('hostname')}"
+                      dataType : 'json'
+                      contentType: "application/json"
+                      data     : payload
+                      success: ( data ) =>
+                        success data
+                      error: ( data ) =>
+                        error data, JSON.parse(data.responseText)
+                      complete: ->
+                        Utils.working false
       error: (a, b) ->
         console.log("a: " + a)
         Utils.midAlert "Import error"
