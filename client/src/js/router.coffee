@@ -20,6 +20,7 @@ class Router extends Backbone.Router
   routes:
     'workflow/run/:workflowId'  : 'workflowRun'
     'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
+    'workflows': 'workflows'
     'widget'   : 'widgetLoad'
     'widget-play/:id' : 'widgetPlay'
     'login'    : 'login'
@@ -119,7 +120,7 @@ class Router extends Backbone.Router
 
     callFunction = not refresh
 
-    Tangerine.router.navigate "assessments", callFunction
+    Tangerine.router.navigate "workflows", callFunction
 
     document.location.reload() if refresh # this is for the stupid click bug
 
@@ -482,29 +483,29 @@ class Router extends Backbone.Router
           success: ->
             vm.show new AssessmentSyncView "assessment": assessment
 
-  assessments: ->
+  workflows: ->
     Tangerine.user.verify
       isAuthenticated: ->
 
         (workflows = new Workflows).fetch
           success: ->
-            # If there are workflows, only show workflows, otherwise show assessments.
-            # @todo We should make this a setting.
-            if workflows.length > 0
-              feedbacks = new Feedbacks feedbacks
-              feedbacks.fetch
-                success: ->
-                  view = new WorkflowMenuView
-                    workflows : workflows
-                    feedbacks : feedbacks
-                  Tangerine.app.rm.get('mainRegion').show view
-            else
-              assessments = new Assessments
-              assessments.fetch
-                success: ->
-                  assessmentsView = new AssessmentsMenuView
-                    assessments : assessments
-                  Tangerine.app.rm.get('mainRegion').show assessmentsView
+            feedbacks = new Feedbacks feedbacks
+            feedbacks.fetch
+              success: ->
+                view = new WorkflowMenuView
+                  workflows : workflows
+                  feedbacks : feedbacks
+                Tangerine.app.rm.get('mainRegion').show view
+
+  assessments: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        assessments = new Assessments
+        assessments.fetch
+          success: ->
+            assessmentsView = new AssessmentsMenuView
+              assessments : assessments
+            Tangerine.app.rm.get('mainRegion').show assessmentsView
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
