@@ -16,6 +16,9 @@ class Router extends Backbone.Router
     'workflow/run/:workflowId'  : 'workflowRun'
     'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
 
+    'feedback/edit/:workflowId' : 'feedbackEdit'
+    'feedback/:workflowId'      : 'feedback'
+
     'login'    : 'login'
     'register' : 'register'
     'logout'   : 'logout'
@@ -78,6 +81,47 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+
+  feedbackEdit: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        showFeedbackEditor = ( feedback, workflow ) ->
+          feedback.updateCollection()
+          view = new FeedbackEditView
+            feedback: feedback
+            workflow: workflow
+          vm.show view
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            feedbackId = "#{workflowId}-feedback"
+            feedback   = new Feedback "_id" : feedbackId
+            feedback.fetch
+              error:   -> feedback.save null, success: -> showFeedbackEditor(feedback, workflow)
+              success: -> showFeedbackEditor(feedback, workflow)
+
+  feedback: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            feedbackId = "#{workflowId}-feedback"
+            feedback = new Feedback "_id" : feedbackId
+            feedback.fetch
+              error: -> Utils.midAlert "No feedback defined"
+              success: ->
+                feedback.updateCollection()
+                view = new FeedbackTripsView
+                  feedback : feedback
+                  workflow : workflow
+                vm.show view
+
+
+
 
 
   workflowEdit: ( workflowId ) ->
