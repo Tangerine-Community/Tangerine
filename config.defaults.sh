@@ -15,7 +15,7 @@ T_PASS="password"
 #
 
 # TANGERINE_SERVER_VERSION is the version that the start.sh and uprgrade.sh script will use when installing Tangerine.
-TANGERINE_VERSION="latest"
+TANGERINE_VERSION="0.4.5"
 
 # T_HOST_NAME is the URL without protocol (like http://) you will be accessing your Tangerine server at.
 T_HOST_NAME='127.0.0.1'
