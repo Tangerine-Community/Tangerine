@@ -124,6 +124,18 @@ Tangerine.bootSequence =
     Backbone.history.start()
     callback() # for testing
 
+  getLocationList : ( callback ) ->    
+    # Grab our system config doc   
+    Tangerine.locationList = new Backbone.Model "_id" : "location-list"    
+   
+    Tangerine.locationList.fetch   
+      error   : ->   
+        console.log "could not fetch location-list..."   
+        callback   
+   
+      success : callback
+
+
 
 # callback is used for testing
 Tangerine.boot = (callback) ->
@@ -136,6 +148,7 @@ Tangerine.boot = (callback) ->
     Tangerine.bootSequence.guaranteeInstanceId
     Tangerine.bootSequence.fetchTemplates
     Tangerine.bootSequence.documentReady
+    Tangerine.bootSequence.getLocationList
     Tangerine.bootSequence.loadI18n
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
