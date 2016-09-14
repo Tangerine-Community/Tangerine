@@ -1,11 +1,16 @@
+
+
+require_relative '../helpers/LocationList.rb'
+require_relative '../helpers/UserList.rb'
+
 class Brockman < Sinatra::Base
 
-  get '/workflow/:group/:workflowId' do | groupPath, workflowId |
+  get '/workflow/:group/:workflowId/:year/:month' do | groupPath, workflowId, year, month |
 
-    $logger.info "CSV request - #{groupPath} #{workflowId}"
+    $logger.info "CSV request - #{groupPath} #{workflowId} #{year} #{month}"
 
     couch = Couch.new({
-      :host      => $settings[:host],
+      :host      => $settings[:dbHost],
       :login     => $settings[:login],
       :designDoc => $settings[:designDoc],
       :db        => groupPath,
@@ -32,6 +37,19 @@ class Brockman < Sinatra::Base
     groupSettings = couch.getRequest({ :doc => 'settings', :parseJson => true })
     groupTimeZone = groupSettings['timeZone']    
 
+    #
+    # get locations
+    #
+    locationList = LocationList.new({
+      :couch => couch
+    })
+
+    #
+    # get users
+    #
+    userList = UserList.new({
+      :couch => couch
+    })
 
     #
     # get workflow
@@ -42,46 +60,65 @@ class Brockman < Sinatra::Base
     workflowName = workflow['name']
     $logger.info "Beginning #{workflowName}"
 
+    allTripIds = []
     #
     # Get csv rows from view
     #
-
-    # get all trip Ids associated with workflow
-    resultRows = couch.getRequest({ 
+    
+    # Get results filtered by workflow
+    resultByWorkflow = couch.postRequest({ 
       :view => "tutorTrips",
+      :data => { "keys" => ["workflow-#{workflowId}"]},
       :parseJson => true,
-      :params => {
-        "key" => "\"workflow-#{workflowId}\"",
-        "reduce" => false
-      }
+      :params => { "reduce" => false }
     })['rows']
 
-
-    $logger.info "Received #{resultRows.length} result ids"
-
-    # group results together by trip
-    resultsByTripId = {}
-
-    # save all results for bulk fetch from csvRows
-    allResultIds = []
-
-    for row in resultRows
-
-      tripId   = row['value']
-      resultId = row['id']
-
-      resultsByTripId[tripId] = [] if resultsByTripId[tripId].nil?
-      resultsByTripId[tripId].push resultId
-      allResultIds.push resultId
-
+    workflowTrips = {}
+    for row in resultByWorkflow
+      tripId                      = row['value']
+      workflowTrips[tripId]       = [] if workflowTrips[tripId].nil?
+      workflowTrips[tripId].push  row['id']
+      allTripIds.push             tripId
     end
 
+    # Get results filtered by date
+    resultByDate = couch.postRequest({ 
+      :view => "tutorTrips",
+      :data => { "keys" => ["year#{year}month#{month}"]},
+      :parseJson => true,
+      :params => { "reduce" => false }
+    })['rows']
+
+    dateTrips = {}
+    for row in resultByDate
+      tripId                  = row['value']
+      dateTrips[tripId]       = [] if dateTrips[tripId].nil?
+      dateTrips[tripId].push  row['id']
+      allTripIds.push         tripId
+    end
+
+    #get the intersection of each the workflows and date and group by TripId
+    resultsByTripId = {}
+    allTripIds.map{ | tripId | 
+      workflowTrips[tripId] = [] if workflowTrips[tripId].nil?
+      dateTrips[tripId]     = [] if dateTrips[tripId].nil?
+
+      workflowDateIntersection = workflowTrips[tripId] & dateTrips[tripId]
+      
+      if workflowDateIntersection.length > 0
+        resultsByTripId[tripId] = workflowDateIntersection
+      end
+    }
+
+    $logger.info "Received #{resultsByTripId.length} result ids"
     $logger.info "Processing start"
 
     csv = Csv.new({
       :couch => couch,
       :name => workflowName,
-      :path => groupPath
+      :path => groupPath,
+      :locationList => locationList,
+      :userList => userList
     })
 
     file = csv.doWorkflow({
