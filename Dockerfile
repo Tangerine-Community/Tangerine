@@ -91,6 +91,7 @@ RUN cd /tangerine-server/client \
     && ./node_modules/.bin/cordova platform add android@5.X.X \
     && npm install cordova-plugin-whitelist \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
 
 # Install Tangerine CLI
