@@ -371,6 +371,17 @@ conf.fileOrder = [
   'QuestionsEditView',
   'QuestionsEditListElementView',
 
+  'WorkflowStep',
+  'WorkflowSteps',
+  'Workflow',
+  'Workflows',
+  'SchoolListView',
+  'WorkflowMenuView',
+  'ValidObservationView',
+  'WorkflowEditView',
+  'WorkflowRunView',
+  'WorkflowSelectView',
+
   'Klass',
   'KlassView',
   'KlassEditView',
@@ -411,6 +422,13 @@ conf.fileOrder = [
   'Students',
   'StudentListElementView',
   'StudentEditView',
+
+  'Critique',
+  'Critiques',
+  'Feedback',
+  'FeedbackEditView',
+  'FeedbackRunView',
+  'FeedbackTripsView',
 
   'User',
   'Users',

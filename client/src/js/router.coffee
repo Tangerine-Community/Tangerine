@@ -18,6 +18,9 @@ class Router extends Backbone.Router
       callback.apply(this, args);
 
   routes:
+    'workflow/run/:workflowId'  : 'workflowRun'
+    'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
+    'workflows': 'workflows'
     'widget'   : 'widgetLoad'
     'widget-play/:id' : 'widgetPlay'
     'login'    : 'login'
@@ -124,7 +127,7 @@ class Router extends Backbone.Router
 
     callFunction = not refresh
 
-    Tangerine.router.navigate "assessments", callFunction
+    Tangerine.router.navigate "workflows", callFunction
 
     document.location.reload() if refresh # this is for the stupid click bug
 
@@ -134,6 +137,89 @@ class Router extends Backbone.Router
       isAuthenticated: ->
         view = new GroupsView
         vm.show view
+  #
+  # Workflow
+  #
+
+  feedback: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            feedbackId = "#{workflowId}-feedback"
+            feedback = new Feedback "_id" : feedbackId
+            feedback.fetch
+              error: -> Utils.midAlert "No feedback defined"
+              success: ->
+                feedback.updateCollection()
+                view = new FeedbackTripsView
+                  feedback : feedback
+                  workflow : workflow
+                Tangerine.app.rm.get('mainRegion').show view
+
+
+  workflowRun: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            workflow.updateCollection()
+            view = new WorkflowRunView
+              workflow: workflow
+            Tangerine.app.rm.get('mainRegion').show view
+
+  workflowResume: ( workflowId, tripId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            Tangerine.$db.view Tangerine.design_doc+"/tripsAndUsers",
+              key: tripId
+              include_docs: true
+              success: (data) ->
+                index = Math.max(data.rows.length - 1, 0)
+
+                # add old results
+                steps = []
+                for j in [0..index]
+                  steps.push {result : new Result data.rows[j].doc}
+
+                assessmentResumeIndex = data.rows[index]?.doc?.subtestData?.length || 0
+
+                ###
+                  if data.rows[index]?.doc?.order_map?
+                  # save the order map of previous randomization
+                  orderMap = result.get("order_map").slice() # clone array
+                  # restore the previous ordermap
+                  view.orderMap = orderMap
+
+                ###
+
+                workflow = new Workflow "_id" : workflowId
+                workflow.fetch
+                  success: ->
+
+                    incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete")
+
+                    incomplete[workflowId] = _(incomplete[workflowId]).without tripId
+
+                    Tangerine.user.getPreferences("tutor-workflows", "incomplete", incomplete)
+
+                    workflow.updateCollection()
+                    view = new WorkflowRunView
+                      assessmentResumeIndex : assessmentResumeIndex
+                      workflow: workflow
+                      tripId  : tripId
+                      index   : index
+                      steps   : steps
+                    Tangerine.app.rm.get('mainRegion').show view
+
 
   #
   # Class
@@ -404,14 +490,26 @@ class Router extends Backbone.Router
           success: ->
             vm.show new AssessmentSyncView "assessment": assessment
 
+  workflows: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        (workflows = new Workflows).fetch
+          success: ->
+            feedbacks = new Feedbacks feedbacks
+            feedbacks.fetch
+              success: ->
+                view = new WorkflowMenuView
+                  workflows : workflows
+                  feedbacks : feedbacks
+                Tangerine.app.rm.get('mainRegion').show view
+
   assessments: ->
     Tangerine.user.verify
       isAuthenticated: ->
         assessments = new Assessments
         assessments.fetch
           success: ->
-#            vm.show new AssessmentsMenuView
-#              assessments : assessments
             assessmentsView = new AssessmentsMenuView
               assessments : assessments
             Tangerine.app.rm.get('mainRegion').show assessmentsView

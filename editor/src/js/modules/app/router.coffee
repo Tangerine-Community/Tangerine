@@ -11,6 +11,14 @@ class Router extends Backbone.Router
       callback.apply(this, args)
 
   routes:
+
+    'workflow/edit/:workflowId' : 'workflowEdit'
+    'workflow/run/:workflowId'  : 'workflowRun'
+    'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
+
+    'feedback/edit/:workflowId' : 'feedbackEdit'
+    'feedback/:workflowId'      : 'feedback'
+
     'login'    : 'login'
     'register' : 'register'
     'logout'   : 'logout'
@@ -73,6 +81,121 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+
+  feedbackEdit: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        showFeedbackEditor = ( feedback, workflow ) ->
+          feedback.updateCollection()
+          view = new FeedbackEditView
+            feedback: feedback
+            workflow: workflow
+          vm.show view
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            feedbackId = "#{workflowId}-feedback"
+            feedback   = new Feedback "_id" : feedbackId
+            feedback.fetch
+              error:   -> feedback.save null, success: -> showFeedbackEditor(feedback, workflow)
+              success: -> showFeedbackEditor(feedback, workflow)
+
+  feedback: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            feedbackId = "#{workflowId}-feedback"
+            feedback = new Feedback "_id" : feedbackId
+            feedback.fetch
+              error: -> Utils.midAlert "No feedback defined"
+              success: ->
+                feedback.updateCollection()
+                view = new FeedbackTripsView
+                  feedback : feedback
+                  workflow : workflow
+                vm.show view
+
+
+
+
+
+  workflowEdit: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            view = new WorkflowEditView workflow : workflow
+            vm.show view
+
+  workflowRun: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            workflow.updateCollection()
+            view = new WorkflowRunView
+              workflow: workflow
+            vm.show view
+
+  workflowResume: ( workflowId, tripId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            Tangerine.$db.view Tangerine.design_doc+"/tripsAndUsers",
+              key: tripId
+              include_docs: true
+              success: (data) ->
+                index = Math.max(data.rows.length - 1, 0)
+
+                # add old results
+                steps = []
+                for j in [0..index]
+                  steps.push {result : new Result data.rows[j].doc}
+
+                assessmentResumeIndex = data.rows[index]?.doc?.subtestData?.length || 0
+
+                ###
+                  if data.rows[index]?.doc?.order_map?
+                  # save the order map of previous randomization
+                  orderMap = result.get("order_map").slice() # clone array
+                  # restore the previous ordermap
+                  view.orderMap = orderMap
+
+                ###
+
+                workflow = new Workflow "_id" : workflowId
+                workflow.fetch
+                  success: ->
+
+                    incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete")
+
+                    incomplete[workflowId] = _(incomplete[workflowId]).without tripId
+
+                    Tangerine.user.getPreferences("tutor-workflows", "incomplete", incomplete)
+
+                    workflow.updateCollection()
+                    view = new WorkflowRunView
+                      assessmentResumeIndex : assessmentResumeIndex
+                      workflow: workflow
+                      tripId  : tripId
+                      index   : index
+                      steps   : steps
+                    vm.show view
+
+
+
 
 
   admin: (options) ->
@@ -390,18 +513,45 @@ class Router extends Backbone.Router
           noun :"assessment"
         vm.show view
 
+  
   assessments: ->
-      Tangerine.user.verify
-        isAuthenticated: ->
-          Utils.loadCollections
-            collections: [
+    Tangerine.user.verify
+      isAuthenticated: ->
+        (workflows = new Workflows).fetch
+          success: ->
+
+            if workflows.length > 0 && Tangerine.settings.get("context") isnt "server"
+
+              feedbacks = new Feedbacks feedbacks
+              feedbacks.fetch
+                success: ->
+                  view = new WorkflowMenuView
+                    workflows : workflows
+                    feedbacks : feedbacks
+                  vm.show view
+
+            collections = [
               "Klasses"
               "Teachers"
               "Curricula"
               "Assessments"
+              "Workflows"
             ]
-            complete: (options) ->
-              vm.show new AssessmentsMenuView options
+
+            # collections.push if "server" == Tangerine.settings.get("context") then "Users" else "TabletUsers"
+            collections.push "Users"
+
+            Utils.loadCollections
+              collections: collections
+              complete: (options) ->
+                # load feedback models associated with workflows
+                feedbacks = options.workflows.models.map (a) -> new Feedback "_id" : "#{a.id}-feedback"
+                feedbacks = new Feedbacks feedbacks
+                feedbacks.fetch
+                  success: ->
+                    options.feedbacks = feedbacks
+                    options.users = options.tabletUsers || options.users
+                    vm.show new AssessmentsMenuView options
 
   editId: (id) ->
     id = Utils.cleanURL id
