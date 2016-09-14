@@ -517,41 +517,19 @@ class Router extends Backbone.Router
   assessments: ->
     Tangerine.user.verify
       isAuthenticated: ->
-        (workflows = new Workflows).fetch
-          success: ->
-
-            if workflows.length > 0 && Tangerine.settings.get("context") isnt "server"
-
-              feedbacks = new Feedbacks feedbacks
-              feedbacks.fetch
-                success: ->
-                  view = new WorkflowMenuView
-                    workflows : workflows
-                    feedbacks : feedbacks
-                  vm.show view
-
-            collections = [
-              "Klasses"
-              "Teachers"
-              "Curricula"
-              "Assessments"
-              "Workflows"
-            ]
-
-            # collections.push if "server" == Tangerine.settings.get("context") then "Users" else "TabletUsers"
-            collections.push "Users"
-
-            Utils.loadCollections
-              collections: collections
-              complete: (options) ->
-                # load feedback models associated with workflows
-                feedbacks = options.workflows.models.map (a) -> new Feedback "_id" : "#{a.id}-feedback"
-                feedbacks = new Feedbacks feedbacks
-                feedbacks.fetch
-                  success: ->
-                    options.feedbacks = feedbacks
-                    options.users = options.tabletUsers || options.users
-                    vm.show new AssessmentsMenuView options
+        collections = [
+          "Klasses"
+          "Teachers"
+          "Curricula"
+          "Assessments"
+          "Workflows"
+          "Users"
+        ]
+        Utils.loadCollections
+          collections: collections
+          complete: (options) ->
+            options.showWorkflows = Tangerine.settings.get('showWorkflows')
+            vm.show new AssessmentsMenuView options
 
   editId: (id) ->
     id = Utils.cleanURL id
