@@ -425,10 +425,14 @@ conf.fileOrder = [
 
   'Critique',
   'Critiques',
+  'Loc',
+  'LocView',
   'Feedback',
   'FeedbackEditView',
   'FeedbackRunView',
   'FeedbackTripsView',
+  'TripResult',
+  'TripResultCollection',
 
   'User',
   'Users',
