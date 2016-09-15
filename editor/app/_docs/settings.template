@@ -6,6 +6,7 @@
   "hostname": "INSERT_HOST_NAME",
   "groupHost": "INSERT_PROTOCOL://INSERT_HOST_NAME",
   "groupDDoc": "ojai",
+  "showWorkflows": false,
   "log": [
     ""
   ],
