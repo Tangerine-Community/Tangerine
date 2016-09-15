@@ -4,11 +4,14 @@ class WorkflowMenuView extends Backbone.View
 
   events:
     "click .workflow-new"    : 'new'
+    'click .universal_upload' : 'universalUpload'
     "click .workflow-delete" : "delete"
     "click .workflow-run"    : "run"
     "click .workflow-edit"   : "edit"
     "click .workflow-csv"    : "csvPromptMonth"
     'click .remove-resume'   : 'removeResume'
+
+  universalUpload: -> Utils.universalUpload()
 
   removeResume: (event) ->
 
@@ -189,7 +192,7 @@ class WorkflowMenuView extends Backbone.View
         </li>
         "
     @$el.find(".workflow-menu").html htmlWorkflows
-
+    @$el.append("<button class='command universal_upload'>Universal Upload</button>")
     @renderResumeInfo()
 
   renderResumeInfo: ->
