@@ -1,0 +1,13 @@
+{
+   "_id": "location-list",
+   "locationsLevels": [
+       "county",
+       "subcounty",
+       "zone",
+       "school"
+   ],
+   "locationModel": {
+   },
+   "locations": {
+   }
+}
