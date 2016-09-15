@@ -126,8 +126,10 @@ class Router extends Backbone.Router
   landing: (refresh = false) ->
 
     callFunction = not refresh
-
-    Tangerine.router.navigate "workflows", callFunction
+    if Tangerine.settings.get('showWorkflows') == true
+      Tangerine.router.navigate "workflows", callFunction
+    else
+      Tangerine.router.navigate "assessments", callFunction
 
     document.location.reload() if refresh # this is for the stupid click bug
 
