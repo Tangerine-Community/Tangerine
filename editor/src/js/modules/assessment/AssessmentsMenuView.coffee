@@ -204,11 +204,12 @@ class AssessmentsMenuView extends Backbone.View
     else
       @$el.find("#teachers_container").remove()
 
-    @workflowMenuView = new WorkflowMenuView
-      workflows : @workflows
-      feedbacks : @feedbacks
-    @workflowMenuView.setElement @$el.find("#workflow_menu_container")
-    @workflowMenuView.render()
+    if Tangerine.settings.get('showWorkflows') == true
+      @workflowMenuView = new WorkflowMenuView
+        workflows : @workflows
+        feedbacks : @feedbacks
+      @workflowMenuView.setElement @$el.find("#workflow_menu_container")
+      @workflowMenuView.render()
 
 
     @trigger "rendered"
