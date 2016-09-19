@@ -1,4 +1,5 @@
-class IdRunItemView extends Backbone.Marionette.ItemView
+class IdRunItemView extends SubtestRunItemView
+
   template: JST["ItemView"],
 
   className: "idItem"
