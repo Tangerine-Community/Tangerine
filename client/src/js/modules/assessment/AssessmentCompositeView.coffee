@@ -134,6 +134,10 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     # Get @currentChildView
     childViewClass = @getChildViewClass(@currentChildModel)
     @currentChildView = new childViewClass({model: @currentChildModel})
+    # @todo It looks like Skip Logic requires us to put this in a global. We should
+    # look into how to localize this.
+    Tangerine.progress =
+      currentSubview : @currentChildView
 
     this.$el.html "
       <h1>#{@assessment.get('name')}</h1>
@@ -189,7 +193,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     # Run validation on the current Subtest View before we move on.
     if @currentChildView.hasOwnProperty('testValid')
-      valid = @currentSubtestView.testValid()
+      valid = @currentChildView.testValid()
       if valid
         @saveResult( @currentChildView, increment )
       else
@@ -380,17 +384,17 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # TODO: Documentation
   getGridScore: ->
-    link = @model.get("subtest").gridLinkId || ""
+    link = @currentChildModel.get('gridLinkId') || ""
     if link == "" then return
-    grid = @model.subtests.get @model.get("subtest").gridLinkId
+    grid = @model.subtests.get @currentChildModel.get('gridLinkId')
     gridScore = @result.getGridScore grid.id
     gridScore
 
   # TODO: Documentation
   gridWasAutostopped: ->
-    link = @model.get("subtest").gridLinkId || ""
+    link = @currentChildModel.get('gridLinkId') || ""
     if link == "" then return
-    grid = @model.subtests.get @model.get("subtest").gridLinkId
+    grid = @assessment.subtests.get @currentChildModel.get('gridLinkId')
     gridWasAutostopped = @result.gridWasAutostopped grid.id
 
   #
