@@ -2,13 +2,9 @@
 # AssessmentCompositeView
 #
 # AssessmentCompositeView renders every time a new subtest is shown. When next
-# or back is clicked, the reset(incrementToMoveToSubtestReferencedByViewIndex) method is
-# eventually called which calls render. `reset` method seems familiar because
-# there is `reset` on Backbone.Collection, but this reset on a View is it's own
-# thing. `AssessmentCompositeView.reset` and `AssessmentCompositeView.initialize`
-# ensure that there is only one model in `AssessmentCompositeView.collection` for
-# `AssessmentCompositeView.render` to render. Which Model should be in that
-# `AssessmentCompositeView.collection` is determined by `AssessmentCompositeView.index`.
+# or back is clicked, the step(incrementToMoveToSubtestReferencedByViewIndex) method is
+# eventually called which calls render.
+#
 # Listens for "result:saved" and "result:another" events triggered by the ResultItemView subtest and makes it
 # available for consumption (via triggerSaved and triggerAnother) by external users such as Widget.
 
@@ -63,6 +59,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     #
 
     @i18n()
+
+    #
+    # Set some globals for Skip Logic code to use.
+    #
+    Tangerine.tempData = {}
 
 
   #
@@ -134,10 +135,13 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     # Get @currentChildView
     childViewClass = @getChildViewClass(@currentChildModel)
     @currentChildView = new childViewClass({model: @currentChildModel})
-    # @todo It looks like Skip Logic requires us to put this in a global. We should
+
+    # TODO: It looks like Skip Logic requires us to put this in a global. We should
     # look into how to localize this.
     Tangerine.progress =
       currentSubview : @currentChildView
+      index: @index
+    Tangerine.tempData.index = @index
 
     this.$el.html "
       <h1>#{@assessment.get('name')}</h1>
@@ -151,7 +155,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       </div>
       "
 
-    # Attach @currentChildView
+    # Attach and Render @currentChildView.
     subtestWrapper = this.$el.find('#subtest_wrapper')
     $(subtestWrapper).html(@currentChildView.el)
     @currentChildView.render()
@@ -351,7 +355,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubtest.updateQuestionVisibility()
       currentSubtest.updateProgressButtons()
 
-  # TODO:
+  # TODO: Documentation.
   prevQuestion: ->
 
     currentSubtest = @children.findByIndex(0)
