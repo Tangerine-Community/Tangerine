@@ -1,4 +1,4 @@
-class GridRunItemView extends Backbone.Marionette.ItemView
+class GridRunItemView extends SubtestRunItemView
   className: "gridItem"
   template: JST["Grid"],
 
@@ -270,18 +270,6 @@ class GridRunItemView extends Backbone.Marionette.ItemView
         console.log "displaycodeFixed Error: " + message
 
     @prototypeView?.updateExecuteReady?(true)
-
-# @todo Documentation
-  skip: =>
-    @parent.result.add
-      name      : currentView.model.get "name"
-      data      : currentView.getSkipped()
-      subtestId : currentView.model.id
-      skipped   : true
-      prototype : currentView.model.get "prototype"
-    ,
-      success: =>
-        @parent.reset 1
 
   restartTimer: ->
     @stopTimer(simpleStop:true) if @timeRunning

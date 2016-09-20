@@ -36,11 +36,9 @@
     @backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
     @parent.displaySkip(@skippable)
     @parent.displayBack(@backable)
-    ConsentRunItemView.__super__.initialize.apply(this, arguments)
-
 
   render: ->
-
+    @runDisplayCode()
     @$el.html "
         <div class='question'>
           <label>#{@model.get('prompt') || @text.defaultConsent}</label>

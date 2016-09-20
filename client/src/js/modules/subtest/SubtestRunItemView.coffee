@@ -45,21 +45,19 @@
     ui.text = @text
     @model.set('ui', ui)
 
-    @on 'rendered', =>
-      displayCode = @model.getString("displayCode")
-      console.log displayCode
+  runDisplayCode: -> 
+    displayCode = @model.getString("displayCode")
+    console.log displayCode
 
-      if not _.isEmptyString(displayCode)
+    if not _.isEmptyString(displayCode)
 
-        try
-          CoffeeScript.eval.apply(@, [displayCode])
-        catch error
-          name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
-          message = error.message
-          alert "#{name}\n\n#{message}"
-          console.log "displayCode Error: " + JSON.stringify(error)
-
-      @prototypeView?.updateExecuteReady?(true)
+      try
+        CoffeeScript.eval.apply(@, [displayCode])
+      catch error
+        name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+        message = error.message
+        alert "#{name}\n\n#{message}"
+        console.log "displayCode Error: " + JSON.stringify(error)
 
   onRender: ->
 
