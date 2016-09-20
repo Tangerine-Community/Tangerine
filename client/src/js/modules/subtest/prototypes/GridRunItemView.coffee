@@ -37,7 +37,6 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
   initialize: (options) ->
 
-    Tangerine.progress.currentSubview = @
     @i18n()
 
     @fontStyle = "style=\"font-family: #{@model.get('fontFamily')} !important;\"" if @model.get("fontFamily") != ""
@@ -274,7 +273,6 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
 # @todo Documentation
   skip: =>
-    currentView = Tangerine.progress.currentSubview
     @parent.result.add
       name      : currentView.model.get "name"
       data      : currentView.getSkipped()

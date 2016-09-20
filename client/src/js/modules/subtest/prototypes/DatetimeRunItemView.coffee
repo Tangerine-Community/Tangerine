@@ -13,7 +13,6 @@ class DatetimeRunItemView extends Backbone.Marionette.ItemView
       "help" : t("SubtestRunView.button.help")
 
   initialize: (options) ->
-    Tangerine.progress.currentSubview = @
     @i18n()
 
     @model  = options.model

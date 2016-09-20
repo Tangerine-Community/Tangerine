@@ -22,7 +22,6 @@
       "help" : t("SubtestRunView.button.help")
 
   initialize: (options) ->
-    Tangerine.progress.currentSubview = @
     @i18n()
 
     @confirmedNonConsent = false
@@ -86,7 +85,6 @@
   testValid: ->
 #    console.log("ConsentRunItemView testValid.")
 #    if not @prototypeRendered then return false
-#    currentView = Tangerine.progress.currentSubview
     if @isValid?
       return @isValid()
     else

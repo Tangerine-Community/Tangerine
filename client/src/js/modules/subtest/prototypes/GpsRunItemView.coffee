@@ -9,7 +9,6 @@ class GpsRunItemView extends Backbone.Marionette.ItemView
     @updateDisplay()
 
   initialize: (options) ->
-    Tangerine.progress.currentSubview = @
     @i18n()
     @model   = options.model
     @parent = @model.parent

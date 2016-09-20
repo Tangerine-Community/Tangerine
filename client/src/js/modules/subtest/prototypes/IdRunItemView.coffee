@@ -25,7 +25,6 @@ class IdRunItemView extends SubtestRunItemView
     @dataEntry = options.dataEntry
 
     @validator = new CheckDigit
-    Tangerine.progress.currentSubview = @
     labels = {}
     labels.text = @text
     @model.set('labels', labels)
@@ -72,9 +71,6 @@ class IdRunItemView extends SubtestRunItemView
     @updateNavigation()
 
   testValid: ->
-#    console.log("IdRinItemView testValid.")
-#    if not @prototypeRendered then return false
-#    currentView = Tangerine.progress.currentSubview
     if @isValid?
       return @isValid()
     else

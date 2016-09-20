@@ -9,12 +9,11 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     "change select" : "onSelectChange"
 
   i18n: ->
-    @text = 
+    @text =
       clear : t("LocationRunView.button.clear")
       "help" : t("SubtestRunView.button.help")
 
   initialize: (options) ->
-    Tangerine.progress.currentSubview = @
     @i18n()
 
     @model  = options.model
@@ -255,9 +254,6 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     true
 
   testValid: ->
-#    console.log("LocationRunItemView testValid.")
-  #    if not @prototypeRendered then return false
-#    currentView = Tangerine.progress.currentSubview
     if @isValid?
       return @isValid()
     else

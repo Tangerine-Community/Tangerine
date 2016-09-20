@@ -26,8 +26,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @renderCount   = 0
     @notAskedCount = 0
     @notAskedIds = []
-    vm =
-      currentView: Tangerine.progress.currentSubview
 #    @childViewOptions =
 #        parent: this
 
@@ -48,7 +46,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #        @model.collection.models = collection.models
 #        @render()
 
-    Tangerine.progress.currentSubview = @
     labels = {}
     labels.text = @text
     @model.set('labels', labels)
@@ -218,15 +215,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     return true
 
   testValid: ->
-#    console.log("SurveyRinItem testValid.")
-#    if not @prototypeRendered then return false
-#    currentView = Tangerine.progress.currentSubview
-#    if @isValid?
-#    console.log("testvalid: " + @isValid?)
     return @isValid()
-#    else
-#      return false
-#    true
 
 
   # @TODO this should probably be returning multiple, single type hash values
@@ -444,7 +433,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
 # @todo Documentation
   skip: =>
-    currentView = Tangerine.progress.currentSubview
     @parent.result.add
       name      : currentView.model.get "name"
       data      : currentView.getSkipped()
@@ -482,7 +470,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @rendered.assessment = false
     #    currentView = @subtestViews[@orderMap[@index]]
     #    currentView.close()
-    Tangerine.progress.currentSubview.close();
     @index =
       if @abortAssessment == true
         @subtestViews.length-1
