@@ -15,45 +15,6 @@
 
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
-  #
-  # Configure the View
-  #
-
-  # for Backbone.Marionette.CompositeView Composite Model
-  template: JST["AssessmentView"],
-
-  # for Backbone.Marionette.CompositeView
-  childViewContainer: '#subtest_wrapper',
-
-  # @todo Documentation
-  i18n: ->
-    @text =
-      "next" : t("SubtestRunView.button.next")
-      "back" : t("SubtestRunView.button.back")
-      "skip" : t("SubtestRunView.button.skip")
-      "help" : t("SubtestRunView.button.help")
-      "previousQuestion" : t("SurveyRunView.button.previous_question")
-      "nextQuestion" : t("SurveyRunView.button.next_question")
-
-  #
-  # Bind Events.
-  #
-
-  # for Backbone.View
-  events:
-    'click .subtest-next' : 'next'
-    'click .subtest-back' : 'back'
-    'click .subtest_help' : 'toggleHelp'
-    'click .skip'         : 'skip'
-    'click .next_question' : 'nextQuestion'
-    'click .prev_question' : 'prevQuestion'
-    'nextQuestionRendered': 'nextQuestionRenderedBoom'
-
-  # for Backbone.Marionette.CollectionView
-  childEvents:
-    'render:collection': 'addChildPostRender'
-    'subRendered': 'subRendered'
-
   # Initialize
   #
   # @params
@@ -93,24 +54,55 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     # Set States.
     #
 
-    #@index = if options.hasOwnProperty('result') options.result.get('subtestData').length else 0
-    @index = 0
+    @index = if options.hasOwnProperty('result') then options.result.get('subtestData').length else 0
     @abortAssessment = false
     @enableCorrections = false  # toggled if user hits the back button.
 
+    #
     # Initialize i18n strings.
+    #
+
     @i18n()
 
-    # @todo Assessment.subtests should come out of the box sorted so we don't
-    # need to use an awkward order map.
-    #
-    #      @assessment.subtests.models[@orderMap[@index]]
-    #                         VS
-    #      @assessment.subtests.models[@index]
-    #
-    @orderMap = @assessment.getOrderMap()
-    @result.set("order_map" : @orderMap)
 
+  #
+  # Configure the View
+  #
+
+  # for Backbone.Marionette.CompositeView Composite Model
+  template: JST["AssessmentView"],
+
+  # for Backbone.Marionette.CompositeView
+  childViewContainer: '#subtest_wrapper',
+
+  # @todo Documentation
+  i18n: ->
+    @text =
+      "next" : t("SubtestRunView.button.next")
+      "back" : t("SubtestRunView.button.back")
+      "skip" : t("SubtestRunView.button.skip")
+      "help" : t("SubtestRunView.button.help")
+      "previousQuestion" : t("SurveyRunView.button.previous_question")
+      "nextQuestion" : t("SurveyRunView.button.next_question")
+
+  #
+  # Bind Events.
+  #
+
+  # for Backbone.View
+  events:
+    'click .subtest-next' : 'next'
+    'click .subtest-back' : 'back'
+    'click .subtest_help' : 'toggleHelp'
+    'click .skip'         : 'skip'
+    'click .next_question' : 'nextQuestion'
+    'click .prev_question' : 'prevQuestion'
+    'nextQuestionRendered': 'nextQuestionRenderedBoom'
+
+  # for Backbone.Marionette.CollectionView
+  childEvents:
+    'render:collection': 'addChildPostRender'
+    'subRendered': 'subRendered'
 
 
   #
@@ -124,8 +116,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     # Depending on the @index, set appropriate child model for the collection.
     # In most cases this will be a subtest model, except for when there are no
     # more subtests, then set it to be the result model.
-    if @assessment.subtests.models[@orderMap[@index]]
-      currentChildModel = @assessment.subtests.models[@orderMap[@index]]
+    if @assessment.subtests.models[@assessment.getOrderMap()[@index]]
+      currentChildModel = @assessment.subtests.models[@assessment.getOrderMap()[@index]]
     else
       @trigger('assessment:complete')
       currentChildModel = @result
@@ -151,7 +143,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # @todo Are there subtest views that have an afterRender function?
   afterRender: ->
-    @subtestViews[@orderMap[@index]]?.afterRender?()
+    @subtestViews[@assessment.getOrderMap()[@index]]?.afterRender?()
 
   # @todo Documentation
   onClose: ->
