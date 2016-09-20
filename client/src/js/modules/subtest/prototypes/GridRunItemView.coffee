@@ -109,6 +109,8 @@ class GridRunItemView extends SubtestRunItemView
 
   onBeforeRender: ->
 
+    @runDisplayCode()
+
     done = 0
 
     startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{@text.start}</button><div class='timer'>#{@timer}</div></div>"
@@ -252,7 +254,6 @@ class GridRunItemView extends SubtestRunItemView
         $target.addClass "element_last"
 
   onShow: ->
-    displayCode = @model.getString("displayCode")
 
     if not _.isEmptyString(displayCode)
 #      displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView","Tangerine.progress.currentSubview")
