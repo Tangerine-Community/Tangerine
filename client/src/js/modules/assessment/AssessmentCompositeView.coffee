@@ -38,7 +38,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     if options.assessment
       @assessment = options.assessment
       @model = options.assessment
-      # @todo This most likely violates the separation of concerns.
+      # TODO: This most likely violates the separation of concerns.
       @model.parent = @
 
     # Set @result.
@@ -75,7 +75,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # for Backbone.Marionette.CompositeView
   childViewContainer: '#subtest_wrapper',
 
-  # @todo Documentation
+  # TODO: Documentation
   i18n: ->
     @text =
       "next" : t("SubtestRunView.button.next")
@@ -99,37 +99,30 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'click .prev_question' : 'prevQuestion'
     'nextQuestionRendered': 'nextQuestionRenderedBoom'
 
-  # for Backbone.Marionette.CollectionView
-  childEvents:
-    'render:collection': 'addChildPostRender'
-    'subRendered': 'subRendered'
-
-
   #
   # Handle Rendering and Closing of the View.
   #
 
   # Set up before render.
-  onBeforeRender:->
+  render:->
     console.log('AssessmentCompositeView.onBeforeRender')
 
+    # Get @currentChildModel
     # Depending on the @index, set appropriate child model for the collection.
     # In most cases this will be a subtest model, except for when there are no
     # more subtests, then set it to be the result model.
     if @assessment.subtests.models[@assessment.getOrderMap()[@index]]
-      currentChildModel = @assessment.subtests.models[@assessment.getOrderMap()[@index]]
+      @currentChildModel = @assessment.subtests.models[@assessment.getOrderMap()[@index]]
     else
       @trigger('assessment:complete')
-      currentChildModel = @result
-    @collection.models = [ currentChildModel ]
+      @currentChildModel = @result
 
-    # @todo This is a nasty thing to do just to feed more data to a template.
-    @model.set('subtest', currentChildModel.toJSON())
+    # TODO: This is not nice but some things require it for now.
+    @currentChildModel.parent = @
 
     # Check to see if this subtest is related to another subtest via the gridLinkId
     # property and if the related subtest was autostopped, skip this subtest.
-    currentSubtestModel = @collection.models[0]
-    parentSubtestId = currentSubtestModel.get('gridLinkId')
+    parentSubtestId = @currentChildModel.get('gridLinkId')
     parentSubtestResult = false
     this.result.attributes.subtestData.forEach( (subtestResult) ->
       if subtestResult.subtestId == parentSubtestId
@@ -138,31 +131,49 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     if parentSubtestResult isnt false and parentSubtestResult.data.auto_stop is true
       @skip()
 
+    # Get @currentChildView
+    childViewClass = @getChildViewClass(@currentChildModel)
+    @currentChildView = new childViewClass({model: @currentChildModel})
+
+    this.$el.html "
+      <h1>#{@assessment.get('name')}</h1>
+      <div id='progress'></div>
+      <h2>#{@currentChildModel.get('name')}</h2>
+      <div id='subtest_wrapper'></div>
+      <div class='controlls clearfix'>
+          <button class='subtest-back navigation hidden'>#{@text.back}</button>
+          <button class='subtest-next navigation'>#{@text.next}</button>
+          <button class='skip navigation hidden'>#{@text.skip}</button>
+      </div>
+      "
+
+    # Attach @currentChildView
+    subtestWrapper = this.$el.find('#subtest_wrapper')
+    $(subtestWrapper).html(@currentChildView.el)
+    @currentChildView.render()
+
     # Update the progress bar.
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
 
-  # @todo Are there subtest views that have an afterRender function?
-  afterRender: ->
-    @subtestViews[@assessment.getOrderMap()[@index]]?.afterRender?()
 
-  # @todo Documentation
+  # TODO: Documentation
   onClose: ->
     for view in @subtestViews
       view.close()
     @result.clear()
     Tangerine.nav.setStudent ""
 
-  # @todo Documentation
+  # TODO: Documentation
   toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
 
-  # @todo Documentation
+  # TODO: Documentation
   displaySkip: (skippable)->
     if skippable
       $( ".skip" ).show();
     else
       $( ".skip" ).hide();
 
-  # @todo Documentation
+  # TODO: Documentation
   displayBack: (backable)->
     if backable
       $( ".subtest-back" ).removeClass("hidden");
@@ -176,15 +187,13 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # Step to another Subtest.
   step: (increment) ->
 
-    # Run validation.
-    if @currentSubtestView.testValid?
-      valid = currentSubtestView.testValid()
+    # Run validation on the current Subtest View before we move on.
+    if @currentChildView.hasOwnProperty('testValid')
+      valid = @currentSubtestView.testValid()
       if valid
-        @saveResult( @currentSubtestView, increment )
+        @saveResult( @currentChildView, increment )
       else
-        return @currentSubtestView.showErrors()
-    else
-      return @currentSubtestView.showErrors()
+        return @currentChildView.showErrors()
 
     # Set the index for the next render to pick appropriate Subtest Model.
     @index =
@@ -193,26 +202,33 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       else
         @index + increment
 
-    # @todo Make sure this is doing what we want.
     if @abortAssessment
-      @saveResult( @currentSubtestView )
+      # TODO: Make sure this is doing what we want when aborting.
+      @saveResult( @currentChildView )
 
     # Now that we've prepared, let's render again.
     @trigger "assessment:step"
     @render()
     window.scrollTo 0, 0
 
+  next: ->
+    @step 1
+
+  back: ->
+    @step -1
+
   abort: ->
     @abortAssessment = true
     @step 1
 
   skip: =>
+    currentSubtestView = @children.findByIndex(0)
     @result.add
-      name      : @currentSubtestView.model.get "name"
-      data      : @currentSubtestView.getSkipped()
-      subtestId : @currentSubtestView.model.id
+      name      : currentSubtestView.model.get "name"
+      data      : currentSubtestView.getSkipped()
+      subtestId : currentSubtestView.model.id
       skipped   : true
-      prototype : @currentSubtestView.model.get "prototype"
+      prototype : currentSubtestView.model.get "prototype"
     ,
       success: =>
         @step 1
@@ -222,9 +238,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # Methods for handling Subtest Views
   #
 
-  # for Backbone.Marionette.CompositeView
-  getChildView: (model) ->
+  # for Backbone.Marionette.CollectionView
+  childEvents:
+    'render:collection': 'addChildPostRender'
+
+  getChildViewClass: (model) ->
+    # TODO: This is probably breaking the separation of concerns.
     model.parent = @
+    # TODO: Every Subtest Model gets a Questions Collection? This doesn't seem right.
     if !model.questions
       model.questions     = new Questions()
     if model.get("collection") == 'result'
@@ -249,12 +270,13 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")
 
-    @ready = true
     return currentSubview
 
   # for Backbone.Marionette.CompositeView
   # Populate the questions in the model of the subtest.
   childViewOptions: (model, index) ->
+    # TODO: Every Subtest model does not have questions. Also this should have
+    # probably already been fetched by Assessment.deepFetch.
     model.questions.fetch
       viewOptions:
         key: "question-#{model.id}"
@@ -265,13 +287,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       error: (model, err, cb) ->
         console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
 
-  #    TODO: This is a work-around: it may be fixed by doing something better. This code was added to resolve an issue
-  #    where the SurveyRunItemView was rendering twice, and the second time it rendered, updateSkipLogic() was not getting executed.
-  subRendered: ->
-    currentSubtest = @children.findByIndex(0)
-    currentSubtest.updateSkipLogic()
-
-  # @todo Documentation
+  # TODO: Documentation
   subTestRenderCollection:->
     console.log("onRenderCollection")
     currentSubtest = @children.findByIndex(0)
@@ -331,7 +347,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubtest.updateQuestionVisibility()
       currentSubtest.updateProgressButtons()
 
-  # @todo
+  # TODO:
   prevQuestion: ->
 
     currentSubtest = @children.findByIndex(0)
@@ -362,7 +378,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # Helper methods for working with Grid Subtest.
   #
 
-  # @todo Documentation
+  # TODO: Documentation
   getGridScore: ->
     link = @model.get("subtest").gridLinkId || ""
     if link == "" then return
@@ -370,7 +386,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     gridScore = @result.getGridScore grid.id
     gridScore
 
-  # @todo Documentation
+  # TODO: Documentation
   gridWasAutostopped: ->
     link = @model.get("subtest").gridLinkId || ""
     if link == "" then return
@@ -381,7 +397,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # Helper methods for working with Results.
   #
 
-  # @todo Documentation
+  # TODO: Documentation
   saveResult: ( currentView, increment ) ->
 
     subtestResult = currentView.getResult()
@@ -420,7 +436,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         success : =>
           @reset increment
 
-  # @todo Documentation
+  # TODO: Documentation
   getSum: ->
     if Tangerine.progress.currentSubview.getSum?
       return Tangerine.progress.currentSubview.getSum()
