@@ -27,10 +27,11 @@ Assessment = Backbone.Model.extend
     opts.error   = opts.error   || $.noop
     opts.success = opts.success || $.noop
 
+    done = => opts.success.apply @subtests, arguments
+
     @fetch
       error: opts.error
       success: =>
-#        console.log "@subtests: " + @subtests
         @subtests = new Subtests
         @subtests.assessment = @
         @subtests.fetch
@@ -39,9 +40,34 @@ Assessment = Backbone.Model.extend
           error: ->
             console.log "deepFetch of Assessment failed"
           success: (subtests) ->
-#            console.log "subtests: " + JSON.stringify(subtests)
             subtests.ensureOrder()
-            opts.success.apply subtests.assessment, arguments
+
+            console.log 'here we go'
+
+            # Collect the surveys.
+            surveys = []
+            subtests.forEach (subtest) ->
+              if subtest.get('prototype') == 'survey'
+                surveys.push subtest
+
+            if surveys.length > 0
+              counter = 0
+              fetchQuestions = ->
+                questions = new Questions
+                questions.fetch
+                  viewOptions:
+                    key: "question-#{surveys[counter].id}"
+                  success: ->
+                    surveys[counter].questions = questions
+                    counter = counter + 1
+                    if counter+1 > surveys.length
+                      done()
+                    else
+                      fetchQuestions()
+              fetchQuestions()
+            else
+              done()
+
 
   # @todo The Assessment model should know how to sort itself.
   getOrderMap: ->
