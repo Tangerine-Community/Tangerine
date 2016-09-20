@@ -135,6 +135,9 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     # Get @currentChildView
     childViewClass = @getChildViewClass(@currentChildModel)
     @currentChildView = new childViewClass({model: @currentChildModel})
+    @currentChildView.on 'skip', =>
+      console.log 'AssessmentCompositeView detected skip'
+      @skip()
 
     # TODO: It looks like Skip Logic requires us to put this in a global. We should
     # look into how to localize this.
@@ -229,14 +232,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @abortAssessment = true
     @step 1
 
-  skip: =>
-    currentSubtestView = @children.findByIndex(0)
+  skip: ->
+    console.log 'adding'
     @result.add
-      name      : currentSubtestView.model.get "name"
-      data      : currentSubtestView.getSkipped()
-      subtestId : currentSubtestView.model.id
+      name      : @currentChildView.model.get "name"
+      data      : @currentChildView.getSkipped()
+      subtestId : @currentChildView.model.id
       skipped   : true
-      prototype : currentSubtestView.model.get "prototype"
+      prototype : @currentChildView.model.get "prototype"
     ,
       success: =>
         @step 1

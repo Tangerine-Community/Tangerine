@@ -1,4 +1,4 @@
- class ConsentRunItemView extends Backbone.Marionette.ItemView
+ class ConsentRunItemView extends SubtestRunItemView
 
   className : "ConsentRunView"
 
@@ -36,6 +36,7 @@
     @backable = ( @model.get("backButton") == true || @model.get("backButton") == "true" ) and @parent.index isnt 0
     @parent.displaySkip(@skippable)
     @parent.displayBack(@backable)
+    ConsentRunItemView.__super__.initialize.apply(this, arguments)
 
 
   render: ->
