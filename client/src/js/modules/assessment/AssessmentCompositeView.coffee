@@ -280,21 +280,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
     return currentSubview
 
-  # for Backbone.Marionette.CompositeView
-  # Populate the questions in the model of the subtest.
-  childViewOptions: (model, index) ->
-    # TODO: Every Subtest model does not have questions. Also this should have
-    # probably already been fetched by Assessment.deepFetch.
-    model.questions.fetch
-      viewOptions:
-        key: "question-#{model.id}"
-      success: (collection) =>
-        model.questions.sort()
-        model.collection = model.questions
-        @collection.models = collection.models
-      error: (model, err, cb) ->
-        console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
-
   # TODO: Documentation
   subTestRenderCollection:->
     console.log("onRenderCollection")
