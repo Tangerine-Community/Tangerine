@@ -213,9 +213,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       else
         @index + increment
 
-    if @abortAssessment
-      # TODO: Make sure this is doing what we want when aborting.
-      @saveResult( @currentChildView )
+    @saveResult( @currentChildView )
 
     # Now that we've prepared, let's render again.
     @trigger "assessment:step"
@@ -233,16 +231,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     @step 1
 
   skip: ->
-    console.log 'adding'
-    @result.add
-      name      : @currentChildView.model.get "name"
-      data      : @currentChildView.getSkipped()
-      subtestId : @currentChildView.model.id
-      skipped   : true
-      prototype : @currentChildView.model.get "prototype"
-    ,
-      success: =>
-        @step 1
+    @step 1
 
 
   #
@@ -389,12 +378,13 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     grid = @assessment.subtests.get @currentChildModel.get('gridLinkId')
     gridWasAutostopped = @result.gridWasAutostopped grid.id
 
+
   #
   # Helper methods for working with Results.
   #
 
   # TODO: Documentation
-  saveResult: ( currentView, increment ) ->
+  saveResult: ( currentView ) ->
 
     subtestResult = currentView.getResult()
     subtestId = currentView.model.id
@@ -418,7 +408,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
           subtestId   : currentView.model.id
           prototype   : currentView.model.get "prototype"
           sum         : getSum
-      @reset increment
 
     else
       @result.add
@@ -428,9 +417,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         subtestId   : currentView.model.id
         prototype   : currentView.model.get "prototype"
         sum         : getSum
-      ,
-        success : =>
-          @reset increment
 
   # TODO: Documentation
   getSum: ->
