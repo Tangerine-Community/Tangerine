@@ -35,6 +35,8 @@ class IdRunItemView extends SubtestRunItemView
     @parent.displayBack(@backable)
 
   render: ->
+    
+    @runDisplayCode()
 
     unless @dataEntry
       previous = @model.parent.result.getByHash(@model.get('hash'))

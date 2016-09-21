@@ -1,4 +1,4 @@
-class SurveyRunItemView extends Backbone.Marionette.CompositeView
+class SurveyRunItemView extends SubtestRunItemView
 
   template: JST["Survey"],
   childView: QuestionRunItemView,
@@ -346,6 +346,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
   onRender: ->
 
+    @runDisplayCode()
+
     notAskedCount = 0
     if @model.questions?
       @model.questions.models.forEach (question, i) =>
@@ -430,18 +432,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
 #  onDomRefresh: ->
 #    console.log("I get too attached to people.")
-
-# @todo Documentation
-  skip: =>
-    @parent.result.add
-      name      : currentView.model.get "name"
-      data      : currentView.getSkipped()
-      subtestId : currentView.model.id
-      skipped   : true
-      prototype : currentView.model.get "prototype"
-    ,
-      success: =>
-        @parent.reset 1
 
   # Doubt this is happening after the question was rendered. TODO: find the right place.
   onQuestionRendered:->

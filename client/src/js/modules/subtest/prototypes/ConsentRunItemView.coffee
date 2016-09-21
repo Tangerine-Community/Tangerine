@@ -37,8 +37,8 @@
     @parent.displaySkip(@skippable)
     @parent.displayBack(@backable)
 
+
   render: ->
-    @runDisplayCode()
     @$el.html "
         <div class='question'>
           <label>#{@model.get('prompt') || @text.defaultConsent}</label>
@@ -64,14 +64,14 @@
       mode      : "single"
       dataEntry : false
       answer    : answer or ""
-    
     @consentButton.setElement @$el.find(".consent-button")
     @consentButton.on "change", @onConsentChange
     @consentButton.render()
 
     @trigger "rendered"
     @trigger "ready"
-  
+    @runDisplayCode()
+
   isValid: ->
     if @confirmedNonConsent is false
       if @consentButton.answer is "yes"

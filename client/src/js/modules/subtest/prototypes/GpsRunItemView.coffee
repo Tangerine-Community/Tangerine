@@ -1,4 +1,4 @@
-class GpsRunItemView extends Backbone.Marionette.ItemView
+class GpsRunItemView extends SubtestRunItemView
 
   className: "GpsRunItemView"
 
@@ -124,8 +124,10 @@ class GpsRunItemView extends Backbone.Marionette.ItemView
 
   render: ->
 
+    @runDisplayCode()
+
     if not Modernizr.geolocation
-      
+
       @$el.html @text.notSupported
 
       @position = @easify(null)

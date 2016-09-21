@@ -1,4 +1,4 @@
-class LocationRunItemView extends Backbone.Marionette.ItemView
+class LocationRunItemView extends SubtestRunItemView
 
   className: "LocationRunItemView"
 
@@ -104,6 +104,8 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     return @li templateInfo
 
   render: ->
+
+    @runDisplayCode()
 
     schoolListElements = ""
 
