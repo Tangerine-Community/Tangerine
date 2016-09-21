@@ -1,23 +1,32 @@
 #
 # AssessmentCompositeView
 #
-# AssessmentCompositeView renders every time a new subtest is shown. When next
+# AssessmentCompositeView on render displays a Subtest View one at a time according
+# to what the current @index state is and what is in @assessment.subtests.
+# @getChildViewClass method is used to determine what Class of View to instantiate
+# for the given Subtest Model.
+# creating a View for each Subtest renders every time a new subtest is shown. When next
 # or back is clicked, the step(incrementToMoveToSubtestReferencedByViewIndex) method is
 # eventually called which calls render.
 #
 # Listens for "result:saved" and "result:another" events triggered by the ResultItemView subtest and makes it
 # available for consumption (via triggerSaved and triggerAnother) by external users such as Widget.
-
+#
+# Options:
+#   assessment (required) - An Assessment Model
+#   result: (optional) - A Result model to pick up where you left off.
+#
+# Events:
+#   assessment:complete - Triggers when all Subtests have completed.
+#   assessment:step - Triggers when a new Subtest View is displayed.
+#   nextQuestionRendered - Triggers when a new Question has been rendered.
+#
 
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
+  #
   # Initialize
   #
-  # @params
-  # {
-  #   assessment: An Assessment Model.
-  #   result: (optional) A Result model to pick up where you left off.
-  # }
 
   initialize: (options) ->
 
@@ -86,6 +95,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       "previousQuestion" : t("SurveyRunView.button.previous_question")
       "nextQuestion" : t("SurveyRunView.button.next_question")
 
+
   #
   # Bind Events.
   #
@@ -100,6 +110,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     'click .prev_question' : 'prevQuestion'
     'nextQuestionRendered': 'nextQuestionRenderedBoom'
 
+
   #
   # Handle Rendering and Closing of the View.
   #
@@ -108,10 +119,13 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   render:->
     console.log('AssessmentCompositeView.onBeforeRender')
 
-    # Get @currentChildModel
-    # Depending on the @index, set appropriate child model for the collection.
-    # In most cases this will be a subtest model, except for when there are no
-    # more subtests, then set it to be the result model.
+    #
+    # Prepare @currentChildModel
+    #
+
+    # Depending on the @index, set appropriate child model. In most cases this
+    # will be a subtest model, except for when there are no more subtests, then
+    # set it to be the result model.
     if @assessment.subtests.models[@assessment.getOrderMap()[@index]]
       @currentChildModel = @assessment.subtests.models[@assessment.getOrderMap()[@index]]
     else
@@ -132,12 +146,20 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     if parentSubtestResult isnt false and parentSubtestResult.data.auto_stop is true
       @skip()
 
-    # Get @currentChildView
+    #
+    # Prepare @currentChildView
+    #
+
     childViewClass = @getChildViewClass(@currentChildModel)
     @currentChildView = new childViewClass({model: @currentChildModel})
     @currentChildView.on 'skip', =>
       console.log 'AssessmentCompositeView detected skip'
       @skip()
+
+
+    #
+    # Set Globals to be accessed in Subtest Display Logic.
+    #
 
     # TODO: It looks like Skip Logic requires us to put this in a global. We should
     # look into how to localize this.
@@ -190,6 +212,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       $( ".subtest-back" ).removeClass("hidden");
     else
       $( ".subtest-back" ).addClass("hidden");
+
 
   #
   # Methods for handling flow of Subtests: step, abort, and skip
@@ -358,6 +381,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubtest.questionIndex = plannedIndex
       currentSubtest.updateQuestionVisibility()
       currentSubtest.updateProgressButtons()
+
 
   #
   # Helper methods for working with Grid Subtest.
