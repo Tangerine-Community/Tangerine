@@ -11,7 +11,7 @@
 #
 # Options:
 #   assessment (required) - An Assessment Model
-#   result: (optional) - A Result model to pick up where you left off.
+#   result (optional) - A Result model to pick up where you left off.
 #
 # Events:
 #   assessment:complete - Triggers when all Subtests have completed.
