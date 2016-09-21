@@ -1,4 +1,4 @@
-class DatetimeRunItemView extends Backbone.Marionette.ItemView
+class DatetimeRunItemView extends SubtestRunItemView 
 
   template: JST["Datetime"]
   className: "datetimeitem"
@@ -59,6 +59,7 @@ class DatetimeRunItemView extends Backbone.Marionette.ItemView
     @model.set('formElements', formElements)
     @trigger "rendered"
     @trigger "ready"
+    @runDisplayLogic()
 
   getResult: ->
     result =
