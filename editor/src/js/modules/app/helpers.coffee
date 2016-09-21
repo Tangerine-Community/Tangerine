@@ -953,6 +953,8 @@ class TangerineTree
   @make: (options) ->
     # Gather a list of document IDs we'll need and then hit allDocs with that as a keys list.
     keyList = []
+    keyList.push("settings")
+    keyList.push("location-list")
     Utils.working true
     # Add all Worklfow IDs to the list.
     workflows = new Workflows
@@ -978,10 +980,9 @@ class TangerineTree
               dataType: "json"
               data: JSON.stringify(dKeyQuery)
               success: (data) =>
-                moreKeys = data.rows.map((row) => row.id);
+                moreKeys = data.rows.map((row) => row.id)
                 keyList = keyList.concat(moreKeys)
                 keyList = _.uniq(keyList)
-                keyList.push("settings");
                 Tangerine.$db.allDocs
                   keys : keyList
                   include_docs:true
