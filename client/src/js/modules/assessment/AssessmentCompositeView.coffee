@@ -31,16 +31,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     # Set properties.
     #
 
-    # Set @collection to an empty collection because before:render we will determine
-    # which Subtest model to place in @collection.models.
-    @collection = new Backbone.Collection()
-
-    # Set @model and @assessment to the same options.assessment. @model satisfies
-    # Marionette.CompositeView while @assessment satisfies code readability.
+    # Set @assessment.
     if options.assessment
       @assessment = options.assessment
-      @model = options.assessment
       # TODO: This most likely violates the separation of concerns.
+      @model = @assessment
       @model.parent = @
 
     # Set @result.
@@ -134,6 +129,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       console.log 'AssessmentCompositeView detected skip'
       @skip()
 
+    @currentChildView.on 'back', =>
+      @back()
+
+    @currentChildView.on 'next', =>
+      @next()
 
     #
     # Set Globals to be accessed in Subtest Display Logic.
