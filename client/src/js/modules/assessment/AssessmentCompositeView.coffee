@@ -334,6 +334,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       @reset(1)
 
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
+    # TODO: The Tangerine.progress.currentSubview global is assigned by the Subtest Classes themselves. This is an example of bad separation of concerns.
     Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
     Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
 #    Tangerine.progress.currentSubview.on "nextQuestionRendered", => @trigger "nextQuestionRendered"
