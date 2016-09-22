@@ -413,7 +413,9 @@ conf.fileOrder = [
 
   'DatetimeRunView',
   'DatetimeRunItemView',
-
+  
+  'Loc',
+  'LocView',
   'LocationRunView',
   'LocationRunItemView',
 
