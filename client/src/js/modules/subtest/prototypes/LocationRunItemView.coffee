@@ -1,4 +1,4 @@
-class LocationRunItemView extends Backbone.Marionette.ItemView
+class LocationRunView extends Backbone.View
 
   className: "LocationRunView"
 
@@ -104,8 +104,13 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
         return matchCount == expectedCount
       )
     ""
+<<<<<<< 34005bcd95a67326d93c62239e933790b65c12cc
 
 
+=======
+
+
+>>>>>>> Move the LocationRunView in legacy to LocationRunItemView, next combine them
   getOptions: (index)->
 
     targetIndex = @levelColMap[index]
@@ -135,6 +140,7 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
 
           doneOptions.push location[targetIndex]
           currentOptions.push _(location[targetIndex]).escape()
+<<<<<<< 34005bcd95a67326d93c62239e933790b65c12cc
 
     for locationName in _.sortBy(currentOptions, (el) -> return el)
       levelOptions += "
@@ -176,6 +182,40 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
       'body' : result
       'meta' :
         'hash' : hash
+=======
+
+    for locationName in _.sortBy(currentOptions, (el) -> return el)
+      levelOptions += "
+        <option value='#{locationName}'>#{locationName}</option>
+      "
+
+    return "
+      <option selected='selected' value='' disabled='disabled'>Please select a #{@levels[index]}</option>
+    " + levelOptions
+
+
+
+  getResult: (filtered = false)->
+    if @isStandard
+      result =
+        labels   : []
+        location : []
+      values = @locView.value()
+      result.labels   = Object.keys values
+      result.location = result.labels.map (el) -> values[el]
+      return result
+
+    if filtered
+      return {
+        "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
+        "location" : (@$el.find("#level_#{i}").val() for level, i in @levels)
+      }
+    else
+      return {
+        "labels"   : (column.replace(/[\s-]/g,"_") for column in @locationCols)
+        "location" : (@selectedLocation)
+      }
+>>>>>>> Move the LocationRunView in legacy to LocationRunItemView, next combine them
 
   getSkipped: ->
     return {
@@ -189,6 +229,7 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     selects = @$el.find("select")
     for input, i in selects
       return false if _($(input).val()).isEmptyString()
+<<<<<<< 34005bcd95a67326d93c62239e933790b65c12cc
 
     return false if @selectedLocation == []
     true
@@ -198,6 +239,10 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
       return @isValid()
     else
       return false
+=======
+
+    return false if @selectedLocation == []
+>>>>>>> Move the LocationRunView in legacy to LocationRunItemView, next combine them
     true
 
   showErrors: ->
