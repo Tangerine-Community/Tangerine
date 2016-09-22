@@ -1,4 +1,4 @@
-class LocationRunView extends Backbone.View
+class LocationRunItemView extends Backbone.Marionette.ItemView
 
   className: "LocationRunView"
 
@@ -203,19 +203,28 @@ class LocationRunView extends Backbone.View
       values = @locView.value()
       result.labels   = Object.keys values
       result.location = result.labels.map (el) -> values[el]
-      return result
+      hash = @model.get("hash") if @model.has("hash")
+      return subtestResult =
+        'body' : result
+        'meta' :
+          'hash' : hash
 
     if filtered
-      return {
+      result = {
         "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
         "location" : (@$el.find("#level_#{i}").val() for level, i in @levels)
       }
     else
-      return {
+      result = {
         "labels"   : (column.replace(/[\s-]/g,"_") for column in @locationCols)
         "location" : (@selectedLocation)
       }
 >>>>>>> Move the LocationRunView in legacy to LocationRunItemView, next combine them
+
+    return subtestResult =
+      'body' : result
+      'meta' :
+        'hash' : hash
 
   getSkipped: ->
     return {
@@ -243,6 +252,13 @@ class LocationRunView extends Backbone.View
 
     return false if @selectedLocation == []
 >>>>>>> Move the LocationRunView in legacy to LocationRunItemView, next combine them
+    true
+
+  testValid: ->
+    if @isValid?
+      return @isValid()
+    else
+      return false
     true
 
   showErrors: ->
