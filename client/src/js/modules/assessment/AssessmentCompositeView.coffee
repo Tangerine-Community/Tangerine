@@ -321,10 +321,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # @todo Documentation
   onRender:->
 
+    @currentSubtestModel = @collection.models[0]
+    @children.each (child) => @currentSubtestView = child
+
     # Check to see if this subtest is related to another subtest via the gridLinkId
     # property and if the related subtest was autostopped, skip this subtest.
-    currentSubtestModel = @collection.models[0]
-    parentSubtestId = currentSubtestModel.get('gridLinkId')
+    parentSubtestId = @currentSubtestModel.get('gridLinkId')
     parentSubtestResult = false
     this.result.attributes.subtestData.forEach( (subtestResult) ->
       if subtestResult.subtestId == parentSubtestId
@@ -333,16 +335,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     if parentSubtestResult isnt false and parentSubtestResult.data.auto_stop is true
       @reset(1)
 
+    # Set progress bar.
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
-    # TODO: The Tangerine.progress.currentSubview global is assigned by the Subtest Classes themselves. This is an example of bad separation of concerns.
-    Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
-    Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
-#    Tangerine.progress.currentSubview.on "nextQuestionRendered", => @trigger "nextQuestionRendered"
-
-    Tangerine.progress.currentSubview.on "next",    =>
-      console.log("currentView next")
-      @step 1
-    Tangerine.progress.currentSubview.on "back",    => @step -1
+    
+    # Listen for events bubbling up from subtest views.
+    @currentSubtestView.on "rendered",    => @flagRender "subtest"
+    @currentSubtestView.on "subRendered", => @trigger "subRendered"
+    @currentSubtestView.on "next",        => @step 1
+    @currentSubtestView.on "back",        => @step -1
 
     @flagRender "assessment"
 
