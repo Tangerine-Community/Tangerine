@@ -380,7 +380,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # @todo Documentation
   skip: =>
-    currentView = Tangerine.progress.currentSubview
+    currentView = @currentSubtestView
     @result.add
       name      : currentView.model.get "name"
       data      : currentView.getSkipped()
@@ -395,11 +395,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   step: (increment) ->
     this.trigger "assessment:step"
     if @abortAssessment
-      currentView = Tangerine.progress.currentSubview
+      currentView = @currentSubtestView
       @saveResult( currentView )
       return
 
-    currentView = Tangerine.progress.currentSubview
+    currentView = @currentSubtestView
 
     if currentView.testValid?
       valid = currentView.testValid()
@@ -440,7 +440,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   reset: (increment) ->
     @rendered.subtest = false
     @rendered.assessment = false
-    Tangerine.progress.currentSubview.close();
+    @currentSubtestView.close();
     @index =
       if @abortAssessment == true
         @subtestViews.length-1
@@ -495,8 +495,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # @todo Documentation
   getSum: ->
-    if Tangerine.progress.currentSubview.getSum?
-      return Tangerine.progress.currentSubview.getSum()
+    if @currentSubtestView.getSum?
+      return @currentSubtestView.getSum()
     else
       # maybe a better fallback
       return {correct:0,incorrect:0,missing:0,total:0}
