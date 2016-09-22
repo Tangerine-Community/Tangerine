@@ -384,6 +384,8 @@ conf.fileOrder = [
   'AssessmentDataEntryView',
 
   'BandwidthCheckView',
+  'SyncManager',
+  'InstrumentSyncView',
 
   'Subtest',
   'Subtests',
