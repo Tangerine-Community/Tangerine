@@ -330,6 +330,18 @@ Tangerine.bootSequence =
       Tangerine.router.navigate(sendTo, { trigger: true, replace: true })
     )
 
+  getLocationList : ( callback ) ->    
+    # Grab our system config doc   
+    Tangerine.locationList = new Backbone.Model "_id" : "location-list"    
+   
+    Tangerine.locationList.fetch   
+      error   : ->   
+        console.log "could not fetch location-list..."   
+        callback   
+   
+      success : callback
+
+
 Tangerine.boot = ->
 
   sequence = [
@@ -342,6 +354,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.documentReady
     Tangerine.bootSequence.loadI18n
     Tangerine.bootSequence.loadSingletons
+    Tangerine.bootSequence.getLocationList
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone
 #    Tangerine.bootSequence.monitorBrowserBack
