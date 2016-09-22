@@ -43,7 +43,6 @@ class LocView extends Backbone.View
 
       if @addedOptions
         res = @addedOptions[index].concat res
-      console.log "results: ", res
       res = res.sort (a,b) ->
         if a.label.toLowerCase() < b.label.toLowerCase()
           return -1
