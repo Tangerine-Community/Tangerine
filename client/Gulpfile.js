@@ -405,6 +405,10 @@ conf.fileOrder = [
   'WorkflowEditView',
   'WorkflowRunView',
   'WorkflowSelectView',
+  'TripResultCollection',
+  'TripResult',
+  'TripResults',
+
 
   'SurveyRunItemView',
 
