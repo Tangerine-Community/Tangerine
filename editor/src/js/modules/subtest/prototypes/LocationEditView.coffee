@@ -2,7 +2,7 @@ class LocationEditView extends Backbone.View
 
   className: "LocationEditView"
 
-  events: 
+  events:
     'keyup #data'               : 'updateData'
     'keyup #levels'             : 'updateLevels'
     'click #data_format input'   : 'updateData'
@@ -10,8 +10,14 @@ class LocationEditView extends Backbone.View
 
 
   updateData: (event) ->
+    if hasTabs
+      @$el.find("#data_format :radio[value='Tabs']").attr("checked", "checked").button("refresh")
+    else
+      @$el.find("#data_format :radio[value='Commas']").attr("checked", "checked").button("refresh")
+
+  updateData: (event) ->
     if event?.type == "click"
-      if $(event.target).val() == "Tabs" 
+      if $(event.target).val() == "Tabs"
         @dataCommaToTab()
         hasTabs   = true
         hasCommas = false
@@ -19,7 +25,7 @@ class LocationEditView extends Backbone.View
         @dataTabToComma()
         hasTabs   = false
         hasCommas = true
-      
+
     else
       data = @$el.find("#data").val()
       hasTabs = data.match(/\t/g)?
@@ -32,7 +38,7 @@ class LocationEditView extends Backbone.View
 
   updateLevels: (event) ->
     if event?.type == "click"
-      if $(event.target).val() == "Tabs" 
+      if $(event.target).val() == "Tabs"
         @levelsCommaToTab()
         hasTabs   = true
         hasCommas = false
@@ -40,7 +46,7 @@ class LocationEditView extends Backbone.View
         @levelsTabToComma()
         hasTabs   = false
         hasCommas = true
-      
+
     else
       levels    = @$el.find("#levels").val()
       hasTabs   = levels.match(/\t/g)?
@@ -55,8 +61,14 @@ class LocationEditView extends Backbone.View
       @$el.find("#levels_format :radio[value='Commas']").attr("checked", "checked").button("refresh")
 
 
-  dataTabToComma: -> @$el.find("#data").val(String(@$el.find("#data").val()).replace(/\t/g,", "))
-  dataCommaToTab: -> @$el.find("#data").val(@$el.find("#data").val().replace(/, */g, "\t"))
+  dataTabToComma: ->
+    @$el.find("#data").val(String(@$el.find("#data").val()).replace(/\t/g,", "))
+    @$el.find("#locationCols").val(String(@$el.find("#locationCols").val()).replace(/\t/g,", "))
+
+  dataCommaToTab: ->
+    @$el.find("#data").val(@$el.find("#data").val().replace(/, */g, "\t"))
+    @$el.find("#locationCols").val(@$el.find("#locationCols").val().replace(/, */g, "\t"))
+
   levelsTabToComma: -> @$el.find("#levels").val(String(@$el.find("#levels").val()).replace(/\t/g,", "))
   levelsCommaToTab: -> @$el.find("#levels").val(@$el.find("#levels").val().replace(/, */g, "\t"))
 
@@ -67,10 +79,14 @@ class LocationEditView extends Backbone.View
     if @$el.find("#levels").val().match(/\t/g)?
       @levelsTabToComma()
       @$el.find("#levels_format :radio[value='Tabs']").attr("checked", "checked").button("refresh")
-      
+
     levels = @$el.find("#levels").val().split(/, */g)
     for level, i in levels
       levels[i] = $.trim(level).replace(/[^a-zA-Z0-9']/g,"")
+
+    locationCols = @$el.find("#locationCols").val().split(/, */g)
+    for col, i in locationCols
+      col[i] = $.trim(col).replace(/[^a-zA-Z0-9']/g,"")
 
     # removes /\s/
     locationsValue = $.trim(@$el.find("#data").val())
@@ -80,14 +96,24 @@ class LocationEditView extends Backbone.View
     for location, i in locations
       locations[i] = location.split(/, */g)
 
+    standard = $("input:radio[name='standard']:checked").val()
+
     @model.set
-      "levels"    : levels
-      "locations" : locations
+      "levels"       : levels
+      "locationCols" : locationCols
+      "locations"    : locations
+      "standard"     : standard
 
   isValid: ->
-    levels = @model.get("levels")
+    levels       = @model.get("levels")
+    locationCols = @model.get("locationCols")
+
+    for level in levels
+      if _.indexOf(locationCols, level) == -1
+        @errors.push "level_column_match" unless "level_column_match" in @errors
+
     for location in @model.get("locations")
-      if location.length != levels.length
+      if location.length != locationCols.length
         @errors.push "column_match" unless "column_match" in @errors
     return @errors.length == 0
 
@@ -101,21 +127,35 @@ class LocationEditView extends Backbone.View
   initialize: ( options ) ->
     @errors = []
     @model = options.model
-    @errorMessages = 
-      "column_match" : "Some columns in the location data do not match the number of columns in the geographic levels."
+    @errorMessages =
+      "column_match"       : "Some columns in the location data do not match the number of columns in the geographic levels."
+      "level_column_match" : "One or more Geographic Levels cannot be matched to valid Location Columns."
 
   render: ->
-    levels    = @model.get("levels")    || []
-    locations = @model.get("locations") || []
+    levels    = @model.get("levels")          || []
+    locationCols = @model.get("locationCols") || []
+    locations = @model.get("locations")       || []
+    standard = @model.getBoolean("standard")
 
     levels = _.escape(levels.join(", "))
+    locationCols = _.escape(locationCols.join(", "))
 
     locations = locations.join("\n")
     if _.isArray(locations)
-      for location, i in locations 
+      for location, i in locations
         locations[i] = _.escape(location.join(", "))
 
     @$el.html  "
+      <div class='label_value'>
+        <label title='This will use the locations provided by your location-list document'>Use standard</label><br>
+        <div id='group_standard' class='buttonset'>
+          <label for='standard_off'>Off</label>
+          <input id='standard_off' name='standard' type='radio' value='false' #{('checked="checked"' if standard is false)||''}>
+          <label for='standard_on'>On</label>
+          <input id='standard_on' name='standard' type='radio' value='true' #{('checked="checked"' if standard is true)||''}>
+        </div>
+      </div>
+
       <div class='label_value'>
         <div class='menu_box'>
           <label for='levels' title='This is a comma separated list of geographic levels. (E.g. Country, Province, District, School Id) These are the levels that you would consider individual fields on the location form.'>Geographic Levels</label>
@@ -132,7 +172,9 @@ class LocationEditView extends Backbone.View
       </div>
       <div class='label_value'>
         <div class='menu_box'>
-          <label for='data' title='Comma sperated values, with multiple rows separated by line. This information will be used to autofill the location data.'>Location data</label>
+          <label for='cols' title='Comma sperated values, with multiple rows separated by line. This information will be used to autofill the location data.'>Location Columns</label>
+          <input id='locationCols' value='#{locationCols}'><br><br>
+          <label for='data' title='Comma sperated values, with multiple rows separated by line. This information will be used to autofill the location data.'>Location Data</label>
           <textarea id='data'>#{locations}</textarea><br>
           <label title='Tangerine uses comma separated values. If you copy and paste from another program like Excel, the values will be tab separated. These buttons allow you to switch back and forth, however, Tangerine will always save the comma version.'>Format</label><br>        <div id='data_format' class='buttonset'>
             <label for='data_tabs'>Tabs</label>

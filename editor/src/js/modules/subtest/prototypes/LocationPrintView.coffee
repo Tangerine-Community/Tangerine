@@ -3,10 +3,10 @@ class LocationPrintView extends Backbone.View
   className: "LocationPrintView"
 
   initialize: (options) ->
-
-    @model  = options.model
-    @parent = options.parent
-
+    
+    @model  = @options.model
+    @parent = @options.parent
+    
     @levels = @model.get("levels")       || []
     @locations = @model.get("locations") || []
 
