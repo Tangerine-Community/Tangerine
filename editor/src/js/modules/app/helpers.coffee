@@ -951,72 +951,27 @@ class Robbert
 class TangerineTree
   
   @make: (options) ->
+    success = options.success
+    error = options.error
     # Gather a list of document IDs we'll need and then hit allDocs with that as a keys list.
-    keyList = []
-    keyList.push("settings")
-    keyList.push("location-list")
-    Utils.working true
-    # Add all Worklfow IDs to the list.
-    workflows = new Workflows
-    workflows.fetch 
-      success: =>
-        workflows.models.forEach (workflow) =>
-          keyList.push workflow.id
-        # Add all Assessment IDs to the list.
-        url = Tangerine.settings.urlView "group", "assessmentsNotArchived"
+    forClient = new DocumentsForClient()
+    forClient.fetch
+      success: ->
         $.ajax
-          url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
-          dataType: "json"
-          success: (data) =>
-            # Add all things related to those Assessments to the list.
-            dKeys = data.rows.map((row) => row.id.substr(-5))
-            dKeyQuery =
-              keys: dKeys
-            url = Tangerine.settings.urlView("group", "byDKey")
-            $.ajax
-              url: Tangerine.settings.urlView("group", "byDKey"),
-              type: "POST"
-              contentType: "application/json"
-              dataType: "json"
-              data: JSON.stringify(dKeyQuery)
-              success: (data) =>
-                moreKeys = data.rows.map((row) => row.id)
-                keyList = keyList.concat(moreKeys)
-                keyList = _.uniq(keyList)
-                Tangerine.$db.allDocs
-                  keys : keyList
-                  include_docs:true
-                  success: (response) ->
-                    docs = []
-                    for row in response.rows
-                      docs.push row.doc
-                    body =
-                      docs: docs
-                    success = options.success
-                    error   = options.error
-
-                    payload = JSON.stringify(body)
-
-                    delete options.success
-                    delete options.error
-
-                    $.ajax
-                      type     : 'POST'
-                      crossDomain : true
-                      url      : "#{Tangerine.config.get('tree')}/group-#{Tangerine.settings.get('groupName')}/#{Tangerine.settings.get('hostname')}"
-                      dataType : 'json'
-                      contentType: "application/json"
-                      data     : payload
-                      success: ( data ) =>
-                        success data
-                      error: ( data ) =>
-                        error data, JSON.parse(data.responseText)
-                      complete: ->
-                        Utils.working false
-      error: (a, b) ->
-        console.log("a: " + a)
-        Utils.midAlert "Import error"
-
+          type     : 'POST'
+          crossDomain : true
+          url      : "#{Tangerine.config.get('tree')}/group-#{Tangerine.settings.get('groupName')}/#{Tangerine.settings.get('hostname')}"
+          dataType : 'json'
+          contentType: "application/json"
+          data     : JSON.stringify({"docs": forClient.toJSON()})
+          success: ( data ) =>
+            success data
+          error: ( data ) =>
+            error data, JSON.parse(data.responseText)
+          complete: ->
+            Utils.working false
+      error: ->
+        alert 'Unable to fetch documents for client. Check your connection.'
 
 ##UI helpers
 $ ->
