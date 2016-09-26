@@ -420,6 +420,7 @@ class Router extends Backbone.Router
             vm.show new AssessmentRunView model: assessment
 
   widgetLoad: () ->
+    console.log("widgetLoad");
     if typeof Tangerine.widgetLoaded == 'undefined'
       assessmentDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
       groupName = window.frameElement.getAttribute('groupName')
@@ -430,7 +431,7 @@ class Router extends Backbone.Router
       i = 0
       type = null
       insertRecord = ->
-  #      console.log("i: " + i + " assessmentDocs[i]: " + JSON.stringify(assessmentDocs[i]))
+#        console.log("i: " + i + " assessmentDocs[i]: " + JSON.stringify(assessmentDocs[i]))
         Tangerine.db
           .put(assessmentDocs[i])
           .then( (response) ->
@@ -445,6 +446,8 @@ class Router extends Backbone.Router
               insertRecord()
             else
               Tangerine.widgetLoaded = true
+              Tangerine.bootSequence.loadLesson()
+#              Tangerine.bootSequence.initMenu()
               Backbone.history.navigate('#widget-play/' + type + '/' + assessmentId, {trigger: true})
           )
           .catch( (error) ->

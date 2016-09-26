@@ -880,3 +880,5 @@ Handlebars.registerHelper('monthDropdown', (months, currentMonth)->
     return out
   renderOption(month, currentMonth) for month in months
 )
+
+

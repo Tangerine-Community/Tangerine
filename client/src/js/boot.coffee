@@ -65,6 +65,21 @@ Tangerine.bootSequence =
       return callback() unless error
 
       console.log "initializing database"
+#      return unless doc.collection is "lessonPlan"
+
+      byLessonDesignDoc = createDesignDoc('byLesson', (doc) ->
+        if doc.collection == "lessonPlan"
+          emit [doc.lessonPlan_subject, doc.lessonPlan_grade, doc.lessonPlan_week, doc.lessonPlan_day], null
+      )
+
+      db.put(byLessonDesignDoc).then((doc) ->
+        console.log("byLesson created")
+        db.query('byLesson', {stale: 'update_after'})
+#       Backbone.sync.defaults.db.viewCleanup()
+      ).catch((err) ->
+        if err.name == 'conflict'
+          console.log("byLesson exists.")
+      )
 
       # Save views
       db.put(
@@ -74,23 +89,19 @@ Tangerine.bootSequence =
             Used for replication.
             Will give one key for all documents associated with an assessment or curriculum.
           ###
-          byDKey:
-            map: ((doc) ->
-              return if doc.collection is "result"
-
-              if doc.curriculumId
-                id = doc.curriculumId
-                # Do not replicate klasses
-                return if doc.collection is "klass"
-              else
-                id = doc.assessmentId
-
-              emit id.substr(-5,5), null
-            ).toString()
-          byLesson:
-            map: ((doc) ->
-              return unless doc.collection is "patient-records" or doc.collection is "incident"
-              emit [doc.subject, doc.grade, doc.week, doc.day], null).toString()
+#          byDKey:
+#            map: ((doc) ->
+#              return if doc.collection is "result"
+#
+#              if doc.curriculumId
+#                id = doc.curriculumId
+#                # Do not replicate klasses
+#                return if doc.collection is "klass"
+#              else
+#                id = doc.assessmentId
+#
+#              emit id.substr(-5,5), null
+#            ).toString()
           byCollection:
             map : ( (doc) ->
 
@@ -343,22 +354,35 @@ Tangerine.bootSequence =
   
   initMenu: (done) ->
     Tangerine.MenuView   = new LessonMenuView available: Tangerine.available
-    Tangerine.MenuView.setElement($("#menu")).render()
-    done()
+    Tangerine.MenuView.setElement($("#header-region")).render()
+    if typeof done != 'undefined'
+      done()
 
-loadLesson: (done) ->
-    Mmlp.$db.view "by/lesson",
-      success: (response) =>
-        Mmlp.available = []
-        for row in response.rows
-          subject = Mmlp.enum.subjects[row.key[0]]
-          grade   = row.key[1]
-          week    = row.key[2]
-          day     = row.key[3]
-          Mmlp.available.push [subject, grade, week, day]
-        if window.location.hash is ""
-          window.location.hash = "lesson/#{Mmlp.available[0][0]}/#{Mmlp.available[0][1]}/#{Mmlp.available[0][2]}/#{Mmlp.available[0][3]}"
-        done()
+  loadLesson: (done) ->
+    console.log("Load lesson")
+#    Tangerine.db.query("_design/#{Tangerine.conf.design_doc}/views/byLesson",
+#    Tangerine.db.query("byLesson",
+    Tangerine.db.allDocs(
+      include_docs : true
+    ).then (response) ->
+#        success: (response) =>
+      Tangerine.available = []
+      for row in response.rows
+        collection = row.doc.collection
+        console.log("collection: " + collection)
+        if (collection == "lessonPlan")
+          subject = Tangerine.enum.subjects[row.doc.lessonPlan_subject]
+          grade   = row.doc.lessonPlan_grade
+          week    = row.doc.lessonPlan_week
+          day     = row.doc.lessonPlan_day
+          console.log("Lessons available: " + [subject, grade, week, day])
+          Tangerine.available.push [subject, grade, week, day]
+      Tangerine.bootSequence.initMenu()
+
+      if window.location.hash is ""
+        window.location.hash = "lesson/#{Tangerine.available[0][0]}/#{Tangerine.available[0][1]}/#{Tangerine.available[0][2]}/#{Tangerine.available[0][3]}"
+    if typeof done != 'undefined'
+      done()
 
 Tangerine.boot = ->
 
@@ -374,7 +398,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.loadLesson
-    Tangerine.bootSequence.initMenu #inits the IMLP Menu
+#    Tangerine.bootSequence.initMenu #inits the IMLP Menu
     Tangerine.bootSequence.startBackbone
 #    Tangerine.bootSequence.monitorBrowserBack
   ]
@@ -382,3 +406,30 @@ Tangerine.boot = ->
   Utils.execute sequence
 
 Tangerine.boot()
+
+Tangerine.enum =
+  subjects :
+    1 : "Afaan Oromo"
+    2 : "Af-Somali"
+    3 : "Amharic"
+    4 : "Hadiyyisa"
+    5 : "Sidaamu Afoo"
+    6 : "Tigrinya"
+    7 : "Wolayttatto"
+  iSubjects :
+    "Afaan Oromo": "1"
+    "Af-Somali" : "2"
+    "Amharic" : "3"
+    "Hadiyyisa" : "4"
+    "Sidaamu Afoo" : "5"
+    "Tigrinya" : "6"
+    "Wolayttatto" : "7"
+
+createDesignDoc = (name, mapFunction) ->
+  ddoc = {
+    _id: '_design/' + name,
+    views: {
+    }
+  };
+  ddoc.views[name] = { map: mapFunction.toString() };
+  return ddoc;
