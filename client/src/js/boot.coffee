@@ -87,7 +87,10 @@ Tangerine.bootSequence =
 
               emit id.substr(-5,5), null
             ).toString()
-
+          byLesson:
+            map: ((doc) ->
+              return unless doc.collection is "patient-records" or doc.collection is "incident"
+              emit [doc.subject, doc.grade, doc.week, doc.day], null).toString()
           byCollection:
             map : ( (doc) ->
 
@@ -333,6 +336,25 @@ Tangerine.bootSequence =
       sendTo = Backbone.history.getFragment()
       Tangerine.router.navigate(sendTo, { trigger: true, replace: true })
     )
+  
+  initMenu: (done) ->
+    Tangerine.MenuView   = new LessonMenuView available: Tangerine.available
+    Tangerine.MenuView.setElement($("#menu")).render()
+    done()
+
+loadLesson: (done) ->
+    Mmlp.$db.view "by/lesson",
+      success: (response) =>
+        Mmlp.available = []
+        for row in response.rows
+          subject = Mmlp.enum.subjects[row.key[0]]
+          grade   = row.key[1]
+          week    = row.key[2]
+          day     = row.key[3]
+          Mmlp.available.push [subject, grade, week, day]
+        if window.location.hash is ""
+          window.location.hash = "lesson/#{Mmlp.available[0][0]}/#{Mmlp.available[0][1]}/#{Mmlp.available[0][2]}/#{Mmlp.available[0][3]}"
+        done()
 
 Tangerine.boot = ->
 
@@ -347,6 +369,8 @@ Tangerine.boot = ->
     Tangerine.bootSequence.loadI18n
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
+    Tangerine.bootSequence.loadLesson
+    Tangerine.bootSequence.initMenu #inits the IMLP Menu
     Tangerine.bootSequence.startBackbone
 #    Tangerine.bootSequence.monitorBrowserBack
   ]
