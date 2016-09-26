@@ -26,3 +26,5 @@ client/src/lesson_plan_media/
 data/couchdb
 
 .DS_Store
+
+npm-debug.log
