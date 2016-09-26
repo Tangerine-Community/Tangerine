@@ -157,6 +157,12 @@ Tangerine.bootSequence =
     $("#footer").append("<div id='version'>#{Tangerine.version}-#{Tangerine.buildVersion}</div>")
     callback()
 
+  # load templates
+  fetchTemplates: ( callback ) ->
+    (Tangerine.templates = new Template "_id" : "templates").fetch
+      error: -> alert "Could not load templates."
+      success: callback
+
   # get our local Tangerine settings
   # these do tend to change depending on the particular install of the
   fetchSettings : ( callback ) ->
@@ -355,6 +361,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.loadI18n
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.getLocationList
+    Tangerine.bootSequence.fetchTemplates
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone
 #    Tangerine.bootSequence.monitorBrowserBack

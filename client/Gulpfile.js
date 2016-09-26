@@ -380,6 +380,7 @@ conf.fileOrder = [
   'AssessmentListElementView',
   'AssessmentsMenuView',
   'AssessmentRunView',
+  'AssessmentEditView',
   'AssessmentSyncView',
   'AssessmentDataEntryView',
 
@@ -389,6 +390,10 @@ conf.fileOrder = [
   'Subtests',
   'SubtestRunView',
   'SubtestRunItemView',
+  'SubtestEditView',
+  'SubtestListEditView',
+  'SubtestListElementView',
+  'SubtestPrintView',
 
   'Question',
   'Questions',
@@ -521,6 +526,8 @@ conf.fileOrder = [
   'ViewManager',
 
   'NavigationView',
+
+  'Template',
 
   'router',
 
