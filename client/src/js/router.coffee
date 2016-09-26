@@ -19,10 +19,13 @@ class Router extends Backbone.Router
 
   routes:
     'workflow/run/:workflowId'  : 'workflowRun'
+    'workflow/edit/:workflowId'  : 'workflowEdit'
     'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
     'workflows': 'workflows'
     'widget'   : 'widgetLoad'
     'widget-play/:id' : 'widgetPlay'
+    'feedback/edit/:workflowId' : 'feedbackEdit'
+    'feedback/:workflowId'      : 'feedback'
     'login'    : 'login'
     'register' : 'register'
     'logout'   : 'logout'
@@ -89,6 +92,16 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+
+  edit: (id) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        assessment = new Assessment
+          "_id" : id
+        assessment.deepFetch
+          success : ( res ) ->
+            view = new AssessmentEditView model: assessment 
+            vm.show view
 
 
   admin: (options) ->
@@ -160,6 +173,40 @@ class Router extends Backbone.Router
                   feedback : feedback
                   workflow : workflow
                 Tangerine.app.rm.get('mainRegion').show view
+
+  feedbackEdit: ( workflowId ) ->
+      Tangerine.user.verify
+        isAuthenticated: ->
+
+          showFeedbackEditor = ( feedback, workflow ) ->
+            feedback.updateCollection()
+            view = new FeedbackEditView
+              feedback: feedback
+              workflow: workflow
+            vm.show view
+
+          workflow = new Workflow "_id" : workflowId
+          workflow.fetch
+            success: ->
+              feedbackId = "#{workflowId}-feedback"
+              feedback   = new Feedback "_id" : feedbackId
+              feedback.fetch
+                error:   -> feedback.save null, success: -> showFeedbackEditor(feedback, workflow)
+                success: -> showFeedbackEditor(feedback, workflow)
+
+
+
+
+  workflowEdit: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            view = new WorkflowEditView workflow : workflow
+            vm.show view
+
 
 
   workflowRun: ( workflowId ) ->
