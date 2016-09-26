@@ -166,9 +166,9 @@ class WorkflowMenuView extends Backbone.View
     htmlWorkflows = ""
 
     @workflows.models.sort( (a,b) ->
-      if a.get('name').toLowerCase() < b.get('name').toLowerCase()
+      if a.has('name') and b.has('name') and a.get('name').toLowerCase() < b.get('name').toLowerCase()
         return -1
-      else if a.get('name').toLowerCase() > b.get('name').toLowerCase()
+      else if a.has('name') and b.has('name') and a.get('name').toLowerCase() > b.get('name').toLowerCase()
         return 1
       else
         return 0
