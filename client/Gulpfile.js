@@ -537,7 +537,9 @@ conf.fileOrder = [
 
   'locales',
 
+  'views',
   'boot'
+
 
 ];
 
