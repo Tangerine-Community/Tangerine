@@ -358,8 +358,8 @@ Tangerine.bootSequence =
     if typeof done != 'undefined'
       done()
 
-  loadLesson: (done) ->
-    console.log("Load lesson")
+  loadTangerineAvailable: (done) ->
+    console.log("Load lessons into Tangerine.available")
 #    Tangerine.db.query("_design/#{Tangerine.conf.design_doc}/views/byLesson",
 #    Tangerine.db.query("byLesson",
     Tangerine.db.allDocs(
@@ -375,17 +375,17 @@ Tangerine.bootSequence =
           grade   = row.doc.lessonPlan_grade
           week    = row.doc.lessonPlan_week
           day     = row.doc.lessonPlan_day
-          console.log("Lessons available: " + [subject, grade, week, day])
-          Tangerine.available.push [subject, grade, week, day]
-      Tangerine.bootSequence.initMenu()
+          id      = row.doc._id
+          console.log("Lessons available: " + [subject, grade, week, day, id])
+          Tangerine.available.push [subject, grade, week, day, id]
+#      Tangerine.bootSequence.initMenu()
 
-      if window.location.hash is ""
-        window.location.hash = "lesson/#{Tangerine.available[0][0]}/#{Tangerine.available[0][1]}/#{Tangerine.available[0][2]}/#{Tangerine.available[0][3]}"
+#      if window.location.hash is ""
+#        window.location.hash = "lesson/#{Tangerine.available[0][0]}/#{Tangerine.available[0][1]}/#{Tangerine.available[0][2]}/#{Tangerine.available[0][3]}"
     if typeof done != 'undefined'
       done()
 
 Tangerine.boot = ->
-
   sequence = [
     Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.basicConfig
@@ -397,7 +397,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.loadI18n
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
-    Tangerine.bootSequence.loadLesson
+    Tangerine.bootSequence.loadTangerineAvailable
 #    Tangerine.bootSequence.initMenu #inits the IMLP Menu
     Tangerine.bootSequence.startBackbone
 #    Tangerine.bootSequence.monitorBrowserBack

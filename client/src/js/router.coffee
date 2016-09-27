@@ -68,6 +68,7 @@ class Router extends Backbone.Router
 
     'run/:id'       : 'run'
     'runMar/:id'       : 'runMar'
+    'lesson/:subject/:grade/:week/:day' : 'lesson'
     'print/:id/:format'       : 'print'
     'dataEntry/:id' : 'dataEntry'
 
@@ -446,7 +447,7 @@ class Router extends Backbone.Router
               insertRecord()
             else
               Tangerine.widgetLoaded = true
-              Tangerine.bootSequence.loadLesson()
+              Tangerine.bootSequence.loadTangerineAvailable()
 #              Tangerine.bootSequence.initMenu()
               Backbone.history.navigate('#widget-play/' + type + '/' + assessmentId, {trigger: true})
           )
@@ -499,6 +500,9 @@ class Router extends Backbone.Router
           view = new LessonPlanItemView
             model: lessonPlan
           dashboardLayout.contentRegion.show(view)
+          Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
+          dashboardLayout.headerRegion.reset();
+          dashboardLayout.headerRegion.show(Tangerine.LessonMenuView)
         error: (model, err, cb) ->
           console.log JSON.stringify err
 
@@ -507,18 +511,6 @@ class Router extends Backbone.Router
     Tangerine.user.verify
       isAuthenticated: ->
         router.navigateAwayMessage = t("Router.message.quit_assessment")
-#        assessment = new Assessment "_id" : id
-#        assessment.deepFetch
-#          success : ->
-#            dashboardLayout = new DashboardLayout();
-#            Tangerine.app.rm.get('mainRegion').show dashboardLayout
-#            dashboardLayout.contentRegion.reset()
-#            assessmentCompositeView = new AssessmentCompositeView
-#              assessment: assessment
-#            dashboardLayout.contentRegion.show(assessmentCompositeView)
-#          error: (model, err, cb) ->
-#            console.log JSON.stringify err
-
         lessonPlan = new LessonPlan "_id" : id
         lessonPlan.deepFetch
           success : ->
@@ -529,8 +521,37 @@ class Router extends Backbone.Router
             view = new LessonPlanItemView
               model: lessonPlan
             dashboardLayout.contentRegion.show(view)
+            Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
+            dashboardLayout.headerRegion.reset();
+            dashboardLayout.headerRegion.show(Tangerine.LessonMenuView)
           error: (model, err, cb) ->
             console.log JSON.stringify err
+
+  lesson: (options...) ->
+    console.log("lesson route")
+    subject = options[0]
+    grade   = options[1]
+    week    = options[2]
+    day     = options[3]
+
+#    Tangerine.LessonPlanItemView.select subject, grade, week, day
+    subject = Tangerine.enum.iSubjects[subject]
+
+#    menu = Tangerine.MenuView
+#    menu.updateSubject()
+#    menu.$subject.val(subjectName)
+#    menu.onSubjectChange()
+#    menu.$grade.val(grade)
+#    menu.onGradeChange()
+#    menu.$week.val(week)
+#    menu.onWeekChange()
+#    menu.$day.val(day)
+
+    lesson = new Lesson
+    lesson.fetch subject, grade, week, day, =>
+      console.log("got the lesson. TBD - now run runMar")
+      id = lesson.get(id)
+      @runMar(id)
 
   resume: (assessmentId, resultId) ->
     router = this

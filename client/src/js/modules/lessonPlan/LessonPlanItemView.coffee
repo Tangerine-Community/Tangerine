@@ -3,6 +3,11 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
 # for Backbone.Marionette.CompositeView Composite Model
   template: JST["LessonPlanItemView"],
 
+  className : "LessonPlanItemView"
+
+#  initialize: () ->
+#    @lesson = new Lesson
+
   onBeforeRender: () ->
 #    console.log("onBeforeRender")
     @model.set("groupName", Tangerine.settings.get("groupName"))
@@ -56,5 +61,22 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
       return {
         items: @serializeCollection.apply(@, args)
       };
+
+#  select: (subjectName, grade, week, day) ->
+#
+#    subject = Tangerine.enum.iSubjects[subjectName]
+#
+#    menu = Tangerine.MenuView
+#    menu.updateSubject()
+#    menu.$subject.val(subjectName)
+#    menu.onSubjectChange()
+#    menu.$grade.val(grade)
+#    menu.onGradeChange()
+#    menu.$week.val(week)
+#    menu.onWeekChange()
+#    menu.$day.val(day)
+#
+#    @lesson.fetch subject, grade, week, day, =>
+#      @render()
 
 

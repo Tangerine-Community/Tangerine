@@ -14,7 +14,11 @@ class Lesson extends Backbone.Model
     callback = splat[4]
     error    = splat[5]
 
-    Mmlp.$db.view "mmlp/lesson",
+#    Tangerine.$db.view "mmlp/lesson",
+#    $.couch.db(Tangerine.db_name).view "#{Tangerine.design_doc}/byLesson",
+#    $.couch.db(Tangerine.db_name).view "byLesson",
+#    Tangerine.db.query("byLesson",
+    Tangerine.db.query("_design/byLesson/byLesson",
       include_docs: true
       key: [ @subject, @grade, @week, @day ]
       success: (response) =>
@@ -22,168 +26,14 @@ class Lesson extends Backbone.Model
         attributes = _(response.rows).first().doc
         @set attributes
         callback?()
-      error: =>
-        error?()
-
-class LessonView extends Backbone.View
-
-  className : "LessonView"
-  
-  initialize: () ->
-    @lesson = new Lesson
-
-  render : =>
-
-    # nothing to render. render tripped early
-    return unless @lesson.get("grade")?
-
-    unless @lesson.has("subject")
-    
-      return @$el.html "
-        <div class='lesson-language'>#{@lesson.subject}</div>
-        <div class='lesson-info'>
-          class #{@lesson.grade}<br>
-          week #{@lesson.week} day #{@lesson.day}
-        </div>
-        <p>No lesson plan available.</p>
-      "
-
-    subject    = Mmlp.enum.subjects[@lesson.get("subject")]
-
-    grade      = @lesson.get("grade")
-
-    day        = @lesson.get("day")
-    week       = @lesson.get("week")
-
-    lessonText = @lesson.get("lessonText")
-
-
-    replaces = [
-      { # remove font size css
-        from : [/font\-size(.+?);/g]
-        to   : ''
-      },
-      { # fix audio links
-        from : [/src="lessons/g]
-        to   : "src=\"%2Fmmlp%2F_design%2Flessons"
-      },
-      { # fix audio links
-        from : [/src='lessons/g]
-        to   : "src=\'%2Fmmlp%2F_design%2Flessons"
-      },
-      { # fix urls
-        from : [/%2F/g]
-        to   : "/"
-      },
-      {
-        from: ["▄"]
-        to:'<img src="/mmlp/_design/mmlp/img/rectangle.png">'
-      },
-      {
-        from: ["▲"]
-        to:'<img src="/mmlp/_design/mmlp/img/triangle.png">'
-      },
-      {
-        from: ["⬬"]
-        to: '<img src="/mmlp/_design/mmlp/img/ellipse.png">'
-      }
-    ]
-
-
-    for element in replaces
-      for oneFrom in element.from
-        lessonText = lessonText.replace oneFrom, element.to
-
-
-    $lesson = $(lessonText)
-
-    $lesson.find("audio").each ( i, a ) ->
-      $a = $(a)
-      $a.attr "controls", false
-      $a.after "<button onClick='$(this).prev().prev()[0].pause();'>Pause</button>"
-      $a.after "<button onClick='$(this).prev()[0].play();'>Play</button>"
-
-
-    $specialSpans = $lesson.find("span[style]").filter (i, a) ->
-        style = $(a).attr('style')
-        ~style.indexOf("Webdings") or 
-        ~style.indexOf("Wingdings")
-
-    $specialSpans.each (i, a) ->
-      $a = $(a)
-
-      char = $.trim($a.html()).replace('&nbsp;','')
-
-      if      char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/home.png">')
-      else if char is "?"
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/hand.png">')
-      else if char is "&acute;" or char is "´" or char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/question.png">')
-      else if char is"" or char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/speak.png">')
-      else if char is '&amp;' or char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/book.png">')
-      else if char is "" or char is "p" or char is "" or char is "▲"
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/triangle.png">')
-      else if char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/star.png">')
-      else if char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/circle.png">')
-      else if char is "" or char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/square.png">')
-      else if char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/diamond.png">')
-      else if char is "" or char is "$"
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/glasses.png">')
-      else if char is "C"
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/thumbs-up.png">')
-      else if char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/listen.png">')
-      else if char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/music.png">')
-      else if char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/lips.png">')
-      else if char is "" or char is ""
-        $a.replaceWith('<img src="/mmlp/_design/mmlp/img/hollow.png">')
-
-
-    imageUrls  = @lesson.get("image")
-
-    imageHtml = ("<img src='/mmlp/_design/#{decodeURIComponent(url)}'>" for url in imageUrls).join('')
-
-    @$el.html "
-      <div class='clearfix'>
-        <div class='lesson-language'>#{subject}</div>
-        <div class='lesson-info'>
-          class #{grade}<br>
-          week #{week} day #{day}
-        </div>
-      </div>
-      <div class='image-container'>#{imageHtml}</div>
-      <div class='lesson-text'></div>
-    "
-
-    @$el.find(".lesson-text").append $lesson
-
-
-  select: (subjectName, grade, week, day) ->
-
-    subject = Mmlp.enum.iSubjects[subjectName]
-
-    menu = Mmlp.MenuView
-    menu.updateSubject()
-    menu.$subject.val(subjectName)
-    menu.onSubjectChange()
-    menu.$grade.val(grade)
-    menu.onGradeChange()
-    menu.$week.val(week)
-    menu.onWeekChange()
-    menu.$day.val(day)
-
-    @lesson.fetch subject, grade, week, day, => 
-      @render()
-
+      error: (err) =>
+        console.log("Error: " + JSON.stringify(err))
+    ).then (response) ->
+#      return error?() if response.rows.length is 0
+      console.log("response: " + JSON.stringify(response))
+      attributes = _(response.rows).first().doc
+      @set attributes
+      callback?()
 
 class LessonMenuView extends Backbone.View
 
@@ -294,12 +144,13 @@ class LessonMenuView extends Backbone.View
     alreadyDone = []
     for element in @available
       day = element[3]
-      if element[0] is selectedSubject and 
+      id = element[4]
+      if element[0] is selectedSubject and
          element[1] is selectedGrade and 
          element[2] is selectedWeek and
          !~alreadyDone.indexOf(day)
 
-        rows.push order:day, html: "<option value='#{day}'>#{day}</option>"
+        rows.push order:day, html: "<option value='#{day}_#{id}'>#{day}</option>"
 
     html = rows.sort((a, b)->a.order-b.order).map((e)->e.html).join('')
     html = "<option disabled='disabled' selected='true'>Select</option>" + html
@@ -312,23 +163,13 @@ class LessonMenuView extends Backbone.View
     grade   = @$grade.val()
     week    = @$week.val()
     day     = @$day.val()
+    dayArr = day.split("_")
+    id = dayArr[1]
 
-    Mmlp.router.navigate "lesson/#{subject}/#{grade}/#{week}/#{day}", false
+#    Tangerine.router.navigate "lesson/#{subject}/#{grade}/#{week}/#{day}", false
+    Tangerine.router.navigate "runMar/#{id}", false
     window.location.reload()
 
-class MmlpRouter extends Backbone.Router
-
-  routes: 
-    'lesson/:subject/:grade/:week/:day' : 'lesson'
-
-  lesson: (options...) ->
-
-    subject = options[0]
-    grade   = options[1]
-    week    = options[2]
-    day     = options[3]
-
-    Mmlp.LessonView.select subject, grade, week, day
 
 
 
