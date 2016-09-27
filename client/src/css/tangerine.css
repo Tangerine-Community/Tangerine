@@ -639,17 +639,17 @@ progress {
 #watermark {
   float: right;
   text-align: center;
-  padding: 10px 0 10px 7px;
+  padding: 10px 10px 10px 7px;
   margin: 0 15px 0 0;
   background: white;
   border-radius: 10px;
   display: inline-block;
 }
 #watermark img {
-  opacity: 0.5;
+  opacity: 0.9;
 }
 #footer {
-  background: #F6C637 url("../images/noise.png");
+  background: #556eb3 url("../images/noise.png");
   width: 100%;
   height: 77px;
   -moz-box-shadow: 0 15px 30px 5px rgba(0, 0, 0, 0.3);

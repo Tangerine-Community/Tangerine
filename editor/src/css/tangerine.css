@@ -468,11 +468,11 @@ table.grid .end_of_grid_line {
   margin: 5px;
   padding: 5px 5px;
   cursor: pointer;
-  background: #F6C637 !important;
+  background: #556eb3 !important;
   color: white !important;
   font-weight: bold;
   font-size: 40px;
-  border: 5px solid #F6C637;
+  border: 5px solid #556eb3;
   text-align: center;
   border-radius: 10px;
   -moz-border-radius: 10px;
@@ -521,13 +521,13 @@ button.time {
   font-size: 25px;
   margin: 0 15px 10px 6px;
   color: white;
-  background-color: #F49B00;
+  background-color: #f1dd42;
   border: 0 !important;
   border-radius: 10px !important;
   font-weight: normal;
 }
 button.time:active {
-  background-color: #F6C637;
+  background-color: #556eb3;
 }
 div.timer {
   min-width: 60px;
@@ -637,17 +637,17 @@ progress {
 #watermark {
   float: right;
   text-align: center;
-  padding: 10px 0 10px 7px;
-  margin: 0 15px 0 0;
+  padding: 5px 5px 5px 5px;
+  margin: 5px 15px 0 0;
   background: white;
   border-radius: 10px;
   display: inline-block;
 }
 #watermark img {
-  opacity: 0.5;
+  opacity: 0.9;
 }
 #footer {
-  background: #F6C637 url("../images/noise.png");
+  background: #556eb3 url("../images/noise.png");
   width: 100%;
   height: 77px;
   -moz-box-shadow: 0 15px 30px 5px rgba(0, 0, 0, 0.3);
@@ -723,7 +723,7 @@ progress {
 #navigation {
   font-size: 18px;
   position: relative;
-  background: #F6C637 url("../images/noise.png");
+  background: #556eb3 url("../images/noise.png");
   display: none;
   -moz-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
   -webkit-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
@@ -756,10 +756,10 @@ progress {
   height: 30px;
   padding: 15px 10px 6px 10px;
   color: white;
-  background: #F49B00;
+  background: #f1dd42;
 }
 #navigation #logout:hover {
-  background: #F6C637;
+  background: #556eb3;
 }
 #navigation #navigation-logo {
   cursor: pointer;
@@ -774,20 +774,20 @@ progress {
 }
 #navigation #username-dropdown li {
   width: 100%;
-  border-top: 2px solid #F49B00;
-  background-color: #F6C637;
+  border-top: 2px solid #f1dd42;
+  background-color: #556eb3;
   display: block;
 }
 #navigation #username-dropdown a:visited,
 #navigation #username-dropdown a {
   display: block;
   padding: 10px;
-  background-color: #F6C637;
+  background-color: #556eb3;
   text-decoration: none;
   color: white;
 }
 #navigation #username-dropdown a:hover {
-  background-color: #F49B00;
+  background-color: #f1dd42;
 }
 .assessment_menu {
   display: none;
@@ -1804,7 +1804,7 @@ button.navigation {
   display: inline-block;
   font-size: 22px;
   color: white;
-  background-color: #F49B00;
+  background-color: #f1dd42;
   border: 0 !important;
   margin: 10px 0 5px 0;
   padding: 7px 20px !important;
@@ -1814,7 +1814,7 @@ button.navigation {
   font-weight: normal;
 }
 button.navigation:active {
-  background-color: #F6C637;
+  background-color: #556eb3;
 }
 button.navigation:hover {
   background-color: #F26F10;
@@ -1847,7 +1847,7 @@ body.server button {
 }
 .command:active,
 .navigation:active {
-  background-color: #F6C637;
+  background-color: #556eb3;
 }
 .command:hover,
 .navigation:hover {
@@ -1880,7 +1880,7 @@ body.server button {
   color: black;
 }
 .command_red:active {
-  background-color: #F6C637;
+  background-color: #556eb3;
 }
 .command_red:hover {
   background-color: #F6EF9A;
@@ -1906,7 +1906,7 @@ body.server button {
   color: black;
 }
 .xtick:active {
-  background-color: #F6C637;
+  background-color: #556eb3;
 }
 .xtick:hover {
   background-color: #F6EF9A;
@@ -1978,7 +1978,7 @@ label.no_help {
   width: 99%;
   font-size: 25px;
   color: white;
-  background-color: #F49B00;
+  background-color: #f1dd42;
   border: 0 !important;
   margin: 20px 0 0;
   padding: 7px !important;
@@ -1994,7 +1994,7 @@ label.no_help {
   }
 }
 .LoginView button:active {
-  background-color: #F6C637;
+  background-color: #556eb3;
 }
 @media only screen and (max-width: 450px) {
   .LoginView #login_logo {
@@ -2021,7 +2021,7 @@ label.no_help {
 .LoginView .tab.selected {
   padding-bottom: 5px;
   border-bottom: none !important;
-  color: #f49b00;
+  color: #f1dd42;
   background: #fff;
 }
 .LoginView .tab_container {
@@ -2365,7 +2365,7 @@ body[rtl] {
   color: #666;
 }
 .ButtonView .selected {
-  background: #F6C637 !important;
+  background: #556eb3 !important;
   color: white !important;
 }
 .ButtonView .left {
@@ -2557,13 +2557,13 @@ table.tablesorter thead tr .headerSortUp {
 .ui-state-active,
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active {
-  background: #F6C637;
+  background: #556eb3;
   color: white;
 }
 .ui-state-active a,
 .ui-state-active a:link,
 .ui-state-active a:visited {
-  color: #F49B00;
+  color: #f1dd42;
   text-decoration: none;
 }
 .ui-widget :active {
@@ -2865,7 +2865,7 @@ button.ui-button::-moz-focus-inner {
 .ui-progressbar .ui-progressbar-value {
   margin: -1px;
   height: 100%;
-  background-color: #F6C637;
+  background-color: #556eb3;
 }
 /* Auto complete and menu */
 .ui-autocomplete {
