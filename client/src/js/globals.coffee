@@ -7,7 +7,9 @@ Tangerine =
       username = prompt("Please enter your username")
       password = prompt("Please enter your password")
       # TODO: We need the protocol environment variable, not hardcoded to https.
-      Tangerine.db.replicate.to('http://' + username + ':' + password + '@' + Tangerine.settings.get('hostname') + '/db/group-' + Tangerine.settings.get('groupName'))
+      uri = 'http://' + username + ':' + password + '@' + Tangerine.settings.get('hostname') + '/db/group-' + Tangerine.settings.get('groupName')
+      console.log 'Replicating with ' + uri
+      Tangerine.db.replicate.to(uri)
         .on 'complete', (info) ->
           alert 'Replication complete.'
           console.log(info)
@@ -20,7 +22,9 @@ Tangerine =
     pull: ->
       username = prompt("Please enter your username")
       password = prompt("Please enter your password")
-      Tangerine.db.replicate.from('http://' + username + ':' + password + '@' + Tangerine.settings.get('hostname') + '/db/group-' + Tangerine.settings.get('groupName'))
+      uri = 'http://' + username + ':' + password + '@' + Tangerine.settings.get('hostname') + '/db/group-' + Tangerine.settings.get('groupName')
+      console.log 'Replicating with ' + uri
+      Tangerine.db.replicate.from(uri)
         .on 'complete', (info) ->
           alert 'Replication complete.'
           console.log(info)
