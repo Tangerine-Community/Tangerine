@@ -830,7 +830,7 @@ class Router extends Backbone.Router
   #
   editSubtest: (id) ->
     Tangerine.user.verify
-      isAdmin: ->
+      isAuthenticated: ->
         id = Utils.cleanURL id
         subtest = new Subtest _id : id
         subtest.fetch
@@ -843,8 +843,6 @@ class Router extends Backbone.Router
                   model      : model
                   assessment : assessment
                 vm.show view
-      isUser: ->
-        Tangerine.router.landing()
 
   editKlassSubtest: (id) ->
 
@@ -884,7 +882,7 @@ class Router extends Backbone.Router
   #
   editQuestion: (id) ->
     Tangerine.user.verify
-      isAdmin: ->
+      isAuthenticated: ->
         id = Utils.cleanURL id
         question = new Question _id : id
         question.fetch
@@ -902,8 +900,6 @@ class Router extends Backbone.Router
                       "subtest"    : subtest
                       "assessment" : assessment
                     vm.show view
-      isUser: ->
-        Tangerine.router.landing()
 
 
   editKlassQuestion: (id) ->

@@ -120,6 +120,16 @@ Tangerine.bootSequence =
       error: -> alert "Could not load templates."
       success: callback
 
+  # Grab our system config doc. These generally don't change very often unless
+  # major system changes are required. New servers, etc.
+  fetchConfiguration: ( callback ) ->
+
+    Tangerine.config = new Config "_id" : "configuration"
+    Tangerine.config.fetch
+      error   : -> alert "Could not fetch configuration"
+      success : callback
+
+
   # get our local Tangerine settings
   # these do tend to change depending on the particular install of the
   fetchSettings : ( callback ) ->
@@ -313,6 +323,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.checkDatabase
     Tangerine.bootSequence.versionTag
     Tangerine.bootSequence.fetchSettings
+    Tangerine.bootSequence.fetchConfiguration
     Tangerine.bootSequence.guaranteeInstanceId
     Tangerine.bootSequence.documentReady
     Tangerine.bootSequence.loadI18n

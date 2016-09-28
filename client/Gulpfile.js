@@ -399,6 +399,9 @@ conf.fileOrder = [
   'Questions',
   'QuestionRunView',
   'QuestionRunItemView',
+  'QuestionEditView',
+  'QuestionsEditView',
+  'QuestionsEditListElementView',
 
   'WorkflowStep',
   'WorkflowSteps',
@@ -416,6 +419,7 @@ conf.fileOrder = [
 
 
   'SurveyRunItemView',
+  'SurveyEditView',
 
   'ConsentRunView',
   'ConsentRunItemView',
