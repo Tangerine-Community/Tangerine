@@ -430,6 +430,7 @@ conf.fileOrder = [
   'Loc',
   'LocView',
   'LocationRunView',
+  'LocationEditView',
   'LocationRunItemView',
 
   'SurveyRunView',
