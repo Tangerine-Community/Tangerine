@@ -40,6 +40,7 @@ class Router extends Backbone.Router
     '' : 'landing'
 
     'logs' : 'logs'
+    'reload' : 'reload'
 
     # Class
     'class'          : 'klass'
@@ -92,6 +93,10 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+
+  reload: ->
+    @navigate '', false
+    window.location.reload()
 
   edit: (id) ->
     Tangerine.user.verify
