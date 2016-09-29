@@ -364,10 +364,10 @@ class FeedbackTripsView extends Backbone.View
             <button class='command hide-feedback' data-trip-id='#{tripId}' style='display:none;'>Hide feedback</button>
           </td>
           <td>
-            #{lessonPlanButtonsHtml || ''}
+            <!-- TODO: Get this working. #{lessonPlanButtonsHtml || ''} -->
           </td>
           <td>
-            #{resultButtonHtml || ''}
+            <!-- TODO: Get this working. #{resultButtonHtml || ''} -->
           </td>
 
         </tr>
