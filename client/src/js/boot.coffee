@@ -371,13 +371,13 @@ Tangerine.bootSequence =
         collection = row.doc.collection
         console.log("collection: " + collection)
         if (collection == "lessonPlan")
-          subject = Tangerine.enum.subjects[row.doc.lessonPlan_subject]
-          grade   = row.doc.lessonPlan_grade
+#          subject = Tangerine.enum.subjects[row.doc.lessonPlan_subject]
+#          grade   = row.doc.lessonPlan_grade
           week    = row.doc.lessonPlan_week
           day     = row.doc.lessonPlan_day
           id      = row.doc._id
-          console.log("Lessons available: " + [subject, grade, week, day, id])
-          Tangerine.available.push [subject, grade, week, day, id]
+          console.log("Lessons available: " + [week, day, id])
+          Tangerine.available.push [week, day, id]
 #      Tangerine.bootSequence.initMenu()
 
 #      if window.location.hash is ""
@@ -397,7 +397,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.loadI18n
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
-    Tangerine.bootSequence.loadTangerineAvailable
+#    Tangerine.bootSequence.loadTangerineAvailable
 #    Tangerine.bootSequence.initMenu #inits the IMLP Menu
     Tangerine.bootSequence.startBackbone
 #    Tangerine.bootSequence.monitorBrowserBack

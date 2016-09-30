@@ -104,7 +104,23 @@ class AssessmentsMenuView extends Backbone.View
 
     @assessments.each (assessment) => assessment.on "new", @addAssessment
     @curricula.each   (curriculum) => curriculum.on "new", @addCurriculum
-    @lessonPlans.each   (lessonPlan) => lessonPlan.on "new", @addLessonPlan
+    Tangerine.available = [];
+    Tangerine.firstLessonId = null;
+    @lessonPlans.each   (lessonPlan) =>
+      lessonPlan.on "new", @addLessonPlan
+#      subject = Tangerine.enum.subjects[lessonPlan.get("lessonPlan_subject")]
+#      grade   = lessonPlan.get("lessonPlan_grade")
+      week    = lessonPlan.get("lessonPlan_week")
+      day     = lessonPlan.get("lessonPlan_day")
+      id      = lessonPlan.get("_id")
+      console.log("Lessons available: " + [week, day, id])
+      if week == '1' && day == '1'
+        Tangerine.firstLessonId = id
+        console.log("firstLesson: " + [week, day, id])
+      Tangerine.available.push [week, day, id]
+#    console.log("navigating to " + Tangerine.firstLessonId)
+#    Tangerine.router.navigate "run/" + Tangerine.firstLessonId, false
+#    window.location.reload()
 
     @curriculaListView = new CurriculaListView
       "curricula" : @curricula
@@ -120,6 +136,12 @@ class AssessmentsMenuView extends Backbone.View
     @usersMenuView = new UsersMenuView
 
   render: =>
+
+    Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
+#    dashboardLayout.headerRegion.reset();
+#    dashboardLayout.headerRegion.show(Tangerine.LessonMenuView)
+    Tangerine.LessonMenuView.setElement($("#menu")).render()
+
 
     isAdmin = Tangerine.user.isAdmin()
 
