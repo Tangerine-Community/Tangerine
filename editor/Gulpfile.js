@@ -419,6 +419,7 @@ conf.fileOrder = [
   'LessonPlanListElementView',
   'LessonPlanEditView',
   'LessonPlanRunView',
+  'LessonMenuView',
 
   'Teacher',
   'Teachers',

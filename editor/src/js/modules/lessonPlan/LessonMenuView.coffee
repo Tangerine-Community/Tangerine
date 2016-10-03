@@ -28,6 +28,8 @@ class LessonMenuView extends Backbone.View
       <select id='day' disabled><option disabled='disable' selected='true'>Select</option></select>
     "
 
+#    @$subject = @$el.find("#subject")
+#    @$grade   = @$el.find("#grade")
     @$week    = @$el.find("#week")
     @$day     = @$el.find("#day")
 
@@ -47,7 +49,10 @@ class LessonMenuView extends Backbone.View
 
   onWeekChange: ->
 
+#    selectedSubject = @$subject.val()
+#    selectedGrade   = @$grade.val()
     selectedWeek    = @$week.val()
+
     rows = []
     alreadyDone = []
     for element in @available
@@ -55,6 +60,7 @@ class LessonMenuView extends Backbone.View
       id = element[2]
       if element[0] is selectedWeek and !~alreadyDone.indexOf(day)
         rows.push order:day, html: "<option value='#{day}_#{id}'>#{day}</option>"
+
     html = rows.sort((a, b)->a.order-b.order).map((e)->e.html).join('')
     html = "<option disabled='disabled' selected='true'>Select</option>" + html
 
@@ -69,8 +75,8 @@ class LessonMenuView extends Backbone.View
     dayArr = day.split("_")
     id = dayArr[1]
 
-    #    Tangerine.router.navigate "lesson/#{subject}/#{grade}/#{week}/#{day}", false
-    Tangerine.router.navigate "runMar/#{id}", false
+#    Tangerine.router.navigate "lesson/#{subject}/#{grade}/#{week}/#{day}", false
+    Tangerine.router.navigate "run/#{id}", false
     window.location.reload()
 
 

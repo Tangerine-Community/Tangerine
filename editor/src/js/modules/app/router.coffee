@@ -55,6 +55,8 @@ class Router extends Backbone.Router
     'assessments'        : 'assessments'
 
     'run/:id'       : 'run'
+    'lesson/:subject/:grade/:week/:day' : 'lesson'
+
     'print/:id/:format'       : 'print'
     'dataEntry/:id' : 'dataEntry'
 
@@ -475,6 +477,21 @@ class Router extends Backbone.Router
 #                  docs: docs
                 view = new WidgetRunView model: docs
                 vm.show view
+
+  lesson: (options...) ->
+    console.log("lesson route")
+    subject = options[0]
+    grade   = options[1]
+    week    = options[2]
+    day     = options[3]
+
+    #    Tangerine.LessonPlanItemView.select subject, grade, week, day
+    subject = Tangerine.enum.iSubjects[subject]
+    lesson = new Lesson
+    lesson.fetch subject, grade, week, day, =>
+      console.log("got the lesson. TBD - now run runMar")
+      id = lesson.get(id)
+      @run(id)
 
   print: ( assessmentId, format ) ->
     Tangerine.user.verify

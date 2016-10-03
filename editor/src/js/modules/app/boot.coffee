@@ -129,6 +129,23 @@ Tangerine.bootSequence =
     Backbone.history.start()
     callback() # for testing
 
+Tangerine.enum =
+  subjects :
+    1 : "Afaan Oromo"
+    2 : "Af-Somali"
+    3 : "Amharic"
+    4 : "Hadiyyisa"
+    5 : "Sidaamu Afoo"
+    6 : "Tigrinya"
+    7 : "Wolayttatto"
+  iSubjects :
+    "Afaan Oromo": "1"
+    "Af-Somali" : "2"
+    "Amharic" : "3"
+    "Hadiyyisa" : "4"
+    "Sidaamu Afoo" : "5"
+    "Tigrinya" : "6"
+    "Wolayttatto" : "7"
 
 # callback is used for testing
 Tangerine.boot = (callback) ->
