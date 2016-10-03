@@ -1955,7 +1955,7 @@ label.no_help {
   width: 99%;
   font-size: 25px;
   color: white;
-  background-color: #F49B00;
+  background-color: #f1dd42;
   border: 0 !important;
   margin: 20px 0 0;
   padding: 7px !important;
@@ -2931,4 +2931,8 @@ button.ui-button::-moz-focus-inner {
   font-weight: bold;
   color: grey;
   line-height: 0.9em;
+}
+
+.LoginView img {
+  margin-bottom: 10px;
 }
