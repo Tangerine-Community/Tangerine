@@ -405,6 +405,7 @@ class Router extends Backbone.Router
         lessonPlans = new LessonPlans
         lessonPlans.fetch
           success: ->
+            Tangerine.available = []
             lessonPlans.each((lessonPlan) ->
 #              subject = Tangerine.enum.subjects[lessonPlan.get("lessonPlan_subject")]
 #              grade   = lessonPlan.get("lessonPlan_grade")
