@@ -416,6 +416,7 @@ class Router extends Backbone.Router
               Tangerine.available.push [week, day, id]
             )
             Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
+            dashboardLayout = new DashboardLayout();
             dashboardLayout.headerRegion.reset();
             dashboardLayout.headerRegion.show(Tangerine.LessonMenuView)
             assessmentsView = new AssessmentsMenuView
