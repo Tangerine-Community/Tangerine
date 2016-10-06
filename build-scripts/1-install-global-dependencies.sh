@@ -37,6 +37,7 @@ apt-get update && apt-get -y install \
     automake \
     libtool \
     bison \
+    jq \
     libffi-dev
 
 
