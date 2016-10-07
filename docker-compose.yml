@@ -2,5 +2,9 @@ version: '2'
 services:
   tangerine:
     image: tangerine/tangerine:0.4.8 
+    env_file: 
+      - 'config.env'
+    ports:
+      - "80:80"
     volumes:
       - "./.data/couchdb:/var/lib/couchdb"
