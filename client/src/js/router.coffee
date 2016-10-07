@@ -405,6 +405,7 @@ class Router extends Backbone.Router
         lessonPlans = new LessonPlans
         lessonPlans.fetch
           success: ->
+            Tangerine.available = []
             lessonPlans.each((lessonPlan) ->
 #              subject = Tangerine.enum.subjects[lessonPlan.get("lessonPlan_subject")]
 #              grade   = lessonPlan.get("lessonPlan_grade")
@@ -415,7 +416,7 @@ class Router extends Backbone.Router
               Tangerine.available.push [week, day, id]
             )
             Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
-#           dashboardLayout = new DashboardLayout();
+            dashboardLayout = new DashboardLayout();
             Tangerine.app.rm.get('mainRegion').show dashboardLayout
             dashboardLayout.contentRegion.reset()
             dashboardLayout.headerRegion.reset();
@@ -425,6 +426,7 @@ class Router extends Backbone.Router
               lessonPlans : lessonPlans
             # Tangerine.app.rm.get('mainRegion').show assessmentsView
             dashboardLayout.contentRegion.show(assessmentsView)
+
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
