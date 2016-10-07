@@ -7,6 +7,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 
 ENV T_HOST_NAME 127.0.0.1 
 ENV T_PROTOCOL http
+# T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
 ENV T_USER1 user1
 ENV T_USER1_PASSWORD password
 ENV T_TREE_HOSTNAME / 
@@ -15,6 +16,7 @@ ENV T_TREE_URL /tree
 # Set to "development" for live code reload of editor and client.
 ENV T_RUN_MODE production
 
+# T_ADMIN is the admin user for your database. Make sure to change this so the outside world does not have access.
 ENV T_ADMIN admin
 ENV T_PASS password
 ENV T_COUCH_HOST localhost
@@ -23,7 +25,7 @@ ENV T_ROBBERT_PORT 4444
 ENV T_TREE_PORT 4445
 ENV T_BROCKMAN_PORT 4446
 ENV T_DECOMPRESSOR_PORT 4447
-
+ENV PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT false
 #
 # Stage 1 - Install global dependecies
 #
