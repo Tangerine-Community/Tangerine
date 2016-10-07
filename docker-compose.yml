@@ -1,0 +1,6 @@
+version: '2'
+services:
+  tangerine:
+    image: tangerine/tangerine:0.4.8 
+    volumes:
+      - "./.data/couchdb:/var/lib/couchdb"
