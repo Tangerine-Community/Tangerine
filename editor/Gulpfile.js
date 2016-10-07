@@ -307,6 +307,8 @@ conf.fileOrder = [
 
   'helpers',
 
+  'DocumentsForClient',
+
   'ButtonView',
 
   'Assessment',
