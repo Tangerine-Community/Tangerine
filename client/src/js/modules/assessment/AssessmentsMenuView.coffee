@@ -76,7 +76,7 @@ class AssessmentsMenuView extends Backbone.View
         console.log("firstLesson: " + [week, day, id])
       Tangerine.available.push [week, day, id]
     console.log("navigating to " + Tangerine.firstLessonId)
-    Tangerine.router.navigate "run/" + Tangerine.firstLessonId, false
+    Tangerine.router.navigate "runMar/" + Tangerine.firstLessonId, false
     window.location.reload()
 
     @lessonPlansListView = new LessonPlansListView
