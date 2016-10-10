@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-source ./config.defaults.sh
 if [ -f "./config.sh" ]
 then
   source ./config.sh
@@ -20,11 +19,12 @@ docker run \
   --env "T_USER1_PASSWORD=$T_USER1_PASSWORD" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   --env "T_PROTOCOL=$T_PROTOCOL" \
-  --volume $T_VOLUMES/couchdb/:/var/lib/couchdb \
-  --volume $T_VOLUMES/apks/:/tangerine-server/tree/apks \
+  --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
+  --volume $(pwd)/data/apks/:/tangerine-server/tree/apks \
   --volume $(pwd)/editor/src:/tangerine-server/editor/src \
   --volume $(pwd)/editor/app:/tangerine-server/editor/app \
   --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \
+  --volume $(pwd)/entrypoint.sh:/tangerine-server/entrypoint.sh \
   --volume $(pwd)/client/src:/tangerine-server/client/src \
   --volume $(pwd)/client/Gulpfile.js:/tangerine-server/client/Gulpfile.js \
   tangerine/tangerine:$TANGERINE_VERSION
