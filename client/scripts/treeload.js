@@ -132,6 +132,13 @@ var logger = new winston.Logger({
 // Summarize this job
 logger.info(argv.group)
 
+// Set up a list of IDs we'll use for the inital database.
+var idList = []
+idList.push("settings");
+idList.push("configuration");
+idList.push("templates");
+idList.push("location-list");
+
 // delete any old packs if they're there
 del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])
   .then( function (paths) {
@@ -142,23 +149,15 @@ del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])
   .then(function checkGroupExistence() {
     return get(SOURCE_GROUP);
   })
-  .then(function getIds() {
-    // Get a list of _ids for the assessments not archived
-    return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/assessmentsNotArchived"))
-  })
   .then(function getAllDocs(res) {
-    // transform them to dKeys
-    let dKeyQuery = {
-      keys: res.body.rows.map((row) => row.id.substr(-5))
-    };
-
     // get a list of docs associated with those assessments
-    return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byDKey"), dKeyQuery)
+    return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byDKey"))
   })
   .then(function packLoop(res) {
 
-    var idList = res.body.rows.map((row) => row.id);
-    idList.push("settings");
+    res.body.rows.forEach(function(row) {
+      idList.push(row.id);
+    })
 
     var packIndex = 0;
     var padding = "0000";

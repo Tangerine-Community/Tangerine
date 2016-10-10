@@ -953,25 +953,19 @@ class TangerineTree
   @make: (options) ->
     success = options.success
     error = options.error
-    # Gather a list of document IDs we'll need and then hit allDocs with that as a keys list.
-    forClient = new DocumentsForClient()
-    forClient.fetch
-      success: ->
-        $.ajax
-          type     : 'POST'
-          crossDomain : true
-          url      : "#{Tangerine.config.get('tree')}/group-#{Tangerine.settings.get('groupName')}/#{Tangerine.settings.get('hostname')}"
-          dataType : 'json'
-          contentType: "application/json"
-          data     : JSON.stringify({"docs": forClient.toJSON()})
-          success: ( data ) =>
-            success data
-          error: ( data ) =>
-            error data, JSON.parse(data.responseText)
-          complete: ->
-            Utils.working false
-      error: ->
-        alert 'Unable to fetch documents for client. Check your connection.'
+    $.ajax
+      type     : 'POST'
+      crossDomain : true
+      url      : "#{Tangerine.config.get('tree')}/group-#{Tangerine.settings.get('groupName')}/#{Tangerine.settings.get('hostname')}"
+      dataType : 'json'
+      contentType: "application/json"
+      data     : {} 
+      success: ( data ) =>
+        success data
+      error: ( data ) =>
+        error data, JSON.parse(data.responseText)
+      complete: ->
+        Utils.working false
 
 ##UI helpers
 $ ->

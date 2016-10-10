@@ -1,5 +1,4 @@
-'use strict';
-
+'use strict'; 
 const Conf = require('../Conf');
 
 const Token = require('../Token');
@@ -63,8 +62,10 @@ const makeApk = function(req, res) {
 
     // assert a group name
     const groupNameRaw = req.params.group;
+    // sanitize the group name
+    var groupName = groupNameRaw.replace(/[^a-zA-Z0-9_\-]/,'')
+    groupName = groupName.replace('group-','')
     const hostname = req.params[0];
-    const docs = req.body.docs
     const emptyGroup = !groupNameRaw || groupNameRaw == ''
     if (emptyGroup) {
         return res
@@ -73,6 +74,9 @@ const makeApk = function(req, res) {
                 message : 'Missing group'
             });
     }
+
+    // Summarize this job
+    logger.info(groupName)
 
     // assert authorized user
     const notEvenLoggedIn = req.couchAuth.body.userCtx === undefined;
@@ -83,78 +87,57 @@ const makeApk = function(req, res) {
                 message : "You're not logged in."
             });
     }
-    //
-    // // assert a valid user within requested group
-    // logger.info("req.couchAuth.body.userCtx.roles: " + JSON.stringify(req.couchAuth.body))
-    // const notAssociated = req.couchAuth.body.userCtx.roles.indexOf(`admin-${groupNameRaw}`) === -1;
-    // if (notAssociated) {
-    //   return res
-    //     .status(HttpStatus.UNAUTHORIZED)
-    //     .json({
-    //       message : "Must be an admin to create APKs."
-    //     });
-    // }
 
-    // sanitize the group name
-    const groupName = groupNameRaw.replace(/[^a-zA-Z0-9_\-]/,'')
+    // assert a valid user within requested group
+    logger.info("req.couchAuth.body.userCtx.roles: " + JSON.stringify(req.couchAuth.body))
+    const notAssociated = req.couchAuth.body.userCtx.roles.indexOf(`admin-${groupName}`) === -1;
+    if (notAssociated) {
+       return res
+         .status(HttpStatus.UNAUTHORIZED)
+         .json({
+           message : "Must be an admin to create APKs."
+         });
+     }
 
     // make a token
     const token = Token.make();
 
-    // load the json packs
-    cd(`${__dirname}/../client`);
-
-    // Summarize this job
-    logger.info(groupName)
-
-// delete any old packs if they're there
-    del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])
+    // delete any old packs if they're there
+    del([ '/tangerine-server/tree/client/src/js/init/pack*.json' ])
         .then( function (paths) {
             if ( paths.length !== 0 ) {
                 logger.debug(`Old json packs deleted: ${paths.map((p)=>p.substring(Conf.PACK_PATH.length)).join(', ')}`);
             }
         })
         .then(function writeDocs(msg) {
-            let fileName = Path.join(Conf.PACK_PATH, `/pack0000.json`);
-            logger.log("logger fileName: " + fileName );
-            console.log("console fileName: " + fileName );
 
-            fs.writeFile(fileName, JSON.stringify(docs), function(err) {
-                if (err) {
-                    console.log("Error:" + err.stack)
-                    logger.error(err);
-                    return process.exit(1);
-                } else {
-                    console.log("building the apk for " + groupName);
+           // load the json packs
+           cd(`${__dirname}/../client`);
+           const treeLoad = exec(`npm run treeload --group=${groupName}`);
+           if (notOk(treeLoad, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
 
-                    // build the apk
-                    cd(`${__dirname}/../client`);
-                    const buildApk = exec(`npm run build:apk`);
-                    if (notOk(buildApk, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
+            // build the apk
+            cd(`${__dirname}/../client`);
+            const buildApk = exec(`npm run build:apk`);
+            if (notOk(buildApk, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
 
-                    // Make sure the directory is there
-                    cd(Conf.APP_ROOT_PATH);
+            // Make sure the directory is there
+            cd(Conf.APP_ROOT_PATH);
 
-                    console.log("APK built; moving APK, token: " + token)
+            console.log("APK built; moving APK, token: " + token)
 
-                    // move the apk to the right directory
-                    const execer = require('child_process').exec;
-                    execer(`mv ${Conf.APK_PATH} ${Conf.APP_ROOT_PATH}/apks/${token}`, (error, stdout, stderr) => {
-                      if (error) {
-                        console.error(`exec error: ${error}`);
-                        return;
-                      }
-                      console.log(`stdout: ${stdout}`);
-                      console.log(`stderr: ${stderr}`);
-                      res.status(HttpStatus.OK).json({
-                          token : token
-                      });
-                    })
-
-                    // move the x86 apk to the right directory
-                    // const moveX86Apk = mv(Conf.X86_APK_PATH, `apks/${token}-x86`);
-                    // if (notOk(moveX86Apk, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
-                }
+            // move the apk to the right directory
+            const execer = require('child_process').exec;
+            execer(`mv ${Conf.APK_PATH} ${Conf.APP_ROOT_PATH}/apks/${token}`, (error, stdout, stderr) => {
+              if (error) {
+                console.error(`exec error: ${error}`);
+                return;
+              }
+              console.log(`stdout: ${stdout}`);
+              console.log(`stderr: ${stderr}`);
+              res.status(HttpStatus.OK).json({
+                  token : token
+              });
             })
 
         })
