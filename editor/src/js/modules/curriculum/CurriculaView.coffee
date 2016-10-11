@@ -17,7 +17,7 @@ class CurriculaView extends Backbone.View
 
   render: ->
     @$el.html "
-      <button class='back navigation'>#{t('back')}</button><br>
+      <button class='back nav-button'>#{t('back')}</button><br>
       <button class='command import'>#{t('import')}</button>
       <br>
       <div id='curricula_list'></div>

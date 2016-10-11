@@ -10,9 +10,16 @@ class CurriculumView extends Backbone.View
     "click .edit_in_place"  : "editInPlace"
     'click .new_subtest'    : "newSubtest"
 
+    'change #file' : 'uploadFile'
+
     "focusout .editing" : "editing"
     "keyup    .editing" : "editing"
     "keydown  .editing" : "editing"
+
+    "click .name-controls .edit"   : "editName"
+    "click .name-controls .save"   : "saveName"
+    "click .name-controls .cancel" : "cancelEditName"
+
 
   initialize: (options) ->
 
@@ -20,7 +27,7 @@ class CurriculumView extends Backbone.View
     @curriculum = options.curriculum
     @subtests   = options.subtests
     @questions  = options.questions
-    @questionsBySubtestId = @questions.indexBy "subtestId"
+    @questionsByParentId = @questions.indexBy "subtestId"
 
     # primaries
     @totalAssessments  = Math.max.apply Math, @subtests.pluck("part")
@@ -28,8 +35,18 @@ class CurriculumView extends Backbone.View
     @subtestProperties = 
       "grid" : [
         {
+          "key"      : "itemType"
+          "label"    : "Item type"
+          "editable" : true
+        },
+        {
           "key"      : "part"
-          "label"    : "Assessment"
+          "label"    : "Term"
+          "editable" : true
+        },
+        {
+          "key"      : "grade"
+          "label"    : "Grade"
           "editable" : true
         },
         {
@@ -41,11 +58,6 @@ class CurriculumView extends Backbone.View
         {
           "key"      : "timer"
           "label"    : "Time<br>allowed"
-          "editable" : true
-        },
-        {
-          "key"      : "reportType"
-          "label"    : "Report"
           "editable" : true
         },
         {
@@ -73,25 +85,65 @@ class CurriculumView extends Backbone.View
         }
       ]
 
+  htmlFileTable: ->
+
+    return "" if _(@curriculum.getAttachments()).isEmpty()
+
+    prefixes = ["", "KB", "MB", "GB"]
+    html = "
+      <h2>Attachments</h2>
+      <table>
+    "
+    for attachment in @curriculum.getAttachments()
+      bytes = attachment.size
+      index  = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)))
+      size   = Math.decimals(bytes / Math.pow(1024, index), 1) + " " + prefixes[index]
+      html += "<tr><td>#{attachment.filename} (#{size})</td></tr>"
+
+    html += "</table>"
+
+    return html
+
+  uploadFile: (event) ->
+
+    file = event.target.files[0]
+
+    @curriculum.addAttachment
+      file: file
+      error: =>
+        Utils.midAlert "Error uploading."
+      success: =>
+        Utils.midAlert "File uploaded"
+      complete: =>
+        @curriculum.fetch
+          success: => @render()
+
 
   render: ->
 
     subtestTable = @getSubtestTable()
 
-    deleteButton = "<button class='command_red delete'>Delete</button>"
+    deleteButton = if Tangerine.settings.get("context") == "server" then "<button class='command_red delete'>Delete</button>" else ""
 
     newButtons = "
         <button class='command new_subtest' data-prototype='grid'>New Grid Subtest</button><br>
         <button class='command new_subtest' data-prototype='survey'>New Survey Subtest</button>
-    "
+        <div class='file_box'>
+          #{@htmlFileTable()}
+          <label for='file'>Upload file</label>
+          <input type='file' id='file'>
+        </div>
+
+    " if Tangerine.settings.get("context") == "server"
 
     html = "
 
-      <button class='navigation back'>#{t('back')}</button>
-      <h1>#{@curriculum.get('name')}</h1>
+      <button class='nav-button back'>#{t('back')}</button>
+      <h1 class='curriculum-name'></h1>
+      <small class='name-controls'></small><br>
 
       <div class='small_grey'>Download key <b>#{@curriculum.id.substr(-5,5)}</b></div>
-      
+
       <div id='subtest_table_container'>
         #{subtestTable}
       </div>
@@ -104,21 +156,69 @@ class CurriculumView extends Backbone.View
     "
 
     @$el.html html
+
+    @renderName()
+
     @trigger "rendered"
+
+  renderName: ->
+    @$el.find(".curriculum-name").html @curriculum.getEscapedString('name')
+    @$el.find(".name-controls").html "
+      <span class='edit'>Edit</span>
+    "
+
+  editName: ->
+    $h1 = @$el.find(".curriculum-name").html "<input class='new-name' value='#{@curriculum.getEscapedString('name')}'>"
+    $h1.find("input").select()
+    @$el.find(".name-controls").html "
+      <span class='save'>Save</span> 
+      <span class='cancel'>Cancel</span>
+    "
+  
+  saveName: ->
+    newName = @$el.find(".new-name").val()
+    @curriculum.save 
+      name : newName
+    ,
+      success: =>
+        Utils.topAlert "Name saved"
+        @renderName()
+      error: =>
+        Utils.topAlert "New name did not save. Please try again."
+        @renderName()
+
+  cancelEditName: -> @renderName()
 
   updateTable: -> @$el.find("#subtest_table_container").html @getSubtestTable()
 
-  getSubtestTable: ->
+  getSubtestTable: (grade) ->
 
     html = "<table class='subtests'>"
 
     html += "
       <tbody>
     "
-    @subtestsByPart = @subtests.indexArrayBy "part"
-    for part, subtests of @subtestsByPart
+
+    #if grade?
+    #  subtests = new Backbone.Collection @subtests.where grade : grade
+    #else
+    #  subtests = @subtests
+
+    @subtestByItemType = new Backbone.Collection(@subtests.models.sort( (a,b) -> 
+      a = "#{a.get("itemType")}#{a.get("part")}#{a.get("grade")}"
+      b = "#{b.get("itemType")}#{b.get("part")}#{b.get("grade")}"
+      if ( a < b )
+        return -1
+      if ( a > b )
+        return 1
+      return 0
+    )).indexArrayBy("itemType")
+
+    for part, subtests of @subtestByItemType
       html += "<tr><td>&nbsp;</td></tr>"
       for subtest in subtests
+        items = null
+        prompts = null
         headerHtml = bodyHtml = ""
 
         for prop in @subtestProperties[subtest.get("prototype")]
@@ -130,22 +230,23 @@ class CurriculumView extends Backbone.View
 
 
         # add buttons for serverside editing
-        html += "
-          <td>
-            <a href='#class/subtest/#{subtest.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>
-            <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
-            <a href='#class/run/test/#{subtest.id}'><img class='link_icon testRun' title='Test run' src='images/icon_run.png'></a>
-          </td>
-        </tr>
-        "
+        if Tangerine.settings.get("context") == "server"
+          html += "
+            <td>
+              <a href='#class/subtest/#{subtest.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>
+              <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
+              <a href='#class/run/test/#{subtest.id}'><img class='link_icon testRun' title='Test run' src='images/icon_run.png'></a>
+            </td>
+          </tr>
+          "
 
         # quick previews of subtest contents
         if subtest.get("prototype") == "grid"
           items = subtest.get("items").join " "
           html += "<tr><td colspan='#{@subtestProperties['grid'].length}'>#{items}</td></tr>"
         
-        if subtest.get("prototype") == "survey" && @questionsBySubtestId[subtest.id]?
-          prompts = (question.get("prompt") for question in @questionsBySubtestId[subtest.id]).join(", ")
+        if subtest.get("prototype") == "survey" && @questionsByParentId[subtest.id]?
+          prompts = (question.get("prompt") for question in @questionsByParentId[subtest.id]).join(", ")
           html += "<tr><td colspan='#{@subtestProperties['survey'].length}'>#{prompts}</td></tr>"
 
 
@@ -165,7 +266,7 @@ class CurriculumView extends Backbone.View
     value = "" if not value?
 
     # what is it
-    editOrNot   = if prop.editable then "class='edit_in_place'" else ""
+    editOrNot   = if prop.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
 
     numberOrNot = if _.isNumber(value) then "data-isNumber='true'" else "data-isNumber='false'" 
 
@@ -272,7 +373,10 @@ class CurriculumView extends Backbone.View
     return false
 
   goBack: -> 
-    Tangerine.router.navigate "assessments", true
+    if Tangerine.settings.get("context") == "server" 
+      Tangerine.router.navigate "assessments", true
+    else if Tangerine.settings.get("context") == "class"
+      Tangerine.router.navigate "class", true
 
   deleteCurriculum: ->
     if confirm("Delete curriculum\n#{@curriculum.get('name')}?")

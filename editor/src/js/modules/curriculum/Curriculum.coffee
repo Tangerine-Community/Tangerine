@@ -46,11 +46,11 @@ class Curriculum extends Backbone.Model
       success: =>
         questions = new Questions
         questions.fetch
-          key: "q" + originalId
+          key: originalId
           success: ( questions ) =>
             subtests = new Subtests
             subtests.fetch
-              key: "s" + originalId
+              key: originalId
               success: ( subtests ) =>
                 filteredSubtests = subtests.models
                 subtestIdMap = {}
@@ -112,6 +112,7 @@ class Curriculum extends Backbone.Model
         for row in response.rows
           # only absolutely necessary properties are sent back, _id, _rev, _deleted
           row.value["_deleted"] = true
+          row.value["deletedAt"] = Tangerine.settings.get("context")
           docs.push row.value
 
         requestData = 
