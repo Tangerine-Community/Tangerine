@@ -123,18 +123,13 @@ class CurriculumView extends Backbone.View
 
     subtestTable = @getSubtestTable()
 
-    deleteButton = if Tangerine.settings.get("context") == "server" then "<button class='command_red delete'>Delete</button>" else ""
+    deleteButton = "<button class='command_red delete'>Delete</button>"
 
     newButtons = "
         <button class='command new_subtest' data-prototype='grid'>New Grid Subtest</button><br>
         <button class='command new_subtest' data-prototype='survey'>New Survey Subtest</button>
-        <div class='file_box'>
-          #{@htmlFileTable()}
-          <label for='file'>Upload file</label>
-          <input type='file' id='file'>
-        </div>
 
-    " if Tangerine.settings.get("context") == "server"
+    "
 
     html = "
 
@@ -230,15 +225,14 @@ class CurriculumView extends Backbone.View
 
 
         # add buttons for serverside editing
-        if Tangerine.settings.get("context") == "server"
-          html += "
-            <td>
-              <a href='#class/subtest/#{subtest.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>
-              <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
-              <a href='#class/run/test/#{subtest.id}'><img class='link_icon testRun' title='Test run' src='images/icon_run.png'></a>
-            </td>
-          </tr>
-          "
+        html += "
+          <td>
+            <a href='#class/subtest/#{subtest.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>
+            <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
+            <a href='#class/run/test/#{subtest.id}'><img class='link_icon testRun' title='Test run' src='images/icon_run.png'></a>
+          </td>
+        </tr>
+        "
 
         # quick previews of subtest contents
         if subtest.get("prototype") == "grid"
@@ -266,7 +260,7 @@ class CurriculumView extends Backbone.View
     value = "" if not value?
 
     # what is it
-    editOrNot   = if prop.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
+    editOrNot   = if prop.editable then "class='edit_in_place'" else ""
 
     numberOrNot = if _.isNumber(value) then "data-isNumber='true'" else "data-isNumber='false'" 
 
@@ -373,10 +367,7 @@ class CurriculumView extends Backbone.View
     return false
 
   goBack: -> 
-    if Tangerine.settings.get("context") == "server" 
-      Tangerine.router.navigate "assessments", true
-    else if Tangerine.settings.get("context") == "class"
-      Tangerine.router.navigate "class", true
+    Tangerine.router.navigate "assessments", true
 
   deleteCurriculum: ->
     if confirm("Delete curriculum\n#{@curriculum.get('name')}?")
