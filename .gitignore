@@ -3,6 +3,8 @@ tanerine-env-vars.sh
 
 data
 .data
+config.env
+
 couchdb.stdout
 
 couchdb.stderr
