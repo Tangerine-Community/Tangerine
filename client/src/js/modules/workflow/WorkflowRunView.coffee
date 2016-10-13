@@ -50,16 +50,11 @@ class WorkflowRunView extends Backbone.View
 
     stepIndicator = "<div id='workflow-progress'></div>"
 
-    nextButton = "
-      <div class='clearfix'><button class='nav-button next'>Next</button></div>
-    " if @index isnt @workflow.getChildren().length - 1
 
     @$el.html "
       #{stepIndicator}
       <div id='header-container'></div>
       <section id='#{@cid}_current_step'></section>
-      <!--button class='nav-button previous'>Previous</button-->
-      #{nextButton || ''}
     "
 
     @renderStep()
