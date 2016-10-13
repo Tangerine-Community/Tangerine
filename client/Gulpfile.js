@@ -384,6 +384,7 @@ conf.fileOrder = [
   'AssessmentDataEntryView',
 
   'BandwidthCheckView',
+  'TabView',
 
   'Subtest',
   'Subtests',
