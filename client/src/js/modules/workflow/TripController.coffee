@@ -20,9 +20,6 @@ class TripController extends Backbone.Controller
     else
       throw "No workflowId or tripId provided."
 
-    # Models hold state thus state can be saved and restored. When this Model changes, time to render again.
-    @trip.on('sync', @render)
-
     # Get the Workflow related to this Trip. It will contain the map of sections.
     @workflow = new WorkflowModel({ id: @trip.get('workflowId') })
     @workflow.fetch()
