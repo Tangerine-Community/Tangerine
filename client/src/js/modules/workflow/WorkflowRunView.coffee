@@ -141,7 +141,6 @@ class WorkflowRunView extends Backbone.View
         result = step.result.getVariable(key)
       if result?
         return result
-      
 
   renderStep: =>
     @steps[@index] = {} unless @steps[@index]?
@@ -157,7 +156,7 @@ class WorkflowRunView extends Backbone.View
     switch @currentStep.getType()
       when "new"        then @renderNew()
       when "assessment" then @renderAssessment()
-      when "curriculum" then @renderCurriculum()
+      when "curriculum" then @renderAssessment()
       when "message"    then @renderMessage()
       when "login"
         @$el.find("##{@cid}_current_step").html "
@@ -230,92 +229,22 @@ class WorkflowRunView extends Backbone.View
 
     @showView view
 
-
   renderAssessment: ->
     @nextButton true
-
     @currentStep.fetch
       success: =>
-        assessment = @currentStep.getTypeModel()
-
-        assessment.deepFetch 
-          success: =>
-            view = new AssessmentCompositeView 
-              assessment : assessment
-              inWorkflow : true
-              tripId     : @tripId
-              workflowId : @workflow.id
-
-            if @assessmentResumeIndex?
-              view.index = @assessmentResumeIndex
-              delete @assessmentResumeIndex
-
-
-            @steps[@index].view   = view
-            # @steps[@index].result = view.getResult()
-            @steps[@index].result = view.result
-            @showView view
-
-
-  renderCurriculum: ->
-    @nextButton false
-
-    curriculumId = @currentStep.getTypesId()
-    subtests = new Subtests
-    subtests.fetch
-      key : curriculumId
-      success: =>
-
-        itemType = @getString @currentStep.getCurriculumItemType()
-        grade    = @getNumber @currentStep.getCurriculumGrade()
-
-        thisYear = (new Date()).getFullYear()
-        term1Start = moment "#{thisYear} Jan 1"
-        term1End   = moment "#{thisYear} April 30"
-
-        term2Start = moment "#{thisYear} May 1"
-        term2End   = moment "#{thisYear} Aug 31"
-
-        term3Start = moment "#{thisYear} Sept 1"
-        term3End   = moment "#{thisYear} Dec 31"
-
-        now = moment()
-        term =
-          if      term1Start <= now <= term1End
-            1
-          else if term2Start <= now <= term2End
-            2
-          else if term3Start <= now <= term3End
-            3
-
-        criteria =
-          itemType : itemType
-          part     : term
-          grade    : grade
-
-        subtest = _(subtests.where(
-          itemType : itemType
-          part     : term
-          grade    : grade
-        )).first()
-
-        return Utils.midAlert "
-          Subtest not found for <br>
-          itemType: #{itemType}<br>
-          term: #{term}<br>
-          grade: #{grade}
-        " unless subtest?
-
-        view = new KlassSubtestRunView
-          student      : new Student
-          subtest      : subtest
-          questions    : new Questions
-          linkedResult : new KlassResult
-          inWorkflow   : true
-          tripId       : @tripId
-          workflowId   : @workflow.id
-        @steps[@index].view = view
-        @showView view, @currentStep.getName()
+        view = new AssessmentCompositeView
+          assessment : @currentStep.model
+          inWorkflow : true
+          tripId     : @tripId
+          workflowId : @workflow.id
+        if @assessmentResumeIndex?
+          view.index = @assessmentResumeIndex
+          delete @assessmentResumeIndex
+        @steps[@index].view   = view
+        # @steps[@index].result = view.getResult()
+        @steps[@index].result = view.result
+        @showView view
 
   renderEnd: ->
     Utils.gpsPing
