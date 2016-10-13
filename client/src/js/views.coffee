@@ -418,7 +418,11 @@ Tangerine.views =
 
       # Belongs to relationship
       if doc.collection is 'subtest'
-        emit "subtest-#{doc.assessmentId}"
+        # TODO: In the future, no distinction between curriculum and assessment.
+        if doc.hasOwnProperty('curriculumId')
+          emit "subtest-#{doc.curriculumId}"
+        else
+          emit "subtest-#{doc.assessmentId}"
 
       # Belongs to relationship
       else if doc.collection is 'question'
