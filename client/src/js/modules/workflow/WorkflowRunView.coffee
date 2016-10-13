@@ -27,7 +27,6 @@ class WorkflowRunView extends Backbone.View
           @renderEnd()
           return @trigger "workflow:done"
         @nextStep()
-
   shouldSkip: ->
     currentStep = @workflow.stepModelByIndex @index
     return false unless currentStep?
@@ -49,12 +48,20 @@ class WorkflowRunView extends Backbone.View
       return @nextStep()
 
     stepIndicator = "<div id='workflow-progress'></div>"
-
-
+    
+    if @currentStep.getType() == "message" && @index != @workflow.getChildren().length - 1
+      nextButton = "
+        <div class='clearfix'><button class='nav-button next'>Next</button></div>
+      "
+    else
+      nextButton = ""
+  
     @$el.html "
       #{stepIndicator}
       <div id='header-container'></div>
       <section id='#{@cid}_current_step'></section>
+      <!--button class='nav-button previous'>Previous</button-->
+      #{nextButton || ''}
     "
 
     @renderStep()
@@ -100,6 +107,12 @@ class WorkflowRunView extends Backbone.View
     # intentionally lets you go one over
     # handled with "if currentStep is null"
     @index = Math.min @index + 1, @workflow.getLength()
+    
+    # Set next step.
+    @steps[@index] = {} unless @steps[@index]?
+    @currentStep = @workflow.stepModelByIndex @index
+    @currentStep.workflow = @
+    @steps[@index].model = @currentStep
 
     # RJ: Also commented out for reasons stated above.
     #@render() if oldIndex isnt @index
@@ -138,11 +151,7 @@ class WorkflowRunView extends Backbone.View
         return result
 
   renderStep: =>
-    @steps[@index] = {} unless @steps[@index]?
-    @currentStep = @workflow.stepModelByIndex @index
-    @currentStep.workflow = @
-    @steps[@index].model = @currentStep
-
+    
     if @index == @workflow.getLength()-1
       Tangerine.activity = ""
       @$el.find(".next").hide()
