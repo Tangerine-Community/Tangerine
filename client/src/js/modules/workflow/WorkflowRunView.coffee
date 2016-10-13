@@ -145,6 +145,7 @@ class WorkflowRunView extends Backbone.View
   renderStep: =>
     @steps[@index] = {} unless @steps[@index]?
     @currentStep = @workflow.stepModelByIndex @index
+    @currentStep.workflow = @
     @steps[@index].model = @currentStep
 
     if @index == @workflow.getLength()-1

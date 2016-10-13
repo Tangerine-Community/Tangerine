@@ -60,9 +60,9 @@ class WorkflowStep extends Backbone.ChildModel
           success: (subtests) =>
             if @has('curriculumItemType') && @has('curriculumWeek') && @has('curriculumGrade')
               filters =
-                "itemType" : CoffeeScript.eval.apply(null, [@get('curriculumItemType')])
-                "part" : CoffeeScript.eval.apply(null, [@get('curriculumWeek')])
-                "grade" : (CoffeeScript.eval.apply(null, [@get('curriculumGrade')])).toString()
+                "itemType" : (CoffeeScript.eval.apply(@workflow, [@get('curriculumItemType')])).toString()
+                "part" : (CoffeeScript.eval.apply(@workflow, [@get('curriculumWeek')])).toString()
+                "grade" : (CoffeeScript.eval.apply(@workflow, [@get('curriculumGrade')])).toString()
               models = @subtests.where(filters)
               if models.length == 0
                 return Utils.midAlert "
