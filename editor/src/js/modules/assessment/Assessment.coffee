@@ -46,7 +46,7 @@ class Assessment extends Backbone.Model
     options.success = (model) =>
         allSubtests = new Subtests
         allSubtests.fetch
-          key: "s" + @id
+          key: @id
           success: (collection) =>
             @subtests = collection
             @subtests.ensureOrder()
