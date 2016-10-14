@@ -28,6 +28,7 @@ const HttpStatus = require('http-status-codes');
 const getApk = function(req, res){
 
   const token = req.params.token;
+  const language = req.params.language;
 
   // You can't always get what you want
   const emptyToken = !token || token == ''
@@ -49,7 +50,7 @@ const getApk = function(req, res){
     downloadName = 'tangerine-x86.apk';
   } else {
     apkPath = Path.join(Conf.APP_ROOT_PATH, 'apks', token);
-    downloadName = 'tangerine.apk';
+    downloadName = 'imlp_' + language + '.apk';
   }
 
   // see if the file is there

@@ -71,7 +71,20 @@ class AssessmentsMenuView extends Backbone.View
       success: (data) ->
         a = document.createElement("a")
         a.href = Tangerine.settings.config.get("tree")
-        Utils.sticky("<h1>APK link</h1><p>#{a.host}/tree/#{data.token}</p>")
+        groupName = Tangerine.settings.get('groupName')
+        languageCodes = {
+          af_somali: 'SO',
+          amharic: 'AM',
+          afaan_oromo: 'OR',
+          hadiyysa: 'HY',
+          sidaamu_affo: 'SD',
+          tigrinya: 'TG',
+          wolayttatto: 'WT'
+        }
+        language = languageCodes[groupName];
+        if typeof language == 'undefined'
+          language = groupName
+        Utils.sticky("<h1>APK link</h1><p><a href='http://#{a.host}/tree/#{data.token}/#{language}'>#{a.host}/tree/#{data.token}/#{language}</a></p>")
       error: (xhr, response) ->
         Utils.sticky response.message
 
@@ -92,7 +105,7 @@ class AssessmentsMenuView extends Backbone.View
       cancel           : t("AssessmentMenuView.button.cancel")
       assessment  : t("AssessmentMenuView.label.assessment")
       assessments : t("AssessmentMenuView.label.assessments")
-      instruments : t("AssessmentMenuView.label.instruments")
+      lesson_plans : t("AssessmentMenuView.label.lesson_plans")
       curriculum  : t("AssessmentMenuView.label.curriculum")
       lesson_plan  : t("AssessmentMenuView.label.lesson_plan")
 
@@ -169,7 +182,7 @@ class AssessmentsMenuView extends Backbone.View
       #{resultsButton}
       #{groupHandle}
       <section>
-        <h1>#{@text.instruments}</h1>
+        <h1>#{@text.lesson_plans}</h1>
     "
 
     if isAdmin
@@ -181,8 +194,6 @@ class AssessmentsMenuView extends Backbone.View
             <div class='menu_box'>
               <input type='text' class='new_name' placeholder='Name'>
               <select id='new_type'>
-                <option value='assessment'>#{@text.assessment}</option>
-                <option value='curriculum'>#{@text.curriculum}</option>
                 <option value='lesson_plan'>#{@text.lesson_plan}</option>
               </select><br>
               <button class='new_save command'>#{@text.save}</button> <button class='new_cancel command'>#{@text.cancel}</button>

@@ -37,7 +37,7 @@ app.post('/make/:group', require('./routes/makeApkDeprecated'));
 app.post('/:group/*', require('./routes/makeApk'));
 
 // get an apk
-app.get('/:token',  require('./routes/getApk'));
+app.get('/:token/:language',  require('./routes/getApk'));
 
 // get an x86 apk
 app.get('/:token.x86',  require('./routes/getApk'));
