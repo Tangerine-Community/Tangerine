@@ -46,6 +46,13 @@ class WorkflowRunView extends Backbone.View
     if @shouldSkip()
       @subViewRendered = true
       return @nextStep()
+ 
+    # Set next step.
+    @steps[@index] = {} unless @steps[@index]?
+    @currentStep = @workflow.stepModelByIndex @index
+    @currentStep.workflow = @
+    @steps[@index].model = @currentStep
+    console.log('step set')
 
     stepIndicator = "<div id='workflow-progress'></div>"
     
@@ -107,12 +114,6 @@ class WorkflowRunView extends Backbone.View
     # intentionally lets you go one over
     # handled with "if currentStep is null"
     @index = Math.min @index + 1, @workflow.getLength()
-    
-    # Set next step.
-    @steps[@index] = {} unless @steps[@index]?
-    @currentStep = @workflow.stepModelByIndex @index
-    @currentStep.workflow = @
-    @steps[@index].model = @currentStep
 
     # RJ: Also commented out for reasons stated above.
     #@render() if oldIndex isnt @index
