@@ -232,7 +232,7 @@ class Assessment extends Backbone.Model
 
     getSubtests = ->
       subtests.fetch
-        key: "s" + oldModel.id
+        key: oldModel.id
         success: -> processDocs()
 
     processDocs = ->
