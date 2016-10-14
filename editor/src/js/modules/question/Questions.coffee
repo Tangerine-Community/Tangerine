@@ -3,7 +3,7 @@ class Questions extends Backbone.Collection
   model : Question
   url   : "question"
   db:
-    view: "byParentId"
+    view: "questionsByParentId"
 
   comparator: (subtest) ->
     subtest.get "order"
