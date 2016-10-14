@@ -58,18 +58,25 @@ class WorkflowStep extends Backbone.ChildModel
           error: ->
             console.log "deepFetch of Assessment failed"
           success: (subtests) =>
+ 
+            # Filter subtests of curriculum.
             if @has('curriculumItemType') && @has('curriculumWeek') && @has('curriculumGrade')
               filters =
-                "itemType" : (CoffeeScript.eval.apply(@workflow, [@get('curriculumItemType')])).toString()
-                "part" : (CoffeeScript.eval.apply(@workflow, [@get('curriculumWeek')])).toString()
-                "grade" : (CoffeeScript.eval.apply(@workflow, [@get('curriculumGrade')])).toString()
-              models = @subtests.where(filters)
-              if models.length == 0
+                "itemType" : (CoffeeScript.eval.apply(@workflow, [@get('curriculumItemType')]))
+                "part" : (CoffeeScript.eval.apply(@workflow, [@get('curriculumWeek')]))
+                "grade" : (CoffeeScript.eval.apply(@workflow, [@get('curriculumGrade')]))
+              filteredModels = []
+              @subtests.forEach (subtest) ->
+                if subtest.has("itemType") && subtest.has("part") && subtest.has("grade")
+                  if ((subtest.get("itemType")).toString() == (filters.itemType).toString() && (subtest.get("part")).toString() == (filters.part).toString() && (subtest.get("grade")).toString() == (filters.grade).toString()) 
+                    filteredModels.push(subtest)
+              if filteredModels.length == 0
                 return Utils.midAlert "
                   Curriculum filters found no Subtest for <br>
                   #{JSON.stringify(filters)} 
                 "
-              @subtests.models = models
+              @subtests.models = filteredModels
+
             @subtests.ensureOrder()
             options.success()
 
