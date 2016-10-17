@@ -90,6 +90,7 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+    '_':'_'
 
 
   admin: (options) ->
@@ -114,6 +115,15 @@ class Router extends Backbone.Router
         view = new TabView
         vm.show view
 
+  _: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        view = new TabView
+        if Tangerine.settings.has 'tabs'
+          view.tabsToUser = Settings.get 'tabs'
+        vm.show view
+
+
   dashboard: (options) ->
     options = options?.split(/\//)
     #default view options
@@ -133,10 +143,7 @@ class Router extends Backbone.Router
   landing: (refresh = false) ->
 
     callFunction = not refresh
-    if Tangerine.settings.get('showWorkflows') == true
-      Tangerine.router.navigate "workflows", callFunction
-    else
-      Tangerine.router.navigate "assessments", callFunction
+    Tangerine.router.navigate "_", callFunction
 
     document.location.reload() if refresh # this is for the stupid click bug
 

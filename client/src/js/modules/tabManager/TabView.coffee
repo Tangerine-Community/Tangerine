@@ -4,27 +4,15 @@ class TabView extends Backbone.View
   
 
   events:
-    "click paper-tab"	: 'displayViewHtml'
+    "click paper-tab"	: 'tabClicked'
 
+  tabs:  [
+        {"title": "Assessments", "weight": 1, "url":"#assessments", "views": [{className: "AssessmentsViewController"} ] },
+        { "title": "Bandwidth", "weight": 2, "url":"#bandwidth", "views": [{className: "BandwidthCheckView"}] },
+      ]
 
-
-  config: => 
-    
-    @tabsHtml = ''
-    @tabsToUse =  [
-          {"title": "Login", "weight": 1, "url":"#login", "views": [{className: "LoginView"} ] },
-          { "title": "Bandwidth", "weight": 2, "url":"#bandwidth", "views": [{className: "BandwidthCheckView"}] },
-          { "title": "Tab Test", "weight": 3, "url":"#testurl", "views": [{className: "Testclass"}] }
-        ]
-    for tab in @tabsToUse
-      #console.log tab.title    
-      @tabsHtml += "<paper-tab link>
-                    <a id='#{tab.views[0].className}' class='link' data-tab-to-use='#{JSON.stringify(tab)}' tabindex='-1'>#{tab.title}</a>
-                  </paper-tab>" 
-    #console.log tabsHtml
-    #href='#{tab.url}'
-    #onclick= '#{@displayViewHtml}'
-                
+  config: =>
+                  
   # Allow for overridden configs
   initialize: (config={}) =>
     _.extend(@config(), config)
@@ -32,25 +20,33 @@ class TabView extends Backbone.View
   myFunction: ()->
     console.log "do some work here JW"
 
-  displayViewHtml: (element) ->  
-    tab = JSON.parse($(element.currentTarget).find('a')[0].getAttribute('data-tab-to-use'))
+  tabClicked: (element) ->
+    tabNumber = JSON.parse($(element.currentTarget).find('a')[0].getAttribute('data-tab-to-use'))
+    @setTab(tabNumber)
+
+  setTab: (tabNumber) ->
+    tab = @tabs[tabNumber]
     views = []
-    tab.views.forEach (view) -> 
+    tab.views.forEach (view) ->
       prototypeView = new window[view.className]
       views.push(prototypeView)
-    console.log views
     
-    element = this.$el.find('.classHtml')[0]
-    $(element).html('')
-    views.forEach (view) -> 
+    tabBody = this.$el.find('.classHtml')[0]
+    $(tabBody).html('')
+    views.forEach (view) ->
       view.render()
-      view.el
-      $(element).append view.el
-  
-  #alert('#{tab.views[0].className}')
+      $(tabBody).append view.el
   
   render: =>
     
+    @tabTitles = ''
+    i = 0
+    for tab in @tabs
+      @tabTitles += "<paper-tab link>
+                    <a id='#{tab.views[0].className}' class='link' data-tab-to-use='#{i}' tabindex='-1'>#{tab.title}</a>
+                  </paper-tab>"
+      i++
+ 
     @$el.html "
     <link rel='import' href='js/lib/bower_components/paper-tabs/paper-tab.html'>
     <link rel='import' href='js/lib/bower_components/paper-tabs/paper-tabs.html'>
@@ -67,12 +63,11 @@ class TabView extends Backbone.View
       }
     </style>
     <div>
-      <h2>Tab Test2</h2>
       <paper-tabs selected='0'>
-        #{@tabsHtml}
+        #{@tabTitles}
       </paper-tabs>     
     </div>
-    <div class='classHtml'>Hello there</div>
+    <div class='classHtml'></div>
     "
 
-    @trigger "rendered"
+    @setTab(0)
