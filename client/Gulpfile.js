@@ -382,6 +382,7 @@ conf.fileOrder = [
   'AssessmentRunView',
   'AssessmentSyncView',
   'AssessmentDataEntryView',
+  'AssessmentsViewController',
 
   'BandwidthCheckView',
   'TabView',
