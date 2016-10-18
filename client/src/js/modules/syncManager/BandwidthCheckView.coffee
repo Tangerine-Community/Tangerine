@@ -129,11 +129,10 @@ class BandwidthCheckView extends Backbone.View
   render: =>
     @$el.html "
       <div class='BandwidthCheckView'>
-        <h2>Network Connection Test</h2>
         <div class='grid grid-pad'>
           <div class='col-3-12'>
             <div class='content'>
-              <button class='bandwidth-begin-btn begin command'>Begin</button>
+              <button class='bandwidth-begin-btn begin command'>Test network</button>
               <button class='bandwidth-cancel-btn cancel command'>Cancel</button>
             </div>
           </div>

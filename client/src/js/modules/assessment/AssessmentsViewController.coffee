@@ -4,7 +4,7 @@ class AssessmentsViewController extends Backbone.View
     assessments = new Assessments
     assessments.fetch
       success: =>
-        assessmentsView = new AssessmentsMenuView
+        assessmentsView = new AssessmentsView
           assessments : assessments
         @$el.html(assessmentsView.el)
         assessmentsView.render()

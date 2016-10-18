@@ -442,6 +442,8 @@ conf.fileOrder = [
   'DashboardView',
   'ResultPreview',
   'ResultPreviews',
+  'ResultsSaveAsFileView',
+  'UniversalUploadView',
 
   'AdminView',
 

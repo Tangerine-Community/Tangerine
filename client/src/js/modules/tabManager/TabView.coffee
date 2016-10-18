@@ -8,7 +8,7 @@ class TabView extends Backbone.View
 
   tabs:  [
         {"title": "Assessments", "weight": 1, "url":"#assessments", "views": [{className: "AssessmentsViewController"} ] },
-        { "title": "Bandwidth", "weight": 2, "url":"#bandwidth", "views": [{className: "BandwidthCheckView"}] },
+        { "title": "Sync", "weight": 2, "url":"#bandwidth", "views": [{className: "BandwidthCheckView"}, {className: "UniversalUploadView"}, {className: "ResultsSaveAsFileView"}] },
       ]
 
   config: =>
