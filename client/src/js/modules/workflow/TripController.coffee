@@ -32,12 +32,12 @@ class TripController extends Backbone.Controller
     # See if we should skip this section. If so, set new trip state and render again.
     if CoffeeScript.eval.apply(section.get('skipLogic'), {trip: @trip, workflow: @workflow})
       # Save away `null` data with breadcrumb as the key as string like `/sectionId1/sectionId2/section3`.
-      @trip.set( '/' + @trip.get('breadcrumb').join('/'),  null)
+      @trip.set( @trip.get('breadcrumb'),  null)
       # Calculate the next breadcrumb state.
       @trip.set('breadcrumb', @workflow.calculateNextBreadcrumb(@trip.get('breadcrumb')))
       @trip.save()
       # State has changed, render again.
-      @render()
+      return @render()
 
     @item = new ItemModel({ id: @section.get('itemId')})
     @item.fetch()
@@ -48,15 +48,15 @@ class TripController extends Backbone.Controller
     # Filter elements if Section's Filter Logic dictates it. Default returns all elements.
     @elements = CoffeeScript.eval.apply(section.get('filterLogic'), {trip: @trip, workflow: @workflow, item: @item, elements: @elements})
 
-    @itemView = new ItemView({workflow: @workflow, item: @item, elements: @elements})
+    @itemView = new ItemView({item: @item, elements: @elements})
     @itemView.on "done", =>
       # Save away `null` data with breadcrumb as the key as string like `/sectionId1/sectionId2/section3`.
-      @trip.set( '/' + @trip.get('breadcrumb').join('/'),  null)
+      @trip.set( @trip.get('breadcrumb'),  @itemView.results)
       # Calculate the next breadcrumb state.
       @trip.set('breadcrumb', @workflow.calculateNextBreadcrumb(@trip.get('breadcrumb')))
       @trip.save()
       # State has changed, render again.
-      @render()
+      return @render()
 
     App.main.html(@itemView.el)
     @itemView.render()
