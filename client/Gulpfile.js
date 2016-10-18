@@ -543,6 +543,7 @@ conf.jsFileOrder = conf.fileOrder.map(function(el) {
 conf.libFiles = [
   './src/js/lib/modernizr.js',
   './src/js/lib/jquery.js',
+  './src/js/lib/bower_components/jquery-ui/jquery-ui.min.js',
   './src/js/lib/underscore.js',
   './src/js/lib/backbone.js',
   './src/js/lib/backbone.marionette.js',

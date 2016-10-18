@@ -16,6 +16,7 @@ class TabView extends Backbone.View
   # Allow for overridden configs
   initialize: (config={}) =>
     _.extend(@config(), config)
+    @tabIndex = null
 
   myFunction: ()->
     console.log "do some work here JW"
@@ -31,14 +32,34 @@ class TabView extends Backbone.View
       prototypeView = new window[view.className]
       views.push(prototypeView)
     
+    if (@tabIndex == null)
+      slideOut = 'right'
+      slideIn = 'left'
+    else if @tabIndex < tabNumber
+      slideOut = 'left'
+      slideIn = 'right'
+    else if @tabIndex > tabNumber
+      slideOut = 'right'
+      slideIn = 'left'
+    @tabIndex = tabNumber
+    console.log('slide')
     tabBody = this.$el.find('.classHtml')[0]
-    $(tabBody).html('')
-    views.forEach (view) ->
-      view.render()
-      $(tabBody).append view.el
+    $(tabBody).hide("slide", { direction: slideOut }, 200)
+
+    slideIt = () ->
+      $(tabBody).html('')
+      views.forEach (view) ->
+        view.render()
+        $(tabBody).append view.el
+      $(tabBody).show("slide", { easing: 'swing', direction: slideIn }, 200)
+
+    setTimeout(slideIt, 200)
+
   
   render: =>
-    
+
+    @$el.html ''
+     
     @tabTitles = ''
     i = 0
     for tab in @tabs
@@ -51,14 +72,24 @@ class TabView extends Backbone.View
     <link rel='import' href='js/lib/bower_components/paper-tabs/paper-tab.html'>
     <link rel='import' href='js/lib/bower_components/paper-tabs/paper-tabs.html'>
     <style is='custom-style'>
+      .AssessmentsView {
+        background: white;
+      }
+      .TabView .classHtml {
+        padding: 20px;
+      }
       paper-tabs, paper-toolbar {
             background-color: #F6C637; 
-            color: #fff;
+            color: white;
+      }
+      .paper-tabs-0 #selectionBar.paper-tabs {
+        background-color: #000 !important;
       }
       paper-tab[link] a {
         @apply(--layout-horizontal);
         @apply(--layout-center-center);
-        color: #fff;
+        /* color: #F6C637; */
+        color: white;
         text-decoration: none;
       }
     </style>
