@@ -23,12 +23,19 @@
     </head>
 
     <body class='mobile'>
+
+        <!-- Add quick loading overlay --> 
+        <script>
+        loadingOverlay = document.createElement('div')
+        loadingOverlay.setAttribute('style', 'width: ' + document.body.scrollWidth + 'px; height: ' + document.body.scrollHeight + 'px; background: url(images/navigation-logo-spin.gif) center no-repeat #F6C637; position: absolute; left: 0px; top: 0px; z-index:999999999999;')
+        loadingOverlay.setAttribute('id', 'loading-overlay')
+        document.body.appendChild(loadingOverlay)
+        </script>
+
+        <!-- set up regions --> 
         <div id='navigation' class="clearfix"></div>
         <div id="content_wrapper">
             <div id='content'></div>
-        </div>
-        <div id='footer'>
-            <div id="watermark"><img src="images/tangerine_logo_89.png"></div>
         </div>
 
         <script src="cordova.js"></script>

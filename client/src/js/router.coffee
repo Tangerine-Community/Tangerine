@@ -30,7 +30,8 @@ class Router extends Backbone.Router
     'register' : 'register'
     'logout'   : 'logout'
     'account'  : 'account'
-    'bandwidth' :'bandwidth' 
+    'bandwidth' : 'bandwidth' 
+    'tabs' :'tabs' 
 
     'transfer' : 'transfer'
 
@@ -93,6 +94,7 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+    '_':'_'
 
   reload: ->
     @navigate '', false
@@ -125,6 +127,21 @@ class Router extends Backbone.Router
         view = new BandwidthCheckView
         vm.show view
 
+  tabs: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        view = new TabView
+        vm.show view
+
+  _: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        view = new TabView
+        if Tangerine.settings.has 'tabs'
+          view.tabsToUser = Settings.get 'tabs'
+        Tangerine.app.rm.get('mainRegion').show view 
+
+
   dashboard: (options) ->
     options = options?.split(/\//)
     #default view options
@@ -144,10 +161,7 @@ class Router extends Backbone.Router
   landing: (refresh = false) ->
 
     callFunction = not refresh
-    if Tangerine.settings.get('showWorkflows') == true
-      Tangerine.router.navigate "workflows", callFunction
-    else
-      Tangerine.router.navigate "assessments", callFunction
+    Tangerine.router.navigate "_", callFunction
 
     document.location.reload() if refresh # this is for the stupid click bug
 

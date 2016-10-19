@@ -11,6 +11,9 @@
 
 Tangerine.bootSequence =
 
+  wait: (callback) ->
+    setTimeout callback, 1000
+
   # Basic configuration
 
   basicConfig : (callback) ->
@@ -319,10 +322,16 @@ Tangerine.bootSequence =
    
       success : callback
 
+  removeLoadingOverlay: ( callback ) ->
+    removeOverlay = ->
+      $('#loading-overlay').animate({opacity: 0, height: "toggle"}, 450)
+    setTimeout(removeOverlay, 1500)
+    callback()
 
 Tangerine.boot = ->
 
   sequence = [
+    Tangerine.bootSequence.wait
     Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.basicConfig
     Tangerine.bootSequence.checkDatabase
@@ -337,6 +346,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.fetchTemplates
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone
+    Tangerine.bootSequence.removeLoadingOverlay
 #    Tangerine.bootSequence.monitorBrowserBack
   ]
 
