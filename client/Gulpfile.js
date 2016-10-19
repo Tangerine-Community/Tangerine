@@ -406,6 +406,14 @@ conf.fileOrder = [
   'WorkflowRunView',
   'WorkflowSelectView',
 
+  'TripController',
+  'TripModel',
+  'WorkflowModel',
+  'SectionModel',
+  'ItemModel',
+  'ElementsCollection',
+  'ItemView',
+
   'SurveyRunItemView',
 
   'ConsentRunView',
