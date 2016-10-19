@@ -3018,3 +3018,31 @@ button.ui-button::-moz-focus-inner {
 .workflow-step-container {
   margin: 20px 10px;
 }
+
+.workflow-button-link {
+    text-decoration: none;
+    display: block;
+    font-size: 22px;
+    color: white;
+    background-color: #f49b00;
+    border: 0 !important;
+    margin: 10px 0 5px 0;
+    padding: 7px 20px !important;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    font-weight: normal
+}
+
+.workflow-button-link:visited {
+    color: white
+}
+
+.workflow-button-link:active {
+    color: white;
+    background-color: #f6c637
+}
+
+.workflow-button-link:hover {
+    background-color: #f26f10
+}
