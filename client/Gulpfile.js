@@ -411,6 +411,7 @@ conf.fileOrder = [
   'Workflows',
   'SchoolListView',
   'WorkflowMenuView',
+  'WorkflowMenuViewController',
   'ValidObservationView',
   'WorkflowEditView',
   'WorkflowRunView',
