@@ -1,7 +1,6 @@
 class TabView extends Backbone.View
 
   className : "TabView"
-  
 
   events:
     "click paper-tab"	: 'tabClicked'
@@ -17,9 +16,6 @@ class TabView extends Backbone.View
   initialize: (config={}) =>
     _.extend(@config(), config)
     @tabIndex = null
-
-  myFunction: ()->
-    console.log "do some work here JW"
 
   tabClicked: (element) ->
     tabNumber = JSON.parse($(element.currentTarget).find('a')[0].getAttribute('data-tab-to-use'))
@@ -78,20 +74,20 @@ class TabView extends Backbone.View
       .TabView .classHtml {
         padding: 20px;
       }
-      paper-tabs, paper-toolbar {
-            background-color: #F6C637; 
-            color: white;
+      paper-tabs {
+        background-color: #EEE;
+        --paper-tabs-selection-bar-color: var(--paper-orange-600);
+        border-bottom: 1px solid #CCC;
       }
-      .paper-tabs-0 #selectionBar.paper-tabs {
-        background-color: #000 !important;
+      paper-toolbar {
+        --paper-toolbar-background: var(--paper-red-900);
       }
       paper-tab[link] a {
         @apply(--layout-horizontal);
         @apply(--layout-center-center);
-        /* color: #F6C637; */
-        color: white;
-        text-decoration: none;
+        color: var(--paper-orange-600);
       }
+
     </style>
     <div>
       <paper-tabs selected='0'>
