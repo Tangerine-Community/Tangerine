@@ -8,6 +8,5 @@ class WorkflowMenuViewController extends Backbone.View
             view = new WorkflowMenuView
               workflows : workflows
               feedbacks : feedbacks
-            @el.html(view.el)
+            @$el.html(view.el)
             view.render()
-

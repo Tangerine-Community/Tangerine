@@ -66,7 +66,7 @@ class WorkflowRunView extends Backbone.View
     @$el.html "
       #{stepIndicator}
       <div id='header-container'></div>
-      <section id='#{@cid}_current_step'></section>
+      <div id='#{@cid}_current_step' class='workflow-step-container'></div>
       <!--button class='nav-button previous'>Previous</button-->
       #{nextButton || ''}
     "

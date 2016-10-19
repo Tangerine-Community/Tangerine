@@ -730,6 +730,9 @@ progress {
   position: relative;
   background: #F6C637 url("../images/noise.png");
   display: none;
+  -webkit-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
+  -moz-box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(100, 0, 0, 0.2);
 }
 #navigation ul {
   float: right;
@@ -3006,4 +3009,12 @@ button.ui-button::-moz-focus-inner {
 .ui-menu .ui-menu-icon {
   position: static;
   float: right;
+}
+
+#workflow-progress {
+  margin: 20px 10px;
+}
+
+.workflow-step-container {
+  margin: 20px 10px;
 }

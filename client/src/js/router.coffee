@@ -138,7 +138,7 @@ class Router extends Backbone.Router
       isAuthenticated: ->
         view = new TabView
         if Tangerine.settings.has 'tabs'
-          view.tabsToUser = Settings.get 'tabs'
+          view.tabs = Tangerine.settings.get 'tabs'
         Tangerine.app.rm.get('mainRegion').show view 
 
 
