@@ -543,19 +543,20 @@ class Router extends Backbone.Router
                   week    = lessonPlan.get("lessonPlan_week")
                   day     = lessonPlan.get("lessonPlan_day")
                   id      = lessonPlan.get("_id")
-                  console.log("Lessons available: " + [week, day, id])
+#                  console.log("Lessons available: " + [week, day, id])
                   Tangerine.available.push [week, day, id]
                 )
                 dashboardLayout = new DashboardLayout();
                 Tangerine.app.rm.get('mainRegion').show dashboardLayout
                 dashboardLayout.contentRegion.reset()
-                lessonPlan.set("elements",lessonPlan.elements)
-                view = new LessonPlanItemView
-                  model: lessonPlan
-                dashboardLayout.contentRegion.show(view)
                 Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
                 dashboardLayout.headerRegion.reset();
                 dashboardLayout.headerRegion.show(Tangerine.LessonMenuView)
+                lessonPlan.set("elements",lessonPlan.elements)
+                lessonPlanItemView = new LessonPlanItemView
+                  model: lessonPlan
+                dashboardLayout.contentRegion.show(lessonPlanItemView)
+                $('.mediaClick').on('play',lessonPlanItemView.mediaClick)
               error: (model, err, cb) ->
                 console.log JSON.stringify err
 

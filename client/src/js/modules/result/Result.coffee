@@ -88,3 +88,10 @@ class Result extends Backbone.Model
   gridWasAutostopped: (id) ->
     for datum in @get 'subtestData'
       return datum.data.auto_stop if datum.subtestId == id
+
+  saveLessonPlan: () ->
+    @save null,
+      success: (r) ->
+#        console.log("Saved")
+      error: (a,b,c) ->
+        console.log("Error: " + b)

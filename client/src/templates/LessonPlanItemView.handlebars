@@ -10,12 +10,12 @@
         <!--{{{element}}}-->
         </br>
     {{else if audio}}
-        <audio controls style="width:100%;height:auto;">
+        <audio controls style="width:100%;height:auto;" class="mediaClick" id="audio_{{{fileName}}}">
             <source src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}" type="{{{fileType}}}">
             Your browser does not support the audio tag.
         </audio>
     {{else if video}}
-        <video controls style="width:100%;height:auto;">
+        <video controls style="width:100%;height:auto;" class="mediaClick" id="video_{{{fileName}}}">
             <source src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}" type="{{{fileType}}}">
         </video>
     {{else}}
@@ -23,3 +23,6 @@
     {{/if}}
     </br>
 {{/each}}
+<p>
+    <button class='quit_lp command'>Quit</button>
+</p>

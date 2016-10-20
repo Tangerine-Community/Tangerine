@@ -5,8 +5,21 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
 
   className : "LessonPlanItemView"
 
-#  initialize: () ->
-#    @lesson = new Lesson
+  initialize: () ->
+    _.bindAll(this, "mediaClick");
+    @result = new Result
+      options:{}
+    this.model.result = @result
+    @result.set('user',Tangerine.user.name())
+    clicks = []
+    @result.set('clicks',clicks)
+    startTime = moment().format("YYYY-MMM-DD HH:mm:ss")
+    @result.set('startTime',startTime)
+    @result.saveLessonPlan()
+
+  events:
+    'click .quit_lp' : 'quit_lp'
+#    'play .mediaClick' : 'mediaClick'
 
   onBeforeRender: () ->
 #    console.log("onBeforeRender")
@@ -27,6 +40,12 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
      lessonPlan_subject_full = 'Wolayttatto'
 
     @model.set("lessonPlan_subject_full", lessonPlan_subject_full)
+
+#  onRender: () ->
+#    console.log("onRender")
+#    $('.mediaClick').on('play', () ->
+#      console.log("play")
+#    )
 
 #    // Serialize the model or collection for the view. If a model is
 #    // found, the view's `serializeModel` is called. If a collection is found,
@@ -61,6 +80,25 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
       return {
         items: @serializeCollection.apply(@, args)
       };
+
+  quit_lp: () ->
+    console.log("I'm quitting.")
+    timestamp = moment().format("YYYY-MMM-DD HH:mm:ss")
+    @result.set('stopTime',timestamp)
+    @result.saveLessonPlan()
+
+  mediaClick: (e) ->
+    id = e.target.id
+    console.log("I'm mediaClick for: " + id)
+    timestamp = moment().format("YYYY-MMM-DD HH:mm:ss")
+    click =
+      media:id
+      timestamp:timestamp
+    clicks = @result.get('clicks')
+    clicks.push(click)
+#    console.log("clicks: " + JSON.stringify(clicks))
+    @result.saveLessonPlan()
+
 
 #  select: (subjectName, grade, week, day) ->
 #
