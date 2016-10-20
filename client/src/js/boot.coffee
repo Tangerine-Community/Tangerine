@@ -82,14 +82,19 @@ Tangerine.bootSequence =
           # development purposes.
           #
 
+          indexViews = ->
+            Tangerine.db.query('tangerine/byCollection', {key: 'workflows'}).then((res) ->
+              markDatabaseAsInitialized()
+            ).catch( (err) ->
+              alert('Could not index views')
+            )
+
+          markDatabaseAsInitialized = ->
+            Tangerine.db.put({"_id":"initialized"}).then( => callback() )
 
           # Recursive function that will iterate through js/init/pack000[0-x] until
           # there is no longer a returned pack.
           packNumber = 0
-
-          doneAll = ->
-            Tangerine.db.put({"_id":"initialized"}).then( -> callback() )
-
           doOne = ->
 
             paddedPackNumber = ("0000" + packNumber).slice(-4)
@@ -101,9 +106,9 @@ Tangerine.bootSequence =
                 if res.status is 404
                   # Mark this database as initialized so that this process does not
                   # run again on page refresh, then load Development Packs.
-                  doneAll()
+                  indexViews()
               success: (res) ->
-                if res.docs.length == 0 then return doneAll()
+                if res.docs.length == 0 then return indexViews()
                 console.log('Found ' + res.docs.length + ' docs')
                 packNumber++
                 Tangerine.db.bulkDocs res.docs, (error, doc) ->
