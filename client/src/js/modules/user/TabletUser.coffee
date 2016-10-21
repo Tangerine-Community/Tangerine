@@ -15,9 +15,9 @@ class TabletUser extends Backbone.Model
     @myRoles = []
 
   schema:
-    name:       'Text'
+    name: 'Text'
+    password: 'Password'
     foo: 'Text'
-    password:   'Password'
 
   ###
     Accessors
@@ -97,12 +97,13 @@ class TabletUser extends Backbone.Model
 
 
   signup: ( name, pass, attributes, callbacks={} ) =>
-    @set "_id" : TabletUser.calcId(@get('name'))
+    @set "_id" : TabletUser.calcId(name)
     @fetch
       success: => @trigger "name-error", "User already exists."
       error: =>
-        @setPassword @get('password')
-        @save
+        @set "name" : name
+        @setPassword pass
+        @save attributes,
           success: =>
             if Tangerine.settings.get("context") is "class"
               view = new RegisterTeacherView

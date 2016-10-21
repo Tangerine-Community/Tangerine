@@ -163,8 +163,13 @@ class LoginView extends Backbone.Marionette.View
     @$el.html html
 
     # Attach registration form.
+    # TODO: We should feed in the Tangerine.user Model that already exists but we have to do this
+    # the hard way and feed in a new placeholder Model that can be used to pass attributes to 
+    # Tangerine.user cleanly on signup. Otherwise on pouch save of the Backbone.Forms model we 
+    # get an error of `DataCloneError: An object could not be cloned`.
+    # Issue in PouchDB described here: https://pouchdb.com/errors.html#could_not_be_cloned
     @registrationForm = new Backbone.Form({
-        model: @user
+        model: new TabletUser()
     }).render()
     $(@$el.find('.signup-form')[0]).html(@registrationForm.el)
 
@@ -191,14 +196,16 @@ class LoginView extends Backbone.Marionette.View
   signup: ->
     errors = @registrationForm.commit()
     console.log errors
-    ###
-    name  = ($name  = @$el.find("#new_name")).val().toLowerCase()
-    pass1 = ($pass1 = @$el.find("#new_pass_1")).val()
-    pass2 = ($pass2 = @$el.find("#new_pass_2")).val()
-    @passError(@text.pass_mismatch) if pass1 isnt pass2
-    ###
-
-    @user.signup()
+    name  = @registrationForm.model.get('name') 
+    pass  = @registrationForm.model.get('password') 
+    #pass1 = ($pass1 = @$el.find("#new_pass_1")).val()
+    #pass2 = ($pass2 = @$el.find("#new_pass_2")).val()
+    #@passError(@text.pass_mismatch) if pass1 isnt pass2
+    otherAttributes = @registrationForm.model.toJSON()
+    delete otherAttributes.name
+    delete otherAttributes.password
+    @user.set(otherAttributes)
+    @user.signup(name, pass)
 
 
   login: ->
