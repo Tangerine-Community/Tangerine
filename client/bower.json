@@ -7,7 +7,8 @@
     "marionette": "~2.4.1",
     "handlebars": "~3.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^1.6.2",
-    "jquery-ui": "^1.12.1"
+    "jquery-ui": "^1.12.1",
+    "backbone-forms": "^0.14.1"
   },
   "devDependencies": {
     "bluebird": "~2.10.1",

@@ -416,7 +416,6 @@ conf.fileOrder = [
   'WorkflowEditView',
   'WorkflowRunView',
   'WorkflowSelectView',
-  'TripResultCollection',
   'TripResult',
   'TripResults',
 
@@ -568,6 +567,7 @@ conf.libFiles = [
   './src/js/lib/underscore.js',
   './src/js/lib/backbone.js',
   './src/js/lib/backbone.marionette.js',
+  './src/js/lib/bower_components/backbone-forms/distribution/backbone-forms.js',
   './src/js/lib/handlebars.runtime.js',
   './src/js/lib/sha1.js',
   './src/js/lib/jquery.couch.js',

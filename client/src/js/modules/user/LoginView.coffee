@@ -147,21 +147,26 @@ class LoginView extends Backbone.Marionette.View
 
       <div class='signup' style='display:none;'>
         <section>
+          <div class='signup-form'>
+            <input id='new_name' class='tablet-name' type='text' placeholder='#{nameName}'>
 
-          <div class='messages name_message'></div>
-          <input id='new_name' class='tablet-name' type='text' placeholder='#{nameName}'>
+            <div class='messages pass_message'></div>
+            <input id='new_pass_1' type='password' placeholder='#{@text.password}'>
 
-          <div class='messages pass_message'></div>
-          <input id='new_pass_1' type='password' placeholder='#{@text.password}'>
-
-          <input id='new_pass_2' type='password' placeholder='#{@text.password_confirm}'>
-
+            <input id='new_pass_2' type='password' placeholder='#{@text.password_confirm}'>
+          </div>
           <button class='sign_up'>#{@text.sign_up}</button>
         </section>
       </div>
     "
 
     @$el.html html
+
+    # Attach registration form.
+    @registrationForm = new Backbone.Form({
+        model: @user
+    }).render()
+    $(@$el.find('.signup-form')[0]).html(@registrationForm.el)
 
     @initAutocomplete()
 
@@ -178,39 +183,22 @@ class LoginView extends Backbone.Marionette.View
     $("body").css("background", @oldBackground)
     $(window).off('orientationchange scroll resize', @recenter)
 
-  keyHandler: (event) ->
-
-    key =
-      ENTER     : 13
-      TAB       : 9
-      BACKSPACE : 8
-
-    $('.messages').html('')
-    char = event.which
-    if char?
-      isSpecial =
-        char is key.ENTER              or
-        event.keyCode is key.TAB       or
-        event.keyCode is key.BACKSPACE
-      # Allow upper case here but make it so it's not later
-      return false if not /[a-zA-Z0-9]/.test(String.fromCharCode(char)) and not isSpecial
-      return @action() if char is key.ENTER
-    else
-      return true
-
   action: ->
     @login()  if @mode is "login"
     @signup() if @mode is "signup"
     return false
 
   signup: ->
+    errors = @registrationForm.commit()
+    console.log errors
+    ###
     name  = ($name  = @$el.find("#new_name")).val().toLowerCase()
     pass1 = ($pass1 = @$el.find("#new_pass_1")).val()
     pass2 = ($pass2 = @$el.find("#new_pass_2")).val()
-
     @passError(@text.pass_mismatch) if pass1 isnt pass2
+    ###
 
-    @user.signup name, pass1
+    @user.signup()
 
 
   login: ->
