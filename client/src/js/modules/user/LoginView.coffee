@@ -168,8 +168,16 @@ class LoginView extends Backbone.Marionette.View
     # Tangerine.user cleanly on signup. Otherwise on pouch save of the Backbone.Forms model we 
     # get an error of `DataCloneError: An object could not be cloned`.
     # Issue in PouchDB described here: https://pouchdb.com/errors.html#could_not_be_cloned
+    formModel = new Backbone.Model()
+    if (Tangerine.settings.has('customProfile'))
+      formModel.schema = Tangerine.settings.get('customProfile')
+    else 
+      formModel.schema =
+        "name": "Text"
+        "password": "Password"
+        "confirmPassword": "Password"
     @registrationForm = new Backbone.Form({
-        model: new TabletUser()
+        model: formModel
     }).render()
     $(@$el.find('.signup-form')[0]).html(@registrationForm.el)
 
@@ -195,15 +203,18 @@ class LoginView extends Backbone.Marionette.View
 
   signup: ->
     errors = @registrationForm.commit()
-    console.log errors
-    name  = @registrationForm.model.get('name') 
-    pass  = @registrationForm.model.get('password') 
-    #pass1 = ($pass1 = @$el.find("#new_pass_1")).val()
-    #pass2 = ($pass2 = @$el.find("#new_pass_2")).val()
-    #@passError(@text.pass_mismatch) if pass1 isnt pass2
+    if (errors)
+      alert('Cannot proceed because of errors in your form.')
+      return alert(JSON.stringify(errors))
+    else if (@registrationForm.model.get('password') !== @registrationForm.model.get('confirmPassword'))
+      return @passError(@text.pass_mismatch)
+    # Separate out name and pass properties because they will be modified and set in @user.singup().
+    name  = @registrationForm.model.get('name')
+    pass  = @registrationForm.model.get('password')
     otherAttributes = @registrationForm.model.toJSON()
     delete otherAttributes.name
     delete otherAttributes.password
+    delete otherAttributes.confirmPassword
     @user.set(otherAttributes)
     @user.signup(name, pass)
 
