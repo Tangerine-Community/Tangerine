@@ -43,6 +43,9 @@ Tangerine.bootSequence =
     # set underscore's template engine to accept handlebar-style variables
     _.templateSettings = interpolate : /\{\{(.+?)\}\}/g
 
+    # Load custom backbone-forms elements
+    Backbone.Form.editors.LocationElement = LocationElement
+
     callback()
 
     ###

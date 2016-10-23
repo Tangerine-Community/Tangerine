@@ -169,13 +169,14 @@ class LoginView extends Backbone.Marionette.View
     # get an error of `DataCloneError: An object could not be cloned`.
     # Issue in PouchDB described here: https://pouchdb.com/errors.html#could_not_be_cloned
     formModel = new Backbone.Model()
-    if (Tangerine.settings.has('customProfile'))
-      formModel.schema = Tangerine.settings.get('customProfile')
-    else 
-      formModel.schema =
-        "name": "Text"
-        "password": "Password"
-        "confirmPassword": "Password"
+    # Set fields required for the form to function.
+    formModel.schema =
+      name: "Text"
+      password: "Password"
+      confirmPassword: "Password"
+    # If a userProfile is defined in the settings doc, add those.
+    if (Tangerine.settings.has('userProfile')) then formModel.schema = Object.assign(formModel.schema, Tangerine.settings.get('userProfile'))
+
     @registrationForm = new Backbone.Form({
         model: formModel
     }).render()
@@ -206,7 +207,7 @@ class LoginView extends Backbone.Marionette.View
     if (errors)
       alert('Cannot proceed because of errors in your form.')
       return alert(JSON.stringify(errors))
-    else if (@registrationForm.model.get('password') !== @registrationForm.model.get('confirmPassword'))
+    else if (@registrationForm.model.get('password') != @registrationForm.model.get('confirmPassword'))
       return @passError(@text.pass_mismatch)
     # Separate out name and pass properties because they will be modified and set in @user.singup().
     name  = @registrationForm.model.get('name')
