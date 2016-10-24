@@ -124,13 +124,13 @@ Tangerine.bootSequence =
               else if doc.collection is 'question'
                 emit "question-#{doc.subtestId}"
 
-              else if doc.collection is 'result'
-                result = _id : doc._id
-                doc.subtestData.forEach (subtest) ->
-                  if subtest.prototype is "id" then result.participantId = subtest.data.participant_id
-                  if subtest.prototype is "complete" then result.endTime = subtest.data.end_time
-                result.startTime = doc.start_time
-                emit "result-#{doc.assessmentId}", result
+#              else if doc.collection is 'result'
+#                result = _id : doc._id
+#                doc.subtestData.forEach (subtest) ->
+#                  if subtest.prototype is "id" then result.participantId = subtest.data.participant_id
+#                  if subtest.prototype is "complete" then result.endTime = subtest.data.end_time
+#                result.startTime = doc.start_time
+#                emit "result-#{doc.assessmentId}", result
 
             ).toString()
 
@@ -161,12 +161,12 @@ Tangerine.bootSequence =
                   # run again on page refresh, then load Development Packs.
                   db.put({"_id":"initialized"}).then( -> callback() )
               success: (res) ->
-                console.log("res: " + JSON.stringify(res))
+#                console.log("res: " + JSON.stringify(res))
                 packNumber++
                 db.bulkDocs res, {new_edits: false}, (error, response) ->
                   if error
                     return alert "could not save initialization document: #{error}"
-                  console.log("response: " + JSON.stringify(response))
+#                  console.log("response: " + JSON.stringify(response))
                   doOne()
 
           # kick off recursive process
