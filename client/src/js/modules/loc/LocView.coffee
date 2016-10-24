@@ -17,7 +17,6 @@ class LocView extends Backbone.View
     @levels = options.levels || ["county", "zone", "school"]
     @addedOptions = if options.addedOptions? then options.addedOptions else false
     @selected = options.selected || []
-    @render()
 
   isComplete: ->
     value = @value()

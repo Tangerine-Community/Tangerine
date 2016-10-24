@@ -32,7 +32,7 @@ class LocationElement extends Backbone.Form.editors.Base
     #this.setValue(this.value)
     @locView = new LocView
       levels: @schema.levels
-    #@locView.render()
+    @locView.render()
     @$el.html(@locView.el)
     # this.setValue('foo')
 
