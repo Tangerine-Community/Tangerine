@@ -34,6 +34,9 @@ class TabletUser extends Backbone.Model
   # Never save the passwordConfirm.
   beforeSave: ->
     delete this.attributes.passwordConfirm
+    # TODO: The fact we have to set a field to password and not pass and that we get that weird PouchDB error when we do it the right way need
+    # to be figured out. This is spaghetti right now with the dance between password and pass.
+    delete this.attributes.password
 
   ###
     Accessors
