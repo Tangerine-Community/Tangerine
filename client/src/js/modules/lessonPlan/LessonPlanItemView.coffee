@@ -15,6 +15,7 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
     @result.set('clicks',clicks)
     startTime = moment().format("YYYY-MMM-DD HH:mm:ss")
     @result.set('startTime',startTime)
+    @result.set('name',@model.get('name'))
     @result.saveLessonPlan()
 
   events:
