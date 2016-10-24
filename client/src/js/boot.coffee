@@ -65,21 +65,20 @@ Tangerine.bootSequence =
       return callback() unless error
 
       console.log "initializing database"
-#      return unless doc.collection is "lessonPlan"
 
-      byLessonDesignDoc = createDesignDoc('byLesson', (doc) ->
-        if doc.collection == "lessonPlan"
-          emit [doc.lessonPlan_subject, doc.lessonPlan_grade, doc.lessonPlan_week, doc.lessonPlan_day], null
-      )
-
-      db.put(byLessonDesignDoc).then((doc) ->
-        console.log("byLesson created")
-        db.query('byLesson', {stale: 'update_after'})
-#       Backbone.sync.defaults.db.viewCleanup()
-      ).catch((err) ->
-        if err.name == 'conflict'
-          console.log("byLesson exists.")
-      )
+#      byLessonDesignDoc = createDesignDoc('byLesson', (doc) ->
+#        if doc.collection == "lessonPlan"
+#          emit [doc.lessonPlan_subject, doc.lessonPlan_grade, doc.lessonPlan_week, doc.lessonPlan_day], null
+#      )
+#
+#      db.put(byLessonDesignDoc).then((doc) ->
+#        console.log("byLesson created")
+#        db.query('byLesson', {stale: 'update_after'})
+##       Backbone.sync.defaults.db.viewCleanup()
+#      ).catch((err) ->
+#        if err.name == 'conflict'
+#          console.log("byLesson exists.")
+#      )
 
       # Save views
       db.put(
@@ -162,10 +161,12 @@ Tangerine.bootSequence =
                   # run again on page refresh, then load Development Packs.
                   db.put({"_id":"initialized"}).then( -> callback() )
               success: (res) ->
+                console.log("res: " + JSON.stringify(res))
                 packNumber++
-                db.bulkDocs res, (error, doc) ->
+                db.bulkDocs res, {new_edits: false}, (error, response) ->
                   if error
                     return alert "could not save initialization document: #{error}"
+                  console.log("response: " + JSON.stringify(response))
                   doOne()
 
           # kick off recursive process

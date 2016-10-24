@@ -247,3 +247,4 @@ Tangerine.locales["en-US"] =
         "error"  : "Error"
         "resultsUploaded"  : "Results uploaded"
         "universalUploadComplete"  : "Universal Upload Complete"
+        "closeApplication"  : "You may close the application"

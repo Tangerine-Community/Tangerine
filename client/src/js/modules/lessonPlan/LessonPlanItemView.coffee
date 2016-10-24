@@ -91,6 +91,9 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
     timestamp = moment().format("YYYY-MMM-DD HH:mm:ss")
     @result.set('stopTime',timestamp)
     @result.saveLessonPlan()
+    Utils.universalUpload()
+    Utils.sticky(t("Utils.message.closeApplication"));
+#    You may close the application
 
   mediaClick: (e) ->
     id = e.target.id

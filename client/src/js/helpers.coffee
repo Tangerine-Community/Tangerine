@@ -271,7 +271,7 @@ class Utils
               alert "Server bulk docs error" + errorMessage
               $("#upload_results").append(t("Utils.message.bulkDocsError") + bulkDocsUrl + ' - ' + t("Utils.message.error") + ': ' + errorMessage + '<br/>')
             success: =>
-              Utils.sticky t("Utils.message.resultsUploaded")
+#              Utils.sticky t("Utils.message.resultsUploaded")
               $("#upload_results").append(t("Utils.message.universalUploadComplete")+ '<br/>')
               return
         )
