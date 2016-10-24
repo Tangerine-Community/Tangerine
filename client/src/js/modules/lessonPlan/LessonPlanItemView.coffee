@@ -19,7 +19,11 @@ LessonPlanItemView = Backbone.Marionette.ItemView.extend
 
   events:
     'click .quit_lp' : 'quit_lp'
-#    'play .mediaClick' : 'mediaClick'
+    'click .statusIcons' : 'universalUpload'
+
+#  universalUpload: -> console.log("Loadin'")
+  universalUpload: -> Utils.universalUpload()
+
 
   onBeforeRender: () ->
 #    console.log("onBeforeRender")

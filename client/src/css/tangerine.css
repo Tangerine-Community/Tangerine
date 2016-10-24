@@ -636,6 +636,18 @@ progress {
   color: #CCC;
   font-weight: bold;
 }
+#statusIcons {
+  postiion: relative;
+  margin: 5px;
+  text-align: center;
+  background: white;
+  border-radius: 10px;
+  display: inline-block;
+}
+#statusIcons img {
+  opacity: 0.9;
+  padding: 5px 5px 5px 5px;
+}
 #watermark {
   float: right;
   text-align: center;
@@ -1949,6 +1961,9 @@ label.no_help {
     font-size: 20px;
   }
 }
+.LoginView img {
+  margin-bottom: 10px;
+}
 .LoginView button {
   display: block;
   clear: both;
@@ -2931,8 +2946,4 @@ button.ui-button::-moz-focus-inner {
   font-weight: bold;
   color: grey;
   line-height: 0.9em;
-}
-
-.LoginView img {
-  margin-bottom: 10px;
 }

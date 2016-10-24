@@ -12,6 +12,6 @@ Tangerine.defaults =
       "language": "en-US"
       "log": [""]
       "groupName": ""
-      "groupHost": "http://databases.tangerinecentral.org/db"
+      "groupHost": "http://mmlp.tangerinecentral.org/db"
       "upPass": "pass"
 

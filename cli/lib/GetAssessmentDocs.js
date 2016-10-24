@@ -1,4 +1,5 @@
 var unirest = require('unirest')
+var _ = require('underscore')
 
 // @todo Error handling. Error param never used when using callback.
 
@@ -42,9 +43,11 @@ module.exports = function(options, callback) {
     var id_list = res.body.rows.map(function(row) {
       return row.id;
     })
+    keyList = _.uniq(id_list)
+    keyList.push("settings");
     post({
       url: options.url + "/_all_docs?include_docs=true",
-      data: {keys: id_list}
+      data: {keys: keyList}
     })
     .end(function(res) {
       var data = []

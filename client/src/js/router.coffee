@@ -557,6 +557,7 @@ class Router extends Backbone.Router
                   model: lessonPlan
                 dashboardLayout.contentRegion.show(lessonPlanItemView)
                 $('.mediaClick').on('play',lessonPlanItemView.mediaClick)
+                $('#connection').on('click',lessonPlanItemView.universalUpload);
               error: (model, err, cb) ->
                 console.log JSON.stringify err
 

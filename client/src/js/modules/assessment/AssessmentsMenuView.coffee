@@ -4,7 +4,7 @@ class AssessmentsMenuView extends Backbone.View
 
   events:
     'click .import'      : 'import'
-    'click .universal_upload' : 'universalUpload'
+    'click .statusIcons' : 'universalUpload'
     'click .sync_tablets' : 'syncTablets'
     'click .results'        : 'results'
     'click .emergency_sync'        : 'emergencySync'
@@ -15,7 +15,8 @@ class AssessmentsMenuView extends Backbone.View
 
   results: -> Tangerine.router.navigate "dashboard", true
 
-  universalUpload: -> Utils.universalUpload()
+#  universalUpload: -> Utils.universalUpload()
+  universalUpload: -> console.log("Loadin'")
 
   emergencySync: -> Utils.replicateToServer(null,null)
 

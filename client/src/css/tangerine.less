@@ -673,24 +673,39 @@ progress
   
 }
 
+#statusIcons
+{
+  postiion: relative;
+  margin: 5px;
+  text-align: center;
+  background: white;
+  border-radius: 10px;
+  display: inline-block;
+  img
+  {
+    opacity: 0.9;
+    padding: 5px 5px 5px 5px;
+  }
+}
+
 #watermark
 {
   float: right;
   text-align: center;
-  padding: 10px 0 10px 7px;
+  padding: 10px 10px 10px 7px;
   margin: 0 15px 0 0;
   background: white;
   border-radius: 10px;
   display: inline-block;
   img
   {
-    opacity: 0.5;
+    opacity: 0.9;
   }
 }
 
 #footer
 {
-  background: @orange-3 url("../images/noise.png");
+  background: #556eb3 url("../images/noise.png");
   width: 100%;
   height: 77px;
   .box-sh (0, 15px, 30px, 5px, rgba(0,0,0,0.3));
@@ -1853,7 +1868,10 @@ label.no_help
     clear: left;
   }
 
-
+  img
+  {
+    margin-bottom: 10px;
+  }
 
   button
   {
@@ -1870,7 +1888,7 @@ label.no_help
 
     font-size: @h1;
     color: white;
-    background-color: @orange-2;
+    background-color: #f1dd42;
     border: 0 !important;
     margin: 20px 0 0;
     padding: 7px !important;
@@ -2639,7 +2657,6 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 .lesson-language
 {
   font-weight: normal;
-  font-size: 2.4em;
   float: left;
   margin-right: 0.5em;
   margin-bottom: 0.3em;
@@ -2647,7 +2664,6 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 
 .lesson-info
 {
-  font-size: 1.5em;
   font-weight: bold;
   color: grey;
   line-height: 0.9em;
