@@ -358,7 +358,7 @@ gulp.task('default', ['webserver', 'init', 'watch']);
 gulp.task('index-dev', ['prepare-index-dev']);
 gulp.task('test', ['compile_packs', 'coffee:test', 'run_tests']);
 gulp.task('testWatch', ['compile_packs', 'coffee:test', 'run_tests', 'watch']);
-gulp.task('coffeeW', ['coffee:test', 'watch']);
+gulp.task('coffeeW', ['build:app.js','coffee:test', 'watch']);
 
 conf.fileOrder = [
 

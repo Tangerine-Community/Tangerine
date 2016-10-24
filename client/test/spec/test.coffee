@@ -503,8 +503,8 @@
             console.log "Catch Error: " + JSON.stringify err
             done(err)
           success: (record) ->
-            console.log("assessment: " + JSON.stringify assessment)
-            Tangerine.assessment = assessment
+            console.log("ItemModel: " + JSON.stringify assessment)
+#            Tangerine.assessment = assessment
             expect(assessment.get("name")).to.equal('Test 1');
             done()
         })

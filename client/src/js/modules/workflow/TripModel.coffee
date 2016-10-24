@@ -1,3 +1,3 @@
-class TripModel extends Backbone.ChildModel
+class TripModel extends Backbone.Model
 
-initialize: ( options={} ) ->
+    url: "trip"

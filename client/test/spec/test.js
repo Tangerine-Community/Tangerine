@@ -745,8 +745,7 @@
             return done(err);
           },
           success: function(record) {
-            console.log("assessment: " + JSON.stringify(assessment));
-            Tangerine.assessment = assessment;
+            console.log("ItemModel: " + JSON.stringify(assessment));
             expect(assessment.get("name")).to.equal('Test 1');
             return done();
           }
