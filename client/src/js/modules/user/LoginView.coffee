@@ -173,7 +173,7 @@ class LoginView extends Backbone.Marionette.View
     # If a userProfile is defined in the settings doc, add those.
 
     @registrationForm = new Backbone.Form({
-        model: userModel
+        model: Tangerine.user
     }).render()
     $(@$el.find('.signup-form')[0]).html(@registrationForm.el)
 
@@ -204,12 +204,7 @@ class LoginView extends Backbone.Marionette.View
     # Separate out name and pass properties because they will be modified and set in @user.singup().
     name  = @registrationForm.model.get('name')
     pass  = @registrationForm.model.get('password')
-    otherAttributes = @registrationForm.model.toJSON()
-    delete otherAttributes.name
-    delete otherAttributes.password
-    delete otherAttributes.confirmPassword
-    @user.set(otherAttributes)
-    @user.signup(name, pass)
+    @registrationForm.model.signup(name, pass)
 
 
   login: ->

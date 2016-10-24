@@ -121,15 +121,9 @@ class TabletUser extends Backbone.Model
         @setPassword pass
         @save attributes,
           success: =>
-            if Tangerine.settings.get("context") is "class"
-              view = new RegisterTeacherView
-                name : name
-                pass : pass
-              vm.show view
-            else
-              Tangerine.session.set @id
-              @trigger "login"
-              callbacks.success?()
+            @login name, pass
+            @trigger "login"
+            callbacks.success?()
 
   login: ( name, pass, callbacks = {} ) ->
 
@@ -150,6 +144,7 @@ class TabletUser extends Backbone.Model
     if @verifyPassword pass
       Tangerine.session.set @id
       @trigger "login"
+      console.log (@id + ' session has started.')
       callbacks.success?()
       
       recentUsers = @recentUsers().filter( (a) => !~a.indexOf(@name()))
