@@ -170,6 +170,10 @@ Tangerine.bootSequence =
     else
       callback()
 
+  applySettings: ( callback ) ->
+    if (Tangerine.settings.has('userSchema')) then window.TabletUser = window.TabletUser.extend({schema: Tangerine.settings.get('userSchema')})
+    callback()
+
   documentReady: ( callback ) -> $ ->
 
     #$("<button id='reload'>reload me</button>").appendTo("#footer").click -> document.location.reload()
@@ -346,6 +350,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.versionTag
     Tangerine.bootSequence.fetchSettings
     Tangerine.bootSequence.fetchConfiguration
+    Tangerine.bootSequence.applySettings
     Tangerine.bootSequence.guaranteeInstanceId
     Tangerine.bootSequence.documentReady
     Tangerine.bootSequence.loadI18n

@@ -14,10 +14,26 @@ class TabletUser extends Backbone.Model
   initialize: ( options ) ->
     @myRoles = []
 
+  # This may be overriden by Tangerine.settings.attributes.userSchema as loaded in 
+  # on boot.applySettings().
   schema:
-    name: 'Text'
-    password: 'Password'
-    foo: 'Text'
+    name: "Text"
+    password:
+      type: "Password"
+      validators: [
+        { type: 'match', field: 'passwordConfirm', message: 'Passwords must match!' }
+      ]
+    passwordConfirm:
+      type: "Password"
+      validators: [{
+        type: 'match',
+        field: 'password',
+        message: 'Passwords must match!'
+      }]
+
+  # Never save the passwordConfirm.
+  beforeSave: ->
+    delete this.attributes.passwordConfirm
 
   ###
     Accessors
