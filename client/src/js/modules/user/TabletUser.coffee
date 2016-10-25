@@ -20,23 +20,20 @@ class TabletUser extends Backbone.Model
     name: "Text"
     password:
       type: "Password"
-      validators: [
-        { type: 'match', field: 'passwordConfirm', message: 'Passwords must match!' }
-      ]
     passwordConfirm:
       type: "Password"
-      validators: [{
-        type: 'match',
-        field: 'password',
-        message: 'Passwords must match!'
-      }]
 
-  # Never save the passwordConfirm.
+  validate: ->
+    if (@attributes.password != undefined && @attributes.password != null && @attributes.password.length > 0 && @attributes.password != @attributes.passwordConfirm)
+      return "Passwords must match."
+
   beforeSave: ->
-    delete this.attributes.passwordConfirm
-    # TODO: The fact we have to set a field to password and not pass and that we get that weird PouchDB error when we do it the right way need
-    # to be figured out. This is spaghetti right now with the dance between password and pass.
-    delete this.attributes.password
+    # Check to see if a password is set, if so then use @setPassword to set it as a `pass` attribute.
+    if (@attributes.password != undefined && @attributes.password != null && @attributes.password.length > 0)
+      @setPassword @attributes.password
+    # Never save password and passwordConfirm.
+    delete @attributes.passwordConfirm
+    delete @attributes.password
 
   ###
     Accessors
@@ -115,19 +112,7 @@ class TabletUser extends Backbone.Model
     document.location = Tangerine.settings.location.group.url.replace(/\:\/\/.*@/,'://')+"_ghost/#{user}/#{pass}/#{location}"
 
 
-  signup: ( name, pass, attributes, callbacks={} ) =>
-    @set "_id" : TabletUser.calcId(name)
-    @fetch
-      success: => @trigger "name-error", "User already exists."
-      error: =>
-        @set "name" : name
-        @setPassword pass
-        @save attributes,
-          success: =>
-            @login name, pass
-            @trigger "login"
-            callbacks.success?()
-
+  # TODO: This should be on the Tangerine object.
   login: ( name, pass, callbacks = {} ) ->
 
     if Tangerine.session.exists()

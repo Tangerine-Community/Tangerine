@@ -199,10 +199,24 @@ class LoginView extends Backbone.Marionette.View
     errors = @registrationForm.commit()
     if (errors)
       return alert('Cannot proceed because of errors in your form.')
-    # Separate out name and pass properties because they will be modified and set in @user.singup().
-    name  = @registrationForm.model.get('name')
-    pass  = @registrationForm.model.get('password')
-    @registrationForm.model.signup(name, pass)
+    modelErrors = @registrationForm.model.validate()
+    if (modelErrors)
+      return alert('Could not proceed because of errors in your form: ' + modelErrors)
+    # TODO: A UUID should be used but for reporting purposes (implied relationship in the name) we have to keep it this way for now.
+    @registrationForm.model.set "_id" : 'user-' + @registrationForm.model.get('name')
+    # Stash the user name and password for logging them in after saving them.
+    name = @registrationForm.model.get('name')
+    password = @registrationForm.model.get('password')
+    # Try to fetch the user first, because if they exist then we should fail.
+    @registrationForm.model.fetch
+      success: => alert("User already exists")
+      error: =>
+        @registrationForm.model.on 'sync', =>
+          @registrationForm.model.login name, password
+          @registrationForm.model.trigger "login"
+          # TODO This event below should bubble up to the router where the router then decides where to go next. Somewhere in the application the login is causing a redirect.
+          @trigger 'done'
+        @registrationForm.model.save()
 
 
   login: ->
