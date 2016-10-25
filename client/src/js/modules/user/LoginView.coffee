@@ -23,7 +23,6 @@ class LoginView extends Backbone.Marionette.View
       'keyup #new_name'    : 'checkNewName'
 
   initialize: (options) ->
-    $(window).on('orientationchange scroll resize', @recenter)
     @mode = "login"
     @i18n()
     @users = options.users
@@ -190,7 +189,6 @@ class LoginView extends Backbone.Marionette.View
   onBeforeDestroy: =>
     $("#footer").show()
     $("body").css("background", @oldBackground)
-    $(window).off('orientationchange scroll resize', @recenter)
 
   action: ->
     @login()  if @mode is "login"
