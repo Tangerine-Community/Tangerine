@@ -513,6 +513,7 @@ conf.fileOrder = [
   'User',
   'Users',
   'TabletUser',
+  'TabletUserView',
   'TabletUsers',
 
   'LoginView',

@@ -28,6 +28,7 @@ class Router extends Backbone.Router
     'feedback/:workflowId'      : 'feedback'
     'login'    : 'login'
     'register' : 'register'
+    'user/:userId' : 'user'
     'logout'   : 'logout'
     'account'  : 'account'
     'bandwidth' : 'bandwidth' 
@@ -966,6 +967,18 @@ class Router extends Backbone.Router
 
   logout: ->
     Tangerine.user.logout()
+
+  user: (userId) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        tabletUserModel = new TabletUser({id: userId})
+        tabletUserModel.set('_id', userId)
+        tabletUserModel.on 'sync', ->
+          tabletUserView = new TabletUserView
+            model : tabletUserModel
+          Tangerine.app.rm.get('mainRegion').show tabletUserView
+        tabletUserModel.fetch()
+
 
   account: ->
     Tangerine.user.verify
