@@ -51,11 +51,11 @@ class LocView extends Backbone.View
           return 0
 
       htmlOptions = res.map (el) ->
-        if @selected[index]? and el.id is @selected[index]
+        if @selected[@levels[index]]? and el.id is @selected[@levels[index]]
           selected = "selected='selected'"
         "<option value='#{el.id}' #{selected||''}>#{el.label}</option>"
       , @
-
+      # TODO: There is an off by one error here that when I try to fix it causes a huge number of fields to manifest. Needs work.
       title = @levels[index].titleize() if @showTitles
 
       noPreSelection = not @selected[index]?
