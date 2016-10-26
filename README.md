@@ -40,4 +40,4 @@ If your server restarts or the container stops, you can later run the `./start.s
 Check out the [Tangerine Technical Documentation site on Github Pages](http://tangerine-community.github.io/Tangerine/#!index.md). Want to contribute documentation? Fork the Tangerine repository, commit to the `gh-pages` branch and send us a pull request.
 
 ## Trademark and License
-Tangerine is a registered trademark of RTI International. This software is licensed under the [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).
+Tangerine is a registered trademark of [RTI International](https://rti.org). This software is licensed under the [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).
