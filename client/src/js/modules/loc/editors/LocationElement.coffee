@@ -26,6 +26,20 @@ class LocationElement extends Backbone.Form.editors.Base
     # if (this.schema.customParam)
     #  this.doSomething()
 
+  validate: () ->
+    value = this.locView.value()
+    missing = []
+
+    @schema.levels.forEach (level) =>
+      if value.hasOwnProperty(level) != true || value[level] == null || value[level] == ''
+        missing.push level
+
+    if (missing.length > 0)
+      err =
+        type: 'LocationElement'
+        message: 'Missing ' + missing.join(', ')
+      return err
+
   render: () ->
     #window.LocationElementInstance = @
     # TODO: Set values if there is data so this field can be edited.
