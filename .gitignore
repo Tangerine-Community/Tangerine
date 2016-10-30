@@ -30,3 +30,5 @@ data/couchdb
 npm-debug.log
 
 editor/src/compiled/*
+
+client/lesson_plan_media

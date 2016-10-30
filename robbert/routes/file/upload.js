@@ -3,7 +3,6 @@ var path = require('path');     //used for file path
 var fs = require('fs-extra');       //File System - for file manipulation
 
 
-
 /* ==========================================================
  Create a Route (/upload) to handle the Form submission
  (handle POST requests to /upload)
@@ -11,7 +10,7 @@ var fs = require('fs-extra');       //File System - for file manipulation
  ============================================================ */
 var upload = function (req, res, next) {
 
-    var fstream, savedFile, groupName;
+    var fstream, savedFile, groupName, elementFilename;
     var lpPath = __dirname + '/../../../client/lesson_plan_media/';
     var tmpDir = lpPath + 'tmp/';
     fs.ensureDir(tmpDir, function (err) {
@@ -37,13 +36,15 @@ var upload = function (req, res, next) {
         // console.log('Field [' + fieldname + ']: value: ' + val);
         if (fieldname == "groupName") {
             groupName = val
+        } else if (fieldname == "elementFilename") {
+            elementFilename = val
         }
     });
     req.busboy.on('finish', function() {
-        console.log('Done parsing form for savedFile: ' + savedFile + " and groupName: " + groupName);
+        console.log('Done parsing form for savedFile: ' + savedFile + " and groupName: " + groupName + " and elementFilename: " + elementFilename);
         var fs = require('fs-extra')
 
-        var dest = lpPath + groupName + '/' + savedFile
+        var dest = lpPath + groupName + '/' + elementFilename
         fs.ensureDir(lpPath + groupName, function (err) {
             // console.log(err) // => null
             // dir has now been created, including the directory it is to be placed in

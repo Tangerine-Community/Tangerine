@@ -2,7 +2,11 @@
 <div class="lesson-text">{{{lessonPlan_lesson_text}}}</div>
 {{#each elements}}
     {{#if image}}
-        <div><img style="width:100%;height:auto;" src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}"/></div>
+        {{#if elementFilename}}
+            <div><img style="width:100%;height:auto;" src="lesson_plan_media/{{{groupName}}}/{{{elementFilename}}}"/></div>
+        {{else}}
+            <div><img style="width:100%;height:auto;" src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}"/></div>
+        {{/if}}
         <!--{{{fileName}}}-->
         <!--{{{fileSize}}}-->
         <!--{{{fileType}}}-->

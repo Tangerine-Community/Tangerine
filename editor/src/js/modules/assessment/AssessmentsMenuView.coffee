@@ -126,10 +126,10 @@ class AssessmentsMenuView extends Backbone.View
       week    = lessonPlan.get("lessonPlan_week")
       day     = lessonPlan.get("lessonPlan_day")
       id      = lessonPlan.get("_id")
-      console.log("Lessons available: " + [week, day, id])
+#      console.log("Lessons available: " + [week, day, id])
       if week == '1' && day == '1'
         Tangerine.firstLessonId = id
-        console.log("firstLesson: " + [week, day, id])
+#        console.log("firstLesson: " + [week, day, id])
       Tangerine.available.push [week, day, id]
 #    console.log("navigating to " + Tangerine.firstLessonId)
 #    Tangerine.router.navigate "run/" + Tangerine.firstLessonId, false

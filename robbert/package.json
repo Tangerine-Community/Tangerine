@@ -28,6 +28,7 @@
     "http-status-codes": "^1.0.5",
     "mocha": "^2.3.4",
     "nano": "^6.2.0",
+    "sanitize-filename": "^1.6.1",
     "unirest": "^0.4.2",
     "winston": "^2.1.1"
   }

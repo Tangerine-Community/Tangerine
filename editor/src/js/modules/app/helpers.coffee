@@ -699,56 +699,6 @@ class Robbert
 
 # Tree interface
 class TangerineTree
-  
-  @generateJsonAndMAke: ->
-
-    url = Tangerine.settings.urlView "group", "assessmentsNotArchived"
-    console.log("url: " + url)
-
-    $.ajax
-      url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
-      dataType: "json"
-      success: (data) =>
-        console.log("data: " + JSON.stringify(data))
-#        dKeys = _.compact(doc.id.substr(-5, 5) for doc in data.rows).concat(keyList).join(" ")
-        dKeys = data.rows.map((row) => row.id.substr(-5))
-        dKeyQuery =
-          keys: JSON.stringify(dKeys)
-        console.log("dKeyQuery:" + JSON.stringify(dKeyQuery))
-        url = Tangerine.settings.urlView("group", "byDKey")
-        console.log("url: " + url)
-        $.ajax
-          url: Tangerine.settings.urlView("group", "byDKey"),
-          type: "POST"
-          contentType: "application/json"
-          dataType: "json"
-          data: dKeyQuery
-          success: (data) =>
-            console.log("data: " + JSON.stringify(data))
-            keyList = []
-#            for datum in data.rows
-#              keyList.push datum.key
-            keyList = data.rows.map((row) => row.id);
-            keyList = _.uniq(keyList)
-            keyList.push("settings");
-            console.log("keyList: " + JSON.stringify(keyList));
-#            keyListQuery = {
-#              keys: keyList,
-#              include_docs:true
-#            }
-            Tangerine.$db.allDocs
-              keys : keyList
-              success: (response) ->
-  #              let docs = response.body.rows.map( (row) => row.doc );
-                docs = []
-                for row in response.rows
-                  docs.push row.doc
-                body =
-                  docs: docs
-                return body
-      error: (a, b) ->
-        console.log("a: " + a)
-        Utils.midAlert "Import error"
 
   @make: (options) ->
 

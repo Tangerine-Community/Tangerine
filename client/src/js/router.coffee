@@ -453,7 +453,7 @@ class Router extends Backbone.Router
       insertRecord = ->
 #        console.log("i: " + i + " assessmentDocs[i]: " + JSON.stringify(assessmentDocs[i]))
         Tangerine.db
-          .put(assessmentDocs[i])
+          .put(assessmentDocs[i], {new_edits: false})
           .then( (response) ->
               # Catch the Assessment ID that will be passing by here.
             if assessmentDocs[i].collection == 'assessment' || assessmentDocs[i].collection == 'lessonPlan'

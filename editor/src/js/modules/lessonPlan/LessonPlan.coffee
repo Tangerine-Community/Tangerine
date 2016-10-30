@@ -54,6 +54,8 @@ class LessonPlan extends Backbone.Model
 
     Assessment.__super__.fetch.call @, options
 
+
+
   splitDKeys: ( dKey = "" ) ->
 # split to handle multiple dkeys
     dKey.toLowerCase().replace(/[g-z]/g,'').replace(/[^a-f0-9]/g," ").split(/\s+/)

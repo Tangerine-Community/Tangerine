@@ -360,7 +360,7 @@ Tangerine.bootSequence =
       done()
 
   loadTangerineAvailable: (done) ->
-    console.log("Load lessons into Tangerine.available")
+#    console.log("Load lessons into Tangerine.available")
 #    Tangerine.db.query("_design/#{Tangerine.conf.design_doc}/views/byLesson",
 #    Tangerine.db.query("byLesson",
     Tangerine.db.allDocs(
@@ -370,14 +370,14 @@ Tangerine.bootSequence =
       Tangerine.available = []
       for row in response.rows
         collection = row.doc.collection
-        console.log("collection: " + collection)
+#        console.log("collection: " + collection)
         if (collection == "lessonPlan")
 #          subject = Tangerine.enum.subjects[row.doc.lessonPlan_subject]
 #          grade   = row.doc.lessonPlan_grade
           week    = row.doc.lessonPlan_week
           day     = row.doc.lessonPlan_day
           id      = row.doc._id
-          console.log("Lessons available: " + [week, day, id])
+#          console.log("Lessons available: " + [week, day, id])
           Tangerine.available.push [week, day, id]
 #      Tangerine.bootSequence.initMenu()
 

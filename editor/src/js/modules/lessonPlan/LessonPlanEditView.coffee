@@ -136,17 +136,45 @@ class LessonPlanEditView extends Backbone.View
     # bit more specific template
     useTypeTemplate = Tangerine.templates.get("element");
 
+    # extract some values from @$el.
+    name = @$el.find("#new_element_name").val()
+    type = @$el.find("#element_type_select").val()
+
+    # Get the file from the form.
     file = document.getElementById("files").files[0]
+    if typeof file != 'undefined'
+      fileName = file.name
+      fileNameArr = file.name.split('.')
+      extension = fileNameArr.pop()
+
+    # build the elementFilename
+    if type == "media"
+      numElements = @model.elements.length
+      sanitizedName = Sanitize  name
+      lessonPlanTitle = Sanitize @model.get("lessonPlan_title")
+      if sanitizedName != ""
+        finalName = "_" + sanitizedName
+      else
+        finalName = ""
+      if lessonPlanTitle != ""
+        finalLessonPlanTitle =  lessonPlanTitle
+      else
+        finalLessonPlanTitle = "LP"
+      timestamp = (new Date()).getTime()
+      elementFilename = finalLessonPlanTitle + "_" + type + finalName  + "_" + numElements + "_" + timestamp + "." + extension
+      console.log("elementFilename: " + elementFilename)
+
     if typeof file != 'undefined'
       fd = new FormData()
       fd.append("file", file)
       fd.append("groupName", Tangerine.settings.get("groupName"))
+      fd.append("elementFilename", elementFilename)
 
     newAttributes = $.extend newAttributes, prototypeTemplate
     newAttributes = $.extend newAttributes, useTypeTemplate
     newAttributes = $.extend newAttributes,
-      name         : @$el.find("#new_element_name").val()
-      element         : @$el.find("#element_type_select").val()
+      name         : name
+      element         : type
       lessonPlanId : @model.id
       assessmentId : @model.id
       order        : @model.elements.length
@@ -157,11 +185,13 @@ class LessonPlanEditView extends Backbone.View
       newAttributes = $.extend newAttributes,
         html: @model.get('html')
 
+
     if typeof file != 'undefined'
       newAttributes = $.extend newAttributes,
         fileType  : file.type
         fileName  : file.name
         fileSize  : file.size
+        elementFilename  : elementFilename
 
     if typeof file == 'undefined'
       options =
