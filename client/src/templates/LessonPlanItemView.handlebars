@@ -14,14 +14,27 @@
         <!--{{{element}}}-->
         </br>
     {{else if audio}}
-        <audio controls style="width:100%;height:auto;" class="mediaClick" id="audio_{{{fileName}}}">
-            <source src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}" type="{{{fileType}}}">
-            Your browser does not support the audio tag.
-        </audio>
+        {{#if elementFilename}}
+            <audio controls style="width:100%;height:auto;" class="mediaClick" id="audio_{{{elementFilename}}}">
+                <source src="lesson_plan_media/{{{groupName}}}/{{{elementFilename}}}" type="{{{fileType}}}">
+                Your browser does not support the audio tag.
+            </audio>
+        {{else}}
+            <audio controls style="width:100%;height:auto;" class="mediaClick" id="audio_{{{fileName}}}">
+                <source src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}" type="{{{fileType}}}">
+                Your browser does not support the audio tag.
+            </audio>
+        {{/if}}
     {{else if video}}
-        <video controls style="width:100%;height:auto;" class="mediaClick" id="video_{{{fileName}}}">
-            <source src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}" type="{{{fileType}}}">
-        </video>
+        {{#if elementFilename}}
+            <video controls style="width:100%;height:auto;" class="mediaClick" id="video_{{{elementFilename}}}">
+                <source src="lesson_plan_media/{{{groupName}}}/{{{elementFilename}}}" type="{{{fileType}}}">
+            </video>
+        {{else}}
+            <video controls style="width:100%;height:auto;" class="mediaClick" id="video_{{{fileName}}}">
+                <source src="lesson_plan_media/{{{groupName}}}/{{{fileName}}}" type="{{{fileType}}}">
+            </video>
+        {{/if}}
     {{else}}
        <div>{{{html}}}</div>
     {{/if}}
