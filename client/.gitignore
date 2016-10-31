@@ -24,6 +24,6 @@ src/js/init/pack*.json
 test/packs.json
 src/packs.json
 
-
 .idea
 
+/lesson_plan_media/

@@ -12,9 +12,9 @@ Tangerine.loadViews = (doneLoadingViews) ->
     Tangerine.db.put(ddoc)
       .then (doc) ->
         doneLoadingViews()
-      .catch (error) ->
-        console.log error
-        doneLoadingViews(error)
+#      .catch (error) ->
+#        console.log error
+#        doneLoadingViews(error)
 
 Tangerine.viewLibs =
   utils:

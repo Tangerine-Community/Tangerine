@@ -132,18 +132,21 @@ Tangerine.bootSequence =
 
   # load templates
   fetchTemplates: ( callback ) ->
-    (Tangerine.templates = new Template "_id" : "templates").fetch
-      error: -> alert "Could not load templates."
-      success: callback
+    if (window.location.hash != '#widget')
+      (Tangerine.templates = new Template "_id" : "templates").fetch
+        error: -> alert "Could not load templates."
+        success: callback
+    else return callback()
 
   # Grab our system config doc. These generally don't change very often unless
   # major system changes are required. New servers, etc.
   fetchConfiguration: ( callback ) ->
-
-    Tangerine.config = new Config "_id" : "configuration"
-    Tangerine.config.fetch
-      error   : -> alert "Could not fetch configuration"
-      success : callback
+    if (window.location.hash != '#widget')
+      Tangerine.config = new Config "_id" : "configuration"
+      Tangerine.config.fetch
+        error   : -> alert "Could not fetch configuration"
+        success : callback
+    else return callback()
 
 
   # get our local Tangerine settings
@@ -323,16 +326,18 @@ Tangerine.bootSequence =
       Tangerine.router.navigate(sendTo, { trigger: true, replace: true })
     )
 
-  getLocationList : ( callback ) ->    
-    # Grab our system config doc   
-    Tangerine.locationList = new Backbone.Model "_id" : "location-list"    
-   
-    Tangerine.locationList.fetch   
-      error   : ->   
-        console.log "could not fetch location-list..."   
-        callback   
-   
-      success : callback
+  getLocationList : ( callback ) ->
+    if (window.location.hash != '#widget')
+      # Grab our system config doc
+      Tangerine.locationList = new Backbone.Model "_id" : "location-list"
+
+      Tangerine.locationList.fetch
+        error   : ->
+          console.log "could not fetch location-list..."
+          callback
+
+        success : callback
+    else return callback()
 
   removeLoadingOverlay: ( callback ) ->
     removeOverlay = ->
