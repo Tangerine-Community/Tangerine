@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "postinstall": " cd scripts && ./postinstall.sh",
-    "build:apk": "cordova build -- --gradleArg=-PcdvBuildArch=arm --gradleArg=-PcompileJava.options.encoding=UTF-8  android 2>&1",
+    "build:apk": "cordova build -- --gradleArg=-PcdvBuildArch=arm android 2>&1",
     "test": "gulp test",
     "clean": "rm -rf platforms plugins node_modules",
     "update:tree": "git pull && chown -R www-data:www-data .",

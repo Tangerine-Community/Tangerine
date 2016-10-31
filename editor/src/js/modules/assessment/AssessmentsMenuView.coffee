@@ -150,10 +150,10 @@ class AssessmentsMenuView extends Backbone.View
 
   render: =>
 
-    Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
+#    Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
 #    dashboardLayout.headerRegion.reset();
 #    dashboardLayout.headerRegion.show(Tangerine.LessonMenuView)
-    Tangerine.LessonMenuView.setElement($("#menu")).render()
+#    Tangerine.LessonMenuView.setElement($("#menu")).render()
 
 
     isAdmin = Tangerine.user.isAdmin()
