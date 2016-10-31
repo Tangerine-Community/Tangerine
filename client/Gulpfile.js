@@ -461,6 +461,7 @@ conf.fileOrder = [
   'ResultPreviews',
   'ResultsSaveAsFileView',
   'UniversalUploadView',
+  'SyncManager',
 
   'AdminView',
 
