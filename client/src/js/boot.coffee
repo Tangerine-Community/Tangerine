@@ -304,6 +304,7 @@ Tangerine.bootSequence =
       router : Tangerine.router
     Tangerine.log    = new Log()
     Tangerine.session = new Session()
+#    Tangerine.Controller = new TripController()
 
     #  init  Tangerine as a Marionette app
     Tangerine.app = new Marionette.Application()

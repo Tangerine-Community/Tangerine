@@ -21,6 +21,7 @@ class Router extends Backbone.Router
     'workflow/run/:workflowId'  : 'workflowRun'
     'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
     'workflows': 'workflows'
+    'trip/:tripId/:workflowId':'trip'
     'widget'   : 'widgetLoad'
     'widget-play/:id' : 'widgetPlay'
     'login'    : 'login'
@@ -512,6 +513,15 @@ class Router extends Backbone.Router
                   workflows : workflows
                   feedbacks : feedbacks
                 Tangerine.app.rm.get('mainRegion').show view
+
+  trip: (tripId, workflowId) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        controller = new TripController
+          tripId:tripId
+          workflowId:workflowId
+        controller.render()
 
   assessments: ->
     Tangerine.user.verify

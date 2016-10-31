@@ -1,0 +1,69 @@
+[
+  {
+    "_id": "49ed849c-c123-6e9c-3f48-8197fe5960e9",
+    "_rev": "2-e467c56c288241334b420320c94b2e20",
+    "name": "Test 1",
+    "assessmentId": "49ed849c-c123-6e9c-3f48-8197fe5960e9",
+    "archived": false,
+    "editedBy": "tangerine",
+    "updated": "Thu Oct 20 2016 11:07:23 GMT+0200 (CEST)",
+    "hash": "wo1WtT8BZZkkL1p2DNpW4f/7bbY=",
+    "collection": "assessment",
+    "sequences": [
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "_id": "c04a769b0454339956b872c0db00079c",
+    "_rev": "2-21fcca062e624ebd88984b36d699af44",
+    "studentDialog": "",
+    "enumeratorHelp": "",
+    "transitionComment": "",
+    "skippable": false,
+    "order": 0,
+    "items": [
+      "a",
+      "s",
+      "d",
+      "f",
+      "g",
+      "h",
+      "j",
+      "k",
+      "l",
+      "e",
+      "r",
+      "t",
+      "y",
+      "u",
+      "i",
+      "o",
+      "p",
+      "x",
+      "c",
+      "v"
+    ],
+    "columns": 0,
+    "prototype": "grid",
+    "autostop": 0,
+    "timer": 60,
+    "name": "Letter Sound Grid",
+    "assessmentId": "49ed849c-c123-6e9c-3f48-8197fe5960e9",
+    "editedBy": "tangerine",
+    "updated": "Thu Oct 20 2016 11:10:25 GMT+0200 (CEST)",
+    "hash": "RdB9T0cqsO4YULjG2HbBP/F34qI=",
+    "collection": "subtest",
+    "displayCode": "",
+    "fontFamily": "",
+    "captureLastAttempted": true,
+    "endOfLine": false,
+    "captureItemAtTime": false,
+    "captureAfterSeconds": 0,
+    "fontSize": "medium",
+    "layoutMode": "fixed",
+    "randomize": false,
+    "variableName": ""
+  }
+]
