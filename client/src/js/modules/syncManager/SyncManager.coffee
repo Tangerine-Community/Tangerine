@@ -211,44 +211,6 @@ class SyncManagerView extends Backbone.View
       doNow => doIt()
 
     doIt()
-
-  # send tablet user docs to the server
-  syncUsers: ( callback ) ->
-    tabletUsers = new TabletUsers
-    tabletUsers.fetch
-      error: -> callback?()
-      success: ->
-        docIds = tabletUsers.pluck "_id"
-
-        $.ajax
-          type: "post"
-          url: "/"+Tangerine.db_name+"/_all_docs?include_docs=true"
-          dataType: "json"
-          contentType: "application/json"
-          data: JSON.stringify(
-            keys: _.without(docIds, "user-admin")
-          )
-          error: =>
-            console.log "syncUsers: Unable to reach local server to retrieve users"
-
-          success: (response) =>
-
-            docs = {"docs":response.rows.map((el)->el.doc)}
-            compressedData = LZString.compressToBase64(JSON.stringify(docs))
-            
-            a = document.createElement("a")
-            a.href = Tangerine.settings.get("groupHost")
-            bulkDocsUrl = "#{a.protocol}//#{a.host}/_corsBulkDocs/#{Tangerine.settings.groupDB}/force"
-
-            $.ajax
-              type : "post"
-              url : bulkDocsUrl
-              data : compressedData
-              error: (response) =>
-                console.log "User Upload: Server bulk docs error", response
-              success: (response) =>
-                console.log "Users Uploaded", response
-
   # Counts how many trips are on the tablet from this user and all users previous users
   # removes any trips that are in the incomplete list
   updateSyncable: ( callback ) =>
@@ -282,59 +244,74 @@ class SyncManagerView extends Backbone.View
     if @uploadingNow
       return alert "Already uploading."
 
-    @syncUsers()
+    #@syncUsers()
 
     @uploadingNow = true
     @uploadStatus "Upload initializing"
 
-    @ensureServerAuth
-      error: => 
+    allTrips = _(@syncable).clone().reverse()# all trips, for debugging
+    tempTrips = _(_(@syncable).clone()).difference(@sunc) # only unlogged unsunc trips
+
+    doTrip = =>
+
+      @uploadStatus ("Uploading #{100-parseInt((tempTrips.length / allTrips.length) * 100)}% complete")
+      currentTrip = tempTrips.shift()
+      
+      unless currentTrip?
         @uploadingNow = false
-        alert "Logging in to server. Please sync again."
-        Tangerine.user.ghostLogin "uploader-"+Tangerine.settings.get("groupName"), Tangerine.settings.get("upPass")
+        Utils.sticky "Done uploading."
+        return 
 
-      success: =>
-        @uploadStatus "Upload starting"
-
-
-
-        allTrips = _(@syncable).clone().reverse()# all trips, for debugging
-        tempTrips = _(_(@syncable).clone()).difference(@sunc) # only unlogged unsunc trips
-
-        doTrip = =>
-
-          @uploadStatus ("Uploading #{100-parseInt((tempTrips.length / allTrips.length) * 100)}% complete")
-          currentTrip = tempTrips.shift()
-          
-          unless currentTrip?
+      Tangerine.db.query "tangerine/tripsAndUsers",
+        key     : currentTrip
+      .then ( response ) =>
+        docIds = _(response.rows).pluck("id")
+        allDocs = (Tangerine.settings.location.group.db+"_all_docs").replace('group-', 'db\/group-')
+        $.ajax
+          url: allDocs+"?keys="+JSON.stringify(docIds)
+          dataType: "json"
+          error: (err) =>
             @uploadingNow = false
-            Utils.sticky "Done uploading."
-            return 
+            alert "Error communicating with server.\n" + err
+          success: (response) =>
 
-          Tangerine.$db.view "#{Tangerine.design_doc}/tripsAndUsers",
-            key     : currentTrip
-            error: =>
-              @uploadingNow = false
-            success : ( response ) =>
-              docIds = _(response.rows).pluck("id")
-              allDocs = Tangerine.settings.location.group.db+"_all_docs"
-              $.ajax
-                url: allDocs+"?keys="+JSON.stringify(docIds)
-                dataType: "jsonp"
-                error: (err) =>
-                  @uploadingNow = false
-                  alert "Error communicating with server.\n" + err
-                success: (response) =>
+            rows = response.rows
+            leftToUpload = []
+            for row in rows
+              leftToUpload.push(row.key) unless row.id?
 
-                  rows = response.rows
-                  leftToUpload = []
-                  for row in rows
-                    leftToUpload.push(row.key) unless row.id?
+            # if it's already fully uploaded
+            # make sure it's in the log
 
-                  # if it's already fully uploaded
-                  # make sure it's in the log
-
-                  if leftToUpload.length is 0
+            if leftToUpload.length is 0
+              @sunc.push currentTrip
+              @sunc = _.uniq(@sunc)
+              @log.setTrips @sunc
+              @log.save null,
+                error: => @uploadingNow = false
+                success: =>
+                  @update =>
+                    @render()
+                    doTrip()
+            else
+              Tangerine.db.allDocs
+                include_docs: true
+                keys: docIds
+              .then (response) =>
+                docs = {"docs":response.rows.map((el)->el.doc)}
+                compressedData = LZString.compressToBase64(JSON.stringify(docs))
+                a = document.createElement("a")
+                a.href = Tangerine.settings.get("groupHost")
+                bulkDocsUrl = "#{a.protocol}//#{a.host}/_corsBulkDocs/#{Tangerine.settings.groupDB}"
+                
+                $.ajax
+                  type : "post"
+                  url : bulkDocsUrl
+                  data : compressedData
+                  error: =>
+                    @uploadingNow = false
+                    alert "Server bulk docs error"
+                  success: =>
                     @sunc.push currentTrip
                     @sunc = _.uniq(@sunc)
                     @log.setTrips @sunc
@@ -344,46 +321,8 @@ class SyncManagerView extends Backbone.View
                         @update =>
                           @render()
                           doTrip()
-                  else
-                    $.ajax
-                      type: "post"
-                      url: "/"+Tangerine.db_name+"/_all_docs?include_docs=true"
-                      dataType: "json"
-                      contentType: "application/json"
-                      data: JSON.stringify(
-                        keys: docIds
-                      )
-                      error: =>
-                        @uploadingNow = false
-                        alert "Local error. Please try again."
 
-                      success: (response) =>
-
-                        docs = {"docs":response.rows.map((el)->el.doc)}
-                        compressedData = LZString.compressToBase64(JSON.stringify(docs))
-                        a = document.createElement("a")
-                        a.href = Tangerine.settings.get("groupHost")
-                        bulkDocsUrl = "#{a.protocol}//#{a.host}/_corsBulkDocs/#{Tangerine.settings.groupDB}"
-                        
-                        $.ajax
-                          type : "post"
-                          url : bulkDocsUrl
-                          data : compressedData
-                          error: =>
-                            @uploadingNow = false
-                            alert "Server bulk docs error"
-                          success: =>
-                            @sunc.push currentTrip
-                            @sunc = _.uniq(@sunc)
-                            @log.setTrips @sunc
-                            @log.save null,
-                              error: => @uploadingNow = false
-                              success: =>
-                                @update =>
-                                  @render()
-                                  doTrip()
-
-        doTrip()
+    doTrip()
 
 
   uploadStatus: (status) ->
