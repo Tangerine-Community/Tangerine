@@ -301,8 +301,10 @@ class Utils
             data : compressedData
             error: (response) =>
               console.log "User Upload: Server bulk docs error", response
+              callback(response)
             success: (response) =>
               console.log "Users Uploaded", response
+              callback(null, response)
 
 
   @universalUpload: ->
