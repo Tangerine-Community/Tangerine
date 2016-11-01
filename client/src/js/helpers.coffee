@@ -276,6 +276,34 @@ class Utils
               return
         )
 
+  # send tablet user docs to the server
+  @syncUsers: ( callback ) ->
+    tabletUsers = new TabletUsers
+    tabletUsers.fetch
+      error: -> callback?()
+      success: ->
+        docIds = tabletUsers.pluck "_id"
+
+        Tangerine.db.allDocs 
+          keys: _.without(docIds, "user-admin")
+          include_docs: true
+        , (err, response) =>
+          if (err)
+            return alert("Unable to sync Users because of" + err)
+          docs = {"docs":response.rows.map((el)->el.doc)}
+          compressedData = LZString.compressToBase64(JSON.stringify(docs))
+          a = document.createElement("a")
+          a.href = Tangerine.settings.get("groupHost")
+          bulkDocsUrl = "#{a.protocol}//#{a.host}/decompressor/#{Tangerine.settings.groupDB}/force"
+          $.ajax
+            type : "post"
+            url : bulkDocsUrl
+            data : compressedData
+            error: (response) =>
+              console.log "User Upload: Server bulk docs error", response
+            success: (response) =>
+              console.log "Users Uploaded", response
+
 
   @universalUpload: ->
     results = new Results

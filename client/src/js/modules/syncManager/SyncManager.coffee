@@ -35,9 +35,10 @@ class SyncManagerView extends Backbone.View
 
 
   ensureServerAuth: (callbacks = {}) ->
-    sessionUrl = Tangerine.settings.urlSession "group"
-    sessionUrl = "http://" + sessionUrl.replace(/http(.*)\@/, '')
 
+    groupHost = Tangerine.settings.get('groupHost')
+    protocolAndDomain = groupHost.split(':\/\/')
+    sessionUrl = protocolAndDomain[0] + '://uploader-' + Tangerine.settings.get('groupName') + ':' + Tangerine.settings.get('upPass') + '@' + protocolAndDomain[1] + '/db/_session'
     $.ajax
       url: sessionUrl
       type: "GET"
@@ -251,17 +252,16 @@ class SyncManagerView extends Backbone.View
   # Counts how many trips are on the tablet from this user and all users previous users
   # removes any trips that are in the incomplete list
   updateSyncable: ( callback ) =>
-    Tangerine.$db.view "#{Tangerine.design_doc}/tripsAndUsers",
+    Tangerine.db.query "tangerine/tripsAndUsers",
       keys    : [Tangerine.user.name()].concat(Tangerine.user.getArray('previousUsers'))
-      error   : $.noop
-      success : ( response ) =>
-
-        @syncable = _( _( response.rows ).pluck( "value" ) ).uniq()
-        # filter out incomplete trips
-        if @incompleteTrips.length isnt 0
-          @syncable = @syncable.filter((el) => !~@incompleteTrips.indexOf(el))
-
-        callback()
+    .then ( response ) =>
+      @syncable = _( _( response.rows ).pluck( "value" ) ).uniq()
+      # filter out incomplete trips
+      if @incompleteTrips.length isnt 0
+        @syncable = @syncable.filter((el) => !~@incompleteTrips.indexOf(el))
+      callback()
+    .catch ( err ) =>
+      console.log err
 
   # get the log of what trips have been synced already
   # if the log doesn't exist yet, make it exist
