@@ -191,11 +191,15 @@ _.indexBy = ( propertyName, objectArray ) ->
 
 class Utils
 
-  @execute: ( functions ) ->
+  @execute: ( functions, scope, progress ) ->
+
+    totalFunctions = functions.length
 
     step = ->
+      progress?.apply?(scope||step, [totalFunctions, functions.length])
       nextFunction = functions.shift()
-      nextFunction?(step)
+      if typeof nextFunction is "function"
+        nextFunction.apply(scope||step, [step])
     step()
 
   @changeLanguage : (code, callback) ->
