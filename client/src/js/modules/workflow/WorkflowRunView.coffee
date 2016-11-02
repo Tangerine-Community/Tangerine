@@ -17,7 +17,7 @@ class WorkflowRunView extends Backbone.View
       @trip.set('startTime', (Date.now()).toString())
     @trip.set('workflowId', @workflow.id)
     @trip.set('userId', Tangerine.user.id)
-    # @trip.save()
+    @trip.save()
     # TODO: Legacy.
     @tripId = @trip.id
 
@@ -328,10 +328,10 @@ class WorkflowRunView extends Backbone.View
     if tripValidation != undefined && tripValidation.enabled == true
       if tripValidation.constraints.duration?
           minutes = (@trip.get('endTime') - @trip.get('startTime')) / 1000 / 60
-          if minutes > tripValidation.constraints.duration.minutes
+          if minutes < tripValidation.constraints.duration.minutes
             valid = false
       if tripValidation.constraints.timeOfDay?
-        tripTime = moment(@trip.get('startTime'))
+        tripTime = moment(parseInt(@trip.get('startTime')))
         tripTime.zone(Tangerine.settings.get("timeZone")) if Tangerine.settings.get("timeZone")?
         if tripTime.hours() < tripValidation.constraints.timeOfDay.startTime.hour or tripTime.hours() > tripValidation.constraints.timeOfDay.endTime.hour
           valid = false

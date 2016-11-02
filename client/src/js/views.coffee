@@ -211,6 +211,12 @@ Tangerine.views =
       emit id.substr(-5,5), null
     ).toString()
 
+  tripsByUserId:
+    map: ( ( doc ) ->
+      if doc.collection == 'trip'
+        return emit(doc.userId, null)
+    ).toString()
+
   results :
     map: ( ( doc ) ->
       return unless doc.collection is 'result'
