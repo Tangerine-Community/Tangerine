@@ -18,40 +18,40 @@ class ValidObservationView extends Backbone.View
 
     Utils.execute [
       (callback = $.noop) ->
-        Tangerine.$db.view "#{Tangerine.design_doc}/tutorTrips",
+        Tangerine.db.query "tangerine/tutorTrips",
           key     : "year#{year}month#{month}"
           reduce  : false
-          success : (response) =>
-            @tripIds.thisMonth = _(response.rows.map (el) -> el.value).uniq()
-            callback?()
+        .then (response) =>
+          @tripIds.thisMonth = _(response.rows.map (el) -> el.value).uniq()
+          callback?()
 
       , (callback = $.noop) ->
-        Tangerine.$db.view "#{Tangerine.design_doc}/tutorTrips",
+        Tangerine.db.query "tangerine/tutorTrips",
           key     : "year#{year}month#{month-1}"
           reduce  : false
-          success : (response) =>
-            @tripIds.lastMonth = _(response.rows.map (el) -> el.value).uniq()
-            callback?()
+        .then (response) =>
+          @tripIds.lastMonth = _(response.rows.map (el) -> el.value).uniq()
+          callback?()
 
       , (callback = $.noop) ->
         users = [Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers"))
-        Tangerine.$db.view "#{Tangerine.design_doc}/tripsAndUsers",
+        Tangerine.db.query "tangerine/tripsAndUsers",
           keys    : users
           reduce  : false
-          success : (response) =>
-            @tripIds.thisUser = _(response.rows.map (el) -> el.value).uniq()
-            callback?()
+        .then (response) =>
+          @tripIds.thisUser = _(response.rows.map (el) -> el.value).uniq()
+          callback?()
 
       , (callback = $.noop) ->
         bestPractices = "00b0a09a-2a9f-baca-2acb-c6264d4247cb"
         fullPrimr     = "c835fc38-de99-d064-59d3-e772ccefcf7d"
         workflowKeys = [bestPractices, fullPrimr].map (el) -> "workflow-#{el}"
-        Tangerine.$db.view "#{Tangerine.design_doc}/tutorTrips",
+        Tangerine.db.query "tangerine/tutorTrips",
           keys    : workflowKeys
           reduce  : false
-          success : (response) =>
-            @tripIds.theseWorkflows = _(response.rows.map (el) -> el.value).uniq()
-            callback?()
+        .then(response) =>
+          @tripIds.theseWorkflows = _(response.rows.map (el) -> el.value).uniq()
+          callback?()
 
       , (callback = $.noop) ->
         @tripIds.final = {
@@ -62,33 +62,31 @@ class ValidObservationView extends Backbone.View
         callback?()
 
       , (callback = $.noop) ->
-        Tangerine.$db.view "#{Tangerine.design_doc}/spirtRotut",
+        Tangerine.db.query "tangerine/spirtRotut",
           group   : true
           keys    : @tripIds.final.thisMonth
-          success : (response) =>
+        .then (response) =>
+          validTrips = response.rows.filter (row) ->
+            minutes = (parseInt(row.value.maxTime) - parseInt(row['value']['minTime'])) / 1000 / 60
+            result = minutes >= 20
+            return result
 
-            validTrips = response.rows.filter (row) ->
-              minutes = (parseInt(row.value.maxTime) - parseInt(row['value']['minTime'])) / 1000 / 60
-              result = minutes >= 20
-              return result
-
-            @validTrips = validTrips.map (el) -> el.key
-            @trigger "valid-update"
-            @validCount.thisMonth = validTrips.length
-            callback?()
+          @validTrips = validTrips.map (el) -> el.key
+          @trigger "valid-update"
+          @validCount.thisMonth = validTrips.length
+          callback?()
 
       , (callback = $.noop) ->
-        Tangerine.$db.view "#{Tangerine.design_doc}/spirtRotut",
+        Tangerine.db.query "tangerine/spirtRotut",
           group   : true
           keys    : @tripIds.final.lastMonth
-          success : (response) =>
-
-            validTrips = response.rows.filter (row) ->
-              minutes = (parseInt(row.value.maxTime) - parseInt(row['value']['minTime'])) / 1000 / 60
-              result = minutes >= 20
-              return result
-            @validCount.lastMonth = validTrips.length
-            callback?()
+        .then (response) =>
+          validTrips = response.rows.filter (row) ->
+            minutes = (parseInt(row.value.maxTime) - parseInt(row['value']['minTime'])) / 1000 / 60
+            result = minutes >= 20
+            return result
+          @validCount.lastMonth = validTrips.length
+          callback?()
       , @render
       ], @
 
