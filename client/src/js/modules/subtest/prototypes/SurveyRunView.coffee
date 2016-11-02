@@ -6,6 +6,37 @@ class SurveyRunView extends Backbone.View
     'click .next_question' : 'nextQuestion'
     'click .prev_question' : 'prevQuestion'
 
+  avNext: =>
+    qv = @questionViews[@currentQuestion]
+    return @showErrors(qv) unless @isValid([qv])
+
+    qv.$el.find('.av-question').css('display', 'none')
+    @currentQuestion++
+    if @questionViews.length is @currentQuestion
+      return @parent.next()
+    qv = @questionViews[@currentQuestion]
+    #if @questionViews.length - 1 is @currentQuestion
+    #  qv.$el.find('.av-question').css('position', 'relative')
+
+    qv.startAv()
+    @updateQuestionProgress()
+
+  updateQuestionProgress: ->
+    qv = @questionViews[@currentQuestion]
+    qv.setProgress(@currentQuestion+1, @questionViews.length)
+
+  avPrev: =>
+    return if @currentQuestion == 0
+    qv = @questionViews[@currentQuestion]
+    return @showErrors(qv) unless @isValid([qv])
+
+    qv.$el.find('.av-question').css('display', 'none')
+    @currentQuestion--
+    qv = @questionViews[@currentQuestion]
+
+    qv.$el.find('.av-question').css('display', 'block')
+    @updateQuestionProgress()
+
   nextQuestion: ->
 
     currentQuestionView = @questionViews[@questionIndex]
@@ -146,6 +177,12 @@ class SurveyRunView extends Backbone.View
 
     @i18n()
 
+    # used by av questions
+    @inputAudio = @model.getObject('inputAudio', false)
+    if @inputAudio
+      @audio = new Audio("data:#{@inputAudio.type};base64,#{@inputAudio.data}")
+
+
     @questions     = new Questions()
     # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
     @questions.fetch
@@ -153,8 +190,20 @@ class SurveyRunView extends Backbone.View
         key: "question-#{@model.id}"
       success: (collection) =>
         @questions.sort()
+        if @questions.first().get("type") is "av"
+          @avMode = true
+          $(window).on 'resize', @handleResize
         @ready = true
         @render()
+
+  handleResize: =>
+    @questionViews.forEach (qv)-> qv.render()
+
+    qv = @questionViews[@currentQuestion]
+    @updateQuestionProgress()
+    qv.$el.find('.av-question').css 'display': 'block'
+    qv.resizeAvImages()
+    qv.highlightPrevious()
 
   # when a question is answered
   onQuestionAnswer: (element) =>
@@ -238,6 +287,15 @@ class SurveyRunView extends Backbone.View
     , @
     return result
 
+  addAvResult: (result, qv) ->
+
+    name = qv.model.get('name')
+    result["#{name}_response_time"] = qv.responseTime || null
+    result["#{name}_display_time"] = qv.displayTime
+    if qv.forcedTime?
+      result["#{name}_forced_time"] = qv.forcedTime
+
+
   getResult: =>
     result = {}
     @questionViews.forEach (qv, i) ->
@@ -273,7 +331,7 @@ class SurveyRunView extends Backbone.View
           else
             message = @text.pleaseAnswer
 
-          if first == true
+          if first == true && qv.model.get('type') isnt 'av'
             @showQuestion(i) if views == @questionViews
             qv.$el.scrollTo()
             Utils.midAlert @text.correctErrors
@@ -316,6 +374,9 @@ class SurveyRunView extends Backbone.View
 
         @listenTo oneView, "rendered",      @onQuestionRendered
         @listenTo oneView, "answer scroll", @onQuestionAnswer
+        @listenTo oneView, "av-next",       @avNext
+        @listenTo oneView, "av-prev",       @avPrev
+        @listenTo oneView, 'abort',         => @abort()
 
         @questionViews[i] = oneView
         container.appendChild oneView.el
@@ -341,12 +402,27 @@ class SurveyRunView extends Backbone.View
     @$el.append container
     @trigger "rendered"
 
+  abort: ->
+    @trigger 'abort'
+
   onQuestionRendered: =>
     @renderCount++
     if @renderCount == @questions.length
       @trigger "ready"
       @updateSkipLogic()
+      @avStart() if @avMode
     @trigger "subRendered"
+
+  avStart: ->
+    start = =>
+      @currentQuestion = 0
+      @questionViews[@currentQuestion].startAv()
+      @updateQuestionProgress()
+
+    if @model.getString('studentDialog') isnt ''
+      Utils.sticky @model.get('studentDialog'), "Ok", start
+    else
+      start()
 
   onClose:->
     for qv in @questionViews

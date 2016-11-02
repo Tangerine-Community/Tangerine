@@ -206,13 +206,16 @@ class QuestionEditView extends Backbone.View
             <input id='single' name='type' type='radio' value='single' #{'checked' if type == 'single'}>
             <label for='multiple'>multiple</label>
             <input id='multiple' name='type'  type='radio' value='multiple' #{'checked' if type == 'multiple'}>
-            <label for='open'>open</label>
-            <input id='open' name='type'  type='radio' value='open' #{'checked' if type == 'open'}>
+            <label for='open'>Open</label>
+            <input id='open' name='type' type='radio' value='open' #{'checked' if type == 'open'}>
+            <label for='av'>AV</label>
+            <input id='av' name='type' type='radio' value='av' #{'checked' if type == 'av'}>
+
           </div>
         </div>
         "
 
-    if type != "open"
+    if type is "single" or type is "multiple"
       optionHTML = "
         <div class='label_value'>
         <label for='question_template_select'>Fill from template</label><br>
@@ -232,7 +235,15 @@ class QuestionEditView extends Backbone.View
       @$el.append optionHTML
 
       @refreshSortable()
-      
+
+    else if type is 'av'
+      avEditor = new AvEditView
+        model : @question
+        subtest : @subtest
+      @$el.append "<div id='av-editor'></div>"
+      avEditor.setElement(@$el.find('#av-editor')).render()
+
+
     @$el.append "<button class='done command'>Done</button>
       </div>
       "
@@ -259,7 +270,7 @@ class QuestionEditView extends Backbone.View
   changeQuestionType: (event) ->
     $target = $(event.target)
     # if it changes, redo the rendering
-    if ($target.val() != "open" && @question.get("type") == "open") || ($target.val() == "open" && @question.get("type") != "open")
+    if $target.val() != @question.get("type")
       @updateModel()
       @question.set "type", $target.val()
       @question.set "options", []
