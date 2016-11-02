@@ -10,23 +10,53 @@ class WorkflowRunView extends Backbone.View
 
   initialize: (options) ->
     @[key] = value for key, value of options
-    @tripId = Utils.guid() unless @tripId?
+    
+    # Set up the trip.
+    if (!options.hasOwnProperty('trip'))
+      @trip = new Trip()
+      @trip.set('startTime', (Date.now()).toString())
+    @trip.set('workflowId', @workflow.id)
+    @trip.set('userId', Tangerine.user.id)
+    # @trip.save()
+    # TODO: Legacy.
+    @tripId = @trip.id
+
+    # Start our index and set our current step.
     @index = 0 unless @index?
     @steps = [] unless @steps?
     @currentStep = @workflow.stepModelByIndex @index
+
+    # TODO: Legacy.
     @subViewRendered = false
-    # When a new subview is shown, set listener for when it is done so we can
+
+    # When a step is shown, set listener for when it is done so we can
     # save the result and go to the next step.
-    @on 'workflow:showView', =>
-      view = @steps[@index].view
-      view.on "assessment:complete", =>
-        view.result.set 'tripId', @tripId
-        view.result.set 'workflowId', @workflow.id
-        view.result.save()
-        if (@index + 1) == @workflow.getLength()
-          @renderEnd()
-          return @trigger "workflow:done"
-        @nextStep()
+    @on 'step:show', =>
+      @steps[@index].view.on "assessment:complete", =>
+        @trigger "step:complete"
+
+    # When a step is complete, save the result and figure out what to do next.
+    @on 'step:complete', =>
+      result = @steps[@index].view.result
+      result.set 'tripId', @tripId
+      result.set 'workflowId', @workflow.id
+      result.save()
+      # If we don't have another step to go to, end.
+      if (@index + 1) == @workflow.getLength()
+        @renderEnd()
+        return @trigger "workflow:done"
+      # If we are about to be on the last step and the last step is a message, we are done.
+      if (@index + 2) == @workflow.getLength() && @workflow.collection.models[@index + 1].get('type') == 'message' 
+        @trigger "workflow:done"
+      @nextStep()
+
+    # When a workflow is done, clean up shop.
+    @on 'workflow:done', =>
+      @trip.set('endTime', (Date.now()).toString())
+      @validateTrip()
+      @trip.save()
+
+
   shouldSkip: ->
     currentStep = @workflow.stepModelByIndex @index
     return false unless currentStep?
@@ -254,10 +284,14 @@ class WorkflowRunView extends Backbone.View
 
   renderEnd: ->
     Utils.gpsPing
-    @$el.find("##{@cid}_current_step").html "
-      <p>You have completed this Classroom Observation.</p>
-      <button class='nav-button'><a href='#feedback/#{@workflow.id}'>Go to feedback</a></button>
-      <p>Once in feedback select the appropriate county, zone, school and date of this school visit to retrieve the feedback for this lesson observation. This information is to be used in your reflections and discussion with the teacher.</p>
+    @$el.html "
+      <p>You have completed this Workflow.</p>
+    "
+    if @workflow.get('feedbackEnabled') 
+      @$el.append "
+        <button class='nav-button'><a href='#feedback/#{@workflow.id}'>Go to feedback</a></button>
+      "
+    @$el.append "
       <button class='nav-button'><a href='#'>Main</a></button>
     "
     return
@@ -275,7 +309,7 @@ class WorkflowRunView extends Backbone.View
     @$button?.remove?()
 
   showView: (subView, header = '') ->
-    @trigger 'workflow:showView'
+    @trigger 'step:show'
     header = "<h1>#{header}</h1>" if header isnt ''
     @subView = subView
     @$el.find("#header-container").html header
@@ -286,3 +320,19 @@ class WorkflowRunView extends Backbone.View
       @trigger "rendered"
       #@afterRender()
     @subView.render()
+
+  validateTrip: ->
+    tripValidation = @workflow.get('tripValidation')
+    # Start with valid being true, then prove us wrong.
+    valid = true
+    if tripValidation != undefined && tripValidation.enabled == true
+      if tripValidation.constraints.duration?
+          minutes = (@trip.get('endTime') - @trip.get('startTime')) / 1000 / 60
+          if minutes > tripValidation.constraints.duration.minutes
+            valid = false
+      if tripValidation.constraints.timeOfDay?
+        tripTime = moment(@trip.get('startTime'))
+        tripTime.zone(Tangerine.settings.get("timeZone")) if Tangerine.settings.get("timeZone")?
+        if tripTime.hours() < tripValidation.constraints.timeOfDay.startTime.hour or tripTime.hours() > tripValidation.constraints.timeOfDay.endTime.hour
+          valid = false
+    @trip.set('valid', valid)
