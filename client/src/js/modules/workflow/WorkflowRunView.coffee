@@ -37,10 +37,17 @@ class WorkflowRunView extends Backbone.View
 
     # When a step is complete, save the result and figure out what to do next.
     @on 'step:complete', =>
-      result = @steps[@index].view.result
-      result.set 'tripId', @tripId
-      result.set 'workflowId', @workflow.id
-      result.save()
+      if @steps[@index].model.get('type') == 'assessment' || @steps[@index].model.get('type') == 'curriculum'
+        result = @steps[@index].view.result
+        result.set 'tripId', @tripId
+        result.set 'workflowId', @workflow.id
+        result.save()
+        # If there was a Location Subtest in this 
+        result.attributes.subtestData.forEach (subtestData) =>
+          if subtestData.prototype == 'location'
+            @trip.set('locationData', subtestData.data)
+            @trip.save()
+
       # If we don't have another step to go to, end.
       if (@index + 1) == @workflow.getLength()
         @renderEnd()
