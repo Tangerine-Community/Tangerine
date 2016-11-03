@@ -19,7 +19,7 @@ See [installation demonstration video](https://vimeo.com/171423878).
 
 The easiest way to get started is to create an Ubuntu 14.04 Droplet on [Digital Ocean](https://digitalocean.com). 
 
-We also have [instructions for AWS](documentation/INSTALLATION_AWS.md) which include the following steps.
+We also have [instructions for AWS](docs/INSTALLATION_AWS.md) which include the following steps.
 
 SSH into it from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
 ```
@@ -37,7 +37,7 @@ Now visit your Tangerine-server installation at the IP address or hostname of yo
 If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine-server folder. To upgrade your server, run the `./upgrade.sh` script. Note that if you update environment variables in `config.sh`, they will not be propogated to the `settings` doc in each group so certain paths will break. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
 
 ## Technical Documentation
-Check out the [Tangerine Technical Documentation site on Github Pages](http://tangerine-community.github.io/Tangerine/#!documentation/index.md). Want to contribute documentation? Fork the Tangerine repository, commit to the `gh-pages` branch and send us a pull request.
+Check out the [Tangerine Technical Documentation site on Github Pages](http://tangerine-community.github.io/Tangerine/index.html). Want to contribute documentation? Fork the Tangerine repository, commit to the `gh-pages` branch and send us a pull request.
 
 ## Trademark and License
 Tangerine is a registered trademark of [RTI International](https://rti.org). This software is licensed under the [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).
