@@ -37,7 +37,7 @@ Now visit your Tangerine-server installation at the IP address or hostname of yo
 If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine-server folder. To upgrade your server, run the `./upgrade.sh` script. Note that if you update environment variables in `config.sh`, they will not be propogated to the `settings` doc in each group so certain paths will break. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
 
 ## Technical Documentation
-Check out the [Tangerine Technical Documentation site on Github Pages](http://tangerine-community.github.io/Tangerine/#!index.md). Want to contribute documentation? Fork the Tangerine repository, commit to the `gh-pages` branch and send us a pull request.
+Check out the [Tangerine Technical Documentation site on Github Pages](http://tangerine-community.github.io/Tangerine/#!documentation/index.md). Want to contribute documentation? Fork the Tangerine repository, commit to the `gh-pages` branch and send us a pull request.
 
 ## Trademark and License
 Tangerine is a registered trademark of [RTI International](https://rti.org). This software is licensed under the [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).
