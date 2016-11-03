@@ -56,7 +56,7 @@
         )
       series(functions)
 
-    describe 'Should get the assessment', ()->
+    describe 'Tangerine Tests', ()->
       this.timeout(10000);
 
       dbs = [];
@@ -200,16 +200,11 @@
             console.log "Catch Error: " + JSON.stringify err
             done(err)
           success: (record) ->
-            #            console.log "assessment subtests: " + JSON.stringify(assessment.subtests)
-            #            expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
             Tangerine.assessment = assessment
-            #            console.log("assessment: " + JSON.stringify assessment.doc)
             viewOptions =
               model: assessment
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
-            #            serializedData = view.serializeData();
-            #            console.log("serializedData:" + JSON.stringify(serializedData))
             view.once("render", () ->
               #              console.log("view.$el.text():" + view.$el.text())
               expect(view.$el.text()).to.contain("01. LTTP2 2015 - Student");
@@ -316,7 +311,8 @@
                 $(levelOne[0]).trigger "change"
                 # Test level Two.
                 levelTwo = view.$el.find('#level_2')
-                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+                expect($(levelTwo[0][1]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+                expect($(levelTwo[0][0]).context.disabled).to.equal(true)
                 done()
               )
               # Click through to the next subtest that we will actually test.
@@ -327,9 +323,8 @@
         })
       )
 
-
       it('Should resume assessment at the same place', (done)->
-        this.timeout(30000)
+        this.timeout(10000)
         this.$fixture.empty().appendTo(this.$container);
         id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
         assessment = new Assessment "_id" : id
@@ -356,7 +351,10 @@
                 $(levelOne[0]).trigger "change"
                 # Test level Two.
                 levelTwo = view.$el.find('#level_2')
-                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+                $(levelTwo[0]).val('Gorpu Dolo Boi Elem.& Jr. High')
+                $(levelTwo[0]).trigger "change"
+#                expect($(levelTwo[0][1]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+#                expect($(levelTwo[0][0]).context.disabled).to.equal(true)
                 view.once("render", ->
                   buttons = view.$el.find('.subtest-next')
                   $(buttons[0]).click()
@@ -391,6 +389,7 @@
         })
       )
 
+
       it('Should contain a next question button', (done)->
 #        this.timeout(200000);
         this.$fixture.empty().appendTo(this.$container);
@@ -415,7 +414,8 @@
         })
       )
 
-
+#     If you are viewing this test in a browser, you will get many js error popups from the skip logic. Ignore. This has always been an issue.
+#      The test will pass despite that. Utils.data in helpers.coffee is used in the skip logic rule, and it is not getting populated.
       it('Should pass to the Kiswahili page and display only the first question (focusmode)', (done)->
 #        this.timeout(15000);
         this.$fixture.empty().appendTo(this.$container);
@@ -431,7 +431,7 @@
               model: assessment
               el: this.$fixture
             view = new AssessmentCompositeView viewOptions
-            view.once("render:collection", () ->
+            view.once("render", () ->
 #            view.once("render:collection", () ->
 #            view.once("dom:refresh", () ->
 # This test will continue on the next render of a subtest.

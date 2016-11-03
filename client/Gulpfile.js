@@ -102,6 +102,14 @@ gulp.task('webserver', function() {
   });
 });
 
+// start the webserver for testing
+gulp.task('test-webserver', function() {
+  connect.server({
+    livereload: true, // sets up socket based reloading
+    root: '.'       // host from this dir
+  });
+});
+
 
 // compile coffeescript into js files
 gulp.task('build:js', ['version'], function() {
@@ -225,6 +233,8 @@ gulp.task('coffee:test', function(){
   gulp.src('./test/spec/*.coffee')  // handle translation documents
       .pipe(c)                          // compile coffeescript
       .pipe(gulp.dest(conf.testDir))  // send it here
+      .pipe(connect.reload());          // reload anyone watching
+
 });
 
 // Pre compile handlebars template
@@ -355,6 +365,7 @@ gulp.task('run_tests', function(done){
 gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js']);
 
 gulp.task('default', ['webserver', 'init', 'watch']);
+gulp.task('test-default', ['test-webserver', 'init', 'watch']);
 gulp.task('index-dev', ['prepare-index-dev']);
 gulp.task('test', ['compile_packs', 'coffee:test', 'run_tests']);
 gulp.task('testWatch', ['compile_packs', 'coffee:test', 'run_tests', 'watch']);

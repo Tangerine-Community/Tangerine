@@ -623,7 +623,7 @@
       });
       return series(functions);
     };
-    return describe('Should get the assessment', function() {
+    return describe('Tangerine Tests', function() {
       this.timeout(10000);
       dbs = [];
       before('Setup Tangerine and Pouch', function(done) {
@@ -892,7 +892,8 @@
                 $(levelOne[0]).val('Zota');
                 $(levelOne[0]).trigger("change");
                 levelTwo = view.$el.find('#level_2');
-                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High');
+                expect($(levelTwo[0][1]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High');
+                expect($(levelTwo[0][0]).context.disabled).to.equal(true);
                 return done();
               });
               buttons = view.$el.find('.subtest-next');
@@ -904,7 +905,7 @@
       });
       it('Should resume assessment at the same place', function(done) {
         var assessment, id;
-        this.timeout(30000);
+        this.timeout(10000);
         this.$fixture.empty().appendTo(this.$container);
         id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
         assessment = new Assessment({
@@ -934,7 +935,8 @@
                 $(levelOne[0]).val('Zota');
                 $(levelOne[0]).trigger("change");
                 levelTwo = view.$el.find('#level_2');
-                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High');
+                $(levelTwo[0]).val('Gorpu Dolo Boi Elem.& Jr. High');
+                $(levelTwo[0]).trigger("change");
                 view.once("render", function() {
                   var assessmentId, assessmentTwo, buttons, elHtml, resultId;
                   buttons = view.$el.find('.subtest-next');
@@ -1027,7 +1029,7 @@
               el: this.$fixture
             };
             view = new AssessmentCompositeView(viewOptions);
-            view.once("render:collection", function() {
+            view.once("render", function() {
               var buttons;
               view.once("render:collection", function() {
                 var buttons, levelOne, levelTwo, levelZero;

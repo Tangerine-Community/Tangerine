@@ -154,29 +154,20 @@ Sometimes you need to start with a fresh pouch. Paste this to your javascript co
 
 ## Run Tests
 
-The tests run in mocha/phantomjs. The pouch runs in a in-memory container.
-
-This requires that you have the Grunt CLI installed globally.
-
-```
-npm install -g grunt-cli
-```
-
-To run the tests, use the following command.
+The tests run in mocha/phantomjs. The pouch runs in a in-memory container. To run the tests, use the following command from the tests directory:
 
 ```
 npm test
 ```
 
-To run the tests in a browser, compile the src code, compile the test, start the test server, and then navigate to http://127.0.0.1:9000/test/index.html
+To run the tests in a browser, run 
 
-```
-npm start
-# now kill the process using ctrl-c to be able to run the next command
-npm test
-# now kill the process using ctrl-c to be able to run the next command
-npm run testInBrowser
-```
+````
+npm run debug-test
+````
+
+
+This compiles the src code, compile the tests, and starts the test server. Navigate to http://127.0.0.1:8080/test/index.html
 
 ## Write tests
 Currently tests are all written using the [Mocha framework](https://mochajs.org/) and placed in `./test/spec/test.coffee`. We have a giant `describe` with each test contained in an `it`. For example, here is the test that verifies that an assessment can be retrieved.

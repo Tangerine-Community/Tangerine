@@ -7,6 +7,7 @@
     "postinstall": " cd scripts && ./postinstall.sh",
     "build:apk": "cordova build -- --gradleArg=-PcdvBuildArch=arm android 2>&1",
     "test": "gulp test",
+    "testWatch": "gulp testWatch",
     "clean": "rm -rf platforms plugins node_modules",
     "update:tree": "git pull && chown -R www-data:www-data .",
     "listen": "cd scripts ./listen.rb",
@@ -17,7 +18,7 @@
     "start": "gulp",
     "gulp": "gulp",
     "debug": "gulp index-dev & gulp default",
-    "debug-test": "gulp debug & http-server ./ -p 9000 --silent",
+    "debug-test": "gulp index-dev & gulp test-default",
     "debug-gulp": "iron-node node_modules/gulp/bin/gulp.js",
     "tree-postinstall": " cd scripts && ./tree-postinstall.sh"
   },
