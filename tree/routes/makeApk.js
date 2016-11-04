@@ -34,6 +34,10 @@ Object.defineProperty(Conf, "PACK_DOC_SIZE", {value: 50, writeable: false, confi
 // Where the json docs will go
 Object.defineProperty(Conf, "PACK_PATH", {value: `/tangerine-server/client/src/js/init`, writeable: false, configurable: false, enumerable: true})
 
+// Where the get the media assets
+Object.defineProperty(Conf, "MEDIA_PATH", {value: `/tangerine-server/client/media_assets/`, writeable: true, configurable: false, enumerable: true})
+Object.defineProperty(Conf, "APK_MEDIA_PATH", {value: `/tangerine-server/client/merges/android/media_assets/`, writeable: true, configurable: false, enumerable: true})
+
 /** Handle environment variables. */
 let Settings = require('../client/scripts/Settings');
 
@@ -111,10 +115,27 @@ const makeApk = function(req, res) {
         })
         .then(function writeDocs(msg) {
 
-           // load the json packs
-           cd(`${__dirname}/../client`);
-           const treeLoad = exec(`npm run treeload --group=${groupName}`);
-           if (notOk(treeLoad, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
+            // load the json packs
+            cd(`${__dirname}/../client`);
+            const treeLoad = exec(`npm run treeload --group=${groupName}`);
+            if (notOk(treeLoad, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
+
+            // Copy groupMediaPath
+            let groupNameTruncated = groupName.replace("group-", "")
+            let groupMediaPath = Path.join(Conf.MEDIA_PATH, groupNameTruncated);
+            let groupAPKMediaPath = Path.join(Conf.APK_MEDIA_PATH,  groupNameTruncated);
+
+            fse.remove(Conf.APK_MEDIA_PATH, function (err) {
+                if (err) return console.error(err)
+                console.log('Removed ' + Conf.APK_MEDIA_PATH)
+                fse.ensureDir(Conf.APK_MEDIA_PATH, function (err) {
+                    if (err) return console.error(err)
+                    // dir has now been created, including the directory it is to be placed in
+
+            console.log("Copying groupMediaPath:" + groupMediaPath + " to groupAPKMediaPath:" + groupAPKMediaPath);
+            fse.copy(groupMediaPath, groupAPKMediaPath, function (err) {
+                if (err) return console.error(err)
+                console.log('Successfully copied the groupMediaPath dir.')
 
             // build the apk
             cd(`${__dirname}/../client`);
