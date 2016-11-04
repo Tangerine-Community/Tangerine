@@ -3,7 +3,13 @@ class UniversalUploadView extends Backbone.View
   events:
     'click .universal_upload' : 'universalUpload'
 
-  universalUpload: -> Utils.universalUpload()
+  universalUpload: -> 
+    Utils.syncUsers (err, response) ->
+      if (err)
+        alert("There was an issue with uploading users.")
+        alert(err)
+      console.log("Users uploaded")
+      Utils.universalUpload()
 
   i18n: ->
     @text =

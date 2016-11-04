@@ -166,6 +166,13 @@ Tangerine.viewLibs =
 
 Tangerine.views =
 
+  tripsAndUsers:
+    map: ( (doc) ->
+      return unless doc.collection is 'result' and doc.workflowId
+      emit doc.enumerator || doc.editedBy, doc.tripId
+      emit doc.tripId, doc._id
+    ).toString()
+
   tutorTrips:
 
     map: ( (doc) ->
@@ -202,6 +209,19 @@ Tangerine.views =
       else
         id = doc.assessmentId
       emit id.substr(-5,5), null
+    ).toString()
+
+  tripsByUserId:
+    map: ( ( doc ) ->
+      if doc.collection == 'trip'
+        return emit(doc.userId, null)
+    ).toString()
+
+  tripsByUserIdAndMonth:
+    map: ( ( doc ) ->
+      if doc.collection == 'trip'
+        month = moment(doc.startTime).format('MM')
+        return emit(doc.userId + '-' + month, null)
     ).toString()
 
   results :

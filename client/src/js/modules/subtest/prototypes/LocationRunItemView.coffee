@@ -49,6 +49,7 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     @$el.html "<div class='loc-container'></div>"
     @locView = new LocView
     @locView.setElement @$el.find(".loc-container")
+    @locView.render()
     @trigger "rendered"
     @trigger "ready"
 

@@ -427,6 +427,9 @@ conf.fileOrder = [
   'WorkflowEditView',
   'WorkflowRunView',
   'WorkflowSelectView',
+  'Trip',
+  'TripsByUserIdCollection',
+  'TripsByUserIdAndMonthCollection',
   'TripResult',
   'TripResults',
 
@@ -472,6 +475,7 @@ conf.fileOrder = [
   'ResultPreviews',
   'ResultsSaveAsFileView',
   'UniversalUploadView',
+  'SyncManager',
 
   'AdminView',
 
