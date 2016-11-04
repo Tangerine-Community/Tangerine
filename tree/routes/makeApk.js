@@ -114,56 +114,47 @@ const makeApk = function(req, res) {
             }
         })
         .then(function writeDocs(msg) {
-
-            // load the json packs
-            cd(`${__dirname}/../client`);
-            const treeLoad = exec(`npm run treeload --group=${groupName}`);
-            if (notOk(treeLoad, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
-
-            // Copy groupMediaPath
-            let groupNameTruncated = groupName.replace("group-", "")
-            let groupMediaPath = Path.join(Conf.MEDIA_PATH, groupNameTruncated);
-            let groupAPKMediaPath = Path.join(Conf.APK_MEDIA_PATH,  groupNameTruncated);
-
-            fse.remove(Conf.APK_MEDIA_PATH, function (err) {
-                if (err) return console.error(err)
-                console.log('Removed ' + Conf.APK_MEDIA_PATH)
-                fse.ensureDir(Conf.APK_MEDIA_PATH, function (err) {
-                    if (err) return console.error(err)
-                    // dir has now been created, including the directory it is to be placed in
-                })
-            })
-
-            console.log("Copying groupMediaPath:" + groupMediaPath + " to groupAPKMediaPath:" + groupAPKMediaPath);
-            fse.copy(groupMediaPath, groupAPKMediaPath, function (err) {
+          // load the json packs
+          cd(`${__dirname}/../client`);
+          const treeLoad = exec(`npm run treeload --group=${groupName}`);
+          if (notOk(treeLoad, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
+          // Copy groupMediaPath
+          let groupNameTruncated = groupName.replace("group-", "")
+          let groupMediaPath = Path.join(Conf.MEDIA_PATH, groupNameTruncated);
+          let groupAPKMediaPath = Path.join(Conf.APK_MEDIA_PATH,  groupNameTruncated);
+          fse.remove(Conf.APK_MEDIA_PATH, function (err) {
+            if (err) return console.error(err)
+            console.log('Removed ' + Conf.APK_MEDIA_PATH)
+            fse.ensureDir(Conf.APK_MEDIA_PATH, function (err) {
+              if (err) return console.error(err)
+              // dir has now been created, including the directory it is to be placed in
+              console.log("Copying groupMediaPath:" + groupMediaPath + " to groupAPKMediaPath:" + groupAPKMediaPath);
+              fse.copy(groupMediaPath, groupAPKMediaPath, function (err) {
                 if (err) return console.error(err)
                 console.log('Successfully copied the groupMediaPath dir.')
+                // build the apk
+                cd(`${__dirname}/../client`);
+                const buildApk = exec(`npm run build:apk`);
+                if (notOk(buildApk, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
+                // Make sure the directory is there
+                cd(Conf.APP_ROOT_PATH);
+                console.log("APK built; moving APK, token: " + token)
+                // move the apk to the right directory
+                const execer = require('child_process').exec;
+                execer(`mv ${Conf.APK_PATH} ${Conf.APP_ROOT_PATH}/apks/${token}`, (error, stdout, stderr) => {
+                  if (error) {
+                    console.error(`exec error: ${error}`);
+                    return;
+                  }
+                  console.log(`stdout: ${stdout}`);
+                  console.log(`stderr: ${stderr}`);
+                  res.status(HttpStatus.OK).json({
+                      token : token
+                  });
+                })
+              })
             })
-
-            // build the apk
-            cd(`${__dirname}/../client`);
-            const buildApk = exec(`npm run build:apk`);
-            if (notOk(buildApk, res, HttpStatus.INTERNAL_SERVER_ERROR)) { return; }
-
-            // Make sure the directory is there
-            cd(Conf.APP_ROOT_PATH);
-
-            console.log("APK built; moving APK, token: " + token)
-
-            // move the apk to the right directory
-            const execer = require('child_process').exec;
-            execer(`mv ${Conf.APK_PATH} ${Conf.APP_ROOT_PATH}/apks/${token}`, (error, stdout, stderr) => {
-              if (error) {
-                console.error(`exec error: ${error}`);
-                return;
-              }
-              console.log(`stdout: ${stdout}`);
-              console.log(`stderr: ${stderr}`);
-              res.status(HttpStatus.OK).json({
-                  token : token
-              });
-            })
-
+          })
         })
         .catch(function noGroup(err) {
             console.log(err.stack)
