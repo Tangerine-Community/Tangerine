@@ -85,9 +85,10 @@ function newGroup(req, res) {
           });
       })
       .then(function setupMediaAssetsDir(){
-        fse.ensureDir('/tangerine-server/client/merges/android/media_assets/'+groupName, function (err) {
+        fse.ensureDir('/tangerine-server/client/media_assets/'+groupName, function (err) {
           if (err) return console.error(err)
             // dir has now been created, including the directory it is to be placed in
+        })
       })
       .catch(errorHandler(res));
 
