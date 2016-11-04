@@ -21,6 +21,7 @@ docker run \
   --env "T_PROTOCOL=$T_PROTOCOL" \
   --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
   --volume $(pwd)/data/apks/:/tangerine-server/tree/apks \
+  --volume $(pwd)/data/media_assets/:/tangerine-server/client/src/media_assets \
   --volume $(pwd)/editor/src:/tangerine-server/editor/src \
   --volume $(pwd)/editor/app:/tangerine-server/editor/app \
   --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \
