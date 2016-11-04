@@ -63,10 +63,11 @@ class SchoolListView extends Backbone.View
   fetchTrips: (callback = $.noop) ->
     return callback() if @invalid
 
-    trips = new TripsByUserIdAndMonthCollection()
+    trips = new TripsByUserIdYearMonthCollection()
     trips.params = {
       userId: Tangerine.user.id,
       month: moment(Date.now()).format('MM')
+      year: moment(Date.now()).format('YYYY')
     }
     trips.on 'sync', =>
 

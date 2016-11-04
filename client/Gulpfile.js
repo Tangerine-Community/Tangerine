@@ -418,7 +418,7 @@ conf.fileOrder = [
   'WorkflowSelectView',
   'Trip',
   'TripsByUserIdCollection',
-  'TripsByUserIdAndMonthCollection',
+  'TripsByUserIdYearMonthCollection',
   'TripResult',
   'TripResults',
 
