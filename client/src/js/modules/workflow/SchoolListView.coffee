@@ -138,14 +138,13 @@ class SchoolListView extends Backbone.View
       </table>
 
       <table class='class_table school-list start-hidden'>
-        <tr><td><b>Remaining</b></td></tr>
-        #{("<tr><td>#{@schoolNames[school]}</td></tr>" for school in @schools.left).join('')}
-      </table>
-
-      <table class='class_table school-list start-hidden'>
         <tr><td><b>Done</b></td></tr>
         #{("<tr><td>#{@schoolNames[school]}</td></tr>" for school in @schools.done).join('')}
       </table>
 
+      <table class='class_table school-list start-hidden'>
+        <tr><td><b>Remaining</b></td></tr>
+        #{("<tr><td>#{@schoolNames[school]}</td></tr>" for school in @schools.left).join('')}
+      </table>
     "
 
