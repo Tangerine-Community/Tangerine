@@ -20,5 +20,5 @@ docker run -d \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   -p 80:80 \
   --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
-  --volume $(pwd)/data/media_assets/:/tangerine-server/client/src/media_assets \
+  --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
   tangerine/tangerine:$TANGERINE_VERSION
