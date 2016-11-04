@@ -4,60 +4,56 @@ class WorkflowRunView extends Backbone.View
     "click .previous" : "previousStep"
     "click .next"     : "nextStep"
 
-  switch: =>
-    @$el.toggle()
-    @$lessonContainer.toggle()
-
   initialize: (options) ->
+    @on 'step:show', @_onStepShow
+    @on 'step:complete', @_onStepComplete
+    @on 'workflow:done', @_onWorkflowDone
+
     @[key] = value for key, value of options
     
     # Set up the Trip.
     if (!options.hasOwnProperty('trip'))
       @trip = new Trip({workflow: @workflow, user: Tangerine.user})
-      @trip.set('startTime', (Date.now()).toString())
-      @trip.save()
     else
       @trip = options.trip
 
     # Start our index and set our current step.
     @index = 0 unless @index?
     @steps = [] unless @steps?
-    @currentStep = @workflow.stepModelByIndex @index
 
-    # TODO: Legacy.
+    # TODO: Legacy we can refactor away.
+    @currentStep = @workflow.stepModelByIndex @index
     @tripId = @trip.id
     @subViewRendered = false
 
-    #
-    # Event listeners for flow of the Workflow.
-    #
-    
-    @on 'step:show', =>
-      # Listen for steps whose View emits "assessment:complete" because it won't emit "step:complete" by itself.
-      @steps[@index].view.on "assessment:complete", =>
-        @trigger "step:complete"
+  _onStepShow: =>
+    # Some steps emit step:complete, but Assessments and Curriculum just emit assessment:complete. This translates assessment:complete to step:complete.
+    @steps[@index].view.on "assessment:complete", =>
+      @trigger "step:complete"
 
+  _onStepComplete: =>
     # When a step is complete, mark it as complete in the Trip and figure out what to do next.
-    @on 'step:complete', =>
-      @trip.markStepComplete(@steps[@index])
-      # If we don't have another step to go to, render a nice default end message, emit done, and return.
-      if (@index + 1) == @workflow.getLength()
-        @renderEnd()
-        @trigger "workflow:done"
-        return
-      # If we were just on the step before last and the last step is a message, emit done.
-      else if (@index + 2) == @workflow.getLength() && @workflow.collection.models[@index + 1].get('type') == 'message' 
-        @trigger "workflow:done"
-        @nextStep()
-      else
-        # No need to exit at this point, let's move to the next Step.
-        @nextStep()
+    @trip.markStepComplete(@steps[@index])
+    # If we don't have another step to go to, render a nice default end message, emit done, and return.
+    if (@index + 1) == @workflow.getLength()
+      @renderEnd()
+      @trigger "workflow:done"
+      return
+    # If we were just on the step before last and the last step is a message, emit done.
+    else if (@index + 2) == @workflow.getLength() && @workflow.collection.models[@index + 1].get('type') == 'message' 
+      @trigger "workflow:done"
+      @nextStep()
+    else
+      # No need to exit at this point, let's move to the next Step.
+      @nextStep()
 
-    # When a workflow is done, clean up shop.
-    @on 'workflow:done', =>
-      @trip.set('endTime', (Date.now()).toString())
-      @trip.save()
+  _onWorkflowDone: =>
+    @trip.markTripComplete()
+    @trip.save()
 
+  switch: =>
+    @$el.toggle()
+    @$lessonContainer.toggle()
 
   shouldSkip: ->
     currentStep = @workflow.stepModelByIndex @index
