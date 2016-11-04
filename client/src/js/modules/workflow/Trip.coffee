@@ -46,11 +46,13 @@ Trip = Backbone.Model.extend
         if subtestData.prototype == 'location'
           @set('locationData', subtestData.data)
       # TODO: Phase out saving individual results.
-      result.set 'tripId', @id
-      result.set 'workflowId', @get('workflowId')
-      result.save()
+      @on 'sync', =>
+        result.set 'tripId', @id
+        result.set 'workflowId', @get('workflowId')
+        result.save()
     log.push(message)
     @set('log', log)
+    @save()
 
   # When the Trip in the Workflow is all done, use this method to mark it as complete.
   markTripComplete: ->
