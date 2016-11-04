@@ -131,11 +131,14 @@ const makeApk = function(req, res) {
                 fse.ensureDir(Conf.APK_MEDIA_PATH, function (err) {
                     if (err) return console.error(err)
                     // dir has now been created, including the directory it is to be placed in
+                })
+            })
 
             console.log("Copying groupMediaPath:" + groupMediaPath + " to groupAPKMediaPath:" + groupAPKMediaPath);
             fse.copy(groupMediaPath, groupAPKMediaPath, function (err) {
                 if (err) return console.error(err)
                 console.log('Successfully copied the groupMediaPath dir.')
+            })
 
             // build the apk
             cd(`${__dirname}/../client`);
