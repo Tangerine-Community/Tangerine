@@ -9,29 +9,38 @@ Trip = Backbone.Model.extend
     userId: null
     startTime: null
     endTime: null
-    stepLog: []
+    log: []
     authenticity: false
     authenticityParameters: {}
   
-  # If this is a new Trip, options is required to have a Workflow in the workflow option and a User in the user option.
+  # If this is a new Trip, options is required to have a Workflow in the `workflow` option and a User in the `user` option.
   initialize: (options) ->
-    if options.hasOwnProperty('workflow')
+
+    # Option checking.
+    if !options.hasOwnProperty('_id') && (!options.hasOwnProperty('workflow') || !options.hasOwnProperty('user'))
+      throw Error 'You must pass in a workflow and user when starting a trip'
+    
+    # Set some starting values on a new Trip.
+    if !options.hasOwnProperty('_id')
+      # Set up some 
+      @set('startTime', Date.now())
       @set('workflowId', options.workflow.id)
-      # Authenticity parameters are saved on the Trip itself. This is important for later understanding to what the authenticity
-      # boolean represents. If Authenticity Parameters in the Workflow are later changed, the program can tell this Trip was evaulated
-      # to a different set of authenticity parameters. 
       @set('authenticityParameters', options.workflow.get('authenticityParameters')) 
-      @unset('workflow')
-    if options.hasOwnProperty('user')
       @set('userId', options.user.id)
+      # Clean up.
+      @unset('workflow')
       @unset('user')
 
+  # Logs the completion of a step onto `Trip.attributes.log`. For now this also involves saving a Result document.
   markStepComplete: (step) ->
-    # Add this result to the Trip.
-    stepLog = @get('stepLog')
+    log = @get('log')
+    message =
+      stepId: step.model.id
+      status: "completed"
+      time: Date.now()
     if step.model.get('type') == 'assessment' || step.model.get('type') == 'curriculum'
       result = step.view.result
-      stepLog[step.model.id] = {"status": "completed", "result": result.toJSON()}
+      message.result = result.toJSON()
       # If there was a Location Subtest in this, add it to the Trip metadata. 
       result.attributes.subtestData.forEach (subtestData) =>
         if subtestData.prototype == 'location'
@@ -40,16 +49,23 @@ Trip = Backbone.Model.extend
       result.set 'tripId', @id
       result.set 'workflowId', @get('workflowId')
       result.save()
-    else
-      stepLog[step.model.id] = {"status": "completed"}
-    @set('stepLog', stepLog)
+    log.push(message)
+    @set('log', log)
 
+  # When the Trip in the Workflow is all done, use this method to mark it as complete.
+  markTripComplete: ->
+    @set('endTime', Date.now())
+  
+  # Default Backbone.Model.validate hook that is called before save. Here we use it to determine authenticity for lack of
+  # a Backbone.Model.beforeSave hook.
   validate: ->
     # Determine authenticity if conditions are met.
     authenticityParameters = @get('authenticityParameters')
-    if authenticityParameters != undefined && authenticityParameters.enabled == true && @get('endTime') != null
+    authenticity = true
+    if @get('endTime') == null
+      authenticity = false
+    else if authenticityParameters != undefined && authenticityParameters.enabled == true
       # Start with valid being true, then prove us wrong.
-      authenticity = true
       if authenticityParameters.constraints.duration?
           minutes = (@get('endTime') - @get('startTime')) / 1000 / 60
           if minutes < authenticityParameters.constraints.duration.minutes
@@ -59,5 +75,5 @@ Trip = Backbone.Model.extend
         tripTime.zone(Tangerine.settings.get("timeZone")) if Tangerine.settings.get("timeZone")?
         if tripTime.hours() < authenticityParameters.constraints.timeOfDay.startTime.hour or tripTime.hours() > authenticityParameters.constraints.timeOfDay.endTime.hour
           authenticity = false
-      @set('authenticity', authenticity)
+    @set('authenticity', authenticity)
     return
