@@ -36,7 +36,7 @@ Object.defineProperty(Conf, "PACK_PATH", {value: `/tangerine-server/client/src/j
 
 // Where the get the media assets
 Object.defineProperty(Conf, "MEDIA_PATH", {value: `/tangerine-server/client/media_assets/`, writeable: true, configurable: false, enumerable: true})
-Object.defineProperty(Conf, "APK_MEDIA_PATH", {value: `/tangerine-server/client/merges/android/media_assets/`, writeable: true, configurable: false, enumerable: true})
+Object.defineProperty(Conf, "APK_MEDIA_PATH", {value: `/tangerine-server/client/src/media_assets/`, writeable: true, configurable: false, enumerable: true})
 
 /** Handle environment variables. */
 let Settings = require('../client/scripts/Settings');
