@@ -1,8 +1,9 @@
 class WorkflowRunView extends Backbone.View
   
+  # TODO: Is previousStep ever used? 
   events:
     "click .previous" : "previousStep"
-    "click .next"     : "nextStep"
+    "click .next"     : "_onStepComplete"
 
   initialize: (options) ->
     @on 'step:show', @_onStepShow
