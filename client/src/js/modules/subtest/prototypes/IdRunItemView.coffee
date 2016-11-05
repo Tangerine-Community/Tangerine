@@ -1,4 +1,5 @@
-class IdRunItemView extends Backbone.Marionette.ItemView
+class IdRunItemView extends SubtestRunItemView
+
   template: JST["ItemView"],
 
   className: "idItem"
@@ -24,7 +25,6 @@ class IdRunItemView extends Backbone.Marionette.ItemView
     @dataEntry = options.dataEntry
 
     @validator = new CheckDigit
-    Tangerine.progress.currentSubview = @
     labels = {}
     labels.text = @text
     @model.set('labels', labels)
@@ -35,6 +35,8 @@ class IdRunItemView extends Backbone.Marionette.ItemView
     @parent.displayBack(@backable)
 
   render: ->
+    
+    @runDisplayCode()
 
     unless @dataEntry
       previous = @model.parent.result.getByHash(@model.get('hash'))
@@ -71,9 +73,6 @@ class IdRunItemView extends Backbone.Marionette.ItemView
     @updateNavigation()
 
   testValid: ->
-#    console.log("IdRinItemView testValid.")
-#    if not @prototypeRendered then return false
-#    currentView = Tangerine.progress.currentSubview
     if @isValid?
       return @isValid()
     else

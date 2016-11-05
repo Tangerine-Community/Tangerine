@@ -1,4 +1,4 @@
-class GridRunItemView extends Backbone.Marionette.ItemView
+class GridRunItemView extends SubtestRunItemView
   className: "gridItem"
   template: JST["Grid"],
 
@@ -37,7 +37,6 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
   initialize: (options) ->
 
-    Tangerine.progress.currentSubview = @
     @i18n()
 
     @fontStyle = "style=\"font-family: #{@model.get('fontFamily')} !important;\"" if @model.get("fontFamily") != ""
@@ -109,6 +108,8 @@ class GridRunItemView extends Backbone.Marionette.ItemView
     modeButton: ".mode-button"
 
   onBeforeRender: ->
+
+    @runDisplayCode()
 
     done = 0
 
@@ -253,7 +254,6 @@ class GridRunItemView extends Backbone.Marionette.ItemView
         $target.addClass "element_last"
 
   onShow: ->
-    displayCode = @model.getString("displayCode")
 
     if not _.isEmptyString(displayCode)
 #      displaycodeFixed = displayCode.replace("vm.currentView.subtestViews[vm.currentView.index].prototypeView","Tangerine.progress.currentSubview")
@@ -271,19 +271,6 @@ class GridRunItemView extends Backbone.Marionette.ItemView
         console.log "displaycodeFixed Error: " + message
 
     @prototypeView?.updateExecuteReady?(true)
-
-# @todo Documentation
-  skip: =>
-    currentView = Tangerine.progress.currentSubview
-    @parent.result.add
-      name      : currentView.model.get "name"
-      data      : currentView.getSkipped()
-      subtestId : currentView.model.id
-      skipped   : true
-      prototype : currentView.model.get "prototype"
-    ,
-      success: =>
-        @parent.reset 1
 
   restartTimer: ->
     @stopTimer(simpleStop:true) if @timeRunning

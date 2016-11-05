@@ -1,4 +1,4 @@
-class DatetimeRunItemView extends Backbone.Marionette.ItemView
+class DatetimeRunItemView extends SubtestRunItemView 
 
   template: JST["Datetime"]
   className: "datetimeitem"
@@ -13,7 +13,6 @@ class DatetimeRunItemView extends Backbone.Marionette.ItemView
       "help" : t("SubtestRunView.button.help")
 
   initialize: (options) ->
-    Tangerine.progress.currentSubview = @
     @i18n()
 
     @model  = options.model
@@ -60,6 +59,7 @@ class DatetimeRunItemView extends Backbone.Marionette.ItemView
     @model.set('formElements', formElements)
     @trigger "rendered"
     @trigger "ready"
+    @runDisplayLogic()
 
   getResult: ->
     result =

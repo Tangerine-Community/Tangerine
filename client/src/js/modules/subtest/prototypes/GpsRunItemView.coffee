@@ -1,4 +1,4 @@
-class GpsRunItemView extends Backbone.Marionette.ItemView
+class GpsRunItemView extends SubtestRunItemView
 
   className: "GpsRunItemView"
 
@@ -9,7 +9,6 @@ class GpsRunItemView extends Backbone.Marionette.ItemView
     @updateDisplay()
 
   initialize: (options) ->
-    Tangerine.progress.currentSubview = @
     @i18n()
     @model   = options.model
     @parent = @model.parent
@@ -125,8 +124,10 @@ class GpsRunItemView extends Backbone.Marionette.ItemView
 
   render: ->
 
+    @runDisplayCode()
+
     if not Modernizr.geolocation
-      
+
       @$el.html @text.notSupported
 
       @position = @easify(null)

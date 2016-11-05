@@ -1,26 +1,180 @@
 #
 # AssessmentCompositeView
 #
-# AssessmentCompositeView renders every time a new subtest is shown. When next
-# or back is clicked, the reset(incrementTomoveToSubtestViewIndex) method is
-# eventually called which calls render. `reset` method seems familiar because
-# there is `reset` on Backbone.Collection, but this reset on a View is it's own
-# thing. `AssessmentCompositeView.reset` and `AssessmentCompositeView.initialize`
-# ensure that there is only one model in `AssessmentCompositeView.collection` for
-# `AssessmentCompositeView.render` to render. Which Model should be in that
-# `AssessmentCompositeView.collection` is determined by `AssessmentCompositeView.index`.
-# Listens for "result:saved" and "result:another" events triggered by the ResultItemView subtest and makes it
-# available for consumption (via triggerSaved and triggerAnother) by external users such as Widget.
-
+# AssessmentCompositeView on render displays a Subtest View one at a time according
+# to what the current @index state is and what is in @assessment.subtests.
+# @getChildViewClass method is used to determine what Class of View to instantiate
+# for the given Subtest Model.
+# creating a View for each Subtest renders every time a new subtest is shown. When next
+# or back is clicked, the step(incrementToMoveToSubtestReferencedByViewIndex) method is
+# eventually called which calls render.
+#
+# Options:
+#   assessment (required) - An Assessment Model
+#   result (optional) - A Result model to pick up where you left off.
+#
+# Events:
+#   assessment:complete - Triggers when all Subtests have completed.
+#   assessment:step - Triggers when a new Subtest View is displayed.
+#   nextQuestionRendered - Triggers when a new Question has been rendered.
+#
 
 AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
-  # for Backbone.Marionette.CompositeView Composite Model
-  template: JST["AssessmentView"],
+  #
+  # Initialize
+  #
 
-  # for Backbone.Marionette.CompositeView
-  getChildView: (model) ->
+  initialize: (options) ->
+
+    #
+    # Set properties.
+    #
+
+    # Set @assessment.
+    if options.assessment
+      @assessment = options.assessment
+      # TODO: This most likely violates the separation of concerns.
+      @model = @assessment
+      @model.parent = @
+
+    # Set @result.
+    if typeof options.result == 'undefined'
+      @result = new Result
+        assessmentId   : @model.id
+        assessmentName : @model.get "name"
+        blank          : true
+    else
+      @result = options.result
+
+    #
+    # Set States.
+    #
+
+    @index = if options.hasOwnProperty('result') then options.result.get('subtestData').length else 0
+    @abortAssessment = false
+    @enableCorrections = false  # toggled if user hits the back button.
+
+    #
+    # Initialize i18n strings.
+    #
+
+    @i18n()
+
+    #
+    # Set some globals for Skip Logic code to use.
+    #
+    Tangerine.tempData = {}
+
+
+  #
+  # Handle Rendering.
+  #
+
+  i18n: ->
+    @text =
+      "next" : t("SubtestRunView.button.next")
+      "back" : t("SubtestRunView.button.back")
+      "skip" : t("SubtestRunView.button.skip")
+      "help" : t("SubtestRunView.button.help")
+      "previousQuestion" : t("SurveyRunView.button.previous_question")
+      "nextQuestion" : t("SurveyRunView.button.next_question")
+
+  events:
+    'click .subtest-next' : 'next'
+    'click .subtest-back' : 'back'
+    'click .subtest_help' : 'toggleHelp'
+    'click .skip'         : 'skip'
+    'click .next_question' : 'nextQuestion'
+    'click .prev_question' : 'prevQuestion'
+    'nextQuestionRendered': 'nextQuestionRenderedBoom'
+
+  render:->
+    console.log('AssessmentCompositeView.onBeforeRender')
+
+    #
+    # Prepare @currentChildModel
+    #
+
+    # Depending on the @index, set appropriate child model. In most cases this
+    # will be a subtest model, except for when there are no more subtests, then
+    # set it to be the result model.
+    if @assessment.subtests.models[@assessment.getOrderMap()[@index]]
+      @currentChildModel = @assessment.subtests.models[@assessment.getOrderMap()[@index]]
+    else
+      @trigger('assessment:complete')
+      @currentChildModel = @result
+
+    # TODO: This is not nice but some things require it for now.
+    @currentChildModel.parent = @
+
+    # Check to see if this subtest is related to another subtest via the gridLinkId
+    # property and if the related subtest was autostopped, skip this subtest.
+    parentSubtestId = @currentChildModel.get('gridLinkId')
+    parentSubtestResult = false
+    this.result.attributes.subtestData.forEach( (subtestResult) ->
+      if subtestResult.subtestId == parentSubtestId
+        parentSubtestResult = subtestResult
+    )
+    if parentSubtestResult isnt false and parentSubtestResult.data.auto_stop is true
+      @skip()
+
+    #
+    # Prepare @currentChildView
+    #
+
+    childViewClass = @getChildViewClass(@currentChildModel)
+    @currentChildView = new childViewClass({model: @currentChildModel})
+    @currentChildView.on 'skip', =>
+      console.log 'AssessmentCompositeView detected skip'
+      @skip()
+
+    @currentChildView.on 'back', =>
+      @back()
+
+    @currentChildView.on 'next', =>
+      @next()
+
+    #
+    # Set Globals to be accessed in Subtest Display Logic.
+    #
+
+    # TODO: It looks like Skip Logic requires us to put this in a global. We should
+    # look into how to localize this.
+    Tangerine.progress =
+      currentSubview : @currentChildView
+      index: @index
+    Tangerine.tempData.index = @index
+
+    this.$el.html "
+      <h1>#{@assessment.get('name')}</h1>
+      <div id='progress'></div>
+      <h2>#{@currentChildModel.get('name')}</h2>
+      <div id='subtest_wrapper'></div>
+      <div class='controlls clearfix'>
+          <button class='subtest-back navigation hidden'>#{@text.back}</button>
+          <button class='subtest-next navigation'>#{@text.next}</button>
+          <button class='skip navigation hidden'>#{@text.skip}</button>
+      </div>
+      "
+
+    # Attach and Render @currentChildView.
+    subtestWrapper = this.$el.find('#subtest_wrapper')
+    $(subtestWrapper).html(@currentChildView.el)
+    @currentChildView.render()
+
+    # Update the progress bar.
+    @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
+
+
+  #
+  # Method for deciding what Subtest View Class to use.
+  #
+
+  getChildViewClass: (model) ->
+    # TODO: This is probably breaking the separation of concerns.
     model.parent = @
+    # TODO: Every Subtest Model gets a Questions Collection? This doesn't seem right.
     if !model.questions
       model.questions     = new Questions()
     if model.get("collection") == 'result'
@@ -45,80 +199,149 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview =  null
         console.log(prototypeName + "  Subview is not defined.")
 
-    @ready = true
     return currentSubview
 
-  # for Backbone.Marionette.CompositeView
-  # Populate the questions in the model of the subtest.
-  childViewOptions: (model, index) ->
-    model.questions.fetch
-      viewOptions:
-        key: "question-#{model.id}"
-      success: (collection) =>
-#        console.log("collection.size: " + collection.size())
-        model.questions.sort()
-        model.collection = model.questions
-        @collection.models = collection.models
-#        The trigger collectionPopulated is use for unit tests
-#        @trigger "collectionPopulated"
-      error: (model, err, cb) ->
-        console.log("childViewOptions id: " +  model.id + " err:" + JSON.stringify(err))
 
-  # for Backbone.Marionette.CompositeView
-  childViewContainer: '#subtest_wrapper',
+  #
+  # Methods for handling flow of Subtests: step, next, back, abort, and skip
+  #
 
-  # for Backbone.View
-  events:
-    'click .subtest-next' : 'next'
-    'click .subtest-back' : 'back'
-    'click .subtest_help' : 'toggleHelp'
-    'click .skip'         : 'skip'
-    'click .next_question' : 'nextQuestion'
-    'click .prev_question' : 'prevQuestion'
-    'nextQuestionRendered': 'nextQuestionRenderedBoom'
+  # Step to another Subtest.
+  step: (increment) ->
 
-  # for Backbone.Marionette.CollectionView
-  childEvents:
-#    'add:child': 'addChildPostRender'
-#    'collection:rendered': 'addChildPostRender'
-    'render:collection': 'addChildPostRender'
-    'subRendered': 'subRendered'
-#    'attach': 'childAttach'
-#    'childAttached': 'childChildAttach'
-#    'collectionPopulated': 'collectionPopulated'
+    # Run validation on the current Subtest View before we move on.
+    if @currentChildView.hasOwnProperty('testValid')
+      valid = @currentChildView.testValid()
+      if valid
+        @saveResult( @currentChildView, increment )
+      else
+        return @currentChildView.showErrors()
 
-#    TODO: This is a work-around: it may be fixed by doing something better. This code was added to resolve an issue
-#    where the SurveyRunItemView was rendering twice, and the second time it rendered, updateSkipLogic() was not getting executed.
-  subRendered: ->
-#    console.log("subRendered")
+    # Set the index for the next render to pick appropriate Subtest Model.
+    @index =
+      if @abortAssessment == true
+        @subtestViews.length-1
+      else
+        @index + increment
+
+    @saveResult( @currentChildView )
+
+    # Now that we've prepared, let's render again.
+    @trigger "assessment:step"
+    @render()
+    window.scrollTo 0, 0
+
+  next: ->
+    @step 1
+
+  back: ->
+    @step -1
+
+  abort: ->
+    @abortAssessment = true
+    @step 1
+
+  skip: ->
+    @step 1
+
+
+  #
+  # Helper method for working with Results.
+  #
+
+  saveResult: ( currentView ) ->
+
+    subtestResult = currentView.getResult()
+    subtestId = currentView.model.id
+    prototype = currentView.model.get "prototype"
+    subtestReplace = null
+
+    for result, i in @result.get('subtestData')
+      if subtestId == result.subtestId
+        subtestReplace = i
+
+    if subtestReplace != null
+      if typeof currentView.getSum != 'function'
+        getSum = {correct:0,incorrect:0,missing:0,total:0}
+
+      # Don't update the gps subtest.
+      if prototype != 'gps'
+        @result.insert
+          name        : currentView.model.get "name"
+          data        : subtestResult.body
+          subtestHash : subtestResult.meta.hash
+          subtestId   : currentView.model.id
+          prototype   : currentView.model.get "prototype"
+          sum         : getSum
+
+    else
+      @result.add
+        name        : currentView.model.get "name"
+        data        : subtestResult.body
+        subtestHash : subtestResult.meta.hash
+        subtestId   : currentView.model.id
+        prototype   : currentView.model.get "prototype"
+        sum         : getSum
+
+
+
+
+
+
+
+
+
+
+
+
+  #
+  # Poorly understood and potentially removeable methods and documentation.
+  #
+
+  # Listens for "result:saved" and "result:another" events triggered by the ResultItemView subtest and makes it
+  # available for consumption (via triggerSaved and triggerAnother) by external users such as Widget.
+
+  onClose: ->
+    for view in @subtestViews
+      view.close()
+    @result.clear()
+    Tangerine.nav.setStudent ""
+
+  toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
+
+  displaySkip: (skippable)->
+    if skippable
+      $( ".skip" ).show();
+    else
+      $( ".skip" ).hide();
+
+  displayBack: (backable)->
+    if backable
+      $( ".subtest-back" ).removeClass("hidden");
+    else
+      $( ".subtest-back" ).addClass("hidden");
+
+  subTestRenderCollection:->
+    console.log("onRenderCollection")
     currentSubtest = @children.findByIndex(0)
-    currentSubtest.updateSkipLogic()
+    focusMode = currentSubtest.model.getBoolean("focusMode")
+    if focusMode
+      currentSubtest.updateQuestionVisibility()
+      currentSubtest.updateProgressButtons()
 
-#  onDomRefresh: ->
-#    console.log("ACV: I get too attached to people.")
+  childEvents:
+    'render:collection': 'addChildPostRender'
 
-#  renderCollection: ->
-##    console.log("renderCollection")
-
-#  childAttach: ->
-#    console.log("child attached.")
-#  childChildAttach: ->
-#    console.log("childChildAttach attached.")
-#  collectionPopulated: ->
-#    console.log("collectionPopulated.")
-
-#    This is simply used to alert the test it('Should contain a next question button') that the page has finished rendering.
+  # This is simply used to alert the test it('Should contain a next question button') that the page has finished rendering.
   nextQuestionRenderedBoom: ->
-#    console.log("nextQuestionRenderedBoom")
+    console.log("nextQuestionRenderedBoom")
 
   # Triggered by `add:child` of this.childEvents
   addChildPostRender: ->
     currentSubtest = @children.findByIndex(0)
     focusMode = currentSubtest.model.getBoolean("focusMode")
     if focusMode
-#      if !$( "#summary_container" ).length
       if !@$el.find("#summary_container").length
-#        $('#subtest_wrapper').after $ "
         @$el.find("#subtest_wrapper").after $ "
               <div id='summary_container'></div>
               <button class='navigation prev_question'>#{@text.previousQuestion}</button>
@@ -154,7 +377,6 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubtest.updateQuestionVisibility()
       currentSubtest.updateProgressButtons()
 
-  # @todo
   prevQuestion: ->
 
     currentSubtest = @children.findByIndex(0)
@@ -181,335 +403,21 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       currentSubtest.updateQuestionVisibility()
       currentSubtest.updateProgressButtons()
 
-  # @todo Documentation
-  i18n: ->
-    @text =
-      "next" : t("SubtestRunView.button.next")
-      "back" : t("SubtestRunView.button.back")
-      "skip" : t("SubtestRunView.button.skip")
-      "help" : t("SubtestRunView.button.help")
-      "previousQuestion" : t("SurveyRunView.button.previous_question")
-      "nextQuestion" : t("SurveyRunView.button.next_question")
-
-  #
-  # AssessmentCompositeView.initialize overrides Backbone.View.initialize
-  #
-  # @params
-  #
-  # options = {
-  #   assessment: An Assessment Model.
-  #   result: (optional) A Result model to pick up where you left off.
-  # }
-  #
-  initialize: (options) ->
-
-    @i18n()
-
-    @on "before:render", @setChromeData
-    @on "assessment:reset", =>
-      if (@index + 1) == @subtestViews.length
-        this.trigger('assessment:complete')
-
-    # Set @assessment and @model
-    #
-    # Assessment should come from options.assessment, but in case it was assigned
-    # to @model, also place it in @assessment.
-    if options.assessment
-      @model = options.assessment
-      @assessment = options.assessment
-    else
-      @assessment = @model
-      console.log("@model:" + JSON.stringify(@model))
-      console.log("@assessment:" + JSON.stringify(@assessment))
-
-    if typeof options.result == 'undefined'
-      @result = new Result
-        assessmentId   : @model.id
-        assessmentName : @model.get "name"
-        blank          : true
-    else
-      @result = options.result
-
-    @index = (@result.get('subtestData')).length
-    Tangerine.progress = {}
-    Tangerine.progress.index = @index
-
-    @abortAssessment = false
-    @enableCorrections = false  # toggled if user hits the back button.
-
-    Tangerine.tempData = {}
-
-    @rendered = {
-      "assessment" : false
-      "subtest" : false
-    }
-
-    Tangerine.activity = "assessment run"
-    @subtestViews = []
-    @model.parent = @
-    @model.subtests.sort()
-    @model.subtests.each (model) =>
-      model.parent = @
-      @subtestViews.push new SubtestRunItemView
-        model  : model
-        parent : @
-    this.listenTo(Backbone, 'result:saved', @triggerSaved);
-    this.listenTo(Backbone, 'result:another', @triggerAnother);
-
-    # Figure out the @orderMap which is either derived from the assessment, the
-    # result with a prior orderMap, or lastly no specified order map in which case
-    # we create a linear orderMap.
-    @orderMap = []
-    hasSequences = @model.has("sequences") && not _.isEmpty(_.compact(_.flatten(@model.get("sequences"))))
-    if hasSequences and !options.result
-      sequences = @model.get("sequences")
-      # get or initialize sequence places
-      places = Tangerine.settings.get("sequencePlaces")
-      places = {} unless places?
-      places[@model.id] = 0 unless places[@model.id]?
-      if places[@model.id] < sequences.length - 1
-        places[@model.id]++
-      else
-        places[@model.id] = 0
-      Tangerine.settings.save("sequencePlaces", places)
-      @orderMap = sequences[places[@model.id]]
-      @orderMap[@orderMap.length] = @subtestViews.length
-      @result.set("order_map" : @orderMap)
-    else if hasSequences and options.result
-      @orderMap = options.result.get('order_map')
-    else
-      for i in [0..@subtestViews.length]
-        @orderMap[i] = i
-      @result.set("order_map" : @orderMap)
-
-    resultView = new ResultView
-      model          : @result
-      assessment     : @model
-      assessmentView : @
-    @subtestViews.push resultView
-
-    # Given this.index, get ONE MODEL to place as the SINGLE MODEL IN THE COLLECTION
-    # for the Composite View to render.
-    col = {}
-    col.models = []
-    #    model = @model.subtests.models[@index]
-    model = @subtestViews[@orderMap[@index]].model
-    col.models.push model
-    @collection = col
-
-    ui = {}
-    ui.enumeratorHelp = if (@model.get("enumeratorHelp") || "") != "" then "<div class='enumerator_help' #{@fontStyle || ""}>#{@model.get 'enumeratorHelp'}</div>" else ""
-    ui.studentDialog  = if (@model.get("studentDialog")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'studentDialog'}</div>" else ""
-    ui.transitionComment  = if (@model.get("transitionComment")  || "") != "" then "<div class='student_dialog' #{@fontStyle || ""}>#{@model.get 'transitionComment'}</div> <br>" else ""
-
-    ui.text = @text
-    @model.set('ui', ui)
-    @.on "nextQuestionRendered", => @nextQuestionRenderedBoom()
-
-  triggerSaved: ->
-    console.log("Reslt has been saved to internal PouchDB.")
-    @trigger "result:saved"
-
-  triggerAnother: ->
-    console.log("User wishes to do another Assessment.")
-    @trigger "result:another"
-
-  # @todo Documentation
-  setChromeData:->
-    @model.set('subtest', @subtestViews[@orderMap[@index]].model.toJSON())
-
-  # @todo Documentation
-  onRender:->
-
-    # Check to see if this subtest is related to another subtest via the gridLinkId
-    # property and if the related subtest was autostopped, skip this subtest.
-    currentSubtestModel = @collection.models[0]
-    parentSubtestId = currentSubtestModel.get('gridLinkId')
-    parentSubtestResult = false
-    this.result.attributes.subtestData.forEach( (subtestResult) ->
-      if subtestResult.subtestId == parentSubtestId
-        parentSubtestResult = subtestResult
-    )
-    if parentSubtestResult isnt false and parentSubtestResult.data.auto_stop is true
-      @reset(1)
-
-    @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
-    Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
-    Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
-#    Tangerine.progress.currentSubview.on "nextQuestionRendered", => @trigger "nextQuestionRendered"
-
-    Tangerine.progress.currentSubview.on "next",    =>
-      console.log("currentView next")
-      @step 1
-    Tangerine.progress.currentSubview.on "back",    => @step -1
-
-    @flagRender "assessment"
-
-  # @todo Documentation
-  subTestRenderCollection:->
-    console.log("onRenderCollection")
-    currentSubtest = @children.findByIndex(0)
-    focusMode = currentSubtest.model.getBoolean("focusMode")
-    if focusMode
-      currentSubtest.updateQuestionVisibility()
-      currentSubtest.updateProgressButtons()
-
-  # @todo Documentation
-  flagRender: (object) ->
-    @rendered[object] = true
-
-    if @rendered.assessment && @rendered.subtest
-      @trigger "rendered"
-
-  # @todo Documentation
-  afterRender: ->
-    @subtestViews[@orderMap[@index]]?.afterRender?()
-
-  # @todo Documentation
-  onClose: ->
-    for view in @subtestViews
-      view.close()
-    @result.clear()
-    Tangerine.nav.setStudent ""
-
-  # @todo Documentation
-  abort: ->
-    @abortAssessment = true
-    @step 1
-
-  # @todo Documentation
-  skip: =>
-    currentView = Tangerine.progress.currentSubview
-    @result.add
-      name      : currentView.model.get "name"
-      data      : currentView.getSkipped()
-      subtestId : currentView.model.id
-      skipped   : true
-      prototype : currentView.model.get "prototype"
-    ,
-      success: =>
-        @reset 1
-
-  # @todo Documentation
-  step: (increment) ->
-    this.trigger "assessment:step"
-    if @abortAssessment
-      currentView = Tangerine.progress.currentSubview
-      @saveResult( currentView )
-      return
-
-    currentView = Tangerine.progress.currentSubview
-
-    if currentView.testValid?
-      valid = currentView.testValid()
-      if valid
-        @saveResult( currentView, increment )
-      else
-        currentView.showErrors()
-    else
-      currentView.showErrors()
-
-  # @todo Documentation
-  next: ->
-    @step 1
-
-  # @todo Documentation
-  back: ->
-    @step -1
-
-  # @todo Documentation
-  toggleHelp: -> @$el.find(".enumerator_help").fadeToggle(250)
-
-  # @todo Documentation
   getGridScore: ->
-    link = @model.get("subtest").gridLinkId || ""
+    link = @currentChildModel.get('gridLinkId') || ""
     if link == "" then return
-    grid = @model.subtests.get @model.get("subtest").gridLinkId
+    grid = @model.subtests.get @currentChildModel.get('gridLinkId')
     gridScore = @result.getGridScore grid.id
     gridScore
 
-  # @todo Documentation
   gridWasAutostopped: ->
-    link = @model.get("subtest").gridLinkId || ""
+    link = @currentChildModel.get('gridLinkId') || ""
     if link == "" then return
-    grid = @model.subtests.get @model.get("subtest").gridLinkId
+    grid = @assessment.subtests.get @currentChildModel.get('gridLinkId')
     gridWasAutostopped = @result.gridWasAutostopped grid.id
 
-  # @todo Documentation
-  reset: (increment) ->
-    @rendered.subtest = false
-    @rendered.assessment = false
-    Tangerine.progress.currentSubview.close();
-    @index =
-      if @abortAssessment == true
-        @subtestViews.length-1
-      else
-        @index + increment
-    model = @subtestViews[@orderMap[@index]].model
-    # Now that we have our model we want to render, assign that model to the
-    # Composite View's Collection as the ONLY model to render.
-    @collection.models = [model]
-    @.trigger('assessment:reset')
-    @render()
-    window.scrollTo 0, 0
-
-  # @todo Documentation
-  saveResult: ( currentView, increment ) ->
-
-    subtestResult = currentView.getResult()
-    subtestId = currentView.model.id
-    prototype = currentView.model.get "prototype"
-    subtestReplace = null
-
-    for result, i in @result.get('subtestData')
-      if subtestId == result.subtestId
-        subtestReplace = i
-
-    if subtestReplace != null
-      if typeof currentView.getSum != 'function'
-        getSum = {correct:0,incorrect:0,missing:0,total:0}
-
-      # Don't update the gps subtest.
-      if prototype != 'gps'
-        @result.insert
-          name        : currentView.model.get "name"
-          data        : subtestResult.body
-          subtestHash : subtestResult.meta.hash
-          subtestId   : currentView.model.id
-          prototype   : currentView.model.get "prototype"
-          sum         : getSum
-      @reset increment
-
-    else
-      @result.add
-        name        : currentView.model.get "name"
-        data        : subtestResult.body
-        subtestHash : subtestResult.meta.hash
-        subtestId   : currentView.model.id
-        prototype   : currentView.model.get "prototype"
-        sum         : getSum
-      ,
-        success : =>
-          @reset increment
-
-  # @todo Documentation
   getSum: ->
     if Tangerine.progress.currentSubview.getSum?
       return Tangerine.progress.currentSubview.getSum()
     else
-      # maybe a better fallback
       return {correct:0,incorrect:0,missing:0,total:0}
-
-  # @todo Documentation
-  displaySkip: (skippable)->
-    if skippable
-      $( ".skip" ).show();
-    else
-      $( ".skip" ).hide();
-
-  # @todo Documentation
-  displayBack: (backable)->
-    if backable
-      $( ".subtest-back" ).removeClass("hidden");
-    else
-      $( ".subtest-back" ).addClass("hidden");

@@ -1,4 +1,4 @@
- class ConsentRunItemView extends Backbone.Marionette.ItemView
+ class ConsentRunItemView extends SubtestRunItemView
 
   className : "ConsentRunView"
 
@@ -22,7 +22,6 @@
       "help" : t("SubtestRunView.button.help")
 
   initialize: (options) ->
-    Tangerine.progress.currentSubview = @
     @i18n()
 
     @confirmedNonConsent = false
@@ -40,7 +39,6 @@
 
 
   render: ->
-
     @$el.html "
         <div class='question'>
           <label>#{@model.get('prompt') || @text.defaultConsent}</label>
@@ -66,14 +64,14 @@
       mode      : "single"
       dataEntry : false
       answer    : answer or ""
-    
     @consentButton.setElement @$el.find(".consent-button")
     @consentButton.on "change", @onConsentChange
     @consentButton.render()
 
     @trigger "rendered"
     @trigger "ready"
-  
+    @runDisplayCode()
+
   isValid: ->
     if @confirmedNonConsent is false
       if @consentButton.answer is "yes"
@@ -86,7 +84,6 @@
   testValid: ->
 #    console.log("ConsentRunItemView testValid.")
 #    if not @prototypeRendered then return false
-#    currentView = Tangerine.progress.currentSubview
     if @isValid?
       return @isValid()
     else
