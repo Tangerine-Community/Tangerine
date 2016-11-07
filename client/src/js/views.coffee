@@ -8,7 +8,7 @@ Tangerine.loadViews = (doneLoadingViews) ->
       console.log "Design Doc detected. Updating it."
       ddoc._rev = doc._rev
     else
-      console.log "Loading in a fresh _desing/tangerine doc"
+      console.log "Loading in a fresh _design/tangerine doc"
     Tangerine.db.put(ddoc)
       .then (doc) ->
         doneLoadingViews()

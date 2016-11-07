@@ -339,8 +339,8 @@ Tangerine.bootSequence =
         error   : ->
           console.log "could not fetch location-list..."
           callback
-
         success : callback
+      callback()
     else return callback()
 
   removeLoadingOverlay: ( callback ) ->
