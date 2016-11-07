@@ -111,10 +111,14 @@ Tangerine.bootSequence =
                   # run again on page refresh, then load Development Packs.
                   indexViews()
               success: (res) ->
-                if res.docs.length == 0 then return indexViews()
-                console.log('Found ' + res.docs.length + ' docs')
+                if res.docs?
+                  docs = res.docs
+                else
+                  docs = res
+                if docs.length == 0 then return indexViews()
+                console.log('Found ' + docs.length + ' docs')
                 packNumber++
-                Tangerine.db.bulkDocs res.docs, (error, doc) ->
+                Tangerine.db.bulkDocs docs, (error, doc) ->
                   if error
                     return alert "could not save initialization documents: #{error}"
                   doOne()

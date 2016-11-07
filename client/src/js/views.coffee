@@ -217,11 +217,12 @@ Tangerine.views =
         return emit(doc.userId, null)
     ).toString()
 
-  tripsByUserIdAndMonth:
+  tripsByUserIdYearMonth:
     map: ( ( doc ) ->
       if doc.collection == 'trip'
         month = moment(doc.startTime).format('MM')
-        return emit(doc.userId + '-' + month, null)
+        year = moment(doc.startTime).format('YYYY')
+        return emit(doc.userId + '-' + year + '-' + month, null)
     ).toString()
 
   results :

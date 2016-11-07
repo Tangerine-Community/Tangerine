@@ -9,6 +9,9 @@ const HttpStatus = require('http-status-codes');
 
 const errorHandler = require('../../utils/errorHandler');
 
+// for mkdirp
+const fse = require('fs-extra');
+
 /** Creates a new group.
  * Makes new database, and uploader user.
  * replicates from trunk
@@ -80,6 +83,12 @@ function newGroup(req, res) {
           .json({
             message : message
           });
+      })
+      .then(function setupMediaAssetsDir(){
+        fse.ensureDir('/tangerine-server/client/media_assets/'+groupName, function (err) {
+          if (err) return console.error(err)
+            // dir has now been created, including the directory it is to be placed in
+        })
       })
       .catch(errorHandler(res));
 

@@ -233,9 +233,9 @@ class WorkflowRunView extends Backbone.View
             @$lessonContainer.append(lessonImage)
 
       if subject is "3"
-        lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{motherTongue}_w#{week}_d#{day}.png"
+        lessonImage.src = "media_assets/#{Tangerine.settings.get('groupName')}/lessons/#{motherTongue}_w#{week}_d#{day}.png"
       else
-        lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
+        lessonImage.src = "media_assets/#{Tangerine.settings.get('groupName')}/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
 
     else
       @lessonContainer?.remove?()

@@ -23,7 +23,8 @@ docker run -d \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   -p 80:80 \
   -p 5984:5984 \
-  --volume $T_VOLUMES/tangerine/couchdb/:/var/lib/couchdb \
-  --volume $T_VOLUMES/tangerine/apks/:/tangerine-server/tree/apks \
+  --volume $T_VOLUMES/couchdb/:/var/lib/couchdb \
+  --volume $T_VOLUMES/apks/:/tangerine-server/tree/apks \
+  --volume $T_VOLUMES/media_assets/:/tangerine-server/client/media_assets/ \
   tangerine/tangerine:local
 docker logs -f tangerine-container
