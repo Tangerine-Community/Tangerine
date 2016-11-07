@@ -95,11 +95,16 @@ class NavigationView extends Backbone.View
   render: ->
 
     @$el.html "
-
+      <paper-menu-button>
+        <img icon='menu' class='dropdown-trigger' src='images/navigation-logo.png'>
+        <paper-menu class='dropdown-content'>
+          <paper-item>Share</paper-item>
+          <paper-item>Settings</paper-item>
+          <paper-item>Help</paper-item>
+        </paper-menu>
+      </paper-menu-button>
       <img id='navigation-logo' src='images/navigation-logo.png' title='#{@text.logo}'>
-
       <ul>
-
         <li id='student-container' class='hidden'>
 
           <label>#{@text.student_id}</label>
