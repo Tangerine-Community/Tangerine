@@ -307,6 +307,8 @@ conf.fileOrder = [
 
   'helpers',
 
+  'DocumentsForClient',
+
   'ButtonView',
 
   'Assessment',
@@ -425,10 +427,14 @@ conf.fileOrder = [
 
   'Critique',
   'Critiques',
+  'Loc',
+  'LocView',
   'Feedback',
   'FeedbackEditView',
   'FeedbackRunView',
   'FeedbackTripsView',
+  'TripResult',
+  'TripResultCollection',
 
   'User',
   'Users',

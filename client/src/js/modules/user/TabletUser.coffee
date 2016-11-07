@@ -14,6 +14,27 @@ class TabletUser extends Backbone.Model
   initialize: ( options ) ->
     @myRoles = []
 
+  # This may be overriden by Tangerine.settings.attributes.userSchema as loaded in 
+  # on boot.applySettings().
+  schema:
+    name: "Text"
+    password:
+      type: "Password"
+    passwordConfirm:
+      type: "Password"
+
+  validate: ->
+    if (@attributes.password != undefined && @attributes.password != null && @attributes.password.length > 0 && @attributes.password != @attributes.passwordConfirm)
+      return "Passwords must match."
+
+  beforeSave: ->
+    # Check to see if a password is set, if so then use @setPassword to set it as a `pass` attribute.
+    if (@attributes.password != undefined && @attributes.password != null && @attributes.password.length > 0)
+      @setPassword @attributes.password
+    # Never save password and passwordConfirm.
+    delete @attributes.passwordConfirm
+    delete @attributes.password
+
   ###
     Accessors
   ###
@@ -91,25 +112,7 @@ class TabletUser extends Backbone.Model
     document.location = Tangerine.settings.location.group.url.replace(/\:\/\/.*@/,'://')+"_ghost/#{user}/#{pass}/#{location}"
 
 
-  signup: ( name, pass, attributes, callbacks={} ) =>
-    @set "_id" : TabletUser.calcId(name)
-    @fetch
-      success: => @trigger "name-error", "User already exists."
-      error: =>
-        @set "name" : name
-        @setPassword pass
-        @save attributes,
-          success: =>
-            if Tangerine.settings.get("context") is "class"
-              view = new RegisterTeacherView
-                name : name
-                pass : pass
-              vm.show view
-            else
-              Tangerine.session.set @id
-              @trigger "login"
-              callbacks.success?()
-
+  # TODO: This should be on the Tangerine object.
   login: ( name, pass, callbacks = {} ) ->
 
     if Tangerine.session.exists()
@@ -129,6 +132,7 @@ class TabletUser extends Backbone.Model
     if @verifyPassword pass
       Tangerine.session.set @id
       @trigger "login"
+      console.log (@id + ' session has started.')
       callbacks.success?()
       
       recentUsers = @recentUsers().filter( (a) => !~a.indexOf(@name()))

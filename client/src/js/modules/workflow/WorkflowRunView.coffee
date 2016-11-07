@@ -1,32 +1,60 @@
 class WorkflowRunView extends Backbone.View
   
+  # TODO: Is previousStep ever used? 
   events:
     "click .previous" : "previousStep"
-    "click .next"     : "nextStep"
+    "click .next"     : "_onStepComplete"
+
+  initialize: (options) ->
+    @on 'step:show', @_onStepShow
+    @on 'step:complete', @_onStepComplete
+    @on 'workflow:done', @_onWorkflowDone
+
+    @[key] = value for key, value of options
+    
+    # Set up the Trip.
+    if (!options.hasOwnProperty('trip'))
+      @trip = new Trip({workflow: @workflow, user: Tangerine.user})
+    else
+      @trip = options.trip
+
+    # Start our index and set our current step.
+    @index = 0 unless @index?
+    @steps = [] unless @steps?
+
+    # TODO: Legacy we can refactor away.
+    @currentStep = @workflow.stepModelByIndex @index
+    @tripId = @trip.id
+    @subViewRendered = false
+
+  _onStepShow: =>
+    # Some steps emit step:complete, but Assessments and Curriculum just emit assessment:complete. This translates assessment:complete to step:complete.
+    @steps[@index].view.on "assessment:complete", =>
+      @trigger "step:complete"
+
+  _onStepComplete: =>
+    # When a step is complete, mark it as complete in the Trip and figure out what to do next.
+    @trip.markStepComplete(@steps[@index])
+    # If we don't have another step to go to, render a nice default end message, emit done, and return.
+    if (@index + 1) == @workflow.getLength()
+      @renderEnd()
+      @trigger "workflow:done"
+      return
+    # If we were just on the step before last and the last step is a message, emit done.
+    else if (@index + 2) == @workflow.getLength() && @workflow.collection.models[@index + 1].get('type') == 'message' 
+      @trigger "workflow:done"
+      @nextStep()
+    else
+      # No need to exit at this point, let's move to the next Step.
+      @nextStep()
+
+  _onWorkflowDone: =>
+    @trip.markTripComplete()
+    @trip.save()
 
   switch: =>
     @$el.toggle()
     @$lessonContainer.toggle()
-
-  initialize: (options) ->
-    @[key] = value for key, value of options
-    @tripId = Utils.guid() unless @tripId?
-    @index = 0 unless @index?
-    @steps = [] unless @steps?
-    @currentStep = @workflow.stepModelByIndex @index
-    @subViewRendered = false
-    # When a new subview is shown, set listener for when it is done so we can
-    # save the result and go to the next step.
-    @on 'workflow:showView', =>
-      view = @steps[@index].view
-      view.on "assessment:complete", =>
-        view.result.set 'tripId', @tripId
-        view.result.set 'workflowId', @workflow.id
-        view.result.save()
-        if (@index + 1) == @workflow.getLength()
-          @renderEnd()
-          return @trigger "workflow:done"
-        @nextStep()
 
   shouldSkip: ->
     currentStep = @workflow.stepModelByIndex @index
@@ -47,17 +75,27 @@ class WorkflowRunView extends Backbone.View
     if @shouldSkip()
       @subViewRendered = true
       return @nextStep()
+ 
+    # Set next step.
+    @steps[@index] = {} unless @steps[@index]?
+    @currentStep = @workflow.stepModelByIndex @index
+    @currentStep.workflow = @
+    @steps[@index].model = @currentStep
+    console.log('step set')
 
     stepIndicator = "<div id='workflow-progress'></div>"
-
-    nextButton = "
-      <div class='clearfix'><button class='nav-button next'>Next</button></div>
-    " if @index isnt @workflow.getChildren().length - 1
-
+    
+    if @currentStep.getType() == "message" && @index != @workflow.getChildren().length - 1
+      nextButton = "
+        <div class='clearfix'><button class='nav-button next'>Next</button></div>
+      "
+    else
+      nextButton = ""
+  
     @$el.html "
       #{stepIndicator}
       <div id='header-container'></div>
-      <section id='#{@cid}_current_step'></section>
+      <div id='#{@cid}_current_step' class='workflow-step-container'></div>
       <!--button class='nav-button previous'>Previous</button-->
       #{nextButton || ''}
     "
@@ -141,13 +179,9 @@ class WorkflowRunView extends Backbone.View
         result = step.result.getVariable(key)
       if result?
         return result
-      
 
   renderStep: =>
-    @steps[@index] = {} unless @steps[@index]?
-    @currentStep = @workflow.stepModelByIndex @index
-    @steps[@index].model = @currentStep
-
+    
     if @index == @workflow.getLength()-1
       Tangerine.activity = ""
       @$el.find(".next").hide()
@@ -157,7 +191,7 @@ class WorkflowRunView extends Backbone.View
     switch @currentStep.getType()
       when "new"        then @renderNew()
       when "assessment" then @renderAssessment()
-      when "curriculum" then @renderCurriculum()
+      when "curriculum" then @renderAssessment()
       when "message"    then @renderMessage()
       when "login"
         @$el.find("##{@cid}_current_step").html "
@@ -199,9 +233,9 @@ class WorkflowRunView extends Backbone.View
             @$lessonContainer.append(lessonImage)
 
       if subject is "3"
-        lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{motherTongue}_w#{week}_d#{day}.png"
+        lessonImage.src = "media_assets/#{Tangerine.settings.get('groupName')}/lessons/#{motherTongue}_w#{week}_d#{day}.png"
       else
-        lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
+        lessonImage.src = "media_assets/#{Tangerine.settings.get('groupName')}/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
 
     else
       @lessonContainer?.remove?()
@@ -230,99 +264,33 @@ class WorkflowRunView extends Backbone.View
 
     @showView view
 
-
   renderAssessment: ->
     @nextButton true
-
     @currentStep.fetch
       success: =>
-        assessment = @currentStep.getTypeModel()
-
-        assessment.deepFetch 
-          success: =>
-            view = new AssessmentCompositeView 
-              assessment : assessment
-              inWorkflow : true
-              tripId     : @tripId
-              workflowId : @workflow.id
-
-            if @assessmentResumeIndex?
-              view.index = @assessmentResumeIndex
-              delete @assessmentResumeIndex
-
-
-            @steps[@index].view   = view
-            # @steps[@index].result = view.getResult()
-            @steps[@index].result = view.result
-            @showView view
-
-
-  renderCurriculum: ->
-    @nextButton false
-
-    curriculumId = @currentStep.getTypesId()
-    subtests = new Subtests
-    subtests.fetch
-      key : curriculumId
-      success: =>
-
-        itemType = @getString @currentStep.getCurriculumItemType()
-        grade    = @getNumber @currentStep.getCurriculumGrade()
-
-        thisYear = (new Date()).getFullYear()
-        term1Start = moment "#{thisYear} Jan 1"
-        term1End   = moment "#{thisYear} April 30"
-
-        term2Start = moment "#{thisYear} May 1"
-        term2End   = moment "#{thisYear} Aug 31"
-
-        term3Start = moment "#{thisYear} Sept 1"
-        term3End   = moment "#{thisYear} Dec 31"
-
-        now = moment()
-        term =
-          if      term1Start <= now <= term1End
-            1
-          else if term2Start <= now <= term2End
-            2
-          else if term3Start <= now <= term3End
-            3
-
-        criteria =
-          itemType : itemType
-          part     : term
-          grade    : grade
-
-        subtest = _(subtests.where(
-          itemType : itemType
-          part     : term
-          grade    : grade
-        )).first()
-
-        return Utils.midAlert "
-          Subtest not found for <br>
-          itemType: #{itemType}<br>
-          term: #{term}<br>
-          grade: #{grade}
-        " unless subtest?
-
-        view = new KlassSubtestRunView
-          student      : new Student
-          subtest      : subtest
-          questions    : new Questions
-          linkedResult : new KlassResult
-          inWorkflow   : true
-          tripId       : @tripId
-          workflowId   : @workflow.id
-        @steps[@index].view = view
-        @showView view, @currentStep.getName()
+        view = new AssessmentCompositeView
+          assessment : @currentStep.model
+          inWorkflow : true
+          tripId     : @tripId
+          workflowId : @workflow.id
+        if @assessmentResumeIndex?
+          view.index = @assessmentResumeIndex
+          delete @assessmentResumeIndex
+        @steps[@index].view   = view
+        # @steps[@index].result = view.getResult()
+        @steps[@index].result = view.result
+        @showView view
 
   renderEnd: ->
     Utils.gpsPing
-    @$el.find("##{@cid}_current_step").html "
-      <p>You have completed this Classroom Observation.</p>
-      <button class='nav-button'><a href='#feedback/#{@workflow.id}'>Go to feedback</a></button>
-      <p>Once in feedback select the appropriate county, zone, school and date of this school visit to retrieve the feedback for this lesson observation. This information is to be used in your reflections and discussion with the teacher.</p>
+    @$el.html "
+      <p>You have completed this Workflow.</p>
+    "
+    if @workflow.get('feedbackEnabled') 
+      @$el.append "
+        <button class='nav-button'><a href='#feedback/#{@workflow.id}'>Go to feedback</a></button>
+      "
+    @$el.append "
       <button class='nav-button'><a href='#'>Main</a></button>
     "
     return
@@ -340,7 +308,7 @@ class WorkflowRunView extends Backbone.View
     @$button?.remove?()
 
   showView: (subView, header = '') ->
-    @trigger 'workflow:showView'
+    @trigger 'step:show'
     header = "<h1>#{header}</h1>" if header isnt ''
     @subView = subView
     @$el.find("#header-container").html header

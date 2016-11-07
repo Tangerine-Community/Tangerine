@@ -951,71 +951,21 @@ class Robbert
 class TangerineTree
   
   @make: (options) ->
-    # Gather a list of document IDs we'll need and then hit allDocs with that as a keys list.
-    keyList = []
-    Utils.working true
-    # Add all Worklfow IDs to the list.
-    workflows = new Workflows
-    workflows.fetch 
-      success: =>
-        workflows.models.forEach (workflow) =>
-          keyList.push workflow.id
-        # Add all Assessment IDs to the list.
-        url = Tangerine.settings.urlView "group", "assessmentsNotArchived"
-        $.ajax
-          url: Tangerine.settings.urlView "group", "assessmentsNotArchived"
-          dataType: "json"
-          success: (data) =>
-            # Add all things related to those Assessments to the list.
-            dKeys = data.rows.map((row) => row.id.substr(-5))
-            dKeyQuery =
-              keys: dKeys
-            url = Tangerine.settings.urlView("group", "byDKey")
-            $.ajax
-              url: Tangerine.settings.urlView("group", "byDKey"),
-              type: "POST"
-              contentType: "application/json"
-              dataType: "json"
-              data: JSON.stringify(dKeyQuery)
-              success: (data) =>
-                moreKeys = data.rows.map((row) => row.id);
-                keyList = keyList.concat(moreKeys)
-                keyList = _.uniq(keyList)
-                keyList.push("settings");
-                Tangerine.$db.allDocs
-                  keys : keyList
-                  include_docs:true
-                  success: (response) ->
-                    docs = []
-                    for row in response.rows
-                      docs.push row.doc
-                    body =
-                      docs: docs
-                    success = options.success
-                    error   = options.error
-
-                    payload = JSON.stringify(body)
-
-                    delete options.success
-                    delete options.error
-
-                    $.ajax
-                      type     : 'POST'
-                      crossDomain : true
-                      url      : "#{Tangerine.config.get('tree')}/group-#{Tangerine.settings.get('groupName')}/#{Tangerine.settings.get('hostname')}"
-                      dataType : 'json'
-                      contentType: "application/json"
-                      data     : payload
-                      success: ( data ) =>
-                        success data
-                      error: ( data ) =>
-                        error data, JSON.parse(data.responseText)
-                      complete: ->
-                        Utils.working false
-      error: (a, b) ->
-        console.log("a: " + a)
-        Utils.midAlert "Import error"
-
+    success = options.success
+    error = options.error
+    $.ajax
+      type     : 'POST'
+      crossDomain : true
+      url      : "#{Tangerine.config.get('tree')}/group-#{Tangerine.settings.get('groupName')}/#{Tangerine.settings.get('hostname')}"
+      dataType : 'json'
+      contentType: "application/json"
+      data     : {} 
+      success: ( data ) =>
+        success data
+      error: ( data ) =>
+        error data, JSON.parse(data.responseText)
+      complete: ->
+        Utils.working false
 
 ##UI helpers
 $ ->

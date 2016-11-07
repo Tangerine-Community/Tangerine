@@ -2,6 +2,8 @@ tanerine-env-vars.sh
 .idea
 
 data
+.data
+config.env
 
 couchdb.stdout
 

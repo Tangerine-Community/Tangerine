@@ -27,8 +27,7 @@ class NavigationView extends Backbone.View
   userMenuOut: => @refreshDropDownPosition(); @$el.find("#username-dropdown").hide()
 
   gotoAccount: ->
-    if @user.isAdmin()
-      Tangerine.router.navigate "account", true
+    Tangerine.router.navigate "user/" + Tangerine.user.id, true
 
   logoClick: -> 
     if @user.isAdmin()

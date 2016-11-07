@@ -19,12 +19,16 @@ class Router extends Backbone.Router
 
   routes:
     'workflow/run/:workflowId'  : 'workflowRun'
+    'workflow/edit/:workflowId'  : 'workflowEdit'
     'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
     'workflows': 'workflows'
     'widget'   : 'widgetLoad'
     'widget-play/:id' : 'widgetPlay'
+    'feedback/edit/:workflowId' : 'feedbackEdit'
+    'feedback/:workflowId'      : 'feedback'
     'login'    : 'login'
     'register' : 'register'
+    'user/:userId' : 'user'
     'logout'   : 'logout'
     'account'  : 'account'
     'bandwidth' : 'bandwidth' 
@@ -38,6 +42,7 @@ class Router extends Backbone.Router
     '' : 'landing'
 
     'logs' : 'logs'
+    'reload' : 'reload'
 
     # Class
     'class'          : 'klass'
@@ -90,6 +95,21 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+    '_':'_'
+
+  reload: ->
+    @navigate '', false
+    window.location.reload()
+
+  edit: (id) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        assessment = new Assessment
+          "_id" : id
+        assessment.deepFetch
+          success : ( res ) ->
+            view = new AssessmentEditView model: assessment 
+            vm.show view
 
 
   admin: (options) ->
@@ -114,6 +134,15 @@ class Router extends Backbone.Router
         view = new TabView
         vm.show view
 
+  _: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        view = new TabView
+        if Tangerine.settings.has 'tabs'
+          view.tabs = Tangerine.settings.get 'tabs'
+        Tangerine.app.rm.get('mainRegion').show view 
+
+
   dashboard: (options) ->
     options = options?.split(/\//)
     #default view options
@@ -133,10 +162,7 @@ class Router extends Backbone.Router
   landing: (refresh = false) ->
 
     callFunction = not refresh
-    if Tangerine.settings.get('showWorkflows') == true
-      Tangerine.router.navigate "workflows", callFunction
-    else
-      Tangerine.router.navigate "assessments", callFunction
+    Tangerine.router.navigate "_", callFunction
 
     document.location.reload() if refresh # this is for the stupid click bug
 
@@ -167,6 +193,40 @@ class Router extends Backbone.Router
                   feedback : feedback
                   workflow : workflow
                 Tangerine.app.rm.get('mainRegion').show view
+
+  feedbackEdit: ( workflowId ) ->
+      Tangerine.user.verify
+        isAuthenticated: ->
+
+          showFeedbackEditor = ( feedback, workflow ) ->
+            feedback.updateCollection()
+            view = new FeedbackEditView
+              feedback: feedback
+              workflow: workflow
+            vm.show view
+
+          workflow = new Workflow "_id" : workflowId
+          workflow.fetch
+            success: ->
+              feedbackId = "#{workflowId}-feedback"
+              feedback   = new Feedback "_id" : feedbackId
+              feedback.fetch
+                error:   -> feedback.save null, success: -> showFeedbackEditor(feedback, workflow)
+                success: -> showFeedbackEditor(feedback, workflow)
+
+
+
+
+  workflowEdit: ( workflowId ) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+
+        workflow = new Workflow "_id" : workflowId
+        workflow.fetch
+          success: ->
+            view = new WorkflowEditView workflow : workflow
+            vm.show view
+
 
 
   workflowRun: ( workflowId ) ->
@@ -790,7 +850,7 @@ class Router extends Backbone.Router
   #
   editSubtest: (id) ->
     Tangerine.user.verify
-      isAdmin: ->
+      isAuthenticated: ->
         id = Utils.cleanURL id
         subtest = new Subtest _id : id
         subtest.fetch
@@ -803,8 +863,6 @@ class Router extends Backbone.Router
                   model      : model
                   assessment : assessment
                 vm.show view
-      isUser: ->
-        Tangerine.router.landing()
 
   editKlassSubtest: (id) ->
 
@@ -844,7 +902,7 @@ class Router extends Backbone.Router
   #
   editQuestion: (id) ->
     Tangerine.user.verify
-      isAdmin: ->
+      isAuthenticated: ->
         id = Utils.cleanURL id
         question = new Question _id : id
         question.fetch
@@ -862,8 +920,6 @@ class Router extends Backbone.Router
                       "subtest"    : subtest
                       "assessment" : assessment
                     vm.show view
-      isUser: ->
-        Tangerine.router.landing()
 
 
   editKlassQuestion: (id) ->
@@ -911,6 +967,18 @@ class Router extends Backbone.Router
 
   logout: ->
     Tangerine.user.logout()
+
+  user: (userId) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        tabletUserModel = new TabletUser({id: userId})
+        tabletUserModel.set('_id', userId)
+        tabletUserModel.on 'sync', ->
+          tabletUserView = new TabletUserView
+            model : tabletUserModel
+          Tangerine.app.rm.get('mainRegion').show tabletUserView
+        tabletUserModel.fetch()
+
 
   account: ->
     Tangerine.user.verify

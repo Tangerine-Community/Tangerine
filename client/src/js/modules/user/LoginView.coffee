@@ -23,7 +23,6 @@ class LoginView extends Backbone.Marionette.View
       'keyup #new_name'    : 'checkNewName'
 
   initialize: (options) ->
-    $(window).on('orientationchange scroll resize', @recenter)
     @mode = "login"
     @i18n()
     @users = options.users
@@ -147,21 +146,35 @@ class LoginView extends Backbone.Marionette.View
 
       <div class='signup' style='display:none;'>
         <section>
+          <div class='signup-form'>
+            <input id='new_name' class='tablet-name' type='text' placeholder='#{nameName}'>
 
-          <div class='messages name_message'></div>
-          <input id='new_name' class='tablet-name' type='text' placeholder='#{nameName}'>
+            <div class='messages pass_message'></div>
+            <input id='new_pass_1' type='password' placeholder='#{@text.password}'>
 
-          <div class='messages pass_message'></div>
-          <input id='new_pass_1' type='password' placeholder='#{@text.password}'>
-
-          <input id='new_pass_2' type='password' placeholder='#{@text.password_confirm}'>
-
+            <input id='new_pass_2' type='password' placeholder='#{@text.password_confirm}'>
+          </div>
           <button class='sign_up'>#{@text.sign_up}</button>
         </section>
       </div>
     "
 
     @$el.html html
+
+    # Attach registration form.
+    # TODO: We should feed in the Tangerine.user Model that already exists but we have to do this
+    # the hard way and feed in a new placeholder Model that can be used to pass attributes to 
+    # Tangerine.user cleanly on signup. Otherwise on pouch save of the Backbone.Forms model we 
+    # get an error of `DataCloneError: An object could not be cloned`.
+    # Issue in PouchDB described here: https://pouchdb.com/errors.html#could_not_be_cloned
+    userModel = new TabletUser()
+    # Set fields required for the form to function.
+    # If a userProfile is defined in the settings doc, add those.
+
+    @registrationForm = new Backbone.Form({
+        model: Tangerine.user
+    }).render()
+    $(@$el.find('.signup-form')[0]).html(@registrationForm.el)
 
     @initAutocomplete()
 
@@ -176,27 +189,6 @@ class LoginView extends Backbone.Marionette.View
   onBeforeDestroy: =>
     $("#footer").show()
     $("body").css("background", @oldBackground)
-    $(window).off('orientationchange scroll resize', @recenter)
-
-  keyHandler: (event) ->
-
-    key =
-      ENTER     : 13
-      TAB       : 9
-      BACKSPACE : 8
-
-    $('.messages').html('')
-    char = event.which
-    if char?
-      isSpecial =
-        char is key.ENTER              or
-        event.keyCode is key.TAB       or
-        event.keyCode is key.BACKSPACE
-      # Allow upper case here but make it so it's not later
-      return false if not /[a-zA-Z0-9]/.test(String.fromCharCode(char)) and not isSpecial
-      return @action() if char is key.ENTER
-    else
-      return true
 
   action: ->
     @login()  if @mode is "login"
@@ -204,13 +196,27 @@ class LoginView extends Backbone.Marionette.View
     return false
 
   signup: ->
-    name  = ($name  = @$el.find("#new_name")).val().toLowerCase()
-    pass1 = ($pass1 = @$el.find("#new_pass_1")).val()
-    pass2 = ($pass2 = @$el.find("#new_pass_2")).val()
-
-    @passError(@text.pass_mismatch) if pass1 isnt pass2
-
-    @user.signup name, pass1
+    errors = @registrationForm.commit()
+    if (errors)
+      return alert('Cannot proceed because of errors in your form.')
+    modelErrors = @registrationForm.model.validate()
+    if (modelErrors)
+      return alert('Could not proceed because of errors in your form: ' + modelErrors)
+    # TODO: A UUID should be used but for reporting purposes (implied relationship in the name) we have to keep it this way for now.
+    @registrationForm.model.set "_id" : 'user-' + @registrationForm.model.get('name')
+    # Stash the user name and password for logging them in after saving them.
+    name = @registrationForm.model.get('name')
+    password = @registrationForm.model.get('password')
+    # Try to fetch the user first, because if they exist then we should fail.
+    @registrationForm.model.fetch
+      success: => alert("User already exists")
+      error: =>
+        @registrationForm.model.on 'sync', =>
+          @registrationForm.model.login name, password
+          @registrationForm.model.trigger "login"
+          # TODO This event below should bubble up to the router where the router then decides where to go next. Somewhere in the application the login is causing a redirect.
+          @trigger 'done'
+        @registrationForm.model.save()
 
 
   login: ->

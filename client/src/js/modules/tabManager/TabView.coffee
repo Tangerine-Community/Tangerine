@@ -1,78 +1,100 @@
 class TabView extends Backbone.View
 
   className : "TabView"
-  
 
   events:
-    "click paper-tab"	: 'displayViewHtml'
+    "click paper-tab"	: 'tabClicked'
 
+  tabs:  [
+        {"title": "Assessments", "weight": 1, "url":"#assessments", "views": [{className: "AssessmentsViewController"} ] },
+        { "title": "Sync", "weight": 2, "url":"#bandwidth", "views": [{className: "BandwidthCheckView"}, {className: "UniversalUploadView"}, {className: "ResultsSaveAsFileView"}] },
+      ]
 
-
-  config: => 
-    
-    @tabsHtml = ''
-    @tabsToUse =  [
-          {"title": "Login", "weight": 1, "url":"#login", "views": [{className: "LoginView"} ] },
-          { "title": "Bandwidth", "weight": 2, "url":"#bandwidth", "views": [{className: "BandwidthCheckView"}] },
-          { "title": "Tab Test", "weight": 3, "url":"#testurl", "views": [{className: "Testclass"}] }
-        ]
-    for tab in @tabsToUse
-      #console.log tab.title    
-      @tabsHtml += "<paper-tab link>
-                    <a id='#{tab.views[0].className}' class='link' data-tab-to-use='#{JSON.stringify(tab)}' tabindex='-1'>#{tab.title}</a>
-                  </paper-tab>" 
-    #console.log tabsHtml
-    #href='#{tab.url}'
-    #onclick= '#{@displayViewHtml}'
-                
+  config: =>
+                  
   # Allow for overridden configs
   initialize: (config={}) =>
     _.extend(@config(), config)
+    @tabIndex = null
 
-  myFunction: ()->
-    console.log "do some work here JW"
+  tabClicked: (element) ->
+    tabNumber = JSON.parse($(element.currentTarget).find('a')[0].getAttribute('data-tab-to-use'))
+    @setTab(tabNumber)
 
-  displayViewHtml: (element) ->  
-    tab = JSON.parse($(element.currentTarget).find('a')[0].getAttribute('data-tab-to-use'))
+  setTab: (tabNumber) ->
+    tab = @tabs[tabNumber]
     views = []
-    tab.views.forEach (view) -> 
+    tab.views.forEach (view) ->
       prototypeView = new window[view.className]
       views.push(prototypeView)
-    console.log views
     
-    element = this.$el.find('.classHtml')[0]
-    $(element).html('')
-    views.forEach (view) -> 
-      view.render()
-      view.el
-      $(element).append view.el
-  
-  #alert('#{tab.views[0].className}')
+    if (@tabIndex == null)
+      slideOut = 'right'
+      slideIn = 'left'
+    else if @tabIndex < tabNumber
+      slideOut = 'left'
+      slideIn = 'right'
+    else if @tabIndex > tabNumber
+      slideOut = 'right'
+      slideIn = 'left'
+    @tabIndex = tabNumber
+    console.log('slide')
+    tabBody = this.$el.find('.classHtml')[0]
+    $(tabBody).hide("slide", { direction: slideOut }, 200)
+
+    slideIt = () ->
+      $(tabBody).html('')
+      views.forEach (view) ->
+        view.render()
+        $(tabBody).append view.el
+      $(tabBody).show("slide", { easing: 'swing', direction: slideIn }, 200)
+
+    setTimeout(slideIt, 200)
+
   
   render: =>
-    
+
+    @$el.html ''
+     
+    @tabTitles = ''
+    i = 0
+    for tab in @tabs
+      @tabTitles += "<paper-tab link>
+                    <a id='#{tab.views[0].className}' class='link' data-tab-to-use='#{i}' tabindex='-1'>#{tab.title}</a>
+                  </paper-tab>"
+      i++
+ 
     @$el.html "
     <link rel='import' href='js/lib/bower_components/paper-tabs/paper-tab.html'>
     <link rel='import' href='js/lib/bower_components/paper-tabs/paper-tabs.html'>
     <style is='custom-style'>
-      paper-tabs, paper-toolbar {
-            background-color: #F6C637; 
-            color: #fff;
+      .AssessmentsView {
+        background: white;
+      }
+      .TabView .classHtml {
+        padding: 20px;
+      }
+      paper-tabs {
+        background-color: #EEE;
+        --paper-tabs-selection-bar-color: var(--paper-orange-600);
+        border-bottom: 1px solid #CCC;
+      }
+      paper-toolbar {
+        --paper-toolbar-background: var(--paper-red-900);
       }
       paper-tab[link] a {
         @apply(--layout-horizontal);
         @apply(--layout-center-center);
-        color: #fff;
-        text-decoration: none;
+        color: var(--paper-orange-600);
       }
+
     </style>
     <div>
-      <h2>Tab Test2</h2>
       <paper-tabs selected='0'>
-        #{@tabsHtml}
+        #{@tabTitles}
       </paper-tabs>     
     </div>
-    <div class='classHtml'>Hello there</div>
+    <div class='classHtml'></div>
     "
 
-    @trigger "rendered"
+    @setTab(0)

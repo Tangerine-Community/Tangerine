@@ -26,14 +26,11 @@ class SchoolListView extends Backbone.View
 
     @locationSubtest = {}
 
-    @validObservationView = new ValidObservationView
-    @listenTo @validObservationView, "valid-update", ->
-      Utils.execute [
-        @fetchLocations
-        @fetchTrips
-        @render
-      ], @
-    , @
+    Utils.execute [
+      @fetchLocations
+      @fetchTrips
+      @render
+    ], @
 
 
   fetchLocations: ( callback = $.noop ) ->
@@ -66,64 +63,61 @@ class SchoolListView extends Backbone.View
   fetchTrips: (callback = $.noop) ->
     return callback() if @invalid
 
-    d = new Date()
-    year  = d.getFullYear()
-    month = d.getMonth() + 1
+    trips = new TripsByUserIdYearMonthCollection()
+    trips.params = {
+      userId: Tangerine.user.id,
+      month: moment(Date.now()).format('MM')
+      year: moment(Date.now()).format('YYYY')
+    }
+    trips.on 'sync', =>
 
-    trips = new TripResultCollection
-    trips.fetch
-      resultView : "tutorTrips"
-      queryKey   : "year#{year}month#{month}"
-      success: =>
-        rows = []
-        zones = {}
+      schoolIds = []
 
-        incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete") || {}
-        incompleteTrips = []
-        for workflowId, tripIds of incomplete
-          incompleteTrips = incompleteTrips.concat(tripIds)
+      for trip in trips.models
 
-        schoolIds = []
+        # skip unless they belong in this list
+        #isThisTutor = trip.get("enumerator") in [Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers"))
+        #isRightWorkflow = trip.get("workflowId") in [@WORKFLOW_NO_BOOKS, @WORKFLOW_WITH_BOOKS]
+        #isValid = trip.get("tripId") in @validObservationView.validTrips
+        #continue unless isThisTutor
+        #continue unless isRightWorkflow
+        #continue if trip.get('tripId') in incompleteTrips
+        #continue unless isValid
+        console.log 'flula'
+        continue unless trip.get('authenticity')
+        continue unless trip.get('endTime')
+        continue unless trip.get('locationData')
+        locationData = trip.get('locationData') 
+        schoolIds.push locationData.location[locationData.labels.indexOf('school')]
 
-        for trip in trips.models
-
-          # skip unless they belong in this list
-          isThisTutor = trip.get("enumerator") in [Tangerine.user.get("name")].concat(Tangerine.user.getArray("previousUsers"))
-          isRightWorkflow = trip.get("workflowId") in [@WORKFLOW_NO_BOOKS, @WORKFLOW_WITH_BOOKS]
-          isValid = trip.get("tripId") in @validObservationView.validTrips
-          continue unless isThisTutor
-          continue unless isRightWorkflow
-          continue if trip.get('tripId') in incompleteTrips
-          continue unless isValid
-
-          schoolIds.push trip.get("school")
-
-        @visited = {}
+      @visited = {}
 
 
-        doOne = =>
-          if schoolIds.length is 0
-            return finish()
+      doOne = =>
+        if schoolIds.length is 0
+          return finish()
 
-          schoolId = schoolIds.pop()
-          if _.contains @allSchools, schoolId
-            @visited[schoolId] = true
-            
-          doOne()
-
-        finish = =>
-          if !_.isEmpty @visited
-            @schools.done = Object.keys(@visited).sort()
-          else
-            @schools.done = []
-          # use list of all schools in county/zone
-          @schools.all  = @allSchools
-          @schools.left = _(@allSchools).difference(@schools.done)
-
-          @ready = true
-          callback?()
-
+        schoolId = schoolIds.pop()
+        if _.contains @allSchools, schoolId
+          @visited[schoolId] = true
+          
         doOne()
+
+      finish = =>
+        if !_.isEmpty @visited
+          @schools.done = Object.keys(@visited).sort()
+        else
+          @schools.done = []
+        # use list of all schools in county/zone
+        @schools.all  = @allSchools
+        @schools.left = _(@allSchools).difference(@schools.done)
+
+        @ready = true
+        callback?()
+
+      doOne()
+
+    trips.fetch()
 
   render: (status) ->
     if @invalid
@@ -145,14 +139,13 @@ class SchoolListView extends Backbone.View
       </table>
 
       <table class='class_table school-list start-hidden'>
-        <tr><td><b>Remaining</b></td></tr>
-        #{("<tr><td>#{@schoolNames[school]}</td></tr>" for school in @schools.left).join('')}
-      </table>
-
-      <table class='class_table school-list start-hidden'>
         <tr><td><b>Done</b></td></tr>
         #{("<tr><td>#{@schoolNames[school]}</td></tr>" for school in @schools.done).join('')}
       </table>
 
+      <table class='class_table school-list start-hidden'>
+        <tr><td><b>Remaining</b></td></tr>
+        #{("<tr><td>#{@schoolNames[school]}</td></tr>" for school in @schools.left).join('')}
+      </table>
     "
 

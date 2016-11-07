@@ -11,6 +11,9 @@
 
 Tangerine.bootSequence =
 
+  wait: (callback) ->
+    setTimeout callback, 1000
+
   # Basic configuration
 
   basicConfig : (callback) ->
@@ -40,6 +43,9 @@ Tangerine.bootSequence =
     # set underscore's template engine to accept handlebar-style variables
     _.templateSettings = interpolate : /\{\{(.+?)\}\}/g
 
+    # Load custom backbone-forms elements
+    Backbone.Form.editors.LocationElement = LocationElement
+
     callback()
 
     ###
@@ -65,55 +71,12 @@ Tangerine.bootSequence =
       return callback() unless error
 
       console.log "initializing database"
-
-      # Save views
-      db.put(
-        _id: "_design/#{Tangerine.conf.design_doc}"
-        views:
-          ###
-            Used for replication.
-            Will give one key for all documents associated with an assessment or curriculum.
-          ###
-          byDKey:
-            map: ((doc) ->
-              return if doc.collection is "result"
-
-              if doc.curriculumId
-                id = doc.curriculumId
-                # Do not replicate klasses
-                return if doc.collection is "klass"
-              else
-                id = doc.assessmentId
-
-              emit id.substr(-5,5), null
-            ).toString()
-
-          byCollection:
-            map : ( (doc) ->
-
-              return unless doc.collection
-
-              emit doc.collection, null
-
-              # Belongs to relationship
-              if doc.collection is 'subtest'
-                emit "subtest-#{doc.assessmentId}"
-
-              # Belongs to relationship
-              else if doc.collection is 'question'
-                emit "question-#{doc.subtestId}"
-
-              else if doc.collection is 'result'
-                result = _id : doc._id
-                doc.subtestData.forEach (subtest) ->
-                  if subtest.prototype is "id" then result.participantId = subtest.data.participant_id
-                  if subtest.prototype is "complete" then result.endTime = subtest.data.end_time
-                result.startTime = doc.start_time
-                emit "result-#{doc.assessmentId}", result
-
-            ).toString()
-
-      ).then ->
+      
+      # Load Views and then load packs.
+      Tangerine.loadViews (err) =>
+        if (err)
+          alert 'Error loading views'
+          console.log err
 
         if (window.location.hash != '#widget')
 
@@ -122,14 +85,22 @@ Tangerine.bootSequence =
           # development purposes.
           #
 
-          packNumber = 0
+          indexViews = ->
+            Tangerine.db.query('tangerine/byCollection', {key: 'workflows'}).then((res) ->
+              markDatabaseAsInitialized()
+            ).catch( (err) ->
+              alert('Could not index views')
+            )
+
+          markDatabaseAsInitialized = ->
+            Tangerine.db.put({"_id":"initialized"}).then( => callback() )
 
           # Recursive function that will iterate through js/init/pack000[0-x] until
           # there is no longer a returned pack.
+          packNumber = 0
           doOne = ->
 
             paddedPackNumber = ("0000" + packNumber).slice(-4)
-
             $.ajax
               dataType: "json"
               url: "js/init/pack#{paddedPackNumber}.json"
@@ -138,12 +109,14 @@ Tangerine.bootSequence =
                 if res.status is 404
                   # Mark this database as initialized so that this process does not
                   # run again on page refresh, then load Development Packs.
-                  db.put({"_id":"initialized"}).then( -> callback() )
+                  indexViews()
               success: (res) ->
+                if res.docs.length == 0 then return indexViews()
+                console.log('Found ' + res.docs.length + ' docs')
                 packNumber++
-                db.bulkDocs res, (error, doc) ->
+                Tangerine.db.bulkDocs res.docs, (error, doc) ->
                   if error
-                    return alert "could not save initialization document: #{error}"
+                    return alert "could not save initialization documents: #{error}"
                   doOne()
 
           # kick off recursive process
@@ -156,6 +129,22 @@ Tangerine.bootSequence =
   versionTag: ( callback ) ->
     $("#footer").append("<div id='version'>#{Tangerine.version}-#{Tangerine.buildVersion}</div>")
     callback()
+
+  # load templates
+  fetchTemplates: ( callback ) ->
+    (Tangerine.templates = new Template "_id" : "templates").fetch
+      error: -> alert "Could not load templates."
+      success: callback
+
+  # Grab our system config doc. These generally don't change very often unless
+  # major system changes are required. New servers, etc.
+  fetchConfiguration: ( callback ) ->
+
+    Tangerine.config = new Config "_id" : "configuration"
+    Tangerine.config.fetch
+      error   : -> alert "Could not fetch configuration"
+      success : callback
+
 
   # get our local Tangerine settings
   # these do tend to change depending on the particular install of the
@@ -180,6 +169,10 @@ Tangerine.bootSequence =
         success: callback
     else
       callback()
+
+  applySettings: ( callback ) ->
+    if (Tangerine.settings.has('userSchema')) then window.TabletUser = window.TabletUser.extend({schema: Tangerine.settings.get('userSchema')})
+    callback()
 
   documentReady: ( callback ) -> $ ->
 
@@ -330,20 +323,43 @@ Tangerine.bootSequence =
       Tangerine.router.navigate(sendTo, { trigger: true, replace: true })
     )
 
+  getLocationList : ( callback ) ->    
+    # Grab our system config doc   
+    Tangerine.locationList = new Backbone.Model "_id" : "location-list"    
+   
+    Tangerine.locationList.fetch   
+      error   : ->   
+        console.log "could not fetch location-list..."   
+        callback   
+   
+      success : callback
+
+  removeLoadingOverlay: ( callback ) ->
+    removeOverlay = ->
+      $('#loading-overlay').animate({opacity: 0, height: "toggle"}, 450)
+    setTimeout(removeOverlay, 1500)
+    callback()
+
 Tangerine.boot = ->
 
   sequence = [
+    Tangerine.bootSequence.wait
     Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.basicConfig
     Tangerine.bootSequence.checkDatabase
     Tangerine.bootSequence.versionTag
     Tangerine.bootSequence.fetchSettings
+    Tangerine.bootSequence.fetchConfiguration
+    Tangerine.bootSequence.applySettings
     Tangerine.bootSequence.guaranteeInstanceId
     Tangerine.bootSequence.documentReady
     Tangerine.bootSequence.loadI18n
     Tangerine.bootSequence.loadSingletons
+    Tangerine.bootSequence.getLocationList
+    Tangerine.bootSequence.fetchTemplates
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone
+    Tangerine.bootSequence.removeLoadingOverlay
 #    Tangerine.bootSequence.monitorBrowserBack
   ]
 

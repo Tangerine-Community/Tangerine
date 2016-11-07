@@ -77,7 +77,7 @@ Group.prototype.create = function create() {
         .json({
           source  : 'tangerine',
           target  : groupDbName,
-          doc_ids : ['_design/ojai', 'configuration', 'settings', 'templates']
+          doc_ids : ['_design/ojai', 'configuration', 'settings', 'templates', 'location-list']
         })
         .end(function onReplicateResponse( response ){
           if (response.status > 199 && response.status < 399 ) {

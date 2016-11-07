@@ -191,11 +191,15 @@ _.indexBy = ( propertyName, objectArray ) ->
 
 class Utils
 
-  @execute: ( functions ) ->
+  @execute: ( functions, scope, progress ) ->
+
+    totalFunctions = functions.length
 
     step = ->
+      progress?.apply?(scope||step, [totalFunctions, functions.length])
       nextFunction = functions.shift()
-      nextFunction?(step)
+      if typeof nextFunction is "function"
+        nextFunction.apply(scope||step, [step])
     step()
 
   @changeLanguage : (code, callback) ->
@@ -275,6 +279,36 @@ class Utils
               $("#upload_results").append(t("Utils.message.universalUploadComplete")+ '<br/>')
               return
         )
+
+  # send tablet user docs to the server
+  @syncUsers: ( callback ) ->
+    tabletUsers = new TabletUsers
+    tabletUsers.fetch
+      error: -> callback?()
+      success: ->
+        docIds = tabletUsers.pluck "_id"
+
+        Tangerine.db.allDocs 
+          keys: _.without(docIds, "user-admin")
+          include_docs: true
+        , (err, response) =>
+          if (err)
+            return alert("Unable to sync Users because of" + err)
+          docs = {"docs":response.rows.map((el)->el.doc)}
+          compressedData = LZString.compressToBase64(JSON.stringify(docs))
+          a = document.createElement("a")
+          a.href = Tangerine.settings.get("groupHost")
+          bulkDocsUrl = "#{a.protocol}//#{a.host}/decompressor/upload/#{Tangerine.settings.get('groupName')}?force=true"
+          $.ajax
+            type : "post"
+            url : bulkDocsUrl
+            data : compressedData
+            error: (response) =>
+              console.log "User Upload: Server bulk docs error", response
+              callback(response)
+            success: (response) =>
+              console.log "Users Uploaded", response
+              callback(null, response)
 
 
   @universalUpload: ->

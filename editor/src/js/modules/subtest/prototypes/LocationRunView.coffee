@@ -3,165 +3,116 @@ class LocationRunView extends Backbone.View
   className: "LocationRunView"
 
   events:
-    "click .school_list li" : "autofill"
-    "keyup input"  : "showOptions"
     "click .clear" : "clearInputs"
     "change select" : "onSelectChange"
 
-  i18n: ->
-    @text =
-      clear : t("LocationRunView.button.clear")
-
   initialize: (options) ->
 
-    @i18n()
+    @model  = @options.model
+    @parent = @options.parent
 
-    @model     = options.model
-    @parent    = options.parent
-    @dataEntry = options.dataEntry
+    @limit  = @options.limit
 
+    @levels       = @model.get("levels")          || []
+    @locationCols = @model.get("locationCols")    || []
+    @locations    = @model.get("locations")       || []
+    @isStandard   = @model.getBoolean("standard")
 
-    @levels = @model.get("levels")       || []
-    @locations = @model.get("locations") || []
+    @selectedLocation = []
 
-    if @levels.length is 1 and @levels[0] is ""
+    @levels = @levels.slice(0, @limit) if @limit?
+
+    if @levels.length == 1 && @levels[0] == ""
       @levels = []
-    if @locations.length is 1 and @locations[0] is ""
+    if @locationCols.length == 1 && @locationCols[0] == ""
+      @locationCols = []
+    if @locations.length == 1 && @locations[0] == ""
       @locations = []
 
-    @haystack = []
-
-    for location, i in @locations
-      @haystack[i] = []
-      for locationData in location
-        @haystack[i].push locationData.toLowerCase()
-
-    template = "<li data-index='{{i}}'>"
+    @levelColMap = []
     for level, i in @levels
-      template += "{{level_#{i}}}"
-      template += " - " unless i is @levels.length-1
-    template += "</li>"
-
-    @li = _.template(template)
+      @levelColMap[i] = _.indexOf @locationCols, level
+    @levelColMap = @levelColMap.slice(0, @limit) if @limit?
 
   clearInputs: ->
-    @$el.empty()
-    @render()
+    @resetSelects(0)
+    ""
 
-  autofill: (event) ->
-    @$el.find(".autofill").fadeOut(250)
-    index = $(event.target).attr("data-index")
-    location = @locations[index]
-    for level, i in @levels
-      @$el.find("#level_#{i}").val(location[i])
+  resetSelects: (index) ->
+    for i in [index..@levels.length-1]
+      @$el.find("#level_#{i}").html = "<option selected='selected' value='' disabled='disabled'>Please select a #{@levels[i]}</option>"
+      @$el.find("#level_#{i}").val("")
+      if i isnt 0 then @$el.find("#level_#{i}").attr("disabled", true)
 
 
-  showOptions: (event) ->
-    needle = $(event.target).val().toLowerCase()
-    fieldIndex = parseInt($(event.target).attr('data-level'))
-    # hide if others are showing
-    for otherField in [0..@haystack.length]
-      @$el.find("#autofill_#{otherField}").hide()
+  renderStandard: ->
+    @$el.html "<div class='loc-container'></div>"
+    @locView = new LocView
+    @locView.setElement @$el.find(".loc-container")
+    @trigger "rendered"
+    @trigger "ready"
 
-    atLeastOne = false
-    results = []
-    for stack, i in @haystack
-      isThere = ~@haystack[i][fieldIndex].indexOf(needle)
-      results.push i if isThere
-      atLeastOne = true if isThere
-
-    for stack, i in @haystack
-      for otherField, j in stack
-        if j is fieldIndex
-          continue
-        isThere = ~@haystack[i][j].indexOf(needle)
-        results.push i if isThere and !~results.indexOf(i)
-        atLeastOne = true if isThere
-
-    if atLeastOne
-      html = ""
-      for result in results
-        html += @getLocationLi result
-      @$el.find("#autofill_#{fieldIndex}").fadeIn(250)
-      @$el.find("#school_list_#{fieldIndex}").html html
-
-    else
-      @$el.find("#autofill_#{fieldIndex}").fadeOut(250)
-
-  getLocationLi: (i) ->
-    templateInfo = "i" : i
-    for location, j in @locations[i]
-      templateInfo["level_" + j] = location
-    return @li templateInfo
 
   render: ->
-    schoolListElements = ""
 
-    html = "<button class='clear command'>#{@text.clear}</button>"
+    if @isStandard
+      return @renderStandard()
 
-    unless @dataEntry
-      previous = @parent.parent.result.getByHash(@model.get('hash'))
+    html = ""
 
-    if @typed
+    for level, i in @levels
+      levelOptions = @getOptions(i)
 
-      for level, i in @levels
-        previousLevel = ''
-        if previous
-          previousLevel = previous.location[i]
-        html += "
-          <div class='label_value'>
-            <label for='level_#{i}'>#{level}</label><br>
-            <input data-level='#{i}' id='level_#{i}' value='#{previousLevel||''}'>
-          </div>
-          <div id='autofill_#{i}' class='autofill' style='display:none'>
-            <h2>#{t('select one from autofill list')}</h2>
-            <ul class='school_list' id='school_list_#{i}'>
-            </ul>
-          </div>
-        "
+      isDisabled = i isnt 0 && "disabled='disabled'"
 
-    else
-
-      for level, i in @levels
-
-        previousLevel = ''
-        if previous
-          previousLevel = previous.location[i]
-        
-        levelOptions = @getOptions(i, previousLevel)
-
-        isDisabled = (i isnt 0 and not previousLevel) and "disabled='disabled'" 
-
-        html += "
-          <div class='label_value'>
-            <label for='level_#{i}'>#{level}</label><br>
-            <select id='level_#{i}' data-level='#{i}' #{isDisabled||''}>
-              #{levelOptions}
-            </select>
-          </div>
-        "
+      html += "
+        <div class='label_value'>
+          <label for='level_#{i}'>#{level}</label><br>
+          <select id='level_#{i}' data-level='#{i}' #{isDisabled||''}>
+            #{levelOptions}
+          </select>
+        </div>
+      "
     @$el.html html
 
     @trigger "rendered"
     @trigger "ready"
 
   onSelectChange: (event) ->
+    @trigger "select-change"
     $target = $(event.target)
     levelChanged = parseInt($target.attr("data-level"))
     newValue = $target.val()
     nextLevel = levelChanged + 1
-    if levelChanged isnt @levels.length
+    if levelChanged isnt @levels.length-1
+      @resetSelects(nextLevel+1)
       @$el.find("#level_#{nextLevel}").removeAttr("disabled")
-      $html = @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel)
-      if (options = $html.find("option")).length is 1
-        options.parent("select").trigger "change"
+      @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel)
+      @selectedLocation = []
+    else
+      levelVals = []
+      for level, i in @levels
+        levelVals.push @$el.find("#level_#{i}").val()
 
-  getOptions: ( index, previousLevel ) ->
+      matchCount = 0
+      expectedCount = levelVals.length
+      levelColMap = @levelColMap
+      @selectedLocation = _.find(@locations, (arr) ->
+        matchCount = 0
+        for level, i in levelVals
+          if arr[levelColMap[i]] is levelVals[i] then matchCount += 1
+        return matchCount == expectedCount
+      )
+    ""
+
+
+  getOptions: (index)->
+
+    targetIndex = @levelColMap[index]
 
     doneOptions = []
+    currentOptions = []
     levelOptions = ''
-
-    previousFlag = false
 
     parentValues = []
     for i in [0..index]
@@ -170,69 +121,95 @@ class LocationRunView extends Backbone.View
 
     for location, i in @locations
 
-      unless ~doneOptions.indexOf location[index]
+      unless ~doneOptions.indexOf location[targetIndex]
 
         isNotChild = index is 0
         isValidChild = true
         for i in [0..Math.max(index-1,0)]
 
-          if parentValues[i] isnt location[i] and not previousLevel
+          if parentValues[i] isnt location[@levelColMap[i]]
             isValidChild = false
             break
 
         if isNotChild or isValidChild
 
-          doneOptions.push location[index]
+          doneOptions.push location[targetIndex]
+          currentOptions.push _(location[targetIndex]).escape()
 
-          locationName = _(location[index]).escape()
-          
-          if location[index] is previousLevel
-            selected = "selected='selected'"
-            previousFlag = true
-          else
-            selected = ''
-          levelOptions += "
-            <option value='#{locationName}' #{selected or ''}>#{locationName}</option>
-          "
-
-    selectPrompt = "selected='selected'" unless previousFlag
-
-    promptOption  = "<option #{selectPrompt or ''} disabled='disabled'>Please select a #{@levels[index]}</option>"
-
-    if doneOptions.length is 1
-      return levelOptions
-    else
-      return "
-        #{promptOption}
-        #{levelOptions}
+    for locationName in _.sortBy(currentOptions, (el) -> return el)
+      levelOptions += "
+        <option value='#{locationName}'>#{locationName}</option>
       "
 
-  getResult: ->
-    return {
-      "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
-      "location" : ($.trim(@$el.find("#level_#{i}").val()) for level, i in @levels)
-    }
+    return "
+      <option selected='selected' value='' disabled='disabled'>Please select a #{@levels[index]}</option>
+    " + levelOptions
+
+
+
+  getResult: (filtered = false)->
+    if @isStandard
+      result =
+        labels   : []
+        location : []
+      values = @locView.value()
+      result.labels   = Object.keys values
+      result.location = result.labels.map (el) -> values[el]
+      return result
+
+    if filtered
+      return {
+        "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
+        "location" : (@$el.find("#level_#{i}").val() for level, i in @levels)
+      }
+    else
+      return {
+        "labels"   : (column.replace(/[\s-]/g,"_") for column in @locationCols)
+        "location" : (@selectedLocation)
+      }
 
   getSkipped: ->
     return {
-      "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
-      "location" : ("skipped" for level, i in @levels)
+      "labels"   : (column.replace(/[\s-]/g,"_") for column in @locationCols)
+      "location" : ("skipped" for locationCols in @locationCols)
     }
+
 
   isValid: ->
     @$el.find(".message").remove()
-    inputs = @$el.find("input")
     selects = @$el.find("select")
-    elements = if selects.length > 0 then selects else inputs
-    for input, i in elements
-      return false unless $(input).val()
+    for input, i in selects
+      return false if _($(input).val()).isEmptyString()
+
+    return false if @selectedLocation == []
     true
 
   showErrors: ->
-    inputs = @$el.find("input")
     selects = @$el.find("select")
-    elements = if selects.length > 0 then selects else inputs
-    for input in elements
-      unless $(input).val()
-        levelName = $('label[for='+$(input).attr('id')+']').text()
-        $(input).after " <span class='message'>#{t("LocationRunView.message.must_be_filled", levelName : levelName)}</span>"
+    for input in selects
+      if _($(input).val()).isEmptyString()
+        $(input).after " <span class='message'>#{$('label[for='+$(input).attr('id')+']').text()} must be filled.</span>"
+
+  onClose: ->
+    @locView.remove()
+
+  getSum: ->
+    counts =
+      correct   : 0
+      incorrect : 0
+      missing   : 0
+      total     : 0
+      
+    for input in @$el.find("input")
+      $input = $(input)
+      counts['correct']   += 1 if ($input.val()||"") != ""
+      counts['incorrect'] += 0 if false
+      counts['missing']   += 1 if ($input.val()||"") == ""
+      counts['total']     += 1 if true
+
+    return {
+      correct   : counts['correct']
+      incorrect : counts['incorrect']
+      missing   : counts['missing']
+      total     : counts['total']
+    }

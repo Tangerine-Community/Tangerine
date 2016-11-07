@@ -3,7 +3,7 @@ class Subtests extends Backbone.Collection
   url: "subtest"
   model: Subtest
   db:
-    view: "byParentId"
+    view: "subtestsByAssessmentId"
 
   comparator: (subtest) ->
       if subtest.has("curriculumId")

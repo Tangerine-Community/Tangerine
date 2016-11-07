@@ -321,10 +321,12 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   # @todo Documentation
   onRender:->
 
+    @currentSubtestModel = @collection.models[0]
+    @children.each (child) => @currentSubtestView = child
+
     # Check to see if this subtest is related to another subtest via the gridLinkId
     # property and if the related subtest was autostopped, skip this subtest.
-    currentSubtestModel = @collection.models[0]
-    parentSubtestId = currentSubtestModel.get('gridLinkId')
+    parentSubtestId = @currentSubtestModel.get('gridLinkId')
     parentSubtestResult = false
     this.result.attributes.subtestData.forEach( (subtestResult) ->
       if subtestResult.subtestId == parentSubtestId
@@ -333,15 +335,14 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     if parentSubtestResult isnt false and parentSubtestResult.data.auto_stop is true
       @reset(1)
 
+    # Set progress bar.
     @$el.find('#progress').progressbar value : ( ( @index + 1 ) / ( @model.subtests.length + 1 ) * 100 )
-    Tangerine.progress.currentSubview.on "rendered",    => @flagRender "subtest"
-    Tangerine.progress.currentSubview.on "subRendered", => @trigger "subRendered"
-#    Tangerine.progress.currentSubview.on "nextQuestionRendered", => @trigger "nextQuestionRendered"
-
-    Tangerine.progress.currentSubview.on "next",    =>
-      console.log("currentView next")
-      @step 1
-    Tangerine.progress.currentSubview.on "back",    => @step -1
+    
+    # Listen for events bubbling up from subtest views.
+    @currentSubtestView.on "rendered",    => @flagRender "subtest"
+    @currentSubtestView.on "subRendered", => @trigger "subRendered"
+    @currentSubtestView.on "next",        => @step 1
+    @currentSubtestView.on "back",        => @step -1
 
     @flagRender "assessment"
 
@@ -379,7 +380,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # @todo Documentation
   skip: =>
-    currentView = Tangerine.progress.currentSubview
+    currentView = @currentSubtestView
     @result.add
       name      : currentView.model.get "name"
       data      : currentView.getSkipped()
@@ -394,11 +395,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   step: (increment) ->
     this.trigger "assessment:step"
     if @abortAssessment
-      currentView = Tangerine.progress.currentSubview
+      currentView = @currentSubtestView
       @saveResult( currentView )
       return
 
-    currentView = Tangerine.progress.currentSubview
+    currentView = @currentSubtestView
 
     if currentView.testValid?
       valid = currentView.testValid()
@@ -439,7 +440,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
   reset: (increment) ->
     @rendered.subtest = false
     @rendered.assessment = false
-    Tangerine.progress.currentSubview.close();
+    @currentSubtestView.close();
     @index =
       if @abortAssessment == true
         @subtestViews.length-1
@@ -494,8 +495,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 
   # @todo Documentation
   getSum: ->
-    if Tangerine.progress.currentSubview.getSum?
-      return Tangerine.progress.currentSubview.getSum()
+    if @currentSubtestView.getSum?
+      return @currentSubtestView.getSum()
     else
       # maybe a better fallback
       return {correct:0,incorrect:0,missing:0,total:0}

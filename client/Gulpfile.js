@@ -380,8 +380,10 @@ conf.fileOrder = [
   'AssessmentListElementView',
   'AssessmentsMenuView',
   'AssessmentRunView',
+  'AssessmentEditView',
   'AssessmentSyncView',
   'AssessmentDataEntryView',
+  'AssessmentsViewController',
 
   'BandwidthCheckView',
   'TabView',
@@ -390,11 +392,18 @@ conf.fileOrder = [
   'Subtests',
   'SubtestRunView',
   'SubtestRunItemView',
+  'SubtestEditView',
+  'SubtestListEditView',
+  'SubtestListElementView',
+  'SubtestPrintView',
 
   'Question',
   'Questions',
   'QuestionRunView',
   'QuestionRunItemView',
+  'QuestionEditView',
+  'QuestionsEditView',
+  'QuestionsEditListElementView',
 
   'WorkflowStep',
   'WorkflowSteps',
@@ -402,21 +411,33 @@ conf.fileOrder = [
   'Workflows',
   'SchoolListView',
   'WorkflowMenuView',
+  'WorkflowMenuViewController',
   'ValidObservationView',
   'WorkflowEditView',
   'WorkflowRunView',
   'WorkflowSelectView',
+  'Trip',
+  'TripsByUserIdCollection',
+  'TripsByUserIdYearMonthCollection',
+  'TripResult',
+  'TripResults',
+
 
   'SurveyRunItemView',
+  'SurveyEditView',
 
   'ConsentRunView',
   'ConsentRunItemView',
 
   'DatetimeRunView',
   'DatetimeRunItemView',
-
+  
+  'Loc',
+  'LocView',
   'LocationRunView',
+  'LocationEditView',
   'LocationRunItemView',
+  'LocationElement',
 
   'SurveyRunView',
 
@@ -441,6 +462,9 @@ conf.fileOrder = [
   'DashboardView',
   'ResultPreview',
   'ResultPreviews',
+  'ResultsSaveAsFileView',
+  'UniversalUploadView',
+  'SyncManager',
 
   'AdminView',
 
@@ -493,6 +517,7 @@ conf.fileOrder = [
   'User',
   'Users',
   'TabletUser',
+  'TabletUserView',
   'TabletUsers',
 
   'LoginView',
@@ -517,6 +542,8 @@ conf.fileOrder = [
 
   'NavigationView',
 
+  'Template',
+
   'router',
 
   'configuration',
@@ -525,7 +552,9 @@ conf.fileOrder = [
 
   'locales',
 
+  'views',
   'boot'
+
 
 ];
 
@@ -540,9 +569,11 @@ conf.jsFileOrder = conf.fileOrder.map(function(el) {
 conf.libFiles = [
   './src/js/lib/modernizr.js',
   './src/js/lib/jquery.js',
+  './src/js/lib/bower_components/jquery-ui/jquery-ui.min.js',
   './src/js/lib/underscore.js',
   './src/js/lib/backbone.js',
   './src/js/lib/backbone.marionette.js',
+  './src/js/lib/bower_components/backbone-forms/distribution/backbone-forms.js',
   './src/js/lib/handlebars.runtime.js',
   './src/js/lib/sha1.js',
   './src/js/lib/jquery.couch.js',
