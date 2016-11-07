@@ -8,7 +8,10 @@
     "handlebars": "~3.0.0",
     "paper-tabs": "PolymerElements/paper-tabs#^1.6.2",
     "jquery-ui": "^1.12.1",
-    "backbone-forms": "^0.14.1"
+    "backbone-forms": "^0.14.1",
+    "paper-menu-button": "^1.5.2",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.10",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.7"
   },
   "devDependencies": {
     "bluebird": "~2.10.1",
