@@ -186,6 +186,7 @@ RUN cd /tangerine-server/tree \
 # Install client.
 ADD ./client/package.json /tangerine-server/client/package.json
 ADD ./client/bower.json /tangerine-server/client/bower.json
+ADD ./client/.bowerrc /tangerine-server/client/.bowerrc
 ADD ./client/scripts/postinstall.sh /tangerine-server/client/scripts/postinstall.sh
 ADD ./client/Gruntfile.js /tangerine-server/client/Gruntfile.js
 ADD ./client/Gulpfile.js /tangerine-server/client/Gulpfile.js
