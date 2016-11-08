@@ -95,32 +95,30 @@ class NavigationView extends Backbone.View
   render: ->
 
     @$el.html "
-
       <img id='navigation-logo' src='images/navigation-logo.png' title='#{@text.logo}'>
 
+      <paper-menu-button dynamic-align='true' style='color: white; background: #f49b00; margin-left: 15px; float:right;'>
+        <paper-icon-button class='dropdown-trigger' noink icon='menu' title='find'></paper-icon-button>
+        <paper-menu class='dropdown-content'>
+          <paper-item><a href='#user/#{Tangerine.user.id}'>Profile</a></paper-item>
+          <paper-item><a href='#logout'>Logout</a></paper-item>
+        </paper-menu>
+      </paper-menu-button>
+      
       <ul>
-
         <li id='student-container' class='hidden'>
-
           <label>#{@text.student_id}</label>
           <div id='student-id'></div>
-
         </li>
-
-        <li id='username-container'>
-
+        <li id='username-container' style='margin-top: 5px'>
           <label title='#{@text.account}'>#{@whoAmI}</label>
           <div id='username'>#{Tangerine.user.name() || ""}</div>
-      
           <ul id='username-dropdown'>
             <li><a href='#account'>#{@text.account_button}</a></li>
             <li><a href='#settings'>#{@text.settings_button}</a></li>
           </ul>
 
         </li>
-
-        <li id='logout'>#{@text.logout}</li>
-
       </ul>
       
     "

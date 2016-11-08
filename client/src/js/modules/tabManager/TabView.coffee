@@ -65,8 +65,6 @@ class TabView extends Backbone.View
       i++
  
     @$el.html "
-    <link rel='import' href='js/lib/bower_components/paper-tabs/paper-tab.html'>
-    <link rel='import' href='js/lib/bower_components/paper-tabs/paper-tabs.html'>
     <style is='custom-style'>
       .AssessmentsView {
         background: white;
