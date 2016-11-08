@@ -162,7 +162,7 @@ class Router extends Backbone.Router
   landing: (refresh = false) ->
 
     callFunction = not refresh
-    Tangerine.router.navigate "_", callFunction
+    Tangerine.router.navigate "class", callFunction
 
     document.location.reload() if refresh # this is for the stupid click bug
 
@@ -435,23 +435,41 @@ class Router extends Backbone.Router
             subtest = new Subtest "_id" : subtestId
             subtest.fetch
               success: ->
-                Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
-                  key : [studentId,subtestId]
-                  success: (response) ->
-                    allResults = new KlassResults
-                    allResults.fetch
-                      success: (collection) ->
-                        results = collection.where
-                          "subtestId" : subtestId
-                          "studentId" : studentId
-                          "klassId"   : student.get("klassId")
-                        view = new KlassSubtestResultView
-                          "allResults" : allResults
-                          "results"  : results
-                          "subtest"  : subtest
-                          "student"  : student
-                          "previous" : response.rows.length
-                        vm.show view
+#                Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
+#                  key : [studentId,subtestId]
+#                  success: (response) ->
+#                    allResults = new KlassResults
+#                    allResults.fetch
+#                      success: (collection) ->
+#                        results = collection.where
+#                          "subtestId" : subtestId
+#                          "studentId" : studentId
+#                          "klassId"   : student.get("klassId")
+#                        view = new KlassSubtestResultView
+#                          "allResults" : allResults
+#                          "results"  : results
+#                          "subtest"  : subtest
+#                          "student"  : student
+#                          "previous" : response.rows.length
+#                        vm.show view
+                Tangerine.db.query('tangerine/resultsByStudentSubtest', {key: [studentId,subtestId]}).then((res) ->
+                  allResults = new KlassResults
+                  allResults.fetch
+                    success: (collection) ->
+                      results = collection.where
+                        "subtestId" : subtestId
+                        "studentId" : studentId
+                        "klassId"   : student.get("klassId")
+                      view = new KlassSubtestResultView
+                        "allResults" : allResults
+                        "results"  : results
+                        "subtest"  : subtest
+                        "student"  : student
+                        "previous" : res.rows.length
+                      vm.show view
+                ).catch( (err) ->
+                  console.log('Error: ' + err)
+                )
 
   runSubtest: (studentId, subtestId) ->
     Tangerine.user.verify

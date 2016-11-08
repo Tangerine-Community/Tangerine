@@ -95,6 +95,23 @@ Tangerine.bootSequence =
           markDatabaseAsInitialized = ->
             Tangerine.db.put({"_id":"initialized"}).then( => callback() )
 
+        # Load the users
+          loadUsers = ->
+            $.ajax
+              dataType: "json"
+              url: "js/init/user-admin.json"
+              error: (res) ->
+                console.log("Error: " + res)
+              success: (res) ->
+#                console.log("Loaded user: " + res)
+                if res.docs?
+                  docs = res.docs
+                else
+                  docs = res
+                Tangerine.db.put docs, (error, doc) ->
+                  if error
+                    return alert "could not save user documents: #{error}"
+
           # Recursive function that will iterate through js/init/pack000[0-x] until
           # there is no longer a returned pack.
           packNumber = 0
@@ -110,6 +127,7 @@ Tangerine.bootSequence =
                   # Mark this database as initialized so that this process does not
                   # run again on page refresh, then load Development Packs.
                   indexViews()
+                  loadUsers()
               success: (res) ->
                 if res.docs?
                   docs = res.docs
@@ -128,6 +146,9 @@ Tangerine.bootSequence =
         else
           console.log("init empty db for widget.")
           db.put({"_id":"initialized"}).then( -> callback() )
+
+
+
 
   # Put this version's information in the footer
   versionTag: ( callback ) ->

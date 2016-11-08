@@ -50,10 +50,10 @@ class KlassSubtestResultView extends Backbone.View
 
       resultHTML = "<button class='command show_itemized'>#{t('itemized results')}</button><table class='itemized confirmation'><tbody><tr><th>Item</th><th>Result</th></tr>"
       if @subtest.get("prototype") == "grid"
-        for datum, i in @result.get("subtestData").items
+        for datum, i in @result.get("subtestData").body.items
           resultHTML += "<tr><td>#{datum.itemLabel}</td><td>#{t(datum.itemResult)}</td></tr>"
       else if @subtest.get("prototype") == "survey"
-        for key, value of @result.get("subtestData")
+        for key, value of @result.get("subtestData").body
           resultHTML += "<tr><td>#{key}</td><td>#{t(value)}</td></tr>"
       resultHTML += "</tbody></table><br>"
 

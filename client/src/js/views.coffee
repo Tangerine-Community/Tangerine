@@ -619,3 +619,12 @@ Tangerine.views =
       emit keyId, result
 
     ).toString()
+
+  resultsByStudentSubtest:
+    map : ( (doc) ->
+      return unless doc.collection is "result"
+
+      emit [doc.studentId, doc.subtestId], doc
+
+    ).toString()
+

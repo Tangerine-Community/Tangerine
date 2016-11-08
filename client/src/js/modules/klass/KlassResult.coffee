@@ -2,6 +2,28 @@ class KlassResult extends Backbone.Model
 
   url : "result"
 
+  initialize: ( options ) ->
+
+    # could use defaults but it messes things up
+    if options.blank == true
+      device = window.Device || {}
+      deviceInfo =
+        'name'      : device.name
+        'platform'  : device.platform
+        'uuid'      : device.uuid
+        'version'   : device.version
+        'userAgent' : navigator.userAgent
+
+      @set
+        'subtestData'       : []
+        'start_time'        : (new Date()).getTime()
+        'enumerator'        : Tangerine.user.name()
+        'tangerine_version' : Tangerine.version
+        'device'            : deviceInfo
+        'instanceId'        : Tangerine.settings.getString("instanceId")
+
+      @unset "blank" # options automatically get added to the model. Lame.
+
   add: ( subtestDataElement, callback ) ->
     @save
       'subtestData' : subtestDataElement
@@ -65,3 +87,10 @@ class KlassResult extends Backbone.Model
 
   getCorrectPerSeconds: ( secondsAllowed ) ->
     Math.round( ( @get("correct") / ( secondsAllowed - @getTimeRemain() ) ) * secondsAllowed )
+
+  getByHash: ( hash ) ->
+    if (hash?)
+      for subtest in @get("subtestData")
+        if hash is subtest.subtestHash
+          return subtest.data
+    return null
