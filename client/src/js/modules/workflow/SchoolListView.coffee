@@ -147,4 +147,4 @@ class SchoolListView extends Backbone.View
       </table>
 
     "
-    @toggleSchoolList()
+    @$el.find(".school-list").hide()
