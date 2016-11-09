@@ -91,7 +91,7 @@ of the latest release
     wget https://github.com/Tangerine-Community/Tangerine/archive/0.3.0.tar.gz
     tar xvf 0.3.0.tar.gz
     cd Tangerine-0.3.0
-    cp config.defaults.sh config.sh
+    cp config.sh_example config.sh
     nano config.sh
     Change T_HOST_NAME to your instance's IP address
     Change T_USER1_PASSWORD and T_PASS to password of your choice.
