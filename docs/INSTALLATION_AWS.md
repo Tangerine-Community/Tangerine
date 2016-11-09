@@ -95,7 +95,6 @@ of the latest release
     nano config.sh
     Change T_HOST_NAME to your instance's IP address
     Change T_USER1_PASSWORD and T_PASS to password of your choice.
-    Change TANGERINE_VERSION="local" to the tag of the Tangerine release you installed (e.g.: 1.0.1, special-release-1) 
     Control O and control X to save and exit.
 
 Login as sudo:
