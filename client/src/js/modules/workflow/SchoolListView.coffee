@@ -1,5 +1,3 @@
-# bit of a crap shoot this one
-# it will find _a_ school list
 class SchoolListView extends Backbone.View
 
 
