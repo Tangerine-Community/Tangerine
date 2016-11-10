@@ -191,6 +191,20 @@ _.indexBy = ( propertyName, objectArray ) ->
 
 class Utils
 
+  @gpsPing: ( options = {} ) =>
+    Utils.log this, "GPS Ping Started" 
+    navigator.geolocation.getCurrentPosition(
+        (position) =>
+          Utils.log this, "GPS Ping: Received #{Utils.gpsEasify position}" 
+      ,
+        (positionError) =>
+          Utils.log this, "GPS Ping: Error: #{positionError.message}" 
+      , 
+        maximumAge         : 300 * 1000
+        timeout            : 60 * 1000
+        enableHighAccuracy : true 
+    )
+
   @execute: ( functions, scope, progress ) ->
 
     totalFunctions = functions.length

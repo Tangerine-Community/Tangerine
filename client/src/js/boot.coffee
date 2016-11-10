@@ -340,6 +340,11 @@ Tangerine.bootSequence =
     setTimeout(removeOverlay, 1500)
     callback()
 
+  initGPS : (callback) ->
+    $ ->
+      Utils.gpsPing
+      callback()
+
 Tangerine.boot = ->
 
   sequence = [
@@ -347,6 +352,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.basicConfig
     Tangerine.bootSequence.checkDatabase
+    Tangerine.bootSequence.initGPS
     Tangerine.bootSequence.versionTag
     Tangerine.bootSequence.fetchSettings
     Tangerine.bootSequence.fetchConfiguration
