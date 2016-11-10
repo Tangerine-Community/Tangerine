@@ -179,7 +179,9 @@ class Router extends Backbone.Router
   feedback: ( workflowId ) ->
     Tangerine.user.verify
       isAuthenticated: ->
-
+        loadingView = new Backbone.View
+        loadingView.$el.html('Loading...')
+        Tangerine.app.rm.get('mainRegion').show loadingView
         workflow = new Workflow "_id" : workflowId
         workflow.fetch
           success: ->

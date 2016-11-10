@@ -60,6 +60,7 @@ class FeedbackTripsView extends Backbone.View
 
   initialize: (options) ->
     @[key] = value for key, value of options
+    @$el.html('Loading...')
 
     @subViews = []
 
