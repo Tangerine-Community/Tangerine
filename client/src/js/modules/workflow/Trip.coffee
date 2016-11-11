@@ -1,6 +1,8 @@
 # When instantiating a new Trip, options is required to have a Workflow in the workflow option and a User in the user option.
 Trip = Backbone.Model.extend
 
+  idAttribute: "_id"
+
   url: "trip"
 
   defaults:

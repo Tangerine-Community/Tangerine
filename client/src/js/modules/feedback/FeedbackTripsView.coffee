@@ -66,6 +66,10 @@ class FeedbackTripsView extends Backbone.View
 
     @locLevels = ["county", "zone", "school"]
 
+    # TODO: Here is a good example of a poor seperation of Views and
+    # Controllers. The route callback `fetch` has controller logic of getting a
+    # workflow and the feedback, then shows this view and it immediately starts
+    # getting some data. 
     @trips = new TripResultCollection
     @trips.fetch 
       resultView : "tutorTrips"
@@ -142,17 +146,16 @@ class FeedbackTripsView extends Backbone.View
 
   showFeedback: (event) ->
     $target = $(event.target)
-
     $target.toggle()
     $target.siblings().toggle()
-
-
     tripId = $target.attr("data-trip-id")
-
-    trip = @trips.get(tripId)
-    
+    tripModel = {}
+    @tripsByWorkflowIdCollection.models.forEach (model) =>
+      if model.id == tripId
+        tripModel = model
     view = new FeedbackRunView
-      trip     : trip
+      tripModel: tripModel 
+      trip     : @trips.get(tripId)
       feedback : @feedback
 
     view.render()

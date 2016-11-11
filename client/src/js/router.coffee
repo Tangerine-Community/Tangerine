@@ -191,10 +191,15 @@ class Router extends Backbone.Router
               error: -> Utils.midAlert "No feedback defined"
               success: ->
                 feedback.updateCollection()
-                view = new FeedbackTripsView
-                  feedback : feedback
-                  workflow : workflow
-                Tangerine.app.rm.get('mainRegion').show view
+                tripsByWorkflowIdCollection = new TripsByWorkflowIdCollection
+                tripsByWorkflowIdCollection.params.workflowId = workflow.id
+                tripsByWorkflowIdCollection.on 'sync', ->
+                  view = new FeedbackTripsView
+                    feedback : feedback
+                    workflow : workflow
+                    tripsByWorkflowIdCollection : tripsByWorkflowIdCollection
+                  Tangerine.app.rm.get('mainRegion').show view
+                tripsByWorkflowIdCollection.fetch()
 
   feedbackEdit: ( workflowId ) ->
       Tangerine.user.verify

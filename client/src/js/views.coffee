@@ -217,6 +217,13 @@ Tangerine.views =
         return emit(doc.userId, null)
     ).toString()
 
+  tripsByWorkflowIdCollection:
+    map: ( ( doc ) ->
+      if doc.collection == 'trip'
+        return emit(doc.workflowId, null)
+    ).toString()
+
+
   tripsByUserIdYearMonth:
     map: ( ( doc ) ->
       if doc.collection == 'trip'

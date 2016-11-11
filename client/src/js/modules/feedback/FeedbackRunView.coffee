@@ -34,6 +34,7 @@ class FeedbackRunView extends Backbone.View
     @feedback.collection.each (critique, i) =>
 
       namespace = new Namespace
+        tripModel : @tripModel
         critique : critique
         trip     : @trip
         getDurationMinutes : =>
@@ -57,9 +58,10 @@ class FeedbackRunView extends Backbone.View
           startTime = 0
           endTime   = 0
 
-          for result in @rawData
-            if result?.doc?.subtestData?
-              for subtest in result.doc.subtestData
+          for step in @tripModel.attributes.log
+            if step.result?.subtestData?
+              for subtest in step.result.subtestData
+                console.log Object.keys(subtest.data)
                 startTime = parseInt(subtest.timestamp) if subtest.data.hasOwnProperty(var1)
                 endTime   = parseInt(subtest.timestamp) if subtest.data.hasOwnProperty(var2)
 
