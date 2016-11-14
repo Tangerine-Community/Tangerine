@@ -330,16 +330,23 @@ class Utils
 
   @checkSession: (url, options) ->
     options = options || {};
+    console.log("checkSession started")
     $.ajax
       type: "GET",
       url:  url,
-      async: true,
       data: "",
       beforeSend: (xhr)->
         xhr.setRequestHeader('Accept', 'application/json')
       ,
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("Error: " + textStatus + " jqXHR: " + JSON.stringify(jqXHR))
       complete: (req) ->
+        console.log("checkSession about to run the parseJSON: " + JSON.stringify(req))
         resp = $.parseJSON(req.responseText);
+        console.log("checkSession about to run the Promise")
+
+        Promise.resolve(req.responseJSON);
+        console.log("checkSession just ran the Promise")
         if (req.status == 200)
           console.log("Logged in.")
           if options.success
@@ -367,14 +374,40 @@ class Utils
 #    timeout: 60000};
 #    Backbone.sync.defaults.db.replicate.to(remoteCouch, opts, CoconutUtils.ReplicationErrorLog);
 
+  @importDoc = (file) ->
+    return p = new Promise (resolve, reject) ->
+      $.ajax
+        dataType: "json"
+        url: file
+        error: (res) ->
+          console.log("Error: " + res)
+        success: (res) ->
+          if res.docs?
+            docs = res.docs
+          else
+            docs = res
+          Tangerine.db.put docs, (error, doc) ->
+            if error
+              return alert "could not save user documents: #{error}"
+
   @cloud_url_with_credentials: (cloud_url)->
-    cloud_credentials = "username:password"
+#    cloud_credentials = "username:password"
+    cloud_credentials = Tangerine.settings.get("replicationCreds")
     cloud_url.replace(/http:\/\//,"http://#{cloud_credentials}@")
 
-  @replicateToServer: (options, divId) ->
+  @groupHost_url_with_creds = ->
+    a = document.createElement("a")
+    a.href = Tangerine.settings.get("groupHost")
+    url = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
+    credUrl = @cloud_url_with_credentials(url)
+    return credUrl
+
+#    TODO: write test
+  @replicate: (options, divId) ->
     options = {} if !options
     opts =
 #      live:true
+#      retry:true
       continuous: false
 #      batch_size:5
 #      filter: filter
@@ -383,44 +416,54 @@ class Utils
 #      auth:
 #        username:account.username
 #        password:account.password
-      complete: (result) ->
-        if typeof result != 'undefined' && result != null && result.ok
-          console.log "replicateToServer - onComplete: Replication is fine. "
-        else
-          console.log "replicateToServer - onComplete: Replication message: " + result
       error: (result) ->
         console.log "error: Replication error: " + JSON.stringify result
       timeout: 60000
-    _.extend options, opts
 
-    a = document.createElement("a")
-    a.href = Tangerine.settings.get("groupHost")
-    replicationURL = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
-    credRepliUrl = @cloud_url_with_credentials(replicationURL)
-    console.log("credRepliUrl: " + credRepliUrl)
-    Backbone.sync.defaults.db.replicate.to(credRepliUrl, options).on('uptodate', (result) ->
-      if typeof result != 'undefined' && result.ok
-        console.log "uptodate: Replication is fine. "
-        options.complete()
-        if typeof options.success != 'undefined'
-          options.success()
+#    _.extend options, opts
+
+    complete = (result) ->
+      if typeof result != 'undefined' && result != null && result.ok
+        console.log "replicateToServer - onComplete: Replication is fine. "
       else
-        console.log "uptodate: Replication error: " + JSON.stringify result).on('change', (info)->
-      console.log "Change: " + JSON.stringify info
-      doc_count = options.status?.doc_count
-      doc_del_count = options.status?.doc_del_count
-      total_docs = doc_count? + doc_del_count?
-      doc_written = info.docs_written
-      percentDone = Math.floor((doc_written/total_docs) * 100)
-      if !isNaN  percentDone
-        msg = "Change: docs_written: " + doc_written + " of " +  total_docs + ". Percent Done: " + percentDone + "%<br/>"
-      else
-        msg = "Change: docs_written: " + doc_written + "<br/>"
-      console.log("msg: " + msg)
-      $(divId).append msg
-    ).on('complete', (info)->
-      console.log "Complete: " + JSON.stringify info
+        console.log "replicateToServer - onComplete: Replication message: " + result
+
+    source = options.source
+    target = options.target
+
+    remotePouch = PouchDB.defaults(
+      prefix: source
     )
+
+    remotePouch = new PouchDB(source)
+
+    console.log("about to @checkSession")
+    @checkSession(source).then((result) ->
+      console.log("about to replicate")
+      rep = PouchDB.replicate(remotePouch, target, opts).on('change', (info) ->
+        doc_count = result?.doc_count
+        doc_del_count = result?.doc_del_count
+        total_docs = doc_count + doc_del_count
+        doc_written = info.docs_written
+        percentDone = Math.floor((doc_written/total_docs) * 100)
+        if !isNaN  percentDone
+          msg = "Change: docs_written: " + doc_written + " of " +  total_docs + ". Percent Done: " + percentDone + "%<br/>"
+        else
+          msg = "Change: docs_written: " + doc_written + "<br/>"
+        console.log("Change; msg: " + msg)
+        if typeof divId != 'undefined'
+          $(divId).append msg
+      ).on('complete', (info) ->
+        console.log "Complete: " + JSON.stringify info
+      ).on('error',  (err) ->
+        console.log "error: " + JSON.stringify err
+      ).then(
+        console.log("I'm done")
+        Tangerine.db.info().then((result) ->
+          console.log("result: " + JSON.stringify(result)))
+      )
+    )
+
 #    Coconut.menuView.checkReplicationStatus();
 
   @restartTangerine: (message, callback) ->

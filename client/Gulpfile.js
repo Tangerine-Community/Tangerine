@@ -359,8 +359,15 @@ gulp.task('compile_packs', function(done){
 });
 
 gulp.task('run_tests', function(done){
-  gulp.src('test/index.html').pipe(mochaPhantomJS());
+  // gulp.src('test/index.html').pipe(mochaPhantomJS({ 'webSecurityEnabled': false, "outputEncoding": "utf8", "localToRemoteUrlAccessEnabled": true }),
+      gulp.src('test/index.html').pipe(mochaPhantomJS({phantomjs: {webSecurityEnabled: false, localToRemoteUrlAccessEnabled:true}})
+  ).on('error', handleError);
 });
+
+function handleError(err) {
+  console.log(err.toString());
+  this.emit('end');
+}
 
 gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js']);
 

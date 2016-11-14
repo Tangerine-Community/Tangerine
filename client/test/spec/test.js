@@ -623,27 +623,34 @@
       });
       return series(functions);
     };
-    return describe('Tangerine Tests', function() {
-      this.timeout(10000);
-      dbs = [];
-      before('Setup Tangerine and Pouch', function(done) {
+    describe('Foo test', function(done) {
+      var foo;
+      foo = false;
+      before(function(done) {
+        return setTimeout(function() {
+          foo = true;
+          return done();
+        }, 1000);
+      });
+      return it("should pass", function() {
+        return expect(foo).equals(true);
+      });
+    });
+    return describe('Tangerine Tests', function(done) {
+      var foo;
+      foo = false;
+      this.timeout(30000);
+      before('Setup Tangerine and Pouch', function() {
         var pouchName;
+        console.log("before, we are setting up Tangerine and Pouch");
         this.$container = $("#view-test-container");
         this.$fixture = $("<div>", {
           id: "fixture"
         });
-        this.timeout(5000);
         pouchName = dbName;
         dbs = [dbName];
         Tangerine.db = new PouchDB(pouchName, {
           adapter: 'memory'
-        }, function(err) {
-          if (err) {
-            console.log("Before: I got an error: " + err);
-            return done(err);
-          } else {
-            return done();
-          }
         });
         return Backbone.sync = BackbonePouch.sync({
           db: Tangerine.db,
@@ -654,440 +661,121 @@
           }
         });
       });
-      after('Teardown Pouch', function(done) {
-        var pouchName, result;
-        console.log("after");
-        this.$container.empty();
-        delete this.$fixture;
-        this.timeout(15000);
-        pouchName = dbName;
-        dbs = [dbName];
-        return result = Tangerine.db.destroy(function(er) {}).then(function(er) {
+      beforeEach('Setup done and timeout', function(done) {
+        console.log("beforeEach, we are setting the timeout");
+        setTimeout(function() {
+          console.log("at the end of the timeout, return done()");
+          foo = true;
           return done();
-        })["catch"](function(er) {
-          console.log("After: Problem destroying db: " + er);
-          return done(er);
-        });
+        }, 20000);
       });
-      it('Populate pouch with Assessments', function(done) {
+      it('Populate pouch with Views and Assessments', function() {
         var db;
+        console.log("Populating the pouchdb");
         db = Tangerine.db;
-        return db.get("initialized", function(error, doc) {
-          return db.put({
-            _id: "_design/tangerine",
-            views: {
-              byDKey: {
-                map: (function(doc) {
-                  var id;
-                  if (doc.collection === "result") {
+        console.log("Saving views");
+        return db.put({
+          _id: "_design/tangerine",
+          views: {
+            byDKey: {
+              map: (function(doc) {
+                var id;
+                if (doc.collection === "result") {
+                  return;
+                }
+                if (doc.curriculumId) {
+                  id = doc.curriculumId;
+                  if (doc.collection === "klass") {
                     return;
                   }
-                  if (doc.curriculumId) {
-                    id = doc.curriculumId;
-                    if (doc.collection === "klass") {
-                      return;
+                } else {
+                  id = doc.assessmentId;
+                }
+                return emit(id.substr(-5, 5), null);
+              }).toString()
+            },
+            byCollection: {
+              map: (function(doc) {
+                var result;
+                if (!doc.collection) {
+                  return;
+                }
+                emit(doc.collection, null);
+                if (doc.collection === 'subtest') {
+                  return emit("subtest-" + doc.assessmentId);
+                } else if (doc.collection === 'question') {
+                  return emit("question-" + doc.subtestId);
+                } else if (doc.collection === 'result') {
+                  result = {
+                    _id: doc._id
+                  };
+                  doc.subtestData.forEach(function(subtest) {
+                    if (subtest.prototype === "id") {
+                      result.participantId = subtest.data.participant_id;
                     }
-                  } else {
-                    id = doc.assessmentId;
-                  }
-                  return emit(id.substr(-5, 5), null);
-                }).toString()
-              },
-              byCollection: {
-                map: (function(doc) {
-                  var result;
-                  if (!doc.collection) {
-                    return;
-                  }
-                  emit(doc.collection, null);
-                  if (doc.collection === 'subtest') {
-                    return emit("subtest-" + doc.assessmentId);
-                  } else if (doc.collection === 'question') {
-                    return emit("question-" + doc.subtestId);
-                  } else if (doc.collection === 'result') {
-                    result = {
-                      _id: doc._id
-                    };
-                    doc.subtestData.forEach(function(subtest) {
-                      if (subtest.prototype === "id") {
-                        result.participantId = subtest.data.participant_id;
-                      }
-                      if (subtest.prototype === "complete") {
-                        return result.endTime = subtest.data.end_time;
-                      }
-                    });
-                    result.startTime = doc.start_time;
-                    return emit("result-" + doc.assessmentId, result);
-                  }
-                }).toString()
-              }
+                    if (subtest.prototype === "complete") {
+                      return result.endTime = subtest.data.end_time;
+                    }
+                  });
+                  result.startTime = doc.start_time;
+                  return emit("result-" + doc.assessmentId, result);
+                }
+              }).toString()
             }
-          }).then(function() {
-            return Utils.loadDevelopmentPacks(function(err) {
-              if (err) {
-                throw err;
-              } else {
-                return done();
-              }
-            });
+          }
+        }, function(err, response) {
+          console.log("response: " + JSON.stringify(response));
+          Utils.loadDevelopmentPacks(function(err) {
+            return console.log("loadDevelopmentPacks done.");
           });
         });
       });
-      it('Should return the expected assessment', function(done) {
-        var assessment, id;
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
+      return it('Should replicate to the test server', function() {
+        var file;
+        console.log("Should replicate to the test server");
+        file = 'init/Settings.json';
+        return $.ajax({
+          dataType: "json",
+          url: file,
+          error: function(res) {
+            return console.log("Error: " + res);
           },
-          success: function(record) {
-            Tangerine.assessment = assessment;
-            expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
-            return done();
-          }
-        });
-      });
-      it('Should make the view', function(done) {
-        var assessment, id;
-        this.$fixture.empty().appendTo(this.$container);
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
-          },
-          success: function(record) {
-            var view, viewOptions;
-            Tangerine.assessment = assessment;
-            viewOptions = {
-              model: assessment,
-              el: this.$fixture
-            };
-            view = new AssessmentCompositeView(viewOptions);
-            view.once("render", function() {
-              return expect(view.$el.text()).to.contain("01. LTTP2 2015 - Student");
-            });
-            view.render();
-            return done();
-          }
-        });
-      });
-      it('Should contain a test transition comment, help text, and dialog', function(done) {
-        var assessment, id;
-        this.$fixture.empty().appendTo(this.$container);
-        id = "5a6de214-b578-07c2-9349-41804d85bf2b";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
-          },
-          success: function(record) {
-            var view, viewOptions;
-            Tangerine.assessment = assessment;
-            viewOptions = {
-              model: assessment,
-              el: this.$fixture
-            };
-            view = new AssessmentCompositeView(viewOptions);
-            view.once("render", function() {
-              view.once("render", function() {
-                var enumeratorHelp, studentDialog, subtestHelpButton;
-                subtestHelpButton = (view.$el.find('button.subtest_help'))[0];
-                $(subtestHelpButton).click();
-                studentDialog = (view.$el.find('.student_dialog'))[0];
-                enumeratorHelp = (view.$el.find('.enumerator_help'))[0];
-                expect($(studentDialog).text()).to.contain("Here are some subtraction (take away) problems.");
-                expect($(enumeratorHelp).text()).to.contain("Show the child the sheet in the student stimulus booklet as you read the instructions.");
-                expect(view.$el.text()).to.contain("Test transition comment");
-                return done();
+          success: function(res) {
+            var credRepliUrl, doc, options;
+            if (res.docs != null) {
+              return doc = res.docs;
+            } else {
+              doc = res;
+              Tangerine.settings = new Settings(doc);
+              Tangerine.settings.update();
+              credRepliUrl = Utils.groupHost_url_with_creds();
+              console.log("credRepliUrl: " + credRepliUrl);
+              options = {
+                source: credRepliUrl,
+                target: Tangerine.db
+              };
+              return $.ajax({
+                url: credRepliUrl,
+                async: true,
+                error: function(res) {
+                  return console.log("Error: " + JSON.stringify(res));
+                },
+                success: function(res) {
+                  var error;
+                  console.log("result" + JSON.stringify(res));
+                  try {
+                    return Utils.replicate(options);
+                  } catch (error1) {
+                    error = error1;
+                    return console.log(error);
+                  }
+                }
               });
-              return $((view.$el.find('.subtest-next'))[0]).click();
-            });
-            return view.render();
-          }
-        });
-      });
-      it('Should contain a test transition comment, the subtest should complete and then there should be another test transition comment', function(done) {
-        var assessment, id;
-        this.$fixture.empty().appendTo(this.$container);
-        id = "11322a8a-0807-68b6-c469-37ecc571cbf0";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
-          },
-          success: function(record) {
-            var view, viewOptions;
-            Tangerine.assessment = assessment;
-            viewOptions = {
-              model: assessment,
-              el: this.$fixture
-            };
-            view = new AssessmentCompositeView(viewOptions);
-            view.once("render", function() {
-              var grid, gridButton, startTimeButton;
-              expect(view.$el.text()).to.contain("1. Test transition comment");
-              view.once("render", function() {
-                expect(view.$el.text()).to.contain("2. Test transition comment");
-                return done();
-              });
-              startTimeButton = (view.$el.find('.start_time'))[0];
-              $(startTimeButton).click();
-              grid = (view.$el.find('button'))[0];
-              gridButton = ($(grid).find('button'))[0];
-              $(gridButton).click();
-              return setTimeout(function() {
-                var stopTimeButton, subTestNextButton;
-                stopTimeButton = (view.$el.find('.stop_time'))[0];
-                $(stopTimeButton).click();
-                subTestNextButton = (view.$el.find('.subtest-next'))[0];
-                return $(subTestNextButton).click();
-              }, 1000);
-            });
-            return view.render();
-          }
-        });
-      });
-      it('Should default to one school if there is only one option', function(done) {
-        var assessment, id;
-        this.$fixture.empty().appendTo(this.$container);
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
-          },
-          success: function(record) {
-            var view, viewOptions;
-            Tangerine.assessment = assessment;
-            viewOptions = {
-              model: assessment,
-              el: this.$fixture
-            };
-            view = new AssessmentCompositeView(viewOptions);
-            view.once("render", function() {
-              var buttons;
-              view.once("render", function() {
-                var levelOne, levelTwo, levelZero;
-                levelZero = view.$el.find('#level_0');
-                $(levelZero[0]).val('Bong');
-                $(levelZero[0]).trigger("change");
-                levelOne = view.$el.find('#level_1');
-                $(levelOne[0]).val('Zota');
-                $(levelOne[0]).trigger("change");
-                levelTwo = view.$el.find('#level_2');
-                expect($(levelTwo[0][1]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High');
-                expect($(levelTwo[0][0]).context.disabled).to.equal(true);
-                return done();
-              });
-              buttons = view.$el.find('.subtest-next');
-              return $(buttons[0]).click();
-            });
-            return view.render();
-          }
-        });
-      });
-      it('Should resume assessment at the same place', function(done) {
-        var assessment, id;
-        this.timeout(10000);
-        this.$fixture.empty().appendTo(this.$container);
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
-          },
-          success: function(record) {
-            var view, viewOptions;
-            Tangerine.assessment = assessment;
-            viewOptions = {
-              model: assessment,
-              el: this.$fixture
-            };
-            view = new AssessmentCompositeView(viewOptions);
-            view.once("render", function() {
-              var buttons;
-              view.once("render", function() {
-                var buttons, levelOne, levelTwo, levelZero;
-                levelZero = view.$el.find('#level_0');
-                $(levelZero[0]).val('Bong');
-                $(levelZero[0]).trigger("change");
-                levelOne = view.$el.find('#level_1');
-                $(levelOne[0]).val('Zota');
-                $(levelOne[0]).trigger("change");
-                levelTwo = view.$el.find('#level_2');
-                $(levelTwo[0]).val('Gorpu Dolo Boi Elem.& Jr. High');
-                $(levelTwo[0]).trigger("change");
-                view.once("render", function() {
-                  var assessmentId, assessmentTwo, buttons, elHtml, resultId;
-                  buttons = view.$el.find('.subtest-next');
-                  $(buttons[0]).click();
-                  resultId = view.result.id;
-                  assessmentId = view.assessment.id;
-                  elHtml = view.$el.html();
-                  assessmentTwo = new Assessment({
-                    "_id": assessmentId
-                  });
-                  return assessmentTwo.deepFetch({
-                    success: function() {
-                      var result;
-                      result = new Result({
-                        "_id": resultId
-                      });
-                      return result.fetch({
-                        success: function() {
-                          view = new AssessmentCompositeView({
-                            assessment: assessmentTwo,
-                            result: result
-                          });
-                          view.once("render", function() {
-                            if (elHtml === view.$el.html()) {
-                              return done();
-                            } else {
-                              throw "HTML of AssessmentCompositeView does not match up resume";
-                            }
-                          });
-                          return view.render();
-                        }
-                      });
-                    }
-                  });
-                });
-                buttons = view.$el.find('.subtest-next');
-                return $(buttons[0]).click();
-              });
-              buttons = view.$el.find('.subtest-next');
-              return $(buttons[0]).click();
-            });
-            return view.render();
-          }
-        });
-      });
-      it('Should contain a next question button', function(done) {
-        var assessment, id;
-        this.$fixture.empty().appendTo(this.$container);
-        id = "af072ff9-e325-c518-7ecd-c04f5ed4ec00";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
-          },
-          success: function(record) {
-            var view, viewOptions;
-            viewOptions = {
-              assessment: assessment,
-              el: this.$fixture
-            };
-            view = new AssessmentCompositeView(viewOptions);
-            view.once("nextQuestionRendered", function() {
-              expect(view.$el.html()).to.contain("Next question");
-              return done();
-            });
-            return view.render();
-          }
-        });
-      });
-      return it('Should pass to the Kiswahili page and display only the first question (focusmode)', function(done) {
-        var assessment, id;
-        this.$fixture.empty().appendTo(this.$container);
-        id = "122a745b-e619-d4c0-29cd-3e9e27645632";
-        assessment = new Assessment({
-          "_id": id
-        });
-        return assessment.deepFetch({
-          error: function(err) {
-            console.log("Catch Error: " + JSON.stringify(err));
-            return done(err);
-          },
-          success: function(record) {
-            var view, viewOptions;
-            Tangerine.assessment = assessment;
-            viewOptions = {
-              model: assessment,
-              el: this.$fixture
-            };
-            view = new AssessmentCompositeView(viewOptions);
-            view.once("render", function() {
-              var buttons;
-              view.once("render:collection", function() {
-                var buttons, levelOne, levelTwo, levelZero;
-                levelZero = view.$el.find('#level_0');
-                $(levelZero[0]).val('Arusha');
-                $(levelZero[0]).trigger("change");
-                levelOne = view.$el.find('#level_1');
-                $(levelOne[0]).val('ARUSHA');
-                $(levelOne[0]).trigger("change");
-                levelTwo = view.$el.find('#level_2');
-                $(levelTwo[0]).val('OLDONYOSAPUK PR. SCHOOL');
-                $(levelTwo[0]).trigger("change");
-                console.log("Test Should display the School Selection< page - view.$el.html(): " + view.$el.html());
-                view.once("render:collection", function() {
-                  var renderObservation;
-                  renderObservation = function() {
-                    var buttons, renderKiswahili;
-                    console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html());
-                    expect(view.$el.html()).to.contain("Kiswahili");
-                    renderKiswahili = function() {
-                      var lessoncContentFirst, reading;
-                      console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html());
-                      lessoncContentFirst = view.$el.find('#question-lesson_content_first');
-                      if (typeof lessoncContentFirst !== 'undefined' && lessoncContentFirst !== null) {
-                        if (typeof lessoncContentFirst.css('display') !== 'undefined' && lessoncContentFirst.css('display') !== null) {
-                          expect(lessoncContentFirst.css('display')).to.eq('block');
-                        }
-                      }
-                      reading = view.$el.find('#question-reading');
-                      if (typeof reading !== 'undefined' && reading !== null) {
-                        console.log("reading: " + reading);
-                        if (typeof reading.css('display') !== 'undefined' && reading.css('display') !== null) {
-                          expect(reading.css('display')).to.eq('none');
-                        }
-                      }
-                      return done();
-                    };
-                    buttons = view.$el.find('.button.left');
-                    $(buttons[0]).click();
-                    buttons = view.$el.find('.subtest-next');
-                    $(buttons[0]).click();
-                    return setTimeout(renderKiswahili, 2000);
-                  };
-                  return setTimeout(renderObservation, 1000);
-                });
-                buttons = view.$el.find('.subtest-next');
-                return $(buttons[0]).click();
-              });
-              buttons = view.$el.find('.subtest-next');
-              return $(buttons[0]).click();
-            });
-            return view.render();
+            }
           }
         });
       });
     });
   };
-  return dbs.split(',').forEach(function(db) {
-    return tests(db);
-  });
+  return tests(dbs);
 })();

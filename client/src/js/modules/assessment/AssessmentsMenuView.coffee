@@ -17,7 +17,11 @@ class AssessmentsMenuView extends Backbone.View
 
   universalUpload: -> Utils.universalUpload()
 
-  emergencySync: -> Utils.replicateToServer(null,null)
+  emergencySync: ->
+    options =
+      source:credRepliUrl
+      target:Tangerine.db
+    Utils.replicateToServer(options)
 
   apk: ->
     TangerineTree.make

@@ -81,8 +81,8 @@ View package.json for other useful npm targets:
  - npm listen turns on the changes listener and compiles coffeescript files.
  - npm run build:apk will generate a debug APK.
  - npm test will run mocha-phantomjs tests and watch for changes to coffeescript files.
- - npm run testW will run tests using mocha-phantomjs, displaying output on command line and watch for changes to coffeescript files.
- - npm run testWatch will run mocha tests in the browser at http://localhost:9000/test/ and watch for changes to coffeescript files.
+ - npm run testWatch will run tests using mocha-phantomjs, displaying output on command line and watch for changes to coffeescript files.
+ - npm run debug-test will run mocha tests in the browser at http://127.0.0.1:8080/test/index.html and watch for changes to coffeescript files.
  - npm run debug will copy files into www/compiled and build index-dev.html. Use this when using chrome debugger until gulp
    handles sourcemaps better (https://github.com/terinjokes/gulp-uglify/issues/105). It's a little wonky; it may fail the first time it is run. Try again.
  - npm run debug-gulp index-dev will debug the index-dev gulp target in iron-node. Place the "debugger" keyword where you need the debugger to pause.

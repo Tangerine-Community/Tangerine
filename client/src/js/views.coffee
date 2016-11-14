@@ -449,13 +449,14 @@ Tangerine.views =
       else if doc.collection is 'question'
         emit "question-#{doc.subtestId}"
 
-      else if doc.collection is 'result'
-        result = _id : doc._id
-        doc.subtestData.forEach (subtest) ->
-          if subtest.prototype is "id" then result.participantId = subtest.data.participant_id
-          if subtest.prototype is "complete" then result.endTime = subtest.data.end_time
-        result.startTime = doc.start_time
-        emit "result-#{doc.assessmentId}", result
+#      else if doc.collection is 'result'
+#        result = _id : doc._id
+#        if doc.hasOwnProperty('subtestData')
+#          doc.subtestData.forEach (subtest) ->
+#            if subtest.prototype is "id" then result.participantId = subtest.data.participant_id
+#            if subtest.prototype is "complete" then result.endTime = subtest.data.end_time
+#          result.startTime = doc.start_time
+#          emit "result-#{doc.assessmentId}", result
 
     ).toString()
 
