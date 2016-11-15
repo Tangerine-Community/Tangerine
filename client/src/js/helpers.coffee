@@ -402,7 +402,6 @@ class Utils
     credUrl = @cloud_url_with_credentials(url)
     return credUrl
 
-#    TODO: write test
   @replicate: (options, divId) ->
     options = {} if !options
     opts =
@@ -741,7 +740,7 @@ class Utils
       error: (res) ->
         callback(res)
       success: (res) ->
-        Tangerine.db.bulkDocs res, (error, doc) ->
+        Tangerine.db.bulkDocs res, {new_edits: false}, (error, response) ->
           if error then callback(error) else callback()
 
   @getAssessments: (T_ADMIN, T_PASS, group, success, error) ->

@@ -667,6 +667,8 @@ class Router extends Backbone.Router
 
 
 #  widgetSite: () ->
+#   Setup replication from Couchdb to pouchdb in client
+
 
 
   runMar: (id) ->
