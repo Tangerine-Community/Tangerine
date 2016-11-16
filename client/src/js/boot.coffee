@@ -78,7 +78,7 @@ Tangerine.bootSequence =
           alert 'Error loading views'
           console.log err
 
-        if (window.location.hash != '#widget')
+        if ((window.location.hash != '#widget') && (window.location.hash != '#widgetRelicateLoad'))
 
           #
           # Load Packs that Tree creates for an APK, then load the Packs we use for
@@ -131,9 +131,6 @@ Tangerine.bootSequence =
           console.log("init empty db for widget.")
           db.put({"_id":"initialized"}).then( -> callback() )
 
-
-
-
   # Put this version's information in the footer
   versionTag: ( callback ) ->
     $("#footer").append("<div id='version'>#{Tangerine.version}-#{Tangerine.buildVersion}</div>")
@@ -141,7 +138,7 @@ Tangerine.bootSequence =
 
   # load templates
   fetchTemplates: ( callback ) ->
-    if (window.location.hash != '#widget')
+    if ((window.location.hash != '#widget') && (window.location.hash != '#widgetRelicateLoad'))
       (Tangerine.templates = new Template "_id" : "templates").fetch
         error: -> alert "Could not load templates."
         success: callback
@@ -150,7 +147,7 @@ Tangerine.bootSequence =
   # Grab our system config doc. These generally don't change very often unless
   # major system changes are required. New servers, etc.
   fetchConfiguration: ( callback ) ->
-    if (window.location.hash != '#widget')
+    if ((window.location.hash != '#widget') && (window.location.hash != '#widgetRelicateLoad'))
       Tangerine.config = new Config "_id" : "configuration"
       Tangerine.config.fetch
         error   : -> alert "Could not fetch configuration"
@@ -336,7 +333,7 @@ Tangerine.bootSequence =
     )
 
   getLocationList : ( callback ) ->
-    if (window.location.hash != '#widget')
+    if ((window.location.hash != '#widget') && (window.location.hash != '#widgetRelicateLoad'))
       # Grab our system config doc
       Tangerine.locationList = new Backbone.Model "_id" : "location-list"
 

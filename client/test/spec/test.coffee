@@ -538,6 +538,11 @@
               options =
                 source:credRepliUrl
                 target:Tangerine.db
+                complete = (result) ->
+                  if typeof result != 'undefined' && result != null && result.ok
+                    console.log "replicateToServer - onComplete: Replication is fine. "
+                  else
+                    console.log "replicateToServer - onComplete: Replication message: " + result
               $.ajax
                 url: credRepliUrl
                 async:true

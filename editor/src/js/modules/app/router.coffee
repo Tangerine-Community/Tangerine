@@ -62,6 +62,7 @@ class Router extends Backbone.Router
 
     'assessments'        : 'assessments'
 
+    'run/app/'       : 'runApp'
     'run/:id'       : 'run'
     'print/:id/:format'       : 'print'
     'dataEntry/:id' : 'dataEntry'
@@ -610,6 +611,22 @@ class Router extends Backbone.Router
 #                  docs: docs
                 view = new WidgetRunView model: docs
                 vm.show view
+
+#  WidgetSiteRunView displays the whole app.
+  runApp: (id) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        docList = []
+        docList.push "settings"
+        Tangerine.$db.allDocs
+          keys : docList
+          include_docs:true
+          success: (response) ->
+            docs = []
+            for row in response.rows
+              docs.push row.doc
+            view = new WidgetSiteRunView model: docs
+            vm.show view
 
   print: ( assessmentId, format ) ->
     Tangerine.user.verify

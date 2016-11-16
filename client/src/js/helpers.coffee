@@ -395,12 +395,52 @@ class Utils
     cloud_credentials = Tangerine.settings.get("replicationCreds")
     cloud_url.replace(/http:\/\//,"http://#{cloud_credentials}@")
 
+  @cloud_url_with_uploader_creds: (cloud_url)->
+    upName = "uploader-" + Tangerine.settings.get("groupName")
+    upPass = Tangerine.settings.get("upPass")
+    uploader_creds = upName + ":" + upPass
+    cloud_url.replace(/http:\/\//,"http://#{uploader_creds}@")
+
   @groupHost_url_with_creds = ->
     a = document.createElement("a")
     a.href = Tangerine.settings.get("groupHost")
     url = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
     credUrl = @cloud_url_with_credentials(url)
     return credUrl
+
+  @groupDb_url_with_creds = ->
+    a = document.createElement("a")
+    a.href = Tangerine.settings.get("groupDb")
+    url = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
+    credUrl = @cloud_url_with_credentials(url)
+    return credUrl
+
+  @groupDb_url_with_uploader_creds = ->
+    a = document.createElement("a")
+    a.href = Tangerine.settings.get("groupDb")
+    url = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
+    credUrl = @cloud_url_with_uploader_creds(url)
+    return credUrl
+
+  @ensureServerAuth: (callbacks = {}) ->
+
+    groupHost = Tangerine.settings.get('groupDb')
+    protocolAndDomain = groupHost.split(':\/\/')
+#    sessionUrl = protocolAndDomain[0] + '://uploader-' + Tangerine.settings.get('groupName') + ':' + Tangerine.settings.get('upPass') + '@' + protocolAndDomain[1] + '/_session'
+    sessionUrl = protocolAndDomain[0] + '://' + Tangerine.settings.get('replicationCreds')  + '@' + protocolAndDomain[1] + '/_session'
+    $.ajax
+      url: sessionUrl
+      type: "GET"
+      dataType: "json"
+      xhrFields:
+        withCredentials: true
+      error: $.noop
+      success: (response) ->
+
+        if response.userCtx.name is null
+          callbacks.error?()
+        else
+          callbacks.success?()
 
   @replicate: (options, divId) ->
     options = {} if !options
@@ -421,11 +461,11 @@ class Utils
 
 #    _.extend options, opts
 
-    complete = (result) ->
-      if typeof result != 'undefined' && result != null && result.ok
-        console.log "replicateToServer - onComplete: Replication is fine. "
-      else
-        console.log "replicateToServer - onComplete: Replication message: " + result
+#    complete = (result) ->
+#      if typeof result != 'undefined' && result != null && result.ok
+#        console.log "replicateToServer - onComplete: Replication is fine. "
+#      else
+#        console.log "replicateToServer - onComplete: Replication message: " + result
 
     source = options.source
     target = options.target
@@ -436,32 +476,34 @@ class Utils
 
     remotePouch = new PouchDB(source)
 
-    console.log("about to @checkSession")
-    @checkSession(source).then((result) ->
-      console.log("about to replicate")
-      rep = PouchDB.replicate(remotePouch, target, opts).on('change', (info) ->
-        doc_count = result?.doc_count
-        doc_del_count = result?.doc_del_count
-        total_docs = doc_count + doc_del_count
-        doc_written = info.docs_written
-        percentDone = Math.floor((doc_written/total_docs) * 100)
-        if !isNaN  percentDone
-          msg = "Change: docs_written: " + doc_written + " of " +  total_docs + ". Percent Done: " + percentDone + "%<br/>"
-        else
-          msg = "Change: docs_written: " + doc_written + "<br/>"
-        console.log("Change; msg: " + msg)
-        if typeof divId != 'undefined'
-          $(divId).append msg
-      ).on('complete', (info) ->
-        console.log "Complete: " + JSON.stringify info
-      ).on('error',  (err) ->
-        console.log "error: " + JSON.stringify err
-      ).then(
-        console.log("I'm done")
-        Tangerine.db.info().then((result) ->
-          console.log("result: " + JSON.stringify(result)))
-      )
+#    console.log("about to @checkSession")
+#    @checkSession(source).then((result) ->
+    console.log("about to replicate")
+    rep = PouchDB.replicate(remotePouch, target, opts).on('change', (info) ->
+      doc_count = result?.doc_count
+      doc_del_count = result?.doc_del_count
+      total_docs = doc_count + doc_del_count
+      doc_written = info.docs_written
+      percentDone = Math.floor((doc_written/total_docs) * 100)
+      if !isNaN  percentDone
+        msg = "Change: docs_written: " + doc_written + " of " +  total_docs + ". Percent Done: " + percentDone + "%<br/>"
+      else
+        msg = "Change: docs_written: " + doc_written + "<br/>"
+      console.log("Change; msg: " + msg)
+      if typeof divId != 'undefined'
+        $(divId).append msg
+    ).on('complete', (info) ->
+      console.log "Complete: " + JSON.stringify info
+      if (options.complete?)
+        options.complete(info)
+    ).on('error',  (err) ->
+      console.log "error: " + JSON.stringify err
+    ).then(
+      console.log("I'm done")
+      Tangerine.db.info().then((result) ->
+        console.log("result: " + JSON.stringify(result)))
     )
+#    )
 
 #    Coconut.menuView.checkReplicationStatus();
 

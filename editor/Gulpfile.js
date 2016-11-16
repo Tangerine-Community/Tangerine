@@ -323,6 +323,7 @@ conf.fileOrder = [
   'AssessmentDataEntryView',
 
   'WidgetRunView',
+  'WidgetSiteRunView',
 
   'Subtest',
   'Subtests',

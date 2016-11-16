@@ -28,3 +28,5 @@ editor/npm-debug.log
 editor/src/compiled/*
 
 client/src/lesson_plan_media
+
+client/src/js/init/class-pack0000.json

@@ -24,6 +24,7 @@ class Router extends Backbone.Router
     'workflows': 'workflows'
     'widget'   : 'widgetLoad'
     'widget-play/:id' : 'widgetPlay'
+    'widgetRelicateLoad' : 'widgetRelicateLoad'
     'feedback/edit/:workflowId' : 'feedbackEdit'
     'feedback/:workflowId'      : 'feedback'
     'login'    : 'login'
@@ -665,9 +666,55 @@ class Router extends Backbone.Router
       error: (model, err, cb) ->
         console.log JSON.stringify err
 
+  widgetRelicateLoad: () ->
+    siteDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
+    settings = siteDocs[0]
+    Tangerine.settings = new Settings(settings)
+    Tangerine.settings.update()
 
-#  widgetSite: () ->
-#   Setup replication from Couchdb to pouchdb in client
+    credRepliUrl = Utils.groupDb_url_with_creds()
+#    credRepliUrl = Utils.groupDb_url_with_uploader_creds()
+    console.log("credRepliUrl: " + credRepliUrl)
+    cloud_credentials = Tangerine.settings.get("replicationCreds")
+    upName = "uploader-" + Tangerine.settings.get("groupName")
+    upPass = Tangerine.settings.get("upPass")
+    console.log("cloud_credentials: " + cloud_credentials)
+    creds = cloud_credentials.split(":")
+#    username = creds[0]
+#    password = creds[1]
+    username = upName
+    password = upPass
+
+    Utils.ensureServerAuth(
+      error: => console.log 'ensureServerAuth failed'
+      success: =>
+        console.log 'ensureServerAuth worked'
+        options =
+          source:credRepliUrl
+          target:Tangerine.db
+          username:username
+          password:password
+          complete: (result) ->
+            if typeof result != 'undefined' && result != null && result.ok
+              console.log "replicateToServer - onComplete: Replication is fine. "
+              Backbone.history.navigate('', {trigger: true})
+            else
+              console.log "replicateToServer - onComplete: Replication message: " + result
+#        $.ajax
+#          url: credRepliUrl
+#          async:true
+#          username:username
+#          password:password
+#          error: (res) ->
+#            console.log("Error: " + JSON.stringify(res))
+#          success: (res) ->
+#            console.log("result" + JSON.stringify(res))
+        try
+          Utils.replicate(options)
+        catch error
+          console.log(error)
+    )
+
 
 
 
