@@ -65,26 +65,10 @@ class Brockman < Sinatra::Base
     # Get csv rows from view
     #
     
-    # Get results filtered by workflow
-    resultByWorkflow = couch.postRequest({ 
-      :view => "tutorTrips",
-      :data => { "keys" => ["workflow-#{workflowId}"]},
-      :parseJson => true,
-      :params => { "reduce" => false }
-    })['rows']
-
-    workflowTrips = {}
-    for row in resultByWorkflow
-      tripId                      = row['value']
-      workflowTrips[tripId]       = [] if workflowTrips[tripId].nil?
-      workflowTrips[tripId].push  row['id']
-      allTripIds.push             tripId
-    end
-
     # Get results filtered by date
     resultByDate = couch.postRequest({ 
       :view => "tutorTrips",
-      :data => { "keys" => ["year#{year}month#{month}"]},
+      :data => { "keys" => ["year#{year}month#{month}workflowId#{workflowId}"]},
       :parseJson => true,
       :params => { "reduce" => false }
     })['rows']
@@ -97,17 +81,8 @@ class Brockman < Sinatra::Base
       allTripIds.push         tripId
     end
 
-    #get the intersection of each the workflows and date and group by TripId
-    resultsByTripId = {}
     allTripIds.map{ | tripId | 
-      workflowTrips[tripId] = [] if workflowTrips[tripId].nil?
       dateTrips[tripId]     = [] if dateTrips[tripId].nil?
-
-      workflowDateIntersection = workflowTrips[tripId] & dateTrips[tripId]
-      
-      if workflowDateIntersection.length > 0
-        resultsByTripId[tripId] = workflowDateIntersection
-      end
     }
 
     $logger.info "Received #{resultsByTripId.length} result ids"
@@ -122,7 +97,7 @@ class Brockman < Sinatra::Base
     })
 
     file = csv.doWorkflow({
-      :resultsByTripId => resultsByTripId,
+      :resultsByTripId => dateTrips,
       :groupTimeZone => groupTimeZone
     })
 
