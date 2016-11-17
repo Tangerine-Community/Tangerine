@@ -85,7 +85,6 @@ class Brockman < Sinatra::Base
       dateTrips[tripId]     = [] if dateTrips[tripId].nil?
     }
 
-    $logger.info "Received #{resultsByTripId.length} result ids"
     $logger.info "Processing start"
 
     csv = Csv.new({
