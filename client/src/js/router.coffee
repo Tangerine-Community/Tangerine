@@ -405,6 +405,7 @@ class Router extends Backbone.Router
         lessonPlans = new LessonPlans
         lessonPlans.fetch
           success: ->
+            Tangerine.available = []
             lessonPlans.each((lessonPlan) ->
 #              subject = Tangerine.enum.subjects[lessonPlan.get("lessonPlan_subject")]
 #              grade   = lessonPlan.get("lessonPlan_grade")
@@ -415,11 +416,17 @@ class Router extends Backbone.Router
               Tangerine.available.push [week, day, id]
             )
             Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
+            dashboardLayout = new DashboardLayout();
+            Tangerine.app.rm.get('mainRegion').show dashboardLayout
+            dashboardLayout.contentRegion.reset()
             dashboardLayout.headerRegion.reset();
             dashboardLayout.headerRegion.show(Tangerine.LessonMenuView)
+            # Tangerine.app.rm.get('headerRegion').show Tangerine.LessonMenuView
             assessmentsView = new AssessmentsMenuView
               lessonPlans : lessonPlans
-            Tangerine.app.rm.get('mainRegion').show assessmentsView
+            # Tangerine.app.rm.get('mainRegion').show assessmentsView
+            dashboardLayout.contentRegion.show(assessmentsView)
+
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
@@ -526,16 +533,32 @@ class Router extends Backbone.Router
         lessonPlan = new LessonPlan "_id" : id
         lessonPlan.deepFetch
           success : ->
-            dashboardLayout = new DashboardLayout();
-            Tangerine.app.rm.get('mainRegion').show dashboardLayout
-            dashboardLayout.contentRegion.reset()
-            lessonPlan.set("elements",lessonPlan.elements)
-            view = new LessonPlanItemView
-              model: lessonPlan
-            dashboardLayout.contentRegion.show(view)
-            Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
-            dashboardLayout.headerRegion.reset();
-            dashboardLayout.headerRegion.show(Tangerine.LessonMenuView)
+            Tangerine.available = []
+            lessonPlans = new LessonPlans
+            lessonPlans.fetch
+              success: ->
+                lessonPlans.each((lessonPlan) ->
+    #              subject = Tangerine.enum.subjects[lessonPlan.get("lessonPlan_subject")]
+    #              grade   = lessonPlan.get("lessonPlan_grade")
+                  week    = lessonPlan.get("lessonPlan_week")
+                  day     = lessonPlan.get("lessonPlan_day")
+                  id      = lessonPlan.get("_id")
+                  console.log("Lessons available: " + [week, day, id])
+                  Tangerine.available.push [week, day, id]
+                )
+                dashboardLayout = new DashboardLayout();
+                Tangerine.app.rm.get('mainRegion').show dashboardLayout
+                dashboardLayout.contentRegion.reset()
+                lessonPlan.set("elements",lessonPlan.elements)
+                view = new LessonPlanItemView
+                  model: lessonPlan
+                dashboardLayout.contentRegion.show(view)
+                Tangerine.LessonMenuView   = new LessonMenuView available: Tangerine.available
+                dashboardLayout.headerRegion.reset();
+                dashboardLayout.headerRegion.show(Tangerine.LessonMenuView)
+              error: (model, err, cb) ->
+                console.log JSON.stringify err
+
           error: (model, err, cb) ->
             console.log JSON.stringify err
 
