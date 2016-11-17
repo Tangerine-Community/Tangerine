@@ -77,23 +77,6 @@
                  "message": "Passwords must match!"
              }
          ]
-     },
-     "firstName": {
-         "type": "Text",
-         "validators": [
-             "required"
-         ]
-     },
-     "lastName": {
-         "type": "Text",
-         "validators": [
-             "required"
-         ]
-     },
-     "email": {
-         "validators": [
-             "email"
-         ]
      }
   } 
 }
