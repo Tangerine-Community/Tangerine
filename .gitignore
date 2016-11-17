@@ -34,3 +34,6 @@ editor/src/compiled/*
 .history/
 
 client/lesson_plan_media/
+client/src/js/init/class-pack0000.json
+
+client/test/init/Settings.json
