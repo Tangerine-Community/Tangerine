@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Send nginx logs to docker logs.
+tail -f /var/log/nginx/access.log &
+tail -f /var/log/nginx/error.log &
+
 echo ""
 echo ""
 echo ""
@@ -7,7 +11,7 @@ echo "Setting up database user"
 echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini
 sudo chown -R couchdb /var/run/couchdb
 couchdb -k
-couchdb -b
+couchdb &
 echo ""
 echo ""
 echo ""
