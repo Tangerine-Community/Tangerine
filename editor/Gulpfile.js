@@ -383,6 +383,7 @@ conf.fileOrder = [
   'WorkflowEditView',
   'WorkflowRunView',
   'WorkflowSelectView',
+  'WorkflowMenuMemberView',
 
   'Klass',
   'KlassView',
