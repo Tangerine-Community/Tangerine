@@ -4,9 +4,10 @@
   "upPass": "pass",
   "groupName": "",
   "hostname": "INSERT_HOST_NAME",
+  "groupDb": "INSERT_HOST_NAME/db",
   "groupHost": "INSERT_PROTOCOL://INSERT_HOST_NAME",
   "groupDDoc": "ojai",
-  "replicationCreds": "admin:password",
+  "replicationCreds": "INSERT_ADMIN:INSERT_ADMIN_PASS",
   "showWorkflows": false,
   "log": [
     ""

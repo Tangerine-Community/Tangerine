@@ -28,7 +28,7 @@ echo ""
 echo "Push the ojai design doc"
 cd /tangerine-server/editor/app
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/configuration.json
-sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/settings.json 
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" | sed "s#INSERT_ADMIN#"$T_ADMIN"#g" | sed "s#INSERT_ADMIN_PASS#"$T_PASS"#g" > _docs/settings.json
 couchapp push
 
 if [ $PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT = true ] 
