@@ -1088,7 +1088,14 @@
               console.log("credRepliUrl: " + credRepliUrl);
               options = {
                 source: credRepliUrl,
-                target: Tangerine.db
+                target: Tangerine.db,
+                complete: function(result) {
+                  if (typeof result !== 'undefined' && result !== null && result.ok) {
+                    return console.log("replicateToServer - onComplete: Replication is fine. ");
+                  } else {
+                    return console.log("replicateToServer - onComplete: Replication message: " + result);
+                  }
+                }
               };
               return $.ajax({
                 url: credRepliUrl,

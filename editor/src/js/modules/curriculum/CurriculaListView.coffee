@@ -10,8 +10,18 @@ class CurriculaListView extends Backbone.View
 
 
   render: =>
-    return if @curricula.length == 0 
-    @$el.html "<h1>Curricula</h1>"
+    return if @curricula.length == 0
+
+    if @curricula.length > 0
+      runCurriculaApp = " <ul>
+        <li class = 'sp_run'><a href='#run/app/'>Run the Curricula App</a></li>
+        <li>Run the Curricula App</li>
+      </ul>"
+    else
+      runCurriculaApp = ""
+
+    @$el.html "<h1>Curricula</h1>" + runCurriculaApp
+
     @closeViews
     @curricula.each (curriculum) =>
       view = new CurriculumListElementView
@@ -28,4 +38,3 @@ class CurriculaListView extends Backbone.View
   closeViews: ->
     for view in @views
       view.close?()
-  

@@ -63,7 +63,9 @@ class KlassListElementView extends Backbone.View
     if klass.get("teacherId") == "admin"
       teacherName = "admin"
     else
-      teacher = vm.currentView.teachers.get(klass.get("teacherId"))
+#      teacher = vm.currentView.teachers.get(klass.get("teacherId"))
+#      teacher = Tangerine.app.rm.get('mainRegion').currentView.teachers.get(klass.get("teacherId"))
+      teacher = Tangerine.currentView.teachers.get(klass.get("teacherId"))
       teacherName = teacher?.getEscapedString('name') || ""
 
     htmlTeacher = "

@@ -490,12 +490,16 @@ class Utils
       else
         msg = "Change: docs_written: " + doc_written + "<br/>"
       console.log("Change; msg: " + msg)
+      if (options.change?)
+        options.change(msg)
       if typeof divId != 'undefined'
         $(divId).append msg
     ).on('complete', (info) ->
       console.log "Complete: " + JSON.stringify info
       if (options.complete?)
         options.complete(info)
+      if (options.change?)
+        options.change(info)
     ).on('error',  (err) ->
       console.log "error: " + JSON.stringify err
     ).then(
@@ -506,6 +510,45 @@ class Utils
 #    )
 
 #    Coconut.menuView.checkReplicationStatus();
+
+  @replicateToPouchdb = ->
+    credRepliUrl = Utils.groupDb_url_with_creds()
+    #    credRepliUrl = Utils.groupDb_url_with_uploader_creds()
+    console.log("credRepliUrl: " + credRepliUrl)
+    cloud_credentials = Tangerine.settings.get("replicationCreds")
+    upName = "uploader-" + Tangerine.settings.get("groupName")
+    upPass = Tangerine.settings.get("upPass")
+    console.log("cloud_credentials: " + cloud_credentials)
+    creds = cloud_credentials.split(":")
+    #    username = creds[0]
+    #    password = creds[1]
+    username = upName
+    password = upPass
+
+    Utils.ensureServerAuth(
+      error: => console.log 'ensureServerAuth failed'
+      success: =>
+        console.log 'ensureServerAuth worked'
+        options =
+          source: credRepliUrl
+          target: Tangerine.db
+          username: username
+          password: password
+          complete: (result) ->
+            if typeof result != 'undefined' && result != null && result.ok
+              console.log "replicateToServer - onComplete: Replication is fine. "
+              $('.assessment-widget-result').html(result)
+#              Backbone.history.navigate('', {trigger: true})
+              Tangerine.router.landing(true)
+            else
+              console.log "replicateToServer - onComplete: Replication message: " + result
+          change: (info) ->
+            $('.assessment-widget-result').html(info)
+        try
+          Utils.replicate(options)
+        catch error
+          console.log(error)
+    )
 
   @restartTangerine: (message, callback) ->
     Utils.midAlert "#{message || 'Restarting Tangerine'}"

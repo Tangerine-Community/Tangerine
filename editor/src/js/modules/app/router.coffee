@@ -613,7 +613,7 @@ class Router extends Backbone.Router
                 vm.show view
 
 #  WidgetSiteRunView displays the whole app.
-  runApp: (id) ->
+  runApp: () ->
     Tangerine.user.verify
       isAuthenticated: ->
         docList = []
@@ -625,6 +625,11 @@ class Router extends Backbone.Router
             docs = []
             for row in response.rows
               docs.push row.doc
+            userAdminDoc = '{"_id": "user-admin","name": "admin","pass": "047c4f2af570ec4a46b9e5d6280affb79f559aa0",
+                "salt": "d379172ac55e5fee09e3edcc2e569745b65202e5","editedBy": "admin",
+                "updated": "Mon Nov 07 2016 13:51:18 GMT+0100 (CET)","fromInstanceId": "testing-on-server",
+                "collection": "user","roles": ["_admin"],"teacherId": "user-admin"}'
+            docs.push JSON.parse  userAdminDoc
             view = new WidgetSiteRunView model: docs
             vm.show view
 

@@ -372,7 +372,9 @@ class Router extends Backbone.Router
                       klasses   : klassCollection
                       curricula : curriculaCollection
                       teachers  : teachers
-                    vm.show view
+#                    vm.show view
+                    Tangerine.currentView = view
+                    Tangerine.app.rm.get('mainRegion').show view
 
   klassEdit: (id) ->
     Tangerine.user.verify
@@ -392,7 +394,9 @@ class Router extends Backbone.Router
                       students    : klassStudents
                       allStudents : allStudents
                       teachers    : teachers
-                    vm.show view
+#                    vm.show view
+                    Tangerine.currentView = view
+                    Tangerine.app.rm.get('mainRegion').show view
 
   klassPartly: (klassId, part=null) ->
     Tangerine.user.verify
@@ -424,7 +428,9 @@ class Router extends Backbone.Router
                               "students"   : students
                               "curriculum" : curriculum
                               "klass"      : klass
-                            vm.show view
+#                            vm.show view
+                            Tangerine.currentView = view
+                            Tangerine.app.rm.get('mainRegion').show view
 
 
   studentSubtest: (studentId, subtestId) ->
@@ -467,7 +473,9 @@ class Router extends Backbone.Router
                         "subtest"  : subtest
                         "student"  : student
                         "previous" : res.rows.length
-                      vm.show view
+#                      vm.show view
+                      Tangerine.currentView = view
+                      Tangerine.app.rm.get('mainRegion').show view
                 ).catch( (err) ->
                   console.log('Error: ' + err)
                 )
@@ -492,7 +500,9 @@ class Router extends Backbone.Router
                       "subtest"      : subtest
                       "questions"    : questions
                       "linkedResult" : linkedResult
-                    vm.show view
+#                    vm.show view
+                    Tangerine.currentView = view
+                    Tangerine.app.rm.get('mainRegion').show view
 
                   questions = null
                   if subtest.get("prototype") == "survey"
@@ -544,7 +554,9 @@ class Router extends Backbone.Router
                 view = new StudentEditView
                   student : model
                   klasses : klassCollection
-                vm.show view
+#                vm.show view
+                Tangerine.currentView = view
+                Tangerine.app.rm.get('mainRegion').show view
 
 
   #
@@ -671,52 +683,16 @@ class Router extends Backbone.Router
     settings = siteDocs[0]
     Tangerine.settings = new Settings(settings)
     Tangerine.settings.update()
-
-    credRepliUrl = Utils.groupDb_url_with_creds()
-#    credRepliUrl = Utils.groupDb_url_with_uploader_creds()
-    console.log("credRepliUrl: " + credRepliUrl)
-    cloud_credentials = Tangerine.settings.get("replicationCreds")
-    upName = "uploader-" + Tangerine.settings.get("groupName")
-    upPass = Tangerine.settings.get("upPass")
-    console.log("cloud_credentials: " + cloud_credentials)
-    creds = cloud_credentials.split(":")
-#    username = creds[0]
-#    password = creds[1]
-    username = upName
-    password = upPass
-
-    Utils.ensureServerAuth(
-      error: => console.log 'ensureServerAuth failed'
-      success: =>
-        console.log 'ensureServerAuth worked'
-        options =
-          source:credRepliUrl
-          target:Tangerine.db
-          username:username
-          password:password
-          complete: (result) ->
-            if typeof result != 'undefined' && result != null && result.ok
-              console.log "replicateToServer - onComplete: Replication is fine. "
-              Backbone.history.navigate('', {trigger: true})
-            else
-              console.log "replicateToServer - onComplete: Replication message: " + result
-#        $.ajax
-#          url: credRepliUrl
-#          async:true
-#          username:username
-#          password:password
-#          error: (res) ->
-#            console.log("Error: " + JSON.stringify(res))
-#          success: (res) ->
-#            console.log("result" + JSON.stringify(res))
-        try
-          Utils.replicate(options)
-        catch error
-          console.log(error)
-    )
-
-
-
+    userAdminDoc = siteDocs[1]
+#    userAdmin = new User(userAdminDoc)
+    Tangerine.db
+      .put(userAdminDoc)
+      .then( (response) ->
+        Utils.replicateToPouchdb()
+      ).catch(
+        console.log("Database already initialized. ")
+        Utils.replicateToPouchdb()
+      )
 
   runMar: (id) ->
     router = this

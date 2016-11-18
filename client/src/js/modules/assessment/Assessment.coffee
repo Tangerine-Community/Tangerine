@@ -41,5 +41,5 @@ Assessment = Backbone.Model.extend
           success: (subtests) ->
 #            console.log "subtests: " + JSON.stringify(subtests)
             subtests.ensureOrder()
-#            opts.success.apply subtests.assessment, arguments
+            opts.success.apply subtests.assessment, arguments
 

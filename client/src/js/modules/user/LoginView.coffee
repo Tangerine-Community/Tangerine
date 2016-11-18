@@ -190,6 +190,9 @@ class LoginView extends Backbone.Marionette.View
     $("#footer").show()
     $("body").css("background", @oldBackground)
 
+  onDestroy: =>
+    console.log("Destroy the view")
+
   action: ->
     @login()  if @mode is "login"
     @signup() if @mode is "signup"
