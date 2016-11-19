@@ -622,5 +622,6 @@ conf.libFiles = [
   './src/js/lib/ckeditor.js',
   './src/js/lib/boomerang.js',
   './src/js/lib/boomerang-plugin-bw-custom.js',
+  './src/js/lib/string.startsWith.js',
   './src/js/lib/coffee-script.js' // This file tends to like to be last
 ];

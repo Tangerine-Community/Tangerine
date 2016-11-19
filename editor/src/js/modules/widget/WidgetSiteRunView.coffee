@@ -14,7 +14,8 @@ class WidgetSiteRunView extends Backbone.View
     @$el.html "<div class='assessment'></div>
       <div class='assessment-widget-result'></div>"
     @$appWidget = $(document.createElement('iframe'))
-    @$appWidget.attr('src', '/client/index-dev.html#widgetRelicateLoad')
+    groupName = Tangerine.settings.get('groupName')
+    @$appWidget.attr('src', '/client/index-dev.html#widgetSiteLoad/' + groupName)
     @$appWidget.attr('data-assessment', JSON.stringify(@model))
     @$appWidget.attr('data-result', '{}')
     @$appWidget.attr('width', '100%')

@@ -113,6 +113,36 @@ class AssessmentsMenuView extends Backbone.View
 
     @usersMenuView = new UsersMenuView
 
+    if @curricula.length > 0
+      groupPouch = new PouchDB(Tangerine.settings.get('groupName'))
+      options =
+        source: Tangerine.settings.location.group.db
+        target: groupPouch
+        complete: (info, result) ->
+          if typeof info != 'undefined' && info != null && info.ok
+            console.log "replicateToServer - onComplete: Replication is fine. "
+            $('#messages').append(JSON.stringify(info))
+  #              Tangerine.router.landing(true)
+          else
+            console.log "replicateToServer - onComplete: Replication message: " + result
+        change: (info, result) ->
+  #            $('#messages').html(info)
+          doc_count = result?.doc_count
+          doc_del_count = result?.doc_del_count
+          total_docs = doc_count + doc_del_count
+          doc_written = info.docs_written
+          percentDone = Math.floor((doc_written/total_docs) * 100)
+          if !isNaN  percentDone
+            msg = "Change: docs_written: " + doc_written + " of " +  total_docs + ". Percent Done: " + percentDone + "%<br/>"
+          else
+            msg = "Change: docs_written: " + doc_written + "<br/>"
+          console.log("Change; msg: " + msg)
+          $('#messages').append(msg)
+      try
+        Utils.replicate(options)
+      catch error
+        console.log(error)
+
 
   render: =>
 

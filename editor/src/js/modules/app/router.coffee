@@ -62,7 +62,7 @@ class Router extends Backbone.Router
 
     'assessments'        : 'assessments'
 
-    'run/app/'       : 'runApp'
+    'run/app/:groupName'       : 'runApp'
     'run/:id'       : 'run'
     'print/:id/:format'       : 'print'
     'dataEntry/:id' : 'dataEntry'
@@ -518,6 +518,8 @@ class Router extends Backbone.Router
   assessments: ->
     Tangerine.user.verify
       isAuthenticated: ->
+
+
         (workflows = new Workflows).fetch
           success: ->
 
@@ -613,7 +615,7 @@ class Router extends Backbone.Router
                 vm.show view
 
 #  WidgetSiteRunView displays the whole app.
-  runApp: () ->
+  runApp: (groupName) ->
     Tangerine.user.verify
       isAuthenticated: ->
         docList = []

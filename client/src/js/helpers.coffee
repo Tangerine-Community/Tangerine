@@ -442,113 +442,79 @@ class Utils
         else
           callbacks.success?()
 
-  @replicate: (options, divId) ->
+  @replicate: (options) ->
     options = {} if !options
     opts =
-#      live:true
-#      retry:true
       continuous: false
-#      batch_size:5
-#      filter: filter
-#      batches_limit:1
       withCredentials:true
-#      auth:
-#        username:account.username
-#        password:account.password
       error: (result) ->
         console.log "error: Replication error: " + JSON.stringify result
       timeout: 60000
-
-#    _.extend options, opts
-
-#    complete = (result) ->
-#      if typeof result != 'undefined' && result != null && result.ok
-#        console.log "replicateToServer - onComplete: Replication is fine. "
-#      else
-#        console.log "replicateToServer - onComplete: Replication message: " + result
-
     source = options.source
     target = options.target
 
     remotePouch = PouchDB.defaults(
       prefix: source
     )
-
     remotePouch = new PouchDB(source)
-
-#    console.log("about to @checkSession")
-#    @checkSession(source).then((result) ->
-    console.log("about to replicate")
-    rep = PouchDB.replicate(remotePouch, target, opts).on('change', (info) ->
-      doc_count = result?.doc_count
-      doc_del_count = result?.doc_del_count
-      total_docs = doc_count + doc_del_count
-      doc_written = info.docs_written
-      percentDone = Math.floor((doc_written/total_docs) * 100)
-      if !isNaN  percentDone
-        msg = "Change: docs_written: " + doc_written + " of " +  total_docs + ". Percent Done: " + percentDone + "%<br/>"
-      else
-        msg = "Change: docs_written: " + doc_written + "<br/>"
-      console.log("Change; msg: " + msg)
-      if (options.change?)
-        options.change(msg)
-      if typeof divId != 'undefined'
-        $(divId).append msg
-    ).on('complete', (info) ->
-      console.log "Complete: " + JSON.stringify info
-      if (options.complete?)
-        options.complete(info)
-      if (options.change?)
-        options.change(info)
-    ).on('error',  (err) ->
-      console.log "error: " + JSON.stringify err
-    ).then(
-      console.log("I'm done")
-      Tangerine.db.info().then((result) ->
-        console.log("result: " + JSON.stringify(result)))
+    @checkSession(source).then((result) ->
+      console.log("about to replicate")
+      rep = PouchDB.replicate(remotePouch, target, opts).on('change', (info) ->
+        if (options.change?)
+          options.change(info, result)
+        if typeof divId != 'undefined'
+          $(divId).append msg
+      ).on('complete', (info) ->
+        console.log "Complete: " + JSON.stringify info
+        if (options.complete?)
+          options.complete(info, result)
+      ).on('error',  (err) ->
+        console.log "error: " + JSON.stringify err
+      ).then(
+        console.log("I'm done")
+#        Tangerine.db.info().then((result) ->
+#          console.log("result: " + JSON.stringify(result)))
+      )
     )
-#    )
-
-#    Coconut.menuView.checkReplicationStatus();
 
   @replicateToPouchdb = ->
-    credRepliUrl = Utils.groupDb_url_with_creds()
-    #    credRepliUrl = Utils.groupDb_url_with_uploader_creds()
-    console.log("credRepliUrl: " + credRepliUrl)
-    cloud_credentials = Tangerine.settings.get("replicationCreds")
-    upName = "uploader-" + Tangerine.settings.get("groupName")
-    upPass = Tangerine.settings.get("upPass")
-    console.log("cloud_credentials: " + cloud_credentials)
-    creds = cloud_credentials.split(":")
-    #    username = creds[0]
-    #    password = creds[1]
-    username = upName
-    password = upPass
-
-    Utils.ensureServerAuth(
-      error: => console.log 'ensureServerAuth failed'
-      success: =>
-        console.log 'ensureServerAuth worked'
-        options =
-          source: credRepliUrl
-          target: Tangerine.db
-          username: username
-          password: password
-          complete: (result) ->
-            if typeof result != 'undefined' && result != null && result.ok
-              console.log "replicateToServer - onComplete: Replication is fine. "
-              $('.assessment-widget-result').html(result)
+#    credRepliUrl = Utils.groupDb_url_with_creds()
+#    #    credRepliUrl = Utils.groupDb_url_with_uploader_creds()
+#    console.log("credRepliUrl: " + credRepliUrl)
+#    cloud_credentials = Tangerine.settings.get("replicationCreds")
+#    upName = "uploader-" + Tangerine.settings.get("groupName")
+#    upPass = Tangerine.settings.get("upPass")
+#    console.log("cloud_credentials: " + cloud_credentials)
+#    creds = cloud_credentials.split(":")
+#    #    username = creds[0]
+#    #    password = creds[1]
+#    username = upName
+#    password = upPass
+#
+#    Utils.ensureServerAuth(
+#      error: => console.log 'ensureServerAuth failed'
+#      success: =>
+#        console.log 'ensureServerAuth worked'
+    options =
+      source: credRepliUrl
+      target: Tangerine.db
+      username: username
+      password: password
+      complete: (result) ->
+        if typeof result != 'undefined' && result != null && result.ok
+          console.log "replicateToServer - onComplete: Replication is fine. "
+          $('.assessment-widget-result').html(result)
 #              Backbone.history.navigate('', {trigger: true})
-              Tangerine.router.landing(true)
-            else
-              console.log "replicateToServer - onComplete: Replication message: " + result
-          change: (info) ->
-            $('.assessment-widget-result').html(info)
-        try
-          Utils.replicate(options)
-        catch error
-          console.log(error)
-    )
+          Tangerine.router.landing(true)
+        else
+          console.log "replicateToServer - onComplete: Replication message: " + result
+      change: (info) ->
+        $('.assessment-widget-result').html(info)
+    try
+      Utils.replicate(options)
+    catch error
+      console.log(error)
+#    )
 
   @restartTangerine: (message, callback) ->
     Utils.midAlert "#{message || 'Restarting Tangerine'}"

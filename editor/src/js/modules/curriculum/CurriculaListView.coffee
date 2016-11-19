@@ -13,8 +13,10 @@ class CurriculaListView extends Backbone.View
     return if @curricula.length == 0
 
     if @curricula.length > 0
+      groupName = Tangerine.settings.get('groupName')
+      url = '#run/app/' + groupName
       runCurriculaApp = " <ul>
-        <li class = 'sp_run'><a href='#run/app/'>Run the Curricula App</a></li>
+        <li class = 'sp_run'><a href=" + url + ">Run the Curricula App</a></li>
         <li>Run the Curricula App</li>
       </ul>"
     else

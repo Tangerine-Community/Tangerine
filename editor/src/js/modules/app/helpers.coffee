@@ -647,6 +647,70 @@ class Utils
                       Utils.onUpdateSuccess(totalDocs)
         , doc_ids : docIds
 
+  @checkSession: (url, options) ->
+    options = options || {};
+    console.log("checkSession started")
+    $.ajax
+      type: "GET",
+      url:  url,
+      data: "",
+      beforeSend: (xhr)->
+        xhr.setRequestHeader('Accept', 'application/json')
+      ,
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("Error: " + textStatus + " jqXHR: " + JSON.stringify(jqXHR))
+      complete: (req) ->
+        console.log("checkSession about to run the parseJSON: " + JSON.stringify(req))
+        resp = $.parseJSON(req.responseText);
+        console.log("checkSession about to run the Promise")
+
+        Promise.resolve(req.responseJSON);
+        console.log("checkSession just ran the Promise")
+        if (req.status == 200)
+          console.log("Logged in.")
+          if options.success
+            options.success(resp)
+        else if (options.error)
+          console.log("Error:" + req.status + " resp.error: " + resp.error)
+          options.error(req.status, resp.error, resp.reason);
+        else
+          alert("An error occurred getting session info: " + resp.reason)
+
+  @replicate: (options) ->
+    options = {} if !options
+    opts =
+      continuous: false
+      withCredentials:true
+      error: (result) ->
+        console.log "error: Replication error: " + JSON.stringify result
+      timeout: 60000
+    source = options.source
+    target = options.target
+
+    remotePouch = PouchDB.defaults(
+      prefix: source
+    )
+    remotePouch = new PouchDB(source)
+    @checkSession(source).then((result) ->
+      console.log("about to replicate")
+      rep = PouchDB.replicate(remotePouch, target, opts).on('change', (info) ->
+        if (options.change?)
+          options.change(info, result)
+        if typeof divId != 'undefined'
+          $(divId).append msg
+      ).on('complete', (info) ->
+        console.log "Complete: " + JSON.stringify info
+        if (options.complete?)
+          options.complete(info, result)
+      ).on('error',  (err) ->
+        console.log "error: " + JSON.stringify err
+      ).then(
+        console.log("I'm done")
+#        Tangerine.db.info().then((result) ->
+#          console.log("result: " + JSON.stringify(result)))
+      )
+    )
+
   @log: (self, error) ->
     className = self.constructor.toString().match(/function\s*(\w+)/)[1]
     console.log "#{className}: #{error}"

@@ -24,7 +24,7 @@ class Router extends Backbone.Router
     'workflows': 'workflows'
     'widget'   : 'widgetLoad'
     'widget-play/:id' : 'widgetPlay'
-    'widgetRelicateLoad' : 'widgetRelicateLoad'
+    'widgetSiteLoad/:groupName' : 'widgetSiteLoad'
     'feedback/edit/:workflowId' : 'feedbackEdit'
     'feedback/:workflowId'      : 'feedback'
     'login'    : 'login'
@@ -678,9 +678,11 @@ class Router extends Backbone.Router
       error: (model, err, cb) ->
         console.log JSON.stringify err
 
-  widgetRelicateLoad: () ->
+  widgetSiteLoad: (groupName) ->
     siteDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
     settings = siteDocs[0]
+#    groupName = settings.groupName
+#    Tangerine.db = new PouchDB(groupName)
     Tangerine.settings = new Settings(settings)
     Tangerine.settings.update()
     userAdminDoc = siteDocs[1]
@@ -688,11 +690,13 @@ class Router extends Backbone.Router
     Tangerine.db
       .put(userAdminDoc)
       .then( (response) ->
-        Utils.replicateToPouchdb()
-      ).catch(
-        console.log("Database already initialized. ")
-        Utils.replicateToPouchdb()
-      )
+#        Utils.replicateToPouchdb()
+        Tangerine.router.landing(true)
+      ).catch (err) ->
+        console.log("Database already initialized: " + err)
+#        Utils.replicateToPouchdb()
+        Tangerine.router.landing()
+
 
   runMar: (id) ->
     router = this

@@ -27,6 +27,11 @@ Tangerine.bootSequence =
       dbname = "tangerine-" + Date.now() + Math.random()
       console.log("dbname:" + dbname)
       Tangerine.db = new PouchDB(dbname, {storage: 'temporary'})
+    else if (window.location.hash.startsWith('#widgetSiteLoad'))
+#       This is a widget for editor and we should keep it in our long-term memory
+      hashArr = window.location.hash.split("/")
+      groupName = hashArr[1]
+      Tangerine.db = new PouchDB(groupName)
     else 
       # This is not a widget and we'll hang onto our long term memory.
       Tangerine.db = new PouchDB(Tangerine.conf.db_name)
@@ -78,7 +83,7 @@ Tangerine.bootSequence =
           alert 'Error loading views'
           console.log err
 
-        if ((window.location.hash != '#widget') && (window.location.hash != '#widgetRelicateLoad'))
+        if ((window.location.hash != '#widget'))
 
           #
           # Load Packs that Tree creates for an APK, then load the Packs we use for
@@ -95,41 +100,46 @@ Tangerine.bootSequence =
           markDatabaseAsInitialized = ->
             Tangerine.db.put({"_id":"initialized"}).then( => callback() )
 
-          # Recursive function that will iterate through js/init/pack000[0-x] until
-          # there is no longer a returned pack.
-          packNumber = 0
-          doOne = ->
+          if (!window.location.hash.startsWith('#widgetSiteLoad'))
 
-            paddedPackNumber = ("0000" + packNumber).slice(-4)
-            $.ajax
-              dataType: "json"
-              url: "js/init/pack#{paddedPackNumber}.json"
-              error: (res) ->
-                # No more pack? We're all done here.
-                if res.status is 404
-                  # Mark this database as initialized so that this process does not
-                  # run again on page refresh, then load Development Packs.
-                  indexViews()
-#                  Load the admin user
-                  Utils.importDoc('js/init/user-admin.json')
-              success: (res) ->
-                if res.docs?
-                  docs = res.docs
-                else
-                  docs = res
-                if docs.length == 0 then return indexViews()
-                console.log('Found ' + docs.length + ' docs')
-                packNumber++
-                Tangerine.db.bulkDocs docs, (error, doc) ->
-                  if error
-                    return alert "could not save initialization documents: #{error}"
-                  doOne()
+            # Recursive function that will iterate through js/init/pack000[0-x] until
+            # there is no longer a returned pack.
+            packNumber = 0
+            doOne = ->
 
-          # kick off recursive process
-          doOne()
-        else
-          console.log("init empty db for widget.")
-          db.put({"_id":"initialized"}).then( -> callback() )
+              paddedPackNumber = ("0000" + packNumber).slice(-4)
+              $.ajax
+                dataType: "json"
+                url: "js/init/pack#{paddedPackNumber}.json"
+                error: (res) ->
+                  # No more pack? We're all done here.
+                  if res.status is 404
+                    # Mark this database as initialized so that this process does not
+                    # run again on page refresh, then load Development Packs.
+                    indexViews()
+  #                  Load the admin user
+                    Utils.importDoc('js/init/user-admin.json')
+                success: (res) ->
+                  if res.docs?
+                    docs = res.docs
+                  else
+                    docs = res
+                  if docs.length == 0 then return indexViews()
+                  console.log('Found ' + docs.length + ' docs')
+                  packNumber++
+                  Tangerine.db.bulkDocs docs, (error, doc) ->
+                    if error
+                      return alert "could not save initialization documents: #{error}"
+                    doOne()
+
+            # kick off recursive process
+            doOne()
+          else
+            if (window.location.hash.startsWith('#widgetSiteLoad'))
+              indexViews().then( -> callback() )
+            else
+              console.log("init empty db for widget.")
+              db.put({"_id":"initialized"}).then( -> callback() )
 
   # Put this version's information in the footer
   versionTag: ( callback ) ->
@@ -138,7 +148,7 @@ Tangerine.bootSequence =
 
   # load templates
   fetchTemplates: ( callback ) ->
-    if ((window.location.hash != '#widget') && (window.location.hash != '#widgetRelicateLoad'))
+    if ((window.location.hash != '#widget') && (!window.location.hash.startsWith('#widgetSiteLoad')))
       (Tangerine.templates = new Template "_id" : "templates").fetch
         error: -> alert "Could not load templates."
         success: callback
@@ -147,7 +157,8 @@ Tangerine.bootSequence =
   # Grab our system config doc. These generally don't change very often unless
   # major system changes are required. New servers, etc.
   fetchConfiguration: ( callback ) ->
-    if ((window.location.hash != '#widget') && (window.location.hash != '#widgetRelicateLoad'))
+#    if ((window.location.hash != '#widget') && (!window.location.hash.startsWith('#widgetSiteLoad')))
+    if ((window.location.hash != '#widget'))
       Tangerine.config = new Config "_id" : "configuration"
       Tangerine.config.fetch
         error   : -> alert "Could not fetch configuration"
@@ -333,7 +344,7 @@ Tangerine.bootSequence =
     )
 
   getLocationList : ( callback ) ->
-    if ((window.location.hash != '#widget') && (window.location.hash != '#widgetRelicateLoad'))
+    if ((window.location.hash != '#widget') && (!window.location.hash.startsWith('#widgetSiteLoad')))
       # Grab our system config doc
       Tangerine.locationList = new Backbone.Model "_id" : "location-list"
 

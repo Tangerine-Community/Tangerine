@@ -10,7 +10,8 @@
     "jquery-ui": "^1.12.1",
     "backbone-forms": "^0.14.1",
     "pouchdb": "^6.0.7",
-    "backbone-pouchdb": "*"
+    "backbone-pouchdb": "*",
+    "string.startsWith": "*"
   },
   "devDependencies": {
     "bluebird": "^3.4.6",
