@@ -503,7 +503,7 @@ conf.libFiles = [
   './src/js/lib/base64.js',
   './src/js/lib/jstz.js',
   './src/js/lib/sanitize-webpack.js',
-  './src/js/lib/ckeditor.js',
+  //'./src/js/lib/ckeditor.js',
   // './src/bower_components/backbone-model-file-upload/backbone-model-file-upload.js',
   // './src/bower_components/blueimp-file-upload/js/jquery.fileupload.js',
   './src/js/lib/coffee-script.js' // This file tends to like to be last
