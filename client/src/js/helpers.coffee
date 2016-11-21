@@ -341,12 +341,8 @@ class Utils
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("Error: " + textStatus + " jqXHR: " + JSON.stringify(jqXHR))
       complete: (req) ->
-        console.log("checkSession about to run the parseJSON: " + JSON.stringify(req))
         resp = $.parseJSON(req.responseText);
-        console.log("checkSession about to run the Promise")
-
         Promise.resolve(req.responseJSON);
-        console.log("checkSession just ran the Promise")
         if (req.status == 200)
           console.log("Logged in.")
           if options.success

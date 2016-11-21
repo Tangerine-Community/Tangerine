@@ -94,7 +94,7 @@ Tangerine.bootSequence =
             Tangerine.db.query('tangerine/byCollection', {key: 'workflows'}).then((res) ->
               markDatabaseAsInitialized()
             ).catch( (err) ->
-              alert('Could not index views')
+              alert('Could not index views. Error: ' + err)
             )
 
           markDatabaseAsInitialized = ->

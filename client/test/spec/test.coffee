@@ -207,355 +207,114 @@
 ##              done()
 ##            )
       )
-
-      it('Should return the expected assessment', ()->
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch({
-          error:(err) ->
-            console.log "Catch Error: " + JSON.stringify err
-          success: (record) ->
-#            console.log("assessment: " + JSON.stringify assessment)
-            Tangerine.assessment = assessment
-            expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
-        })
-      )
-
-      it('Should make the view', ()->
-        this.$fixture.empty().appendTo(this.$container);
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch({
-          error: (err)->
-            console.log "Catch Error: " + JSON.stringify err
-          success: (record) ->
-            Tangerine.assessment = assessment
-            viewOptions =
-              model: assessment
-              el: this.$fixture
-            view = new AssessmentCompositeView viewOptions
-            view.once("render", () ->
-              console.log("view.$el.text():" + view.$el.text())
-              expect(view.$el.text()).to.contain("01. LTTP2 2015 - Student");
-            )
-            view.render();
-        })
-      )
-
-      it('Should contain a test transition comment, help text, and dialog', ()->
-        this.$fixture.empty().appendTo(this.$container);
-        id = "5a6de214-b578-07c2-9349-41804d85bf2b"
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch({
-          error: (err)->
-            console.log "Catch Error: " + JSON.stringify err
-          success: (record) ->
-            Tangerine.assessment = assessment
-            viewOptions =
-              model: assessment
-              el: this.$fixture
-            view = new AssessmentCompositeView viewOptions
-            view.once("render", () ->
-              view.once("render", () ->
-                subtestHelpButton = (view.$el.find('button.subtest_help'))[0]
-                $(subtestHelpButton).click()
-                studentDialog = (view.$el.find('.student_dialog'))[0]
-                enumeratorHelp = (view.$el.find('.enumerator_help'))[0]
-                expect($(studentDialog).text()).to.contain("Here are some subtraction (take away) problems.")
-                expect($(enumeratorHelp).text()).to.contain("Show the child the sheet in the student stimulus booklet as you read the instructions.")
-                expect(view.$el.text()).to.contain("Test transition comment");
-              )
-              $((view.$el.find('.subtest-next'))[0]).click()
-            )
-            view.render();
-        })
-      )
-      it('Should contain a test transition comment, the subtest should complete and then there should be another test transition comment', ()->
-        this.$fixture.empty().appendTo(this.$container);
-        id = "11322a8a-0807-68b6-c469-37ecc571cbf0"
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch({
-          error: (err)->
-            console.log "Catch Error: " + JSON.stringify err
-          success: (record) ->
-            Tangerine.assessment = assessment
-            viewOptions =
-              model: assessment
-              el: this.$fixture
-            view = new AssessmentCompositeView viewOptions
-            view.once("render", () ->
-              expect(view.$el.text()).to.contain("1. Test transition comment");
-              view.once("render", () ->
-                expect(view.$el.text()).to.contain("2. Test transition comment");
-              )
-              # Click through to the next subtest that we will actually test.
-              startTimeButton = (view.$el.find('.start_time'))[0]
-              $(startTimeButton).click()
-              grid = (view.$el.find('button'))[0]
-              gridButton = ($(grid).find('button'))[0]
-              $(gridButton).click()
-              setTimeout(() ->
-                stopTimeButton = (view.$el.find('.stop_time'))[0]
-                $(stopTimeButton).click()
-                subTestNextButton = (view.$el.find('.subtest-next'))[0]
-                $(subTestNextButton).click()
-              , 1000)
-# @todo Not nice ^ that we have to wait in our test. I think there is
-# something in the code that does not allow start and stop in the
-# same second.
-            )
-            view.render();
-        })
-      )
-
-      it('Should default to one school if there is only one option', ()->
-        this.$fixture.empty().appendTo(this.$container);
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch({
-          error: (err)->
-            console.log "Catch Error: " + JSON.stringify err
-          success: (record) ->
-            Tangerine.assessment = assessment
-            viewOptions =
-              model: assessment
-              el: this.$fixture
-            view = new AssessmentCompositeView viewOptions
-            view.once("render", () ->
-# This test will continue on the next render of a subtest.
-              view.once("render", () ->
-# Change level Zero.
-                levelZero = view.$el.find('#level_0')
-                $(levelZero[0]).val('Bong')
-                $(levelZero[0]).trigger "change"
-                # Change level One.
-                levelOne = view.$el.find('#level_1')
-                $(levelOne[0]).val('Zota')
-                $(levelOne[0]).trigger "change"
-                # Test level Two.
-                levelTwo = view.$el.find('#level_2')
-                expect($(levelTwo[0][1]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
-                expect($(levelTwo[0][0]).context.disabled).to.equal(true)
-              )
-              # Click through to the next subtest that we will actually test.
-              buttons = view.$el.find('.subtest-next')
-              $(buttons[0]).click()
-            )
-            view.render();
-        })
-      )
-
-      it('Should resume assessment at the same place', ()->
-        this.timeout(10000)
-        this.$fixture.empty().appendTo(this.$container);
-        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch({
-          error: (err)->
-            console.log "Catch Error: " + JSON.stringify err
-          success: (record) ->
-            Tangerine.assessment = assessment
-            viewOptions =
-              model: assessment
-              el: this.$fixture
-            view = new AssessmentCompositeView viewOptions
-            view.once("render", () ->
-# This test will continue on the next render of a subtest.
-              view.once("render", () ->
-# Change level Zero.
-                levelZero = view.$el.find('#level_0')
-                $(levelZero[0]).val('Bong')
-                $(levelZero[0]).trigger "change"
-                # Change level One.
-                levelOne = view.$el.find('#level_1')
-                $(levelOne[0]).val('Zota')
-                $(levelOne[0]).trigger "change"
-                # Test level Two.
-                levelTwo = view.$el.find('#level_2')
-                $(levelTwo[0]).val('Gorpu Dolo Boi Elem.& Jr. High')
-                $(levelTwo[0]).trigger "change"
-#                expect($(levelTwo[0][1]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
-#                expect($(levelTwo[0][0]).context.disabled).to.equal(true)
-                view.once("render", ->
-                  buttons = view.$el.find('.subtest-next')
-                  $(buttons[0]).click()
-                  resultId = view.result.id
-                  assessmentId = view.assessment.id
-                  elHtml = view.$el.html()
-                  assessmentTwo = new Assessment "_id" : assessmentId
-                  assessmentTwo.deepFetch({
-                    success : ->
-                      result = new Result "_id" : resultId
-                      result.fetch
-                        success: ->
-                          view = new AssessmentCompositeView
-                            assessment: assessmentTwo
-                            result: result
-                          view.once("render", () ->
-                            if (elHtml == view.$el.html())
-                            else
-                              throw "HTML of AssessmentCompositeView does not match up resume"
-                          )
-                          view.render()
-                  })
-                )
-                buttons = view.$el.find('.subtest-next')
-                $(buttons[0]).click()
-              )
-              buttons = view.$el.find('.subtest-next')
-              $(buttons[0]).click()
-            )
-            view.render();
-        })
-      )
-
-
-      it('Should contain a next question button', ()->
-#        this.timeout(200000);
-        this.$fixture.empty().appendTo(this.$container);
-        id = "af072ff9-e325-c518-7ecd-c04f5ed4ec00"
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch({
-          error: (err)->
-            console.log "Catch Error: " + JSON.stringify err
-          success: (record) ->
-            viewOptions =
-              assessment: assessment
-              el: this.$fixture
-            view = new AssessmentCompositeView viewOptions
-            view.once("nextQuestionRendered", () ->
-#            view.once("render:collection", () ->
-#              console.log("view.$el.html(): " + view.$el.html())
-              expect(view.$el.html()).to.contain("Next question");
-            )
-            view.render();
-        })
-      )
-
-#     If you are viewing this test in a browser, you will get many js error popups from the skip logic. Ignore. This has always been an issue.
-#      The test will pass despite that. Utils.data in helpers.coffee is used in the skip logic rule, and it is not getting populated.
-      it('Should pass to the Kiswahili page and display only the first question (focusmode)', ()->
-#        this.timeout(15000);
-        this.$fixture.empty().appendTo(this.$container);
-        id = "122a745b-e619-d4c0-29cd-3e9e27645632"
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch({
-          error: (err)->
-            console.log "Catch Error: " + JSON.stringify err
-          success: (record) ->
-            Tangerine.assessment = assessment
-            viewOptions =
-              model: assessment
-              el: this.$fixture
-            view = new AssessmentCompositeView viewOptions
-            view.once("render", () ->
-#            view.once("render:collection", () ->
-#            view.once("dom:refresh", () ->
-# This test will continue on the next render of a subtest.
-#              view.once("render", () ->
-              view.once("render:collection", () ->
-# Change level Zero.
-                levelZero = view.$el.find('#level_0')
-                $(levelZero[0]).val('Arusha')
-                $(levelZero[0]).trigger "change"
-                # Change level One.
-                levelOne = view.$el.find('#level_1')
-                $(levelOne[0]).val('ARUSHA')
-                $(levelOne[0]).trigger "change"
-                # Test level Two.
-                levelTwo = view.$el.find('#level_2')
-                #                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
-                $(levelTwo[0]).val('OLDONYOSAPUK PR. SCHOOL')
-                $(levelTwo[0]).trigger "change"
-                #                console.log("view.$el.html(): " + view.$el.html())
-                console.log("Test Should display the School Selection< page - view.$el.html(): " + view.$el.html())
-                view.once("render:collection", () ->
-#                  console.log("Test display the Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
-#                  buttons = view.$el.find('.subtest-next')
-#                  $(buttons[0]).click()
-#                  expect(view.$el.html()).to.contain("When you are ready to begin observing, press 'Kiswahili' below.");
-                  renderObservation = ->
-                    console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
-                    expect(view.$el.html()).to.contain("Kiswahili");
-                    renderKiswahili = ->
-                      console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html())
-#                      expect(view.$el.html()).to.contain("Kiswahili");
-#                      expect(view.$el.find('#question-lesson_content_first').css('display')).to.eq('block');
-                      lessoncContentFirst = view.$el.find('#question-lesson_content_first')
-                      if typeof lessoncContentFirst != 'undefined' && lessoncContentFirst != null
-                        if typeof lessoncContentFirst.css('display') != 'undefined' && lessoncContentFirst.css('display') != null
-                          expect(lessoncContentFirst.css('display')).to.eq('block');
-                      reading = view.$el.find('#question-reading')
-                      if typeof reading != 'undefined' && reading != null
-                        console.log("reading: " + reading)
-                        if typeof reading.css('display') != 'undefined' && reading.css('display') != null
-                          expect(reading.css('display')).to.eq('none');
-                    buttons = view.$el.find('.button.left')
-                    $(buttons[0]).click()
-                    buttons = view.$el.find('.subtest-next')
-                    $(buttons[0]).click()
-                    setTimeout(renderKiswahili, 2000)
-                  setTimeout(renderObservation, 1000)
-                )
-                buttons = view.$el.find('.subtest-next')
-                $(buttons[0]).click()
-              )
-              # Click through to the next subtest that we will actually test.
-              buttons = view.$el.find('.subtest-next')
-              $(buttons[0]).click()
-            )
-            view.render();
-        })
-      )
-
-      it('Should replicate to the test server', ()->
-        console.log("Should replicate to the test server")
-        file = 'init/Settings.json'
-        $.ajax
-          dataType: "json"
-          url: file
-          error: (res) ->
-            console.log("Error: " + res)
-          success: (res) ->
-            if res.docs?
-              doc = res.docs
-            else
-              doc = res
-              Tangerine.settings = new Settings doc
-              Tangerine.settings.update()
-              credRepliUrl = Utils.groupHost_url_with_creds()
-              console.log("credRepliUrl: " + credRepliUrl)
-              options =
-                source:credRepliUrl
-                target:Tangerine.db
-                complete: (result) ->
-                  if typeof result != 'undefined' && result != null && result.ok
-                    console.log "replicateToServer - onComplete: Replication is fine. "
-                  else
-                    console.log "replicateToServer - onComplete: Replication message: " + result
-              $.ajax
-                url: credRepliUrl
-                async:true
-                error: (res) ->
-                  console.log("Error: " + JSON.stringify(res))
-                success: (res) ->
-                  console.log("result" + JSON.stringify(res))
-                  try
-                    Utils.replicate(options)
-                  catch error
-                    console.log(error)
-        )
-
-
-#      it('Should skip to Subtask 3', (done)->
-#        this.timeout(30000)
+#
+#      it('Should return the expected assessment', ()->
+#        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
+#        assessment = new Assessment "_id" : id
+#        assessment.deepFetch({
+#          error:(err) ->
+#            console.log "Catch Error: " + JSON.stringify err
+#          success: (record) ->
+##            console.log("assessment: " + JSON.stringify assessment)
+#            Tangerine.assessment = assessment
+#            expect(assessment.get("name")).to.equal('01. LTTP2 2015 - Student');
+#        })
+#      )
+#
+#      it('Should make the view', ()->
 #        this.$fixture.empty().appendTo(this.$container);
-#        id = "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9"
+#        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
 #        assessment = new Assessment "_id" : id
 #        assessment.deepFetch({
 #          error: (err)->
 #            console.log "Catch Error: " + JSON.stringify err
-#            done(err)
+#          success: (record) ->
+#            Tangerine.assessment = assessment
+#            viewOptions =
+#              model: assessment
+#              el: this.$fixture
+#            view = new AssessmentCompositeView viewOptions
+#            view.once("render", () ->
+#              console.log("view.$el.text():" + view.$el.text())
+#              expect(view.$el.text()).to.contain("01. LTTP2 2015 - Student");
+#            )
+#            view.render();
+#        })
+#      )
+#
+#      it('Should contain a test transition comment, help text, and dialog', ()->
+#        this.$fixture.empty().appendTo(this.$container);
+#        id = "5a6de214-b578-07c2-9349-41804d85bf2b"
+#        assessment = new Assessment "_id" : id
+#        assessment.deepFetch({
+#          error: (err)->
+#            console.log "Catch Error: " + JSON.stringify err
+#          success: (record) ->
+#            Tangerine.assessment = assessment
+#            viewOptions =
+#              model: assessment
+#              el: this.$fixture
+#            view = new AssessmentCompositeView viewOptions
+#            view.once("render", () ->
+#              view.once("render", () ->
+#                subtestHelpButton = (view.$el.find('button.subtest_help'))[0]
+#                $(subtestHelpButton).click()
+#                studentDialog = (view.$el.find('.student_dialog'))[0]
+#                enumeratorHelp = (view.$el.find('.enumerator_help'))[0]
+#                expect($(studentDialog).text()).to.contain("Here are some subtraction (take away) problems.")
+#                expect($(enumeratorHelp).text()).to.contain("Show the child the sheet in the student stimulus booklet as you read the instructions.")
+#                expect(view.$el.text()).to.contain("Test transition comment");
+#              )
+#              $((view.$el.find('.subtest-next'))[0]).click()
+#            )
+#            view.render();
+#        })
+#      )
+#      it('Should contain a test transition comment, the subtest should complete and then there should be another test transition comment', ()->
+#        this.$fixture.empty().appendTo(this.$container);
+#        id = "11322a8a-0807-68b6-c469-37ecc571cbf0"
+#        assessment = new Assessment "_id" : id
+#        assessment.deepFetch({
+#          error: (err)->
+#            console.log "Catch Error: " + JSON.stringify err
+#          success: (record) ->
+#            Tangerine.assessment = assessment
+#            viewOptions =
+#              model: assessment
+#              el: this.$fixture
+#            view = new AssessmentCompositeView viewOptions
+#            view.once("render", () ->
+#              expect(view.$el.text()).to.contain("1. Test transition comment");
+#              view.once("render", () ->
+#                expect(view.$el.text()).to.contain("2. Test transition comment");
+#              )
+#              # Click through to the next subtest that we will actually test.
+#              startTimeButton = (view.$el.find('.start_time'))[0]
+#              $(startTimeButton).click()
+#              grid = (view.$el.find('button'))[0]
+#              gridButton = ($(grid).find('button'))[0]
+#              $(gridButton).click()
+#              setTimeout(() ->
+#                stopTimeButton = (view.$el.find('.stop_time'))[0]
+#                $(stopTimeButton).click()
+#                subTestNextButton = (view.$el.find('.subtest-next'))[0]
+#                $(subTestNextButton).click()
+#              , 1000)
+## @todo Not nice ^ that we have to wait in our test. I think there is
+## something in the code that does not allow start and stop in the
+## same second.
+#            )
+#            view.render();
+#        })
+#      )
+#
+#      it('Should default to one school if there is only one option', ()->
+#        this.$fixture.empty().appendTo(this.$container);
+#        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
+#        assessment = new Assessment "_id" : id
+#        assessment.deepFetch({
+#          error: (err)->
+#            console.log "Catch Error: " + JSON.stringify err
 #          success: (record) ->
 #            Tangerine.assessment = assessment
 #            viewOptions =
@@ -567,31 +326,78 @@
 #              view.once("render", () ->
 ## Change level Zero.
 #                levelZero = view.$el.find('#level_0')
-##                $(levelZero[0]).val('Bong')
-##                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+#                $(levelZero[0]).val('Bong')
+#                $(levelZero[0]).trigger "change"
+#                # Change level One.
+#                levelOne = view.$el.find('#level_1')
+#                $(levelOne[0]).val('Zota')
+#                $(levelOne[0]).trigger "change"
+#                # Test level Two.
+#                levelTwo = view.$el.find('#level_2')
+#                expect($(levelTwo[0][1]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+#                expect($(levelTwo[0][0]).context.disabled).to.equal(true)
+#              )
+#              # Click through to the next subtest that we will actually test.
+#              buttons = view.$el.find('.subtest-next')
+#              $(buttons[0]).click()
+#            )
+#            view.render();
+#        })
+#      )
+#
+#      it('Should resume assessment at the same place', ()->
+#        this.timeout(10000)
+#        this.$fixture.empty().appendTo(this.$container);
+#        id = "5edd67d0-9579-6c8d-5bb5-03a33b4556a6"
+#        assessment = new Assessment "_id" : id
+#        assessment.deepFetch({
+#          error: (err)->
+#            console.log "Catch Error: " + JSON.stringify err
+#          success: (record) ->
+#            Tangerine.assessment = assessment
+#            viewOptions =
+#              model: assessment
+#              el: this.$fixture
+#            view = new AssessmentCompositeView viewOptions
+#            view.once("render", () ->
+## This test will continue on the next render of a subtest.
+#              view.once("render", () ->
+## Change level Zero.
+#                levelZero = view.$el.find('#level_0')
+#                $(levelZero[0]).val('Bong')
+#                $(levelZero[0]).trigger "change"
+#                # Change level One.
+#                levelOne = view.$el.find('#level_1')
+#                $(levelOne[0]).val('Zota')
+#                $(levelOne[0]).trigger "change"
+#                # Test level Two.
+#                levelTwo = view.$el.find('#level_2')
+#                $(levelTwo[0]).val('Gorpu Dolo Boi Elem.& Jr. High')
+#                $(levelTwo[0]).trigger "change"
+##                expect($(levelTwo[0][1]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+##                expect($(levelTwo[0][0]).context.disabled).to.equal(true)
 #                view.once("render", ->
-##                  buttons = view.$el.find('.subtest-next')
-##                  $(buttons[0]).click()
-##                  resultId = view.result.id
-##                  assessmentId = view.assessment.id
-##                  elHtml = view.$el.html()
-##                  assessmentTwo = new Assessment "_id" : assessmentId
-##                  assessmentTwo.deepFetch({
-##                    success : ->
-##                      result = new Result "_id" : resultId
-##                      result.fetch
-##                        success: ->
-##                          view = new AssessmentCompositeView
-##                            assessment: assessmentTwo
-##                            result: result
-##                          view.once("render", () ->
-##                            if (elHtml == view.$el.html())
-#                              done()
-##                            else
-##                              throw "HTML of AssessmentCompositeView does not match up resume"
-##                          )
-##                          view.render()
-##                  })
+#                  buttons = view.$el.find('.subtest-next')
+#                  $(buttons[0]).click()
+#                  resultId = view.result.id
+#                  assessmentId = view.assessment.id
+#                  elHtml = view.$el.html()
+#                  assessmentTwo = new Assessment "_id" : assessmentId
+#                  assessmentTwo.deepFetch({
+#                    success : ->
+#                      result = new Result "_id" : resultId
+#                      result.fetch
+#                        success: ->
+#                          view = new AssessmentCompositeView
+#                            assessment: assessmentTwo
+#                            result: result
+#                          view.once("render", () ->
+#                            if (elHtml == view.$el.html())
+#                            else
+#                              throw "HTML of AssessmentCompositeView does not match up resume"
+#                          )
+#                          view.render()
+#                  })
 #                )
 #                buttons = view.$el.find('.subtest-next')
 #                $(buttons[0]).click()
@@ -602,6 +408,186 @@
 #            view.render();
 #        })
 #      )
+#
+#
+#      it('Should contain a next question button', ()->
+##        this.timeout(200000);
+#        this.$fixture.empty().appendTo(this.$container);
+#        id = "af072ff9-e325-c518-7ecd-c04f5ed4ec00"
+#        assessment = new Assessment "_id" : id
+#        assessment.deepFetch({
+#          error: (err)->
+#            console.log "Catch Error: " + JSON.stringify err
+#          success: (record) ->
+#            viewOptions =
+#              assessment: assessment
+#              el: this.$fixture
+#            view = new AssessmentCompositeView viewOptions
+#            view.once("nextQuestionRendered", () ->
+##            view.once("render:collection", () ->
+##              console.log("view.$el.html(): " + view.$el.html())
+#              expect(view.$el.html()).to.contain("Next question");
+#            )
+#            view.render();
+#        })
+#      )
+#
+##     If you are viewing this test in a browser, you will get many js error popups from the skip logic. Ignore. This has always been an issue.
+##      The test will pass despite that. Utils.data in helpers.coffee is used in the skip logic rule, and it is not getting populated.
+#      it('Should pass to the Kiswahili page and display only the first question (focusmode)', ()->
+##        this.timeout(15000);
+#        this.$fixture.empty().appendTo(this.$container);
+#        id = "122a745b-e619-d4c0-29cd-3e9e27645632"
+#        assessment = new Assessment "_id" : id
+#        assessment.deepFetch({
+#          error: (err)->
+#            console.log "Catch Error: " + JSON.stringify err
+#          success: (record) ->
+#            Tangerine.assessment = assessment
+#            viewOptions =
+#              model: assessment
+#              el: this.$fixture
+#            view = new AssessmentCompositeView viewOptions
+#            view.once("render", () ->
+##            view.once("render:collection", () ->
+##            view.once("dom:refresh", () ->
+## This test will continue on the next render of a subtest.
+##              view.once("render", () ->
+#              view.once("render:collection", () ->
+## Change level Zero.
+#                levelZero = view.$el.find('#level_0')
+#                $(levelZero[0]).val('Arusha')
+#                $(levelZero[0]).trigger "change"
+#                # Change level One.
+#                levelOne = view.$el.find('#level_1')
+#                $(levelOne[0]).val('ARUSHA')
+#                $(levelOne[0]).trigger "change"
+#                # Test level Two.
+#                levelTwo = view.$el.find('#level_2')
+#                #                expect($(levelTwo[0]).val()).to.equal('Gorpu Dolo Boi Elem.& Jr. High')
+#                $(levelTwo[0]).val('OLDONYOSAPUK PR. SCHOOL')
+#                $(levelTwo[0]).trigger "change"
+#                #                console.log("view.$el.html(): " + view.$el.html())
+#                console.log("Test Should display the School Selection< page - view.$el.html(): " + view.$el.html())
+#                view.once("render:collection", () ->
+##                  console.log("Test display the Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
+##                  buttons = view.$el.find('.subtest-next')
+##                  $(buttons[0]).click()
+##                  expect(view.$el.html()).to.contain("When you are ready to begin observing, press 'Kiswahili' below.");
+#                  renderObservation = ->
+#                    console.log("Test Should pass to Ulichoona/ Classroom Observation page - view.$el.html(): " + view.$el.html())
+#                    expect(view.$el.html()).to.contain("Kiswahili");
+#                    renderKiswahili = ->
+#                      console.log("Test Should pass to Classroom Observation (Kiswahili) (2016) page - view.$el.html(): " + view.$el.html())
+##                      expect(view.$el.html()).to.contain("Kiswahili");
+##                      expect(view.$el.find('#question-lesson_content_first').css('display')).to.eq('block');
+#                      lessoncContentFirst = view.$el.find('#question-lesson_content_first')
+#                      if typeof lessoncContentFirst != 'undefined' && lessoncContentFirst != null
+#                        if typeof lessoncContentFirst.css('display') != 'undefined' && lessoncContentFirst.css('display') != null
+#                          expect(lessoncContentFirst.css('display')).to.eq('block');
+#                      reading = view.$el.find('#question-reading')
+#                      if typeof reading != 'undefined' && reading != null
+#                        console.log("reading: " + reading)
+#                        if typeof reading.css('display') != 'undefined' && reading.css('display') != null
+#                          expect(reading.css('display')).to.eq('none');
+#                    buttons = view.$el.find('.button.left')
+#                    $(buttons[0]).click()
+#                    buttons = view.$el.find('.subtest-next')
+#                    $(buttons[0]).click()
+#                    setTimeout(renderKiswahili, 2000)
+#                  setTimeout(renderObservation, 1000)
+#                )
+#                buttons = view.$el.find('.subtest-next')
+#                $(buttons[0]).click()
+#              )
+#              # Click through to the next subtest that we will actually test.
+#              buttons = view.$el.find('.subtest-next')
+#              $(buttons[0]).click()
+#            )
+#            view.render();
+#        })
+#      )
+#
+#      it('Should replicate to the test server', ()->
+#        console.log("Should replicate to the test server")
+#        file = 'init/Settings.json'
+#        $.ajax
+#          dataType: "json"
+#          url: file
+#          error: (res) ->
+#            console.log("Error: " + res)
+#          success: (res) ->
+#            if res.docs?
+#              doc = res.docs
+#            else
+#              doc = res
+#              Tangerine.settings = new Settings doc
+#              Tangerine.settings.update()
+#              credRepliUrl = Utils.groupHost_url_with_creds()
+#              console.log("credRepliUrl: " + credRepliUrl)
+#              options =
+#                source:credRepliUrl
+#                target:Tangerine.db
+#                complete: (result) ->
+#                  if typeof result != 'undefined' && result != null && result.ok
+#                    console.log "replicateToServer - onComplete: Replication is fine. "
+#                  else
+#                    console.log "replicateToServer - onComplete: Replication message: " + result
+#              $.ajax
+#                url: credRepliUrl
+#                async:true
+#                error: (res) ->
+#                  console.log("Error: " + JSON.stringify(res))
+#                success: (res) ->
+#                  console.log("result" + JSON.stringify(res))
+#                  try
+#                    Utils.replicate(options)
+#                  catch error
+#                    console.log(error)
+#        )
+
+
+
+      it('Should return the expected curriculum', ()->
+        id = "bccafd15-c49f-e29b-eae8-54bdb9a363e8"
+        record = new Curriculum "_id" : id
+        record.fetch({
+          error:(err) ->
+            console.log "Catch Error: " + JSON.stringify err
+          success: (record) ->
+#            console.log("record: " + JSON.stringify record)
+            expect(record.get("name")).to.equal('Curr 1');
+        })
+      )
+
+      it('Should make the view', ()->
+        this.$fixture.empty().appendTo(this.$container);
+        allKlasses = new Klasses
+        allKlasses.fetch
+          success: ( klassCollection ) =>
+            teachers = new Teachers
+            teachers.fetch
+              success: =>
+                record = new Curricula
+                record.fetch({
+                  error: (err)->
+                    console.log "Catch Error: " + JSON.stringify err
+                  success: (curriculaCollection) =>
+                    if not Tangerine.user.isAdmin()
+                      klassCollection = new Klasses klassCollection.where("teacherId" : Tangerine.user.get("teacherId"))
+                    viewOptions =
+                      klasses   : klassCollection
+                      curricula : curriculaCollection
+                      teachers  : {}
+                      el: this.$fixture
+                    view = new KlassesView viewOptions
+                    view.once("render", () ->
+                      console.log("view.$el.text():" + view.$el.text())
+                      expect(view.$el.text()).to.contain("Admin menu");
+                    )
+                    view.render();
+                })
+      )
 
 
 #      it('Should download the assessment config', (done)->
