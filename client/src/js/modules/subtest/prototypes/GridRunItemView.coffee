@@ -690,6 +690,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
       "items"         : itemResults
       "time_remain"   : timeRemaining
       "mark_record"   : @markRecord
+      "time_allowed"  : @model.get("timer")
       "variable_name" : @model.get("variableName")
     hash = @model.get("hash") if @model.has("hash")
     subtestResult =
