@@ -681,6 +681,7 @@ class Router extends Backbone.Router
   widgetSiteLoad: (groupName) ->
     siteDocs = JSON.parse(window.frameElement.getAttribute('data-assessment'))
     settings = siteDocs[0]
+    $.cookie "groupName", groupName
 #    groupName = settings.groupName
 #    Tangerine.db = new PouchDB(groupName)
     Tangerine.settings = new Settings(settings)

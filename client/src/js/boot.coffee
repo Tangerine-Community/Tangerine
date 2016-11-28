@@ -32,9 +32,13 @@ Tangerine.bootSequence =
       hashArr = window.location.hash.split("/")
       groupName = hashArr[1]
       Tangerine.db = new PouchDB(groupName)
-    else 
+    else
+      groupName = $.cookie("groupName")
+      if groupName != null
+        Tangerine.db = new PouchDB(groupName)
+      else
       # This is not a widget and we'll hang onto our long term memory.
-      Tangerine.db = new PouchDB(Tangerine.conf.db_name)
+        Tangerine.db = new PouchDB(Tangerine.conf.db_name)
 
     Backbone.sync = BackbonePouch.sync
       db: Tangerine.db
@@ -161,7 +165,7 @@ Tangerine.bootSequence =
     if ((window.location.hash != '#widget'))
       Tangerine.config = new Config "_id" : "configuration"
       Tangerine.config.fetch
-        error   : -> alert "Could not fetch configuration"
+        error   : (err) -> alert "Could not fetch configuration: " + err
         success : callback
     else return callback()
 

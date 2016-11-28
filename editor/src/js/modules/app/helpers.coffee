@@ -660,12 +660,12 @@ class Utils
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("Error: " + textStatus + " jqXHR: " + JSON.stringify(jqXHR))
       complete: (req) ->
-        console.log("checkSession about to run the parseJSON: " + JSON.stringify(req))
+#        console.log("checkSession about to run the parseJSON: " + JSON.stringify(req))
         resp = $.parseJSON(req.responseText);
-        console.log("checkSession about to run the Promise")
+#        console.log("checkSession about to run the Promise")
 
         Promise.resolve(req.responseJSON);
-        console.log("checkSession just ran the Promise")
+#        console.log("checkSession just ran the Promise")
         if (req.status == 200)
           console.log("Logged in.")
           if options.success
@@ -684,6 +684,8 @@ class Utils
       error: (result) ->
         console.log "error: Replication error: " + JSON.stringify result
       timeout: 60000
+      complete: (message) ->
+        console.log("I'm complete: " + message)
     source = options.source
     target = options.target
 
@@ -703,7 +705,7 @@ class Utils
         if (options.complete?)
           options.complete(info, result)
       ).on('error',  (err) ->
-        console.log "error: " + JSON.stringify err
+        console.log "error when trying to replicate: " + JSON.stringify err
       ).then(
         console.log("I'm done")
 #        Tangerine.db.info().then((result) ->
