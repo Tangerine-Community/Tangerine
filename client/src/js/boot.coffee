@@ -34,7 +34,7 @@ Tangerine.bootSequence =
       Tangerine.db = new PouchDB(groupName)
     else
       groupName = $.cookie("groupName")
-      if groupName != null
+      if typeof groupName != 'undefined' && groupName != null
         Tangerine.db = new PouchDB(groupName)
       else
       # This is not a widget and we'll hang onto our long term memory.
