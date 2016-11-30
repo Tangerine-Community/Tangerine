@@ -81,7 +81,6 @@ class SchoolListView extends Backbone.View
         #continue unless isRightWorkflow
         #continue if trip.get('tripId') in incompleteTrips
         #continue unless isValid
-        console.log 'flula'
         continue unless trip.get('authenticity')
         continue unless trip.get('endTime')
         continue unless trip.get('locationData')
