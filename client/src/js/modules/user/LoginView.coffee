@@ -94,7 +94,15 @@ class LoginView extends Backbone.Marionette.View
     else
       @$el.find("#pass").focus()
 
-  goOn: -> Tangerine.router.navigate "", true
+  goOn: ->
+    name = @registrationForm.model.get('name')
+    console.log("Tangerine.settings.get(context): " + Tangerine.settings.get("context") + " name: " + name)
+    if typeof Tangerine.settings.get("context") != "undefined" && Tangerine.settings.get("context") == "class" && name != "admin"
+      console.log("sending to register.")
+      Tangerine.router.navigate "register"
+    else
+      console.log("sending to landing page.")
+      Tangerine.router.navigate "", true
 
   updateMode: (event) ->
     $target = $(event.target)
@@ -218,7 +226,9 @@ class LoginView extends Backbone.Marionette.View
           @registrationForm.model.login name, password
           @registrationForm.model.trigger "login"
           # TODO This event below should bubble up to the router where the router then decides where to go next. Somewhere in the application the login is causing a redirect.
+          console.log("triggering done")
           @trigger 'done'
+        console.log("Saving the model")
         @registrationForm.model.save()
 
 

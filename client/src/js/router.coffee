@@ -110,7 +110,7 @@ class Router extends Backbone.Router
         assessment.deepFetch
           success : ( res ) ->
             view = new AssessmentEditView model: assessment 
-            vm.show view
+            Tangerine.app.rm.get('mainRegion').show view
 
 
   admin: (options) ->
@@ -121,19 +121,19 @@ class Router extends Backbone.Router
             groups = databases.filter (database) -> database.indexOf("group-") == 0
             view = new AdminView
               groups : groups
-            vm.show view
+            Tangerine.app.rm.get('mainRegion').show view
 
   bandwidth: ->
     Tangerine.user.verify
       isAuthenticated: ->
         view = new BandwidthCheckView
-        vm.show view
+        Tangerine.app.rm.get('mainRegion').show view
 
   tabs: ->
     Tangerine.user.verify
       isAuthenticated: ->
         view = new TabView
-        vm.show view
+        Tangerine.app.rm.get('mainRegion').show view
 
   _: ->
     Tangerine.user.verify
@@ -158,7 +158,7 @@ class Router extends Backbone.Router
 
     view = new DashboardView()
     view.options = reportViewOptions
-    vm.show view
+    Tangerine.app.rm.get('mainRegion').show view
 
   landing: (refresh = false) ->
 
@@ -172,7 +172,7 @@ class Router extends Backbone.Router
     Tangerine.user.verify
       isAuthenticated: ->
         view = new GroupsView
-        vm.show view
+        Tangerine.app.rm.get('mainRegion').show view
   #
   # Workflow
   #
@@ -204,7 +204,7 @@ class Router extends Backbone.Router
             view = new FeedbackEditView
               feedback: feedback
               workflow: workflow
-            vm.show view
+            Tangerine.app.rm.get('mainRegion').show view
 
           workflow = new Workflow "_id" : workflowId
           workflow.fetch
@@ -226,7 +226,7 @@ class Router extends Backbone.Router
         workflow.fetch
           success: ->
             view = new WorkflowEditView workflow : workflow
-            vm.show view
+            Tangerine.app.rm.get('mainRegion').show view
 
 
 
@@ -302,7 +302,7 @@ class Router extends Backbone.Router
           success: (collection) ->
             view = new CurriculaView
               "curricula" : collection
-            vm.show view
+            Tangerine.app.rm.get('mainRegion').show view
 
   curriculum: (curriculumId) ->
     Tangerine.user.verify
@@ -325,7 +325,7 @@ class Router extends Backbone.Router
                       "subtests"   : subtests
                       "questions"  : questions
 
-                    vm.show view
+                    Tangerine.app.rm.get('mainRegion').show view
 
 
   curriculumEdit: (curriculumId) ->
@@ -344,7 +344,7 @@ class Router extends Backbone.Router
                   "curriculum" : curriculum
                   "subtests" : subtests
                   "parts" : partCount
-                vm.show view
+                Tangerine.app.rm.get('mainRegion').show view
 
 
   curriculumImport: ->
@@ -352,7 +352,7 @@ class Router extends Backbone.Router
       isAuthenticated: ->
         view = new AssessmentImportView
           noun : "curriculum"
-        vm.show view
+        Tangerine.app.rm.get('mainRegion').show view
 
   klass: ->
     Tangerine.user.verify
@@ -372,7 +372,6 @@ class Router extends Backbone.Router
                       klasses   : klassCollection
                       curricula : curriculaCollection
                       teachers  : teachers
-#                    vm.show view
                     Tangerine.currentView = view
                     Tangerine.app.rm.get('mainRegion').show view
 
@@ -394,7 +393,7 @@ class Router extends Backbone.Router
                       students    : klassStudents
                       allStudents : allStudents
                       teachers    : teachers
-#                    vm.show view
+#                    Tangerine.app.rm.get('mainRegion').show view
                     Tangerine.currentView = view
                     Tangerine.app.rm.get('mainRegion').show view
 
@@ -473,7 +472,6 @@ class Router extends Backbone.Router
                         "subtest"  : subtest
                         "student"  : student
                         "previous" : res.rows.length
-#                      vm.show view
                       Tangerine.currentView = view
                       Tangerine.app.rm.get('mainRegion').show view
                 ).catch( (err) ->
@@ -500,7 +498,7 @@ class Router extends Backbone.Router
                       "subtest"      : subtest
                       "questions"    : questions
                       "linkedResult" : linkedResult
-#                    vm.show view
+#                    Tangerine.app.rm.get('mainRegion').show view
                     Tangerine.currentView = view
                     Tangerine.app.rm.get('mainRegion').show view
 
@@ -534,12 +532,15 @@ class Router extends Backbone.Router
                   onStudentReady(student, subtest)
 
   register: ->
+    console.log("at register")
     Tangerine.user.verify
       isUnregistered: ->
+        console.log("at register")
         view = new RegisterTeacherView
           user : new User
-        vm.show view
+        Tangerine.app.rm.get('mainRegion').show view
       isAuthenticated: ->
+        console.log("send to landing")
         Tangerine.router.landing()
 
   studentEdit: ( studentId ) ->
@@ -554,7 +555,6 @@ class Router extends Backbone.Router
                 view = new StudentEditView
                   student : model
                   klasses : klassCollection
-#                vm.show view
                 Tangerine.currentView = view
                 Tangerine.app.rm.get('mainRegion').show view
 
@@ -761,7 +761,7 @@ class Router extends Backbone.Router
                 view = new ResultsView
                   "assessment" : assessment
                   "results"    : allResults
-#                vm.show view
+#                Tangerine.app.rm.get('mainRegion').show view
                 Tangerine.app.rm.get('mainRegion').show view
 
 
@@ -770,7 +770,7 @@ class Router extends Backbone.Router
       isAdmin: ->
         view = new CSVView
           assessmentId : id
-        vm.show view
+        Tangerine.app.rm.get('mainRegion').show view
 
   csv_alpha: (id) ->
     Tangerine.user.verify
@@ -819,7 +819,7 @@ class Router extends Backbone.Router
                         "students" : students
                         "subtests" : subtests
                         "results"  : filteredResults
-                      vm.show view
+                      Tangerine.app.rm.get('mainRegion').show view
 
   masteryCheck: (studentId) ->
     Tangerine.user.verify
@@ -850,7 +850,7 @@ class Router extends Backbone.Router
                           "results"  : results
                           "klass"    : klass
                           "subtests" : subtestCollection
-                        vm.show view
+                        Tangerine.app.rm.get('mainRegion').show view
 
   progressReport: (studentId, klassId) ->
     Tangerine.user.verify
@@ -886,7 +886,7 @@ class Router extends Backbone.Router
                         "student"  : student
                         "results"  : results
                         "klass"    : klass
-                      vm.show view
+                      Tangerine.app.rm.get('mainRegion').show view
 
         if studentId != "all"
           student = new Student "_id" : studentId
@@ -914,7 +914,7 @@ class Router extends Backbone.Router
                 view = new SubtestEditView
                   model      : model
                   assessment : assessment
-                vm.show view
+                Tangerine.app.rm.get('mainRegion').show view
 
   editKlassSubtest: (id) ->
 
@@ -923,7 +923,7 @@ class Router extends Backbone.Router
         model      : subtest
         curriculum : curriculum
         questions  : questions
-      vm.show view
+      Tangerine.app.rm.get('mainRegion').show view
 
     Tangerine.user.verify
       isAdmin: ->
@@ -971,7 +971,7 @@ class Router extends Backbone.Router
                       "question"   : question
                       "subtest"    : subtest
                       "assessment" : assessment
-                    vm.show view
+                    Tangerine.app.rm.get('mainRegion').show view
 
 
   editKlassQuestion: (id) ->
@@ -993,7 +993,7 @@ class Router extends Backbone.Router
                       "question"   : question
                       "subtest"    : subtest
                       "assessment" : curriculum
-                    vm.show view
+                    Tangerine.app.rm.get('mainRegion').show view
 
 
   #
@@ -1039,7 +1039,8 @@ class Router extends Backbone.Router
           view = new AccountView
             user : Tangerine.user
             teacher: teacher
-          vm.show view
+#          Tangerine.app.rm.get('mainRegion').show view
+          Tangerine.app.rm.get('mainRegion').show view
 
         if "class" is Tangerine.settings.get("context")
           if Tangerine.user.has("teacherId")
@@ -1060,7 +1061,7 @@ class Router extends Backbone.Router
     Tangerine.user.verify
       isAuthenticated: ->
         view = new SettingsView
-        vm.show view
+        Tangerine.app.rm.get('mainRegion').show view
 
 
   logs: ->
@@ -1071,7 +1072,7 @@ class Router extends Backbone.Router
           success: =>
             view = new LogView
               logs: logs
-            vm.show view
+            Tangerine.app.rm.get('mainRegion').show view
 
 
   teachers: ->
@@ -1086,7 +1087,7 @@ class Router extends Backbone.Router
                 view = new TeachersView
                   teachers: teachers
                   users: users
-                vm.show view
+                Tangerine.app.rm.get('mainRegion').show view
 
 
   # Transfer a new user from tangerine-central into tangerine

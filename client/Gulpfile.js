@@ -105,7 +105,7 @@ gulp.task('webserver', function() {
 // start the webserver for testing
 gulp.task('test-webserver', function() {
   connect.server({
-    livereload: true, // sets up socket based reloading
+    livereload: false, // sets up socket based reloading
     root: '.'       // host from this dir
   });
 });
@@ -490,8 +490,8 @@ conf.fileOrder = [
   'KlassView',
   'KlassEditView',
   'Klasses',
-  'KlassesView',
   'KlassListElementView',
+  'KlassesView',
   'KlassSubtestRunView',
   'KlassSubtestResultView',
   'KlassMenuView',

@@ -3,6 +3,7 @@
   "language": "en-US",
   "upPass": "pass",
   "groupName": "",
+  "context": "class",
   "hostname": "INSERT_HOST_NAME",
   "groupDb": "INSERT_HOST_NAME/db",
   "groupHost": "INSERT_PROTOCOL://INSERT_HOST_NAME",

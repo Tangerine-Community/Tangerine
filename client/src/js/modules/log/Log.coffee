@@ -114,7 +114,7 @@ class LogView extends Backbone.View
     "
 
 
-    for log in logs
+    for log in @logs
       return if not log.get("event")? 
 
       ev      = log.get "event"

@@ -75,3 +75,14 @@ From the command line, the `./scripts/pack-cli.js` command can be used like this
 ```
 
 Notice the naming convention of the JSON file. It's the last 5 characters of the Assessment ID and then a descriptive human readable name.
+
+## Issues
+
+ - Assessment.deepFetch: When running the tests in browser, the following line throws an error:
+ 
+    ````opts.success.apply subtests.assessment, arguments````
+    
+    When the app is viewed in a browser, it runs fine. Workaround: Surround the following line in backbone.js in a try/catch:
+    
+    ````obj[implementation](name, callback, this);````
+    

@@ -649,7 +649,6 @@ class Utils
 
   @checkSession: (url, options) ->
     options = options || {};
-    console.log("checkSession started")
     $.ajax
       type: "GET",
       url:  url,
@@ -667,7 +666,7 @@ class Utils
         Promise.resolve(req.responseJSON);
 #        console.log("checkSession just ran the Promise")
         if (req.status == 200)
-          console.log("Logged in.")
+#          console.log("Logged in.")
           if options.success
             options.success(resp)
         else if (options.error)
@@ -694,7 +693,6 @@ class Utils
     )
     remotePouch = new PouchDB(source)
     @checkSession(source).then((result) ->
-      console.log("about to replicate")
       rep = PouchDB.replicate(remotePouch, target, opts).on('change', (info) ->
         if (options.change?)
           options.change(info, result)
@@ -706,11 +704,12 @@ class Utils
           options.complete(info, result)
       ).on('error',  (err) ->
         console.log "error when trying to replicate: " + JSON.stringify err
-      ).then(
-        console.log("I'm done")
+      )
+#      ).then(
+#        console.log("I'm done")
 #        Tangerine.db.info().then((result) ->
 #          console.log("result: " + JSON.stringify(result)))
-      )
+#      )
     )
 
   @log: (self, error) ->

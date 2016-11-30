@@ -1,6 +1,10 @@
-class KlassesView extends Backbone.View
+class KlassesView extends Backbone.Marionette.CompositeView
 
   className : "KlassesView"
+  childView: KlassListElementView
+  className: "KlassesView"
+# for Backbone.Marionette.CompositeView
+  childViewContainer: '#klass_list',
 
   events :
     'click .klass_add'         : 'toggleAddForm'
@@ -23,6 +27,8 @@ class KlassesView extends Backbone.View
     @teachers  = options.teachers
     
     @klasses.on "add remove change", @render
+
+    @collection = @klasses.models
 
     if Tangerine.user.isAdmin()
       # timeout for the verification attempt
@@ -269,6 +275,7 @@ class KlassesView extends Backbone.View
     @$el.find("#klass_list_wrapper").append $ul
 
   onSubviewRendered: =>
+    console.log("subRendered")
     @trigger "subRendered"
 
   render: =>
@@ -334,3 +341,6 @@ class KlassesView extends Backbone.View
 
   onClose: ->
     @closeViews()
+
+  onRender:->
+    console.log("onRender KlassesView")
