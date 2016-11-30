@@ -59,16 +59,10 @@ Trip = Backbone.Model.extend
   # When the Trip in the Workflow is all done, use this method to mark it as complete.
   markTripComplete: ->
     @set('endTime', Date.now())
-  
-  # Default Backbone.Model.validate hook that is called before save. Here we use it to determine authenticity for lack of
-  # a Backbone.Model.beforeSave hook.
-  validate: ->
     # Determine authenticity if conditions are met.
     authenticityParameters = @get('authenticityParameters')
     authenticity = true
-    if @get('endTime') == null
-      authenticity = false
-    else if authenticityParameters != undefined && authenticityParameters.enabled == true
+    if authenticityParameters != undefined && authenticityParameters.enabled == true
       # Start with valid being true, then prove us wrong.
       if authenticityParameters.constraints.duration?
           minutes = (@get('endTime') - @get('startTime')) / 1000 / 60
