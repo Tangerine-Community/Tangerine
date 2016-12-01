@@ -148,15 +148,7 @@ class AccountView extends Backbone.View
     applicationMenu = "
       <section>
         <h2>Application</h2>
-        <table class='menu_box'>
-          <tr>
-            <td><button class='command update'>Update</button></td>
-            <td><input type='checkbox' id='attempt_resolve'></td>
-            <td><label for='attempt_resolve'>Legacy method</label></td>
-          </tr>
-        </table><br>
         <button class='command restart'>Restart</button><br>
-        <button class='command send_debug'>Send debug report</button>
       </section>
 
       

@@ -704,6 +704,8 @@ class Utils
           options.complete(info, result)
       ).on('error',  (err) ->
         console.log "error when trying to replicate: " + JSON.stringify err
+        if (options.error?)
+          options.error(err)
       )
 #      ).then(
 #        console.log("I'm done")
@@ -931,6 +933,14 @@ class Utils
   @oldConsoleAssert = null
   @enableConsoleAssert: -> return unless oldConsoleAssert?    ; window.console.assert = oldConsoleAssert
   @disableConsoleAssert: -> oldConsoleAssert = console.assert ; window.console.assert = $.noop
+
+  # Spin the logo on ajax calls
+  @logoSpinStart: ->
+    if $("#navigation-logo").attr("src") isnt "images/navigation-logo-spin.gif"
+      $("#navigation-logo").attr "src", "images/navigation-logo-spin.gif"
+  @logoSpinStop: ->
+    if $("#navigation-logo").attr("src") isnt "images/navigation-logo.png"
+      $("#navigation-logo").attr "src", "images/navigation-logo.png"
 
 # Robbert interface
 class Robbert

@@ -14,7 +14,9 @@ class KlassesView extends Backbone.Marionette.CompositeView
     'click .goto_class'        : 'gotoKlass'
     'click .pull_data'   : 'pullData'
     'click .verify'      : 'ghostLogin'
-    'click .upload_data' : 'uploadData'
+    'click .upload_data' : 'universalUpload'
+    'click .save_to_disk'      : 'saveToDisk'
+    'click .curricula'      : 'gotoCurricula'
 
   initialize: ( options ) ->
     @ipBlock  = 32
@@ -81,6 +83,7 @@ class KlassesView extends Backbone.Marionette.CompositeView
         "<div class='menu_box'><small>No connection</small><br><button class='command verify'>Verify connection</button></div>"
       else
         "<button class='command' disabled='disabled'>Verifying connection...</button>"
+
 
     @$el.find(".uploader").html html
 
@@ -202,6 +205,19 @@ class KlassesView extends Backbone.Marionette.CompositeView
         "_rev" : @randomDoc.rev
       @klasses.fetch success: => @renderKlasses()
 
+  universalUpload: ->
+    Utils.getKlassCollections().then((records) ->
+      docList = []
+      records.forEach (record) ->
+        id = record._id
+        docList.push id
+      Utils.universalUpload(JSON.stringify(docList))
+    )
+
+  saveToDisk: ->
+    Utils.getKlassCollections().then((records) ->
+      Utils.saveDocListToFile(JSON.stringify(records)))
+
   gotoCurricula: ->
     Tangerine.router.navigate "curricula", true
 
@@ -286,20 +302,21 @@ class KlassesView extends Backbone.Marionette.CompositeView
 
     adminPanel = "
       <h1>Admin menu</h1>
-      <button class='pull_data command'>Pull data</button>
+      <h2>Data Transfer</h2>
       <div class='uploader'></div>
+      <button class='save_to_disk command'>Save to Disk</button>
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") isnt "server"
 
     curriculaButton = "
-      <button class='command curricula'>#{t('all curricula')}</button>
+      <button class='command curricula'>#{t('Edit Curricula')}</button>
     " if Tangerine.settings.get("context") isnt "server"
 
     @$el.html "
       #{adminPanel || ""}
-      <h1>#{t('classes')}</h1>
+      <h2>#{t('Content')}</h2>
       <div id='klass_list_wrapper'></div>
 
-      <button class='klass_add command'>#{t('add')}</button>
+      <button class='klass_add command'>#{t('Add a class')}</button>
       <div id='add_form' class='confirmation'>
         <div class='menu_box'> 
           <div class='label_value'>

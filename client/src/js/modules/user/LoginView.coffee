@@ -94,15 +94,7 @@ class LoginView extends Backbone.Marionette.View
     else
       @$el.find("#pass").focus()
 
-  goOn: ->
-    name = @registrationForm.model.get('name')
-    console.log("Tangerine.settings.get(context): " + Tangerine.settings.get("context") + " name: " + name)
-    if typeof Tangerine.settings.get("context") != "undefined" && Tangerine.settings.get("context") == "class" && name != "admin"
-      console.log("sending to register.")
-      Tangerine.router.navigate "register"
-    else
-      console.log("sending to landing page.")
-      Tangerine.router.navigate "", true
+  goOn: -> Tangerine.router.navigate "", true
 
   updateMode: (event) ->
     $target = $(event.target)
@@ -213,23 +205,34 @@ class LoginView extends Backbone.Marionette.View
     modelErrors = @registrationForm.model.validate()
     if (modelErrors)
       return alert('Could not proceed because of errors in your form: ' + modelErrors)
-    # TODO: A UUID should be used but for reporting purposes (implied relationship in the name) we have to keep it this way for now.
-    @registrationForm.model.set "_id" : 'user-' + @registrationForm.model.get('name')
-    # Stash the user name and password for logging them in after saving them.
+    console.log("Tangerine.settings.get(context): " + Tangerine.settings.get("context") + " name: " + name)
     name = @registrationForm.model.get('name')
-    password = @registrationForm.model.get('password')
-    # Try to fetch the user first, because if they exist then we should fail.
-    @registrationForm.model.fetch
-      success: => alert("User already exists")
-      error: =>
-        @registrationForm.model.on 'sync', =>
-          @registrationForm.model.login name, password
-          @registrationForm.model.trigger "login"
-          # TODO This event below should bubble up to the router where the router then decides where to go next. Somewhere in the application the login is causing a redirect.
-          console.log("triggering done")
-          @trigger 'done'
-        console.log("Saving the model")
-        @registrationForm.model.save()
+    pass = @registrationForm.model.get('password')
+    if typeof Tangerine.settings.get("context") != "undefined" && Tangerine.settings.get("context") == "class" && name != "admin"
+      console.log("sending to register.")
+#      Tangerine.router.navigate "register", true
+      view = new RegisterTeacherView
+        name : name
+        pass : pass
+      Tangerine.app.rm.get('mainRegion').show view
+    else
+      # TODO: A UUID should be used but for reporting purposes (implied relationship in the name) we have to keep it this way for now.
+      @registrationForm.model.set "_id" : 'user-' + @registrationForm.model.get('name')
+      # Stash the user name and password for logging them in after saving them.
+      name = @registrationForm.model.get('name')
+      password = @registrationForm.model.get('password')
+      # Try to fetch the user first, because if they exist then we should fail.
+      @registrationForm.model.fetch
+        success: => alert("User already exists")
+        error: =>
+          @registrationForm.model.on 'sync', =>
+            @registrationForm.model.login name, password
+            @registrationForm.model.trigger "login"
+            # TODO This event below should bubble up to the router where the router then decides where to go next. Somewhere in the application the login is causing a redirect.
+            console.log("triggering done")
+            @trigger 'done'
+          console.log("Saving the model")
+          @registrationForm.model.save()
 
 
   login: ->

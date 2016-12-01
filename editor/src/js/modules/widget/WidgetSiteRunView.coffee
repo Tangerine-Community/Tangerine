@@ -9,10 +9,12 @@ class WidgetSiteRunView extends Backbone.View
   initialize: (options) ->
     @model = options.model
     groupPouch = new PouchDB(Tangerine.settings.get('groupName'))
+    $('#footer').show()
     options =
       source: Tangerine.settings.location.group.db
       target: groupPouch
       complete: (info, result) ->
+        Utils.logoSpinStop()
         if typeof info != 'undefined' && info != null && info.ok
           console.log "replicateToServer - onComplete: Replication is fine. "
           $('#messages').append(JSON.stringify(info))
@@ -20,6 +22,7 @@ class WidgetSiteRunView extends Backbone.View
         else
           console.log "replicateToServer - onComplete: Replication message: " + result
       change: (info, result) ->
+        Utils.logoSpinStart()
 #            $('#messages').html(info)
         doc_count = result?.doc_count
         doc_del_count = result?.doc_del_count
@@ -31,7 +34,12 @@ class WidgetSiteRunView extends Backbone.View
         else
           msg = "Change: docs_written: " + doc_written + "<br/>"
         console.log("Change; msg: " + msg)
-        $('#messages').append(msg)
+        $('#messages').html(msg)
+      error: (result) ->
+        Utils.logoSpinStop()
+        msg = "error: Replication error: " + JSON.stringify result
+        console.log msg
+        $('#messages').html(msg)
     try
       Utils.replicate(options)
     catch error
@@ -50,6 +58,13 @@ class WidgetSiteRunView extends Backbone.View
     @$appWidget.attr('height', 800)
     @$appWidget.attr('id', 'client-widget')
 
+    # Spin the logo on ajax calls
+    $(document).ajaxStart ->
+      if $("#navigation-logo").attr("src") isnt "images/navigation-logo-spin.gif"
+        $("#navigation-logo").attr "src", "images/navigation-logo-spin.gif"
+    $(document).ajaxStop ->
+      if $("#navigation-logo").attr("src") isnt "images/navigation-logo.png"
+        $("#navigation-logo").attr "src", "images/navigation-logo.png"
 
     @$el.find(".assessment").append(@$appWidget)
     @trigger "rendered"

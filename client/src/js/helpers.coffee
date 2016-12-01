@@ -311,22 +311,81 @@ class Utils
               callback(null, response)
 
 
-  @universalUpload: ->
-    results = new Results
-    results.fetch
-      success: ->
-        docList = results.pluck("_id")
-        Utils.uploadCompressed(docList)
+  @universalUpload: (jsonString) ->
+    if jsonString?
+      Utils.uploadCompressed(docList)
+    else
+      results = new Results
+      results.fetch
+        success: ->
+          docList = results.pluck("_id")
+          Utils.uploadCompressed(docList)
 
-  @saveDocListToFile: ->
+  #/*
+  # * Use the writeTextToFile method.
+  # */
+  @saveRecordsToFile = (text) ->
+    username = Tangerine.user.name()
+    timestamp = (new Date).toISOString();
+    timestamp = timestamp.replace(/:/g, "-")
+    if username == null
+      fileName = "backup-" + timestamp + ".json"
+    else
+      fileName = username + "-backup-" + timestamp + ".json"
+    console.log("fileName: " + fileName)
+    if(navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
+      cordova.file.writeTextToFile({
+          text:  text,
+          path: cordova.file.externalDataDirectory,
+          fileName: fileName,
+          append: false
+        },
+        {
+          success: (file) ->
+            alert("Success! Look for the file at " + file.nativeURL)
+            console.log("File saved at " + file.nativeURL)
+          , error: (error) ->
+            console.log(error)
+        }
+      )
+    else
+      console.log("Local DB Dump: " + fileName + " : " + text)
+
+  @getKlassCollections = ->
+    return p = new Promise (resolve, reject) ->
+      klasses = new Klasses
+      klasses.fetch
+        success: ( klassCollection ) ->
+          teachers = new Teachers
+          teachers.fetch
+            success: ->
+              curricula = new Curricula
+              curricula.fetch
+                success: ( curriculaCollection ) ->
+                  results = new Results
+                  results.fetch
+                    success: ->
+                      users = new Users
+                      users.fetch
+                        success: ->
+                          logs = new Logs
+                          logs.fetch
+                            success: ->
+                              combinedCollection = klasses.toJSON().concat(teachers.toJSON()).concat(curricula.toJSON()).concat(results.toJSON()).concat(users.toJSON()).concat(logs.toJSON())
+                              return resolve(combinedCollection)
+
+  @saveDocListToFile: (jsonString) ->
 #    Tangerine.db.allDocs(include_docs:true).then( (response) ->
 #      Utils.saveRecordsToFile(JSON.stringify(response))
 #    )
-    results = new Results
-    results.fetch
-      success: ->
-#        console.log("results: " + JSON.stringify(results))
-        Utils.saveRecordsToFile(JSON.stringify(results))
+    if jsonString?
+      Utils.saveRecordsToFile(jsonString)
+    else
+      results = new Results
+      results.fetch
+        success: ->
+  #        console.log("results: " + JSON.stringify(results))
+          Utils.saveRecordsToFile(JSON.stringify(results))
 
   @checkSession: (url, options) ->
     options = options || {};

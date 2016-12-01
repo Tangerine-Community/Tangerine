@@ -115,10 +115,12 @@ class AssessmentsMenuView extends Backbone.View
 
     if @curricula.length > 0
       groupPouch = new PouchDB(Tangerine.settings.get('groupName'))
+      $('#footer').show()
       options =
         source: Tangerine.settings.location.group.db
         target: groupPouch
         complete: (info, result) ->
+          Utils.logoSpinStop()
           if typeof info != 'undefined' && info != null && info.ok
             console.log "replicateToServer - onComplete: Replication is fine. "
             $('#messages').append(JSON.stringify(info))
@@ -126,6 +128,7 @@ class AssessmentsMenuView extends Backbone.View
           else
             console.log "replicateToServer - onComplete: Replication message: " + result
         change: (info, result) ->
+          Utils.logoSpinStart()
   #            $('#messages').html(info)
           doc_count = result?.doc_count
           doc_del_count = result?.doc_del_count
@@ -137,7 +140,12 @@ class AssessmentsMenuView extends Backbone.View
           else
             msg = "Change: docs_written: " + doc_written + "<br/>"
           console.log("Change; msg: " + msg)
-          $('#messages').append(msg)
+          $('#messages').html(msg)
+        error: (result) ->
+          Utils.logoSpinStop()
+          msg = "error: Replication error: " + JSON.stringify result
+          console.log msg
+          $('#messages').html(msg)
       try
         Utils.replicate(options)
       catch error
@@ -165,7 +173,13 @@ class AssessmentsMenuView extends Backbone.View
     containers.push "<section id='users_menu_container' class='UsersMenuView'></section>"
     containers.push "<section id='workflow_menu_container' class='WorkflowMenuView'></section>"
 
-
+    # Spin the logo on ajax calls
+    $(document).ajaxStart ->
+      if $("#navigation-logo").attr("src") isnt "images/navigation-logo-spin.gif"
+        $("#navigation-logo").attr "src", "images/navigation-logo-spin.gif"
+    $(document).ajaxStop ->
+      if $("#navigation-logo").attr("src") isnt "images/navigation-logo.png"
+        $("#navigation-logo").attr "src", "images/navigation-logo.png"
 
     html = "
       #{groupsButton}

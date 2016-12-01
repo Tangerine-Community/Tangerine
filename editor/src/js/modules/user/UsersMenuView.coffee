@@ -37,13 +37,13 @@ class UsersMenuView extends Backbone.View
 
   renderUsers: (users) ->
 
-    adminHtml = users.admin.map( (admin) ->
+    adminHtml = users.admin?.map( (admin) ->
       "<li data-name='#{_.escape(admin)}' class='admin icon'>#{_.escape(admin)}</li>"
     ).join('')
-    if users.member.length == 0
+    if users.member?.length == 0
       memberHtml = "<span class='grey'>No members yet.</span>"
     else
-      memberHtml = users.member.map( (member) ->
+      memberHtml = users.member?.map( (member) ->
         "<li data-name='#{_.escape(member)}' class='member icon'>#{_.escape(member)}</li>"
       ).join('')
 

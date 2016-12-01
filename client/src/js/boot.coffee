@@ -165,10 +165,9 @@ Tangerine.bootSequence =
     if ((window.location.hash != '#widget'))
       Tangerine.config = new Config "_id" : "configuration"
       Tangerine.config.fetch
-        error   : (err) -> alert "Could not fetch configuration: " + err
+        error   : (err) -> alert err
         success : callback
     else return callback()
-
 
   # get our local Tangerine settings
   # these do tend to change depending on the particular install of the
@@ -278,33 +277,6 @@ Tangerine.bootSequence =
                 callback.error(error)
               )
             )
-          )
-
-        #/*
-        # * Use the writeTextToFile method.
-        # */
-        Utils.saveRecordsToFile = (text) ->
-          username = Tangerine.user.name()
-          timestamp = (new Date).toISOString();
-          timestamp = timestamp.replace(/:/g, "-")
-          if username == null
-            fileName = "backup-" + timestamp + ".json"
-          else
-            fileName = username + "-backup-" + timestamp + ".json"
-          console.log("fileName: " + fileName)
-          cordova.file.writeTextToFile({
-            text:  text,
-            path: cordova.file.externalDataDirectory,
-            fileName: fileName,
-            append: false
-            },
-            {
-              success: (file) ->
-                alert("Success! Look for the file at " + file.nativeURL)
-                console.log("File saved at " + file.nativeURL)
-              , error: (error) ->
-                  console.log(error)
-            }
           )
 
       catch error

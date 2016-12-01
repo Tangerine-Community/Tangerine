@@ -42,8 +42,9 @@ class RegisterTeacherView extends Backbone.View
       "name" : @name
 
     teacher = new Teacher teacherDoc
-    teacher.save 
-      "_id" : Utils.humanGUID()
+    teacher.save
+      "_id" : 'user-' + teacher.get('name')
+#      "_id" : Utils.humanGUID()
     ,
       success: =>
         Tangerine.user.save
