@@ -54,7 +54,6 @@ Trip = Backbone.Model.extend
         result.save()
     log.push(message)
     @set('log', log)
-    @save()
 
   # When the Trip in the Workflow is all done, use this method to mark it as complete.
   markTripComplete: ->

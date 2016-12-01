@@ -51,9 +51,6 @@ class WorkflowRunView extends Backbone.View
   _onWorkflowDone: =>
     @trip.markTripComplete()
     @trip.save()
-    # Save twice because of unknown bug. Perhaps Trip is already in the middle of a save? 
-    @trip.once 'sync', =>
-      @trip.save()
 
   switch: =>
     @$el.toggle()
