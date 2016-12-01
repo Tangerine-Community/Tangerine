@@ -12,8 +12,8 @@ Trip = Backbone.Model.extend
     startTime: null
     endTime: null
     log: []
-    authenticity: false
-    authenticityParameters: {}
+    authenticity: undefined
+    authenticityParameters: undefined
   
   # If this is a new Trip, options is required to have a Workflow in the `workflow` option and a User in the `user` option.
   initialize: (options) ->
@@ -57,20 +57,22 @@ Trip = Backbone.Model.extend
 
   # When the Trip in the Workflow is all done, use this method to mark it as complete.
   markTripComplete: ->
+    # Set endTime.
     @set('endTime', Date.now())
-    # Determine authenticity if conditions are met.
-    authenticityParameters = @get('authenticityParameters')
-    authenticity = true
-    if authenticityParameters != undefined && authenticityParameters.enabled == true
-      # Start with valid being true, then prove us wrong.
-      if authenticityParameters.constraints.duration?
-          minutes = (@get('endTime') - @get('startTime')) / 1000 / 60
-          if minutes < authenticityParameters.constraints.duration.minutes
+    # Determine authenticity.
+    if @get('authenticityParameters') != undefined
+      authenticityParameters = @get('authenticityParameters')
+      if authenticityParameters.enabled == true
+        # Start with authenticity being true, then prove us wrong.
+        authenticity = true
+        if authenticityParameters.constraints.duration?
+            minutes = (@get('endTime') - @get('startTime')) / 1000 / 60
+            if minutes < authenticityParameters.constraints.duration.minutes
+              authenticity = false
+        if authenticityParameters.constraints.timeOfDay?
+          tripTime = moment(parseInt(@get('startTime')))
+          tripTime.zone(Tangerine.settings.get("timeZone")) if Tangerine.settings.get("timeZone")?
+          if tripTime.hours() < authenticityParameters.constraints.timeOfDay.startTime.hour or tripTime.hours() > authenticityParameters.constraints.timeOfDay.endTime.hour
             authenticity = false
-      if authenticityParameters.constraints.timeOfDay?
-        tripTime = moment(parseInt(@get('startTime')))
-        tripTime.zone(Tangerine.settings.get("timeZone")) if Tangerine.settings.get("timeZone")?
-        if tripTime.hours() < authenticityParameters.constraints.timeOfDay.startTime.hour or tripTime.hours() > authenticityParameters.constraints.timeOfDay.endTime.hour
-          authenticity = false
-    @set('authenticity', authenticity)
+        @set('authenticity', authenticity)
     return
