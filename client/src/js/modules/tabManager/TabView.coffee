@@ -22,34 +22,32 @@ class TabView extends Backbone.View
     @setTab(tabNumber)
 
   setTab: (tabNumber) ->
+    # This hiding tabBody, replacing the contents of tabBody, then showing it.  
+    tabBody = this.$el.find('.classHtml')[0]
     tab = @tabs[tabNumber]
     views = []
+    # Initialize all the Views for the Tab.
     tab.views.forEach (view) ->
       prototypeView = new window[view.className]
       views.push(prototypeView)
-    
-    if (@tabIndex == null)
-      slideOut = 'right'
-      slideIn = 'left'
-    else if @tabIndex < tabNumber
-      slideOut = 'left'
-      slideIn = 'right'
-    else if @tabIndex > tabNumber
-      slideOut = 'right'
-      slideIn = 'left'
     @tabIndex = tabNumber
-    console.log('slide')
-    tabBody = this.$el.find('.classHtml')[0]
-    $(tabBody).hide("slide", { direction: slideOut }, 200)
-
-    slideIt = () ->
+    # A function that hides the old tab. 
+    hideOldTab = (duration) ->
+      $(tabBody).fadeOut(duration)
+      # TODO: Destory the Views in the current Tab. 
+    # A function that shows the new tab.
+    showNewTab = (duration) ->
+      # Render and append all the Views for the new tab.
       $(tabBody).html('')
       views.forEach (view) ->
         view.render()
         $(tabBody).append view.el
-      $(tabBody).show("slide", { easing: 'swing', direction: slideIn }, 200)
-
-    setTimeout(slideIt, 200)
+        $(tabBody).fadeIn(duration)
+    # Animate it.
+    hideOldTab(200)
+    setTimeout(->
+      showNewTab(300)
+    , 300)
 
   
   render: =>
