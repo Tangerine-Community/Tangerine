@@ -50,7 +50,7 @@ class SubtestRunView extends Backbone.View
         <h2>#{@model.get 'name'}</h2>
         #{enumeratorHelp}
         #{studentDialog}
-        <div id='prototype_wrapper'></div>
+        <div id='prototype_wrapper' class='unselectable'></div>
 
         <div class='controlls clearfix'>
           #{transitionComment}
@@ -69,6 +69,8 @@ class SubtestRunView extends Backbone.View
       @prototypeView.on "showNext",    => @showNext()
       @prototypeView.on "hideNext",    => @hideNext()
       @prototypeView.on "ready",       => @prototypeRendered = true;
+      @prototypeView.on "abort",       => @abort()
+
       @prototypeView.setElement(@$el.find('#prototype_wrapper'))
       @prototypeView.render()
 
@@ -167,6 +169,8 @@ class SubtestRunView extends Backbone.View
     else
       throw "Prototype skipping not implemented"
 
-  next: -> @trigger "next"
+  next: ->
+    $(window).off('resize')
+    @trigger "next"
   back: -> @trigger "back"
   skip: -> @parent.skip()

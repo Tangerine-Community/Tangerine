@@ -26,5 +26,21 @@ class Question extends Backbone.Model
     skipRequirement : null
 
   initialize: ( options )->
-    
-    
+
+  layout: (obj) ->
+    if obj?
+      @set('layout', obj)
+    else
+      if @has('layout')
+        return @get('layout')
+      else
+        return { rows : [] }
+
+
+Object.defineProperty Question, 'AV_ALIGNMENT',
+  value: [
+    'left',
+    'center',
+    'right'
+  ]
+
