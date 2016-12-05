@@ -955,6 +955,7 @@ class Router extends Backbone.Router
   # User
   #
   login: ->
+
     Tangerine.user.verify
       isAuthenticated: ->
         Tangerine.router.landing()
@@ -963,14 +964,15 @@ class Router extends Backbone.Router
         users = new TabletUsers
         users.fetch
           success: ->
-#            vm.show new LoginView
-#              users: users
-            loginView = new LoginView
-              users: users
-#            dashboardLayout = new DashboardLayout();
+
+            viewOptions = {}
+            viewOptions.users = users
+            if Tangerine.settings.has 'user'
+              viewOptions.userSettings = Tangerine.settings.get 'user'
+            loginView = new LoginView viewOptions
+
             Tangerine.app.rm.get('mainRegion').show loginView
             loginView.afterRender()
-#            dashboardLayout.contentRegion.show(loginView)
 
   logout: ->
     Tangerine.user.logout()
