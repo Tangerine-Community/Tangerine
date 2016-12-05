@@ -13,7 +13,7 @@ class KlassesView extends Backbone.Marionette.CompositeView
     'click .klass_curricula'   : 'gotoCurricula'
     'click .goto_class'        : 'gotoKlass'
     'click .pull_data'   : 'pullData'
-    'click .verify'      : 'ghostLogin'
+    'click .verify'      : 'checkNetwork'
     'click .upload_data' : 'universalUpload'
     'click .save_to_disk'      : 'saveToDisk'
     'click .curricula'      : 'gotoCurricula'
@@ -34,22 +34,27 @@ class KlassesView extends Backbone.Marionette.CompositeView
 
     if Tangerine.user.isAdmin()
       # timeout for the verification attempt
-      @timer = setTimeout =>
-        @updateUploader(false)
-      , 20 * 1000
-
-      # try to verify the connection to the server
-      verReq = $.ajax 
-        url: Tangerine.settings.urlView("group", "byDKey")
-        dataType: "jsonp"
-        data: keys: ["testtest"]
-        timeout: 5000
-        success: =>
-          clearTimeout @timer 
-          @updateUploader true
+      @checkNetwork()
 
   ghostLogin: ->
     Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
+
+  checkNetwork: ->
+    @timer = setTimeout =>
+      @updateUploader(false)
+    , 20 * 1000
+# try to verify the connection to the server
+    verReq = $.ajax
+      url: Tangerine.settings.urlView("group", "byDKey")
+      dataType: "jsonp"
+      data:
+        keys: ["testtest"]
+        user: Tangerine.settings.upUser
+        pass: Tangerine.settings.upPass
+      timeout: 5000
+      success: =>
+        clearTimeout @timer
+        @updateUploader true
 
   uploadData: ->
     $.ajax
@@ -74,16 +79,14 @@ class KlassesView extends Backbone.Marionette.CompositeView
             doc_ids: docList
         )
 
-
   updateUploader: (status) =>
     html =
       if status == true
-        "<button class='upload_data command'>Upload</button>"
+        "<button class='upload_data command'>Upload</button><br/><div id = \"upload_results\"></div>"
       else if status == false 
-        "<div class='menu_box'><small>No connection</small><br><button class='command verify'>Verify connection</button></div>"
+        "<div class='menu_box'><small>No connection</small><br><button class='command verify'>Verify connection</button><button class='upload_data command'>Upload</button></div><br/><div id = \"upload_results\"></div>"
       else
-        "<button class='command' disabled='disabled'>Verifying connection...</button>"
-
+        "<button class='command' disabled='disabled'>Verifying connection...</button><br><button class='upload_data command'>Upload</button><br/><div id = \"upload_results\"></div>"
 
     @$el.find(".uploader").html html
 
@@ -211,7 +214,7 @@ class KlassesView extends Backbone.Marionette.CompositeView
       records.forEach (record) ->
         id = record._id
         docList.push id
-      Utils.universalUpload(JSON.stringify(docList))
+      Utils.universalUpload(docList)
     )
 
   saveToDisk: ->

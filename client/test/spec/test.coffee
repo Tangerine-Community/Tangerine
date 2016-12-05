@@ -507,7 +507,7 @@
             view.render();
         })
       )
-#
+
 #      it('Should replicate to the test server', ()->
 #        console.log("Should replicate to the test server")
 #        file = 'init/Settings.json'

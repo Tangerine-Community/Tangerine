@@ -112,23 +112,26 @@ Tangerine.bootSequence =
             doOne = ->
 
               paddedPackNumber = ("0000" + packNumber).slice(-4)
+              finishInit = ->
+#               Mark this database as initialized so that this process does not
+#               run again on page refresh, then load Development Packs.
+                indexViews()
+                #                  Load the admin user
+                Utils.importDoc('js/init/user-admin.json')
               $.ajax
                 dataType: "json"
                 url: "js/init/pack#{paddedPackNumber}.json"
                 error: (res) ->
                   # No more pack? We're all done here.
                   if res.status is 404
-                    # Mark this database as initialized so that this process does not
-                    # run again on page refresh, then load Development Packs.
-                    indexViews()
-  #                  Load the admin user
-                    Utils.importDoc('js/init/user-admin.json')
+                    finishInit()
                 success: (res) ->
                   if res.docs?
                     docs = res.docs
                   else
                     docs = res
-                  if docs.length == 0 then return indexViews()
+                  if docs.length == 0
+                    finishInit()
                   console.log('Found ' + docs.length + ' docs')
                   packNumber++
                   Tangerine.db.bulkDocs docs, (error, doc) ->

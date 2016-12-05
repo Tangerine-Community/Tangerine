@@ -311,7 +311,7 @@ class Utils
               callback(null, response)
 
 
-  @universalUpload: (jsonString) ->
+  @universalUpload: (docList) ->
     if jsonString?
       Utils.uploadCompressed(docList)
     else
@@ -434,14 +434,11 @@ class Utils
       $.ajax
         dataType: "json"
         url: file
-        error: (res) ->
-          console.log("Error: " + res)
+        error: (res, doc) ->
+          console.log("Error: " + res + " file: " + file + " doc: " + doc)
         success: (res) ->
-          if res.docs?
-            docs = res.docs
-          else
-            docs = res
-          Tangerine.db.put docs, (error, doc) ->
+          doc = res[0]
+          Tangerine.db.put doc, (error, doc) ->
             if error
               return alert "could not save user documents: #{error}"
 

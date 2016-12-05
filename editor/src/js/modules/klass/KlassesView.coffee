@@ -278,7 +278,6 @@ class KlassesView extends Backbone.View
       curriculaOptionList += "<option data-id='#{curricula.id}'>#{curricula.get 'name'}</option>"
 
     @$el.html "
-      #{adminPanel || ""}
       <h1>#{t('classes')}</h1>
       <div id='klass_list_wrapper'></div>
 
@@ -308,7 +307,6 @@ class KlassesView extends Backbone.View
           <button class='command klass_save'>#{t('save')}</button><button class='command klass_cancel'>#{t('cancel')}</button>
         </div>
       </div>
-      #{curriculaButton || ''}
     "
 
     @updateUploader() if Tangerine.user.isAdmin()

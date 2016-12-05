@@ -138,7 +138,6 @@ idList.push("settings");
 idList.push("configuration");
 idList.push("templates");
 idList.push("location-list");
-idList.push("user-admin");
 
 // delete any old packs if they're there
 del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])

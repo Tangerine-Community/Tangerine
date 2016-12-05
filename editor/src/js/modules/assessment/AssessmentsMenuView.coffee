@@ -228,25 +228,9 @@ class AssessmentsMenuView extends Backbone.View
     @usersMenuView.setElement( @$el.find("#users_menu_container") )
     @usersMenuView.render()
 
-    if @klasses.length > 0
-      @klassesView = new KlassesView
-        klasses : @klasses
-        curricula : @curricula
-        teachers : @teachers
-      @klassesView.setElement @$el.find("#klass_container")
-      @klassesView.render()
-    else
-      @$el.find("#klass_container").remove()
+    @$el.find("#klass_container").remove()
 
-
-    if @teachers.length > 0
-      @teachersView = new TeachersView
-        teachers : @teachers
-        users : @users
-      @teachersView.setElement @$el.find("#teachers_container")
-      @teachersView.render()
-    else
-      @$el.find("#teachers_container").remove()
+    @$el.find("#teachers_container").remove()
 
     if Tangerine.settings.get('showWorkflows') == true
       @workflowMenuView = new WorkflowMenuView

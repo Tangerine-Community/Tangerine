@@ -50,9 +50,9 @@ class KlassResult extends Backbone.Model
 
     if options == "total"
       if @attributes.prototype == "grid"
-        return @attributes.subtestData.items.length
+        return @attributes.subtestData.body.items.length
       else if @attributes.prototype == "survey"
-        return _.keys(@attributes.subtestData).length
+        return _.keys(@attributes.subtestData.body).length
     
     if options == "attempted"   then return @getAttempted()
     if options == "time_remain" then return @getTimeRemain()
@@ -66,15 +66,15 @@ class KlassResult extends Backbone.Model
     count = 0
     if @attributes.prototype == "grid"
       if _.isArray(value)
-        (count++ if ~value.indexOf(item.itemResult)) for item in @get("subtestData").items   
+        (count++ if ~value.indexOf(item.itemResult)) for item in @get("subtestData").body.items
       else
-        (count++ if item.itemResult == value) for item in @get("subtestData").items 
+        (count++ if item.itemResult == value) for item in @get("subtestData").body.items
     else if @attributes.prototype == "survey"
       if _.isArray(value)
-        for k, v of @attributes.subtestData
+        for k, v of @attributes.subtestData.body
           count++ if (~value.indexOf(v) || ~value.indexOf(parseInt(v)))
       else
-        for k, v of @attributes.subtestData
+        for k, v of @attributes.subtestData.body
           count++ if (value == v || value == parseInt(v))
             
     return count
