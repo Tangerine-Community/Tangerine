@@ -25,8 +25,6 @@ var sourcemaps = require('gulp-sourcemaps'); // for debugging
 var inject = require('gulp-inject-string');  // to create index-dev.html
 var rename = require('gulp-rename');  // to create index-dev.html
 
-var less = require('gulp-less'); // for compiling less files
-
 var git = require('gulp-git'); // for versioning
 
 // For handlebars
@@ -60,7 +58,6 @@ var conf = {
   appFile        : 'app.js',
   libFile        : 'lib.js',
   libGlob        : './src/js/lib/**/*.js',
-  lessFile       : './src/css/tangerine.less',
   cssDir         : './src/css',
   handlebarsGlob : './src/templates/*.handlebars',
   testGlob : './test/spec/*.coffee',
@@ -184,16 +181,6 @@ gulp.task('version', function(cb) {
 });
 
 
-// Handle less files
-gulp.task('build:less', function () {
-  return gulp.src(conf.lessFile)
-      .pipe(less())                      // compile less
-      .pipe(gulp.dest(conf.cssDir))      // output directory
-      .pipe(connect.reload());           // reload anyone watching
-
-});
-
-
 // Compile translations
 gulp.task('build:locales', function(){
 
@@ -260,7 +247,6 @@ gulp.task('handlebars', function(){
 gulp.task('watch', function() {
   gulp.watch(conf.coffeeGlob,   ['build:app.js']);    // for our app
   gulp.watch(conf.libGlob,      ['build:lib.js']);    // for libraries/vendor stuff
-  gulp.watch(conf.lessFile,     ['build:less']);      // for less
   gulp.watch(conf.localeGlob,   ['build:locales']);   // for i18n
   gulp.watch(conf.handlebarsGlob, ['build:app.js']); // for handlebars templates
   gulp.watch(conf.testGlob, ['coffee:test']); // for test scripts
