@@ -152,9 +152,11 @@ class LoginView extends Backbone.Marionette.View
     switch @mode
       when "login"
         $login.show()
+        $reset.hide()
         $signup.hide()
       when "signup"
         $login.hide()
+        $reset.hide()
         $signup.show()
       when "reset"
         $login.hide()
