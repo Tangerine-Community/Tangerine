@@ -247,7 +247,7 @@ ADD ./purgeOldApks.sh /home/ubuntu/purgeOldApks.sh
 ADD ./purgeOldApks-cron.txt /etc/cron.d/purgeOldApks-cron
 # Give execution rights on the cron script and cron job
 RUN chmod 0644 /home/ubuntu/purgeOldApks.sh
-RUN chmod 0644 /etc/cron.d/hello-cron
+RUN chmod 0644 /etc/cron.d/purgeOldApks-cron
 # Create the log file
 RUN touch /var/log/purgeOldApks.log
 # Run the command on container startup

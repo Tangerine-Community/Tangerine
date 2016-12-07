@@ -56,7 +56,7 @@ class KlassSubtestEditView extends Backbone.View
       @model.save
         name           : @$el.find("#name").val()
         part           : Math.max(parseInt( @$el.find("#part").val() ), 1)
-        reportType     : @$el.find("#report_type").val().toLowerCase()
+        reportType     : @$el.find("#report_type option:selected").val()
         itemType       : @$el.find("#item_type").val().toLowerCase()
         scoreTarget    : parseInt(@$el.find("#score_target").val())
         scoreSpread    : parseInt(@$el.find("#score_spread").val())
@@ -73,7 +73,6 @@ class KlassSubtestEditView extends Backbone.View
           Utils.midAlert "Subtest Saved"
         error: =>
           Utils.midAlert "Save error"
-
 
     #
     # Surveys
@@ -118,7 +117,7 @@ class KlassSubtestEditView extends Backbone.View
       @model.save
         name           : @$el.find("#name").val()
         part           : Math.max(parseInt( @$el.find("#part").val() ), 1)
-        reportType     : @$el.find("#report_type").val().toLowerCase()
+        reportType     : @$el.find("#report_type option:selected").val()
         itemType       : @$el.find("#item_type").val().toLowerCase()
         scoreTarget    : parseInt(@$el.find("#score_target").val())
         scoreSpread    : parseInt(@$el.find("#score_spread").val())
@@ -312,7 +311,10 @@ class KlassSubtestEditView extends Backbone.View
 
       <div class='label_value'>
         <label for='report_type'>Report Type</label>
-        <input id='report_type' value='#{reportType}'>
+        <select id='report_type'>
+          <option value='progress'>Progress</option>
+          <option value='mastery'>Mastery</option>
+        </select>
       </div>
 
       <div class='label_value'>
