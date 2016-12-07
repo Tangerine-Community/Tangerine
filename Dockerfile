@@ -82,7 +82,8 @@ RUN apt-get update && apt-get -y install \
     libtool \
     bison \
     jq \
-    libffi-dev
+    libffi-dev \
+    cron
 
 # Install node and some node based services
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash - \
@@ -240,6 +241,18 @@ RUN cd /tangerine-server/editor && npm start init
 # Engage the Tangerine CLI so we can run commands like `sudo tangerine make-me-a-sandwich`.
 ADD ./cli /tangerine-server/cli
 RUN cd /tangerine-server/cli && npm link
+
+# add the cron job to purge APK's
+ADD ./purgeOldApks.sh /home/ubuntu/purgeOldApks.sh
+ADD ./purgeOldApks-cron.txt /etc/cron.d/purgeOldApks-cron
+ADD crontab /etc/cron.d/purgeOldApks-cron.txt
+# Give execution rights on the cron script and cron job
+RUN chmod 0644 /home/ubuntu/purgeOldApks.sh
+RUN chmod 0644 /etc/cron.d/hello-cron
+# Create the log file
+RUN touch /var/log/purgeOldApks.log
+# Run the command on container startup
+CMD cron
 
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/ 

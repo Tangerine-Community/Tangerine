@@ -56,28 +56,28 @@ class KlassesView extends Backbone.Marionette.CompositeView
         clearTimeout @timer
         @updateUploader true
 
-  uploadData: ->
-    $.ajax
-      "url"         : "/" + Tangerine.db_name + "/_design/tangerine/_view/byCollection?include_docs=false"
-      "type"        : "POST"
-      "dataType"    : "json"
-      "contentType" : "application/json;charset=utf-8",
-      "data"        : JSON.stringify(
-          include_docs: false
-          keys : ['result', 'klass', 'student', 'teacher', 'logs', 'user']
-        )
-      "success" : (data) =>
-        docList = _.pluck(data.rows,"id")
-        $.couch.replicate(
-          Tangerine.settings.urlDB("local"),
-          Tangerine.settings.urlDB("group"),
-            success:      =>
-              Utils.midAlert "Sync successful"
-            error: (a, b) =>
-              Utils.midAlert "Sync error<br>#{a} #{b}"
-          ,
-            doc_ids: docList
-        )
+#  uploadData: ->
+#    $.ajax
+#      "url"         : "/" + Tangerine.db_name + "/_design/tangerine/_view/byCollection?include_docs=false"
+#      "type"        : "POST"
+#      "dataType"    : "json"
+#      "contentType" : "application/json;charset=utf-8",
+#      "data"        : JSON.stringify(
+#          include_docs: false
+#          keys : ['result', 'klass', 'student', 'teacher', 'logs', 'user']
+#        )
+#      "success" : (data) =>
+#        docList = _.pluck(data.rows,"id")
+#        $.couch.replicate(
+#          Tangerine.settings.urlDB("local"),
+#          Tangerine.settings.urlDB("group"),
+#            success:      =>
+#              Utils.midAlert "Sync successful"
+#            error: (a, b) =>
+#              Utils.midAlert "Sync error<br>#{a} #{b}"
+#          ,
+#            doc_ids: docList
+#        )
 
   updateUploader: (status) =>
     html =

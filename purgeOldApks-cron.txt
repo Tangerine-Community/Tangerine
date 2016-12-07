@@ -1,0 +1,1 @@
+0 5 * * * /home/ubuntu/purgeOldApks.sh /var/log/purgeOldApks.log 2>&1

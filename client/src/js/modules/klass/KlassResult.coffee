@@ -80,10 +80,10 @@ class KlassResult extends Backbone.Model
     return count
 
   getAttempted: ->
-    return parseInt( @get("subtestData").attempted )
+    return parseInt( @get("subtestData").body.attempted )
 
   getTimeRemain: ->
-    return parseInt( @get("subtestData").time_remain )
+    return parseInt( @get("subtestData").body.time_remain )
 
   getCorrectPerSeconds: ( secondsAllowed ) ->
     Math.round( ( @get("correct") / ( secondsAllowed - @getTimeRemain() ) ) * secondsAllowed )
