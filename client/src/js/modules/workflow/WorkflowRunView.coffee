@@ -228,6 +228,7 @@ class WorkflowRunView extends Backbone.View
       
       mediaOverlayFile = (CoffeeScript.eval.apply(@, [mediaOverlayFileScript]))
       lessonImage.src = "media_assets/#{Tangerine.settings.get('groupName')}/#{mediaOverlayFile}"
+      @trip.set('mediaOverlayFileSrc', lessonImage.src)
 
     else
       @lessonContainer?.remove?()

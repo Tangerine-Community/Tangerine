@@ -101,19 +101,11 @@ class FeedbackTripsView extends Backbone.View
     $target.siblings().toggle()
 
     tripId = $target.attr("data-trip-id")
-    trip   = @trips.get(tripId)
+    trip   = new Trip({"_id": tripId})
 
     @$lessonContainer = @$el.find(".#{tripId}-lesson")
 
     @$lessonContainer.html "<img class='loading' src='images/loading.gif'>"
-
-
-    subject = ({"bukusu": "bukusu","kamba": "kamba","word": "kiswahili", "english_word" : "english", "operation" : "maths"})[trip.get('subject')]
-
-    motherTongue = trip.get("subject_mother_tongue")
-    grade   = trip.get("class")
-    week    = trip.get("lesson_week")
-    day     = trip.get("lesson_day")
 
     lessonImage = new Image 
     $(lessonImage).on "load", 
@@ -127,11 +119,9 @@ class FeedbackTripsView extends Backbone.View
           @$lessonContainer.append(lessonImage)
 
 
-    if subject is "3"
-      lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{motherTongue}_w#{week}_d#{day}.png"
-    else
-      lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
-
+    trip.on 'sync', =>
+      lessonImage.src = trip.get 'mediaOverlayFileSrc'
+    trip.fetch()
 
   hideFeedback: (event) ->
 
@@ -368,7 +358,7 @@ class FeedbackTripsView extends Backbone.View
             <button class='command hide-feedback' data-trip-id='#{tripId}' style='display:none;'>Hide feedback</button>
           </td>
           <td>
-            <!-- TODO: Get this working. #{lessonPlanButtonsHtml || ''} -->
+            #{lessonPlanButtonsHtml || ''}
           </td>
           <td>
             <!-- TODO: Get this working. #{resultButtonHtml || ''} -->
