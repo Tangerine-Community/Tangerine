@@ -361,7 +361,7 @@ class FeedbackTripsView extends Backbone.View
             #{lessonPlanButtonsHtml || ''}
           </td>
           <td>
-            <!-- TODO: Get this working. #{resultButtonHtml || ''} -->
+            #{resultButtonHtml || ''}
           </td>
 
         </tr>
@@ -405,7 +405,7 @@ class WorkflowResultView extends Backbone.View
         blank = assessmentModelBlanks.pop()
         assessment = new Assessment blank
         assessments.push assessment
-        assessment.fetch
+        assessment.deepFetch
           error: -> alert "Loading assessment failed. Please try again."
           success: ->
             assessment.questions = new Questions
