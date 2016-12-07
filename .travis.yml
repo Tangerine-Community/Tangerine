@@ -21,3 +21,4 @@ before_script:
   - npm run gulp init
 notifications:
   slack: rti:nBr3dvYD5mClKt1pAnuHgH8J
+  email: false
