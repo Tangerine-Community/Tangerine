@@ -55,6 +55,8 @@ class KlassesView extends Backbone.Marionette.CompositeView
       success: =>
         clearTimeout @timer
         @updateUploader true
+      error: (err, msg) =>
+        console.log("err: " + err + " msg: " + msg)
 
 #  uploadData: ->
 #    $.ajax

@@ -671,7 +671,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
           itemResult : "missing"
           itemLabel : @items[@mapItem[i]]
 
-    @lastAttempted = false if not @captureLastAttempted
+#    @lastAttempted = false if not @captureLastAttempted
 
     if @dataEntry
       autostopped = @$el.find(".data_autostopped").is(":checked")

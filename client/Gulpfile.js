@@ -372,7 +372,7 @@ function handleError(err) {
 gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js']);
 
 gulp.task('default', ['webserver', 'init', 'watch']);
-gulp.task('test-default', ['test-webserver', 'init', 'watch']);
+gulp.task('test-default', ['compile_packs','test-webserver', 'init', 'watch']);
 gulp.task('index-dev', ['prepare-index-dev']);
 gulp.task('test', ['compile_packs', 'coffee:test', 'run_tests']);
 gulp.task('testWatch', ['compile_packs', 'coffee:test', 'run_tests', 'watch']);

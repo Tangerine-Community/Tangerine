@@ -6,8 +6,8 @@ class CurriculaListView extends Backbone.View
   initialize: (options) ->
     @views = []
     @curricula = options.curricula
-    @curricula.on? "all", @render
-
+#    @curricula.on? "all", @render
+    @curricula.on "add destroy remove update", @render
 
   render: =>
     return if @curricula.length == 0
@@ -16,8 +16,8 @@ class CurriculaListView extends Backbone.View
       groupName = Tangerine.settings.get('groupName')
       url = '#run/app/' + groupName
       runCurriculaApp = " <ul>
-        <li class = 'sp_run'><a href=" + url + ">Run the Curricula App</a></li>
-        <li>Run the Curricula App</li>
+        <li class = 'sp_run'><a href=" + url + ">Demo the Curricula App</a></li>
+        <li>Demo the Curricula App</li>
       </ul>"
     else
       runCurriculaApp = ""
