@@ -229,8 +229,8 @@ class Utils
         pass: Tangerine.settings.upPass
       error: (e) ->
         errorMessage = JSON.stringify e
-        alert "Error connecting" + errorMessage
-        $("#upload_results").append('Error connecting to : ' + allDocsUrl + ' - Error: ' + errorMessage + '<br/>')
+        console.log "Error connecting" + errorMessage
+#        $("#upload_results").append('Error connecting to : ' + allDocsUrl + ' - Error: ' + errorMessage + '<br/>')
       success: (response) =>
         $("#upload_results").append('Received response from server.<br/>')
         rows = response.rows

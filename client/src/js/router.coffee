@@ -533,18 +533,23 @@ class Router extends Backbone.Router
         lessonPlan = new LessonPlan "_id" : id
         lessonPlan.deepFetch
           success : ->
+            Tangerine.selectedWeek    = lessonPlan.get("lessonPlan_week")
+            Tangerine.selectedDay     = lessonPlan.get("lessonPlan_day")
             Tangerine.available = []
             lessonPlans = new LessonPlans
             lessonPlans.fetch
-              success: ->
-                lessonPlans.each((lessonPlan) ->
+              success: =>
+                lessonPlans.each((currentLessonPlan) ->
     #              subject = Tangerine.enum.subjects[lessonPlan.get("lessonPlan_subject")]
     #              grade   = lessonPlan.get("lessonPlan_grade")
-                  week    = lessonPlan.get("lessonPlan_week")
-                  day     = lessonPlan.get("lessonPlan_day")
-                  id      = lessonPlan.get("_id")
+                  week    = currentLessonPlan.get("lessonPlan_week")
+                  day     = currentLessonPlan.get("lessonPlan_day")
+                  id      = currentLessonPlan.get("_id")
+                  if Tangerine.selectedWeek == week && Tangerine.selectedDay == day
+                    selected = week + "/" + day
+                  else
 #                  console.log("Lessons available: " + [week, day, id])
-                  Tangerine.available.push [week, day, id]
+                  Tangerine.available.push [week, day, id, selected]
                 )
                 dashboardLayout = new DashboardLayout();
                 Tangerine.app.rm.get('mainRegion').show dashboardLayout

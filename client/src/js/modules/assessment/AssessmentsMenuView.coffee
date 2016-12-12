@@ -64,6 +64,8 @@ class AssessmentsMenuView extends Backbone.View
     @[key] = value for key, value of options
       
 #    @assessments.each (assessment) => assessment.on "new", @addAssessment
+    firstWeek = null
+    firstDay = null
     @lessonPlans.each   (lessonPlan) =>
       lessonPlan.on "new", @addLessonPlan
 #      subject = Tangerine.enum.subjects[lessonPlan.get("lessonPlan_subject")]
@@ -71,11 +73,29 @@ class AssessmentsMenuView extends Backbone.View
       week    = lessonPlan.get("lessonPlan_week")
       day     = lessonPlan.get("lessonPlan_day")
       id      = lessonPlan.get("_id")
-      console.log("Lessons available: " + [week, day, id])
-      if week == '1' && day == '1'
+      if firstWeek == null
+        firstWeek = week
+      else if week < firstWeek
+        firstWeek = week
+      if firstDay == null
+        firstDay = day
+      else if day < firstDay
+        firstDay = day
+#      if week == firstWeek && day == firstDay
+      weekdayCat = week.concat("").concat(day)
+      weekDayInt = parseInt(weekdayCat)
+      if typeof Tangerine.firstLessonWeekDayInt == "undefined" && Tangerine.firstLessonWeekDayInt != null
+        Tangerine.firstLessonWeekDayInt = weekDayInt
         Tangerine.firstLessonId = id
-        console.log("firstLesson: " + [week, day, id])
+      if weekDayInt < Tangerine.firstLessonWeekDayInt
+        Tangerine.firstLessonWeekDayInt = weekDayInt
+        Tangerine.firstLessonId = id
+      console.log("Lessons available: " + [week, day, id])
+#      if week == '1' && day == '1'
+#        Tangerine.firstLessonId = id
+#        console.log("firstLesson: " + [week, day, id])
       Tangerine.available.push [week, day, id]
+
     console.log("navigating to " + Tangerine.firstLessonId)
     Tangerine.router.navigate "runMar/" + Tangerine.firstLessonId, false
     window.location.reload()
