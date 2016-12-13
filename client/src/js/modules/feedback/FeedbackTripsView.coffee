@@ -320,9 +320,6 @@ class FeedbackTripsView extends Backbone.View
       <table id='feedback-table'>
         <thead>
           <tr>
-            <th nowrap class='sortable' data-attr='subject'>Subject #{@getSortArrow("subject")}</th>
-            <th nowrap class='sortable' data-attr='class'>Class #{@getSortArrow("class")}</th>
-            <th nowrap class='sortable' data-attr='stream'>Stream #{@getSortArrow("stream")}</th>
             <th nowrap class='sortable' data-attr='start_time'>Observation Start Time #{@getSortArrow("start_time")}</span></th>
             <th nowrap class='sortable' data-attr=''>&nbsp;</th>
           </tr>
@@ -349,9 +346,6 @@ class FeedbackTripsView extends Backbone.View
 
       feedbackHtml += "
         <tr>
-          <td id='subject-#{index}'>#{subject}</td>
-          <td>#{trip.getString("class")}</td>
-          <td>#{trip.getString("stream")}</td>
           <td>#{moment(trip.get("start_time")).format("MMM-DD HH:mm")}</td>
           <td>
             <button class='command show-feedback' data-trip-id='#{tripId}'>Show feedback</button>
