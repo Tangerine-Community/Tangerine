@@ -1,4 +1,4 @@
-class KlassSubtestRunView extends Backbone.View
+class KlassSubtestRunView extends Backbone.Marionette.ItemView
 
   className : "KlassSubtestRunView"
 
@@ -14,6 +14,7 @@ class KlassSubtestRunView extends Backbone.View
     @student      = options.student
     @subtest      = options.subtest
     @questions    = options.questions
+    @subtest.questions     = @questions
 
     @prototype = @subtest.get("prototype")
 

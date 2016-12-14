@@ -240,7 +240,6 @@ class KlassSubtestEditView extends Backbone.View
 
     else if @prototype == "survey"
 
-
       gridLinkId = @model.get("gridLinkId") || ""
       autostopLimit = parseInt(@model.get("autostopLimit")) || 0
 
@@ -248,9 +247,11 @@ class KlassSubtestEditView extends Backbone.View
         @renderQuestions()
 
         # get linked grid options
+        console.log("curriculum.id: " + @curriculum.id)
         subtests = new Subtests
         subtests.fetch
-          key: "s" + @curriculum.id
+#          key: "s" + @curriculum.id
+          key: @curriculum.id
           success: (collection) =>
             collection = new Subtests collection.where
               prototype : 'grid' # only grids can provide scores

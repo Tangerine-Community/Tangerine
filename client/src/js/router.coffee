@@ -488,35 +488,50 @@ class Router extends Backbone.Router
 
             # this function for later, real code below
             onStudentReady = (student, subtest) ->
+              console.log("onStudentReady")
               student.fetch
                 success: ->
 
                   # this function for later, real code below
                   onSuccess = (student, subtest, question=null, linkedResult={}) ->
+                    console.log("onSuccess")
                     view = new KlassSubtestRunView
                       "student"      : student
                       "subtest"      : subtest
                       "questions"    : questions
                       "linkedResult" : linkedResult
-#                    Tangerine.app.rm.get('mainRegion').show view
+#                    vm.show view
                     Tangerine.currentView = view
                     Tangerine.app.rm.get('mainRegion').show view
 
                   questions = null
                   if subtest.get("prototype") == "survey"
-                    Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
-                      key : [studentId,subtest.get("gridLinkId")]
-                      success: (response) =>
-                        if response.rows != 0
-                          linkedResult = new KlassResult _.last(response.rows)?.value
-                        questions = new Questions
-                        questions.fetch
-                          viewOptions:
-                            key: "question-#{subtest.get("curriculumId")}"
-                          success: ->
-                            questions = new Questions(questions.where {subtestId : subtestId })
-                            onSuccess(student, subtest, questions, linkedResult)
+                    gridLinkId  = subtest.get("gridLinkId")
+                    console.log("studentId: " + studentId + " gridLinkId: " + gridLinkId)
+#                    Tangerine.db.query "tangerine/resultsByStudentSubtest",
+#                      key : [studentId,subtest.get(gridLinkId)]
+                    Tangerine.db.query('tangerine/resultsByStudentSubtest', {key : [studentId,subtest.get("gridLinkId")]}).then((response) ->
+#                      success: (response) =>
+                      if response.rows.length != 0
+                        linkedResult = new KlassResult _.last(response.rows)?.value
+                      questions = new Questions
+                      curriculumId = subtest.get("curriculumId")
+                      console.log("curriculumId: " + curriculumId)
+                      questions.fetch
+                        options:
+##                          key: "question-#{subtest.get("curriculumId")}"
+                          key: curriculumId
+                        success: ->
+                          console.log("questions")
+                          questions = new Questions(questions.where {subtestId : subtestId })
+                          onSuccess(student, subtest, questions, linkedResult)
+                        error: (res, msg) ->
+                          console.log("Error: " + res + " Message: " + msg)
+                    ).catch( (err) ->
+                      console.log('Error: ' + err)
+                    )
                   else
+                    console.log("not survey")
                     onSuccess(student, subtest)
               # end of onStudentReady
 
@@ -527,6 +542,7 @@ class Router extends Backbone.Router
                   student.save null,
                     success: -> onStudentReady( student, subtest)
             else
+              console.log("studentId fetch")
               student.fetch
                 success: ->
                   onStudentReady(student, subtest)
