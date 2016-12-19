@@ -240,9 +240,9 @@ Tangerine.locales["en-US"] =
         "quit_assessment" : "Are you sure you want to quit this Assessment?"
     "Utils"   :
       "message"  :
-        "checkingServer"  : "Count of results on tablet to check if available on server:"
-        "countTabletResults"  : "Count of results on tablet to upload:"
-        "noUpload"  : "Not necessary to upload results;  Server already has the results on the tablet."
+        "checkingServer"  : "Count of results on device to check if available on server:"
+        "countTabletResults"  : "Count of results on device to upload:"
+        "noUpload"  : "Not necessary to upload results;  Server has already synchronized with this device."
         "bulkDocsError"  : "Error uploading results to bulk docs server at :"
         "error"  : "Error"
         "resultsUploaded"  : "Results uploaded"

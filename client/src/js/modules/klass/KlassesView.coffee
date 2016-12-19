@@ -32,9 +32,9 @@ class KlassesView extends Backbone.Marionette.CompositeView
 
     @collection = @klasses.models
 
-    if Tangerine.user.isAdmin()
-      # timeout for the verification attempt
-      @checkNetwork()
+#    if Tangerine.user.isAdmin()
+#      # timeout for the verification attempt
+#      @checkNetwork()
 
   ghostLogin: ->
     Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
@@ -83,12 +83,12 @@ class KlassesView extends Backbone.Marionette.CompositeView
 
   updateUploader: (status) =>
     html =
-      if status == true
+#      if status == true
         "<button class='upload_data command'>Upload</button><br/><div id = \"upload_results\"></div>"
-      else if status == false 
-        "<div class='menu_box'><small>No connection</small><br><button class='command verify'>Verify connection</button><button class='upload_data command'>Upload</button></div><br/><div id = \"upload_results\"></div>"
-      else
-        "<button class='command' disabled='disabled'>Verifying connection...</button><br><button class='upload_data command'>Upload</button><br/><div id = \"upload_results\"></div>"
+#      else if status == false
+#        "<div class='menu_box'><small>No connection</small><br><button class='command verify'>Verify connection</button><button class='upload_data command'>Upload</button></div><br/><div id = \"upload_results\"></div>"
+#      else
+#        "<button class='command' disabled='disabled'>Verifying connection...</button><br><button class='upload_data command'>Upload</button><br/><div id = \"upload_results\"></div>"
 
     @$el.find(".uploader").html html
 
@@ -309,7 +309,7 @@ class KlassesView extends Backbone.Marionette.CompositeView
       <h1>Admin menu</h1>
       <h2>Data Transfer</h2>
       <div class='uploader'></div>
-      <button class='save_to_disk command'>Save to Disk</button>
+      <button class='upload_data command'>Upload</button><button class='save_to_disk command'>Save to Disk</button><div id = \"upload_results\"></div>
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") isnt "server"
 
     curriculaButton = "
@@ -350,7 +350,7 @@ class KlassesView extends Backbone.Marionette.CompositeView
       #{curriculaButton || ''}
     "
 
-    @updateUploader() if Tangerine.user.isAdmin()
+#    @updateUploader() if Tangerine.user.isAdmin()
 
     @renderKlasses()
     
