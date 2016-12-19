@@ -191,6 +191,20 @@ _.indexBy = ( propertyName, objectArray ) ->
 
 class Utils
 
+  @gpsPing: ( options = {} ) =>
+    Utils.log this, "GPS Ping Started" 
+    navigator.geolocation.getCurrentPosition(
+        (position) =>
+          Utils.log this, "GPS Ping: Received #{Utils.gpsEasify position}" 
+      ,
+        (positionError) =>
+          Utils.log this, "GPS Ping: Error: #{positionError.message}" 
+      , 
+        maximumAge         : 300 * 1000
+        timeout            : 60 * 1000
+        enableHighAccuracy : true 
+    )
+
   @execute: ( functions, scope, progress ) ->
 
     totalFunctions = functions.length
@@ -233,7 +247,6 @@ class Utils
         pass: Tangerine.settings.upPass
       error: (e) ->
         errorMessage = JSON.stringify e
-        alert "Error connecting" + errorMessage
         $("#upload_results").append('Error connecting to : ' + allDocsUrl + ' - Error: ' + errorMessage + '<br/>')
       success: (response) =>
         $("#upload_results").append('Received response from server.<br/>')
@@ -272,7 +285,6 @@ class Utils
             data : compressedData
             error: (e) =>
               errorMessage = JSON.stringify e
-              alert "Server bulk docs error" + errorMessage
               $("#upload_results").append(t("Utils.message.bulkDocsError") + bulkDocsUrl + ' - ' + t("Utils.message.error") + ': ' + errorMessage + '<br/>')
             success: =>
               Utils.sticky t("Utils.message.resultsUploaded")

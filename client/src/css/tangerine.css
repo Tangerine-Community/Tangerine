@@ -3054,3 +3054,12 @@ button.ui-button::-moz-focus-inner {
 .workflow-button-link:hover {
     background-color: #f26f10
 }
+
+#display-switch {
+  position: fixed;
+  right: 50px;
+  bottom: 100px;
+  box-shadow: 3px 3px 7px rgba(0,0,0,0.2);
+  cursor: pointer;
+  z-index: 999;
+}

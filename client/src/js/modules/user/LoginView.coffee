@@ -5,6 +5,8 @@ class LoginView extends Backbone.Marionette.View
   events:
     if Modernizr.touch
       'keypress input'     : 'keyHandler'
+      'click .next'        : 'next' #touchstart
+      'click .verify'      : 'verify' #touchstart
       'change input'       : 'onInputChange'
       'change select#name' : 'onSelectChange'
       'click .mode'   : 'updateMode'
@@ -14,6 +16,8 @@ class LoginView extends Backbone.Marionette.View
       'keyup #new_name'    : 'checkNewName'
     else
       'keypress input'     : 'keyHandler'
+      'click .next'        : 'next' #touchstart
+      'click .verify'      : 'verify' #touchstart
       'change input'       : 'onInputChange'
       'change select#name' : 'onSelectChange'
       'click .mode'        : 'updateMode'
@@ -23,6 +27,16 @@ class LoginView extends Backbone.Marionette.View
       'keyup #new_name'    : 'checkNewName'
 
   initialize: (options) ->
+
+    if options.userSettings?
+      @userSettings = options.userSettings
+    else
+      @userSettings =
+        passwordReset:
+          enabled: false,
+          challengeProperty: 'yearOfBirth'
+          challengeText: 'What is your year of birth?'
+
     @mode = "login"
     @i18n()
     @users = options.users
@@ -51,6 +65,36 @@ class LoginView extends Backbone.Marionette.View
     return unless type is 'text' or not type?
 
     $target.val($target.val().toLowerCase())
+
+  next: ->
+    $challenge = @$el.find("#challenge")
+    $challenge.html "<img src='images/loading.gif' class='loading'>"
+
+    @resetUser = new TabletUser "_id" : "user-#{@$el.find("#reset-name").val()}"
+    @resetUser.fetch
+      error: -> $challenge.html "User not found."
+      success: =>
+        $challenge.html "
+          <section class='clearfix'>
+            <label for='response'>#{@userSettings.passwordReset.challengeText}</label>
+            <input id='response' type='text' >
+            <button class='command verify'>Verify</button>
+          </section>
+        "
+
+  verify: ->
+    response = @$el.find("#response").val()
+    realResponse = @resetUser.get(@userSettings.passwordReset.challengeProperty)
+    if realResponse is response 
+      newPass = prompt('Enter a new password')
+      newHash = (TabletUser.generateHash newPass, @resetUser.get('salt'))['pass']
+      @resetUser.save
+        "pass": newHash
+
+      Utils.sticky "Password reset", null, -> document.location.reload()
+    else
+      Utils.sticky "That response did not match our records."
+
 
   showRecent: ->
     @$el.find("#name").autocomplete(
@@ -103,14 +147,22 @@ class LoginView extends Backbone.Marionette.View
     $target.addClass("selected")
     $login  = @$el.find(".login")
     $signup = @$el.find(".signup")
+    $reset  = @$el.find(".reset")
 
     switch @mode
       when "login"
         $login.show()
+        $reset.hide()
         $signup.hide()
       when "signup"
         $login.hide()
+        $reset.hide()
         $signup.show()
+      when "reset"
+        $login.hide()
+        $signup.hide()
+        $reset.show()
+
 
     @$el.find("input")[0].focus()
 
@@ -123,10 +175,20 @@ class LoginView extends Backbone.Marionette.View
     html = "
       <img src='images/login_logo.png' id='login_logo'>
 
-      <div class='tab_container'>
-        <div class='tab mode selected first' data-mode='login'>#{@text.login_tab}</div><div class='tab mode last' data-mode='signup'>#{@text.sign_up_tab}</div>
-      </div>
-
+    "
+    if @userSettings.passwordReset.enabled == true
+      html += "
+        <div class='tab_container'>
+          <div class='tab mode selected first' data-mode='login'>Login</div><div class='tab mode' data-mode='signup'>Sign up</div><div class='tab mode last' data-mode='reset'>Reset</div>
+        </div>
+        "
+    else
+      html += "
+        <div class='tab_container'>
+          <div class='tab mode selected first' data-mode='login'>Login</div><div class='tab mode last' data-mode='signup'>Sign up</div>
+        </div>
+        "
+    html += "
       <div class='login'>
         <section>
 
@@ -157,6 +219,17 @@ class LoginView extends Backbone.Marionette.View
           <button class='sign_up'>#{@text.sign_up}</button>
         </section>
       </div>
+
+      <div class='reset' style='display:none;'>
+        <section class='clearfix'>
+          <div class='messages name-message'></div>
+          <input id='reset-name' placeholder='#{nameName}'>
+          <button class='command next'>Next</button>
+        </section>
+        <div id='challenge'></div>
+      </div>
+
+
     "
 
     @$el.html html

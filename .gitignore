@@ -34,3 +34,5 @@ client/src/js/init/class-pack0000.json
 editor/bower_components/
 
 client/src/js/init/mmlp.json
+
+npm-debug.log

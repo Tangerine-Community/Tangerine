@@ -9,9 +9,77 @@
   "groupHost": "INSERT_PROTOCOL://INSERT_HOST_NAME",
   "groupDDoc": "ojai",
   "replicationCreds": "INSERT_ADMIN:INSERT_ADMIN_PASS",
-  "showWorkflows": false,
+  "showWorkflows": true,
   "log": [
     ""
   ],
-  "instanceId": "necd-vhga-yymg"
+  "instanceId": "necd-vhga-yymg",
+  "tabs": [
+     {
+         "title": "Workflows",
+         "weight": 1,
+         "url": "#workflows",
+         "views": [
+             {
+                 "className": "WorkflowMenuViewController"
+             }
+         ]
+     },
+     {
+         "title": "Sync",
+         "weight": 2,
+         "url": "#bandwidth",
+         "views": [
+             {
+                 "className": "BandwidthCheckView"
+             },
+             {
+                 "className": "UniversalUploadView"
+             },
+             {
+                 "className": "ResultsSaveAsFileView"
+             }
+         ]
+     },
+     {
+         "title": "Schools",
+         "weight": 3,
+         "url": "#schools",
+         "views": [
+             {
+                 "className": "SchoolListView"
+             }
+         ]
+     }
+  ],
+  "userSchema": {
+     "name": {
+         "type": "Text",
+         "title": "User Name",
+         "validators": [
+             "required"
+         ]
+     },
+     "password": {
+         "type": "Password",
+         "validators": [
+             {
+                 "type": "match",
+                 "field": "passwordConfirm",
+                 "message": "Passwords must match!"
+             }
+         ]
+     },
+     "passwordConfirm": {
+         "type": "Password",
+         "title": "Confirm Password",
+         "validators": [
+             {
+                 "type": "match",
+                 "field": "password",
+                 "message": "Passwords must match!"
+             }
+         ]
+     }
+  } 
 }

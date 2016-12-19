@@ -554,7 +554,14 @@ class Router extends Backbone.Router
                   success: ->
                     options.feedbacks = feedbacks
                     options.users = options.tabletUsers || options.users
-                    vm.show new AssessmentsMenuView options
+                    if !Tangerine.user.isAdmin() && Tangerine.settings.get('showWorkflows') == true
+                      view = new WorkflowMenuMemberView options
+                      vm.show view
+                      # ^ vm.show not working for some reason so lets attach the View to the DOM manually.
+                      $('#content').html(view.el)
+                    else
+                      vm.show new AssessmentsMenuView options
+
 
   editId: (id) ->
     id = Utils.cleanURL id

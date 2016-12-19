@@ -202,15 +202,8 @@ class WorkflowRunView extends Backbone.View
           <h1>#{@currentStep.name()} - #{@currentStep.getType()}</h1>
         "
 
-    if @currentStep.getShowLesson()
-      
-      subject      = @getVariable("subject")
-      motherTongue = @getVariable("subject_mother_tongue")
-
-      subject = ({"word": "kiswahili", "english_word" : "english", "operation" : "maths","3":"3"})[subject]
-      grade   = @getVariable("class")
-      week    = @getVariable("lesson_week")
-      day     = @getVariable("lesson_day")
+    mediaOverlayFileScript = @workflow.get('mediaOverlayFile')
+    if @currentStep.getShowLesson() and mediaOverlayFileScript?
 
       $content = $("#content")
 
@@ -232,10 +225,10 @@ class WorkflowRunView extends Backbone.View
           else
             @$lessonContainer.append(lessonImage)
 
-      if subject is "3"
-        lessonImage.src = "media_assets/#{Tangerine.settings.get('groupName')}/lessons/#{motherTongue}_w#{week}_d#{day}.png"
-      else
-        lessonImage.src = "media_assets/#{Tangerine.settings.get('groupName')}/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
+      
+      mediaOverlayFile = (CoffeeScript.eval.apply(@, [mediaOverlayFileScript]))
+      lessonImage.src = "media_assets/#{Tangerine.settings.get('groupName')}/#{mediaOverlayFile}"
+      @trip.set('mediaOverlayFileSrc', lessonImage.src)
 
     else
       @lessonContainer?.remove?()

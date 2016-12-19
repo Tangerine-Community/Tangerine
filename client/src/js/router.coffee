@@ -180,7 +180,9 @@ class Router extends Backbone.Router
   feedback: ( workflowId ) ->
     Tangerine.user.verify
       isAuthenticated: ->
-
+        loadingView = new Backbone.View
+        loadingView.$el.html('Loading...')
+        Tangerine.app.rm.get('mainRegion').show loadingView
         workflow = new Workflow "_id" : workflowId
         workflow.fetch
           success: ->
@@ -190,10 +192,15 @@ class Router extends Backbone.Router
               error: -> Utils.midAlert "No feedback defined"
               success: ->
                 feedback.updateCollection()
-                view = new FeedbackTripsView
-                  feedback : feedback
-                  workflow : workflow
-                Tangerine.app.rm.get('mainRegion').show view
+                tripsByWorkflowIdCollection = new TripsByWorkflowIdCollection
+                tripsByWorkflowIdCollection.params.workflowId = workflow.id
+                tripsByWorkflowIdCollection.on 'sync', ->
+                  view = new FeedbackTripsView
+                    feedback : feedback
+                    workflow : workflow
+                    tripsByWorkflowIdCollection : tripsByWorkflowIdCollection
+                  Tangerine.app.rm.get('mainRegion').show view
+                tripsByWorkflowIdCollection.fetch()
 
   feedbackEdit: ( workflowId ) ->
       Tangerine.user.verify
@@ -1016,6 +1023,7 @@ class Router extends Backbone.Router
   # User
   #
   login: ->
+
     Tangerine.user.verify
       isAuthenticated: ->
         Tangerine.router.landing()
@@ -1024,14 +1032,15 @@ class Router extends Backbone.Router
         users = new TabletUsers
         users.fetch
           success: ->
-#            vm.show new LoginView
-#              users: users
-            loginView = new LoginView
-              users: users
-#            dashboardLayout = new DashboardLayout();
+
+            viewOptions = {}
+            viewOptions.users = users
+            if Tangerine.settings.has 'user'
+              viewOptions.userSettings = Tangerine.settings.get 'user'
+            loginView = new LoginView viewOptions
+
             Tangerine.app.rm.get('mainRegion').show loginView
             loginView.afterRender()
-#            dashboardLayout.contentRegion.show(loginView)
 
   logout: ->
     Tangerine.user.logout()

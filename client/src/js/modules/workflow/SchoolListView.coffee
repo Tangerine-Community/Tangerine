@@ -1,5 +1,3 @@
-# bit of a crap shoot this one
-# it will find _a_ school list
 class SchoolListView extends Backbone.View
 
 
@@ -83,7 +81,6 @@ class SchoolListView extends Backbone.View
         #continue unless isRightWorkflow
         #continue if trip.get('tripId') in incompleteTrips
         #continue unless isValid
-        console.log 'flula'
         continue unless trip.get('authenticity')
         continue unless trip.get('endTime')
         continue unless trip.get('locationData')
@@ -139,13 +136,14 @@ class SchoolListView extends Backbone.View
       </table>
 
       <table class='class_table school-list start-hidden'>
+        <tr><td><b>Remaining</b></td></tr>
+        #{("<tr><td>#{@schoolNames[school]}</td></tr>" for school in @schools.left).join('')}
+      </table>
+
+      <table class='class_table school-list start-hidden'>
         <tr><td><b>Done</b></td></tr>
         #{("<tr><td>#{@schoolNames[school]}</td></tr>" for school in @schools.done).join('')}
       </table>
 
-      <table class='class_table school-list start-hidden'>
-        <tr><td><b>Remaining</b></td></tr>
-        #{("<tr><td>#{@schoolNames[school]}</td></tr>" for school in @schools.left).join('')}
-      </table>
     "
-
+    @$el.find(".school-list").hide()

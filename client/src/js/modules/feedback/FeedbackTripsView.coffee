@@ -60,11 +60,16 @@ class FeedbackTripsView extends Backbone.View
 
   initialize: (options) ->
     @[key] = value for key, value of options
+    @$el.html('Loading...')
 
     @subViews = []
 
     @locLevels = ["county", "zone", "school"]
 
+    # TODO: Here is a good example of a poor seperation of Views and
+    # Controllers. The route callback `fetch` has controller logic of getting a
+    # workflow and the feedback, then shows this view and it immediately starts
+    # getting some data. 
     @trips = new TripResultCollection
     @trips.fetch 
       resultView : "tutorTrips"
@@ -96,19 +101,11 @@ class FeedbackTripsView extends Backbone.View
     $target.siblings().toggle()
 
     tripId = $target.attr("data-trip-id")
-    trip   = @trips.get(tripId)
+    trip   = new Trip({"_id": tripId})
 
     @$lessonContainer = @$el.find(".#{tripId}-lesson")
 
     @$lessonContainer.html "<img class='loading' src='images/loading.gif'>"
-
-
-    subject = ({"bukusu": "bukusu","kamba": "kamba","word": "kiswahili", "english_word" : "english", "operation" : "maths"})[trip.get('subject')]
-
-    motherTongue = trip.get("subject_mother_tongue")
-    grade   = trip.get("class")
-    week    = trip.get("lesson_week")
-    day     = trip.get("lesson_day")
 
     lessonImage = new Image 
     $(lessonImage).on "load", 
@@ -122,11 +119,9 @@ class FeedbackTripsView extends Backbone.View
           @$lessonContainer.append(lessonImage)
 
 
-    if subject is "3"
-      lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{motherTongue}_w#{week}_d#{day}.png"
-    else
-      lessonImage.src = "/#{Tangerine.db_name}/_design/assets/lessons/#{subject}_c#{grade}_w#{week}_d#{day}.png"
-
+    trip.on 'sync', =>
+      lessonImage.src = trip.get 'mediaOverlayFileSrc'
+    trip.fetch()
 
   hideFeedback: (event) ->
 
@@ -141,17 +136,16 @@ class FeedbackTripsView extends Backbone.View
 
   showFeedback: (event) ->
     $target = $(event.target)
-
     $target.toggle()
     $target.siblings().toggle()
-
-
     tripId = $target.attr("data-trip-id")
-
-    trip = @trips.get(tripId)
-    
+    tripModel = {}
+    @tripsByWorkflowIdCollection.models.forEach (model) =>
+      if model.id == tripId
+        tripModel = model
     view = new FeedbackRunView
-      trip     : trip
+      tripModel: tripModel 
+      trip     : @trips.get(tripId)
       feedback : @feedback
 
     view.render()
@@ -326,9 +320,6 @@ class FeedbackTripsView extends Backbone.View
       <table id='feedback-table'>
         <thead>
           <tr>
-            <th nowrap class='sortable' data-attr='subject'>Subject #{@getSortArrow("subject")}</th>
-            <th nowrap class='sortable' data-attr='class'>Class #{@getSortArrow("class")}</th>
-            <th nowrap class='sortable' data-attr='stream'>Stream #{@getSortArrow("stream")}</th>
             <th nowrap class='sortable' data-attr='start_time'>Observation Start Time #{@getSortArrow("start_time")}</span></th>
             <th nowrap class='sortable' data-attr=''>&nbsp;</th>
           </tr>
@@ -355,19 +346,16 @@ class FeedbackTripsView extends Backbone.View
 
       feedbackHtml += "
         <tr>
-          <td id='subject-#{index}'>#{subject}</td>
-          <td>#{trip.getString("class")}</td>
-          <td>#{trip.getString("stream")}</td>
           <td>#{moment(trip.get("start_time")).format("MMM-DD HH:mm")}</td>
           <td>
             <button class='command show-feedback' data-trip-id='#{tripId}'>Show feedback</button>
             <button class='command hide-feedback' data-trip-id='#{tripId}' style='display:none;'>Hide feedback</button>
           </td>
           <td>
-            <!-- TODO: Get this working. #{lessonPlanButtonsHtml || ''} -->
+            #{lessonPlanButtonsHtml || ''}
           </td>
           <td>
-            <!-- TODO: Get this working. #{resultButtonHtml || ''} -->
+            #{resultButtonHtml || ''}
           </td>
 
         </tr>
@@ -411,7 +399,7 @@ class WorkflowResultView extends Backbone.View
         blank = assessmentModelBlanks.pop()
         assessment = new Assessment blank
         assessments.push assessment
-        assessment.fetch
+        assessment.deepFetch
           error: -> alert "Loading assessment failed. Please try again."
           success: ->
             assessment.questions = new Questions

@@ -18,7 +18,7 @@ class SurveyEditView extends Backbone.View
 
     Utils.working true
     @model.questions.fetch
-      key: "q" + @model.get "assessmentId"
+      key: @model.get "assessmentId"
       success: =>
         Utils.working false
         @questionsEditView.questions = new Questions(@model.questions.where {subtestId : @model.id  })
