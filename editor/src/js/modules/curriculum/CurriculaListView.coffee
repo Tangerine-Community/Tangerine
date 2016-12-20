@@ -12,6 +12,9 @@ class CurriculaListView extends Backbone.View
   render: =>
     return if @curricula.length == 0
 
+    urlPhrases = '#phrases'
+    linkToPhrases = "<p><a href=" + urlPhrases + ">Edit Phrases</a></p>"
+
     if @curricula.length > 0
       groupName = Tangerine.settings.get('groupName')
       url = '#run/app/' + groupName
@@ -22,7 +25,7 @@ class CurriculaListView extends Backbone.View
     else
       runCurriculaApp = ""
 
-    @$el.html "<h1>Curricula</h1>" + runCurriculaApp
+    @$el.html "<h1>Curricula</h1>" + linkToPhrases + runCurriculaApp
 
     @closeViews
     @curricula.each (curriculum) =>

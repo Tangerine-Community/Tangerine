@@ -69,6 +69,7 @@
       )
     )
 
+
     describe 'Tangerine Tests', (done)->
       foo = false
       this.timeout(50000);
@@ -624,7 +625,6 @@
                     view.render();
 #                })
       )
-
 
 #      it('Should download the assessment config', (done)->
 #        this.$fixture.empty().appendTo(this.$container);

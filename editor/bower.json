@@ -1,0 +1,8 @@
+{
+  "name": "tangerine-editor",
+  "version": "0.0.0",
+  "dependencies": {
+    "backbone-forms": "^0.14.1"
+  },
+  "directory": "src/bower_components"
+}

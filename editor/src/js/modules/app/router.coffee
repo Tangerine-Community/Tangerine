@@ -82,6 +82,7 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+    'phrases'      : 'phrases'
 
   feedbackEdit: ( workflowId ) ->
     Tangerine.user.verify
@@ -375,6 +376,15 @@ class Router extends Backbone.Router
                               "klass"      : klass
                             vm.show view
 
+  phrases: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        phrases = new Phrases
+        phrases.fetch
+          success: (collection) ->
+            view = new PhrasesRunView
+              phrases:  collection
+            vm.show view
 
   studentSubtest: (studentId, subtestId) ->
     Tangerine.user.verify

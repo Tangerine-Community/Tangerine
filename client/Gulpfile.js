@@ -61,7 +61,9 @@ var conf = {
   cssDir         : './src/css',
   handlebarsGlob : './src/templates/*.handlebars',
   testGlob : './test/spec/*.coffee',
-  testDir : './test/spec/'
+  testSpecsGlob : './test/specs/*.coffee',
+  testDir : './test/spec/',
+  testSpecsDir : './test/specs/'
 };
 
 // Helper function helps display logs
@@ -217,9 +219,14 @@ gulp.task('coffee:test', function(){
     c.end();                    // end stream so we don't freeze the program
   });
 
-  gulp.src('./test/spec/*.coffee')  // handle translation documents
+  gulp.src('./test/spec/*.coffee')  // handle test coffeescript documents
       .pipe(c)                          // compile coffeescript
       .pipe(gulp.dest(conf.testDir))  // send it here
+      .pipe(connect.reload());          // reload anyone watching
+
+  gulp.src('./test/specs/*.coffee')  // handle test coffeescript documents
+      .pipe(c)                          // compile coffeescript
+      .pipe(gulp.dest(conf.testSpecsDir))  // send it here
       .pipe(connect.reload());          // reload anyone watching
 
 });
@@ -260,6 +267,7 @@ gulp.task('watch', function() {
   gulp.watch(conf.localeGlob,   ['build:locales']);   // for i18n
   gulp.watch(conf.handlebarsGlob, ['build:app.js']); // for handlebars templates
   gulp.watch(conf.testGlob, ['coffee:test']); // for test scripts
+  gulp.watch(conf.testSpecsGlob, ['coffee:test']); // for test scripts
 });
 
 

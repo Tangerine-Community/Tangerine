@@ -417,6 +417,10 @@ conf.fileOrder = [
   'CurriculumListElementView',
   'CurriculaView',
 
+  'Phrase',
+  'Phrases',
+  'PhrasesRunView',
+
   'Teacher',
   'Teachers',
   'TeachersView',
@@ -506,6 +510,7 @@ conf.libFiles = [
   './src/js/lib/jquery.ui.progressbar.js',
   './src/js/lib/inflection.js',
   './src/js/lib/backbone.js',
+  './src/bower_components/backbone-forms/distribution/backbone-forms.js',
   './src/js/lib/moment.js',
   './src/js/lib/backbone-couchdb.js',
   './src/js/lib/transcriptionCheckdigit.js',

@@ -33,6 +33,7 @@
   },
   "homepage": "https://github.com/Tangerine-Community/Tangerine-client",
   "devDependencies": {
+    "chai": "^3.5.0",
     "coffee-script": "^1.10.0",
     "commander": "^2.9.0",
     "cordova": "^6.3.0",
@@ -65,7 +66,10 @@
     "junk": "^1.0.3",
     "map-stream": "0.0.6",
     "shelljs": "^0.7.3",
-    "unirest": "^0.5.0"
+    "unirest": "^0.5.0",
+    "wdio-dot-reporter": "0.0.6",
+    "wdio-mocha-framework": "^0.5.8",
+    "webdriverio": "^4.5.1"
   },
   "dependencies": {
     "gulp-mocha-phantomjs": "^0.12.0",
