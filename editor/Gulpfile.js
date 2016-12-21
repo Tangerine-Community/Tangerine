@@ -440,12 +440,10 @@ conf.fileOrder = [
   'FeedbackRunView',
   'FeedbackTripsView',
   'TripResult',
-  'TripResultCollection',
+  'TripResults',
 
   'User',
   'Users',
-  'TabletUser',
-  'TabletUsers',
 
   'LoginView',
   'AccountView',
