@@ -36,6 +36,7 @@ class ProgressView extends Backbone.View
     @student      = options.student
     @subtests     = options.subtests
     @klass        = options.klass
+    @phrases      = options.phrases
 
     # Catch things that "look" "odd"
     if not @klass?          then Utils.log @, "No klass."
@@ -267,7 +268,7 @@ class ProgressView extends Backbone.View
   afterRender: =>
     @updateFlot()
 
-  updateTable: ->
+  updateTable: =>
 
     type = @selected.itemType
     week = @selected.week
@@ -316,23 +317,45 @@ class ProgressView extends Backbone.View
       low  = threshold.target - threshold.spread
       difference = score - threshold.target
 
+      @score = score
+      @difference = difference
+
       if score > high
-        result = "(#{score}), #{difference} correct items per minute above the benchmark"
-        warnings = "Your class is doing well, #{result}, continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+#        result = "(#{score}), #{difference} correct items per minute above the benchmark"
+#        warnings = "Your class is doing well, #{result}, continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+        resultPhrase = @phrases.findWhere({"code":"highScoreResult"})?.get("phrase")
+        CoffeeScript.eval.apply(this, ["this.result = " + resultPhrase])
+        result = @result
+        warningsPhrase = @phrases.findWhere({"code":"highScoreResult"})?.get("phrase")
+        CoffeeScript.eval.apply(this, ["this.warnings = " + warningsPhrase])
+        warnings = @warnings
       else if score < low
-        result = "(#{score}), #{Math.abs(difference)} correct items per minute below the benchmark"
-        warnings = "Your class is performing below the grade-level target, #{result}. Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more."
+#        result = "(#{score}), #{Math.abs(difference)} correct items per minute below the benchmark"
+#        warnings = "Your class is performing below the grade-level target, #{result}. Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more."
+        resultPhrase = @phrases.findWhere({"code":"lowScoreResult"})?.get("phrase")
+        warningsPhrase = @phrases.findWhere({"code":"lowScoreWarning"})?.get("phrase")
       else
         if difference != 0 && difference * -1 == Math.abs(difference)
-          result = (score - threshold.target) + " correct items per minute above the bench mark"
+#          result = (score - threshold.target) + " correct items per minute above the bench mark"
+          resultText = @phrases.findWhere({"code":"correctAboveBenchmark"})?.get("phrase")
+          CoffeeScript.eval.apply(this, ["this.result = " + resultText])
+          result = (score - threshold.target) + @result
         else if difference == 0
-          result = "#{score} correct items per minute"
+#          result = "#{score} correct items per minute"
+          resultPhrase = @phrases.findWhere({"code":"correctItemsPerMinute"})?.get("phrase")
+          CoffeeScript.eval.apply(this, ["this.result = " + resultPhrase])
+          result = @result
         else
-          result = "(#{score}), " + Math.abs(score - threshold.target) + " correct items per minute below the bench mark"
-        
-        # @TODO make that "minute" unit dynamic
-        warnings = "Your class is in line with expectations, #{result}. Continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+#          result = "(#{score}), " + Math.abs(score - threshold.target) + " correct items per minute below the bench mark"
+          resultText = @phrases.findWhere({"code":"correctBelowBenchmark"})?.get("phrase")
+          CoffeeScript.eval.apply(this, ["this.result = " + resultText])
+          result = "(#{score}), " + Math.abs(score - threshold.target) + @result
 
+        # @TODO make that "minute" unit dynamic
+#        warnings = "Your class is in line with expectations, #{result}. Continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+        warningsPhrase = @phrases.findWhere({"code":"correctWarning"})?.get("phrase")
+        CoffeeScript.eval.apply(this, ["this.warnings = " + warningsPhrase])
+        warnings = @warnings
       html += "
         <section>
           #{warnings}

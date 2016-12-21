@@ -36,6 +36,7 @@ class ProgressView extends Backbone.View
     @student      = options.student
     @subtests     = options.subtests
     @klass        = options.klass
+    @phrases      = options.phrases
 
     # Catch things that "look" "odd"
     if not @klass?          then Utils.log @, "No klass."
@@ -316,8 +317,15 @@ class ProgressView extends Backbone.View
       low  = threshold.target - threshold.spread
       difference = score - threshold.target
 
+      phrase = @phrases.findWhere
+        code:"highScoreResult"
+        console.log("phrase: " + phrase)
+
       if score > high
         result = "(#{score}), #{difference} correct items per minute above the benchmark"
+        phrase = @phrases.findWhere
+          code:"highScoreResult"
+        console.log("phrase: " + phrase)
 #        highScoreResult
         warnings = "Your class is doing well, #{result}, continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
 #        highScoreWarning

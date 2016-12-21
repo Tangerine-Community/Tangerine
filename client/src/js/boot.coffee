@@ -98,6 +98,7 @@ Tangerine.bootSequence =
             Tangerine.db.query('tangerine/byCollection', {key: 'workflows'}).then((res) ->
               markDatabaseAsInitialized()
             ).catch( (err) ->
+              console.log('Could not index views. Error: ' + err)
               alert('Could not index views. Error: ' + err)
             )
 
@@ -136,6 +137,7 @@ Tangerine.bootSequence =
                   packNumber++
                   Tangerine.db.bulkDocs docs, (error, doc) ->
                     if error
+                      console.log "could not save initialization documents: #{error}"
                       return alert "could not save initialization documents: #{error}"
                     doOne()
 

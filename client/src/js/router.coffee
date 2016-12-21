@@ -904,12 +904,18 @@ class Router extends Backbone.Router
                           resultsFromCurrentStudents.push(result) if result.get("studentId") in studentIds
                         results = new KlassResults resultsFromCurrentStudents
 
-                      view = new ProgressView
-                        "subtests" : subtests
-                        "student"  : student
-                        "results"  : results
-                        "klass"    : klass
-                      Tangerine.app.rm.get('mainRegion').show view
+                      phrases = new Phrases
+                      phrases.fetch
+                        success: (col) ->
+                          phrasesArray =  col.where({"collection":"phrase"})
+                          phrasesCol = new Phrases  phrasesArray
+                          view = new ProgressView
+                            "subtests" : subtests
+                            "student"  : student
+                            "results"  : results
+                            "klass"    : klass
+                            "phrases"  : phrasesCol
+                          Tangerine.app.rm.get('mainRegion').show view
 
         if studentId != "all"
           student = new Student "_id" : studentId

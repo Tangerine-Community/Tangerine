@@ -296,7 +296,6 @@ class KlassesView extends Backbone.Marionette.CompositeView
     @$el.find("#klass_list_wrapper").append $ul
 
   onSubviewRendered: =>
-    console.log("subRendered")
     @trigger "subRendered"
 
   render: =>

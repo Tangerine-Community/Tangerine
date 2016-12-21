@@ -510,6 +510,10 @@ conf.fileOrder = [
   'CurriculumListElementView',
   'CurriculaView',
 
+  'Phrase',
+  'Phrases',
+  'PhrasesRunView',
+
   'Teacher',
   'Teachers',
   'TeachersView',

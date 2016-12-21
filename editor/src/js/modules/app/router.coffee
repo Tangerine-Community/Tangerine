@@ -817,13 +817,16 @@ class Router extends Backbone.Router
                         for result in results.models
                           resultsFromCurrentStudents.push(result) if result.get("studentId") in studentIds
                         results = new KlassResults resultsFromCurrentStudents
-
-                      view = new ProgressView
-                        "subtests" : subtests
-                        "student"  : student
-                        "results"  : results
-                        "klass"    : klass
-                      vm.show view
+                      phrases = new Phrases
+                      phrases.fetch
+                        success: (phrases) ->
+                          view = new ProgressView
+                            "subtests" : subtests
+                            "student"  : student
+                            "results"  : results
+                            "klass"    : klass
+                            "phrases"  : phrases
+                          vm.show view
 
         if studentId != "all"
           student = new Student "_id" : studentId
