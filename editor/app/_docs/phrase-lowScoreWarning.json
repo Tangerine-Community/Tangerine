@@ -1,0 +1,7 @@
+{
+  "_id": "phrase-lowScoreWarning",
+  "language": "en",
+  "code": "lowScoreWarning",
+  "phrase": "'Your class is performing below the grade-level target, #{result}. Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more.'",
+  "collection": "phrase"
+}

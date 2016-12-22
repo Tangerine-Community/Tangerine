@@ -1,0 +1,7 @@
+{
+  "_id": "phrase-correctWarning",
+  "language": "en",
+  "code": "correctWarning",
+  "phrase": "'Your class is in line with expectations, ' + @result + '. Continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind.'",
+  "collection": "phrase"
+}
