@@ -500,7 +500,7 @@ class Router extends Backbone.Router
                 success: ->
 
                   # this function for later, real code below
-                  onSuccess = (student, subtest, question=null, linkedResult={}) ->
+                  onSuccess = (student, subtest, question=null, linkedResult=null) ->
                     console.log("onSuccess")
                     view = new KlassSubtestRunView
                       "student"      : student
@@ -530,7 +530,7 @@ class Router extends Backbone.Router
                           key: curriculumId
                         success: ->
                           console.log("questions")
-                          questions = new Questions(questions.where {subtestId : subtestId })
+                          questions = new Questions(questions.where {subtestId : subtestId, collection:"question" })
                           onSuccess(student, subtest, questions, linkedResult)
                         error: (res, msg) ->
                           console.log("Error: " + res + " Message: " + msg)

@@ -85,7 +85,8 @@ class KlassSubtestRunView extends Backbone.Marionette.ItemView
     result = @linkedResult.get("subtestData").body['attempted'] || 0
     return result
 
-  gridWasAutostopped: -> @linkedResult.get("subtestData")?['auto_stop'] || 0
+  gridWasAutostopped: ->
+    @linkedResult?.get("subtestData")?.body['auto_stop'] || 0
 
   onClose: ->
     @prototypeView?.close?()
