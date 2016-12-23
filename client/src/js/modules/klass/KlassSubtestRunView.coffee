@@ -81,8 +81,8 @@ class KlassSubtestRunView extends Backbone.Marionette.ItemView
     @trigger "rendered"
 
   getGridScore: -> 
-    return false if not @linkedResult.get("subtestData")? # no result found
-    result = @linkedResult.get("subtestData")['attempted'] || 0 
+    return false if not @linkedResult.get("subtestData")?.body # no result found
+    result = @linkedResult.get("subtestData").body['attempted'] || 0
     return result
 
   gridWasAutostopped: -> @linkedResult.get("subtestData")?['auto_stop'] || 0
