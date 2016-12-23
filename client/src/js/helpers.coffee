@@ -452,7 +452,7 @@ class Utils
           doc = res[0]
           Tangerine.db.put doc, (error, doc) ->
             if error
-              return alert "could not save user documents: #{error}"
+              return console.log "could not save user documents: " + error
 
   @cloud_url_with_credentials: (cloud_url)->
 #    cloud_credentials = "username:password"

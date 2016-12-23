@@ -173,6 +173,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
         options : []
         mode    : "single"
         model   : model
+        answer  : "last"
 
       buttonConfig.options.push {
         label : @text.mark
