@@ -163,6 +163,12 @@ Math.ave = ->
 
 Math.isInt    = -> return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n)
 Math.decimals = (num, decimals) -> m = Math.pow( 10, decimals ); num *= m; num =  num+(`num<0?-0.5:+0.5`)>>0; num /= m
+# Kudos MDN: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Math/round
+Tangerine.round = (number, precision) ->
+  factor = Math.pow(10, precision);
+  tempNumber = number * factor;
+  roundedTempNumber = Math.round(tempNumber);
+  return roundedTempNumber / factor;
 Math.commas   = (num) -> parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
 

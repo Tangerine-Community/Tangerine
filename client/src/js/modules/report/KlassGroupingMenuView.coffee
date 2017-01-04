@@ -21,8 +21,10 @@ class KlassGroupingMenuView extends Backbone.View
         allSubtests = new Subtests
         allSubtests.fetch
           success: (collection) =>
-            subtests = collection.where 
-              curriculaId : @curricula.id
+            curriculumId = @klass.get("curriculumId")
+            subtests = collection.where
+#            subtests = new Subtests collection.where
+              curriculumId : curriculumId
             @parts = []
             for subtest in subtests
               

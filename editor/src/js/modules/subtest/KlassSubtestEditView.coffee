@@ -339,12 +339,12 @@ class KlassSubtestEditView extends Backbone.View
       </div>
 
       <div class='label_value'>
-        <label for='score_target'>Target score</label><br>
+        <label for='score_target' title='This value is used in the progress reports for the Progress benchmark score.'>Target score</label><br>
         <input type='number' id='score_target' value='#{scoreTarget}'>
       </div>
 
       <div class='label_value'>
-        <label for='score_spread'>Score spread</label><br>
+        <label for='score_spread' title='This value is used in the Progress report to calculate the high and low thresholds, which determine which result message and warning to display.'>Score spread</label><br>
         <input type='number' id='score_spread' value='#{scoreSpread}'>
       </div>
 
