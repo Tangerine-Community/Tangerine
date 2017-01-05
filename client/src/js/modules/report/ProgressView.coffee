@@ -1,4 +1,4 @@
-class ProgressView extends Backbone.View
+class ProgressView extends Backbone.Marionette.ItemView
 
   className : "ProgressView"
 
@@ -265,7 +265,8 @@ class ProgressView extends Backbone.View
     @updateTable()
     @trigger "rendered"
 
-  afterRender: =>
+  onShow: =>
+#    console.log("onShow")
     @updateFlot()
 
   updateTable: =>

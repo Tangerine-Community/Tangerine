@@ -894,8 +894,7 @@ class Router extends Backbone.Router
                   allResults.fetch
                     success: ( collection ) ->
                       results = new KlassResults collection.where "klassId" : klassId, "reportType" : "progress"
-
-                      console.log students
+#                      console.log students
                       if students?
                         # filter `Results` by `Klass`'s current `Students`
                         studentIds = students.pluck("_id")
