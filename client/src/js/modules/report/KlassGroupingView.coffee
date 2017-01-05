@@ -10,8 +10,8 @@ class KlassGroupingView extends Backbone.View
 
   events:
     "click .back"                      : "goBack"
-    "change #selector_container input" : "selector"
-    'click .student_name' : 'showItemized' 
+    "click #selector_container button" : "selector"
+    'click .student_name' : 'showItemized'
 
   showItemized: (event) ->
     $target = $(event.target)
@@ -27,8 +27,10 @@ class KlassGroupingView extends Backbone.View
       @$el.find(".itemized_results").addClass "confirmation"
       @$el.find(".student_#{studentId}").removeClass "confirmation"
 
-  selector: ->
-    subtestId = @$el.find("#selector_container input:checked").attr("data-subtestId")
+  selector: (event) ->
+    $target = $(event.target)
+    subtestId = $target.attr("data-subtestId")
+    $target.addClass("selected")
     @selected.subtestId = subtestId
     @selected.results   = @results.where("subtestId" : subtestId)
 
@@ -255,20 +257,27 @@ class KlassGroupingView extends Backbone.View
 
     detailsHTML += "</table>"
 
+    formLinksHtml = "<div id='selector_container'>"
 
+    for subtest in @subtests.models
+      checkedAttribute = if subtest.id == @selected.subtestId then "selected" else ""
+      label =subtest.get("name")
+      formLinksHtml += "<button class='selector command #{checkedAttribute}' id='#{subtest.id}' data-subtestId='#{subtest.id}'>#{label}</button>"
+
+    formLinksHtml += "      </div>"
 
     if @selected.results.length != 0
       html = "
-        #{menuHTML}
         #{summaryHTML}
         #{detailsHTML}
+        #{formLinksHtml}
         #{itemizedResults}
         #{warningsHTML || ""}
         <button class='navigation back'>Back</button>
       "
     else
       html = "
-        #{menuHTML}
+        #{formLinksHtml}
         #{emptyHTML}
         <button class='navigation back'>Back</button>
       "
