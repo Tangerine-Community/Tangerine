@@ -32,6 +32,13 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #        parent: this
 
     @i18n()
+
+
+    # used by av questions
+    @inputAudio = @model.getObject('inputAudio', false)
+    if @inputAudio
+      @audio = new Audio("data:#{@inputAudio.type};base64,#{@inputAudio.data}")
+
 #    this.listenTo(@model.collection,'change', this.viewRender)
 #      this.listenTo(model.collection, 'reset', this.render);
 #    if @model.questions.length == 0
@@ -59,6 +66,33 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @parent.displayBack(@backable)
 
     @listenTo
+
+  avNext: =>
+    qv = @questionViews[@currentQuestion]
+    return @showErrors(qv) unless @isValid([qv])
+
+    qv.$el.find('.av-question').css('display', 'none')
+    @currentQuestion++
+    if @questionViews.length is @currentQuestion
+      return @parent.next()
+    qv = @questionViews[@currentQuestion]
+    #if @questionViews.length - 1 is @currentQuestion
+    #  qv.$el.find('.av-question').css('position', 'relative')
+
+    qv.startAv()
+    @updateQuestionProgress()
+
+  avPrev: =>
+    return if @currentQuestion == 0
+    qv = @questionViews[@currentQuestion]
+    return @showErrors(qv) unless @isValid([qv])
+
+    qv.$el.find('.av-question').css('display', 'none')
+    @currentQuestion--
+    qv = @questionViews[@currentQuestion]
+
+    qv.$el.find('.av-question').css('display', 'block')
+    @updateQuestionProgress()
 
   updateProgressButtons: ->
 
@@ -295,6 +329,10 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     'rendered': 'onQuestionRendered'
 #    'render:collection': 'renderCol'
 #    'attach': 'attachChild'
+    "answer scroll": 'onQuestionAnswer'
+    "av-next":       'avNext'
+    "av-prev":       'avPrev'
+    'abort':         'abort'
 
   # This tests if add:child is triggered on the subtest instead of on AssessmentCompositeView.
   foo: ->
