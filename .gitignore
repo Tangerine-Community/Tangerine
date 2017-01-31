@@ -36,3 +36,5 @@ client/lesson_plan_media
 editor/bower_components
 
 client/src/js/init/class.json.json
+
+bower_components
