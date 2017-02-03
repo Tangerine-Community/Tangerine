@@ -50,6 +50,7 @@ class LessonPlan extends Backbone.Model
         success: (collection) =>
           @elements = collection
           @elements.ensureOrder()
+          model.set("elements", @elements)
           oldSuccess? @
 
     Assessment.__super__.fetch.call @, options
@@ -290,41 +291,57 @@ class LessonPlan extends Backbone.Model
 
 
 
-  destroy: =>
+  destroyLessonPlan: =>
 
 # get all docs that belong to this assesssment except results
-    $.ajax
-      type: "POST"
-      contentType: "application/json; charset=UTF-8"
-      dataType: "json"
-      url: "/db/#{Tangerine.db_name}/_design/#{Tangerine.design_doc}/_view/byParentId"
-      data: JSON.stringify({ keys : ["s#{@id}","q#{@id}","a#{@id}"] })
-      error: (xhr, status, err) ->
-        Utils.midAlert "Delete error: 01";
-        Tangerine.log.db("assessment-delete-error-01","Error: #{err}, Status: #{status}, xhr:#{xhr.responseText||'none'}. headers: #{xhr.getAllResponseHeaders()}")
-      success: (response) =>
+    lessonPlan = new LessonPlan
+      "_id" : @id
+    lessonPlan.fetch
+      success: (lessonPlan) =>
+        console.log("lessonPlan: " + JSON.stringify(lessonPlan))
+        # loop through the lessonPlan elements
+        elements = lessonPlan.get("elements")
+        console.log("Elements: " + JSON.stringify(elements))
+        $.each elements, (ele) =>
+          console.log("Element: " + JSON.stringify(element))
+          element.destroy()
+        lessonPlan.destroy()
+#  outside the loop, delete the lessonplan either by lessonPlan.destroy() 
+#or by using the jqueery code below.
+   
+   
+   #$.ajax
+   #  type: "POST"
+   #  contentType: "application/json; charset=UTF-8"
+   #  dataType: "json"
+   #  url: "/db/#{Tangerine.db_name}/_design/#{Tangerine.design_doc}/_view/byParentId"
+   #  data: JSON.stringify({ keys : ["s#{@id}","q#{@id}","a#{@id}"] })
+   #  error: (xhr, status, err) ->
+   #    Utils.midAlert "Delete error: 01";
+   #    console.log("lessonPlan-delete-error-01","Error: #{err}, Status: #{status}, xhr:#{xhr.responseText||'none'}. headers: #{xhr.getAllResponseHeaders()}")
+   #  success: (response) =>
 
-        requestData =
-          docs : response.rows.map (row) ->
-            "_id"  : row.id
-            "_rev" : row.value.r
-            "_deleted" : true
+   #    requestData =
+   #      docs : response.rows.map (row) ->
+   #        "_id"  : row.id
+   #        "_rev" : row.value.r
+   #        "_deleted" : true
 
-        $.ajax
-          type: "POST"
-          contentType: "application/json; charset=UTF-8"
-          dataType: "json"
-          url: Tangerine.settings.urlBulkDocs()
-          data: JSON.stringify(requestData)
-          error: -> Utils.midAlert "Delete error: 02"; Tangerine.log.db("assessment-delete-error-02",JSON.stringify(arguments))
-          success: (responses) =>
-            okCount = 0
-            (okCount++ if resp.ok?) for resp in responses
-            if okCount == responses.length
-              @collection.remove @id
-              @clear()
-            else
-              Utils.midAlert "Delete error: 03"; Tangerine.log.db("assessment-delete-error-03",JSON.stringify(arguments))
+   #    $.ajax
+   #      type: "POST"
+   #      contentType: "application/json; charset=UTF-8"
+   #      dataType: "json"
+   #      url: Tangerine.settings.urlBulkDocs()
+   #      data: JSON.stringify(requestData)
+   #      error: -> Utils.midAlert "Delete error: 02"; Tangerine.log.db("lessonPlan-delete-error-02",JSON.stringify(arguments))
+   #      success: (responses) =>
+   #        okCount = 0
+   #        (okCount++ if resp.ok?) for resp in responses
+   #        if okCount == responses.length
+   #          @collection.remove @id
+   #          @clear()
+   #        else
+   #          Utils.midAlert "Delete error: 03"; Tangerine.log.db("lessonPlan-delete-error-03",JSON.stringify(arguments))
 
   isActive: -> return not @isArchived()
 
