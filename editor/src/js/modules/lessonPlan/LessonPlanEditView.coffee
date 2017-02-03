@@ -161,7 +161,9 @@ class LessonPlanEditView extends Backbone.View
       else
         finalLessonPlanTitle = "LP"
       timestamp = (new Date()).getTime()
-      elementFilename = finalLessonPlanTitle + "_" + type + finalName  + "_" + numElements + "_" + timestamp + "." + extension
+      finalLessonPlanTitle = finalLessonPlanTitle.replace(/[^a-z0-9_]/gi,'')
+      elementFilename = finalLessonPlanTitle + "_" + type + finalName.replace(/[^a-z0-9_]/gi,'')  + "_" + numElements + "_" + timestamp + "." + extension
+      elementFilename = elementFilename.replace(/[^a-z0-9_]/gi,'')
       console.log("elementFilename: " + elementFilename)
 
     if typeof file != 'undefined'

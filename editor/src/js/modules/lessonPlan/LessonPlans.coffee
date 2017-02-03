@@ -5,3 +5,4 @@ class LessonPlans extends Backbone.Collection
 
   comparator : (model) ->
     model.get "name"
+
