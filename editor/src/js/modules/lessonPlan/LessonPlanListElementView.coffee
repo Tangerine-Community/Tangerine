@@ -130,7 +130,12 @@ class LessonPlanListElementView extends Backbone.View
 # deep non-gerneric delete
   assessmentDelete: =>
 # removes from collection
-    @model.destroyLessonPlan()
+    options =
+      success: ()->
+        document.location.reload()
+    @model.destroyLessonPlan(options)
+    @assessmentDeleteToggle()
+
 
   spriteListLink: ( tagName, names... ) ->
     result = ""
