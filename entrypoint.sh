@@ -16,7 +16,7 @@ echo ""
 echo ""
 echo ""
 echo "We will relax while the couch gets ready."
-while true; do nc -vz $T_COUCH_HOST 5984 > /dev/null && break; done
+sleep 3
 echo ""
 echo ""
 echo ""
