@@ -30,7 +30,7 @@ function newGroup(req, res) {
       });
   }
 
-  Acl('Create new group',req.couchAuth.body.userCtx.name, 'global', function(err, hasPermission) { 
+  Acl('Create new group', req.couchAuth.body.userCtx, function(err, hasPermission) { 
 
     if (err) {
       logger.warn('Group creation failed: Internal error.');
