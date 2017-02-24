@@ -28,15 +28,13 @@ class Csv
       nextResults = @couch.postRequest({
         :view => "csvRows",
         :data => { "keys" => nextResultIds },
-        :cache => false,
         :parseJson => true
       })
 
       # this doesn't keep the old results if there were any... @orderedResults important
-      @cachedResults = Hash[ nextResults['rows'].map { |row| [row['id'], row['value']] } ]
+      @cachedResults = Hash[nextResults['rows'].map { |row| [row['id'], row['value'] ] }]
 
     end
-
 
     result = @cachedResults[id]
     @cachedResults.delete(id)
@@ -80,7 +78,7 @@ class Csv
           isTimeRelated = key.match(/timestamp/) || key.match(/start_time/) || key.match(/startTime/)
           isntFalsy     = ! ( value.nil? || value == "" || value == 0 )
           if isTimeRelated && isntFalsy && groupTimeZone.nil?  then value = Time.at(value.to_i / 1000).strftime("%yy %mm %dd %Hh %Mm") end
-          if isTimeRelated && isntFalsy && !groupTimeZone.nil? then value = Time.at(value.to_i / 1000).getlocal(groupTimeZone).strftime("%yy %mm %dd %Hh %Mm") end
+          if isTimeRelated && isntFalsy && !groupTimeZone.nil? then value = Time.at(value.to_i / 1000).getlocal(groupTimeZone).strftime("%yy %mm %dd %Hh %Mm")d end
 
           unless indexByMachineName[machineName] # Have we seen the machine name before?
             machineNames.push machineName
@@ -128,7 +126,6 @@ class Csv
     resultIds.each { |value| @orderedResults.push value }
 
     resultIds.each { |resultId|
-
 
       row = []
       

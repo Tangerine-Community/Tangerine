@@ -4,6 +4,8 @@ require_relative '../utilities/zoneTranslate'
 require_relative '../utilities/percentage'
 
 class Brockman < Sinatra::Base
+
+  TRIP_KEY_CHUNK_SIZE = 300
   
   get '/email/:email/:group/:workflowIds/:year/:month/:county.?:format?' do | email, group, workflowIds, year, month, county, format |
 
@@ -107,7 +109,6 @@ class Brockman < Sinatra::Base
     subjectsExists = {}
     zoneCountyExists = {
     }
-
 
     #
     # Get chunks of trips and work on the result
@@ -300,7 +301,7 @@ class Brockman < Sinatra::Base
             <th class='sorting'>Targeted number of classroom visits<a href='#footer-note-2'><sup>[2]</sup></a></th>
             #{result['fluency']['subjects'].select{|x|x!="3" && !x.nil?}.map{ | subject |
               "<th class='sorting'>#{subjectLegend[subject]}<br>Correct per minute<a href='#footer-note-3'><sup>[3]</sup></a><br>#{"<small>( Percentage at KNEC benchmark<a href='#footer-note-4'><sup>[4]</sup></a>)</small>" if subject != "operation"}</th>"
-            }.join}
+            }.join unless result['fluency']['subjects'].nil?}
           </tr>
         </thead>
         <tbody>
@@ -352,7 +353,7 @@ class Brockman < Sinatra::Base
               }.join}
 
             </tr>
-          "}.join }
+          "}.join unless zones.length == 0 }
         </tbody>
       </table>
       #{legendHtml}
@@ -379,7 +380,7 @@ class Brockman < Sinatra::Base
                 Correct per minute<a href='#footer-note-3'><sup>[3]</sup></a><br>
                 #{"<small>( Percentage at KNEC benchmark<a href='#footer-note-4'><sup>[4]</sup></a>)</small>" if subject != "operation"}
               </th>"
-            }.join}
+            }.join unless result['fluency']['subject'].nil?}
           </tr>
         </thead>
         <tbody>
@@ -420,7 +421,7 @@ class Brockman < Sinatra::Base
                 "<td>#{average} #{percentage}</td>"
               }.join}
             </tr>
-          "}.join }
+          "}.join unless result['visits']['byCounty'].nil?}
         </tbody>
       </table>
       #{legendHtml}

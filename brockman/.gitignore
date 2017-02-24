@@ -1,0 +1,6 @@
+# Why do I have to do this, Apple?
+.Apple*
+.DS_Store
+
+config.rb
+*.log

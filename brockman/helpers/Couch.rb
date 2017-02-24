@@ -19,7 +19,7 @@ class Couch
     @protocol  = options[:protocol] || DEFAULT_PROTOCOL
     @host      = options[:host]
     @db        = options[:db]
-    @designDoc = options[:designDoc]
+    @designDoc = options[:designDoc] 
 
     @login = options[:login] || ""
 
@@ -30,13 +30,13 @@ class Couch
     processRequest( arOptions, lambda { | req | RestClient.get( req['url'], req['options'] ) } )
   end # of getRequest
 
-  # sends a post request to
+  # sends a post request to 
   def postRequest( arOptions )
     processRequest( arOptions, lambda { | req | RestClient.post( req['url'], req['data'], req['options'] ) } )
 
   end # of postRequest
 
-  # sends a put request to
+  # sends a put request to 
   def putRequest( arOptions )
     processRequest( arOptions, lambda { | req | RestClient.put( req['url'], req['data'], req['options'] ) } )
   end # of postRequest
@@ -185,7 +185,7 @@ class Couch
       url = File.join host, options[:db], options[:doc]
     elsif options[:db] # @todo this is unreachable if there's a db specified at init
       url = File.join host, options[:db]
-    else
+    else 
       url = host
     end
 
