@@ -1,6 +1,7 @@
 tanerine-env-vars.sh
 .idea
 
+client/src/media_assets/
 data
 .data
 config.env
