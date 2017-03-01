@@ -18,7 +18,6 @@ class Csv
 
   # lazyish get from server
   def getResult( id )
-    puts id
     # try to get it from the cache
     if @cachedResults[id].nil? # if the result isn't there get new ones
 
@@ -52,6 +51,8 @@ class Csv
 
     files = getFiles()
 
+    throttle = 0
+
     # save all the result ids in order so we can can grab chunks
     @orderedResults = []
     resultsByTripId.each { | tripId, resultIds| @orderedResults.concat(resultIds) }
@@ -61,6 +62,15 @@ class Csv
 
       # make an array of resultIds for this trip
       results = resultIds.map { | resultId | getResult(resultId) }
+
+      throttle = throttle + 1
+
+      puts throttle
+
+      if throttle % 500 == 0
+        puts "Throttling..."
+        sleep 3
+      end
 
       row = []
 
