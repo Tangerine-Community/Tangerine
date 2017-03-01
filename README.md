@@ -34,6 +34,8 @@ Now visit your Tangerine-server installation at the IP address or hostname of yo
 
 If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine-server folder. To upgrade your server, run the `./upgrade.sh` script. Note that if you update environment variables in `config.sh`, they will not be propogated to the `settings` doc in each group so certain paths will break. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
 
+To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine. At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
+
 ## Technical Documentation
 Check out the [Tangerine Technical Documentation site on Github Pages](http://tangerine-community.github.io/Tangerine/index.html). Want to contribute documentation? Fork the Tangerine repository, commit to the `gh-pages` branch and send us a pull request.
 
