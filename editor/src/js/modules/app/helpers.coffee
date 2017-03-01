@@ -346,6 +346,9 @@ Backbone.Model.prototype.getArray =         (key) -> return if @has(key) then @g
 Backbone.Model.prototype.getString =        (key) -> return if @has(key) then @get(key)           else ""
 Backbone.Model.prototype.getEscapedString = (key) -> return if @has(key) then @escape(key)        else ""
 Backbone.Model.prototype.getBoolean =       (key) -> return if @has(key) then (@get(key) == true or @get(key) == 'true')
+Backbone.Model.prototype.getObject        = (key, def) -> return if @has(key) then @get(key)           else if def isnt undefined then def else {}
+
+
 
 
 #

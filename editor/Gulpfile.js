@@ -370,6 +370,7 @@ conf.fileOrder = [
   'QuestionEditView',
   'QuestionsEditView',
   'QuestionsEditListElementView',
+  'AvEditView',
 
   'WorkflowStep',
   'WorkflowSteps',
