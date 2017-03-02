@@ -14,19 +14,41 @@ Digitize your EGMA and EGRA data collection with Tangerine. Create your Assessme
 ## Installation
 We recommend using AWS for hosting have documented detailed [instructions for AWS](docs/install-on-aws.md). Below are general instructions for installing on any machine.
 
-SSH into your machine from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the URL of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
+SSH into your machine from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
 ```
-wget <latest release, choose tar.gz option>
-tar xvf <the tarball>
-cd <the now uncompressed tangerine folder>
+# Get the software.
+git clone https://github.com/Tangerine-Community/Tangerine.git
+cd Tangerine
+git checkout <version tag>
+# Create config.sh and edit to match your desired settings. Make sure to set `TANGERINE_VERSION` to the same as what `<version tag>` in the prior commands. 
 cp config.sh_example config.sh
-# Edit the config.sh file to match your desired settings. Try `nano config.sh`. 
+nano config.sh
+# Start the software.
 ./start.sh
 ```
+
+If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine-server folder.
+
 To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine and set the `T_PROTOCOL` variable in `config.sh` to `https` before running `start.sh`. At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. How to set this up is detailed in our [instructions for AWS](docs/install-on-aws.md).  If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
 Now visit your Tangerine-server installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network.
 
-If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine-server folder. To upgrade your server, run the `./upgrade.sh` script. Note that if you update environment variables in `config.sh`, they will not be propogated to the `settings` doc in each group so certain paths will break. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
+
+## Upgrade
+SSH into your server and run the following commands.
+```
+cd Tangerine
+git fetch origin
+git checkout <version tag>
+# Set up config.sh again.
+cp config.sh config.sh_backup
+cp config.sh_example config.sh
+# Migrate settings from config backup to config.sh. Set TANGERINE_VERSION to the same <version tag>.
+vim -O config.sh config.sh_backup
+rm config.sh_backup
+./start.sh
+```
+
+Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
 
 
 ## Technical Documentation
