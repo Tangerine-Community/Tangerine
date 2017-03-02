@@ -26,6 +26,18 @@ const Group = require('./Group');
 
 const app = express();
 
+// Enforce SSL behind Load Balancers.
+if (process.env.T_PROTOCOL == 'https') {
+  app.use(function(req, res, next) {
+    if(req.get('X-Forwarded-Proto') == 'http') {
+      res.redirect('https://' + req.get('Host') + req.url);
+    }
+    else {
+      next();
+    }
+  });
+}
+
 var couchProxy = proxy('localhost:5984', {
   forwardPath: function (req, res) {
     var path = require('url').parse(req.url).path;
