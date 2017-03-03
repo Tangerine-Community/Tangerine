@@ -87,7 +87,7 @@ class Csv
           # hack for handling time
           isTimeRelated = key.match(/timestamp/) || key.match(/start_time/) || key.match(/startTime/)
           isntFalsy     = ! ( value.nil? || value == "" || value == 0 )
-          if isTimeRelated && isntFalsy && groupTimeZone.nil?  then value = Time.at(value.to_i / 1000).rtrftime("%yy %mm %dd %Hh %Mm %Ss") end
+          if isTimeRelated && isntFalsy && groupTimeZone.nil?  then value = Time.at(value.to_i / 1000).strftime("%yy %mm %dd %Hh %Mm %Ss") end
           if isTimeRelated && isntFalsy && !groupTimeZone.nil? then value = Time.at(value.to_i / 1000).getlocal(groupTimeZone).strftime("%yy %mm %dd %Hh %Mm %Ss") end
 
           unless indexByMachineName[machineName] # Have we seen the machine name before?
