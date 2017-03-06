@@ -1,5 +1,14 @@
 # Tangerine
 
+
+
+*Note* This Tangerine branch is specially customised to accommodate older
+versions of the Tangerine codebase. Note the path to robbert is to the also-engineering
+directory - see in ecosystem.json
+
+Also see history.txt if you need help resurrecting this server.
+
+
 ![Tangerine](http://static1.squarespace.com/static/55c4e56fe4b0852b09fa2f29/t/55c4ec18e4b0f8bc41c735ae/1461960019800/?format=1500w)
 
 [![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine.svg)](https://travis-ci.org/Tangerine-Community/Tangerine)

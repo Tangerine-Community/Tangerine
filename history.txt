@@ -1,0 +1,384 @@
+    1  cd /tangerine-server/
+    2  ls -lsa
+    3  ps ax|grep ruby
+    4  pwd
+    5  ls -lsa
+    6  more ecosystem.json 
+    7  mkdir also-engineering
+    8  cd also-engineering/
+    9  git clone https://github.com/also-engineering/client.git
+   10  ls
+   11  git clone https://github.com/also-engineering/editor.git
+   12  pm2 status
+   13  pm2 stop robbert
+   14  cd editor
+   15  ls -lsa
+   16  cd app
+   17  ls -lsa
+   18  cp couchapprc.sample .couchapprc
+   19  vi .couchapprc 
+   20  more ../../../config.sh
+   21  exit
+   22  cd /tangerine-server/also-engineering/editor/
+   23  cd app
+   24  vi .couchapprc 
+   25  vi _docs/configuration.json 
+   26  pm2 start robbert
+   27  curl http://localhost
+   28  curl http://localhost:5984
+   29  curl https://eftouch.tangerinecentral.org/
+   30  curl https://eftouch.tangerinecentral.org/db/
+   31  exit
+   32  rvm use 2.3
+   33  exit
+   34  rvm use 2.3
+   35  ruby -v
+   36  exit
+   37  pm2 status
+   38  ps ax
+   39  cd /tangerine-server/
+   40  ls -lsa
+   41  cd logs
+   42  ls -sa
+   43  ls -lsa
+   44  date
+   45  tail -f robbert-0.log 
+   46  cd /var/log
+   47  ls
+   48  cd nginx/
+   49  ls -lsa
+   50  tail -f access.log 
+   51  cd /tangerine-server/also-engineering/editor/
+   52  cd app/_docs/
+   53  vi configuration.json 
+   54  cd ../../../../
+   55  cd editor/
+   56  ls -lsa
+   57  cd app
+   58  vi _docs/configuration.json 
+   59  pm2 status
+   60  cd ../../robbert
+   61  ls -lsa
+   62  vi index.js 
+   63  ps ax|grep ruby
+   64  cd ..
+   65  cd also-engineering/
+   66  cd editor/
+   67  ls -lsa
+   68  cd app
+   69  ls -lsa
+   70  ./listen.rb 
+   71  which ruby
+   72  ls -lsa /usr/local/rvm/rubies/ruby-2.2.0/bin/ruby
+   73  ls -lsa /usr/local/rvm/rubies/ruby-2.2.0/bin/
+   74  vi listen.rb 
+   75  ./listen.rb 
+   76  vi listen.rb 
+   77  rvm
+   78  ls -lsa
+   79  cd ..
+   80  ls -lsa
+   81  cd app
+   82  ls -lsa
+   83  rvm gem add listen
+   84  vi listen.rb 
+   85  rvm gem install listen
+   86  gem install listen
+   87  type rvm | head -1
+   88  source ~/.rvm/scripts/rvm
+   89  rvm notes
+   90  rvm list known
+   91  gem install listen
+   92  rvm install 2.3
+   93  rvm use 2.3
+   94  ruby -v
+   95  bash --login
+   96  ruby -v
+   97  rvm use 2.3
+   98  source ~/.rvm/scripts/rvm
+   99  ls ~/
+  100  pwd
+  101  ls -lsa ~
+  102  echo $HOME
+  103  ls /root
+  104  ls -lsa /root
+  105  /bin/bash --login
+  106  ruby -v
+  107  exit
+  108  ruby -v
+  109  rvm use 2.3
+  110  gem install listen
+  111  cd /tangerine-server/also-engineering/editor/app
+  112  ruby -v
+  113  which ruby
+  114  type rvm | head -1
+  115  vi listen.rb 
+  116  ./listen.rb 
+  117  couchapp push
+  118  ls -lsa
+  119  cd _attachments/
+  120  ls -lsa
+  121  cd js
+  122  ls -lsa
+  123  ./init.sh 
+  124  $(which ruby)
+  125  which ruby
+  126  sudo ln -sfn $(which ruby) /usr/bin/ruby
+  127  which ruby
+  128  ruby -v
+  129  ./init.sh 
+  130  gem install coffee
+  131  ./init.sh 
+  132  gem install uglifier
+  133  gem install pathname
+  134  ./init.sh 
+  135  ls -lsa
+  136  date
+  137  ls -lsa min
+  138  find ../../views -name "*.coffee"
+  139  ./uglify.rb `find ./modules -name "*.js"`
+  140  find ./modules -name "*.js"
+  141  ./uglify.rb lib
+  142  ./uglify.rb app
+  143  coffee -bc `find ../../views -name "*.coffee"`
+  144  coffee help
+  145  coffee help bc
+  146  coffee status
+  147  coffee --bare --compile `find ../../views -name "*.coffee"`
+  148  coffee -help
+  149  coffee --help
+  150  coffee -v
+  151  coffee --v
+  152  which coffee
+  153  history|grep coffee
+  154  gem install coffee-script
+  155  which coffee
+  156  coffee --v
+  157  gem remove coffee
+  158  gem uninstall coffee
+  159  gem install coffee-script
+  160  coffee --v
+  161  npm install --global coffee-script
+  162  coffee --v
+  163  coffee --bare --compile `find ../../views -name "*.coffee"`
+  164  ./init
+  165  ./init.sh 
+  166  ls -lsa min
+  167  date
+  168  ./init.sh 
+  169  df -a
+  170  df -h
+  171  rm lib.js app.js
+  172  ./uglify.rb `find ./modules -name "*.js"`
+  173  ./uglify.rb `ls *.js`
+  174  ./uglify.rb lib
+  175  ./uglify.rb app
+  176  ls -lsa
+  177  ls modules/subtest/
+  178  ls -lsa modules/subtest/
+  179  more /modules/report/KlassGroupingView.js
+  180  more ./modules/report/KlassGroupingView.js
+  181  apt-get -y install locales
+  182  echo 'en_US.UTF-8 UTF-8'>>/etc/locale.gen
+  183  ocale-gen
+  184  locale-gen
+  185  echo $LANG
+  186  locale
+  187  dpkg-reconfigure locales
+  188  locale
+  189  more /etc/locale.gen
+  190  more /etc/environment
+  191  /etc/default/locale
+  192  locale-gen en_US en_US.UTF-8
+  193  dpkg-reconfigure locales 
+  194  ./uglify.rb app
+  195  ./init.sh 
+  196  exit
+  197  cd /tangerine-server/also-engineering/editor/app/
+  198  ls
+  199  cd _attachments/
+  200  ls -lsa
+  201  cd js
+  202  ls
+  203  ./uglify.rb `find ./modules -name "*.js"`
+  204  exit
+  205  cd /tangerine-server/tree
+  206  ls -lsa
+  207  date
+  208  ls -lsa client/src/js/init/
+  209  tail -f tree-1.log 
+  210  ls -lsa /tangerine-server/tree/routes/../client
+  211  vi routes/makeApk.js 
+  212  ls -lsa /tangerine-server/also-engineering/client/src/js/init
+  213  cd /tangerine-server/tree/routes/../client
+  214  npm run treeload --group=ef-five
+  215  ls -lsa /tangerine-server/also-engineering/client/src/js/init
+  216  cd ..
+  217  tail -f tree-1.log 
+  218  ls -lsa /tangerine-server/also-engineering/client/src/js/init
+  219  date
+  220  vi routes/makeApk.js 
+  221  cd /etc/nginx/sites-enabled/
+  222  vi tangerine.conf 
+  223  cd /tangerine-server/robbert/
+  224  ls
+  225  vi index.js 
+  226  pm2 restart robbert
+  227  cd ../tree
+  228  tail -f tree-1.log 
+  229  exit
+  230  ls -lsa
+  231  tar -czvf tangerine-server.tar.gz tangerine-server
+  232  ls -lsa
+  233  df -h
+  234  cd ~ubuntu
+  235  exit
+  236  mv tangerine-server.tar.gz tangerine-server/client/media_assets/
+  237  df -h
+  238  exit
+  239  pm2 status
+  240  df -h
+  241  pm2 robbert restart
+  242  pm2 restart robbert
+  243  cd /tangerine-server/
+  244  cd logs
+  245  ps ax|grep couch
+  246  service couchdb restart
+  247  cd ..
+  248  cd data
+  249  ls -lsa
+  250  pm2 robbert stop
+  251  pm2 stop robbert
+  252  cd also-engineering/
+  253  ls -lsa
+  254  pm2 start robbert
+  255  cd ..
+  256  ls -lsa
+  257  more ecosystem.json 
+  258  pm2 status
+  259  cd logs
+  260  cd ..
+  261  couchdb -k
+  262  couchdb -b
+  263  ps ax|grep couch
+  264  pm2 status
+  265  pm2 restart robbert
+  266  pm2 status
+  267  ls -lsa /etc/init.d
+  268  exit
+  269  hisotry|grep rvm
+  270  tosotry|grep rvm
+  271  history|grep rvm
+  272  rvm
+  273  type rvm | head -1
+  274  history|grep rvm
+  275  ls -lsa /usr/local/rvm
+  276  ls -lsa /usr/local/rvm/rubies
+  277  history|grep ruby
+  278  $(which ruby)
+  279  ruby -v
+  280  history|grep rvm
+  281  rvm notes
+  282  rvm list known
+  283  ls -lsa
+  284  cd /root
+  285  ls -lsa
+  286  more .profile 
+  287  more .bashrc 
+  288  ls -lsa
+  289  cd ~ubuntu
+  290  locate .rvm
+  291  which rvm
+  292  exit
+  293  cd /tangerine-server/
+  294  ls -lsa
+  295  cd editor/
+  296  ls -lsa
+  297  cd ..
+  298  git log
+  299  exit
+  300  cd /tangerine-server/
+  301  ls -lsa
+  302  df -h
+  303  cd ..
+  304  ls -lsa
+  305  cd ~
+  306  pwd
+  307  ls -lsa
+  308  tar -czvf tanerine-server.tar.gz /tangerine-server
+  309  ls -lsa
+  310  exit
+  311  mv /root/tanerine-server.tar.gz /tangerine-server/client/media_assets/
+  312  exit
+  313  cd /tangerine-server/
+  314  more .git/config 
+  315  git log
+  316  git remote update
+  317  git diff
+  318  git status
+  319  exit
+  320  cd /tangerine-server/
+  321  cd client/media_assets/
+  322  ls -lsa
+  323  mv editor.zip ../../
+  324  cd ../../
+  325  ls -lsa
+  326  mv editor editor-orig
+  327  tar -xczf editor.zip 
+  328  tar -xzf editor.zip 
+  329  tar -xvf editor.zip 
+  330  unzip editor.zip 
+  331  ls -lsa
+  332  pm2 status
+  333  cd editor
+  334  ls -lsa
+  335  npm install
+  336  npm run debug
+  337  npm install
+  338  npm run debug
+  339  ls -lsa node_modules
+  340  npm install gulp-inject-string
+  341  npm run debug
+  342  npm install gulp-rename
+  343  npm run debug
+  344  npm start
+  345  npm install gulp-wait
+  346  npm start
+  347  npm run debug
+  348  pm2 status
+  349  ls -lsa
+  350  cd app
+  351  vi .couchapprc 
+  352  couchapp push
+  353  couchapp push -v
+  354  url http://localhost:5984/tangerine/_design/ojai/index.html
+  355  curl http://localhost:5984/tangerine/_design/ojai/index.html
+  356  cd ../../
+  357  cd robbert/
+  358  vi index.js 
+  359  pm2 robbert restart
+  360  pm2 status
+  361  pm2 restart robbert
+  362  vi index.js 
+  363  exit
+  364  cd /tangerine-server/
+  365  ls -lsa
+  366  cd also-engineering/
+  367  ls -lsa
+  368  cd ..
+  369  more ecosystem.json 
+  370  ls -lsa
+  371  tar -czvf also.tar.gz also-engineering
+  372  ls -lsa
+  373  rm -rf also.tar.gz 
+  374  more ecosystem.json 
+  375  cd also
+  376  cd also-engineering/
+  377  ls -lsa
+  378  cd ..
+  379  tar -czvf also-robbert.tar.gz also-engineering/Tangerine-robbert-legacy
+  380  ls -lsa
+  381  mv also-robbert.tar.gz client/media_assets/
+  382  more ecosystem.json 
+  383  history
+  384  history > client/media_assets/history.txt

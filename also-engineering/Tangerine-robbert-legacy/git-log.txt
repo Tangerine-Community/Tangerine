@@ -1,0 +1,313 @@
+commit 1f4d51574b51064bb921e19fbbaabd42d9e7f010
+Author: R.J. Steinert <rj@rjsteinert.com>
+Date:   Wed Feb 17 01:20:07 2016 -0500
+
+    Remove -v flag from install that was interrupting install
+
+commit f311aa539b68ad09f380fa8479226021e48a8967
+Author: Josh Anderson <fetmar@gmail.com>
+Date:   Tue Jan 26 11:20:35 2016 -0500
+
+    npm install from proper directory
+
+commit 26077f80d26c66c10057be7e524ba3d161a4355c
+Author: Josh Anderson <fetmar@gmail.com>
+Date:   Sat Jan 23 17:49:06 2016 -0500
+
+    style
+
+commit 4a0cee21b824df0d68181e4fd828faa98c232424
+Author: Josh Anderson <fetmar@gmail.com>
+Date:   Sat Jan 23 17:27:53 2016 -0500
+
+    show bash commands
+
+commit 88a812537a77c614757188acb08ed6894280dd3b
+Author: Josh Anderson <fetmar@gmail.com>
+Date:   Tue Jan 19 17:01:18 2016 -0500
+
+    better node install
+
+commit f844d5724a129c555d7a5b5a3222227ba1612e80
+Author: Josh Anderson <fetmar@gmail.com>
+Date:   Tue Jan 19 02:17:28 2016 -0500
+
+    handle path better
+
+commit c29eabdf6ca1dc86fc5611392458f41d30e6e580
+Author: Josh Anderson <fetmar@gmail.com>
+Date:   Tue Jan 19 02:16:05 2016 -0500
+
+    fix couchapp install
+
+commit acc45be55f95c97d5ca2b730efed46e611b60fcc
+Author: Josh Anderson <fetmar@gmail.com>
+Date:   Mon Jan 18 20:18:44 2016 -0500
+
+    check for node/npm separately, use exported bash variable
+
+commit 0e0db79dd89070bd05e61f01c5807fa2f68d39c0
+Author: Josh Anderson <fetmar@gmail.com>
+Date:   Mon Jan 18 15:51:07 2016 -0500
+
+    make init script executable
+
+commit 593894c1b037c9ed7fe843af58f182f2074fcb9a
+Author: Josh Anderson <fetmar@gmail.com>
+Date:   Mon Jan 18 11:36:35 2016 -0500
+
+    deploy commit
+
+commit db50f6e530ff611bc0261232581e6121586be303
+Author: fetmar <fetmar@gmail.com>
+Date:   Fri Dec 12 14:26:36 2014 -0500
+
+    php5 upgrade, housecleaning
+
+commit c1375216ba73950628733afc25f0819545830990
+Author: fet mar <fetmar@gmail.com>
+Date:   Fri Apr 5 20:10:41 2013 -0400
+
+    Update naming scheme for backup deletion as well
+
+commit cb10dcba36b49de4005bdf489a55c7c899f8ccbf
+Author: fet mar <fetmar@gmail.com>
+Date:   Fri Apr 5 20:07:39 2013 -0400
+
+    Updated backup naming scheme
+
+commit c89873b6fcbc0db3074c58c6d359d1bb17f98571
+Author: fet mar <fetmar@gmail.com>
+Date:   Fri Apr 5 19:51:04 2013 -0400
+
+    Use server nickname when creating backup replicators so we know where the backups come from.
+
+commit 013c9283f1fcf17dbe1a63bb73e89a63577b6963
+Merge: 1f06433 3a4f294
+Author: fet mar <fetmar@gmail.com>
+Date:   Fri Apr 5 19:41:06 2013 -0400
+
+    Merge branch 'master' of github.com:Tangerine-Community/robbert
+
+commit 1f064333bb34740c6ccba33b4a719526354981c5
+Author: fet mar <fetmar@gmail.com>
+Date:   Fri Apr 5 19:40:30 2013 -0400
+
+    updated the sample config
+
+commit 3a4f2946662fe164a69f43a688724501469f9e6e
+Merge: e358b94 ca2e5f7
+Author: fet mar <fetmar@gmail.com>
+Date:   Fri Apr 5 23:38:01 2013 +0000
+
+    Merge branch 'master' of github.com:Tangerine-Community/robbert
+
+commit e358b945206954e28abda2e38ec61ed6f070b205
+Author: fet mar <fetmar@gmail.com>
+Date:   Fri Apr 5 23:34:06 2013 +0000
+
+    Explicitly define static methods
+
+commit d033a363d7ead17297d1833434a5b82b36fd05b7
+Author: fet mar <fetmar@gmail.com>
+Date:   Fri Apr 5 23:32:59 2013 +0000
+
+    iriscouch AND our new server map port 5984 to 80.
+
+commit ca2e5f7092a8f6a5a90e9375daf552a092529a81
+Author: fet mar <fetmar@gmail.com>
+Date:   Thu Mar 21 18:48:35 2013 -0300
+
+    quick incomplete update
+
+commit 60933a64d3d6bb78338596a2f369554742bdb655
+Author: fet mar <fetmar@gmail.com>
+Date:   Thu Mar 21 15:54:02 2013 +0000
+
+    fixed incorrect error message
+
+commit baf4009913bf26deb0f535c3e1b2bb17b26e263a
+Author: root <root@tangerine.(none)>
+Date:   Thu Mar 21 15:37:41 2013 +0000
+
+    better host sniffing, if iriscouch will not use port
+
+commit 21e6831739b7c10d91c2bd8658b73634038f8a72
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 19 23:55:41 2013 +0000
+
+    Use ConfigHelper to set groupHost. Closes #5
+
+commit 1249a2b8dcc4e26f83f4e2e68f64cf19a53716a0
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 19 23:19:34 2013 +0000
+
+    Variable cleanup
+
+commit c4e7794cd9dccee9123ba781511c363dec726d21
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 19 17:29:39 2013 -0500
+
+    better configuration and housecleaning
+
+commit a25888a8d034c0ce4f32a453349e6895dabeb6ea
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 19 15:49:29 2013 -0500
+
+    Better configuration
+
+commit a3fd08d2b7f29156359b64a4d42f4940e24e5d89
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 19 15:30:30 2013 -0500
+
+    better password generation
+
+commit 2f3cb28f4b3fe42c7f3deca1c5ac6ec77aaf43ae
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 5 23:50:54 2013 -0500
+
+    backup targets must point to the proper backup server
+
+commit 68250f7e993b65d52f0401c0cf08215a98176c55
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 5 23:42:40 2013 -0500
+
+    delete group name fix
+
+commit d5036e4ef68fe6650f5bb8db5ff3a0aac2b18a34
+Author: fet mar <fetmar@gmail.com>
+Date:   Wed Feb 6 04:34:20 2013 +0000
+
+    corrected method names and settings saving
+
+commit b05331a00ddbbcaa29f6941ad43ace12a4612e4d
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 5 22:52:39 2013 -0500
+
+    pointing to wrong db
+
+commit c8274509d726313bbbed5ae4f3601ab59835f59f
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 5 22:49:17 2013 -0500
+
+    pointing to wrong server
+
+commit ae7793e9403305177dd5123dfc45742054407229
+Author: fet mar <fetmar@gmail.com>
+Date:   Wed Feb 6 03:45:20 2013 +0000
+
+    Typos and housecleaning
+
+commit 0b5e7e0a90be245d612abd2d29f53031888a00ab
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 5 22:09:26 2013 -0500
+
+    More flexible config settings
+
+commit 80dbe3fd7a2a0623914f16b8132f4c56de64be17
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 5 22:07:54 2013 -0500
+
+    Config with contextual methods
+
+commit d56511873e0223d2c926de654513d97462b7e5ff
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 5 22:01:07 2013 -0500
+
+    different defaults
+
+commit 81f1c7f67eca34214fe9650c1be2081fa97524d3
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 5 14:56:33 2013 -0500
+
+    sample config won't overwrite real config
+
+commit 1d101de09b60184498cf60a075572e9bc14d023a
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Feb 5 14:54:23 2013 -0500
+
+    rename for simplicity in url
+
+commit aa514c4a70df75c114a4f8c71b39059bb306042e
+Author: fet mar <fetmar@gmail.com>
+Date:   Tue Jan 29 11:21:56 2013 -0800
+
+    Create README.md
+
+commit 4ad603d0b88ce90e18dd51c1c92eebf96f9b29fe
+Author: fet mar <fetmar@gmail.com>
+Date:   Sun Jan 13 13:44:24 2013 -0500
+
+    include updated design doc and server host in new settings doc
+
+commit 0a7509b4b886f7bf033f0a8d87d427d63a724368
+Author: fet mar <fetmar@gmail.com>
+Date:   Sun Jan 13 13:42:44 2013 -0500
+
+    included ojai design doc
+
+commit 26b6612011bab98947a62239f9b42a04de34f3eb
+Author: fet mar <fetmar@gmail.com>
+Date:   Sun Jan 13 13:42:21 2013 -0500
+
+    httpful recactor
+
+commit e0e6b266b28c054f4bfadeed26480386c395abd1
+Author: fet mar <fetmar@gmail.com>
+Date:   Sun Jan 13 13:33:50 2013 -0500
+
+    removed httpful phar archive. suhosin problems
+
+commit 1a95c2f12d5475f29b7d8657ac5a6477f588a37b
+Author: fet mar <fetmar@gmail.com>
+Date:   Sun Jan 6 13:06:46 2013 -0500
+
+    Tangerine.php refactored out
+
+commit cfd60e7e8237cc4bec07d977b395eed8b46f2437
+Author: fet mar <fetmar@gmail.com>
+Date:   Sun Jan 6 12:56:14 2013 -0500
+
+    everything was refactored out into robbert.php, group.php and user.php
+
+commit 59e5c4e0ff11146102a5c19e8178317f96aa57a3
+Author: fet mar <fetmar@gmail.com>
+Date:   Wed Dec 26 17:32:00 2012 -0500
+
+    remove group plus housecleaning
+
+commit 8a1a5747e66bd96e1871cb122b11a8a4212ddb65
+Author: fet mar <fetmar@gmail.com>
+Date:   Wed Dec 26 17:31:11 2012 -0500
+
+    Quick authentication instead, still boots old session, may be localhost pains. User destroy method
+
+commit 59fee69012b8d33a33e8763e06212ef376df7eac
+Author: fet mar <fetmar@gmail.com>
+Date:   Wed Dec 26 17:20:32 2012 -0500
+
+    Cross origin changes for debugging, random password function,
+
+commit 80ac934f8df5c512bbe39dcc38d07e180cf90cda
+Author: fet mar <fetmar@gmail.com>
+Date:   Wed Dec 26 17:17:56 2012 -0500
+
+    Ensure uploader user for tablets
+
+commit bed3707b4616d629bd340a966deeac6cb37b8133
+Author: fet mar <fetmar@gmail.com>
+Date:   Wed Dec 26 17:17:02 2012 -0500
+
+    include ojai documents
+
+commit aa849c6de0d6c036c90c5228b69f3fd8368875ef
+Author: fet mar <fetmar@gmail.com>
+Date:   Wed Dec 26 17:01:58 2012 -0500
+
+    renamed index to robbert
+
+commit 51cb814147bed1146cb6c6b105f5211a74fbb31c
+Author: fet mar <fetmar@gmail.com>
+Date:   Wed Nov 21 11:09:40 2012 -0500
+
+    Partial commit

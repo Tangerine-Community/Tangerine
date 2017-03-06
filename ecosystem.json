@@ -2,8 +2,8 @@
   "apps" : [
     {
       "name"       : "robbert",
-      "script"     : "robbert/index.js",
-      "cwd"        : "./robbert/",
+      "script"     : "also-engineering/Tangerine-robbert-legacy/index.js",
+      "cwd"        : "./also-engineering/Tangerine-robbert-legacy/",
       "error_file" : "../logs/robbert-error.log",
       "out_file"   : "../logs/robbert.log",
       "pid_file"   : "../pids/robbert.pid"
