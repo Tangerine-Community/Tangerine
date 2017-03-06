@@ -611,7 +611,7 @@ conf.libFiles = [
   './src/js/lib/jquery.ui.progressbar.js',
   './src/js/lib/inflection.js',
   './src/js/lib/moment.js',
-  './src/bower_components/pouchdb/dist/pouchdb.js',
+  './src/js/lib/pouchdb.min.js',
   './src/js/lib/backbone-pouchdb.js',
   './src/js/lib/transcriptionCheckdigit.js',
   './src/js/lib/table2CSV.js',
