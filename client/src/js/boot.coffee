@@ -135,7 +135,11 @@ Tangerine.bootSequence =
                     finishInit()
                   console.log('Found ' + docs.length + ' docs')
                   packNumber++
-                  Tangerine.db.bulkDocs docs, {"new_edits": false}, (error, doc) ->
+                  query =
+                    docs: docs
+                    new_edits: false
+
+                  Tangerine.db.bulkDocs query, (error, doc) ->
                     if error
                       console.log "could not save initialization documents: #{error}"
 #                      return alert "could not save initialization documents: #{error}"
