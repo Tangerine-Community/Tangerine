@@ -99,7 +99,7 @@ Tangerine.bootSequence =
               markDatabaseAsInitialized()
             ).catch( (err) ->
               console.log('Could not index views. Error: ' + err)
-              alert('Could not index views. Error: ' + err)
+#              alert('Could not index views. Error: ' + err)
             )
 
           markDatabaseAsInitialized = ->
@@ -135,10 +135,10 @@ Tangerine.bootSequence =
                     finishInit()
                   console.log('Found ' + docs.length + ' docs')
                   packNumber++
-                  Tangerine.db.bulkDocs docs, (error, doc) ->
+                  Tangerine.db.bulkDocs docs, {"new_edits": false}, (error, doc) ->
                     if error
                       console.log "could not save initialization documents: #{error}"
-                      return alert "could not save initialization documents: #{error}"
+#                      return alert "could not save initialization documents: #{error}"
                     doOne()
 
             # kick off recursive process
@@ -170,7 +170,10 @@ Tangerine.bootSequence =
     if ((window.location.hash != '#widget'))
       Tangerine.config = new Config "_id" : "configuration"
       Tangerine.config.fetch
-        error   : (err) -> alert err
+        error   : (err) ->
+          msg = "Tangerine.config.fetch error: " + JSON.stringify(err)
+          console.log msg
+          alert msg
         success : callback
     else return callback()
 
