@@ -18,12 +18,13 @@ tmp/min/*
 lib.js
 app.js
 src/compiled/*
+src/index-dev.html
 
 # tangerine's packs
 src/js/init/pack*.json
 test/packs.json
 src/packs.json
 
-
 .idea
-
+/lesson_plan_media/
+src/compiled

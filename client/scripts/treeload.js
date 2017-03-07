@@ -138,6 +138,14 @@ idList.push("settings");
 idList.push("configuration");
 idList.push("templates");
 idList.push("location-list");
+idList.push("phrase-correctAboveBenchmark");
+idList.push("phrase-correctBelowBenchmark");
+idList.push("phrase-correctItemsPerMinute");
+idList.push("phrase-correctWarning");
+idList.push("phrase-highScoreResult");
+idList.push("phrase-highScoreWarning");
+idList.push("phrase-lowScoreResult");
+idList.push("phrase-lowScoreWarning");
 
 // delete any old packs if they're there
 del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])

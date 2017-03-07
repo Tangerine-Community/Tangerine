@@ -19,6 +19,8 @@ ENV T_PROTOCOL http
 ENV T_RUN_MODE production
 # If true, this will run couchapp push again on all of your group databases. Good for making sure 
 # your groups have the most recent updates but may cause Views to reindex when you don't want them to.
+# WARNING: If set to true, you will need to manually update all of your group's `settings` and `configuration` docs because
+# they will now be overwritten with defaults. This includes properties like the group's name.
 ENV PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT false
 
 #
@@ -82,7 +84,8 @@ RUN apt-get update && apt-get -y install \
     libtool \
     bison \
     jq \
-    libffi-dev
+    libffi-dev \
+    cron
 
 # Install node and some node based services
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash - \
@@ -186,6 +189,7 @@ RUN cd /tangerine-server/tree \
 # Install client.
 ADD ./client/package.json /tangerine-server/client/package.json
 ADD ./client/bower.json /tangerine-server/client/bower.json
+ADD ./client/.bowerrc /tangerine-server/client/.bowerrc
 ADD ./client/scripts/postinstall.sh /tangerine-server/client/scripts/postinstall.sh
 ADD ./client/Gruntfile.js /tangerine-server/client/Gruntfile.js
 ADD ./client/Gulpfile.js /tangerine-server/client/Gulpfile.js
@@ -240,6 +244,17 @@ RUN cd /tangerine-server/editor && npm start init
 # Engage the Tangerine CLI so we can run commands like `sudo tangerine make-me-a-sandwich`.
 ADD ./cli /tangerine-server/cli
 RUN cd /tangerine-server/cli && npm link
+
+# add the cron job to purge APK's
+ADD ./purgeOldApks.sh /home/ubuntu/purgeOldApks.sh
+ADD ./purgeOldApks-cron.txt /etc/cron.d/purgeOldApks-cron
+# Give execution rights on the cron script and cron job
+RUN chmod 0644 /home/ubuntu/purgeOldApks.sh
+RUN chmod 0644 /etc/cron.d/purgeOldApks-cron
+# Create the log file
+RUN touch /var/log/purgeOldApks.log
+# Run the command on container startup
+CMD cron
 
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/ 

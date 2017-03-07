@@ -1,4 +1,4 @@
-class KlassSubtestRunView extends Backbone.View
+class KlassSubtestRunView extends Backbone.Marionette.ItemView
 
   className : "KlassSubtestRunView"
 
@@ -14,6 +14,7 @@ class KlassSubtestRunView extends Backbone.View
     @student      = options.student
     @subtest      = options.subtest
     @questions    = options.questions
+    @subtest.questions     = @questions
 
     @prototype = @subtest.get("prototype")
 
@@ -21,6 +22,8 @@ class KlassSubtestRunView extends Backbone.View
 
     @prototypeRendered = false
 
+    Tangerine.progress = {}
+    Tangerine.progress.currentSubview = @
 
     if @prototype == "grid"
       @result = new KlassResult
@@ -33,6 +36,7 @@ class KlassSubtestRunView extends Backbone.View
         part         : @subtest.get("part")
         klassId      : @student.get("klassId")
         timeAllowed  : @subtest.get("timer")
+        blank        : true
     else if @prototype == "survey"
       @result = new KlassResult
         prototype    : "survey"
@@ -43,6 +47,7 @@ class KlassSubtestRunView extends Backbone.View
         klassId      : @student.get("klassId")
         itemType     : @subtest.get("itemType")
         reportType   : @subtest.get("reportType")
+        blank        : true
       @questions.sort()
       @render()
 
@@ -57,10 +62,12 @@ class KlassSubtestRunView extends Backbone.View
       #{studentDialog}
     "
 
+    @subtest.parent = @
+
     # Use prototype specific views here
     @prototypeView = new window[@protoViews[@subtest.get 'prototype']['run']]
       model: @subtest
-      parent: @
+#      parent: @
     @prototypeView.on "rendered", @onPrototypeRendered
     @prototypeView.render()
     @$el.append @prototypeView.el
@@ -74,11 +81,12 @@ class KlassSubtestRunView extends Backbone.View
     @trigger "rendered"
 
   getGridScore: -> 
-    return false if not @linkedResult.get("subtestData")? # no result found
-    result = @linkedResult.get("subtestData")['attempted'] || 0 
+    return false if not @linkedResult.get("subtestData")?.body # no result found
+    result = @linkedResult.get("subtestData").body['attempted'] || 0
     return result
 
-  gridWasAutostopped: -> @linkedResult.get("subtestData")?['auto_stop'] || 0
+  gridWasAutostopped: ->
+    @linkedResult?.get("subtestData")?.body['auto_stop'] || 0
 
   onClose: ->
     @prototypeView?.close?()
@@ -110,15 +118,33 @@ class KlassSubtestRunView extends Backbone.View
       return
 
     if @isValid()
-      # Gaurantee single "new" result
-      Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
-        key : [@student.id,@subtest.id]
-        success: (data) =>
-          rows = data.rows
-          for datum in rows
-            Tangerine.$db.saveDoc $.extend(datum.value, "old":true)
-          # save this result
-          @result.add @prototypeView.getResult(), =>
-            Tangerine.router.navigate "class/#{@student.get('klassId')}/#{@subtest.get('part')}", true
+      # Guarantee single "new" result
+#      Tangerine.$db.view "#{Tangerine.design_doc}/resultsByStudentSubtest",
+      Tangerine.db.query('tangerine/resultsByStudentSubtest', {key: [@student.id,@subtest.id]}).then((res) =>
+#        key : [@student.id,@subtest.id]
+#        success: (data) =>
+        rows = res.rows
+        for datum in rows
+          Tangerine.db.saveDoc $.extend(datum.value, "old":true)
+        # save this result
+        @result.add @prototypeView.getResult(), =>
+          Tangerine.router.navigate "class/#{@student.get('klassId')}/#{@subtest.get('part')}", true
+      ).catch( (err) ->
+        console.log('Error: ' + err)
+      )
     else
       @prototypeView.showErrors()
+
+# @todo Documentation
+  displaySkip: (skippable)->
+    if skippable
+      $( ".skip" ).show();
+    else
+      $( ".skip" ).hide();
+
+# @todo Documentation
+  displayBack: (backable)->
+    if backable
+      $( ".subtest-back" ).removeClass("hidden");
+    else
+      $( ".subtest-back" ).addClass("hidden");

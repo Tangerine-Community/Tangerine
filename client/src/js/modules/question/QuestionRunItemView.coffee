@@ -121,8 +121,9 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
             when "multiple"
               if ~_.values(@answer).indexOf("checked") then true  else false
             when "single"
-#              console.log("@answer: " + @answer + " _.isEmptyString(@answer)" + _.isEmptyString(@answer) + " _.isEmpty(@answer): " + " _.isObject(@answer):" + _.isObject(@answer))
-              if _.isEmptyString(@answer) || (_.isEmpty(@answer) && _.isObject(@answer)) then false else true
+              invalid = _.isEmptyString(@answer) || (_.isEmpty(@answer) && _.isObject(@answer))
+#              console.log("invalid: " + invalid + " @answer: " + @answer + " _.isEmptyString(@answer)" + _.isEmptyString(@answer) + " _.isEmpty(@answer): " + " _.isObject(@answer):" + _.isObject(@answer))
+              if invalid then false else true
 
   setOptions: (options) =>
     @button.options = options

@@ -173,6 +173,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
         options : []
         mode    : "single"
         model   : model
+        answer  : "last"
 
       buttonConfig.options.push {
         label : @text.mark
@@ -671,7 +672,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
           itemResult : "missing"
           itemLabel : @items[@mapItem[i]]
 
-    @lastAttempted = false if not @captureLastAttempted
+#    @lastAttempted = false if not @captureLastAttempted
 
     if @dataEntry
       autostopped = @$el.find(".data_autostopped").is(":checked")
@@ -690,6 +691,7 @@ class GridRunItemView extends Backbone.Marionette.ItemView
       "items"         : itemResults
       "time_remain"   : timeRemaining
       "mark_record"   : @markRecord
+      "time_allowed"  : @model.get("timer")
       "variable_name" : @model.get("variableName")
     hash = @model.get("hash") if @model.has("hash")
     subtestResult =

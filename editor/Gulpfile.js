@@ -323,6 +323,7 @@ conf.fileOrder = [
   'AssessmentDataEntryView',
 
   'WidgetRunView',
+  'WidgetSiteRunView',
 
   'Subtest',
   'Subtests',
@@ -383,6 +384,7 @@ conf.fileOrder = [
   'WorkflowEditView',
   'WorkflowRunView',
   'WorkflowSelectView',
+  'WorkflowMenuMemberView',
 
   'Klass',
   'KlassView',
@@ -415,6 +417,10 @@ conf.fileOrder = [
   'CurriculumListElementView',
   'CurriculaView',
 
+  'Phrase',
+  'Phrases',
+  'PhrasesRunView',
+
   'Teacher',
   'Teachers',
   'TeachersView',
@@ -434,12 +440,10 @@ conf.fileOrder = [
   'FeedbackRunView',
   'FeedbackTripsView',
   'TripResult',
-  'TripResultCollection',
+  'TripResults',
 
   'User',
   'Users',
-  'TabletUser',
-  'TabletUsers',
 
   'LoginView',
   'AccountView',
@@ -504,11 +508,13 @@ conf.libFiles = [
   './src/js/lib/jquery.ui.progressbar.js',
   './src/js/lib/inflection.js',
   './src/js/lib/backbone.js',
+  './src/bower_components/backbone-forms/distribution/backbone-forms.js',
   './src/js/lib/moment.js',
   './src/js/lib/backbone-couchdb.js',
   './src/js/lib/transcriptionCheckdigit.js',
   './src/js/lib/base64.js',
   './src/js/lib/jstz.js',
   './src/js/lib/ckeditor.js',
+  './src/js/lib/pouchdb.js',
   './src/js/lib/coffee-script.js' // This file tends to like to be last
 ];

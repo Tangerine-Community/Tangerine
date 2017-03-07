@@ -1,0 +1,7 @@
+{
+  "_id": "phrase-lowScoreResult",
+  "language": "en",
+  "code": "lowScoreResult",
+  "phrase": "@score + ',' +  Math.abs(@difference) + ' correct items per minute below the benchmark'",
+  "collection": "phrase"
+}

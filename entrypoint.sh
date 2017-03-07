@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Send nginx logs to docker logs.
+tail -f /var/log/nginx/access.log &
+tail -f /var/log/nginx/error.log &
+
 echo ""
 echo ""
 echo ""
@@ -7,7 +11,7 @@ echo "Setting up database user"
 echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini
 sudo chown -R couchdb /var/run/couchdb
 couchdb -k
-couchdb -b
+couchdb &
 echo ""
 echo ""
 echo ""
@@ -28,7 +32,7 @@ echo ""
 echo "Push the ojai design doc"
 cd /tangerine-server/editor/app
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/configuration.json
-sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/settings.json 
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" | sed "s#INSERT_ADMIN#"$T_ADMIN"#g" | sed "s#INSERT_ADMIN_PASS#"$T_PASS"#g" > _docs/settings.json
 couchapp push
 
 if [ $PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT = true ] 

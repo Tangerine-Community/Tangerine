@@ -1,0 +1,113 @@
+[
+  {
+    "_id": "configuration",
+    "subnet": {
+      "base": "192.168.1."
+    },
+    "tree": "/tree",
+    "update": {
+      "login": "",
+      "host": "54.234.128.249/db",
+      "dbName": "update"
+    },
+    "groupDBPrefix": "group-",
+    "printFormats": [
+      {
+        "name": "Content",
+        "key": "content"
+      },
+      {
+        "name": "Stimuli",
+        "key": "stimuli"
+      },
+      {
+        "name": "Backup",
+        "key": "backup"
+      },
+      {
+        "name": "Metadata",
+        "key": "metadata"
+      }
+    ],
+    "reports": [
+      {
+        "reportType": "progress",
+        "name": "progress graph",
+        "menuView": "ProgressMenuView"
+      },
+      {
+        "reportType": "mastery",
+        "name": "mastery check table",
+        "menuView": "MasteryCheckMenuView"
+      },
+      {
+        "name": "class grouping table",
+        "menuView": "KlassGroupingMenuView"
+      },
+      {
+        "context": "server",
+        "name": "csv",
+        "menuView": "CsvMenuView"
+      }
+    ],
+    "defaults": {
+      "settings": {
+        "language": "en-US",
+        "upPass": "pass",
+        "groupName": "",
+        "groupHost": "http://54.234.128.249/db",
+        "groupDDoc": "ojai",
+        "log": [
+          ""
+        ]
+      }
+    },
+    "trunk": {
+      "host": "54.234.128.249/db",
+      "dbName": "tangerine"
+    },
+    "collection": "config",
+    "prototypeViews": {
+      "observation": {
+        "edit": "ObservationEditView",
+        "run": "ObservationRunView"
+      },
+      "consent": {
+        "edit": "ConsentEditView",
+        "run": "ConsentRunItemView"
+      },
+      "datetime": {
+        "edit": "DatetimeEditView",
+        "run": "DatetimeRunItemView"
+      },
+      "survey": {
+        "edit": "SurveyEditView",
+        "run": "SurveyRunItemView"
+      },
+      "location": {
+        "edit": "LocationEditView",
+        "run": "LocationRunItemView"
+      },
+      "grid": {
+        "edit": "GridEditView",
+        "run": "GridRunItemView"
+      },
+      "id": {
+        "edit": "IdEditView",
+        "run": "IdRunItemView"
+      },
+      "gps": {
+        "edit": "GpsEditView",
+        "run": "GpsRunItemView"
+      }
+    },
+    "robbert": "http://54.234.128.249/robbert",
+    "local": {
+      "host": "54.234.128.249/db",
+      "dbName": "tangerine"
+    },
+    "port": 5984,
+    "couchapp": {},
+    "_rev": "4-c03db35eaaa91bbd5223f19e7c693ee1"
+  }
+]

@@ -62,6 +62,7 @@ class Router extends Backbone.Router
 
     'assessments'        : 'assessments'
 
+    'run/app/:groupName'       : 'runApp'
     'run/:id'       : 'run'
     'print/:id/:format'       : 'print'
     'dataEntry/:id' : 'dataEntry'
@@ -81,6 +82,7 @@ class Router extends Backbone.Router
     'admin' : 'admin'
 
     'sync/:id'      : 'sync'
+    'phrases'      : 'phrases'
 
   feedbackEdit: ( workflowId ) ->
     Tangerine.user.verify
@@ -374,6 +376,15 @@ class Router extends Backbone.Router
                               "klass"      : klass
                             vm.show view
 
+  phrases: ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        phrases = new Phrases
+        phrases.fetch
+          success: (collection) ->
+            view = new PhrasesRunView
+              phrases:  collection
+            vm.show view
 
   studentSubtest: (studentId, subtestId) ->
     Tangerine.user.verify
@@ -517,6 +528,8 @@ class Router extends Backbone.Router
   assessments: ->
     Tangerine.user.verify
       isAuthenticated: ->
+
+
         (workflows = new Workflows).fetch
           success: ->
 
@@ -551,7 +564,14 @@ class Router extends Backbone.Router
                   success: ->
                     options.feedbacks = feedbacks
                     options.users = options.tabletUsers || options.users
-                    vm.show new AssessmentsMenuView options
+                    if !Tangerine.user.isAdmin() && Tangerine.settings.get('showWorkflows') == true
+                      view = new WorkflowMenuMemberView options
+                      vm.show view
+                      # ^ vm.show not working for some reason so lets attach the View to the DOM manually.
+                      $('#content').html(view.el)
+                    else
+                      vm.show new AssessmentsMenuView options
+
 
   editId: (id) ->
     id = Utils.cleanURL id
@@ -610,6 +630,27 @@ class Router extends Backbone.Router
 #                  docs: docs
                 view = new WidgetRunView model: docs
                 vm.show view
+
+#  WidgetSiteRunView displays the whole app.
+  runApp: (groupName) ->
+    Tangerine.user.verify
+      isAuthenticated: ->
+        docList = []
+        docList.push "settings"
+        Tangerine.$db.allDocs
+          keys : docList
+          include_docs:true
+          success: (response) ->
+            docs = []
+            for row in response.rows
+              docs.push row.doc
+            userAdminDoc = '{"_id": "user-admin","name": "admin","pass": "047c4f2af570ec4a46b9e5d6280affb79f559aa0",
+                "salt": "d379172ac55e5fee09e3edcc2e569745b65202e5","editedBy": "admin",
+                "updated": "Mon Nov 07 2016 13:51:18 GMT+0100 (CET)","fromInstanceId": "testing-on-server",
+                "collection": "user","roles": ["_admin"],"teacherId": "user-admin"}'
+            docs.push JSON.parse  userAdminDoc
+            view = new WidgetSiteRunView model: docs
+            vm.show view
 
   print: ( assessmentId, format ) ->
     Tangerine.user.verify
@@ -776,13 +817,16 @@ class Router extends Backbone.Router
                         for result in results.models
                           resultsFromCurrentStudents.push(result) if result.get("studentId") in studentIds
                         results = new KlassResults resultsFromCurrentStudents
-
-                      view = new ProgressView
-                        "subtests" : subtests
-                        "student"  : student
-                        "results"  : results
-                        "klass"    : klass
-                      vm.show view
+                      phrases = new Phrases
+                      phrases.fetch
+                        success: (phrases) ->
+                          view = new ProgressView
+                            "subtests" : subtests
+                            "student"  : student
+                            "results"  : results
+                            "klass"    : klass
+                            "phrases"  : phrases
+                          vm.show view
 
         if studentId != "all"
           student = new Student "_id" : studentId

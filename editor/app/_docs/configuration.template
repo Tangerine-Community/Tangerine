@@ -62,15 +62,15 @@
 
    "prototypeViews" : {
       "grid" : {
-         "run" : "GridRunView",
+         "run" : "GridRunItemView",
          "edit" : "GridEditView"
       },
       "location" : {
-         "run" : "LocationRunView",
+         "run" : "LocationRunItemView",
          "edit" : "LocationEditView"
       },
       "datetime" : {
-         "run" : "DatetimeRunView",
+         "run" : "DatetimeRunItemView",
          "edit" : "DatetimeEditView"
       },
       "observation" : {
@@ -78,19 +78,19 @@
          "edit" : "ObservationEditView"
       },
       "survey" : {
-         "run" : "SurveyRunView",
+         "run" : "SurveyRunItemView",
          "edit" : "SurveyEditView"
       },
       "gps" : {
-         "run" : "GpsRunView",
+         "run" : "GpsRunItemView",
          "edit" : "GpsEditView"
       },
       "id" : {
-         "run" : "IdRunView",
+         "run" : "IdRunItemView",
          "edit" : "IdEditView"
       },
       "consent" : {
-         "run" : "ConsentRunView",
+         "run" : "ConsentRunItemView",
          "edit" : "ConsentEditView"
       }
    },

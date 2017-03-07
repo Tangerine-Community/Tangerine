@@ -33,7 +33,7 @@ class WidgetRunView extends Backbone.View
       <p><button id='saveToCouchDB' class='saveToCouchDB'>#{@text.save}</button></p>
       <div class='assessment-widget-result'></div>"
     @$assessmentWidget = $(document.createElement('iframe'))
-    @$assessmentWidget.attr('src', '/client/index.html#widget')
+    @$assessmentWidget.attr('src', '/client/index-dev.html#widget')
     @$assessmentWidget.attr('data-assessment', JSON.stringify(@model))
     @$assessmentWidget.attr('data-result', '{}')
     @$assessmentWidget.attr('width', '100%')

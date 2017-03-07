@@ -1,0 +1,7 @@
+{
+  "_id": "phrase-correctItemsPerMinute",
+  "language": "en",
+  "code": "correctItemsPerMinute",
+  "phrase": "@score + ' correct items per minute'",
+  "collection": "phrase"
+}

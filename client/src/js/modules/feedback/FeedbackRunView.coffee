@@ -34,6 +34,7 @@ class FeedbackRunView extends Backbone.View
     @feedback.collection.each (critique, i) =>
 
       namespace = new Namespace
+        tripModel : @tripModel
         critique : critique
         trip     : @trip
         getDurationMinutes : =>
@@ -52,6 +53,20 @@ class FeedbackRunView extends Backbone.View
                   maxTime = Math.max(intValue, maxTime)
                   minTime = Math.min(intValue, minTime)
           return parseInt(( maxTime - minTime ) / 1000 / 60)
+
+        getDurationBetweenVariables : (var1, var2) =>
+          startTime = 0
+          endTime   = 0
+
+          for step in @tripModel.attributes.log
+            if step.result?.subtestData?
+              for subtest in step.result.subtestData
+                console.log Object.keys(subtest.data)
+                startTime = parseInt(subtest.timestamp) if subtest.data.hasOwnProperty(var1)
+                endTime   = parseInt(subtest.timestamp) if subtest.data.hasOwnProperty(var2)
+
+          return "Undefined" if (startTime == 0 || endTime == 0)
+          return parseInt((Math.abs(endTime - startTime)) / 1000 / 60)
 
 
       try 

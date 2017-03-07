@@ -28,3 +28,15 @@ editor/npm-debug.log
 editor/src/compiled/*
 
 client/src/lesson_plan_media
+
+client/src/js/init/class-pack0000.json
+
+editor/src/bower_components/
+
+client/src/js/init/mmlp.json
+
+npm-debug.log
+
+client/errorShots
+
+client/src/js/init/lachko-pack0000.json

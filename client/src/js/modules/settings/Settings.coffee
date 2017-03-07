@@ -36,7 +36,7 @@ class Settings extends Backbone.Model
     @location =
       group:
         url : "#{groupHost}/"
-        db  : "#{groupHost}/#{prefix}#{groupName}/"
+        db  : "#{groupHost}/db/#{prefix}#{groupName}/"
       subnet : 
         url : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/"                      for x in [0..255])
         db  : ("http://#{subnetBase}#{@ipRange[x]}:#{port}/#{Tangerine.db_name}/" for x in [0..255])

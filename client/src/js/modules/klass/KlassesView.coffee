@@ -1,6 +1,10 @@
-class KlassesView extends Backbone.View
+class KlassesView extends Backbone.Marionette.CompositeView
 
   className : "KlassesView"
+  childView: KlassListElementView
+  className: "KlassesView"
+# for Backbone.Marionette.CompositeView
+  childViewContainer: '#klass_list',
 
   events :
     'click .klass_add'         : 'toggleAddForm'
@@ -9,8 +13,10 @@ class KlassesView extends Backbone.View
     'click .klass_curricula'   : 'gotoCurricula'
     'click .goto_class'        : 'gotoKlass'
     'click .pull_data'   : 'pullData'
-    'click .verify'      : 'ghostLogin'
-    'click .upload_data' : 'uploadData'
+    'click .verify'      : 'checkNetwork'
+    'click .upload_data' : 'universalUpload'
+    'click .save_to_disk'      : 'saveToDisk'
+    'click .curricula'      : 'gotoCurricula'
 
   initialize: ( options ) ->
     @ipBlock  = 32
@@ -24,57 +30,65 @@ class KlassesView extends Backbone.View
     
     @klasses.on "add remove change", @render
 
-    if Tangerine.user.isAdmin()
-      # timeout for the verification attempt
-      @timer = setTimeout =>
-        @updateUploader(false)
-      , 20 * 1000
+    @collection = @klasses.models
 
-      # try to verify the connection to the server
-      verReq = $.ajax 
-        url: Tangerine.settings.urlView("group", "byDKey")
-        dataType: "jsonp"
-        data: keys: ["testtest"]
-        timeout: 5000
-        success: =>
-          clearTimeout @timer 
-          @updateUploader true
+#    if Tangerine.user.isAdmin()
+#      # timeout for the verification attempt
+#      @checkNetwork()
 
   ghostLogin: ->
     Tangerine.user.ghostLogin Tangerine.settings.upUser, Tangerine.settings.upPass
 
-  uploadData: ->
-    $.ajax
-      "url"         : "/" + Tangerine.db_name + "/_design/tangerine/_view/byCollection?include_docs=false"
-      "type"        : "POST"
-      "dataType"    : "json"
-      "contentType" : "application/json;charset=utf-8",
-      "data"        : JSON.stringify(
-          include_docs: false
-          keys : ['result', 'klass', 'student', 'teacher', 'logs', 'user']
-        )
-      "success" : (data) =>
-        docList = _.pluck(data.rows,"id")
-        $.couch.replicate(
-          Tangerine.settings.urlDB("local"),
-          Tangerine.settings.urlDB("group"),
-            success:      =>
-              Utils.midAlert "Sync successful"
-            error: (a, b) =>
-              Utils.midAlert "Sync error<br>#{a} #{b}"
-          ,
-            doc_ids: docList
-        )
+  checkNetwork: ->
+    @timer = setTimeout =>
+      @updateUploader(false)
+    , 20 * 1000
+# try to verify the connection to the server
+    verReq = $.ajax
+      url: Tangerine.settings.urlView("group", "byDKey")
+      dataType: "jsonp"
+      data:
+        keys: ["testtest"]
+        user: Tangerine.settings.upUser
+        pass: Tangerine.settings.upPass
+      timeout: 5000
+      success: =>
+        clearTimeout @timer
+        @updateUploader true
+      error: (err, msg) =>
+        console.log("err: " + err + " msg: " + msg)
 
+#  uploadData: ->
+#    $.ajax
+#      "url"         : "/" + Tangerine.db_name + "/_design/tangerine/_view/byCollection?include_docs=false"
+#      "type"        : "POST"
+#      "dataType"    : "json"
+#      "contentType" : "application/json;charset=utf-8",
+#      "data"        : JSON.stringify(
+#          include_docs: false
+#          keys : ['result', 'klass', 'student', 'teacher', 'logs', 'user']
+#        )
+#      "success" : (data) =>
+#        docList = _.pluck(data.rows,"id")
+#        $.couch.replicate(
+#          Tangerine.settings.urlDB("local"),
+#          Tangerine.settings.urlDB("group"),
+#            success:      =>
+#              Utils.midAlert "Sync successful"
+#            error: (a, b) =>
+#              Utils.midAlert "Sync error<br>#{a} #{b}"
+#          ,
+#            doc_ids: docList
+#        )
 
   updateUploader: (status) =>
     html =
-      if status == true
-        "<button class='upload_data command'>Upload</button>"
-      else if status == false 
-        "<div class='menu_box'><small>No connection</small><br><button class='command verify'>Verify connection</button></div>"
-      else
-        "<button class='command' disabled='disabled'>Verifying connection...</button>"
+#      if status == true
+        "<button class='upload_data command'>Upload</button><br/><div id = \"upload_results\"></div>"
+#      else if status == false
+#        "<div class='menu_box'><small>No connection</small><br><button class='command verify'>Verify connection</button><button class='upload_data command'>Upload</button></div><br/><div id = \"upload_results\"></div>"
+#      else
+#        "<button class='command' disabled='disabled'>Verifying connection...</button><br><button class='upload_data command'>Upload</button><br/><div id = \"upload_results\"></div>"
 
     @$el.find(".uploader").html html
 
@@ -196,6 +210,19 @@ class KlassesView extends Backbone.View
         "_rev" : @randomDoc.rev
       @klasses.fetch success: => @renderKlasses()
 
+  universalUpload: ->
+    Utils.getKlassCollections().then((records) ->
+      docList = []
+      records.forEach (record) ->
+        id = record._id
+        docList.push id
+      Utils.universalUpload(docList)
+    )
+
+  saveToDisk: ->
+    Utils.getKlassCollections().then((records) ->
+      Utils.saveDocListToFile(JSON.stringify(records)))
+
   gotoCurricula: ->
     Tangerine.router.navigate "curricula", true
 
@@ -279,20 +306,21 @@ class KlassesView extends Backbone.View
 
     adminPanel = "
       <h1>Admin menu</h1>
-      <button class='pull_data command'>Pull data</button>
+      <h2>Data Transfer</h2>
       <div class='uploader'></div>
+      <button class='upload_data command'>Upload</button><button class='save_to_disk command'>Save to Disk</button><div id = \"upload_results\"></div>
     " if Tangerine.user.isAdmin() && Tangerine.settings.get("context") isnt "server"
 
     curriculaButton = "
-      <button class='command curricula'>#{t('all curricula')}</button>
+      <button class='command curricula'>#{t('Edit Curricula')}</button>
     " if Tangerine.settings.get("context") isnt "server"
 
     @$el.html "
       #{adminPanel || ""}
-      <h1>#{t('classes')}</h1>
+      <h2>#{t('Content')}</h2>
       <div id='klass_list_wrapper'></div>
 
-      <button class='klass_add command'>#{t('add')}</button>
+      <button class='klass_add command'>#{t('Add a class')}</button>
       <div id='add_form' class='confirmation'>
         <div class='menu_box'> 
           <div class='label_value'>
@@ -321,7 +349,7 @@ class KlassesView extends Backbone.View
       #{curriculaButton || ''}
     "
 
-    @updateUploader() if Tangerine.user.isAdmin()
+#    @updateUploader() if Tangerine.user.isAdmin()
 
     @renderKlasses()
     
@@ -334,3 +362,6 @@ class KlassesView extends Backbone.View
 
   onClose: ->
     @closeViews()
+
+  onRender:->
+    console.log("onRender KlassesView")

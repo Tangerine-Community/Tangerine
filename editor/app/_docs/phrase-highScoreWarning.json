@@ -1,0 +1,7 @@
+{
+  "_id": "phrase-highScoreWarning",
+  "language": "en",
+  "code": "highScoreWarning",
+  "phrase": "'Your class is doing well, ' + @result + ', continue with the reading program. Share your and your class\\’ great work with parents.\n          Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a\n          student grouping report for this assessment and make sure that those children performing below average get extra\n          attention and practice and don\\’t fall behind.'",
+  "collection": "phrase"
+}

@@ -18,6 +18,7 @@ docker run -d \
   --env "T_USER1=$T_USER1" \
   --env "T_USER1_PASSWORD=$T_USER1_PASSWORD" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
+  --env "PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT=$PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT" \
   -p 80:80 \
   --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \

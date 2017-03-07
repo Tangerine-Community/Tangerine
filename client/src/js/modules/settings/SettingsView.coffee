@@ -57,7 +57,7 @@ class SettingsView extends Backbone.View
     ,
       success: =>
         Utils.midAlert @text.saved
-      error: ->
+      error: =>
         Utils.midAlert @text.saveError
 
   render: ->

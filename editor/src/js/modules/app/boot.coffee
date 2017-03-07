@@ -47,7 +47,10 @@ Tangerine.bootSequence =
 
     Tangerine.config = new Config "_id" : "configuration"
     Tangerine.config.fetch
-      error   : -> alert "Could not fetch configuration"
+      error  : (err, msg) ->
+        console.log("err: " + JSON.stringify(err) + " msg: " + JSON.stringify(msg))
+        alert "Session expired; you must login."
+        window.location.href = "/app/tangerine/"
       success : callback
 
 
@@ -129,13 +132,11 @@ Tangerine.bootSequence =
     Tangerine.locationList = new Backbone.Model "_id" : "location-list"    
    
     Tangerine.locationList.fetch   
-      error   : ->   
-        console.log "could not fetch location-list..."   
-        callback   
-   
+      error   : ->
+        console.log "could not fetch location-list..."
+#        callback
       success : callback
-
-
+    callback()
 
 # callback is used for testing
 Tangerine.boot = (callback) ->

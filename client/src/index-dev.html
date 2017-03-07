@@ -30,7 +30,7 @@
 <!-- lib:js -->
 <script src='js/lib/modernizr.js'></script>
 <script src='js/lib/jquery.js'></script>
-<script src='js/lib/bower_components/jquery-ui/jquery-ui.min.js'></script>
+<script src='js/lib/jquery.cookie.js'></script>
 <script src='js/lib/underscore.js'></script>
 <script src='js/lib/backbone.js'></script>
 <script src='js/lib/backbone.marionette.js'></script>
@@ -55,7 +55,7 @@
 <script src='js/lib/jquery.ui.progressbar.js'></script>
 <script src='js/lib/inflection.js'></script>
 <script src='js/lib/moment.js'></script>
-<script src='js/lib/pouchdb.js'></script>
+<script src='js/lib/pouchdb.min.js'></script>
 <script src='js/lib/backbone-pouchdb.js'></script>
 <script src='js/lib/transcriptionCheckdigit.js'></script>
 <script src='js/lib/table2CSV.js'></script>
@@ -65,6 +65,7 @@
 <script src='js/lib/ckeditor.js'></script>
 <script src='js/lib/boomerang.js'></script>
 <script src='js/lib/boomerang-plugin-bw-custom.js'></script>
+<script src='js/lib/string.startsWith.js'></script>
 <script src='js/lib/coffee-script.js'></script>
 
 <!-- endinject -->
@@ -116,6 +117,7 @@
 <script src='compiled/WorkflowSelectView.js'></script>
 <script src='compiled/Trip.js'></script>
 <script src='compiled/TripsByUserIdCollection.js'></script>
+<script src='compiled/TripsByWorkflowIdCollection.js'></script>
 <script src='compiled/TripsByUserIdYearMonthCollection.js'></script>
 <script src='compiled/TripResult.js'></script>
 <script src='compiled/TripResults.js'></script>
@@ -157,8 +159,8 @@
 <script src='compiled/KlassView.js'></script>
 <script src='compiled/KlassEditView.js'></script>
 <script src='compiled/Klasses.js'></script>
-<script src='compiled/KlassesView.js'></script>
 <script src='compiled/KlassListElementView.js'></script>
+<script src='compiled/KlassesView.js'></script>
 <script src='compiled/KlassSubtestRunView.js'></script>
 <script src='compiled/KlassSubtestResultView.js'></script>
 <script src='compiled/KlassMenuView.js'></script>
@@ -179,6 +181,9 @@
 <script src='compiled/CurriculaListView.js'></script>
 <script src='compiled/CurriculumListElementView.js'></script>
 <script src='compiled/CurriculaView.js'></script>
+<script src='compiled/Phrase.js'></script>
+<script src='compiled/Phrases.js'></script>
+<script src='compiled/PhrasesRunView.js'></script>
 <script src='compiled/Teacher.js'></script>
 <script src='compiled/Teachers.js'></script>
 <script src='compiled/TeachersView.js'></script>
@@ -222,9 +227,16 @@
 <script src='compiled/boot.js'></script>
 
 <!-- endinject -->
+
+<!-- Polymer Elements -->
+<link rel='import' href='bower_components/paper-menu/paper-menu.html'>
+<link rel='import' href='bower_components/paper-menu-button/paper-menu-button.html'>
+<link rel='import' href='bower_components/paper-icon-button/paper-icon-button.html'>
+<link rel='import' href='bower_components/paper-item/paper-item.html'>
+<link rel='import' href='bower_components/iron-icons/iron-icons.html'>
+<link rel='import' href='bower_components/paper-tabs/paper-tab.html'>
+<link rel='import' href='bower_components/paper-tabs/paper-tabs.html'>
+
 </body>
 
 </html>
-
-
-

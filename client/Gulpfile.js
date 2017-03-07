@@ -25,8 +25,6 @@ var sourcemaps = require('gulp-sourcemaps'); // for debugging
 var inject = require('gulp-inject-string');  // to create index-dev.html
 var rename = require('gulp-rename');  // to create index-dev.html
 
-var less = require('gulp-less'); // for compiling less files
-
 var git = require('gulp-git'); // for versioning
 
 // For handlebars
@@ -60,11 +58,12 @@ var conf = {
   appFile        : 'app.js',
   libFile        : 'lib.js',
   libGlob        : './src/js/lib/**/*.js',
-  lessFile       : './src/css/tangerine.less',
   cssDir         : './src/css',
   handlebarsGlob : './src/templates/*.handlebars',
   testGlob : './test/spec/*.coffee',
-  testDir : './test/spec/'
+  testSpecsGlob : './test/specs/*.coffee',
+  testDir : './test/spec/',
+  testSpecsDir : './test/specs/'
 };
 
 // Helper function helps display logs
@@ -99,6 +98,14 @@ gulp.task('webserver', function() {
   connect.server({
     livereload: true, // sets up socket based reloading
     root: 'www'       // host from this dir
+  });
+});
+
+// start the webserver for testing
+gulp.task('test-webserver', function() {
+  connect.server({
+    livereload: false, // sets up socket based reloading
+    root: '.'       // host from this dir
   });
 });
 
@@ -184,16 +191,6 @@ gulp.task('version', function(cb) {
 });
 
 
-// Handle less files
-gulp.task('build:less', function () {
-  return gulp.src(conf.lessFile)
-      .pipe(less())                      // compile less
-      .pipe(gulp.dest(conf.cssDir))      // output directory
-      .pipe(connect.reload());           // reload anyone watching
-
-});
-
-
 // Compile translations
 gulp.task('build:locales', function(){
 
@@ -222,9 +219,16 @@ gulp.task('coffee:test', function(){
     c.end();                    // end stream so we don't freeze the program
   });
 
-  gulp.src('./test/spec/*.coffee')  // handle translation documents
+  gulp.src('./test/spec/*.coffee')  // handle test coffeescript documents
       .pipe(c)                          // compile coffeescript
       .pipe(gulp.dest(conf.testDir))  // send it here
+      .pipe(connect.reload());          // reload anyone watching
+
+  gulp.src('./test/specs/*.coffee')  // handle test coffeescript documents
+      .pipe(c)                          // compile coffeescript
+      .pipe(gulp.dest(conf.testSpecsDir))  // send it here
+      .pipe(connect.reload());          // reload anyone watching
+
 });
 
 // Pre compile handlebars template
@@ -260,10 +264,10 @@ gulp.task('handlebars', function(){
 gulp.task('watch', function() {
   gulp.watch(conf.coffeeGlob,   ['build:app.js']);    // for our app
   gulp.watch(conf.libGlob,      ['build:lib.js']);    // for libraries/vendor stuff
-  gulp.watch(conf.lessFile,     ['build:less']);      // for less
   gulp.watch(conf.localeGlob,   ['build:locales']);   // for i18n
   gulp.watch(conf.handlebarsGlob, ['build:app.js']); // for handlebars templates
   gulp.watch(conf.testGlob, ['coffee:test']); // for test scripts
+  gulp.watch(conf.testSpecsGlob, ['coffee:test']); // for test scripts
 });
 
 
@@ -349,12 +353,20 @@ gulp.task('compile_packs', function(done){
 });
 
 gulp.task('run_tests', function(done){
-  gulp.src('test/index.html').pipe(mochaPhantomJS());
+  // gulp.src('test/index.html').pipe(mochaPhantomJS({ 'webSecurityEnabled': false, "outputEncoding": "utf8", "localToRemoteUrlAccessEnabled": true }),
+      gulp.src('test/index.html').pipe(mochaPhantomJS({phantomjs: {webSecurityEnabled: false, localToRemoteUrlAccessEnabled:true}})
+  ).on('error', handleError);
 });
+
+function handleError(err) {
+  console.log(err.toString());
+  this.emit('end');
+}
 
 gulp.task('init', ['clean', 'handlebars', 'version', 'build:locales', 'build:app.js', 'build:lib.js']);
 
 gulp.task('default', ['webserver', 'init', 'watch']);
+gulp.task('test-default', ['compile_packs','test-webserver', 'init', 'watch']);
 gulp.task('index-dev', ['prepare-index-dev']);
 gulp.task('test', ['compile_packs', 'coffee:test', 'run_tests']);
 gulp.task('testWatch', ['compile_packs', 'coffee:test', 'run_tests', 'watch']);
@@ -418,6 +430,7 @@ conf.fileOrder = [
   'WorkflowSelectView',
   'Trip',
   'TripsByUserIdCollection',
+  'TripsByWorkflowIdCollection',
   'TripsByUserIdYearMonthCollection',
   'TripResult',
   'TripResults',
@@ -472,8 +485,8 @@ conf.fileOrder = [
   'KlassView',
   'KlassEditView',
   'Klasses',
-  'KlassesView',
   'KlassListElementView',
+  'KlassesView',
   'KlassSubtestRunView',
   'KlassSubtestResultView',
   'KlassMenuView',
@@ -496,6 +509,10 @@ conf.fileOrder = [
   'CurriculaListView',
   'CurriculumListElementView',
   'CurriculaView',
+
+  'Phrase',
+  'Phrases',
+  'PhrasesRunView',
 
   'Teacher',
   'Teachers',
@@ -569,7 +586,7 @@ conf.jsFileOrder = conf.fileOrder.map(function(el) {
 conf.libFiles = [
   './src/js/lib/modernizr.js',
   './src/js/lib/jquery.js',
-  './src/js/lib/bower_components/jquery-ui/jquery-ui.min.js',
+  './src/js/lib/jquery.cookie.js',
   './src/js/lib/underscore.js',
   './src/js/lib/backbone.js',
   './src/js/lib/backbone.marionette.js',
@@ -594,7 +611,7 @@ conf.libFiles = [
   './src/js/lib/jquery.ui.progressbar.js',
   './src/js/lib/inflection.js',
   './src/js/lib/moment.js',
-  './src/js/lib/pouchdb.js',
+  './src/js/lib/pouchdb.min.js',
   './src/js/lib/backbone-pouchdb.js',
   './src/js/lib/transcriptionCheckdigit.js',
   './src/js/lib/table2CSV.js',
@@ -604,5 +621,6 @@ conf.libFiles = [
   './src/js/lib/ckeditor.js',
   './src/js/lib/boomerang.js',
   './src/js/lib/boomerang-plugin-bw-custom.js',
+  './src/js/lib/string.startsWith.js',
   './src/js/lib/coffee-script.js' // This file tends to like to be last
 ];

@@ -163,6 +163,12 @@ Math.ave = ->
 
 Math.isInt    = -> return typeof n == 'number' && parseFloat(n) == parseInt(n, 10) && !isNaN(n)
 Math.decimals = (num, decimals) -> m = Math.pow( 10, decimals ); num *= m; num =  num+(`num<0?-0.5:+0.5`)>>0; num /= m
+# Kudos MDN: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Math/round
+Tangerine.round = (number, precision) ->
+  factor = Math.pow(10, precision);
+  tempNumber = number * factor;
+  roundedTempNumber = Math.round(tempNumber);
+  return roundedTempNumber / factor;
 Math.commas   = (num) -> parseInt(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 Math.limit    = (min, num, max) -> Math.max(min, Math.min(num, max))
 
@@ -190,6 +196,20 @@ _.indexBy = ( propertyName, objectArray ) ->
 
 
 class Utils
+
+  @gpsPing: ( options = {} ) =>
+    Utils.log this, "GPS Ping Started" 
+    navigator.geolocation.getCurrentPosition(
+        (position) =>
+          Utils.log this, "GPS Ping: Received #{Utils.gpsEasify position}" 
+      ,
+        (positionError) =>
+          Utils.log this, "GPS Ping: Error: #{positionError.message}" 
+      , 
+        maximumAge         : 300 * 1000
+        timeout            : 60 * 1000
+        enableHighAccuracy : true 
+    )
 
   @execute: ( functions, scope, progress ) ->
 
@@ -233,7 +253,6 @@ class Utils
         pass: Tangerine.settings.upPass
       error: (e) ->
         errorMessage = JSON.stringify e
-        alert "Error connecting" + errorMessage
         $("#upload_results").append('Error connecting to : ' + allDocsUrl + ' - Error: ' + errorMessage + '<br/>')
       success: (response) =>
         $("#upload_results").append('Received response from server.<br/>')
@@ -272,7 +291,6 @@ class Utils
             data : compressedData
             error: (e) =>
               errorMessage = JSON.stringify e
-              alert "Server bulk docs error" + errorMessage
               $("#upload_results").append(t("Utils.message.bulkDocsError") + bulkDocsUrl + ' - ' + t("Utils.message.error") + ': ' + errorMessage + '<br/>')
             success: =>
               Utils.sticky t("Utils.message.resultsUploaded")
@@ -311,35 +329,97 @@ class Utils
               callback(null, response)
 
 
-  @universalUpload: ->
-    results = new Results
-    results.fetch
-      success: ->
-        docList = results.pluck("_id")
-        Utils.uploadCompressed(docList)
+  @universalUpload: (docList) ->
+    if jsonString?
+      Utils.uploadCompressed(docList)
+    else
+      results = new Results
+      results.fetch
+        success: ->
+          docList = results.pluck("_id")
+          Utils.uploadCompressed(docList)
 
-  @saveDocListToFile: ->
+  #/*
+  # * Use the writeTextToFile method.
+  # */
+  @saveRecordsToFile = (text) ->
+    username = Tangerine.user.name()
+    timestamp = (new Date).toISOString();
+    timestamp = timestamp.replace(/:/g, "-")
+    if username == null
+      fileName = "backup-" + timestamp + ".json"
+    else
+      fileName = username + "-backup-" + timestamp + ".json"
+    console.log("fileName: " + fileName)
+    if(navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/))
+      cordova.file.writeTextToFile({
+          text:  text,
+          path: cordova.file.externalDataDirectory,
+          fileName: fileName,
+          append: false
+        },
+        {
+          success: (file) ->
+            alert("Success! Look for the file at " + file.nativeURL)
+            console.log("File saved at " + file.nativeURL)
+          , error: (error) ->
+            console.log(error)
+        }
+      )
+    else
+      console.log("Local DB Dump: " + fileName + " : " + text)
+
+  @getKlassCollections = ->
+    return p = new Promise (resolve, reject) ->
+      klasses = new Klasses
+      klasses.fetch
+        success: ( klassCollection ) ->
+          teachers = new Teachers
+          teachers.fetch
+            success: ->
+              curricula = new Curricula
+              curricula.fetch
+                success: ( curriculaCollection ) ->
+                  results = new Results
+                  results.fetch
+                    success: ->
+                      users = new Users
+                      users.fetch
+                        success: ->
+                          logs = new Logs
+                          logs.fetch
+                            success: ->
+                              combinedCollection = klasses.toJSON().concat(teachers.toJSON()).concat(curricula.toJSON()).concat(results.toJSON()).concat(users.toJSON()).concat(logs.toJSON())
+                              return resolve(combinedCollection)
+
+  @saveDocListToFile: (jsonString) ->
 #    Tangerine.db.allDocs(include_docs:true).then( (response) ->
 #      Utils.saveRecordsToFile(JSON.stringify(response))
 #    )
-    results = new Results
-    results.fetch
-      success: ->
-#        console.log("results: " + JSON.stringify(results))
-        Utils.saveRecordsToFile(JSON.stringify(results))
+    if jsonString?
+      Utils.saveRecordsToFile(jsonString)
+    else
+      results = new Results
+      results.fetch
+        success: ->
+  #        console.log("results: " + JSON.stringify(results))
+          Utils.saveRecordsToFile(JSON.stringify(results))
 
   @checkSession: (url, options) ->
     options = options || {};
+    console.log("checkSession started")
     $.ajax
       type: "GET",
       url:  url,
-      async: true,
       data: "",
       beforeSend: (xhr)->
         xhr.setRequestHeader('Accept', 'application/json')
       ,
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("Error: " + textStatus + " jqXHR: " + JSON.stringify(jqXHR))
       complete: (req) ->
         resp = $.parseJSON(req.responseText);
+        Promise.resolve(req.responseJSON);
         if (req.status == 200)
           console.log("Logged in.")
           if options.success
@@ -367,61 +447,144 @@ class Utils
 #    timeout: 60000};
 #    Backbone.sync.defaults.db.replicate.to(remoteCouch, opts, CoconutUtils.ReplicationErrorLog);
 
+  @importDoc = (file) ->
+    return p = new Promise (resolve, reject) ->
+      $.ajax
+        dataType: "json"
+        url: file
+        error: (res, doc) ->
+          console.log("Error: " + res + " file: " + file + " doc: " + doc)
+        success: (res) ->
+          doc = res[0]
+          Tangerine.db.put doc, (error, doc) ->
+            if error
+              return console.log "could not save user documents: " + error
+
   @cloud_url_with_credentials: (cloud_url)->
-    cloud_credentials = "username:password"
+#    cloud_credentials = "username:password"
+    cloud_credentials = Tangerine.settings.get("replicationCreds")
     cloud_url.replace(/http:\/\//,"http://#{cloud_credentials}@")
 
-  @replicateToServer: (options, divId) ->
+  @cloud_url_with_uploader_creds: (cloud_url)->
+    upName = "uploader-" + Tangerine.settings.get("groupName")
+    upPass = Tangerine.settings.get("upPass")
+    uploader_creds = upName + ":" + upPass
+    cloud_url.replace(/http:\/\//,"http://#{uploader_creds}@")
+
+  @groupHost_url_with_creds = ->
+    a = document.createElement("a")
+    a.href = Tangerine.settings.get("groupHost")
+    url = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
+    credUrl = @cloud_url_with_credentials(url)
+    return credUrl
+
+  @groupDb_url_with_creds = ->
+    a = document.createElement("a")
+    a.href = Tangerine.settings.get("groupDb")
+    url = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
+    credUrl = @cloud_url_with_credentials(url)
+    return credUrl
+
+  @groupDb_url_with_uploader_creds = ->
+    a = document.createElement("a")
+    a.href = Tangerine.settings.get("groupDb")
+    url = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
+    credUrl = @cloud_url_with_uploader_creds(url)
+    return credUrl
+
+  @ensureServerAuth: (callbacks = {}) ->
+
+    groupHost = Tangerine.settings.get('groupDb')
+    protocolAndDomain = groupHost.split(':\/\/')
+#    sessionUrl = protocolAndDomain[0] + '://uploader-' + Tangerine.settings.get('groupName') + ':' + Tangerine.settings.get('upPass') + '@' + protocolAndDomain[1] + '/_session'
+    sessionUrl = protocolAndDomain[0] + '://' + Tangerine.settings.get('replicationCreds')  + '@' + protocolAndDomain[1] + '/_session'
+    $.ajax
+      url: sessionUrl
+      type: "GET"
+      dataType: "json"
+      xhrFields:
+        withCredentials: true
+      error: $.noop
+      success: (response) ->
+
+        if response.userCtx.name is null
+          callbacks.error?()
+        else
+          callbacks.success?()
+
+  @replicate: (options) ->
     options = {} if !options
     opts =
-#      live:true
       continuous: false
-#      batch_size:5
-#      filter: filter
-#      batches_limit:1
       withCredentials:true
-#      auth:
-#        username:account.username
-#        password:account.password
-      complete: (result) ->
-        if typeof result != 'undefined' && result != null && result.ok
-          console.log "replicateToServer - onComplete: Replication is fine. "
-        else
-          console.log "replicateToServer - onComplete: Replication message: " + result
       error: (result) ->
         console.log "error: Replication error: " + JSON.stringify result
       timeout: 60000
-    _.extend options, opts
+    source = options.source
+    target = options.target
 
-    a = document.createElement("a")
-    a.href = Tangerine.settings.get("groupHost")
-    replicationURL = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
-    credRepliUrl = @cloud_url_with_credentials(replicationURL)
-    console.log("credRepliUrl: " + credRepliUrl)
-    Backbone.sync.defaults.db.replicate.to(credRepliUrl, options).on('uptodate', (result) ->
-      if typeof result != 'undefined' && result.ok
-        console.log "uptodate: Replication is fine. "
-        options.complete()
-        if typeof options.success != 'undefined'
-          options.success()
-      else
-        console.log "uptodate: Replication error: " + JSON.stringify result).on('change', (info)->
-      console.log "Change: " + JSON.stringify info
-      doc_count = options.status?.doc_count
-      doc_del_count = options.status?.doc_del_count
-      total_docs = doc_count? + doc_del_count?
-      doc_written = info.docs_written
-      percentDone = Math.floor((doc_written/total_docs) * 100)
-      if !isNaN  percentDone
-        msg = "Change: docs_written: " + doc_written + " of " +  total_docs + ". Percent Done: " + percentDone + "%<br/>"
-      else
-        msg = "Change: docs_written: " + doc_written + "<br/>"
-      console.log("msg: " + msg)
-      $(divId).append msg
-    ).on('complete', (info)->
-      console.log "Complete: " + JSON.stringify info
+    remotePouch = PouchDB.defaults(
+      prefix: source
     )
-#    Coconut.menuView.checkReplicationStatus();
+    remotePouch = new PouchDB(source)
+    @checkSession(source).then((result) ->
+      console.log("about to replicate")
+      rep = PouchDB.replicate(remotePouch, target, opts).on('change', (info) ->
+        if (options.change?)
+          options.change(info, result)
+        if typeof divId != 'undefined'
+          $(divId).append msg
+      ).on('complete', (info) ->
+        console.log "Complete: " + JSON.stringify info
+        if (options.complete?)
+          options.complete(info, result)
+      ).on('error',  (err) ->
+        console.log "error: " + JSON.stringify err
+      ).then(
+        console.log("I'm done")
+#        Tangerine.db.info().then((result) ->
+#          console.log("result: " + JSON.stringify(result)))
+      )
+    )
+
+  @replicateToPouchdb = ->
+#    credRepliUrl = Utils.groupDb_url_with_creds()
+#    #    credRepliUrl = Utils.groupDb_url_with_uploader_creds()
+#    console.log("credRepliUrl: " + credRepliUrl)
+#    cloud_credentials = Tangerine.settings.get("replicationCreds")
+#    upName = "uploader-" + Tangerine.settings.get("groupName")
+#    upPass = Tangerine.settings.get("upPass")
+#    console.log("cloud_credentials: " + cloud_credentials)
+#    creds = cloud_credentials.split(":")
+#    #    username = creds[0]
+#    #    password = creds[1]
+#    username = upName
+#    password = upPass
+#
+#    Utils.ensureServerAuth(
+#      error: => console.log 'ensureServerAuth failed'
+#      success: =>
+#        console.log 'ensureServerAuth worked'
+    options =
+      source: credRepliUrl
+      target: Tangerine.db
+      username: username
+      password: password
+      complete: (result) ->
+        if typeof result != 'undefined' && result != null && result.ok
+          console.log "replicateToServer - onComplete: Replication is fine. "
+          $('.assessment-widget-result').html(result)
+#              Backbone.history.navigate('', {trigger: true})
+          Tangerine.router.landing(true)
+        else
+          console.log "replicateToServer - onComplete: Replication message: " + result
+      change: (info) ->
+        $('.assessment-widget-result').html(info)
+    try
+      Utils.replicate(options)
+    catch error
+      console.log(error)
+#    )
 
   @restartTangerine: (message, callback) ->
     Utils.midAlert "#{message || 'Restarting Tangerine'}"
@@ -698,7 +861,7 @@ class Utils
       error: (res) ->
         callback(res)
       success: (res) ->
-        Tangerine.db.bulkDocs res, (error, doc) ->
+        Tangerine.db.bulkDocs res, {new_edits: false}, (error, response) ->
           if error then callback(error) else callback()
 
   @getAssessments: (T_ADMIN, T_PASS, group, success, error) ->

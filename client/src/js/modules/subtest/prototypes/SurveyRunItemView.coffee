@@ -206,6 +206,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     return true if not views? # if there's nothing to check, it must be good
     views = [views] if not _.isArray(views)
     for qv, i in views
+#      console.log("question: " + qv.model.get("prompt"))
       qv.updateValidity()
       # can we skip it?
       if not qv.model.getBoolean("skippable")

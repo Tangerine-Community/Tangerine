@@ -4,10 +4,11 @@ class WorkflowEditView extends Backbone.EditView
   className: "WorkflowEditView"
 
   events : $.extend
-    'click  .add'           : "stepAdd"
-    'change .type-selector' : 'onTypeSelectorChange'
-    'change .types-id'      : 'onTypesIdChange'
-    'change .user-type'     : 'onUserTypeChange'
+    'click  .add'              : "stepAdd"
+    'change .type-selector'    : 'onTypeSelectorChange'
+    'change .types-id'         : 'onTypesIdChange'
+    'change .user-type'        : 'onUserTypeChange'
+    'change input[type=radio]' : 'onRadioChange'
 
     'click .open-selector'  : 'openSelector'
 
@@ -45,6 +46,23 @@ class WorkflowEditView extends Backbone.EditView
     @models.get(stepId).save "userType" : userType,
       success: ->
         Utils.topAlert "Saved"
+
+  onRadioChange: (event) ->
+    $target = $(event.target)
+    value = $target.val();
+    dataId = $target.attr('data-id')
+    stepId = $target.attr('data-step-id')
+
+    if stepId? and dataId?
+      @models.get(stepId).save dataId : value,
+        success: ->
+          Utils.topAlert "Saved"
+    else
+      @workflow.set dataId, value
+      @workflow.save null,
+        success: ->
+          Utils.topAlert("Saved")
+
 
   initialize: (options) ->
     @[key] = value for key, value of options
@@ -252,15 +270,48 @@ class WorkflowEditView extends Backbone.EditView
 
 
     html = "
-      <h1>#{@getEditable
-        model: @workflow
-        attribute : 
-          key : 'name'
-          escape : true
-        name : "Workflow name"
-        placeholder: "Untitled workflow"
-        }
-      </h1>
+      
+      <section>
+        <table>
+          <tr>
+            <td><h1>Name: </h1></td>
+            <td>
+              <h1>#{@getEditable
+                model: @workflow
+                attribute : 
+                  key : 'name'
+                  escape : true
+                name : "Workflow name"
+                placeholder: "Untitled workflow"
+                }
+              </h1>
+            </td>
+          </tr>
+          <tr>
+            <th>Feedback Enabled: </th>
+            <td>
+              <div id='enable_feedback_radio' class='buttonset' style='float: left; padding-right: 15px;'>
+                <label for='enable_feedback_true'>Yes</label><input name='enableFeedback' data-id='enableFeedback' type='radio' value='true' id='enable_feedback_true' #{'checked' if @workflow.get('enableFeedback') is 'true'}>
+                <label for='enable_feedback_false'>No</label><input name='enableFeedback' data-id='enableFeedback' type='radio' value='false' id='enable_feedback_false' #{'checked' if not (@workflow.get('enableFeedback') is 'true')}>
+              </div>
+              <button class='command feedback nav-button'><a href='#feedback/edit/#{@workflow.id}'>Edit Feedback</a></button>
+            </td>
+          </tr>
+          <tr>
+            <th>Media Overlay File: </th>
+            <td>
+              #{@getEditable
+                model: @workflow
+                attribute : 
+                  key : 'mediaOverlayFile'
+                  escape : true
+                name : "Media Overlay File Name Logic"
+                placeholder: "[Logic returning media overlay file name - leave empty if no Media Overlay is enabled]"
+              }
+            </td>
+          </tr>
+        </table>
+      </section>
       <div class='menubox'>
         <h2>Steps</h2>
         <ul id='step-list'>#{stepList}</ul>
@@ -268,32 +319,6 @@ class WorkflowEditView extends Backbone.EditView
       <div id='controls'>
         <button class='add command'>Add step</button>
       </div>
-
-      <section>
-        <h2>Feedback</h2>
-
-        <table>
-          <tr>
-            <th>Enabled</th>
-            <td>#{@getEditable
-                model: @workflow
-                attribute:
-                  key : 'enableFeedback'
-                  escape: true
-                name: 'Enable feedback'
-                placeholder: 'true or false'
-                prepare: (value) -> value.toLowerCase() is "true"
-              }
-            </td>
-          </tr>
-        </table>
-
-
-        <div id='feedback'>
-          <button class='feedback nav-button'><a href='#feedback/edit/#{@workflow.id}'>Edit</a></button>
-        </div>
-
-      </section>
 
     "
 

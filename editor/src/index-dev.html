@@ -21,7 +21,8 @@
   <body class="server">
     <div id="navigation" class="clearfix"></div>
     <div id="content_wrapper"><div id="content"></div></div>
-    <div id="footer"><div id="watermark"><img src="images/tangerine_logo_89.png"></div></div>
+    <div id="footer"><div id="watermark"><img src="images/tangerine_logo_89.png"></div><div id="messages"></div></div>
+
 
 <!--<script src="js/lib.js"></script>-->
 
@@ -48,12 +49,14 @@
 <script src='js/lib/jquery.ui.progressbar.js'></script>
 <script src='js/lib/inflection.js'></script>
 <script src='js/lib/backbone.js'></script>
+<script src='bower_components/backbone-forms/distribution/backbone-forms.js'></script>
 <script src='js/lib/moment.js'></script>
 <script src='js/lib/backbone-couchdb.js'></script>
 <script src='js/lib/transcriptionCheckdigit.js'></script>
 <script src='js/lib/base64.js'></script>
 <script src='js/lib/jstz.js'></script>
 <script src='js/lib/ckeditor.js'></script>
+<script src='js/lib/pouchdb.js'></script>
 <script src='js/lib/coffee-script.js'></script>
 
 <!-- endinject -->
@@ -61,6 +64,7 @@
 <script src='compiled/globals.js'></script>
 <script src='compiled/version.js'></script>
 <script src='compiled/helpers.js'></script>
+<script src='compiled/DocumentsForClient.js'></script>
 <script src='compiled/ButtonView.js'></script>
 <script src='compiled/Assessment.js'></script>
 <script src='compiled/Assessments.js'></script>
@@ -72,8 +76,8 @@
 <script src='compiled/AssessmentImportView.js'></script>
 <script src='compiled/AssessmentSyncView.js'></script>
 <script src='compiled/AssessmentDataEntryView.js'></script>
-<script src='compiled/DocumentsForClient.js'></script>
 <script src='compiled/WidgetRunView.js'></script>
+<script src='compiled/WidgetSiteRunView.js'></script>
 <script src='compiled/Subtest.js'></script>
 <script src='compiled/Subtests.js'></script>
 <script src='compiled/SubtestListEditView.js'></script>
@@ -121,6 +125,7 @@
 <script src='compiled/WorkflowEditView.js'></script>
 <script src='compiled/WorkflowRunView.js'></script>
 <script src='compiled/WorkflowSelectView.js'></script>
+<script src='compiled/WorkflowMenuMemberView.js'></script>
 <script src='compiled/Klass.js'></script>
 <script src='compiled/KlassView.js'></script>
 <script src='compiled/KlassEditView.js'></script>
@@ -148,6 +153,9 @@
 <script src='compiled/CurriculaListView.js'></script>
 <script src='compiled/CurriculumListElementView.js'></script>
 <script src='compiled/CurriculaView.js'></script>
+<script src='compiled/Phrase.js'></script>
+<script src='compiled/Phrases.js'></script>
+<script src='compiled/PhrasesRunView.js'></script>
 <script src='compiled/Teacher.js'></script>
 <script src='compiled/Teachers.js'></script>
 <script src='compiled/TeachersView.js'></script>

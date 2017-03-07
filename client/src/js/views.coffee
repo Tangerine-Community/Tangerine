@@ -8,13 +8,13 @@ Tangerine.loadViews = (doneLoadingViews) ->
       console.log "Design Doc detected. Updating it."
       ddoc._rev = doc._rev
     else
-      console.log "Loading in a fresh _desing/tangerine doc"
+      console.log "Loading in a fresh _design/tangerine doc"
     Tangerine.db.put(ddoc)
       .then (doc) ->
         doneLoadingViews()
-      .catch (error) ->
-        console.log error
-        doneLoadingViews(error)
+#      .catch (error) ->
+#        console.log error
+#        doneLoadingViews(error)
 
 Tangerine.viewLibs =
   utils:
@@ -216,6 +216,13 @@ Tangerine.views =
       if doc.collection == 'trip'
         return emit(doc.userId, null)
     ).toString()
+
+  tripsByWorkflowIdCollection:
+    map: ( ( doc ) ->
+      if doc.collection == 'trip'
+        return emit(doc.workflowId, null)
+    ).toString()
+
 
   tripsByUserIdYearMonth:
     map: ( ( doc ) ->
@@ -449,13 +456,14 @@ Tangerine.views =
       else if doc.collection is 'question'
         emit "question-#{doc.subtestId}"
 
-      else if doc.collection is 'result'
-        result = _id : doc._id
-        doc.subtestData.forEach (subtest) ->
-          if subtest.prototype is "id" then result.participantId = subtest.data.participant_id
-          if subtest.prototype is "complete" then result.endTime = subtest.data.end_time
-        result.startTime = doc.start_time
-        emit "result-#{doc.assessmentId}", result
+#      else if doc.collection is 'result'
+#        result = _id : doc._id
+#        if doc.hasOwnProperty('subtestData')
+#          doc.subtestData.forEach (subtest) ->
+#            if subtest.prototype is "id" then result.participantId = subtest.data.participant_id
+#            if subtest.prototype is "complete" then result.endTime = subtest.data.end_time
+#          result.startTime = doc.start_time
+#          emit "result-#{doc.assessmentId}", result
 
     ).toString()
 
@@ -619,3 +627,12 @@ Tangerine.views =
       emit keyId, result
 
     ).toString()
+
+  resultsByStudentSubtest:
+    map : ( (doc) ->
+      return unless doc.collection is "result"
+
+      emit [doc.studentId, doc.subtestId], doc
+
+    ).toString()
+

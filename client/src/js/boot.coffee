@@ -27,9 +27,18 @@ Tangerine.bootSequence =
       dbname = "tangerine-" + Date.now() + Math.random()
       console.log("dbname:" + dbname)
       Tangerine.db = new PouchDB(dbname, {storage: 'temporary'})
-    else 
+    else if (window.location.hash.startsWith('#widgetSiteLoad'))
+#       This is a widget for editor and we should keep it in our long-term memory
+      hashArr = window.location.hash.split("/")
+      groupName = hashArr[1]
+      Tangerine.db = new PouchDB(groupName)
+    else
+      groupName = $.cookie("groupName")
+      if typeof groupName != 'undefined' && groupName != null
+        Tangerine.db = new PouchDB(groupName)
+      else
       # This is not a widget and we'll hang onto our long term memory.
-      Tangerine.db = new PouchDB(Tangerine.conf.db_name)
+        Tangerine.db = new PouchDB(Tangerine.conf.db_name)
 
     Backbone.sync = BackbonePouch.sync
       db: Tangerine.db
@@ -78,7 +87,7 @@ Tangerine.bootSequence =
           alert 'Error loading views'
           console.log err
 
-        if (window.location.hash != '#widget')
+        if ((window.location.hash != '#widget'))
 
           #
           # Load Packs that Tree creates for an APK, then load the Packs we use for
@@ -89,41 +98,58 @@ Tangerine.bootSequence =
             Tangerine.db.query('tangerine/byCollection', {key: 'workflows'}).then((res) ->
               markDatabaseAsInitialized()
             ).catch( (err) ->
-              alert('Could not index views')
+              console.log('Could not index views. Error: ' + err)
+#              alert('Could not index views. Error: ' + err)
             )
 
           markDatabaseAsInitialized = ->
             Tangerine.db.put({"_id":"initialized"}).then( => callback() )
 
-          # Recursive function that will iterate through js/init/pack000[0-x] until
-          # there is no longer a returned pack.
-          packNumber = 0
-          doOne = ->
+          if (!window.location.hash.startsWith('#widgetSiteLoad'))
 
-            paddedPackNumber = ("0000" + packNumber).slice(-4)
-            $.ajax
-              dataType: "json"
-              url: "js/init/pack#{paddedPackNumber}.json"
-              error: (res) ->
-                # No more pack? We're all done here.
-                if res.status is 404
-                  # Mark this database as initialized so that this process does not
-                  # run again on page refresh, then load Development Packs.
-                  indexViews()
-              success: (res) ->
-                if res.docs.length == 0 then return indexViews()
-                console.log('Found ' + res.docs.length + ' docs')
-                packNumber++
-                Tangerine.db.bulkDocs res.docs, (error, doc) ->
-                  if error
-                    return alert "could not save initialization documents: #{error}"
-                  doOne()
+            # Recursive function that will iterate through js/init/pack000[0-x] until
+            # there is no longer a returned pack.
+            packNumber = 0
+            doOne = ->
 
-          # kick off recursive process
-          doOne()
-        else
-          console.log("init empty db for widget.")
-          db.put({"_id":"initialized"}).then( -> callback() )
+              paddedPackNumber = ("0000" + packNumber).slice(-4)
+              finishInit = ->
+#               Mark this database as initialized so that this process does not
+#               run again on page refresh, then load Development Packs.
+                indexViews()
+                #                  Load the admin user
+                Utils.importDoc('js/init/user-admin.json')
+              $.ajax
+                dataType: "json"
+                url: "js/init/pack#{paddedPackNumber}.json"
+                error: (res) ->
+                  # No more pack? We're all done here.
+                  if res.status is 404
+                    finishInit()
+                success: (res) ->
+                  if res.docs?
+                    docs = res.docs
+                  else
+                    docs = res
+                  if docs.length == 0
+                    finishInit()
+                  console.log('Found ' + docs.length + ' docs')
+                  packNumber++
+
+                  Tangerine.db.bulkDocs docs, {new_edits: false}, (error, doc) ->
+                    if error
+                      console.log "could not save initialization documents: #{error}"
+                      return alert "could not save initialization documents: #{error}"
+                    doOne()
+
+            # kick off recursive process
+            doOne()
+          else
+            if (window.location.hash.startsWith('#widgetSiteLoad'))
+              indexViews().then( -> callback() )
+            else
+              console.log("init empty db for widget.")
+              db.put({"_id":"initialized"}).then( -> callback() )
 
   # Put this version's information in the footer
   versionTag: ( callback ) ->
@@ -132,19 +158,25 @@ Tangerine.bootSequence =
 
   # load templates
   fetchTemplates: ( callback ) ->
-    (Tangerine.templates = new Template "_id" : "templates").fetch
-      error: -> alert "Could not load templates."
-      success: callback
+    if ((window.location.hash != '#widget') && (!window.location.hash.startsWith('#widgetSiteLoad')))
+      (Tangerine.templates = new Template "_id" : "templates").fetch
+        error: -> alert "Could not load templates."
+        success: callback
+    else return callback()
 
   # Grab our system config doc. These generally don't change very often unless
   # major system changes are required. New servers, etc.
   fetchConfiguration: ( callback ) ->
-
-    Tangerine.config = new Config "_id" : "configuration"
-    Tangerine.config.fetch
-      error   : -> alert "Could not fetch configuration"
-      success : callback
-
+#    if ((window.location.hash != '#widget') && (!window.location.hash.startsWith('#widgetSiteLoad')))
+    if ((window.location.hash != '#widget'))
+      Tangerine.config = new Config "_id" : "configuration"
+      Tangerine.config.fetch
+        error   : (err) ->
+          msg = "Tangerine.config.fetch error: " + JSON.stringify(err)
+          console.log msg
+          alert msg
+        success : callback
+    else return callback()
 
   # get our local Tangerine settings
   # these do tend to change depending on the particular install of the
@@ -256,33 +288,6 @@ Tangerine.bootSequence =
             )
           )
 
-        #/*
-        # * Use the writeTextToFile method.
-        # */
-        Utils.saveRecordsToFile = (text) ->
-          username = Tangerine.user.name()
-          timestamp = (new Date).toISOString();
-          timestamp = timestamp.replace(/:/g, "-")
-          if username == null
-            fileName = "backup-" + timestamp + ".json"
-          else
-            fileName = username + "-backup-" + timestamp + ".json"
-          console.log("fileName: " + fileName)
-          cordova.file.writeTextToFile({
-            text:  text,
-            path: cordova.file.externalDataDirectory,
-            fileName: fileName,
-            append: false
-            },
-            {
-              success: (file) ->
-                alert("Success! Look for the file at " + file.nativeURL)
-                console.log("File saved at " + file.nativeURL)
-              , error: (error) ->
-                  console.log(error)
-            }
-          )
-
       catch error
         console.log("Unable to fetch script. Error: " + error)
     callback()
@@ -323,22 +328,29 @@ Tangerine.bootSequence =
       Tangerine.router.navigate(sendTo, { trigger: true, replace: true })
     )
 
-  getLocationList : ( callback ) ->    
-    # Grab our system config doc   
-    Tangerine.locationList = new Backbone.Model "_id" : "location-list"    
-   
-    Tangerine.locationList.fetch   
-      error   : ->   
-        console.log "could not fetch location-list..."   
-        callback   
-   
-      success : callback
+  getLocationList : ( callback ) ->
+    if ((window.location.hash != '#widget') && (!window.location.hash.startsWith('#widgetSiteLoad')))
+      # Grab our system config doc
+      Tangerine.locationList = new Backbone.Model "_id" : "location-list"
+
+      Tangerine.locationList.fetch
+        error   : ->
+          console.log "could not fetch location-list..."
+          callback
+        success : callback
+      callback()
+    else return callback()
 
   removeLoadingOverlay: ( callback ) ->
     removeOverlay = ->
       $('#loading-overlay').animate({opacity: 0, height: "toggle"}, 450)
     setTimeout(removeOverlay, 1500)
     callback()
+
+  initGPS : (callback) ->
+    $ ->
+      Utils.gpsPing
+      callback()
 
 Tangerine.boot = ->
 
@@ -347,6 +359,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.basicConfig
     Tangerine.bootSequence.checkDatabase
+    Tangerine.bootSequence.initGPS
     Tangerine.bootSequence.versionTag
     Tangerine.bootSequence.fetchSettings
     Tangerine.bootSequence.fetchConfiguration

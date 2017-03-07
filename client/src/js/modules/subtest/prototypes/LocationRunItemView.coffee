@@ -14,7 +14,7 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     @limit  = @options.limit
 
     @levels       = @model.get("levels")          || []
-    @locationCols = @model.get("locationCols")    || []
+    @locationCols = @model.get("locationCols")    || @levels
     @locations    = @model.get("locations")       || []
     @isStandard   = @model.getBoolean("standard")
 
@@ -88,7 +88,14 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     if levelChanged isnt @levels.length-1
       @resetSelects(nextLevel+1)
       @$el.find("#level_#{nextLevel}").removeAttr("disabled")
-      @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel)
+      $html = @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel)
+      options = $html.find("option")
+      if options.length is 2
+#       Programatically set the selected value.
+        $(options.parent("select")).val($(options[1]).val())
+        # Trigger change event that would otherwise be triggered by user-browser
+        # interaction.
+        $(options.parent("select")).trigger "change"
       @selectedLocation = []
     else
       levelVals = []
@@ -105,6 +112,23 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
         return matchCount == expectedCount
       )
     ""
+
+# Original onSelectChange for reference
+#  onSelectChange: (event) ->
+#    $target = $(event.target)
+#    levelChanged = parseInt($target.attr("data-level"))
+#    newValue = $target.val()
+#    nextLevel = levelChanged + 1
+#    if levelChanged isnt @levels.length
+#      @$el.find("#level_#{nextLevel}").removeAttr("disabled")
+#      $html = @$el.find("#level_#{nextLevel}").html @getOptions(nextLevel)
+#      # If there is only one option, select that option.
+#      if (options = $html.find("option")).length is 2
+## Programatically set the selected value.
+#        $(options.parent("select")).val($(options[1]).val())
+#        # Trigger change event that would otherwise be triggered by user-browser
+#        # interaction.
+#        $(options.parent("select")).trigger "change"
 
   getOptions: (index)->
 
@@ -203,10 +227,12 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     selects = @$el.find("select")
     for input in selects
       if _($(input).val()).isEmptyString()
+        console.log("error: " + $(input).attr('id'))
         $(input).after " <span class='message'>#{$('label[for='+$(input).attr('id')+']').text()} must be filled.</span>"
 
   onClose: ->
-    @locView.remove()
+    if @isStandard
+      @locView.remove()
 
   getSum: ->
     counts =

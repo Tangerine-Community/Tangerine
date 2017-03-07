@@ -7,6 +7,7 @@
     "commander": "^2.9.0",
     "fs-extra": "^0.26.4",
     "single-line-log": "^1.0.1",
+    "underscore": "^1.8.3",
     "unirest": "^0.4.2",
     "walkdir": "0.0.11"
   },

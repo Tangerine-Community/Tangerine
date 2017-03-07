@@ -1,0 +1,745 @@
+[
+  {
+    "_id": "4dab9f7d-5cca-347b-8212-d563753204ed",
+    "_rev": "5-9bb18026960871fdb987f91efb283644",
+    "prototype": "survey",
+    "gridLinkId": "",
+    "curriculumId": "6f0ac11f-e37a-3f91-776d-6266b449f8a7",
+    "captureLastAttempted": false,
+    "endOfLine": false,
+    "collection": "subtest",
+    "name": "English Survey",
+    "part": 1,
+    "reportType": "survey",
+    "itemType": "ite",
+    "scoreTarget": 0,
+    "scoreSpread": 0,
+    "order": 0,
+    "autostopLimit": 0
+  },
+  {
+    "_id": "6f0ac11f-e37a-3f91-776d-6266b449f8a7",
+    "_rev": "1-f3b889449f0efad35a6f8bb83eafe4d1",
+    "name": "Cur 2",
+    "curriculumId": "6f0ac11f-e37a-3f91-776d-6266b449f8a7",
+    "collection": "curriculum"
+  },
+  {
+    "_id": "8724e3adddb0f7c3896b518a3c000e3b",
+    "_rev": "3-52b281184fe0f5f02dc41e2b6b8305e2",
+    "prompt": "Is English your first language?",
+    "name": "EEEQQQ1",
+    "hint": "",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      }
+    ],
+    "subtestId": "4dab9f7d-5cca-347b-8212-d563753204ed",
+    "curriculumId": "6f0ac11f-e37a-3f91-776d-6266b449f8a7",
+    "id": "000e9e13-642e-0d25-f05d-4b5f0f830c4c",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "8724e3adddb0f7c3896b518a3c001649",
+    "_rev": "4-656e58c7f715236354d61e2cf97c346a",
+    "prompt": "Do you know your address?",
+    "name": "EEEQQQ2",
+    "hint": "",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "True",
+        "value": "1"
+      },
+      {
+        "label": "False",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "4dab9f7d-5cca-347b-8212-d563753204ed",
+    "curriculumId": "6f0ac11f-e37a-3f91-776d-6266b449f8a7",
+    "id": "3f533401-ff56-1a48-399e-41f231207998",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "b6497b73-4613-af43-d863-e3e2950a7105",
+    "_rev": "2-f18b14c70d353983f4ef5704f5eebb3e",
+    "items": [
+      "a",
+      "q",
+      "w",
+      "s",
+      "e",
+      "d",
+      "r",
+      "f",
+      "t",
+      "g",
+      "y",
+      "h",
+      "u",
+      "j",
+      "i",
+      "k",
+      "o",
+      "l",
+      "p",
+      "m",
+      "n",
+      "b",
+      "v",
+      "c",
+      "x",
+      "z",
+      "D",
+      "F",
+      "V",
+      "A",
+      "T",
+      "H",
+      "B",
+      "O",
+      "L",
+      "K",
+      "Q"
+    ],
+    "columns": 4,
+    "prototype": "grid",
+    "autostop": 0,
+    "timer": 0,
+    "curriculumId": "6f0ac11f-e37a-3f91-776d-6266b449f8a7",
+    "captureLastAttempted": false,
+    "endOfLine": false,
+    "collection": "subtest",
+    "name": "English letters",
+    "part": 1,
+    "reportType": "letters",
+    "itemType": "alpha",
+    "scoreTarget": 0,
+    "scoreSpread": 0,
+    "order": 0,
+    "randomize": false
+  },
+  {
+    "_id": "f393a6db-6486-e4f2-f187-41b38dc4f247",
+    "_rev": "1-246586dc146f9918a3d24a6049bb460f",
+    "items": [],
+    "columns": 0,
+    "prototype": "grid",
+    "autostop": 0,
+    "timer": 0,
+    "curriculumId": "6f0ac11f-e37a-3f91-776d-6266b449f8a7",
+    "captureLastAttempted": false,
+    "endOfLine": false,
+    "collection": "subtest"
+  },
+  {
+    "_id": "fdb87851-dbc4-81c0-9f46-50c7adcbc57e",
+    "_rev": "2-a88d6f0fcc688646428b38676ae09323",
+    "items": [
+      "1",
+      "English",
+      "letters",
+      "0",
+      "37",
+      "Edit",
+      "Delete",
+      "Test",
+      "run",
+      "a",
+      "q",
+      "w",
+      "s",
+      "e",
+      "d",
+      "r",
+      "f",
+      "t",
+      "g",
+      "y",
+      "h",
+      "u",
+      "j",
+      "i",
+      "k",
+      "o",
+      "l",
+      "p",
+      "m",
+      "n",
+      "b",
+      "v",
+      "c",
+      "x",
+      "z",
+      "D",
+      "F",
+      "V",
+      "A",
+      "T",
+      "H",
+      "B",
+      "O",
+      "L",
+      "K",
+      "Q"
+    ],
+    "columns": 0,
+    "prototype": "grid",
+    "autostop": 0,
+    "timer": 0,
+    "curriculumId": "6f0ac11f-e37a-3f91-776d-6266b449f8a7",
+    "captureLastAttempted": false,
+    "endOfLine": false,
+    "collection": "subtest",
+    "name": "Grid 2",
+    "part": 1,
+    "reportType": "grid",
+    "itemType": "grid",
+    "scoreTarget": 0,
+    "scoreSpread": 0,
+    "order": 1,
+    "randomize": false
+  },
+  {
+    "_id": "settings",
+    "_rev": "6-dba0126ae9ee4eaa1527fe0dfabb2ba0",
+    "upPass": "865d8908ca0b3f622c85ee9a2902cb8e4ed00849",
+    "language": "en-US",
+    "instanceId": "necd-vhga-yymg",
+    "hostname": "54.234.128.249",
+    "groupDb": "54.234.128.249/db",
+    "groupName": "lkv",
+    "showWorkflows": false,
+    "log": [
+      ""
+    ],
+    "groupHost": "http://54.234.128.249",
+    "replicationCreds": "admin:admin_PASS",
+    "groupDDoc": "ojai",
+    "couchapp": {},
+    "groupCreated": "Wed Nov 23 2016 16:35:14 GMT+0000 (UTC)"
+  },
+  {
+    "_id": "configuration",
+    "_rev": "4-c03db35eaaa91bbd5223f19e7c693ee1",
+    "subnet": {
+      "base": "192.168.1."
+    },
+    "tree": "/tree",
+    "update": {
+      "login": "",
+      "host": "54.234.128.249/db",
+      "dbName": "update"
+    },
+    "groupDBPrefix": "group-",
+    "printFormats": [
+      {
+        "name": "Content",
+        "key": "content"
+      },
+      {
+        "name": "Stimuli",
+        "key": "stimuli"
+      },
+      {
+        "name": "Backup",
+        "key": "backup"
+      },
+      {
+        "name": "Metadata",
+        "key": "metadata"
+      }
+    ],
+    "reports": [
+      {
+        "reportType": "progress",
+        "name": "progress graph",
+        "menuView": "ProgressMenuView"
+      },
+      {
+        "reportType": "mastery",
+        "name": "mastery check table",
+        "menuView": "MasteryCheckMenuView"
+      },
+      {
+        "name": "class grouping table",
+        "menuView": "KlassGroupingMenuView"
+      },
+      {
+        "context": "server",
+        "name": "csv",
+        "menuView": "CsvMenuView"
+      }
+    ],
+    "defaults": {
+      "settings": {
+        "language": "en-US",
+        "upPass": "pass",
+        "groupName": "",
+        "groupHost": "http://54.234.128.249/db",
+        "groupDDoc": "ojai",
+        "log": [
+          ""
+        ]
+      }
+    },
+    "trunk": {
+      "host": "54.234.128.249/db",
+      "dbName": "tangerine"
+    },
+    "collection": "config",
+    "prototypeViews": {
+      "observation": {
+        "edit": "ObservationEditView",
+        "run": "ObservationRunView"
+      },
+      "consent": {
+        "edit": "ConsentEditView",
+        "run": "ConsentRunItemView"
+      },
+      "datetime": {
+        "edit": "DatetimeEditView",
+        "run": "DatetimeRunItemView"
+      },
+      "survey": {
+        "edit": "SurveyEditView",
+        "run": "SurveyRunItemView"
+      },
+      "location": {
+        "edit": "LocationEditView",
+        "run": "LocationRunItemView"
+      },
+      "grid": {
+        "edit": "GridEditView",
+        "run": "GridRunItemView"
+      },
+      "id": {
+        "edit": "IdEditView",
+        "run": "IdRunItemView"
+      },
+      "gps": {
+        "edit": "GpsEditView",
+        "run": "GpsRunItemView"
+      }
+    },
+    "robbert": "http://54.234.128.249/robbert",
+    "local": {
+      "host": "54.234.128.249/db",
+      "dbName": "tangerine"
+    },
+    "port": 5984,
+    "couchapp": {}
+  },
+  {
+    "_id": "templates",
+    "_rev": "4-4a4e5fad15125006874da6514b474bae",
+    "optionTemplates": [
+      {
+        "name": "True/False",
+        "options": [
+          {
+            "value": "1",
+            "label": "True"
+          },
+          {
+            "value": "0",
+            "label": "False"
+          }
+        ]
+      },
+      {
+        "name": "Yes/No ",
+        "options": [
+          {
+            "value": "1",
+            "label": "Yes"
+          },
+          {
+            "value": "0",
+            "label": "No"
+          }
+        ]
+      },
+      {
+        "name": "Correct/Incorrect",
+        "options": [
+          {
+            "value": "1",
+            "label": "Correct"
+          },
+          {
+            "value": "0",
+            "label": "Incorrect"
+          }
+        ]
+      },
+      {
+        "name": "True/False/No Response",
+        "options": [
+          {
+            "value": "1",
+            "label": "True"
+          },
+          {
+            "value": "0",
+            "label": "False"
+          },
+          {
+            "value": "3",
+            "label": "No response"
+          }
+        ]
+      },
+      {
+        "name": "Yes/No/No Response",
+        "options": [
+          {
+            "value": "1",
+            "label": "Yes"
+          },
+          {
+            "value": "0",
+            "label": "No"
+          },
+          {
+            "value": "3",
+            "label": "No response"
+          }
+        ]
+      },
+      {
+        "name": "Correct/Incorrect/No Response",
+        "options": [
+          {
+            "value": "1",
+            "label": "Correct"
+          },
+          {
+            "value": "0",
+            "label": "Incorrect"
+          },
+          {
+            "value": "3",
+            "label": "No response"
+          }
+        ]
+      },
+      {
+        "options": [
+          {
+            "value": "1",
+            "label": "January"
+          },
+          {
+            "value": "2",
+            "label": "February"
+          },
+          {
+            "value": "3",
+            "label": "March"
+          },
+          {
+            "value": "4",
+            "label": "April"
+          },
+          {
+            "value": "5",
+            "label": "May"
+          },
+          {
+            "value": "6",
+            "label": "June"
+          },
+          {
+            "value": "7",
+            "label": "July"
+          },
+          {
+            "value": "8",
+            "label": "August"
+          },
+          {
+            "value": "9",
+            "label": "September"
+          },
+          {
+            "value": "10",
+            "label": "October"
+          },
+          {
+            "value": "11",
+            "label": "November"
+          },
+          {
+            "value": "12",
+            "label": "December"
+          }
+        ],
+        "name": "Month",
+        "variableName": "month"
+      },
+      {
+        "options": [
+          {
+            "value": "5",
+            "label": "Strongly agree"
+          },
+          {
+            "value": "4",
+            "label": "Agree"
+          },
+          {
+            "value": "3",
+            "label": "Neither agree nor disagree"
+          },
+          {
+            "value": "2",
+            "label": "Disagree"
+          },
+          {
+            "value": "1",
+            "label": "Strongly disagree"
+          },
+          {
+            "value": "99",
+            "label": "N/A"
+          }
+        ],
+        "name": "5-point Likert",
+        "variableName": "likert"
+      }
+    ],
+    "collection": "template",
+    "prototypes": {
+      "observation": {
+        "totalSeconds": 0,
+        "prototype": "observation",
+        "displayName": "",
+        "intervalLength": 0,
+        "variableName": ""
+      },
+      "consent": {
+        "prototype": "consent",
+        "prompt": ""
+      },
+      "datetime": {
+        "prototype": "datetime"
+      },
+      "survey": {
+        "prototype": "survey",
+        "gridLinkId": ""
+      },
+      "location": {
+        "prototype": "location",
+        "locations": []
+      },
+      "grid": {
+        "items": [],
+        "columns": 0,
+        "prototype": "grid",
+        "autostop": 0,
+        "timer": 0
+      },
+      "id": {
+        "prototype": "id"
+      },
+      "gps": {
+        "prototype": "gps"
+      }
+    },
+    "subtest": {
+      "studentDialog": "",
+      "enumeratorHelp": "",
+      "transitionComment": "",
+      "skippable": false,
+      "order": 0
+    },
+    "questionTemplate": {
+      "prompt": "",
+      "name": "",
+      "hint": "",
+      "order": 0,
+      "linkedGridScore": 0,
+      "type": "single",
+      "options": []
+    },
+    "subtestTemplates": {
+      "observation": {
+        "Classroom Observation": {}
+      },
+      "consent": {
+        "Consent Screen": {}
+      },
+      "datetime": {
+        "Date and Time": {}
+      },
+      "grid": {
+        "Familiar word identification": {
+          "items": [
+            "metamorphosis",
+            "erudite",
+            "precocious"
+          ],
+          "timer": 60
+        },
+        "Non-word decoding": {
+          "items": [
+            "bub",
+            "uf",
+            "mig"
+          ],
+          "timer": 60
+        },
+        "Subtraction Level 1": {
+          "items": [
+            "4-3=(1)",
+            "5-3=(2)",
+            "8-2=(6)",
+            "9-5=(4)",
+            "6-3=(3)"
+          ],
+          "timer": 60
+        },
+        "Letter Sound Knowledge": {
+          "items": [
+            "A",
+            "b",
+            "C",
+            "d",
+            "E"
+          ],
+          "timer": 60
+        },
+        "Oral passage reading": {
+          "items": [
+            "Modou",
+            "wakes",
+            "up",
+            "very",
+            "early."
+          ],
+          "timer": 60
+        },
+        "Empty Grid": {},
+        "Number Identification": {
+          "items": [
+            "2",
+            "9",
+            "0",
+            "12",
+            "30"
+          ],
+          "timer": 60
+        },
+        "Addition Level 1": {
+          "items": [
+            "1+3=(4)",
+            "2+3=(5)",
+            "6+2=(8)",
+            "4+5=(9)",
+            "3+3=(6)"
+          ],
+          "timer": 60
+        },
+        "Letter Name Knowledge": {
+          "items": [
+            "A",
+            "b",
+            "C",
+            "d",
+            "E"
+          ],
+          "timer": 60
+        },
+        "Timed Syllable Identification": {
+          "items": [
+            "ma",
+            "en",
+            "ta",
+            "ki",
+            "bo"
+          ],
+          "timer": 60
+        }
+      },
+      "location": {
+        "School Location": {}
+      },
+      "survey": {
+        "Student Information": {},
+        "Rational Counting": {},
+        "Missing Number": {},
+        "Number Discrimination": {},
+        "Word Problems": {},
+        "Pupil Context Interview": {},
+        "Listening Comprehension": {},
+        "Initial Sounds": {},
+        "Untimed Reading Comprehension": {},
+        "Addition Level 2": {},
+        "Dictation": {},
+        "Phoneme Segmentation": {},
+        "Timed Reading Comprehension": {}
+      },
+      "id": {
+        "Student ID": {}
+      },
+      "gps": {
+        "GPS Coordinates": {}
+      }
+    },
+    "couchapp": {}
+  },
+  {
+    "editedBy": "admin",
+    "updated": "Tue Nov 29 2016 13:31:16 GMT+0100 (CET)",
+    "fromInstanceId": "necd-vhga-yymg",
+    "collection": "klass",
+    "teacherId": "user-admin",
+    "schoolName": "Sch1",
+    "year": "2016",
+    "grade": "1",
+    "stream": "1",
+    "curriculumId": "6f0ac11f-e37a-3f91-776d-6266b449f8a7",
+    "startDate": 1480422676691,
+    "_id": "54DC5D9E-B8B1-B613-83F3-3683E15C6CE3",
+    "_rev": "1-6414aba4d27554bc64160fb685a10c59"
+  },
+  {
+    "gender": "m",
+    "age": "8",
+    "name": "tom",
+    "klassId": "54DC5D9E-B8B1-B613-83F3-3683E15C6CE3",
+    "editedBy": "admin",
+    "updated": "Tue Nov 29 2016 13:31:37 GMT+0100 (CET)",
+    "fromInstanceId": "necd-vhga-yymg",
+    "collection": "student",
+    "_id": "AE28A1B0-9D50-3D5C-BD64-6DE7905F8CE5",
+    "_rev": "1-7d6c2d47955cadea08ba06ea8e7cabf6"
+  }
+]

@@ -1,4 +1,4 @@
-class KlassListElementView extends Backbone.View
+class KlassListElementView extends Backbone.Marionette.ItemView
 
   className : "KlassListElementView"
 
@@ -28,6 +28,7 @@ class KlassListElementView extends Backbone.View
       @curriculum = new Curriculum 
 
   edit: ->
+    console.log("KlassListElementView edit")
     Tangerine.router.navigate "class/edit/" + @klass.id, true
 
   getReportMenu: (event) ->
@@ -63,7 +64,10 @@ class KlassListElementView extends Backbone.View
     if klass.get("teacherId") == "admin"
       teacherName = "admin"
     else
-      teacher = vm.currentView.teachers.get(klass.get("teacherId"))
+#      teacher = vm.currentView.teachers.get(klass.get("teacherId"))
+#      teacher = Tangerine.app.rm.get('mainRegion').currentView.teachers.get(klass.get("teacherId"))
+      if Tangerine.currentView.teachers?
+        teacher = Tangerine.currentView.teachers?.get(klass.get("teacherId"))
       teacherName = teacher?.getEscapedString('name') || ""
 
     htmlTeacher = "
@@ -108,5 +112,8 @@ class KlassListElementView extends Backbone.View
     "
 
     @trigger "rendered"
+
+  onRender:->
+    console.log("onRender")
 
 

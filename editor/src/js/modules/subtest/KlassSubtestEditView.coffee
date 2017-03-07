@@ -56,7 +56,7 @@ class KlassSubtestEditView extends Backbone.View
       @model.save
         name           : @$el.find("#name").val()
         part           : Math.max(parseInt( @$el.find("#part").val() ), 1)
-        reportType     : @$el.find("#report_type").val().toLowerCase()
+        reportType     : @$el.find("#report_type option:selected").val()
         itemType       : @$el.find("#item_type").val().toLowerCase()
         scoreTarget    : parseInt(@$el.find("#score_target").val())
         scoreSpread    : parseInt(@$el.find("#score_spread").val())
@@ -118,7 +118,7 @@ class KlassSubtestEditView extends Backbone.View
       @model.save
         name           : @$el.find("#name").val()
         part           : Math.max(parseInt( @$el.find("#part").val() ), 1)
-        reportType     : @$el.find("#report_type").val().toLowerCase()
+        reportType     : @$el.find("#report_type option:selected").val()
         itemType       : @$el.find("#item_type").val().toLowerCase()
         scoreTarget    : parseInt(@$el.find("#score_target").val())
         scoreSpread    : parseInt(@$el.find("#score_spread").val())
@@ -240,7 +240,6 @@ class KlassSubtestEditView extends Backbone.View
 
     else if @prototype == "survey"
 
-
       gridLinkId = @model.get("gridLinkId") || ""
       autostopLimit = parseInt(@model.get("autostopLimit")) || 0
 
@@ -248,9 +247,11 @@ class KlassSubtestEditView extends Backbone.View
         @renderQuestions()
 
         # get linked grid options
+        console.log("curriculum.id: " + @curriculum.id)
         subtests = new Subtests
         subtests.fetch
-          key: "s" + @curriculum.id
+#          key: "s" + @curriculum.id
+          key: @curriculum.id
           success: (collection) =>
             collection = new Subtests collection.where
               prototype : 'grid' # only grids can provide scores
@@ -293,6 +294,21 @@ class KlassSubtestEditView extends Backbone.View
         </div>
       "
 
+    reportTypeOptions = "<option value=''>Select One</option><option value='progress'>Progress</option><option value='mastery'>Mastery</option>"
+
+    if reportType == "progress"
+      reportTypeOptions = "<option value=''>Select One</option><option value='progress' selected = 'selected'>Progress</option><option value='mastery'>Mastery</option> "
+    else if reportType == "mastery"
+      reportTypeOptions = "<option value=''>Select One</option><option value='progress'>Progress</option><option value='mastery' selected = 'selected'>Mastery</option>"
+
+    reportTypeDropdown = "
+      <div class='label_value'>
+        <label for='report_type'>Report Type</label>
+        <select id='report_type'>
+          #{reportTypeOptions}
+        </select>
+      </div>"
+
     @$el.html "
       <button class='back_button navigation'>Back</button><br>
       <h1>Subtest Editor</h1>
@@ -310,10 +326,7 @@ class KlassSubtestEditView extends Backbone.View
         <input id='name' value='#{name}'>
       </div>
 
-      <div class='label_value'>
-        <label for='report_type'>Report Type</label>
-        <input id='report_type' value='#{reportType}'>
-      </div>
+      #{reportTypeDropdown}
 
       <div class='label_value'>
         <label for='item_type' title='This variable is used for reports. All results from subtests with the same Item Type will show up together. Inconsistent naming will invalidate results.  '>Item Type</label>
@@ -326,12 +339,12 @@ class KlassSubtestEditView extends Backbone.View
       </div>
 
       <div class='label_value'>
-        <label for='score_target'>Target score</label><br>
+        <label for='score_target' title='This value is used in the progress reports for the Progress benchmark score.'>Target score</label><br>
         <input type='number' id='score_target' value='#{scoreTarget}'>
       </div>
 
       <div class='label_value'>
-        <label for='score_spread'>Score spread</label><br>
+        <label for='score_spread' title='This value is used in the Progress report to calculate the high and low thresholds, which determine which result message and warning to display.'>Score spread</label><br>
         <input type='number' id='score_spread' value='#{scoreSpread}'>
       </div>
 

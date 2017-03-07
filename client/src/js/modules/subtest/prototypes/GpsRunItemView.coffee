@@ -107,14 +107,20 @@ class GpsRunItemView extends Backbone.Marionette.ItemView
           "(#{@text.poor})"
         else
           "(#{@text.ok})"
-
-      html = "
-        <table>
-          <tr><td>#{@text.latitude}</td> <td>#{lat}</td></tr>
-          <tr><td>#{@text.longitude}</td><td>#{long}</td></tr>
-          <tr><td>#{@text.accuracy}</td> <td>#{acc}</td></tr>
-        </table>
-      "
+      if @model.get('simpleMode')
+        html = "
+          <table>
+            <tr><td>#{@text.accuracy}</td> <td>#{acc}</td></tr>
+          </table>
+        "
+      else
+        html = "
+          <table>
+            <tr><td>#{@text.latitude}</td> <td>#{lat}</td></tr>
+            <tr><td>#{@text.longitude}</td><td>#{long}</td></tr>
+            <tr><td>#{@text.accuracy}</td> <td>#{acc}</td></tr>
+          </table>
+        "
 
       el.html html
 
@@ -154,18 +160,38 @@ class GpsRunItemView extends Backbone.Marionette.ItemView
             </div>
         "
       else
-        @$el.html "
-          <section>
-            <h3>#{@text.bestReading}</h3>
-            <div class='gps_best'></div><button class='clear command'>#{@text.clear}</button>
-            <h3>#{@text.currentReading}</h3>
-            <div class='gps_current'></div>
-          </section>
-          <section>
-            <h2>#{@text.gpsStatus}</h2>
-            <div class='status'>#{@text.searching}</div>
-          </section>
-          "
+        if @model.get('simpleMode')
+          @$el.html "
+            <section>
+              <h3>#{@text.bestReading}</h3>
+              <div class='gps_best'></div>
+              <h3>Tips</h3>
+              <p>
+                Try standing next to a window.<br/>
+                Try moving outside with a clear view of the sky.<br/>
+                Try standing away from trees or buildings
+              </p>
+            </section>
+            <section>
+              <h2>#{@text.gpsStatus}</h2>
+              <div class='status'>#{@text.searching}</div>
+            </section>
+
+            "
+        else
+          @$el.html "
+            <section>
+              <h3>#{@text.bestReading}</h3>
+              <div class='gps_best'></div>
+              <button class='clear command'>#{@text.clear}</button>
+              <h3>#{@text.currentReading}</h3>
+              <div class='gps_current'></div>
+            </section>
+            <section>
+              <h2>#{@text.gpsStatus}</h2>
+              <div class='status'>#{@text.searching}</div>
+            </section>
+            "
       @trigger "rendered"
       @trigger "ready"
       @poll()

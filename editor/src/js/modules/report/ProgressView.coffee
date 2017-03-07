@@ -36,6 +36,7 @@ class ProgressView extends Backbone.View
     @student      = options.student
     @subtests     = options.subtests
     @klass        = options.klass
+    @phrases      = options.phrases
 
     # Catch things that "look" "odd"
     if not @klass?          then Utils.log @, "No klass."
@@ -316,22 +317,37 @@ class ProgressView extends Backbone.View
       low  = threshold.target - threshold.spread
       difference = score - threshold.target
 
+      phrase = @phrases.findWhere
+        code:"highScoreResult"
+        console.log("phrase: " + phrase)
+
       if score > high
         result = "(#{score}), #{difference} correct items per minute above the benchmark"
+        phrase = @phrases.findWhere
+          code:"highScoreResult"
+        console.log("phrase: " + phrase)
+#        highScoreResult
         warnings = "Your class is doing well, #{result}, continue with the reading program. Share your and your class’ great work with parents. Reward your class with some fun reading activities such as reading marathons or competitions. However, look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+#        highScoreWarning
       else if score < low
         result = "(#{score}), #{Math.abs(difference)} correct items per minute below the benchmark"
+#        lowScoreResult
         warnings = "Your class is performing below the grade-level target, #{result}. Plan for additional lesson time focusing on reading in consultation with your principal. Encourage parents to spend more time with reading materials at home – remind them that you are a team working together to help their children learning to read. Think about organizing other events and opportunities for practice, e.g., reading marathons or competitions to motivate students to read more."
+#        lowScoreWarning
       else
         if difference != 0 && difference * -1 == Math.abs(difference)
           result = (score - threshold.target) + " correct items per minute above the bench mark"
+#          correctAboveBenchmark
         else if difference == 0
           result = "#{score} correct items per minute"
+#          correctItemsPerMinute
         else
           result = "(#{score}), " + Math.abs(score - threshold.target) + " correct items per minute below the bench mark"
+#          correctBelowBenchmark
         
         # @TODO make that "minute" unit dynamic
         warnings = "Your class is in line with expectations, #{result}. Continue with the reading program and keep up the good work! Look at a student grouping report for this assessment and make sure that those children performing below average get extra attention and practice and don’t fall behind."
+#        correctWarning
 
       html += "
         <section>

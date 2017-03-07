@@ -1,0 +1,7 @@
+{
+  "_id": "phrase-highScoreResult",
+  "language": "en",
+  "code": "highScoreResult",
+  "phrase": "'(' + @score + '),' + @difference + ' correct items per minute above the benchmark'",
+  "collection": "phrase"
+}

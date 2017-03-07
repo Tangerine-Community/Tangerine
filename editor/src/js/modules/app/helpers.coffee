@@ -647,6 +647,73 @@ class Utils
                       Utils.onUpdateSuccess(totalDocs)
         , doc_ids : docIds
 
+  @checkSession: (url, options) ->
+    options = options || {};
+    $.ajax
+      type: "GET",
+      url:  url,
+      data: "",
+      beforeSend: (xhr)->
+        xhr.setRequestHeader('Accept', 'application/json')
+      ,
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("Error: " + textStatus + " jqXHR: " + JSON.stringify(jqXHR))
+      complete: (req) ->
+#        console.log("checkSession about to run the parseJSON: " + JSON.stringify(req))
+        resp = $.parseJSON(req.responseText);
+#        console.log("checkSession about to run the Promise")
+
+        Promise.resolve(req.responseJSON);
+#        console.log("checkSession just ran the Promise")
+        if (req.status == 200)
+#          console.log("Logged in.")
+          if options.success
+            options.success(resp)
+        else if (options.error)
+          console.log("Error:" + req.status + " resp.error: " + resp.error)
+          options.error(req.status, resp.error, resp.reason);
+        else
+          alert("An error occurred getting session info: " + resp.reason)
+
+  @replicate: (options) ->
+    options = {} if !options
+    opts =
+      continuous: false
+      withCredentials:true
+      error: (result) ->
+        console.log "error: Replication error: " + JSON.stringify result
+      timeout: 60000
+      complete: (message) ->
+        console.log("I'm complete: " + message)
+    source = options.source
+    target = options.target
+
+    remotePouch = PouchDB.defaults(
+      prefix: source
+    )
+    remotePouch = new PouchDB(source)
+    @checkSession(source).then((result) ->
+      rep = PouchDB.replicate(remotePouch, target, opts).on('change', (info) ->
+        if (options.change?)
+          options.change(info, result)
+        if typeof divId != 'undefined'
+          $(divId).append msg
+      ).on('complete', (info) ->
+        console.log "Complete: " + JSON.stringify info
+        if (options.complete?)
+          options.complete(info, result)
+      ).on('error',  (err) ->
+        console.log "error when trying to replicate: " + JSON.stringify err
+        if (options.error?)
+          options.error(err)
+      )
+#      ).then(
+#        console.log("I'm done")
+#        Tangerine.db.info().then((result) ->
+#          console.log("result: " + JSON.stringify(result)))
+#      )
+    )
+
   @log: (self, error) ->
     className = self.constructor.toString().match(/function\s*(\w+)/)[1]
     console.log "#{className}: #{error}"
@@ -866,6 +933,14 @@ class Utils
   @oldConsoleAssert = null
   @enableConsoleAssert: -> return unless oldConsoleAssert?    ; window.console.assert = oldConsoleAssert
   @disableConsoleAssert: -> oldConsoleAssert = console.assert ; window.console.assert = $.noop
+
+  # Spin the logo on ajax calls
+  @logoSpinStart: ->
+    if $("#navigation-logo").attr("src") isnt "images/navigation-logo-spin.gif"
+      $("#navigation-logo").attr "src", "images/navigation-logo-spin.gif"
+  @logoSpinStop: ->
+    if $("#navigation-logo").attr("src") isnt "images/navigation-logo.png"
+      $("#navigation-logo").attr "src", "images/navigation-logo.png"
 
 # Robbert interface
 class Robbert
