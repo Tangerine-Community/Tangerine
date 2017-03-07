@@ -181,10 +181,10 @@ gulp.task('version', function(cb) {
   fs.writeFile( filename, body, function(err) {
     fs.writeFile( filenameTwo, body, function(err) {
       if (err !== null) { console.log(err); }
+      gulp.src([conf.tmpMinDir + '/version.js']).pipe(gulp.dest('./www/compiled'));
       cb();
     });
   })
-  gulp.src([conf.tmpMinDir + '/version.js']).pipe(gulp.dest('./www/compiled'));
 });
 
 
