@@ -1,0 +1,4 @@
+{
+  "buildVersion" : 'foo',
+  "version"      : 'bar' 
+}

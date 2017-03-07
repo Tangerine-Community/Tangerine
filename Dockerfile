@@ -210,6 +210,7 @@ RUN cd /tangerine-server/client \
     && npm install cordova-plugin-geolocation \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
+RUN cd /tangerine-server/client && npm run build:apk 
 
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
@@ -234,11 +235,9 @@ RUN cd /tangerine-server/editor && npm start init
 ADD ./cli /tangerine-server/cli
 RUN cd /tangerine-server/cli && npm link
 
-# Compile client. Run twice otherwise compile is incomplete. See #74.
+# Compile client. 
 ADD ./client /tangerine-server/client
 RUN cd /tangerine-server/client && npm run gulp init
-#RUN cd /tangerine-server/client && npm run gulp init
-#RUN cd /tangerine-server/client && npm run build:apk 
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
