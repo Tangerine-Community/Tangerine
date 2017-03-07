@@ -29,6 +29,7 @@ docker run \
   -p 80:80 \
   --env "DEBUG=1" \
   --env "NODE_ENV=development" \
+  --env "T_VERSION=$TANGERINE_VERSION" \
   --env "T_RUN_MODE=development" \
   --env "T_ADMIN=$T_ADMIN" \
   --env "T_PASS=$T_PASS" \
@@ -40,8 +41,6 @@ docker run \
   --volume $(pwd)/data/apks/:/tangerine-server/tree/apks \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
-  --volume $(pwd)/data/log/nginx/access.log:/var/log/nginx/access.log \
-  --volume $(pwd)/data/log/nginx/error.log:/var/log/nginx/error.log \
   --volume $(pwd)/editor/src:/tangerine-server/editor/src \
   --volume $(pwd)/editor/app:/tangerine-server/editor/app \
   --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \

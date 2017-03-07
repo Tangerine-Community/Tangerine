@@ -191,7 +191,6 @@ ADD ./client/bower.json /tangerine-server/client/bower.json
 ADD ./client/.bowerrc /tangerine-server/client/.bowerrc
 ADD ./client/scripts/postinstall.sh /tangerine-server/client/scripts/postinstall.sh
 ADD ./client/Gruntfile.js /tangerine-server/client/Gruntfile.js
-ADD ./client/Gulpfile.js /tangerine-server/client/Gulpfile.js
 ADD ./client/config.xml /tangerine-server/client/config.xml
 RUN mkdir /tangerine-server/client/src
 ADD ./client/www /tangerine-server/client/www
@@ -227,23 +226,24 @@ RUN cd /tangerine-server/decompressor \
 # Stage 3 Compile 
 # 
 
-# @todo Add all of the rest of the code too early because otherwise client compile doesn't pick up on the git repository it needs.
-ADD ./ /tangerine-server
-# Add the git repo so compile processes can pick up version number.
-ADD ./.git /tangerine-server/.git
-# Compile client. Run twice otherwise compile is incomplete. See #74.
-ADD ./client /tangerine-server/client
-RUN cd /tangerine-server/client && npm run gulp init
-RUN cd /tangerine-server/client && npm run gulp init
-RUN cd /tangerine-server/client && npm run build:apk 
-
 # Compile editor.
 ADD ./editor /tangerine-server/editor
 RUN cd /tangerine-server/editor && npm start init
+
 # Engage the Tangerine CLI so we can run commands like `sudo tangerine make-me-a-sandwich`.
 ADD ./cli /tangerine-server/cli
 RUN cd /tangerine-server/cli && npm link
 
+# Compile client. Run twice otherwise compile is incomplete. See #74.
+ADD ./client /tangerine-server/client
+RUN cd /tangerine-server/client && npm run gulp init
+#RUN cd /tangerine-server/client && npm run gulp init
+#RUN cd /tangerine-server/client && npm run build:apk 
+
+# Add all of the rest of the code 
+ADD ./ /tangerine-server
+
+# Volumes
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/ 
 

@@ -160,24 +160,31 @@ gulp.task('build:lib.js', function() {
 
 // Update version.js
 gulp.task('version', function(cb) {
-  git.exec({ args: 'describe --tags' }, function(err, version) {
-    version = version.replace(/\n/, '');
-    git.exec({ args: 'rev-parse --short HEAD' }, function(err, build) {
-      build = build.replace(/\n/, '');
-      var body = 'window.TangerineVersion = ' + JSON.stringify({
-            buildVersion : build,
-            version      : version
-          });
-      var filename = conf.tmpMinDir + '/version.js';
-      fs.writeFile( filename, body,
-          function(err) {
-            if (err !== null) { console.log(err); }
-            cb();
-          });
-      gulp.src([conf.tmpMinDir + '/version.js']).pipe(gulp.dest('./www/compiled'));
+  // @todo We can get the actual git build, need to automate adding of build args.
+  // See https://medium.com/microscaling-systems/labelling-automated-builds-on-docker-hub-f3d073fb8e1#.if8e6eh03
+  if (process.env.DOCKER_TAG) {
+    var version = process.env.T_VERSION
+  }
+  else if (process.env.T_VERSION) {
+    var version = processs.env.T_VERSION 
+  }
+  else {
+    var version = 'stub'
+  }
+  var body = 'window.TangerineVersion = ' + JSON.stringify({
+        buildVersion : 'foo',
+        version      : 'bar' 
+      });
+  var filename = conf.tmpMinDir + '/version.js';
+  var filenameTwo = './tmp/min/version.js';
+  console.log('Writing version file for client...')
+  fs.writeFile( filename, body, function(err) {
+    fs.writeFile( filenameTwo, body, function(err) {
+      if (err !== null) { console.log(err); }
+      cb();
     });
-  });
-
+  })
+  gulp.src([conf.tmpMinDir + '/version.js']).pipe(gulp.dest('./www/compiled'));
 });
 
 
@@ -319,6 +326,7 @@ gulp.task('prepare-index-dev', function () {
   }
 
   //var stat = function () {
+  console.log("stat the version.js")
   fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
     gulp.src(conf.tmpMinDir + '/version.js')
         .pipe(wait(2000))

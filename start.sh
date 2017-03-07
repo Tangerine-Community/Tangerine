@@ -11,6 +11,7 @@ docker rm tangerine-container
 docker run -d \
   --name tangerine-container \
   --env "NODE_ENV=production" \
+  --env "T_VERSION=$TANGERINE_VERSION" \
   --env "T_PROTOCOL=$T_PROTOCOL" \
   --env "T_ADMIN=$T_ADMIN" \
   --env "T_PASS=$T_PASS" \
@@ -20,7 +21,5 @@ docker run -d \
   -p 80:80 \
   --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
-  --volume $(pwd)/data/log/nginx/access.log:/var/log/nginx/access.log \
-  --volume $(pwd)/data/log/nginx/error.log:/var/log/nginx/error.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
   tangerine/tangerine:$TANGERINE_VERSION
