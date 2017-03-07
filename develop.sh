@@ -1,17 +1,34 @@
 #!/usr/bin/env bash
 
-if [ -f "./config.sh" ]
-then
+source ./config.defaults.sh
+if [ -f "./config.sh" ]; then
   source ./config.sh
 fi
 
-docker pull tangerine/tangerine:$TANGERINE_VERSION
-docker kill tangerine-container 
+echo ""
+echo "Building tangerine/tangerine:local from local files..."
+echo ""
+docker build -t tangerine/tangerine:local ./
+
+echo ""
+echo "Stopping the container if it exists..."
+echo ""
+docker kill tangerine-container
+
+echo ""
+echo "Removing the container if it exists..."
+echo ""
 docker rm tangerine-container
+
+echo ""
+echo "Running the container..."
+echo ""
 docker run \
   -it \
   --name tangerine-container \
   -p 80:80 \
+  --env "DEBUG=1" \
+  --env "NODE_ENV=development" \
   --env "T_RUN_MODE=development" \
   --env "T_ADMIN=$T_ADMIN" \
   --env "T_PASS=$T_PASS" \
@@ -22,10 +39,13 @@ docker run \
   --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
   --volume $(pwd)/data/apks/:/tangerine-server/tree/apks \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
+  --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
+  --volume $(pwd)/data/log/nginx/access.log:/var/log/nginx/access.log \
+  --volume $(pwd)/data/log/nginx/error.log:/var/log/nginx/error.log \
   --volume $(pwd)/editor/src:/tangerine-server/editor/src \
   --volume $(pwd)/editor/app:/tangerine-server/editor/app \
   --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \
   --volume $(pwd)/entrypoint.sh:/tangerine-server/entrypoint.sh \
   --volume $(pwd)/client/src:/tangerine-server/client/src \
   --volume $(pwd)/client/Gulpfile.js:/tangerine-server/client/Gulpfile.js \
-  tangerine/tangerine:$TANGERINE_VERSION
+  tangerine/tangerine:local
