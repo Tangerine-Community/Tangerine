@@ -21,6 +21,7 @@ docker run -d \
   --env "T_TREE_HOSTNAME=$T_TREE_HOSTNAME" \
   --env "T_TREE_URL=$T_TREE_URL" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
+  --env "PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT=$PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT" \
   -p 80:80 \
   -p 5984:5984 \
   --volume $T_VOLUMES/couchdb/:/var/lib/couchdb \

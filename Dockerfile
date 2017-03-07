@@ -19,6 +19,8 @@ ENV T_PROTOCOL http
 ENV T_RUN_MODE production
 # If true, this will run couchapp push again on all of your group databases. Good for making sure 
 # your groups have the most recent updates but may cause Views to reindex when you don't want them to.
+# WARNING: If set to true, you will need to manually update all of your group's `settings` and `configuration` docs because
+# they will now be overwritten with defaults. This includes properties like the group's name.
 ENV PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT false
 
 #
