@@ -13,12 +13,12 @@
   "instanceId": "necd-vhga-yymg",
   "tabs": [
      {
-         "title": "Workflows",
+         "title": "Assessments",
          "weight": 1,
-         "url": "#workflows",
+         "url": "#Assessments",
          "views": [
              {
-                 "className": "WorkflowMenuViewController"
+                 "className": "AssessmentsViewController"
              }
          ]
      },
@@ -35,16 +35,6 @@
              },
              {
                  "className": "ResultsSaveAsFileView"
-             }
-         ]
-     },
-     {
-         "title": "Schools",
-         "weight": 3,
-         "url": "#schools",
-         "views": [
-             {
-                 "className": "SchoolListView"
              }
          ]
      }
