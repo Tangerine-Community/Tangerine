@@ -3,6 +3,8 @@
 source ./config.defaults.sh
 if [ -f "./config.sh" ]; then
   source ./config.sh
+else
+  echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
 docker pull tangerine/tangerine:$TANGERINE_VERSION
