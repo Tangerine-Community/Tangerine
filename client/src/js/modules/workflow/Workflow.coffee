@@ -2,6 +2,19 @@ class Workflow extends Backbone.ParentModel
 
   url : "workflow"
 
+  defaults: {
+		"retrictToRole": [],
+		"reporting": {
+			"preProcess": false,
+			"reportClass": "",
+			"targetRoles": []
+		},
+		"authenticityParameters": {
+		"enabled": false,
+		"constraints": {}
+		}
+  },
+
   Child           : WorkflowStep
   ChildCollection : WorkflowSteps
 
