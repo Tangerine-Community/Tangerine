@@ -199,7 +199,32 @@ Group.prototype.destroy = function destroy() {
           }
         })
     });
+  })
+  .then(function lockDownDeletedGroup(){
+    return new Promise(function addGroupPromise(resolve, reject){
+      self.attributes.name = 'deleted-' + self.name()
+      const securityDoc = {
+        admins: {
+          names : [process.env.T_ADMIN],
+          roles : [] 
+        },
+        members: {
+          names : [], 
+          roles : [] 
+        }
+      };
+      return unirest.put( Conf.calcSecurityUrl(self.name()) ).headers(JSON_OPTS)
+        .json(securityDoc)
+        .end(function(response) {
+          if (response.status === 200 ) {
+            resolve();
+          } else {
+            reject(response);
+          }
+        });
+    });
   });
+
 };
 
 Group.prototype.getAdmins = function(){
