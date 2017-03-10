@@ -36,11 +36,6 @@ Tangerine.bootSequence =
 
     callback()
 
-  # Put this version's information in the footer
-  versionTag: ( callback ) ->
-    $("#footer").append("<div id='version'>#{Tangerine.version}-#{Tangerine.build}</div>")
-    callback()
-
   # Grab our system config doc. These generally don't change very often unless
   # major system changes are required. New servers, etc.
   fetchConfiguration: ( callback ) ->
@@ -142,7 +137,6 @@ Tangerine.boot = (callback) ->
 
   sequence = [
     Tangerine.bootSequence.basicConfig
-    Tangerine.bootSequence.versionTag
     Tangerine.bootSequence.fetchConfiguration
     Tangerine.bootSequence.fetchSettings
     Tangerine.bootSequence.guaranteeInstanceId
