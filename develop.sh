@@ -24,7 +24,7 @@ echo ""
 echo "Running the container..."
 echo ""
 docker run \
-  -it \
+  -d \
   --name tangerine-container \
   -p 80:80 \
   --env "DEBUG=1" \
@@ -48,3 +48,4 @@ docker run \
   --volume $(pwd)/client/src:/tangerine-server/client/src \
   --volume $(pwd)/client/Gulpfile.js:/tangerine-server/client/Gulpfile.js \
   tangerine/tangerine:local
+docker logs -f tangerine-container
