@@ -147,12 +147,13 @@ Group.prototype.destroy = function destroy() {
   const self = this;
   const groupName = self.name();
   const groupDbName = Conf.calcGroupPath( groupName ).replace('/','');
+  const deletedDbName = Conf.calcDeletedPath( groupName ).replace('/','');
   return (new Promise(function(resolve, reject){
     // back up first
     unirest.post( Conf.replicateUrl ).headers(JSON_OPTS)
       .json({
         source : groupDbName,
-        target : 'deleted-' + groupName,
+        target : deletedDbName,
         create_target : true
       })
       .end(function(response){
@@ -202,18 +203,17 @@ Group.prototype.destroy = function destroy() {
   })
   .then(function lockDownDeletedGroup(){
     return new Promise(function addGroupPromise(resolve, reject){
-      self.attributes.name = 'deleted-' + self.name()
       const securityDoc = {
         admins: {
-          names : [process.env.T_ADMIN],
+          names : [ process.env.T_ADMIN ],
           roles : [] 
         },
         members: {
-          names : [], 
+          names : [ process.env.T_ADMIN ], 
           roles : [] 
         }
       };
-      return unirest.put( Conf.calcSecurityUrl(self.name()) ).headers(JSON_OPTS)
+      return unirest.put( Conf.calcDeletedUrl(self.name()) + '/_security' ).headers(JSON_OPTS)
         .json(securityDoc)
         .end(function(response) {
           if (response.status === 200 ) {

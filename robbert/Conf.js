@@ -9,8 +9,12 @@ let Conf = {
   usersDb: '/_users',
   userDocPrefix: '/org.couchdb.user:',
   groupPathPrefix: '/group-',
+  deletedPathPrefix: '/deleted-',
   calcGroupPath: function(groupName) {
     return `${this.groupPathPrefix}${groupName}`;
+  },
+  calcDeletedPath: function(groupName) {
+    return `${this.deletedPathPrefix}${groupName}`;
   },
   calcUserUrl: function(userName) {
     return `${this.userDbUrl}${this.userDocPrefix}${userName}`;
@@ -20,6 +24,9 @@ let Conf = {
   },
   calcSecurityUrl: function(groupName) {
     return `${this.protocol}${this.auth}${this.serverUrl}${this.calcGroupPath(groupName)}/_security`;
+  },
+  calcDeletedUrl: function(groupName) {
+    return `${this.protocol}${this.auth}${this.serverUrl}${this.calcDeletedPath(groupName)}`;
   }
 };
 
