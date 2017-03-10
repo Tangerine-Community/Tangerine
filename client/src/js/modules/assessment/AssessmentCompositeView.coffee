@@ -38,7 +38,11 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
       else if  (prototypeName == 'IdRunItemView')
         currentSubview = IdRunItemView
       else if  (prototypeName == 'LocationRunItemView')
-        currentSubview = LocationRunItemView
+        # Support for both Location Subtests, one might be based on Location List in settings doc, the other will be on the Subtest Model.
+        if (Object.prototype.toString.call(model.attributes.locations) == '[object Array]' && model.attributes.locations.length > 0)
+          currentSubview = LocationListInSubtestRunItemView
+        else
+          currentSubview = LocationRunItemView
       else if  (prototypeName == 'ConsentRunItemView')
         currentSubview = ConsentRunItemView
       else
