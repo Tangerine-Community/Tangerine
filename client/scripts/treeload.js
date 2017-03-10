@@ -171,10 +171,16 @@ del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])
         .then(function(res){
 
           let fileName = Path.join(Conf.PACK_PATH, `/pack${(padding + packIndex).substr(-4)}.json`);
-          let docs = res.body.rows.map( (row) => row.doc );
+          let docs = [] 
+          res.body.rows.forEach( function(row) { 
+            if (row.doc != null) {
+              docs.push(row.doc)
+            } 
+          });
           let body = JSON.stringify({
             docs: docs
           });
+
 
           fs.writeFile(fileName, body, function(err) {
             if (err) {
