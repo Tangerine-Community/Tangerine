@@ -328,10 +328,7 @@ Tangerine.bootSequence =
     Tangerine.locationList = new Backbone.Model "_id" : "location-list"    
    
     Tangerine.locationList.fetch   
-      error   : ->   
-        console.log "could not fetch location-list..."   
-        callback   
-   
+      error   : callback
       success : callback
 
   removeLoadingOverlay: ( callback ) ->
