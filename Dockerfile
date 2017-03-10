@@ -193,7 +193,7 @@ ADD ./client/scripts/postinstall.sh /tangerine-server/client/scripts/postinstall
 ADD ./client/Gruntfile.js /tangerine-server/client/Gruntfile.js
 ADD ./client/config.xml /tangerine-server/client/config.xml
 RUN mkdir /tangerine-server/client/src
-ADD ./client/www /tangerine-server/client/www
+RUN mkdir /tangerine-server/client/www
 ADD ./client/res /tangerine-server/client/res
 RUN cd /tangerine-server/client \
     && sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js 
@@ -237,6 +237,8 @@ RUN cd /tangerine-server/cli && npm link
 
 # Compile client. 
 ADD ./client /tangerine-server/client
+RUN rm -r /tangerine-server/client/www
+ADD ./client/www /tangerine-server/client/www
 RUN cd /tangerine-server/client && npm run gulp init
 
 # Add all of the rest of the code 
