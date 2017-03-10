@@ -1,6 +1,6 @@
 tanerine-env-vars.sh
 .idea
-
+.git
 data
 .data
 config.env
@@ -33,3 +33,4 @@ editor/npm-debug.log
 editor/src/compiled
 
 client/src/lesson_plan_media
+client/src/index-dev.html
