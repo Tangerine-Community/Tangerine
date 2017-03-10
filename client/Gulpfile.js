@@ -166,7 +166,7 @@ gulp.task('version', function(cb) {
     var version = process.env.T_VERSION
   }
   else if (process.env.T_VERSION) {
-    var version = processs.env.T_VERSION 
+    var version = process.env.T_VERSION 
   }
   else {
     var version = 'stub'
