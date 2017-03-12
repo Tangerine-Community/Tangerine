@@ -432,6 +432,7 @@ conf.fileOrder = [
   'LocationRunView',
   'LocationEditView',
   'LocationRunItemView',
+  'LocationListInSubtestRunItemView',
   'LocationElement',
 
   'SurveyRunView',
