@@ -21,7 +21,7 @@ git clone https://github.com/Tangerine-Community/Tangerine.git
 cd Tangerine
 git checkout <version tag>
 # Create config.sh and edit to match your desired settings. Make sure to set `TANGERINE_VERSION` to the same as what `<version tag>` in the prior commands. 
-cp config.sh_example config.sh
+cp config.defaults.sh config.sh
 nano config.sh
 # Start the software.
 ./start.sh
@@ -41,7 +41,7 @@ git fetch origin
 git checkout <version tag>
 # Set up config.sh again.
 cp config.sh config.sh_backup
-cp config.sh_example config.sh
+cp config.defaults.sh config.sh
 # Migrate settings from config backup to config.sh. Set TANGERINE_VERSION to the same <version tag>.
 vim -O config.sh config.sh_backup
 rm config.sh_backup
