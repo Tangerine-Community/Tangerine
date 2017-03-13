@@ -9,6 +9,39 @@ A workflow is a mechanism that can string together multiple Assessments. This is
 - Click save to save the document.
 - Now go back to editor, navigate to your group and you will find at the bottom of your group a "Workflows" section where you can create new workflows.
 
+Example settings configuration:
+```
+   "tabs": [
+       {
+           "url": "#workflows",
+           "views": [
+               {
+                   "className": "WorkflowMenuViewController"
+               }
+           ],
+           "weight": 1,
+           "title": "Workflows"
+       },
+       {
+           "url": "#bandwidth",
+           "views": [
+               {
+                   "className": "BandwidthCheckView"
+               },
+               {
+                   "className": "UniversalUploadView"
+               },
+               {
+                   "className": "ResultsSaveAsFileView"
+               }
+           ],
+           "weight": 2,
+           "title": "Sync"
+       }
+   ],
+   "showWorkflows": true,
+```
+
 ## Adding custom Trip Validation logic
 No UI for this yet. Add JSON to your Workflow documents via Futon at `/db/_utils/index.html`. 
 
