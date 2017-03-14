@@ -1,6 +1,6 @@
 
 ## Issues
-- [File a user story](https://github.com/tangerine-community/tangerine/issues/new?title=As a [role] I want to [action] in order to [objective]&labels=user%20story&body=%23%23+Tasks%0d%0a*+%5b+%5d+Code%0d%0a*+%5b+%5d+Unit+tests%0d%0a*+%5b+%5d+Documentation%0d%0a*+%5b+%5d+Integration+Tests%0d%0a%0d%0a%23%23+Acceptance+criteria%0d%0a-+...)
+- [File a user story](https://github.com/tangerine-community/tangerine/issues/new?title=As+a+%5brole%5d+I+want+to+%5baction%5d+in+order+to+%5bobjective%5d&labels=user%20story&body=%23%23+Tasks%0d%0a*+%5b+%5d+Code%0d%0a*+%5b+%5d+Unit+tests%0d%0a*+%5b+%5d+Documentation%0d%0a*+%5b+%5d+Integration+Tests%0d%0a%0d%0a%23%23+Acceptance+criteria%0d%0a-+...)
 - [File a bug](https://github.com/tangerine-community/tangerine/issues/new?labels=bug&body=)
 - [File a technical issue](https://github.com/tangerine-community/tangerine/issues/new?labels=technical&body=)
 
