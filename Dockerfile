@@ -243,7 +243,10 @@ RUN cd /tangerine-server/client && npm run gulp init
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
 
+RUN mkdir /tangerine-server/logs
+
 # Volumes
+VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/ 
 
