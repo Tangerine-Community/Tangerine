@@ -237,8 +237,7 @@ RUN cd /tangerine-server/cli && npm link
 
 # Compile client. 
 ADD ./client /tangerine-server/client
-RUN rm -r /tangerine-server/client/www
-ADD ./client/www /tangerine-server/client/www
+RUN ln -s /tangerine-server/client/www /tangerine-server/client/src
 RUN cd /tangerine-server/client && npm run gulp init
 
 # Add all of the rest of the code 
