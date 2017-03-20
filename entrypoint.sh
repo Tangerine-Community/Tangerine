@@ -31,9 +31,19 @@ echo ""
 echo ""
 echo "Push the ojai design doc"
 cd /tangerine-server/editor/app
-sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/configuration.json
-sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/settings.json 
 couchapp push
+echo ""
+echo ""
+echo ""
+echo "Insert documents used for new groups."
+cd /tangerine-server/
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" ./documents-for-new-groups/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > ./documents-for-new-groups/configuration.json
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" ./documents-for-new-groups/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > ./documents-for-new-groups/settings.json 
+curl -XPUT -d "@./documents-for-new-groups/LocationList.json" -H "Content-Type: application/json" http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/location-list
+curl -XPUT -d "@./documents-for-new-groups/acl.json" -H "Content-Type: application/json" http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/acl
+curl -XPUT -d "@./documents-for-new-groups/settings.json" -H "Content-Type: application/json" http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/settings
+curl -XPUT -d "@./documents-for-new-groups/templates.json" -H "Content-Type: application/json" http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/templates
+curl -XPUT -d "@./documents-for-new-groups/configuration.json" -H "Content-Type: application/json" http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/configuration
 echo ""
 echo ""
 echo ""
