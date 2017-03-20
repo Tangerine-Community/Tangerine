@@ -29,7 +29,7 @@ docker run \
   -p 80:80 \
   --env "DEBUG=1" \
   --env "NODE_ENV=development" \
-  --env "T_VERSION=$TANGERINE_VERSION" \
+  --env "T_VERSION=local" \
   --env "T_RUN_MODE=development" \
   --env "T_ADMIN=$T_ADMIN" \
   --env "T_PASS=$T_PASS" \
