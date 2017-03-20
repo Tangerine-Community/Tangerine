@@ -170,9 +170,9 @@ RUN cd /tangerine-server/brockman \
     && gem install bundler --no-ri --no-rdoc \
     && bundle install --path vendor/bundle
 
-# Install robbert.
-ADD ./robbert/package.json /tangerine-server/robbert/package.json
-RUN cd /tangerine-server/robbert \
+# Install server.
+ADD ./server/package.json /tangerine-server/server/package.json
+RUN cd /tangerine-server/server \
     && npm install
 
 # Install editor.

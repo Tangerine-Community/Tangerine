@@ -67,8 +67,8 @@ echo ""
 echo ""
 fi
 
-echo "Push the robbert couchapp"
-cd /tangerine-server/robbert/couchapp
+echo "Push the server couchapp"
+cd /tangerine-server/server/couchapp
 couchapp push
 echo ""
 echo ""
