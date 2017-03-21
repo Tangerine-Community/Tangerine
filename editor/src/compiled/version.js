@@ -1,1 +1,1 @@
-Tangerine.version = "eftouch-1-1-g1b35098";Tangerine.build = "1b35098";
+Tangerine.version = "fatal: Not a git repository (or any of the parent directories): .git";Tangerine.build = "fatal: Not a git repository (or any of the parent directories): .git";

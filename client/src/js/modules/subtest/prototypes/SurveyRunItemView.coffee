@@ -82,6 +82,10 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     qv.startAv()
     @updateQuestionProgress()
 
+  updateQuestionProgress: ->
+    qv = @questionViews[@currentQuestion]
+    qv.setProgress(@currentQuestion+1, @questionViews.length)
+
   avPrev: =>
     return if @currentQuestion == 0
     qv = @questionViews[@currentQuestion]
@@ -93,6 +97,54 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
     qv.$el.find('.av-question').css('display', 'block')
     @updateQuestionProgress()
+
+  nextQuestion: ->
+
+    currentQuestionView = @questionViews[@questionIndex]
+
+    # show errors before doing anything if there are any
+    return @showErrors(currentQuestionView) unless @isValid(currentQuestionView)
+
+    # find the non-skipped questions
+    isAvailable = []
+    for qv, i in @questionViews
+      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
+    isAvailable  = _.filter isAvailable, (e) => e > @questionIndex
+
+    # don't go anywhere unless we have somewhere to go
+    if isAvailable.length == 0
+      plannedIndex = @questionIndex
+    else
+      plannedIndex = Math.min.apply(plannedIndex, isAvailable)
+
+    if @questionIndex != plannedIndex
+      @questionIndex = plannedIndex
+      @updateQuestionVisibility()
+      @updateProgressButtons()
+
+  prevQuestion: ->
+
+    currentQuestionView = @questionViews[@questionIndex]
+
+    # show errors before doing anything if there are any
+    return @showErrors(currentQuestionView) unless @isValid(currentQuestionView)
+
+    # find the non-skipped questions
+    isAvailable = []
+    for qv, i in @questionViews
+      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
+    isAvailable  = _.filter isAvailable, (e) => e < @questionIndex
+
+    # don't go anywhere unless we have somewhere to go
+    if isAvailable.length == 0
+      plannedIndex = @questionIndex
+    else
+      plannedIndex = Math.max.apply(plannedIndex, isAvailable)
+
+    if @questionIndex != plannedIndex
+      @questionIndex = plannedIndex
+      @updateQuestionVisibility()
+      @updateProgressButtons()
 
   updateProgressButtons: ->
 
@@ -117,6 +169,19 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       $next.hide()
     else
       $next.show()
+
+  updateExecuteReady: (ready) =>
+
+    @executeReady = ready
+
+    return if not @triggerShowList?
+
+    if @triggerShowList.length > 0
+      for index in @triggerShowList
+        @questionViews[index]?.trigger "show"
+      @triggerShowList = []
+
+    @updateSkipLogic() if @executeReady
 
   updateQuestionVisibility: ->
 
@@ -148,18 +213,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     @updateQuestionVisibility()
 #    @updateProgressButtons()
 
-  updateExecuteReady: (ready) ->
-    @executeReady = ready
-
-    return if not @triggerShowList?
-
-    if @triggerShowList.length > 0
-      for index in @triggerShowList
-        @questionViews[index]?.trigger "show"
-      @triggerShowList = []
-
-    @updateSkipLogic() if @executeReady
-
   i18n: ->
     @text =
       pleaseAnswer : t("SurveyRunView.message.please_answer")
@@ -172,6 +225,16 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       "back" : t("SubtestRunView.button.back")
       "skip" : t("SubtestRunView.button.skip")
       "help" : t("SubtestRunView.button.help")
+
+
+  handleResize: =>
+    @questionViews.forEach (qv)-> qv.render()
+
+    qv = @questionViews[@currentQuestion]
+    @updateQuestionProgress()
+    qv.$el.find('.av-question').css 'display': 'block'
+    qv.resizeAvImages()
+    qv.highlightPrevious()
 
   # when a question is answered
   onQuestionAnswer: (element) ->
@@ -270,6 +333,14 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       result[@questions.models[i].get("name")] = "skipped"
     , @
     return result
+
+  addAvResult: (result, qv) ->
+
+    name = qv.model.get('name')
+    result["#{name}_response_time"] = qv.responseTime || null
+    result["#{name}_display_time"] = qv.displayTime
+    if qv.forcedTime?
+      result["#{name}_forced_time"] = qv.forcedTime
 
   getResult: ->
     result = {}
@@ -493,6 +564,9 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       success: =>
         @parent.reset 1
 
+  abort: ->
+    @trigger 'abort'
+
   # Doubt this is happening after the question was rendered. TODO: find the right place.
   onQuestionRendered:->
 #    console.log("onQuestionRendered @renderCount: " + @renderCount)
@@ -508,11 +582,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #  onShow:->
 #    console.log("iShown!")
 #    @onRenderCollection()
-
-  onClose:->
-    for qv in @questionViews
-      qv.close?()
-    @questionViews = []
 
   reset: (increment) ->
     console.log("reset")
@@ -532,3 +601,19 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
   next: () ->
     console.log("next")
     @model.parent.next?()
+
+  avStart: ->
+    start = =>
+      @currentQuestion = 0
+      @questionViews[@currentQuestion].startAv()
+      @updateQuestionProgress()
+
+    if @model.getString('studentDialog') isnt ''
+      Utils.sticky @model.get('studentDialog'), "Ok", start
+    else
+      start()
+
+  onClose:->
+    for qv in @questionViews
+      qv.close?()
+    @questionViews = []

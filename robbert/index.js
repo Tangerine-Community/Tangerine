@@ -26,23 +26,35 @@ const Group = require('./Group');
 
 const app = express();
 
+// Enforce SSL behind Load Balancers.
+if (process.env.T_PROTOCOL == 'https') {
+    app.use(function(req, res, next) {
+        if(req.get('X-Forwarded-Proto') == 'http') {
+            res.redirect('https://' + req.get('Host') + req.url);
+        }
+        else {
+            next();
+        }
+    });
+}
+
 var couchProxy = proxy('localhost:5984', {
-  forwardPath: function (req, res) {
-    var path = require('url').parse(req.url).path;
-    console.log("path:" + path);
-    return path;
-  }
+    forwardPath: function (req, res) {
+        var path = require('url').parse(req.url).path;
+        console.log("path:" + path);
+        return path;
+    }
 });
 
 var mountpoint = '/db';
 app.use(mountpoint, couchProxy);
 
 app.use(mountpoint, function(req, res) {
-  if (req.originalUrl === mountpoint) {
-    res.redirect(301, req.originalUrl + '/');
-  } else {
-    couchProxy;
-  }
+    if (req.originalUrl === mountpoint) {
+        res.redirect(301, req.originalUrl + '/');
+    } else {
+        couchProxy;
+    }
 });
 
 app.use(bodyParser.json()); // use json
@@ -78,9 +90,8 @@ app.delete('/group/:group/:user', require('./routes/group/leave-group'));
 
 // landing
 app.get('/', function(req, res){
-  res.redirect('/app/tangerine/index.html')
+    res.redirect('/app/tangerine/index.html')
 })
-
 // kick it off
 var server = app.listen(Settings.T_ROBBERT_PORT, function() {
   var host = server.address().address;
@@ -88,35 +99,3 @@ var server = app.listen(Settings.T_ROBBERT_PORT, function() {
   console.log(server.address());
   console.log('Robbert: http://%s:%s', host, port);
 });
-
-// Update all group databases with most recent code from the tangerine database.
-var couchUrl = 'http://' + process.env.T_ADMIN + ':' + process.env.T_PASS + '@127.0.0.1:5984/'
-var databases = []
-var groupDatabases = []
-unirest.get(couchUrl + '_all_dbs').send().end(function(response) { 
-  databases = JSON.parse(response.body)
-  databases.forEach(function(database) {
-    if (database.substr(0,6) == 'group-') {
-      groupDatabases.push(database)
-    }
-  })
-  groupDatabases.forEach(function(database) {
-    var packet = {
-      "source": couchUrl + "tangerine",
-      "target": couchUrl + database,
-      "doc_ids": ["_design/ojai", "configuration"]
-    }
-    unirest.post(couchUrl + '_replicate')
-    .headers({'Accept': 'application/json', 'Content-Type': 'application/json'})
-    .send(packet)
-    .end(function(response) {
-      if (response.body.ok === true) {
-        console.log('Updated app in ' + database)
-      }
-      else {
-        console.log(response.body)
-        process.exit(1)
-      }
-    })
-  })
-}) 

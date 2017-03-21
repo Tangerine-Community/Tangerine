@@ -1,13 +1,20 @@
 tanerine-env-vars.sh
 .idea
-
+.git
 data
+.data
+config.env
 
 couchdb.stdout
 
 couchdb.stderr
 node_modules
+editor/node_modules
+client/node_modules
+tree/node_modules
+decompressor/node_modules
 editor/tmp
+
 
 config.sh
 
@@ -23,16 +30,6 @@ robbert/npm-debug.log
 
 editor/npm-debug.log
 
-editor/src/compiled/*
+editor/src/compiled
 
 client/src/lesson_plan_media
-
-client/src/js/init/class-pack0000.json
-
-client/src/js/init/lachko-pack0000.json
-
-editor/src/bower_components/
-
-client/src/js/init/class-2-pack0000.json
-
-robbert/npm-shrinkwrap.json

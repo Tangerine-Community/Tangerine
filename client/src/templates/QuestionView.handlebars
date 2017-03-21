@@ -8,6 +8,8 @@
     {{else}}
         <div><input id='{{cid}}_{{name}}' data-cid='{{cid}}' value='{{answerValue}}'></div>
     {{/if}}
+{{else if isAV}}
+    <div class='av-question' id='container-{{name}}'></div>
 {{else}}
     <div class='button_container'></div>
 {{/if}}

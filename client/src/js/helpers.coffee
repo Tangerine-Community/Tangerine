@@ -116,7 +116,7 @@ Backbone.Model.prototype.getString =        (key, fallback = '') -> return if @h
 Backbone.Model.prototype.getEscapedString = (key, fallback = '') -> return if @has(key) then @escape(key)        else fallback
 # this seems too important to use a default
 Backbone.Model.prototype.getBoolean =       (key) -> return if @has(key) then (@get(key) == true or @get(key) == 'true')
-
+Backbone.Model.prototype.getObject        = (key, def) -> return if @has(key) then @get(key)           else if def isnt undefined then def else {}
 
 #
 # handy jquery functions

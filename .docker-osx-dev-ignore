@@ -1,0 +1,8 @@
+.DS_Store
+.idea
+.data
+.git
+node_modules
+data/
+compiled/
+client/src/compiled/
