@@ -46,6 +46,7 @@ docker run \
   --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \
   --volume $(pwd)/entrypoint.sh:/tangerine-server/entrypoint.sh \
   --volume $(pwd)/client/src:/tangerine-server/client/src \
+  --volume $(pwd)/upgrades:/tangerine-server/upgrades \
   --volume $(pwd)/client/Gulpfile.js:/tangerine-server/client/Gulpfile.js \
   tangerine/tangerine:local
 docker logs -f tangerine-container
