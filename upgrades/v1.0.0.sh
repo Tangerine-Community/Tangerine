@@ -1,3 +1,4 @@
+#!/bin/bash
 echo "Running updates for 1.0.0"
 echo ""
 echo ""
