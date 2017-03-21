@@ -24,7 +24,7 @@ Body:
 ```
 
 ### Bug
-[Click here to file a bug](https://github.com/tangerine-community/tangerine/issues/new?title=I+expected+%5bexpected+behavior%5d+but+I+get+%5bactual+behavior%5d&labels=bug&body=%23%23+Expected+behavior%0d%0a%0d%0a%23%23+Actual+behavior%0d%0a%0d%0a%23%23+Steps+to+reproduce+the+behavior)
+[Click here to file a bug](https%3a%2f%2fgithub.com%2ftangerine-community%2ftangerine%2fissues%2fnew%3ftitle%3dI+expected+%5bexpected+behavior%5d+but+I+get+%5bactual+behavior%5d%26labels%3dbug%26body%3d%23%23+Expected+behavior%0d%0a%0d%0a%23%23+Actual+behavior%0d%0a%0d%0a%23%23+Steps+to+reproduce+the+behavior%0d%0a%0d%0a%23%23+Screenshot+of+the+issue%0d%0a%0d%0a%23%23+Hardware+information+(mobile+device+model)%0d%0a%0d%0a%23%23+Android+Version)
 
 Title:
 ```
@@ -38,6 +38,13 @@ Body:
 ## Actual behavior
 
 ## Steps to reproduce the behavior
+
+## Screenshot of the issue
+
+## Hardware information (mobile device model)
+
+## Android Version
+
 ```
 
 
