@@ -28,7 +28,7 @@ __Design Document permissions__:
 - Write any databases' design documents.
 
 
-### How those permissions are granted 
+### How permissions are granted 
 
 - __Super Admins__: These are the admins you would usually define when you first install couchdb by modifying the `couchdb.ini` file or adding them via the user interface. In Tangerine, you add the database user by defining it in the `T_ADMIN`:`T_PASS` environment variables in your container as passed in by `config.sh`.
   - Create databases.
