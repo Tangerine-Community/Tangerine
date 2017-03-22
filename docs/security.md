@@ -78,23 +78,39 @@ Tangerine Application Security on the serverside consists of two APIs, CouchDB a
 	- Create Assessments in this group
 	- Read Assessments in this group
 	- Edit Assessments in this group
-	- Add members in this group
-	- Add admins in this group
+	- Add members in this group 
+	- Add admins in this group 
 
-How this works: 
+Roles in Tangerine are literally `roles` on the user documents in CouchDB. 
 
-- Roles in Tangerine are literally `roles` on the user documents in CouchDB.
-- Most permissions are handled are handled via CouchDB's own security because each group's database is exposed without any additional proxy security logic. 
-- When a group is created, two roles are added to that group's CouchDB database `/group-<group name>/_security` endpoint. `<group name>-admin` role is added the group's Admin Role and `<group name>-member` is added to the group's member role.
-	- __CouchDB security exception__: Tangerine's custom API allows users with `manager` role to create `group-<group name>` databases without having to be super admin. This is done via the `/robbert/group/new` endpoint.
-- When a user is added as an admin or a member to a group, the corresponding `<group name>-admin` or `<group name>-member` role is added to their User doc. 
-	- __CouchDB security exception__: Tangerine's custom API bypasses CouchDB's security to allow users with `<group name>-admin` role to add roles of  `<group name>-member` and `<group name>-admin` roles to user docs without having to be a super admin. This is done via the `/robbert/...` endpoint.
-- There are three different security recipes for databases in Tangerine.
+Most permissions are handled are handled via CouchDB's own security because each group's database is exposed without any additional proxy security logic. When a group is created, two roles are added to that group's CouchDB database `/group-<group name>/_security` endpoint. `<group name>-admin` role is added the group's Admin Role and `<group name>-member` is added to the group's member role. All users are standard CouchDB users so they are limited to access to the databases that their own roles permit. They are also limited to editing their own user Doc so role escalation is not possible. However, some users with `manager` role can create a Group which then creates a Database even though they are normal CouchDB users. This is possible because of Tangerine's custom API.  
+
+By default, Tangerine's custom API allows users with `manager` role to create `group-<group name>` databases without having to be super admin. This is done via the `/robbert/group/new` endpoint which checks the Permission Grants that user's roles have been given to see if any of the granted permissions is "Create Group". The permissions granted for specific roles are listed in the `acl` document in the `tangerine` database. ACL stands for "Access Control List".  
+
+Default `acl` doc:
+```
+{
+   "_id": "acl",
+   "_rev": "11-9ff945e90521cba49bf5ccc01ef9b855",
+   "roles": [
+       {
+           "name": "manager",
+           "permissions": [
+               "Create new group"
+           ]
+       }
+   ]
+}
+```
+
+
+There are three different security recipes for databases in Tangerine.
 	- `tangerine` database: No members or admins so reading wide open. Writes are protected by a `_design/_auth` design docs that contains a validation function that only allows Super Admins to write to that database (role of `_admin`).
   - `group-<group name>` database: `/group-<group name>/_security` endpoint is set to `<group name>-admin` for admin roles and `<group name>-member` for member roles. 
   - `deleted-<group name>` database: The database's `_security` member and admin names are set to the user defined in `T_ADMIN`   
-- __A CouchDB database should never be without an Admin, a Member, or a validation function.__
-- @TODO: Describe upload user.
+  
+
+@TODO: Describe upload user.
 
 
 
