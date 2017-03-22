@@ -7,7 +7,26 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
-docker pull tangerine/tangerine:$TANGERINE_VERSION
+if [ "$1" = "" ]; then
+  TAG=$(git describe --tags --abbrev=0)
+else
+  TAG=$1
+fi
+
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo "Starting Tangerine at $TAG"
+echo ""
+echo ""
+echo ""
+docker pull tangerine/tangerine:$TAG
 docker stop tangerine-container 
 docker rm tangerine-container 
 docker run -d \
@@ -22,6 +41,7 @@ docker run -d \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   -p 80:80 \
   --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
+  --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
-  tangerine/tangerine:$TANGERINE_VERSION
+  tangerine/tangerine:$TAG

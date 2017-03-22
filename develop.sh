@@ -29,7 +29,7 @@ docker run \
   -p 80:80 \
   --env "DEBUG=1" \
   --env "NODE_ENV=development" \
-  --env "T_VERSION=$TANGERINE_VERSION" \
+  --env "T_VERSION=local" \
   --env "T_RUN_MODE=development" \
   --env "T_ADMIN=$T_ADMIN" \
   --env "T_PASS=$T_PASS" \
@@ -46,6 +46,7 @@ docker run \
   --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \
   --volume $(pwd)/entrypoint.sh:/tangerine-server/entrypoint.sh \
   --volume $(pwd)/client/src:/tangerine-server/client/src \
+  --volume $(pwd)/upgrades:/tangerine-server/upgrades \
   --volume $(pwd)/client/Gulpfile.js:/tangerine-server/client/Gulpfile.js \
   tangerine/tangerine:local
 docker logs -f tangerine-container

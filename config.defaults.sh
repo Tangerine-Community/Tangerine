@@ -1,4 +1,3 @@
-TANGERINE_VERSION="local"
 T_HOST_NAME='localhost'
 T_PROTOCOL="http"
 T_USER1="user1"
