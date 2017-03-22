@@ -1,14 +1,14 @@
 # Security
 
 ## CouchDb Security
-To understand Tangerine security, it's important to first understand CouchDB security.
+Most security in Tangerine is handled by CouchDB. In order to understand Tangerine security, it's important to first understand CouchDB security.
 
 ### Permissions in CouchDB
 This is a list of different permissions in CouchDB. In CouchDB you do not give any one user specific permissions, a user is given a set of permissions as determined by various mechanisms described in the next section.  
 
 __User permissions__:
 - Read `_users`.
-- Edit `_users` documents (ie. role)
+- Edit `_users` documents (ie. edit a User's `role` array)
 
 __Database permissions__:
 - Create database
@@ -28,7 +28,7 @@ __Design Document permissions__:
 - Write any databases' design documents.
 
 
-### How those permissions are allocated
+### How those permissions are granted 
 
 - __Super Admins__: These are the admins you would usually define when you first install couchdb by modifying the `couchdb.ini` file or adding them via the user interface. In Tangerine, you add the database user by defining it in the `T_ADMIN`:`T_PASS` environment variables in your container as passed in by `config.sh`.
   - Create databases.
