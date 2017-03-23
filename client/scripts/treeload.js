@@ -140,7 +140,7 @@ idList.push("templates");
 idList.push("location-list");
 
 // delete any old packs if they're there
-del([ Path.join(Conf.PACK_PATH, 'pack*.json') ])
+del([ Path.join(Conf.PACK_PATH, 'pack*.json') ], {force: true})
   .then( function (paths) {
     if ( paths.length !== 0 ) {
       logger.debug(`Old json packs deleted: ${paths.map((p)=>p.substring(Conf.PACK_PATH.length)).join(', ')}`);
