@@ -22,3 +22,4 @@ echo ""
 echo ""
 cd /tangerine-server/upgrades
 node v2.0.0-helper.js
+rm /tangerine-server/upgrades/node_modules
