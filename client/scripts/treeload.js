@@ -149,9 +149,19 @@ del([ Path.join(Conf.PACK_PATH, 'pack*.json') ], {force: true})
   .then(function checkGroupExistence() {
     return get(SOURCE_GROUP);
   })
-  .then(function getAllDocs(res) {
-    // get a list of docs associated with those assessments
-    return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byDKey"))
+  .then(function getAssessments(res) {
+    return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byCollection?keys=[\"assessment\"]&include_docs=true"))
+  })
+  .then(function getDocsRelatedToUnarchivedAssessments(res) {
+    var unarchivedAssessmentKeys = []
+    res.body.rows.forEach(function(row) {
+      if (row.doc.archived != true) unarchivedAssessmentKeys.push(row.doc._id)
+    })
+    var dKeys = []
+    unarchivedAssessmentKeys.forEach(function(key) {
+      dKeys.push(key.substr(-5, 5))
+    })
+    return post(urljoin(SOURCE_GROUP, `/_design/ojai/_view/byDKey?keys=${JSON.stringify(dKeys)}`))
   })
   .then(function packLoop(res) {
 
