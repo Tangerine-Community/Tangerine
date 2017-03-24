@@ -33,6 +33,5 @@ docker exec -it tangerine-container /tangerine-server/upgrades/v2.0.0.sh
 
 If you are at Tangerine 1.7.8, then you must run...
 ```
-```
 docker exec -it tangerine-container /tangerine-server/upgrades/v2.0.0.sh
 ```
