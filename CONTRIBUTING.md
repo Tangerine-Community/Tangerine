@@ -24,7 +24,7 @@ Body:
 ```
 
 ### Bug
-[Click here to file a bug](https://github.com/tangerine-community/tangerine/issues/new?title=I+expected+%5bexpected+behavior%5d+but+I+get+%5bactual+behavior%5d&labels=bug&body=%23%23+Expected+behavior%0d%0a%0d%0a%23%23+Actual+behavior%0d%0a%0d%0a%23%23+Steps+to+reproduce+the+behavior)
+[Click here to file a bug](https://github.com/tangerine-community/tangerine/issues/new?title=I+expected+%5bexpected+behavior%5d+but+I+get+%5bactual+behavior%5d&labels=bug&body=Current+version%3a%0d%0aUpgraded+from%3a%0d%0aIssue+on+tablet+and%2for+server%3a%0d%0a%0d%0a%23%23+Expected+behavior%0d%0a%0d%0a%23%23+Actual+behavior%0d%0a%0d%0a%23%23+Steps+to+reproduce+the+behavior%0d%0a)
 
 Title:
 ```
@@ -33,6 +33,10 @@ I expected [expected behavior] but I get [actual behavior]
 
 Body:
 ```
+Current version:
+Upgraded from:
+Issue on tablet and/or server:
+
 ## Expected behavior
 
 ## Actual behavior
