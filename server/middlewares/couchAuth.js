@@ -15,7 +15,7 @@ function couchAuth(req,res,next){
   const credentials = basicAuth(req)
   
   if (credentials !== undefined) { 
-    unirest.get(`http://${credentials.name}:${credentials.pass}@127.0.0.1:5984/_users/org.couchdb.user:${credentials.name}/`)
+    unirest.get(`http://${process.env.T_ADMIN}:${process.env.T_PASS}@127.0.0.1:5984/_users/org.couchdb.user:${credentials.name}/`)
       .end(function handleAuthResponse( authResponse ) {
         req.couchAuth = {body:{userCtx:JSON.parse(authResponse.body)}}
         next();
