@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 
+## 2.0.0 (pre-release)
 
 ### User Stories
 - As a Tangerine Database admin, I want to control which users have the "Manager" role for creating new groups [#218](https://github.com/Tangerine-Community/Tangerine/issues/218)
@@ -28,5 +28,11 @@
 For example, if you are at Tangerine 0.4.6, then you must run...
 ```
 docker exec -it tangerine-container /tangerine-server/upgrades/v1.0.0.sh
+docker exec -it tangerine-container /tangerine-server/upgrades/v2.0.0.sh
+```
+
+If you are at Tangerine 1.7.8, then you must run...
+```
+```
 docker exec -it tangerine-container /tangerine-server/upgrades/v2.0.0.sh
 ```
