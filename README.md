@@ -34,6 +34,8 @@ Now visit your Tangerine-server installation at the IP address or hostname of yo
 
 
 ## Upgrade
+Monitor https://github.com/Tangerine-Community/Tangerine/releases for new stable releases. Note that a "Pre-release" may not be stable, might corrupt your data, and there will not be an upgrade path for you.
+
 SSH into your server and run the following commands.
 ```
 cd Tangerine
@@ -46,7 +48,9 @@ cp config.defaults.sh config.sh
 vim -O config.sh config.sh_backup
 rm config.sh_backup
 ./start.sh
-# Check for upgrade scripts that need to be run. Note that you can only run scripts that end in .sh and you need to run every script between your prior version to version you have upgraded to.
+# Check for upgrade scripts that need to be run. Note that you can only run scripts that end in .sh and you need to 
+# run every script between your prior version to version you have upgraded to. Also always check the release notes for
+# any special instructions
 docker exec -it tangerine-container ls /tangerine-server/upgrades
 # Run an upgrade script.
 docker exec -it tangerine-container /tangerine-server/v2.0.0.sh
