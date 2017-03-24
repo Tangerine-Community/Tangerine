@@ -33,7 +33,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
     @i18n()
 
-
     # used by av questions
     @inputAudio = @model.getObject('inputAudio', false)
     if @inputAudio
@@ -54,6 +53,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #        collection.sort()
 #        @model.collection.models = collection.models
 #        @render()
+
+
 
     Tangerine.progress.currentSubview = @
     labels = {}
@@ -418,6 +419,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
   # populates @questionViews for this view.
   buildChildView: (child, ChildViewClass, childViewOptions) ->
+    if @model.questions.first().get("type") is "av"
+      @avMode = true
     options = _.extend({model: child}, childViewOptions);
     childView = new ChildViewClass(options)
     required = child.getNumber "linkedGridScore"
@@ -428,6 +431,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       @notAskedCount++
       @notAskedIds = _.union(@notAskedIds, [child.id])
     Marionette.MonitorDOMRefresh(childView);
+    console.log("childViewOptions.index:" + childViewOptions.index)
     @questionViews[childViewOptions.index] = childView
 
     return childView
@@ -458,7 +462,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     return options
 
   onChildviewRender: () ->
-#    console.log("childViewRendered.");
+    console.log("childViewRendered.");
+#    @avStart() if @avMode
     @trigger "childViewRendered"
 
   onBeforeRender: ->
@@ -475,6 +480,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
         question.set  "notAsked", isNotAsked
         if isNotAsked then @notAskedCount++
     @trigger "ready"
+    @avStart() if @avMode
+
 
 #    if @focusMode
 #      $('#subtest_wrapper').after $ "
@@ -575,6 +582,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     if @renderCount == @questions.length
       @trigger "ready"
       @updateSkipLogic()
+      @avStart() if @avMode
 #      @updateQuestionVisibility()
 #      @updateProgressButtons()
 #    @trigger "subRendered"
