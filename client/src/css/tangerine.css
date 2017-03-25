@@ -393,6 +393,11 @@ textarea[contenteditable] {
 .clearfix {
   *zoom: 1;
 }
+.unselectable {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
 /*
  * Tangerine
  */
@@ -3007,4 +3012,115 @@ button.ui-button::-moz-focus-inner {
 .ui-menu .ui-menu-icon {
   position: static;
   float: right;
+}
+/*
+ * Av Questions
+ */
+.av-row {
+  display: block;
+  overflow: hidden;
+}
+.av-cell {
+  margin: 0;
+  display: inline-block;
+  overflow: hidden;
+}
+.av-question {
+  z-index: 999;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: white;
+}
+.av-button {
+  margin: 0 !important;
+  outline: none;
+  background: none;
+  border: none;
+}
+.av-button-highlight {
+  border: 10px solid #af0;
+  border-radius: 10px;
+}
+.av-layout {
+  position: fixed;
+  margin-top: 1em;
+  bottom: 0;
+}
+.av-light {
+  font-size: 18px;
+  color: #aaa;
+  display: block;
+  clear: both;
+}
+.av-controls {
+  opacity: 0.2;
+  text-align: center;
+}
+.av-controls-prev {
+  float: left;
+}
+.av-controls-next {
+  float: right;
+}
+.av-image {
+  max-height: 100%;
+  max-width: 100%;
+}
+/*
+ * Av Question editor
+ */
+.av-image-container {
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  background-color: white;
+}
+#asset-table {
+  background-color: #eee;
+}
+#asset-table td,
+#asset-table th {
+  padding: 5px;
+}
+#asset-table input {
+  margin-top: 15px;
+}
+.av-input-box {
+  display: inline;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  padding: 5px;
+  font-weight: normal;
+  margin: 0;
+}
+.av-input-box input {
+  border: none;
+  background-color: #eee;
+}
+.dimension-overylay {
+  position: absolute;
+  padding: 6px;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  font-weight: bold;
+  margin-left: 1px;
+}
+.width-overlay {
+  top: 30px;
+  left: 0;
+  margin-left: 0;
+}
+#modal {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: none;
+  background: white;
+  z-index: 5000;
 }

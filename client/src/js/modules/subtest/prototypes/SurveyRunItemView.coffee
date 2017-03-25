@@ -2,7 +2,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
   template: JST["Survey"],
   childView: QuestionRunItemView,
-  tagName: "p",
+  tagName: "div",
   className: "SurveyRunItemView"
 
   events:
@@ -421,6 +421,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
   buildChildView: (child, ChildViewClass, childViewOptions) ->
     if @model.questions.first().get("type") is "av"
       @avMode = true
+      $(window).on 'resize', @handleResize
     options = _.extend({model: child}, childViewOptions);
     childView = new ChildViewClass(options)
     required = child.getNumber "linkedGridScore"
@@ -431,7 +432,6 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
       @notAskedCount++
       @notAskedIds = _.union(@notAskedIds, [child.id])
     Marionette.MonitorDOMRefresh(childView);
-    console.log("childViewOptions.index:" + childViewOptions.index)
     @questionViews[childViewOptions.index] = childView
 
     return childView
