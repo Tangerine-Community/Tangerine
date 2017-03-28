@@ -602,10 +602,10 @@ class Router extends Backbone.Router
           data: key: dKey
           error: (a, b) => @trigger "status", "import error", "#{a} #{b}"
           success: (data) =>
-            docList = []
+            docList = ["location-list"]
             for datum in data.rows
               docList.push datum.id
-              keyList = _.uniq(docList)
+            keyList = _.uniq(docList)
             Tangerine.$db.allDocs
               keys : keyList
               include_docs:true
