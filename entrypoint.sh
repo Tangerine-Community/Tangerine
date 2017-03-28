@@ -47,6 +47,13 @@ curl -XPUT -d "@./documents-for-new-groups/configuration.json" -H "Content-Type:
 echo ""
 echo ""
 echo ""
+echo ""
+echo "Update globals in group databases."
+tangerine deploy-globals
+echo ""
+echo ""
+echo ""
+echo ""
 echo "Locking down tangerine database in case it is not already secured."
 curl -XPOST -d \
   '{ "_id": "_design/_auth",   "language": "javascript",   "validate_doc_update": "function(newDoc, oldDoc, userCtx, secObj) { if (userCtx.roles.indexOf(\"_admin\") === -1) { throw({forbidden: \"Only admins may update this database.\"}); } }" }' \
