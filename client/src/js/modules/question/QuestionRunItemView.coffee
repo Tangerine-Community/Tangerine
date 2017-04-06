@@ -195,7 +195,7 @@ QuestionRunItemView = Backbone.Marionette.ItemView.extend
     @trigger "av-next"
 
 
-  playDisplaySound: () =>
+  playDisplaySound: () ->
     @displaySoundObj?.play()
 
 
