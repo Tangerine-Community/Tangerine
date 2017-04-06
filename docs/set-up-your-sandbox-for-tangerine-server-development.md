@@ -8,13 +8,13 @@ git clone <your clone url>
 cd Tangerine
 ./develop.sh
 ```
-You'll see the logs wizzing by. When things have finally calmed down you will see `Finished 'default'` for a second time, go to http://127.0.0.1/ in your web browser and log in with username of `user1` and password of `password`. Create your first group by clicking on "groups", then click on "account", then "Join or create a group", fill out "Group name" as "g1", click "Join Group", click "Back", and then click "g1". You are now in your first group. You'll notice a `data` directory in your Tangerine directory that contains data for your container. That folder of data ensures that between runs of `./develop.sh` your data will persist. If you want to start with a blank slate, delete it or move it away to another place. 
+You'll see the logs wizzing by. When things have finally calmed down you will see `Finished 'default'` for a second time, go to http://localhost/ in your web browser and log in with username of `user1` and password of `password`. Create your first group by clicking on "groups", then click on "account", then "Join or create a group", fill out "Group name" as "g1", click "Join Group", click "Back", and then click "g1". You are now in your first group. You'll notice a `data` directory in your Tangerine directory that contains data for your container. That folder of data ensures that between runs of `./develop.sh` your data will persist. If you want to start with a blank slate, delete it or move it away to another place. 
 
 Note: This is the easiest method for development but results in a sandbox where only changes to `./editor/src/js` and `./client/src/js` are reflected in your container. For other methods of sandbox development, see the alternatives below.
 
 
 ## Load test data 
-To load some test data, you will run a command inside the container you are running. 
+To load some test data, create a group called `g1` and then run the following command. 
 ```
 docker exec tangerine-container tangerine push-backup --path /tangerine-server/client/test/packs --url http://user1:password@127.0.0.1:5984/group-g1
 ```
