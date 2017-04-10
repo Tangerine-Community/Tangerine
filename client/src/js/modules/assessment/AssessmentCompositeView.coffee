@@ -28,7 +28,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
     else
       prototypeName = model.get('prototype').titleize() + "RunItemView"
       if  (prototypeName == 'SurveyRunItemView')
-        currentSubview = SurveyRunItemView
+        currentSubview = SurveyRunView
       else if  (prototypeName == 'GridRunItemView')
         currentSubview = GridRunItemView
       else if  (prototypeName == 'GpsRunItemView')
@@ -83,6 +83,7 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
 #    'collection:rendered': 'addChildPostRender'
     'render:collection': 'addChildPostRender'
     'subRendered': 'subRendered'
+    'abort': 'abort'
 #    'attach': 'childAttach'
 #    'childAttached': 'childChildAttach'
 #    'collectionPopulated': 'collectionPopulated'

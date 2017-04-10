@@ -463,7 +463,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
   onChildviewRender: () ->
     console.log("childViewRendered.");
-#    @avStart() if @avMode
+#    if @questionViews?
+#      @avStart() if @avMode
     @trigger "childViewRendered"
 
   onBeforeRender: ->
@@ -480,7 +481,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
         question.set  "notAsked", isNotAsked
         if isNotAsked then @notAskedCount++
     @trigger "ready"
-    @avStart() if @avMode
+    if !@avStarted
+      @avStart() if @avMode
 
 
 #    if @focusMode
@@ -490,7 +492,7 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 #            <button class='navigation next_question'>#{@text.nextQuestion}</button>
 #          "
 
-  onRenderCollection:->
+  onRenderCollection: ->
 #    if @focusMode
 #      $('#subtest_wrapper').after $ "
 #            <div id='summary_container'></div>
@@ -555,8 +557,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
 
     @prototypeView?.updateExecuteReady?(true)
 
-#  onDomRefresh: ->
-#    console.log("I get too attached to people.")
+  onDomRefresh: ->
+    console.log("I get too attached to people.")
 
 # @todo Documentation
   skip: =>
@@ -610,7 +612,8 @@ class SurveyRunItemView extends Backbone.Marionette.CompositeView
     console.log("next")
     @model.parent.next?()
 
-  avStart: ->
+  avStart: =>
+    @avStarted = true
     start = =>
       @currentQuestion = 0
       @questionViews[@currentQuestion].startAv()

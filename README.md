@@ -64,6 +64,21 @@ cd Tangerine
 
 If you are using a text editor or IDE such as Webstorm on your host machine, your
 file modifications may not trigger the ng build process on the docker instance.
+
+If you use Idea Webstorm, please try turning 'Safe write' option ( Settings | Appearance & Behavior | System Settings | Use "safe write" (save changes to temporary file first)) off
+https://github.com/webpack/webpack-dev-server/issues/143
+
+Run these commands to start get docker working inside your shell:
+
+````
+docker-machine start
+eval $(docker-machine env default)
+cd source/Tangerine-Community/Tangerine
+./develop.sh
+````
+
+If file changes are not being deployed, try this alternate approach:
+
 Follow these instructions to install [docker-osx-dev](https://github.com/brikis98/docker-osx-dev),
 which uses rsync to copy file changes over to the container.
 
@@ -82,9 +97,6 @@ docker-osx-dev install
 cd source/Tangerine-Community/Tangerine
 docker-osx-dev --ignore-file .docker-osx-dev-ignore
 ````
-
-If you use Idea Webstorm, please try turning 'Safe write' option ( Settings | Appearance & Behavior | System Settings | Use "safe write" (save changes to temporary file first)) off
-https://github.com/webpack/webpack-dev-server/issues/143
 
 In another shell, start the development container.
 
