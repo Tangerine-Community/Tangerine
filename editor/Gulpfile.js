@@ -25,8 +25,6 @@ var rename = require('gulp-rename');  // to create index-dev.html
 
 var less = require('gulp-less'); // for compiling less files
 
-var git = require('gulp-git'); // for versioning
-
 // cause i don't like mondays
 var wait = require('gulp-wait')
 var mapStream = require('map-stream');
@@ -77,7 +75,7 @@ function log(err) {
  */
 
 // compile coffeescript into js files
-gulp.task('build:js', ['version'], function() {
+gulp.task('build:js', function() {
 
   var c = coffee({bare: true}); // get a coffeescript stream
   c.on('error', function(err) { // on error
@@ -97,7 +95,7 @@ gulp.task('build:js', ['version'], function() {
 
 
 // Minify Javascript
-gulp.task('minify:js', ['build:js', 'version'], function() {
+gulp.task('minify:js', ['build:js'], function() {
 
   return gulp.src(conf.jsGlob)
     .pipe(sourcemaps.init({loadMaps: true})) // pass along old sourcemaps
@@ -118,24 +116,9 @@ gulp.task('build:app.js', ['minify:js'], function() {
     .pipe(sourcemaps.write())                // append sourcemaps
     .pipe(gulp.dest(conf.srcDir))           // put everything here
       .on('end', function() {
-        push();
       });
 
 });
-
-
-
-function push() {
-  require('child_process').exec('cd app && couchapp push',
-    function (error, stdout, stderr) {
-      // console.log('stdout: ' + stdout);
-      // console.log('stderr: ' + stderr);
-      if (error !== null) {
-        console.log('exec error: ' + error);
-      }
-    }
-  );
-}
 
 // Build the libraries
 // just concat all the required library files
@@ -147,7 +130,6 @@ gulp.task('build:lib.js', function() {
     .pipe(sourcemaps.write())       // append sourcemaps
     .pipe(gulp.dest(conf.srcDir))   // write to dir
       .on('end', function() {
-        push();
       });
 });
 
@@ -159,29 +141,7 @@ gulp.task('build:views', function() {
     .pipe(coffee({bare: true}))       // transpile coffee
     .pipe(gulp.dest('./'))
       .on('end', function() {
-        push();
       });
-
-});
-
-// Update version.js
-gulp.task('version', function(cb) {
-  git.exec({ args: 'describe --tags' }, function(err, version) {
-    version = version.replace(/\n/, '');
-    git.exec({ args: 'rev-parse --short HEAD' }, function(err, build) {
-      build = build.replace(/\n/, '');
-      var body = '' +
-        'Tangerine.version = ' + JSON.stringify(version) + ';' +
-        'Tangerine.build = ' + JSON.stringify(build) + ';';
-      var filename = conf.tmpMinDir + '/version.js';
-      fs.writeFile( filename, body,
-        function(err) {
-          if (err !== null) { console.log(err); }
-          cb();
-        });
-      gulp.src([conf.tmpMinDir + '/version.js']).pipe(gulp.dest(conf.compiledDir));
-    });
-  });
 
 });
 
@@ -284,15 +244,9 @@ gulp.task('prepare-index-dev', function () {
     })
   }
 
-  //var stat = function () {
-  fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
-    gulp.src(conf.tmpMinDir + '/version.js')
-        .pipe(wait(2000))
-        .pipe(prepFiles());
-  });
 });
 
-gulp.task('init', ['clean', 'version', 'build:locales', 'build:views', 'build:app.js', 'build:lib.js']);
+gulp.task('init', ['clean', 'build:locales', 'build:views', 'build:app.js', 'build:lib.js']);
 
 gulp.task('default', ['init', 'watch']);
 
@@ -302,8 +256,6 @@ gulp.task('index-dev', ['prepare-index-dev']);
 conf.fileOrder = [
 
   'globals',
-
-  'version',
 
   'helpers',
 

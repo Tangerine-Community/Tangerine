@@ -454,3 +454,5 @@ class SurveyRunView extends Backbone.View
     for qv in @questionViews
       qv.close?()
     @questionViews = []
+
+

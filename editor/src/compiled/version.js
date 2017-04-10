@@ -1,1 +1,0 @@
-Tangerine.version = "fatal: Not a git repository (or any of the parent directories): .git";Tangerine.build = "fatal: Not a git repository (or any of the parent directories): .git";
