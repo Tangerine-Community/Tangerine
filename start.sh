@@ -13,16 +13,17 @@ if [ "$1" = "" ]; then
 else
   TAG=$1
 fi
-echo ""
-echo ""
-echo ""
-echo "Starting Tangerine at $TAG"
-echo ""
-echo ""
-echo ""
+echo "Pulling $TAG"
 docker pull tangerine/tangerine:$TAG
-docker stop $T_CONTAINER_NAME 
-docker rm $T_CONTAINER_NAME 
+NO_SUCH_CONTAINER=$(docker inspect $T_CONTAINER_NAME | grep "No such object")
+echo $NO_SUCH_CONTAINER
+if [ "$NO_SUCH_CONTAINER" = "" ]; then
+  echo "Stopping $T_CONTAINER_NAME"
+  docker stop $T_CONTAINER_NAME > /dev/null 
+  echo "Removing $T_CONTAINER_NAME"
+  docker rm $T_CONTAINER_NAME > /dev/null 
+fi
+echo "Running $T_CONTAINER_NAME at version $TAG"
 docker run -d \
   --name $T_CONTAINER_NAME \
   --env "NODE_ENV=production" \
