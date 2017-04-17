@@ -7,18 +7,12 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
+# Allow to specify Tangerine Version as parameter in ./star.sh, other wise use the most recent tag.
 if [ "$1" = "" ]; then
   TAG=$(git describe --tags --abbrev=0)
 else
   TAG=$1
 fi
-
-echo ""
-echo ""
-echo ""
-echo ""
-echo ""
-echo ""
 echo ""
 echo ""
 echo ""
@@ -27,10 +21,10 @@ echo ""
 echo ""
 echo ""
 docker pull tangerine/tangerine:$TAG
-docker stop tangerine-container 
-docker rm tangerine-container 
+docker stop $T_CONTAINER_NAME 
+docker rm $T_CONTAINER_NAME 
 docker run -d \
-  --name tangerine-container \
+  --name $T_CONTAINER_NAME \
   --env "NODE_ENV=production" \
   --env "T_VERSION=$TANGERINE_VERSION" \
   --env "T_PROTOCOL=$T_PROTOCOL" \
