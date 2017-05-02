@@ -172,11 +172,11 @@ gulp.task('version', function(cb) {
         var version = process.env.T_VERSION
     }
     else {
-        var version = 'stub'
+        var version = ''
     }
     var body = 'window.TangerineVersion = ' + JSON.stringify({
-            buildVersion : 'foo',
-            version      : 'bar'
+            buildVersion : '',
+            version      : version
         });
     var filename = conf.tmpMinDir + '/version.js';
     var filenameTwo = './tmp/min/version.js';

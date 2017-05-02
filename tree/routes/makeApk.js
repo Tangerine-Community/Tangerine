@@ -65,7 +65,7 @@ const makeApk = function(req, res) {
     const groupNameRaw = req.params.group;
     const hostname = req.params[0];
     const docs = req.body.docs
-    console.log("docs: " + JSON.stringify(docs));
+    // console.log("docs: " + JSON.stringify(docs));
     const emptyGroup = !groupNameRaw || groupNameRaw == ''
     if (emptyGroup) {
         return res
