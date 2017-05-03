@@ -1,6 +1,6 @@
 /* jshint undef: true, unused: true, node: true, quotmark: single */
 
-'use strict';
+"use strict";
 
 /*
  * Requires
@@ -10,15 +10,15 @@ var fs  = require('fs'); // for writing files
 var del = require('del'); // for deleting files
 
 // gulp
-var gulp = require('gulp');
+var gulp = require("gulp");
 
-var connect = require('gulp-connect');  // nice little webserver for testing
-var notify  = require('gulp-notify');   // OS notifications
-var coffee  = require('gulp-coffee');   // For coffeescript compilation
-var uglify  = require('gulp-uglify');   // For minification of Javascript
-var concat  = require('gulp-concat');   // Concating files
-var flatten = require('gulp-flatten');  // For removing directory strcuture
-var cache   = require('gulp-cached');   // For speedy redos
+var connect = require("gulp-connect");  // nice little webserver for testing
+var notify  = require("gulp-notify");   // OS notifications
+var coffee  = require("gulp-coffee");   // For coffeescript compilation
+var uglify  = require("gulp-uglify");   // For minification of Javascript
+var concat  = require("gulp-concat");   // Concating files
+var flatten = require("gulp-flatten");  // For removing directory strcuture
+var cache   = require("gulp-cached");   // For speedy redos
 
 var sourcemaps = require('gulp-sourcemaps'); // for debugging
 //var inject = require('gulp-inject');  // to create index-dev.html
@@ -287,72 +287,72 @@ gulp.task('clean', function(done){
 
 gulp.task('prepare-index-dev', function () {
 
-  var prepFiles = function () {
+    var prepFiles = function () {
 
-    return mapStream(function (file, cb) {
-      console.log("running prepFiles")
-      //console.log(file);
-      gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest('./www/compiled'));
-      gulp.src(['./tmp/min/templates.js']).pipe(gulp.dest('./www/compiled'));
-      // gulp.src([conf.tmpMinDir + '/version.js'])
-      //     //.pipe(debug({title: 'unicorn:', minimal: false}))
-      //     .pipe(gulp.dest('./www/compiled'));
-      // gulp.src([conf.tmpMinDir + '/locales.js'])
-      //     //.pipe(debug({minimal: false}))
-      //     .pipe(gulp.dest('./www/compiled'));
-      var template = gulp.src('./www/index-dev-template.html');
-      //var target = gulp.src('./www/index-dev.html');
-      // It's not necessary to read the files (will speed up things), we're only after their paths:
-      //var JsSources = gulp.src(conf.fileOrder, {read: false});
-      var JsSources = conf.fileOrder;
-      //var libSources = gulp.src(conf.libFiles, {read: false});
-      var libSources = conf.libFiles;
-      var JsSourcesString = ""
-      var arrayLength = JsSources.length;
-      for (var i = 0; i < arrayLength; i++) {
-        var prop = JsSources[i];
-        // modify the string
-        var filename = "compiled/" + prop + ".js";
-        var scriptString = "<script src='" + filename + "'></script>\n";
-        JsSourcesString += scriptString
-      }
-      //console.log("JsSourcesString: " + JsSourcesString)
-      var libSourcesString = ""
-      var arrayLength = libSources.length;
-      for (var i = 0; i < arrayLength; i++) {
-        var prop = libSources[i];
-        // modify the string
-        var filename = prop.replace("./src/", "")
-        var scriptString = "<script src='" + filename + "'></script>\n";
-        libSourcesString += scriptString
-      }
+        return mapStream(function (file, cb) {
+            console.log("running prepFiles")
+            //console.log(file);
+            gulp.src(['*.js'], {base: conf.tmpJsDir}).pipe(gulp.dest('./www/compiled'));
+            gulp.src(['./tmp/min/templates.js']).pipe(gulp.dest('./www/compiled'));
+            // gulp.src([conf.tmpMinDir + '/version.js'])
+            //     //.pipe(debug({title: 'unicorn:', minimal: false}))
+            //     .pipe(gulp.dest('./www/compiled'));
+            // gulp.src([conf.tmpMinDir + '/locales.js'])
+            //     //.pipe(debug({minimal: false}))
+            //     .pipe(gulp.dest('./www/compiled'));
+            var template = gulp.src('./www/index-dev-template.html');
+            //var target = gulp.src('./www/index-dev.html');
+            // It's not necessary to read the files (will speed up things), we're only after their paths:
+            //var JsSources = gulp.src(conf.fileOrder, {read: false});
+            var JsSources = conf.fileOrder;
+            //var libSources = gulp.src(conf.libFiles, {read: false});
+            var libSources = conf.libFiles;
+            var JsSourcesString = ""
+            var arrayLength = JsSources.length;
+            for (var i = 0; i < arrayLength; i++) {
+                var prop = JsSources[i];
+                // modify the string
+                var filename = "compiled/" + prop + ".js";
+                var scriptString = "<script src='" + filename + "'></script>\n";
+                JsSourcesString += scriptString
+            }
+            //console.log("JsSourcesString: " + JsSourcesString)
+            var libSourcesString = ""
+            var arrayLength = libSources.length;
+            for (var i = 0; i < arrayLength; i++) {
+                var prop = libSources[i];
+                // modify the string
+                var filename = prop.replace("./src/", "")
+                var scriptString = "<script src='" + filename + "'></script>\n";
+                libSourcesString += scriptString
+            }
 
-      template.pipe(inject.after("<!-- inject:js -->\n", JsSourcesString))
-          .pipe(inject.after("<!-- lib:js -->\n", libSourcesString))
-          //.pipe(debug({title: 'unicorny:', minimal: false}))
-          .pipe(rename('index-dev.html'))
-          .pipe(gulp.dest('./www')).on('error', function(err) { // on error
-        log(err);                   // log
-        //target.end();                    // end stream so we don't freeze the program
-      });
-      return cb(null, file)
-    })
-  }
+            template.pipe(inject.after("<!-- inject:js -->\n", JsSourcesString))
+                .pipe(inject.after("<!-- lib:js -->\n", libSourcesString))
+                //.pipe(debug({title: 'unicorny:', minimal: false}))
+                .pipe(rename('index-dev.html'))
+                .pipe(gulp.dest('./www')).on('error', function(err) { // on error
+                log(err);                   // log
+                //target.end();                    // end stream so we don't freeze the program
+            });
+            return cb(null, file)
+        })
+    }
 
-  //var stat = function () {
-  fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
-    gulp.src(conf.tmpMinDir + '/version.js')
-        .pipe(wait(2000))
-        .pipe(prepFiles());
-  });
+    //var stat = function () {
+    fs.stat(conf.tmpMinDir + '/version.js', function(err, stat) {
+        gulp.src(conf.tmpMinDir + '/version.js')
+            .pipe(wait(2000))
+            .pipe(prepFiles());
+    });
 });
 
 gulp.task('compile_packs', function(done){
-  exec('./scripts/compilepacks.js', function (err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-    done(err);
-  });
+    exec('./scripts/compilepacks.js', function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        done(err);
+    });
 });
 
 gulp.task('run_tests', function(done){
@@ -369,17 +369,11 @@ gulp.task('coffeeW', ['coffee:test', 'watch']);
 
 conf.fileOrder = [
 
-  'globals',
-
   'version',
 
   'helpers',
 
-  'templates',
-
-  'Button',
   'ButtonView',
-  'ButtonItemView',
 
   'Assessment',
   'Assessments',
@@ -390,66 +384,46 @@ conf.fileOrder = [
   'AssessmentSyncView',
   'AssessmentDataEntryView',
 
-  'BandwidthCheckView',
-  'TabView',
 
   'Subtest',
   'Subtests',
   'SubtestRunView',
-  'SubtestRunItemView',
-
-  'Question',
-  'Questions',
-  'QuestionRunView',
-  'QuestionRunItemView',
-
-  'WorkflowStep',
-  'WorkflowSteps',
-  'Workflow',
-  'Workflows',
-  'SchoolListView',
-  'WorkflowMenuView',
-  'ValidObservationView',
-  'WorkflowEditView',
-  'WorkflowRunView',
-  'WorkflowSelectView',
-
-  'SurveyRunItemView',
 
   'ConsentRunView',
-  'ConsentRunItemView',
 
   'DatetimeRunView',
-  'DatetimeRunItemView',
 
   'LocationRunView',
-  'LocationRunItemView',
 
   'SurveyRunView',
 
   'IdRunView',
-  'IdRunItemView',
 
   'GridRunView',
-  'GridRunItemView',
 
   'ObservationRunView',
 
   'GpsRunView',
-  'GpsRunItemView',
+
+  'CaseSearchRunView',
+  'CaseSelectRunView',
+
+  'TabletManagerView',
+
 
   'Result',
   'Results',
   'ResultView',
   'ResultsView',
-  'ResultItemView',
   'TabletManagerView',
   'ResultSumView',
   'DashboardView',
-  'ResultPreview',
-  'ResultPreviews',
 
   'AdminView',
+
+  'Question',
+  'Questions',
+  'QuestionRunView',
 
   'Klass',
   'KlassView',
@@ -490,13 +464,6 @@ conf.fileOrder = [
   'StudentListElementView',
   'StudentEditView',
 
-  'Critique',
-  'Critiques',
-  'Feedback',
-  'FeedbackEditView',
-  'FeedbackRunView',
-  'FeedbackTripsView',
-
   'User',
   'Users',
   'TabletUser',
@@ -507,15 +474,12 @@ conf.fileOrder = [
   'GroupsView',
   'UsersMenuView',
 
-  'AssessmentDashboardView',
-  'HomeRecordItemView',
-  'AssessmentCompositeView',
-  'AssessmentControlsView',
-  'DashboardLayout',
-
   'Config',
 
   'Log',
+
+  'Case',
+  'Cases',
 
   'Settings',
   'SettingsView',
@@ -528,11 +492,9 @@ conf.fileOrder = [
 
   'configuration',
 
-  'displayCode_migrations',
-
   'locales',
 
-  'boot'
+  'boot',
 
 ];
 
@@ -545,12 +507,10 @@ conf.jsFileOrder = conf.fileOrder.map(function(el) {
 });
 
 conf.libFiles = [
+  './src/js/lib/phonegap.js',
   './src/js/lib/modernizr.js',
   './src/js/lib/jquery.js',
   './src/js/lib/underscore.js',
-  './src/js/lib/backbone.js',
-  './src/js/lib/backbone.marionette.js',
-  './src/js/lib/handlebars.runtime.js',
   './src/js/lib/sha1.js',
   './src/js/lib/jquery.couch.js',
   './src/js/lib/js-cookie.js',
@@ -569,6 +529,7 @@ conf.libFiles = [
   './src/js/lib/jquery.ui.button.js',
   './src/js/lib/jquery.ui.progressbar.js',
   './src/js/lib/inflection.js',
+  './src/js/lib/backbone.js',
   './src/js/lib/moment.js',
   './src/js/lib/pouchdb.js',
   './src/js/lib/backbone-pouchdb.js',
@@ -578,7 +539,5 @@ conf.libFiles = [
   './src/js/lib/jstz.js',
   './src/js/lib/lz-string.js',
   './src/js/lib/ckeditor.js',
-  './src/js/lib/boomerang.js',
-  './src/js/lib/boomerang-plugin-bw-custom.js',
   './src/js/lib/coffee-script.js' // This file tends to like to be last
 ];

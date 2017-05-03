@@ -3,54 +3,15 @@
 /*
  * Downloads documents from a CouchDB server and puts them into json "pack" files.
  * Change group_name to the group your Tangerine will connect to and download from.
- * ./preload.js T_ADMIN=username T_PASS=password protocol=https hostname=www.server.org group_name=test123
  */
 
-var group_name = "rti_tanzania_2016_test";
+var group_name = "ef2";
 
 var fs = require('fs'); // for writeFile
 var fse = require('fs-extra'); // for mkdirp
 var unirest = require('unirest'); // a REST client
 var del = require('del'); // 
 
-/*
- * parse arguments...kinda
- * arguments    argv
- * T_ADMIN=username      { T_ADMIN : "username" }
- */
-var rawrgv = [];
-argv = {};
-
-process.argv.forEach(function (val, index, array) {
-  console.log(index + ': ' + val);
-  var split = val.split("=");
-  var key = split[0];
-  var value = split[1];
-  argv[key] = value;
-});
-
-rawrgv.forEach(function(el, i){
-  if (~el.indexOf("--") && ~el.indexOf("=")) {
-    var clean = el.substr(2);
-    var split = clean.split("=");
-    argv[split[0]] = split[1];
-  } else if (~el.indexOf("-")) {
-    var key = el.replace(/\-/g, "");
-    var nextArgIsAnotherKey = ~(rawrgv[i+1] || "").indexOf("-");
-    var noMoreKeys = typeof rawrgv[i+1] === "undefined";
-    if (nextArgIsAnotherKey || noMoreKeys) {
-      argv[key] = true;
-    } else {
-      argv[key] = rawrgv[i+1];
-    }
-  }
-});
-
-console.log(JSON.stringify(argv));
-// override default group with cli argument group
-if ( typeof argv.group !== "undefined" ) {
-  group_name = argv.group;
-}
 
 // how many documents will be put into a pack at most.
 var PACK_DOC_SIZE = 50;
@@ -58,16 +19,14 @@ var PACK_DOC_SIZE = 50;
 // Path where the json files go.
 var PACK_PATH = __dirname + '/../src/js/init';
 
-//if ( ! ( process.env.T_ADMIN && process.env.T_PASS ) ) {
-if ( ! ( argv.T_ADMIN && argv.T_PASS ) ) {
-  console.log("T_ADMIN and T_PASS args need to be set.");
+if ( ! ( process.env.T_ADMIN && process.env.T_PASS ) ) {
+  console.log("T_ADMIN and T_PASS env variables need to be set.");
   process.exit(1);
 }
 
-var SOURCE_GROUP = argv.protocol + "://" + argv.T_ADMIN + ":" + argv.T_PASS + "@" + argv.hostname+"/group-" + argv.group_name;
-
-console.log("SOURCE_GROUP:" + SOURCE_GROUP);
-
+// var SOURCE_GROUP = "http://" + process.env.T_ADMIN + ":" + process.env.T_PASS + "@databases.tangerinecentral.org/group-" + group_name;
+var SOURCE_GROUP = "http://" + process.env.T_ADMIN + ":" + process.env.T_PASS + "@127.0.0.1:5984/group-" + group_name;
+console.log("SOURCE_GROUP" + SOURCE_GROUP);
 // helper method for json post requests
 // needs opts.data and opts.url.
 // Chain handlers to .end(f)
@@ -90,32 +49,19 @@ function get(opts) {
 }
 
 
-// delete any old packs if they're there
 del([ PACK_PATH + '/pack*.json' ]).then( function (paths) {
-
     if ( paths.length !== 0 ) {
       console.log(
         'Old json packs deleted\n' +
          paths.map(function(el){return "  " + el;}).join('\n')
       );
+    } else {
+      main();
     }
-
-    main();
-
 });
 
+
 function main() {
-
-  get({url: SOURCE_GROUP}).end(function(res){
-
-    if ( res.code !== 200 ) {
-      console.log(res.code)
-      console.log(res.rawbody)
-      process.exit();
-    }
-
-  });
-
 
   // Get a list of _ids for the assessments not archived
   post({

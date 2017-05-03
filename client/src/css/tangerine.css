@@ -454,7 +454,7 @@ table.grid .grid_element {
   width: 95%;
   border: none;
   outline: none;
-  font-family: Gentium, Tahoma, Monaco, sans-serif;
+  font-family: Andika, Gentium, Tahoma, Monaco, sans-serif;
   cursor: pointer;
   text-align: center;
   background: #CCC;
@@ -547,9 +547,7 @@ div.timer {
   color: black;
 }
 .timer_wrapper {
-  display: inline-block;
-  width: 100%;
-  margin: 15px 0 0;
+  margin: 15px 0 20px;
 }
 /*
  * AccountView
@@ -803,10 +801,6 @@ progress {
 }
 .subtest-back {
   float: left;
-  display: none;
-}
-.skip {
-  display: none;
 }
 button {
   margin: 10px 0px;
@@ -1180,26 +1174,6 @@ ul.assessment_list .assessment_menu {
   height: 36px;
 }
 .sp_run button {
-  display: block;
-  height: 36px;
-}
-.sp_run_mar {
-  background-position: -180px 0 !important;
-  text-indent: -999em;
-  letter-spacing: -999em;
-  overflow: hidden;
-  width: 36px;
-  height: 36px;
-  background: url('sprites.png') no-repeat;
-  border: 0;
-  cursor: pointer !important;
-  margin: 0 6px 0 0;
-}
-.sp_run_mar a {
-  display: block;
-  height: 36px;
-}
-.sp_run_mar button {
   display: block;
   height: 36px;
 }
@@ -2314,7 +2288,7 @@ body[rtl] {
   vertical-align: text-top;
 }
 /*
- * Users Menu View 
+ * Users Menu View
  */
 .UsersMenuView input {
   width: 50% !important;
@@ -2326,94 +2300,6 @@ body[rtl] {
 .UsersMenuView th {
   text-align: left;
   font-weight: normal;
-}
-/*
- * Bandwidth Check
- */
-.BandwidthCheckView .bandwidth-begin-btn {
-  display: inline-block;
-}
-.BandwidthCheckView .bandwidth-cancel-btn {
-  display: none;
-}
-.BandwidthCheckView .grid {
-  padding: 0 !important;
-}
-.BandwidthCheckView .test-results {
-  display: none;
-  margin: 10px 0 5px 0;
-}
-.BandwidthCheckView .test-results .status-bar {
-  display: block;
-  background-color: #CCC;
-  height: 40px;
-  padding: 2px;
-  border-radius: 5px;
-}
-.BandwidthCheckView .test-results .status-bar span {
-  display: inline-block;
-  height: 100%;
-  width: 100%;
-  border-radius: 3px;
-  transition: width 0.4s ease-in-out;
-  text-align: center;
-  line-height: 1.75;
-}
-.BandwidthCheckView .test-results .status-bar.stripes span {
-  background-size: 30px 30px;
-  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  -webkit-animation: animate-stripes 3s linear infinite;
-  -moz-animation: animate-stripes 3s linear infinite;
-  -o-animation: animate-stripes 3s linear infinite;
-  animation: animate-stripes 3s linear infinite;
-}
-.BandwidthCheckView .test-results .status-bar.blue span {
-  background-color: #0075F4;
-  color: #F6F6F6;
-}
-.BandwidthCheckView .test-results .status-bar.Poor span {
-  background-color: #E82F2F;
-  color: #F6F6F6;
-}
-.BandwidthCheckView .test-results .status-bar.Fair span {
-  background-color: #f6c637;
-  color: #F6F6F6;
-}
-.BandwidthCheckView .test-results .status-bar.Good span {
-  background-color: #4D740C;
-  color: #F6F6F6;
-}
-@-webkit-keyframes animate-stripes {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 60px 0;
-  }
-}
-@-moz-keyframes animate-stripes {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 60px 0;
-  }
-}
-@-o-keyframes animate-stripes {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 60px 0;
-  }
-}
-@keyframes animate-stripes {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 60px 0;
-  }
 }
 /*
  * ButtonView

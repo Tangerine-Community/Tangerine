@@ -1,6 +1,11 @@
 class GridRunView extends Backbone.View
 
   className: "grid_prototype"
+  c:
+    CORRECT   : "C"
+    INCORRECT : "I"
+    MISSING   : "M"
+    SKIPPED   : "S"
 
   events: if Modernizr.touch then {
     'click .grid_element'     : 'gridClick' #click
@@ -31,15 +36,14 @@ class GridRunView extends Backbone.View
     $target = $(event.target)
     index = $target.attr('data-index')
 
-    indexIsntBelowLastAttempted = parseInt(index) > parseInt(@lastAttempted)
-    lastAttemptedIsntZero       = parseInt(@lastAttempted) != 0
-    correctionsDisabled         = @dataEntry is false and @parent?.parent?.enableCorrections is false
+    clickPastLastAttempted = parseInt(index) > parseInt(@lastAttempted)
+    lastAttemptedIsntZero  = parseInt(@lastAttempted) != 0
+    correctionsDisabled    = @dataEntry is false and @parent?.parent?.enableCorrections is false
 
-    return if correctionsDisabled && lastAttemptedIsntZero && indexIsntBelowLastAttempted
+    return if correctionsDisabled && lastAttemptedIsntZero && clickPastLastAttempted
 
     @markElement(index)
     @checkAutostop() if @autostop != 0
-
 
   intermediateItemHandler: (event) =>
     @timeIntermediateCaptured = @getTime() - @startTime
@@ -54,7 +58,7 @@ class GridRunView extends Backbone.View
     if @timeRunning
       autoCount = 0
       for i in [0..@autostop-1]
-        if @gridOutput[i] == "correct" then break
+        if @gridOutput[i] == @c.CORRECT then break
         autoCount++
       if @autostopped == false
         if autoCount == @autostop then @autostopTest()
@@ -76,13 +80,13 @@ class GridRunView extends Backbone.View
 
     if not @autostopped
       if value == null # not specifying the value, just toggle
-        @gridOutput[index-1] = if (@gridOutput[index-1] == "correct") then "incorrect" else "correct"
+        @gridOutput[index-1] = if (@gridOutput[index-1] == @c.CORRECT) then @c.INCORRECT else @c.CORRECT
         $target.toggleClass "element_wrong"
       else # value specified
         @gridOutput[index-1] = value
-        if value == "incorrect"
+        if value == @c.INCORRECT
           $target.addClass "element_wrong"
-        else if value == "correct"
+        else if value == @c.CORRECT
           $target.removeClass "element_wrong"
 
   endOfGridLineClick: (event) ->
@@ -96,13 +100,13 @@ class GridRunView extends Backbone.View
         $target.removeClass "element_wrong"
         index = $target.attr('data-index')
         for i in [index..(index-(@columns-1))]
-          @markElement i, "correct"
+          @markElement i, @c.CORRECT
       else if !$target.hasClass("element_wrong") && !@autostopped
         # NO, mark it wrong
         $target.addClass "element_wrong"
         index = $target.attr('data-index')
         for i in [index..(index-(@columns-1))]
-          @markElement i, "incorrect"
+          @markElement i, @c.INCORRECT
 
       @checkAutostop() if @autostop != 0
 
@@ -113,45 +117,19 @@ class GridRunView extends Backbone.View
       $target = $(event.target)
       index   = $target.attr('data-index')
 
-    if index - 1 >= @gridOutput.lastIndexOf("incorrect")
+    if index - 1 >= @gridOutput.lastIndexOf(@c.INCORRECT)
       @$el.find(".element_last").removeClass "element_last"
       $target.addClass "element_last"
       @lastAttempted = index
 
-  floatOn: ->
-    timer = @$el.find('.timer')
-    timerPos = timer.offset()
-    $(window).on 'scroll', ->
-      scrollPos = $(window).scrollTop()
-      if scrollPos >= timerPos.top
-        timer.css
-          position: "fixed"
-          top: "10%"
-          left: "80%"
-      else
-        timer.css
-          position: "initial"
-          top: "initial"
-          left: "initial"
-
-  floatOff: ->
-    $(window).off 'scroll'
-    timer = @$el.find('.timer')
-    timer.css
-      position: "initial"
-      top: "initial"
-      left: "initial"
-
   startTimer: ->
     if @timerStopped == false && @timeRunning == false
-
       @interval = setInterval( @updateCountdown, 1000 ) # magic number
       @startTime = @getTime()
       @timeRunning = true
       @updateMode "mark"
       @enableGrid()
       @updateCountdown()
-      @floatOn()
 
   enableGrid: ->
     @$el.find("table.disabled, div.disabled").removeClass("disabled")
@@ -168,7 +146,7 @@ class GridRunView extends Backbone.View
     @stopTime = @getTime()
     @timeRunning = false
     @timerStopped = true
-    @floatOff()
+
     @updateCountdown()
 
     # do these if it's not a simple stop
@@ -220,7 +198,7 @@ class GridRunView extends Backbone.View
             Utils.background ""
         , 1e3) # magic number
 
-        @updateMode event, "last"
+        @updateMode "last"
 
 
     if @captureItemAtTime && !@gotIntermediate && !@minuteMessage && @timeElapsed >= @captureAfterSeconds
@@ -302,7 +280,7 @@ class GridRunView extends Backbone.View
 
     @mode = "mark" if @dataEntry
 
-    @gridOutput = @items.map -> 'correct'
+    @gridOutput = @items.map ( -> @c.CORRECT ), @
     @columns  = parseInt(@model.get("columns")) || 3
 
     @autostop = if @untimed then 0 else (parseInt(@model.get("autostop")) || 0)
@@ -394,6 +372,9 @@ class GridRunView extends Backbone.View
 
   render: ->
 
+    window.screen.lockOrientation?('landscape')
+    Tangerine.orientationLocked = true
+
     done = 0
 
     startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{@text.start}</button><div class='timer'>#{@timer}</div></div>"
@@ -433,7 +414,7 @@ class GridRunView extends Backbone.View
           "i"     : i+1
       gridHTML += "</div>"
     html += gridHTML
-    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button></div>"
+    stopTimerHTML = "<div class='timer_wrapper'><button class='stop_time time'>#{@text.stop}</button><div class='timer'>#{@timer}</div></div>"
 
     resetButton = "
       <div>
@@ -471,7 +452,7 @@ class GridRunView extends Backbone.View
       } if @captureLastAttempted
 
       @modeButton = new ButtonView buttonConfig
-      @listenTo @modeButton, "change click", @updateMode
+      @listenTo @modeButton, "change click", => @updateMode()
       modeSelector = "
         <div class='grid_mode_wrapper question clearfix'>
           <label>#{@text.inputMode}</label><br>
@@ -532,7 +513,7 @@ class GridRunView extends Backbone.View
 
       item = @items[@items.length-1]
       if confirm(t("GridRunView.message.last_item_confirm", item:item))
-        @updateMode
+        @updateMode()
         return true
       else
         @messages = if @messages?.push then @messages.concat([msg]) else [msg]
@@ -578,7 +559,7 @@ class GridRunView extends Backbone.View
           itemLabel  : item
       else
         itemResults[i] =
-          itemResult : "missing"
+          itemResult : @c.MISSING
           itemLabel : @items[@mapItem[i]]
 
     @lastAttempted = false if not @captureLastAttempted
@@ -608,19 +589,19 @@ class GridRunView extends Backbone.View
 
     for item, i in @items
       itemResults[i] =
-        itemResult : "skipped"
+        itemResult : @c.SKIPPED
         itemLabel  : item
 
     result =
-      "capture_last_attempted"     : "skipped"
-      "item_at_time"               : "skipped"
-      "time_intermediate_captured" : "skipped"
-      "capture_item_at_time"       : "skipped"
-      "auto_stop"     : "skipped"
-      "attempted"     : "skipped"
+      "capture_last_attempted"     : @c.SKIPPED
+      "item_at_time"               : @c.SKIPPED
+      "time_intermediate_captured" : @c.SKIPPED
+      "capture_item_at_time"       : @c.SKIPPED
+      "auto_stop"     : @c.SKIPPED
+      "attempted"     : @c.SKIPPED
       "items"         : itemResults
-      "time_remain"   : "skipped"
-      "mark_record"   : "skipped"
+      "time_remain"   : @c.SKIPPED
+      "mark_record"   : @c.SKIPPED
       "variable_name" : @model.get("variableName")
 
   onClose: ->

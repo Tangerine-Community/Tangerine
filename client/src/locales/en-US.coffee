@@ -44,8 +44,6 @@ Tangerine.locales["en-US"] =
     "ResultSumView" :
       "button" :
         "resume" : "Resume"
-      "message" :
-        "no_results" : "No results yet!"
 
     "SettingsView" :
       "message" :
@@ -81,19 +79,17 @@ Tangerine.locales["en-US"] =
         "another" : "Perform another assessment"
 
 
-    "AssessmentMenuView" :
+    "AssessmentsMenuView" :
       "button" :
         "new" : "New"
         "import" : "Import"
         "apk" : "APK"
         "groups" : "Groups"
         "universal_upload" : "Universal Upload"
-        "emergency_sync" : "Emergency Sync "
-        "sync_tablets" : "Sync tablets"
         "results" : "Results"
         "save" : "Save"
         "cancel" : "Cancel"
-        "save_to_disk" : "Save as file"
+        "tablet_manager" : "Tablet manager"
       "label" :
         "assessment" : "Assessment"
         "assessments" : "Assessments"
@@ -235,15 +231,3 @@ Tangerine.locales["en-US"] =
         "retrying" : "Retrying..."
         "searching" : "Searching..."
         "not_supported" : "Your system does not support geolocations."
-    "Router"  :
-      "message":
-        "quit_assessment" : "Are you sure you want to quit this Assessment?"
-    "Utils"   :
-      "message"  :
-        "checkingServer"  : "Count of results on tablet to check if available on server:"
-        "countTabletResults"  : "Count of results on tablet to upload:"
-        "noUpload"  : "Not necessary to upload results;  Server already has the results on the tablet."
-        "bulkDocsError"  : "Error uploading results to bulk docs server at :"
-        "error"  : "Error"
-        "resultsUploaded"  : "Results uploaded"
-        "universalUploadComplete"  : "Universal Upload Complete"

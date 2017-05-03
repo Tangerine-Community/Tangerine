@@ -1,6 +1,6 @@
 class QuestionRunView extends Backbone.View
 
-  className: "question"
+  className: 'question'
 
   events:
     'change input'           : 'update'
@@ -203,6 +203,7 @@ class QuestionRunView extends Backbone.View
   scroll: (event) ->
     @trigger "scroll", event, @model.get("order")
 
+
   initialize: (options) ->
     @on "show", => @onShow()
     @model     = options.model
@@ -214,7 +215,7 @@ class QuestionRunView extends Backbone.View
 
     @dataEntry = options.dataEntry
     @fontFamily = @parent.model.get('fontFamily')
-    @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != "" 
+    @fontStyle = "style=\"font-family: #{@parent.model.get('fontFamily')} !important;\"" if @parent.model.get("fontFamily") != ""
 
     unless @dataEntry
       @answer = options.answer
@@ -235,7 +236,7 @@ class QuestionRunView extends Backbone.View
     else
       @isValid = false
       @skipped = false
-    
+
     if @notAsked == true
       @isValid = true
       @updateResult()

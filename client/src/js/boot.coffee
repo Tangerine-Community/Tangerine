@@ -9,6 +9,8 @@
 # Utils.disableConsoleLog()
 # Utils.disableConsoleAssert()
 
+
+
 Tangerine.bootSequence =
 
   # Basic configuration
@@ -24,7 +26,7 @@ Tangerine.bootSequence =
       dbname = "tangerine-" + Date.now() + Math.random()
       console.log("dbname:" + dbname)
       Tangerine.db = new PouchDB(dbname, {storage: 'temporary'})
-    else 
+    else
       # This is not a widget and we'll hang onto our long term memory.
       Tangerine.db = new PouchDB(Tangerine.conf.db_name)
 
@@ -108,7 +110,7 @@ Tangerine.bootSequence =
                 doc.subtestData.forEach (subtest) ->
                   if subtest.prototype is "id" then result.participantId = subtest.data.participant_id
                   if subtest.prototype is "complete" then result.endTime = subtest.data.end_time
-                result.startTime = doc.start_time
+                result.startTime = doc.startTime
                 emit "result-#{doc.assessmentId}", result
 
             ).toString()
@@ -304,14 +306,6 @@ Tangerine.bootSequence =
       router : Tangerine.router
     Tangerine.log    = new Log()
     Tangerine.session = new Session()
-
-    #  init  Tangerine as a Marionette app
-    Tangerine.app = new Marionette.Application()
-    Tangerine.app.rm = new Marionette.RegionManager();
-
-    Tangerine.app.rm.addRegions siteNav: "#siteNav"
-    Tangerine.app.rm.addRegions mainRegion: "#content"
-    Tangerine.app.rm.addRegions dashboardRegion: "#dashboard"
     callback()
 
   reloadUserSession: ( callback ) ->
@@ -324,16 +318,10 @@ Tangerine.bootSequence =
     Backbone.history.start()
     callback() # for testing
 
-  monitorBrowserBack: ( callback ) ->
-    window.addEventListener('popstate', (e) ->
-      sendTo = Backbone.history.getFragment()
-      Tangerine.router.navigate(sendTo, { trigger: true, replace: true })
-    )
 
 Tangerine.boot = ->
 
   sequence = [
-    Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.basicConfig
     Tangerine.bootSequence.checkDatabase
     Tangerine.bootSequence.versionTag
@@ -341,10 +329,10 @@ Tangerine.boot = ->
     Tangerine.bootSequence.guaranteeInstanceId
     Tangerine.bootSequence.documentReady
     Tangerine.bootSequence.loadI18n
+    Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone
-#    Tangerine.bootSequence.monitorBrowserBack
   ]
 
   Utils.execute sequence

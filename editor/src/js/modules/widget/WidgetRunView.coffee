@@ -1,3 +1,5 @@
+
+
 # WidgetRunView takes a list of subtests and the assessment as the model, stringifies it, and renders the Tangerine client widget.
 # It listens for a result:saved:widget event from the client widget, which is created by the widgetPlay route in widget's router
 # by the result:saved event thrown by AssessmentCompositeView from ResultItemView. It also listens for the result:saved:widget
@@ -33,7 +35,7 @@ class WidgetRunView extends Backbone.View
       <p><button id='saveToCouchDB' class='saveToCouchDB'>#{@text.save}</button></p>
       <div class='assessment-widget-result'></div>"
     @$assessmentWidget = $(document.createElement('iframe'))
-    @$assessmentWidget.attr('src', '/client/index-dev.html#widget')
+    @$assessmentWidget.attr('src', '/client/index.html#widget')
     @$assessmentWidget.attr('data-assessment', JSON.stringify(@model))
     @$assessmentWidget.attr('data-result', '{}')
     @$assessmentWidget.attr('width', '100%')

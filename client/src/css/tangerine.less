@@ -37,7 +37,7 @@ body { margin: 0; font-size: 100%; line-height: 1.231; }
 
 body, button, input, select, textarea { font-family: sans-serif; color: #222; -webkit-tap-highlight-color: rgba(0,0,0,0);}
 
-body.server 
+body.server
 {
   font-family: "Helvetica Std", Helvetica, Arial, sans-serif;
 }
@@ -252,7 +252,6 @@ textarea[contenteditable] {-webkit-appearance: none;}
 .clearfix:after { clear: both; }
 .clearfix { *zoom: 1; }
 
-
 .unselectable {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -312,7 +311,7 @@ textarea[contenteditable] {-webkit-appearance: none;}
  * Parametric mixins
  */
 
-.border-radius (@radius) 
+.border-radius (@radius)
 {
   border-radius: @radius;
   -moz-border-radius: @radius;
@@ -387,7 +386,7 @@ p
 
 section
 {
-  .box-sh( 0 2px, 2.5px, rgba(0,0,0,0.1)); 
+  .box-sh( 0 2px, 2.5px, rgba(0,0,0,0.1));
   padding: 10px;
   margin-bottom: 10px;
 }
@@ -396,7 +395,7 @@ body.flash{
   background-color: @yellow;
 }
 
-.icon 
+.icon
 {
   cursor: pointer;
   margin-right: 10px;
@@ -413,7 +412,7 @@ div.disabled
   }
 }
 
-body.class 
+body.class
 {
   table.grid
   {
@@ -430,20 +429,20 @@ table.grid
 
   clear: both;
   width: 101%;
-  
+
   td
   {
     padding: 0;
     margin: 0;
     border: 0;
   }
-  
+
   .grid_element
   {
     width: 95%;
     border: none;
     outline: none;
-    font-family: Gentium, Tahoma, Monaco, sans-serif;
+    font-family: Andika, Gentium, Tahoma, Monaco, sans-serif;
     cursor: pointer;
     text-align:center;
     background: @grey-1;
@@ -536,7 +535,7 @@ button.time
   &:active
   {
     background-color: @orange-3;
-  }  
+  }
 }
 
 
@@ -557,9 +556,7 @@ div.timer
 
 .timer_wrapper
 {
-  display: inline-block;
-  width: 100%;
-  margin: 15px 0 0;
+  margin: 15px 0 20px;
 }
 
 /*
@@ -669,14 +666,14 @@ progress
     display: inline-block;
     border-color: @green;
   }
-  
+
   .not_saved
   {
     border-color: @grey-1 !important;
     color: @grey-1;
     font-weight: bold;
   }
-  
+
 }
 
 #watermark
@@ -778,7 +775,7 @@ progress
 
     label
     {
-      color: black;  
+      color: black;
       background: none !important;
       font-weight: normal;
       margin: 0;
@@ -863,11 +860,6 @@ progress
 .subtest-back
 {
   float: left;
-  display:none;
-}
-
-.skip {
-  display:none;
 }
 
 button{
@@ -904,7 +896,7 @@ span.delete_confirm
   #prototype_wrapper {
     .print-page {
       /* A4 */
-      size: 297mm 210mm; 
+      size: 297mm 210mm;
       height: 297mm;
       width: 297mm;
       margin: 0;
@@ -934,7 +926,7 @@ span.delete_confirm
     border-collapse: separate;
     border-spacing:10px;
   }
-  td.marking-area, 
+  td.marking-area,
   .free-text {
     margin: 10px;
     width: 14cm;
@@ -1015,7 +1007,7 @@ span.delete_confirm
 {
   cursor: pointer;
   vertical-align: middle;
-  
+
   .sp_right;
 }
 
@@ -1038,7 +1030,7 @@ ul.assessment_list
   text-indent: 0px;
   margin: 0px;
   padding-left: 0px;
-  
+
   li.AssessmentListElementView
   {
     list-style: none;
@@ -1087,7 +1079,7 @@ ul.assessment_list
   {
     color: @grey;
   }
-  
+
   .assessment_menu
   {
     margin-left: 55px;
@@ -1115,12 +1107,12 @@ ul.assessment_list
   border: 0;
   cursor: pointer !important;
   margin: 0 6px 0 0;
-  a 
+  a
   {
     display: block;
     height: 36px;
   }
-  button 
+  button
   {
     display: block;
     height: 36px;
@@ -1140,7 +1132,6 @@ ul.assessment_list
 .sp_add        { background-position: -108px 0 !important; .sprite_helper; }
 .sp_drag       { background-position: -144px 0 !important; .sprite_helper; }
 .sp_run        { background-position: -180px 0 !important; .sprite_helper; }
-.sp_run_mar    { background-position: -180px 0 !important; .sprite_helper; }
 .sp_right      { background-position: -216px 0 !important; .sprite_helper; }
 .sp_down       { background-position: -252px 0 !important; .sprite_helper; }
 .sp_duplicate  { background-position: -288px 0 !important; .sprite_helper; }
@@ -1153,6 +1144,7 @@ ul.assessment_list
 .sp_print      { background-position: -504px 0 !important; .sprite_helper; }
 .sp_recent     { background-position: -540px 0 !important; .sprite_helper; }
 .sp_data_entry { background-position: -575px 0 !important; .sprite_helper; }
+
 
 .resultCount
 {
@@ -1202,7 +1194,7 @@ ul.assessment_list
  */
 
 
- 
+
 div.assessment_edit_view
 {
 
@@ -1220,7 +1212,7 @@ div.assessment_edit_view
       padding: 5px 0;
       vertical-align: middle;
     }
-    
+
   }
 
   a
@@ -1231,7 +1223,7 @@ div.assessment_edit_view
     padding: 0 !important;
     -webkit-appearance: none !important;
   }
-  
+
 
   input
   {
@@ -1296,7 +1288,7 @@ div.subtest_edit
     padding-right: 10px;
     vertical-align: middle;
   }
-  
+
   .enumerator_help_preview,
   .student_dialog_preview,
   .transition_comment_preview
@@ -1312,7 +1304,7 @@ div.subtest_edit
   overflow-y: scroll;
   margin: 0 0 0 -5px;
   width: 125%;
-  
+
   //border: 4px solid red;
 }
 
@@ -1337,7 +1329,7 @@ label.ui-button
 /*
  * Question
  */
- 
+
 table.basic_info
 {
     .small_grey;
@@ -1365,7 +1357,7 @@ table.basic_info
   border: 2px solid @grey-1;
 
 }
- 
+
 .question
 {
   position:relative;
@@ -1387,27 +1379,27 @@ table.basic_info
     display: inline;
     margin: 0 10px 0 0;
   }
-  
+
   .option_label_value
   {
     padding: 5px;
     display:inline-block;
     vertical-align: middle;
   }
-  
+
   ul
   {
     background: @orange-4;
     padding: 10px;
   }
-  
+
   li
   {
     .box-sh(5px, 5px, 10px, rgba(0,0,0,0.1));
     margin: 10px 0;
     background: white;
   }
-  
+
   button
   {
     margin: 10px;
@@ -1420,7 +1412,7 @@ table.basic_info
     color: black;
     margin: 10px 5px 0;
   }
-  
+
   .hint
   {
     font-size: 20px;
@@ -1530,13 +1522,13 @@ table.basic_info
 #csv_view
 {
   font-size: 12px;
-  
+
   textarea
   {
     height: 200px;
     font-family: "andale mono", "courier new", "courier", monospace;
   }
-  
+
 }
 
 /*
@@ -1662,7 +1654,7 @@ button.navigation
   {
     background-color: @orange-3;
   }
-  
+
   &:hover
   {
     background-color: @orange-1;
@@ -1698,7 +1690,7 @@ body.server
 .command,
 .navigation
 {
-  
+
   a, a:visited, a:hover
   {
     text-decoration: none;
@@ -1709,7 +1701,7 @@ body.server
   {
     background-color: @orange-3;
   }
-  
+
   &:hover
   {
     background-color: @orange-4;
@@ -1752,7 +1744,7 @@ body.server
   {
     background-color: @orange-3;
   }
-  
+
   &:hover
   {
     background-color: @orange-4;
@@ -1802,7 +1794,7 @@ label.no_help
     width: 5em;
     margin: 0 0 10px;
   }
-  
+
 }
 
 .id
@@ -1852,7 +1844,7 @@ label.no_help
     @media only screen and (max-width : 450px) {
       font-size: @h2;
     }
-    
+
     font-size: @h1;
     border: 1px solid #888;
     padding: 5px !important;
@@ -1869,7 +1861,7 @@ label.no_help
 
     width: 99%;
 
-    @media only screen and (max-width : 450px) { 
+    @media only screen and (max-width : 450px) {
       width: 97%;
       font-size: @h2;
     }
@@ -1887,7 +1879,7 @@ label.no_help
       background-color: @orange-3;
     }
   }
-  
+
   #login_logo
   {
     @media only screen and (max-width : 450px) { width: 75%; height: auto; }
@@ -1975,7 +1967,7 @@ label.no_help
 }
 
 
-.messages 
+.messages
 {
 
   font-weight: bold;
@@ -2244,7 +2236,7 @@ body[rtl]
   {
 
     border: 2px solid white !important;
-    
+
     thead
     {
       position:relative;
@@ -2265,7 +2257,7 @@ body[rtl]
 }
 
 /*
- * Users Menu View 
+ * Users Menu View
  */
 
 .UsersMenuView
@@ -2277,7 +2269,7 @@ body[rtl]
   .command
   {
     padding-left: 10px !important;
-    padding-right: 10px !important; 
+    padding-right: 10px !important;
   }
   th
   {
@@ -2285,105 +2277,6 @@ body[rtl]
     font-weight: normal;
   }
 }
-
-/*
- * Bandwidth Check
- */
-.BandwidthCheckView {
-  .bandwidth-begin-btn {
-    display:inline-block;
-  }
-
-  .bandwidth-cancel-btn {
-    display:none;
-  }
-
-  .grid {
-    padding: 0 !important;
-  }
-  
-  .test-results {
-    display: none;
-    margin: 10px 0 5px 0;
-
-    .status-bar {
-      display: block;
-      background-color: #CCC;
-      height: 40px;
-      padding: 2px;     
-      border-radius: 5px;
-
-      span {
-        display: inline-block;
-        height: 100%;
-        width: 100%;
-        border-radius: 3px;
-        transition: width .4s ease-in-out; 
-        text-align: center;
-        line-height: 1.75;
-      }
-
-      &.stripes {
-        span {
-          background-size: 30px 30px;
-          background-image: linear-gradient(135deg, rgba(255, 255, 255, .15) 25%, transparent 25%,
-                          transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%,
-                          transparent 75%, transparent);            
-      
-          -webkit-animation: animate-stripes 3s linear infinite;
-          -moz-animation: animate-stripes 3s linear infinite;
-          -o-animation: animate-stripes 3s linear infinite;
-          animation: animate-stripes 3s linear infinite;
-        }
-      }
-
-      &.blue {
-        span {
-          background-color: #0075F4;
-          color: #F6F6F6;
-        }
-      }
-
-      &.Poor {
-        span {
-          background-color: #E82F2F;
-          color: #F6F6F6;
-        }
-      }
-
-      &.Fair {
-        span {
-          background-color: #f6c637;
-          color: #F6F6F6;
-        }
-      }
-
-      &.Good {
-        span {
-          background-color: #4D740C;
-          color: #F6F6F6;
-        }
-      }
-    }
-  }
-}
-
-@-webkit-keyframes animate-stripes{
-    0% {background-position: 0 0;} 100% {background-position: 60px 0;}
-}
-@-moz-keyframes animate-stripes{
-    0% {background-position: 0 0;} 100% {background-position: 60px 0;}
-}
-@-o-keyframes animate-stripes{
-    0% {background-position: 0 0;} 100% {background-position: 60px 0;}
-}
-@keyframes animate-stripes {
-    0% {background-position: 0 0;} 100% {background-position: 60px 0;}
-}
-//end bandwith including webkit stuff above
-
-
-
 /*
  * ButtonView
  */
@@ -2608,8 +2501,8 @@ table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSo
 .ui-button { -webkit-appearance:none; display: inline-block; position: relative; padding: 0; margin-right: 10px; text-decoration: none !important; cursor: pointer; text-align: center; zoom: 1; overflow: visible; } /* the overflow property removes extra width in IE */
 .ui-button-icon-only { width: 2.2em; } /* to make room for the icon, a width needs to be set here */
 button.ui-button-icon-only { width: 2.4em; } /* button elements seem to need a little more width */
-.ui-button-icons-only { width: 3.4em; } 
-button.ui-button-icons-only { width: 3.7em; } 
+.ui-button-icons-only { width: 3.4em; }
+button.ui-button-icons-only { width: 3.7em; }
 
 /*button text element */
 .ui-button .ui-button-text { display: block; line-height: 1;font-size:22px; border:2px solid white}
@@ -2780,8 +2673,8 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
 }
 
 .av-button-highlight {
-  border: 10px solid #af0;
-  border-radius: 10px;
+    border: 10px solid #af0;
+    border-radius: 10px;
 }
 
 .av-layout {
@@ -2868,7 +2761,3 @@ button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra pad
   background: white;
   z-index: 5000;
 }
-
-
-
-

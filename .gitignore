@@ -36,3 +36,5 @@ editor/src/bower_components/
 client/src/js/init/class-2-pack0000.json
 
 robbert/npm-shrinkwrap.json
+
+client/src/compiled/*

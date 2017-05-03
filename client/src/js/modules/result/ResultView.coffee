@@ -1,4 +1,4 @@
-class ResultView extends Backbone.Marionette.ItemView
+class ResultView extends Backbone.View
 
   className: "result_view"
 
@@ -23,7 +23,7 @@ class ResultView extends Backbone.Marionette.ItemView
         incorrect : 0
         missing : 0
         total : 1
-    @trigger "result-saved"
+
     if @model.save()
       Tangerine.activity = ""
       Utils.midAlert @text.saved

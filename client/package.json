@@ -5,21 +5,13 @@
   "main": "index.js",
   "scripts": {
     "postinstall": " cd scripts && ./postinstall.sh",
-    "build:apk": "cordova build -- --gradleArg=-PcdvBuildArch=arm android 2>&1",
-    "test": "gulp test",
-    "clean": "rm -rf platforms plugins node_modules",
-    "update:tree": "git pull && chown -R www-data:www-data .",
-    "listen": "cd scripts ./listen.rb",
-    "testInBrowser": "http-server ./ -p 9000 --silent",
+    "build:apk": "cordova build android 2>&1",
     "install:apk": "cd scripts && ./install.sh",
+    "test": "mocha echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf platforms plugins node_modules",
     "preload": "scripts/preload.js",
     "treeload": "scripts/treeload.js",
-    "start": "gulp",
-    "gulp": "gulp",
-    "debug": "gulp index-dev & gulp default",
-    "debug-test": "gulp debug & http-server ./ -p 9000 --silent",
-    "debug-gulp": "iron-node node_modules/gulp/bin/gulp.js",
-    "tree-postinstall": " cd scripts && ./tree-postinstall.sh"
+    "start": "gulp"
   },
   "repository": {
     "type": "git",

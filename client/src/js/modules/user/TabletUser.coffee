@@ -14,12 +14,12 @@ class TabletUser extends Backbone.Model
   initialize: ( options ) ->
     @myRoles = []
 
-  ###
+  ###s
     Accessors
   ###
   name:        -> @get("name") || null
   roles:       -> @getArray("roles")
-  isAdmin:     -> "_admin" in @roles()
+  isAdmin:     -> "_admin" in @roles() or @name() is "admin "
   recentUsers: -> Tangerine.settings.getArray("recentUsers")
 
   ###
@@ -63,18 +63,6 @@ class TabletUser extends Backbone.Model
   ###
     helpers
   ###
-
-  setPreferences: ( domain = "general", key = '', value = '' ) ->
-    preferences = @get("preferences") || {}
-    preferences[domain] = {} unless preferences[domain]?
-    preferences[domain][key] = value
-    @save("preferences": preferences)
-
-  getPreferences: ( domain = "general", key = "" ) ->
-    prefs = @get("preferences")
-    return prefs?[domain] || null if key is ""
-    return prefs?[domain]?[key] || null
-
   verifyPassword: ( providedPass ) ->
     salt     = @get "salt"
     realHash = @get "pass"

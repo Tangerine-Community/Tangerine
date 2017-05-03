@@ -1172,26 +1172,6 @@ ul.assessment_list .assessment_menu {
   display: block;
   height: 36px;
 }
-.sp_run_mar {
-  background-position: -180px 0 !important;
-  text-indent: -999em;
-  letter-spacing: -999em;
-  overflow: hidden;
-  width: 36px;
-  height: 36px;
-  background: url('sprites.png') no-repeat;
-  border: 0;
-  cursor: pointer !important;
-  margin: 0 6px 0 0;
-}
-.sp_run_mar a {
-  display: block;
-  height: 36px;
-}
-.sp_run_mar button {
-  display: block;
-  height: 36px;
-}
 .sp_right {
   background-position: -216px 0 !important;
   text-indent: -999em;
@@ -2237,7 +2217,7 @@ body[rtl] {
   font-weight: normal;
   background-color: white;
   text-align: left;
-  border: 1px solid #000000;
+  border: 1px solid black;
 }
 .KlassSubtestResultView {
   margin: 1em 0;
@@ -2744,7 +2724,7 @@ button.ui-button-icons-only {
   display: block;
   line-height: 1;
   font-size: 22px;
-  border: 2px solid #ffffff;
+  border: 2px solid white;
 }
 .ui-button-text-only .ui-button-text {
   padding: 8px;

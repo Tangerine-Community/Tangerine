@@ -6,8 +6,9 @@
 
 ResultOfQuestion = (name) ->
   returnView = null
-#  viewMaster.subtestViews[index].prototypeView.questionViews.forEach (candidateView) ->
-  Tangerine.progress.currentSubview.questionViews.forEach (candidateView) ->
+  index = vm.currentView.orderMap[vm.currentView.index]
+
+  vm.currentView.subtestViews[index].prototypeView.questionViews.forEach (candidateView) ->
     if candidateView.model.get("name") == name
       returnView = candidateView
   throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
@@ -16,8 +17,9 @@ ResultOfQuestion = (name) ->
 
 ResultOfMultiple = (name) ->
   returnView = null
-#  viewMaster.subtestViews[index].prototypeView.questionViews.forEach (candidateView) ->
-  Tangerine.progress.currentSubview.questionViews.forEach (candidateView) ->
+  index = vm.currentView.orderMap[vm.currentView.index]
+
+  vm.currentView.subtestViews[index].prototypeView.questionViews.forEach (candidateView) ->
     if candidateView.model.get("name") == name
       returnView = candidateView
   throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
@@ -28,22 +30,33 @@ ResultOfMultiple = (name) ->
   return result
 
 ResultOfPrevious = (name) ->
-  if typeof vm.currentView.result == 'undefined'
-#    console.log("Using Tangerine.progress.currentSubview")
-    return Tangerine.progress.currentSubview.model.parent.result.getVariable(name)
-  else
-    return vm.currentView.result.getVariable(name)
+  return vm.currentView.result.getVariable(name)
 
 ResultOfGrid = (name) ->
-  if typeof vm.currentView.result == 'undefined'
-    console.log("Using Tangerine.progress.currentSubview")
-    return Tangerine.progress.currentSubview.model.parent.result.getItemResultCountByVariableName(name, "correct")
-  else
-    return vm.currentView.result.getVariable(name)
+  return vm.currentView.result.getItemResultCountByVariableName(name, "correct")
+
+
+SetPrevious = (name, value) ->
+  return vm.currentView.result.setVariable(name, value)
+
+SetResultOfQuestion = (name, value, obj) ->
+  index = vm.currentView.orderMap[vm.currentView.index]
+  notFound = true
+
+  for candidateView in vm.currentView.subtestViews[index].prototypeView.questionViews
+    if candidateView.model.get("name") == name
+      notFound = false
+      candidateView.answer = value
+      if obj?
+        candidateView[k] = v for k, v of obj
+  throw new ReferenceError("SetResultOfQuestion could not find variable #{name}") if notFound
+  
+
+
 #
 # Tangerine backbutton handler
 #
-$.extend(Tangerine,TangerineVersion)
+Tangerine = if Tangerine? then Tangerine else {}
 Tangerine.onBackButton = (event) ->
   if Tangerine.activity == "assessment run"
     if confirm t("NavigationView.message.incomplete_main_screen")
@@ -110,13 +123,13 @@ Backbone.Model.prototype.stamp = ->
 # This series of functions returns properties with default values if no property is found
 # @gotcha be mindful of the default "blank" values set here
 #
-Backbone.Model.prototype.getNumber =        (key, fallback = 0)  -> return if @has(key) then parseInt(@get(key)) else fallback
-Backbone.Model.prototype.getArray =         (key, fallback = []) -> return if @has(key) then @get(key)           else fallback
-Backbone.Model.prototype.getString =        (key, fallback = '') -> return if @has(key) then @get(key)           else fallback
-Backbone.Model.prototype.getEscapedString = (key, fallback = '') -> return if @has(key) then @escape(key)        else fallback
-# this seems too important to use a default
-Backbone.Model.prototype.getBoolean =       (key) -> return if @has(key) then (@get(key) == true or @get(key) == 'true')
+Backbone.Model.prototype.getNumber        = (key, def) -> return if @has(key) then Number(@get(key)) else if def isnt undefined then def else 0
+Backbone.Model.prototype.getArray         = (key, def) -> return if @has(key) then @get(key)           else if def isnt undefined then def else []
+Backbone.Model.prototype.getString        = (key, def) -> return if @has(key) then @get(key)           else if def isnt undefined then def else ""
+Backbone.Model.prototype.getEscapedString = (key, def) -> return if @has(key) then @escape(key)        else if def isnt undefined then def else ""
+Backbone.Model.prototype.getBoolean       = (key, def) -> return if @has(key) then (@get(key) is true or @get(key) is 'true') else if def isnt undefined then def
 Backbone.Model.prototype.getObject        = (key, def) -> return if @has(key) then @get(key)           else if def isnt undefined then def else {}
+
 
 #
 # handy jquery functions
@@ -206,17 +219,7 @@ class Utils
 
     a = document.createElement("a")
     a.href = Tangerine.settings.get("groupHost")
-    if Tangerine.settings.get("groupHost") == "localhost"
-      allDocsUrl = "http://#{Tangerine.settings.get("groupHost")}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
-    else
-      if a.host == "databases.tangerinecentral.org"
-        allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
-      else if a.host == "databases-qa.tangerinecentral.org"
-        allDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/check/#{Tangerine.settings.groupDB}"
-      else
-        allDocsUrl = "#{a.protocol}//#{a.host}/decompressor/check/#{Tangerine.settings.get('groupName')}"
-
-    $("#upload_results").append(t("Utils.message.checkingServer") + '&nbsp' + docList.length + '<br/>')
+    allDocsUrl = "#{a.protocol}//#{a.host}/decompressor/check/#{Tangerine.settings.get('groupName')}"
 
     return $.ajax
       url: allDocsUrl
@@ -227,21 +230,14 @@ class Utils
         keys: docList
         user: Tangerine.settings.upUser
         pass: Tangerine.settings.upPass
-      error: (e) ->
-        errorMessage = JSON.stringify e
-        alert "Error connecting" + errorMessage
-        $("#upload_results").append('Error connecting to : ' + allDocsUrl + ' - Error: ' + errorMessage + '<br/>')
+      error: (a) ->
+        alert "Error connecting"
       success: (response) =>
-        $("#upload_results").append('Received response from server.<br/>')
+
         rows = response.rows
         leftToUpload = []
         for row in rows
           leftToUpload.push(row.key) if row.error?
-
-        if leftToUpload.length > 0
-          $("#upload_results").append(t("Utils.message.countTabletResults") + '&nbsp' + leftToUpload.length + '<br/>')
-        else
-          $("#upload_results").append(t("Utils.message.noUpload") + '<br/>')
 
         # if it's already fully uploaded
         # make sure it's in the log
@@ -252,27 +248,17 @@ class Utils
           compressedData = LZString.compressToBase64(JSON.stringify(docs))
           a = document.createElement("a")
           a.href = Tangerine.settings.get("groupHost")
-          if Tangerine.settings.get("groupHost") == "localhost"
-            bulkDocsUrl = "http://#{Tangerine.settings.get("groupHost")}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
-          else
-            if a.host == "databases.tangerinecentral.org"
-              bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
-            else if a.host == "databases-qa.tangerinecentral.org"
-              bulkDocsUrl = "#{a.protocol}//#{a.host}/_cors_bulk_docs/upload/#{Tangerine.settings.groupDB}"
-            else
-              bulkDocsUrl = "#{a.protocol}//#{a.host}/decompressor/upload/#{Tangerine.settings.get('groupName')}"
+          bulkDocsUrl = "#{a.protocol}//#{a.host}/decompressor/upload/#{Tangerine.settings.get('groupName')}"
 
           $.ajax
             type : "POST"
             url : bulkDocsUrl
+            contentType: 'text/plain'
             data : compressedData
-            error: (e) =>
-              errorMessage = JSON.stringify e
-              alert "Server bulk docs error" + errorMessage
-              $("#upload_results").append(t("Utils.message.bulkDocsError") + bulkDocsUrl + ' - ' + t("Utils.message.error") + ': ' + errorMessage + '<br/>')
+            error: =>
+              alert "Server bulk docs error"
             success: =>
-              Utils.sticky t("Utils.message.resultsUploaded")
-              $("#upload_results").append(t("Utils.message.universalUploadComplete")+ '<br/>')
+              Utils.sticky "Results uploaded"
               return
         )
 
@@ -280,19 +266,11 @@ class Utils
   @universalUpload: ->
     results = new Results
     results.fetch
+      options:
+        key: "result"
       success: ->
         docList = results.pluck("_id")
         Utils.uploadCompressed(docList)
-
-  @saveDocListToFile: ->
-#    Tangerine.db.allDocs(include_docs:true).then( (response) ->
-#      Utils.saveRecordsToFile(JSON.stringify(response))
-#    )
-    results = new Results
-    results.fetch
-      success: ->
-#        console.log("results: " + JSON.stringify(results))
-        Utils.saveRecordsToFile(JSON.stringify(results))
 
   @checkSession: (url, options) ->
     options = options || {};
@@ -315,79 +293,6 @@ class Utils
           options.error(req.status, resp.error, resp.reason);
         else
           alert("An error occurred getting session info: " + resp.reason)
-
-#  @startReplication =  () ->
-#    credentials = account.username + ":" + account.password;
-#    couchdb =  "troubletickets_" +  account.site;
-#    subdomain =  "ug" +  account.site;
-#    remoteCouch = "http://" + credentials + "@localhost:5984/" + couchdb + "/";
-#    a = document.createElement("a")
-#    a.href = Tangerine.settings.get("groupHost")
-#    bulkDocsUrl = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
-#    console.log("start replication with " + remoteCouch)
-#    opts = {continuous: false,
-#      withCredentials:true,
-#    #//cookieAuth: {username:account.username, password:account.password},
-#    auth: {username:account.username, password:account.password},
-#    complete: CoconutUtils.onComplete,
-#    timeout: 60000};
-#    Backbone.sync.defaults.db.replicate.to(remoteCouch, opts, CoconutUtils.ReplicationErrorLog);
-
-  @cloud_url_with_credentials: (cloud_url)->
-    cloud_credentials = "username:password"
-    cloud_url.replace(/http:\/\//,"http://#{cloud_credentials}@")
-
-  @replicateToServer: (options, divId) ->
-    options = {} if !options
-    opts =
-#      live:true
-      continuous: false
-#      batch_size:5
-#      filter: filter
-#      batches_limit:1
-      withCredentials:true
-#      auth:
-#        username:account.username
-#        password:account.password
-      complete: (result) ->
-        if typeof result != 'undefined' && result != null && result.ok
-          console.log "replicateToServer - onComplete: Replication is fine. "
-        else
-          console.log "replicateToServer - onComplete: Replication message: " + result
-      error: (result) ->
-        console.log "error: Replication error: " + JSON.stringify result
-      timeout: 60000
-    _.extend options, opts
-
-    a = document.createElement("a")
-    a.href = Tangerine.settings.get("groupHost")
-    replicationURL = "#{a.protocol}//#{a.host}/#{Tangerine.settings.groupDB}"
-    credRepliUrl = @cloud_url_with_credentials(replicationURL)
-    console.log("credRepliUrl: " + credRepliUrl)
-    Backbone.sync.defaults.db.replicate.to(credRepliUrl, options).on('uptodate', (result) ->
-      if typeof result != 'undefined' && result.ok
-        console.log "uptodate: Replication is fine. "
-        options.complete()
-        if typeof options.success != 'undefined'
-          options.success()
-      else
-        console.log "uptodate: Replication error: " + JSON.stringify result).on('change', (info)->
-      console.log "Change: " + JSON.stringify info
-      doc_count = options.status?.doc_count
-      doc_del_count = options.status?.doc_del_count
-      total_docs = doc_count? + doc_del_count?
-      doc_written = info.docs_written
-      percentDone = Math.floor((doc_written/total_docs) * 100)
-      if !isNaN  percentDone
-        msg = "Change: docs_written: " + doc_written + " of " +  total_docs + ". Percent Done: " + percentDone + "%<br/>"
-      else
-        msg = "Change: docs_written: " + doc_written + "<br/>"
-      console.log("msg: " + msg)
-      $(divId).append msg
-    ).on('complete', (info)->
-      console.log "Complete: " + JSON.stringify info
-    )
-#    Coconut.menuView.checkReplicationStatus();
 
   @restartTangerine: (message, callback) ->
     Utils.midAlert "#{message || 'Restarting Tangerine'}"
@@ -657,99 +562,7 @@ class Utils
               doc_ids: docList
           )
 
-  @loadDevelopmentPacks: (callback) ->
-    $.ajax
-      dataType: "json"
-      url: "packs.json"
-      error: (res) ->
-        callback(res)
-      success: (res) ->
-        Tangerine.db.bulkDocs res, (error, doc) ->
-          if error then callback(error) else callback()
 
-  @getAssessments: (T_ADMIN, T_PASS, group, success, error) ->
-
-    SOURCE_GROUP = "http://" + T_ADMIN + ":" + T_PASS + "@databases.tangerinecentral.org/group-" + group;
-
-
-    # helper method for json get requests
-    # needs opts.url.
-    # Chain handlers to .end(f)
-    get = (opts) ->
-      data = opts.data || {};
-      return $.getJSON(opts.url)
-#        .header('Accept', 'application/json')
-#        .header('Content-Type', 'application/json');
-
-
-    # helper method for json post requests
-    # needs opts.data and opts.url.
-    # Chain handlers to .end(f)
-    post = (opts) ->
-      data = opts.data || {};
-      return $.post(
-        url: opts.url
-        dataType: 'json'
-        data: data
-      )
-#      .header('Accept', 'application/json')
-#      .header('Content-Type', 'application/json')
-#      .send(data)
-
-    assessments = ""
-    get({url: SOURCE_GROUP}).done((res) ->
-      if res.code != 200
-        console.log(res.code)
-        console.log(res.rawbody)
-        error(res.rawbody)
-    )
-    post(
-      url: SOURCE_GROUP + "/_design/ojai/_view/assessmentsNotArchived"
-      ).done((res) ->
-#       transform them to dKeys
-      list_query_data =
-          keys: res.body.rows.map( (row) ->
-            return row.id.substr(-5)
-            )
-#      get a list of files associated with those assessments
-        post(
-          url: SOURCE_GROUP + "/_design/ojai/_view/byDKey",
-          data: list_query_data
-        ).done((res) ->
-          id_list = res.body.rows.map((row) ->
-            return row.id;
-          )
-          id_list.push("settings")
-          pack_number = 0;
-          padding = "0000";
-
-          fse.ensureDirSync(PACK_PATH); # make sure the directory is there
-          doOne() ->
-            ids = id_list.splice(0, PACK_DOC_SIZE); # get X doc ids
-            #get n docs
-            get(
-              url: SOURCE_GROUP + "/_all_docs?include_docs=true&keys=" + JSON.stringify(ids)
-            )
-            .done((res) ->
-#              file_name = PACK_PATH + "/pack" + (padding + pack_number).substr(-4) + ".json";
-              docs = res.body.rows.map((row) ->
-                return row.doc;
-                )
-              body = JSON.stringify(
-                docs: docs
-                )
-              assessments = assessments + body
-              console.log(pack_number + " added to assessments");
-              if ids.length != 0
-                pack_number++;
-                doOne()
-              else
-                console.log("All done")
-
-            ) # END of get _all_docs
-          doOne()
-          ) # END of byDKey callback
-    ) # END of assessmentsNotArchived callback
 
 # Robbert interface
 class Robbert
@@ -820,313 +633,3 @@ $ ->
 
   # $(window).resize Utils.resizeScrollPane
   # Utils.resizeScrollPane()
-
-# Handlebars partials
-Handlebars.registerHelper('gridLabel', (items,itemMap,index) ->
-#  _.escape(items[itemMap[done]])
-  _.escape(items[itemMap[index]])
-)
-Handlebars.registerHelper('startRow', (index) ->
-  console.log("index: " + index)
-  if index == 0
-    "<tr>"
-)
-Handlebars.registerHelper('endRow', (index) ->
-  console.log("index: " + index)
-  if index == 0
-    "</tr>"
-)
-
-Handlebars.registerHelper('startCell', (index) ->
-  console.log("index: " + index)
-  if index == 0
-    "<td></td>"
-)
-
-#/*
-#   * Use this to turn on logging:
-#   */
-Handlebars.logger.log = (level)->
-  if  level >= Handlebars.logger.level
-    console.log.apply(console, [].concat(["Handlebars: "], _.toArray(arguments)))
-
-##// DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3,
-Handlebars.registerHelper('log', Handlebars.logger.log);
-##// Std level is 3, when set to 0, handlebars will log all compilation results
-Handlebars.logger.level = 3;
-
-#/*
-#   * Log can also be used in templates: '{{log 0 this "myString" accountName}}'
-#   * Logs all the passed data when logger.level = 0
-#   */
-
-Handlebars.registerHelper("debug", (optionalValue)->
-  console.log("Current Context")
-  console.log("====================")
-  console.log(this)
-
-  if optionalValue
-    console.log("Value")
-    console.log("====================")
-    console.log(optionalValue)
-)
-
-Handlebars.registerHelper('monthDropdown', (months, currentMonth)->
-  renderOption = (month, currentMonth)->
-    out = "<option value='" + month + "'"
-    if month == currentMonth
-      out = out + "selected='selected'"
-    out = out +  ">" + month.titleize() + "</option>"
-    return out
-  renderOption(month, currentMonth) for month in months
-)
-
-class Backbone.EditView extends Backbone.View
-
-  events :
-    "click .edit_in_place" : "editInPlace"
-    "focusout .editing"    : "editing"
-    "keyup    .editing"    : "editing"
-    "keydown  .editing"    : "editing"
-
-  getEditable: (options) =>
-
-    model        = options.model
-    attribute    = options.attribute
-    name         = options.name        || "Value"
-    placeholder  = options.placeholder || "none"
-    prepare      = options.prepare
-
-    @preparations                     = {} unless @preparations?
-    @preparations[model.id]           = {} unless @preparations[model.id]?
-    @preparations[model.id][attribute.key] = prepare
-
-    @htmlGenCatelog = {} unless @htmlGenCatelog?
-    @htmlGenCatelog[model.id] = {} unless @htmlGenCatelog[model.id]?
-    @htmlGenCatelog[model.id][attribute.key] = htmlFunction = do (model, attribute, name, placeholder) -> 
-      -> 
-
-        key    = attribute.key
-        escape = attribute.escape
-        type   = attribute.type || ''
-
-        # cook the value
-        value = if model.has(key) then model.get(key) else placeholder
-        value = placeholder if _(value).isEmptyString()
-
-        value = _(value).escape() if escape
-        untitled = " data-untitled='true' " if value is placeholder
-
-        # what is it
-        editOrNot   = if attribute.editable && Tangerine.settings.get("context") == "server" then "class='edit_in_place'" else ""
-
-        numberOrNot = if _.isNumber(value) then "data-is-number='true'" else "data-is-number='false'" 
-
-        result = "<div class='edit_in_place #{key}-edit-in-place' id='#{model.id}-#{key}'><span data-model-id='#{model.id}' data-type='#{type}' data-key='#{key}' data-value='#{value}' data-name='#{name}' #{editOrNot} #{numberOrNot} #{untitled||''}>#{value}</span></div>"
-
-        return result
-
-    return htmlFunction()
-
-
-  editInPlace: (event) =>
-
-    return if @alreadyEditing
-    @alreadyEditing = true
-
-    # save state
-    # replace with text area
-    # on save, save and re-replace
-    $span = $(event.target)
-
-    $parent  = $span.parent()
-
-    return if $span.hasClass("editing")
-
-    guid     = Utils.guid()
-
-    key      = $span.attr("data-key")
-    name     = $span.attr("data-name")
-    type     = $span.attr("data-type")
-    isNumber = $span.attr("data-is-number") == "true"
-
-    modelId  = $span.attr("data-model-id")
-    model    = @models.get(modelId)
-
-    oldValue = model.get(key) || ""
-    oldValue = "" if $span.attr("data-untitled") == "true"
-
-    $target = $(event.target)
-    classes = ($target.attr("class") || "").replace("settings","")
-    margins = $target.css("margin")
-
-    transferVariables = "data-is-number='#{isNumber}' data-key='#{key}' data-model-id='#{modelId}' "
-
-    if type is "boolean"
-      $span
-
-    # sets width/height with style attribute
-    rows = 1 + oldValue.count("\n")
-    rows = parseInt(Math.max(oldValue.length / 30, rows))
-    $parent.html("<textarea placeholder='#{name}' id='#{guid}' rows='#{rows}' #{transferVariables} class='editing #{classes} #{key}-editing' style='margin:#{margins}' data-name='#{name}'>#{oldValue}</textarea>")
-    # style='width:#{oldWidth}px; height: #{oldHeight}px;'
-    $textarea = $("##{guid}")
-    $textarea.select()
-
-  editing: (event) =>
-
-    return false if event.which == 13 and event.type == "keyup"
-
-    $target = $(event.target)
-
-    $parent = $target.parent()
-
-    key        = $target.attr("data-key")
-    isNumber   = $target.attr("data-is-number") == "true"
-
-    modelId    = $target.attr("data-model-id")
-    name       = $target.attr("data-name")
-
-    model      = @models.get(modelId)
-    oldValue   = model.get(key)
-
-    newValue = $target.val()
-    newValue = if isNumber then parseInt(newValue) else newValue
-
-    if event.which == 27 or event.type == "focusout"
-      @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
-      @alreadyEditing = false
-      return
-
-    # act normal, unless it's an enter key on keydown
-    keyDown = event.type is "keydown"
-    enter   = event.which is 13
-    altKey  = event.altKey
-
-    return true if enter and altKey
-    return true unless enter and keyDown
-
-    @alreadyEditing = false
-
-    # If there was a change, save it
-    if String(newValue) != String(oldValue)
-      attributes = {}
-      attributes[key] = newValue
-      if @preparations?[modelId]?[key]?
-        try
-          attributes[key+"-cooked"] = @preparations[modelId][key](newValue)
-        catch e
-          Utils.sticky("Problem cooking value<br>#{e.message}")
-          return
-      model.save attributes,
-        success: =>
-          Utils.topAlert "#{name} saved"
-          @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
-        error: =>
-          alert "Please try to save again, it didn't work that time."
-          @render()
-    else
-      @$el.find("##{modelId}-#{key}").html @htmlGenCatelog[modelId][key]?()
-
-    # this ensures we do not insert a newline character when we press enter
-    return false
-
-
-
-
-
-class Backbone.ChildModel extends Backbone.Model
-
-  save: (attributes, options={}) =>
-    options.success = $.noop unless options.success?
-    options.error = $.noop unless options.error?
-    @set attributes
-    options.childSelf = @
-    @parent.childSave(options)
-
-
-class Backbone.ChildCollection extends Backbone.Collection
-
-
-class Backbone.ParentModel extends Backbone.Model
-
-  Child: null
-  ChildCollection: null
-
-  constructor: (options) ->
-    @collection = new @ChildCollection()
-    @collection.on "remove", => @updateAttributes()
-    super(options)
-
-  getLength: -> @collection.length || @attributes.children.length
-
-  fetch: (options) ->
-    oldSuccess = options.success
-    delete options.success
-    
-    options.success = (model, response, options) =>
-      childrenModels = []
-      for child in @getChildren()
-        childModel = new @Child(child)
-        childModel.parent = @
-        childrenModels.push childModel
-      @collection.reset childrenModels
-      @collection.sort()
-      oldSuccess(model, response, options)
-
-    super(options)
-
-  getChildren: ->
-    @getArray("children")
-
-  updateAttributes: ->
-    @attributes.children = []
-    for model in @collection.models
-      @attributes.children.push model.attributes
-
-  updateCollection: =>
-    @collection.reset(@attributes.children)
-    @collection.each (child) =>
-      child.parent = @
-
-  newChild: (attributes={}, options) =>
-    newChild = new @Child
-    newChild.set("_id", Utils.guid())
-    newChild.parent = @
-    @collection.add(newChild, options)
-    newChild.save attributes,
-      success: =>
-        
-
-  childSave: (options = {}) =>
-    oldSuccess = options.success
-    delete options.success
-    options.success = (a, b, c) =>
-      oldSuccess.apply(options.childSelf, [a, b, c])
-    @updateAttributes()
-
-    @save null, options
-
-
-_.prototype.isEmptyString = ->
-  _.isEmptyString(@_wrapped)
-
-_.prototype.indexBy = ( index ) ->
-
-  anArray = @_wrapped
-  anArray = @_wrapped.models if @_wrapped.models?
-
-  _.indexBy(index, anArray)
-
-_.prototype.tally = ->
-  _.tally(@_wrapped)
-
-_.tally = ( anArray ) ->
-  counts = {}
-  for element in anArray
-    if element?
-      counts[element] = 0 unless counts[element]?
-      counts[element]++
-  counts
-
-

@@ -9,21 +9,12 @@ plugins/
 
 # npm
 node_modules/
-bower_components/
-npm-debug.log
+
+bundler
+bundle/
+bundle/
+.bundle/
 
 # gulp build artifacts
 tmp/js/*
 tmp/min/*
-lib.js
-app.js
-src/compiled/*
-
-# tangerine's packs
-src/js/init/pack*.json
-test/packs.json
-src/packs.json
-
-
-.idea
-/lesson_plan_media/

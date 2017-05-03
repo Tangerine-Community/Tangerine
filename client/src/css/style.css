@@ -33,20 +33,6 @@
     src: url('./gentium.ttf') format('truetype');
 }
 
-@font-face {
-    font-family: 'Mondulkiri';
-    font-style: normal;
-    font-weight: 400;
-    src: url('./Mondulkiri-R.ttf') format('truetype');
-}
-
-@font-face {
-    font-family: 'Busra';
-    font-style: normal;
-    font-weight: 400;
-    src: url('./Busra-R.ttf') format('truetype');
-}
-
 /*
  * Media queries for responsive design https://github.com/shichuan/mobile-html5-boilerplate/wiki/The-Style
  */

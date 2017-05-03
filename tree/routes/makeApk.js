@@ -40,7 +40,7 @@ let Settings = require('../client/scripts/Settings');
 
 // shell response idiom
 const notOk = function(output, res, status) {
-    console.log("output of APK build process: " + output);
+    console.log("output of APK build process: " + JSON.stringify(output));
     if (output === undefined) { return; }
     const badExit = output.code !== 0;
     if (badExit) {
@@ -65,7 +65,6 @@ const makeApk = function(req, res) {
     const groupNameRaw = req.params.group;
     const hostname = req.params[0];
     const docs = req.body.docs
-    // console.log("docs: " + JSON.stringify(docs));
     const emptyGroup = !groupNameRaw || groupNameRaw == ''
     if (emptyGroup) {
         return res

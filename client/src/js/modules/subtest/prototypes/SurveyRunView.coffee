@@ -10,6 +10,7 @@ class SurveyRunView extends Backbone.View
     qv = @questionViews[@currentQuestion]
     return @showErrors(qv) unless @isValid([qv])
 
+    console.log("avNext:"+ @currentQuestion)
     qv.$el.find('.av-question').css('display', 'none')
     @currentQuestion++
     if @questionViews.length is @currentQuestion
@@ -23,6 +24,7 @@ class SurveyRunView extends Backbone.View
 
   updateQuestionProgress: ->
     qv = @questionViews[@currentQuestion]
+    console.log("updateQuestionProgress @currentQuestion: " + @currentQuestion)
     qv.setProgress(@currentQuestion+1, @questionViews.length)
 
   avPrev: =>
@@ -46,10 +48,8 @@ class SurveyRunView extends Backbone.View
 
     # find the non-skipped questions
     isAvailable = []
-    for question, i in @questionViews
-      isAutostopped  = question.$el.hasClass("disabled_autostop")
-      isLogicSkipped = question.$el.hasClass("disabled_skipped")
-      isAvailable.push i if not (isAutostopped or isLogicSkipped)
+    for qv, i in @questionViews
+      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
     isAvailable  = _.filter isAvailable, (e) => e > @questionIndex
 
     # don't go anywhere unless we have somewhere to go
@@ -72,10 +72,8 @@ class SurveyRunView extends Backbone.View
 
     # find the non-skipped questions
     isAvailable = []
-    for question, i in @questionViews
-      isAutostopped  = question.$el.hasClass("disabled_autostop")
-      isLogicSkipped = question.$el.hasClass("disabled_skipped")
-      isAvailable.push i if not (isAutostopped or isLogicSkipped)
+    for qv, i in @questionViews
+      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
     isAvailable  = _.filter isAvailable, (e) => e < @questionIndex
 
     # don't go anywhere unless we have somewhere to go
@@ -92,10 +90,8 @@ class SurveyRunView extends Backbone.View
   updateProgressButtons: ->
 
     isAvailable = []
-    for question, i in @questionViews
-      isAutostopped  = question.$el.hasClass("disabled_autostop")
-      isLogicSkipped = question.$el.hasClass("disabled_skipped")
-      isAvailable.push i if not (isAutostopped or isLogicSkipped)
+    for qv, i in @questionViews
+      isAvailable.push i if not (qv.isAutostopped or qv.isSkipped)
     isAvailable.push @questionIndex
 
     $prev = @$el.find(".prev_question")
@@ -170,8 +166,9 @@ class SurveyRunView extends Backbone.View
 
 
   initialize: (options) ->
+
     @model         = options.model
-    @parent        = @model.parent
+    @parent        = options.parent
     @dataEntry     = options.dataEntry
     @isObservation = options.isObservation
     @focusMode     = @model.getBoolean("focusMode")
@@ -179,8 +176,6 @@ class SurveyRunView extends Backbone.View
     @questionViews = []
     @answered      = []
     @renderCount   = 0
-    vm =
-      currentView: Tangerine.progress.currentSubview
 
     @i18n()
 
@@ -193,17 +188,15 @@ class SurveyRunView extends Backbone.View
     @questions     = new Questions()
     # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
     @questions.fetch
-      key: "q" + @model.get("assessmentId")
+      viewOptions:
+        key: "question-#{@model.id}"
       success: (collection) =>
-        @questions = new Questions collection.where {"subtestId":@model.id}
         @questions.sort()
         if @questions.first().get("type") is "av"
           @avMode = true
           $(window).on 'resize', @handleResize
         @ready = true
         @render()
-
-    Tangerine.progress.currentSubview = @
 
   handleResize: =>
     @questionViews.forEach (qv)-> qv.render()
@@ -214,30 +207,14 @@ class SurveyRunView extends Backbone.View
     qv.resizeAvImages()
     qv.highlightPrevious()
 
-# when a question is answered
+  # when a question is answered
   onQuestionAnswer: (element) =>
 
     return unless @renderCount == @questions.length
 
-    if @isObservation
-
-# find the view of the question
-      cid = $(element).attr("data-cid")
-      for view in @questionViews
-        if view.cid == cid && view.type != "multiple" # if it's multiple don't go scrollin
-
-# find last or next not skipped
-          next = $(view.el).next()
-          while next.length != 0 && next.hasClass("disabled_skipped")
-            next = $(next).next()
-
-          # if it's not the last, scroll to it
-          if next.length != 0
-            next.scrollTo()
-
     # auto stop after limit
     @autostopped    = false
-    autostopLimit   = parseInt(@model.get("autostopLimit")) || 0
+    autostopLimit   = @model.getNumber "autostopLimit"
     longestSequence = 0
     autostopCount   = 0
 
@@ -257,17 +234,22 @@ class SurveyRunView extends Backbone.View
     @updateSkipLogic()
 
   updateAutostop: ->
-    autostopLimit = parseInt(@model.get("autostopLimit")) || 0
-    for view, i in @questionViews
+    autostopLimit = @model.getNumber "autostopLimit"
+    @questionViews.forEach (view, i) ->
       if i > (@autostopIndex - 1)
-        view.$el.addClass    "disabled_autostop" if     @autostopped
-        view.$el.removeClass "disabled_autostop" if not @autostopped
+        if @autostopped
+          view.isAutostopped = true
+          view.$el.addClass    "disabled_autostop"
+        else
+          view.isAutostopped = false
+          view.$el.removeClass "disabled_autostop"
+    , @
 
   updateSkipLogic: =>
-    for questionView in @questionViews
-      question = questionView.model
-      skipLogicCode = question.get "skipLogic"
-      if not _.isEmptyString(skipLogicCode)
+    @questionViews.forEach (qv) ->
+      question = qv.model
+      skipLogicCode = question.getString "skipLogic"
+      unless skipLogicCode is ""
         try
           result = CoffeeScript.eval.apply(@, [skipLogicCode])
         catch error
@@ -276,38 +258,35 @@ class SurveyRunView extends Backbone.View
           alert "Skip logic error in question #{question.get('name')}\n\n#{name}\n\n#{message}"
 
         if result
-          questionView.$el.addClass "disabled_skipped"
+          qv.$el.addClass "disabled_skipped"
+          qv.isSkipped = true
         else
-          questionView.$el.removeClass "disabled_skipped"
-      questionView.updateValidity()
+          qv.$el.removeClass "disabled_skipped"
+          qv.isSkipped = false
+      qv.updateValidity()
+    , @
 
   isValid: (views = @questionViews) ->
     return true if not views? # if there's nothing to check, it must be good
     views = [views] if not _.isArray(views)
-    for qv, i in views
+    for qv, i in views 
       qv.updateValidity()
       # can we skip it?
       if not qv.model.getBoolean("skippable")
-# is it valid
+        # is it valid
         if not qv.isValid
-# red alert!!
+          # red alert!!
           return false
+
     return true
 
-  testValid: ->
-#    console.log("SurveyRinItem testValid.")
-#    if not @prototypeRendered then return false
-#    currentView = Tangerine.progress.currentSubview
-#    if @isValid?
-#    console.log("testvalid: " + @isValid?)
-    return @isValid()
-#    else
-#      return false
-#    true
 
+  # @TODO this should probably be returning multiple, single type hash values
   getSkipped: ->
     result = {}
-    result[@questions.models[i].get("name")] = "skipped" for qv, i in @questionViews
+    @questionViews.forEach (qv, i) ->
+      result[@questions.models[i].get("name")] = 'skipped'
+    , @
     return result
 
   addAvResult: (result, qv) ->
@@ -321,41 +300,33 @@ class SurveyRunView extends Backbone.View
 
   getResult: =>
     result = {}
-    for qv, i in @questionViews
-      if @questions.models[i].get('type') is 'av'
-        @addAvResult(result, qv)
-
-      result[@questions.models[i].get('name')] =
+    @questionViews.forEach (qv, i) ->
+      result[@questions.models[i].get("name")] =
         if qv.notAsked # because of grid score
           qv.notAskedResult
         else if not _.isEmpty(qv.answer) # use answer
           qv.answer
         else if qv.skipped
           qv.skippedResult
-        else if qv.$el.hasClass("disabled_skipped")
+        else if qv.isSkipped
           qv.logicSkippedResult
-        else if qv.$el.hasClass("disabled_autostop")
+        else if qv.isAutostopped
           qv.notAskedAutostopResult
         else
           qv.answer
-    hash = @model.get("hash") if @model.has("hash")
-    subtestResult =
-      'body' : result
-      'meta' :
-        'hash' : hash
-#    return result
+    , @
+    return result
 
   showErrors: (views = @questionViews) ->
     @$el.find('.message').remove()
     first = true
     views = [views] if not _.isArray(views)
-
-    for qv, i in views
+    views.forEach (qv, i) ->
       if not _.isString(qv)
         message = ""
         if not qv.isValid
 
-# handle custom validation error messages
+          # handle custom validation error messages
           customMessage = qv.model.get("customValidationMessage")
           if not _.isEmpty(customMessage)
             message = customMessage
@@ -368,23 +339,25 @@ class SurveyRunView extends Backbone.View
             Utils.midAlert @text.correctErrors
             first = false
         qv.setMessage message
+    , @
 
-  render: =>
+  render: ->
     return unless @ready
     @$el.empty()
 
+    container = document.createDocumentFragment()
+
     unless @dataEntry
-# class doesn't have this heirarchy
-      if @parent? and @parent.parent? and @parent.parent.result?
-        previous = @parent.parent.result.getByHash(@model.get('hash'))
+      previous = @parent.parent.result.getByHash(@model.get('hash'))
 
     notAskedCount = 0
+
     @questions.sort()
     if @questions.models?
-      for question, i in @questions.models
-# skip the rest if score not high enough
+      @questions.models.forEach (question, i) ->
+        # skip the rest if score not high enough
 
-        required = parseInt(question.get("linkedGridScore")) || 0
+        required = question.getNumber "linkedGridScore"
 
         isNotAsked = ( ( required != 0 && @parent.getGridScore() < required ) || @parent.gridWasAutostopped() ) && @parent.getGridScore() != false
 
@@ -401,22 +374,21 @@ class SurveyRunView extends Backbone.View
           isObservation : @isObservation
           answer        : answer
 
-        oneView.on "rendered", @onQuestionRendered
-        oneView.on "answer scroll", @onQuestionAnswer
-        oneView.on "av-next", @avNext
-        oneView.on "av-prev", @avPrev
-        oneView.on 'abort', => @abort()
+        @listenTo oneView, "rendered",      @onQuestionRendered
+        @listenTo oneView, "answer scroll", @onQuestionAnswer
+        @listenTo oneView, "av-next",       @avNext
+        @listenTo oneView, "av-prev",       @avPrev
+        @listenTo oneView, 'abort',         => @abort()
 
         @questionViews[i] = oneView
-        @$el.append oneView.el
+        container.appendChild oneView.el
+      , @
 
-      for questionView in @questionViews
-        questionView.render()
-
+      @questionViews.forEach (questionView) -> questionView.render()
 
       if @focusMode
         @updateQuestionVisibility()
-        @$el.append "
+        container.appendChild $ "
           <div id='summary_container'></div>
           <button class='navigation prev_question'>#{@text.previousQuestion}</button>
           <button class='navigation next_question'>#{@text.nextQuestion}</button>
@@ -424,8 +396,12 @@ class SurveyRunView extends Backbone.View
         @updateProgressButtons()
 
     if @questions.length == notAskedCount
-      @parent.next?()
+      if Tangerine.settings.get("context") != "class"
+        @parent.next?()
+      else
+        container.appendChild $ "<p class='grey'>#{@text.notEnough}</p>"
 
+    @$el.append container
     @trigger "rendered"
 
   abort: ->
@@ -454,5 +430,3 @@ class SurveyRunView extends Backbone.View
     for qv in @questionViews
       qv.close?()
     @questionViews = []
-
-

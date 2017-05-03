@@ -7,7 +7,7 @@
 */
 
 var ViewManager = function() {
-        
+
   this.currentView = {};
 
 };
@@ -23,7 +23,6 @@ ViewManager.prototype = {
 
   // displays a view and removes the previous if it exists
   show: function( view ) {
-
     // scroll window to top of screen
     window.scrollTo(0, 0);
 
@@ -37,19 +36,25 @@ ViewManager.prototype = {
     this.className = view.className;
 
     // make a container
-    var $container = $(this.templates.container(this.className)).appendTo("#content");
-    this.currentView.setElement($container);
+    var $container = $(this.templates.container(this.className))
+    $container.appendTo("#content");
+    this.currentView.setElement($("."+this.className));
+
+    this.listenTo(this.currentView, "rendered", function(){
+      // call afterRender function if exists
+      if (typeof this.currentView.afterRender === "function") {
+        this.currentView.afterRender()
+      }
+    });
 
     // render view to container
     this.currentView.render()
 
-    // call afterRender function if exists
-    if (typeof this.currentView.afterRender === "function") {
-      this.currentView.afterRender()
-    }
 
   } // END of show
 
 };
+
+_(ViewManager.prototype).extend(Backbone.Events);
 
 `

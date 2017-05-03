@@ -1,4 +1,4 @@
-class LoginView extends Backbone.Marionette.View
+class LoginView extends Backbone.View
 
   className: 'LoginView'
 
@@ -86,7 +86,7 @@ class LoginView extends Backbone.Marionette.View
       "error_name" : t('LoginView.message.error_name_empty')
       "error_pass" : t('LoginView.message.error_password_empty')
       "error_name_taken" : t('LoginView.message.error_name_taken')
-
+      "pass_mismatch" : t('LoginView.message.pass_mismatch')
 
   onSelectChange: (event) ->
     $target = $(event.target)
@@ -173,7 +173,7 @@ class LoginView extends Backbone.Marionette.View
   afterRender: =>
     @recenter()
 
-  onBeforeDestroy: =>
+  onClose: =>
     $("#footer").show()
     $("body").css("background", @oldBackground)
     $(window).off('orientationchange scroll resize', @recenter)
@@ -208,8 +208,8 @@ class LoginView extends Backbone.Marionette.View
     pass1 = ($pass1 = @$el.find("#new_pass_1")).val()
     pass2 = ($pass2 = @$el.find("#new_pass_2")).val()
 
-    @passError(@text.pass_mismatch) if pass1 isnt pass2
-
+    return @passError(@text.pass_mismatch) if pass1 isnt pass2
+ 
     @user.signup name, pass1
 
 
@@ -230,7 +230,7 @@ class LoginView extends Backbone.Marionette.View
 
   passError: (error) ->
     @errors++
-    @passMsg.html error
+    @$el.find(".pass_message").html error
     @$el.find("#pass").focus()
 
   nameError: (error) ->

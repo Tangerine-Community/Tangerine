@@ -4,7 +4,7 @@ class DatetimeRunView extends Backbone.View
 
   i18n: ->
 
-    @text =
+    @text = 
       year : t("DatetimeRunView.label.year")
       month : t("DatetimeRunView.label.month")
       day : t("DatetimeRunView.label.day")
@@ -17,7 +17,7 @@ class DatetimeRunView extends Backbone.View
     @model  = options.model
     @parent = options.parent
     @dataEntry = options.dataEntry
-
+  
   render: ->
     dateTime = new Date()
     year     = dateTime.getFullYear()
@@ -58,7 +58,7 @@ class DatetimeRunView extends Backbone.View
       "
     @trigger "rendered"
     @trigger "ready"
-
+  
   getResult: ->
     return {
       "year"  : @$el.find("#year").val()

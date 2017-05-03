@@ -1,34 +1,11 @@
 class Router extends Backbone.Router
-
-
-  # Set Router.navigateAwayMessage to a string to confirm when a user is navigating
-  # away from their current route. Set it to false to turn off the confirmation.
-  navigateAwayMessage: false
-
-  # Override Backbone.Router.execute
-  execute: (callback, args, name) ->
-    # Implement support for Router.navigateAwayMessage
-    if this.navigateAwayMessage isnt false
-      if !confirm this.navigateAwayMessage
-        return false
-      else
-        this.navigateAwayMessage = false
-        Tangerine.router.landing(true)
-    if (callback)
-      callback.apply(this, args);
-
   routes:
-    'workflow/run/:workflowId'  : 'workflowRun'
-    'workflow/resume/:workflowId/:tripId'  : 'workflowResume'
-    'workflows': 'workflows'
     'widget'   : 'widgetLoad'
     'widget-play/:id' : 'widgetPlay'
     'login'    : 'login'
     'register' : 'register'
     'logout'   : 'logout'
     'account'  : 'account'
-    'bandwidth' : 'bandwidth' 
-    'tabs' :'tabs' 
 
     'transfer' : 'transfer'
 
@@ -38,6 +15,9 @@ class Router extends Backbone.Router
     '' : 'landing'
 
     'logs' : 'logs'
+
+    'tablet-manager' : 'tabletManager'
+
 
     # Class
     'class'          : 'klass'
@@ -71,7 +51,6 @@ class Router extends Backbone.Router
     'assessments'        : 'assessments'
 
     'run/:id'       : 'run'
-    'runMar/:id'       : 'runMar'
     'print/:id/:format'       : 'print'
     'dataEntry/:id' : 'dataEntry'
 
@@ -102,18 +81,6 @@ class Router extends Backbone.Router
               groups : groups
             vm.show view
 
-  bandwidth: ->
-    Tangerine.user.verify
-      isAuthenticated: ->
-        view = new BandwidthCheckView
-        vm.show view
-
-  tabs: ->
-    Tangerine.user.verify
-      isAuthenticated: ->
-        view = new TabView
-        vm.show view
-
   dashboard: (options) ->
     options = options?.split(/\//)
     #default view options
@@ -133,10 +100,8 @@ class Router extends Backbone.Router
   landing: (refresh = false) ->
 
     callFunction = not refresh
-    if Tangerine.settings.get('showWorkflows') == true
-      Tangerine.router.navigate "workflows", callFunction
-    else
-      Tangerine.router.navigate "assessments", callFunction
+
+    Tangerine.router.navigate "assessments", callFunction
 
     document.location.reload() if refresh # this is for the stupid click bug
 
@@ -146,89 +111,13 @@ class Router extends Backbone.Router
       isAuthenticated: ->
         view = new GroupsView
         vm.show view
-  #
-  # Workflow
-  #
 
-  feedback: ( workflowId ) ->
+
+  tabletManager: ->
     Tangerine.user.verify
       isAuthenticated: ->
-
-        workflow = new Workflow "_id" : workflowId
-        workflow.fetch
-          success: ->
-            feedbackId = "#{workflowId}-feedback"
-            feedback = new Feedback "_id" : feedbackId
-            feedback.fetch
-              error: -> Utils.midAlert "No feedback defined"
-              success: ->
-                feedback.updateCollection()
-                view = new FeedbackTripsView
-                  feedback : feedback
-                  workflow : workflow
-                Tangerine.app.rm.get('mainRegion').show view
-
-
-  workflowRun: ( workflowId ) ->
-    Tangerine.user.verify
-      isAuthenticated: ->
-
-        workflow = new Workflow "_id" : workflowId
-        workflow.fetch
-          success: ->
-            workflow.updateCollection()
-            view = new WorkflowRunView
-              workflow: workflow
-            Tangerine.app.rm.get('mainRegion').show view
-
-  workflowResume: ( workflowId, tripId ) ->
-    Tangerine.user.verify
-      isAuthenticated: ->
-
-        workflow = new Workflow "_id" : workflowId
-        workflow.fetch
-          success: ->
-            Tangerine.$db.view Tangerine.design_doc+"/tripsAndUsers",
-              key: tripId
-              include_docs: true
-              success: (data) ->
-                index = Math.max(data.rows.length - 1, 0)
-
-                # add old results
-                steps = []
-                for j in [0..index]
-                  steps.push {result : new Result data.rows[j].doc}
-
-                assessmentResumeIndex = data.rows[index]?.doc?.subtestData?.length || 0
-
-                ###
-                  if data.rows[index]?.doc?.order_map?
-                  # save the order map of previous randomization
-                  orderMap = result.get("order_map").slice() # clone array
-                  # restore the previous ordermap
-                  view.orderMap = orderMap
-
-                ###
-
-                workflow = new Workflow "_id" : workflowId
-                workflow.fetch
-                  success: ->
-
-                    incomplete = Tangerine.user.getPreferences("tutor-workflows", "incomplete")
-
-                    incomplete[workflowId] = _(incomplete[workflowId]).without tripId
-
-                    Tangerine.user.getPreferences("tutor-workflows", "incomplete", incomplete)
-
-                    workflow.updateCollection()
-                    view = new WorkflowRunView
-                      assessmentResumeIndex : assessmentResumeIndex
-                      workflow: workflow
-                      tripId  : tripId
-                      index   : index
-                      steps   : steps
-                    Tangerine.app.rm.get('mainRegion').show view
-
+        view = new TabletManagerView
+        vm.show view
 
   #
   # Class
@@ -499,29 +388,14 @@ class Router extends Backbone.Router
           success: ->
             vm.show new AssessmentSyncView "assessment": assessment
 
-  workflows: ->
-    Tangerine.user.verify
-      isAuthenticated: ->
-
-        (workflows = new Workflows).fetch
-          success: ->
-            feedbacks = new Feedbacks feedbacks
-            feedbacks.fetch
-              success: ->
-                view = new WorkflowMenuView
-                  workflows : workflows
-                  feedbacks : feedbacks
-                Tangerine.app.rm.get('mainRegion').show view
-
   assessments: ->
     Tangerine.user.verify
       isAuthenticated: ->
         assessments = new Assessments
         assessments.fetch
           success: ->
-            assessmentsView = new AssessmentsMenuView
+            vm.show new AssessmentsMenuView
               assessments : assessments
-            Tangerine.app.rm.get('mainRegion').show assessmentsView
 
   restart: (name) ->
     Tangerine.router.navigate "run/#{name}", true
@@ -567,70 +441,60 @@ class Router extends Backbone.Router
     assessment = new Assessment "_id" : id
     assessment.deepFetch
       success : ->
-        dashboardLayout = new DashboardLayout();
-        Tangerine.app.rm.get('mainRegion').show dashboardLayout
-        dashboardLayout.contentRegion.reset()
-        assessmentCompositeView = new AssessmentCompositeView
-          assessment: assessment
-        assessmentCompositeView.on('result:saved', () =>
-          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
-          evt = document.createEvent("Event");
-          evt.initEvent("result:save:widget", true, false);
-          window.frameElement.dispatchEvent(evt)
-        )
-        assessmentCompositeView.on('result:another', () =>
-          evt = document.createEvent("Event");
-          evt.initEvent("result:another:widget", true, false);
-          window.frameElement.dispatchEvent(evt)
-        )
-        dashboardLayout.contentRegion.show(assessmentCompositeView)
+#        dashboardLayout = new DashboardLayout();
+#        Tangerine.app.rm.get('mainRegion').show dashboardLayout
+#        dashboardLayout.contentRegion.reset()
+#        assessmentCompositeView = new AssessmentCompositeView
+#          assessment: assessment
+#        assessmentCompositeView.on('result:saved', () =>
+#          window.frameElement.setAttribute('data-result', JSON.stringify(assessmentCompositeView.result.toJSON()))
+#          evt = document.createEvent("Event");
+#          evt.initEvent("result:save:widget", true, false);
+#          window.frameElement.dispatchEvent(evt)
+#        )
+#        assessmentCompositeView.on('result:another', () =>
+#          evt = document.createEvent("Event");
+#          evt.initEvent("result:another:widget", true, false);
+#          window.frameElement.dispatchEvent(evt)
+#        )
+#        dashboardLayout.contentRegion.show(assessmentCompositeView)
+        vm.show new AssessmentRunView model: assessment
       error: (model, err, cb) ->
         console.log JSON.stringify err
 
-  runMar: (id) ->
-    router = this
-    Tangerine.user.verify
-      isAuthenticated: ->
-        router.navigateAwayMessage = t("Router.message.quit_assessment")
-        assessment = new Assessment "_id" : id
-        assessment.deepFetch
-          success : ->
-            dashboardLayout = new DashboardLayout();
-            Tangerine.app.rm.get('mainRegion').show dashboardLayout
-            dashboardLayout.contentRegion.reset()
-            assessmentCompositeView = new AssessmentCompositeView
-              assessment: assessment
-            dashboardLayout.contentRegion.show(assessmentCompositeView)
-          error: (model, err, cb) ->
-            console.log JSON.stringify err
-
   resume: (assessmentId, resultId) ->
-    router = this
     Tangerine.user.verify
       isAuthenticated: ->
-        router.navigateAwayMessage = t("Router.message.quit_assessment")
         assessment = new Assessment "_id" : assessmentId
         assessment.deepFetch
           success : ->
             result = new Result "_id" : resultId
             result.fetch
               success: ->
+                view = new AssessmentRunView
+                  model: assessment
 
-                # Build an AssessmentCompositeView.
-                assessmentCompositeView = new AssessmentCompositeView
-                  assessment: assessment
-                  result: result
+                if result.has("orderMap")
+                  # save the order map of previous randomization
+                  orderMap = result.get("orderMap").slice() # clone array
+                  # restore the previous ordermap
+                  view.orderMap = orderMap
 
-                # @todo RJ: Remove. I've seen this required by something...
-                result.parent = assessmentCompositeView
-
-                # Set participant info in the Tangerine Nav.
                 for subtest in result.get("subtestData")
                   if subtest.data? && subtest.data.participant_id?
                     Tangerine.nav.setStudent subtest.data.participant_id
 
-                # Add assessmentCompositeView to the mainRegion.
-                Tangerine.app.rm.get('mainRegion').show assessmentCompositeView
+                # replace the view's result with our old one
+                view.result = result
+
+                # Hijack the normal Result and ResultView, use one from the db
+                view.subtestViews.pop()
+                view.subtestViews.push new ResultView
+                  model          : result
+                  assessment     : assessment
+                  assessmentView : view
+                view.index = result.get("subtestData").length
+                vm.show view
 
 
 
@@ -649,8 +513,7 @@ class Router extends Backbone.Router
                 view = new ResultsView
                   "assessment" : assessment
                   "results"    : allResults
-#                vm.show view
-                Tangerine.app.rm.get('mainRegion').show view
+                vm.show view
 
 
   csv: (id) ->
@@ -900,14 +763,11 @@ class Router extends Backbone.Router
         users = new TabletUsers
         users.fetch
           success: ->
-#            vm.show new LoginView
-#              users: users
-            loginView = new LoginView
+            vm.show new LoginView
               users: users
-#            dashboardLayout = new DashboardLayout();
-            Tangerine.app.rm.get('mainRegion').show loginView
-            loginView.afterRender()
-#            dashboardLayout.contentRegion.show(loginView)
+
+
+
 
   logout: ->
     Tangerine.user.logout()

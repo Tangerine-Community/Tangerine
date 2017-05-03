@@ -2,10 +2,14 @@ class ButtonView extends Backbone.View
 
   className : "ButtonView"
 
+  c:
+    CHECKED   : "C"
+    UNCHECKED : "U"
+
   events :
     if Modernizr.touch
       "touchstart .button" : "onClick"
-    else 
+    else
       "click .button"      : "onClick"
 
   getValue: -> @answer
@@ -27,7 +31,7 @@ class ButtonView extends Backbone.View
     value = _.map($(event.target).find("option:selected"), (x) -> $(x).attr('data-answer'))
     @trigger "change", @el
 
-  hybridClick: (opts) -> 
+  hybridClick: (opts) ->
     @$el.find(".button").removeClass "selected"
 
     if not opts.checkedBefore
@@ -51,9 +55,9 @@ class ButtonView extends Backbone.View
 
     @answer[opts.value] =
       if opts.checkedBefore
-        "unchecked"
+        @c.UNCHECKED
       else
-        "checked"
+        @c.CHECKED
 
 
   onClick : (event) ->
@@ -69,13 +73,14 @@ class ButtonView extends Backbone.View
   initialize : ( options ) ->
     @mode    = options.mode
     @options = options.options
-    
+
     if @mode == "single" or @mode == "open"
       answer = ""
     else if @mode == "multiple"
       answer = {}
       @options.forEach (option) ->
-        answer[option.value] = "unchecked"
+        answer[option.value] = @c.UNCHECKED
+      , @
 
     @answer = answer
 
@@ -97,7 +102,7 @@ class ButtonView extends Backbone.View
       label = option.label
 
       selectedClass =
-        if @mode == "multiple" && @answer[value] == "checked"
+        if @mode == "multiple" && @answer[value] == @c.CHECKED
           "selected"
         else if @mode == "single" && @answer == value
           "selected"
