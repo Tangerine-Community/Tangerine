@@ -65,6 +65,56 @@
 }
 ```
 
+### Row
+```
+{
+  //
+  // Meta data.
+  //
+  _id: "cb5400e4-8532-4121-a43a-6f17b109908a",
+  _rev: "4-88daad28-27e6-410b-920b-07259bf78ba4",
+  collection: "Row",
+  spreadsheetId: "11574cdf-eafd-4506-a452-25573c5f9441",
+  spreadSheetRevision: "f7a00dd5-a19d-4e23-aba6-77933e126c12"
+  spreadSheetSchemaId: "10d09189-26e6-4b33-a3ea-64f6d86c3c4d"
+  userId: "d04d801c-83c1-47c2-8015-a20382d54aac",
+  caseId: "7f8fdab9-e4f4-4605-b960-c58a078f9b03",
+  // Last state of the result, derived from Section's
+  // variableName properties and the Item IDs.
+  path: "/Part 1/Section 5/2a69a46b-d606-40da-8160-8718dd1b3604",
+  // Items can return two things. Variables and logs.
+  tangerineVersion: 'v3.0.1',
+  tangerineBuild: 'cbefb754-6493-4ca6-99fb-7c77a92a59fa',
+  deviceInfo: 'ASUS Nexus 6 T-DQ82',
+  //
+  // Data for the row on different sheets. There is a one to many relatioship between the rows 
+  // on the master sheet to the rows on the Repeatable Section Sheets.
+  //
+  sheets: {
+    "master": {
+      "Row ID": "cb5400e4-8532-4121-a43a-6f17b109908a",
+      "Column Name 1": "foo",
+      "Column Name 2": "bar",
+      ...
+    },
+    "Student Reading Comprehension Observations P1": [
+      {
+        "Row ID": "cb5400e4-8532-4121-a43a-6f17b109908a",
+        "Column Name 1": "foo",
+        "Column Name 2": "bar",
+        ...
+      },
+      ...
+    ]
+  }
+  // Event log catch all for advanced processing later.
+  log: [
+    { ... },
+    ...
+  ]
+}
+```
+
 ### Spreadsheet Wizard 
 ```
 {
@@ -158,47 +208,4 @@
 }
 ```
 
-### Row
-```
-{
-  //
-  // Meta data.
-  //
-  _id: "cb5400e4-8532-4121-a43a-6f17b109908a",
-  _rev: "4-88daad28-27e6-410b-920b-07259bf78ba4",
-  collection: "Row",
-  spreadsheetId: "11574cdf-eafd-4506-a452-25573c5f9441",
-  spreadSheetRevision: "f7a00dd5-a19d-4e23-aba6-77933e126c12"
-  spreadSheetSchemaId: "10d09189-26e6-4b33-a3ea-64f6d86c3c4d"
-  userId: "d04d801c-83c1-47c2-8015-a20382d54aac",
-  caseId: "7f8fdab9-e4f4-4605-b960-c58a078f9b03",
-  // Last state of the result, derived from Section's
-  // variableName properties and the Item IDs.
-  path: "/Part 1/Section 5/2a69a46b-d606-40da-8160-8718dd1b3604",
-  // Items can return two things. Variables and logs.
-  tangerineVersion: 'v3.0.1',
-  tangerineBuild: 'cbefb754-6493-4ca6-99fb-7c77a92a59fa',
-  deviceInfo: 'ASUS Nexus 6 T-DQ82',
-  //
-  sheets: {
-    "master": {
-      "Row ID": "cb5400e4-8532-4121-a43a-6f17b109908a",
-      "Column Name 1": "foo",
-      "Column Name 2": "bar",
-      ...
-    },
-    "Student Reading Comprehension Observations P1": {
-      "Row ID": "cb5400e4-8532-4121-a43a-6f17b109908a",
-      "Column Name 1": "foo",
-      "Column Name 2": "bar",
-      ...
-    }
-  }
-  // Event log catch all for advanced processing later.
-  log: [
-    { ... },
-    ...
-  ]
-}
-```
 
