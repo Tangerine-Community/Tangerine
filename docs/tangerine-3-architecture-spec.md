@@ -3,7 +3,7 @@
 
 ## Schema
 
-### Spreadsheet
+### Spreadsheet (or Content Type, or Model Type, or ...)
 ```
 {
   _id: "ced3aca4-3101-11e7-93ae-92361f002671",
@@ -16,6 +16,7 @@
       collection: "SpreadsheetSchema",
       spreadsheetId: "ced3aca4-3101-11e7-93ae-92361f002671",
       status: "canonical",
+      // Schemas for seperate Sheets related to this Spreadsheet. Or rather Schemas for Tables related to this Content Type.
       sheets: {
         "master": [
           "RowUUID",
@@ -65,7 +66,7 @@
 }
 ```
 
-### Row
+### Row (or Node, or Data, or Model Instance, or Object)
 ```
 {
   //
@@ -115,7 +116,7 @@
 }
 ```
 
-### Spreadsheet Wizard 
+### Spreadsheet Wizard (or Multi-Page-Form, or Forms, or, Content Type Edit Settings, ...)
 ```
 {
   _id: "43a883f3-9277-42ec-b93b-f037b8a3da4a",
@@ -197,7 +198,7 @@
 }
 ```
 
-### Page
+### Page (or Form)
 ```
 {
   title: "Page 1",
