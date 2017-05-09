@@ -201,7 +201,6 @@ AvEditView = Backbone.View.extend
 
     @$el.find('#asset-manager').html "
       <section>
-      <h3>Assets</h3>
         #{listHtml}
       </section>
     "

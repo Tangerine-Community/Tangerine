@@ -10,6 +10,7 @@ class QuestionRunView extends Backbone.View
     'click .av-controls-exit' : 'avExit'
     'click .av-controls-next' : 'avNext'
     'touchstart .av-button' : 'avButton'
+    'mousedown .av-button' : 'avButton'
 
   avExit: ->
     # reset the timer every time the button is pressed
@@ -317,9 +318,10 @@ class QuestionRunView extends Backbone.View
       @answer = "" unless @answer
 
       if not _.isEmptyString(customValidationCode)
-#        console.log("customValidationCode: " + customValidationCode)
+        console.log("customValidationCode: " + customValidationCode)
         try
           @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
+          console.log("@isValid: " + @isValid)
         catch e
           alert "Custom Validation error\n\n#{e}"
       else

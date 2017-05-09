@@ -232,7 +232,8 @@ class SurveyRunView extends Backbone.View
           @autostopped = true
           @autostopIndex = i
     @updateAutostop()
-    @updateSkipLogic()
+#    @updateSkipLogic()
+    @updateQuestionSkipLogic()
 
   updateAutostop: ->
     autostopLimit = @model.getNumber "autostopLimit"
@@ -266,6 +267,26 @@ class SurveyRunView extends Backbone.View
           qv.isSkipped = false
       qv.updateValidity()
     , @
+
+  updateQuestionSkipLogic: =>
+    qv = @questionViews[@currentQuestion]
+    question = qv.model
+    skipLogicCode = question.getString "skipLogic"
+    unless skipLogicCode is ""
+      try
+        result = CoffeeScript.eval.apply(@, [skipLogicCode])
+      catch error
+        name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
+        message = error.message
+        alert "Skip logic error in question #{question.get('name')}\n\n#{name}\n\n#{message}"
+
+      if result
+        qv.$el.addClass "disabled_skipped"
+        qv.isSkipped = true
+      else
+        qv.$el.removeClass "disabled_skipped"
+        qv.isSkipped = false
+    qv.updateValidity()
 
   isValid: (views = @questionViews) ->
     return true if not views? # if there's nothing to check, it must be good

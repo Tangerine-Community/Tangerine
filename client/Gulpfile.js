@@ -405,9 +405,6 @@ conf.fileOrder = [
 
   'GpsRunView',
 
-  'CaseSearchRunView',
-  'CaseSelectRunView',
-
   'TabletManagerView',
 
 
@@ -477,9 +474,6 @@ conf.fileOrder = [
   'Config',
 
   'Log',
-
-  'Case',
-  'Cases',
 
   'Settings',
   'SettingsView',

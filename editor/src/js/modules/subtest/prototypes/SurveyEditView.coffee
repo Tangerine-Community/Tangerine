@@ -13,6 +13,7 @@ class SurveyEditView extends Backbone.View
     'change input.asset'      : 'updateAssets'
     'change .asset-name'      : 'changeAssetName'
     'click .remove-asset'     : 'removeAsset'
+    'click #assets'     : 'showAssets'
 
   initialize: ( options ) ->
     @model = options.model
@@ -160,6 +161,9 @@ class SurveyEditView extends Backbone.View
   renderQuestions: =>
     @questionsEditView?.render()
 
+  showAssets: =>
+    $('#asset-manager').toggle()
+
   render: ->
       
 #    addQuestionSelect = "<select id='add_question_select'>"
@@ -172,7 +176,8 @@ class SurveyEditView extends Backbone.View
     focusMode = @model.getBoolean("focusMode")
 
     @$el.html "
-
+      <div id='assets'>
+      <h2>Assets</h2>
       <section id='asset-manager'>
       </section>
 

@@ -11,8 +11,12 @@ ResultOfQuestion = (name) ->
   vm.currentView.subtestViews[index].prototypeView.questionViews.forEach (candidateView) ->
     if candidateView.model.get("name") == name
       returnView = candidateView
+    else
+#      console.log("name: " + candidateView.model.get("name") + " prompt: " + candidateView.model.get("prompt") )
   throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
-  return returnView.answer if returnView.answer
+  if returnView.answer
+    console.log("name: " + returnView.model.get("name") + " prompt: " + returnView.model.get("prompt") + " answer! " + returnView.answer)
+    return returnView.answer
   return null
 
 ResultOfPreviousQuestions = (previousQuestions) ->
@@ -20,7 +24,7 @@ ResultOfPreviousQuestions = (previousQuestions) ->
   for name in previousQuestions
     previousAnswer = ResultOfQuestion(name)
     if previousAnswer?
-      previousQuestions.push(previousAnswer)
+      previousAnswers.push(previousAnswer)
     return previousAnswers
 
 ResultOfMultiple = (name) ->
