@@ -6,7 +6,7 @@ Tangerine is an application for assessing students on any scale, country-level, 
 Tangerine is designed for [Early Grade Reading Assessments](https://www.eddataglobal.org/reading/) but flexible and powerful enough to handle any survey's requirements.
 
 Please visit the [wiki](https://github.com/Tangerine-Community/Tangerine/wiki) for the most up to date development guides
-and references and [Tangerine Central](http://www.tanerinecentral.org) for much more information and news.
+and references and [Tangerine Central](http://www.tangerinecentral.org) for much more information and news.
 
 Alternatively put, Tangerine is a [CouchApp](http://couchapp.org/page/index) that uses
 [Apache CouchDB](http://couchdb.apache.org/) built with [Backbone.js](http://backbonejs.org/), [LessCSS](http://lesscss.org/) written in [CoffeeScript](http://coffeescript.org/) augmented with [Sinatra](http://www.sinatrarb.com/) and PHP.

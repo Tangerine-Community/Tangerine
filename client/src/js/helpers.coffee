@@ -15,6 +15,15 @@ ResultOfQuestion = (name) ->
   return returnView.answer if returnView.answer
   return null
 
+ResultOfPreviousQuestions = (previousQuestions) ->
+  console.log("ResultOfPreviousQuestions")
+  previousAnswers = []
+  for name in previousQuestions
+    previousAnswer = ResultOfQuestion(name)
+    if previousAnswer?
+      previousQuestions.push(previousAnswer)
+    return previousAnswers
+
 ResultOfMultiple = (name) ->
   returnView = null
   index = vm.currentView.orderMap[vm.currentView.index]

@@ -77,32 +77,6 @@ cd source/Tangerine-Community/Tangerine
 ./develop.sh
 ````
 
-If file changes are not being deployed, try this alternate approach:
-
-Follow these instructions to install [docker-osx-dev](https://github.com/brikis98/docker-osx-dev),
-which uses rsync to copy file changes over to the container.
-
-*Note* these instructions are specific to docker-machine on Mac.
-
-In VirtualBox, go to your running docker instance's Settings/Shared Folders
-and remove the mount for /Users.
-Run these commands to install docker-osx-dev:
-
-````
-docker-machine start
-eval $(docker-machine env default)
-curl -o /usr/local/bin/docker-osx-dev https://raw.githubusercontent.com/brikis98/docker-osx-dev/master/src/docker-osx-dev
-chmod +x /usr/local/bin/docker-osx-dev
-docker-osx-dev install
-cd source/Tangerine-Community/Tangerine
-docker-osx-dev --ignore-file .docker-osx-dev-ignore
-````
-
-In another shell, start the development container.
-
-````
-./develop.sh
-````
 
 ## Technical Documentation
 Check out the [Tangerine Technical Documentation site on Github Pages](http://tangerine-community.github.io/Tangerine/index.html). Want to contribute documentation? Fork the Tangerine repository, commit to the `gh-pages` branch and send us a pull request.

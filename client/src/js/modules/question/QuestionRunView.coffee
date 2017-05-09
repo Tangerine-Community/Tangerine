@@ -116,8 +116,6 @@ class QuestionRunView extends Backbone.View
 
     return if value is '' # dont respond if there's no value
 
-
-
     notAnsweredAlready = not @responseTime?
 
     previousVariable = @model.getString('highlightPrevious')
@@ -319,6 +317,7 @@ class QuestionRunView extends Backbone.View
       @answer = "" unless @answer
 
       if not _.isEmptyString(customValidationCode)
+#        console.log("customValidationCode: " + customValidationCode)
         try
           @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
         catch e
@@ -385,7 +384,11 @@ class QuestionRunView extends Backbone.View
 
     if not @notAsked
 
-      html = "<div class='error_message'></div><div class='prompt' #{@fontStyle || ""}>#{@model.get 'prompt'}</div>
+      if @type is 'av'
+        html = "<div class='error_message'></div><div class='prompt' #{@fontStyle || ""}>#{@model.get 'prompt'}</div>
+      <div class='hint' #{@fontStyle || ""}>#{(@model.get('hint') || "")}</div>"
+      else
+        html = "<div class='error_message'></div><div class='prompt' #{@fontStyle || ""}>#{@model.get 'prompt'}</div>
       <div class='hint' #{@fontStyle || ""}>#{(@model.get('hint') || "")}</div>"
 
       if @type == "open"

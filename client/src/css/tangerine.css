@@ -1554,6 +1554,9 @@ table.basic_info td {
   padding: 5px 10px 15px;
   border: 2px solid #CCC;
 }
+.question-no-border {
+  border: 0;
+}
 .question {
   position: relative;
   -moz-box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
@@ -1594,6 +1597,9 @@ table.basic_info td {
   font-size: 25px;
   color: black;
   margin: 10px 5px 0;
+}
+.question .hide {
+  display: none;
 }
 .question .hint {
   font-size: 20px;

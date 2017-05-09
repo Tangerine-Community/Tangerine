@@ -10,7 +10,8 @@ class SurveyRunView extends Backbone.View
     qv = @questionViews[@currentQuestion]
     return @showErrors(qv) unless @isValid([qv])
 
-    console.log("avNext:"+ @currentQuestion)
+#    console.log("avNext:"+ @currentQuestion)
+#    $(".AssessmentRunView").css('display', 'none')
     qv.$el.find('.av-question').css('display', 'none')
     @currentQuestion++
     if @questionViews.length is @currentQuestion
@@ -24,7 +25,7 @@ class SurveyRunView extends Backbone.View
 
   updateQuestionProgress: ->
     qv = @questionViews[@currentQuestion]
-    console.log("updateQuestionProgress @currentQuestion: " + @currentQuestion)
+#    console.log("updateQuestionProgress @currentQuestion: " + @currentQuestion)
     qv.setProgress(@currentQuestion+1, @questionViews.length)
 
   avPrev: =>
