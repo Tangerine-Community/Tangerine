@@ -16,7 +16,6 @@ ResultOfQuestion = (name) ->
   return null
 
 ResultOfPreviousQuestions = (previousQuestions) ->
-  console.log("ResultOfPreviousQuestions")
   previousAnswers = []
   for name in previousQuestions
     previousAnswer = ResultOfQuestion(name)

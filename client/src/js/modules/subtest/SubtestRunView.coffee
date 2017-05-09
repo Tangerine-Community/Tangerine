@@ -113,7 +113,7 @@ class SubtestRunView extends Backbone.View
         name = ((/function (.{1,})\(/).exec(error.constructor.toString())[1])
         message = error.message
         alert "#{name}\n\n#{message}"
-        console.log "displayCode Error: " + JSON.stringify(error)
+        console.log "displayCode Error: #{name}\n\n#{message} " + " error: "  + JSON.stringify(error)
 
     @prototypeView?.updateExecuteReady?(true)
 

@@ -815,7 +815,7 @@ class Router extends Backbone.Router
                 subtestsPrimeThePump.fetch
                   key: "s" + assessment.id
                   success: ->
-                    console.log "SubtestsPrimeThePump success callback called"
+#                    console.log "SubtestsPrimeThePump success callback called"
                   error: ->
                     console.log "SubtestsPrimeThePump error callback called"
                 subtests = new Subtests 
