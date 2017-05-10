@@ -178,6 +178,7 @@ class SurveyEditView extends Backbone.View
     @$el.html "
       <div id='assets'>
       <h2>Assets</h2>
+      <p>Click the title above to minimise the images in order to proceed directly to the Questions (less scrolling!).</p>
       <section id='asset-manager'>
       </section>
 

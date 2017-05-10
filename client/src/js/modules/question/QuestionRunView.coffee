@@ -321,7 +321,7 @@ class QuestionRunView extends Backbone.View
         console.log("customValidationCode: " + customValidationCode)
         try
           @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
-          console.log("@isValid: " + @isValid)
+#          console.log("@isValid: " + @isValid + "for this.name: " + this.name)
         catch e
           alert "Custom Validation error\n\n#{e}"
       else

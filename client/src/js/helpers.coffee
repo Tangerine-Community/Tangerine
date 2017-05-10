@@ -25,7 +25,7 @@ ResultOfPreviousQuestions = (previousQuestions) ->
     previousAnswer = ResultOfQuestion(name)
     if previousAnswer?
       previousAnswers.push(previousAnswer)
-    return previousAnswers
+  return previousAnswers
 
 ResultOfMultiple = (name) ->
   returnView = null
