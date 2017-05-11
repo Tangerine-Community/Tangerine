@@ -206,8 +206,8 @@ class QuestionRunView extends Backbone.View
 
 
   playDisplaySound: () =>
+    @displaySoundObj?.load();
     @displaySoundObj?.play()
-
 
   scroll: (event) ->
     @trigger "scroll", event, @model.get("order")
