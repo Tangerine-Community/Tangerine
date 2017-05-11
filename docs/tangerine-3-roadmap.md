@@ -17,7 +17,7 @@
   - Provide consistent UI to Tangerine Editor.
   - Feature parity with Tangerine Vanilla.
   - Field test our assumptions of areas of focus for features and design in Phase 2. Iterate designs based on testing.
-  - Release Tangerine v3.0.0-beta1.
+  - Release Tangerine v3.0.0-beta1. Track milestone [here](https://github.com/Tangerine-Community/Tangerine/milestone/6)
 
 ## Phase 2 - Tutor Features (August, September, October)
 ### Tangerine v3.0.0-betaX Milestones
