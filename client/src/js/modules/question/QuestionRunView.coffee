@@ -3,14 +3,23 @@ class QuestionRunView extends Backbone.View
   className: 'question'
 
   events:
-    'change input'           : 'update'
-    'change textarea'        : 'update'
-    'click .av-controls-prev' : 'avPrev'
-    'click .autoscroll_icon' : 'scroll'
-    'click .av-controls-exit' : 'avExit'
-    'click .av-controls-next' : 'avNext'
-    'touchstart .av-button' : 'avButton'
-    'mousedown .av-button' : 'avButton'
+    if Modernizr.touch
+      'change input'           : 'update'
+      'change textarea'        : 'update'
+      'click .av-controls-prev' : 'avPrev'
+      'click .autoscroll_icon' : 'scroll'
+      'click .av-controls-exit' : 'avExit'
+      'click .av-controls-next' : 'avNext'
+      'touchstart .av-button' : 'avButton'
+    else
+      'change input'           : 'update'
+      'change textarea'        : 'update'
+      'click .av-controls-prev' : 'avPrev'
+      'click .autoscroll_icon' : 'scroll'
+      'click .av-controls-exit' : 'avExit'
+      'click .av-controls-next' : 'avNext'
+      'mousedown .av-button' : 'avButton'
+
 
   avExit: ->
     # reset the timer every time the button is pressed
@@ -107,6 +116,7 @@ class QuestionRunView extends Backbone.View
     @trigger "av-next"
 
   avButton: (e) ->
+    @setWarningMessage("")
     time = (new Date).getTime() - @displayTime
     # Only respond to images, not the buttons
     return if e.target.nodeName != "IMG"
@@ -183,7 +193,7 @@ class QuestionRunView extends Backbone.View
         @setMessage(@model.getEscapedString('transitionComment'))
 
     else
-      @setMessage(@model.getEscapedString("customValidationMessage"))
+      @setWarningMessage(@model.getEscapedString("customValidationMessage"))
       return # do not trigger the answer event
 
     @trigger "answer", e, @model.get('order')
@@ -318,7 +328,7 @@ class QuestionRunView extends Backbone.View
       @answer = "" unless @answer
 
       if not _.isEmptyString(customValidationCode)
-        console.log("customValidationCode: " + customValidationCode)
+#        console.log("customValidationCode: " + customValidationCode)
         try
           @isValid = CoffeeScript.eval.apply(@, [customValidationCode])
 #          console.log("@isValid: " + @isValid + "for this.name: " + this.name)

@@ -156,7 +156,7 @@ Tangerine.bootSequence =
 
   # Put this version's information in the footer
   versionTag: ( callback ) ->
-    $("#footer").append("<div id='version'>#{Tangerine.version}-#{Tangerine.buildVersion}</div>")
+#    $("#footer").append("<div id='version'>#{Tangerine.version}-#{Tangerine.buildVersion}</div>")
     callback()
 
   # get our local Tangerine settings
