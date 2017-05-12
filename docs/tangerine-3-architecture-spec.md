@@ -116,7 +116,7 @@
 }
 ```
 
-### Spreadsheet Wizard (or Multi-Page-Form, or Forms, or, Content Type Edit Settings, ...)
+### Spreadsheet Wizard (or Multi-Page-Form, or Forms, or Form, or Binder, or Content Type Edit Settings, ...)
 ```
 {
   _id: "43a883f3-9277-42ec-b93b-f037b8a3da4a",
