@@ -96,7 +96,7 @@ const makeApk = function(req, res) {
   const token = Token.make();
   var prepareData = function(donePreparingData) {
     // delete any old packs if they're there
-    del([ '/tangerine-server/tree/client/src/js/init/pack*.json' ])
+    del([ '/tangerine-server/tree/client/src/js/init/pack*.json' ], {force: true})
     .then( function (paths) {
       if ( paths.length !== 0 ) {
         logger.debug(`Old json packs deleted: ${paths.map((p)=>p.substring(Conf.PACK_PATH.length)).join(', ')}`);

@@ -16,7 +16,6 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
     @levels       = @model.get("levels")          || []
     @locationCols = @model.get("locationCols")    || []
     @locations    = @model.get("locations")       || []
-    @isStandard   = @model.getBoolean("standard")
 
     @selectedLocation = []
 
@@ -45,37 +44,11 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
       if i isnt 0 then @$el.find("#level_#{i}").attr("disabled", true)
 
 
-  renderStandard: ->
+  render: ->
     @$el.html "<div class='loc-container'></div>"
     @locView = new LocView
     @locView.setElement @$el.find(".loc-container")
     @locView.render()
-    @trigger "rendered"
-    @trigger "ready"
-
-
-  render: ->
-
-    if @isStandard
-      return @renderStandard()
-
-    html = ""
-
-    for level, i in @levels
-      levelOptions = @getOptions(i)
-
-      isDisabled = i isnt 0 && "disabled='disabled'"
-
-      html += "
-        <div class='label_value'>
-          <label for='level_#{i}'>#{level}</label><br>
-          <select id='level_#{i}' data-level='#{i}' #{isDisabled||''}>
-            #{levelOptions}
-          </select>
-        </div>
-      "
-    @$el.html html
-
     @trigger "rendered"
     @trigger "ready"
 
@@ -148,30 +121,13 @@ class LocationRunItemView extends Backbone.Marionette.ItemView
 
 
   getResult: (filtered = false)->
-    if @isStandard
-      result =
-        labels   : []
-        location : []
-      values = @locView.value()
-      result.labels   = Object.keys values
-      result.location = result.labels.map (el) -> values[el]
-      hash = @model.get("hash") if @model.has("hash")
-      return subtestResult =
-        'body' : result
-        'meta' :
-          'hash' : hash
-
-    if filtered
-      result = {
-        "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
-        "location" : (@$el.find("#level_#{i}").val() for level, i in @levels)
-      }
-    else
-      result = {
-        "labels"   : (column.replace(/[\s-]/g,"_") for column in @locationCols)
-        "location" : (@selectedLocation)
-      }
-
+    result =
+      labels   : []
+      location : []
+    values = @locView.value()
+    result.labels   = Object.keys values
+    result.location = result.labels.map (el) -> values[el]
+    hash = @model.get("hash") if @model.has("hash")
     return subtestResult =
       'body' : result
       'meta' :

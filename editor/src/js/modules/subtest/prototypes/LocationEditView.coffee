@@ -96,13 +96,10 @@ class LocationEditView extends Backbone.View
     for location, i in locations
       locations[i] = location.split(/, */g)
 
-    standard = $("input:radio[name='standard']:checked").val()
-
     @model.set
       "levels"       : levels
       "locationCols" : locationCols
       "locations"    : locations
-      "standard"     : standard
 
   isValid: ->
     levels       = @model.get("levels")
@@ -135,7 +132,6 @@ class LocationEditView extends Backbone.View
     levels    = @model.get("levels")          || []
     locationCols = @model.get("locationCols") || []
     locations = @model.get("locations")       || []
-    standard = @model.getBoolean("standard")
 
     levels = _.escape(levels.join(", "))
     locationCols = _.escape(locationCols.join(", "))
@@ -146,15 +142,6 @@ class LocationEditView extends Backbone.View
         locations[i] = _.escape(location.join(", "))
 
     @$el.html  "
-      <div class='label_value'>
-        <label title='This will use the locations provided by your location-list document'>Use standard</label><br>
-        <div id='group_standard' class='buttonset'>
-          <label for='standard_off'>Off</label>
-          <input id='standard_off' name='standard' type='radio' value='false' #{('checked="checked"' if standard is false)||''}>
-          <label for='standard_on'>On</label>
-          <input id='standard_on' name='standard' type='radio' value='true' #{('checked="checked"' if standard is true)||''}>
-        </div>
-      </div>
 
       <div class='label_value'>
         <div class='menu_box'>

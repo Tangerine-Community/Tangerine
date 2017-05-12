@@ -170,9 +170,9 @@ RUN cd /tangerine-server/brockman \
     && gem install bundler --no-ri --no-rdoc \
     && bundle install --path vendor/bundle
 
-# Install robbert.
-ADD ./robbert/package.json /tangerine-server/robbert/package.json
-RUN cd /tangerine-server/robbert \
+# Install server.
+ADD ./server/package.json /tangerine-server/server/package.json
+RUN cd /tangerine-server/server \
     && npm install
 
 # Install editor.
@@ -237,14 +237,18 @@ RUN cd /tangerine-server/cli && npm link
 
 # Compile client. 
 ADD ./client /tangerine-server/client
-RUN rm -r /tangerine-server/client/www
-ADD ./client/www /tangerine-server/client/www
 RUN cd /tangerine-server/client && npm run gulp init
+RUN rm -r /tangerine-server/client/www
+RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
+
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
 
+RUN mkdir /tangerine-server/logs
+
 # Volumes
+VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/ 
 

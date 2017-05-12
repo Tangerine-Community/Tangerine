@@ -16,7 +16,6 @@ class LocationRunView extends Backbone.View
     @levels       = @model.get("levels")          || []
     @locationCols = @model.get("locationCols")    || []
     @locations    = @model.get("locations")       || []
-    @isStandard   = @model.getBoolean("standard")
 
     @selectedLocation = []
 
@@ -45,38 +44,13 @@ class LocationRunView extends Backbone.View
       if i isnt 0 then @$el.find("#level_#{i}").attr("disabled", true)
 
 
-  renderStandard: ->
+  render: ->
     @$el.html "<div class='loc-container'></div>"
     @locView = new LocView
     @locView.setElement @$el.find(".loc-container")
     @trigger "rendered"
     @trigger "ready"
 
-
-  render: ->
-
-    if @isStandard
-      return @renderStandard()
-
-    html = ""
-
-    for level, i in @levels
-      levelOptions = @getOptions(i)
-
-      isDisabled = i isnt 0 && "disabled='disabled'"
-
-      html += "
-        <div class='label_value'>
-          <label for='level_#{i}'>#{level}</label><br>
-          <select id='level_#{i}' data-level='#{i}' #{isDisabled||''}>
-            #{levelOptions}
-          </select>
-        </div>
-      "
-    @$el.html html
-
-    @trigger "rendered"
-    @trigger "ready"
 
   onSelectChange: (event) ->
     @trigger "select-change"
@@ -148,25 +122,13 @@ class LocationRunView extends Backbone.View
 
 
   getResult: (filtered = false)->
-    if @isStandard
-      result =
-        labels   : []
-        location : []
-      values = @locView.value()
-      result.labels   = Object.keys values
-      result.location = result.labels.map (el) -> values[el]
-      return result
-
-    if filtered
-      return {
-        "labels"   : (level.replace(/[\s-]/g,"_") for level in @levels)
-        "location" : (@$el.find("#level_#{i}").val() for level, i in @levels)
-      }
-    else
-      return {
-        "labels"   : (column.replace(/[\s-]/g,"_") for column in @locationCols)
-        "location" : (@selectedLocation)
-      }
+    result =
+      labels   : []
+      location : []
+    values = @locView.value()
+    result.labels   = Object.keys values
+    result.location = result.labels.map (el) -> values[el]
+    return result
 
   getSkipped: ->
     return {

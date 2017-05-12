@@ -1,12 +1,12 @@
 {
   "apps" : [
     {
-      "name"       : "robbert",
-      "script"     : "robbert/index.js",
-      "cwd"        : "./robbert/",
-      "error_file" : "../logs/robbert-error.log",
-      "out_file"   : "../logs/robbert.log",
-      "pid_file"   : "../pids/robbert.pid"
+      "name"       : "server",
+      "script"     : "server/index.js",
+      "cwd"        : "./server/",
+      "error_file" : "../logs/server-error.log",
+      "out_file"   : "../logs/server.log",
+      "pid_file"   : "../pids/server.pid"
     },
     {
       "name"      : "tree",

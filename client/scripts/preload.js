@@ -91,7 +91,7 @@ function get(opts) {
 
 
 // delete any old packs if they're there
-del([ PACK_PATH + '/pack*.json' ]).then( function (paths) {
+del([ PACK_PATH + '/pack*.json' ], {force: true}).then( function (paths) {
 
     if ( paths.length !== 0 ) {
       console.log(

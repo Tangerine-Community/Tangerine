@@ -7,11 +7,25 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
-docker pull tangerine/tangerine:$TANGERINE_VERSION
-docker stop tangerine-container 
-docker rm tangerine-container 
+# Allow to specify Tangerine Version as parameter in ./star.sh, other wise use the most recent tag.
+if [ "$1" = "" ]; then
+  TAG=$(git describe --tags --abbrev=0)
+else
+  TAG=$1
+fi
+echo "Pulling $TAG"
+docker pull tangerine/tangerine:$TAG
+NO_SUCH_CONTAINER=$(docker inspect $T_CONTAINER_NAME | grep "No such object")
+echo $NO_SUCH_CONTAINER
+if [ "$NO_SUCH_CONTAINER" = "" ]; then
+  echo "Stopping $T_CONTAINER_NAME"
+  docker stop $T_CONTAINER_NAME > /dev/null 
+  echo "Removing $T_CONTAINER_NAME"
+  docker rm $T_CONTAINER_NAME > /dev/null 
+fi
+echo "Running $T_CONTAINER_NAME at version $TAG"
 docker run -d \
-  --name tangerine-container \
+  --name $T_CONTAINER_NAME \
   --env "NODE_ENV=production" \
   --env "T_VERSION=$TANGERINE_VERSION" \
   --env "T_PROTOCOL=$T_PROTOCOL" \
@@ -22,6 +36,7 @@ docker run -d \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   -p 80:80 \
   --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
+  --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
-  tangerine/tangerine:$TANGERINE_VERSION
+  tangerine/tangerine:$TAG

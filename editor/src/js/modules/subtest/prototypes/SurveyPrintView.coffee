@@ -10,7 +10,7 @@ class SurveyPrintView extends Backbone.View
     @answered      = []
     @questions     = new Questions
     @questions.fetch
-      key: "q" + @model.get("assessmentId")
+      key: @model.get("assessmentId")
       success: (collection) =>
         @questions = new Questions collection.where {"subtestId":@model.id}
         @questions.sort()
