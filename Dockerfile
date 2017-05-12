@@ -220,7 +220,10 @@ RUN cd /tangerine-server/cli \
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
     && npm install
-
+# Install client-v3
+ADD ./client-v3/package.json /tangerine-server/client-v3/package.json
+RUN cd /tangerine-server/client-v3 \
+    && npm install
 
 #
 # Stage 3 Compile 
@@ -240,12 +243,16 @@ RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
 
+# Compile client-v3. 
+ADD ./client-v3 /tangerine-server/client-v3
+RUN cd /tangerine-server/client-v3 && npm run build -- --base-href /client-v3/ 
+
+
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
 
 RUN mkdir /tangerine-server/logs
-
 # Volumes
 VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks

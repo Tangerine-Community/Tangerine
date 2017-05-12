@@ -11,6 +11,9 @@ couchdb.stderr
 node_modules
 editor/node_modules
 client/node_modules
+client-v3/node_modules
+client-v3/dist
+client-v3/.vscode
 tree/node_modules
 decompressor/node_modules
 editor/tmp
