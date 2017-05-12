@@ -87,7 +87,7 @@ RUN apt-get update && apt-get -y install \
     libffi-dev
 
 # Install node and some node based services
-RUN curl -sL https://deb.nodesource.com/setup_4.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - \
   && apt-get -y install nodejs \
   && npm install -g pm2 \
   && npm install -g bower 
@@ -151,11 +151,10 @@ RUN cd /opt && \
     tar -xzf $ANDROID_SDK_FILENAME && \
     rm $ANDROID_SDK_FILENAME && \
     echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
+ 
 
 # Install Cordova
-RUN npm update && \
-    npm install -g npm && \
-    npm install -g cordova 
+RUN npm install -g cordova 
 
 
 
