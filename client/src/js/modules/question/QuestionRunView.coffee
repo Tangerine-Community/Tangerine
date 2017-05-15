@@ -170,7 +170,17 @@ class QuestionRunView extends Backbone.View
       @answer = value
       @lastSelected = 'current'
 
-    @updateValidity()
+    isValid = @updateValidity()
+    if @correctable
+      if !isValid
+        $target = $(e.target).parent('button')
+        value = $target.attr('data-value')
+        name = @model.get("name")
+        time = (new Date).getTime() - @displayTime
+#        errorVariable = fieldName + "-error-" + time
+        errorVariable = "errorValue"
+        CreateResultOfQuestion(name, 'errorValue', value, {errorResponseTime:time})
+
     @$el.find('button.av-button-highlight').removeClass('av-button-highlight')
     @highlightCurrent()
     @highlightPrevious()
@@ -208,6 +218,11 @@ class QuestionRunView extends Backbone.View
   playDisplaySound: () =>
     @displaySoundObj?.load();
     @displaySoundObj?.play()
+#    if @audioContext?
+#      @mySound = @audioContext.createBufferSource();
+#      @mySound.buffer = @myBuffer;
+#      @mySound.connect(audioContext.destination);
+#      @mySound?.start(0);
 
   scroll: (event) ->
     @trigger "scroll", event, @model.get("order")
@@ -221,6 +236,15 @@ class QuestionRunView extends Backbone.View
     @displaySound = @model.getObject('displaySound', false)
     if @displaySound
       @displaySoundObj = new Audio("data:#{@displaySound.type};base64,#{@displaySound.data}")
+#      decoded = new TextEncoderLite('utf-8').decode(@displaySound.data);
+#      b64Decoded = base64js.toByteArray(decoded);
+
+#      arrayBuff = Base64Binary.decodeArrayBuffer(@displaySound.data);
+#      @audioContext = new AudioContext();
+#      @audioContext.decodeAudioData(arrayBuff, (audioData) ->
+#        @myBuffer = audioData;
+#      )
+
 
     @dataEntry = options.dataEntry
     @fontFamily = @parent.model.get('fontFamily')
@@ -309,6 +333,7 @@ class QuestionRunView extends Backbone.View
         @answer = @$el.find("##{@cid}_#{@name}").val()
       else
         @answer = @button.answer
+
 
   updateValidity: ->
 

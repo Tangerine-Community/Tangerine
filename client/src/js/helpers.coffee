@@ -15,7 +15,7 @@ ResultOfQuestion = (name) ->
 #      console.log("name: " + candidateView.model.get("name") + " prompt: " + candidateView.model.get("prompt") )
   throw new ReferenceError("ResultOfQuestion could not find variable #{name}") if returnView == null
   if returnView.answer
-    console.log("name: " + returnView.model.get("name") + " prompt: " + returnView.model.get("prompt") + " answer! " + returnView.answer)
+#    console.log("name: " + returnView.model.get("name") + " prompt: " + returnView.model.get("prompt") + " answer! " + returnView.answer)
     return returnView.answer
   return null
 
@@ -62,8 +62,14 @@ SetResultOfQuestion = (name, value, obj) ->
       if obj?
         candidateView[k] = v for k, v of obj
   throw new ReferenceError("SetResultOfQuestion could not find variable #{name}") if notFound
-  
 
+CreateResultOfQuestion = (name, property, value, obj) ->
+  index = vm.currentView.orderMap[vm.currentView.index]
+  for candidateView in vm.currentView.subtestViews[index].prototypeView.questionViews
+    if candidateView.model.get("name") == name
+      candidateView.model.set(property, value)
+      if obj?
+        candidateView[k] = v for k, v of obj
 
 #
 # Tangerine backbutton handler

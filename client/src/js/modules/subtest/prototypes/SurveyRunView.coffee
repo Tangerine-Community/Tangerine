@@ -312,18 +312,28 @@ class SurveyRunView extends Backbone.View
     return result
 
   addAvResult: (result, qv) ->
-
     name = qv.model.get('name')
+    errorKey = name + "_error"
     result["#{name}_response_time"] = qv.responseTime || null
     result["#{name}_display_time"] = qv.displayTime
     if qv.forcedTime?
       result["#{name}_forced_time"] = qv.forcedTime
 
+    errorValue = qv.model.get('errorValue')
+    if errorValue?
+      result["#{errorKey}_response_time"] = qv.errorResponseTime || null
 
   getResult: =>
     result = {}
     @questionViews.forEach (qv, i) ->
-      result[@questions.models[i].get("name")] =
+      name = @questions.models[i].get("name")
+      errorKey = name + "_error"
+      errorValue = @questions.models[i].get("errorValue")
+      if errorValue?
+        result[errorKey] = errorValue
+      if @questions.models[i].get('type') is 'av'
+        @addAvResult(result, qv)
+      result[name] =
         if qv.notAsked # because of grid score
           qv.notAskedResult
         else if not _.isEmpty(qv.answer) # use answer
