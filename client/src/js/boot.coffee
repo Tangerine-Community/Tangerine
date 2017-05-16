@@ -317,12 +317,12 @@ Tangerine.bootSequence =
     window.AudioContext = window.AudioContext||window.webkitAudioContext;
     context = new AudioContext();
     Tangerine.audioContext = context
+    Tangerine.swishSoundBuffer = Utils.prepareSwish()
     callback()
 
   startBackbone: ( callback ) ->
     Backbone.history.start()
     callback() # for testing
-
 
 Tangerine.boot = ->
 
