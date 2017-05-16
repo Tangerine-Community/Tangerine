@@ -51,6 +51,42 @@ export class AppComponent {
               forkable: true,
               children: [
                 {
+                  _id: "0",
+                  title: "Covalent",
+                  collection: "Page",
+                  columnNames: [ "Column Name 1", "Column Name 2" ],
+                  config: [
+                    {
+                      "name": "input",
+                      "type": "input",
+                      "required": false
+                    },
+                    {
+                      "name": "required-input",
+                      "label": "Input Label",
+                      "type": "input",
+                      "required": true
+                    },
+                    {
+                      "name": "textarea",
+                      "type": "textarea",
+                      "required": false
+                    },
+                    {
+                      "name": "text",
+                      "type": "text",
+                      "required": false,
+                      "default": "Default"
+                    },
+                    {
+                      "name": "required-password",
+                      "label": "Password Label",
+                      "type": "password",
+                      "required": true
+                    }
+                  ]
+                },
+                {
                   _id: "1",
                   title: "Car Engines",
                   collection: "Page",
