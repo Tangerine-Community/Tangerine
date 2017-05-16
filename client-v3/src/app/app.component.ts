@@ -57,23 +57,20 @@ export class AppComponent {
                   columnNames: [ "Column Name 1", "Column Name 2" ],
                   config: [
                     {
-                      questionClass: 'DropdownQuestion',
-                      key: 'car_engine_favorite',
+                      type: 'array',
+                      name: 'car_engine_favorite',
                       label: 'What is your favorite type of engine?',
-                      options: [
-                        {key: 'electric',  value: 'Electric'},
-                        {key: 'diesel',  value: 'Diesel'},
-                        {key: 'gasoline',   value: 'Gasoline'}
-                      ],
-                      order: 1
+                      selections: [
+                        'Electric',
+                        'Diesel',
+                        'Gasoline'
+                      ]
                     },
                     {
-                      questionClass: 'TextboxQuestion',
-                      key: 'car_engine_name',
+                      type: 'text',
+                      name: 'car_engine_name',
                       label: 'What was the name of your favorite engine?',
-                      value: '',
-                      required: true,
-                      order: 2
+                      required: true
                     }
                   ]
                 },
@@ -84,16 +81,15 @@ export class AppComponent {
                   columnNames: [ "Column Name 1", "Column Name 2" ],
                   config: [
                     {
-                      questionClass: 'DropdownQuestion',
-                      key: 'car_color_favorite',
+                      type: 'array',
+                      name: 'car_color_favorite',
                       label: 'What your favorite color of car?',
-                      options: [
-                        {key: 'blue',  value: 'Blue'},
-                        {key: 'green',  value: 'Green'},
-                        {key: 'yellow',   value: 'Yellow'},
-                        {key: 'red', value: 'Red'}
-                      ],
-                      order: 1
+                      selections: [
+                        'Blue',
+                        'Green',
+                        'Yellow',
+                        'Red'
+                      ]
                     }
                   ]
                 }
@@ -121,23 +117,20 @@ export class AppComponent {
                   columnNames: [ "Column Name 1", "Column Name 2" ],
                   config: [
                     {
-                      questionClass: 'DropdownQuestion',
-                      key: 'boat_engine_favorite',
+                      type: 'array',
+                      name: 'boat_engine_favorite',
                       label: 'What is your favorite type of engine?',
-                      options: [
-                        {key: 'electric',  value: 'Electric'},
-                        {key: 'diesel',  value: 'Diesel'},
-                        {key: 'gasoline',   value: 'Gasoline'}
-                      ],
-                      order: 1
+                      selections: [
+                        'Electric',
+                        'Diesel',
+                        'Gasoline'
+                      ]
                     },
                     {
-                      questionClass: 'TextboxQuestion',
-                      key: 'boat_engine_name',
+                      type: 'text',
+                      name: 'boat_engine_name',
                       label: 'What was the name of your favorite engine?',
-                      value: '',
-                      required: true,
-                      order: 2
+                      required: true
                     }
                   ]
                 },
@@ -148,16 +141,15 @@ export class AppComponent {
                   columnNames: [ "Column Name 1", "Column Name 2" ],
                   config: [
                     {
-                      questionClass: 'DropdownQuestion',
-                      key: 'boat_color_favorite',
+                      type: 'array',
+                      name: 'boat_color_favorite',
                       label: 'What your favorite color of boat?',
-                      options: [
-                        {key: 'blue',  value: 'Blue'},
-                        {key: 'green',  value: 'Green'},
-                        {key: 'yellow',   value: 'Yellow'},
-                        {key: 'red', value: 'Red'}
-                      ],
-                      order: 1
+                      selections: [
+                        'Blue',
+                        'Green',
+                        'Yellow',
+                        'Red'
+                      ]
                     }
                   ]
                 }
@@ -187,24 +179,21 @@ export class AppComponent {
               columnNames: [ "Column Name 1", "Column Name 2" ],
               config: [
                 {
-                  questionClass: 'DropdownQuestion',
-                  key: 'binder_opinion',
+                  type: 'array',
+                  name: 'binder_opinion',
                   label: 'What do you think of binders?',
-                  options: [
-                    {key: 'solid',  value: 'Solid'},
-                    {key: 'great',  value: 'Great'},
-                    {key: 'good',   value: 'Good'},
-                    {key: 'unproven', value: 'Unproven'}
-                  ],
-                  order: 1
+                  selections: [
+                    'Good',
+                    'Great',
+                    'Dislike',
+                    'Unproven'
+                  ]
                 },
                 {
-                  questionClass: 'TextboxQuestion',
-                  key: 'favorite_binder',
+                  type: 'text',
+                  name: 'favorite_binder',
                   label: 'What was the name of your favorite binder?',
-                  value: '',
-                  required: true,
-                  order: 2
+                  required: true
                 }
               ]
             },
@@ -215,24 +204,21 @@ export class AppComponent {
               columnNames: [ "Column Name 1", "Column Name 2" ],
               config: [
                 {
-                  questionClass: 'DropdownQuestion',
-                  key: 'cat_opinion',
+                  type: 'array',
+                  name: 'cat_opinion',
                   label: 'What do you think of cats?',
-                  options: [
-                    {key: 'solid',  value: 'Solid'},
-                    {key: 'great',  value: 'Great'},
-                    {key: 'good',   value: 'Good'},
-                    {key: 'unproven', value: 'Unproven'}
-                  ],
-                  order: 1
+                  selections: [
+                    'Good',
+                    'Great',
+                    'Dislike',
+                    'Unproven'
+                  ]
                 },
                 {
-                  questionClass: 'TextboxQuestion',
-                  key: 'favorite_cat',
+                  type: 'text',
+                  name: 'favorite_cat',
                   label: 'What was the name of your favorite cat?',
-                  value: '',
-                  required: true,
-                  order: 2
+                  required: true
                 }
               ]
             }
