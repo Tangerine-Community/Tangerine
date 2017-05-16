@@ -21,9 +21,9 @@ export class AppComponent {
       spreadsheetSchemaId: "dd74f132-3101-11e7-93ae-92361f002671",
       children: [
         {
-          _id: "a",
+          _id: "one",
           collection: "section",
-          title: "Section 1",
+          title: "Section 1: Car Surveys",
           stopwatch: true,
           time_limit: "5 minutes",
           code: "function(event, variables, scope, callback) { ... }",
@@ -36,58 +36,130 @@ export class AppComponent {
           forkable: true,
           children: [
             {
-              _id: "1",
-              title: "Page 1",
-              collection: "Page",
-              columnNames: [ "Column Name 1", "Column Name 2" ],
-              config: [
+              _id: "oneA",
+              collection: "section",
+              title: "Section 1a: Cars",
+              stopwatch: true,
+              time_limit: "5 minutes",
+              code: "function(event, variables, scope, callback) { ... }",
+              declarations: [ ],
+              imports: [ ],
+              repeatable: true,
+              sheetName: 'Student Observations for English P2',
+              columnName: 'Student Observations for English P2',
+              repeatN: 3,
+              forkable: true,
+              children: [
                 {
-                  questionClass: 'DropdownQuestion',
-                  key: 'binder_opinion',
-                  label: 'What do you think of binders?',
-                  options: [
-                    {key: 'solid',  value: 'Solid'},
-                    {key: 'great',  value: 'Great'},
-                    {key: 'good',   value: 'Good'},
-                    {key: 'unproven', value: 'Unproven'}
-                  ],
-                  order: 1
+                  _id: "1",
+                  title: "Car Engines",
+                  collection: "Page",
+                  columnNames: [ "Column Name 1", "Column Name 2" ],
+                  config: [
+                    {
+                      questionClass: 'DropdownQuestion',
+                      key: 'car_engine_favorite',
+                      label: 'What is your favorite type of engine?',
+                      options: [
+                        {key: 'electric',  value: 'Electric'},
+                        {key: 'diesel',  value: 'Diesel'},
+                        {key: 'gasoline',   value: 'Gasoline'}
+                      ],
+                      order: 1
+                    },
+                    {
+                      questionClass: 'TextboxQuestion',
+                      key: 'car_engine_name',
+                      label: 'What was the name of your favorite engine?',
+                      value: '',
+                      required: true,
+                      order: 2
+                    }
+                  ]
                 },
                 {
-                  questionClass: 'TextboxQuestion',
-                  key: 'favorite_binder',
-                  label: 'What was the name of your favorite binder?',
-                  value: '',
-                  required: true,
-                  order: 2
+                  _id: "2",
+                  title: "Car Colors",
+                  collection: "Page",
+                  columnNames: [ "Column Name 1", "Column Name 2" ],
+                  config: [
+                    {
+                      questionClass: 'DropdownQuestion',
+                      key: 'car_color_favorite',
+                      label: 'What your favorite color of car?',
+                      options: [
+                        {key: 'blue',  value: 'Blue'},
+                        {key: 'green',  value: 'Green'},
+                        {key: 'yellow',   value: 'Yellow'},
+                        {key: 'red', value: 'Red'}
+                      ],
+                      order: 1
+                    }
+                  ]
                 }
               ]
             },
             {
-              _id: "2",
-              title: "Page 2",
-              collection: "Page",
-              columnNames: [ "Column Name 1", "Column Name 2" ],
-              config: [
+              _id: "oneB",
+              collection: "section",
+              title: "Section 1b: Boats",
+              stopwatch: true,
+              time_limit: "5 minutes",
+              code: "function(event, variables, scope, callback) { ... }",
+              declarations: [ ],
+              imports: [ ],
+              repeatable: true,
+              sheetName: 'Student Observations for English P2',
+              columnName: 'Student Observations for English P2',
+              repeatN: 3,
+              forkable: true,
+              children: [
                 {
-                  questionClass: 'DropdownQuestion',
-                  key: 'cat_opinion',
-                  label: 'What do you think of cats?',
-                  options: [
-                    {key: 'solid',  value: 'Solid'},
-                    {key: 'great',  value: 'Great'},
-                    {key: 'good',   value: 'Good'},
-                    {key: 'unproven', value: 'Unproven'}
-                  ],
-                  order: 1
+                  _id: "1",
+                  title: "Boat Engines",
+                  collection: "Page",
+                  columnNames: [ "Column Name 1", "Column Name 2" ],
+                  config: [
+                    {
+                      questionClass: 'DropdownQuestion',
+                      key: 'boat_engine_favorite',
+                      label: 'What is your favorite type of engine?',
+                      options: [
+                        {key: 'electric',  value: 'Electric'},
+                        {key: 'diesel',  value: 'Diesel'},
+                        {key: 'gasoline',   value: 'Gasoline'}
+                      ],
+                      order: 1
+                    },
+                    {
+                      questionClass: 'TextboxQuestion',
+                      key: 'boat_engine_name',
+                      label: 'What was the name of your favorite engine?',
+                      value: '',
+                      required: true,
+                      order: 2
+                    }
+                  ]
                 },
                 {
-                  questionClass: 'TextboxQuestion',
-                  key: 'favorite_cat',
-                  label: 'What was the name of your favorite cat?',
-                  value: '',
-                  required: true,
-                  order: 2
+                  _id: "2",
+                  title: "Car Colors",
+                  collection: "Page",
+                  columnNames: [ "Column Name 1", "Column Name 2" ],
+                  config: [
+                    {
+                      questionClass: 'DropdownQuestion',
+                      key: 'boat_color_favorite',
+                      label: 'What your favorite color of boat?',
+                      options: [
+                        {key: 'blue',  value: 'Blue'},
+                        {key: 'green',  value: 'Green'},
+                        {key: 'yellow',   value: 'Yellow'},
+                        {key: 'red', value: 'Red'}
+                      ],
+                      order: 1
+                    }
+                  ]
                 }
               ]
             }
@@ -96,7 +168,7 @@ export class AppComponent {
         {
           _id: "b",
           collection: "section",
-          title: "Section 2",
+          title: "Section 2: Binders and Cats",
           stopwatch: true,
           time_limit: "5 minutes",
           code: "function(event, variables, scope, callback) { ... }",
