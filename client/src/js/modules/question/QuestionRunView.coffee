@@ -49,7 +49,8 @@ class QuestionRunView extends Backbone.View
     @displayTime = (new Date()).getTime()
     @startProgressTimer() if @timeLimit isnt 0
     @startWarningTimer()  if @warningTime isnt 0
-    @playDisplaySound()
+#    @playDisplaySound()
+    @loadSound()
     @flashScreen()
     @highlightPrevious()
 
@@ -220,16 +221,20 @@ class QuestionRunView extends Backbone.View
 #    @displaySoundObj?.play()
     if Tangerine.audioContext?
       if @displaySound
+#        @mySound = Tangerine.audioContext.createBufferSource();
+##        arrayBuff = Base64Binary.decodeArrayBuffer(@displaySound.data);
+#        arrayBuff = Utils.base64ToArrayBuffer(@displaySound.data);
+#        Tangerine.audioContext.decodeAudioData(arrayBuff, (audioData) =>
+#          @myBuffer = audioData;
+#          @mySound.buffer = @myBuffer;
+#          @mySound.connect(Tangerine.audioContext.destination);
+#          @mySound?.start(0);
+#        )
         @mySound = Tangerine.audioContext.createBufferSource();
-#        arrayBuff = Base64Binary.decodeArrayBuffer(@displaySound.data);
-        arrayBuff = Utils.base64ToArrayBuffer(@displaySound.data);
-        Tangerine.audioContext.decodeAudioData(arrayBuff, (audioData) =>
-          @myBuffer = audioData;
-          console.log("hoohoo")
-          @mySound.buffer = @myBuffer;
-          @mySound.connect(Tangerine.audioContext.destination);
-          @mySound?.start(0);
-        )
+        @mySound.buffer = @myBuffer;
+        @mySound.connect(Tangerine.audioContext.destination);
+        @mySound?.start(0);
+
 
 
   scroll: (event) ->
@@ -242,17 +247,6 @@ class QuestionRunView extends Backbone.View
     @parent    = options.parent
 
     @displaySound = @model.getObject('displaySound', false)
-#    if @displaySound
-#      @displaySoundObj = new Audio("data:#{@displaySound.type};base64,#{@displaySound.data}")
-#      decoded = new TextEncoderLite('utf-8').decode(@displaySound.data);
-#      b64Decoded = base64js.toByteArray(decoded);
-#      arrayBuff = Base64Binary.decodeArrayBuffer(@displaySound.data);
-##      arrayBuff = Base64.decode(@displaySound.data);
-#      Tangerine.audioContext.decodeAudioData(arrayBuff, (audioData) =>
-#        @myBuffer = audioData;
-#        console.log("hoohoo")
-#      )
-
 
     @dataEntry = options.dataEntry
     @fontFamily = @parent.model.get('fontFamily')
@@ -307,6 +301,15 @@ class QuestionRunView extends Backbone.View
     @exitTimerId   = null
     @exitCount = 0
 
+  loadSound: =>
+    if @displaySound
+#      @mySound = Tangerine.audioContext.createBufferSource();
+      arrayBuff = Utils.base64ToArrayBuffer(@displaySound.data);
+      Tangerine.audioContext.decodeAudioData(arrayBuff, (audioData) =>
+        @myBuffer = audioData;
+        console.log("@myBuffer")
+        @playDisplaySound()
+      )
 
   previousAnswer: =>
     @parent.questionViews[@parent.questionIndex - 1].answer if @parent.questionIndex >= 0
