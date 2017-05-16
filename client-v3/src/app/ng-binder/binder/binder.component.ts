@@ -1,4 +1,6 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+
+import { TdDynamicFormsComponent } from '@covalent/dynamic-forms';
 
 @Component({
   selector: 'app-binder',
@@ -17,6 +19,7 @@ export class BinderComponent implements OnInit {
   objectsByPath: object = {};
   pathsByIndex: Array<any> = [];
   orderIndexByPath: object = {};
+  @ViewChild(TdDynamicFormsComponent) form: TdDynamicFormsComponent;
   constructor() { }
 
    ngOnInit() {
@@ -24,6 +27,11 @@ export class BinderComponent implements OnInit {
     //let foo = this.flatten(this.config);
     this.organize();
     this.step(false);
+  }
+  ngAfterViewInit() {
+    this.form.form.valueChanges.subscribe( () => {
+      console.log(this.form.value);
+    });
   }
 
   organize() {;
@@ -68,8 +76,8 @@ export class BinderComponent implements OnInit {
     this.currentPage = nextObject;
   }
 
-  onJsonFormSubmit(data) {
-    this.result.push(data);
+  onNextClick() {
+    this.result.push(this.form.value);
     this.step();
   }
 
