@@ -6,5 +6,7 @@
 
 <div *ngIf="result">
   <h2>Result</h2>
-  <textarea rows=10 cols=80>{{result | json}}</textarea>
+  <md-input-container>
+    <textarea mdInput rows=10 cols=80>{{result | json}}</textarea>
+  </md-input-container>
 </div>
