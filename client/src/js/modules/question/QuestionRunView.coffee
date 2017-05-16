@@ -221,7 +221,8 @@ class QuestionRunView extends Backbone.View
     if Tangerine.audioContext?
       if @displaySound
         @mySound = Tangerine.audioContext.createBufferSource();
-        arrayBuff = Base64Binary.decodeArrayBuffer(@displaySound.data);
+#        arrayBuff = Base64Binary.decodeArrayBuffer(@displaySound.data);
+        arrayBuff = Utils.base64ToArrayBuffer(@displaySound.data);
         Tangerine.audioContext.decodeAudioData(arrayBuff, (audioData) =>
           @myBuffer = audioData;
           console.log("hoohoo")

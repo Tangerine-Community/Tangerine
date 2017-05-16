@@ -437,8 +437,6 @@ class Utils
           $alert.fadeOut(250, -> $(this).remove() )
       , Math.max(computedDelay, delay)
 
-
-
   @sticky: (html, buttonText = "Close", callback, position = "middle") ->
     div = $("<div class='sticky_alert'>#{html}<br><button class='command parent_remove'>#{buttonText}</button></div>").appendTo("#content")
     if position == "middle"
@@ -579,6 +577,37 @@ class Utils
             },
               doc_ids: docList
           )
+
+#          http://stackoverflow.com/a/16245768/6726094
+  @b64toBlob = (b64Data, contentType, sliceSize) ->
+    contentType = contentType or ''
+    sliceSize = sliceSize or 512
+    byteCharacters = atob(b64Data)
+    byteArrays = []
+    offset = 0
+    while offset < byteCharacters.length
+      slice = byteCharacters.slice(offset, offset + sliceSize)
+      byteNumbers = new Array(slice.length)
+      i = 0
+      while i < slice.length
+        byteNumbers[i] = slice.charCodeAt(i)
+        i++
+      byteArray = new Uint8Array(byteNumbers)
+      byteArrays.push byteArray
+      offset += sliceSize
+    blob = new Blob(byteArrays, type: contentType)
+    blob
+
+#    http://stackoverflow.com/a/21797381/6726094
+  @base64ToArrayBuffer = (base64) ->
+    binary_string = window.atob(base64)
+    len = binary_string.length
+    bytes = new Uint8Array(len)
+    i = 0
+    while i < len
+      bytes[i] = binary_string.charCodeAt(i)
+      i++
+    bytes.buffer
 
 
 
