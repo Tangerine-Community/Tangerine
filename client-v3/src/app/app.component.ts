@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {FormlyFieldConfig} from 'ng-formly';
+import {Validators, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -6,9 +8,49 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  form: FormGroup = new FormGroup({});
   title = 'Tangerine Form Demo';
   binderConfig: object;
   result: object;
+  userFields: FormlyFieldConfig = [{
+    className: 'row',
+    fieldGroup: [{
+        className: 'col-xs-6',
+        key: 'email',
+        type: 'input',
+        templateOptions: {
+            type: 'email',
+            label: 'Email address',
+            placeholder: 'Enter email'
+        },
+        validators: {
+          validation: Validators.compose([Validators.required])
+        }
+    }, {
+        className: 'col-xs-6',
+        key: 'password',
+        type: 'input',
+        templateOptions: {
+            type: 'password',
+            label: 'Password',
+            placeholder: 'Password',
+            pattern: ''
+        },
+        validators: {
+          validation: Validators.compose([Validators.required])
+        }
+    }]
+  }];
+
+  user = {
+    email: 'email@gmail.com',
+    checked: false
+  };
+
+  submit(user) {
+    console.log(user);
+  }
+
   constructor() {
     this.binderConfig = {
       _id: "43a883f3-9277-42ec-b93b-f037b8a3da4a",
