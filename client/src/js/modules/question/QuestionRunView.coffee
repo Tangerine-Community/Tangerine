@@ -312,13 +312,124 @@ class QuestionRunView extends Backbone.View
 #        @playDisplaySound()
 #      )
 
-      synth = Tangerine.audioContext.createOscillator();
-      synth.type = 'square';  # sine wave
-      synth.frequency.value = 440; # value in hertz
-      synth.connect(Tangerine.audioContext.destination);
-      currentTime = Tangerine.audioContext.currentTime;
-      synth.start(currentTime);
-      synth.stop(currentTime + 0.5); # stop after 1 second
+#      synth = Tangerine.audioContext.createOscillator();
+#      synth.type = 'square';  # sine wave
+#      synth.frequency.value = 440; # value in hertz
+#      synth.connect(Tangerine.audioContext.destination);
+#      currentTime = Tangerine.audioContext.currentTime;
+#      synth.start(currentTime);
+#      synth.stop(currentTime + 0.5); # stop after 1 second
+
+
+#      bufferSize = 4096
+#      pinkNoise = do ->
+#        b0 = undefined
+#        b1 = undefined
+#        b2 = undefined
+#        b3 = undefined
+#        b4 = undefined
+#        b5 = undefined
+#        b6 = undefined
+#        b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0
+#        node = Tangerine.audioContext.createScriptProcessor(bufferSize, 1, 1)
+#
+#        node.onaudioprocess = (e) ->
+#          output = e.outputBuffer.getChannelData(0)
+#          i = 0
+#          while i < bufferSize
+#            white = Math.random() * 2 - 1
+#            b0 = 0.99886 * b0 + white * 0.0555179
+#            b1 = 0.99332 * b1 + white * 0.0750759
+#            b2 = 0.96900 * b2 + white * 0.1538520
+#            b3 = 0.86650 * b3 + white * 0.3104856
+#            b4 = 0.55000 * b4 + white * 0.5329522
+#            b5 = -0.7616 * b5 - (white * 0.0168980)
+#            output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362
+#            output[i] *= 0.11
+#            # (roughly) compensate for gain
+#            b6 = white * 0.115926
+#            i++
+#          return
+#
+#        node
+#      pinkNoise.connect Tangerine.audioContext.destination
+#      currentTime = Tangerine.audioContext.currentTime;
+#      pinkNoise.start(currentTime);
+#      pinkNoise.stop(currentTime + 0.5); # stop after 1 second
+
+      context = Tangerine.audioContext
+      audioContext = Tangerine.audioContext
+
+#      convolverGain = context.createGain()
+#      convolver = context.createConvolver()
+#      masterGain = context.createGain()
+#      masterCompression = context.createDynamicsCompressor()
+
+      bufferSize = 2 * Tangerine.audioContext.sampleRate
+      noiseBuffer = Tangerine.audioContext.createBuffer(1, bufferSize, Tangerine.audioContext.sampleRate)
+      output = noiseBuffer.getChannelData(0)
+      i = 0
+      while i < bufferSize
+        output[i] = Math.random() * 2 - 1
+        i++
+      whiteNoise = Tangerine.audioContext.createBufferSource()
+      whiteNoise.buffer = noiseBuffer
+#      convolver.buffer = noiseBuffer
+      whiteNoise.loop = true
+#      whiteNoise.start 0
+#      whiteNoise.connect Tangerine.audioContext.destination
+#      whiteNoise.connect  convolver
+
+#      whiteNoise.connect(convolverGain);
+#      whiteNoise.connect(masterGain);
+#      masterGain.connect(masterCompression);
+#      masterCompression.connect(context.destination);
+
+#      convolver.connect Tangerine.audioContext.destination
+#
+#      currentTime = Tangerine.audioContext.currentTime;
+#      whiteNoise.start(currentTime);
+#      whiteNoise.stop(0.5); # stop after 1 second
+
+      masterGain = audioContext.createGain();
+      masterGain.gain.value = 0.1;
+      masterGain.connect(audioContext.destination);
+
+      now = audioContext.currentTime;
+
+      effect = do ->
+        convolver = audioContext.createConvolver()
+        noiseBuffer = audioContext.createBuffer(2, 0.5 * audioContext.sampleRate, audioContext.sampleRate)
+        left = noiseBuffer.getChannelData(0)
+        right = noiseBuffer.getChannelData(1)
+        i = 0
+        while i < noiseBuffer.length
+          left[i] = Math.random() * 2 - 1
+          right[i] = Math.random() * 2 - 1
+          i++
+        convolver.buffer = noiseBuffer
+        convolver
+
+      sawWave = audioContext.createOscillator();
+      sawWave.type = "sawtooth";
+#      sawWave.start(now);
+      whiteNoise.start(now);
+      whiteNoise.stop(0.5); # stop after 1 second
+      effectGain = audioContext.createGain();
+
+      effect.connect(effectGain);
+      effectGain.connect(masterGain);
+#      sawWave.connect(effect);
+      whiteNoise.connect(effect);
+
+#      /* Sweep from A3 to A6. */
+      sawWave.frequency.setValueAtTime(220, now);
+      sawWave.frequency.linearRampToValueAtTime(1760, now + 4);
+
+#      /* Play raw wave through effect, then fade out. */
+      effectGain.gain.setValueAtTime(1.0, now);
+      effectGain.gain.setValueAtTime(1.0, now + 1);
+      effectGain.gain.linearRampToValueAtTime(0.0, now + 2);
 
   previousAnswer: =>
     @parent.questionViews[@parent.questionIndex - 1].answer if @parent.questionIndex >= 0
