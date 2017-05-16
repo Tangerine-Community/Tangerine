@@ -305,12 +305,20 @@ class QuestionRunView extends Backbone.View
     if @displaySound
 #      @mySound = Tangerine.audioContext.createBufferSource();
 #      arrayBuff = Utils.base64ToArrayBuffer(@displaySound.data);
-      arrayBuff = Tangerine.swishSoundBuffer
-      Tangerine.audioContext.decodeAudioData(arrayBuff, (audioData) =>
-        @myBuffer = audioData;
-        console.log("@myBuffer")
-        @playDisplaySound()
-      )
+#      arrayBuff = Tangerine.swishSoundBuffer
+#      Tangerine.audioContext.decodeAudioData(arrayBuff, (audioData) =>
+#        @myBuffer = audioData;
+#        console.log("@myBuffer")
+#        @playDisplaySound()
+#      )
+
+      synth = Tangerine.audioContext.createOscillator();
+      synth.type = 'square';  # sine wave
+      synth.frequency.value = 440; # value in hertz
+      synth.connect(Tangerine.audioContext.destination);
+      currentTime = Tangerine.audioContext.currentTime;
+      synth.start(currentTime);
+      synth.stop(currentTime + 0.5); # stop after 1 second
 
   previousAnswer: =>
     @parent.questionViews[@parent.questionIndex - 1].answer if @parent.questionIndex >= 0
