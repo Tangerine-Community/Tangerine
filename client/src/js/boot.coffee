@@ -309,10 +309,15 @@ Tangerine.bootSequence =
     callback()
 
   reloadUserSession: ( callback ) ->
-
     Tangerine.user.sessionRefresh
       error: -> Tangerine.user.logout()
       success: callback
+
+  loadAudioContext: ( callback  ) ->
+    window.AudioContext = window.AudioContext||window.webkitAudioContext;
+    context = new AudioContext();
+    Tangerine.audioContext = context
+    callback()
 
   startBackbone: ( callback ) ->
     Backbone.history.start()
@@ -332,6 +337,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
+    Tangerine.bootSequence.loadAudioContext
     Tangerine.bootSequence.startBackbone
   ]
 

@@ -530,6 +530,7 @@ conf.libFiles = [
     './src/js/lib/transcriptionCheckdigit.js',
     './src/js/lib/table2CSV.js',
     './src/js/lib/base64.js',
+    './src/js/lib/base64-binary.js',
     './src/js/lib/jstz.js',
     './src/js/lib/lz-string.js',
     './src/js/lib/ckeditor.js',

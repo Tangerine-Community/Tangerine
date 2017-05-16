@@ -216,33 +216,40 @@ class QuestionRunView extends Backbone.View
 
 
   playDisplaySound: () =>
-    @displaySoundObj?.load();
-    @displaySoundObj?.play()
-#    if @audioContext?
-#      @mySound = @audioContext.createBufferSource();
-#      @mySound.buffer = @myBuffer;
-#      @mySound.connect(audioContext.destination);
-#      @mySound?.start(0);
+#    @displaySoundObj?.load();
+#    @displaySoundObj?.play()
+    if Tangerine.audioContext?
+      if @displaySound
+        @mySound = Tangerine.audioContext.createBufferSource();
+        arrayBuff = Base64Binary.decodeArrayBuffer(@displaySound.data);
+        Tangerine.audioContext.decodeAudioData(arrayBuff, (audioData) =>
+          @myBuffer = audioData;
+          console.log("hoohoo")
+          @mySound.buffer = @myBuffer;
+          @mySound.connect(Tangerine.audioContext.destination);
+          @mySound?.start(0);
+        )
+
 
   scroll: (event) ->
     @trigger "scroll", event, @model.get("order")
 
 
-  initialize: (options) ->
+  initialize: (options) =>
     @on "show", => @onShow()
     @model     = options.model
     @parent    = options.parent
 
     @displaySound = @model.getObject('displaySound', false)
-    if @displaySound
-      @displaySoundObj = new Audio("data:#{@displaySound.type};base64,#{@displaySound.data}")
+#    if @displaySound
+#      @displaySoundObj = new Audio("data:#{@displaySound.type};base64,#{@displaySound.data}")
 #      decoded = new TextEncoderLite('utf-8').decode(@displaySound.data);
 #      b64Decoded = base64js.toByteArray(decoded);
-
 #      arrayBuff = Base64Binary.decodeArrayBuffer(@displaySound.data);
-#      @audioContext = new AudioContext();
-#      @audioContext.decodeAudioData(arrayBuff, (audioData) ->
+##      arrayBuff = Base64.decode(@displaySound.data);
+#      Tangerine.audioContext.decodeAudioData(arrayBuff, (audioData) =>
 #        @myBuffer = audioData;
+#        console.log("hoohoo")
 #      )
 
 
