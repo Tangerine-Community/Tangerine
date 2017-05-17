@@ -338,7 +338,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.handleCordovaEvents
     Tangerine.bootSequence.loadSingletons
     Tangerine.bootSequence.reloadUserSession
-    Tangerine.bootSequence.loadAudioContext
+#    Tangerine.bootSequence.loadAudioContext
     Tangerine.bootSequence.startBackbone
   ]
 

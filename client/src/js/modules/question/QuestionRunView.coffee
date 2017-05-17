@@ -49,8 +49,8 @@ class QuestionRunView extends Backbone.View
     @displayTime = (new Date()).getTime()
     @startProgressTimer() if @timeLimit isnt 0
     @startWarningTimer()  if @warningTime isnt 0
-#    @playDisplaySound()
-    @loadSound()
+    @playDisplaySound()
+#    @loadSound()
     @flashScreen()
     @highlightPrevious()
 
@@ -215,12 +215,11 @@ class QuestionRunView extends Backbone.View
   avNext: ->
     @trigger "av-next"
 
-
   playDisplaySound: () =>
-#    @displaySoundObj?.load();
-#    @displaySoundObj?.play()
-    if Tangerine.audioContext?
-      if @displaySound
+    @displaySoundObj?.load();
+    @displaySoundObj?.play()
+#    if Tangerine.audioContext?
+#      if @displaySound
 #        @mySound = Tangerine.audioContext.createBufferSource();
 ##        arrayBuff = Base64Binary.decodeArrayBuffer(@displaySound.data);
 #        arrayBuff = Utils.base64ToArrayBuffer(@displaySound.data);
@@ -230,12 +229,10 @@ class QuestionRunView extends Backbone.View
 #          @mySound.connect(Tangerine.audioContext.destination);
 #          @mySound?.start(0);
 #        )
-        @mySound = Tangerine.audioContext.createBufferSource();
-        @mySound.buffer = @myBuffer;
-        @mySound.connect(Tangerine.audioContext.destination);
-        @mySound?.start(0);
-
-
+#        @mySound = Tangerine.audioContext.createBufferSource();
+#        @mySound.buffer = @myBuffer;
+#        @mySound.connect(Tangerine.audioContext.destination);
+#        @mySound?.start(0);
 
   scroll: (event) ->
     @trigger "scroll", event, @model.get("order")
@@ -247,6 +244,8 @@ class QuestionRunView extends Backbone.View
     @parent    = options.parent
 
     @displaySound = @model.getObject('displaySound', false)
+    if @displaySound
+      @displaySoundObj = new Audio("data:#{@displaySound.type};base64,#{@displaySound.data}")
 
     @dataEntry = options.dataEntry
     @fontFamily = @parent.model.get('fontFamily')
