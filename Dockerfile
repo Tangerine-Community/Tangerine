@@ -1,5 +1,5 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM ubuntu:14.04 
+FROM ubuntu:16.04
 
 #
 # ENV API for this container
@@ -84,7 +84,8 @@ RUN apt-get update && apt-get -y install \
     libtool \
     bison \
     jq \
-    libffi-dev
+    libffi-dev \
+    netcat
 
 # Install node and some node based services
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash - \
@@ -104,8 +105,8 @@ RUN apt-get -y install nginx \
 RUN apt-get -y install software-properties-common \
   && apt-add-repository -y ppa:couchdb/stable \
   && apt-get update && apt-get -y install couchdb \
-  && chown -R couchdb:couchdb /usr/lib/couchdb /usr/share/couchdb /etc/couchdb /usr/bin/couchdb \
-  && chmod -R 0770 /usr/lib/couchdb /usr/share/couchdb /etc/couchdb /usr/bin/couchdb \
+  && chown -R couchdb:couchdb /usr/bin/couchdb /etc/couchdb /usr/share/couchdb \
+  && chmod -R 0770 /usr/bin/couchdb /etc/couchdb /usr/share/couchdb \
   && mkdir /var/run/couchdb \
   && chown -R couchdb /var/run/couchdb \
   && sed -i -e "s#\[couch_httpd_auth\]#\[couch_httpd_auth\]\ntimeout=9999999#" /etc/couchdb/local.ini \
@@ -149,8 +150,29 @@ ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,an
 ENV SDK_HOME /opt/android-sdk
 ENV PATH ${PATH}:${SDK_HOME}/tools:${SDK_HOME}/platform-tools
 
-# Install jd7
-RUN apt-get -y install default-jdk
+# Install jdk
+#RUN apt-get -y install default-jdk
+#RUN apt-add-repository -y ppa:couchdb/stable \
+#    && sudo apt update; sudo apt install oracle-java8-installer \
+#    && apt install oracle-java8-set-default
+
+RUN \
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  add-apt-repository -y ppa:webupd8team/java && \
+  apt-get update && \
+  apt-get install -y oracle-java8-installer && \
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/oracle-jdk8-installer
+
+# do we need to run this?
+#&& apt install oracle-java8-set-default
+
+# Define working directory.
+WORKDIR /data
+
+# Define commonly used JAVA_HOME variable
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+
 
 # Install Android SDK
 #    tar -xzf $ANDROID_SDK_FILENAME && \
@@ -195,10 +217,7 @@ RUN cd /tangerine-server/tree \
 
 # Install client.
 ADD ./client/package.json /tangerine-server/client/package.json
-ADD ./client/bower.json /tangerine-server/client/bower.json
-ADD ./client/.bowerrc /tangerine-server/client/.bowerrc
 ADD ./client/scripts/postinstall.sh /tangerine-server/client/scripts/postinstall.sh
-ADD ./client/Gruntfile.js /tangerine-server/client/Gruntfile.js
 ADD ./client/config.xml /tangerine-server/client/config.xml
 RUN mkdir /tangerine-server/client/src
 RUN mkdir /tangerine-server/client/www
@@ -207,17 +226,20 @@ RUN cd /tangerine-server/client \
     && sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js
 RUN cd /tangerine-server/client \
     && npm install
-RUN cd /tangerine-server/client \
-    && bower install --allow-root
+
+# Same as "export TERM=dumb"; prevents error "Could not open terminal for stdout: $TERM not set"
+ENV TERM linux
+
+RUN apt-get update; apt-get -y install gradle
 
 # Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 RUN cd /tangerine-server/client \
-    && ./node_modules/.bin/cordova platform add android@5.X.X \
+    && ./node_modules/.bin/cordova platform add android@6.X.X \
     && npm install cordova-plugin-whitelist \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
     && npm install cordova-plugin-geolocation \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --save
 RUN cd /tangerine-server/client && npm run build:apk
 
 # Install Tangerine CLI

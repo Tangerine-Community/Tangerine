@@ -11,7 +11,6 @@
     <access origin="*" />
     <icon src="res/icon.png" />
     <allow-navigation href="tangerinecentral.org" />
-    <preference name="xwalkVersion" value="14+" />
     <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
     <preference name="xwalkMode" value="embedded" />
     <preference name="xwalkMultipleApk" value="true" />

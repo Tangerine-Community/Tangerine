@@ -40,7 +40,7 @@ let Settings = require('../client/scripts/Settings');
 
 // shell response idiom
 const notOk = function(output, res, status) {
-    console.log("output of APK build process: " + JSON.stringify(output));
+    // console.log("output of APK build process: " + JSON.stringify(output));
     if (output === undefined) { return; }
     const badExit = output.code !== 0;
     if (badExit) {

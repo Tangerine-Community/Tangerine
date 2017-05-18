@@ -11,7 +11,9 @@
     "clean": "rm -rf platforms plugins node_modules",
     "preload": "scripts/preload.js",
     "treeload": "scripts/treeload.js",
-    "start": "gulp"
+    "start": "gulp",
+    "gulp": "gulp",
+    "debug": "gulp index-dev & gulp default"
   },
   "repository": {
     "type": "git",
