@@ -1,4 +1,5 @@
 <h2>Section: {{currentSection.title}}</h2>
+<h3>Page: {{currentPage.title}}</h3>
 <td-dynamic-forms [elements]="currentPage.config">
 </td-dynamic-forms>
-<button (click)="onNextClick()" md-raised-button>Next</button>
+<button (click)="onPageSubmit()" md-raised-button>Next</button>

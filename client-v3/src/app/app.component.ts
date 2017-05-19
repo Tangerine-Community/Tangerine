@@ -21,40 +21,45 @@ export class AppComponent {
       spreadsheetSchemaId: "dd74f132-3101-11e7-93ae-92361f002671",
       children: [
         {
-          _id: "one",
+          _id: "section0",
           collection: "section",
-          title: "Section 1: Car Surveys",
-          stopwatch: true,
-          time_limit: "5 minutes",
-          code: "function(event, variables, scope, callback) { ... }",
-          declarations: [ ],
-          imports: [ ],
-          repeatable: true,
-          sheetName: 'Student Observations for English P2',
-          columnName: 'Student Observations for English P2',
-          repeatN: 3,
-          forkable: true,
+          title: "Section 0 - A Fateful Question",
+          preCondition: "",
           children: [
             {
-              _id: "oneA",
+              _id: "section0page1",
+              title: "Where would you like to go?",
+              collection: "Page",
+              config: [
+                {
+                  type: 'array',
+                  name: 'answer_questions_about_cars_and_boats',
+                  label: 'Would you like to answer some questions about cars and boats?',
+                  selections: [
+                    'yes',
+                    'no'
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          _id: "section1",
+          collection: "section",
+          title: "Section 1: Car Surveys",
+          preCondition: "if (variables.answer_questions_about_cars_and_boats == 'no') { return true; }",
+          children: [
+            {
+              _id: "section1A",
               collection: "section",
-              title: "Section 1a: Cars",
-              stopwatch: true,
-              time_limit: "5 minutes",
-              code: "function(event, variables, scope, callback) { ... }",
-              declarations: [ ],
-              imports: [ ],
-              repeatable: true,
-              sheetName: 'Student Observations for English P2',
-              columnName: 'Student Observations for English P2',
-              repeatN: 3,
-              forkable: true,
+              title: "Section 1A - Cars",
+              preCondition: "",
               children: [
                 {
-                  _id: "1",
+                  _id: "section1Apage1",
                   title: "Car Engines",
                   collection: "Page",
-                  columnNames: [ "Column Name 1", "Column Name 2" ],
                   config: [
                     {
                       type: 'array',
@@ -75,10 +80,9 @@ export class AppComponent {
                   ]
                 },
                 {
-                  _id: "2",
+                  _id: "section1Apage2",
                   title: "Car Colors",
                   collection: "Page",
-                  columnNames: [ "Column Name 1", "Column Name 2" ],
                   config: [
                     {
                       type: 'array',
@@ -96,25 +100,15 @@ export class AppComponent {
               ]
             },
             {
-              _id: "oneB",
+              _id: "section1B",
               collection: "section",
-              title: "Section 1b: Boats",
-              stopwatch: true,
-              time_limit: "5 minutes",
-              code: "function(event, variables, scope, callback) { ... }",
-              declarations: [ ],
-              imports: [ ],
-              repeatable: true,
-              sheetName: 'Student Observations for English P2',
-              columnName: 'Student Observations for English P2',
-              repeatN: 3,
-              forkable: true,
+              title: "Section 1B - Boats",
+              preCondition: "",
               children: [
                 {
-                  _id: "1",
+                  _id: "section1Bpage1",
                   title: "Boat Engines",
                   collection: "Page",
-                  columnNames: [ "Column Name 1", "Column Name 2" ],
                   config: [
                     {
                       type: 'array',
@@ -135,10 +129,9 @@ export class AppComponent {
                   ]
                 },
                 {
-                  _id: "2",
-                  title: "Car Colors",
+                  _id: "section1Bpage2",
+                  title: "Boat Colors",
                   collection: "Page",
-                  columnNames: [ "Column Name 1", "Column Name 2" ],
                   config: [
                     {
                       type: 'array',
@@ -158,25 +151,39 @@ export class AppComponent {
           ]
         },
         {
-          _id: "b",
+          _id: "section3",
           collection: "section",
-          title: "Section 2: Binders and Cats",
-          stopwatch: true,
-          time_limit: "5 minutes",
-          code: "function(event, variables, scope, callback) { ... }",
-          declarations: [ ],
-          imports: [ ],
-          repeatable: true,
-          sheetName: 'Student Observations for English P3',
-          columnName: 'Student Observations for English P3',
-          repeatN: 3,
-          forkable: true,
+          title: "Section 3 - Another Fateful Section",
+          preCondition: "",
           children: [
             {
-              _id: "3",
-              title: "Page 1",
+              _id: "section3page1",
+              title: "Where would you like to go?",
               collection: "Page",
-              columnNames: [ "Column Name 1", "Column Name 2" ],
+              config: [
+                {
+                  type: 'array',
+                  name: 'answer_questions_about_cats_and_binders',
+                  label: 'Would you like to answer some questions about cats and binders?',
+                  selections: [
+                    'yes',
+                    'no'
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          _id: "section4",
+          collection: "section",
+          title: "Section 4 - Binders and Cats",
+          preCondition: "if (variables.answer_questions_about_cats_and_binders == 'no') { return true; }",
+          children: [
+            {
+              _id: "section4page1",
+              title: "Binder Questions",
+              collection: "Page",
               config: [
                 {
                   type: 'array',
@@ -198,10 +205,9 @@ export class AppComponent {
               ]
             },
             {
-              _id: "4",
-              title: "Page 2",
+              _id: "section4page2",
+              title: "Cat Questions",
               collection: "Page",
-              columnNames: [ "Column Name 1", "Column Name 2" ],
               config: [
                 {
                   type: 'array',

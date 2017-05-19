@@ -11,22 +11,21 @@ export class BinderComponent implements OnInit {
 
   @Input() config: any;
   @Output() binderDone: EventEmitter<Object> = new EventEmitter();
-  currentSection: object = {'title':''};
-  currentPage: object;
-  currentPathIndex: number = 0;
-  currentPath: string = '';
-  result: Array<any> = [];
-  objectsByPath: object = {};
-  pathsByIndex: Array<any> = [];
-  orderIndexByPath: object = {};
+  private currentSection: object = {'title':''};
+  private currentPage: object;
+  private currentPathIndex: number = 0;
+  private currentPath: string = '';
+  private log: Array<any> = [];
+  private variables: object = {};
+  private objectByPath: object = {};
+  private pathByIndex: Array<any> = [];
+  private indexByPath: object = {};
   @ViewChild(TdDynamicFormsComponent) form: TdDynamicFormsComponent;
   constructor() { }
 
    ngOnInit() {
-    //this.currentPage = this.config[this.pageNumber];
-    //let foo = this.flatten(this.config);
     this.organize();
-    this.step(false);
+    this.step(this.pathByIndex[0]);
   }
   ngAfterViewInit() {
     this.form.form.valueChanges.subscribe( () => {
@@ -34,51 +33,100 @@ export class BinderComponent implements OnInit {
     });
   }
 
-  organize() {;
+  private organize() {;
     let path = '';
     let i = 0;
     var that = this;
     function indexChildren(parent) {
       // step forward path
       path += `/${parent._id}`;
-      that.pathsByIndex.push(path);
+      that.pathByIndex.push(path);
       if (parent.children && parent.children.length > 0) {
         parent.children.forEach(element => {
-          that.objectsByPath[path + '/' + element._id] = element;
-          that.orderIndexByPath[path + '/' + element._id] = i;
+          that.objectByPath[path + '/' + element._id] = element;
+          that.indexByPath[path + '/' + element._id] = i;
           i++;
           indexChildren(element);
         });
       }
       // step back path
-      var frags = path.split('\/');
-      frags.pop();
-      path = frags.join('/');
+      var pathFragments = path.split('\/');
+      pathFragments.pop();
+      path = pathFragments.join('/');
 
     }
     indexChildren(this.config);
-    this.pathsByIndex.shift();
+    this.pathByIndex.shift();
   }
 
-  step(iterate = true) {
-    if (iterate !== false) {
+  private step(path = null) {
+    // No path? Go to the next path.
+    if (path === null) {
       this.currentPathIndex++;
+      this.currentPath = this.pathByIndex[this.currentPathIndex];
+      if (this.currentPath == null) {
+        return this.done();
+      }
+    } else {
+      this.currentPathIndex = this.indexByPath[path];
+      this.currentPath = path;
     }
-    this.currentPath = this.pathsByIndex[this.currentPathIndex];
-    if (this.currentPath == null) {
-      return this.binderDone.emit(this.result);
-    }
-    const nextObject = this.objectsByPath[this.currentPath];
+    const nextObject = this.objectByPath[this.currentPath];
     if (nextObject.collection === 'section') {
       this.currentSection = nextObject;
+      var shouldSkip = false
+      if (nextObject.preCondition !== '') {
+        var variables = this.variables;
+        var skipLogic = 'var preCondition = function() { ' + nextObject.preCondition + ' }; shouldSkip = preCondition();';
+        console.log('Executing skipLogic:');
+        console.log(skipLogic);
+        eval(skipLogic);
+      }
+      if (shouldSkip) {
+        // Find the next sibling section.
+        var i = this.currentPathIndex;
+        var nextSiblingPath = null;
+        var sectionDepth = (this.currentPath.split('\/')).length;
+        while (nextSiblingPath == null) {
+          i++;
+          var nextPotentialSiblingPath = this.pathByIndex[i];
+          if (nextPotentialSiblingPath) {
+            var nextPotentialSiblingPathFragments = nextPotentialSiblingPath.split('\/');
+            if (nextPotentialSiblingPathFragments.length == sectionDepth) {
+              nextSiblingPath = nextPotentialSiblingPath;
+            }
+          } else {
+            nextSiblingPath = 'done';
+          }
+        }
+        if (nextSiblingPath === 'done') {
+          this.done();
+        } else {
+          return this.step(nextSiblingPath);
+        }
+      }
       return this.step();
+    } else {
+      this.currentPage = nextObject;
+      return;
     }
-    this.currentPage = nextObject;
   }
 
-  onNextClick() {
-    this.result.push(this.form.value);
+  private onPageSubmit() {
+    this.log.push({
+      time: (new Date()).toUTCString(),
+      action: 'pageSubmit',
+      data: this.form.value
+    });
+    this.variables = Object.assign(this.variables, this.form.value);
     this.step();
+  }
+
+  private done() {
+    this.binderDone.emit({
+      variables: this.variables,
+      log: this.log
+    });
   }
 
 }
