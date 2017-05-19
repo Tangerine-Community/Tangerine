@@ -1,2 +1,5 @@
 <h2>Section: {{currentSection.title}}</h2>
-<app-ng-json-form [config]="currentPage.config" (jsonFormSubmit)="onJsonFormSubmit($event)"></app-ng-json-form>
+<h3>Page: {{currentPage.title}}</h3>
+<td-dynamic-forms [elements]="currentPage.config">
+</td-dynamic-forms>
+<button (click)="onPageSubmit()" md-raised-button>Next</button>
