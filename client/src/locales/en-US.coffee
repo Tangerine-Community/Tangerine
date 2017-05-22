@@ -119,6 +119,16 @@ Tangerine.locales["en-US"] =
         "last_attempted"  : "Last attempted"
         "item_at_seconds" : "Item at __seconds__ seconds"
 
+    "CameraRunView" :
+      "title" : "Capture Photo"
+      "button" :
+        "capture" : "Capture Photo"
+        "browse" : "Browse Photos"
+      "error" :
+        "capture" : "An error occurred while importing the photo. Please try again."
+        "noCamera" : "System Error: No Camera Available to Capture Photo."
+        "invalid" : "You must capture a photograph before you can continue."
+
     "SubtestRunView" :
       "button" :
         "help" : "Help"
