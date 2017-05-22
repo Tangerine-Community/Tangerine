@@ -14,6 +14,9 @@ $cordova plugin add cordova-plugin-crosswalk-webview --save --variable XWALK_VER
 # location services
 $cordova plugin add cordova-plugin-geolocation --save
 
+# add navigator access to the camera
+$cordova plugin add cordova-plugin-camera --save
+
 # whitelist to allow ajax calls to servers specified in config.xml
 $cordova plugin add cordova-plugin-whitelist --save
 
