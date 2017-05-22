@@ -34,3 +34,4 @@ client/src/compiled/*
 editor/src/compiled/*
 client/src/index-dev.html
 editor/src/index-dev.html
+.DS_Store
