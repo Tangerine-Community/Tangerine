@@ -309,6 +309,9 @@ conf.fileOrder = [
   'GpsEditView',
   'GpsPrintView',
 
+  'CameraRunView',
+  'CameraEditView',
+
   'Result',
   'Results',
   'ResultView',
@@ -410,6 +413,7 @@ conf.fileOrder = [
   'SurveyPrintView',
   'ObservationPrintView',
   'SubtestPrintView',
+  'CameraPrintView',
 
   'Config',
 
