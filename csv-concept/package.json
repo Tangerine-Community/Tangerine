@@ -1,0 +1,25 @@
+{
+  "name": "c288e97fea583cd20cffa3bd64ae3bb9",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "nodemon -L --watch csv.js --inspect=9229 index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gist.github.com/c288e97fea583cd20cffa3bd64ae3bb9.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gist.github.com/c288e97fea583cd20cffa3bd64ae3bb9"
+  },
+  "homepage": "https://gist.github.com/c288e97fea583cd20cffa3bd64ae3bb9",
+  "dependencies": {
+    "axios": "^0.16.1",
+    "express": "^4.15.2",
+    "nodemon": "^1.11.0"
+  }
+}
