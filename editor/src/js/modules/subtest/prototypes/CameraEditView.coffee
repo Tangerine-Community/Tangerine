@@ -18,6 +18,9 @@ class CameraEditView extends Backbone.View
       400: '400 px'
       500: '500 px'
       600: '600 px'
+      700: '700 px'
+      800: '800 px'
+      900: '900 px'
 
   render: -> 
     variableName    = @model.get("variableName")   || ""
@@ -26,11 +29,11 @@ class CameraEditView extends Backbone.View
     
     qualityOptionsHTML = ""
     for optK, optV of @qualityOptions 
-      qualityOptionsHTML += "<option value='#{optK}' #{if (parseInt(optK) == captureQuality) then 'selected' else ''}>#{optV}</option>"
+      qualityOptionsHTML += "<option value='#{optK}' #{if (parseInt(optK) == parseInt(captureQuality)) then 'selected' else ''}>#{optV}</option>"
 
     sizeOptionsHTML = ""
     for optK, optV of @sizeOptions 
-      sizeOptionsHTML += "<option value='#{optK}' #{if (parseInt(optK) == captureSize) then 'selected' else ''}>#{optV}</option>"
+      sizeOptionsHTML += "<option value='#{optK}' #{if (parseInt(optK) == parseInt(captureSize)) then 'selected' else ''}>#{optV}</option>"
 
     @$el.html "
       <div class='label_value'>
@@ -54,6 +57,8 @@ class CameraEditView extends Backbone.View
 
   save: -> 
     @model.set
-      variableName : @$el.find("#subtest_variable_name").val().replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
+      variableName:   @$el.find("#subtest_variable_name").val().replace(/\s/g, "_").replace(/[^a-zA-Z0-9_]/g,"")
+      captureQuality: @$el.find("#subtest_capture_quality option:selected").val()
+      captureSize:    @$el.find("#subtest_capture_size option:selected").val()
   
   isValid: -> true
