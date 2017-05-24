@@ -16,11 +16,12 @@ class CameraRunView extends Backbone.View
       allowCamera   : true
       allowGallery  : false
       allowEdit     : false
+      correctOrientation: true
       image:
         quality       : @model.get("captureQuality") || 60
         targetHeight  : @model.get("captureSize")    || 300
         targetWidth   : @model.get("captureSize")    || 300
-        mimeType      : 'image/png'
+        mimeType      : 'image/jpeg'
 
 
     @imgSource = ""
@@ -50,11 +51,14 @@ class CameraRunView extends Backbone.View
         @handleError()
         ""
       ,
-        destinationType:  Camera.DestinationType.DATA_URL
-        sourceType:       Camera.PictureSourceType.CAMERA
-        allowEdit:        @config.allowEdit
-        targetWidth:      @config.image.targetWidth
-        targetHeight:     @config.image.targetHeight
+        destinationType:    Camera.DestinationType.DATA_URL
+        sourceType:         Camera.PictureSourceType.CAMERA
+        encodingType:       Camera.EncodingType.JPEG
+        allowEdit:          @config.allowEdit
+        quality:            @config.image.quality
+        targetWidth:        @config.image.targetWidth
+        targetHeight:       @config.image.targetHeight
+        correctOrientation: @config.correctOrientation
     )
     ""
 
@@ -69,11 +73,14 @@ class CameraRunView extends Backbone.View
       (error) =>
         @handleError()
       ,
-        destinationType:  Camera.DestinationType.DATA_URL
-        sourceType:       Camera.PictureSourceType.PHOTOLIBRARY
-        allowEdit:        @config.allowEdit
-        targetWidth:      @config.image.targetWidth
-        targetHeight:     @config.image.targetHeight
+        destinationType:    Camera.DestinationType.DATA_URL
+        sourceType:         Camera.PictureSourceType.PHOTOLIBRARY
+        encodingType:       Camera.EncodingType.JPEG
+        allowEdit:          @config.allowEdit
+        quality:            @config.image.quality
+        targetWidth:        @config.image.targetWidth
+        targetHeight:       @config.image.targetHeight
+        correctOrientation: @config.correctOrientation
     )
     ""
 
@@ -127,7 +134,11 @@ class CameraRunView extends Backbone.View
     @trigger "ready"
 
   getResult: ->
-    return { "imageBaseUrl": "#{@imgBaseUrl}", "imageBase64": "#{@imgSource}" , "mimeType": "#{@imgMimeType}"}
+    result = 
+      variableName: @model.get("variableName") || ""
+      imageBase64:  "#{@imgSource}"
+      mimeType:     "#{@imgMimeType}"
+    return result
 
   getSkipped: ->
     return {}

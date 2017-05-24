@@ -7,7 +7,6 @@ class CameraRunItemView extends Backbone.Marionette.ItemView
     "click .camera-browse-btn"  : 'browse'
 
   initialize: (options={}) ->
-    console.log "hello init"
     Tangerine.progress.currentSubview = @
     @i18n()
 
@@ -18,16 +17,16 @@ class CameraRunItemView extends Backbone.Marionette.ItemView
       allowCamera   : true
       allowGallery  : false
       allowEdit     : false
+      correctOrientation: true
       image:
         quality       : @model.get("captureQuality") || 60
         targetHeight  : @model.get("captureSize")    || 300
         targetWidth   : @model.get("captureSize")    || 300
-        mimeType      : 'image/png'
+        mimeType      : 'image/jpeg'
 
     @imgSource = ""
     @imgMimeType = "" 
-    @imgBaseUrl = Tangerine.settings.attributes.groupHost+"/"+Tangerine.settings.groupDB+"/_design/"+Tangerine.settings.attributes.groupDDoc+"/_show/image/"
-    console.log "Completed CameraRunItemView initialization", @
+
   i18n: ->
     @text =
       "title"           : t('CameraRunView.title') 
@@ -51,11 +50,14 @@ class CameraRunItemView extends Backbone.Marionette.ItemView
         @handleError()
         ""
       ,
-        destinationType:  Camera.DestinationType.DATA_URL
-        sourceType:       Camera.PictureSourceType.CAMERA
-        allowEdit:        @config.allowEdit
-        targetWidth:      @config.image.targetWidth
-        targetHeight:     @config.image.targetHeight
+        destinationType:    Camera.DestinationType.DATA_URL
+        sourceType:         Camera.PictureSourceType.CAMERA
+        encodingType:       Camera.EncodingType.JPEG
+        allowEdit:          @config.allowEdit
+        quality:            @config.image.quality
+        targetWidth:        @config.image.targetWidth
+        targetHeight:       @config.image.targetHeight
+        correctOrientation: @config.correctOrientation
     )
     ""
 
@@ -70,11 +72,14 @@ class CameraRunItemView extends Backbone.Marionette.ItemView
       (error) =>
         @handleError()
       ,
-        destinationType:  Camera.DestinationType.DATA_URL
-        sourceType:       Camera.PictureSourceType.PHOTOLIBRARY
-        allowEdit:        @config.allowEdit
-        targetWidth:      @config.image.targetWidth
-        targetHeight:     @config.image.targetHeight
+        destinationType:    Camera.DestinationType.DATA_URL
+        sourceType:         Camera.PictureSourceType.PHOTOLIBRARY
+        encodingType:       Camera.EncodingType.JPEG
+        allowEdit:          @config.allowEdit
+        quality:            @config.image.quality
+        targetWidth:        @config.image.targetWidth
+        targetHeight:       @config.image.targetHeight
+        correctOrientation: @config.correctOrientation
     )
     ""
 
@@ -102,7 +107,7 @@ class CameraRunItemView extends Backbone.Marionette.ItemView
       @buttonState = "disabled"
 
     @$el.html "
-      <section class='CameraRunView'>
+      <section class='CameraRunView'> 
         <div class='grid grid-pad'>
           <div class='col-3-12'>
             <div class='content'>
@@ -128,7 +133,18 @@ class CameraRunItemView extends Backbone.Marionette.ItemView
     @trigger "ready"
 
   getResult: ->
-    return { "imageBaseUrl": "#{@imgBaseUrl}", "imageBase64": "#{@imgSource}" , "mimeType": "#{@imgMimeType}"}
+    
+    result = 
+      variableName: @model.get("variableName") || ""
+      imageBase64:  "#{@imgSource}"
+      mimeType:     "#{@imgMimeType}"
+    hash = @model.get("hash") if @model.has("hash")
+    subtestResult =
+      'body' : result
+      'meta' :
+        'hash' : hash
+    return subtestResult
+
 
   getSkipped: ->
     return {}
@@ -141,8 +157,6 @@ class CameraRunItemView extends Backbone.Marionette.ItemView
 
   isValid: -> #if no cam always return true, otherwise check if image is present
     return true if navigator.camera is undefined
-    console.log "Check Valid: Image Source: ", @imgSource
-    console.log "Check Valid: isValid", (@imgSource is "" && !@model.attributes.skippable)?false:true
     if @imgSource is "" && !@model.attributes.skippable then false else true
 
 
