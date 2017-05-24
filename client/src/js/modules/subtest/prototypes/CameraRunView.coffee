@@ -6,21 +6,22 @@ class CameraRunView extends Backbone.View
     "click .camera-capture-btn"	: 'capture'
     "click .camera-browse-btn"  : 'browse'
 
-  config:
-    allowCamera   : true
-    allowGallery  : false
-    allowEdit     : false
-    image:
-      quality       : 50
-      targetHeight  : 200
-      targetWidth   : 135
-      mimeType      : 'image/png'
-
   initialize: (options={}) ->
     @i18n()
 
     @model = options.model
     @parent = options.parent
+
+    @config =
+      allowCamera   : true
+      allowGallery  : false
+      allowEdit     : false
+      image:
+        quality       : @model.get("captureQuality") || 60
+        targetHeight  : @model.get("captureSize")    || 300
+        targetWidth   : @model.get("captureSize")    || 300
+        mimeType      : 'image/png'
+
 
     @imgSource = ""
     @imgMimeType = ""

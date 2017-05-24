@@ -6,27 +6,28 @@ class CameraRunItemView extends Backbone.Marionette.ItemView
     "click .camera-capture-btn"	: 'capture'
     "click .camera-browse-btn"  : 'browse'
 
-  config:
-    allowCamera   : true
-    allowGallery  : false
-    allowEdit     : false
-    image:
-      quality       : 50
-      targetHeight  : 200
-      targetWidth   : 135
-      mimeType      : 'image/png'
-
   initialize: (options={}) ->
+    console.log "hello init"
     Tangerine.progress.currentSubview = @
     @i18n()
 
     @model = options.model
     @parent = options.parent
 
+    @config =
+      allowCamera   : true
+      allowGallery  : false
+      allowEdit     : false
+      image:
+        quality       : @model.get("captureQuality") || 60
+        targetHeight  : @model.get("captureSize")    || 300
+        targetWidth   : @model.get("captureSize")    || 300
+        mimeType      : 'image/png'
+
     @imgSource = ""
     @imgMimeType = "" 
     @imgBaseUrl = Tangerine.settings.attributes.groupHost+"/"+Tangerine.settings.groupDB+"/_design/"+Tangerine.settings.attributes.groupDDoc+"/_show/image/"
-
+    console.log "Completed CameraRunItemView initialization", @
   i18n: ->
     @text =
       "title"           : t('CameraRunView.title') 
@@ -140,9 +141,17 @@ class CameraRunItemView extends Backbone.Marionette.ItemView
 
   isValid: -> #if no cam always return true, otherwise check if image is present
     return true if navigator.camera is undefined
-
+    console.log "Check Valid: Image Source: ", @imgSource
+    console.log "Check Valid: isValid", (@imgSource is "" && !@model.attributes.skippable)?false:true
     if @imgSource is "" && !@model.attributes.skippable then false else true
 
+
+  testValid: ->
+    if @isValid?
+      return @isValid()
+    else
+      return false
+    true
 
   showErrors: ->
     @$el.find("messages").html t('CameraRunView.error.invalid')
