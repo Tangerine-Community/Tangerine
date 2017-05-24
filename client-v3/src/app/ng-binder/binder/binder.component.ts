@@ -9,7 +9,7 @@ export class BinderComponent implements OnInit {
 
   @Input() config: any;
   @Output() binderDone: EventEmitter<Object> = new EventEmitter();
-  currentSection: object = {'title':''};
+  currentSection: object = {'name':''};
   currentPage: object;
   currentPathIndex: number = 0;
   currentPath: string = '';
@@ -20,8 +20,8 @@ export class BinderComponent implements OnInit {
   constructor() { }
 
    ngOnInit() {
-    //this.currentPage = this.config[this.pageNumber];
-    //let foo = this.flatten(this.config);
+    // this.currentPage = this.config[this.pageNumber];
+    // let foo = this.flatten(this.config);
     this.organize();
     this.step(false);
   }
@@ -29,7 +29,7 @@ export class BinderComponent implements OnInit {
   organize() {;
     let path = '';
     let i = 0;
-    var that = this;
+    let that = this;
     function indexChildren(parent) {
       // step forward path
       path += `/${parent._id}`;
@@ -43,7 +43,7 @@ export class BinderComponent implements OnInit {
         });
       }
       // step back path
-      var frags = path.split('\/');
+      let frags = path.split('\/');
       frags.pop();
       path = frags.join('/');
 
