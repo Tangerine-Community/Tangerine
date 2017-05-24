@@ -26,7 +26,6 @@ class CameraRunView extends Backbone.View
 
     @imgSource = ""
     @imgMimeType = ""
-    @imgBaseUrl = Tangerine.settings.attributes.groupHost+"/"+Tangerine.settings.groupDB+"/_design/"+Tangerine.settings.attributes.groupDDoc+"/_show/image/"
 
   i18n: ->
     @text =
