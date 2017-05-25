@@ -1,13 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocationFormControlTypesService } from './../location-form-control-types.service';
-import { LocationParentNodesService } from '../location-parent-nodes.service';
 import { StepState } from '@covalent/core';
 import { DataService } from './../../core/data-service.service';
 @Component({
   selector: 'app-node-creator',
   templateUrl: './node-creator.component.html',
   styleUrls: ['./node-creator.component.css'],
-  providers: [LocationFormControlTypesService, LocationParentNodesService, DataService],
+  providers: [LocationFormControlTypesService, DataService],
 })
 export class NodeCreatorComponent implements OnInit {
   formElements = [];
@@ -23,7 +22,7 @@ export class NodeCreatorComponent implements OnInit {
 
   constructor(
     private locationFormControlTypesService: LocationFormControlTypesService,
-    private locationParentNodesService: LocationParentNodesService, private dataService: DataService
+    private dataService: DataService
   ) { }
 
 
