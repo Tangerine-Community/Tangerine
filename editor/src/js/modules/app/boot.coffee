@@ -42,7 +42,10 @@ Tangerine.bootSequence =
 
     Tangerine.config = new Config "_id" : "configuration"
     Tangerine.config.fetch
-      error   : -> alert "Could not fetch configuration"
+      error  : (err, msg) ->
+        console.log("err: " + JSON.stringify(err) + " msg: " + JSON.stringify(msg))
+        alert "Session expired; you must login."
+        window.location.href = "/app/tangerine/"
       success : callback
 
 
