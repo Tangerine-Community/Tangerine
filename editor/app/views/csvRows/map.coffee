@@ -52,7 +52,7 @@ The only real behavior worth mentioning here is
     result.push cell "universal", "studentId",  doc.studentId
   else
     result.push cell "universal", "enumerator", doc.enumerator
-    result.push cell "universal", "start_time", doc.start_time || ''
+    result.push cell "universal", "startTime", doc.startTime || ''
     result.push cell "universal", "order_map",  (doc.order_map || []).join(",")
 
 

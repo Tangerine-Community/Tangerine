@@ -104,7 +104,8 @@ RUN apt-get -y install nginx \
 # Install Couchdb
 RUN apt-get -y install software-properties-common \
   && apt-add-repository -y ppa:couchdb/stable \
-  && apt-get update && apt-get -y install couchdb \
+  && apt-get update \
+  && apt-get -y install couchdb \
   && chown -R couchdb:couchdb /usr/bin/couchdb /etc/couchdb /usr/share/couchdb \
   && chmod -R 0770 /usr/bin/couchdb /etc/couchdb /usr/share/couchdb \
   && mkdir /var/run/couchdb \
