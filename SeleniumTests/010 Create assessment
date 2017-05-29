@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost/" />
+<title>010 Create assessment</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">010 Create assessment</td></tr>
+</thead><tbody>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=name</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=name</td>
+	<td>selenium</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=pass</td>
+	<td>selenium12</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.login</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button.account.navigation</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>css=button.command.goto</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button.new.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>css=input.new_name</td>
+	<td>test01</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new_save.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>selectWindow</td>
+	<td>null</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button.admin_name.clickable </td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='assessments_container']/ul/li/div/div</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>link=Edit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button.new_subtest_button.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new_subtest_button.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=subtest_type_select</td>
+	<td>label=Student ID</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=new_subtest_name</td>
+	<td>id</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new_subtest_save.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new_subtest_button.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=subtest_type_select</td>
+	<td>label=School Location</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=new_subtest_name</td>
+	<td>loc</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new_subtest_save.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new_subtest_button.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=subtest_type_select</td>
+	<td>label=Letter Name Knowledge</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=new_subtest_name</td>
+	<td>grid</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new_subtest_save.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new_subtest_button.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=subtest_type_select</td>
+	<td>label=Timed Reading Comprehension</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=new_subtest_name</td>
+	<td>survey</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.new_subtest_save.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//img[@title='Edit'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=levels</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=levels</td>
+	<td>area, town</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=locationCols</td>
+	<td>area,town</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=data</td>
+	<td>Madrid,Madrid<br />Catalunya, Barcelona<br />Murcia, Cartagena</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='content']/div/button[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=(//img[@title='Edit'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//img[@title='Edit'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='content']/div/button[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=(//img[@title='Edit'])[4]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//img[@title='Edit'])[4]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button.add_question.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.add_question.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=question_prompt</td>
+	<td>t1</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=question_name</td>
+	<td>t1</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.add_question_add.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=question_prompt</td>
+	<td>t2</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=question_name</td>
+	<td>t2</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.add_question_add.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=question_prompt</td>
+	<td>t3</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=question_name</td>
+	<td>t3</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.add_question_add.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=img.link_icon.edit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=question_template_select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=question_template_select</td>
+	<td>True/False</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=options.0.label</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='content']/div/button[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='content']/div/button[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=(//img[@title='Edit'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//img[@title='Edit'])[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=question_template_select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=question_template_select</td>
+	<td>True/False/No Response</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=options.0.label</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button.add_option.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.add_option.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=options.3.label</td>
+	<td>Other</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=options.3.value</td>
+	<td>4</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button.add_option.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='content']/div/button[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=(//img[@title='Edit'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//img[@title='Edit'])[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=question_template_select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=question_template_select</td>
+	<td>True/False/No Response</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='question_type']/div/label[3]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=open</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='content']/div/button[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button.add_question.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.add_question.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=question_prompt</td>
+	<td>t4</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=question_name</td>
+	<td>t4</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=button.add_question_add.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=(//img[@title='Edit'])[4]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=(//img[@title='Edit'])[4]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>id=question_template_select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>id=question_template_select</td>
+	<td>True/False</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=options.0.label</td>
+	<td>once</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=options.1.label</td>
+	<td>twice</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='question_type']/div/label[2]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=multiple</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>css=button.add_option.command</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='content']/div/button[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='content']/div/button[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='content']/div/button[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@id='content']/div/button[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='content']/div/button[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=navigation-logo</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>
