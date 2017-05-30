@@ -229,7 +229,6 @@ class CurriculumView extends Backbone.View
           <td>
             <a href='#class/subtest/#{subtest.id}'><img class='link_icon edit' title='Edit' src='images/icon_edit.png'></a>
             <img class='link_icon delete_subtest' title='Delete' data-subtestId='#{subtest.id}' src='images/icon_delete.png'>
-            <a href='#class/run/test/#{subtest.id}'><img class='link_icon testRun' title='Test run' src='images/icon_run.png'></a>
           </td>
         </tr>
         "

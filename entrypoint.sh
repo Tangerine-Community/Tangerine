@@ -9,7 +9,7 @@ echo ""
 echo ""
 echo "Setting up database user"
 echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini
-sudo chown -R couchdb /var/run/couchdb
+chown -R couchdb /var/run/couchdb
 couchdb -k
 couchdb &
 echo ""
@@ -35,7 +35,7 @@ sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/configuration.template | sed "s#
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" | sed "s#INSERT_ADMIN#"$T_ADMIN"#g" | sed "s#INSERT_ADMIN_PASS#"$T_PASS"#g" > _docs/settings.json
 couchapp push
 
-if [ $PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT = true ] 
+if [ $PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT = true ]
 then
 echo ""
 echo ""

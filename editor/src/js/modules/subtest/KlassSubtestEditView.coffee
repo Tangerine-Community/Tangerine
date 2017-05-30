@@ -68,6 +68,7 @@ class KlassSubtestEditView extends Backbone.View
         timer     : Math.max(parseInt( @$el.find("#subtest_timer").val() ), 0)
         items     : _.compact( @$el.find("#subtest_items").val().split(" ") ) # mild sanitization, happens at read too
         columns   : Math.max(parseInt( @$el.find("#subtest_columns").val() ), 0)
+        rtl       : @$el.find("#rtl_radio input:radio[name=rtl]:checked").val() == "true"
       ,
         success: =>
           Utils.midAlert "Subtest Saved"
@@ -180,6 +181,8 @@ class KlassSubtestEditView extends Backbone.View
     scoreTarget    = @model.getNumber "scoreTarget"
     scoreSpread    = @model.getNumber "scoreSpread"
     order          = @model.getNumber "order"
+    rtlEditHtml    = ""
+    rtl            = @model.getBoolean("rtl")
 
     #
     # Grids
@@ -192,6 +195,18 @@ class KlassSubtestEditView extends Backbone.View
       items        = @model.get("items").join " "
       timer        = @model.get("timer")        || 0
       columns      = @model.get("columns")      || 0
+
+
+      rtlEditHtml = "
+      <div class='label_value'>
+        <label>Right-to-Left direction</label><br>
+        <div class='menu_box'>
+          <div id='rtl_radio' class='buttonset'>
+            <label for='rtl_true'>Yes</label><input name='rtl' type='radio' value='true' id='rtl_true' #{'checked' if rtl}>
+            <label for='rtl_false'>No</label><input name='rtl' type='radio' value='false' id='rtl_false' #{'checked' if not rtl}>
+          </div>
+        </div>
+      </div>"
 
       prototypeOptions = "
         <div class='label_value'>
@@ -267,8 +282,6 @@ class KlassSubtestEditView extends Backbone.View
             linkSelect += "</select></div></div>"
             @$el.find('#grid_link').html linkSelect
 
-
-
       prototypeOptions = "
         <div class='label_value'>
           <label for='autostop_limit' title='The survey will discontinue after the first N questions have been answered with a &quot;0&quot; value option.'>Autostop after N incorrect</label><br>
@@ -314,7 +327,7 @@ class KlassSubtestEditView extends Backbone.View
       <h1>Subtest Editor</h1>
       <table class='basic_info'>
         <tr>
-          <th>Curriculum</th>
+          <th>Curriculum:</th>
           <td>#{curriculumName}</td>
         </tr>
       </table>
@@ -325,6 +338,8 @@ class KlassSubtestEditView extends Backbone.View
         <label for='name'>Name</label>
         <input id='name' value='#{name}'>
       </div>
+
+      #{rtlEditHtml}
 
       #{reportTypeDropdown}
 

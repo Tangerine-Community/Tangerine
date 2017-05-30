@@ -20,12 +20,9 @@ brockman/Brockman.log
 editor/app/_docs/configuration.json
 bundle
 
-
 robbert/npm-debug.log
 
 editor/npm-debug.log
-
-editor/src/compiled/*
 
 client/src/lesson_plan_media
 
@@ -40,3 +37,8 @@ npm-debug.log
 client/errorShots
 
 client/src/js/init/lachko-pack0000.json
+
+client/src/compiled/*
+editor/src/compiled/*
+client/src/index-dev.html
+editor/src/index-dev.html

@@ -1,5 +1,4 @@
-# Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM ubuntu:14.04 
+FROM ubuntu:16.04
 
 #
 # ENV API for this container
@@ -85,6 +84,7 @@ RUN apt-get update && apt-get -y install \
     bison \
     jq \
     libffi-dev \
+    netcat \
     cron
 
 # Install node and some node based services
@@ -104,9 +104,10 @@ RUN apt-get -y install nginx \
 # Install Couchdb
 RUN apt-get -y install software-properties-common \
   && apt-add-repository -y ppa:couchdb/stable \
-  && apt-get update && apt-get -y install couchdb \
-  && chown -R couchdb:couchdb /usr/lib/couchdb /usr/share/couchdb /etc/couchdb /usr/bin/couchdb \
-  && chmod -R 0770 /usr/lib/couchdb /usr/share/couchdb /etc/couchdb /usr/bin/couchdb \
+  && apt-get update \
+  && apt-get -y install couchdb \
+  && chown -R couchdb:couchdb /usr/bin/couchdb /etc/couchdb /usr/share/couchdb \
+  && chmod -R 0770 /usr/bin/couchdb /etc/couchdb /usr/share/couchdb \
   && mkdir /var/run/couchdb \
   && chown -R couchdb /var/run/couchdb \
   && sed -i -e "s#\[couch_httpd_auth\]#\[couch_httpd_auth\]\ntimeout=9999999#" /etc/couchdb/local.ini \
@@ -134,31 +135,45 @@ ENV GEM_HOME /usr/local/rvm/rubies/ruby-2.2.0
 
 # Prepare to install Android Build Tools
 ENV GRADLE_OPTS -Dorg.gradle.jvmargs=-Xmx2048m
-ENV ANDROID_SDK_FILENAME android-sdk_r24.4.1-linux.tgz
-ENV ANDROID_SDK_URL http://dl.google.com/android/${ANDROID_SDK_FILENAME}
+ENV ANDROID_SDK_VERSION 25.2.2
+ENV ANDROID_API_LEVEL 25
+ENV ANDROID_BUILD_TOOLS_VERSION 25.0.0
+#ENV ANDROID_SDK_FILENAME android-sdk_r24.4.1-linux.tgz
+ENV ANDROID_SDK_DIST tools_r${ANDROID_SDK_VERSION}-linux.zip
+#ENV ANDROID_SDK_URL http://dl.google.com/android/${ANDROID_SDK_FILENAME}
+ENV ANDROID_SDK_URL http://dl.google.com/android/repository/${ANDROID_SDK_DIST}
+#http://dl.google.com/android/repository/tools_r25.2.2-linux.zip
 # Support from Ice Cream Sandwich, 4.0.3 - 4.0.4, to Marshmallow version 6.0
-ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23
+ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23,android-24,android-25
 # https://developer.android.com/studio/releases/build-tools.html
-ENV ANDROID_BUILD_TOOLS_VERSION 23.0.3
-ENV ANDROID_HOME /opt/android-sdk-linux
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+#ENV ANDROID_BUILD_TOOLS_VERSION 23.0.3
+#ENV ANDROID_HOME /opt/android-sdk-linux
+ENV SDK_HOME /opt/android-sdk
+ENV PATH ${PATH}:${SDK_HOME}/tools:${SDK_HOME}/platform-tools
 
-# Install jd7
-RUN apt-get -y install default-jdk
+# Install jd8
+RUN \
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  add-apt-repository -y ppa:webupd8team/java && \
+  apt-get update && \
+  apt-get install -y oracle-java8-installer && \
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/oracle-jdk8-installer
+
+# Define commonly used JAVA_HOME variable
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
 # Install Android SDK
 RUN cd /opt && \
     wget -q $ANDROID_SDK_URL && \
-    tar -xzf $ANDROID_SDK_FILENAME && \
-    rm $ANDROID_SDK_FILENAME && \
+    unzip $ANDROID_SDK_DIST -d $SDK_HOME && \
+    rm $ANDROID_SDK_DIST && \
     echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
 
 # Install Cordova
 RUN npm update && \
     npm install -g npm && \
-    npm install -g cordova 
-
-
+    npm install -g cordova
 
 # 
 # Stage 2 Install application dependencies
@@ -178,8 +193,12 @@ RUN cd /tangerine-server/robbert \
 
 # Install editor.
 ADD ./editor/package.json /tangerine-server/editor/package.json
+ADD ./editor/bower.json /tangerine-server/editor/bower.json
+ADD ./editor/.bowerrc /tangerine-server/editor/.bowerrc
 RUN cd /tangerine-server/editor \
     && npm install
+RUN cd /tangerine-server/editor \
+    && bower install --allow-root
 
 # Install tree.
 ADD ./tree/package.json /tangerine-server/tree/package.json
@@ -195,6 +214,7 @@ ADD ./client/Gruntfile.js /tangerine-server/client/Gruntfile.js
 ADD ./client/Gulpfile.js /tangerine-server/client/Gulpfile.js
 ADD ./client/config.xml /tangerine-server/client/config.xml
 RUN mkdir /tangerine-server/client/src
+RUN mkdir /tangerine-server/client/www
 ADD ./client/www /tangerine-server/client/www
 ADD ./client/res /tangerine-server/client/res
 RUN cd /tangerine-server/client \
@@ -202,16 +222,22 @@ RUN cd /tangerine-server/client \
 RUN cd /tangerine-server/client \
     && npm install 
 RUN cd /tangerine-server/client \
-    && bower install --allow-root  
+    && bower install --allow-root
+
+# Same as "export TERM=dumb"; prevents error "Could not open terminal for stdout: $TERM not set"
+ENV TERM linux
+
+RUN apt-get update; apt-get -y install gradle
 
 # Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 RUN cd /tangerine-server/client \
-    && ./node_modules/.bin/cordova platform add android@5.X.X \
+    && ./node_modules/.bin/cordova platform add android@6.X.X \
     && npm install cordova-plugin-whitelist \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
     && npm install cordova-plugin-geolocation \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --save
+RUN cd /tangerine-server/client && npm run build:apk
 
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
@@ -223,27 +249,29 @@ ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
     && npm install
 
-
 #
 # Stage 3 Compile 
 # 
 
-# @todo Add all of the rest of the code too early because otherwise client compile doesn't pick up on the git repository it needs.
-ADD ./ /tangerine-server
 # Add the git repo so compile processes can pick up version number.
 ADD ./.git /tangerine-server/.git
-# Compile client. Run twice otherwise compile is incomplete. See #74.
-ADD ./client /tangerine-server/client
-RUN cd /tangerine-server/client && npm run gulp init
-RUN cd /tangerine-server/client && npm run gulp init
-RUN cd /tangerine-server/client && npm run build:apk 
 
 # Compile editor.
 ADD ./editor /tangerine-server/editor
 RUN cd /tangerine-server/editor && npm start init
+
 # Engage the Tangerine CLI so we can run commands like `sudo tangerine make-me-a-sandwich`.
 ADD ./cli /tangerine-server/cli
 RUN cd /tangerine-server/cli && npm link
+
+# Compile client.
+ADD ./client /tangerine-server/client
+RUN cd /tangerine-server/client && npm run gulp init
+RUN rm -r /tangerine-server/client/www
+RUN ln -s /tangerine-server/client/src /tangerine-server/client/www
+
+# Add all of the rest of the code
+ADD ./ /tangerine-server
 
 # add the cron job to purge APK's
 ADD ./purgeOldApks.sh /home/ubuntu/purgeOldApks.sh
@@ -256,6 +284,7 @@ RUN touch /var/log/purgeOldApks.log
 # Run the command on container startup
 CMD cron
 
+VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/ 
 
