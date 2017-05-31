@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocationFormControlTypesService } from './../location-form-control-types.service';
-import { StepState } from '@covalent/core';
 import { DataService } from './../../core/data-service.service';
 @Component({
   selector: 'app-node-creator',
@@ -16,23 +15,14 @@ export class NodeCreatorComponent implements OnInit {
   parentNodes = [];
   controlTypes = [];
   selectedParentNode: any;
-
-  stateStep1: StepState = StepState.Required;
-  stateStep3: StepState = StepState.Complete;
-
+  isViewOnFirstPage = true;
+  isEditingMetaData = false;
+  editedMetadataIndex;
   constructor(
     private locationFormControlTypesService: LocationFormControlTypesService,
     private dataService: DataService
   ) { }
 
-
-  toggleRequiredStep2(): void {
-    this.stateStep1 = (this.stateStep1 === StepState.Required ? StepState.None : StepState.Required);
-  }
-
-  toggleCompleteStep3(): void {
-    this.stateStep3 = (this.stateStep3 === StepState.Complete ? StepState.None : StepState.Complete);
-  }
   ngOnInit() {
     this.dataService.getParentNodes().then(data => {
       data.map((items) => {
@@ -45,13 +35,16 @@ export class NodeCreatorComponent implements OnInit {
     this.controlTypes = this.locationFormControlTypesService.getControlTypes();
   }
 
+  switchPages(): void {
+    this.isViewOnFirstPage = !this.isViewOnFirstPage;
+  }
   createMetadata(): void {
     this.nodeElements.metadata.push({
       label: this.form.metadata.metadata,
       metadataType: this.form.metadata.metadataType,
-      metadataRequired: this.form.metadata.metadataRequired
+      metadataRequired: this.form.metadata.metadataRequired || false
     });
-    this.form.metadata = {};
+    this.clearMetaDataForm();
   }
 
   createNode(): void {
@@ -60,4 +53,28 @@ export class NodeCreatorComponent implements OnInit {
     this.dataService.createNode(this.nodeElements);
   }
 
+  editMetaData(data, index): void {
+    this.editedMetadataIndex = index;
+    this.isEditingMetaData = true;
+    this.form.metadata.metadata = data.label;
+    this.form.metadata.metadataType = data.metadataType;
+    this.form.metadata.metadataRequired = data.metadataRequired;
+  }
+  deleteMetaData(index): void {
+    this.nodeElements.metadata.splice(index, 1);
+  }
+
+  saveEditedMetaData(): void {
+    this.isEditingMetaData = false;
+    this.nodeElements.metadata[this.editedMetadataIndex] = {
+      label: this.form.metadata.metadata,
+      metadataType: this.form.metadata.metadataType,
+      metadataRequired: this.form.metadata.metadataRequired || false
+    };
+    this.clearMetaDataForm();
+  }
+
+  clearMetaDataForm(): void {
+    this.form.metadata = {};
+  }
 }
