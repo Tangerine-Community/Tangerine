@@ -1,6 +1,6 @@
 env:
   global:
-    - REPO="client"
+    - REPO="client-v3"
     - CI_HOME=`pwd`/$REPO
 language: node_js
 node_js:
@@ -9,16 +9,11 @@ before_install:
   - echo TRAVIS_BUILD_DIR= ${TRAVIS_BUILD_DIR}
   - echo CI_HOME= ${CI_HOME}
   - cd $CI_HOME
-  - npm install -g grunt-cli
-  - npm install -g gulp
 install: npm install
 before_script:
   - echo TRAVIS_BUILD_DIR= ${TRAVIS_BUILD_DIR}
   - echo CI_HOME= ${CI_HOME}
   - cd $CI_HOME
-  - npm install -g bower
-  - bower install
-  - npm run gulp init
 notifications:
   slack: rti:nBr3dvYD5mClKt1pAnuHgH8J
   email: false
