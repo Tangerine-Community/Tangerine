@@ -173,7 +173,7 @@ RUN cd /opt && \
 # Install Cordova
 RUN npm update && \
     npm install -g npm && \
-    npm install -g cordova
+    npm install -g cordova@6.5.0
 
 # 
 # Stage 2 Install application dependencies
@@ -232,9 +232,7 @@ RUN apt-get update; apt-get -y install gradle
 # Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 RUN cd /tangerine-server/client \
     && ./node_modules/.bin/cordova platform add android@6.X.X \
-    && npm install cordova-plugin-whitelist \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
-    && npm install cordova-plugin-geolocation \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --save
 RUN cd /tangerine-server/client && npm run build:apk
