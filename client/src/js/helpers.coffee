@@ -993,7 +993,7 @@ class TangerineTree
       success: ( data ) =>
         success data
       error: ( data ) =>
-        error data, JSON.parse(data.responseText)
+        error data, JSON.stringify(data.responseText)
       complete: ->
         Utils.working false
 

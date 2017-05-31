@@ -112,11 +112,11 @@ class GridRunItemView extends Backbone.Marionette.ItemView
 
     done = 0
 
-    startTimerHTML = "<div class='timer_wrapper'><button class='start_time time'>#{@text.start}</button><div class='timer'>#{@timer}</div></div>"
+    displayRtl = "rtl_mode" if @rtl
+
+    startTimerHTML = "<div class='timer_wrapper  #{displayRtl||''}'><button class='start_time time'>#{@text.start}</button><div class='timer'>#{@timer}</div></div>"
 
     disabling = "disabled" unless @untimed
-
-    displayRtl = "rtl_mode" if @rtl
 
     html = if not @untimed then startTimerHTML else ""
 

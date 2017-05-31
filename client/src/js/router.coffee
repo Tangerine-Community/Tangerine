@@ -165,8 +165,7 @@ class Router extends Backbone.Router
     callFunction = not refresh
     Tangerine.router.navigate "class", callFunction
 
-    document.location.reload() if refresh # this is for the stupid click bug
-
+#    document.location.reload() if refresh # this is for the stupid click bug
 
   groups: ->
     Tangerine.user.verify
@@ -1156,3 +1155,6 @@ class Router extends Backbone.Router
                       window.location.reload()
                     error: ->
                       Utils.sticky "Error transfering user."
+
+
+

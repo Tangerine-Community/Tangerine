@@ -26,15 +26,16 @@ class NavigationView extends Backbone.View
     Tangerine.router.navigate "user/" + Tangerine.user.id, true
 
   logoClick: -> 
-    if @user.isAdmin()
-      Tangerine.activity = ""
-      @router.landing(true)
-    else
-      if Tangerine.activity == "assessment run"
-        if confirm @text.incomplete_main
-          @router.landing(true)
-      else
-          @router.landing(true)
+#    if @user.isAdmin()
+#      Tangerine.activity = ""
+#      @router.landing(true)
+#    else
+#      if Tangerine.activity == "assessment run"
+#        if confirm @text.incomplete_main
+#          @router.landing(true)
+#      else
+#          @router.landing(true)
+    Tangerine.router.navigate "class", true
 
   logout: ->
     if @user.isAdmin()
@@ -159,5 +160,3 @@ class NavigationView extends Backbone.View
       isUnregistered: =>
         @render()
         $( '#navigation' ).fadeOut(250)
-
-
