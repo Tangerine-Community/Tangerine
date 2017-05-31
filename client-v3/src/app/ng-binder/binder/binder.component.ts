@@ -9,7 +9,7 @@ export class BinderComponent implements OnInit {
 
   @Input() config: any;
   @Output() binderDone: EventEmitter<Object> = new EventEmitter();
-  currentSection: object = { 'title': '' };
+  currentSection: object = {'name': ''};
   currentPage: object;
   currentPathIndex = 0;
   currentPath = '';

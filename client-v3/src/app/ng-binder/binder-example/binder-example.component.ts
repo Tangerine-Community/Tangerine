@@ -6,14 +6,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./binder-example.component.css']
 })
 export class BinderExampleComponent {
-  title = 'Tangerine Form Demo';
+  name = 'Tangerine Form Demo';
   binderConfig: object;
   result: object;
   constructor() {
     this.binderConfig = {
       _id: '43a883f3-9277-42ec-b93b-f037b8a3da4a',
       _rev: '1-045b5094-e6c8-4603-8c12-f909eae744de',
-      title: 'Binder for School Observations Spreadsheet v3',
+      name: 'Binder for School Observations Spreadsheet v3',
       collection: 'Binder',
       status: 'published',
       spreadsheetId: 'ced3aca4-3101-11e7-93ae-92361f002671',
@@ -23,7 +23,7 @@ export class BinderExampleComponent {
         {
           _id: 'one',
           collection: 'section',
-          title: 'Section 1: Car Surveys',
+          name: 'Section 1: Car Surveys',
           stopwatch: true,
           time_limit: '5 minutes',
           code: 'function(event, variables, scope, callback) { ... }',
@@ -38,7 +38,7 @@ export class BinderExampleComponent {
             {
               _id: 'oneA',
               collection: 'section',
-              title: 'Section 1a: Cars',
+              name: 'Section 1a: Cars',
               stopwatch: true,
               time_limit: '5 minutes',
               code: 'function(event, variables, scope, callback) { ... }',
@@ -52,7 +52,7 @@ export class BinderExampleComponent {
               children: [
                 {
                   _id: '1',
-                  title: 'Car Engines',
+                  name: 'Car Engines',
                   collection: 'Page',
                   columnNames: [ 'Column Name 1', 'Column Name 2' ],
                   config: [
@@ -79,7 +79,7 @@ export class BinderExampleComponent {
                 },
                 {
                   _id: '2',
-                  title: 'Car Colors',
+                  name: 'Car Colors',
                   collection: 'Page',
                   columnNames: [ 'Column Name 1', 'Column Name 2' ],
                   config: [
@@ -102,7 +102,7 @@ export class BinderExampleComponent {
             {
               _id: 'oneB',
               collection: 'section',
-              title: 'Section 1b: Boats',
+              name: 'Section 1b: Boats',
               stopwatch: true,
               time_limit: '5 minutes',
               code: 'function(event, variables, scope, callback) { ... }',
@@ -116,7 +116,7 @@ export class BinderExampleComponent {
               children: [
                 {
                   _id: '1',
-                  title: 'Boat Engines',
+                  name: 'Boat Engines',
                   collection: 'Page',
                   columnNames: [ 'Column Name 1', 'Column Name 2' ],
                   config: [
@@ -143,7 +143,7 @@ export class BinderExampleComponent {
                 },
                 {
                   _id: '2',
-                  title: 'Car Colors',
+                  name: 'Car Colors',
                   collection: 'Page',
                   columnNames: [ 'Column Name 1', 'Column Name 2' ],
                   config: [
@@ -168,7 +168,7 @@ export class BinderExampleComponent {
         {
           _id: 'b',
           collection: 'section',
-          title: 'Section 2: Binders and Cats',
+          name: 'Section 2: Binders and Cats',
           stopwatch: true,
           time_limit: '5 minutes',
           code: 'function(event, variables, scope, callback) { ... }',
@@ -182,7 +182,7 @@ export class BinderExampleComponent {
           children: [
             {
               _id: '3',
-              title: 'Page 1',
+              name: 'Page 1',
               collection: 'Page',
               columnNames: [ 'Column Name 1', 'Column Name 2' ],
               config: [
@@ -210,7 +210,7 @@ export class BinderExampleComponent {
             },
             {
               _id: '4',
-              title: 'Page 2',
+              name: 'Page 2',
               collection: 'Page',
               columnNames: [ 'Column Name 1', 'Column Name 2' ],
               config: [
