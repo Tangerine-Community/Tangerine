@@ -13,6 +13,8 @@ import { AppComponent } from './app.component';
 import { NgBinderModule } from './ng-binder/ng-binder.module';
 import { NodeManagerModule } from './node-manager/node-manager.module';
 
+export { AppComponent }
+
 @NgModule({
   declarations: [
     AppComponent,
