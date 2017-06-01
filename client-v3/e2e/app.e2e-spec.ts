@@ -9,6 +9,6 @@ describe('tangerine-form App', () => {
 
   it('should display message saying Tangerine Client v3.x.x', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Tangerine Client v3.x.x fail');
+    expect(page.getParagraphText()).toEqual('Tangerine Client v3.x.x');
   });
 });
