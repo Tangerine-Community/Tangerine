@@ -30,4 +30,3 @@ script:
   - cd client-v3
   - ng test --watch false
   - ng e2e
-  - exit 0
