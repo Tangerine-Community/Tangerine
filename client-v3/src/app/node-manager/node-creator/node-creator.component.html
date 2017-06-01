@@ -1,6 +1,6 @@
 <md-grid-list cols="4" *ngIf="isViewOnFirstPage" rowHeight="5rem">
   <md-grid-tile colspan="4" rowspan="1">
-    <md-input-container class="tangy-full">
+    <md-input-container>
       <input mdInput placeholder="Node Name" [(ngModel)]="form.nodeName">
     </md-input-container>
   </md-grid-tile>
@@ -18,7 +18,7 @@
 
 <md-grid-list cols="4" *ngIf="!isViewOnFirstPage" rowHeight="5rem">
   <md-grid-tile rowspan="1" colspan="2">
-    <md-input-container class="tangy-full">
+    <md-input-container>
       <input mdInput placeholder="Metadata Label" [(ngModel)]="form.metadata.metadata">
     </md-input-container>
     <md-select placeholder="Metadata Type" [(ngModel)]="form.metadata.metadataType" name="food" required>
