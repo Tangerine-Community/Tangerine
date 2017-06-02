@@ -7,8 +7,8 @@ describe('tangerine-form App', () => {
     page = new TangerineFormPage();
   });
 
-  it('should display message saying app works', () => {
+  it('should display message saying Tangerine Client v3.x.x', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
+    expect(page.getParagraphText()).toEqual('Tangerine Client v3.x.x');
   });
 });

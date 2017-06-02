@@ -22,11 +22,9 @@ before_install:
   - export CHROME_BIN=/usr/bin/google-chrome
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - npm install -g @angular/cli
 install:
   - cd client-v3
   - npm install
 script:
   - cd client-v3
-  - ng test --watch false
-  - ng e2e
+  - node_modules/.bin/ng test --watch false
