@@ -1,6 +1,7 @@
 utils = require("views/lib/utils")
 cell  = utils.cell
 
+exportValue           = utils.exportValue
 translatedGridValue   = utils.translatedGridValue
 translatedSurveyValue = utils.translatedSurveyValue
 
@@ -70,7 +71,6 @@ cellsSurvey = ( subtest ) ->
       row.push cell( subtest, surveyVariable, translatedSurveyValue(surveyValue)) # if open just show result, otherwise translate not_asked
   return row
 
-
 cellsGps = (subtest) ->
   row = []
   row.push cell( subtest, "latitude",         subtest.data.lat )
@@ -83,7 +83,15 @@ cellsGps = (subtest) ->
   row.push cell( subtest, "timestamp",        subtest.data.timestamp )
   return row
 
+cellsCamera = (subtest, cameraSuffix, resultId) ->
+  variableName = subtest.data.variableName
+  subtestId    = subtest.subtestId
+  row = []
+  row.push cell( subtest, "#{variableName}_photo_captured#{cameraSuffix}",   exportValue(if subtest.data.imageBase64 != "" then "Yes" else "No"))
+  row.push cell( subtest, "#{variableName}_photo_url#{cameraSuffix}",        exportValue(if subtest.data.imageBase64 != "" then "" + "URL_REPLACE/#{resultId}/#{subtestId}" else ""))  
+  return row
 
+exports.cellsCamera      = cellsCamera
 exports.cellsGrid        = cellsGrid
 exports.cellsGps         = cellsGps
 exports.cellsSurvey      = cellsSurvey

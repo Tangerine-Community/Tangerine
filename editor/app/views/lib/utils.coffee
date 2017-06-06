@@ -12,6 +12,19 @@ surveyValueMap =
     "skipped" : "999" # skipped
     "logicSkipped" : "999" # skipped
 
+exportValueMap = 
+    "correct" : "1"   # correct
+    "incorrect" : "0"   # incorrect
+    "checked" : "1"   # checked 
+    "unchecked" : "0"   # unchecked
+    "missing" : "."   # missing
+    "not asked" : "."   # not asked
+    "skipped" : "999" # skipped
+    "logicSkipped" : "999" # skipped
+
+
+exportValue = ( databaseValue = "no_record" ) ->
+  return exportValueMap[databaseValue] || String(databaseValue)
 
 translatedGridValue = ( databaseValue = "no_record" ) ->
   return gridValueMap[databaseValue] || String(databaseValue)
@@ -32,5 +45,6 @@ cell = ( subtest, key, value ) ->
 
 exports.cell        = cell
 
+exports.exportValue = exportValue
 exports.translatedSurveyValue = translatedSurveyValue
 exports.translatedGridValue = translatedGridValue

@@ -10,9 +10,7 @@ The only real behavior worth mentioning here is
   return unless doc.collection is "result"
 
   clone = `function (item) { if (!item) { return item; } var types = [ Number, String, Boolean ], result; types.forEach(function(type) { if (item instanceof type) { result = type( item ); } }); if (typeof result == "undefined") { if (Object.prototype.toString.call( item ) === "[object Array]") { result = []; item.forEach(function(child, index, array) { result[index] = clone( child ); }); } else if (typeof item == "object") { if (item.nodeType && typeof item.cloneNode == "function") { var result = item.cloneNode( true ); } else if (!item.prototype) { if (item instanceof Date) { result = new Date(item); } else { result = {}; for (var i in item) { result[i] = clone( item[i] ); } } } else { if (false && item.constructor) { result = new item.constructor(); } else { result = item; } } } else { result = item; } } return result; }`
-
   utils = require("views/lib/utils")
-
   cell        = utils.cell
 
   prototypes  = require("views/lib/prototypes")
@@ -22,6 +20,7 @@ The only real behavior worth mentioning here is
   cellsDatetime    = prototypes.cellsDatetime
   cellsGps         = prototypes.cellsGps
   cellsLocation    = prototypes.cellsLocation
+  cellsCamera      = prototypes.cellsCamera
 
   subtestData = doc.subtestData
 
@@ -57,6 +56,7 @@ The only real behavior worth mentioning here is
 
 
   datetimeCount = 0;
+  cameraCount = 0
   linearOrder = subtestData.map (el, i) -> return i
 
   orderMap = doc.orderMap
@@ -69,27 +69,25 @@ The only real behavior worth mentioning here is
 
   timestamps = []
 
-
   # Do this in case the number of subtests isn't always the total number
   orderedSubtests = orderMap.map (index) ->
     tmp = subtestData[index]
-    subtestData[index] = null
+    subtestData[index] = null #TODO: this is not working properly - value is not being set to null - review later
     return tmp
-
+  
   orderedSubtests = orderedSubtests.concat(subtestData);
 
   subtests = []
 
   for subtest in orderedSubtests
     subtests.push(subtest) if subtest?
-
+  
   orderedSubtests = subtests
 
   # go through each subtest in this result
   for subtest in orderedSubtests
 
     continue if subtest is null # not quite sure how this happens
-
     prototype = subtest['prototype']
 
     # simple prototypes
@@ -123,6 +121,12 @@ The only real behavior worth mentioning here is
 
     else if prototype == "gps"
       result = result.concat cellsGps subtest
+
+    else if prototype == "camera"
+      #cameraSuffix = if cameraCount > 0 then "_#{cameraCount}" else ""
+      cameraSuffix = ""
+      result = result.concat cellsCamera subtest, cameraSuffix, doc._id
+      cameraCount++
 
     timestamps.push subtest.timestamp
 
