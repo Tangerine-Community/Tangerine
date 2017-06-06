@@ -13,6 +13,9 @@ class Csv
     @path  = options[:path]
     @cachedResults = {}
 
+    puts "Generating CSV - Path #{@path}"
+    #puts "Generating CSV - Host #{$settings[:host]}"
+    #puts "Generating CSV - Public Host #{$settings[:publicHost]}"
   end
 
 
@@ -84,11 +87,17 @@ class Csv
           value       = cell['v']
           machineName = cell['m'] + resultIndex.to_s
 
+          isntFalsy     = ! ( value.nil? || value == "" || value == 0 )
+
           # hack for handling time
           isTimeRelated = key.match(/timestamp/) || key.match(/start_time/) || key.match(/startTime/)
-          isntFalsy     = ! ( value.nil? || value == "" || value == 0 )
           if isTimeRelated && isntFalsy && groupTimeZone.nil?  then value = Time.at(value.to_i / 1000).strftime("%yy %mm %dd %Hh %Mm %Ss") end
           if isTimeRelated && isntFalsy && !groupTimeZone.nil? then value = Time.at(value.to_i / 1000).getlocal(groupTimeZone).strftime("%yy %mm %dd %Hh %Mm %Ss") end
+          
+          # handling photo url
+          isPhotoUrl = key.match(/photo_url/)
+          if isPhotoUrl && isntFalsy then value = value.sub('URL_REPLACE', "#{$settings[:publicHost]}/photo/#{@path}") end
+
 
           unless indexByMachineName[machineName] # Have we seen the machine name before?
             machineNames.push machineName
@@ -146,6 +155,13 @@ class Csv
         key         = cell['k']
         value       = cell['v']
         machineName = cell['m']
+
+        isntFalsy     = ! ( value.nil? || value == "" || value == 0 )
+
+        # handling photo url
+        isPhotoUrl = key.include? 'photo_url'
+        if isPhotoUrl && isntFalsy then value = value.sub('URL_REPLACE', "#{$settings[:publicHost]}/photo/#{@path}") end
+
 
         unless indexByMachineName[machineName] # Have we seen the machine name before?
           machineNames.push machineName
