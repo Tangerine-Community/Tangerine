@@ -18,3 +18,5 @@ bundle/
 # gulp build artifacts
 tmp/js/*
 tmp/min/*
+
+bower_components/
