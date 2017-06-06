@@ -13,9 +13,6 @@ class Csv
     @path  = options[:path]
     @cachedResults = {}
 
-    puts "Generating CSV - Path #{@path}"
-    #puts "Generating CSV - Host #{$settings[:host]}"
-    #puts "Generating CSV - Public Host #{$settings[:publicHost]}"
   end
 
 
@@ -96,7 +93,7 @@ class Csv
           
           # handling photo url
           isPhotoUrl = key.match(/photo_url/)
-          if isPhotoUrl && isntFalsy then value = value.sub('URL_REPLACE', "#{$settings[:publicHost]}/photo/#{@path}") end
+          if isPhotoUrl && isntFalsy then value = value.sub('URL_REPLACE', "#{$settings[:publicHost]}/media/resultphoto/#{@path}") end
 
 
           unless indexByMachineName[machineName] # Have we seen the machine name before?
@@ -160,7 +157,7 @@ class Csv
 
         # handling photo url
         isPhotoUrl = key.include? 'photo_url'
-        if isPhotoUrl && isntFalsy then value = value.sub('URL_REPLACE', "#{$settings[:publicHost]}/photo/#{@path}") end
+        if isPhotoUrl && isntFalsy then value = value.sub('URL_REPLACE', "#{$settings[:publicHost]}/photo/resultphoto/#{@path}") end
 
 
         unless indexByMachineName[machineName] # Have we seen the machine name before?
