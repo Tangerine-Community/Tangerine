@@ -58,6 +58,7 @@ describe('TangerinePageComponent', () => {
   });
 
   it('should show two input elements', () => {
-    expect((fixture.debugElement.queryAll(By.css('input')).length)).toEqual(2);
+    const inputElements = fixture.debugElement.queryAll(By.css('input'));
+    expect(inputElements.length).toEqual(2);
   });
 });
