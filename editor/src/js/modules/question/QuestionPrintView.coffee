@@ -52,13 +52,13 @@ class QuestionPrintView extends Backbone.View
         else
           imgHtml = "<br>No image<img src='' class='preview-thumb'>"
 
-        if cell.align != null
-          textAlign = "text-align: #{Question.AV_ALIGNMENT[cell.align]}"
-        else
-          textAlign = ''
+#        if cell.align != null
+#          textAlign = "text-align: #{Question.AV_ALIGNMENT[cell.align]}"
+#        else
+        textAlign = 'left'
 
-        rowHtml += "<div style='margin:0; position:relative; z-index: 999; display: inline-block; box-sizing: border-box; border:solid red 1px; height:#{480*(row.height/100)}px;width:#{640*(cell.width/100)}px; overflow:hidden; #{textAlign}'> <span class='dimension-overylay width-overlay'>Width #{cell.width}% <br> #{asset.name || ''}<br>#{assetMap[cell.content]||''}</span> #{imgHtml}</div>"
-      previewGridHtml += "<div style='border: 1px green solid; display:block; overflow:hidden; height:#{480*(row.height/100)}px'><span class='dimension-overylay' style='z-index:9999;'>Row Height #{row.height}%</span>#{rowHtml}</div>"
+        rowHtml += "<div style='margin:0; position:relative; z-index: 999; display: inline-block; box-sizing: border-box; border:solid red 1px; height:#{480*(row.height/100)}px;width:#{640*(cell.width/100)}px; overflow:hidden; #{textAlign}'> <p class='dimension-overylay width-overlay'><strong>Width:</strong> #{cell.width}% <br><strong>Filename:</strong> #{asset.name || ''}<br><strong>Answer:</strong> #{assetMap[cell.content]||''}</p> #{imgHtml}</div>"
+      previewGridHtml += "<div style='border: 1px green solid; display:block; overflow:hidden; height:#{480*(row.height/100)}px'>#{rowHtml}</div>"
     return previewGridHtml
 
   updateGridPreview: ->
@@ -195,7 +195,7 @@ class QuestionPrintView extends Backbone.View
             </tr>
           </table>
           <h3>Question Layout</h3>
-          <section id='grid-preview' style='height:480px;width:900px;'></section>
+          <section id='grid-preview' style='height:500px;width:900px;'></section>
         "
         if @type is 'av'
           @updateGridPreview()
