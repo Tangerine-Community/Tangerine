@@ -1,9 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormlyModule, FormlyBootstrapModule } from 'ng-formly';
+import { By } from '@angular/platform-browser';
 import {Validators, FormGroup} from '@angular/forms';
-import {ReactiveFormsModule} from '@angular/forms';
-
-
+import { TangerineFormsModule } from '../tangerine-forms.module';
 import { TangerinePageComponent } from './tangerine-page.component';
 
 describe('TangerinePageComponent', () => {
@@ -41,11 +39,8 @@ describe('TangerinePageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TangerinePageComponent ],
       imports: [
-        ReactiveFormsModule,
-        FormlyModule.forRoot(),
-        FormlyBootstrapModule
+        TangerineFormsModule
       ]
     })
     .compileComponents();
@@ -62,7 +57,7 @@ describe('TangerinePageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // it('should show a form', () => {
-    // expect(el.textContent).toContain('Test Title');
-  // });
+  it('should show two input elements', () => {
+    expect((fixture.debugElement.queryAll(By.css('input')).length)).toEqual(2);
+  });
 });
