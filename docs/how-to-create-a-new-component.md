@@ -1,5 +1,6 @@
 # How to create a new Component
 
+## The process
 1. If your component is appropriate for a separate module, generate a new module with `ng generate module your-module-name`.
 1. Generate component in the appropriate module `cd your-module-name; ng generate component you-component-name;`
 1. Modify the generated spec `your-component-name/your-component-name.spec.ts` for the Component.
@@ -13,3 +14,11 @@
 1. Start development of that component. After you make a change in the code, check your console output to make sure there is not a build error.
 1. If there is no build error, then refresh your DEBUG tab in Chrome to see the rendered component.
 1. As you code your component, set up test doubles in your Component's spec file to feed to your component's inputs. When you see output of the component is satisfactory, write a test to verify the DOM or any Component output is what you expect.
+
+## Helpful documentation
+- https://en.wikipedia.org/wiki/Test_double
+- https://aio-staging.firebaseapp.com/guide/testing
+
+## Tips
+- If you are passing in a Service into your Component, it's probably a Controller Component and an e2e test may be more appropriate.
+- Looking at other tests we have written are good examples of how to test many of things you will also need to test.
