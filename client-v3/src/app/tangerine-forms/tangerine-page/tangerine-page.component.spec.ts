@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 import {Validators, FormGroup} from '@angular/forms';
 import { TangerineFormsModule } from '../tangerine-forms.module';
 import { TangerinePageComponent } from './tangerine-page.component';
-import { TangerinePage } from './tangerine-page';
+import { TangerinePageConfig } from './tangerine-page-config';
 
 /** Button events to pass to `DebugElement.triggerEventHandler` for RouterLink event handler */
 const ButtonClickEvents = {
@@ -79,18 +79,28 @@ describe('TangerinePageComponent', () => {
   it('should emit data on user input', () => {
 
   });
-  it('should emit expected form when done', () => {
-    // const expectedForm = new TangerinePage();
-    const expectedFormModel = { question1: 'foo', question2: 'bar' };
-    // let emittedFormModel: TangerinePage;
-    let emittedFormModel: object;
+
+  it('should emit expected model when done', () => {
+    const expectedModel = { question1: 'foo', question2: 'bar' };
+    let emittedModel: object;
     component.form.controls.question1.setValue('foo');
     component.form.controls.question2.setValue('bar');
-    component.submit.subscribe((formModel: TangerinePage) => {
-      emittedFormModel = formModel;
+    component.submit.subscribe((formModel: object) => {
+      emittedModel = formModel;
     });
     click(nextButtonEl);
     // TODO: For some reason we have to JSON.stringify the Model to get them to match.
-    expect(JSON.stringify(emittedFormModel)).toBe(JSON.stringify(expectedFormModel));
+    // expect(emittedModel).toBe(expectedModel);
+    expect(JSON.stringify(emittedModel)).toBe(JSON.stringify(expectedModel));
   });
-});
+
+  it('should populate from model', () => {
+    const model = { question1: 'foo', question2: 'bar' };
+    component.model = model;
+    fixture.detectChanges();
+    const inputElements = fixture.debugElement.queryAll(By.css('input'));
+    expect(inputElements[0].nativeElement.value).toBe('foo');
+    expect(inputElements[1].nativeElement.value).toBe('bar');
+  });
+
+}); ;
