@@ -10,7 +10,7 @@ import { TangerinePageConfig } from './tangerine-page-config';
 export class TangerinePageComponent implements OnInit {
 
   // Input default model data for form.
-  private _model: object;
+  private _model: object = {};
   @Input()
   set model (value: TangerinePageConfig) {
     this._model = value;
@@ -20,7 +20,7 @@ export class TangerinePageComponent implements OnInit {
   }
 
   // Input the configuration for the page.
-  private _config: TangerinePageConfig;
+  private _config: TangerinePageConfig = {};
   @Input()
   set config (value: TangerinePageConfig) {
     this._config = value;
@@ -31,12 +31,10 @@ export class TangerinePageComponent implements OnInit {
   @Output() submit: EventEmitter<Object> = new EventEmitter();
 
   form: FormGroup = new FormGroup({});
+
   // TODO: Move these to TangerinePage Model? To TangerineForm Component?
   showNextButton: Boolean = true;
   showPreviousButton: Boolean = true;
-
-  data = {
-  };
 
   onFormSubmit(formModel) {
     this.submit.emit(formModel);
@@ -45,6 +43,7 @@ export class TangerinePageComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+
   }
 
 }

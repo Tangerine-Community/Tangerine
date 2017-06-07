@@ -1,4 +1,4 @@
-<form class="formly" role="form" novalidate [formGroup]="form" (ngSubmit)="onFormSubmit(data)">
+<form class="formly" role="form" novalidate [formGroup]="form" (ngSubmit)="onFormSubmit(model)">
     <formly-form [model]="model" [fields]="config" [form]="form">
         <button *ngIf="showPreviousButton" type="submit" class="btn btn-default previous">Previous</button>
         <button type="submit" class="btn btn-default next">Next</button>
