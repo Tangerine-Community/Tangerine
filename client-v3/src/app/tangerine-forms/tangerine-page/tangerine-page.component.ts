@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {Validators, FormGroup} from '@angular/forms';
-import {FormlyFieldConfig} from 'ng-formly';
+import { TangerinePage } from './tangerine-page';
 
 @Component({
   selector: 'app-tangerine-page',
@@ -9,23 +9,25 @@ import {FormlyFieldConfig} from 'ng-formly';
 })
 export class TangerinePageComponent implements OnInit {
   form: FormGroup = new FormGroup({});
-  _config: FormlyFieldConfig;
+  private _config: TangerinePage;
+  showNextButton: Boolean = true;
+  showPreviousButton: Boolean = true;
 
   @Input()
-  set config (value: FormlyFieldConfig) {
+  set config (value: TangerinePage) {
     this._config = value;
   }
   get config () {
     return this._config;
   }
 
-  user = {
-    email: 'email@gmail.com',
-    checked: false
+  @Output() submit: EventEmitter<Object> = new EventEmitter();
+
+  data = {
   };
 
-  submit(user) {
-    console.log(user);
+  onFormSubmit(formModel) {
+    this.submit.emit(formModel);
   };
 
   constructor() { }
