@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import {Validators, FormGroup} from '@angular/forms';
+import {Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { TangerinePageConfig } from './tangerine-page-config';
 
 @Component({
@@ -29,6 +29,7 @@ export class TangerinePageComponent implements OnInit {
     return this._config;
   }
   @Output() submit: EventEmitter<Object> = new EventEmitter();
+  @Output() update: EventEmitter<Object> = new EventEmitter();
 
   form: FormGroup = new FormGroup({});
 
@@ -40,10 +41,12 @@ export class TangerinePageComponent implements OnInit {
     this.submit.emit(formModel);
   };
 
-  constructor() { }
+  constructor(fb: FormBuilder) {
+    this.form = fb.group({});
+  }
 
   ngOnInit() {
-
+    this.form.valueChanges.subscribe(data => this.update.emit(data));
   }
 
 }

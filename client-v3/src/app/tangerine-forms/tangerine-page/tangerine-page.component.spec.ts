@@ -77,7 +77,14 @@ describe('TangerinePageComponent', () => {
   });
 
   it('should emit data on user input', () => {
-
+    let emittedModel: object;
+    component.update.subscribe((formModel: object) => {
+      emittedModel = formModel;
+    });
+    component.form.controls.question1.setValue('foo');
+    expect(JSON.stringify(emittedModel)).toBe(JSON.stringify({ question1: 'foo', question2: undefined }));
+    component.form.controls.question2.setValue('bar');
+    expect(JSON.stringify(emittedModel)).toBe(JSON.stringify({ question1: 'foo', question2: 'bar' }));
   });
 
   it('should emit expected model when done', () => {
