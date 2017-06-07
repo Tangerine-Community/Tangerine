@@ -3,9 +3,9 @@
 1. If your component is appropriate for a separate module, generate a new module with `ng generate module your-module-name`.
 1. Generate component in the appropriate module `cd your-module-name; ng generate component you-component-name;`
 1. Modify the generated spec `your-component-name/your-component-name.spec.ts` for the Component.
-  - Remove the TestBed module configuration for declaring the component. `TestBed.configureTestingModule({ declarations: [ YourComponentName ] })` should become `TestBed.configureTestingModule({ })`.
-  - Do an ES Import of the parent module with `import { YourModuleName } from '../you-module-name.module';`.
-  - Do an Angular Module Import of that Module Class by modifying `TestBed.configureTestingModule({ imports: [ YourModuleName ] })`.
+    - Remove the TestBed module configuration for declaring the component. `TestBed.configureTestingModule({ declarations: [ YourComponentName ] })` should become `TestBed.configureTestingModule({ })`.
+    - Do an ES Import of the parent module with `import { YourModuleName } from '../you-module-name.module';`.
+    - Do an Angular Module Import of that Module Class by modifying `TestBed.configureTestingModule({ imports: [ YourModuleName ] })`.
 1. Modify the component's tests from using `it` function to using `fit` function.
 1. Run `ng test`.
 1. Chrome will open, tests will run and then click `DEBUG` which will open a new tab.
