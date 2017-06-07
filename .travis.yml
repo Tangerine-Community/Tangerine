@@ -26,5 +26,4 @@ install:
   - cd client-v3
   - npm install
 script:
-  - cd client-v3
   - node_modules/.bin/ng test --watch false
