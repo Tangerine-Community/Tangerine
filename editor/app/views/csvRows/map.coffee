@@ -69,14 +69,15 @@ The only real behavior worth mentioning here is
 
   timestamps = []
 
+  # Make a shallow copy of subtestData
+  copySubtestData = subtestData.slice();
 
   # Do this in case the number of subtests isn't always the total number
-  orderedSubtests = orderMap.map (index) ->
-    tmp = subtestData[index]
-    subtestData[index] = null
-    return tmp
+  orderMap.map (index) ->
+    delete copySubtestData[index];
 
-  orderedSubtests = orderedSubtests.concat(subtestData);
+  cleanedCopySubtestData=copySubtestData.filter(Boolean);
+  orderedSubtests = cleanedCopySubtestData.concat(subtestData);
 
   subtests = []
 
