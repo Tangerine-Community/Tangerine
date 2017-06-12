@@ -157,7 +157,7 @@ class Csv
 
         # handling photo url
         isPhotoUrl = key.include? 'photo_url'
-        if isPhotoUrl && isntFalsy then value = value.sub('URL_REPLACE', "#{$settings[:publicHost]}/photo/resultphoto/#{@path}") end
+        if isPhotoUrl && isntFalsy then value = value.sub('URL_REPLACE', "#{$settings[:publicHost]}/media/resultphoto/#{@path}") end
 
 
         unless indexByMachineName[machineName] # Have we seen the machine name before?
