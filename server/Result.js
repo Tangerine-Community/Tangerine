@@ -1,7 +1,6 @@
 'use strict';
 
 let Conf = require('./Conf');
-let User = require('./Result');
 
 let HttpStatus = require('http-status-codes');
 
@@ -39,13 +38,13 @@ let Result = function Result( attributes ) {
 Result.prototype.fetch = function() {
 
   const self = this;
+  console.log("in result fetch");
 
   return new Promise(function fetchPromise(resolve, reject){
     unirest.get(Conf.calcGroupDocUrl(self.groupName, self.attributes._id)).headers(JSON_OPTS)
       .end(function onResultResponse( response ) {
         var foundDoc = response.status > 199 && response.status < 299;
         if (foundDoc) {
-          console.log("Result - Found Result");
           self.attributes = response.body;
           resolve({
             status  : response.status,
