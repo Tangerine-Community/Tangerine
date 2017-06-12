@@ -25,7 +25,7 @@ describe('TangerinePageComponent', () => {
   let component: TangerinePageComponent;
   let fixture: ComponentFixture<TangerinePageComponent>;
   let nextButtonEl: DebugElement;
-  const config = [{
+  const tangerinePageConfigStub = [{
     className: 'row',
     fieldGroup: [{
         key: 'question1',
@@ -62,7 +62,7 @@ describe('TangerinePageComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TangerinePageComponent);
     component = fixture.componentInstance;
-    component.config = config;
+    component.config = tangerinePageConfigStub;
     nextButtonEl = (fixture.debugElement.query(By.css('.next'))).nativeElement;
     fixture.detectChanges();
   });
@@ -95,6 +95,7 @@ describe('TangerinePageComponent', () => {
     component.submit.subscribe((formModel: object) => {
       emittedModel = formModel;
     });
+    // TODO: Instead of clicking a next button, we'll want to hit a done method, check the state, move on.
     click(nextButtonEl);
     // TODO: For some reason we have to JSON.stringify the Model to get them to match.
     // expect(emittedModel).toBe(expectedModel);
