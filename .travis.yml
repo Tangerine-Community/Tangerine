@@ -17,7 +17,7 @@ addons:
     - google-chrome-stable
 cache:
   directories:
-    - node_modules
+    - client-v3/node_modules
 before_install:
   - export CHROME_BIN=/usr/bin/google-chrome
   - export DISPLAY=:99.0
@@ -26,5 +26,4 @@ install:
   - cd client-v3
   - npm install
 script:
-  - cd client-v3
   - node_modules/.bin/ng test --watch false
