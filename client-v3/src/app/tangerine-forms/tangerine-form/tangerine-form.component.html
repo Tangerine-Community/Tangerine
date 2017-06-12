@@ -1,5 +1,5 @@
 <h2>Section: {{currentSection.title}}</h2>
 <h3>Page: {{currentPage.title}}</h3>
-<app-tangerine-page [config]="currentPage.config" (update)="onTangerinePageUpdate">
+<app-tangerine-page [config]="currentPage.config" (update)="onTangerinePageUpdate($event)">
 </app-tangerine-page>
-<button (click)="onPageSubmit()" md-raised-button>Next</button>
+<button [disabled]="disableNext" class="next" (click)="onClickNext()" md-raised-button>Next</button>

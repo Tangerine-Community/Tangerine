@@ -28,25 +28,24 @@ export class TangerinePageComponent implements OnInit {
   get config () {
     return this._config;
   }
-  @Output() submit: EventEmitter<Object> = new EventEmitter();
+
+  // Output all user input updates.
   @Output() update: EventEmitter<Object> = new EventEmitter();
 
   form: FormGroup = new FormGroup({});
-
-  // TODO: Move these to TangerinePage Model? To TangerineForm Component?
-  showNextButton: Boolean = true;
-  showPreviousButton: Boolean = true;
-
-  onFormSubmit(formModel) {
-    this.submit.emit(formModel);
-  };
 
   constructor(fb: FormBuilder) {
     this.form = fb.group({});
   }
 
   ngOnInit() {
-    this.form.valueChanges.subscribe(data => this.update.emit(data));
+    // Output all user input updates.
+    this.form.valueChanges.subscribe(variables => {
+      this.update.emit({
+        status: this.form.status,
+        variables: variables
+      });
+    });
   }
 
 }

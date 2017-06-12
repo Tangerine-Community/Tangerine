@@ -6,25 +6,9 @@ import { TangerineFormsModule } from '../tangerine-forms.module';
 import { TangerinePageComponent } from './tangerine-page.component';
 import { TangerinePageConfig } from './tangerine-page-config';
 
-/** Button events to pass to `DebugElement.triggerEventHandler` for RouterLink event handler */
-const ButtonClickEvents = {
-   left:  { button: 0 },
-   right: { button: 2 }
-};
-
-/** Simulate element click. Defaults to mouse left-button click event. */
-function click(el: DebugElement | HTMLElement, eventObj: any = ButtonClickEvents.left): void {
-  if (el instanceof HTMLElement) {
-    el.click();
-  } else {
-    el.triggerEventHandler('click', eventObj);
-  }
-}
-
 describe('TangerinePageComponent', () => {
   let component: TangerinePageComponent;
   let fixture: ComponentFixture<TangerinePageComponent>;
-  let nextButtonEl: DebugElement;
   const tangerinePageConfigStub = [{
     className: 'row',
     fieldGroup: [{
@@ -63,7 +47,6 @@ describe('TangerinePageComponent', () => {
     fixture = TestBed.createComponent(TangerinePageComponent);
     component = fixture.componentInstance;
     component.config = tangerinePageConfigStub;
-    nextButtonEl = (fixture.debugElement.query(By.css('.next'))).nativeElement;
     fixture.detectChanges();
   });
 
@@ -87,19 +70,10 @@ describe('TangerinePageComponent', () => {
     expect(JSON.stringify(emittedModel)).toBe(JSON.stringify({ question1: 'foo', question2: 'bar' }));
   });
 
-  it('should emit expected model when done', () => {
-    const expectedModel = { question1: 'foo', question2: 'bar' };
-    let emittedModel: object;
+  it('should be valid when done', () => {
     component.form.controls.question1.setValue('foo');
     component.form.controls.question2.setValue('bar');
-    component.submit.subscribe((formModel: object) => {
-      emittedModel = formModel;
-    });
-    // TODO: Instead of clicking a next button, we'll want to hit a done method, check the state, move on.
-    click(nextButtonEl);
-    // TODO: For some reason we have to JSON.stringify the Model to get them to match.
-    // expect(emittedModel).toBe(expectedModel);
-    expect(JSON.stringify(emittedModel)).toBe(JSON.stringify(expectedModel));
+    expect(component.form.status).toBe('VALID');
   });
 
   it('should populate from model', () => {
@@ -111,4 +85,4 @@ describe('TangerinePageComponent', () => {
     expect(inputElements[1].nativeElement.value).toBe('bar');
   });
 
-}); ;
+}); ; ;

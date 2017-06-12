@@ -20,6 +20,7 @@ export class TangerineFormComponent implements OnInit {
   private pathByIndex: Array<any> = [];
   private indexByPath: object = {};
   private pageComponent: TangerinePageComponent;
+  disableNext = true;
   ///@ViewChild(TdDynamicFormsComponent) form: TdDynamicFormsComponent;
   constructor() { }
 
@@ -116,11 +117,14 @@ export class TangerineFormComponent implements OnInit {
     // TODO: Using this.currentPage, set up the new TangerinePageComponent.
   }
 
-  private onTangerinePageUpdate(values) {
-    console.log(values);
+  private onTangerinePageUpdate(datum) {
+    if (datum.status === 'VALID') {
+      this.disableNext = false;
+    }
+    console.log(datum);
   }
 
-  private pageSubmit() {
+  private onClickNext() {
     // TODO: Programatically submit this.pageComponent and then do stuff.
     this.result.log.push({
       time: (new Date()).toUTCString(),
