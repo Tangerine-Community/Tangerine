@@ -65,9 +65,9 @@ describe('TangerinePageComponent', () => {
       emittedModel = formModel;
     });
     component.form.controls.question1.setValue('foo');
-    expect(JSON.stringify(emittedModel)).toBe(JSON.stringify({ question1: 'foo', question2: undefined }));
+    expect(JSON.stringify(emittedModel)).toBe(`{"status":"INVALID","variables":{"question1":"foo"}}`);
     component.form.controls.question2.setValue('bar');
-    expect(JSON.stringify(emittedModel)).toBe(JSON.stringify({ question1: 'foo', question2: 'bar' }));
+    expect(JSON.stringify(emittedModel)).toBe(`{"status":"VALID","variables":{"question1":"foo","question2":"bar"}}`);
   });
 
   it('should be valid when done', () => {

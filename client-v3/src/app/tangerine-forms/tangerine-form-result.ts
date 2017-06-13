@@ -1,4 +1,11 @@
 export class TangerineFormResult {
-  log: Array<any> = [];
+  _id: '';
+  _rev: '';
+  formId: '';
   variables: object = {};
+  log: Array<any> = [];
+  currentPath = '';
+  currentPageVariables: object;
+  currentPageStatus: '';
+  complete = false;
 }

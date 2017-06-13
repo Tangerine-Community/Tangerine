@@ -1,5 +1,6 @@
-<h2>Section: {{currentSection.title}}</h2>
-<h3>Page: {{currentPage.title}}</h3>
-<app-tangerine-page [config]="currentPage.config" (update)="onTangerinePageUpdate($event)">
+<h2>Section: context.sectionObject.title</h2>
+<h3>Page: {{context.pageObject.title}}</h3>
+<app-tangerine-page [config]="context.pageObject.config" (update)="onTangerinePageUpdate($event)">
 </app-tangerine-page>
-<button [disabled]="disableNext" class="next" (click)="onClickNext()" md-raised-button>Next</button>
+<button *ngIf="!context.isLastPage" [disabled]="disableNext" class="next" (click)="onClickNext()" md-raised-button>Next</button>
+<button *ngIf="context.isLastPage" [disabled]="disableNext" class="done" (click)="onClickDone()" md-raised-button>Done</button>

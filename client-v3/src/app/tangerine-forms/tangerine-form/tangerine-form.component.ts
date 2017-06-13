@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { TangerinePageComponent } from '../tangerine-page/tangerine-page.component';
 import { TangerineFormResult } from '../tangerine-form-result';
+import { TangerineForm } from '../tangerine-form';
+import { TangerineFormContext } from '../tangerine-form-context';
 
 @Component({
   selector: 'app-tangerine-form',
@@ -9,134 +11,115 @@ import { TangerineFormResult } from '../tangerine-form-result';
 })
 export class TangerineFormComponent implements OnInit {
 
-  @Input() form: any;
-  @Input() result: TangerineFormResult = { variables: {}, log: [] };
-  @Output() binderDone: EventEmitter<Object> = new EventEmitter();
-  private currentSection: object = {'title': ''};
-  private currentPage: object;
-  private currentPathIndex = 0;
-  private currentPath = '';
-  private objectByPath: object = {};
-  private pathByIndex: Array<any> = [];
-  private indexByPath: object = {};
-  private pageComponent: TangerinePageComponent;
+  // IO.
+  @Input() form: TangerineForm;
+  @Input() result: TangerineFormResult;
+  @Output() resultUpdate: EventEmitter<Object> = new EventEmitter();
+  @Output() resultDone: EventEmitter<Object> = new EventEmitter();
+
+  // State is stored in Result, but from that state we need a valid context for our Template to work from.
+  private context: TangerineFormContext;
+
+  // Should be in context as hasNext boolean.
   disableNext = true;
-  ///@ViewChild(TdDynamicFormsComponent) form: TdDynamicFormsComponent;
-  constructor() { }
+
+  constructor() {
+
+  }
 
    ngOnInit() {
-    this.organize();
-    // TODO: Add support for resuming, don't assume index of 0.
-    this.step(this.pathByIndex[0]);
-  }
-  // ngAfterViewInit() {
-
-  // }
-
-  private organize() {;
-    let path = '';
-    let i = 0;
-    const that = this;
-    function indexChildren(parent) {
-      // step forward path
-      path += `/${parent._id}`;
-      that.pathByIndex.push(path);
-      if (parent.children && parent.children.length > 0) {
-        parent.children.forEach(element => {
-          that.objectByPath[path + '/' + element._id] = element;
-          that.indexByPath[path + '/' + element._id] = i;
-          i++;
-          indexChildren(element);
-        });
-      }
-      // step back path
-      const pathFragments = path.split('\/');
-      pathFragments.pop();
-      path = pathFragments.join('/');
-
+    // Set up this.result.
+    if (!this.result) {
+      this.result = new TangerineFormResult();
     }
-    indexChildren(this.form);
-    this.pathByIndex.shift();
+    this.form = new TangerineForm(this.form);
+    const context = this.form.findContextFromPath(this.result.currentPath);
+    this.goToPath(context.pagePath);
   }
 
-  private step(path = null) {
-    // No path? Go to the next path.
-    if (path === null) {
-      this.currentPathIndex++;
-      this.currentPath = this.pathByIndex[this.currentPathIndex];
-      if (this.currentPath == null) {
-        return this.done();
-      }
-    } else {
-      this.currentPathIndex = this.indexByPath[path];
-      this.currentPath = path;
-    }
-    const nextObject = this.objectByPath[this.currentPath];
-    if (nextObject.collection === 'section') {
-      this.currentSection = nextObject;
-      const shouldSkip = false;
-      if (nextObject.preCondition !== '') {
-        const variables = this.result.variables;
-        const skipLogic = 'var preCondition = function() { ' + nextObject.preCondition + ' }; shouldSkip = preCondition();';
-        console.log('Executing skipLogic:');
-        console.log(skipLogic);
-        eval(skipLogic);
-      }
-      if (shouldSkip) {
-        // Find the next sibling section.
-        let i = this.currentPathIndex;
-        let nextSiblingPath = null;
-        const sectionDepth = (this.currentPath.split('\/')).length;
-        while (nextSiblingPath == null) {
-          i++;
-          const nextPotentialSiblingPath = this.pathByIndex[i];
-          if (nextPotentialSiblingPath) {
-            const nextPotentialSiblingPathFragments = nextPotentialSiblingPath.split('\/');
-            if (nextPotentialSiblingPathFragments.length === sectionDepth) {
-              nextSiblingPath = nextPotentialSiblingPath;
-            }
-          } else {
-            nextSiblingPath = 'done';
-          }
-        }
-        if (nextSiblingPath === 'done') {
-          this.done();
-        } else {
-          return this.step(nextSiblingPath);
-        }
-      }
-      return this.step();
-    } else {
-      this.currentPage = nextObject;
-      this.showCurrentPage();
-      return;
-    }
-  }
-
-  private showCurrentPage() {
-    // TODO: Using this.currentPage, set up the new TangerinePageComponent.
+  private goToPath(path) {
+    this.context = this.form.findContextFromPath(path);
+    this.result.currentPath = this.context.pagePath;
+    // TODO: Save new path to log.
   }
 
   private onTangerinePageUpdate(datum) {
     if (datum.status === 'VALID') {
       this.disableNext = false;
     }
-    console.log(datum);
+    this.result.currentPageVariables = datum.variables;
+    this.result.currentPageStatus = datum.status;
+  }
+
+  private saveCurrentResult() {
+    this.result.log.push({
+      time: (new Date()).toUTCString(),
+      action: 'next',
+      currentPageVariables: this.result.currentPageVariables,
+      currentPageStatus: this.result.currentPageStatus
+    });
+    this.result.variables = Object.assign(this.result.variables, this.result.currentPageVariables);
+    this.result.currentPageVariables = {};
+    this.result.currentPageStatus = '';
+    this.resultUpdate.emit(this.result);
   }
 
   private onClickNext() {
-    // TODO: Programatically submit this.pageComponent and then do stuff.
-    this.result.log.push({
-      time: (new Date()).toUTCString(),
-      action: 'pageSubmit',
-      data: this.form.value
-    });
-    this.result.variables = Object.assign(this.result.variables, this.pageComponent.model);
-    this.step();
+    this.saveCurrentResult();
+    const context = this.form.findNextContextFromPath(this.result.currentPath);
+    // TODO Run skip logic.
+    this.goToPath(context.pagePath);
   }
 
-  private done() {
-    this.binderDone.emit(this.result);
+  private onClickDone() {
+    this.saveCurrentResult();
+    this.resultDone.emit(this.result);
   }
 
+        /*
+        Skip logic stuff to be migrated up.
+
+
+        This stuff needs to go in the component I think.
+        const nextObject = this.objectByPath[path];
+        if (nextObject.collection === 'section') {
+        this.currentSection = nextObject;
+        const shouldSkip = false;
+        if (nextObject.preCondition !== '') {
+            const variables = this.result.variables;
+            const skipLogic = 'var preCondition = function() { ' + nextObject.preCondition + ' }; shouldSkip = preCondition();';
+            console.log('Executing skipLogic:');
+            console.log(skipLogic);
+            eval(skipLogic);
+        }
+        if (shouldSkip) {
+            // Find the next sibling section.
+            let i = this.currentPathIndex;
+            let nextSiblingPath = null;
+            const sectionDepth = (this.currentPath.split('\/')).length;
+            while (nextSiblingPath == null) {
+            i++;
+            const nextPotentialSiblingPath = this.pathByIndex[i];
+            if (nextPotentialSiblingPath) {
+                const nextPotentialSiblingPathFragments = nextPotentialSiblingPath.split('\/');
+                if (nextPotentialSiblingPathFragments.length === sectionDepth) {
+                nextSiblingPath = nextPotentialSiblingPath;
+                }
+            } else {
+                nextSiblingPath = 'done';
+            }
+            }
+            if (nextSiblingPath === 'done') {
+            this.done();
+            } else {
+            return nextSiblingPath;
+            }
+        }
+        // return this.step();
+        } else {
+        this.currentPage = nextObject;
+        this.showCurrentPage();
+        return;
+    }
+    */
 }

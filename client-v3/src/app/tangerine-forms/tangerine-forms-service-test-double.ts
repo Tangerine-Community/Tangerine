@@ -44,6 +44,35 @@ export class TangerineFormsServiceTestDouble {
                                 }
                             }]
                         }]
+                    },
+                    {
+                        _id: 'section0page2',
+                        title: 'Very simple questions 2',
+                        collection: 'Page',
+                        config: [{
+                            className: 'row',
+                            fieldGroup: [{
+                                key: 'question3',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 3'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }, {
+                                key: 'question4',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 4'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }]
+                        }]
                     }
                 ]
             }
@@ -52,12 +81,10 @@ export class TangerineFormsServiceTestDouble {
     multiStepFormWithSkipLogic: object = {
       _id: '43a883f3-9277-42ec-b93b-f037b8a3da4a',
       _rev: '1-045b5094-e6c8-4603-8c12-f909eae744de',
-      title: 'Binder for School Observations Spreadsheet v3',
-      collection: 'Binder',
+      title: 'Form for School Observations Spreadsheet v3',
+      collection: 'Form',
       status: 'published',
-      spreadsheetId: 'ced3aca4-3101-11e7-93ae-92361f002671',
-      spreadsheetRevision: 'ced3aca4-3101-11e7-93ae-92361f002671',
-      spreadsheetSchemaId: 'dd74f132-3101-11e7-93ae-92361f002671',
+      schemaRevId: 'dd74f132-3101-11e7-93ae-92361f002671',
       children: [
         {
           _id: 'section0',

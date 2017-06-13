@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, ComponentFixtureAutoDetect, TestBed } from '@angular/core/testing';
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
@@ -26,7 +26,9 @@ describe('TangerineFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ TangerineFormsModule ]
+      imports: [ TangerineFormsModule ],
+      // providers: [ { provide: ComponentFixtureAutoDetect, useValue: true } ]
+      providers: [ ]
     })
     .compileComponents();
   }));
@@ -41,13 +43,15 @@ describe('TangerineFormComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display a Tangerine Page', () => {
+  it('should display a Tangerine Page with two input elements', () => {
     const tangerineFormsService = new TangerineFormsServiceTestDouble;
     component.form = tangerineFormsService.get('simpleForm');
     fixture.detectChanges();
+    const inputElements = fixture.debugElement.queryAll(By.css('input'));
+    expect(inputElements.length).toEqual(2);
   });
 
-  fit('next button should be disabled until page form is valid', () => {
+  it('next button should be disabled until page form is valid', () => {
     const tangerineFormsService = new TangerineFormsServiceTestDouble;
     component.form = tangerineFormsService.get('simpleForm');
     fixture.detectChanges();
@@ -59,7 +63,34 @@ describe('TangerineFormComponent', () => {
     expect(nextButtonEl.disabled).toBe(false);
   });
 
-  it('should step to the next Tangerine Page', () => {
+  it('should emit new result and step to the next Tangerine Page', () => {
+    const tangerineFormsService = new TangerineFormsServiceTestDouble;
+    let formResult = {};
+    component.form = tangerineFormsService.get('simpleForm');
+    fixture.detectChanges();
+    component.resultUpdate.subscribe((freshResult) => {
+      console.log(freshResult);
+      formResult = freshResult;
+    });
+
+    const tangerinePage = fixture.debugElement.query(By.css('app-tangerine-page'));
+    tangerinePage.componentInstance.form.controls.question1.setValue('foo');
+    tangerinePage.componentInstance.form.controls.question2.setValue('bar');
+    fixture.detectChanges();
+
+    const nextButtonEl = (fixture.debugElement.query(By.css('.next'))).nativeElement;
+    click(nextButtonEl);
+    fixture.detectChanges();
+    debugger;
+
+    const tangerinePageTwo = fixture.debugElement.query(By.css('app-tangerine-page'));
+    debugger;
+    tangerinePage.componentInstance.form.controls.question3.setValue('baz');
+    tangerinePage.componentInstance.form.controls.question4.setValue('yar');
+    debugger;
+    const doneButtonEl = (fixture.debugElement.query(By.css('.done'))).nativeElement;
+    click(doneButtonEl);
+    fixture.detectChanges();
   });
 
   it('should step through a tree of sections', () => {
