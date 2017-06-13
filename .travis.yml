@@ -1,24 +1,29 @@
 env:
   global:
-    - REPO="client"
+    - REPO="client-v3"
     - CI_HOME=`pwd`/$REPO
+os:
+  - linux
+services:
+  - docker
 language: node_js
 node_js:
-  - "node"
+  - "6.10.0"
+addons:
+  apt:
+    sources:
+    - google-chrome
+    packages:
+    - google-chrome-stable
+cache:
+  directories:
+    - client-v3/node_modules
 before_install:
-  - echo TRAVIS_BUILD_DIR= ${TRAVIS_BUILD_DIR}
-  - echo CI_HOME= ${CI_HOME}
-  - cd $CI_HOME
-  - npm install -g grunt-cli
-  - npm install -g gulp
-install: npm install
-before_script:
-  - echo TRAVIS_BUILD_DIR= ${TRAVIS_BUILD_DIR}
-  - echo CI_HOME= ${CI_HOME}
-  - cd $CI_HOME
-  - npm install -g bower
-  - bower install
-  - npm run gulp init
-notifications:
-  slack: rti:nBr3dvYD5mClKt1pAnuHgH8J
-  email: false
+  - export CHROME_BIN=/usr/bin/google-chrome
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+install:
+  - cd client-v3
+  - npm install
+script:
+  - node_modules/.bin/ng test --watch false

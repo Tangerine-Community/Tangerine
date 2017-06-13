@@ -1,0 +1,3 @@
+<h2>Section: {{currentSection.name}}</h2>
+<tree-root [nodes]="config.children"></tree-root>
+<app-ng-json-form [config]="currentPage.config" (jsonFormSubmit)="onJsonFormSubmit($event)"></app-ng-json-form>

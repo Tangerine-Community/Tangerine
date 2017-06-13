@@ -87,7 +87,7 @@ RUN apt-get update && apt-get -y install \
     libffi-dev
 
 # Install node and some node based services
-RUN curl -sL https://deb.nodesource.com/setup_4.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - \
   && apt-get -y install nodejs \
   && npm install -g pm2 \
   && npm install -g bower 
@@ -151,11 +151,10 @@ RUN cd /opt && \
     tar -xzf $ANDROID_SDK_FILENAME && \
     rm $ANDROID_SDK_FILENAME && \
     echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
+ 
 
 # Install Cordova
-RUN npm update && \
-    npm install -g npm && \
-    npm install -g cordova 
+RUN npm install -g cordova 
 
 
 
@@ -221,7 +220,10 @@ RUN cd /tangerine-server/cli \
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
     && npm install
-
+# Install client-v3
+ADD ./client-v3/package.json /tangerine-server/client-v3/package.json
+RUN cd /tangerine-server/client-v3 \
+    && npm install
 
 #
 # Stage 3 Compile 
@@ -241,12 +243,16 @@ RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
 
+# Compile client-v3. 
+ADD ./client-v3 /tangerine-server/client-v3
+RUN cd /tangerine-server/client-v3 && npm run build -- --base-href /client-v3/ 
+
+
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
 
 RUN mkdir /tangerine-server/logs
-
 # Volumes
 VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks
