@@ -7,7 +7,7 @@ describe('PathMap', () => {
   beforeEach(() => {
   });
 
-  fit('should be created', () => {
+  it('should be created', () => {
       const service = new TangerineFormsServiceTestDouble;
       const formObject = service.get('simpleForm');
       const pathMap = new PathMap(formObject);
@@ -17,7 +17,7 @@ describe('PathMap', () => {
       // expect(JSON.stringify(pathMap.objectByPath)).toBe(``);
   });
 
-  fit('should be created with a complex form', () => {
+  it('should be created with a complex form', () => {
       const service = new TangerineFormsServiceTestDouble;
       const formObject = service.get('multiStepFormWithSkipLogic');
       const pathMap = new PathMap(formObject);
