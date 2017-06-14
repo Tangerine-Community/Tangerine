@@ -51,4 +51,15 @@ describe('TangerineForm', () => {
       expect(context.pagePath).toBe(nextPath);
       expect(context.isLastPage).toBe(true);
   });
-}); ;
+
+  it('should return an array of sections to skip', () => {
+    const tangerineFormsService = new TangerineFormsServiceTestDouble;
+    const form = new TangerineForm(tangerineFormsService.get('deepSectionFormWithSkipLogic'));
+    const variables = {
+        'shouldSkipSection0Sub0': 'yes',
+    };
+    const toSkip = form.calculateSectionsToSkip(variables);
+    expect(JSON.stringify(toSkip)).toBe(JSON.stringify(['/deepSectionFormWithSkipLogic/section0/section0sub0']));
+
+  });
+});

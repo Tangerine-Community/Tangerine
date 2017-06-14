@@ -14,7 +14,7 @@ export class TangerineFormsServiceTestDouble {
                 _id: 'section0',
                 collection: 'section',
                 title: 'Section 0 - Questions',
-                preCondition: '',
+                skipLogic: '',
                 children: [
                     {
                         _id: 'section0page1',
@@ -79,9 +79,8 @@ export class TangerineFormsServiceTestDouble {
         ]
     };
 
-    // TODO
-    deepSectionForm: object = {
-        _id: 'deeoSectionForm',
+    flatSectionForm: object = {
+        _id: 'simpleForm',
         _rev: '3-045b5094-e6c8-4603-8c12-f909eae744de',
         collection: 'Form',
         formRevision: 'ced3aca4-3101-11e7-93ae-92361f002671',
@@ -93,7 +92,93 @@ export class TangerineFormsServiceTestDouble {
                 _id: 'section0',
                 collection: 'section',
                 title: 'Section 0',
-                preCondition: '',
+                skipLogic: '',
+                children: [
+                    {
+                        _id: 'section0page1',
+                        title: 'Very simple questions',
+                        collection: 'Page',
+                        config: [{
+                            className: 'row',
+                            fieldGroup: [{
+                                key: 'question1',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 1'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }, {
+                                key: 'question2',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 2'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }]
+                        }]
+                    }
+                ]
+            },
+            {
+                _id: 'section1',
+                collection: 'section',
+                title: 'Section 1',
+                skipLogic: '',
+                children: [
+                    {
+                        _id: 'section0page2',
+                        title: 'Very simple questions 2',
+                        collection: 'Page',
+                        config: [{
+                            className: 'row',
+                            fieldGroup: [{
+                                key: 'question3',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 3'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }, {
+                                key: 'question4',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 4'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }]
+                        }]
+                    }
+                ]
+            }
+        ]
+    };
+
+    deepSectionForm: object = {
+        _id: 'deepSectionForm',
+        _rev: '3-045b5094-e6c8-4603-8c12-f909eae744de',
+        collection: 'Form',
+        formRevision: 'ced3aca4-3101-11e7-93ae-92361f002671',
+        formSchemaId: 'dd74f132-3101-11e7-93ae-92361f002671',
+        status: 'published',
+        title: 'Form for School Observations',
+        children: [
+            {
+                _id: 'section0',
+                collection: 'section',
+                title: 'Section 0',
+                skipLogic: '',
                 children: [
                     {
                         _id: 'section0page1',
@@ -128,7 +213,7 @@ export class TangerineFormsServiceTestDouble {
                       _id: 'section0sub0',
                       collection: 'section',
                       title: 'Section 0 - Subsection 0',
-                      preCondition: '',
+                      skipLogic: '',
                       children: [
                           {
                               _id: 'section0page2',
@@ -167,7 +252,7 @@ export class TangerineFormsServiceTestDouble {
                 _id: 'section1',
                 collection: 'section',
                 title: 'Section 1',
-                preCondition: '',
+                skipLogic: '',
                 children: [
                     {
                         _id: 'section0page3',
@@ -204,8 +289,8 @@ export class TangerineFormsServiceTestDouble {
 
     };
 
-    flatSectionForm: object = {
-        _id: 'simpleForm',
+    deepSectionFormWithSkipLogic: object = {
+        _id: 'deepSectionFormWithSkipLogic',
         _rev: '3-045b5094-e6c8-4603-8c12-f909eae744de',
         collection: 'Form',
         formRevision: 'ced3aca4-3101-11e7-93ae-92361f002671',
@@ -217,7 +302,7 @@ export class TangerineFormsServiceTestDouble {
                 _id: 'section0',
                 collection: 'section',
                 title: 'Section 0',
-                preCondition: '',
+                skipLogic: '',
                 children: [
                     {
                         _id: 'section0page1',
@@ -226,58 +311,86 @@ export class TangerineFormsServiceTestDouble {
                         config: [{
                             className: 'row',
                             fieldGroup: [{
-                                key: 'question1',
-                                type: 'input',
+                                key: 'shouldSkipSection0Sub0',
+                                type: 'select',
                                 templateOptions: {
                                     type: 'text',
-                                    label: 'Question 1'
-                                },
-                                validators: {
-                                validation: Validators.compose([Validators.required])
-                                }
-                            }, {
-                                key: 'question2',
-                                type: 'input',
-                                templateOptions: {
-                                    type: 'text',
-                                    label: 'Question 2'
+                                    label: 'Would you like to skip Section 0s Subsection 0?',
+                                    options: [ 'yes', 'no']
                                 },
                                 validators: {
                                 validation: Validators.compose([Validators.required])
                                 }
                             }]
                         }]
-                    }
+                    },
+                    {
+                      _id: 'section0sub0',
+                      collection: 'section',
+                      title: 'Section 0 - Subsection 0',
+                      skipLogic: 'if(variables.shouldSkipSection0Sub0 == "yes") { shouldSkip = true }',
+                      children: [
+                          {
+                              _id: 'section0page2',
+                              title: 'Very simple questions 2',
+                              collection: 'Page',
+                              config: [{
+                                  className: 'row',
+                                  fieldGroup: [{
+                                      key: 'question3',
+                                      type: 'input',
+                                      templateOptions: {
+                                          type: 'text',
+                                          label: 'Question 3'
+                                      },
+                                      validators: {
+                                      validation: Validators.compose([Validators.required])
+                                      }
+                                  }, {
+                                      key: 'question4',
+                                      type: 'input',
+                                      templateOptions: {
+                                          type: 'text',
+                                          label: 'Question 4'
+                                      },
+                                      validators: {
+                                      validation: Validators.compose([Validators.required])
+                                      }
+                                  }]
+                              }]
+                          }
+                      ]
+                  }
                 ]
             },
             {
                 _id: 'section1',
                 collection: 'section',
                 title: 'Section 1',
-                preCondition: '',
+                skipLogic: '',
                 children: [
                     {
-                        _id: 'section0page2',
-                        title: 'Very simple questions 2',
+                        _id: 'section0page3',
+                        title: 'Very simple questions',
                         collection: 'Page',
                         config: [{
                             className: 'row',
                             fieldGroup: [{
-                                key: 'question3',
+                                key: 'question5',
                                 type: 'input',
                                 templateOptions: {
                                     type: 'text',
-                                    label: 'Question 3'
+                                    label: 'Question 5'
                                 },
                                 validators: {
                                 validation: Validators.compose([Validators.required])
                                 }
                             }, {
-                                key: 'question4',
+                                key: 'question6',
                                 type: 'input',
                                 templateOptions: {
                                     type: 'text',
-                                    label: 'Question 4'
+                                    label: 'Question 6'
                                 },
                                 validators: {
                                 validation: Validators.compose([Validators.required])
@@ -288,6 +401,7 @@ export class TangerineFormsServiceTestDouble {
                 ]
             }
         ]
+
     };
 
     multiStepFormWithSkipLogic: object = {
@@ -302,7 +416,7 @@ export class TangerineFormsServiceTestDouble {
           _id: 'section0',
           collection: 'section',
           title: 'Section 0 - A Fateful Question',
-          preCondition: '',
+          skipLogic: '',
           children: [
             {
               _id: 'section0page1',
@@ -326,13 +440,13 @@ export class TangerineFormsServiceTestDouble {
           _id: 'section1',
           collection: 'section',
           title: 'Section 1: Car Surveys',
-          preCondition: 'if (variables.answer_questions_about_cars_and_boats == \'no\') { return true; }',
+          skipLogic: 'if (variables.answer_questions_about_cars_and_boats == \'no\') { return true; }',
           children: [
             {
               _id: 'section1A',
               collection: 'section',
               title: 'Section 1A - Cars',
-              preCondition: '',
+              skipLogic: '',
               children: [
                 {
                   _id: 'section1Apage1',
@@ -381,7 +495,7 @@ export class TangerineFormsServiceTestDouble {
               _id: 'section1B',
               collection: 'section',
               title: 'Section 1B - Boats',
-              preCondition: '',
+              skipLogic: '',
               children: [
                 {
                   _id: 'section1Bpage1',
@@ -432,7 +546,7 @@ export class TangerineFormsServiceTestDouble {
           _id: 'section3',
           collection: 'section',
           title: 'Section 3 - Another Fateful Section',
-          preCondition: '',
+          skipLogic: '',
           children: [
             {
               _id: 'section3page1',
@@ -456,7 +570,7 @@ export class TangerineFormsServiceTestDouble {
           _id: 'section4',
           collection: 'section',
           title: 'Section 4 - Binders and Cats',
-          preCondition: 'if (variables.answer_questions_about_cats_and_binders == \'no\') { return true; }',
+          skipLogic: 'if (variables.answer_questions_about_cats_and_binders == \'no\') { return true; }',
           children: [
             {
               _id: 'section4page1',
