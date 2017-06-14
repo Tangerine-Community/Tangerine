@@ -149,8 +149,6 @@ describe('TangerineFormComponent', () => {
       'complete': false
     });
     fixture.detectChanges();
-    fixture.detectChanges();
-    fixture.detectChanges();
 
     const tangerinePage = fixture.debugElement.query(By.css('app-tangerine-page'));
     expect(tangerinePage.componentInstance.form.controls.question3.value).toBe('baz');
