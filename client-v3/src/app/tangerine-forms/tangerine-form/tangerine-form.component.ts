@@ -22,9 +22,6 @@ export class TangerineFormComponent implements OnInit {
   // State is stored in Result, but from that state we need a valid context for our Template to work from.
   private _context: TangerineFormContext;
 
-  // TODO: Should be in context as hasNext boolean.
-  disableNext = true;
-
   constructor() {
 
   }
