@@ -158,12 +158,10 @@ describe('TangerineFormComponent', () => {
 
   });
 
-  it('should step through a tree of sections', () => {
-  });
+  // it('should step through a tree of sections', () => {
+  // });
 
-  it('should skip to the next section', () => {
-  });
+  // it('should skip to the next section', () => {
+  // });
 
-  it('should resume', () => {
-  });
 });
