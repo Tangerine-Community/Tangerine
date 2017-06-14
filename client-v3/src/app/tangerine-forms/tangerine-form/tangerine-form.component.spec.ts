@@ -156,8 +156,36 @@ describe('TangerineFormComponent', () => {
 
   });
 
-  // it('should step through a tree of sections', () => {
-  // });
+  it('should step through a tree of sections', () => {
+
+    const tangerineFormsService = new TangerineFormsServiceTestDouble;
+    component.form = tangerineFormsService.get('deepSectionForm');
+    component.result = new TangerineFormResult();
+    fixture.detectChanges();
+
+    const tangerinePage = fixture.debugElement.query(By.css('app-tangerine-page'));
+    tangerinePage.componentInstance.form.controls.question1.setValue('foo');
+    tangerinePage.componentInstance.form.controls.question2.setValue('bar');
+    fixture.detectChanges();
+
+    const nextButtonEl = (fixture.debugElement.query(By.css('.next'))).nativeElement;
+    click(nextButtonEl);
+    fixture.detectChanges();
+
+    tangerinePage.componentInstance.form.controls.question3.setValue('baz');
+    tangerinePage.componentInstance.form.controls.question4.setValue('yar');
+    click(nextButtonEl);
+    fixture.detectChanges();
+
+    const doneButtonEl = (fixture.debugElement.query(By.css('.done'))).nativeElement;
+    tangerinePage.componentInstance.form.controls.question5.setValue('nar');
+    tangerinePage.componentInstance.form.controls.question6.setValue('tib');
+    click(doneButtonEl);
+    fixture.detectChanges();
+
+    expect(component.result.complete).toBe(true);
+
+  });
 
   // it('should skip to the next section', () => {
   // });

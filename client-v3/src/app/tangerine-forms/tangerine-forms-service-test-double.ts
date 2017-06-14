@@ -81,6 +81,126 @@ export class TangerineFormsServiceTestDouble {
 
     // TODO
     deepSectionForm: object = {
+        _id: 'deeoSectionForm',
+        _rev: '3-045b5094-e6c8-4603-8c12-f909eae744de',
+        collection: 'Form',
+        formRevision: 'ced3aca4-3101-11e7-93ae-92361f002671',
+        formSchemaId: 'dd74f132-3101-11e7-93ae-92361f002671',
+        status: 'published',
+        title: 'Form for School Observations',
+        children: [
+            {
+                _id: 'section0',
+                collection: 'section',
+                title: 'Section 0',
+                preCondition: '',
+                children: [
+                    {
+                        _id: 'section0page1',
+                        title: 'Very simple questions',
+                        collection: 'Page',
+                        config: [{
+                            className: 'row',
+                            fieldGroup: [{
+                                key: 'question1',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 1'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }, {
+                                key: 'question2',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 2'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }]
+                        }]
+                    },
+                    {
+                      _id: 'section0sub0',
+                      collection: 'section',
+                      title: 'Section 0 - Subsection 0',
+                      preCondition: '',
+                      children: [
+                          {
+                              _id: 'section0page2',
+                              title: 'Very simple questions 2',
+                              collection: 'Page',
+                              config: [{
+                                  className: 'row',
+                                  fieldGroup: [{
+                                      key: 'question3',
+                                      type: 'input',
+                                      templateOptions: {
+                                          type: 'text',
+                                          label: 'Question 3'
+                                      },
+                                      validators: {
+                                      validation: Validators.compose([Validators.required])
+                                      }
+                                  }, {
+                                      key: 'question4',
+                                      type: 'input',
+                                      templateOptions: {
+                                          type: 'text',
+                                          label: 'Question 4'
+                                      },
+                                      validators: {
+                                      validation: Validators.compose([Validators.required])
+                                      }
+                                  }]
+                              }]
+                          }
+                      ]
+                  }
+                ]
+            },
+            {
+                _id: 'section1',
+                collection: 'section',
+                title: 'Section 1',
+                preCondition: '',
+                children: [
+                    {
+                        _id: 'section0page3',
+                        title: 'Very simple questions',
+                        collection: 'Page',
+                        config: [{
+                            className: 'row',
+                            fieldGroup: [{
+                                key: 'question5',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 5'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }, {
+                                key: 'question6',
+                                type: 'input',
+                                templateOptions: {
+                                    type: 'text',
+                                    label: 'Question 6'
+                                },
+                                validators: {
+                                validation: Validators.compose([Validators.required])
+                                }
+                            }]
+                        }]
+                    }
+                ]
+            }
+        ]
 
     };
 
