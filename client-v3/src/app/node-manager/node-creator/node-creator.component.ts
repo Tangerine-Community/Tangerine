@@ -49,7 +49,7 @@ export class NodeCreatorComponent implements OnInit {
 
   createNode(): void {
     this.nodeElements.nodeName = this.form.nodeName;
-    this.nodeElements.parent = this.form.selectedParentNode;
+    this.nodeElements.parent = this.form.selectedParentNode || null;
     this.dataService.createNode(this.nodeElements);
   }
 
