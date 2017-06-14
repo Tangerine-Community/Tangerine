@@ -20,7 +20,7 @@ export class TangerineFormComponent implements OnInit {
   // State is stored in Result, but from that state we need a valid context for our Template to work from.
   private context: TangerineFormContext;
 
-  // Should be in context as hasNext boolean.
+  // TODO: Should be in context as hasNext boolean.
   disableNext = true;
 
   constructor() {
@@ -28,17 +28,22 @@ export class TangerineFormComponent implements OnInit {
   }
 
    ngOnInit() {
+
+    // TODO: Could do this.result and this.form as a setter to instantiate the classes.
     // Set up this.result.
     if (!this.result) {
       this.result = new TangerineFormResult();
     }
     this.form = new TangerineForm(this.form);
+
+    // Get the Context and then go there.
     const context = this.form.findContextFromPath(this.result.currentPath);
-    this.goToPath(context.pagePath);
+    this.goTo(context);
   }
 
-  private goToPath(path) {
-    this.context = this.form.findContextFromPath(path);
+  // TODO: this.context could be a setter.
+  private goTo(context) {
+    this.context = context;
     this.result.currentPath = this.context.pagePath;
     // TODO: Save new path to log.
   }
@@ -68,7 +73,7 @@ export class TangerineFormComponent implements OnInit {
     this.saveCurrentResult();
     const context = this.form.findNextContextFromPath(this.result.currentPath);
     // TODO Run skip logic.
-    this.goToPath(context.pagePath);
+    this.goTo(context);
   }
 
   private onClickDone() {
