@@ -31,7 +31,7 @@ export class TangerineFormComponent implements OnInit {
 
    ngOnInit() {
 
-    // TODO: Could do this.result and this.form as a setter to instantiate the classes.
+    // TODO: Could do this.result and this.form as a setter to instantiate the classes. Or maybe they should already be correct Class.
     if (!this.result) {
       this.result = new TangerineFormResult();
     }
@@ -54,22 +54,18 @@ export class TangerineFormComponent implements OnInit {
 
   private onTangerinePageUpdate(datum) {
     if (datum.status === 'VALID') {
-      this.disableNext = false;
+      this.result.pageValid = true;
     }
-    this.result.currentPageVariables = datum.variables;
-    this.result.currentPageStatus = datum.status;
+    // this.result.currentPageVariables = datum.variables;
+    this.result.variables = Object.assign(this.result.variables, datum.variables);
   }
 
   private saveCurrentResult(action = 'next') {
     this.result.log.push({
       time: (new Date()).toUTCString(),
-      action: action,
-      currentPageVariables: this.result.currentPageVariables,
-      currentPageStatus: this.result.currentPageStatus
+      action: action
     });
-    this.result.variables = Object.assign(this.result.variables, this.result.currentPageVariables);
-    this.result.currentPageVariables = {};
-    this.result.currentPageStatus = '';
+    // this.result.currentPageStatus = '';
     if (action === 'complete') {
       this.result.complete = true;
     }

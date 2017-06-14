@@ -2,6 +2,7 @@ import { async, ComponentFixture, ComponentFixtureAutoDetect, TestBed } from '@a
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
+import { TangerineFormResult } from '../tangerine-form-result';
 import { TangerineFormComponent } from './tangerine-form.component';
 import { TangerineFormsModule } from '../tangerine-forms.module';
 import { TangerineFormsServiceTestDouble } from '../tangerine-forms-service-test-double';
@@ -98,6 +99,7 @@ describe('TangerineFormComponent', () => {
 
     const tangerineFormsService = new TangerineFormsServiceTestDouble;
     component.form = tangerineFormsService.get('flatSectionForm');
+    component.result = new TangerineFormResult();
     fixture.detectChanges();
 
     const tangerinePage = fixture.debugElement.query(By.css('app-tangerine-page'));
@@ -110,12 +112,49 @@ describe('TangerineFormComponent', () => {
     fixture.detectChanges();
 
     const tangerinePageTwo = fixture.debugElement.query(By.css('app-tangerine-page'));
+    // TODO Whoa. That's tangerinePage not tangerinePageTwo.
     tangerinePage.componentInstance.form.controls.question3.setValue('baz');
     tangerinePage.componentInstance.form.controls.question4.setValue('yar');
     const doneButtonEl = (fixture.debugElement.query(By.css('.done'))).nativeElement;
     click(doneButtonEl);
     fixture.detectChanges();
     expect(component.result.complete).toBe(true);
+
+  });
+
+  it('in flatSectionForm should resume', () => {
+
+    const tangerineFormsService = new TangerineFormsServiceTestDouble;
+    component.form = tangerineFormsService.get('flatSectionForm');
+    component.result = new TangerineFormResult({
+      '_id': 'exampleResult',
+      '_rev': 'rev-3',
+      'formId': 'form1',
+      'variables': {
+        'question1': 'foo',
+        'question2': 'bar',
+        'question3': 'baz',
+        'question4': 'yar'
+      },
+      'log': [
+        {
+          'time': 'Wed, 14 Jun 2017 06:43:54 GMT',
+          'action': 'next'
+        }, {
+          'time': 'Wed, 14 Jun 2017 06:43:54 GMT',
+          'action': 'complete',
+        }],
+      'currentPath': '/simpleForm/section1/section0page2',
+      'pageValid': true,
+      'complete': false
+    });
+    fixture.detectChanges();
+    fixture.detectChanges();
+    fixture.detectChanges();
+
+    const tangerinePage = fixture.debugElement.query(By.css('app-tangerine-page'));
+    expect(tangerinePage.componentInstance.form.controls.question3.value).toBe('baz');
+    expect(tangerinePage.componentInstance.form.controls.question4.value).toBe('yar');
 
   });
 

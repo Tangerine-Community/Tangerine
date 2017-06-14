@@ -12,7 +12,7 @@ export class TangerinePageComponent implements OnInit {
   // Input default model data for form.
   private _model: object = {};
   @Input()
-  set model (value: TangerinePageConfig) {
+  set model (value: any) {
     this._model = value;
   }
   get model () {
