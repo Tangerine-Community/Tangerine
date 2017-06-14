@@ -41,4 +41,15 @@ describe('TangerineForm', () => {
       expect(context.isLastPage).toBe(true);
   });
 
+  it('in flatSectionForm should find next page from path and be marked as last page', () => {
+      const service = new TangerineFormsServiceTestDouble;
+      const formObject = service.get('flatSectionForm');
+      const tangerineForm = new TangerineForm(formObject);
+      const firstPath = tangerineForm.pathMap.pathByIndex[1];
+      const nextPath = tangerineForm.pathMap.pathByIndex[3];
+      const context = tangerineForm.findNextContextFromPath(firstPath);
+      debugger;
+      expect(context.pagePath).toBe(nextPath);
+      expect(context.isLastPage).toBe(true);
+  });
 }); ;

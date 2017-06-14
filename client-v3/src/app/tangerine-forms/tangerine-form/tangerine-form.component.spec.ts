@@ -81,16 +81,42 @@ describe('TangerineFormComponent', () => {
     const nextButtonEl = (fixture.debugElement.query(By.css('.next'))).nativeElement;
     click(nextButtonEl);
     fixture.detectChanges();
-    debugger;
 
     const tangerinePageTwo = fixture.debugElement.query(By.css('app-tangerine-page'));
-    debugger;
     tangerinePage.componentInstance.form.controls.question3.setValue('baz');
     tangerinePage.componentInstance.form.controls.question4.setValue('yar');
-    debugger;
+
     const doneButtonEl = (fixture.debugElement.query(By.css('.done'))).nativeElement;
     click(doneButtonEl);
     fixture.detectChanges();
+
+    // No expects, just making sure there are no errors.
+
+  });
+
+  it('in flatSectionForm should step to the last Tangerine Page and result.complete be true', () => {
+
+    const tangerineFormsService = new TangerineFormsServiceTestDouble;
+    component.form = tangerineFormsService.get('flatSectionForm');
+    fixture.detectChanges();
+
+    const tangerinePage = fixture.debugElement.query(By.css('app-tangerine-page'));
+    tangerinePage.componentInstance.form.controls.question1.setValue('foo');
+    tangerinePage.componentInstance.form.controls.question2.setValue('bar');
+    fixture.detectChanges();
+
+    const nextButtonEl = (fixture.debugElement.query(By.css('.next'))).nativeElement;
+    click(nextButtonEl);
+    fixture.detectChanges();
+
+    const tangerinePageTwo = fixture.debugElement.query(By.css('app-tangerine-page'));
+    tangerinePage.componentInstance.form.controls.question3.setValue('baz');
+    tangerinePage.componentInstance.form.controls.question4.setValue('yar');
+    const doneButtonEl = (fixture.debugElement.query(By.css('.done'))).nativeElement;
+    click(doneButtonEl);
+    fixture.detectChanges();
+    expect(component.result.complete).toBe(true);
+
   });
 
   it('should step through a tree of sections', () => {

@@ -14,6 +14,8 @@ export class TangerineFormComponent implements OnInit {
   // IO.
   @Input() form: TangerineForm;
   @Input() result: TangerineFormResult;
+  // TODO: If result used a setter, that setter could be in charge of emitting these events instead of having to remember to that
+  // manually every time result is updated.
   @Output() resultUpdate: EventEmitter<Object> = new EventEmitter();
   @Output() resultDone: EventEmitter<Object> = new EventEmitter();
 
@@ -35,7 +37,7 @@ export class TangerineFormComponent implements OnInit {
     }
     this.form = new TangerineForm(this.form);
 
-    // Get the Context and then go there.
+    // Set the context.
     this.context = this.form.findContextFromPath(this.result.currentPath);
   }
 
@@ -58,31 +60,34 @@ export class TangerineFormComponent implements OnInit {
     this.result.currentPageStatus = datum.status;
   }
 
-  private saveCurrentResult() {
+  private saveCurrentResult(action = 'next') {
     this.result.log.push({
       time: (new Date()).toUTCString(),
-      action: 'next',
+      action: action,
       currentPageVariables: this.result.currentPageVariables,
       currentPageStatus: this.result.currentPageStatus
     });
     this.result.variables = Object.assign(this.result.variables, this.result.currentPageVariables);
     this.result.currentPageVariables = {};
     this.result.currentPageStatus = '';
+    if (action === 'complete') {
+      this.result.complete = true;
+    }
     this.resultUpdate.emit(this.result);
   }
 
   private onClickNext() {
-    this.saveCurrentResult();
+    this.saveCurrentResult('next');
     this.context = this.form.findNextContextFromPath(this.result.currentPath);
   }
 
   private onClickDone() {
-    this.saveCurrentResult();
+    this.saveCurrentResult('complete');
     this.resultDone.emit(this.result);
   }
 
         /*
-        Skip logic stuff to be migrated up.
+        Skip logic stuff to be migrated up, or maybe into the Form Class.
 
 
         This stuff needs to go in the component I think.
