@@ -32,35 +32,35 @@ export class LocationsCreatorComponent implements OnInit {
     });
   }
   clickNode(node): void {
-    alert(node.nodeName);
-    // this.userFields = [{
-    //   className: 'row',
-    //   fieldGroup: [{
-    //     className: 'col-xs-6',
-    //     key: 'email',
-    //     type: 'input',
-    //     templateOptions: {
-    //       type: 'email',
-    //       label: 'Email address',
-    //       placeholder: 'Enter email'
-    //     },
-    //     validators: {
-    //       validation: Validators.compose([Validators.required])
-    //     }
-    //   }, {
-    //     className: 'col-xs-6',
-    //     key: 'password',
-    //     type: 'input',
-    //     templateOptions: {
-    //       type: 'password',
-    //       label: 'Password',
-    //       placeholder: 'Password',
-    //       pattern: ''
-    //     },
-    //     validators: {
-    //       validation: Validators.compose([Validators.required])
-    //     }
-    //   }]
-    // }];
+    // alert(node.nodeName);
+    this.userFields = [{
+      className: 'row',
+      fieldGroup: [{
+        className: 'col-xs-6',
+        key: 'email',
+        type: 'input',
+        templateOptions: {
+          type: 'email',
+          label: 'Email address',
+          placeholder: 'Enter email'
+        },
+        validators: {
+          validation: Validators.compose([Validators.required])
+        }
+      }, {
+        className: 'col-xs-6',
+        key: 'password',
+        type: 'input',
+        templateOptions: {
+          type: 'password',
+          label: 'Password',
+          placeholder: 'Password',
+          pattern: ''
+        },
+        validators: {
+          validation: Validators.compose([Validators.required])
+        }
+      }]
+    }];
   }
 }
