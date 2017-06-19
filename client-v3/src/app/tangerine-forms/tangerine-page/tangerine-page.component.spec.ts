@@ -80,6 +80,7 @@ describe('TangerinePageComponent', () => {
     const model = { question1: 'foo', question2: 'bar' };
     component.model = model;
     fixture.detectChanges();
+    debugger;
     const inputElements = fixture.debugElement.queryAll(By.css('input'));
     expect(inputElements[0].nativeElement.value).toBe('foo');
     expect(inputElements[1].nativeElement.value).toBe('bar');

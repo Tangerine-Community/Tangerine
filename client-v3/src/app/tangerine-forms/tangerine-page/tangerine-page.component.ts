@@ -9,43 +9,28 @@ import { TangerinePageConfig } from './tangerine-page-config';
 })
 export class TangerinePageComponent implements OnInit {
 
-  // Input default model data for form.
-  private _model: object = {};
-  @Input()
-  set model (value: any) {
-    this._model = value;
-  }
-  get model () {
-    return this._model;
-  }
-
-  // Input the configuration for the page.
-  private _config: TangerinePageConfig = {};
-  @Input()
-  set config (value: TangerinePageConfig) {
-    this._config = value;
-  }
-  get config () {
-    return this._config;
-  }
+  // The model of data to use with
+  @Input()model: any;
+  // JSON describing the fields on the page.
+  @Input() config: TangerinePageConfig;
 
   // Output all user input updates.
   @Output() update: EventEmitter<Object> = new EventEmitter();
 
-  form: FormGroup = new FormGroup({});
+  form: FormGroup;
 
   constructor(fb: FormBuilder) {
     this.form = fb.group({});
   }
 
   ngOnInit() {
-    // Output all user input updates.
-    this.form.valueChanges.subscribe(variables => {
+    // Bubble up form changes.
+    this.form.valueChanges.subscribe(model => {
       this.update.emit({
         status: this.form.status,
-        variables: variables
+        variables: model
       });
     });
-  }
+  };
 
 }
