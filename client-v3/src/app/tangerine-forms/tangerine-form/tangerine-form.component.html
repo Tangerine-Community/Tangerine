@@ -1,0 +1,6 @@
+<h2>Section: context.sectionObject.title</h2>
+<h3>Page: {{context.pageObject.title}}</h3>
+<app-tangerine-page [model]="result.variables" [config]="context.pageObject.config" (update)="onTangerinePageUpdate($event)">
+</app-tangerine-page>
+<button *ngIf="!context.isLastPage" [disabled]="!result.pageValid" class="next" (click)="onClickNext()" md-raised-button>Next</button>
+<button *ngIf="context.isLastPage" [disabled]="!result.pageValid" class="done" (click)="onClickDone()" md-raised-button>Done</button>
