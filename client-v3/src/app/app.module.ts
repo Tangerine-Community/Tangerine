@@ -12,6 +12,8 @@ import { AppComponent } from './app.component';
 
 import { NgBinderModule } from './ng-binder/ng-binder.module';
 import { NodeManagerModule } from './node-manager/node-manager.module';
+import { GroupManagerModule } from './group-manager/group-manager.module';
+import { GroupManagerRoutingModule } from './group-manager/group-manager-routing.module';
 
 export { AppComponent }
 
@@ -27,7 +29,9 @@ export { AppComponent }
     MdButtonModule, MdCheckboxModule, MdInputModule,
     NgBinderModule,
     NodeManagerModule,
-    AppRoutingModule
+    AppRoutingModule,
+    GroupManagerModule,
+    GroupManagerRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
