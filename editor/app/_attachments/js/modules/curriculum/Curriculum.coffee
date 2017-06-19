@@ -46,11 +46,11 @@ class Curriculum extends Backbone.Model
       success: =>
         questions = new Questions
         questions.fetch
-          key: "q" + originalId
+          key: originalId
           success: ( questions ) =>
             subtests = new Subtests
             subtests.fetch
-              key: "s" + originalId
+              key: originalId
               success: ( subtests ) =>
                 filteredSubtests = subtests.models
                 subtestIdMap = {}

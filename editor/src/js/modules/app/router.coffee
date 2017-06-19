@@ -433,7 +433,7 @@ class Router extends Backbone.Router
                           linkedResult = new KlassResult _.last(response.rows)?.value
                         questions = new Questions
                         questions.fetch
-                          key: "q" + subtest.get("curriculumId")
+                          key: subtest.get("curriculumId")
                           success: ->
                             questions = new Questions(questions.where {subtestId : subtestId })
                             onSuccess(student, subtest, questions, linkedResult)
@@ -489,7 +489,7 @@ class Router extends Backbone.Router
           success: ->
             questions = new Questions
             questions.fetch
-              key: "q" + assessmentId
+              key: assessmentId
               success: ->
                 questionsBySubtestId = questions.indexBy("subtestId")
                 for subtestId, questions of questionsBySubtestId
