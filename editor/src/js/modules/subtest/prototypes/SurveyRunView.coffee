@@ -154,7 +154,7 @@ class SurveyRunView extends Backbone.View
     @questions     = new Questions()
     # @questions.db.view = "questionsBySubtestId" Bring this back when prototypes make sense again
     @questions.fetch
-      key: "q" + @model.get("assessmentId")
+      key: @model.get("assessmentId")
       success: (collection) =>
         @questions = new Questions collection.where {"subtestId":@model.id} 
         @questions.sort()

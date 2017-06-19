@@ -58,7 +58,7 @@ class QuestionsEditView extends Backbone.View
   refetchAndRender: ->
     anyQuestion = @questions.models[0]
     @questions.fetch 
-      key: "q" + anyQuestion.get("assessmentId")
+      key: anyQuestion.get("assessmentId")
       success: =>
         @questions = new Questions(@questions.where {subtestId : anyQuestion.get("subtestId") })
         @render true
