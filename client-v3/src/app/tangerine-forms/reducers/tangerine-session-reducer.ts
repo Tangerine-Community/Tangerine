@@ -3,23 +3,33 @@ import { TangerineFormSession } from '../models/tangerine-form-session';
 
 
 export const tangerineFormSessionReducer = (state = new TangerineFormSession, action: Action) => {
+    // TODO: How to specify that newState should also be of TangerineFormSession type?
+    // Perhaps on the state updated in the subscribe. Will probably already happen even
+    // if the structure is valid because ... oh wait ya it's going to inherit class from
+    // state ultimately? Maybe it's not really something typey will notice.
     switch (action.type) {
         case 'LOAD_FORM':
-            // TODO
-            return state;
+            return Object.assign({}, state, action.payload);
         case 'PAGE_UPDATE':
             const newState = Object.assign({}, state);
             newState.sections[state.sectionIndex][state.pageIndex].model = action.payload.model;
             newState.sections[state.sectionIndex][state.pageIndex].status = action.payload.status;
             return newState;
         case 'GO_TO_PAGE':
-            return Object.assign({}, state, {bookmark: action.payload});
+            // Not obvious payload is going to be { sectionIndex: ..., pageIndex: ...}
+            return Object.assign({}, state, action.payload);
         case 'GO_TO_NEXT_PAGE':
-            if (state.sections[state.sectionIndex].pages.length === state.pageIndex) {
-                return Object.assign({}, state, {
-                    sectionIndex: (state.sectionIndex + 1),
-                    pageIndex: 0
-                });
+            // If we're on the last page, increment the sectionIndex, else increment pageIndex.
+            if (state.sections[state.sectionIndex].pages.length === state.pageIndex + 1) {
+                // If we're on the last section, mark done else increment the sectionIndex.
+                if (state.sections.length === state.sectionIndex + 1) {
+                    return Object.assign({}, state, { markedDone: true });
+                } else {
+                    return Object.assign({}, state, {
+                        sectionIndex: (state.sectionIndex + 1),
+                        pageIndex: 0
+                    });
+                }
             } else {
                 return Object.assign({}, state, {
                     sectionIndex: state.sectionIndex,
@@ -27,9 +37,32 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
                 });
 
             }
+        case 'GO_TO_PREVIOUS_PAGE':
+            // If we're on the first page, decrement the sectionIndex, else decrement pageIndex.
+            if (state.pageIndex === 0) {
+                // If we're on the first section, do nothing.
+                if (state.sectionIndex === 0) {
+                    return Object.assign({}, state);
+                } else {
+                    return Object.assign({}, state, {
+                        sectionIndex: (state.sectionIndex - 1),
+                        pageIndex: 0
+                    });
+                }
+            } else {
+                return Object.assign({}, state, {
+                    sectionIndex: state.sectionIndex,
+                    pageIndex: state.pageIndex - 1
+                });
+            }
+
         case 'HELLO':
             console.log('hello from tangerine-session reducer :)');
             return {foo: 'bar'};
+
+        case 'HELLO_TWO':
+            console.log('hello from tangerine-session reducer :)');
+            return Object.assign({}, state, action.payload);
 
         default:
             console.log('Default hit');
