@@ -3,8 +3,8 @@ class CameraPrintView extends Backbone.View
   className: "Camera"
 
   initialize: (options) ->
-    @model  = @options.model
-    @parent = @options.parent
+    @model  = options.model
+    @parent = options.parent
   
   render: ->
     return if @format is "stimuli" or @format is "backup"
