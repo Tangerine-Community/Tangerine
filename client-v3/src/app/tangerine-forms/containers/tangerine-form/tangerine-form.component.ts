@@ -17,13 +17,16 @@ export class TangerineFormComponent implements OnInit {
 
   // tangerineFormSession: Observable<TangerineFormSessionState>;
   // tangerineFormSession: TangerineFormSessionState;
- tangerineFormSession: any;
+  // Insert session.
+ @Input() tangerineFormSession: any;
+ // Local copy of state.
+ _tangerineFormSession: any;
 
   constructor(private store: Store<any>) {
     // this.tangerineFormSession = store.select('tangerineFormSession');
     store.select('tangerineFormSession')
       .subscribe(tangerineFormSession => {
-        this.tangerineFormSession = tangerineFormSession;
+        this._tangerineFormSession = tangerineFormSession;
       });
   }
 
@@ -77,28 +80,28 @@ export class TangerineFormComponent implements OnInit {
 
   helloClick() {
     console.log('hi');
-    console.log(this.tangerineFormSession);
+    console.log(this._tangerineFormSession);
     this.store.dispatch({ type: 'HELLO' });
-    console.log(this.tangerineFormSession);
+    console.log(this._tangerineFormSession);
   }
 
   helloTwoClick() {
     console.log('hi');
-    console.log(this.tangerineFormSession);
+    console.log(this._tangerineFormSession);
     this.store.dispatch({ type: 'HELLO_TWO', payload: {zip: 'cat'}});
-    console.log(this.tangerineFormSession);
+    console.log(this._tangerineFormSession);
   }
 
   nextPageClick() {
-    console.log(this.tangerineFormSession);
+    console.log(this._tangerineFormSession);
     this.store.dispatch({ type: 'GO_TO_NEXT_PAGE' });
-    console.log(this.tangerineFormSession);
+    console.log(this._tangerineFormSession);
   }
 
   previousPageClick() {
-    console.log(this.tangerineFormSession);
+    console.log(this._tangerineFormSession);
     this.store.dispatch({ type: 'GO_TO_PREVIOUS_PAGE' });
-    console.log(this.tangerineFormSession);
+    console.log(this._tangerineFormSession);
   }
 
 }
