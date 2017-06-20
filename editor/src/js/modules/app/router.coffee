@@ -675,7 +675,7 @@ class Router extends Backbone.Router
           allResults = new Results
           allResults.fetch
             include_docs: false
-            key: "r" + assessmentId
+            key: assessmentId
             success: (results) =>
               view = new ResultsView
                 "assessment" : assessment
