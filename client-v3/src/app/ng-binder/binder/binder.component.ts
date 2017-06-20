@@ -9,8 +9,10 @@ export class BinderComponent implements OnInit {
 
   @Input() config: any;
   @Output() binderDone: EventEmitter<Object> = new EventEmitter();
-  currentSection: object = {'name': ''};
-  currentPage: object;
+  currentSection: any = { 'name': '' };
+  currentPage: any = {
+    config: ''
+  };
   currentPathIndex = 0;
   currentPath = '';
   result: Array<any> = [];

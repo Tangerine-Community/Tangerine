@@ -1,3 +1,15 @@
-<p>
-  locations-creator works!
-</p>
+<md-grid-list cols="2" rowHeight="2:1">
+  <md-grid-tile>
+    <ul>
+
+      <li *ngFor="let node of nodes"><a (click)="clickNode(node)">{{node.nodeName}}</a></li>
+    </ul>
+  </md-grid-tile>
+  <md-grid-tile>
+    <!--<form class="formly" role="form" novalidate [formGroup]="form" (ngSubmit)="submit(user)">
+      <formly-form [model]="user" [fields]="userFields">
+        <button type="submit" class="btn btn-default" i18n>Button</button>
+      </formly-form>
+    </form>-->
+  </md-grid-tile>
+</md-grid-list>

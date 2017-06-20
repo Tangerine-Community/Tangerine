@@ -1,10 +1,12 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MdButtonModule, MdCheckboxModule, MdInputModule } from '@angular/material';
+
+import { FormlyModule, FormlyBootstrapModule } from 'ng-formly';
 import 'hammerjs';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -28,6 +30,9 @@ export { AppComponent }
     BrowserAnimationsModule,
     MdButtonModule, MdCheckboxModule, MdInputModule,
     NgBinderModule,
+    ReactiveFormsModule,
+    FormlyModule.forRoot(),
+    FormlyBootstrapModule,
     NodeManagerModule,
     AppRoutingModule,
     GroupManagerModule,
