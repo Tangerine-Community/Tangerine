@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 
 import { NgBinderModule } from './ng-binder/ng-binder.module';
 import { NodeManagerModule } from './node-manager/node-manager.module';
+import { TangerineFormsModule } from './tangerine-forms/tangerine-forms.module';
 
 export { AppComponent }
 
@@ -26,6 +27,7 @@ export { AppComponent }
     BrowserAnimationsModule,
     MdButtonModule, MdCheckboxModule, MdInputModule,
     NgBinderModule,
+    TangerineFormsModule,
     NodeManagerModule,
     AppRoutingModule
   ],
