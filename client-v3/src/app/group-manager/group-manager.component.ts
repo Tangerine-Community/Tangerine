@@ -52,11 +52,12 @@ export class GroupManagerComponent implements OnInit {
     console.log("groupModel: " + JSON.stringify(datum))
     // let name = groupModel.variables["name"]
     // this.groupModel = groupModel.variables;
-    this.result.variables = Object.assign(this.result.variables, datum.variables);
+    Object.assign(this.result.variables, datum.variables);
+    console.log("this.result.variables: " + JSON.stringify(this.result.variables))
   }
 
   createGroup(datum) {
-    console.log("this.result.variables: " + JSON.stringify(this.result.variables))
+    console.log("Saving to pouch - this.result.variables: " + JSON.stringify(this.result.variables))
     this.dataService.createNode(this.result.variables);
     // this.jsonFormSubmit.emit(this.form.value);
   }
