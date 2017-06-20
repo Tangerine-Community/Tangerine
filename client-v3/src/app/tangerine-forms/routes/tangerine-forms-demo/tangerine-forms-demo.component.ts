@@ -7,12 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TangerineFormsDemoComponent implements OnInit {
 
-  tangerineFormSession: any;
-
-  constructor() { }
-
-  ngOnInit() {
-    this.tangerineFormSession = {
+  tangerineFormSession = {
       id: 'tangerineFormSessionId1',
       formId: 'form1',
       sectionIndex: 0,
@@ -57,5 +52,9 @@ export class TangerineFormsDemoComponent implements OnInit {
         }
       ]
     };
+
+  constructor() { }
+
+  ngOnInit() {
   }
 }
