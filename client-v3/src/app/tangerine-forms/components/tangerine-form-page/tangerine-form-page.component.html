@@ -1,3 +1,7 @@
-<p>
-  tangerine-form-page works!
-</p>
+<form class="formly" role="form" novalidate [formGroup]="form">
+    <formly-form 
+        [model]="tangerineFormPage.model" 
+        [fields]="tangerineFormPage.fields" 
+        [form]="form">
+    </formly-form>
+</form>

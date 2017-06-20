@@ -17,6 +17,7 @@ export class TangerineFormComponent implements OnInit {
   _tangerineFormSession: any;
 
   constructor(private store: Store<any>) {
+    // TODO: Saw this in the example app. How can we make that work?
     // this.tangerineFormSession = store.select('tangerineFormSession');
     store.select('tangerineFormSession')
       .subscribe(tangerineFormSession => {

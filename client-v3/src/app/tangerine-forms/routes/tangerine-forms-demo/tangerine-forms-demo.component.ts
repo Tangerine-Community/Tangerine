@@ -19,28 +19,34 @@ export class TangerineFormsDemoComponent implements OnInit {
           path: '/a',
           pages: [
             {
-              status: 'VALID',
-              fields: [
-                {
-                  required: true,
-                  key: 'variable1',
-                  templateConfig: {
-                    type: 'text'
+              status: 'UNSEEN',
+              fields: [{
+                className: 'row',
+                fieldGroup: [
+                  {
+                    type: 'input',
+                    key: 'variable1',
+                    templateOptions: {
+                      label: 'Variable 1',
+                      type: 'text',
+                    }
                   }
-                }
-              ],
+                ]
+              }],
               model: {
                 'variable1': '',
               }
             },
             {
-              status: 'VALID',
+              status: 'UNSEEN',
               fields: [
                 {
-                  required: true,
+                  type: 'input',
                   key: 'variable2',
-                  templateConfig: {
-                    type: 'text'
+                  templateOptions: {
+                    label: 'Variable 2',
+                    type: 'text',
+                    required: true
                   }
                 }
               ],
