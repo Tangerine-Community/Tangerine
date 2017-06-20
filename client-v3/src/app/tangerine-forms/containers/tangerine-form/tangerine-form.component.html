@@ -1,5 +1,8 @@
-<button (click)='helloClick()'>Hello</button>
-<button (click)='helloTwoClick()'>Hello 2</button>
-<button (click)='nextPageClick()'>Next Page</button>
+
+<ul>
+    <li>Section: {{tangerineFormSession.sectionIndex}}</li>
+    <li>Page: {{tangerineFormSession.pageIndex}}</li>
+    <li>Done: {{tangerineFormSession.markedDone}}</li>
+</ul>
 <button (click)='previousPageClick()'>Previous Page</button>
-hola
+<button (click)='nextPageClick()'>Next Page</button>
