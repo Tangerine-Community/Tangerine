@@ -4,9 +4,7 @@ import { TangerineFormSession } from '../models/tangerine-form-session';
 
 export const tangerineFormSessionReducer = (state = new TangerineFormSession, action: Action) => {
     // TODO: How to specify that newState should also be of TangerineFormSession type?
-    // Perhaps on the state updated in the subscribe. Will probably already happen even
-    // if the structure is valid because ... oh wait ya it's going to inherit class from
-    // state ultimately? Maybe it's not really something typey will notice.
+    // TODO: How do we make obvious that certain payloads are of certain types?
     switch (action.type) {
         case 'LOAD_FORM':
             return Object.assign({}, state, action.payload);
@@ -16,7 +14,6 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
             newState.sections[state.sectionIndex][state.pageIndex].status = action.payload.status;
             return newState;
         case 'GO_TO_PAGE':
-            // Not obvious payload is going to be { sectionIndex: ..., pageIndex: ...}
             return Object.assign({}, state, action.payload);
         case 'GO_TO_NEXT_PAGE':
             // If we're on the last page, increment the sectionIndex, else increment pageIndex.
@@ -55,14 +52,6 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
                     pageIndex: state.pageIndex - 1
                 });
             }
-
-        case 'HELLO':
-            console.log('hello from tangerine-session reducer :)');
-            return {foo: 'bar'};
-
-        case 'HELLO_TWO':
-            console.log('hello from tangerine-session reducer :)');
-            return Object.assign({}, state, action.payload);
 
         default:
             console.log('Default hit');
