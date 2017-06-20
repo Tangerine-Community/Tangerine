@@ -22,7 +22,7 @@ import { TangerineFormsDemoComponent } from './routes/tangerine-forms-demo/tange
     FormlyBootstrapModule,
     StoreModule.provideStore({ tangerineFormSession: tangerineFormSessionReducer }),
     StoreDevtoolsModule.instrumentOnlyWithExtension({
-      maxAge: 5
+      maxAge: 100
     })
   ],
   declarations: [
