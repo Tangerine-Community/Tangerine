@@ -6,7 +6,7 @@ import { FormlyModule, FormlyBootstrapModule } from 'ng-formly';
 
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
-import { tangerineFormSessionReducer } from './reducers/tangerine-session-reducer';
+import { tangerineFormSessionReducer } from './reducers/tangerine-form-session-reducer';
 import { TangerineFormComponent } from './containers/tangerine-form/tangerine-form.component';
 import { TangerineFormPageComponent } from './components/tangerine-form-page/tangerine-form-page.component';
 import { TangerineFormsRoutingModule } from './tangerine-forms-routing.module';
