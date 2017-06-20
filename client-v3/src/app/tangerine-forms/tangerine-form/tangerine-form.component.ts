@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { TangerinePageComponent } from '../tangerine-page/tangerine-page.component';
+// import { TangerinePageComponent } from '../tangerine-page/tangerine-page.component';
 import { TangerineFormResult } from '../tangerine-form-result';
 import { TangerineForm } from '../tangerine-form';
 import { TangerineFormContext } from '../tangerine-form-context';

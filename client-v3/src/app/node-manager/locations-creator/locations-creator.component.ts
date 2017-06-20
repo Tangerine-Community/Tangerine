@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 import { Validators, FormGroup } from '@angular/forms';
 import { FormlyFieldConfig } from 'ng-formly';
 import { DataService } from './../../core/data-service.service';
+import {TangerinePageConfig} from "../../tangerine-forms/tangerine-page/tangerine-page-config";
+import {NodeValue} from "../node-value";
+import {NodeResult} from "../node-result";
+
 
 @Component({
   selector: 'app-locations-creator',
@@ -12,12 +16,43 @@ import { DataService } from './../../core/data-service.service';
 })
 export class LocationsCreatorComponent implements OnInit {
 
+  // IO.
+  @Input() model:NodeValue;
+  @Input() result: NodeResult;
+
   nodes = [];
   form: FormGroup = new FormGroup({});
   userFields: FormlyFieldConfig;
   constructor(private dataService: DataService) { }
 
+  config:TangerinePageConfig = [{
+    className: 'row',
+    fieldGroup: [{
+      key: 'name',
+      type: 'input',
+      templateOptions: {
+        type: 'text',
+        label: 'Name'
+      },
+      validators: {
+        validation: Validators.compose([Validators.required])
+      }
+    },{
+      key: '_id',
+      type: 'input',
+      templateOptions: {
+        type: 'hidden',
+      },
+      validators: {
+        validation: Validators.compose([Validators.required])
+      }
+    }]
+  }];
+
   ngOnInit() {
+      if (!this.result) {
+        this.result = new NodeResult();
+      }
     this.getNodes();
   }
 
@@ -32,7 +67,7 @@ export class LocationsCreatorComponent implements OnInit {
     });
   }
   clickNode(node): void {
-    // alert(node.nodeName);
+    console.log(node.nodeName);
     this.userFields = [{
       className: 'row',
       fieldGroup: [{
@@ -62,5 +97,20 @@ export class LocationsCreatorComponent implements OnInit {
         }
       }]
     }];
+  }
+
+  onUpdate(datum) {
+    // debugger
+    console.log("datum: " + JSON.stringify(datum))
+    // let name = groupModel.variables["name"]
+    // this.groupModel = groupModel.variables;
+    Object.assign(this.result.variables, datum.variables);
+    console.log("this.result.variables: " + JSON.stringify(this.result.variables))
+  }
+
+  save(datum) {
+    console.log("Saving to pouch - this.result.variables: " + JSON.stringify(this.result.variables))
+    this.dataService.createNode(this.result.variables);
+    // this.jsonFormSubmit.emit(this.form.value);
   }
 }

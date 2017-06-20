@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule, FormlyBootstrapModule } from 'ng-formly';
 import { TangerineFormComponent } from './tangerine-form/tangerine-form.component';
-import { TangerinePageComponent } from './tangerine-page/tangerine-page.component';
+// import { TangerinePageComponent } from './tangerine-page/tangerine-page.component';
 
 
 
@@ -14,6 +14,7 @@ import { TangerinePageComponent } from './tangerine-page/tangerine-page.componen
     FormlyModule.forRoot(),
     FormlyBootstrapModule
   ],
-  declarations: [TangerineFormComponent, TangerinePageComponent]
+  // declarations: [TangerineFormComponent, TangerinePageComponent]
+  declarations: [TangerineFormComponent]
 })
 export class TangerineFormsModule { }

@@ -1,12 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GroupManagerComponent } from './group-manager.component';
-import {GroupManagerModule} from "./group-manager.module";
 import {Validators} from "@angular/forms";
-import {TangerinePageComponent} from "../tangerine-forms/tangerine-page/tangerine-page.component";
 import {By} from "@angular/platform-browser";
 import {Group} from "./group";
-import {GroupResult} from "app/group-manager/group-result";
+import {NodeManagerModule} from "../node-manager.module";
 
 
 describe('GroupManagerComponent', () => {
@@ -30,7 +28,7 @@ describe('GroupManagerComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
-        GroupManagerModule
+        NodeManagerModule
       ]
     })
       .compileComponents();
@@ -51,7 +49,7 @@ describe('GroupManagerComponent', () => {
     expect(inputElements.length).toEqual(1);
   });
 
-  fit('should populate with data of Group model', () => {
+  it('should populate with data of Group model', () => {
     let group:Group = {
       _id: "foo",
       name:"bigDaddy",

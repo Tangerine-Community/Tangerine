@@ -1,11 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {TangerinePageComponent} from "../tangerine-forms/tangerine-page/tangerine-page.component";
 import {FormBuilder, Validators} from "@angular/forms";
-import {TangerineFormContext} from "../tangerine-forms/tangerine-form-context";
-import {TangerinePageConfig} from "../tangerine-forms/tangerine-page/tangerine-page-config";
 import {Group} from "./group";
 import {GroupResult} from "./group-result";
 import {GroupDataService} from "./group-data-service.service";
+import {TangerinePageConfig} from "../../tangerine-forms/tangerine-page/tangerine-page-config";
 
 @Component({
   selector: 'app-group-manager',
@@ -47,7 +45,7 @@ export class GroupManagerComponent implements OnInit {
     }]
   }];
 
-  onTangerinePageUpdate(datum) {
+  onUpdate(datum) {
     // debugger
     console.log("groupModel: " + JSON.stringify(datum))
     // let name = groupModel.variables["name"]
@@ -56,7 +54,7 @@ export class GroupManagerComponent implements OnInit {
     console.log("this.result.variables: " + JSON.stringify(this.result.variables))
   }
 
-  createGroup(datum) {
+  save(datum) {
     console.log("Saving to pouch - this.result.variables: " + JSON.stringify(this.result.variables))
     this.dataService.createNode(this.result.variables);
     // this.jsonFormSubmit.emit(this.form.value);
