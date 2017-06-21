@@ -1,0 +1,23 @@
+
+## A Tangerine Epic
+- The Project Owner hires a server admin to install Tangerine on a server.
+- Server Admin creates a Tangerine server while online.
+- The Project Owner account is generated with a random password during installation, Server Admin gives this account credentials and URL to the Project Owner.
+- Project Owner then creates groups.
+- Project Owner emails URL of server to Editors
+- Editor creates a server account on the server by entering a username and password in the login field while online (anyone can create an account).
+- Editor emails Project Owner what the username is they created and request access for a specific group.
+- Project Owner adds the Editor's user account to a "Group" while online. If the Project Owner does not want to manage who gets added to what groups, they can assign an Editor with the "Group Admin" role which will allow them to add other Editors' users.
+- Editor edits forms for group while online.
+- Content is ready for deployment so Content, Upload User, and Application Code are compiled together as a package at an obscure URL.
+- Deployment strategies
+    - Local Technician uses obscure URL to deploy app to tablets via ADB or by some manual process.
+    - or...
+    - Assessor is given URL, downloads it on tablet, changes security settings on tablet, opens the download via the filesystem, grants permissions to the app.
+- While offline, Assessor open Tangerine App, creates account with username, password, and optional security question in case they forget their password.
+- While offline, Assessor takes tablet into field, logs into Tangerine app, collects data.
+- When ready to send data back to the server...
+  - Goes to a place with Internet access, connects to wifi, and click upload which then uses the Upload User to upload data to the server that APK is tied to.
+  - or...
+  - Clicks the "save to file" button which saves only their in-app-account's data to a file on the Android file system, they extract the data using something like a USB or a SD Card and then physically send it to the main office somehow.
+- Editors and Project Owner now export from server the data uploaded for each form as a CSV.
