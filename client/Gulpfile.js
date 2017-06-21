@@ -448,6 +448,9 @@ conf.fileOrder = [
   'GpsRunView',
   'GpsRunItemView',
 
+  'CameraRunView',
+  'CameraRunItemView',
+
   'Result',
   'Results',
   'ResultView',

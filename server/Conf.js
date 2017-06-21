@@ -22,6 +22,9 @@ let Conf = {
   calcGroupUrl: function(groupName) {
     return `${this.protocol}${this.auth}${this.serverUrl}${this.calcGroupPath(groupName)}`;
   },
+  calcGroupDocUrl: function(groupName, docId) {
+    return `${this.protocol}${this.auth}${this.serverUrl}${this.calcGroupPath(groupName)}/${docId}`;
+  },
   calcSecurityUrl: function(groupName) {
     return `${this.protocol}${this.auth}${this.serverUrl}${this.calcGroupPath(groupName)}/_security`;
   },

@@ -87,6 +87,9 @@ app.post('/group/:group/remove-member', require('./routes/group/remove-member'))
 
 app.delete('/group/:group/:user', require('./routes/group/leave-group'));
 
+// retrieve stored photo
+app.get('/media/resultphoto/:group/:result/:subtest', require('./routes/media/get-result-photo'))
+
 
 // landing
 app.get('/', function(req, res){

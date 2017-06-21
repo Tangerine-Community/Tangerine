@@ -33,6 +33,8 @@ AssessmentCompositeView = Backbone.Marionette.CompositeView.extend
         currentSubview = GridRunItemView
       else if  (prototypeName == 'GpsRunItemView')
         currentSubview = GpsRunItemView
+      else if  (prototypeName == 'CameraRunItemView')
+        currentSubview = CameraRunItemView
       else if  (prototypeName == 'DatetimeRunItemView')
         currentSubview = DatetimeRunItemView
       else if  (prototypeName == 'IdRunItemView')
