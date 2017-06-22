@@ -21,33 +21,68 @@ export class LocationsCreatorComponent implements OnInit {
   @Input() result: NodeResult;
 
   nodes = [];
-  form: FormGroup = new FormGroup({});
-  userFields: FormlyFieldConfig;
+  // form: FormGroup = new FormGroup({});
+  // userFields: FormlyFieldConfig;
   constructor(private dataService: DataService) { }
 
-  tangerineFormSession = [{
-    className: 'row',
-    fieldGroup: [{
-      key: 'name',
-      type: 'input',
-      templateOptions: {
-        type: 'text',
-        label: 'Name'
-      },
-      validators: {
-        validation: Validators.compose([Validators.required])
+  // tangerineFormSession = [{
+  //   className: 'row',
+  //   fieldGroup: [{
+  //     key: 'name',
+  //     type: 'input',
+  //     templateOptions: {
+  //       type: 'text',
+  //       label: 'Name'
+  //     },
+  //     validators: {
+  //       validation: Validators.compose([Validators.required])
+  //     }
+  //   },{
+  //     key: '_id',
+  //     type: 'input',
+  //     templateOptions: {
+  //       type: 'hidden',
+  //     },
+  //     validators: {
+  //       validation: Validators.compose([Validators.required])
+  //     }
+  //   }]
+  // }];
+
+  tangerineFormSession = {
+    id: 'tangerineFormSessionId1',
+    formId: 'form1',
+    sectionIndex: 0,
+    pageIndex: 0,
+    markedDone: false,
+    sections: [
+      {
+        status: 'UNSEEN',
+        path: '/a',
+        pages: [
+          {
+            status: 'UNSEEN',
+            fields: [{
+              className: 'row',
+              fieldGroup: [
+                {
+                  type: 'input',
+                  key: 'name',
+                  templateOptions: {
+                    label: 'Name',
+                    type: 'text',
+                  }
+                }
+              ]
+            }],
+            model: {
+              'name': '',
+            }
+          }
+        ]
       }
-    },{
-      key: '_id',
-      type: 'input',
-      templateOptions: {
-        type: 'hidden',
-      },
-      validators: {
-        validation: Validators.compose([Validators.required])
-      }
-    }]
-  }];
+    ]
+  };
 
   ngOnInit() {
       if (!this.result) {
@@ -68,35 +103,35 @@ export class LocationsCreatorComponent implements OnInit {
   }
   clickNode(node): void {
     console.log(node.nodeName);
-    this.userFields = [{
-      className: 'row',
-      fieldGroup: [{
-        className: 'col-xs-6',
-        key: 'email',
-        type: 'input',
-        templateOptions: {
-          type: 'email',
-          label: 'Email address',
-          placeholder: 'Enter email'
-        },
-        validators: {
-          validation: Validators.compose([Validators.required])
-        }
-      }, {
-        className: 'col-xs-6',
-        key: 'password',
-        type: 'input',
-        templateOptions: {
-          type: 'password',
-          label: 'Password',
-          placeholder: 'Password',
-          pattern: ''
-        },
-        validators: {
-          validation: Validators.compose([Validators.required])
-        }
-      }]
-    }];
+    // this.userFields = [{
+    //   className: 'row',
+    //   fieldGroup: [{
+    //     className: 'col-xs-6',
+    //     key: 'email',
+    //     type: 'input',
+    //     templateOptions: {
+    //       type: 'email',
+    //       label: 'Email address',
+    //       placeholder: 'Enter email'
+    //     },
+    //     validators: {
+    //       validation: Validators.compose([Validators.required])
+    //     }
+    //   }, {
+    //     className: 'col-xs-6',
+    //     key: 'password',
+    //     type: 'input',
+    //     templateOptions: {
+    //       type: 'password',
+    //       label: 'Password',
+    //       placeholder: 'Password',
+    //       pattern: ''
+    //     },
+    //     validators: {
+    //       validation: Validators.compose([Validators.required])
+    //     }
+    //   }]
+    // }];
   }
 
   onUpdate(datum) {

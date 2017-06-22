@@ -70,11 +70,11 @@ describe('GroupManagerComponent', () => {
         }
       ]
     };
-    component.tangerineFormSession = tangerineFormSession;
+    // component.tangerineFormSession = tangerineFormSession;
     fixture.detectChanges();
     const inputElements = fixture.debugElement.queryAll(By.css('input'));
-    let fields = tangerineFormSession.sections[0].pages[0].fields[0].fieldGroup[0]
-    expect(inputElements[0].nativeElement.value).toEqual(fields["name"]);
+    let model = tangerineFormSession.sections[0].pages[0].model
+    expect(inputElements[0].nativeElement.value).toEqual(model["name"]);
   });
 
 

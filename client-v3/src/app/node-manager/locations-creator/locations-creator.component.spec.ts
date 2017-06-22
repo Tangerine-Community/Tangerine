@@ -34,16 +34,16 @@ describe('LocationsCreatorComponent', () => {
   });
 
 
-  fit('should populate with data of NodeValue model', () => {
-    let node:NodeValue = {
-      _id: "foo",
-      name:"topdawg",
-      _rev:"bingo"
-    }
-    component.model = node;
-    fixture.detectChanges();
-    const inputElements = fixture.debugElement.queryAll(By.css('input'));
-    expect(inputElements[0].nativeElement.value).toEqual(node.name);
-  });
+  // it('should populate with data of NodeValue model', () => {
+  //   let node:NodeValue = {
+  //     _id: "foo",
+  //     name:"topdawg",
+  //     _rev:"bingo"
+  //   }
+  //   component.model = node;
+  //   fixture.detectChanges();
+  //   const inputElements = fixture.debugElement.queryAll(By.css('input'));
+  //   expect(inputElements[0].nativeElement.value).toEqual(node.name);
+  // });
 
 });

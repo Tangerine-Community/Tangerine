@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TangerineFormsDemoComponent } from './tangerine-forms-demo.component';
+import {TangerineFormsModule} from "../../tangerine-forms.module";
 
 describe('TangerineFormsDemoComponent', () => {
   let component: TangerineFormsDemoComponent;
@@ -8,7 +9,8 @@ describe('TangerineFormsDemoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TangerineFormsDemoComponent ]
+      // declarations: [ TangerineFormsDemoComponent ]
+      imports: [TangerineFormsModule]
     })
     .compileComponents();
   }));
