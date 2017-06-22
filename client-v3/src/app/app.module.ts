@@ -12,10 +12,9 @@ import { AppComponent } from './app.component';
 
 import { NgBinderModule } from './ng-binder/ng-binder.module';
 import { NodeManagerModule } from './node-manager/node-manager.module';
-import {TangerinePageComponent} from "./tangerine-forms/tangerine-page/tangerine-page.component";
+import { TangerineFormsModule } from './tangerine-forms/tangerine-forms.module';
+import {TangerineFormComponent} from "./tangerine-forms/containers/tangerine-form/tangerine-form.component";
 import {FormlyBootstrapModule, FormlyModule} from "ng-formly";
-// import { GroupManagerModule } from './group-manager/group-manager.module';
-// import { GroupManagerRoutingModule } from './group-manager/group-manager-routing.module';
 
 export { AppComponent }
 
@@ -33,12 +32,11 @@ export { AppComponent }
     ReactiveFormsModule,
     FormlyModule.forRoot(),
     FormlyBootstrapModule,
+    TangerineFormsModule,
     NodeManagerModule,
     AppRoutingModule
-    // GroupManagerModule,
-    // GroupManagerRoutingModule
   ],
-  providers: [TangerinePageComponent],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

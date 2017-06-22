@@ -1,20 +1,34 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { StoreModule } from '@ngrx/store';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormlyModule, FormlyBootstrapModule } from 'ng-formly';
-import { TangerineFormComponent } from './tangerine-form/tangerine-form.component';
-// import { TangerinePageComponent } from './tangerine-page/tangerine-page.component';
-
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { tangerineFormSessionReducer } from './reducers/tangerine-form-session-reducer';
+import { TangerineFormComponent } from './containers/tangerine-form/tangerine-form.component';
+import { TangerineFormPageComponent } from './components/tangerine-form-page/tangerine-form-page.component';
+import { TangerineFormsRoutingModule } from './tangerine-forms-routing.module';
+import { TangerineFormsDemoComponent } from './routes/tangerine-forms-demo/tangerine-forms-demo.component';
 
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    TangerineFormsRoutingModule,
     FormlyModule.forRoot(),
-    FormlyBootstrapModule
+    FormlyBootstrapModule,
+    StoreModule.provideStore({ tangerineFormSession: tangerineFormSessionReducer }),
+    StoreDevtoolsModule.instrumentOnlyWithExtension({
+      maxAge: 100
+    })
   ],
-  // declarations: [TangerineFormComponent, TangerinePageComponent]
-  declarations: [TangerineFormComponent]
+
+  declarations: [
+    TangerineFormComponent,
+    TangerineFormPageComponent,
+    TangerineFormsDemoComponent
+  ],
+  exports: [TangerineFormComponent ]
 })
 export class TangerineFormsModule { }

@@ -9,7 +9,7 @@ import { NodeManagerRoutingModule } from './node-manager-routing.module';
 import { LocationsCreatorComponent } from './locations-creator/locations-creator.component';
 import {FormlyBootstrapModule, FormlyModule} from "ng-formly";
 import {GroupManagerComponent} from "./group-manager/group-manager.component";
-import {TangerinePageComponent} from "../tangerine-forms/tangerine-page/tangerine-page.component";
+import {TangerineFormsModule} from "../tangerine-forms/tangerine-forms.module";
 
 @NgModule({
   imports: [
@@ -18,9 +18,9 @@ import {TangerinePageComponent} from "../tangerine-forms/tangerine-page/tangerin
     FormlyModule.forRoot(),
     FormlyBootstrapModule,
     BrowserAnimationsModule, MdButtonModule, MdInputModule, MdGridListModule, MdListModule, MdCardModule, FormsModule, BrowserModule,
-    MdButtonModule, MdSelectModule, MdSlideToggleModule, NodeManagerRoutingModule
+    MdButtonModule, MdSelectModule, MdSlideToggleModule, NodeManagerRoutingModule, TangerineFormsModule
   ],
-  declarations: [NodeCreatorComponent, LocationsCreatorComponent, GroupManagerComponent, TangerinePageComponent],
+  declarations: [NodeCreatorComponent, LocationsCreatorComponent, GroupManagerComponent],
   exports: [NodeCreatorComponent ]
 })
 export class NodeManagerModule { }

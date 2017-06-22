@@ -3,7 +3,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import { Validators, FormGroup } from '@angular/forms';
 import { FormlyFieldConfig } from 'ng-formly';
 import { DataService } from './../../core/data-service.service';
-import {TangerinePageConfig} from "../../tangerine-forms/tangerine-page/tangerine-page-config";
+// import {TangerinePageConfig} from "../../tangerine-forms/tangerine-page/tangerine-page-config";
 import {NodeValue} from "../node-value";
 import {NodeResult} from "../node-result";
 
@@ -25,7 +25,7 @@ export class LocationsCreatorComponent implements OnInit {
   userFields: FormlyFieldConfig;
   constructor(private dataService: DataService) { }
 
-  config:TangerinePageConfig = [{
+  tangerineFormSession = [{
     className: 'row',
     fieldGroup: [{
       key: 'name',

@@ -10,20 +10,6 @@ import {NodeManagerModule} from "../node-manager.module";
 describe('GroupManagerComponent', () => {
   let component: GroupManagerComponent;
   let fixture: ComponentFixture<GroupManagerComponent>;
-  const tangerinePageConfigStub = [{
-    className: 'row',
-    fieldGroup: [{
-      key: 'groupName',
-      type: 'input',
-      templateOptions: {
-        type: 'text',
-        label: 'Group Name'
-      },
-      validators: {
-        validation: Validators.compose([Validators.required])
-      }
-    }]
-  }];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -49,16 +35,46 @@ describe('GroupManagerComponent', () => {
     expect(inputElements.length).toEqual(1);
   });
 
-  it('should populate with data of Group model', () => {
-    let group:Group = {
-      _id: "foo",
-      name:"bigDaddy",
-      _rev:"bingo"
-    }
-    component.groupModel = group;
+  fit('should populate with data of Group model', () => {
+    let tangerineFormSession = {
+      id: 'tangerineFormSessionId1',
+      formId: 'form1',
+      sectionIndex: 0,
+      pageIndex: 0,
+      markedDone: false,
+      sections: [
+        {
+          status: 'UNSEEN',
+          path: '/a',
+          pages: [
+            {
+              status: 'UNSEEN',
+              fields: [{
+                className: 'row',
+                fieldGroup: [
+                  {
+                    type: 'input',
+                    key: 'name',
+                    templateOptions: {
+                      label: 'Group Name',
+                      type: 'text',
+                    }
+                  }
+                ]
+              }],
+              model: {
+                'name': 'boop',
+              }
+            }
+          ]
+        }
+      ]
+    };
+    component.tangerineFormSession = tangerineFormSession;
     fixture.detectChanges();
     const inputElements = fixture.debugElement.queryAll(By.css('input'));
-    expect(inputElements[0].nativeElement.value).toEqual(group.name);
+    let fields = tangerineFormSession.sections[0].pages[0].fields[0].fieldGroup[0]
+    expect(inputElements[0].nativeElement.value).toEqual(fields["name"]);
   });
 
 

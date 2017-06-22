@@ -3,7 +3,6 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {Group} from "./group";
 import {GroupResult} from "./group-result";
 import {GroupDataService} from "./group-data-service.service";
-import {TangerinePageConfig} from "../../tangerine-forms/tangerine-page/tangerine-page-config";
 
 @Component({
   selector: 'app-group-manager',
@@ -21,29 +20,63 @@ export class GroupManagerComponent implements OnInit {
   // manually every time result is updated.
   // @Output() resultUpdate: EventEmitter<Object> = new EventEmitter();  // assign result of update to model
 
-  config:TangerinePageConfig = [{
-    className: 'row',
-    fieldGroup: [{
-      key: 'name',
-      type: 'input',
-      templateOptions: {
-        type: 'text',
-        label: 'Group Name'
-      },
-      validators: {
-        validation: Validators.compose([Validators.required])
+  // tangerineFormSession = [{
+  //   className: 'row',
+  //   fieldGroup: [{
+  //     key: 'name',
+  //     type: 'input',
+  //     templateOptions: {
+  //       type: 'text',
+  //       label: 'Group Name'
+  //     },
+  //     validators: {
+  //       validation: Validators.compose([Validators.required])
+  //     }
+  //   },{
+  //     key: '_id',
+  //     type: 'input',
+  //     templateOptions: {
+  //       type: 'hidden',
+  //     },
+  //     validators: {
+  //       validation: Validators.compose([Validators.required])
+  //     }
+  //   }]
+  // }];
+  tangerineFormSession = {
+    id: 'tangerineFormSessionId1',
+    formId: 'form1',
+    sectionIndex: 0,
+    pageIndex: 0,
+    markedDone: false,
+    sections: [
+      {
+        status: 'UNSEEN',
+        path: '/a',
+        pages: [
+          {
+            status: 'UNSEEN',
+            fields: [{
+              className: 'row',
+              fieldGroup: [
+                {
+                  type: 'input',
+                  key: 'name',
+                  templateOptions: {
+                    label: 'Group Name',
+                    type: 'text',
+                  }
+                }
+              ]
+            }],
+            model: {
+              'name': 'boop',
+            }
+          }
+        ]
       }
-    },{
-      key: '_id',
-      type: 'input',
-      templateOptions: {
-        type: 'hidden',
-      },
-      validators: {
-        validation: Validators.compose([Validators.required])
-      }
-    }]
-  }];
+    ]
+  };
 
   onUpdate(datum) {
     // debugger
