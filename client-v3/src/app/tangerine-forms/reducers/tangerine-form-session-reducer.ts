@@ -10,11 +10,8 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
             return Object.assign({}, state, action.payload);
         case 'PAGE_UPDATE':
             const newState = Object.assign({}, state);
-            const page = newState.sections[state.sectionIndex].pages[state.pageIndex];
-            page.model = action.payload.model;
-            page.status = action.payload.status;
-            newState.sections[state.sectionIndex].pages[state.pageIndex] = page;
-            // newState.model = Object.assign({}, newState.model, action.payload.model);
+            newState.sections[state.sectionIndex].pages[state.pageIndex].status = action.payload.status;
+            newState.model = Object.assign({}, newState.model, action.payload.model);
             return newState;
         case 'GO_TO_PAGE':
             return Object.assign({}, state, action.payload);

@@ -47,23 +47,23 @@ export class TangerineFormComponent implements OnInit {
   }
 
 
-  clickedNext() {
+  clickedNext(model) {
     this.store.dispatch({
       type: 'PAGE_UPDATE',
       payload: {
         status: this.form.status,
-        model: this._model
+        model
       }
     });
     this.store.dispatch({ type: 'GO_TO_NEXT_PAGE' });
   }
 
-  clickedPrevious() {
+  clickedPrevious(model) {
     this.store.dispatch({
       type: 'PAGE_UPDATE',
       payload: {
         status: this.form.status,
-        model: this._model
+        model
       }
     });
     this.store.dispatch({ type: 'GO_TO_PREVIOUS_PAGE' });

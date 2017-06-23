@@ -1,9 +1,8 @@
 <tangerine-form-breadcrumb></tangerine-form-breadcrumb>
 <form class="formly" role="form" novalidate [formGroup]="form">
     <formly-form 
-        [model]="_tangerineFormPage.model" 
         [fields]="_tangerineFormPage.fields" 
-        [form]="form">
+        [form]="form" #formlyForm>
     </formly-form>
 </form>
-<tangerine-form-pager (clickedNext)="clickedNext()" (clickedPrevious)="clickedPrevious()"></tangerine-form-pager>~
+<tangerine-form-pager (clickedNext)="clickedNext(formlyForm.model)" (clickedPrevious)="clickedPrevious(formlyForm.model)"></tangerine-form-pager>~

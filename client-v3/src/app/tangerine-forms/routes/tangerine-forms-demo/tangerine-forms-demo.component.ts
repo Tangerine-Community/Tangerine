@@ -24,9 +24,6 @@ export class TangerineFormsDemoComponent implements OnInit {
         path: '/a'
         pages: 
           - status: 'UNSEEN'
-            model: 
-              'variable1': ''
-              'variable2': ''
             fields: 
                 - type: 'input'
                   key: 'variable1'
@@ -39,9 +36,6 @@ export class TangerineFormsDemoComponent implements OnInit {
                     label: 'Variable 2'
                     type: 'text'
           - status: 'UNSEEN'
-            model: 
-              'variable1': ''
-              'variable2': ''
             fields: 
                 - type: 'input'
                   key: 'variable3'
@@ -72,9 +66,6 @@ export class TangerineFormsDemoComponent implements OnInit {
         path: '/a'
         pages: 
           - status: 'UNSEEN'
-            model: 
-              'variable1': ''
-              'variable2': ''
             fields: 
                 - type: 'input'
                   key: 'variable1'
@@ -87,9 +78,6 @@ export class TangerineFormsDemoComponent implements OnInit {
                     label: 'Variable 2'
                     type: 'text'
           - status: 'UNSEEN'
-            model: 
-              'variable1': ''
-              'variable2': ''
             fields: 
                 - type: 'input'
                   key: 'variable3'
@@ -105,9 +93,6 @@ export class TangerineFormsDemoComponent implements OnInit {
         path: '/b'
         pages: 
           - status: 'UNSEEN'
-            model: 
-              'variable1': ''
-              'variable2': ''
             fields: 
                 - type: 'input'
                   key: 'variable5'
@@ -120,9 +105,6 @@ export class TangerineFormsDemoComponent implements OnInit {
                     label: 'Variable 6'
                     type: 'text'
           - status: 'UNSEEN'
-            model: 
-              'variable1': ''
-              'variable2': ''
             fields: 
                 - type: 'input'
                   key: 'variable7'
