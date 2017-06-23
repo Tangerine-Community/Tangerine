@@ -35,7 +35,7 @@ describe('GroupManagerComponent', () => {
     expect(inputElements.length).toEqual(1);
   });
 
-  fit('should populate with data of Group model', () => {
+  it('should populate with data of Group model', () => {
     let tangerineFormSession = {
       id: 'tangerineFormSessionId1',
       formId: 'form1',

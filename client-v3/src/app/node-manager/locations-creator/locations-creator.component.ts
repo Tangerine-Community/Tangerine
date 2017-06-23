@@ -25,30 +25,6 @@ export class LocationsCreatorComponent implements OnInit {
   // userFields: FormlyFieldConfig;
   constructor(private dataService: DataService) { }
 
-  // tangerineFormSession = [{
-  //   className: 'row',
-  //   fieldGroup: [{
-  //     key: 'name',
-  //     type: 'input',
-  //     templateOptions: {
-  //       type: 'text',
-  //       label: 'Name'
-  //     },
-  //     validators: {
-  //       validation: Validators.compose([Validators.required])
-  //     }
-  //   },{
-  //     key: '_id',
-  //     type: 'input',
-  //     templateOptions: {
-  //       type: 'hidden',
-  //     },
-  //     validators: {
-  //       validation: Validators.compose([Validators.required])
-  //     }
-  //   }]
-  // }];
-
   tangerineFormSession = {
     id: 'tangerineFormSessionId1',
     formId: 'form1',
@@ -76,7 +52,7 @@ export class LocationsCreatorComponent implements OnInit {
               ]
             }],
             model: {
-              'name': '',
+              'name': 'boop',
             }
           }
         ]

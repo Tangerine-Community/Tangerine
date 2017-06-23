@@ -34,16 +34,46 @@ describe('LocationsCreatorComponent', () => {
   });
 
 
-  // it('should populate with data of NodeValue model', () => {
-  //   let node:NodeValue = {
-  //     _id: "foo",
-  //     name:"topdawg",
-  //     _rev:"bingo"
-  //   }
-  //   component.model = node;
-  //   fixture.detectChanges();
-  //   const inputElements = fixture.debugElement.queryAll(By.css('input'));
-  //   expect(inputElements[0].nativeElement.value).toEqual(node.name);
-  // });
+  it('should populate with data of Group model', () => {
+    let tangerineFormSession = {
+      id: 'tangerineFormSessionId1',
+      formId: 'form1',
+      sectionIndex: 0,
+      pageIndex: 0,
+      markedDone: false,
+      sections: [
+        {
+          status: 'UNSEEN',
+          path: '/a',
+          pages: [
+            {
+              status: 'UNSEEN',
+              fields: [{
+                className: 'row',
+                fieldGroup: [
+                  {
+                    type: 'input',
+                    key: 'name',
+                    templateOptions: {
+                      label: 'Group Name',
+                      type: 'text',
+                    }
+                  }
+                ]
+              }],
+              model: {
+                'name': 'boop',
+              }
+            }
+          ]
+        }
+      ]
+    };
+    // component.tangerineFormSession = tangerineFormSession;
+    fixture.detectChanges();
+    const inputElements = fixture.debugElement.queryAll(By.css('input'));
+    let model = tangerineFormSession.sections[0].pages[0].model
+    expect(inputElements[0].nativeElement.value).toEqual(model["name"]);
+  });
 
 });
