@@ -12,7 +12,6 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
             const newState = Object.assign({}, state);
             Object.assign(newState.pages[state.pageIndex], {status: action.payload.status});
             newState.model = Object.assign({}, action.payload.model);
-            // console.log(newState.model);
             newState.pages.forEach((page, index, pages) => {
                 let skip = false;
                 const model = Object.assign({}, newState.model);
@@ -26,7 +25,7 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
         case 'GO_TO_NEXT_PAGE':
             // Set page status to IN_PROGRESS
             if (state.pages.length === state.pageIndex + 1) {
-                return Object.assign({}, state, { markedDone: true });
+                return Object.assign({}, state, { status: 'DONE' });
             } else {
                 let newPageIndex = state.pageIndex + 1;
                 while (state.pages[newPageIndex].skip === true) {

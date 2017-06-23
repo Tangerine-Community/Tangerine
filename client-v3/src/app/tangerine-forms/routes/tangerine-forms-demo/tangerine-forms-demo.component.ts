@@ -65,6 +65,7 @@ export class TangerineFormsDemoComponent implements OnInit {
           - type: 'radio'
             key: 'cat_survey_confirmation'
             templateOptions: 
+              disabled: true
               label: 'Would you like to answer a survey about cats?'
               options: 
                 - key: 'yes'

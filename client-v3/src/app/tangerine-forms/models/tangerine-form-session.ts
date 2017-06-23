@@ -5,7 +5,8 @@ export class TangerineFormSession {
   formId: '';
   sectionIndex: number;
   pageIndex: number;
-  markedDone = false;
+  status = 'INITIALIZED';
   pages: Array<TangerineFormPage>;
   model: any = {};
+  swipe = 'RIGHT';
 }
