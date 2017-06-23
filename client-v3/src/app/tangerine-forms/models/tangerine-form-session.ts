@@ -1,4 +1,4 @@
-import { TangerineFormSection } from './tangerine-form-section';
+import { TangerineFormPage } from './tangerine-form-page';
 
 export class TangerineFormSession {
   id: '';
@@ -6,6 +6,6 @@ export class TangerineFormSession {
   sectionIndex: number;
   pageIndex: number;
   markedDone = false;
-  sections: Array<TangerineFormSection>;
+  pages: Array<TangerineFormPage>;
   model: any;
 }

@@ -27,10 +27,8 @@ export class TangerineFormComponent implements OnInit {
     store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {
         // Don't assign until the form is initialized.
-        if (tangerineFormSession.hasOwnProperty('sections') && tangerineFormSession.sections.length > 0) {
-          this._tangerineFormPage = tangerineFormSession
-                                        .sections[tangerineFormSession.sectionIndex]
-                                        .pages[tangerineFormSession.pageIndex];
+        if (tangerineFormSession.hasOwnProperty('pages') && tangerineFormSession.pages.length > 0) {
+          this._tangerineFormPage = tangerineFormSession.pages[tangerineFormSession.pageIndex];
         }
       });
     // Instantiate a Reactive Angular Form.

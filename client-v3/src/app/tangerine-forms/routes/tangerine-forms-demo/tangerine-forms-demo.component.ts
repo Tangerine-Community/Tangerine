@@ -54,69 +54,34 @@ export class TangerineFormsDemoComponent implements OnInit {
 
     id: 'tangerineFormSessionId1'
     formId: 'form1'
-    sectionIndex: 0
     pageIndex: 0
     markedDone: false
-    isOnLastPage: false
     model: 
-      variable1: ''
-      variable2: ''
-    sections: 
+    pages:
       - status: 'UNSEEN'
-        path: '/a'
-        pages: 
-          - status: 'UNSEEN'
-            fields: 
-                - type: 'input'
-                  key: 'variable1'
-                  templateOptions: 
-                    label: 'Variable 1'
-                    type: 'text'
-                - type: 'input'
-                  key: 'variable2'
-                  templateOptions: 
-                    label: 'Variable 2'
-                    type: 'text'
-          - status: 'UNSEEN'
-            fields: 
-                - type: 'input'
-                  key: 'variable3'
-                  templateOptions: 
-                    label: 'Variable 3'
-                    type: 'text'
-                - type: 'input'
-                  key: 'variable4'
-                  templateOptions: 
-                    label: 'Variable 4'
-                    type: 'text'
+        section: '/Cat Survey/'
+        fields: 
+          - type: 'radio'
+            key: 'cat_survey_confirmation'
+            templateOptions: 
+              label: 'Would you like to answer a survey about cats?'
+              options: 
+                - key: 'yes'
+                  value: 'yes'
+                - key: 'no'
+                  value: 'no'
       - status: 'UNSEEN'
-        path: '/b'
-        pages: 
-          - status: 'UNSEEN'
-            fields: 
-                - type: 'input'
-                  key: 'variable5'
-                  templateOptions: 
-                    label: 'Variable 5'
-                    type: 'text'
-                - type: 'input'
-                  key: 'variable6'
-                  templateOptions: 
-                    label: 'Variable 6'
-                    type: 'text'
-          - status: 'UNSEEN'
-            fields: 
-                - type: 'input'
-                  key: 'variable7'
-                  templateOptions: 
-                    label: 'Variable 7'
-                    type: 'text'
-                - type: 'input'
-                  key: 'variable8'
-                  templateOptions: 
-                    label: 'Variable 8'
-                    type: 'text'                    
-
+        section: '/Cat Survey/'
+        fields: 
+          - type: 'radio'
+            key: 'cat_hair_preference'
+            templateOptions: 
+              label: 'Do you prefer short haired or fluffy cats?'
+              options: 
+                - key: 'fluffy'
+                  value: 'fluffy'
+                - key: 'short'
+                  value: 'short'
   `);
 
   tangerineFormSession: any;

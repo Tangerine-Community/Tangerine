@@ -10,45 +10,26 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
             return Object.assign({}, state, action.payload);
         case 'PAGE_UPDATE':
             const newState = Object.assign({}, state);
-            newState.sections[state.sectionIndex].pages[state.pageIndex].status = action.payload.status;
-            newState.model = Object.assign({}, newState.model, action.payload.model);
+            Object.assign(newState.pages[state.pageIndex], {status: action.payload.status});
+            Object.assign({}, newState.model, action.payload.model);
             return newState;
         case 'GO_TO_PAGE':
             return Object.assign({}, state, action.payload);
         case 'GO_TO_NEXT_PAGE':
-            // If we're on the last page, increment the sectionIndex, else increment pageIndex.
-            if (state.sections[state.sectionIndex].pages.length === state.pageIndex + 1) {
-                // If we're on the last section, mark done else increment the sectionIndex.
-                if (state.sections.length === state.sectionIndex + 1) {
-                    return Object.assign({}, state, { markedDone: true });
-                } else {
-                    return Object.assign({}, state, {
-                        sectionIndex: (state.sectionIndex + 1),
-                        pageIndex: 0
-                    });
-                }
+            // Set page status to IN_PROGRESS
+            if (state.pages.length === state.pageIndex + 1) {
+                return Object.assign({}, state, { markedDone: true });
             } else {
                 return Object.assign({}, state, {
-                    sectionIndex: state.sectionIndex,
                     pageIndex: state.pageIndex + 1
                 });
-
             }
         case 'GO_TO_PREVIOUS_PAGE':
-            // If we're on the first page, decrement the sectionIndex, else decrement pageIndex.
+            // Set page status to IN_PROGRESS
             if (state.pageIndex === 0) {
-                // If we're on the first section, do nothing.
-                if (state.sectionIndex === 0) {
-                    return Object.assign({}, state);
-                } else {
-                    return Object.assign({}, state, {
-                        sectionIndex: (state.sectionIndex - 1),
-                        pageIndex: 0
-                    });
-                }
+                return Object.assign({}, state);
             } else {
                 return Object.assign({}, state, {
-                    sectionIndex: state.sectionIndex,
                     pageIndex: state.pageIndex - 1
                 });
             }
