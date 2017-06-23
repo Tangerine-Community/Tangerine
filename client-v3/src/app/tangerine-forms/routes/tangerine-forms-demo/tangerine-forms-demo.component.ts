@@ -72,7 +72,8 @@ export class TangerineFormsDemoComponent implements OnInit {
                 - key: 'no'
                   value: 'no'
       - status: 'UNSEEN'
-        skip: 'if(model.cat_survey_confirmation === "no") skip = true'
+        logic: 'if(model.hasOwnProperty("cat_survey_confirmation") && model.cat_survey_confirmation === "no") skip = true'
+        skip: false,
         section: '/Cat Survey/'
         fields: 
           - type: 'radio'

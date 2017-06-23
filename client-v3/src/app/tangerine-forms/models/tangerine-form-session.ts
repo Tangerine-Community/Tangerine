@@ -7,5 +7,5 @@ export class TangerineFormSession {
   pageIndex: number;
   markedDone = false;
   pages: Array<TangerineFormPage>;
-  model: any;
+  model: any = {};
 }

@@ -12,6 +12,14 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
             const newState = Object.assign({}, state);
             Object.assign(newState.pages[state.pageIndex], {status: action.payload.status});
             newState.model = Object.assign({}, action.payload.model);
+            // console.log(newState.model);
+            newState.pages.forEach((page, index, pages) => {
+                let skip = false;
+                const model = Object.assign({}, newState.model);
+                skip = false;
+                eval(page.logic);
+                pages[index].skip = skip;
+            });
             return newState;
         case 'GO_TO_PAGE':
             return Object.assign({}, state, action.payload);
@@ -20,8 +28,12 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
             if (state.pages.length === state.pageIndex + 1) {
                 return Object.assign({}, state, { markedDone: true });
             } else {
+                let newPageIndex = state.pageIndex + 1;
+                while (state.pages[newPageIndex].skip === true) {
+                    newPageIndex++;
+                }
                 return Object.assign({}, state, {
-                    pageIndex: state.pageIndex + 1
+                    pageIndex: newPageIndex
                 });
             }
         case 'GO_TO_PREVIOUS_PAGE':
@@ -29,8 +41,12 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
             if (state.pageIndex === 0) {
                 return Object.assign({}, state);
             } else {
+                let newPageIndex = state.pageIndex - 1;
+                while (state.pages[newPageIndex].skip === true) {
+                    newPageIndex--;
+                }
                 return Object.assign({}, state, {
-                    pageIndex: state.pageIndex - 1
+                    pageIndex: newPageIndex
                 });
             }
 
