@@ -1,17 +1,20 @@
 import { ActionReducer, Action } from '@ngrx/store';
 import { TangerineFormSession } from '../models/tangerine-form-session';
 
-
 export const tangerineFormSessionReducer = (state = new TangerineFormSession, action: Action) => {
     // TODO: How to specify that newState should also be of TangerineFormSession type?
     // TODO: How do we make obvious that certain payloads are of certain types?
+
     switch (action.type) {
         case 'LOAD_FORM':
             return Object.assign({}, state, action.payload);
         case 'PAGE_UPDATE':
             const newState = Object.assign({}, state);
-            newState.sections[state.sectionIndex][state.pageIndex].model = action.payload.model;
-            newState.sections[state.sectionIndex][state.pageIndex].status = action.payload.status;
+            const page = newState.sections[state.sectionIndex].pages[state.pageIndex];
+            page.model = action.payload.model;
+            page.status = action.payload.status;
+            newState.sections[state.sectionIndex].pages[state.pageIndex] = page;
+            // newState.model = Object.assign({}, newState.model, action.payload.model);
             return newState;
         case 'GO_TO_PAGE':
             return Object.assign({}, state, action.payload);

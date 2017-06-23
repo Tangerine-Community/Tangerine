@@ -1,9 +1,9 @@
-
-<ul>
-    <li>Section: {{_tangerineFormSession.sectionIndex}}</li>
-    <li>Page: {{_tangerineFormSession.pageIndex}}</li>
-    <li>Done: {{_tangerineFormSession.markedDone}}</li>
-</ul>
-<tangerine-form-page></tangerine-form-page>
-<button (click)='previousPageClick()'>Previous Page</button>
-<button (click)='nextPageClick()'>Next Page</button>
+<tangerine-form-breadcrumb></tangerine-form-breadcrumb>
+<form class="formly" role="form" novalidate [formGroup]="form">
+    <formly-form 
+        [model]="_tangerineFormPage.model" 
+        [fields]="_tangerineFormPage.fields" 
+        [form]="form">
+    </formly-form>
+</form>
+<tangerine-form-pager></tangerine-form-pager>~

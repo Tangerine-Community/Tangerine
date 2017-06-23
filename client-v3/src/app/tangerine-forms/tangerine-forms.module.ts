@@ -11,6 +11,8 @@ import { TangerineFormComponent } from './containers/tangerine-form/tangerine-fo
 import { TangerineFormPageComponent } from './components/tangerine-form-page/tangerine-form-page.component';
 import { TangerineFormsRoutingModule } from './tangerine-forms-routing.module';
 import { TangerineFormsDemoComponent } from './routes/tangerine-forms-demo/tangerine-forms-demo.component';
+import { TangerineFormPagerComponent } from './components/tangerine-form-pager/tangerine-form-pager.component';
+import { TangerineFormBreadcrumbComponent } from './components/tangerine-form-breadcrumb/tangerine-form-breadcrumb.component';
 
 
 @NgModule({
@@ -28,7 +30,9 @@ import { TangerineFormsDemoComponent } from './routes/tangerine-forms-demo/tange
   declarations: [
     TangerineFormComponent,
     TangerineFormPageComponent,
-    TangerineFormsDemoComponent
+    TangerineFormsDemoComponent,
+    TangerineFormPagerComponent,
+    TangerineFormBreadcrumbComponent
   ]
 })
 export class TangerineFormsModule { }

@@ -11,20 +11,22 @@ import { TangerineFormSession } from '../../models/tangerine-form-session';
   styleUrls: ['./tangerine-form-page.component.css']
 })
 export class TangerineFormPageComponent implements OnInit {
+  private _tangerineFormPage: TangerineFormPage;
 
-  tangerineFormPage: TangerineFormPage;
   form: FormGroup;
 
   constructor(fb: FormBuilder, private store: Store<any>) {
+    // Subrcribe to the store so we can receive updates when we are on a new page.
     store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {
         // Don't assign until the form is initialized.
         if (tangerineFormSession.hasOwnProperty('sections') && tangerineFormSession.sections.length > 0) {
-          this.tangerineFormPage = tangerineFormSession
-            .sections[tangerineFormSession.sectionIndex]
-            .pages[tangerineFormSession.pageIndex];
+          this._tangerineFormPage = tangerineFormSession
+                                        .sections[tangerineFormSession.sectionIndex]
+                                        .pages[tangerineFormSession.pageIndex];
         }
       });
+    // Instantiate a Reactive Angular Form.
     this.form = fb.group({});
   }
 
@@ -32,12 +34,12 @@ export class TangerineFormPageComponent implements OnInit {
     // Bubble up form changes.
     this.form.valueChanges.subscribe(model => {
       this.store.dispatch({
-        type: 'FORM_PAGE_UPDATE',
+        type: 'PAGE_UPDATE',
         payload: {
           status: this.form.status,
           model: model
         }
       });
     });
-  }
-}
+  };
+};
