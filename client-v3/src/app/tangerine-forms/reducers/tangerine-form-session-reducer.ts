@@ -6,12 +6,12 @@ export const tangerineFormSessionReducer = (state = new TangerineFormSession, ac
     // TODO: How do we make obvious that certain payloads are of certain types?
 
     switch (action.type) {
-        case 'LOAD_FORM':
+        case 'FORM_LOAD':
             return Object.assign({}, state, action.payload);
-        case 'PAGE_UPDATE':
+        case 'FORM_UPDATE':
             const newState = Object.assign({}, state);
             Object.assign(newState.pages[state.pageIndex], {status: action.payload.status});
-            Object.assign({}, newState.model, action.payload.model);
+            newState.model = Object.assign({}, action.payload.model);
             return newState;
         case 'GO_TO_PAGE':
             return Object.assign({}, state, action.payload);

@@ -37,35 +37,28 @@ export class TangerineFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.store.dispatch({type: 'LOAD_FORM', payload: this.tangerineFormSession});
+    this.store.dispatch({type: 'FORM_LOAD', payload: this.tangerineFormSession});
     // Bubble up form changes.
     this.form.valueChanges.subscribe(model => {
-      this._model = model;
+      if (model) {
+        this.store.dispatch({
+          type: 'FORM_UPDATE',
+          payload: {
+            status: this.form.status,
+            model
+          }
+        });
+      }
     });
   }
 
 
   clickedNext(model) {
-    this.store.dispatch({
-      type: 'PAGE_UPDATE',
-      payload: {
-        status: this.form.status,
-        model
-      }
-    });
     this.store.dispatch({ type: 'GO_TO_NEXT_PAGE' });
   }
 
   clickedPrevious(model) {
-    this.store.dispatch({
-      type: 'PAGE_UPDATE',
-      payload: {
-        status: this.form.status,
-        model
-      }
-    });
     this.store.dispatch({ type: 'GO_TO_PREVIOUS_PAGE' });
-
   }
 
 }

@@ -60,6 +60,7 @@ export class TangerineFormsDemoComponent implements OnInit {
     pages:
       - status: 'UNSEEN'
         section: '/Cat Survey/'
+        skip: ''
         fields: 
           - type: 'radio'
             key: 'cat_survey_confirmation'
@@ -71,6 +72,7 @@ export class TangerineFormsDemoComponent implements OnInit {
                 - key: 'no'
                   value: 'no'
       - status: 'UNSEEN'
+        skip: 'if(model.cat_survey_confirmation === "no") skip = true'
         section: '/Cat Survey/'
         fields: 
           - type: 'radio'
@@ -82,6 +84,15 @@ export class TangerineFormsDemoComponent implements OnInit {
                   value: 'fluffy'
                 - key: 'short'
                   value: 'short'
+      - status: 'UNSEEN'
+        skip: ''
+        section: '/Conclusion/'
+        fields: 
+          - type: 'radio'
+            key: 'thank_you'
+            templateOptions: 
+              label: 'Thank you for taking our survey.'
+              options: 
   `);
 
   tangerineFormSession: any;
