@@ -20,6 +20,7 @@ export class TangerineFormComponent implements OnInit {
   @Input() tangerineFormSession: any;
   // Local copy of state.
   _tangerineFormSession: any;
+  _model: any;
 
   constructor(fb: FormBuilder, private store: Store<any>) {
     // Subrcribe to the store so we can receive updates when we are on a new page.
@@ -34,10 +35,39 @@ export class TangerineFormComponent implements OnInit {
       });
     // Instantiate a Reactive Angular Form.
     this.form = fb.group({});
+
   }
 
-   ngOnInit() {
-     this.store.dispatch({type: 'LOAD_FORM', payload: this.tangerineFormSession});
+  ngOnInit() {
+    this.store.dispatch({type: 'LOAD_FORM', payload: this.tangerineFormSession});
+    // Bubble up form changes.
+    this.form.valueChanges.subscribe(model => {
+      this._model = model;
+    });
+  }
+
+
+  clickedNext() {
+    this.store.dispatch({
+      type: 'PAGE_UPDATE',
+      payload: {
+        status: this.form.status,
+        model: this._model
+      }
+    });
+    this.store.dispatch({ type: 'GO_TO_NEXT_PAGE' });
+  }
+
+  clickedPrevious() {
+    this.store.dispatch({
+      type: 'PAGE_UPDATE',
+      payload: {
+        status: this.form.status,
+        model: this._model
+      }
+    });
+    this.store.dispatch({ type: 'GO_TO_PREVIOUS_PAGE' });
+
   }
 
 }

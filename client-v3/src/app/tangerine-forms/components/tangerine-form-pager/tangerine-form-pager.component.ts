@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Store, provideStore } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'tangerine-form-pager',
@@ -10,23 +8,10 @@ import { Observable } from 'rxjs/Observable';
 export class TangerineFormPagerComponent implements OnInit {
 
   _tangerineFormSession: any;
-
-  constructor(private store: Store<any>) {
-    store.select('tangerineFormSession')
-      .subscribe(tangerineFormSession => {
-        this._tangerineFormSession = tangerineFormSession;
-      });
-  }
+  @Output() clickedNext = new EventEmitter();
+  @Output() clickedPrevious = new EventEmitter();
 
   ngOnInit() {
-  }
-
-  nextPageClick() {
-    this.store.dispatch({ type: 'GO_TO_NEXT_PAGE' });
-  }
-
-  previousPageClick() {
-    this.store.dispatch({ type: 'GO_TO_PREVIOUS_PAGE' });
   }
 
 }
