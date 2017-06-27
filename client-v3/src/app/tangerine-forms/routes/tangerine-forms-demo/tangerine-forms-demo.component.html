@@ -30,17 +30,22 @@ cards:
             label: 'Variable 4'
             type: 'text'
   - id: 'card3'
+    title: 'Fruit'
+    subtitle: 'A very important topic.'
+    avatarImage: 'https://tangerinekenya.github.io/DesignSprintPrototype-Team1/images/tangerineLogo.png'
     fields:
-        - type: 'input'
-          key: 'variable5'
+        - type: 'select'
+          key: 'doge_name'
           templateOptions: 
             required: true
-            label: 'Variable 5'
-            type: 'text'
-        - type: 'input'
-          key: 'variable6'
-          templateOptions: 
-            required: true
-            label: 'Variable 6'
-            type: 'text'
+            label: 'What is your favorite fruit?'
+            options:
+              - key: orange
+                label: Orange
+              - key: strawberry
+                label: Strawberry
+              - key: Tangerine
+                label: Tangerine
+              - key: coconut
+                label: Coconut
 </tangerine-form>
