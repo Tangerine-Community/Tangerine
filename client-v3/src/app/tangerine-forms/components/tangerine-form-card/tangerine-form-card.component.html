@@ -1,5 +1,5 @@
 
-<md-card>
+<md-card [@cardStatus]='_tangerineFormCard.status'>
     <md-card-header *ngIf='showHeader'>
         <div *ngIf='tangerineFormCard.avatarImage' 
             md-card-avatar class="avatar-image" 

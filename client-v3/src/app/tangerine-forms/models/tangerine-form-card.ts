@@ -9,7 +9,7 @@ export class TangerineFormCard {
     fields: FormlyFieldConfig;
     showSubmitButton = false;
     model: any = {};
-    status = '';
+    status = 'INVALID';
     skip =  false;
     logic = '';
 }

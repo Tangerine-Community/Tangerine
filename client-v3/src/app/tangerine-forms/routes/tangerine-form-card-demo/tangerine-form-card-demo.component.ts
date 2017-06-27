@@ -14,11 +14,13 @@ export class TangerineFormCardDemoComponent implements OnInit {
         - type: 'input'
           key: 'variable1'
           templateOptions: 
+            required: true
             label: 'Variable 1'
             type: 'text'
         - type: 'input'
           key: 'variable2'
           templateOptions: 
+            required: true
             label: 'Variable 2'
             type: 'text'
   `);
