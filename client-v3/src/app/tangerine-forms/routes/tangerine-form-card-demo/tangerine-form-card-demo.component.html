@@ -1,0 +1,120 @@
+<h2> Tangerine Form Card Demo </h2>
+
+
+<h3> 
+  A basic Tangerine Form Card.
+</h3>
+
+<tangerine-form-card #card1>
+    id: 'card1'
+    fields:
+        - type: 'input'
+          key: 'variable1'
+          templateOptions: 
+            label: 'Variable 1'
+            type: 'text'
+        - type: 'input'
+          key: 'variable2'
+          templateOptions: 
+            label: 'Variable 2'
+            type: 'text'
+</tangerine-form-card>
+Output:
+<pre> {{card1.tangerineFormCard.model | json}}</pre>
+
+
+<h3> 
+  A Tangerine Form Card with data prepopulated.
+</h3>
+
+<tangerine-form-card #card2>
+    id: 'card2'
+    fields:
+        - type: 'input'
+          key: 'variable1'
+          templateOptions: 
+            label: 'Variable 1'
+            type: 'text'
+        - type: 'input'
+          key: 'variable2'
+          templateOptions: 
+            label: 'Variable 2'
+            type: 'text'
+    model:
+      variable1: 'foo'
+      variable2: 'bar'
+</tangerine-form-card>
+Output:
+<pre> {{card2.tangerineFormCard.model | json}}</pre>
+
+<h3> 
+  Listening for changes on the card and sending them to console log.
+</h3>
+<tangerine-form-card (change)="onChange($event)">
+    id: 'card3'
+    fields:
+        - type: 'input'
+          key: 'variable1'
+          templateOptions: 
+            label: 'Variable 1'
+            type: 'text'
+        - type: 'input'
+          key: 'variable2'
+          templateOptions: 
+            label: 'Variable 2'
+            type: 'text'
+</tangerine-form-card>
+
+<h3> 
+  A Tangerine Form Card based on attribute input. 
+</h3>
+<tangerine-form-card [tangerineFormCard]="tangerineFormCardExample">
+</tangerine-form-card>
+
+<h3> 
+  A Tangerine Form Card with a title, a subtitle, an avatar, and a submit button.
+</h3>
+<tangerine-form-card (submit)="onSubmit($event)">
+    id: 'card5'
+    title: 'Fruit'
+    subtitle: 'A very important topic.'
+    avatarImage: 'https://tangerinekenya.github.io/DesignSprintPrototype-Team1/images/tangerineLogo.png'
+    showSubmitButton: true
+    fields:
+        - type: 'select'
+          key: 'doge_name'
+          templateOptions: 
+            label: 'What is your favorite fruit?'
+            options:
+              - key: orange
+                label: Orange
+              - key: strawberry
+                label: Strawberry
+              - key: Tangerine
+                label: Tangerine
+              - key: coconut
+                label: Coconut
+</tangerine-form-card>
+
+<h3> 
+  A Tangerine Form Card with everything: a title, a subtitle, image, an avatar, and a submit button.
+</h3>
+<tangerine-form-card (submit)="onSubmit($event)">
+    id: 'card6'
+    title: 'Doge Wow!'
+    subtitle: 'So many squirrels, so little time.'
+    image: 'https://material.angular.io/assets/img/examples/shiba2.jpg'
+    avatarImage: 'assets/noun_727773_cc.png'
+    showSubmitButton: true
+    fields:
+        - type: 'input'
+          key: 'doge_name'
+          templateOptions: 
+            label: 'Your dogs name?'
+            type: 'text'
+        - type: 'input'
+          key: 'doge_color'
+          templateOptions: 
+            label: 'Your dogs favorite color?'
+            type: 'text'
+</tangerine-form-card>

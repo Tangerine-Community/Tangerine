@@ -1,8 +1,7 @@
-<tangerine-form-breadcrumb></tangerine-form-breadcrumb>
-<form class="formly" role="form" novalidate [formGroup]="form" [@formStatus]="status"> 
-    <formly-form 
-        [fields]="_tangerineFormPage.fields" 
-        [form]="form" #formlyForm>
-    </formly-form>
-</form>
-<tangerine-form-pager (clickedNext)="clickedNext(formlyForm.model)" (clickedPrevious)="clickedPrevious(formlyForm.model)"></tangerine-form-pager>
+<tangerine-form-card *ngFor="let card of tangerineForm.cards" [tangerineFormCard]="card" [tangerineFormModel]="tangerineFormModel">
+</tangerine-form-card>
+<div style="display: none;">
+    START-CONFIG 
+        <ng-content></ng-content>
+    END-CONFIG
+</div>

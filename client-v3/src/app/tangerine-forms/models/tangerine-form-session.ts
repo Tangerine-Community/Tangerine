@@ -1,12 +1,4 @@
-import { TangerineFormPage } from './tangerine-form-page';
+import { TangerineFormCard } from './tangerine-form-card';
 
 export class TangerineFormSession {
-  id: '';
-  formId: '';
-  sectionIndex: number;
-  pageIndex: number;
-  status = 'INITIALIZED';
-  pages: Array<TangerineFormPage>;
-  model: any = {};
-  swipe = 'RIGHT';
 }
