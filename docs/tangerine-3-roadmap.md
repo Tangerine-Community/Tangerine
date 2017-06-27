@@ -1,5 +1,7 @@
 # Tangerine 3 Roadmap
 
+On going brainstorming: https://docs.google.com/document/d/1tIPSmdqFBNoMBY-1AocDjtVlrcS6v6fwwQjc3Ytu6OY/edit
+
 ## Phase 1 - Foundation of Tangerine App (May, June, July)
 ### Iterate on Tangerine v3.0.0-alphaX Milestones
 - Timeline: May, June
