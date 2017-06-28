@@ -51,6 +51,7 @@ Output:
 Output:
 <pre> {{card2.tangerineFormCard.model | json}}</pre>
 
+
 <h3> 
   Listening for changes on the card and sending them to console log.
 </h3>
@@ -71,11 +72,13 @@ Output:
             type: 'text'
 </tangerine-form-card>
 
+
 <h3> 
   A Tangerine Form Card based on attribute input. 
 </h3>
 <tangerine-form-card [tangerineFormCard]="tangerineFormCardExample">
 </tangerine-form-card>
+
 
 <h3> 
   A Tangerine Form Card with a title, a subtitle, an avatar, and a submit button.
@@ -103,6 +106,7 @@ Output:
                 label: Coconut
 </tangerine-form-card>
 
+
 <h3> 
   A Tangerine Form Card with everything: a title, a subtitle, image, an avatar, and a submit button.
 </h3>
@@ -127,3 +131,67 @@ Output:
             label: 'Your dogs favorite color?'
             type: 'text'
 </tangerine-form-card>
+
+
+<h3> 
+  A Tangerine Form Card with an expression for disabling a field.
+</h3>
+<tangerine-form-card #card7>
+    id: 'card7'
+    fields:
+      - type: 'select'
+        key: 'want_to_answer'
+        templateOptions:
+          required: true
+          options:
+            - value: 'no_answer'
+              label: '...'
+            - value: 'yes'
+              label: 'Yes'
+            - value: 'no'
+              label: 'No'
+          label: 'Would you like to tell us your name?'
+          type: 'text'
+      - type: 'input'
+        key: 'name'
+        expressionProperties: 
+          'templateOptions.disabled': 'model.want_to_answer !== "yes"'
+        templateOptions:
+          required: true
+          label: 'What is your name?'
+          type: 'text'
+</tangerine-form-card>
+Output:
+<pre> {{card7.tangerineFormCard.model | json}}</pre>
+
+
+<h3> 
+  A Tangerine Form Card with a hide expression.
+</h3>
+<tangerine-form-card #card8>
+    id: 'card8'
+    fields:
+      - type: 'select'
+        key: 'want_to_answer'
+        required: true
+        templateOptions:
+          required: true
+          options:
+            - value: 'no_answer'
+              label: '...'
+            - value: 'yes'
+              label: 'Yes'
+            - value: 'no'
+              label: 'No'
+          label: 'Would you like to tell us your name?'
+          type: 'text'
+      - type: 'input'
+        key: 'name'
+        hideExpression: 'model.want_to_answer !== "yes"'
+        templateOptions:
+          required: true
+          label: 'What is your name?'
+          type: 'text'
+</tangerine-form-card>
+Output:
+<pre> {{card8.tangerineFormCard.model | json}}</pre>
