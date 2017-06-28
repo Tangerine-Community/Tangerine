@@ -1,5 +1,5 @@
 
-<tangerine-form formId="tangerine-form-demo" #tangerineForm>
+<tangerine-form [session]="session" formId="tangerine-form-demo" #tangerineForm>
 
   <h2> A basic Tangerine Form Card. </h2>
   <tangerine-form-card>
@@ -103,6 +103,6 @@
             type: 'text'
   </tangerine-form-card>
 
-  <tangerine-form-session [session]="tangerineForm.session"></tangerine-form-session>
+  <tangerine-form-session [session]="session"></tangerine-form-session>
 
 </tangerine-form>

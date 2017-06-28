@@ -33,9 +33,9 @@ import {
 export class TangerineFormComponent implements OnInit, AfterViewInit {
 
   // Send a Tangerine Form in.
-  @Input() tangerineForm: TangerineForm = new TangerineForm();
+  @Input() form: TangerineForm = new TangerineForm();
   // Or send a Tangerine Session in.
-  @Input() tangerineFormSession: TangerineFormSession = new TangerineFormSession();
+  @Input() session: TangerineFormSession = new TangerineFormSession();
   @Input() formId = '';
   // Latch onto the children Cards so we can listen for their events.
   @ContentChildren(TangerineFormCardComponent) tangerineFormCardChildren: QueryList<TangerineFormCardComponent>;
@@ -46,10 +46,9 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    console.log(this.formId);
-    this.tangerineFormSession = new TangerineFormSession({
-      formId: this.formId
-    });
+    if (this.formId) {
+      this.session.formId = this.formId;
+    }
   }
 
   // TODO: Should be ngAfterContentInit?
@@ -57,9 +56,9 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
     console.log(this.formId);
     this.tangerineFormCardChildren.setDirty();
     this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-      tangerineFormCardComponent.tangerineFormCard.model = this.tangerineFormSession.model;
+      tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
       tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
-        Object.assign(this.tangerineFormSession.model, tangerineFormCard.model);
+        Object.assign(this.session.model, tangerineFormCard.model);
       });
     });
   }
