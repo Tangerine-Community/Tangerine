@@ -1,6 +1,7 @@
 
-<tangerine-form #tangerineForm>
+<tangerine-form formId="tangerine-form-demo" #tangerineForm>
 
+  <h2> A basic Tangerine Form Card. </h2>
   <tangerine-form-card>
     id: 'card1'
     fields:
@@ -18,23 +19,7 @@
             type: 'text'
   </tangerine-form-card>
 
-  <tangerine-form-card>
-    id: 'card2'
-    fields:
-        - type: 'input'
-          key: 'variable3'
-          templateOptions: 
-            required: true
-            label: 'Variable 3'
-            type: 'text'
-        - type: 'input'
-          key: 'variable4'
-          templateOptions: 
-            required: true
-            label: 'Variable 4'
-            type: 'text'
-  </tangerine-form-card>
-  
+  <h2> A Tangerine Form Card with bells and whistles. </h2>
   <tangerine-form-card>
     id: 'card3'
     title: 'Fruit'
@@ -59,9 +44,7 @@
                 label: Coconut
   </tangerine-form-card>
   
-  <h3> 
-    A Tangerine Form Card with a hide expression.
-  </h3>
+  <h2> A Tangerine Form Card with a hide expression. </h2>
   <tangerine-form-card #card8>
       id: 'card8'
       fields:
@@ -88,9 +71,7 @@
             type: 'text'
   </tangerine-form-card>
    
-  <h3> 
-    Two Tangerine Form Cards with a hide expression between them.
-  </h3>
+  <h2> Two Tangerine Form Cards with a hide expression between them. </h2>
   <tangerine-form-card>
       id: 'card9'
       fields:
@@ -121,8 +102,7 @@
             label: 'What is your name?'
             type: 'text'
   </tangerine-form-card>
-  
-  <h3>Model:</h3>
-  <pre> {{tangerineForm.tangerineFormModel | json}}</pre>
+
+  <tangerine-form-session [session]="tangerineForm.tangerineFormSession"></tangerine-form-session>
 
 </tangerine-form>

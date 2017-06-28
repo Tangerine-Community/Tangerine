@@ -21,9 +21,10 @@
             label: 'Variable 2'
             type: 'text'
 </tangerine-form-card>
-Output:
-<pre> {{card1.tangerineFormCard.model | json}}</pre>
 
+<pre>
+  {{card1.tangerineFormCard.model | json }}
+</pre>
 
 <h3> 
   A Tangerine Form Card with data prepopulated.
@@ -156,6 +157,7 @@ Output:
         key: 'name'
         expressionProperties: 
           'templateOptions.disabled': 'model.want_to_answer !== "yes"'
+          'templateOptions.label': 'model.name'
         templateOptions:
           required: true
           label: 'What is your name?'
@@ -173,7 +175,6 @@ Output:
     fields:
       - type: 'select'
         key: 'want_to_answer'
-        required: true
         templateOptions:
           required: true
           options:

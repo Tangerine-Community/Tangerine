@@ -17,6 +17,7 @@ import { TangerineFormsDemoComponent } from './routes/tangerine-forms-demo/tange
 // import { TangerineFormBreadcrumbComponent } from './components/tangerine-form-breadcrumb/tangerine-form-breadcrumb.component';
 import { TangerineFormCardComponent } from './components/tangerine-form-card/tangerine-form-card.component';
 import { TangerineFormCardDemoComponent } from './routes/tangerine-form-card-demo/tangerine-form-card-demo.component';
+import { TangerineFormSessionComponent } from './components/tangerine-form-session/tangerine-form-session.component';
 // import { TangerineFormCarouselComponent } from './components/tangerine-form-carousel/tangerine-form-carousel.component';
 
 
@@ -40,6 +41,7 @@ import { TangerineFormCardDemoComponent } from './routes/tangerine-form-card-dem
  //   TangerineFormBreadcrumbComponent,
     TangerineFormCardComponent,
  TangerineFormCardDemoComponent,
+ TangerineFormSessionComponent,
  //   TangerineFormCarouselComponent
   ],
   exports: [
