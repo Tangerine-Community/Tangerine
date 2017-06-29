@@ -1,11 +1,9 @@
-<md-grid-list cols="2" rowHeight="2:1">
-  <md-grid-tile>
+
     <ul>
 
       <li *ngFor="let node of nodes"><a (click)="clickNode(node)">{{node.nodeName}}</a></li>
     </ul>
-  </md-grid-tile>
-  <md-grid-tile>
+
     <!--<form class="formly" role="form" novalidate [formGroup]="form" (ngSubmit)="submit(user)">
       <formly-form [model]="user" [fields]="userFields">
         <button type="submit" class="btn btn-default" i18n>Button</button>
@@ -13,7 +11,18 @@
     </form>-->
     <!--<app-tangerine-page [model]="model" [config]="config" (update)="onUpdate($event)">-->
     <!--</app-tangerine-page>-->
-    <tangerine-form [tangerineFormSession]="tangerineFormSession"></tangerine-form>
-    <button type="submit" (click)="createNode($event)">Save</button>
-  </md-grid-tile>
-</md-grid-list>
+
+    <tangerine-form formId="tangerine-location-demo" #tangerineForm>
+
+      <tangerine-form-card>
+        id: 'location'
+        fields:
+        - type: 'input'
+          key: 'name'
+          templateOptions:
+          required: true
+          label: 'Name'
+
+      </tangerine-form-card>
+
+

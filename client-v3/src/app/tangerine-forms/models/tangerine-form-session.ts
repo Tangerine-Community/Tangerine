@@ -1,10 +1,13 @@
-import { TangerineFormSection } from './tangerine-form-section';
+import { TangerineFormCard } from './tangerine-form-card';
+import { UUID } from 'angular2-uuid';
 
 export class TangerineFormSession {
-  id: '';
-  formId: '';
-  sectionIndex: number;
-  pageIndex: number;
-  markedDone = false;
-  sections: Array<TangerineFormSection>;
+    _id: string = UUID.UUID();
+    formId = '';
+    model = {};
+    constructor(session?) {
+        if (session) {
+            Object.assign(this, session);
+        }
+    }
 }

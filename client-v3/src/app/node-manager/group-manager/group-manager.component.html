@@ -1,4 +1,14 @@
-<p>
-  <tangerine-form [tangerineFormSession]="tangerineFormSession"></tangerine-form>
-  <button type="submit" (click)="save($event)">Save</button>
-</p>
+
+  <tangerine-form formId="tangerine-group-demo" #tangerineForm>
+
+  <tangerine-form-card>
+    id: 'group'
+    fields:
+      - type: 'input'
+        key: 'name'
+        templateOptions:
+        required: true
+        label: 'Group Name'
+
+  </tangerine-form-card>
+
