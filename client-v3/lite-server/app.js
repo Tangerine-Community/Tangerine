@@ -31,7 +31,7 @@ async function setup() {
 
   // Set up the app database.
   try {
-    await http.put(`${DB_ADMIN_URL}/todos`);
+    await http.put(`${DB_ADMIN_URL}/${config.appDatabase}`);
     console.log("Todos database created.");
   }
   catch (err) {
