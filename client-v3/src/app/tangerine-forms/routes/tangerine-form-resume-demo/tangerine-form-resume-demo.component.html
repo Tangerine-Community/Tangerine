@@ -1,0 +1,108 @@
+
+<tangerine-form [session]="session" formId="tangerine-form-demo" #tangerineForm>
+
+  <h2> A basic Tangerine Form Card. </h2>
+  <tangerine-form-card>
+    id: 'card1'
+    fields:
+        - type: 'input'
+          key: 'variable1'
+          templateOptions: 
+            required: true
+            label: 'Variable 1'
+            type: 'text'
+        - type: 'input'
+          key: 'variable2'
+          templateOptions: 
+            required: true
+            label: 'Variable 2'
+            type: 'text'
+  </tangerine-form-card>
+
+  <h2> A Tangerine Form Card with bells and whistles. </h2>
+  <tangerine-form-card>
+    id: 'card3'
+    title: 'Fruit'
+    subtitle: 'A very important topic.'
+    avatarImage: 'https://tangerinekenya.github.io/DesignSprintPrototype-Team1/images/tangerineLogo.png'
+    fields:
+        - type: 'select'
+          key: 'favorite_fruit'
+          templateOptions: 
+            required: true
+            label: 'What is your favorite fruit?'
+            options:
+              - value: not_selected
+                label: ''
+              - value: orange
+                label: Orange
+              - value: strawberry
+                label: Strawberry
+              - value: Tangerine
+                label: Tangerine
+              - value: coconut
+                label: Coconut
+  </tangerine-form-card>
+  
+  <h2> A Tangerine Form Card with a hide expression. </h2>
+  <tangerine-form-card #card8>
+      id: 'card8'
+      fields:
+        - type: 'select'
+          key: 'want_to_answer'
+          required: true
+          templateOptions:
+            required: true
+            options:
+              - value: 'no_answer'
+                label: '...'
+              - value: 'yes'
+                label: 'Yes'
+              - value: 'no'
+                label: 'No'
+            label: 'Would you like to tell us your name?'
+            type: 'text'
+        - type: 'input'
+          key: 'name'
+          hideExpression: 'model.want_to_answer !== "yes"'
+          templateOptions:
+            required: true
+            label: 'What is your name?'
+            type: 'text'
+  </tangerine-form-card>
+   
+  <h2> Two Tangerine Form Cards with a hide expression between them. </h2>
+  <tangerine-form-card>
+      id: 'card9'
+      fields:
+        - type: 'select'
+          key: 'want_to_answer_2'
+          required: true
+          templateOptions:
+            required: true
+            options:
+              - value: 'no_answer'
+                label: '...'
+              - value: 'yes'
+                label: 'Yes'
+              - value: 'no'
+                label: 'No'
+            label: 'Would you like to tell us your name?'
+            type: 'text'
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+      id: 'card10'
+      fields:
+        - type: 'input'
+          key: 'name_2'
+          hideExpression: 'model.want_to_answer_2 !== "yes"'
+          templateOptions:
+            required: true
+            label: 'What is your name?'
+            type: 'text'
+  </tangerine-form-card>
+
+  <tangerine-form-session [session]="session"></tangerine-form-session>
+
+</tangerine-form>
