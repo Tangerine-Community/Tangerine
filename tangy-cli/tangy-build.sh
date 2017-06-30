@@ -28,15 +28,18 @@ do
 done
 
 # Generate a Module, Component, and Route for each HTML file.
-cd "$APP_DIR"
+index=0
 for HTML_PATH in "${HTML_PATHS[@]}"
 do
   :
+  cd "$APP_DIR"
   # TODO: Special case if index. Modify app.* files instead.
   FS_NAME=`echo $HTML_PATH | sed -e 's/.html//' | sed -e 's/\//--/'`
   MODULE_PATH="$APP_DIR/$FS_NAME"
+  MD_PATH=${MD_PATHS[$index]}
+  ESCAPED_MD_PATH=`echo "$MD_PATH" | sed -e ''`
   echo "Installing module: $FS_NAME to $MODULE_PATH"
-  ng generate module $FS_NAME
+  ng generate module --routing $FS_NAME
   MODULE_NAME=`cat "$APP_DIR/$FS_NAME/$FS_NAME.module.ts" | tail -n 1 | awk '{print $3}'`
   # ES6 import module into app.module.ts.
   echo "import { $MODULE_NAME } from './$FS_NAME/$FS_NAME.module';" > tmp
@@ -45,7 +48,14 @@ do
   # Angular import the module into the AppModule.
   cat "$APP_DIR/app.module.ts" | sed -e "s/imports\: [\[]/imports\: [ $MODULE_NAME,/" > "$APP_DIR/app.module.ts"
   # Generate component.
+  cd "$MODULE_PATH" 
+  ng generate component $FS_NAME;
   # Move HTML file to Component.
+  cd $SOURCE_DIR 
+  mv "$HTML_PATH" "$MODULE_PATH/$FS_NAME/$FS_NAME.component.html"
   # Edit routing to import and declare path for Component.
-  
+  echo "MD_PATH IS $MD_PATH"
+  cat "$MODULE_PATH/$FS_NAME-routing.module.ts" | sed -e "s#const routes# const routes \: Routes \ = \[ \{ path\: '$MD_PATH', component\: $MODULE_NAME \}\] \/\/#" > tmp
+  mv tmp "$MODULE_PATH/$FS_NAME-routing.module.ts"
+	index=$(($index+1))
 done
