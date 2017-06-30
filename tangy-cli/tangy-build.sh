@@ -4,6 +4,10 @@ SOURCE_DIR=$PWD
 APP_DIR="$SOURCE_DIR/code/src/app"
 DIST_DIR="$SOURCE_DIR/code/dist"
 
+# Clean up.
+rm -r public
+rm -r code
+
 # Create the new app.
 ng new --routing code 
 
@@ -27,13 +31,16 @@ do
 	index=$(($index+1))
 done
 
+# Use index.html to override app.component.html
+rm "$APP_DIR/app.component.html"
+cp "$SOURCE_DIR/index.html" "$APP_DIR/app.component.html"
+
 # Generate a Module, Component, and Route for each HTML file.
 index=0
 for HTML_PATH in "${HTML_PATHS[@]}"
 do
   :
   cd "$APP_DIR"
-  # TODO: Special case if index. Modify app.* files instead.
   FS_NAME=`echo $HTML_PATH | sed -e 's/.html//' | sed -e 's/\//--/'`
   MODULE_PATH="$APP_DIR/$FS_NAME"
   MD_PATH=${MD_PATHS[$index]}
