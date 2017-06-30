@@ -1,0 +1,21 @@
+{
+  "name": "tangy-cli",
+  "version": "0.0.0",
+  "description": "A CLI for Tangerine",
+  "main": "tangy.js",
+  "dependencies": {
+    "async-child-process": "^1.1.1",
+    "commander": "^2.9.0",
+    "fs-extra": "^0.26.4",
+    "single-line-log": "^1.0.1",
+    "unirest": "^0.4.2",
+    "walkdir": "0.0.11"
+  },
+  "bin": {
+    "tangy": "./tangy.js"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "tangy.js"
+  }
+}
