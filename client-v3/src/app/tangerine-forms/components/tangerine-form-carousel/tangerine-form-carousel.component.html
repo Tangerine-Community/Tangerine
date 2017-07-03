@@ -1,0 +1,13 @@
+
+
+<tangerine-form-card 
+  *ngFor="let card of cards" 
+  [@swipeAction]="swipe"
+  [card]="card" 
+  [update]="onCardUpdate(card)">
+</tangerine-form-card>
+<ng-content></ng-content>
+
+<button *ngIf="hasPrevious" (click)='previous()'>Previous</button>
+<button *ngIf="hasNext" (click)='next()'>Next</button>
+<button *ngIf="!hasNext" (click)='done()'>Done</button>

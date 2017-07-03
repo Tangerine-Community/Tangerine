@@ -1,0 +1,32 @@
+
+<md-card [@cardStatus]='_tangerineFormCard.status'>
+    <md-card-header *ngIf='showHeader'>
+        <div *ngIf='tangerineFormCard.avatarImage' 
+            md-card-avatar class="avatar-image" 
+            [style.background-image]="'url(' + tangerineFormCard.avatarImage + ')'"
+            >
+        </div>
+        <md-card-title *ngIf='tangerineFormCard.title'>{{tangerineFormCard.title}}</md-card-title>
+        <md-card-subtitle *ngIf='tangerineFormCard.subtitle'>{{tangerineFormCard.subtitle}}</md-card-subtitle>
+    </md-card-header>
+    <img *ngIf='tangerineFormCard.image' md-card-image src="{{tangerineFormCard.image}}">
+    <md-card-content>
+        <form class="formly" role="form" novalidate [formGroup]="form">
+            <formly-form 
+            [fields]="tangerineFormCard.fields" 
+            [model]="tangerineFormCard.model" 
+            [form]="form" 
+            >
+            </formly-form>
+        </form>
+    </md-card-content>
+    <md-card-actions *ngIf="tangerineFormCard.showSubmitButton">
+        <button (click)='onSubmit()' md-button>SUBMIT</button>
+    </md-card-actions>
+</md-card>
+
+<div style="display: none;">
+    START-CONFIG 
+        <ng-content></ng-content>
+    END-CONFIG
+</div>
