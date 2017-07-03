@@ -2,10 +2,9 @@ import { async, ComponentFixture, ComponentFixtureAutoDetect, TestBed } from '@a
 import { DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
 
-import { TangerineFormResult } from '../tangerine-form-result';
 import { TangerineFormComponent } from './tangerine-form.component';
-import { TangerineFormsModule } from '../tangerine-forms.module';
-import { TangerineFormsServiceTestDouble } from '../tangerine-forms-service-test-double';
+import { TangerineFormsModule } from '../../tangerine-forms.module';
+
 /** Button events to pass to `DebugElement.triggerEventHandler` for RouterLink event handler */
 const ButtonClickEvents = {
    left:  { button: 0 },

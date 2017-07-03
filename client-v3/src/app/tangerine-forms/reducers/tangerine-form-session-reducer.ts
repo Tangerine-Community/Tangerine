@@ -1,7 +1,7 @@
 import { ActionReducer, Action } from '@ngrx/store';
 import { TangerineFormSession } from '../models/tangerine-form-session';
 
-export const tangerineFormSessionReducer = (state = new TangerineFormSession, action: Action) => {
+export function tangerineFormSessionReducer(state = new TangerineFormSession, action: Action) {
 
     switch (action.type) {
         case 'TANGERINE_FORM_SESSION_START':
