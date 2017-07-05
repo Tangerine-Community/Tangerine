@@ -1,28 +1,25 @@
-# TangerineForm
+# Tangerine Client v3
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.1.
+## Installation
+Prerequisites:
+- Install Node 8 (https://nodejs.org)
+- Install command line utilities with `npm install -g angular-pages gh-markdown-cli @angular/cli http-server`
 
-## Development server
+Use the following commands to install, build and run. Yes, you have to run `npm install` twice.
+```
+git clone https://github.com/tangerine-community/tangerine.git
+cd tangerine/client-v3
+git checkout v3.x.x
+npm install
+npm install
+npm run build
+cd dist
+http-server
+```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Then in a web browser go to http://127.0.0.1:8080/.
 
-## Code scaffolding
+If you want to edit pages, open the `tangerine/client-v3/pages` directory in a code editor. If you don't have one, Atom is a great choice https://atom.io/. After you make a change to the pages, run `npm run build` again from the `tangerine/client-v3` directory. To make a link to a page you create, create an anchor tag with a `routerLink` property set to the path of your page. For example, if you had a Markdown page at `./pages/some-path/hello-world.md`, you would create an anchor tag like `<a routerLink="/some-path/hello-world">Link to my hello world</a>`. Note how the path does not have the `.md` file extension of the page you are linking to. 
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
+Inside of you pages files you can now write any mix of Markdown syntax and HTML fill out the content of your page. For a reference of Markdown syntax, see the [cheatsheet here](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet). Note that if you want to create Tangerine Forms on your pages, you will not be able to use Markdown syntax or use the `.md` extension on those pages, you will use the `.html` file extension. This is a bug we're hoping to fix soon.
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
