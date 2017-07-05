@@ -5,6 +5,8 @@ import {Validators} from "@angular/forms";
 import {By} from "@angular/platform-browser";
 import {Group} from "./group";
 import {NodeManagerModule} from "../node-manager.module";
+import {TangerineFormSession} from "../../tangerine-forms/models/tangerine-form-session";
+// import TangerineFormComponent
 
 
 describe('GroupManagerComponent', () => {
@@ -36,45 +38,14 @@ describe('GroupManagerComponent', () => {
   });
 
   it('should populate with data of Group model', () => {
-    let tangerineFormSession = {
-      id: 'tangerineFormSessionId1',
-      formId: 'form1',
-      sectionIndex: 0,
-      pageIndex: 0,
-      markedDone: false,
-      sections: [
-        {
-          status: 'UNSEEN',
-          path: '/a',
-          pages: [
-            {
-              status: 'UNSEEN',
-              fields: [{
-                className: 'row',
-                fieldGroup: [
-                  {
-                    type: 'input',
-                    key: 'name',
-                    templateOptions: {
-                      label: 'Group Name',
-                      type: 'text',
-                    }
-                  }
-                ]
-              }],
-              model: {
-                'name': 'boop',
-              }
-            }
-          ]
-        }
-      ]
-    };
+
+
+
     // component.tangerineFormSession = tangerineFormSession;
     fixture.detectChanges();
     const inputElements = fixture.debugElement.queryAll(By.css('input'));
-    let model = tangerineFormSession.sections[0].pages[0].model
-    expect(inputElements[0].nativeElement.value).toEqual(model["name"]);
+    // let model = tangerineFormSession.sections[0].pages[0].model
+    expect(inputElements[0].nativeElement.value).toEqual("Rambo");
   });
 
 

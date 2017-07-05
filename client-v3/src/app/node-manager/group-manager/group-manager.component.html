@@ -1,5 +1,8 @@
 
-<tangerine-form formId="tangerine-group-demo" #tangerineForm>
+
+This form demonstrates resuming a previous session; the group name is already filled out.
+
+<tangerine-form formId="tangerine-group-demo" [session]="session" #foo>
 
   <tangerine-form-card (submit)="onSubmit($event)" #group>
     id: 'group'
@@ -15,4 +18,7 @@
         type: 'text'
 
   </tangerine-form-card>
+</tangerine-form>
+
+You submitted: {{result.variables | json }}
 

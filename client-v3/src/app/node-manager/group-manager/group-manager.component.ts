@@ -3,6 +3,7 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {Group} from "./group";
 import {GroupResult} from "./group-result";
 import {GroupDataService} from "./group-data-service.service";
+import {TangerineFormSession} from "../../tangerine-forms/models/tangerine-form-session";
 
 @Component({
   selector: 'app-group-manager',
@@ -15,6 +16,14 @@ export class GroupManagerComponent implements OnInit {
   // IO.
   @Input() groupModel:Group;
   @Input() result: GroupResult;
+
+  session: TangerineFormSession = new TangerineFormSession({
+    '_id': 'bc82cf48-b394-3053-6759-c36dec144460',
+    'formId': 'tangerine-group-demo',
+    'model': {
+      'name': 'Rambo'
+    }
+  });
 
   onSubmit(tangerineFormCard) {
     console.log(tangerineFormCard.model);
