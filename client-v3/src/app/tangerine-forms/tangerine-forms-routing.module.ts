@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TangerineFormsDemoComponent } from './routes/tangerine-forms-demo/tangerine-forms-demo.component';
 import { TangerineFormCardDemoComponent } from './routes/tangerine-form-card-demo/tangerine-form-card-demo.component';
 import { TangerineFormResumeDemoComponent } from './routes/tangerine-form-resume-demo/tangerine-form-resume-demo.component';
+import { EftouchDemoComponent } from './routes/eftouch-demo/eftouch-demo.component';
 
 const routes: Routes = [ {
   path: 'tangerine-forms-demo',
@@ -15,10 +16,15 @@ const routes: Routes = [ {
 {
   path: 'tangerine-form-card-demo',
   component: TangerineFormCardDemoComponent
+},
+{
+  path: 'eftouch-demo',
+  component: EftouchDemoComponent
 }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  declarations: []
 })
 export class TangerineFormsRoutingModule { }
