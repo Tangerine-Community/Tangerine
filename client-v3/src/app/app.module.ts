@@ -13,12 +13,18 @@ import { AppComponent } from './app.component';
 import { NgBinderModule } from './ng-binder/ng-binder.module';
 import { NodeManagerModule } from './node-manager/node-manager.module';
 import { TangerineFormsModule } from './tangerine-forms/tangerine-forms.module';
+import { PagesRoutingModule } from './pages/pages-routing.module';
+import { MyTangyFormComponent } from './pages/my-tangy-form/my-tangy-form.component';
+import { IndexComponent } from './pages/index/index.component';
+
 
 export { AppComponent }
 
 @NgModule({
   declarations: [
     AppComponent,
+    MyTangyFormComponent,
+    IndexComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,6 +35,7 @@ export { AppComponent }
     NgBinderModule,
     TangerineFormsModule,
     NodeManagerModule,
+    PagesRoutingModule,
     AppRoutingModule
   ],
   providers: [],
