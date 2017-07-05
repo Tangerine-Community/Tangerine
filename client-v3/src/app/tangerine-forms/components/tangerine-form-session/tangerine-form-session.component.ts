@@ -16,4 +16,8 @@ export class TangerineFormSessionComponent implements OnInit {
   ngOnInit() {
   }
 
+  onDoneBtnClick() {
+    this.session.status = 'DONE';
+  }
+
 }
