@@ -1,13 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LocationsCreatorComponent } from './locations-creator.component';
+import { GroupManagerComponent } from './group-manager.component';
+import {Validators} from "@angular/forms";
 import {By} from "@angular/platform-browser";
-import {NodeValue} from "../node-value";
+import {Group} from "./group";
 import {NodeManagerModule} from "../node-manager.module";
 
-describe('LocationsCreatorComponent', () => {
-  let component: LocationsCreatorComponent;
-  let fixture: ComponentFixture<LocationsCreatorComponent>;
+
+describe('GroupManagerComponent', () => {
+  let component: GroupManagerComponent;
+  let fixture: ComponentFixture<GroupManagerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -19,12 +21,12 @@ describe('LocationsCreatorComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LocationsCreatorComponent);
+    fixture = TestBed.createComponent(GroupManagerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should be created', () => {
     expect(component).toBeTruthy();
   });
 
@@ -32,7 +34,6 @@ describe('LocationsCreatorComponent', () => {
     const inputElements = fixture.debugElement.queryAll(By.css('input'));
     expect(inputElements.length).toEqual(1);
   });
-
 
   it('should populate with data of Group model', () => {
     let tangerineFormSession = {
@@ -75,5 +76,6 @@ describe('LocationsCreatorComponent', () => {
     let model = tangerineFormSession.sections[0].pages[0].model
     expect(inputElements[0].nativeElement.value).toEqual(model["name"]);
   });
+
 
 });

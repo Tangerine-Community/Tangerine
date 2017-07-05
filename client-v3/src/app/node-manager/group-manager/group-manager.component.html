@@ -1,0 +1,18 @@
+
+<tangerine-form formId="tangerine-group-demo" #tangerineForm>
+
+  <tangerine-form-card (submit)="onSubmit($event)" #group>
+    id: 'group'
+    title: 'Create Group'
+    subtitle: 'Enter the new group name.'
+    showSubmitButton: true
+    fields:
+    - type: 'input'
+      key: 'name'
+      templateOptions:
+        required: true
+        label: 'Group Name'
+        type: 'text'
+
+  </tangerine-form-card>
+
