@@ -1,3 +1,31 @@
-<p>
-  locations-creator works!
-</p>
+
+<ul>
+
+  <li *ngFor="let node of nodes"><a (click)="clickNode(node)">{{node.nodeName}}</a></li>
+</ul>
+
+<!--<form class="formly" role="form" novalidate [formGroup]="form" (ngSubmit)="submit(user)">
+  <formly-form [model]="user" [fields]="userFields">
+    <button type="submit" class="btn btn-default" i18n>Button</button>
+  </formly-form>
+</form>-->
+<!--<app-tangerine-page [model]="model" [config]="config" (update)="onUpdate($event)">-->
+<!--</app-tangerine-page>-->
+
+<tangerine-form formId="tangerine-location-demo" #tangerineForm>
+
+  <tangerine-form-card (submit)="onSubmit($event)" #location>
+    id: 'location'
+    subtitle: 'Enter the new location name.'
+    showSubmitButton: true
+    fields:
+    - type: 'input'
+      key: 'nodeName'
+      templateOptions:
+        required: true
+        label: 'Name'
+        type: 'text'
+  </tangerine-form-card>
+
+</tangerine-form>
+
