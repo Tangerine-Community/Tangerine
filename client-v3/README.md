@@ -8,8 +8,8 @@ Prerequisites:
 Use the following commands to install, build and run. 
 ```
 git clone https://github.com/tangerine-community/tangerine.git
-cd tangerine/client-v3
 git checkout v3.x.x
+cd tangerine/client-v3
 npm install
 npm run build
 cd dist
