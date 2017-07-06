@@ -22,6 +22,7 @@ import {
   animate,
   transition
 } from '@angular/animations';
+import {TangerineBaseCardComponent} from "../../models/tangerine-base-card";
 
 
 @Component({
@@ -38,8 +39,7 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   @Input() session: TangerineFormSession = new TangerineFormSession();
   @Input() formId = '';
   // Latch onto the children Cards so we can listen for their events.
-  @ContentChildren(TangerineFormCardComponent) tangerineFormCardChildren: QueryList<TangerineFormCardComponent>;
-
+  @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
 
   constructor() {
 

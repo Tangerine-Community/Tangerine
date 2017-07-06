@@ -25,6 +25,7 @@ import { TangerineFormCardDemoComponent } from './routes/tangerine-form-card-dem
 import { TangerineFormSessionComponent } from './components/tangerine-form-session/tangerine-form-session.component';
 import { TangerineFormResumeDemoComponent } from './routes/tangerine-form-resume-demo/tangerine-form-resume-demo.component';
 import {EftouchDemoComponent} from "./routes/eftouch-demo/eftouch-demo.component";
+import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch-form-card.component';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import {EftouchDemoComponent} from "./routes/eftouch-demo/eftouch-demo.component
  TangerineFormCardDemoComponent,
  TangerineFormSessionComponent,
  TangerineFormResumeDemoComponent,
-    EftouchDemoComponent
+    EftouchDemoComponent,
+    EftouchFormCardComponent
  //   TangerineFormCarouselComponent
   ],
   exports: [
