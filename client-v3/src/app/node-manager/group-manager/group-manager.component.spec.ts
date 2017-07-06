@@ -39,8 +39,6 @@ describe('GroupManagerComponent', () => {
 
   it('should populate with data of Group model', () => {
 
-
-
     // component.tangerineFormSession = tangerineFormSession;
     fixture.detectChanges();
     const inputElements = fixture.debugElement.queryAll(By.css('input'));
