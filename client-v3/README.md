@@ -5,12 +5,11 @@ Prerequisites:
 - Install Node 8 (https://nodejs.org)
 - Install command line utilities with `npm install -g angular-pages gh-markdown-cli @angular/cli http-server`
 
-Use the following commands to install, build and run. Yes, you have to run `npm install` twice.
+Use the following commands to install, build and run. 
 ```
 git clone https://github.com/tangerine-community/tangerine.git
 cd tangerine/client-v3
 git checkout v3.x.x
-npm install
 npm install
 npm run build
 cd dist
