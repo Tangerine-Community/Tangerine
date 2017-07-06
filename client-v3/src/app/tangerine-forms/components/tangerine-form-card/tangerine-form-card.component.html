@@ -1,4 +1,3 @@
-
 <md-card [@cardStatus]='_tangerineFormCard.status'>
     <md-card-header *ngIf='showHeader'>
         <div *ngIf='tangerineFormCard.avatarImage'
@@ -10,11 +9,6 @@
         <md-card-subtitle *ngIf='tangerineFormCard.subtitle'>{{tangerineFormCard.subtitle}}</md-card-subtitle>
     </md-card-header>
     <img *ngIf='tangerineFormCard.image' md-card-image src="{{tangerineFormCard.image}}">
-    <div *ngIf='tangerineFormCard.images'>
-      <div *ngFor="let image of tangerineFormCard.images" class="av-cell" style="display:inline-block;">
-        <button class="av-button av-button-highlight" data-value="1" style="width: auto; height: 100%;">
-          <img class="av-image" src="{{image.image}}"></button></div>
-    </div>
     <md-card-content>
         <form class="formly" role="form" novalidate [formGroup]="form">
             <formly-form

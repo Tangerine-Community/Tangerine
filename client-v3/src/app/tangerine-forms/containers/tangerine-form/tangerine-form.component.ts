@@ -22,6 +22,7 @@ import {
   animate,
   transition
 } from '@angular/animations';
+import {TangerineBaseCardComponent} from "../../models/tangerine-base-card";
 
 
 @Component({
@@ -38,12 +39,12 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   @Input() session: TangerineFormSession = new TangerineFormSession();
   @Input() formId = '';
   // Latch onto the children Cards so we can listen for their events.
+  // @ContentChildren(TangerineBaseCardComponent, {descendants: true}) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
   @ContentChildren(TangerineFormCardComponent) tangerineFormCardChildren: QueryList<TangerineFormCardComponent>;
-
-
   constructor() {
 
   }
+
 
   ngOnInit() {
     if (this.formId) {
@@ -56,6 +57,7 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
     console.log(this.formId);
     this.tangerineFormCardChildren.setDirty();
     this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
+      debugger;
       tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
       tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
         Object.assign(this.session.model, tangerineFormCard.model);
