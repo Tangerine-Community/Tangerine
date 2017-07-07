@@ -25,5 +25,6 @@ before_install:
 install:
   - cd client-v3
   - npm install
+  - ./node_modules/.bin/angular-pages build
 script:
   - node_modules/.bin/ng test --watch false
