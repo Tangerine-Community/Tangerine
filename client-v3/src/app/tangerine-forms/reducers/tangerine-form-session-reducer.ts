@@ -1,19 +1,18 @@
 import { ActionReducer, Action } from '@ngrx/store';
 import { TangerineFormSession } from '../models/tangerine-form-session';
 
-export function tangerineFormSessionReducer(state = new TangerineFormSession, action: Action) {
-
+export function tangerineFormSessionReducer(state, action: Action) {
+    console.log(action.type);
     switch (action.type) {
-        case 'TANGERINE_FORM_SESSION_ASSIGN_FORM_ID':
-            debugger;
-            return Object.assign({}, state, {formId: action.payload.formId});
         case 'TANGERINE_FORM_SESSION_START':
-            return Object.assign({}, state, action.payload);
+            const newSession = new TangerineFormSession();
+            newSession.formId = action.payload.formId;
+            return Object.assign({}, state, newSession);
         case 'TANGERINE_FORM_CARD_CHANGE':
             const newState = Object.assign({}, state);
-            return Object.assign({}, state, action.payload);
+            Object.assign(newState.model, action.payload.model);
+            return newState;
         default:
-            console.log('Default hit');
             return state;
 
     }
