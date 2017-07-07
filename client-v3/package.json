@@ -27,7 +27,7 @@
     "@ngrx/store": "^2.2.2",
     "@ngrx/store-devtools": "^3.2.4",
     "@types/js-yaml": "^3.5.31",
-    "angular-pages": "^0.1.0",
+    "angular-pages": "^0.1.1",
     "angular-tree-component": "^3.7.2",
     "angular2-uuid": "^1.1.1",
     "core-js": "^2.4.1",
