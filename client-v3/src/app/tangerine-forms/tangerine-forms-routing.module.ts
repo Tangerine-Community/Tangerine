@@ -7,7 +7,7 @@ import { EftouchDemoComponent } from './routes/eftouch-demo/eftouch-demo.compone
 
 const routes: Routes = [ {
   path: 'tangerine-forms-demo',
-  component: TangerineFormsDemoComponent
+  component: TangerineFormsDemoComponent,
 },
 {
   path: 'tangerine-form-resume-demo',

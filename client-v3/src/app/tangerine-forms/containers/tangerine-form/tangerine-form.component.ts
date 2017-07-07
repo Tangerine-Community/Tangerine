@@ -55,7 +55,6 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
 
-
     // Subscribe Tangerine Form Session.
     this.store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {

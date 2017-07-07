@@ -4,11 +4,12 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "angular-pages build --watch & ng serve",
-    "build": "angular-pages build && ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "start": "./node_modules/.bin/angular-pages build && ng serve",
+    "build": "./node_modules/.bin/angular-pages build && ng build",
+    "test": "./node_modules/.bin/angular-pages build && ng test",
+    "lint": "./node_modules/.bin/angular-pages build && ng lint",
+    "e2e": "./node_modules/.bin/angular-pages build && ng e2e",
+    "pages": "./node_modules/.bin/angular-pages build --watch"
   },
   "private": true,
   "dependencies": {
@@ -27,7 +28,7 @@
     "@ngrx/store": "^2.2.2",
     "@ngrx/store-devtools": "^3.2.4",
     "@types/js-yaml": "^3.5.31",
-    "angular-pages": "0.0.4",
+    "angular-pages": "^0.1.1",
     "angular-tree-component": "^3.7.2",
     "angular2-uuid": "^1.1.1",
     "core-js": "^2.4.1",
