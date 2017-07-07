@@ -20,7 +20,7 @@ export { AppComponent }
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
     BrowserModule,
