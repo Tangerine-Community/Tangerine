@@ -11,8 +11,6 @@ import "rxjs/add/operator/take";
 import {TangerineFormSession} from "../../models/tangerine-form-session";
 import {TangerineForm} from "../../models/tangerine-form";
 import {TangerineBaseCardComponent} from "../../models/tangerine-base-card";
-import {TangerineFormCardComponent} from "../../components/tangerine-form-card/tangerine-form-card.component";
-import {EftouchFormCardComponent} from "../../components/eftouch-form-card/eftouch-form-card.component";
 
 
 @Component({
@@ -30,12 +28,9 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   @Input() formId = '';
   // Latch onto the children Cards so we can listen for their events.
   @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
-  // @ContentChildren(TangerineFormCardComponent, {descendants: true}) tangerineFormCardChildren: QueryList<TangerineFormCardComponent>;
-  // @ContentChildren(EftouchFormCardComponent, {descendants: true}) efTouchFormCardChildren: QueryList<EftouchFormCardComponent>;
   constructor() {
 
   }
-
 
   ngOnInit() {
     if (this.formId) {
