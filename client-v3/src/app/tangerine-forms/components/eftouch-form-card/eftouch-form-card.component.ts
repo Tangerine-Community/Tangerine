@@ -1,18 +1,11 @@
-import {Component, ElementRef, OnInit} from '@angular/core';
+import {Component, ElementRef, forwardRef, OnInit} from "@angular/core";
 import {FormBuilder} from "@angular/forms";
 import {TangerineBaseCardComponent} from "../../models/tangerine-base-card";
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition
-} from '@angular/animations';
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'eftouch-form-card',
   templateUrl: './eftouch-form-card.component.html',
-  styleUrls: ['./eftouch-form-card.component.css'],
   animations: [
     trigger('cardStatus', [
       state('INVALID', style({
@@ -26,7 +19,11 @@ import {
       transition('INVALID => VALID', animate('100ms ease-in')),
       transition('VALID => INVALID', animate('100ms ease-out'))
     ])
-  ]
+  ],
+  // We use providers to link this class' superclass, TangerineBaseCardComponent, to its child EftouchFormCardComponent
+  // This enables the ContentChildren query in TangerineFormComponent to find its children.
+  // See https://github.com/Tangerine-Community/Tangerine/issues/369 for more information
+  providers: [{provide: TangerineBaseCardComponent, useExisting: forwardRef(() => EftouchFormCardComponent)}]
 })
 
 export class EftouchFormCardComponent extends TangerineBaseCardComponent implements OnInit {

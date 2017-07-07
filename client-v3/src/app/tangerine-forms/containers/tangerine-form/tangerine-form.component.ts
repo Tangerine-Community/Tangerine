@@ -4,24 +4,12 @@
  * aggregated model back down to the card components.
  */
 
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ViewChildren, ElementRef, QueryList, ContentChildren } from '@angular/core';
-import { Store, provideStore } from '@ngrx/store';
-import { Validators, FormGroup, FormBuilder } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/interval';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/take';
-import { TangerineFormCard } from '../../models/tangerine-form-card';
-import { TangerineFormSession } from '../../models/tangerine-form-session';
-import { TangerineForm } from '../../models/tangerine-form';
-import { TangerineFormCardComponent } from '../../components/tangerine-form-card/tangerine-form-card.component';
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition
-} from '@angular/animations';
+import {AfterViewInit, Component, ContentChildren, Input, OnInit, QueryList} from "@angular/core";
+import "rxjs/add/observable/interval";
+import "rxjs/add/operator/map";
+import "rxjs/add/operator/take";
+import {TangerineFormSession} from "../../models/tangerine-form-session";
+import {TangerineForm} from "../../models/tangerine-form";
 import {TangerineBaseCardComponent} from "../../models/tangerine-base-card";
 
 
@@ -38,13 +26,13 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   // Or send a Tangerine Session in.
   @Input() session: TangerineFormSession = new TangerineFormSession();
   @Input() formId = '';
-  // Latch onto the children Cards so we can listen for their events.
-  // @ContentChildren(TangerineBaseCardComponent, {descendants: true}) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
-  @ContentChildren(TangerineFormCardComponent) tangerineFormCardChildren: QueryList<TangerineFormCardComponent>;
+  // Query the abstract base class TangerineBaseCardComponent and find its children.
+  // This enables us to latch onto the children Cards so we can listen for their events.
+  // See https://github.com/Tangerine-Community/Tangerine/issues/369 for more information
+  @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
   constructor() {
 
   }
-
 
   ngOnInit() {
     if (this.formId) {
@@ -56,13 +44,14 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     console.log(this.formId);
     this.tangerineFormCardChildren.setDirty();
+    // tangerineFormCardChildren's QueryList is immutable.
     this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-      debugger;
       tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
       tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
         Object.assign(this.session.model, tangerineFormCard.model);
       });
     });
+
   }
 
 }
