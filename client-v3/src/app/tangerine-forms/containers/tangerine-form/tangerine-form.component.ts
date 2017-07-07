@@ -26,7 +26,9 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   // Or send a Tangerine Session in.
   @Input() session: TangerineFormSession = new TangerineFormSession();
   @Input() formId = '';
-  // Latch onto the children Cards so we can listen for their events.
+  // Query the abstract base class TangerineBaseCardComponent and find its children.
+  // This enables us to latch onto the children Cards so we can listen for their events.
+  // See https://github.com/Tangerine-Community/Tangerine/issues/369 for more information
   @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
   constructor() {
 

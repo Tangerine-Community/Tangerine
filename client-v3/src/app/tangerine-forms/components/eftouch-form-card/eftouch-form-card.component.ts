@@ -20,6 +20,9 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
       transition('VALID => INVALID', animate('100ms ease-out'))
     ])
   ],
+  // We use providers to link this class' superclass, TangerineBaseCardComponent, to its child EftouchFormCardComponent
+  // This enables the ContentChildren query in TangerineFormComponent to find its children.
+  // See https://github.com/Tangerine-Community/Tangerine/issues/369 for more information
   providers: [{provide: TangerineBaseCardComponent, useExisting: forwardRef(() => EftouchFormCardComponent)}]
 })
 
