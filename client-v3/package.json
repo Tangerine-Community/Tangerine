@@ -4,11 +4,11 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "./node_modules/.bin/angular-pages build && ng serve",
     "build": "./node_modules/.bin/angular-pages build && ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e",
+    "test": "./node_modules/.bin/angular-pages build && ng test",
+    "lint": "./node_modules/.bin/angular-pages build && ng lint",
+    "e2e": "./node_modules/.bin/angular-pages build && ng e2e",
     "pages": "./node_modules/.bin/angular-pages build --watch"
   },
   "private": true,
