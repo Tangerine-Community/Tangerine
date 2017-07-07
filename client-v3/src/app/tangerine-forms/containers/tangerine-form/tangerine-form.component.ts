@@ -22,7 +22,7 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import {TangerineBaseCardComponent} from "../../models/tangerine-base-card";
+import {TangerineBaseCardComponent} from '../../models/tangerine-base-card';
 
 
 @Component({
@@ -41,15 +41,48 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   // Latch onto the children Cards so we can listen for their events.
   // @ContentChildren(TangerineBaseCardComponent, {descendants: true}) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
   @ContentChildren(TangerineFormCardComponent) tangerineFormCardChildren: QueryList<TangerineFormCardComponent>;
-  constructor() {
+  constructor(private store: Store<any>) {
 
   }
 
 
   ngOnInit() {
+    /*
+    this.store.dispatch({
+            type: 'TANGERINE_FORM_SESSION_ASSIGN_FORM_ID',
+            payload: {
+              // sessionId: tangerineFormSession._id,
+              formId: this.formId
+            }
+          });
+    */
+    // Subscribe to the active Tangerine Form Session.
+    this.store.select('tangerineFormSession')
+      .subscribe((tangerineFormSession: TangerineFormSession) => {
+        debugger;
+        /*
+        if (tangerineFormSession.formId === '') {
+          this.store.dispatch({
+            type: 'TANGERINE_FORM_SESSION_ASSIGN_FORM_ID',
+            payload: {
+              sessionId: tangerineFormSession._id,
+              formId: this.formId
+            }
+          });
+        } else if (tangerineFormSession.formId !== this.formId || tangerineFormSession._id !== this.session._id) {
+          alert('You have another Form Session active. Please close this tab.');
+        } else {
+          this.session = tangerineFormSession;
+        }
+        */
+      });
+    /*
     if (this.formId) {
       this.session.formId = this.formId;
     }
+    */
+    // Check for an active Tangerine Form Session. If there isn't one, then dispatch an action to start one.
+    this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: this.session});
   }
 
   // TODO: Should be ngAfterContentInit?
@@ -58,9 +91,19 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
     this.tangerineFormCardChildren.setDirty();
     this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
       debugger;
+      // Assign the session model to the tangerineFormCard model so it is a shared model state between all the cards.
       tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
+      // Listen for changes to all cards. When they change, dispatch an event with the card that changed and the sessionId.
       tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
-        Object.assign(this.session.model, tangerineFormCard.model);
+        // TODO: Causes infinite loop?
+        /*
+        this.store.dispatch({type: 'TANGERINE_FORM_CARD_CHANGE', payload: {
+          sessionId: this.session._id,
+          cardModel: tangerineFormCard
+        }});
+        */
+        // TODO: This is now down in the store subscribe. Have we done it correctly?
+        // Object.assign(this.session.model, tangerineFormCard.model);
       });
     });
   }
