@@ -8,7 +8,8 @@
     "build": "./node_modules/.bin/angular-pages build && ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "pages": "./node_modules/.bin/angular-pages build --watch"
   },
   "private": true,
   "dependencies": {
