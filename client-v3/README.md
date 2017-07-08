@@ -20,7 +20,7 @@ http-server
 Then in a web browser go to http://127.0.0.1:8080/.
 
 ## Live edit pages
-To get started seeing your live changes, open the `tangerine/client-v3` folder in two seperate terminals. In the first terminal run `npm run pages` and in the second terminal run `npm start`. Now go to http://localhost:4200/ in your web browser.
+To get started seeing your live changes, in a terminal open the `tangerine/client-v3` and run run `npm start`. Now go to http://localhost:4200/ in your web browser.
 
 To edit pages, open the `tangerine/client-v3/pages` directory in a code editor. If you don't have one, Atom is a great choice https://atom.io/. After you make a change to the pages, run `npm run build` again from the `tangerine/client-v3` directory. To make a link to a page you create, create an anchor tag with a `routerLink` property set to the path of your page. For example, if you had a Markdown page at `./pages/some-path/hello-world.md`, you would create an anchor tag like `<a routerLink="/some-path/hello-world">Link to my hello world</a>`. Note how the path does not have the `.md` file extension of the page you are linking to. 
 
