@@ -68,16 +68,17 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
         }
         // We have a session for our form.
         else {
-          // New session? Spread the model to all of the cards.
+          // If no current session then spread the model to all of the cards, else this is an update for the current session.
           if (!this.session) {
             this.session = tangerineFormSession;
             this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
               tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
             });
+            // TODO: Save the session.
           }
-          // This is an update for the form. Set it so that all cards receive it.
           else {
             this.session = tangerineFormSession;
+            // TODO: Save the session.
           }
         };
       });
