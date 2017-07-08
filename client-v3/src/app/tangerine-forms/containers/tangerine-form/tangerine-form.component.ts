@@ -5,7 +5,9 @@
  */
 
 import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ViewChildren, ElementRef, QueryList, ContentChildren } from '@angular/core';
+import * as PouchDB from 'pouchdb';
 import { Store, provideStore } from '@ngrx/store';
+import { TangerineFormSessionService } from '../../services/tangerine-form-sessions.service';
 import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
@@ -44,7 +46,7 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
 
   // Set the store to a local store property.
-  constructor(private store: Store<any>) {
+  constructor(private store: Store<any>, private service: TangerineFormSessionService) {
   }
 
   ngOnInit() {
@@ -70,15 +72,14 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
         else {
           // If no current session then spread the model to all of the cards, else this is an update for the current session.
           if (!this.session) {
-            this.session = tangerineFormSession;
-            this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-              tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
-            });
-            // TODO: Save the session.
+            // Save the session.
+            this.saveSession(tangerineFormSession);
+            // Auto-save the session every 5 seconds.
+            // TODO: Destroy this timer on ngOnDestroy and save one last time.
+            setInterval(() => this.updateSession(), 5000);
           }
           else {
             this.session = tangerineFormSession;
-            // TODO: Save the session.
           }
         };
       });
@@ -95,11 +96,16 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
 
   }
 
-  spreadTheSession() {
-    // Spread the session's model out to all the cards.
+  async updateSession() {
+    this.session = await this.service.update(this.session);
+  }
+
+  async saveSession(tangerineFormSession) {
+    this.session = await this.service.add(tangerineFormSession);
     this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
       tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
     });
   }
+
 
 }

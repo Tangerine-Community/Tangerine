@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormlyModule, FormlyBootstrapModule } from 'ng-formly';
+import { TangerineFormSessionService } from './services/tangerine-form-sessions.service';
 
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
@@ -24,7 +25,7 @@ import { TangerineFormCardComponent } from './components/tangerine-form-card/tan
 import { TangerineFormCardDemoComponent } from './routes/tangerine-form-card-demo/tangerine-form-card-demo.component';
 import { TangerineFormSessionComponent } from './components/tangerine-form-session/tangerine-form-session.component';
 import { TangerineFormResumeDemoComponent } from './routes/tangerine-form-resume-demo/tangerine-form-resume-demo.component';
-import {EftouchDemoComponent} from "./routes/eftouch-demo/eftouch-demo.component";
+import {EftouchDemoComponent} from './routes/eftouch-demo/eftouch-demo.component';
 import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch-form-card.component';
 
 
@@ -62,6 +63,7 @@ import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch
   exports: [
     TangerineFormCardComponent,
     TangerineFormComponent
-  ]
+  ],
+  providers: [TangerineFormSessionService]
 })
 export class TangerineFormsModule { }
