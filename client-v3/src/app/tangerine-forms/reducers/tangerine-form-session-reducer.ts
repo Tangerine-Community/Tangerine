@@ -8,10 +8,10 @@ export function tangerineFormSessionReducer(state, action: Action) {
             const newSession = new TangerineFormSession();
             newSession.formId = action.payload.formId;
             return Object.assign({}, state, newSession);
-        case 'TANGERINE_FORM_CARD_CHANGE':
-            const newState = Object.assign({}, state);
-            Object.assign(newState.model, action.payload.model);
-            return newState;
+        case 'TANGERINE_FORM_SESSION_UPDATE':
+            return Object.assign({}, state, action.payload);
+        case 'TANGERINE_FORM_SESSION_MODEL_UPDATE':
+            return Object.assign({}, state, {model: Object.assign({}, state.model, action.payload)});
         default:
             return state;
 

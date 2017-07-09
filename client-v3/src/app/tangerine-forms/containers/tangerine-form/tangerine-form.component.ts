@@ -60,52 +60,37 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
     // Subscribe Tangerine Form Session.
     this.store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {
-        // No Session? Call home for one and this will come back around.
-        if (!tangerineFormSession) {
+
+        // No Session or the session doesn't match this form? Call home for one and this will come back around.
+        if (!tangerineFormSession || tangerineFormSession.formId !== this.formId) {
           this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
         }
-        // Are we on a different form? Tell the store we need a new Session.
-        else if (tangerineFormSession.formId !== this.formId) {
-          this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
+        // We have a new session.
+        else if (!this.session) {
+          // Spread the Session around.
+          this.session = tangerineFormSession;
+          this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
+            tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
+          });
+          // Subscribe to all of the cards change events.
+          this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
+            tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
+              this.store.dispatch({
+                type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
+                payload: tangerineFormCard.model
+              });
+            });
+          });
         }
-        // We have a session for our form.
+        // We have an update to the session.
         else {
-          // If no current session then spread the model to all of the cards, else this is an update for the current session.
-          if (!this.session) {
-            // Save the session.
-            this.saveSession(tangerineFormSession);
-            // Auto-save the session every 5 seconds.
-            // TODO: Destroy this timer on ngOnDestroy and save one last time.
-            setInterval(() => this.updateSession(), 5000);
-          }
-          else {
-            this.session = tangerineFormSession;
-          }
+          // this.session = tangerineFormSession;
         };
+
       });
 
-    // Subscribe to all of the cards change events.
-    this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-      tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
-        this.store.dispatch({
-          type: 'TANGERINE_FORM_CARD_CHANGE',
-          payload: tangerineFormCard.model
-        });
-      });
-    });
-
   }
 
-  async updateSession() {
-    this.session = await this.service.update(this.session);
-  }
-
-  async saveSession(tangerineFormSession) {
-    this.session = await this.service.add(tangerineFormSession);
-    this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-      tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
-    });
-  }
 
 
 }
