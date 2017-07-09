@@ -7,7 +7,7 @@
 import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ViewChildren, ElementRef, QueryList, ContentChildren } from '@angular/core';
 import * as PouchDB from 'pouchdb';
 import { Store, provideStore } from '@ngrx/store';
-import { TangerineFormSessionService } from '../../services/tangerine-form-sessions.service';
+import { TangerineFormSessionsService } from '../../services/tangerine-form-sessions.service';
 import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
@@ -46,7 +46,7 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
 
   // Set the store to a local store property.
-  constructor(private store: Store<any>, private service: TangerineFormSessionService) {
+  constructor(private store: Store<any>, private service: TangerineFormSessionsService) {
   }
 
   ngOnInit() {

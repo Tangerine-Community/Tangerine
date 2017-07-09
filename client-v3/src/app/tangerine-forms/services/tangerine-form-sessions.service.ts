@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as PouchDB from 'pouchdb';
 @Injectable()
-export class TangerineFormSessionService {
+export class TangerineFormSessionsService {
   DB = new PouchDB('tangerine-form-sessions');
   constructor() {
   }
