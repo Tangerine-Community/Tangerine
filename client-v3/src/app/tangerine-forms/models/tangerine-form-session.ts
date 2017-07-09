@@ -6,6 +6,7 @@ export class TangerineFormSession {
     _rev?: any;
     formId = '';
     model = {};
+    status = 'IN_PROGRESS';
     constructor(session?) {
         if (session) {
             Object.assign(this, session);

@@ -4,6 +4,7 @@ import { APP_BASE_HREF } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { WindowRef } from './core/window-ref.service';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MdButtonModule, MdCheckboxModule, MdInputModule } from '@angular/material';
@@ -31,7 +32,7 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
-      providers: [{provide: APP_BASE_HREF, useValue: '/'}]
+      providers: [{provide: APP_BASE_HREF, useValue: '/'}, WindowRef]
     }).compileComponents();
   }));
 
