@@ -8,6 +8,7 @@ import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ViewChil
 import * as PouchDB from 'pouchdb';
 import { Store, provideStore } from '@ngrx/store';
 import { TangerineFormSessionsService } from '../../services/tangerine-form-sessions.service';
+import { TangerineFormSessionsEffects } from '../../effects/tangerine-form-sessions-effects';
 import { Validators, FormGroup, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
@@ -45,8 +46,15 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   // See https://github.com/Tangerine-Community/Tangerine/issues/369 for more information
   @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
 
+  private _effects: TangerineFormSessionsEffects;
+
   // Set the store to a local store property.
   constructor(private store: Store<any>, private service: TangerineFormSessionsService) {
+    // TODO: In the future, it would be nice if Components did not have to be in charge of activating Effects.
+    //       Perhaps we could make effects reducers that misbehave.
+    // Enable Effects.
+    // TODO: Destroy this effect on ngOnDestroy and save one last time.
+    this._effects = new TangerineFormSessionsEffects(store, service);
   }
 
   ngOnInit() {

@@ -20,7 +20,7 @@ export class TangerineFormSessionsService {
     try {
       const response = await this.DB.post(session);
       session._rev = response.rev;
-      console.log('TangerineFormSession._id', session._id);
+      console.log(`TANGERINE_FORM_SESSIONS_ADD, TangerineFormSession._id: ${session._id}`);
       return session;
     } catch (error) {
       console.log(error);
@@ -31,11 +31,33 @@ export class TangerineFormSessionsService {
     try {
       const response = await this.DB.put(session);
       session._rev = response.rev;
-      console.log('TangerineFormSession._rev', session._rev);
+      console.log(`TANGERINE_FORM_SESSIONS_UPDATE, TangerineFormSession._id: ${session._id}, TangerineFormSession._rev: ${session._rev}`);
       return session;
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async forceSave(session) {
+    let doc = {rev: '', _rev: ''};
+    try {
+      // Get the most recent rev and then save the session.
+      doc = await this.DB.get(session._id);
+      console.log('Updating form session');
+      session._rev = doc._rev;
+      doc = await this.DB.put(session);
+    } catch (error) {
+      // Getting and updating failed, must be a new doc.
+      try {
+        console.log('Inserting new form session');
+        doc = await this.DB.post(session);
+      } catch (error) {
+        console.log('Unable to post a new doc or update the doc.');
+      }
+    }
+    session._rev = doc.rev;
+    console.log(`TANGERINE_FORM_SESSIONS_UPDATE, TangerineFormSession._id: ${session._id}, TangerineFormSession._rev: ${session._rev}`);
+    return session;
   }
 
   async delete(session) {
