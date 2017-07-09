@@ -9,6 +9,7 @@ import 'hammerjs';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { WindowRef } from './core/window-ref.service';
 
 import { NgBinderModule } from './ng-binder/ng-binder.module';
 import { NodeManagerModule } from './node-manager/node-manager.module';
@@ -34,7 +35,7 @@ export { AppComponent }
     PagesModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [WindowRef],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
