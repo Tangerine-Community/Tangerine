@@ -4,7 +4,7 @@
  * aggregated model back down to the card components.
  */
 
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ViewChildren, ElementRef, QueryList, ContentChildren } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Input, Output, EventEmitter, ViewChildren, ElementRef, QueryList, ContentChildren } from '@angular/core';
 import * as PouchDB from 'pouchdb';
 import { Store, provideStore } from '@ngrx/store';
 import { TangerineFormSessionsService } from '../../services/tangerine-form-sessions.service';
@@ -48,25 +48,28 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
 
   private _effects: TangerineFormSessionsEffects;
 
+  private subscription: any;
+
   // Set the store to a local store property.
   constructor(private store: Store<any>, private service: TangerineFormSessionsService) {
     // TODO: In the future, it would be nice if Components did not have to be in charge of activating Effects.
     //       Perhaps we could make effects reducers that misbehave.
-    // Enable Effects.
-    // TODO: Destroy this effect on ngOnDestroy and save one last time.
     this._effects = new TangerineFormSessionsEffects(store, service);
   }
 
+  ngOnDestroy() {
+    this._effects.subscription.unsubscribe();
+    this.subscription.unsubscribe();
+  }
+
   ngOnInit() {
-
-
 
   }
 
   ngAfterViewInit() {
 
     // Subscribe Tangerine Form Session.
-    this.store.select('tangerineFormSession')
+    this.subscription = this.store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {
 
         // No Session or the session doesn't match this form? Call home for one and this will come back around.
@@ -78,21 +81,28 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
           // Spread the Session around.
           this.session = tangerineFormSession;
           this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-            tangerineFormCardComponent.tangerineFormCard.model = this.session.model;
+            tangerineFormCardComponent.tangerineFormCard.model = Object.assign({}, this.session.model);
           });
           // Subscribe to all of the cards change events.
           this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
             tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
-              this.store.dispatch({
-                type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
-                payload: tangerineFormCard.model
-              });
+              // Protect from an infinite loop because of how Formly works.
+              const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
+              if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
+                this.store.dispatch({
+                  type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
+                  payload: tangerineFormCard.model
+                });
+              };
             });
           });
         }
         // We have an update to the session.
         else {
-          // this.session = tangerineFormSession;
+          this.session = tangerineFormSession;
+          this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
+            tangerineFormCardComponent.tangerineFormCard.model = Object.assign({}, this.session.model);
+          });
         };
 
       });

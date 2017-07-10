@@ -6,6 +6,7 @@ export class TangerineFormSession {
     _rev?: any;
     formId = '';
     model = {};
+    date: number = Date.now();
     status = 'IN_PROGRESS';
     constructor(session?) {
         if (session) {

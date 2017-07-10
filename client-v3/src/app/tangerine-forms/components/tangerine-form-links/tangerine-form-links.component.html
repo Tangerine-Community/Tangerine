@@ -1,0 +1,4 @@
+<span><ng-content></ng-content></span>
+<span (click)="newSession()"> [ new session ] </span> 
+<span (click)="toggleSessions()"> [ {{toggleSessionText}} ] </span>
+<tangerine-form-sessions *ngIf="showSessions" [formId]="formId" [link]="link"></tangerine-form-sessions>

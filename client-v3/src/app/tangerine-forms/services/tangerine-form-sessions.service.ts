@@ -5,12 +5,17 @@ export class TangerineFormSessionsService {
   DB = new PouchDB('tangerine-form-sessions');
   constructor() {
   }
-  async getAll() {
+  async getAll(formId) {
     try {
       const result = await this.DB.allDocs({
         include_docs: true
       });
-      return result.rows;
+      const docs = result.rows.map((row) => row.doc);
+      docs.sort((a, b) => b.date - a.date);
+      if (formId) {
+        return docs.filter((doc) => doc.formId === formId);
+      }
+      return docs;
     } catch (error) {
       console.log(error);
     }

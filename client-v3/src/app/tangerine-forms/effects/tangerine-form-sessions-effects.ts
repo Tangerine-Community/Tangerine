@@ -10,8 +10,9 @@ export class TangerineFormSessionsEffects {
   queued = false;
   // The last item queued for saving.
   queue: any;
+  subscription: any;
   constructor(private store: Store<any>, private service: TangerineFormSessionsService) {
-    this.store.select('tangerineFormSession')
+    this.subscription = this.store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {
         if (tangerineFormSession && tangerineFormSession.hasOwnProperty('_id')) {
             this.save(tangerineFormSession);
