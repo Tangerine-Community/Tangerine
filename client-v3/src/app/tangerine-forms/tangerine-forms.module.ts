@@ -26,6 +26,7 @@ import { TangerineFormSessionComponent } from './components/tangerine-form-sessi
 import { TangerineFormResumeDemoComponent } from './routes/tangerine-form-resume-demo/tangerine-form-resume-demo.component';
 import {EftouchDemoComponent} from "./routes/eftouch-demo/eftouch-demo.component";
 import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch-form-card.component';
+import { FormlyFieldImageComponent } from './components/formly-field-image/formly-field-image.component';
 
 
 @NgModule({
@@ -39,7 +40,10 @@ import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch
     MdToolbarModule,
     MdSidenavModule,
     TangerineFormsRoutingModule,
-    FormlyModule.forRoot(),
+    FormlyModule.forRoot({
+      types: [
+        { name: 'toggle', component: FormlyFieldImageComponent}
+        ]}),
     FormlyBootstrapModule,
     StoreModule.provideStore({ tangerineFormSession: tangerineFormSessionReducer }),
     StoreDevtoolsModule.instrumentOnlyWithExtension({
@@ -56,7 +60,8 @@ import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch
  TangerineFormSessionComponent,
  TangerineFormResumeDemoComponent,
     EftouchDemoComponent,
-    EftouchFormCardComponent
+    EftouchFormCardComponent,
+    FormlyFieldImageComponent
  //   TangerineFormCarouselComponent
   ],
   exports: [
