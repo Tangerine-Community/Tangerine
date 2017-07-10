@@ -76,7 +76,7 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
         if (!tangerineFormSession || tangerineFormSession.formId !== this.formId) {
           this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
         }
-        // We have a new session.
+        // We now have a session for this Component, do things only once.
         else if (!this.session) {
           // Spread the Session around.
           this.session = tangerineFormSession;

@@ -7,6 +7,7 @@ module.exports = {
     'dist/assets/icons/*'
   ],
   root: 'dist',
+  maximumFileSizeToCacheInBytes: 2097152000,
   stripPrefix: 'dist/',
   navigateFallback: '/index.html'
 };

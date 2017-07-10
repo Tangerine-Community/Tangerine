@@ -1,4 +1,4 @@
-<span (click)="downloadCsv()">Download as CSV</span>
+<button (click)="downloadCsv()">Download as CSV</button>
 <ul>
   <li *ngFor="let session of sessions">
     <tangerine-form-session-item [link]="link" [session]="session"></tangerine-form-session-item>
