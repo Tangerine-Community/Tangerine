@@ -1,11 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GroupManagerComponent } from './group-manager.component';
-import {Validators} from "@angular/forms";
-import {By} from "@angular/platform-browser";
-import {Group} from "./group";
-import {NodeManagerModule} from "../node-manager.module";
-import {TangerineFormSession} from "../../tangerine-forms/models/tangerine-form-session";
+import {Validators} from '@angular/forms';
+import {By} from '@angular/platform-browser';
+import {Group} from './group';
+import {NodeManagerModule} from '../node-manager.module';
+import {TangerineFormSession} from '../../tangerine-forms/models/tangerine-form-session';
 // import TangerineFormComponent
 
 
@@ -27,7 +27,7 @@ describe('GroupManagerComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-
+  // TODO: Failing due to breaking changes in Tangerine Form Component's refactoring.
   it('should be created', () => {
     expect(component).toBeTruthy();
   });
@@ -43,7 +43,7 @@ describe('GroupManagerComponent', () => {
     fixture.detectChanges();
     const inputElements = fixture.debugElement.queryAll(By.css('input'));
     // let model = tangerineFormSession.sections[0].pages[0].model
-    expect(inputElements[0].nativeElement.value).toEqual("Rambo");
+    expect(inputElements[0].nativeElement.value).toEqual('Rambo');
   });
 
 

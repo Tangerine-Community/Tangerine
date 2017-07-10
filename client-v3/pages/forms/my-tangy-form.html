@@ -1,5 +1,5 @@
 <h1> My Tangy Form </h1>
-<tangerine-form id="my-form">
+<tangerine-form formId="tangy-form">
   <tangerine-form-card>
     id: 'card5'
     title: 'Fruit'
@@ -7,21 +7,26 @@
     avatarImage: 'https://tangerinekenya.github.io/DesignSprintPrototype-Team1/images/tangerineLogo.png'
     showSubmitButton: true
     fields:
+        - type: 'input'
+          key: 'name'
+          templateOptions:
+            required: true
+            placeholder: 'What is your name?'
         - type: 'select'
           key: 'fruit_name'
           templateOptions: 
             required: true
             label: 'What is your favorite fruit?'
             options:
-              - key: no_selection
+              - value: no_selection
                 label: "----"
-              - key: orange
+              - value: orange
                 label: Orange
-              - key: strawberry
+              - value: strawberry
                 label: Strawberry
-              - key: Tangerine
+              - value: Tangerine
                 label: Tangerine
-              - key: coconut
+              - value: coconut
                 label: Coconut
   </tangerine-form-card>
 </tangerine-form>

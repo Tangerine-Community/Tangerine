@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormlyModule, FormlyBootstrapModule } from 'ng-formly';
+import { TangerineFormSessionsService } from './services/tangerine-form-sessions.service';
 
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
@@ -24,8 +25,11 @@ import { TangerineFormCardComponent } from './components/tangerine-form-card/tan
 import { TangerineFormCardDemoComponent } from './routes/tangerine-form-card-demo/tangerine-form-card-demo.component';
 import { TangerineFormSessionComponent } from './components/tangerine-form-session/tangerine-form-session.component';
 import { TangerineFormResumeDemoComponent } from './routes/tangerine-form-resume-demo/tangerine-form-resume-demo.component';
-import {EftouchDemoComponent} from "./routes/eftouch-demo/eftouch-demo.component";
+import {EftouchDemoComponent} from './routes/eftouch-demo/eftouch-demo.component';
 import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch-form-card.component';
+import { TangerineFormLinksComponent } from './components/tangerine-form-links/tangerine-form-links.component';
+import { TangerineFormSessionsComponent } from './components/tangerine-form-sessions/tangerine-form-sessions.component';
+import { TangerineFormSessionItemComponent } from './components/tangerine-form-session-item/tangerine-form-session-item.component';
 
 
 @NgModule({
@@ -56,12 +60,17 @@ import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch
  TangerineFormSessionComponent,
  TangerineFormResumeDemoComponent,
     EftouchDemoComponent,
-    EftouchFormCardComponent
+    EftouchFormCardComponent,
+    TangerineFormLinksComponent,
+    TangerineFormSessionsComponent,
+    TangerineFormSessionItemComponent
  //   TangerineFormCarouselComponent
   ],
   exports: [
     TangerineFormCardComponent,
+    TangerineFormLinksComponent,
     TangerineFormComponent
-  ]
+  ],
+  providers: [TangerineFormSessionsService]
 })
 export class TangerineFormsModule { }
