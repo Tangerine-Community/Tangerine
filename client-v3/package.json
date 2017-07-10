@@ -5,11 +5,13 @@
   "scripts": {
     "ng": "ng",
     "start": "concurrently \"./node_modules/.bin/angular-pages build --watch\" \"ng serve\"",
-    "build": "./node_modules/.bin/angular-pages build && ng build",
+    "build": "./node_modules/.bin/angular-pages build && ng build && sw-precache --verbose --config=sw-precache-config.js",
     "test": "./node_modules/.bin/angular-pages build && ng test",
     "lint": "./node_modules/.bin/angular-pages build && ng lint",
     "e2e": "./node_modules/.bin/angular-pages build && ng e2e",
-    "pages": "./node_modules/.bin/angular-pages build --watch"
+    "pages": "./node_modules/.bin/angular-pages build --watch",
+    "precache": "sw-precache --verbose --config=sw-precache-config.js",
+    "lite-server": "cd lite-server && node app.js"
   },
   "private": true,
   "dependencies": {
@@ -40,7 +42,10 @@
     "ng-formly": "^1.0.0-rc.9",
     "pouchdb": "^6.2.0",
     "rxjs": "^5.1.0",
-    "zone.js": "^0.8.4"
+    "zone.js": "^0.8.4",
+    "axios": "^0.16.2",
+    "express-pouchdb": "^2.3.7",
+    "read-yaml": "^1.1.0"
   },
   "devDependencies": {
     "@angular/cli": "^1.2.0",
@@ -57,6 +62,7 @@
     "karma-jasmine": "~1.1.0",
     "karma-jasmine-html-reporter": "^0.2.2",
     "protractor": "~5.1.0",
+    "sw-precache": "^5.2.0",
     "ts-node": "~2.0.0",
     "tslint": "~4.5.0",
     "typescript": "~2.2.0"
