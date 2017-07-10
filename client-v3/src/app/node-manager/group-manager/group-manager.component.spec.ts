@@ -27,7 +27,7 @@ describe('GroupManagerComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-  /* TODO: Failing due to breaking changes in Tangerine Form Component's refactoring.
+
   it('should be created', () => {
     expect(component).toBeTruthy();
   });
@@ -45,7 +45,7 @@ describe('GroupManagerComponent', () => {
     // let model = tangerineFormSession.sections[0].pages[0].model
     expect(inputElements[0].nativeElement.value).toEqual("Rambo");
   });
-  */
+
 
 
 });
