@@ -13,7 +13,6 @@ import 'hammerjs';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { NgBinderModule } from './ng-binder/ng-binder.module';
 import { NodeManagerModule } from './node-manager/node-manager.module';
 
 describe('AppComponent', () => {
@@ -25,7 +24,6 @@ describe('AppComponent', () => {
         HttpModule,
         BrowserAnimationsModule,
         MdButtonModule, MdCheckboxModule, MdInputModule,
-        NgBinderModule,
         NodeManagerModule,
         AppRoutingModule
       ],
