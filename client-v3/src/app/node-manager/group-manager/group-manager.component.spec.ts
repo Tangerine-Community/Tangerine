@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { GroupManagerComponent } from './group-manager.component';
 import {Validators} from '@angular/forms';
 import {By} from '@angular/platform-browser';
-import {Group} from './group';
+import {TangerineGroup} from '../../tangerine-forms/models/tangerine-group';
 import {NodeManagerModule} from '../node-manager.module';
 import {TangerineFormSession} from '../../tangerine-forms/models/tangerine-form-session';
 // import TangerineFormComponent

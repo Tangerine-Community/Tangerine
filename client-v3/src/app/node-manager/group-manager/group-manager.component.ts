@@ -1,10 +1,10 @@
 import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import {GroupDataService} from "./group-data-service.service";
 import {TangerineFormSession} from "../../tangerine-forms/models/tangerine-form-session";
-import {TangerineFormSessionsEffects} from "../../tangerine-forms/effects/tangerine-form-sessions-effects";
 import {Store} from "@ngrx/store";
 import {TangerineFormSessionsService} from "../../tangerine-forms/services/tangerine-form-sessions.service";
 import {TangerineFormCardComponent} from "../../tangerine-forms/components/tangerine-form-card/tangerine-form-card.component";
+import {TangerineGroupSessionsEffects} from "../../tangerine-forms/effects/tangerine-group-sessions-effects";
 
 @Component({
   selector: 'group-manager',
@@ -29,18 +29,15 @@ export class GroupManagerComponent implements OnInit {
   // });
   @Input() formId = 'group';
 
-  // @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
-  // @ContentChild(TangerineFormCardComponent) contentChild: TangerineFormCardComponent;
-  // @ContentChild(TangerineFormCardComponent) contentChild: TangerineFormCardComponent;
   @ViewChild(TangerineFormCardComponent) child: TangerineFormCardComponent;
-  private _effects: TangerineFormSessionsEffects;
+  private _effects: TangerineGroupSessionsEffects;
   private subscription: any;
 
   // Set the store to a local store property.
   constructor(private store: Store<any>, private service: TangerineFormSessionsService) {
     // TODO: In the future, it would be nice if Components did not have to be in charge of activating Effects.
     //       Perhaps we could make effects reducers that misbehave.
-    this._effects = new TangerineFormSessionsEffects(store, service);
+    this._effects = new TangerineGroupSessionsEffects(store, service);
   }
 
   ngOnDestroy() {
@@ -75,18 +72,31 @@ export class GroupManagerComponent implements OnInit {
           this.child.tangerineFormCard.model = Object.assign({}, this.session.model);
           // Subscribe to all of the cards change events.
           // this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-          this.child.change.subscribe((tangerineFormCard) => {
-            // Protect from an infinite loop because of how Formly works.
-            const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
-            if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
-              this.store.dispatch({
-                type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
-                payload: tangerineFormCard.model
-              });
-            };
-          });
+          if (this.child.tangerineFormCard.showSubmitButton == false) {
+            this.child.change.subscribe((tangerineFormCard) => {
+              // Protect from an infinite loop because of how Formly works.
+              const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
+              if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
+                this.store.dispatch({
+                  type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
+                  payload: tangerineFormCard.model
+                });
+              };
+            });
           // });
-        }
+        } else {
+            this.child.submit.subscribe((tangerineFormCard) => {
+              // Protect from an infinite loop because of how Formly works.
+              const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
+              if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
+                this.store.dispatch({
+                  type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
+                  payload: tangerineFormCard.model
+                });
+              };
+            });
+          }
+          }
         // We have an update to the session.
         else {
           this.session = tangerineFormSession;
