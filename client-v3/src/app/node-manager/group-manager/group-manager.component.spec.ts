@@ -43,9 +43,8 @@ describe('GroupManagerComponent', () => {
     fixture.detectChanges();
     const inputElements = fixture.debugElement.queryAll(By.css('input'));
     // let model = tangerineFormSession.sections[0].pages[0].model
-    expect(inputElements[0].nativeElement.value).toEqual("Rambo");
+    expect(inputElements[0].nativeElement.value).toEqual('Rambo');
   });
-
 
 
 });
