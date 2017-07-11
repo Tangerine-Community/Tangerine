@@ -1,17 +1,13 @@
-import {Component, ContentChild, ContentChildren, EventEmitter, Input, OnInit, Output, QueryList} from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
-import {Group} from "./group";
-import {GroupResult} from "./group-result";
+import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import {GroupDataService} from "./group-data-service.service";
 import {TangerineFormSession} from "../../tangerine-forms/models/tangerine-form-session";
 import {TangerineFormSessionsEffects} from "../../tangerine-forms/effects/tangerine-form-sessions-effects";
 import {Store} from "@ngrx/store";
 import {TangerineFormSessionsService} from "../../tangerine-forms/services/tangerine-form-sessions.service";
-import {TangerineBaseCardComponent} from "../../tangerine-forms/models/tangerine-base-card";
 import {TangerineFormCardComponent} from "../../tangerine-forms/components/tangerine-form-card/tangerine-form-card.component";
 
 @Component({
-  selector: 'app-group-manager',
+  selector: 'group-manager',
   templateUrl: './group-manager.component.html',
   styleUrls: ['./group-manager.component.css'],
   providers: [GroupDataService]
@@ -33,9 +29,10 @@ export class GroupManagerComponent implements OnInit {
   // });
   @Input() formId = 'group';
 
-  @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
+  // @ContentChildren(TangerineBaseCardComponent) tangerineFormCardChildren: QueryList<TangerineBaseCardComponent>;
   // @ContentChild(TangerineFormCardComponent) contentChild: TangerineFormCardComponent;
-
+  // @ContentChild(TangerineFormCardComponent) contentChild: TangerineFormCardComponent;
+  @ViewChild(TangerineFormCardComponent) child: TangerineFormCardComponent;
   private _effects: TangerineFormSessionsEffects;
   private subscription: any;
 
@@ -62,41 +59,6 @@ export class GroupManagerComponent implements OnInit {
 
   ngAfterViewInit() {
 
-    // // Subscribe Tangerine Form Session.
-    // this.subscription = this.store.select('groupSession')
-    //   .subscribe((tangerineFormSession: TangerineFormSession) => {
-    //
-    //     // No Session or the session doesn't match this form? Call home for one and this will come back around.
-    //     if (!tangerineFormSession || tangerineFormSession.formId !== this.formId) {
-    //       this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
-    //     }
-    //     // We now have a session for this Component, do things only once.
-    //     else if (!this.session) {
-    //       // Spread the Session around.
-    //       this.session = tangerineFormSession;
-    //       this.contentChild.tangerineFormCard.model = Object.assign({}, this.session.model);
-    //       // Subscribe to all of the cards change events.
-    //       // this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-    //       this.contentChild.change.subscribe((tangerineFormCard) => {
-    //         // Protect from an infinite loop because of how Formly works.
-    //         const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
-    //         if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
-    //           this.store.dispatch({
-    //             type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
-    //             payload: tangerineFormCard.model
-    //           });
-    //         };
-    //       });
-    //       // });
-    //     }
-    //     // We have an update to the session.
-    //     else {
-    //       this.session = tangerineFormSession;
-    //       this.contentChild.tangerineFormCard.model = Object.assign({}, this.session.model);
-    //     };
-    //
-    //   });
-
     // Subscribe Tangerine Form Session.
     this.subscription = this.store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {
@@ -106,32 +68,29 @@ export class GroupManagerComponent implements OnInit {
           this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
         }
         // We now have a session for this Component, do things only once.
+        // cek: removed else if
         else if (!this.session) {
           // Spread the Session around.
           this.session = tangerineFormSession;
-          this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-            tangerineFormCardComponent.tangerineFormCard.model = Object.assign({}, this.session.model);
-          });
+          this.child.tangerineFormCard.model = Object.assign({}, this.session.model);
           // Subscribe to all of the cards change events.
-          this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-            tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
-              // Protect from an infinite loop because of how Formly works.
-              const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
-              if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
-                this.store.dispatch({
-                  type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
-                  payload: tangerineFormCard.model
-                });
-              };
-            });
+          // this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
+          this.child.change.subscribe((tangerineFormCard) => {
+            // Protect from an infinite loop because of how Formly works.
+            const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
+            if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
+              this.store.dispatch({
+                type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
+                payload: tangerineFormCard.model
+              });
+            };
           });
+          // });
         }
         // We have an update to the session.
         else {
           this.session = tangerineFormSession;
-          this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-            tangerineFormCardComponent.tangerineFormCard.model = Object.assign({}, this.session.model);
-          });
+          this.child.tangerineFormCard.model = Object.assign({}, this.session.model);
         };
 
       });
