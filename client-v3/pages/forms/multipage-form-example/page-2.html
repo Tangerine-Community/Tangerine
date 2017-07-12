@@ -2,8 +2,6 @@
 
 <tangerine-form formId="MultipageFormExample">
   
-  <h3> A Tangerine Form Card with data prepopulated. </h3>
-
   <tangerine-form-card>
     fields:
       - type: 'input'
@@ -21,14 +19,11 @@
       prepopulated_variable_2: 'bar'
   </tangerine-form-card>
 
-
-  <h3> A Tangerine Form Card with everything: a title, a subtitle, image, an avatar, and a submit button. </h3>
   <tangerine-form-card>
     title: 'Doge Wow!'
     subtitle: 'So many squirrels, so little time.'
     image: 'https://material.angular.io/assets/img/examples/shiba2.jpg'
     avatarImage: 'assets/noun_727773_cc.png'
-    showSubmitButton: true
     fields:
       - type: 'input'
         key: 'doge_name'
@@ -44,6 +39,7 @@
           type: 'text'
   </tangerine-form-card>
 
-  <a routerLink="/forms/multipage-form-example/page-3">Go to Page 3</a>
+  <a routerLink="/forms/multipage-form-example/page-1">◄ Page 1</a>
+  <a routerLink="/forms/multipage-form-example/page-3">Page 3 ►</a>
   
 </tangerine-form>
