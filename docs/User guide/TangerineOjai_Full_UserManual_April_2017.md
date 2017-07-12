@@ -404,7 +404,7 @@ that all information on this screen is correct before pressing ‘Next.”
 Unicode UTF-8 font of your choosing. This is important for some
 languages and scripts whose characters may not be contained within the
 character libraries of the tablet you are using. At present, embedded
-font options include: andika, gentium, padauk, zwekabin, and rabiat. If
+font options include: andika, gentium, padauk, zwekabin, rabiat, and Mondulkiri. If
 you need support for additional font libraries to be embeddable options,
 please contact RTI or your Tangerine host provider.
 
