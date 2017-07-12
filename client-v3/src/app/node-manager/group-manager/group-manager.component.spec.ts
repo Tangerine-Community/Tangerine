@@ -37,15 +37,4 @@ describe('GroupManagerComponent', () => {
     expect(inputElements.length).toEqual(1);
   });
 
-  it('should populate with data of Group model', () => {
-
-    // component.tangerineFormSession = tangerineFormSession;
-    fixture.detectChanges();
-    const inputElements = fixture.debugElement.queryAll(By.css('input'));
-    // let model = tangerineFormSession.sections[0].pages[0].model
-    expect(inputElements[0].nativeElement.value).toEqual("Rambo");
-  });
-
-
-
 });
