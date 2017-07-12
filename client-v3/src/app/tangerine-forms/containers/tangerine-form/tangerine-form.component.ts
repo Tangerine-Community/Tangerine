@@ -85,16 +85,30 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
           });
           // Subscribe to all of the cards change events.
           this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-            tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
-              // Protect from an infinite loop because of how Formly works.
-              const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
-              if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
-                this.store.dispatch({
-                  type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
-                  payload: tangerineFormCard.model
-                });
-              };
-            });
+            if (tangerineFormCardComponent.tangerineFormCard.showSubmitButton == false) {
+              tangerineFormCardComponent.change.subscribe((tangerineFormCard) => {
+                // Protect from an infinite loop because of how Formly works.
+                const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
+                if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
+                  this.store.dispatch({
+                    type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
+                    payload: tangerineFormCard.model
+                  });
+                };
+              });
+            } else {
+              tangerineFormCardComponent.submit.subscribe((tangerineFormCard) => {
+                // Protect from an infinite loop because of how Formly works.
+                const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
+                if (JSON.stringify(potentialModel) !== JSON.stringify(this.session.model)) {
+                  this.store.dispatch({
+                    type: 'TANGERINE_FORM_SESSION_MODEL_UPDATE',
+                    payload: tangerineFormCard.model
+                  });
+                };
+              });
+            }
+
           });
         }
         // We have an update to the session.
