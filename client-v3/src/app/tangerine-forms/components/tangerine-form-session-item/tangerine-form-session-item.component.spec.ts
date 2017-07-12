@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { RouterTestingModule } from '@angular/router/testing';
 import { TangerineFormSessionItemComponent } from './tangerine-form-session-item.component';
+import { TangerineFormsModule } from '../../tangerine-forms.module';
+import { TangerineFormSession } from '../../models/tangerine-form-session';
 
 describe('TangerineFormSessionItemComponent', () => {
   let component: TangerineFormSessionItemComponent;
@@ -8,7 +11,7 @@ describe('TangerineFormSessionItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TangerineFormSessionItemComponent ]
+      imports: [ TangerineFormsModule, RouterTestingModule ]
     })
     .compileComponents();
   }));
@@ -16,6 +19,7 @@ describe('TangerineFormSessionItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TangerineFormSessionItemComponent);
     component = fixture.componentInstance;
+    component.session = new TangerineFormSession();
     fixture.detectChanges();
   });
 

@@ -36,5 +36,5 @@ describe('GroupManagerComponent', () => {
     const inputElements = fixture.debugElement.queryAll(By.css('input'));
     expect(inputElements.length).toEqual(1);
   });
-
+  
 });
