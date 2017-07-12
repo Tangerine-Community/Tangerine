@@ -10,10 +10,10 @@
       navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
         // Registration was successful
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
-		if (registration.installing) {
-			console.log('registration.installing is available on service worker registration.')
-		}
-		
+    if (registration.installing) {
+      console.log('registration.installing is available on service worker registration.')
+    }
+    
         // updatefound is fired if service-worker.js changes.
         registration.onupdatefound = function() {
           console.log('This app is installing.')
@@ -30,8 +30,19 @@
                   // have been added to the cache.
                   // It's the perfect time to display a "New content is available; please refresh."
                   // message in the page's interface.
-                  console.log('Your app has been updated. Please reload.');
-                  alert('Your app has been updated. Please reload.');
+                  console.log('Your app has been updated. Reloading now.');
+                  alert('Your app has been updated. Reloading now.');
+                  // If URL has a hash, we have to carve it out less there will be no reload.
+                  window.location = window.location.href.replace('\/\#', '');
+                  /* TODO: Support for reloading when app is not in the TLDR's root.
+                     TODO: Prompt user wether or not they wanted to update the cache in the first place.. 
+                     TODO: Prompt user wether or not they want to reload. 
+                  if (window.location.href.indexOf('\/\#') !== -1) {
+                    window.location = window.location.href;
+                  } else {
+                    window.location = window.location.href.substr(0, window.location.href.indexOf('\/\#'))
+                  }
+                  */
                 } else {
                   // At this point, everything has been precached, but the service worker is not
                   // controlling the page. The service worker will not take control until the next
