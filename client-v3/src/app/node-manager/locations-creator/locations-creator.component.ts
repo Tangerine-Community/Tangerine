@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { Validators, FormGroup } from '@angular/forms';
 import { FormlyFieldConfig } from 'ng-formly';
 import { DataService } from './../../core/data-service.service';
+// import {TangerinePageConfig} from "../../tangerine-forms/tangerine-page/tangerine-page-config";
+import { NodeValue } from '../node-value';
+import { NodeResult } from '../node-result';
 
 @Component({
   selector: 'app-locations-creator',
@@ -12,12 +15,19 @@ import { DataService } from './../../core/data-service.service';
 })
 export class LocationsCreatorComponent implements OnInit {
 
+  // IO.
+  @Input() model: NodeValue;
+  @Input() result: NodeResult;
+
   nodes = [];
-  form: FormGroup = new FormGroup({});
-  userFields: FormlyFieldConfig;
+  // form: FormGroup = new FormGroup({});
+  // userFields: FormlyFieldConfig;
   constructor(private dataService: DataService) { }
 
   ngOnInit() {
+    if (!this.result) {
+      this.result = new NodeResult();
+    }
     this.getNodes();
   }
 
@@ -31,36 +41,16 @@ export class LocationsCreatorComponent implements OnInit {
       });
     });
   }
-  clickNode(node): void {
-    // alert(node.nodeName);
-    this.userFields = [{
-      className: 'row',
-      fieldGroup: [{
-        className: 'col-xs-6',
-        key: 'email',
-        type: 'input',
-        templateOptions: {
-          type: 'email',
-          label: 'Email address',
-          placeholder: 'Enter email'
-        },
-        validators: {
-          validation: Validators.compose([Validators.required])
-        }
-      }, {
-        className: 'col-xs-6',
-        key: 'password',
-        type: 'input',
-        templateOptions: {
-          type: 'password',
-          label: 'Password',
-          placeholder: 'Password',
-          pattern: ''
-        },
-        validators: {
-          validation: Validators.compose([Validators.required])
-        }
-      }]
-    }];
+  onSubmit(tangerineFormCard) {
+    console.log(tangerineFormCard.model);
+    Object.assign(this.result.variables, tangerineFormCard.model);
+    this.save(this.result.variables);
+  }
+
+  save(datum) {
+    console.log('Saving to pouch - datum: ' + JSON.stringify(datum));
+    this.dataService.createNode(datum);
+    this.nodes = [];
+    this.getNodes();
   }
 }

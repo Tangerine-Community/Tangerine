@@ -4,9 +4,26 @@
   <meta charset="utf-8">
   <title>TangerineForm</title>
   <base href="/">
+  <link rel="manifest" href="/manifest.json">
+	<script>
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+				// Registration was successful
+				console.log('ServiceWorker registration successful with scope: ', registration.scope);
+			}).catch(function(err) {
+				// registration failed :(
+				console.log('ServiceWorker registration failed: ', err);
+			});
+		}
+	</script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" sizes="60x60" href="/assets/logos/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logos/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/logos/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/logos/tangerine--512-512.png">
+  <link rel="mask-icon" href="/assets/logos/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="theme-color" content="#ffffff">
 </head>
 <body>
   <app-root>Loading...</app-root>
