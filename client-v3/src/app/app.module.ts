@@ -14,6 +14,7 @@ import { AppComponent } from './app.component';
 
 import { NgBinderModule } from './ng-binder/ng-binder.module';
 import { NodeManagerModule } from './node-manager/node-manager.module';
+import { AuthModule } from './core/auth/auth.module';
 
 export { AppComponent }
 
@@ -32,7 +33,9 @@ export { AppComponent }
     FormlyModule.forRoot(),
     FormlyBootstrapModule,
     NodeManagerModule,
-    AppRoutingModule
+    AuthModule,
+    AppRoutingModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent]

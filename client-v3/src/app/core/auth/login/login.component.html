@@ -1,3 +1,14 @@
-<p>
-  login works!
-</p>
+<md-grid-list cols="2" rowHeight="2:1">
+  <md-grid-tile>
+    <md-input-container>
+      <label>Email</label>
+      <input mdInput [(ngModel)]="user.username" place>
+    </md-input-container>
+    <md-input-container>
+      <label>Password</label>
+      <input mdInput [(ngModel)]="user.password" type="password">
+    </md-input-container>
+    <button md-raised-button (click)="login()">Login</button>
+  </md-grid-tile>
+  <md-grid-tile></md-grid-tile>
+</md-grid-list>
