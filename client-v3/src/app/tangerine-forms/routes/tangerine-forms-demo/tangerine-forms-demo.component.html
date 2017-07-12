@@ -7,13 +7,32 @@
     fields:
         - type: 'input'
           key: 'variable1'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'Variable 1'
             type: 'text'
         - type: 'input'
           key: 'variable2'
-          templateOptions: 
+          templateOptions:
+            required: true
+            label: 'Variable 2'
+            type: 'text'
+  </tangerine-form-card>
+
+  <h2> A basic Tangerine Form Card with a Submit button. </h2>
+  <tangerine-form-card>
+    id: 'card1'
+    showSubmitButton: true
+    fields:
+        - type: 'input'
+          key: 'variable1'
+          templateOptions:
+            required: true
+            label: 'Variable 1'
+            type: 'text'
+        - type: 'input'
+          key: 'variable2'
+          templateOptions:
             required: true
             label: 'Variable 2'
             type: 'text'
@@ -28,7 +47,7 @@
     fields:
         - type: 'select'
           key: 'favorite_fruit'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'What is your favorite fruit?'
             options:
@@ -43,7 +62,7 @@
               - value: coconut
                 label: Coconut
   </tangerine-form-card>
-  
+
   <h2> A Tangerine Form Card with a hide expression. </h2>
   <tangerine-form-card #card8>
       id: 'card8'
@@ -70,7 +89,7 @@
             label: 'What is your name?'
             type: 'text'
   </tangerine-form-card>
-   
+
   <h2> Two Tangerine Form Cards with a hide expression between them. </h2>
   <tangerine-form-card>
       id: 'card9'
