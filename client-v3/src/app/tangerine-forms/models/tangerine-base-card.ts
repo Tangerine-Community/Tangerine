@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {TangerineFormCard} from "./tangerine-form-card";
-import {safeLoad} from "js-yaml";
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {TangerineFormCard} from './tangerine-form-card';
+import {safeLoad} from 'js-yaml';
 
 export abstract class TangerineBaseCardComponent implements OnInit {
 
@@ -10,7 +10,7 @@ export abstract class TangerineBaseCardComponent implements OnInit {
   // Input.
   //
 
-  private _tangerineFormCard: TangerineFormCard = new TangerineFormCard();
+  _tangerineFormCard: TangerineFormCard = new TangerineFormCard();
   @Input() tangerineFormCard: TangerineFormCard = new TangerineFormCard();
 
   private _tangerineFormModel: any;
@@ -36,7 +36,8 @@ export abstract class TangerineBaseCardComponent implements OnInit {
 
   form: FormGroup;
   private internalEl: any;
-  private showHeader = false;
+  showHeader = false;
+  showSubmitButton = false;
 
   constructor(fb: FormBuilder, el: ElementRef) {
     // Capture the internal element for getting any inline configuration set.

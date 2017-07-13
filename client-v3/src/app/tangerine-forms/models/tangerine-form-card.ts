@@ -5,6 +5,7 @@ export class TangerineFormCard {
     title: String = undefined;
     subtitle: String = undefined;
     image: String = undefined;
+    images = [];
     avatarImage: String = undefined;
     fields: FormlyFieldConfig;
     showSubmitButton = false;

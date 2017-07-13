@@ -11,7 +11,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { WindowRef } from './core/window-ref.service';
 
-import { NgBinderModule } from './ng-binder/ng-binder.module';
 import { NodeManagerModule } from './node-manager/node-manager.module';
 import { TangerineFormsModule } from './tangerine-forms/tangerine-forms.module';
 import { PagesModule } from './pages/pages.module';
@@ -29,7 +28,6 @@ export { AppComponent }
     HttpModule,
     BrowserAnimationsModule,
     MdButtonModule, MdCheckboxModule, MdInputModule, MdToolbarModule, MdSidenavModule,
-    NgBinderModule,
     TangerineFormsModule,
     NodeManagerModule,
     PagesModule,

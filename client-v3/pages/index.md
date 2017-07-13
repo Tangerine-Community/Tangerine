@@ -1,4 +1,4 @@
-# Hello World
+# Tangerine v3 Demo 
 
-- <a routerLink="forms/my-tangy-form">My Tangy Form</a>
-- <a routerLink="forms/demo">Demo Form</a>
+- <tangerine-form-links link="forms/demo" formId="demoForm">Demo Form</tangerine-form-links>
+- <tangerine-form-links link="forms/my-tangy-form" formId="tangy-form">Tangy Form</tangerine-form-links>
