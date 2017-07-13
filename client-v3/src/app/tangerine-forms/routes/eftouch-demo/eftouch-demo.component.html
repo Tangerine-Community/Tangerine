@@ -1,9 +1,22 @@
-<eftouch-form-card>
+
+<h3> Using tangerine-form-card with imageSelect custom component </h3>
+
+<tangerine-form formId="tangerine-eftouch-demo" #tangerineForm>
+
+<tangerine-form-card>
   id: 'card7'
   title: '7/52'
   subtitle: 'Here are some new pictures.. Please touch one of them..'
-  images:
-  - image: 'https://ictatrti.github.io/eftouch-test1/assets/airplane.png'
-  - image: 'https://ictatrti.github.io/eftouch-test1/assets/apple.png'
-  - image: 'https://ictatrti.github.io/eftouch-test1/assets/banana.png'
-</eftouch-form-card>
+  fields:
+  - type: 'imageSelect'
+    key: 'eftouchy'
+    templateOptions:
+      imageList:
+        - image: 'https://ictatrti.github.io/eftouch-test1/assets/airplane.png'
+        - image: 'https://ictatrti.github.io/eftouch-test1/assets/apple.png'
+        - image: 'https://ictatrti.github.io/eftouch-test1/assets/banana.png'
+
+</tangerine-form-card>
+
+</tangerine-form>
+

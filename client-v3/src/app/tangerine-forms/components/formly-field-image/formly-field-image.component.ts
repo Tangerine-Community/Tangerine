@@ -8,6 +8,11 @@ import {Field} from "ng-formly";
 })
 export class FormlyFieldImageComponent extends Field {
 
-
+  get imageList() {
+    if (this.templateOptions['imageList']) {
+      return this.templateOptions['imageList'];
+    }
+    return null;
+  }
 
 }

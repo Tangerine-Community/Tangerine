@@ -1,7 +1,7 @@
 <h2> Tangerine Form Card Demo </h2>
 
 
-<h3> 
+<h3>
   A basic Tangerine Form Card.
 </h3>
 
@@ -10,13 +10,13 @@
     fields:
         - type: 'input'
           key: 'variable1'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'Variable 1'
             type: 'text'
         - type: 'input'
           key: 'variable2'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'Variable 2'
             type: 'text'
@@ -26,7 +26,7 @@
   {{card1.tangerineFormCard.model | json }}
 </pre>
 
-<h3> 
+<h3>
   A Tangerine Form Card with data prepopulated.
 </h3>
 
@@ -35,13 +35,13 @@
     fields:
         - type: 'input'
           key: 'variable1'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'Variable 1'
             type: 'text'
         - type: 'input'
           key: 'variable2'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'Variable 2'
             type: 'text'
@@ -53,7 +53,7 @@ Output:
 <pre> {{card2.tangerineFormCard.model | json}}</pre>
 
 
-<h3> 
+<h3>
   Listening for changes on the card and sending them to console log.
 </h3>
 <tangerine-form-card (change)="onChange($event)">
@@ -61,27 +61,27 @@ Output:
     fields:
         - type: 'input'
           key: 'variable1'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'Variable 1'
             type: 'text'
         - type: 'input'
           key: 'variable2'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'Variable 2'
             type: 'text'
 </tangerine-form-card>
 
 
-<h3> 
-  A Tangerine Form Card based on attribute input. 
+<h3>
+  A Tangerine Form Card based on attribute input.
 </h3>
 <tangerine-form-card [tangerineFormCard]="tangerineFormCardExample">
 </tangerine-form-card>
 
 
-<h3> 
+<h3>
   A Tangerine Form Card with a title, a subtitle, an avatar, and a submit button.
 </h3>
 <tangerine-form-card (submit)="onSubmit($event)">
@@ -93,7 +93,7 @@ Output:
     fields:
         - type: 'select'
           key: 'doge_name'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'What is your favorite fruit?'
             options:
@@ -108,7 +108,7 @@ Output:
 </tangerine-form-card>
 
 
-<h3> 
+<h3>
   A Tangerine Form Card with everything: a title, a subtitle, image, an avatar, and a submit button.
 </h3>
 <tangerine-form-card (submit)="onSubmit($event)">
@@ -121,20 +121,20 @@ Output:
     fields:
         - type: 'input'
           key: 'doge_name'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'Your dogs name?'
             type: 'text'
         - type: 'input'
           key: 'doge_color'
-          templateOptions: 
+          templateOptions:
             required: true
             label: 'Your dogs favorite color?'
             type: 'text'
 </tangerine-form-card>
 
 
-<h3> 
+<h3>
   A Tangerine Form Card with an expression for disabling a field.
 </h3>
 <tangerine-form-card #card7>
@@ -155,7 +155,7 @@ Output:
           type: 'text'
       - type: 'input'
         key: 'name'
-        expressionProperties: 
+        expressionProperties:
           'templateOptions.disabled': 'model.want_to_answer !== "yes"'
           'templateOptions.label': 'model.name'
         templateOptions:
@@ -167,7 +167,7 @@ Output:
 <pre> {{card7.tangerineFormCard.model | json}}</pre>
 
 
-<h3> 
+<h3>
   A Tangerine Form Card with a hide expression.
 </h3>
 <tangerine-form-card #card8>
@@ -196,3 +196,14 @@ Output:
 </tangerine-form-card>
 Output:
 <pre> {{card8.tangerineFormCard.model | json}}</pre>
+
+<h3> Using the eftouch-form-card tag</h3>
+<eftouch-form-card>
+  id: 'card7'
+  title: '7/52'
+  subtitle: 'Here are some new pictures.. Please touch one of them..'
+  images:
+  - image: 'https://ictatrti.github.io/eftouch-test1/assets/airplane.png'
+  - image: 'https://ictatrti.github.io/eftouch-test1/assets/apple.png'
+  - image: 'https://ictatrti.github.io/eftouch-test1/assets/banana.png'
+</eftouch-form-card>
