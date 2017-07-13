@@ -27,14 +27,10 @@ import { TangerineFormSessionComponent } from './components/tangerine-form-sessi
 import { TangerineFormResumeDemoComponent } from './routes/tangerine-form-resume-demo/tangerine-form-resume-demo.component';
 import {EftouchDemoComponent} from './routes/eftouch-demo/eftouch-demo.component';
 import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch-form-card.component';
-<<<<<<< HEAD
 import { FormlyFieldImageComponent } from './components/formly-field-image/formly-field-image.component';
-=======
 import { TangerineFormLinksComponent } from './components/tangerine-form-links/tangerine-form-links.component';
 import { TangerineFormSessionsComponent } from './components/tangerine-form-sessions/tangerine-form-sessions.component';
 import { TangerineFormSessionItemComponent } from './components/tangerine-form-session-item/tangerine-form-session-item.component';
->>>>>>> v3.x.x
-
 
 @NgModule({
   imports: [
@@ -68,13 +64,10 @@ import { TangerineFormSessionItemComponent } from './components/tangerine-form-s
  TangerineFormResumeDemoComponent,
     EftouchDemoComponent,
     EftouchFormCardComponent,
-<<<<<<< HEAD
-    FormlyFieldImageComponent
-=======
+    FormlyFieldImageComponent,
     TangerineFormLinksComponent,
     TangerineFormSessionsComponent,
     TangerineFormSessionItemComponent
->>>>>>> v3.x.x
  //   TangerineFormCarouselComponent
   ],
   exports: [
