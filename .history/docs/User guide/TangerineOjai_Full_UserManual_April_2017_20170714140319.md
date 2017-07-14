@@ -645,13 +645,21 @@ formats and answer categories for non-open questions.
 
 ![](.//media/image39.png)
 
-***Question Type***: Next, you will want to select the answer format and type of question. You have three options for this:
+> ***Question Type***: Next, you will want to select the answer format
+> and type of question. You have three options for this:
 
-a.  **Single:** You can present as many options as necessary; users will be allowed to select only one response.
+a.  **Single:** You can present as many options as necessary; users will
+    > be allowed to select only one response.
 
-b.  **Multiple**: You can present as many options as necessary; users will be allowed to select as many responses as appropriate.
+b.  **Multiple**: You can present as many options as necessary; users
+    > will be allowed to select as many responses as appropriate.
 
-c.  **Open** question. If you select open question, Tangerine will automatically insert a text field underneath the question in the enumerator view for the enumerator to type in the participant’s response. These can be accompanied by hint text in order to help standardize response types and formats, as shown in the screen shot below.
+c.  **Open** question. If you select open question, Tangerine will
+    > automatically insert a text field underneath the question in the
+    > enumerator view for the enumerator to type in the participant’s
+    > response. These can be accompanied by hint text in order to help
+    > standardize response types and formats, as shown in the screen
+    > shot below.
 
 For single and multiple choice questions you will need to define the
 answer options and assign values to these. To do so, select the single
