@@ -1,0 +1,267 @@
+<h2> Tangerine Form Demo </h2>
+
+
+<h3> A card with locations and dependant cities. </h3>
+
+<tangerine-form id="demoForm">
+<tangerine-form-card>
+    title: "Location"
+    fields:
+      - type: 'select'
+        key: 'country'
+        templateOptions:
+          required: true
+          label: 'Country'
+          options:
+            - value: AU
+              label: Australia
+            - value: US
+              label: United States
+            - value: UK
+              label: United Kingdom
+            - value: ZM
+              label: Zambia
+      - type: 'select'
+        key: 'city'
+        templateOptions:
+          label: "City"
+          required: true
+          options:
+            - value: washington
+              label: Washington
+            - value: newyork
+              label: New York
+        hideExpression: 'model.country !== "US"'
+      - type: 'select'
+        key: 'city'
+        templateOptions:
+          label: "City"
+          required: true
+          options:
+            - value: melburn
+              label: Melburn
+            - value: sydney
+              label: Syndey
+        hideExpression: 'model.country !== "AU"'
+      - type: 'select'
+        key: 'city'
+        templateOptions:
+          label: "City"
+          required: true
+          options:
+            - value: london
+              label: London
+            - value: bath
+              label: Bath
+        hideExpression: 'model.country !== "UK"'
+  </tangerine-form-card>
+
+<h3> A card with single selection radio button. </h3>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'attend_school'
+        templateOptions:
+          required: true
+          label: 'When do you attend school? All day, in the morning, or in the afternoon? (Full day - morning - afternoon - alternating shifts)'
+          options:
+            - key: full
+              value: Full day
+            - key: am
+              value: Morning only
+            - key: pm
+              value: Afternoon only
+  </tangerine-form-card>
+
+<h3> A card other option. </h3>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'attend_school'
+        templateOptions:
+          required: true
+          label: '  What is your age? ([If child does not recall their age but knows the year in which s/he was born, assessor should do the math and choose the correct age])'
+          options:
+            - key: six
+              value: 6
+            - key: seven
+              value: 7
+            - key: eight
+              value: 8
+            - key: other
+              value: Other
+            - key: dontref
+              value: Don't Know/Refuse
+        hideExpression: 'model.attend_school == "full" ? (model.country == "US" ? true : false) : false'
+      - type: 'input'
+        key: 'ageOther'
+        templateOptions:
+          required: true
+          label: 'Age Other (9 to 13)'
+          pattern: '([9]|[1][0]|[1][1]|[1][2])'
+        hideExpression: 'model.attend_school !== "other"'
+    </tangerine-form-card>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 'numberOne'
+        templateOptions:
+          required: true
+          label: 'Number between 50 and 99'
+          pattern: "([5-9][0-9]+)"
+  </tangerine-form-card>
+
+    <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 'textOne'
+        templateOptions:
+          required: true
+          label: 'Text with 6 characters'
+          maxlength: 6
+          minlength: 6
+  </tangerine-form-card>
+
+  <h3> A Tangerine Form Card with Multi select radio boxes. </h3>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'multicheckbox'
+        key: 'multi'
+        templateOptions:
+          required: true
+          label: 'Do you have book in the following languages'
+          options:
+            - key: orange
+              value: Orange
+            - key: strawberry
+              value: Strawberry
+            - key: Tangerine
+              value: Tangerine
+            - key: coconut
+              value: Coconut
+  </tangerine-form-card>
+
+ <tangerine-form-card>
+    fields:
+      - type: 'textarea'
+        key: 'observationw'
+        templateOptions:
+          required: true
+          label: 'Please leave a comment?'
+          description: 'This is the description'
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+    title: "First Card"
+    fields:
+      - type: 'input'
+        key: 'variable1'
+        templateOptions:
+          required: false
+          label: 'Variable 1'
+      - type: 'input'
+        key: 'variable2'
+        templateOptions:
+          placeholder: "I'm am placeholder text"
+          required: true
+          label: 'Variable 2'
+        expressionProperties:
+          'invalid' : 'model.variable2 == "foo"'
+  </tangerine-form-card>
+
+  <h3> A Tangerine Form Card with data prepopulated. </h3>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 'prepopulated_variable_1'
+        defaultValue: test
+        templateOptions:
+          required: true
+          label: 'Prepopulated Variable 1'
+      - type: 'input'
+        key: 'prepopulated_variable_2'
+        templateOptions:
+          required: true
+          label: 'Prepopulated Variable 2'
+    model:
+
+  </tangerine-form-card>
+
+
+  <h3> A Tangerine Form Card with everything: a title, a subtitle, image, an avatar, and a submit button. </h3>
+  <tangerine-form-card>
+    title: 'Doge Wow!'
+    subtitle: 'So many squirrels, so little time.'
+    image: 'https://material.angular.io/assets/img/examples/shiba2.jpg'
+    avatarImage: 'assets/noun_727773_cc.png'
+    showSubmitButton: true
+    fields:
+      - type: 'input'
+        key: 'doge_name'
+        templateOptions:
+          required: true
+          label: 'Your dogs name?'
+          type: 'text'
+      - type: 'input'
+        key: 'doge_color'
+        templateOptions:
+          required: true
+          label: 'Your dogs favorite color?'
+          type: 'text'
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'want_to_eat_fruit_now'
+        templateOptions:
+          required: true
+          label: 'Would you like to eat fruit right now?'
+          options:
+            - key: yes
+              value: Yes
+            - key: no
+              value: No
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 'fruit_i_want_to_eat_now'
+        templateOptions:
+          required: true
+          label: 'What fruit would you eat right now?'
+        hideExpression: "model.want_to_eat_fruit_now !== 'yes'"
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'want_to_eat_candy_now'
+        templateOptions:
+          required: true
+          label: 'Would you like to eat candy right now?'
+          options:
+            - key: yes
+              value: Yes
+            - key: no
+              value: No
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 'candy_i_want_to_eat_now'
+        expressionProperties:
+          'templateOptions.disabled': 'model.want_to_eat_candy_now !== "yes"'
+        templateOptions:
+          required: true
+          label: 'What candy would you eat right now?'
+  </tangerine-form-card>
+
+</tangerine-form>

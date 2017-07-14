@@ -1,0 +1,57 @@
+<h2> Tangerine Form Multipage Example: Page 3 </h2>
+
+<tangerine-form formId="MultipageFormExample">
+  
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'want_to_eat_fruit_now'
+        templateOptions:
+          required: true
+          label: 'Would you like to eat fruit right now?'
+          options:
+            - key: yes
+              value: Yes
+            - key: no
+              value: No
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 'fruit_i_want_to_eat_now'
+        hideExpression: 'model.want_to_eat_fruit_now !== "yes"'
+        templateOptions:
+          required: true
+          label: 'What fruit would you eat right now?'
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'want_to_eat_candy_now'
+        templateOptions:
+          required: true
+          label: 'Would you like to eat candy right now?'
+          options:
+            - key: yes
+              value: Yes
+            - key: no
+              value: No
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 'candy_i_want_to_eat_now'
+        expressionProperties:
+          'templateOptions.disabled': 'model.want_to_eat_candy_now !== "yes"'
+        templateOptions:
+          required: true
+          label: 'What candy would you eat right now?'
+  </tangerine-form-card>
+
+  <a routerLink="/forms/multipage-form-example/page-2">◄ Page 2</a>
+  <a routerLink="/">▲ Home</a>
+  
+</tangerine-form>

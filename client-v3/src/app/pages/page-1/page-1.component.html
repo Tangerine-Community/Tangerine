@@ -1,0 +1,55 @@
+<h2> Tangerine Form Multipage Example: Page 1 </h2>
+
+<tangerine-form formId="MultipageFormExample">
+
+  <tangerine-form-card>
+    title: "First Card"
+    fields:
+      - type: 'input'
+        key: 'variable1'
+        templateOptions: 
+          required: true
+          label: 'Variable 1'
+      - type: 'input'
+        key: 'variable2'
+        templateOptions: 
+          placeholder: "I'm am placeholder text"
+          required: true
+          label: 'Variable 2'
+  </tangerine-form-card>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'select'
+        key: 'favorite_fruit'
+        templateOptions: 
+          required: true
+          label: 'What is your favorite fruit?'
+          options:
+            - key: orange
+              label: Orange
+            - key: strawberry
+              label: Strawberry
+            - key: Tangerine
+              label: Tangerine
+            - key: coconut
+              label: Coconut
+      - type: 'radio'
+        key: 'favorite_color'
+        templateOptions: 
+          required: true
+          label: 'What is your favorite color?'
+          options:
+            - key: red 
+              value: Red 
+            - key: blue 
+              value: Blue 
+            - key: green 
+              value: Green
+            - key: yellow 
+              value: Yellow 
+  </tangerine-form-card>
+
+  <a routerLink="/forms/multipage-form-example/page-2">Page 2 ►</a>
+
+</tangerine-form>
