@@ -45,7 +45,7 @@ import { TangerineFormSessionItemComponent } from './components/tangerine-form-s
     TangerineFormsRoutingModule,
     FormlyModule.forRoot({
       types: [
-        { name: 'imageSelect', component: FormlyFieldImageComponent, defaultOptions: { templateOptions: { imageList: [] }}}
+        { name: 'imageSelect', component: FormlyFieldImageComponent, defaultOptions: { to: { imageList: [] }}}
     ]}),
     FormlyBootstrapModule,
     StoreModule.provideStore({ tangerineFormSession: tangerineFormSessionReducer }),
