@@ -13,6 +13,7 @@
     "precache": "sw-precache --verbose --config=sw-precache-config.js",
     "lite-server": "cd lite-server && node app.js",
     "publish": "npm run build && git clone git@github.com:tangerine-v3-demo/tangerine-v3-demo.github.io .publish-tmp && mv .publish-tmp/.git dist/ && rm -r .publish-tmp && cd dist && git add . && git commit -m \"npm publish\" && git push && cd ..",
+    "publish-to-dat-web": "./scripts/publish-to-dat-web.sh",
     "test-publish": "npm run build && cd dist && hs -c-1"
   },
   "private": true,
@@ -40,6 +41,7 @@
     "concurrently": "^3.5.0",
     "core-js": "^2.4.1",
     "csv-file-creator": "^1.0.7",
+    "dat": "^13.7.0",
     "express-pouchdb": "^2.3.7",
     "gh-markdown-cli": "^0.2.0",
     "hammerjs": "^2.0.8",
