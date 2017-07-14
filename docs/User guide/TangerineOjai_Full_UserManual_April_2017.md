@@ -1142,9 +1142,9 @@ of the possible variations for this sequence, namely:
 > 1, 0, 2
 >
 > 1, 2, 0
-
-2, 0, 1
-
+>
+> 2, 0, 1
+>
 > 2, 1, 0
 
 Tangerine will cycle through the order of subtests as your enumerator
@@ -1218,20 +1218,22 @@ a range of programs including: Microsoft Excel, OpenOffice, and most
 statistical analysis packages (STATA, SPSS, R). The results file
 structure is as follows:
 
-  **enumerator**   **Variable 1**     **Variable 2**
-  ---------------- ------------------ ------------------
-  Jane\_Doe        (value response)   (value response)
-  John\_Doe        (value response)   (value response)
+| **enumerator** | **Variable 1**       | **Variable** 2       |
+|------------|------------------|------------------|
+| Jane_Doe   | (value response) | (value response) |
+| John_Doe   | (value response) | (value response) |
 
-![](.//media/image48.png)Each line of the data file represents one
+![](.//media/image48.png)
+
+Each line of the data file represents one
 data entry for your instrument. The values displayed under each variable
 correspond to the values you have assigned to each response option when
 designing your instrument. You can obtain a printout of your
 instrument’s response labels and their corresponding value labels by
 selecting the ‘Metadata’ printout option:
 
-1.  ![](.//media/image16.png)Click the Print button below your instrument.
-
+1.  Click the Print button below your instrument.
+![](.//media/image16.png) ![](.//media/image48.png)
 2.  Select the ‘Metadata’ option.
 
 ### 8.2 Default and Automatic Variables
@@ -1242,18 +1244,18 @@ addition to these default variables, Tangerine will also automatically
 generate some variables when certain types of subtests are used (such as
 Date/Time and Grid tests). These include the following variables:
 
-  **Variable Name**                                **Description**
-  ------------------------------------------------ -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  enumerator                                       The user name active when data was entered.
-  start\_time, end\_time                           An [EPOCH](http://en.wikipedia.org/wiki/Unix_time) time stamp automatically generated at the start/end of each subtest. See section on ‘Converting timestamps’ below.
-  order\_map                                       The sequence of subtests administered (for instruments using random sequences).
-  additional\_comments                             Optional text entered by users at the end of a given instrument.
-  \[gridvariable\]\_auto\_stop                     Will return “TRUE” or “FALSE” to indicate if autostop triggered for timed tests.
-  \[gridvariable\]\_time\_remain                   The number of seconds remaining on the timer when timed test ended.
-  \[gridvariable\]\_attempted                      The numerical position of the last grid item attempted.
-  \[gridvariable\]\_item\_at\_time                 The numerical position of the grid item captured at a specified time point.
-  \[gridvariable\]\_time\_intermediate\_captured   The number of seconds that have passed when “item at time” is marked.
-  year; month; date                                3 distinct variables generated from adding the “Date” subtest.
+  | **Variable Name**                             | **Description**                                                                                                                 |
+|-------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| enumerator                                | The user name active when data was,entered.                                                                                 |
+| start_time, end_time                      | An EPOCH time stamp automatically generated at the start/end of each,subtest.,See section on ‘Converting,timestamps’ below. |
+| order_map                                 | The sequence of subtests,administered (for instruments using random sequences).                                             |
+| additional_comments                       | Optional text entered by users at,the end of a given instrument.                                                            |
+| [gridvariable]_auto_stop                  | Will return “TRUE” or “FALSE” to,indicate if autostop triggered for timed tests.                                            |
+| [gridvariable]_time_remain                | The number of seconds remaining on,the timer when timed test ended.                                                         |
+| [gridvariable]_attempted                  | The numerical position of the last,grid item attempted.                                                                     |
+| [gridvariable]_item_at_time               | The numerical position of the grid,item captured at a specified time point.                                                 |
+| [gridvariable]_time_intermediate_captured | The number of seconds that have,passed when “item at time” is marked.                                                       |
+| year;,month;,date                         | 3 distinct variables generated from,adding the “Date” subtest.                                                              |
 
 Other variables in your dataset will appear as you named them, and in
 the order in which they appear in your assessment.
@@ -1275,10 +1277,10 @@ that your values are expressed in milliseconds). To convert it yourself
 using spreadsheet software such as Excel, here is an example of how you
 would proceed:
 
-  A                     B                                 C
-  --------------------- --------------------------------- -----------------------
-  timestamp\_original   timestamp\_conversion             timestamp\_end\_human
-  1442035807399         =A2/(60\*60\*24000) +"1/1/1970"   09/12/2015 05:30:07
+| A                  | B                             | C                   |
+|--------------------|-------------------------------|---------------------|
+| timestamp_original | timestamp_conversion          | timestamp_end_human |
+| 1442035807399      | =A2/(60*60*24000) +"1/1/1970" | 09/12/2015 05:30:07 |
 
 In this example, columns B and C contain the same values, but the
 formatting in column C has been changed to read the value as a date in
@@ -2074,44 +2076,14 @@ Annex 1: Training Topics and Example Agenda
 > an additional hour at most is recommended so that enumerators can
 > become familiar with the hardware and its main functions.
 
-  -- --------------------------------- -- --------------------------------------------------------------- ------------------------------------------------------------------------------------- -------------------------------------------------------------------------------- -- -- --
-     > Topic                                                                                              Details                                                                                                                                                                      
-                                                                                                          > •                                                                                   On/Off/Sleep. Tablet care.                                                          
-     > Tablet basics                                                                                      > •                                                                                   Navigation: touch screen vs. stylus; keypad, including how to hide the keypad.      
-     > *Suggest 1 hour*                                                                                   > • Browser: refresh, enter URL                                                                                                                                        
-                                                                                                          > • Settings: check battery life, turn on/off Wi-Fi and verify Internet connection;                                                                                    
-     > *orientation, including free*                                                                                                                                                                                                                                             
-                                                                                                                                                                                                brightness or screen lock settings; set time and date.                              
-     > *time to practice/explore*                                                                                                                                                                                                                                                   
-                                                                                                          > • Touch bottom of screen to show menu items (careful not to touch during testing)                                                                                    
-                                                                                                                                                                                                                                                                                 
-                                                                                                          > • Icons: settings, wireless, battery, on/off                                                                                                                         
-                                                                                                                                                                                                                                                                                    
-                                                                                                          > • Open Tangerine from application list                                                                                                                               
-     > Sign Up, Login/logout                                                                              > •                                                                                   Register/Sign Up User Name and Password.                                            
-                                                                                                          > • List of tests, opening test options; define each icon.                                                                                                             
-                                                                                                          > • Start test using the play icon.                                                                                                                                    
-                                                                                                          > •                                                                                   Logout                                                                              
-                                                                                                                                                                                                                                                                                    
-                                          > Depends on specific assessment(s). General issues to cover:                                                                                         
-     > Practice subtests                                                                                  > •                                                                                   Button states (disabled, activated, etc.)                                           
-                                                                                                          > • Using the school information autofill                                                                                                                              
-     > *Suggest 2 hours, subtest*                                                                         > •                                                                                   Generating student ID                                                               
-     > *by subtest, with practice*                                                                                                                                                                                                                                                  
-                                                                                                          > •                                                                                   Start/stop timer                                                                    
-     > *in pairs.*                                                                                                                                                                                                                                                                  
-                                                                                                          > •                                                                                   Ending a test and starting a new assessment                                         
-                                                                                                                                                                                                                                                                                    
-                                                                                                                                                                                                                                                                                 
-                                                                                                                                                                                                                                                                                       
-                                                                                                          > •                                                                                   Subtest doesn‘t respond                                                             
-     > Troubleshooting                                                                                    > •                                                                                   Can‘t find current EGRA version                                                     
-                                                                                                          > • Errors caused by touching wrong, timer start/stop                                                                                                                  
-                                                                                                                                                                                                                                                                                 
-                                                                                                                                                                                                                                                                                       
-     > Saving/syncing data                                                                                Depends on local context                                                                                                                                                  
-                                                                                                                                                                                                                                                                                       
-  -- --------------------------------- -- --------------------------------------------------------------- ------------------------------------------------------------------------------------- -------------------------------------------------------------------------------- -- -- --
+  
+  | **Topic**                                                                              | **Details**                                                                                                                                                                                                                                                                                                                                                                                                              |
+|------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Tablet basics  Suggest 1 hour,orientation, including free,time to practice/explore | - On/Off/Sleep. Tablet care.  - Navigation: touch screen vs. stylus; keypad, including how to hide the keypad. - Browser: refresh, enter URL - Settings: check battery life, turn on/off Wi-Fi and verify Internet,connection;,brightness or screen lock,settings; set time and date. - Touch bottom of screen to show menu items (careful not to touch during,testing) - Icons: settings, wireless, battery, on/off |
+| Sign Up, Login/logout                                                              | - Open Tangerine from application list - Register/Sign Up User Name and,Password. - List of tests, opening test options; define each icon. - Start test using the play icon.  - Logout                                                                                                                                                                                                                               |
+| Practice subtests  Suggest 2 hours, subtest,by subtest, with practice,in pairs.    | Depends on specific assessment(s). General issues to cover: -Button states (disabled,,activated, etc.) - Using the school information autofill - Generating student ID - Start/stop timer - Ending a test and starting a new,assessment                                                                                                                                                                              |
+| Troubleshooting                                                                    | - Subtest doesn‘t respond - Can‘t find current EGRA version - Errors caused by touching wrong, timer start/stop                                                                                                                                                                                                                                                                                                      |
+| Saving/syncing data                                                                | Depends on local context                                                                                                                                                                                                                                                                                                                                                                                             |
 
 Annex 2: Tangerine Tipsheet
 ===========================
