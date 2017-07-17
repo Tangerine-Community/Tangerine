@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from './../_services/user.service';
 import { Observable } from 'rxjs/Observable';
+import { User } from './../_services/user.model';
 import 'rxjs/add/observable/fromPromise';
 @Component({
   selector: 'app-registration',
@@ -10,7 +11,7 @@ import 'rxjs/add/observable/fromPromise';
 })
 export class RegistrationComponent implements OnInit {
 
-  user: any;
+  user: User;
   constructor(
     private userService: UserService,
     private router: Router
@@ -19,7 +20,13 @@ export class RegistrationComponent implements OnInit {
   ngOnInit() {
   }
 
-  register(): void {
+  onSubmit(tangerineForm): void {
+    const model = tangerineForm.model;
+    this.user = {
+      username: model.username,
+      password: model.password,
+      email: model.email
+    };
     Observable.fromPromise(this.userService.create(this.user)).subscribe(data => {
       this.router.navigate(['/login']);
     }, error => {

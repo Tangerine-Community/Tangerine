@@ -20,12 +20,12 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-    const isAnonymousMode = this.authenticationService.getSecurityPolicy().find(policy => policy === 'anonymouss');
+    const isAnonymousMode = this.authenticationService.getSecurityPolicy().find(policy => policy === 'anonymous');
 
     if (this.authenticationService.isLoggedIn() || isAnonymousMode === 'anonymous') {
       this.router.navigate([this.returnUrl]);
     } else {
-      this.router.navigate(['/login'], { queryParams: { returnUrl: this.returnUrl } });
+      this.router.navigate(['/create-nodes'], { queryParams: { returnUrl: this.returnUrl } });
     }
 
   }
@@ -38,6 +38,10 @@ export class LoginComponent implements OnInit {
       alert('Login Unsuccessful');
 
     });
+  }
+
+  register(): void {
+    this.router.navigate(['/register']);
   }
 
 

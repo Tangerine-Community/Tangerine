@@ -1,3 +1,37 @@
-<p>
-  registration works!
-</p>
+Register as user
+
+<tangerine-form formId="tangerine-group-demo" #foo>
+
+  <tangerine-form-card (submit)="onSubmit($event)" #group>
+    id: 'register'
+    title: 'Register as a new User'
+    <!-- subtitle: 'Enter username.' -->
+    showSubmitButton: true
+    fields:
+    - type: 'input'
+      key: 'username'
+      templateOptions:
+        required: true
+        label: 'User Name'
+        type: 'text'
+    - type: 'input'
+      key: 'email'
+      templateOptions:
+        required: true
+        label: 'Email'
+        type: 'email'
+    - type: 'input'
+      key: 'passowrd'
+      templateOptions:
+        required: true
+        label: 'Password'
+        type: 'password'
+    - type: 'input'
+      key: 'confirmPassowrd'
+      templateOptions:
+        required: true
+        label: 'Confirm Password'
+        type: 'password'
+
+  </tangerine-form-card>
+</tangerine-form>

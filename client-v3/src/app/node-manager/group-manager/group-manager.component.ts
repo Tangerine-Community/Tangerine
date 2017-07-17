@@ -1,9 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, Validators} from "@angular/forms";
-import {Group} from "./group";
-import {GroupResult} from "./group-result";
-import {GroupDataService} from "./group-data-service.service";
-import {TangerineFormSession} from "../../tangerine-forms/models/tangerine-form-session";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Group } from './group';
+import { GroupResult } from './group-result';
+import { GroupDataService } from './group-data-service.service';
+import { TangerineFormSession } from '../../tangerine-forms/models/tangerine-form-session';
 
 @Component({
   selector: 'app-group-manager',
@@ -14,7 +14,7 @@ import {TangerineFormSession} from "../../tangerine-forms/models/tangerine-form-
 export class GroupManagerComponent implements OnInit {
 
   // IO.
-  @Input() groupModel:Group;
+  @Input() groupModel: Group;
   @Input() result: GroupResult;
 
   session: TangerineFormSession = new TangerineFormSession({
@@ -28,11 +28,11 @@ export class GroupManagerComponent implements OnInit {
   onSubmit(tangerineFormCard) {
     console.log(tangerineFormCard.model);
     Object.assign(this.result.variables, tangerineFormCard.model);
-    this.save(this.result.variables)
+    this.save(this.result.variables);
   }
 
   save(datum) {
-    console.log("Saving to pouch - datum: " + JSON.stringify(datum))
+    console.log('Saving to pouch - datum: ' + JSON.stringify(datum));
     this.dataService.createNode(datum);
     // this.jsonFormSubmit.emit(this.form.value);
   }

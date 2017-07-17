@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  securityPolicy: ['anonymous']
+  securityPolicy: ['password']// anonymous
 };
