@@ -28,6 +28,7 @@ export abstract class TangerineBaseCardComponent implements OnInit {
   //
 
   @Output() change = new EventEmitter();
+  @Output() click = new EventEmitter();
   @Output() submit = new EventEmitter();
 
   //

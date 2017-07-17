@@ -31,6 +31,7 @@ import { FormlyFieldImageComponent } from './components/formly-field-image/forml
 import { TangerineFormLinksComponent } from './components/tangerine-form-links/tangerine-form-links.component';
 import { TangerineFormSessionsComponent } from './components/tangerine-form-sessions/tangerine-form-sessions.component';
 import { TangerineFormSessionItemComponent } from './components/tangerine-form-session-item/tangerine-form-session-item.component';
+import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
   imports: [
@@ -45,13 +46,14 @@ import { TangerineFormSessionItemComponent } from './components/tangerine-form-s
     TangerineFormsRoutingModule,
     FormlyModule.forRoot({
       types: [
-        { name: 'imageSelect', component: FormlyFieldImageComponent, defaultOptions: { to: { imageList: [] }}}
+        { name: 'imageSelect', component: FormlyFieldImageComponent, defaultOptions: { to: { imageList: [] }}, extends: 'input'}
     ]}),
     FormlyBootstrapModule,
     StoreModule.provideStore({ tangerineFormSession: tangerineFormSessionReducer }),
     StoreDevtoolsModule.instrumentOnlyWithExtension({
       maxAge: 100
-    })
+    }),
+    NgbModule.forRoot()
   ],
   declarations: [
     TangerineFormComponent,

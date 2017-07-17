@@ -1,20 +1,29 @@
 
 <tangerine-form formId="tangerine-eftouch-demo" #tangerineForm>
 
-<tangerine-form-card>
+<tangerine-form-card #card7>
   id: 'card7'
   title: '7/52'
   subtitle: 'Here are some new pictures. Please touch one of them.'
   fields:
   - type: 'imageSelect'
-    key: 'eftouchy'
+    key: 'picImage1'
     templateOptions:
       imageList:
         - image: 'https://ictatrti.github.io/eftouch-test1/assets/airplane.png'
+          value: 'airplane'
         - image: 'https://ictatrti.github.io/eftouch-test1/assets/apple.png'
+          value: 'apple'
         - image: 'https://ictatrti.github.io/eftouch-test1/assets/banana.png'
+          value: 'banana'
 
 </tangerine-form-card>
 
+<hr>
+  Output:<br/>
+<pre> {{card7.tangerineFormCard.model | json}}</pre>
+
 </tangerine-form>
+
+
 
