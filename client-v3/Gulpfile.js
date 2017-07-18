@@ -1,4 +1,5 @@
 
+var locales = require('./src/i18n/locales.json');
 var gulp = require("gulp");
 var rename = require("gulp-rename");
 var modifyFile = require("gulp-modify-file");
@@ -6,6 +7,10 @@ var async = require("async");
 var cheerio = require("gulp-cheerio");
 var pd = require("pretty-data").pd;
 var removeEmptyLines = require('gulp-remove-empty-lines');
+var { exec } = require('child_process');
+var del = require('del');
+var runSequence = require('run-sequence');
+var DIST_DIR = 'dist';
 
 function copyArray(source) {
     var copy = [];
@@ -28,6 +33,9 @@ function removeNodeFromList(nodeList, node) {
     return nodeList.splice(getNodeIndexFromNodeList(nodeList, node), 1);
 }
 
+function getLocales() {
+
+}
 const PATH_I18N_LANGUAGES = "./src/i18n";
 const FILE_SOURCE_I18N = "./src/i18n/messages.xlf";
 const XLF_MASK = "/*.xlf";
@@ -134,7 +142,61 @@ gulp.task("i18n-update:merge", ["i18n-update:init"], function () {
         .pipe(gulp.dest(PATH_I18N_LANGUAGES));
 });
 
+gulp.task('build', () => {
+
+});
 /**
  * Task pipe to init & merge i18n translation files
  */
 gulp.task("i18n-update", ["i18n-update:merge", "i18n-update:init"]);
+
+gulp.task('pagesBuild', (cb) => {
+    return locales.map((locale) => {
+        let lang = locale.language;
+        let command = `./node_modules/.bin/angular-pages build && ng build --output-path=dist/${lang} --aot -prod  --bh /${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
+
+        exec(command, function (err, stdout, stderr) {
+            console.log(stderr);
+
+        });
+
+    });
+    cb();
+});
+gulp.task('generate-service-worker', function (callback) {
+    var swPrecache = require('sw-precache');
+
+    locales.map((locale) => {
+        var rootDir = 'dist/' + locale.language;
+        let swConfig = {
+            staticFileGlobs: [
+                rootDir + '/**/*.{js,html,css,png,jpg,gif,svg,eot,ttf,woff}',
+                // rootDir + '/**/*.html',
+                // rootDir + '/js/**/*.js',
+                // rootDir + '/css/**/*.css',
+                // rootDir + '/images/**/*.*',
+                // rootDir + '/icons/**/*.*',
+                // rootDir + '/logos/**/*.*',
+            ],
+            stripPrefix: rootDir,
+            verbose: true,
+            maximumFileSizeToCacheInBytes: 2097152000,
+            navigateFallback: '/index.html'
+        };
+        swPrecache.write(`${rootDir}/service-worker.js`, swConfig);
+    }, );
+    callback();
+});
+
+gulp.task('create-redirect-page', () => {
+
+});
+gulp.task('clean', () => {
+    return del.sync([DIST_DIR]);
+});
+
+gulp.task('build', function (callback) {
+    runSequence('clean',
+        'pagesBuild',
+        callback);
+});

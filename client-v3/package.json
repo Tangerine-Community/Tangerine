@@ -16,7 +16,7 @@
     "i18n:create": "gulp i18n-init --languages",
     "i18n:update": "gulp i18n-update",
     "i18n:extract": "ng xi18n --output-path src/i18n",
-    "i18n:build": "for lang in en es fr; do ng build --output-path=dist/$lang --aot -prod --bh /$lang/ --i18n-file=src/i18n/messages.$lang.xlf --i18n-format=xlf --locale=$lang; done"
+    "i18n:build": "gulp build && gulp generate-service-worker"
   },
   "private": true,
   "dependencies": {
@@ -61,6 +61,7 @@
     "@types/node": "~6.0.60",
     "async": "^2.4.1",
     "codelyzer": "~2.0.0",
+    "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-cheerio": "^0.6.2",
     "gulp-modify-file": "^0.1.0",
@@ -76,6 +77,7 @@
     "karma-jasmine-html-reporter": "^0.2.2",
     "pretty-data": "^0.40.0",
     "protractor": "~5.1.0",
+    "run-sequence": "^2.0.0",
     "sw-precache": "^5.2.0",
     "ts-node": "~2.0.0",
     "tslint": "~4.5.0",
