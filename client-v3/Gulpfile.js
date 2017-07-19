@@ -153,15 +153,24 @@ gulp.task("i18n-update", ["i18n-update:merge", "i18n-update:init"]);
 
 gulp.task('pagesBuild', (cb) => {
     return locales.map((locale) => {
-        let lang = locale.language;
-        let command = `./node_modules/.bin/angular-pages build && ng build --output-path=dist/${lang} --aot -prod  --bh /${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
+        const lang = locale.language;
+        const command = `./node_modules/.bin/angular-pages build && ng build --output-path=dist/${lang} --aot -prod  --bh /${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
 
-        exec(command, function (err, stdout, stderr) {
-            console.log(stdout);
-            console.log(stderr);
-
+        /**
+         * attaching exec to a variable Allows us to listen to console output from shell and send them to our gulp output as a stream. Note exec implements Event Emitter thus allowing listening to the events
+         */
+        const execCommand = exec(command);
+        execCommand.stdout.on('data', function (data) {
+            console.log(data.toString());
         });
 
+        execCommand.stderr.on('data', function (data) {
+            console.log(data.toString());
+        });
+
+        execCommand.on('exit', function (code) {
+            console.log(`Pages build process for ${locale.language} exited with code ` + code.toString());
+        });
     });
     cb();
 });
