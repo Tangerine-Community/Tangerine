@@ -192,7 +192,51 @@ gulp.task('generate-service-worker', function (callback) {
 });
 
 gulp.task('create-redirect-page', () => {
+    let languages = '';
+    locales.map((locale) => {
+        languages += `<li><a href="/${locale.language}" onClick="setLocale('${locale.language}')">${locale.abbreviation}</a></li>`
+    })
+    let contents = `
+<!doctype html>
 
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Tangerine v3</title>
+  <meta name="description" content="Tangerine v3">
+  <meta name="author" content="Tangerine">
+</head>
+
+<body>
+<h1>Choose Language:</h1>
+    <ul id="languages">
+    ${languages}
+    </ul>
+  <script>
+  document.onreadystatechange = () => {
+        if (document.readyState === 'interactive') {
+            navigateToLocale()
+        }
+    }
+     function navigateToLocale() {
+        let locale = localStorage.getItem("tangy-locale");
+        if(locale){
+            window.location.href = "/"+locale;
+        } 
+    }
+       function setLocale(locale) {
+        localStorage.setItem("tangy-locale", locale);
+    }
+  </script>
+</body>
+</html>`;
+
+
+    fs.writeFile(DIST_DIR + '/index.html', contents, (err) => {
+        if (err) throw err;
+        console.log('Created Redirect Page Successfuly');
+    });
 });
 gulp.task('clean', () => {
     return del.sync([DIST_DIR]);
