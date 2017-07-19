@@ -1,5 +1,6 @@
 
 var locales = require('./src/i18n/locales.json');
+var fs = require('fs');
 var gulp = require("gulp");
 var rename = require("gulp-rename");
 var modifyFile = require("gulp-modify-file");
@@ -156,6 +157,7 @@ gulp.task('pagesBuild', (cb) => {
         let command = `./node_modules/.bin/angular-pages build && ng build --output-path=dist/${lang} --aot -prod  --bh /${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
 
         exec(command, function (err, stdout, stderr) {
+            console.log(stdout);
             console.log(stderr);
 
         });
@@ -178,7 +180,8 @@ gulp.task('generate-service-worker', function (callback) {
                 // rootDir + '/icons/**/*.*',
                 // rootDir + '/logos/**/*.*',
             ],
-            stripPrefix: rootDir,
+
+            stripPrefix: 'dist',
             verbose: true,
             maximumFileSizeToCacheInBytes: 2097152000,
             navigateFallback: '/index.html'

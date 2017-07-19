@@ -16,7 +16,8 @@
     "i18n:create": "gulp i18n-init --languages",
     "i18n:update": "gulp i18n-update",
     "i18n:extract": "ng xi18n --output-path src/i18n",
-    "i18n:build": "gulp build && gulp generate-service-worker"
+    "i18n:build": "gulp build && gulp generate-service-worker",
+    "evans": "gulp create-redirect-page"
   },
   "private": true,
   "dependencies": {
