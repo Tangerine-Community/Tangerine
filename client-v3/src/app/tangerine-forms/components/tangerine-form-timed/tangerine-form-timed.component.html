@@ -3,7 +3,7 @@
   <button (click)="clickedStart()">start timer</button>
   <button (click)="clickedStop()">stop timer</button>
   <form>
-    <input type="text" id="{{id}}_countdown" value="{{countdown}}" />
+    <input type="hidden" id="{{id}}_countdown" value="{{countdown}}" />
     <ng-content></ng-content>
   </form>
 </md-card>
