@@ -2,8 +2,11 @@
   <div class="countdown">{{countdown}}</div>
   <button (click)="clickedStart()">start timer</button>
   <button (click)="clickedStop()">stop timer</button>
+  <button (click)="clickedReset()">reset timer</button>
+  <div> {{statusMessage}} </div>
   <form>
     <input type="hidden" id="{{id}}_countdown" value="{{countdown}}" />
+    <input type="hidden" id="{{id}}_last_selected" value="{{lastSelectedId}}" />
     <ng-content></ng-content>
   </form>
 </md-card>
