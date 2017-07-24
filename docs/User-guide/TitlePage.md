@@ -1,8 +1,7 @@
- **Tangerine®**
-===============
+# **Tangerine®** {-}
 
- Full User’s Guide
- ===============
+## Full User’s Guide {-}
+
  v\. July 2017
 
 ![](.//media/image1.png)&nbsp;
