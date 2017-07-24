@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TangerineFormTimedComponent } from './tangerine-form-timed.component';
+import { TangerineFormsModule } from '../../tangerine-forms.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('TangerineFormTimedComponent', () => {
   let component: TangerineFormTimedComponent;
@@ -8,7 +10,10 @@ describe('TangerineFormTimedComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TangerineFormTimedComponent ]
+      imports: [
+        TangerineFormsModule,
+        BrowserAnimationsModule
+        ]
     })
     .compileComponents();
   }));
