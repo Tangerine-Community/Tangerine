@@ -1774,23 +1774,6 @@ that will send the data to the above-mentioned Tangerine server. If you
 have been able to sync your data successfully on the Tangerine server,
 there is no need to proceed with the backup options below.
 
-***‘Sync tablets’***
-
-On the home screen of Tangerine, you will find a button labeled ‘Sync
-tablets’ just below the list of your loaded instruments. Once this
-button is tapped, Tangerine will begin looking for other tablets using
-Tangerine which are connected to the same WiFi network. If two or more
-tablets are connected to the same wireless network, this process will
-create duplicate copies of all data on all tablets, such that data loss
-will be mitigated if anything should happen to any of the tablets. This
-process relies on ‘peer-to-peer syncing’ which is a data transfer
-protocol not allowed by all wireless networks, depending on their
-defined security settings. You will see messages appear on the tablet
-screens indicating the progress and success of this backup. Note that
-this process will not work between two tablets connected to the same 3G
-or mobile network – the network connection between the tablets must be
-provided by a wireless router establishing a local area network.
-
 ***Full tablet backup / Exporting Tangerine data***
 
 A more involved backup than the ‘Sync tablets’ option is to backup all
