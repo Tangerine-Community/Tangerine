@@ -13,5 +13,4 @@ export class TangerineFormCard {
     status = 'INVALID';
     skip =  false;
     logic = '';
-    imageSelect = [];
 }
