@@ -2,7 +2,6 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef }
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {TangerineFormCard} from './tangerine-form-card';
 import {safeLoad} from 'js-yaml';
-import {load} from 'js-yaml';
 
 export abstract class TangerineBaseCardComponent implements OnInit {
 
@@ -58,19 +57,6 @@ export abstract class TangerineBaseCardComponent implements OnInit {
       inlineConfig.splice(0, 1);
       inlineConfig.splice(inlineConfig.length - 2, inlineConfig.length);
       inlineConfig = safeLoad(inlineConfig.join('\n'));
-      // inlineConfig = safeLoad(inlineConfig.join('\n'), {schema: 'DEFAULT_FULL_SCHEMA'});
-      // inlineConfig = load(inlineConfig.join('\n'));
-      console.log("TODO: cek hard-coding this");
-      // inlineConfig.fields[0].validators.foo.expression = function (control) {
-      //   var test = control.value === "airplane"
-      //   console.log("validation results: " + test);
-      //   return test
-      // }
-      // inlineConfig.fields[1].validators.foo = function (control) {
-      //   var test = control.value === "airplane"
-      //   console.log("validation results: " + test);
-      //   return test
-      // }
       Object.assign(this.tangerineFormCard, inlineConfig);
     }
 
