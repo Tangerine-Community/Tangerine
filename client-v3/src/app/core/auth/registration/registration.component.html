@@ -1,37 +1,29 @@
-Register as user
+<h2>Register as user</h2>
+<form #registration='ngForm' novalidate (ngSubmit)="register(registration.value)">
+  <md-grid-list cols="1" rowHeight="1:1">
+    <md-grid-tile>
+      <md-input-container>
+        <label>Username</label>
+        <input name="username" type="text" mdInput [ngModel]="user.username" (blur)="userExists(registration.value.username)" required>
+      </md-input-container>
+      <md-input-container>
+        <label>Email</label>
+        <input name="email" type="email" mdInput [ngModel]="user.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required>
+      </md-input-container>
 
-<tangerine-form formId="tangerine-group-demo" #foo>
-
-  <tangerine-form-card (submit)="onSubmit($event)" #group>
-    id: 'register'
-    title: 'Register as a new User'
-    <!-- subtitle: 'Enter username.' -->
-    showSubmitButton: true
-    fields:
-    - type: 'input'
-      key: 'username'
-      templateOptions:
-        required: true
-        label: 'User Name'
-        type: 'text'
-    - type: 'input'
-      key: 'email'
-      templateOptions:
-        required: true
-        label: 'Email'
-        type: 'email'
-    - type: 'input'
-      key: 'passowrd'
-      templateOptions:
-        required: true
-        label: 'Password'
-        type: 'password'
-    - type: 'input'
-      key: 'confirmPassowrd'
-      templateOptions:
-        required: true
-        label: 'Confirm Password'
-        type: 'password'
-
-  </tangerine-form-card>
-</tangerine-form>
+    </md-grid-tile>
+    <md-grid-tile>
+      <md-input-container>
+        <label>Password</label>
+        <input name="password" mdInput [ngModel]="user.password" type="password" required>
+      </md-input-container>
+      <md-input-container>
+        <label>Confirm Password</label>
+        <input name="confirmPassword" mdInput [ngModel]="user.confirmPassword" type="password" required>
+      </md-input-container>
+      <!-- <button md-raised-button (click)="login()">Login</button> -->
+      <button type="submit" md-raised-button [disabled]="registration.invalid||registration.value.password!==registration.value.confirmPassword">Register</button>
+      <a href="#/login">Go to Login Page</a>
+    </md-grid-tile>
+  </md-grid-list>
+</form>

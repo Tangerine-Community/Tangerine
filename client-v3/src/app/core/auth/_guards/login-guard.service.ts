@@ -6,7 +6,9 @@ import { AuthenticationService } from './../_services/authentication.service';
 export class LoginGuard implements CanActivate {
   constructor(private router: Router, private authenticationService: AuthenticationService) { }
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.authenticationService.isLoggedIn()) { return true; };
+    if (this.authenticationService.isLoggedIn()) {
+      return true;
+    };
     console.log('Can Activate called');
     this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
     return false;

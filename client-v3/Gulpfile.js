@@ -196,7 +196,7 @@ gulp.task('generate-service-worker', function (callback) {
             navigateFallback: '/index.html'
         };
         swPrecache.write(`${rootDir}/service-worker.js`, swConfig);
-    }, );
+    });
     callback();
 });
 

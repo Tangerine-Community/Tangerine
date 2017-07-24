@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from './../_services/user.service';
 import { Observable } from 'rxjs/Observable';
-import { User } from './../_services/user.model';
 import 'rxjs/add/observable/fromPromise';
+import { User } from './../_services/user.model.interface';
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.component.html',
@@ -11,7 +11,13 @@ import 'rxjs/add/observable/fromPromise';
 })
 export class RegistrationComponent implements OnInit {
 
-  user: User;
+  user = <User>{
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  };
+  isUsernameTaken: boolean;
   constructor(
     private userService: UserService,
     private router: Router
@@ -20,18 +26,26 @@ export class RegistrationComponent implements OnInit {
   ngOnInit() {
   }
 
-  onSubmit(tangerineForm): void {
-    const model = tangerineForm.model;
+  register(registrationForm): void {
     this.user = {
-      username: model.username,
-      password: model.password,
-      email: model.email
+      username: registrationForm.username,
+      password: registrationForm.password,
+      email: registrationForm.email,
     };
     Observable.fromPromise(this.userService.create(this.user)).subscribe(data => {
       this.router.navigate(['/login']);
     }, error => {
+      console.log(error);
       alert('Error creating User');
     });
+  }
+  userExists(user) {
+    Observable.fromPromise(this.userService.doesUserExist(user)).subscribe((data) => {
+      this.isUsernameTaken = data;
+      this.isUsernameTaken ? alert('Username taken') : console.log('Good to go');
+      return this.isUsernameTaken;
+    });
+
   }
 
 }
