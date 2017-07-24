@@ -1,0 +1,13 @@
+:host /deep/ .md-card-width {
+  width: 600px;
+}
+
+#slide2 {
+  /*visibility: hidden;*/
+  display: none;
+}
+
+.cardRight {
+  position: absolute;
+  left: 580px;
+}

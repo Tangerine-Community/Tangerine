@@ -1,29 +1,60 @@
 
 <tangerine-form formId="tangerine-eftouch-demo" #tangerineForm>
 
-<tangerine-form-card #card7>
-  id: 'card7'
-  title: '7/52'
-  subtitle: 'Here are some new pictures. Please touch one of them.'
-  fields:
-  - type: 'imageSelect'
-    key: 'picImage1'
-    templateOptions:
-      imageList:
-        - image: 'https://ictatrti.github.io/eftouch-test1/assets/airplane.png'
-          value: 'airplane'
-        - image: 'https://ictatrti.github.io/eftouch-test1/assets/apple.png'
-          value: 'apple'
+<div id="slide1">
+  <tangerine-form-card #card1>
+    id: 'card1'
+    fields:
+    - type: 'imageSelect'
+      key: 'picImage1'
+      transitionAudio: 'url'
+      expressionProperties:
+        foo: 'model.picImage1 === "airplane" ? this.field.templateOptions.description="Good job!": this.field.templateOptions.description="Please select airplane";'
+      templateOptions:
+        description: 'Please being by selecting an airplane.'
+        label: 'Select one of these.'
+        type: 'text'
+        imageList:
+          - image: 'https://ictatrti.github.io/eftouch-test1/assets/airplane.png'
+            value: 'airplane'
+            audio: 'url1'
+          - image: 'https://ictatrti.github.io/eftouch-test1/assets/apple.png'
+            value: 'apple'
+            audio: 'url2'
+          - image: 'https://ictatrti.github.io/eftouch-test1/assets/banana.png'
+            value: 'banana'
+  </tangerine-form-card>
+  <div ngClass="cardRight">
+    <a (click)='show("#slide2","#slide1")'>Next</a>
+  </div>
+</div>
+
+  <div id="slide2">
+    <tangerine-form-card #card2>
+    id: 'card2'
+    fields:
+    - type: 'imageSelect'
+      key: 'picImage2'
+      expressionProperties:
+        foo: 'model.picImage2 === "apple" ? this.field.templateOptions.description="Good job!": this.field.templateOptions.description="Please select apple";'
+      templateOptions:
+        description: 'Please being by selecting an apple.'
+        label: 'Select one of these.'
+        type: 'text'
+        imageList:
         - image: 'https://ictatrti.github.io/eftouch-test1/assets/banana.png'
           value: 'banana'
+        - image: 'https://ictatrti.github.io/eftouch-test1/assets/apple.png'
+          value: 'apple'
+        - image: 'https://ictatrti.github.io/eftouch-test1/assets/airplane.png'
+          value: 'airplane'
 
-</tangerine-form-card>
-
-<hr>
-  Output:<br/>
-<pre> {{card7.tangerineFormCard.model | json}}</pre>
+  </tangerine-form-card>
+    <div><a (click)='show("#slide1","#slide2")'>Back</a></div>
+  </div>
 
 </tangerine-form>
+
 
 
 

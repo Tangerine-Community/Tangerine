@@ -12,4 +12,11 @@ export class EftouchDemoComponent implements OnInit {
   ngOnInit() {
   }
 
+  show(show, hide) {
+    console.log("showing: " + show)
+    // #slide2
+    document.querySelector(show).style.display = "block";
+    document.querySelector(hide).style.display = "none";
+  }
+
 }

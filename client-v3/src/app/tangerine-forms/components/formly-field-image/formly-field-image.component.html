@@ -3,8 +3,10 @@
     <!--<button class="av-button av-button-highlight" data-value="{{image.value}}" style="width: auto; height: 100%;">-->
       <!--<input class="form-control" placeholder="yyyy-mm-dd" name="dp" [formControl]="formControl" ngbImageSelect #i="ngbImageSelect">-->
       <!--<img class="av-image" src="{{image.image}}"></button>-->
-    <label class="btn btn-primary">
-      <input type="radio" value="{{image.value}}"><img src="{{image.image}}">
+    <!--<label class="btn btn-primary">-->
+    <label class="btn btn-primary custom-control custom-radio">
+      <input type="radio" value="{{image.value}}"><img src="{{image.image}}" width="150">
+      <span class="custom-control-indicator"></span>
     </label>
   </div>
 </div>

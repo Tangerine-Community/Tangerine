@@ -1,12 +1,12 @@
 import {Component, EventEmitter, Output} from '@angular/core';
-import {Field} from "ng-formly";
+import {Field, FieldType} from "ng-formly";
 
 @Component({
   selector: 'formly-field-image',
   templateUrl: './formly-field-image.component.html',
   styleUrls: ['./formly-field-image.component.css']
 })
-export class FormlyFieldImageComponent extends Field {
+export class FormlyFieldImageComponent extends FieldType {
 
   // @Output() imageValue = new EventEmitter();
 
@@ -23,3 +23,4 @@ export class FormlyFieldImageComponent extends Field {
   }
 
 }
+
