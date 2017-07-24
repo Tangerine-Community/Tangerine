@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'tangerine-form-timed',
@@ -7,9 +7,39 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TangerineFormTimedComponent implements OnInit {
 
-  constructor() { }
+  @Input() duration = 60;
+  @Input() id = 'timed';
+
+  countdown = 0;
+  timer: any;
+
+  constructor(private elementRef: ElementRef) { }
 
   ngOnInit() {
+    this.countdown = this.duration;
+  }
+
+  clickedStart() {
+    const countdownInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_countdown');
+    console.log('starting timer');
+    this.timer = setInterval(() => {
+      if (this.countdown > 0) {
+        this.countdown--;
+        countdownInputEl.dispatchEvent(new Event('change', {bubbles: true}));
+      } else {
+        clearInterval(this.timer);
+        countdownInputEl.dispatchEvent(new Event('change', {bubbles: true}));
+        this.timeIsUp();
+      }
+    }, 1000);
+  }
+
+  clickedStop() {
+    clearInterval(this.timer);
+  }
+
+  timeIsUp() {
+    console.log('time is up');
   }
 
 }
