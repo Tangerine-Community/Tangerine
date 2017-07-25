@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
-@import '~bootstrap/dist/css/bootstrap.css';
+/*@import '~bootstrap/dist/css/bootstrap.css';*/
 
 button.tangy-froms-margin-left{
    margin-left:3rem

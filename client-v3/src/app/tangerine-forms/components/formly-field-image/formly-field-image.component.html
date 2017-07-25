@@ -1,8 +1,7 @@
 <div *ngIf='imageList'>
-  <div *ngFor="let image of imageList" ngbRadioGroup  [formControl]="formControl">
+  <div *ngFor="let image of imageList" ngbRadioGroup [formControl]="formControl">
     <label class="btn btn-primary custom-control custom-radio">
       <input type="radio" value="{{image.value}}"><img src="{{image.image}}" width="150">
-      <span class="custom-control-indicator"></span>
     </label>
   </div>
 </div>

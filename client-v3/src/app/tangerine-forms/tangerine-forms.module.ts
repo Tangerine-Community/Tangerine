@@ -48,7 +48,7 @@ import { TangerineFormTimedComponent } from './components/tangerine-form-timed/t
     TangerineFormsRoutingModule,
     FormlyModule.forRoot({
       types: [
-        { name: 'imageSelect', component: FormlyFieldImageComponent, defaultOptions: { to: { imageList: [] }}, extends: 'input'}
+        { name: 'imageSelect', component: FormlyFieldImageComponent}
     ]}),
     FormlyBootstrapModule,
     StoreModule.provideStore({ tangerineFormSession: tangerineFormSessionReducer }),

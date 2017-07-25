@@ -70,7 +70,7 @@ describe('FormlyFieldImage Component', () => {
             //   component: FormlyFieldText,
             //   wrappers: ['label'],
             // },
-            { name: 'imageSelect', component: FormlyFieldImageComponent, defaultOptions: { to: { imageList: [] }}, extends: 'input'}
+            { name: 'imageSelect', component: FormlyFieldImageComponent}
           ],
           // wrappers: [{
           //   name: 'label',
@@ -94,7 +94,7 @@ describe('FormlyFieldImage Component', () => {
     expect(fixture.nativeElement.innerText).toEqual('Nested property keys');
   });
 
-  it('should render field type', () => {
+  fit('should render field type', () => {
     testComponentInputs = {
       // field: {
       //   key: 'title',
