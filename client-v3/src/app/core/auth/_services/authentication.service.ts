@@ -31,7 +31,7 @@ export class AuthenticationService {
         if (doesPasswordMatch) {
           localStorage.setItem('currentUser', username);
         }
-      } else { doesPasswordMatch = false; }
+      }
     } catch (error) {
       console.log(error);
     }

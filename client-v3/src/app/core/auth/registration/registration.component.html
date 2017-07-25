@@ -4,7 +4,8 @@
     <md-grid-tile>
       <md-input-container>
         <label>Username</label>
-        <input name="username" type="text" mdInput [ngModel]="user.username" (blur)="userExists(registration.value.username)" required>
+        <input name="username" type="text" mdInput [ngModel]="user.username" (blur)="doesUserExist(registration.value.username)"
+          required>
       </md-input-container>
       <md-input-container>
         <label>Email</label>
