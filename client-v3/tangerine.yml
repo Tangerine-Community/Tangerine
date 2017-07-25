@@ -3,6 +3,5 @@ admin:
   password: "password"
 domain: "127.0.0.1"
 protocol: "http://"
-port: 80 
-dbServerEndpoint: '/api'
-appDatabase: 'db'
+databases:
+  - 'form-responses'
