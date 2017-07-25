@@ -9,6 +9,8 @@ import {FormlyFieldImageComponent} from "./formly-field-image.component";
 // import { FormlyValueChangeEvent } from '../services/formly.event.emitter';
 // import { evalStringExpression, evalExpressionValueSetter } from './../utils';
 
+// Much of this code comes directly from the formly.field.spec.ts test.
+
 export function evalStringExpression(expression: string, argNames: string[]) {
   try {
     return Function.bind.apply(Function, [void 0].concat(argNames.concat(`return ${expression};`)))();
@@ -25,7 +27,6 @@ export function evalExpressionValueSetter(expression: string, argNames: string[]
     console.error(error);
   }
 }
-
 
 function createGenericTestComponent<T>(html: string, type: {new (...args: any[]): T}): ComponentFixture<T> {
   TestBed.overrideComponent(type, {set: {template: html}});
@@ -83,7 +84,7 @@ describe('FormlyFieldImage Component', () => {
     });
   });
 
-  fit('should render template option', () => {
+  it('should render template option', () => {
     testComponentInputs = {
       field: { template: '<div>Nested property keys</div>'},
     };
@@ -93,7 +94,7 @@ describe('FormlyFieldImage Component', () => {
     expect(fixture.nativeElement.innerText).toEqual('Nested property keys');
   });
 
-  fit('should render field type', () => {
+  it('should render field type', () => {
     testComponentInputs = {
       // field: {
       //   key: 'title',
@@ -178,6 +179,7 @@ export class Manipulator {
   }
 }
 
+// This is useful when debugging issues with this custom field. Instead of importing the field, use this one.
 // @Component({
 //   selector: 'formly-field-image',
 //   template: `<div *ngIf='imageList'>hii
