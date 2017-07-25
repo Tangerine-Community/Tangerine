@@ -9,7 +9,7 @@ import {
   MdSidenavModule
 } from '@angular/material';
 import { StoreModule } from '@ngrx/store';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormlyModule, FormlyBootstrapModule } from 'ng-formly';
@@ -32,11 +32,13 @@ import { TangerineFormLinksComponent } from './components/tangerine-form-links/t
 import { TangerineFormSessionsComponent } from './components/tangerine-form-sessions/tangerine-form-sessions.component';
 import { TangerineFormSessionItemComponent } from './components/tangerine-form-session-item/tangerine-form-session-item.component';
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
+import { TangerineFormTimedComponent } from './components/tangerine-form-timed/tangerine-form-timed.component';
 
 @NgModule({
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MdButtonModule,
     MdCheckboxModule,
     MdCardModule,
@@ -69,12 +71,14 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
     FormlyFieldImageComponent,
     TangerineFormLinksComponent,
     TangerineFormSessionsComponent,
-    TangerineFormSessionItemComponent
+    TangerineFormSessionItemComponent,
+    TangerineFormTimedComponent,
  //   TangerineFormCarouselComponent
   ],
   exports: [
     TangerineFormCardComponent,
     TangerineFormLinksComponent,
+    TangerineFormTimedComponent,
     TangerineFormComponent
   ],
   providers: [TangerineFormSessionsService]
