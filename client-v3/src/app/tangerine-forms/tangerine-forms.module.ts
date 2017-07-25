@@ -31,6 +31,7 @@ import { TangerineFormLinksComponent } from './components/tangerine-form-links/t
 import { TangerineFormSessionsComponent } from './components/tangerine-form-sessions/tangerine-form-sessions.component';
 import { TangerineFormSessionItemComponent } from './components/tangerine-form-session-item/tangerine-form-session-item.component';
 import { TangerineFormTimedComponent } from './components/tangerine-form-timed/tangerine-form-timed.component';
+import {TangerineFormDefinitionService} from "./services/tangerine-form-definition-service";
 
 
 @NgModule({
@@ -75,6 +76,6 @@ import { TangerineFormTimedComponent } from './components/tangerine-form-timed/t
     TangerineFormTimedComponent,
     TangerineFormComponent
   ],
-  providers: [TangerineFormSessionsService]
+  providers: [TangerineFormSessionsService, TangerineFormDefinitionService]
 })
 export class TangerineFormsModule { }
