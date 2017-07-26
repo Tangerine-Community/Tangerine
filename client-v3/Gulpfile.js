@@ -51,6 +51,11 @@ var currentNodes = [];
  *
  * Sample: gulp i18n-init --languages "es, en, de, fr"
  */
+/**
+ * @TODO Create documentation for adding languages.
+ * Both the automated and manual creation of files.
+ * @TODO when task is run, wire up the laguages to the locales.json file to keep them in sync. Make The JSON to have only the language ids for the ones passed through the cli
+ */
 gulp.task("i18n-init", function (done) {
     console.log("Creating translation files...");
 
@@ -143,15 +148,15 @@ gulp.task("i18n-update:merge", ["i18n-update:init"], function () {
         .pipe(gulp.dest(PATH_I18N_LANGUAGES));
 });
 
-gulp.task('build', () => {
-
-});
 /**
  * Task pipe to init & merge i18n translation files
  */
 gulp.task("i18n-update", ["i18n-update:merge", "i18n-update:init"]);
 
 gulp.task('pagesBuild', (cb) => {
+    /**
+     * @TODO Use promisifyed version of exec. angular pages build need only run once
+     */
     return locales.map((locale) => {
         const lang = locale.language;
         const command = `./node_modules/.bin/angular-pages build && ng build --output-path=dist/${lang} --aot -prod  --bh /${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
@@ -181,18 +186,12 @@ gulp.task('generate-service-worker', function (callback) {
         var rootDir = 'dist/' + locale.language;
         let swConfig = {
             staticFileGlobs: [
-                rootDir + '/**/*.{js,html,css,png,jpg,gif,svg,eot,ttf,woff}',
-                // rootDir + '/**/*.html',
-                // rootDir + '/js/**/*.js',
-                // rootDir + '/css/**/*.css',
-                // rootDir + '/images/**/*.*',
-                // rootDir + '/icons/**/*.*',
-                // rootDir + '/logos/**/*.*',
+                rootDir + '/**/*.{js,html,css,png,jpg,gif,svg,eot,ttf,woff}'
             ],
 
             stripPrefix: 'dist',
             verbose: true,
-            maximumFileSizeToCacheInBytes: 2097152000,
+            maximumFileSizeToCacheInBytes: 2097152000,//This is arbitarily set to a very large file size because the default was too low 
             navigateFallback: '/index.html'
         };
         swPrecache.write(`${rootDir}/service-worker.js`, swConfig);
@@ -201,9 +200,12 @@ gulp.task('generate-service-worker', function (callback) {
 });
 
 gulp.task('create-redirect-page', () => {
+    /**
+     * @TODO add preventDefault to the click event
+     */
     let languages = '';
     locales.map((locale) => {
-        languages += `<li><a href="/${locale.language}" onClick="setLocale('${locale.language}')">${locale.abbreviation}</a></li>`
+        languages += `<li><a href="/${locale.language}" onclick="setLocale('${locale.language}')">${locale.abbreviation}</a></li>`
     })
     let contents = `
 <!doctype html>
