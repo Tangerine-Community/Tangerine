@@ -28,6 +28,9 @@ export class UserService {
   async doesUserExist(username) {
     let userExists: boolean;
     PouchDB.plugin(PouchDBFind);
+    /**
+     * @TODO We may want to run this on the first time when the app runs.
+     */
     this.DB.createIndex({
       index: { fields: ['username'] }
     }).then((data) => { console.log('Indexing Succesful'); })

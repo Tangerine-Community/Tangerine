@@ -25,9 +25,13 @@ export class LoginComponent implements OnInit {
 
     if (this.authenticationService.isLoggedIn() || isAnonymousMode === 'anonymous') {
       this.router.navigate([this.returnUrl]);
-    } else {
-      this.router.navigate(['/create-nodes'], { queryParams: { returnUrl: this.returnUrl } });
     }
+    /**
+     * @TODO is this really necessary? May need to clean up
+     */
+    // else {
+    //   this.router.navigate(['/create-nodes'], { queryParams: { returnUrl: this.returnUrl } });
+    // }
 
   }
   login(): void {

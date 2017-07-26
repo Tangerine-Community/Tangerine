@@ -16,6 +16,9 @@ export class AuthenticationService {
     const userExists = await this.userService.doesUserExist(username);
     if (userExists) {
       console.log('user exists');
+      /**
+       *@TODO if Security policy require password is false, then no need to check password. Just login the user
+       */
       isCredentialsValid = await this.confirmPassword(username, password);
     }
 
@@ -29,6 +32,11 @@ export class AuthenticationService {
       if (result.docs.length > 0) {
         doesPasswordMatch = await bcrypt.compare(password, result.docs[0].password);
         if (doesPasswordMatch) {
+          /**
+           * @TODO we will probably need to save the current timestamp when the user logged in for security policy use
+           * Security policy Example: 1) Expire user after 5 minutes or 2) never
+           * @TODO Refactor for Redux send Action to Current User store. Dont do this until our ngrx stores are backed up by local storage
+           */
           localStorage.setItem('currentUser', username);
         }
       }
