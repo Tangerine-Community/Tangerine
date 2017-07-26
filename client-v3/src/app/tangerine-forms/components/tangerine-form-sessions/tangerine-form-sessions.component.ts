@@ -3,6 +3,8 @@ import { TangerineFormSessionsService } from '../../services/tangerine-form-sess
 import { TangerineFormSession } from '../../models/tangerine-form-session';
 import * as Csv from 'csv-file-creator';
 declare const Buffer;
+import { WindowRef } from '../../../core/window-ref.service';
+
 @Component({
   selector: 'tangerine-form-sessions',
   templateUrl: './tangerine-form-sessions.component.html',
@@ -14,16 +16,19 @@ export class TangerineFormSessionsComponent implements OnInit {
   @Input() link: string;
   sessions: Array<TangerineFormSession> = [];
   service: TangerineFormSessionsService;
+  window: any;
 
-  constructor(service: TangerineFormSessionsService) {
+  constructor(windowRef: WindowRef, service: TangerineFormSessionsService) {
     this.service = service;
+    this.window = windowRef.nativeWindow;
   }
 
   async ngOnInit() {
     this.sessions = await this.service.getAll(this.formId);
   }
 
-  downloadCsv() {
+  async downloadCsv() {
+    const archive = new this.window.DatArchive('' + this.window.location)
     // TODO: Flatten all sessions.
     const flatSessions = [];
     this.sessions.forEach((session) => {
@@ -45,6 +50,8 @@ export class TangerineFormSessionsComponent implements OnInit {
       rows.push(row);
     });
     Csv(this.formId + '.csv', rows);
+    await archive.writeFile(this.formId + '.csv', JSON.stringify(rows), 'utf8')
+    await archive.commit()
   }
 
   // Flatten a deep object.

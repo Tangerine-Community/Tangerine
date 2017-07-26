@@ -14,6 +14,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormlyModule, FormlyBootstrapModule } from 'ng-formly';
 import { TangerineFormSessionsService } from './services/tangerine-form-sessions.service';
+import { WindowRef } from '../core/window-ref.service';
 
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
@@ -71,6 +72,6 @@ import { TangerineFormSessionItemComponent } from './components/tangerine-form-s
     TangerineFormLinksComponent,
     TangerineFormComponent
   ],
-  providers: [TangerineFormSessionsService]
+  providers: [TangerineFormSessionsService, WindowRef]
 })
 export class TangerineFormsModule { }
