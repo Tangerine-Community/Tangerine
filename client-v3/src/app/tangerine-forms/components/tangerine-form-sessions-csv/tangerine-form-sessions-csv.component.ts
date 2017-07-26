@@ -15,7 +15,7 @@ export class TangerineFormSessionsCsvComponent implements OnInit {
   @Input() link: string;
   sessions: Array<TangerineFormSession> = [];
   service: TangerineFormSessionsService;
-  status = 'preparing csv';
+  status = 'click to prepare csv';
 
   window: any;
   constructor(service: TangerineFormSessionsService, windowRef: WindowRef) {
@@ -24,8 +24,21 @@ export class TangerineFormSessionsCsvComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.sessions = await this.service.getAll(this.formId);
-    this.status = 'download csv';
+  }
+
+  async do() {
+    if (this.status === 'click to prepare csv') {
+      this.status = 'getting all form sessions';
+      setTimeout(async () => {
+        // @TODO: Instead of getting all, get one at a time and append to the blob
+        // so we don't end up creating a big javascript array in memory.
+        this.sessions = await this.service.getAll(this.formId);
+        this.status = 'download csv';
+      }, 2000);
+    }
+    else {
+      this.downloadCsv();
+    }
   }
 
   downloadCsv() {
@@ -79,13 +92,13 @@ export class TangerineFormSessionsCsvComponent implements OnInit {
   }
 
   generateCSV(filename, rows) {
-    let csvBuilder = new BlobBuilder();
+    const csvRows = [];
+    let blob = new Blob([], {type: 'application/csv;charset=utf-8;' });
     for (const row of rows) {
-      csvBuilder.append(rows.join(',') + '\n');
+      blob = new Blob([blob, rows.join(',') + '\n'], { type: 'application/csv;charset=utf-8;' });
     }
     console.log('creating element');
     const element = this.window.document.createElement('a');
-    const blob = csvBuilder.getBlob('application/csv;charset=utf-8;');
     element.setAttribute('href', URL.createObjectURL(blob));
     element.setAttribute('download', filename);
     console.log('appending to DOM');
