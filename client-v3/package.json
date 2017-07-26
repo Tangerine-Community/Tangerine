@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "cp ./tangerine.yml ./server/config.yml && cd server && node app.js",
-    "edit": "concurrently \"./node_modules/.bin/angular-pages build --watch\" \"ng serve --proxy-config development-api-proxy.conf.json\" \"npm run lite-server\"",
+    "edit": "concurrently \"./node_modules/.bin/angular-pages build --watch\" \"ng serve --proxy-config development-api-proxy.conf.json\" \"npm start\"",
     "build": "./node_modules/.bin/angular-pages build && ng build --aot --prod && sw-precache --verbose --config=sw-precache-config.js",
     "test": "./node_modules/.bin/angular-pages build && ng test",
     "lint": "./node_modules/.bin/angular-pages build && ng lint",

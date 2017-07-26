@@ -7,9 +7,8 @@ var app = express();
 var fauxton = express();
 var config = read.sync('./config.yml');
 
-const DB_URL = `${config.protocol}${config.domain}:${config.port}${config.dbServerEndpoint}`
-const DB_ADMIN_URL = `${config.protocol}${config.admin.username}:${config.admin.password}@${config.domain}:${config.port}${config.dbServerEndpoint}`
-
+const DB_URL = `${config.protocol}${config.domain}/api/db`
+const DB_ADMIN_URL = `${config.protocol}${config.admin.username}:${config.admin.password}@${config.domain}/api/db`
 
 // Set up the app server.
 // Claim a route for the database at `/api/db`. We may have other APIs under `/api/*` in the future.
