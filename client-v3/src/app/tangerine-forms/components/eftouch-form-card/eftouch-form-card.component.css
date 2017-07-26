@@ -1,0 +1,7 @@
+md-card {
+  width: 400px;
+  margin: 10px;
+}
+.avatar-image {
+  background-size: cover;
+}

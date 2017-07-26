@@ -1,0 +1,7 @@
+admin:
+  username: "admin"
+  password: "password"
+domain: "127.0.0.1"
+protocol: "http://"
+databases:
+  - 'form-responses'
