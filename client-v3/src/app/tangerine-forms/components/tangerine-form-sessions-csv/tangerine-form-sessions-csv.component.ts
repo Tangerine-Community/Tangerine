@@ -79,15 +79,13 @@ export class TangerineFormSessionsCsvComponent implements OnInit {
   }
 
   generateCSV(filename, rows) {
-    let csvString = '';
+    let csvBuilder = new BlobBuilder();
     for (const row of rows) {
-      csvString += rows.join(',') + '\n';
+      csvBuilder.append(rows.join(',') + '\n');
     }
     console.log('creating element');
     const element = this.window.document.createElement('a');
-    const blob = new Blob([ csvString ], {
-              type : 'application/csv;charset=utf-8;'
-          });
+    const blob = csvBuilder.getBlob('application/csv;charset=utf-8;');
     element.setAttribute('href', URL.createObjectURL(blob));
     element.setAttribute('download', filename);
     console.log('appending to DOM');
