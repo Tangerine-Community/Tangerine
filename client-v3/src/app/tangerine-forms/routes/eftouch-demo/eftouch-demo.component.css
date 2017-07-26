@@ -1,0 +1,31 @@
+:host /deep/ .md-card-width {
+  width: 600px;
+}
+
+#slide2 {
+  /*visibility: hidden;*/
+  display: none;
+}
+
+.cardRight {
+  position: absolute;
+  left: 580px;
+}
+
+a {
+  color: #337ab7;
+  text-decoration: none;
+}
+
+:host /deep/ * {
+  box-sizing: border-box;
+}
+
+div {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #333;
+  background-color: #fff;
+}
+

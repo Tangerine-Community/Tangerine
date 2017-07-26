@@ -1,7 +1,10 @@
 md-card {
-    width: 400px;
-    margin: 10px;
+  margin: 10px;
 }
 .avatar-image {
   background-size: cover;
+}
+.md-card-width {
+  min-width: 400px;
+  max-width: 600px;
 }

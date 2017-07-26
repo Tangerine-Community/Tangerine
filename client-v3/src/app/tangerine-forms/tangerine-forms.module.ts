@@ -27,11 +27,12 @@ import { TangerineFormSessionComponent } from './components/tangerine-form-sessi
 import { TangerineFormResumeDemoComponent } from './routes/tangerine-form-resume-demo/tangerine-form-resume-demo.component';
 import {EftouchDemoComponent} from './routes/eftouch-demo/eftouch-demo.component';
 import { EftouchFormCardComponent } from './components/eftouch-form-card/eftouch-form-card.component';
+import { FormlyFieldImageComponent } from './components/formly-field-image/formly-field-image.component';
 import { TangerineFormLinksComponent } from './components/tangerine-form-links/tangerine-form-links.component';
 import { TangerineFormSessionsComponent } from './components/tangerine-form-sessions/tangerine-form-sessions.component';
 import { TangerineFormSessionItemComponent } from './components/tangerine-form-session-item/tangerine-form-session-item.component';
+import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import { TangerineFormTimedComponent } from './components/tangerine-form-timed/tangerine-form-timed.component';
-
 
 @NgModule({
   imports: [
@@ -45,12 +46,16 @@ import { TangerineFormTimedComponent } from './components/tangerine-form-timed/t
     MdToolbarModule,
     MdSidenavModule,
     TangerineFormsRoutingModule,
-    FormlyModule.forRoot(),
+    FormlyModule.forRoot({
+      types: [
+        { name: 'imageSelect', component: FormlyFieldImageComponent}
+    ]}),
     FormlyBootstrapModule,
     StoreModule.provideStore({ tangerineFormSession: tangerineFormSessionReducer }),
     StoreDevtoolsModule.instrumentOnlyWithExtension({
       maxAge: 100
-    })
+    }),
+    NgbModule.forRoot()
   ],
   declarations: [
     TangerineFormComponent,
@@ -63,6 +68,7 @@ import { TangerineFormTimedComponent } from './components/tangerine-form-timed/t
  TangerineFormResumeDemoComponent,
     EftouchDemoComponent,
     EftouchFormCardComponent,
+    FormlyFieldImageComponent,
     TangerineFormLinksComponent,
     TangerineFormSessionsComponent,
     TangerineFormSessionItemComponent,
