@@ -1,32 +1,32 @@
 <md-grid-list cols="4" *ngIf="isViewOnFirstPage" rowHeight="5rem">
   <md-grid-tile colspan="4" rowspan="1">
     <md-input-container>
-      <input mdInput placeholder="Node Name" [(ngModel)]="form.nodeName">
+      <input mdInput i18n-placeholder placeholder="Node Names" [(ngModel)]="form.nodeName">
     </md-input-container>
   </md-grid-tile>
   <md-grid-tile colspan="4" rowspan="1">
-    <md-select placeholder="Parent Node" [(ngModel)]="form.selectedParentNode" name="food" required>
+    <md-select i18n-placeholder placeholder="Parent Node" [(ngModel)]="form.selectedParentNode" name="food" required>
       <md-option *ngFor="let parent of parentNodes" [value]="parent.uuid">
         {{parent.label}}
       </md-option>
     </md-select>
   </md-grid-tile>
   <md-grid-tile colspan="4" rowspan="1">
-    <button md-raised-button color="primary" (click)=switchPages() [disabled]="!form.nodeName">Next Page</button>
+    <button md-raised-button color="primary" (click)=switchPages() [disabled]="!form.nodeName" i18n>Next Page</button>
   </md-grid-tile>
 </md-grid-list>
 
 <md-grid-list cols="4" *ngIf="!isViewOnFirstPage" rowHeight="5rem">
   <md-grid-tile rowspan="1" colspan="2">
     <md-input-container>
-      <input mdInput placeholder="Metadata Label" [(ngModel)]="form.metadata.metadata">
+      <input mdInput i18n-placeholder placeholder="Metadata Label" [(ngModel)]="form.metadata.metadata">
     </md-input-container>
-    <md-select placeholder="Metadata Type" [(ngModel)]="form.metadata.metadataType" name="food" required>
+    <md-select i18n-placeholder placeholder="Metadata Type" [(ngModel)]="form.metadata.metadataType" name="food" required>
       <md-option *ngFor="let type of controlTypes" [value]="type">
         {{type}}
       </md-option>
     </md-select>
-    <md-slide-toggle [(ngModel)]="form.metadata.metadataRequired">Metadata Required in Form?</md-slide-toggle>
+    <md-slide-toggle [(ngModel)]="form.metadata.metadataRequired" i18n>Metadata Required in Form?</md-slide-toggle>
   </md-grid-tile>
   <md-grid-tile rowspan="2" colspan="2">
     <table>

@@ -245,7 +245,7 @@ RUN ln -s /tangerine-server/client/src /tangerine-server/client/www
 
 # Compile client-v3. 
 ADD ./client-v3 /tangerine-server/client-v3
-RUN cd /tangerine-server/client-v3 && npm run build -- --base-href /client-v3/ 
+RUN cd /tangerine-server/client-v3 && npm run build-i18n -- --base-href /client-v3/ 
 
 
 

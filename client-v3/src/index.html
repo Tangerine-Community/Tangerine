@@ -1,28 +1,29 @@
 <!doctype html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <title>TangerineForm</title>
   <base href="/">
-  <link rel="manifest" href="/manifest.json">
+  <link rel="manifest" href="manifest.json">
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+      navigator.serviceWorker.register('service-worker.js').then(function (registration) {
         // Registration was successful
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    if (registration.installing) {
-      console.log('registration.installing is available on service worker registration.')
-    }
-    
+        if (registration.installing) {
+          console.log('registration.installing is available on service worker registration.')
+        }
+
         // updatefound is fired if service-worker.js changes.
-        registration.onupdatefound = function() {
+        registration.onupdatefound = function () {
           console.log('This app is installing.')
           alert('This app is installing.')
           // The updatefound event implies that registration.installing is set; see
           // https://slightlyoff.github.io/ServiceWorker/spec/service_worker/index.html#service-worker-container-updatefound-event
           var installingWorker = registration.installing;
 
-          installingWorker.onstatechange = function() {
+          installingWorker.onstatechange = function () {
             switch (installingWorker.state) {
               case 'installed':
                 if (navigator.serviceWorker.controller) {
@@ -51,15 +52,15 @@
                   console.log('This App has been installed and is now ready for offline use.');
                   alert('This App has been installed and is now ready for offline use.');
                 }
-              break;
+                break;
 
               case 'redundant':
                 console.error('The installing service worker became redundant.');
-              break;
+                break;
             }
           };
         };
-      }).catch(function(err) {
+      }).catch(function (err) {
         // registration failed :(
         console.log('ServiceWorker registration failed: ', err);
       });
@@ -67,14 +68,16 @@
   </script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="apple-touch-icon" sizes="60x60" href="/assets/logos/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/logos/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/assets/logos/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="/assets/logos/tangerine--512-512.png">
-  <link rel="mask-icon" href="/assets/logos/safari-pinned-tab.svg" color="#5bbad5">
+  <link rel="apple-touch-icon" sizes="60x60" href="assets/logos/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/logos/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/logos/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/logos/tangerine--512-512.png">
+  <link rel="mask-icon" href="assets/logos/safari-pinned-tab.svg" color="#5bbad5">
   <meta name="theme-color" content="#ffffff">
 </head>
+
 <body>
   <app-root>Loading...</app-root>
 </body>
+
 </html>
