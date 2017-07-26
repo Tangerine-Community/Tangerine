@@ -1,0 +1,21 @@
+ This form demonstrates resuming a previous session; the group name is already filled out.
+
+<tangerine-form formId="tangerine-group-demo" [session]="session" #foo>
+
+  <tangerine-form-card (submit)="onSubmit($event)" #group>
+    id: 'group'
+    title: 'Create Group'
+    subtitle: 'Enter the new group name.'
+    showSubmitButton: true
+    fields:
+    - type: 'input'
+      key: 'name'
+      templateOptions:
+        required: true
+        label: 'Group Name'
+        type: 'text'
+
+  </tangerine-form-card>
+</tangerine-form>
+
+You submitted: {{result.variables | json }}
