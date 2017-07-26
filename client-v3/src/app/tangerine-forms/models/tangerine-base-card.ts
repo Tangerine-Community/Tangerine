@@ -37,6 +37,7 @@ export abstract class TangerineBaseCardComponent implements OnInit {
   form: FormGroup;
   private internalEl: any;
   showHeader = false;
+  showSubmitButton = false;
 
   constructor(fb: FormBuilder, el: ElementRef) {
     // Capture the internal element for getting any inline configuration set.
