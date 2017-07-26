@@ -1,5 +1,9 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# Dat
+.dat
+dat
+
 # Angular Pages
 src/app/pages
 
