@@ -94,7 +94,7 @@ describe('FormlyFieldImage Component', () => {
     expect(fixture.nativeElement.innerText).toEqual('Nested property keys');
   });
 
-  fit('should render field type', () => {
+  it('should render field type', () => {
     testComponentInputs = {
       // field: {
       //   key: 'title',
