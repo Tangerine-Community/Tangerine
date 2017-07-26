@@ -31,6 +31,7 @@ import { TangerineFormLinksComponent } from './components/tangerine-form-links/t
 import { TangerineFormSessionsComponent } from './components/tangerine-form-sessions/tangerine-form-sessions.component';
 import { TangerineFormSessionItemComponent } from './components/tangerine-form-session-item/tangerine-form-session-item.component';
 import { TangerineFormTimedComponent } from './components/tangerine-form-timed/tangerine-form-timed.component';
+import { TangerineFormSessionsCsvComponent } from './components/tangerine-form-sessions-csv/tangerine-form-sessions-csv.component';
 
 
 @NgModule({
@@ -67,6 +68,7 @@ import { TangerineFormTimedComponent } from './components/tangerine-form-timed/t
     TangerineFormSessionsComponent,
     TangerineFormSessionItemComponent,
     TangerineFormTimedComponent,
+    TangerineFormSessionsCsvComponent,
  //   TangerineFormCarouselComponent
   ],
   exports: [
