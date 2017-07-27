@@ -4,8 +4,15 @@ import {Injectable} from "@angular/core";
 export class TangerineFormDefinitionService {
   constructor() {
   }
-  card1 =  {
-    "id": "card1",
+
+  getForm(id) {
+    if (id === 'efcard1') {
+      return this.efcard1
+    }
+     return null;
+   }
+  efcard1 =  {
+    "id": "efcard1",
     "fields":
       [
         {

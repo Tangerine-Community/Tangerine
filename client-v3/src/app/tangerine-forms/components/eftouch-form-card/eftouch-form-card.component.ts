@@ -2,6 +2,7 @@ import {Component, ElementRef, forwardRef, OnInit} from "@angular/core";
 import {FormBuilder} from "@angular/forms";
 import {TangerineBaseCardComponent} from "../../models/tangerine-base-card";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {TangerineFormDefinitionService} from "../../services/tangerine-form-definition-service";
 
 @Component({
   selector: 'eftouch-form-card',
@@ -28,8 +29,8 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 
 export class EftouchFormCardComponent extends TangerineBaseCardComponent implements OnInit {
 
-  constructor(fb: FormBuilder, el: ElementRef) {
-    super(fb, el);
+  constructor(fb: FormBuilder, el: ElementRef,service: TangerineFormDefinitionService) {
+    super(fb, el, service);
   }
 
 }

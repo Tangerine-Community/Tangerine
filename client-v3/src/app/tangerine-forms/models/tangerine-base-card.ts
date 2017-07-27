@@ -14,7 +14,7 @@ export abstract class TangerineBaseCardComponent implements OnInit {
   // markup can be yaml or json. Currently defaults to yaml. Expect default will be json soon.
   @Input() markup: string = 'yaml'
   // If markup is json, retrieve it from the service using this field identifier
-  @Input() field: string
+  @Input() formid: string
 
   _tangerineFormCard: TangerineFormCard = new TangerineFormCard();
   @Input() tangerineFormCard: TangerineFormCard = new TangerineFormCard();
@@ -44,14 +44,12 @@ export abstract class TangerineBaseCardComponent implements OnInit {
   private internalEl: any;
   showHeader = false;
   showSubmitButton = false;
-  service = TangerineFormDefinitionService;
 
-  constructor(fb: FormBuilder, el: ElementRef, service: TangerineFormDefinitionService) {
+  constructor(fb: FormBuilder, el: ElementRef, private service: TangerineFormDefinitionService) {
     // Capture the internal element for getting any inline configuration set.
     this.internalEl = el;
     // Instantiate a Reactive Angular Form.
     this.form = fb.group({});
-    this.service = service
   }
 
   ngOnInit() {
@@ -69,7 +67,8 @@ export abstract class TangerineBaseCardComponent implements OnInit {
 
       } else {
         // it is json
-        Object.assign(this.tangerineFormCard, inlineConfig);
+       let json = this.service.getForm(this.formid)
+        Object.assign(this.tangerineFormCard, json);
       }
     }
 
