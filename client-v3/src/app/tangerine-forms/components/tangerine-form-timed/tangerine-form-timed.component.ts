@@ -18,6 +18,7 @@ export class TangerineFormTimedComponent implements OnInit {
   private timeSpent = 0;
   private timeRemaining = 0;
   // Allows our event listeners on input clicks to know if we are marking the last item.
+  // @TODO Probably a better name like "lastItemCovered".
   private lastSelectedMode = false;
   // A message to display to the user about the state of the form.
   statusMessage = 'Click "start timer" to begin.';
@@ -108,6 +109,9 @@ export class TangerineFormTimedComponent implements OnInit {
 
   clickedStop() {
     clearInterval(this.timer);
+    // @TODO Last item covered should be a feature you opt into. Not relevant to all things timed.
+    // @TODO Disabling prevent last item from being selected.
+    // this.inputElements.forEach(element => element.disabled = true);
     this.statusMessage = 'Click the last item covered.';
     this.lastSelectedMode = true;
   }
