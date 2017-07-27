@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MdButtonModule, MdCheckboxModule, MdInputModule, MdToolbarModule, MdSidenavModule } from '@angular/material';
+import { MdButtonModule, MdButtonToggleModule, MdCheckboxModule, MdInputModule, MdToolbarModule, MdSidenavModule } from '@angular/material';
 import 'hammerjs';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -27,7 +27,7 @@ export { AppComponent }
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
-    MdButtonModule, MdCheckboxModule, MdInputModule, MdToolbarModule, MdSidenavModule,
+    MdButtonModule, MdCheckboxModule, MdInputModule, MdToolbarModule, MdSidenavModule, MdButtonToggleModule,
     TangerineFormsModule,
     NodeManagerModule,
     PagesModule,
