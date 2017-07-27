@@ -1,10 +1,10 @@
-import {Component, Input, OnInit, ViewChild} from "@angular/core";
-import {GroupDataService} from "./group-data-service.service";
-import {TangerineFormSession} from "../../tangerine-forms/models/tangerine-form-session";
-import {Store} from "@ngrx/store";
-import {TangerineFormSessionsService} from "../../tangerine-forms/services/tangerine-form-sessions.service";
-import {TangerineFormCardComponent} from "../../tangerine-forms/components/tangerine-form-card/tangerine-form-card.component";
-import {TangerineGroupSessionsEffects} from "../../tangerine-forms/effects/tangerine-group-sessions-effects";
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { GroupDataService } from './group-data-service.service';
+import { TangerineFormSession } from '../../tangerine-forms/models/tangerine-form-session';
+import { Store } from '@ngrx/store';
+import { TangerineFormSessionsService } from '../../tangerine-forms/services/tangerine-form-sessions.service';
+import { TangerineFormCardComponent } from '../../tangerine-forms/components/tangerine-form-card/tangerine-form-card.component';
+import { TangerineGroupSessionsEffects } from '../../tangerine-forms/effects/tangerine-group-sessions-effects';
 
 @Component({
   selector: 'group-manager',
@@ -62,7 +62,7 @@ export class GroupManagerComponent implements OnInit {
 
         // No Session or the session doesn't match this form? Call home for one and this will come back around.
         if (!tangerineFormSession || tangerineFormSession.formId !== this.formId) {
-          this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
+          this.store.dispatch({ type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId } });
         }
         // We now have a session for this Component, do things only once.
         // cek: removed else if
@@ -72,7 +72,7 @@ export class GroupManagerComponent implements OnInit {
           this.child.tangerineFormCard.model = Object.assign({}, this.session.model);
           // Subscribe to all of the cards change events.
           // this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
-          if (this.child.tangerineFormCard.showSubmitButton == false) {
+          if (this.child.tangerineFormCard.showSubmitButton === false) {
             this.child.change.subscribe((tangerineFormCard) => {
               // Protect from an infinite loop because of how Formly works.
               const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
@@ -83,8 +83,8 @@ export class GroupManagerComponent implements OnInit {
                 });
               };
             });
-          // });
-        } else {
+            // });
+          } else {
             this.child.submit.subscribe((tangerineFormCard) => {
               // Protect from an infinite loop because of how Formly works.
               const potentialModel = Object.assign({}, this.session.model, tangerineFormCard.model);
@@ -96,7 +96,7 @@ export class GroupManagerComponent implements OnInit {
               };
             });
           }
-          }
+        }
         // We have an update to the session.
         else {
           this.session = tangerineFormSession;

@@ -18,9 +18,9 @@ export class DataService {
   async createNode(node) {
     try {
       const response = await this.DB.post(node);
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
+
   }
 }

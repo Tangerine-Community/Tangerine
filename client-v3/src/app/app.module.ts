@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -13,6 +13,7 @@ import { WindowRef } from './core/window-ref.service';
 
 import { NodeManagerModule } from './node-manager/node-manager.module';
 import { TangerineFormsModule } from './tangerine-forms/tangerine-forms.module';
+import { AuthModule } from './core/auth/auth.module';
 import { PagesModule } from './pages/pages.module';
 
 
@@ -20,7 +21,7 @@ export { AppComponent }
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -29,6 +30,7 @@ export { AppComponent }
     BrowserAnimationsModule,
     MdButtonModule, MdCheckboxModule, MdInputModule, MdToolbarModule, MdSidenavModule,
     TangerineFormsModule,
+    AuthModule,
     NodeManagerModule,
     PagesModule,
     AppRoutingModule

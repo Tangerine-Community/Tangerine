@@ -1,12 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { Validators, FormGroup } from '@angular/forms';
 import { FormlyFieldConfig } from 'ng-formly';
 import { DataService } from './../../core/data-service.service';
 // import {TangerinePageConfig} from "../../tangerine-forms/tangerine-page/tangerine-page-config";
-import {NodeValue} from "../node-value";
-import {NodeResult} from "../node-result";
-
+import { NodeValue } from '../node-value';
+import { NodeResult } from '../node-result';
 
 @Component({
   selector: 'app-locations-creator',
@@ -17,7 +16,7 @@ import {NodeResult} from "../node-result";
 export class LocationsCreatorComponent implements OnInit {
 
   // IO.
-  @Input() model:NodeValue;
+  @Input() model: NodeValue;
   @Input() result: NodeResult;
 
   nodes = [];
@@ -45,13 +44,13 @@ export class LocationsCreatorComponent implements OnInit {
   onSubmit(tangerineFormCard) {
     console.log(tangerineFormCard.model);
     Object.assign(this.result.variables, tangerineFormCard.model);
-    this.save(this.result.variables)
+    this.save(this.result.variables);
   }
 
   save(datum) {
-    console.log("Saving to pouch - datum: " + JSON.stringify(datum))
+    console.log('Saving to pouch - datum: ' + JSON.stringify(datum));
     this.dataService.createNode(datum);
-    this.nodes = []
+    this.nodes = [];
     this.getNodes();
   }
 }
