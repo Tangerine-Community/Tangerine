@@ -1,0 +1,254 @@
+<tangerine-form id="MultipageFormTest">
+ <h3>Pupil Questionnaire - Part 1</h3>
+   <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 's1'
+        templateOptions:
+          required: true
+          label: "How old are you?"
+          description: ""
+    </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's2'
+        templateOptions:
+          required: true
+          label: "Did you go to nursery before Grade 1?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's3'
+        templateOptions:
+          required: true
+          label: "Did you eat before coming to school today? "
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's4'
+        templateOptions:
+          required: true
+          label: "Do you attend any other school besides this school?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's5'
+        hideExpression: 'model.s4 != "1"'
+        templateOptions:
+          required: true
+          label: "Please tell me the type of school you attend. "
+          description: ""
+          options:
+            - key: 1
+              value: Public/government school
+            - key: 2
+              value: Religious school
+            - key: 3
+              value: Other
+            - key: 4
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's6'
+        templateOptions:
+          required: true
+          label: "Were you absent from THIS school any day last week? "
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's7'
+        templateOptions:
+          required: true
+          label: "Do you have a LANGUAGE reading book at school?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's8'
+        templateOptions:
+          required: true
+          label: "Do you have time to read books in your classroom or in your school library every day?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's9'
+        templateOptions:
+          required: true
+          label: "Do you bring home reading books from your classroom or from the school library?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's10'
+        templateOptions:
+          required: true
+          label: "How often does someone read out loud to you at home: Never, sometimes, or every day?"
+          description: ""
+          options:
+            - key: 0
+              value: Never
+            - key: 1
+              value: Sometimes
+            - key: 2
+              value: Everyday
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's11'
+        templateOptions:
+          required: true
+          label: "Does someone at home help you with your homework when you need it? "
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's12'
+        hideExpression: 'model.s11 != "1"'
+        templateOptions:
+          required: true
+          label: "Who helps you with your homework?"
+          description: ""
+          options:
+            - key: 1
+              value: Brother or sister
+            - key: 2
+              value: Mother or father
+            - key: 3
+              value: Grandparent
+            - key: 4
+              value: Other
+            - key: 5
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's13'
+        templateOptions:
+          required: true
+          label: "How often do you read out loud to someone at home? Never, sometimes, or every day?"
+          description: ""
+          options:
+            - key: 0
+              value: Never
+            - key: 1
+              value: Sometimes
+            - key: 2
+              value: Everyday
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's14'
+        templateOptions:
+          required: true
+          label: "Now I’m going to ask you a few questions about your home. What language do you speak most frequently at home?"
+          description: ""
+          options:
+            - key: 1
+              value: Language 1
+            - key: 2
+              value: Language 2
+            - key: 3
+              value: Language 3
+            - key: 4
+              value: Other
+            - key: 5
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's15'
+        templateOptions:
+          required: true
+          label: "Apart from your school books, are there books, newspapers or other materials for you to read at your house?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+
+<a routerLink="/forms/multipage-form-test/egra10">Page 10 ►</a>
+</tangerine-form>

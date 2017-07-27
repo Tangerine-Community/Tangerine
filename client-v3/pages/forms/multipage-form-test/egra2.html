@@ -1,0 +1,90 @@
+<tangerine-form id="MultipageFormTest">
+ <h3> Subtest 1: Listening Comprehension. </h3>
+<p>I am going to read you a short story aloud ONCE and then ask you some questions. Please listen carefully and answer the questions as best as you can. You can answer the questions in whichever language you prefer. Ready? Let’s begin.
+
+
+
+Adama has a hen. It lays eggs every day. Adama sells the eggs at the market. One day, Adama dropped her basket of eggs.  All the eggs broke. Adama was very sad. The next day her hen gave new eggs. Adama was very happy.</p>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp1'
+        templateOptions:
+          required: true
+          label: "1. What does Adama have?"
+          description: "[a hen]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp2'
+        templateOptions:
+          required: true
+          label: "2.	What does Adama sell at the market?"
+          description: "[eggs]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp3'
+        templateOptions:
+          required: true
+          label: "3.	What happened to Adama’s eggs?"
+          description: "[they broke]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp1'
+        templateOptions:
+          required: true
+          label: "4.	Why was Adama sad?"
+          description: "[she dropped her eggs, her eggs broke]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp1'
+        templateOptions:
+          required: true
+          label: "5.	Why was Adama happy?"
+          description: "[her hen gave new eggs, she had new eggs to sell at the market]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+<a routerLink="/forms/multipage-form-test/egra3">Page 3 ►</a>
+</tangerine-form>

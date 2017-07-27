@@ -1,0 +1,78 @@
+<tangerine-form id="MultipageFormTest">
+
+<h3>Pupil Questionnaire - Part 2</h3>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's16'
+        templateOptions:
+          required: true
+          label: "What is the main flooring material of your house?"
+          description: ""
+          options:
+            - key: 1
+              value: Earth/sand
+            - key: 2
+              value: Straw
+            - key: 3
+              value: Cement
+            - key: 4
+              value: Carpet/rug
+            - key: 5
+              value: Other
+            - key: 6
+              value: Do not know/No response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's3'
+        templateOptions:
+          required: true
+          label: "Did you eat before coming to school today? "
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's4'
+        templateOptions:
+          required: true
+          label: "Do you attend any other school besides this school?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's5'
+        hideExpression: 'model.s4 != "1"'
+        templateOptions:
+          required: true
+          label: "Please tell me the type of school you attend. "
+          description: ""
+          options:
+            - key: 1
+              value: Public/government school
+            - key: 2
+              value: Religious school
+            - key: 3
+              value: Other
+            - key: 4
+              value: Do not know/No response
+  </tangerine-form-card>
+<a routerLink="/forms/multipage-form-test/egra11">Page 11 ►</a>
+</tangerine-form>

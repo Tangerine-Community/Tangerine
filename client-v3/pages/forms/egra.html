@@ -1,0 +1,1110 @@
+<h3> A card with locations and dependant cities. </h3>
+
+<tangerine-form id="egraForm">
+  <tangerine-form-card>
+    title: "Location"
+    fields:
+      - type: 'select'
+        key: 'country'
+        templateOptions:
+          required: true
+          label: 'Country'
+          options:
+            - value: AU
+              label: Australia
+            - value: US
+              label: United States
+            - value: UK
+              label: United Kingdom
+            - value: ZM
+              label: Zambia
+      - type: 'select'
+        key: 'city'
+        templateOptions:
+          label: "City"
+          required: true
+          options:
+            - value: washington
+              label: Washington
+            - value: newyork
+              label: New York
+        hideExpression: 'model.country !== "US"'
+      - type: 'select'
+        key: 'city'
+        templateOptions:
+          label: "City"
+          required: true
+          options:
+            - value: melburn
+              label: Melburn
+            - value: sydney
+              label: Syndey
+        hideExpression: 'model.country !== "AU"'
+      - type: 'select'
+        key: 'city'
+        templateOptions:
+          label: "City"
+          required: true
+          options:
+            - value: london
+              label: London
+            - value: bath
+              label: Bath
+        hideExpression: 'model.country !== "UK"'
+  </tangerine-form-card>
+
+  <h3> Student Information </h3>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'school'
+        templateOptions:
+          label: "1.  What is the school shift the child attends?"
+          required: true
+          options:
+            - key: FullDay
+              value: Full Day
+            - key: Morning
+              value: Morning
+            - key: Afternoon
+              value: Afternoon
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'shift'
+        templateOptions:
+          label: "2. Is the child in school?"
+          required: true
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Not Sure
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'textarea'
+        key: 'section'
+        templateOptions:
+          required: true
+          label: "3. What class section is the child in?"
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 'birth'
+        templateOptions:
+          label: "4.  What is the child's year of birth?"
+          description: "Input 999 if the child doesn't know the answer"
+          required: true
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'birth_month'
+        templateOptions:
+          label: "5. What is the child's month of birth?"
+          required: true
+          options:
+            - key: 1
+              value: January
+            - key: 2
+              value: February
+            - key: 3
+              value: March
+            - key: 4
+              value: April
+            - key: 5
+              value: May
+            - key: 6
+              value: June
+            - key: 7
+              value: July
+            - key: 8
+              value: August
+            - key: 9
+              value: September
+            - key: 10
+              value: October
+            - key: 11
+              value: November
+            - key: 12
+              value: December
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'female'
+        templateOptions:
+          required: true
+          label: "6.  What is the child's gender"
+          options:
+            - key: 0
+              value: Boy
+            - key: 1
+              value: Girl
+  </tangerine-form-card>
+
+
+<h3> Subtest 1: Listening Comprehension. </h3>
+<p>I am going to read you a short story aloud ONCE and then ask you some questions. Please listen carefully and answer the questions as best as you can. You can answer the questions in whichever language you prefer. Ready? Let’s begin.
+
+
+
+Adama has a hen. It lays eggs every day. Adama sells the eggs at the market. One day, Adama dropped her basket of eggs.  All the eggs broke. Adama was very sad. The next day her hen gave new eggs. Adama was very happy.</p>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp1'
+        templateOptions:
+          required: true
+          label: "1. What does Adama have?"
+          description: "[a hen]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp2'
+        templateOptions:
+          required: true
+          label: "2.	What does Adama sell at the market?"
+          description: "[eggs]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp3'
+        templateOptions:
+          required: true
+          label: "3.	What happened to Adama’s eggs?"
+          description: "[they broke]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp1'
+        templateOptions:
+          required: true
+          label: "4.	Why was Adama sad?"
+          description: "[she dropped her eggs, her eggs broke]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'list_comp1'
+        templateOptions:
+          required: true
+          label: "5.	Why was Adama happy?"
+          description: "[her hen gave new eggs, she had new eggs to sell at the market]"
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+
+
+<h3> Subtask 2: Phonemic Awareness </h3>
+<p style="margin-left:18.0pt;"><strong>This is a listening exercise. I want you to tell me the first sound of each word. For example, in the word &ldquo;pot&rdquo;, the first sound is /p/.&nbsp; I would like you to tell me the first sound you hear in each word. I will say each word <u>two times</u>. Listen to the word, then tell me the very first sound in that word.&nbsp; </strong></p><p>&nbsp;</p><p><strong>Let&rsquo;s practice. What is the first sound in &ldquo;mouse&rdquo;? &hellip; &ldquo;mouse&rdquo;?</strong></p><p style="margin-left:36.0pt;">[If the child responds correctly, say:]<strong> Very good, the first sound in &ldquo;mouse&rdquo; is /m/. </strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say]: <strong>Listen again: &ldquo;mouse&rdquo;.&nbsp; The first sound in &ldquo;mouse&rdquo; is /mmm/.</strong></p><p><strong>Now let&rsquo;s try another one: What is the first sound in &ldquo;day&rdquo;? &hellip; &ldquo;day&rdquo;?</strong></p><p style="margin-left:36.0pt;">[If the child responds correctly, say]: <strong>Very good, the first sound in &ldquo;day&rdquo; is /d/. </strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say]: <strong>Listen again: &ldquo;day&rdquo;. The first sound in &ldquo;day&rdquo; is /d/.</strong></p><p style="margin-left:35.4pt;"><strong>&nbsp;Ready? Let&rsquo;s begin.</strong></p>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound1'
+        templateOptions:
+          required: true
+          label: "1. What is the first sound in 'at'? …'at'?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound2'
+        templateOptions:
+          required: true
+          label: "2. What is the first sound in “so”? …“so”?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound3'
+        templateOptions:
+          required: true
+          label: "3. What is the first sound in “chalk”? …“chalk”?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound4'
+        templateOptions:
+          required: true
+          label: "4. What is the first sound in “very”? …“very”? "
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound5'
+        templateOptions:
+          required: true
+          label: "5. What is the first sound in “car”? …“car”?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound6'
+        templateOptions:
+          required: true
+          label: "6. What is the first sound in “for”? …“for”?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound7'
+        templateOptions:
+          required: true
+          label: "7. What is the first sound in “man”? …“man”?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound8'
+        templateOptions:
+          required: true
+          label: "8. What is the first sound in “ox”? …“ox”?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound9'
+        templateOptions:
+          required: true
+          label: "9. What is the first sound in “yes”? …“yes?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'e_pa_init_sound10'
+        templateOptions:
+          required: true
+          label: "10. What is the first sound in “go”? …“go”?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+
+  <h3> Subtask 3: Letter Sound Identification</h3>
+<p style="margin-left:18.0pt;"><strong>Here is a page full of letters of the English alphabet. Please tell me the SOUNDS of as many letters of the alphabet as you can. Not their names, but their sounds.</strong></p><p><strong>For example, the sound of this letter </strong>[point to the letter T]<strong> is /t/.</strong></p><p><strong>Let&rsquo;s practice: Tell me the sound of this letter </strong>[point to the letter M]<strong>:</strong></p><p style="margin-left:36.0pt;">[If the child responds correctly, say:]<strong> Good, the sound of this letter is /m/.</strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say:] <strong>The sound of this letter is /m/.</strong></p><p><strong>Now try another one: Tell me the sound of this letter </strong>[point to the letter S]:</p><p style="margin-left:36.0pt;">[If the child responds correctly say:]<strong> Good, the sound of this letter is /s/.</strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say:] <strong>The sound of this letter is /s/.</strong></p><p><strong>When I say &ldquo;Begin,&rdquo; start here</strong> [point to first letter] <strong>and go across the page</strong> [point]. <strong>Point to each letter and tell me the sound of that letter in a loud voice. </strong><strong>Read as quickly and carefully as you can. If you come to a letter you do not know, go on to the next letter. Put your finger on the first letter. </strong></p><p><strong>Ready? Begin.</strong></p>
+
+<tangerine-form-timed id="letter_sound" duration=5>
+    <table>
+        <tr>
+
+            <td> <input id="L" type="checkbox"  /> <label for="L"> L </label> </td>
+            <td> <input id="i" type="checkbox"  /> <label for="i">i </label> </td>
+            <td> <input id="h" type="checkbox"  /> <label for="h">h </label> </td>
+            <td> <input id="R" type="checkbox"  /> <label for="R">R </label> </td>
+            <td> <input id="S" type="checkbox"  /> <label for="S">S </label> </td>
+            <td> <input id="y" type="checkbox"  /> <label for="y">y </label> </td>
+            <td> <input id="E" type="checkbox"  /> <label for="E">E </label> </td>
+            <td> <input id="O" type="checkbox"  /> <label for="O">O </label> </td>
+            <td> <input id="w" type="checkbox"  /> <label for="w">w </label> </td>
+            <td> <input id="T" type="checkbox"  /> <label for="T">T </label> </td>
+        </tr>
+        <tr>
+            <td> <input id="i" type="checkbox"  /> <label for="i">i</label> </td>
+            <td> <input id="e" type="checkbox"  /> <label for="e">e</label> </td>
+            <td> <input id="T" type="checkbox"  /> <label for="T">T</label> </td>
+            <td> <input id="E" type="checkbox"  /> <label for="E">E</label> </td>
+            <td> <input id="F" type="checkbox"  /> <label for="F">F</label> </td>
+            <td> <input id="t" type="checkbox"  /> <label for="t">t</label> </td>
+            <td> <input id="a" type="checkbox"  /> <label for="a">a</label> </td>
+            <td> <input id="d" type="checkbox"  /> <label for="d">d</label> </td>
+            <td> <input id="n" type="checkbox"  /> <label for="n">n</label> </td>
+            <td> <input id="e" type="checkbox"  /> <label for="e">e</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="h" type="checkbox"  /> <label for="h">h</label> </td>
+            <td> <input id="O" type="checkbox"  /> <label for="O">O</label> </td>
+            <td> <input id="A" type="checkbox"  /> <label for="A">A</label> </td>
+            <td> <input id="m" type="checkbox"  /> <label for="m">m</label> </td>
+            <td> <input id="U" type="checkbox"  /> <label for="U">U</label> </td>
+            <td> <input id="r" type="checkbox"  /> <label for="r">r</label> </td>
+            <td> <input id="L" type="checkbox"  /> <label for="L">L</label> </td>
+            <td> <input id="G" type="checkbox"  /> <label for="G">G</label> </td>
+            <td> <input id="R" type="checkbox"  /> <label for="R">R</label> </td>
+            <td> <input id="u" type="checkbox"  /> <label for="u">u</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="g" type="checkbox"  /> <label for="g">g</label> </td>
+            <td> <input id="R" type="checkbox"  /> <label for="R">R</label> </td>
+            <td> <input id="B" type="checkbox"  /> <label for="B">B</label> </td>
+            <td> <input id="N" type="checkbox"  /> <label for="N">N</label> </td>
+            <td> <input id="i" type="checkbox"  /> <label for="i">i</label> </td>
+            <td> <input id="r" type="checkbox"  /> <label for="r">r</label> </td>
+            <td> <input id="m" type="checkbox"  /> <label for="m">m</label> </td>
+            <td> <input id="t" type="checkbox"  /> <label for="t">t</label> </td>
+            <td> <input id="s" type="checkbox"  /> <label for="s">s</label> </td>
+            <td> <input id="r" type="checkbox"  /> <label for="r">r</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="S" type="checkbox"  /> <label for="S">S</label> </td>
+            <td> <input id="T" type="checkbox"  /> <label for="T">T</label> </td>
+            <td> <input id="E" type="checkbox"  /> <label for="E">E</label> </td>
+            <td> <input id="C" type="checkbox"  /> <label for="C">C</label> </td>
+            <td> <input id="p" type="checkbox"  /> <label for="p">p</label> </td>
+            <td> <input id="A" type="checkbox"  /> <label for="A">A</label> </td>
+            <td> <input id="e" type="checkbox"  /> <label for="e">e</label> </td>
+            <td> <input id="c" type="checkbox"  /> <label for="c">c</label> </td>
+            <td> <input id="a" type="checkbox"  /> <label for="a">a</label> </td>
+            <td> <input id="E" type="checkbox"  /> <label for="E">E</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="y" type="checkbox"  /> <label for="y">y</label> </td>
+            <td> <input id="s" type="checkbox"  /> <label for="s">s</label> </td>
+            <td> <input id="Q" type="checkbox"  /> <label for="Q">Q</label> </td>
+            <td> <input id="A" type="checkbox"  /> <label for="A">A</label> </td>
+            <td> <input id="O" type="checkbox"  /> <label for="O">O</label> </td>
+            <td> <input id="C" type="checkbox"  /> <label for="C">C</label> </td>
+            <td> <input id="O" type="checkbox"  /> <label for="O">O</label> </td>
+            <td> <input id="h" type="checkbox"  /> <label for="h">h</label> </td>
+            <td> <input id="t" type="checkbox"  /> <label for="t">t</label> </td>
+            <td> <input id="P" type="checkbox"  /> <label for="P">P</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="e" type="checkbox"  /> <label for="e">e</label> </td>
+            <td> <input id="A" type="checkbox"  /> <label for="A">A</label> </td>
+            <td> <input id="s" type="checkbox"  /> <label for="s">s</label> </td>
+            <td> <input id="M" type="checkbox"  /> <label for="M">M</label> </td>
+            <td> <input id="F" type="checkbox"  /> <label for="F">F</label> </td>
+            <td> <input id="n" type="checkbox"  /> <label for="n">n</label> </td>
+            <td> <input id="u" type="checkbox"  /> <label for="u">u</label> </td>
+            <td> <input id="R" type="checkbox"  /> <label for="R">R</label> </td>
+            <td> <input id="t" type="checkbox"  /> <label for="t">t</label> </td>
+            <td> <input id="A" type="checkbox"  /> <label for="A">A</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="q" type="checkbox"  /> <label for="q">q</label> </td>
+            <td> <input id="H" type="checkbox"  /> <label for="H">H</label> </td>
+            <td> <input id="N" type="checkbox"  /> <label for="N">N</label> </td>
+            <td> <input id="S" type="checkbox"  /> <label for="S">S</label> </td>
+            <td> <input id="i" type="checkbox"  /> <label for="i">i</label> </td>
+            <td> <input id="g" type="checkbox"  /> <label for="g">g</label> </td>
+            <td> <input id="m" type="checkbox"  /> <label for="m">m</label> </td>
+            <td> <input id="i" type="checkbox"  /> <label for="i">i</label> </td>
+            <td> <input id="L" type="checkbox"  /> <label for="L">L</label> </td>
+            <td> <input id="L" type="checkbox"  /> <label for="L">L</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="i" type="checkbox"  /> <label for="i">i</label> </td>
+            <td> <input id="b" type="checkbox"  /> <label for="b">b</label> </td>
+            <td> <input id="O" type="checkbox"  /> <label for="O">O</label> </td>
+            <td> <input id="E" type="checkbox"  /> <label for="E">E</label> </td>
+            <td> <input id="p" type="checkbox"  /> <label for="p">p</label> </td>
+            <td> <input id="r" type="checkbox"  /> <label for="r">r</label> </td>
+            <td> <input id="X" type="checkbox"  /> <label for="X">X</label> </td>
+            <td> <input id="N" type="checkbox"  /> <label for="N">N</label> </td>
+            <td> <input id="A" type="checkbox"  /> <label for="A">A</label> </td>
+            <td> <input id="c" type="checkbox"  /> <label for="c">c</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="D" type="checkbox"  /> <label for="D">D</label> </td>
+            <td> <input id="d" type="checkbox"  /> <label for="d">d</label> </td>
+            <td> <input id="e" type="checkbox"  /> <label for="e">e</label> </td>
+            <td> <input id="o" type="checkbox"  /> <label for="o">o</label> </td>
+            <td> <input id="e" type="checkbox"  /> <label for="e">e</label> </td>
+            <td> <input id="j" type="checkbox"  /> <label for="j">j</label> </td>
+            <td> <input id="n" type="checkbox"  /> <label for="n">n</label> </td>
+            <td>  </td>
+            <td>  </td>
+            <td>  </td>
+        </tr>
+    </table>
+  </tangerine-form-timed>
+
+<h3> Subtask 5: Oral Reading Passage</h3>
+<p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say &ldquo;Begin,&rdquo; read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+<tangerine-form-timed id="oral_read" duration=60>
+    <table>
+        <tr>
+            <td> <input id="Salma" type="checkbox"  /> <label for="Salma">Salma</label> </td>
+            <td> <input id="and" type="checkbox"  /> <label for="and">and</label> </td>
+            <td> <input id="Ali" type="checkbox"  /> <label for="Ali">Ali</label> </td>
+            <td> <input id="clean" type="checkbox"  /> <label for="clean">clean</label> </td>
+            <td> <input id="their" type="checkbox"  /> <label for="their">their</label> </td>
+        </tr>
+       <tr>
+            <td> <input id="classroom" type="checkbox"  /> <label for="classroom">classroom</label> </td>
+            <td> <input id="every" type="checkbox"  /> <label for="every">every </label> </td>
+            <td> <input id="day" type="checkbox"  /> <label for="day">day. </label> </td>
+            <td> <input id="Ali" type="checkbox"  /> <label for="Ali">Ali</label> </td>
+            <td> <input id="cleans" type="checkbox"  /> <label for="cleans">cleans</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="the" type="checkbox"  /> <label for="the"> the </label> </td>
+            <td> <input id="blackboard" type="checkbox"  /> <label for="blackboard">blackboard</label> </td>
+            <td> <input id="and" type="checkbox"  /> <label for="and">and</label> </td>
+            <td> <input id="Binta" type="checkbox"  /> <label for="Binta">Binta</label> </td>
+            <td> <input id="sweeps" type="checkbox"  /> <label for="sweeps">sweeps </label> </td>
+        </tr>
+        <tr>
+            <td> <input id="the" type="checkbox"  /> <label for="the">the </label> </td>
+            <td> <input id="floor" type="checkbox"  /> <label for="floor">floor. </label> </td>
+            <td> <input id="One" type="checkbox"  /> <label for="One">One </label> </td>
+            <td> <input id="day" type="checkbox"  /> <label for="day">day, </label> </td>
+            <td> <input id="they" type="checkbox"  /> <label for="they">they </label> </td>
+        </tr>
+        <tr>
+            <td> <input id="could" type="checkbox"  /> <label for="could">could </label> </td>
+            <td> <input id="not" type="checkbox"  /> <label for="not">not </label> </td>
+            <td> <input id="find" type="checkbox"  /> <label for="find">find </label> </td>
+            <td> <input id="Bintas" type="checkbox"  /> <label for="Bintas">Binta’s </label> </td>
+            <td> <input id="broom" type="checkbox"  /> <label for="broom">broom. </label> </td>
+        </tr>
+    </table>
+  </tangerine-form-timed>
+<h3> Subtask 4: Non-Word Reading</h3>
+<p style="margin-left:18.0pt;"><strong>Here are some made-up words in English. I would like you to read as many as you can. Do not spell the words, but read them. For example, this made-up word is: &ldquo;ut&rdquo;.</strong></p><p><strong>Let&rsquo;s practise: Please read this word</strong> [point to the word: <strong>dif</strong>].&nbsp;</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [If the child responds correctly]: <strong>&ldquo;Good, This word is &ldquo;dif.&rdquo;</strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say]: <strong>This made-up word is &ldquo;dif.&rdquo;</strong></p><p><strong>Now try another one: please read this word </strong>[point to the next word: <strong>mab</strong>].&nbsp;</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[If the child responds correctly, say]: <strong>&ldquo;Good, this made-up word is &ldquo;mab.&rdquo;</strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly say]: <strong>This made-up word is &ldquo;mab.&rdquo;</strong></p><p><strong>When I say &ldquo;Begin,&rdquo; start here</strong> [point to first word] <strong>and read across the page</strong> [point]. <strong>Point to each word and read it in a loud voice. </strong><strong>Read as quickly and carefully as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong></p>
+<tangerine-form-timed id="oral_read" duration=60>
+    <table>
+        <tr>
+            <td> <input id="fut" type="checkbox"  /> <label for="fut">fut</label> </td>
+            <td> <input id="lus" type="checkbox"  /> <label for="lus">lus</label> </td>
+            <td> <input id="dit" type="checkbox"  /> <label for="dit">dit</label> </td>
+            <td> <input id="leb" type="checkbox"  /> <label for="leb">leb</label> </td>
+            <td> <input id="gak" type="checkbox"  /> <label for="gak">gak</label> </td>
+        </tr>
+       <tr>
+            <td> <input id="huz" type="checkbox"  /> <label for="huz">huz</label> </td>
+            <td> <input id="jod" type="checkbox"  /> <label for="jod">jod </label> </td>
+            <td> <input id="kib" type="checkbox"  /> <label for="kib">kib </label> </td>
+            <td> <input id="lek" type="checkbox"  /> <label for="lek">lek</label> </td>
+            <td> <input id="tob" type="checkbox"  /> <label for="tob">tob</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="nom" type="checkbox"  /> <label for="nom"> nom </label> </td>
+            <td> <input id="rop" type="checkbox"  /> <label for="rop">rop</label> </td>
+            <td> <input id="and" type="checkbox"  /> <label for="and">and</label> </td>
+            <td> <input id="hig" type="checkbox"  /> <label for="hig">hig</label> </td>
+            <td> <input id="reg" type="checkbox"  /> <label for="reg">reg </label> </td>
+        </tr>
+        <tr>
+            <td> <input id="san" type="checkbox"  /> <label for="san">san </label> </td>
+            <td> <input id="tup" type="checkbox"  /> <label for="tup">tup </label> </td>
+            <td> <input id="ral" type="checkbox"  /> <label for="ral">ral </label> </td>
+            <td> <input id="wix" type="checkbox"  /> <label for="wix">wix </label> </td>
+            <td> <input id="nep" type="checkbox"  /> <label for="nep">nep </label> </td>
+        </tr>
+        <tr>
+            <td> <input id="nad" type="checkbox"  /> <label for="nad">nad </label> </td>
+            <td> <input id="lut" type="checkbox"  /> <label for="lut">lut </label> </td>
+            <td> <input id="yod" type="checkbox"  /> <label for="yod">yod </label> </td>
+            <td> <input id="sim" type="checkbox"  /> <label for="sim">sim </label> </td>
+            <td> <input id="tat" type="checkbox"  /> <label for="tat">tat </label> </td>
+        </tr>
+    </table>
+  </tangerine-form-timed>
+  <h3>Subtask 5B: Reading Comprehension</h3>
+<p><strong>Now I am going to ask you a few questions about the story you just read. Try to answer the questions as well as you can. You can provide your answers in whichever language you prefer.&nbsp;&nbsp;</strong></p>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'read_comp1'
+        templateOptions:
+          required: true
+          label: "1.	What do Binta and Ali do every day at school?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'read_comp2'
+        templateOptions:
+          required: true
+          label: "	2.	What is Binta’s duty at school?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'read_comp3'
+        templateOptions:
+          required: true
+          label: "3.	Where did Ali and Binta look for the broom? "
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'read_comp4'
+        templateOptions:
+          required: true
+          label: "4.	Where was the broom?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'read_comp5'
+        templateOptions:
+          required: true
+          label: "5.	What did the teacher give Ali and Binta?"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <h3>Subtask 6: Dictation - Letter Writing</h3>
+<p style="margin-left:16.0pt;"><strong>I will say the name of a letter; you should listen carefully. After I have told you the name of the letter, I want </strong><strong>you </strong><strong>to write the letter on this paper. You can write the letter in either capital or lower case.</strong></p><p><strong>Let&rsquo;s practice: </strong><strong>The letter I want you to write is &ldquo;</strong><strong>s&rdquo; </strong><strong>as in </strong><strong>&ldquo;sama&rdquo;</strong><strong>. Write the letter </strong><strong>&ldquo;s</strong><strong>&rdquo;</strong><strong>.</strong></p><p style="margin-left:36.0pt;">[If the child writes the letter correctly, say:]<strong> Good, that is how you write the letter &ldquo;s.&rdquo;</strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say:] <strong>The letter &ldquo;s&rdquo; is written like this: </strong>[write letter for child]. &nbsp;</p><p><strong>Okay, listen and let&rsquo;s get started</strong><strong>.&nbsp;</strong></p>
+<tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'dict1'
+        templateOptions:
+          required: true
+          label: "1. Write the letter “A,” as in “at”—[pause]—“A”. "
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'dict2'
+        templateOptions:
+          required: true
+          label: "2. Write the letter “N,” as in “not”—[pause]—“N”. "
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'dict3'
+        templateOptions:
+          required: true
+          label: "3. Write the letter “T,” as in “take”—[pause]—“T”."
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'dict4'
+        templateOptions:
+          required: true
+          label: "4. Write the letter “U,” as in “up”—[pause]—“U”. [dict4, single]"
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'dict5'
+        templateOptions:
+          required: true
+          label: "	5. Write the letter “B,” as in “be”—[pause]—“B”."
+          description: ""
+          options:
+            - key: 1
+              value: Correct
+            - key: 0
+              value: Incorrect
+            - key: 3
+              value: No Response
+  </tangerine-form-card>
+
+
+
+  <h3>Pupil Questionnaire - Part 1</h3>
+   <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 's1'
+        templateOptions:
+          required: true
+          label: "How old are you?"
+          description: ""
+    </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's2'
+        templateOptions:
+          required: true
+          label: "Did you go to nursery before Grade 1?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's3'
+        templateOptions:
+          required: true
+          label: "Did you eat before coming to school today? "
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's4'
+        templateOptions:
+          required: true
+          label: "Do you attend any other school besides this school?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's5'
+        hideExpression: 'model.s4 != "1"'
+        templateOptions:
+          required: true
+          label: "Please tell me the type of school you attend. "
+          description: ""
+          options:
+            - key: 1
+              value: Public/government school
+            - key: 2
+              value: Religious school
+            - key: 3
+              value: Other
+            - key: 4
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's6'
+        templateOptions:
+          required: true
+          label: "Were you absent from THIS school any day last week? "
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's7'
+        templateOptions:
+          required: true
+          label: "Do you have a LANGUAGE reading book at school?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's8'
+        templateOptions:
+          required: true
+          label: "Do you have time to read books in your classroom or in your school library every day?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's9'
+        templateOptions:
+          required: true
+          label: "Do you bring home reading books from your classroom or from the school library?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's10'
+        templateOptions:
+          required: true
+          label: "How often does someone read out loud to you at home: Never, sometimes, or every day?"
+          description: ""
+          options:
+            - key: 0
+              value: Never
+            - key: 1
+              value: Sometimes
+            - key: 2
+              value: Everyday
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's11'
+        templateOptions:
+          required: true
+          label: "Does someone at home help you with your homework when you need it? "
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's12'
+        hideExpression: 'model.s11 != "1"'
+        templateOptions:
+          required: true
+          label: "Who helps you with your homework?"
+          description: ""
+          options:
+            - key: 1
+              value: Brother or sister
+            - key: 2
+              value: Mother or father
+            - key: 3
+              value: Grandparent
+            - key: 4
+              value: Other
+            - key: 5
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's13'
+        templateOptions:
+          required: true
+          label: "How often do you read out loud to someone at home? Never, sometimes, or every day?"
+          description: ""
+          options:
+            - key: 0
+              value: Never
+            - key: 1
+              value: Sometimes
+            - key: 2
+              value: Everyday
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's14'
+        templateOptions:
+          required: true
+          label: "Now I’m going to ask you a few questions about your home. What language do you speak most frequently at home?"
+          description: ""
+          options:
+            - key: 1
+              value: Language 1
+            - key: 2
+              value: Language 2
+            - key: 3
+              value: Language 3
+            - key: 4
+              value: Other
+            - key: 5
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's15'
+        templateOptions:
+          required: true
+          label: "Apart from your school books, are there books, newspapers or other materials for you to read at your house?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+
+
+
+<h3>Pupil Questionnaire - Part 2</h3>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's16'
+        templateOptions:
+          required: true
+          label: "What is the main flooring material of your house?"
+          description: ""
+          options:
+            - key: 1
+              value: Earth/sand
+            - key: 2
+              value: Straw
+            - key: 3
+              value: Cement
+            - key: 4
+              value: Carpet/rug
+            - key: 5
+              value: Other
+            - key: 6
+              value: Do not know/No response
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's3'
+        templateOptions:
+          required: true
+          label: "Did you eat before coming to school today? "
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's4'
+        templateOptions:
+          required: true
+          label: "Do you attend any other school besides this school?"
+          description: ""
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's5'
+        hideExpression: 'model.s4 != "1"'
+        templateOptions:
+          required: true
+          label: "Please tell me the type of school you attend. "
+          description: ""
+          options:
+            - key: 1
+              value: Public/government school
+            - key: 2
+              value: Religious school
+            - key: 3
+              value: Other
+            - key: 4
+              value: Do not know/No response
+  </tangerine-form-card>
+</tangerine-form>

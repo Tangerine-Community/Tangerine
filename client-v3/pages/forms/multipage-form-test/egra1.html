@@ -1,0 +1,152 @@
+<h3> A card with locations and dependant cities. </h3>
+
+<tangerine-form id="MultipageFormTest">
+  <tangerine-form-card>
+    title: "Location"
+    fields:
+      - type: 'select'
+        key: 'country'
+        templateOptions:
+          required: true
+          label: 'Country'
+          options:
+            - value: AU
+              label: Australia
+            - value: US
+              label: United States
+            - value: UK
+              label: United Kingdom
+            - value: ZM
+              label: Zambia
+      - type: 'select'
+        key: 'city'
+        templateOptions:
+          label: "City"
+          required: true
+          options:
+            - value: washington
+              label: Washington
+            - value: newyork
+              label: New York
+        hideExpression: 'model.country !== "US"'
+      - type: 'select'
+        key: 'city'
+        templateOptions:
+          label: "City"
+          required: true
+          options:
+            - value: melburn
+              label: Melburn
+            - value: sydney
+              label: Syndey
+        hideExpression: 'model.country !== "AU"'
+      - type: 'select'
+        key: 'city'
+        templateOptions:
+          label: "City"
+          required: true
+          options:
+            - value: london
+              label: London
+            - value: bath
+              label: Bath
+        hideExpression: 'model.country !== "UK"'
+  </tangerine-form-card>
+
+  <h3> Student Information </h3>
+
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'school'
+        templateOptions:
+          label: "1.  What is the school shift the child attends?"
+          required: true
+          options:
+            - key: FullDay
+              value: Full Day
+            - key: Morning
+              value: Morning
+            - key: Afternoon
+              value: Afternoon
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'shift'
+        templateOptions:
+          label: "2. Is the child in school?"
+          required: true
+          options:
+            - key: 1
+              value: Yes
+            - key: 0
+              value: No
+            - key: 3
+              value: Not Sure
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'textarea'
+        key: 'section'
+        templateOptions:
+          required: true
+          label: "3. What class section is the child in?"
+  </tangerine-form-card>
+    <tangerine-form-card>
+    fields:
+      - type: 'input'
+        key: 'birth'
+        templateOptions:
+          label: "4.  What is the child's year of birth?"
+          description: "Input 999 if the child doesn't know the answer"
+          required: true
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'birth_month'
+        templateOptions:
+          label: "5. What is the child's month of birth?"
+          required: true
+          options:
+            - key: 1
+              value: January
+            - key: 2
+              value: February
+            - key: 3
+              value: March
+            - key: 4
+              value: April
+            - key: 5
+              value: May
+            - key: 6
+              value: June
+            - key: 7
+              value: July
+            - key: 8
+              value: August
+            - key: 9
+              value: September
+            - key: 10
+              value: October
+            - key: 11
+              value: November
+            - key: 12
+              value: December
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 'female'
+        templateOptions:
+          required: true
+          label: "6.  What is the child's gender"
+          options:
+            - key: 0
+              value: Boy
+            - key: 1
+              value: Girl
+  </tangerine-form-card>
+<a routerLink="/forms/multipage-form-test/egra2">Page 2 ►</a>
+</tangerine-form>
