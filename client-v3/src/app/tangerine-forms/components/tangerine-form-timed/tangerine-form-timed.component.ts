@@ -7,91 +7,123 @@ import { Component, OnInit, Input, ElementRef } from '@angular/core';
 })
 export class TangerineFormTimedComponent implements OnInit {
 
+  // In seconds.
   @Input() duration = 60;
+  // An ID that will be
   @Input() id = 'timed';
 
-  countdown = 0;
+  // Track the timer.
+  private timeSpent = 0;
+  private timeRemaining = 0;
+  // Prevents double starts.
+  private countdownMode = false;
+  // A message to display to the user about the state of the form.
+  statusMessage = 'Click "start timer" to begin.';
+  // A place to put all of the input elements in this form.
+  inputElements: any;
+  // Hidden variables for form.
+  private lastSelectedId = '';
+  private lastSelectedNth: Number;
+  private itemsPerMinute: Number;
+  // Things to cleanup on destroy.
   timer: any;
-  lastSelectedId = '';
-
-  selectLastInputMode = false;
-  countdownMode = false;
-
-  statusMessage = 'Click start timer to begin.';
+  lastClickedItemListeners: any;
 
   constructor(private elementRef: ElementRef) { }
 
   ngOnInit() {
     // Set our countdown to the desired duration.
-    this.countdown = this.duration;
-    // Watch all input elements for a click. This will be used for setting the lastInput hidden variable.
-    const inputElements = this.elementRef.nativeElement.querySelectorAll('input');
-    inputElements.forEach(element => {
-      element.addEventListener('click', (event) => {
-        // Only do something when we are selecting the last input.
-        if (this.selectLastInputMode === true) {
-          // Cleanup any previously selected last input.
-          inputElements.forEach(cleanupElement => {
-            if (cleanupElement.labels && cleanupElement.labels.length > 0) {
-              const cleanupLabelEl = cleanupElement.labels[0];
-              cleanupLabelEl.setAttribute('style', ''); ;
-            }
-          });
-          // That last click will cause the opposite of what we want. Put it back to the original state.
-          event.srcElement.checked = !event.srcElement.checked;
-          // Style the label.
-          const labelEl = event.srcElement.labels[0];
-          // Angular styles don't work on native elements.
-          labelEl.className = 'lastInput';
-          // ... but inline styles do.
-          labelEl.setAttribute('style', 'color:red; border: 1px solid blue;'); ;
-          this.statusMessage = 'You may now proceed.';
-          // Set the last selected hidden variable.
-          debugger;
-          // Will set the value of the id of lastSelectedInputEl for good measure but it's not useful because it's too slow.
-          this.lastSelectedId = event.srcElement.id;
-          const lastSelectedInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_last_selected');
-          // If we don't set this directly, there is a race condition where setting this.lastSelectedId doesn't make into the DOM in time.
-          lastSelectedInputEl.value = event.srcElement.id;
-          lastSelectedInputEl.dispatchEvent(new Event('change', {bubbles: true}));
-
-        }
-      });
-    });
+    this.timeRemaining = this.duration;
+    // Find all our input elements.
+    this.inputElements = Array.prototype.slice.call(this.elementRef.nativeElement.querySelectorAll('input'));
+    // Disable all the input elements. Will enable on start.
+    this.inputElements.forEach(element => element.disabled = true);
   }
 
   clickedReset() {
-    this.countdown = this.duration;
+    this.timeRemaining = this.duration;
+    this.timeSpent = 0;
   }
 
   clickedStart() {
-    this.statusMessage = '';
+    // Prevent double starts.
     if (this.countdownMode === false) {
       this.countdownMode = true;
-      const countdownInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_countdown');
-      console.log('starting timer');
+      const timeSpentInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_time_spent');
+      const timeRemainingInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_time_remaining');
+      this.statusMessage = 'Timer is running.';
+      this.inputElements.forEach((element) => element.disabled = false);
       this.timer = setInterval(() => {
-        if (this.countdown > 0) {
-          this.countdown--;
-          countdownInputEl.dispatchEvent(new Event('change', {bubbles: true}));
-        } else {
+        this.timeRemaining--;
+        this.timeSpent++;
+        if (this.timeRemaining === 0) {
           clearInterval(this.timer);
-          countdownInputEl.dispatchEvent(new Event('change', {bubbles: true}));
           this.timeIsUp();
         }
+        timeRemainingInputEl.value = this.timeRemaining;
+        timeRemainingInputEl.dispatchEvent(new Event('change', {bubbles: true}));
+        timeSpentInputEl.value = this.timeSpent;
+        timeSpentInputEl.dispatchEvent(new Event('change', {bubbles: true}));
       }, 1000);
     }
   }
 
+  clickedPause() {
+    // @TODO: Do we need pause/resume?
+  }
+
   clickedStop() {
     clearInterval(this.timer);
-    this.countdownMode = false;
+    this.statusMessage = 'Click the last item covered.';
+    this.enableLastClickedMode();
   }
 
   timeIsUp() {
+    clearInterval(this.timer);
     this.statusMessage = 'Time is up, click the last item covered.';
-    this.countdownMode = false;
-    this.selectLastInputMode = true;
+    this.enableLastClickedMode();
   }
 
+  // Watch for click on all input elements so we can calculate variables when this.selectLastInputMode is true.
+  enableLastClickedMode() {
+    this.inputElements.forEach(element => {
+      element.addEventListener('click', (event) => {
+        // That last click will cause the opposite of what we want. Put it back to the original state.
+        event.srcElement.checked = !event.srcElement.checked;
+        // Cleanup any previously selected last input.
+        this.inputElements.forEach(cleanupElement => {
+          if (cleanupElement.labels && cleanupElement.labels.length > 0) {
+            const cleanupLabelEl = cleanupElement.labels[0];
+            cleanupLabelEl.setAttribute('style', ''); ;
+          }
+        });
+        // Style the label.
+        const labelEl = event.srcElement.labels[0];
+        // @TODO: This won't work because Angular styles don't work on native elements. Really?
+        labelEl.className = 'lastInput';
+        // ... but inline styles do.
+        labelEl.setAttribute('style', 'color:red; border: 1px solid blue;'); ;
+        this.statusMessage = 'You may now proceed.';
+        // Set hidden variables.
+        // Last selected id.
+        const lastSelectedIdInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_last_selected_id');
+        lastSelectedIdInputEl.value = event.srcElement.id;
+        lastSelectedIdInputEl.dispatchEvent(new Event('change', {bubbles: true}));
+        // Last selected nth item.
+        const lastSelectedNthInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_last_selected_nth');
+        lastSelectedNthInputEl.value = this.inputElements.findIndex((el) => el.id === event.srcElement.id) + 1;
+        lastSelectedNthInputEl.dispatchEvent(new Event('change', {bubbles: true}));
+        // items per minute
+        const itemsPerMinuteInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_items_per_minute');
+        itemsPerMinuteInputEl.value = ( lastSelectedNthInputEl.value / ( this.timeSpent / 60 ) );
+        itemsPerMinuteInputEl.dispatchEvent(new Event('change', {bubbles: true}));
+        // Items marked is number of checkboxes checked.
+        const itemsNumberOfItemsMarkedInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_number_of_items_marked');
+        itemsNumberOfItemsMarkedInputEl.value = this.inputElements.filter((element) => {
+          return element.type === 'checkbox' && element.checked === true;
+        }).length;
+        itemsNumberOfItemsMarkedInputEl.dispatchEvent(new Event('change', {bubbles: true}));
+      });
+    });
+  }
 }
