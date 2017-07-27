@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "concurrently \"./node_modules/.bin/angular-pages build --watch\" \"ng serve\"",
+    "start": "./node_modules/.bin/angular-pages build && concurrently \"./node_modules/.bin/angular-pages build --watch\" \"ng serve\"",
     "build": "./node_modules/.bin/angular-pages build && ng build --aot --prod && sw-precache --verbose --config=sw-precache-config.js",
     "test": "./node_modules/.bin/angular-pages build && ng test",
     "lint": "./node_modules/.bin/angular-pages build && ng lint",
