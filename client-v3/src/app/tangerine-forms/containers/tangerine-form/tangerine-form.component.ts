@@ -50,6 +50,9 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
 
   private subscription: any;
 
+  // A place to stash all the form elements we find inside of this component for input output management.
+  private forms: Array<any> = [];
+
   // Set the store to a local store property.
   constructor(private store: Store<any>, private service: TangerineFormSessionsService, private elementRef: ElementRef) {
     // TODO: In the future, it would be nice if Components did not have to be in charge of activating Effects.
@@ -60,6 +63,7 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   ngOnDestroy() {
     this._effects.subscription.unsubscribe();
     this.subscription.unsubscribe();
+    this.forms.forEach(form => form.removeEventListener('change'));
   }
 
   ngOnInit() {
@@ -67,34 +71,59 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterContentInit() {
+    // Find all forms and stash their reference. Skip Formly Forms, they are special.
     this.elementRef.nativeElement.querySelectorAll('form').forEach((form) => {
+      // @TODO: If you put a debugger statement it will work but...
       if (form.className !== 'formly') {
-        form.addEventListener('change', (event) => {
-          this.store.dispatch({
-            type: 'TANGERINE_FORM_ELEMENT_UPDATE',
-            payload: {
-              element: event.srcElement,
-            }
-          });
-        });
+        // ... if you put a debugger statement here it will never hit but a console log will.
+        console.log('yup');
+        this.forms.push(form);
+        // Note if you want the form elements of a form in an array do Array.prototype.slice.call(form.elements,0).
       }
+    });
+    // Subscribe to all form change events so we can pass actions up to the reducer.
+    this.forms.forEach((form) => {
+      form.addEventListener('change', (event) => {
+        this.store.dispatch({
+          type: 'TANGERINE_FORM_ELEMENT_UPDATE',
+          payload: {
+            element: event.srcElement,
+          }
+        });
+      });
     });
   }
 
   ngAfterViewInit() {
 
-    // Subscribe Tangerine Form Session.
+    // Subscribe to Tangerine Form Session store so we can apply updates.
     this.subscription = this.store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {
 
-        // No Session or the session doesn't match this form? Call home for one and this will come back around.
+        // Is there no session or the session doesn't match this form? Call home for one and this will come back around.
         if (!tangerineFormSession || tangerineFormSession.formId !== this.formId) {
           this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
         }
-        // We now have a session for this Component, do things only once.
+        // We now have a session for this Component, do this only once because all other times are an update.
         else if (!this.session) {
           // Spread the Session around.
           this.session = tangerineFormSession;
+
+          this.forms.forEach((form) => {
+            Array.prototype.slice.call(form.elements, 0).forEach((element) => {
+              if (this.session.model.hasOwnProperty(element.id)) {
+                switch (element.type) {
+                  case 'checkbox':
+                    element.checked = this.session.model[element.id];
+                  break;
+                  case 'text':
+                    element.value = this.session.model[element.id];
+                  break;
+                }
+              }
+            })
+          });
+
           this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
             tangerineFormCardComponent.tangerineFormCard.model = Object.assign({}, this.session.model);
           });
