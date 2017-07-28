@@ -47,6 +47,8 @@ export class TangerineFormTimedComponent implements OnInit {
           // ... but inline styles do.
           labelEl.setAttribute('style', 'color:red; border: 1px solid blue;'); ;
           this.statusMessage = 'You may now proceed.';
+          // @TODO Show some visual indication of the status of this being valid and done. Maybe similar to
+          // ... TangerineFormCardComponent that animates to Green when complete.
           // Set hidden variables.
           // Last selected id.
           const lastSelectedIdInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_last_selected_id');
@@ -84,8 +86,7 @@ export class TangerineFormTimedComponent implements OnInit {
   clickedStart() {
     // Prevent double starts.
     if (this.timeSpent === 0) {
-      const timeSpentInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_time_spent');
-      const timeRemainingInputEl = this.elementRef.nativeElement.querySelector('#' + this.id + '_time_remaining');
+      // @TODO Should disable start timer button to provide visual indication you can't click it again.
       this.statusMessage = 'Timer is running.';
       this.inputElements.forEach((element) => element.disabled = false);
       this.timer = setInterval(() => {
@@ -95,10 +96,6 @@ export class TangerineFormTimedComponent implements OnInit {
           clearInterval(this.timer);
           this.timeIsUp();
         }
-        timeRemainingInputEl.value = this.timeRemaining;
-        timeRemainingInputEl.dispatchEvent(new Event('change', {bubbles: true}));
-        timeSpentInputEl.value = this.timeSpent;
-        timeSpentInputEl.dispatchEvent(new Event('change', {bubbles: true}));
       }, 1000);
     }
   }
@@ -117,7 +114,6 @@ export class TangerineFormTimedComponent implements OnInit {
   }
 
   timeIsUp() {
-    clearInterval(this.timer);
     this.lastSelectedMode = true;
     this.statusMessage = 'Time is up, click the last item covered.';
   }
