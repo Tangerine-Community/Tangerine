@@ -22,8 +22,7 @@ export class TangerineFormSessionItemComponent implements OnInit {
   }
 
   resumeSession() {
-    this.store.dispatch({type: 'TANGERINE_FORM_SESSION_RESUME', payload: this.session});
-    this.router.navigate([this.link]);
+    this.router.navigate([ this.link ], {queryParams: { sessionId: this.session._id}} );
   }
 
 }

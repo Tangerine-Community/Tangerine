@@ -6,6 +6,7 @@
 
 import { Component, OnInit, OnDestroy, AfterViewInit, AfterContentInit, Input, Output, EventEmitter, ViewChildren, ElementRef, QueryList, ContentChildren } from '@angular/core';
 import * as PouchDB from 'pouchdb';
+import { ActivatedRoute } from '@angular/router';
 import { Store, provideStore } from '@ngrx/store';
 import { TangerineFormSessionsService } from '../../services/tangerine-form-sessions.service';
 import { TangerineFormSessionsEffects } from '../../effects/tangerine-form-sessions-effects';
@@ -52,9 +53,10 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
 
   // A place to stash all the form elements we find inside of this component for input output management.
   private forms: Array<any> = [];
+  private elements: Array<any> = [];
 
   // Set the store to a local store property.
-  constructor(private store: Store<any>, private service: TangerineFormSessionsService, private elementRef: ElementRef) {
+  constructor(private store: Store<any>, private service: TangerineFormSessionsService, private elementRef: ElementRef, private route: ActivatedRoute) {
     // TODO: In the future, it would be nice if Components did not have to be in charge of activating Effects.
     //       Perhaps we could make effects reducers that misbehave.
     this._effects = new TangerineFormSessionsEffects(store, service);
@@ -99,10 +101,15 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
     // Subscribe to Tangerine Form Session store so we can apply updates.
     this.subscription = this.store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {
-
+        const sessionId = this.route.queryParams.first();
         // Is there no session or the session doesn't match this form? Call home for one and this will come back around.
-        if (!tangerineFormSession || tangerineFormSession.formId !== this.formId) {
-          this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
+        if (!tangerineFormSession || tangerineFormSession.formId !== this.formId || tangerineFormSession._id !== sessionId) {
+          if () {
+            this.store.dispatch({type: 'TANGERINE_FORM_SESSION_RESUME', payload: { _id: sessionId} });
+          }
+          else {
+            this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
+          }
         }
         // We now have a session for this Component, do this only once because all other times are an update.
         else if (!this.session) {
