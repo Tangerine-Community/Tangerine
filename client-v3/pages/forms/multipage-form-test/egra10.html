@@ -26,52 +26,83 @@
     <tangerine-form-card>
     fields:
       - type: 'radio'
-        key: 's3'
+        key: 's17'
         templateOptions:
           required: true
-          label: "Did you eat before coming to school today? "
+          label: "What is the main roofing material of your house? "
           description: ""
           options:
             - key: 1
-              value: Yes
-            - key: 0
-              value: No
+              value: No roof
+            - key: 2
+              value: Thatch
             - key: 3
-              value: Do not know/No response
+              value: Plastic mat
+            - key: 4
+              value: Metal/zinc
+            - key: 5
+              value: Cement
   </tangerine-form-card>
   <tangerine-form-card>
     fields:
       - type: 'radio'
-        key: 's4'
+        key: 's18'
         templateOptions:
           required: true
-          label: "Do you attend any other school besides this school?"
+          label: "Where do you most frequently get your drinking water at home?"
           description: ""
           options:
             - key: 1
-              value: Yes
-            - key: 0
-              value: No
+              value: Well
+            - key: 2
+              value: Borehole
             - key: 3
-              value: Do not know/No response
+              value: Tap outside the house/compound
+            - key: 4
+              value: Tap inside the house/compound
+            - key: 5
+              value: Stream, river, pond
   </tangerine-form-card>
   <tangerine-form-card>
     fields:
       - type: 'radio'
-        key: 's5'
+        key: 's19'
         hideExpression: 'model.s4 != "1"'
         templateOptions:
           required: true
-          label: "Please tell me the type of school you attend. "
+          label: "What type of fuel does your family use for cooking MOST OFTEN? "
           description: ""
           options:
             - key: 1
-              value: Public/government school
+              value: Wood/coal
             - key: 2
-              value: Religious school
+              value: Gas/electric/kerosene
             - key: 3
-              value: Other
+              value: Cow dung
             - key: 4
+              value: Corn stalks
+            - key: 5
+              value: Do not know/No response
+  </tangerine-form-card>
+  <tangerine-form-card>
+    fields:
+      - type: 'radio'
+        key: 's19'
+        hideExpression: 'model.s4 != "1"'
+        templateOptions:
+          required: true
+          label: "What type of toilet facility does your household have?"
+          description: ""
+          options:
+            - key: 1
+              value: Flush toilet
+            - key: 2
+              value: Pit toilet/latrine - private
+            - key: 3
+              value: Pit toilet/latrine - shared
+            - key: 4
+              value: No facility
+            - key: 5
               value: Do not know/No response
   </tangerine-form-card>
 <a routerLink="/forms/multipage-form-test/egra11">Page 11 ►</a>
