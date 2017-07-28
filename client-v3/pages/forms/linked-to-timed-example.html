@@ -1,0 +1,36 @@
+<h2> Linked to Tangerine Timed example </h2>
+
+<tangerine-form formId="linked-to-timed-example">
+
+  <tangerine-form-timed id="timer1" duration=3>
+    Which type of fruits do you recognize?
+    <table>
+        <tr>
+            <td> <input id="pear" type="checkbox"  /> <label for="pear"> pear </label> </td>
+            <td> <input id="mango" type="checkbox"  /> <label for="mango"> mango </label> </td>
+            <td> <input id="peach" type="checkbox"  /> <label for="peach"> peach </label> </td>
+        </tr>
+        <tr>
+            <td> <input id="kiwi" type="checkbox"  /> <label for="kiwi"> kiwi </label> </td>
+            <td> <input id="pineapple" type="checkbox"  /> <label for="pineapple"> pineapple </label> </td>
+            <td> <input id="coconut" type="checkbox"  /> <label for="coconut"> coconut </label> </td>
+        </tr> 
+    </table>
+    <input id="timer1_time_remaining" hidden />
+    <input id="timer1_time_spent" hidden />
+    <input id="timer1_last_selected_id" hidden />
+    <input id="timer1_last_selected_nth" hidden />
+    <input id="timer1_items_per_minute" hidden />
+    <input id="timer1_number_of_items_marked" hidden />
+  </tangerine-form-timed>
+
+  <form id="form2" onchange="
+    if (parseInt(this.elements.timer1_number_of_items_marked.value) > 0) this.hidden = false;
+    if (this.elements.send_me_fruit.checked === true) this.children.throw_fruit.hidden = false;
+    " hidden>
+    <input type="checkbox" id="send_me_fruit" /><label for="send_me_fruit">Would you like us to send you some of the fruit you've never seen?</label>
+    <img width=300 id="throw_fruit" src="/assets/fruit-bowl.gif" hidden>
+  </form>
+
+</tangerine-form>
+

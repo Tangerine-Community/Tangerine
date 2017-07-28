@@ -6,6 +6,7 @@
 
 import { Component, OnInit, OnDestroy, AfterViewInit, AfterContentInit, Input, Output, EventEmitter, ViewChildren, ElementRef, QueryList, ContentChildren } from '@angular/core';
 import * as PouchDB from 'pouchdb';
+import { ActivatedRoute } from '@angular/router';
 import { Store, provideStore } from '@ngrx/store';
 import { TangerineFormSessionsService } from '../../services/tangerine-form-sessions.service';
 import { TangerineFormSessionsEffects } from '../../effects/tangerine-form-sessions-effects';
@@ -52,9 +53,10 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
 
   // A place to stash all the form elements we find inside of this component for input output management.
   private forms: Array<any> = [];
+  private elements: Array<any> = [];
 
   // Set the store to a local store property.
-  constructor(private store: Store<any>, private service: TangerineFormSessionsService, private elementRef: ElementRef) {
+  constructor(private store: Store<any>, private service: TangerineFormSessionsService, private elementRef: ElementRef, private route: ActivatedRoute) {
     // TODO: In the future, it would be nice if Components did not have to be in charge of activating Effects.
     //       Perhaps we could make effects reducers that misbehave.
     this._effects = new TangerineFormSessionsEffects(store, service);
@@ -76,14 +78,30 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
       // @TODO: If you put a debugger statement it will work but...
       if (form.className !== 'formly') {
         // ... if you put a debugger statement here it will never hit but a console log will.
-        console.log('yup');
         this.forms.push(form);
         // Note if you want the form elements of a form in an array do Array.prototype.slice.call(form.elements,0).
       }
     });
+    // Get all elements.
+    this.forms.forEach((form) => {
+      Array.prototype.slice.call(form.elements, 0).forEach((element) => {
+        this.elements.push(element);
+      });
+    });
+    // Spread the elements to all forms.
+    this.forms.forEach((form) => {
+      this.elements.forEach(element => form.elements[element.id] = element);
+    });
     // Subscribe to all form change events so we can pass actions up to the reducer.
     this.forms.forEach((form) => {
       form.addEventListener('change', (event) => {
+        // Echo the change event to other forms on the page.
+        this.forms.forEach(form => {
+          if (form.id !== event.srcElement.id && form.onchange) {
+            form.onchange(event);
+          }
+        });
+        // Dispatch action to the store so data model will update.
         this.store.dispatch({
           type: 'TANGERINE_FORM_ELEMENT_UPDATE',
           payload: {
@@ -99,7 +117,7 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
     // Subscribe to Tangerine Form Session store so we can apply updates.
     this.subscription = this.store.select('tangerineFormSession')
       .subscribe((tangerineFormSession: TangerineFormSession) => {
-
+        const sessionId = this.route.queryParams.first();
         // Is there no session or the session doesn't match this form? Call home for one and this will come back around.
         if (!tangerineFormSession || tangerineFormSession.formId !== this.formId) {
           this.store.dispatch({type: 'TANGERINE_FORM_SESSION_START', payload: { formId: this.formId }});
@@ -108,22 +126,23 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
         else if (!this.session) {
           // Spread the Session around.
           this.session = tangerineFormSession;
-
-          this.forms.forEach((form) => {
-            Array.prototype.slice.call(form.elements, 0).forEach((element) => {
-              if (this.session.model.hasOwnProperty(element.id)) {
-                switch (element.type) {
-                  case 'checkbox':
-                    element.checked = this.session.model[element.id];
-                  break;
-                  case 'text':
-                    element.value = this.session.model[element.id];
-                  break;
-                }
+          // Set HTML form elements.
+          for (const element of this.elements) {
+            if (this.session.model.hasOwnProperty(element.id)) {
+              switch (element.type) {
+                case 'checkbox':
+                  element.checked = this.session.model[element.id];
+                break;
+                case 'text':
+                  element.value = this.session.model[element.id];
+                break;
+                case 'option':
+                  // @TODO
+                break;
               }
-            })
-          });
-
+            }
+          }
+          // Spread to Tangerine Form Cards.
           this.tangerineFormCardChildren.forEach((tangerineFormCardComponent, index, cards) => {
             tangerineFormCardComponent.tangerineFormCard.model = Object.assign({}, this.session.model);
           });
