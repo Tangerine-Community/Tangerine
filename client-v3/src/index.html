@@ -6,6 +6,11 @@
   <title>TangerineForm</title>
   <base href="/">
   <link rel="manifest" href="manifest.json">
+  <style>
+    input:invalid {
+      border: 3px solid red;
+    }
+  </style>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js').then(function (registration) {

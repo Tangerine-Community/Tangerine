@@ -4,9 +4,10 @@
  * aggregated model back down to the card components.
  */
 
-import { Component, OnInit, OnDestroy, AfterViewInit, AfterContentInit, Input, Output, EventEmitter, ViewChildren, ElementRef, QueryList, ContentChildren } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, AfterContentInit, Input, Output, EventEmitter, ViewChildren, ElementRef, QueryList, ContentChildren, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/platform-browser';
 import * as PouchDB from 'pouchdb';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store, provideStore } from '@ngrx/store';
 import { TangerineFormSessionsService } from '../../services/tangerine-form-sessions.service';
 import { TangerineFormSessionsEffects } from '../../effects/tangerine-form-sessions-effects';
@@ -56,7 +57,12 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   private elements: Array<any> = [];
 
   // Set the store to a local store property.
-  constructor(private store: Store<any>, private service: TangerineFormSessionsService, private elementRef: ElementRef, private route: ActivatedRoute) {
+  constructor(private store: Store<any>,
+    private service: TangerineFormSessionsService,
+    private elementRef: ElementRef,
+    private route: ActivatedRoute,
+    private router: Router,
+    @Inject(DOCUMENT) private document: any) {
     // TODO: In the future, it would be nice if Components did not have to be in charge of activating Effects.
     //       Perhaps we could make effects reducers that misbehave.
     this._effects = new TangerineFormSessionsEffects(store, service);
@@ -73,8 +79,35 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterContentInit() {
+    // Listen for clicks on Buttons with `formaction` attributes. Note those are translated to `button.formAction` properties.
+    this.elementRef.nativeElement.querySelectorAll('button').forEach((button) => {
+      if (button.formAction !== this.document.location.href) {
+        button.addEventListener('click', (event) => {
+          let foundUnmetRequiredElement = false;
+          let foundInvalidElement = false;
+          for (const element of event.currentTarget.form.elements) {
+            if (element.required === true && element.value === '') {
+              foundUnmetRequiredElement = true;
+              alert('You have required fields you must fill out.');
+            }
+            if (element.validity.valid === false) {
+              foundInvalidElement = true;
+              alert(element.validationMessage);
+            }
+            if (!foundInvalidElement && !foundUnmetRequiredElement) {
+              // Form action is transformed into a full URL, cut out what we need.
+              const formAction = event.currentTarget.formAction;
+              const positionOfThirdForwardSlash = formAction.split('\/', 3).join('\/').length;
+              const angularURL = formAction.substring(positionOfThirdForwardSlash, formAction.length);
+              this.router.navigate([angularURL]);
+            }
+          }
+        });
+      }
+    });
     // Find all forms and stash their reference. Skip Formly Forms, they are special.
     this.elementRef.nativeElement.querySelectorAll('form').forEach((form) => {
+
       // @TODO: If you put a debugger statement it will work but...
       if (form.className !== 'formly') {
         // ... if you put a debugger statement here it will never hit but a console log will.
@@ -110,6 +143,14 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
         });
       });
     });
+    // @TODO This timer is a shame.
+    setTimeout(() => {
+      for (const form of this.forms) {
+        const event = new Event('change');
+        // Dispatch the event.
+        form.dispatchEvent(event);
+      }
+    }, 200);
   }
 
   ngAfterViewInit() {
@@ -133,11 +174,11 @@ export class TangerineFormComponent implements OnInit, AfterViewInit {
                 case 'checkbox':
                   element.checked = this.session.model[element.id];
                 break;
-                case 'text':
-                  element.value = this.session.model[element.id];
-                break;
                 case 'option':
                   // @TODO
+                break;
+                default:
+                  element.value = this.session.model[element.id];
                 break;
               }
             }
