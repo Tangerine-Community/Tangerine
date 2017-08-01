@@ -43,7 +43,7 @@ const JSON_OPTS = {
 app.get('/', function(req, res){ res.status(HttpStatus.OK).send(`<body><canvas id='big-img' width='200' height='200' style='width:200px;height:200px;margin:auto;top:0;left:0;right:0;bottom:0;position:absolute;'></canvas></body><script>var img;(img = new Image()).src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAZElEQVQYV2NkQAJz5sz5D+OmpKQwwthgBkwSWQJZjBHEQZZENhlmAFgRNiuQxcGKLL3iwOqOb1sENyguIgHMXrRiAQOKIphCmALSFCH7DmQtyEqQSSBrQADkKXhYICuGScIcCADEOEIp/83TCgAAAABJRU5ErkJggg==';var big = document.getElementById('big-img').getContext('2d');big.imageSmoothingEnabled = false;big.drawImage(img,0,0,10,10,0,0,200,200);</script>`); });
 
 // accept a post to _all_docs
-app.post('/check/:group', bodyParser.json(), function(req, res) {
+app.post('/check/:group', bodyParser.json({limit: '50mb'}), function(req, res) {
     const group = req.params.group;
     const keys = req.body.keys;
     const url = `http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/group-${group}/_all_docs`
