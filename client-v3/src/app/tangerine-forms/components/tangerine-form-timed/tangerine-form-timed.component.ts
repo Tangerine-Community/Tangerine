@@ -16,7 +16,7 @@ export class TangerineFormTimedComponent implements OnInit {
   private timer: any;
   // Track the timer.
   private timeSpent = 0;
-  private timeRemaining = 0;
+  timeRemaining = 0;
   // Allows our event listeners on input clicks to know if we are marking the last item.
   // @TODO Probably a better name like "lastItemCovered".
   private lastSelectedMode = false;
