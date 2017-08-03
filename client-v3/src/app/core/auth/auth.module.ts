@@ -10,6 +10,8 @@ import { TangerineFormsModule } from '../../tangerine-forms/tangerine-forms.modu
 import { LoginGuard } from './_guards/login-guard.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
+import { LoginRemoteServerComponent } from './login-remote-server/login-remote-server.component';
+import { RegisterRemoteServerComponent } from './register-remote-server/register-remote-server.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -21,6 +23,6 @@ import { UserService } from './_services/user.service';
     AuthRoutingModule
   ],
   providers: [LoginGuard, AuthenticationService, UserService],
-  declarations: [LoginComponent, RegistrationComponent]
+  declarations: [LoginComponent, RegistrationComponent, LoginRemoteServerComponent, RegisterRemoteServerComponent]
 })
 export class AuthModule { }
