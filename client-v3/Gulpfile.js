@@ -54,9 +54,9 @@ var currentNodes = [];
  * Sample: gulp i18n-init --languages "es, en, de, fr"
  */
 /**
- * @TODO Create documentation for adding languages.
+ * TODO: Create documentation for adding languages.
  * Both the automated and manual creation of files.
- * @TODO when task is run, wire up the laguages to the locales.json file to keep them in sync. Make The JSON to have only the language ids for the ones passed through the cli
+ * TODO: when task is run, wire up the laguages to the locales.json file to keep them in sync. Make The JSON to have only the language ids for the ones passed through the cli
  */
 gulp.task("i18n-init", function (done) {
     console.log("Creating translation files...");

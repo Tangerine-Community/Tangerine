@@ -1,0 +1,11 @@
+<div [hidden]="!isLoading">
+  <h2>Working</h2><img src="../../../../assets/tangy-loading.gif"></div>
+<button (click)="syncSelectedRecords()">Push Selected</button>
+<button (click)="pushAllRecords()">Push All records</button>
+<button (click)="syncSelectedRecords()">Pull Selected</button>
+<button (click)="pullAllRecords()">Pull All records</button>
+<button (click)="syncSelectedRecords()">Sync Selected</button>
+<button (click)="syncAllRecords()">Sync All records</button>
+<ul>
+  <li *ngFor="let db of DBS_TO_SYNC"><input (change)="selectDB($event,db)" type="checkbox">{{db}}</li>
+</ul>

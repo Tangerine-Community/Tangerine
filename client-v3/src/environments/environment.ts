@@ -5,5 +5,11 @@
 
 export const environment = {
   production: false,
-  securityPolicy: ['password']// anonymous
+  securityPolicy: ['password'], // anonymous,
+  uploadUserCredentials: {
+    username: 'admin',
+    password: 'password'
+  },
+  remoteCouchDBHost: 'http://admin:password@localhost:5984/',
+  databasesToSync: ['tangerine-form-sessions', 'groups', 'locations']
 };
