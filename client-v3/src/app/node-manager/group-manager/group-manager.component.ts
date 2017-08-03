@@ -17,7 +17,7 @@ export class GroupManagerComponent implements OnInit {
   // IO.
   // @Input() groupModel:Group;
   // @Input() result: GroupResult;
-
+  result: any;
   @Input() session: TangerineFormSession;
 
   // @Input() session: TangerineFormSession = new TangerineFormSession({

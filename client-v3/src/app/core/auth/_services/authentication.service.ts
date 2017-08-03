@@ -57,8 +57,24 @@ export class AuthenticationService {
     return false;
   }
   isLoggedInForUpload(): boolean {
+    if (localStorage.getItem('loggedInForUploadUser')) {
+      return true;
+    }
     return false;
   }
+  async loginForUpload(username: string, password: string) {
+    const uploadUser = environment.uploadUserCredentials;
+    let isCredentialsValid = false;
+    if (username === uploadUser.username && password === uploadUser.password) {
+      isCredentialsValid = true;
+      localStorage.setItem('loggedInForUploadUser', username);
+    }
+    return isCredentialsValid;
+  }
+  logoutUploadUser(): void {
+    localStorage.removeItem('loggedInForUploadUser');
+  }
+
   getSecurityPolicy() {
     return environment.securityPolicy;
   }
