@@ -1,0 +1,51 @@
+<h2> Linked to Tangerine Timed example </h2>
+
+<tangerine-form formId="linked-to-timed-example">
+  <form onchange="
+      console.log('change happened');
+      if (this.elements.timer1_number_of_items_marked.valueAsNumber > 0) this.children.send_me_fruit_prompt.hidden = false;
+      if (this.elements.send_me_fruit.checked === true) this.children.offer_fruit.hidden = false;
+      " 
+      onload="
+      console.log('hi');
+      debugger;
+      if (this.elements.timer1_number_of_items_marked.valueAsNumber > 0) this.children.send_me_fruit_prompt.hidden = false;
+      if (this.elements.send_me_fruit.checked === true) this.children.offer_fruit.hidden = false;
+      ">
+
+    <label for="contact_telephone">Telephone number:</label><input id="contact_telephone" type="tel" pattern="\d{3}[\-]\d{3}[\-]\d{4}" required> <br>
+
+    <tangerine-form-timed id="timer1" duration=3>
+      Which type of fruits do you recognize?
+      <table>
+          <tr>
+              <td> <input id="pear" type="checkbox"  /> <label for="pear"> pear </label> </td>
+              <td> <input id="mango" type="checkbox"  /> <label for="mango"> mango </label> </td>
+              <td> <input id="peach" type="checkbox"  /> <label for="peach"> peach </label> </td>
+          </tr>
+          <tr>
+              <td> <input id="kiwi" type="checkbox"  /> <label for="kiwi"> kiwi </label> </td>
+              <td> <input id="pineapple" type="checkbox"  /> <label for="pineapple"> pineapple </label> </td>
+              <td> <input id="coconut" type="checkbox"  /> <label for="coconut"> coconut </label> </td>
+          </tr> 
+      </table>
+      <input id="timer1_time_remaining" type="number" hidden>
+      <input id="timer1_time_spent" type="number" hidden>
+      <input id="timer1_last_selected_id" hidden>
+      <input id="timer1_last_selected_nth" type="number" hidden>
+      <input id="timer1_items_per_minute" type="number" hidden>
+      <input id="timer1_number_of_items_marked" type="number" hidden>
+    </tangerine-form-timed>
+
+    <fieldset id="send_me_fruit_prompt" hidden>
+      <input type="checkbox" id="send_me_fruit"><label for="send_me_fruit">Would you like us to send you some of the fruit you've never seen?</label>
+    </fieldset>
+    <div id="offer_fruit" hidden>
+      <img width=300 id="offer_fruit" src="/assets/fruit-bowl.gif"> <br>
+    </div>
+    
+    <button type="submit" formaction="/">Go home.</button>
+    <button type="submit" formaction="/forms/linked-to-timed-example-2">Proceed to the next page to send us your address.</button>
+
+  </form>
+</tangerine-form>
