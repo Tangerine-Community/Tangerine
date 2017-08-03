@@ -9,6 +9,8 @@ var cheerio = require("gulp-cheerio");
 var pd = require("pretty-data").pd;
 var removeEmptyLines = require('gulp-remove-empty-lines');
 var { exec } = require('child_process');
+const util = require('util')
+const execAwait = util.promisify(require('child_process').exec);
 var del = require('del');
 var runSequence = require('run-sequence');
 var DIST_DIR = 'dist';
@@ -249,8 +251,10 @@ gulp.task('create-redirect-page', () => {
         console.log('Created Redirect Page Successfuly');
     });
 });
-gulp.task('clean', () => {
-    return del.sync([DIST_DIR]);
+gulp.task('clean', async () => {
+    await execAwait(`rm -r ${DIST_DIR}`);
+    await execAwait(`mkdir ${DIST_DIR}`);
+    return 
 });
 
 gulp.task('build', function (callback) {
