@@ -1,5 +1,3 @@
-import { async } from '@angular/core/testing/src/testing';
-import { tryCatch } from 'rxjs/util/tryCatch';
 import { Component, OnInit } from '@angular/core';
 import { SyncingService } from '../_services/syncing.service';
 import { environment } from '../../../../environments/environment';
@@ -18,7 +16,6 @@ export class SyncRecordsComponent implements OnInit {
   }
 
   selectDB(el, database) {
-    console.log(database);
     if (el.target.checked) {
       this.selectedDBs.push(database);
     } else {

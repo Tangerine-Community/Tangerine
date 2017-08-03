@@ -1,4 +1,3 @@
-import { tryCatch } from 'rxjs/util/tryCatch';
 import { Injectable } from '@angular/core';
 import * as PouchDB from 'pouchdb';
 import { environment } from '../../../../environments/environment';
