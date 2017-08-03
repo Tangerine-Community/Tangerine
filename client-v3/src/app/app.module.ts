@@ -14,7 +14,6 @@ import { WindowRef } from './core/window-ref.service';
 import { NodeManagerModule } from './node-manager/node-manager.module';
 import { TangerineFormsModule } from './tangerine-forms/tangerine-forms.module';
 import { AuthModule } from './core/auth/auth.module';
-import { PagesModule } from './pages/pages.module';
 
 
 export { AppComponent }
@@ -32,7 +31,6 @@ export { AppComponent }
     TangerineFormsModule,
     AuthModule,
     NodeManagerModule,
-    PagesModule,
     AppRoutingModule
   ],
   providers: [WindowRef],

@@ -161,7 +161,7 @@ gulp.task('pagesBuild', (cb) => {
      */
     return locales.map((locale) => {
         const lang = locale.language;
-        const command = `./node_modules/.bin/angular-pages build && ng build --output-path=dist/${lang} --aot -prod  --bh /${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
+        const command = `ng build --output-path=dist/${lang} --aot -prod  --bh /${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
 
         /**
          * attaching exec to a variable Allows us to listen to console output from shell and send them to our gulp output as a stream. Note exec implements Event Emitter thus allowing listening to the events
@@ -252,7 +252,12 @@ gulp.task('create-redirect-page', () => {
     });
 });
 gulp.task('clean', async () => {
-    await execAwait(`rm -r ${DIST_DIR}`);
+    try {
+      await execAwait(`rm -r ${DIST_DIR}`);
+    }
+    catch (e) { 
+      // Do nothing, they didn't have a dist directory yet.
+    }
     await execAwait(`mkdir ${DIST_DIR}`);
     return 
 });
