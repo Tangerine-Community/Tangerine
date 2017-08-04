@@ -13,7 +13,7 @@ const util = require('util')
 const execAwait = util.promisify(require('child_process').exec);
 var del = require('del');
 var runSequence = require('run-sequence');
-var DIST_DIR = 'dist';
+var DIST_DIR = 'dist/tangerine';
 
 function copyArray(source) {
     var copy = [];
@@ -161,7 +161,7 @@ gulp.task('pagesBuild', (cb) => {
      */
     return locales.map((locale) => {
         const lang = locale.language;
-        const command = `ng build --output-path=dist/${lang} --aot -prod  --bh /${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
+        const command = `ng build --output-path=dist/tangerine/${lang} --aot -prod  --bh /tangerine/${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
 
         /**
          * attaching exec to a variable Allows us to listen to console output from shell and send them to our gulp output as a stream. Note exec implements Event Emitter thus allowing listening to the events
@@ -185,7 +185,7 @@ gulp.task('generate-service-worker', function (callback) {
     var swPrecache = require('sw-precache');
 
     locales.map((locale) => {
-        var rootDir = 'dist/' + locale.language;
+        var rootDir = 'dist/tangerine/' + locale.language;
         let swConfig = {
             staticFileGlobs: [
                 rootDir + '/**/*.{js,html,css,png,jpg,gif,svg,eot,ttf,woff}'
@@ -207,7 +207,7 @@ gulp.task('create-redirect-page', () => {
      */
     let languages = '';
     locales.map((locale) => {
-        languages += `<li><a href="/${locale.language}" onclick="setLocale('${locale.language}')">${locale.abbreviation}</a></li>`
+        languages += `<li><a href="/tangerine/${locale.language}" onclick="setLocale('${locale.language}')">${locale.abbreviation}</a></li>`
     })
     let contents = `
 <!doctype html>
@@ -235,7 +235,7 @@ gulp.task('create-redirect-page', () => {
      function navigateToLocale() {
         let locale = localStorage.getItem("tangy-locale");
         if(locale){
-            window.location.href = "/"+locale;
+            window.location.href = locale;
         } 
     }
        function setLocale(locale) {
@@ -253,12 +253,13 @@ gulp.task('create-redirect-page', () => {
 });
 gulp.task('clean', async () => {
     try {
-      await execAwait(`rm -r ${DIST_DIR}`);
+      await execAwait(`rm -r dist`);
     }
     catch (e) { 
       // Do nothing, they didn't have a dist directory yet.
     }
-    await execAwait(`mkdir ${DIST_DIR}`);
+    await execAwait(`mkdir dist`);
+    await execAwait(`mkdir dist/tangerine`);
     return 
 });
 
