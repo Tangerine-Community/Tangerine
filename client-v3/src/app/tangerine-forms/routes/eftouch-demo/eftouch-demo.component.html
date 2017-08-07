@@ -1,8 +1,8 @@
 
-<tangerine-form formId="tangerine-eftouch-demo" #tangerineForm>
-
+<tangerine-form formId="tangerine-eftouch-demo" #tangerineForm >
 <div id="slide1">
-  <tangerine-form-card #card1>
+  <div ngClass="efcard cardRight"><a (click)='show("#slide2","#slide1")'>Next</a></div>
+  <eftouch-form-card #card1>
     id: 'card1'
     fields:
     - type: 'imageSelect'
@@ -23,14 +23,15 @@
             audio: 'url2'
           - image: 'https://ictatrti.github.io/eftouch-test1/assets/banana.png'
             value: 'banana'
-  </tangerine-form-card>
-  <div ngClass="cardRight">
-    <a (click)='show("#slide2","#slide1")'>Next</a>
-  </div>
+    media:
+      transitionSound: 'https://ictatrti.github.io/eftouch-test1/assets/pop.mp3'
+      displaySound:  'https://ictatrti.github.io/eftouch-test1/assets/swish.mp3'
+  </eftouch-form-card>
 </div>
 
   <div id="slide2">
-    <tangerine-form-card #card2>
+    <div ngClass="efcard"><a (click)='show("#slide1","#slide2")'>Back</a></div>
+    <eftouch-form-card #card2>
     id: 'card2'
     fields:
     - type: 'imageSelect'
@@ -48,9 +49,10 @@
           value: 'apple'
         - image: 'https://ictatrti.github.io/eftouch-test1/assets/airplane.png'
           value: 'airplane'
-
-  </tangerine-form-card>
-    <div><a (click)='show("#slide1","#slide2")'>Back</a></div>
+    media:
+      transitionSound: 'https://ictatrti.github.io/eftouch-test1/assets/pop.mp3'
+      displaySound:  'https://ictatrti.github.io/eftouch-test1/assets/swish.mp3'
+  </eftouch-form-card>
   </div>
 
 </tangerine-form>

@@ -7,9 +7,17 @@
   display: none;
 }
 
+.efcard {
+  /*top: -10px;*/
+  position: absolute;
+  background-color: rgb(175, 210, 154);
+  z-index: 1;
+  left: 20px;
+}
+
 .cardRight {
   position: absolute;
-  left: 580px;
+  left: 500px;
 }
 
 a {

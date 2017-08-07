@@ -6,6 +6,7 @@ export class TangerineFormCard {
     subtitle: String = undefined;
     image: String = undefined;
     images = [];
+    media: Media = new Media();
     avatarImage: String = undefined;
     fields: FormlyFieldConfig;
     showSubmitButton = false;
@@ -13,4 +14,9 @@ export class TangerineFormCard {
     status = 'INVALID';
     skip =  false;
     logic = '';
+}
+
+export class Media {
+  transitionSound: string = undefined;
+  displaySound: string = undefined;
 }
