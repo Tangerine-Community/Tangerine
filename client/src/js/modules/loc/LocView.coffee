@@ -14,7 +14,7 @@ class LocView extends Backbone.View
 
   initialize: (options={}) ->
     @showTitles = if options.showTitles? then options.showTitles else true
-    @levels = options.levels || ["county", "zone", "school"]
+    @levels = options.levels || Tangerine.locationList.attributes.locationsLevels || ["county", "zone", "school"]
     @addedOptions = if options.addedOptions? then options.addedOptions else false
     @selected = options.selected || []
 
