@@ -154,7 +154,7 @@ del([ Path.join(Conf.PACK_PATH, 'pack*.json') ], {force: true})
   })
   .then(function putWorkflowIdsInIdList(res) {
     res.body.rows.forEach(function(row) {
-      idList.push(row._id)
+      idList.push(row.id)
     })
   })
   .then(function getAssessments(res) {
