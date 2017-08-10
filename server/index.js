@@ -13,6 +13,8 @@ const cookieParser = require('cookie-parser');
 // for cookie authorization
 const couchAuth = require('./middlewares/couchAuth');
 
+const  isCouchAdmin = require('./middlewares/isCouchAdmin');
+
 // basic logging
 const requestLogger = require('./middlewares/requestLogger');
 
@@ -67,7 +69,7 @@ app.use(function(err, req, res, next) {
 });
 
 app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
-app.use('/client', express.static(__dirname + '/../client/src/'));
+app.use('/client', isCouchAdmin, express.static(__dirname + '/../client/src/'));
 
 // User routes
 app.get('/user/:name',    require('./routes/user/get-user'));
