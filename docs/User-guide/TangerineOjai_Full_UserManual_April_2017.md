@@ -72,14 +72,14 @@ Tangerine Icon Library
                                                                                                                                                                           
   ![](.//media/image18.jpeg)                                                                                 The ‘Copy to’ button in the Wizard can be used to copy questions between subtests and subtests between assessments.
                                                                                                                                                                           
-  ![Macintosh HD:Users:scottkipp:Desktop:Screen Shot 2014-11-25 at 1.15.18 PM.png](.//media/image19.png)    The ‘Delete’ key will remove an assessment from the ***Wizard***. On ***tablets***, this button is visible only when logged in as admin.
+  ![Macintosh HD:Users:scottkipp:Desktop:Screen Shot 2014-11-25 at 1.15.18 PM.png](.//media/image19.png)    The ‘Delete’ key will remove an assessment from the ***Wizard***.
 
 # A. The Tangerine Wizard
 
 To begin building instruments in Tangerine, you
-must establish a user name and password at the [Tangerine
-Ojai](http://databases.tangerinecentral.org/tangerine/_design/ojai/index.html#login)
-website. Both your username and password are case-sensitive. Once logged
+must establish a user name and password on the Tangerine server you are using. Tangerine can be used by establishing a server hosted by RTI International, or by as hosted by anyone who has installed Tangerine's open code on their webhost. Please see www.tangerinecentral.org to learn more.
+
+Both your username and password are case-sensitive. Once logged
 in, your user name will appear in the top right-hand corner of the
 browser window.
 
@@ -99,9 +99,11 @@ If you would like to join an existing group, please contact the person
 who has created the group you would like to join and request that your
 user name be added to that group.
 
-If you would like to create a new group, click the “Account” button
+If you would like to create a new group, you must login with username as: 'user1' - this is the only username on a Tangerine server with the ability to create a new group. If you do not have the password for this account, please contact your server's administrator to request that a new group be created. 
+
+Once logged in as 'user1', click the “Account” button
 shown in the image above and then select “Join or create group” on the
-page that follows. You will be asked to re-enter your password in order
+page that follows. You will be asked to re-enter the 'user1' password in order
 to create a new group. Once you have done this, you should now see your
 new group appear in the Wizard landing screen. In this example, the
 group “demo\_manual” now appears as an option.
@@ -114,26 +116,30 @@ building.*
 ## 2. The Tangerine Group Homepage
 
 Once you have joined or have been given access at least one group, you
-will see buttons representing each group. Click a group button to work
+will see buttons representing each group. Click a group button to enter into that group to work
 in it. Once you are inside a group, your screen (as in the example
 below) will present several options:
 
 ![](.//media/image21.png)&nbsp;
 
 In Tangerine, all instruments are referred to as ***Assessments***. You
-can either:
+can:
 
-1.  Create a new assessment; or
+1.  Create a new assessment (see below).
 
-2.  Import an assessment.
+2.  Import an assessment from another group (see below).
 
-You can add users by entering their account names into the text fields
+3. Add collaborating users.
+
+You can add collaborating users by entering their account names into the text fields
 under ‘***Admins***’ and ‘***Members***.’ Admin users have all
 privileges for editing, deleting and duplicating instruments. Member
 users, also known as ‘readers’, can only simulate (run) assessments,
-download their results files (.csv files), and print contents. To add a
+download their results files (.csv files), and print out instrument contents. To add a
 user into either role, enter the user’s name in the text field and click
 the ‘+’ button. Enter your password to confirm.
+
+Recall that user names are case-sensitve. If you see an error when trying to add a user to your group, confirm the exact spelling of the username with the user, and ask them to confirm that they have logged in on the Tangerine server you are using. 
 
 ### 2.1 Changing your Group’s Language
 
@@ -168,7 +174,7 @@ to repurpose in a new group, you can import them by clicking the
 
 3.  In the target group (where you want the new copy), click ‘Import’.
 
-4.  Select the original group and enter the download key in the box.
+4.  Select the original group and enter the download key in the box. Click 'Import'. 
 
 5.  Return to the new group’s main page and you will see the import.
 
@@ -193,8 +199,8 @@ with multiple subtests.
 <!-- -->
 
 2.  Name your assessment, then click “Save.” Your assessment will now
-    appear in the “Group assessments” section of the homepage, which is
-    categorized alphabetically.
+    appear in the “Assessments” section of the group's landing page. Assessments on this
+    page are categorized alphabetically.
 
 <!-- -->
 
@@ -202,7 +208,7 @@ with multiple subtests.
 
 ![](.//media/image22.tmp)&nbsp;
 
-![](.//media/image4.png) *Carefully select the name for your assessment. Make sure to include the name of the project or country, month of data collection, assessment target group and potentially some other unique details. We expect that you will be using Tangerine several times in a specific project (e.g. for baseline, midterm and final data collection or annual data collection activities). You will want to make sure that you are using appropriate instruments and that these are clearly identified.*
+![](.//media/image4.png) *Carefully select the name for your assessment. Make sure to include the name of the project or country, month of data collection, assessment target group and potentially some other unique details. If you expect that you will be using Tangerine several times in a specific project (e.g. for baseline, midterm and final data collection or annual data collection activities), it may be helpful to include dates in the assessment name. You will want to make sure that you are using appropriate instruments and that these are clearly identified.*
 
 ## 5. Building an Assessment
 
@@ -217,7 +223,7 @@ are not changeable. The ‘***Status***’ of an assessment will be
 highlighted in yellow as either “Active” or “Archived” – which you can
 change by clicking on the button (when the button is yellow, it is
 selected). This setting only affects whether an assessment is included
-into an APK file. An assessment’s status has no effect on data – both
+into an APK file; when you export your APK file from the Tangerine Wizard, only 'Active' assessments will be included. An assessment’s status has no effect on data – both
 ***Active*** and ***Archived*** instruments can receive data being
 uploaded from tablets. Your ability to edit subtests is also unaffected
 by the assessment’s status.
@@ -237,15 +243,15 @@ basic data**:**
 
 1.  The date and time subtest;
 
-2.  The location subtest, used to identify locale;
+2.  The location subtest, used to select your point of data collection from a list (e.g. select a school name from a filtered list of schools);
 
-3.  The student id subtest, used to create a unique data point record; and
+3.  The student id subtest, used to create a unique, anonymous data identifier; and
 
 4.  The consent subtest.
 
 Additional subtests will be made up of “survey” or “grid” pages, the
 page formats most often chosen for the various EGRA/EGMA assessments and
-surveys. Subtests will appear in the sequence in which they were added.
+surveys. Subtests will appear in the order in which they were added.
 To reorder your subtests, simply click on the left-hand icon of three
 gray bars to drag pages/subtests into a different order:
 
@@ -255,21 +261,19 @@ Click and drag the handlebars to reorder subtests and questions.
 
 ## 6. Editing Individual Subtests (Subtest Editor)
 
-Click on the edit (pencil) icon next to the subtest in which you wish to
-work, as shown below:
+Click on the edit (pencil) icon next to the subtest you want to edit, as shown below:
 
 ![](.//media/image28.jpeg)&nbsp;
 
 To the right of each subtest, you will notice four things:
 
-1.  Type of subtest: this is the system-generated name of the prototype you selected for each subtest (e.g. ‘grid’ from the above
-    > screenshot).
+1.  Type of subtest: this is the system-generated name of the prototype you selected for each subtest (e.g. ‘grid’ from the above screenshot).
 
 2.  The edit button, ![](.//media/image29.jpeg), which you will click to edit subtest content.
 
 3.  The “Copy to…” button, ![](.//media/image18.jpeg), which you can use to send a copy of a given subtest to any other assessment in your group.
 
-4.  The delete button, ![](.//media/image30.jpeg), which can be used to remove subtests from your assessment. You will be prompted to confirm this choice.
+4.  The delete button, ![](.//media/image30.jpeg), which can be used to remove subtests from your assessment. You will be prompted to confirm this choice. NB: Deleted assessments cannot be recovered. If you think you may need an assessment or its data at a later stage, it is best to set that instrument's status to "Archived" rather than deleting it. 
 
 After clicking the edit icon,
 ![](.//media/image29.jpeg) , you will land on the Subtest Editor page. At the
@@ -284,17 +288,11 @@ The following fields and configurations appear in all types of subtests.
 Other settings and options are unique to certain types of subtests (such
 as grid subtests, survey subtests).
 
-***Language Code:*** here you can indicate the language to apply to this
-subtest. This refers to the system text that appears on the tablets
-(e.g. buttons like “Help”, “Next”, “Start” and “Stop”). When left blank,
-the subtest’s system text will appear in English. At present, only
-French is an option for subtest system text language. To apply French to
-a subtest, enter ‘fr’ into the language code field.
+***Language Code:*** here you can indicate the language used for the subtest's content. This is a reference field only and will not affect how your content is displayed in Tangerine. 
 
 ***Skippable***: you can indicate whether this subtest is required or
 not. The default setting of ‘No’ means that all items will be required
-before a user can advance to the next subtest. Not allowing your
-enumerators to skip a subtest will avoid missing values in your dataset
+before a user can advance to the next subtest. Requiring your users to complete a subtest will avoid missing values in your dataset
 (provided individual questions are also kept with ‘Skippable’ set to
 ‘No’). When set to ‘Yes’, a button labeled ‘Skip’ will appear on the
 bottom left of the tablet screen.
@@ -308,13 +306,13 @@ accurate.
 ***Enumerator help***: you can include a description of the subtest
 assessment procedure for the enumerator’s benefit, or any other
 instruction that may not always need to be visible. This information can
-be collapsed/expanded by the enumerator with one touch on a “Help”
+be collapsed/expanded by the enumerator with one touch on the “Help”
 button during data collection to avoid taking up screen space on
 devices. This ensures that the information is easily accessible in case
 there is doubt as to how to administer the subtest and can provide
 helpful reminders.
 
-***Student Dialogue**:* typically used to display the dialog that your
+***Student Dialogue***: typically used to display the dialog that your
 data collector says to the student/participant (i.e. the actual
 instructions they read out loud). The text editor is used to bold,
 italicize, underline, or accent in any way a piece of information.
@@ -333,20 +331,22 @@ that all information on this screen is correct before pressing ‘Next.”
 Unicode UTF-8 font of your choosing. This is important for some
 languages and scripts whose characters may not be contained within the
 character libraries of the tablet you are using. At present, embedded
-font options include: andika, gentium, padauk, zwekabin, rabiat, and Mondulkiri. If
-you need support for additional font libraries to be embeddable options,
+font options include: andika, gentium, padauk, zwekabin, rabiat, and Mondulkiri. 
+
+If you are having trouble displaying some characters or fonts on your tablet and you need support for additional font libraries to be embeddable options,
 please contact RTI or your Tangerine host provider.
 
 Note that though some characters may display properly when viewed on a
 computer’s browser, an Android tablet may not contain the same character
-library, and so may hide or distort some characters – always verify your
-instruments’ fidelity of display on your tablets.
+library, and so the tablet may hide or distort some characters – always verify your instruments’ fidelity of display on your tablets.
 
-![](.//media/image4.png) *When pasting text into the Enumerator Help, Student Dialog or Transition comment boxes, first click on the icon marked “Paste as plain text” in the top row of the editor, the fifth icon from the left (see above screenshot for Student Dialog). Paste the text into the box that appears, click “OK”, and the text will appear in the Tangerine Wizard. If you copy text directly from a rich text program such as Microsoft Word, your copied text will likely be accompanied by additional formatting which will distort the text in the kinds of wizards (aka “WYSIWYG’s) used by Tangerine. This additional markup formatting may cause other errors in your instruments; if you begin to see odd formatting or text displaying incorrectly on screens, check that your dialog texts do not contain additional formatting by copying all text into a plain text editor (such as Notepad or TextEdit), deleting it from the dialog box in Tangerine, and re-copying back in from the plain text editor.*
+![](.//media/image4.png) *When pasting text into the Enumerator Help, Student Dialog or Transition comment boxes, first click on the icon marked “Paste as plain text” in the top row of the editor, the fifth icon from the left (see above screenshot for Student Dialog). Paste the text into the box that appears, click “OK”, and the text will appear in the Tangerine Wizard. If you copy text directly from a rich text program such as Microsoft Word, your copied text will likely be accompanied by additional formatting which may distort the text in the kinds of wizards (aka “WYSIWYG’s) used by Tangerine. This additional markup formatting may cause other errors in your instruments; if you begin to see odd formatting or text displaying incorrectly on screens, check that your dialog texts do not contain additional formatting by copying all text into a plain text editor (such as Notepad or TextEdit), deleting it from the dialog box in Tangerine, and re-copying back in from the plain text editor.*
 
 ### 6.1 The Date and Time Subtest
 
-This subtest is used to generate date and time variables in your data set. When this subtest appears on the tablet screen, it will auto-populate the date and time variables with the current settings from the tablet. Typically, data collectors should just press the “Next” button if the data should reflect the time that the data collection actually occurred. The Date and Time page cannot be edited beyond its title. Although there is provision for Enumerator help and instructions, these are usually not needed. If desired, data collectors can manually adjust the date and time which appear on the screen (e.g. such as when entering into Tangerine data which was originally collected on paper at an earlier time/date).
+This subtest is used to generate date and time variables in your data set. When this subtest appears on the tablet screen, it will auto-populate the date and time variables with the current settings from the tablet. Typically, data collectors should just press the “Next” button if the data should reflect the time that the data collection actually occurred. If your data collectors notice than the date and/or time displayed in Tangerine on their tablet is not accurate, then this is an indication that the tablet's date and time settings are incorrect. In these cases, the user should change the date and time in the tablet's settings and restart the assessment on the tablet to have Tangerine reflect the correct time. 
+
+The Date and Time subtest's functions cannot be edited. If desired, data collectors can manually adjust the date and time which appear on the screen (e.g. such as when entering into Tangerine data which was originally collected on paper at an earlier time/date). Editing the displayed date and time on the Tangerine tablet screen will not change the tablet's date and time settings, it will only change the date and time data associated with that particular assessment.
 
 ![](.//media/image4.png) *The Tangerine app will pull the date and time information from the device on which it is installed. To ensure accurate time stamps for your data, verify that the date and time is configured properly and consistently on all of your devices prior to data collection.*
 
@@ -367,15 +367,20 @@ site-specific location info:
 
 In the field for “Location Data” you can enter the site location details for the collection points in your sample. Once you have loaded the Geographic Levels and respective data, the data collectors filling out this subtest in the field will be prompted to select site location details from the list you have entered in this subtest.
 
+If you receive this error, 
+>"Some columns in the location data do not match the number of columns in the geographic levels."
+
+This is an indication that your location data may be incomplete, or you may have pasted in extra commas somewhere in your Location Data. You may find it easiest to open your data in a spreadsheet program and search for commas in the names of schools, replacing them with another symbol such as a hyphen or a slash. 
+
 ### 6.3 The Student ID Subtest
 
-The Student ID subtests is used to generate a unique ID code for your data record. The page cannot be edited beyond its title. Although there is provision for Enumerator help and instructions, these are usually not needed. Data collectors simply press the ‘Generate’ button as shown below, then ‘Next’ to proceed, once a code has appeared in the box below ‘Random Identifier.’
+The Student ID subtest is used to generate a unique ID code for your data record. This subtest's function cannot be edited. Although there is provision for Enumerator help and instructions, these are usually not needed. Data collectors simply press the ‘Generate’ button as shown below, then ‘Next’ to proceed, once a code has appeared in the box below ‘Random Identifier.’
 
-![](.//media/image4.png) *If you intend to track specific survey participants across multiple assessments, multiple enumerators or over a span of time, it will be important for the enumerator or the participant to retain their ID number. You cannot assign numbers ahead of time to participants, such as “ABCDEF”, as the Tangerine system follows an algorithmic pattern to generate ID numbers. You have two options in using this type of subtest: either click “Generate” to execute a new ID number, or enter an ID number that has been previously created by the Tangerine system. If you want to require users to enter an ID number that has been previously generated by Tangerine, consider hiding the ‘Generate’ button (see appendix for applicable command).*
+![](.//media/image4.png) *If you intend to track specific survey participants across multiple assessments, multiple enumerators or over a span of time, it will be important for the enumerator or the participant to retain their Tangerine-generated ID number. You cannot assign numbers ahead of time to participants, such as “ABCDEF”, as the Tangerine system follows an algorithmic pattern to generate ID numbers. You have two options in using this type of subtest: either click “Generate” to execute a new ID number, or enter an ID number that has been previously created by the Tangerine system. If you want to require users to enter an ID number that has been previously generated by Tangerine, consider hiding the ‘Generate’ button (see appendix for applicable command).*
 
 ### 6.4 The Consent Subtest
 
-The consent subtest is used to show in your data that the assessment participant or survey responder agreed to proceed. This subtest generates a “Yes / No” question. If “Yes” is marked as the answer, the instrument will proceed. If “No” is marked, this indicated non-consent, and the instrument will automatically skip to its end.
+The consent subtest is used to show in your data that the assessment participant or survey responder agreed to proceed. This subtest generates a “Yes / No” question. If “Yes” is marked as the answer, the instrument will proceed. If “No” is marked, this indicates non-consent, and the instrument will automatically skip to the end of the instrument.
 
 At the bottom of the Subtest Editor page for Consent, you will find a box titled “Consent prompt” - this is where you can customize the phrasing and language of the consent prompt to the specific assessment target group (e.g., “Does Student consent?”, or “Does the Principal consent to participate in the interview?”).
 
@@ -385,15 +390,12 @@ As you will see with other subtests, a similar process of filling out a “promp
 
 ![](.//media/image33.jpeg)&nbsp;
 
-Grid subtests are most commonly used for timed subtests.
-In addition to the standard fields for Enumerator Help, Student Dialog
-and Transition Comment, there are fields and settings unique to these
-timed tests that will appear in the Subtest Editor for any grid subtest
+Grid subtests are most commonly used for timed subtests, such as Oral Reading or Letter Name Recognition. In addition to the standard fields for Enumerator Help, Student Dialog and Transition Comment, there are fields and settings unique to these timed tests that will appear in the Subtest Editor for any grid subtest
 prototype.
 
 The ***Variable name*** you choose, such as “letters”, will be the prefix added to each grid item in your results file. In this case, each grid item (each letter) in your results file will be listed as “letter\_1”, “letter\_2”, etc., based on their sequential position in the ***Grid items*** box.
 
-In the field for “Grid Items”, simply paste in the items (letters, words, numbers) you have selected for this subtest. Delimit each item with a single space (if you have extra space breaks the system will remove these); Tangerine will generate grid buttons based on this spacing. For example, if you want the equation “5+3=(8)” to appear on one grid button, enter the equation with no spaces between its characters, adding spaces in between equations to indicate a new button. After entering your variable name and grid items, you can alter several configuration settings for how your grid will look and behave:
+In the field for “Grid Items”, simply paste in the items (letters, words, numbers, etc) you have selected for this subtest. Delimit each item with a single space (if you have extra space breaks the system will remove these); Tangerine will generate grid buttons based on this spacing. For example, if you want the equation “5+3=(8)” to appear on one grid button, enter the equation with no spaces between its characters, adding spaces in between equations to indicate a new button on the grid. After entering your variable name and grid items, you can alter several configuration settings for how your grid will look and behave:
 
 ***Right-to-Left direction:*** This setting will reverse the default order of scoring for grid tests.
 
@@ -401,21 +403,21 @@ In the field for “Grid Items”, simply paste in the items (letters, words, nu
 
 ***Layout mode:*** ‘Fixed’ will stabilize the grid’s settings irrespective of the tablet’s screen orientation, ‘Variable’ will attempt to adjust to screen optimization. ‘Fixed’ is the default and recommended setting.
 
-***Grid font size:*** Medium is the default. Select “small” if you have particularly wide grids. When testing on tablets, it is important that your users have enough blank space in the margins next to the grid to scroll without tapping assessment items.
+***Grid font size:*** Medium is the default. Select “small” if you have particularly wide grids (e.g. a grid of vocabulary words that are particularly lengthy). When testing on tablets, it is important that your users have enough blank space in the margins next to the grid to scroll without inadvertently tapping assessment items.
 
-***Capture item at specified number of seconds:*** This option allows you to take a ‘snapshot’ of a student’s progress at a specific time point.
+***Capture item at specified number of seconds:*** This option allows you to take a ‘snapshot’ of a student’s progress at a specific time point. 
 
 ***Capture last item attempted:*** Ensures that your enumerators will be forced to indicate the end point of the student’s progress through the grid items.
 
-***Mark entire line button:*** For all but the first line of grid items, if this setting is left at ‘Yes’, a button with an asterisk “\*” will appear to the right of each grid row, allowing assessors to quickly mark incorrect an entire line of items.
+***Mark entire line button:*** For all but the first line of grid items, if this setting is left at ‘Yes’, a button with an asterisk “\*” will appear to the right of each grid row, allowing assessors to quickly mark incorrect an entire line of items. This button can be helpful in cases where a student has skipped over an entire line of items, as it facilitates quickly marking the entire line incorrect, allowing the assessor to maintain focus on the remainder of the subtest. 
 
-***Columns:*** Indicate in how many columns you want to display the items (for letters we usually select 10 columns of 10 items each, for familiar words 5 columns of 10 items each);
+***Columns:*** Indicate in how many columns you want to display the items (for letters we usually select 10 columns of 10 items each, for familiar words 5 columns of 10 items each). If your grid is displaying too wide on your device, consider reducing the number of columns. 
 
-***Autostop***: the number of consecutive incorrect items after which the subtest stops automatically. The autostop calculation will only activate if the first grid item is marked incorrect. For example, with an autostop value of 10, if a child has the first 4 items correct and then the following 10 items incorrect, the test will not autostop. It will only autostop if the first 10 items are all incorrect.
+***Autostop***: the number of consecutive incorrect items, counting from the first grid item, after which the subtest stops automatically. The autostop calculation will only activate if the first grid item is marked incorrect. For example, with an autostop value of 10, if a child has the first 4 items correct and then the following 10 items incorrect, the test will not autostop. It will only autostop if the **first** 10 items are all incorrect.
 
-***Timer***: The number of seconds you would like to allow for grid items to be attempted. If you would like to use the grid test setup, but not the timer, set the Timer value to zero and the “Capture last item attempted” setting to “No.”
+***Timer***: The total number of seconds you would like to allow for grid items to be attempted. If you would like to use the grid test setup, but not the timer, set the Timer value to zero and the “Capture last item attempted” setting to “No.”
 
-***Last Item Attempted Bracket in Timed Tests:*** The last item attempted by the student is critical in marking the speed and progress of an assessment. The bracket itself is a red outline that will be placed around the final grid item attempted. When using a timed test, there are 3 possible scenarios for how the bracket will be placed:
+***Last Item Attempted Bracket in Timed Tests:*** The last item attempted by the student is critical in marking the speed and progress of an assessment, and as such is also critical for calcuating fluency and "correct items per minute" variables. The bracket itself is a red outline that will be placed around the final grid item attempted. When using a timed test, there are 3 possible scenarios for how the bracket will be placed:
 
 1.  It will be placed automatically if the test has been autostopped (if
     Autostop activated). Once the final incorrect item needed to trigger
@@ -429,8 +431,7 @@ In the field for “Grid Items”, simply paste in the items (letters, words, nu
 
 3.  The assessor presses the ‘Stop’ button. This should only happen if
     the child has attempted the final item of the grid (or if the test
-    needs to be restarted due to an error or for practice). As such, the
-    screen will not flash red as the assessor will know to stop the
+    needs to be restarted due to an error/distraction or for practice). As such, the screen will not flash red as the assessor will know to stop the
     child. As the assessor should only be stopping time when the final
     item has been attempted, the red bracket will automatically appear
     over the final grid item.
@@ -438,14 +439,14 @@ In the field for “Grid Items”, simply paste in the items (letters, words, nu
 To save your changes in the Subtest editor, click “***Done***,” to save
 and return to the Assessment Builder, where you can then edit the next
 subtest or add a new page/subtest to your assessment or go back to the
-Wizard home screen to run and verify your rendering work.
+Wizard home screen to run and verify your work.
 
-When you “Run” this subtest you will see a Start button and a grid of
-empty grey cells. The enumerator will hit “Start” to start the timer
+When you use this subtest, you will see a Start button and a grid of
+empty grey cells. The enumerator will tap “Start” to start the timer
 counting backwards from 60 seconds (or whatever time you have
 designated) and to see the items in the grid appear. The default result
 for each grid item is “correct”. To identify an item as “incorrect”, the
-enumerator simply touches whichever item was incorrect (to self-correct,
+enumerator simply touches an item (to self-correct,
 they just touch the same item again to de-select it). If a child has
 completed all items before the time is up, the enumerator will hit the
 “Stop” button to stop the timer and for the system to record the
@@ -454,25 +455,25 @@ remaining time (12 seconds in the example below).
 ![](.//media/image34.jpeg)&nbsp;
 
 The enumerator then selects the last item attempted (shown below with
-red border) and then moves on to the next subtest by hitting “Next”:
+red border around the letter "a") and then moves on to the next subtest by tapping “Next”:
 
 ![](.//media/image35.jpeg)&nbsp;
 
 ***Input Mode:*** When an enumerator starts a grid test, the “Input
 Mode” shown at the bottom of the grid is set by default to “Mark” –
-meaning that the enumerator is marking the test results. When the test
+meaning that the enumerator is marking or scoring the test results. When the test
 is stopped (either by autostop, the time running out, or by the
-enumerator clicking “Stop”), the “Input Mode” switches automatically to
+enumerator tapping “Stop”), the “Input Mode” switches automatically to
 “Last attempted” as shown by this button’s highlighted state in the
 screenshot above. After the test, the enumerator can manually switch the
 “Input Mode” back to “Mark” in the event that he or she needs to make
-corrections onto the test results after the time has been stopped. This
+corrections to the test results after the time has been stopped. This
 should only be used in cases of an erroneous click or difficulty in
 marking a grid item during the timed test – it is not recommended to
 have enumerators rely on this mode regularly to score their results. No
 changes to test marks can be made to items positioned sequentially after
 the grid item marked “Last attempted” – this is a logic built into
-Tangerine to avoid confusing results (i.e. item 10 is marked as “last
+Tangerine to avoid confusing results (e.g. prevents cases where item 10 is marked as the “last
 attempted” and item 13 is marked “incorrect”).
 
 ### 6.6 Survey pages (Untimed and Question and Answer Subtests)
@@ -493,16 +494,14 @@ create this subtest and attach it to your assessment. You should now see
 your new survey subtest appear in the list of subtests within your
 assessment. Click on the edit icon to begin adding survey questions.
 
-You will already be familiar with the fields for “Skippable”,
-“Enumerator help”, “Student Dialogue” and “Transition Comment”, which
-you can adjust to your needs. The other settings fields available in the
-Subtest Editor are as follows:
+In addition to settings that are shared with grid subtests (such as “Skippable”,
+“Enumerator help”, “Student Dialogue” and “Transition Comment”), other settings fields available in the Subtest Editor for surveys are as follows:
 
 > ***Preferred Font:*** If you need to embed a specialized font not
 > supported by a Unicode library, you can request that the font be
 > loaded into Tangerine (email: <contact@tangerinecentral.org> ); the
 > font name would then be entered here. At present, the loaded fonts
-> are: gentium, andika, padauk, zwekabin, and rabiat.
+> are: gentium, andika, padauk, zwekabin, rabiat, and Mondulkiri.
 >
 > ***Action on Display:*** Command line logic for skipping an entire
 > subtest (if entered on Subtest Editor) or question (if entered on
@@ -511,7 +510,7 @@ Subtest Editor are as follows:
 > ***Autostop After N Incorrect***: In some instances, you might need to
 > configure a survey-type test instrument to stop automatically after a
 > specified number of consecutively incorrect responses. This option
-> will “autostop” the subtest by skipping the remaining questions
+> will “autostop” the subtest by skipping the remaining questions in the subtest
 > without requiring skip logic commands entered for each question. This
 > feature is used in the ‘Initial Sounds’ subtest of the EGRA, shown
 > below, which consists of 10 survey-type questions, each of which has
@@ -666,7 +665,7 @@ steps we would take:
 
 ![](.//media/image42.jpeg)&nbsp;
 
-In Tangerine, questions are identified by their variable name and answers by their assigned values.
+In Tangerine's data outputs, questions are identified by their variable name, and answers by their assigned values.
 
 1.  As such, in the screenshot above, we have told Tangerine to skip
     asking this question if the answer to our first question, “What
@@ -980,10 +979,12 @@ then hit “Duplicate”
 ![](.//media/image45.jpeg)&nbsp;
 
 A second assessment will appear titled “Copy of…” and the name of the
-assessment duplicated (but with a different Download Key). You can now
+assessment duplicated (the 'Download Key' of the new copy will be unique). You can now
 edit the new assessment, change its name, and keep it as a separate
 assessment (with a separate database) without having to create a new
 assessment from scratch.
+
+The 'Duplicate' function is also useful if you simply want to clean up your results file. Your duplicate copy will not carry prior results, nor will its results file contain variables which had been deleted from your original assessment.
 
 ***Please Note:*** If you have already loaded instruments onto your
 devices and then use the Wizard to create additional questions and
@@ -998,26 +999,25 @@ data file for your results.\
 To delete an assessment from the Wizard home screen, click on the orange
 arrow next to the assessment you wish to delete. Then, click the orange
 circle icon; an option will appear and ask you to confirm deleting the
-assessment. Press “Delete”.
+assessment. Press “Delete”. Please note that deleted assessments cannot be recovered. 
 
 ![](.//media/image46.tmp)&nbsp;
 
 ## 8. Accessing, Downloading and Interpreting Data
 
-Once data has been uploaded from the tablets to the central server, you
-can access the data via the wizard. Log in to the wizard and navigate to
-the applicable group, click the carrot “&gt;” the left of your
+Once data has been uploaded from the tablets to your Tangerine server, you
+can access the data in the Tangerine Wizard. Log in to your server and navigate to
+the applicable group, click the carrot “&gt;” found to the left of your
 assessment, and hit the “Results” icon,
-![](.//media/image47.jpeg). On the next screen you will find not
-only the list of all tests that have been uploaded for this assessment
-with a date and time stamp, but also a button labeled ‘CSV’.
+![](.//media/image47.jpeg). On the next screen you will find the list of all results that have been uploaded for this assessment
+with a date and time stamp, and also a button labeled ‘CSV’.
 
 Clicking the ‘CSV’ button will prompt your browser to begin downloading
 the results file. The CSV file will contain every piece of data that has
 ever been generated in your instrument. This will include partial
 assessments (assessments do not need to be fully completed on tablets in
 order to be uploaded), as well as data from variables which have already
-been deleted from your instruments.
+been deleted from your instruments. If you have tested your assessments online in the Wizard and opted to save those results to your server, those data will also be present in the CSV file. 
 
 ### 8.1 Interpreting Data
 
@@ -1036,7 +1036,7 @@ structure is as follows:
 Each line of the data file represents one
 data entry for your instrument. The values displayed under each variable
 correspond to the values you have assigned to each response option when
-designing your instrument. You can obtain a printout of your
+designing your instrument. The sequence of the variables corresponds to the order in which data was stored on the server. This order may or may not match the order of variables in your assessment. For example, if you created some variables, collected data on the assessment, but later added other variables or re-ordered some subtests, the order of variables in your CSV file may no longer align with your instrument as it appears on devices. You can obtain a printout of your
 instrument’s response labels and their corresponding value labels by
 selecting the ‘Metadata’ printout option:
 
@@ -1058,6 +1058,7 @@ Date/Time and Grid tests). These include the following variables:
 | start_time, end_time                      | An EPOCH time stamp automatically generated at the start/end of each,subtest.,See section on ‘Converting,timestamps’ below. |
 | order_map                                 | The sequence of subtests,administered (for instruments using random sequences).                                             |
 | additional_comments                       | Optional text entered by users at,the end of a given instrument.                                                            |
+| [gridvariable]_time_allowed               | Will return the maximum time allotted for the given subtest, if a time limit was defined. |
 | [gridvariable]_auto_stop                  | Will return “TRUE” or “FALSE” to,indicate if autostop triggered for timed tests.                                            |
 | [gridvariable]_time_remain                | The number of seconds remaining on,the timer when timed test ended.                                                         |
 | [gridvariable]_attempted                  | The numerical position of the last,grid item attempted.                                                                     |
@@ -1073,11 +1074,11 @@ the order in which they appear in your assessment.
 
 In your Tangerine data, you will find a number of ‘timestamp’ variables.
 There will be one timestamp variable for each subtest in your
-assessment, and each of these ‘timestamsp’ will be taken at the point
+assessment, and each of these ‘timestamps’ will be taken at the point
 when the ‘Next’ button has been pressed to advance between subtests, as
 this is the time when Tangerine is saving your data. The Epoch timestamp
 value itself is the number of milliseconds that have elapsed between
-January 1, 1970 and the point in time when the timestamp was generated.
+12:00am on January 1, 1970 (GMT +0) and the point in time when the timestamp was generated.
 
 To convert the Epoch timestamp into a human-readable time, you can
 either convert it yourself or try an online converter (searching for
@@ -1125,7 +1126,7 @@ application does not properly render UTF-8 encoded characters.
 
 Microsoft Excel’s workbooks do not properly render non-Latin characters
 with UTF-8 encoding. To view and process data from non-Latin character
-sets (such as Arabic), you must ***first*** open your Tangerine results
+sets (such as Arabic responses written into an open text response question), you must ***first*** open your Tangerine results
 file with an application that can process UTF-8 encoded text. If you
 have already opened your Tangerine CSV file with Microsoft Excel, you
 will have changed the encoding, and so you will need to re-download your
@@ -1179,9 +1180,9 @@ included in the totals represented in the Results Dashboard.
 Tangerine requires the following minimum features for use as a data
 collection tool:
 
-2.  Capacitive touch screen
+2.  Capacitive touch screen (models with resistive screens can also be use, but are not recommended)
 
-3.  Android OS \[v. 2.3 or higher\]
+3.  Android OS \[v. 4.0 or higher\]
 
 4.  HTML 5-capable browser (standards, such as Chrome or Opera Mini
     preferred)
@@ -1192,23 +1193,19 @@ collection tool:
 
 7.  512MB Memory
 
-8.  7 hours battery life (without Internet turned on)
+8.  7 hours battery life (recommended)
 
 9.  Ability to install third-party Android applications
 
 Additionally, the following are **desired features**:
 
--   3G connectivity
+-   3G connectivity (if tablet supports a SIM card)
 
 -   GPS
 
 -   mini-/USB port
 
 -   mini-/HD slot
-
--   Capacitive touch-screen
-
-The following is recommended:
 
 -   7 inch screen
 
@@ -1218,12 +1215,8 @@ The following is recommended:
 
 A range of tablets/eReaders meet the minimum requirements, including the
 Archos 70, Barnes & Noble Nook Color and Tablet, Huawei Ideos 7, Samsung
-Galaxy Tab 7 (starting with original 7 with Internet only, although the
-current generation), Cherry Tablet 2. Several RTI projects are using the
-original Kindle Fire and the Google/Asus Nexus 7. As of January, 2015,
-RTI recommends Nexus 7 16GB (USD199, USD227 including tax). However,
-other models are coming on the market and there may be other suitable
-solutions, but further testing needs to be done.
+Galaxy Tab series, and Asus ZenPads. Several RTI projects have used Nexus, Asus and Samsung models. As of July, 2017,
+RTI recommends Samsung and Asus models of 7" or larger screens for EGRA/EGMA data collections.
 
 **Hardware purchase and delivery **
 
@@ -1310,7 +1303,7 @@ All tablets have an internal WiFi adapter, but may not have a port for
 inserting a SIM card. However, you can purchase a **mobile Internet
 hotspot** such as the [TP Link
 MR3040](http://www.amazon.com/TP-LINK-TL-MR3040-Wireless-Portable-Compatible/dp/B0088PPFP4)
-or a similar device available locally. These devices will allow you to
+or a similar device available locally. Mobile network operators (AirTel, Vodacom, Safaricom) often sell mobile hotspot units that can be used to share a single network connection across multiple devices. These devices will allow you to
 connect a USB dongle with a SIM card and data plan (either for the month
 of data collection or over a certain amount of data, e.g. 20MB) from a
 local mobile service provider, to connect to the Internet via 3G (note
@@ -1342,7 +1335,7 @@ tablet. More information on charging devices can be found in Annex 4.
 **Installation of Tangerine**
 
 Before installing anything, be sure the Android device allows you to
-install files. In the settings menu of the device, look for the option
+install applications that are not provided by way of the Google Play Store. In the settings menu of the device, look for the option
 “Allow installation of (Third Party / Unknown Source) Applications” and
 set this option to “Yes” or “On”.
 
@@ -1402,26 +1395,15 @@ ITEMS AND SUBTESTS).***
 3. Logging into Tangerine on mobile devices
 -------------------------------------------
 
-There are two types of users on the tablet application:
-
-1.) enumerators/data collectors;
-
-2\) administrators
-
-For those who will be collecting and uploading data, they will follow
-the standard steps outlined here for creating a user account and logging
-in. For project managers and those responsible for managing data, the
-administrator login may be required, as it includes some important
-permissions such as: updating and deleting assessments, and manipulating
-Tangerine application settings.
+When Tangerine opens, the user will see this login / signup screen:
 
 ![](.//media/image51.png)&nbsp;
 
 Notice there are two tabs in the login screen: ***Login*** and ***Sign
 Up***. Login is for users who have already registered a user account on
 the device and on the .apk file that is currently installed. **User
-accounts which you have created on other tablets, on the online wizard,
-or on other versions of the .apk file are not recognized as they have
+accounts which you have created on other tablets, or on the online wizard,
+or on other versions of the .apk file, are not recognized as they have
 not been created within that tablet application’s memory.**
 
 ***Sign Up.*** New users should tap the ‘Sign Up’ tab to establish an
@@ -1438,10 +1420,10 @@ something simple and easy for him to recall.
 version of the app that is installed) can enter their credentials to
 login. If a user has lost or forgotten the username or password, they
 can simply create a new login with the ‘Sign Up’ tab. All data from all
-users on each tablet is uploaded – there is no data lost when a user
+users on a tablet are uploaded – there is no data lost when a user
 needs to create a new account.
 
-4. Managing Instruments on Tablets
+4. Instruments on Tablets
 ----------------------------------
 
 After you have installed the Tangerine .apk file and logged into the
@@ -1460,16 +1442,16 @@ interrupted assessments or surveys to be resumed.
 
 ![](.//media/image54.png)&nbsp;
 
-The “Sync” tab gives the enumerator the option to synchronize their
-results. The “Universal Upload” button in the middle of the screen
+The “Sync” tab gives the enumerator the option to send their
+results to the Tangerine server where they were created. The “Universal Upload” button in the middle of the screen
 allows the enumerator to upload all of the new data from all of the
-different assessments with one easy click. **This will upload all new
-data from all users who have entered data on that device.**
+assessments on the APK. **This will upload all new
+data from all users who have entered data on that device, not just from the user who is currently logged in.**
 
 In case you are unable to perform a universal upload, due to poor
 connectivity, you can also use the “Save as file” option which will
 create a back file with the results data that can be imported on the
-server.
+server. To make use of this function, tap the "Save as file" button, and Tangerine will indicate the file directory on the tablet where the file has been created. Connect the tablet to a computer, open the tablet's internal storage and navigate to the indicated backup file location to extract the file. The backup file can now be emailed to your Tangerine server administrator for merging into your results files. 
 
 
 5. Training and Data Collection
@@ -1481,31 +1463,31 @@ training, pilot and data collection**
 You may use the steps outlined earlier in this manual to prepare the
 assessment and the tablets for enumerator training. The enumerators can
 practice entering and saving data, and when you are ready to begin the
-actual data collection and no changes were needed to your assessments,
+actual data collection and no changes are needed to your assessments,
 you can just filter your database by date and know which tests were part
 of training and which were part of the actual data collection.
 Similarly, you may use Tangerine for piloting early versions of your
 instruments.
 
 Alternatively, to create separate versions of each assessment (i.e.,
-training version, pilot version, final), just duplicate your test in the
-Wizard, by clicking on the duplicate icon. Then give the assessment a
+training version, pilot version, final), duplicate your test in the
+Wizard by clicking on the duplicate icon. Then give the new assessment a
 different name. Results will not be carried over under duplication, but
 make sure you check the new instrument to confirm that questions and
 subtests have been fully duplicated.
 
 **Tangerine Training Topics **
 
-Based on RTI’s experiences with Tangerine enumerator training for EGRA,
+Based on RTI’s experiences with Tangerine enumerator training for EGRA/EGMA work,
 no additional time should be needed with a Tangerine data collection
 compared to a paper-based data collection. The training agenda should be
 the same, with only an additional one to two hours set aside for
 introducing the tablet hardware and familiarizing enumerators with basic
 navigation and operation of the hardware and software. Key topics need
-particular highlighting:
+particular emphasis:
 
 1.  Properly logging in and out (including fully powering off the
-    tablet) on daily basis.
+    tablet) on a daily basis.
 
 2.  Selecting the correct school in the location subtest and what to do
     if the school is not available in the pre-loaded list (e.g. because
@@ -1513,6 +1495,8 @@ particular highlighting:
 
 3.  Hitting the start button of timed subtests only when the child
     attempts the first item (not when the enumerator says “Begin”).
+
+4.  Connecting to a wireless network and synchronizing/uploading results.
 
 An example training agenda and topics that are important to cover is
 included in Annex 1.
@@ -1532,9 +1516,13 @@ recommended steps:
 -   Prepare an assessment for doing IRR (make sure it does NOT contain
     randomization).
 
+-   As you begin the IRR exercise, ask assessors to confirm that their tablet: shows their username in Tangerine, and shows the correct date and time.
+
 -   Have everyone listen to the same stimuli and record their responses,
     while someone on the team records the ‘gold standard‘ reference
     model against which they will be compared.
+
+-   When the stimuli are finished, ask assessors to enter "IRR" as text in the 'Additional Comments' field found at the end of every assessment. 
 
 -   Upload saved results from this assessment(s), including the ‘gold
     standard‘.
@@ -1574,25 +1562,21 @@ Click the ―run icon ![](.//media/image60.jpeg) to begin collecting data on any
 instrument.
 
 **Types of input.** Input in Tangerine will either be done by tapping
-response items or entering text. Once you have mastered the types of
-input per each item in your instrument, each subtest should be simple to
-administer, presuming you are familiar with the basic methodology of
-assessment or survey administration (not covered in this User‘s Guide).
-Below are descriptions of the different types of input; shading in red
+response items or entering text. Below are descriptions of the different types of input; shading in red
 indicates where you should apply pressure to the screen (either with
 stylus or finger) to activate the element.
 
 -   **Buttons.** Most input is done through buttons, including advancing
-    from screen to screen (“Next”‖ button), assigning a student ID,
+    from screen to screen ("Next" button), assigning a student ID,
     starting or stopping the timer, or indicating incorrect items in an
     assessment grid. To use a button, simply touch the button in the
     center and release with a short tap or a firm, but short, press. On
     grid item pages, the button will turn green to indicate a wrong
     answer. You can click a second time to unmark the item and it will
     return to grey. You cannot ‘unclick‘ the start and stop buttons.
-    Once you press “Start”‖ or “Stop”‖, clicking it a second time will
+    Once you press "Start" or "Stop", clicking it a second time will
     have no effect if the timer has already started. After clicking
-    “Stop”, you can click a grid item to mark it as the last item
+    "Stop", you can click a grid item to mark it as the last item
     attempted. It will be shown in red with a bracket. Clicking it a
     second time will have no effect, but you can change your selection
     of the last letter attempted by clicking a different letter.
@@ -1606,11 +1590,11 @@ stylus or finger) to activate the element.
     automatically filled in. These are the date and time fields, which
     are generated according to the date and time that the device is set
     to when the assessment begins; and the unique student ID field,
-    which is filled in when the assessor presses the “Generate”‖ button.
+    which is filled in when the assessor presses the "Generate" button.
     While these fields can be changed manually, assessors should be
     instructed not to touch them unless necessary (such as when users
     are entering data collected earlier on paper) - just advance by
-    using the “Next” button.
+    using the "Next" button.
 
 ![](.//media/image61.png)&nbsp;
 
@@ -1622,7 +1606,7 @@ started you should not stop and restart except for exceptional
 circumstances. If a restart is needed, there is a button at the bottom
 of the page for that purpose.
 
-By default, all grid items are “correct”.‖ Mark items “incorrect” by
+By default, all grid items are “correct”. Mark items “incorrect” by
 tapping on that item, causing a line to be struck through that grid
 item. Re-mark them correct by tapping a second time. Use the asterisk
 button on the right-hand side of the grid to mark a whole row incorrect.
@@ -1632,7 +1616,7 @@ three ways to end a timed subtest:
 -   *the program will autostop*, if that feature has been turned on in
     the wizard. If this occurs, the screen will flash red, and a message
     will appear that says “Autostop activated. Discontinue test.” The
-    next step for the assessor is to press “Next”‖ to move to the next
+    next step for the assessor is to press "Next" to move to the next
     exercise.
 
 -   *the timer will run out.* If the timer runs out while the child is
@@ -1656,9 +1640,7 @@ three ways to end a timed subtest:
 
 ![](.//media/image63.png)&nbsp;
 
-The “Input mode”‖ feature exists because
-buttons behave differently depending on what ‘mode‘ the application is
-in. When the timer has started, the buttons are in the “Mark”‖ mode that
+The "Input mode" allows the user to toggle between marking items correct/incorrect and marking the last item attempted. When the timer has started, the buttons are in the “Mark" mode that
 expects a click to mean “mark this item incorrect”. After the timer is
 stopped, the mode automatically changes to “Last attempted” and the
 application expects that the next click will mean “mark this as the last
@@ -1666,7 +1648,7 @@ item read” (above). In some cases, the last item read is both the last
 item AND an incorrect item. Therefore, the assessor must toggle between
 modes in order to mark the button accordingly. There is also a mode for
 “Capture item at specified number of seconds.” This is for a special
-administration case where the subtest is untimed, but you want to mark
+administration case where the subtest may be untimed, but you want to mark
 the item read at a certain point (i.e., 60 seconds).\
 **\
 Completing an assessment**. Upon reaching the end of the assessment
@@ -1706,10 +1688,9 @@ that test. Click on each assessment to see details.
 
 A recommended Tangerine subtest is the “Student ID” subtest, which
 generates an anonymous and unique student code for each assessment. This
-ensures that each test /observation corresponds to a unique entry into
-the database. This subtest is designed such that enumerators can click
+facilitates identifying records in your results file. This subtest is designed such that enumerators can click
 the “Generate” button to produce a student code, but enumerators are not
-able to enter manual codes for this subtest. Tangerine uses an
+able to manually enter codes for this subtest unless they are entering codes previously generated by Tangerine. Tangerine uses an
 algorithmic formula to generate IDs, and as such an attempt by an
 enumerator to enter an ID not conforming to this formula will not be
 accepted.
@@ -1720,7 +1701,7 @@ have suggested preparing index cards that list the various assessments
 and provide a space to note the student identifier for each child. If a
 child reaches an enumerator and the index card does not yet provide a
 student ID number (a 6-digit combination of letters already generated by
-Tangerine, e.g., XCVRRR), the enumerator must generate a new ID, AND
+Tangerine, e.g., XCVRRR), the enumerator must generate a new ID and
 copy it to the student‘s index card. Thus, the enumerators of the
 second/third assessment can look at the index card and just copy the
 student ID by typing it into the relevant field in Tangerine instead of
@@ -1736,22 +1717,15 @@ a circle around it to indicate the issue. The enumerator of the last
 assessment for this child should retain the index card to allow for
 reconciliation of the observations at data cleaning stage.
 
-For additional confirmation one idea is that each enumerator could have
-a rubber stamp and inkpad with a dedicated image that can be stamped on
-each child‘s hand to easily recognize which and how many assessments
-that child has already undertaken. Approaches here may be context
-specific and new ones need to be tried. Please give feedback to the RTI
-Tangerine team as to what worked (or did not) in a given context.
+Tangerine ID's can also be useful for verification of scoring for writing samples. For example, if your assessment includes a Dictation task, you may have trained your assessors to score student writing. You may want to verify the accuracy of their scoring, in which case you can have assessors copy the Tangerine ID for the assessment onto the student's writing sample. You can then collect the writing sample and cross-check the associated Tangerine data.
 
 **8. Data Storage, Synchronization
 and Backup**
 
-At present, all data will be hosted on a secure server which is managed
-by the RTI Tangerine team. Check local laws and regulations about export
-of personal data to ensure that this is an acceptable solution. For more
-information contact your Tangerine administrator. As Tangerine is open
+Data collected with Tangerine will be synchronized/uploaded to the Tangerine server housing the APK file used on the tablet. The server used may be one hosted by RTI or another provider of the open software who has installed it on their server. As Tangerine is open
 source software, any user has the license-free option of hosting
-Tangerine on their own webserver if they should wish to.
+Tangerine on their own webserver if they should wish to. The details provided in this manual refer only to the provision of Tangerine as offered by RTI International. Check local laws and regulations about export
+of personal data to ensure that your use of Tangerine is compliant. 
 
 **RTI International does not advocate the collection of personally
 identifiable information (PII) on Tangerine. The storage of PII on
