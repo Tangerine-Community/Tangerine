@@ -157,6 +157,14 @@ del([ Path.join(Conf.PACK_PATH, 'pack*.json') ], {force: true})
       idList.push(row.id)
     })
   })
+  .then(function getFeedbacks(res) {
+    return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byCollection?keys=[\"feedback\"]"))
+  })
+  .then(function putFeedbackIdsInIdList(res) {
+    res.body.rows.forEach(function(row) {
+      idList.push(row.id)
+    })
+  })
   .then(function getAssessments(res) {
     return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byCollection?keys=[\"assessment\"]&include_docs=true"))
   })
