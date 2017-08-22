@@ -34,7 +34,6 @@ docker run -d \
   --env "T_USER1=$T_USER1" \
   --env "T_USER1_PASSWORD=$T_USER1_PASSWORD" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
-  -p 80:80 \
   --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
   --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
