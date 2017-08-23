@@ -51,14 +51,6 @@
           <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="f568b71ebf402ba44243ccecd23e1c7da266c110" datatype="html">
-        <source>Chris E Kelley</source>
-        <target>RJ</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/node-manager/locations-creator/locations-creator.component.ts</context>
-          <context context-type="linenumber">14</context>
-        </context-group>
-      </trans-unit>
     </body>
   </file>
 </xliff>
