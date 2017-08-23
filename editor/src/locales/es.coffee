@@ -1,4 +1,4 @@
-Tangerine.locales["en-US"] =
+Tangerine.locales["es"] =
   translation :
     "Tangerine" :
       "message" :
