@@ -96,7 +96,7 @@ Tangerine.locales["es"] =
         "save_to_disk" : "Guardar como fichero"        
       "label" :
         "assessment" : "Evaluación"
-        "assessments" : "Evaluacione"
+        "assessments" : "Evaluaciones"
         "curriculum" : "Currículo"
 
     "GridRunView" :
