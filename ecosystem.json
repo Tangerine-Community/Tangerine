@@ -32,6 +32,14 @@
       "error_file" : "../logs/decompressor-error.log",
       "out_file"   : "../logs/decompressor.log",
       "pid_file"   : "../pids/decompressor.pid"
+    },
+    {
+      "name"       : "csv-node",
+      "script"     : "csv-node/app.js",
+      "cwd"        : "./csv-node/",
+      "error_file" : "../logs/csv-node-error.log",
+      "out_file"   : "../logs/csv-node.log",
+      "pid_file"   : "../pids/csv-node.pid"
     }
   ],
   "deploy" : {
