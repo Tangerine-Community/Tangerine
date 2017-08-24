@@ -4,11 +4,28 @@ class Settings extends Backbone.Model
   url : "settings"
 
   initialize: ->
-
     @ipRange = _.uniq((x for x in [100..200]).concat((x for x in [0..255])))
     @config = Tangerine.config
     @on "change", => @update()
 
+  sync: (method, model) =>
+    # Get the settings doc, and then if there is a configuration doc, override
+    # settings with the properties found in configuration.
+    if method == 'read'
+      data = {}
+      Tangerine.db.get('settings').then (doc) =>
+        data = doc
+        Tangerine.db.get('configuration').then (doc) =>
+          Object.assign(data, doc)
+          model.set(data)
+          model.trigger 'sync'
+        .error =>
+          model.set(data)
+          model.trigger 'sync'
+      .error =>
+        alert 'Unable to fetch settings'
+    else
+      Backbone.Model.prototype.sync.call(@);
 
   update: =>
     groupHost = @getString "groupHost"
