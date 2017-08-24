@@ -94,7 +94,7 @@ Tangerine.locales["es"] =
         "cancel" : "Cancelar"
       "label" :
         "assessment" : "Evaluación"
-        "assessments" : "Evaluacione"
+        "assessments" : "Evaluaciones"
         "curriculum" : "Currículo"
 
     "GridRunView" :
