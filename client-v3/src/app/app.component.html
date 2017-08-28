@@ -1,4 +1,10 @@
-<md-sidenav-container class="container">
+<md-toolbar color="primary">
+  <button type="button" md-button (click)="sidenav.open()">
+    <md-icon class="material-icons">menu</md-icon>
+    </button>
+  <i class="material-icons">account_box</i>
+</md-toolbar>
+<md-sidenav-container style="top: 64px !important">
   <md-sidenav #sidenav class="sidenav">
     <ul>
       <li>
@@ -34,19 +40,7 @@
     </ul>
   </md-sidenav>
 
-  <div class="example-sidenav-content">
-    
+  <div class="app-content">
+    <router-outlet></router-outlet>
   </div>
-
-  <md-toolbar>
-    <button md-button><a routerLink="login">Login</a></button> 
-    <button md-button><a routerLink="register">Register</a></button> 
-    <button md-button><a routerLink="sync-records">Sync Records</a></button>
-    <button type="button" md-button (click)="sidenav.open()">
-     UNDER CONSTRUCTION 
-    </button>
-  </md-toolbar>
-
-  <router-outlet></router-outlet>
-
 </md-sidenav-container>

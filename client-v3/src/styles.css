@@ -6,3 +6,13 @@ button.tangy-froms-margin-left{
    margin-left:3rem
 }
 
+.app-content{
+    min-height: 100vh;
+}
+md-toolbar{
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 9;
+}
