@@ -1,0 +1,218 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../tangy-form-responses/tangy-form-responses.html">
+<link rel="import" href="../tangy-form-item/tangy-form-item.html">
+<script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
+
+<dom-module id="tangy-form">
+
+  <template>
+      <paper-tabs selected="0">
+        <paper-tab id="tangy-form--show-questions">QUESTIONS</paper-tab>
+        <paper-tab id="tangy-form--show-responses">RESPONSES</paper-tab>
+      </paper-tabs>
+      <div id="tangy-form-questions">
+        <slot id="tangy-form-questions--form"></slot>
+        <div id="tangy-form-questions--button-container">
+          <paper-button id="tangy-form-questions--back-button" raised on-click="onBackClick">< back</paper-button>
+          <paper-button id="tangy-form-questions--next-button" raised on-click="onNextClick">next ></paper-button>
+        </div>
+        <paper-progress id="tangy-form-questions--progress" value="0" secondary-progress="100"></paper-progress>
+      </div>
+      <div id="tangy-form-responses" hidden>
+        <tangy-form-responses form_id="{{id}}" database="{{database}}"></tangy-form-responses>
+      </div>
+      <style>
+        #tangy-form-responses, #tangy-form-questions {
+          margin 15px;
+          padding: 15px;
+        }
+        #tangy-form-questions--button-container {
+          position: fixed;
+          bottom: 15px;
+          right: 15px;
+        }
+        #tangy-form-questions--progress {
+          position: fixed;
+          bottom: 0px;
+          left: 0px;
+          width: 100%;
+        }
+      </style>
+  </template>
+
+  <script>
+    /**
+     * `tangy-form`
+     * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+
+    class TangyForm extends Polymer.Element {
+
+      static get is() { return 'tangy-form'; }
+      static get properties() {
+        return {
+          id: {
+            type: String,
+            value: 'tangy-form'
+          },
+          src: {
+            type: String,
+            value: 'tangy-form'
+          },
+          database: {
+            type: String,
+            value: 'tangy-form'
+          }
+        };
+      }
+      async ready() {
+        super.ready();
+        // Use a PouchDB to store responses.
+        this.db = new PouchDB(this.database)
+        // Listen for showing/hiding the questions and responses tabs.
+        this.$['tangy-form--show-questions'].addEventListener('click', (event) => {
+          this.$['tangy-form-questions'].hidden = false
+          this.$['tangy-form-responses'].hidden = true 
+        })
+        this.$['tangy-form--show-responses'].addEventListener('click', (event) => {
+          this.$['tangy-form-questions'].hidden = true 
+          this.$['tangy-form-responses'].hidden = false 
+        })
+        // Get the current response, else catch and create new response.
+        try {
+          this.currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
+          this.response = await this.db.get(this.currentTangyFormResponse.responseId)
+        }
+        catch(e) {
+          // Create a new response document.
+          const response = await this.db.post({
+            type: 'tangy-form-response',
+            form_id: this.id,
+            datetime: (new Date()).toLocaleString(),
+            unixtime: Date.now()
+          })
+          // Get the response from the db.
+          this.response = await this.db.get(response.id)
+          // Save that as the current response.
+          // @TODO: Add sanitization to user inputs. No malicious code allowed!
+          await this.db.put({
+            _id: `current_tangy_form_response_${this.id}`,
+            responseId: this.response._id 
+          })
+          this.currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`)
+        }
+        // Load the form.
+        let response = await fetch(this.src + '/form.html')
+        this.$['tangy-form-questions--form'].innerHTML = await response.text()
+        // Prepend the form src path to the item src paths because item paths are relative to the form and 
+        // don't know the context.
+        let items = this.$['tangy-form-questions--form'].querySelectorAll('tangy-form-item')
+        items.forEach((item) => {
+          item.setAttribute('src', `${this.src}/${item.src}`)
+        })
+        // Find the first item and load it.
+        // @TODO: Pick up on the item left off?
+        this.loadItemByIndex(0)
+      }
+
+      async onNextClick() {
+        let items = this.$['tangy-form-questions--form'].querySelectorAll('tangy-form-item')
+        // Find currentIndex. 
+        var currentIndex = 0
+        items.forEach((item, index) => {
+          if (item.load) currentIndex = index
+        })
+        this.loadItemByIndex(currentIndex+1)
+      }
+
+      async onBackClick() {
+        let items = this.$['tangy-form-questions--form'].querySelectorAll('tangy-form-item')
+        // Find currentIndex. 
+        var currentIndex = 0
+        items.forEach((item, index) => {
+          if (item.load) currentIndex = index
+        })
+        this.loadItemByIndex(currentIndex-1)
+      }
+
+      loadItemByIndex(newIndex) {
+        let items = this.$['tangy-form-questions--form'].querySelectorAll('tangy-form-item')
+        // Find current index, call it oldIndex. 
+        var oldIndex = null
+        items.forEach((item, index) => {
+          if (item.load) oldIndex = index
+        })
+        // @TODO: Save the item or perhaps we've been listening all along.
+
+        // Unload the old item. Note: THIS is how you set a boolean attribute to false. #gotcha
+        if (Number.isInteger(oldIndex)) {
+          items[oldIndex].removeAttribute('load')
+        }
+        // Pass in response data for item in case there are any variables to populate.
+        items[newIndex].setAttribute('response', JSON.stringify(this.response))
+        // Load the next item.
+        items[newIndex].setAttribute('load', true)
+        // Check to see if we should hide the next button.
+        if (items[newIndex+1]) {
+          // this.$['tangy-form-questions--next-button'].style.display = 'inline-flex'
+          this.$['tangy-form-questions--next-button'].removeAttribute('disabled')
+        }
+        else {
+          // this.$['tangy-form-questions--next-button'].style.display = 'none'
+          this.$['tangy-form-questions--next-button'].setAttribute('disabled', true)
+        }
+        if (items[newIndex-1]) {
+          // this.$['tangy-form-questions--back-button'].style.display = 'inline-flex'
+          this.$['tangy-form-questions--back-button'].removeAttribute('disabled')
+        }
+        else {
+          // this.$['tangy-form-questions--back-button'].style.display = 'none'
+          this.$['tangy-form-questions--back-button'].setAttribute('disabled', true)
+        }
+        // Set progress.
+        let progressCalc = (parseInt(((newIndex+1)/items.length)*100))
+        this.$['tangy-form-questions--progress'].setAttribute('value', progressCalc)
+
+      }
+      
+      saveItem() {
+        // @TODO: This is going to be something like setting a done property on the item then waiting for it to 
+        // emit the response data back.
+        // Or perhaps its been emitting data all along...
+        return new Promise(async (resolve, reject) => {
+          for (const element of this.form.elements) {
+            const change = new Event('change')
+            if (element.type === 'checkbox') {
+              this.response[element.name] = element.checked
+              element.dispatchEvent(change, {bubbles: true})
+            } else {
+              this.response[element.name] = element.value
+              element.dispatchEvent(change, {bubbles: true})
+            }
+          }
+          for (let element of this.querySelectorAll('paper-input')) {
+            this.response[element.name] = element.value
+          }
+          await this.db.put(this.response);
+          this.preparedForSubmit = true
+          this.form.submit()
+        })
+      }
+
+    }
+
+    window.customElements.define(TangyForm.is, TangyForm);
+  </script>
+</dom-module>
