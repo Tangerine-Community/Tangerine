@@ -1,3 +1,8 @@
+<script src="tangy-form-response-model.js"></script>
+<link rel="import" href="tangy-form-item.html">
+<link rel="import" href="tangy-form-responses.html">
+
+<!-- dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -8,8 +13,6 @@
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../tangy-form-responses/tangy-form-responses.html">
-<link rel="import" href="../tangy-form-item/tangy-form-item.html">
 <script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
 
 <dom-module id="tangy-form">
@@ -94,39 +97,31 @@
         // Get the current response, else catch and create new response.
         try {
           this.currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-          this.response = await this.db.get(this.currentTangyFormResponse.responseId)
+          this.tangyFormResponse = await this.db.get(this.currentTangyFormResponse.responseId)
         }
         catch(e) {
           // Create a new response document.
-          const response = await this.db.post({
-            type: 'tangy-form-response',
-            form_id: this.id,
-            datetime: (new Date()).toLocaleString(),
-            unixtime: Date.now(),
-            items: []
-          })
-          // Get the response from the db.
-          this.response = await this.db.get(response.id)
-          // Save that as the current response.
-          // @TODO: Add sanitization to user inputs. No malicious code allowed!
+          this.tangyFormResponse = new TangyFormResponseModel({ form_id: this.id })
+          const postStatus = await this.db.post(this.tangyFormResponse)
+          Object.apply(this.tangyFormResponse, await this.db.get(postStatus.id))
+          // Set response id as the current response.
           await this.db.put({
             _id: `current_tangy_form_response_${this.id}`,
-            responseId: this.response._id 
+            responseId: this.tangyFormResponse._id 
           })
-          this.currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`)
         }
         // Load the form.
-        let response = await fetch(this.src + '/form.html')
+        let response = await fetch(this.src)
         this.innerHTML = await response.text()
-        // Prepend the form src path to the item src paths because item paths are relative to the form and 
-        // don't know the context.
+        // Prepend the form src directory to the item src paths because item paths are relative to the form's directory.
+        const formDirectory = this.src.substring(0, this.src.lastIndexOf('\/'))
         let items = this.querySelectorAll('tangy-form-item')
         items.forEach((item) => {
-          item.setAttribute('src', `${this.src}/${item.src}`)
+          item.setAttribute('src', `${formDirectory}/${item.src}`)
         })
         // Find the first item and load it.
-        // @TODO: Pick up on the item left off?
         this.loadItemByIndex(0)
+        // @TODO: Resume on the item last viewed? Could get reduxy here.
       }
 
 
@@ -147,9 +142,9 @@
           // Save the item if it has a form.
           let form = this.querySelector('iron-form')
           if (form) {
-            this.response.items[currentIndex] = form.serializeForm()
-            this.db.put(this.response)
-            this.response = await this.db.get(this.response._id)
+            this.tangyFormResponse.items[currentIndex] = form.serializeForm()
+            this.db.put(this.tangyFormResponse)
+            this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id)
           }
           // Unload the old item. 
           items[currentIndex].removeAttribute('load')
@@ -161,10 +156,10 @@
           // Load response data into the item
           let inputs = items[newIndex].querySelectorAll('[name]') 
           for (let input of inputs) {
-            if (this.response.items[newIndex] && this.response.items[newIndex].hasOwnProperty(input.name)) {
+            if (Array.isArray(this.tangyFormResponse.items) && this.tangyFormResponse.items[newIndex] && this.tangyFormResponse.items[newIndex].hasOwnProperty(input.name)) {
               switch (input.tagName) {
                 case 'PAPER-INPUT':
-                  input.value = this.response.items[newIndex][input.name]
+                  input.value = this.tangyFormResponse.items[newIndex][input.name]
                   break
                 case 'PAPER-CHECKBOX':
                   input.checked = true
@@ -177,7 +172,7 @@
                   let paperItemIndex = 0
                   let i = 0
                   for (let paperItem of paperItems) {
-                    if (paperItem.innerText == this.response.items[newIndex][input.name]) {
+                    if (paperItem.innerText == this.tangyFormResponse.items[newIndex][input.name]) {
                       paperItemIndex = i
                     }
                     i++
@@ -217,9 +212,9 @@
         })
         // Save response for index of current index.
         if (window.form) {
-          this.response.items[currentIndex] = form.serializeForm()
-          await this.db.put(this.response)
-          this.response = await this.db.get(this.response._id)
+          this.tangyFormResponse.items[currentIndex] = form.serializeForm()
+          await this.db.put(this.tangyFormResponse)
+          this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id)
         }
         // Load next index.
         this.loadItemByIndex(currentIndex+1)
@@ -234,9 +229,9 @@
         })
         // Save response for index of current index.
         if (window.form) {
-          this.response.items[currentIndex] = form.serializeForm()
-          await this.db.put(this.response)
-          this.response = await this.db.get(this.response._id)
+          this.tangyFormResponse.items[currentIndex] = form.serializeForm()
+          await this.db.put(this.tangyFormResponse)
+          this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id)
         }
         // Load previous index.
         this.loadItemByIndex(currentIndex-1)
@@ -250,17 +245,17 @@
           for (const element of this.form.elements) {
             const change = new Event('change')
             if (element.type === 'checkbox') {
-              this.response[element.name] = element.checked
+              this.tangyFormResponse[element.name] = element.checked
               element.dispatchEvent(change, {bubbles: true})
             } else {
-              this.response[element.name] = element.value
+              this.tangyFormResponse[element.name] = element.value
               element.dispatchEvent(change, {bubbles: true})
             }
           }
           for (let element of this.querySelectorAll('paper-input')) {
-            this.response[element.name] = element.value
+            this.tangyFormResponse[element.name] = element.value
           }
-          await this.db.put(this.response);
+          await this.db.put(this.tangyFormResponse);
           this.preparedForSubmit = true
           this.form.submit()
         })
