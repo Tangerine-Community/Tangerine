@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
@@ -101,7 +102,8 @@
             type: 'tangy-form-response',
             form_id: this.id,
             datetime: (new Date()).toLocaleString(),
-            unixtime: Date.now()
+            unixtime: Date.now(),
+            items: []
           })
           // Get the response from the db.
           this.response = await this.db.get(response.id)
@@ -115,10 +117,10 @@
         }
         // Load the form.
         let response = await fetch(this.src + '/form.html')
-        this.$['tangy-form-questions--form'].innerHTML = await response.text()
+        this.innerHTML = await response.text()
         // Prepend the form src path to the item src paths because item paths are relative to the form and 
         // don't know the context.
-        let items = this.$['tangy-form-questions--form'].querySelectorAll('tangy-form-item')
+        let items = this.querySelectorAll('tangy-form-item')
         items.forEach((item) => {
           item.setAttribute('src', `${this.src}/${item.src}`)
         })
@@ -127,66 +129,119 @@
         this.loadItemByIndex(0)
       }
 
+
+      async loadItemByIndex(newIndex) {
+        // Make sure we don't currently have invalid input.
+        if (window.form && !window.form.validate()) {
+          return
+        }
+        // Get all items.
+        let items = this.querySelectorAll('tangy-form-item')
+        // Find current index. 
+        var currentIndex = null
+        items.forEach((item, index) => {
+          if (item.load) currentIndex = index
+        })
+        // If we have an item loaded, prepare to move on. 
+        if (Number.isInteger(currentIndex)) {
+          // Save the item if it has a form.
+          let form = this.querySelector('iron-form')
+          if (form) {
+            this.response.items[currentIndex] = form.serializeForm()
+            this.db.put(this.response)
+            this.response = await this.db.get(this.response._id)
+          }
+          // Unload the old item. 
+          items[currentIndex].removeAttribute('load')
+        }
+        // Load the item belonging to the new index.
+        items[newIndex].addEventListener('item-loaded', () => {
+          // @TODO: How to remove event listener?
+          // items[newIndex].removeEventListener('item-loaded', itemLoaded)
+          // Load response data into the item
+          let inputs = items[newIndex].querySelectorAll('[name]') 
+          for (let input of inputs) {
+            if (this.response.items[newIndex] && this.response.items[newIndex].hasOwnProperty(input.name)) {
+              switch (input.tagName) {
+                case 'PAPER-INPUT':
+                  input.value = this.response.items[newIndex][input.name]
+                  break
+                case 'PAPER-CHECKBOX':
+                  input.checked = true
+                  break
+                case 'PAPER-DROPDOWN-MENU':
+                  //input.selected-
+                  let listBox = input.querySelector('paper-listbox')
+                  let paperItems = input.querySelectorAll('paper-item')
+                  // Find index of paper item to select.
+                  let paperItemIndex = 0
+                  let i = 0
+                  for (let paperItem of paperItems) {
+                    if (paperItem.innerText == this.response.items[newIndex][input.name]) {
+                      paperItemIndex = i
+                    }
+                    i++
+                  }
+                  listBox.selected = paperItemIndex
+                  break
+              }
+              form.dispatchEvent(new CustomEvent('change'), {bubbles: true})
+            }
+          }
+          // Update the next and back buttons.
+          if (items[newIndex+1]) {
+            this.$['tangy-form-questions--next-button'].removeAttribute('disabled')
+          }
+          else {
+            this.$['tangy-form-questions--next-button'].setAttribute('disabled', true)
+          }
+          if (items[newIndex-1]) {
+            this.$['tangy-form-questions--back-button'].removeAttribute('disabled')
+          }
+          else {
+            this.$['tangy-form-questions--back-button'].setAttribute('disabled', true)
+          }
+          // Set progress.
+          let progressCalc = (parseInt(((newIndex+1)/items.length)*100))
+          this.$['tangy-form-questions--progress'].setAttribute('value', progressCalc)
+        })
+        items[newIndex].setAttribute('load', true)
+      }
+
       async onNextClick() {
-        let items = this.$['tangy-form-questions--form'].querySelectorAll('tangy-form-item')
+        let items = this.querySelectorAll('tangy-form-item')
         // Find currentIndex. 
         var currentIndex = 0
         items.forEach((item, index) => {
           if (item.load) currentIndex = index
         })
+        // Save response for index of current index.
+        if (window.form) {
+          this.response.items[currentIndex] = form.serializeForm()
+          await this.db.put(this.response)
+          this.response = await this.db.get(this.response._id)
+        }
+        // Load next index.
         this.loadItemByIndex(currentIndex+1)
       }
 
       async onBackClick() {
-        let items = this.$['tangy-form-questions--form'].querySelectorAll('tangy-form-item')
+        let items = this.querySelectorAll('tangy-form-item')
         // Find currentIndex. 
         var currentIndex = 0
         items.forEach((item, index) => {
           if (item.load) currentIndex = index
         })
+        // Save response for index of current index.
+        if (window.form) {
+          this.response.items[currentIndex] = form.serializeForm()
+          await this.db.put(this.response)
+          this.response = await this.db.get(this.response._id)
+        }
+        // Load previous index.
         this.loadItemByIndex(currentIndex-1)
       }
 
-      loadItemByIndex(newIndex) {
-        let items = this.$['tangy-form-questions--form'].querySelectorAll('tangy-form-item')
-        // Find current index, call it oldIndex. 
-        var oldIndex = null
-        items.forEach((item, index) => {
-          if (item.load) oldIndex = index
-        })
-        // @TODO: Save the item or perhaps we've been listening all along.
-
-        // Unload the old item. Note: THIS is how you set a boolean attribute to false. #gotcha
-        if (Number.isInteger(oldIndex)) {
-          items[oldIndex].removeAttribute('load')
-        }
-        // Pass in response data for item in case there are any variables to populate.
-        items[newIndex].setAttribute('response', JSON.stringify(this.response))
-        // Load the next item.
-        items[newIndex].setAttribute('load', true)
-        // Check to see if we should hide the next button.
-        if (items[newIndex+1]) {
-          // this.$['tangy-form-questions--next-button'].style.display = 'inline-flex'
-          this.$['tangy-form-questions--next-button'].removeAttribute('disabled')
-        }
-        else {
-          // this.$['tangy-form-questions--next-button'].style.display = 'none'
-          this.$['tangy-form-questions--next-button'].setAttribute('disabled', true)
-        }
-        if (items[newIndex-1]) {
-          // this.$['tangy-form-questions--back-button'].style.display = 'inline-flex'
-          this.$['tangy-form-questions--back-button'].removeAttribute('disabled')
-        }
-        else {
-          // this.$['tangy-form-questions--back-button'].style.display = 'none'
-          this.$['tangy-form-questions--back-button'].setAttribute('disabled', true)
-        }
-        // Set progress.
-        let progressCalc = (parseInt(((newIndex+1)/items.length)*100))
-        this.$['tangy-form-questions--progress'].setAttribute('value', progressCalc)
-
-      }
-      
       saveItem() {
         // @TODO: This is going to be something like setting a done property on the item then waiting for it to 
         // emit the response data back.
@@ -210,7 +265,6 @@
           this.form.submit()
         })
       }
-
     }
 
     window.customElements.define(TangyForm.is, TangyForm);
