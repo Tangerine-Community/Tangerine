@@ -1,0 +1,23 @@
+{
+  "name": "service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node microservices/raisin/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "basic-auth": "^1.1.0",
+    "fs-extra": "^4.0.1",
+    "nodegit": "^0.20.1",
+    "path": "^0.12.7",
+    "restify": "^4.3.0",
+    "restify-cookies": "^0.2.2",
+    "restify-plugins": "^1.5.0",
+    "sanitize-filename": "^1.6.1",
+    "unirest": "^0.5.1"
+  }
+}
