@@ -1,11 +1,21 @@
-<md-toolbar color="primary">
-  <button md-button (click)="sidenav.open()"><md-icon class="material-icons">menu</md-icon></button>
+<md-toolbar color="primary" class="mat-typography">
+  <button md-button (click)="sidenav.open()"><i class="material-icons">menu</i></button>
 
   <span>Tangerine Forms</span>
   <span class="tangerine-toolbar-spacer"></span>
-  <i class="material-icons">account_box</i>
+  <button md-button><i class="material-icons" [mdMenuTriggerFor]="appMenu">account_box</i></button>
+  <md-menu #appMenu="mdMenu">
+    <a routerLink="create-nodes" md-menu-item>
+      <i class="material-icons md-18">create</i>
+      <span>Edit Profile</span> 
+    </a>
+    <a routerLink="create-nodes" md-menu-item>
+      <i class="material-icons md-18">settings</i>
+      <span>My Settings</span>
+    </a>
+  </md-menu>
 </md-toolbar>
-<md-sidenav-container style="top: 64px !important">
+<md-sidenav-container style="top: 64px !important" class="mat-typography">
   <md-sidenav #sidenav class="sidenav">
     <ul>
       <li>
