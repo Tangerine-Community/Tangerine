@@ -31,7 +31,7 @@
         <paper-progress id="tangy-form-questions--progress" value="0" secondary-progress="100"></paper-progress>
       </div>
       <div id="tangy-form-responses" hidden>
-        <tangy-form-responses form_id="{{id}}" database="{{database}}"></tangy-form-responses>
+        <tangy-form-responses id="tangy-form-responses-element" form_id="{{id}}" database="{{database}}"></tangy-form-responses>
       </div>
       <style>
         #tangy-form-responses, #tangy-form-questions {
@@ -83,8 +83,6 @@
       }
       async ready() {
         super.ready();
-        // Use a PouchDB to store responses.
-        this.db = new PouchDB(this.database)
         // Listen for showing/hiding the questions and responses tabs.
         this.$['tangy-form--show-questions'].addEventListener('click', (event) => {
           this.$['tangy-form-questions'].hidden = false
@@ -94,6 +92,13 @@
           this.$['tangy-form-questions'].hidden = true 
           this.$['tangy-form-responses'].hidden = false 
         })
+        this.$['tangy-form-responses-element'].addEventListener('new-response', () => {
+          this.loadItemByIndex(0, true)
+          this.$['tangy-form-questions'].hidden = false
+          this.$['tangy-form-responses'].hidden = true 
+        })
+        // Use a PouchDB to store responses.
+        this.db = new PouchDB(this.database)
         // Get the current response, else catch and create new response.
         try {
           this.currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
@@ -110,24 +115,15 @@
             responseId: this.tangyFormResponse._id 
           })
         }
-        // Load the form.
-        let response = await fetch(this.src)
-        this.innerHTML = await response.text()
-        // Prepend the form src directory to the item src paths because item paths are relative to the form's directory.
-        const formDirectory = this.src.substring(0, this.src.lastIndexOf('\/'))
-        let items = this.querySelectorAll('tangy-form-item')
-        items.forEach((item) => {
-          item.setAttribute('src', `${formDirectory}/${item.src}`)
-        })
         // Find the first item and load it.
         this.loadItemByIndex(0)
         // @TODO: Resume on the item last viewed? Could get reduxy here.
       }
 
 
-      async loadItemByIndex(newIndex) {
+      async loadItemByIndex(newIndex, bypassValidation) {
         // Make sure we don't currently have invalid input.
-        if (window.form && !window.form.validate()) {
+        if (!bypassValidation && window.form && !window.form.validate()) {
           return
         }
         // Get all items.

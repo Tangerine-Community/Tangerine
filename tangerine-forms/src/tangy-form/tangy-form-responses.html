@@ -9,11 +9,11 @@
   <template>
     <paper-button on-click='generateCSV' raised>Download CSV</paper-button>
     <paper-button on-click='newResponse' raised>New Response</paper-button>
-    <template is="dom-repeat" items="{{responses}}">
-      <ul>
+    <ul>
+      <template is="dom-repeat" items="{{responses}}">
         <li> [[item.datetime]]  <paper-button data-form-id="[[item._id]]" on-click="resumeResponse" raised>resume</paper-button> </li>
-      </ul>
-    </template>
+      </template>
+    </ul>
   </template>
 
   <script>
@@ -63,6 +63,9 @@
       async ready() {
         super.ready()
         this.db = new PouchDB(this.database)
+        this.loadResponses()
+      }
+      async loadResponses() {
         this.currentResponse = await this.db.get(`current_tangy_form_response_${this.form_id}`);
         // @TODO Query for form response docs with `doc.form_id` equal to `this.form_id`.
         let allDocs = (await this.db.allDocs({include_docs: true})).rows.map((row) => { return row.doc})
@@ -90,10 +93,11 @@
         this.currentResponse.responseId = this.response._id
         await this.db.put(this.currentResponse)
         this.currentResponse = this.db.get(this.currentResponse._id)
-        window.location = window.location
+        this.loadResponses()
+        this.dispatchEvent(new Event('new-response'))
       }
 
-      async resumeResponse(event, foo) {
+      async resumeResponse(event) {
         this.currentResponse = await this.db.get(`current_tangy_form_response_${this.form_id}`);
         this.currentResponse.responseId = event.path[0].dataFormId
         await this.db.put(this.currentResponse)
