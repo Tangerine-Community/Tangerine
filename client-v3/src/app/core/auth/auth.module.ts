@@ -12,6 +12,7 @@ import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
 import { LoginRemoteServerComponent } from './login-remote-server/login-remote-server.component';
 import { RegisterRemoteServerComponent } from './register-remote-server/register-remote-server.component';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -23,6 +24,6 @@ import { RegisterRemoteServerComponent } from './register-remote-server/register
     AuthRoutingModule
   ],
   providers: [LoginGuard, AuthenticationService, UserService],
-  declarations: [LoginComponent, RegistrationComponent, LoginRemoteServerComponent, RegisterRemoteServerComponent]
+  declarations: [LoginComponent, RegistrationComponent, LoginRemoteServerComponent, RegisterRemoteServerComponent, EditProfileComponent]
 })
 export class AuthModule { }
