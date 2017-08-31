@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { LoginRemoteServerComponent } from './login-remote-server/login-remote-server.component';
 import { RegisterRemoteServerComponent } from './register-remote-server/register-remote-server.component';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
 const routes: Routes = [{
   path: 'login',
   component: LoginComponent
@@ -16,6 +17,9 @@ const routes: Routes = [{
 }, {
   path: 'loginRemoteServer',
   component: LoginRemoteServerComponent
+}, {
+  path: 'edit-user-profile',
+  component: EditProfileComponent
 }];
 
 @NgModule({
