@@ -17,15 +17,6 @@
       "pid_file"   : "tree.pid"
     },
     {
-      "name"       : "brockman",
-      "cwd"        : "./brockman",
-      "script"     : "brockman/Brockman.rb",
-      "args"       : ["-p", "4446"],
-      "error_file" : "../logs/brockman-error.log",
-      "out_file"   : "../logs/brockman.log",
-      "pid_file"   : "../pids/brockman.pid"
-    },
-    {
       "name"      : "decompressor",
       "cwd"        : "./decompressor/",
       "script"    : "decompressor/index.js",
@@ -33,6 +24,15 @@
       "out_file"   : "../logs/decompressor.log",
       "pid_file"   : "../pids/decompressor.pid"
     }
+//  ,
+//    {
+//      "name"      : "raisin",
+//      "cwd"        : "./raisin/",
+//      "script"    : "raisin/microservices/raisin/server.js",
+//      "error_file" : "../logs/raisin-error.log",
+//      "out_file"   : "../logs/raisin.log",
+//      "pid_file"   : "../pids/raisin.pid"
+//    }
   ],
   "deploy" : {
     "production" : {

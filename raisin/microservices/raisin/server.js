@@ -2,12 +2,12 @@ var restify = require('restify');
 var plugins = require('restify-plugins');
 var CookieParser = require('restify-cookies');
 var sanitize = require("sanitize-filename");
-var Git = require("nodegit");
 const fs = require('fs-extra');
 const { join } = require('path')
 // for cookie authorization
 const couchAuth = require('../../middlewares/couchAuth');
 var Logger = require('bunyan');
+var Dat = require('dat-node')
 var log = new Logger({
     name: 'raisin',
     streams: [
@@ -93,33 +93,47 @@ server.get(/\/projects\/?.*/, restify.plugins.serveStatic({
     default: 'index.html'
 }));
 
-server.post('/project/create', function (req, res, next) {
+server.post('/project/create', async function (req, res, next) {
     console.log("req.params:" + JSON.stringify(req.params));
     var safeProjectName = sanitize(req.params.projectName);
     const dir = projectRoot + safeProjectName;
-    fs.pathExists(dir)
-        .then(exists => {
-            if(exists) {
-                res.send(new Error('projectName exists: ' + req.params.projectName));
-            } else {
-                fs.ensureDir(dir)
-                    .then(() => {
-                        Git.Clone("https://github.com/chrisekelley/tangy-eftouch.git", dir)
-                        // Look up this known commit.
-                            .then(function(repo) {
-                                let dirs = listProjects();
-                                let resp = {
-                                    "dirs" : dirs,
-                                    "message" : 'Project created: ' + req.params.projectName
-                                }
-                                res.send(resp);
-                            })
-                            .catch(err => {
-                                console.error(err)
-                            })
-                    })
-            }
-        })
+    let exists = await fs.pathExists(dir)
+    if (exists) {
+        res.send(new Error('projectName exists: ' + req.params.projectName));
+    } else {
+        await fs.ensureDir(dir)
+        let contentPath = dir + "/content";
+        await fs.ensureDir(contentPath)
+        let srcpath = "../tangy";
+        let dstpath = dir + "/client";
+        await fs.ensureSymlink(srcpath, dstpath);
+        mirrorOpts = { dereference: false }; // dereference any symlinks}
+
+        await Dat(dir, mirrorOpts, function (err, dat) {
+            dat.joinNetwork();
+            let datKey =  dat.key.toString('hex');
+            console.log('My Dat link is: dat://' + datKey);
+            let metadata = {
+                "datKey": datKey,
+                "projectName": req.params.projectName
+            };
+            fs.writeJson(dir + '/metadata.json', metadata).then(() => {
+                    let dirs = listProjects();
+                    let resp = {
+                        "dirs": dirs,
+                        "datKey": datKey,
+                        "message": 'Project created: ' + req.params.projectName
+                    }
+                    res.send(resp);
+                }
+            )
+            dat.network.on('connection', function () {
+                console.log('I connected to someone!')
+            })
+
+        });
+
+    }
     return next();
 });
 

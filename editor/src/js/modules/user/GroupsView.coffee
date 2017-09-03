@@ -1,5 +1,6 @@
 class GroupsView extends Backbone.View
 
+
   className: "GroupsView"
 
   events:
@@ -11,7 +12,7 @@ class GroupsView extends Backbone.View
   initialize: ->
     Robbert.fetchUsers
     $.ajax
-      url: "http://localhost:3000/project/listAll",
+      url: "/editor/project/listAll",
       type: "GET"
       dataType: "json"
       contentType: "application/json"
@@ -33,13 +34,13 @@ class GroupsView extends Backbone.View
   viewProject: (event) ->
     group = $(event.target).attr("data-group")
     console.log("take me to there: " + group)
-    window.location = "http://localhost:3000/projects/" + group + "/"
+    window.location = "/editor/projects/" + group + "/"
 
   newProject: (event) ->
     projectName = $('#projectName').val()
     console.log("projectName: " + projectName)
     $.ajax
-      url: "http://localhost:3000/project/create",
+      url: "/editor/project/create",
       type: "POST"
       dataType: "json"
       contentType: "application/json"

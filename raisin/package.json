@@ -11,8 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "basic-auth": "^1.1.0",
+    "dat-node": "^3.5.3",
     "fs-extra": "^4.0.1",
-    "nodegit": "^0.20.1",
+    "mirror-folder": "^2.1.1",
     "path": "^0.12.7",
     "restify": "^4.3.0",
     "restify-cookies": "^0.2.2",

@@ -9,7 +9,7 @@ echo ""
 echo ""
 echo "Setting up database user"
 echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini
-sudo chown -R couchdb /var/run/couchdb
+chown -R couchdb /var/run/couchdb
 couchdb -k
 couchdb &
 echo ""
@@ -103,11 +103,16 @@ then
 	echo ""
 	echo ""
 	echo ""
-	echo "Monitoring for editor chages..."
+	echo "Monitoring for editor changes..."
 	cd /tangerine-server/editor && npm run debug &
 	echo ""
 	echo ""
 	echo ""
-	echo "Monitoring for client chages..."
-	cd /tangerine-server/client && npm run debug
+#	echo "Monitoring for client chagnes..."
+#	cd /tangerine-server/client && npm run debug
+#	echo ""
+#	echo ""
+#	echo ""
+	echo "Monitoring for raisin changes..."
+	cd /tangerine-server/raisin && nodemon microservices/raisin/server.js
 fi
