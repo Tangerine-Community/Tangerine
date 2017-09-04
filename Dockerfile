@@ -263,8 +263,7 @@ RUN cd /tangerine-server/client-v3 \
 RUN npm install -g nodemon
 RUN npm install -g dat
 ADD ./raisin/package.json /tangerine-server/raisin/package.json
-RUN cd /tangerine-server/raisin \
-    && npm install
+RUN cd /tangerine-server/raisin && npm install
 
 #
 # Stage 3 Compile
@@ -296,6 +295,7 @@ ADD ./tangy /tangerine-server/tangy
 
 # Create projects.
 RUN mkdir /tangerine-server/projects
+RUN mkdir /tangerine-server/projects/projects
 
 # Add all of the rest of the code
 ADD ./ /tangerine-server

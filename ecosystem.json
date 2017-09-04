@@ -23,16 +23,15 @@
       "error_file" : "../logs/decompressor-error.log",
       "out_file"   : "../logs/decompressor.log",
       "pid_file"   : "../pids/decompressor.pid"
+    },
+    {
+      "name"      : "raisin",
+      "cwd"        : "./raisin/",
+      "script"    : "raisin/microservices/raisin/server.js",
+      "error_file" : "../logs/raisin-error.log",
+      "out_file"   : "../logs/raisin.log",
+      "pid_file"   : "../pids/raisin.pid"
     }
-//  ,
-//    {
-//      "name"      : "raisin",
-//      "cwd"        : "./raisin/",
-//      "script"    : "raisin/microservices/raisin/server.js",
-//      "error_file" : "../logs/raisin-error.log",
-//      "out_file"   : "../logs/raisin.log",
-//      "pid_file"   : "../pids/raisin.pid"
-//    }
   ],
   "deploy" : {
     "production" : {
