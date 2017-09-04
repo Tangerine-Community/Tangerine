@@ -24,8 +24,8 @@ echo "CouchDB is ready"
 echo ""
 echo ""
 echo ""
-echo "Creating user1 at http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1"
-curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1" --data-binary '{"_id": "'"org.couchdb.user:$T_USER1"'","name": "'"$T_USER1"'","roles": ["manager"],"type": "user","password": "'"$T_USER1_PASSWORD"'"}'
+#echo "Creating user1 at http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1"
+#curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1" --data-binary '{"_id": "'"org.couchdb.user:$T_USER1"'","name": "'"$T_USER1"'","roles": ["manager"],"type": "user","password": "'"$T_USER1_PASSWORD"'"}'
 echo ""
 echo ""
 echo ""
@@ -78,12 +78,12 @@ echo ""
 echo ""
 fi
 
-echo "Push the server couchapp"
-cd /tangerine-server/server/couchapp
-couchapp push
-echo ""
-echo ""
-echo ""
+#echo "Push the server couchapp"
+#cd /tangerine-server/server/couchapp
+#couchapp push
+#echo ""
+#echo ""
+#echo ""
 echo "Go nginx!"
 sed -i -e "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" /etc/nginx/sites-available/tangerine.conf 
 service nginx start
