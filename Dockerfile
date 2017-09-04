@@ -261,6 +261,7 @@ RUN cd /tangerine-server/client-v3 \
     && npm install
 # Install raisin
 RUN npm install -g nodemon
+RUN npm install -g dat
 ADD ./raisin/package.json /tangerine-server/raisin/package.json
 RUN cd /tangerine-server/raisin \
     && npm install

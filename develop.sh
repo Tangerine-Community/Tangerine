@@ -23,12 +23,14 @@ docker rm tangerine-container
 echo ""
 echo "Running the container..."
 echo ""
+
 docker run \
   -d \
   --name tangerine-container \
+  -P \
   -p 80:80 \
-  -p 3282 \
-  -p 3282/udp \
+  -p 3282:3282 \
+  -p 3282:3282/udp \
   --env "DEBUG=1" \
   --env "NODE_ENV=development" \
   --env "T_VERSION=local" \
