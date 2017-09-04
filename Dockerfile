@@ -291,11 +291,11 @@ RUN cd /tangerine-server/client-v3 && npm run build -- --base-href /client-v3/
 # Copy raisin.
 ADD ./raisin /tangerine-server/raisin
 
-# Copy projects.
+# Copy tangy.
 ADD ./tangy /tangerine-server/tangy
 
-# Copy projects.
-ADD ./projects /tangerine-server/projects
+# Create projects.
+RUN mkdir /tangerine-server/projects
 
 # Add all of the rest of the code
 ADD ./ /tangerine-server
