@@ -34,7 +34,13 @@
         <paper-button on-click='generateCSV' raised>Download CSV</paper-button>
         <ul>
           <template is="dom-repeat" items="{{responses}}">
-            <li> [[item.datetime]]  <paper-button data-response-id="[[item._id]]" on-click="resumeResponse" raised>resume</paper-button> </li>
+            <li> 
+              [[item.datetime]]
+              <paper-button data-response-id="[[item._id]]" on-click="resumeResponse" raised>resume</paper-button> 
+              <template is="dom-if" if="{{item.isCurrentTangyFormResponse}}">
+                <span style="color: red"> *</span>
+              </template>
+            </li>
           </template>
         </ul>
       </div>
@@ -115,11 +121,10 @@
         // Use a PouchDB to store responses.
         this.db = new PouchDB(this.database)
         // Load responses for responses list.
-        this.loadResponses()
-        this.loadCurrentTangyFormResponse()
+        this.render()
       }
 
-      async loadCurrentTangyFormResponse(bypassValidation) {
+      async render(bypassValidation) {
         // Unload all items
         let items = this.querySelectorAll('tangy-form-item')
         items.forEach((item, index) => {
@@ -133,14 +138,16 @@
         catch(e) {
           // Create a new response document.
           this.tangyFormResponse = new TangyFormResponseModel({ form_id: this.id })
-          const postStatus = await this.db.post(this.tangyFormResponse)
-          Object.apply(this.tangyFormResponse, await this.db.get(postStatus.id))
+          const dbStatus = await this.db.post(this.tangyFormResponse)
+          Object.apply(this.tangyFormResponse, await this.db.get(dbStatus.id))
           // Set response id as the current response.
           await this.db.put({
             _id: `current_tangy_form_response_${this.id}`,
             responseId: this.tangyFormResponse._id 
           })
         }
+        // Load all responses for list.
+        this.loadResponses()
         // Find the first item and load it.
         this.loadItemByIndex(0, bypassValidation)
         // @TODO: Resume on the item last viewed? Could get reduxy here.
@@ -292,8 +299,8 @@
         currentTangyFormResponse.responseId = dbStatus.id
         await this.db.put(currentTangyFormResponse)
         // currentTangyFormResponse = this.db.get(currentTangyFormResponse._id)
-        this.loadCurrentTangyFormResponse(true)
-        this.loadResponses()
+        this.render(true)
+        // this.loadResponses()
         // @TODO How do we let responses know we have a new one?
         // this.loadResponses()
         // this.dispatchEvent(new Event('new-response'))
@@ -304,13 +311,13 @@
         currentTangyFormResponse.responseId = event.path[0].dataResponseId
         await this.db.put(currentTangyFormResponse)
         // this.tangyFormResponse = await this.db.get(currentTangyFormResponse.responseId);
-        this.loadCurrentTangyFormResponse(true)
+        this.render(true)
         // @TODO: We need to navigate back to form? Show status of this response is now active?
         // window.location = window.location
       }
 
       async loadResponses() {
-        this.currentResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
+        let currentResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
         // @TODO Query for form response docs with `doc.form_id` equal to `this.form_id`.
         let allDocs = (await this.db.allDocs({include_docs: true})).rows.map((row) => { return row.doc})
         allDocs.sort(function (a, b) {
@@ -318,6 +325,11 @@
         });
         this.responses = allDocs.filter((doc) => {
           if (doc.type === 'tangy-form-response' && doc.form_id == this.id) {
+            if (doc._id == currentResponse.responseId) {
+              doc.isCurrentTangyFormResponse = true
+            } else {
+              doc.isCurrentTangyFormResponse = false
+            }
             return doc
           }
         }) 
