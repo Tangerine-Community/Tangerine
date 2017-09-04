@@ -9,9 +9,8 @@
     <link rel="manifest" href="/manifest.json">
     <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="/bower_components/pouchdb/dist/pouchdb.js"></script>
-    <script src="/bower_components/ckeditor/ckeditor.js"></script>
     <link href="/fonts/fonts.css" rel="stylesheet">
-    <link rel="stylesheet" href="/node_modules/material-components-web/dist/material-components-web.css">
+    <link rel="import" href="/src/tangy-form/tangy-form-app.html">
     <link rel="import" href="/src/tangy-form/tangy-form.html">
     <link rel="import" href="/bower_components/paper-styles/typography.html">
     <link rel="import" href="/bower_components/paper-button/paper-button.html">
@@ -25,8 +24,6 @@
     <link rel="import" href="/bower_components/neon-animation/web-animations.html">
   </head>
   <body>
-    <tangy-form id="form-1" src="forms/form-1/form.html" database="user-1"></tangy-form>
-    <script src="/node_modules/material-components-web/dist/material-components-web.js"></script>
-    <script>mdc.autoInit()</script>
+    <tangy-form-app></tangy-form-app>
   </body>
 </html>
