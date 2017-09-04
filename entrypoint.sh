@@ -48,8 +48,9 @@ echo ""
 echo ""
 echo ""
 echo ""
-echo "Update globals in group databases."
-tangerine deploy-globals
+echo "DIASBLED updating of globals in group databases."
+#echo "Update globals in group databases."
+#tangerine deploy-globals
 echo ""
 echo ""
 echo ""
