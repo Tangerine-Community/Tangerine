@@ -103,43 +103,45 @@ server.post('/project/create', async function (req, res, next) {
             if (exists) {
                 res.send(new Error('projectName exists: ' + req.params.projectName));
             } else {
-                await fs.ensureDir(dir)
-                let contentPath = dir + "/content";
-                await fs.ensureDir(contentPath)
-                let srcpath = "../tangy";
-                let dstpath = dir + "/client";
-                await fs.ensureSymlink(srcpath, dstpath);
-                mirrorOpts = {
-                    dereference: false,
-                    watch: true
-                };
-
-                Dat(dir, mirrorOpts, function (err, dat) {
-                    var importer = dat.importFiles(dir, mirrorOpts)
-                    dat.joinNetwork();
-                    let datKey =  dat.key.toString('hex');
-                    console.log('My Dat link is: dat://' + datKey);
-                    let metadata = {
-                        "datKey": datKey,
-                        "projectName": req.params.projectName
-                    };
-                    fs.writeJson(dir + '/metadata.json', metadata).then(() => {
-                            let dirs = listProjects();
-                            let resp = {
-                                "dirs": dirs,
-                                "datKey": datKey,
-                                "message": 'Project created: ' + req.params.projectName
-                            }
-                            res.send(resp);
-                        }
-                    )
-                    dat.network.on('connection', function () {
-                        console.log('I connected to someone!')
+                fs.ensureDir(dir).then(() => {
+                    let contentPath = dir + "/content";
+                    fs.ensureDir(contentPath).then(() => {
+                        let srcpath = "../tangy";
+                        let dstpath = dir + "/client";
+                        fs.ensureSymlink(srcpath, dstpath).then(() => {
+                            mirrorOpts = {
+                                dereference: false,
+                                watch: true
+                            };
+                            Dat(dir, mirrorOpts, function (err, dat) {
+                                var importer = dat.importFiles(dir, mirrorOpts)
+                                dat.joinNetwork();
+                                let datKey =  dat.key.toString('hex');
+                                console.log('My Dat link is: dat://' + datKey);
+                                let metadata = {
+                                    "datKey": datKey,
+                                    "projectName": req.params.projectName
+                                };
+                                fs.writeJson(dir + '/metadata.json', metadata).then(() => {
+                                        let dirs = listProjects();
+                                        let resp = {
+                                            "dirs": dirs,
+                                            "datKey": datKey,
+                                            "message": 'Project created: ' + req.params.projectName
+                                        }
+                                        res.send(resp);
+                                    }
+                                )
+                                dat.network.on('connection', function () {
+                                    console.log('I connected to someone!')
+                                })
+                                importer.on('put', src, dest, function () {
+                                    console.log("Importing into dat: " + src)
+                                })
+                            });
+                        })
                     })
-                    importer.on('put', src, dest, function () {
-                        console.log("Importing into dat: " + src)
-                    })
-                });
+                })
             }
         })
     return next();
