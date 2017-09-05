@@ -113,27 +113,26 @@ server.post('/project/create', async function (req, res, next) {
         };
 
         Dat(dir, mirrorOpts, function (err, dat) {
-            var importer = dat.importFiles(dir, mirrorOpts, function (err, dat) {
-                dat.joinNetwork();
-                let datKey =  dat.key.toString('hex');
-                console.log('My Dat link is: dat://' + datKey);
-                let metadata = {
-                    "datKey": datKey,
-                    "projectName": req.params.projectName
-                };
-                fs.writeJson(dir + '/metadata.json', metadata).then(() => {
-                        let dirs = listProjects();
-                        let resp = {
-                            "dirs": dirs,
-                            "datKey": datKey,
-                            "message": 'Project created: ' + req.params.projectName
-                        }
-                        res.send(resp);
+            var importer = dat.importFiles(dir, mirrorOpts)
+            dat.joinNetwork();
+            let datKey =  dat.key.toString('hex');
+            console.log('My Dat link is: dat://' + datKey);
+            let metadata = {
+                "datKey": datKey,
+                "projectName": req.params.projectName
+            };
+            fs.writeJson(dir + '/metadata.json', metadata).then(() => {
+                    let dirs = listProjects();
+                    let resp = {
+                        "dirs": dirs,
+                        "datKey": datKey,
+                        "message": 'Project created: ' + req.params.projectName
                     }
-                )
-                dat.network.on('connection', function () {
-                    console.log('I connected to someone!')
-                })
+                    res.send(resp);
+                }
+            )
+            dat.network.on('connection', function () {
+                console.log('I connected to someone!')
             })
             importer.on('put', src, dest, function () {
                 console.log("Importing into dat: " + src)
