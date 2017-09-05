@@ -108,10 +108,10 @@ then
 	echo ""
 	echo ""
 	echo "Monitoring for editor changes..."
-	cd /tangerine-server/editor && npm run debug &
-	echo ""
-	echo ""
-	echo ""
+	cd /tangerine-server/editor && npm run debug
+#	echo ""
+#	echo ""
+#	echo ""
 #	echo "Monitoring for client chagnes..."
 #	cd /tangerine-server/client && npm run debug
 #	echo ""
