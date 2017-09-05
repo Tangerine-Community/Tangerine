@@ -111,7 +111,8 @@ server.post('/project/create', async function (req, res, next) {
                         fs.ensureSymlink(srcpath, dstpath).then(() => {
                             mirrorOpts = {
                                 dereference: false,
-                                watch: true
+                                watch: true,
+                                ignoreDirs: false
                             };
                             Dat(dir, mirrorOpts, function (err, dat) {
                                 var importer = dat.importFiles(dir, mirrorOpts)
@@ -137,8 +138,8 @@ server.post('/project/create', async function (req, res, next) {
                                 dat.network.on('connection', function () {
                                     console.log('I connected to someone!')
                                 })
-                                importer.on('put', function (src) {
-                                    console.log("Importing into dat: " + src.name)
+                                importer.on('put', function (src, dest) {
+                                    console.log('Importing ', src.name, ' into archive dest: ' + dest.name)
                                 })
                             });
                         })
