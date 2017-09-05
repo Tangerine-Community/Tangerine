@@ -109,14 +109,18 @@ server.post('/project/create', async function (req, res, next) {
                         let srcpath = "../tangy";
                         let dstpath = dir + "/client";
                         fs.ensureSymlink(srcpath, dstpath).then(() => {
-                            mirrorOpts = {
-                                dereference: false,
+                            var mirrorOpts = {
                                 watch: true,
                                 ignoreDirs: false
                             };
                             Dat(dir, mirrorOpts, function (err, dat) {
-                                var importer = dat.importFiles(dir, mirrorOpts)
-                                dat.joinNetwork();
+                                if (err) throw err
+
+                                var network = dat.joinNetwork()
+                                network.once('connection', function () {
+                                    console.log('Connected')
+                                })
+                                var importer = dat.importFiles(mirrorOpts)
                                 let datKey =  dat.key.toString('hex');
                                 console.log('My Dat link is: dat://' + datKey);
                                 let metadata = {
