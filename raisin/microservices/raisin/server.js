@@ -131,7 +131,9 @@ server.post('/project/create', async function (req, res, next) {
                                         }
                                         res.send(resp);
                                     }
-                                )
+                                ).catch(err => {
+                                    console.error("Error writing json: " + err)
+                                })
                                 dat.network.on('connection', function () {
                                     console.log('I connected to someone!')
                                 })

@@ -53,7 +53,7 @@ class GroupsView extends Backbone.View
         @$el.find('#group-list-container').html ""
         @renderGroups("")
       error: ( data ) =>
-        alert("Project already exists")
+        alert("Project creation error: " + JSON.stringify(data))
 
   renderGroups: (message) ->
     @$el.find('#group-list-container').html "
