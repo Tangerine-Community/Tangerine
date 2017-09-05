@@ -107,31 +107,37 @@ server.post('/project/create', async function (req, res, next) {
         let srcpath = "../tangy";
         let dstpath = dir + "/client";
         await fs.ensureSymlink(srcpath, dstpath);
-        mirrorOpts = { dereference: false }; // dereference any symlinks}
+        mirrorOpts = {
+            dereference: false,
+            watch: true
+        };
 
-        await Dat(dir, mirrorOpts, function (err, dat) {
-
-            let datKey =  dat.key.toString('hex');
-            console.log('My Dat link is: dat://' + datKey);
-            let metadata = {
-                "datKey": datKey,
-                "projectName": req.params.projectName
-            };
-            fs.writeJson(dir + '/metadata.json', metadata).then(() => {
-                    dat.joinNetwork();
-                    let dirs = listProjects();
-                    let resp = {
-                        "dirs": dirs,
-                        "datKey": datKey,
-                        "message": 'Project created: ' + req.params.projectName
+        Dat(dir, mirrorOpts, function (err, dat) {
+            var importer = dat.importFiles(dir, mirrorOpts, function (err, dat) {
+                dat.joinNetwork();
+                let datKey =  dat.key.toString('hex');
+                console.log('My Dat link is: dat://' + datKey);
+                let metadata = {
+                    "datKey": datKey,
+                    "projectName": req.params.projectName
+                };
+                fs.writeJson(dir + '/metadata.json', metadata).then(() => {
+                        let dirs = listProjects();
+                        let resp = {
+                            "dirs": dirs,
+                            "datKey": datKey,
+                            "message": 'Project created: ' + req.params.projectName
+                        }
+                        res.send(resp);
                     }
-                    res.send(resp);
-                }
-            )
-            dat.network.on('connection', function () {
-                console.log('I connected to someone!')
+                )
+                dat.network.on('connection', function () {
+                    console.log('I connected to someone!')
+                })
             })
-
+            importer.on('put', src, dest) {
+                console.log("Importing into dat: " + src)
+            }
         });
 
     }
