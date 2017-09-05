@@ -108,7 +108,7 @@ server.post('/project/create', async function (req, res, next) {
                     fs.ensureDir(contentPath).then(() => {
                         let srcpath = "../tangy";
                         let dstpath = dir + "/client";
-                        fs.ensureSymlink(srcpath, dstpath).then(() => {
+                        // fs.ensureSymlink(srcpath, dstpath).then(() => {
                             var mirrorOpts = {
                                 watch: true,
                                 ignoreDirs: false,
@@ -122,6 +122,7 @@ server.post('/project/create', async function (req, res, next) {
                                 network.once('connection', function () {
                                     console.log('Connected')
                                 })
+                                var importTangy = dat.importFiles(srcpath, mirrorOpts)
                                 var importer = dat.importFiles(mirrorOpts)
                                 let datKey =  dat.key.toString('hex');
                                 console.log('My Dat link is: dat://' + datKey);
@@ -144,6 +145,15 @@ server.post('/project/create', async function (req, res, next) {
                                 dat.network.on('connection', function () {
                                     console.log('I connected to someone!')
                                 })
+                                importTangy.on('put', function (src, dest) {
+                                    console.log('importTangy: Importing ', src.name, ' into archive dest: ' + dest.name)
+                                })
+                                importTangy.on('skip', function (src, dest) {
+                                    console.log('importTangy: Skipping ', src.name, ' into archive dest: ' + dest.name)
+                                })
+                                importTangy.on('error', function (err) {
+                                    console.log('importTangy: Error:  ', err)
+                                })
                                 importer.on('put', function (src, dest) {
                                     console.log('Importing ', src.name, ' into archive dest: ' + dest.name)
                                 })
@@ -155,7 +165,7 @@ server.post('/project/create', async function (req, res, next) {
                                 })
 
                             });
-                        })
+                        // })
                     })
                 })
             }
