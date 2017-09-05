@@ -100,8 +100,8 @@ server.post('/project/create', async function (req, res, next) {
     fs.pathExists(dir)
         .then((exists) => {
             console.log("pathExists:" + exists)
-            if (exists) {
-                res.send(new Error('projectName exists: ' + req.params.projectName));
+            if (exists == true) {
+                res.send(new Error('Error: Project already exists: ' + req.params.projectName));
             } else {
                 fs.ensureDir(dir).then(() => {
                     let contentPath = dir + "/content";
