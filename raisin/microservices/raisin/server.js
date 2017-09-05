@@ -135,9 +135,9 @@ server.post('/project/create', async function (req, res, next) {
                     console.log('I connected to someone!')
                 })
             })
-            importer.on('put', src, dest) {
+            importer.on('put', src, dest, function () {
                 console.log("Importing into dat: " + src)
-            }
+            })
         });
 
     }
