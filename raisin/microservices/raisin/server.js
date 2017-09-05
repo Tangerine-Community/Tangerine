@@ -122,7 +122,7 @@ server.post('/project/create', async function (req, res, next) {
                                 network.once('connection', function () {
                                     console.log('Connected')
                                 })
-                                var importTangy = dat.importFiles(srcpath, mirrorOpts)
+                                var importTangy = dat.importFiles(srcpath, dstpath, mirrorOpts)
                                 var importer = dat.importFiles(mirrorOpts)
                                 let datKey =  dat.key.toString('hex');
                                 console.log('My Dat link is: dat://' + datKey);
