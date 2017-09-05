@@ -1,12 +1,23 @@
-<iron-form id="form">
-    <form action="" onchange="
-    //debug(this)
-    
+<iron-form id="form" onchange= "
+      // Example of referencing elements by their id property.
+      if (oral_read_last_selected_nth.value >= 8) read_comp8_div.hidden = false 
+      if (oral_read_last_selected_nth.value >= 14) read_comp14_div.hidden = false 
+      if (oral_read_last_selected_nth.value >= 20) read_comp20_div1.hidden = false 
+      if (oral_read_last_selected_nth.value >= 20) read_comp20_div2.hidden = false 
+      if (oral_read_last_selected_nth.value >= 20) read_comp20_div3.hidden = false 
+      // Example of referencing elements by their name property.
+      let elements = this.serializeForm()
+      if (elements.s4 == 1) if (elements.s4 != '') {s5_div.hidden = false} 
+      if (elements.s4 != 1) if (elements.s4 != '') {s5_div.hidden = true} 
+      if (elements.s11 == 1) if (elements.s11 != '') {s12_div.hidden = false} 
+      if (elements.s11 != 1) if (elements.s11 != '') {s12_div.hidden = true} 
     ">
-<paper-checkbox name="pizza" checked>pizza</paper-checkbox><br>
-<paper-checkbox name="cheese" required>cheese</paper-checkbox><br>
-<paper-checkbox name="pepperoni" required>pepperoni</paper-checkbox><br>
-<paper-checkbox name="fruit_prompt">I would like to add fruit.</paper-checkbox><br>
+    <form> 
+
+        <paper-checkbox id="pizza" name="pizza" checked>pizza</paper-checkbox><br>
+        <paper-checkbox id="cheese" name="cheese" required>cheese</paper-checkbox><br>
+        <paper-checkbox id="pepperoni" name="pepperoni" required>pepperoni</paper-checkbox><br>
+        <paper-checkbox id="fruit_prompt" name="fruit_prompt">I would like to add fruit.</paper-checkbox><br>
 
         <paper-card>
             Please select country
