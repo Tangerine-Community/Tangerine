@@ -111,7 +111,9 @@ server.post('/project/create', async function (req, res, next) {
                         fs.ensureSymlink(srcpath, dstpath).then(() => {
                             var mirrorOpts = {
                                 watch: true,
-                                ignoreDirs: false
+                                ignoreDirs: false,
+                                live: true,
+                                dereference: false
                             };
                             Dat(dir, mirrorOpts, function (err, dat) {
                                 if (err) throw err
@@ -145,6 +147,13 @@ server.post('/project/create', async function (req, res, next) {
                                 importer.on('put', function (src, dest) {
                                     console.log('Importing ', src.name, ' into archive dest: ' + dest.name)
                                 })
+                                importer.on('skip', function (src, dest) {
+                                    console.log('Skipping ', src.name, ' into archive dest: ' + dest.name)
+                                })
+                                importer.on('error', function (err) {
+                                    console.log('Error:  ', err)
+                                })
+
                             });
                         })
                     })
