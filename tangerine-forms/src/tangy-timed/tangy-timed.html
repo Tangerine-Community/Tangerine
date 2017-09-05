@@ -1,0 +1,160 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="tangy-timed">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <span class="countdown">[[timeRemaining]]⏱</span>
+    <span> [[statusMessage]] </span>
+    <div>
+      <button on-click="clickedStart">start timer</button>
+      <button on-click="clickedStop">stop timer</button>
+      <button on-click="clickedReset">reset timer</button>
+    </div>
+    <slot></slot>
+  </template>
+
+  <script>
+    /**
+     * `tangy-timed`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TangyTimed extends Polymer.Element {
+      static get is() { return 'tangy-timed'; }
+      static get properties() {
+        return {
+          duration: {
+            type: Number,
+            value: 60 
+          },
+          timeRemaining: {
+            type: Number,
+            value: 0 
+          },
+          timeSpent: {
+            type: Number,
+            value: 0 
+          },
+          statusMessage: {
+            type: String,
+            value: 'Click start to begin'
+          }
+        };
+      }
+
+      // Element class can define custom element reactions
+      // @TODO: Duplicating ready?
+      connectedCallback() {
+        super.connectedCallback();
+      }
+    
+      ready() {
+        super.ready();
+        // Set our countdown to the desired duration.
+        this.timeRemaining = this.duration;
+        // @TODO: Need to listen to slot for ready.
+        setTimeout(() => this._prepareForm(), 200)
+      }
+
+      _prepareForm() {
+        // Find all our input elements.
+        this.inputElements = Array.prototype.slice.call(this.querySelectorAll('input'));
+        // Disable all the input elements. Will enable on start.
+        this.inputElements.forEach(element => element.disabled = true);
+        this.inputElements.forEach(element => {
+          element.addEventListener('click', (event) => {
+            if (this.lastSelectedMode === true) {
+              this.removeLastSelected();
+              // That last click will cause the opposite of what we want. Put it back to the original state.
+              event.srcElement.checked = !event.srcElement.checked;
+              // Style the label.
+              const labelEl = event.srcElement.labels[0];
+              labelEl.setAttribute('style', 'color:red; border: 1px solid blue;'); ;
+              this.statusMessage = 'You may now proceed.';
+              //
+              // Set hidden values.
+              //
+              // Last selected id.
+              const lastSelectedIdInputEl = this.querySelector('#' + this.id + '_last_selected_id');
+              lastSelectedIdInputEl.value = event.srcElement.id;
+              // Last selected nth item.
+              const lastSelectedNthInputEl = this.querySelector('#' + this.id + '_last_selected_nth');
+              lastSelectedNthInputEl.value = this.inputElements.findIndex((el) => el.id === event.srcElement.id) + 1;
+              // Time remaining.
+              const timeRemainingInputEl = this.querySelector('#' + this.id + '_time_remaining');
+              timeRemainingInputEl.value = this.timeRemaining;
+              // Time spent.
+              const timeSpentInputEl = this.querySelector('#' + this.id + '_time_spent');
+              timeSpentInputEl.value = this.timeSpent;
+              // items per minute
+              const itemsPerMinuteInputEl = this.querySelector('#' + this.id + '_items_per_minute');
+              itemsPerMinuteInputEl.value = ( lastSelectedNthInputEl.value / ( this.timeSpent / 60 ) );
+              // Items marked is number of checkboxes checked.
+              const itemsNumberOfItemsMarkedInputEl = this.querySelector('#' + this.id + '_number_of_items_marked');
+              itemsNumberOfItemsMarkedInputEl.value = this.inputElements.filter((element) => {
+                return element.type === 'checkbox' && element.checked === true;
+              }).length;
+            }
+          });
+        });
+
+      }
+      clickedReset() {
+        this.removeLastSelected();
+        this.lastSelectedMode = false;
+        this.timeRemaining = this.duration;
+        this.timeSpent = 0;
+        if (this.timer.state === 'notScheduled') {
+          this.statusMessage = 'You may click start to begin again.';
+        }
+      }
+    
+      clickedStart() {
+        // Prevent double starts.
+        if (this.timeSpent === 0) {
+          // @TODO Should disable start timer button to provide visual indication you can't click it again.
+          this.statusMessage = 'Timer is running.';
+          this.inputElements.forEach((element) => element.disabled = false);
+          this.timer = setInterval(() => {
+            this.timeRemaining--;
+            this.timeSpent++;
+            if (this.timeRemaining === 0) {
+              clearInterval(this.timer);
+              this.timeIsUp();
+            }
+          }, 1000);
+        }
+      }
+    
+      clickedStop() {
+        clearInterval(this.timer);
+        this.statusMessage = 'Click the last item covered.';
+        this.lastSelectedMode = true;
+      }
+    
+      timeIsUp() {
+        this.lastSelectedMode = true;
+        this.statusMessage = 'Time is up, click the last item covered.';
+      }
+    
+      removeLastSelected() {
+        this.inputElements.forEach(cleanupElement => {
+          if (cleanupElement.labels && cleanupElement.labels.length > 0) {
+            const cleanupLabelEl = cleanupElement.labels[0];
+            cleanupLabelEl.setAttribute('style', ''); ;
+          }
+        });
+      }
+    
+    }
+
+    window.customElements.define(TangyTimed.is, TangyTimed);
+  </script>
+</dom-module>

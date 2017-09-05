@@ -1,5 +1,6 @@
 <script src="tangy-form-response-model.js"></script>
 <link rel="import" href="tangy-form-item.html">
+<link rel="import" href="../tangy-timed/tangy-timed.html">
 
 <!-- dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
@@ -14,6 +15,12 @@
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
+
+<style>
+  input:invalid {
+    background-color: #ffdddd;
+  }
+</style>
 
 <dom-module id="tangy-form">
 
