@@ -295,25 +295,7 @@
         items.forEach((item, index) => {
           if (item.load) currentIndex = index
         })
-        // @TODO: This is going to be something like setting a done property on the item then waiting for it to 
-        // emit the response data back.
-        // Or perhaps its been emitting data all along...
         this.tangyFormResponse.items[currentIndex] = {}
-        let htmlForm = this.querySelector('form')
-        for (const element of htmlForm.elements) {
-          switch (element.type) {
-            case 'checkbox':
-              this.tangyFormResponse.items[currentIndex][element.name] = element.checked
-              break
-            case 'radio':
-              if (element.checked) {
-                this.tangyFormResponse.items[currentIndex][element.name] = element.value
-              }
-              break
-            default:
-              this.tangyFormResponse.items[currentIndex][element.name] = element.value
-          }
-        }
         let ironForm = this.querySelector('iron-form')
         Object.assign(this.tangyFormResponse.items[currentIndex], ironForm.serializeForm())
         await this.db.put(this.tangyFormResponse)
