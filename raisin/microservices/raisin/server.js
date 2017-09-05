@@ -97,49 +97,51 @@ server.post('/project/create', async function (req, res, next) {
     console.log("req.params:" + JSON.stringify(req.params));
     var safeProjectName = sanitize(req.params.projectName);
     const dir = projectRoot + safeProjectName;
-    let exists = await fs.pathExists(dir)
-    if (exists) {
-        res.send(new Error('projectName exists: ' + req.params.projectName));
-    } else {
-        await fs.ensureDir(dir)
-        let contentPath = dir + "/content";
-        await fs.ensureDir(contentPath)
-        let srcpath = "../tangy";
-        let dstpath = dir + "/client";
-        await fs.ensureSymlink(srcpath, dstpath);
-        mirrorOpts = {
-            dereference: false,
-            watch: true
-        };
+    fs.pathExists(dir)
+        .then((exists) => {
+            console.log("pathExists:" + exists)
+            if (exists) {
+                res.send(new Error('projectName exists: ' + req.params.projectName));
+            } else {
+                await fs.ensureDir(dir)
+                let contentPath = dir + "/content";
+                await fs.ensureDir(contentPath)
+                let srcpath = "../tangy";
+                let dstpath = dir + "/client";
+                await fs.ensureSymlink(srcpath, dstpath);
+                mirrorOpts = {
+                    dereference: false,
+                    watch: true
+                };
 
-        Dat(dir, mirrorOpts, function (err, dat) {
-            var importer = dat.importFiles(dir, mirrorOpts)
-            dat.joinNetwork();
-            let datKey =  dat.key.toString('hex');
-            console.log('My Dat link is: dat://' + datKey);
-            let metadata = {
-                "datKey": datKey,
-                "projectName": req.params.projectName
-            };
-            fs.writeJson(dir + '/metadata.json', metadata).then(() => {
-                    let dirs = listProjects();
-                    let resp = {
-                        "dirs": dirs,
+                Dat(dir, mirrorOpts, function (err, dat) {
+                    var importer = dat.importFiles(dir, mirrorOpts)
+                    dat.joinNetwork();
+                    let datKey =  dat.key.toString('hex');
+                    console.log('My Dat link is: dat://' + datKey);
+                    let metadata = {
                         "datKey": datKey,
-                        "message": 'Project created: ' + req.params.projectName
-                    }
-                    res.send(resp);
-                }
-            )
-            dat.network.on('connection', function () {
-                console.log('I connected to someone!')
-            })
-            importer.on('put', src, dest, function () {
-                console.log("Importing into dat: " + src)
-            })
-        });
-
-    }
+                        "projectName": req.params.projectName
+                    };
+                    fs.writeJson(dir + '/metadata.json', metadata).then(() => {
+                            let dirs = listProjects();
+                            let resp = {
+                                "dirs": dirs,
+                                "datKey": datKey,
+                                "message": 'Project created: ' + req.params.projectName
+                            }
+                            res.send(resp);
+                        }
+                    )
+                    dat.network.on('connection', function () {
+                        console.log('I connected to someone!')
+                    })
+                    importer.on('put', src, dest, function () {
+                        console.log("Importing into dat: " + src)
+                    })
+                });
+            }
+        })
     return next();
 });
 
