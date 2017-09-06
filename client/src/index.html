@@ -27,14 +27,28 @@
         <div id="content_wrapper">
             <div id='content'></div>
         </div>
+        <div id="overlay" name="overlay" class="overlay">
+                <p>
+                        This software was built on open source technology developed by RTI International (www.rti.org). The software was customized to Ethiopia with support from the U.S. Agency for International Development through the USAID/Ethiopia READ TA Project under Cooperative Agreement No. AID-663-A-12-00013. 
+                        </p><p>
+                        The original grades 1 and 2 teacher guides for reading and writing in Mother Tongue was produced by the Ethiopia Ministry of Education and the Regional State Education Bureau with support from READ TA Project. 
+                        </p><p>
+                        The authors' views expressed in this publication do not necessarily reflect the views of the United States Agency for International Development or the United States Government.
+                        </p>
+            <div id="close" class="close" onclick="funcClose(this);">OK</div>
+        </div>
+        <div id="show" class="show" onclick="funcShow(this);"></div>
+       
         <div id='footer'>
             <!--<div id="statusIcons"><img id="connection" src="images/connection.png"></div>-->
-            <div id="watermark"><img src="images/tangerine_logo_89.png"></div>
-        </div>
+            <div id="watermark" class="show" onclick="funcShow(this);"><img src="images/tangerine_logo_89.png"></div>     
+               
+        </template>
 
         <script src="cordova.js"></script>
         <script src="js/lib.js"></script>
         <script src="js/app.js"></script>
+        <script src='js/lib/overlay.js'></script>
     </body>
 
 </html>
