@@ -5,7 +5,7 @@ class TangyFormResponseModel {
     this.form_id = ''
     this.datetime = (new Date()).toLocaleString(),
     this.unixtime = Date.now(),
-    this.items = []
+    this.items = {}
     Object.assign(this, props)
   }
 }

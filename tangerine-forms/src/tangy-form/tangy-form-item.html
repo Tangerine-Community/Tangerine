@@ -44,9 +44,17 @@
           this.innerHTML = '' 
         }
         else if (newValue == true) {
-          let response = await fetch(this.src)
-          this.innerHTML = await response.text()
-          this.dispatchEvent(new CustomEvent('item-loaded'))
+          this.shouldSkip = false
+          if (typeof this.onload === 'function') {
+            this.onload()
+          }
+          if (this.shouldSkip === true) {
+            this.dispatchEvent(new CustomEvent('item-skip'))
+          } else {
+            let response = await fetch(this.src)
+            this.innerHTML = await response.text()
+            this.dispatchEvent(new CustomEvent('item-loaded'))
+          }
         }
       }
 
