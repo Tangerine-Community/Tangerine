@@ -1,9 +1,52 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
 <dom-module id="tangy-form-item">
 
   <template>
-    <slot></slot>
+    <style>
+      :host {
+        margin: 15px;
+        min-height: 100vh;
+      }
+      
+      paper-card {
+        display: block;
+        --paper-card-background-color: #FF9800;
+        --paper-card-header-color: #FFF;
+        color: #FFF;
+        max-width: 325px;
+        margin: 30px auto;
+      }
+      :host[valid=true] paper-card {
+        --paper-card-background-color: green !important;
+      }
+      paper-card.valid:not(.open) {
+        --paper-card-background-color: #8BC34A !important;
+      }
+      paper-card.open {
+        -webkit-transition: .2s;
+        -moz-transition: .2s;
+        -ms-transition: .2s;
+        -o-transition: .2s;
+        display: block;
+        max-width: 720px;
+        margin: 30px auto;
+        --paper-card-background-color: #FFF;
+        --paper-card-header-color: #FF9800;
+        color: #000;
+      }
+    </style>
+    <paper-card id="card" class="shrunk" heading="[[title]]">
+      <div class="card-content">
+        <slot></slot>
+      </div>
+      <div class="card-actions">
+        <!--paper-button on-click="openListener">open</paper-button>
+        <paper-button on-click="closeListener">close</paper-button>
+        <paper-button on-click="submitListener" disable>submit</paper-button-->
+      </div>
+    </paper-card>
   </template>
 
   <script>
@@ -25,38 +68,165 @@
             type: String,
             value: 'tangy-form-item'
           },
-          load: {
-            type: Boolean,
-            observer: 'onLoadChange'
-          },
-          response: {
+          title: {
             type: String,
-            value: '{}'
+            value: ''
+          },
+          responseJson: {
+            type: String,
+            value: '{}',
+            observer: 'onResponseJsonChange'
+          },
+          onopen: {
+            type: Function
+          },
+          open: {
+            type: Boolean,
+            value: false,
+            observer: 'onOpenChange'
+          },
+          valid: {
+            type: Boolean,
+            observer: 'onValidChange'
+          },
+          disabled: {
+            type: Boolean,
+            observer: 'onDisabledChange'
           }
         };
       }
       async ready() {
         super.ready()
+        this.response = {}
+        this.stuck = false
+      }
+      onResponseJsonChange() {
+        this.response = JSON.parse(this.responseJson)
+      }
+      async onDisabledChange(newValue) {
+      }
+      async onValidChange(newValue) {
+      }
+      async onOpenChange(newValue, oldValue) {
+        // Close it.
+        if (newValue === false && oldValue === true) {
+          let ironForm = this.querySelector('iron-form')
+          if (ironForm) {
+            this.valid = ironForm.validate() 
+            if (this.valid === true) {
+              this.stuck = false
+              this.innerHTML = '' 
+              this.$.card.classList.remove('open')
+              this.$.card.classList.add('valid')
+            } else {
+              // User is stuck with this item open.
+              this.$.card.classList.remove('valid')
+              this.stuck = true
+              this.open = true
+            }
+          } else {
+            this.stuck = false
+            this.valid = true
+            this.$.card.classList.add('valid')
+            this.innerHTML = '' 
+            this.$.card.classList.remove('open')
+          }
+
+        }
+        // Open it.
+        if (newValue == true && oldValue === false && this.stuck === false) {
+          // We're going to load, but before we do, run onload because it might result in becoming disabled.
+          eval(this.onopen)
+          // If we are disabled, emit an event crying about it.
+          if (this.disabled === true) {
+            this.dispatchEvent(new CustomEvent('tangy-item-open-cancelled'))
+          } else {
+            // Everything is groovy, let's open this item up.
+            let response = await fetch(this.src)
+            this.$.card.classList.add('open')
+            this.innerHTML = await response.text()
+            this.populateResponse()
+            // Listen for change events, set data to response.
+            let ironForm = this.querySelector('iron-form')
+            if (ironForm) {
+              ironForm.addEventListener('change', this.formChangeListener.bind(this))
+            }
+            this.dispatchEvent(new CustomEvent('tangy-item-opened'))
+          }
+        }
       }
 
-      async onLoadChange(newValue, oldValue) {
-        if (newValue == false) {
-          this.innerHTML = '' 
-        }
-        else if (newValue == true) {
-          this.shouldSkip = false
-          if (typeof this.onload === 'function') {
-            this.onload()
-          }
-          if (this.shouldSkip === true) {
-            this.dispatchEvent(new CustomEvent('item-skip'))
-          } else {
-            let response = await fetch(this.src)
-            this.innerHTML = await response.text()
-            this.dispatchEvent(new CustomEvent('item-loaded'))
-          }
-        }
+      formChangeListener(event) {
+        let ironForm = event.currentTarget
+        // @TODO: This timeout is an ugly hack because if you serialize the form now and a paper-radio-button was changed, if a selection had been made prior then 
+        // both paper-radio-buttons will be "on".
+        setTimeout(() => {
+          this.response = ironForm.serializeForm()
+          this.dispatchEvent(new CustomEvent('item-change'))
+        }, 300)
       }
+        
+      populateResponse() {
+        let item = this 
+        let inputs = item.querySelectorAll('[name]') 
+        let ironForm = item.querySelector('iron-form');
+        let htmlForm = item.querySelector('form');
+        // Load response data into the item
+        for (let input of inputs) {
+          if (this.response.hasOwnProperty(input.name)) {
+            // Handle iron elements.
+            switch (input.tagName) {
+              case 'PAPER-INPUT':
+                input.value = this.response[input.name]
+                break
+              case 'PAPER-CHECKBOX':
+                input.checked = true
+                break
+              case 'PAPER-RADIO-BUTTON':
+                // @TODO: Another nasty hack because of paper-radio-button-group. If you set item.checked to true, paper-radio-button-group
+                // doesn't pick up on it.
+                // input.checked = true
+                // input.dispatchEvent(new Event('change'))
+                setTimeout(() => {
+                  input.click()
+                }, 300)
+                break
+              case 'PAPER-DROPDOWN-MENU':
+                //input.selected-
+                let listBox = input.querySelector('paper-listbox')
+                let paperItems = input.querySelectorAll('paper-item')
+                // Find index of paper item to select.
+                let paperItemIndex = 0
+                let i = 0
+                for (let paperItem of paperItems) {
+                  if (paperItem.innerText == this.response[input.name]) {
+                    paperItemIndex = i
+                  }
+                  i++
+                }
+                listBox.selected = paperItemIndex
+                break
+            }
+            // Handle standard form input element.
+            switch(input.type) {
+              case 'checkbox':
+                input.checked = this.response[input.name]
+                break
+              case 'radio':
+                if (this.response[input.name] == input.value) {
+                  input.checked = true
+                }
+                break
+              default:
+                input.value = this.response[input.name]
+            }
+          } 
+        }
+        // Last step, trigger the change event.
+        if (ironForm) ironForm.dispatchEvent(new Event('change'), {bubbles: true})
+
+      }
+
 
     }
 

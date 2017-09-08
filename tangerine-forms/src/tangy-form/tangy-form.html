@@ -5,9 +5,17 @@
 <!-- dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
@@ -18,27 +26,48 @@
 
 <style>
   input:invalid {
-    background-color: #ffdddd;
+    background-color: #FF9800;
   }
   paper-card {
     margin: 15px 0px;
     padding: 25px;
   }
+
+  paper-checkbox {
+    --paper-checkbox-checked-ink-color: #8BC34A;
+    --paper-checkbox-checked-color: #8BC34A;
+  }
+  paper-radio-button {
+    --paper-radio-button-checked-color: #8BC34A;
+    --paper-radio-button-checked-ink-color: #8BC34A;
+  }
+  paper-input, paper-textarea {
+    --paper-input-container-focus-color: #8BC34A;
+  }
+
 </style>
 
 <dom-module id="tangy-form">
 
   <template>
-
       <style>
+        :host {
+          background: #FF9800; 
+          display: block;
+          margin: 0px;
+          padding: 0px;
+        }
+        #tangy-form--header {
+          background: #FF9800; /* #ef6433; */
+        }
         #tangy-form-responses, #tangy-form-questions {
-          margin 15px;
+          margin: 0px 20px;
           padding: 15px;
         }
         #tangy-form-questions--button-container {
           position: fixed;
           bottom: 15px;
-          right: 15px;
+          right: 0px;
         }
         #tangy-form-questions--progress {
           position: fixed;
@@ -46,36 +75,72 @@
           left: 0px;
           width: 100%;
         }
+        #tangy-form-questions--form-container {
+          display: block;
+          max-width: 720px;
+          margin: 0px auto;
+        }
+        #up-fab {
+          background: #8BC34A; 
+          position: fixed;
+          bottom: 73px;
+          right: 7px;
+          color: white;
+        }
+        #down-fab {
+          background: #8BC34A; 
+          position: fixed;
+          bottom: 10px;
+          right: 7px;
+          color: white;
+        }
+        #show-responses-fab {
+          background: #8BC34A; 
+          position: fixed;
+          top: 73px;
+          right: 7px;
+        }
+        #new-response-fab {
+          background: #8BC34A; 
+          position: fixed;
+          top: 10px;
+          right: 7px;
+        }
+        paper-progress {
+          --paper-progress-active-color: #8BC34A;
+        }
+        paper-tab, paper-tabs {
+          --paper-tabs-selection-bar-color: #8BC34A !important;
+          color: #fff;
+        }
       </style>
-
-      <paper-button on-click='newResponse' raised>New Response</paper-button>
-      <paper-tabs selected="0">
-        <paper-tab id="tangy-form--show-questions" on-click="showQuestionsPane">QUESTIONS</paper-tab>
-        <paper-tab id="tangy-form--show-responses" on-click="showResponsesPane">RESPONSES</paper-tab>
-      </paper-tabs>
+      <div id="tangy-form--header">
+      </div>
       <div id="tangy-form-questions">
-        <slot id="tangy-form-questions--form"></slot>
-        <div id="tangy-form-questions--button-container">
-          <paper-button id="tangy-form-questions--back-button" raised on-click="navigationClickListener">< back</paper-button>
-          <paper-button id="tangy-form-questions--next-button" raised on-click="navigationClickListener">next ></paper-button>
+        <div id="tangy-form-questions--form-container">
+          <slot id="tangy-form-questions--form"></slot>
         </div>
+        <paper-fab id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
+        <paper-fab id="show-responses-fab" on-click="showResponsesPane" icon="icons:save"></paper-fab>
+        <paper-fab id="up-fab" on-click="upFabClickListener" icon="hardware:keyboard-arrow-up"></paper-fab>
+        <paper-fab id="down-fab" on-click="downFabClickListener" icon="hardware:keyboard-arrow-down"></paper-fab>
         <paper-progress id="tangy-form-questions--progress" value="0" secondary-progress="100"></paper-progress>
       </div>
       <div id="tangy-form-responses" hidden>
-        <paper-button on-click='generateCSV' raised>Download CSV</paper-button>
+        <paper-button raised><iron-icon on-click='newResponse' icon="icons:add"></iron-icon></paper-button>
+        <paper-button raised><iron-icon on-click='generateCSV' icon="icons:file-download"></iron-icon></paper-button>
         <ul>
           <template is="dom-repeat" items="{{responses}}">
             <li> 
               [[item.datetime]]
-              <paper-button data-response-id="[[item._id]]" on-click="resumeResponse" raised>resume</paper-button> 
+              <paper-button data-response-id="[[item._id]]" on-click="resumeResponse" raised><iron-icon icon="icons:launch"></iron-icon></paper-button> 
               <template is="dom-if" if="{{item.isCurrentTangyFormResponse}}">
-                <span style="color: red"> *</span>
+                <span style="color: #8BC34A;"> *</span>
               </template>
             </li>
           </template>
         </ul>
       </div>
-
   </template>
 
   <script>
@@ -126,6 +191,7 @@
         super.ready();
         // Use a PouchDB to store responses.
         this.db = new PouchDB(this.database)
+        this.focusIndex = 0
         // Load responses for responses list.
         this.loadQuestionsPane()
         this.loadResponsesPane()
@@ -162,13 +228,27 @@
         // Unload all items and make sure the response has a place for them.
         let items = this.querySelectorAll('tangy-form-item')
         items.forEach((item, index) => {
-          item.removeAttribute('load')
+          item.removeAttribute('open')
+          // Make room in response for each item.
           if (!this.tangyFormResponse.items.hasOwnProperty(item.id)) {
             this.tangyFormResponse.items[item.id] = {}
           }
+          // Set the response json on the item.
+          item.setAttribute('response-json', JSON.stringify(this.tangyFormResponse.items[item.id]))
+          item.addEventListener('item-change', async (event) => {
+            this.tangyFormResponse.items[event.currentTarget.id] = event.currentTarget.response
+            await this.db.post(this.tangyFormResponse)
+            this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id)
+          })
+          item.addEventListener('click', (event) => {
+            let currentTarget = event.currentTarget
+            if (!currentTarget.open) {
+              this.focusOnItem(currentTarget.id)
+            }
+          })
         })
         // Find the first item and load it.
-        this.loadItem(items[0].id)
+        this.focusOnItem(items[0].id)
         // @TODO: Resume on the item last viewed? Could get reduxy here.
       }
 
@@ -189,155 +269,75 @@
             return doc
           }
         }) 
-      }
-
-      async loadItem(itemId) {
-        let item = this.querySelector(`#${itemId}`)
-        // @TODO: This needs to be unbinded.
-        item.addEventListener('item-skip', this.itemSkipListener.bind(this), { once: true })
-        item.addEventListener('item-loaded', this.itemLoadedListener.bind(this), { once: true })
-        item.setAttribute('load', true)
-      }
-
-      async unloadItem(itemId, bypassValidation) {
-        let item = this.querySelector(`#${itemId}`)
-        if (item.load === true) {
-          // Make sure we don't currently have invalid input.
-          let ironForm = item.querySelector('iron-form')
-          if (!bypassValidation && ironForm && !ironForm.validate()) {
-            return false
-          }
-          // Save item into response.
-          if (ironForm) {
-            Object.assign(this.tangyFormResponse.items[itemId], ironForm.serializeForm())
-            await this.db.put(this.tangyFormResponse)
-            this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id)
-          }
-          item.removeAttribute('load')
+        // @TODO: Apply responses.
+        let items = this.querySelectorAll('tangerine-form-items')
+        for (let item in items) {
+          // item.response = this.response.items[item.id]
         }
-        return true
       }
 
       async focusOnItem(itemId) {
-        // Find all items loaded and unload them, make sure they do not return false.
         let items = this.querySelectorAll('tangy-form-item')
-        for (let item of items) {
-          // @TODO: If we don't async this context and await this function, it returns a promise which is 
-          // not how I understand await-able things to work.
-          if (item.load === true) {
-            let unloadItemStatus = await this.unloadItem(item.id, true)
-            if (unloadItemStatus === false) {
-              // Prevent focus, there is still work to be done.
-              return
-            }
+        let oldItem = items[this.focusIndex]
+        let newItem = this.querySelector(`#${itemId}`)
+        // Close old item 
+        if (oldItem.open === true) {
+          oldItem.open = false
+          // Cancel new focus if old item is has invalid state.
+          if (oldItem.valid === false) {
+            return
           }
         }
-        // Load item.
-        await this.loadItem(itemId)
+        // Find new focus index. 
+        let i = 0
+        for (let item of items) {
+          if (item.id === itemId) this.focusIndex = i
+          i++
+        }
+        // Open item.
+        newItem.open = true
         this.updateItemNavigation()
+        setTimeout(() => {
+          newItem.scrollIntoView({behavior: 'smooth', block: 'start'}) 
+        }, 50)
       }
 
-      itemSkipListener(event) {
+      itemOpenCancelledListener(event) {
         // Unload all items with bypassValidation
         let items = this.querySelectorAll('tangy-form-item')
-        let currentItemIndex = 0
-        // Find current item index. Assumes only one item is loaded.
-        let i = 0
-        for (let item of items) {
-          if (item.id == event.currentTarget.id) {
-            currentItemIndex = i 
-          } else {
-            i++
-          }
-        }
-        // Update the next and back buttons.
+        let currentItemIndex = items.indexOf(event.currentTarget.id)
         this.focusOnItem(items[currentItemIndex+1].id)
       }
-        
-      itemLoadedListener(event) {
-        let item = this.querySelector(`#${event.currentTarget.id}`)
-        let inputs = item.querySelectorAll('[name]') 
-        let ironForm = item.querySelector('iron-form');
-        let htmlForm = item.querySelector('form');
-        // Load response data into the item
-        for (let input of inputs) {
-          if (this.tangyFormResponse.items[item.id].hasOwnProperty(input.name)) {
-            // Handle iron elements.
-            switch (input.tagName) {
-              case 'PAPER-INPUT':
-                input.value = this.tangyFormResponse.items[item.id][input.name]
-                break
-              case 'PAPER-CHECKBOX':
-                input.checked = true
-                break
-              case 'PAPER-DROPDOWN-MENU':
-                //input.selected-
-                let listBox = input.querySelector('paper-listbox')
-                let paperItems = input.querySelectorAll('paper-item')
-                // Find index of paper item to select.
-                let paperItemIndex = 0
-                let i = 0
-                for (let paperItem of paperItems) {
-                  if (paperItem.innerText == this.tangyFormResponse.items[item.id][input.name]) {
-                    paperItemIndex = i
-                  }
-                  i++
-                }
-                listBox.selected = paperItemIndex
-                break
-            }
-            // Handle standard form input element.
-            switch(input.type) {
-              case 'checkbox':
-                input.checked = this.tangyFormResponse.items[item.id][input.name]
-                break
-              case 'radio':
-                if (this.tangyFormResponse.items[item.id][input.name] == input.value) {
-                  input.checked = true
-                }
-                break
-              default:
-                input.value = this.tangyFormResponse.items[item.id][input.name]
-            }
-            htmlForm.dispatchEvent(new Event('change'), {bubbles: true})
-          } 
-        }
-      }
-
       updateItemNavigation() {
-        let items = this.querySelectorAll('tangy-form-item')
-        let currentItemIndex = 0
         // Find current item index. Assumes only one item is loaded.
-        let i = 0
-        for (let item of items) {
-          if (item.load == true) {
-            currentItemIndex = i 
-          } else {
-            i++
-          }
-        }
+        let items = this.querySelectorAll('tangy-form-item')
+        let currentItemIndex = this.focusIndex
         // Update the next and back buttons.
         if (items[currentItemIndex+1]) {
-          this.$['tangy-form-questions--next-button'].removeAttribute('disabled')
-          this.$['tangy-form-questions--next-button'].setAttribute('data-focus-on-item', items[currentItemIndex+1].id)
+          this.$['down-fab'].removeAttribute('disabled')
         }
         else {
-          this.$['tangy-form-questions--next-button'].setAttribute('disabled', true)
+          this.$['down-fab'].setAttribute('disabled', true)
         }
         if (items[currentItemIndex-1]) {
-          this.$['tangy-form-questions--back-button'].removeAttribute('disabled')
-          this.$['tangy-form-questions--back-button'].setAttribute('data-focus-on-item', items[currentItemIndex-1].id)
+          this.$['up-fab'].removeAttribute('disabled')
         }
         else {
-          this.$['tangy-form-questions--back-button'].setAttribute('disabled', true)
+          this.$['up-fab'].setAttribute('disabled', true)
         }
         // Update progress.
         let progressCalculation = (parseInt(((currentItemIndex+1)/items.length)*100))
         this.$['tangy-form-questions--progress'].setAttribute('value', progressCalculation)
       }
 
-      async navigationClickListener(event) {
-        let itemId = event.currentTarget.getAttribute('data-focus-on-item')
+      async upFabClickListener(event) {
+        let items = this.querySelectorAll('tangy-form-item')
+        let itemId = items[this.focusIndex-1].id 
+        this.focusOnItem(itemId)
+      }
+      async downFabClickListener(event) {
+        let items = this.querySelectorAll('tangy-form-item')
+        let itemId = items[this.focusIndex+1].id 
         this.focusOnItem(itemId)
       }
 
@@ -350,6 +350,7 @@
         await this.db.put(currentTangyFormResponse)
         this.loadQuestionsPane()
         this.loadResponsesPane()
+        this.showQuestionsPane()
       }
 
       async resumeResponse(event) {
@@ -358,6 +359,7 @@
         await this.db.put(currentTangyFormResponse)
         this.loadQuestionsPane()
         this.loadResponsesPane()
+        this.showQuestionsPane()
       }
 
       generateCSV() {

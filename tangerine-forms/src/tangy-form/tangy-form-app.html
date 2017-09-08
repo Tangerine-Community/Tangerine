@@ -4,8 +4,10 @@
 <!-- dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
@@ -15,26 +17,83 @@
 <script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
 
 <dom-module id="tangy-form-app">
+  <style>
+    body {
+      background: #F4F4F4;
+      padding: 0px;
+      margin: 0px;
+      scroll-behavior: smooth; 
+    }
+  </style>
 
   <template>
+    <style>
+      :host {
+        display: block;
+      }
+      .form-link {
+        background: #FF9800;
+        padding: 15px;
+        margin: 15px;
+      }
+      paper-card {
+        border: 1px solid #FF9800;
+        --paper-card-header-color: #fff !important;
+      }
+      paper-card:hover {
+        border: 1px solid #8BC34A;
+      }
+      paper-card .card-actions {
+        text-align: right;
+        color: #fff;
+      }
+      .launch-form {
+        position: relative;
+        left: 45px;
+        top: 8px;
+      }
+      #form-view--nav {
+        font-weight: heavy;
+        font-size: 1.2em;
+        padding: 15px;
+        color: #FFF;
+        background: #FF9800;
+      }
+    </style>
+    <div class="tangy-form-app--container">
       <div id="form-list">
-        <h1>Forms</h1>
         <template is="dom-repeat" items="{{forms}}">
-          <ul>
-            <li data-form-src="[[item.src]]" data-form-title="[[item.title]]" on-click="showForm">[[item.title]]</li>
-          </ul>
+            <paper-card 
+              class="form-link" 
+              image="images/noun_1018421_cc-small.png" 
+              alt="[[item.title]]" 
+                            heading="[[item.title]]">
+                <div class="card-actions">
+                  <paper-button 
+                  class="launch-form"
+                    data-form-src="[[item.src]]" 
+                    data-form-title="[[item.title]]" 
+                    on-click="showForm">
+                    <iron-icon icon="icons:launch"/>
+                  </paper-button>
+                </div>
+            </paper-card>
         </template>
       </div>
       <div id="form-view" hidden>
         <div id="form-view--nav">
-          <span on-click="showFormsList"><-- </span>
+          <iron-icon icon="icons:close" on-click="showFormsList"></iron-icon>
           [[formTitle]]
-          <span on-click="editForm"> [edit] </span>
         </div>
         <slot></slot>
       </div>
-      <style>
-      </style>
+    </div>
+
+    <style>
+      .tangy-form-app--container {
+      }
+    </style>
+
   </template>
 
   <script>
@@ -91,8 +150,8 @@
         this.$['form-view'].hidden = false
         this.$['form-list'].hidden = true 
         // Load the form into the DOM.
-        let formSrc = event.path[0].dataFormSrc
-        this.formTitle = event.path[0].dataFormTitle
+        let formSrc = event.currentTarget.dataFormSrc
+        this.formTitle = event.currentTarget.dataFormTitle
         let formHtml = await fetch(formSrc)
         this.innerHTML = await formHtml.text()
         // Prepend the form src directory to the item src paths because item paths are relative to the form's directory.
