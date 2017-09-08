@@ -122,7 +122,6 @@
         };
       }
       static set forms(data) {
-        debugger
         return this._forms = data
       }
       static get forms() {
@@ -156,13 +155,10 @@
         this.innerHTML = await formHtml.text()
         // Prepend the form src directory to the item src paths because item paths are relative to the form's directory.
         const formDirectory = formSrc.substring(0, formSrc.lastIndexOf('\/'))
-        let items = this.querySelectorAll('tangy-form-item')
-        items.forEach((item) => {
-          item.setAttribute('src', `${formDirectory}/${item.src}`)
-        })
-        // Tell the form to load itself.
-        // @TODO tangy-form needs to watch for that load property?
         let tangyForm = this.querySelector('tangy-form')
+        tangyForm.setAttribute('items-base-path', formDirectory)
+        // Tell the form to load itself.
+        // @TODO Need this?
         tangyForm.setAttribute('load', true)
       }
       editForm(path) {

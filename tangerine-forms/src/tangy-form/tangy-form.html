@@ -113,6 +113,9 @@
           --paper-tabs-selection-bar-color: #8BC34A !important;
           color: #fff;
         }
+        paper-button {
+          background: #8BC34A;
+        }
       </style>
       <div id="tangy-form--header">
       </div>
@@ -120,20 +123,20 @@
         <div id="tangy-form-questions--form-container">
           <slot id="tangy-form-questions--form"></slot>
         </div>
-        <paper-fab id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
+        <paper-fab id="new-response-fab" on-click="newResponseButtonListener" icon="icons:add"></paper-fab>
         <paper-fab id="show-responses-fab" on-click="showResponsesPane" icon="icons:save"></paper-fab>
         <paper-fab id="up-fab" on-click="upFabClickListener" icon="hardware:keyboard-arrow-up"></paper-fab>
         <paper-fab id="down-fab" on-click="downFabClickListener" icon="hardware:keyboard-arrow-down"></paper-fab>
         <paper-progress id="tangy-form-questions--progress" value="0" secondary-progress="100"></paper-progress>
       </div>
       <div id="tangy-form-responses" hidden>
-        <paper-button raised><iron-icon on-click='newResponse' icon="icons:add"></iron-icon></paper-button>
-        <paper-button raised><iron-icon on-click='generateCSV' icon="icons:file-download"></iron-icon></paper-button>
+        <paper-button raised><iron-icon on-click='newResponseButtonListener' icon="icons:add"></iron-icon></paper-button>
+        <paper-button raised><iron-icon on-click='generateCSVButtonListener' icon="icons:file-download"></iron-icon></paper-button>
         <ul>
           <template is="dom-repeat" items="{{responses}}">
             <li> 
               [[item.datetime]]
-              <paper-button data-response-id="[[item._id]]" on-click="resumeResponse" raised><iron-icon icon="icons:launch"></iron-icon></paper-button> 
+              <paper-button data-response-id="[[item._id]]" on-click="resumeResponseButtonListener" raised><iron-icon icon="icons:launch"></iron-icon></paper-button> 
               <template is="dom-if" if="{{item.isCurrentTangyFormResponse}}">
                 <span style="color: #8BC34A;"> *</span>
               </template>
@@ -166,6 +169,10 @@
             type: String,
             value: 'tangy-form'
           },
+          itemsBasePath: {
+            type: String,
+            value: '' 
+          },
           database: {
             type: String,
             value: 'tangy-form'
@@ -187,15 +194,17 @@
         }
       }
 
-      async ready() {
-        super.ready();
+      async connectedCallback() {
+        super.connectedCallback();
         // Use a PouchDB to store responses.
         this.db = new PouchDB(this.database)
         this.focusIndex = 0
+        this.itemsStash = this.innerHTML
         // Load responses for responses list.
-        this.loadQuestionsPane()
+        //this.loadQuestionsPane()
         this.loadResponsesPane()
-        this.updateItemNavigation()
+        //this.updateItemNavigation()
+        this.showResponsesPane()
       }
 
       showQuestionsPane() {
@@ -210,36 +219,30 @@
 
       async loadQuestionsPane() {
         // Get the current response, else catch and create new response.
-        try {
-          let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-          this.tangyFormResponse = await this.db.get(currentTangyFormResponse.responseId)
-        }
-        catch(e) {
-          // Create a new response document.
-          this.tangyFormResponse = new TangyFormResponseModel({ form_id: this.id })
-          const dbStatus = await this.db.post(this.tangyFormResponse)
-          Object.apply(this.tangyFormResponse, await this.db.get(dbStatus.id))
-          // Set response id as the current response.
-          await this.db.put({
-            _id: `current_tangy_form_response_${this.id}`,
-            responseId: this.tangyFormResponse._id 
-          })
-        }
+        let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
+        this.tangyFormResponse = await this.db.get(currentTangyFormResponse.responseId)
         // Unload all items and make sure the response has a place for them.
+        // @TODO Could take a snapshot at the beginning, then trash these and reapply. Perhaps not use a slot.
+        this.innerHTML = this.itemsStash
         let items = this.querySelectorAll('tangy-form-item')
         items.forEach((item, index) => {
-          item.removeAttribute('open')
+          // Set base path for item if there is one.
+          if (this.itemsBasePath) {
+            item.setAttribute('src', this.itemsBasePath + '/' + item.src)
+          }
           // Make room in response for each item.
           if (!this.tangyFormResponse.items.hasOwnProperty(item.id)) {
             this.tangyFormResponse.items[item.id] = {}
           }
           // Set the response json on the item.
           item.setAttribute('response-json', JSON.stringify(this.tangyFormResponse.items[item.id]))
+          // Listen for Change events, save to response.
           item.addEventListener('item-change', async (event) => {
             this.tangyFormResponse.items[event.currentTarget.id] = event.currentTarget.response
             await this.db.post(this.tangyFormResponse)
             this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id)
           })
+          // Listen for clicks on items to open them.
           item.addEventListener('click', (event) => {
             let currentTarget = event.currentTarget
             if (!currentTarget.open) {
@@ -298,7 +301,11 @@
         newItem.open = true
         this.updateItemNavigation()
         setTimeout(() => {
-          newItem.scrollIntoView({behavior: 'smooth', block: 'start'}) 
+          if (this.focusIndex === 0) {
+            //window.body.scrollIntoView({behavior: 'smooth', block: 'start'}) 
+          } else {
+            newItem.scrollIntoView({behavior: 'smooth', block: 'start'}) 
+          }
         }, 50)
       }
 
@@ -341,7 +348,7 @@
         this.focusOnItem(itemId)
       }
 
-      async newResponse() {
+      async newResponseButtonListener() {
         // Create the new response.
         let tangyFormResponse = new TangyFormResponseModel({ form_id: this.id })
         let dbStatus = await this.db.post(tangyFormResponse)
@@ -353,9 +360,10 @@
         this.showQuestionsPane()
       }
 
-      async resumeResponse(event) {
+      async resumeResponseButtonListener(event) {
+        let currentTarget = event.currentTarget
         let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-        currentTangyFormResponse.responseId = event.path[0].dataResponseId
+        currentTangyFormResponse.responseId = currentTarget.dataResponseId
         await this.db.put(currentTangyFormResponse)
         this.loadQuestionsPane()
         this.loadResponsesPane()
