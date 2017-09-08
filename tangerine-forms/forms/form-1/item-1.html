@@ -1,30 +1,25 @@
-
-
-<iron-form id="form" onchange="
-    console.log(this); 
-    window.response = 
-    this.serializeForm();
+<iron-form onchange="
     // custom logic
-    if (response.fruit_prompt == 'on') fruit_selection.disabled = false
-    if (!response.fruit_prompt) fruit_selection.disabled = true
-    
+    let response = this.serializeForm();
+    if (response.fruit_prompt == 'on') fruit_selection.hidden = false
+    if (!response.fruit_prompt) fruit_selection.hidden = true
+    console.log('ya')
     ">
   <form action="/foo" method="get">
     <paper-input error-message="This is required" type="text" name="name" required multiple label="Name" value=""></paper-input>
-    <paper-checkbox name="pizza" checked>pizza</paper-checkbox><br>
-    <paper-checkbox name="cheese" required>cheese</paper-checkbox><br>
-    <paper-checkbox name="pepperoni" required>pepperoni</paper-checkbox><br>
+    <label>Pizza toppings:</label> <br>
+    <paper-checkbox name="cheese">cheese</paper-checkbox><br>
+    <paper-checkbox name="pepperoni">pepperoni</paper-checkbox><br>
     <paper-checkbox name="fruit_prompt">I would like to add fruit.</paper-checkbox><br>
     <br>
-    <paper-dropdown-menu id="fruit_selection" label="Fruit" name="fruit" disabled>
-      <paper-listbox class="dropdown-content" slot="dropdown-content">
-        <paper-item>Tangerine</paper-item>
-        <paper-item>Apple</paper-item>
-        <paper-item>Pear</paper-item>
-        <paper-item>Coconut</paper-item>
-      </paper-listbox>
-    </paper-dropdown-menu>
+    <div id="fruit_selection" hidden>
+      <paper-radio-group>
+        <paper-radio-button name="fruit_selection_tangerine">Tangerine</paper-radio-button>
+        <paper-radio-button name="fruit_selection_apple">Apple</paper-radio-button>
+        <paper-radio-button name="fruit_selection_pear">Pear</paper-radio-button>
+        <paper-radio-button name="fruit_selection_coconut">Coconut</paper-radio-button>
+      </paper-radio-group>
+    </div>
+
   </form>
-  <br>
-  <div class="output"></div>
 </iron-form>

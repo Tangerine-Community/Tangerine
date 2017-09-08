@@ -1,51 +1,18 @@
-    <script> 
-        var checked = []; 
-        function getChecked(varName) {
-            checked = []
-            var ele = document.getElementsByName(varName);
-            for(var i=0; ele[i]; ++i){
-                if(ele[i].checked){
-                    checked.push(ele[i].value)
-                }
-            }
-        }
-    </script>
-    <script> 
-        function debug (form) {
-            debugger;
-            console.log(form.children.s35_div.hidden + ':' + checked.indexOf("4") )
-      if (form.elements.oral_read_last_selected_nth.value >= 8) form.children.read_comp8_div.hidden = false 
-      if (form.elements.oral_read_last_selected_nth.value >= 14) form.children.read_comp14_div.hidden = false 
-      if (form.elements.oral_read_last_selected_nth.value >= 20) form.children.read_comp20_div1.hidden = false 
-      if (form.elements.oral_read_last_selected_nth.value >= 20) form.children.read_comp20_div2.hidden = false 
-      if (form.elements.oral_read_last_selected_nth.value >= 20) form.children.read_comp20_div3.hidden = false 
-      if (form.elements.s4.value == 1) if (form.elements.s4.value != '') {form.children.s5_div.hidden = false} 
-      if (form.elements.s4.value != 1) if (form.elements.s4.value != '') {form.children.s5_div.hidden = true} 
-      if (form.elements.s11.value == 1) if (form.elements.s11.value != '') {form.children.s12_div.hidden = false} 
-      if (form.elements.s11.value != 1) if (form.elements.s11.value != '') {form.children.s12_div.hidden = true} 
-      getChecked('s34')
-
-      if (checked.indexOf("4") != -1) form.children.s35_div.hidden = false; else form.children.s35_div.hidden = true
-      
-      var label = form.elements.s40.labels[0].innerText
-      if (form.elements.s39.value != "") form.elements.s40.labels[0].innerText = label.replace ("@",form.elements.s39.value)
-      //if (non_word_number_of_items_marked >= 25) 
-      
-      //fire event that it has changed
-      var event =new Event("change")
-      //form.elements.s4.value = 999
-      //form.elements.s4.dispatchEvent(event)
-      form.elements.s11.value = 999
-        } 
-    </script>
-    <style>
-      paper-card {
-        margin: 15px 0px;
-        padding: 25px;
-      }
-    </style>
-  <h1>EGRA Demo</h1>
-  <tangy-form id="egra-html-form">
-    <tangy-form-item src="item-1.html"></tangy-form-item>
-    <tangy-form-item src="item-2.html"></tangy-form-item>
-  </tangy-form>
+<tangy-form id="egra-html-form">
+    <tangy-form-item 
+        id="item-1" 
+        title="Item 1"
+        src="item-1.html" 
+        onchange="
+            console.log(this.tangyFormResponse)
+        " 
+        onload="
+            console.log(this.shouldSkip); 
+            // shouldSkip = true
+            // this.skip = true
+        "
+    >
+    </tangy-form-item>
+    <tangy-form-item id="item-2" title="Item 2" src="item-2.html"></tangy-form-item>
+    <tangy-form-item id="item-3" title="Item 3" src="item-3.html"></tangy-form-item>
+</tangy-form>

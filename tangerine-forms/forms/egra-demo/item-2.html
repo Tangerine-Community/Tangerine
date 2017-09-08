@@ -1,13 +1,9 @@
 
 
 <iron-form id="form" onchange="
-console.log(this); 
-window.response = 
-this.serializeForm();
-// custom logic
-if (response.fruit_prompt == 'on') fruit_selection.disabled = false
-if (!response.fruit_prompt) fruit_selection.disabled = true
-
+  let variables = this.serializeForm();
+  if (variables.fruit_prompt == 'on') fruit_selection.disabled = false
+  if (!variables.fruit_prompt) fruit_selection.disabled = true
 ">
 <form action="/foo" method="get">
 <paper-input error-message="This is required" type="text" name="name" required multiple label="Name" value=""></paper-input>

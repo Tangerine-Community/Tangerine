@@ -5,12 +5,12 @@
       if (oral_read_last_selected_nth.value >= 20) read_comp20_div1.hidden = false 
       if (oral_read_last_selected_nth.value >= 20) read_comp20_div2.hidden = false 
       if (oral_read_last_selected_nth.value >= 20) read_comp20_div3.hidden = false 
-      // Example of referencing elements by their name property.
-      let elements = this.serializeForm()
-      if (elements.s4 == 1) if (elements.s4 != '') {s5_div.hidden = false} 
-      if (elements.s4 != 1) if (elements.s4 != '') {s5_div.hidden = true} 
-      if (elements.s11 == 1) if (elements.s11 != '') {s12_div.hidden = false} 
-      if (elements.s11 != 1) if (elements.s11 != '') {s12_div.hidden = true} 
+      // Example of reading variable data directly. Handy for things like radio inputs (no need for getChecked helper function).
+      let variables = this.serializeForm()
+      if (variables.s4 == 1) if (variables.s4 != '') {s5_div.hidden = false} 
+      if (variables.s4 != 1) if (variables.s4 != '') {s5_div.hidden = true} 
+      if (variables.s11 == 1) if (variables.s11 != '') {s12_div.hidden = false} 
+      if (variables.s11 != 1) if (variables.s11 != '') {s12_div.hidden = true} 
     ">
     <form> 
 
