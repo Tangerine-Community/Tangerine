@@ -58,13 +58,25 @@ information about `paper-button`.
         ],
 
         ready: function () {
+            // Set properties for iron-selectable-behavior.
             this.selectable = 'paper-button';
             this.selectedAttribute = 'active';
+            let input = this.querySelector('input')
+            let items = this.querySelectorAll('paper-button')
             this.addEventListener('iron-select', (event) => {
-                let items = this.querySelectorAll('paper-button')
-                let input = this.querySelector('input')
                 input.value = items[this.selected].innerHTML
+                //input.dispatchEvent(new Event('change'), {bubbles:true})
                 input.form.dispatchEvent(new Event('change'), {bubbles:true})
+            })
+            input.addEventListener('change', (event) => {
+                if (input.value) {
+                    for (let item of items) {
+                       if (item.innerHTML == input.value) {
+                           item.click()
+                        }
+                    }
+                }
+
             })
         }
 
