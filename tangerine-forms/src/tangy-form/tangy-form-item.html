@@ -18,11 +18,14 @@
         max-width: 325px;
         margin: 30px auto;
       }
-      :host[valid=true] paper-card {
-        --paper-card-background-color: green !important;
-      }
       paper-card.valid:not(.open) {
-        --paper-card-background-color: #8BC34A !important;
+        --paper-card-background-color: #8BC34A;
+      }
+      paper-card.stuck {
+        --paper-card-background-color: #ffebea;
+      }
+      paper-card.disabled {
+        --paper-card-background-color: gray;
       }
       paper-card.open {
         -webkit-transition: .2s;
@@ -89,6 +92,11 @@
             type: Boolean,
             observer: 'onValidChange'
           },
+          stuck: {
+            type: Boolean,
+            value: false,
+            observer: 'onStuckChange'
+          },
           disabled: {
             type: Boolean,
             observer: 'onDisabledChange'
@@ -103,10 +111,32 @@
       onResponseJsonChange() {
         this.response = JSON.parse(this.responseJson)
       }
-      async onDisabledChange(newValue) {
+      async onDisabledChange(newValue, oldValue) {
+        if (newValue === true && oldValue === false) {
+          this.$.card.classList.add('disabled')
+        }
+        if (newValue === false && oldValue === true) {
+          this.$.card.classList.remove('disabled')
+        }
       }
-      async onValidChange(newValue) {
+      async onValidChange(newValue, oldValue) {
+        if (newValue === true && oldValue === false) {
+          this.$.card.classList.add('valid')
+        }
+        if (newValue === false && oldValue === true) {
+          this.$.card.classList.remove('valid')
+        }
       }
+
+      async onStuckChange(newValue, oldValue) {
+        if (newValue === true && oldValue === false) {
+          this.$.card.classList.add('stuck')
+        }
+        if (newValue === false && oldValue === true) {
+          this.$.card.classList.remove('stuck')
+        }
+      }
+
       async onOpenChange(newValue, oldValue) {
         // Close it.
         if (newValue === false && oldValue === true) {
@@ -142,28 +172,40 @@
             this.dispatchEvent(new CustomEvent('tangy-item-open-cancelled'))
           } else {
             // Everything is groovy, let's open this item up.
+            let ironForm = document.createElement('iron-form')
+            this.appendChild(ironForm)
             let response = await fetch(this.src)
             this.$.card.classList.add('open')
-            this.innerHTML = await response.text()
-            this.populateResponse()
-            // Listen for change events, set data to response.
-            let ironForm = this.querySelector('iron-form')
-            if (ironForm) {
-              ironForm.addEventListener('change', this.formChangeListener.bind(this))
+            ironForm.innerHTML = await response.text()
+            let htmlForm = this.querySelector('form')
+            if (htmlForm) {
+              htmlForm.getResponse = this.getResponse.bind(this)
+              this.populateResponse()
             }
+            // Listen for change events, set data to response.
+            ironForm.addEventListener('change', this.ironFormChangeListener.bind(this))
+            // Notify anything watching that we are all done opening.
             this.dispatchEvent(new CustomEvent('tangy-item-opened'))
           }
         }
       }
 
-      formChangeListener(event) {
-        let ironForm = event.currentTarget
+      ironFormChangeListener(event) {
         // @TODO: This timeout is an ugly hack because if you serialize the form now and a paper-radio-button was changed, if a selection had been made prior then 
         // both paper-radio-buttons will be "on".
         setTimeout(() => {
-          this.response = ironForm.serializeForm()
+          let htmlForm = this.querySelector('form')
+          if (htmlForm) {
+            htmlForm.dispatchEvent(new Event('change'))
+          }
+          this.response = this.getResponse() 
           this.dispatchEvent(new CustomEvent('item-change'))
         }, 300)
+      }
+
+      getResponse() {
+        let ironForm = this.querySelector(`iron-form`)
+        return ironForm.serializeForm()
       }
         
       populateResponse() {
@@ -223,7 +265,7 @@
           } 
         }
         // Last step, trigger the change event.
-        if (ironForm) ironForm.dispatchEvent(new Event('change'), {bubbles: true})
+        if (htmlForm) htmlForm.dispatchEvent(new Event('change'), {bubbles: true})
 
       }
 
