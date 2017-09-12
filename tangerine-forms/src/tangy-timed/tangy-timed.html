@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <dom-module id="tangy-timed">
   <template>
@@ -10,9 +12,9 @@
     <span class="countdown">[[timeRemaining]]⏱</span>
     <span> [[statusMessage]] </span>
     <div>
-      <button on-click="clickedStart">start timer</button>
-      <button on-click="clickedStop">stop timer</button>
-      <button on-click="clickedReset">reset timer</button>
+      <paper-button raised on-click="clickedStart">start</paper-button>
+      <paper-button raised on-click="clickedStop">stop</paper-button>
+      <paper-button raised on-click="clickedReset">reset</paper-button>
     </div>
     <slot></slot>
   </template>
@@ -65,9 +67,9 @@
 
       _prepareForm() {
         // Find all our input elements.
-        this.inputElements = Array.prototype.slice.call(this.querySelectorAll('input'));
+        this.inputElements = Array.prototype.slice.call(this.querySelectorAll('paper-button'));
         // Disable all the input elements. Will enable on start.
-        this.inputElements.forEach(element => element.disabled = true);
+        this.inputElements.forEach(element => element.setAttribute('disabled', true));
         this.inputElements.forEach(element => {
           element.addEventListener('click', (event) => {
             if (this.lastSelectedMode === true) {
