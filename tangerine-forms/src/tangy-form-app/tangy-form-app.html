@@ -70,10 +70,10 @@
               heading="[[item.title]]">
                 <div class="card-actions">
                   <paper-button 
-                  class="launch-form"
+                    class="launch-form"
                     data-form-src="[[item.src]]" 
                     data-form-title="[[item.title]]" 
-                    on-click="showForm">
+                    on-click="showFormListener">
                     <iron-icon icon="icons:launch"/>
                   </paper-button>
                 </div>
@@ -114,13 +114,22 @@
           forms: {
             type: Array,
             value: []
+          },
+          formSrc: {
+            type: String,
+            value: '',
+            observer: 'onFormSrcChange'
           }
         };
       }
       
-      async ready() {
-        super.ready();
-        this.showFormsList()
+      connectedCallback() {
+        super.connectedCallback(); 
+        if (window.location.hash) {
+          this.formSrc = (window.location.hash).replace('#', '')
+        } else {
+          this.showFormsList()
+        }
       }
 
       async showFormsList() {
@@ -131,13 +140,19 @@
         this.forms = await formsJson.json() 
       }
 
-      async showForm(event) {
-        this.innerHTML = ''
+      onFormSrcChange(newValue, oldValue) {
+        if (newValue !== '') this.showForm(newValue)
+      }
+
+      async showFormListener(event) {
+        window.location.hash = event.currentTarget.dataFormSrc
+        this.formSrc = event.currentTarget.dataFormSrc
+      }
+
+      async showForm(formSrc) {
         this.$['form-view'].hidden = false
         this.$['form-list'].hidden = true 
         // Load the form into the DOM.
-        let formSrc = event.currentTarget.dataFormSrc
-        this.formTitle = event.currentTarget.dataFormTitle
         let formHtml = await fetch(formSrc)
         this.innerHTML = await formHtml.text()
         // Prepend the form src directory to the item src paths because item paths are relative to the form's directory.
