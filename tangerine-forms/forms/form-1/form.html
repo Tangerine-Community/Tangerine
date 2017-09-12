@@ -3,11 +3,11 @@
   console.log(tangyForm)
   console.log(response)
   console.log(items)
-  if (items[0].response['no_extra_items']) items[1].disabled = true
-  if (!items[0].response['no_extra_items']) items[1].disabled = false
+  if (items[0].response['extra_items']) items[1].disabled = false 
+  if (!items[0].response['extra_items']) items[1].disabled = true 
 ">
   <tangy-form-item src="item-1.html" id="item-1" title="Design Your Pizza"></tangy-form-item>
-  <tangy-form-item src="item-2.html" id="item-2" title="Extra Items"></tangy-form-item>
+  <tangy-form-item src="item-2.html" id="item-2" title="Extra Items" disabled></tangy-form-item>
   <tangy-form-item src="item-3.html" id="item-3a" title="A quick word survey"></tangy-form-item>
 </tangy-form>
 

@@ -123,10 +123,9 @@
         this.response = JSON.parse(this.responseJson)
       }
       async onDisabledChange(newValue, oldValue) {
-        if (newValue === true && oldValue === false) {
+        if (newValue === true) {
           this.$.card.classList.add('disabled')
-        }
-        if (newValue === false && oldValue === true) {
+        } else {
           this.$.card.classList.remove('disabled')
         }
       }
