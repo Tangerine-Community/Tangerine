@@ -159,6 +159,7 @@
     class TangyForm extends Polymer.Element {
 
       static get is() { return 'tangy-form'; }
+
       static get properties() {
         return {
           id: {
@@ -180,30 +181,14 @@
         };
       }
 
-      static set responses(data) {
-        return this._responses = data
-      }
-
-      static get responses() {
-        if (this.hasOwnProperty('_responses')) {
-          return this._responses
-        }
-        else {
-          this._responses = []
-          return this._responses
-        }
-      }
-
       async connectedCallback() {
         super.connectedCallback();
         // Use a PouchDB to store responses.
         this.db = new PouchDB(this.database)
-        this.focusIndex = 0
-        this.itemsStash = this.innerHTML
-        // Load responses for responses list.
-        //this.loadQuestionsPane()
+        this._itemsStash = this.innerHTML
+        this._isSaving = false
+        this._isFocusing = false
         this.loadResponsesPane()
-        //this.updateItemNavigation()
         this.showResponsesPane()
       }
 
@@ -221,9 +206,10 @@
         // Get the current response, else catch and create new response.
         let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
         this.tangyFormResponse = await this.db.get(currentTangyFormResponse.responseId)
-        // Unload all items and make sure the response has a place for them.
-        // @TODO Could take a snapshot at the beginning, then trash these and reapply. Perhaps not use a slot.
-        this.innerHTML = this.itemsStash
+        // @TODO: Load this initial index from the response.
+        this.focusIndex = 0
+        // Reload all items. 
+        this.innerHTML = this._itemsStash
         let items = this.querySelectorAll('tangy-form-item')
         items.forEach((item, index) => {
           // Set base path for item if there is one.
@@ -238,9 +224,11 @@
           item.setAttribute('response-json', JSON.stringify(this.tangyFormResponse.items[item.id]))
           // Listen for Change events, save to response.
           item.addEventListener('item-change', async (event) => {
+            this._isSaving = true
             this.tangyFormResponse.items[event.currentTarget.id] = event.currentTarget.response
             await this.db.post(this.tangyFormResponse)
             this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id)
+            this._isSaving = false
           })
           // Listen for clicks on items to open them.
           item.addEventListener('click', (event) => {
@@ -250,9 +238,8 @@
             }
           })
         })
-        // Find the first item and load it.
-        this.focusOnItem(items[0].id)
-        // @TODO: Resume on the item last viewed? Could get reduxy here.
+        // Open the focused item.
+        this.focusOnItem(items[this.focusIndex].id)
       }
 
       async loadResponsesPane() {
@@ -272,14 +259,19 @@
             return doc
           }
         }) 
-        // @TODO: Apply responses.
-        let items = this.querySelectorAll('tangerine-form-items')
-        for (let item in items) {
-          // item.response = this.response.items[item.id]
-        }
       }
 
       async focusOnItem(itemId) {
+        // Debounce.
+        if (this._isFocusing == true) return
+        this._isFocusing = true
+        // Sleep because change of focus may have just caused a change event in the item.
+        await sleep(300)
+        // Make sure we're not in the middle of saving the item.
+        while (this._isSaving == true) {
+          await sleep(100)
+        }
+        // Get items.
         let items = this.querySelectorAll('tangy-form-item')
         let oldItem = items[this.focusIndex]
         let newItem = this.querySelector(`#${itemId}`)
@@ -302,10 +294,12 @@
         this.updateItemNavigation()
         setTimeout(() => {
           if (this.focusIndex === 0) {
-            //window.body.scrollIntoView({behavior: 'smooth', block: 'start'}) 
+            this.scrollIntoView({behavior: 'smooth', block: 'start'}) 
+
           } else {
             newItem.scrollIntoView({behavior: 'smooth', block: 'start'}) 
           }
+          this._isFocusing = false
         }, 50)
       }
 
@@ -315,6 +309,7 @@
         let currentItemIndex = items.indexOf(event.currentTarget.id)
         this.focusOnItem(items[currentItemIndex+1].id)
       }
+
       updateItemNavigation() {
         // Find current item index. Assumes only one item is loaded.
         let items = this.querySelectorAll('tangy-form-item')
@@ -349,10 +344,19 @@
       }
 
       async newResponseButtonListener() {
+        let currentTangyFormResponse
+        try {
+          currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
+        }
+        catch (e) {
+          await this.db.post({
+            _id: `current_tangy_form_response_${this.id}`
+          })
+          currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
+        }
         // Create the new response.
         let tangyFormResponse = new TangyFormResponseModel({ form_id: this.id })
         let dbStatus = await this.db.post(tangyFormResponse)
-        let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
         currentTangyFormResponse.responseId = dbStatus.id
         await this.db.put(currentTangyFormResponse)
         this.loadQuestionsPane()
@@ -405,6 +409,10 @@
         window.document.body.removeChild(element);
       }
     }
+
+    const sleep = (ms) => new Promise((res, rej) => { 
+      setTimeout(res, ms)
+    })
 
     window.customElements.define(TangyForm.is, TangyForm);
   </script>
