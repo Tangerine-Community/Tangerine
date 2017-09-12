@@ -1,5 +1,5 @@
-<link rel="import" href="tangy-form.html">
-<link rel="import" href="tangy-form-item.html">
+<link rel="import" href="../tangy-form/tangy-form.html">
+<link rel="import" href="../tangy-form/tangy-form-item.html">
 
 <!-- dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
@@ -67,7 +67,7 @@
               class="form-link" 
               image="images/noun_1018421_cc-small.png" 
               alt="[[item.title]]" 
-                            heading="[[item.title]]">
+              heading="[[item.title]]">
                 <div class="card-actions">
                   <paper-button 
                   class="launch-form"
@@ -89,11 +89,6 @@
       </div>
     </div>
 
-    <style>
-      .tangy-form-app--container {
-      }
-    </style>
-
   </template>
 
   <script>
@@ -109,6 +104,7 @@
     class TangyFormApp extends Polymer.Element {
 
       static get is() { return 'tangy-form-app'; }
+
       static get properties() {
         return {
           database: {
@@ -121,22 +117,12 @@
           }
         };
       }
-      static set forms(data) {
-        return this._forms = data
-      }
-      static get forms() {
-        if (this.hasOwnProperty('_forms')) {
-          return this._forms
-        }
-        else {
-          this._forms = []
-          return this._forms
-        }
-      }
+      
       async ready() {
         super.ready();
         this.showFormsList()
       }
+
       async showFormsList() {
         this.$['form-view'].hidden = true
         this.$['form-list'].hidden = false
@@ -144,6 +130,7 @@
         let formsJson = await fetch('forms.json')
         this.forms = await formsJson.json() 
       }
+
       async showForm(event) {
         this.innerHTML = ''
         this.$['form-view'].hidden = false
@@ -157,14 +144,10 @@
         const formDirectory = formSrc.substring(0, formSrc.lastIndexOf('\/'))
         let tangyForm = this.querySelector('tangy-form')
         tangyForm.setAttribute('items-base-path', formDirectory)
-        // Tell the form to load itself.
-        // @TODO Need this?
-        tangyForm.setAttribute('load', true)
       }
-      editForm(path) {
-        // @TODO: Write code for editing a form.
-      }
+
     }
+
     window.customElements.define(TangyFormApp.is, TangyFormApp);
   </script>
 </dom-module>
