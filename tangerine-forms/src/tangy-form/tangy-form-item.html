@@ -1,13 +1,23 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
+<style>
+  paper-input {
+    margin-bottom: 15px;
+  }
+</style>
+   
 <dom-module id="tangy-form-item">
-
+  
   <template>
     <style>
       :host {
         margin: 15px;
         min-height: 100vh;
+      }
+
+      paper-input {
+        margin-bottom: 15px;
       }
       
       paper-card {
@@ -99,6 +109,7 @@
           },
           disabled: {
             type: Boolean,
+            value: false,
             observer: 'onDisabledChange'
           }
         };

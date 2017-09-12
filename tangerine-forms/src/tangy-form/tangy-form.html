@@ -174,6 +174,10 @@
             type: String,
             value: '' 
           },
+          onItemChange: {
+            type: String,
+            value: '' 
+          },
           database: {
             type: String,
             value: 'tangy-form'
@@ -227,6 +231,9 @@
             this._isSaving = true
             this.tangyFormResponse.items[event.currentTarget.id] = event.currentTarget.response
             await this.db.post(this.tangyFormResponse)
+            let tangyForm = this
+            let response = this.tangyFormResponse
+            eval(this.onItemChange)// .bind(this)
             this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id)
             this._isSaving = false
           })
@@ -273,22 +280,31 @@
         }
         // Get items.
         let items = this.querySelectorAll('tangy-form-item')
+        // Close old item but cancel if invalid.
         let oldItem = items[this.focusIndex]
-        let newItem = this.querySelector(`#${itemId}`)
-        // Close old item 
         if (oldItem.open === true) {
           oldItem.open = false
           // Cancel new focus if old item is has invalid state.
           if (oldItem.valid === false) {
+            this._isFocusing = false
             return
           }
         }
-        // Find new focus index. 
+        // Find new focus index and item. 
         let i = 0
+        let oldFocusIndex = this.focusIndex
         for (let item of items) {
           if (item.id === itemId) this.focusIndex = i
           i++
         }
+        while (items[this.focusIndex].disabled) {
+          if (oldFocusIndex > this.focusIndex) {
+            this.focusIndex--
+          } else {
+            this.focusIndex++
+          }
+        }
+        let newItem = items[this.focusIndex]
         // Open item.
         newItem.open = true
         this.updateItemNavigation()

@@ -1,6 +1,13 @@
-<tangy-form id="form-1">
-  <tangy-form-item src="item-1.html" id="item-1" title="Item 1"></tangy-form-item>
-  <tangy-form-item src="item-2.html" id="item-2" title="Item 2"></tangy-form-item>
-  <tangy-form-item src="item-3.html" id="item-3a" title="Item 3a"></tangy-form-item>
+<tangy-form id="form-1" on-item-change="
+  console.log('item changed')
+  console.log(tangyForm)
+  console.log(response)
+  console.log(items)
+  if (items[0].response['no_extra_items']) items[1].disabled = true
+  if (!items[0].response['no_extra_items']) items[1].disabled = false
+">
+  <tangy-form-item src="item-1.html" id="item-1" title="Design Your Pizza"></tangy-form-item>
+  <tangy-form-item src="item-2.html" id="item-2" title="Extra Items"></tangy-form-item>
+  <tangy-form-item src="item-3.html" id="item-3a" title="A quick word survey"></tangy-form-item>
 </tangy-form>
 
