@@ -35,7 +35,7 @@
         --paper-card-background-color: #ffebea;
       }
       paper-card.disabled {
-        --paper-card-background-color: gray;
+        --paper-card-background-color: gray !important;
       }
       paper-card.open {
         -webkit-transition: .2s;
@@ -273,6 +273,7 @@
               default:
                 input.value = this.response[input.name]
             }
+            input.dispatchEvent(new Event('change'))
           } 
         }
         // Last step, trigger the change event.
