@@ -14,12 +14,14 @@
   <paper-checkbox name="cheese">cheese</paper-checkbox><br>
   <paper-checkbox name="pepperoni">pepperoni</paper-checkbox><br>
   <paper-checkbox name="fruit_prompt">I would like to add fruit.</paper-checkbox><br>
-  <tangy-button-group id="fruit_selection" hidden>
-    <paper-button name="fruit_selection_tangerine">Tangerine</paper-button>
-    <paper-button name="fruit_selection_apple">Apple</paper-button>
-    <paper-button name="fruit_selection_pear">Pear</paper-button>
-    <paper-button name="fruit_selection_coconut">Coconut</paper-button>
-    <input name="fruit_selection" type="hidden"/>
-  </tangy-button-group>
+  <div id="fruit_selection" hidden>
+    <paper-radio-group>
+      <paper-radio-button name="fruit_selection_tangerine">Tangerine</paper-radio-button>
+      <paper-radio-button name="fruit_selection_apple">Apple</paper-radio-button>
+      <paper-radio-button name="fruit_selection_pear">Pear</paper-radio-button>
+      <paper-radio-button name="fruit_selection_coconut">Coconut</paper-radio-button>
+      <input name="fruit_selection" type="hidden"/>
+    </paper-radio-group>
+  </div>
   <paper-checkbox name="no_extra_items">I would not like to add extra items.</paper-checkbox><br>
 </form>
