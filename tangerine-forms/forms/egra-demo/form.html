@@ -1,0 +1,18 @@
+<tangy-form id="egra-html-form">
+    <tangy-form-item 
+        id="item-1" 
+        title="Item 1"
+        src="item-1.html" 
+        onchange="
+            console.log(this.tangyFormResponse)
+        " 
+        onload="
+            console.log(this.shouldSkip); 
+            // shouldSkip = true
+            // this.skip = true
+        "
+    >
+    </tangy-form-item>
+    <tangy-form-item id="item-2" title="Item 2" src="item-2.html"></tangy-form-item>
+    <tangy-form-item id="item-3" title="Item 3" src="item-3.html"></tangy-form-item>
+</tangy-form>

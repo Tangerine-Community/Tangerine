@@ -1,0 +1,25 @@
+<form onchange="
+  let response = this.getResponse();
+  if (response.fruit_prompt == 'on') window.fruit_selection.hidden = false
+  if (!response.fruit_prompt) window.fruit_selection.hidden = true
+  ">
+  <paper-input 
+    error-message="A pizza name is required" 
+    type="text" 
+    name="pizza_name" 
+    required 
+    label="Name your pizza">
+  </paper-input>
+  <label>Pizza toppings:</label> <br>
+  <paper-checkbox name="cheese">cheese</paper-checkbox><br>
+  <paper-checkbox name="pepperoni">pepperoni</paper-checkbox><br>
+  <paper-checkbox name="fruit_prompt">I would like to add fruit.</paper-checkbox><br>
+  <tangy-button-group id="fruit_selection" hidden>
+    <paper-button name="fruit_selection_tangerine">Tangerine</paper-button>
+    <paper-button name="fruit_selection_apple">Apple</paper-button>
+    <paper-button name="fruit_selection_pear">Pear</paper-button>
+    <paper-button name="fruit_selection_coconut">Coconut</paper-button>
+    <input name="fruit_selection" type="hidden"/>
+  </tangy-button-group>
+  <paper-checkbox name="no_extra_items">I would not like to add extra items.</paper-checkbox><br>
+</form>

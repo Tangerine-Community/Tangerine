@@ -1,0 +1,10 @@
+[
+  {
+    "title": "Form 1",
+    "src": "forms/form-1/form.html"
+  }, 
+  {
+    "title": "EGRA Demo",
+    "src": "forms/egra-demo/form.html"
+  }
+]

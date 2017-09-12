@@ -1,0 +1,883 @@
+<iron-form id="form" onchange= "
+      // Example of referencing elements by their id property.
+      if (oral_read_last_selected_nth.value >= 8) read_comp8_div.hidden = false 
+      if (oral_read_last_selected_nth.value >= 14) read_comp14_div.hidden = false 
+      if (oral_read_last_selected_nth.value >= 20) read_comp20_div1.hidden = false 
+      if (oral_read_last_selected_nth.value >= 20) read_comp20_div2.hidden = false 
+      if (oral_read_last_selected_nth.value >= 20) read_comp20_div3.hidden = false 
+      // Example of reading variable data directly. Handy for things like radio inputs (no need for getChecked helper function).
+      let variables = this.serializeForm()
+      if (variables.s4 == 1) if (variables.s4 != '') {s5_div.hidden = false} 
+      if (variables.s4 != 1) if (variables.s4 != '') {s5_div.hidden = true} 
+      if (variables.s11 == 1) if (variables.s11 != '') {s12_div.hidden = false} 
+      if (variables.s11 != 1) if (variables.s11 != '') {s12_div.hidden = true} 
+    ">
+    <form> 
+
+        <paper-checkbox id="pizza" name="pizza" checked>pizza</paper-checkbox><br>
+        <paper-checkbox id="cheese" name="cheese" required>cheese</paper-checkbox><br>
+        <paper-checkbox id="pepperoni" name="pepperoni" required>pepperoni</paper-checkbox><br>
+        <paper-checkbox id="fruit_prompt" name="fruit_prompt">I would like to add fruit.</paper-checkbox><br>
+
+        <paper-card>
+            Please select country
+             <select id="formly_1_select_country" name="selectCountry" >
+                        <option value="">---Select---</option>
+                        <option value="AU">Australia</option>
+                        <option value="US">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="ZM">Zambia</option>
+            </select>
+            
+            
+            <select id="formly_1_select_city_1" name="selectCity" hidden>
+                <option value="washington">Washington</option>
+                <option value="newyork">New York</option>
+      
+            </select>
+ 
+            <select id="formly_1_select_city_2" name="selectCity" hidden>
+                    <option value="melburn">Melburn</option>
+                    <option value="sydney">Syndey</option>
+            </select>
+        
+            <select id="formly_1_select_city_3" name="selectCity" hidden>
+                <option value="london">London</option>
+                <option value="bath">Bath</option>
+            </select>
+        </paper-card>
+<br/>
+<h2>Student Information</h2>
+        <paper-card>
+            1. What is the school shift the child attends?<br/>
+            <input type="radio" id="radio_school_0" name="school" value="1" >Full Day<br/>
+            <input type="radio" id="radio_school_1" name="school" value="2">Morning<br/>
+            <input type="radio" id="radio_school_2" name="school" value="3">Afternoon
+        </paper-card>
+<br/>
+        <paper-card>
+            2. Is the child in school?<br/>
+            <input type="radio" id="radio_shift_0" name="shift" value="1" >Yes<br/>
+            <input type="radio" id="radio_shift_1" name="shift" value="0">No<br/>
+            <input type="radio" id="radio_shift_2" name="shift" value="3">Not Sure
+        </paper-card>
+<br/>
+        <paper-card>
+            3. What class section is the child in?<br/>
+            <input type="textarea" id="textarea_section" name="section" ><br/>
+        </paper-card>
+<br/>
+        <paper-card>
+             2. What is the child's year of birth? </br>
+            <input type="text" id="formly_2_year_birth" name="birth_year" pattern="[2][0][0|1][0-9]|[1][9][9|8][0-9]|(999)" title="1990-2019 or enter 999 for no reply"> 
+        </paper-card>
+<br/>
+        <paper-card>
+             5. What is the child's month of birth? </br>
+            <input type="radio" id="radio_birth_month" name="birth_month" value="1" >January<br/>
+            <input type="radio" id="radio_birth_month2" name="birth_month" value="2" >February<br/>
+            <input type="radio" id="radio_birth_month3" name="birth_month" value="3" >March<br/>
+            <input type="radio" id="radio_birth_month4" name="birth_month" value="4" >April<br/>
+            <input type="radio" id="radio_birth_month5" name="birth_month" value="5" >May<br/>
+            <input type="radio" id="radio_birth_month6" name="birth_month" value="6" >June<br/>
+            <input type="radio" id="radio_birth_month7" name="birth_month" value="7" >July<br/>
+            <input type="radio" id="radio_birth_month8" name="birth_month" value="8" >August<br/>
+            <input type="radio" id="radio_birth_month9" name="birth_month" value="9" >September<br/>
+            <input type="radio" id="radio_birth_month10" name="birth_month" value="10" >October<br/>
+            <input type="radio" id="radio_birth_month11" name="birth_month" value="11" >November<br/>
+            <input type="radio" id="radio_birth_month12" name="birth_month" value="12" >December<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+            6.  What is the child's gender?<br/>
+            <input type="radio" id="radio_gender" name="gender" value="1" >Boy<br/>
+            <input type="radio" id="radio_gender1" name="gender" value="0">Girl<br/>
+        </paper-card>
+
+<h3> Subtest 1: Listening Comprehension. </h3>
+<p>I am going to read you a short story aloud ONCE and then ask you some questions. Please listen carefully and answer the questions as best as you can. You can answer the questions in whichever language you prefer. Ready? Let’s begin.
+
+
+
+Adama has a hen. It lays eggs every day. Adama sells the eggs at the market. One day, Adama dropped her basket of eggs.  All the eggs broke. Adama was very sad. The next day her hen gave new eggs. Adama was very happy.</p>
+        <paper-card>
+            1. What does Adama have?<br/>
+            <input type="radio" id="list_comp1_1" name="list_comp1" value="1" >Correct<br/>
+            <input type="radio" id="list_comp1_2" name="list_comp1" value="0">Incorrect<br/>
+            <input type="radio" id="list_comp1_3" name="list_comp1" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+            2.	What does Adama sell at the market?<br/>
+            <input type="radio" id="list_comp2_1" name="list_comp2" value="1" >Correct<br/>
+            <input type="radio" id="list_comp2_2" name="list_comp2" value="0">Incorrect<br/>
+            <input type="radio" id="list_comp2_3" name="list_comp2" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           3.	What happened to Adama’s eggs?<br/>
+            <input type="radio" id="list_comp3_1" name="list_comp3" value="1" >Correct<br/>
+            <input type="radio" id="list_comp3_2" name="list_comp3" value="0">Incorrect<br/>
+            <input type="radio" id="list_comp3_3" name="list_comp3" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+            4.	Why was Adama sad?<br/>
+            <input type="radio" id="list_comp4_1" name="list_comp4" value="1" >Correct<br/>
+            <input type="radio" id="list_comp4_2" name="list_comp4" value="0">Incorrect<br/>
+            <input type="radio" id="list_comp4_3" name="list_comp4" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+            5.	Why was Adama happy?<br/>
+            <input type="radio" id="list_comp5_1" name="list_comp5" value="1" >Correct<br/>
+            <input type="radio" id="list_comp5_2" name="list_comp5" value="0">Incorrect<br/>
+            <input type="radio" id="list_comp5_3" name="list_comp5" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+
+
+<h3> Subtask 2: Phonemic Awareness </h3>
+<p style="margin-left:18.0pt;"><strong>This is a listening exercise. I want you to tell me the first sound of each word. For example, in the word &ldquo;pot&rdquo;, the first sound is /p/.&nbsp; I would like you to tell me the first sound you hear in each word. I will say each word <u>two times</u>. Listen to the word, then tell me the very first sound in that word.&nbsp; </strong></p><p>&nbsp;</p><p><strong>Let&rsquo;s practice. What is the first sound in &ldquo;mouse&rdquo;? &hellip; &ldquo;mouse&rdquo;?</strong></p><p style="margin-left:36.0pt;">[If the child responds correctly, say:]<strong> Very good, the first sound in &ldquo;mouse&rdquo; is /m/. </strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say]: <strong>Listen again: &ldquo;mouse&rdquo;.&nbsp; The first sound in &ldquo;mouse&rdquo; is /mmm/.</strong></p><p><strong>Now let&rsquo;s try another one: What is the first sound in &ldquo;day&rdquo;? &hellip; &ldquo;day&rdquo;?</strong></p><p style="margin-left:36.0pt;">[If the child responds correctly, say]: <strong>Very good, the first sound in &ldquo;day&rdquo; is /d/. </strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say]: <strong>Listen again: &ldquo;day&rdquo;. The first sound in &ldquo;day&rdquo; is /d/.</strong></p><p style="margin-left:35.4pt;"><strong>&nbsp;Ready? Let&rsquo;s begin.</strong></p>
+
+        <paper-card>
+            1. What is the first sound in 'at'? …'at'?<br/>
+            <input type="radio" id="le_pa_init_sound1_1" name="e_pa_init_sound1" value="1" >Correct<br/>
+            <input type="radio" id="e_pa_init_sound1_2" name="e_pa_init_sound1" value="0">Incorrect<br/>
+            <input type="radio" id="e_pa_init_sound1_3" name="e_pa_init_sound1" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            2. What is the first sound in “so”? …“so”?<br/>
+            <input type="radio" id="le_pa_init_sound2_1" name="e_pa_init_sound2" value="1" >Correct<br/>
+            <input type="radio" id="e_pa_init_sound2_2" name="e_pa_init_sound2" value="0">Incorrect<br/>
+            <input type="radio" id="e_pa_init_sound2_3" name="e_pa_init_sound2" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            3. What is the first sound in “chalk”? …“chalk”?<br/>
+            <input type="radio" id="le_pa_init_sound3_1" name="e_pa_init_sound3" value="1" >Correct<br/>
+            <input type="radio" id="le_pa_init_sound3_2" name="e_pa_init_sound3" value="0">Incorrect<br/>
+            <input type="radio" id="le_pa_init_sound3_3" name="e_pa_init_sound3" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            4. What is the first sound in “very”? …“very”?<br/>
+            <input type="radio" id="e_pa_init_sound4_1" name="e_pa_init_sound4" value="1" >Correct<br/>
+            <input type="radio" id="e_pa_init_sound4_2" name="e_pa_init_sound4" value="0">Incorrect<br/>
+            <input type="radio" id="e_pa_init_sound4_3" name="e_pa_init_sound4" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            5. What is the first sound in “car”? …“car”?<br/>
+            <input type="radio" id="e_pa_init_sound5_1" name="e_pa_init_sound5" value="1" >Correct<br/>
+            <input type="radio" id="e_pa_init_sound5_2" name="e_pa_init_sound5" value="0">Incorrect<br/>
+            <input type="radio" id="e_pa_init_sound5_3" name="e_pa_init_sound5" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            6. What is the first sound in “for”? …“for”<br/>
+            <input type="radio" id="e_pa_init_sound6_1" name="e_pa_init_sound6" value="1" >Correct<br/>
+            <input type="radio" id="e_pa_init_sound6_2" name="e_pa_init_sound6" value="0">Incorrect<br/>
+            <input type="radio" id="e_pa_init_sound6_3" name="e_pa_init_sound6" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            7. What is the first sound in “man”? …“man”<br/>
+            <input type="radio" id="e_pa_init_sound7_1" name="e_pa_init_sound7" value="1" >Correct<br/>
+            <input type="radio" id="e_pa_init_sound7_2" name="e_pa_init_sound7" value="0">Incorrect<br/>
+            <input type="radio" id="e_pa_init_sound7_3" name="e_pa_init_sound7" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            8. What is the first sound in “ox”? …“ox”?<br/>
+            <input type="radio" id="e_pa_init_sound8_1" name="e_pa_init_sound8" value="1" >Correct<br/>
+            <input type="radio" id="e_pa_init_sound8_2" name="e_pa_init_sound8" value="0">Incorrect<br/>
+            <input type="radio" id="e_pa_init_sound8_3" name="e_pa_init_sound8" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            9. What is the first sound in “yes”? …“yes?<br/>
+            <input type="radio" id="e_pa_init_sound9_1" name="e_pa_init_sound9" value="1" >Correct<br/>
+            <input type="radio" id="e_pa_init_sound9_2" name="e_pa_init_sound9" value="0">Incorrect<br/>
+            <input type="radio" id="e_pa_init_sound9_3" name="e_pa_init_sound9" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            10. What is the first sound in “go”? …“go”?<br/>
+            <input type="radio" id="e_pa_init_sound10_1" name="e_pa_init_sound10" value="1" >Correct<br/>
+            <input type="radio" id="e_pa_init_sound10_2" name="e_pa_init_sound10" value="0">Incorrect<br/>
+            <input type="radio" id="e_pa_init_sound10_3" name="e_pa_init_sound10" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+
+        <h3> Subtask 3: Letter Sound Identification</h3>
+<p style="margin-left:18.0pt;">
+  <strong>
+    Here is a page full of letters of the English alphabet. Please tell me the SOUNDS of as many 
+    letters of the alphabet as you can. Not their names, but their sounds.</strong></p><p><strong>
+    For example, the sound of this letter </strong>[point to the letter T]<strong> is /t/.</strong>
+</p>
+<p>
+  <strong>Let&rsquo;s practice: Tell me the sound of this letter </strong>[point to the letter M]<strong>:</strong>
+</p>
+<p style="margin-left:36.0pt;">
+  [If the child responds correctly, say:]<strong> Good, the sound of this letter is /m/.</strong>
+</p>
+<p style="margin-left:36.0pt;">
+  [If the child does not respond correctly, say:] <strong>The sound of this letter is /m/.</strong>
+</p>
+<p>
+  <strong>Now try another one: Tell me the sound of this letter </strong>[point to the letter S]:
+</p>
+<p style="margin-left:36.0pt;">
+  [If the child responds correctly say:]<strong> Good, the sound of this letter is /s/.</strong>
+</p>
+<p style="margin-left:36.0pt;">
+  [If the child does not respond correctly, say:] <strong>The sound of this letter is /s/.</strong>
+</p>
+<p>
+  <strong>When I say &ldquo;Begin,&rdquo; start here</strong> [point to first letter] <strong>and go 
+    across the page</strong> [point]. <strong>Point to each letter and tell me the sound of that 
+    letter in a loud voice. </strong><strong>Read as quickly and carefully as you can. If you come 
+    to a letter you do not know, go on to the next letter. Put your finger on the first letter. 
+    </strong>
+</p>
+<p>
+  <strong>Ready? Begin.</strong>
+</p>
+
+<tangy-timed id="letter_sound" duration=60>
+    <table>
+        <tr>
+            <td> <input id="L1" name="L1" type="checkbox"  /> <label for="L1"> L </label> </td>
+            <td> <input id="i1" name="i1" type="checkbox"  /> <label for="i1">i </label> </td>
+            <td> <input id="h1" name="h1" type="checkbox"  /> <label for="h1">h </label> </td>
+            <td> <input id="R1" name="R1" type="checkbox"  /> <label for="R1">R </label> </td>
+            <td> <input id="S1" name="S1" type="checkbox"  /> <label for="S1">S </label> </td>
+            <td> <input id="y1" name="y1" type="checkbox"  /> <label for="y1">y </label> </td>
+            <td> <input id="E1" name="E1" type="checkbox"  /> <label for="E1">E </label> </td>
+            <td> <input id="O1" name="O1" type="checkbox"  /> <label for="O1">O </label> </td>
+            <td> <input id="w1" name="w1" type="checkbox"  /> <label for="w1">w </label> </td>
+            <td> <input id="T1" name="T1" type="checkbox"  /> <label for="T1">T </label> </td>
+        </tr>
+        <tr>
+            <td> <input id="i2" name="i2" type="checkbox"  /> <label for="i2">i</label> </td>
+            <td> <input id="e2" name="e2" type="checkbox"  /> <label for="e2">e</label> </td>
+            <td> <input id="T2" name="T2" type="checkbox"  /> <label for="T2">T</label> </td>
+            <td> <input id="E2" name="E2" type="checkbox"  /> <label for="E2">E</label> </td>
+            <td> <input id="F2" name="F2" type="checkbox"  /> <label for="F2">F</label> </td>
+            <td> <input id="t2" name="t2" type="checkbox"  /> <label for="t2">t</label> </td>
+            <td> <input id="a2" name="a2" type="checkbox"  /> <label for="a2">a</label> </td>
+            <td> <input id="d2" name="d2" type="checkbox"  /> <label for="d2">d</label> </td>
+            <td> <input id="n2" name="n2" type="checkbox"  /> <label for="n2">n</label> </td>
+            <td> <input id="e2" name="e2" type="checkbox"  /> <label for="e2">e</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="h3" name="h3" type="checkbox"  /> <label for="h3">h</label> </td>
+            <td> <input id="O3" name="O3" type="checkbox"  /> <label for="O3">O</label> </td>
+            <td> <input id="A3" name="A3" type="checkbox"  /> <label for="A3">A</label> </td>
+            <td> <input id="m3" name="m3" type="checkbox"  /> <label for="m3">m</label> </td>
+            <td> <input id="U3" name="U3" type="checkbox"  /> <label for="U3">U</label> </td>
+            <td> <input id="r3" name="r3" type="checkbox"  /> <label for="r3">r</label> </td>
+            <td> <input id="L3" name="L3" type="checkbox"  /> <label for="L3">L</label> </td>
+            <td> <input id="G3" name="G3" type="checkbox"  /> <label for="G3">G</label> </td>
+            <td> <input id="R3" name="R3" type="checkbox"  /> <label for="R3">R</label> </td>
+            <td> <input id="u3" name="u3" type="checkbox"  /> <label for="u3">u</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="g4" name="g4" type="checkbox"  /> <label for="g4">g</label> </td>
+            <td> <input id="R4" name="R4" type="checkbox"  /> <label for="R4">R</label> </td>
+            <td> <input id="B4" name="B4" type="checkbox"  /> <label for="B4">B</label> </td>
+            <td> <input id="N4" name="N4" type="checkbox"  /> <label for="N4">N</label> </td>
+            <td> <input id="i4" name="i4" type="checkbox"  /> <label for="i4">i</label> </td>
+            <td> <input id="r4" name="r4" type="checkbox"  /> <label for="r4">r</label> </td>
+            <td> <input id="m4" name="m4" type="checkbox"  /> <label for="m4">m</label> </td>
+            <td> <input id="t4" name="t4" type="checkbox"  /> <label for="t4">t</label> </td>
+            <td> <input id="S4" name="S4" type="checkbox"  /> <label for="S4">s</label> </td>
+            <td> <input id="r4" name="r4" type="checkbox"  /> <label for="r4">r</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="S5" name="S5" type="checkbox"  /> <label for="S5">S</label> </td>
+            <td> <input id="T5" name="T5" type="checkbox"  /> <label for="T5">T</label> </td>
+            <td> <input id="E5" name="E5" type="checkbox"  /> <label for="E5">E</label> </td>
+            <td> <input id="C5" name="C5" type="checkbox"  /> <label for="C5">C</label> </td>
+            <td> <input id="p5" name="p5" type="checkbox"  /> <label for="p5">p</label> </td>
+            <td> <input id="A5" name="A5" type="checkbox"  /> <label for="A5">A</label> </td>
+            <td> <input id="e5" name="e5" type="checkbox"  /> <label for="e5">e</label> </td>
+            <td> <input id="c5" name="c5" type="checkbox"  /> <label for="c5">c</label> </td>
+            <td> <input id="a5" name="a5" type="checkbox"  /> <label for="a5">a</label> </td>
+            <td> <input id="E5" name="E5" type="checkbox"  /> <label for="E5">E</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="y6" name="y6" type="checkbox"  /> <label for="y6">y</label> </td>
+            <td> <input id="S6" name="S6" type="checkbox"  /> <label for="S6">s</label> </td>
+            <td> <input id="Q6" name="Q6" type="checkbox"  /> <label for="Q6">Q</label> </td>
+            <td> <input id="A6" name="A6" type="checkbox"  /> <label for="A6">A</label> </td>
+            <td> <input id="O6" name="O6" type="checkbox"  /> <label for="O6">O</label> </td>
+            <td> <input id="C6" name="C6" type="checkbox"  /> <label for="C6">C</label> </td>
+            <td> <input id="O61" name="O61" type="checkbox"  /> <label for="O61">O</label> </td>
+            <td> <input id="h6" name="h6" type="checkbox"  /> <label for="h6">h</label> </td>
+            <td> <input id="t6" name="t6" type="checkbox"  /> <label for="t6">t</label> </td>
+            <td> <input id="P6" name="P6" type="checkbox"  /> <label for="P6">P</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="e7" name="e7" type="checkbox"  /> <label for="e7">e</label> </td>
+            <td> <input id="A7" name="A7" type="checkbox"  /> <label for="A7">A</label> </td>
+            <td> <input id="S7" name="S7" type="checkbox"  /> <label for="S7">s</label> </td>
+            <td> <input id="M7" name="M7" type="checkbox"  /> <label for="M7">M</label> </td>
+            <td> <input id="F7" name="F7" type="checkbox"  /> <label for="F7">F</label> </td>
+            <td> <input id="n7" name="n7" type="checkbox"  /> <label for="n7">n</label> </td>
+            <td> <input id="u7" name="u7" type="checkbox"  /> <label for="u7">u</label> </td>
+            <td> <input id="R7" name="R7" type="checkbox"  /> <label for="R7">R</label> </td>
+            <td> <input id="t7" name="t7" type="checkbox"  /> <label for="t7">t</label> </td>
+            <td> <input id="A7" name="A7" type="checkbox"  /> <label for="A7">A</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="q8" name="q8" type="checkbox"  /> <label for="q8">q</label> </td>
+            <td> <input id="H8" name="H8" type="checkbox"  /> <label for="H8">H</label> </td>
+            <td> <input id="N8" name="N8" type="checkbox"  /> <label for="N8">N</label> </td>
+            <td> <input id="S8" name="S8" type="checkbox"  /> <label for="S8">S</label> </td>
+            <td> <input id="i8" name="i8" type="checkbox"  /> <label for="i8">i</label> </td>
+            <td> <input id="g8" name="g8" type="checkbox"  /> <label for="g8">g</label> </td>
+            <td> <input id="m8" name="m8" type="checkbox"  /> <label for="m8">m</label> </td>
+            <td> <input id="i8" name="i8" type="checkbox"  /> <label for="i8">i</label> </td>
+            <td> <input id="L8" name="L8" type="checkbox"  /> <label for="L8">L</label> </td>
+            <td> <input id="L81" name="L81" type="checkbox"  /> <label for="L81">L</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="i9" name="i9" type="checkbox"  /> <label for="i9">i</label> </td>
+            <td> <input id="b9" name="b9" type="checkbox"  /> <label for="b9">b</label> </td>
+            <td> <input id="O9" name="O9" type="checkbox"  /> <label for="O9">O</label> </td>
+            <td> <input id="E9" name="E9" type="checkbox"  /> <label for="E9">E</label> </td>
+            <td> <input id="p9" name="p9" type="checkbox"  /> <label for="p9">p</label> </td>
+            <td> <input id="r9" name="r9" type="checkbox"  /> <label for="r9">r</label> </td>
+            <td> <input id="X9" name="X9" type="checkbox"  /> <label for="X9">X</label> </td>
+            <td> <input id="N9" name="N9" type="checkbox"  /> <label for="N9">N</label> </td>
+            <td> <input id="A9" name="A9" type="checkbox"  /> <label for="A9">A</label> </td>
+            <td> <input id="c9" name="c9" type="checkbox"  /> <label for="c9">c</label> </td>
+        </tr>
+        <tr>
+            <td> <input id="D10" name="D10" type="checkbox"  /> <label for="D10">D</label> </td>
+            <td> <input id="d10" name="d10" type="checkbox"  /> <label for="d10">d</label> </td>
+            <td> <input id="e10" name="e10" type="checkbox"  /> <label for="e10">e</label> </td>
+            <td> <input id="o10" name="o10" type="checkbox"  /> <label for="o10">o</label> </td>
+            <td> <input id="e10" name="e10" type="checkbox"  /> <label for="e10">e</label> </td>
+            <td> <input id="j10" name="j10" type="checkbox"  /> <label for="j10">j</label> </td>
+            <td> <input id="n10" name="n10" type="checkbox"  /> <label for="n10">n</label> </td>
+            <td>  </td>
+            <td>  </td>
+            <td>  </td>
+        </tr>
+    </table>
+    <input name="letter_sound_time_remaining" id="letter_sound_time_remaining" type="hidden">
+    <input name="letter_sound_time_spent" id="letter_sound_time_spent" type="hidden">
+    <input name="letter_sound_last_selected_id" id="letter_sound_last_selected_id" type="hidden">
+    <input name="letter_sound_last_selected_nth" id="letter_sound_last_selected_nth" type="hidden">
+    <input name="letter_sound_items_per_minute" id="letter_sound_items_per_minute" type="hidden">
+    <input name="letter_sound_number_of_items_marked" id="letter_sound_number_of_items_marked" type="hidden"> 
+</tangy-timed>
+</br>
+
+<h3> Subtask 5: Oral Reading Passage</h3>
+<p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say &ldquo;Begin,&rdquo; read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed id="oral_read" duration=60>
+            <table>
+                <tr>
+                    <td> <input id="Salma1" name="Salma1" type="checkbox"  /> <label for="Salma1">Salma</label> </td>
+                    <td> <input id="and1"   name="and1"   type="checkbox"  /> <label for="and1">and</label> </td>
+                    <td> <input id="Ali1"   name="Ali1"   type="checkbox"  /> <label for="Ali1">Ali</label> </td>
+                    <td> <input id="clean1" name="clean1" type="checkbox"  /> <label for="clean1">clean</label> </td>
+                    <td> <input id="their1" name="their1" type="checkbox"  /> <label for="their1">their</label> </td>
+                </tr>
+                <tr>
+                    <td> <input id="classroom2" name="classroom2" type="checkbox"  /> <label for="classroom2">classroom</label> </td>
+                    <td> <input id="every2"     name="every2"     type="checkbox"  /> <label for="every2">every </label> </td>
+                    <td> <input id="day2"       name="day2"       type="checkbox"  /> <label for="day2">day. </label> </td>
+                    <td> <input id="Ali2"       name="Ali2"       type="checkbox"  /> <label for="Ali2">Ali</label> </td>
+                    <td> <input id="cleans2"    name="cleans2"    type="checkbox"  /> <label for="cleans2">cleans</label> </td>
+                </tr>
+                <tr>
+                    <td> <input id="the3"        name="the3"        type="checkbox"  /> <label for="the3"> the </label> </td>
+                    <td> <input id="blackboard3" name="blackboard3" type="checkbox"  /> <label for="blackboard3">blackboard</label> </td>
+                    <td> <input id="and3"        name="and3"        type="checkbox"  /> <label for="and3">and</label> </td>
+                    <td> <input id="Binta3"      name="Binta3"      type="checkbox"  /> <label for="Binta3">Binta</label> </td>
+                    <td> <input id="sweeps3"     name="sweeps3"     type="checkbox"  /> <label for="sweeps3">sweeps </label> </td>
+                </tr>
+                <tr>
+                    <td> <input id="the4"    name="the4"   type="checkbox"  /> <label for="the4">the </label> </td>
+                    <td> <input id="floor4"  name="floor4" type="checkbox"  /> <label for="floor4">floor. </label> </td>
+                    <td> <input id="One4"    name="One4"   type="checkbox"  /> <label for="One4">One </label> </td>
+                    <td> <input id="day4"    name="day4"   type="checkbox"  /> <label for="day4">day, </label> </td>
+                    <td> <input id="they4"   name="they4"  type="checkbox"  /> <label for="they4">they </label> </td>
+                </tr>
+                <tr>
+                    <td> <input id="could5"  name="could5"  type="checkbox"  /> <label for="could5">could </label> </td>
+                    <td> <input id="not5"    name="not5"    type="checkbox"  /> <label for="not5">not </label> </td>
+                    <td> <input id="find5"   name="find5"   type="checkbox"  /> <label for="find5">find </label> </td>
+                    <td> <input id="Bintas5" name="Bintas5" type="checkbox"  /> <label for="Bintas5">Binta’s </label> </td>
+                    <td> <input id="broom5"  name="broom5"  type="checkbox"  /> <label for="broom5">broom. </label> </td>
+                </tr>
+            </table>
+
+
+            <input name="oral_read_time_remaining" id="oral_read_time_remaining" type="hidden">
+            <input name="oral_read_time_spent" id="oral_read_time_spent" type="hidden">
+            <input name="oral_read_last_selected_id" id="oral_read_last_selected_id" type="hidden">
+            <input name="oral_read_last_selected_nth" id="oral_read_last_selected_nth" type="hidden">
+            <input name="oral_read_items_per_minute" id="oral_read_items_per_minute" type="hidden">
+            <input name="oral_read_number_of_items_marked" id="oral_read_number_of_items_marked" type="hidden"> 
+        </tangy-timed>
+        
+<h3> Subtask 4: Non-Word Reading</h3>
+<p style="margin-left:18.0pt;"><strong>Here are some made-up words in English. I would like you to read as many as you can. Do not spell the words, but read them. For example, this made-up word is: &ldquo;ut&rdquo;.</strong></p><p><strong>Let&rsquo;s practise: Please read this word</strong> [point to the word: <strong>dif</strong>].&nbsp;</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; [If the child responds correctly]: <strong>&ldquo;Good, This word is &ldquo;dif.&rdquo;</strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say]: <strong>This made-up word is &ldquo;dif.&rdquo;</strong></p><p><strong>Now try another one: please read this word </strong>[point to the next word: <strong>mab</strong>].&nbsp;</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;[If the child responds correctly, say]: <strong>&ldquo;Good, this made-up word is &ldquo;mab.&rdquo;</strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly say]: <strong>This made-up word is &ldquo;mab.&rdquo;</strong></p><p><strong>When I say &ldquo;Begin,&rdquo; start here</strong> [point to first word] <strong>and read across the page</strong> [point]. <strong>Point to each word and read it in a loud voice. </strong><strong>Read as quickly and carefully as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong></p>
+
+        <tangy-timed id="non_word" duration=60>
+            <table>
+                <tr>
+                    <td> <input id="fut1" name="fut1" type="checkbox"  /> <label for="fut1">fut</label> </td>
+                    <td> <input id="lus1" name="lus1" type="checkbox"  /> <label for="lus1">lus</label> </td>
+                    <td> <input id="dit1" name="dit1" type="checkbox"  /> <label for="dit1">dit</label> </td>
+                    <td> <input id="leb1" name="leb1" type="checkbox"  /> <label for="leb1">leb</label> </td>
+                    <td> <input id="gak1" name="gak1" type="checkbox"  /> <label for="gak1">gak</label> </td>
+                </tr>
+            <tr>
+                    <td> <input id="huz2" name="huz2" type="checkbox"  /> <label for="huz2">huz</label> </td>
+                    <td> <input id="jod2" name="jod2" type="checkbox"  /> <label for="jod2">jod </label> </td>
+                    <td> <input id="kib2" name="kib2" type="checkbox"  /> <label for="kib2">kib </label> </td>
+                    <td> <input id="lek2" name="lek2" type="checkbox"  /> <label for="lek2">lek</label> </td>
+                    <td> <input id="tob2" name="tob2" type="checkbox"  /> <label for="tob2">tob</label> </td>
+                </tr>
+                <tr>
+                    <td> <input id="nom3" name="nom3" type="checkbox"  /> <label for="nom3"> nom </label> </td>
+                    <td> <input id="rop3" name="rop3" type="checkbox"  /> <label for="rop3">rop</label> </td>
+                    <td> <input id="1and3" name="1and3" type="checkbox"  /> <label for="1and3">and</label> </td>
+                    <td> <input id="hig3" name="hig3" type="checkbox"  /> <label for="hig3">hig</label> </td>
+                    <td> <input id="reg3" name="reg3" type="checkbox"  /> <label for="reg3">reg </label> </td>
+                </tr>
+                <tr>
+                    <td> <input id="san4" name="san4" type="checkbox"  /> <label for="san4">san </label> </td>
+                    <td> <input id="tup4" name="tup4" type="checkbox"  /> <label for="tup4">tup </label> </td>
+                    <td> <input id="ral4" name="ral4" type="checkbox"  /> <label for="ral4">ral </label> </td>
+                    <td> <input id="wix4" name="wix4" type="checkbox"  /> <label for="wix4">wix </label> </td>
+                    <td> <input id="nep4" name="nep4" type="checkbox"  /> <label for="nep4">nep </label> </td>
+                </tr>
+                <tr>
+                    <td> <input id="nad5" name="nad5" type="checkbox"  /> <label for="nad5">nad </label> </td>
+                    <td> <input id="lut5" name="lut5" type="checkbox"  /> <label for="lut5">lut </label> </td>
+                    <td> <input id="yod5" name="yod5" type="checkbox"  /> <label for="yod5">yod </label> </td>
+                    <td> <input id="sim5" name="sim5" type="checkbox"  /> <label for="sim5">sim </label> </td>
+                    <td> <input id="tat5" name="tat5" type="checkbox"  /> <label for="tat5">tat </label> </td>
+                </tr>
+            </table>
+
+            <input name="non_word_time_remaining" id="non_word_time_remaining" type="hidden">
+            <input name="non_word_time_spent" id="non_word_time_spent" type="hidden">
+            <input name="non_word_last_selected_id" id="non_word_last_selected_id" type="hidden">
+            <input name="non_word_last_selected_nth" id="non_word_last_selected_nth" type="hidden">
+            <input name="non_word_items_per_minute" id="non_word_items_per_minute" type="hidden">
+            <input name="non_word_number_of_items_marked" id="non_word_number_of_items_marked" type="hidden"> 
+        </tangy-timed>
+
+<h3>Subtask 5B: Reading Comprehension</h3>
+<p><strong>Now I am going to ask you a few questions about the story you just read. Try to answer the questions as well as you can. You can provide your answers in whichever language you prefer.&nbsp;&nbsp;</strong></p>
+        
+    <div id="read_comp8_div" name="read_comp8_div" hidden>
+         <paper-card >
+            1.	What do Binta and Ali do every day at school?<br/>
+            <input type="radio" id="read_comp1_1" name="read_comp1" value="1" >Correct<br/>
+            <input type="radio" id="read_comp1_2" name="read_comp1" value="0">Incorrect<br/>
+            <input type="radio" id="read_comp1_3" name="read_comp1" value="3">No Response<br/>
+        </paper-card>
+    </div>
+        <br/>
+    <div id="read_comp14_div" name="read_comp14_div" hidden>
+         <paper-card>
+            2.	What is Binta’s duty at school?<br/>
+            <input type="radio" id="read_comp2_1" name="read_comp2" value="1" >Correct<br/>
+            <input type="radio" id="read_comp2_2" name="read_comp2" value="0">Incorrect<br/>
+            <input type="radio" id="read_comp2_3" name="read_comp2" value="3">No Response<br/>
+        </paper-card>
+    </div>
+    <div id="read_comp20_div1" name="read_comp20_div1" hidden>
+        <br/>
+         <paper-card>
+            3.	Where did Ali and Binta look for the broom?<br/>
+            <input type="radio" id="read_comp3_1" name="read_comp3" value="1" >Correct<br/>
+            <input type="radio" id="read_comp3_2" name="read_comp3" value="0">Incorrect<br/>
+            <input type="radio" id="read_comp3_3" name="read_comp3" value="3">No Response<br/>
+        </paper-card>
+    </div>
+        <br/>
+    <div id="read_comp20_div2" name="read_comp20_div2" hidden>
+         <paper-card>
+            4.	Where was the broom?<br/>
+            <input type="radio" id="read_comp4_1" name="read_comp4" value="1" >Correct<br/>
+            <input type="radio" id="read_comp4_2" name="read_comp4" value="0">Incorrect<br/>
+            <input type="radio" id="read_comp4_3" name="read_comp4" value="3">No Response<br/>
+        </paper-card>
+    </div>
+        <br/>
+    <div id="read_comp20_div3" name="read_comp20_div3" hidden>
+         <paper-card>
+            5.	What did the teacher give Ali and Binta?<br/>
+            <input type="radio" id="read_comp5_1" name="read_comp5" value="1" >Correct<br/>
+            <input type="radio" id="read_comp5_2" name="read_comp5" value="0">Incorrect<br/>
+            <input type="radio" id="read_comp5_3" name="read_comp5" value="3">No Response<br/>
+        </paper-card>
+    </div>
+        <br/>
+
+
+<h3>Subtask 6: Dictation - Letter Writing</h3>
+<p style="margin-left:16.0pt;"><strong>I will say the name of a letter; you should listen carefully. After I have told you the name of the letter, I want </strong><strong>you </strong><strong>to write the letter on this paper. You can write the letter in either capital or lower case.</strong></p><p><strong>Let&rsquo;s practice: </strong><strong>The letter I want you to write is &ldquo;</strong><strong>s&rdquo; </strong><strong>as in </strong><strong>&ldquo;sama&rdquo;</strong><strong>. Write the letter </strong><strong>&ldquo;s</strong><strong>&rdquo;</strong><strong>.</strong></p><p style="margin-left:36.0pt;">[If the child writes the letter correctly, say:]<strong> Good, that is how you write the letter &ldquo;s.&rdquo;</strong></p><p style="margin-left:36.0pt;">[If the child does not respond correctly, say:] <strong>The letter &ldquo;s&rdquo; is written like this: </strong>[write letter for child]. &nbsp;</p><p><strong>Okay, listen and let&rsquo;s get started</strong><strong>.&nbsp;</strong></p>
+
+     <paper-card>
+            1. Write the letter “A,” as in “at”—[pause]—“A”. <br/>
+            <input type="radio" id="dict1_1" name="dict1" value="1" >Correct<br/>
+            <input type="radio" id="dict1_2" name="dict1" value="0">Incorrect<br/>
+            <input type="radio" id="dict1_3" name="dict1" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            2. Write the letter “N,” as in “not”—[pause]—“N”.<br/>
+            <input type="radio" id="dict2_1" name="dict2" value="1" >Correct<br/>
+            <input type="radio" id="dict2_2" name="dict2" value="0">Incorrect<br/>
+            <input type="radio" id="dict2_3" name="dict2" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            3. Write the letter “T,” as in “take”—[pause]—“T”.<br/>
+            <input type="radio" id="dict3_1" name="dict3" value="1" >Correct<br/>
+            <input type="radio" id="dict3_2" name="dict3" value="0">Incorrect<br/>
+            <input type="radio" id="dict3_3" name="dict3" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            4. Write the letter “U,” as in “up”—[pause]—“U”. <br/>
+            <input type="radio" id="dict4_1" name="dict4" value="1" >Correct<br/>
+            <input type="radio" id="dict4_2" name="dict4" value="0">Incorrect<br/>
+            <input type="radio" id="dict4_3" name="dict4" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+         <paper-card>
+            5. Write the letter “B,” as in “be”—[pause]—“B”. </br>
+            <input type="radio" id="dict5_1" name="dict5" value="1" >Correct<br/>
+            <input type="radio" id="dict5_2" name="dict5" value="0">Incorrect<br/>
+            <input type="radio" id="dict5_3" name="dict5" value="3">No Response<br/>
+        </paper-card>
+        <br/>
+
+ <h3>Pupil Questionnaire - Part 1</h3>
+        <paper-card>
+            How old are you? </br>
+            <input type="text" id="s1" name="s1" ><br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+            Did you go to nursery before Grade 1? </br>
+            <input type="radio" id="s2_1" name="s2" value="1" >Yes<br/>
+            <input type="radio" id="s2_2" name="s2" value="0">No<br/>
+            <input type="radio" id="s2_3" name="s2" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+            Did you eat before coming to school today?</br>
+            <input type="radio" id="s3_1" name="s3" value="1" >Yes<br/>
+            <input type="radio" id="s3_2" name="s3" value="0">No<br/>
+            <input type="radio" id="s3_3" name="s3" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+            Do you attend any other school besides this school? </br>
+            <input type="radio" id="s4_1" name="s4" value="1" >Yes<br/>
+            <input type="radio" id="s4_2" name="s4" value="0">No<br/>
+            <input type="radio" id="s4_3" name="s4" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+    <div id="s5_div" hidden>     
+        <paper-card>
+            Please tell me the type of school you attend. </br>
+            <input type="radio" id="s5_1" name="s5" value="1" >Public/government school<br/>
+            <input type="radio" id="s5_2" name="s5" value="2">Religious schoolNo<br/>
+            <input type="radio" id="s5_3" name="s5" value="3">Other<br/>
+            <input type="radio" id="s5_4" name="s5" value="4">Do not know/No response<br/>
+        </paper-card>
+    </div>
+        <br/>
+        <paper-card>
+            Were you absent from THIS school any day last week?</br>
+            <input type="radio" id="s6_1" name="s6" value="1" >Yes<br/>
+            <input type="radio" id="s6_2" name="s6" value="0">No<br/>
+            <input type="radio" id="s6_3" name="s6" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+            Do you have a LANGUAGE reading book at school?</br>
+            <input type="radio" id="s7_1" name="s7" value="1" >Yes<br/>
+            <input type="radio" id="s7_2" name="s7" value="0">No<br/>
+            <input type="radio" id="s7_3" name="s7" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+            Do you have time to read books in your classroom or in your school library every day?</br>
+            <input type="radio" id="s8_1" name="s8" value="1" >Yes<br/>
+            <input type="radio" id="s8_2" name="s8" value="0">No<br/>
+            <input type="radio" id="s8_3" name="s8" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           Do you bring home reading books from your classroom or from the school library</br>
+            <input type="radio" id="s9_1" name="s9" value="1" >Yes<br/>
+            <input type="radio" id="s9_2" name="s9" value="0">No<br/>
+            <input type="radio" id="s9_3" name="s9" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           How often does someone read out loud to you at home: Never, sometimes, or every day?</br>
+            <input type="radio" id="s10_1" name="s10" value="0" >Never<br/>
+            <input type="radio" id="s10_2" name="s10" value="1">Sometimes<br/>
+            <input type="radio" id="s10_3" name="s10" value="2">Everyday<br/>
+            <input type="radio" id="s10_4" name="s10" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           Does someone at home help you with your homework when you need it? </br>
+            <input type="radio" id="s11_1" name="s11" value="1" >Yes<br/>
+            <input type="radio" id="s11_2" name="s11" value="0">No<br/>
+            <input type="radio" id="s11_3" name="s11" value="3">Do not know/No response<br/>
+        </paper-card>
+        </br>
+    <div id="s12_div" hidden> 
+        <paper-card>
+           Who helps you with your homework?</br>
+            <input type="radio" id="s12_1" name="s12" value="1">Brother or sister<br/>
+            <input type="radio" id="s12_2" name="s12" value="2">Mother or father<br/>
+            <input type="radio" id="s12_3" name="s12" value="3">Grandparent<br/>
+            <input type="radio" id="s12_4" name="s12" value="4">Other<br/>
+            <input type="radio" id="s12_5" name="s12" value="5">Do not know/No response<br/>
+        </paper-card>
+    </div>
+        <br/>
+        <paper-card>
+           How often do you read out loud to someone at home? Never, sometimes, or every day?</br>
+            <input type="radio" id="s13_1" name="s13" value="0">Never<br/>
+            <input type="radio" id="s13_2" name="s13" value="1">Sometimes<br/>
+            <input type="radio" id="s13_3" name="s13" value="2">Everyday<br/>
+            <input type="radio" id="s13_4" name="s13" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           Now I’m going to ask you a few questions about your home. What language do you speak most frequently at home?</br>
+            <input type="radio" id="s14_1" name="s14" value="1">Language 1<br/>
+            <input type="radio" id="s14_2" name="s14" value="2">Language 2<br/>
+            <input type="radio" id="s14_3" name="s14" value="3">Language 3<br/>
+            <input type="radio" id="s14_4" name="s14" value="4">Other<br/>
+            <input type="radio" id="s14_5" name="s14" value="5">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           Apart from your school books, are there books, newspapers or other materials for you to read at your house?</br>
+            <input type="radio" id="s15_1" name="s15" value="1" >Yes<br/>
+            <input type="radio" id="s15_2" name="s15" value="0">No<br/>
+            <input type="radio" id="s15_3" name="s15" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+
+<h3>Pupil Questionnaire - Part 2</h3> </br>
+        <paper-card>
+           What is the main flooring material of your house? </br>
+            <input type="radio" id="s16_1" name="s16" value="1">Earth/sand<br/>
+            <input type="radio" id="s16_2" name="s16" value="2">Straw<br/>
+            <input type="radio" id="s16_3" name="s16" value="3">Cement<br/>
+            <input type="radio" id="s16_4" name="s16" value="4">Carpet/rug<br/>
+            <input type="radio" id="s16_5" name="s16" value="4">Other<br/>
+            <input type="radio" id="s16_6" name="s16" value="5">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           What is the main roofing material of your house?</br>
+            <input type="radio" id="s17_1" name="s17" value="1">No roof<br/>
+            <input type="radio" id="s17_2" name="s17" value="2">Thatch<br/>
+            <input type="radio" id="s17_3" name="s17" value="3">Plastic mat<br/>
+            <input type="radio" id="s17_4" name="s17" value="4">Metal/zinc<br/>
+            <input type="radio" id="s17_5" name="s17" value="4">Cement<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           Where do you most frequently get your drinking water at home?</br>
+            <input type="radio" id="s18_1" name="s18" value="1">Well<br/>
+            <input type="radio" id="s18_2" name="s18" value="2">Borehole<br/>
+            <input type="radio" id="s18_4" name="s18" value="4">Tap outside the house/compound<br/>
+            <input type="radio" id="s18_5" name="s18" value="5">Tap inside the house/compound<br/>
+            <input type="radio" id="s18_6" name="s18" value="6">Stream, river, pond<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           What type of fuel does your family use for cooking MOST OFTEN?</br>
+            <input type="radio" id="s19_1" name="s19" value="1">Wood/coal<br/>
+            <input type="radio" id="s19_2" name="s19" value="2">Gas/electric/kerosene<br/>
+            <input type="radio" id="s19_4" name="s19" value="3">Cow dung<br/>
+            <input type="radio" id="s19_5" name="s19" value="4">Corn stalks<br/>
+            <input type="radio" id="s19_6" name="s19" value="5">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           What type of toilet facility does your household have?</br>
+            <input type="radio" id="s20_1" name="s20" value="1">Flush toilet<br/>
+            <input type="radio" id="s20_2" name="s20" value="2">Pit toilet/latrine - private<br/>
+            <input type="radio" id="s20_4" name="s20" value="3">Pit toilet/latrine - shared<br/>
+            <input type="radio" id="s20_5" name="s20" value="4">No facility<br/>
+            <input type="radio" id="s20_6" name="s20" value="5">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+
+        <h3>Pupil Questionnaire - Part 3</h3>
+  <p><strong><span style="color: rgb(34, 34, 34); font-family: sans-serif; font-size: 20px; line-height: 24px;">Do you have the following items in your home?....</span></strong></p>
+        <paper-card>
+           Do you have the following items in your home?... A radio?</br>
+            <input type="radio" id="s21_1" name="s21" value="1">Yes<br/>
+            <input type="radio" id="s21_2" name="s21" value="0">No<br/>
+            <input type="radio" id="s21_3" name="s21" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A telephone or cell phone??</br>
+            <input type="radio" id="s22_1" name="s22" value="1">Yes<br/>
+            <input type="radio" id="s22_2" name="s22" value="0">No<br/>
+            <input type="radio" id="s22_3" name="s22" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           Electricity?</br>
+            <input type="radio" id="s23_1" name="s23" value="1">Yes<br/>
+            <input type="radio" id="s23_2" name="s23" value="0">No<br/>
+            <input type="radio" id="s23_3" name="s23" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A television?</br>
+            <input type="radio" id="s24_1" name="s24" value="1">Yes<br/>
+            <input type="radio" id="s24_2" name="s24" value="0">No<br/>
+            <input type="radio" id="s24_3" name="s24" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A refrigerator? </br>
+            <input type="radio" id="s25_1" name="s25" value="1">Yes<br/>
+            <input type="radio" id="s25_2" name="s25" value="0">No<br/>
+            <input type="radio" id="s25_3" name="s25" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A bicycle?</br>
+            <input type="radio" id="s26_1" name="s26" value="1">Yes<br/>
+            <input type="radio" id="s26_2" name="s26" value="0">No<br/>
+            <input type="radio" id="s26_3" name="s26" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A motorcycle or motorbike?</br>
+            <input type="radio" id="s27_1" name="s27" value="1">Yes<br/>
+            <input type="radio" id="s27_2" name="s27" value="0">No<br/>
+            <input type="radio" id="s27_3" name="s27" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A car or truck?</br>
+            <input type="radio" id="s28_1" name="s28" value="1">Yes<br/>
+            <input type="radio" id="s28_2" name="s28" value="0">No<br/>
+            <input type="radio" id="s28_3" name="s28" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A canoe?</br>
+            <input type="radio" id="s29_1" name="s29" value="1">Yes<br/>
+            <input type="radio" id="s29_2" name="s29" value="0">No<br/>
+            <input type="radio" id="s29_3" name="s29" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A boat with a motor? </br>
+            <input type="radio" id="s30_1" name="s30" value="1">Yes<br/>
+            <input type="radio" id="s30_2" name="s30" value="0">No<br/>
+            <input type="radio" id="s30_3" name="s30" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           An animal-drawn cart?</br>
+            <input type="radio" id="s31_1" name="s31" value="1">Yes<br/>
+            <input type="radio" id="s31_2" name="s31" value="0">No<br/>
+            <input type="radio" id="s31_3" name="s31" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A generator?</br>
+            <input type="radio" id="s32_1" name="s32" value="1">Yes<br/>
+            <input type="radio" id="s32_2" name="s32" value="0">No<br/>
+            <input type="radio" id="s32_3" name="s32" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+        <paper-card>
+           A computer?</br>
+            <input type="radio" id="s33_1" name="s33" value="1">Yes<br/>
+            <input type="radio" id="s33_2" name="s33" value="0">No<br/>
+            <input type="radio" id="s33_3" name="s33" value="3">Do not know/No response<br/>
+        </paper-card>
+        <br/>
+
+<h3>OTHER EXAMPLES</h3> </br>
+        <paper-card>
+           Multi select controling other fields</br>
+            <input type="checkbox" id="s34_1" name="s34" value="1">Languages 1<br/>
+            <input type="checkbox" id="s34_2" name="s34" value="2">Languages 2<br/>
+            <input type="checkbox" id="s34_3" name="s34" value="3">Languages 3<br/>
+            <input type="checkbox" id="s34_4" name="s34" value="4">Languages 4<br/>
+            <input type="checkbox" id="s34_5" name="s34" value="5">Languages 5<br/>
+            <input type="checkbox" id="s34_6" name="s34" value="6">Languages 6<br/>
+        </paper-card>
+        <br/>
+    <div id="s35_div" hidden>     
+        <paper-card>
+           Only visible when Language 4 is in results</br>
+            <input type="radio" id="s35_1" name="s35" value="1" >Yes<br/>
+            <input type="radio" id="s35_2" name="s35" value="0">No<br/>
+            <input type="radio" id="s35_3" name="s35" value="3">Do not know/No response<br/>
+        </paper-card>
+    </div>
+    <br/>
+    <div id="s36_div" >     
+        <paper-card>
+           Number from 1 to 40</br>
+            <input type="text" id="s36" name="s36" pattern="([0-9]|[1-3][0-9])" title="Number must be less then 40"><br/>
+        </paper-card>
+    </div>
+    <br/>
+    <div id="s38_div" >     
+        <paper-card>
+            Number between 5 and 10 or 999 when no answer </br>
+            <input type="text" id="s38" name="s38" pattern="([5-9]|10|999)" title="Number must be between 5 and 10"><br/>
+        </paper-card>
+    </div>
+    <div id="s39_div" >     
+        <paper-card>
+            Text used in a future question prompt</br>
+            <input type="text" id="s39" name="s39"><br/>
+        </paper-card>
+    </div>
+         <paper-card>
+             <label id="s40_label" name="s40_label" for="s40">How old are you @?</label></br>
+            <input type="text" id="s40" name="s40"><br/>
+        </paper-card>
+        <br/>
+    <div id="s41_div" hidden>     
+        <paper-card>
+            Skip this if the number of wrong items on the non word grid is > 25</br>
+            <input type="text" id="s41" name="s41"><br/>
+        </paper-card>
+    </div>
+    </br>
+        <input type="submit" value="done">
+    </form>
+</iron-form>
