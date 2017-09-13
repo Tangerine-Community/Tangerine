@@ -27,13 +27,15 @@ class Csv
       nextResults = @couch.postRequest({
         :view => "csvRows",
         :data => { "keys" => nextResultIds },
+        :cache => false,
         :parseJson => true
       })
 
       # this doesn't keep the old results if there were any... @orderedResults important
-      @cachedResults = Hash[nextResults['rows'].map { |row| [row['id'], row['value'] ] }]
+      @cachedResults = Hash[ nextResults['rows'].map { |row| [row['id'], row['value']] } ]
 
     end
+
 
     result = @cachedResults[id]
     @cachedResults.delete(id)
@@ -80,9 +82,9 @@ class Csv
 
         for cell in result
 
-          key         = cell['k']
-          value       = cell['v']
-          machineName = cell['m'] + resultIndex.to_s
+          key         = cell['key']
+          value       = cell['value']
+          machineName = cell['machineName'] + resultIndex.to_s
 
           isntFalsy     = ! ( value.nil? || value == "" || value == 0 )
 
@@ -143,15 +145,16 @@ class Csv
 
     resultIds.each { |resultId|
 
-      row = []
 
+      row = []
+      
       result = getResult(resultId)
 
-      for cell in result
+      for cell in result  
 
-        key         = cell['k']
-        value       = cell['v']
-        machineName = cell['m']
+        key         = cell['key']
+        value       = cell['value']
+        machineName = cell['machineName']
 
         isntFalsy     = ! ( value.nil? || value == "" || value == 0 )
 
@@ -172,7 +175,7 @@ class Csv
 
       end
 
-      files[:body].write row.map { |value|
+      files[:body].write row.map { |value| 
         value = value.to_s if value.class != String
         result = "\""
         (0..value.length-1).each { |index|
