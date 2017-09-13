@@ -90,9 +90,6 @@
             value: '{}',
             observer: 'onResponseJsonChange'
           },
-          onopen: {
-            type: Function
-          },
           open: {
             type: Boolean,
             value: false,
@@ -241,6 +238,8 @@
                 // input.dispatchEvent(new Event('change'))
                 setTimeout(() => {
                   input.click()
+                  htmlForm.dispatchEvent(new Event('change'), {bubbles: true})
+                  this.dispatchEvent(new CustomEvent('item-change'), {bubbles: true})
                 }, 300)
                 break
               case 'PAPER-DROPDOWN-MENU':
@@ -277,6 +276,7 @@
         }
         // Last step, trigger the change event.
         if (htmlForm) htmlForm.dispatchEvent(new Event('change'), {bubbles: true})
+        if (htmlForm) this.dispatchEvent(new CustomEvent('item-change'), {bubbles: true})
 
       }
 
