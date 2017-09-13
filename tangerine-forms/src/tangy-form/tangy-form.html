@@ -192,8 +192,10 @@
         this._itemsStash = this.innerHTML
         this._isSaving = false
         this._isFocusing = false
-        this.loadResponsesPane()
-        this.showResponsesPane()
+        // this.loadResponsesPane()
+        // this.showResponsesPane()
+        this.loadQuestionsPane()
+        this.showQuestionsPane()
       }
 
       showQuestionsPane() {
@@ -202,6 +204,7 @@
       }
 
       showResponsesPane() {
+        this.loadResponsesPane()
         this.$['tangy-form-questions'].hidden = true 
         this.$['tangy-form-responses'].hidden = false 
       }

@@ -186,8 +186,9 @@
             ironForm.innerHTML = await response.text()
             let htmlForm = this.querySelector('form')
             if (htmlForm) {
+              // Pass the getResponse method down to the HTML Form so that onchange logic can use it.
               htmlForm.getResponse = this.getResponse.bind(this)
-              this.populateResponse()
+              this.setResponse()
             }
             // Listen for change events, set data to response.
             ironForm.addEventListener('change', this.ironFormChangeListener.bind(this))
@@ -198,8 +199,7 @@
       }
 
       ironFormChangeListener(event) {
-        // @TODO: This timeout is an ugly hack because if you serialize the form now and a paper-radio-button was changed, if a selection had been made prior then 
-        // both paper-radio-buttons will be "on".
+        // Delay to avoid single choice select fields from showing two inputs as checked. 
         setTimeout(() => {
           let htmlForm = this.querySelector('form')
           if (htmlForm) {
@@ -214,73 +214,33 @@
         let ironForm = this.querySelector(`iron-form`)
         return ironForm.serializeForm()
       }
-        
-      populateResponse() {
-        let item = this 
-        let inputs = item.querySelectorAll('[name]') 
-        let ironForm = item.querySelector('iron-form');
-        let htmlForm = item.querySelector('form');
-        // Load response data into the item
+
+      setResponse() {
+        // Get all elements with a name attribute.
+        let inputs = this.querySelectorAll('[name]') 
         for (let input of inputs) {
-          if (this.response.hasOwnProperty(input.name)) {
-            // Handle iron elements.
-            switch (input.tagName) {
-              case 'PAPER-INPUT':
-                input.value = this.response[input.name]
-                break
-              case 'PAPER-CHECKBOX':
-                input.checked = true
-                break
-              case 'PAPER-RADIO-BUTTON':
-                // @TODO: Another nasty hack because of paper-radio-button-group. If you set item.checked to true, paper-radio-button-group
-                // doesn't pick up on it.
-                // input.checked = true
-                // input.dispatchEvent(new Event('change'))
-                setTimeout(() => {
-                  input.click()
-                  htmlForm.dispatchEvent(new Event('change'), {bubbles: true})
-                  this.dispatchEvent(new CustomEvent('item-change'), {bubbles: true})
-                }, 300)
-                break
-              case 'PAPER-DROPDOWN-MENU':
-                //input.selected-
-                let listBox = input.querySelector('paper-listbox')
-                let paperItems = input.querySelectorAll('paper-item')
-                // Find index of paper item to select.
-                let paperItemIndex = 0
-                let i = 0
-                for (let paperItem of paperItems) {
-                  if (paperItem.innerText == this.response[input.name]) {
-                    paperItemIndex = i
-                  }
-                  i++
-                }
-                listBox.selected = paperItemIndex
-                break
+          // Single select.
+          if (this.response.hasOwnProperty(input.name) && input.value !== undefined && input.checked !== undefined) {
+            if (this.response[input.name] == input.value) {
+              input.checked = true
             }
-            // Handle standard form input element.
-            switch(input.type) {
-              case 'checkbox':
-                input.checked = this.response[input.name]
-                break
-              case 'radio':
-                if (this.response[input.name] == input.value) {
-                  input.checked = true
-                }
-                break
-              default:
-                input.value = this.response[input.name]
-            }
-            input.dispatchEvent(new Event('change'))
-          } 
+          }
+          // Multi select.
+          else if (this.response.hasOwnProperty(input.name) && input.checked !== undefined) {
+            input.checked = true
+          }
+          // Standard.
+          else if (this.response.hasOwnProperty(input.name) && input.value !== undefined) {
+            input.value = this.response[input.name]
+          }
         }
         // Last step, trigger the change event.
-        if (htmlForm) htmlForm.dispatchEvent(new Event('change'), {bubbles: true})
-        if (htmlForm) this.dispatchEvent(new CustomEvent('item-change'), {bubbles: true})
-
+        let htmlForm = this.querySelector('form')
+        if (htmlForm) {
+          htmlForm.dispatchEvent(new Event('change'), {bubbles: true})
+          this.dispatchEvent(new CustomEvent('item-change'), {bubbles: true})
+        }
       }
-
-
     }
 
     window.customElements.define(TangyFormItem.is, TangyFormItem);
