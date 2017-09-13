@@ -36,6 +36,9 @@ app.post('/make/:group', require('./routes/makeApkDeprecated'));
 // make an apk
 app.post('/:group/*', require('./routes/makeApk'));
 
+// make a zip
+app.post('/make/zip/:group', require('./routes/makeZip'));
+
 // get an apk
 app.get('/:token',  require('./routes/getApk'));
 
