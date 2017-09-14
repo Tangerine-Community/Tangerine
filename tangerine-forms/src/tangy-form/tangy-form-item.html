@@ -5,6 +5,9 @@
   paper-input {
     margin-bottom: 15px;
   }
+  paper-radio-button {
+    margin: 0px 15px 0px 0px;
+  }
 </style>
    
 <dom-module id="tangy-form-item">
@@ -199,15 +202,31 @@
       }
 
       ironFormChangeListener(event) {
-        // Delay to avoid single choice select fields from showing two inputs as checked. 
-        setTimeout(() => {
-          let htmlForm = this.querySelector('form')
-          if (htmlForm) {
-            htmlForm.dispatchEvent(new Event('change'))
+        // Prevent a variable name from having two values in an array. This is a clean up non-native single select fields. For example, paper-radio-buttons behaves like a checkbox
+        // where two radio buttons of the same name can be checked but this is not how native radio button are supposed to work. This will ensure only one paper-radio-button 
+        // is checked.
+        let data = this.getResponse()  
+        for (let prop in data) {
+          // If there is data that is an array (object), then two of the same thing are selected.
+          if (typeof data[prop] == 'object') {
+            // Uncheck the last thing that was selected.
+            // @TODO: Unless the last thing that was selected was the current thing? This currently allows user to have a null value for a single select.
+            // This is confusing in the required case. This makes me think we should go back to the paper-radio-button-group, but it should be the form input,
+            // not the radio buttons, and it should have the value property that is reflected by the selected radio. 
+            // We'll make a better single select element when we work on tangy-button-select. Having more than one element share the same name space is just bad design
+            // on HTML's part.
+            let input = this.querySelector(`[name=${prop}][value=${this.response[prop]}]`)
+            input.checked = false
           }
-          this.response = this.getResponse() 
-          this.dispatchEvent(new CustomEvent('item-change'))
-        }, 300)
+        }
+        // Native HTML Form does not dispatch a change event when non native input elements change. Force it to.
+        // @TODO: If we can detect this is a native input element that change, then don't do this.
+        let htmlForm = this.querySelector('form')
+        if (htmlForm) {
+          htmlForm.dispatchEvent(new Event('change'))
+        }
+        this.response = this.getResponse() 
+        this.dispatchEvent(new CustomEvent('item-change'))
       }
 
       getResponse() {
