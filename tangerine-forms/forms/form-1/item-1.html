@@ -1,4 +1,4 @@
-<form onchange="
+<form id="form1" onchange="
   let response = this.getResponse();
   if (response.fruit_prompt == 'on') window.fruit_selection.hidden = false
   if (!response.fruit_prompt) window.fruit_selection.hidden = true
@@ -8,20 +8,18 @@
     type="text" 
     name="pizza_name" 
     required 
-    label="Name your pizza">
+    label="Name your pizza"
+    value="">
   </paper-input>
   <label>Pizza toppings:</label> <br>
   <paper-checkbox name="cheese">cheese</paper-checkbox><br>
   <paper-checkbox name="pepperoni">pepperoni</paper-checkbox><br>
   <paper-checkbox name="fruit_prompt">I would like to add fruit.</paper-checkbox><br>
   <div id="fruit_selection" hidden>
-    <paper-radio-group>
-      <paper-radio-button name="fruit_selection_tangerine">Tangerine</paper-radio-button>
-      <paper-radio-button name="fruit_selection_apple">Apple</paper-radio-button>
-      <paper-radio-button name="fruit_selection_pear">Pear</paper-radio-button>
-      <paper-radio-button name="fruit_selection_coconut">Coconut</paper-radio-button>
-      <input name="fruit_selection" type="hidden"/>
-    </paper-radio-group>
+    <paper-radio-button name="fruit_selection" value="tangerine">Tangerine</paper-radio-button>
+    <paper-radio-button name="fruit_selection" value="apple">Apple</paper-radio-button>
+    <paper-radio-button name="fruit_selection" value="pear">Pear</paper-radio-button>
+    <paper-radio-button name="fruit_selection" value="coconut">Coconut</paper-radio-button>
   </div>
   <paper-checkbox name="extra_items">I would like to add extra items.</paper-checkbox><br>
 </form>
