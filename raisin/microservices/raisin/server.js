@@ -1,3 +1,4 @@
+
 var restify = require('restify');
 var plugins = require('restify-plugins');
 var CookieParser = require('restify-cookies');
@@ -65,25 +66,56 @@ server.get('/', function (req, res, next) {
   return next();
 });
 
-let listProjects = function () {
+
+// kudos: https://stackoverflow.com/questions/45293969/waiting-for-many-async-functions-execution
+let readFiles = ()=>{
     var dir = projectRoot;
     // const dirs = p => fs.readdirSync(p).filter(f => fs.statSync(p+"/"+f).isDirectory())
     const isDirectory = source => fs.lstatSync(source).isDirectory()
     const getDirectories = source =>
         fs.readdirSync(source).map(name => join(source, name)).filter(isDirectory)
     let dirList = getDirectories(dir);
-    let dirs = [];
-    for (var value of dirList) {
-        console.log('value: ' + value);
-        var dir = value.replace(projectRoot, '')
-        dirs.push(dir)
-    }
-    return dirs;
-};
+    let contents = {};
+    let promises = dirList
+        .map(path => fs.readJson(path + '/metadata.json'));
+    return Promise.all(promises);
+}
+
+let listProjects = new Promise((resolve, reject) => {
+
+        readFiles()
+            .then(contents => {
+                console.log("contents: " + JSON.stringify(contents))
+                resolve(contents)
+                return contents
+            })
+            .catch(error => {
+                console.log("bummer: " + error)
+                reject(contents)
+            });
+    });
+
+
 server.get('/project/listAll', function (req, res, next) {
-    let dirs = listProjects();
-    res.send(dirs);
-  return next();
+
+    // let dirs = listProjects.then(function(result) {
+    //     console.log(result); // "Stuff worked!"
+    //     res.send(dirs);
+    // }, function(err) {
+    //     console.log(err); // Error: "It broke"
+    // });
+
+    readFiles()
+        .then(contents => {
+            console.log("contents: " + JSON.stringify(contents))
+            res.send(contents);
+        })
+        .catch(error => {
+            console.log("bummer: " + error)
+
+        });
+
+    return next();
 });
 
 // file: 'build/default/index.html'
@@ -93,10 +125,54 @@ server.get(/\/projects\/?.*/, restify.plugins.serveStatic({
     default: 'index.html'
 }));
 
+server.get(/\/tangy\/?.*/, restify.plugins.serveStatic({
+    directory: '../app',
+    default: 'index.html'
+}));
+
+server.post('/writeFile', async function (req, res, next) {
+    console.log("req.params:" + JSON.stringify(req.params));
+    let html = req.params.html
+    let project = req.params.project
+    let filePath = req.params.filePath
+    let safeProjectName = sanitize(project);
+    let dir = projectRoot + safeProjectName + "/content/" + filePath
+        fs.outputFile(dir, html).then(() => {
+            let resp = {
+                "message": 'File created: ' + filePath
+            }
+            res.send(resp);
+        }).catch(() => {
+            res.send(new Error('Error: Directory not created: ' + dir));
+        })
+})
+
+server.post('/mkDir', async function (req, res, next) {
+    console.log("req.params:" + JSON.stringify(req.params));
+    let project = req.params.project
+    let dirName = req.params.dirName
+    let safeProjectName = sanitize(project);
+    let dir = projectRoot + safeProjectName + "/content/" + dirName
+    fs.pathExists(dir)
+        .then((exists) => {
+            console.log("pathExists:" + exists)
+            if (exists == true) {
+                res.send(new Error('Error: Directory already exists: ' + dirName));
+            } else {
+                fs.ensureDir(dir).then(() => {
+                    let resp = {
+                        "message": 'Directory created: ' + dirName
+                    }
+                    res.send(resp);
+                })
+            }
+        })
+})
+
 server.post('/project/create', async function (req, res, next) {
     console.log("req.params:" + JSON.stringify(req.params));
     var safeProjectName = sanitize(req.params.projectName);
-    const dir = projectRoot + safeProjectName;
+    let dir = projectRoot + safeProjectName;
     fs.pathExists(dir)
         .then((exists) => {
             console.log("pathExists:" + exists)
@@ -106,57 +182,61 @@ server.post('/project/create', async function (req, res, next) {
                 fs.ensureDir(dir).then(() => {
                     let contentPath = dir + "/content";
                     fs.ensureDir(contentPath).then(() => {
-                        let srcpath = "../tangy";
+			            fs.ensureFile(contentPath + "/hi").then(() => {
+                        let srcpath = "../app/tangy";
                         let dstpath = dir + "/client";
                         fs.ensureSymlink(srcpath, dstpath).then(() => {
                             var mirrorOpts = {
                                 watch: true,
                                 ignoreDirs: false,
                                 live: true,
-                                dereference: false
+                                dereference: true
                             };
-                            Dat(dir, mirrorOpts, function (err, dat) {
-                                if (err) throw err
+                            fs.copy(srcpath + "/index.html", contentPath + "/index.html").then(() => {
+                                Dat(dir, mirrorOpts, function (err, dat) {
+                                    if (err) throw err
 
-                                var network = dat.joinNetwork()
-                                network.once('connection', function () {
-                                    console.log('Connected')
-                                })
-                                var importer = dat.importFiles(mirrorOpts)
-                                let datKey =  dat.key.toString('hex');
-                                console.log('My Dat link is: dat://' + datKey);
-                                let metadata = {
-                                    "datKey": datKey,
-                                    "projectName": req.params.projectName
-                                };
-                                fs.writeJson(dir + '/metadata.json', metadata).then(() => {
-                                        let dirs = listProjects();
-                                        let resp = {
-                                            "dirs": dirs,
-                                            "datKey": datKey,
-                                            "message": 'Project created: ' + req.params.projectName
+                                    var network = dat.joinNetwork()
+                                    network.once('connection', function () {
+                                        console.log('Connected')
+                                    })
+                                    var importer = dat.importFiles(mirrorOpts)
+                                    let datKey =  dat.key.toString('hex');
+                                    console.log('My Dat link is: dat://' + datKey);
+                                    let metadata = {
+                                        "datKey": datKey,
+                                        "projectName": req.params.projectName
+                                    };
+                                    fs.writeJson(dir + '/metadata.json', metadata).then(() => {
+                                            let dirs = listProjects();
+                                            let resp = {
+                                                "dirs": dirs,
+                                                "datKey": datKey,
+                                                "message": 'Project created: ' + req.params.projectName
+                                            }
+                                            res.send(resp);
                                         }
-                                        res.send(resp);
-                                    }
-                                ).catch(err => {
-                                    console.error("Error writing json: " + err)
-                                })
-                                dat.network.on('connection', function () {
-                                    console.log('I connected to someone!')
-                                })
-                                importer.on('put', function (src, dest) {
-                                    console.log('Importing ', src.name, ' into archive dest: ' + dest.name)
-                                })
-                                importer.on('skip', function (src, dest) {
-                                    console.log('Skipping ', src.name, ' into archive dest: ' + dest.name)
-                                })
-                                importer.on('error', function (err) {
-                                    console.log('Error:  ', err)
-                                })
+                                    ).catch(err => {
+                                        console.error("Error writing json: " + err)
+                                    })
+                                    dat.network.on('connection', function () {
+                                        console.log('I connected to someone!')
+                                    })
+                                    importer.on('put', function (src, dest) {
+                                        console.log('Importing ', src.name, ' into archive dest: ' + dest.name)
+                                    })
+                                    importer.on('skip', function (src, dest) {
+                                        console.log('Skipping ', src.name, ' into archive dest: ' + dest.name)
+                                    })
+                                    importer.on('error', function (err) {
+                                        console.log('Error:  ', err)
+                                    })
 
+                            });
                             });
                         })
                     })
+		    })
                 })
             }
         })

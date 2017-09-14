@@ -91,7 +91,7 @@ app.delete('/group/:group/:user', require('./routes/group/leave-group'));
 
 // landing
 app.get('/', function (req, res) {
-  res.redirect('/client-v3/en/index.html')
+  res.redirect('/app/tangerine/index.html')
 })
 
 // kick it off

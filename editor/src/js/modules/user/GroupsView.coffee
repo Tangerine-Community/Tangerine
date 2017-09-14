@@ -8,6 +8,8 @@ class GroupsView extends Backbone.View
     'click .goto'    : 'gotoGroup'
     'click .newProject'    : 'newProject'
     'click .viewProject'    : 'viewProject'
+    'contextmenu .viewProject'    : 'showTooltip'
+#    'mouseleave .viewProject'    : 'leaveTooltip'
 
   initialize: ->
     Robbert.fetchUsers
@@ -34,7 +36,36 @@ class GroupsView extends Backbone.View
   viewProject: (event) ->
     group = $(event.target).attr("data-group")
     console.log("take me to there: " + group)
-    window.location = "/editor/projects/" + group + "/"
+    window.location = "/editor/projects/" + group + "/" + "content/"
+
+#     kudos: http://jsfiddle.net/ostapische/4GHGF/
+  showTooltip: (event) ->
+    group = $(event.target).attr("data-group")
+    title = $(event.target).attr("title")
+#    tooltipId = "#" + group + "tooltip"
+#    tooltip = document.querySelector(tooltipId);
+#    text = tooltip.innerHTML
+    console.log("text: " + title)
+#    tooltip.style.display = "inline";
+
+    window.prompt("Copy to clipboard: Ctrl+C, Enter", title);
+#    console.log("stuff");
+#    tooltip.select;
+
+#    try
+#      successful = document.execCommand('copy');
+#      msg = successful ? 'successful' : 'unsuccessful';
+#      console.log('Copying text command was ' + msg);
+#    catch err
+#      console.log('Oops, unable to copy');
+
+    return
+
+  leaveTooltip: (event) ->
+    group = $(event.target).attr("data-group")
+    tooltipId = "#" + group + "tooltip"
+    tooltip = $(tooltipId);
+    tooltip[0].style.display = "none";
 
   newProject: (event) ->
     projectName = $('#projectName').val()
@@ -56,11 +87,13 @@ class GroupsView extends Backbone.View
         console.log("Project creation error: " + JSON.stringify(data))
         alert("Project creation error: " + JSON.stringify(data))
 
+#        <div class='tooltip' id='#{group.projectName}tooltip'>#{group.datKey}</div><br/>
   renderGroups: (message) ->
     @$el.find('#group-list-container').html "
       <h2>v3 Projects</h2>#{message}
         <p>Create new project: <input type='text' id='projectName' style='width: 200px;'> <button class='command newProject'>Create</button></p>\n
-        <p>#{@projects.map( (group) -> "<button class='command viewProject' data-group='#{_.escape(group)}'>#{group}</button>").join('')}</p>
+        <p>Right-click on the project name to view its dat id.</p>
+        <p>#{@projects.map( (group) -> "<button class='command viewProject' data-group='#{_.escape(group.projectName)}' title='#{group.datKey}'>#{group.projectName}</button>").join('')}</p>
       <h2>v2 Groups</h2>
       <h3>Admin</h3>
         <p>#{Tangerine.user.groups().admin.map( (group) -> "<button class='command goto' data-group='#{_.escape(group)}'>#{group}</button>").join('')}</p>
