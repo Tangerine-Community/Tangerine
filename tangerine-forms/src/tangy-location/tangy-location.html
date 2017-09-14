@@ -1,0 +1,152 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<script src="../../bower_components/jquery/dist/jquery.js"></script>
+<script src="../../bower_components/underscore/underscore.js"></script>
+<script src="./loc.js"></script>
+
+<dom-module id="tangy-location">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+      <slot></slot>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * `tangy-timed`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TangyLocation extends Polymer.Element {
+      static get is() { return 'tangy-location'; }
+      static get properties() {
+        return {
+          
+        };
+      }
+
+      // Element class can define custom element reactions
+      // @TODO: Duplicating ready?
+      connectedCallback() {
+        super.connectedCallback();
+      }
+    
+      async ready() {
+        super.ready();
+        let response = await fetch('location-list.json')
+        let options = await response.json()
+        window.locationList = options
+        if (options == null) {
+          options = {};
+        }
+        this.showTitles = options.showTitles != null ? options.showTitles : true;
+        this.levels = options.levels || ["county", "zone", "school"];
+        this.addedOptions = options.addedOptions != null ? options.addedOptions : false;
+        this.selected = options.selected || [];
+        this.render()
+      }
+
+      onChange (event) {
+        var index;
+        $(event.target).closest("div").nextAll().remove();
+        index = parseInt($(event.target).attr('data-index'));
+        if (index + 1 !== this.levels.length) {
+          this.renderOne(index + 1);
+        }
+        return this.trigger("change");
+      }
+
+      isComplete () {
+        var j, len, level, ref, value;
+        value = this.value();
+        ref = this.levels;
+        for (j = 0, len = ref.length; j < len; j++) {
+          level = ref[j];
+          if (!value[level]) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      value () {
+        var i, j, len, level, ref, result;
+        result = {};
+        ref = this.levels;
+        for (i = j = 0, len = ref.length; j < len; i = ++j) {
+          level = ref[i];
+          let selectEl = this.querySelector("[data-index='" + i + "']")
+          if (selectEl) {
+            result[level] = selectEl.options[selectEl.selectedIndex].value;
+          }
+        }
+        return result;
+      }
+
+      renderOne (index) {
+        var criteria;
+        if (index === 0) {
+          criteria = {};
+        } else {
+          criteria = this.value();
+        }
+        return Loc.query(this.levels, criteria, (res) => {
+          var htmlOptions, noPreSelection, selected, title;
+          if (this.addedOptions) {
+            res = this.addedOptions[index].concat(res);
+          }
+          res = res.sort(function(a, b) {
+            if (a.label.toLowerCase() < b.label.toLowerCase()) {
+              return -1;
+            } else if (a.label.toLowerCase() > b.label.toLowerCase()) {
+              return 1;
+            } else {
+              return 0;
+            }
+          });
+          htmlOptions = res.map(function(el) {
+            var selected;
+            if ((this.selected[this.levels[index]] != null) && el.id === this.selected[this.levels[index]]) {
+              selected = "selected='selected'";
+            }
+            return "<option value='" + el.id + "' " + (selected || '') + ">" + el.label + "</option>";
+          }, this);
+          if (this.showTitles) {
+            // @TODO
+            // title = this.levels[index].titleize();
+            title = this.levels[index];
+          }
+          noPreSelection = this.selected[index] == null;
+          if (noPreSelection) {
+            selected = "selected='selected'";
+          }
+          this.insertAdjacentHTML('beforeend',"<div> <label>" + (title || '') + " <select data-index='" + index + "'> <option " + (selected || '') + " disabled='disabled'>Select...</option> " + htmlOptions + " </select> </label> <br> </div>")
+          let selectElements = this.querySelectorAll('select')
+          let latestSelectElement = selectElements[selectElements.length-1]
+          latestSelectElement.addEventListener('change', this.onChange.bind(this))
+
+          
+          if (this.selected.length !== 0) {
+            if (index + 1 === this.selected.length) {
+              return this.selected = [];
+            } else {
+              return this.renderOne(index + 1);
+            }
+          }
+        }, this);
+      }
+      render () {
+        return this.renderOne(0);
+      }
+    
+    }
+
+    window.customElements.define(TangyLocation.is, TangyLocation);
+  </script>
+</dom-module>
