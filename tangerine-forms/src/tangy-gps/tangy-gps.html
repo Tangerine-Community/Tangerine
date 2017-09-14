@@ -1,0 +1,85 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="tangy-gps">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div>
+      <b>Current Position</b>
+      <div>
+        Latitude: {{currentLatitude}} <br> Longitude: {{currentLongitude}}
+      </div>
+      <b>Recorded Position</b>
+      <div>
+        Latitude: {{recordedLatitude}} <br> Longitude: {{recordedLongitude}}
+      </div>
+      <paper-button raised on-click="clickedRecord">record position</paper-button>
+      <slot></slot>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * `tangy-timed`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TangyGps extends Polymer.Element {
+      static get is() { return 'tangy-gps'; }
+      static get properties() {
+        return {
+          
+        };
+      }
+
+      // Element class can define custom element reactions
+      // @TODO: Duplicating ready?
+      connectedCallback() {
+        super.connectedCallback();
+      }
+    
+      ready() {
+        super.ready();
+        this.currentLatitude = 'Searching...'
+        this.currentLongitude = 'Searching...'
+        // window.gpsPosition may already be watched from another location. Allow for that.
+        if (!window.gpsPosition) {
+          navigator.geolocation.watchPosition((position) => {
+            window.gpsPosition = {
+              latitude: position.coords.latitude, 
+              longitude: position.coords.longitude
+            }
+            this.updateWatchedPosition()
+          })
+        } else {
+          this.updateWatchedPosition()
+        }
+      }
+
+      updateWatchedPosition() {
+        setInterval(() => {
+          this.currentLatitude = window.gpsPosition.latitude
+          this.currentLongitude = window.gpsPosition.longitude
+        }, 2000)
+      }
+
+      clickedRecord() {
+        this.recordedLatitude = this.currentLatitude
+        this.recordedLongitude = this.currentLongitude
+        let latitudeInput = this.querySelector('.latitude')
+        latitudeInput.value = this.recordedLatitude
+        let longitudeInput = this.querySelector('.longitude')
+        longitudeInput.value = this.recordedLongitude
+      }
+    
+    }
+
+    window.customElements.define(TangyGps.is, TangyGps);
+  </script>
+</dom-module>
