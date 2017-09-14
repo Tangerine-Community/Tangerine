@@ -41,7 +41,6 @@
     "gulp-declare": "^0.3.0",
     "gulp-duration": "0.0.0",
     "gulp-flatten": "^0.3.0",
-    "gulp-git": "^1.10.0",
     "gulp-handlebars": "^4.0.0",
     "gulp-inject": "^4.1.0",
     "gulp-inject-string": "^1.1.0",
@@ -63,6 +62,7 @@
   },
   "dependencies": {
     "base64-js": "^1.2.0",
+    "gulp-git": "^2.4.2",
     "junk": "^1.0.3",
     "text-encoder-lite": "^1.0.0"
   }

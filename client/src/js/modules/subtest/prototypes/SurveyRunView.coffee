@@ -315,9 +315,9 @@ class SurveyRunView extends Backbone.View
     name = qv.model.get('name')
     errorKey = name + "_error"
     result["#{name}_response_time"] = qv.responseTime || null
-    result["#{name}_display_time"] = qv.displayTime
-    if qv.forcedTime?
-      result["#{name}_forced_time"] = qv.forcedTime
+#    result["#{name}_display_time"] = qv.displayTime
+#    if qv.forcedTime?
+#      result["#{name}_forced_time"] = qv.forcedTime
 
     errorValue = qv.model.get('errorValue')
     if errorValue?
