@@ -154,6 +154,11 @@ app.post('/upload/:group', function(req, res) {
     //var decompressedData = LZString.decompressFromBase64(formData);
     var uploadedDocs = (JSON.parse(decompressedData)).docs 
 
+    // Set the uploadedDate on each doc.
+    uploadedDoc.forEach(function(doc) {
+      doc.uploadedDate = Date.now()
+    })
+
     if (req.query.hasOwnProperty('force') && req.query.force == "true") { 
       forceUpload(group, uploadedDocs, function(err, response) {
         if (err) console.log(err)
