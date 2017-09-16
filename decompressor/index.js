@@ -154,9 +154,9 @@ app.post('/upload/:group', function(req, res) {
     //var decompressedData = LZString.decompressFromBase64(formData);
     var uploadedDocs = (JSON.parse(decompressedData)).docs 
 
-    // Set the uploadedDate on each doc.
+    // Set the uploadDate on each doc.
     uploadedDoc.forEach(function(doc) {
-      doc.uploadedDate = Date.now()
+      doc.uploadDate = Date.now()
     })
 
     if (req.query.hasOwnProperty('force') && req.query.force == "true") { 
