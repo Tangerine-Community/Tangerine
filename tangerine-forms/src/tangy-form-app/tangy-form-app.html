@@ -62,23 +62,45 @@
     </style>
     <div class="tangy-form-app--container">
       <div id="form-list">
-        <template is="dom-repeat" items="{{forms}}">
-            <paper-card 
-              class="form-link" 
-              image="images/noun_1018421_cc-small.png" 
-              alt="[[item.title]]" 
-              heading="[[item.title]]">
-                <div class="card-actions">
-                  <paper-button 
-                    class="launch-form"
-                    data-form-src="[[item.src]]" 
-                    data-form-title="[[item.title]]" 
-                    on-click="showFormListener">
-                    <iron-icon icon="icons:launch"/>
-                  </paper-button>
-                </div>
+        <template is="dom-if" if="{{forms.size > 0}}">
+          <template is="dom-repeat" items="{{editorForms}}">
+            <paper-card
+                    class="form-link"
+                    image="../client/images/noun_1018421_cc-small.png"
+                    alt="[[item.title]]"
+                    heading="[[item.title]]">
+              <div class="card-actions">
+                <paper-button
+                        class="launch-form"
+                        data-form-src="[[item.src]]"
+                        data-form-title="[[item.title]]"
+                        on-click="showFormListener">
+                  <iron-icon icon="icons:launch"/>
+                </paper-button>
+              </div>
             </paper-card>
+          </template>
         </template>
+        <template is="dom-else" if="{{forms.size > 0}}">
+          <template is="dom-repeat" items="{{forms}}">
+            <paper-card
+                    class="form-link"
+                    image="../client/images/noun_1018421_cc-small.png"
+                    alt="[[item.title]]"
+                    heading="[[item.title]]">
+              <div class="card-actions">
+                <paper-button
+                        class="launch-form"
+                        data-form-src="[[item.src]]"
+                        data-form-title="[[item.title]]"
+                        on-click="showFormListener">
+                  <iron-icon icon="icons:launch"/>
+                </paper-button>
+              </div>
+            </paper-card>
+          </template>
+        </template>
+
       </div>
       <div id="form-view" hidden>
         <div id="form-view--nav">
@@ -115,6 +137,10 @@
             type: Array,
             value: []
           },
+          editorForms: {
+            type: Array,
+            value: []
+          },
           formSrc: {
             type: String,
             value: '',
@@ -137,7 +163,10 @@
         this.$['form-list'].hidden = false
         // Load forms list.
         let formsJson = await fetch('forms.json')
-        this.forms = await formsJson.json() 
+        this.forms = await formsJson.json()
+//          Load editor forms
+        let editorJson = await fetch('../client/editor-forms.json')
+        this.editorForms = await editorJson.json()
       }
 
       onFormSrcChange(newValue, oldValue) {
@@ -160,6 +189,10 @@
         let tangyForm = this.querySelector('tangy-form')
         tangyForm.setAttribute('items-base-path', formDirectory)
       }
+
+      submitEditorListener() {
+          console.log("stuff")
+        }
 
     }
 

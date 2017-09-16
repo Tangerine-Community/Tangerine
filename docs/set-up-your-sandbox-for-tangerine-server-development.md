@@ -104,14 +104,28 @@ Push the Robbert couchapp to populate byRoleKey view to the _users database:
     cd /tangerine-server/robbert/couchapp
     couchapp push
 
-Launch Robbert:
+Launch Server:
 
 ````
-cd /tangerine-server/robbert
+cd /tangerine-server/server
 npm install
 npm start
 
 ````
+
+Launch Raisin:
+
+````
+cd /tangerine-server/raisin
+npm install
+nodemon microservices/raisin/server.js
+
+````
+
+To get the pieces to work under a single url, install nginx and copy tangerine.conf into its configuration directory.
+
+Go to http://localhost/app/tangerine/index.html to view the app
+Futon is at http://localhost/db/_utils/#
 
 #### Configuring the client app
 
