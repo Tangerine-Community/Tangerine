@@ -155,7 +155,7 @@ app.post('/upload/:group', function(req, res) {
     var uploadedDocs = (JSON.parse(decompressedData)).docs 
 
     // Set the uploadDate on each doc.
-    uploadedDoc.forEach(function(doc) {
+    uploadedDocs.forEach(function(doc) {
       doc.uploadDate = Date.now()
     })
 
