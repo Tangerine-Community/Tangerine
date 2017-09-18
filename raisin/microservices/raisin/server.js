@@ -121,13 +121,15 @@ server.get('/project/listAll', function (req, res, next) {
 // file: 'build/default/index.html'
 
 server.get(/\/projects\/?.*/, restify.plugins.serveStatic({
-    directory: '../projects',
-    default: 'index.html'
+  directory: '../projects',
+  default: 'index.html',
+  maxAge:0
 }));
 
 server.get(/\/tangy\/?.*/, restify.plugins.serveStatic({
-    directory: '../app',
-    default: 'index.html'
+  directory: '../app',
+  default: 'index.html',
+  maxAge:0
 }));
 
 server.post('/writeFile', async function (req, res, next) {
@@ -170,75 +172,118 @@ server.post('/mkDir', async function (req, res, next) {
 })
 
 server.post('/project/create', async function (req, res, next) {
-    console.log("req.params:" + JSON.stringify(req.params));
-    var safeProjectName = sanitize(req.params.projectName);
-    let dir = projectRoot + safeProjectName;
-    fs.pathExists(dir)
-        .then((exists) => {
-            console.log("pathExists:" + exists)
-            if (exists == true) {
-                res.send(new Error('Error: Project already exists: ' + req.params.projectName));
-            } else {
-                fs.ensureDir(dir).then(() => {
-                    let contentPath = dir + "/content";
-                    fs.ensureDir(contentPath + "/forms").then(() => {
-                        let srcpath = "../tangerine-forms";
-                        let dstpath = dir + "/client";
-                        fs.ensureSymlink(srcpath, dstpath).then(() => {
-                            var mirrorOpts = {
-                                watch: true,
-                                ignoreDirs: false,
-                                live: true,
-                                dereference: true
-                            };
-                            fs.copy(srcpath + "/index.html", contentPath + "/index.html").then(() => {
-                                Dat(dir, mirrorOpts, function (err, dat) {
-                                    if (err) throw err
+  console.log("req.params:" + JSON.stringify(req.params));
+  var safeProjectName = sanitize(req.params.projectName);
+  let dir = projectRoot + safeProjectName;
+  fs.pathExists(dir)
+    .then((exists) => {
+      console.log("pathExists:" + exists)
+      if (exists == true) {
+        res.send(new Error('Error: Project already exists: ' + req.params.projectName));
+      } else {
+        fs.ensureDir(dir).then(() => {
+          let contentPath = dir + "/content";
+          fs.ensureDir(contentPath + "/forms").then(() => {
+            let srcpath = "../tangerine-forms";
+            let dstpath = dir + "/client";
+            fs.ensureSymlink(srcpath, dstpath).then(() => {
+              var mirrorOpts = {
+                watch: true,
+                ignoreDirs: false,
+                live: true,
+                dereference: true
+              };
+              fs.copy(srcpath + "/index.html", contentPath + "/index.html").then(() => {
+                let formsJsonSrc = srcpath + "/forms/editor/forms.json";
+                let formsJsonDest = dir + "/content/forms.json";
+                fs.copy(formsJsonSrc, formsJsonDest).then(() => {
+                  Dat(dir, mirrorOpts, function (err, dat) {
+                    if (err) throw err
 
-                                    var network = dat.joinNetwork()
-                                    network.once('connection', function () {
-                                        console.log('Connected')
-                                    })
-                                    var importer = dat.importFiles(mirrorOpts)
-                                    let datKey =  dat.key.toString('hex');
-                                    console.log('My Dat link is: dat://' + datKey);
-                                    let metadata = {
-                                        "datKey": datKey,
-                                        "projectName": req.params.projectName
-                                    };
-                                    fs.writeJson(dir + '/metadata.json', metadata).then(() => {
-                                            let dirs = listProjects();
-                                            let resp = {
-                                                "dirs": dirs,
-                                                "datKey": datKey,
-                                                "message": 'Project created: ' + req.params.projectName
-                                            }
-                                            res.send(resp);
-                                        }
-                                    ).catch(err => {
-                                        console.error("Error writing json: " + err)
-                                    })
-                                    dat.network.on('connection', function () {
-                                        console.log('I connected to someone!')
-                                    })
-                                    importer.on('put', function (src, dest) {
-                                        console.log('Importing ', src.name, ' into archive dest: ' + dest.name)
-                                    })
-                                    importer.on('skip', function (src, dest) {
-                                        console.log('Skipping ', src.name, ' into archive dest: ' + dest.name)
-                                    })
-                                    importer.on('error', function (err) {
-                                        console.log('Error:  ', err)
-                                    })
-
-                            });
-                            });
-                        })
-		    })
-                })
-            }
+                    var network = dat.joinNetwork()
+                    network.once('connection', function () {
+                      console.log('Connected')
+                    })
+                    var importer = dat.importFiles(mirrorOpts)
+                    let datKey =  dat.key.toString('hex');
+                    console.log('My Dat link is: dat://' + datKey);
+                    let metadata = {
+                      "datKey": datKey,
+                      "projectName": req.params.projectName
+                    };
+                    fs.writeJson(dir + '/metadata.json', metadata).then(() => {
+                        let dirs = listProjects();
+                        let resp = {
+                          "dirs": dirs,
+                          "datKey": datKey,
+                          "message": 'Project created: ' + req.params.projectName
+                        }
+                        res.send(resp);
+                      }
+                    ).catch(err => {
+                      console.error("Error writing json: " + err)
+                    })
+                    dat.network.on('connection', function () {
+                      console.log('I connected to someone!')
+                    })
+                    importer.on('put', function (src, dest) {
+                      console.log('Importing ', src.name, ' into archive dest: ' + dest.name)
+                    })
+                    importer.on('skip', function (src, dest) {
+                      console.log('Skipping ', src.name, ' into archive dest: ' + dest.name)
+                    })
+                    importer.on('error', function (err) {
+                      console.log('Error:  ', err)
+                    })
+                  });
+                });
+              });
+            })
+          })
         })
-    return next();
+      }
+    })
+  return next();
+});
+
+server.post('/form/create', async function (req, res, next) {
+  console.log("req.params:" + JSON.stringify(req.params));
+  let safeFiletName = sanitize(req.params.file_name);
+  let safeTitle = sanitize(req.params.title);
+  let projectName = req.params.projectName
+  let dir = projectRoot + projectName;
+  let exists = await fs.pathExists(dir)
+  console.log("pathExists:" + exists)
+  if (exists !== true) {
+    res.send(new Error('Error: Project does not exist: ' + projectName));
+  } else {
+    let formsPath = dir + "/content/forms";
+    await fs.ensureDir(formsPath)
+    let formsJsonPath = dir + "/content/forms.json";
+    let packageObj = await fs.readJson(formsJsonPath)
+    let metadata = {
+      "title": safeTitle,
+      "src": "forms/" + safeFiletName + "/form.html"
+    }
+    packageObj.push(metadata)
+    console.log("packageObj con metadata: " + JSON.stringify(packageObj))
+    // fs.writeJson(formsJsonPath, packageObj).then(() => {
+    await fs.writeJson(formsJsonPath, packageObj)
+    let newFormPath = formsPath + "/" +  safeFiletName;
+    await fs.ensureDir(newFormPath)
+    let srcpath = "../tangerine-forms/forms/editor";
+    let formTemplate = await fs.readFile(srcpath + "/form-template.html","utf8")
+    console.log("formTemplate: " + formTemplate)
+    // let formTemplateStr = JSON.stringify(formTemplate)
+    let formTemplateStr = formTemplate.replace("FORMNAME", safeFiletName)
+    await fs.outputFile(newFormPath + "/form.html", formTemplateStr)
+      let resp = {
+      "message": 'Form created: ' + safeFiletName
+    }
+    res.send(resp);
+
+  }
+  return next();
 });
 
 server.listen(PORT, function () {

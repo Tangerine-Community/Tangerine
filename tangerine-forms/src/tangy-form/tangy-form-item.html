@@ -195,13 +195,14 @@
             }
             // Listen for change events, set data to response.
             ironForm.addEventListener('change', this.ironFormChangeListener.bind(this))
+            ironForm.addEventListener('click', this.ironFormChangeListener.bind(this))
             // Notify anything watching that we are all done opening.
             this.dispatchEvent(new CustomEvent('tangy-item-opened'))
           }
         }
       }
 
-      ironFormChangeListener(event) {
+      async ironFormChangeListener(event) {
         // Prevent a variable name from having two values in an array. This is a clean up non-native single select fields. For example, paper-radio-buttons behaves like a checkbox
         // where two radio buttons of the same name can be checked but this is not how native radio button are supposed to work. This will ensure only one paper-radio-button 
         // is checked.
@@ -227,7 +228,24 @@
         }
         this.response = this.getResponse() 
         this.dispatchEvent(new CustomEvent('item-change'))
+        if (event.type == 'click' && event.srcElement.textContent == 'Submit to Server') {
+          console.log("Clicked Submit button. Send to server.   " + this.response)
+          let project = window.location.pathname.split("/")[3];
+          let metadata = this.response
+          metadata.projectName = project
+          let response = await fetch("/editor/form/create", {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify(metadata)
+          });
+
+        }
+
       }
+
 
       getResponse() {
         let ironForm = this.querySelector(`iron-form`)
@@ -260,6 +278,8 @@
           this.dispatchEvent(new CustomEvent('item-change'), {bubbles: true})
         }
       }
+
+
     }
 
     window.customElements.define(TangyFormItem.is, TangyFormItem);
