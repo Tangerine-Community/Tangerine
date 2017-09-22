@@ -1,6 +1,6 @@
 'use strict';
 
-let Conf = require('./Conf');
+let Conf = require('../Conf');
 var nano = require('nano')(Conf.protocol + Conf.auth + Conf.serverUrl);
 
 /*
@@ -10,16 +10,17 @@ db.get('acl', function(err, body) {
 })
 */
 
-const Group = require('./Group');
-const User = require('./User');
+const Group = require('../Group');
+const User = require('../User');
 
 const HttpStatus = require('http-status-codes');
-const logger = require('./logger');
+const logger = require('../logger');
 
-const verifyRequester = require('./utils/verifyRequester');
-const errorHandler = require('./utils/errorHandler');
+const verifyRequester = require('../utils/verifyRequester');
+const errorHandler = require('../utils/errorHandler');
 
-module.exports = function(done) {
+const usage = function (req, res) {
+console.log(req.params)
 
   var getGroups = function(callback) {
     var groups = []
@@ -56,8 +57,11 @@ module.exports = function(done) {
       .then(function respondSuccess(response) {
         group.users = response
         var db = nano.db.use('group-' + groupName)
-        db.view('ojai', 'completedResultsByEndTime', function(err, response) {
-          group.numberOfResults = response.total_rows
+        var options = { descending: false }
+        if (req.params.hasOwnProperty('startdate')) options.startkey = parseInt(req.params.startdate)
+        if (req.params.hasOwnProperty('enddate')) options.endkey = parseInt(req.params.enddate)
+        db.view('ojai', 'resultsByUploadDate', options,  function(err, response) {
+          group.numberOfResults = response.rows.length
           callback(null, group)
         })
       })
@@ -78,7 +82,8 @@ module.exports = function(done) {
   }
 
   getGroups(function(err, groups) {
-    done(groups)
+    res.send(groups)
   })
 
 }
+module.exports = usage;

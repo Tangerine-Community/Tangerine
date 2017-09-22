@@ -74,6 +74,10 @@ app.get('/user/:name',    require('./routes/user/get-user'));
 app.put('/user',          require('./routes/user/new-user'));
 app.delete('/user/:name', require('./routes/user/delete-user'));
 
+app.get('/usage', require('./routes/usage'));
+app.get('/usage/:startdate', require('./routes/usage'));
+app.get('/usage/:startdate/:enddate', require('./routes/usage'));
+
 // Group routes
 app.get('/group/:group',    require('./routes/group/get-group'));
 app.put('/group',           require('./routes/group/new-group'));
