@@ -35,3 +35,20 @@ If you are at Tangerine 1.7.8, then you must run...
 ```
 docker exec -it tangerine-container /tangerine-server/upgrades/v2.0.0.sh
 ```
+
+## v2.2.0
+
+### User Stories
+- As a Site Owner I want to know how many results have been uploaded given arbitrary time period #457
+
+### Technical 
+- Refactor start.sh and config.defaults.sh to allow configurable ports and tag #456
+
+### Upgrade direcections
+```
+docker exec -it tangerine-container /tangerine-server/upgrades/v2.2.0.sh
+```
+
+
+
+
