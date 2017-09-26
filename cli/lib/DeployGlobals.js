@@ -9,7 +9,7 @@ module.exports = function(options, callback) {
   var env = options.env
   if (!env) env = process.env
   var couchUrl = options.couchUrl
-  if (!couchUrl) couchUrl = `${env.T_PROTOCOL}://${env.T_ADMIN}:${env.T_PASS}@localhost:5984`
+  if (!couchUrl) couchUrl = http://${env.T_ADMIN}:${env.T_PASS}@localhost:5984`
 
   var settingsDocs = []
   var configurationDocs = []
@@ -30,6 +30,7 @@ module.exports = function(options, callback) {
               groupDbs.push(db)
             }
           })
+          groupDbs.push('tangerine')
           console.log(`Found ${groupDbs.length} group databases.`)
           resolve()
         })
