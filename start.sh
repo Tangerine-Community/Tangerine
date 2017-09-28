@@ -9,31 +9,38 @@ else
 fi
 
 # Allow to specify Tangerine Version as parameter in ./start.sh, other wise use the most recent tag.
-if [ "$1" = "" ] && [ "$T_TAG" = "" ]; then
-  TAG=$(git describe --tags --abbrev=0)
-fi
-echo $T_TAG
-if  [ "$T_TAG" != "" ]; then
-  TAG=$T_TAG
-fi
-if  [ "$1" != "" ]; then
-  TAG=$1
+if [ "$T_TAG" = "" ]; then
+  T_TAG=$(git describe --tags --abbrev=0)
 fi
 
 # Pull tag.
-echo "Pulling $TAG"
-docker pull tangerine/tangerine:$TAG
+echo "Pulling $T_TAG"
+docker pull tangerine/tangerine:$T_TAG
 
-# Check if the container exists, if so, stop and remove it.
-NO_SUCH_CONTAINER=$(docker inspect $T_CONTAINER_NAME | grep "No such object")
-echo $NO_SUCH_CONTAINER
-if [ "$NO_SUCH_CONTAINER" = "" ]; then
-  echo "Stopping $T_CONTAINER_NAME"
-  docker stop $T_CONTAINER_NAME > /dev/null 
-  echo "Removing $T_CONTAINER_NAME"
-  docker rm $T_CONTAINER_NAME > /dev/null 
-fi
+echo "Stopping $T_CONTAINER_NAME"
+docker stop $T_CONTAINER_NAME > /dev/null 
+echo "Removing $T_CONTAINER_NAME"
+docker rm $T_CONTAINER_NAME > /dev/null 
 
-echo "Running $T_CONTAINER_NAME at version $TAG"
+RUN_OPTIONS="
+  --name $T_CONTAINER_NAME \
+  --env \"NODE_ENV=production\" \
+  --env \"T_VERSION=$T_TAG\" \
+  --env \"T_PROTOCOL=$T_PROTOCOL\" \
+  --env \"T_ADMIN=$T_ADMIN\" \
+  --env \"T_PASS=$T_PASS\" \
+  --env \"T_USER1=$T_USER1\" \
+  --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
+  --env \"T_HOST_NAME=$T_HOST_NAME\" \
+  $T_PORT_MAPPING \
+  --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
+  --volume $(pwd)/data/apks/:/tangerine-server/tree/apks/ \
+  --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
+  --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
+  --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
+" 
 
-echo "docker run -d --name $T_CONTAINER_NAME   --env \"NODE_ENV=production\"   --env \"T_VERSION=$TANGERINE_VERSION\"   --env \"T_PROTOCOL=$T_PROTOCOL\"   --env \"T_ADMIN=$T_ADMIN\"   --env \"T_PASS=$T_PASS\"   --env \"T_USER1=$T_USER1\"   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\"   --env \"T_HOST_NAME=$T_HOST_NAME\"   $T_PORT_MAPPING   --volume $(pwd)/data/couchdb/:/var/lib/couchdb   --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/    tangerine/tangerine:$TAG" | sh
+CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
+
+echo "Running $T_CONTAINER_NAME at version $T_TAG"
+eval ${CMD}
