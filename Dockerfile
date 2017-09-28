@@ -1,37 +1,11 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
 FROM ubuntu:14.04 
 
-#
-# ENV API for this container
-#
-
-# T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
-ENV T_USER1 user1
-ENV T_USER1_PASSWORD password
-# T_ADMIN is the admin user for your database. Make sure to change this so the outside world does not have access.
-ENV T_ADMIN admin
-ENV T_PASS password
-# T_HOST_NAME is the URL without protocol (like http://) you will be accessing your Tangerine server at.
-ENV T_HOST_NAME 127.0.0.1 
-# If you have set up SSL on your server, you must change this to "https".
-ENV T_PROTOCOL http
-# Set to "development" for live code reload of editor and client.
-ENV T_RUN_MODE production
-# If true, this will run couchapp push again on all of your group databases. Good for making sure 
-# your groups have the most recent updates but may cause Views to reindex when you don't want them to.
-# WARNING: If set to true, you will need to manually update all of your group's `settings` and `configuration` docs because
-# they will now be overwritten with defaults. This includes properties like the group's name.
-ENV PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT false
-
-#
-# Other ENVs 
-#
-
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-# Configure some things for use internally.
+# WARNING: Do not override these environment variables when running as a container.
 ENV T_TREE_HOSTNAME / 
 ENV T_TREE_URL /tree 
 ENV T_COUCH_HOST localhost
@@ -248,12 +222,5 @@ RUN ln -s /tangerine-server/client/src /tangerine-server/client/www
 ADD ./ /tangerine-server
 
 RUN mkdir /tangerine-server/logs
-
-# Volumes
-VOLUME /tangerine-server/logs
-VOLUME /tangerine-server/tree/apks
-VOLUME /var/lib/couchb/ 
-
-EXPOSE 80
 
 ENTRYPOINT /tangerine-server/entrypoint.sh
