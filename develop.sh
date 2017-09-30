@@ -23,10 +23,14 @@ docker rm tangerine-container
 echo ""
 echo "Running the container..."
 echo ""
+
 docker run \
   -d \
   --name tangerine-container \
+  -P \
   -p 80:80 \
+  -p 3282:3282 \
+  -p 3282:3282/udp \
   --env "DEBUG=1" \
   --env "NODE_ENV=development" \
   --env "T_VERSION=local" \
@@ -45,9 +49,10 @@ docker run \
   --volume $(pwd)/editor/app:/tangerine-server/editor/app \
   --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \
   --volume $(pwd)/entrypoint.sh:/tangerine-server/entrypoint.sh \
-  --volume $(pwd)/client/src:/tangerine-server/client/src \
   --volume $(pwd)/upgrades:/tangerine-server/upgrades \
-  --volume $(pwd)/client/Gulpfile.js:/tangerine-server/client/Gulpfile.js \
   --volume $(pwd)/cli/lib:/tangerine-server/cli/lib \
+  --volume $(pwd)/raisin:/tangerine-server/raisin \
+  --volume $(pwd)/projects:/tangerine-server/projects \
+  --volume $(pwd)/tangy:/tangerine-server/tangy \
   tangerine/tangerine:local
 docker logs -f tangerine-container
