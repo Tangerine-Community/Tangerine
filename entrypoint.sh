@@ -88,14 +88,7 @@ echo ""
 echo ""
 echo ""
 
-if [ "$T_RUN_MODE" = "production" ]
-then
-	echo "Start the pm2 process"
-	cd /tangerine-server
-	pm2 start --no-daemon ecosystem.json
-fi
-
-if [ "$T_RUN_MODE" = "development" ]
+if [ "$DEBUG" = 1 ]
 then
 	echo "Start the pm2 process"
 	cd /tangerine-server
@@ -104,10 +97,14 @@ then
 	echo ""
 	echo ""
 	echo "Monitoring for editor chages..."
-	cd /tangerine-server/editor && npm run debug &
+	cd /tangerine-server/editor && npm run gulp init && npm run debug &
 	echo ""
 	echo ""
 	echo ""
 	echo "Monitoring for client chages..."
 	cd /tangerine-server/client && npm run debug
+else
+  echo "Start the pm2 process"
+	cd /tangerine-server
+	pm2 start --no-daemon ecosystem.json
 fi
