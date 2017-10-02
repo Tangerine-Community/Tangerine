@@ -77,45 +77,53 @@ let readFiles = ()=>{
     let dirList = getDirectories(dir);
     let contents = {};
     let promises = dirList
-        .map(path => fs.readJson(path + '/metadata.json'));
+        .map(path => fs.readJson(path + '/metadata.json').catch(err => {
+            console.error(err) // Not called
+          })
+        );
     return Promise.all(promises);
 }
 
-let listProjects = new Promise((resolve, reject) => {
+function listProjects() {
+  return new Promise((resolve, reject) => {
+    console.log("listing projects.")
+    readFiles()
+      .then(contents => {
+        // console.log("contents: " + JSON.stringify(contents))
+        // contents = contents.filter(function(n){ console.log("n is: " + JSON.stringify(n) + " type: " + typeof n);return typeof n == 'object' });
+        contents = contents.filter(function(n){ return typeof n == 'object' });
+        console.log("contents : " + JSON.stringify(contents))
 
-        readFiles()
-            .then(contents => {
-                console.log("contents: " + JSON.stringify(contents))
-                resolve(contents)
-                return contents
-            })
-            .catch(error => {
-                console.log("bummer: " + error)
-                reject(contents)
-            });
-    });
-
+        resolve(contents)
+        return contents
+      })
+      .catch(error => {
+        console.log("bummer: " + error)
+        reject(contents)
+      });
+  });
+}
 
 server.get('/project/listAll', function (req, res, next) {
 
-    // let dirs = listProjects.then(function(result) {
-    //     console.log(result); // "Stuff worked!"
-    //     res.send(dirs);
-    // }, function(err) {
-    //     console.log(err); // Error: "It broke"
-    // });
+  var dirs = listProjects().then(function(result) {
+    console.log("listAll: " + JSON.stringify(result)); // "Stuff worked!"
+    res.send(result);
+  }, function(err) {
+    console.log(err); // Error: "It broke"
+  });
 
-    readFiles()
-        .then(contents => {
-            console.log("contents: " + JSON.stringify(contents))
-            res.send(contents);
-        })
-        .catch(error => {
-            console.log("bummer: " + error)
+  // readFiles()
+  //     .then(contents => {
+  //         console.log("contents: " + JSON.stringify(contents))
+  //         res.send(contents);
+  //     })
+  //     .catch(error => {
+  //         console.log("bummer: " + error)
+  //
+  //     });
 
-        });
-
-    return next();
+  return next();
 });
 
 // file: 'build/default/index.html'
@@ -212,13 +220,18 @@ server.post('/project/create', async function (req, res, next) {
                       "projectName": req.params.projectName
                     };
                     fs.writeJson(dir + '/metadata.json', metadata).then(() => {
-                        let dirs = listProjects();
-                        let resp = {
-                          "dirs": dirs,
-                          "datKey": datKey,
-                          "message": 'Project created: ' + req.params.projectName
-                        }
-                        res.send(resp);
+                        // let dirs = listProjects();
+                        let list = listProjects().then(function(dirs) {
+                          console.log("dirs: " + JSON.stringify(dirs)); // "Stuff worked!"
+                          let resp = {
+                            "dirs": dirs,
+                            "datKey": datKey,
+                            "message": 'Project created: ' + req.params.projectName
+                          }
+                          res.send(resp);
+                        }, function(err) {
+                          console.log(err); // Error: "It broke"
+                        });
                       }
                     ).catch(err => {
                       console.error("Error writing json: " + err)
