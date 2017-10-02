@@ -18,6 +18,6 @@ mkdir build
 # Copy build items over.
 cp -r shell/dist/tangerine build
 mv build/tangerine/index.html build/
-cp -r tangy-forms/build build/tangerine-forms
+cp -r tangy-forms/build/default build/tangy-forms
 # cp -r legacy/dist build/legacy
 cp -r content build/
