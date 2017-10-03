@@ -33,7 +33,6 @@
     margin: 15px 0px;
     padding: 25px;
   }
-
   paper-checkbox {
     --paper-checkbox-checked-ink-color: #8BC34A;
     --paper-checkbox-checked-color: #8BC34A;
@@ -171,10 +170,6 @@
             type: String,
             value: 'tangy-form'
           },
-          itemsBasePath: {
-            type: String,
-            value: '' 
-          },
           onItemChange: {
             type: String,
             value: '' 
@@ -220,12 +215,6 @@
         this.innerHTML = this._itemsStash
         let items = this.querySelectorAll('tangy-form-item')
         items.forEach((item, index) => {
-          // Set base path for item if there is one.
-          /*
-          if (this.itemsBasePath) {
-            item.setAttribute('src', this.itemsBasePath + '/' + item.src)
-          }
-          */
           // Make room in response for each item.
           if (!this.tangyFormResponse.items.hasOwnProperty(item.id)) {
             this.tangyFormResponse.items[item.id] = {}

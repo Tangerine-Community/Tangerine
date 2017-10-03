@@ -123,24 +123,24 @@
       
       connectedCallback() {
         super.connectedCallback(); 
-				let query = this.parseQuery(window.location.search)
+        let query = this.parseQuery(window.location.search)
         if (query.form) {
-					this.showForm(query.form)
+          this.showForm(query.form)
         } else {
           this.showFormsList()
         }
       }
 
 			// For parsing window.location.search parameters.
-		  parseQuery(qstr) {
-				var query = {};
-				var a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&');
-				for (var i = 0; i < a.length; i++) {
-						var b = a[i].split('=');
-						query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
-				}
-				return query;
-  		}
+      parseQuery(qstr) {
+        var query = {};
+        var a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&');
+        for (var i = 0; i < a.length; i++) {
+          var b = a[i].split('=');
+          query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
+        }
+        return query;
+      }
       async showFormsList() {
         this.$['form-view'].hidden = true
         this.$['form-list'].hidden = false
@@ -162,14 +162,8 @@
         this.$['form-view'].hidden = false
         this.$['form-list'].hidden = true 
         // Load the form into the DOM.
-        console.log('Getting formSrc:')
-        console.log(formSrc)
         let formHtml = await fetch(formSrc)
         this.innerHTML = await formHtml.text()
-        // Prepend the form src directory to the item src paths because item paths are relative to the form's directory.
-        //const formDirectory = '../content/' + formSrc.substring(0, formSrc.lastIndexOf('\/'))
-        //let tangyForm = this.querySelector('tangy-form')
-        //tangyForm.setAttribute('items-base-path', formDirectory)
       }
 
     }
