@@ -1,0 +1,15 @@
+{
+  "name": "tangy-forms",
+  "version": "1.0.0",
+  "description": "``` ## system dependencies npm install -g bower http-server ## get the code git clone git@github.com:tangerine-community/tangerine cd tangerine git checkout v3.x.x ## install cd tangerine-forms bower install ## start the no-cache server in the tangerine-forms directory http-server -c-1 ```",
+  "main": "index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/polymer build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "polymer-cli": "^1.5.5"
+  }
+}
