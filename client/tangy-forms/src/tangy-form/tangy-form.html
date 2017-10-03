@@ -221,9 +221,11 @@
         let items = this.querySelectorAll('tangy-form-item')
         items.forEach((item, index) => {
           // Set base path for item if there is one.
+          /*
           if (this.itemsBasePath) {
             item.setAttribute('src', this.itemsBasePath + '/' + item.src)
           }
+          */
           // Make room in response for each item.
           if (!this.tangyFormResponse.items.hasOwnProperty(item.id)) {
             this.tangyFormResponse.items[item.id] = {}

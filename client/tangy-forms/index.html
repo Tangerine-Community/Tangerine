@@ -16,6 +16,32 @@
     <link rel="import" href="bower_components/neon-animation/web-animations.html">
   </head>
   <body>
+    <div id="base-path-loader"></div>
+    <script>
+		function parseQuery(qstr) {
+				var query = {};
+				var a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&');
+				for (var i = 0; i < a.length; i++) {
+						var b = a[i].split('=');
+						query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
+				}
+				return query;
+		}
+    (function() {
+      if (window.location.search) {
+        let query = parseQuery(window.location.search)
+        let formPath = query.form 
+        let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
+        console.log(`Setting <base> path using form directory: ${formDirectory}`)
+        window['base-path-loader'].innerHTML = `<base href="${formDirectory}">`
+      }
+    })();
+    </script>
+
+
+     
+
+    </script>
     <tangy-form-app></tangy-form-app>
     <style>
       html, body, tangy-form-app, tangy-form {
