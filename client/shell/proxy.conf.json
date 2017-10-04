@@ -5,7 +5,7 @@
     "pathRewrite": {"^/legacy" : ""}
   },
   "/tangy-forms": {
-    "target": "http://localhost:8081",
+    "target": "http://localhost:8083",
     "secure": false,
     "pathRewrite": {"^/tangy-forms" : ""}
   },

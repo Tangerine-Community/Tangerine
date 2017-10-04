@@ -1,0 +1,53 @@
+<script>
+  window.Vaadin = window.Vaadin || {};
+  window.Vaadin.MetaDataUpdater = superClass =>
+    class extends superClass {
+
+      /**
+      * The meta data properties we are updating.
+      */
+      static get metaDataProperties() {
+        return ['title', 'description', 'image'];
+      }
+
+      /**
+      * Updates 
+      */
+      static updateMetaData(metaData) {
+        this.metaDataProperties.forEach(prop => {
+          let metaTag = document.head.querySelector(`meta[property="og:${prop}"]`);
+          let propertyContent = metaData[prop];
+
+          // if we have a tag from before, update it
+          if (metaTag && propertyContent) {
+            metaTag.setAttribute('property', `og:${prop}`);
+            metaTag.setAttribute('content', propertyContent);
+          }
+          // if we have a tag but no new content for it, remove it
+          else if (metaTag && !propertyContent) {
+            document.head.removeChild(metaTag);
+          }
+          // if we have content, but no tag from before, create and append
+          else if (!metaTag && propertyContent) {
+            metaTag = document.createElement('meta');
+            metaTag.setAttribute('property', `og:${prop}`);
+            metaTag.setAttribute('content', propertyContent);
+            document.head.appendChild(metaTag);
+          }
+
+          // Also update title to document
+          if (prop === 'title') {
+            document.title = propertyContent || '';
+          }
+        });
+
+
+      }
+
+      static createMetaTagFor(prop) {
+        let tag = document.createElement('meta');
+        tag.setAttribute(`og:${prop}`)
+      }
+    };
+
+</script>

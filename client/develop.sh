@@ -5,7 +5,7 @@ cd legacy/src
 http-server -p 8080 &
 cd ../..
 cd tangy-forms
-http-server -p 8081 &
+http-server -p 8083 &
 cd ..
 cd content
 http-server -p 8082 &
