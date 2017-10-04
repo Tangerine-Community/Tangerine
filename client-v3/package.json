@@ -46,7 +46,7 @@
     "express-pouchdb": "^2.3.7",
     "hammerjs": "^2.0.8",
     "js-yaml": "^3.8.4",
-    "ng-formly": "^1.0.0-rc.9",
+    "ng-formly": "^1.0.0-rc.11",
     "pouchdb": "^6.2.0",
     "pouchdb-find": "^6.3.4",
     "read-yaml": "^1.1.0",
