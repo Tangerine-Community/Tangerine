@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as PouchDB from 'pouchdb';
 @Injectable()
 export class DataService {
-  DB = new PouchDB('locations');
+  DB = new PouchDB(localStorage.getItem('currentUser'));
   constructor() { }
   async getParentNodes() {
     try {
