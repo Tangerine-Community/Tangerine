@@ -46,6 +46,7 @@
   }
   paper-input, paper-textarea {
     --paper-input-container-focus-color: #8BC34A;
+  } transform: scale3d(2, 2, 2);
   }
 
 </style>
@@ -119,6 +120,21 @@
         paper-button {
           background: #8BC34A;
         }
+        paper-fab.expand-and-inform {
+            -webkit-transform: scale3d(2, 2, 2);
+            transform: scale3d(2, 2, 2);
+        }
+        paper-fab.shrink-to-tiny {
+            -webkit-transform: scale3d(0.5, 0.5, 0.5);
+            transform: scale3d(0.5, 0.5, 0.5);
+        }
+        paper-fab.shrink-to-normal {
+            -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+        /*.expand-and-inform {*/
+            /*-webkit-transform: scale3d(2, 2, 2);*/
+
       </style>
       <div id="tangy-form--header">
       </div>
@@ -214,6 +230,16 @@
 
       async loadQuestionsPane() {
         // Get the current response, else catch and create new response.
+        let currentTangyFormResponse
+        try {
+          currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
+        } catch (e) {
+          console.log(e)
+          let fab = this.$['new-response-fab']
+//          let ripple = fab.getRipple()
+//          ripple.animate()
+          fab.toggleClass('expand-and-inform');
+        }
         this.tangyFormResponse = await this.db.get(currentTangyFormResponse.responseId)
         // @TODO: Load this initial index from the response.
         this.focusIndex = 0
@@ -365,6 +391,10 @@
       }
 
       async newResponseButtonListener() {
+        let fab = this.$['new-response-fab']
+        if (fab.classList.contains('expand-and-inform')) {
+          fab.toggleClass('shrink-to-normal');
+        }
         let currentTangyFormResponse
         try {
           currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
