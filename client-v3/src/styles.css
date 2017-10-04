@@ -8,6 +8,7 @@ button.tangy-froms-margin-left{
 
 .tangerine-app-content{
     min-height: 100vh;
+    margin-top: 30px;
 }
 md-toolbar{
     position: fixed;
