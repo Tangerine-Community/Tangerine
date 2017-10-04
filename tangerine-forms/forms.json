@@ -6,5 +6,9 @@
   {
     "title": "EGRA Demo",
     "src": "forms/egra-demo/form.html"
+  },
+  {
+    "title": "ACASI Demo",
+    "src": "forms/acasi/form.html"
   }
 ]

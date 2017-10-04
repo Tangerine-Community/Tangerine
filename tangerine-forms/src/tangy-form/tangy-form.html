@@ -5,6 +5,7 @@
 <link rel="import" href="../tangy-gps/tangy-gps.html">
 <link rel="import" href="../tangy-location/tangy-location.html">
 <link rel="import" href="../tangy-button-group/tangy-button-group.html">
+<link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
 
 <!-- dependencies -->
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
@@ -213,7 +214,6 @@
 
       async loadQuestionsPane() {
         // Get the current response, else catch and create new response.
-        let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
         this.tangyFormResponse = await this.db.get(currentTangyFormResponse.responseId)
         // @TODO: Load this initial index from the response.
         this.focusIndex = 0
