@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { UserService } from './../_services/user.service';
-import { AuthenticationService } from './../_services/authentication.service';
 import 'rxjs/add/observable/fromPromise';
 import { User } from './../_services/user.model.interface';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthenticationService } from '../_services/authentication.service';
+import { UserService } from '../_services/user.service';
+import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.component.html',
@@ -28,7 +29,11 @@ export class RegistrationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+    const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
+    if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
+      this.router.navigate([this.returnUrl]);
+    }
   }
 
   register(registrationForm): void {

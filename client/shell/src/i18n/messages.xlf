@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xliff version="1.2" 
-  xmlns="urn:oasis:names:tc:xliff:document:1.2">
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template">
     <body>
       <trans-unit id="ef1509b9c5416b752affaf8ef7fd0da423030907" datatype="html">
@@ -51,12 +50,12 @@
           <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="f568b71ebf402ba44243ccecd23e1c7da266c110" datatype="html">
-        <source>Chris E Kelley</source>
+      <trans-unit id="1a05e2a7905976804ad9a10c19503eab4c5c30ef" datatype="html">
+        <source>Previous Page</source>
         <target/>
         <context-group purpose="location">
-          <context context-type="sourcefile">app/node-manager/locations-creator/locations-creator.component.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="sourcefile">app/node-manager/node-creator/node-creator.component.ts</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
     </body>

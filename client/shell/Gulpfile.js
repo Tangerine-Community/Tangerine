@@ -253,14 +253,14 @@ gulp.task('create-redirect-page', () => {
 });
 gulp.task('clean', async () => {
     try {
-      await execAwait(`rm -r dist`);
+        await execAwait(`rm -r dist`);
     }
-    catch (e) { 
-      // Do nothing, they didn't have a dist directory yet.
+    catch (e) {
+        // Do nothing, they didn't have a dist directory yet.
     }
     await execAwait(`mkdir dist`);
     await execAwait(`mkdir dist/tangerine`);
-    return 
+    return
 });
 
 gulp.task('build', function (callback) {

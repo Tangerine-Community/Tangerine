@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/pairs';
+import 'rxjs/add/observable/from';
+import 'rxjs/add/operator/filter';
 import * as PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import * as bcrypt from 'bcryptjs';
@@ -8,6 +9,7 @@ import * as bcrypt from 'bcryptjs';
 export class UserService {
   userData = {};
   DB = new PouchDB('users');
+  USER_DATABASE = 'userDatabase';
   constructor() { }
   async create(payload) {
     const salt = bcrypt.genSaltSync(10);
@@ -46,5 +48,35 @@ export class UserService {
       console.log(error);
     }
     return userExists;
+  }
+
+  async getAllUsers() {
+
+    try {
+      const result = await this.DB.allDocs({ include_docs: true });
+
+      const users = [];
+      Observable.from(result.rows).map(doc => doc).filter(doc => !doc['id'].startsWith('_design')).subscribe(doc => {
+        users.push({
+          username: doc['doc'].username,
+          email: doc['doc'].email
+        });
+      });
+      return users;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async setUserDatabase(username) {
+    return await localStorage.setItem(this.USER_DATABASE, username);
+  }
+
+  async getUserDatabase() {
+    return await localStorage.getItem(this.USER_DATABASE);
+  }
+
+  async removeUserDatabase() {
+    localStorage.removeItem(this.USER_DATABASE);
   }
 }

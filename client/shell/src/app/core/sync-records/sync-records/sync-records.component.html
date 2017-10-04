@@ -1,11 +1,16 @@
+<h2> Sync records</h2>
+
+<md-input-container>
+  <label>Username</label>
+  <input mdInput [(ngModel)]="user.username" place>
+</md-input-container>
+<md-input-container>
+  <label>Password</label>
+  <input mdInput [(ngModel)]="user.password" type="password">
+</md-input-container>
 <div [hidden]="!isLoading">
   <h2>Working</h2><img src="../../../../assets/tangy-loading.gif"></div>
-<button (click)="syncSelectedRecords()">Push Selected</button>
-<button (click)="pushAllRecords()">Push All records</button>
-<button (click)="syncSelectedRecords()">Pull Selected</button>
-<button (click)="pullAllRecords()">Pull All records</button>
-<button (click)="syncSelectedRecords()">Sync Selected</button>
-<button (click)="syncAllRecords()">Sync All records</button>
-<ul>
-  <li *ngFor="let db of DBS_TO_SYNC"><input (change)="selectDB($event,db)" type="checkbox">{{db}}</li>
-</ul>
+
+<button md-raised-button (click)="pushAllRecords()">Push All records</button>
+<button md-raised-button (click)="pullAllRecords()">Pull All records</button>
+<button md-raised-button (click)="syncAllRecords()">Sync All records</button>

@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
+
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
+
+import { UserService } from '../_services/user.service';
 import { AuthenticationService } from './../_services/authentication.service';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -13,25 +17,24 @@ export class LoginComponent implements OnInit {
   loading = false;
   returnUrl: string; // stores the value of the url to redirect to after login
   user = { username: '', password: '' };
+  users = [];
   constructor(
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private usersService: UserService
   ) { }
 
   ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-    const isAnonymousMode = this.authenticationService.getSecurityPolicy().find(policy => policy === 'anonymous');
-
-    if (this.authenticationService.isLoggedIn() || isAnonymousMode === 'anonymous') {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+    console.log(this.returnUrl);
+    const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
+    Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {
+      this.users = data;
+    });
+    if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
       this.router.navigate([this.returnUrl]);
     }
-    /**
-     * @TODO is this really necessary? May need to clean up
-     */
-    // else {
-    //   this.router.navigate(['/create-nodes'], { queryParams: { returnUrl: this.returnUrl } });
-    // }
 
   }
   login(): void {

@@ -1,15 +1,22 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/pairs';
-import { environment } from './../../../../environments/environment';
-import * as PouchDB from 'pouchdb';
-import PouchDBFind from 'pouchdb-find';
+
+import { Injectable } from '@angular/core';
 import * as bcrypt from 'bcryptjs';
+import * as PouchDB from 'pouchdb';
+import { Subject } from 'rxjs/Subject';
+
+import { environment } from './../../../../environments/environment';
 import { UserService } from './user.service';
+
 @Injectable()
 export class AuthenticationService {
   DB = new PouchDB('users');
-  constructor(private userService: UserService) { }
+  public currentUserLoggedIn$: any;
+  private _currentUserLoggedIn: boolean;
+
+  constructor(private userService: UserService) {
+    this.currentUserLoggedIn$ = new Subject();
+  }
 
   async login(username: string, password: string) {
     let isCredentialsValid = false;
@@ -20,6 +27,11 @@ export class AuthenticationService {
        *@TODO if Security policy require password is false, then no need to check password. Just login the user
        */
       isCredentialsValid = await this.confirmPassword(username, password);
+      if (isCredentialsValid) {
+        localStorage.setItem('currentUser', username);
+        this._currentUserLoggedIn = true;
+        this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+      }
     }
 
     return isCredentialsValid;
@@ -37,7 +49,7 @@ export class AuthenticationService {
            * Security policy Example: 1) Expire user after 5 minutes or 2) never
            * @TODO Refactor for Redux send Action to Current User store. Dont do this until our ngrx stores are backed up by local storage
            */
-          localStorage.setItem('currentUser', username);
+
         }
       }
     } catch (error) {
@@ -48,13 +60,18 @@ export class AuthenticationService {
 
   logout(): void {
     localStorage.removeItem('currentUser');
+    this._currentUserLoggedIn = false;
+    this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
   }
 
-  isLoggedIn(): boolean {
+  isLoggedIn() {
+    this._currentUserLoggedIn = false;
     if (localStorage.getItem('currentUser')) {
-      return true;
+      this._currentUserLoggedIn = true;
     }
-    return false;
+    this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+    return this._currentUserLoggedIn;
+
   }
   isLoggedInForUpload(): boolean {
     if (localStorage.getItem('loggedInForUploadUser')) {
@@ -71,11 +88,16 @@ export class AuthenticationService {
     }
     return isCredentialsValid;
   }
-  logoutUploadUser(): void {
-    localStorage.removeItem('loggedInForUploadUser');
-  }
+
 
   getSecurityPolicy() {
     return environment.securityPolicy;
   }
+  isNoPasswordMode() {
+    const isNoPasswordMode = this.getSecurityPolicy().find(policy => policy === 'noPassword');
+    return isNoPasswordMode === 'noPassword';
+  }
+
+
+
 }

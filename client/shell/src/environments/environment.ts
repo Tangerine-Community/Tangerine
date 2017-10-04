@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  securityPolicy: ['password'], // anonymous,
+  securityPolicy: ['password'], // noPassword,
   uploadUserCredentials: {
     username: 'admin',
     password: 'password'
