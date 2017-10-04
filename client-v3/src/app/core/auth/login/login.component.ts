@@ -15,6 +15,7 @@ import { AuthenticationService } from './../_services/authentication.service';
 export class LoginComponent implements OnInit {
 
   loading = false;
+  errorMessage = '';
   returnUrl: string; // stores the value of the url to redirect to after login
   user = { username: '', password: '' };
   users = [];
@@ -27,7 +28,6 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
-    console.log(this.returnUrl);
     const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
     Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {
       this.users = data;
@@ -42,10 +42,12 @@ export class LoginComponent implements OnInit {
     Observable.fromPromise(this.authenticationService.login(this.user.username, this.user.password)).subscribe(data => {
       if (data) {
         this.router.navigate(['' + this.returnUrl]);
-      } else { alert('Login Unsuccessful'); }
+      } else {
+        this.errorMessage = 'Login Unsuccessful';
+      }
     }, error => {
       this.loading = false;
-      alert('Login Unsuccessful');
+      this.errorMessage = 'Login Unsuccessful';
 
     });
   }
