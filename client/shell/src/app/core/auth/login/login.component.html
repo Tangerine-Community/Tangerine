@@ -1,0 +1,14 @@
+<md-grid-list cols="2" rowHeight="2:1">
+  <md-grid-tile>
+    <md-select placeholder="Username" [(ngModel)]="user.username">
+      <md-option *ngFor="let user of users" [value]="user.username">{{ user.username }}</md-option>
+    </md-select>
+    <md-input-container>
+      <label>Password</label>
+      <input mdInput [(ngModel)]="user.password" type="password">
+    </md-input-container>
+    <button md-raised-button (click)="login()">Login</button>
+    <button md-raised-button (click)="register()">Register</button>
+  </md-grid-tile>
+  <md-grid-tile></md-grid-tile>
+</md-grid-list>

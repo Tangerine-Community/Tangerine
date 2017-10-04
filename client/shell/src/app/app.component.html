@@ -1,0 +1,48 @@
+<md-toolbar color="primary" class="mat-typography">
+  <button *ngIf="showHomePage" md-button (click)="sidenav.first.open()"><i class="material-icons">menu</i></button>
+  <span>Tangerine</span>
+  <span class="tangerine-toolbar-spacer"></span>
+  <div *ngIf="showHomePage">
+    <button md-button><i class="material-icons" [mdMenuTriggerFor]="appMenu">account_box</i></button>
+    <md-menu #appMenu="mdMenu">
+      <a routerLink="edit-user-profile" md-menu-item>
+        <i class="material-icons md-18">create</i>
+        <span>Edit Profile</span> 
+      </a>
+      <a routerLink="create-nodes" md-menu-item>
+        <i class="material-icons md-18">settings</i>
+        <span>My Settings</span>
+      </a>
+      <li md-menu-item (click)="logout()">
+        <i class="material-icons md-18">exit_to_app</i>
+        <span>Log Out</span>
+      </li>
+    </md-menu>
+  </div>
+
+</md-toolbar>
+<div style="top: 64px !important" class="mat-typography" *ngIf="showHomePage;">
+  <md-sidenav-container style="margin-top:64px">
+    <md-sidenav #sidenav class="sidenav">
+      <ul>
+        <li> <a routerLink="tangy-forms">Forms</a>
+        <li>
+          <a routerLink="sync-records">Sync</a>
+        </li>
+        <li>
+          <a routerLink="registerRemoteServer">Register on remote server</a>
+        </li>
+        <li>
+          <a routerLink="loginRemoteServer">Login on remote server</a>
+        </li>
+      </ul>
+    </md-sidenav>
+
+    <div class="tangerine-app-content">
+      <router-outlet></router-outlet>
+    </div>
+  </md-sidenav-container>
+</div>
+<div style="top:64px !important; position:absolute" class="mat-typography">
+  <router-outlet></router-outlet>
+</div>
