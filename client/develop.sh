@@ -1,3 +1,6 @@
+# kill http-server processes that may have been running.
+ps -a | grep 'bin\/http-server' | awk '{print $1}' | xargs kill
+# start servers
 cd legacy/src
 http-server -p 8080 &
 cd ../..
