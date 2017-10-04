@@ -1,11 +1,12 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SyncRecodsRoutingModule } from './sync-recods-routing.module';
-import { SyncRecordsComponent } from './sync-records/sync-records.component';
-import { MdInputModule, MdButtonModule } from '@angular/material';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SyncingService } from './_services/syncing.service';
+import { MdInputModule } from '@angular/material';
+
 import { UploadGuardService } from '../auth/_guards/upload-guard.service';
+import { SyncingService } from './_services/syncing.service';
+import { SyncRecodsRoutingModule } from './sync-records-routing.module';
+import { SyncRecordsComponent } from './sync-records/sync-records.component';
 
 @NgModule({
   imports: [
