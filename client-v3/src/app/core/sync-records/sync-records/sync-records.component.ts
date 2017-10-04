@@ -8,29 +8,21 @@ import { environment } from '../../../../environments/environment';
 })
 export class SyncRecordsComponent implements OnInit {
   isLoading = false;
-  selectedDBs = [];
-  DBS_TO_SYNC = environment.databasesToSync;
+  user = { username: '', password: '' };
   constructor(private syncingService: SyncingService) { }
 
   ngOnInit() {
   }
 
-  selectDB(el, database) {
-    if (el.target.checked) {
-      this.selectedDBs.push(database);
-    } else {
-      this.selectedDBs.splice(this.selectedDBs.indexOf(database), 1);
-    }
-  }
-
   async syncAllRecords() {
     this.toggleIsLoading();
     try {
-      const result = await this.syncingService.syncAllRecords();
+      const result = await this.syncingService.syncAllRecords(this.user.username, this.user.password);
       if (result) {
         this.toggleIsLoading();
       }
     } catch (error) {
+      console.log(error);
       this.toggleIsLoading();
     }
   }
@@ -38,63 +30,28 @@ export class SyncRecordsComponent implements OnInit {
   async pushAllRecords() {
     this.toggleIsLoading();
     try {
-      const result = await this.syncingService.pushAllrecords();
+      const result = await this.syncingService.pushAllrecords(this.user.username, this.user.password);
       if (result) {
         this.toggleIsLoading();
       }
     } catch (error) {
+      console.log(error);
       this.toggleIsLoading();
     }
   }
   async pullAllRecords() {
     this.toggleIsLoading();
     try {
-      const result = await this.syncingService.pullAllRecords();
+      const result = await this.syncingService.pullAllRecords(this.user.username, this.user.password);
       if (result) {
         this.toggleIsLoading();
       }
     } catch (error) {
+      console.log(error);
       this.toggleIsLoading();
     }
   }
 
-
-  async syncSelectedRecords() {
-    this.toggleIsLoading();
-    try {
-      const result = await this.syncingService.syncSelectedRecords(this.selectedDBs);
-      if (result) {
-        this.toggleIsLoading();
-      }
-    } catch (error) {
-      this.toggleIsLoading();
-    }
-  }
-
-
-  async pushSelectedRecords() {
-    this.toggleIsLoading();
-    try {
-      const result = await this.syncingService.pushSelectedRecords(this.selectedDBs);
-      if (result) {
-        this.toggleIsLoading();
-      }
-    } catch (error) {
-      this.toggleIsLoading();
-    }
-  }
-
-  async pullSelectedRecords() {
-    this.toggleIsLoading();
-    try {
-      const result = await this.syncingService.pullSelectedRecords(this.selectedDBs);
-      if (result) {
-        this.toggleIsLoading();
-      }
-    } catch (error) {
-      this.toggleIsLoading();
-    }
-  }
 
   toggleIsLoading() {
     this.isLoading = !this.isLoading;
