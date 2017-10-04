@@ -18,7 +18,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CaseManagementModule } from './case-management/case-management.module';
 import { AuthModule } from './core/auth/auth.module';
-import { ChooseUserProfileComponent } from './core/auth/choose-user-profile/choose-user-profile.component';
 import { SyncRecordsModule } from './core/sync-records/sync-records.module';
 import { WindowRef } from './core/window-ref.service';
 import { NodeManagerModule } from './node-manager/node-manager.module';
@@ -28,7 +27,7 @@ export { AppComponent }
 
 @NgModule({
   declarations: [
-    AppComponent, ChooseUserProfileComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
