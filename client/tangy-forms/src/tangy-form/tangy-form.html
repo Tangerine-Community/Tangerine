@@ -210,7 +210,7 @@
         let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
         this.tangyFormResponse = await this.db.get(currentTangyFormResponse.responseId)
         // @TODO: Load this initial index from the response.
-        this.focusIndex = 0
+        this.focusIndex = this.tangyFormResponse.focusIndex
         // Reload all items. 
         this.innerHTML = this._itemsStash
         let items = this.querySelectorAll('tangy-form-item')
@@ -299,6 +299,9 @@
             this.focusIndex++
           }
         }
+        this.tangyFormResponse.focusIndex = this.focusIndex
+        await this.db.put(this.tangyFormResponse)
+        this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id);
         let newItem = items[this.focusIndex]
         // Open item.
         newItem.open = true
