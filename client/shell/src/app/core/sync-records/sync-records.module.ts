@@ -13,6 +13,7 @@ import { SyncRecordsComponent } from './sync-records/sync-records.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    SyncRecodsRoutingModule,
     MdInputModule
   ],
   declarations: [SyncRecordsComponent],

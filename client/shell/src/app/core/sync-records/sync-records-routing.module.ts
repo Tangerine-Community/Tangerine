@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { LoginGuard } from '../auth/_guards/login-guard.service';
 import { UploadGuardService } from '../auth/_guards/upload-guard.service';
 import { SyncRecordsComponent } from './sync-records/sync-records.component';
 
-const routes = [{
+const routes: Routes = [{
   path: 'sync-records',
   component: SyncRecordsComponent,
   canActivate: [LoginGuard, UploadGuardService]
