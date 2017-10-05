@@ -1,8 +1,10 @@
-<md-toolbar color="primary" class="mat-typography">
-  <button *ngIf="showHomePage" md-button (click)="sidenav.first.open()"><i class="material-icons">menu</i></button>
-  <span>Tangerine</span>
-  <span class="tangerine-toolbar-spacer"></span>
-  <div *ngIf="showHomePage">
+<div *ngIf="showNav">
+  <md-toolbar color="primary" class="mat-typography">
+    <button *ngIf="showNav" md-button (click)="sidenav.first.open()"><i class="material-icons">menu</i></button>
+
+    <span>Tangerine Forms</span>
+    <span class="tangerine-toolbar-spacer"></span>
+
     <button md-button><i class="material-icons" [mdMenuTriggerFor]="appMenu">account_box</i></button>
     <md-menu #appMenu="mdMenu">
       <a routerLink="edit-user-profile" md-menu-item>
@@ -18,10 +20,10 @@
         <span>Log Out</span>
       </li>
     </md-menu>
-  </div>
 
-</md-toolbar>
-<div style="top: 64px !important" class="mat-typography" *ngIf="showHomePage;">
+  </md-toolbar>
+</div>
+<div style="top: 64px !important" class="mat-typography" *ngIf="showNav;">
   <md-sidenav-container style="margin-top:64px">
     <md-sidenav #sidenav class="sidenav">
       <ul>
@@ -43,6 +45,6 @@
     </div>
   </md-sidenav-container>
 </div>
-<div style="top:64px !important; position:absolute" class="mat-typography">
+<div *ngIf="!showNav" style="top:64px !important; position:absolute" class="mat-typography">
   <router-outlet></router-outlet>
 </div>

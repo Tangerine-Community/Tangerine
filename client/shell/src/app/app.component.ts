@@ -14,26 +14,25 @@ import { WindowRef } from './core/window-ref.service';
 })
 export class AppComponent implements OnInit {
   title = 'Tangerine Client v3.x.x';
-  showHomePage;
+  showNav;
   @ViewChildren('sidenav') sidenav: QueryList<MdSidenav>;
   constructor(
-    windowRef: WindowRef,
-    private userService: UserService,
+    windowRef: WindowRef, private userService: UserService,
     private authenticationService: AuthenticationService,
     private router: Router) {
     windowRef.nativeWindow.PouchDB = PouchDB;
   }
 
   ngOnInit() {
-    this.showHomePage = this.authenticationService.isLoggedIn();
+    this.showNav = this.authenticationService.isLoggedIn();
     this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
-      this.showHomePage = isLoggedIn;
+      this.showNav = isLoggedIn;
     });
   }
 
   logout() {
     this.authenticationService.logout();
     this.router.navigate(['login']);
-    location.reload(); // @TODO find a way to load the page contents without reloadinhg
+    location.reload(); // @TODO find a way to load the page contents without reloading
   }
 }
