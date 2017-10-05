@@ -2,7 +2,7 @@ import 'rxjs/add/observable/pairs';
 
 import { Injectable } from '@angular/core';
 import * as bcrypt from 'bcryptjs';
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
 import { Subject } from 'rxjs/Subject';
 
 import { environment } from './../../../../environments/environment';
