@@ -45,6 +45,9 @@
             name: {
               type: String,
               value: 'Hootie'
+            },
+            _valid: {
+              type: Boolean,
             }
           };
         }
@@ -54,17 +57,20 @@
         }
 
         validate() {
-          return false
+          return Tangy._valid
+//          return true;
         }
 
         // Element class can define custom element reactions
         // @TODO: Duplicating ready?
         connectedCallback() {
           super.connectedCallback();
-//          this.name = this.getAttribute("name")
           if (typeof window.Tangy == 'undefined') {
             window.Tangy =  {}
           }
+          Tangy._valid = false;
+//          this.name = this.getAttribute("name")
+
           if (this.introSrc) {
             var isPlaying = Tangy.displaySound && Tangy.displaySound.currentTime > 0 && !Tangy.displaySound.paused && !Tangy.displaySound.ended
               && Tangy.displaySound.readyState > 2;
@@ -73,6 +79,19 @@
               Tangy.displaySound.play();
 //              this.$['up-fab'].setAttribute('disabled', true)
 //              this.$['down-fab'].setAttribute('disabled', true)
+
+              var audioLoop = setInterval(checkAudio, 500);
+              function checkAudio() {
+                var isPlaying = Tangy.displaySound && Tangy.displaySound.currentTime > 0 && !Tangy.displaySound.paused && !Tangy.displaySound.ended
+                  && Tangy.displaySound.readyState > 2;
+                Tangy._valid = false;
+                console.log("isPlaying currentTime: " + Tangy.displaySound.currentTime + " _valid: " + Tangy._valid)
+                if (!isPlaying) {
+                  Tangy._valid = true;
+                  console.log("isPlaying: " + isPlaying + " _valid: " + Tangy._valid)
+                  window.clearInterval(audioLoop)
+                }
+              }
             } else {
               console.log("isPlaying currentTime: " + Tangy.displaySound.currentTime)
               Tangy.isPlaying = true
