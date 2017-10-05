@@ -16,7 +16,7 @@
 
   <script>
     /**
-     * `tangy-timed`
+     * `tangy-location`
      * 
      *
      * @customElement
@@ -27,7 +27,10 @@
       static get is() { return 'tangy-location'; }
       static get properties() {
         return {
-          
+          namespace: {
+            type: String,
+            value: 'location'
+          }
         };
       }
 
@@ -39,7 +42,7 @@
     
       async ready() {
         super.ready();
-        let response = await fetch('location-list.json')
+        let response = await fetch('../location-list.json')
         let options = await response.json()
         window.locationList = options
         if (options == null) {
@@ -126,7 +129,7 @@
           if (noPreSelection) {
             selected = "selected='selected'";
           }
-          this.insertAdjacentHTML('beforeend',"<div> <label>" + (title || '') + " <select data-index='" + index + "'> <option " + (selected || '') + " disabled='disabled'>Select...</option> " + htmlOptions + " </select> </label> <br> </div>")
+          this.insertAdjacentHTML('beforeend',"<div> <label>" + (title || '') + " <select name='" + this.namespace + "-" + this.levels[index] + "' data-index='" + index + "'> <option " + (selected || '') + " disabled='disabled'>Select...</option> " + htmlOptions + " </select> </label> <br> </div>")
           let selectElements = this.querySelectorAll('select')
           let latestSelectElement = selectElements[selectElements.length-1]
           latestSelectElement.addEventListener('change', this.onChange.bind(this))
