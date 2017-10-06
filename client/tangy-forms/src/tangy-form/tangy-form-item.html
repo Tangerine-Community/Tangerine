@@ -177,16 +177,18 @@
         if (newValue == true && oldValue === false && this.stuck === false) {
           // We're going to load, but before we do, run onload because it might result in becoming disabled.
           eval(this.onopen)
+          // todo: Do we need to check for if this.disabled === true? This functionality may have been moved up to tangy-form.
           // If we are disabled, emit an event crying about it.
           if (this.disabled === true) {
             this.dispatchEvent(new CustomEvent('tangy-item-open-cancelled'))
           } else {
+            // todo: openSound - trigger playing of the sound.
             // Everything is groovy, let's open this item up.
             let ironForm = document.createElement('iron-form')
             this.appendChild(ironForm)
             let response = await fetch(this.src)
-            this.$.card.classList.add('open')
             ironForm.innerHTML = await response.text()
+            this.$.card.classList.add('open')
             let htmlForm = this.querySelector('form')
             if (htmlForm) {
               // Pass the getResponse method down to the HTML Form so that onchange logic can use it.
