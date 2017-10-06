@@ -4,7 +4,7 @@
   <span>Tangerine Forms</span>
   <span class="tangerine-toolbar-spacer"></span>
 
-  <button md-button><i class="material-icons" [mdMenuTriggerFor]="appMenu">account_box</i></button>
+  <button *ngIf="showNav" md-button><i class="material-icons" [mdMenuTriggerFor]="appMenu">account_box</i></button>
   <md-menu #appMenu="mdMenu">
     <a routerLink="edit-user-profile" md-menu-item>
       <i class="material-icons md-18">create</i>
