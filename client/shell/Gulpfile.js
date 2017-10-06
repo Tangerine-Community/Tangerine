@@ -235,7 +235,7 @@ gulp.task('create-redirect-page', () => {
      function navigateToLocale() {
         let locale = localStorage.getItem("tangy-locale");
         if(locale){
-            window.location.href = locale;
+            window.location.href = 'tangerine/' +locale;
         } 
     }
        function setLocale(locale) {
