@@ -1,12 +1,16 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CaseManagementComponent } from './case-management/case-management.component';
+import { NgModule } from '@angular/core';
+import { MdTabsModule } from '@angular/material';
+
 import { CaseManagementRoutingModule } from './case-management-routing.module';
+import { CaseManagementComponent } from './case-management.component';
 
 @NgModule({
   imports: [
     CommonModule,
-    CaseManagementRoutingModule
+    CaseManagementRoutingModule,
+    MdTabsModule
+
   ],
   declarations: [CaseManagementComponent]
 })
