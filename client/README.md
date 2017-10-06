@@ -9,4 +9,10 @@ To view your app within the Tangerine login shell, visit http://localhost:4200/#
 
 To view your app without the shell (much easier), visit http://localhost:4200/tangy-forms/index.html
 
+# Troubleshooting
+
+If you have any port conflicts, modify the ports in the following files:
+
+* client/develop.sh
+* client/shell/proxy.conf.json
 
