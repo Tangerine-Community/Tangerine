@@ -66,9 +66,7 @@ export class AuthenticationService {
 
   isLoggedIn() {
     this._currentUserLoggedIn = false;
-    if (localStorage.getItem('currentUser')) {
-      this._currentUserLoggedIn = true;
-    }
+    this._currentUserLoggedIn = !!localStorage.getItem('currentUser');
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
     return this._currentUserLoggedIn;
 
