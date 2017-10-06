@@ -1,11 +1,23 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
+<style>
+tangy-timed tangy-toggle-button {
+  width: 70%;
+  font-size: 1.2em;
+}
+
+tangy-timed table {
+  width: 100%;
+}
+</style>
+
 <dom-module id="tangy-timed">
   <template>
     <style>
       :host {
         display: block;
       }
+      
     </style>
     <span class="countdown">[[timeRemaining]]⏱</span>
     <span> [[statusMessage]] </span>
@@ -65,7 +77,7 @@
 
       _prepareForm() {
         // Find all our input elements.
-        this.inputElements = Array.prototype.slice.call(this.querySelectorAll('input'));
+        this.inputElements = Array.prototype.slice.call(this.querySelectorAll('[name]'));
         // Disable all the input elements. Will enable on start.
         this.inputElements.forEach(element => element.disabled = true);
         this.inputElements.forEach(element => {
@@ -73,10 +85,8 @@
             if (this.lastSelectedMode === true) {
               this.removeLastSelected();
               // That last click will cause the opposite of what we want. Put it back to the original state.
-              event.srcElement.checked = !event.srcElement.checked;
-              // Style the label.
-              const labelEl = event.srcElement.labels[0];
-              labelEl.setAttribute('style', 'color:red; border: 1px solid blue;'); ;
+              event.srcElement.pressed = !event.srcElement.pressed;
+              event.srcElement.setAttribute('style', 'color:red; border: 3px solid red;'); ;
               this.statusMessage = 'You may now proceed.';
               //
               // Set hidden values.
@@ -146,10 +156,7 @@
     
       removeLastSelected() {
         this.inputElements.forEach(cleanupElement => {
-          if (cleanupElement.labels && cleanupElement.labels.length > 0) {
-            const cleanupLabelEl = cleanupElement.labels[0];
-            cleanupLabelEl.setAttribute('style', ''); ;
-          }
+          cleanupElement.setAttribute('style', ''); ;
         });
       }
     
