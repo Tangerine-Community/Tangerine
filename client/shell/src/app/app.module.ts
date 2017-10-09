@@ -16,15 +16,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-// import { CaseManagementModule } from './case-management/case-management.module';
+import { CaseManagementModule } from './case-management/case-management.module';
+import { AuthModule } from './core/auth/auth.module';
 import { SyncRecordsModule } from './core/sync-records/sync-records.module';
 import { WindowRef } from './core/window-ref.service';
 import { NodeManagerModule } from './node-manager/node-manager.module';
 import { TangerineFormsModule } from './tangerine-forms/tangerine-forms.module';
 import { TangerineV2Module } from './tangerine-v2/tangerine-v2.module';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
-import { AuthModule } from './core/auth/auth.module';
 
+// import { CaseManagementModule } from './case-management/case-management.module';
 export { AppComponent }
 
 @NgModule({
@@ -44,7 +45,7 @@ export { AppComponent }
     SyncRecordsModule,
     NodeManagerModule,
     AppRoutingModule,
-//    CaseManagementModule
+    CaseManagementModule
   ],
   providers: [WindowRef],
   bootstrap: [AppComponent]

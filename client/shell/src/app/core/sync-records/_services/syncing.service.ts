@@ -1,7 +1,9 @@
-import { AuthenticationService } from '../../auth/_services/authentication.service';
 import { Injectable } from '@angular/core';
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
+
 import { environment } from '../../../../environments/environment';
+import { AuthenticationService } from '../../auth/_services/authentication.service';
+
 @Injectable()
 export class SyncingService {
   constructor(private autheunticationService: AuthenticationService) { }
