@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/filter';
-import * as PouchDB from 'pouchdb';
-import PouchDBFind from 'pouchdb-find';
+
+import { Injectable } from '@angular/core';
 import * as bcrypt from 'bcryptjs';
+import PouchDB from 'pouchdb';
+import PouchDBFind from 'pouchdb-find';
+import { Observable } from 'rxjs/Observable';
+
 @Injectable()
 export class UserService {
   userData = {};

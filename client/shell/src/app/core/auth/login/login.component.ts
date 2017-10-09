@@ -29,9 +29,10 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
     const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
-    Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {
-      this.users = data;
-    });
+    // TODO List users on login page
+    // Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {
+    //   this.users = data;
+    // });
     if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
       this.router.navigate([this.returnUrl]);
     }

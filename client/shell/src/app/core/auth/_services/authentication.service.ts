@@ -2,7 +2,7 @@ import 'rxjs/add/observable/pairs';
 
 import { Injectable } from '@angular/core';
 import * as bcrypt from 'bcryptjs';
-import * as PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb';
 import { Subject } from 'rxjs/Subject';
 
 import { environment } from './../../../../environments/environment';
@@ -66,9 +66,7 @@ export class AuthenticationService {
 
   isLoggedIn() {
     this._currentUserLoggedIn = false;
-    if (localStorage.getItem('currentUser')) {
-      this._currentUserLoggedIn = true;
-    }
+    this._currentUserLoggedIn = !!localStorage.getItem('currentUser');
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
     return this._currentUserLoggedIn;
 
