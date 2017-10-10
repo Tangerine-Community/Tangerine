@@ -21,6 +21,8 @@ tangerine pull-assessments --help
 Pull down assessments from one group and push them to another.
 
   mkdir data
+  
   tangerine pull-assessments --url http://username:password@databases.tangerinecentral.org/group-avonlea_ph_pilot_qnrs > ./data/assessments.json
+  
   tangerine push-backup --url https://username:password@rti.tangerinecentral.org/db/group-some-group --path ./data/
 
