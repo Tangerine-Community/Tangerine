@@ -26,6 +26,7 @@ RUN_OPTIONS="
   --name $T_CONTAINER_NAME \
   --env \"NODE_ENV=production\" \
   --env \"T_VERSION=$T_TAG\" \
+  --env \"OTA_UPDATE=$OTA_UPDATE\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_ADMIN=$T_ADMIN\" \
   --env \"T_PASS=$T_PASS\" \
