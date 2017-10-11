@@ -213,7 +213,6 @@ RUN cd /tangerine-server/client \
     && npm install cordova-hot-code-push-plugin \
     && ./node_modules/.bin/cordova plugin add cordova-hot-code-push-plugin --save \
     && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-RUN cd /tangerine-server/client && npm run build:apk 
 
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
