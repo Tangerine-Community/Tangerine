@@ -24,6 +24,7 @@ import { NodeManagerModule } from './node-manager/node-manager.module';
 import { TangerineFormsModule } from './tangerine-forms/tangerine-forms.module';
 import { TangerineV2Module } from './tangerine-v2/tangerine-v2.module';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
+import { UserProfileModule } from './user-profile/user-profile.module';
 
 // import { CaseManagementModule } from './case-management/case-management.module';
 export { AppComponent }
@@ -42,6 +43,7 @@ export { AppComponent }
     TangerineV2Module,
     TangyFormsModule,
     AuthModule,
+    UserProfileModule,
     SyncRecordsModule,
     NodeManagerModule,
     AppRoutingModule,

@@ -1,15 +1,14 @@
 <div *ngIf="showNav">
   <md-toolbar color="primary" class="mat-typography">
     <button *ngIf="showNav" md-button (click)="sidenav.first.open()"><i class="material-icons">menu</i></button>
-
     <span>Tangerine Forms</span>
     <span class="tangerine-toolbar-spacer"></span>
 
     <button md-button><i class="material-icons" [mdMenuTriggerFor]="appMenu">account_box</i></button>
     <md-menu #appMenu="mdMenu">
-      <a routerLink="edit-user-profile" md-menu-item>
+      <a routerLink="manage-users" md-menu-item>
         <i class="material-icons md-18">create</i>
-        <span>Edit Profile</span> 
+        <span>Manage Profile</span> 
       </a>
       <a routerLink="create-nodes" md-menu-item>
         <i class="material-icons md-18">settings</i>
@@ -20,7 +19,6 @@
         <span>Log Out</span>
       </li>
     </md-menu>
-
   </md-toolbar>
 </div>
 <div style="top: 64px !important" class="mat-typography" *ngIf="showNav;">
