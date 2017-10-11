@@ -20,7 +20,8 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.css"
+        "styles.css",
+        "tangerine-theme.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
