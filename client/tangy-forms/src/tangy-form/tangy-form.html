@@ -4,6 +4,8 @@
 <link rel="import" href="../tangy-timed/tangy-timed.html">
 <link rel="import" href="../tangy-gps/tangy-gps.html">
 <link rel="import" href="../tangy-location/tangy-location.html">
+<link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
+<script src="../tangy-toggle-button/tangy-toggle-button.js"></script>
 
 <!-- dependencies -->
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
@@ -116,6 +118,21 @@
         paper-button {
           background: #8BC34A;
         }
+        paper-fab.expand-and-inform {
+            -webkit-transform: scale3d(2, 2, 2);
+            transform: scale3d(2, 2, 2);
+        }
+        paper-fab.shrink-to-tiny {
+            -webkit-transform: scale3d(0.5, 0.5, 0.5);
+            transform: scale3d(0.5, 0.5, 0.5);
+        }
+        paper-fab.shrink-to-normal {
+            -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+        /*.expand-and-inform {*/
+            /*-webkit-transform: scale3d(2, 2, 2);*/
+
       </style>
       <div id="tangy-form--header">
       </div>
@@ -207,7 +224,16 @@
 
       async loadQuestionsPane() {
         // Get the current response, else catch and create new response.
-        let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
+        let currentTangyFormResponse
+        try {
+          currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
+        } catch (e) {
+          console.log(e)
+          let fab = this.$['new-response-fab']
+//          let ripple = fab.getRipple()
+//          ripple.animate()
+          fab.toggleClass('expand-and-inform');
+        }
         this.tangyFormResponse = await this.db.get(currentTangyFormResponse.responseId)
         // @TODO: Load this initial index from the response.
         this.focusIndex = this.tangyFormResponse.focusIndex
@@ -358,6 +384,10 @@
       }
 
       async newResponseButtonListener() {
+        let fab = this.$['new-response-fab']
+        if (fab.classList.contains('expand-and-inform')) {
+          fab.toggleClass('shrink-to-normal');
+        }
         let currentTangyFormResponse
         try {
           currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);

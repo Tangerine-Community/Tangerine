@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { LoginComponent } from './login/login.component';
-import { RegistrationComponent } from './registration/registration.component';
+import { RouterModule, Routes } from '@angular/router';
+
+import { LoginGuard } from './_guards/login-guard.service';
 import { LoginRemoteServerComponent } from './login-remote-server/login-remote-server.component';
+import { LoginComponent } from './login/login.component';
 import { RegisterRemoteServerComponent } from './register-remote-server/register-remote-server.component';
+import { RegistrationComponent } from './registration/registration.component';
+
 // @TODO Add edit-profile component.
 // import { EditProfileComponent } from './edit-profile/edit-profile.component';
 const routes: Routes = [{
@@ -14,16 +17,18 @@ const routes: Routes = [{
   component: RegistrationComponent
 }, {
   path: 'registerRemoteServer',
-  component: RegisterRemoteServerComponent
+  component: RegisterRemoteServerComponent,
+  canActivate: [LoginGuard]
 }, {
   path: 'loginRemoteServer',
-  component: LoginRemoteServerComponent
+  component: LoginRemoteServerComponent,
+  canActivate: [LoginGuard]
 }
-// @TODO Add edit-profile component.
-/*, {
-  path: 'edit-user-profile',
-  component: EditProfileComponent
-}*/
+  // @TODO Add edit-profile component.
+  /*, {
+    path: 'edit-user-profile',
+    component: EditProfileComponent
+  }*/
 ];
 
 @NgModule({
