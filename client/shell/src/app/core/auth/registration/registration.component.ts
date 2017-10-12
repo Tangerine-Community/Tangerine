@@ -1,3 +1,4 @@
+import { AppSettings } from '../../../config/app-settings';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../_services/authentication.service';
 import { UserService } from '../_services/user.service';
@@ -33,7 +34,7 @@ export class RegistrationComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || AppSettings.HOME_URL;
         const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
         if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
             this.router.navigate([this.returnUrl]);
