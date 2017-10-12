@@ -4,7 +4,6 @@ import { MdListModule } from '@angular/material';
 
 import { UserProfileRoutingModule } from './user-profile-routing.module';
 import { UserProfileComponent } from './user-profile.component';
-import { ManageMySchoolsListComponent } from './manage-my-schools-list/manage-my-schools-list.component';
 
 @NgModule({
   imports: [
@@ -12,6 +11,6 @@ import { ManageMySchoolsListComponent } from './manage-my-schools-list/manage-my
     UserProfileRoutingModule,
     MdListModule
   ],
-  declarations: [UserProfileComponent, ManageMySchoolsListComponent]
+  declarations: [UserProfileComponent]
 })
 export class UserProfileModule { }

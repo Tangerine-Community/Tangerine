@@ -21,8 +21,20 @@ md-toolbar{
     flex: 1 1 auto;
 }
 
-.tangy-foreground{
+.tangy-foreground-primary{
     color: #ff5722;
+}
+
+.tangy-no-text-decoration{
+    text-decoration: none;
+}
+.tangy-foreground-white{
+    color: white;
+}
+.tangy-unstyled-list{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 .material-icons.md-18 { font-size: 18px; }
 .material-icons.md-24 { font-size: 24px; }

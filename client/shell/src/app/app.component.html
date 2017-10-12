@@ -1,7 +1,7 @@
 <md-toolbar color="primary" class="mat-typography">
   <button *ngIf="showNav" md-button (click)="sidenav.open()"><i class="material-icons">menu</i></button>
 
-  <span>Tangerine Forms</span>
+  <span><a class="tangy-no-text-decoration tangy-foreground-white" routerLink="home">Tangerine Forms</a></span>
   <span class="tangerine-toolbar-spacer"></span>
 
   <button *ngIf="showNav" [mdMenuTriggerFor]="appMenu" md-button><i class="material-icons">account_box</i></button>
@@ -23,18 +23,15 @@
 </md-toolbar>
 <md-sidenav-container style="margin-top:64px">
   <md-sidenav #sidenav class="sidenav mat-typography">
-    <ul>
-      <li> <a routerLink="tangy-forms">Forms</a>
-        <li>
-          <a routerLink="sync-records">Sync</a>
-        </li>
-        <li>
-          <a routerLink="registerRemoteServer">Register on remote server</a>
-        </li>
-        <li>
-          <a routerLink="loginRemoteServer">Login on remote server</a>
-        </li>
-    </ul>
+    <md-nav-list>
+      <md-list-item>
+        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="tangy-forms">Forms</a>
+      </md-list-item>
+      <br>
+      <md-list-item>
+        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="sync-records">Sync Records</a>
+      </md-list-item>
+    </md-nav-list>
   </md-sidenav>
   <div class="tangerine-app-content mat-typography">
     <router-outlet></router-outlet>
