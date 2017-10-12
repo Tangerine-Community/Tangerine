@@ -311,7 +311,13 @@
         // Bail if newItem is already open, return.
         if (newItem.open) return
         // Bail if linearMode and newItem is not +1/-1 index, return.
-        if (this.linearMode && (newItemIndex !== oldItemIndex+1 || newItemIndex !== oldItemIndex-1)) return
+        if (
+          this.linearMode 
+          && oldItemIndex !== newItemIndex
+          && newItemIndex !== oldItemIndex+1 
+          && newItemIndex !== oldItemIndex-1) {
+            return
+        } 
 
         // Skip if new item is disabled.
         while (newItem.disabled) {
