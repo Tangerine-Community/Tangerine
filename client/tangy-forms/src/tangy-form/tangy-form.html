@@ -339,6 +339,7 @@
         // Update the nav.
         this.updateItemNavigation()
         // Scroll to the new item.
+        await sleep(50)
         if (this.tangyFormResponse.focusIndex === 0) {
           this.scrollIntoView({behavior: 'smooth', block: 'start'}) 
 
