@@ -6,7 +6,7 @@ import { ManageMySchoolsListComponent } from './manage-my-schools-list/manage-my
 import { UserProfileComponent } from './user-profile.component';
 
 const routes = [{
-  path: 'manage-users',
+  path: 'manage-user-profile',
   component: UserProfileComponent,
   canActivate: [LoginGuard]
 },
