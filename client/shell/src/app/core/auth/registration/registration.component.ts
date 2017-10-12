@@ -41,11 +41,11 @@ export class RegistrationComponent implements OnInit {
     }
 
     register(): void {
+        delete this.user.confirmPassword;
         const userData = Object.assign({}, this.user);
-        delete userData.confirmPassword;
         if (!this.isUsernameTaken) {
             Observable.fromPromise(this.userService.create(userData)).subscribe(data => {
-                this.loginUserAfterRegistration(userData.username, userData.password);
+                this.loginUserAfterRegistration(userData.username, this.user.password);
             }, error => {
                 console.log(error);
                 this.errorMessage = 'Error creating User';
