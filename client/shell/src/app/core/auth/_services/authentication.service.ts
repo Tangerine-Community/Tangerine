@@ -96,6 +96,12 @@ export class AuthenticationService {
     return isNoPasswordMode === 'noPassword';
   }
 
+  getCurrentUser() {
+    return localStorage.getItem('currentUser');
+  }
+  getCurrentUserDBPath() {
+    return localStorage.getItem('currentUser');
+  }
 
 
 }
