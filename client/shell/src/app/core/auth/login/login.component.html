@@ -1,25 +1,35 @@
 <div class="login-app-content">
-
   <div class="group">
-
-    <form role="form" (submit)="login()"><br>
-      <h3 class="tangy-foreground">Login to Tangerine</h3>
+    <form role="form" (submit)="login()">
+      <br>
+      <h3 class="tangy-foreground-primary">Login to Tangerine</h3>
       <md-input-container>
         <input mdInput type="text" required [(ngModel)]="user.username" id="username" name="username">
         <md-placeholder>
           <i class="material-icons app-input-icon">face</i>Username
         </md-placeholder>
-      </md-input-container><br><br>
+      </md-input-container>
+      <br>
+      <br>
       <md-input-container>
         <input mdInput type="password" required [(ngModel)]="user.password" id="password" name="password">
         <md-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>Password
         </md-placeholder>
-      </md-input-container><br><br>
+      </md-input-container>
+      <br>
+      <br>
       <button md-raised-button color="primary" type="submit" name="action">LOGIN</button>
-      <span><a md-button routerLink="/register"><small>REGISTER</small></a></span>
-      <br><br>
-      <span id="err"><small>{{errorMessage}}</small></span>
+      <span>
+        <a md-button routerLink="/register">
+          <small>REGISTER</small>
+        </a>
+      </span>
+      <br>
+      <br>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
     </form>
   </div>
 </div>

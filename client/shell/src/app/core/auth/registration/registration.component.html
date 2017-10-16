@@ -1,32 +1,42 @@
 <div class="login-app-content">
-
   <div class="group">
 
-    <form role="form" #registration='ngForm' novalidate (submit)="register()"><br>
-      <h3 class="tangy-foreground">Register on Tangerine</h3>
+    <form role="form" #registration='ngForm' novalidate (submit)="register()">
+      <br>
+      <h3 class="tangy-foreground-primary">Register on Tangerine</h3>
       <md-input-container>
-        <label>Username</label>
         <input name="username" type="text" mdInput [(ngModel)]="user.username" (blur)="doesUserExist(user.username)" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">face</i>Username
+        </md-placeholder>
       </md-input-container>
       <md-input-container>
-        <label>Email</label>
         <input name="email" type="email" mdInput [(ngModel)]="user.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
           required>
+        <md-placeholder>
+          <i class="material-icons md-11">mail_outline</i>Email
+        </md-placeholder>
       </md-input-container>
-      <br><br>
+      <br>
       <md-input-container>
-        <label>Password</label>
         <input name="password" mdInput [(ngModel)]="user.password" type="password" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">lock_open</i>Password
+        </md-placeholder>
       </md-input-container>
       <md-input-container>
-        <label>Confirm Password</label>
         <input name="confirmPassword" mdInput [(ngModel)]="user.confirmPassword" type="password" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">lock_open</i>Confirm Password
+        </md-placeholder>
       </md-input-container>
-      <br><br>
+      <br>
       <!-- <button md-raised-button (click)="login()">Login</button> -->
       <button md-raised-button color="primary" type="submit" [disabled]="registration.invalid||user.password!==user.confirmPassword">REGISTER</button>
       <a md-button routerLink="#/login">LOGIN</a>
-      <span id="err"><small>{{errorMessage}}</small></span>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
     </form>
   </div>
 </div>
