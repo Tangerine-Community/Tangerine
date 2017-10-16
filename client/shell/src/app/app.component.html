@@ -1,15 +1,21 @@
 <md-toolbar color="primary" class="mat-typography">
-  <button *ngIf="showNav" md-button (click)="sidenav.open()"><i class="material-icons">menu</i></button>
+  <button *ngIf="showNav" md-button (click)="sidenav.open()">
+    <i class="material-icons">menu</i>
+  </button>
 
-  <span><a class="tangy-no-text-decoration tangy-foreground-white" routerLink="home">Tangerine Forms</a></span>
+  <span>
+    <a class="tangy-no-text-decoration tangy-foreground-white" routerLink="home">Tangerine Forms</a>
+  </span>
   <span class="tangerine-toolbar-spacer"></span>
 
-  <button *ngIf="showNav" [mdMenuTriggerFor]="appMenu" md-button><i class="material-icons">account_box</i></button>
+  <button *ngIf="showNav" [mdMenuTriggerFor]="appMenu" md-button>
+    <i class="material-icons">account_box</i>
+  </button>
   <md-menu #appMenu="mdMenu">
     <a routerLink="manage-user-profile" md-menu-item>
-        <i class="material-icons md-18">create</i>
-        <span>Manage Profile</span> 
-      </a>
+      <i class="material-icons md-18">create</i>
+      <span>Manage Profile</span>
+    </a>
     <a routerLink="create-nodes" md-menu-item>
       <i class="material-icons md-18">settings</i>
       <span>My Settings</span>
@@ -26,6 +32,10 @@
     <md-nav-list>
       <md-list-item>
         <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="tangy-forms">Forms</a>
+      </md-list-item>
+      <br>
+      <md-list-item>
+        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="case-management">Case Management</a>
       </md-list-item>
       <br>
       <md-list-item>

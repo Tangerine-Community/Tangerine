@@ -43,11 +43,11 @@ export { AppComponent }
     TangerineV2Module,
     TangyFormsModule,
     AuthModule,
+    CaseManagementModule,
     UserProfileModule,
     SyncRecordsModule,
     NodeManagerModule,
-    AppRoutingModule,
-    CaseManagementModule
+    AppRoutingModule
   ],
   providers: [WindowRef],
   bootstrap: [AppComponent]
