@@ -54,6 +54,15 @@
         --paper-card-header-color: #FF9800;
         color: #000;
       }
+      :host([open]) #open {
+        display: none;
+      }
+      :host(:not([open])) #close {
+        display: none;
+      }
+      :host([disabled]) #open {
+        display: none;
+      }
       :host([no-buttons]) #open,
       :host([no-buttons]) #close {
         display: none;
@@ -66,7 +75,6 @@
       <div class="card-actions">
         <paper-button id="open">open</paper-button>
         <paper-button id="close">close</paper-button>
-        <!--paper-button on-click="submitListener" disable>submit</paper-button-->
       </div>
     </paper-card>
   </template>
@@ -133,14 +141,10 @@
         this.response = {}
         this.$.close.addEventListener('click', () => {
           this.open = false
-          this.$.close.hidden = true
-          this.$.open.hidden = false 
         })
         this.$.open.addEventListener('click', () => {
           if (this.disabled) return
           this.open = true 
-          this.$.close.hidden = false 
-          this.$.open.hidden = true
         })
       }
 
