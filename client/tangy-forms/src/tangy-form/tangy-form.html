@@ -263,8 +263,8 @@
         }
         // If linearMode, turn off buttons on items.
         if (this.linearMode) {
-          let items = this.querySelectorAll('tangy-form-items')
-          for (item of items) item.noButtons = true
+          let items = this.querySelectorAll('tangy-form-item')
+          for (let item of items) item.noButtons = true
         }
         // Open last focused item or first item.
         if (this.response.focusItemId) {
