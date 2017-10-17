@@ -140,10 +140,10 @@
         <div id="tangy-form-questions--form-container">
           <slot id="tangy-form-questions--form"></slot>
         </div>
-        <paper-fab id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
-        <paper-fab id="show-responses-fab" on-click="showResponses" icon="icons:save"></paper-fab>
-        <paper-fab id="up-fab" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
-        <paper-fab id="down-fab" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
+        <paper-fab id="new-response-fab" on-click="newResponseButtonListener" icon="icons:add"></paper-fab>
+        <paper-fab id="show-responses-fab" on-click="showResponsesPane" icon="icons:save"></paper-fab>
+        <paper-fab id="up-fab" on-click="upFabClickListener" icon="hardware:keyboard-arrow-up"></paper-fab>
+        <paper-fab id="down-fab" on-click="downFabClickListener" icon="hardware:keyboard-arrow-down"></paper-fab>
         <paper-progress id="tangy-form-questions--progress" value="0" secondary-progress="100"></paper-progress>
       </div>
       <div id="tangy-form-responses" hidden>
@@ -152,7 +152,7 @@
         <ul>
           <template is="dom-repeat" items="{{responses}}">
             <li> 
-              [[item.startDatetime]]
+              [[item.datetime]]
               <paper-button data-response-id="[[item._id]]" on-click="resumeResponseButtonListener" raised><iron-icon icon="icons:launch"></iron-icon></paper-button> 
               <template is="dom-if" if="{{item.isCurrentTangyFormResponse}}">
                 <span style="color: #8BC34A;"> *</span>
@@ -206,157 +206,187 @@
         super.connectedCallback();
         // Use a PouchDB to store responses.
         this.db = new PouchDB(this.database)
-        // Stash initial state of innerHTML for use when starting a new response 
-        // after a prior response was worked on.
         this._formDefinition = this.innerHTML
+        this._isSaving = false
+        this._isFocusing = false
+        // this.loadResponsesPane()
+        // this.showResponsesPane()
+        this.loadQuestionsPane()
+        this.showQuestionsPane()
+      }
+
+      showQuestionsPane() {
+        this.$['tangy-form-responses'].hidden = true 
+        this.$['tangy-form-questions'].hidden = false
+      }
+
+      showResponsesPane() {
+        this.loadResponsesPane()
+        this.$['tangy-form-questions'].hidden = true 
+        this.$['tangy-form-responses'].hidden = false 
+      }
+
+      async loadQuestionsPane() {
         // Get the current response, else catch and create new response.
         let currentTangyFormResponse
         try {
           currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
         } catch (e) {
-          let tangyFormResponse = new TangyFormResponseModel({
-            formId: this.id
-          })
+          tangyFormResponse = new TangyFormResponseModel({form_id: this.id})
           let dbResponse = await this.db.post(tangyFormResponse)
           tangyFormResponse = await this.db.get(dbResponse.id)
           dbResponse = await this.db.put({
             _id: `current_tangy_form_response_${this.id}`,
             responseId: tangyFormResponse._id
-          })
+          });
           currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
         }
-        this.response = await this.db.get(currentTangyFormResponse.responseId)
-        this.render()
-      }
+        this.tangyFormResponse = await this.db.get(currentTangyFormResponse.responseId)
 
-      render() {
-        this.$['tangy-form-responses'].hidden = true 
-        this.$['tangy-form-questions'].hidden = false
         // Load items from item stash that was made on connected callback. Good for resuming fresh. 
         this.innerHTML = this._formDefinition
-        // Load response data into items.
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        for (let item of items) {
-          if (this.response.items.hasOwnProperty(item.id)) {
-            item.response = this.response.items[item.id] 
-          } else {
-            this.response.items[item.id] = {}
+
+        // Iterate through items to bind to them and prepare response.
+        let items = this.querySelectorAll('tangy-form-item')
+        items.forEach((item, index) => {
+          // Make room in response for each item.
+          if (!this.tangyFormResponse.items.hasOwnProperty(item.id)) {
+            this.tangyFormResponse.items[item.id] = {}
           }
-        }
-        // Listen for Item Change events, save to response.
-        this.addEventListener('tangy-form-item-variables-change', this.onItemVariablesChange)
-        // If focusMode, hide other items when one opens.
-        if (this.hideClosedItems) {
-          this.addEventListener('tangy-form-item-open-change', (event) => {
-            let currentTarget = event.currentTarget
-            if (this.focusMode) {
-              this.focusOnItem(currentTarget.id)
-            }
+          // Set the response json on the item for resuming.
+          item.setAttribute('response-json', JSON.stringify(this.tangyFormResponse.items[item.id]))
+          // Listen for Item Change events, save to response.
+          item.addEventListener('item-change', async (event) => {
+            this._isSaving = true
+            this.tangyFormResponse.items[event.currentTarget.id] = event.currentTarget.response
+            await this.db.post(this.tangyFormResponse)
+            let tangyForm = this
+            let response = this.tangyFormResponse
+            eval(this.onItemChange)// .bind(this)
+            this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id)
+            this._isSaving = false
           })
-        }
-        // If linearMode, turn off buttons on items.
-        if (this.linearMode) {
-          let items = this.querySelectorAll('tangy-form-items')
-          for (item of items) item.noButtons = true
-        }
-        // Open last focused item or first item.
-        if (this.response.focusItemId) {
-          this.focusOnItem(this.response.focusItemId)
-        } else {
-          let firstItem = this.querySelector('tangy-form-item')
-          this.focusOnItem(firstItem.id)
-        }
+          // Listen for clicks on items to focus and open them.
+          item.addEventListener('click', (event) => {
+            let currentTarget = event.currentTarget
+            this.focusOnItem(currentTarget.id)
+          })
+        })
+
+        // Open the focused item.
+        this.focusOnItem(items[this.tangyFormResponse.focusIndex].id)
+
       }
 
-      async onItemVariablesChange(event) {
-        this.response.items[event.srcElement.id] = event.srcElement.response
-        await this.db.post(this.response)
-        this.response = await this.db.get(this.response._id)
-        // onItemChange logic.
-        let tangyForm = this
-        let response = this.response
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        eval(this.onItemChange)// .bind(this)
+      async loadResponsesPane() {
+        let currentResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
+        // @TODO Query for form response docs with `doc.form_id` equal to `this.form_id`.
+        let allDocs = (await this.db.allDocs({include_docs: true})).rows.map((row) => { return row.doc})
+        allDocs.sort(function (a, b) {
+          return b.unixtime - a.unixtime;
+        });
+        this.responses = allDocs.filter((doc) => {
+          if (doc.type === 'tangy-form-response' && doc.form_id == this.id) {
+            if (doc._id == currentResponse.responseId) {
+              doc.isCurrentTangyFormResponse = true
+            } else {
+              doc.isCurrentTangyFormResponse = false
+            }
+            return doc
+          }
+        }) 
       }
 
       async focusOnItem(itemId) {
-        // Close all items.
+
+        // Get items.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        items.forEach((item) => item.removeAttribute('open'))
-        // If there is another item we stuck on closing it, divert focus to invalid item.
-        let stuckItemIndex = items.findIndex((item) => item.stuck == true)
-        if (stuckItemIndex !== -1) itemId = items[stuckItemIndex].id
-        // Get item to focus on.
-        let item = this.querySelector(`#${itemId}`)
-        // Save our new focus item ID.
-        this.response.focusItemId = item.id 
-        await this.db.put(this.response)
-        this.response = await this.db.get(this.response._id);
-        // Open item.
-        if(!item.open) item.open = true
+        let oldItem = items[this.tangyFormResponse.focusIndex]
+        let oldItemIndex = this.tangyFormResponse.focusIndex 
+        let newItem = this.querySelector(`#${itemId}`)
+        let newItemIndex = items.findIndex(x => x.id == itemId);
+
+        // Bail if new focus if old item is has invalid state.
+        if (oldItem.valid === false) return
+        // Bail if newItem is already open, return.
+        if (newItem.open) return
+        // Bail if linearMode and newItem is not +1/-1 index, return.
+        if (
+          this.linearMode 
+          && oldItemIndex !== newItemIndex
+          && newItemIndex !== oldItemIndex+1 
+          && newItemIndex !== oldItemIndex-1) {
+            return
+        } 
+
+        // Skip if new item is disabled.
+        while (newItem.disabled) {
+          newItemIndex++
+          newItem = items[newItemIndex]
+          // Bail ff we hit the end of the road.
+          if (newItemIndex == items.length) return
+        }
+
+        // Save our new focus index.
+        this.tangyFormResponse.focusIndex = newItemIndex 
+        await this.db.put(this.tangyFormResponse)
+        this.tangyFormResponse = await this.db.get(this.tangyFormResponse._id);
+
+        // Close old item.
+        oldItem.open = false
+        // Open new item.
+        newItem.open = true
         // Update the nav.
         this.updateItemNavigation()
         // Scroll to the new item.
         await sleep(50)
-        item.scrollIntoView({behavior: 'smooth', block: 'start'}) 
-      }
+        if (this.tangyFormResponse.focusIndex === 0) {
+          this.scrollIntoView({behavior: 'smooth', block: 'start'}) 
 
-      focusOnPreviousItem(event) {
-        let previousItem = this.findPreviousItem(this.response.focusItemId)
-        this.focusOnItem(previousItem.id)
-      }
-
-      focusOnNextItem(event) {
-        let nextItem = this.findNextItem(this.response.focusItemId)
-        this.focusOnItem(nextItem.id)
-      }
-
-      findNextItem(relativeItemId) {
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        let relativeItemIndex = items.findIndex(item => item.id == relativeItemId)
-        let nextItemIndex = relativeItemIndex + 1
-        while(items[nextItemIndex] && items[nextItemIndex].disabled) nextItemIndex++
-        if (items[nextItemIndex]) {
-          return items[nextItemIndex]
         } else {
-          return false
+          newItem.scrollIntoView({behavior: 'smooth', block: 'start'}) 
         }
-      }
 
-      findPreviousItem(relativeItemId) {
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        let relativeItemIndex = items.findIndex(item => item.id == relativeItemId)
-        let previousItemIndex = relativeItemIndex - 1
-        while(items[previousItemIndex] && items[previousItemIndex].disabled) previousItemIndex--
-        if (items[previousItemIndex]) {
-          return items[previousItemIndex]
-        } else {
-          return false
-        }
       }
 
       updateItemNavigation() {
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        let focusItemIndex = items.findIndex(item => item.id == this.response.focusItemId)
-        // Update progress.
-        let progressCalculation = (parseInt(((focusItemIndex+1)/items.length)*100))
-        this.$['tangy-form-questions--progress'].setAttribute('value', progressCalculation)
+        // Find current item index. Assumes only one item is loaded.
+        let items = this.querySelectorAll('tangy-form-item')
+        let currentItemIndex = this.tangyFormResponse.focusIndex
         // Update the next and back buttons.
-        if (this.findNextItem(this.response.focusItemId)) {
+        if (items[currentItemIndex+1]) {
           this.$['down-fab'].removeAttribute('disabled')
         }
         else {
           this.$['down-fab'].setAttribute('disabled', true)
         }
-        if (this.findPreviousItem(this.response.focusItemId)) {
+        if (items[currentItemIndex-1]) {
           this.$['up-fab'].removeAttribute('disabled')
         }
         else {
           this.$['up-fab'].setAttribute('disabled', true)
         }
+        // Update progress.
+        let progressCalculation = (parseInt(((currentItemIndex+1)/items.length)*100))
+        this.$['tangy-form-questions--progress'].setAttribute('value', progressCalculation)
       }
 
-      async newResponse() {
+      async upFabClickListener(event) {
+        let items = this.querySelectorAll('tangy-form-item')
+        let itemId = items[this.tangyFormResponse.focusIndex-1].id 
+        this.focusOnItem(itemId)
+      }
+      async downFabClickListener(event) {
+        let items = this.querySelectorAll('tangy-form-item')
+        let itemId = items[this.tangyFormResponse.focusIndex+1].id 
+        this.focusOnItem(itemId)
+      }
+
+      async newResponseButtonListener() {
+        let fab = this.$['new-response-fab']
+        if (fab.classList.contains('expand-and-inform')) {
+          fab.toggleClass('shrink-to-normal');
+        }
         let currentTangyFormResponse
         try {
           currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
@@ -368,45 +398,59 @@
           currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
         }
         // Create the new response.
-        let tangyFormResponse = new TangyFormResponseModel({
-          formId: this.id
-        })
-        this.response = await this.db.get((await this.db.post(tangyFormResponse)).id)
-        currentTangyFormResponse.responseId = this.response._id 
+        let tangyFormResponse = new TangyFormResponseModel({ form_id: this.id })
+        let dbStatus = await this.db.post(tangyFormResponse)
+        currentTangyFormResponse.responseId = dbStatus.id
         await this.db.put(currentTangyFormResponse)
-        this.render()
+        this.loadQuestionsPane()
+        this.loadResponsesPane()
+        this.showQuestionsPane()
       }
 
-      async resumeResponse(event) {
+      async resumeResponseButtonListener(event) {
         let currentTarget = event.currentTarget
         let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
         currentTangyFormResponse.responseId = currentTarget.dataResponseId
         await this.db.put(currentTangyFormResponse)
-        this.response = this.db.get(currentTangyFormResponse.responseId)
-        this.render()
+        this.loadQuestionsPane()
+        this.loadResponsesPane()
+        this.showQuestionsPane()
       }
 
-      async showResponses() {
-        this.$['tangy-form-questions'].hidden = true 
-        this.$['tangy-form-responses'].hidden = false 
-        let currentResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-        // @TODO Query for form response docs with `doc.form_id` equal to `this.form_id`.
-        let allDocs = (await this.db.allDocs({include_docs: true})).rows.map((row) => { return row.doc})
-        allDocs.sort(function (a, b) {
-          return b.startUnixtime - a.startUnixtime;
-        });
-        this.responses = allDocs.filter((doc) => {
-          if (doc.collection === 'TangyFormResponse' && doc.formId == this.id) {
-            if (doc._id == currentResponse.responseId) {
-              doc.isCurrentTangyFormResponse = true
+      generateCSV() {
+        let blob = new Blob([], {type: 'application/csv;charset=utf-8;' });
+        // TODO: Scan for keys. Bonus points for doing it 100 sessions at a time.
+        // Get header row.
+        let keys = []
+        for (let response of this.responses) {
+          keys = _.uniq(keys.concat(Object.getOwnPropertyNames(response)))
+        }
+        // Get all data row.
+        blob = new Blob([blob, keys.join(',') + '\n'], { type: 'application/csv;charset=utf-8;' });
+        for (let response of this.responses) {
+          let row = []
+          // TODO: Loop through keys, assign empty values for nonmatching keys.
+          for (let key of keys) {
+            if (response.hasOwnProperty(key)) {
+              row.push('"' + encodeURI(response[key]) + '"')
             } else {
-              doc.isCurrentTangyFormResponse = false
+              row.push('""')
             }
-            return doc
           }
-        }) 
+          blob = new Blob([blob, row.join(',') + '\n'], { type: 'application/csv;charset=utf-8;' });
+        }
+        console.log('creating element');
+        const element = window.document.createElement('a');
+        element.setAttribute('href', URL.createObjectURL(blob));
+        element.setAttribute('download', this.form_id + '.csv');
+        console.log('appending to DOM');
+        element.style.display = 'none';
+        window.document.body.appendChild(element);
+        console.log('Triggering download.');
+        element.click();
+        console.log('Cleaning up.');
+        window.document.body.removeChild(element);
       }
-
     }
 
     const sleep = (ms) => new Promise((res, rej) => { 
