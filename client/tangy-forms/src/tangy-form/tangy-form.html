@@ -198,6 +198,10 @@
           linearMode: {
             type: Boolean,
             value: false
+          },
+          hideClosedItems: {
+            type: Boolean,
+            valuse: false
           }
         };
       }
@@ -245,13 +249,16 @@
         }
         // Listen for Item Change events, save to response.
         this.addEventListener('tangy-form-item-variables-change', this.onItemVariablesChange)
-        // If focusMode, hide other items when one opens.
+        // If hideClosedItems, hide other items when one opens.
         if (this.hideClosedItems) {
           this.addEventListener('tangy-form-item-open-change', (event) => {
-            let currentTarget = event.currentTarget
-            if (this.focusMode) {
-              this.focusOnItem(currentTarget.id)
-            }
+            items.forEach((item) => {
+              if (!item.open) {
+                item.style.display = 'none'
+              } else {
+                item.style.display = 'block'
+              }
+            })
           })
         }
         // If linearMode, turn off buttons on items.

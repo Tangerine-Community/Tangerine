@@ -185,7 +185,7 @@
           // Listen for change events, set data to response.
           ironForm.addEventListener('change', this.ironFormChangeListener.bind(this))
           // Notify anything watching that we are all done opening.
-          this.dispatchEvent(new CustomEvent('tangy-form-item-open-change'))
+          this.dispatchEvent(new CustomEvent('tangy-form-item-open-change', {bubbles: true}))
         }
       }
 
