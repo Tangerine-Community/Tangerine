@@ -3,8 +3,8 @@ Overview
 
 Whether you are using Tangerine for educational assessments, surveys, or
 both, the process for using the software involves the configuration of
-your instruments in Tangerine’s online environment (the “Wizard”) and
-thereafter using your instruments on an Android device (the “app”). This
+your instruments in Tangerine’s online environment (the "Wizard") and
+thereafter using your instruments on an Android device (the "app"). This
 manual is structured in the two components making up the Tangerine
 Platform:
 
@@ -99,12 +99,12 @@ If you would like to join an existing group, please contact the person
 who has created the group you would like to join and request that your
 user name be added to that group.
 
-If you would like to create a new group, click the “Account” button
-shown in the image above and then select “Join or create group” on the
+If you would like to create a new group, click the "Account" button
+shown in the image above and then select "Join or create group" on the
 page that follows. You will be asked to re-enter your password in order
 to create a new group. Once you have done this, you should now see your
 new group appear in the Wizard landing screen. In this example, the
-group “demo\_manual” now appears as an option.
+group "demo\_manual" now appears as an option.
 
 ![](.//media/image20.png)&nbsp;
 
@@ -186,14 +186,14 @@ in the Wizard will become its own screen on the tablet application. This
 section will walk you through the process of setting up a new assessment
 with multiple subtests.
 
-1.  Click the “New” button just below the ‘Groups’ button on the Group
+1.  Click the "New" button just below the ‘Groups’ button on the Group
     homepage and a box will appear for you to name your new assessment,
     as shown below:
 
 <!-- -->
 
-2.  Name your assessment, then click “Save.” Your assessment will now
-    appear in the “Group assessments” section of the homepage, which is
+2.  Name your assessment, then click "Save." Your assessment will now
+    appear in the "Group assessments" section of the homepage, which is
     categorized alphabetically.
 
 <!-- -->
@@ -212,9 +212,9 @@ Builder page, as shown below:
 
 ![](.//media/image24.jpeg)&nbsp;
 
-Change “Name” by typing into this field. The download key and ‘Group’
+Change "Name" by typing into this field. The download key and ‘Group’
 are not changeable. The ‘***Status***’ of an assessment will be
-highlighted in yellow as either “Active” or “Archived” – which you can
+highlighted in yellow as either "Active" or "Archived" – which you can
 change by clicking on the button (when the button is yellow, it is
 selected). This setting only affects whether an assessment is included
 into an APK file. An assessment’s status has no effect on data – both
@@ -228,7 +228,7 @@ Click ‘Add Subtest’ to create a new subtest, which will generate the
 ![](.//media/image25.jpeg)![](.//media/image26.jpeg)&nbsp;
 
 ***Subtest Type and Name:*** See the sections below for distinctions on
-the various subtest types. The “Name” is what will appear in the
+the various subtest types. The "Name" is what will appear in the
 application when you send it to a device, and as such can be where you
 enter the local language title for each subtest.
 
@@ -243,7 +243,7 @@ basic data**:**
 
 4.  The consent subtest.
 
-Additional subtests will be made up of “survey” or “grid” pages, the
+Additional subtests will be made up of "survey" or "grid" pages, the
 page formats most often chosen for the various EGRA/EGMA assessments and
 surveys. Subtests will appear in the sequence in which they were added.
 To reorder your subtests, simply click on the left-hand icon of three
@@ -267,7 +267,7 @@ To the right of each subtest, you will notice four things:
 
 2.  The edit button, ![](.//media/image29.jpeg), which you will click to edit subtest content.
 
-3.  The “Copy to…” button, ![](.//media/image18.jpeg), which you can use to send a copy of a given subtest to any other assessment in your group.
+3.  The "Copy to…" button, ![](.//media/image18.jpeg), which you can use to send a copy of a given subtest to any other assessment in your group.
 
 4.  The delete button, ![](.//media/image30.jpeg), which can be used to remove subtests from your assessment. You will be prompted to confirm this choice.
 
@@ -275,7 +275,7 @@ After clicking the edit icon,
 ![](.//media/image29.jpeg) , you will land on the Subtest Editor page. At the
 top of this page, you can edit the name of your pages/subtest as needed.
 Below the field showing the name of your subtest you will note the
-subtest’s “Prototype” – this is system information on the type of page
+subtest’s "Prototype" – this is system information on the type of page
 template you have chosen; this cannot be edited.
 
 **Subtest Editor Terms and Settings:**
@@ -286,7 +286,7 @@ as grid subtests, survey subtests).
 
 ***Language Code:*** here you can indicate the language to apply to this
 subtest. This refers to the system text that appears on the tablets
-(e.g. buttons like “Help”, “Next”, “Start” and “Stop”). When left blank,
+(e.g. buttons like "Help", "Next", "Start" and "Stop"). When left blank,
 the subtest’s system text will appear in English. At present, only
 French is an option for subtest system text language. To apply French to
 a subtest, enter ‘fr’ into the language code field.
@@ -308,7 +308,7 @@ accurate.
 ***Enumerator help***: you can include a description of the subtest
 assessment procedure for the enumerator’s benefit, or any other
 instruction that may not always need to be visible. This information can
-be collapsed/expanded by the enumerator with one touch on a “Help”
+be collapsed/expanded by the enumerator with one touch on a "Help"
 button during data collection to avoid taking up screen space on
 devices. This ensures that the information is easily accessible in case
 there is doubt as to how to administer the subtest and can provide
@@ -323,11 +323,11 @@ are **bolded**, while instructions to the enumerator are in normal
 typeface.
 
 ***Transition Comment:*** here you can add text that will appear at the
-bottom of the subtest screen in Tangerine, just above the “Next” button
+bottom of the subtest screen in Tangerine, just above the "Next" button
 that advances the user to the next subtest screen. It can be used to
-enter reminders or further instruction, such as “Take the reading
-passage away from the student before proceeding” or “Remember to confirm
-that all information on this screen is correct before pressing ‘Next.”
+enter reminders or further instruction, such as "Take the reading
+passage away from the student before proceeding" or "Remember to confirm
+that all information on this screen is correct before pressing ‘Next."
 
 ***Preferred Font***: here you can instruct Tangerine to apply (embed) a
 Unicode UTF-8 font of your choosing. This is important for some
@@ -342,11 +342,11 @@ computer’s browser, an Android tablet may not contain the same character
 library, and so may hide or distort some characters – always verify your
 instruments’ fidelity of display on your tablets.
 
-![](.//media/image4.png) *When pasting text into the Enumerator Help, Student Dialog or Transition comment boxes, first click on the icon marked “Paste as plain text” in the top row of the editor, the fifth icon from the left (see above screenshot for Student Dialog). Paste the text into the box that appears, click “OK”, and the text will appear in the Tangerine Wizard. If you copy text directly from a rich text program such as Microsoft Word, your copied text will likely be accompanied by additional formatting which will distort the text in the kinds of wizards (aka “WYSIWYG’s) used by Tangerine. This additional markup formatting may cause other errors in your instruments; if you begin to see odd formatting or text displaying incorrectly on screens, check that your dialog texts do not contain additional formatting by copying all text into a plain text editor (such as Notepad or TextEdit), deleting it from the dialog box in Tangerine, and re-copying back in from the plain text editor.*
+![](.//media/image4.png) *When pasting text into the Enumerator Help, Student Dialog or Transition comment boxes, first click on the icon marked "Paste as plain text" in the top row of the editor, the fifth icon from the left (see above screenshot for Student Dialog). Paste the text into the box that appears, click "OK", and the text will appear in the Tangerine Wizard. If you copy text directly from a rich text program such as Microsoft Word, your copied text will likely be accompanied by additional formatting which will distort the text in the kinds of wizards (aka "WYSIWYG’s) used by Tangerine. This additional markup formatting may cause other errors in your instruments; if you begin to see odd formatting or text displaying incorrectly on screens, check that your dialog texts do not contain additional formatting by copying all text into a plain text editor (such as Notepad or TextEdit), deleting it from the dialog box in Tangerine, and re-copying back in from the plain text editor.*
 
 ### 6.1 The Date and Time Subtest
 
-This subtest is used to generate date and time variables in your data set. When this subtest appears on the tablet screen, it will auto-populate the date and time variables with the current settings from the tablet. Typically, data collectors should just press the “Next” button if the data should reflect the time that the data collection actually occurred. The Date and Time page cannot be edited beyond its title. Although there is provision for Enumerator help and instructions, these are usually not needed. If desired, data collectors can manually adjust the date and time which appear on the screen (e.g. such as when entering into Tangerine data which was originally collected on paper at an earlier time/date).
+This subtest is used to generate date and time variables in your data set. When this subtest appears on the tablet screen, it will auto-populate the date and time variables with the current settings from the tablet. Typically, data collectors should just press the "Next" button if the data should reflect the time that the data collection actually occurred. The Date and Time page cannot be edited beyond its title. Although there is provision for Enumerator help and instructions, these are usually not needed. If desired, data collectors can manually adjust the date and time which appear on the screen (e.g. such as when entering into Tangerine data which was originally collected on paper at an earlier time/date).
 
 ![](.//media/image4.png) *The Tangerine app will pull the date and time information from the device on which it is installed. To ensure accurate time stamps for your data, verify that the date and time is configured properly and consistently on all of your devices prior to data collection.*
 
@@ -358,28 +358,28 @@ create multiple fields for specifying your data location sites. These
 are what you enter into the field labeled, ‘Geographic Levels.’ In the
 example below, the labels are ‘Province’, ‘District’, ‘Name’ and ‘ID.’
 The default option for separating these fields is by the use of a comma,
-as indicated by the highlighted “Comma” button. Each of these geographic
+as indicated by the highlighted "Comma" button. Each of these geographic
 level labels will be its own field for your data collectors to enter
 site-specific location info:
 
 ![](.//media/image31.png)&nbsp;
 ![](.//media/image32.png)&nbsp;
 
-In the field for “Location Data” you can enter the site location details for the collection points in your sample. Once you have loaded the Geographic Levels and respective data, the data collectors filling out this subtest in the field will be prompted to select site location details from the list you have entered in this subtest.
+In the field for "Location Data" you can enter the site location details for the collection points in your sample. Once you have loaded the Geographic Levels and respective data, the data collectors filling out this subtest in the field will be prompted to select site location details from the list you have entered in this subtest.
 
 ### 6.3 The Student ID Subtest
 
 The Student ID subtests is used to generate a unique ID code for your data record. The page cannot be edited beyond its title. Although there is provision for Enumerator help and instructions, these are usually not needed. Data collectors simply press the ‘Generate’ button as shown below, then ‘Next’ to proceed, once a code has appeared in the box below ‘Random Identifier.’
 
-![](.//media/image4.png) *If you intend to track specific survey participants across multiple assessments, multiple enumerators or over a span of time, it will be important for the enumerator or the participant to retain their ID number. You cannot assign numbers ahead of time to participants, such as “ABCDEF”, as the Tangerine system follows an algorithmic pattern to generate ID numbers. You have two options in using this type of subtest: either click “Generate” to execute a new ID number, or enter an ID number that has been previously created by the Tangerine system. If you want to require users to enter an ID number that has been previously generated by Tangerine, consider hiding the ‘Generate’ button (see appendix for applicable command).*
+![](.//media/image4.png) *If you intend to track specific survey participants across multiple assessments, multiple enumerators or over a span of time, it will be important for the enumerator or the participant to retain their ID number. You cannot assign numbers ahead of time to participants, such as "ABCDEF", as the Tangerine system follows an algorithmic pattern to generate ID numbers. You have two options in using this type of subtest: either click "Generate" to execute a new ID number, or enter an ID number that has been previously created by the Tangerine system. If you want to require users to enter an ID number that has been previously generated by Tangerine, consider hiding the ‘Generate’ button (see appendix for applicable command).*
 
 ### 6.4 The Consent Subtest
 
-The consent subtest is used to show in your data that the assessment participant or survey responder agreed to proceed. This subtest generates a “Yes / No” question. If “Yes” is marked as the answer, the instrument will proceed. If “No” is marked, this indicated non-consent, and the instrument will automatically skip to its end.
+The consent subtest is used to show in your data that the assessment participant or survey responder agreed to proceed. This subtest generates a "Yes / No" question. If "Yes" is marked as the answer, the instrument will proceed. If "No" is marked, this indicated non-consent, and the instrument will automatically skip to its end.
 
-At the bottom of the Subtest Editor page for Consent, you will find a box titled “Consent prompt” - this is where you can customize the phrasing and language of the consent prompt to the specific assessment target group (e.g., “Does Student consent?”, or “Does the Principal consent to participate in the interview?”).
+At the bottom of the Subtest Editor page for Consent, you will find a box titled "Consent prompt" - this is where you can customize the phrasing and language of the consent prompt to the specific assessment target group (e.g., "Does Student consent?", or "Does the Principal consent to participate in the interview?").
 
-As you will see with other subtests, a similar process of filling out a “prompt” will occur. A “prompt” in Tangerine indicates the text that will be seen by the data collector asking the questions or collecting information from participants. Almost all of the other subtests are either of the “survey” format (question and answer, or untimed assessment formats) or “grid” format (timed subtests). Only one “Consent” subtest type will function properly in each instrument. For options on additional consent cut-offs, see section 6.8.
+As you will see with other subtests, a similar process of filling out a "prompt" will occur. A "prompt" in Tangerine indicates the text that will be seen by the data collector asking the questions or collecting information from participants. Almost all of the other subtests are either of the "survey" format (question and answer, or untimed assessment formats) or "grid" format (timed subtests). Only one "Consent" subtest type will function properly in each instrument. For options on additional consent cut-offs, see section 6.8.
 
 ### 6.5 Grid pages or Timed Subtests
 
@@ -391,9 +391,9 @@ and Transition Comment, there are fields and settings unique to these
 timed tests that will appear in the Subtest Editor for any grid subtest
 prototype.
 
-The ***Variable name*** you choose, such as “letters”, will be the prefix added to each grid item in your results file. In this case, each grid item (each letter) in your results file will be listed as “letter\_1”, “letter\_2”, etc., based on their sequential position in the ***Grid items*** box.
+The ***Variable name*** you choose, such as "letters", will be the prefix added to each grid item in your results file. In this case, each grid item (each letter) in your results file will be listed as "letter\_1", "letter\_2", etc., based on their sequential position in the ***Grid items*** box.
 
-In the field for “Grid Items”, simply paste in the items (letters, words, numbers) you have selected for this subtest. Delimit each item with a single space (if you have extra space breaks the system will remove these); Tangerine will generate grid buttons based on this spacing. For example, if you want the equation “5+3=(8)” to appear on one grid button, enter the equation with no spaces between its characters, adding spaces in between equations to indicate a new button. After entering your variable name and grid items, you can alter several configuration settings for how your grid will look and behave:
+In the field for "Grid Items", simply paste in the items (letters, words, numbers) you have selected for this subtest. Delimit each item with a single space (if you have extra space breaks the system will remove these); Tangerine will generate grid buttons based on this spacing. For example, if you want the equation "5+3=(8)" to appear on one grid button, enter the equation with no spaces between its characters, adding spaces in between equations to indicate a new button. After entering your variable name and grid items, you can alter several configuration settings for how your grid will look and behave:
 
 ***Right-to-Left direction:*** This setting will reverse the default order of scoring for grid tests.
 
@@ -401,19 +401,19 @@ In the field for “Grid Items”, simply paste in the items (letters, words, nu
 
 ***Layout mode:*** ‘Fixed’ will stabilize the grid’s settings irrespective of the tablet’s screen orientation, ‘Variable’ will attempt to adjust to screen optimization. ‘Fixed’ is the default and recommended setting.
 
-***Grid font size:*** Medium is the default. Select “small” if you have particularly wide grids. When testing on tablets, it is important that your users have enough blank space in the margins next to the grid to scroll without tapping assessment items.
+***Grid font size:*** Medium is the default. Select "small" if you have particularly wide grids. When testing on tablets, it is important that your users have enough blank space in the margins next to the grid to scroll without tapping assessment items.
 
 ***Capture item at specified number of seconds:*** This option allows you to take a ‘snapshot’ of a student’s progress at a specific time point.
 
 ***Capture last item attempted:*** Ensures that your enumerators will be forced to indicate the end point of the student’s progress through the grid items.
 
-***Mark entire line button:*** For all but the first line of grid items, if this setting is left at ‘Yes’, a button with an asterisk “\*” will appear to the right of each grid row, allowing assessors to quickly mark incorrect an entire line of items.
+***Mark entire line button:*** For all but the first line of grid items, if this setting is left at ‘Yes’, a button with an asterisk "\*" will appear to the right of each grid row, allowing assessors to quickly mark incorrect an entire line of items.
 
 ***Columns:*** Indicate in how many columns you want to display the items (for letters we usually select 10 columns of 10 items each, for familiar words 5 columns of 10 items each);
 
 ***Autostop***: the number of consecutive incorrect items after which the subtest stops automatically. The autostop calculation will only activate if the first grid item is marked incorrect. For example, with an autostop value of 10, if a child has the first 4 items correct and then the following 10 items incorrect, the test will not autostop. It will only autostop if the first 10 items are all incorrect.
 
-***Timer***: The number of seconds you would like to allow for grid items to be attempted. If you would like to use the grid test setup, but not the timer, set the Timer value to zero and the “Capture last item attempted” setting to “No.”
+***Timer***: The number of seconds you would like to allow for grid items to be attempted. If you would like to use the grid test setup, but not the timer, set the Timer value to zero and the "Capture last item attempted" setting to "No."
 
 ***Last Item Attempted Bracket in Timed Tests:*** The last item attempted by the student is critical in marking the speed and progress of an assessment. The bracket itself is a red outline that will be placed around the final grid item attempted. When using a timed test, there are 3 possible scenarios for how the bracket will be placed:
 
@@ -435,66 +435,66 @@ In the field for “Grid Items”, simply paste in the items (letters, words, nu
     item has been attempted, the red bracket will automatically appear
     over the final grid item.
 
-To save your changes in the Subtest editor, click “***Done***,” to save
+To save your changes in the Subtest editor, click "***Done***," to save
 and return to the Assessment Builder, where you can then edit the next
 subtest or add a new page/subtest to your assessment or go back to the
 Wizard home screen to run and verify your rendering work.
 
-When you “Run” this subtest you will see a Start button and a grid of
-empty grey cells. The enumerator will hit “Start” to start the timer
+When you "Run" this subtest you will see a Start button and a grid of
+empty grey cells. The enumerator will hit "Start" to start the timer
 counting backwards from 60 seconds (or whatever time you have
 designated) and to see the items in the grid appear. The default result
-for each grid item is “correct”. To identify an item as “incorrect”, the
+for each grid item is "correct". To identify an item as "incorrect", the
 enumerator simply touches whichever item was incorrect (to self-correct,
 they just touch the same item again to de-select it). If a child has
 completed all items before the time is up, the enumerator will hit the
-“Stop” button to stop the timer and for the system to record the
+"Stop" button to stop the timer and for the system to record the
 remaining time (12 seconds in the example below).
 
 ![](.//media/image34.jpeg)&nbsp;
 
 The enumerator then selects the last item attempted (shown below with
-red border) and then moves on to the next subtest by hitting “Next”:
+red border) and then moves on to the next subtest by hitting "Next":
 
 ![](.//media/image35.jpeg)&nbsp;
 
-***Input Mode:*** When an enumerator starts a grid test, the “Input
-Mode” shown at the bottom of the grid is set by default to “Mark” –
+***Input Mode:*** When an enumerator starts a grid test, the "Input
+Mode" shown at the bottom of the grid is set by default to "Mark" –
 meaning that the enumerator is marking the test results. When the test
 is stopped (either by autostop, the time running out, or by the
-enumerator clicking “Stop”), the “Input Mode” switches automatically to
-“Last attempted” as shown by this button’s highlighted state in the
+enumerator clicking "Stop"), the "Input Mode" switches automatically to
+"Last attempted" as shown by this button’s highlighted state in the
 screenshot above. After the test, the enumerator can manually switch the
-“Input Mode” back to “Mark” in the event that he or she needs to make
+"Input Mode" back to "Mark" in the event that he or she needs to make
 corrections onto the test results after the time has been stopped. This
 should only be used in cases of an erroneous click or difficulty in
 marking a grid item during the timed test – it is not recommended to
 have enumerators rely on this mode regularly to score their results. No
 changes to test marks can be made to items positioned sequentially after
-the grid item marked “Last attempted” – this is a logic built into
-Tangerine to avoid confusing results (i.e. item 10 is marked as “last
-attempted” and item 13 is marked “incorrect”).
+the grid item marked "Last attempted" – this is a logic built into
+Tangerine to avoid confusing results (i.e. item 10 is marked as "last
+attempted" and item 13 is marked "incorrect").
 
 ### 6.6 Survey pages (Untimed and Question and Answer Subtests)
 
-There are two levels of editing survey pages: the “top” level identifies
-the survey subtest’s name and instructions and the “lower” level
+There are two levels of editing survey pages: the "top" level identifies
+the survey subtest’s name and instructions and the "lower" level
 involves editing the separate questions that comprise the survey itself.
-To begin, click on “Add Subtest” at the bottom of the Assessment Builder
+To begin, click on "Add Subtest" at the bottom of the Assessment Builder
 page and select an option from the ‘Survey’ category of subtest types.
-In the example below, we have chosen the “Student Information”
+In the example below, we have chosen the "Student Information"
 prototype, which is perhaps the most common and generic form and can be
 customized to suit many types of survey needs.
 
 ![](.//media/image36.jpeg)&nbsp;
 
-Once you have selected and named your survey type, clicking “Add” will
+Once you have selected and named your survey type, clicking "Add" will
 create this subtest and attach it to your assessment. You should now see
 your new survey subtest appear in the list of subtests within your
 assessment. Click on the edit icon to begin adding survey questions.
 
-You will already be familiar with the fields for “Skippable”,
-“Enumerator help”, “Student Dialogue” and “Transition Comment”, which
+You will already be familiar with the fields for "Skippable",
+"Enumerator help", "Student Dialogue" and "Transition Comment", which
 you can adjust to your needs. The other settings fields available in the
 Subtest Editor are as follows:
 
@@ -511,12 +511,12 @@ Subtest Editor are as follows:
 > ***Autostop After N Incorrect***: In some instances, you might need to
 > configure a survey-type test instrument to stop automatically after a
 > specified number of consecutively incorrect responses. This option
-> will “autostop” the subtest by skipping the remaining questions
+> will "autostop" the subtest by skipping the remaining questions
 > without requiring skip logic commands entered for each question. This
 > feature is used in the ‘Initial Sounds’ subtest of the EGRA, shown
 > below, which consists of 10 survey-type questions, each of which has
 > three response options: Correct / Incorrect / No response. To be
-> considered an “incorrect” response that counts towards the
+> considered an "incorrect" response that counts towards the
 > ***consecutive*** errors needed to trigger this type of autostop,
 > incorrect response options must be assigned a value of 0 or 9.
 >
@@ -533,10 +533,10 @@ Subtest Editor are as follows:
 > been autostopped, the linked survey subtest will be skipped over
 > automatically.
 
-By clicking “***Add Question***,” you will be taken through adding
-questions as per the process outlined below. Under the “Prompt” box, you
+By clicking "***Add Question***," you will be taken through adding
+questions as per the process outlined below. Under the "Prompt" box, you
 will indicate the question the enumerator will ask the student (e.g.,
-“What language do you speak at home?”). The “Variable name” is what you
+"What language do you speak at home?"). The "Variable name" is what you
 will name your question, and which will be included in your database
 (e.g. s\_q1 – for student questionnaire question 1).
 
@@ -561,13 +561,13 @@ formats and answer categories for non-open questions.
 > will not be read out to the participant as part of the question. This
 > is helpful when answer categories are of the Correct, Incorrect, No
 > Response format and the enumerator is to score, and also when you want
-> to provide format instructions such as “Please write the answer as a
-> number” or “Please write the date as month-day-year”. When the answer
-> options are set to “correct / incorrect / no response”, we strongly
+> to provide format instructions such as "Please write the answer as a
+> number" or "Please write the date as month-day-year". When the answer
+> options are set to "correct / incorrect / no response", we strongly
 > advise supporting the enumerator by providing the correct answer as a
 > hint, e.g., for a reading comprehension question, the question prompt
-> may be “What is Modou's little brother's name?”, the note provided may
-> be “Samba”.
+> may be "What is Modou's little brother's name?", the note provided may
+> be "Samba".
 >
 > ***Skip Logic, Custom Validation, and Action on Display:*** These
 > fields are used to define conditions and rules for when your question
@@ -583,7 +583,7 @@ formats and answer categories for non-open questions.
 > The timed grid page with short story items is typically followed with
 > the Reading Comprehension Subtest, which is a series of survey
 > questions. To link the two, select the Oral Passage Reading grid
-> subtest from the drop down box “Linked to grid” in the Subtest Editor
+> subtest from the drop down box "Linked to grid" in the Subtest Editor
 > for the Reading Comprehension Subtest.
 >
 > ***To link individual questions to grid locations:*** For each survey
@@ -592,12 +592,12 @@ formats and answer categories for non-open questions.
 > provide the number of words a child will need to have attempted in
 > order to be presented each comprehension question. For example,
 > imagine we are creating survey questions, which are tied to a previous
-> Reading Comprehension grid whose first sentence is, “Charlie has two
-> brothers and three dogs” and our first survey question is “How many
-> dogs does Charlie have?” We would only want to ask this first question
+> Reading Comprehension grid whose first sentence is, "Charlie has two
+> brothers and three dogs" and our first survey question is "How many
+> dogs does Charlie have?" We would only want to ask this first question
 > if the last item attempted on the Reading Comprehension grid is at
-> least 7, as “dogs” is the 7^th^ word on that grid subtest. Enter this
-> number in the field for “Items attempted required on linked grid” “ in
+> least 7, as "dogs" is the 7^th^ word on that grid subtest. Enter this
+> number in the field for "Items attempted required on linked grid" " in
 > the Question Editor (see below). As noted above, be sure to include a
 > hint to show your enumerator what the correct response should be:
 
@@ -613,24 +613,24 @@ c.  **Open** question. If you select open question, Tangerine will automatically
 
 For single and multiple choice questions you will need to define the
 answer options and assign values to these. To do so, select the single
-or multiple button, and then select “Add Option” which will generate
-fields for “Label” and “Value” as shown below. For each answer option,
+or multiple button, and then select "Add Option" which will generate
+fields for "Label" and "Value" as shown below. For each answer option,
 provide the Option Label (e.g., Correct, Incorrect, No Response,
 English, Kiswahili, French, etc.) depending on question, as well as the
-Value (e.g. “0” for Incorrect, “1” for Correct and “99” for No Response
+Value (e.g. "0" for Incorrect, "1" for Correct and "99" for No Response
 \[without quotation marks\]).
 
 ![](.//media/image40.jpeg)&nbsp;
 
-***Fill from template:*** Under the drop-down menu “Fill from template”
+***Fill from template:*** Under the drop-down menu "Fill from template"
 visible in the above screenshot, we have provided several common
-examples of question answer (read “option”) types, such as Binary
-Agreement for “Yes / No” questions, and a “Month” template which
+examples of question answer (read "option") types, such as Binary
+Agreement for "Yes / No" questions, and a "Month" template which
 currently provides 12 options with month labels and sequential values.
 These are meant to be illustrative and helpful but each of these can be
 tailored to suit your specific needs.
 
-![](.//media/image4.png) *When scripting long surveys, break the survey down into sets of 10-15 questions and start a new survey subtest (select e.g. the “student information” subtest from the dropdown – ([see 6.6 Survey Pages](#Survey20)) for each set of questions. Reason: Tangerine will automatically save results and responses collected each time the Next button was hit to move from one subtest to the next. Should the assessment get interrupted or the application freeze for whatever reason, enumerators will be able to resume (see [Completing an Assessment](#Completing)) on the subtest page following the completed set of questions for which results were saved by hitting Next.*
+![](.//media/image4.png) *When scripting long surveys, break the survey down into sets of 10-15 questions and start a new survey subtest (select e.g. the "student information" subtest from the dropdown – ([see 6.6 Survey Pages](#Survey20)) for each set of questions. Reason: Tangerine will automatically save results and responses collected each time the Next button was hit to move from one subtest to the next. Should the assessment get interrupted or the application freeze for whatever reason, enumerators will be able to resume (see [Completing an Assessment](#Completing)) on the subtest page following the completed set of questions for which results were saved by hitting Next.*
 
 ### 6.7 Validation and Skip Logic
 
@@ -638,28 +638,28 @@ tailored to suit your specific needs.
 
 When designing any subtest or survey
 question in Tangerine, you are presented with the option of having that
-component be “Skippable.” This is represented by an option labeled,
-“Skippable” with “Yes / No” buttons adjacent to this field. As noted,
-this option is set to “No” by default so as to force an enumerator to
+component be "Skippable." This is represented by an option labeled,
+"Skippable" with "Yes / No" buttons adjacent to this field. As noted,
+this option is set to "No" by default so as to force an enumerator to
 validate each subtest or question before proceeding (i.e. to validate by
 not allowing any unintentional or purposeful skipping of any portion of
 the assessment).
 
 In some instances, however, you may wish to ask questions that are not
-relevant for all participants. Consider an example, “*Which class were
-you in last year?”,* for which answer options could be something like
+relevant for all participants. Consider an example, "*Which class were
+you in last year?",* for which answer options could be something like
 those presented in the screenshot on the right, each assigned its own
 value:
 
-In order to capture further details for those who answer with “Other”,
+In order to capture further details for those who answer with "Other",
 we would add a follow-on question and use skip logic to define when it
 should be asked. Thus in order to capture additional information from
-the example above, “What class were you in last year?” these are the
+the example above, "What class were you in last year?" these are the
 steps we would take:
 
 1.  Create a second question designed to capture details on for those
-    who responded with “Other”. In this case, the follow-up question is
-    “*If ‘other’ please specify:*”
+    who responded with "Other". In this case, the follow-up question is
+    "*If ‘other’ please specify:*"
 
 2.  Enter a command in the **Skip If** field tying this question to the
     preceding question.
@@ -669,28 +669,28 @@ steps we would take:
 In Tangerine, questions are identified by their variable name and answers by their assigned values.
 
 1.  As such, in the screenshot above, we have told Tangerine to skip
-    asking this question if the answer to our first question, “What
-    class were you in last year?” was not “other.”
+    asking this question if the answer to our first question, "What
+    class were you in last year?" was not "other."
 
-2.  Remember to set this question type to “open” so that your
+2.  Remember to set this question type to "open" so that your
     enumerators can freely enter text to capture information.
 
 3.  Test out your skip logics to ensure that your enumerators are able
     to capture detailed information and to ensure that they are not
     being required to answer questions for which there may not be a
-    response (e.g. forcing an open field response for “other” when this
+    response (e.g. forcing an open field response for "other" when this
     was not the answer selected from the first question).
 
 ***Example Skip Logic commands***
 
-The following are examples of texts you could enter into the “Skip If”
-field for questions of the “Single” or “Multiple” type. For questions of
-the “Open” type, please see the section below on **Custom Validation**.
+The following are examples of texts you could enter into the "Skip If"
+field for questions of the "Single" or "Multiple" type. For questions of
+the "Open" type, please see the section below on **Custom Validation**.
 Note that you can enter more than one piece of logic for each question
-by using the “or” command to tie your question to more than one answer
+by using the "or" command to tie your question to more than one answer
 or more than one previous question. For each answer or question you want
 to incorporate into your skip logic, you will need to repeat the
-“ResultOf…” command in order to have Tangerine recognize your
+"ResultOf…" command in order to have Tangerine recognize your
 instruction.
 
 In the following examples, the ***variables*** are those inside the
@@ -699,14 +699,14 @@ those outside of the parentheses (e.g. "4"). Each of these command
 scripts would be entered into ‘***Skip If***’ field, with the spacing
 exactly as shown:
 
-**For Skip Logic responding to “single” type questions:**
+**For Skip Logic responding to "single" type questions:**
 
 > ResultOfQuestion("ht\_13 ") is "12" or ResultOfQuestion("ht\_13 ") is
 > "4 "
 >
 > ResultOfQuestion("ht\_4 ") isnt "2"
 
-**For Skip Logic responding to “multiple” type questions:**
+**For Skip Logic responding to "multiple" type questions:**
 
 > "5" in ResultOfMultiple("t\_13") or "4" in ResultOfMultiple("t\_13")
 >
@@ -733,8 +733,8 @@ Commands.
 
 ***Please Note:*** If you are having trouble configuring your skip
 logics but still wish to capture follow-up information, you might
-consider switching the “Skippable” default from “No” to “Yes.” Making
-any subtest or question “Skippable” can provide ample opportunity for
+consider switching the "Skippable" default from "No" to "Yes." Making
+any subtest or question "Skippable" can provide ample opportunity for
 your enumerators to collect information; however there are risks
 associated with this as you might not know if your enumerators skipped
 questions because they were not relevant to the participants or if they
@@ -745,11 +745,11 @@ are case-sensitive and space-sensitive. Therefore, you must type
 precisely the name of the variables which you want to reference, and you
 must pay attention to the capital and lower-case letters of all portions
 of your commands. Similarly, the quotation marks used in your commands
-cannot be “hooked” but should be straight up and down, such as in the
-examples above. You can write skip logic commands using either “is” or
-“isnt” – where possible, try to use commands that use “isnt” as these
+cannot be "hooked" but should be straight up and down, such as in the
+examples above. You can write skip logic commands using either "is" or
+"isnt" – where possible, try to use commands that use "isnt" as these
 questions will only appear once the response option they depend on is
-selected. Commands using “is” will result in follow-up questions that
+selected. Commands using "is" will result in follow-up questions that
 initially appear on the screen but only disappear when the response
 option(s) they depend on is not selected.*
 
@@ -757,17 +757,17 @@ option(s) they depend on is not selected.*
 
 ***Custom Validation***
 
-For “open” type questions, which provide a text box for enumerators to
+For "open" type questions, which provide a text box for enumerators to
 type in their responses, Tangerine provides you some control over the
 range of responses you will accept. To include Custom Validation for an
 open question, find the box below in the Question Editor:
 
 ![](.//media/image43.jpeg)&nbsp;
 
-In the above example, the text entered into the “Valid when” field is
+In the above example, the text entered into the "Valid when" field is
 written to ensure that enumerators are only allowed to enter numerical
-values of a certain range (i.e. no written words like, “three” and no
-numbers outside of the range are allowed). The “Error message” field is
+values of a certain range (i.e. no written words like, "three" and no
+numbers outside of the range are allowed). The "Error message" field is
 the text that will be shown to your enumerator should he or she enter
 characters that do not satisfy the validation requirements.
 
@@ -782,13 +782,13 @@ Here are some additional examples for the ***Valid when*** field:
 > @answer.length is 3
 
 Note that any text string which is identified as allowable is
-case-sensitive. Applied to the above examples, responses of “Refused” or
-“na” would not be accepted by the software, as the custom validation has
-been set to allow “refused” and “NA”.
+case-sensitive. Applied to the above examples, responses of "Refused" or
+"na" would not be accepted by the software, as the custom validation has
+been set to allow "refused" and "NA".
 
-![](.//media/image4.png) *“Save” regularly by pressing ‘Done’ to
+![](.//media/image4.png) *"Save" regularly by pressing ‘Done’ to
 avoid losing your work, and before adding another answer option or going
-“Back” to the Subtest Editor with the list of questions you have already
+"Back" to the Subtest Editor with the list of questions you have already
 added for this page of your assessment.*
 
 ### 6.8 Subtest Skip Logic and ‘Action on Display’
@@ -803,14 +803,14 @@ The examples and in the Sample Skip Logic table found in the Appendix,
 however, are basic enough to be copy-pasted and edited to fit other
 surveys, and can tremendously cut down on enumerator error and interview
 times. In the Tangerine Wizard, there are two places to enter this
-script; the “***Action on Display***” (AOD) field that can be found on
+script; the "***Action on Display***" (AOD) field that can be found on
 both the Subtest Editor and the Question Editor screens.
 
 ***Automatically skipping entire subtests***
 
 To skip an entire subtest based on the results of a previous question,
-you will need to know the ***variable*** name of the “independent
-question”, and the data ***value*** of the “independent answer” – both
+you will need to know the ***variable*** name of the "independent
+question", and the data ***value*** of the "independent answer" – both
 of which will be located in a prior subtest of your assessment. In the
 example below, the subtest is skipped when the answer option value was 0
 in variable B28. This AOD script would go into the AOD field on subtest
@@ -819,12 +819,12 @@ level (recall that commands are case- and space-sensitive):
 > @skip() if ResultOfPrevious("B28") is "0"
 
 Assume the subtest we want to skip contains several questions about a
-student’s classroom experience. Assume B28 refers to the question “Are
-currently going to school?”, where answer options are “Yes”, with data
-value “1”, or “No” with a data value of “0”. The above skip logic,
+student’s classroom experience. Assume B28 refers to the question "Are
+currently going to school?", where answer options are "Yes", with data
+value "1", or "No" with a data value of "0". The above skip logic,
 entered into the ‘Action on Display’ field of the ***Subtest Editor***,
 would skip the entire subtest with the classroom questions for students
-who answered “No” (when data value was “0”, in B28).
+who answered "No" (when data value was "0", in B28).
 
 The inverse operation can also be applied, that is, the subtest is
 skipped for any answer option chosen – except for the one with data
@@ -836,8 +836,8 @@ Other examples include:
 
 > @skip() if ResultOfPrevious("age") &gt; 5
 
-In this scenario, the variable “age” refers to the age of the child. The
-data value “5” can either be a simple number entry in an open question
+In this scenario, the variable "age" refers to the age of the child. The
+data value "5" can either be a simple number entry in an open question
 format, or a selected age from answer options provided for, say, ages
 0-10. This would skip the entire subtest if the child is older than 5.
 
@@ -857,14 +857,14 @@ an entry level test, a command such as this might be useful:
 > @skip() if ResultOfGrid("add") &lt; 5
 
 In this case, if the child has fewer than 5 correct answers to a
-previous grid whose variable is “add”, the subtest will be skipped.
+previous grid whose variable is "add", the subtest will be skipped.
 
 ***Automatic survey early stop logic***
 
 At times, it may be necessary to abort or stop an interview before all
 questions have been asked. This could happen if the participant is not
-providing consent to participate, and “No, stop”, was chosen in the
-consent subtest (see section 4.4). As only one “consent” type subtest
+providing consent to participate, and "No, stop", was chosen in the
+consent subtest (see section 4.4). As only one "consent" type subtest
 can be included in each assessment, at times it is necessary to have a
 second consent cut-off in the middle of a survey subtest. An example
 could be a household survey designed to ask about children’s schooling,
@@ -872,7 +872,7 @@ but the participating household has no children going to school.
 
 The applicable script would go into the AOD field in the ***Question
 Editor*** of the item after the trigger question. For this feature to
-function, “Focus Mode” must be enabled on the subtest in question:
+function, "Focus Mode" must be enabled on the subtest in question:
 
 > @parent.parent.abort() if ResultOfQuestion("children\_in\_school") is
 > "0"
@@ -890,41 +890,41 @@ person (e.g. from the head of household about one of her school aged
 children), it would most likely enhance the interview experience to ask
 questions in a personalized manner, using the child’s name. First, the
 name variable (the child’s name) would need to be captured, such as with
-the question “*What is the girl’s name?”* Let’s assume the variable for
-this is “name” and the answer option an open text field for the
+the question "*What is the girl’s name?"* Let’s assume the variable for
+this is "name" and the answer option an open text field for the
 enumerator to type in the name provided. The enumerator would type in,
-“Ana.”
+"Ana."
 
 Subsequent questions can be personalized by customizing the following
 script into the ***Action*** ***on Display*** (AOD) field for every
 applicable question. Assume one of the next questions is about the age
 of the girl. Then the prompt for the question in the Tangerine Wizard
-may read “What is the age of \[girl’s name\]?”, and the following should
+may read "What is the age of \[girl’s name\]?", and the following should
 be inserted into the AOD field of this same question:
 
-> @setPrompt “What is the age of \#{ResultOfPrevious("name")}?”
+> @setPrompt "What is the age of \#{ResultOfPrevious("name")}?"
 
 Remember, if the dynamic question is referring to an earlier question
-from within the subtest use the command “ResultOfQuestion.” If the
+from within the subtest use the command "ResultOfQuestion." If the
 command is referring to a question from a separate subtest, use the
-command “ResultOfPrevious”. When conducting the interview on the tablet,
+command "ResultOfPrevious". When conducting the interview on the tablet,
 Tangerine will automatically pull the entry that was made for the
-question with variable “name”, and plug it into the above question
-prompt for the enumerator to read out: “What is the age of ***Ana***?”
+question with variable "name", and plug it into the above question
+prompt for the enumerator to read out: "What is the age of ***Ana***?"
 Note that the AOD command will replace any other text you have entered
 into the ‘Prompt’ field.
 
 In another example, we may ask about the grade level the girl is in. In
-the Tangerine Wizard, the prompt for the question may read “What grade
-level is \[girl’s name\] enrolled in?”, and the AOD script for this
+the Tangerine Wizard, the prompt for the question may read "What grade
+level is \[girl’s name\] enrolled in?", and the AOD script for this
 question would read:
 
-> @setPrompt “What grade level is \#{ResultOfPrevious("name")} enrolled
-> in?”
+> @setPrompt "What grade level is \#{ResultOfPrevious("name")} enrolled
+> in?"
 
 Using the above example when conducting the interview, the enumerator
-would automatically see the question prompt as “What grade level is
-***Ana*** enrolled in?”
+would automatically see the question prompt as "What grade level is
+***Ana*** enrolled in?"
 
 ### 6.9 Randomizing Subtests
 
@@ -938,9 +938,9 @@ Tangerine automatically assigns a number to each of your subtests, based
 on its order in your Assessment Builder page. As you can see in the
 example to the right, the numbering starts at zero from the top of the
 list of subtests and sequences down the list, with numbers appearing
-below “Random Sequences:
+below "Random Sequences:
 
-In this example, “Test Survey” = 0, “Date and Time” = 1, and “Consent”
+In this example, "Test Survey" = 0, "Date and Time" = 1, and "Consent"
 =2. In order to randomize the order of appearance for these three
 subtests, enter all of the possible sequences for these components into
 the text box appearing just below the list of subtests. In this example,
@@ -972,14 +972,14 @@ assessments.*
 
 To create a copy of an existing assessment, e.g., when conducting a
 mid-term assessment using the same instrument as for the Baseline, the
-quickest way is to use the “Duplicate” function for the specific
+quickest way is to use the "Duplicate" function for the specific
 assessment in the Tangerine Wizard home screen. While at the home page,
 click the orange arrow next to the assessment you want to duplicate, and
-then hit “Duplicate”
+then hit "Duplicate"
 
 ![](.//media/image45.jpeg)&nbsp;
 
-A second assessment will appear titled “Copy of…” and the name of the
+A second assessment will appear titled "Copy of…" and the name of the
 assessment duplicated (but with a different Download Key). You can now
 edit the new assessment, change its name, and keep it as a separate
 assessment (with a separate database) without having to create a new
@@ -998,7 +998,7 @@ data file for your results.\
 To delete an assessment from the Wizard home screen, click on the orange
 arrow next to the assessment you wish to delete. Then, click the orange
 circle icon; an option will appear and ask you to confirm deleting the
-assessment. Press “Delete”.
+assessment. Press "Delete".
 
 ![](.//media/image46.tmp)&nbsp;
 
@@ -1006,8 +1006,8 @@ assessment. Press “Delete”.
 
 Once data has been uploaded from the tablets to the central server, you
 can access the data via the wizard. Log in to the wizard and navigate to
-the applicable group, click the carrot “&gt;” the left of your
-assessment, and hit the “Results” icon,
+the applicable group, click the carrot "&gt;" the left of your
+assessment, and hit the "Results" icon,
 ![](.//media/image47.jpeg). On the next screen you will find not
 only the list of all tests that have been uploaded for this assessment
 with a date and time stamp, but also a button labeled ‘CSV’.
@@ -1058,13 +1058,13 @@ Date/Time and Grid tests). These include the following variables:
 | start_time, end_time                      | An EPOCH time stamp automatically generated at the start/end of each,subtest.,See section on ‘Converting,timestamps’ below. |
 | order_map                                 | The sequence of subtests,administered (for instruments using random sequences).                                             |
 | additional_comments                       | Optional text entered by users at,the end of a given instrument.                                                            |
-| [gridvariable]_auto_stop                  | Will return “TRUE” or “FALSE” to,indicate if autostop triggered for timed tests.                                            |
+| [gridvariable]_auto_stop                  | Will return "TRUE" or "FALSE" to,indicate if autostop triggered for timed tests.                                            |
 | [gridvariable]_time_remain                | The number of seconds remaining on,the timer when timed test ended.                                                         |
 | [gridvariable]_attempted                  | The numerical position of the last,grid item attempted.                                                                     |
 | [gridvariable]_item_at_time               | The numerical position of the grid,item captured at a specified time point.                                                 |
 | [gridvariable]_time_
-intermediate_captured | The number of seconds that have,passed when “item at time” is marked.                                                       |
-| year;,month;,date                         | 3 distinct variables generated from,adding the “Date” subtest.                                                              |
+intermediate_captured | The number of seconds that have,passed when "item at time" is marked.                                                       |
+| year;,month;,date                         | 3 distinct variables generated from,adding the "Date" subtest.                                                              |
 
 Other variables in your dataset will appear as you named them, and in
 the order in which they appear in your assessment.
@@ -1143,18 +1143,18 @@ OpenOffice, simply select UTF-8 as the character set.
 
 The Tangerine Wizard contains a useful tool to manage and monitor data
 collections. The Results Dashboard is specific to each group. Inside
-your group, locate the button “**Results**” at the top right to access
+your group, locate the button "**Results**" at the top right to access
 the Results Dashboard.
 
 Once you are in the dashboard, you are presented with a range of options
 of how you would like to view basic overview details about your data.
-Under the “Assessment” option you can choose specific
+Under the "Assessment" option you can choose specific
 assessments/instruments that you would like to view or you can select
-“All” and see a basic summary of all of the assessments in your group
-(see below). “Value used for grouping” lets you decide how you would
+"All" and see a basic summary of all of the assessments in your group
+(see below). "Value used for grouping" lets you decide how you would
 like to sort the results (see below). Options include sorting by
 enumerator, assessment name, start time, subtest, school, county, etc.
-Under “Advanced Options” you have the option to shift the time value by
+Under "Advanced Options" you have the option to shift the time value by
 a certain number to handle the correct time zone.
 
 ![](.//media/image49.tmp)&nbsp;
@@ -1169,7 +1169,7 @@ from partial assessments will be available in your results file,
 assessments which have been only partially completed will not be
 included in the totals represented in the Results Dashboard.
 
-# B. Tangerine on Mobile Devices – the “app”
+# B. Tangerine on Mobile Devices – the "app"
 
 1.  Hardware Selection and setup of Tangerine software
 ------------------------------------------------------
@@ -1244,11 +1244,11 @@ examples of this process are detailed below.
     > credit card or other payment information for this account
 
 2.  When the Kindles arrive, you will turn them on and it will lead you
-    > through a setup process. You will see a message “Welcome \[name of
-    > person who purchased Kindles\]”. Next to this message there will
-    > be a link that says “Not \[name\]? Deregister Kindle”.
+    > through a setup process. You will see a message "Welcome \[name of
+    > person who purchased Kindles\]". Next to this message there will
+    > be a link that says "Not \[name\]? Deregister Kindle".
 
-3.  Click on “Deregister”, and re-register your Kindle to the new name
+3.  Click on "Deregister", and re-register your Kindle to the new name
     > that you have set up.
 
 Note that each Kindle also has a unique email address. In your project
@@ -1279,7 +1279,7 @@ website: *[www.amazon.com/my](http://www.amazon.com/myk)k*
 
 8.  Disable English language spell checker: Settings/Language & input. Untick Spell checker and untick Google voice typing.
 
-9.  Before you install Tangerine: Go to Settings/Security, and tick the box next to “Unknown sources”.
+9.  Before you install Tangerine: Go to Settings/Security, and tick the box next to "Unknown sources".
 
 **Procurement, Importation and Customs **
 
@@ -1343,8 +1343,8 @@ tablet. More information on charging devices can be found in Annex 4.
 
 Before installing anything, be sure the Android device allows you to
 install files. In the settings menu of the device, look for the option
-“Allow installation of (Third Party / Unknown Source) Applications” and
-set this option to “Yes” or “On”.
+"Allow installation of (Third Party / Unknown Source) Applications" and
+set this option to "Yes" or "On".
 
 *To install Tangerine on the tablets, ensure you are connected to the
 web.*
@@ -1376,13 +1376,13 @@ web.*
     you see a small number (1) next to the device name in the upper
     left-hand corner, or find there a small arrow pointing down, or find
     the app listed in the download section of your device. You may also
-    immediately notice the words “Starting download…” flash along the
+    immediately notice the words "Starting download…" flash along the
     bottom of the browser. Touch the number/arrow/listing and install
     the app. You can also find your downloaded APK in the downloads
     folder on your device.
 
 -   When it is done installing, find your downloaded APK file and click
-    “Open” and follow any additional steps to confirm installation. You
+    "Open" and follow any additional steps to confirm installation. You
     will know when it is finished you will see a Tangerine login screen.
     You have now installed and launched the application. From now on,
     you can get into the application by clicking on the Tangerine icon
@@ -1451,23 +1451,23 @@ Wizard group listed on the home screen. The Tangerine app home screen
 
 ![](.//media/image52.png)&nbsp;
 
-Under “Assessments” tab, the enumerator is able to see the different
-assessments that can be run. Clicking the “Run”
+Under "Assessments" tab, the enumerator is able to see the different
+assessments that can be run. Clicking the "Run"
 ![](.//media/image11.tmp) button will start the assessment. The
-“Results” ![](.//media/image53.png) button will bring the enumerator to a
+"Results" ![](.//media/image53.png) button will bring the enumerator to a
 screen that shows the data collected thus far, and allows the option for
 interrupted assessments or surveys to be resumed.
 
 ![](.//media/image54.png)&nbsp;
 
-The “Sync” tab gives the enumerator the option to synchronize their
-results. The “Universal Upload” button in the middle of the screen
+The "Sync" tab gives the enumerator the option to synchronize their
+results. The "Universal Upload" button in the middle of the screen
 allows the enumerator to upload all of the new data from all of the
 different assessments with one easy click. **This will upload all new
 data from all users who have entered data on that device.**
 
 In case you are unable to perform a universal upload, due to poor
-connectivity, you can also use the “Save as file” option which will
+connectivity, you can also use the "Save as file" option which will
 create a back file with the results data that can be imported on the
 server.
 
@@ -1512,7 +1512,7 @@ particular highlighting:
     of a last minute school replacement)
 
 3.  Hitting the start button of timed subtests only when the child
-    attempts the first item (not when the enumerator says “Begin”).
+    attempts the first item (not when the enumerator says "Begin").
 
 An example training agenda and topics that are important to cover is
 included in Annex 1.
@@ -1550,17 +1550,17 @@ instrument piloting and final data collection. **This will be very
 helpful in managing your data files and instrument changes. **
 
 We have found the most practical way to make an initial, full version of
-the instrument and append the words “training / pilot / final” in the
+the instrument and append the words "training / pilot / final" in the
 assessment names. For training purposes, you may wish to create
-single-subtest assessments, such as “Letter Sounds” which allow users to
+single-subtest assessments, such as "Letter Sounds" which allow users to
 repeatedly focus on just one subtest during training. It is handy to
-have these for practice, to avoid enumerators having to “click through”
+have these for practice, to avoid enumerators having to "click through"
 too many unnecessary subtests.
 
 During the training we usually find one or two things to edit in the
 instruments before piloting. We do this by duplicating the full training
 instrument, editing the necessary items and renaming it to append
-“pilot” or “final” to the assessment name.
+"pilot" or "final" to the assessment name.
 
 6. Entering data on tablets
 ---------------------------
@@ -1583,16 +1583,16 @@ indicates where you should apply pressure to the screen (either with
 stylus or finger) to activate the element.
 
 -   **Buttons.** Most input is done through buttons, including advancing
-    from screen to screen (“Next”‖ button), assigning a student ID,
+    from screen to screen ("Next"‖ button), assigning a student ID,
     starting or stopping the timer, or indicating incorrect items in an
     assessment grid. To use a button, simply touch the button in the
     center and release with a short tap or a firm, but short, press. On
     grid item pages, the button will turn green to indicate a wrong
     answer. You can click a second time to unmark the item and it will
     return to grey. You cannot ‘unclick‘ the start and stop buttons.
-    Once you press “Start”‖ or “Stop”‖, clicking it a second time will
+    Once you press "Start"‖ or "Stop"‖, clicking it a second time will
     have no effect if the timer has already started. After clicking
-    “Stop”, you can click a grid item to mark it as the last item
+    "Stop", you can click a grid item to mark it as the last item
     attempted. It will be shown in red with a bracket. Clicking it a
     second time will have no effect, but you can change your selection
     of the last letter attempted by clicking a different letter.
@@ -1606,23 +1606,23 @@ stylus or finger) to activate the element.
     automatically filled in. These are the date and time fields, which
     are generated according to the date and time that the device is set
     to when the assessment begins; and the unique student ID field,
-    which is filled in when the assessor presses the “Generate”‖ button.
+    which is filled in when the assessor presses the "Generate"‖ button.
     While these fields can be changed manually, assessors should be
     instructed not to touch them unless necessary (such as when users
     are entering data collected earlier on paper) - just advance by
-    using the “Next” button.
+    using the "Next" button.
 
 ![](.//media/image61.png)&nbsp;
 
 **Timed subtests.** On a timed grid page,
-you will not see the grid items until you press “Start”. When you press
-“Start”, the timer will start counting down and you will see the items
+you will not see the grid items until you press "Start". When you press
+"Start", the timer will start counting down and you will see the items
 appear in the grid (see screenshot shown at right). Once you have
 started you should not stop and restart except for exceptional
 circumstances. If a restart is needed, there is a button at the bottom
 of the page for that purpose.
 
-By default, all grid items are “correct”.‖ Mark items “incorrect” by
+By default, all grid items are "correct".‖ Mark items "incorrect" by
 tapping on that item, causing a line to be struck through that grid
 item. Re-mark them correct by tapping a second time. Use the asterisk
 button on the right-hand side of the grid to mark a whole row incorrect.
@@ -1631,24 +1631,24 @@ three ways to end a timed subtest:
 
 -   *the program will autostop*, if that feature has been turned on in
     the wizard. If this occurs, the screen will flash red, and a message
-    will appear that says “Autostop activated. Discontinue test.” The
-    next step for the assessor is to press “Next”‖ to move to the next
+    will appear that says "Autostop activated. Discontinue test." The
+    next step for the assessor is to press "Next"‖ to move to the next
     exercise.
 
 -   *the timer will run out.* If the timer runs out while the child is
-    still reading, the screen will flash red, and a message to “select
-    the last item read” will appear (see below). The enumerator should
+    still reading, the screen will flash red, and a message to "select
+    the last item read" will appear (see below). The enumerator should
     ask the child to stop reading, then touch the last item attempted by
     the child when the timer went off. If it is necessary to mark the
-    last item read as incorrect, use the “mode” feature (see below).
-    Otherwise, the next step for the assessor is to press the “next”
+    last item read as incorrect, use the "mode" feature (see below).
+    Otherwise, the next step for the assessor is to press the "next"
     button.
 
 ![](.//media/image62.png)&nbsp;
 
 -   *the assessor will click the stop button.* If a child completes all
     of the grid items before the allotted time runs out, the assessor
-    will stop the timer by using the “stop” button. This will
+    will stop the timer by using the "stop" button. This will
     automatically place the ‘Last Item Read’ bracket around the final
     grid item, as the timer should only be stopped when the child has
     attempted the final grid item. If need be, the ‘Last Item Read’
@@ -1656,36 +1656,36 @@ three ways to end a timed subtest:
 
 ![](.//media/image63.png)&nbsp;
 
-The “Input mode”‖ feature exists because
+The "Input mode"‖ feature exists because
 buttons behave differently depending on what ‘mode‘ the application is
-in. When the timer has started, the buttons are in the “Mark”‖ mode that
-expects a click to mean “mark this item incorrect”. After the timer is
-stopped, the mode automatically changes to “Last attempted” and the
-application expects that the next click will mean “mark this as the last
-item read” (above). In some cases, the last item read is both the last
+in. When the timer has started, the buttons are in the "Mark"‖ mode that
+expects a click to mean "mark this item incorrect". After the timer is
+stopped, the mode automatically changes to "Last attempted" and the
+application expects that the next click will mean "mark this as the last
+item read" (above). In some cases, the last item read is both the last
 item AND an incorrect item. Therefore, the assessor must toggle between
 modes in order to mark the button accordingly. There is also a mode for
-“Capture item at specified number of seconds.” This is for a special
+"Capture item at specified number of seconds." This is for a special
 administration case where the subtest is untimed, but you want to mark
 the item read at a certain point (i.e., 60 seconds).\
 **\
 Completing an assessment**. Upon reaching the end of the assessment
 (after the last subtest or interview question), you will see a
 confirmation page that the test has been completed, and an overview of
-results for each subtest (select the details button on “Subtests
-completed”). This is for the enumerator‘s benefit as a way to verify
+results for each subtest (select the details button on "Subtests
+completed"). This is for the enumerator‘s benefit as a way to verify
 that all of the subtests were completed.
 
-Users now have the option of adding “Additional Comments” as deemed
+Users now have the option of adding "Additional Comments" as deemed
 appropriate. Typically, RTI will ask that users only add comments that
-are important for analyses (e.g. “I noted this child was a female but it
-is actually a boy”). Other subjective comments (e.g. “This child did
-well”) are not encouraged as these will not be taken into account for
+are important for analyses (e.g. "I noted this child was a female but it
+is actually a boy"). Other subjective comments (e.g. "This child did
+well") are not encouraged as these will not be taken into account for
 analysis.
 
 Once users have decided to make a comment or ignore this field, they
 should press ‘Save Result’ to finalize their entry. This button will
-then become “Perform another assessment.” You can either press this
+then become "Perform another assessment." You can either press this
 button to begin assessing another child on the same instrument, or you
 can use the Tangerine icon button
 ![](.//media/image64.jpeg) in the upper-left hand corner to get back to the
@@ -1704,11 +1704,11 @@ that test. Click on each assessment to see details.
 7. The Student/Participant Identifier
 -------------------------------------
 
-A recommended Tangerine subtest is the “Student ID” subtest, which
+A recommended Tangerine subtest is the "Student ID" subtest, which
 generates an anonymous and unique student code for each assessment. This
 ensures that each test /observation corresponds to a unique entry into
 the database. This subtest is designed such that enumerators can click
-the “Generate” button to produce a student code, but enumerators are not
+the "Generate" button to produce a student code, but enumerators are not
 able to enter manual codes for this subtest. Tangerine uses an
 algorithmic formula to generate IDs, and as such an attempt by an
 enumerator to enter an ID not conforming to this formula will not be
@@ -1728,9 +1728,9 @@ creating a new one for this student.
 
 Tangerine will then tell the enumerator if a student identifier is
 invalid. The enumerator shall then double-check the card to make sure
-she/he didn't make a mistake in the transcription and press “Next” at
+she/he didn't make a mistake in the transcription and press "Next" at
 the bottom of the screen. If Tangerine still doesn't accept the Student
-ID from the notecard, the enumerator shall click “Generate” to create a
+ID from the notecard, the enumerator shall click "Generate" to create a
 new one, and write this new identifier down on the card as well and put
 a circle around it to indicate the issue. The enumerator of the last
 assessment for this child should retain the index card to allow for
@@ -1799,14 +1799,14 @@ data file may be feasible.
     equipped with these.
 
 2.  Exporting Tangerine data. On your Android tablet, Tangerine stores
-    its data in a file named, “tangerine.couch” which can usually be
+    its data in a file named, "tangerine.couch" which can usually be
     found in the following directory: Android/appdata/Tangerine. To find
     the file in this directory, you may need to install a File Manager
     application, such as the ES File Explorer app (free from Google
     Play). Once you have a File Manager app installed, open the File
-    Manger app and then find the folder named, “Android”. Thereafter
-    open “App Data” and then “Tangerine” in order to find the
-    “tangerine.couch” file. Once you have located this file, you will
+    Manger app and then find the folder named, "Android". Thereafter
+    open "App Data" and then "Tangerine" in order to find the
+    "tangerine.couch" file. Once you have located this file, you will
     need to either store it on a laptop or save it to an external
     storage option available for your tablet (such as an SD card or USB
     port).
@@ -1858,7 +1858,7 @@ Training on the use of Tangerine for data collection should be integrated into t
 
 -   Turn on tablet using the exterior buttons on the device
 
--   Locate the “Tangerine” icon (orange square) in your bookshelf or an “Apps” menu
+-   Locate the "Tangerine" icon (orange square) in your bookshelf or an "Apps" menu
 
 -   Touch it once
 
@@ -1872,13 +1872,13 @@ Training on the use of Tangerine for data collection should be integrated into t
 
 *To turn on wireless:*
 
--   Touch the icons in the top right corner of the screen to active the Wi-Fi, or go via “Settings”
+-   Touch the icons in the top right corner of the screen to active the Wi-Fi, or go via "Settings"
 
--   Touch “Wi-Fi”
+-   Touch "Wi-Fi"
 
 -   Find the available wireless hotspot or network in the list and tap its name
 
--   Touch “connect”
+-   Touch "connect"
 
 -   Wait for wireless signal icon (without an x) to show up in the list of icons top right
 
@@ -1886,9 +1886,9 @@ Training on the use of Tangerine for data collection should be integrated into t
 
 -   Go to the test list (using the round fruit icon in the top left of the screen)
 
--   Tap “Universal Upload” on Tangerine’s home screen
+-   Tap "Universal Upload" on Tangerine’s home screen
 
--   Wait for confirmation message, “Results Successfully Synced to Cloud”
+-   Wait for confirmation message, "Results Successfully Synced to Cloud"
 
 -   Remember to fully ***Power Off*** all devices at the end of each day.
 
@@ -1898,9 +1898,9 @@ Training on the use of Tangerine for data collection should be integrated into t
 
 -   For timed grid exercised: Touch an item to mark it wrong. Touch it again to mark it correct if the child autocorrects or if you have touched it by mistake. A blue item with a line through it means INCORRECT.
 
--   Do not ever touch any tablet specific navigation bar, e.g. on the Kindle or Nexus at the bottom (with home, arrow, etc.) during a test. During a test you only need the NEXT button to navigate. YOU CAN NOT GO BACKWARDS OR START OVER (unless your particular instruments are using the “Back” button).
+-   Do not ever touch any tablet specific navigation bar, e.g. on the Kindle or Nexus at the bottom (with home, arrow, etc.) during a test. During a test you only need the NEXT button to navigate. YOU CAN NOT GO BACKWARDS OR START OVER (unless your particular instruments are using the "Back" button).
 
--   Never use the “Input mode” buttons UNLESS you necessary or if must mark the last item wrong. In this case, after the timer stops and you mark the last letter, change ‘mode’ to “mark item” and touch the item to mark it wrong.
+-   Never use the "Input mode" buttons UNLESS you necessary or if must mark the last item wrong. In this case, after the timer stops and you mark the last letter, change ‘mode’ to "mark item" and touch the item to mark it wrong.
 
 
 # Annex 3: Guide to Supervisor Responsibilities during Data Collection
@@ -2055,8 +2055,8 @@ used so that they conform to your needs. Recall that all spacing and
 characters are case-sensitive in Tangerine skip commands. The variables
 shown below in green are examples only and would need to be changed to
 align with however you have named your own variables. Note: for
-Question-Level items, you will need to change “ResultOfQuestion” to
-“ResultOfPrevious” if the initial variable being referenced is contained
+Question-Level items, you will need to change "ResultOfQuestion" to
+"ResultOfPrevious" if the initial variable being referenced is contained
 in a previous subtest than the one where you are entering the skip
 logic. The same rule applies to response data coming from open questions
 (i.e. when using parseInt(ResultOfQuestion) or
@@ -2066,20 +2066,20 @@ parseInt(ResultOfPrevious).
 |---------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
 | Subtest Level Action on Display                   | Skip an entire subtest depending on responses entered in a prior subtest.The prior subtest can be a survey, or location type.                                                                                                                                                                                                                         | @skip() if ResultOfPrevious("xxx") ) is "0"                                                                                                                                                                                                                         | No                   |
 | Subtest Level Action on Display                   | Skip an entire subtest depending on the number of correct responses from a previous grid test.                                                                                                                                                                                                                                                        | @skip() if ResultOfGrid("add") < 5                                                                                                                                                                                                                                  | No                   |
-| Subtest Level Action on Display                   | Skip an entire subtest depending on geographical factors (e.g. when only some questions are intended for specific states/provinces).,The initial variable in this example, “province”,,would match whichever ‘Geographic Level’ you have defined in your school location subtest.                                                                     | @skip() if ResultOfPrevious("province") ) isnt "west"                                                                                                                                                                                                               | No                   |
-| Question Level Custom Validation                  | Require a numeric response within a defined range, and allow one designated value for cases where the data is unavailable or unknown, “888”                                                                                                                                                                                                           | @answer > 0 and @answer < 50 or @answer == "0" or @answer == "888"                                                                                                                                                                                                  | No                   |
+| Subtest Level Action on Display                   | Skip an entire subtest depending on geographical factors (e.g. when only some questions are intended for specific states/provinces).,The initial variable in this example, "province",,would match whichever ‘Geographic Level’ you have defined in your school location subtest.                                                                     | @skip() if ResultOfPrevious("province") ) isnt "west"                                                                                                                                                                                                               | No                   |
+| Question Level Custom Validation                  | Require a numeric response within a defined range, and allow one designated value for cases where the data is unavailable or unknown, "888"                                                                                                                                                                                                           | @answer > 0 and @answer < 50 or @answer == "0" or @answer == "888"                                                                                                                                                                                                  | No                   |
 | Question Level Custom Validation                  | Require a numeric response which is allowable when compared with a previous data point (e.g. when total number of books in good condition should not be less than the total number of books available).                                                                                                                                               | parseInt(@answer) <= parseInt(ResultOfQuestion("total_books"))                                                                                                                                                                                                      | No                   |
 | Question Level Custom Validation                  | Require that a numeric response be the sum or the difference from two prior responses.                                                                                                                                                                                                                                                                | parseInt(@answer) == parseInt( ResultOfQuestion("num1") ) + parseInt( ResultOfQuestion("num2") )                                                                                                                                                                    | No                   |
 | Question Level,
-“Skip if…”                         | Skip a question if the answer to a prior question is above or below a specified value.                                                                                                                                                                                                                                                                | parseInt(ResultOfPrevious("xxx" ) ) < 10,or,parseInt(ResultOfPrevious("xxx" ) ) < 10                                                                                                                                                                                | No                   |
+"Skip if…"                         | Skip a question if the answer to a prior question is above or below a specified value.                                                                                                                                                                                                                                                                | parseInt(ResultOfPrevious("xxx" ) ) < 10,or,parseInt(ResultOfPrevious("xxx" ) ) < 10                                                                                                                                                                                | No                   |
 | Question Level,
 Action on Display                  | Display the result of a mathematical operation applied to previous data points, as a question-level hint.,Note that the hint / result display must be in a different subtest from the original data points.,This particular example is designed to show the teacher attendance rate, as a percentage calculated on days absent vs. total school days. | @setHint "This teacher is present #{parseInt(parseFloat((ResultOfPrevious("school_days")) - (ResultOfPrevious("teacher_absent"))) / parseFloat(ResultOfPrevious("school_days")) * 100)}% of the total school time.,Please note this with teacher and head teacher." | Yes                  |
 | Question Level Custom Validation                  | Require that a response to an open question contain text only (no numeric responses).                                                                                                                                                                                                                                                                 | not @answer.match(/[^ a-zA-Z]/)                                                                                                                                                                                                                                     | No                   |
 | Question Level,
-“Skip if…”                         | Skip a question depending on one or more answers to previous multiple-response type questions.                                                                                                                                                                                                                                                        | not ("2" in ResultOfMultiple("grade")) and not ("1" in ResultOfMultiple("section"))                                                                                                                                                                                 | No                   |
+"Skip if…"                         | Skip a question depending on one or more answers to previous multiple-response type questions.                                                                                                                                                                                                                                                        | not ("2" in ResultOfMultiple("grade")) and not ("1" in ResultOfMultiple("section"))                                                                                                                                                                                 | No                   |
 | Question Level Action on Display                  | End / Abort a survey or assessment based on the answer value to a previous variable.,E.g. if a parent responds that a child is not in school, automatically end the interview.                                                                                                                                                                        | @parent.parent.abort() if ResultOfQuestion("children_in_school") is "0"                                                                                                                                                                                             | Yes                  |
 | Question Level,
 Action on Display                  | End / Abort a survey or assessment based on the answer value to a previous variable.,E.g. if a parent responds that a child is not in school, automatically end the interview.                                                                                                                                                                        | @parent.parent.abort() if ResultOfQuestion("children_in_school") is "0"                                                                                                                                                                                             | Yes                  |
 | Subtest Level (Student ID test) Action on Display | Hide the ‘Generate’ button of the ‘Student ID’ subtest.,This may be desired if, for example, you are conducting a longitudinal study and want to require that users are entering an ID that has been previously generated by Tangerine.                                                                                                               | $("#generate").hide()                                                                                                                                                                                                                                               | No                   |
 | Question Level,
-“Skip if…”, and Custom Validation   | Ask a user to re-enter a Student ID Code that matches their previous entry.,This may be applicable if your users are entering ID’s that were previously generated (such as with a longitudinal study).                                                                                                                                                | In the ‘Skip if…’,field, enter this: console.log("#{ResultOfPrevious('participant_id')} "); false;  In the ‘Custom Validation’ field, enter: @answer == ResultOfPrevious("participant_id")                                                                          | No                   |
+"Skip if…", and Custom Validation   | Ask a user to re-enter a Student ID Code that matches their previous entry.,This may be applicable if your users are entering ID’s that were previously generated (such as with a longitudinal study).                                                                                                                                                | In the ‘Skip if…’,field, enter this: console.log("#{ResultOfPrevious('participant_id')} "); false;  In the ‘Custom Validation’ field, enter: @answer == ResultOfPrevious("participant_id")                                                                          | No                   |

@@ -9,7 +9,7 @@ in the same folder execute:
 This will create the titile page without header numbers, {-} indicates that no numbers will be selected
 
 Now execute:
-> pandoc  -S -s -V geometry:nohead,nofoot,right=1.5cm,left=2cm,bottom=2.5cm  TangerineOjai_Full_UserManual_April_2017.md --latex-engine=xelatex --toc -o BodyPage.pdf
+> pandoc --no-tex-ligatures -s -V geometry:nohead,nofoot,right=1.5cm,left=2cm,bottom=2.5cm  TangerineOjai_Full_UserManual_July_2017.md --latex-engine=pdflatex --toc -o BodyPage.pdf
 
 Now we have the body with the TOC
 
