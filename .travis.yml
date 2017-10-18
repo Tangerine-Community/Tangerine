@@ -27,8 +27,8 @@ before_install:
 install:
   - cd client/shell && yarn install
 script:
-  - cd client/shell && ng test --watch false
-  - ck client/shell && ng e2e
+  - ng test --watch false
+  - ng e2e
 notifications:
   webhooks:
     on_success: change
