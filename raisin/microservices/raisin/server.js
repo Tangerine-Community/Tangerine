@@ -1,14 +1,14 @@
-
-var restify = require('restify');
-var plugins = require('restify-plugins');
-var CookieParser = require('restify-cookies');
-var sanitize = require("sanitize-filename");
+const restify = require('restify');
+const plugins = require('restify-plugins');
+const CookieParser = require('restify-cookies');
+const sanitize = require('sanitize-filename');
 const fs = require('fs-extra');
 const { join } = require('path')
 // for cookie authorization
 const couchAuth = require('../../middlewares/couchAuth');
-var Logger = require('bunyan');
-var Dat = require('dat-node')
+const Logger = require('bunyan');
+const Dat = require('dat-node')
+const cheerio = require('cheerio');
 var log = new Logger({
     name: 'raisin',
     streams: [
@@ -259,9 +259,62 @@ server.post('/project/create', async function (req, res, next) {
   return next();
 });
 
+
+
+/**
+ * Reads current form.json and adds new form params to it, then saves.
+ * @param dir
+ * @param formParameters
+ * @returns {Promise.<void>}
+ */
+let saveFormsJson = async function (dir, formParameters) {
+  let formsPath = dir + "/content/forms";
+  await fs.ensureDir(formsPath)
+  let formsJsonPath = dir + "/content/forms.json";
+  let currentFormJson = await fs.readJson(formsJsonPath)
+  currentFormJson.push(formParameters)
+  console.log("currentFormJson with metadata: " + JSON.stringify(currentFormJson))
+  // fs.writeJson(formsJsonPath, packageObj).then(() => {
+  await fs.writeJson(formsJsonPath, packageObj)
+};
+
+/**
+ * Saves a form at projects/projectName/content/forms/formName/form.html
+ * @param dir
+ * @param safeFiletName
+ * @param form
+ * @returns {Promise.<{message: string}>}
+ */
+let saveForm = async function (dir, formName, form) {
+  let formPath = dir + "/content/forms/" + formName;
+  await fs.ensureDir(formPath)
+  await fs.outputFile(formPath + "/form.html", form)
+  let resp = {
+    "message": 'Form saved: ' + safeFiletName
+  }
+  return resp;
+};
+
+/**
+ * Saves an item at projects/projectName/content/forms/formName/itemName.html
+ * @param dir
+ * @param formName
+ * @param itemFilename
+ * @param itemHtmlText
+ * @returns {Promise.<{message: string}>}
+ */
+let saveItem = async function (dir, formName, itemFilename, itemHtmlText) {
+  let itemPath = dir + "/content/forms/" + formName + "/" + itemFilename;
+  await fs.outputFile(itemPath, itemHtmlText)
+  let resp = {
+    "message": 'Item saved: ' + itemPath
+  }
+  return resp;
+};
+
 server.post('/form/create', async function (req, res, next) {
   console.log("req.params:" + JSON.stringify(req.params));
-  let safeFiletName = sanitize(req.params.file_name);
+  let safeFileName = sanitize(req.params.file_name);
   let safeTitle = sanitize(req.params.title);
   let projectName = req.params.projectName
   let dir = projectRoot + projectName;
@@ -270,36 +323,72 @@ server.post('/form/create', async function (req, res, next) {
   if (exists !== true) {
     res.send(new Error('Error: Project does not exist: ' + projectName));
   } else {
-    let formsPath = dir + "/content/forms";
-    await fs.ensureDir(formsPath)
-    let formsJsonPath = dir + "/content/forms.json";
-    let packageObj = await fs.readJson(formsJsonPath)
-    let metadata = {
+
+    let formParameters = {
       "title": safeTitle,
       "src": "forms/" + safeFiletName + "/form.html"
     }
-    packageObj.push(metadata)
-    console.log("packageObj con metadata: " + JSON.stringify(packageObj))
-    // fs.writeJson(formsJsonPath, packageObj).then(() => {
-    await fs.writeJson(formsJsonPath, packageObj)
-    let newFormPath = formsPath + "/" +  safeFiletName;
-    await fs.ensureDir(newFormPath)
+    await saveFormsJson(dir, formParameters);
+
     let srcpath = "../tangerine-forms/forms/editor";
     let formTemplate = await fs.readFile(srcpath + "/form-template.html","utf8")
     console.log("formTemplate: " + formTemplate)
     // let formTemplateStr = JSON.stringify(formTemplate)
-    let formTemplateStr = formTemplate.replace("FORMNAME", safeFiletName)
-    await fs.outputFile(newFormPath + "/form.html", formTemplateStr)
-      let resp = {
-      "message": 'Form created: ' + safeFiletName
-    }
-    res.send(resp);
+    let form = formTemplate.replace("FORMNAME", safeFiletName)
 
+    let resp = await saveForm(dir, safeFileName, form);
+    res.send(resp)
   }
-  return next();
-});
+  return next()
+})
+server.post('/item/save', async function (req, res, next) {
+  // console.log("req.params:" + JSON.stringify(req.params))
+  let safeItemTitle = sanitize(req.params.itemTitle)
+  let itemHtmlText = req.params.itemHtmlText
+  let itemFrmSrc = req.params.itemFrmSrc
+  let itemFilename = req.params.itemEditSrc
+  let projectName = req.params.projectName
+  // "itemFrmSrc":"forms/lemmie/form.html","itemEditSrc":"item-1.html","itemId":"item-1","itemTitle":"ACASI Part 3: Introduction"}
+  let formName = itemFrmSrc.split('/')[1]
+  let dir = projectRoot + projectName;
+
+  // open the form and parse it
+  let formPath = dir + "/content/forms/" + formName + "/form.html"
+  let originalForm = await fs.readFile(formPath,'utf8')
+  const $ = cheerio.load(originalForm)
+  // search for tangy-form-item
+  let formItemList = $('tangy-form-item')
+  // console.log('formItemList: ' + JSON.stringify(formItemList))
+  let html = $.html('tangy-form-item')
+  // console.log("html: " + html)
+  // html: <tangy-form-item src="item-1.html" id="item-1" title="ACASI Part 3: Introduction"></tangy-form-item><tangy-form-item src="item-2.html" id="item-2" title="Question 1"></tangy-form-item>
+  formItemList.each(function(i, elem) {
+    let id = $(this).attr("id")
+    let src = $(this).attr("src")
+
+    console.log('id: ' + id + ' src: ' + src +  ' itemFilename: ' + itemFilename)
+    if (src === itemFilename) {
+      console.log('matched ' + id + " order: " + i)
+    }
+  });
+  let clippedFormItemList = formItemList.not(function(i, el) {
+    // this === el
+    let id = $(this).attr('id')
+    let src = $(this).attr('src')
+    return src === itemFilename
+  })
+  console.log('formItemList: ' + formItemList.length + ' clippedFormItemList: ' + clippedFormItemList.length)
+  // let resp1 = await saveForm(dir, safeFileName, form)
+
+  // let resp = await saveItem(dir, formName, itemFilename, itemHtmlText)
+  let resp = {
+    "message": 'Its OK '
+  }
+  res.send(resp)
+  return next()
+})
 
 server.listen(PORT, function () {
   console.log('server is up!');
   console.log('%s listening at %s', server.name, server.url);
-});
+})

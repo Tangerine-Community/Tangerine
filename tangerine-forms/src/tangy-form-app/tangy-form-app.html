@@ -14,6 +14,11 @@
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
 <script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
 
 <dom-module id="tangy-form-app">
@@ -44,13 +49,20 @@
         border: 1px solid #8BC34A;
       }
       paper-card .card-actions {
-        text-align: right;
+        text-align: center;
         color: #fff;
+      }
+      .settings {
+        position: relative;
+        /*left: 45px;*/
+        top: 8px;
+        margin:auto;
       }
       .launch-form {
         position: relative;
-        left: 45px;
+        /*left: 45px;*/
         top: 8px;
+        margin:auto;
       }
       #form-view--nav {
         font-weight: heavy;
@@ -59,29 +71,56 @@
         color: #FFF;
         background: #FF9800;
       }
+      /*#.horizontal {*/
+        /*--demo-snippet-demo: {*/
+          /*@apply --layout-horizontal;*/
+          /*@apply --layout-justified;*/
+          /*@apply --layout-wrap;*/
+        /*}*/
+      /*}*/
+      /*demo-snippet.horizontal paper-input {*/
+        /*display: inline-block;*/
+      /*}*/
+      .item-container {
+        @apply(--layout-horizontal);
+      }
+      .flexchild {
+        @apply(--layout-flex);
+      }
+      .flex2child {
+        @apply(--layout-flex-2);
+      }
+      div[role="listbox"] {
+        border: 1px solid #e5e5e5;
+      }
+      .avatar {
+        display: inline-block;
+        box-sizing: border-box;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--paper-amber-500);
+      }
+
+      .blue {
+        background-color: var(--paper-light-blue-300);
+      }
+      paper-input {
+        max-width: 600px;
+        margin: auto;
+      }
+      paper-textarea {
+        max-width: 600px;
+        margin: auto;
+      }
+      paper-button {
+        min-width: 0em;
+        margin: auto
+      }
     </style>
     <div class="tangy-form-app--container">
       <div id="form-list">
-        <template is="dom-if" if="{{forms.size > 0}}">
-          <template is="dom-repeat" items="{{editorForms}}">
-            <paper-card
-                    class="form-link"
-                    image="../client/images/noun_1018421_cc-small.png"
-                    alt="[[item.title]]"
-                    heading="[[item.title]]">
-              <div class="card-actions">
-                <paper-button
-                        class="launch-form"
-                        data-form-src="[[item.src]]"
-                        data-form-title="[[item.title]]"
-                        on-click="showFormListener">
-                  <iron-icon icon="icons:launch"/>
-                </paper-button>
-              </div>
-            </paper-card>
-          </template>
-        </template>
-        <template is="dom-else" if="{{forms.size > 0}}">
+        <template is="dom-if" if="{{forms.size < 1}}">
           <template is="dom-repeat" items="{{forms}}">
             <paper-card
                     class="form-link"
@@ -89,6 +128,13 @@
                     alt="[[item.title]]"
                     heading="[[item.title]]">
               <div class="card-actions">
+                <paper-button
+                        class="settings"
+                        data-form-src="[[item.src]]"
+                        data-form-title="[[item.title]]"
+                        on-click="editFormListener">
+                  <iron-icon icon="icons:settings"/>
+                </paper-button>
                 <paper-button
                         class="launch-form"
                         data-form-src="[[item.src]]"
@@ -101,13 +147,98 @@
           </template>
         </template>
 
+        <template is="dom-repeat" items="{{editorForms}}">
+          <paper-card
+                  class="form-link"
+                  image="../client/images/noun_1018421_cc-small.png"
+                  alt="[[item.title]]"
+                  heading="[[item.title]]">
+            <div class="card-actions">
+              <paper-button
+                      class="settings"
+                      data-form-src="[[item.src]]"
+                      data-form-title="[[item.title]]"
+                      on-click="editFormListener">
+                <iron-icon icon="icons:settings"/>
+              </paper-button>
+            </div>
+          </paper-card>
+        </template>
       </div>
+
       <div id="form-view" hidden>
         <div id="form-view--nav">
           <iron-icon icon="icons:close" on-click="showFormsList"></iron-icon>
-          [[formTitle]]
+          [[headerTitle]]
         </div>
         <slot></slot>
+      </div>
+
+      <div id="form-edit" hidden>
+        <div id="form-edit--nav">
+          <iron-icon icon="icons:close" on-click="showFormsList"></iron-icon>
+          [[headerTitle]]
+        </div>
+
+        <template is="dom-if" if="{{items.size < 1}}">
+          <div role="listbox">
+          <template is="dom-repeat" items="{{items}}">
+
+            <!--<div class="item-container">-->
+
+                <paper-icon-item
+                        on-click="editFormItemListener"
+                        data-item-id="[[item.id]]"
+                        data-form-src="[[item.formSrc]]"
+                        data-item-src="[[item.src]]"
+                        data-item-title="[[item.title]]">
+                  <div class="avatar blue" slot="item-icon"></div>
+                  <paper-item-body
+                          two-line
+                          on-click="editFormItemListener"
+                          data-item-id="[[item.id]]"
+                          data-form-src="[[item.formSrc]]"
+                          data-item-src="[[item.src]]"
+                          data-item-title="[[item.title]]">
+                    <div>[[item.title]]</div>
+                    <div secondary>[[item.src]]</div>
+                  </paper-item-body>
+                  <paper-button
+                    class="settings"
+                    data-item-id="[[item.id]]"
+                    data-form-src="[[item.formSrc]]"
+                    data-item-src="[[item.src]]"
+                    data-item-title="[[item.title]]"
+                    on-click="editFormItemListener">
+                    <iron-icon icon="icons:settings"/>
+                  </paper-button>
+                </paper-icon-item>
+          </template>
+          </div>
+        </template>
+
+      </div>
+
+      <div id="item-edit" hidden>
+        <div id="item-edit--nav">
+          <iron-icon icon="icons:close" on-click="showFormsList"></iron-icon>
+          [[headerTitle]]
+        </div>
+
+        <template is="dom-if" if="{{itemHtmlText != null}}">
+          <div style="width: 600px;margin-left: auto; margin-right: auto;">
+            <form id="itemEditor">
+              <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
+              <paper-textarea id="itemHtml" value="{{itemHtmlText}}" label="html code" always-float-label></paper-textarea>
+              <paper-button
+                      data-item-src="[[itemEditSrc]]"
+                      data-item-id="[[itemId]]"
+                      on-tap="saveItem">
+                <iron-icon icon="icons:save"/>
+              </paper-button>
+            </form>
+          </div>
+        </template>
       </div>
     </div>
 
@@ -137,6 +268,10 @@
             type: Array,
             value: []
           },
+          items: {
+            type: Array,
+            value: []
+          },
           editorForms: {
             type: Array,
             value: []
@@ -145,6 +280,41 @@
             type: String,
             value: '',
             observer: 'onFormSrcChange'
+          },
+          formEditSrc: {
+            type: String,
+            value: '',
+            observer: 'onFormEditSrcChange'
+          },
+          itemEditSrc: {
+            type: String,
+            value: '',
+            observer: 'onItemEditSrcChange'
+          },
+          itemHtml: {
+            type: String,
+            value: '',
+            observer: 'onItemHtmlChange'
+          },
+          itemId: {
+            type: String,
+            value: '',
+          },
+          itemFrmSrc: {
+            type: String,
+            value: '',
+          },
+          itemHtmlText: {
+            type: String,
+            value: '',
+          },
+          itemTitle: {
+            type: String,
+            value: '',
+          },
+          headerTitle: {
+            type: String,
+            value: '',
           }
         };
       }
@@ -161,6 +331,8 @@
       async showFormsList() {
         this.$['form-view'].hidden = true
         this.$['form-list'].hidden = false
+        this.$['form-edit'].hidden = true
+        this.$['item-edit'].hidden = true
         // Load forms list.
         let formsJson = await fetch('forms.json')
         this.forms = await formsJson.json()
@@ -173,14 +345,39 @@
         if (newValue !== '') this.showForm(newValue)
       }
 
+      onFormEditSrcChange(newValue, oldValue) {
+        if (newValue !== '') this.editForm(newValue)
+      }
+
+      onItemEditSrcChange(newValue, oldValue) {
+        if (newValue !== '') this.editItem(newValue)
+      }
+
+      onItemHtmlChange(newValue, oldValue) {
+        if (newValue !== '') this.saveItem(newValue)
+      }
+
       async showFormListener(event) {
         window.location.hash = event.currentTarget.dataFormSrc
         this.formSrc = event.currentTarget.dataFormSrc
       }
+      async editFormListener(event) {
+//        window.location.hash = event.currentTarget.dataFormSrc
+        this.formEditSrc = event.currentTarget.dataFormSrc
+      }
+      async editFormItemListener(event) {
+//        window.location.hash = event.currentTarget.dataFormSrc
+        this.itemFrmSrc = event.currentTarget.dataFormSrc
+        this.itemEditSrc = event.currentTarget.dataItemSrc
+        this.itemId = event.currentTarget.dataItemId
+        this.itemTitle = event.currentTarget.dataItemTitle
+      }
 
       async showForm(formSrc) {
         this.$['form-view'].hidden = false
-        this.$['form-list'].hidden = true 
+        this.$['form-edit'].hidden = true
+        this.$['item-edit'].hidden = true
+        this.$['form-list'].hidden = true
         // Load the form into the DOM.
         let formHtml = await fetch(formSrc)
         this.innerHTML = await formHtml.text()
@@ -190,9 +387,68 @@
         tangyForm.setAttribute('items-base-path', formDirectory)
       }
 
-      submitEditorListener() {
-          console.log("stuff")
+      async editForm(formSrc) {
+        this.$['form-view'].hidden = true
+        this.$['form-edit'].hidden = false
+        this.$['item-edit'].hidden = true
+        this.$['form-list'].hidden = true
+        // Load the form into a temp DOM to get stuff out of it
+        let formHtml = await fetch(formSrc)
+        let innerHTML = await formHtml.text()
+        var doc = document.implementation.createHTMLDocument("New Document");
+        doc.documentElement.innerHTML = innerHTML;
+        let itemsNode = doc.querySelectorAll("tangy-form-item");
+        this.items = []
+        for (let node of itemsNode) {
+          let item = {}
+          item.id = node.getAttribute('id')
+          item.src = node.getAttribute('src')
+          item.title = node.getAttribute('title')
+          item.formSrc = formSrc
+          this.items.push(item)
         }
+        this.headerTitle = "Form Listing"
+      }
+
+      async editItem(itemSrc) {
+        this.$['form-view'].hidden = true
+        this.$['form-edit'].hidden = true
+        this.$['item-edit'].hidden = false
+        this.$['form-list'].hidden = true
+        // Load the form into the DOM.
+        let frmSrc = this.itemFrmSrc
+        this.headerTitle = "Edit Item"
+        let array = frmSrc.split('/')
+        let itemUrl = array[0] + '/' + array[1] + '/' + itemSrc
+        let itemHtml = await fetch(itemUrl)
+        this.itemHtmlText = await itemHtml.text()
+//        console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
+      }
+
+      async saveItem(event) {
+        this.itemEditSrc = event.currentTarget.dataItemSrc
+        this.itemId = event.currentTarget.dataItemId
+        let itemTitle = event.currentTarget.dataItemTitle
+//        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
+        let project = window.location.pathname.split("/")[3];
+        let item = {}
+        item.projectName = project
+        item.itemFrmSrc = this.itemFrmSrc
+        item.itemEditSrc = this.itemEditSrc
+        item.itemId = this.itemId
+        item.itemTitle = this.itemTitle
+        item.itemHtmlText = this.itemHtmlText
+        let response = await fetch("/editor/item/save", {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          method: "POST",
+          body: JSON.stringify(item)
+        });
+        console.log("response: " + response);
+//        this.editForm(this.formEditSrc)
+      }
 
     }
 
