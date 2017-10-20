@@ -3,7 +3,7 @@
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "app-layout": "PolymerElements/app-layout#^2.0.1",
+    "app-layout": "PolymerElements/app-layout#^2.0.4",
     "paper-button": "PolymerElements/paper-button#^2.0.0",
     "pouchdb": "^6.3.4",
     "iron-icons": "PolymerElements/iron-icons#^2.0.1",

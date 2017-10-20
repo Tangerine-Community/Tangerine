@@ -18,6 +18,9 @@
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
 
 <script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
 
@@ -117,10 +120,25 @@
         min-width: 0em;
         margin: auto
       }
+      paper-icon-item.newItem {
+        --paper-item-body-secondary-color: {
+          background: var(--paper-amber-500);
+        };
+      }
+      paper-item-body.newItem {
+        --paper-item-body-secondary-color: {
+          background: var(--paper-amber-500);
+        };
+      }
+      paper-item-body {
+        --paper-item-body-secondary-color: {
+          color: #0e90d2;
+        };
+      }
     </style>
     <div class="tangy-form-app--container">
       <div id="form-list">
-        <template is="dom-if" if="{{forms.size < 1}}">
+        <template is="dom-if" if="{{forms.size > 1}}">
           <template is="dom-repeat" items="{{forms}}">
             <paper-card
                     class="form-link"
@@ -167,6 +185,7 @@
       </div>
 
       <div id="form-view" hidden>
+
         <div id="form-view--nav">
           <iron-icon icon="icons:close" on-click="showFormsList"></iron-icon>
           [[headerTitle]]
@@ -175,76 +194,105 @@
       </div>
 
       <div id="form-edit" hidden>
-        <div id="form-edit--nav">
-          <iron-icon icon="icons:close" on-click="showFormsList"></iron-icon>
-          [[headerTitle]]
-        </div>
+        <app-header reveals>
+          <app-toolbar>
+            <paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>
+            <div main-title>[[headerTitle]]</div>
+            <paper-icon-button
+                    icon="add-circle-outline"
+                    data-form-src="[[formHtmlPath]]"
+                    data-item-title="New Item"
+                    data-form-src=null
+                    data-item-src=null
+                    data-item-order=null
+                    on-click="editFormItemListener">
+            </paper-icon-button>
+            <paper-icon-button icon="close" on-click="showFormsList"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
 
-        <template is="dom-if" if="{{items.size < 1}}">
+        <template is="dom-if" if="{{items.size > 1}}">
           <div role="listbox">
           <template is="dom-repeat" items="{{items}}">
-
-            <!--<div class="item-container">-->
-
                 <paper-icon-item
+                        class="[[item.class]]"
                         on-click="editFormItemListener"
                         data-item-id="[[item.id]]"
                         data-form-src="[[item.formSrc]]"
                         data-item-src="[[item.src]]"
+                        data-item-order="[[item.itemOrder]]"
                         data-item-title="[[item.title]]">
                   <div class="avatar blue" slot="item-icon"></div>
                   <paper-item-body
                           two-line
+                          class="[[item.class]]"
                           on-click="editFormItemListener"
                           data-item-id="[[item.id]]"
                           data-form-src="[[item.formSrc]]"
                           data-item-src="[[item.src]]"
+                          data-item-order="[[item.itemOrder]]"
                           data-item-title="[[item.title]]">
                     <div>[[item.title]]</div>
                     <div secondary>[[item.src]]</div>
                   </paper-item-body>
-                  <paper-button
-                    class="settings"
-                    data-item-id="[[item.id]]"
-                    data-form-src="[[item.formSrc]]"
-                    data-item-src="[[item.src]]"
-                    data-item-title="[[item.title]]"
-                    on-click="editFormItemListener">
-                    <iron-icon icon="icons:settings"/>
-                  </paper-button>
                 </paper-icon-item>
           </template>
           </div>
         </template>
-
       </div>
 
       <div id="item-edit" hidden>
-        <div id="item-edit--nav">
-          <iron-icon icon="icons:close" on-click="showFormsList"></iron-icon>
-          [[headerTitle]]
-        </div>
+        <app-header reveals>
+          <app-toolbar>
+            <paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>
+            <div main-title>[[headerTitle]]</div>
+            <paper-icon-button icon="close" on-click="showFormsList"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
 
-        <template is="dom-if" if="{{itemHtmlText != null}}">
           <div style="width: 600px;margin-left: auto; margin-right: auto;">
             <form id="itemEditor">
               <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
+              <paper-input id="itemOrder" value="{{itemOrder}}" label="order" always-float-label disabled$="{{itemOrderDisabled}}"></paper-input>
               <paper-textarea id="itemHtml" value="{{itemHtmlText}}" label="html code" always-float-label></paper-textarea>
               <paper-button
-                      data-item-src="[[itemEditSrc]]"
+                      data-item-src="[[itemFilename]]"
                       data-item-id="[[itemId]]"
                       on-tap="saveItem">
                 <iron-icon icon="icons:save"/>
               </paper-button>
             </form>
           </div>
-        </template>
       </div>
     </div>
 
   </template>
 
   <script>
+
+    class TangyUtils {
+
+      static async saveItem(item, items) {
+        // Check if this is a new item
+        if (typeof item.itemId == 'undefined') {
+          // todo : create filename from item title using sanitize
+          let len = items.length + 1
+          item.itemId= 'item-' + len
+          item.itemFilename = item.itemId + '.html'
+        }
+        let response = await fetch("/editor/item/save", {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          method: "POST",
+          body: JSON.stringify(item)
+        });
+        return response;
+      };
+    }
+
+
     /**
      * `tangy-form-app`
      * ... 
@@ -276,45 +324,51 @@
             type: Array,
             value: []
           },
-          formSrc: {
+          headerTitle: {
+            type: String,
+            value: '',
+          },
+          form: {
+            type: Object,
+          },
+          formSrc: {  // path to form.html, used in Form listing.
             type: String,
             value: '',
             observer: 'onFormSrcChange'
           },
-          formEditSrc: {
+          formHtmlPath: { // path to form.html - e.g.: "formHtmlPath":"forms/lemmie/form.html"
             type: String,
             value: '',
-            observer: 'onFormEditSrcChange'
           },
-          itemEditSrc: {
+          itemFilename: { // "itemFilename":"item-1.html",
             type: String,
             value: '',
-            observer: 'onItemEditSrcChange'
+            observer: 'onItemFilenameChange'
           },
-          itemHtml: {
+          itemId: { // "itemId":"item-1"
+            type: String,
+            value: '',
+          },
+          itemHtml: { // id of textarea for html content
             type: String,
             value: '',
             observer: 'onItemHtmlChange'
           },
-          itemId: {
+          itemHtmlText: { // html code from textarea
             type: String,
             value: '',
           },
-          itemFrmSrc: {
+          itemTitle: { // "itemTitle":"ACASI Part 3: Introduction"
             type: String,
             value: '',
           },
-          itemHtmlText: {
-            type: String,
+          itemOrder: {  // item order in form
+            type: Number,
             value: '',
           },
-          itemTitle: {
-            type: String,
-            value: '',
-          },
-          headerTitle: {
-            type: String,
-            value: '',
+          itemOrderDisabled: {  // item order in form
+            type: Boolean,
+            value: false,
           }
         };
       }
@@ -329,6 +383,7 @@
       }
 
       async showFormsList() {
+        this.headerTitle = "Form Listing"
         this.$['form-view'].hidden = true
         this.$['form-list'].hidden = false
         this.$['form-edit'].hidden = true
@@ -345,11 +400,7 @@
         if (newValue !== '') this.showForm(newValue)
       }
 
-      onFormEditSrcChange(newValue, oldValue) {
-        if (newValue !== '') this.editForm(newValue)
-      }
-
-      onItemEditSrcChange(newValue, oldValue) {
+      onItemFilenameChange(newValue, oldValue) {
         if (newValue !== '') this.editItem(newValue)
       }
 
@@ -363,13 +414,15 @@
       }
       async editFormListener(event) {
 //        window.location.hash = event.currentTarget.dataFormSrc
-        this.formEditSrc = event.currentTarget.dataFormSrc
+        this.formHtmlPath = event.currentTarget.dataFormSrc
+        this.editForm(this.formHtmlPath)
       }
       async editFormItemListener(event) {
 //        window.location.hash = event.currentTarget.dataFormSrc
-        this.itemFrmSrc = event.currentTarget.dataFormSrc
-        this.itemEditSrc = event.currentTarget.dataItemSrc
+        this.formHtmlPath = event.currentTarget.dataFormSrc
+        this.itemFilename = event.currentTarget.dataItemSrc
         this.itemId = event.currentTarget.dataItemId
+        this.itemOrder = event.currentTarget.dataItemOrder
         this.itemTitle = event.currentTarget.dataItemTitle
       }
 
@@ -395,59 +448,77 @@
         // Load the form into a temp DOM to get stuff out of it
         let formHtml = await fetch(formSrc)
         let innerHTML = await formHtml.text()
+        this.form = innerHTML
         var doc = document.implementation.createHTMLDocument("New Document");
         doc.documentElement.innerHTML = innerHTML;
         let itemsNode = doc.querySelectorAll("tangy-form-item");
         this.items = []
+//        let newItem = {}
+//        newItem.title = 'New Item'
+//        newItem.class='newItem'
+//        this.items.push(newItem)
         for (let node of itemsNode) {
           let item = {}
           item.id = node.getAttribute('id')
           item.src = node.getAttribute('src')
           item.title = node.getAttribute('title')
+          item.itemOrder = node.getAttribute('itemOrder')
           item.formSrc = formSrc
           this.items.push(item)
         }
-        this.headerTitle = "Form Listing"
+        this.headerTitle = "Item Listing"
       }
 
+      /**
+       * This can be used to create new items or edit items.
+       * @param itemSrc
+       * @returns {Promise.<void>}
+       */
       async editItem(itemSrc) {
         this.$['form-view'].hidden = true
         this.$['form-edit'].hidden = true
         this.$['item-edit'].hidden = false
         this.$['form-list'].hidden = true
-        // Load the form into the DOM.
-        let frmSrc = this.itemFrmSrc
-        this.headerTitle = "Edit Item"
-        let array = frmSrc.split('/')
-        let itemUrl = array[0] + '/' + array[1] + '/' + itemSrc
-        let itemHtml = await fetch(itemUrl)
-        this.itemHtmlText = await itemHtml.text()
+        // Check if this is a new item
+        if (typeof itemSrc !== 'undefined') {
+          this.headerTitle = "Edit Item"
+          // Load the form into the DOM.
+          let frmSrc = this.formHtmlPath
+          let array = frmSrc.split('/')
+          let itemUrl = array[0] + '/' + array[1] + '/' + itemSrc
+          // todo try to grab local pouch version of item
+          let itemHtml = await fetch(itemUrl)
+          this.itemHtmlText = await itemHtml.text()
 //        console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
+        } else {
+          this.headerTitle = "Create Item"
+          this.itemHtmlText = ''
+          this.itemOrder = null
+          this.itemOrderDisabled = true;
+        }
       }
 
       async saveItem(event) {
-        this.itemEditSrc = event.currentTarget.dataItemSrc
+        this.itemFilename = event.currentTarget.dataItemSrc
         this.itemId = event.currentTarget.dataItemId
         let itemTitle = event.currentTarget.dataItemTitle
 //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
         let project = window.location.pathname.split("/")[3];
         let item = {}
         item.projectName = project
-        item.itemFrmSrc = this.itemFrmSrc
-        item.itemEditSrc = this.itemEditSrc
+        item.formHtmlPath = this.formHtmlPath
+        item.itemFilename = this.itemFilename
         item.itemId = this.itemId
         item.itemTitle = this.itemTitle
         item.itemHtmlText = this.itemHtmlText
-        let response = await fetch("/editor/item/save", {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          method: "POST",
-          body: JSON.stringify(item)
-        });
-        console.log("response: " + response);
-//        this.editForm(this.formEditSrc)
+        item.itemOrder = this.itemOrder
+        if (item.itemFilename !== 'undefined') {
+          let size = this.items.length
+          item.itemOrder = size+1
+        }
+        // pass items to help saveItem create new item name
+        let response = await TangyUtils.saveItem(item, this.items);
+        console.log("response: " + JSON.stringify(response));
       }
 
     }

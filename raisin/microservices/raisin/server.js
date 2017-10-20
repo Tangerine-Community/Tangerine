@@ -290,7 +290,7 @@ let saveForm = async function (dir, formName, form) {
   await fs.ensureDir(formPath)
   await fs.outputFile(formPath + "/form.html", form)
   let resp = {
-    "message": 'Form saved: ' + safeFiletName
+    "message": 'Form saved: ' + formPath
   }
   return resp;
 };
@@ -326,7 +326,7 @@ server.post('/form/create', async function (req, res, next) {
 
     let formParameters = {
       "title": safeTitle,
-      "src": "forms/" + safeFiletName + "/form.html"
+      "src": "forms/" + safeFileName + "/form.html"
     }
     await saveFormsJson(dir, formParameters);
 
@@ -334,7 +334,7 @@ server.post('/form/create', async function (req, res, next) {
     let formTemplate = await fs.readFile(srcpath + "/form-template.html","utf8")
     console.log("formTemplate: " + formTemplate)
     // let formTemplateStr = JSON.stringify(formTemplate)
-    let form = formTemplate.replace("FORMNAME", safeFiletName)
+    let form = formTemplate.replace("FORMNAME", safeFileName)
 
     let resp = await saveForm(dir, safeFileName, form);
     res.send(resp)
@@ -345,13 +345,13 @@ server.post('/item/save', async function (req, res, next) {
   // console.log("req.params:" + JSON.stringify(req.params))
   let safeItemTitle = sanitize(req.params.itemTitle)
   let itemHtmlText = req.params.itemHtmlText
-  let itemFrmSrc = req.params.itemFrmSrc
-  let itemFilename = req.params.itemEditSrc
+  let formHtmlPath = req.params.formHtmlPath
+  let itemFilename = req.params.itemFilename
   let projectName = req.params.projectName
-  // "itemFrmSrc":"forms/lemmie/form.html","itemEditSrc":"item-1.html","itemId":"item-1","itemTitle":"ACASI Part 3: Introduction"}
-  let formName = itemFrmSrc.split('/')[1]
+  let itemId = req.params.itemId
+  // "formHtmlPath":"forms/lemmie/form.html","itemEditSrc":"item-1.html","itemId":"item-1","itemTitle":"ACASI Part 3: Introduction"}
+  let formName = formHtmlPath.split('/')[1]
   let dir = projectRoot + projectName;
-
   // open the form and parse it
   let formPath = dir + "/content/forms/" + formName + "/form.html"
   let originalForm = await fs.readFile(formPath,'utf8')
@@ -359,18 +359,20 @@ server.post('/item/save', async function (req, res, next) {
   // search for tangy-form-item
   let formItemList = $('tangy-form-item')
   // console.log('formItemList: ' + JSON.stringify(formItemList))
-  let html = $.html('tangy-form-item')
-  // console.log("html: " + html)
+  // let html = $.html('tangy-form-item')
+  console.log("*********************")
+  console.log("html before: " + $.html())
+  console.log("*********************")
   // html: <tangy-form-item src="item-1.html" id="item-1" title="ACASI Part 3: Introduction"></tangy-form-item><tangy-form-item src="item-2.html" id="item-2" title="Question 1"></tangy-form-item>
-  formItemList.each(function(i, elem) {
-    let id = $(this).attr("id")
-    let src = $(this).attr("src")
-
-    console.log('id: ' + id + ' src: ' + src +  ' itemFilename: ' + itemFilename)
-    if (src === itemFilename) {
-      console.log('matched ' + id + " order: " + i)
-    }
-  });
+  // formItemList.each(function(i, elem) {
+  //   let id = $(this).attr("id")
+  //   let src = $(this).attr("src")
+  //
+  //   console.log('id: ' + id + ' src: ' + src +  ' itemFilename: ' + itemFilename)
+  //   if (src === itemFilename) {
+  //     console.log('matched ' + id + " order: " + i)
+  //   }
+  // });
   let clippedFormItemList = formItemList.not(function(i, el) {
     // this === el
     let id = $(this).attr('id')
@@ -378,12 +380,26 @@ server.post('/item/save', async function (req, res, next) {
     return src === itemFilename
   })
   console.log('formItemList: ' + formItemList.length + ' clippedFormItemList: ' + clippedFormItemList.length)
-  // let resp1 = await saveForm(dir, safeFileName, form)
 
-  // let resp = await saveItem(dir, formName, itemFilename, itemHtmlText)
-  let resp = {
-    "message": 'Its OK '
-  }
+  // create the form html that will be added
+  let newForm = '<tangy-form-item src="' + itemFilename + '" id="' + itemId + '" title="' + safeItemTitle + '">'
+  console.log('newForm: ' + newForm)
+  // $(newForm).insertAfter('tangy-form-item')
+  // $(newForm).insertAfter(clippedFormItemList)
+  // $('tangy-form-item').replaceWith(clippedFormItemList)
+  $('tangy-form-item').remove()
+  // todo: resolve ordering of these elements.
+  $(newForm).appendTo('tangy-form')
+  $(clippedFormItemList).appendTo('tangy-form')
+  console.log("*********************")
+  console.log('html after: ' + $.html())
+  console.log("*********************")
+  let form = $.html()
+  await saveForm(dir, formName, form);
+  let resp = await saveItem(dir, formName, itemFilename, itemHtmlText)
+  // let resp = {
+  //   "message": 'Its OK '
+  // }
   res.send(resp)
   return next()
 })
