@@ -159,11 +159,24 @@
       }
 
       async showForm(formSrc) {
+        let query = this.parseQuery(window.location.search)
         this.$['form-view'].hidden = false
         this.$['form-list'].hidden = true 
         // Load the form into the DOM.
         let formHtml = await fetch(formSrc)
-        this.innerHTML = await formHtml.text()
+        // Put the formHtml in a template first so element do not initialize connectedCallback
+        // before we modify them.
+        let formTemplate = document.createElement('template')
+        formTemplate.innerHTML = await formHtml.text()
+        let formEl = formTemplate.content.querySelector('tangy-form')
+        if (query.database) formEl.database = query.database
+        if (query['linear-mode']) formEl.setAttribute('linearMode', true) 
+        if (query['response-id']) formEl.setAttribute('responseId', query['response-id'])
+        if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true) 
+        if (query['hide-nav']) formEl.setAttribute('hide-nav', true) 
+        if (query['hide-responses']) formEl.setAttribute('hide-responses', true) 
+        this.innerHTML = formTemplate.innerHTML 
+        debugger
       }
 
     }
