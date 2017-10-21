@@ -38,6 +38,10 @@
           showLevels: {
             type: String,
             value: ''
+          },
+          saveChildren: {
+            type: Boolean,
+            value: false 
           }
         };
       }
@@ -73,8 +77,25 @@
         index = parseInt($(event.target).attr('data-index'));
         if (index + 1 !== this.levels.length) {
           this.renderOne(index + 1);
+        } else if (this.saveChildren) {
+          this.setChildren()
         }
-        return this.trigger("change");
+        // @TODO This is causing PouchDB conflicts somehow?
+        return this.dispatchEvent(new Event("change", {bubbles: true}));
+      }
+
+      setChildren() {
+        console.log('Setting children')
+        // let selectedOptions = this.querySelectorAll('option[selected="selected"]')
+        let criteria = this.value();
+        // @TODO The right place to get locationList?
+        let childrenLevel = window.locationList.locationsLevels.slice(0, this.levels.length)
+        Loc.query(childrenLevel, criteria, (res) => {
+          // @TODO If reselect, then modify existing. We probably want to set this input on connected callback, then just update it here.
+          this.insertAdjacentHTML('beforeend',"<div><input type='hidden' name='" + this.namespace + "-children' value='" + JSON.stringify(res) + "'></div>")
+          var htmlOptions, noPreSelection, selected, title;
+        })
+
       }
 
       isComplete () {
