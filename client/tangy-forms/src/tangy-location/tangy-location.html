@@ -30,6 +30,14 @@
           namespace: {
             type: String,
             value: 'location'
+          },
+          locationSrc: {
+            type: String,
+            value: '../location-list.json'
+          },
+          showLevels: {
+            type: String,
+            value: ''
           }
         };
       }
@@ -42,14 +50,18 @@
     
       async ready() {
         super.ready();
-        let response = await fetch('../location-list.json')
+        let response = await fetch(this.locationSrc)
         let options = await response.json()
         window.locationList = options
         if (options == null) {
           options = {};
         }
         this.showTitles = options.showTitles != null ? options.showTitles : true;
-        this.levels = options.levels || ["county", "zone", "school"];
+        if (this.showLevels) {
+          this.levels = this.showLevels.split(',')
+        } else {
+          this.levels = options.locationsLevels
+        }
         this.addedOptions = options.addedOptions != null ? options.addedOptions : false;
         this.selected = options.selected || [];
         this.render()
