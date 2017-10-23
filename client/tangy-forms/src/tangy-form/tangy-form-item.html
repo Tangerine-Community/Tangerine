@@ -74,7 +74,7 @@
       </div>
       <div class="card-actions">
         <paper-button id="open">open</paper-button>
-        <paper-button id="close">close</paper-button>
+        <paper-button id="close">submit</paper-button>
       </div>
     </paper-card>
   </template>
@@ -138,7 +138,11 @@
 
       async connectedCallback() {
         super.connectedCallback()
-        this.response = {}
+        if (this.responseJson) {
+          this.response = JSON.parse(this.responseJson)
+        } else {
+          this.response = {}
+        }
         this.$.close.addEventListener('click', () => {
           this.open = false
         })
@@ -148,114 +152,91 @@
         })
       }
 
-      onResponseJsonChange() {
-        this.response = JSON.parse(this.responseJson)
+      closeIt() {
+        this.valid = this.validate() 
+        if (this.valid === true) {
+          this.stuck = false
+          this.innerHTML = '' 
+        } else {
+          // User is stuck with this item open.
+          this.stuck = true
+          this.open = true
+        }
+      }
+
+      async openIt() {
+        // Put item HTML in a template element first so we can prepopulate it with data.
+        let template = document.createElement('template')
+        let response = await fetch(this.src)
+        template.innerHTML = await response.text()
+        let formTemplate = template.content.querySelector('form')
+        this.setResponse(formTemplate)
+        this.innerHTML = template.innerHTML
+        // @TODO Necessary?
+        let htmlForm = this.querySelector('form')
+        htmlForm.getResponse = this.getResponse.bind(this)
+        // @TODO Necessarry?
+        this.$.card.classList.add('open')
+        // Dispatch the change event to the form so now that it has been prepopulated and rendered, any logic in
+        // htmlForm.onchange has a chance to run.
+        htmlForm.dispatchEvent(new Event('change'))
+        // Listen for change events, set data to response.
+        htmlForm.addEventListener('change', this.formChangeListener.bind(this))
+        // Notify anything watching that we are all done opening.
+        this.dispatchEvent(new CustomEvent('tangy-form-item-open-change', {bubbles: true}))
       }
 
       async onOpenChange(newValue, oldValue) {
         // Close it.
         if (newValue === false && oldValue === true) {
-          let ironForm = this.querySelector('iron-form')
-          if (ironForm) {
-            this.valid = ironForm.validate() 
-            if (this.valid === true) {
-              this.stuck = false
-              this.innerHTML = '' 
-            } else {
-              // User is stuck with this item open.
-              this.stuck = true
-              this.open = true
-            }
-          } else {
-            this.stuck = false
-            this.innerHTML = '' 
-          }
-
+          this.closeIt()  
         }
         // Open it.
         if (newValue == true && oldValue === false && this.stuck === false) {
-          // Everything is groovy, let's open this item up.
-          let ironForm = document.createElement('iron-form')
-          this.appendChild(ironForm)
-          let response = await fetch(this.src)
-          ironForm.innerHTML = await response.text()
-          this.$.card.classList.add('open')
-          let htmlForm = this.querySelector('form')
-          if (htmlForm) {
-            // Pass the getResponse method down to the HTML Form so that onchange logic can use it.
-            htmlForm.getResponse = this.getResponse.bind(this)
-            this.setResponse()
-          }
-          // Listen for change events, set data to response.
-          ironForm.addEventListener('change', this.ironFormChangeListener.bind(this))
-          // Notify anything watching that we are all done opening.
-          this.dispatchEvent(new CustomEvent('tangy-form-item-open-change', {bubbles: true}))
+          this.openIt()
         }
       }
 
-      ironFormChangeListener(event) {
-        // Prevent a variable name from having two values in an array. This is a clean up non-native single select fields. For example, paper-radio-buttons behaves like a checkbox
-        // where two radio buttons of the same name can be checked but this is not how native radio button are supposed to work. This will ensure only one paper-radio-button 
-        // is checked.
-        let data = this.getResponse()  
-        for (let prop in data) {
-          // If there is data that is an array (object), then two of the same thing are selected.
-          if (typeof data[prop] == 'object') {
-            // Uncheck the last thing that was selected.
-            // @TODO: Unless the last thing that was selected was the current thing? This currently allows user to have a null value for a single select.
-            // This is confusing in the required case. This makes me think we should go back to the paper-radio-button-group, but it should be the form input,
-            // not the radio buttons, and it should have the value property that is reflected by the selected radio. 
-            // We'll make a better single select element when we work on tangy-button-select. Having more than one element share the same name space is just bad design
-            // on HTML's part.
-            let input = this.querySelector(`[name=${prop}][value=${this.response[prop]}]`)
-            input.checked = false
-          }
-        }
+      formChangeListener(event) {
+        this.response = this.getResponse()  
         // Native HTML Form does not dispatch a change event when non native input elements change. Force it to.
         // @TODO: If we can detect this is a native input element that change, then don't do this.
         let htmlForm = this.querySelector('form')
         if (htmlForm) {
-          htmlForm.dispatchEvent(new Event('change'))
+          htmlForm.response = this.response
+          //htmlForm.dispatchEvent(new Event('change'))
         }
-        this.response = this.getResponse() 
         this.dispatchEvent(new CustomEvent('tangy-form-item-variables-change', {bubbles: true}))
       }
 
-      close() {
-        this.open = false
+      validate() {
+        let isValid = true 
+        let inputs = this.querySelectorAll('[name]') 
+        for (let input of inputs) {
+          if (typeof input.validate == 'function' && !input.validate()) isValid = false 
+        }
+        return isValid
       }
 
       getResponse() {
-        let ironForm = this.querySelector(`iron-form`)
-        return ironForm.serializeForm()
+        let inputs = this.querySelectorAll('[name]') 
+        let response = {}
+        for (let input of inputs) {
+          response[input.name] = input.value
+        }
+        return response 
       }
 
-      setResponse() {
+      setResponse(formTemplate) {
         // Get all elements with a name attribute.
-        let inputs = this.querySelectorAll('[name]') 
+        let inputs = formTemplate.querySelectorAll('[name]') 
         for (let input of inputs) {
-          // Single select.
-          if (this.response.hasOwnProperty(input.name) && input.value !== undefined && input.checked !== undefined) {
-            if (this.response[input.name] == input.value) {
-              input.checked = true
-            }
+          if (this.response[input.attributes.name.value]) {
+            input.attributes.value.value = this.response[input.attributes.name.value]
           }
-          // Multi select.
-          else if (this.response.hasOwnProperty(input.name) && input.checked !== undefined) {
-            input.checked = true
-          }
-          // Standard.
-          else if (this.response.hasOwnProperty(input.name) && input.value !== undefined) {
-            input.value = this.response[input.name]
-          }
-        }
-        // Last step, trigger the change event.
-        let htmlForm = this.querySelector('form')
-        if (htmlForm) {
-          htmlForm.dispatchEvent(new Event('change'), {bubbles: true})
-          this.dispatchEvent(new CustomEvent('item-change'), {bubbles: true})
         }
       }
+
     }
 
     window.customElements.define(TangyFormItem.is, TangyFormItem);
