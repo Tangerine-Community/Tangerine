@@ -49,6 +49,7 @@
 
       connectedCallback() {
         super.connectedCallback()
+        if (this.value) this.$.checkbox.checked = true
         this.$.checkbox.addEventListener('change', (e) => this.value = (e.target.checked) ? 'on' : '')
       }
 
