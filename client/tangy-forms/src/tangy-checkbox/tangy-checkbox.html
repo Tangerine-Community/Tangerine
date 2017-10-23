@@ -1,0 +1,71 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<dom-module id="tangy-checkbox">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-checkbox id="checkbox"><slot></slot></paper-checkbox>
+  </template>
+
+  <script>
+    /**
+     * `tangy-checkbox`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TangyCheckbox extends Polymer.Element {
+
+      static get is() { return 'tangy-checkbox'; }
+
+      static get properties() {
+        return {
+          required: {
+            type: Boolean,
+            value: false,
+            observer: 'onRequiredChange'
+          },
+          disabled: {
+            type: Boolean,
+            value: false,
+            observer: 'onDisabledChange'
+          },
+          name: {
+            type: String,
+            value: ''
+          },
+          value: {
+            type: String,
+            value: ''
+          }
+        }
+      }
+
+      connectedCallback() {
+        super.connectedCallback()
+        if (this.value) this.$.checkbox.checked = true
+        this.$.checkbox.addEventListener('change', (e) => this.value = (e.target.checked) ? 'on' : '')
+      }
+
+      onRequiredChange(value) {
+        this.$.checkbox.required = value
+      }
+
+      onDisabledChange(value) {
+        this.$.checkbox.disabled = value
+      }
+
+      validate() {
+        return this.$.checkbox.validate()
+      }
+
+    }
+    window.customElements.define(TangyCheckbox.is, TangyCheckbox);
+  </script>
+</dom-module>

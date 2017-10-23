@@ -1,19 +1,19 @@
 <form>
   <img src="pizza.png">
   <h2>Role</h2>
-  <div id="role">
-    <paper-radio-button name="role" value="cso">CSO</paper-radio-button>
-    <paper-radio-button name="role" value="coach">Coach</paper-radio-button>
-    <paper-radio-button name="role" value="earc">EARC</paper-radio-button>
-    <paper-radio-button name="role" value="city_manager">City Manager</paper-radio-button>
-    <paper-radio-button name="role" value="rti_staff">RTI Stagf</paper-radio-button>
-    <paper-radio-button name="role" value="scde">SCDE</paper-radio-button>
-    <paper-radio-button name="role" value="esqac">ESQAC</paper-radio-button>
-    <paper-radio-button name="role" value="ntt">NTT</paper-radio-button>
-    <paper-radio-button name="role" value="county_director_tsc">County Director TSC</paper-radio-button>
-    <paper-radio-button name="role" value="county_directory_moe">County Director MOE</paper-radio-button>
-    <paper-radio-button name="role" value="other">Other</paper-radio-button>
-  </div>
+  <tangy-radio-buttons name="role" value="">
+    <option value="cso">CSO</option>
+    <option value="coach">Coach</option>
+    <option value="earc">EARC</option>
+    <option value="city_manager">City Manager</option>
+    <option value="rti_staff">RTI Stagf</option>
+    <option value="scde">SCDE</option>
+    <option value="esqac">ESQAC</option>
+    <option value="ntt">NTT</option>
+    <option value="county_director_tsc">County Director TSC</option>
+    <option value="county_directory_moe">County Director MOE</option>
+    <option value="other">Other</option>
+  </tangy-radio-buttons>
   <paper-input 
     error-message="A pizza name is required" 
     type="text" 
@@ -23,7 +23,7 @@
     value="">
   </paper-input>
   <paper-input 
-    error-message="A pizza name is required" 
+    error-message="Your M-Pesa number is required." 
     type="text" 
     name="mpesa_phone_number" 
     required 
@@ -32,7 +32,7 @@
   </paper-input>
   <gold-phone-input country-code="254" phone-number-pattern="X-XX-XX-XX-XX"></gold-phone-input> 
   <paper-input 
-    error-message="A pizza name is required" 
+    error-message="Your year of birth is required." 
     type="text" 
     name="year_of_birth" 
     required 
@@ -40,7 +40,7 @@
     value="">
   </paper-input>
   <paper-input 
-    error-message="A pizza name is required" 
+    error-message="Your first name is required." 
     type="text" 
     name="first_name" 
     required 
@@ -48,7 +48,7 @@
     value="">
   </paper-input>
   <paper-input 
-    error-message="A pizza name is required" 
+    error-message="Your last name is required" 
     type="text" 
     name="last_name" 
     required 
@@ -57,9 +57,8 @@
   </paper-input>
   <tangy-location required save-children show-levels="county,subcounty,zone" name="location"></tangy-location>
   <h2>Gender</h2>
-  <paper-radio-button name="gender" value="female">Female</paper-radio-button>
-  <paper-radio-button name="gender" value="male">Male</paper-radio-button>
-  <gold-phone-input country-code="254" phone-number-pattern="X-XX-XX-XX-XX"></gold-phone-input> 
+  <option name="gender" value="female">Female</option>
+  <option name="gender" value="male">Male</option>
   <paper-input 
     error-message="A valid email address is required." 
     type="email" 
