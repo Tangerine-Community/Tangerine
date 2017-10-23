@@ -37,7 +37,6 @@
           value: {
             type: String,
             value: '',
-            observer: 'valueListener',
             reflectToAttribute: true
           },
           required: {
@@ -66,25 +65,16 @@
 
       // Element class can define custom element reactions
       // @TODO: Duplicating ready?
-      connectedCallback() {
+      async connectedCallback() {
         super.connectedCallback();
-        this.setItUp = true
-      }
-
-      valueListener(value) {
-        if (value == "") return this.value = '{}'
-        if (this.setItUp == false) return
+        let selected = {}
+        if (this.value == "") this.value = '{}'
         try {
-          this.setItUp = false
-          this.selected = JSON.parse(value)
-          this.render()
+          // this.selected = JSON.parse(`[${this.value}`)
+          selected = JSON.parse(this.value)
         } catch(e) {
           console.log(`${this.name} was given invalid JSON`)
         }
-      }
-    
-      async ready() {
-        super.ready();
         let response = await fetch(this.locationSrc)
         let options = await response.json()
         window.locationList = options
@@ -97,8 +87,16 @@
         } else {
           this.levels = options.locationsLevels
         }
+        // @TODO This is a nasty hack. The renderOne function goes into an infinite loop if selected is an object of what is
+        // selected. It needs to be an object in an array for every level or else infinite loop. Refactor renderOne, at the
+        // same time we might as well refactor to use Material Web Components.
+        this.selected = []
+        for (let level in this.levels) {
+          if (Object.keys(selected).length > 0) this.selected.push(selected[level])
+        }
+        this.selected = selected
         this.addedOptions = options.addedOptions != null ? options.addedOptions : false;
-        this.selected = options.selected || [];
+        // this.selected = this.selected || [];
         this.render()
       }
 
@@ -126,6 +124,10 @@
         Loc.query(childrenLevel, criteria, (res) => {
           // @TODO If reselect, then modify existing. We probably want to set this input on connected callback, then just update it here.
           this.insertAdjacentHTML('beforeend',"<div><input type='hidden' name='" + this.name + "-children' value='" + JSON.stringify(res) + "'></div>")
+          let childrenInputEl = this.querySelector(`[name=${this.name}-children]`)
+          setTimeout(() => {
+            childrenInputEl.dispatchEvent(new Event('change', {bubbles: true}))
+          }, 1000)
           // criteria[window.locationList.locationsLevels[this.levels.length]] = res
           // this.value = JSON.stringify(criteria) 
         })
@@ -207,7 +209,8 @@
 
           
           if (this.selected.length !== 0) {
-            if (index + 1 === this.selected.length) {
+            // if (index + 1 === this.selected.length) {
+            if (index + 1 === this.levels.length) {
               return this.selected = [];
             } else {
               return this.renderOne(index + 1);
