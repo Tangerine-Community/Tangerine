@@ -41,6 +41,7 @@
           value: {
             type: String,
             value: '',
+            reflectToAttribute: true,
             observer: 'onValueChange'
           },
           required: {
@@ -96,7 +97,6 @@
 
       onValueChange(value) {
         if (!this.isReady) return
-        let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
         this.$['paper-radio-group'].selected = value
       }
 
