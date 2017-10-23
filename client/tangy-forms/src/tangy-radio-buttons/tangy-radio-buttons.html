@@ -1,0 +1,125 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+
+<dom-module id="tangy-radio-buttons">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+      :host([invalid]) {
+        border: red solid 3px;
+      }
+    </style>
+    <paper-radio-group id="paper-radio-group">
+    </paper-radio-group>
+  </template>
+
+  <script>
+    /**
+     * `tangy-radio-buttons`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TangyRadioButton extends Polymer.Element {
+
+      static get is() { return 'tangy-radio-buttons'; }
+
+      static get properties() {
+        return {
+          name: {
+            type: String,
+            value: ''
+          },
+          value: {
+            type: String,
+            value: '',
+            observer: 'onValueChange'
+          },
+          required: {
+            type: Boolean,
+            value: false
+          },
+          disabled: {
+            type: Boolean,
+            value: false,
+            observer: 'onDisabledChange',
+            reflectToAttribute: true
+          },
+          hidden: {
+            type: Boolean,
+            value: false,
+            observer: 'onHiddenChange',
+            reflectToAttribute: true
+          },
+          invalid: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          }
+        }
+      }
+
+      connectedCallback() {
+        super.connectedCallback()
+        this.isReady = false
+        let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
+        paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
+        // Populate options as paper-radio-button elements
+        let options = this.querySelectorAll('option')
+        for (let option of options) {
+          let button = document.createElement('paper-radio-button')
+          button.name = option.value
+          button.innerHTML = option.innerHTML
+          paperRadioGroupEl.appendChild(button)
+        }
+        paperRadioGroupEl.selected = this.value
+        if (this.required) paperRadioGroupEl.required = true
+        this.isReady = true
+      }
+
+      onPaperRadioGroupChange(event) {
+        // Stop propagation of paper-radio-button change event so we can set the value of this element first.
+        // Otherwise tangy-form-item will find the wrong value for this element.
+        event.stopPropagation()
+        if (!this.isReady) return
+        this.value = event.target.name
+        this.dispatchEvent(new Event('change', {bubbles:true}))
+      }
+
+      onValueChange(value) {
+        if (!this.isReady) return
+        let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
+        this.$['paper-radio-group'].selected = value
+      }
+
+      onDisabledChange(value) {
+        let paperRadioButtons = this.shadowRoot.querySelectorAll('paper-radio-button')
+        paperRadioButtons.forEach((button) => button.disabled = value)
+      }
+      onHiddenChange(value) {
+        // Disable when hidden so values do not end up being saved when hidden.
+        this.disabled = value
+      }
+
+      validate() {
+        if (this.required && !this.hidden && !this.value) {
+          this.invalid = true
+          return false
+        } else {
+          this.removeAttribute('invalid')
+          return true
+        }
+      }
+
+    }
+    window.customElements.define(TangyRadioButton.is, TangyRadioButton);
+  </script>
+</dom-module>

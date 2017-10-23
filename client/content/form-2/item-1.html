@@ -1,5 +1,5 @@
 <form id="form1" onchange="
-  let response = this.getResponse();
+  let response = this.getResponse()
   if (response.fruit_prompt == 'on') window.fruit_selection.hidden = false
   if (!response.fruit_prompt) window.fruit_selection.hidden = true
   ">
@@ -13,14 +13,14 @@
     value="">
   </paper-input>
   <label>Pizza toppings:</label> <br>
-  <paper-checkbox name="cheese">cheese</paper-checkbox><br>
-  <paper-checkbox name="pepperoni">pepperoni</paper-checkbox><br>
-  <paper-checkbox name="fruit_prompt">I would like to add fruit.</paper-checkbox><br>
-  <div id="fruit_selection" hidden>
-    <paper-radio-button name="fruit_selection" value="tangerine">Tangerine</paper-radio-button>
-    <paper-radio-button name="fruit_selection" value="apple">Apple</paper-radio-button>
-    <paper-radio-button name="fruit_selection" value="pear">Pear</paper-radio-button>
-    <paper-radio-button name="fruit_selection" value="coconut">Coconut</paper-radio-button>
-  </div>
-  <paper-checkbox name="extra_items">I would like to add extra items.</paper-checkbox><br>
+  <tangy-checkbox name="cheese" value="">cheese</tangy-checkbox><br>
+  <tangy-checkbox name="pepperoni" value="">pepperoni</tangy-checkbox><br>
+  <tangy-checkbox name="fruit_prompt" value="">I would like to add fruit.</tangy-checkbox><br>
+  <tangy-radio-buttons id="fruit_selection" name="fruit_selection" value="" hidden required>
+    <option value="tangerine">Tangerine</option>
+    <option value="apple">Apple</option>
+    <option value="pear">Pear</option>
+    <option value="coconut">Coconut</option>
+  </tangy-radio-buttons>
+  <tangy-checkbox name="extra_items" value="">I would like to add extra items.</tangy-checkbox><br>
 </form>
