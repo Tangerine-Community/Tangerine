@@ -9,6 +9,9 @@
       :host {
         display: block;
       }
+      :host([invalid]) {
+        border: solid red 3px;
+      }
     </style>
       <slot></slot>
     </div>
@@ -27,58 +30,119 @@
       static get is() { return 'tangy-location'; }
       static get properties() {
         return {
-          namespace: {
+          name: {
             type: String,
             value: 'location'
+          },
+          value: {
+            type: String,
+            value: '',
+            reflectToAttribute: true
+          },
+          required: {
+            type: Boolean,
+            value: false
+          },
+          invalid: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          locationSrc: {
+            type: String,
+            value: '../location-list.json'
+          },
+          showLevels: {
+            type: String,
+            value: ''
+          },
+          saveChildren: {
+            type: Boolean,
+            value: false 
           }
         };
       }
 
       // Element class can define custom element reactions
       // @TODO: Duplicating ready?
-      connectedCallback() {
+      async connectedCallback() {
         super.connectedCallback();
-      }
-    
-      async ready() {
-        super.ready();
-        let response = await fetch('../location-list.json')
+        this.selected = {}
+        if (this.value == "") this.value = '{}'
+        try {
+          // this.selected = JSON.parse(`[${this.value}`)
+          this.selected = JSON.parse(this.value)
+        } catch(e) {
+          console.log(`${this.name} was given invalid JSON`)
+        }
+        let response = await fetch(this.locationSrc)
         let options = await response.json()
         window.locationList = options
         if (options == null) {
           options = {};
         }
         this.showTitles = options.showTitles != null ? options.showTitles : true;
-        this.levels = options.levels || ["county", "zone", "school"];
+        if (this.showLevels) {
+          this.levels = this.showLevels.split(',')
+        } else {
+          this.levels = options.locationsLevels
+        }
         this.addedOptions = options.addedOptions != null ? options.addedOptions : false;
-        this.selected = options.selected || [];
         this.render()
       }
 
       onChange (event) {
+        this.value = JSON.stringify(this.selection())
         var index;
         $(event.target).closest("div").nextAll().remove();
         index = parseInt($(event.target).attr('data-index'));
         if (index + 1 !== this.levels.length) {
           this.renderOne(index + 1);
+        } else if (this.saveChildren) {
+          this.setChildren()
         }
-        return this.trigger("change");
+        if (this.invalid) this.validate()
+        // @TODO This is causing PouchDB conflicts somehow?
+        // return this.dispatchEvent(new Event("change", {bubbles: true}));
       }
 
-      isComplete () {
+      setChildren() {
+        console.log('Setting children')
+        // let selectedOptions = this.querySelectorAll('option[selected="selected"]')
+        let criteria = this.selection();
+        // @TODO The right place to get locationList?
+        let childrenLevel = window.locationList.locationsLevels.slice(0, this.levels.length)
+        Loc.query(childrenLevel, criteria, (res) => {
+          // @TODO If reselect, then modify existing. We probably want to set this input on connected callback, then just update it here.
+          this.insertAdjacentHTML('beforeend',"<div><input type='hidden' name='" + this.name + "-children' value='" + JSON.stringify(res) + "'></div>")
+          let childrenInputEl = this.querySelector(`[name=${this.name}-children]`)
+          setTimeout(() => {
+            childrenInputEl.dispatchEvent(new Event('change', {bubbles: true}))
+          }, 1000)
+          // criteria[window.locationList.locationsLevels[this.levels.length]] = res
+          // this.value = JSON.stringify(criteria) 
+        })
+
+      }
+
+      // @TODO This does not work if the last level is not set.
+      validate () {
+        if (!this.required) return true
         var j, len, level, ref, value;
-        value = this.value();
+        value = this.selection();
         ref = this.levels;
         for (j = 0, len = ref.length; j < len; j++) {
           level = ref[j];
           if (!value[level]) {
+            this.setAttribute('invalid', true)
             return false;
           }
         }
+        this.removeAttribute('invalid')
         return true;
       }
 
-      value () {
+      selection () {
         var i, j, len, level, ref, result;
         result = {};
         ref = this.levels;
@@ -97,7 +161,7 @@
         if (index === 0) {
           criteria = {};
         } else {
-          criteria = this.value();
+          criteria = this.selection();
         }
         return Loc.query(this.levels, criteria, (res) => {
           var htmlOptions, noPreSelection, selected, title;
@@ -115,6 +179,7 @@
           });
           htmlOptions = res.map(function(el) {
             var selected;
+            // Populate selected data.
             if ((this.selected[this.levels[index]] != null) && el.id === this.selected[this.levels[index]]) {
               selected = "selected='selected'";
             }
@@ -129,14 +194,15 @@
           if (noPreSelection) {
             selected = "selected='selected'";
           }
-          this.insertAdjacentHTML('beforeend',"<div> <label>" + (title || '') + " <select name='" + this.namespace + "-" + this.levels[index] + "' data-index='" + index + "'> <option " + (selected || '') + " disabled='disabled'>Select...</option> " + htmlOptions + " </select> </label> <br> </div>")
+          this.insertAdjacentHTML('beforeend',"<div> <label>" + (title || '') + " <select name='" + this.name + "-" + this.levels[index] + "' data-index='" + index + "'> <option " + (selected || '') + " disabled='disabled'>Select...</option> " + htmlOptions + " </select> </label> <br> </div>")
           let selectElements = this.querySelectorAll('select')
           let latestSelectElement = selectElements[selectElements.length-1]
           latestSelectElement.addEventListener('change', this.onChange.bind(this))
 
           
           if (this.selected.length !== 0) {
-            if (index + 1 === this.selected.length) {
+            // if (index + 1 === this.selected.length) {
+            if (index + 1 === this.levels.length) {
               return this.selected = [];
             } else {
               return this.renderOne(index + 1);
