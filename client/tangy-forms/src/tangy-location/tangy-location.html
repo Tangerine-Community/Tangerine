@@ -67,11 +67,11 @@
       // @TODO: Duplicating ready?
       async connectedCallback() {
         super.connectedCallback();
-        let selected = {}
+        this.selected = {}
         if (this.value == "") this.value = '{}'
         try {
           // this.selected = JSON.parse(`[${this.value}`)
-          selected = JSON.parse(this.value)
+          this.selected = JSON.parse(this.value)
         } catch(e) {
           console.log(`${this.name} was given invalid JSON`)
         }
@@ -87,16 +87,7 @@
         } else {
           this.levels = options.locationsLevels
         }
-        // @TODO This is a nasty hack. The renderOne function goes into an infinite loop if selected is an object of what is
-        // selected. It needs to be an object in an array for every level or else infinite loop. Refactor renderOne, at the
-        // same time we might as well refactor to use Material Web Components.
-        this.selected = []
-        for (let level in this.levels) {
-          if (Object.keys(selected).length > 0) this.selected.push(selected[level])
-        }
-        this.selected = selected
         this.addedOptions = options.addedOptions != null ? options.addedOptions : false;
-        // this.selected = this.selected || [];
         this.render()
       }
 
