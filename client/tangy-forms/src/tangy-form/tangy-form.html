@@ -34,7 +34,7 @@
 
 <style>
   input:invalid {
-    background-color: #FF9800;
+    background-color: #e1e2e1;
   }
   paper-card {
     margin: 15px 0px;
@@ -64,13 +64,13 @@
   <template>
       <style>
         :host {
-          background: #FF9800; 
+          background: #e1e2e1; 
           display: block;
           margin: 0px;
           padding: 0px;
         }
         #tangy-form--header {
-          background: #FF9800; /* #ef6433; */
+          background: #e1e2e1; /* #ef6433; */
         }
         #tangy-form-responses, #tangy-form-questions {
           margin: 0px 20px;
@@ -93,14 +93,14 @@
           margin: 0px auto;
         }
         #up-fab {
-          background: #8BC34A; 
+          background: #FF9800; 
           position: fixed;
           bottom: 73px;
           right: 7px;
           color: white;
         }
         #down-fab {
-          background: #8BC34A; 
+          background: #FF9800; 
           position: fixed;
           bottom: 10px;
           right: 7px;
@@ -111,13 +111,13 @@
           display: none;
         } 
         #show-responses-fab {
-          background: #8BC34A; 
+          background: #FF9800; 
           position: fixed;
           top: 73px;
           right: 7px;
         }
         #new-response-fab {
-          background: #8BC34A; 
+          background: #FF9800; 
           position: fixed;
           top: 10px;
           right: 7px;
@@ -127,14 +127,16 @@
           display: none;
         } 
         paper-progress {
-          --paper-progress-active-color: #8BC34A;
+          --paper-progress-active-color: #FF9800;
         }
         paper-tab, paper-tabs {
-          --paper-tabs-selection-bar-color: #8BC34A !important;
+          --paper-tabs-selection-bar-color: #FF9800 !important;
           color: #fff;
         }
         paper-button {
-          background: #8BC34A;
+          background: #FF9800;
+          --paper-button-ink-color: #FFF;
+          color: #FFF;
         }
         paper-fab.expand-and-inform {
             -webkit-transform: scale3d(2, 2, 2);
