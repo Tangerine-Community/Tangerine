@@ -200,7 +200,7 @@
             type: String,
             value: 'tangy-form'
           },
-          onItemChange: {
+          onChange: {
             type: String,
             value: '' 
           },
@@ -294,7 +294,7 @@
           item.response = this.response
         }
         // Listen for Item Change events, save to response.
-        this.addEventListener('change', this.onInputChange)
+        this.addEventListener('change', (event) => this.onInputChange(event.target) )
         // If hideClosedItems, hide other items when one opens.
         if (this.hideClosedItems) {
           this.addEventListener('tangy-form-item-open-change', (event) => {
@@ -319,10 +319,10 @@
           let firstItem = this.querySelector('tangy-form-item')
           this.focusOnItem(firstItem.id)
         }
+        this.evalOnChange()
       }
 
-      async onInputChange(event) {
-        let input = event.srcElement
+      async onInputChange(input) {
         this.response[input.name] = input.value
         this.response.log.push({
           event: 'change',
@@ -331,12 +331,16 @@
             value: input.value 
           }
         })
-        this.response = this.service.saveResponse(this.response) 
+        this.response = await this.service.saveResponse(this.response) 
+        this.evalOnChange()
+      }
+
+      evalOnChange() {
         // onItemChange logic.
         let tangyForm = this
         let response = this.response
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        eval(this.onItemChange)// .bind(this)
+        eval(this.onChange)// .bind(this)
       }
 
       async focusOnItem(itemId) {
@@ -350,7 +354,7 @@
         let item = this.querySelector(`#${itemId}`)
         // Save our new focus item ID.
         this.response.focusItemId = item.id 
-        this.response = this.service.saveResponse(this.response)
+        this.response = await this.service.saveResponse(this.response)
         // Open item.
         if(!item.open) item.open = true
         // Update the nav.
@@ -416,7 +420,7 @@
       }
 
       async newResponse() {
-        this.response = this.service.saveResponse(new TangyFormResponse({formId: this.formId}))
+        this.response = await this.service.saveResponse(new TangyFormResponse({formId: this.formId}))
         this.render()
       }
 
