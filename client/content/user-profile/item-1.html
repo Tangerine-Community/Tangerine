@@ -57,8 +57,10 @@
   </paper-input>
   <tangy-location required save-children show-levels="county,subcounty,zone" name="location" value=""></tangy-location>
   <h2>Gender</h2>
-  <option name="gender" value="female">Female</option>
-  <option name="gender" value="male">Male</option>
+  <tangy-radio-buttons name="gender" value="">
+    <option value="female">Female</option>
+    <option value="male">Male</option>
+  </tangy-radio-buttons>
   <paper-input 
     error-message="A valid email address is required." 
     type="email" 

@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<script src="tangy-form-model.js"></script>
 <script src="tangy-form-response-model.js"></script>
+<script src="tangy-form-service.js"></script>
 <link rel="import" href="tangy-form-item.html">
 <link rel="import" href="../tangy-timed/tangy-timed.html">
 <link rel="import" href="../tangy-gps/tangy-gps.html">
@@ -198,7 +200,7 @@
             type: String,
             value: 'tangy-form'
           },
-          onItemChange: {
+          onChange: {
             type: String,
             value: '' 
           },
@@ -230,41 +232,53 @@
       }
 
       async connectedCallback() {
+
+        // @TODO Change this.id to this.form_id. It's more obvious.
         super.connectedCallback();
-        // Use a PouchDB to store responses.
-        this.db = new PouchDB(this.database)
+
         // Stash initial state of innerHTML for use when starting a new response 
         // after a prior response was worked on.
         this._formDefinition = this.innerHTML
-        // If now responseId provided, try to get it from a current tangy form response doc.
-        if (!this.responseId) {
-          // Get the current response, else catch and create new response.
-          let currentTangyFormResponse
-          try {
-            currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-          } catch (e) {
-            let tangyFormResponse = new TangyFormResponseModel({
-              formId: this.id
-            })
-            let dbResponse = await this.db.post(tangyFormResponse)
-            tangyFormResponse = await this.db.get(dbResponse.id)
-            dbResponse = await this.db.put({
-              _id: `current_tangy_form_response_${this.id}`,
-              responseId: tangyFormResponse._id
-            })
-            currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-          }
-          this.response = await this.db.get(currentTangyFormResponse.responseId)
-        } else {
-          // Try to get the response with responseId provided, otherwise create it.
-          try {
-            this.response = await this.db.get(this.responseId)
-          } catch (e) {
-            let response = new TangyFormResponseModel({_id: this.responseId})
-            await this.db.put(response)
-            this.response = await this.db.get(response._id)
-          }
+
+        // @TODO Rename database to databaseName.
+        this.service = new TangyFormService({databaseName: this.database})
+        await this.service.initialize()
+
+        // Get our formDoc.
+        this.formDoc = await this.service.getForm(this.id)
+
+        // No formDoc? Create one. 
+        if (!this.formDoc) {
+          this.formDoc = new TangyFormModel({formId: this.id})
+          this.formDoc = await this.service.saveForm(this.formDoc)
         }
+
+        // Determine our current response ID.
+        if (!this.responseId && this.formDoc.responseId) {
+          this.responseId = this.formDoc.responseId
+        }
+
+        // No response ID? Create one.
+        if (!this.responseId) {
+          this.response = new TangyFormResponseModel({_id: this.responseId, formId: this.id})
+          this.response = await this.service.saveResponse(this.response)
+          // Now we definitely have a response ID.
+          this.responseId = this.response._id
+        }
+
+        // Get our current response.
+        this.response = await this.service.getResponse(this.responseId)
+
+        // No response by this ID? Create it.
+        if (!this.response) {
+          this.response = new TangyFormResponseModel({_id: this.responseId, formId: this.id})
+          this.response = await this.service.saveResponse(this.response)
+        }
+
+        // Save this response as our current response.
+        this.formDoc.responseId = this.response._id
+        this.formDoc = await this.service.saveForm(this.formDoc)
+
         // Render the form.
         this.render()
       }
@@ -277,14 +291,10 @@
         // Load response data into items.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         for (let item of items) {
-          if (this.response.items.hasOwnProperty(item.id)) {
-            item.response = this.response.items[item.id] 
-          } else {
-            this.response.items[item.id] = {}
-          }
+          item.response = this.response
         }
         // Listen for Item Change events, save to response.
-        this.addEventListener('tangy-form-item-variables-change', this.onItemVariablesChange)
+        this.addEventListener('change', (event) => this.onInputChange(event.target) )
         // If hideClosedItems, hide other items when one opens.
         if (this.hideClosedItems) {
           this.addEventListener('tangy-form-item-open-change', (event) => {
@@ -309,17 +319,28 @@
           let firstItem = this.querySelector('tangy-form-item')
           this.focusOnItem(firstItem.id)
         }
+        this.evalOnChange()
       }
 
-      async onItemVariablesChange(event) {
-        this.response.items[event.srcElement.id] = event.srcElement.response
-        await this.db.post(this.response)
-        this.response = await this.db.get(this.response._id)
+      async onInputChange(input) {
+        this.response[input.name] = input.value
+        this.response.log.push({
+          event: 'change',
+          package: {
+            name: input.name,
+            value: input.value 
+          }
+        })
+        this.response = await this.service.saveResponse(this.response) 
+        this.evalOnChange()
+      }
+
+      evalOnChange() {
         // onItemChange logic.
         let tangyForm = this
         let response = this.response
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        eval(this.onItemChange)// .bind(this)
+        eval(this.onChange)// .bind(this)
       }
 
       async focusOnItem(itemId) {
@@ -333,8 +354,7 @@
         let item = this.querySelector(`#${itemId}`)
         // Save our new focus item ID.
         this.response.focusItemId = item.id 
-        await this.db.put(this.response)
-        this.response = await this.db.get(this.response._id);
+        this.response = await this.service.saveResponse(this.response)
         // Open item.
         if(!item.open) item.open = true
         // Update the nav.
@@ -400,54 +420,24 @@
       }
 
       async newResponse() {
-        let currentTangyFormResponse
-        try {
-          currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-        }
-        catch (e) {
-          await this.db.post({
-            _id: `current_tangy_form_response_${this.id}`
-          })
-          currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-        }
-        // Create the new response.
-        let tangyFormResponse = new TangyFormResponseModel({
-          formId: this.id
-        })
-        this.response = await this.db.get((await this.db.post(tangyFormResponse)).id)
-        currentTangyFormResponse.responseId = this.response._id 
-        await this.db.put(currentTangyFormResponse)
+        this.response = await this.service.saveResponse(new TangyFormResponse({formId: this.formId}))
         this.render()
       }
 
       async resumeResponse(event) {
-        let currentTarget = event.currentTarget
-        let currentTangyFormResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-        currentTangyFormResponse.responseId = currentTarget.dataResponseId
-        await this.db.put(currentTangyFormResponse)
-        this.response = this.db.get(currentTangyFormResponse.responseId)
+        let resumeResponseId = event.currentTarget.dataResponseId
+        this.response = await this.service.getResponse(resumeResponseId)
+        this.formDoc = await this.service.getForm(this.id)
+        this.formDoc.responseId = this.response._id
+        this.formDoc = await this.service.saveForm(this.formDoc)
         this.render()
       }
 
       async showResponses() {
         this.$['tangy-form-questions'].hidden = true 
         this.$['tangy-form-responses'].hidden = false 
-        let currentResponse = await this.db.get(`current_tangy_form_response_${this.id}`);
-        // @TODO Query for form response docs with `doc.form_id` equal to `this.form_id`.
-        let allDocs = (await this.db.allDocs({include_docs: true})).rows.map((row) => { return row.doc})
-        allDocs.sort(function (a, b) {
-          return b.startUnixtime - a.startUnixtime;
-        });
-        this.responses = allDocs.filter((doc) => {
-          if (doc.collection === 'TangyFormResponse' && doc.formId == this.id) {
-            if (doc._id == currentResponse.responseId) {
-              doc.isCurrentTangyFormResponse = true
-            } else {
-              doc.isCurrentTangyFormResponse = false
-            }
-            return doc
-          }
-        }) 
+        // @TODO Paginate and mark current response.
+        this.responses = await this.service.getResponsesByFormId(this.id) 
       }
 
     }
