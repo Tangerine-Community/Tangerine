@@ -9,6 +9,7 @@ class TangyFormResponseModel {
     this.variables = {}
     this.log = []
     this.items = {}
+    this.uploadDatetime = ''
     Object.assign(this, props)
   }
 }
