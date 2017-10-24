@@ -165,12 +165,22 @@
       }
 
       async openIt() {
-        // Put item HTML in a template element first so we can prepopulate it with data.
-        let template = document.createElement('template')
+        // Put item HTML in a template first so we can prepopulate it with data.
+        let template = document.createElement('div')
         let response = await fetch(this.src)
         template.innerHTML = await response.text()
-        let formTemplate = template.content.querySelector('form')
-        this.setResponse(formTemplate)
+        let inputs = template.querySelectorAll('[name]') 
+        // Run generators. This is temporary until we have nice CKEditor widgets to do this.  
+        for (let input of inputs) {
+          this.generate(input)
+        }
+        // Prepopulate data. 
+        for (let input of inputs) {
+          if (this.response[input.name]) {
+            input.setAttribute('value', this.response[input.name])
+          }
+        }
+        // Display the form.
         this.innerHTML = template.innerHTML
         // @TODO Necessary?
         let htmlForm = this.querySelector('form')
@@ -227,13 +237,21 @@
         return response 
       }
 
-      setResponse(formTemplate) {
-        // Get all elements with a name attribute.
-        let inputs = formTemplate.querySelectorAll('[name]') 
-        for (let input of inputs) {
-          if (this.response[input.attributes.name.value]) {
-            input.attributes.value.value = this.response[input.attributes.name.value]
-          }
+      generate(element) {
+        switch (element.nodeName) {
+          case 'TANGY-TIMED':
+            let fragments = element.innerText.split(' ')
+            fragments = fragments.filter((fragment) => fragment.trim() !== '')
+            let i = 0
+            for (let fragment of fragments) {
+              let input = document.createElement('tangy-toggle-button')
+              i++
+              input.setAttribute('name', `${element.name}-${i}`)
+              input.setAttribute('value', '')
+              input.innerHTML = fragment
+              element.appendChild(input)
+            }
+            break;
         }
       }
 

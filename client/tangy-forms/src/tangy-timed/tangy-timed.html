@@ -42,6 +42,10 @@ tangy-timed table {
       static get is() { return 'tangy-timed'; }
       static get properties() {
         return {
+          name: {
+            type: String,
+            value: 'tangy-timed'
+          },
           duration: {
             type: Number,
             value: 60 
@@ -161,7 +165,7 @@ tangy-timed table {
       }
     
     }
-
+    
     window.customElements.define(TangyTimed.is, TangyTimed);
   </script>
 </dom-module>
