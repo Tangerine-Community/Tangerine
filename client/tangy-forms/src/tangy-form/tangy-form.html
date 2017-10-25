@@ -167,13 +167,13 @@
         <paper-progress id="tangy-form-questions--progress" value="0" secondary-progress="100"></paper-progress>
       </div>
       <div id="tangy-form-responses" hidden>
-        <paper-button raised><iron-icon on-click='newResponseButtonListener' icon="icons:add"></iron-icon></paper-button>
+        <paper-button raised><iron-icon on-click='newResponse' icon="icons:add"></iron-icon></paper-button>
         <paper-button raised><iron-icon on-click='generateCSVButtonListener' icon="icons:file-download"></iron-icon></paper-button>
         <ul>
           <template is="dom-repeat" items="{{responses}}">
             <li> 
               [[item.startDatetime]]
-              <paper-button data-response-id="[[item._id]]" on-click="resumeResponseButtonListener" raised><iron-icon icon="icons:launch"></iron-icon></paper-button> 
+              <iron-icon data-response-id="[[item._id]]" on-click="resumeResponse" icon="icons:launch"></iron-icon> 
               <template is="dom-if" if="{{item.isCurrentTangyFormResponse}}">
                 <span style="color: #8BC34A;"> *</span>
               </template>
@@ -427,7 +427,10 @@
       }
 
       async newResponse() {
-        this.response = await this.service.saveResponse(new TangyFormResponse({formId: this.formId}))
+        this.response = await this.service.saveResponse(new TangyFormResponseModel({formId: this.id}))
+        this.formDoc = await this.service.getForm(this.id)
+        this.formDoc.responseId = this.response._id
+        this.formDoc = await this.service.saveForm(this.formDoc)
         this.render()
       }
 
