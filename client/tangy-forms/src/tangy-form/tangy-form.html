@@ -167,8 +167,8 @@
         <paper-progress id="tangy-form-questions--progress" value="0" secondary-progress="100"></paper-progress>
       </div>
       <div id="tangy-form-responses" hidden>
-        <paper-button raised><iron-icon on-click='newResponse' icon="icons:add"></iron-icon></paper-button>
-        <paper-button raised><iron-icon on-click='generateCSV' icon="icons:file-download"></iron-icon></paper-button>
+        <paper-button on-click='newResponse' raised><iron-icon icon="icons:add"></iron-icon></paper-button>
+        <paper-button on-click='generateCSV' raised><iron-icon icon="icons:file-download"></iron-icon></paper-button>
         <ul>
           <template is="dom-repeat" items="{{responses}}">
             <li> 
