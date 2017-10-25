@@ -247,6 +247,7 @@
         // after a prior response was worked on.
         this._formDefinition = this.innerHTML
 
+        // Set up the TangyFormService for interacting with TangyForm and TangyFormResponse docs in the database.
         // @TODO Rename database to databaseName.
         this.service = new TangyFormService({databaseName: this.database})
         await this.service.initialize()
