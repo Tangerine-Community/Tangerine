@@ -27,20 +27,19 @@
         -ms-transition: .4s;
         -o-transition: .4s;
         display: block;
-        --paper-card-background-color: #FF9800;
-        --paper-card-header-color: #FFF;
-        color: #FFF;
+        --paper-card-background-color: #FFF;
+        --paper-card-header-color: #8BC34A;
         max-width: 325px;
         margin: 30px auto;
       }
       :host([valid]) paper-card {
-        --paper-card-background-color: #8BC34A;
       }
       :host([stuck]) paper-card {
         --paper-card-background-color: #ffebea;
       }
       :host([disabled]) paper-card {
         --paper-card-background-color: gray !important;
+        --paper-card-header-color: #CCC;
       }
       :host([open]) paper-card {
         -webkit-transition: .4s;
@@ -51,7 +50,7 @@
         max-width: 720px;
         margin: 30px auto;
         --paper-card-background-color: #FFF !important;
-        --paper-card-header-color: #FF9800;
+        --paper-card-header-color: #8BC34A;
         color: #000;
       }
       :host([open]) #open {
@@ -66,6 +65,11 @@
       :host([no-buttons]) #open,
       :host([no-buttons]) #close {
         display: none;
+      }
+      paper-button {
+        background: #FF9800;
+        --paper-button-ink-color: #FFF;
+        color: #FFF;
       }
     </style>
     <paper-card id="card" class="shrunk" heading="[[title]]">

@@ -8,11 +8,18 @@
     <style>
       :host {
         display: block;
+        margin-top: 15px;
       }
       :host([invalid]) {
         border: solid red 3px;
       }
+      label {
+        font-size: 12px;
+        color: #777;
+      }
     </style>
+      <label>Location</label>
+      <div id="loading">Loading location list...</div>
       <slot></slot>
     </div>
   </template>
@@ -77,6 +84,7 @@
         }
         let response = await fetch(this.locationSrc)
         let options = await response.json()
+        this.$.loading.innerHTML = ''
         window.locationList = options
         if (options == null) {
           options = {};
