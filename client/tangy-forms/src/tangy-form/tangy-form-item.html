@@ -186,18 +186,18 @@
         htmlForm.dispatchEvent(new Event('change'))
         // Listen for change events, set data to response.
         htmlForm.addEventListener('change', this.formChangeListener.bind(this))
-        // Notify anything watching that we are all done opening.
-        this.dispatchEvent(new CustomEvent('tangy-form-item-open-change', {bubbles: true}))
       }
 
       async onOpenChange(newValue, oldValue) {
         // Close it.
         if (newValue === false && oldValue === true) {
           this.closeIt()  
+          this.dispatchEvent(new CustomEvent('tangy-form-item-closed', {bubbles: true}))
         }
         // Open it.
         if (newValue == true && oldValue === false && this.stuck === false) {
           this.openIt()
+          this.dispatchEvent(new CustomEvent('tangy-form-item-opened', {bubbles: true}))
         }
       }
 

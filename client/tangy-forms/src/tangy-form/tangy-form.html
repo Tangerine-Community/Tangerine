@@ -292,42 +292,53 @@
       }
 
       render() {
+
         this.$['tangy-form-responses'].hidden = true 
         this.$['tangy-form-questions'].hidden = false
+
         // Load items from item stash that was made on connected callback. Good for resuming fresh. 
         this.innerHTML = this._formDefinition
-        // Load response data into items.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        for (let item of items) {
-          item.response = this.response
+
+        // Listen for input change events that bubble up input elements in items.
+        this.addEventListener('change', (event) => this.onInputChange(event.target))
+
+        // Listen for when Items open.
+        this.addEventListener('tangy-form-item-opened', (event) => this.onItemOpen(event.target))
+
+        // Attach response items so they can prepopulate existing data when they open.
+        items.forEach((item) => item.response = this.response)
+
+        // If linearMode, turn off buttons on items.
+        if (this.linearMode) items.forEach((item) => item.noButtons = true)
+
+        // Focus on last focused item or first item.
+        let focusItemId = (this.response.focusItemId) ? this.response.focusItemId : items[0].id
+        this.focusOnItem(focusItemId)
+
+        // Run tangy-form.on-change logic to give custom logic an opportunity to recreate state.
+        // @TODO If we were saving state of items, then we could have set that up already and only
+        // run this when a form designer expects, on form input change.
+        this.evalOnChangeAttribute()
+      }
+
+      onItemOpen(item) {
+        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
+        // If an item opened on its own accord, then make sure we are focusing on it.
+        if (this.focusItemId !== item.id) {
+          this.focusOnItem(item.id)
         }
-        // Listen for Item Change events, save to response.
-        this.addEventListener('change', (event) => this.onInputChange(event.target) )
-        // If hideClosedItems, hide other items when one opens.
+        // If we are configured to hide closed items, then make sure we're showing open items
+        // and hiding closed items.
         if (this.hideClosedItems) {
-          this.addEventListener('tangy-form-item-open-change', (event) => {
-            items.forEach((item) => {
-              if (!item.open) {
-                item.style.display = 'none'
-              } else {
-                item.style.display = 'block'
-              }
-            })
+          items.forEach((item) => {
+            if (!item.open) {
+              item.style.display = 'none'
+            } else {
+              item.style.display = 'block'
+            }
           })
         }
-        // If linearMode, turn off buttons on items.
-        if (this.linearMode) {
-          let items = this.querySelectorAll('tangy-form-item')
-          for (let item of items) item.noButtons = true
-        }
-        // Open last focused item or first item.
-        if (this.response.focusItemId) {
-          this.focusOnItem(this.response.focusItemId)
-        } else {
-          let firstItem = this.querySelector('tangy-form-item')
-          this.focusOnItem(firstItem.id)
-        }
-        this.evalOnChange()
       }
 
       async onInputChange(input) {
@@ -340,10 +351,10 @@
           }
         })
         this.response = await this.service.saveResponse(this.response) 
-        this.evalOnChange()
+        this.evalOnChangeAttribute()
       }
 
-      evalOnChange() {
+      evalOnChangeAttribute() {
         // onItemChange logic.
         let tangyForm = this
         let response = this.response
@@ -354,7 +365,7 @@
       async focusOnItem(itemId) {
         // Close all items.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        items.forEach((item) => item.removeAttribute('open'))
+        items.forEach((item) => { if (item.id !== itemId) item.removeAttribute('open') })
         // If there is another item we stuck on closing it, divert focus to invalid item.
         let stuckItemIndex = items.findIndex((item) => item.stuck == true)
         if (stuckItemIndex !== -1) itemId = items[stuckItemIndex].id
@@ -362,7 +373,23 @@
         let item = this.querySelector(`#${itemId}`)
         // Save our new focus item ID.
         this.response.focusItemId = item.id 
-        this.response = await this.service.saveResponse(this.response)
+        // @TODO This use of saveResponse happens dangerously close to another saveResponse in tangyForm.onInputChange
+        // especially when clicking the next fab after entering content into a text input that does not fire a change
+        // event until focus moves away from itself. We should move away from this asynchronous state changing that
+        // leads to these problems and instead move the use of a service to an Action that watches for state changes
+        // and can appropriately save queue themselves without conflict.
+        try {
+          this.response = await this.service.saveResponse(this.response)
+        }
+        catch(e) { 
+          console.log('ERROR: saveResponse conflict! See known issue @TODO in tangy-form.')
+          setTimeout(async ()=> {
+            // All very ugly stuff to ensure we maintain proper state and UI reflects it.
+            this.response.focusItemId = item.id 
+            this.response = await this.service.saveResponse(this.response)
+            this.updateItemNavigation()
+          }, 200)
+        }
         // Open item.
         if(!item.open) item.open = true
         // Update the nav.
