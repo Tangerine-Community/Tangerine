@@ -167,13 +167,13 @@
         <paper-progress id="tangy-form-questions--progress" value="0" secondary-progress="100"></paper-progress>
       </div>
       <div id="tangy-form-responses" hidden>
-        <paper-button raised><iron-icon on-click='newResponseButtonListener' icon="icons:add"></iron-icon></paper-button>
-        <paper-button raised><iron-icon on-click='generateCSVButtonListener' icon="icons:file-download"></iron-icon></paper-button>
+        <paper-button on-click='newResponse' raised><iron-icon icon="icons:add"></iron-icon></paper-button>
+        <paper-button on-click='generateCSV' raised><iron-icon icon="icons:file-download"></iron-icon></paper-button>
         <ul>
           <template is="dom-repeat" items="{{responses}}">
             <li> 
               [[item.startDatetime]]
-              <paper-button data-response-id="[[item._id]]" on-click="resumeResponseButtonListener" raised><iron-icon icon="icons:launch"></iron-icon></paper-button> 
+              <iron-icon data-response-id="[[item._id]]" on-click="resumeResponse" icon="icons:launch"></iron-icon> 
               <template is="dom-if" if="{{item.isCurrentTangyFormResponse}}">
                 <span style="color: #8BC34A;"> *</span>
               </template>
@@ -247,6 +247,7 @@
         // after a prior response was worked on.
         this._formDefinition = this.innerHTML
 
+        // Set up the TangyFormService for interacting with TangyForm and TangyFormResponse docs in the database.
         // @TODO Rename database to databaseName.
         this.service = new TangyFormService({databaseName: this.database})
         await this.service.initialize()
@@ -427,7 +428,10 @@
       }
 
       async newResponse() {
-        this.response = await this.service.saveResponse(new TangyFormResponse({formId: this.formId}))
+        this.response = await this.service.saveResponse(new TangyFormResponseModel({formId: this.id}))
+        this.formDoc = await this.service.getForm(this.id)
+        this.formDoc.responseId = this.response._id
+        this.formDoc = await this.service.saveForm(this.formDoc)
         this.render()
       }
 
@@ -447,6 +451,48 @@
         this.responses = await this.service.getResponsesByFormId(this.id) 
       }
 
+      async generateCSV() {
+        this.responses = await this.service.getResponsesByFormId(this.id)
+        let blob = new Blob([], {type: 'application/csv;charset=utf-8;' });
+        // TODO: Scan for keys. Bonus points for doing it 100 sessions at a time.
+        // Get header row.
+        let keys = []
+        for (let response of this.responses) {
+          keys = _.uniq(keys.concat(Object.getOwnPropertyNames(response)))
+        }
+        // Get all data row.
+        blob = new Blob([blob, keys.join(',') + '\n'], { type: 'application/csv;charset=utf-8;' });
+        for (let response of this.responses) {
+          let row = []
+          // TODO: Loop through keys, assign empty values for nonmatching keys.
+          for (let key of keys) {
+            if (response.hasOwnProperty(key)) {
+              let value = response[key]
+              if (typeof value === 'object') value = JSON.stringify(value)
+              if (typeof value === 'number') value = value.toString()
+              // @TODO Using encodeURI for every string is a bummer, it makes output look weird.
+              // value = value.replace(/"/g,'\\\"')
+              // value = value.replace(/,/g,'\\,')
+              value = encodeURI(value)
+              row.push(`"${value}"`)
+            } else {
+              row.push('""')
+            }
+          }
+          blob = new Blob([blob, row.join(',') + '\n'], { type: 'application/csv;charset=utf-8;' });
+        }
+        console.log('creating element');
+        const element = window.document.createElement('a');
+        element.setAttribute('href', URL.createObjectURL(blob));
+        element.setAttribute('download', this.id + '.csv');
+        console.log('appending to DOM');
+        element.style.display = 'none';
+        window.document.body.appendChild(element);
+        console.log('Triggering download.');
+        element.click();
+        console.log('Cleaning up.');
+        window.document.body.removeChild(element);
+      }
     }
 
     const sleep = (ms) => new Promise((res, rej) => { 

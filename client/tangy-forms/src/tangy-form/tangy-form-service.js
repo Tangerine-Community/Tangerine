@@ -66,7 +66,8 @@ class TangyFormService {
   }
 
   async getResponsesByFormId(formId) {
-    return this.db.query('tangy-form/responseByFormId', {key: formId, include_docs: true})
+    let r = await this.db.query('tangy-form/responseByFormId', {key: formId, include_docs: true})
+    return r.rows.map((row) => row.doc)
   }
   
 }
