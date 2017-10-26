@@ -8,6 +8,11 @@
     "src": "form-2/form.html"
   },
   {
+    "title": "Form 3",
+    "src": "form-3/form.html"
+  },
+
+  {
     "title": "User Profile",
     "src": "user-profile/form.html"
   },
