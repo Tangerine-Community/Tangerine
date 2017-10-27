@@ -6,9 +6,9 @@ class TangyFormResponseModel {
     this.focusItemId = ''
     this.startDatetime = (new Date()).toLocaleString(),
     this.startUnixtime = Date.now(),
-    this.variables = {}
     this.log = []
     this.items = {}
+    this.inputs = {}
     this.uploadDatetime = ''
     Object.assign(this, props)
   }

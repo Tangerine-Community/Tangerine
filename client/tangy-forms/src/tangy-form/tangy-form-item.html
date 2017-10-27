@@ -106,140 +106,69 @@
             type: String,
             value: ''
           },
-          responseJson: {
-            type: String,
-            value: '{}',
-            observer: 'onResponseJsonChange'
+          noButtons: {
+            type: Boolean,
+            value: false,
           },
+          // State
           open: {
             type: Boolean,
             value: false,
             observer: 'onOpenChange',
-            reflectToAttribute: true
           },
           valid: {
             type: Boolean,
             value: false,
-            reflectToAttribute: true
           },
           stuck: {
             type: Boolean,
-            value: false,
-            reflectToAttribute: true
+            value: false
           },
           disabled: {
             type: Boolean,
             value: false,
-            reflectToAttribute: true
-          },
-          noButtons: {
-            type: Boolean,
-            value: false,
-            reflectToAttribute: true
           }
+          
         };
       }
 
       async connectedCallback() {
         super.connectedCallback()
-        if (this.responseJson) {
-          this.response = JSON.parse(this.responseJson)
-        } else {
-          this.response = {}
-        }
-        this.$.close.addEventListener('click', () => {
-          this.open = false
-        })
-        this.$.open.addEventListener('click', () => {
-          if (this.disabled) return
-          this.open = true 
-        })
+        this.$.close.addEventListener('click', () => this.dispatch({type: ITEM_CLOSE, itemId: this.id }))
+        this.$.open.addEventListener('click', () => this.dispatch({ type: ITEM_OPEN, itemId: this.id }))
+        this.addEventListener('change', (event) => this.dispatch({type: INPUT_VALUE, inputName: event.target.name, inputValue: event.target.value}))
       }
 
-      closeIt() {
-        this.valid = this.validate() 
-        if (this.valid === true) {
-          this.stuck = false
-          this.innerHTML = '' 
-        } else {
-          // User is stuck with this item open.
-          this.stuck = true
-          this.open = true
-        }
-      }
-
-      async openIt() {
-        // Put item HTML in a template element first so we can prepopulate it with data.
-        let template = document.createElement('template')
-        let response = await fetch(this.src)
-        template.innerHTML = await response.text()
-        let formTemplate = template.content.querySelector('form')
-        this.setResponse(formTemplate)
-        this.innerHTML = template.innerHTML
-        // @TODO Necessary?
-        let htmlForm = this.querySelector('form')
-        htmlForm.getResponse = this.getResponse.bind(this)
-        // @TODO Necessarry?
-        this.$.card.classList.add('open')
-        // Dispatch the change event to the form so now that it has been prepopulated and rendered, any logic in
-        // htmlForm.onchange has a chance to run.
-        htmlForm.dispatchEvent(new Event('change'))
-        // Listen for change events, set data to response.
-        htmlForm.addEventListener('change', this.formChangeListener.bind(this))
-      }
-
-      async onOpenChange(newValue, oldValue) {
-        // Close it.
-        if (newValue === false && oldValue === true) {
-          this.closeIt()  
-          this.dispatchEvent(new CustomEvent('tangy-form-item-closed', {bubbles: true}))
+      async onOpenChange(open) {
+        if (open === false) {
+          if (this.validate()) {
+            this.innerHTML = '' 
+            this.dispatch(ITEM_CLOSED, { itemId: this.id })
+          } else {
+            this.dispatch(ITEM_CLOSE_STUCK, { itemId: this.id })
+          }
         }
         // Open it.
-        if (newValue == true && oldValue === false && this.stuck === false) {
-          this.openIt()
-          this.dispatchEvent(new CustomEvent('tangy-form-item-opened', {bubbles: true}))
+        if (open == true) {
+          let request = await fetch(this.src)
+          this.innerHTML = await request.text()
+          this.dispatch(ITEM_OPENED, { itemId: this.id })
         }
-      }
-
-      formChangeListener(event) {
-        this.response = this.getResponse()  
-        // Native HTML Form does not dispatch a change event when non native input elements change. Force it to.
-        // @TODO: If we can detect this is a native input element that change, then don't do this.
-        let htmlForm = this.querySelector('form')
-        if (htmlForm) {
-          htmlForm.response = this.response
-          //htmlForm.dispatchEvent(new Event('change'))
-        }
-        this.dispatchEvent(new CustomEvent('tangy-form-item-variables-change', {bubbles: true}))
       }
 
       validate() {
-        let isValid = true 
-        let inputs = this.querySelectorAll('[name]') 
-        for (let input of inputs) {
-          if (typeof input.validate == 'function' && !input.validate()) isValid = false 
+        let inputs = this.querySelectorAll('[name]')
+        let invalidInputNames = [] 
+        inputs.forEach((input) => {
+          if (!input.validate()) invalidInputNames.push(input.name)
+        })
+        if (inavlidInputNames.length > 0) {
+          return false
+        } else {
+          return true
         }
-        return isValid
       }
 
-      getResponse() {
-        let inputs = this.querySelectorAll('[name]') 
-        let response = {}
-        for (let input of inputs) {
-          response[input.name] = input.value
-        }
-        return response 
-      }
-
-      setResponse(formTemplate) {
-        // Get all elements with a name attribute.
-        let inputs = formTemplate.querySelectorAll('[name]') 
-        for (let input of inputs) {
-          if (this.response[input.attributes.name.value]) {
-            input.attributes.value.value = this.response[input.attributes.name.value]
-          }
-        }
-      }
 
     }
 
