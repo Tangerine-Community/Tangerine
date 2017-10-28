@@ -10,7 +10,7 @@
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="bower_components/pouchdb/dist/pouchdb.js"></script>
     <link href="fonts/fonts.css" rel="stylesheet">
-    <link rel="import" href="src/tangy-form-app/tangy-form-app.html">
+    <link rel="import" href="src/tangy-app/tangy-app.html">
     <link rel="import" href="bower_components/paper-styles/typography.html">
     <link rel="import" href="bower_components/neon-animation/web-animations.html">
   </head>
@@ -41,11 +41,16 @@
      
 
     </script>
-    <tangy-form-app></tangy-form-app>
-    <style>
-      html, body, tangy-form-app, tangy-form {
-        min-height: 100vh;
-      }
-    </style>
+    <tangy-app>    
+    </tangy-app>
+      <tangy-form linear-mode hide-closed-items id="form-1" on-change="
+        item_2.disabled = (response.extra_items) ? false : true
+      ">
+        <tangy-form-item src="/content/form-1/item-1.html" id="item_1" title="Design Your Pizza"></tangy-form-item>
+        <tangy-form-item src="/content/form-1/item-2.html" id="item_2" title="Extra Items"></tangy-form-item>
+        <tangy-form-item src="/content/form-1/item-3.html" id="item_3" title="A quick word survey"></tangy-form-item>
+        <tangy-form-item src="/content/form-1/item-4.html" id="item_4" title="GPS"></tangy-form-item>
+        <tangy-form-item src="/content/form-1/item-5.html" id="item_5" title="Location"></tangy-form-item>
+      </tangy-form>
   </body>
 </html>

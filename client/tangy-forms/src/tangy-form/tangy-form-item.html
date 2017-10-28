@@ -100,33 +100,40 @@
         return {
           src: {
             type: String,
-            value: 'tangy-form-item'
+            value: 'tangy-form-item',
+            reflectToAttribute: true
           },
           title: {
             type: String,
-            value: ''
+            value: '',
+            reflectToAttribute: true
           },
           noButtons: {
             type: Boolean,
             value: false,
+            reflectToAttribute: true
           },
           // State
           open: {
             type: Boolean,
             value: false,
+            reflectToAttribute: true,
             observer: 'onOpenChange',
           },
           valid: {
             type: Boolean,
             value: false,
+            reflectToAttribute: true
           },
           stuck: {
             type: Boolean,
-            value: false
+            value: false,
+            reflectToAttribute: true
           },
           disabled: {
             type: Boolean,
             value: false,
+            reflectToAttribute: true
           }
           
         };
@@ -134,25 +141,28 @@
 
       async connectedCallback() {
         super.connectedCallback()
-        this.$.close.addEventListener('click', () => this.dispatch({type: ITEM_CLOSE, itemId: this.id }))
-        this.$.open.addEventListener('click', () => this.dispatch({ type: ITEM_OPEN, itemId: this.id }))
-        this.addEventListener('change', (event) => this.dispatch({type: INPUT_VALUE, inputName: event.target.name, inputValue: event.target.value}))
+        this.store = window.tangyFormStore
+        this.$.close.addEventListener('click', () => this.store.dispatch({type: ITEM_CLOSE, itemId: this.id }))
+        this.$.open.addEventListener('click', () => this.store.dispatch({ type: ITEM_OPEN, itemId: this.id }))
+        this.addEventListener('change', (event) => this.store.dispatch({type: INPUT_VALUE_CHANGE,  inputName: event.target.name, inputValue: event.target.value} ))
       }
 
       async onOpenChange(open) {
-        if (open === false) {
+        if (open === false && this.innerHTML !== '') {
           if (this.validate()) {
             this.innerHTML = '' 
-            this.dispatch(ITEM_CLOSED, { itemId: this.id })
+            // this.store.dispatch({type: ITEM_CLOSED, itemId: this.id })
           } else {
-            this.dispatch(ITEM_CLOSE_STUCK, { itemId: this.id })
+            this.store.dispatch({type: ITEM_CLOSE_STUCK, itemId: this.id })
           }
         }
-        // Open it.
-        if (open == true) {
+        // Open it, but only if empty because we might be stuck.
+        if (open == true && this.innerHTML == '') {
           let request = await fetch(this.src)
           this.innerHTML = await request.text()
-          this.dispatch(ITEM_OPENED, { itemId: this.id })
+          this.querySelectorAll('[name]').forEach((input) => {
+            this.store.dispatch({type: 'INPUT_ADDED', attributes: serializeElement(input)})
+          })
         }
       }
 
@@ -162,7 +172,7 @@
         inputs.forEach((input) => {
           if (!input.validate()) invalidInputNames.push(input.name)
         })
-        if (inavlidInputNames.length > 0) {
+        if (invalidInputNames.length > 0) {
           return false
         } else {
           return true
