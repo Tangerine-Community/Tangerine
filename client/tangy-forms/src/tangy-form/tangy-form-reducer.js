@@ -23,21 +23,40 @@ function tangyFormReducer(state = initialState, action) {
         return item
       })})
 
+    case ITEM_VALID:
+      let items = state.items.map((item) => {
+          if (item.id == action.itemId) {
+            return Object.assign({}, item, {valid: true})
+          }
+          return item
+        })
+      return Object.assign({}, state, {
+        progress: ( ( ( items.filter((i) => i.valid).length ) / items.length ) * 100 ),
+        items: items 
+      })
+
+
     case ITEM_CLOSE:
-      return Object.assign({}, state, {items: state.items.map((item) => {
-        if (item.id == action.itemId) {
-          return Object.assign({}, item, {open: false, stuck: false})
-        }
-        return item
-      })})
+      return Object.assign({}, state, {
+        progress: ( ( ( state.items.filter((i) => i.valid).length ) / state.items.length ) * 100 ),
+        items: state.items.map((item) => {
+          if (item.id == action.itemId) {
+            return Object.assign({}, item, {open: false, valid: true})
+          }
+          return item
+        })
+      })
 
     case ITEM_CLOSE_STUCK:
-      return Object.assign({}, state, {items: state.items.map((item) => {
-        if (item.id == action.itemId) {
-          return Object.assign({}, item, {open: true, stuck: true})
-        }
-        return item
-      })})
+      return Object.assign({}, state, {
+        progress: ( ( ( state.items.filter((i) => i.valid == true).length + 1 ) / state.items.length ) * 100 ),
+        items: state.items.map((item) => {
+          if (item.id == action.itemId) {
+            return Object.assign({}, item, {open: true, valid: false})
+          }
+          return item
+        })
+      })
 
 
     case ITEM_DISABLE:

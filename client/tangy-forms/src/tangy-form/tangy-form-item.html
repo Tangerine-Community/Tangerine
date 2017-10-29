@@ -79,6 +79,9 @@
       <div class="card-actions">
         <paper-button id="open">open</paper-button>
         <paper-button id="close">submit</paper-button>
+        <template is="dom-if" if="{{valid}}">
+            <iron-icon style="color: #8BC34A; float: right; margin-top:10px" icon="icons:check-circle"></iron-icon>
+        </template>
       </div>
     </paper-card>
   </template>
@@ -141,6 +144,9 @@
 
       async connectedCallback() {
         super.connectedCallback()
+        while (!window.tangyFormStore) await sleep(1000)
+        while (!window.tangyFormStore.subscribe) await sleep(1000)
+        console.log('every set up 2')
         this.store = window.tangyFormStore
         this.$.close.addEventListener('click', () => this.store.dispatch({type: ITEM_CLOSE, itemId: this.id }))
         this.$.open.addEventListener('click', () => this.store.dispatch({ type: ITEM_OPEN, itemId: this.id }))
@@ -151,7 +157,7 @@
         if (open === false && this.innerHTML !== '') {
           if (this.validate()) {
             this.innerHTML = '' 
-            // this.store.dispatch({type: ITEM_CLOSED, itemId: this.id })
+            this.store.dispatch({type: ITEM_VALID, itemId: this.id })
           } else {
             this.store.dispatch({type: ITEM_CLOSE_STUCK, itemId: this.id })
           }
@@ -183,5 +189,6 @@
     }
 
     window.customElements.define(TangyFormItem.is, TangyFormItem);
+
   </script>
 </dom-module>

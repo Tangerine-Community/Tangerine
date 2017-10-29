@@ -134,33 +134,61 @@
         };
       }
 
+      constructor() {
+        super()
+        this.fire = false
+        this.loaded = false
+      }
+
       async connectedCallback() {
         super.connectedCallback()
         // Wait until the slot content has passed through.
-        while (this.innerHTML == '') await sleep(50)
+        while (this.innerHTML == '') await sleep(1000)
+        while (this.innerHTML == window.tangyFormStore) await sleep(1000)
+        while (!window.tangyFormStore) await sleep(1000)
+        while (!window.tangyFormStore.subscribe) await sleep(1000)
+        console.log('every set up')
         if (this.hideNav) this.$['nav'].hidden = true 
         // Set up the store.
         this.store = window.tangyFormStore
-        this.store.subscribe(this.update.bind(this))
+        this.store.subscribe(this.throttledUpdate.bind(this))
         this.store.dispatch({type: FORM_OPEN, items: this.querySelectorAllSerialized('tangy-form-item')})
+      }
+
+      // Prevent parallel updates which leads to race conditions.
+      async throttledUpdate() {
+        // If already loaded, return.
+        if (this.loaded) return
+        // Throttle this fire by waiting until last fire is done.
+        if (this.firing) {
+          this.loaded = true
+          while(this.firing) await sleep(200)
+          this.loaded = false
+        }
+        // Fire it.
+        this.firing = true
+        this.update()
+        this.firing = false
       }
 
       update() {
         let state = this.store.getState()
         if (!this.previousState) this.previousState = state
+        // Set state in tangy-form-item elements.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
           let index = state.items.findIndex((itemState) => item.id == itemState.id) 
           if (index !== -1) Object.assign(item, state.items[index])
         })
+        // Set state in input elements.
         let inputs = [].slice.call(this.querySelectorAll('[name]'))
         inputs.forEach((input) => {
           let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
           if (index !== -1) Object.assign(input, state.inputs[index])
         })
-        // this.$.progress.setAttribute('value', state.progress)
+        this.$.progress.setAttribute('value', state.progress)
         // if (state.focusItemId !== this.previousState.focusItemId) // scroll to item
-        this.previousState = Object.assign({}, state)
+        // this.previousState = Object.assign({}, state)
       }
 
       focusOnPreviousItem(event) {
@@ -191,10 +219,8 @@
       }
 
       updateItemNavigation() {
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         let focusItemIndex = items.findIndex(item => item.id == this.store.focusItemId)
         // Update progress.
-        let progressCalculation = (parseInt(((focusItemIndex+1)/items.length)*100))
         this.$['tangy-form-questions--progress'].setAttribute('value', progressCalculation)
         // Update the next and back buttons.
         if (this.findNextItem(this.store.focusItemId)) {
@@ -217,11 +243,6 @@
       attributes.forEach((attr) => serial[attr.name] = attr.value)
       return serial
     }
-
-    const sleep = (ms) => new Promise((res, rej) => { 
-      setTimeout(res, ms)
-    })
-
     window.customElements.define(TangyForm.is, TangyForm);
   </script>
 </dom-module>
