@@ -58,11 +58,19 @@
       }
 
       onRequiredChange(value) {
-        this.$.checkbox.required = value
+        if (value === false) {
+          this.$.checkbox.removeAttribute('required')
+        } else {
+          this.$.checkbox.setAttribute('required', true)
+        }
       }
 
       onDisabledChange(value) {
-        this.$.checkbox.disabled = value
+        if (value === false) {
+          this.$.checkbox.removeAttribute('disabled')
+        } else {
+          this.$.checkbox.setAttribute('disabled', true)
+        }
       }
 
       onValueChange(value) {
