@@ -87,6 +87,15 @@
           right: 7px;
           color: white;
         }
+        :host(:not([linear-mode])) #nextItemButton,
+        :host(:not([linear-mode])) #previousItemButton
+         {
+          display: none;
+        }
+        #progress {
+          position: fixed;
+          top: 0px;
+        }
         paper-progress {
           --paper-progress-active-color: #FF9800;
           width: 100%;
@@ -128,7 +137,7 @@
             type: Boolean,
             value: false
           },
-          hideNav: {
+          linearMode: {
             type: Boolean,
             value: false
           }
@@ -143,6 +152,7 @@
 
       async connectedCallback() {
         super.connectedCallback()
+        this.db = new PouchDB('tangy-form')
         // Wait until the slot content has passed through.
         while (this.innerHTML == '') await sleep(1000)
         while (this.innerHTML == window.tangyFormStore) await sleep(1000)
@@ -152,10 +162,19 @@
         if (this.hideNav) this.$['nav'].hidden = true 
         // Set up the store.
         this.store = window.tangyFormStore
-        this.store.subscribe(this.throttledUpdate.bind(this))
-        // 
+        
+        let state = this.store.getState()
+        try {
+          let session = await this.db.get(state._id)
+          this.store.dispatch({type: FORM_SESSION_RESUME, session: session})
+        } catch (e) {
+          this.db.put(state)
+        }
+        this.store.subscribe(this.throttledSave.bind(this))
+        this.store.subscribe(() => this.throttledUpdate(this))
         this.querySelectorAll('tangy-form-item').forEach((item) => {
           item.addEventListener('INPUT_VALUE_CHANGE', this.evalOnChangeAttribute.bind(this))
+          if (this.linearMode) item.noButtons = true
         })
         this.store.dispatch({type: FORM_OPEN, items: this.querySelectorAllSerialized('tangy-form-item')})
       }
@@ -165,23 +184,54 @@
         eval(this.onChange)
       }
 
-      // Prevent parallel updates which leads to race conditions.
-      async throttledUpdate() {
+      // Prevent parallel saves which leads to race conditions.
+      async throttledSave() {
         // If already loaded, return.
-        if (this.loaded) return
+        if (this.throttledSaveLoaded) return
         // Throttle this fire by waiting until last fire is done.
-        if (this.firing) {
-          this.loaded = true
-          while(this.firing) await sleep(200)
-          this.loaded = false
+        if (this.throttledSaveFiring) {
+          this.throttledSaveLoaded = true
+          while(this.throttledSaveFiring) await sleep(200)
+          this.throttledSaveLoaded = false
         }
         // Fire it.
-        this.firing = true
-        this.update()
-        this.firing = false
+        this.throttledSaveFiring = true
+        await this.save()
+        this.throttledSaveFiring = false
       }
 
-      update() {
+      async save() {
+        const state = this.store.getState()
+        let stateDoc = {}
+        try {
+          stateDoc = await this.db.get(state._id)
+        } catch(e) {
+          let r = await this.db.put(state)
+          stateDoc = await this.db.get(state._id)
+        }
+        let newStateDoc = Object.assign({}, state, { _rev: stateDoc._rev })
+        await this.db.put(newStateDoc)
+      }
+
+      // Prevent parallel updates which leads to race conditions.
+      async throttledUpdate() {
+        if (this.throttledUpdateFiring) {
+          this.throttledUpdateLoaded = true
+          return
+        } 
+        // Fire it.
+        this.throttledUpdateFiring = true
+        await this.update()
+        this.throttledUpdateFiring = false
+        while (this.throttledUpdateLoaded === true) {
+          this.throttledUpdateFiring = true
+          await this.update()
+          this.throttledUpdateFiring = false
+          this.throttledUpdateLoaded = false
+        }
+      }
+
+      async update() {
         let state = this.store.getState()
         if (!this.previousState) this.previousState = state
         // Set state in tangy-form-item elements.
@@ -197,11 +247,21 @@
           if (index !== -1) Object.assign(input, state.inputs[index])
         })
         this.$.progress.setAttribute('value', state.progress)
+        if (this.hideClosedItems) {
+          items.forEach((item) => {
+            if (item.open) {
+              item.style.display = 'block'
+            } else {
+              item.style.display = 'none'
+            }
+          })
+        }
         if (state.focusId !== this.previousState.focusId) {
           let item = this.querySelector(`#${state.focusId}`)
-          item.scrollIntoView({behavior: 'smooth', block: 'start'})
-        }  // scroll to item
-        // this.previousState = Object.assign({}, state)
+          await sleep(200)
+          if (item) item.scrollIntoView({behavior: 'smooth', block: 'start'})
+        }  
+        this.previousState = Object.assign({}, state)
       }
 
       focusOnPreviousItem(event) {

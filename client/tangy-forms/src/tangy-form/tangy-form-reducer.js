@@ -1,8 +1,8 @@
 
 const initialState = {
+  _id: 'form-1',
   formId: '',
   collection: 'TangyFormResponse',
-  focusItemId: 'item_1',
   startDate: (new Date()).toLocaleString(),
   items: [],
   inputs: [],
@@ -15,13 +15,18 @@ function tangyFormReducer(state = initialState, action) {
   var newState
   switch(action.type) {
 
+    case FORM_SESSION_RESUME:
+      return Object.assign({}, action.session)
+
     case FORM_OPEN:
-      currentIndex = action.items.findIndex((item) => (item.open))
-      items = action.items
+      // If we don't find a currently open item, set first item to open.
+      newState = Object.assign({}, state)
+      if (state.items.length === 0) newState.items = action.items 
+      currentIndex = state.items.findIndex((item) => (item.open))
       if (currentIndex == -1) {
-        items[0].open = true
+        newState.items[0].open = true
       }
-      return Object.assign({}, state, {items: [...items]})
+      return newState 
 
     case ITEM_OPEN:
       return Object.assign({}, state, {items: state.items.map((item) => {
@@ -172,55 +177,3 @@ function tangyFormReducer(state = initialState, action) {
 
 
 }
-/*
-function tangyFormReducer(state = initialState, action) {
-  return {
-    items: tangyFormItemReducer(state.items, action)
-  }
-
-}
-
-function tangyFormItemReducer(state = [], action) {
-  switch(action.type) {
-
-    case FORM_OPEN:
-      return [...action.items]
-
-    case ITEM_OPEN:
-      return state.map((item) => {
-        if (item.id == action.itemId) {
-          return Object.assign({}, item, {open: true})
-        }
-        return item
-      })
-
-    case ITEM_CLOSE:
-      return state.map((item) => {
-        if (item.id == action.itemId) {
-          return Object.assign({}, item, {open: false})
-        }
-        return item
-      })
-
-    case ITEM_DISABLE:
-    break
-    case INPUT_VALUE_CHANGE:
-      newState = Object.assign({}, state)
-      newState.inputs[action.inputName] = action.inputValue 
-    break
-    case INPUT_DISABLE:
-    break
-    case INPUT_HIDE:
-    break
-    case NAVIGATE_TO_NEXT_ITEM:
-    break
-    case NAVIGATE_TO_PREVIOUS_ITEM:
-    break
-    default: 
-      return state
-  }
-
-
-}
-*/
-
