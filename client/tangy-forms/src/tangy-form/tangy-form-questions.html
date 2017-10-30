@@ -1,45 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<script src="tangy-form-model.js"></script>
-<script src="tangy-form-response-model.js"></script>
-<script src="tangy-form-service.js"></script>
-<script src="tangy-form-reducer.js"></script>
-<script src="tangy-form-actions.js"></script>
 <script src="../../node_modules/redux/dist/redux.js"></script>
 
-<link rel="import" href="tangy-form-item.html">
-<link rel="import" href="../tangy-timed/tangy-timed.html">
-<link rel="import" href="../tangy-gps/tangy-gps.html">
-<link rel="import" href="../tangy-location/tangy-location.html">
-<link rel="import" href="../tangy-checkbox/tangy-checkbox.html">
-<link rel="import" href="../tangy-radio-buttons/tangy-radio-buttons.html">
-<link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
-<script src="../tangy-toggle-button/tangy-toggle-button.js"></script>
-
-<!-- dependencies -->
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
-<link rel="import" href="../../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
-<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/iron-form/iron-form.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../bower_components/gold-phone-input/gold-phone-input.html">
-
 <style>
-  input:invalid {
-    background-color: #e1e2e1;
-  }
   paper-card {
     margin: 15px 0px;
     padding: 25px;
@@ -132,25 +94,26 @@
           // Pass in code to be eval'd on any form input change.
           onChange: {
             type: String,
-            value: '' 
+            value: '',
+            reflectToAttribute: true
           },
           // Set liniar-mode to turn on navigation and turn off item action buttons.
           linearMode: {
             type: Boolean,
-            value: false
+            value: false,
+            reflectToAttribute: true
           },
           // Hide closed items to focus user on current item.
           hideClosedItems: {
             type: Boolean,
-            value: false
+            value: false,
+            reflectToAttribute: true
           }
         };
       }
 
       constructor() {
         super()
-        this.fire = false
-        this.loaded = false
       }
 
       async connectedCallback() {
@@ -165,7 +128,7 @@
         if (this.hideNav) this.$['nav'].hidden = true 
         // Set up the store.
         this.store = window.tangyFormStore
-        
+       /* 
         let state = this.store.getState()
         try {
           let session = await this.db.get(state._id)
@@ -173,6 +136,7 @@
         } catch (e) {
           this.db.put(state)
         }
+        */
         this.store.subscribe(this.throttledSave.bind(this))
         this.store.subscribe(() => this.throttledUpdate(this))
         this.querySelectorAll('tangy-form-item').forEach((item) => {

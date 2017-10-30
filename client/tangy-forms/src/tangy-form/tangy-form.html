@@ -1,0 +1,361 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<script src="../../node_modules/redux/dist/redux.js"></script>
+<script src="tangy-form-model.js"></script>
+<script src="tangy-form-response-model.js"></script>
+<script src="tangy-form-service.js"></script>
+<script src="tangy-form-reducer.js"></script>
+<script src="tangy-form-actions.js"></script>
+<link rel="import" href="tangy-form-item.html">
+<link rel="import" href="tangy-form-questions.html">
+<link rel="import" href="../tangy-timed/tangy-timed.html">
+<link rel="import" href="../tangy-gps/tangy-gps.html">
+<link rel="import" href="../tangy-location/tangy-location.html">
+<link rel="import" href="../tangy-checkbox/tangy-checkbox.html">
+<link rel="import" href="../tangy-radio-buttons/tangy-radio-buttons.html">
+<link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
+<script src="../tangy-toggle-button/tangy-toggle-button.js"></script>
+
+<!-- dependencies -->
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/gold-phone-input/gold-phone-input.html">
+
+<dom-module id="tangy-form">
+
+  <template>
+      <style>
+        :host {
+          background: #e1e2e1; 
+          display: block;
+          margin: 0px;
+          padding: 0px;
+        }
+        #tangy-form--header {
+          background: #e1e2e1; /* #ef6433; */
+        }
+        #tangy-form-responses, #tangy-form-questions {
+          margin: 0px 20px;
+          padding: 15px;
+        }
+        #tangy-form-questions--button-container {
+          position: fixed;
+          bottom: 15px;
+          right: 0px;
+        }
+        #tangy-form-questions--progress {
+          position: fixed;
+          bottom: 0px;
+          left: 0px;
+          width: 100%;
+        }
+        #tangy-form-questions--form-container {
+          display: block;
+          max-width: 720px;
+          margin: 0px auto;
+        }
+        #up-fab {
+          background: #FF9800; 
+          position: fixed;
+          bottom: 73px;
+          right: 7px;
+          color: white;
+        }
+        #down-fab {
+          background: #FF9800; 
+          position: fixed;
+          bottom: 10px;
+          right: 7px;
+          color: white;
+        }
+        :host([hide-nav]) #up-fab, 
+        :host([hide-nav]) #down-fab {
+          display: none;
+        } 
+        #show-responses-fab {
+          background: #FF9800; 
+          position: fixed;
+          top: 73px;
+          right: 7px;
+        }
+        #new-response-fab {
+          background: #FF9800; 
+          position: fixed;
+          top: 10px;
+          right: 7px;
+        }
+        :host([hide-responses]) #show-responses-fab, 
+        :host([hide-responses]) #new-response-fab {
+          display: none;
+        } 
+        paper-progress {
+          --paper-progress-active-color: #FF9800;
+        }
+        paper-tab, paper-tabs {
+          --paper-tabs-selection-bar-color: #FF9800 !important;
+          color: #fff;
+        }
+        paper-button {
+          background: #FF9800;
+          --paper-button-ink-color: #FFF;
+          color: #FFF;
+        }
+        paper-fab.expand-and-inform {
+            -webkit-transform: scale3d(2, 2, 2);
+            transform: scale3d(2, 2, 2);
+        }
+        paper-fab.shrink-to-tiny {
+            -webkit-transform: scale3d(0.5, 0.5, 0.5);
+            transform: scale3d(0.5, 0.5, 0.5);
+        }
+        paper-fab.shrink-to-normal {
+            -webkit-transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+        /*.expand-and-inform {*/
+            /*-webkit-transform: scale3d(2, 2, 2);*/
+
+      </style>
+      <div id="tangy-form--header">
+      </div>
+      <div id="tangy-form-questions">
+        <div id="tangy-form-questions--form-container">
+          <slot id="tangy-form-questions--form"></slot>
+        </div>
+        <paper-fab id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
+        <paper-fab id="show-responses-fab" on-click="showResponses" icon="icons:save"></paper-fab>
+      </div>
+      <div id="tangy-form-responses" hidden>
+        <paper-button on-click='newResponse' raised><iron-icon icon="icons:add"></iron-icon></paper-button>
+        <paper-button on-click='generateCSV' raised><iron-icon icon="icons:file-download"></iron-icon></paper-button>
+        <ul>
+          <template is="dom-repeat" items="{{responses}}">
+            <li> 
+              [[item.startDatetime]]
+              <iron-icon data-response-id="[[item._id]]" on-click="resumeResponse" icon="icons:launch"></iron-icon> 
+              <template is="dom-if" if="{{item.isCurrentTangyFormResponse}}">
+                <span style="color: #8BC34A;"> *</span>
+              </template>
+            </li>
+          </template>
+        </ul>
+      </div>
+  </template>
+
+  <script>
+    /**
+     * `tangy-form`
+     * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+
+    class TangyForm extends Polymer.Element {
+
+      static get is() { return 'tangy-form'; }
+
+      constructor() {
+        super()
+        window.tangyFormStore = Redux.createStore(tangyFormReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+        this.store = window.tangyFormStore
+      }
+
+      static get properties() {
+        return {
+          id: {
+            type: String,
+            value: 'tangy-form'
+          },
+          onChange: {
+            type: String,
+            value: '' 
+          },
+          databaseName: {
+            type: String,
+            value: 'tangy-form'
+          },
+          responseId: {
+            type: String,
+            value: ''
+          },
+          linearMode: {
+            type: Boolean,
+            value: false
+          },
+          hideClosedItems: {
+            type: Boolean,
+            value: false
+          },
+          hideResponses: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      async connectedCallback() {
+
+        // @TODO Change this.id to this.form_id. It's more obvious.
+        super.connectedCallback();
+
+        // Stash initial state of innerHTML for use when starting a new response 
+        // after a prior response was worked on.
+        this._formDefinition = this.innerHTML
+        this.innerHTML = ''
+
+        // Set up the TangyFormService for interacting with TangyForm and TangyFormResponse docs in the database.
+        // @TODO Rename database to databaseName.
+        this.service = new TangyFormService({databaseName: this.databaseName})
+        await this.service.initialize()
+
+        // Get our formDoc.
+        this.formDoc = await this.service.getForm(this.id)
+
+        // No formDoc? Create one. 
+        if (!this.formDoc) {
+          this.formDoc = new TangyFormModel({formId: this.id})
+          this.formDoc = await this.service.saveForm(this.formDoc)
+        }
+
+        // Determine our current response ID.
+        if (!this.responseId && this.formDoc.responseId) {
+          this.responseId = this.formDoc.responseId
+        }
+
+        // No response ID? Create one.
+        if (!this.responseId) {
+          this.response = new TangyFormResponseModel({_id: this.responseId, formId: this.id})
+          this.response = await this.service.saveResponse(this.response)
+          // Now we definitely have a response ID.
+          this.responseId = this.response._id
+        }
+
+        // Get our current response.
+        this.response = await this.service.getResponse(this.responseId)
+
+        // No response by this ID? Create it. Useful if someone made up a response ID.
+        if (!this.response) {
+          this.response = new TangyFormResponseModel({_id: this.responseId, formId: this.id})
+          this.response = await this.service.saveResponse(this.response)
+        }
+
+        // Save this response as our current response.
+        this.formDoc.responseId = this.response._id
+        this.formDoc = await this.service.saveForm(this.formDoc)
+
+        this.store.dispatch({type: FORM_SESSION_RESUME, session: this.response})
+
+        // Show questions.
+        this.showQuestions()
+      }
+
+      showQuestions() {
+        this.$['tangy-form-responses'].hidden = true 
+        this.$['tangy-form-questions'].hidden = false
+        // Load items from item stash that was made on connected callback. Good for resuming fresh. 
+        let tangyFormQuestions = document.createElement('tangy-form-questions')
+        Object.assign(tangyFormQuestions, {
+          hideClosedItems: this.hideClosedItems,
+          linearMode: this.linearMode,
+          onChange: this.onChange
+        })
+        tangyFormQuestions.innerHTML = this._formDefinition
+        this.appendChild(tangyFormQuestions)
+      }
+
+      /*
+       * Responses helpers
+       */
+
+      async newResponse() {
+        this.response = await this.service.saveResponse(new TangyFormResponseModel({formId: this.id}))
+        this.formDoc = await this.service.getForm(this.id)
+        this.formDoc.responseId = this.response._id
+        this.formDoc = await this.service.saveForm(this.formDoc)
+        this.store.dispatch({type: FORM_SESSION_RESUME, session: this.response})
+        this.showQuestions()
+      }
+
+      async resumeResponse(event) {
+        let resumeResponseId = event.currentTarget.dataResponseId
+        this.response = await this.service.getResponse(resumeResponseId)
+        this.formDoc = await this.service.getForm(this.id)
+        this.formDoc.responseId = this.response._id
+        this.formDoc = await this.service.saveForm(this.formDoc)
+        this.store.dispatch({type: FORM_SESSION_RESUME, session: this.response})
+        this.showQuestions()
+      }
+
+      async showResponses() {
+        this.$['tangy-form-questions'].hidden = true 
+        this.$['tangy-form-responses'].hidden = false 
+        // @TODO Paginate and mark current response.
+        this.responses = await this.service.getResponsesByFormId(this.id) 
+      }
+
+      async generateCSV() {
+        this.responses = await this.service.getResponsesByFormId(this.id)
+        let blob = new Blob([], {type: 'application/csv;charset=utf-8;' });
+        // TODO: Scan for keys. Bonus points for doing it 100 sessions at a time.
+        // Get header row.
+        let keys = []
+        for (let response of this.responses) {
+          keys = _.uniq(keys.concat(Object.getOwnPropertyNames(response)))
+        }
+        // Get all data row.
+        blob = new Blob([blob, keys.join(',') + '\n'], { type: 'application/csv;charset=utf-8;' });
+        for (let response of this.responses) {
+          let row = []
+          // TODO: Loop through keys, assign empty values for nonmatching keys.
+          for (let key of keys) {
+            if (response.hasOwnProperty(key)) {
+              let value = response[key]
+              if (typeof value === 'object') value = JSON.stringify(value)
+              if (typeof value === 'number') value = value.toString()
+              // @TODO Using encodeURI for every string is a bummer, it makes output look weird.
+              // value = value.replace(/"/g,'\\\"')
+              // value = value.replace(/,/g,'\\,')
+              value = encodeURI(value)
+              row.push(`"${value}"`)
+            } else {
+              row.push('""')
+            }
+          }
+          blob = new Blob([blob, row.join(',') + '\n'], { type: 'application/csv;charset=utf-8;' });
+        }
+        console.log('creating element');
+        const element = window.document.createElement('a');
+        element.setAttribute('href', URL.createObjectURL(blob));
+        element.setAttribute('download', this.id + '.csv');
+        console.log('appending to DOM');
+        element.style.display = 'none';
+        window.document.body.appendChild(element);
+        console.log('Triggering download.');
+        element.click();
+        console.log('Cleaning up.');
+        window.document.body.removeChild(element);
+      }
+    }
+
+    
+
+    window.customElements.define(TangyForm.is, TangyForm);
+  </script>
+</dom-module>
