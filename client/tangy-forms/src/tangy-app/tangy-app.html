@@ -1,0 +1,43 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<script src="../../node_modules/redux/dist/redux.js"></script>
+<link rel="import" href="../tangy-form/tangy-form.html">
+
+<style>
+
+</style>
+
+<dom-module id="tangy-app">
+
+  <template>
+    <slot></slot>
+  </template>
+
+  <script>
+    /**
+     * `tangy-app`
+     * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+
+    class TangyApp extends Polymer.Element {
+
+      static get is() { return 'tangy-app'; }
+
+      static get properties() {
+        return {
+          
+        };
+      }
+
+      constructor() {
+        super()
+        window.tangyFormStore = Redux.createStore(tangyFormReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+      }
+    }
+
+    window.customElements.define(TangyApp.is, TangyApp);
+  </script>
+</dom-module>

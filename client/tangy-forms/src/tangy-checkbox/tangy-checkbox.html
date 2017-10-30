@@ -26,23 +26,27 @@
 
       static get properties() {
         return {
-          required: {
-            type: Boolean,
-            value: false,
-            observer: 'onRequiredChange'
-          },
-          disabled: {
-            type: Boolean,
-            value: false,
-            observer: 'onDisabledChange'
-          },
           name: {
             type: String,
             value: ''
           },
+          required: {
+            type: Boolean,
+            value: false,
+            observer: 'onRequiredChange',
+            reflectToAttribute: true
+          },
+          disabled: {
+            type: Boolean,
+            value: false,
+            observer: 'onDisabledChange',
+            reflectToAttribute: true
+          },
           value: {
             type: String,
-            value: ''
+            value: '',
+            observer: 'onValueChange',
+            reflectToAttribute: true
           }
         }
       }
@@ -54,11 +58,24 @@
       }
 
       onRequiredChange(value) {
-        this.$.checkbox.required = value
+        if (value === false) {
+          this.$.checkbox.removeAttribute('required')
+        } else {
+          this.$.checkbox.setAttribute('required', true)
+        }
       }
 
       onDisabledChange(value) {
-        this.$.checkbox.disabled = value
+        if (value === false) {
+          this.$.checkbox.removeAttribute('disabled')
+        } else {
+          this.$.checkbox.setAttribute('disabled', true)
+        }
+      }
+
+      onValueChange(value) {
+        if (value) this.$.checkbox.setAttribute('checked', true) 
+        if (!value) this.$.checkbox.removeAttribute('checked')
       }
 
       validate() {

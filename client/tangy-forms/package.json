@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "polymer-cli": "^1.5.5"
+    "polymer-cli": "^1.5.5",
+    "redux": "^3.7.2"
   }
 }
