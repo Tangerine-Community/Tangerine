@@ -46,7 +46,6 @@ function tangyFormReducer(state = initialState, action) {
         items: items 
       })
 
-
     case ITEM_CLOSE:
       return Object.assign({}, state, {
         progress: ( ( ( state.items.filter((i) => i.valid).length ) / state.items.length ) * 100 ),
@@ -60,6 +59,7 @@ function tangyFormReducer(state = initialState, action) {
 
     case ITEM_CLOSE_STUCK:
       return Object.assign({}, state, {
+        focusId: action.itemId,
         progress: ( ( ( state.items.filter((i) => i.valid == true).length + 1 ) / state.items.length ) * 100 ),
         items: state.items.map((item) => {
           if (item.id == action.itemId) {
@@ -69,8 +69,25 @@ function tangyFormReducer(state = initialState, action) {
         })
       })
 
+    case ITEM_ENABLE:
+      return Object.assign({}, state, {
+        items: state.items.map((item) => {
+          if (item.id == action.itemId) {
+            return Object.assign({}, item, {disabled: false})
+          }
+          return item
+        })
+      })
+
     case ITEM_DISABLE:
-    break
+      return Object.assign({}, state, {
+        items: state.items.map((item) => {
+          if (item.id == action.itemId) {
+            return Object.assign({}, item, {disabled: true})
+          }
+          return item
+        })
+      })
 
     case INPUT_ADDED: 
       // If this input does not yet
@@ -87,12 +104,24 @@ function tangyFormReducer(state = initialState, action) {
         return input 
       })})
     break
-
     case INPUT_DISABLE:
     break
 
+    case INPUT_SHOW:
+      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+        if (input.name == action.inputName) {
+          return Object.assign({}, input, {hidden: false})
+        }
+        return input
+      })})
+
     case INPUT_HIDE:
-    break
+      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+        if (input.name == action.inputName) {
+          return Object.assign({}, input, {hidden: true})
+        }
+        return input
+      })})
 
     case NAVIGATE_TO_NEXT_ITEM:
       currentIndex = state.items.findIndex((item) => item.open === true)
@@ -101,12 +130,19 @@ function tangyFormReducer(state = initialState, action) {
         if (i == currentIndex) {
           return Object.assign({}, item, {open: false})
         } else if (i == currentIndex + 1) {
-          nextFocusId = item.id
+          let potentialNewIndex = i
+          while (state.items[potentialNewIndex] && state.items[potentialNewIndex].disabled === true) {
+            if (state.items[potentialNewIndex+1]) {
+              potentialNewIndex++
+            } else {
+              potentialNewIndex = 'no potential new index' 
+            }
+          }
+          if (typeof (potentialNewIndex) == 'number') nextFocusId = state.items[potentialNewIndex].id 
         }
         return item
       })
       return Object.assign({}, state, { items: items, focusId: nextFocusId })
-    break
 
     case NAVIGATE_TO_PREVIOUS_ITEM:
       currentIndex = state.items.findIndex((item) => item.open === true)
@@ -115,12 +151,19 @@ function tangyFormReducer(state = initialState, action) {
         if (i == currentIndex) {
           return Object.assign({}, item, {open: false})
         } else if (i == currentIndex - 1) {
-          nextFocusId = item.id
+          let potentialNewIndex = i
+          while (state.items[potentialNewIndex] && state.items[potentialNewIndex].disabled === true) {
+            if (state.items[potentialNewIndex-1]) {
+              potentialNewIndex--
+            } else {
+              potentialNewIndex = 'no potential new index' 
+            }
+          }
+          if (typeof (potentialNewIndex) == 'number') nextFocusId = state.items[potentialNewIndex].id 
         }
         return item
       })
       return Object.assign({}, state, { items: items, focusId: nextFocusId })
-    break
 
     default: 
       return state

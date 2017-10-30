@@ -153,7 +153,16 @@
         // Set up the store.
         this.store = window.tangyFormStore
         this.store.subscribe(this.throttledUpdate.bind(this))
+        // 
+        this.querySelectorAll('tangy-form-item').forEach((item) => {
+          item.addEventListener('INPUT_VALUE_CHANGE', this.evalOnChangeAttribute.bind(this))
+        })
         this.store.dispatch({type: FORM_OPEN, items: this.querySelectorAllSerialized('tangy-form-item')})
+      }
+
+      evalOnChangeAttribute() {
+        let state = this.store.getState()
+        eval(this.onChange)
       }
 
       // Prevent parallel updates which leads to race conditions.
@@ -215,32 +224,14 @@
         return serializedElements
       }
 
-      evalOnChangeAttribute() {
-        let tangyForm = this
-        let response = this.store
-        let items = this.querySelectorAll('tangy-form-item')
-        eval(this.onChange)// .bind(this)
+      getInputValue(name) {
+        let state = this.store.getState()
+        let input = state.inputs.find((input) => input.name == name)
+        if (input) return input.value
       }
 
-      updateItemNavigation() {
-        let focusItemIndex = items.findIndex(item => item.id == this.store.focusItemId)
-        // Update progress.
-        this.$['tangy-form-questions--progress'].setAttribute('value', progressCalculation)
-        // Update the next and back buttons.
-        if (this.findNextItem(this.store.focusItemId)) {
-          this.$['down-fab'].removeAttribute('disabled')
-        }
-        else {
-          this.$['down-fab'].setAttribute('disabled', true)
-        }
-        if (this.findPreviousItem(this.store.focusItemId)) {
-          this.$['up-fab'].removeAttribute('disabled')
-        }
-        else {
-          this.$['up-fab'].setAttribute('disabled', true)
-        }
-      }
     }
+
     const serializeElement = (element) => {
       let attributes = [].slice.call(element.attributes)
       let serial = {}

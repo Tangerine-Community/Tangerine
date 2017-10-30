@@ -21,10 +21,19 @@
     <tangy-app>    
     </tangy-app>
       <tangy-form linear-mode hide-closed-items id="form-1" on-change="
-        item_2.disabled = (response.extra_items) ? false : true
+        if (this.getInputValue('extra_items')) {
+          itemEnable('item_2')
+        } else {
+          itemDisable('item_2')
+        }
+        if (this.getInputValue('fruit_prompt')) {
+          inputShow('fruit_selection')
+        } else {
+          inputHide('fruit_selection')
+        }
       ">
         <tangy-form-item src="/content/form-1/item-1.html" id="item_1" title="Design Your Pizza"></tangy-form-item>
-        <tangy-form-item src="/content/form-1/item-2.html" id="item_2" title="Extra Items"></tangy-form-item>
+        <tangy-form-item src="/content/form-1/item-2.html" id="item_2" title="Extra Items" disabled></tangy-form-item>
         <tangy-form-item src="/content/form-1/item-3.html" id="item_3" title="Foo"></tangy-form-item>
         <tangy-form-item src="/content/form-1/item-4.html" id="item_4" title="Bar"></tangy-form-item>
       </tangy-form>

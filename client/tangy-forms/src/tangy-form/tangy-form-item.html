@@ -151,6 +151,7 @@
         this.$.close.addEventListener('click', () => this.store.dispatch({type: ITEM_CLOSE, itemId: this.id }))
         this.$.open.addEventListener('click', () => this.store.dispatch({ type: ITEM_OPEN, itemId: this.id }))
         this.addEventListener('change', (event) => this.store.dispatch({type: INPUT_VALUE_CHANGE,  inputName: event.target.name, inputValue: event.target.value} ))
+        this.addEventListener('change', (event) => this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE') ))
       }
 
       async onOpenChange(open) {
