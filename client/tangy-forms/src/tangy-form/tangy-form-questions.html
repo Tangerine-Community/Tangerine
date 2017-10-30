@@ -117,44 +117,45 @@
         super.connectedCallback()
         // Set up the store.
         this.store = window.tangyFormStore
-        this.unsubscribe = this.store.subscribe(() => this.throttledUpdate(this))
-        this.itemListeners = []
+        this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
         this.querySelectorAll('tangy-form-item').forEach((item) => {
-          this.itemListeners.push(item.addEventListener('INPUT_VALUE_CHANGE', this.evalOnChangeAttribute.bind(this)))
+          // This should perhaps be moved to evaluating on store but throttled using RxJS so it's not running hot or creating infinite loops.
+          item.addEventListener('INPUT_VALUE_CHANGE', this.evalOnChangeAttribute.bind(this))
           if (this.linearMode) item.noButtons = true
         })
-        this.store.dispatch({type: FORM_OPEN, items: this.querySelectorAllSerialized('tangy-form-item')})
+        // Notify store is open and send up the items if it does not have them.
+        this.store.dispatch({
+            type: FORM_OPEN, 
+            items: ([].slice.call(this.querySelectorAll('tangy-form-item'))).map((element) => serializeElement(element))
+        })
       }
 
       disconnectedCallback() {
         this.unsubscribe()
       }
 
-      evalOnChangeAttribute() {
-        let state = this.store.getState()
-        eval(this.onChange)
+
+      // Prevent parallel reflects, leads to race conditions.
+      async throttledReflect() {
+        // If there is an reflect already queued, we can quit. 
+        if (this.reflectQueued) return
+        // Throttle this fire by waiting until last fire is done.
+        if (this.reflectRunning) {
+          // Update is running, delay the execution of this until it's done.
+          this.reflectQueued = true
+          while(this.reflectRunning) await sleep(200)
+          this.reflectQueued = false
+        }
+        // Fire it.
+        this.reflectRunning = true
+        await this.reflect()
+        this.reflectRunning = false
       }
 
-      // Prevent parallel updates which leads to race conditions.
-      async throttledUpdate() {
-        if (this.throttledUpdateFiring) {
-          this.throttledUpdateLoaded = true
-          return
-        } 
-        // Fire it.
-        this.throttledUpdateFiring = true
-        await this.update()
-        this.throttledUpdateFiring = false
-        while (this.throttledUpdateLoaded === true) {
-          this.throttledUpdateFiring = true
-          await this.update()
-          this.throttledUpdateFiring = false
-          this.throttledUpdateLoaded = false
-        }
-      }
+
 
       // Apply state in the store to the DOM.
-      async update() {
+      async reflect() {
         let state = this.store.getState()
         if (!this.previousState) this.previousState = state
         // Set state in tangy-form-item elements.
@@ -187,7 +188,7 @@
           await sleep(200)
           if (item) item.scrollIntoView({behavior: 'smooth', block: 'start'})
         }  
-        // Save away previous state.
+        // Stash as previous state.
         this.previousState = Object.assign({}, state)
       }
 
@@ -199,16 +200,9 @@
         this.store.dispatch({ type: NAVIGATE_TO_NEXT_ITEM })
       }
 
-      querySelectorAllSerialized(selector) {
-        let elements = this.querySelectorAll(selector)
-        let serializedElements = []
-        elements.forEach((element) => {
-          let serializedElement = {}
-          let attributes = [].slice.call(element.attributes)
-          attributes.forEach((attr) => serializedElement[attr.name] = attr.value)
-          serializedElements.push(serializedElement)
-        })
-        return serializedElements
+      evalOnChangeAttribute() {
+        let state = this.store.getState()
+        eval(this.onChange)
       }
 
       getInputValue(name) {
@@ -219,12 +213,7 @@
 
     }
 
-    const serializeElement = (element) => {
-      let attributes = [].slice.call(element.attributes)
-      let serial = {}
-      attributes.forEach((attr) => serial[attr.name] = attr.value)
-      return serial
-    }
+    
     window.customElements.define(TangyFormQuestions.is, TangyFormQuestions);
   </script>
 </dom-module>

@@ -1,12 +1,12 @@
 
+// Probably never used, tangy-form will set the form with a TangyFormResponseModel.
 const initialState = {
   _id: 'form-1',
   formId: '',
   collection: 'TangyFormResponse',
   startDate: (new Date()).toLocaleString(),
   items: [],
-  inputs: [],
-  count: 0
+  inputs: []
 }
 
 function tangyFormReducer(state = initialState, action) {
