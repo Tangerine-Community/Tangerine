@@ -119,24 +119,8 @@
       async connectedCallback() {
         super.connectedCallback()
         this.db = new PouchDB('tangy-form')
-        // Wait until the slot content has passed through.
-        while (this.innerHTML == '') await sleep(1000)
-        while (this.innerHTML == window.tangyFormStore) await sleep(1000)
-        while (!window.tangyFormStore) await sleep(1000)
-        while (!window.tangyFormStore.subscribe) await sleep(1000)
-        console.log('every set up')
-        if (this.hideNav) this.$['nav'].hidden = true 
         // Set up the store.
         this.store = window.tangyFormStore
-       /* 
-        let state = this.store.getState()
-        try {
-          let session = await this.db.get(state._id)
-          this.store.dispatch({type: FORM_SESSION_RESUME, session: session})
-        } catch (e) {
-          this.db.put(state)
-        }
-        */
         this.store.subscribe(this.throttledSave.bind(this))
         this.store.subscribe(() => this.throttledUpdate(this))
         this.querySelectorAll('tangy-form-item').forEach((item) => {
