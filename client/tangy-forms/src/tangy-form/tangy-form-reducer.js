@@ -10,10 +10,18 @@ const initialState = {
 }
 
 function tangyFormReducer(state = initialState, action) {
+  var items
+  var currentIndex
+  var newState
   switch(action.type) {
 
     case FORM_OPEN:
-      return Object.assign({}, state, {items: [...action.items]})
+      currentIndex = action.items.findIndex((item) => (item.open))
+      items = action.items
+      if (currentIndex == -1) {
+        items[0].open = true
+      }
+      return Object.assign({}, state, {items: [...items]})
 
     case ITEM_OPEN:
       return Object.assign({}, state, {items: state.items.map((item) => {
@@ -24,7 +32,10 @@ function tangyFormReducer(state = initialState, action) {
       })})
 
     case ITEM_VALID:
-      let items = state.items.map((item) => {
+      items = state.items.map((item) => {
+          if (state.focusId == item.id) {
+            return Object.assign({}, item, {open: true})
+          }
           if (item.id == action.itemId) {
             return Object.assign({}, item, {valid: true})
           }
@@ -58,7 +69,6 @@ function tangyFormReducer(state = initialState, action) {
         })
       })
 
-
     case ITEM_DISABLE:
     break
 
@@ -68,6 +78,7 @@ function tangyFormReducer(state = initialState, action) {
         return Object.assign({}, state, {inputs: [...state.inputs, action.attributes]})
       }
       break
+
     case INPUT_VALUE_CHANGE:
       return Object.assign({}, state, {inputs: state.inputs.map((input) => {
         if (input.name == action.inputName) {
@@ -76,14 +87,41 @@ function tangyFormReducer(state = initialState, action) {
         return input 
       })})
     break
+
     case INPUT_DISABLE:
     break
+
     case INPUT_HIDE:
     break
+
     case NAVIGATE_TO_NEXT_ITEM:
+      currentIndex = state.items.findIndex((item) => item.open === true)
+      nextFocusId = ''
+      items = state.items.map((item, i) => {
+        if (i == currentIndex) {
+          return Object.assign({}, item, {open: false})
+        } else if (i == currentIndex + 1) {
+          nextFocusId = item.id
+        }
+        return item
+      })
+      return Object.assign({}, state, { items: items, focusId: nextFocusId })
     break
+
     case NAVIGATE_TO_PREVIOUS_ITEM:
+      currentIndex = state.items.findIndex((item) => item.open === true)
+      nextFocusId = ''
+      items = state.items.map((item, i) => {
+        if (i == currentIndex) {
+          return Object.assign({}, item, {open: false})
+        } else if (i == currentIndex - 1) {
+          nextFocusId = item.id
+        }
+        return item
+      })
+      return Object.assign({}, state, { items: items, focusId: nextFocusId })
     break
+
     default: 
       return state
   }

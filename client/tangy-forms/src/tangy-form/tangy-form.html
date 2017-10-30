@@ -73,14 +73,14 @@
           margin: 0px;
           padding: 0px;
         }
-        #up-fab {
+        #nextItemButton {
           background: #FF9800; 
           position: fixed;
           bottom: 73px;
           right: 7px;
           color: white;
         }
-        #down-fab {
+        #previousItemButton {
           background: #FF9800; 
           position: fixed;
           bottom: 10px;
@@ -89,6 +89,7 @@
         }
         paper-progress {
           --paper-progress-active-color: #FF9800;
+          width: 100%;
         }
         paper-tab, paper-tabs {
           --paper-tabs-selection-bar-color: #FF9800 !important;
@@ -187,7 +188,10 @@
           if (index !== -1) Object.assign(input, state.inputs[index])
         })
         this.$.progress.setAttribute('value', state.progress)
-        // if (state.focusItemId !== this.previousState.focusItemId) // scroll to item
+        if (state.focusId !== this.previousState.focusId) {
+          let item = this.querySelector(`#${state.focusId}`)
+          item.scrollIntoView({behavior: 'smooth', block: 'start'})
+        }  // scroll to item
         // this.previousState = Object.assign({}, state)
       }
 
