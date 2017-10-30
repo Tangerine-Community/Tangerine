@@ -11,31 +11,42 @@
     <script src="bower_components/pouchdb/dist/pouchdb.js"></script>
     <script src="src/cat.js"></script>
     <link href="fonts/fonts.css" rel="stylesheet">
-    <link rel="import" href="src/tangy-form/tangy-form.html">
+    <link rel="import" href="src/tangy-form-app/tangy-form-app.html">
+    <link rel="import" href="bower_components/paper-styles/typography.html">
+    <link rel="import" href="bower_components/neon-animation/web-animations.html">
   </head>
-  <style>
-    body {
-      margin: 0px;
-      padding: 0px;
-    }
-  </style>
   <body>
-      <tangy-form hide-closed-items linear-mode id="form-1" on-change="
-        if (this.getInputValue('extra_items')) {
-          itemEnable('item_2')
-        } else {
-          itemDisable('item_2')
-        }
-        if (this.getInputValue('fruit_prompt')) {
-          inputShow('fruit_selection')
-        } else {
-          inputHide('fruit_selection')
-        }
-      ">
-        <tangy-form-item src="/content/form-1/item-1.html" id="item_1" title="Design Your Pizza"></tangy-form-item>
-        <tangy-form-item src="/content/form-1/item-2.html" id="item_2" title="Extra Items" disabled></tangy-form-item>
-        <tangy-form-item src="/content/form-1/item-3.html" id="item_3" title="Foo"></tangy-form-item>
-        <tangy-form-item src="/content/form-1/item-4.html" id="item_4" title="Bar"></tangy-form-item>
-      </tangy-form>
+    <div id="base-path-loader"></div>
+    <script>
+    function parseQuery(qstr) {
+      var query = {};
+      var a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&');
+      for (var i = 0; i < a.length; i++) {
+        var b = a[i].split('=');
+        query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
+      }
+      return query;
+    }
+    (function() {
+      if (window.location.search) {
+        let query = parseQuery(window.location.search)
+        let formPath = query.form 
+        let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
+        console.log(`Setting <base> path using form directory: ${formDirectory}`)
+        window['base-path-loader'].innerHTML = `<base href="${formDirectory}">`
+      }
+    })();
+    </script>
+
+
+     
+
+    </script>
+    <tangy-form-app></tangy-form-app>
+    <style>
+      html, body, tangy-form-app, tangy-form {
+        min-height: 100vh;
+      }
+    </style>
   </body>
 </html>
