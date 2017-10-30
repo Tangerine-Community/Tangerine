@@ -50,24 +50,14 @@
           background: #e1e2e1; /* #ef6433; */
         }
         #tangy-form-responses, #tangy-form-questions {
-          margin: 0px 20px;
-          padding: 15px;
-        }
-        #tangy-form-questions--button-container {
-          position: fixed;
-          bottom: 15px;
-          right: 0px;
-        }
-        #tangy-form-questions--progress {
-          position: fixed;
-          bottom: 0px;
-          left: 0px;
-          width: 100%;
+          margin: 0px;
+          padding: 0px;
         }
         #tangy-form-questions--form-container {
+          width: 100%;
+          margin: 0px;
+          padding: 0px;
           display: block;
-          max-width: 720px;
-          margin: 0px auto;
         }
         #show-responses-fab {
           background: #FF9800; 
@@ -175,16 +165,13 @@
 
       async connectedCallback() {
 
-        // @TODO Change this.id to this.form_id. It's more obvious.
         super.connectedCallback();
 
-        // Stash initial state of innerHTML for use when starting a new response 
-        // after a prior response was worked on.
+        // Stash the tangy-form-items to pass down to tangy-form-questions element when we showQuestions().
         this._formDefinition = this.innerHTML
         this.innerHTML = ''
 
         // Set up the TangyFormService for interacting with TangyForm and TangyFormResponse docs in the database.
-        // @TODO Rename database to databaseName.
         this.service = new TangyFormService({databaseName: this.databaseName})
         await this.service.initialize()
 
@@ -223,7 +210,11 @@
         this.formDoc.responseId = this.response._id
         this.formDoc = await this.service.saveForm(this.formDoc)
 
+        // Set the response as the current value for the store.
         this.store.dispatch({type: FORM_SESSION_RESUME, session: this.response})
+
+        // Subscribe to store to update it in the database.
+        this.store.subscribe(this.throttledSaveResponse.bind(this))
 
         // Show questions.
         this.showQuestions()
@@ -232,6 +223,9 @@
       showQuestions() {
         this.$['tangy-form-responses'].hidden = true 
         this.$['tangy-form-questions'].hidden = false
+        if (this.childElementCount > 0) this.removeChild(this.childNodes[0])
+        // let currentTangyFormQuestionsEl = this.querySelector('tangy-form-questions')
+
         // Load items from item stash that was made on connected callback. Good for resuming fresh. 
         let tangyFormQuestions = document.createElement('tangy-form-questions')
         Object.assign(tangyFormQuestions, {
@@ -241,6 +235,35 @@
         })
         tangyFormQuestions.innerHTML = this._formDefinition
         this.appendChild(tangyFormQuestions)
+      }
+
+      // Prevent parallel saves which leads to race conditions.
+      async throttledSaveResponse() {
+        // If already loaded, return.
+        if (this.throttledSaveLoaded) return
+        // Throttle this fire by waiting until last fire is done.
+        if (this.throttledSaveFiring) {
+          this.throttledSaveLoaded = true
+          while(this.throttledSaveFiring) await sleep(200)
+          this.throttledSaveLoaded = false
+        }
+        // Fire it.
+        this.throttledSaveFiring = true
+        await this.saveResponse()
+        this.throttledSaveFiring = false
+      }
+
+      async saveResponse() {
+        const state = this.store.getState()
+        let stateDoc = {}
+        try {
+          stateDoc = await this.service.getResponse(state._id)
+        } catch(e) {
+          let r = await this.service.saveResponse(state)
+          stateDoc = await this.service.getResponse(state._id)
+        }
+        let newStateDoc = Object.assign({}, state, { _rev: stateDoc._rev })
+        await this.service.saveResponse(newStateDoc)
       }
 
       /*

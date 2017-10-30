@@ -31,6 +31,7 @@
       <style>
         :host {
           background: #e1e2e1; 
+          width: 100%;
           display: block;
           margin: 0px;
           padding: 0px;
@@ -77,7 +78,7 @@
 
   <script>
     /**
-     * `tangy-form`
+     * `tangy-form-questions`
      * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
      *
      * @customElement
@@ -112,56 +113,26 @@
         };
       }
 
-      constructor() {
-        super()
-      }
-
       async connectedCallback() {
         super.connectedCallback()
-        this.db = new PouchDB('tangy-form')
         // Set up the store.
         this.store = window.tangyFormStore
-        this.store.subscribe(this.throttledSave.bind(this))
-        this.store.subscribe(() => this.throttledUpdate(this))
+        this.unsubscribe = this.store.subscribe(() => this.throttledUpdate(this))
+        this.itemListeners = []
         this.querySelectorAll('tangy-form-item').forEach((item) => {
-          item.addEventListener('INPUT_VALUE_CHANGE', this.evalOnChangeAttribute.bind(this))
+          this.itemListeners.push(item.addEventListener('INPUT_VALUE_CHANGE', this.evalOnChangeAttribute.bind(this)))
           if (this.linearMode) item.noButtons = true
         })
         this.store.dispatch({type: FORM_OPEN, items: this.querySelectorAllSerialized('tangy-form-item')})
       }
 
+      disconnectedCallback() {
+        this.unsubscribe()
+      }
+
       evalOnChangeAttribute() {
         let state = this.store.getState()
         eval(this.onChange)
-      }
-
-      // Prevent parallel saves which leads to race conditions.
-      async throttledSave() {
-        // If already loaded, return.
-        if (this.throttledSaveLoaded) return
-        // Throttle this fire by waiting until last fire is done.
-        if (this.throttledSaveFiring) {
-          this.throttledSaveLoaded = true
-          while(this.throttledSaveFiring) await sleep(200)
-          this.throttledSaveLoaded = false
-        }
-        // Fire it.
-        this.throttledSaveFiring = true
-        await this.save()
-        this.throttledSaveFiring = false
-      }
-
-      async save() {
-        const state = this.store.getState()
-        let stateDoc = {}
-        try {
-          stateDoc = await this.db.get(state._id)
-        } catch(e) {
-          let r = await this.db.put(state)
-          stateDoc = await this.db.get(state._id)
-        }
-        let newStateDoc = Object.assign({}, state, { _rev: stateDoc._rev })
-        await this.db.put(newStateDoc)
       }
 
       // Prevent parallel updates which leads to race conditions.
