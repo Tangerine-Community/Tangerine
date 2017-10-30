@@ -63,7 +63,7 @@
   }
 </style>
 
-<dom-module id="tangy-form">
+<dom-module id="tangy-form-questions">
 
   <template>
       <style>
@@ -123,21 +123,24 @@
      * @demo demo/index.html
      */
 
-    class TangyForm extends Polymer.Element {
+    class TangyFormQuestions extends Polymer.Element {
 
-      static get is() { return 'tangy-form'; }
+      static get is() { return 'tangy-form-questions'; }
 
       static get properties() {
         return {
+          // Pass in code to be eval'd on any form input change.
           onChange: {
             type: String,
             value: '' 
           },
-          hideClosedItems: {
+          // Set liniar-mode to turn on navigation and turn off item action buttons.
+          linearMode: {
             type: Boolean,
             value: false
           },
-          linearMode: {
+          // Hide closed items to focus user on current item.
+          hideClosedItems: {
             type: Boolean,
             value: false
           }
@@ -231,6 +234,7 @@
         }
       }
 
+      // Apply state in the store to the DOM.
       async update() {
         let state = this.store.getState()
         if (!this.previousState) this.previousState = state
@@ -246,7 +250,9 @@
           let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
           if (index !== -1) Object.assign(input, state.inputs[index])
         })
+        // Set progress state.
         this.$.progress.setAttribute('value', state.progress)
+        // Hide closed items.
         if (this.hideClosedItems) {
           items.forEach((item) => {
             if (item.open) {
@@ -256,11 +262,13 @@
             }
           })
         }
+        // Find item to scroll to.
         if (state.focusId !== this.previousState.focusId) {
           let item = this.querySelector(`#${state.focusId}`)
           await sleep(200)
           if (item) item.scrollIntoView({behavior: 'smooth', block: 'start'})
         }  
+        // Save away previous state.
         this.previousState = Object.assign({}, state)
       }
 
@@ -298,6 +306,6 @@
       attributes.forEach((attr) => serial[attr.name] = attr.value)
       return serial
     }
-    window.customElements.define(TangyForm.is, TangyForm);
+    window.customElements.define(TangyFormQuestions.is, TangyFormQuestions);
   </script>
 </dom-module>
