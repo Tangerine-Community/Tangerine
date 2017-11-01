@@ -39,7 +39,6 @@ export { AppComponent }
     BrowserAnimationsModule,
     MdButtonModule, MdCheckboxModule, MdInputModule, MdToolbarModule, MdSidenavModule, MdMenuModule,
     UuidModule,
-    TangerineFormsModule,
     TangerineV2Module,
     TangyFormsModule,
     AuthModule,
