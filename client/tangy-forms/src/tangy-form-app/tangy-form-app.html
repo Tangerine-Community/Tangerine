@@ -1,30 +1,12 @@
-<link rel="import" href="../tangy-form/tangy-form.html">
-<link rel="import" href="../tangy-form/tangy-form-item.html">
 
 <!-- dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/iron-form/iron-form.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
-<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
+
+<link rel="import" href="../tangy-form/tangy-form.html">
 
 <dom-module id="tangy-form-app">
-  <style>
-    body {
-      background: #F4F4F4;
-      padding: 0px;
-      margin: 0px;
-      scroll-behavior: smooth; 
-    }
-  </style>
 
   <template>
     <style>
@@ -57,7 +39,6 @@
         font-size: 1.2em;
         padding: 15px;
         color: #FFF;
-        background: #e1e2e1;
       }
     </style>
     <div class="tangy-form-app--container">
@@ -102,25 +83,7 @@
     class TangyFormApp extends Polymer.Element {
 
       static get is() { return 'tangy-form-app'; }
-
-      static get properties() {
-        return {
-          database: {
-            type: String,
-            value: 'tangy-form'
-          },
-          forms: {
-            type: Array,
-            value: []
-          },
-          formSrc: {
-            type: String,
-            value: '',
-            observer: 'onFormSrcChange'
-          }
-        };
-      }
-      
+     
       connectedCallback() {
         super.connectedCallback(); 
         let query = this.parseQuery(window.location.search)
@@ -141,6 +104,7 @@
         }
         return query;
       }
+
       async showFormsList() {
         this.$['form-view'].hidden = true
         this.$['form-list'].hidden = false
@@ -169,7 +133,7 @@
         let formTemplate = document.createElement('div')
         formTemplate.innerHTML = await formHtml.text()
         let formEl = formTemplate.querySelector('tangy-form')
-        if (query.database) formEl.setAttribute('database', query.database)
+        if (query.database) formEl.setAttribute('databaseName', query.database)
         if (query['linear-mode']) formEl.setAttribute('linearMode', true) 
         if (query['response-id']) formEl.setAttribute('response-id', query['response-id'])
         if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true) 

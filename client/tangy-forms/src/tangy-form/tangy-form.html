@@ -1,12 +1,22 @@
+
+<!-- Libraries -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
 <script src="../../node_modules/redux/dist/redux.js"></script>
+<script src="cat.js"></script>
+
+<!-- Classes -->
 <script src="tangy-form-model.js"></script>
 <script src="tangy-form-response-model.js"></script>
 <script src="tangy-form-service.js"></script>
 <script src="tangy-form-reducer.js"></script>
 <script src="tangy-form-actions.js"></script>
+
+<!-- Tangy Form Core Elements --> 
 <link rel="import" href="tangy-form-item.html">
 <link rel="import" href="tangy-form-questions.html">
+
+<!-- Tangy Custom Inputs Elements -->
 <link rel="import" href="../tangy-timed/tangy-timed.html">
 <link rel="import" href="../tangy-gps/tangy-gps.html">
 <link rel="import" href="../tangy-location/tangy-location.html">
@@ -15,12 +25,13 @@
 <link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
 <script src="../tangy-toggle-button/tangy-toggle-button.js"></script>
 
-<!-- dependencies -->
+<!-- Dependencies -->
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 <link rel="import" href="../../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
 <link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
@@ -39,25 +50,17 @@
 <dom-module id="tangy-form">
 
   <template>
+
       <style>
         :host {
-          background: #e1e2e1; 
           display: block;
           margin: 0px;
           padding: 0px;
         }
-        #tangy-form--header {
-          background: #e1e2e1; /* #ef6433; */
-        }
-        #tangy-form-responses, #tangy-form-questions {
+        #tangy-form-responses, 
+        #tangy-form-questions {
           margin: 0px;
           padding: 0px;
-        }
-        #tangy-form-questions--form-container {
-          width: 100%;
-          margin: 0px;
-          padding: 0px;
-          display: block;
         }
         #show-responses-fab {
           background: #FF9800; 
@@ -75,22 +78,14 @@
         :host([hide-responses]) #new-response-fab {
           display: none;
         } 
-        paper-button {
-          background: #FF9800;
-          --paper-button-ink-color: #FFF;
-          color: #FFF;
-        }
-
       </style>
-      <div id="tangy-form--header">
-      </div>
+
       <div id="tangy-form-questions">
-        <div id="tangy-form-questions--form-container">
-          <slot id="tangy-form-questions--form"></slot>
-        </div>
+        <slot id="tangy-form-questions--form"></slot>
         <paper-fab id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
         <paper-fab id="show-responses-fab" on-click="showResponses" icon="icons:save"></paper-fab>
       </div>
+
       <div id="tangy-form-responses" hidden>
         <paper-button on-click='newResponse' raised><iron-icon icon="icons:add"></iron-icon></paper-button>
         <paper-button on-click='generateCSV' raised><iron-icon icon="icons:file-download"></iron-icon></paper-button>
@@ -106,6 +101,7 @@
           </template>
         </ul>
       </div>
+
   </template>
 
   <script>
@@ -339,8 +335,6 @@
         window.document.body.removeChild(element);
       }
     }
-
-    
 
     window.customElements.define(TangyForm.is, TangyForm);
   </script>

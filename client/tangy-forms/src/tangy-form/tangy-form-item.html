@@ -1,27 +1,17 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
-
-<style>
-  paper-input {
-    margin-bottom: 15px;
-  }
-  paper-radio-button {
-    margin: 0px 15px 0px 0px;
-  }
-</style>
-   
+  
 <dom-module id="tangy-form-item">
   
   <template>
     <style>
       :host {
-        padding: 15px;
-        min-height: 100vh;
+        margin: 15px;
       }
-      paper-input {
-        margin-bottom: 15px;
-      }
-      :host paper-card {
+      /*
+       * Card
+       */
+      paper-card {
         -webkit-transition: .4s;
         -moz-transition: .4s;
         -ms-transition: .4s;
@@ -31,10 +21,6 @@
         --paper-card-header-color: #8BC34A;
         max-width: 325px;
         margin: 30px auto;
-      }
-      :host([disabled]) paper-card {
-        --paper-card-background-color: gray !important;
-        --paper-card-header-color: #CCC;
       }
       :host([open]) paper-card {
         -webkit-transition: .4s;
@@ -47,6 +33,22 @@
         --paper-card-background-color: #FFF !important;
         --paper-card-header-color: #8BC34A;
         color: #000;
+      }
+      :host([disabled]) paper-card {
+        --paper-card-background-color: gray !important;
+        --paper-card-header-color: #CCC;
+      }
+
+      /* 
+       * Action Buttons 
+       */
+      .card-actions {
+        height: 45px;
+      }
+      .card-actions paper-button {
+        background: #FF9800;
+        --paper-button-ink-color: #FFF;
+        color: #FFF;
       }
       :host([open]) #open {
         display: none;
@@ -61,27 +63,24 @@
       :host([no-buttons]) #close {
         display: none;
       }
-      .card-actions {
-        height: 45px;
-      }
-      paper-button {
-        background: #FF9800;
-        --paper-button-ink-color: #FFF;
-        color: #FFF;
-      }
     </style>
+
     <paper-card id="card" class="shrunk" heading="[[title]]">
+
       <div class="card-content">
         <slot></slot>
       </div>
+
       <div class="card-actions">
         <paper-button id="open">open</paper-button>
         <paper-button id="close">submit</paper-button>
         <template is="dom-if" if="{{valid}}">
-            <iron-icon style="color: #8BC34A; float: right; margin-top:10px" icon="icons:check-circle"></iron-icon>
+            <iron-icon style="color: #8BC34A; float: right; margin-top: 10px" icon="icons:check-circle"></iron-icon>
         </template>
       </div>
+
     </paper-card>
+
   </template>
 
   <script>
@@ -99,6 +98,8 @@
       static get is() { return 'tangy-form-item'; }
       static get properties() {
         return {
+
+          // Configuration
           src: {
             type: String,
             value: 'tangy-form-item',
@@ -114,6 +115,7 @@
             value: false,
             reflectToAttribute: true
           },
+
           // State
           open: {
             type: Boolean,
@@ -122,11 +124,6 @@
             observer: 'onOpenChange',
           },
           valid: {
-            type: Boolean,
-            value: false,
-            reflectToAttribute: true
-          },
-          stuck: {
             type: Boolean,
             value: false,
             reflectToAttribute: true
@@ -150,6 +147,7 @@
       }
 
       async onOpenChange(open) {
+        // Close it.
         if (open === false && this.innerHTML !== '') {
           if (this.validate()) {
             this.innerHTML = '' 
@@ -159,7 +157,7 @@
           }
         }
         // Open it, but only if empty because we might be stuck.
-        if (open == true && this.innerHTML == '') {
+        if (open === true && this.innerHTML == '') {
           let request = await fetch(this.src)
           this.innerHTML = await request.text()
           this.querySelectorAll('[name]').forEach((input) => {
