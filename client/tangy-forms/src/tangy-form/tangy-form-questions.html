@@ -107,8 +107,6 @@
         // Set up the store.
         this.store = window.tangyFormStore
         this.querySelectorAll('tangy-form-item').forEach((item) => {
-          // This should perhaps be moved to evaluating on store but throttled using RxJS so it's not running hot or creating infinite loops.
-          item.addEventListener('INPUT_VALUE_CHANGE', this.evalOnChangeAttribute.bind(this))
           if (this.linearMode) item.noButtons = true
         })
         // Notify store is open and send up the items if it does not have them.
@@ -121,6 +119,18 @@
         if (this.linearMode) {
           this.hasNotYetFocused = true
           focusOnItem(state.focusIndex) 
+        }
+        // Register tangy redux hook.
+        window.tangyReduxHook_INPUT_VALUE_CHANGE = (store) => {
+          console.log('hook override')
+          let state = store.getState()
+          let getValue = this.getValue.bind(this)
+          eval(this.onChange)
+          let forms = [].slice.call(this.querySelectorAll('form[on-change]'))
+          forms.forEach((form) => {
+            if (form.hasAttribute('on-change')) eval(form.getAttribute('on-change'))
+          })
+
         }
       }
 
@@ -217,12 +227,7 @@
         }
       }
 
-      evalOnChangeAttribute() {
-        let state = this.store.getState()
-        eval(this.onChange)
-      }
-
-      getInputValue(name) {
+      getValue(name) {
         let state = this.store.getState()
         let input = state.inputs.find((input) => input.name == name)
         if (input) return input.value
