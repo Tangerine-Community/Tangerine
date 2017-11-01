@@ -13,8 +13,6 @@ import 'hammerjs';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { NodeManagerModule } from './node-manager/node-manager.module';
-
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -24,7 +22,6 @@ describe('AppComponent', () => {
         HttpModule,
         BrowserAnimationsModule,
         MdButtonModule, MdCheckboxModule, MdInputModule,
-        NodeManagerModule,
         AppRoutingModule
       ],
       declarations: [
