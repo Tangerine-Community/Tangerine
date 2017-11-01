@@ -9,7 +9,11 @@ export class LoginGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (this.authenticationService.isLoggedIn()) {
       return true;
-    };
+    }
+    //  else if (!this.authenticationService.isLoggedIn() && this.authenticationService.isNoPasswordMode()) {
+    //   this.router.navigate(['/login-nopassword'], { queryParams: { returnUrl: state.url } });
+    //   return true;
+    // }
     this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
     return false;
   }

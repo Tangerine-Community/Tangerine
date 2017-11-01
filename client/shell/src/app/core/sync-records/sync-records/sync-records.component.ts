@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+
 import { SyncingService } from '../_services/syncing.service';
-import { environment } from '../../../../environments/environment';
+
 @Component({
   selector: 'app-sync-records',
   templateUrl: './sync-records.component.html',
@@ -8,6 +9,7 @@ import { environment } from '../../../../environments/environment';
 })
 export class SyncRecordsComponent implements OnInit {
   isLoading = false;
+  errorMessage;
   user = { username: '', password: '' };
   constructor(private syncingService: SyncingService) { }
 
@@ -22,6 +24,7 @@ export class SyncRecordsComponent implements OnInit {
         this.toggleIsLoading();
       }
     } catch (error) {
+      this.errorMessage = error;
       console.log(error);
       this.toggleIsLoading();
     }

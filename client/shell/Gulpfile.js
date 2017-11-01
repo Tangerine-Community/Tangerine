@@ -176,7 +176,7 @@ gulp.task('pagesBuild', (cb) => {
         });
 
         execCommand.on('exit', function (code) {
-            console.log(`Pages build process for ${locale.language} exited with code ` + code.toString());
+            // console.log(`Pages build process for ${locale.language} exited with code ` + code.toString());
         });
     });
     cb();

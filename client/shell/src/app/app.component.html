@@ -1,14 +1,20 @@
 <md-toolbar color="primary" class="mat-typography">
-  <button *ngIf="showNav" md-button (click)="sidenav.open()"><i class="material-icons">menu</i></button>
+  <button *ngIf="showNav" md-button (click)="sidenav.open()">
+    <i class="material-icons">menu</i>
+  </button>
 
-  <span>Tangerine Forms</span>
-  <span class="tangerine-toolbar-spacer"></span>
+  <span>
+    <a class="tangy-no-text-decoration tangy-foreground-white" routerLink="home">Tangerine Forms</a>
+  </span>
+  <span class="tangy-spacer"></span>
 
-  <button *ngIf="showNav" md-button><i class="material-icons" [mdMenuTriggerFor]="appMenu">account_box</i></button>
+  <button *ngIf="showNav" [mdMenuTriggerFor]="appMenu" md-button>
+    <i class="material-icons">account_box</i>
+  </button>
   <md-menu #appMenu="mdMenu">
-    <a routerLink="edit-user-profile" md-menu-item>
+    <a routerLink="manage-user-profile" md-menu-item>
       <i class="material-icons md-18">create</i>
-      <span>Edit Profile</span> 
+      <span>Manage Profile</span>
     </a>
     <a routerLink="create-nodes" md-menu-item>
       <i class="material-icons md-18">settings</i>
@@ -19,25 +25,24 @@
       <span>Log Out</span>
     </li>
   </md-menu>
-
 </md-toolbar>
 <md-sidenav-container style="margin-top:64px">
-  <md-sidenav #sidenav class="sidenav">
-    <ul>
-      <li> <a routerLink="tangy-forms">Forms</a>
-        <li>
-          <a routerLink="sync-records">Sync</a>
-        </li>
-        <li>
-          <a routerLink="registerRemoteServer">Register on remote server</a>
-        </li>
-        <li>
-          <a routerLink="loginRemoteServer">Login on remote server</a>
-        </li>
-    </ul>
+  <md-sidenav #sidenav class="sidenav mat-typography">
+    <md-nav-list>
+      <md-list-item>
+        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="forms-list">Forms List</a>
+      </md-list-item>
+      <br>
+      <md-list-item>
+        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="case-management">Case Management</a>
+      </md-list-item>
+      <br>
+      <md-list-item>
+        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="sync-records">Sync Records</a>
+      </md-list-item>
+    </md-nav-list>
   </md-sidenav>
-
-  <div class="tangerine-app-content">
+  <div class="tangerine-app-content mat-typography">
     <router-outlet></router-outlet>
   </div>
 </md-sidenav-container>

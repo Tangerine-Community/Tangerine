@@ -1,16 +1,26 @@
-<h2> Sync records</h2>
-
-<md-input-container>
-  <label>Username</label>
-  <input mdInput [(ngModel)]="user.username" place>
-</md-input-container>
-<md-input-container>
-  <label>Password</label>
-  <input mdInput [(ngModel)]="user.password" type="password">
-</md-input-container>
-<div [hidden]="!isLoading">
-  <h2>Working</h2><img src="../../../../assets/tangy-loading.gif"></div>
-
-<button md-raised-button (click)="pushAllRecords()">Push All records</button>
-<button md-raised-button (click)="pullAllRecords()">Pull All records</button>
-<button md-raised-button (click)="syncAllRecords()">Sync All records</button>
+<div class="login-app-content">
+  <div class="group">
+    <form role="form" novalidate>
+      <br>
+      <h3 class="tangy-foreground-primary">Sync records</h3>
+      <md-input-container>
+        <input name="username" type="text" mdInput [(ngModel)]="user.username" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">face</i>Username
+        </md-placeholder>
+      </md-input-container>
+      <br>
+      <md-input-container>
+        <input name="password" mdInput [(ngModel)]="user.password" type="password" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">lock_open</i>Password
+        </md-placeholder>
+      </md-input-container>
+      <button color="primary" md-raised-button (click)="syncAllRecords()">SYNC</button>
+      <br>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
+    </form>
+  </div>
+</div>

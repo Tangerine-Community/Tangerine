@@ -1,3 +1,4 @@
+import { SharedModule } from '../shared.module';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -7,7 +8,8 @@ import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-play
 @NgModule({
   imports: [
     CommonModule,
-    TangyFormsRoutingModule
+    TangyFormsRoutingModule,
+    SharedModule
   ],
   declarations: [TangyFormsPlayerComponent]
 })

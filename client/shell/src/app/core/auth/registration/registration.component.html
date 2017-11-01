@@ -1,30 +1,42 @@
-<h2>Register as user</h2>
-<form #registration='ngForm' novalidate (ngSubmit)="register(registration.value)">
-  <md-grid-list cols="1" rowHeight="1:1">
-    <md-grid-tile>
-      <md-input-container>
-        <label>Username</label>
-        <input name="username" type="text" mdInput [ngModel]="user.username" (blur)="doesUserExist(registration.value.username)"
-          required>
-      </md-input-container>
-      <md-input-container>
-        <label>Email</label>
-        <input name="email" type="email" mdInput [ngModel]="user.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" required>
-      </md-input-container>
+<div class="login-app-content">
+  <div class="group">
 
-    </md-grid-tile>
-    <md-grid-tile>
+    <form role="form" #registration='ngForm' novalidate (submit)="register()">
+      <br>
+      <h3 class="tangy-foreground-primary">Register on Tangerine</h3>
       <md-input-container>
-        <label>Password</label>
-        <input name="password" mdInput [ngModel]="user.password" type="password" required>
+        <input name="username" type="text" mdInput [(ngModel)]="user.username" (blur)="doesUserExist(user.username)" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">face</i>Username
+        </md-placeholder>
       </md-input-container>
       <md-input-container>
-        <label>Confirm Password</label>
-        <input name="confirmPassword" mdInput [ngModel]="user.confirmPassword" type="password" required>
+        <input name="email" type="email" mdInput [(ngModel)]="user.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+          required>
+        <md-placeholder>
+          <i class="material-icons md-11">mail_outline</i>Email
+        </md-placeholder>
       </md-input-container>
+      <br>
+      <md-input-container>
+        <input name="password" mdInput [(ngModel)]="user.password" type="password" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">lock_open</i>Password
+        </md-placeholder>
+      </md-input-container>
+      <md-input-container>
+        <input name="confirmPassword" mdInput [(ngModel)]="user.confirmPassword" type="password" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">lock_open</i>Confirm Password
+        </md-placeholder>
+      </md-input-container>
+      <br>
       <!-- <button md-raised-button (click)="login()">Login</button> -->
-      <button type="submit" md-raised-button [disabled]="registration.invalid||registration.value.password!==registration.value.confirmPassword">Register</button>
-      <a href="#/login">Go to Login Page</a>
-    </md-grid-tile>
-  </md-grid-list>
-</form>
+      <button md-raised-button color="primary" type="submit" [disabled]="registration.invalid||user.password!==user.confirmPassword">REGISTER</button>
+      <a md-button routerLink="#/login">LOGIN</a>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
+    </form>
+  </div>
+</div>
