@@ -1,16 +1,17 @@
 
-<!-- Libraries -->
+<!-- Dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
 <script src="../../node_modules/redux/dist/redux.js"></script>
-<script src="cat.js"></script>
 
-<!-- Classes -->
+<!-- Tangy Libraries -->
 <script src="tangy-form-model.js"></script>
 <script src="tangy-form-response-model.js"></script>
 <script src="tangy-form-service.js"></script>
 <script src="tangy-form-reducer.js"></script>
+<script src="tangy-form-redux-middleware.js"></script>
 <script src="tangy-form-actions.js"></script>
+<script src="cat.js"></script>
 
 <!-- Tangy Form Core Elements --> 
 <link rel="import" href="tangy-form-item.html">
@@ -120,7 +121,12 @@
 
       constructor() {
         super()
-        window.tangyFormStore = Redux.createStore(tangyFormReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+        window.tangyFormStore = Redux.createStore(
+          tangyFormReducer, 
+          window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), 
+          Redux.applyMiddleware(tangyReduxMiddlewareTangyHook)
+          // Redux.applyMiddleware(tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareLogger, tangyReduxMiddlewareTangyHook)
+        )
         this.store = window.tangyFormStore
       }
 
