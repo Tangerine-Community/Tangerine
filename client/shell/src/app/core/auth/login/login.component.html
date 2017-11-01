@@ -1,40 +1,35 @@
-<!-- <md-grid-list cols="2" rowHeight="2:1">
-  <md-grid-tile>
-    <md-select placeholder="Username" [(ngModel)]="user.username">
-      <md-option *ngFor="let user of users" [value]="user.username">{{ user.username }}</md-option>
-    </md-select>
-    <md-input-container>
-      <label>Password</label>
-      <input mdInput [(ngModel)]="user.password" type="password">
-    </md-input-container>
-    <button md-raised-button (click)="login()">Login</button>
-    <button md-raised-button (click)="register()">Register</button>
-  </md-grid-tile>
-  <md-grid-tile></md-grid-tile>
-</md-grid-list> -->
-
 <div class="login-app-content">
-
   <div class="group">
-
-    <form role="form" (submit)="login()"><br>
-      <p>Login to Tangerine</p>
+    <form role="form" (submit)="login()">
+      <br>
+      <h3 class="tangy-foreground-primary">Login to Tangerine</h3>
       <md-input-container>
         <input mdInput type="text" required [(ngModel)]="user.username" id="username" name="username">
         <md-placeholder>
           <i class="material-icons app-input-icon">face</i>Username
         </md-placeholder>
-      </md-input-container><br><br>
+      </md-input-container>
+      <br>
+      <br>
       <md-input-container>
         <input mdInput type="password" required [(ngModel)]="user.password" id="password" name="password">
         <md-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>Password
         </md-placeholder>
-      </md-input-container><br><br>
+      </md-input-container>
+      <br>
+      <br>
       <button md-raised-button color="primary" type="submit" name="action">LOGIN</button>
-      <span><a md-button routerLink="/register"><small>Register</small></a></span>
-      <br><br>
-      <span id="err"><small>{{errorMessage}}</small></span>
+      <span>
+        <a md-button routerLink="/register">
+          <small>REGISTER</small>
+        </a>
+      </span>
+      <br>
+      <br>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
     </form>
   </div>
 </div>

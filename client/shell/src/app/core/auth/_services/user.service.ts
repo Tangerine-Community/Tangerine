@@ -6,29 +6,75 @@ import * as bcrypt from 'bcryptjs';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import { Observable } from 'rxjs/Observable';
-
+import { Uuid } from 'ng2-uuid';
 @Injectable()
 export class UserService {
   userData = {};
   DB = new PouchDB('users');
-  USER_DATABASE = 'userDatabase';
-  constructor() { }
+  USER_DATABASE_NAME = 'currentUser';
+  constructor(private uuid: Uuid) { }
   async create(payload) {
+    const uuidCode = this.uuid.v1();
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(payload.password, salt);
     this.userData = payload;
+    this.userData['uuidCode'] = uuidCode;
     this.userData['password'] = hash;
 
     try {
       /**@todo check if user exists before saving */
-      const result = await this.DB.post(this.userData);
-      return result;
+      const postUserdata = await this.DB.post(this.userData);
+      if (postUserdata) {
+        const result = await this.initUserProfile(this.userData['username'], uuidCode);
+        return result;
+      }
+
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 
   }
 
+  async initUserProfile(userDBPath, profileId) {
+    console.log(userDBPath);
+    if (userDBPath) {
+      const userDB = new PouchDB(userDBPath);
+      try {
+        const result = await userDB.put({
+          _id: profileId,
+          collection: 'user-profile'
+        });
+        console.log(result);
+        return result;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  async getUserProfileId() {
+    const userDBPath = await this.getUserDatabase();
+    console.log(userDBPath);
+    if (userDBPath) {
+      const userDB = new PouchDB(userDBPath);
+      let userProfileId: string;
+      PouchDB.plugin(PouchDBFind);
+      userDB.createIndex({
+        index: { fields: ['collection'] }
+      }).then((data) => { console.log('Indexing Succesful'); })
+        .catch(err => console.log(err));
+
+      try {
+        const result = await userDB.find({ selector: { collection: 'user-profile' } });
+        if (result.docs.length > 0) {
+          userProfileId = result.docs[0]['_id'];
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      return userProfileId;
+    }
+  }
   async doesUserExist(username) {
     let userExists: boolean;
     PouchDB.plugin(PouchDBFind);
@@ -47,7 +93,7 @@ export class UserService {
       } else { userExists = false; }
     } catch (error) {
       userExists = true;
-      console.log(error);
+      console.error(error);
     }
     return userExists;
   }
@@ -66,19 +112,20 @@ export class UserService {
       });
       return users;
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
   async setUserDatabase(username) {
-    return await localStorage.setItem(this.USER_DATABASE, username);
+    return await localStorage.setItem(this.USER_DATABASE_NAME, username);
   }
 
   async getUserDatabase() {
-    return await localStorage.getItem(this.USER_DATABASE);
+    return await localStorage.getItem(this.USER_DATABASE_NAME);
   }
 
   async removeUserDatabase() {
-    localStorage.removeItem(this.USER_DATABASE);
+    localStorage.removeItem(this.USER_DATABASE_NAME);
   }
+
 }

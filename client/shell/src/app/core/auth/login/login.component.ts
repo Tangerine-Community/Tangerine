@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
+import { AppSettings } from '../../../config/app-settings';
 import { UserService } from '../_services/user.service';
 import { AuthenticationService } from './../_services/authentication.service';
 
@@ -27,7 +28,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/home';
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || AppSettings.HOME_URL;
     const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
     // TODO List users on login page
     // Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {
