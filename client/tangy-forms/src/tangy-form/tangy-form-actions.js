@@ -1,16 +1,26 @@
 FORM_SESSION_RESUME = 'FORM_SESSION_RESUME'
-FORM_OPEN = 'FORM_OPEN'
+FORM_ADD_ITEMS = 'FORM_ADD_ITEMS'
+
 // Items
+FOCUS_ON_ITEM = 'FOCUS_ON_ITEM'
+const focusOnItem = (focusIndex) => window.tangyFormStore.dispatch({ type: FOCUS_ON_ITEM, focusIndex })
 ITEM_OPEN = 'ITEM_OPEN'
-ITEM_OPENED = 'ITEM_OPENED'
+const itemOpen = (itemId) => window.tangyFormStore.dispatch({ type: ITEM_OPEN, itemId: itemId })
 ITEM_CLOSE = 'ITEM_CLOSE' 
-ITEM_CLOSE_STUCK = 'ITEM_CLOSE_STUCK' 
-ITEM_VALID = 'ITEM_VALID' 
-ITEM_CLOSED = 'ITEM_CLOSED' 
+const itemClose = (itemId) => window.tangyFormStore.dispatch({ type: ITEM_CLOSE, itemId: itemId })
 ITEM_DISABLE = 'ITEM_DISABLE'
 const itemDisable = (itemId) => window.tangyFormStore.dispatch({ type: ITEM_DISABLE, itemId: itemId })
 ITEM_ENABLE = 'ITEM_ENABLE'
 const itemEnable = (itemId) => window.tangyFormStore.dispatch({ type: ITEM_ENABLE, itemId: itemId })
+
+ITEMS_INVALID = 'ITEMS_INVALID'
+ITEM_CLOSE_STUCK = 'ITEM_CLOSE_STUCK' 
+ITEM_CLOSED = 'ITEM_CLOSED' 
+ITEM_DISABLED = 'ITEM_DISABLED'
+ITEM_ENABLED = 'ITEM_ENABLED'
+ITEM_VALID = 'ITEM_VALID' 
+ITEM_OPENED = 'ITEM_OPENED'
+
 
 
 // Inputs

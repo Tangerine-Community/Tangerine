@@ -13,19 +13,40 @@ function tangyFormReducer(state = initialState, action) {
   var items
   var currentIndex
   var newState
+  var tmp = {}
   switch(action.type) {
 
     case FORM_SESSION_RESUME:
       return Object.assign({}, action.session)
 
-    case FORM_OPEN:
-      // If we don't find a currently open item, set first item to open.
+    case FORM_ADD_ITEMS:
+      return Object.assign({}, state, {
+        items: (state.items.length === 0) ? action.items : state.items
+      })
+
+    case FOCUS_ON_ITEM:
       newState = Object.assign({}, state)
-      if (state.items.length === 0) newState.items = action.items 
-      currentIndex = state.items.findIndex((item) => (item.open))
-      if (currentIndex == -1) {
-        newState.items[0].open = true
+      // Find the current index of the item opening.
+      newState.focusIndex = action.focusIndex 
+      // Find next.
+      newState.nextFocusIndex = state.items.findIndex((item, i) =>  (i > newState.focusIndex && !item.hasOwnProperty('disabled')))
+      // Find previous focus index using reversed items and focus index.
+      newState.items.reverse()
+      tmp.focusIndexReversed = newState.items.length - newState.focusIndex - 1
+      newState.previousFocusIndex = newState.items.findIndex((item, i) =>  (i > tmp.focusIndexReversed && !item.hasOwnProperty('disabled')))
+      if (newState.previousFocusIndex !== -1) {
+        // Unreverse the the found index.
+        newState.previousFocusIndex = newState.items.length - newState.previousFocusIndex - 1
       }
+      // Unreverse items.
+      newState.items.reverse()
+      newState.items.forEach((item, i) => {
+        if (i === newState.focusIndex) {
+          item.open = true
+        } else {
+          item.open = false
+        }
+      }) 
       return newState 
 
     case ITEM_OPEN:
@@ -35,6 +56,13 @@ function tangyFormReducer(state = initialState, action) {
         }
         return item
       })})
+
+
+    // Move into ITEM_ENABLE / ITEM_DISABLE?
+    case ITEM_ENABLED:
+    case ITEM_DISABLED:
+       newState = Object.assign({}, state)
+      // Recalculate focus indexes.
 
     case ITEM_VALID:
       items = state.items.map((item) => {
@@ -129,46 +157,21 @@ function tangyFormReducer(state = initialState, action) {
       })})
 
     case NAVIGATE_TO_NEXT_ITEM:
-      currentIndex = state.items.findIndex((item) => item.open === true)
-      nextFocusId = ''
-      items = state.items.map((item, i) => {
-        if (i == currentIndex) {
-          return Object.assign({}, item, {open: false})
-        } else if (i == currentIndex + 1) {
-          let potentialNewIndex = i
-          while (state.items[potentialNewIndex] && state.items[potentialNewIndex].disabled === true) {
-            if (state.items[potentialNewIndex+1]) {
-              potentialNewIndex++
-            } else {
-              potentialNewIndex = 'no potential new index' 
-            }
-          }
-          if (typeof (potentialNewIndex) == 'number') nextFocusId = state.items[potentialNewIndex].id 
-        }
-        return item
+      return Object.assign({}, state, { 
+        items: state.items.map((item) => {
+          item.open = (state.items[state.nextItemIndex].id === item.id) ? true : false 
+          return item
+        })
       })
-      return Object.assign({}, state, { items: items, focusId: nextFocusId })
 
     case NAVIGATE_TO_PREVIOUS_ITEM:
-      currentIndex = state.items.findIndex((item) => item.open === true)
-      nextFocusId = ''
-      items = state.items.map((item, i) => {
-        if (i == currentIndex) {
-          return Object.assign({}, item, {open: false})
-        } else if (i == currentIndex - 1) {
-          let potentialNewIndex = i
-          while (state.items[potentialNewIndex] && state.items[potentialNewIndex].disabled === true) {
-            if (state.items[potentialNewIndex-1]) {
-              potentialNewIndex--
-            } else {
-              potentialNewIndex = 'no potential new index' 
-            }
-          }
-          if (typeof (potentialNewIndex) == 'number') nextFocusId = state.items[potentialNewIndex].id 
-        }
-        return item
+      return Object.assign({}, state, { 
+        items: state.items.map((item) => {
+          item.open = (state.items[state.previousItemIndex].id === item.id) ? true : false 
+          return item
+        })
       })
-      return Object.assign({}, state, { items: items, focusId: nextFocusId })
+
 
     default: 
       return state

@@ -6,17 +6,7 @@
     margin: 15px 0px;
     padding: 25px;
   }
-  paper-checkbox {
-    --paper-checkbox-checked-ink-color: #8BC34A;
-    --paper-checkbox-checked-color: #8BC34A;
-  }
-  paper-radio-button {
-    --paper-radio-button-checked-color: #8BC34A;
-    --paper-radio-button-checked-ink-color: #8BC34A;
-  }
-  paper-input, paper-textarea {
-    --paper-input-container-focus-color: #8BC34A;
-  }
+  
   label {
     display: block;
     margin-top: 15px;
@@ -35,14 +25,14 @@
           margin: 0px;
           padding: 0px;
         }
-        #nextItemButton {
+        #previousItemButton {
           background: #FF9800; 
           position: fixed;
           bottom: 73px;
           right: 7px;
           color: white;
         }
-        #previousItemButton {
+        #nextItemButton {
           background: #FF9800; 
           position: fixed;
           bottom: 10px;
@@ -69,8 +59,8 @@
       </style>
       <slot></slot>
       <div id="nav">
-        <paper-fab id="nextItemButton" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
-        <paper-fab id="previousItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
+        <paper-fab id="previousItemButton" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
+        <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
       </div>
       <paper-progress id="progress" value="0" secondary-progress="100"></paper-progress>
   </template>
@@ -112,11 +102,10 @@
         };
       }
 
-      async connectedCallback() {
+      connectedCallback() {
         super.connectedCallback()
         // Set up the store.
         this.store = window.tangyFormStore
-        this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
         this.querySelectorAll('tangy-form-item').forEach((item) => {
           // This should perhaps be moved to evaluating on store but throttled using RxJS so it's not running hot or creating infinite loops.
           item.addEventListener('INPUT_VALUE_CHANGE', this.evalOnChangeAttribute.bind(this))
@@ -124,9 +113,15 @@
         })
         // Notify store is open and send up the items if it does not have them.
         this.store.dispatch({
-            type: FORM_OPEN, 
+            type: FORM_ADD_ITEMS, 
             items: ([].slice.call(this.querySelectorAll('tangy-form-item'))).map((element) => serializeElement(element))
         })
+        let state = this.store.getState()
+        this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
+        if (this.linearMode) {
+          this.hasNotYetFocused = true
+          focusOnItem(state.focusIndex) 
+        }
       }
 
       disconnectedCallback() {
@@ -135,26 +130,22 @@
 
 
       // Prevent parallel reflects, leads to race conditions.
-      async throttledReflect() {
+      throttledReflect(iAmQueued = false) {
         // If there is an reflect already queued, we can quit. 
-        if (this.reflectQueued) return
-        // Throttle this fire by waiting until last fire is done.
+        if (this.reflectQueued && !iAmQueued) return
         if (this.reflectRunning) {
-          // Update is running, delay the execution of this until it's done.
           this.reflectQueued = true
-          while(this.reflectRunning) await sleep(200)
-          this.reflectQueued = false
+          setTimeout(() => this.throttledReflect(true), 200)
+        } else {
+          this.reflectRunning = true
+          this.reflect()
+          this.reflectRunning = false
+          if (iAmQueued) this.reflectQueued = false
         }
-        // Fire it.
-        this.reflectRunning = true
-        await this.reflect()
-        this.reflectRunning = false
       }
 
-
-
       // Apply state in the store to the DOM.
-      async reflect() {
+      reflect() {
         let state = this.store.getState()
         if (!this.previousState) this.previousState = state
         // Set state in tangy-form-item elements.
@@ -182,21 +173,48 @@
           })
         }
         // Find item to scroll to.
-        if (state.focusId !== this.previousState.focusId) {
-          let item = this.querySelector(`#${state.focusId}`)
-          await sleep(200)
-          if (item) item.scrollIntoView({behavior: 'smooth', block: 'start'})
+        if (!state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused)) {
+          this.hasNotYetFocused = false
+          setTimeout(() => {
+            items[state.focusIndex].scrollIntoView({behavior: 'smooth', block: 'start'})
+          }, 200)
         }  
+        this.$.nextItemButton.disabled = (state.nextFocusIndex === -1) ? true : false
+        this.$.previousItemButton.disabled = (state.previousFocusIndex === -1) ? true : false
         // Stash as previous state.
         this.previousState = Object.assign({}, state)
       }
 
       focusOnPreviousItem(event) {
-        this.store.dispatch({ type: NAVIGATE_TO_PREVIOUS_ITEM })
+        this.$.previousItemButton.setAttribute('disabled', true)
+        this.$.nextItemButton.setAttribute('disabled', true)
+        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
+        let invalidItemIds = [] 
+        items.forEach((item) => {
+          if (item.validate() === false) invalidItemIds.push(item.id)
+        })
+        if (invalidItemIds.length > 0) {
+          this.store.dispatch({ type: ITEMS_INVALID, itemIds: invalidItemIds })
+        } else {
+          let state = this.store.getState()
+          this.store.dispatch({ type: FOCUS_ON_ITEM, focusIndex: state.previousFocusIndex })
+        }
       }
 
       focusOnNextItem(event) {
-        this.store.dispatch({ type: NAVIGATE_TO_NEXT_ITEM })
+        this.$.previousItemButton.setAttribute('disabled', true)
+        this.$.nextItemButton.setAttribute('disabled', true)
+        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
+        let invalidItemIds = [] 
+        items.forEach((item) => {
+          if (item.validate() === false) invalidItemIds.push(item.id)
+        })
+        if (invalidItemIds.length > 0) {
+          this.store.dispatch({ type: ITEMS_INVALID, itemIds: invalidItemIds })
+        } else {
+          let state = this.store.getState()
+          this.store.dispatch({ type: FOCUS_ON_ITEM, focusIndex: state.nextFocusIndex })
+        }
       }
 
       evalOnChangeAttribute() {
