@@ -68,7 +68,7 @@ export class RegistrationComponent implements OnInit {
     loginUserAfterRegistration(username, password) {
         Observable.fromPromise(this.authenticationService.login(username, password)).subscribe(data => {
             if (data) {
-                this.router.navigate(['' + this.returnUrl]);
+                this.router.navigate(['' + '/manage-user-profile']);
             } else { this.errorMessage = 'Login Unsuccessful'; }
         }, error => {
             this.errorMessage = 'Login Unsuccessful';
