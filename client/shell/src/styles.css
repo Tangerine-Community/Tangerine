@@ -17,11 +17,11 @@ md-toolbar{
     left: 0;
     z-index: 2;
 }
-.tangerine-toolbar-spacer{
+.tangy-spacer{
     flex: 1 1 auto;
 }
 
-h3.tangy-foreground-primary{
+.tangy-foreground-primary{
     color: #ff5722;
 }
 
@@ -36,12 +36,40 @@ h3.tangy-foreground-primary{
     padding: 0;
     margin: 0;
 }
+
+.tangy-card-content-container{
+  margin-left: 3%;
+  width: 90%;
+  margin-right:5%;
+  min-height: vh;
+}
+
+.tangy-location-list {
+  border-bottom: 1px solid rgba(0,0,0,.12);
+  font-size: 14px;
+  color: rgba(0,0,0,.87);
+  letter-spacing: 0.05em;
+}
+
+.tangy-location-list-icon{
+  padding-right: 10px;
+  padding-top:3.5px;
+}
+
+.search-icon{
+padding-top:0px;   
+}
 .material-icons.md-11 { font-size: 11px; }
-.material-icons.md-18 { font-size: 11px; }
+.material-icons.md-14 { font-size: 14px; }
+.material-icons.md-18 { font-size: 18px; }
 .material-icons.md-24 { font-size: 24px; }
 .material-icons.md-36 { font-size: 36px; }
 .material-icons.md-48 { font-size: 48px; }
 
+
+.tangy-full-width{
+  width: 100%;
+}
 /* Form Stuff*/
 .app-input-icon {
     font-size: 16px;
