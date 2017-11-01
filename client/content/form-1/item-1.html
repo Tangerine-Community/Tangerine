@@ -1,4 +1,9 @@
-<form id="form1" onchange="
+<form id="form1" on-change="
+  if (getValue('fruit_prompt')) {
+    inputShow('fruit_selection')
+  } else {
+    inputHide('fruit_selection')
+  }
   ">
   <paper-input 
     error-message="A pizza name is required" 
