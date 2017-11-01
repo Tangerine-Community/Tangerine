@@ -13,6 +13,7 @@ export class CaseManagementComponent implements OnInit {
   result;
   isVisited = true;
   searchTextValue$;
+  locationName;
   constructor(private caseManagementService: CaseManagementService) {
     this.searchTextValue$ = new Subject();
   }
