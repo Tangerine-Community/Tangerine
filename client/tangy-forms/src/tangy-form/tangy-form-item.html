@@ -157,12 +157,19 @@
           }
         }
         // Open it, but only if empty because we might be stuck.
-        if (open === true && this.innerHTML == '') {
+        if (open === true && !this.disabled && this.innerHTML == '') {
           let request = await fetch(this.src)
           this.innerHTML = await request.text()
           this.querySelectorAll('[name]').forEach((input) => {
             this.store.dispatch({type: 'INPUT_ADDED', attributes: serializeElement(input)})
           })
+          this.store.dispatch({type: ITEM_OPENED, itemId: this.id })
+        }
+      }
+
+      onDisabledChange(newState, oldState) {
+        if (newState === true && oldState === false) {
+          this.store.dispatch({type: ITEM_DISABLED, itemId: this.id })
         }
       }
 
