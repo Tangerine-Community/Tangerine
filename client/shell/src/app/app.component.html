@@ -6,7 +6,7 @@
   <span>
     <a class="tangy-no-text-decoration tangy-foreground-white" routerLink="home">Tangerine Forms</a>
   </span>
-  <span class="tangerine-toolbar-spacer"></span>
+  <span class="tangy-spacer"></span>
 
   <button *ngIf="showNav" [mdMenuTriggerFor]="appMenu" md-button>
     <i class="material-icons">account_box</i>
@@ -25,13 +25,12 @@
       <span>Log Out</span>
     </li>
   </md-menu>
-
 </md-toolbar>
 <md-sidenav-container style="margin-top:64px">
   <md-sidenav #sidenav class="sidenav mat-typography">
     <md-nav-list>
       <md-list-item>
-        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="tangy-forms">Forms</a>
+        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="forms-list">Forms List</a>
       </md-list-item>
       <br>
       <md-list-item>
