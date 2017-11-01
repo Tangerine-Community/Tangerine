@@ -1,0 +1,72 @@
+<form>
+  <label>Role</label>
+  <tangy-radio-buttons name="role" value="">
+    <option value="cso">CSO</option>
+    <option value="coach">Coach</option>
+    <option value="earc">EARC</option>
+    <option value="city_manager">City Manager</option>
+    <option value="rti_staff">RTI Stagf</option>
+    <option value="scde">SCDE</option>
+    <option value="esqac">ESQAC</option>
+    <option value="ntt">NTT</option>
+    <option value="county_director_tsc">County Director TSC</option>
+    <option value="county_directory_moe">County Director MOE</option>
+    <option value="other">Other</option>
+  </tangy-radio-buttons>
+  <paper-input 
+    error-message="A pizza name is required" 
+    type="text" 
+    name="tsc_or_employment_number" 
+    required 
+    label="TSC or Employment Number"
+    value="">
+  </paper-input>
+  <paper-input 
+    error-message="Your M-Pesa number is required." 
+    type="text" 
+    name="mpesa_phone_number" 
+    required 
+    label="M-Pesa phone number"
+    value="">
+  </paper-input>
+  <gold-phone-input country-code="254" phone-number-pattern="X-XX-XX-XX-XX"></gold-phone-input> 
+  <paper-input 
+    error-message="Your year of birth is required." 
+    type="text" 
+    name="year_of_birth" 
+    required 
+    label="Year of birth"
+    value="">
+  </paper-input>
+  <paper-input 
+    error-message="Your first name is required." 
+    type="text" 
+    name="first_name" 
+    required 
+    label="First name"
+    value="">
+  </paper-input>
+  <paper-input 
+    error-message="Your last name is required" 
+    type="text" 
+    name="last_name" 
+    required 
+    label="Last name"
+    value="">
+  </paper-input>
+  <tangy-location required save-children show-levels="county,subcounty,zone" name="location" value=""></tangy-location>
+  <label>Gender</label>
+  <tangy-radio-buttons name="gender" value="">
+    <option value="female">Female</option>
+    <option value="male">Male</option>
+  </tangy-radio-buttons>
+  <paper-input 
+    error-message="A valid email address is required." 
+    type="email" 
+    name="email" 
+    required 
+    label="Email"
+    auto-validate
+    value="">
+  </paper-input>
+</form>

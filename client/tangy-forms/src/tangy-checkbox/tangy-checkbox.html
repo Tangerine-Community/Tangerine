@@ -1,0 +1,88 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<dom-module id="tangy-checkbox">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <paper-checkbox id="checkbox"><slot></slot></paper-checkbox>
+  </template>
+
+  <script>
+    /**
+     * `tangy-checkbox`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TangyCheckbox extends Polymer.Element {
+
+      static get is() { return 'tangy-checkbox'; }
+
+      static get properties() {
+        return {
+          name: {
+            type: String,
+            value: ''
+          },
+          required: {
+            type: Boolean,
+            value: false,
+            observer: 'onRequiredChange',
+            reflectToAttribute: true
+          },
+          disabled: {
+            type: Boolean,
+            value: false,
+            observer: 'onDisabledChange',
+            reflectToAttribute: true
+          },
+          value: {
+            type: String,
+            value: '',
+            observer: 'onValueChange',
+            reflectToAttribute: true
+          }
+        }
+      }
+
+      connectedCallback() {
+        super.connectedCallback()
+        if (this.value) this.$.checkbox.checked = true
+        this.$.checkbox.addEventListener('change', (e) => this.value = (e.target.checked) ? 'on' : '')
+      }
+
+      onRequiredChange(value) {
+        if (value === false) {
+          this.$.checkbox.removeAttribute('required')
+        } else {
+          this.$.checkbox.setAttribute('required', true)
+        }
+      }
+
+      onDisabledChange(value) {
+        if (value === false) {
+          this.$.checkbox.removeAttribute('disabled')
+        } else {
+          this.$.checkbox.setAttribute('disabled', true)
+        }
+      }
+
+      onValueChange(value) {
+        if (value) this.$.checkbox.setAttribute('checked', true) 
+        if (!value) this.$.checkbox.removeAttribute('checked')
+      }
+
+      validate() {
+        return this.$.checkbox.validate()
+      }
+
+    }
+    window.customElements.define(TangyCheckbox.is, TangyCheckbox);
+  </script>
+</dom-module>

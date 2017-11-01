@@ -1,12 +1,15 @@
 class TangyFormResponseModel {
   constructor(props) {
     this._id = ''
-    this.type = 'tangy-form-response'
-    this.form_id = ''
-    this.focusIndex = 0
-    this.datetime = (new Date()).toLocaleString(),
-    this.unixtime = Date.now(),
-    this.items = {}
+    this.collection = 'TangyFormResponse'
+    this.formId = ''
+    this.focusItemId = ''
+    this.startDatetime = (new Date()).toLocaleString(),
+    this.startUnixtime = Date.now(),
+    this.log = []
+    this.items = []
+    this.inputs = []
+    this.uploadDatetime = ''
     Object.assign(this, props)
   }
 }
