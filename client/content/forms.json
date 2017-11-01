@@ -4,6 +4,20 @@
     "src": "form-1/form.html"
   }, 
   {
+    "title": "Form 2",
+    "src": "form-2/form.html"
+  },
+  {
+    "title": "Form 3",
+    "src": "form-3/form.html"
+  },
+
+  {
+    "title": "User Profile",
+    "src": "user-profile/form.html"
+  },
+
+  {
     "title": "EGRA Demo",
     "src": "egra-demo/form.html"
   },

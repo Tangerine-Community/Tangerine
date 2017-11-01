@@ -3,6 +3,8 @@
 *.tmp
 .DS_store
 
+www
+
 # Cordova
 platforms/
 plugins/

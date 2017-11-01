@@ -1,6 +1,7 @@
 tanerine-env-vars.sh
+server/ui/src/compiled
 .idea
-
+.vscode
 client/src/media_assets/
 data
 .data

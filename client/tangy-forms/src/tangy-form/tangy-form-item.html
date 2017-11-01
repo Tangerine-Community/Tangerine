@@ -15,42 +15,59 @@
   <template>
     <style>
       :host {
-        margin: 15px;
+        padding: 15px;
         min-height: 100vh;
       }
-
       paper-input {
         margin-bottom: 15px;
       }
-      
-      paper-card {
+      :host paper-card {
+        -webkit-transition: .4s;
+        -moz-transition: .4s;
+        -ms-transition: .4s;
+        -o-transition: .4s;
         display: block;
-        --paper-card-background-color: #FF9800;
-        --paper-card-header-color: #FFF;
-        color: #FFF;
+        --paper-card-background-color: #FFF;
+        --paper-card-header-color: #8BC34A;
         max-width: 325px;
         margin: 30px auto;
       }
-      paper-card.valid:not(.open) {
-        --paper-card-background-color: #8BC34A;
-      }
-      paper-card.stuck {
-        --paper-card-background-color: #ffebea;
-      }
-      paper-card.disabled {
+      :host([disabled]) paper-card {
         --paper-card-background-color: gray !important;
+        --paper-card-header-color: #CCC;
       }
-      paper-card.open {
-        -webkit-transition: .2s;
-        -moz-transition: .2s;
-        -ms-transition: .2s;
-        -o-transition: .2s;
+      :host([open]) paper-card {
+        -webkit-transition: .4s;
+        -moz-transition: .4s;
+        -ms-transition: .4s;
+        -o-transition: .4s;
         display: block;
         max-width: 720px;
         margin: 30px auto;
-        --paper-card-background-color: #FFF;
-        --paper-card-header-color: #FF9800;
+        --paper-card-background-color: #FFF !important;
+        --paper-card-header-color: #8BC34A;
         color: #000;
+      }
+      :host([open]) #open {
+        display: none;
+      }
+      :host(:not([open])) #close {
+        display: none;
+      }
+      :host([disabled]) #open {
+        display: none;
+      }
+      :host([no-buttons]) #open,
+      :host([no-buttons]) #close {
+        display: none;
+      }
+      .card-actions {
+        height: 45px;
+      }
+      paper-button {
+        background: #FF9800;
+        --paper-button-ink-color: #FFF;
+        color: #FFF;
       }
     </style>
     <paper-card id="card" class="shrunk" heading="[[title]]">
@@ -58,9 +75,11 @@
         <slot></slot>
       </div>
       <div class="card-actions">
-        <!--paper-button on-click="openListener">open</paper-button>
-        <paper-button on-click="closeListener">close</paper-button>
-        <paper-button on-click="submitListener" disable>submit</paper-button-->
+        <paper-button id="open">open</paper-button>
+        <paper-button id="close">submit</paper-button>
+        <template is="dom-if" if="{{valid}}">
+            <iron-icon style="color: #8BC34A; float: right; margin-top:10px" icon="icons:check-circle"></iron-icon>
+        </template>
       </div>
     </paper-card>
   </template>
@@ -82,188 +101,90 @@
         return {
           src: {
             type: String,
-            value: 'tangy-form-item'
+            value: 'tangy-form-item',
+            reflectToAttribute: true
           },
           title: {
             type: String,
-            value: ''
+            value: '',
+            reflectToAttribute: true
           },
-          responseJson: {
-            type: String,
-            value: '{}',
-            observer: 'onResponseJsonChange'
+          noButtons: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           },
+          // State
           open: {
             type: Boolean,
             value: false,
-            observer: 'onOpenChange'
+            reflectToAttribute: true,
+            observer: 'onOpenChange',
           },
           valid: {
             type: Boolean,
-            observer: 'onValidChange'
+            value: false,
+            reflectToAttribute: true
           },
           stuck: {
             type: Boolean,
             value: false,
-            observer: 'onStuckChange'
+            reflectToAttribute: true
           },
           disabled: {
             type: Boolean,
             value: false,
-            observer: 'onDisabledChange'
+            reflectToAttribute: true
           }
+          
         };
       }
-      async ready() {
-        super.ready()
-        this.response = {}
-        this.stuck = false
-      }
-      onResponseJsonChange() {
-        this.response = JSON.parse(this.responseJson)
-      }
-      async onDisabledChange(newValue, oldValue) {
-        if (newValue === true) {
-          this.$.card.classList.add('disabled')
-        } else {
-          this.$.card.classList.remove('disabled')
-        }
-      }
-      async onValidChange(newValue, oldValue) {
-        if (newValue === true && oldValue === false) {
-          this.$.card.classList.add('valid')
-        }
-        if (newValue === false && oldValue === true) {
-          this.$.card.classList.remove('valid')
-        }
+
+      async connectedCallback() {
+        super.connectedCallback()
+        this.store = window.tangyFormStore
+        this.$.close.addEventListener('click', () => this.store.dispatch({type: ITEM_CLOSE, itemId: this.id }))
+        this.$.open.addEventListener('click', () => this.store.dispatch({ type: ITEM_OPEN, itemId: this.id }))
+        this.addEventListener('change', (event) => this.store.dispatch({type: INPUT_VALUE_CHANGE,  inputName: event.target.name, inputValue: event.target.value} ))
+        this.addEventListener('change', (event) => this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE') ))
       }
 
-      async onStuckChange(newValue, oldValue) {
-        if (newValue === true && oldValue === false) {
-          this.$.card.classList.add('stuck')
-        }
-        if (newValue === false && oldValue === true) {
-          this.$.card.classList.remove('stuck')
-        }
-      }
-
-      async onOpenChange(newValue, oldValue) {
-        // Close it.
-        if (newValue === false && oldValue === true) {
-          let ironForm = this.querySelector('iron-form')
-          if (ironForm) {
-            this.valid = ironForm.validate() 
-            if (this.valid === true) {
-              this.stuck = false
-              this.innerHTML = '' 
-              this.$.card.classList.remove('open')
-              this.$.card.classList.add('valid')
-            } else {
-              // User is stuck with this item open.
-              this.$.card.classList.remove('valid')
-              this.stuck = true
-              this.open = true
-            }
-          } else {
-            this.stuck = false
-            this.valid = true
-            this.$.card.classList.add('valid')
+      async onOpenChange(open) {
+        if (open === false && this.innerHTML !== '') {
+          if (this.validate()) {
             this.innerHTML = '' 
-            this.$.card.classList.remove('open')
-          }
-
-        }
-        // Open it.
-        if (newValue == true && oldValue === false && this.stuck === false) {
-          // We're going to load, but before we do, run onload because it might result in becoming disabled.
-          eval(this.onopen)
-          // todo: Do we need to check for if this.disabled === true? This functionality may have been moved up to tangy-form.
-          // If we are disabled, emit an event crying about it.
-          if (this.disabled === true) {
-            this.dispatchEvent(new CustomEvent('tangy-item-open-cancelled'))
+            this.store.dispatch({type: ITEM_VALID, itemId: this.id })
           } else {
-            // todo: openSound - trigger playing of the sound.
-            // Everything is groovy, let's open this item up.
-            let ironForm = document.createElement('iron-form')
-            this.appendChild(ironForm)
-            let response = await fetch(this.src)
-            ironForm.innerHTML = await response.text()
-            this.$.card.classList.add('open')
-            let htmlForm = this.querySelector('form')
-            if (htmlForm) {
-              // Pass the getResponse method down to the HTML Form so that onchange logic can use it.
-              htmlForm.getResponse = this.getResponse.bind(this)
-              this.setResponse()
-            }
-            // Listen for change events, set data to response.
-            ironForm.addEventListener('change', this.ironFormChangeListener.bind(this))
-            // Notify anything watching that we are all done opening.
-            this.dispatchEvent(new CustomEvent('tangy-item-opened'))
+            this.store.dispatch({type: ITEM_CLOSE_STUCK, itemId: this.id })
           }
+        }
+        // Open it, but only if empty because we might be stuck.
+        if (open == true && this.innerHTML == '') {
+          let request = await fetch(this.src)
+          this.innerHTML = await request.text()
+          this.querySelectorAll('[name]').forEach((input) => {
+            this.store.dispatch({type: 'INPUT_ADDED', attributes: serializeElement(input)})
+          })
         }
       }
 
-      ironFormChangeListener(event) {
-        // Prevent a variable name from having two values in an array. This is a clean up non-native single select fields. For example, paper-radio-buttons behaves like a checkbox
-        // where two radio buttons of the same name can be checked but this is not how native radio button are supposed to work. This will ensure only one paper-radio-button 
-        // is checked.
-        let data = this.getResponse()  
-        for (let prop in data) {
-          // If there is data that is an array (object), then two of the same thing are selected.
-          if (typeof data[prop] == 'object') {
-            // Uncheck the last thing that was selected.
-            // @TODO: Unless the last thing that was selected was the current thing? This currently allows user to have a null value for a single select.
-            // This is confusing in the required case. This makes me think we should go back to the paper-radio-button-group, but it should be the form input,
-            // not the radio buttons, and it should have the value property that is reflected by the selected radio. 
-            // We'll make a better single select element when we work on tangy-button-select. Having more than one element share the same name space is just bad design
-            // on HTML's part.
-            let input = this.querySelector(`[name=${prop}][value=${this.response[prop]}]`)
-            input.checked = false
-          }
+      validate() {
+        let inputs = this.querySelectorAll('[name]')
+        let invalidInputNames = [] 
+        inputs.forEach((input) => {
+          if (!input.validate()) invalidInputNames.push(input.name)
+        })
+        if (invalidInputNames.length > 0) {
+          return false
+        } else {
+          return true
         }
-        // Native HTML Form does not dispatch a change event when non native input elements change. Force it to.
-        // @TODO: If we can detect this is a native input element that change, then don't do this.
-        let htmlForm = this.querySelector('form')
-        if (htmlForm) {
-          htmlForm.dispatchEvent(new Event('change'))
-        }
-        this.response = this.getResponse() 
-        this.dispatchEvent(new CustomEvent('item-change'))
       }
 
-      getResponse() {
-        let ironForm = this.querySelector(`iron-form`)
-        return ironForm.serializeForm()
-      }
 
-      setResponse() {
-        // Get all elements with a name attribute.
-        let inputs = this.querySelectorAll('[name]') 
-        for (let input of inputs) {
-          // Single select.
-          if (this.response.hasOwnProperty(input.name) && input.value !== undefined && input.checked !== undefined) {
-            if (this.response[input.name] == input.value) {
-              input.checked = true
-            }
-          }
-          // Multi select.
-          else if (this.response.hasOwnProperty(input.name) && input.checked !== undefined) {
-            input.checked = true
-          }
-          // Standard.
-          else if (this.response.hasOwnProperty(input.name) && input.value !== undefined) {
-            input.value = this.response[input.name]
-          }
-        }
-        // Last step, trigger the change event.
-        let htmlForm = this.querySelector('form')
-        if (htmlForm) {
-          htmlForm.dispatchEvent(new Event('change'), {bubbles: true})
-          this.dispatchEvent(new CustomEvent('item-change'), {bubbles: true})
-        }
-      }
     }
 
     window.customElements.define(TangyFormItem.is, TangyFormItem);
+
   </script>
 </dom-module>

@@ -1,0 +1,219 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<script src="../../node_modules/redux/dist/redux.js"></script>
+
+<style>
+  paper-card {
+    margin: 15px 0px;
+    padding: 25px;
+  }
+  paper-checkbox {
+    --paper-checkbox-checked-ink-color: #8BC34A;
+    --paper-checkbox-checked-color: #8BC34A;
+  }
+  paper-radio-button {
+    --paper-radio-button-checked-color: #8BC34A;
+    --paper-radio-button-checked-ink-color: #8BC34A;
+  }
+  paper-input, paper-textarea {
+    --paper-input-container-focus-color: #8BC34A;
+  }
+  label {
+    display: block;
+    margin-top: 15px;
+    font-size: 12px;
+    color: #777;
+  }
+</style>
+
+<dom-module id="tangy-form-questions">
+
+  <template>
+      <style>
+        :host {
+          background: #e1e2e1; 
+          width: 100%;
+          display: block;
+          margin: 0px;
+          padding: 0px;
+        }
+        #nextItemButton {
+          background: #FF9800; 
+          position: fixed;
+          bottom: 73px;
+          right: 7px;
+          color: white;
+        }
+        #previousItemButton {
+          background: #FF9800; 
+          position: fixed;
+          bottom: 10px;
+          right: 7px;
+          color: white;
+        }
+        :host(:not([linear-mode])) #nextItemButton,
+        :host(:not([linear-mode])) #previousItemButton
+         {
+          display: none;
+        }
+        #progress {
+          position: fixed;
+          top: 0px;
+        }
+        paper-progress {
+          --paper-progress-active-color: #FF9800;
+          width: 100%;
+        }
+        paper-tab, paper-tabs {
+          --paper-tabs-selection-bar-color: #FF9800 !important;
+          color: #fff;
+        }
+      </style>
+      <slot></slot>
+      <div id="nav">
+        <paper-fab id="nextItemButton" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
+        <paper-fab id="previousItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
+      </div>
+      <paper-progress id="progress" value="0" secondary-progress="100"></paper-progress>
+  </template>
+
+  <script>
+    /**
+     * `tangy-form-questions`
+     * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+
+    class TangyFormQuestions extends Polymer.Element {
+
+      static get is() { return 'tangy-form-questions'; }
+
+      static get properties() {
+        return {
+          // Pass in code to be eval'd on any form input change.
+          onChange: {
+            type: String,
+            value: '',
+            reflectToAttribute: true
+          },
+          // Set liniar-mode to turn on navigation and turn off item action buttons.
+          linearMode: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          // Hide closed items to focus user on current item.
+          hideClosedItems: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          }
+        };
+      }
+
+      async connectedCallback() {
+        super.connectedCallback()
+        // Set up the store.
+        this.store = window.tangyFormStore
+        this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
+        this.querySelectorAll('tangy-form-item').forEach((item) => {
+          // This should perhaps be moved to evaluating on store but throttled using RxJS so it's not running hot or creating infinite loops.
+          item.addEventListener('INPUT_VALUE_CHANGE', this.evalOnChangeAttribute.bind(this))
+          if (this.linearMode) item.noButtons = true
+        })
+        // Notify store is open and send up the items if it does not have them.
+        this.store.dispatch({
+            type: FORM_OPEN, 
+            items: ([].slice.call(this.querySelectorAll('tangy-form-item'))).map((element) => serializeElement(element))
+        })
+      }
+
+      disconnectedCallback() {
+        this.unsubscribe()
+      }
+
+
+      // Prevent parallel reflects, leads to race conditions.
+      async throttledReflect() {
+        // If there is an reflect already queued, we can quit. 
+        if (this.reflectQueued) return
+        // Throttle this fire by waiting until last fire is done.
+        if (this.reflectRunning) {
+          // Update is running, delay the execution of this until it's done.
+          this.reflectQueued = true
+          while(this.reflectRunning) await sleep(200)
+          this.reflectQueued = false
+        }
+        // Fire it.
+        this.reflectRunning = true
+        await this.reflect()
+        this.reflectRunning = false
+      }
+
+
+
+      // Apply state in the store to the DOM.
+      async reflect() {
+        let state = this.store.getState()
+        if (!this.previousState) this.previousState = state
+        // Set state in tangy-form-item elements.
+        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
+        items.forEach((item) => {
+          let index = state.items.findIndex((itemState) => item.id == itemState.id) 
+          if (index !== -1) Object.assign(item, state.items[index])
+        })
+        // Set state in input elements.
+        let inputs = [].slice.call(this.querySelectorAll('[name]'))
+        inputs.forEach((input) => {
+          let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
+          if (index !== -1) Object.assign(input, state.inputs[index])
+        })
+        // Set progress state.
+        this.$.progress.setAttribute('value', state.progress)
+        // Hide closed items.
+        if (this.hideClosedItems) {
+          items.forEach((item) => {
+            if (item.open) {
+              item.style.display = 'block'
+            } else {
+              item.style.display = 'none'
+            }
+          })
+        }
+        // Find item to scroll to.
+        if (state.focusId !== this.previousState.focusId) {
+          let item = this.querySelector(`#${state.focusId}`)
+          await sleep(200)
+          if (item) item.scrollIntoView({behavior: 'smooth', block: 'start'})
+        }  
+        // Stash as previous state.
+        this.previousState = Object.assign({}, state)
+      }
+
+      focusOnPreviousItem(event) {
+        this.store.dispatch({ type: NAVIGATE_TO_PREVIOUS_ITEM })
+      }
+
+      focusOnNextItem(event) {
+        this.store.dispatch({ type: NAVIGATE_TO_NEXT_ITEM })
+      }
+
+      evalOnChangeAttribute() {
+        let state = this.store.getState()
+        eval(this.onChange)
+      }
+
+      getInputValue(name) {
+        let state = this.store.getState()
+        let input = state.inputs.find((input) => input.name == name)
+        if (input) return input.value
+      }
+
+    }
+
+    
+    window.customElements.define(TangyFormQuestions.is, TangyFormQuestions);
+  </script>
+</dom-module>
