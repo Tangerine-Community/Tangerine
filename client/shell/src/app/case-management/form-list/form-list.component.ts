@@ -10,6 +10,7 @@ import { CaseManagementService } from '../_services/case-management.service';
 export class FormListComponent implements OnInit {
   formList;
   searchTextValue$;
+  formName;
   constructor(private caseManagementService: CaseManagementService) {
     this.searchTextValue$ = new Subject();
   }
