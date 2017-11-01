@@ -3,9 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MdButtonModule, MdInputModule, MdSelectModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormlyModule } from 'ng-formly';
 
-import { TangerineFormsModule } from '../../tangerine-forms/tangerine-forms.module';
 import { LoginGuard } from './_guards/login-guard.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
@@ -26,9 +24,7 @@ import { RegistrationComponent } from './registration/registration.component';
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    TangerineFormsModule,
-    AuthRoutingModule,
-    FormlyModule.forRoot()
+    AuthRoutingModule
   ],
   providers: [LoginGuard, AuthenticationService, UserService],
   // @TODO Add edit-profile component.

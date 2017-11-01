@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { Validators, FormGroup } from '@angular/forms';
-import { FormlyFieldConfig } from 'ng-formly';
 import { DataService } from './../../core/data-service.service';
 // import {TangerinePageConfig} from "../../tangerine-forms/tangerine-page/tangerine-page-config";
 import { NodeValue } from '../node-value';
@@ -21,7 +20,6 @@ export class LocationsCreatorComponent implements OnInit {
 
   nodes = [];
   // form: FormGroup = new FormGroup({});
-  // userFields: FormlyFieldConfig;
   constructor(private dataService: DataService) { }
 
   ngOnInit() {
