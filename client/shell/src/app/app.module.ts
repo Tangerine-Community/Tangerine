@@ -12,7 +12,7 @@ import {
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+import { UuidModule } from 'ng2-uuid';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CaseManagementModule } from './case-management/case-management.module';
@@ -38,6 +38,7 @@ export { AppComponent }
     HttpModule,
     BrowserAnimationsModule,
     MdButtonModule, MdCheckboxModule, MdInputModule, MdToolbarModule, MdSidenavModule, MdMenuModule,
+    UuidModule,
     TangerineFormsModule,
     TangerineV2Module,
     TangyFormsModule,
