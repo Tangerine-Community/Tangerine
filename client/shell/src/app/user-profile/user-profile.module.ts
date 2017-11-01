@@ -1,3 +1,4 @@
+import { SharedModule } from '../shared.module';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MdListModule } from '@angular/material';
@@ -9,7 +10,8 @@ import { UserProfileComponent } from './user-profile.component';
   imports: [
     CommonModule,
     UserProfileRoutingModule,
-    MdListModule
+    MdListModule,
+    SharedModule
   ],
   declarations: [UserProfileComponent]
 })

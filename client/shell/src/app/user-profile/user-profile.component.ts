@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserProfileComponent implements OnInit {
 
-  constructor() { }
+  formUrl;
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.getForm();
   }
+  getForm() {
 
+  }
 }
