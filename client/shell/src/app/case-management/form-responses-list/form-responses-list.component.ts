@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs/Rx';
 import { Component, OnInit } from '@angular/core';
-import { DataSource } from '@angular/cdk';
+// import { DataSource } from '@angular/cdk';
 import 'rxjs/add/observable/of';
 @Component({
   selector: 'app-form-responses-list',
@@ -32,12 +32,5 @@ const data: FormResponse[] = [{
   class: '1',
   subject: 'English'
 }];
-export class FormDataSource extends DataSource<any> {
-  connect(): Observable<FormResponse[]> {
-    return Observable.of(data);
-  }
 
-  disconnect() {
-
-  }
 }
