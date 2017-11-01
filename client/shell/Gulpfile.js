@@ -155,32 +155,7 @@ gulp.task("i18n-update:merge", ["i18n-update:init"], function () {
  */
 gulp.task("i18n-update", ["i18n-update:merge", "i18n-update:init"]);
 
-gulp.task('pagesBuild', (cb) => {
-    /**
-     * @TODO Use promisifyed version of exec. angular pages build need only run once
-     */
-    return locales.map((locale) => {
-        const lang = locale.language;
-        const command = `ng build --output-path=dist/tangerine/${lang} --aot -prod  --bh /tangerine/${lang}/ --i18n-file=src/i18n/messages.${lang}.xlf --i18n-format=xlf --locale=${lang}`;
 
-        /**
-         * attaching exec to a variable Allows us to listen to console output from shell and send them to our gulp output as a stream. Note exec implements Event Emitter thus allowing listening to the events
-         */
-        const execCommand = exec(command);
-        execCommand.stdout.on('data', function (data) {
-            console.log(data.toString());
-        });
-
-        execCommand.stderr.on('data', function (data) {
-            console.log(data.toString());
-        });
-
-        execCommand.on('exit', function (code) {
-            console.log(`Pages build process for ${locale.language} exited with code ` + code.toString());
-        });
-    });
-    cb();
-});
 gulp.task('generate-service-worker', function (callback) {
     var swPrecache = require('sw-precache');
 
@@ -265,6 +240,5 @@ gulp.task('clean', async () => {
 
 gulp.task('build', function (callback) {
     runSequence('clean',
-        'pagesBuild',
         callback);
 });
