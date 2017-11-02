@@ -104,10 +104,10 @@ then
 	echo ""
 	echo ""
 	echo "Monitoring for editor chages..."
-	cd /tangerine-server/editor && npm run debug &
+	cd /tangerine-server/server/ui && npm run debug &
 	echo ""
 	echo ""
 	echo ""
 	echo "Monitoring for client chages..."
-	cd /tangerine-server/client && npm run debug
+	cd /tangerine-server/client && ./develop.sh 
 fi
