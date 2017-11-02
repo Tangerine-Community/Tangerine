@@ -1,6 +1,6 @@
 import { UserService } from '../core/auth/_services/user.service';
 import { ActivatedRoute } from '@angular/router';
-import { Component, OnInit,AfterViewInit, Renderer,ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Renderer, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-user-profile',
@@ -13,14 +13,7 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
   constructor(private route: ActivatedRoute, private userService: UserService, private renderer: Renderer) { }
 
   ngOnInit() {
-    this.renderer.listenGlobal('window', 'scroll', (evt) => {
-      frames['ifr'].document.documentElement.scrollTop = window.pageYOffset;
-      frames['ifr'].document.body.scrollTop = window.pageYOffset;
-      window.dispatchEvent(new Event('resize'));
-    });
-    this.renderer.listenGlobal('window', 'resize', (evt) => {
-      document.body.style.height = frames['ifr'].document.body.offsetHeight + parseInt(document.getElementById('tangy_iframe_container').style.top) + parseInt(document.getElementById('tangy_iframe_container').style.bottom) + 'px'
-    });
+
     this.getForm();
   }
   async getForm() {
@@ -29,11 +22,10 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     // console.log(userDB);
     this.formUrl =
       `/tangy-forms/index.html?form=/content/user-profile/form.html&database=${userDB}&response-id=${responseId}`;
-      
+
   }
 
-  ngAfterViewInit(){
-    document.body.style.height = frames['ifr'].document.body.offsetHeight + parseInt(document.getElementById('tangy_iframe_container').style.top) + parseInt(document.getElementById('tangy_iframe_container').style.bottom) + 'px';
-    
+  ngAfterViewInit() {
+
   }
 }

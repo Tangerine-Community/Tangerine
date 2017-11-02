@@ -1,6 +1,3 @@
-.container {
-    height: 1300px;
-}
 .sidenav-content {
   display: flex;
   height: 100%;
@@ -10,4 +7,9 @@
 
 .sidenav {
   padding: 20px;
+}
+
+.home-icon{
+  padding-top: 7px;
+  padding-right: 7px;
 }
