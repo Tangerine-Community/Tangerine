@@ -11,12 +11,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class TangyFormsPlayerComponent implements OnInit {
   formUrl;
   formIndex: number;
-  /**
-   * @Todo 1 create form input
-   * @Todo Create responseID input
-   */
   constructor(private caseManagementService: CaseManagementService, private route: ActivatedRoute) {
-
   }
 
   ngOnInit() {
@@ -25,7 +20,6 @@ export class TangyFormsPlayerComponent implements OnInit {
       this.getForm(this.formIndex);
     });
   }
-
   async getForm(index = 0) {
     try {
       const form = await this.caseManagementService.getFormList();

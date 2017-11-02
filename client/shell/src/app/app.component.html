@@ -1,7 +1,7 @@
 <md-toolbar color="primary" class="mat-typography">
-  <button *ngIf="showNav" md-button (click)="sidenav.open()">
-    <i class="material-icons">menu</i>
-  </button>
+  <span *ngIf="showNav" class="home-icon">
+    <a class="tangy-no-text-decoration tangy-foreground-white" routerLink="home"><i class="material-icons">home</i></a>
+  </span>
 
   <span>
     <a class="tangy-no-text-decoration tangy-foreground-white" routerLink="home">Tangerine Forms</a>
@@ -26,7 +26,11 @@
     </li>
   </md-menu>
 </md-toolbar>
-<md-sidenav-container style="margin-top:64px">
+<div class="tangerine-app-content mat-typography">
+  <router-outlet></router-outlet>
+</div>
+
+<!-- <md-sidenav-container style="margin-top:64px">
   <md-sidenav #sidenav class="sidenav mat-typography">
     <md-nav-list>
       <md-list-item>
@@ -45,4 +49,4 @@
   <div class="tangerine-app-content mat-typography">
     <router-outlet></router-outlet>
   </div>
-</md-sidenav-container>
+</md-sidenav-container> -->
