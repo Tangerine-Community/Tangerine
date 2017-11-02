@@ -87,7 +87,7 @@ RUN apt-get update && apt-get -y install \
     libffi-dev
 
 # Install node and some node based services
-RUN curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash - \
+RUN curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - \
   && apt-get -y install nodejs \
   && npm install -g pm2 \
   && npm install -g bower 

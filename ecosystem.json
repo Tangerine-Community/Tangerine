@@ -10,16 +10,16 @@
     },
     {
       "name"      : "tree",
-      "script"    : "tree/index.js",
-      "cwd"        : "./tree/",
+      "script"    : "server/tree/index.js",
+      "cwd"        : "./server/tree/",
       "error_file" : "tree-error.log",
       "out_file"   : "tree.log",
       "pid_file"   : "tree.pid"
     },
     {
       "name"       : "brockman",
-      "cwd"        : "./brockman",
-      "script"     : "brockman/Brockman.rb",
+      "cwd"        : "./server/brockman",
+      "script"     : "server/brockman/Brockman.rb",
       "args"       : ["-p", "4446"],
       "error_file" : "../logs/brockman-error.log",
       "out_file"   : "../logs/brockman.log",
@@ -27,8 +27,8 @@
     },
     {
       "name"      : "decompressor",
-      "cwd"        : "./decompressor/",
-      "script"    : "decompressor/index.js",
+      "cwd"        : "./server/decompressor/",
+      "script"    : "server/decompressor/index.js",
       "error_file" : "../logs/decompressor-error.log",
       "out_file"   : "../logs/decompressor.log",
       "pid_file"   : "../pids/decompressor.pid"
