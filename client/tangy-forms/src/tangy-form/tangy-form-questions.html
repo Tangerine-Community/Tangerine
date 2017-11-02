@@ -26,14 +26,14 @@
           padding: 0px;
         }
         #previousItemButton {
-          background: #FF9800; 
+          background: #ef6433; 
           position: fixed;
           bottom: 73px;
           right: 7px;
           color: white;
         }
         #nextItemButton {
-          background: #FF9800; 
+          background: #ef6433; 
           position: fixed;
           bottom: 10px;
           right: 7px;
@@ -49,11 +49,11 @@
           top: 0px;
         }
         paper-progress {
-          --paper-progress-active-color: #FF9800;
+          --paper-progress-active-color: #ef6433;
           width: 100%;
         }
         paper-tab, paper-tabs {
-          --paper-tabs-selection-bar-color: #FF9800 !important;
+          --paper-tabs-selection-bar-color: #ef6433 !important;
           color: #fff;
         }
       </style>
@@ -106,32 +106,41 @@
         super.connectedCallback()
         // Set up the store.
         this.store = window.tangyFormStore
+
+        // Move to reducer.
         this.querySelectorAll('tangy-form-item').forEach((item) => {
           if (this.linearMode) item.noButtons = true
         })
-        // Notify store is open and send up the items if it does not have them.
-        this.store.dispatch({
-            type: FORM_ADD_ITEMS, 
-            items: ([].slice.call(this.querySelectorAll('tangy-form-item'))).map((element) => serializeElement(element))
-        })
-        let state = this.store.getState()
-        this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
-        if (this.linearMode) {
-          this.hasNotYetFocused = true
-          focusOnItem(state.focusIndex) 
-        }
         // Register tangy redux hook.
         window.tangyReduxHook_INPUT_VALUE_CHANGE = (store) => {
           console.log('hook override')
-          let state = store.getState()
           let getValue = this.getValue.bind(this)
           eval(this.onChange)
           let forms = [].slice.call(this.querySelectorAll('form[on-change]'))
           forms.forEach((form) => {
             if (form.hasAttribute('on-change')) eval(form.getAttribute('on-change'))
           })
-
         }
+
+        // Subscribe to the store to reflect changes.
+        this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
+ 
+        // Notify store is open and send up the items if it does not have them.
+        if (this.response.items.length === 0) {
+          this.response.items = ([].slice.call(this.querySelectorAll('tangy-form-item'))).map((element) => serializeElement(element))
+        }
+        formOpen(this.response)
+
+        // Open an item if there are none open.
+        let state = this.store.getState()
+        let anyItemOpen = state.items.findIndex(item => item.open)
+        if (anyItemOpen === -1) {
+          itemOpen(state.items[0].id)
+        }
+
+        this.hasNotYetFocused = true
+
+
       }
 
       disconnectedCallback() {
@@ -183,7 +192,7 @@
           })
         }
         // Find item to scroll to.
-        if (!state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused)) {
+        if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused)) {
           this.hasNotYetFocused = false
           setTimeout(() => {
             items[state.focusIndex].scrollIntoView({behavior: 'smooth', block: 'start'})
@@ -207,7 +216,7 @@
           this.store.dispatch({ type: ITEMS_INVALID, itemIds: invalidItemIds })
         } else {
           let state = this.store.getState()
-          this.store.dispatch({ type: FOCUS_ON_ITEM, focusIndex: state.previousFocusIndex })
+          itemOpen(state.items[state.previousFocusIndex].id)
         }
       }
 
@@ -223,7 +232,7 @@
           this.store.dispatch({ type: ITEMS_INVALID, itemIds: invalidItemIds })
         } else {
           let state = this.store.getState()
-          this.store.dispatch({ type: FOCUS_ON_ITEM, focusIndex: state.nextFocusIndex })
+          this.store.dispatch({ type: ITEM_OPEN, itemId: state.items[state.nextFocusIndex].id })
         }
       }
 
