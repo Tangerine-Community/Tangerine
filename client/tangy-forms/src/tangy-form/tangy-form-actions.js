@@ -1,9 +1,9 @@
-FORM_SESSION_RESUME = 'FORM_SESSION_RESUME'
-FORM_ADD_ITEMS = 'FORM_ADD_ITEMS'
+FORM_OPEN = 'FORM_OPEN'
+const formOpen = (response) => window.tangyFormStore.dispatch({ type: FORM_OPEN, response })
 
 // Items
 FOCUS_ON_ITEM = 'FOCUS_ON_ITEM'
-const focusOnItem = (focusIndex) => window.tangyFormStore.dispatch({ type: FOCUS_ON_ITEM, focusIndex })
+const focusOnItem = (itemId) => window.tangyFormStore.dispatch({ type: FOCUS_ON_ITEM, itemId })
 ITEM_OPEN = 'ITEM_OPEN'
 const itemOpen = (itemId) => window.tangyFormStore.dispatch({ type: ITEM_OPEN, itemId: itemId })
 ITEM_CLOSE = 'ITEM_CLOSE' 
