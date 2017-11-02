@@ -1,4 +1,4 @@
-import { SharedModule } from '../shared.module';
+import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MdListModule } from '@angular/material';
@@ -12,6 +12,7 @@ import { UserProfileComponent } from './user-profile.component';
     UserProfileRoutingModule,
     MdListModule,
     SharedModule
+
   ],
   declarations: [UserProfileComponent]
 })

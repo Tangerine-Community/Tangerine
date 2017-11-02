@@ -1,20 +1,16 @@
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { CaseManagementService } from '../../case-management/_services/case-management.service';
-import { Component, Input, OnInit } from '@angular/core';
+import { AfterContentInit, Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-tangy-forms-player',
   templateUrl: './tangy-forms-player.component.html',
   styleUrls: ['./tangy-forms-player.component.css']
 })
-export class TangyFormsPlayerComponent implements OnInit {
+export class TangyFormsPlayerComponent implements OnInit, AfterContentInit {
   formUrl;
   formIndex: number;
-  /**
-   * @Todo 1 create form input
-   * @Todo Create responseID input
-   */
   constructor(private caseManagementService: CaseManagementService, private route: ActivatedRoute) {
 
   }
@@ -25,7 +21,9 @@ export class TangyFormsPlayerComponent implements OnInit {
       this.getForm(this.formIndex);
     });
   }
+  ngAfterContentInit() {
 
+  }
   async getForm(index = 0) {
     try {
       const form = await this.caseManagementService.getFormList();
