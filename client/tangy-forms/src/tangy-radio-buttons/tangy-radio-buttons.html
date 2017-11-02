@@ -14,6 +14,18 @@
       :host([invalid]) {
         border: red solid 3px;
       }
+      paper-radio-button {
+        /*
+        --paper-radio-button-unchecked-color: #8BC34A;
+        --paper-radio-button-unchecked-ink-color: #8BC34A;
+        --paper-radio-button-unchecked-background-color: #8BC34A;
+        --paper-radio-button-label-color: #8BC34A;
+        */
+        --paper-radio-button-checked-color: #8BC34A;
+        --paper-radio-button-checked-ink-color: #8BC34A;
+        --paper-radio-button-size: 16px; 
+        --paper-radio-button-label-spacing: 10px;
+      }
     </style>
     <paper-radio-group id="paper-radio-group">
     </paper-radio-group>
@@ -102,7 +114,8 @@
 
       onDisabledChange(value) {
         let paperRadioButtons = this.shadowRoot.querySelectorAll('paper-radio-button')
-        paperRadioButtons.forEach((button) => button.disabled = value)
+        if (value == true) paperRadioButtons.forEach((button) => button.setAttribute('disabled', true))
+        if (value == false) paperRadioButtons.forEach((button) => button.removeAttribute('disabled'))
       }
       onHiddenChange(value) {
         // Disable when hidden so values do not end up being saved when hidden.
