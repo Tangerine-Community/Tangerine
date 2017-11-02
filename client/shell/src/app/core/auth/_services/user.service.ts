@@ -36,7 +36,6 @@ export class UserService {
   }
 
   async initUserProfile(userDBPath, profileId) {
-    console.log(userDBPath);
     if (userDBPath) {
       const userDB = new PouchDB(userDBPath);
       try {
@@ -44,7 +43,6 @@ export class UserService {
           _id: profileId,
           collection: 'user-profile'
         });
-        console.log(result);
         return result;
       } catch (error) {
         console.error(error);
@@ -54,7 +52,6 @@ export class UserService {
 
   async getUserProfileId() {
     const userDBPath = await this.getUserDatabase();
-    console.log(userDBPath);
     if (userDBPath) {
       const userDB = new PouchDB(userDBPath);
       let userProfileId: string;
@@ -62,7 +59,7 @@ export class UserService {
       userDB.createIndex({
         index: { fields: ['collection'] }
       }).then((data) => { console.log('Indexing Succesful'); })
-        .catch(err => console.log(err));
+        .catch(err => console.error(err));
 
       try {
         const result = await userDB.find({ selector: { collection: 'user-profile' } });
@@ -84,7 +81,7 @@ export class UserService {
     this.DB.createIndex({
       index: { fields: ['username'] }
     }).then((data) => { console.log('Indexing Succesful'); })
-      .catch(err => console.log(err));
+      .catch(err => console.error(err));
 
     try {
       const result = await this.DB.find({ selector: { username } });
