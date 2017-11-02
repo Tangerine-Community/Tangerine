@@ -56,9 +56,10 @@ export class CaseManagementService {
   }
 
   async getFormList() {
-    return await this.http.get('content/forms.json')
+    return await this.http.get('/content/forms.json')
       .toPromise()
       .then(response => response.json()).catch(data => console.error(data));
   }
 }
+
 
