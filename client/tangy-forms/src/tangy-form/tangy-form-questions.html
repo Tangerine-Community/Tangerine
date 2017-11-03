@@ -26,14 +26,12 @@
           padding: 0px;
         }
         #previousItemButton {
-          background: #ef6433; 
           position: fixed;
           bottom: 73px;
           right: 7px;
           color: white;
         }
         #nextItemButton {
-          background: #ef6433; 
           position: fixed;
           bottom: 10px;
           right: 7px;
@@ -46,14 +44,12 @@
         }
         #progress {
           position: fixed;
-          top: 0px;
+          bottom: 0px;
         }
         paper-progress {
-          --paper-progress-active-color: #ef6433;
           width: 100%;
         }
         paper-tab, paper-tabs {
-          --paper-tabs-selection-bar-color: #ef6433 !important;
           color: #fff;
         }
       </style>
@@ -62,7 +58,7 @@
         <paper-fab id="previousItemButton" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
         <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
       </div>
-      <paper-progress id="progress" value="0" secondary-progress="100"></paper-progress>
+      <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
   </template>
 
   <script>
@@ -99,7 +95,7 @@
             value: false,
             reflectToAttribute: true
           }
-        };
+        }
       }
 
       connectedCallback() {

@@ -17,8 +17,6 @@
         -ms-transition: .4s;
         -o-transition: .4s;
         display: block;
-        --paper-card-background-color: #FFF;
-        --paper-card-header-color: #8BC34A;
         max-width: 325px;
         margin: 30px auto;
       }
@@ -29,10 +27,6 @@
         -o-transition: .4s;
         display: block;
         max-width: 720px;
-        margin: 30px auto;
-        --paper-card-background-color: #FFF !important;
-        --paper-card-header-color: #8BC34A;
-        color: #000;
       }
       :host([disabled]) paper-card {
         --paper-card-background-color: gray !important;
@@ -44,11 +38,6 @@
        */
       .card-actions {
         height: 45px;
-      }
-      .card-actions paper-button {
-        background: #ef6433;
-        --paper-button-ink-color: #FFF;
-        color: #FFF;
       }
       :host([open]) #open {
         display: none;
