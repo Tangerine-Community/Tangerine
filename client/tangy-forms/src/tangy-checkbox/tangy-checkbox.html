@@ -7,6 +7,9 @@
       :host {
         display: block;
       }
+      :host([hidden]) {
+        display: none;
+      }
     </style>
     <paper-checkbox id="checkbox"><slot></slot></paper-checkbox>
   </template>
