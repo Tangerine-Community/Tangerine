@@ -40,7 +40,7 @@ var Loc = {
       });
     }
     if ((levelMap[depth] != null) && (depth < targetDepth)) {
-      if (criteria[levelMap[depth]]) {
+      if (criteria[levelMap[depth]] && data[criteria[levelMap[depth]]] && data[criteria[levelMap[depth]]].hasOwnProperty('children')) {
         return Loc._query(depth + 1, targetDepth, data[criteria[levelMap[depth]]].children, levelMap, criteria);
       }
     }
