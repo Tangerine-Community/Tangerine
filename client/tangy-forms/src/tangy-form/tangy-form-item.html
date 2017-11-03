@@ -171,7 +171,7 @@
         let inputs = this.querySelectorAll('[name]')
         let invalidInputNames = [] 
         inputs.forEach((input) => {
-          if (!input.validate()) invalidInputNames.push(input.name)
+          if (input.validate && !input.validate()) invalidInputNames.push(input.name)
         })
         if (invalidInputNames.length > 0) {
           return false
