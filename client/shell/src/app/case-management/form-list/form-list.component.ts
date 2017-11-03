@@ -9,6 +9,7 @@ import 'rxjs/add/operator/map';
 })
 export class FormListComponent implements OnInit, AfterViewInit {
   formList;
+  formName;
   @ViewChild('search') search: ElementRef;
   constructor(private caseManagementService: CaseManagementService) {
   }
