@@ -3,7 +3,7 @@
     <br>
     <md-card class="tangy-card-content-container">
       <md-input-container class="tangy-full-width">
-        <input name="username" type="text" mdInput [(ngModel)]="formName" (keyup)="onSearchBoxKeup(formName)">
+        <input name="username" #search type="text" mdInput>
         <md-placeholder>
           Search Form By Name
           <span>

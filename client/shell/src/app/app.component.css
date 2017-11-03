@@ -1,14 +1,3 @@
-.sidenav-content {
-  display: flex;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-}
-
-.sidenav {
-  padding: 20px;
-}
-
 .home-icon{
   padding-top: 7px;
   padding-right: 7px;
