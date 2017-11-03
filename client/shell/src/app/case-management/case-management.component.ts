@@ -1,28 +1,32 @@
-import { Component, OnInit } from '@angular/core';
-import { Subject } from 'rxjs/Rx';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs/Rx';
 import { CaseManagementService } from './_services/case-management.service';
-
+import 'rxjs/add/operator/map';
 @Component({
   selector: 'app-case-management',
   templateUrl: './case-management.component.html',
   styleUrls: ['./case-management.component.css']
 })
-export class CaseManagementComponent implements OnInit {
+export class CaseManagementComponent implements OnInit, AfterViewInit {
   notYetVisitedLocations;
   alreadyVistedLocations;
   result;
   isVisited = true;
-  searchTextValue$;
-  locationName;
+
+  @ViewChild('search') search: ElementRef;
   constructor(private caseManagementService: CaseManagementService) {
-    this.searchTextValue$ = new Subject();
   }
 
   async ngOnInit() {
-    this.searchTextValue$.debounceTime(500).distinctUntilChanged().subscribe(searchText => {
-      this.searchLocation(searchText);
-    });
     this.getMyLocations();
+  }
+
+  ngAfterViewInit() {
+    Observable.fromEvent(this.search.nativeElement, 'keyup')
+      .debounceTime(500)
+      .map(val => val['target'].value)
+      .distinctUntilChanged()
+      .subscribe(res => this.searchLocation(res));
   }
   async getMyLocations() {
     try {
@@ -37,9 +41,6 @@ export class CaseManagementComponent implements OnInit {
     return data.filter((item) => {
       return (isVisited && item.visits > 0) || (!isVisited && item.visits < 1);
     });
-  }
-  onSearchBoxKeup(searchText) {
-    this.searchTextValue$.next(searchText);
   }
   searchLocation(locationName) {
     this.notYetVisitedLocations =

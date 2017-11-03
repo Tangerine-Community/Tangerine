@@ -1,26 +1,28 @@
-import { Component, OnInit } from '@angular/core';
-import { Subject } from 'rxjs/Rx';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Observable } from 'rxjs/Rx';
 import { CaseManagementService } from '../_services/case-management.service';
-
+import 'rxjs/add/operator/map';
 @Component({
   selector: 'app-form-list',
   templateUrl: './form-list.component.html',
   styleUrls: ['./form-list.component.css']
 })
-export class FormListComponent implements OnInit {
+export class FormListComponent implements OnInit, AfterViewInit {
   formList;
-  searchTextValue$;
-  formName;
+  @ViewChild('search') search: ElementRef;
   constructor(private caseManagementService: CaseManagementService) {
-    this.searchTextValue$ = new Subject();
   }
   ngOnInit() {
-    this.searchTextValue$.debounceTime(500).distinctUntilChanged().subscribe(searchText => {
-      this.searchForm(searchText);
-    });
     this.getFormList();
   }
 
+  ngAfterViewInit() {
+    Observable.fromEvent(this.search.nativeElement, 'keyup')
+      .debounceTime(500)
+      .map(val => val['target'].value)
+      .distinctUntilChanged()
+      .subscribe(res => this.searchForm(res));
+  }
   async getFormList() {
     try {
       this.formList = await this.caseManagementService.getFormList();
@@ -29,9 +31,6 @@ export class FormListComponent implements OnInit {
     }
   }
 
-  onSearchBoxKeup(searchText) {
-    this.searchTextValue$.next(searchText);
-  }
   async searchForm(formName) {
     const list = await this.caseManagementService.getFormList();
     this.formList = list.filter(data => {
