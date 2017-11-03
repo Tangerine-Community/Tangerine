@@ -26,7 +26,8 @@
     "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0",
     "jquery": "^3.2.1",
     "gold-phone-input": "PolymerElements/gold-phone-input#^2.0.2",
-    "moment": "^2.19.1"
+    "moment": "^2.19.1",
+    "app-datepicker": "^2.11.2"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
