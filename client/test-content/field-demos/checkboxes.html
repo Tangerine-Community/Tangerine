@@ -1,0 +1,43 @@
+<form id="form1" on-change="">
+
+  <h3>Checkboxes</h3> 
+
+  <p>
+    <tangy-checkbox name="checkbox_1">This checkbox is not required.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_2" required>This checkbox is required.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_3" disabled>This checkbox is disabled.</tangy-checkbox>
+  </p>
+
+  <p>
+    <tangy-checkbox name="checkbox_4" disabled>This checkbox is disabled.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_5">Check this checkbox to enable the disabled checkbox.</tangy-checkbox>
+  </p>
+
+  <p>
+    <tangy-checkbox name="checkbox_6" hidden>This checkbox is hidden.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_7">Check this checkbox to show the hidden checkbox.</tangy-checkbox>
+  </p>
+
+  <p>
+    <tangy-checkbox name="checkbox_8" required>This checkbox is required.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_9">Check this to make the prior checkbox not required.</tangy-checkbox>
+  </p>
+
+
+  <h3>Checkbox Groups</h3> 
+
+  <tangy-checkbox-group name="checkbox_group_1" label="This is a checkbox group">
+    <tangy-checkbox name="checkbox_group_1__checkbox_1">Option 1</tangy-checkbox>
+    <tangy-checkbox name="checkbox_group_1__checkbox_2">Option 2</tangy-checkbox>
+    <tangy-checkbox name="checkbox_group_1__checkbox_3">Option 3</tangy-checkbox>
+    <tangy-checkbox name="checkbox_group_1__checkbox_4">Option 4</tangy-checkbox>
+  </tangy-checkbox-group>
+
+  <tangy-checkbox-group name="checkbox_group_2" requires-more-than=0 label="This is a checkbox group with at least 1 checked checkbox">
+    <tangy-checkbox name="checkbox_group_2__checkbox_1">Option 1</tangy-checkbox>
+    <tangy-checkbox name="checkbox_group_2__checkbox_2">Option 2</tangy-checkbox>
+    <tangy-checkbox name="checkbox_group_2__checkbox_3">Option 3</tangy-checkbox>
+    <tangy-checkbox name="checkbox_group_2__checkbox_4">Option 4</tangy-checkbox>
+  </tangy-checkbox-group>
+
+</form>
