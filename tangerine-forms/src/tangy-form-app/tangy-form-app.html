@@ -1,5 +1,6 @@
 <link rel="import" href="../tangy-form/tangy-form.html">
 <link rel="import" href="../tangy-form/tangy-form-item.html">
+<link rel="import" href="../tangy-form/tangy-textarea.html">
 
 <!-- dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
@@ -20,8 +21,9 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/exmg-ckeditor/exmg-ckeditor.html">
 
-
+<!--<script src="../../node_modules/ckeditor5-build-classic/build/ckeditor.js/ckeditor.js"></script>-->
 <script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
 
 <dom-module id="tangy-form-app">
@@ -118,7 +120,8 @@
       }
       paper-button {
         min-width: 0em;
-        margin: auto
+        margin: auto;
+        margin-left: -15px;
       }
       paper-icon-item.newItem {
         --paper-item-body-secondary-color: {
@@ -252,15 +255,16 @@
 
           <div style="width: 600px;margin-left: auto; margin-right: auto;">
             <form id="itemEditor">
-              <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
-              <paper-input id="itemOrder" value="{{itemOrder}}" label="order" always-float-label disabled$="{{itemOrderDisabled}}"></paper-input>
-              <paper-textarea id="itemHtml" value="{{itemHtmlText}}" label="html code" always-float-label></paper-textarea>
               <paper-button
                       data-item-src="[[itemFilename]]"
                       data-item-id="[[itemId]]"
                       on-tap="saveItem">
                 <iron-icon icon="icons:save"/>
               </paper-button>
+              <paper-input id="itemTitle" value="{{itemTitle}}" label="title"  always-float-label></paper-input>
+              <paper-input id="itemOrder" value="{{itemOrder}}" label="order" always-float-label disabled$="{{itemOrderDisabled}}"></paper-input>
+              <!--<exmg-ckeditor id="itemHtml" value="{{itemHtmlText}}" label="html code" always-float-label></exmg-ckeditor>-->
+              <tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>
             </form>
           </div>
       </div>
@@ -382,20 +386,6 @@
         }
       }
 
-      async showFormsList() {
-        this.headerTitle = "Form Listing"
-        this.$['form-view'].hidden = true
-        this.$['form-list'].hidden = false
-        this.$['form-edit'].hidden = true
-        this.$['item-edit'].hidden = true
-        // Load forms list.
-        let formsJson = await fetch('forms.json')
-        this.forms = await formsJson.json()
-//          Load editor forms
-        let editorJson = await fetch('../client/editor-forms.json')
-        this.editorForms = await editorJson.json()
-      }
-
       onFormSrcChange(newValue, oldValue) {
         if (newValue !== '') this.showForm(newValue)
       }
@@ -426,11 +416,27 @@
         this.itemTitle = event.currentTarget.dataItemTitle
       }
 
+      async showFormsList() {
+        this.headerTitle = "Form Listing"
+        this.$['form-view'].hidden = true
+        this.$['form-list'].hidden = false
+        this.$['form-edit'].hidden = true
+        this.$['item-edit'].hidden = true
+        document.querySelector("#content").setAttribute('style', 'display:none;')
+        // Load forms list.
+        let formsJson = await fetch('forms.json')
+        this.forms = await formsJson.json()
+//          Load editor forms
+        let editorJson = await fetch('../client/editor-forms.json')
+        this.editorForms = await editorJson.json()
+      }
+
       async showForm(formSrc) {
         this.$['form-view'].hidden = false
         this.$['form-edit'].hidden = true
         this.$['item-edit'].hidden = true
         this.$['form-list'].hidden = true
+        document.querySelector("#content").setAttribute('style', 'display:none;')
         // Load the form into the DOM.
         let formHtml = await fetch(formSrc)
         this.innerHTML = await formHtml.text()
@@ -445,6 +451,7 @@
         this.$['form-edit'].hidden = false
         this.$['item-edit'].hidden = true
         this.$['form-list'].hidden = true
+        document.querySelector("#content").setAttribute('style', 'display:none;')
         // Load the form into a temp DOM to get stuff out of it
         let formHtml = await fetch(formSrc)
         let innerHTML = await formHtml.text()
@@ -479,6 +486,10 @@
         this.$['form-edit'].hidden = true
         this.$['item-edit'].hidden = false
         this.$['form-list'].hidden = true
+        let content = document.querySelector("#content")
+        content.setAttribute('style', 'display:block;width: 600px;margin-left: auto; margin-right: auto;')
+        let tangyFormApp = document.querySelector("tangy-form-app")
+        tangyFormApp.setAttribute('style', 'min-height:0vh')
         // Check if this is a new item
         if (typeof itemSrc !== 'undefined') {
           this.headerTitle = "Edit Item"
@@ -489,7 +500,8 @@
           // todo try to grab local pouch version of item
           let itemHtml = await fetch(itemUrl)
           this.itemHtmlText = await itemHtml.text()
-//        console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
+          Tangy.editor.setData(this.itemHtmlText)
+        console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
         } else {
           this.headerTitle = "Create Item"
           this.itemHtmlText = ''
@@ -501,7 +513,8 @@
       async saveItem(event) {
         this.itemFilename = event.currentTarget.dataItemSrc
         this.itemId = event.currentTarget.dataItemId
-        let itemTitle = event.currentTarget.dataItemTitle
+        let itemTitle = this.$.itemTitle.value
+        let itemHtmlText = Tangy.editor.getData();
 //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
         let project = window.location.pathname.split("/")[3];
         let item = {}
@@ -509,10 +522,12 @@
         item.formHtmlPath = this.formHtmlPath
         item.itemFilename = this.itemFilename
         item.itemId = this.itemId
-        item.itemTitle = this.itemTitle
-        item.itemHtmlText = this.itemHtmlText
-        item.itemOrder = this.itemOrder
-        if (item.itemFilename !== 'undefined') {
+        item.itemTitle = itemTitle
+        item.itemHtmlText = itemHtmlText
+//        item.itemOrder = this.itemOrder
+        // todo: eventually we will have a UI to re-arrange the items in the item listing, but for now, get the value from our form.
+        item.itemOrder = this.$.itemOrder.value
+        if (item.itemFilename == 'undefined') {
           let size = this.items.length
           item.itemOrder = size+1
         }

@@ -1,0 +1,14 @@
+{
+  "name": "tangerine-forms",
+  "version": "1.0.0",
+  "description": "``` ## system dependencies npm install -g bower http-server ## get the code git clone git@github.com:tangerine-community/tangerine cd tangerine git checkout v3.x.x ## install cd tangerine-forms bower install ## start the no-cache server in the tangerine-forms directory http-server -c-1 ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^1.0.0-alpha.1"
+  }
+}

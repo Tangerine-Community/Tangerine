@@ -1,0 +1,113 @@
+<!--<link rel="import" href="./bower_components/polymer/polymer.html">-->
+<script src="../../node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+
+
+<!--
+`tangy-textarea`
+ckeditor5 input type
+
+@demo demo/index.html
+-->
+
+<dom-module id="tangy-textarea">
+    <!--<link rel="import" type="css" href="../../styles.css">-->
+    <template>
+        <template id="special-template" preserve-content>
+            <textarea id="editor" hidden></textarea>
+        </template>
+
+    </template>
+
+    <script>
+      class TangyTextarea extends Polymer.Element {
+
+        static get is() { return  'tangy-textarea' }
+
+        static get properties() {
+          return {
+            value: {
+              type: String,
+            }
+          }
+        }
+
+        connectedCallback() {
+          super.connectedCallback();
+          console.log('my-element created!');
+          const config = {
+            toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
+//            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'Paragraph', 'typing',  'Image', 'ImageToolbar', 'ImageCaption', 'ImageStyle', 'BlockQuote','ImageUpload' ],
+//            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'BlockQuote', 'Image', 'ImageUpload' ],
+            image: {
+              toolbar: [ 'imageTextAlternative', '|', 'imageStyleFull', 'imageStyleSide' ]
+            },
+            ckfinder: {
+              uploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&responseType=json'
+            }
+          };
+//          const config = {
+//            toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
+//            heading: {
+//              options: [
+//                { modelElement: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+//                { modelElement: 'heading1', viewElement: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+//                { modelElement: 'heading2', viewElement: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' }
+//              ]
+//            },
+//            ckfinder: {
+//              uploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&responseType=json'
+//            }
+//          }
+          ClassicEditor
+            .create( window.document.querySelector("#editor"), config )
+//            .create( window.document.querySelector("#editor") )
+            .then( editor => {
+              console.log( editor );
+              if (typeof Tangy == 'undefined') {
+                window.Tangy = new Object()
+                window.Tangy.editor = editor
+              } else {
+                window.Tangy.editor = editor
+              }
+            } )
+            .catch( error => {
+              console.error( error );
+            } );
+        }
+
+        ready() {
+          super.ready();
+          // retrieve the nested template
+          let template = this.shadowRoot.querySelector('#special-template');
+
+          //
+//        for (let i=0; i<10; i++) {
+//          this.shadowRoot.appendChild(document.importNode(template.content, true));
+          document.querySelector("#content").appendChild(document.importNode(template.content, true));
+//        }
+
+        }
+
+        created() {
+          console.log(this.localName + '#' + this.id + ' was created');
+        }
+
+        attached() {
+          super.attached();
+          console.log(this.localName + '#' + this.id + ' was attached');
+
+        }
+
+        detached() {
+          console.log(this.localName + '#' + this.id + ' was detached');
+        }
+
+        attributeChanged(name, type) {
+          console.log(this.localName + '#' + this.id + ' attribute ' + name +
+            ' was changed to ' + this.getAttribute(name));
+        }
+      }
+
+      customElements.define(TangyTextarea.is, TangyTextarea);
+    </script>
+</dom-module>

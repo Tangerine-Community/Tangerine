@@ -344,6 +344,7 @@ server.post('/form/create', async function (req, res, next) {
 server.post('/item/save', async function (req, res, next) {
   // console.log("req.params:" + JSON.stringify(req.params))
   let safeItemTitle = sanitize(req.params.itemTitle)
+  let itemOrder = req.params.itemOrder
   let itemHtmlText = req.params.itemHtmlText
   let formHtmlPath = req.params.formHtmlPath
   let itemFilename = req.params.itemFilename
@@ -382,11 +383,8 @@ server.post('/item/save', async function (req, res, next) {
   console.log('formItemList: ' + formItemList.length + ' clippedFormItemList: ' + clippedFormItemList.length)
 
   // create the form html that will be added
-  let newForm = '<tangy-form-item src="' + itemFilename + '" id="' + itemId + '" title="' + safeItemTitle + '">'
+  let newForm = '<tangy-form-item src="' + itemFilename + '" id="' + itemId + '" title="' + safeItemTitle + '" itemOrder="' + itemOrder + '">'
   console.log('newForm: ' + newForm)
-  // $(newForm).insertAfter('tangy-form-item')
-  // $(newForm).insertAfter(clippedFormItemList)
-  // $('tangy-form-item').replaceWith(clippedFormItemList)
   $('tangy-form-item').remove()
   // todo: resolve ordering of these elements.
   $(newForm).appendTo('tangy-form')
@@ -408,3 +406,4 @@ server.listen(PORT, function () {
   console.log('server is up!');
   console.log('%s listening at %s', server.name, server.url);
 })
+
