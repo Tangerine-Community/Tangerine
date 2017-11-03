@@ -14,6 +14,9 @@
       :host([invalid]) {
         border: red solid 3px;
       }
+      paper-radio-button {
+        display: block;
+      }
     </style>
 
     <paper-radio-group id="paper-radio-group">
@@ -113,7 +116,8 @@
       }
 
       validate() {
-        if (this.required && !this.hidden && !this.value) {
+        let props = this.getProps()
+        if (props.required && !props.hidden && !props.value) {
           this.invalid = true
           return false
         } else {
