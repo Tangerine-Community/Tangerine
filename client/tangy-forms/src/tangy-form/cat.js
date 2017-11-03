@@ -16,10 +16,10 @@ HTMLElement.prototype.setAttributes = function (attributes = {}) {
 }
 
 HTMLElement.prototype.getProps = function () {
-  let attributes = [].slice.call(this.attributes)
-  let serial = {}
-  attributes.forEach((attr) => serial[attr.name] = attr.value)
-  return serial
+  let propertyInfo; eval(`propertyInfo = ${this.constructor.name}.properties`)
+  let props = {}
+  for (let propName in propertyInfo) props[propName] = this[propName] 
+  return props
 }
 
 HTMLElement.prototype.setProps = function (props = {}) {
