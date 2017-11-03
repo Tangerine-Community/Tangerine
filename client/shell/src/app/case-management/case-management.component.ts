@@ -11,7 +11,6 @@ export class CaseManagementComponent implements OnInit, AfterViewInit {
   notYetVisitedLocations;
   alreadyVistedLocations;
   result;
-  locationName;
   isVisited = true;
 
   @ViewChild('search') search: ElementRef;
