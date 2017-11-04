@@ -10,15 +10,30 @@
       :host([hidden]) {
         display: none;
       }
+      .container {
+        position: relative;
+      }
+      :host([required]) paper-input::before  { 
+        content: "*"; 
+        color: red; 
+        position: absolute;
+        top: 32px;
+        right: 5px;
+      }
     </style>
-    <paper-input 
-      id="input" 
-      label="[[label]]" 
-      type="[[type]]" 
-      error-message="[[errorMessage]]" 
-      value="[[value]]" 
-      allowed-pattern="[[allowedPattern]]">
-    </paper-input>
+    <div class="container">
+      <paper-input 
+        id="input" 
+        label="[[label]]" 
+        type="[[type]]" 
+        error-message="[[errorMessage]]" 
+        value="[[value]]" 
+        allowed-pattern="[[allowedPattern]]">
+        <template is="dom-if" if="required">
+          <div slot="suffix"></div>
+        </template>
+      </paper-input>
+    </div>
   </template>
 
   <script>

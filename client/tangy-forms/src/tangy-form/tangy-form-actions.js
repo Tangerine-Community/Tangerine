@@ -26,9 +26,16 @@ ITEM_OPENED = 'ITEM_OPENED'
 // Inputs
 INPUT_ADDED = 'INPUT_ADDED' 
 INPUT_VALUE_CHANGE = 'INPUT_VALUE_CHANGE' 
+
 INPUT_DISABLE = 'INPUT_DISABLE'
+const inputDisable = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_DISABLE, inputName: inputName })
+
+INPUT_ENABLE = 'INPUT_ENABLE'
+const inputEnable = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_ENABLE, inputName: inputName })
+
 INPUT_INVALID = 'INPUT_INVALID'
 INPUT_VALID = 'INPUT_VALID'
+
 INPUT_HIDE = 'INPUT_HIDE'
 const inputHide = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_HIDE, inputName: inputName })
 INPUT_SHOW = 'INPUT_SHOW'
