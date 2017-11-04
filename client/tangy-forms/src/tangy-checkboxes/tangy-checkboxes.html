@@ -1,0 +1,132 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+
+<dom-module id="tangy-checkboxes">
+  <template>
+    <style>
+      :host {
+        display: block;
+        margin: 15px 0 15px;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+      :host([invalid]) {
+        border: red solid 3px;
+      }
+      paper-radio-button {
+        display: block;
+      }
+      label {
+        display: block;
+        font-size: 1.2em;
+      }
+      :host([disabled]) label {
+        color: #FFF 
+
+      }
+    </style>
+    <label for="group">[[label]]</label>
+    <div id="checkboxes">
+      <slot></slot>
+    </div>
+    
+  </template>
+
+  <script>
+    /**
+     * `tangy-checkboxes`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TangyCheckboxes extends Polymer.Element {
+
+      static get is() { return 'tangy-checkboxes'; }
+
+      static get properties() {
+        return {
+          name: {
+            type: String,
+            value: ''
+          },
+          // @TODO Need value? Really?
+          value: {
+            type: String,
+            value: '',
+            reflectToAttribute: true,
+            observer: 'onValueChange'
+          },
+          required: {
+            type: Boolean,
+            value: false
+          },
+          disabled: {
+            type: Boolean,
+            value: false,
+            observer: 'onDisabledChange',
+            reflectToAttribute: true
+          },
+          isDisabled: {
+            type: Boolean,
+            value: false,
+            observer: 'onDisabledChange',
+            reflectToAttribute: true
+          },
+          label: {
+            type: String,
+            value: '',
+            reflectToAttribute: true
+          },
+          hidden: {
+            type: Boolean,
+            value: false,
+            observer: 'onHiddenChange',
+            reflectToAttribute: true
+          },
+          invalid: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          }
+        }
+      }
+
+      connectedCallback() {
+        super.connectedCallback()
+      }
+
+      onDisabledChange(value) {
+        let paperCheckboxes = this.shadowRoot.querySelectorAll('tangy-checkbox')
+        if (value == true) paperCheckboxes.forEach((button) => button.setAttribute('disabled', true))
+        if (value == false) paperCheckboxes.forEach((button) => button.removeAttribute('disabled'))
+      }
+      onHiddenChange(value) {
+        // Disable when hidden so values do not end up being saved when hidden.
+        this.disabled = value
+        let paperCheckboxes = this.shadowRoot.querySelectorAll('tangy-checkbox')
+      }
+
+      validate() {
+        let props = this.getProps()
+        if (this.hidden || this.disabled || !this.required) return true
+        let checkedCount = 0
+        let paperCheckboxes = this.querySelectorAll('tangy-checkbox').forEach((checkbox) => {
+          if (checkbox.checked) checkedCount++
+        })
+        if (checkedCount < 1) {
+          this.setAttribute('invalid', true)
+          return false 
+        } else {
+          this.removeAttribute('invalid')
+          return true
+        }
+      }
+
+    }
+    window.customElements.define(TangyCheckboxes.is, TangyCheckboxes );
+  </script>
+</dom-module>
