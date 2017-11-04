@@ -13,6 +13,13 @@
       :host([invalid]) {
         border: solid red 3px;
       }
+      :host([required]:not([disabled])) label::before  { 
+        content: "*"; 
+        color: red; 
+        position: absolute;
+        top: 4px;
+        right: 5px;
+      }
       label {
         font-size: 12px;
         color: #777;

@@ -23,6 +23,13 @@
       :host([highlighted]) {
         border-color: #8BC34A;
       }
+      :host([required]:not([disabled])) label::before  { 
+        content: "*"; 
+        color: red; 
+        position: absolute;
+        top: 4px;
+        right: 5px;
+      }
       .text-outer {
         position: relative;
         height: 100%;

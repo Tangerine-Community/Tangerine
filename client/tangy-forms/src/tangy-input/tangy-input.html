@@ -13,7 +13,7 @@
       .container {
         position: relative;
       }
-      :host([required]) paper-input::before  { 
+      :host([required]:not([disabled])) label::before  { 
         content: "*"; 
         color: red; 
         position: absolute;

@@ -18,7 +18,7 @@
       .container {
         position: relative;
       }
-      :host([required]) label::before  { 
+      :host([required]:not([disabled])) label::before  { 
         content: "*"; 
         color: red; 
         position: absolute;
@@ -33,7 +33,7 @@
         font-size: 1.2em;
       }
       :host([disabled]) label {
-        color: #FFF 
+        color: #CCC; 
 
       }
     </style>
