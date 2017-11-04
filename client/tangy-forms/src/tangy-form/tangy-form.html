@@ -21,7 +21,9 @@
 <link rel="import" href="../tangy-timed/tangy-timed.html">
 <link rel="import" href="../tangy-gps/tangy-gps.html">
 <link rel="import" href="../tangy-location/tangy-location.html">
+<link rel="import" href="../tangy-input/tangy-input.html">
 <link rel="import" href="../tangy-checkbox/tangy-checkbox.html">
+<link rel="import" href="../tangy-checkboxes/tangy-checkboxes.html">
 <link rel="import" href="../tangy-radio-buttons/tangy-radio-buttons.html">
 <link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
 <link rel="import" href="../tangy-toggle-button/tangy-toggle-button.html">
@@ -178,6 +180,9 @@
 
         super.connectedCallback();
 
+        /*
+         * Setup
+         */
         // Stash the tangy-form-items to pass down to tangy-form-questions element when we showQuestions().
         this._formDefinition = this.innerHTML
         this.innerHTML = ''
@@ -185,6 +190,10 @@
         // Set up the TangyFormService for interacting with TangyForm and TangyFormResponse docs in the database.
         this.service = new TangyFormService({databaseName: this.databaseName})
         await this.service.initialize()
+
+        /*
+         * Get data
+         */
 
         // Get our formDoc.
         this.formDoc = await this.service.getForm(this.id)
@@ -221,7 +230,7 @@
         }
 
         // Good or bad idea? Handy if the attribute configuration of tangy-form changes...
-        Object.assign(this.response, serializeElement(this))
+        Object.assign(this.response, this.getProps())
 
         // Save this response as our current response.
         this.formDoc.responseId = this.response._id
@@ -244,10 +253,17 @@
         // Can't work because linear-mode gets serialized as empty string value which then turns into false.
         //Object.assign(tangyFormQuestions, serializeElement(this), { response: this.response })
         Object.assign(tangyFormQuestions, { response: this.response })
-        tangyFormQuestions.setAttributes(this.getAttributes())
+        tangyFormQuestions.setProps(this.getProps())
         // Pass what was the tangy-form's innerHTML to the innerHTML of tangyFormQuestions. 
         tangyFormQuestions.innerHTML = this._formDefinition
         this.appendChild(tangyFormQuestions)
+      }
+
+      async showResponses() {
+        this.$['tangy-form-questions'].hidden = true 
+        this.$['tangy-form-responses'].hidden = false 
+        // @TODO Paginate and mark current response.
+        this.responses = await this.service.getResponsesByFormId(this.id) 
       }
 
       // Prevent parallel saves which leads to race conditions.
@@ -288,7 +304,6 @@
         this.formDoc = await this.service.getForm(this.id)
         this.formDoc.responseId = this.response._id
         this.formDoc = await this.service.saveForm(this.formDoc)
-        this.store.dispatch({type: FORM_SESSION_RESUME, session: this.response})
         this.showQuestions()
       }
 
@@ -298,15 +313,7 @@
         this.formDoc = await this.service.getForm(this.id)
         this.formDoc.responseId = this.response._id
         this.formDoc = await this.service.saveForm(this.formDoc)
-        this.store.dispatch({type: FORM_SESSION_RESUME, session: this.response})
         this.showQuestions()
-      }
-
-      async showResponses() {
-        this.$['tangy-form-questions'].hidden = true 
-        this.$['tangy-form-responses'].hidden = false 
-        // @TODO Paginate and mark current response.
-        this.responses = await this.service.getResponsesByFormId(this.id) 
       }
 
       async generateCSV() {
