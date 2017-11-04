@@ -7,7 +7,7 @@
     <style>
       :host {
         display: block;
-        margin: 15px 0 15px;
+      margin: 45px 0 15px;
       }
       :host([hidden]) {
         display: none;
@@ -26,10 +26,22 @@
         color: #FFF 
 
       }
+      .container {
+        position: relative;
+      }
+      :host([required]) label::before { 
+        content: "*"; 
+        color: red; 
+        position: absolute;
+        top: 4px;
+        right: 5px;
+      }
     </style>
-    <label for="group">[[label]]</label>
-    <div id="checkboxes">
-      <slot></slot>
+    <div class="container">
+      <label for="group">[[label]]</label>
+      <div id="checkboxes">
+        <slot></slot>
+      </div>
     </div>
     
   </template>
@@ -108,14 +120,11 @@
       }
 
       onDisabledChange(value) {
-        let paperCheckboxes = this.shadowRoot.querySelectorAll('tangy-checkbox')
-        if (value == true) paperCheckboxes.forEach((button) => button.setAttribute('disabled', true))
-        if (value == false) paperCheckboxes.forEach((button) => button.removeAttribute('disabled'))
+        let paperCheckboxes = this.querySelectorAll('tangy-checkbox')
+        if (value == true) paperCheckboxes.forEach((button) => inputDisable(button.name)) 
+        if (value == false) paperCheckboxes.forEach((button) => inputEnable(button.name))
       }
       onHiddenChange(value) {
-        // Disable when hidden so values do not end up being saved when hidden.
-        this.disabled = value
-        let paperCheckboxes = this.shadowRoot.querySelectorAll('tangy-checkbox')
       }
 
       validate() {
