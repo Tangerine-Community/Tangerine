@@ -1,0 +1,123 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<dom-module id="tangy-input">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      :host([hidden]) {
+        display: none;
+      }
+    </style>
+    <paper-input id="input" label="[[label]]" type="[[type]]" error-message="[[errorMessage]]" value="[[value]]"></paper-input>
+  </template>
+
+  <script>
+    /**
+     * `tangy-input`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TangyInput extends Polymer.Element {
+
+      static get is() { return 'tangy-input'; }
+
+      static get properties() {
+        return {
+          name: {
+            type: String,
+            value: ''
+          },
+          label: {
+            type: String,
+            value: ''
+          },
+          type: {
+            type: String,
+            value: ''
+          },
+          errorMessage: {
+            type: String,
+            value: ''
+          },
+          required: {
+            type: Boolean,
+            value: false,
+            observer: 'onRequiredChange',
+            reflectToAttribute: true
+          },
+          disabled: {
+            type: Boolean,
+            value: false,
+            observer: 'onDisabledChange',
+            reflectToAttribute: true
+          },
+          hidden: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          invalid: {
+            type: Boolean,
+            value: false,
+            observer: 'onInvalidChange',
+            reflectToAttribute: true
+          },
+          value: {
+            type: String,
+            value: '',
+            reflectToAttribute: true
+          }
+        }
+      }
+
+      connectedCallback() {
+        super.connectedCallback()
+        this.$.input.addEventListener('change', (event) => {
+          this.value = this.$.input.value
+          // @TODO tangy-form-item's listener for change events is not capturing this.
+          this.dispatchEvent(new Event('change', {bubbles: true}))
+        })
+      }
+
+      onRequiredChange(value) {
+        if (value === false) {
+          this.$.input.removeAttribute('required')
+        } else {
+          this.$.input.setAttribute('required', true)
+        }
+      }
+
+      onDisabledChange(value) {
+        if (value === false) {
+          this.$.input.removeAttribute('disabled')
+        } else {
+          this.$.input.setAttribute('disabled', true)
+        }
+      }
+
+      onInvalidChange(value) {
+        if (value === false) {
+          this.$.input.removeAttribute('invalid')
+        } else {
+          this.$.input.setAttribute('invalid', true)
+        }
+      }
+
+      onValueChange(value) {
+        this.$.input.setAttribute('value', value) 
+      }
+
+      validate() {
+        return this.$.input.validate()
+      }
+
+    }
+    window.customElements.define(TangyInput.is, TangyInput);
+  </script>
+</dom-module>
