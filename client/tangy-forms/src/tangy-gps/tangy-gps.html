@@ -6,6 +6,13 @@
       :host {
         display: block;
       }
+      :host([required]:not([disabled])) label::before  { 
+        content: "*"; 
+        color: red; 
+        position: absolute;
+        top: 4px;
+        right: 5px;
+      }
     </style>
     <div>
       <b>Current Position</b>
