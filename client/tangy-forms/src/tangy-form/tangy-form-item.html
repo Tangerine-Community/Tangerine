@@ -109,6 +109,10 @@
             value: false,
             reflectToAttribute: true
           },
+          inputs: {
+            type: Array,
+            value: []
+          },
 
           // State
           open: {
@@ -134,28 +138,37 @@
       async connectedCallback() {
         super.connectedCallback()
         this.store = window.tangyFormStore
-        this.$.close.addEventListener('click', () => this.store.dispatch({type: ITEM_CLOSE, itemId: this.id }))
-        this.$.open.addEventListener('click', () => this.store.dispatch({ type: ITEM_OPEN, itemId: this.id }))
-        this.addEventListener('change', (event) => this.store.dispatch({type: INPUT_VALUE_CHANGE,  inputName: event.target.name, inputValue: event.target.value} ))
-        this.addEventListener('change', (event) => this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE') ))
+        this.$.close.addEventListener('click', () => this.store.dispatch({
+          type: ITEM_CLOSE,
+          itemId: this.id
+        }))
+        this.$.open.addEventListener('click', () => this.store.dispatch({ 
+          type: ITEM_OPEN, 
+          itemId: this.id 
+        }))
+        this.addEventListener('change', (event) => {
+          this.store.dispatch({
+            type: INPUT_VALUE_CHANGE,  
+            inputName: event.target.name, 
+            inputValue: event.target.value, 
+            inputInvalid: !event.target.validate()
+          })
+        })
+        // this.addEventListener('change', (event) => this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE') ))
       }
 
       async onOpenChange(open) {
         // Close it.
-        if (open === false && this.innerHTML !== '') {
-          if (this.validate()) {
-            this.innerHTML = '' 
-            this.store.dispatch({type: ITEM_VALID, itemId: this.id })
-          } else {
-            this.store.dispatch({type: ITEM_CLOSE_STUCK, itemId: this.id })
-          }
+        if (open === false) {
+          this.innerHTML = '' 
         }
         // Open it, but only if empty because we might be stuck.
         if (open === true && !this.disabled && this.innerHTML == '') {
           let request = await fetch(this.src)
           this.innerHTML = await request.text()
           this.querySelectorAll('[name]').forEach((input) => {
-            this.store.dispatch({type: 'INPUT_ADDED', attributes: serializeElement(input)})
+            // @TODO Past tense?
+            this.store.dispatch({type: 'INPUT_ADDED', itemId: this.id, attributes: input.getProps()})
           })
           this.store.dispatch({type: ITEM_OPENED, itemId: this.id })
         }
@@ -170,10 +183,17 @@
       validate() {
         let inputs = this.querySelectorAll('[name]')
         let invalidInputNames = [] 
+        let validInputNames = []
         inputs.forEach((input) => {
-          if (input.validate && !input.hidden && !input.validate()) invalidInputNames.push(input.name)
+          if (input.validate && !input.hidden && !input.validate()) {
+            invalidInputNames.push(input.name)
+          } else {
+            validInputNames.push(input.name)
+          }
         })
         if (invalidInputNames.length > 0) {
+          invalidInputNames.forEach(input => this.store.dispatch({ type: INPUT_INVALID, inputName: input.name }))
+          validInputNames.forEach(input => this.store.dispatch({ type: INPUT_VALID, inputName: input.name }))
           return false
         } else {
           return true

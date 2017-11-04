@@ -35,11 +35,10 @@ function tangyFormReducer(state = initialState, action) {
   switch(action.type) {
 
     case FORM_OPEN:
-      tmp.response = Object.assign({}, action.response)
-      return Object.assign({}, tmp.response)
-
-      /*
-    case FORM_ADD_ITEMS:
+      // tmp.response = Object.assign({}, action.response)
+      return Object.assign({}, action.response)
+    /*
+    case ITEM_ADD:
       tmp.items = (state.items.length === 0) ? action.items : state.items
       tmp.openIndex = tmp.items.findIndex(item => (item.open))
       if (tmp.openIndex === -1) tmp.items[0].open = true
@@ -96,27 +95,41 @@ function tangyFormReducer(state = initialState, action) {
       })
 
     case ITEM_CLOSE:
-      return Object.assign({}, state, {
-        progress: ( ( ( state.items.filter((i) => i.valid).length ) / state.items.length ) * 100 ),
-        items: state.items.map((item) => {
-          if (item.id == action.itemId) {
-            return Object.assign({}, item, {open: false, valid: true})
-          }
-          return item
-        })
+      tmp.itemInvalid
+      tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
+      newState = Object.assign({}, state)
+      // Find inputs in this item that are required but have no value, mark them invalid.
+      newState.inputs = state.inputs.map(input => {
+        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1
+            && input.required === true 
+            && input.value === ''
+            && input.hidden === false
+            && input.disabled === false) {
+            return Object.assign({}, input, {invalid: true})
+        }
+        return Object.assign({}, input)
       })
-
-    case ITEM_CLOSE_STUCK:
-      return Object.assign({}, state, {
-        focusId: action.itemId,
-        progress: ( ( ( state.items.filter((i) => i.valid == true).length + 1 ) / state.items.length ) * 100 ),
-        items: state.items.map((item) => {
-          if (item.id == action.itemId) {
-            return Object.assign({}, item, {open: true, valid: false})
-          }
-          return item
-        })
+      // Determine if there are any invalid inputs. Some may have been marked invalid when emitting their values.
+      tmp.foundInvalidInputs = false
+      newState.inputs.forEach(input => {
+        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1 && input.invalid === true) {
+          tmp.foundInvalidInputs = true 
+        }
       })
+      if (tmp.foundInvalidInputs) {
+        // Do not set item to close.
+        return newState 
+      } else {
+        return Object.assign({}, state, {
+          progress: ( ( ( state.items.filter((i) => i.valid).length ) / state.items.length ) * 100 ),
+          items: state.items.map((item) => {
+            if (item.id == action.itemId) {
+              return Object.assign({}, item, {open: false, valid: true})
+            }
+            return Object.assign({}, item)
+          })
+        })
+      }
 
     case ITEM_ENABLE:
       newState = Object.assign({}, state, {
@@ -139,18 +152,29 @@ function tangyFormReducer(state = initialState, action) {
         })
       })
       return calculateFocusTargets(newState)
+    
+    /*
+     * INPUT
+     */
 
     case INPUT_ADDED: 
       // If this input does not yet
-      if (state.inputs.findIndex((input) => input.name === action.attributes.name) === -1) {
-        return Object.assign({}, state, {inputs: [...state.inputs, action.attributes]})
+      newState = Object.assign({}, state)
+      tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
+      // Save input name reference to item.
+      if (state.items[tmp.itemIndex].inputs.findIndex((input) => input.name === action.attributes.name) === -1) {
+        newState.items[tmp.itemIndex].inputs = [...newState.items[tmp.itemIndex].inputs, action.attributes.name]
       }
-      break
+      // Save input in inputs.
+      if (state.inputs.findIndex((input) => input.name === action.attributes.name) === -1) {
+        newState.inputs = [...newState.inputs, action.attributes]
+      }
+      return newState 
 
     case INPUT_VALUE_CHANGE:
       return Object.assign({}, state, {inputs: state.inputs.map((input) => {
         if (input.name == action.inputName) {
-          return Object.assign({}, input, {value: action.inputValue})
+          return Object.assign({}, input, {value: action.inputValue, invalid: action.inputInvalid})
         }
         return input 
       })})
