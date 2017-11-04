@@ -7,6 +7,7 @@
     <style>
       :host {
         display: block;
+        margin: 15px 0 15px;
       }
       :host([hidden]) {
         display: none;
@@ -17,9 +18,17 @@
       paper-radio-button {
         display: block;
       }
-    </style>
+      label {
+        display: block;
+        font-size: 1.2em;
+      }
+      :host([disabled]) label {
+        color: #FFF 
 
-    <paper-radio-group id="paper-radio-group">
+      }
+    </style>
+    <label for="group">[[label]]</label>
+    <paper-radio-group name="group" id="paper-radio-group">
     </paper-radio-group>
     
   </template>
@@ -33,7 +42,7 @@
      * @polymer
      * @demo demo/index.html
      */
-    class TangyRadioButton extends Polymer.Element {
+    class TangyRadioButtons extends Polymer.Element {
 
       static get is() { return 'tangy-radio-buttons'; }
 
@@ -53,10 +62,15 @@
             type: Boolean,
             value: false
           },
-          disabled: {
+          isDisabled: {
             type: Boolean,
             value: false,
             observer: 'onDisabledChange',
+            reflectToAttribute: true
+          },
+          label: {
+            type: String,
+            value: '',
             reflectToAttribute: true
           },
           hidden: {
@@ -127,6 +141,6 @@
       }
 
     }
-    window.customElements.define(TangyRadioButton.is, TangyRadioButton);
+    window.customElements.define(TangyRadioButtons.is, TangyRadioButtons);
   </script>
 </dom-module>
