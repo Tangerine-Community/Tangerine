@@ -11,7 +11,14 @@
         display: none;
       }
     </style>
-    <paper-input id="input" label="[[label]]" type="[[type]]" error-message="[[errorMessage]]" value="[[value]]"></paper-input>
+    <paper-input 
+      id="input" 
+      label="[[label]]" 
+      type="[[type]]" 
+      error-message="[[errorMessage]]" 
+      value="[[value]]" 
+      allowed-pattern="[[allowedPattern]]">
+    </paper-input>
   </template>
 
   <script>
@@ -69,6 +76,11 @@
             reflectToAttribute: true
           },
           value: {
+            type: String,
+            value: '',
+            reflectToAttribute: true
+          },
+          allowedPattern: {
             type: String,
             value: '',
             reflectToAttribute: true
