@@ -45,12 +45,24 @@
             observer: 'onDisabledChange',
             reflectToAttribute: true
           },
+          invalid: {
+            type: Boolean,
+            value: false,
+            observer: 'onInvalidChange',
+            reflectToAttribute: true
+          },
+          hidden: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
           value: {
             type: String,
             value: '',
             observer: 'onValueChange',
             reflectToAttribute: true
-          }
+          },
+
         }
       }
 
@@ -65,6 +77,14 @@
           this.$.checkbox.removeAttribute('required')
         } else {
           this.$.checkbox.setAttribute('required', true)
+        }
+      }
+
+      onInvalidChange(value) {
+        if (value === false) {
+          this.$.checkbox.removeAttribute('invalid')
+        } else {
+          this.$.checkbox.setAttribute('invalid', true)
         }
       }
 

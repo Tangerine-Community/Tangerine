@@ -57,20 +57,18 @@
           value: {
             type: String,
             value: '',
-            reflectToAttribute: true,
-            observer: 'onValueChange'
+            reflectToAttribute: true
+          },
+          atLeast: {
+            type: Number,
+            value: 0,
+            reflectToAttribute: true
           },
           required: {
             type: Boolean,
             value: false
           },
           disabled: {
-            type: Boolean,
-            value: false,
-            observer: 'onDisabledChange',
-            reflectToAttribute: true
-          },
-          isDisabled: {
             type: Boolean,
             value: false,
             observer: 'onDisabledChange',
@@ -97,6 +95,16 @@
 
       connectedCallback() {
         super.connectedCallback()
+        this.querySelectorAll('tangy-checkbox').forEach(checkbox => {
+          checkbox.addEventListener('change', this.onCheckboxChange.bind(this))
+        })
+
+      }
+
+      onCheckboxChange(checkbox) {
+        let checked = [].slice.call(this.querySelectorAll('tangy-checkbox')).filter(checkbox => checkbox.value !== '')
+        this.value = checked.length
+        this.dispatchEvent(new Event('change'))
       }
 
       onDisabledChange(value) {
@@ -111,19 +119,12 @@
       }
 
       validate() {
-        let props = this.getProps()
-        if (this.hidden || this.disabled || !this.required) return true
-        let checkedCount = 0
-        let paperCheckboxes = this.querySelectorAll('tangy-checkbox').forEach((checkbox) => {
-          if (checkbox.checked) checkedCount++
-        })
-        if (checkedCount < 1) {
-          this.setAttribute('invalid', true)
-          return false 
-        } else {
-          this.removeAttribute('invalid')
-          return true
-        }
+        if (this.hidden || this.disabled) return true
+        if (this.atLeast === 0 && !this.required) return true
+        let checked = [].slice.call(this.querySelectorAll('tangy-checkbox')).filter(checkbox => checkbox.value !== '')
+        if (this.atLeast === 0 && this.required && checked.length > 0) return true
+        if(checked.length >= this.atLeast) return true
+        return false
       }
 
     }
