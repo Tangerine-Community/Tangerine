@@ -22,6 +22,26 @@
         margin: 0px;
         background: #FAFAFA;
       }
+      *[hidden] {
+        display: none;
+      }
+      *[name] {
+        border: white solid 3px;
+        padding: 5px;
+      }
+      *[invalid]:not([disabled]):not(tangy-input) {
+        border: rgb(252, 177, 177) solid 3px;
+      }
+      *[required]:not([disabled])  { 
+        position: relative;
+      }
+      *[required]:not([disabled])::before  { 
+        content: "*"; 
+        color: red; 
+        position: absolute;
+        top: 4px;
+        right: 5px;
+      }
     </style>
 
   </head>
