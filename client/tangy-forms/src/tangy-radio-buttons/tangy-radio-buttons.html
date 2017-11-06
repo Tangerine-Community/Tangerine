@@ -12,18 +12,8 @@
       :host([hidden]) {
         display: none;
       }
-      :host([invalid]) {
-        border: red solid 3px;
-      }
       .container {
         position: relative;
-      }
-      :host([required]:not([disabled])) label::before  { 
-        content: "*"; 
-        color: red; 
-        position: absolute;
-        top: 4px;
-        right: 5px;
       }
       paper-radio-button {
         display: block;
@@ -80,12 +70,6 @@
             observer: 'onDisabledChange',
             reflectToAttribute: true
           },
-          isDisabled: {
-            type: Boolean,
-            value: false,
-            observer: 'onDisabledChange',
-            reflectToAttribute: true
-          },
           label: {
             type: String,
             value: '',
@@ -115,6 +99,7 @@
         for (let option of options) {
           let button = document.createElement('paper-radio-button')
           button.name = option.value
+          if (this.disabled) button.setAttribute('disabled', true)
           button.innerHTML = option.innerHTML
           paperRadioGroupEl.appendChild(button)
         }

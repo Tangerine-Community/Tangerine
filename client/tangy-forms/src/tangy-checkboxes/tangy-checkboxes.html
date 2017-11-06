@@ -9,12 +9,7 @@
         display: block;
       margin: 45px 0 15px;
       }
-      :host([hidden]) {
-        display: none;
-      }
-      :host([invalid]) {
-        border: red solid 3px;
-      }
+      
       paper-radio-button {
         display: block;
       }
@@ -29,13 +24,7 @@
       .container {
         position: relative;
       }
-      :host([required]:not([disabled])) label::before  { 
-        content: "*"; 
-        color: red; 
-        position: absolute;
-        top: 4px;
-        right: 5px;
-      }
+      
     </style>
     <div class="container">
       <label for="group">[[label]]</label>
@@ -65,7 +54,6 @@
             type: String,
             value: ''
           },
-          // @TODO Need value? Really?
           value: {
             type: String,
             value: '',
@@ -108,15 +96,30 @@
       connectedCallback() {
         super.connectedCallback()
         this.querySelectorAll('tangy-checkbox').forEach(checkbox => {
-          checkbox.addEventListener('change', this.onCheckboxChange.bind(this))
+          checkbox.addEventListener('INPUT_VALUE_CHANGE', this.onCheckboxChange.bind(this))
         })
 
       }
 
-      onCheckboxChange(checkbox) {
-        let checked = [].slice.call(this.querySelectorAll('tangy-checkbox')).filter(checkbox => checkbox.value !== '')
-        this.value = checked.length
-        this.dispatchEvent(new Event('change'))
+      onCheckboxChange(event) {
+        let checked = [].slice.call(this.querySelectorAll('tangy-checkbox')).filter(checkbox => checkbox.value === true)
+        let change = (event.detail.inputValue === true) ? 1 : -1
+        let value = checked.length + change
+        let invalid = false
+        // If not hidden and/or disabled, check for invalid state.
+        if (this.hidden !== true && this.disabled !== true) {
+          if (value < this.atLeast) invalid = true
+          if (this.required === true && value === 0) invalid = true
+        }
+
+        this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
+          detail: {
+            inputName: this.name,
+            inputValue: value,
+            inputInvalid: invalid 
+          }, 
+          bubbles: true
+        }))
       }
 
       onDisabledChange(value) {
@@ -125,15 +128,6 @@
         if (value == false) paperCheckboxes.forEach((button) => inputEnable(button.name))
       }
       onHiddenChange(value) {
-      }
-
-      validate() {
-        if (this.hidden || this.disabled) return true
-        if (this.atLeast === 0 && !this.required) return true
-        let checked = [].slice.call(this.querySelectorAll('tangy-checkbox')).filter(checkbox => checkbox.value !== '')
-        if (this.atLeast === 0 && this.required && checked.length > 0) return true
-        if(checked.length >= this.atLeast) return true
-        return false
       }
 
     }

@@ -76,7 +76,17 @@
       connectedCallback() {
         super.connectedCallback()
         if (this.value) this.$.checkbox.checked = true
-        this.$.checkbox.addEventListener('change', (e) => this.value = (e.target.checked) ? 'on' : '')
+        this.$.checkbox.addEventListener('change', (e) => {
+          e.stopPropagation()
+          this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
+            bubbles: true, 
+            detail: {
+              inputName: this.name,
+              inputValue: (e.target.checked) ? true : false,
+              inputInvalid: !this.$.checkbox.validate()
+            }
+          }))
+        })
       }
 
       onRequiredChange(value) {
@@ -106,10 +116,6 @@
       onValueChange(value) {
         if (value) this.$.checkbox.setAttribute('checked', true) 
         if (!value) this.$.checkbox.removeAttribute('checked')
-      }
-
-      validate() {
-        return this.$.checkbox.validate()
       }
 
     }
