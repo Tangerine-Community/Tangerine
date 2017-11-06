@@ -17,6 +17,10 @@ HTMLElement.prototype.setAttributes = function (attributes = {}) {
 
 HTMLElement.prototype.getProps = function () {
   let propertyInfo; eval(`propertyInfo = ${this.constructor.name}.properties`)
+  // If no property info, then go off what attributes we do have.
+  if (!propertyInfo) {
+    return this.getAttributes()
+  }
   let props = {}
   for (let propName in propertyInfo) {
     if (propertyInfo[propName].type === Boolean) {
