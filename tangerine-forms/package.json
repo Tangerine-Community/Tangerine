@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ckeditor/ckeditor5-build-classic": "^1.0.0-alpha.1"
+    "@ckeditor/ckeditor5-build-classic": "^1.0.0-alpha.1",
+    "ckeditor5-eftouch": "git+https://github.com/chrisekelley/ckeditor5-eftouch.git"
   }
 }
