@@ -167,20 +167,25 @@
 
       // Apply state in the store to the DOM.
       reflect() {
+
         let state = this.store.getState()
+        // Set initial this.previousState
         if (!this.previousState) this.previousState = state
+
         // Set state in tangy-form-item elements.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
           let index = state.items.findIndex((itemState) => item.id == itemState.id) 
           if (index !== -1) Object.assign(item, state.items[index])
         })
+        
         // Set state in input elements.
         let inputs = [].slice.call(this.querySelectorAll('[name]'))
         inputs.forEach((input) => {
           let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
           if (index !== -1) Object.assign(input, state.inputs[index])
         })
+
         // Set progress state.
         this.$.progress.setAttribute('value', state.progress)
         // Hide closed items.
@@ -193,6 +198,7 @@
             }
           })
         }
+
         // Find item to scroll to.
         if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused)) {
           this.hasNotYetFocused = false
@@ -200,8 +206,18 @@
             items[state.focusIndex].scrollIntoView({behavior: 'smooth', block: 'start'})
           }, 200)
         }  
+
+        // Disable navigation buttons depending on wether there is a next or previous place to focus to.
         this.$.nextItemButton.disabled = (state.nextFocusIndex === -1) ? true : false
         this.$.previousItemButton.disabled = (state.previousFocusIndex === -1) ? true : false
+
+        // Dispatch ALL_ITEMS_CLOSED if all items are now closed.
+        let previouslyClosedItemCount = (this.previousState.items.filter(item => !item.open)).length
+        let currentlyClosedItemCount = (state.items.filter(item => !item.open)).length
+        if (previouslyClosedItemCount !== currentlyClosedItemCount && currentlyClosedItemCount === state.items.length) {
+          this.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
+        }
+
         // Stash as previous state.
         this.previousState = Object.assign({}, state)
       }
