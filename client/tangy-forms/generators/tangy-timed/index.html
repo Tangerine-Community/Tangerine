@@ -1,0 +1,40 @@
+<!doctype HTML>
+<html>
+<script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+<link rel="import" href="../../src/tangy-timed/tangy-timed.html">
+<body>
+
+<style>
+
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row {
+display: flex;
+}
+
+.column {
+margin: 0px;
+width: 16%;
+}
+
+</style>
+
+<h2>Number of columns</h2>
+<input type="number" id="numberOfColumns" value="4"/>
+<h2>Text</h2>
+<textarea id="customText">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</textarea>
+<h2>Name</h2>
+<textarea id="customName">foo</textarea>
+<br>
+<button id="go">generate</button>
+<h2>Output</h2>
+<textarea id="output"></textarea>
+<div id="demo">
+</div>
+</body>
+<script src="app.js">
+</script>
+</html>
