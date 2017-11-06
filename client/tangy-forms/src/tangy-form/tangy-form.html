@@ -125,6 +125,7 @@
 
       constructor() {
         super()
+        // Create Redux Store.
         window.tangyFormStore = Redux.createStore(
           tangyFormReducer, 
           window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(), 
@@ -250,13 +251,24 @@
         if (this.childElementCount > 0) this.removeChild(this.childNodes[0])
         // Load items from item stash that was made on connected callback. Good for resuming fresh. 
         let tangyFormQuestions = document.createElement('tangy-form-questions')
-        // Can't work because linear-mode gets serialized as empty string value which then turns into false.
-        //Object.assign(tangyFormQuestions, serializeElement(this), { response: this.response })
         Object.assign(tangyFormQuestions, { response: this.response })
         tangyFormQuestions.setProps(this.getProps())
         // Pass what was the tangy-form's innerHTML to the innerHTML of tangyFormQuestions. 
         tangyFormQuestions.innerHTML = this._formDefinition
         this.appendChild(tangyFormQuestions)
+        // Pass up events from questions.
+        this.questionsListener = tangyFormQuestions.addEventListener('ALL_ITEMS_CLOSED', () => {
+          // Prevent firing while saving.
+          let buffer = () => {
+            if (this.throttledSaveFiring || this.throttledSaveLoaded) {
+              setTimeout(() => buffer(), 200)
+            } else {
+              fireEvent()
+            }
+          }
+          let fireEvent = () => this.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
+          buffer()
+        })
       }
 
       async showResponses() {
