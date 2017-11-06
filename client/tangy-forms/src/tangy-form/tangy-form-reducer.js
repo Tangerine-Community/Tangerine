@@ -102,7 +102,7 @@ function tangyFormReducer(state = initialState, action) {
       newState.inputs = state.inputs.map(input => {
         if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1
             && input.required === true 
-            && input.value === ''
+            && (input.value === '' || input.value === false)
             && input.hidden === false
             && input.disabled === false) {
             return Object.assign({}, input, {invalid: true})
@@ -112,7 +112,10 @@ function tangyFormReducer(state = initialState, action) {
       // Determine if there are any invalid inputs. Some may have been marked invalid when emitting their values.
       tmp.foundInvalidInputs = false
       newState.inputs.forEach(input => {
-        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1 && input.invalid === true) {
+        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1 
+            && input.disabled !== true
+            && input.hidden !== true 
+            && input.invalid === true) {
           tmp.foundInvalidInputs = true 
         }
       })

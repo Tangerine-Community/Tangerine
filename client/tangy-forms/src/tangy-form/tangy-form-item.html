@@ -154,6 +154,15 @@
             inputInvalid: !event.target.validate()
           })
         })
+        this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
+          this.store.dispatch({
+            type: INPUT_VALUE_CHANGE,  
+            inputName: event.detail.inputName, 
+            inputValue: event.detail.inputValue, 
+            inputInvalid: event.detail.inputInvalid 
+          })
+        })
+
         // this.addEventListener('change', (event) => this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE') ))
       }
 
