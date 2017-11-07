@@ -33,7 +33,7 @@
           <span class="tangy-foreground-primary">Visits</span>
         </md-list-item>
         <md-list-item class="tangy-location-list" *ngFor="let location of alreadyVistedLocations">
-          <a class="tangy-foreground-primary" routerLink="/tangy-forms">
+          <a class="tangy-foreground-primary" routerLink="/forms-list">
             <i class="material-icons md-18 tangy-location-list-icon">open_in_new</i>
           </a>
           <span>{{location.location}}</span>
@@ -44,5 +44,6 @@
     </md-card>
   </md-tab>
   <md-tab label="Monthly Report">Content 2</md-tab>
+
   <!-- <md-tab label="Monthly Report">Manage My Schools List</md-tab> -->
 </md-tab-group>
