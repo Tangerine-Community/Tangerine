@@ -1,0 +1,92 @@
+
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Tangerine v3</title>
+  <meta name="description" content="Tangerine v3">
+  <meta name="author" content="Tangerine">
+</head>
+
+<body>
+<h1>Choose Language:</h1>
+    <ul id="languages">
+    <li><a href="/tangerine/en" onclick="setLocale('en')">en-US</a></li><li><a href="/tangerine/es" onclick="setLocale('es')">es-SP</a></li><li><a href="/tangerine/fr" onclick="setLocale('fr')">fr-FR</a></li>
+    </ul>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(function (registration) {
+        // Registration was successful
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        if (registration.installing) {
+          console.log('registration.installing is available on service worker registration.')
+        }
+        // updatefound is fired if service-worker.js changes.
+        registration.onupdatefound = function () {
+          console.log('This app is installing.')
+          alert('This app is installing.')
+          // The updatefound event implies that registration.installing is set; see
+          // https://slightlyoff.github.io/ServiceWorker/spec/service_worker/index.html#service-worker-container-updatefound-event
+          var installingWorker = registration.installing;
+          installingWorker.onstatechange = function () {
+            switch (installingWorker.state) {
+              case 'installed':
+                if (navigator.serviceWorker.controller) {
+                  // At this point, the old content will have been purged and the fresh content will
+                  // have been added to the cache.
+                  // It's the perfect time to display a "New content is available; please refresh."
+                  // message in the page's interface.
+                  console.log('Your app has been updated. Reloading now.');
+                  alert('Your app has been updated. Reloading now.');
+                  // If URL has a hash, we have to carve it out less there will be no reload.
+                  window.location = window.location.href.replace('\/\#', '');
+                  /* TODO: Support for reloading when app is not in the TLDR's root.
+                     TODO: Prompt user wether or not they wanted to update the cache in the first place.. 
+                     TODO: Prompt user wether or not they want to reload. 
+                  if (window.location.href.indexOf('\/\#') !== -1) {
+                    window.location = window.location.href;
+                  } else {
+                    window.location = window.location.href.substr(0, window.location.href.indexOf('\/\#'))
+                  }
+                  */
+                } else {
+                  // At this point, everything has been precached, but the service worker is not
+                  // controlling the page. The service worker will not take control until the next
+                  // reload or navigation to a page under the registered scope.
+                  // It's the perfect time to display a "Content is cached for offline use." message.
+                  console.log('This App has been installed and is now ready for offline use.');
+                  alert('This App has been installed and is now ready for offline use.');
+                }
+                break;
+              case 'redundant':
+                console.error('The installing service worker became redundant.');
+                break;
+            }
+          };
+        };
+      }).catch(function (err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    }
+/*
+  document.onreadystatechange = () => {
+        if (document.readyState === 'interactive') {
+            navigateToLocale()
+        }
+    }
+     function navigateToLocale() {
+        let locale = localStorage.getItem("tangy-locale");
+        if(locale){
+            window.location.href = 'tangerine/' +locale;
+        } 
+    }
+       function setLocale(locale) {
+        localStorage.setItem("tangy-locale", locale);
+    }
+    */
+  </script>
+</body>
+</html>

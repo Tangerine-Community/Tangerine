@@ -17,7 +17,13 @@ mkdir build
 
 # Copy build items over.
 cp -r shell/dist/tangerine build
-cp build/tangerine/index.html build/
+cp index.html build/
 cp -r tangy-forms/build/default build/tangy-forms
 # cp -r legacy/dist build/legacy
-#cp -r content build/
+cp -r $1 build/content
+
+# generate service worker
+workbox generate:sw
+
+# generate a release uuid
+uuid > build/release-uuid.txt
