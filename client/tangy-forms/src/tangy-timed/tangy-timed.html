@@ -140,13 +140,7 @@
         setTimeout(() => {
           this.generateGrid()
           this.reflectInputsToToggles()
-          let tangyToggleButtons = [].slice.call(this.shadowRoot.querySelectorAll('tangy-toggle-button'))
-          if ((tangyToggleButtons.find(button => button.pressed))){
-            // this.dispatchModeChange(TANGY_TIMED_MODE_DONE)
-          } else {
-            // this.dispatchModeChange(TANGY_TIMED_MODE_UNTOUCHED)
-          } 
-        }, 200)
+        }, 400)
       }
 
       dispatchModeChange(mode) {
