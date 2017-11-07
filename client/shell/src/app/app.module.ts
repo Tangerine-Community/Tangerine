@@ -1,3 +1,4 @@
+import { SharedModule } from './shared/shared.module';
 import 'hammerjs';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -41,7 +42,8 @@ export { AppComponent }
     CaseManagementModule,
     UserProfileModule,
     SyncRecordsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    SharedModule
   ],
   providers: [WindowRef],
   bootstrap: [AppComponent]
