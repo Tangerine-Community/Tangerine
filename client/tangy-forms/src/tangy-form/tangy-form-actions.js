@@ -9,9 +9,17 @@ const itemOpen = (itemId) => window.tangyFormStore.dispatch({ type: ITEM_OPEN, i
 ITEM_CLOSE = 'ITEM_CLOSE' 
 const itemClose = (itemId) => window.tangyFormStore.dispatch({ type: ITEM_CLOSE, itemId: itemId })
 ITEM_DISABLE = 'ITEM_DISABLE'
-const itemDisable = (itemId) => window.tangyFormStore.dispatch({ type: ITEM_DISABLE, itemId: itemId })
+const itemDisable = (itemId) => { 
+    let state = window.tangyFormStore.getState()
+    let item = state.items.find(item => itemId === item.id)
+    if (!item.disabled) window.tangyFormStore.dispatch({ type: ITEM_DISABLE, itemId: itemId })
+}
 ITEM_ENABLE = 'ITEM_ENABLE'
-const itemEnable = (itemId) => window.tangyFormStore.dispatch({ type: ITEM_ENABLE, itemId: itemId })
+const itemEnable = (itemId) => {
+    let state = window.tangyFormStore.getState()
+    let item = state.items.find(item => itemId === item.id)
+    if (item.disabled) window.tangyFormStore.dispatch({ type: ITEM_ENABLE, itemId: itemId })
+}
 
 ITEMS_INVALID = 'ITEMS_INVALID'
 ITEM_CLOSE_STUCK = 'ITEM_CLOSE_STUCK' 
