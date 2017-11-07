@@ -27,5 +27,5 @@
       "type": "image/png"
     } 
   ],
-  "orientation": "portrait"
+  "orientation": "any"
 }
