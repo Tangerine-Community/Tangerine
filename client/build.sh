@@ -20,4 +20,4 @@ cp -r shell/dist/tangerine build
 cp build/tangerine/index.html build/
 cp -r tangy-forms/build/default build/tangy-forms
 # cp -r legacy/dist build/legacy
-cp -r content build/
+#cp -r content build/
