@@ -1,12 +1,21 @@
 <!doctype HTML>
 <html>
-<script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
-<link rel="import" href="../../src/tangy-timed/tangy-timed.html">
+<head>
+  <script src="../../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+  <link href="../../fonts/fonts.css" rel="stylesheet">
+  <!-- tangy-form-app needs to be before global-styles. hmmm. -->
+  <link rel="import" href="../../src/tangy-form-app/tangy-form-app.html">
+  <link rel="import" href="../../global-styles.html">
+  
+  <link rel="import" href="../../src/tangy-timed/tangy-timed.html">
+</head>
 <body>
 
 <style>
 
-
+* {
+  font-family: Roboto;
+}
 .grid {
   display: flex;
   flex-wrap: wrap;
@@ -24,6 +33,8 @@ width: 16%;
 
 <h2>Number of columns</h2>
 <input type="number" id="numberOfColumns" value="4"/>
+<h2>Duration</h2>
+<input type="number" id="duration" value="5"/>
 <h2>Text</h2>
 <textarea id="customText">Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</textarea>
 <h2>Name</h2>

@@ -7,6 +7,7 @@ function generateFlat(text, name, numberOfColumns) {
   let tangyTimed = document.createElement('tangy-timed')
   tangyTimed.setAttribute('columns', numberOfColumns)
   tangyTimed.setAttribute('id', name)
+  tangyTimed.setAttribute('duration', duration.value)
 
   let i = 0
   for (let fragment of fragments) {
