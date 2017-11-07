@@ -22,8 +22,3 @@ cp -r tangy-forms/build/default build/tangy-forms
 # cp -r legacy/dist build/legacy
 cp -r $1 build/content
 
-# generate service worker
-workbox generate:sw
-
-# generate a release uuid
-uuid > build/release-uuid.txt

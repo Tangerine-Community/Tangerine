@@ -6,6 +6,7 @@ module.exports = {
   ],
   "swDest": "build/sw.js",
   "globIgnores": [
-    "../workbox-cli-config.js"
+    "../workbox-cli-config.js",
+    "release-uuid.txt"
   ]
 };
