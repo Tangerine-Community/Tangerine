@@ -98,6 +98,7 @@ function updateServiceWorker() {
                 // have been added to the cache.
                 // It's the perfect time to display a "New content is available; please refresh."
                 // message in the page's interface.
+
                 localStorage.setItem('release-uuid', window.installReleaseUuid)
                 console.log('Your app has been updated. Reloading now.');
                 alert('Your app has been updated. Reloading now.');
@@ -118,7 +119,6 @@ function updateServiceWorker() {
                 // reload or navigation to a page under the registered scope.
                 // It's the perfect time to display a "Content is cached for offline use." message.
                 console.log('This App has been installed and is now ready for offline use.');
-                debugger
                 localStorage.setItem('release-uuid', window.installReleaseUuid)
                 alert('This App has been installed and is now ready for offline use.');
                 window.location = window.location.href.replace('\/\#', '');
@@ -126,6 +126,7 @@ function updateServiceWorker() {
               break;
             case 'redundant':
               console.error('The installing service worker became redundant.');
+              alert('Update did not complete, keeping the app you have. Your network may be down, please try again later.')
               break;
           }
         };
