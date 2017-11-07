@@ -160,7 +160,7 @@ function tangyFormReducer(state = initialState, action) {
      * INPUT
      */
 
-    case INPUT_ADDED: 
+    case INPUT_ADD: 
       // If this input does not yet
       newState = Object.assign({}, state)
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
@@ -182,6 +182,7 @@ function tangyFormReducer(state = initialState, action) {
         return input 
       })})
     break
+
     case INPUT_DISABLE:
       return Object.assign({}, state, { inputs: state.inputs.map((input) => {
         if (input.name == action.inputName) {
@@ -190,7 +191,7 @@ function tangyFormReducer(state = initialState, action) {
         return input
       })})
 
-case INPUT_ENABLE:
+    case INPUT_ENABLE:
       return Object.assign({}, state, { inputs: state.inputs.map((input) => {
         if (input.name == action.inputName) {
           return Object.assign({}, input, {disabled: false})
