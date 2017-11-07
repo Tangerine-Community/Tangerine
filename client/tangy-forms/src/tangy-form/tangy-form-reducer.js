@@ -9,9 +9,10 @@ const initialState = {
   inputs: []
 }
 
-function calculateFocusTargets(state) {
+function calculateTargets(state) {
   let tmp = {}
   let newState = Object.assign({}, state)
+  newState.focusIndex = newState.items.findIndex(item => item.open)
   newState.nextFocusIndex = state.items.findIndex((item, i) =>  (i > newState.focusIndex && (!item.hasOwnProperty('disabled') || item.disabled === false)))
   // Find previous focus index using reversed items and focus index.
   newState.items.reverse()
@@ -23,6 +24,18 @@ function calculateFocusTargets(state) {
   }
   // Unreverse items.
   newState.items.reverse()
+  if (newState.nextFocusIndex !== -1) {
+    newState.nextItemId = newState.items[newState.nextFocusIndex].id
+  } else {
+    newState.nextItemId = undefined
+  }
+
+  if (newState.previousFocusIndex !== -1) {
+    newState.previousItemId = newState.items[newState.previousFocusIndex].id
+  } else {
+    newState.previousItemId = undefined
+  }
+
   return newState
 }
 
@@ -51,54 +64,22 @@ function tangyFormReducer(state = initialState, action) {
       newState = Object.assign({}, state)
       // Find the current index of the item opening.
       newState.focusIndex = newState.items.findIndex(item => (item.id === action.itemId))
-      newState = calculateFocusTargets(newState)
-      if (state.hasOwnProperty('linear-mode')) {
-        // Apply focus.
-        newState.items.forEach((item, i) => {
-          if (i === newState.focusIndex) {
-            item.open = true
-          } else {
-            item.open = false
-          }
-        }) 
-        return newState
-      } else {
-        return Object.assign({}, newState, {items: state.items.map((item) => {
-          if (item.id == action.itemId) {
-            return Object.assign({}, item, {open: true})
-          }
-          return item
-        })})
-      }
+      return Object.assign({}, newState, {items: state.items.map((item) => {
+        if (item.id == action.itemId) {
+          return Object.assign({}, item, {open: true})
+        }
+        return item
+      })})
       break
 
 
-    // Move into ITEM_ENABLE / ITEM_DISABLE?
-    case ITEM_ENABLED:
-    case ITEM_DISABLED:
-       newState = Object.assign({}, state)
-      // Recalculate focus indexes.
-
-    case ITEM_VALID:
-      items = state.items.map((item) => {
-          if (state.focusId == item.id) {
-            return Object.assign({}, item, {open: true})
-          }
-          if (item.id == action.itemId) {
-            return Object.assign({}, item, {valid: true})
-          }
-          return item
-        })
-      return Object.assign({}, state, {
-        progress: ( ( ( items.filter((i) => i.valid).length ) / items.length ) * 100 ),
-        items: items 
-      })
-
     case ITEM_CLOSE:
-      tmp.itemInvalid
+
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
+
       newState = Object.assign({}, state)
-      // Find inputs in this item that are required but have no value, mark them invalid.
+
+      // Validate.
       newState.inputs = state.inputs.map(input => {
         if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1
             && input.required === true 
@@ -109,7 +90,8 @@ function tangyFormReducer(state = initialState, action) {
         }
         return Object.assign({}, input)
       })
-      // Determine if there are any invalid inputs. Some may have been marked invalid when emitting their values.
+
+      // Find blockers.
       tmp.foundInvalidInputs = false
       newState.inputs.forEach(input => {
         if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1 
@@ -119,20 +101,34 @@ function tangyFormReducer(state = initialState, action) {
           tmp.foundInvalidInputs = true 
         }
       })
-      if (tmp.foundInvalidInputs) {
-        // Do not set item to close.
-        return newState 
-      } else {
-        return Object.assign({}, state, {
-          progress: ( ( ( state.items.filter((i) => i.valid).length ) / state.items.length ) * 100 ),
-          items: state.items.map((item) => {
-            if (item.id == action.itemId) {
-              return Object.assign({}, item, {open: false, valid: true})
-            }
-            return Object.assign({}, item)
-          })
+      // If there are invalid inputs, don't open, just return newState.
+      if (tmp.foundInvalidInputs) return newState 
+
+      // In case it next and previous hasn't been calculated yet.
+      Object.assign(newState, calculateTargets(newState))
+
+      // Mark open and closed.
+      Object.assign(newState, {
+        progress: ( ( ( state.items.filter((i) => i.valid).length ) / state.items.length ) * 100 ),
+        items: state.items.map((item) => {
+          if (item.id == action.itemId) {
+            return Object.assign({}, item, {open: false, valid: true})
+          }
+          if (action.navigateBack && newState.previousItemId === item.id) {
+            return Object.assign({}, item, {open: true})
+          }
+          if (action.navigateForward && newState.nextItemId === item.id) {
+            return Object.assign({}, item, {open: true})
+          }
+          return Object.assign({}, item)
         })
-      }
+      })
+
+      // Calculate if there is next and previous item Ids.
+      Object.assign(newState, calculateTargets(newState))
+
+      return newState
+
 
     case ITEM_ENABLE:
       newState = Object.assign({}, state, {
@@ -143,7 +139,7 @@ function tangyFormReducer(state = initialState, action) {
           return item
         })
       })
-      return calculateFocusTargets(newState)
+      return calculateTargets(newState)
 
     case ITEM_DISABLE:
       newState = Object.assign({}, state, {
@@ -154,7 +150,7 @@ function tangyFormReducer(state = initialState, action) {
           return item
         })
       })
-      return calculateFocusTargets(newState)
+      return calculateTargets(newState)
     
     /*
      * INPUT

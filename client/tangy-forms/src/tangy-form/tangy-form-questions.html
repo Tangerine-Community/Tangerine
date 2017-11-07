@@ -225,33 +225,17 @@
       focusOnPreviousItem(event) {
         this.$.previousItemButton.setAttribute('disabled', true)
         this.$.nextItemButton.setAttribute('disabled', true)
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        let invalidItemIds = [] 
-        items.forEach((item) => {
-          if (item.validate() === false) invalidItemIds.push(item.id)
-        })
-        if (invalidItemIds.length > 0) {
-          this.store.dispatch({ type: ITEMS_INVALID, itemIds: invalidItemIds })
-        } else {
-          let state = this.store.getState()
-          itemOpen(state.items[state.previousFocusIndex].id)
-        }
+        let state = this.store.getState()
+        let item = state.items.find(item => item.open)
+        this.store.dispatch({ type: ITEM_CLOSE, itemId: item.id, navigateBack: true  })
       }
 
       focusOnNextItem(event) {
         this.$.previousItemButton.setAttribute('disabled', true)
         this.$.nextItemButton.setAttribute('disabled', true)
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
-        let invalidItemIds = [] 
-        items.forEach((item) => {
-          if (item.validate() === false) invalidItemIds.push(item.id)
-        })
-        if (invalidItemIds.length > 0) {
-          this.store.dispatch({ type: ITEMS_INVALID, itemIds: invalidItemIds })
-        } else {
-          let state = this.store.getState()
-          this.store.dispatch({ type: ITEM_OPEN, itemId: state.items[state.nextFocusIndex].id })
-        }
+        let state = this.store.getState()
+        let item = state.items.find(item => item.open)
+        this.store.dispatch({ type: ITEM_CLOSE, itemId: item.id, navigateForward: true  })
       }
 
       getValue(name) {
