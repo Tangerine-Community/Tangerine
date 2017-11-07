@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import '~@angular/material/prebuilt-themes/deeppurple-amber.css'; */
 /*@import '~bootstrap/dist/css/bootstrap.css';*/
+@import '~styles/_tangy-app-variables.scss';
 .login-app-content{
   margin-top: 180px;
 }
@@ -20,18 +21,18 @@ md-toolbar{
     z-index: 2;
 }
 .tangy-spacer{
-    flex: 1 1 auto;
+    flex: 1 1 auto; 
 }
 
 .tangy-foreground-primary{
-    color: #ff5722;
+    color: $tangy-foreground-primary;
 }
 
 .tangy-no-text-decoration{
     text-decoration: none;
 }
-.tangy-foreground-white{
-    color: white;
+.tangy-app-name{
+  color: $tangy-app-name;
 }
 .tangy-unstyled-list{
     list-style-type: none;
@@ -127,5 +128,5 @@ padding-top:0px;
     -webkit-transform: rotate(45deg);
   }
   #err {
-    color : red;
+    color :$tangy-foreground-error-message;
   }
