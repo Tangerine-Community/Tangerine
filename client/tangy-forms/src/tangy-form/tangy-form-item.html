@@ -177,7 +177,7 @@
           this.innerHTML = await request.text()
           this.querySelectorAll('[name]').forEach((input) => {
             // @TODO Past tense?
-            this.store.dispatch({type: 'INPUT_ADDED', itemId: this.id, attributes: input.getProps()})
+            this.store.dispatch({type: 'INPUT_ADD', itemId: this.id, attributes: input.getProps()})
           })
           this.store.dispatch({type: ITEM_OPENED, itemId: this.id })
         }
