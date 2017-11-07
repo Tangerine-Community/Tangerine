@@ -10,3 +10,4 @@ UUID=$(uuid)
 mv build/sw.js build/$UUID.js
 # generate a release uuid
 echo $UUID > build/release-uuid.txt
+echo "Release with UUID of $UUID"
