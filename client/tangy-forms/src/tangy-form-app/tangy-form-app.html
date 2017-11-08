@@ -86,7 +86,7 @@
      
       connectedCallback() {
         super.connectedCallback(); 
-        let query = this.parseQuery(window.location.search)
+        let query = this.parseQuery(window.location.hash)
         if (query.form) {
           this.showForm(query.form)
         } else {
@@ -94,10 +94,10 @@
         }
       }
 
-			// For parsing window.location.search parameters.
+			// For parsing window.location.hash parameters.
       parseQuery(qstr) {
         var query = {};
-        var a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&');
+        var a = (qstr[0] === '#' ? qstr.substr(1) : qstr).split('&');
         for (var i = 0; i < a.length; i++) {
           var b = a[i].split('=');
           query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
@@ -123,7 +123,7 @@
       }
 
       async showForm(formSrc) {
-        let query = this.parseQuery(window.location.search)
+        let query = this.parseQuery(window.location.hash)
         this.$['form-view'].hidden = false
         this.$['form-list'].hidden = true 
         // Load the form into the DOM.
