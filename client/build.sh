@@ -15,10 +15,15 @@ cd ..
 rm -r build
 mkdir build
 
+# Build updater
+cd app-updater
+polymer build
+cd ..
+
 # Copy build items over.
-cp -r shell/dist/tangerine build
-cp index.html build/
+cp app-updater/build/default/index.html build/index.html
+cp app-updater/logo.svg build/logo.svg
+cp -r shell/dist/tangerine build/tangerine
 cp -r tangy-forms/build/default build/tangy-forms
-# cp -r legacy/dist build/legacy
-cp -r $1 build/content
+
 
