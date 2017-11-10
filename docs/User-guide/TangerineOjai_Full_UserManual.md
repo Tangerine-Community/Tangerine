@@ -26,7 +26,7 @@ the software’s code base, please visit our
 [Github](https://github.com/Tangerine-Community/Tangerine) page. While
 we will make every effort to ensure a productive and seamless Tangerine
 experience for you, we cannot guarantee that the software will function
-perfectly at all times. Please be sure to check your Tangerine
+perfectly on all Android devices at all times. Please be sure to check in with RTI for hardware suggestions, and review your Tangerine
 instruments and data files regularly and report any issues to RTI
 International so that we may assist.
 
@@ -77,9 +77,7 @@ Tangerine Icon Library
 # A. The Tangerine Wizard
 
 To begin building instruments in Tangerine, you
-must establish a user name and password at the [Tangerine
-Ojai](http://databases.tangerinecentral.org/tangerine/_design/ojai/index.html#login)
-website. Both your username and password are case-sensitive. Once logged
+must establish a user name and password on the Tangerine server you are using, whether through RTI or through another host. Both your username and password are case-sensitive. Once logged
 in, your user name will appear in the top right-hand corner of the
 browser window.
 
@@ -91,20 +89,18 @@ the landing screen indicating that your user is not part of a
 ‘Group.’[]{#TangerineWizard2 .anchor} Once you have logged into
 Tangerine, you can either:
 
-1.  Join an existing group; or
+1.  **Join an existing group**:
+    If you would like to join an existing group, please contact the person
+    who has created the group you would like to join and request that your
+    user name be added to that group.or
 
-2.  Create a new Group.
-
-If you would like to join an existing group, please contact the person
-who has created the group you would like to join and request that your
-user name be added to that group.
-
-If you would like to create a new group, click the "Account" button
-shown in the image above and then select "Join or create group" on the
-page that follows. You will be asked to re-enter your password in order
-to create a new group. Once you have done this, you should now see your
-new group appear in the Wizard landing screen. In this example, the
-group "demo\_manual" now appears as an option.
+2.  **Create a new Group**:
+    If you would like to create a new group, you must be logged in with the **user1** acount on your Tangerine server. This is the only username with the ability to create new groups. Once logged in as user1, click the "Account" button
+    shown in the image below and then select "Join or create group" on the
+    page that follows. You will be asked to re-enter your password in order
+    to create a new group. Once you have done this, you should now see your
+    new group appear in the Wizard landing screen. In this example, the
+    group "demo\_manual" now appears as an option.
 
 ![](.//media/image20.png)&nbsp;
 
@@ -133,7 +129,7 @@ privileges for editing, deleting and duplicating instruments. Member
 users, also known as ‘readers’, can only simulate (run) assessments,
 download their results files (.csv files), and print contents. To add a
 user into either role, enter the user’s name in the text field and click
-the ‘+’ button. Enter your password to confirm.
+the ‘+’ button. Enter your password to confirm. If you have errors adding a user to your group, it is most likely that you have not entered the user's name correctly - recall that usernames in Tangerine are case-sensitive. 
 
 ### 2.1 Changing your Group’s Language
 
@@ -168,13 +164,12 @@ to repurpose in a new group, you can import them by clicking the
 
 3.  In the target group (where you want the new copy), click ‘Import’.
 
-4.  Select the original group and enter the download key in the box.
+4.  Select the original group and enter the download key in the box. Click 'Import'. If successful you will see messaging indicating the number of documents imported (a single assessment can contain hundreds of 'documents' - each being a survey question, an assessment item, etc.)
 
 5.  Return to the new group’s main page and you will see the import.
 
 Note that the new copy of the imported instrument does not include any
-results data that may have been uploaded to the original copy. Any
-results uploaded to any instrument will only appear in the group from
+results data that may have been uploaded to the original copy. Results uploaded to any instrument will only appear in the group from
 which the copy of the instrument came. If you try to import an
 instrument that is archived in the original group, it will appear as
 archived also in the new group.
@@ -1472,11 +1467,10 @@ create a back file with the results data that can be imported on the
 server.
 
 
-5. Training and Data Collection
+## 5. Training and Data Collection
 -------------------------------
 
-**Using Tangerine during
-training, pilot and data collection**
+### **Using Tangerine during training, pilot and data collection**
 
 You may use the steps outlined earlier in this manual to prepare the
 assessment and the tablets for enumerator training. The enumerators can
@@ -1494,7 +1488,7 @@ different name. Results will not be carried over under duplication, but
 make sure you check the new instrument to confirm that questions and
 subtests have been fully duplicated.
 
-**Tangerine Training Topics **
+### **Tangerine Training Topics**
 
 Based on RTI’s experiences with Tangerine enumerator training for EGRA,
 no additional time should be needed with a Tangerine data collection
@@ -1517,7 +1511,7 @@ particular highlighting:
 An example training agenda and topics that are important to cover is
 included in Annex 1.
 
-**Inter-rater reliability (IRR) **
+### **Inter-rater reliability (IRR)**
 
 Procedurally, the process of inter-rater reliability does not change
 with Tangerine. Please refer to the best practices cited in the EGRA
@@ -1542,7 +1536,7 @@ recommended steps:
 -   Download the.csv file from the Tangerine Wizard for analysis, and
     conduct the analysis as you would normally.
 
-**Preparing for final data collection**
+### **Preparing for final data collection**
 
 As noted, you may want to create separate versions of each assessment
 for key stages in the data collection process: enumerator training,
@@ -1562,10 +1556,11 @@ instruments before piloting. We do this by duplicating the full training
 instrument, editing the necessary items and renaming it to append
 "pilot" or "final" to the assessment name.
 
-6. Entering data on tablets
+## 6. Entering data on tablets
 ---------------------------
 
-**Launch your assessment.** Before entering data, you must open the
+### **Launch your assessment.** 
+Before entering data, you must open the
 assessment that you wish to conduct. Some countries may have more than
 one assessment developed, i.e., EGRA (potential several in various
 languages), EGMA, and/or SSME instruments.
@@ -1656,7 +1651,7 @@ three ways to end a timed subtest:
 
 ![](.//media/image63.png)&nbsp;
 
-The "Input mode"‖ feature exists because
+The "Input mode" feature exists because
 buttons behave differently depending on what ‘mode‘ the application is
 in. When the timer has started, the buttons are in the "Mark"‖ mode that
 expects a click to mean "mark this item incorrect". After the timer is
@@ -1701,7 +1696,7 @@ that test. Click on each assessment to see details.
 
 *Never delete or modify an assessment or APK file from a tablet until you have uploaded all of the data! Remember that copying an assessment online does not create a copy of your results data, only the instrument content.*
 
-7. The Student/Participant Identifier
+## **7. The Student/Participant Identifier**
 -------------------------------------
 
 A recommended Tangerine subtest is the "Student ID" subtest, which
@@ -1743,7 +1738,7 @@ that child has already undertaken. Approaches here may be context
 specific and new ones need to be tried. Please give feedback to the RTI
 Tangerine team as to what worked (or did not) in a given context.
 
-**8. Data Storage, Synchronization
+## **8. Data Storage, Synchronization**
 and Backup**
 
 At present, all data will be hosted on a secure server which is managed
@@ -1753,7 +1748,7 @@ information contact your Tangerine administrator. As Tangerine is open
 source software, any user has the license-free option of hosting
 Tangerine on their own webserver if they should wish to.
 
-**RTI International does not advocate the collection of personally
+>RTI International does not advocate the collection of personally
 identifiable information (PII) on Tangerine. The storage of PII on
 Tangerine’s servers may jeopardize individuals if such data were to be
 provided to authorities with punitive powers or criminal intentions. As
@@ -1761,10 +1756,9 @@ such, Tangerine users should take the utmost care in ensuring that data
 stored on Tangerine does not contain PII and/or that any individuals
 with the permission to access your data are aware of and compliant with
 your organization’s ethics policy. Please see the Terms of Use on
-Tangerine’s website for further details. **
+Tangerine’s website for further details.
 
-**Making backups during
-data collection**
+**Making backups during data collection**
 
 Tangerine works in a browser, but does not require an Internet
 connection. There are two principal ways to back up your data during
@@ -1774,13 +1768,12 @@ that will send the data to the above-mentioned Tangerine server. If you
 have been able to sync your data successfully on the Tangerine server,
 there is no need to proceed with the backup options below.
 
-***Full tablet backup / Exporting Tangerine data***
+**Full tablet backup / Exporting Tangerine data**
 
-A more involved backup than the ‘Sync tablets’ option is to backup all
-of the data stored within your Tangerine application. This process can
+This process can
 be done either by backing up the entire tablet’s data, or by copying
 only the Tangerine data file. The memory taken up by backing up the
-entire tablet’s backup will be greater, but the process will be easier
+entire tablet’s backup will be greater, but the process may be easier
 to follow than extracting only the Tangerine data file. For more novice
 tablet users, backing up the entire tablet may be easier to follow. For
 more advanced users (such as those who may be selected as data
@@ -1798,18 +1791,7 @@ data file may be feasible.
     external storage such as an SD card or USB port, if your tablet is
     equipped with these.
 
-2.  Exporting Tangerine data. On your Android tablet, Tangerine stores
-    its data in a file named, "tangerine.couch" which can usually be
-    found in the following directory: Android/appdata/Tangerine. To find
-    the file in this directory, you may need to install a File Manager
-    application, such as the ES File Explorer app (free from Google
-    Play). Once you have a File Manager app installed, open the File
-    Manger app and then find the folder named, "Android". Thereafter
-    open "App Data" and then "Tangerine" in order to find the
-    "tangerine.couch" file. Once you have located this file, you will
-    need to either store it on a laptop or save it to an external
-    storage option available for your tablet (such as an SD card or USB
-    port).
+2.  Exporting Tangerine data. Log into Tangerine on the tablet and tap the 'Sync' tab just below the top bar. On this screen you will see a button labeled, 'Save as File'. Tap this and Tangerine will indicate the file path where your backup file has been stored. Connect the tablet to a computer using the tablet's USB cable. The tablet should appear as a storage device on the computer. Open the tablet's storage and navigate to the file path indicated by Tangerine to extract the backup file. Contact your host for options to merge this data file with your other data.  
 
 In the event you should lose or damage tablets and need to merge data
 from a backup into your larger online database, please contact the RTI
@@ -1817,10 +1799,10 @@ Tangerine team for steps on how to send the Tangerine data file form
 your backup in for processing.
 
 
-**9. Hardware and software maintenance and troubleshooting**
+## **9. Hardware and software maintenance and troubleshooting**
 
 **Battery maintenance.** A new
-tablet‘s battery will typically last for 8 - 10 straight hours of use,
+tablet‘s battery will typically last for 8 - 10 straight hours of Tangerine use,
 or approximately 20-25 EGRA assessments. To fully recharge the battery,
 you may need approximately 3 hours or more.
 
@@ -1839,7 +1821,7 @@ you may lose some of the data you are currently collecting.
 
 
 
-# Annex 1: Training Topics and Example Agenda 
+## Annex 1: Training Topics and Example Agenda 
 
 Training on the use of Tangerine for data collection should be integrated into the regular EGRA training programs, just as use of paper for marking responses would be. Based on RTI’s experiences, only an additional hour at most is recommended so that enumerators can become familiar with the hardware and its main functions.
 
@@ -1852,7 +1834,7 @@ Training on the use of Tangerine for data collection should be integrated into t
 | Troubleshooting                                                                    | - Subtest doesn‘t respond - Can‘t find current EGRA version - Errors caused by touching wrong, timer start/stop                                                                                                                                                                                                                                                                                                      |
 | Saving/syncing data                                                                | Depends on local context                                                                                                                                                                                                                                                                                                                                                                                             |
 
-# Annex 2: Tangerine Tipsheet
+## Annex 2: Tangerine Tipsheet
 
 *To start:*
 
@@ -1903,7 +1885,7 @@ Training on the use of Tangerine for data collection should be integrated into t
 -   Never use the "Input mode" buttons UNLESS you necessary or if must mark the last item wrong. In this case, after the timer stops and you mark the last letter, change ‘mode’ to "mark item" and touch the item to mark it wrong.
 
 
-# Annex 3: Guide to Supervisor Responsibilities during Data Collection
+## Annex 3: Guide to Supervisor Responsibilities during Data Collection
 
 Use the following guidelines to modify or create your supervisor guide.
 
@@ -1972,7 +1954,7 @@ IV\. At the end of data collection
 -   Store the devices in a safe place until returning them to the
     principal researcher or logistician.
 
-# Annex 4: Tips for keeping Tablets Charged
+## Annex 4: Tips for keeping Tablets Charged
 
 Tablets should be chosen so that they can be used for a full day without
 running out of power. In order to conserve power the **Wi-Fi should be
@@ -2047,7 +2029,7 @@ charging the second set of tablets. This could be done either with an
 inverter in the car or going to a place with mains electricity or
 finding a local cell phone charging service.
 
-# Annex 5. Additional Examples of Skip Logic Commands
+## Annex 5. Additional Examples of Skip Logic Commands
 
 The example strings of text can be copied and pasted into your
 instruments; you will just need to adjust the variable names and values
