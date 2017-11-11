@@ -131,13 +131,13 @@ server.get('/project/listAll', function (req, res, next) {
 server.get(/\/projects\/?.*/, restify.plugins.serveStatic({
   directory: '../projects',
   default: 'index.html',
-  maxAge:0
+  maxAge: 0
 }));
 
 server.get(/\/tangy\/?.*/, restify.plugins.serveStatic({
   directory: '../app',
   default: 'index.html',
-  maxAge:0
+  maxAge: 0
 }));
 
 server.post('/writeFile', async function (req, res, next) {
@@ -346,6 +346,7 @@ server.post('/item/save', async function (req, res, next) {
   let safeItemTitle = sanitize(req.params.itemTitle)
   let itemOrder = req.params.itemOrder
   let itemHtmlText = req.params.itemHtmlText
+
   let formHtmlPath = req.params.formHtmlPath
   let itemFilename = req.params.itemFilename
   let projectName = req.params.projectName

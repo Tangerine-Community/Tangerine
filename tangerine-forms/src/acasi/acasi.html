@@ -1,0 +1,116 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="tangy-acasi">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div> [[statusmessage]] </div>
+    <slot></slot>
+  </template>
+
+  <script>
+    /**
+     * `tangy-acasi`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+
+    class TangyAcasi extends Polymer.Element {
+      static get is() { return 'tangy-acasi'; }
+      static get properties() {
+        return {
+          statusmessage: {
+            type: String,
+            value: 'Click start to begin'
+          },
+            display_sound_url: {
+            type: String,
+            value: 'hoot'
+          },
+            transition_sound_url: {
+            type: String,
+            value: 'hoot'
+          }
+        };
+      }
+
+
+      // Element class can define custom element reactions
+      // @TODO: Duplicating ready?
+      connectedCallback() {
+        super.connectedCallback();
+      }
+    
+      ready() {
+        super.ready();
+        this.status = this.statusmessage;
+        this.ds = this.display_sound_url;
+        this.ts = this.transition_sound_url;
+        console.log("display_sound_url: " + this.display_sound_url);
+        console.log("transition_sound_url: " + this.transition_sound_url);
+        if (this.transition_sound_url) {
+            this.transitionSound = new Audio(this.transition_sound_url);
+            this.transitionSound.play();
+        }
+        this.transitionSound.play();
+        if (this.display_sound_url) {
+            this.displaySound = new Audio(this.display_sound_url);
+            this.displaySound.load();
+        }
+
+
+          // @TODO: Need to listen to slot for ready.
+        setTimeout(() => this._prepareForm(), 200)
+      }
+
+        _prepareForm() {
+
+            // Find all our img elements.
+            this.imgElements = Array.prototype.slice.call(this.querySelectorAll('img'));
+            this.imgElements.forEach(element => {
+                element.addEventListener('click', (event) => {
+                this.imgElements.forEach(element => {
+//                element.setAttribute('style', 'border: none;'); ;
+//                TangyUtils.removeClass(element, 'eftouch-selected');
+                var ele = element;
+                var cls = 'eftouch-selected';
+                var hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
+                if (hasClass) {
+                    var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+                    ele.className=ele.className.replace(reg,' ');
+                }
+
+
+
+        });
+            const element = event.srcElement;
+//            element.setAttribute('style', 'border: 10px solid #af0; border-radius: 10px;'); ;
+            var ele = element;
+            var cls = 'eftouch-selected';
+            var hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
+            if (!hasClass) ele.className += " "+cls;
+
+            const inputEl = this.querySelector('#foo');
+            if (inputEl !== null) {
+                inputEl.value = event.srcElement.id;
+            }
+            this.displaySound.play();
+//            this.statusmessage = 'You may now proceed.';
+        });
+        });
+
+      }
+
+
+    }
+
+
+    window.customElements.define(TangyAcasi.is, TangyAcasi);
+  </script>
+</dom-module>

@@ -1,6 +1,16 @@
 # Raisin
 
-a restly node server for Tangerinev3
+a restly node server for TangerineV3
+
+## Running
+
+### Development
+
+`npm run dev` runs nodemon.
+
+### Deployment
+
+`npm run start` runs node.
 
 ## API
 

@@ -1,0 +1,70 @@
+<head>
+    <style>
+        span.highlight-yellow {
+            background-color: yellow;
+        }
+        span.highlight-blue {
+            background-color: blue;
+        }
+        span.highlight-red {
+            background-color: red;
+        }
+        .ck-widget.fancy-widget {
+            background-color: black;
+            color: white;
+            text-align: center;
+            height: 40px;
+            line-height: 40px;
+        }
+        .ck-widget.fancy-widget.highlight-yellow {
+            background-color: yellow;
+            color: black;
+        }
+        .ck-widget.fancy-widget.highlight-blue {
+            background-color: blue;
+            color: black;
+        }
+        .ck-widget.fancy-widget.highlight-red {
+            background-color: red;
+            color: black;
+        }
+        button {
+            width: 200px;
+        }
+         .ck-editor__editable {
+             min-height: 800px;
+         }
+    </style>
+</head>
+<div id="editor"></div>
+
+<script src="../build/ckeditor.js"></script>
+
+<script>
+//  const config = {
+//    toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'insertAcasi', 'showHtml' ],
+////            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'Paragraph', 'typing',  'Image', 'ImageToolbar', 'ImageCaption', 'ImageStyle', 'BlockQuote','ImageUpload' ],
+////            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'BlockQuote', 'Image', 'ImageUpload' ],
+//    image: {
+//      toolbar: [ 'imageTextAlternative', '|', 'imageStyleFull', 'imageStyleSide' ]
+//    },
+//    ckfinder: {
+//      uploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&responseType=json'
+//    }
+//  };
+  ClassicEditor
+//    .create( window.document.querySelector("#editor"), config )
+    .create( window.document.querySelector("#editor") )
+    .then( editor => {
+      console.log( editor );
+      if (typeof Tangy == 'undefined') {
+        window.Tangy = new Object()
+        window.Tangy.editor = editor
+      } else {
+        window.Tangy.editor = editor
+      }
+    } )
+    .catch( error => {
+      console.error( "error: " + error );
+    } );
+</script>

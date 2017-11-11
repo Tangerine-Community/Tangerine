@@ -1,6 +1,7 @@
 <!--<link rel="import" href="./bower_components/polymer/polymer.html">-->
-<script src="../../node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
-
+<!--<script src="../../node_modules/@ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>-->
+<!--<script src="../../node_modules/ckeditor5-eftouch/dist/bundle.js"></script>-->
+<script src="../../build/ckeditor.js"></script>
 
 <!--
 `tangy-textarea`
@@ -35,8 +36,8 @@ ckeditor5 input type
           super.connectedCallback();
           console.log('my-element created!');
           const config = {
-            toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote' ],
-//            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'Paragraph', 'typing',  'Image', 'ImageToolbar', 'ImageCaption', 'ImageStyle', 'BlockQuote','ImageUpload' ],
+            toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'acasi', 'dumpdata' ],
+//            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'Paragraph', 'typing',  'Image', 'ImageToolbar', 'ImageCaption', 'ImageStyle', 'ImageUpload', 'Acasi', 'Dumpdata' ],
 //            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'BlockQuote', 'Image', 'ImageUpload' ],
             image: {
               toolbar: [ 'imageTextAlternative', '|', 'imageStyleFull', 'imageStyleSide' ]
@@ -59,8 +60,8 @@ ckeditor5 input type
 //            }
 //          }
           ClassicEditor
-            .create( window.document.querySelector("#editor"), config )
-//            .create( window.document.querySelector("#editor") )
+//            .create( window.document.querySelector("#editor"), config )
+            .create( window.document.querySelector("#editor") )
             .then( editor => {
               console.log( editor );
               if (typeof Tangy == 'undefined') {
