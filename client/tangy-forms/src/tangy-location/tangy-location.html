@@ -53,6 +53,10 @@
             // reflectToAttribute: true,
             observer: 'render'
           },
+          label: {
+            type: String,
+            value: 'Location'
+          },
           required: {
             type: Boolean,
             value: false
@@ -77,20 +81,44 @@
         };
       }
 
-      // Element class can define custom element reactions
-      // @TODO: Duplicating ready?
       async connectedCallback() {
         super.connectedCallback();
          
         // window.tangyFormStore.dispatch({type: 'INPUT_VALUE_CHANGE', inputName: 'location', inputValue: {}})
-        /*
-        this.shadowDom.addEventListener('change', (event) => this.dispatchEvent('INPUT_VALUE_CHANGE', {
-          details: {
-            inputName: this.name,
-            inputValue: {...this.value, { $event.target.name: event.target.value }}
-          }
-        }))
-        */
+        this.shadowRoot.addEventListener('change', (event) => {
+          let levels = this.showLevels.split(',')
+          // Calculate our new value.
+          let newSelections =  this.value.map(selection => {
+            // Modify the selection level associated with the event.
+            if (selection.level === event.target.name) {
+              return {
+                level: event.target.name, 
+                value: event.target.value
+              }
+            } 
+            // Make sure to set the selection values to '' for all selections after the one just selected. 
+            else if (levels.indexOf(selection.level) > levels.indexOf(event.target.name)) {
+              return {
+                level: selection.level,
+                value: ''
+              }
+            } 
+            // Return unmodified selections if they are unrelated to this event.
+            else {
+              return selection
+            }
+          })
+          this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', 
+            {
+              detail: {
+                inputName: this.name,
+                inputValue: newSelections
+              },
+              bubbles: true
+            }
+          ))
+        })
+
       }
  
       render() {
@@ -121,7 +149,8 @@
         }
 
         // Find the first level not selected.
-        firstLevelNotSelected = (selections.find(selection => (selection.value === ''))).level
+        let firstSelectionNotSelected = (selections.find(selection => (selection.value === '')))
+        firstLevelNotSelected = (firstSelectionNotSelected) ? firstSelectionNotSelected.level : ''
 
         // Generate queries.
         selections.forEach((selection, i) => {
@@ -158,10 +187,14 @@
         //
 
         this.$.container.innerHTML = `
-          <label>Location</label>
+          <label>${this.label}</label> <br>
           ${selections.map((selection, i) => `
-            <label> ${selection.level} </label>
-            <select name=${selection.level}> 
+            <label ${(options[selection.level].length === 0) ? 'hidden' : ''}> 
+              ${selection.level} 
+            </label>
+            <select name=${selection.level}
+              ${(options[selection.level].length === 0) ? 'hidden' : ''}
+            > 
               <option
                 ${(selection.value === '') ? 'selected' : ''} 
                 disabled='disabled'
@@ -176,51 +209,11 @@
                   ${option.label}
                 </option>
               `)}
-            </select> 
+            </select><br> 
           `).join('')}
         `
 
-        // @TODO In reducer, if a level was just selected that is somewhere in the middle of selection, unset everything after it.
       }
-
-      /*
-
-      onChange (event) {
-
-        // this.calculateTreeFromShadowDOM()
-
-        // If we have an level that is not selected, render again.
-        if (this.levels.find(level => this.selected[level] === '' )) {
-          this.render();
-        } else {
-          this.done()
-        }
-      } 
-
-      calculateTreeFromLightDOM() {
-        // Get selected.
-        let inputs = this.querySelectorAll('[name]')
-        inputs.forEach((input, i) => {
-          if (input.name === `${this.name}-children`) return
-          this.selected[this.levels[i]] = input.value
-        })
-
-        return Loc.query(this.levels, this.state, (res) => {
-        })
-      }
-
-      calculateTreeFromShadowDOM() {
-        // Get selected.
-        let inputs = this.querySelectorAll('[name]')
-        inputs.forEach((input, i) => {
-          if (input.name === `${this.name}-children`) return
-          this.selected[this.levels[i]] = input.value
-        })
-
-        return Loc.query(this.levels, this.state, (res) => {
-        })
-      }
-      */
 
     }
 
