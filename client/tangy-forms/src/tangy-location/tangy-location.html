@@ -194,9 +194,19 @@
 
       // On selection change event, calculate our new value and dispatch an event.
       onSelectionChange(event) {
+
         let levels = this.showLevels.split(',')
+
+        // Get selections from this.value but scaffold out selections if there is no value.
+        let selections = [...this.value]
+        if (selections.length === 0) {
+          levels.forEach(level => {
+            selections = [...selections, ...[{level, value: ''}]] 
+          })
+        }
+
         // Calculate our new value.
-        let newSelections =  this.value.map(selection => {
+        let newSelections =  selections.map(selection => {
           // Modify the selection level associated with the event.
           if (selection.level === event.target.name) {
             return {
