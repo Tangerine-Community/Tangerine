@@ -10,6 +10,7 @@
     <title>Tangerine Forms</title>
 
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="bower_components/paper-progress/paper-progress.html"></script>
     <link href="fonts/fonts.css" rel="stylesheet">
 
     <link rel="import" href="src/tangy-form-app/tangy-form-app.html">
@@ -48,6 +49,7 @@
 
   <body>
 
+
     <div id="base-path-loader"></div>
 
     <script>
@@ -73,6 +75,11 @@
       })();
 
     </script>
+
+    <div id="tangy-form-app-loading" style="text-align: center; margin: auto; width: 300px">
+      Loading...
+      <paper-progress style="margin: auto" indeterminate class="slow"></paper-progress>
+    </div>
 
     <tangy-form-app></tangy-form-app>
 
