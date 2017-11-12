@@ -74,21 +74,27 @@ function tangyFormReducer(state = initialState, action) {
 
 
     case ITEM_CLOSE:
-
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
-
       newState = Object.assign({}, state)
-
       // Validate.
       newState.inputs = state.inputs.map(input => {
-        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1
-            && input.required === true 
-            && (input.value === '' || input.value === false)
+        // Skip over if not in the item being closed.
+        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) === -1) {
+          return Object.assign({}, input)
+        }
+        // Check to see if the item has value.
+        let hasValue = false
+        if (Array.isArray(input.value) && input.value.length > 0) hasValue = true
+        if (typeof input.value === 'string' && input.value.length > 0) hasValue = true
+        // Now check the validation.
+        if (input.required === true 
+            && !hasValue
             && input.hidden === false
             && input.disabled === false) {
             return Object.assign({}, input, {invalid: true})
+        } else {
+          return Object.assign({}, input)
         }
-        return Object.assign({}, input)
       })
 
       // Find blockers.
