@@ -18,7 +18,7 @@ rm -r build
 mkdir build
 
 # Copy build items over.
-cp app-updater/build/default/index.html build/index.html
+cp -r app-updater/build/default/* build/
 cp app-updater/logo.svg build/logo.svg
 cp -r shell/dist/tangerine build/tangerine
 cp -r tangy-forms/build/default build/tangy-forms
