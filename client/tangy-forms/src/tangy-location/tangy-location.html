@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<script src="../../bower_components/jquery/dist/jquery.js"></script>
 <script src="../../bower_components/underscore/underscore.js"></script>
 <script src="./loc.js"></script>
 
@@ -83,70 +82,78 @@
 
       async connectedCallback() {
         super.connectedCallback();
-         
-        // window.tangyFormStore.dispatch({type: 'INPUT_VALUE_CHANGE', inputName: 'location', inputValue: {}})
-        this.shadowRoot.addEventListener('change', (event) => {
-          let levels = this.showLevels.split(',')
-          // Calculate our new value.
-          let newSelections =  this.value.map(selection => {
-            // Modify the selection level associated with the event.
-            if (selection.level === event.target.name) {
-              return {
-                level: event.target.name, 
-                value: event.target.value
-              }
-            } 
-            // Make sure to set the selection values to '' for all selections after the one just selected. 
-            else if (levels.indexOf(selection.level) > levels.indexOf(event.target.name)) {
-              return {
-                level: selection.level,
-                value: ''
-              }
-            } 
-            // Return unmodified selections if they are unrelated to this event.
-            else {
-              return selection
-            }
-          })
-          this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', 
-            {
-              detail: {
-                inputName: this.name,
-                inputValue: newSelections
-              },
-              bubbles: true
-            }
-          ))
-        })
-
+        // When we hear change events, it's coming from users interacting with select lists.
+        this.shadowRoot.addEventListener('change', this.onSelectionChange.bind(this))
       }
  
       render() {
 
-        //
-        // Preprocessing.
-        //
+        // Get levels configured on this.showLevels.
+        let levels = this.showLevels.split(',')
 
-        // Selections are what is currently selected given this.value.
-        let selections = []
+        // Get selections from this.value but scaffold out selections if there is no value.
+        let selections = [...this.value]
+        if (selections.length === 0) {
+          levels.forEach(level => {
+            selections = [...selections, ...[{level, value: ''}]] 
+          })
+        } 
+
+        // Calculate the options for each select. Returns an object keyed by select level.
+        let options = this.calculateLevelOptions(selections)
+
+        // Render template and assign to the container.
+        this.$.container.innerHTML = `
+
+          <label>
+            ${this.label}
+          </label> <br>
+
+          ${selections.map((selection, i) => `
+
+            <label ${(options[selection.level].length === 0) ? 'hidden' : ''}> 
+              ${selection.level} 
+            </label>
+
+            <select 
+              name=${selection.level}
+              ${(options[selection.level].length === 0) ? 'hidden' : ''}
+            > 
+
+              <option
+                ${(selection.value === '') ? 'selected' : ''} 
+                disabled='disabled'
+              >
+                Select...
+              </option>
+
+              ${options[selection.level].map((option, i) => `
+                <option 
+                  value="${option.id}" 
+                  ${(selection.value === option.id) ? 'selected' : ''}
+                 >
+                  ${option.label}
+                </option>
+              `)}
+
+            </select><br> 
+
+          `).join('')}
+        `
+
+      }
+
+      calculateLevelOptions(selections) {
+
+        // Options is an object where the keys are the level and the value is an array of location objects that are options given previously selected.
+        let options = {}
         // Queries contain the Loc.query() parameters required to find options for a given level. Level is the key which points to an object where the properties
         // are the parameters for the Loc.query().
         let queries = {} 
-        // Options is an object where the keys are the level and the value is an array of location objects that are options given previously selected.
-        let options = {}
         // firstLevelNotSelected is the first level with no selection and the last level we will bother calculating options for.
         let firstLevelNotSelected = '' 
         // Levels for querying.
         let levels = this.showLevels.split(',')
-
-        // Get selections from this.value and safeguard for not yet having a value.
-        if (this.value.length === 0) {
-          levels.forEach(level => {
-            selections = [...selections, ...[{level, value: ''}]] 
-          })
-        } else {
-          selections = this.value
-        }
 
         // Find the first level not selected.
         let firstSelectionNotSelected = (selections.find(selection => (selection.value === '')))
@@ -182,37 +189,42 @@
           }
         })
 
-        //
-        // Render
-        //
+        return options
+      }
 
-        this.$.container.innerHTML = `
-          <label>${this.label}</label> <br>
-          ${selections.map((selection, i) => `
-            <label ${(options[selection.level].length === 0) ? 'hidden' : ''}> 
-              ${selection.level} 
-            </label>
-            <select name=${selection.level}
-              ${(options[selection.level].length === 0) ? 'hidden' : ''}
-            > 
-              <option
-                ${(selection.value === '') ? 'selected' : ''} 
-                disabled='disabled'
-              >
-                Select...
-              </option>
-              ${options[selection.level].map((option, i) => `
-                <option 
-                  value="${option.id}" 
-                  ${(selection.value === option.id) ? 'selected' : ''}
-                 >
-                  ${option.label}
-                </option>
-              `)}
-            </select><br> 
-          `).join('')}
-        `
-
+      // On selection change event, calculate our new value and dispatch an event.
+      onSelectionChange(event) {
+        let levels = this.showLevels.split(',')
+        // Calculate our new value.
+        let newSelections =  this.value.map(selection => {
+          // Modify the selection level associated with the event.
+          if (selection.level === event.target.name) {
+            return {
+              level: event.target.name, 
+              value: event.target.value
+            }
+          } 
+          // Make sure to set the selection values to '' for all selections after the one just selected. 
+          else if (levels.indexOf(selection.level) > levels.indexOf(event.target.name)) {
+            return {
+              level: selection.level,
+              value: ''
+            }
+          } 
+          // Return unmodified selections if they are unrelated to this event.
+          else {
+            return selection
+          }
+        })
+        this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', 
+          {
+            detail: {
+              inputName: this.name,
+              inputValue: newSelections
+            },
+            bubbles: true
+          }
+        ))
       }
 
     }
