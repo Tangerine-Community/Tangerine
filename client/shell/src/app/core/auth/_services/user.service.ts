@@ -72,6 +72,31 @@ export class UserService {
       return userProfileId;
     }
   }
+
+  async getUserProfile() {
+    const userDBPath = await this.getUserDatabase();
+    if (userDBPath) {
+      const userDB = new PouchDB(userDBPath);
+      let userProfileId: any;
+      PouchDB.plugin(PouchDBFind);
+      userDB.createIndex({
+        index: { fields: ['collection'] }
+      }).then((data) => { console.log('Indexing Succesful'); })
+        .catch(err => console.error(err));
+
+      try {
+        const result = await userDB.find({ selector: { formId: 'user-profile', collection: 'TangyFormResponse' } });
+        if (result.docs.length > 0) {
+          userProfileId = result.docs[0];
+        }
+      } catch (error) {
+        console.error(error);
+      }
+      const userProfile = await userDB.get(userProfileId._id);
+      return userProfile;
+    }
+  }
+
   async doesUserExist(username) {
     let userExists: boolean;
     PouchDB.plugin(PouchDBFind);
