@@ -42,6 +42,7 @@
       }
     </style>
     <div class="tangy-form-app--container">
+
       <div id="form-list">
         <template is="dom-repeat" items="{{forms}}">
             <paper-card 
@@ -59,6 +60,7 @@
             </paper-card>
         </template>
       </div>
+
       <div id="form-view" hidden>
         <div id="form-view--nav">
           <!-- a href="/tangy-forms/index.html"><iron-icon icon="icons:close"></iron-icon></a-->
@@ -66,7 +68,9 @@
         </div>
         <slot></slot>
       </div>
+
     </div>
+
 
   </template>
 
@@ -92,6 +96,7 @@
         } else {
           this.showFormsList()
         }
+        this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
       }
 
 			// For parsing window.location.hash parameters.
