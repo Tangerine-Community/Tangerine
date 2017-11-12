@@ -2,23 +2,20 @@
 cd shell 
 npm run build
 cd ..
+
 # Build tangy forms.
 cd tangy-forms
 npm run build
 cd ..
-# Build legacy client.
-## cd ../legacy
-# npm install 
-# cd ..
+
+# Build updater
+cd app-updater
+npm run build
+cd ..
 
 # Refresh the build directory.
 rm -r build
 mkdir build
-
-# Build updater
-cd app-updater
-polymer build
-cd ..
 
 # Copy build items over.
 cp app-updater/build/default/index.html build/index.html
