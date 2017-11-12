@@ -50,15 +50,6 @@ function tangyFormReducer(state = initialState, action) {
     case FORM_OPEN:
       // tmp.response = Object.assign({}, action.response)
       return Object.assign({}, action.response)
-    /*
-    case ITEM_ADD:
-      tmp.items = (state.items.length === 0) ? action.items : state.items
-      tmp.openIndex = tmp.items.findIndex(item => (item.open))
-      if (tmp.openIndex === -1) tmp.items[0].open = true
-      return Object.assign({}, state, {
-        items: tmp.items
-      })
-      */
 
     case ITEM_OPEN:
       newState = Object.assign({}, state)
