@@ -42,7 +42,9 @@ INPUT_ENABLE = 'INPUT_ENABLE'
 const inputEnable = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_ENABLE, inputName: inputName })
 
 INPUT_INVALID = 'INPUT_INVALID'
+const inputInvalid = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_INVALID, inputName: inputName })
 INPUT_VALID = 'INPUT_VALID'
+const inputValid = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_VALID, inputName: inputName })
 
 INPUT_HIDE = 'INPUT_HIDE'
 const inputHide = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_HIDE, inputName: inputName })
