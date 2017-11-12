@@ -12,12 +12,8 @@
       :host([invalid]) {
         border: solid red 3px;
       }
-      :host([required]:not([disabled])) label::before  { 
-        content: "*"; 
-        color: red; 
-        position: absolute;
-        top: 4px;
-        right: 5px;
+      :host([hidden]) {
+        display: none;
       }
       label {
         font-size: 12px;
@@ -73,9 +69,14 @@
             type: String,
             value: ''
           },
-          saveChildren: {
+          hidden: {
             type: Boolean,
-            value: false 
+            value: false
+          },
+          disabled: {
+            type: Boolean,
+            value: false,
+            observer: 'render'
           }
         };
       }
@@ -118,6 +119,7 @@
             <select 
               name=${selection.level}
               ${(options[selection.level].length === 0) ? 'hidden' : ''}
+              ${(this.disabled) ? 'disabled' : ''}
             > 
 
               <option
@@ -226,11 +228,21 @@
             return selection
           }
         })
+
+        // Calculate validity.
+        let isValid = true 
+        if (this.required === true) {
+          let levelsWithSelections = newSelections.filter(select => select.value !== '')
+          isValid = (levelsWithSelections.length === levels.length)
+        }
+
+        // Dispatch the event.
         this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', 
           {
             detail: {
               inputName: this.name,
-              inputValue: newSelections
+              inputValue: newSelections,
+              inputInvalid: !isValid 
             },
             bubbles: true
           }
