@@ -118,8 +118,7 @@
         this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
           detail: {
             inputName: this.name,
-            inputValue: event.target.name,
-            inputInvalid: !this.validate()
+            inputValue: event.target.name
           },
           bubbles:true
         }))
@@ -136,17 +135,6 @@
         if (value == false) paperRadioButtons.forEach((button) => button.removeAttribute('disabled'))
       }
       onHiddenChange(value) {
-      }
-
-      validate() {
-        let props = this.getProps()
-        if (props.required && !props.hidden && !props.value) {
-          this.invalid = true
-          return false
-        } else {
-          this.removeAttribute('invalid')
-          return true
-        }
       }
 
     }
