@@ -108,7 +108,14 @@
         this.$.input.addEventListener('change', (event) => {
           this.value = this.$.input.value
           // @TODO tangy-form-item's listener for change events is not capturing this.
-          this.dispatchEvent(new Event('change', {bubbles: true}))
+          this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
+            detail: {
+              inputName: this.name,
+              inputValue: event.target.value,
+              inputInvalid: !this.$.input.validate()
+            },
+            bubbles: true
+          }))
         })
       }
 

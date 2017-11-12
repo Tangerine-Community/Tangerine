@@ -113,8 +113,16 @@
         // Otherwise tangy-form-item will find the wrong value for this element.
         event.stopPropagation()
         if (!this.isReady) return
-        this.value = event.target.name
-        this.dispatchEvent(new Event('change', {bubbles:true}))
+        // The value we dispatch is the event.target.name. Remember, that's the option that was just selected
+        // and the option's name selected is the value of this element.
+        this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
+          detail: {
+            inputName: this.name,
+            inputValue: event.target.name,
+            inputInvalid: !this.validate()
+          },
+          bubbles:true
+        }))
       }
 
       onValueChange(value) {
