@@ -7,6 +7,10 @@ import { AuthenticationService } from './core/auth/_services/authentication.serv
 import { UserService } from './core/auth/_services/user.service';
 import { WindowRef } from './core/window-ref.service';
 
+function _window(): any {
+    return window;
+}
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -21,9 +25,16 @@ export class AppComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private router: Router) {
     windowRef.nativeWindow.PouchDB = PouchDB;
+
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+
+    // Set location list as a global.
+    const window = _window();
+    const res = await fetch('/content/location-list.json');
+    window.locationList = await res.json();
+
     this.showNav = this.authenticationService.isLoggedIn();
     this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
       this.showNav = isLoggedIn;
