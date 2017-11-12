@@ -201,6 +201,22 @@ function tangyFormReducer(state = initialState, action) {
         return input
       })})
 
+    case INPUT_INVALID:
+      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+        if (input.name == action.inputName) {
+          return Object.assign({}, input, {invalid: true})
+        }
+        return input
+      })})
+
+    case INPUT_VALID:
+      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+        if (input.name == action.inputName) {
+          return Object.assign({}, input, {invalid: false})
+        }
+        return input
+      })})
+
     case INPUT_SHOW:
       return Object.assign({}, state, { inputs: state.inputs.map((input) => {
         if (input.name == action.inputName) {
