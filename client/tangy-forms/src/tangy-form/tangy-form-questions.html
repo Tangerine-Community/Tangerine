@@ -140,15 +140,24 @@
           itemOpen(state.items[0].id)
         }
 
-        this.hasNotYetFocused = true
+        // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
+        this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
+          this.store.dispatch({
+            type: INPUT_VALUE_CHANGE,  
+            inputName: event.detail.inputName, 
+            inputValue: event.detail.inputValue, 
+            inputInvalid: event.detail.inputInvalid 
+          })
+        })
 
+        // Flag for first render.
+        this.hasNotYetFocused = true
 
       }
 
       disconnectedCallback() {
         this.unsubscribe()
       }
-
 
       // Prevent parallel reflects, leads to race conditions.
       throttledReflect(iAmQueued = false) {
