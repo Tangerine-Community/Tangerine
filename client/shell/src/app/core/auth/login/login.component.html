@@ -2,7 +2,7 @@
   <div class="group">
     <form role="form" (submit)="login()">
       <br>
-      <h3 class="tangy-foreground-primary">Login to Tangerine</h3>
+      <h3 class="mat-title">Login to Tangerine</h3>
       <md-input-container>
         <input mdInput type="text" required [(ngModel)]="user.username" id="username" name="username">
         <md-placeholder>
@@ -19,12 +19,8 @@
       </md-input-container>
       <br>
       <br>
-      <button md-raised-button color="primary" type="submit" name="action">LOGIN</button>
-      <span>
-        <a md-button routerLink="/register">
-          <small>REGISTER</small>
-        </a>
-      </span>
+      <button md-raised-button color="accent" type="submit" name="action">LOGIN</button>
+      <button md-button color="accent" routerLink="/register">REGISTER</button>
       <br>
       <br>
       <span id="err">
