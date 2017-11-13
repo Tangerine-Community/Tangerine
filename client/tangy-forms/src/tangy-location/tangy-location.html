@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<script src="../../bower_components/jquery/dist/jquery.js"></script>
 <script src="../../bower_components/underscore/underscore.js"></script>
 <script src="./loc.js"></script>
 
@@ -13,20 +12,15 @@
       :host([invalid]) {
         border: solid red 3px;
       }
-      :host([required]:not([disabled])) label::before  { 
-        content: "*"; 
-        color: red; 
-        position: absolute;
-        top: 4px;
-        right: 5px;
+      :host([hidden]) {
+        display: none;
       }
       label {
         font-size: 12px;
         color: #777;
       }
     </style>
-      <label>Location</label>
-      <div id="loading">Loading location list...</div>
+      <div id="container"></div>
       <slot></slot>
     </div>
   </template>
@@ -49,9 +43,14 @@
             value: 'location'
           },
           value: {
+            type: Array,
+            value: [],
+            // reflectToAttribute: true,
+            observer: 'render'
+          },
+          label: {
             type: String,
-            value: '',
-            reflectToAttribute: true
+            value: 'Location'
           },
           required: {
             type: Boolean,
@@ -70,171 +69,186 @@
             type: String,
             value: ''
           },
-          saveChildren: {
+          hidden: {
             type: Boolean,
-            value: false 
+            value: false
+          },
+          disabled: {
+            type: Boolean,
+            value: false,
+            observer: 'render'
           }
         };
       }
 
-      // Element class can define custom element reactions
-      // @TODO: Duplicating ready?
       async connectedCallback() {
         super.connectedCallback();
-        this.selected = {}
-        if (this.value == "") this.value = '{}'
-        try {
-          // this.selected = JSON.parse(`[${this.value}`)
-          this.selected = JSON.parse(this.value)
-        } catch(e) {
-          console.log(`${this.name} was given invalid JSON`)
-        }
-        let response = await fetch(this.locationSrc)
-        let options = await response.json()
-        this.$.loading.innerHTML = ''
-        window.locationList = options
-        if (options == null) {
-          options = {};
-        }
-        this.showTitles = options.showTitles != null ? options.showTitles : true;
-        if (this.showLevels) {
-          this.levels = this.showLevels.split(',')
-        } else {
-          this.levels = options.locationsLevels
-        }
-        this.addedOptions = options.addedOptions != null ? options.addedOptions : false;
-        this.render()
+        // When we hear change events, it's coming from users interacting with select lists.
+        this.shadowRoot.addEventListener('change', this.onSelectionChange.bind(this))
+      }
+ 
+      render() {
+
+        // Get levels configured on this.showLevels.
+        let levels = this.showLevels.split(',')
+
+        // Get selections from this.value but scaffold out selections if there is no value.
+        let selections = [...this.value]
+        if (selections.length === 0) {
+          levels.forEach(level => {
+            selections = [...selections, ...[{level, value: ''}]] 
+          })
+        } 
+
+        // Calculate the options for each select. Returns an object keyed by select level.
+        let options = this.calculateLevelOptions(selections)
+
+        // Render template and assign to the container.
+        this.$.container.innerHTML = `
+
+          <label>
+            ${this.label}
+          </label> <br>
+
+          ${selections.map((selection, i) => `
+
+            <label ${(options[selection.level].length === 0) ? 'hidden' : ''}> 
+              ${selection.level} 
+            </label>
+
+            <select 
+              name=${selection.level}
+              ${(options[selection.level].length === 0) ? 'hidden' : ''}
+              ${(this.disabled) ? 'disabled' : ''}
+            > 
+
+              <option
+                ${(selection.value === '') ? 'selected' : ''} 
+                disabled='disabled'
+              >
+                Select...
+              </option>
+
+              ${options[selection.level].map((option, i) => `
+                <option 
+                  value="${option.id}" 
+                  ${(selection.value === option.id) ? 'selected' : ''}
+                 >
+                  ${option.label}
+                </option>
+              `)}
+
+            </select><br> 
+
+          `).join('')}
+        `
+
       }
 
-      onChange (event) {
-        this.value = JSON.stringify(this.selection())
-        var index;
-        $(event.target).closest("div").nextAll().remove();
-        index = parseInt($(event.target).attr('data-index'));
-        if (index + 1 !== this.levels.length) {
-          this.renderOne(index + 1);
-        } else if (this.saveChildren) {
-          this.setChildren()
-        }
-        if (this.invalid) this.validate()
-        // @TODO This is causing PouchDB conflicts somehow?
-        // return this.dispatchEvent(new Event("change", {bubbles: true}));
-      }
+      calculateLevelOptions(selections) {
 
-      setChildren() {
-        console.log('Setting children')
-        // let selectedOptions = this.querySelectorAll('option[selected="selected"]')
-        let criteria = this.selection();
-        // @TODO The right place to get locationList?
-        let childrenLevel = window.locationList.locationsLevels.slice(0, this.levels.length)
-        Loc.query(childrenLevel, criteria, (res) => {
-          // @TODO If reselect, then modify existing. We probably want to set this input on connected callback, then just update it here.
-          this.insertAdjacentHTML('beforeend',"<div><input type='hidden' name='" + this.name + "-children' value='" + JSON.stringify(res) + "'></div>")
-          let childrenInputEl = this.querySelector(`[name=${this.name}-children]`)
-          setTimeout(() => {
-            childrenInputEl.dispatchEvent(new Event('change', {bubbles: true}))
-          }, 1000)
-          // criteria[window.locationList.locationsLevels[this.levels.length]] = res
-          // this.value = JSON.stringify(criteria) 
+        // Options is an object where the keys are the level and the value is an array of location objects that are options given previously selected.
+        let options = {}
+        // Queries contain the Loc.query() parameters required to find options for a given level. Level is the key which points to an object where the properties
+        // are the parameters for the Loc.query().
+        let queries = {} 
+        // firstLevelNotSelected is the first level with no selection and the last level we will bother calculating options for.
+        let firstLevelNotSelected = '' 
+        // Levels for querying.
+        let levels = this.showLevels.split(',')
+
+        // Find the first level not selected.
+        let firstSelectionNotSelected = (selections.find(selection => (selection.value === '')))
+        firstLevelNotSelected = (firstSelectionNotSelected) ? firstSelectionNotSelected.level : ''
+
+        // Generate queries.
+        selections.forEach((selection, i) => {
+          // Only generate queries for levels that are selected or the first level not selected.
+          if (selection.value === '' && selection.level !== firstLevelNotSelected) return 
+          // Slice out the selections at this level from all selections.
+          let selectionsAtThisLevel = selections.slice(0, i) 
+          // Transform the array of objects to an array of levels.
+          let queryLevels = selectionsAtThisLevel.map(s => s.level)
+          // Transform selectionsAtThisLevel Array to queryCriteria Object.
+          let queryCriteria = {} 
+          selectionsAtThisLevel.forEach(selection =>  queryCriteria[selection.level] = selection.value)
+          // Set the query.
+          queries[selection.level] = {
+            levels: queryLevels,
+            criteria: queryCriteria
+          }
         })
 
+        // Run queries to get options.
+        selections.forEach(selection => {
+          if (queries[selection.level]) {
+            let query = queries[selection.level]
+            Loc.query(levels, query.criteria, (res) => {
+              options[selection.level] = res
+            })
+          } else {
+            options[selection.level] = []
+          }
+        })
+
+        return options
       }
 
-      // @TODO This does not work if the last level is not set.
-      validate () {
-        if (!this.required) return true
-        var j, len, level, ref, value;
-        value = this.selection();
-        ref = this.levels;
-        for (j = 0, len = ref.length; j < len; j++) {
-          level = ref[j];
-          if (!value[level]) {
-            this.setAttribute('invalid', true)
-            return false;
-          }
-        }
-        this.removeAttribute('invalid')
-        return true;
-      }
+      // On selection change event, calculate our new value and dispatch an event.
+      onSelectionChange(event) {
 
-      selection () {
-        var i, j, len, level, ref, result;
-        result = {};
-        ref = this.levels;
-        for (i = j = 0, len = ref.length; j < len; i = ++j) {
-          level = ref[i];
-          let selectEl = this.querySelector("[data-index='" + i + "']")
-          if (selectEl) {
-            result[level] = selectEl.options[selectEl.selectedIndex].value;
-          }
-        }
-        return result;
-      }
+        let levels = this.showLevels.split(',')
 
-      renderOne (index) {
-        var criteria;
-        if (index === 0) {
-          criteria = {};
-        } else {
-          criteria = this.selection();
+        // Get selections from this.value but scaffold out selections if there is no value.
+        let selections = [...this.value]
+        if (selections.length === 0) {
+          levels.forEach(level => {
+            selections = [...selections, ...[{level, value: ''}]] 
+          })
         }
-        return Loc.query(this.levels, criteria, (res) => {
-          var htmlOptions, noPreSelection, selected, title;
-          if (this.addedOptions) {
-            res = this.addedOptions[index].concat(res);
-          }
-          if (typeof res === 'object' && res.length !== undefined) {
-            res = res.sort(function(a, b) {
-              if (a.label.toLowerCase() < b.label.toLowerCase()) {
-                return -1;
-              } else if (a.label.toLowerCase() > b.label.toLowerCase()) {
-                return 1;
-              } else {
-                return 0;
-              }
-            });
-            htmlOptions = res.map(function(el) {
-              var selected;
-              // Populate selected data.
-              if ((this.selected[this.levels[index]] != null) && el.id === this.selected[this.levels[index]]) {
-                selected = "selected='selected'";
-              }
-              return "<option value='" + el.id + "' " + (selected || '') + ">" + el.label + "</option>";
-            }, this);
-          }
-          if (this.showTitles) {
-            // @TODO
-            // title = this.levels[index].titleize();
-            title = this.levels[index];
-          }
-          noPreSelection = this.selected[index] == null;
-          if (noPreSelection) {
-            selected = "selected='selected'";
-          }
-          this.insertAdjacentHTML('beforeend',"<div> <label>" + (title || '') + " <select name='" + this.name + "-" + this.levels[index] + "' data-index='" + index + "'> <option " + (selected || '') + " disabled='disabled'>Select...</option> " + htmlOptions + " </select> </label> <br> </div>")
-          let selectElements = this.querySelectorAll('select')
-          let latestSelectElement = selectElements[selectElements.length-1]
-          latestSelectElement.addEventListener('change', this.onChange.bind(this))
 
-          
-          if (this.selected.length !== 0) {
-            // if (index + 1 === this.selected.length) {
-            if (index + 1 === this.levels.length) {
-              this.querySelectorAll('div').forEach((selectEl, i) => {
-                if (i !== 0) selectEl.setAttribute('hidden', true)
-              })
-              return this.selected = [];
-            } else {
-              return this.renderOne(index + 1);
+        // Calculate our new value.
+        let newSelections =  selections.map(selection => {
+          // Modify the selection level associated with the event.
+          if (selection.level === event.target.name) {
+            return {
+              level: event.target.name, 
+              value: event.target.value
             }
+          } 
+          // Make sure to set the selection values to '' for all selections after the one just selected. 
+          else if (levels.indexOf(selection.level) > levels.indexOf(event.target.name)) {
+            return {
+              level: selection.level,
+              value: ''
+            }
+          } 
+          // Return unmodified selections if they are unrelated to this event.
+          else {
+            return selection
           }
-        }, this);
-      }
-      render () {
-        this.renderOne(0);
+        })
 
+        // Calculate validity.
+        let isValid = true 
+        if (this.required === true) {
+          let levelsWithSelections = newSelections.filter(select => select.value !== '')
+          isValid = (levelsWithSelections.length === levels.length)
+        }
+
+        // Dispatch the event.
+        this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', 
+          {
+            detail: {
+              inputName: this.name,
+              inputValue: newSelections,
+              inputInvalid: !isValid 
+            },
+            bubbles: true
+          }
+        ))
       }
-    
+
     }
 
     window.customElements.define(TangyLocation.is, TangyLocation);

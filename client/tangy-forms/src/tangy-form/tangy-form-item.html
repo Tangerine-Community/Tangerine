@@ -146,22 +146,7 @@
           type: ITEM_OPEN, 
           itemId: this.id 
         }))
-        this.addEventListener('change', (event) => {
-          this.store.dispatch({
-            type: INPUT_VALUE_CHANGE,  
-            inputName: event.target.name, 
-            inputValue: event.target.value, 
-            inputInvalid: !event.target.validate()
-          })
-        })
-        this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
-          this.store.dispatch({
-            type: INPUT_VALUE_CHANGE,  
-            inputName: event.detail.inputName, 
-            inputValue: event.detail.inputValue, 
-            inputInvalid: event.detail.inputInvalid 
-          })
-        })
+        
 
         // this.addEventListener('change', (event) => this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE') ))
       }
@@ -179,7 +164,8 @@
             // @TODO Past tense?
             this.store.dispatch({type: 'INPUT_ADD', itemId: this.id, attributes: input.getProps()})
           })
-          this.store.dispatch({type: ITEM_OPENED, itemId: this.id })
+          // this.store.dispatch({type: ITEM_OPENED, itemId: this.id })
+          this.dispatchEvent(new CustomEvent('tangy-form-item-opened', {bubbles: true}))
         }
       }
 
