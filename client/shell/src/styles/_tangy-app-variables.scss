@@ -1,8 +1,9 @@
 @import '~@angular/material/theming';
-
-$tangerine-app-primary: mat-palette($mat-green);
-$tangerine-app-accent:  mat-palette($mat-deep-orange, A200, A100, A400);
+$tangerine-app-primary: mat-palette($mat-green, 500);
+$tangerine-app-accent:  mat-palette($mat-deep-orange, 500);
 $tangerine-app-warn:    mat-palette($mat-red);
-$tangy-foreground-primary:#ff5722;
+$tangy-app-foreground:mat-palette($mat-green); 
 $tangy-foreground-error-message:red;
+$tangy-foreground-success-message:green;
+$tangy-foreground-primary:#ff5722;
 $tangy-app-name:white;
