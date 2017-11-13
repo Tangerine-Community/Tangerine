@@ -42,6 +42,7 @@
       }
     </style>
     <div class="tangy-form-app--container">
+
       <div id="form-list">
         <template is="dom-repeat" items="{{forms}}">
             <paper-card 
@@ -59,6 +60,7 @@
             </paper-card>
         </template>
       </div>
+
       <div id="form-view" hidden>
         <div id="form-view--nav">
           <!-- a href="/tangy-forms/index.html"><iron-icon icon="icons:close"></iron-icon></a-->
@@ -66,7 +68,9 @@
         </div>
         <slot></slot>
       </div>
+
     </div>
+
 
   </template>
 
@@ -86,18 +90,19 @@
      
       connectedCallback() {
         super.connectedCallback(); 
-        let query = this.parseQuery(window.location.search)
+        let query = this.parseQuery(window.location.hash)
         if (query.form) {
           this.showForm(query.form)
         } else {
           this.showFormsList()
         }
+        this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
       }
 
-			// For parsing window.location.search parameters.
+			// For parsing window.location.hash parameters.
       parseQuery(qstr) {
         var query = {};
-        var a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&');
+        var a = (qstr[0] === '#' ? qstr.substr(1) : qstr).split('&');
         for (var i = 0; i < a.length; i++) {
           var b = a[i].split('=');
           query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
@@ -123,7 +128,7 @@
       }
 
       async showForm(formSrc) {
-        let query = this.parseQuery(window.location.search)
+        let query = this.parseQuery(window.location.hash)
         this.$['form-view'].hidden = false
         this.$['form-list'].hidden = true 
         // Load the form into the DOM.
@@ -133,8 +138,8 @@
         let formTemplate = document.createElement('div')
         formTemplate.innerHTML = await formHtml.text()
         let formEl = formTemplate.querySelector('tangy-form')
-        if (query.database) formEl.setAttribute('databaseName', query.database)
-        if (query['linear-mode']) formEl.setAttribute('linearMode', true) 
+        if (query.database) formEl.setAttribute('database-name', query.database)
+        if (query['linear-mode']) formEl.setAttribute('linear-mode', true) 
         if (query['response-id']) formEl.setAttribute('response-id', query['response-id'])
         if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true) 
         if (query['hide-nav']) formEl.setAttribute('hide-nav', true) 

@@ -20,13 +20,7 @@ var Loc = {
     }
     currentLevelIndex = Loc.getCurrentLevelIndex(levels, criteria, levelMap);
     resp = Loc._query(0, currentLevelIndex, locations, levelMap, criteria);
-    return setTimeout(function(cb) {
-      if (resp.length === 0) {
-        return cb.apply(context, [null]);
-      } else {
-        return cb.apply(context, [resp]);
-      }
-    }, 0, qCallback);
+    qCallback(resp)
   },
 
   _query (depth, targetDepth, data, levelMap, criteria) {
