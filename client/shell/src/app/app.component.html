@@ -1,12 +1,12 @@
 <md-toolbar color="primary" class="mat-typography">
-  <span *ngIf="showNav" class="home-icon">
+  <span class="home-icon">
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="/home">
-      <app-tangy-svg-logo [tangyLogoStyle]="{'height':'65px'}"></app-tangy-svg-logo>
+      <app-tangy-svg-logo [tangyLogoStyle]="{'height':'45px'}"></app-tangy-svg-logo>
     </a>
   </span>
 
   <span>
-    <a class="tangy-no-text-decoration tangy-app-name" routerLink="home">Tangerine Forms</a>
+    <a class="tangy-no-text-decoration tangy-app-name" routerLink="home">Tangerine</a>
   </span>
   <span class="tangy-spacer"></span>
 
@@ -14,19 +14,24 @@
     <i class="material-icons">account_box</i>
   </button>
   <md-menu #appMenu="mdMenu">
-    <a routerLink="manage-user-profile" md-menu-item>
-      <i class="material-icons md-18">create</i>
+    <button routerLink="manage-user-profile" md-menu-item>
+      <md-icon class="material-icons md-18">create</md-icon>
       <span>Manage Profile</span>
-    </a>
-    <a routerLink="create-nodes" md-menu-item>
-      <i class="material-icons md-18">settings</i>
+    </button>
+    <button routerLink="/home" md-menu-item>
+      <md-icon class="material-icons md-18">settings</md-icon>
       <span>My Settings</span>
-    </a>
-    <li md-menu-item (click)="logout()">
-      <i class="material-icons md-18">exit_to_app</i>
+    </button>
+    <button routerLink="/sync-records" md-menu-item>
+      <md-icon class="material-icons md-18">autorenew</md-icon>
+      <span>Sync</span>
+    </button>
+    <button md-menu-item (click)="logout()">
+      <md-icon class="material-icons md-18">exit_to_app</md-icon>
       <span>Log Out</span>
-    </li>
+    </button>
   </md-menu>
+
 </md-toolbar>
 <div class="tangerine-app-content mat-typography">
   <router-outlet></router-outlet>
