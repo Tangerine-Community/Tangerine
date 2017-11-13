@@ -25,13 +25,19 @@ export class RegistrationComponent implements OnInit {
     };
     isUsernameTaken: boolean;
     returnUrl: string;
-    errorMessage: string;
+    statusMessage: object;
+    userNameUnavailableMessage = { type: 'error', message: 'Username Unavailable.' };
+    userNameAvailableMessage = { type: 'success', message: 'Username Available.' };
+    loginUnsucessfulMessage = { type: 'error', message: 'Login Unsuccessful' };
+    couldNotCreateUserMessage = { type: 'error', message: 'Could Not Create User' };
     constructor(
         private userService: UserService,
         private authenticationService: AuthenticationService,
         private route: ActivatedRoute,
         private router: Router
-    ) { }
+    ) {
+        this.statusMessage = { type: '', message: '' };
+    }
 
     ngOnInit() {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || AppSettings.HOME_URL;
@@ -49,17 +55,19 @@ export class RegistrationComponent implements OnInit {
                 this.loginUserAfterRegistration(userData.username, this.user.password);
             }, error => {
                 console.log(error);
-                this.errorMessage = 'Error creating User';
+                this.statusMessage = this.couldNotCreateUserMessage;
             });
         } else {
-            this.errorMessage = 'Username taken';
+            this.statusMessage = this.userNameUnavailableMessage;
         }
 
     }
     doesUserExist(user) {
-        Observable.fromPromise(this.userService.doesUserExist(user)).subscribe((data) => {
+        Observable.fromPromise(this.userService.doesUserExist(user.trim())).subscribe((data) => {
             this.isUsernameTaken = data;
-            this.isUsernameTaken ? this.errorMessage = 'Username taken' : console.log('Good to go');
+            this.isUsernameTaken ?
+                this.statusMessage = this.userNameUnavailableMessage :
+                this.statusMessage = this.userNameAvailableMessage;
             return this.isUsernameTaken;
         });
 
@@ -69,9 +77,9 @@ export class RegistrationComponent implements OnInit {
         Observable.fromPromise(this.authenticationService.login(username, password)).subscribe(data => {
             if (data) {
                 this.router.navigate(['' + '/manage-user-profile']);
-            } else { this.errorMessage = 'Login Unsuccessful'; }
+            } else { this.statusMessage = this.loginUnsucessfulMessage; }
         }, error => {
-            this.errorMessage = 'Login Unsuccessful';
+            this.statusMessage = this.loginUnsucessfulMessage;
 
         });
     }
