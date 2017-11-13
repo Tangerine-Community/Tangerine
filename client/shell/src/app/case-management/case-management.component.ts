@@ -22,11 +22,16 @@ export class CaseManagementComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    /**
+     *The `(res.length < 1 || res.trim())` expression checks if the string entered in the searchbox is a series of whitespace or
+     * a non-empty string after removing the whitespace.
+     * If the length of the string is <1, no text has been entered and thus cannot be a series of whitespace.
+     **/
     Observable.fromEvent(this.search.nativeElement, 'keyup')
       .debounceTime(500)
       .map(val => val['target'].value)
       .distinctUntilChanged()
-      .subscribe(res => this.searchLocation(res));
+      .subscribe(res => (res.length < 1 || res.trim()) && this.searchLocation(res.trim()));
   }
   async getMyLocations() {
     try {

@@ -31,11 +31,10 @@
         </md-placeholder>
       </md-input-container>
       <br>
-      <!-- <button md-raised-button (click)="login()">Login</button> -->
-      <button md-raised-button color="primary" type="submit" [disabled]="registration.invalid||user.password!==user.confirmPassword">REGISTER</button>
-      <a md-button routerLink="#/login">LOGIN</a>
-      <span id="err">
-        <small>{{errorMessage}}</small>
+      <button md-raised-button color="accent" type="submit" [disabled]="registration.invalid||user.password!==user.confirmPassword">REGISTER</button>
+      <button color="accent" md-button routerLink="#/login">LOGIN</button>
+      <span [id]="statusMessage.type">
+        <small>{{statusMessage.message}}</small>
       </span>
     </form>
   </div>

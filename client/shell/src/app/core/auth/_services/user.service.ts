@@ -22,7 +22,7 @@ export class UserService {
     this.userData['password'] = hash;
 
     try {
-      /**@todo check if user exists before saving */
+      /**TODO: check if user exists before saving */
       const postUserdata = await this.DB.post(this.userData);
       if (postUserdata) {
         const result = await this.initUserProfile(this.userData['username'], uuidCode);
@@ -99,23 +99,28 @@ export class UserService {
 
   async doesUserExist(username) {
     let userExists: boolean;
-    PouchDB.plugin(PouchDBFind);
-    /**
-     * @TODO We may want to run this on the first time when the app runs.
-     */
-    this.DB.createIndex({
-      index: { fields: ['username'] }
-    }).then((data) => { console.log('Indexing Succesful'); })
-      .catch(err => console.error(err));
+    if (username) {
+      PouchDB.plugin(PouchDBFind);
+      /**
+       * @TODO We may want to run this on the first time when the app runs.
+       */
+      this.DB.createIndex({
+        index: { fields: ['username'] }
+      }).then((data) => { console.log('Indexing Succesful'); })
+        .catch(err => console.error(err));
 
-    try {
-      const result = await this.DB.find({ selector: { username } });
-      if (result.docs.length > 0) {
+      try {
+        const result = await this.DB.find({ selector: { username } });
+        if (result.docs.length > 0) {
+          userExists = true;
+        } else { userExists = false; }
+      } catch (error) {
         userExists = true;
-      } else { userExists = false; }
-    } catch (error) {
+        console.error(error);
+      }
+    } else {
       userExists = true;
-      console.error(error);
+      return userExists;
     }
     return userExists;
   }
