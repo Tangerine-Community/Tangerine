@@ -1,6 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
-/* @import '~@angular/material/prebuilt-themes/deeppurple-amber.css'; */
-/*@import '~bootstrap/dist/css/bootstrap.css';*/
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import '~styles/_tangy-app-variables.scss';
 .login-app-content{
   margin-top: 180px;
@@ -127,6 +125,9 @@ padding-top:0px;
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
   }
-  #err {
+  #error {
     color :$tangy-foreground-error-message;
+  }
+  #success{
+    color :$tangy-foreground-success-message;
   }
