@@ -1,0 +1,26 @@
+<div class="login-app-content">
+  <div class="group">
+    <form role="form" novalidate>
+      <br>
+      <h3 class="tangy-foreground-primary">Sync records</h3>
+      <md-input-container>
+        <input name="username" type="text" mdInput [(ngModel)]="user.username" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">face</i>Username
+        </md-placeholder>
+      </md-input-container>
+      <br>
+      <md-input-container>
+        <input name="password" mdInput [(ngModel)]="user.password" type="password" required>
+        <md-placeholder>
+          <i class="material-icons md-11 app-input-icon">lock_open</i>Password
+        </md-placeholder>
+      </md-input-container>
+      <button color="primary" md-raised-button (click)="syncAllRecords()">SYNC</button>
+      <br>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
+    </form>
+  </div>
+</div>
