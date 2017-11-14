@@ -185,14 +185,14 @@
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
           let index = state.items.findIndex((itemState) => item.id == itemState.id) 
-          if (index !== -1) Object.assign(item, state.items[index])
+          if (index !== -1) item.setProps(state.items[index])
         })
         
         // Set state in input elements.
         let inputs = [].slice.call(this.querySelectorAll('[name]'))
         inputs.forEach((input) => {
           let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
-          if (index !== -1) Object.assign(input, state.inputs[index])
+          if (index !== -1) input.setProps(state.inputs[index])
         })
 
         // Set progress state.
