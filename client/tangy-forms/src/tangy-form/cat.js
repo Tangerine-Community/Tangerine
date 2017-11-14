@@ -19,7 +19,7 @@ HTMLElement.prototype.getProps = function () {
   let propertyInfo; eval(`propertyInfo = ${this.constructor.name}.properties`)
   // If no property info, then go off what attributes we do have.
   if (!propertyInfo) {
-    return this.getAttributes()
+    return Object.assign({}, this.getAttributes(), {tagName: this.tagName})
   }
   let props = {}
   for (let propName in propertyInfo) {
@@ -30,18 +30,13 @@ HTMLElement.prototype.getProps = function () {
       props[propName] = this[propName] 
     }
   }
-  return props
+  return Object.assign({}, props, {tagName: this.tagName})
 }
 
 HTMLElement.prototype.setProps = function (props = {}) {
-  if (this.hasOwnProperty('setProperties') && typeof this.setProperties === 'function') {
-    // Use Polymer's setProperties method.
-    this.setProperties(props)
-  } else {
-    // Ensure both HTMLElement Properties and Attributes reflect props.
-    Object.assign(this, props)
-    for (let propKey in props) this.setAttribute(propKey, props[propKey])
-  }
+  let propsObject = Object.assign({}, props)
+  delete propsObject.tagName
+  Object.assign(this, propsObject)
 }
 
 window.serializeElement = (element) => {
