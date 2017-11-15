@@ -4,15 +4,15 @@
           The actual rendered columns are set as a property on the row definition" -->
 
   <!-- Form Name Column -->
-  <ng-container cdkColumnDef="formName">
+  <ng-container cdkColumnDef="formTitle">
     <md-header-cell *cdkHeaderCellDef> Form </md-header-cell>
-    <md-cell *cdkCellDef="let formResponse"> Form</md-cell>
+    <md-cell *cdkCellDef="let formResponse"> {{formResponse.formTitle}}</md-cell>
   </ng-container>
 
   <!-- Date Column -->
-  <ng-container cdkColumnDef="date">
-    <md-header-cell *cdkHeaderCellDef> Date </md-header-cell>
-    <md-cell *cdkCellDef="let formResponse"> {{formResponse.date| date:'MMM d, y, h:mm a'}} </md-cell>
+  <ng-container cdkColumnDef="startDatetime">
+    <md-header-cell *cdkHeaderCellDef> Date Started</md-header-cell>
+    <md-cell *cdkCellDef="let formResponse"> {{formResponse.startDatetime| date:'MMM d, y, h:mm a'}} </md-cell>
   </ng-container>
 
   <!-- Class Column -->

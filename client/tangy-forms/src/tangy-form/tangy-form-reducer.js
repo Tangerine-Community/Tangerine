@@ -9,36 +9,6 @@ const initialState = {
   inputs: []
 }
 
-function calculateTargets(state) {
-  let tmp = {}
-  let newState = Object.assign({}, state)
-  newState.focusIndex = newState.items.findIndex(item => item.open)
-  newState.nextFocusIndex = state.items.findIndex((item, i) =>  (i > newState.focusIndex && (!item.hasOwnProperty('disabled') || item.disabled === false)))
-  // Find previous focus index using reversed items and focus index.
-  newState.items.reverse()
-  tmp.focusIndexReversed = newState.items.length - newState.focusIndex - 1
-  newState.previousFocusIndex = newState.items.findIndex((item, i) =>  (i > tmp.focusIndexReversed && (!item.hasOwnProperty('disabled') || item.disabled === false)))
-  if (newState.previousFocusIndex !== -1) {
-    // Unreverse the the found index.
-    newState.previousFocusIndex = newState.items.length - newState.previousFocusIndex - 1
-  }
-  // Unreverse items.
-  newState.items.reverse()
-  if (newState.nextFocusIndex !== -1) {
-    newState.nextItemId = newState.items[newState.nextFocusIndex].id
-  } else {
-    newState.nextItemId = undefined
-  }
-
-  if (newState.previousFocusIndex !== -1) {
-    newState.previousItemId = newState.items[newState.previousFocusIndex].id
-  } else {
-    newState.previousItemId = undefined
-  }
-
-  return newState
-}
-
 
 function tangyFormReducer(state = initialState, action) {
   var items
@@ -247,4 +217,34 @@ function tangyFormReducer(state = initialState, action) {
   return state
 
 
+}
+
+function calculateTargets(state) {
+  let tmp = {}
+  let newState = Object.assign({}, state)
+  newState.focusIndex = newState.items.findIndex(item => item.open)
+  newState.nextFocusIndex = state.items.findIndex((item, i) =>  (i > newState.focusIndex && (!item.hasOwnProperty('disabled') || item.disabled === false)))
+  // Find previous focus index using reversed items and focus index.
+  newState.items.reverse()
+  tmp.focusIndexReversed = newState.items.length - newState.focusIndex - 1
+  newState.previousFocusIndex = newState.items.findIndex((item, i) =>  (i > tmp.focusIndexReversed && (!item.hasOwnProperty('disabled') || item.disabled === false)))
+  if (newState.previousFocusIndex !== -1) {
+    // Unreverse the the found index.
+    newState.previousFocusIndex = newState.items.length - newState.previousFocusIndex - 1
+  }
+  // Unreverse items.
+  newState.items.reverse()
+  if (newState.nextFocusIndex !== -1) {
+    newState.nextItemId = newState.items[newState.nextFocusIndex].id
+  } else {
+    newState.nextItemId = undefined
+  }
+
+  if (newState.previousFocusIndex !== -1) {
+    newState.previousItemId = newState.items[newState.previousFocusIndex].id
+  } else {
+    newState.previousItemId = undefined
+  }
+
+  return newState
 }

@@ -1,6 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
-<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 
 <dom-module id="tangy-checkboxes">
   <template>
@@ -29,9 +28,10 @@
     <div class="container">
       <label for="group">[[label]]</label>
       <div id="checkboxes">
-        <slot></slot>
       </div>
     </div>
+    
+
     
   </template>
 
@@ -55,18 +55,17 @@
             value: ''
           },
           value: {
-            type: String,
-            value: '',
-            reflectToAttribute: true
+            type: Array,
+            value: []
           },
           atLeast: {
             type: Number,
-            value: 0,
-            reflectToAttribute: true
+            value: 0
           },
           required: {
             type: Boolean,
-            value: false
+            value: false,
+            reflectToAttribute: true
           },
           disabled: {
             type: Boolean,
@@ -76,13 +75,11 @@
           },
           label: {
             type: String,
-            value: '',
-            reflectToAttribute: true
+            value: ''
           },
           hidden: {
             type: Boolean,
             value: false,
-            observer: 'onHiddenChange',
             reflectToAttribute: true
           },
           invalid: {
@@ -94,40 +91,50 @@
       }
 
       connectedCallback() {
+
         super.connectedCallback()
-        this.querySelectorAll('tangy-checkbox').forEach(checkbox => {
-          checkbox.addEventListener('INPUT_VALUE_CHANGE', this.onCheckboxChange.bind(this))
-        })
+
+        this.$.checkboxes.addEventListener('change', this.onCheckboxChange.bind(this), false)
+        // Populate options as paper-radio-button elements
+        let options = this.querySelectorAll('option')
+        for (let option of options) {
+          let checkbox = document.createElement('paper-checkbox')
+          checkbox.name = option.value
+          if (this.disabled) checkbox.setAttribute('disabled', true)
+          checkbox.innerHTML = option.innerHTML
+          this.$.checkboxes.appendChild(checkbox)
+        }
 
       }
 
       onCheckboxChange(event) {
-        let checked = [].slice.call(this.querySelectorAll('tangy-checkbox')).filter(checkbox => checkbox.value === true)
-        let change = (event.detail.inputValue === true) ? 1 : -1
-        let value = checked.length + change
-        let invalid = false
+        // Needs hasAttribute no checked==true?
+        let checkedElements = [].slice.call(this.$.checkboxes.querySelectorAll('paper-checkbox')).filter(checkbox => checkbox.checked === true)
+        // The name of the checkbox is an entry in this value array.
+        let value = checkedElements.map(el => el.name)
+        // let change = (event.detail.inputValue === true) ? 1 : -1
+        // let value = checked.length + change
+        let isInvalid = false
         // If not hidden and/or disabled, check for invalid state.
         if (this.hidden !== true && this.disabled !== true) {
-          if (value < this.atLeast) invalid = true
-          if (this.required === true && value === 0) invalid = true
+          if (value.length < this.atLeast) isInvalid = true
+          if (this.required === true && value.length === 0) isInvalid = true
         }
-
+        // Dispatch the event.
         this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
           detail: {
             inputName: this.name,
             inputValue: value,
-            inputInvalid: invalid 
+            inputInvalid: isInvalid
           }, 
           bubbles: true
         }))
       }
 
       onDisabledChange(value) {
-        let paperCheckboxes = this.querySelectorAll('tangy-checkbox')
-        if (value == true) paperCheckboxes.forEach((button) => inputDisable(button.name)) 
-        if (value == false) paperCheckboxes.forEach((button) => inputEnable(button.name))
-      }
-      onHiddenChange(value) {
+        let paperCheckboxes = this.querySelectorAll('paper-checkbox')
+        if (value == true) paperCheckboxes.forEach((button) => button.setAttribute('disabled', true)) 
+        if (value == false) paperCheckboxes.forEach((button) => button.removeAttribute('disabled'))
       }
 
     }

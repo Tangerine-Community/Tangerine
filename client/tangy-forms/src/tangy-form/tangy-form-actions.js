@@ -46,10 +46,17 @@ INPUT_VALID = 'INPUT_VALID'
 const inputValid = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_VALID, inputName: inputName })
 
 INPUT_HIDE = 'INPUT_HIDE'
-const inputHide = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_HIDE, inputName: inputName })
+const inputHide = (inputName) => {
+    let state = window.tangyFormStore.getState()
+    let input = state.inputs.find(input => inputName === input.name)
+    if (input.hidden === false) window.tangyFormStore.dispatch({ type: INPUT_HIDE, inputName: inputName })
+}
 INPUT_SHOW = 'INPUT_SHOW'
-const inputShow = (inputName) => window.tangyFormStore.dispatch({ type: INPUT_SHOW, inputName: inputName })
-
+const inputShow = (inputName) => { 
+    let state = window.tangyFormStore.getState()
+    let input = state.inputs.find(input => inputName === input.name)
+    if (input.hidden === true) window.tangyFormStore.dispatch({ type: INPUT_SHOW, inputName: inputName })
+}
 // Navigation
 NAVIGATE_TO_NEXT_ITEM = 'NAVIGATE_TO_NEXT_ITEM'
 NAVIGATE_TO_PREVIOUS_ITEM = 'NAVIGATE_TO_PREVIOUS_ITEM'
