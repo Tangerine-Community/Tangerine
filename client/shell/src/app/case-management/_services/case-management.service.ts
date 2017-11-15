@@ -17,7 +17,6 @@ export class CaseManagementService {
   userDB;
   loc: Loc;
   userService: UserService;
-  myLocations = [];
   constructor(
     authenticationService: AuthenticationService,
     loc: Loc,
@@ -29,9 +28,6 @@ export class CaseManagementService {
     this.userDB = new PouchDB
       (authenticationService.getCurrentUserDBPath());
   }
-  async getMyLocationList() {
-    return await [];
-  }
   async getMyLocationVisits() {
 
     const res = await fetch('/content/location-list.json');
@@ -39,24 +35,29 @@ export class CaseManagementService {
     const userProfile = await this.userService.getUserProfile();
 
     // Calculate our locations by generating the path in the locationList object.
-    const myLocations = {};
+    let myLocations = locationList.locations;
     const location = userProfile.inputs.find(input => input.name === 'location');
-    let path = 'myLocations = locationList.locations';
-    location.value.forEach(levelObject => path = `${path}["${levelObject.value}"].children`);
-    eval(path);
+    location.value.forEach(levelObject => myLocations = myLocations[levelObject.value].children);
 
     const locations = [];
+
+    /** @TODO: Look up numnber of visits for each location
+     * do not hardcode to 0. Visits is how many unique days we have with Form Responses for that location.
+     *
+     *  Check for ownProperty in myLocations
+     * for ...in  iterate over all enumerable properties of the object
+     * Also enumerates and those the object inherits from its constructor's prototype
+     * You may get unexpected properties from the prototype chain
+     */
     for (const locationId in myLocations) {
-      locations.push({
-        location: myLocations[locationId].label,
-        visits: 0
-      });
+      if (myLocations.hasOwnProperty(locationId)) {
+        locations.push({
+          location: myLocations[locationId].label,
+          visits: 0
+        });
+      }
     }
     return locations;
-  }
-
-  async searchLocationByName() {
-
   }
 
   async getFormList() {

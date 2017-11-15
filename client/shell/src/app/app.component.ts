@@ -7,10 +7,6 @@ import { AuthenticationService } from './core/auth/_services/authentication.serv
 import { UserService } from './core/auth/_services/user.service';
 import { WindowRef } from './core/window-ref.service';
 
-function _window(): any {
-    return window;
-}
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -21,7 +17,7 @@ export class AppComponent implements OnInit {
   showNav;
   @ViewChild(MdSidenav) sidenav: QueryList<MdSidenav>;
   constructor(
-    windowRef: WindowRef, private userService: UserService,
+    private windowRef: WindowRef, private userService: UserService,
     private authenticationService: AuthenticationService,
     private router: Router) {
     windowRef.nativeWindow.PouchDB = PouchDB;
@@ -31,7 +27,7 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
 
     // Set location list as a global.
-    const window = _window();
+    const window = this.windowRef.nativeWindow;
     const res = await fetch('/content/location-list.json');
     window.locationList = await res.json();
 
