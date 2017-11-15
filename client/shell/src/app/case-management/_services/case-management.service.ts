@@ -39,13 +39,13 @@ export class CaseManagementService {
     const userProfile = await this.userService.getUserProfile();
 
     // Calculate our locations by generating the path in the locationList object.
-    let myLocations = {};
+    let myLocations = locationList.locations;
     const location = userProfile.inputs.find(input => input.name === 'location');
-    let path = 'myLocations = locationList.locations';
-    location.value.forEach(levelObject => path = `${path}["${levelObject.value}"].children`);
-    eval(path);
+    location.value.forEach(levelObject => myLocations = myLocations[levelObject.value].children);
 
     const locations = [];
+
+    // @TODO: Look up numnber of visits for each location, do not hardcode to 0. Visits is how many unique days we have with Form Responses for that location.
     for (const locationId in myLocations) {
       locations.push({
         location: myLocations[locationId].label,
