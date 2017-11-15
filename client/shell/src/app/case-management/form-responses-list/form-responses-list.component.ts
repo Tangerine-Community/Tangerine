@@ -58,7 +58,6 @@ export class FormResponsesListDataSource extends DataSource<any> {
         const flattenedData = [];
         data.forEach(item => {
           if (item.doc.formId !== 'user-profile') {
-            console.log(item.doc)
             flattenedData.push({
               formId: item.doc.formId,
               title: item.doc.title,
