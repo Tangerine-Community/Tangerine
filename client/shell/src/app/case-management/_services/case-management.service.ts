@@ -9,7 +9,7 @@ import { UserService } from '../../core/auth/_services/user.service';
 import { Loc } from '../../core/location.service';
 
 function _window(): any {
-    return window;
+  return window;
 }
 
 @Injectable()
@@ -39,7 +39,7 @@ export class CaseManagementService {
     const userProfile = await this.userService.getUserProfile();
 
     // Calculate our locations by generating the path in the locationList object.
-    let myLocations = {};
+    const myLocations = {};
     const location = userProfile.inputs.find(input => input.name === 'location');
     let path = 'myLocations = locationList.locations';
     location.value.forEach(levelObject => path = `${path}["${levelObject.value}"].children`);
