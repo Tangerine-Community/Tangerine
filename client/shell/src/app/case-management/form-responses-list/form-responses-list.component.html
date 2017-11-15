@@ -1,35 +1,47 @@
-<!-- <md-card class="tangy-card-content-container">
-  <md-table #table [dataSource]="dataSource"> -->
+<md-table #table [dataSource]="dataSource">
 
-<!--- Note that these columns can be defined in any order.
-              The actual rendered columns are set as a property on the row definition" -->
+  <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
 
-<!-- Position Column -->
-<!-- <ng-container mdColumnDef="date">
-      <md-header-cell *mdHeaderCellDef> Date </md-header-cell>
-      <md-cell *mdCellDef="let data"> {{data.date}} </md-cell>
-    </ng-container> -->
+  <!-- Form Name Column -->
+  <ng-container cdkColumnDef="formName">
+    <md-header-cell *cdkHeaderCellDef> Form </md-header-cell>
+    <md-cell *cdkCellDef="let formResponse"> Form</md-cell>
+  </ng-container>
 
-<!-- Name Column -->
-<!-- <ng-container mdColumnDef="class">
-      <md-header-cell *mdHeaderCellDef> Class </md-header-cell>
-      <md-cell *mdCellDef="let data"> {{data.class}} </md-cell>
-    </ng-container> -->
+  <!-- Date Column -->
+  <ng-container cdkColumnDef="date">
+    <md-header-cell *cdkHeaderCellDef> Date </md-header-cell>
+    <md-cell *cdkCellDef="let formResponse"> {{formResponse.date| date:'MMM d, y, h:mm a'}} </md-cell>
+  </ng-container>
 
-<!-- Weight Column -->
-<!-- <ng-container mdColumnDef="subject">
-      <md-header-cell *mdHeaderCellDef> Subject </md-header-cell>
-      <md-cell *mdCellDef="let data"> {{data.subject}} </md-cell>
-    </ng-container> -->
+  <!-- Class Column -->
+  <ng-container cdkColumnDef="class">
+    <md-header-cell *cdkHeaderCellDef> Class </md-header-cell>
+    <md-cell style="text-align:center" *cdkCellDef="let formResponse"> {{formResponse.class}} </md-cell>
+  </ng-container>
 
-<!-- Color Column -->
-<!-- <ng-container mdColumnDef="stream">
-      <md-header-cell *mdHeaderCellDef> Stream </md-header-cell>
-      <md-cell *mdCellDef="let data"> {{data.stream}} </md-cell>
-    </ng-container>
+  <!-- Subject Column -->
+  <ng-container cdkColumnDef="subject">
+    <md-header-cell *cdkHeaderCellDef> Subject </md-header-cell>
+    <md-cell *cdkCellDef="let formResponse"> {{formResponse.subject}} </md-cell>
+  </ng-container>
 
-    <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
-    <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
-  </md-table>
-</md-card> -->
-<!-- path, database, responseId, hide-nav, hide-reponses -->
+  <!-- Stream Column -->
+  <ng-container cdkColumnDef="stream">
+    <md-header-cell *cdkHeaderCellDef> Stream </md-header-cell>
+    <md-cell *cdkCellDef="let formResponse"> {{formResponse.stream}} </md-cell>
+  </ng-container>
+
+  <!-- Stream Column -->
+  <ng-container cdkColumnDef="action">
+    <md-header-cell *cdkHeaderCellDef> </md-header-cell>
+    <md-cell *cdkCellDef="let formResponse">
+      <i class="material-icons md-24">feedback</i>
+      <i class="material-icons md-24">speaker_notes</i>
+    </md-cell>
+  </ng-container>
+
+  <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+  <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+</md-table>
