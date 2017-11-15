@@ -24,7 +24,7 @@ export class TangyFormsPlayerComponent implements OnInit {
     try {
       const form = await this.caseManagementService.getFormList();
       if (!(index >= form.length)) {
-        this.formUrl = '/tangy-forms/index.html?form=/content/' + form[index]['src'];
+        this.formUrl = '/tangy-forms/index.html#form=/content/' + form[index]['src'];
       } else {
         console.error('Item not Found');
       }

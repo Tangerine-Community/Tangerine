@@ -50,15 +50,6 @@ function tangyFormReducer(state = initialState, action) {
     case FORM_OPEN:
       // tmp.response = Object.assign({}, action.response)
       return Object.assign({}, action.response)
-    /*
-    case ITEM_ADD:
-      tmp.items = (state.items.length === 0) ? action.items : state.items
-      tmp.openIndex = tmp.items.findIndex(item => (item.open))
-      if (tmp.openIndex === -1) tmp.items[0].open = true
-      return Object.assign({}, state, {
-        items: tmp.items
-      })
-      */
 
     case ITEM_OPEN:
       newState = Object.assign({}, state)
@@ -74,21 +65,27 @@ function tangyFormReducer(state = initialState, action) {
 
 
     case ITEM_CLOSE:
-
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
-
       newState = Object.assign({}, state)
-
       // Validate.
       newState.inputs = state.inputs.map(input => {
-        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1
-            && input.required === true 
-            && (input.value === '' || input.value === false)
+        // Skip over if not in the item being closed.
+        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) === -1) {
+          return Object.assign({}, input)
+        }
+        // Check to see if the item has value.
+        let hasValue = false
+        if (Array.isArray(input.value) && input.value.length > 0) hasValue = true
+        if (typeof input.value === 'string' && input.value.length > 0) hasValue = true
+        // Now check the validation.
+        if (input.required === true 
+            && !hasValue
             && input.hidden === false
             && input.disabled === false) {
             return Object.assign({}, input, {invalid: true})
+        } else {
+          return Object.assign({}, input)
         }
-        return Object.assign({}, input)
       })
 
       // Find blockers.
@@ -191,6 +188,22 @@ function tangyFormReducer(state = initialState, action) {
       return Object.assign({}, state, { inputs: state.inputs.map((input) => {
         if (input.name == action.inputName) {
           return Object.assign({}, input, {disabled: false})
+        }
+        return input
+      })})
+
+    case INPUT_INVALID:
+      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+        if (input.name == action.inputName) {
+          return Object.assign({}, input, {invalid: true})
+        }
+        return input
+      })})
+
+    case INPUT_VALID:
+      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+        if (input.name == action.inputName) {
+          return Object.assign({}, input, {invalid: false})
         }
         return input
       })})

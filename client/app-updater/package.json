@@ -1,0 +1,18 @@
+{
+  "name": "app-updater",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/polymer build --bundle --js-compile",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "polymer-cli": "^1.5.7"
+  }
+}
