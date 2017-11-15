@@ -10,6 +10,7 @@
     <title>Tangerine Forms</title>
 
     <script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="bower_components/paper-progress/paper-progress.html"></script>
     <link href="fonts/fonts.css" rel="stylesheet">
 
     <link rel="import" href="src/tangy-form-app/tangy-form-app.html">
@@ -48,13 +49,14 @@
 
   <body>
 
+
     <div id="base-path-loader"></div>
 
     <script>
 
       function parseQuery(qstr) {
         var query = {};
-        var a = (qstr[0] === '?' ? qstr.substr(1) : qstr).split('&');
+        var a = (qstr[0] === '#' ? qstr.substr(1) : qstr).split('&');
         for (var i = 0; i < a.length; i++) {
           var b = a[i].split('=');
           query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
@@ -63,8 +65,8 @@
       }
 
       (function() {
-        if (window.location.search) {
-          let query = parseQuery(window.location.search)
+        if (window.location.hash) {
+          let query = parseQuery(window.location.hash)
           let formPath = query.form 
           let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
           console.log(`Setting <base> path using form directory: ${formDirectory}`)
@@ -73,6 +75,11 @@
       })();
 
     </script>
+
+    <div id="tangy-form-app-loading" style="text-align: center; margin: auto; width: 300px">
+      Loading...
+      <paper-progress style="margin: auto" indeterminate class="slow"></paper-progress>
+    </div>
 
     <tangy-form-app></tangy-form-app>
 
