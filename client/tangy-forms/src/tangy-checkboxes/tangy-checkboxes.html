@@ -12,6 +12,7 @@
       }
       
       paper-checkbox {
+        margin-top: 15px;
         margin-right: 25px;
         --paper-checkbox-size: 2em;
       }
@@ -52,7 +53,8 @@
           },
           value: {
             type: Array,
-            value: []
+            value: [],
+            observer: 'onValueChange'
           },
           atLeast: {
             type: Number,
@@ -101,6 +103,10 @@
           this.$.checkboxes.appendChild(checkbox)
         }
 
+      }
+
+      onValueChange(value) {
+        this.shadowRoot.querySelectorAll(`paper-checkbox`).forEach(checkbox => checkbox.checked = value.includes(checkbox.name))
       }
 
       onCheckboxChange(event) {
