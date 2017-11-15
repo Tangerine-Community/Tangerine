@@ -1,25 +1,22 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../tangy-form/tangy-element-styles.html">
 
 <dom-module id="tangy-checkboxes">
   <template>
+    <style include="tangy-element-styles"></style>
     <style>
+
       :host {
-        display: block;
-      margin: 45px 0 15px;
+        @apply --paper-font-common-base;
       }
       
-      paper-radio-button {
-        display: block;
+      paper-checkbox {
+        margin-top: 15px;
+        margin-right: 25px;
+        --paper-checkbox-size: 2em;
       }
-      label {
-        display: block;
-        font-size: 1.2em;
-      }
-      :host([disabled]) label {
-        color: #CCC;
-
-      }
+      
       .container {
         position: relative;
       }
@@ -56,7 +53,8 @@
           },
           value: {
             type: Array,
-            value: []
+            value: [],
+            observer: 'onValueChange'
           },
           atLeast: {
             type: Number,
@@ -107,6 +105,10 @@
 
       }
 
+      onValueChange(value) {
+        this.shadowRoot.querySelectorAll(`paper-checkbox`).forEach(checkbox => checkbox.checked = value.includes(checkbox.name))
+      }
+
       onCheckboxChange(event) {
         // Needs hasAttribute no checked==true?
         let checkedElements = [].slice.call(this.$.checkboxes.querySelectorAll('paper-checkbox')).filter(checkbox => checkbox.checked === true)
@@ -132,7 +134,7 @@
       }
 
       onDisabledChange(value) {
-        let paperCheckboxes = this.querySelectorAll('paper-checkbox')
+        let paperCheckboxes = this.shadowRoot.querySelectorAll('paper-checkbox')
         if (value == true) paperCheckboxes.forEach((button) => button.setAttribute('disabled', true)) 
         if (value == false) paperCheckboxes.forEach((button) => button.removeAttribute('disabled'))
       }

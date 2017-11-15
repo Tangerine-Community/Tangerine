@@ -11,7 +11,6 @@
     display: block;
     margin-top: 15px;
     font-size: 12px;
-    color: #777;
   }
 </style>
 
@@ -29,13 +28,14 @@
           position: fixed;
           bottom: 73px;
           right: 7px;
+          /*
           color: white;
+          */
         }
         #nextItemButton {
           position: fixed;
           bottom: 10px;
           right: 7px;
-          color: white;
         }
         :host(:not([linear-mode])) #nextItemButton,
         :host(:not([linear-mode])) #previousItemButton
@@ -48,9 +48,6 @@
         }
         paper-progress {
           width: 100%;
-        }
-        paper-tab, paper-tabs {
-          color: #fff;
         }
       </style>
       <slot></slot>

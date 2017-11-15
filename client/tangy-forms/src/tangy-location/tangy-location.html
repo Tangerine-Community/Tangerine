@@ -1,25 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <script src="../../bower_components/underscore/underscore.js"></script>
+<link rel="import" href="../tangy-form/tangy-element-styles.html">
 <script src="./loc.js"></script>
 
 <dom-module id="tangy-location">
   <template>
-    <style>
-      :host {
-        display: block;
-        margin-top: 15px;
-      }
-      :host([invalid]) {
-        border: solid red 3px;
-      }
-      :host([hidden]) {
-        display: none;
-      }
-      label {
-        font-size: 12px;
-        color: #777;
-      }
-    </style>
+      <style include="tangy-element-styles"></style>
       <div id="container"></div>
       <slot></slot>
     </div>

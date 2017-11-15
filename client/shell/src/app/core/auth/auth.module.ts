@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MdButtonModule, MdInputModule, MdSelectModule } from '@angular/material';
+import { MatButtonModule, MatInputModule, MatSelectModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { LoginGuard } from './_guards/login-guard.service';
@@ -18,9 +18,9 @@ import { RegistrationComponent } from './registration/registration.component';
 @NgModule({
   imports: [
     CommonModule,
-    MdInputModule,
-    MdButtonModule,
-    MdSelectModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,

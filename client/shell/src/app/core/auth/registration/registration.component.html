@@ -4,35 +4,35 @@
     <form role="form" #registration='ngForm' novalidate (submit)="register()">
       <br>
       <h3 class="tangy-foreground-primary">Register on Tangerine</h3>
-      <md-input-container>
-        <input name="username" type="text" mdInput [(ngModel)]="user.username" (blur)="doesUserExist(user.username)" required>
-        <md-placeholder>
-          <i class="material-icons md-11 app-input-icon">face</i>Username
-        </md-placeholder>
-      </md-input-container>
-      <md-input-container>
-        <input name="email" type="email" mdInput [(ngModel)]="user.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+      <mat-input-container>
+        <input name="username" type="text" matInput [(ngModel)]="user.username" (blur)="doesUserExist(user.username)" required>
+        <mat-placeholder>
+          <i class="material-icons mat-11 app-input-icon">face</i>Username
+        </mat-placeholder>
+      </mat-input-container>
+      <mat-input-container>
+        <input name="email" type="email" matInput [(ngModel)]="user.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
           required>
-        <md-placeholder>
-          <i class="material-icons md-11">mail_outline</i>Email
-        </md-placeholder>
-      </md-input-container>
+        <mat-placeholder>
+          <i class="material-icons mat-11">mail_outline</i>Email
+        </mat-placeholder>
+      </mat-input-container>
       <br>
-      <md-input-container>
-        <input name="password" mdInput [(ngModel)]="user.password" type="password" required>
-        <md-placeholder>
-          <i class="material-icons md-11 app-input-icon">lock_open</i>Password
-        </md-placeholder>
-      </md-input-container>
-      <md-input-container>
-        <input name="confirmPassword" mdInput [(ngModel)]="user.confirmPassword" type="password" required>
-        <md-placeholder>
-          <i class="material-icons md-11 app-input-icon">lock_open</i>Confirm Password
-        </md-placeholder>
-      </md-input-container>
+      <mat-input-container>
+        <input name="password" matInput [(ngModel)]="user.password" type="password" required>
+        <mat-placeholder>
+          <i class="material-icons mat-11 app-input-icon">lock_open</i>Password
+        </mat-placeholder>
+      </mat-input-container>
+      <mat-input-container>
+        <input name="confirmPassword" matInput [(ngModel)]="user.confirmPassword" type="password" required>
+        <mat-placeholder>
+          <i class="material-icons mat-11 app-input-icon">lock_open</i>Confirm Password
+        </mat-placeholder>
+      </mat-input-container>
       <br>
-      <button md-raised-button color="accent" type="submit" [disabled]="registration.invalid||user.password!==user.confirmPassword">REGISTER</button>
-      <button color="accent" md-button routerLink="#/login">LOGIN</button>
+      <button mat-raised-button color="accent" type="submit" [disabled]="registration.invalid||user.password!==user.confirmPassword">REGISTER</button>
+      <button color="accent" mat-button routerLink="#/login">LOGIN</button>
       <span [id]="statusMessage.type">
         <small>{{statusMessage.message}}</small>
       </span>

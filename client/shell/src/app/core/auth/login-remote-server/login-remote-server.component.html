@@ -1,15 +1,15 @@
-<md-grid-list cols="2" rowHeight="2:1">
+<mat-grid-list cols="2" rowHeight="2:1">
   <h2>Log in to Remote Server</h2>
-  <md-grid-tile>
-    <md-input-container>
+  <mat-grid-tile>
+    <mat-input-container>
       <label>Username</label>
-      <input mdInput [(ngModel)]="user.username" place>
-    </md-input-container>
-    <md-input-container>
+      <input matInput [(ngModel)]="user.username" place>
+    </mat-input-container>
+    <mat-input-container>
       <label>Password</label>
-      <input mdInput [(ngModel)]="user.password" type="password">
-    </md-input-container>
-    <button md-raised-button (click)="loginForUpload()">Login</button>
-  </md-grid-tile>
-  <md-grid-tile></md-grid-tile>
-</md-grid-list>
+      <input matInput [(ngModel)]="user.password" type="password">
+    </mat-input-container>
+    <button mat-raised-button (click)="loginForUpload()">Login</button>
+  </mat-grid-tile>
+  <mat-grid-tile></mat-grid-tile>
+</mat-grid-list>
