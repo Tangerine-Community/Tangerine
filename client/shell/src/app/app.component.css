@@ -2,3 +2,7 @@
   padding-top: 7px;
   padding-right: 7px;
 }
+
+mat-toolbar.mat-tangy-custom-toolbar {
+  background: #020202;
+}
