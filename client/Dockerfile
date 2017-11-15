@@ -21,6 +21,8 @@ RUN npm install http-server
 
 ADD tangy-forms/src tangy-forms/src 
 ADD tangy-forms/index.html tangy-forms/index.html
+ADD tangy-forms/global-styles.html tangy-forms/global-styles.html
+ADD tangy-forms/fonts tangy-forms/fonts
 ADD shell/src shell/src
 ADD shell/Gulpfile.js shell/Gulpfile.js
 ADD shell/proxy.conf.json shell/proxy.conf.json
