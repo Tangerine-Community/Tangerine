@@ -1,26 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../tangy-form/tangy-element-styles.html">
 
 <dom-module id="tangy-input">
+
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-      :host([hidden]) {
-        display: none;
-      }
-      .container {
-        position: relative;
-      }
-      :host([required]:not([disabled])) label::before  { 
-        content: "*"; 
-        color: red; 
-        position: absolute;
-        top: 32px;
-        right: 5px;
-      }
-    </style>
+
+    <style include="tangy-element-styles"></style>
+
     <div class="container">
       <paper-input 
         id="input" 
@@ -34,6 +21,7 @@
         </template>
       </paper-input>
     </div>
+
   </template>
 
   <script>
