@@ -32,6 +32,9 @@
         --paper-card-background-color: gray !important;
         --paper-card-header-color: #CCC;
       }
+      :host([hidden]) {
+        display: none;
+      }
 
       /* 
        * Action Buttons 
@@ -48,8 +51,8 @@
       :host([disabled]) #open {
         display: none;
       }
-      :host([no-buttons]) #open,
-      :host([no-buttons]) #close {
+      :host([hide-buttons]) #open,
+      :host([hide-buttons]) #close {
         display: none;
       }
     </style>
@@ -62,7 +65,7 @@
 
       <div class="card-actions">
         <paper-button id="open">open</paper-button>
-        <paper-button id="close">submit</paper-button>
+        <paper-button id="close">close</paper-button>
         <template is="dom-if" if="{{valid}}">
             <iron-icon style="color: var(--primary-color); float: right; margin-top: 10px" icon="icons:check-circle"></iron-icon>
         </template>
@@ -85,6 +88,11 @@
     class TangyFormItem extends Polymer.Element {
 
       static get is() { return 'tangy-form-item'; }
+
+      constructor() {
+        super()
+      }
+
       static get properties() {
         return {
 
@@ -104,7 +112,7 @@
             value: '',
             reflectToAttribute: true
           },
-          noButtons: {
+          hideButtons: {
             type: Boolean,
             value: false,
             reflectToAttribute: true
@@ -130,6 +138,11 @@
             type: Boolean,
             value: false,
             reflectToAttribute: true
+          },
+          hidden: {
+            type: Boolean,
+            value: false,
+            relfectToAttribute: true
           }
           
         };

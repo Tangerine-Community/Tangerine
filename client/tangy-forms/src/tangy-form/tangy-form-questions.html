@@ -37,6 +37,11 @@
           bottom: 10px;
           right: 7px;
         }
+        #markCompleteFab, #lockedFab {
+          position: fixed;
+          top: 133px;
+          right: 7px;
+        }
         :host(:not([linear-mode])) #nextItemButton,
         :host(:not([linear-mode])) #previousItemButton
          {
@@ -52,6 +57,8 @@
       </style>
       <slot></slot>
       <div id="nav">
+        <paper-fab id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-fab>
+        <paper-fab id="lockedFab" icon="icons:lock" disabled></paper-fab>
         <paper-fab id="previousItemButton" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
         <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
       </div>
@@ -128,14 +135,6 @@
         if (this.response.items.length === 0) {
           this.response.items = ([].slice.call(this.querySelectorAll('tangy-form-item'))).map((element) => element.getProps())
         }
-        formOpen(this.response)
-
-        // Open an item if there are none open.
-        let state = this.store.getState()
-        let anyItemOpen = state.items.findIndex(item => item.open)
-        if (anyItemOpen === -1) {
-          itemOpen(state.items[0].id)
-        }
 
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
@@ -147,6 +146,7 @@
           })
         })
 
+        formOpen(this.response)
         // Flag for first render.
         this.hasNotYetFocused = true
 
@@ -194,16 +194,6 @@
 
         // Set progress state.
         this.$.progress.setAttribute('value', state.progress)
-        // Hide closed items.
-        if (this.hideClosedItems) {
-          items.forEach((item) => {
-            if (item.open) {
-              item.style.display = 'block'
-            } else {
-              item.style.display = 'none'
-            }
-          })
-        }
 
         // Find item to scroll to.
         if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused)) {
@@ -216,7 +206,13 @@
         // Disable navigation buttons depending on wether there is a next or previous place to focus to.
         this.$.nextItemButton.disabled = (state.nextFocusIndex === -1) ? true : false
         this.$.previousItemButton.disabled = (state.previousFocusIndex === -1) ? true : false
-
+        if (state.complete === true) {
+          this.$.markCompleteFab.style.display =  'none'
+          this.$.lockedFab.style.display =  'block'
+        } else {
+          this.$.markCompleteFab.style.display =  'block'
+          this.$.lockedFab.style.display =  'none'
+        }
         // Dispatch ALL_ITEMS_CLOSED if all items are now closed.
         let previouslyClosedItemCount = (this.previousState.items.filter(item => !item.open)).length
         let currentlyClosedItemCount = (state.items.filter(item => !item.open)).length
@@ -233,7 +229,7 @@
         this.$.nextItemButton.setAttribute('disabled', true)
         let state = this.store.getState()
         let item = state.items.find(item => item.open)
-        this.store.dispatch({ type: ITEM_CLOSE, itemId: item.id, navigateBack: true  })
+        this.store.dispatch({ type: ITEM_BACK, itemId: item.id })
       }
 
       focusOnNextItem(event) {
@@ -241,7 +237,11 @@
         this.$.nextItemButton.setAttribute('disabled', true)
         let state = this.store.getState()
         let item = state.items.find(item => item.open)
-        this.store.dispatch({ type: ITEM_CLOSE, itemId: item.id, navigateForward: true  })
+        this.store.dispatch({ type: ITEM_NEXT, itemId: item.id })
+      }
+
+      markComplete() {
+        this.store.dispatch({type: "FORM_RESPONSE_COMPLETE"})
       }
 
       getValue(name) {
