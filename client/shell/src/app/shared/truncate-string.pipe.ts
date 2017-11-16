@@ -21,7 +21,7 @@ export class TruncateStringPipe implements PipeTransform {
     value = value ? value.toString() : '';
     characters = characters ? characters : value.length;
     if (value.length <= characters || value.characters < 1) {
-      return value.tovalue();
+      return value.toString();
     }
     ellipsis = ellipsis ? ellipsis : '...';
     value = value.slice(0, characters);
