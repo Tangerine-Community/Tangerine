@@ -3,24 +3,24 @@
     <form role="form" (submit)="login()">
       <br>
       <h3 class="mat-title">Log in to Tangerine</h3>
-      <md-input-container>
-        <input mdInput type="text" required [(ngModel)]="user.username" id="username" name="username">
-        <md-placeholder>
+      <mat-input-container>
+        <input matInput type="text" required [(ngModel)]="user.username" id="username" name="username">
+        <mat-placeholder>
           <i class="material-icons app-input-icon">face</i>Username
-        </md-placeholder>
-      </md-input-container>
+        </mat-placeholder>
+      </mat-input-container>
       <br>
       <br>
-      <md-input-container>
-        <input mdInput type="password" required [(ngModel)]="user.password" id="password" name="password">
-        <md-placeholder>
+      <mat-input-container>
+        <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
+        <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>Password
-        </md-placeholder>
-      </md-input-container>
+        </mat-placeholder>
+      </mat-input-container>
       <br>
       <br>
-      <button md-raised-button color="accent" type="submit" name="action">LOGIN</button>
-      <button md-button color="accent" routerLink="/register">REGISTER</button>
+      <button mat-raised-button color="accent" type="submit" name="action">LOGIN</button>
+      <button mat-button color="accent" routerLink="/register">REGISTER</button>
       <br>
       <br>
       <span id="err">

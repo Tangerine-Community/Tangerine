@@ -4,12 +4,12 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {
-  MdButtonModule,
-  MdCheckboxModule,
-  MdInputModule,
-  MdMenuModule,
-  MdSidenavModule,
-  MdToolbarModule,
+  MatButtonModule,
+  MatCheckboxModule,
+  MatInputModule,
+  MatMenuModule,
+  MatSidenavModule,
+  MatToolbarModule,
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -36,7 +36,7 @@ export { AppComponent }
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
-    MdButtonModule, MdCheckboxModule, MdInputModule, MdToolbarModule, MdSidenavModule, MdMenuModule,
+    MatButtonModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule,
     UuidModule,
     TangyFormsModule,
     AuthModule,

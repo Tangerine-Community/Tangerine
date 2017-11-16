@@ -3,20 +3,20 @@
     <form role="form" novalidate>
       <br>
       <h3 class="tangy-foreground-primary">Sync records</h3>
-      <md-input-container>
-        <input name="username" type="text" mdInput [(ngModel)]="user.username" required>
-        <md-placeholder>
-          <i class="material-icons md-11 app-input-icon">face</i>Username
-        </md-placeholder>
-      </md-input-container>
+      <mat-input-container>
+        <input name="username" type="text" matInput [(ngModel)]="user.username" required>
+        <mat-placeholder>
+          <i class="material-icons mat-11 app-input-icon">face</i>Username
+        </mat-placeholder>
+      </mat-input-container>
       <br>
-      <md-input-container>
-        <input name="password" mdInput [(ngModel)]="user.password" type="password" required>
-        <md-placeholder>
-          <i class="material-icons md-11 app-input-icon">lock_open</i>Password
-        </md-placeholder>
-      </md-input-container>
-      <button color="primary" md-raised-button (click)="syncAllRecords()">SYNC</button>
+      <mat-input-container>
+        <input name="password" matInput [(ngModel)]="user.password" type="password" required>
+        <mat-placeholder>
+          <i class="material-icons mat-11 app-input-icon">lock_open</i>Password
+        </mat-placeholder>
+      </mat-input-container>
+      <button color="primary" mat-raised-button (click)="syncAllRecords()">SYNC</button>
       <br>
       <span id="err">
         <small>{{errorMessage}}</small>

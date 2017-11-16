@@ -1,5 +1,5 @@
 import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
-import { MdSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
 import * as PouchDB from 'pouchdb';
 
@@ -15,7 +15,7 @@ import { WindowRef } from './core/window-ref.service';
 export class AppComponent implements OnInit {
   title = 'Tangerine Client v3.x.x';
   showNav;
-  @ViewChild(MdSidenav) sidenav: QueryList<MdSidenav>;
+  @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
     private windowRef: WindowRef, private userService: UserService,
     private authenticationService: AuthenticationService,
