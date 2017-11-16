@@ -1,3 +1,4 @@
+import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { CdkTableModule } from '@angular/cdk/table';
@@ -21,6 +22,7 @@ import { FormResponsesListComponent } from './form-responses-list/form-responses
     MatCardModule,
     CdkTableModule,
     MatTableModule,
+    SharedModule
   ],
   declarations: [CaseManagementComponent, FormListComponent, FormResponsesListComponent],
   providers: [CaseManagementService]

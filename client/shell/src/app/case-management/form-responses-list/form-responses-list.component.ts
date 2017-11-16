@@ -60,7 +60,7 @@ export class FormResponsesListDataSource extends DataSource<any> {
           if (item.doc.formId !== 'user-profile') {
             flattenedData.push({
               formId: item.doc.formId,
-              title: item.doc.title,
+              formTitle: item.doc.formTitle,
               startDatetime: item.doc.startDatetime,
               responseId: item.doc.responseId,
               _id: item.doc._id
