@@ -206,7 +206,8 @@
 
         // Disable navigation buttons depending on wether there is a next or previous place to focus to.
         this.$.nextItemButton.disabled = (state.nextFocusIndex === -1 || state.items[state.focusIndex].incomplete) ? true : false
-        this.$.previousItemButton.disabled = (state.previousFocusIndex === -1 || state.items[state.focusIndex].incomplete) ? true : false
+        // Allow navigating back even if incomplete.
+        this.$.previousItemButton.disabled = (state.previousFocusIndex === -1) ? true : false
         if (state.complete === true) {
           this.$.markCompleteFab.style.display =  'none'
           this.$.lockedFab.style.display =  'block'

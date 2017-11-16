@@ -101,21 +101,8 @@ function tangyFormReducer(state = initialState, action) {
     case ITEM_NEXT:
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
       newState = Object.assign({}, state)
-      // Validate.
-      newState.inputs = validateItemInputs(state, tmp.itemIndex)
-      // Find blockers.
-      tmp.foundInvalidInputs = false
-      newState.inputs.forEach(input => {
-        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1 
-            && input.disabled !== true
-            && input.hidden !== true 
-            && input.invalid === true) {
-          tmp.foundInvalidInputs = true 
-        }
-      })
-      // If there are invalid inputs, don't open, just return newState.
-      if (tmp.foundInvalidInputs) return newState 
       // In case it next and previous hasn't been calculated yet.
+      // @TODO: Do we need to do this??
       Object.assign(newState, calculateTargets(newState))
       // Mark open and closed.
       Object.assign(newState, {
