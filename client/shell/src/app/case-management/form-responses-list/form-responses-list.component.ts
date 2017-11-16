@@ -2,7 +2,7 @@ import { UserService } from '../../core/auth/_services/user.service';
 import { CaseManagementService } from '../_services/case-management.service';
 import { Observable } from 'rxjs/Rx';
 import { Component, Injectable, OnInit } from '@angular/core';
-import { DataSource } from '@angular/cdk';
+import { DataSource } from '@angular/cdk/table';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';

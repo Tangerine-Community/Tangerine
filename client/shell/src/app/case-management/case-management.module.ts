@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { CdkTableModule } from '@angular/cdk';
+import { CdkTableModule } from '@angular/cdk/table';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule, MatCardModule, MatInputModule, MatListModule, MatTabsModule, MatTableModule } from '@angular/material';
+import { MatListModule, MatTabsModule, MatInputModule, MatCardModule, MatTableModule } from '@angular/material';
 
 import { CaseManagementService } from './_services/case-management.service';
 import { CaseManagementRoutingModule } from './case-management-routing.module';
@@ -18,7 +18,9 @@ import { FormResponsesListComponent } from './form-responses-list/form-responses
     MatInputModule,
     FormsModule,
     MatListModule,
-    MatCardModule
+    MatCardModule,
+    CdkTableModule,
+    MatTableModule,
   ],
   declarations: [CaseManagementComponent, FormListComponent, FormResponsesListComponent],
   providers: [CaseManagementService]
