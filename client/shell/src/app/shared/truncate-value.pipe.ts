@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'truncateString'
+  name: 'truncateValuePipe'
 })
-export class TruncateStringPipe implements PipeTransform {
+export class TruncateValuePipe implements PipeTransform {
   /**
    * @ngModule SharedModule
    * @whatItDoes Transforms text by truncating it
