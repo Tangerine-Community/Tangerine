@@ -78,6 +78,11 @@
             observer: 'onInvalidChange',
             reflectToAttribute: true
           },
+          incomplete: {
+            type: Boolean,
+            value: true,
+            reflectToAttribute: true
+          },
           value: {
             type: String,
             value: '',
@@ -96,10 +101,12 @@
         this.$.input.addEventListener('change', (event) => {
           this.value = this.$.input.value
           // @TODO tangy-form-item's listener for change events is not capturing this.
+          let incomplete = (event.target.value === '') ? true : false
           this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
             detail: {
               inputName: this.name,
               inputValue: event.target.value,
+              inputIncomplete: incomplete,
               inputInvalid: !this.$.input.validate()
             },
             bubbles: true

@@ -53,6 +53,11 @@
             observer: 'onInvalidChange',
             reflectToAttribute: true
           },
+          incomplete: {
+            type: Boolean,
+            value: true,
+            reflectToAttribute: true
+          },
           hidden: {
             type: Boolean,
             value: false,
@@ -73,11 +78,13 @@
         if (this.value) this.$.checkbox.checked = true
         this.$.checkbox.addEventListener('change', (e) => {
           e.stopPropagation()
+          let incomplete = (!e.target.checked) ? true : false
           this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
             bubbles: true, 
             detail: {
               inputName: this.name,
               inputValue: (e.target.checked) ? true : false,
+              inputIncomplete: incomplete,
               inputInvalid: !this.$.checkbox.validate()
             }
           }))
