@@ -80,6 +80,11 @@
             value: false,
             reflectToAttribute: true
           },
+          incomplete: {
+            type: Boolean,
+            value: true,
+            reflectToAttribute: true
+          },
           invalid: {
             type: Boolean,
             value: false,
@@ -114,20 +119,19 @@
         let checkedElements = [].slice.call(this.$.checkboxes.querySelectorAll('paper-checkbox')).filter(checkbox => checkbox.checked === true)
         // The name of the checkbox is an entry in this value array.
         let value = checkedElements.map(el => el.name)
-        // let change = (event.detail.inputValue === true) ? 1 : -1
-        // let value = checked.length + change
-        let isInvalid = false
-        // If not hidden and/or disabled, check for invalid state.
+        // If not hidden and/or disabled, check for incomplete state.
+        let isIncomplete = false
         if (this.hidden !== true && this.disabled !== true) {
-          if (value.length < this.atLeast) isInvalid = true
-          if (this.required === true && value.length === 0) isInvalid = true
+          if (value.length < this.atLeast) isIncomplete = true
+          if (this.required === true && value.length === 0) isIncomplete = true
         }
         // Dispatch the event.
         this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
           detail: {
             inputName: this.name,
             inputValue: value,
-            inputInvalid: isInvalid
+            inputInvalid: false, 
+            inputIncomplete: isIncomplete 
           }, 
           bubbles: true
         }))
