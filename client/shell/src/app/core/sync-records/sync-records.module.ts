@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MdButtonModule, MdInputModule } from '@angular/material';
+import { MatButtonModule, MatInputModule } from '@angular/material';
 
 import { UploadGuardService } from '../auth/_guards/upload-guard.service';
 import { SyncingService } from './_services/syncing.service';
@@ -14,8 +14,8 @@ import { SyncRecordsComponent } from './sync-records/sync-records.component';
     FormsModule,
     ReactiveFormsModule,
     SyncRecodsRoutingModule,
-    MdButtonModule,
-    MdInputModule
+    MatButtonModule,
+    MatInputModule
   ],
   declarations: [SyncRecordsComponent],
   providers: [SyncingService, UploadGuardService],

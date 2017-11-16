@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../tangy-form/tangy-element-styles.html">
 
 <dom-module id="tangy-toggle-button">
   <template>
@@ -17,11 +18,11 @@
         display: none;
       }
       :host([pressed]) {
-        background: #777;
+        background: var(--primary-color);
         color: #FFF;
       }
       :host([highlighted]) {
-        border-color: var(--primary-color);
+        border-color: var(--accent-color);
       }
       :host([required]:not([disabled])) label::before  { 
         content: "*"; 

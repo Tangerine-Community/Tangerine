@@ -1,7 +1,7 @@
 import { SharedModule } from '../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MdListModule } from '@angular/material';
+import { MatListModule } from '@angular/material';
 
 import { UserProfileRoutingModule } from './user-profile-routing.module';
 import { UserProfileComponent } from './user-profile.component';
@@ -10,7 +10,7 @@ import { UserProfileComponent } from './user-profile.component';
   imports: [
     CommonModule,
     UserProfileRoutingModule,
-    MdListModule,
+    MatListModule,
     SharedModule
 
   ],

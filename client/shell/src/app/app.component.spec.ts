@@ -7,7 +7,7 @@ import { HttpModule } from '@angular/http';
 import { WindowRef } from './core/window-ref.service';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MdButtonModule, MdCheckboxModule, MdInputModule } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatInputModule } from '@angular/material';
 import 'hammerjs';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -21,7 +21,7 @@ describe('AppComponent', () => {
         FormsModule,
         HttpModule,
         BrowserAnimationsModule,
-        MdButtonModule, MdCheckboxModule, MdInputModule,
+        MatButtonModule, MatCheckboxModule, MatInputModule,
         AppRoutingModule
       ],
       declarations: [
