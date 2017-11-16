@@ -19,7 +19,35 @@ function tangyFormReducer(state = initialState, action) {
 
     case FORM_OPEN:
       // tmp.response = Object.assign({}, action.response)
-      return Object.assign({}, action.response)
+      newState = Object.assign({}, action.response) 
+      if (!newState.items.find(item => item.open)) newState.items[0].open = true
+      if (newState.form.hideClosedItems === true) newState.items.forEach(item => item.hidden = !item.open)
+      if (newState.form.linearMode === true) newState.items.forEach(item => item.hideButtons = true)
+      return newState
+
+    case FORM_RESPONSE_COMPLETE:
+      return Object.assign({}, state, {
+        complete: true,
+        form: Object.assign({}, state.form, {
+          linearMode: false,
+          hideClosedItems: false
+        }),
+        items: state.items.map(item => {
+          let props = {}
+          // If the item has inputs, then it was opened and potentially touched so don't hide buttons
+          // so that they may review what is inside.
+          // Look at the inputs for the item, only show buttons if it does actually have input.
+          if (item.inputs.length === 0 || item.disabled) {
+            props.hidden = true
+          } else {
+            props.hidden = false
+            props.open = false
+            props.hideButtons = false
+          }
+          return Object.assign({}, item, props)
+        }),
+        inputs: state.inputs.map(input => Object.assign({}, input, {disabled: true}))
+      })
 
     case ITEM_OPEN:
       newState = Object.assign({}, state)
@@ -38,26 +66,7 @@ function tangyFormReducer(state = initialState, action) {
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
       newState = Object.assign({}, state)
       // Validate.
-      newState.inputs = state.inputs.map(input => {
-        // Skip over if not in the item being closed.
-        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) === -1) {
-          return Object.assign({}, input)
-        }
-        // Check to see if the item has value.
-        let hasValue = false
-        if (Array.isArray(input.value) && input.value.length > 0) hasValue = true
-        if (typeof input.value === 'string' && input.value.length > 0) hasValue = true
-        // Now check the validation.
-        if (input.required === true 
-            && !hasValue
-            && input.hidden === false
-            && input.disabled === false) {
-            return Object.assign({}, input, {invalid: true})
-        } else {
-          return Object.assign({}, input)
-        }
-      })
-
+      newState.inputs = validateItemInputs(state, tmp.itemIndex)
       // Find blockers.
       tmp.foundInvalidInputs = false
       newState.inputs.forEach(input => {
@@ -70,31 +79,73 @@ function tangyFormReducer(state = initialState, action) {
       })
       // If there are invalid inputs, don't open, just return newState.
       if (tmp.foundInvalidInputs) return newState 
-
-      // In case it next and previous hasn't been calculated yet.
-      Object.assign(newState, calculateTargets(newState))
-
       // Mark open and closed.
       Object.assign(newState, {
         progress: ( ( ( state.items.filter((i) => i.valid).length ) / state.items.length ) * 100 ),
         items: state.items.map((item) => {
           if (item.id == action.itemId) {
-            return Object.assign({}, item, {open: false, valid: true})
-          }
-          if (action.navigateBack && newState.previousItemId === item.id) {
-            return Object.assign({}, item, {open: true})
-          }
-          if (action.navigateForward && newState.nextItemId === item.id) {
-            return Object.assign({}, item, {open: true})
+            return Object.assign({}, item, {open: false, valid: true, hideButtons: false})
           }
           return Object.assign({}, item)
         })
       })
-
       // Calculate if there is next and previous item Ids.
       Object.assign(newState, calculateTargets(newState))
-
       return newState
+
+    case ITEM_BACK:
+    case ITEM_NEXT:
+      tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
+      newState = Object.assign({}, state)
+      // Validate.
+      newState.inputs = validateItemInputs(state, tmp.itemIndex)
+      // Find blockers.
+      tmp.foundInvalidInputs = false
+      newState.inputs.forEach(input => {
+        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1 
+            && input.disabled !== true
+            && input.hidden !== true 
+            && input.invalid === true) {
+          tmp.foundInvalidInputs = true 
+        }
+      })
+      // If there are invalid inputs, don't open, just return newState.
+      if (tmp.foundInvalidInputs) return newState 
+      // In case it next and previous hasn't been calculated yet.
+      Object.assign(newState, calculateTargets(newState))
+      // Mark open and closed.
+      Object.assign(newState, {
+        progress:  
+          ( 
+            state.items.filter((i) => i.valid).length
+                                                      / 
+                                                        state.items.filter(item => !item.disabled).length
+                                                                                                          ) * 100,
+        items: newState.items.map((item) => {
+          let props = {}
+          if (item.id == action.itemId) {
+            props.open = false 
+            props.valid = true
+            props.hideButtons = false
+          }
+          if (action.type === ITEM_BACK && newState.previousItemId === item.id) {
+            props.open = true
+          }
+          if (action.type === ITEM_NEXT && newState.nextItemId === item.id) {
+            props.open = true
+          }
+          if (newState.form.hideClosedItems === true && !props.open) {
+            props.hidden = true
+          } else {
+            props.hidden = false
+          }
+          return Object.assign({}, item, props) 
+        })
+      })
+      // Calculate if there is next and previous item Ids.
+      Object.assign(newState, calculateTargets(newState))
+      return newState
+
 
 
     case ITEM_ENABLE:
@@ -127,6 +178,7 @@ function tangyFormReducer(state = initialState, action) {
       // If this input does not yet
       newState = Object.assign({}, state)
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
+      if (!state.items[tmp.itemIndex].hasOwnProperty('inputs')) newState.items[tmp.itemIndex].inputs = []
       // Save input name reference to item.
       if (state.items[tmp.itemIndex].inputs.findIndex((input) => input.name === action.attributes.name) === -1) {
         newState.items[tmp.itemIndex].inputs = [...newState.items[tmp.itemIndex].inputs, action.attributes.name]
@@ -194,29 +246,33 @@ function tangyFormReducer(state = initialState, action) {
         return input
       })})
 
-    case NAVIGATE_TO_NEXT_ITEM:
-      return Object.assign({}, state, { 
-        items: state.items.map((item) => {
-          item.open = (state.items[state.nextItemIndex].id === item.id) ? true : false 
-          return item
-        })
-      })
-
-    case NAVIGATE_TO_PREVIOUS_ITEM:
-      return Object.assign({}, state, { 
-        items: state.items.map((item) => {
-          item.open = (state.items[state.previousItemIndex].id === item.id) ? true : false 
-          return item
-        })
-      })
-
-
     default: 
       return state
   }
   return state
 
 
+}
+function validateItemInputs(state, itemIndex) {
+  return state.inputs.map(input => {
+    // Skip over if not in the item being closed.
+    if (state.items[itemIndex].inputs.indexOf(input.name) === -1) {
+      return Object.assign({}, input)
+    }
+    // Check to see if the item has value.
+    let hasValue = false
+    if (Array.isArray(input.value) && input.value.length > 0) hasValue = true
+    if (typeof input.value === 'string' && input.value.length > 0) hasValue = true
+    // Now check the validation.
+    if (input.required === true 
+        && !hasValue
+        && input.hidden === false
+        && input.disabled === false) {
+        return Object.assign({}, input, {invalid: true})
+    } else {
+      return Object.assign({}, input)
+    }
+  })
 }
 
 function calculateTargets(state) {
