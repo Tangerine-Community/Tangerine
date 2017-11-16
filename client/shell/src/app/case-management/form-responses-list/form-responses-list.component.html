@@ -1,47 +1,47 @@
-<md-table #table [dataSource]="dataSource">
+<mat-table #table [dataSource]="dataSource">
 
   <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
 
   <!-- Form Name Column -->
   <ng-container cdkColumnDef="formTitle">
-    <md-header-cell *cdkHeaderCellDef> Form </md-header-cell>
-    <md-cell *cdkCellDef="let formResponse"> {{formResponse.formTitle}}</md-cell>
+    <mat-header-cell *cdkHeaderCellDef> Form </mat-header-cell>
+    <mat-cell *cdkCellDef="let formResponse"> {{formResponse.formTitle}}</mat-cell>
   </ng-container>
 
   <!-- Date Column -->
   <ng-container cdkColumnDef="startDatetime">
-    <md-header-cell *cdkHeaderCellDef> Date Started</md-header-cell>
-    <md-cell *cdkCellDef="let formResponse"> {{formResponse.startDatetime| date:'MMM d, y, h:mm a'}} </md-cell>
+    <mat-header-cell *cdkHeaderCellDef> Date Started</mat-header-cell>
+    <mat-cell *cdkCellDef="let formResponse"> {{formResponse.startDatetime| date:'MMM d, y, h:mm a'}} </mat-cell>
   </ng-container>
 
   <!-- Class Column -->
   <ng-container cdkColumnDef="class">
-    <md-header-cell *cdkHeaderCellDef> Class </md-header-cell>
-    <md-cell style="text-align:center" *cdkCellDef="let formResponse"> {{formResponse.class}} </md-cell>
+    <mat-header-cell *cdkHeaderCellDef> Class </mat-header-cell>
+    <mat-cell style="text-align:center" *cdkCellDef="let formResponse"> {{formResponse.class}} </mat-cell>
   </ng-container>
 
   <!-- Subject Column -->
   <ng-container cdkColumnDef="subject">
-    <md-header-cell *cdkHeaderCellDef> Subject </md-header-cell>
-    <md-cell *cdkCellDef="let formResponse"> {{formResponse.subject}} </md-cell>
+    <mat-header-cell *cdkHeaderCellDef> Subject </mat-header-cell>
+    <mat-cell *cdkCellDef="let formResponse"> {{formResponse.subject}} </mat-cell>
   </ng-container>
 
   <!-- Stream Column -->
   <ng-container cdkColumnDef="stream">
-    <md-header-cell *cdkHeaderCellDef> Stream </md-header-cell>
-    <md-cell *cdkCellDef="let formResponse"> {{formResponse.stream}} </md-cell>
+    <mat-header-cell *cdkHeaderCellDef> Stream </mat-header-cell>
+    <mat-cell *cdkCellDef="let formResponse"> {{formResponse.stream}} </mat-cell>
   </ng-container>
 
   <!-- Stream Column -->
   <ng-container cdkColumnDef="action">
-    <md-header-cell *cdkHeaderCellDef> </md-header-cell>
-    <md-cell *cdkCellDef="let formResponse">
+    <mat-header-cell *cdkHeaderCellDef> </mat-header-cell>
+    <mat-cell *cdkCellDef="let formResponse">
       <i class="material-icons md-24">feedback</i>
       <i class="material-icons md-24">speaker_notes</i>
-    </md-cell>
+    </mat-cell>
   </ng-container>
 
-  <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
-  <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
-</md-table>
+  <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>

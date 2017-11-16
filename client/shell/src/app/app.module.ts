@@ -10,6 +10,7 @@ import {
   MatMenuModule,
   MatSidenavModule,
   MatToolbarModule,
+  MATERIAL_COMPATIBILITY_MODE
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -46,7 +47,8 @@ export { AppComponent }
     AppRoutingModule,
     SharedModule
   ],
-  providers: [WindowRef, Loc],
+  providers: [WindowRef,
+    Loc, { provide: MATERIAL_COMPATIBILITY_MODE, useValue: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
