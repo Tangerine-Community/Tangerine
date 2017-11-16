@@ -215,24 +215,22 @@
           }
         })
 
-        // Calculate validity.
-        let isValid = true 
-        if (this.required === true) {
-          let levelsWithSelections = newSelections.filter(select => select.value !== '')
-          isValid = (levelsWithSelections.length === levels.length)
-        }
+        // Check if incomplete.
+        let inputIncomplete = false
+        if (newSelections.find(selection => selection.value === '')) inputIncomplete = true
 
-        // Dispatch the event.
-        this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', 
-          {
-            detail: {
-              inputName: this.name,
-              inputValue: newSelections,
-              inputInvalid: !isValid 
-            },
-            bubbles: true
-          }
-        ))
+        // Dispatch the event only if selections at all levels are made.
+        let detail = {
+          inputName: this.name,
+          inputValue: newSelections,
+          inputInvalid: false,
+          inputIncomplete 
+        }
+        this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
+          detail,
+          bubbles: true
+        }))
+
       }
 
     }

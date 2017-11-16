@@ -78,13 +78,14 @@
           top: 10px;
           right: 7px;
         }
+        
         :host([hide-responses]) #show-responses-fab, 
         :host([hide-responses]) #new-response-fab {
           display: none;
         } 
       </style>
 
-
+      <slot></slot>
       <div id="tangy-form-questions">
         <slot id="tangy-form-questions--form"></slot>
         <paper-fab id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
@@ -177,13 +178,20 @@
         };
       }
 
-      async connectedCallback() {
-
-        super.connectedCallback();
-
+      async ready() {
+        super.ready();
+        Polymer.RenderStatus.afterNextRender(this, this.afterNextRender)
+      }
+      
+      async afterNextRender() {
         /*
          * Setup
          */
+        this.initialState = new TangyFormResponseModel({ form: this.getProps() })
+        this.querySelectorAll('tangy-form-item').forEach(item => {
+          this.initialState.items.push(item.getProps())
+        })
+
         // Stash the tangy-form-items to pass down to tangy-form-questions element when we showQuestions().
         this._formDefinition = this.innerHTML
         this.innerHTML = ''
@@ -316,7 +324,7 @@
        */
 
       async newResponse() {
-        this.response = await this.service.saveResponse(new TangyFormResponseModel({formId: this.id}))
+        this.response = await this.service.saveResponse(Object.assign({}, this.initialState))
         this.formDoc = await this.service.getForm(this.id)
         this.formDoc.responseId = this.response._id
         this.formDoc = await this.service.saveForm(this.formDoc)
