@@ -7,7 +7,7 @@
   <ng-container cdkColumnDef="formTitle">
     <mat-header-cell *cdkHeaderCellDef> Form </mat-header-cell>
     <mat-cell *cdkCellDef="let formResponse">
-      <span [matTooltip]='formResponse.formId'>{{formResponse.formId|truncateString:'10'}}</span>
+      <app-tangy-tooltip [tangyToolTipText]="formResponse.formId" truncateLength="10"></app-tangy-tooltip>
     </mat-cell>
   </ng-container>
 

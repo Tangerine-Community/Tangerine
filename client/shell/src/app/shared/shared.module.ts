@@ -3,13 +3,15 @@ import { SafeUrlPipe } from '../tangy-forms/safe-url.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TangySvgLogoComponent } from './tangy-svg-logo/tangy-svg-logo.component';
-import { TruncateStringPipe } from './truncate-string.pipe';
-
+import { TruncateValuePipe } from './truncate-value.pipe';
+import { TangyTooltipComponent } from './tangy-tooltip/tangy-tooltip.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    MatTooltipModule
   ],
-  declarations: [SafeUrlPipe, SeamlessWithWindowDirective, TangySvgLogoComponent, TruncateStringPipe],
-  exports: [SafeUrlPipe, SeamlessWithWindowDirective, TangySvgLogoComponent, TruncateStringPipe]
+  declarations: [SafeUrlPipe, SeamlessWithWindowDirective, TangySvgLogoComponent, TruncateValuePipe, TangyTooltipComponent],
+  exports: [SafeUrlPipe, SeamlessWithWindowDirective, TangySvgLogoComponent, TruncateValuePipe, TangyTooltipComponent]
 })
 export class SharedModule { }
