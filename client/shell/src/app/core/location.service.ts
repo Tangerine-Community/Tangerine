@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class Loc {
-  query (levels, criteria, locationList) {
+  query(levels, criteria, locationList) {
     let currentLevelIndex, i, j, len, level, levelIDs, levelMap, locationLevels, locations, targetLevelIndex;
     if (criteria == null) {
       criteria = {};
@@ -25,10 +25,10 @@ export class Loc {
     return this._query(0, 2, locations, levels, criteria);
   }
 
-  _query (depth, targetDepth, data, levelMap, criteria) {
+  _query(depth, targetDepth, data, levelMap, criteria) {
     let allChildren, i, j, len, levelData, v;
     if (depth === targetDepth) {
-      return data.map(function(obj) {
+      return data.map(function (obj) {
         return {
           id: obj.id,
           label: obj.label
@@ -42,7 +42,7 @@ export class Loc {
     }
     if ((levelMap[depth] == null) && (depth < targetDepth)) {
       levelData = {};
-      allChildren = data.map(function(loc) {
+      allChildren = data.map(function (loc) {
         return loc.children;
       });
       for (i = j = 0, len = allChildren.length; j < len; i = ++j) {
@@ -54,7 +54,7 @@ export class Loc {
     return {};
   }
 
-  getCurrentLevelIndex (levels, criteria, levelMap) {
+  getCurrentLevelIndex(levels, criteria, levelMap) {
     let i, j, len, level;
     for (i = j = 0, len = levels.length; j < len; i = ++j) {
       level = levels[i];

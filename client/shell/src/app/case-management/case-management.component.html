@@ -2,15 +2,15 @@
   <mat-tab label="My Locations">
     <br>
     <mat-card class="tangy-card-content-container">
-      <mat-input-container class="tangy-full-width">
-        <input name="username" #search type="text" matInput>
+      <mat-form-field class="tangy-full-width">
+        <input name="locationName" #search type="text" matInput>
         <mat-placeholder>
           Filter Location By Name
           <span>
             <i class="material-icons mat-14 search-icon">search</i>
           </span>
         </mat-placeholder>
-      </mat-input-container>
+      </mat-form-field>
       <mat-list>
         <mat-list-item class="tangy-location-list">
           <span class="tangy-foreground-primary">Locations Not yet Visited Visited This Month</span>

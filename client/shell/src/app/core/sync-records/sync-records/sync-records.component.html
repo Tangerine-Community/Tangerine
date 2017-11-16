@@ -3,19 +3,19 @@
     <form role="form" novalidate>
       <br>
       <h3 class="tangy-foreground-primary">Sync records</h3>
-      <mat-input-container>
+      <mat-form-field>
         <input name="username" type="text" matInput [(ngModel)]="user.username" required>
         <mat-placeholder>
           <i class="material-icons mat-11 app-input-icon">face</i>Username
         </mat-placeholder>
-      </mat-input-container>
+      </mat-form-field>
       <br>
-      <mat-input-container>
+      <mat-form-field>
         <input name="password" matInput [(ngModel)]="user.password" type="password" required>
         <mat-placeholder>
           <i class="material-icons mat-11 app-input-icon">lock_open</i>Password
         </mat-placeholder>
-      </mat-input-container>
+      </mat-form-field>
       <button color="primary" mat-raised-button (click)="syncAllRecords()">SYNC</button>
       <br>
       <span id="err">
