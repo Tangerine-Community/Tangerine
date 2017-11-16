@@ -3,20 +3,20 @@
     <form role="form" (submit)="login()">
       <br>
       <h3 class="mat-title">Log in to Tangerine</h3>
-      <mat-input-container>
+      <mat-form-field>
         <input matInput type="text" required [(ngModel)]="user.username" id="username" name="username">
         <mat-placeholder>
           <i class="material-icons app-input-icon">face</i>Username
         </mat-placeholder>
-      </mat-input-container>
+      </mat-form-field>
       <br>
       <br>
-      <mat-input-container>
+      <mat-form-field>
         <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>Password
         </mat-placeholder>
-      </mat-input-container>
+      </mat-form-field>
       <br>
       <br>
       <button mat-raised-button color="accent" type="submit" name="action">LOGIN</button>

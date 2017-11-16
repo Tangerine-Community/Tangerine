@@ -9,7 +9,7 @@ import { UserService } from '../../core/auth/_services/user.service';
 import { Loc } from '../../core/location.service';
 
 function _window(): any {
-    return window;
+  return window;
 }
 
 @Injectable()
@@ -17,7 +17,6 @@ export class CaseManagementService {
   userDB;
   loc: Loc;
   userService: UserService;
-  myLocations = [];
   constructor(
     authenticationService: AuthenticationService,
     loc: Loc,
@@ -28,9 +27,6 @@ export class CaseManagementService {
     this.userService = userService;
     this.userDB = new PouchDB
       (authenticationService.getCurrentUserDBPath());
-  }
-  async getMyLocationList() {
-    return await [];
   }
   async getMyLocationVisits() {
 
@@ -45,18 +41,23 @@ export class CaseManagementService {
 
     const locations = [];
 
-    // @TODO: Look up numnber of visits for each location, do not hardcode to 0. Visits is how many unique days we have with Form Responses for that location.
+    /** @TODO: Look up numnber of visits for each location
+     * do not hardcode to 0. Visits is how many unique days we have with Form Responses for that location.
+     *
+     *  Check for ownProperty in myLocations
+     * for ...in  iterate over all enumerable properties of the object
+     * Also enumerates and those the object inherits from its constructor's prototype
+     * You may get unexpected properties from the prototype chain
+     */
     for (const locationId in myLocations) {
-      locations.push({
-        location: myLocations[locationId].label,
-        visits: 0
-      });
+      if (myLocations.hasOwnProperty(locationId)) {
+        locations.push({
+          location: myLocations[locationId].label,
+          visits: 0
+        });
+      }
     }
     return locations;
-  }
-
-  async searchLocationByName() {
-
   }
 
   async getFormList() {

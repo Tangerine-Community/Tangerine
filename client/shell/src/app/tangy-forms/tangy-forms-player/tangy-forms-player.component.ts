@@ -1,3 +1,4 @@
+import { UserService } from '../../core/auth/_services/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { CaseManagementService } from '../../case-management/_services/case-management.service';
@@ -11,8 +12,11 @@ import { Component, Input, OnInit } from '@angular/core';
 export class TangyFormsPlayerComponent implements OnInit {
   formUrl;
   formIndex: number;
-  constructor(private caseManagementService: CaseManagementService, private route: ActivatedRoute) {
-  }
+  constructor(
+    private caseManagementService: CaseManagementService,
+    private route: ActivatedRoute,
+    private userService: UserService
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -22,10 +26,10 @@ export class TangyFormsPlayerComponent implements OnInit {
   }
   async getForm(index = 0) {
     try {
+      const userDB = await this.userService.getUserDatabase();
       const form = await this.caseManagementService.getFormList();
       if (!(index >= form.length)) {
-        // @TODO: Add user database like '&database=' + userDbName
-        this.formUrl = '/tangy-forms/index.html#form=/content/' + form[index]['src'];
+        this.formUrl = `/tangy-forms/index.html#form=/content/${form[index]['src']}&database=${userDB}`;
       } else {
         console.error('Item not Found');
       }
