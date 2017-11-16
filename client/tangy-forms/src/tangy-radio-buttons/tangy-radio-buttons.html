@@ -73,6 +73,11 @@
             type: Boolean,
             value: false,
             reflectToAttribute: true
+          },
+          incomplete: {
+            type: Boolean,
+            value: true,
+            reflectToAttribute: true
           }
         }
       }
@@ -106,9 +111,11 @@
         this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
           detail: {
             inputName: this.name,
-            inputValue: event.target.name
-          },
-          bubbles:true
+            inputValue: event.target.name,
+            inputInvalid: false, 
+            inputIncomplete: false 
+          }, 
+          bubbles: true
         }))
       }
 

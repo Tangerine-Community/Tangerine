@@ -127,6 +127,18 @@
             type: String,
             value: 'tangy-timed' 
           },
+          // Will never be invalid. Just incomplete.
+          invalid: {
+            type: Boolean,
+            value: false,
+            observer: 'onInvalidChange',
+            reflectToAttribute: true
+          },
+          incomplete: {
+            type: Boolean,
+            value: true,
+            reflectToAttribute: true
+          },
           required: {
             type: Boolean,
             value: false
@@ -144,11 +156,13 @@
       }
 
       dispatchModeChange(mode) {
+        // TODO: Make sure we are now complete. The false here is not what we want.
         this.dispatchEvent(new CustomEvent(INPUT_VALUE_CHANGE, {
           bubbles: true,
           detail: {
             inputName: this.name,
             inputValue: mode,
+            inputIncomplete: false,
             inputInvalid: false 
           }
         }))

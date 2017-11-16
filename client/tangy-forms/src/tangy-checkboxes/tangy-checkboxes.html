@@ -121,6 +121,7 @@
         let value = checkedElements.map(el => el.name)
         // If not hidden and/or disabled, check for incomplete state.
         let isIncomplete = false
+        // @TODO Check not needed? Wouldn't change if it was hidden or disabled. :P
         if (this.hidden !== true && this.disabled !== true) {
           if (value.length < this.atLeast) isIncomplete = true
           if (this.required === true && value.length === 0) isIncomplete = true
