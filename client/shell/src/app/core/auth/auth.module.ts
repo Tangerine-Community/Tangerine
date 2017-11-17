@@ -25,7 +25,6 @@ import { RegistrationComponent } from './registration/registration.component';
     AuthRoutingModule
   ],
   providers: [LoginGuard, AuthenticationService, UserService],
-  // @TODO Add edit-profile component.
   declarations: [LoginComponent, RegistrationComponent, LoginRemoteServerComponent, RegisterRemoteServerComponent]
 })
 export class AuthModule { }
