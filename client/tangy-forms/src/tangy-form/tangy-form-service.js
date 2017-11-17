@@ -19,15 +19,15 @@ class TangyFormService {
   }
 
   async loadDesignDoc() {
-    await this.db.put(tangyFormDesignDoc)
+    await this.db.put(tangyFormDesignDoc);
   }
 
   async getForm(formId) {
-    let results = await this.db.query('tangy-form/formByFormId', {key: formId, include_docs: true})
+    let results = await this.db.query('tangy-form/formByFormId', { key: formId, include_docs: true });
     if (results.rows.length == 0) {
-        return false
+      return false
     } else {
-        return results.rows[0].doc
+      return results.rows[0].doc
     }
   }
 
@@ -58,67 +58,67 @@ class TangyFormService {
 
   async getResponse(responseId) {
     try {
-        let doc = await this.db.get(responseId)
-        return doc
+      let doc = await this.db.get(responseId)
+      return doc
     } catch (e) {
-        return false
+      return false
     }
   }
 
   async getResponsesByFormId(formId) {
-    let r = await this.db.query('tangy-form/responsesByFormId', {key: formId, include_docs: true})
+    let r = await this.db.query('tangy-form/responsesByFormId', { key: formId, include_docs: true })
     return r.rows.map((row) => row.doc)
   }
 
   async getResponsesByLocationId(locationId) {
-    let r = await this.db.query('tangy-form/responsesByLocationId', {key: locationId, include_docs: true})
+    let r = await this.db.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true })
     return r.rows.map((row) => row.doc)
   }
-  
+
 }
 
 var tangyFormDesignDoc = {
-    _id: '_design/tangy-form',
-    version: '10',
-    views: {
-      formByFormId: {
-        map: function(doc) {
-          if (doc.collection !== 'TangyForm') return
-          emit(`${doc.formId}`, true)
-        }.toString()
-      },
-      responsesByFormId: {
-        map: function(doc) {
-          if (doc.collection !== 'TangyFormResponse') return
-          emit(`${doc.formId}`, true)
-        }.toString()
-      },
-      responsesByLocationId: {
-        map: function(doc) {
-          if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && doc.hasOwnProperty('inputs') ) {
-            debugger;
-            const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
-            if (!locationFields || locationFields.length === 0) {
-              return;
-            }
-            locationFields.forEach((field) => {
-              const thisLocationId = field.value[locationFields.length - 1].value
-              emit(thisLocationId, true)
-            })
+  _id: '_design/tangy-form',
+  version: '10',
+  views: {
+    formByFormId: {
+      map: function (doc) {
+        if (doc.collection !== 'TangyFormResponse') return
+        emit(`${doc.formId}`, true)
+      }.toString()
+    },
+    responsesByFormId: {
+      map: (function (doc) {
+        if (doc.collection !== 'TangyFormResponse') return
+        emit(`${doc.formId}`, true)
+      }.toString())
+    },
+    responsesByLocationId: {
+      map: function (doc) {
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && doc.hasOwnProperty('inputs')) {
+          debugger;
+          const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
+          if (!locationFields || locationFields.length === 0) {
+            return;
           }
-        }.toString()
-      },
-      responsesByFormIdAndStartDatetime: {
-        map: function(doc) {
-          if (doc.collection !== 'TangyFormResponse') return
-          emit(`${doc.formId}-${doc.startDatetime}`, true)
-        }.toString()
-      },
-      responseByUploadDatetime: {
-        map: function(doc) {
-          if (doc.collection !== 'TangyFormResponse') return
-          emit(doc.uploadDatetime, true)
-        }.toString()
-      }
+          locationFields.forEach((field) => {
+            const thisLocationId = field.value[locationFields.length - 1].value
+            emit(thisLocationId, true)
+          })
+        }
+      }.toString()
+    },
+    responsesByFormIdAndStartDatetime: {
+      map: function (doc) {
+        if (doc.collection !== 'TangyFormResponse') return
+        emit(`${doc.formId}-${doc.startDatetime}`, true)
+      }.toString()
+    },
+    responseByUploadDatetime: {
+      map: function (doc) {
+        if (doc.collection !== 'TangyFormResponse') return
+        emit(doc.uploadDatetime, true)
+      }.toString()
     }
   }
+}
