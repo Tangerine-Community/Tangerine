@@ -1,11 +1,13 @@
-import { SeamlessWithWindowDirective } from './seamless-with-window.directive';
-import { SafeUrlPipe } from '../tangy-forms/safe-url.pipe';
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TangySvgLogoComponent } from './tangy-svg-logo/tangy-svg-logo.component';
-import { TruncateValuePipe } from './truncate-value.pipe';
-import { TangyTooltipComponent } from './tangy-tooltip/tangy-tooltip.component';
+import { NgModule } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { SafeUrlPipe } from '../tangy-forms/safe-url.pipe';
+import { SeamlessWithWindowDirective } from './seamless-with-window.directive';
+import { TangySvgLogoComponent } from './tangy-svg-logo/tangy-svg-logo.component';
+import { TangyTooltipComponent } from './tangy-tooltip/tangy-tooltip.component';
+import { TruncateValuePipe } from './truncate-value.pipe';
+
 @NgModule({
   imports: [
     CommonModule,
