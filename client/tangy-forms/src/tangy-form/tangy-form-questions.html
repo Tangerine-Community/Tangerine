@@ -31,6 +31,9 @@
          {
           display: none;
         }
+        :host([hide-complete-button]) #markCompleteFab {
+          display: none !important;
+        }
         #progress {
           position: fixed;
           bottom: 0px;
@@ -82,7 +85,13 @@
             type: Boolean,
             value: false,
             reflectToAttribute: true
+          },
+          hideCompleteButton: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
+
         }
       }
 
