@@ -26,16 +26,15 @@
       <mat-icon class="material-icons mat-18">autorenew</mat-icon>
       <span>Sync</span>
     </button>
+    <button routerLink="/sync-records" mat-menu-item>
+      <mat-icon class="material-icons mat-18">cloud_download</mat-icon>
+      <span>Update App</span>
+    </button>
     <button mat-menu-item (click)="logout()">
       <mat-icon class="material-icons mat-18">exit_to_app</mat-icon>
       <span>Log Out</span>
     </button>
-    <button mat-menu-item (click)="logout()">
-      <mat-icon class="material-icons mat-18">download</mat-icon>
-      <a href="/" mat-menu-item>
-        <span>Update App</span>
-      </a>
-    </button>
+
   </mat-menu>
 
 </mat-toolbar>
