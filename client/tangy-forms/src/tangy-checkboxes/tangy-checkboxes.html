@@ -127,6 +127,7 @@
           if (this.required === true && value.length === 0) isIncomplete = true
         }
         // Dispatch the event.
+        // @TODO: Could call inputValueChange() action. Would be less moving parts, less magic.
         this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
           detail: {
             inputName: this.name,

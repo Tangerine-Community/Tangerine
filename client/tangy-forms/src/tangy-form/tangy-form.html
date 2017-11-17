@@ -31,7 +31,6 @@
 <!-- Dependencies -->
 <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
@@ -174,6 +173,11 @@
             type: Boolean,
             value: false,
             reflectToAttribute: true
+          },
+          hideCompleteButton: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
         };
       }
@@ -239,7 +243,7 @@
         }
 
         // Good or bad idea? Handy if the attribute configuration of tangy-form changes...
-        Object.assign(this.response, this.getProps())
+        Object.assign(this.response.form, this.getProps())
 
         // Save this response as our current response.
         this.formDoc.responseId = this.response._id
