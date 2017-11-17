@@ -78,6 +78,10 @@ app.get('/usage', require('./routes/usage'));
 app.get('/usage/:startdate', require('./routes/usage'));
 app.get('/usage/:startdate/:enddate', require('./routes/usage'));
 
+app.get('/groups', require('./routes/groups'));
+app.get('/groups/:startdate', require('./routes/groups'));
+app.get('/groups/:startdate/:enddate', require('./routes/groups'));
+
 // Group routes
 app.get('/group/:group',    require('./routes/group/get-group'));
 app.put('/group',           require('./routes/group/new-group'));
