@@ -1,6 +1,7 @@
-import { UserService } from '../core/auth/_services/user.service';
-import { Component, Input, OnInit, ViewChild, AfterContentInit, ElementRef } from '@angular/core';
+import { AfterContentInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { UserService } from '../core/auth/_services/user.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -31,7 +32,6 @@ export class UserProfileComponent implements OnInit, AfterContentInit {
 
   async getForm() {
     const userDB = await this.userService.getUserDatabase();
-    const responseId = await this.userService.getUserProfileId();
     // this.formUrl = `/tangy-forms/index.html#form=/content/user-profile/form.html&database=${userDB}&response-id=${responseId}`;
     this.formUrl = `/tangy-forms/index.html#form=/content/user-profile/form.html&database=${userDB}`;
 
