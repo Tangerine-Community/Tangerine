@@ -255,6 +255,33 @@ function tangyFormReducer(state = initialState, action) {
         items: itemsIncompleteCheck(newState, action.inputName)
       })
 
+    case TANGY_TIMED_MODE_CHANGE:
+      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+        if (input.name == action.inputName) {
+          return Object.assign({}, input, {mode: action.tangyTimedMode})
+        }
+        return input
+      })})
+
+    case TANGY_TIMED_LAST_ATTEMPTED:
+      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+        if (input.name == action.inputName) {
+          return Object.assign({}, input, {lastAttempted: action.lastAttempted})
+        }
+        return input
+      })})
+
+    case TANGY_TIMED_TIME_SPENT:
+      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+        if (input.name == action.inputName) {
+          return Object.assign({}, input, {timeSpent: action.timeSpent})
+        }
+        return input
+      })})
+
+
+
+
     default: 
       return state
   }

@@ -63,3 +63,24 @@ const inputShow = (inputName) => {
 // Navigation
 NAVIGATE_TO_NEXT_ITEM = 'NAVIGATE_TO_NEXT_ITEM'
 NAVIGATE_TO_PREVIOUS_ITEM = 'NAVIGATE_TO_PREVIOUS_ITEM'
+
+// Tangy Timed
+TANGY_TIMED_MODE_CHANGE = 'TANGY_TIMED_MODE_CHANGE'
+const tangyTimedModeChange = (inputName, tangyTimedMode) => {
+    window.tangyFormStore.dispatch({ type: TANGY_TIMED_MODE_CHANGE, inputName, tangyTimedMode })
+}
+
+TANGY_TIMED_TIME_SPENT = 'TANGY_TIMED_TIME_SPENT'
+const tangyTimedTimeSpent = (inputName, timeSpent) => {
+    window.tangyFormStore.dispatch({ type: TANGY_TIMED_TIME_SPENT, inputName, timeSpent })
+}
+
+TANGY_TIMED_LAST_ATTEMPTED = 'TANGY_TIMED_LAST_ATTEMPTED'
+const tangyTimedLastAttempted = (inputName, lastAttempted) => {
+    window.tangyFormStore.dispatch({ type: TANGY_TIMED_LAST_ATTEMPTED, inputName, lastAttempted })
+}
+
+TANGY_TIMED_INCREMENT = 'TANGY_TIMED_INCREMENT'
+const tangyTimedIncrement = (inputName) => {
+    window.tangyFormStore.dispatch({ type: TANGY_TIMED_INCREMENT, inputName, tangyTimedMode })
+}
