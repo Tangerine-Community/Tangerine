@@ -1,10 +1,10 @@
-import { SharedModule } from '../shared/shared.module';
+import { CdkTableModule } from '@angular/cdk/table';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { CdkTableModule } from '@angular/cdk/table';
 import { FormsModule } from '@angular/forms';
-import { MatListModule, MatTabsModule, MatInputModule, MatCardModule, MatTableModule } from '@angular/material';
+import { MatCardModule, MatInputModule, MatListModule, MatTableModule, MatTabsModule } from '@angular/material';
 
+import { SharedModule } from '../shared/shared.module';
 import { CaseManagementService } from './_services/case-management.service';
 import { CaseManagementRoutingModule } from './case-management-routing.module';
 import { CaseManagementComponent } from './case-management.component';

@@ -13,8 +13,6 @@ import { LoginComponent } from './login/login.component';
 import { RegisterRemoteServerComponent } from './register-remote-server/register-remote-server.component';
 import { RegistrationComponent } from './registration/registration.component';
 
-// @TODO Add edit-profile component.
-// import { EditProfileComponent } from './edit-profile/edit-profile.component';
 @NgModule({
   imports: [
     CommonModule,
