@@ -3,10 +3,10 @@ import { NgModule } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { SafeUrlPipe } from '../tangy-forms/safe-url.pipe';
-import { SeamlessWithWindowDirective } from './seamless-with-window.directive';
-import { TangySvgLogoComponent } from './tangy-svg-logo/tangy-svg-logo.component';
-import { TangyTooltipComponent } from './tangy-tooltip/tangy-tooltip.component';
-import { TruncateValuePipe } from './truncate-value.pipe';
+import { TangySvgLogoComponent } from './_components/tangy-svg-logo/tangy-svg-logo.component';
+import { TangyTooltipComponent } from './_components/tangy-tooltip/tangy-tooltip.component';
+import { SeamlessWithWindowDirective } from './_directives/seamless-with-window.directive';
+import { TruncateValuePipe } from './_pipes/truncate-value.pipe';
 
 @NgModule({
   imports: [
