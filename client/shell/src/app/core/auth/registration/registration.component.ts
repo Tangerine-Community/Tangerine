@@ -1,12 +1,12 @@
-import { AppSettings } from '../../../config/app-settings';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthenticationService } from '../_services/authentication.service';
-import { UserService } from '../_services/user.service';
 import 'rxjs/add/observable/fromPromise';
 
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
+import { AppSettings } from '../../../config/app-settings';
+import { AuthenticationService } from '../_services/authentication.service';
+import { UserService } from '../_services/user.service';
 import { User } from './../_services/user.model.interface';
 
 
@@ -39,9 +39,9 @@ export class RegistrationComponent implements OnInit {
         this.statusMessage = { type: '', message: '' };
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || AppSettings.HOME_URL;
-        const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
+        const isNoPasswordMode = await this.authenticationService.isNoPasswordMode();
         if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
             this.router.navigate([this.returnUrl]);
         }
