@@ -19,11 +19,11 @@ class TangyFormService {
   }
 
   async loadDesignDoc() {
-    await this.db.put(tangyFormDesignDoc);
+    await this.db.put(tangyFormDesignDoc)
   }
 
   async getForm(formId) {
-    let results = await this.db.query('tangy-form/formByFormId', { key: formId, include_docs: true });
+    let results = await this.db.query('tangy-form/formByFormId', { key: formId, include_docs: true })
     if (results.rows.length == 0) {
       return false
     } else {
@@ -83,15 +83,15 @@ var tangyFormDesignDoc = {
   views: {
     formByFormId: {
       map: function (doc) {
-        if (doc.collection !== 'TangyFormResponse') return
+        if (doc.collection !== 'TangyForm') return
         emit(`${doc.formId}`, true)
       }.toString()
     },
     responsesByFormId: {
-      map: (function (doc) {
+      map: function (doc) {
         if (doc.collection !== 'TangyFormResponse') return
         emit(`${doc.formId}`, true)
-      }.toString())
+      }.toString()
     },
     responsesByLocationId: {
       map: function (doc) {
