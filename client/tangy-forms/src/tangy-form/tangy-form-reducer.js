@@ -65,23 +65,6 @@ function tangyFormReducer(state = initialState, action) {
     case ITEM_CLOSE:
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
       newState = Object.assign({}, state)
-      // Validate.
-      /*
-      newState.inputs = setIncompleteInputsToInvalidByItemIndex(state, tmp.itemIndex)
-
-      // Look for invalid inputs.
-      tmp.foundInvalidInputs = false
-      newState.inputs.forEach(input => {
-        if (state.items[tmp.itemIndex].inputs.indexOf(input.name) !== -1 
-            && input.disabled !== true
-            && input.hidden !== true 
-            && input.invalid === true) {
-          tmp.foundInvalidInputs = true 
-        }
-      })
-      // If there are invalid inputs, don't open, just return newState.
-      if (tmp.foundInvalidInputs) return newState 
-      */
 
       // Mark open and closed.
       Object.assign(newState, {
@@ -262,12 +245,32 @@ function tangyFormReducer(state = initialState, action) {
       })})
 
     case TANGY_TIMED_LAST_ATTEMPTED:
-      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
+      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
         if (input.name == action.inputName) {
-          return Object.assign({}, input, {lastAttempted: action.lastAttempted})
+          return Object.assign({}, input, {lastAttempted: action.lastAttempted, incomplete: false})
         }
         return input
       })})
+      // Find out if item is complete if all required elements are not incomplete.
+      tmp.incomplete = false
+      // Find item index.
+      tmp.itemIndex = 0
+      newState.items.forEach((item, i) => {
+        if (item.inputs.includes(action.inputName)) tmp.itemIndex = i 
+      })
+      // Find any incomplete or invalid item in item that are not disabled and not hidden.
+      newState.inputs.forEach(input => {
+        if (newState.items[tmp.itemIndex].inputs.includes(input.name)) {
+          if (!input.disabled && !input.hidden && input.required) {
+            if (input.incomplete || input.invalid) {
+              tmp.incomplete = true 
+            }
+          }
+        }
+      })
+      newState.items[tmp.itemIndex].incomplete = tmp.incomplete 
+      return newState
+
 
     case TANGY_TIMED_TIME_SPENT:
       return Object.assign({}, state, { inputs: state.inputs.map((input) => {
