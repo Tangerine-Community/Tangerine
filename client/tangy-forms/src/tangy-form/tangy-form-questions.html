@@ -200,12 +200,14 @@
         if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused)) {
           this.hasNotYetFocused = false
           setTimeout(() => {
-            items[state.focusIndex].scrollIntoView({behavior: 'smooth', block: 'start'})
+            if (items[state.focusIndex]) items[state.focusIndex].scrollIntoView({behavior: 'smooth', block: 'start'})
           }, 200)
         }
 
         // Disable navigation buttons depending on wether there is a next or previous place to focus to.
-        this.$.nextItemButton.disabled = (state.nextFocusIndex === -1 || state.items[state.focusIndex].incomplete) ? true : false
+        this.$.nextItemButton.disabled = (state.nextFocusIndex === -1 ||
+                                          (state.items[state.focusIndex] && state.items[state.focusIndex].incomplete)
+                                          ) ? true : false
         // Allow navigating back even if incomplete.
         this.$.previousItemButton.disabled = (state.previousFocusIndex === -1) ? true : false
         if (state.complete === true) {
