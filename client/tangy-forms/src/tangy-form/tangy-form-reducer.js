@@ -116,8 +116,6 @@ function tangyFormReducer(state = initialState, action) {
           let props = {}
           if (item.id == action.itemId) {
             props.open = false 
-            props.valid = true
-            props.hideButtons = false
           }
           if (action.type === ITEM_BACK && newState.previousItemId === item.id) {
             props.open = true
