@@ -192,20 +192,15 @@
         let columnsMap = [0, 1, 2.5, 4, 6, 8, 10, 12, 14, 16, 20]
         let columnWidthCalculation = `calc(100% * (1/${columnsMap[this.columns]}) - 10px - 1px)`
 
-        // Create tangy-toggle-button per input.
-        this.words = this.innerHTML.split(' ').filter(word => (word !== '' && word !=='\n'))
-        // Remove line breaks.
-        this.words = this.words.map(word => word.replace(/[\n\r]/g, ''))
-        this.words = this.words.map((word, i) => {
-          return {name: `${word}_${i}`, placeholder: word}
-        })
+        // Create tangy-toggle-button per option.
+        this.options = [].slice.call(this.querySelectorAll('option'))
 
-        this.words.forEach((word, i) => {
+        this.options.forEach((option, i) => {
           // Create the tangy toggle button.
           let tangyToggleButton = document.createElement('tangy-toggle-button')
-          tangyToggleButton.setAttribute('name', word.name)
+          tangyToggleButton.setAttribute('name', option.value)
           tangyToggleButton.style.width = columnWidthCalculation
-          tangyToggleButton.innerHTML = word.placeholder
+          tangyToggleButton.innerHTML = option.innerHTML 
           tangyToggleButton.disabled = true
           this.$.grid.appendChild(tangyToggleButton)
         })
