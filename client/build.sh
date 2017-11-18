@@ -1,6 +1,6 @@
 # Build angular shell.
 cd shell 
-npm run build
+./node_modules/.bin/ng build --base-href /tangerine/
 cd ..
 
 # Build tangy forms.
@@ -20,7 +20,7 @@ mkdir build
 # Copy build items over.
 cp -r app-updater/build/default/* build/
 cp app-updater/logo.svg build/logo.svg
-cp -r shell/dist/tangerine build/tangerine
+cp -r shell/dist build/tangerine
 cp -r tangy-forms/build/default build/tangy-forms
 
 
