@@ -356,6 +356,7 @@ server.post('/item/save', async function (req, res, next) {
   let dir = projectRoot + projectName;
   // open the form and parse it
   let formPath = dir + "/content/forms/" + formName + "/form.html"
+  console.log("formPath: " + formPath)
   let originalForm = await fs.readFile(formPath,'utf8')
   const $ = cheerio.load(originalForm)
   // search for tangy-form-item

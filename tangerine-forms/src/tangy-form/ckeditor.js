@@ -22,8 +22,8 @@ import ParagraphPlugin from '@ckeditor/ckeditor5-paragraph/src/paragraph'
 import ImageuploadPlugin from '@ckeditor/ckeditor5-upload/src/imageupload'
 import Acasi from 'ckeditor5-acasi'
 import Dumpdata from 'ckeditor5-dumpData'
-import AcasiToolbar from 'ckeditor5-acasi/src/acasitoolbar';
-import FormToolbar from 'ckeditor5-acasi/src/formtoolbar';
+import AcasiToolbar from 'ckeditor5-acasi/src/acasitoolbar'
+import FormToolbar from 'ckeditor5-acasi/src/formtoolbar'
 
 
 export default class ClassicEditor extends ClassicEditorBase {}
@@ -64,8 +64,7 @@ ClassicEditor.build = {
         'undo',
         'redo',
         'acasi',
-        'dumpdata',
-        'introSrcDialog'
+        'dumpdata'
       ]
     },
     acasi: {

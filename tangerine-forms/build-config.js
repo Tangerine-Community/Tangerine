@@ -51,8 +51,7 @@ module.exports = {
         'undo',
         'redo',
         'acasi',
-        'dumpdata',
-        'introSrcDialog'
+        'dumpdata'
       ]
     },
     acasi: {

@@ -36,9 +36,10 @@ ckeditor5 input type
           super.connectedCallback();
           console.log('my-element created!');
           const config = {
-            toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'acasi', 'dumpdata' ],
+//            toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'acasi', 'dumpdata' ],
+            toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList' ],
 //            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'Paragraph', 'typing',  'Image', 'ImageToolbar', 'ImageCaption', 'ImageStyle', 'ImageUpload', 'Acasi', 'Dumpdata' ],
-//            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'BlockQuote', 'Image', 'ImageUpload' ],
+            plugins: [ 'Paragraph', 'Heading', 'Bold', 'Italic', 'Link', 'List', 'BlockQuote', 'Image', 'ImageUpload' ],
             image: {
               toolbar: [ 'imageTextAlternative', '|', 'imageStyleFull', 'imageStyleSide' ]
             },

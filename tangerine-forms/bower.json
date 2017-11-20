@@ -25,6 +25,8 @@
     "paper-fab": "PolymerElements/paper-fab#^2.0.0",
     "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0",
     "jquery": "^3.2.1",
+    "node-uuid": "^3.0.0",
+    "simple-uuid": "^1.0.1"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",

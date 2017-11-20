@@ -24,6 +24,8 @@
 
 <!--<script src="../../node_modules/ckeditor5-build-classic/build/ckeditor.js/ckeditor.js"></script>-->
 <script src="../../bower_components/pouchdb/dist/pouchdb.js"></script>
+<!--<script src="../../node-uuid@latest.js"></script>-->
+<script src="../../bower_components/simple-uuid/uuid.js"></script>
 
 <dom-module id="tangy-form-app">
   <style>
@@ -267,6 +269,34 @@
             </form>
           </div>
       </div>
+
+      <div id="item-create" hidden>
+        <app-header reveals>
+          <app-toolbar>
+            <paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>
+            <div main-title>[[headerTitle]]</div>
+            <paper-icon-button icon="close" on-click="showFormsList"></paper-icon-button>
+          </app-toolbar>
+        </app-header>
+
+          <div style="width: 600px;margin-left: auto; margin-right: auto;">
+            <form id="itemEditor">
+              <paper-button
+                      data-item-src="[[itemFilename]]"
+                      data-item-id="[[itemId]]"
+                      on-tap="saveItem">
+                <iron-icon icon="icons:save"/>
+              </paper-button>
+              <paper-input id="formTitle" value="{{formTitle}}" label="form title"  always-float-label></paper-input>
+              <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
+              <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
+              <paper-input id="itemOrder" value="{{itemOrder}}" label="order" always-float-label disabled$="{{itemOrderDisabled}}"></paper-input>
+              <!--<exmg-ckeditor id="itemHtml" value="{{itemHtmlText}}" label="html code" always-float-label></exmg-ckeditor>-->
+              <!--<tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>-->
+            </form>
+          </div>
+      </div>
+
     </div>
 
   </template>
@@ -338,6 +368,14 @@
             type: String,
             value: '',
             observer: 'onFormSrcChange'
+          },
+          formTitle: {  // Title of form, used in Form listing.
+            type: String,
+            value: '',
+          },
+          formName: {  // folder name for form, used to create the formSrc for Form listing.
+            type: String,
+            value: '',
           },
           formHtmlPath: { // path to form.html - e.g.: "formHtmlPath":"forms/lemmie/form.html"
             type: String,
@@ -411,8 +449,13 @@
         this.formHtmlPath = event.currentTarget.dataFormSrc
         this.itemFilename = event.currentTarget.dataItemSrc
         this.itemId = event.currentTarget.dataItemId
-        this.itemOrder = event.currentTarget.dataItemOrder
-        this.itemTitle = event.currentTarget.dataItemTitle
+        if (this.itemId !== 'form-metadata') {
+          this.itemOrder = event.currentTarget.dataItemOrder
+          this.itemTitle = event.currentTarget.dataItemTitle
+        } else {
+          this.itemOrder = 0
+          this.itemTitle = ''
+        }
       }
 
       async showFormsList() {
@@ -421,6 +464,7 @@
         this.$['form-list'].hidden = false
         this.$['form-edit'].hidden = true
         this.$['item-edit'].hidden = true
+        this.$['item-create'].hidden = true
         document.querySelector("#content").setAttribute('style', 'display:none;')
         // Load forms list.
         let formsJson = await fetch('forms.json')
@@ -435,6 +479,7 @@
         this.$['form-edit'].hidden = true
         this.$['item-edit'].hidden = true
         this.$['form-list'].hidden = true
+        this.$['item-create'].hidden = true
         document.querySelector("#content").setAttribute('style', 'display:none;')
         // Load the form into the DOM.
         let formHtml = await fetch(formSrc)
@@ -450,6 +495,7 @@
         this.$['form-edit'].hidden = false
         this.$['item-edit'].hidden = true
         this.$['form-list'].hidden = true
+        this.$['item-create'].hidden = true
         document.querySelector("#content").setAttribute('style', 'display:none;')
         // Load the form into a temp DOM to get stuff out of it
         let formHtml = await fetch(formSrc)
@@ -483,14 +529,22 @@
       async editItem(itemSrc) {
         this.$['form-view'].hidden = true
         this.$['form-edit'].hidden = true
-        this.$['item-edit'].hidden = false
         this.$['form-list'].hidden = true
+
+
+        if (itemSrc !== 'form-metadata.html') {
+          this.$['item-edit'].hidden = false
+          this.$['item-create'].hidden = true
+        } else {
+          this.$['item-edit'].hidden = true
+          this.$['item-create'].hidden = false
+        }
         let content = document.querySelector("#content")
         content.setAttribute('style', 'display:block;width: 600px;margin-left: auto; margin-right: auto;')
         let tangyFormApp = document.querySelector("tangy-form-app")
         tangyFormApp.setAttribute('style', 'min-height:0vh')
         // Check if this is a new item
-        if (typeof itemSrc !== 'undefined') {
+        if (itemSrc !== 'form-metadata.html') {
           this.headerTitle = "Edit Item"
           // Load the form into the DOM.
           let frmSrc = this.formHtmlPath
@@ -499,8 +553,12 @@
           // todo try to grab local pouch version of item
           let itemHtml = await fetch(itemUrl)
           this.itemHtmlText = await itemHtml.text()
-          Tangy.editor.setData(this.itemHtmlText)
-        console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
+          console.log("itemHtmlText: " + this.itemHtmlText)
+          if (this.itemHtmlText === '') {
+            Tangy.editor.setData('<p>&nbsp;</p>')
+          } else {
+            Tangy.editor.setData(this.itemHtmlText)
+          }
         } else {
           this.headerTitle = "Create Item"
           this.itemHtmlText = ''
@@ -510,13 +568,25 @@
       }
 
       async saveItem(event) {
-        this.itemFilename = event.currentTarget.dataItemSrc
-        this.itemId = event.currentTarget.dataItemId
+        let item = {}
+        const project = window.location.pathname.split("/")[3];
+        if (event.currentTarget.dataItemSrc !== 'form-metadata.html') {
+          this.itemFilename = event.currentTarget.dataItemSrc
+          this.itemId = event.currentTarget.dataItemId
+        } else {
+          const uuid = UUID.generate();
+          this.itemFilename = uuid + '.html'
+          this.itemId = uuid
+          item.formTitle = this.$.formTitle.value
+          item.formName = this.$.formName.value
+          this.formHtmlPath = 'forms/' + item.formName + '/form.html'
+        }
+
         let itemTitle = this.$.itemTitle.value
         let itemHtmlText = Tangy.editor.getData();
 //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
-        let project = window.location.pathname.split("/")[3];
-        let item = {}
+
+
         item.projectName = project
         item.formHtmlPath = this.formHtmlPath
         item.itemFilename = this.itemFilename
@@ -526,10 +596,10 @@
 //        item.itemOrder = this.itemOrder
         // todo: eventually we will have a UI to re-arrange the items in the item listing, but for now, get the value from our form.
         item.itemOrder = this.$.itemOrder.value
-        if (item.itemFilename == 'undefined') {
-          let size = this.items.length
-          item.itemOrder = size+1
-        }
+//        if (item.itemFilename == 'undefined') {
+//          let size = this.items.length
+//          item.itemOrder = size+1
+//        }
         // pass items to help saveItem create new item name
         let response = await TangyUtils.saveItem(item, this.items);
         console.log("response: " + JSON.stringify(response));
