@@ -1,4 +1,6 @@
-class TangyFormModel {
+/* jshint esversion: 6 */
+
+export class TangyFormModel {
   constructor(props) {
     this._id = '' 
     this.collection = 'TangyForm'

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Polymer element - Test </title>
+
+    <!-- Normal Script import (if needed) -->
+    <script src="../../tangy-forms/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
+    <script src="../../tangy-forms/node_modules/redux/dist/redux.js"></script>
+
+    <!-- Import the ES6 module -->
+    <script type="module" src="../../tangy-forms/src/tangy-form/tangy-form.js"></script>
+    <script type="module" src="../../tangy-forms/src/tangy-form/tangy-form-item.js"></script>
+    <script type="module" src="../../tangy-forms/src/tangy-input/tangy-input.js"></script>
+
+</head>
+
+<body>
+<tangy-form id="lemmie" on-item-change="
+      console.log(&apos;item changed&apos;)
+      console.log(tangyForm)
+      console.log(response)
+      console.log(items)
+    ">
+    <tangy-form-item src="item-1.html" id="item-1" title="ACASI Part 3 Introduction" itemorder="2"></tangy-form-item>
+</tangy-form>
+
+
+
+<script>
+
+  // Javascript power goes here
+
+</script>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-class TangyFormResponseModel {
+export class TangyFormResponseModel {
   constructor(props) {
     this._id = ''
     this.collection = 'TangyFormResponse'
