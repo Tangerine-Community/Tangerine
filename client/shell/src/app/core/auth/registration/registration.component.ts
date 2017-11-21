@@ -70,7 +70,6 @@ export class RegistrationComponent implements OnInit {
                 this.statusMessage = this.userNameAvailableMessage;
             return this.isUsernameTaken;
         });
-
     }
 
     loginUserAfterRegistration(username, password) {
@@ -80,9 +79,7 @@ export class RegistrationComponent implements OnInit {
             } else { this.statusMessage = this.loginUnsucessfulMessage; }
         }, error => {
             this.statusMessage = this.loginUnsucessfulMessage;
-
         });
     }
-
 }
 

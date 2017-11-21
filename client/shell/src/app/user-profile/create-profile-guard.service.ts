@@ -8,6 +8,8 @@ export class CreateProfileGuardService implements CanActivate {
   constructor(private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    // @TODO: Check whether profile form is marked as complete and make
+    // the isProfileComplete dynamic
     const isProfileComplete = true;
     if (isProfileComplete) {
       return true;
