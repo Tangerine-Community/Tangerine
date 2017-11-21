@@ -15,10 +15,6 @@ import {TangyFormResponseModel} from './tangy-form-response-model.js'
 import {TangyFormService} from './tangy-form-service.js'
 import { tangyFormReducer, itemsIncompleteCheck, validateItemInputs, calculateTargets } from'./tangy-form-reducer.js'
 import {tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook} from './tangy-form-redux-middleware.js'
-import {FORM_OPEN, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, ITEM_OPEN, ITEM_CLOSE, ITEM_DISABLE, ITEM_ENABLE, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
-  ITEM_BACK, ITEM_CLOSED, ITEM_DISABLED, ITEM_ENABLED, ITEM_VALID, INPUT_ADD, INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE,
-  INPUT_INVALID,  INPUT_VALID, INPUT_HIDE, INPUT_SHOW, NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE,
-  TANGY_TIMED_TIME_SPENT, TANGY_TIMED_LAST_ATTEMPTED, TANGY_TIMED_INCREMENT} from './tangy-form-actions.js'
 import './cat.js'
 
 //
