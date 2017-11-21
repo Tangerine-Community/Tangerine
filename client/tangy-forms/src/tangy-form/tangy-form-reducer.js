@@ -1,3 +1,10 @@
+/* jshint esversion: 6 */
+
+import {FORM_OPEN, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, ITEM_OPEN, ITEM_CLOSE, ITEM_DISABLE, ITEM_ENABLE, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
+  ITEM_BACK, ITEM_CLOSED, ITEM_DISABLED, ITEM_ENABLED, ITEM_VALID, INPUT_ADD, INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE,
+  INPUT_INVALID,  INPUT_VALID, INPUT_HIDE, INPUT_SHOW, NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE,
+  TANGY_TIMED_TIME_SPENT, TANGY_TIMED_LAST_ATTEMPTED, TANGY_TIMED_INCREMENT} from './tangy-form-actions.js'// import './tangy-form-actions.js'
+
 
 // Probably never used, tangy-form will set the form with a TangyFormResponseModel.
 const initialState = {
@@ -9,8 +16,7 @@ const initialState = {
   inputs: []
 }
 
-
-function tangyFormReducer(state = initialState, action) {
+const tangyFormReducer = function (state = initialState, action) {
   var items
   var currentIndex
   var newState
@@ -364,3 +370,5 @@ function calculateTargets(state) {
 
   return newState
 }
+
+export {tangyFormReducer, itemsIncompleteCheck, validateItemInputs, calculateTargets}

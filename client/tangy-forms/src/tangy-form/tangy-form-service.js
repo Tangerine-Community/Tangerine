@@ -1,4 +1,4 @@
-class TangyFormService {
+export class TangyFormService {
 
   constructor(props) {
     this.databaseName = 'tangy-forms'
@@ -121,4 +121,6 @@ var tangyFormDesignDoc = {
         }.toString()
       }
     }
-  }
+}
+
+export {tangyFormDesignDoc}
