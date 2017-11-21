@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import {
+    RedirectToDefaultRouteComponent,
+} from 'app/shared/_components/redirect-to-default-route/redirect-to-default-route.component';
 import { CreateProfileGuardService } from 'app/user-profile/create-profile-guard.service';
 
-import { CaseManagementComponent } from './case-management/case-management.component';
-import { AppSettings } from './config/app-settings';
 import { LoginGuard } from './core/auth/_guards/login-guard.service';
 
 const routes: Routes = [
-  { path: '**', redirectTo: AppSettings.HOME_URL }, // redirects to '' in case no route is matched
-  { path: 'home', component: CaseManagementComponent, canActivate: [LoginGuard, CreateProfileGuardService] }
+  { path: '**', redirectTo: '/redirect' }, // redirects to '' in case no route is matched
+  { path: 'redirect', component: RedirectToDefaultRouteComponent, canActivate: [LoginGuard, CreateProfileGuardService] }
 ];
 
 @NgModule({

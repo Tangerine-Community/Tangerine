@@ -2,9 +2,9 @@ import 'rxjs/add/observable/fromPromise';
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AppConfigService } from 'app/shared/_services/app-config.service';
 import { Observable } from 'rxjs/Observable';
 
-import { AppSettings } from '../../../config/app-settings';
 import { UserService } from '../_services/user.service';
 import { AuthenticationService } from './../_services/authentication.service';
 
@@ -24,11 +24,13 @@ export class LoginComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
-    private usersService: UserService
+    private usersService: UserService,
+    private appConfigService: AppConfigService
   ) { }
 
-  ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || AppSettings.HOME_URL;
+  async ngOnInit() {
+    const home_url = await this.appConfigService.getDefaultURL();
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || home_url;
     const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
     // TODO List users on login page
     // Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {

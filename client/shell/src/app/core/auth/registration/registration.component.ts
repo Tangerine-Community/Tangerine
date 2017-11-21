@@ -2,9 +2,9 @@ import 'rxjs/add/observable/fromPromise';
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AppConfigService } from 'app/shared/_services/app-config.service';
 import { Observable } from 'rxjs/Observable';
 
-import { AppSettings } from '../../../config/app-settings';
 import { AuthenticationService } from '../_services/authentication.service';
 import { UserService } from '../_services/user.service';
 import { User } from './../_services/user.model.interface';
