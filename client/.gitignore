@@ -2,5 +2,6 @@ build
 .vscode
 content
 .DS_Store
+tangy-forms-build
 
 
