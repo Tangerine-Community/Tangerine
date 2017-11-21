@@ -1,0 +1,15 @@
+{
+"ignore": "node_modules",
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false,
+        "debug": true,
+        "targets": {
+          "chrome": 48
+        }
+      }
+    ]
+  ]
+}
