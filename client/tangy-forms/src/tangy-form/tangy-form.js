@@ -137,6 +137,12 @@ export class TangyForm extends PolymerElement {
         // Redux.applyMiddleware(tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareLogger, tangyReduxMiddlewareTangyHook)
       )
       this.store = window.tangyFormStore
+      // let multiply = (x, y) => x*y;
+      // // this.ready = await () => super.ready();
+      // this.ready = async () => {
+      //   super.ready();
+      //   afterNextRender(this, this.afterNextRender)
+      // }
     }
 
     static get properties() {
@@ -186,10 +192,30 @@ export class TangyForm extends PolymerElement {
       };
     }
 
-    async ready() {
-      super.ready();
+
+    // async ready() {
+    //   super.ready();
+    //   afterNextRender(this, this.afterNextRender)
+    // }
+
+    ready(){
+      super.ready()
+      //   .then(() => {
       afterNextRender(this, this.afterNextRender)
+      //       .catch(e => {
+      //         console.log('error' + e) // returns a promise
+      //       })
+      // }
+      // )
     }
+
+     // const ready = () => super.ready();
+
+      // afterNextRender(this, this.afterNextRender)
+    // )
+
+
+
 
     async afterNextRender() {
       /*

@@ -15,7 +15,7 @@ gulp.task("init", function () {
 })
 
 gulp.task("build", function () {
-  return gulp.src(['../tangy-forms/src/tangy-form/tangy-form.js', '../tangy-forms/src/tangy-form/tangy-form-item.js'])
+  return gulp.src(['../tangy-forms/src/tangy-form/tangy-form.js', '../tangy-forms/src/tangy-form/tangy-form-item.js', '../tangy-forms/src/tangy-form/tangy-form-service.js'])
     .pipe(babel())
     .pipe(gulp.dest('../tangy-forms-build/src/tangy-form/'));
 });
@@ -26,7 +26,7 @@ gulp.task("build2", function () {
     .pipe(gulp.dest('../tangy-forms-build/src/tangy-input/'));
 });
 
-gulp.task('default', ['init', 'build', 'build2'], function() {
-  gulp.watch(['../tangy-forms/src/tangy-form/tangy-form.js', '../tangy-forms/src/tangy-input/tangy-input.js','../tangy-forms/src/tangy-input/tangy-input.js'], ['build']);
+gulp.task('default', ['build', 'build2'], function() {
+  gulp.watch(['../tangy-forms/src/tangy-form/tangy-form.js', '../tangy-forms/src/tangy-input/tangy-input.js','../tangy-forms/src/tangy-input/tangy-input.js', '../tangy-forms/src/tangy-form/tangy-form-service.js'], ['build']);
   gulp.watch(['.babelrc'], ['build']);
 });

@@ -18,6 +18,7 @@ export class TangyFormService {
     }
   }
 
+
   async loadDesignDoc() {
     await this.db.put(tangyFormDesignDoc)
   }
