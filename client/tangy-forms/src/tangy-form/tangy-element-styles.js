@@ -1,9 +1,9 @@
 /* jshint esversion: 6 */
 
-const $_documentContainer = document.createElement('div');
-$_documentContainer.setAttribute('style', 'display: none;');
+const $_documentStyleContainer = document.createElement('div');
+$_documentStyleContainer.setAttribute('style', 'display: none;');
 
-$_documentContainer.innerHTML = `<dom-module id="tangy-element-styles">
+$_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
   <template><style is="tangy-element-styles">
 
       :host {
@@ -55,4 +55,4 @@ $_documentContainer.innerHTML = `<dom-module id="tangy-element-styles">
     </dom-module>
     `
 
-document.head.appendChild($_documentContainer);
+document.head.appendChild($_documentStyleContainer);

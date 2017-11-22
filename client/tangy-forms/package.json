@@ -14,6 +14,7 @@
     "@polymer/paper-card": "^3.0.0-pre.1",
     "@polymer/paper-input": "^3.0.0-pre.1",
     "@polymer/polymer": "^3.0.0-pre.1",
+    "browser-es-module-loader": "^0.4.1",
     "polymer-cli": "^1.5.5",
     "redux": "^3.7.2"
   },

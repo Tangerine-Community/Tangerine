@@ -148,21 +148,36 @@ paper-card {
       };
     }
 
-    async connectedCallback() {
-      super.connectedCallback()
-      this.store = window.tangyFormStore
-      this.$.close.addEventListener('click', () => this.store.dispatch({
-        type: ITEM_CLOSE,
-        itemId: this.id
-      }))
-      this.$.open.addEventListener('click', () => this.store.dispatch({
-        type: ITEM_OPEN,
-        itemId: this.id
-      }))
+    // async connectedCallback() {
+    //   super.connectedCallback()
+    //   this.store = window.tangyFormStore
+    //   this.$.close.addEventListener('click', () => this.store.dispatch({
+    //     type: ITEM_CLOSE,
+    //     itemId: this.id
+    //   }))
+    //   this.$.open.addEventListener('click', () => this.store.dispatch({
+    //     type: ITEM_OPEN,
+    //     itemId: this.id
+    //   }))
 
+    connectedCallback() {
+        super.connectedCallback()
+          // .then(() => {
+            this.store = window.tangyFormStore;
+            this.$.close.addEventListener('click', () => this.store.dispatch({
+              type: ITEM_CLOSE,
+              itemId: this.id
+            }));
+            this.$.open.addEventListener('click', () => this.store.dispatch({
+              type: ITEM_OPEN,
+              itemId: this.id
+            }));
+        // }
 
+        // )
       // this.addEventListener('change', (event) => this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE') ))
     }
+
 
     async onOpenChange(open) {
       // Close it.
