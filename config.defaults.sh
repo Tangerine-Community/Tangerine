@@ -8,5 +8,7 @@ T_PASS="password"
 
 # optional
 T_TAG=""
+# Set to 1 if you want to change code on the host machine and have it running in the container without having to docker build.
+DEBUG=0
 T_CONTAINER_NAME="tangerine-container"
 T_PORT_MAPPING="-p 80:80 -p 5984:5984"

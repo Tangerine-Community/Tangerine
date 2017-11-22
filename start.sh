@@ -17,6 +17,7 @@ fi
 echo "Pulling $T_TAG"
 docker pull tangerine/tangerine:$T_TAG
 
+# @TODO Pipe error output to null
 echo "Stopping $T_CONTAINER_NAME"
 docker stop $T_CONTAINER_NAME > /dev/null 
 echo "Removing $T_CONTAINER_NAME"
@@ -26,6 +27,7 @@ RUN_OPTIONS="
   --name $T_CONTAINER_NAME \
   --env \"NODE_ENV=production\" \
   --env \"T_VERSION=$T_TAG\" \
+  --env \"DEBUG=$DEBUG\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_ADMIN=$T_ADMIN\" \
   --env \"T_PASS=$T_PASS\" \
@@ -39,7 +41,20 @@ RUN_OPTIONS="
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
 " 
-
+if [ "$DEBUG" = 1 ]
+then
+  RUN_OPTIONS="
+    $RUN_OPTIONS
+    --volume $(pwd)/editor/src:/tangerine-server/editor/src \
+    --volume $(pwd)/editor/app:/tangerine-server/editor/app \
+    --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \
+    --volume $(pwd)/entrypoint.sh:/tangerine-server/entrypoint.sh \
+    --volume $(pwd)/client/src:/tangerine-server/client/src \
+    --volume $(pwd)/upgrades:/tangerine-server/upgrades \
+    --volume $(pwd)/client/Gulpfile.js:/tangerine-server/client/Gulpfile.js \
+    --volume $(pwd)/cli/lib:/tangerine-server/cli/lib \
+  "
+fi
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 
 echo "Running $T_CONTAINER_NAME at version $T_TAG"
