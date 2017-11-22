@@ -3,10 +3,11 @@ import 'rxjs/add/operator/filter';
 
 import { Injectable } from '@angular/core';
 import * as bcrypt from 'bcryptjs';
+import { Uuid } from 'ng2-uuid';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import { Observable } from 'rxjs/Observable';
-import { Uuid } from 'ng2-uuid';
+
 @Injectable()
 export class UserService {
   userData = {};

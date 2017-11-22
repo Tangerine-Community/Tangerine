@@ -34,14 +34,19 @@ export class RegistrationComponent implements OnInit {
         private userService: UserService,
         private authenticationService: AuthenticationService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private appConfigService: AppConfigService
     ) {
         this.statusMessage = { type: '', message: '' };
     }
 
     async ngOnInit() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || AppSettings.HOME_URL;
+        const home_url = await this.appConfigService.getDefaultURL();
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || home_url;
         const isNoPasswordMode = await this.authenticationService.isNoPasswordMode();
+        if (isNoPasswordMode) {
+
+        }
         if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
             this.router.navigate([this.returnUrl]);
         }
