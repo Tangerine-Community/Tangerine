@@ -69,9 +69,6 @@ export class FormResponsesListDataSource extends DataSource<any> {
           }
         });
         return flattenedData;
-      })
-      .map(data => {
-        return data;
       }).catch(() => {
         console.error('Could Not Load Form Responses');
         return Observable.of(null);

@@ -32,7 +32,6 @@ export class UserProfileComponent implements OnInit, AfterContentInit {
 
   async getForm() {
     const userDB = await this.userService.getUserDatabase();
-    // this.formUrl = `/tangy-forms/index.html#form=/content/user-profile/form.html&database=${userDB}&response-id=${responseId}`;
     this.formUrl = `/tangy-forms/index.html#form=/content/user-profile/form.html&database=${userDB}`;
 
   }
