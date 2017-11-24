@@ -1,5 +1,6 @@
-import { WindowRef } from '../core/window-ref.service';
-import { Directive, ElementRef, HostListener, Renderer } from '@angular/core';
+import { Directive, ElementRef, HostListener } from '@angular/core';
+
+import { WindowRef } from '../../core/window-ref.service';
 
 @Directive({
   selector: '[appSeamlessWithWindow]'

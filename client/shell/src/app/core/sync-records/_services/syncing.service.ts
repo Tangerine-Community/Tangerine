@@ -1,77 +1,54 @@
 import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb';
 
-import { environment } from '../../../../environments/environment';
-import { AuthenticationService } from '../../auth/_services/authentication.service';
+import { AppConfigService } from '../../../shared/_services/app-config.service';
 
 @Injectable()
 export class SyncingService {
-  constructor(private autheunticationService: AuthenticationService) { }
+  constructor(private appConfigService: AppConfigService) { }
 
   getUserDB(): string {
     return localStorage.getItem('currentUser');
   }
   // @TODO refactor this to use node server
-  getRemoteHost(): string {
-    return environment.remoteCouchDBHost + this.getUserDB();
+  async getRemoteHost() {
+
+    const appConfig = await this.appConfigService.getAppConfig();
+    return appConfig.remoteCouchDBHost;
   }
-  async syncAllRecords(username, password) {
+  async syncAllRecords() {
 
     try {
-      const response = await this.autheunticationService.loginForUpload(username, password);
-      if (response) {
-        return new Promise((resolve, reject) => {
-          const result = PouchDB.sync(
-            this.getUserDB(), this.getRemoteHost()
-          )
-            .on('complete', (data) => resolve(data))
-            .on('error', (err) => reject(err));
-        });
-      } else {
-        return Promise.reject('Wrong credentials');
-      }
+      const userDB = await this.getUserDB();
+      const remoteHost = await this.getRemoteHost();
+      const result = PouchDB.sync(userDB, remoteHost)
+        .on('complete', function (data) {
+          return data;
+        })
+        .on('error', (err) => (err));
     } catch (error) {
-
-      return Promise.reject(error);
     }
   }
 
-  async pushAllrecords(username, password) {
+  async pushAllrecords() {
 
     try {
-      const response = await this.autheunticationService.loginForUpload(username, password);
-      if (response) {
-        return new Promise((resolve, reject) => {
-          const result = PouchDB.replicate(
-            this.getUserDB(), this.getRemoteHost()
-          )
-            .on('complete', (data) => resolve(data))
-            .on('error', (err) => reject(err));
-        });
-      } else {
-        return Promise.reject('Wrong credentials');
-      }
+      const userDB = await this.getUserDB();
+      const remoteHost = await this.getRemoteHost();
+      const DB = new PouchDB(userDB);
+      const result = await DB.replicate.to(remoteHost);
+      return true;
     } catch (error) {
       return Promise.reject(error);
     }
 
   }
 
-  async pullAllRecords(username, password) {
-
+  async pullAllRecords() {
     try {
-      const response = await this.autheunticationService.loginForUpload(username, password);
-      if (response) {
-        return new Promise((resolve, reject) => {
-          const result = PouchDB.replicate(
-            this.getRemoteHost(), this.getUserDB()
-          )
-            .on('complete', (data) => resolve(data))
-            .on('error', (err) => reject(err));
-        });
-      } else {
-        return Promise.reject('Wrong credentials');
-      }
+      const result = PouchDB.replicate(this.getRemoteHost(), this.getUserDB())
+        .on('complete', (data) => (data))
+        .on('error', (err) => (err));
     } catch (error) {
       return Promise.reject(error);
     }

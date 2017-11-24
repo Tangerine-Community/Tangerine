@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import PouchDB from 'pouchdb';
 import { Subject } from 'rxjs/Subject';
 
+import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { environment } from './../../../../environments/environment';
 import { UserService } from './user.service';
 
@@ -14,7 +15,7 @@ export class AuthenticationService {
   public currentUserLoggedIn$: any;
   private _currentUserLoggedIn: boolean;
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private appConfigService: AppConfigService) {
     this.currentUserLoggedIn$ = new Subject();
   }
 
@@ -22,7 +23,6 @@ export class AuthenticationService {
     let isCredentialsValid = false;
     const userExists = await this.userService.doesUserExist(username);
     if (userExists) {
-      console.log('user exists');
       /**
        *@TODO if Security policy require password is false, then no need to check password. Just login the user
        */
@@ -53,7 +53,7 @@ export class AuthenticationService {
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     return doesPasswordMatch;
   };
@@ -88,11 +88,13 @@ export class AuthenticationService {
   }
 
 
-  getSecurityPolicy() {
-    return environment.securityPolicy;
+  async getSecurityPolicy() {
+    const appConfig = await this.appConfigService.getAppConfig();
+    return appConfig.securityPolicy;
   }
-  isNoPasswordMode() {
-    const isNoPasswordMode = this.getSecurityPolicy().find(policy => policy === 'noPassword');
+  async isNoPasswordMode() {
+    const policy = await this.getSecurityPolicy();
+    const isNoPasswordMode = await policy.find(p => p === 'noPassword');
     return isNoPasswordMode === 'noPassword';
   }
 
