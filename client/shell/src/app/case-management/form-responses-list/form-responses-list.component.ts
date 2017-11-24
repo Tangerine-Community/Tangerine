@@ -1,15 +1,16 @@
-import { UserService } from '../../core/auth/_services/user.service';
-import { CaseManagementService } from '../_services/case-management.service';
-import { Observable } from 'rxjs/Rx';
-import { Component, Injectable, OnInit } from '@angular/core';
-import { DataSource } from '@angular/cdk/table';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/switchMap';
+
+import { DataSource } from '@angular/cdk/table';
+import { Component } from '@angular/core';
 import PouchDB from 'pouchdb';
+import { Observable } from 'rxjs/Rx';
+
+import { UserService } from '../../core/auth/_services/user.service';
 
 @Component({
   selector: 'app-form-responses-list',
@@ -68,9 +69,6 @@ export class FormResponsesListDataSource extends DataSource<any> {
           }
         });
         return flattenedData;
-      })
-      .map(data => {
-        return data;
       }).catch(() => {
         console.error('Could Not Load Form Responses');
         return Observable.of(null);

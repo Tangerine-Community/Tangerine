@@ -10,7 +10,6 @@ import { SyncingService } from '../_services/syncing.service';
 export class SyncRecordsComponent implements OnInit {
   isLoading = false;
   errorMessage;
-  user = { username: '', password: '' };
   constructor(private syncingService: SyncingService) { }
 
   ngOnInit() {
@@ -19,7 +18,7 @@ export class SyncRecordsComponent implements OnInit {
   async syncAllRecords() {
     this.toggleIsLoading();
     try {
-      const result = await this.syncingService.syncAllRecords(this.user.username, this.user.password);
+      const result = await this.syncingService.syncAllRecords();
       if (result) {
         this.toggleIsLoading();
       }
@@ -33,7 +32,7 @@ export class SyncRecordsComponent implements OnInit {
   async pushAllRecords() {
     this.toggleIsLoading();
     try {
-      const result = await this.syncingService.pushAllrecords(this.user.username, this.user.password);
+      const result = await this.syncingService.pushAllrecords();
       if (result) {
         this.toggleIsLoading();
       }
@@ -45,7 +44,7 @@ export class SyncRecordsComponent implements OnInit {
   async pullAllRecords() {
     this.toggleIsLoading();
     try {
-      const result = await this.syncingService.pullAllRecords(this.user.username, this.user.password);
+      const result = await this.syncingService.pullAllRecords();
       if (result) {
         this.toggleIsLoading();
       }

@@ -1,12 +1,12 @@
-import { AppSettings } from '../../../config/app-settings';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AuthenticationService } from '../_services/authentication.service';
-import { UserService } from '../_services/user.service';
 import 'rxjs/add/observable/fromPromise';
 
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AppConfigService } from 'app/shared/_services/app-config.service';
 import { Observable } from 'rxjs/Observable';
 
+import { AuthenticationService } from '../_services/authentication.service';
+import { UserService } from '../_services/user.service';
 import { User } from './../_services/user.model.interface';
 
 
@@ -34,14 +34,19 @@ export class RegistrationComponent implements OnInit {
         private userService: UserService,
         private authenticationService: AuthenticationService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private appConfigService: AppConfigService
     ) {
         this.statusMessage = { type: '', message: '' };
     }
 
-    ngOnInit() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || AppSettings.HOME_URL;
-        const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
+    async ngOnInit() {
+        const home_url = await this.appConfigService.getDefaultURL();
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || home_url;
+        const isNoPasswordMode = await this.authenticationService.isNoPasswordMode();
+        if (isNoPasswordMode) {
+
+        }
         if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
             this.router.navigate([this.returnUrl]);
         }
@@ -70,7 +75,6 @@ export class RegistrationComponent implements OnInit {
                 this.statusMessage = this.userNameAvailableMessage;
             return this.isUsernameTaken;
         });
-
     }
 
     loginUserAfterRegistration(username, password) {
@@ -80,9 +84,7 @@ export class RegistrationComponent implements OnInit {
             } else { this.statusMessage = this.loginUnsucessfulMessage; }
         }, error => {
             this.statusMessage = this.loginUnsucessfulMessage;
-
         });
     }
-
 }
 
