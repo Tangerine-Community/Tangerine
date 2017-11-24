@@ -72,7 +72,7 @@ Tangerine Icon Library
                                                                                                                                                                           
   ![](.//media/image18.jpeg)                                                                                 The ‘Copy to’ button in the Wizard can be used to copy questions between subtests and subtests between assessments.
                                                                                                                                                                           
-  ![Macintosh HD:Users:scottkipp:Desktop:Screen Shot 2014-11-25 at 1.15.18 PM.png](.//media/image19.png)    The ‘Delete’ key will remove an assessment from the ***Wizard***. On ***tablets***, this button is visible only when logged in as admin.
+  ![Macintosh HD:Users:scottkipp:Desktop:Screen Shot 2014-11-25 at 1.15.18 PM.png](.//media/image19.png)    The ‘Delete’ key will remove an assessment from the ***Wizard***.
 
 # A. The Tangerine Wizard
 
@@ -723,8 +723,7 @@ questions:**
 > variable from a previous subtest) parseInt(ResultOfQuestion("s\_8" ) )
 > &lt; 10 (for connecting to a variable from the same subtest)
 
-For additional examples, please see Appendix 5 - Sample Skip Logic
-Commands.
+For additional examples, please see [Annex 5](#annex-5.-additional-examples-of-skip-logic-commands)
 
 ***Please Note:*** If you are having trouble configuring your skip
 logics but still wish to capture follow-up information, you might
@@ -1397,27 +1396,17 @@ ITEMS AND SUBTESTS).***
 3. Logging into Tangerine on mobile devices
 -------------------------------------------
 
-There are two types of users on the tablet application:
-
-1.) enumerators/data collectors;
-
-2\) administrators
-
-For those who will be collecting and uploading data, they will follow
-the standard steps outlined here for creating a user account and logging
-in. For project managers and those responsible for managing data, the
-administrator login may be required, as it includes some important
-permissions such as: updating and deleting assessments, and manipulating
-Tangerine application settings.
-
-![](.//media/image51.png)&nbsp;
-
 Notice there are two tabs in the login screen: ***Login*** and ***Sign
 Up***. Login is for users who have already registered a user account on
 the device and on the .apk file that is currently installed. **User
 accounts which you have created on other tablets, on the online wizard,
 or on other versions of the .apk file are not recognized as they have
 not been created within that tablet application’s memory.**
+
+
+![](.//media/image51.png)&nbsp;
+
+
 
 ***Sign Up.*** New users should tap the ‘Sign Up’ tab to establish an
 account on the tablet. It is best to create user names and passwords
@@ -1515,7 +1504,7 @@ included in Annex 1.
 
 Procedurally, the process of inter-rater reliability does not change
 with Tangerine. Please refer to the best practices cited in the EGRA
-toolkit available at [www.eddataglobal.org](http://www.eddataglobal.org)
+Toolkit available at [shared.rti.org](https://shared.rti.org/content/early-grade-reading-assessment-egra-toolkit-second-edition)
 or follow those of your project/organization. To summarize the minimum
 recommended steps:
 
