@@ -96,7 +96,6 @@ var tangyFormDesignDoc = {
     responsesByLocationId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && doc.hasOwnProperty('inputs')) {
-          debugger;
           const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
           if (!locationFields || locationFields.length === 0) {
             return;
