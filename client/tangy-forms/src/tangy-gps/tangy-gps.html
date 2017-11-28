@@ -41,7 +41,16 @@
       static get is() { return 'tangy-gps'; }
       static get properties() {
         return {
-          
+          name: {
+            type: String,
+            value: 'tangy-gps' 
+          },
+          value: {
+            type: Object,
+            value: {},
+            observer: 'reflect',
+            reflectToAttribute: true
+          }
         };
       }
 
@@ -76,13 +85,21 @@
         }, 2000)
       }
 
+      reflect() {
+        this.recordedLatitude = this.value.recordedLatitude
+        this.recordedLongitude = this.value.recordedLongitude
+      }
+
       clickedRecord() {
-        this.recordedLatitude = this.currentLatitude
-        this.recordedLongitude = this.currentLongitude
-        let latitudeInput = this.querySelector('.latitude')
-        latitudeInput.value = this.recordedLatitude
-        let longitudeInput = this.querySelector('.longitude')
-        longitudeInput.value = this.recordedLongitude
+        this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
+          inputName: this.name,
+          inputValue: {
+            recordedLatitude: this.currentLatitude,
+            recordedLongitude: this.currentLongitude,
+          },
+          inputIncomplete: false,
+          inputInvalid: false 
+        }}))
       }
     
     }
