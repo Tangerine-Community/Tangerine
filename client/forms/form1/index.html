@@ -7,28 +7,25 @@
 
     <title>Polymer element - Test </title>
 
-    <!-- Normal Script import (if needed) -->
-    <script src="../../tangy-forms/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../../tangy-forms/node_modules/babel-polyfill/dist/polyfill.js"></script>
-    <script src="../../tangy-forms/node_modules/browser-es-module-loader/dist/babel-browser-build.js"></script>
-    <script src="../../tangy-forms/node_modules/browser-es-module-loader/dist/browser-es-module-loader.js"></script>
-    <script src="../../tangy-forms/node_modules/redux/dist/redux.js"></script>
+    <script type="application/javascript">
+      // kudos: https://stackoverflow.com/questions/43502448/how-to-detect-async-function-support-without-eval
+      const supportsAsyncFunctions = (() => {
+        try {
+          new Function('async () => {}')();
+        } catch (error) {
+          return false;
+        }
 
-    <!-- Import the ES6 module -->
-    <script type="module" src="../../tangy-forms-build/src/tangy-form/tangy-form.js"></script>
-    <script type="module" src="../../tangy-forms-build/src/tangy-form/tangy-form-item.js"></script>
-    <script type="module" src="../../tangy-forms-build/src/tangy-input/tangy-input.js"></script>
-
+        return true;
+      })();
+      if (supportsAsyncFunctions) {
+        console.log("I can run async.")
+        window.location.href = './es6.html';
+      } else {
+        console.log("Must use transpiled code.")
+        window.location.href = './es5.html';
+      }
+    </script>
 </head>
-
-<body>
-<tangy-form id="lemmie" on-item-change="
-      console.log(&apos;item changed&apos;)
-      console.log(tangyForm)
-      console.log(response)
-      console.log(items)
-    ">
-    <tangy-form-item src="item-1.html" id="item-1" title="ACASI Part 3 Introduction" itemorder="2"></tangy-form-item>
-</tangy-form>
-</body>
+<body>Hello</body>
 </html>

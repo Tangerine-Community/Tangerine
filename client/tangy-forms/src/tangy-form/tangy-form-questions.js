@@ -1,11 +1,13 @@
 /* jshint esversion: 6 */
 
-import {Element as PolymerElement} from '../../p3/node_modules/@polymer/polymer/polymer-element.js'
+import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
 // import '../../node_modules/redux/dist/redux.js'
-import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, ITEM_OPEN, ITEM_CLOSE, ITEM_DISABLE, ITEM_ENABLE, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
-  ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, ITEM_ENABLED, ITEM_VALID, INPUT_ADD, INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE,
-  INPUT_INVALID, INPUT_VALID, INPUT_HIDE, INPUT_SHOW, NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE,
-  TANGY_TIMED_TIME_SPENT, TANGY_TIMED_LAST_ATTEMPTED, TANGY_TIMED_INCREMENT} from './tangy-form-actions.js'
+import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
+  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
+  ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
+  INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
+  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
+  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from './tangy-form-actions.js'
 
     /**
      * `tangy-form-questions`
@@ -122,7 +124,14 @@ export class TangyFormQuestions extends PolymerElement {
           // Eval on-change on forms.
           let forms = [].slice.call(this.querySelectorAll('form[on-change]'))
           forms.forEach((form) => {
-            if (form.hasAttribute('on-change')) eval(form.getAttribute('on-change'))
+            if (form.hasAttribute('on-change')) {
+              try {
+                window.getValue = this.getValue.bind(this)
+                eval(form.getAttribute('on-change'))
+              } catch (error) {
+                console.log("Error: " + error)
+              }
+            }
           })
         }
 

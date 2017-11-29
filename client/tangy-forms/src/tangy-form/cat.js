@@ -1,6 +1,7 @@
 import {TangyForm} from './tangy-form.js'
 import {TangyFormItem} from './tangy-form-item.js'
 import {TangyInput} from '../tangy-input/tangy-input.js'
+import {TangyCheckbox} from '../tangy-checkbox/tangy-checkbox.js'
 
 window.sleep = (ms) => new Promise((res, rej) => {
   setTimeout(res, ms)

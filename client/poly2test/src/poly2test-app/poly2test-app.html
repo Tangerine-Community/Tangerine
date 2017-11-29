@@ -1,0 +1,34 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../foo/foo-element.html">
+
+<dom-module id="poly2test-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello!</h2>
+    <slot></slot>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class Poly2testApp extends Polymer.Element {
+      static get is() { return 'poly2test-app'; }
+      ready() {
+        super.ready()
+        console.log("foody!")
+        this.innerHTML = "<foo-element></foo-element>"
+        setTimeout(() => this.innerHTML = '<strong>changing soon</strong>', 2000)
+        setTimeout(() => this.innerHTML = '<foo-element></foo-element>', 4000)
+      }
+    }
+
+    window.customElements.define(Poly2testApp.is, Poly2testApp);
+  </script>
+</dom-module>

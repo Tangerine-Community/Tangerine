@@ -1,0 +1,6 @@
+{
+  "name": "poly2test",
+  "short_name": "poly2test",
+  "start_url": "/",
+  "display": "standalone"
+}

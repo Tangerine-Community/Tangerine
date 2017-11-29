@@ -1,13 +1,11 @@
 /* jshint esversion: 6 */
-/* global window */
+// /* global window */
 
 import '../tangy-form/tangy-element-styles.js'
-import {Element as PolymerElement} from '../../p3/node_modules/@polymer/polymer/polymer-element.js';
-import {afterNextRender } from '../../p3/node_modules/@polymer/polymer/lib/utils/render-status.js';
+import { Element as PolymerElement } from '../../node_modules/@polymer/polymer/polymer-element.js';
+import { afterNextRender } from '../../node_modules/@polymer/polymer/lib/utils/render-status.js';
+// import '../../node_modules/bluebird/js/browser/bluebird.js';
 import '../../bower_components/pouchdb/dist/pouchdb.js'
-// import '../../node_modules/redux/dist/redux.js'
-// import '../../node_modules/redux/es/index.js'
-// import 'https://unpkg.com/redux@3.7.2/es/index.js?module'
 
 //   <!-- Tangy Libraries -->
 import {TangyFormModel} from './tangy-form-model.js'
@@ -16,6 +14,7 @@ import {TangyFormService} from './tangy-form-service.js'
 import { tangyFormReducer, itemsIncompleteCheck, validateItemInputs, calculateTargets } from'./tangy-form-reducer.js'
 import {tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook} from './tangy-form-redux-middleware.js'
 import './cat.js'
+
 
 //
 //   <!-- Tangy Form Core Elements -->
@@ -103,26 +102,26 @@ export class TangyForm extends PolymerElement {
 
 <slot></slot>
 <div id="tangy-form-questions">
-  <slot id="tangy-form-questions--form"></slot>
+  <!--<slot id="tangy-form-questions&#45;&#45;form"></slot>-->
   <paper-fab id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
   <paper-fab id="show-responses-fab" on-click="showResponses" icon="icons:save"></paper-fab>
-  </div>
+ </div>
 
-  <div id="tangy-form-responses" hidden>
-<paper-button on-click='newResponse' raised><iron-icon icon="icons:add"></iron-icon></paper-button>
-<paper-button on-click='generateCSV' raised><iron-icon icon="icons:file-download"></iron-icon></paper-button>
-<ul>
-<template is="dom-repeat" items="{{responses}}">
-  <li>
-  [[item.startDatetime]]
-  <iron-icon data-response-id="[[item._id]]" on-click="resumeResponse" icon="icons:launch"></iron-icon>
-  <template is="dom-if" if="{{item.isCurrentTangyFormResponse}}">
-  <span style="color: #8BC34A;"> *</span>
-  </template>
-  </li>
-  </template>
+<div id="tangy-form-responses" hidden>
+  <paper-button on-click='newResponse' raised><iron-icon icon="icons:add"></iron-icon></paper-button>
+  <paper-button on-click='generateCSV' raised><iron-icon icon="icons:file-download"></iron-icon></paper-button>
+  <ul>
+    <template is="dom-repeat" items="{{responses}}">
+      <li>
+        [[item.startDatetime]]
+        <iron-icon data-response-id="[[item._id]]" on-click="resumeResponse" icon="icons:launch"></iron-icon>
+        <template is="dom-if" if="{{item.isCurrentTangyFormResponse}}">
+            <span style="color: #8BC34A;"> *</span>
+        </template>
+      </li>
+    </template>
   </ul>
-  </div>`;
+</div>`;
   }
 
     static get is() { return 'tangy-form'; }
@@ -198,8 +197,9 @@ export class TangyForm extends PolymerElement {
     //   afterNextRender(this, this.afterNextRender)
     // }
 
-    ready(){
-      super.ready()
+  async ready(){
+      // super.ready()
+      await PolymerElement.prototype.ready.call(this);
       //   .then(() => {
       afterNextRender(this, this.afterNextRender)
       //       .catch(e => {

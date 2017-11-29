@@ -1,6 +1,8 @@
+/* jshint esversion: 6 */
 
-var Loc = {
-  query (levels, criteria, qCallback, context) {
+export class Loc {
+
+  static query (levels, criteria, qCallback, context) {
     var currentLevelIndex, i, j, len, level, levelIDs, levelMap, locationLevels, locations, resp, targetLevelIndex;
     if (criteria == null) {
       criteria = {};
@@ -21,9 +23,9 @@ var Loc = {
     currentLevelIndex = Loc.getCurrentLevelIndex(levels, criteria, levelMap);
     resp = Loc._query(0, currentLevelIndex, locations, levelMap, criteria);
     qCallback(resp)
-  },
+  }
 
-  _query (depth, targetDepth, data, levelMap, criteria) {
+  static _query (depth, targetDepth, data, levelMap, criteria) {
     var allChildren, i, j, len, levelData, v;
     if (depth === targetDepth) {
       return _.map(data, function(obj) {
@@ -52,9 +54,9 @@ var Loc = {
     console.log("_query: (depth, targetDepth, data, levelMap, criteria)", depth, targetDepth, data, levelMap, criteria);
     console.log("ERROR: Cannot find location. I should never reach this.");
     return {};
-  },
+  }
 
-  getCurrentLevelIndex (levels, criteria, levelMap) {
+  static getCurrentLevelIndex (levels, criteria, levelMap) {
     var i, j, len, level;
     for (i = j = 0, len = levels.length; j < len; i = ++j) {
       level = levels[i];
