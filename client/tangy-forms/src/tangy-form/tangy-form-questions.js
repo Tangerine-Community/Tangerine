@@ -1,9 +1,27 @@
-<link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<script src="../../node_modules/redux/dist/redux.js"></script>
+/* jshint esversion: 6 */
 
-<dom-module id="tangy-form-questions">
+import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
+// import '../../node_modules/redux/dist/redux.js'
+import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
+  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
+  ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
+  INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
+  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
+  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from './tangy-form-actions.js'
 
-  <template>
+    /**
+     * `tangy-form-questions`
+     * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+
+export class TangyFormQuestions extends PolymerElement {
+
+      static get template () {
+        return `
       <style>
         :host {
           width: 100%;
@@ -50,19 +68,8 @@
         <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
       </div>
       <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
-  </template>
-
-  <script>
-    /**
-     * `tangy-form-questions`
-     * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
-     *
-     * @customElement
-     * @polymer
-     * @demo demo/index.html
-     */
-
-    class TangyFormQuestions extends Polymer.Element {
+        `
+      }
 
       static get is() { return 'tangy-form-questions'; }
 
@@ -117,7 +124,14 @@
           // Eval on-change on forms.
           let forms = [].slice.call(this.querySelectorAll('form[on-change]'))
           forms.forEach((form) => {
-            if (form.hasAttribute('on-change')) eval(form.getAttribute('on-change'))
+            if (form.hasAttribute('on-change')) {
+              try {
+                window.getValue = this.getValue.bind(this)
+                eval(form.getAttribute('on-change'))
+              } catch (error) {
+                console.log("Error: " + error)
+              }
+            }
           })
         }
 
@@ -251,5 +265,4 @@
 
     
     window.customElements.define(TangyFormQuestions.is, TangyFormQuestions);
-  </script>
-</dom-module>
+
