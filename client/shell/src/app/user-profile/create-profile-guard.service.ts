@@ -26,7 +26,9 @@ export class CreateProfileGuardService implements CanActivate {
         null;
       if (response_Id) {
         const responseDoc = await this.DB.get(response_Id, { include_docs: true });
-        isProfileComplete = !!responseDoc.complete;
+        isProfileComplete = responseDoc.items.find(item => {
+          return (item.incomplete === true);
+        }) ? false : true;
       }
     }
 

@@ -79,7 +79,7 @@ class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '10',
+  version: '11',
   views: {
     formByFormId: {
       map: function (doc) {
@@ -91,6 +91,12 @@ var tangyFormDesignDoc = {
       map: function (doc) {
         if (doc.collection !== 'TangyFormResponse') return
         emit(`${doc.formId}`, true)
+      }.toString()
+    },
+    responsesLockedAndNotUploaded: {
+      map: function (doc) {
+        if (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime)
+          emit(doc._id, true)
       }.toString()
     },
     responsesByLocationId: {
