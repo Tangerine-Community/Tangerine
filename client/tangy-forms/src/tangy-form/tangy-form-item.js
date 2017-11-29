@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
-import {Element as PolymerElement} from '../../p3/node_modules/@polymer/polymer/polymer-element.js'
-import '../../p3/node_modules/@polymer/paper-card/paper-card.js'
+import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import '../../node_modules/@polymer/paper-card/paper-card.js'
 
   /**
    * `tangy-form-item`
@@ -14,7 +14,7 @@ import '../../p3/node_modules/@polymer/paper-card/paper-card.js'
 
 export class TangyFormItem extends PolymerElement {
 
-    static get template()
+  static get template()
     {
       return `
   <style>
@@ -73,6 +73,7 @@ paper-card {
 <paper-card id="card" class="shrunk" heading="[[title]]">
 
   <div class="card-content">
+  <div class="card-data"></div>
   <slot></slot>
   </div>
 
@@ -160,8 +161,9 @@ paper-card {
     //     itemId: this.id
     //   }))
 
-    connectedCallback() {
-        super.connectedCallback()
+    async connectedCallback() {
+        // super.connectedCallback()
+        await PolymerElement.prototype.connectedCallback.call(this);
           // .then(() => {
             this.store = window.tangyFormStore;
             this.$.close.addEventListener('click', () => this.store.dispatch({
@@ -182,12 +184,13 @@ paper-card {
     async onOpenChange(open) {
       // Close it.
       if (open === false) {
-        this.innerHTML = ''
+        this.shadowRoot.querySelector('.card-data').innerHTML = ''
       }
       // Open it, but only if empty because we might be stuck.
-      if (open === true && !this.disabled && this.innerHTML == '') {
+      if (open === true && !this.disabled && this.shadowRoot.querySelector('.card-data').innerHTML === '') {
         let request = await fetch(this.src)
-        this.innerHTML = await request.text()
+        // this.innerHTML = await request.text()
+        this.shadowRoot.querySelector('.card-data').innerHTML = await request.text()
         this.querySelectorAll('[name]').forEach((input) => {
           // @TODO Past tense?
           this.store.dispatch({type: 'INPUT_ADD', itemId: this.id, attributes: input.getProps()})

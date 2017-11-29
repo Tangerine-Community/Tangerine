@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Polymer element - Test </title>
+
+    <script type="application/javascript">
+      window.Tangy = {}
+      Tangy.path = 'tangy-forms-build'
+    </script>
+
+    <!-- Normal Script import (if needed) -->
+    <script src="../../tangy-forms-build/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
+    <!--<script src="../../tangy-forms-build/node_modules/babel-polyfill/dist/polyfill.js"></script>-->
+    <!--<script src="../../tangy-forms-build/node_modules/bluebird/js/browser/bluebird.js"></script>-->
+    <script src="../../tangy-forms-build/node_modules/browser-es-module-loader/dist/babel-browser-build.js"></script>
+    <script src="../../tangy-forms-build/node_modules/browser-es-module-loader/dist/browser-es-module-loader.js"></script>
+    <script src="../../tangy-forms-build/node_modules/redux/dist/redux.js"></script>
+
+
+    <!-- Load Custom Elements es5 adapter -->
+    <!--<script src="../../tangy-forms-build/node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js"></script>-->
+
+    <!-- Import the ES6 module -->
+    <script type="module" src="../../tangy-forms-build/src/tangy-form/tangy-form.js"></script>
+    <script type="module" src="../../tangy-forms-build/src/tangy-form/tangy-form-item.js"></script>
+    <script type="module" src="../../tangy-forms-build/src/tangy-input/tangy-input.js"></script>
+    <script type="module" src="../../tangy-forms-build/src/tangy-checkbox/tangy-checkbox.js"></script>
+    <!--<script type="module" src="../../tangy-forms-build/src/tangy-foo/tangy-foo.js"></script>-->
+    <script type="module" src="../../tangy-forms/src/tangy-gps/tangy-gps.js"></script>
+    <!--<script type="module" src="../../tangy-forms/src/tangy-location/tangy-location.js"></script>-->
+    <script type="module" src="../../tangy-forms/src/tangy-radio-buttons/tangy-radio-buttons.js"></script>
+    <script type="module" src="../../tangy-forms/src/tangy-timed/tangy-timed.js"></script>
+</head>
+
+<body>
+<tangy-form id="lemmie" on-item-change="
+      console.log(&apos;item changed&apos;)
+      console.log(tangyForm)
+      console.log(response)
+      console.log(items)
+    ">
+
+    <!--<tangy-form-item src="item-1.html" id="item-1" title="ACASI Part 3 Introduction" itemorder="2"></tangy-form-item>-->
+    <!--<tangy-input error-message="Just proving that this element works" type="text" name="it_works" required label="Just proving that this element works" value="" > </tangy-input><br/>-->
+
+    <form id="with-pupil-books-1" on-change="">
+        <tangy-gps>
+            <input class="latitude" name="latitude" type="hidden">
+            <input class="longitude" name="longitude" type="hidden">
+        </tangy-gps>
+
+        <!-- Don't have the scaffolding for loading location-list here. -->
+        <!--<tangy-location  required label="Select your location:" name="location" show-levels="county,subcounty,zone,school">-->
+        <!--</tangy-location>-->
+
+    </form>
+    <form id="with-pupil-books-9" on-change='
+
+
+'>
+
+        <p>Hi CSO, you are about to conduct the pupil assessment. Please select three pupils randomly. Give them the laminated paper with the stories (stimulus), having opened it on the right page. Make sure it is the correct term, class and subject.</p><u>Kusoma Hadithi kwa Sauti</u><p> <i>Muonyeshe mwanafunzi hadithi. Halafu sema hivi,</i></p> <p><b>Hii hapa ni hadithi fupi. Ningependa uisome kwa sauti, haraka iwezekanavyo lakini kwa makini. Je, umeelewa jinsi unavyopaswa kufanya? Nikisema “Anza,” isome hadithi vizuri kadri ya uwezo wako. Nitanyamaza nikusilikilize. Uko tayari? Anza.</b></p>
+        <tangy-radio-buttons id="start3" name="start3" value="" label="Hit Ok and Next below" >
+            <option value="start">OK</option><br>
+        </tangy-radio-buttons>
+    </form>
+
+
+    <form id="with-pupil-books-10" on-change='
+
+
+'>
+        <p>Hi CSO, you are about to conduct the pupil assessment. Please select three pupils randomly. Give them the laminated paper with the stories (stimulus), having opened it on the right page. Make sure it is the correct term, class and subject.</p> <u>Reading story loudly</u><p> <i>Show the Pupil the story and say this,</i></p> <p><b>Here is a short story. I would like you to carefully read it aloud as fast as you can. Have you understood what you are supposed to do? When I say, please read the story carefully, loudly and as fast as you can. I will keep quiet as you read, are you ready? Please start.</b></p>
+        <tangy-radio-buttons id="start4" name="start4" value="" label="Hit Ok and Next below" >
+            <option value="start">OK</option><br>
+        </tangy-radio-buttons>
+    </form>
+
+
+
+    <form id="with-pupil-books-11" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term1_1"><option value="class1_term1_1-1">pen,</option><option value="class1_term1_1-2">big,</option><option value="class1_term1_1-3">net,</option><option value="class1_term1_1-4">I,</option><option value="class1_term1_1-5">am,</option><option value="class1_term1_1-6">bat,</option><option value="class1_term1_1-7">pet,</option><option value="class1_term1_1-8">rat,</option><option value="class1_term1_1-9">hot,</option><option value="class1_term1_1-10">go,</option><option value="class1_term1_1-11">bed,</option><option value="class1_term1_1-12">bin,</option><option value="class1_term1_1-13">mat,</option><option value="class1_term1_1-14">cat,</option><option value="class1_term1_1-15">leg,</option><option value="class1_term1_1-16">cup,</option><option value="class1_term1_1-17">fit,</option><option value="class1_term1_1-18">sun,</option><option value="class1_term1_1-19">dog,</option><option value="class1_term1_1-20">pot,</option><option value="class1_term1_1-21">pig,</option><option value="class1_term1_1-22">let,</option><option value="class1_term1_1-23">yes,</option><option value="class1_term1_1-24">sit,</option><option value="class1_term1_1-25">hen</option><option value="class1_term1_1_last_attempted_name"></option><option value="class1_term1_1_last_attempted_nth"></option><option value="class1_term1_1_time_remaining"></option><option value="class1_term1_1_time_spent"></option><option value="class1_term1_1_items_per_minute"></option><option value="class1_term1_1_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-12" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term1_2"><option value="class1_term1_2-1">pen,</option><option value="class1_term1_2-2">big,</option><option value="class1_term1_2-3">net,</option><option value="class1_term1_2-4">I,</option><option value="class1_term1_2-5">am,</option><option value="class1_term1_2-6">bat,</option><option value="class1_term1_2-7">pet,</option><option value="class1_term1_2-8">rat,</option><option value="class1_term1_2-9">hot,</option><option value="class1_term1_2-10">go,</option><option value="class1_term1_2-11">bed,</option><option value="class1_term1_2-12">bin,</option><option value="class1_term1_2-13">mat,</option><option value="class1_term1_2-14">cat,</option><option value="class1_term1_2-15">leg,</option><option value="class1_term1_2-16">cup,</option><option value="class1_term1_2-17">fit,</option><option value="class1_term1_2-18">sun,</option><option value="class1_term1_2-19">dog,</option><option value="class1_term1_2-20">pot,</option><option value="class1_term1_2-21">pig,</option><option value="class1_term1_2-22">let,</option><option value="class1_term1_2-23">yes,</option><option value="class1_term1_2-24">sit,</option><option value="class1_term1_2-25">hen</option><option value="class1_term1_2_last_attempted_name"></option><option value="class1_term1_2_last_attempted_nth"></option><option value="class1_term1_2_time_remaining"></option><option value="class1_term1_2_time_spent"></option><option value="class1_term1_2_items_per_minute"></option><option value="class1_term1_2_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-13" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term1"><option value="class1_term1-1">pen,</option><option value="class1_term1-2">big,</option><option value="class1_term1-3">net,</option><option value="class1_term1-4">I,</option><option value="class1_term1-5">am,</option><option value="class1_term1-6">bat,</option><option value="class1_term1-7">pet,</option><option value="class1_term1-8">rat,</option><option value="class1_term1-9">hot,</option><option value="class1_term1-10">go,</option><option value="class1_term1-11">bed,</option><option value="class1_term1-12">bin,</option><option value="class1_term1-13">mat,</option><option value="class1_term1-14">cat,</option><option value="class1_term1-15">leg,</option><option value="class1_term1-16">cup,</option><option value="class1_term1-17">fit,</option><option value="class1_term1-18">sun,</option><option value="class1_term1-19">dog,</option><option value="class1_term1-20">pot,</option><option value="class1_term1-21">pig,</option><option value="class1_term1-22">let,</option><option value="class1_term1-23">yes,</option><option value="class1_term1-24">sit,</option><option value="class1_term1-25">hen</option><option value="class1_term1_last_attempted_name"></option><option value="class1_term1_last_attempted_nth"></option><option value="class1_term1_time_remaining"></option><option value="class1_term1_time_spent"></option><option value="class1_term1_items_per_minute"></option><option value="class1_term1_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-14" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term1_1"><option value="class2_term1_1-1">Baby</option><option value="class2_term1_1-2">Sara</option><option value="class2_term1_1-3">wants</option><option value="class2_term1_1-4">to</option><option value="class2_term1_1-5">play</option><option value="class2_term1_1-6">in</option><option value="class2_term1_1-7">the</option><option value="class2_term1_1-8">sand.</option><option value="class2_term1_1-9">She</option><option value="class2_term1_1-10">puts</option><option value="class2_term1_1-11">sand</option><option value="class2_term1_1-12">in</option><option value="class2_term1_1-13">her</option><option value="class2_term1_1-14">hands.</option><option value="class2_term1_1-15">She</option><option value="class2_term1_1-16">puts</option><option value="class2_term1_1-17">sand</option><option value="class2_term1_1-18">on</option><option value="class2_term1_1-19">her</option><option value="class2_term1_1-20">legs.</option><option value="class2_term1_1-21">She</option><option value="class2_term1_1-22">puts</option><option value="class2_term1_1-23">sand</option><option value="class2_term1_1-24">in</option><option value="class2_term1_1-25">her</option><option value="class2_term1_1-26">hair.</option><option value="class2_term1_1-27">Baby</option><option value="class2_term1_1-28">Sara</option><option value="class2_term1_1-29">plays</option><option value="class2_term1_1-30">for</option><option value="class2_term1_1-31">about</option><option value="class2_term1_1-32">an</option><option value="class2_term1_1-33">hour.</option><option value="class2_term1_1-34">She</option><option value="class2_term1_1-35">is</option><option value="class2_term1_1-36">very</option><option value="class2_term1_1-37">happy.</option><option value="class2_term1_1-38">Juma</option><option value="class2_term1_1-39">sees</option><option value="class2_term1_1-40">baby</option><option value="class2_term1_1-41">Sara.</option><option value="class2_term1_1-42">Baby</option><option value="class2_term1_1-43">Sara</option><option value="class2_term1_1-44">is</option><option value="class2_term1_1-45">dirty.</option><option value="class2_term1_1-46">He</option><option value="class2_term1_1-47">takes</option><option value="class2_term1_1-48">her</option><option value="class2_term1_1-49">home.</option><option value="class2_term1_1-50">Mother</option><option value="class2_term1_1-51">gives</option><option value="class2_term1_1-52">baby</option><option value="class2_term1_1-53">Sara</option><option value="class2_term1_1-54">a</option><option value="class2_term1_1-55">bath.</option><option value="class2_term1_1-56">She</option><option value="class2_term1_1-57">puts</option><option value="class2_term1_1-58">a</option><option value="class2_term1_1-59">clean</option><option value="class2_term1_1-60">pink</option><option value="class2_term1_1-61">dress</option><option value="class2_term1_1-62">on</option><option value="class2_term1_1-63">her.</option><option value="class2_term1_1_last_attempted_name"></option><option value="class2_term1_1_last_attempted_nth"></option><option value="class2_term1_1_time_remaining"></option><option value="class2_term1_1_time_spent"></option><option value="class2_term1_1_items_per_minute"></option><option value="class2_term1_1_number_of_items_marked"></option></tangy-timed>
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-15" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term1_2"><option value="class2_term1_2-1">Baby</option><option value="class2_term1_2-2">Sara</option><option value="class2_term1_2-3">wants</option><option value="class2_term1_2-4">to</option><option value="class2_term1_2-5">play</option><option value="class2_term1_2-6">in</option><option value="class2_term1_2-7">the</option><option value="class2_term1_2-8">sand.</option><option value="class2_term1_2-9">She</option><option value="class2_term1_2-10">puts</option><option value="class2_term1_2-11">sand</option><option value="class2_term1_2-12">in</option><option value="class2_term1_2-13">her</option><option value="class2_term1_2-14">hands.</option><option value="class2_term1_2-15">She</option><option value="class2_term1_2-16">puts</option><option value="class2_term1_2-17">sand</option><option value="class2_term1_2-18">on</option><option value="class2_term1_2-19">her</option><option value="class2_term1_2-20">legs.</option><option value="class2_term1_2-21">She</option><option value="class2_term1_2-22">puts</option><option value="class2_term1_2-23">sand</option><option value="class2_term1_2-24">in</option><option value="class2_term1_2-25">her</option><option value="class2_term1_2-26">hair.</option><option value="class2_term1_2-27">Baby</option><option value="class2_term1_2-28">Sara</option><option value="class2_term1_2-29">plays</option><option value="class2_term1_2-30">for</option><option value="class2_term1_2-31">about</option><option value="class2_term1_2-32">an</option><option value="class2_term1_2-33">hour.</option><option value="class2_term1_2-34">She</option><option value="class2_term1_2-35">is</option><option value="class2_term1_2-36">very</option><option value="class2_term1_2-37">happy.</option><option value="class2_term1_2-38">Juma</option><option value="class2_term1_2-39">sees</option><option value="class2_term1_2-40">baby</option><option value="class2_term1_2-41">Sara.</option><option value="class2_term1_2-42">Baby</option><option value="class2_term1_2-43">Sara</option><option value="class2_term1_2-44">is</option><option value="class2_term1_2-45">dirty.</option><option value="class2_term1_2-46">He</option><option value="class2_term1_2-47">takes</option><option value="class2_term1_2-48">her</option><option value="class2_term1_2-49">home.</option><option value="class2_term1_2-50">Mother</option><option value="class2_term1_2-51">gives</option><option value="class2_term1_2-52">baby</option><option value="class2_term1_2-53">Sara</option><option value="class2_term1_2-54">a</option><option value="class2_term1_2-55">bath.</option><option value="class2_term1_2-56">She</option><option value="class2_term1_2-57">puts</option><option value="class2_term1_2-58">a</option><option value="class2_term1_2-59">clean</option><option value="class2_term1_2-60">pink</option><option value="class2_term1_2-61">dress</option><option value="class2_term1_2-62">on</option><option value="class2_term1_2-63">her.</option><option value="class2_term1_2_last_attempted_name"></option><option value="class2_term1_2_last_attempted_nth"></option><option value="class2_term1_2_time_remaining"></option><option value="class2_term1_2_time_spent"></option><option value="class2_term1_2_items_per_minute"></option><option value="class2_term1_2_number_of_items_marked"></option></tangy-timed>
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-16" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term1"><option value="class2_term1-1">Baby</option><option value="class2_term1-2">Sara</option><option value="class2_term1-3">wants</option><option value="class2_term1-4">to</option><option value="class2_term1-5">play</option><option value="class2_term1-6">in</option><option value="class2_term1-7">the</option><option value="class2_term1-8">sand.</option><option value="class2_term1-9">She</option><option value="class2_term1-10">puts</option><option value="class2_term1-11">sand</option><option value="class2_term1-12">in</option><option value="class2_term1-13">her</option><option value="class2_term1-14">hands.</option><option value="class2_term1-15">She</option><option value="class2_term1-16">puts</option><option value="class2_term1-17">sand</option><option value="class2_term1-18">on</option><option value="class2_term1-19">her</option><option value="class2_term1-20">legs.</option><option value="class2_term1-21">She</option><option value="class2_term1-22">puts</option><option value="class2_term1-23">sand</option><option value="class2_term1-24">in</option><option value="class2_term1-25">her</option><option value="class2_term1-26">hair.</option><option value="class2_term1-27">Baby</option><option value="class2_term1-28">Sara</option><option value="class2_term1-29">plays</option><option value="class2_term1-30">for</option><option value="class2_term1-31">about</option><option value="class2_term1-32">an</option><option value="class2_term1-33">hour.</option><option value="class2_term1-34">She</option><option value="class2_term1-35">is</option><option value="class2_term1-36">very</option><option value="class2_term1-37">happy.</option><option value="class2_term1-38">Juma</option><option value="class2_term1-39">sees</option><option value="class2_term1-40">baby</option><option value="class2_term1-41">Sara.</option><option value="class2_term1-42">Baby</option><option value="class2_term1-43">Sara</option><option value="class2_term1-44">is</option><option value="class2_term1-45">dirty.</option><option value="class2_term1-46">He</option><option value="class2_term1-47">takes</option><option value="class2_term1-48">her</option><option value="class2_term1-49">home.</option><option value="class2_term1-50">Mother</option><option value="class2_term1-51">gives</option><option value="class2_term1-52">baby</option><option value="class2_term1-53">Sara</option><option value="class2_term1-54">a</option><option value="class2_term1-55">bath.</option><option value="class2_term1-56">She</option><option value="class2_term1-57">puts</option><option value="class2_term1-58">a</option><option value="class2_term1-59">clean</option><option value="class2_term1-60">pink</option><option value="class2_term1-61">dress</option><option value="class2_term1-62">on</option><option value="class2_term1-63">her.</option><option value="class2_term1_last_attempted_name"></option><option value="class2_term1_last_attempted_nth"></option><option value="class2_term1_time_remaining"></option><option value="class2_term1_time_spent"></option><option value="class2_term1_items_per_minute"></option><option value="class2_term1_number_of_items_marked"></option></tangy-timed>
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-17" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+
+        <tangy-timed required columns="4" name="class1_term2_1"><option value="class1_term2_1-1">Pat</option><option value="class1_term2_1-2">has</option><option value="class1_term2_1-3">a</option><option value="class1_term2_1-4">pet</option><option value="class1_term2_1-5">and</option><option value="class1_term2_1-6">a</option><option value="class1_term2_1-7">mat.</option><option value="class1_term2_1-8">Pat</option><option value="class1_term2_1-9">sits</option><option value="class1_term2_1-10">on</option><option value="class1_term2_1-11">the</option><option value="class1_term2_1-12">mat.</option><option value="class1_term2_1-13">Sam</option><option value="class1_term2_1-14">then</option><option value="class1_term2_1-15">visits</option><option value="class1_term2_1-16">Pat.</option><option value="class1_term2_1-17">Sam</option><option value="class1_term2_1-18">wants</option><option value="class1_term2_1-19">to</option><option value="class1_term2_1-20">chat.</option><option value="class1_term2_1-21">Pat</option><option value="class1_term2_1-22">and</option><option value="class1_term2_1-23">Sam</option><option value="class1_term2_1-24">sit</option><option value="class1_term2_1-25">on</option><option value="class1_term2_1-26">the</option><option value="class1_term2_1-27">mat</option><option value="class1_term2_1-28">and</option><option value="class1_term2_1-29">chat.</option><option value="class1_term2_1_last_attempted_name"></option><option value="class1_term2_1_last_attempted_nth"></option><option value="class1_term2_1_time_remaining"></option><option value="class1_term2_1_time_spent"></option><option value="class1_term2_1_items_per_minute"></option><option value="class1_term2_1_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-18" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+
+        <tangy-timed required columns="4" name="class1_term2_2"><option value="class1_term2_2-1">Pat</option><option value="class1_term2_2-2">has</option><option value="class1_term2_2-3">a</option><option value="class1_term2_2-4">pet</option><option value="class1_term2_2-5">and</option><option value="class1_term2_2-6">a</option><option value="class1_term2_2-7">mat.</option><option value="class1_term2_2-8">Pat</option><option value="class1_term2_2-9">sits</option><option value="class1_term2_2-10">on</option><option value="class1_term2_2-11">the</option><option value="class1_term2_2-12">mat.</option><option value="class1_term2_2-13">Sam</option><option value="class1_term2_2-14">then</option><option value="class1_term2_2-15">visits</option><option value="class1_term2_2-16">Pat.</option><option value="class1_term2_2-17">Sam</option><option value="class1_term2_2-18">wants</option><option value="class1_term2_2-19">to</option><option value="class1_term2_2-20">chat.</option><option value="class1_term2_2-21">Pat</option><option value="class1_term2_2-22">and</option><option value="class1_term2_2-23">Sam</option><option value="class1_term2_2-24">sit</option><option value="class1_term2_2-25">on</option><option value="class1_term2_2-26">the</option><option value="class1_term2_2-27">mat</option><option value="class1_term2_2-28">and</option><option value="class1_term2_2-29">chat.</option><option value="class1_term2_2_last_attempted_name"></option><option value="class1_term2_2_last_attempted_nth"></option><option value="class1_term2_2_time_remaining"></option><option value="class1_term2_2_time_spent"></option><option value="class1_term2_2_items_per_minute"></option><option value="class1_term2_2_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-19" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+
+        <tangy-timed required columns="4" name="class1_term2"><option value="class1_term2-1">Pat</option><option value="class1_term2-2">has</option><option value="class1_term2-3">a</option><option value="class1_term2-4">pet</option><option value="class1_term2-5">and</option><option value="class1_term2-6">a</option><option value="class1_term2-7">mat.</option><option value="class1_term2-8">Pat</option><option value="class1_term2-9">sits</option><option value="class1_term2-10">on</option><option value="class1_term2-11">the</option><option value="class1_term2-12">mat.</option><option value="class1_term2-13">Sam</option><option value="class1_term2-14">then</option><option value="class1_term2-15">visits</option><option value="class1_term2-16">Pat.</option><option value="class1_term2-17">Sam</option><option value="class1_term2-18">wants</option><option value="class1_term2-19">to</option><option value="class1_term2-20">chat.</option><option value="class1_term2-21">Pat</option><option value="class1_term2-22">and</option><option value="class1_term2-23">Sam</option><option value="class1_term2-24">sit</option><option value="class1_term2-25">on</option><option value="class1_term2-26">the</option><option value="class1_term2-27">mat</option><option value="class1_term2-28">and</option><option value="class1_term2-29">chat.</option><option value="class1_term2_last_attempted_name"></option><option value="class1_term2_last_attempted_nth"></option><option value="class1_term2_time_remaining"></option><option value="class1_term2_time_spent"></option><option value="class1_term2_items_per_minute"></option><option value="class1_term2_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-20" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term2_1"><option value="class2_term2_1-1">Tom,</option><option value="class2_term2_1-2">Ben</option><option value="class2_term2_1-3">and</option><option value="class2_term2_1-4">Tam</option><option value="class2_term2_1-5">are</option><option value="class2_term2_1-6">at</option><option value="class2_term2_1-7">home.</option><option value="class2_term2_1-8">Tom</option><option value="class2_term2_1-9">wants</option><option value="class2_term2_1-10">to</option><option value="class2_term2_1-11">eat.</option><option value="class2_term2_1-12">Tam</option><option value="class2_term2_1-13">asks,</option><option value="class2_term2_1-14">‘’Can</option><option value="class2_term2_1-15">you</option><option value="class2_term2_1-16">ride</option><option value="class2_term2_1-17">the</option><option value="class2_term2_1-18">bike</option><option value="class2_term2_1-19">to</option><option value="class2_term2_1-20">the</option><option value="class2_term2_1-21">shop?’’</option><option value="class2_term2_1-22">Ben</option><option value="class2_term2_1-23">says,</option><option value="class2_term2_1-24">‘’Yes,</option><option value="class2_term2_1-25">I</option><option value="class2_term2_1-26">will</option><option value="class2_term2_1-27">ride</option><option value="class2_term2_1-28">the</option><option value="class2_term2_1-29">bike</option><option value="class2_term2_1-30">to</option><option value="class2_term2_1-31">the</option><option value="class2_term2_1-32">shop.</option><option value="class2_term2_1-33">I</option><option value="class2_term2_1-34">will</option><option value="class2_term2_1-35">get</option><option value="class2_term2_1-36">beans,</option><option value="class2_term2_1-37">meat</option><option value="class2_term2_1-38">and</option><option value="class2_term2_1-39">yams.’’</option><option value="class2_term2_1-40">Ben</option><option value="class2_term2_1-41">rides</option><option value="class2_term2_1-42">to</option><option value="class2_term2_1-43">the</option><option value="class2_term2_1-44">shop.</option><option value="class2_term2_1-45">Ben</option><option value="class2_term2_1-46">gets</option><option value="class2_term2_1-47">beans</option><option value="class2_term2_1-48">and</option><option value="class2_term2_1-49">meat.</option><option value="class2_term2_1-50">He</option><option value="class2_term2_1-51">cannot</option><option value="class2_term2_1-52">get</option><option value="class2_term2_1-53">yams.</option><option value="class2_term2_1-54">The</option><option value="class2_term2_1-55">yams</option><option value="class2_term2_1-56">are</option><option value="class2_term2_1-57">bad.</option><option value="class2_term2_1-58">Ben</option><option value="class2_term2_1-59">rides</option><option value="class2_term2_1-60">home</option><option value="class2_term2_1-61">to</option><option value="class2_term2_1-62">Tam.</option><option value="class2_term2_1-63">Tam</option><option value="class2_term2_1-64">makes</option><option value="class2_term2_1-65">the</option><option value="class2_term2_1-66">beans</option><option value="class2_term2_1-67">and</option><option value="class2_term2_1-68">meat.</option><option value="class2_term2_1-69">It</option><option value="class2_term2_1-70">is</option><option value="class2_term2_1-71">good.</option><option value="class2_term2_1_last_attempted_name"></option><option value="class2_term2_1_last_attempted_nth"></option><option value="class2_term2_1_time_remaining"></option><option value="class2_term2_1_time_spent"></option><option value="class2_term2_1_items_per_minute"></option><option value="class2_term2_1_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-21" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term2_2"><option value="class2_term2_2-1">Tom,</option><option value="class2_term2_2-2">Ben</option><option value="class2_term2_2-3">and</option><option value="class2_term2_2-4">Tam</option><option value="class2_term2_2-5">are</option><option value="class2_term2_2-6">at</option><option value="class2_term2_2-7">home.</option><option value="class2_term2_2-8">Tom</option><option value="class2_term2_2-9">wants</option><option value="class2_term2_2-10">to</option><option value="class2_term2_2-11">eat.</option><option value="class2_term2_2-12">Tam</option><option value="class2_term2_2-13">asks,</option><option value="class2_term2_2-14">‘’Can</option><option value="class2_term2_2-15">you</option><option value="class2_term2_2-16">ride</option><option value="class2_term2_2-17">the</option><option value="class2_term2_2-18">bike</option><option value="class2_term2_2-19">to</option><option value="class2_term2_2-20">the</option><option value="class2_term2_2-21">shop?’’</option><option value="class2_term2_2-22">Ben</option><option value="class2_term2_2-23">says,</option><option value="class2_term2_2-24">‘’Yes,</option><option value="class2_term2_2-25">I</option><option value="class2_term2_2-26">will</option><option value="class2_term2_2-27">ride</option><option value="class2_term2_2-28">the</option><option value="class2_term2_2-29">bike</option><option value="class2_term2_2-30">to</option><option value="class2_term2_2-31">the</option><option value="class2_term2_2-32">shop.</option><option value="class2_term2_2-33">I</option><option value="class2_term2_2-34">will</option><option value="class2_term2_2-35">get</option><option value="class2_term2_2-36">beans,</option><option value="class2_term2_2-37">meat</option><option value="class2_term2_2-38">and</option><option value="class2_term2_2-39">yams.’’</option><option value="class2_term2_2-40">Ben</option><option value="class2_term2_2-41">rides</option><option value="class2_term2_2-42">to</option><option value="class2_term2_2-43">the</option><option value="class2_term2_2-44">shop.</option><option value="class2_term2_2-45">Ben</option><option value="class2_term2_2-46">gets</option><option value="class2_term2_2-47">beans</option><option value="class2_term2_2-48">and</option><option value="class2_term2_2-49">meat.</option><option value="class2_term2_2-50">He</option><option value="class2_term2_2-51">cannot</option><option value="class2_term2_2-52">get</option><option value="class2_term2_2-53">yams.</option><option value="class2_term2_2-54">The</option><option value="class2_term2_2-55">yams</option><option value="class2_term2_2-56">are</option><option value="class2_term2_2-57">bad.</option><option value="class2_term2_2-58">Ben</option><option value="class2_term2_2-59">rides</option><option value="class2_term2_2-60">home</option><option value="class2_term2_2-61">to</option><option value="class2_term2_2-62">Tam.</option><option value="class2_term2_2-63">Tam</option><option value="class2_term2_2-64">makes</option><option value="class2_term2_2-65">the</option><option value="class2_term2_2-66">beans</option><option value="class2_term2_2-67">and</option><option value="class2_term2_2-68">meat.</option><option value="class2_term2_2-69">It</option><option value="class2_term2_2-70">is</option><option value="class2_term2_2-71">good.</option><option value="class2_term2_2_last_attempted_name"></option><option value="class2_term2_2_last_attempted_nth"></option><option value="class2_term2_2_time_remaining"></option><option value="class2_term2_2_time_spent"></option><option value="class2_term2_2_items_per_minute"></option><option value="class2_term2_2_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-22" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term2"><option value="class2_term2-1">Tom,</option><option value="class2_term2-2">Ben</option><option value="class2_term2-3">and</option><option value="class2_term2-4">Tam</option><option value="class2_term2-5">are</option><option value="class2_term2-6">at</option><option value="class2_term2-7">home.</option><option value="class2_term2-8">Tom</option><option value="class2_term2-9">wants</option><option value="class2_term2-10">to</option><option value="class2_term2-11">eat.</option><option value="class2_term2-12">Tam</option><option value="class2_term2-13">asks,</option><option value="class2_term2-14">‘’Can</option><option value="class2_term2-15">you</option><option value="class2_term2-16">ride</option><option value="class2_term2-17">the</option><option value="class2_term2-18">bike</option><option value="class2_term2-19">to</option><option value="class2_term2-20">the</option><option value="class2_term2-21">shop?’’</option><option value="class2_term2-22">Ben</option><option value="class2_term2-23">says,</option><option value="class2_term2-24">‘’Yes,</option><option value="class2_term2-25">I</option><option value="class2_term2-26">will</option><option value="class2_term2-27">ride</option><option value="class2_term2-28">the</option><option value="class2_term2-29">bike</option><option value="class2_term2-30">to</option><option value="class2_term2-31">the</option><option value="class2_term2-32">shop.</option><option value="class2_term2-33">I</option><option value="class2_term2-34">will</option><option value="class2_term2-35">get</option><option value="class2_term2-36">beans,</option><option value="class2_term2-37">meat</option><option value="class2_term2-38">and</option><option value="class2_term2-39">yams.’’</option><option value="class2_term2-40">Ben</option><option value="class2_term2-41">rides</option><option value="class2_term2-42">to</option><option value="class2_term2-43">the</option><option value="class2_term2-44">shop.</option><option value="class2_term2-45">Ben</option><option value="class2_term2-46">gets</option><option value="class2_term2-47">beans</option><option value="class2_term2-48">and</option><option value="class2_term2-49">meat.</option><option value="class2_term2-50">He</option><option value="class2_term2-51">cannot</option><option value="class2_term2-52">get</option><option value="class2_term2-53">yams.</option><option value="class2_term2-54">The</option><option value="class2_term2-55">yams</option><option value="class2_term2-56">are</option><option value="class2_term2-57">bad.</option><option value="class2_term2-58">Ben</option><option value="class2_term2-59">rides</option><option value="class2_term2-60">home</option><option value="class2_term2-61">to</option><option value="class2_term2-62">Tam.</option><option value="class2_term2-63">Tam</option><option value="class2_term2-64">makes</option><option value="class2_term2-65">the</option><option value="class2_term2-66">beans</option><option value="class2_term2-67">and</option><option value="class2_term2-68">meat.</option><option value="class2_term2-69">It</option><option value="class2_term2-70">is</option><option value="class2_term2-71">good.</option><option value="class2_term2_last_attempted_name"></option><option value="class2_term2_last_attempted_nth"></option><option value="class2_term2_time_remaining"></option><option value="class2_term2_time_spent"></option><option value="class2_term2_items_per_minute"></option><option value="class2_term2_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-23" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term3_1"><option value="class1_term3_1-1">Sam</option><option value="class1_term3_1-2">and</option><option value="class1_term3_1-3">Mat</option><option value="class1_term3_1-4">go</option><option value="class1_term3_1-5">to</option><option value="class1_term3_1-6">the</option><option value="class1_term3_1-7">lake.</option><option value="class1_term3_1-8">Mat</option><option value="class1_term3_1-9">swims</option><option value="class1_term3_1-10">in</option><option value="class1_term3_1-11">the</option><option value="class1_term3_1-12">lake.</option><option value="class1_term3_1-13">Sam</option><option value="class1_term3_1-14">is</option><option value="class1_term3_1-15">on</option><option value="class1_term3_1-16">the</option><option value="class1_term3_1-17">soil.</option><option value="class1_term3_1-18">Sam</option><option value="class1_term3_1-19">cannot</option><option value="class1_term3_1-20">swim.</option><option value="class1_term3_1-21">He</option><option value="class1_term3_1-22">plays</option><option value="class1_term3_1-23">with</option><option value="class1_term3_1-24">his</option><option value="class1_term3_1-25">toy</option><option value="class1_term3_1-26">ship.</option><option value="class1_term3_1-27">Mat</option><option value="class1_term3_1-28">swims</option><option value="class1_term3_1-29">to</option><option value="class1_term3_1-30">the</option><option value="class1_term3_1-31">shore.</option><option value="class1_term3_1-32">He</option><option value="class1_term3_1-33">plays</option><option value="class1_term3_1-34">with</option><option value="class1_term3_1-35">Mat</option><option value="class1_term3_1-36">and</option><option value="class1_term3_1-37">his</option><option value="class1_term3_1-38">toy</option><option value="class1_term3_1-39">ship.</option><option value="class1_term3_1-40">Sam</option><option value="class1_term3_1-41">is</option><option value="class1_term3_1-42">glad</option><option value="class1_term3_1-43">Mat</option><option value="class1_term3_1-44">can</option><option value="class1_term3_1-45">play.</option><option value="class1_term3_1_last_attempted_name"></option><option value="class1_term3_1_last_attempted_nth"></option><option value="class1_term3_1_time_remaining"></option><option value="class1_term3_1_time_spent"></option><option value="class1_term3_1_items_per_minute"></option><option value="class1_term3_1_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-24" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term3_2"><option value="class1_term3_2-1">Sam</option><option value="class1_term3_2-2">and</option><option value="class1_term3_2-3">Mat</option><option value="class1_term3_2-4">go</option><option value="class1_term3_2-5">to</option><option value="class1_term3_2-6">the</option><option value="class1_term3_2-7">lake.</option><option value="class1_term3_2-8">Mat</option><option value="class1_term3_2-9">swims</option><option value="class1_term3_2-10">in</option><option value="class1_term3_2-11">the</option><option value="class1_term3_2-12">lake.</option><option value="class1_term3_2-13">Sam</option><option value="class1_term3_2-14">is</option><option value="class1_term3_2-15">on</option><option value="class1_term3_2-16">the</option><option value="class1_term3_2-17">soil.</option><option value="class1_term3_2-18">Sam</option><option value="class1_term3_2-19">cannot</option><option value="class1_term3_2-20">swim.</option><option value="class1_term3_2-21">He</option><option value="class1_term3_2-22">plays</option><option value="class1_term3_2-23">with</option><option value="class1_term3_2-24">his</option><option value="class1_term3_2-25">toy</option><option value="class1_term3_2-26">ship.</option><option value="class1_term3_2-27">Mat</option><option value="class1_term3_2-28">swims</option><option value="class1_term3_2-29">to</option><option value="class1_term3_2-30">the</option><option value="class1_term3_2-31">shore.</option><option value="class1_term3_2-32">He</option><option value="class1_term3_2-33">plays</option><option value="class1_term3_2-34">with</option><option value="class1_term3_2-35">Mat</option><option value="class1_term3_2-36">and</option><option value="class1_term3_2-37">his</option><option value="class1_term3_2-38">toy</option><option value="class1_term3_2-39">ship.</option><option value="class1_term3_2-40">Sam</option><option value="class1_term3_2-41">is</option><option value="class1_term3_2-42">glad</option><option value="class1_term3_2-43">Mat</option><option value="class1_term3_2-44">can</option><option value="class1_term3_2-45">play.</option><option value="class1_term3_2_last_attempted_name"></option><option value="class1_term3_2_last_attempted_nth"></option><option value="class1_term3_2_time_remaining"></option><option value="class1_term3_2_time_spent"></option><option value="class1_term3_2_items_per_minute"></option><option value="class1_term3_2_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-25" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term3"><option value="class1_term3-1">Sam</option><option value="class1_term3-2">and</option><option value="class1_term3-3">Mat</option><option value="class1_term3-4">go</option><option value="class1_term3-5">to</option><option value="class1_term3-6">the</option><option value="class1_term3-7">lake.</option><option value="class1_term3-8">Mat</option><option value="class1_term3-9">swims</option><option value="class1_term3-10">in</option><option value="class1_term3-11">the</option><option value="class1_term3-12">lake.</option><option value="class1_term3-13">Sam</option><option value="class1_term3-14">is</option><option value="class1_term3-15">on</option><option value="class1_term3-16">the</option><option value="class1_term3-17">soil.</option><option value="class1_term3-18">Sam</option><option value="class1_term3-19">cannot</option><option value="class1_term3-20">swim.</option><option value="class1_term3-21">He</option><option value="class1_term3-22">plays</option><option value="class1_term3-23">with</option><option value="class1_term3-24">his</option><option value="class1_term3-25">toy</option><option value="class1_term3-26">ship.</option><option value="class1_term3-27">Mat</option><option value="class1_term3-28">swims</option><option value="class1_term3-29">to</option><option value="class1_term3-30">the</option><option value="class1_term3-31">shore.</option><option value="class1_term3-32">He</option><option value="class1_term3-33">plays</option><option value="class1_term3-34">with</option><option value="class1_term3-35">Mat</option><option value="class1_term3-36">and</option><option value="class1_term3-37">his</option><option value="class1_term3-38">toy</option><option value="class1_term3-39">ship.</option><option value="class1_term3-40">Sam</option><option value="class1_term3-41">is</option><option value="class1_term3-42">glad</option><option value="class1_term3-43">Mat</option><option value="class1_term3-44">can</option><option value="class1_term3-45">play.</option><option value="class1_term3_last_attempted_name"></option><option value="class1_term3_last_attempted_nth"></option><option value="class1_term3_time_remaining"></option><option value="class1_term3_time_spent"></option><option value="class1_term3_items_per_minute"></option><option value="class1_term3_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-26" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+
+        <tangy-timed required columns="4" name="class2_term3_1"><option value="class2_term3_1-1">Tom</option><option value="class2_term3_1-2">and</option><option value="class2_term3_1-3">his</option><option value="class2_term3_1-4">new</option><option value="class2_term3_1-5">friend</option><option value="class2_term3_1-6">Jim</option><option value="class2_term3_1-7">run</option><option value="class2_term3_1-8">home</option><option value="class2_term3_1-9">on</option><option value="class2_term3_1-10">the</option><option value="class2_term3_1-11">road.</option><option value="class2_term3_1-12">They</option><option value="class2_term3_1-13">run</option><option value="class2_term3_1-14">and</option><option value="class2_term3_1-15">see</option><option value="class2_term3_1-16">a</option><option value="class2_term3_1-17">big</option><option value="class2_term3_1-18">tree.</option><option value="class2_term3_1-19">They</option><option value="class2_term3_1-20">see</option><option value="class2_term3_1-21">goats</option><option value="class2_term3_1-22">in</option><option value="class2_term3_1-23">the</option><option value="class2_term3_1-24">field.</option><option value="class2_term3_1-25">They</option><option value="class2_term3_1-26">see</option><option value="class2_term3_1-27">a</option><option value="class2_term3_1-28">boat</option><option value="class2_term3_1-29">in</option><option value="class2_term3_1-30">the</option><option value="class2_term3_1-31">lake.</option><option value="class2_term3_1-32">They</option><option value="class2_term3_1-33">see</option><option value="class2_term3_1-34">animals</option><option value="class2_term3_1-35">drinking</option><option value="class2_term3_1-36">water</option><option value="class2_term3_1-37">in</option><option value="class2_term3_1-38">the</option><option value="class2_term3_1-39">river.</option><option value="class2_term3_1-40">They</option><option value="class2_term3_1-41">see</option><option value="class2_term3_1-42">the</option><option value="class2_term3_1-43">clouds</option><option value="class2_term3_1-44">in</option><option value="class2_term3_1-45">the</option><option value="class2_term3_1-46">sky.</option><option value="class2_term3_1-47">Jim</option><option value="class2_term3_1-48">asks</option><option value="class2_term3_1-49">Tom,</option><option value="class2_term3_1-50">‘’Will</option><option value="class2_term3_1-51">it</option><option value="class2_term3_1-52">rain?’’</option><option value="class2_term3_1-53">Tom</option><option value="class2_term3_1-54">says,</option><option value="class2_term3_1-55">‘’Look,</option><option value="class2_term3_1-56">the</option><option value="class2_term3_1-57">rain</option><option value="class2_term3_1-58">is</option><option value="class2_term3_1-59">coming.’’</option><option value="class2_term3_1-60">Then</option><option value="class2_term3_1-61">it</option><option value="class2_term3_1-62">rains.</option><option value="class2_term3_1-63">The</option><option value="class2_term3_1-64">soil</option><option value="class2_term3_1-65">is</option><option value="class2_term3_1-66">wet.</option><option value="class2_term3_1-67">Tom</option><option value="class2_term3_1-68">and</option><option value="class2_term3_1-69">Jim</option><option value="class2_term3_1-70">run</option><option value="class2_term3_1-71">in</option><option value="class2_term3_1-72">the</option><option value="class2_term3_1-73">mud.</option><option value="class2_term3_1_last_attempted_name"></option><option value="class2_term3_1_last_attempted_nth"></option><option value="class2_term3_1_time_remaining"></option><option value="class2_term3_1_time_spent"></option><option value="class2_term3_1_items_per_minute"></option><option value="class2_term3_1_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-27" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+
+        <tangy-timed required columns="4" name="class2_term3_2"><option value="class2_term3_2-1">Tom</option><option value="class2_term3_2-2">and</option><option value="class2_term3_2-3">his</option><option value="class2_term3_2-4">new</option><option value="class2_term3_2-5">friend</option><option value="class2_term3_2-6">Jim</option><option value="class2_term3_2-7">run</option><option value="class2_term3_2-8">home</option><option value="class2_term3_2-9">on</option><option value="class2_term3_2-10">the</option><option value="class2_term3_2-11">road.</option><option value="class2_term3_2-12">They</option><option value="class2_term3_2-13">run</option><option value="class2_term3_2-14">and</option><option value="class2_term3_2-15">see</option><option value="class2_term3_2-16">a</option><option value="class2_term3_2-17">big</option><option value="class2_term3_2-18">tree.</option><option value="class2_term3_2-19">They</option><option value="class2_term3_2-20">see</option><option value="class2_term3_2-21">goats</option><option value="class2_term3_2-22">in</option><option value="class2_term3_2-23">the</option><option value="class2_term3_2-24">field.</option><option value="class2_term3_2-25">They</option><option value="class2_term3_2-26">see</option><option value="class2_term3_2-27">a</option><option value="class2_term3_2-28">boat</option><option value="class2_term3_2-29">in</option><option value="class2_term3_2-30">the</option><option value="class2_term3_2-31">lake.</option><option value="class2_term3_2-32">They</option><option value="class2_term3_2-33">see</option><option value="class2_term3_2-34">animals</option><option value="class2_term3_2-35">drinking</option><option value="class2_term3_2-36">water</option><option value="class2_term3_2-37">in</option><option value="class2_term3_2-38">the</option><option value="class2_term3_2-39">river.</option><option value="class2_term3_2-40">They</option><option value="class2_term3_2-41">see</option><option value="class2_term3_2-42">the</option><option value="class2_term3_2-43">clouds</option><option value="class2_term3_2-44">in</option><option value="class2_term3_2-45">the</option><option value="class2_term3_2-46">sky.</option><option value="class2_term3_2-47">Jim</option><option value="class2_term3_2-48">asks</option><option value="class2_term3_2-49">Tom,</option><option value="class2_term3_2-50">‘’Will</option><option value="class2_term3_2-51">it</option><option value="class2_term3_2-52">rain?’’</option><option value="class2_term3_2-53">Tom</option><option value="class2_term3_2-54">says,</option><option value="class2_term3_2-55">‘’Look,</option><option value="class2_term3_2-56">the</option><option value="class2_term3_2-57">rain</option><option value="class2_term3_2-58">is</option><option value="class2_term3_2-59">coming.’’</option><option value="class2_term3_2-60">Then</option><option value="class2_term3_2-61">it</option><option value="class2_term3_2-62">rains.</option><option value="class2_term3_2-63">The</option><option value="class2_term3_2-64">soil</option><option value="class2_term3_2-65">is</option><option value="class2_term3_2-66">wet.</option><option value="class2_term3_2-67">Tom</option><option value="class2_term3_2-68">and</option><option value="class2_term3_2-69">Jim</option><option value="class2_term3_2-70">run</option><option value="class2_term3_2-71">in</option><option value="class2_term3_2-72">the</option><option value="class2_term3_2-73">mud.</option><option value="class2_term3_2_last_attempted_name"></option><option value="class2_term3_2_last_attempted_nth"></option><option value="class2_term3_2_time_remaining"></option><option value="class2_term3_2_time_spent"></option><option value="class2_term3_2_items_per_minute"></option><option value="class2_term3_2_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-28" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+
+        <tangy-timed required columns="4" name="class2_term3"><option value="class2_term3-1">Tom</option><option value="class2_term3-2">and</option><option value="class2_term3-3">his</option><option value="class2_term3-4">new</option><option value="class2_term3-5">friend</option><option value="class2_term3-6">Jim</option><option value="class2_term3-7">run</option><option value="class2_term3-8">home</option><option value="class2_term3-9">on</option><option value="class2_term3-10">the</option><option value="class2_term3-11">road.</option><option value="class2_term3-12">They</option><option value="class2_term3-13">run</option><option value="class2_term3-14">and</option><option value="class2_term3-15">see</option><option value="class2_term3-16">a</option><option value="class2_term3-17">big</option><option value="class2_term3-18">tree.</option><option value="class2_term3-19">They</option><option value="class2_term3-20">see</option><option value="class2_term3-21">goats</option><option value="class2_term3-22">in</option><option value="class2_term3-23">the</option><option value="class2_term3-24">field.</option><option value="class2_term3-25">They</option><option value="class2_term3-26">see</option><option value="class2_term3-27">a</option><option value="class2_term3-28">boat</option><option value="class2_term3-29">in</option><option value="class2_term3-30">the</option><option value="class2_term3-31">lake.</option><option value="class2_term3-32">They</option><option value="class2_term3-33">see</option><option value="class2_term3-34">animals</option><option value="class2_term3-35">drinking</option><option value="class2_term3-36">water</option><option value="class2_term3-37">in</option><option value="class2_term3-38">the</option><option value="class2_term3-39">river.</option><option value="class2_term3-40">They</option><option value="class2_term3-41">see</option><option value="class2_term3-42">the</option><option value="class2_term3-43">clouds</option><option value="class2_term3-44">in</option><option value="class2_term3-45">the</option><option value="class2_term3-46">sky.</option><option value="class2_term3-47">Jim</option><option value="class2_term3-48">asks</option><option value="class2_term3-49">Tom,</option><option value="class2_term3-50">‘’Will</option><option value="class2_term3-51">it</option><option value="class2_term3-52">rain?’’</option><option value="class2_term3-53">Tom</option><option value="class2_term3-54">says,</option><option value="class2_term3-55">‘’Look,</option><option value="class2_term3-56">the</option><option value="class2_term3-57">rain</option><option value="class2_term3-58">is</option><option value="class2_term3-59">coming.’’</option><option value="class2_term3-60">Then</option><option value="class2_term3-61">it</option><option value="class2_term3-62">rains.</option><option value="class2_term3-63">The</option><option value="class2_term3-64">soil</option><option value="class2_term3-65">is</option><option value="class2_term3-66">wet.</option><option value="class2_term3-67">Tom</option><option value="class2_term3-68">and</option><option value="class2_term3-69">Jim</option><option value="class2_term3-70">run</option><option value="class2_term3-71">in</option><option value="class2_term3-72">the</option><option value="class2_term3-73">mud.</option><option value="class2_term3_last_attempted_name"></option><option value="class2_term3_last_attempted_nth"></option><option value="class2_term3_time_remaining"></option><option value="class2_term3_time_spent"></option><option value="class2_term3_items_per_minute"></option><option value="class2_term3_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-29" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term1_1"><option value="class1_term1_1-1">Mama</option><option value="class1_term1_1-2">ana</option><option value="class1_term1_1-3">paka.</option><option value="class1_term1_1-4">Kaka</option><option value="class1_term1_1-5">ana</option><option value="class1_term1_1-6">kuku.</option><option value="class1_term1_1-7">Amu</option><option value="class1_term1_1-8">anataka</option><option value="class1_term1_1-9">paka</option><option value="class1_term1_1-10">na</option><option value="class1_term1_1-11">kuku.</option><option value="class1_term1_1-12">Kaka</option><option value="class1_term1_1-13">anatamani</option><option value="class1_term1_1-14">kuwa</option><option value="class1_term1_1-15">na</option><option value="class1_term1_1-16">paka.</option><option value="class1_term1_1-17">Mama</option><option value="class1_term1_1-18">anakataa.</option><option value="class1_term1_1-19">Paka</option><option value="class1_term1_1-20">atamla</option><option value="class1_term1_1-21">kuku.</option><option value="class1_term1_1-22">Kuku</option><option value="class1_term1_1-23">anakaa</option><option value="class1_term1_1-24">jikoni.</option><option value="class1_term1_1-25">Paka</option><option value="class1_term1_1-26">atakaa</option><option value="class1_term1_1-27">mezani.</option><option value="class1_term1_1_last_attempted_name"></option><option value="class1_term1_1_last_attempted_nth"></option><option value="class1_term1_1_time_remaining"></option><option value="class1_term1_1_time_spent"></option><option value="class1_term1_1_items_per_minute"></option><option value="class1_term1_1_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-30" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term1_2"><option value="class1_term1_2-1">Mama</option><option value="class1_term1_2-2">ana</option><option value="class1_term1_2-3">paka.</option><option value="class1_term1_2-4">Kaka</option><option value="class1_term1_2-5">ana</option><option value="class1_term1_2-6">kuku.</option><option value="class1_term1_2-7">Amu</option><option value="class1_term1_2-8">anataka</option><option value="class1_term1_2-9">paka</option><option value="class1_term1_2-10">na</option><option value="class1_term1_2-11">kuku.</option><option value="class1_term1_2-12">Kaka</option><option value="class1_term1_2-13">anatamani</option><option value="class1_term1_2-14">kuwa</option><option value="class1_term1_2-15">na</option><option value="class1_term1_2-16">paka.</option><option value="class1_term1_2-17">Mama</option><option value="class1_term1_2-18">anakataa.</option><option value="class1_term1_2-19">Paka</option><option value="class1_term1_2-20">atamla</option><option value="class1_term1_2-21">kuku.</option><option value="class1_term1_2-22">Kuku</option><option value="class1_term1_2-23">anakaa</option><option value="class1_term1_2-24">jikoni.</option><option value="class1_term1_2-25">Paka</option><option value="class1_term1_2-26">atakaa</option><option value="class1_term1_2-27">mezani.</option><option value="class1_term1_2_last_attempted_name"></option><option value="class1_term1_2_last_attempted_nth"></option><option value="class1_term1_2_time_remaining"></option><option value="class1_term1_2_time_spent"></option><option value="class1_term1_2_items_per_minute"></option><option value="class1_term1_2_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-31" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term1"><option value="class1_term1-1">Mama</option><option value="class1_term1-2">ana</option><option value="class1_term1-3">paka.</option><option value="class1_term1-4">Kaka</option><option value="class1_term1-5">ana</option><option value="class1_term1-6">kuku.</option><option value="class1_term1-7">Amu</option><option value="class1_term1-8">anataka</option><option value="class1_term1-9">paka</option><option value="class1_term1-10">na</option><option value="class1_term1-11">kuku.</option><option value="class1_term1-12">Kaka</option><option value="class1_term1-13">anatamani</option><option value="class1_term1-14">kuwa</option><option value="class1_term1-15">na</option><option value="class1_term1-16">paka.</option><option value="class1_term1-17">Mama</option><option value="class1_term1-18">anakataa.</option><option value="class1_term1-19">Paka</option><option value="class1_term1-20">atamla</option><option value="class1_term1-21">kuku.</option><option value="class1_term1-22">Kuku</option><option value="class1_term1-23">anakaa</option><option value="class1_term1-24">jikoni.</option><option value="class1_term1-25">Paka</option><option value="class1_term1-26">atakaa</option><option value="class1_term1-27">mezani.</option><option value="class1_term1_last_attempted_name"></option><option value="class1_term1_last_attempted_nth"></option><option value="class1_term1_time_remaining"></option><option value="class1_term1_time_spent"></option><option value="class1_term1_items_per_minute"></option><option value="class1_term1_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-32" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term1_1"><option value="class2_term1_1-1">Shule</option><option value="class2_term1_1-2">yetu</option><option value="class2_term1_1-3">inaitwa</option><option value="class2_term1_1-4">Kiwanjani.</option><option value="class2_term1_1-5">Mwalimu</option><option value="class2_term1_1-6">wetu</option><option value="class2_term1_1-7">ni</option><option value="class2_term1_1-8">Bi.</option><option value="class2_term1_1-9">Kazungu.</option><option value="class2_term1_1-10">Yeye</option><option value="class2_term1_1-11">anapenda</option><option value="class2_term1_1-12">wanafunzi</option><option value="class2_term1_1-13">wake.</option><option value="class2_term1_1-14">Mwalimu</option><option value="class2_term1_1-15">hutufunza</option><option value="class2_term1_1-16">na</option><option value="class2_term1_1-17">kusahihisha</option><option value="class2_term1_1-18">vitabu</option><option value="class2_term1_1-19">vyetu</option><option value="class2_term1_1-20">kila</option><option value="class2_term1_1-21">siku.</option><option value="class2_term1_1-22">Bi.</option><option value="class2_term1_1-23">Kazungu</option><option value="class2_term1_1-24">huwatunza</option><option value="class2_term1_1-25">wanafunzi</option><option value="class2_term1_1-26">wake</option><option value="class2_term1_1-27">vizuri.</option><option value="class2_term1_1-28">Wakati</option><option value="class2_term1_1-29">wa</option><option value="class2_term1_1-30">mapumziko,</option><option value="class2_term1_1-31">sisi</option><option value="class2_term1_1-32">hupenda</option><option value="class2_term1_1-33">kucheza</option><option value="class2_term1_1-34">mpira</option><option value="class2_term1_1-35">na</option><option value="class2_term1_1-36">mwalimu</option><option value="class2_term1_1-37">wetu.</option><option value="class2_term1_1-38">Tunapokuwa</option><option value="class2_term1_1-39">nyumbani,</option><option value="class2_term1_1-40">sisi</option><option value="class2_term1_1-41">hufurahia</option><option value="class2_term1_1-42">kutazama</option><option value="class2_term1_1-43">vipindi</option><option value="class2_term1_1-44">vya</option><option value="class2_term1_1-45">watoto</option><option value="class2_term1_1-46">kwenye</option><option value="class2_term1_1-47">televisheni.</option><option value="class2_term1_1_last_attempted_name"></option><option value="class2_term1_1_last_attempted_nth"></option><option value="class2_term1_1_time_remaining"></option><option value="class2_term1_1_time_spent"></option><option value="class2_term1_1_items_per_minute"></option><option value="class2_term1_1_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-33" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term1_2"><option value="class2_term1_2-1">Shule</option><option value="class2_term1_2-2">yetu</option><option value="class2_term1_2-3">inaitwa</option><option value="class2_term1_2-4">Kiwanjani.</option><option value="class2_term1_2-5">Mwalimu</option><option value="class2_term1_2-6">wetu</option><option value="class2_term1_2-7">ni</option><option value="class2_term1_2-8">Bi.</option><option value="class2_term1_2-9">Kazungu.</option><option value="class2_term1_2-10">Yeye</option><option value="class2_term1_2-11">anapenda</option><option value="class2_term1_2-12">wanafunzi</option><option value="class2_term1_2-13">wake.</option><option value="class2_term1_2-14">Mwalimu</option><option value="class2_term1_2-15">hutufunza</option><option value="class2_term1_2-16">na</option><option value="class2_term1_2-17">kusahihisha</option><option value="class2_term1_2-18">vitabu</option><option value="class2_term1_2-19">vyetu</option><option value="class2_term1_2-20">kila</option><option value="class2_term1_2-21">siku.</option><option value="class2_term1_2-22">Bi.</option><option value="class2_term1_2-23">Kazungu</option><option value="class2_term1_2-24">huwatunza</option><option value="class2_term1_2-25">wanafunzi</option><option value="class2_term1_2-26">wake</option><option value="class2_term1_2-27">vizuri.</option><option value="class2_term1_2-28">Wakati</option><option value="class2_term1_2-29">wa</option><option value="class2_term1_2-30">mapumziko,</option><option value="class2_term1_2-31">sisi</option><option value="class2_term1_2-32">hupenda</option><option value="class2_term1_2-33">kucheza</option><option value="class2_term1_2-34">mpira</option><option value="class2_term1_2-35">na</option><option value="class2_term1_2-36">mwalimu</option><option value="class2_term1_2-37">wetu.</option><option value="class2_term1_2-38">Tunapokuwa</option><option value="class2_term1_2-39">nyumbani,</option><option value="class2_term1_2-40">sisi</option><option value="class2_term1_2-41">hufurahia</option><option value="class2_term1_2-42">kutazama</option><option value="class2_term1_2-43">vipindi</option><option value="class2_term1_2-44">vya</option><option value="class2_term1_2-45">watoto</option><option value="class2_term1_2-46">kwenye</option><option value="class2_term1_2-47">televisheni.</option><option value="class2_term1_2_last_attempted_name"></option><option value="class2_term1_2_last_attempted_nth"></option><option value="class2_term1_2_time_remaining"></option><option value="class2_term1_2_time_spent"></option><option value="class2_term1_2_items_per_minute"></option><option value="class2_term1_2_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-34" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term1"><option value="class2_term1-1">Shule</option><option value="class2_term1-2">yetu</option><option value="class2_term1-3">inaitwa</option><option value="class2_term1-4">Kiwanjani.</option><option value="class2_term1-5">Mwalimu</option><option value="class2_term1-6">wetu</option><option value="class2_term1-7">ni</option><option value="class2_term1-8">Bi.</option><option value="class2_term1-9">Kazungu.</option><option value="class2_term1-10">Yeye</option><option value="class2_term1-11">anapenda</option><option value="class2_term1-12">wanafunzi</option><option value="class2_term1-13">wake.</option><option value="class2_term1-14">Mwalimu</option><option value="class2_term1-15">hutufunza</option><option value="class2_term1-16">na</option><option value="class2_term1-17">kusahihisha</option><option value="class2_term1-18">vitabu</option><option value="class2_term1-19">vyetu</option><option value="class2_term1-20">kila</option><option value="class2_term1-21">siku.</option><option value="class2_term1-22">Bi.</option><option value="class2_term1-23">Kazungu</option><option value="class2_term1-24">huwatunza</option><option value="class2_term1-25">wanafunzi</option><option value="class2_term1-26">wake</option><option value="class2_term1-27">vizuri.</option><option value="class2_term1-28">Wakati</option><option value="class2_term1-29">wa</option><option value="class2_term1-30">mapumziko,</option><option value="class2_term1-31">sisi</option><option value="class2_term1-32">hupenda</option><option value="class2_term1-33">kucheza</option><option value="class2_term1-34">mpira</option><option value="class2_term1-35">na</option><option value="class2_term1-36">mwalimu</option><option value="class2_term1-37">wetu.</option><option value="class2_term1-38">Tunapokuwa</option><option value="class2_term1-39">nyumbani,</option><option value="class2_term1-40">sisi</option><option value="class2_term1-41">hufurahia</option><option value="class2_term1-42">kutazama</option><option value="class2_term1-43">vipindi</option><option value="class2_term1-44">vya</option><option value="class2_term1-45">watoto</option><option value="class2_term1-46">kwenye</option><option value="class2_term1-47">televisheni.</option><option value="class2_term1_last_attempted_name"></option><option value="class2_term1_last_attempted_nth"></option><option value="class2_term1_time_remaining"></option><option value="class2_term1_time_spent"></option><option value="class2_term1_items_per_minute"></option><option value="class2_term1_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+    <form id="with-pupil-books-2" on-change="">
+        <label>Date and Time</label> <br>
+        <paper-time-picker id="timePicker" name="timePicker"></paper-time-picker>
+        <paper-date-picker id="datePicker" name="datePicker"></paper-date-picker>
+
+    </form>
+
+
+    <form id="with-pupil-books-35" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term2_1"><option value="class1_term2_1-1">Jumatatu,</option><option value="class1_term2_1-2">wezi</option><option value="class1_term2_1-3">walikuja</option><option value="class1_term2_1-4">kijijini.</option><option value="class1_term2_1-5">Watu</option><option value="class1_term2_1-6">wakapiga</option><option value="class1_term2_1-7">mayowe.</option><option value="class1_term2_1-8">“Tunataka</option><option value="class1_term2_1-9">dhahabu!”</option><option value="class1_term2_1-10">wezi</option><option value="class1_term2_1-11">wakasema.</option><option value="class1_term2_1-12">Watu</option><option value="class1_term2_1-13">walipatwa</option><option value="class1_term2_1-14">na</option><option value="class1_term2_1-15">wasiwasi.</option><option value="class1_term2_1-16">Watu</option><option value="class1_term2_1-17">wakasema,</option><option value="class1_term2_1-18">“Hatuna</option><option value="class1_term2_1-19">chochote</option><option value="class1_term2_1-20">cha</option><option value="class1_term2_1-21">thamani.”</option><option value="class1_term2_1-22">Polisi</option><option value="class1_term2_1-23">walifika</option><option value="class1_term2_1-24">hapo.</option><option value="class1_term2_1-25">Waliwashika</option><option value="class1_term2_1-26">wezi</option><option value="class1_term2_1-27">na</option><option value="class1_term2_1-28">kuwatia</option><option value="class1_term2_1-29">pingu.</option><option value="class1_term2_1-30">Wezi</option><option value="class1_term2_1-31">walipelekwa</option><option value="class1_term2_1-32">gerezani.</option><option value="class1_term2_1_last_attempted_name"></option><option value="class1_term2_1_last_attempted_nth"></option><option value="class1_term2_1_time_remaining"></option><option value="class1_term2_1_time_spent"></option><option value="class1_term2_1_items_per_minute"></option><option value="class1_term2_1_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-36" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term2_2"><option value="class1_term2_2-1">Jumatatu,</option><option value="class1_term2_2-2">wezi</option><option value="class1_term2_2-3">walikuja</option><option value="class1_term2_2-4">kijijini.</option><option value="class1_term2_2-5">Watu</option><option value="class1_term2_2-6">wakapiga</option><option value="class1_term2_2-7">mayowe.</option><option value="class1_term2_2-8">“Tunataka</option><option value="class1_term2_2-9">dhahabu!”</option><option value="class1_term2_2-10">wezi</option><option value="class1_term2_2-11">wakasema.</option><option value="class1_term2_2-12">Watu</option><option value="class1_term2_2-13">walipatwa</option><option value="class1_term2_2-14">na</option><option value="class1_term2_2-15">wasiwasi.</option><option value="class1_term2_2-16">Watu</option><option value="class1_term2_2-17">wakasema,</option><option value="class1_term2_2-18">“Hatuna</option><option value="class1_term2_2-19">chochote</option><option value="class1_term2_2-20">cha</option><option value="class1_term2_2-21">thamani.”</option><option value="class1_term2_2-22">Polisi</option><option value="class1_term2_2-23">walifika</option><option value="class1_term2_2-24">hapo.</option><option value="class1_term2_2-25">Waliwashika</option><option value="class1_term2_2-26">wezi</option><option value="class1_term2_2-27">na</option><option value="class1_term2_2-28">kuwatia</option><option value="class1_term2_2-29">pingu.</option><option value="class1_term2_2-30">Wezi</option><option value="class1_term2_2-31">walipelekwa</option><option value="class1_term2_2-32">gerezani.</option><option value="class1_term2_2_last_attempted_name"></option><option value="class1_term2_2_last_attempted_nth"></option><option value="class1_term2_2_time_remaining"></option><option value="class1_term2_2_time_spent"></option><option value="class1_term2_2_items_per_minute"></option><option value="class1_term2_2_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-37" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term2"><option value="class1_term2-1">Jumatatu,</option><option value="class1_term2-2">wezi</option><option value="class1_term2-3">walikuja</option><option value="class1_term2-4">kijijini.</option><option value="class1_term2-5">Watu</option><option value="class1_term2-6">wakapiga</option><option value="class1_term2-7">mayowe.</option><option value="class1_term2-8">“Tunataka</option><option value="class1_term2-9">dhahabu!”</option><option value="class1_term2-10">wezi</option><option value="class1_term2-11">wakasema.</option><option value="class1_term2-12">Watu</option><option value="class1_term2-13">walipatwa</option><option value="class1_term2-14">na</option><option value="class1_term2-15">wasiwasi.</option><option value="class1_term2-16">Watu</option><option value="class1_term2-17">wakasema,</option><option value="class1_term2-18">“Hatuna</option><option value="class1_term2-19">chochote</option><option value="class1_term2-20">cha</option><option value="class1_term2-21">thamani.”</option><option value="class1_term2-22">Polisi</option><option value="class1_term2-23">walifika</option><option value="class1_term2-24">hapo.</option><option value="class1_term2-25">Waliwashika</option><option value="class1_term2-26">wezi</option><option value="class1_term2-27">na</option><option value="class1_term2-28">kuwatia</option><option value="class1_term2-29">pingu.</option><option value="class1_term2-30">Wezi</option><option value="class1_term2-31">walipelekwa</option><option value="class1_term2-32">gerezani.</option><option value="class1_term2_last_attempted_name"></option><option value="class1_term2_last_attempted_nth"></option><option value="class1_term2_time_remaining"></option><option value="class1_term2_time_spent"></option><option value="class1_term2_items_per_minute"></option><option value="class1_term2_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-38" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term2_1"><option value="class2_term2_1-1">Alhamisi</option><option value="class2_term2_1-2">ilikuwa</option><option value="class2_term2_1-3">siku</option><option value="class2_term2_1-4">ya</option><option value="class2_term2_1-5">michezo</option><option value="class2_term2_1-6">shuleni</option><option value="class2_term2_1-7">mwetu.</option><option value="class2_term2_1-8">Wanafunzi</option><option value="class2_term2_1-9">wa</option><option value="class2_term2_1-10">shule</option><option value="class2_term2_1-11">jirani</option><option value="class2_term2_1-12">walifika.</option><option value="class2_term2_1-13">Hali</option><option value="class2_term2_1-14">ya</option><option value="class2_term2_1-15">anga</option><option value="class2_term2_1-16">ilikuwa</option><option value="class2_term2_1-17">tulivu.</option><option value="class2_term2_1-18">Baada</option><option value="class2_term2_1-19">ya</option><option value="class2_term2_1-20">makaribisho,</option><option value="class2_term2_1-21">tulianza</option><option value="class2_term2_1-22">na</option><option value="class2_term2_1-23">mashindano</option><option value="class2_term2_1-24">ya</option><option value="class2_term2_1-25">riadha.</option><option value="class2_term2_1-26">Shule</option><option value="class2_term2_1-27">yetu</option><option value="class2_term2_1-28">ilishinda</option><option value="class2_term2_1-29">katika</option><option value="class2_term2_1-30">michezo</option><option value="class2_term2_1-31">mingi.</option><option value="class2_term2_1-32">Ghafla!</option><option value="class2_term2_1-33">mawingu</option><option value="class2_term2_1-34">meusi</option><option value="class2_term2_1-35">yalitanda.</option><option value="class2_term2_1-36">Upepo</option><option value="class2_term2_1-37">mkali</option><option value="class2_term2_1-38">ulivuma</option><option value="class2_term2_1-39">na</option><option value="class2_term2_1-40">matone</option><option value="class2_term2_1-41">mazito</option><option value="class2_term2_1-42">ya</option><option value="class2_term2_1-43">mvua</option><option value="class2_term2_1-44">yakaanza</option><option value="class2_term2_1-45">kudondoka.</option><option value="class2_term2_1-46">Kila</option><option value="class2_term2_1-47">mtu</option><option value="class2_term2_1-48">alikimbilia</option><option value="class2_term2_1-49">mahali</option><option value="class2_term2_1-50">pa</option><option value="class2_term2_1-51">kujikinga</option><option value="class2_term2_1-52">na</option><option value="class2_term2_1-53">mvua.</option><option value="class2_term2_1-54">Michezo</option><option value="class2_term2_1-55">ilihairishwa</option><option value="class2_term2_1-56">kwa</option><option value="class2_term2_1-57">sababu</option><option value="class2_term2_1-58">ya</option><option value="class2_term2_1-59">mvua.</option><option value="class2_term2_1_last_attempted_name"></option><option value="class2_term2_1_last_attempted_nth"></option><option value="class2_term2_1_time_remaining"></option><option value="class2_term2_1_time_spent"></option><option value="class2_term2_1_items_per_minute"></option><option value="class2_term2_1_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-39" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term2_2"><option value="class2_term2_2-1">Alhamisi</option><option value="class2_term2_2-2">ilikuwa</option><option value="class2_term2_2-3">siku</option><option value="class2_term2_2-4">ya</option><option value="class2_term2_2-5">michezo</option><option value="class2_term2_2-6">shuleni</option><option value="class2_term2_2-7">mwetu.</option><option value="class2_term2_2-8">Wanafunzi</option><option value="class2_term2_2-9">wa</option><option value="class2_term2_2-10">shule</option><option value="class2_term2_2-11">jirani</option><option value="class2_term2_2-12">walifika.</option><option value="class2_term2_2-13">Hali</option><option value="class2_term2_2-14">ya</option><option value="class2_term2_2-15">anga</option><option value="class2_term2_2-16">ilikuwa</option><option value="class2_term2_2-17">tulivu.</option><option value="class2_term2_2-18">Baada</option><option value="class2_term2_2-19">ya</option><option value="class2_term2_2-20">makaribisho,</option><option value="class2_term2_2-21">tulianza</option><option value="class2_term2_2-22">na</option><option value="class2_term2_2-23">mashindano</option><option value="class2_term2_2-24">ya</option><option value="class2_term2_2-25">riadha.</option><option value="class2_term2_2-26">Shule</option><option value="class2_term2_2-27">yetu</option><option value="class2_term2_2-28">ilishinda</option><option value="class2_term2_2-29">katika</option><option value="class2_term2_2-30">michezo</option><option value="class2_term2_2-31">mingi.</option><option value="class2_term2_2-32">Ghafla!</option><option value="class2_term2_2-33">mawingu</option><option value="class2_term2_2-34">meusi</option><option value="class2_term2_2-35">yalitanda.</option><option value="class2_term2_2-36">Upepo</option><option value="class2_term2_2-37">mkali</option><option value="class2_term2_2-38">ulivuma</option><option value="class2_term2_2-39">na</option><option value="class2_term2_2-40">matone</option><option value="class2_term2_2-41">mazito</option><option value="class2_term2_2-42">ya</option><option value="class2_term2_2-43">mvua</option><option value="class2_term2_2-44">yakaanza</option><option value="class2_term2_2-45">kudondoka.</option><option value="class2_term2_2-46">Kila</option><option value="class2_term2_2-47">mtu</option><option value="class2_term2_2-48">alikimbilia</option><option value="class2_term2_2-49">mahali</option><option value="class2_term2_2-50">pa</option><option value="class2_term2_2-51">kujikinga</option><option value="class2_term2_2-52">na</option><option value="class2_term2_2-53">mvua.</option><option value="class2_term2_2-54">Michezo</option><option value="class2_term2_2-55">ilihairishwa</option><option value="class2_term2_2-56">kwa</option><option value="class2_term2_2-57">sababu</option><option value="class2_term2_2-58">ya</option><option value="class2_term2_2-59">mvua.</option><option value="class2_term2_2_last_attempted_name"></option><option value="class2_term2_2_last_attempted_nth"></option><option value="class2_term2_2_time_remaining"></option><option value="class2_term2_2_time_spent"></option><option value="class2_term2_2_items_per_minute"></option><option value="class2_term2_2_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-40" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term2"><option value="class2_term2-1">Alhamisi</option><option value="class2_term2-2">ilikuwa</option><option value="class2_term2-3">siku</option><option value="class2_term2-4">ya</option><option value="class2_term2-5">michezo</option><option value="class2_term2-6">shuleni</option><option value="class2_term2-7">mwetu.</option><option value="class2_term2-8">Wanafunzi</option><option value="class2_term2-9">wa</option><option value="class2_term2-10">shule</option><option value="class2_term2-11">jirani</option><option value="class2_term2-12">walifika.</option><option value="class2_term2-13">Hali</option><option value="class2_term2-14">ya</option><option value="class2_term2-15">anga</option><option value="class2_term2-16">ilikuwa</option><option value="class2_term2-17">tulivu.</option><option value="class2_term2-18">Baada</option><option value="class2_term2-19">ya</option><option value="class2_term2-20">makaribisho,</option><option value="class2_term2-21">tulianza</option><option value="class2_term2-22">na</option><option value="class2_term2-23">mashindano</option><option value="class2_term2-24">ya</option><option value="class2_term2-25">riadha.</option><option value="class2_term2-26">Shule</option><option value="class2_term2-27">yetu</option><option value="class2_term2-28">ilishinda</option><option value="class2_term2-29">katika</option><option value="class2_term2-30">michezo</option><option value="class2_term2-31">mingi.</option><option value="class2_term2-32">Ghafla!</option><option value="class2_term2-33">mawingu</option><option value="class2_term2-34">meusi</option><option value="class2_term2-35">yalitanda.</option><option value="class2_term2-36">Upepo</option><option value="class2_term2-37">mkali</option><option value="class2_term2-38">ulivuma</option><option value="class2_term2-39">na</option><option value="class2_term2-40">matone</option><option value="class2_term2-41">mazito</option><option value="class2_term2-42">ya</option><option value="class2_term2-43">mvua</option><option value="class2_term2-44">yakaanza</option><option value="class2_term2-45">kudondoka.</option><option value="class2_term2-46">Kila</option><option value="class2_term2-47">mtu</option><option value="class2_term2-48">alikimbilia</option><option value="class2_term2-49">mahali</option><option value="class2_term2-50">pa</option><option value="class2_term2-51">kujikinga</option><option value="class2_term2-52">na</option><option value="class2_term2-53">mvua.</option><option value="class2_term2-54">Michezo</option><option value="class2_term2-55">ilihairishwa</option><option value="class2_term2-56">kwa</option><option value="class2_term2-57">sababu</option><option value="class2_term2-58">ya</option><option value="class2_term2-59">mvua.</option><option value="class2_term2_last_attempted_name"></option><option value="class2_term2_last_attempted_nth"></option><option value="class2_term2_time_remaining"></option><option value="class2_term2_time_spent"></option><option value="class2_term2_items_per_minute"></option><option value="class2_term2_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-41" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term3_1"><option value="class1_term3_1-1">Sofia</option><option value="class1_term3_1-2">na</option><option value="class1_term3_1-3">Koki</option><option value="class1_term3_1-4">walisafiri</option><option value="class1_term3_1-5">kwa</option><option value="class1_term3_1-6">gari</option><option value="class1_term3_1-7">la</option><option value="class1_term3_1-8">moshi.</option><option value="class1_term3_1-9">Gari</option><option value="class1_term3_1-10">la</option><option value="class1_term3_1-11">moshi</option><option value="class1_term3_1-12">lilipitia</option><option value="class1_term3_1-13">katika</option><option value="class1_term3_1-14">jiji</option><option value="class1_term3_1-15">kuu.</option><option value="class1_term3_1-16">Huko</option><option value="class1_term3_1-17">waliona</option><option value="class1_term3_1-18">majumba</option><option value="class1_term3_1-19">ya</option><option value="class1_term3_1-20">ghorofa.</option><option value="class1_term3_1-21">Gari</option><option value="class1_term3_1-22">la</option><option value="class1_term3_1-23">moshi</option><option value="class1_term3_1-24">pia</option><option value="class1_term3_1-25">lilipitia</option><option value="class1_term3_1-26">msituni.</option><option value="class1_term3_1-27">Sofia</option><option value="class1_term3_1-28">na</option><option value="class1_term3_1-29">Koki</option><option value="class1_term3_1-30">Waliwaona</option><option value="class1_term3_1-31">mamba</option><option value="class1_term3_1-32">karibu</option><option value="class1_term3_1-33">na</option><option value="class1_term3_1-34">bwawa</option><option value="class1_term3_1-35">la</option><option value="class1_term3_1-36">maji.</option><option value="class1_term3_1-37">Pia,</option><option value="class1_term3_1-38">waliwaona</option><option value="class1_term3_1-39">nyati</option><option value="class1_term3_1-40">na</option><option value="class1_term3_1-41">ndovu</option><option value="class1_term3_1-42">msituni.</option><option value="class1_term3_1-43">Baadaye</option><option value="class1_term3_1-44">waliwaona</option><option value="class1_term3_1-45">wafugaji</option><option value="class1_term3_1-46">na</option><option value="class1_term3_1-47">ng’ombe</option><option value="class1_term3_1-48">wao</option><option value="class1_term3_1-49">malishoni.</option><option value="class1_term3_1-50">Mwishowe,</option><option value="class1_term3_1-51">walishuka</option><option value="class1_term3_1-52">katika</option><option value="class1_term3_1-53">kituo</option><option value="class1_term3_1-54">cha</option><option value="class1_term3_1-55">gari</option><option value="class1_term3_1-56">la</option><option value="class1_term3_1-57">moshi.</option><option value="class1_term3_1_last_attempted_name"></option><option value="class1_term3_1_last_attempted_nth"></option><option value="class1_term3_1_time_remaining"></option><option value="class1_term3_1_time_spent"></option><option value="class1_term3_1_items_per_minute"></option><option value="class1_term3_1_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-42" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term3_2"><option value="class1_term3_2-1">Sofia</option><option value="class1_term3_2-2">na</option><option value="class1_term3_2-3">Koki</option><option value="class1_term3_2-4">walisafiri</option><option value="class1_term3_2-5">kwa</option><option value="class1_term3_2-6">gari</option><option value="class1_term3_2-7">la</option><option value="class1_term3_2-8">moshi.</option><option value="class1_term3_2-9">Gari</option><option value="class1_term3_2-10">la</option><option value="class1_term3_2-11">moshi</option><option value="class1_term3_2-12">lilipitia</option><option value="class1_term3_2-13">katika</option><option value="class1_term3_2-14">jiji</option><option value="class1_term3_2-15">kuu.</option><option value="class1_term3_2-16">Huko</option><option value="class1_term3_2-17">waliona</option><option value="class1_term3_2-18">majumba</option><option value="class1_term3_2-19">ya</option><option value="class1_term3_2-20">ghorofa.</option><option value="class1_term3_2-21">Gari</option><option value="class1_term3_2-22">la</option><option value="class1_term3_2-23">moshi</option><option value="class1_term3_2-24">pia</option><option value="class1_term3_2-25">lilipitia</option><option value="class1_term3_2-26">msituni.</option><option value="class1_term3_2-27">Sofia</option><option value="class1_term3_2-28">na</option><option value="class1_term3_2-29">Koki</option><option value="class1_term3_2-30">Waliwaona</option><option value="class1_term3_2-31">mamba</option><option value="class1_term3_2-32">karibu</option><option value="class1_term3_2-33">na</option><option value="class1_term3_2-34">bwawa</option><option value="class1_term3_2-35">la</option><option value="class1_term3_2-36">maji.</option><option value="class1_term3_2-37">Pia,</option><option value="class1_term3_2-38">waliwaona</option><option value="class1_term3_2-39">nyati</option><option value="class1_term3_2-40">na</option><option value="class1_term3_2-41">ndovu</option><option value="class1_term3_2-42">msituni.</option><option value="class1_term3_2-43">Baadaye</option><option value="class1_term3_2-44">waliwaona</option><option value="class1_term3_2-45">wafugaji</option><option value="class1_term3_2-46">na</option><option value="class1_term3_2-47">ng’ombe</option><option value="class1_term3_2-48">wao</option><option value="class1_term3_2-49">malishoni.</option><option value="class1_term3_2-50">Mwishowe,</option><option value="class1_term3_2-51">walishuka</option><option value="class1_term3_2-52">katika</option><option value="class1_term3_2-53">kituo</option><option value="class1_term3_2-54">cha</option><option value="class1_term3_2-55">gari</option><option value="class1_term3_2-56">la</option><option value="class1_term3_2-57">moshi.</option><option value="class1_term3_2_last_attempted_name"></option><option value="class1_term3_2_last_attempted_nth"></option><option value="class1_term3_2_time_remaining"></option><option value="class1_term3_2_time_spent"></option><option value="class1_term3_2_items_per_minute"></option><option value="class1_term3_2_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-43" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class1_term3"><option value="class1_term3-1">Sofia</option><option value="class1_term3-2">na</option><option value="class1_term3-3">Koki</option><option value="class1_term3-4">walisafiri</option><option value="class1_term3-5">kwa</option><option value="class1_term3-6">gari</option><option value="class1_term3-7">la</option><option value="class1_term3-8">moshi.</option><option value="class1_term3-9">Gari</option><option value="class1_term3-10">la</option><option value="class1_term3-11">moshi</option><option value="class1_term3-12">lilipitia</option><option value="class1_term3-13">katika</option><option value="class1_term3-14">jiji</option><option value="class1_term3-15">kuu.</option><option value="class1_term3-16">Huko</option><option value="class1_term3-17">waliona</option><option value="class1_term3-18">majumba</option><option value="class1_term3-19">ya</option><option value="class1_term3-20">ghorofa.</option><option value="class1_term3-21">Gari</option><option value="class1_term3-22">la</option><option value="class1_term3-23">moshi</option><option value="class1_term3-24">pia</option><option value="class1_term3-25">lilipitia</option><option value="class1_term3-26">msituni.</option><option value="class1_term3-27">Sofia</option><option value="class1_term3-28">na</option><option value="class1_term3-29">Koki</option><option value="class1_term3-30">Waliwaona</option><option value="class1_term3-31">mamba</option><option value="class1_term3-32">karibu</option><option value="class1_term3-33">na</option><option value="class1_term3-34">bwawa</option><option value="class1_term3-35">la</option><option value="class1_term3-36">maji.</option><option value="class1_term3-37">Pia,</option><option value="class1_term3-38">waliwaona</option><option value="class1_term3-39">nyati</option><option value="class1_term3-40">na</option><option value="class1_term3-41">ndovu</option><option value="class1_term3-42">msituni.</option><option value="class1_term3-43">Baadaye</option><option value="class1_term3-44">waliwaona</option><option value="class1_term3-45">wafugaji</option><option value="class1_term3-46">na</option><option value="class1_term3-47">ng’ombe</option><option value="class1_term3-48">wao</option><option value="class1_term3-49">malishoni.</option><option value="class1_term3-50">Mwishowe,</option><option value="class1_term3-51">walishuka</option><option value="class1_term3-52">katika</option><option value="class1_term3-53">kituo</option><option value="class1_term3-54">cha</option><option value="class1_term3-55">gari</option><option value="class1_term3-56">la</option><option value="class1_term3-57">moshi.</option><option value="class1_term3_last_attempted_name"></option><option value="class1_term3_last_attempted_nth"></option><option value="class1_term3_time_remaining"></option><option value="class1_term3_time_spent"></option><option value="class1_term3_items_per_minute"></option><option value="class1_term3_number_of_items_marked"></option></tangy-timed>
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-44" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term3_1"><option value="class2_term3_1-1">Mwalimu</option><option value="class2_term3_1-2">alitufunza</option><option value="class2_term3_1-3">kuhusu</option><option value="class2_term3_1-4">alama</option><option value="class2_term3_1-5">za</option><option value="class2_term3_1-6">barabarani.</option><option value="class2_term3_1-7">Alitueleza</option><option value="class2_term3_1-8">kuwa</option><option value="class2_term3_1-9">alama</option><option value="class2_term3_1-10">hizi</option><option value="class2_term3_1-11">ni</option><option value="class2_term3_1-12">muhimu</option><option value="class2_term3_1-13">sana.</option><option value="class2_term3_1-14">Husaidia</option><option value="class2_term3_1-15">kupunguza</option><option value="class2_term3_1-16">ajali</option><option value="class2_term3_1-17">barabarani.</option><option value="class2_term3_1-18">Mwalimu</option><option value="class2_term3_1-19">alituonyesha</option><option value="class2_term3_1-20">alama</option><option value="class2_term3_1-21">ya</option><option value="class2_term3_1-22">kivukio</option><option value="class2_term3_1-23">cha</option><option value="class2_term3_1-24">watoto.</option><option value="class2_term3_1-25">Alama</option><option value="class2_term3_1-26">huwekwa</option><option value="class2_term3_1-27">karibu</option><option value="class2_term3_1-28">na</option><option value="class2_term3_1-29">shule.</option><option value="class2_term3_1-30">Lazima</option><option value="class2_term3_1-31">dereva</option><option value="class2_term3_1-32">asimame</option><option value="class2_term3_1-33">kuwaruhusu</option><option value="class2_term3_1-34">watoto</option><option value="class2_term3_1-35">kuvuka</option><option value="class2_term3_1-36">barabara.</option><option value="class2_term3_1-37">Tulifunzwa</option><option value="class2_term3_1-38">pia</option><option value="class2_term3_1-39">umuhimu</option><option value="class2_term3_1-40">wa</option><option value="class2_term3_1-41">alama</option><option value="class2_term3_1-42">za</option><option value="class2_term3_1-43">kivukio</option><option value="class2_term3_1-44">cha</option><option value="class2_term3_1-45">wanyama</option><option value="class2_term3_1-46">na</option><option value="class2_term3_1-47">msalaba</option><option value="class2_term3_1-48">mwekundu.</option><option value="class2_term3_1-49">Mwalimu</option><option value="class2_term3_1-50">alimalizia</option><option value="class2_term3_1-51">kwa</option><option value="class2_term3_1-52">kutuomba</option><option value="class2_term3_1-53">tuwe</option><option value="class2_term3_1-54">waangalifu</option><option value="class2_term3_1-55">tunapoitumia</option><option value="class2_term3_1-56">barabara.</option><option value="class2_term3_1-57">Wanafunzi</option><option value="class2_term3_1-58">walifurahia</option><option value="class2_term3_1-59">somo</option><option value="class2_term3_1-60">hilo.</option><option value="class2_term3_1_last_attempted_name"></option><option value="class2_term3_1_last_attempted_nth"></option><option value="class2_term3_1_time_remaining"></option><option value="class2_term3_1_time_spent"></option><option value="class2_term3_1_items_per_minute"></option><option value="class2_term3_1_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-45" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term3_2"><option value="class2_term3_2-1">Mwalimu</option><option value="class2_term3_2-2">alitufunza</option><option value="class2_term3_2-3">kuhusu</option><option value="class2_term3_2-4">alama</option><option value="class2_term3_2-5">za</option><option value="class2_term3_2-6">barabarani.</option><option value="class2_term3_2-7">Alitueleza</option><option value="class2_term3_2-8">kuwa</option><option value="class2_term3_2-9">alama</option><option value="class2_term3_2-10">hizi</option><option value="class2_term3_2-11">ni</option><option value="class2_term3_2-12">muhimu</option><option value="class2_term3_2-13">sana.</option><option value="class2_term3_2-14">Husaidia</option><option value="class2_term3_2-15">kupunguza</option><option value="class2_term3_2-16">ajali</option><option value="class2_term3_2-17">barabarani.</option><option value="class2_term3_2-18">Mwalimu</option><option value="class2_term3_2-19">alituonyesha</option><option value="class2_term3_2-20">alama</option><option value="class2_term3_2-21">ya</option><option value="class2_term3_2-22">kivukio</option><option value="class2_term3_2-23">cha</option><option value="class2_term3_2-24">watoto.</option><option value="class2_term3_2-25">Alama</option><option value="class2_term3_2-26">huwekwa</option><option value="class2_term3_2-27">karibu</option><option value="class2_term3_2-28">na</option><option value="class2_term3_2-29">shule.</option><option value="class2_term3_2-30">Lazima</option><option value="class2_term3_2-31">dereva</option><option value="class2_term3_2-32">asimame</option><option value="class2_term3_2-33">kuwaruhusu</option><option value="class2_term3_2-34">watoto</option><option value="class2_term3_2-35">kuvuka</option><option value="class2_term3_2-36">barabara.</option><option value="class2_term3_2-37">Tulifunzwa</option><option value="class2_term3_2-38">pia</option><option value="class2_term3_2-39">umuhimu</option><option value="class2_term3_2-40">wa</option><option value="class2_term3_2-41">alama</option><option value="class2_term3_2-42">za</option><option value="class2_term3_2-43">kivukio</option><option value="class2_term3_2-44">cha</option><option value="class2_term3_2-45">wanyama</option><option value="class2_term3_2-46">na</option><option value="class2_term3_2-47">msalaba</option><option value="class2_term3_2-48">mwekundu.</option><option value="class2_term3_2-49">Mwalimu</option><option value="class2_term3_2-50">alimalizia</option><option value="class2_term3_2-51">kwa</option><option value="class2_term3_2-52">kutuomba</option><option value="class2_term3_2-53">tuwe</option><option value="class2_term3_2-54">waangalifu</option><option value="class2_term3_2-55">tunapoitumia</option><option value="class2_term3_2-56">barabara.</option><option value="class2_term3_2-57">Wanafunzi</option><option value="class2_term3_2-58">walifurahia</option><option value="class2_term3_2-59">somo</option><option value="class2_term3_2-60">hilo.</option><option value="class2_term3_2_last_attempted_name"></option><option value="class2_term3_2_last_attempted_nth"></option><option value="class2_term3_2_time_remaining"></option><option value="class2_term3_2_time_spent"></option><option value="class2_term3_2_items_per_minute"></option><option value="class2_term3_2_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+
+    <form id="with-pupil-books-46" on-change="">
+        <label>Kiswahili Class 3 - Term 1</label> <br>
+        <p><strong>Here is a short story. I want you to read it aloud, quickly but carefully. When you finish, I will ask you some questions about what you have read. When I say “Begin,” read the story as best as you can. If you come to a word you do not know, go on to the next word. Put your finger on the first word. </strong></p><p><strong>Ready? Begin.</strong> &nbsp;</p><p>&nbsp;</p>
+
+        <tangy-timed required columns="4" name="class2_term3"><option value="class2_term3-1">Mwalimu</option><option value="class2_term3-2">alitufunza</option><option value="class2_term3-3">kuhusu</option><option value="class2_term3-4">alama</option><option value="class2_term3-5">za</option><option value="class2_term3-6">barabarani.</option><option value="class2_term3-7">Alitueleza</option><option value="class2_term3-8">kuwa</option><option value="class2_term3-9">alama</option><option value="class2_term3-10">hizi</option><option value="class2_term3-11">ni</option><option value="class2_term3-12">muhimu</option><option value="class2_term3-13">sana.</option><option value="class2_term3-14">Husaidia</option><option value="class2_term3-15">kupunguza</option><option value="class2_term3-16">ajali</option><option value="class2_term3-17">barabarani.</option><option value="class2_term3-18">Mwalimu</option><option value="class2_term3-19">alituonyesha</option><option value="class2_term3-20">alama</option><option value="class2_term3-21">ya</option><option value="class2_term3-22">kivukio</option><option value="class2_term3-23">cha</option><option value="class2_term3-24">watoto.</option><option value="class2_term3-25">Alama</option><option value="class2_term3-26">huwekwa</option><option value="class2_term3-27">karibu</option><option value="class2_term3-28">na</option><option value="class2_term3-29">shule.</option><option value="class2_term3-30">Lazima</option><option value="class2_term3-31">dereva</option><option value="class2_term3-32">asimame</option><option value="class2_term3-33">kuwaruhusu</option><option value="class2_term3-34">watoto</option><option value="class2_term3-35">kuvuka</option><option value="class2_term3-36">barabara.</option><option value="class2_term3-37">Tulifunzwa</option><option value="class2_term3-38">pia</option><option value="class2_term3-39">umuhimu</option><option value="class2_term3-40">wa</option><option value="class2_term3-41">alama</option><option value="class2_term3-42">za</option><option value="class2_term3-43">kivukio</option><option value="class2_term3-44">cha</option><option value="class2_term3-45">wanyama</option><option value="class2_term3-46">na</option><option value="class2_term3-47">msalaba</option><option value="class2_term3-48">mwekundu.</option><option value="class2_term3-49">Mwalimu</option><option value="class2_term3-50">alimalizia</option><option value="class2_term3-51">kwa</option><option value="class2_term3-52">kutuomba</option><option value="class2_term3-53">tuwe</option><option value="class2_term3-54">waangalifu</option><option value="class2_term3-55">tunapoitumia</option><option value="class2_term3-56">barabara.</option><option value="class2_term3-57">Wanafunzi</option><option value="class2_term3-58">walifurahia</option><option value="class2_term3-59">somo</option><option value="class2_term3-60">hilo.</option><option value="class2_term3_last_attempted_name"></option><option value="class2_term3_last_attempted_nth"></option><option value="class2_term3_time_remaining"></option><option value="class2_term3_time_spent"></option><option value="class2_term3_items_per_minute"></option><option value="class2_term3_number_of_items_marked"></option></tangy-timed>
+
+
+    </form>
+
+
+
+
+    <form id="with-pupil-books-47" on-change="">
+        <label>Assessment Intro 2 - Kiswahili</label> <br>
+        @getVariable("subject") is "english_word"
+
+        <u>Kusoma Hadithi kwa Sauti</u><p> <i>Muonyeshe mwanafunzi hadithi. Halafu sema hivi,</i></p> <p><b>Hii hapa ni hadithi fupi. Ningependa uisome kwa sauti, haraka iwezekanavyo lakini kwa makini. Je, umeelewa jinsi unavyopaswa kufanya? Nikisema “Anza,” isome hadithi vizuri kadri ya uwezo wako. Nitanyamaza nikusilikilize. Uko tayari? Anza.</b></p>
+
+        <tangy-radio-buttons id="start5" name="start5" value="" label="Hit Ok and Next below" >
+            <option value="start">OK</option><br>
+        </tangy-radio-buttons>
+    </form>
+
+    <form id="with-pupil-books-49" on-change="">
+        <label>Assessment Intro 2 - English</label> <br>
+        @getVariable("subject") is "word"
+
+        <u>Reading story loudly</u><p> <i>Show the Pupil the story and say this,</i></p> <p><b>Here is a short story. I would like you to carefully read it aloud as fast as you can. Have you understood what you are supposed to do? When I say, please read the story carefully, loudly and as fast as you can. I will keep quiet as you read, are you ready? Please start.</b></p>
+        <tangy-radio-buttons id="start6" name="start6" value="" label="Hit Ok and Next below" >
+            <option value="start">OK</option><br>
+        </tangy-radio-buttons>
+    </form>
+
+    <form id="with-pupil-books-50" on-change="">
+        <label>Complete</label> <br>
+
+        <p>You have completed this Classroom Observation.</p> <button class='navigation'><a href='#feedback/#{@workflow.id}'>Go to Feedback</a></button> <p>Once in feedback select the appropriate county, zone, school and date of this school visit to retrieve the feedback for this lesson observation. This information is to be used in your reflections and discussion with the teacher.</p>
+        <tangy-radio-buttons id="start7" name="start7" value="" label="Hit Ok and Next below" >
+            <option value="start">OK</option><br>
+        </tangy-radio-buttons>
+    </form>
+
+    <form id="with-pupil-books-51" on-change="
+function showElement(name){
+    var ele = document.getElementById(name)
+    ele.hidden = false;
+}
+
+function changeContent(name,old,newStr){
+    var ele = document.getElementById(name)
+    var str = ele.innerHTML
+    ele.innerHTML = str.replace(old,newStr)
+}
+
+
+//this logic seems unnecessary
+if (getValue('subject') != 'english_word' || getValue('subject') != 'word') {
+    showElement('feedback1')
+    changeContent ('feedback1', '{{lsSubject}}', getValue('subject'))
+    changeContent ('feedback1', '{{lsClass}}', getValue('class'))
+    if (getValue('stream_name') == '')
+        changeContent ('feedback1', '{{lsStream}}', 'n/a')
+    else
+        changeContent ('feedback1', '{{lsStream}}', getValue('stream_name'))
+}
+
+if (getValue('subject') != 'operation') {
+    showElement('feedback2')
+    changeContent ('feedback2', '{{lr_2b}}', getValue('lr_2b'))
+}
+
+
+if (getValue('phonemic').includes('phonemic4') ) {
+    showElement('feedback3')
+}
+
+if (getValue('phonemic').includes('phonemic1') && getValue('pa_detail') == 0 || getValue('thumb')  ) {
+    showElement('feedback4')
+}
+
+if (getValue('phonemic').includes('phonemic2') && getValue('pa_detail') == 0 ) {
+    showElement('feedback5')
+}
+
+if (getValue('phonemic').includes('phonemic3') && getValue('pa_detail') == 0 ) {
+    showElement('feedback6')
+}
+
+
+
+  if (getValue('alphabetic').includes('alphabetic4') ) {
+    var errorsPhrase = ''
+    var errors = []
+
+    if (!getValue('alphabetic').includes('alphabetic1')) errors.push('The teacher did not pronounced the sounds correctly.')
+    if (!getValue('alphabetic').includes('alphabetic2')) errors.push('The teacher did not use proper finger pointing and sweeping to properly sound words.')
+    if (!getValue('alphabetic').includes('alphabetic3')) errors.push('The teacher did not write on the board or used the pocket chart.')
+    if (!getValue('alphabetic').includes('alphabetic4')) errors.push('The teacher did not use the I do/We do/you do.')
+    if (!getValue('alphabetic').includes('alphabetic5')) errors.push('The teacher did not understand the activity.')
+
+    if (errors.length > 0) {
+        errorsPhrase = '<ul>'
+        errors.forEach(function(msg, index) {
+            errorsPhrase += '<li>' + msg + '</li>'
+        });
+        errorsPhrase += '</ul>'
+    }
+
+    showElement('feedback7')
+    changeContent ('feedback7', '{{errorsPhrase}}', errorsPhrase)
+}
+
+
+
+if (!getValue('ap_detail').includes('ap_detail_1') &&  !getValue('ap_detail').includes('ap_detail_2')  &&  !getValue('ap_detail').includes('ap_detail_3')  &&  !getValue('ap_detail').includes('ap_detail_4')  &&  !getValue('ap_detail').includes('ap_detail_5')) {
+    showElement('feedback8')
+}
+
+
+if (!getValue('ap_detail').includes('ap_detail_2')) {
+    showElement('feedback9')
+}
+
+
+//tbd this logic is weird e_vocabulary
+if (!getValue('vocab_detail').includes('vocab_detail1') || !getValue('vocab_detail').includes('vocab_detail2')  || getValue('vocab_detail').includes('vocab_detail7') || getValue('e_vocabulary') == '' || getValue('e_vocab_detail') == 0 || getValue('e_vocab_detail2') == 0  ) {
+    var errorsPhrase = ''
+    var errors = []
+
+    if (!getValue('vocab_detail').includes('vocab_detail1')) errors.push('The teacher did not pronounced the sounds correctly.')
+    if (!getValue('vocab_detail').includes('vocab_detail2')) errors.push('The teacher did not use proper finger pointing and sweeping to properly sound words.')
+
+    if (errors.length > 0) {
+        errorsPhrase = '<ul>'
+        errors.forEach(function(msg, index) {
+            errorsPhrase += '<li>' + msg + '</li>'
+        });
+        errorsPhrase += '</ul>'
+    }
+
+    showElement('feedback10')
+    changeContent ('feedback10', '{{errorsPhrase}}', errorsPhrase)
+}
+
+
+if (getValue('post_comp_detail') == 0 || !getValue('e_initial_comprehension').includes('e_initial_comprehension1') || !getValue('e_initial_comprehension').includes('e_initial_comprehension2')  || getValue('e_initial_comprehension').includes('e_initial_comprehension3') || getValue('e_initial_comprehension').includes('e_initial_comprehension4') ) {
+    showElement('feedback100')
+}
+
+if (getValue('expression') == 0 || getValue('e_read_aloud').includes('e_read_aloud3') || getValue('e_read_aloud_detail') == 0) {
+    showElement('feedback11')
+}
+
+if (getValue('fluency_detail1') == 0 || getValue('fluency_detail1') == 1 ) {
+    showElement('feedback12')
+}
+
+if (getValue('fluency').includes('fluency6') ) {
+    showElement('feedback13')
+}
+
+if (getValue('e_read_aloud').includes('e_read_aloud1') && !getValue('e_read_aloud').includes('e_read_aloud2')) {
+    showElement('feedback14')
+}
+
+
+if (getValue('post_comprehension').includes('post_comprehension4') ) {
+    showElement('feedback15')
+}
+
+
+if (getValue('homework') == 0 ) {
+    showElement('feedback16')
+}
+
+if (getValue('preparedness') == 1 ) {
+    showElement('feedback17')
+}
+
+if (getValue('formative_feedback') == 0 ) {
+    showElement('feedback18')
+}
+
+if (getValue('pace') == 0 ) {
+    showElement('feedback19')
+}
+
+if (parseInt(getValue('protected_book_count') ) < parseInt(getValue('protected_book_count')) * 0.9 ) {
+    showElement('feedback20')
+}
+
+
+if (true ) {
+    //not sure why we have those here
+    var now = new Date()
+    var thisYear = now.getFullYear()
+    var week = getValue('week')
+    showElement('feedback21')
+}
+
+if (getValue('e_song') == 0 ) {
+    showElement('feedback22')
+}
+
+//varibale doesn't exist
+if (getValue('e_song_approach') == 0 ) {
+    showElement('feedback23')
+}
+
+
+
+
+
+if (true ) {//TBD
+   //var i1 = @trip.get('word_items_per_minute') || @trip.get('english_word_items_per_minute') || @trip.get//('operation_items_per_minute')
+   //var i2 = @trip.get('word_items_per_minute_1') || @trip.get('english_word_items_per_minute_1') || @trip.get//('operation_items_per_minute_1')
+   //var i3 = @trip.get('word_items_per_minute_2') || @trip.get('english_word_items_per_minute_2') || @trip.get//('operation_items_per_minute_2')
+   //var i1=parseFloat(i1)
+   //var i2=parseFloat(i2)
+   //var i3=parseFloat(i3)
+   //var average = (i1 + i2 + i3) / 3
+   //var aggScore = parseInt(average)
+    showElement('feedback24')
+   // changeContent ('feedback10', '{{aggScore}}', aggScore)
+
+}
+if (true ) {
+    showElement('feedback25')
+    //changeContent ('feedback10', '{{aggScore}}', aggScore)
+
+}
+
+
+"
+    >
+        <tangy-checkbox name="show_feedback" >Show Feedback</tangy-checkbox>
+
+
+        <div id="feedback1" hidden>
+            <p><strong>Subject:</strong> {{lsSubject}}<br> <strong>Class:</strong> {{lsClass}}<br> <strong>Stream:</strong> {{lsStream}}<br><br> Based on your classroom observations, the following are some of the areas the teacher needs to work on. You may focus your discussion on the following items.<br> Please give the teacher an opportunity to evaluate him/her self by saying what s/he did well and what she thinks should be improved, talk about the positives and then discuss the areas of improvement with the teacher <br/> <br>Lesson duration: {{duration}} minutes</p>
+        </div>
+
+        <div id="feedback2" hidden>
+            <p>
+                In the lesson review you had entered "{{lr_2b}}" as a specific area of improvement you would like the teacher to address.</p>
+
+        </div>
+
+        <div id="feedback3" hidden>
+            <p>
+                <label>Phonemic awareness</label>
+
+                Phonemic Awareness is very important. In order to read, children must be able to hear, identify and maninpulate different sounds. It's important to start each lesson with the oral activity written in the lesson plan.
+            </p>
+        </div>
+
+
+        <div id="feedback4" hidden>
+            <p>
+                <label>PA: Sound Recognition - Thumbs up / Thumbs down</label>
+
+                Say the sound clearly. Say the word clearly. Show thumbs up for each word that has the sound. Show thumbs down for each word that does not have the sound. The activity order should be "I do, We do, You do". It is not written on the board. <br><br> Watch: Sound Recognition with Teacher Kazungu. If the teacher is having issues with the sounds, watch "English Sound Video with teacher Sarah" If the teacher is having issues with Kiswahili sounds, watch "Kiswahili Sounds with teacher Kazungu"
+
+
+            </p>
+        </div>
+
+        <div id="feedback5" hidden>
+            <label>PA: Oral Blending</label>
+
+            Say each sound in the word, and say the word. Remember, sometimes two letters can make one sound. The activity order should be "I do, We do, You do". It is not written on the board. <br><br>Watch: Oral Blending with teacher Linda If the teacher is having issues with the sounds, watch "English Sound Video with teacher Sarah." If the teacher is having issues with Kiswahili sounds, watch "Kiswahili Sounds with teacher Kazungu"
+
+
+
+        </div>
+
+
+        <div id="feedback6" hidden>
+            <label>PA: Segmenting</label>
+
+            Say the word, then say each sound in the word. Remember sometimes two letters can make one sound. The activity order should be "I do, We do, You do". It is not written on the board.<br> <br>Watch: Segmenting with teacher Maina. If the teacher is having issues with the sounds, watch "English Sound Video with teacher Sarah."
+
+
+        </div>
+
+
+        <div id="feedback7" hidden>
+            <label>Alphabetic Principle</label>
+
+            {{errorsPhrase}}<br>
+            Alphabetic Principle is very important.  In order for children to learn to read, they must be able to identify the sound that each letter makes.  Furthermore, they must be able to blend the letter sounds together to make words.  Use the activities in the lesson to teach letters, letter sounds and blending.
+
+
+
+        </div>
+
+        <div id="feedback8" hidden>
+            <label>AP: Letter/Sound Knowledge</label>
+
+            Use the pocket chart or blackboard to point under the letter and say the sound. Tell the children if each letter sound is the same or different in Kiswahili.<br><br>Watch: Letter/Sound Knowledge with Teacher Maina. If the teacher is having issues with the sounds, watch "English Sound Video with teacher Sarah." If the teacher is having issues with Kiswahili sounds, watch "Kiswahili Sounds with teacher Kazungu"
+        </div>
+
+
+        <div id="feedback9" hidden>
+            <label>AP: Word Blending</label>
+
+            Use the pocket chart or blackboard to point under the letters as you say the sounds, and sweep your finger under the letters as you say the word. The order of this activity is "I do, We do, You do"<br><br>Watch: Word Blending with teacher Linda. If the teacher is having issues with the sounds, watch "English Sound Video with teacher Sarah."
+        </div>
+
+        <div id="feedback10" hidden>
+            <label>Vocabulary</label>
+
+            {{errorsPhrase}} 1. Say the word 2. Ask the pupils if they know the word. 3. Show or define the word in simple language. 4. Have pupils use the word in a sentence that shows the meaning.<br><br>Watch: Vocabulary Video with Teacher Maina
+
+        </div>
+
+        <div id="feedback100" hidden>
+            <label>Comprehension (Before the story)</label>
+
+            1. Read the title. 2. Discuss the picture. 3. Ask the pupils to make a prediction 4. Check to see if the pupil's prediction was correct after they read the story. <br><br>Watch: Prediction Video with teacher Kazungu
+
+
+        </div>
+
+
+        <div id="feedback11" hidden>
+            <label>Teacher Read Aloud</label>
+
+            Review the story before the lesson and practice reading. Choose what parts to emphasize to make it exciting. <br><br>Watch: Teach Read Aloud Video with teacher Sarah
+
+
+        </div>
+
+        <div id="feedback12" hidden>
+            <label>I do / We do / You do Reading</label>
+
+            Children must have opportunities to read every day. With I do/We do/You do, the teacher reads first, then the teacher reads with the class, finally the pupils read on their own or with partners.
+
+        </div>
+
+
+        <div id="feedback13" hidden>
+            <label>Fluency</label>
+
+            Children must have many opportunities to listen and to read stories every day. Follow the lesson plan to make sure children are reading each and every day.
+
+        </div>
+
+
+        <div id="feedback14" hidden>
+            <label>Teacher Read Aloud (Teacher Only)</label>
+
+            The teacher read aloud is meant to be read by the teacher ONLY. These stories help children develop listening comprehension and vocabulary.<br><br>Watch: Teach Read Aloud Video with teacher Sarah
+
+
+        </div>
+
+
+        <div id="feedback15" hidden>
+            <label>Comprehension (After the story)</label>
+
+            Demonstrate looking in the text for the correct answer. Demonstrate thinking and arriving at an answer that is not in the text.<br><br>Watch: Comprehension Video with teacher Kazungu
+        </div>
+
+
+        <div id="feedback16" hidden>
+            <label>Homework</label>
+
+            Demonstrate how to do the homework with the classwork examples.
+
+
+        </div>
+
+        <div id="feedback17" hidden>
+            <label>Preparation</label>
+
+            Remember to review your lesson before you deliver it. Have your materials ready to go before the lesson
+
+        </div>
+
+
+        <div id="feedback18" hidden>
+            <label>Formative Feedback</label>
+
+            Remember to demonstrate how to get the correct answer and give the pupils a second chance. Remember to also ask how the pupil arrived at an answer.
+        </div>
+
+        <div id="feedback19" hidden>
+            <label>Perky Pace</label>
+
+            Remember to review your lesson before you give it. You can review by practicing it, review parts that you are unsure about, and timing yourself as you practice
+
+        </div>
+
+        <div id="feedback20" hidden>
+            <label>Book care count</label>
+
+            All pupil books need to be covered.
+
+        </div>
+
+        <div id="feedback21" hidden>
+            <label>Staying on Pace</label>
+
+            It is important to teach Tusome lessons every day. If you fall behind in your Tusome lessons, your children will not be able to read or perform well on exams. If you are falling behind, teach two Tusome lessons on one day to catch up.
+
+        </div>
+
+        <div id="feedback22" hidden>
+            <label>Songs</label>
+
+            It is important to teach every part of the lesson, including the songs. Songs help children develop oral language skills. They teach new words and concepts.<br><br>Click on the songs in the Multimedia lesson plans and let the teacher listen to the tune.
+
+        </div>
+
+        <div id="feedback23" hidden>
+            <label>I do / We do / You do</label>
+
+            Every Tusome activity is taught using I Do/We Do/ You Do. The teacher always models first, then the teacher and the pupils do it together. Finally, the pupils do the activity on their own.
+
+        </div>
+
+
+        <div id="feedback24" hidden>
+            <label>Student Assessment Results</label>
+
+            The students that were assessed in this class achieved on average {{aggScore}} correct items per minute.<br><br>Remember that for Kiswahili, the end of grade benchmark is 17 correct items per minute in Class 1 and 45 correct items per minute in Class 2.<br>For English, the end of grade benchmark is 30 correct items per minute in Class 1 and 65 correct items per minute in Class 2.<br><br>Use this information in your discussions with the teacher.
+
+
+        </div>
+
+        <div id="feedback25" hidden>
+            <label>CSO/Coach Notes:</label>
+
+            The students that were assessed in this class achieved on average {{aggScore}} correct items per minute.<br><br>Remember that for Kiswahili, the end of grade benchmark is 17 correct items per minute in Class 1 and 45 correct items per minute in Class 2.<br>For English, the end of grade benchmark is 30 correct items per minute in Class 1 and 65 correct items per minute in Class 2.<br><br>Use this information in your discussions with the teacher.
+
+            How did the feedback session go? What do you hope the teacher will change for next time?
+        </div>
+
+    </form>
+
+    <form id="with-pupil-books-3" on-change="
+  if (getValue('stream') == '1') {
+    inputShow('stream_name')
+  } else {
+    inputHide('stream_name')
+  }
+
+  ">
+
+        <!--<tangy-location namespace="pupils_with_books"></tangy-location>!-->
+
+        <tangy-radio-buttons id="class" name="class" value="" label="Class" required>
+            <option name="class" value="1">1</option>
+            <option name="class" value="2">2</option>
+            <option name="class" value="3">3</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="stream" name="stream" value="" label="Does this class have streams?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-input  error-message="Stream observed" type="text" name="stream_name" required label="Stream observed" value="" hidden> </tangy-input>
+
+        <tangy-radio-buttons id="subject" name="subject" value="" label="Subject" required>
+            <option value="english_word">English</option>
+            <option value="word">Kiswahili</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="lesson_week" name="lesson_week" label="Lesson week" value="" required>
+            <option value="1">Week 1</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4</option>
+            <option value="5">Week 5</option>
+            <option value="6">Week 6</option>
+            <option value="7">Week 7</option>
+            <option value="8">Week 8</option>
+            <option value="9">Week 9</option>
+            <option value="10">Week 10</option>
+            <option value="11">Week 11</option>
+            <option value="12">Week 12</option>
+            <option value="13">Week 13</option>
+            <option value="14">Week 14</option>
+            <option value="15">Week 15</option>
+            <option value="16">Week 16</option>
+            <option value="17">Week 17</option>
+            <option value="18">Week 18</option>
+            <option value="19">Week 19</option>
+            <option value="20">Week 20</option>
+            <option value="21">Week 21</option>
+            <option value="22">Week 22</option>
+            <option value="23">Week 23</option>
+            <option value="24">Week 24</option>
+            <option value="25">Week 25</option>
+            <option value="26">Week 26</option>
+            <option value="27">Week 27</option>
+            <option value="28">Week 28</option>
+            <option value="29">Week 29</option>
+            <option value="30">Week 30</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="lesson_day" name="lesson_day" value="" label="Lesson day:" required>
+            <option name="lesson_day" value="1">1</option>
+            <option name="lesson_day" value="2">2</option>
+            <option name="lesson_day" value="3">3</option>
+            <option name="lesson_day" value="4">4</option>
+            <option name="lesson_day" value="5">5</option>
+        </tangy-radio-buttons>
+
+
+        <tangy-radio-buttons id="visit_number" name="visit_number" value="" label="Number of visits this month" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </tangy-radio-buttons>
+
+    </form>
+    <form id="with-pupil-books-4" on-change="">
+        <tangy-radio-buttons id="start_time" name="start_time" label="When the lesson starts, Hit Ok and Next below to capture lesson start time" value="" required>
+            <option value="start_time">OK</option><br>
+        </tangy-radio-buttons>
+    </form>
+
+
+    <form id="with-pupil-books-5" on-change="
+
+
+    if (getValue('phonemic').includes('phonemic4') || getValue('phonemic').includes('phonemic5')) {
+        inputHide('pa_detail')
+        inputHide('pa_detail2')
+        inputShow('pa_detail3')
+        inputHide('pa_detail4')
+    } else {
+        inputShow('pa_detail')
+        inputShow('pa_detail2')
+        inputShow('pa_detail3')
+        inputShow('pa_detail4')
+    }
+
+    if (!getValue('phonemic').includes('phonemic1')) {
+        inputHide('thumb')
+        inputHide('thumb_up_down')
+    } else {
+        inputShow('thumb')
+        inputShow('thumb_up_down')
+    }
+    if (getValue('alphabetic').includes('alphabetic5')) {
+        inputHide('read_book')
+        inputHide('ap_detail')
+    } else {
+        inputShow('read_book')
+        inputShow('ap_detail')
+    }
+    if (!getValue('alphabetic').includes('alphabetic2') && !getValue('alphabetic').includes('alphabetic3')) {
+        inputHide('ap_detail2')
+    } else {
+        inputShow('ap_detail2')
+    }
+
+    if (!getValue('vocabulary').includes('vocabulary7') && !getValue('vocabulary').includes('vocabulary8')) {
+        inputHide('vocab_detail')
+    } else {
+        inputShow('vocab_detail')
+     }
+
+    if (getValue('grammar') != '1')     {
+        inputHide('grammar_understanding')
+    } else {
+        inputShow('grammar_understanding')
+    }
+
+    if (getValue('grammar_understanding') != '1')     {
+        inputHide('grammar_perform')
+    } else {
+        inputShow('grammar_perform')
+    }
+
+    if (getValue('pupil_story') != '1')     {
+        inputHide('initial_comprehension')
+    } else {
+        inputShow('initial_comprehension')
+    }
+
+    if (getValue('pupil_story') != '1' )     {
+        inputHide('fluency')
+    } else {
+        inputShow('fluency')
+    }
+
+
+    if (getValue('pupil_story') != '1'  || getValue('fluency').includes('fluency5') )     {
+        inputHide('fluency_detail')
+    } else {
+        inputShow('fluency_detail')
+    }
+
+    if (getValue('pupil_story') != '1' || getValue('fluency').includes('fluency1') )     {
+        inputHide('expression')
+    } else {
+        inputShow('expression')
+    }
+
+    if (getValue('pupil_story') != '1' )     {
+        inputHide('story_questions')
+    } else {
+        inputShow('story_questions')
+    }
+
+    if (getValue('pupil_story') != '1' )     {
+        inputHide('post_comprehension')
+    } else {
+        inputShow('post_comprehension')
+    }
+
+
+    if (!getValue('post_comprehension').includes('post_comprehension4')  )     {
+        inputHide('post_comp_other')
+    } else {
+        inputShow('post_comp_other')
+    }
+
+    if (getValue('pupil_story') != 1 || getValue('post_comprehension').includes('post_comprehension5') || getValue('post_comprehension').includes('post_comprehension6') )     {
+        inputHide('post_comp_detail')
+    } else {
+        inputShow('post_comp_detail')
+    }
+
+    if (getValue('teacher_story') != '1' )     {
+        inputHide('initial_comprehension_teacherstory')
+    } else {
+        inputShow('initial_comprehension_teacherstory')
+    }
+
+    if (getValue('teacher_story') != '1' )     {
+        inputHide('story_questions_teacherstory')
+    } else {
+        inputShow('story_questions_teacherstory')
+    }
+
+    if (getValue('teacher_story') != '1' )     {
+        inputHide('post_comprehension_teacherstory')
+    } else {
+        inputShow('post_comprehension_teacherstory')
+    }
+
+    if (!getValue('post_comprehension_teacherstory').includes('post_comprehension_teacherstory4'))     {
+        inputHide('post_comp_other_teacherstory')
+    } else {
+        inputShow('post_comp_other_teacherstory')
+    }
+
+    if (getValue('teacher_story') != 1 || getValue('post_comprehension_teacherstory').includes('post_comprehension_teacherstory5') || getValue('post_comprehension_teacherstory').includes('post_comprehension_teacherstory6') )     {
+        inputHide('post_comp_detail_teacherstory')
+    } else {
+        inputShow('post_comp_detail_teacherstory')
+    }
+
+">
+        <p>As soon as the teacher has finished the lesson, hit NEXT below to capture the end time of the lesson, and to move to the general lesson follow-up questions, lesson review, and student assessments.</p>
+
+
+        <tangy-checkboxes name="phonemic" label="What Phonemic Awareness activities were modeled?" required>
+            <option value="phonemic1">Thumbs up/thumbs down</option>
+            <option value="phonemic2">Blending</option>
+            <option value="phonemic3">Segmenting</option>
+            <option value="phonemic4">Not Applicable</option>
+            <option value="phonemic5">This section was skipped</option>
+        </tangy-checkboxes>
+
+        <tangy-radio-buttons id="pa_detail" name="pa_detail" value="" label="Did the teacher pronounce the sound correctly?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="pa_detail2" name="pa_detail2" value="" label="Was the activity oral only (nothing on the board)?"  required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="pa_detail3" name="pa_detail3" value="" label="Did the teacher use the I do/We do/You do throughout?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="thumb" name="thumb" value="" label="Was the teacher able to model correctly when pupils use the thumb?" >
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+            <option value="2">Not Applicable</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="thumb_up_down" name="thumb_up_down" value="" label="Were the pupils able to show thumbs up and thumbs down?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="pa_detail4" name="pa_detail4" value="" label="Did the teacher understand the activity?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-checkboxes name="alphabetic" label="What Alphabetic Principle activities were modelled?" required>
+            <option value="alphabetic1">Letter sound correspondence</option>
+            <option value="alphabetic2">Blending syllables or words</option>
+            <option value="alphabetic3">Word/syllable manipulation/making words</option>
+            <option value="alphabetic4">Word reading</option>
+            <option value="alphabetic5">This section was skipped</option>
+        </tangy-checkboxes>
+
+        <tangy-radio-buttons id="read_book" name="read_book" value="" label="Did the teacher instruct the pupils to read from the book?" required>
+            <option name="read_book" value="1">Yes</option>
+            <option name="read_book" value="0">No</option>
+        </tangy-radio-buttons>
+
+
+        <tangy-checkboxes name="ap_detail" label="Select from the statements below the component of teaching alphabetic principle that the teacher applied:" required>
+
+            <option value="ap_detail_1">The teacher pronounced the sounds correctly</option>
+            <option value="ap_detail_2">The teacher used proper finger pointing and sweeping to properly sound words.</option>
+            <option value="ap_detail_3">The teacher wrote on the board or used the pocket chart.</option>
+            <option value="ap_detail_4">The teacher used the I do/We do/You do.</option>
+            <option value="ap_detail_5">The teacher understood the activity.</option>
+        </tangy-checkboxes>
+
+
+        <tangy-radio-buttons id="ap_detail2" name="ap_detail2" value="" label="Was the teacher able to take apart, put together or change sounds?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+
+        <tangy-checkboxes name="vocabulary" label="What Vocabulary activities were modeled?" required>
+            <option value="vocabulary1">Gesturey</option>
+            <option value="vocabulary2">Make a sentence</option>
+            <option value="vocabulary3">Give definition</option>
+            <option value="vocabulary4">Point to something</option>
+            <option value="vocabulary5">Use a picture</option>
+            <option value="vocabulary6">Give another word in English/MT or Kiswahili</option>
+            <option value="vocabulary7">This section was skipped</option>
+            <option value="vocabulary8">Not applicable</option>
+        </tangy-checkboxes>
+
+        <tangy-checkboxes name="vocab_detail" label="Select from the statements below the component of teaching vocabulary that the teacher applied:" required>
+            <option value="vocab_detail1">The teacher read the word correctly</option>
+            <option value="vocab_detail2">The teacher defined the word correctly</option>
+            <option value="vocab_detail3">The teacher asked pupils if they know the meaning of the word</option>
+            <option value="vocab_detail4">The teacher made meaningful sentences using the word</option>
+            <option value="vocab_detail5">The teacher supported the children to make sentences with words</option>
+            <option value="vocab_detail6">The teacher gave pupils time to demonstrate the meaning of the new words</option>
+            <option value="vocab_detail7">None of the above</option>
+        </tangy-checkboxes>
+
+        <tangy-radio-buttons id="grammar" name="grammar" value="" label="Was there any grammar activity in the lesson?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+            <option value="Skipped">Skipped</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="grammar_understanding" name="grammar_understanding" value="" label="Was the teacher able to teach grammar to the level of the pupils understanding?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="grammar_perform" name="grammar_perform" value="" label="Were the pupils able to successfully perform the grammar activity taught?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="pupil_story" name="pupil_story" value="" label="Was there a pupil story in the lesson?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-checkboxes name="initial_comprehension" label="What Comprehension (before reading story) activities were modeled" required>
+            <option value="initial_comprehension1" >Make a prediction</option>
+            <option value="initial_comprehension2" >Read titley</option>
+            <option value="initial_comprehension3" >Talk about picture(s)</option>
+            <option value="initial_comprehension4" >Not applicable</option>
+            <option value="initial_comprehension5" >Discuss the title</option>
+            <option value="initial_comprehension6" >This section was skipped</option>
+        </tangy-checkboxes>
+
+        <tangy-checkboxes name="fluency" label="Who read the story?" required>
+            <option value="fluency1">Teacher</option>
+            <option value="fluency2">Whole class (echo/choral)</option>
+            <option value="fluency3">Partners/groups</option>
+            <option value="fluency4">Individual</option>
+            <option value="fluency5">This section was skipped</option>
+        </tangy-checkboxes>
+
+        <tangy-checkboxes name="fluency_detail" label="Select from the statements below the component of teaching fluency  that the teacher applied:" required>
+            <option value="fluency_detail1" >The children used their fingers to track the words during the reading process.</option>
+            <option value="fluency_detail2" >The teacher walked around the classroom to observe pupils reading.</option>
+            <option value="fluency_detail3" >The teacher read the story with fluency for the pupils.</option>
+            <option value="fluency_detail4" >None of the above</option>
+        </tangy-checkboxes>
+
+
+        <tangy-radio-buttons id="expression" name="expression" value="" label="Did the teacher model reading the story at a good pace with expression?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+            <option value="2">Not applicableNo</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="story_questions" name="story_questions" value="" label="Did the teacher ask questions from the story?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-checkboxes name="post_comprehension" label="What Comprehension (after reading story) activities were modeled?" required>      <option value="post_comprehension1">Checked prediction</option>
+            <option value="post_comprehension2">Asked questions in the script</option>
+            <option value="post_comprehension3">Asked pupils to retell the story</option>
+            <option value="post_comprehension4">Other (specify in next question)</option>
+            <option value="post_comprehension5">Not Applicable</option>
+            <option value="post_comprehension6">Skipped this section</option>
+        </tangy-checkboxes>
+
+        <tangy-input  error-message="Specify other:" type="text" name="post_comp_other" required label="Specify other:" value="" > </tangy-input>
+
+        <tangy-radio-buttons id="post_comp_detail" name="post_comp_detail" value="" label="Did the teacher make the children try to go back to the text to find the answers to the questions?" required>
+            <option value="1">Yes</option>
+            <option value="2">Not applicable</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="teacher_story" name="teacher_story" value="" label="Was there a teacher read aloud story?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+
+        <tangy-checkboxes name="initial_comprehension_teacherstory" label="What Comprehension (before reading story) activities were modeled?" required>
+            <option value="initial_comprehension_teacherstory1" >Make a prediction</option>
+            <option value="initial_comprehension_teacherstory2" >Read title</option>
+            <option value="initial_comprehension_teacherstory3" >Talk about picture(s)</option>
+            <option value="initial_comprehension_teacherstory4" >Not applicable</option>
+            <option value="initial_comprehension_teacherstory5" >Discuss the title</option>
+            <option value="initial_comprehension_teacherstory6" >This section was skipped</option>
+        </tangy-checkboxes>
+
+        <tangy-radio-buttons id="story_questions_teacherstory" name="story_questions_teacherstory" value="" label="Did the teacher ask questions from the story?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+
+        <tangy-checkboxes name="post_comprehension_teacherstory" label="What Comprehension (after reading story) activities were modeled?" required>
+            <option value="post_comprehension_teacherstory1">Checked prediction</option>
+            <option value="post_comprehension_teacherstory2">Asked questions in the script</option>
+            <option value="post_comprehension_teacherstory3">Asked pupils to retell the story</option>
+            <option value="post_comprehension_teacherstory4">Other (specify in next question)</option>
+            <option value="post_comprehension_teacherstory5">Not Applicable</option>
+            <option value="post_comprehension_teacherstory6">Skipped this section</option>
+        </tangy-checkboxes>
+
+        <tangy-input  error-message="Specify other:" type="text" name="post_comp_other_teacherstory" required label="Specify other:" value=""> </tangy-input>
+
+
+        <tangy-radio-buttons id="post_comp_detail_teacherstory" name="post_comp_detail_teacherstory" value="" label="Did the teacher make the children try to go back to the text to find the answers to the questions?" required>
+            <option value="1">Yes</option>
+            <option value="2">Not applicable</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+    </form>
+
+
+    <form id="with-pupil-books-6" on-change="
+
+
+if (getValue('e_vocabulary').includes('e_vocabulary7')|| getValue('e_vocabulary').includes('e_vocabulary8'))     {
+    inputHide('e_vocab_detail')
+} else {
+    inputShow('e_vocab_detail')
+}
+
+if (getValue('e_vocabulary').includes('e_vocabulary7')|| getValue('e_vocabulary').includes('e_vocabulary8'))     {
+    inputHide('e_vocab_detail2')
+} else {
+    inputShow('e_vocab_detail2')
+}
+
+if (getValue('e_grammar') != 1)     {
+    inputHide('e_grammar_understanding')
+} else {
+    inputShow('e_grammar_understanding')
+}
+
+if (getValue('e_grammar_understanding') != 1)     {
+    inputHide('e_grammar_activity')
+} else {
+    inputShow('e_grammar_activity')
+}
+if (!getValue('e_read_aloud').includes('e_read_aloud1') )     {
+    inputHide('e_read_aloud_detail')
+} else {
+    inputShow('e_read_aloud_detail')
+}
+">
+        <p>As soon as the teacher has finished the lesson, hit NEXT below to capture the end time of the lesson, and to move to the general lesson follow-up questions, lesson review, and student assessments.</p>
+
+
+        <tangy-radio-buttons id="e_song" name="e_song" value="" label="Did the teacher teach the song?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+            <option value="2">Not applicable</option>
+        </tangy-radio-buttons>
+
+        <tangy-checkboxes name="e_pa" label="What Phonemic Awareness activities were modeled?" required>
+            <option value="e_pa1">Thumbs up/thumbs down</option>
+            <option value="e_pa2">Blending</option>
+            <option value="e_pa3">Segmenting</option>
+            <option value="e_pa4">Not Applicable</option>
+            <option value="e_pa5">This section was skipped</option>
+        </tangy-checkboxes>
+
+        <tangy-checkboxes name="e_vocabulary" label="What Vocabulary strategies were modeled?" required>
+            <option value="e_vocabulary1" >Gesturey</option>
+            <option value="e_vocabulary2" >Make a sentence</option>
+            <option value="e_vocabulary3" >Give definition</option>
+            <option value="e_vocabulary4" >Point to something</option>
+            <option value="e_vocabulary5" >Use a picture</option>
+            <option value="e_vocabulary6" >Give another word in English/MT or Kiswahili</option>
+            <option value="e_vocabulary7" >Not applicable</option>
+            <option value="e_vocabulary8" >This section was skipped</option>
+        </tangy-checkboxes>
+
+        <tangy-radio-buttons id="e_vocab_detail" name="e_vocab_detail" value="" label="Did the teacher define the word correctly?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+            <option value="2">Not applicable</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="e_vocab_detail2" name="e_vocab_detail2" value="" label="Did the teacher support the children to make sentences with the words?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+            <option value="2">Not applicable</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="e_grammar" name="e_grammar" value="" label="Was there any grammar activity in the lesson?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="e_grammar_understanding" name="e_grammar_understanding" value="" label="Was the teacher able to teach grammar to the level of pupils understanding?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="e_grammar_activity" name="e_grammar_activity" value="" label="Were the pupils able to successfully perform the grammar activity taught? " required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-checkboxes name="e_initial_comprehension" label="What Comprehension (before the story) activities were modeled?" required>
+            <option value="e_initial_comprehension1" >Read title</option>
+            <option value="e_initial_comprehension2" >Talk about picture(s)</option>
+            <option value="e_initial_comprehension3" >Prediction</option>
+            <option value="e_initial_comprehension4" >This section was skipped</option>
+        </tangy-checkboxes>
+
+        <tangy-checkboxes name="e_read_aloud" label="Read-Aloud: Who read the story?" required>
+            <option value="e_read_aloud1" >Teacher</option>
+            <option value="e_read_aloud2" >Whole class (echo/choral)</option>
+            <option value="e_read_aloud3" >This section was skipped</option>
+        </tangy-checkboxes>
+
+        <tangy-radio-buttons id="e_read_aloud_detail" name="e_read_aloud_detail" value="" label="Did the teacher model reading the story slowly with expression" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-checkboxes name="e_post_comprehension" label="What Comprehension (after reading story) activities were modeled?" required>
+            <option value="e_post_comprehension1">Checked prediction</option>
+            <option value="e_post_comprehension2">Asked questions from the script</option>
+            <option value="e_post_comprehension3">Asked pupils to retell the story</option>
+            <option value="e_post_comprehension4">Skipped this section</option>
+        </tangy-checkboxes>
+
+        <tangy-radio-buttons id="e_approach" name="e_approach" value="" label="Did the teacher use the I do/We do/you do throughout?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+
+    </form>
+
+
+    <form id="with-pupil-books-7" on-change="
+
+if (getValue('books') != 1)     {
+    inputHide('current_book_count')
+} else {
+    inputShow('current_book_count')
+}
+
+if (getValue('books') != 1)     {
+    inputHide('protected_book_count')
+} else {
+    inputShow('protected_book_count')
+}
+
+if (getValue('books') != 0)     {
+    inputHide('nonprimr_book_count')
+} else {
+    inputShow('nonprimr_book_count')
+}
+
+">
+        <p>As soon as the teacher has finished the lesson, hit NEXT below to capture the end time of the lesson, and to move to the general lesson follow-up questions, lesson review, and student assessments.</p>
+
+
+        <tangy-radio-buttons id="classwork" name="classwork" value="" label="Did the teacher give the children classwork from Tusome books?"  required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="homework" name="homework" value="" label="Did the teacher give the children homework from the Tusome homework books?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+
+        <tangy-radio-buttons id="preparedness" name="preparedness" value="" label="Based on the lesson, how prepared was the teacher?" required>
+            <option value="1">Unprepared</option>
+            <option value="2">Prepared</option>
+            <option value="3">Well prepared</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="formative_feedback" name="formative_feedback" value="" label="Did the teacher give immediate formative feedback throughout?" required>
+            <option value="1">Yes</option>
+            <option value="2">Sometimes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <label></label> <br>
+        <tangy-radio-buttons id="pace" name="pace" value="" label="Did the teacher  teach with a perky pace?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-input  error-message="How many girls are present?" type="text" name="girls" required label="How many girls are present?" value="" > </tangy-input>
+
+
+        <tangy-input  error-message="How many boys are present?" type="text" name="boys" required label="How many boys are present?" value=""> </tangy-input>
+
+
+        <tangy-radio-buttons id="lesson_plans" name="lesson_plans" value="" label="Did the teacher use Tusome lesson plans in teaching the lesson" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="books" name="books" value="" label="Did the lesson use the TUSOME pupil books?" required >
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+
+        <tangy-input  error-message="" type="number" name="current_book_count"  label="How many learner books were used by pupils during the lesson?" value="" required> </tangy-input>
+
+
+        <tangy-input  error-message="" type="number" name="protected_book_count"  label="How many learner books are covered?" value="" required> </tangy-input>
+
+
+        <tangy-input  error-message="" type="number" name="nonprimr_book_count"  label="How many non-TUSOME learner books are present in the classroom? " value="" required> </tangy-input>
+
+
+
+    </form>
+
+
+    <form id="with-pupil-books-8" on-change="
+
+if (getValue('lr_2') != 1)     {
+  inputHide('lr_2a')
+} else {
+  inputShow('lr_2a')
+}
+
+">
+        <p>Before we get to the student assessments, let's collect some final observations on this teacher and the lesson. Please answer the questions below before you conduct the reflection discussion. </p>
+        <p>CSO, be prepared that as you hit NEXT below, you will be moved to the assessment screen for the first student. The assessments are timed, so as long you don't hit START for the timer to count down, you can take your time to select the 3 required students (if you have not done so yet), and get them to an appropriate place to conduct those 3 rapid assessments.
+            Remember to hit DONE to move to the next student once you have completed an assessment and marked the last item attempted. </p>
+
+
+        <tangy-input  error-message="" type="text" name="lr_1" required label="1) What was successful about the lesson?" value=""> </tangy-input>
+
+
+        <tangy-radio-buttons id="lr_2" name="lr_2" value="" label="2) Have you visited this teacher before?" required>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-radio-buttons id="lr_2a" name="lr_2a" value="" label="2a) The last time you visited this teacher, you talked to him/her about certain areas of improvement. Has s/he made improvement in this area?" required>
+
+            <option value="1">Yes</option>
+            <option value="0">No</option>
+        </tangy-radio-buttons>
+
+        <tangy-input  error-message="" type="text" name="lr_2b" required label="2b) From your observation TODAY what specific area of improvement would you like the teacher to address? " value=""> </tangy-input>
+
+
+
+    </form>
+</tangy-form>
+<!--<tangy-foo id="foo"></tangy-foo>-->
+
+<!-- Interact with the upgraded element -->
+<script>
+  window.addEventListener('WebComponentsReady', function() {
+    // At this point we are guaranteed that all required polyfills have loaded,
+    // all HTML imports have loaded, and all defined custom elements have upgraded
+    let MyElement = customElements.get('tangy-form');
+    let element = document.querySelector('tangy-form');
+    try {
+      console.assert(element instanceof MyElement);  // 👍
+    } catch(err) {
+      console.log("No shadow DOM")
+    }
+//    element.someAPI(); // 👍
+  });
+</script>
+</body>
+</html>

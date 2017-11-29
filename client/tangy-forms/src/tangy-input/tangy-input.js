@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
-import {Element as PolymerElement} from '../../p3/node_modules/@polymer/polymer/polymer-element.js'
-import '../../p3/node_modules/@polymer/paper-input/paper-input.js'
+import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import '../../node_modules/@polymer/paper-input/paper-input.js'
 
     /**
      * `tangy-input`
