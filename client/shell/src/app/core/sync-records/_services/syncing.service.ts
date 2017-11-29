@@ -36,7 +36,8 @@ export class SyncingService {
       const userDB = await this.getUserDB();
       const remoteHost = await this.getRemoteHost();
       const DB = new PouchDB(userDB);
-      const result = await DB.replicate.to(remoteHost);
+      const doc_ids = await this.getFormsLockedAndNotUploaded();
+      const result = await DB.replicate.to(remoteHost, { doc_ids });
       return true;
     } catch (error) {
       return Promise.reject(error);
@@ -52,6 +53,14 @@ export class SyncingService {
     } catch (error) {
       return Promise.reject(error);
     }
+  }
+
+  async getFormsLockedAndNotUploaded() {
+    const userDB = this.getUserDB();
+    const DB = new PouchDB(userDB);
+    const results = await DB.query('tangy-form/responsesLockedAndNotUploaded');
+    const docIds = results.rows.map(row => row.key);
+    return docIds;
   }
 
 }
