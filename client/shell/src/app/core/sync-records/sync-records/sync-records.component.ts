@@ -24,7 +24,7 @@ export class SyncRecordsComponent implements OnInit {
       }
     } catch (error) {
       this.errorMessage = error;
-      console.log(error);
+      console.error(error);
       this.toggleIsLoading();
     }
   }
@@ -37,7 +37,7 @@ export class SyncRecordsComponent implements OnInit {
         this.toggleIsLoading();
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       this.toggleIsLoading();
     }
   }
@@ -49,7 +49,7 @@ export class SyncRecordsComponent implements OnInit {
         this.toggleIsLoading();
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       this.toggleIsLoading();
     }
   }
