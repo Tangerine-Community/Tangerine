@@ -17,11 +17,22 @@
     <div>
       <b>Current Position</b>
       <div>
-        Latitude: {{currentLatitude}} <br> Longitude: {{currentLongitude}}
+        <template is="dom-if" if="{{currentLatitude}}">
+          Latitude: {{currentLatitude}} <br> 
+          Longitude: {{currentLongitude}} <br>
+          Accuracy: {{currentAccuracy}} meters<br> 
+        </template>
+        <template is="dom-if" if="{{!currentLatitude}}">
+          Searching...
+        </template> 
       </div>
       <b>Recorded Position</b>
       <div>
-        Latitude: {{recordedLatitude}} <br> Longitude: {{recordedLongitude}}
+        <template is="dom-if" if="{{recordedLatitude}}">
+          Latitude: {{recordedLatitude}} <br> 
+          Longitude: {{recordedLongitude}} <br>
+          Accuracy: {{recordedAccuracy}} meters<br> 
+        </template>
       </div>
       <paper-button raised on-click="clickedRecord">record position</paper-button>
       <slot></slot>
@@ -30,7 +41,7 @@
 
   <script>
     /**
-     * `tangy-timed`
+     * `tangy-gps`
      * 
      *
      * @customElement
@@ -62,14 +73,16 @@
     
       ready() {
         super.ready();
-        this.currentLatitude = 'Searching...'
-        this.currentLongitude = 'Searching...'
+        this.currentLatitude = ''
+        this.currentLongitude = ''
+        this.currentAccuracy = ''
         // window.gpsPosition may already be watched from another location. Allow for that.
         if (!window.gpsPosition) {
           navigator.geolocation.watchPosition((position) => {
             window.gpsPosition = {
               latitude: position.coords.latitude, 
-              longitude: position.coords.longitude
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy
             }
             this.updateWatchedPosition()
           })
@@ -82,12 +95,14 @@
         setInterval(() => {
           this.currentLatitude = window.gpsPosition.latitude
           this.currentLongitude = window.gpsPosition.longitude
+          this.currentAccuracy = window.gpsPosition.accuracy
         }, 2000)
       }
 
       reflect() {
         this.recordedLatitude = this.value.recordedLatitude
         this.recordedLongitude = this.value.recordedLongitude
+        this.recordedAccuracy = this.value.recordedAccuracy
       }
 
       clickedRecord() {
@@ -96,6 +111,7 @@
           inputValue: {
             recordedLatitude: this.currentLatitude,
             recordedLongitude: this.currentLongitude,
+            recordedAccuracy: this.currentAccuracy
           },
           inputIncomplete: false,
           inputInvalid: false 
