@@ -9,6 +9,13 @@ var babel = require('gulp-babel')
 //     .pipe(gulp.start('build'))
 // });
 
+// gulp.task('init', function () {
+//   process.stdout.write("hi:" + process.cwd() + " __dirname:" + __dirname)
+//   // gulp.src(__dirname + '/bower.json')
+//   // gulp.src('src/**/*', {base:"."})
+//   //   .pipe(gulp.dest('../tangy-forms-build/'))
+// })
+
 gulp.task('init', function () {
   gulp.src('../tangy-forms/**/*')
     .pipe(gulp.dest('../tangy-forms-build/'))

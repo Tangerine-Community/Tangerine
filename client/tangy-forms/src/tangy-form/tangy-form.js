@@ -5,7 +5,6 @@ import '../tangy-form/tangy-element-styles.js'
 import { Element as PolymerElement } from '../../node_modules/@polymer/polymer/polymer-element.js';
 import { afterNextRender } from '../../node_modules/@polymer/polymer/lib/utils/render-status.js';
 // import '../../node_modules/bluebird/js/browser/bluebird.js';
-import '../../bower_components/pouchdb/dist/pouchdb.js'
 // import * as Redux from '../../node_modules/redux/dist/redux.js'
 
 //   <!-- Tangy Libraries -->
