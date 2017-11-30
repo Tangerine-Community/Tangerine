@@ -73,16 +73,16 @@ paper-card {
 <paper-card id="card" class="shrunk" heading="[[title]]">
 
   <div class="card-content">
-  <div class="card-data"></div>
-  <slot></slot>
+    <div id="content"></div>
+    <slot></slot>
   </div>
 
   <div class="card-actions">
-  <paper-button id="open">open</paper-button>
-  <paper-button id="close">close</paper-button>
-  <template is="dom-if" if="{{!incomplete}}">
-  <iron-icon style="color: var(--primary-color); float: right; margin-top: 10px" icon="icons:check-circle"></iron-icon>
-  </template>
+    <paper-button id="open">open</paper-button>
+    <paper-button id="close">close</paper-button>
+    <template is="dom-if" if="{{!incomplete}}">
+      <iron-icon style="color: var(--primary-color); float: right; margin-top: 10px" icon="icons:check-circle"></iron-icon>
+    </template>
   </div>
 
   </paper-card>`
@@ -149,49 +149,85 @@ paper-card {
       };
     }
 
-    // async connectedCallback() {
-    //   super.connectedCallback()
-    //   this.store = window.tangyFormStore
-    //   this.$.close.addEventListener('click', () => this.store.dispatch({
-    //     type: ITEM_CLOSE,
-    //     itemId: this.id
-    //   }))
-    //   this.$.open.addEventListener('click', () => this.store.dispatch({
-    //     type: ITEM_OPEN,
-    //     itemId: this.id
-    //   }))
-
     async connectedCallback() {
-        // super.connectedCallback()
         await PolymerElement.prototype.connectedCallback.call(this);
-          // .then(() => {
-            this.store = window.tangyFormStore;
-            this.$.close.addEventListener('click', () => this.store.dispatch({
-              type: ITEM_CLOSE,
-              itemId: this.id
-            }));
-            this.$.open.addEventListener('click', () => this.store.dispatch({
-              type: ITEM_OPEN,
-              itemId: this.id
-            }));
+        this.store = window.tangyFormStore
+        this.$.close.addEventListener('click', () => this.store.dispatch({
+          type: ITEM_CLOSE,
+          itemId: this.id
+        }));
+        this.$.open.addEventListener('click', () => this.store.dispatch({
+          type: ITEM_OPEN,
+          itemId: this.id
+        }));
+
+        // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
+        this.$.content.addEventListener('INPUT_VALUE_CHANGE', (event) => {
+          this.store.dispatch({
+            type: 'INPUT_VALUE_CHANGE',  
+            inputName: event.detail.inputName, 
+            inputValue: event.detail.inputValue, 
+            inputInvalid: event.detail.inputInvalid,
+            inputIncomplete: event.detail.inputIncomplete
+          })
+        })
+
+        // Subscribe to the store to reflect changes.
+        this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
+ 
         // }
 
         // )
       // this.addEventListener('change', (event) => this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE') ))
     }
 
+    disconnectedCallback() {
+      this.unsubscribe()
+    }
+
+    // Prevent parallel reflects, leads to race conditions.
+    throttledReflect(iAmQueued = false) {
+      // If there is an reflect already queued, we can quit. 
+      if (this.reflectQueued && !iAmQueued) return
+      if (this.reflectRunning) {
+        this.reflectQueued = true
+        setTimeout(() => this.throttledReflect(true), 200)
+      } else {
+        this.reflectRunning = true
+        this.reflect()
+        this.reflectRunning = false
+        if (iAmQueued) this.reflectQueued = false
+      }
+    }
+
+    // Apply state in the store to the DOM.
+    reflect() {
+
+      let state = this.store.getState()
+      // Set initial this.previousState
+      if (!this.previousState) this.previousState = state
+
+      // Set state in input elements.
+      let inputs = [].slice.call(this.$.content.querySelectorAll('[name]'))
+      inputs.forEach((input) => {
+        let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
+        if (index !== -1) input.setProps(state.inputs[index])
+      })
+
+    }
+
+
 
     async onOpenChange(open) {
       // Close it.
       if (open === false) {
-        this.shadowRoot.querySelector('.card-data').innerHTML = ''
+        this.$.content.innerHTML = ''
       }
       // Open it, but only if empty because we might be stuck.
-      if (open === true && !this.disabled && this.shadowRoot.querySelector('.card-data').innerHTML === '') {
+      if (open === true && !this.disabled && this.$.content.innerHTML === '') {
         let request = await fetch(this.src)
-        // this.innerHTML = await request.text()
-        this.shadowRoot.querySelector('.card-data').innerHTML = await request.text()
-        this.querySelectorAll('[name]').forEach((input) => {
+        this.$.content.innerHTML = await request.text()
+        this.$.content.querySelectorAll('[name]').forEach((input) => {
           // @TODO Past tense?
           this.store.dispatch({type: 'INPUT_ADD', itemId: this.id, attributes: input.getProps()})
         })

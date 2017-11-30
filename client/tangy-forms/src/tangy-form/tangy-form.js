@@ -6,11 +6,13 @@ import { Element as PolymerElement } from '../../node_modules/@polymer/polymer/p
 import { afterNextRender } from '../../node_modules/@polymer/polymer/lib/utils/render-status.js';
 // import '../../node_modules/bluebird/js/browser/bluebird.js';
 import '../../bower_components/pouchdb/dist/pouchdb.js'
+// import * as Redux from '../../node_modules/redux/dist/redux.js'
 
 //   <!-- Tangy Libraries -->
 import {TangyFormModel} from './tangy-form-model.js'
 import {TangyFormResponseModel} from './tangy-form-response-model.js'
 import {TangyFormService} from './tangy-form-service.js'
+import './tangy-form-actions.js'
 import { tangyFormReducer, itemsIncompleteCheck, validateItemInputs, calculateTargets } from'./tangy-form-reducer.js'
 import {tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook} from './tangy-form-redux-middleware.js'
 import './cat.js'
@@ -35,9 +37,10 @@ import '../tangy-input/tangy-input.js'
 //   <link rel="import" href="../tangy-toggle-button/tangy-toggle-button.html">
 //
 //   <!-- Dependencies -->
+import '../../node_modules/@polymer/paper-fab/paper-fab.js';
 //   <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 //   <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-//   <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+//   <link rel="import" href="../../bower_components/paper-fab.html">
 //   <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 //   <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
 //   <link rel="import" href="../../bower_components/iron-form/iron-form.html">
