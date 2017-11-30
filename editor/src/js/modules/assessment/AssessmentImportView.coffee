@@ -7,6 +7,7 @@ class AssessmentImportView extends Backbone.View
     'click .back'   : 'back'
     'click .verify' : 'verify'
     'click .group_import' : 'groupImport'
+    'click .filedownload' : 'downloadSingleFile'
 
   groupImport: ->
 
@@ -189,11 +190,46 @@ class AssessmentImportView extends Backbone.View
 
       <h1>Tangerine Central Import</h1>
 
+      <input type='file' id='fileinput' />
+      <button class='filedownload command'>Download</button>
       #{importStep}
 
     "
-
     @trigger "rendered"
+
+  readSingleFile = (evt) -> 
+ 
+       f = evt.target.files[0]  
+ 
+       if (f) 
+         r = new FileReader()
+         r.onload = (e) -> 
+             contents = e.target.result             
+             ct = r.result
+             try 
+               docs = JSON.parse(ct)
+               Tangerine.$db.bulkSave {docs: docs}
+             catch 
+               alert('Could not parse the file you uploaded.')
+               console.log e
+         r.readAsText(f)
+       else 
+         alert("Failed to load file")
+ 
+       @$el.find('#fileinput')[0].addEventListener('change', readSingleFile, false)
+  
+  downloadSingleFile: ->
+      $.ajax
+        url: Tangerine.settings.urlView("group", "byDKey") + "?include_docs=true",
+        contentType: "application/json"
+        dataType: "jsonp"
+        error: (a, b, c) ->
+          console.log("Failure" + a.responseText )
+        success: (data) ->
+          console.log("Success")
+          rows = []
+          for datum in data.rows
+            rows.push datum.doc
 
   onClose: ->
     clearTimeout @timer
