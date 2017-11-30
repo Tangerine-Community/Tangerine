@@ -3,8 +3,27 @@
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../../node_modules/@polymer/paper-card/paper-card.js'
 
-// Actions for form.on-change logic to use.
-import { inputEnable, inputDisable, inputShow, inputHide } from './tangy-form-actions.js'
+// Import actions as a catchall so we can later declare variables of the same name as the properties for use
+// in form.on-change logic. This protects us against the bundler's renaming of imported variables and functions
+// so that Editor written code will still be able to reference actions by actual name.
+import * as tangyFormActions from './tangy-form-actions.js'
+
+// Import relevant actions.
+import { 
+  ITEM_OPEN,
+  itemOpen,
+  ITEM_CLOSE,
+  itemClose,
+  ITEM_DISABLE,
+  itemDisable,
+  ITEM_ENABLE,
+  itemEnable,
+  ITEMS_INVALID,
+  ITEM_CLOSE_STUCK,
+  ITEM_NEXT,
+  INPUT_ADD
+  } from './tangy-form-actions.js'
+
 
   /**
    * `tangy-form-item`
@@ -171,11 +190,18 @@ paper-card {
           state.inputs.forEach(input => inputs[input.name] = input)
           let items = {}
           state.items.forEach(item => items[item.name] = item)
+          // Declare namespaces for helper functions for the eval context in form.on-change.
+          // We have to do this because bundlers modify the names of things that are imported
+          // but do not update the evaled code because it knows not of it.
           let getValue = (name) => {
             let state = this.store.getState()
             let input = state.inputs.find((input) => input.name == name)
             if (input) return input.value
           }
+          let inputHide = tangyFormActions.inputHide 
+          let inputShow = tangyFormActions.inputShow
+          let inputEnable = tangyFormActions.inputEnable
+          let inputDisable = tangyFormActions.inputDisable
           // Eval on-change on forms.
           let forms = [].slice.call(this.shadowRoot.querySelectorAll('form[on-change]'))
           forms.forEach((form) => {
@@ -251,7 +277,7 @@ paper-card {
         this.$.content.innerHTML = await request.text()
         this.$.content.querySelectorAll('[name]').forEach((input) => {
           // @TODO Past tense?
-          this.store.dispatch({type: 'INPUT_ADD', itemId: this.id, attributes: input.getProps()})
+          this.store.dispatch({type: INPUT_ADD, itemId: this.id, attributes: input.getProps()})
         })
         // this.store.dispatch({type: ITEM_OPENED, itemId: this.id })
         this.dispatchEvent(new CustomEvent('tangy-form-item-opened', {bubbles: true}))
@@ -283,7 +309,7 @@ paper-card {
         return true
       }
     }
-
+    
 
   }
 
