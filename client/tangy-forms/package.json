@@ -201,6 +201,7 @@
     "npmlog": "4.1.2",
     "gauge": "2.7.4",
     "level-codec": "7.0.0",
-    "level-errors": "1.1.1"
+    "level-errors": "1.1.1",
+    "babel-core": "6.26.0"
   }
 }
