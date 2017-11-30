@@ -1328,7 +1328,7 @@ USB-car adaptor, or solar power adaptor. We have tested the USB-car
 adaptor sold as a tablet accessory, and it took about 4.5 hours of
 continuous driving to fully charge the battery. With a typical wall
 outlet, expect that it will take at least two hours to fully charge the
-tablet. More information on charging devices can be found in Annex 4.
+tablet. More information on charging devices can be found in [Annex 4](#annex-4.-tips-for-keeping-tablets-charged).
 
 2. Installing Tangerine on your tablet
 --------------------------------------
@@ -1498,7 +1498,7 @@ particular highlighting:
     attempts the first item (not when the enumerator says "Begin").
 
 An example training agenda and topics that are important to cover is
-included in Annex 1.
+included in [Annex 1](#annex-1.-training-topics-and-example-agenda).
 
 ### **Inter-rater reliability (IRR)**
 
@@ -1810,7 +1810,7 @@ you may lose some of the data you are currently collecting.
 
 
 
-## Annex 1: Training Topics and Example Agenda 
+## Annex 1. Training Topics and Example Agenda 
 
 Training on the use of Tangerine for data collection should be integrated into the regular EGRA training programs, just as use of paper for marking responses would be. Based on RTI’s experiences, only an additional hour at most is recommended so that enumerators can become familiar with the hardware and its main functions.
 
@@ -1943,7 +1943,7 @@ IV\. At the end of data collection
 -   Store the devices in a safe place until returning them to the
     principal researcher or logistician.
 
-## Annex 4: Tips for keeping Tablets Charged
+## Annex 4. Tips for keeping Tablets Charged
 
 Tablets should be chosen so that they can be used for a full day without
 running out of power. In order to conserve power the **Wi-Fi should be
