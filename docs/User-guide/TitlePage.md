@@ -2,7 +2,7 @@
 
 ## Full User’s Guide {-}
 
-v\. April 2017
+v\. November 2017
 
 ![](.//media/image1.png)&nbsp;
 
