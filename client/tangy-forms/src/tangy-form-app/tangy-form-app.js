@@ -67,7 +67,11 @@ class TangyFormApp extends Element {
   connectedCallback() {
     super.connectedCallback(); 
     let query = this.parseQuery(window.location.hash)
-    if (query.form) {
+    let formPath = query.form
+    if (formPath) {
+      let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
+      console.log(`Setting <base> path using form directory: ${formDirectory}`)
+      window['base-path-loader'].innerHTML = `<base href="${formDirectory}">`
       this.showForm(query.form)
     } else {
       this.showFormsList()
