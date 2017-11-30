@@ -95,8 +95,9 @@ var tangyFormDesignDoc = {
     },
     responsesLockedAndNotUploaded: {
       map: function (doc) {
-        if (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime)
+        if (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime) {
           emit(doc._id, true)
+        }
       }.toString()
     },
     responsesByLocationId: {
