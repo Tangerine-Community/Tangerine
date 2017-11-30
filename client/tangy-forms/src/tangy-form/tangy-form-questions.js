@@ -8,6 +8,48 @@ import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem,
   INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
   NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
   tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from './tangy-form-actions.js'
+import './tangy-form-item.js'
+
+//   <!-- Tangy Custom Inputs Elements -->
+
+import '../tangy-input/tangy-input.js'
+import '../tangy-timed/tangy-timed.js'
+
+// <link rel="import" href="../tangy-timed/tangy-timed.html">
+//   <link rel="import" href="../tangy-gps/tangy-gps.html">
+//   <link rel="import" href="../tangy-location/tangy-location.html">
+//   <link rel="import" href="../tangy-checkbox/tangy-checkbox.html">
+//   <link rel="import" href="../tangy-checkboxes/tangy-checkboxes.html">
+//   <link rel="import" href="../tangy-radio-buttons/tangy-radio-buttons.html">
+//   <link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
+//   <link rel="import" href="../tangy-toggle-button/tangy-toggle-button.html">
+//
+//   <!-- Dependencies -->
+import '../../node_modules/@polymer/paper-fab/paper-fab.js';
+//   <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
+//   <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+//   <link rel="import" href="../../bower_components/paper-fab.html">
+//   <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+//   <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+//   <link rel="import" href="../../bower_components/iron-form/iron-form.html">
+//   <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+//   <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+//   <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+//   <link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
+//   <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+//   <link rel="import" href="../../bower_components/iron-form/iron-form.html">
+//   <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+//   <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+//   <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+//   <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+//   <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+//   <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+//   <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+//   <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+//   <link rel="import" href="../../bower_components/gold-phone-input/gold-phone-input.html">
+//   <link rel="import" href="../../bower_components/app-datepicker/app-datepicker.html">
+
+
 
     /**
      * `tangy-form-questions`
