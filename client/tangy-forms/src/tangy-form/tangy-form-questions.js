@@ -193,13 +193,6 @@ export class TangyFormQuestions extends PolymerElement {
           if (index !== -1) item.setProps(state.items[index])
         })
         
-        // Set state in input elements.
-        let inputs = [].slice.call(this.querySelectorAll('[name]'))
-        inputs.forEach((input) => {
-          let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
-          if (index !== -1) input.setProps(state.inputs[index])
-        })
-
         // Set progress state.
         this.$.progress.setAttribute('value', state.progress)
 
