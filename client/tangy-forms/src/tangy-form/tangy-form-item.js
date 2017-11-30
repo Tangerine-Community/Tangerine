@@ -3,6 +3,9 @@
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../../node_modules/@polymer/paper-card/paper-card.js'
 
+// Actions for form.on-change logic to use.
+import { inputEnable, inputDisable, inputShow, inputHide } from './tangy-form-actions.js'
+
   /**
    * `tangy-form-item`
    * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
@@ -160,6 +163,25 @@ paper-card {
           type: ITEM_OPEN,
           itemId: this.id
         }));
+
+        // Register tangy redux hook.
+        window.tangyReduxHook_INPUT_VALUE_CHANGE = (store) => {
+          let state = store.getState()
+          let inputs = {}
+          state.inputs.forEach(input => inputs[input.name] = input)
+          let items = {}
+          state.items.forEach(item => items[item.name] = item)
+          let getValue = (name) => {
+            let state = this.store.getState()
+            let input = state.inputs.find((input) => input.name == name)
+            if (input) return input.value
+          }
+          // Eval on-change on forms.
+          let forms = [].slice.call(this.shadowRoot.querySelectorAll('form[on-change]'))
+          forms.forEach((form) => {
+            if (form.hasAttribute('on-change')) eval(form.getAttribute('on-change'))
+          })
+        }
 
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.$.content.addEventListener('INPUT_VALUE_CHANGE', (event) => {

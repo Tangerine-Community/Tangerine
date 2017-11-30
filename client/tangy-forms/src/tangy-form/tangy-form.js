@@ -8,9 +8,9 @@ import { afterNextRender } from '../../node_modules/@polymer/polymer/lib/utils/r
 // import * as Redux from '../../node_modules/redux/dist/redux.js'
 
 //   <!-- Tangy Libraries -->
-import {TangyFormModel} from './tangy-form-model.js'
-import {TangyFormResponseModel} from './tangy-form-response-model.js'
-import {TangyFormService} from './tangy-form-service.js'
+import { TangyFormModel } from './tangy-form-model.js'
+import { TangyFormResponseModel } from './tangy-form-response-model.js'
+import { TangyFormService } from './tangy-form-service.js'
 import './tangy-form-actions.js'
 import { tangyFormReducer } from'./tangy-form-reducer.js'
 import {tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook} from './tangy-form-redux-middleware.js'
