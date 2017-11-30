@@ -72,6 +72,9 @@ module.exports = {
       },
       {
         from: path.resolve(__dirname, './fonts/fonts.css'), to: 'fonts/fonts.css'
+      },
+      {
+        from: path.resolve(__dirname, './node_modules/underscore/underscore.js'), to: 'js/underscore.js'
       }
     ]),
     // get around with stupid warning
