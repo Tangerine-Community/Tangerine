@@ -21,7 +21,7 @@ HTMLElement.prototype.setAttributes = function (attributes = {}) {
 }
 
 HTMLElement.prototype.getProps = function () {
-  let propertyInfo; eval(`propertyInfo = ${this.constructor.name}.properties`)
+  let propertyInfo = this.constructor.properties
   // If no property info, then go off what attributes we do have.
   if (!propertyInfo) {
     return Object.assign({}, this.getAttributes(), {tagName: this.tagName, constructorName: this.constructor.name})
