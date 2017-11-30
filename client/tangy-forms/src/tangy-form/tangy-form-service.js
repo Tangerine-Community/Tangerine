@@ -1,3 +1,4 @@
+const PouchDB = require('pouchdb-browser');
 export class TangyFormService {
 
   constructor(props) {
@@ -13,7 +14,7 @@ export class TangyFormService {
         let updatedDesignDoc = Object.assign({}, designDoc, tangyFormDesignDoc)
         await this.db.put(updatedDesignDoc)
       }
-    } catch (e) {
+    } catch (e) { ``
       this.loadDesignDoc()
     }
   }

@@ -9,16 +9,13 @@
 
     <title>Tangerine Forms</title>
 
-
-    <script src="node_modules/redux/dist/redux.js"></script>
+    <script src="js/redux.js"></script>
+    <script src="js/webcomponents-loader.js"></script>
     <!-- 
       @TODO This should be imported by the Loc.js that depends on it but underscore doesn't play well with ES6 import 
             Issue: https://github.com/jashkenas/underscore/issues/2152
     -->
-    <script src="node_modules/underscore/underscore.js"></script>
-    <script type="module" src="node_modules/@polymer/paper-progress/paper-progress.js"></script>
-    <script type="module" src="src/tangy-form-app/tangy-form-app.js"></script>
-    <script type="module" src="global-styles.js"></script>
+    <script src="js/underscore.js"></script>
 
     <link href="fonts/fonts.css" rel="stylesheet">
     <style>
@@ -34,32 +31,7 @@
 
   <body>
 
-
     <div id="base-path-loader"></div>
-
-    <script>
-
-      function parseQuery(qstr) {
-        var query = {};
-        var a = (qstr[0] === '#' ? qstr.substr(1) : qstr).split('&');
-        for (var i = 0; i < a.length; i++) {
-          var b = a[i].split('=');
-          query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
-        }
-        return query;
-      }
-
-      (function() {
-        if (window.location.hash) {
-          let query = parseQuery(window.location.hash)
-          let formPath = query.form 
-          let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
-          console.log(`Setting <base> path using form directory: ${formDirectory}`)
-          window['base-path-loader'].innerHTML = `<base href="${formDirectory}">`
-        }
-      })();
-
-    </script>
 
     <div id="tangy-form-app-loading" style="text-align: center; margin: auto; width: 300px">
       Loading...

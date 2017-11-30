@@ -29,6 +29,18 @@ and then add it to the `./tangerine-forms/forms.json` file so that it will show 
 There is support for transpiling the es6 code to es5, using Babel.
 To generate es5 versions in the tangy-forms-build directory:
 
+## init the build dir
+
+Transpiled files are saved to tangy-forms-build.
+
+```
+mkdir client/tangy-forms-build
+cd tangy-forms
+yarn run gulp init
+```
+
+## watch for changes
+
 ```
 cd tangy-forms
 yarn run gulp
