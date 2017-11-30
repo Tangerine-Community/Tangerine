@@ -11,7 +11,10 @@
 
 
     <script src="node_modules/redux/dist/redux.js"></script>
-    <!-- @TODO This should be imported by the Loc.js that depends on it but underscore doesn't play well with ES6 import -->
+    <!-- 
+      @TODO This should be imported by the Loc.js that depends on it but underscore doesn't play well with ES6 import 
+            Issue: https://github.com/jashkenas/underscore/issues/2152
+    -->
     <script src="node_modules/underscore/underscore.js"></script>
     <script type="module" src="node_modules/@polymer/paper-progress/paper-progress.js"></script>
     <script type="module" src="src/tangy-form-app/tangy-form-app.js"></script>
@@ -25,7 +28,6 @@
         margin: 0px;
         background: #FAFAFA;
       }
-     
     </style>
 
   </head>
