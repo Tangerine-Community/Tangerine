@@ -1,4 +1,15 @@
-<form id="form1" on-change="">
+<form on-change="
+  debugger
+
+  // Disable/enable radio_buttons_3 given radio_buttons_3_enable's value.
+  if (inputs.radio_buttons_3_enable.value && inputs.radio_buttons_3.disabled) inputEnable('radio_buttons_3')
+  if (!inputs.radio_buttons_3_enable.value && !inputs.radio_buttons_3.disabled) inputDisable('radio_buttons_3')
+
+  // Show/hide radio_buttons_4 given radio_buttons_4_show's value.
+  if (inputs.radio_buttons_4_show.value && inputs.radio_buttons_4.hidden) inputShow('radio_buttons_4')
+  if (!inputs.radio_buttons_4_show.value && !inputs.radio_buttons_4.hidden) inputHide('radio_buttons_4')
+
+">
 
   <tangy-radio-buttons 
     label="These are radio buttons."
@@ -20,9 +31,10 @@
   </tangy-radio-buttons>
 
   <tangy-radio-buttons 
-    label="These are radio buttons that are disabled."
+    label="These are radio buttons that are disabled. If enabled, then a selection is required."
     name="radio_buttons_3"
-    disabled>
+    disabled
+    required>
     <option value="tangerine">Tangerine</option>
     <option value="apple">Apple</option>
     <option value="pear">Pear</option>
@@ -31,9 +43,10 @@
   <tangy-checkbox name="radio_buttons_3_enable">Check this checkbox to enable the disabled radio buttons.</tangy-checkbox>
 
   <tangy-radio-buttons 
-    label="These are radio buttons that are hidden."
+    label="These are radio buttons that are hidden. If not hidden, then a selection is required."
     name="radio_buttons_4"
-    disabled>
+    hidden
+    required>
     <option value="tangerine">Tangerine</option>
     <option value="apple">Apple</option>
     <option value="pear">Pear</option>
