@@ -190,14 +190,13 @@ class AssessmentImportView extends Backbone.View
 
       <h1>Tangerine Central Import</h1>
 
+      <a id='download-" + Tangerine.$db.name + "' download=''" + Tangerine.$db.name + ".json'>Download</a>
       <input type='file' id='fileinput' />
       <button class='filedownload command'>Download</button>
       #{importStep}
 
     "
-    @trigger "rendered"
-
-  readSingleFile = (evt) -> 
+    readSingleFile = (evt) -> 
  
        f = evt.target.files[0]  
  
@@ -208,6 +207,7 @@ class AssessmentImportView extends Backbone.View
              ct = r.result
              try 
                docs = JSON.parse(ct)
+
                Tangerine.$db.bulkSave {docs: docs}
              catch 
                alert('Could not parse the file you uploaded.')
@@ -216,20 +216,40 @@ class AssessmentImportView extends Backbone.View
        else 
          alert("Failed to load file")
  
-       @$el.find('#fileinput')[0].addEventListener('change', readSingleFile, false)
+      @$el.find('#fileinput')[0].addEventListener('change', readSingleFile, false)
+    @trigger "rendered"
+
   
+  
+  downloadFile = (filename, text) -> 
+    #element = document.createElement('a')
+    element = document.getElementById('download-'+Tangerine.$db.name)
+    element.setAttribute('href' ,'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+    #element.setAttribute('id', "download-" + filename)
+    #element.setAttribute('download', filename)
+    #element.style.display = 'none'
+    #document.body.appendChild(element)
+    #element.click()
+    #document.body.removeChild(element)
+    
+
   downloadSingleFile: ->
       $.ajax
         url: Tangerine.settings.urlView("group", "byDKey") + "?include_docs=true",
         contentType: "application/json"
-        dataType: "jsonp"
+        dataType: "json"
+        data: "{}"
         error: (a, b, c) ->
-          console.log("Failure" + a.responseText )
+           Utils.midAlert "Download error"
         success: (data) ->
-          console.log("Success")
-          rows = []
-          for datum in data.rows
-            rows.push datum.doc
-
+          srt = Tangerine.$db.name
+          str = srt.replace("undefined", "")
+          documents = []
+          for row in data.rows
+            documents.push row.doc
+          console.log("Success:" + str)
+          downloadFile(Tangerine.$db.name + ".json", JSON.stringify(documents))
   onClose: ->
     clearTimeout @timer
+
+  
