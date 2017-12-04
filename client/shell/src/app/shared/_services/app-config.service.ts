@@ -10,6 +10,6 @@ export class AppConfigService {
   }
   public async getDefaultURL() {
     const result = await this.getAppConfig();
-    return result.homeUrl;
+    return (result.homeUrl) ? result.homeUrl : 'case-management';
   }
 }
