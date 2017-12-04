@@ -14,19 +14,8 @@ export class RedirectToDefaultRouteComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const defaultUrl = '/case-management';
     const home_url = await this.appConfigService.getDefaultURL();
-    this.router.navigate([home_url]).then(data => {
-      /**
-       * When the user has supplied a route that cannot be matched from the
-       * app-config.json redirect the user to the default url
-       * It checks if the  current route after the  first router.navigate
-       * call is still the register route and redirects to the default url
-       */
-      if (this.router.url === '/redirect') {
-        this.router.navigate([defaultUrl]);
-      }
-    });
+    this.router.navigate([home_url])
   }
 
 }
