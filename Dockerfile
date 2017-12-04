@@ -53,14 +53,8 @@ RUN cd /tangerine/client && ./build.sh
 ADD client/content /tangerine/client/content
 RUN cp -r /tangerine/client/content /tangerine/client/build/
 
-# Generate release info.
+# Add workbox configuration for generating service workers on releases.
 ADD client/workbox-cli-config.js /tangerine/client/workbox-cli-config.js
-RUN cd /tangerine/client/ \
-  && ./node_modules/.bin/workbox generate:sw \
-  && UUID=$(./node_modules/.bin/uuid) \
-  && mv build/sw.js build/$UUID.js \
-  && echo $UUID > build/release-uuid.txt \
-  && echo "Release with UUID of $UUID"
 
 # Entrypoint.
 ADD entrypoint.sh entrypoint.sh
