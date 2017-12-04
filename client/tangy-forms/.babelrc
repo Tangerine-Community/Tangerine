@@ -1,15 +1,18 @@
 {
   "ignore": "node_modules",
+//  "ignore": ["node_modules", "bower_components"],
   "presets": [
     [
       "env",
       {
         "modules": false,
         "debug": true,
+//        "useBuiltIns": true,
         "targets": {
-          "chrome": 49
+//          "android": "4.1.1"
+          "chrome": "49"
         },
-        "exclude": ["transform-regenerator"]
+//        "exclude": ["transform-regenerator"]
       }
     ]
   ],
