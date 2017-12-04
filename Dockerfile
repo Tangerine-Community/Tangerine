@@ -49,6 +49,10 @@ ADD client/shell/.angular-cli.json /tangerine/client/shell/.angular-cli.json
 ADD client/build.sh /tangerine/client/build.sh
 RUN cd /tangerine/client && ./build.sh
 
+# Add content.
+ADD client/content /tangerine/client/content
+RUN cp -r /tangerine/client/content /tangerine/client/build/
+
 # Generate release info.
 ADD client/workbox-cli-config.js /tangerine/client/workbox-cli-config.js
 RUN cd /tangerine/client/ \
@@ -59,6 +63,5 @@ RUN cd /tangerine/client/ \
   && echo "Release with UUID of $UUID"
 
 # Entrypoint.
-ADD client/develop.sh develop.sh
-ADD client/entrypoint.sh entrypoint.sh
+ADD entrypoint.sh entrypoint.sh
 ENTRYPOINT ./entrypoint.sh
