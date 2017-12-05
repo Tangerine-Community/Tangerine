@@ -1,6 +1,10 @@
-<dom-module id='tangy-element-styles'>
-  <template>
-    <style>
+/* jshint esversion: 6 */
+
+const $_documentStyleContainer = document.createElement('div');
+$_documentStyleContainer.setAttribute('style', 'display: none;');
+
+$_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
+  <template><style is="tangy-element-styles">
 
       :host {
         color: var(--primary-text-color);
@@ -47,5 +51,8 @@
       }
 
     </style>
-  </template>
-</dom-module>
+    </template>
+    </dom-module>
+    `
+
+document.head.appendChild($_documentStyleContainer);
