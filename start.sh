@@ -9,16 +9,8 @@ fi
 
 echo "Pulling $T_TAG"
 docker pull tangerine/tangerine:$T_TAG
-
-NO_SUCH_CONTAINER=$(docker inspect $T_CONTAINER_NAME | grep "No such object")
-echo $NO_SUCH_CONTAINER
-if [ "$NO_SUCH_CONTAINER" = "" ]; then
-  echo "Stopping $T_CONTAINER_NAME"
-  docker stop $T_CONTAINER_NAME > /dev/null 
-  echo "Removing $T_CONTAINER_NAME"
-  docker rm $T_CONTAINER_NAME > /dev/null 
-fi
-
+docker stop $T_CONTAINER_NAME > /dev/null 
+docker rm $T_CONTAINER_NAME > /dev/null 
 echo "Running $T_CONTAINER_NAME at version $T_TAG"
 docker run -d \
   --name $T_CONTAINER_NAME \
