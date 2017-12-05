@@ -1,3 +1,4 @@
+// import {Element as PolymerElement} from "@polymer/polymer/polymer-element";
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
 
 import '../tangy-form/tangy-element-styles.js';
@@ -67,7 +68,8 @@ class TangyLocation extends Element {
   }
 
   async connectedCallback() {
-    super.connectedCallback();
+    // super.connectedCallback();
+    Element.prototype.connectedCallback.call(this);
     // When we hear change events, it's coming from users interacting with select lists.
     this.shadowRoot.addEventListener('change', this.onSelectionChange.bind(this))
   }
