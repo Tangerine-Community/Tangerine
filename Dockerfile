@@ -24,23 +24,19 @@ ADD client/shell/package.json /tangerine/client/shell/package.json
 RUN cd /tangerine/client/shell && npm install
 
 # Install tangy-forms dependencies.
-ADD client/tangy-forms/package.json /tangerine/client/tangy-forms/package.json
-RUN cd /tangerine/client/tangy-forms && npm install
-ADD client/tangy-forms/bower.json /tangerine/client/tangy-forms/bower.json
-RUN cd /tangerine/client/tangy-forms && ./node_modules/.bin/bower --allow-root install
+# @TODO Add only what we need for yarn install.
+ADD client/tangy-forms/ /tangerine/client/tangy-forms/
+RUN cd /tangerine/client/tangy-forms && yarn install
 
 #
 # Add sources.
 #
 
-ADD client/tangy-forms/src /tangerine/client/tangy-forms/src
-ADD client/tangy-forms/index.html /tangerine/client/tangy-forms/index.html
-ADD client/tangy-forms/global-styles.html /tangerine/client/tangy-forms/global-styles.html
-ADD client/tangy-forms/fonts /tangerine/client/tangy-forms/fonts
+# TODO: Cleanup later.
+# ADD client/tangy-forms/src /tangerine/client/tangy-forms/src
 
 ADD client/app-updater/src /tangerine/client/app-updater/src
 ADD client/app-updater/index.html /tangerine/client/app-updater/index.html
-ADD client/app-updater/logo.svg /tangerine/client/app-updater/logo.svg
 
 ADD client/shell/src /tangerine/client/shell/src
 ADD client/shell/Gulpfile.js /tangerine/client/shell/Gulpfile.js
@@ -50,8 +46,14 @@ ADD client/shell/tsconfig.json /tangerine/client/shell/tsconfig.json
 ADD client/shell/.angular-cli.json /tangerine/client/shell/.angular-cli.json
 
 # Build.
-ADD client/build.sh /tangerine/client/build.sh
-RUN cd /tangerine/client && ./build.sh
+RUN cd /tangerine/client/shell && ./node_modules/.bin/ng build --base-href /tangerine/
+RUN cd /tangerine/client/tangy-forms && yarn build 
+RUN cd /tangerine/client/app-updater && npm run build
+ADD logo.svg /tangerine/client/build/logo.svg
+RUN cp -r /tangerine/client/app-updater/build/default/* /tangerine/client/build/ && \
+  cp -r /tangerine/client/shell/dist/ /tangerine/client/build/tangerine && \
+  cp -r /tangerine/client/tangy-forms/dist /tangerine/client/build/tangy-forms 
+
 
 # Add server.
 ADD server/index.js server/index.js
