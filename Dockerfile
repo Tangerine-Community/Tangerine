@@ -5,6 +5,10 @@ EXPOSE 4200
 RUN mkdir /tangerine
 WORKDIR /tangerine
 
+# Install server.
+ADD server/package.json server/package.json
+RUN cd /tangerine/server && npm install
+
 # Install root dependencies.
 ADD client/package.json /tangerine/client/package.json
 RUN cd /tangerine/client && npm install
@@ -48,6 +52,12 @@ ADD client/shell/.angular-cli.json /tangerine/client/shell/.angular-cli.json
 # Build.
 ADD client/build.sh /tangerine/client/build.sh
 RUN cd /tangerine/client && ./build.sh
+
+# Add server.
+ADD server/index.js server/index.js
+
+# Add server default config.
+ADD server/config.yml server/config.yml
 
 # Add content.
 ADD client/content /tangerine/client/content

@@ -1,34 +1,20 @@
 {
-  "name": "robbert",
+  "name": "server",
   "version": "0.0.0",
-  "description": "security bot for tangerine",
+  "description": "robbert =======",
   "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
   "scripts": {
-    "test": "mocha tests/index.js",
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Tangerine-Community/robbert.git"
-  },
-  "author": "RTI International <ict-admin@rti.org>",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/Tangerine-Community/robbert/issues"
-  },
-  "homepage": "https://github.com/Tangerine-Community/robbert#readme",
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "basic-auth": "^1.0.4",
-    "body-parser": "^1.14.1",
-    "cookie-parser": "^1.4.0",
-    "expect.js": "^0.3.1",
-    "express": "^4.13.3",
-    "express-http-proxy": "^0.8.0",
-    "fs-extra": "^0.26.3",
-    "http-status-codes": "^1.0.5",
-    "mocha": "^2.3.4",
-    "nano": "^6.2.0",
-    "unirest": "^0.4.2",
-    "winston": "^2.1.1"
+    "axios": "^0.17.1",
+    "pouchdb": "^6.2.0",
+    "express-pouchdb": "^2.3.7",
+    "read-yaml": "^1.1.0"
   }
 }
