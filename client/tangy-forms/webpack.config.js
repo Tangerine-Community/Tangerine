@@ -1,236 +1,162 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-// const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const {resolve, join} = require('path');
 const webpack = require('webpack');
-// const BROWSERS = ['Chrome 49'];
+const WorkboxPlugin = require('workbox-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const pkg = require('./package.json');
+
+/**
+ * === ENV configuration
+ */
+const isDev = process.argv.find(arg => arg.includes('webpack-dev-server'));
+const ENV = isDev ? 'development' : 'production';
 const BROWSERS = process.env.BROWSERS === 'module' ?
-  ['last 2 Chrome versions', 'Safari 10'] : ['> 1%', 'last 2 versions', 'Firefox ESR', 'not ie <= 11'];
+  ['Chrome > 61'] : ['> 1%', 'last 2 versions', 'Firefox ESR', 'not ie <= 11'];
+  // ['Chrome > 61'] : ['Chrome > 48'];
+const IS_MODULE_BUILD = BROWSERS[0].includes('Chrome > 61');
+const outputPath = isDev ? resolve('src') : resolve('dist');
+const processEnv = {
+  NODE_ENV: JSON.stringify(ENV),
+  appVersion: JSON.stringify(pkg.version)
+};
 
-module.exports = [{
+console.log("process.env.BROWSERS: " + process.env.BROWSERS)
 
-  name: "es5",
+/**
+ * === Copy static files configuration
+ */
+const copyStatics = {
+  copyWebcomponents: [{
+    from: resolve('./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }, {
+    from: resolve('./node_modules/@webcomponents/webcomponentsjs/webcomponents-lite.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }, {
+    from: resolve('./node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }, {
+    from: resolve('./node_modules/@webcomponents/webcomponentsjs/webcomponents-hi-sd-ce.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }, {
+    from: resolve('./node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }, {
+    from: resolve('./node_modules/babel-polyfill/dist/polyfill.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }, {
+    from: resolve('./node_modules/redux/dist/redux.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }, {
+    from: resolve('./fonts/fonts.css'),
+    to: join(outputPath, 'fonts'),
+    flatten: true
+  }, {
+    from: resolve('./node_modules/underscore/underscore.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }],
+  copyOthers: [{
+    from: 'assets/**',
+    context: resolve('./src'),
+    to: outputPath
+  }, {
+    from: resolve('./src/index.html'),
+    to: outputPath,
+    flatten: true
+  }, {
+    from: resolve('./src/manifest.json'),
+    to: outputPath,
+    flatten: true
+  }
+  ]
+};
 
-  devtool: 'source-map',
+/**
+ * Plugin configuration
+ */
+const plugins = isDev ? [
+  new CopyWebpackPlugin(copyStatics.copyWebcomponents),
+  new webpack.DefinePlugin({'process.env': processEnv})
+] : [
+  new WorkboxPlugin({
+    globDirectory: outputPath,
+    globPatterns: ['**/*.{html, js, css, svg, png, woff, woff2, ttf}'],
+    swDest: join(outputPath, 'sw.js')
+  }),
+  new CopyWebpackPlugin(
+    [].concat(copyStatics.copyWebcomponents, copyStatics.copyOthers)
+  ),
+  new webpack.DefinePlugin({'process.env': processEnv})
+];
 
-  // https://webpack.js.org/configuration/watch/
-  watch: true,
-
-  // https://webpack.js.org/configuration/entry-context/
-  entry: './index.js',
-  // entry: ['babel-polyfill', './index.js'],
-
-
-  // https://webpack.js.org/configuration/output/
+/**
+ * === Webpack configuration
+ */
+module.exports = {
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundleES5.js',
-
+    path: outputPath,
+    filename: IS_MODULE_BUILD ? 'module.bundle.js' : 'bundle.js'
   },
+  devtool: 'source-map',
   module: {
     rules: [
-      {
-        test: /\.(html)$/,
-        use: {
-          loader: 'html-loader'
-        }
-      },
       {
         test: /\.js$/,
-        exclude: /(node_modules|bower_components|dist)/,
-        // include: [
-        //   path.join(__dirname, '../src'), // + any other paths that need to be transpiled
-        //   /\/node_modules\/@polymer/,
-        // ],
+        // We need to transpile Polymer itself and other ES6 code
+        // exclude: /(node_modules)/,
         use: {
           loader: 'babel-loader',
-          // options: {
-          //   presets: [[
-          //     'env',
-          //     {
-          //       targets: {browsers: BROWSERS},
-          //       debug: true,
-          //       "modules": false,
-          //     }
-          //   ]]
-          // }
-          // options: {
-          //   // presets: [['babel-preset-env']]
-          //   // presets: [['babel-preset-env', {"exclude": ["transform-regenerator"]}]]
-          //   presets: [[
-          //     'env',
-          //     {
-          //       // targets: {browsers: BROWSERS},
-          //       targets: {
-          //         "chrome": 49
-          //       },
-          //       debug: true,
-          //       "exclude": ["transform-regenerator"],
-          //       "modules": false
-          //     }
-          //   ]]
-          // }
+          options: {
+            presets: [[
+              'env',
+              {
+                targets: {browsers: BROWSERS},
+                debug: true
+              }
+            ]]
+          }
         }
+      },
+      {
+        test: /\.html$/,
+        use: ['text-loader']
+      },
+      {
+        test: /\.postcss$/,
+        use: ['text-loader', 'postcss-loader']
       }
     ]
   },
-  resolve: {
-    extensions: ['.js']
-  },
-  plugins: [
-    new CleanWebpackPlugin(['dist'], { root: path.resolve(__dirname, '..')}),
-
-    // new webpack.NormalModuleReplacementPlugin(
-    //   /environments\/environment\.ts/,
-    //   'environment.prod.ts'
-    // ),
-    // new CommonsChunkPlugin({
-    //   // The order of this array matters
-    //   names: ['vendor'],
-    //   minChunks: Infinity
-    // }),
-    // not able to uglify, probably related to: https://github.com/Polymer/polymer-cli/issues/388
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compress: {
-    //     warnings: false
-    //   },
-    //   sourceMap: true
-    // }),
-    new HtmlWebpackPlugin({
-      template: './index.html',
-      inject: false
-    }),
-    // copy custom static assets
-    new CopyWebpackPlugin([
-      // {
-      //   from: path.resolve(__dirname, '../static'),
-      //   to: 'static',
-      //   ignore: ['.*']
-      // },
-      {
-        from: path.resolve(__dirname, './node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js'), to: 'js/webcomponents-loader.js',
-      },
-      {
-        from: path.resolve(__dirname, './node_modules/redux/dist/redux.js'), to: 'js/redux.js'
-      },
-      {
-        from: path.resolve(__dirname, './fonts/fonts.css'), to: 'fonts/fonts.css'
-      },
-      {
-        from: path.resolve(__dirname, './node_modules/underscore/underscore.js'), to: 'js/underscore.js'
-      },
-      {
-        from: path.resolve(__dirname, './node_modules/babel-polyfill/dist/polyfill.js'), to: 'js/polyfill.js'
-      },
-      {
-        from: path.resolve(__dirname, './node_modules/@webcomponents/webcomponentsjs/custom-elements-es5-adapter.js'), to: 'js/custom-elements-es5-adapter.js'
-      },
-      {
-        from: path.resolve(__dirname, './node_modules/@webcomponents/webcomponentsjs/webcomponents-sd-ce.js'), to: 'js/webcomponents-sd-ce.js'
-      },
-      {
-        from: path.resolve(__dirname, './node_modules/browser-es-module-loader/dist/babel-browser-build.js'), to: 'js/babel-browser-build.js'
-      },
-      {
-        from: path.resolve(__dirname, './node_modules/browser-es-module-loader/dist/browser-es-module-loader.js'), to: 'js/browser-es-module-loader.js'
-      }
-    ]),
-    // get around with stupid warning
-    new webpack.IgnorePlugin(/vertx/),
-  ]
-},
-  {
-    name: "es6",
-    devtool: 'source-map',
-
-    // https://webpack.js.org/configuration/watch/
-    watch: true,
-
-    // https://webpack.js.org/configuration/entry-context/
-    entry: './index.js',
-    // entry: ['babel-polyfill', './index.js'],
-
-
-    // https://webpack.js.org/configuration/output/
-    output: {
-    path: path.resolve(__dirname, 'dist'),
-      filename: 'bundleES6.js',
-
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(html)$/,
-        use: {
-          loader: 'html-loader'
-        }
-      }
-      // {
-        // test: /\.js$/,
-        // exclude: /(node_modules|bower_components|dist)/,
-        // include: [
-        //   path.join(__dirname, '../src'), // + any other paths that need to be transpiled
-        //   /\/node_modules\/@polymer/,
-        // ],
-        // use: {
-        //   loader: 'babel-loader',
-        //   options: {
-        //     presets: [['babel-preset-env']]
-        //     // presets: [['babel-preset-env', {"exclude": ["transform-regenerator"]}]]
-        //   }
-        // }
-      // }
-    ]
-  },
-  resolve: {
-    extensions: ['.js']
-  },
-  plugins: [
-    new CleanWebpackPlugin(['dist'], { root: path.resolve(__dirname, '..')}),
-
-    // new webpack.NormalModuleReplacementPlugin(
-    //   /environments\/environment\.ts/,
-    //   'environment.prod.ts'
-    // ),
-    // new CommonsChunkPlugin({
-    //   // The order of this array matters
-    //   names: ['vendor'],
-    //   minChunks: Infinity
-    // }),
-    // not able to uglify, probably related to: https://github.com/Polymer/polymer-cli/issues/388
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compress: {
-    //     warnings: false
-    //   },
-    //   sourceMap: true
-    // }),
-    new HtmlWebpackPlugin({
-      template: './index.html',
-      inject: false
-    }),
-    // copy custom static assets
-    new CopyWebpackPlugin([
-      // {
-      //   from: path.resolve(__dirname, '../static'),
-      //   to: 'static',
-      //   ignore: ['.*']
-      // },
-      {
-        from: path.resolve(__dirname, './node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js'), to: 'js/webcomponents-loader.js',
-      },
-      {
-        from: path.resolve(__dirname, './node_modules/redux/dist/redux.js'), to: 'js/redux.js'
-      },
-      {
-        from: path.resolve(__dirname, './fonts/fonts.css'), to: 'fonts/fonts.css'
-      },
-      {
-        from: path.resolve(__dirname, './node_modules/underscore/underscore.js'), to: 'js/underscore.js'
-      }
-    ]),
-    // get around with stupid warning
-    new webpack.IgnorePlugin(/vertx/),
-  ]
-}];
+  plugins,
+  devServer: {
+    contentBase: [resolve(outputPath)],
+    // contentBase: './content',
+    compress: true,
+    overlay: {
+      errors: true
+    },
+    port: 3000,
+    host: '0.0.0.0',
+    disableHostCheck: true,
+    before(app) {
+      app.get('/content/field-demos/form.html', function (req, res) {
+        return res.sendFile(join(__dirname, "../content/field-demos/form.html"));
+      }),
+        app.get('/content/field-demos/text-inputs.html', function (req, res) {
+          return res.sendFile(join(__dirname, "../content/field-demos/text-inputs.html"));
+        }),
+        app.get('/content/location-list.json', function (req, res) {
+          return res.sendFile(join(__dirname, "../content/location-list.json"));
+        })
+    }
+  }
+};

@@ -26,7 +26,7 @@ const proc = pty.spawn("yarn", ["install", "--flat"], {
 let buff = ""
 
 proc.on("data", function(data) {
-  console.log("yarny: " + data)
+  // console.log("yarny: " + data)
   buff += data.toString()
   if (buff.match(/Answer\?:/g)) {
     const packageName = buff.match(/suitable version for "(\S+)"/)[1]

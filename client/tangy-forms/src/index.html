@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
-	<title>Tangerine Ho!</title>
+	<title>Tangerine</title>
 
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
@@ -15,23 +15,24 @@
   <link rel="shortcut icon" href="/assets/icons/favicon.ico">
   <meta name="msapplication-config" content="/assets/icons/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
-    <script src="vendor/redux.js"></script>
 
-    <!--
-      @TODO This should be imported by the Loc.js that depends on it but underscore doesn't play well with ES6 import
-            Issue: https://github.com/jashkenas/underscore/issues/2152
-    -->
-    <script src="vendor/underscore.js"></script>
+  <script src="vendor/redux.js"></script>
 
-    <link href="fonts/fonts.css" rel="stylesheet">
-    <style>
-        body  {
-            min-height: 100vh;
-            padding: 0px;
-            margin: 0px;
-            background: #FAFAFA;
-        }
-    </style>
+  <!--
+    @TODO This should be imported by the Loc.js that depends on it but underscore doesn't play well with ES6 import
+          Issue: https://github.com/jashkenas/underscore/issues/2152
+  -->
+  <script src="vendor/underscore.js"></script>
+
+  <link href="fonts/fonts.css" rel="stylesheet">
+  <style>
+    body  {
+      min-height: 100vh;
+      padding: 0px;
+      margin: 0px;
+      background: #FAFAFA;
+    }
+  </style>
 
   <script>
     //  if ('serviceWorker' in navigator) {
@@ -81,43 +82,43 @@
 </head>
 
 <body>
-    <div id="base-path-loader"></div>
+<div id="base-path-loader"></div>
 
-    <div id="tangy-form-app-loading" style="text-align: center; margin: auto; width: 300px">
-        Loading...
-        <paper-progress style="margin: auto" indeterminate class="slow"></paper-progress>
-    </div>
+<div id="tangy-form-app-loading" style="text-align: center; margin: auto; width: 300px">
+  Loading...
+  <paper-progress style="margin: auto" indeterminate class="slow"></paper-progress>
+</div>
 
-    <tangy-form-app></tangy-form-app>
+<tangy-form-app></tangy-form-app>
 
-    <div id="ce-babel-polyfill">
-        <script type="text/javascript">
-          const supportsAsyncFunctions = (() => {
-            try {
-              new Function('async () => {}')();
-            } catch (error) {
-              return false;
-            }
-            return true;
-          })();
+<div id="ce-babel-polyfill">
+  <script type="text/javascript">
+    const supportsAsyncFunctions = (() => {
+      try {
+        new Function('async () => {}')();
+      } catch (error) {
+        return false;
+      }
+      return true;
+    })();
 
-          var bundleScriptName;
-          if (supportsAsyncFunctions) {
-            console.log("I can run async.")
-            bundleScriptName = 'bundleES6.js';
-          } else {
-            console.log("Must use transpiled code.")
-            bundleScriptName = 'bundleES5.js';
-          }
-          // bundleES6 does not use babel, so don't need to use the babel polyfill.
-          if (bundleScriptName == 'bundleES6.js') {
-            console.log("Disabling the babel polyfill.js.")
-            var ceShimContainer = document.querySelector('#ce-babel-polyfill');
-            ceShimContainer.parentElement.removeChild(ceShimContainer);
-          }
-        </script>
-        <script type="text/javascript" src="vendor/polyfill.js"></script>
-    </div>
+    var bundleScriptName;
+    if (supportsAsyncFunctions) {
+      console.log("I can run async.")
+      bundleScriptName = 'bundleES6.js';
+    } else {
+      console.log("Must use transpiled code.")
+      bundleScriptName = 'bundleES5.js';
+    }
+    // bundleES6 does not use babel, so don't need to use the babel polyfill.
+    if (bundleScriptName == 'bundleES6.js') {
+      console.log("Disabling the babel polyfill.js.")
+      var ceShimContainer = document.querySelector('#ce-babel-polyfill');
+      ceShimContainer.parentElement.removeChild(ceShimContainer);
+    }
+  </script>
+  <script type="text/javascript" src="vendor/polyfill.js"></script>
+</div>
 
   <script src="./vendor/custom-elements-es5-adapter.js" async nomodule></script>
   <script src="./vendor/webcomponents-lite.js" async></script>
