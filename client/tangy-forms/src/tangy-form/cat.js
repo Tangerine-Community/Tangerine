@@ -1,4 +1,9 @@
-window.sleep = (ms) => new Promise((res, rej) => { 
+import {TangyForm} from './tangy-form.js'
+import {TangyFormItem} from './tangy-form-item.js'
+import {TangyInput} from '../tangy-input/tangy-input.js'
+import {TangyCheckbox} from '../tangy-checkbox/tangy-checkbox.js'
+
+window.sleep = (ms) => new Promise((res, rej) => {
   setTimeout(res, ms)
 })
 
@@ -16,7 +21,7 @@ HTMLElement.prototype.setAttributes = function (attributes = {}) {
 }
 
 HTMLElement.prototype.getProps = function () {
-  let propertyInfo; eval(`propertyInfo = ${this.constructor.name}.properties`)
+  let propertyInfo = this.constructor.properties
   // If no property info, then go off what attributes we do have.
   if (!propertyInfo) {
     return Object.assign({}, this.getAttributes(), {tagName: this.tagName, constructorName: this.constructor.name})

@@ -1,9 +1,74 @@
-<link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<script src="../../node_modules/redux/dist/redux.js"></script>
+/* jshint esversion: 6 */
 
-<dom-module id="tangy-form-questions">
+import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
+// import '../../node_modules/redux/dist/redux.js'
+import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
+  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
+  ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
+  INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
+  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
+  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from './tangy-form-actions.js'
+import './tangy-form-item.js'
 
-  <template>
+//   <!-- Tangy Custom Inputs Elements -->
+
+import '../tangy-input/tangy-input.js'
+import '../tangy-timed/tangy-timed.js'
+import '../tangy-checkbox/tangy-checkbox.js'
+import '../tangy-checkboxes/tangy-checkboxes.js'
+import '../tangy-radio-buttons/tangy-radio-buttons.js'
+import '../tangy-location/tangy-location.js'
+import '../tangy-gps/tangy-gps.js'
+
+// <link rel="import" href="../tangy-timed/tangy-timed.html">
+//   <link rel="import" href="../tangy-gps/tangy-gps.html">
+//   <link rel="import" href="../tangy-location/tangy-location.html">
+//   <link rel="import" href="../tangy-checkbox/tangy-checkbox.html">
+//   <link rel="import" href="../tangy-checkboxes/tangy-checkboxes.html">
+//   <link rel="import" href="../tangy-radio-buttons/tangy-radio-buttons.html">
+//   <link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
+//   <link rel="import" href="../tangy-toggle-button/tangy-toggle-button.html">
+//
+//   <!-- Dependencies -->
+import '../../node_modules/@polymer/paper-fab/paper-fab.js';
+//   <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
+//   <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+//   <link rel="import" href="../../bower_components/paper-fab.html">
+//   <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+//   <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+//   <link rel="import" href="../../bower_components/iron-form/iron-form.html">
+//   <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+//   <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+//   <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+//   <link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
+//   <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+//   <link rel="import" href="../../bower_components/iron-form/iron-form.html">
+//   <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+//   <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+//   <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+//   <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+//   <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+//   <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+//   <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+//   <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+//   <link rel="import" href="../../bower_components/gold-phone-input/gold-phone-input.html">
+//   <link rel="import" href="../../bower_components/app-datepicker/app-datepicker.html">
+
+
+
+    /**
+     * `tangy-form-questions`
+     * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+
+export class TangyFormQuestions extends PolymerElement {
+
+      static get template () {
+        return `
       <style>
         :host {
           width: 100%;
@@ -50,19 +115,8 @@
         <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
       </div>
       <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
-  </template>
-
-  <script>
-    /**
-     * `tangy-form-questions`
-     * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
-     *
-     * @customElement
-     * @polymer
-     * @demo demo/index.html
-     */
-
-    class TangyFormQuestions extends Polymer.Element {
+        `
+      }
 
       static get is() { return 'tangy-form-questions'; }
 
@@ -117,7 +171,14 @@
           // Eval on-change on forms.
           let forms = [].slice.call(this.querySelectorAll('form[on-change]'))
           forms.forEach((form) => {
-            if (form.hasAttribute('on-change')) eval(form.getAttribute('on-change'))
+            if (form.hasAttribute('on-change')) {
+              try {
+                window.getValue = this.getValue.bind(this)
+                eval(form.getAttribute('on-change'))
+              } catch (error) {
+                console.log("Error: " + error)
+              }
+            }
           })
         }
 
@@ -179,13 +240,6 @@
           if (index !== -1) item.setProps(state.items[index])
         })
         
-        // Set state in input elements.
-        let inputs = [].slice.call(this.querySelectorAll('[name]'))
-        inputs.forEach((input) => {
-          let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
-          if (index !== -1) input.setProps(state.inputs[index])
-        })
-
         // Set progress state.
         this.$.progress.setAttribute('value', state.progress)
 
@@ -251,5 +305,4 @@
 
     
     window.customElements.define(TangyFormQuestions.is, TangyFormQuestions);
-  </script>
-</dom-module>
+

@@ -1,12 +1,21 @@
-<link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../tangy-form/tangy-element-styles.html">
+/* jshint esversion: 6 */
 
-<dom-module id="tangy-input">
+import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import '../../node_modules/@polymer/paper-input/paper-input.js'
 
-  <template>
+    /**
+     * `tangy-input`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+export class TangyInput extends PolymerElement {
 
-    <style include="tangy-element-styles"></style>
+  static get template () {
+    return `
+<style include="tangy-element-styles"></style>
 
     <div class="container">
       <paper-input 
@@ -21,23 +30,12 @@
         </template>
       </paper-input>
     </div>
+  `
+  }
 
-  </template>
+  static get is() { return 'tangy-input'; }
 
-  <script>
-    /**
-     * `tangy-input`
-     * 
-     *
-     * @customElement
-     * @polymer
-     * @demo demo/index.html
-     */
-    class TangyInput extends Polymer.Element {
-
-      static get is() { return 'tangy-input'; }
-
-      static get properties() {
+  static get properties() {
         return {
           name: {
             type: String,
@@ -148,5 +146,3 @@
 
     }
     window.customElements.define(TangyInput.is, TangyInput);
-  </script>
-</dom-module>
