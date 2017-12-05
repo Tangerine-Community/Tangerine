@@ -8,7 +8,6 @@ cd /tangerine/client/ \
   && echo "Release with UUID of $UUID"
 
 # Host static assets in build directory.
-cd /tangerine/client/build
-../node_modules/.bin/http-server -c-1 -p 80
-
-
+mkdir /tangerine/server/db
+cd /tangerine/server
+node index.js

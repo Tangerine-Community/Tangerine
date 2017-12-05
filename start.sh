@@ -23,5 +23,7 @@ echo "Running $T_CONTAINER_NAME at version $T_TAG"
 docker run -d \
   --name $T_CONTAINER_NAME \
   -p 80:80 \
+  -p 5984:5984 \
   --volume $T_CONTENT_PATH:/tangerine/client/build/content \
+  --volume $(pwd)/db:/tangerine/server/db/ \
   tangerine/tangerine:$T_TAG
