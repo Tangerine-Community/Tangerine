@@ -24,6 +24,8 @@ else
 
   # Host static assets in build directory.
   mkdir /tangerine/server/db
+
+  # Start the server.
   cd /tangerine/server
   node index.js
 fi
