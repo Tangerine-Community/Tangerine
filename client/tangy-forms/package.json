@@ -8,7 +8,8 @@
   "scripts": {
     "prebuild": "NODE_ENV=production webpack --config webpack-module-build.config.js",
     "build": "NODE_ENV=production webpack --optimize-minimize",
-    "dev": "webpack-dev-server --hot --inline",
+    "dev": "NODE_ENV=production webpack --watch",
+    "dev-server": "webpack-dev-server --hot --inline",
     "dev:module": "BROWSERS=module webpack-dev-server --hot --inline",
     "pretest": "yarn linkbower && yarn build",
     "test": "yarn lint && wct && yarn test:lighthouse && yarn lint:remark",
