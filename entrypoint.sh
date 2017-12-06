@@ -9,7 +9,11 @@ if [ "$DEBUG" != "" ]; then
   node index.js &
 
   cd /tangerine/client/shell
-  ./node_modules/.bin/ng build --base-href /tangerine/ --watch
+  ./node_modules/.bin/ng build --base-href /tangerine/ --watch &
+
+  cd /tangerine/client/tangy-forms
+  npm run dev
+
 else
 
   echo "Starting entrypoint in PRODUCTION mode."
