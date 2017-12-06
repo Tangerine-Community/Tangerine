@@ -51,9 +51,7 @@ RUN cd /tangerine/client/tangy-forms && yarn build
 RUN cd /tangerine/client/app-updater && npm run build
 ADD logo.svg /tangerine/client/build/logo.svg
 RUN cp -r /tangerine/client/app-updater/build/default/* /tangerine/client/build/ && \
-  cp -r /tangerine/client/shell/dist/ /tangerine/client/build/tangerine && \
-  cp -r /tangerine/client/tangy-forms/dist /tangerine/client/build/tangy-forms 
-
+  ln -s /tangerine/client/tangy-forms/dist /tangerine/client/build/tangy-forms
 
 # Add server.
 ADD server/index.js server/index.js

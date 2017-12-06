@@ -11,8 +11,9 @@ if [ "$DEBUG" != "" ]; then
   cd /tangerine/client/shell
   ./node_modules/.bin/ng build --base-href /tangerine/ --watch &
 
+  echo "Starting webpack in watch mode for /tangerine/client/tangy-forms."
   cd /tangerine/client/tangy-forms
-  npm run dev
+  yarn dev
 
 else
 
