@@ -172,7 +172,9 @@ paper-card {
     }
 
     async connectedCallback() {
+
         await PolymerElement.prototype.connectedCallback.call(this);
+
         this.store = window.tangyFormStore
         this.$.close.addEventListener('click', () => this.store.dispatch({
           type: ITEM_CLOSE,
@@ -182,32 +184,6 @@ paper-card {
           type: ITEM_OPEN,
           itemId: this.id
         }));
-
-        // Register tangy redux hook.
-        window.tangyReduxHook_INPUT_VALUE_CHANGE = (store) => {
-          let state = store.getState()
-          let inputs = {}
-          state.inputs.forEach(input => inputs[input.name] = input)
-          let items = {}
-          state.items.forEach(item => items[item.name] = item)
-          // Declare namespaces for helper functions for the eval context in form.on-change.
-          // We have to do this because bundlers modify the names of things that are imported
-          // but do not update the evaled code because it knows not of it.
-          let getValue = (name) => {
-            let state = this.store.getState()
-            let input = state.inputs.find((input) => input.name == name)
-            if (input) return input.value
-          }
-          let inputHide = tangyFormActions.inputHide 
-          let inputShow = tangyFormActions.inputShow
-          let inputEnable = tangyFormActions.inputEnable
-          let inputDisable = tangyFormActions.inputDisable
-          // Eval on-change on forms.
-          let forms = [].slice.call(this.shadowRoot.querySelectorAll('form[on-change]'))
-          forms.forEach((form) => {
-            if (form.hasAttribute('on-change')) eval(form.getAttribute('on-change'))
-          })
-        }
 
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.$.content.addEventListener('INPUT_VALUE_CHANGE', (event) => {
@@ -223,10 +199,6 @@ paper-card {
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
  
-        // }
-
-        // )
-      // this.addEventListener('change', (event) => this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE') ))
     }
 
     disconnectedCallback() {
@@ -262,9 +234,35 @@ paper-card {
         if (index !== -1) input.setProps(state.inputs[index])
       })
 
+      this.fireOnChange()
+
     }
 
-
+    fireOnChange() {
+      // Register tangy redux hook.
+      let state = this.store.getState()
+      let inputs = {}
+      state.inputs.forEach(input => inputs[input.name] = input)
+      let items = {}
+      state.items.forEach(item => items[item.name] = item)
+      // Declare namespaces for helper functions for the eval context in form.on-change.
+      // We have to do this because bundlers modify the names of things that are imported
+      // but do not update the evaled code because it knows not of it.
+      let getValue = (name) => {
+        let state = this.store.getState()
+        let input = state.inputs.find((input) => input.name == name)
+        if (input) return input.value
+      }
+      let inputHide = tangyFormActions.inputHide 
+      let inputShow = tangyFormActions.inputShow
+      let inputEnable = tangyFormActions.inputEnable
+      let inputDisable = tangyFormActions.inputDisable
+      // Eval on-change on forms.
+      let formEl = this.shadowRoot.querySelector('form[on-change]')
+      if (formEl) {
+        eval(form.getAttribute('on-change'))
+      }
+    }
 
     async onOpenChange(open) {
       // Close it.
