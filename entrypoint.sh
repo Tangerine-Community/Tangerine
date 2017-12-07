@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 if [ "$DEBUG" != "" ]; then
 
@@ -8,11 +9,18 @@ if [ "$DEBUG" != "" ]; then
   cd /tangerine/server/
   node index.js &
 
+  cd /tangerine/server/editor
+  nodemon microservices/raisin/server.js &
+
+  echo "Starting nginx"
+  service nginx start
+
   cd /tangerine/client/shell
   ./node_modules/.bin/ng build --base-href /tangerine/ --watch &
 
+  echo "Starting webpack in watch mode for /tangerine/client/tangy-forms."
   cd /tangerine/client/tangy-forms
-  npm run dev
+  yarn dev
 
 else
 
@@ -31,5 +39,10 @@ else
 
   # Start the server.
   cd /tangerine/server
-  node index.js
+  node index.js &
+
+  cd /tangerine/server/editor
+  node microservices/raisin/server.js
 fi
+
+
