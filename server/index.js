@@ -21,7 +21,7 @@ app.use('/content', express.static(path.join(__dirname, '../client/build/content
 if (process.env.DEBUG) {
   // Shell at /tangerine/*
   app.use('/tangerine', express.static(path.join(__dirname, '../client/shell/dist')));
-  // Tangy Forms at /tangy-forms/* 
+  // Tangy Forms at /tangy-forms/*
   app.use('/tangy-forms', express.static(path.join(__dirname, '../client/build/tangy-forms')));
   // App updater at /*
   app.use('/', express.static(path.join(__dirname, '../client/app-updater')));
