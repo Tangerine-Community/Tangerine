@@ -23,6 +23,9 @@ docker run \
   --volume $(pwd)/client/app-updater/src:/tangerine/client/app-updater/src \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
+  --volume $(pwd)/server/editor/src/:/tangerine/server/editor/src/ \
+  --volume $(pwd)/server/editor/middlewares/:/tangerine/server/editor/middlewares/ \
+  --volume $(pwd)/server/editor/microservices/raisin/server.js:/tangerine/server/editor/microservices/raisin/src/server.js \
   tangerine/tangerine:dev
 
 # docker logs -f tangerine-container
