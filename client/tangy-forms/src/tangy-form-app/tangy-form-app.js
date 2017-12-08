@@ -38,9 +38,9 @@ class TangyFormApp extends Element {
 
       <div id="form-list">
         <template is="dom-repeat" items="{{forms}}">
-            <paper-card class="form-link" image="images/noun_1018421_cc-small.png" alt="[[item.title]]" heading="[[item.title]]">
+            <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
                 <div class="card-actions">
-                  <a href="?form=/content/[[item.src]]">
+                  <a href="#form=/content/[[item.src]]" on-click="formSelected">
                     <paper-button class="launch-form">
                       <iron-icon icon="icons:launch">
                     </iron-icon></paper-button>
@@ -96,6 +96,7 @@ class TangyFormApp extends Element {
     // Load forms list.
     let formsJson = await fetch('../content/forms.json')
     this.forms = await formsJson.json() 
+    window['tangy-form-app-loading'].innerHTML = ''
   }
 
   onFormSrcChange(newValue, oldValue) {
@@ -105,6 +106,10 @@ class TangyFormApp extends Element {
   async showFormListener(event) {
     window.location.hash = event.currentTarget.dataFormSrc
     this.formSrc = event.currentTarget.dataFormSrc
+  }
+
+  formSelected(ev) {
+    location.reload() 
   }
 
   async showForm(formSrc) {

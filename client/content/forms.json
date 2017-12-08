@@ -1,23 +1,10 @@
 [
   {
-    "title": "Class 3 lesson observation without pupils books",
-    "src": "class-3-lesson-observation-without-pupil-books/form.html"
+    "title": "Field Demos",
+    "src": "field-demo/form.html"
   },
   {
-    "title": "Classroom observation with pupils books",
-    "src": "classroom-observation-with-pupils-books/form.html"
-  },
-  {
-    "title": "Training Venue GPS Mapping",
-    "src": "training-venue-gps-mapping/form.html"
-  },
-  {
-    "title": "Maths Teachers Observation Tool",
-    "src": "maths-teachers-observation-tool/form.html"
-  },
-  {
-    "title": "Sub County Director of Education Tool",
-    "src": "sub-county-director-of-education-tool/form.html"
+    "title": "Item Demo",
+    "src": "item-demo/form.html"
   }
-  
 ]
