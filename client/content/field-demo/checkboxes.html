@@ -1,19 +1,19 @@
 <form on-change="
   // Disable/enable checkbox_3 given checkbox_4's value.
-  if (inputs.checkbox_4.value && inputs.checkbox_3.disabled) inputEnable('checkbox_3')
-  if (!inputs.checkbox_4.value && !inputs.checkbox_3.disabled) inputDisable('checkbox_3')
+  if (getValue('checkbox_4')) inputEnable('checkbox_3')
+  if (!getValue('checkbox_4')) inputDisable('checkbox_3')
 
   // Hide/show checkbox_5 given checkbox_6's value.
-  if (inputs.checkbox_6.value && inputs.checkbox_5.hidden) inputShow('checkbox_5')
-  if (!inputs.checkbox_6.value && !inputs.checkbox_5.hidden) inputHide('checkbox_5')
+  if (getValue('checkbox_6')) inputShow('checkbox_5')
+  if (!getValue('checkbox_6')) inputHide('checkbox_5')
 
   // Disable/enable checkbox_group_4.
-  if (inputs.checkbox_group_4_enable.value && inputs.checkbox_group_4.disabled) inputEnable('checkbox_group_4')
-  if (!inputs.checkbox_group_4_enable.value && !inputs.checkbox_group_4.disabled) inputDisable('checkbox_group_4')
+  if (getValue('checkbox_group_4_enable')) inputEnable('checkbox_group_4')
+  if (!getValue('checkbox_group_4_enable')) inputDisable('checkbox_group_4')
 
   // Disable/enable checkbox_group_5.
-  if (inputs.checkbox_group_5_show.value && inputs.checkbox_group_5.hidden) inputShow('checkbox_group_5')
-  if (!inputs.checkbox_group_5_show.value && !inputs.checkbox_group_5.hidden) inputHide('checkbox_group_5')
+  if (getValue('checkbox_group_5_show')) inputShow('checkbox_group_5')
+  if (!getValue('checkbox_group_5_show')) inputHide('checkbox_group_5')
 ">
 
   <h3>Checkboxes</h3> 
