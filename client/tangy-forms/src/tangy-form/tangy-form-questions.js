@@ -9,6 +9,7 @@ import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem,
   NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
   tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from './tangy-form-actions.js'
 import './tangy-form-item.js'
+import * as tangyFormActions from './tangy-form-actions.js'
 
 //   <!-- Tangy Custom Inputs Elements -->
 
@@ -273,6 +274,33 @@ export class TangyFormQuestions extends PolymerElement {
 
         // Stash as previous state.
         this.previousState = Object.assign({}, state)
+
+        this.fireOnChange()
+
+      }
+
+      fireOnChange() {
+        // Register tangy redux hook.
+        let state = this.store.getState()
+        let inputs = {}
+        state.inputs.forEach(input => inputs[input.name] = input)
+        let items = {}
+        state.items.forEach(item => items[item.name] = item)
+        // Declare namespaces for helper functions for the eval context in form.on-change.
+        // We have to do this because bundlers modify the names of things that are imported
+        // but do not update the evaled code because it knows not of it.
+        let getValue = (name) => {
+          let state = this.store.getState()
+          let input = state.inputs.find((input) => input.name == name)
+          if (input) return input.value
+        }
+        let inputHide = tangyFormActions.inputHide 
+        let inputShow = tangyFormActions.inputShow
+        let inputEnable = tangyFormActions.inputEnable
+        let inputDisable = tangyFormActions.inputDisable
+        let itemDisable = tangyFormActions.itemDisable
+        let itemEnable = tangyFormActions.itemEnable
+        eval(this.onChange)
       }
 
       focusOnPreviousItem(event) {

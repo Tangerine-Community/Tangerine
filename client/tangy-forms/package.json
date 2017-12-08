@@ -81,6 +81,7 @@
     "@polymer/paper-radio-group": "3.0.0-pre.1",
     "@polymer/polymer": "LasaleFamine/polymer#3.0-preview",
     "babel-polyfill": "6.26.0",
+    "bower": "1.8.2",
     "pouchdb-browser": "6.2.0",
     "redux": "3.7.2",
     "underscore": "1.8.3"

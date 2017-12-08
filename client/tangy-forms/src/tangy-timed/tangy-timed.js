@@ -1,5 +1,4 @@
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
-import '../../global-styles.js';
 import '../../node_modules/@polymer/paper-button/paper-button.js';
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
 import '../../node_modules/@polymer/iron-icons/iron-icons.js';

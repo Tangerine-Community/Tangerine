@@ -31,7 +31,7 @@ const tangyReduxMiddlewareTangyHook = store => next => action => {
   let result = next(action)
   switch (action.type) {
     case INPUT_VALUE_CHANGE:
-      window.tangyReduxHook_INPUT_VALUE_CHANGE(store)
+      // window.tangyReduxHook_INPUT_VALUE_CHANGE(store)
   }
   return result
 }

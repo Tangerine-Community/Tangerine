@@ -2,34 +2,6 @@
   "name": "tangy",
   "main": "index.html",
   "dependencies": {
-    "polymer": "Polymer/polymer#^2.0.0",
-    "app-layout": "PolymerElements/app-layout#^2.0.1",
-    "paper-button": "PolymerElements/paper-button#^2.0.0",
-    "pouchdb": "^6.3.4",
-    "iron-icons": "PolymerElements/iron-icons#^2.0.1",
-    "paper-icon-button": "PolymerElements/paper-icon-button#^2.0.0",
-    "paper-tabs": "PolymerElements/paper-tabs#^2.0.0",
-    "paper-styles": "PolymerElements/paper-styles#^2.0.0",
-    "underscore": "^1.8.3",
-    "paper-input": "PolymerElements/paper-input#^2.0.1",
-    "paper-progress": "PolymerElements/paper-progress#^2.0.1",
-    "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.1",
-    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^2.0.0",
-    "paper-listbox": "PolymerElements/paper-listbox#^2.0.0",
-    "paper-item": "PolymerElements/paper-item#^2.0.0",
-    "iron-form": "PolymerElements/iron-form#^2.0.0",
-    "neon-animation": "PolymerElements/neon-animation#^2.0.1",
-    "web-animations-js": "^2.3.1",
-    "paper-card": "PolymerElements/paper-card#^2.0.0",
-    "vaadin-icons": "^4.1.0",
-    "paper-fab": "PolymerElements/paper-fab#^2.0.0",
-    "paper-radio-group": "PolymerElements/paper-radio-group#^2.0.0",
-    "gold-phone-input": "PolymerElements/gold-phone-input#^2.0.2",
-    "moment": "^2.19.1",
-    "app-datepicker": "^2.11.2"
-  },
-  "devDependencies": {
-    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+    "pouchdb": "^6.3.4"
   }
 }
