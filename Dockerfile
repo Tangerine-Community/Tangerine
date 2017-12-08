@@ -40,7 +40,7 @@ ADD client/tangy-forms/webpack.config.js /tangerine/client/tangy-forms/webpack.c
 ADD client/tangy-forms/webpack-module-build.config.js /tangerine/client/tangy-forms/webpack-module-build.config.js
 ADD client/tangy-forms/assets /tangerine/client/tangy-forms/assets
 ADD client/tangy-forms/src /tangerine/client/tangy-forms/src
-# RUN cd /tangerine/client/tangy-forms && yarn run build
+RUN cd /tangerine/client/tangy-forms && yarn run build
 
 ADD client/app-updater/src /tangerine/client/app-updater/src
 ADD client/app-updater/index.html /tangerine/client/app-updater/index.html
@@ -52,7 +52,7 @@ ADD client/shell/proxy.conf.json /tangerine/client/shell/proxy.conf.json
 ADD client/shell/tslint.json /tangerine/client/shell/tslint.json
 ADD client/shell/tsconfig.json /tangerine/client/shell/tsconfig.json
 ADD client/shell/.angular-cli.json /tangerine/client/shell/.angular-cli.json
-RUN cd /tangerine/client/shell && npm run build
+RUN cd /tangerine/client/shell && ./node_modules/.bin/ng build --base-href /tangerine/ 
 
 ADD server/index.js server/index.js
 
@@ -69,9 +69,9 @@ RUN cp -r /tangerine/client/content /tangerine/client/build/
 # Glue build together.
 #
 
-# RUN cp -r /tangerine/client/app-updater/build/default/* /tangerine/client/build/ && \
-#    cp -r /tangerine/client/shell/dist/ /tangerine/client/build/tangerine && \
-#    cp -r /tangerine/client/tangy-forms/dist /tangerine/client/build/tangy-forms
+RUN cp -r /tangerine/client/app-updater/build/default/* /tangerine/client/build/ && \
+    cp -r /tangerine/client/shell/dist/ /tangerine/client/build/tangerine && \
+    cp -r /tangerine/client/tangy-forms/dist /tangerine/client/build/tangy-forms
 
 #
 # Add configuration.

@@ -55,7 +55,11 @@ const copyStatics = {
     to: join(outputPath, 'vendor'),
     flatten: true
   }, {
-    from: resolve('./fonts/fonts.css'),
+    from: resolve('./bower_components/pouchdb/dist/pouchdb.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }, {
+    from: resolve('./assets/fonts/fonts.css'),
     to: join(outputPath, 'fonts'),
     flatten: true
   }, {
