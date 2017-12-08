@@ -1,5 +1,5 @@
 {
-  "locaionsLevels": ["county", "school"],
+  "locationsLevels": ["county", "school"],
   "locations": {
     "county1": {
       "id": "county1",
