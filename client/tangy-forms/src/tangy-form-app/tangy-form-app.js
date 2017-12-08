@@ -129,8 +129,8 @@ class TangyFormApp extends Element {
     if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true) 
     if (query['hide-nav']) formEl.setAttribute('hide-nav', true) 
     if (query['hide-responses']) formEl.setAttribute('hide-responses', true) 
-    this.innerHTML = formTemplate.innerHTML 
-    let tangyForm = this.querySelector('tangy-form')
+    this.shadowRoot.innerHTML = formTemplate.innerHTML 
+    let tangyForm = this.shadowRoot.querySelector('tangy-form')
     tangyForm.addEventListener('ALL_ITEMS_CLOSED', () => {
       if (parent && parent.frames && parent.frames.ifr) {
         parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
