@@ -1,12 +1,13 @@
 <form on-change="
 
   // Disable/enable radio_buttons_3 given radio_buttons_3_enable's value.
-  if (inputs.radio_buttons_3_enable.value && inputs.radio_buttons_3.disabled) inputEnable('radio_buttons_3')
-  if (!inputs.radio_buttons_3_enable.value && !inputs.radio_buttons_3.disabled) inputDisable('radio_buttons_3')
+  if (getValue('radio_buttons_3_enable')) inputEnable('radio_buttons_3')
+  if (!getValue('radio_buttons_3_enable')) inputDisable('radio_buttons_3')
 
   // Show/hide radio_buttons_4 given radio_buttons_4_show's value.
-  if (inputs.radio_buttons_4_show.value && inputs.radio_buttons_4.hidden) inputShow('radio_buttons_4')
-  if (!inputs.radio_buttons_4_show.value && !inputs.radio_buttons_4.hidden) inputHide('radio_buttons_4')
+  if (getValue('radio_buttons_4_show')) inputShow('radio_buttons_4')
+  if (!getValue('radio_buttons_4_show')) inputHide('radio_buttons_4')
+
 
 ">
 
