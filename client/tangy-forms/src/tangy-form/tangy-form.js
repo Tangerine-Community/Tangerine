@@ -18,6 +18,7 @@ import './cat.js'
 
 //   <!-- Tangy Form Core Element -->
 import './tangy-form-questions.js'
+import * as tangyFormActions from './tangy-form-actions.js'
 
   // /**
   //  * `tangy-form`

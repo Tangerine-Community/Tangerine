@@ -1,4 +1,6 @@
-const PouchDB = require('pouchdb-browser');
+// const PouchDB = require('pouchdb-browser');
+
+// import * as PouchDB from '../../node_modules/pouchdb-browser/lib/index.js';
 export class TangyFormService {
 
   constructor(props) {

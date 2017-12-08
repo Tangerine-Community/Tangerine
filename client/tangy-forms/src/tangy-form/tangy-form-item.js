@@ -260,7 +260,7 @@ paper-card {
       // Eval on-change on forms.
       let formEl = this.shadowRoot.querySelector('form[on-change]')
       if (formEl) {
-        eval(form.getAttribute('on-change'))
+        eval(formEl.getAttribute('on-change'))
       }
     }
 
