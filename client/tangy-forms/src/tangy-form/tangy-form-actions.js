@@ -15,13 +15,13 @@ const ITEM_DISABLE = 'ITEM_DISABLE'
 const itemDisable = (itemId) => { 
     let state = window.tangyFormStore.getState()
     let item = state.items.find(item => itemId === item.id)
-    if (!item.disabled) window.tangyFormStore.dispatch({ type: ITEM_DISABLE, itemId: itemId })
+    if (item && !item.disabled) window.tangyFormStore.dispatch({ type: ITEM_DISABLE, itemId: itemId })
 }
 const ITEM_ENABLE = 'ITEM_ENABLE'
 const itemEnable = (itemId) => {
     let state = window.tangyFormStore.getState()
     let item = state.items.find(item => itemId === item.id)
-    if (item.disabled) window.tangyFormStore.dispatch({ type: ITEM_ENABLE, itemId: itemId })
+    if (item && item.disabled) window.tangyFormStore.dispatch({ type: ITEM_ENABLE, itemId: itemId })
 }
 
 const ITEMS_INVALID = 'ITEMS_INVALID'
@@ -54,13 +54,13 @@ const INPUT_HIDE = 'INPUT_HIDE'
 const inputHide = (inputName) => {
     let state = window.tangyFormStore.getState()
     let input = state.inputs.find(input => inputName === input.name)
-    if (input.hidden === false) window.tangyFormStore.dispatch({ type: INPUT_HIDE, inputName: inputName })
+    if (input && input.hidden === false) window.tangyFormStore.dispatch({ type: INPUT_HIDE, inputName: inputName })
 }
 const INPUT_SHOW = 'INPUT_SHOW'
 const inputShow = (inputName) => { 
     let state = window.tangyFormStore.getState()
     let input = state.inputs.find(input => inputName === input.name)
-    if (input.hidden === true) window.tangyFormStore.dispatch({ type: INPUT_SHOW, inputName: inputName })
+    if (input && input.hidden === true) window.tangyFormStore.dispatch({ type: INPUT_SHOW, inputName: inputName })
 }
 // Navigation
 const NAVIGATE_TO_NEXT_ITEM = 'NAVIGATE_TO_NEXT_ITEM'
