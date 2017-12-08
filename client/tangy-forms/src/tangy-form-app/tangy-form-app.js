@@ -136,6 +136,7 @@ class TangyFormApp extends Element {
         parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
       }
     })
+    window['tangy-form-app-loading'].innerHTML = ''
   }
 }
 
