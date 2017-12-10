@@ -173,6 +173,15 @@
     "@polymer/paper-styles" "^3.0.0-pre.1"
     "@polymer/polymer" "^3.0.0-pre.1"
 
+"@polymer/paper-icon-button@3.0.0-pre.1":
+  version "3.0.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-icon-button/-/paper-icon-button-3.0.0-pre.1.tgz#f0617d177c9478a676eab808cc882978f1031366"
+  dependencies:
+    "@polymer/iron-icon" "^3.0.0-pre.1"
+    "@polymer/paper-behaviors" "^3.0.0-pre.1"
+    "@polymer/paper-styles" "^3.0.0-pre.1"
+    "@polymer/polymer" "^3.0.0-pre.1"
+
 "@polymer/paper-input@3.0.0-pre.1":
   version "3.0.0-pre.1"
   resolved "https://registry.yarnpkg.com/@polymer/paper-input/-/paper-input-3.0.0-pre.1.tgz#d93ca8f5b70b821be5b19341b60092df7ca16fa8"
@@ -182,6 +191,15 @@
     "@polymer/iron-behaviors" "^3.0.0-pre.1"
     "@polymer/iron-form-element-behavior" "^3.0.0-pre.1"
     "@polymer/iron-input" "^3.0.0-pre.1"
+    "@polymer/paper-styles" "^3.0.0-pre.1"
+    "@polymer/polymer" "^3.0.0-pre.1"
+
+"@polymer/paper-item@3.0.0-pre.1":
+  version "3.0.0-pre.1"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-item/-/paper-item-3.0.0-pre.1.tgz#f90a87424c2bc554995272b59386cc20a9f5d190"
+  dependencies:
+    "@polymer/iron-behaviors" "^3.0.0-pre.1"
+    "@polymer/iron-flex-layout" "^3.0.0-pre.1"
     "@polymer/paper-styles" "^3.0.0-pre.1"
     "@polymer/polymer" "^3.0.0-pre.1"
 
@@ -1506,6 +1524,10 @@ boom@2.x.x:
   resolved "https://registry.yarnpkg.com/boom/-/boom-2.10.1.tgz#39c8918ceff5799f83f9492a848f625add0c766f"
   dependencies:
     hoek "2.x.x"
+
+bower@1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/bower/-/bower-1.8.2.tgz#adf53529c8d4af02ef24fb8d5341c1419d33e2f7"
 
 boxen@^0.6.0:
   version "0.6.0"
@@ -5222,7 +5244,7 @@ mem@^1.1.0:
   dependencies:
     mimic-fn "^1.0.0"
 
-memory-fs@^0.4.0, memory-fs@~0.4.1:
+memory-fs@^0.4.0, memory-fs@^0.4.1, memory-fs@~0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/memory-fs/-/memory-fs-0.4.1.tgz#3a9a20b8462523e447cfbc7e8bb80ed667bfc552"
   dependencies:
@@ -5599,6 +5621,15 @@ normalize-url@^1.4.0:
     prepend-http "^1.0.0"
     query-string "^4.1.0"
     sort-keys "^1.0.0"
+
+npm-install-webpack-plugin@webpack-contrib/npm-install-webpack-plugin:
+  version "4.0.5"
+  resolved "https://codeload.github.com/webpack-contrib/npm-install-webpack-plugin/tar.gz/3654c733d4a9a67978f23df37351a4c56d5fa008"
+  dependencies:
+    cross-spawn "^5.0.1"
+    json5 "^0.5.1"
+    memory-fs "^0.4.1"
+    resolve "^1.2.0"
 
 npm-prefix@^1.2.0:
   version "1.2.0"

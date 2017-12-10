@@ -19,7 +19,7 @@ const processEnv = {
  */
 const plugins = [
   new webpack.DefinePlugin({'process.env': processEnv}),
-  new CleanWebpackPlugin([outputPath], {verbose: true})
+  // new CleanWebpackPlugin([outputPath], {verbose: true})
 ];
 
 /**
@@ -31,11 +31,11 @@ module.exports = {
     path: outputPath,
     filename: 'module.bundle.js'
   },
-  devtool: 'cheap-module-source-map',
+  devtool: 'source-map',
   module: {
     rules: [
       {
-        test: /\.js$/,
+        // test: /\.js$/,
         // We need to transpile Polymer itself and other ES6 code
         // exclude: /(node_modules)/,
         // use: {

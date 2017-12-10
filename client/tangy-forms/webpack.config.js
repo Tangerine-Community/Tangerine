@@ -66,6 +66,10 @@ const copyStatics = {
     from: resolve('./node_modules/underscore/underscore.js'),
     to: join(outputPath, 'vendor'),
     flatten: true
+  }, {
+    from: resolve('./src/build/ckeditor.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
   }],
   copyOthers: [{
     from: 'assets/**',
@@ -111,6 +115,10 @@ module.exports = {
     filename: IS_MODULE_BUILD ? 'module.bundle.js' : 'bundle.js'
   },
   devtool: 'source-map',
+  // todo: this is used to make bower_components work
+  // resolve: {
+  //   descriptionFiles: ["package.json", "bower.json"],
+  // },
   module: {
     rules: [
       {

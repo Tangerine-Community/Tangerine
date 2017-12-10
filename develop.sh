@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 
 source ./config.defaults.sh
@@ -10,7 +11,7 @@ fi
 docker build -t tangerine/tangerine:dev .
 docker kill tangerine-dev  
 docker rm tangerine-dev 
-docker run \
+docker run -it \
   --env DEBUG=true \
   --name tangerine-dev \
   -p 80:80 \

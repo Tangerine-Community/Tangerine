@@ -55,6 +55,7 @@ ADD client/shell/.angular-cli.json /tangerine/client/shell/.angular-cli.json
 RUN cd /tangerine/client/shell && ./node_modules/.bin/ng build --base-href /tangerine/ 
 
 ADD server/index.js server/index.js
+ADD server/editor.js server/editor.js
 
 #
 # Add static assets.

@@ -18,6 +18,7 @@
 
   <script src="vendor/redux.js"></script>
   <script src="vendor/pouchdb.js"></script>
+  <script src="vendor/ckeditor.js"></script>
   <!--
     @TODO This should be imported by the Loc.js that depends on it but underscore doesn't play well with ES6 import
           Issue: https://github.com/jashkenas/underscore/issues/2152
@@ -65,6 +66,7 @@
 </div>
 
 <tangy-form-app></tangy-form-app>
+<div id="content" style = "display:none"></div>
 
 <div id="ce-babel-polyfill">
   <script type="text/javascript">
