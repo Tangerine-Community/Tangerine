@@ -31,7 +31,7 @@ module.exports = {
     path: outputPath,
     filename: 'module.bundle.js'
   },
-  devtool: 'cheap-module-source-map',
+  devtool: 'source-map',
   module: {
     rules: [
       {
