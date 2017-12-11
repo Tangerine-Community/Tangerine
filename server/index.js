@@ -40,6 +40,8 @@ if (process.env.DEBUG) {
 
 // editor
 
+app.use('/tangy-editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
+
 app.get('/project/listAll', function (req, res, next) {
 
   // var editorO = editor()

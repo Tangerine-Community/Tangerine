@@ -1,0 +1,26 @@
+
+
+<form id="form1" onchange="
+  let response = this.getResponse();
+  ">
+  <label>Form metadata:</label> <br>
+  <paper-input
+          error-message="A form title is required"
+          type="text"
+          name="title"
+          required
+          label="Title your form."
+          value="">
+  </paper-input>
+  <paper-input
+          error-message="A file name is required"
+          type="text"
+          name="file_name"
+          required
+          label="Name your file (e.g. form-1)"
+          value="">
+  </paper-input>
+    <paper-button>Submit to Server</paper-button>
+
+</form>
+

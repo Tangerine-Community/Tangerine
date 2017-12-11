@@ -10,6 +10,7 @@ import '../../node_modules/@polymer/paper-item/paper-item-body.js';
 // import '../../bower_components/app-layout/app-toolbar/app-toolbar.js'
 import '../tangy-form/tangy-form.js';
 import '../tangy-textarea/tangy-textarea.js';
+
 /**
  * `tangy-form-app`
  * ...
@@ -73,6 +74,17 @@ class TangyFormApp extends Element {
                 </div>
             </paper-card>
         </template>
+        <template is="dom-repeat" items="{{editorForms}}">
+          <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
+            <div class="card-actions">
+              <a href="#form=/tangy-editor/[[item.src]]&edit=1" on-click="formSelected">
+                <paper-button class="settings">
+                  <iron-icon icon="icons:settings"/>
+                </paper-button>
+              </a>
+            </div>
+          </paper-card>
+        </template>        
       </div>
 
       <div id="form-view" hidden="">
@@ -301,6 +313,9 @@ class TangyFormApp extends Element {
     // Load forms list.
     let formsJson = await fetch('../content/forms.json')
     this.forms = await formsJson.json()
+    // Load editor forms
+    let editorJson = await fetch('/tangy-editor/editor-forms.json')
+    this.editorForms = await editorJson.json()
     window['tangy-form-app-loading'].innerHTML = ''
   }
 
@@ -459,7 +474,7 @@ class TangyFormApp extends Element {
       this.itemFilename = event.currentTarget.dataItemSrc
       this.itemId = event.currentTarget.dataItemId
     } else {
-      const uuid = UUID.generate();
+      const uuid = TangyUtils.UUID().generate();
       this.itemFilename = uuid + '.html'
       this.itemId = uuid
       item.formTitle = this.$.formTitle.value
@@ -511,6 +526,38 @@ class TangyUtils {
     });
     return response;
   };
+
+  /**
+   * Fast UUID generator, RFC4122 version 4 compliant.
+   * @author Jeff Ward (jcward.com).
+   * @license MIT license
+   * @link http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+   **/
+  static UUID() {
+    'use strict';
+    var self = {};
+    var lut = [];
+
+    for(var i = 0; i < 256; i++) {
+      lut[i] = (i < 16 ? '0' : '') + (i).toString(16);
+    }
+
+    /**
+     * Generates a UUID
+     * @returns {string}
+     */
+    self.generate = function () {
+      var d0 = Math.random() * 0xffffffff | 0;
+      var d1 = Math.random() * 0xffffffff | 0;
+      var d2 = Math.random() * 0xffffffff | 0;
+      var d3 = Math.random() * 0xffffffff | 0;
+      return lut[d0 & 0xff] + lut[d0 >> 8 & 0xff] + lut[d0 >> 16 & 0xff] + lut[d0 >> 24 & 0xff] + '-' +
+        lut[d1 & 0xff] + lut[d1 >> 8 & 0xff] + '-' + lut[d1 >> 16 & 0x0f | 0x40] + lut[d1 >> 24 & 0xff] + '-' +
+        lut[d2 & 0x3f | 0x80] + lut[d2 >> 8 & 0xff] + '-' + lut[d2 >> 16 & 0xff] + lut[d2 >> 24 & 0xff] +
+        lut[d3 & 0xff] + lut[d3 >> 8 & 0xff] + lut[d3 >> 16 & 0xff] + lut[d3 >> 24 & 0xff];
+    };
+    return self;
+  }
 }
 
 window.customElements.define(TangyFormApp.is, TangyFormApp);

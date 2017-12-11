@@ -5244,7 +5244,7 @@ mem@^1.1.0:
   dependencies:
     mimic-fn "^1.0.0"
 
-memory-fs@^0.4.0, memory-fs@^0.4.1, memory-fs@~0.4.1:
+memory-fs@^0.4.0, memory-fs@~0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/memory-fs/-/memory-fs-0.4.1.tgz#3a9a20b8462523e447cfbc7e8bb80ed667bfc552"
   dependencies:
@@ -5402,6 +5402,10 @@ mocha@^3.4.2:
 modify-values@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/modify-values/-/modify-values-1.0.0.tgz#e2b6cdeb9ce19f99317a53722f3dbf5df5eaaab2"
+
+moment@2.19.3:
+  version "2.19.3"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.3.tgz#bdb99d270d6d7fda78cc0fbace855e27fe7da69f"
 
 ms@0.7.0:
   version "0.7.0"
@@ -5621,15 +5625,6 @@ normalize-url@^1.4.0:
     prepend-http "^1.0.0"
     query-string "^4.1.0"
     sort-keys "^1.0.0"
-
-npm-install-webpack-plugin@webpack-contrib/npm-install-webpack-plugin:
-  version "4.0.5"
-  resolved "https://codeload.github.com/webpack-contrib/npm-install-webpack-plugin/tar.gz/3654c733d4a9a67978f23df37351a4c56d5fa008"
-  dependencies:
-    cross-spawn "^5.0.1"
-    json5 "^0.5.1"
-    memory-fs "^0.4.1"
-    resolve "^1.2.0"
 
 npm-prefix@^1.2.0:
   version "1.2.0"
@@ -8351,6 +8346,10 @@ simple-swizzle@^0.2.2:
   resolved "https://registry.yarnpkg.com/simple-swizzle/-/simple-swizzle-0.2.2.tgz#a4da6b635ffcccca33f70d17cb92592de95e557a"
   dependencies:
     is-arrayish "^0.3.1"
+
+simply-uuid@TylerGarlick/simple-uuid:
+  version "1.0.1"
+  resolved "https://codeload.github.com/TylerGarlick/simple-uuid/tar.gz/2158379632a9bacb007ae73675036080eacf463d"
 
 sinon-chai@^2.10.0:
   version "2.13.0"
