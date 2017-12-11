@@ -8,10 +8,16 @@ var fauxton = express()
 var fs = require('fs-extra')
 var config = read.sync('./config.yml')
 var editor = require('./editor.js')
+const sanitize = require('sanitize-filename');
+const cheerio = require('cheerio');
+// for json parsing in recieved requests
+const bodyParser = require('body-parser');
 
+const sep = path.sep;
 const DB_URL = `${config.protocol}${config.domain}:${config.port}${config.dbServerEndpoint}`
 const DB_ADMIN_URL = `${config.protocol}${config.admin.username}:${config.admin.password}@${config.domain}:${config.port}${config.dbServerEndpoint}`
 
+app.use(bodyParser.json()); // use json
 
 // Database at /db/*
 app.use(config.dbServerEndpoint, require('express-pouchdb')(PouchDB.defaults({prefix: './db/'})))
@@ -46,6 +52,58 @@ app.get('/project/listAll', function (req, res, next) {
   });
   // return next();
 });
+
+app.post('/editor/item/save', async function (req, res, next) {
+  // console.log("req.body:" + JSON.stringify(req.body) + " req.body.itemTitle: " + req.body.itemTitle)
+  let safeItemTitle = sanitize(req.body.itemTitle)
+  let itemHtmlText = req.body.itemHtmlText
+  let formHtmlPath = req.body.formHtmlPath
+  let itemFilename = req.body.itemFilename
+  let projectName = req.body.projectName
+  let itemId = req.body.itemId
+  let formDir = formHtmlPath.split('/')[2]
+  let formName = formHtmlPath.split('/')[3]
+  // let dir = projectRoot + projectName;
+  let dir = config.contentRoot
+  // open the form and parse it
+  let formPath = dir + sep + formDir + sep + formName
+  let originalForm
+  try {
+    originalForm = await fs.readFile(formPath,'utf8')
+  } catch (e) {
+    console.log('e', e);
+  }
+  console.log("originalForm: " + JSON.stringify(originalForm))
+  const $ = cheerio.load(originalForm)
+  // search for tangy-form-item
+  let formItemList = $('tangy-form-item')
+  // let html = $.html('tangy-form-item')
+  console.log("*********************")
+  console.log("html before: " + $.html())
+  console.log("*********************")
+  let clippedFormItemList = formItemList.not(function(i, el) {
+    // this === el
+    let id = $(this).attr('id')
+    let src = $(this).attr('src')
+    return src === itemFilename
+  })
+  console.log('formItemList: ' + formItemList.length + ' clippedFormItemList: ' + clippedFormItemList.length)
+
+  // create the form html that will be added
+  let newForm = '<tangy-form-item src="' + itemFilename + '" id="' + itemId + '" title="' + safeItemTitle + '">'
+  console.log('newForm: ' + newForm)
+  $('tangy-form-item').remove()
+  // todo: resolve ordering of these elements.
+  $(clippedFormItemList).appendTo('tangy-form')
+  $(newForm).appendTo('tangy-form')
+  console.log("*********************")
+  console.log('html after: ' + $.html())
+  console.log("*********************")
+  let form = $.html()
+  await editor().saveForm(formPath, form);
+  let resp = await editor().saveItem(formPath, itemFilename, itemHtmlText)
+  res.send(resp)
+})
 
 
 // Bind the app to port 80.

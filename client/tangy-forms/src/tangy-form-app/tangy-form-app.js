@@ -94,9 +94,9 @@ class TangyFormApp extends Element {
                   data-form-src="[[formHtmlPath]]"
                   data-item-title="New Item"
                   data-form-src=null
-                  data-item-src=null
+                  data-item-src='form-metadata.html'
                   data-item-order=null
-                  on-click="editFormItemListener">
+                  on-click="createFormItemListener">
               </paper-icon-button>
               <paper-icon-button icon="close" on-click="showFormsList"></paper-icon-button>
               </div>
@@ -152,22 +152,19 @@ class TangyFormApp extends Element {
         </div>
   
       <div id="item-create" hidden>
-        <app-header reveals>
-          <app-toolbar>
-            <paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>
-            <div main-title>[[headerTitle]]</div>
-            <paper-icon-button icon="close" on-click="showFormsList"></paper-icon-button>
-          </app-toolbar>
-        </app-header>
-  
           <div style="width: 600px;margin-left: auto; margin-right: auto;">
             <form id="itemEditor">
-              <paper-button
-                      data-item-src="[[itemFilename]]"
-                      data-item-id="[[itemId]]"
-                      on-tap="saveItem">
-                <iron-icon icon="icons:save"/>
-              </paper-button>
+              <div class="card-actions">
+                <div class="horizontal justified" style="text-align: right">
+                  <paper-button
+                          data-form-src="[[formHtmlPath]]"
+                          data-item-src="[[itemFilename]]"
+                          data-item-id="[[itemId]]"
+                          on-tap="saveItem">
+                    <iron-icon icon="icons:save"/>
+                  </paper-button>
+                </div>
+              </div>          
               <paper-input id="formTitle" value="{{formTitle}}" label="form title"  always-float-label></paper-input>
               <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
               <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
@@ -186,6 +183,79 @@ class TangyFormApp extends Element {
   }
 
   static get is() { return 'tangy-form-app'; }
+
+  static get properties() {
+    return {
+      database: {
+        type: String,
+        value: 'tangy-form'
+      },
+      forms: {
+        type: Array,
+        value: []
+      },
+      items: {
+        type: Array,
+        value: []
+      },
+      editorForms: {
+        type: Array,
+        value: []
+      },
+      headerTitle: {
+        type: String,
+        value: '',
+      },
+      form: {
+        type: Object,
+      },
+      formSrc: {  // path to form.html, used in Form listing.
+        type: String,
+        value: '',
+        observer: 'onFormSrcChange'
+      },
+      formTitle: {  // Title of form, used in Form listing.
+        type: String,
+        value: '',
+      },
+      formName: {  // folder name for form, used to create the formSrc for Form listing.
+        type: String,
+        value: '',
+      },
+      formHtmlPath: { // path to form.html - e.g.: "formHtmlPath":"forms/lemmie/form.html"
+        type: String,
+        value: '',
+      },
+      itemFilename: { // "itemFilename":"item-1.html",
+        type: String,
+        value: '',
+      },
+      itemId: { // "itemId":"item-1"
+        type: String,
+        value: '',
+      },
+      itemHtml: { // id of textarea for html content
+        type: String,
+        value: '',
+      },
+      itemHtmlText: { // html code from textarea
+        type: String,
+        value: '',
+      },
+      itemTitle: { // "itemTitle":"ACASI Part 3: Introduction"
+        type: String,
+        value: '',
+      },
+      itemOrder: {  // item order in form
+        type: Number,
+        value: '',
+      },
+      itemOrderDisabled: {  // item order in form
+        type: Boolean,
+        value: false,
+      }
+    };
+  }
 
   connectedCallback() {
     super.connectedCallback();
@@ -255,6 +325,18 @@ class TangyFormApp extends Element {
     this.itemOrder = event.currentTarget.dataItemOrder
     this.itemTitle = event.currentTarget.dataItemTitle
     if (this.itemFilename !== '') this.editItem(this.itemFilename)
+  }
+  async createFormItemListener(event) {
+//        window.location.hash = event.currentTarget.dataFormSrc
+    let query = this.parseQuery(window.location.hash)
+    let formPath = query.form
+    this.formHtmlPath = formPath
+    this.itemFilename = event.currentTarget.dataItemSrc
+    this.itemId = event.currentTarget.dataItemId
+    this.itemOrder = event.currentTarget.dataItemOrder
+    this.itemTitle = event.currentTarget.dataItemTitle
+    this.itemSrc = event.currentTarget.dataset.itemSrc
+    if (this.itemSrc !== '') this.editItem(this.itemSrc)
   }
 
   formSelected(ev) {
@@ -362,6 +444,7 @@ class TangyFormApp extends Element {
         // Tangy.editor.setData("bla bla bla")
       }
     } else {
+      Tangy.editor.setData('<p>&nbsp;</p>')
       this.headerTitle = "Create Item"
       this.itemHtmlText = ''
       this.itemOrder = null
