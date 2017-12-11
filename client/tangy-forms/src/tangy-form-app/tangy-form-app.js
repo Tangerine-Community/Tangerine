@@ -105,19 +105,18 @@ class TangyFormApp extends Element {
             <template is="dom-if" if="{{items.size > 1}}">
               <div role="listbox">
               <template is="dom-repeat" items="{{items}}">
-                      <paper-item-body
-                              two-line
-                              class="[[item.class]]"
-                              on-click="editFormItemListener"
-                              data-item-id="[[item.id]]"
-                              data-form-src="[[item.formSrc]]"
-                              data-item-src="[[item.src]]"
-                              data-item-order="[[item.itemOrder]]"
-                              data-item-title="[[item.title]]">
-                        <div>[[item.title]]</div>
-                        <div secondary>[[item.src]]</div>
-                      </paper-item-body>
-                    </paper-icon-item>
+                  <paper-item-body
+                      two-line
+                      class="[[item.class]]"
+                      on-click="editFormItemListener"
+                      data-item-id="[[item.id]]"
+                      data-form-src="[[item.formSrc]]"
+                      data-item-src="[[item.src]]"
+                      data-item-order="[[item.itemOrder]]"
+                      data-item-title="[[item.title]]">
+                    <div>[[item.title]]</div>
+                    <div secondary>[[item.src]]</div>
+                  </paper-item-body>
               </template>
               </div>
             </template>
@@ -227,6 +226,8 @@ class TangyFormApp extends Element {
     this.$['item-edit'].hidden = true
     this.$['item-create'].hidden = true
     document.querySelector("#content").setAttribute('style', 'display:none;')
+    // Must reset base href path in case user is not currently at tangy-forms root.
+    window['base-path-loader'].innerHTML = `<base href="/tangy-forms">`
     // Load forms list.
     let formsJson = await fetch('../content/forms.json')
     this.forms = await formsJson.json()
