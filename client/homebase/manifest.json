@@ -1,0 +1,6 @@
+{
+  "name": "homebase",
+  "short_name": "homebase",
+  "start_url": "/",
+  "display": "standalone"
+}
