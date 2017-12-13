@@ -62,6 +62,7 @@ ADD server/index.js server/index.js
 
 ADD client/tangy-forms/assets /tangerine/client/tangy-forms/assets
 ADD client/content /tangerine/client/content
+ADD logo.svg /tangerine/client/build/logo.svg
 RUN cp -r /tangerine/client/content /tangerine/client/build/
 
 
