@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "./node_modules/.bin/polymer build --bundle --js-compile",
+    "build": "./node_modules/.bin/polymer build --js-compile",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
