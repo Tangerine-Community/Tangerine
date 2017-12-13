@@ -1,1 +1,0 @@
-window.TangerineVersion = {"buildVersion":"foo","version":"bar"}
