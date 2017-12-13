@@ -62,22 +62,25 @@
         this.checkForRelease()
       }
 
-      async checkForRelease() {
-        let response = await fetch('release-uuid.txt')
-        this.foundReleaseUuid = (await response.text()).replace(/\n|\r/g, "")
-        this.storedReleaseUuid = localStorage.getItem('release-uuid')
-        if (!this.storedReleaseUuid) {
-          this.installReleaseUuid = this.foundReleaseUuid
-          this.message = 'Installing...'
-          this.updateServiceWorker()
-        }
-        else if (this.storedReleaseUuid !== this.foundReleaseUuid) {
-          this.message = 'Updating...'
-          this.updateServiceWorker()
-        } else {
-          this.message = 'No update found... '
-          this.redirect()
-        }
+      checkForRelease() {
+        fetch('release-uuid.txt')
+        .then((response) => response.text())
+        .then((response) => {
+          this.foundReleaseUuid = (response).replace(/\n|\r/g, "")
+          this.storedReleaseUuid = localStorage.getItem('release-uuid')
+          if (!this.storedReleaseUuid) {
+            this.installReleaseUuid = this.foundReleaseUuid
+            this.message = 'Installing...'
+            this.updateServiceWorker()
+          }
+          else if (this.storedReleaseUuid !== this.foundReleaseUuid) {
+            this.message = 'Updating...'
+            this.updateServiceWorker()
+          } else {
+            this.message = 'No update found... '
+            this.redirect()
+          }
+        })
       }
 
       redirect() {
