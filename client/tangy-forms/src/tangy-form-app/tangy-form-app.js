@@ -77,7 +77,7 @@ class TangyFormApp extends Element {
         <template is="dom-repeat" items="{{editorForms}}">
           <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
             <div class="card-actions">
-              <a href="#form=/tangy-editor/[[item.src]]&edit=1" on-click="formSelected">
+              <a href="#form=/tangy-editor/[[item.src]]&new=1" on-click="formSelected">
                 <paper-button class="settings">
                   <iron-icon icon="icons:settings"/>
                 </paper-button>
@@ -105,12 +105,13 @@ class TangyFormApp extends Element {
                   icon="add-circle-outline"
                   data-form-src="[[formHtmlPath]]"
                   data-item-title="New Item"
-                  data-form-src=null
                   data-item-src='form-metadata.html'
                   data-item-order=null
                   on-click="createFormItemListener">
               </paper-icon-button>
-              <paper-icon-button icon="close" on-click="showFormsList"></paper-icon-button>
+              <a href="/tangy-forms" on-click="formSelected">
+                <paper-icon-button icon="close" on-click="showFormsList"></paper-icon-button>
+              </a>
               </div>
             </div>
             <div class="card-content">
@@ -127,7 +128,7 @@ class TangyFormApp extends Element {
                       data-item-order="[[item.itemOrder]]"
                       data-item-title="[[item.title]]">
                     <div>[[item.title]]</div>
-                    <div secondary>[[item.src]]</div>
+                    <!--<div secondary>[[item.src]]</div>-->
                   </paper-item-body>
               </template>
               </div>
@@ -274,12 +275,15 @@ class TangyFormApp extends Element {
     let query = this.parseQuery(window.location.hash)
     let formPath = query.form
     let edit = query.edit
+    let newForm = query.new
     if (formPath) {
       let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
       console.log(`Setting <base> path using form directory: ${formDirectory}`)
       window['base-path-loader'].innerHTML = `<base href="${formDirectory}">`
       if (edit) {
         this.showFormEditor(query.form)
+      } else if (newForm) {
+        this.showFormEditor(query.form, 'newForm')
       } else {
         this.showForm(query.form)
       }
@@ -351,7 +355,11 @@ class TangyFormApp extends Element {
     this.itemOrder = event.currentTarget.dataItemOrder
     this.itemTitle = event.currentTarget.dataItemTitle
     this.itemSrc = event.currentTarget.dataset.itemSrc
-    if (this.itemSrc !== '') this.editItem(this.itemSrc)
+    let newItem
+    if (this.itemSrc === 'form-metadata.html') {
+      newItem = true
+    }
+    if (this.itemSrc !== '') this.editItem(this.itemSrc, null, newItem)
   }
 
   formSelected(ev) {
@@ -393,7 +401,7 @@ class TangyFormApp extends Element {
     window['tangy-form-app-loading'].innerHTML = ''
   }
 
-  async showFormEditor(formSrc) {
+  async showFormEditor(formSrc, isNew) {
     this.$['form-view'].hidden = true
     this.$['form-item-listing'].hidden = false
     this.$['item-edit'].hidden = true
@@ -417,20 +425,30 @@ class TangyFormApp extends Element {
       item.formSrc = formSrc
       this.items.push(item)
     }
-    this.headerTitle = "Item Listing"
+    if (isNew) {
+      this.headerTitle = "New form"
+      // this.createFormItemListener()
+      let query = this.parseQuery(window.location.hash)
+      let formPath = query.form
+      this.formHtmlPath = formPath
+      this.editItem(this.formHtmlPath, true)
+    } else {
+      this.headerTitle = "Item Listing"
+    }
     this.dispatchEvent(new CustomEvent('tangy-form-item-list-opened', {bubbles: true}))
   }
 
   /**
    * This can be used to create new items or edit items.
    * @param itemSrc
+   * @param isNewForm
    * @returns {Promise.<void>}
    */
-  async editItem(itemSrc) {
+  async editItem(itemSrc, isNewForm, isNewItem) {
     this.$['form-view'].hidden = true
     this.$['form-item-listing'].hidden = false
     this.$['form-list'].hidden = true
-    if (itemSrc !== 'form-metadata.html') {
+    if (isNewForm !== true) {
       this.$['item-edit'].hidden = false
       this.$['item-create'].hidden = true
     } else {
@@ -442,25 +460,44 @@ class TangyFormApp extends Element {
     let tangyFormApp = document.querySelector("tangy-form-app")
     tangyFormApp.setAttribute('style', 'min-height:0vh')
     // Check if this is a new item
-    if (itemSrc !== 'form-metadata.html') {
-      this.headerTitle = "Edit Item"
-      // Load the form into the DOM.
-      // let frmSrc = this.formHtmlPath
-      // let array = frmSrc.split('/')
-      // let itemUrl = array[0] + '/' + array[1] + '/' + itemSrc
-      // todo try to grab local pouch version of item
-      let itemHtml = await fetch(itemSrc)
-      this.itemHtmlText = await itemHtml.text()
-       console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
-      if (this.itemHtmlText === '') {
-        Tangy.editor.setData('<p>&nbsp;</p>')
+    if (isNewForm !== true) {
+      if (isNewItem === true) {
+        this.headerTitle = "New Item"
+        // Load the form into the DOM.
+        // let frmSrc = this.formHtmlPath
+        // let array = frmSrc.split('/')
+        // let itemUrl = array[0] + '/' + array[1] + '/' + itemSrc
+        // todo try to grab local pouch version of item
+        // let itemHtml = await fetch(itemSrc)
+        // this.itemHtmlText = await itemHtml.text()
+        // console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
+        // if (this.itemHtmlText === '') {
+          Tangy.editor.setData('<p>&nbsp;</p>')
+        // } else {
+        //   Tangy.editor.setData(this.itemHtmlText)
+        //   // Tangy.editor.setData("bla bla bla")
+        // }
       } else {
-        Tangy.editor.setData(this.itemHtmlText)
-        // Tangy.editor.setData("bla bla bla")
+        this.headerTitle = "Edit Item"
+        // Load the form into the DOM.
+        // let frmSrc = this.formHtmlPath
+        // let array = frmSrc.split('/')
+        // let itemUrl = array[0] + '/' + array[1] + '/' + itemSrc
+        // todo try to grab local pouch version of item
+        let itemHtml = await fetch(itemSrc)
+        this.itemHtmlText = await itemHtml.text()
+        console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
+        if (this.itemHtmlText === '') {
+          Tangy.editor.setData('<p>&nbsp;</p>')
+        } else {
+          Tangy.editor.setData(this.itemHtmlText)
+          // Tangy.editor.setData("bla bla bla")
+        }
       }
+
     } else {
       Tangy.editor.setData('<p>&nbsp;</p>')
-      this.headerTitle = "Create Item"
+      this.headerTitle = "Create Form"
       this.itemHtmlText = ''
       this.itemOrder = null
       this.itemOrderDisabled = true;
@@ -470,7 +507,7 @@ class TangyFormApp extends Element {
   async saveItem(event) {
     let item = {}
     const project = window.location.pathname.split("/")[3];
-    if (event.currentTarget.dataItemSrc !== 'form-metadata.html') {
+    if (event.currentTarget.dataItemSrc !== '') {
       this.itemFilename = event.currentTarget.dataItemSrc
       this.itemId = event.currentTarget.dataItemId
     } else {
@@ -479,53 +516,51 @@ class TangyFormApp extends Element {
       this.itemId = uuid
       item.formTitle = this.$.formTitle.value
       item.formName = this.$.formName.value
-      this.formHtmlPath = 'forms/' + item.formName + '/form.html'
+      this.formHtmlPath = null
     }
-
     let itemTitle = this.$.itemTitle.value
     let itemHtmlText = Tangy.editor.getData();
 //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
-
-
     item.projectName = project
     item.formHtmlPath = this.formHtmlPath
     item.itemFilename = this.itemFilename
     item.itemId = this.itemId
     item.itemTitle = itemTitle
     item.itemHtmlText = itemHtmlText
-//        item.itemOrder = this.itemOrder
     // todo: eventually we will have a UI to re-arrange the items in the item listing, but for now, get the value from our form.
     item.itemOrder = this.$.itemOrder.value
-//        if (item.itemFilename == 'undefined') {
-//          let size = this.items.length
-//          item.itemOrder = size+1
-//        }
-    // pass items to help saveItem create new item name
-    let response = await TangyUtils.saveItem(item, this.items);
-    console.log("response: " + JSON.stringify(response));
-  }
-}
-
-class TangyUtils {
-
-  static async saveItem(item, items) {
+    item.formTitle = this.$.formTitle.value
     // Check if this is a new item
     if (typeof item.itemId == 'undefined') {
       // todo : create filename from item title using sanitize
-      let len = items.length + 1
+      console.log("item.itemId is undefined: " + item.itemId)
+      let len = this.items.length + 1
       item.itemId= 'item-' + len
       item.itemFilename = item.itemId + '.html'
     }
-    let response = await fetch("/editor/item/save", {
+    let result = await fetch("/editor/item/save", {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       method: "POST",
       body: JSON.stringify(item)
-    });
-    return response;
-  };
+    }).then(function(response) {
+      if(response.ok) {
+        response.json().then(function(data) {
+          console.log("result: " + JSON.stringify(data))
+          if (data.displayFormsListing === true) {
+            location.href = '/tangy-forms'
+          } else {
+            location.reload()
+          }
+        });
+      }
+    })
+  }
+}
+
+class TangyUtils {
 
   /**
    * Fast UUID generator, RFC4122 version 4 compliant.

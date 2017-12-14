@@ -1,7 +1,9 @@
-var fs = require('fs-extra')
-var read = require('read-yaml')
-var config = read.sync('./config.yml')
-var path = require('path')
+/* jshint esversion: 6 */
+
+const fs = require('fs-extra')
+const read = require('read-yaml')
+const config = read.sync('./config.yml')
+const path = require('path')
 const sep = path.sep;
 
 let Editor = function Editor() {
@@ -25,21 +27,37 @@ let Editor = function Editor() {
 
 
   /**
-   * Reads current form.json and adds new form params to it, then saves.
-   * @param dir
+   * Populates formJson by reading current form.json. If forms.json does not exist, creates an empty array for formJson
+   * and adds new form params to it, then saves form.json.
+   *
    * @param formParameters
+   * @param project - currently unused
    * @returns {Promise.<void>}
    */
-  this.saveFormsJson = async function (dir, formParameters) {
-    let formsPath = dir + "/content/forms";
-    await fs.ensureDir(formsPath)
-    let formsJsonPath = dir + "/content/forms.json";
-    let currentFormJson = await fs.readJson(formsJsonPath)
-    currentFormJson.push(formParameters)
-    console.log("currentFormJson with metadata: " + JSON.stringify(currentFormJson))
-    // fs.writeJson(formsJsonPath, packageObj).then(() => {
-    await fs.writeJson(formsJsonPath, packageObj)
-  };
+  this.saveFormsJson = async function(formParameters, project) {
+    console.log("formParameters: " + JSON.stringify(formParameters))
+    let contentRoot = config.contentRoot
+    let formsJsonPath = contentRoot + '/forms.json'
+    console.log("formsJsonPath:" + formsJsonPath)
+    let formJson
+    try {
+      await fs.ensureFile(formsJsonPath)
+      console.log("formsJsonPath exists")
+    } catch (err) {
+      console.log("Creating empty formJson array" + err)
+      formJson = []
+    }
+    try {
+      formJson = await fs.readJson(formsJsonPath)
+      console.log("formJson: " + JSON.stringify(formJson))
+      console.log("formParameters: " + JSON.stringify(formParameters))
+      formJson.push(formParameters)
+      console.log("formJson with new formParameters: " + JSON.stringify(formJson))
+    } catch (err) {
+      console.error("An error reading the json form: " + err)
+    }
+    await fs.writeJson(formsJsonPath, formJson)
+  }
 
   /**
    * Saves a form at /content/forms/formName/form.html

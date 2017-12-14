@@ -24,6 +24,8 @@ docker run -it \
   --volume $(pwd)/client/app-updater/src:/tangerine/client/app-updater/src \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
+  --volume $(pwd)/server/editor.js:/tangerine/server/editor.js \
+  --volume $(pwd)/server/config.yml:/tangerine/server/config.yml \
   tangerine/tangerine:dev
 
 # docker logs -f tangerine-container
