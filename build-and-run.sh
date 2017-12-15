@@ -9,4 +9,5 @@ fi
 
 ./start.sh
 
-docker logs -f $T_CONTAINER_NAME 
+docker logs -f $T_CONTAINER_NAME &
+docker logs -f cordova-apk-server
