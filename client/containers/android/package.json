@@ -14,13 +14,15 @@
     "cordova-android": "^6.4.0",
     "cordova-hot-code-push-local-dev-addon": "^0.4.2",
     "cordova-hot-code-push-plugin": "^1.5.3",
+    "cordova-plugin-crosswalk-webview": "^2.3.0",
     "cordova-plugin-whitelist": "^1.3.3"
   },
   "cordova": {
     "plugins": {
       "cordova-plugin-whitelist": {},
       "cordova-hot-code-push-plugin": {},
-      "cordova-hot-code-push-local-dev-addon": {}
+      "cordova-hot-code-push-local-dev-addon": {},
+      "cordova-plugin-crosswalk-webview": {}
     },
     "platforms": [
       "android"
