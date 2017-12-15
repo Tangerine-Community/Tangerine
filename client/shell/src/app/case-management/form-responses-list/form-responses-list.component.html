@@ -40,7 +40,9 @@
     <mat-header-cell *cdkHeaderCellDef> </mat-header-cell>
     <mat-cell *cdkCellDef="let formResponse">
       <i class="material-icons md-24">feedback</i>
-      <i class="material-icons md-24">speaker_notes</i>
+      <a href="/tangy-forms/index.html#form=/content/{{formResponse.formId}}/form.html&response-id={{formResponse.responseId}}">
+        <i class="material-icons md-24">speaker_notes</i>
+      </a>
     </mat-cell>
   </ng-container>
 
