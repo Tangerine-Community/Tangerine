@@ -19,7 +19,7 @@ module.exports = {
   // bail:true,
 
   // https://webpack.js.org/configuration/entry-context/
-  entry: './src/ckeditor.js',
+  entry: './ckeditor.js',
 
   // https://webpack.js.org/configuration/output/
   output: {
