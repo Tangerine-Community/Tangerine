@@ -24,7 +24,7 @@ export class SyncingService {
       const userDB = await this.getUserDB();
       const remoteHost = await this.getRemoteHost();
       const DB = new PouchDB(userDB);
-      const doc_ids = await this.getFormsLockedAndNotUploaded();
+      const doc_ids = await this.getIDsFormsLockedAndNotUploaded();
       if (doc_ids && doc_ids.length > 0) {
         DB.replicate.to(remoteHost, { doc_ids })
           .on('change', async (data) => {
@@ -45,12 +45,16 @@ export class SyncingService {
   }
 
 
-  async getFormsLockedAndNotUploaded() {
+  async getIDsFormsLockedAndNotUploaded() {
     const userDB = this.getUserDB();
     const DB = new PouchDB(userDB);
     const results = await DB.query('tangy-form/responsesLockedAndNotUploaded');
     const docIds = results.rows.map(row => row.key);
     return docIds;
+  }
+
+  async FormsLockedAndNotUploaded() {
+    const docIds = await this.getIDsFormsLockedAndNotUploaded();
   }
 
   async markDocsAsUploaded(replicatedDocIds) {
