@@ -31,24 +31,57 @@ To generate es5 versions in the tangy-forms-build directory:
 
 ## init the build dir
 
-Transpiled files are saved to tangy-forms-build.
+Transpiled files are saved to tangy-forms/dist directory.
 
 ```
-mkdir client/tangy-forms-build
 cd tangy-forms
-yarn run gulp init
+yarn run build
 ```
 
 ## watch for changes
 
 ```
 cd tangy-forms
-yarn run gulp
+yarn run dev
 ```
 
-This gulp target watches for changes on a small number of web components. You may need to modify, or better, refactor this
+and in another console
+
+```
+yarn run dev:mod
+```
+
+This yarn target watches for changes on a small number of web components. You may need to modify, or better, refactor this
 target to include the files you may be working on.
 
 # Viewing demos
 
 cd to client and run `yarn start` to run the http-server.
+
+## Ckeditor5
+
+The ckeditor5 editor is built using webpack. Use `yarn ckeditor` to build it.
+
+Configure the ckeditor plugin at tangy-forms/src/ckeditor.js. Output is at tangy-forms/src/tangy--textarea/build.
+
+If you make any changes to ckeditor, be sure to run `yarn dev-mod` on the tangy-forms source code to view the updated ckeditor.
+ckeditor.js is imported and is part of the webpack bundle. It is a bundle inside a bundle!
+
+Discussion and screenshots here: https://github.com/ckeditor/ckeditor5-widget/issues/3#issuecomment-341706772
+
+### Ckeditor5 plugins
+
+Create a repo on github for the plugin and install into tangerine-forms. Add the plugin to build-config.js and to src/tangy-form/ckeditor.js.
+
+Ckeditor5 plugin example and detailed plugin documentation : https://github.com/chrisekelley/ckeditor5-acasi
+
+Do not use `npm link` when developing a plugin for ckeditor5. The command `npm link` and webpack do not work well together.
+Instead, use the [wml](https://github.com/wix/wml) to copy changed files.
+
+```
+brew update
+brew install watchman
+```
+
+wml add  ~/source/Tangerine-Community/ckeditor5-acasi ~/source/Tangerine-Community/Tangerine-3.x.x/Tangerine/tangerine-forms/node_modules/ckeditor5-acasi
+wml start

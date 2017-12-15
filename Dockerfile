@@ -5,6 +5,9 @@ EXPOSE 4200
 RUN mkdir /tangerine
 WORKDIR /tangerine
 
+# Install vim
+RUN apt-get update && apt-get -y install vim
+
 # Install server.
 ADD server/package.json server/package.json
 RUN cd /tangerine/server && npm install
@@ -38,8 +41,12 @@ RUN cd /tangerine/client/tangy-forms && ./node_modules/.bin/bower --allow-root i
 ADD client/tangy-forms/postcss.config.js /tangerine/client/tangy-forms/postcss.config.js
 ADD client/tangy-forms/webpack.config.js /tangerine/client/tangy-forms/webpack.config.js
 ADD client/tangy-forms/webpack-module-build.config.js /tangerine/client/tangy-forms/webpack-module-build.config.js
+ADD client/tangy-forms/webpack-ckeditor.config.js /tangerine/client/tangy-forms/webpack-ckeditor.config.js
 ADD client/tangy-forms/assets /tangerine/client/tangy-forms/assets
+
+ADD client/tangy-forms/dist /tangerine/client/tangy-forms/dist
 ADD client/tangy-forms/src /tangerine/client/tangy-forms/src
+ADD client/tangy-forms/editor /tangerine/client/tangy-forms/editor
 RUN cd /tangerine/client/tangy-forms && yarn run build
 
 ADD client/app-updater/src /tangerine/client/app-updater/src
@@ -61,7 +68,6 @@ ADD server/editor.js server/editor.js
 # Add static assets.
 #
 
-ADD client/tangy-forms/assets /tangerine/client/tangy-forms/assets
 ADD client/content /tangerine/client/content
 RUN cp -r /tangerine/client/content /tangerine/client/build/
 

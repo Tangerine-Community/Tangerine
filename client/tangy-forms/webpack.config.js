@@ -71,7 +71,7 @@ const copyStatics = {
     to: join(outputPath, 'vendor'),
     flatten: true
   }, {
-    from: resolve('./src/build/ckeditor.js'),
+    from: resolve('./dist/ckeditor.js'),
     to: join(outputPath, 'vendor'),
     flatten: true
   }],

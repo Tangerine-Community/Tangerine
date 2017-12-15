@@ -272,6 +272,9 @@ class TangyFormApp extends Element {
 
   connectedCallback() {
     super.connectedCallback();
+    if (typeof Tangy === 'undefined') {
+      window.Tangy = {}
+    }
     let query = this.parseQuery(window.location.hash)
     let formPath = query.form
     let edit = query.edit
@@ -386,11 +389,8 @@ class TangyFormApp extends Element {
     if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true)
     if (query['hide-nav']) formEl.setAttribute('hide-nav', true)
     if (query['hide-responses']) formEl.setAttribute('hide-responses', true)
-    this.innerHTML = formTemplate.innerHTML
-    let tangyForm = this.querySelector('tangy-form')
-    if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true)
-    if (query['hide-nav']) formEl.setAttribute('hide-nav', true)
-    if (query['hide-responses']) formEl.setAttribute('hide-responses', true)
+    // this.innerHTML = formTemplate.innerHTML
+    // let tangyForm = this.querySelector('tangy-form')
     this.shadowRoot.innerHTML = formTemplate.innerHTML
     let tangyForm = this.shadowRoot.querySelector('tangy-form')
     tangyForm.addEventListener('ALL_ITEMS_CLOSED', () => {
