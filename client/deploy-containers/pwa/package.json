@@ -13,6 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "http-server": "^0.10.0",
+    "uuid": "^3.1.0",
     "polymer-cli": "^1.5.7"
   }
 }
