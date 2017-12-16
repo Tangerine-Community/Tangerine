@@ -41,7 +41,6 @@ RUN cd /tangerine/client/tangy-forms && ./node_modules/.bin/bower --allow-root i
 ADD client/tangy-forms/postcss.config.js /tangerine/client/tangy-forms/postcss.config.js
 ADD client/tangy-forms/webpack.config.js /tangerine/client/tangy-forms/webpack.config.js
 ADD client/tangy-forms/webpack-module-build.config.js /tangerine/client/tangy-forms/webpack-module-build.config.js
-ADD client/tangy-forms/webpack-ckeditor.config.js /tangerine/client/tangy-forms/webpack-ckeditor.config.js
 ADD client/tangy-forms/assets /tangerine/client/tangy-forms/assets
 
 ADD client/tangy-forms/dist /tangerine/client/tangy-forms/dist
