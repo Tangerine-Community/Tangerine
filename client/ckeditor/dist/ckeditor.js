@@ -70084,7 +70084,7 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
       // this.listenTo( view, 'execute', () => {
         let url = prompt( 'Sound URL' );
         if (url == "") {
-          url = '../src/assets/1.mp3'
+          url = '/content/assets/1.mp3'
         }
 
         let urlArray = url.split('/')
@@ -70530,7 +70530,8 @@ class IntroSrcDialogFormView extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckedi
                 focusNext: 'tab'
             }
         });
-        __WEBPACK_IMPORTED_MODULE_1__ckeditor_ckeditor5_ui_src_template__["a" /* default */].extend(this.saveButtonView.template, { attributes: { class: ['ck-button-action'] } });
+        // Template.extend( this.saveButtonView.template, {
+        this.saveButtonView.extendTemplate({ attributes: { class: ['ck-button-action'] } });
         this.template = new __WEBPACK_IMPORTED_MODULE_1__ckeditor_ckeditor5_ui_src_template__["a" /* default */]({
             tag: 'form',
             attributes: {
@@ -71038,7 +71039,8 @@ class FormDialogFormView extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5
                 focusNext: 'tab'
             }
         });
-        __WEBPACK_IMPORTED_MODULE_1__ckeditor_ckeditor5_ui_src_template__["a" /* default */].extend(this.saveButtonView.template, { attributes: { class: ['ck-button-action'] } });
+        // Template.extend( this.saveButtonView.template, {
+        this.saveButtonView.extendTemplate({ attributes: { class: ['ck-button-action'] } });
         this.template = new __WEBPACK_IMPORTED_MODULE_1__ckeditor_ckeditor5_ui_src_template__["a" /* default */]({
             tag: 'form',
             attributes: {
@@ -71362,7 +71364,8 @@ class AcasiToolbar extends __WEBPACK_IMPORTED_MODULE_1__ckeditor_ckeditor5_core_
     this._toolbar = new __WEBPACK_IMPORTED_MODULE_2__ckeditor_ckeditor5_ui_src_toolbar_toolbarview__["a" /* default */]();
 
     // Add CSS class to the toolbar.
-    __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_ui_src_template__["a" /* default */].extend( this._toolbar.template, {
+    // Template.extend( this._toolbar.template, {
+    this._toolbar.extendTemplate( {
       attributes: {
         class: 'ck-editor-toolbar'
       }
@@ -71563,7 +71566,8 @@ class FormToolbar extends __WEBPACK_IMPORTED_MODULE_1__ckeditor_ckeditor5_core_s
     this._toolbar = new __WEBPACK_IMPORTED_MODULE_2__ckeditor_ckeditor5_ui_src_toolbar_toolbarview__["a" /* default */]();
 
     // Add CSS class to the toolbar.
-    __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_ui_src_template__["a" /* default */].extend( this._toolbar.template, {
+    // Template.extend( this._toolbar.template, {
+    this._toolbar.extendTemplate( {
       attributes: {
         class: 'ck-editor-toolbar'
       }
