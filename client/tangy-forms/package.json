@@ -91,6 +91,7 @@
     "pouchdb-browser": "6.2.0",
     "redux": "3.7.2",
     "simply-uuid": "TylerGarlick/simple-uuid",
+    "sortable-list": "https://github.com/chrisekelley/sortable-list",
     "underscore": "1.8.3"
   }
 }

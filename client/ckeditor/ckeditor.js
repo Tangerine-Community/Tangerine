@@ -20,10 +20,10 @@ import LinkPlugin from '@ckeditor/ckeditor5-link/src/link'
 import ListPlugin from '@ckeditor/ckeditor5-list/src/list'
 import ParagraphPlugin from '@ckeditor/ckeditor5-paragraph/src/paragraph'
 import ImageuploadPlugin from '@ckeditor/ckeditor5-upload/src/imageupload'
-import Acasi from 'ckeditor5-acasi'
+import Acasi from './plugins/ckeditor5-acasi'
 import Dumpdata from 'ckeditor5-dumpData'
-import AcasiToolbar from 'ckeditor5-acasi/src/acasitoolbar'
-import FormToolbar from 'ckeditor5-acasi/src/formtoolbar'
+import AcasiToolbar from './plugins/ckeditor5-acasi/src/acasitoolbar'
+import FormToolbar from './plugins/ckeditor5-acasi/src/formtoolbar'
 
 
 export default class ClassicEditor extends ClassicEditorBase {}

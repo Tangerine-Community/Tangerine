@@ -6,8 +6,7 @@ import '../../node_modules/@polymer/paper-card/paper-card.js';
 import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
 import '../../node_modules/@polymer/paper-item/paper-icon-item.js';
 import '../../node_modules/@polymer/paper-item/paper-item-body.js';
-// import '../../bower_components/app-layout/app-header/app-header.js'
-// import '../../bower_components/app-layout/app-toolbar/app-toolbar.js'
+import '../../node_modules/sortable-list/sortable-list';
 import '../tangy-form/tangy-form.js';
 import '../tangy-textarea/tangy-textarea.js';
 
@@ -52,8 +51,27 @@ class TangyFormApp extends Element {
         border-top: 1px solid #e8e8e8;
         border-bottom: 1px solid #e8e8e8;
         padding: 5px 16px;
-        position: relative;      
+        position: relative; 
+        background-color: #e8e8e8;        
       }
+     .item-edit {
+        border-top: 1px solid #e8e8e8;
+        border-bottom: 1px solid #e8e8e8;
+        padding: 5px 16px;
+        position: relative; 
+      }
+     #save-order {
+        border-top: 1px solid #e8e8e8;
+        border-bottom: 1px solid #e8e8e8;
+        padding: 2px 2px;
+        position: relative; 
+        text-align: center;  
+        background-color: pink;
+      }
+      paper-icon-button.small {
+      width: 30px;
+      height: 30px;
+    }
     </style>
     <div class="tangy-form-app--container">
 
@@ -114,12 +132,21 @@ class TangyFormApp extends Element {
               </a>
               </div>
             </div>
+            <div id="save-order" hidden>
+              Save Order: <paper-icon-button
+                  icon="save"
+                  data-item-order="[[itemsOrder]]"
+                  class="small"
+                  on-click="saveItemsOrder">
+              </paper-icon-button>
+            </div>
             <div class="card-content">
             <template is="dom-if" if="{{items.size > 1}}">
               <div role="listbox">
+              <sortable-list on-sort-finish="onSortFinish" >
               <template is="dom-repeat" items="{{items}}">
                   <paper-item-body
-                      two-line
+                      one-line
                       class="[[item.class]]"
                       on-click="editFormItemListener"
                       data-item-id="[[item.id]]"
@@ -131,6 +158,7 @@ class TangyFormApp extends Element {
                     <!--<div secondary>[[item.src]]</div>-->
                   </paper-item-body>
               </template>
+              </sortable-list>
               </div>
             </template>
           </div>
@@ -140,7 +168,7 @@ class TangyFormApp extends Element {
         <div id="item-edit" hidden>
         <!--<paper-card  style="width: 600px;margin-left: auto; margin-right: auto;">-->
         <div style="width: 600px;margin-left: auto; margin-right: auto;">
-          <div class="card-actions">
+          <div class="item-edit">
             <div class="horizontal justified" style="text-align: right">
               <paper-button
                       data-item-src="[[itemFilename]]"
@@ -167,7 +195,7 @@ class TangyFormApp extends Element {
       <div id="item-create" hidden>
           <div style="width: 600px;margin-left: auto; margin-right: auto;">
             <form id="itemEditor">
-              <div class="card-actions">
+              <div class="item-edit">
                 <div class="horizontal justified" style="text-align: right">
                   <paper-button
                           data-form-src="[[formHtmlPath]]"
@@ -263,6 +291,10 @@ class TangyFormApp extends Element {
         type: Number,
         value: '',
       },
+      itemsOrder: {  // item order in form
+        type: Number,
+        value: '',
+      },
       itemOrderDisabled: {  // item order in form
         type: Boolean,
         value: false,
@@ -306,6 +338,45 @@ class TangyFormApp extends Element {
       query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
     }
     return query;
+  }
+
+  onSortFinish(event) {
+    const sortedItem = event.detail.target;
+    // console.log('sortedItem: ' + sortedItem)
+    let items = event.currentTarget.children
+    let sortedItems = []
+    for (let item of items) {
+      let itemSrc = item.dataItemSrc
+      sortedItems.push(itemSrc)
+    }
+    this.itemsOrder = sortedItems
+    this.$['save-order'].hidden = false
+    console.log("sortedItems: " + sortedItems)
+  }
+
+  async saveItemsOrder(event) {
+    let formOrderObj = {
+      itemsOrder: this.itemsOrder,
+      formHtmlPath: this.formHtmlPath
+    }
+    console.log("formOrderObj" + JSON.stringify(formOrderObj))
+    let result = await fetch("/editor/itemsOrder/save", {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "POST",
+      body: JSON.stringify(formOrderObj)
+    }).then(function(response) {
+      if(response.ok) {
+        response.json().then(function(data) {
+          console.log("result: " + JSON.stringify(data))
+          this.$['save-order'].hidden = true
+          this.itemsOrder = null
+        });
+      }
+    })
+
   }
 
   async showFormsList() {

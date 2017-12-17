@@ -8703,6 +8703,12 @@ sort-keys@^1.0.0, sort-keys@^1.1.1, sort-keys@^1.1.2:
   dependencies:
     is-plain-obj "^1.0.0"
 
+"sortable-list@https://github.com/chrisekelley/sortable-list":
+  version "3.0.0-pre.1"
+  resolved "https://github.com/chrisekelley/sortable-list#a6bc2cebbd70535cab683f6b56b2849944cc2bb7"
+  dependencies:
+    "@polymer/polymer" LasaleFamine/polymer#3.0-preview
+
 source-list-map@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/source-list-map/-/source-list-map-2.0.0.tgz#aaa47403f7b245a92fbc97ea08f250d6087ed085"

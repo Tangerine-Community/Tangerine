@@ -119,6 +119,16 @@ app.get('/project/listAll', function (req, res, next) {
     await fs.writeJson(formsJsonPath, formJson)
   }
 
+app.post('/editor/itemsOrder/save', async function (req, res) {
+  let itemsOrder = req.body.itemsOrder
+  let formHtmlPath = req.body.formHtmlPath
+  console.log("itemsOrder" + itemsOrder)
+  let msg = {
+    msg:"Item order saved."
+  }
+  res.send(msg)
+})
+
 // Saves an item - and a new form when formName is passed.
 // otherwise, the path to the existing form is extracted from formHtmlPath.
 app.post('/editor/item/save', async function (req, res) {

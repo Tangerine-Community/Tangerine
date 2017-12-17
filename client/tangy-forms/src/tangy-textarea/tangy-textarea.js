@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
-import './build/ckeditor.js'
+// import './build/ckeditor.js'
 
 
 /**
