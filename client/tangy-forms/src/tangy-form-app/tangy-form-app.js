@@ -31,6 +31,9 @@ class TangyFormApp extends Element {
         padding: 15px;
         margin: 15px;
       }
+      .form-editor-link {
+        /*margin: 15px;*/
+      }
       .settings {
         position: relative;
         /*left: 45px;*/
@@ -116,7 +119,7 @@ class TangyFormApp extends Element {
       <div id="form-editor">
         <div id="form-item-listing" hidden style="max-width: 200px; float:left">
               <!--<paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>-->
-          <paper-card class="form-link" alt="[[headerTitle]]" heading="[[headerTitle]]">
+          <paper-card class="form-editor-link" alt="[[headerTitle]]" heading="[[headerTitle]]">
             <div class="card-actions">
               <div class="horizontal justified">
               <paper-icon-button
@@ -143,16 +146,15 @@ class TangyFormApp extends Element {
             <div class="card-content">
             <template is="dom-if" if="{{items.size > 1}}">
               <div role="listbox">
-              <sortable-list on-sort-finish="onSortFinish" >
+              <sortable-list on-sort-finish="onSortFinish" sortable=".sortable">
               <template is="dom-repeat" items="{{items}}">
                   <paper-item-body
                       one-line
-                      class="[[item.class]]"
+                      class="sortable"
                       on-click="editFormItemListener"
                       data-item-id="[[item.id]]"
                       data-form-src="[[item.formSrc]]"
                       data-item-src="[[item.src]]"
-                      data-item-order="[[item.itemOrder]]"
                       data-item-title="[[item.title]]">
                     <div>[[item.title]]</div>
                     <!--<div secondary>[[item.src]]</div>-->
@@ -181,10 +183,7 @@ class TangyFormApp extends Element {
           <div class="card-content">
             <!--<div style="width: 600px;margin-left: auto; margin-right: auto;">-->
               <form id="itemEditor">
-
                 <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
-                <paper-input id="itemOrder" value="{{itemOrder}}" label="order" always-float-label disabled$="{{itemOrderDisabled}}"></paper-input>
-                <!--<paper-textarea id="itemHtml" value="{{itemHtmlText}}" label="html code" always-float-label></paper-textarea>-->
                 <tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>
               </form>
             </div>
@@ -209,9 +208,6 @@ class TangyFormApp extends Element {
               <paper-input id="formTitle" value="{{formTitle}}" label="form title"  always-float-label></paper-input>
               <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
               <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
-              <paper-input id="itemOrder" value="{{itemOrder}}" label="order" always-float-label disabled$="{{itemOrderDisabled}}"></paper-input>
-              <!--<exmg-ckeditor id="itemHtml" value="{{itemHtmlText}}" label="html code" always-float-label></exmg-ckeditor>-->
-              <!--<tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>-->
             </form>
           </div>
       </div>
@@ -287,17 +283,17 @@ class TangyFormApp extends Element {
         type: String,
         value: '',
       },
-      itemOrder: {  // item order in form
-        type: Number,
-        value: '',
-      },
+      // itemOrder: {  // item order in form
+      //   type: Number,
+      //   value: '',
+      // },
       itemsOrder: {  // item order in form
         type: Number,
         value: '',
       },
       itemOrderDisabled: {  // item order in form
         type: Boolean,
-        value: false,
+        value: true,
       }
     };
   }
@@ -355,6 +351,7 @@ class TangyFormApp extends Element {
   }
 
   async saveItemsOrder(event) {
+    let that = this
     let formOrderObj = {
       itemsOrder: this.itemsOrder,
       formHtmlPath: this.formHtmlPath
@@ -371,8 +368,8 @@ class TangyFormApp extends Element {
       if(response.ok) {
         response.json().then(function(data) {
           console.log("result: " + JSON.stringify(data))
-          this.$['save-order'].hidden = true
-          this.itemsOrder = null
+          that.$['save-order'].hidden = true
+          that.itemsOrder = null
         });
       }
     })
@@ -415,7 +412,7 @@ class TangyFormApp extends Element {
     this.formHtmlPath = event.currentTarget.dataFormSrc
     this.itemFilename = event.currentTarget.dataItemSrc
     this.itemId = event.currentTarget.dataItemId
-    this.itemOrder = event.currentTarget.dataItemOrder
+    // this.itemOrder = event.currentTarget.dataItemOrder
     this.itemTitle = event.currentTarget.dataItemTitle
     if (this.itemFilename !== '') this.editItem(this.itemFilename)
   }
@@ -426,7 +423,7 @@ class TangyFormApp extends Element {
     this.formHtmlPath = formPath
     this.itemFilename = event.currentTarget.dataItemSrc
     this.itemId = event.currentTarget.dataItemId
-    this.itemOrder = event.currentTarget.dataItemOrder
+    // this.itemOrder = event.currentTarget.dataItemOrder
     this.itemTitle = event.currentTarget.dataItemTitle
     this.itemSrc = event.currentTarget.dataset.itemSrc
     let newItem
@@ -492,7 +489,7 @@ class TangyFormApp extends Element {
       item.id = node.getAttribute('id')
       item.src = node.getAttribute('src')
       item.title = node.getAttribute('title')
-      item.itemOrder = node.getAttribute('itemOrder')
+      // item.itemOrder = node.getAttribute('itemOrder')
       item.formSrc = formSrc
       this.items.push(item)
     }
@@ -557,7 +554,7 @@ class TangyFormApp extends Element {
         // todo try to grab local pouch version of item
         let itemHtml = await fetch(itemSrc)
         this.itemHtmlText = await itemHtml.text()
-        console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
+        // console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
         if (this.itemHtmlText === '') {
           Tangy.editor.setData('<p>&nbsp;</p>')
         } else {
@@ -570,7 +567,7 @@ class TangyFormApp extends Element {
       Tangy.editor.setData('<p>&nbsp;</p>')
       this.headerTitle = "Create Form"
       this.itemHtmlText = ''
-      this.itemOrder = null
+      // this.itemOrder = null
       this.itemOrderDisabled = true;
     }
   }
@@ -598,8 +595,7 @@ class TangyFormApp extends Element {
     item.itemId = this.itemId
     item.itemTitle = itemTitle
     item.itemHtmlText = itemHtmlText
-    // todo: eventually we will have a UI to re-arrange the items in the item listing, but for now, get the value from our form.
-    item.itemOrder = this.$.itemOrder.value
+    // item.itemOrder = this.$.itemOrder.value
     item.formTitle = this.$.formTitle.value
     // Check if this is a new item
     if (typeof item.itemId == 'undefined') {

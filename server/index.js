@@ -119,17 +119,84 @@ app.get('/project/listAll', function (req, res, next) {
     await fs.writeJson(formsJsonPath, formJson)
   }
 
+let openForm = async function (path) {
+  let form
+  try {
+    form = await fs.readFile(path, 'utf8')
+  } catch (e) {
+    console.log("Error opening form: ", e);
+  }
+  // console.log("openForm will return form: " + JSON.stringify(form))
+  return form
+};
+
 app.post('/editor/itemsOrder/save', async function (req, res) {
+  let contentRoot = config.contentRoot
   let itemsOrder = req.body.itemsOrder
   let formHtmlPath = req.body.formHtmlPath
-  console.log("itemsOrder" + itemsOrder)
-  let msg = {
-    msg:"Item order saved."
+  // console.log("itemsOrder: " + itemsOrder)
+
+  // fetch the original form
+  let formDir = formHtmlPath.split('/')[2]
+  let formName = formHtmlPath.split('/')[3]
+  let formPath = contentRoot + sep + formDir + sep + formName
+  let originalForm = await openForm(formPath);
+
+  // Now that we have originalForm, we can load it and add items to it.
+  const $ = cheerio.load(originalForm)
+  // search for tangy-form-item
+  let formItemList = $('tangy-form-item')
+  // console.log("formItemList: " + formItemList)
+  let sortedItemList = []
+  for (let itemScr of itemsOrder) {
+    if (itemScr !== null) {
+      // console.log("itemScr: " + itemScr)
+      // let item = $('tangy-form-item').attr('src', src).html()
+      let item = formItemList.is(function(i, el) {
+        // this === el
+        // let id = $(this).attr('id')
+        let src = $(this).attr('src')
+        if (src === itemScr) {
+          // console.log("$(this): " + $(this))
+          sortedItemList.push($(this))
+          return src === itemScr
+        }
+      })
+    }
   }
-  res.send(msg)
+  // console.log("sortedItemList: " + sortedItemList)
+  let tangyform = $('tangy-form')
+  // console.log("tangyform: " + tangyform)
+  // save the updated list back to the form.
+  $('tangy-form-item').remove()
+  // console.log("tangyform slimmer: " + tangyform)
+  // $(sortedItemList).appendTo('tangy-form')
+  $('tangy-form').append(sortedItemList)
+  // console.log('html after: ' + $.html())
+  let form = $.html()
+  // await editor.saveForm(formPath, form);
+  // console.log('now outputting ' + formPath)
+  await fs.outputFile(formPath, form)
+    .then(() => {
+      let msg = "Success! Updated file at: " + formPath
+      // let message = {message: msg}
+      let resp = {
+        "message": msg
+      }
+      console.log(resp)
+      res.send(resp)
+    })
+    .catch(err => {
+      let msg = "An error with form outputFile: " + err
+      let message = {message: msg};
+      console.error(message)
+      res.send(message)
+    })
 })
 
-// Saves an item - and a new form when formName is passed.
+
+
+// Saves an item - and a new form when formName is passed.async
 // otherwise, the path to the existing form is extracted from formHtmlPath.
 app.post('/editor/item/save', async function (req, res) {
   let displayFormsListing = false
@@ -200,15 +267,8 @@ app.post('/editor/item/save', async function (req, res) {
   } else {
     formDir = formHtmlPath.split('/')[2]
     formName = formHtmlPath.split('/')[3]
-    // let dir = projectRoot + projectName;
-    // open the form and parse it
     formPath = contentRoot + sep + formDir + sep + formName
-    try {
-      originalForm = await fs.readFile(formPath,'utf8')
-    } catch (e) {
-      console.log("Error opening originalForm: " , e);
-    }
-    console.log("originalForm: " + JSON.stringify(originalForm))
+    originalForm = await openForm(formPath);
   }
 
   // Now that we have originalForm, we can load it and add items to it.
@@ -245,6 +305,8 @@ app.post('/editor/item/save', async function (req, res) {
       console.error("An error with form outputFile: " + err)
       res.send(err)
     })
+
+  // Save the item
   // let resp =  await editor.saveItem(formPath, itemFilename, itemHtmlText)
   let itemPath = formPath.substring(0, formPath.lastIndexOf("/")) + sep + itemFilename;
   console.log("Saving item at : " + itemPath)
