@@ -10,7 +10,6 @@
 // import View from '../view';
 // import Template from '../template';
 
-import Template from "@ckeditor/ckeditor5-ui/src/template";
 import View from "@ckeditor/ckeditor5-ui/src/view";
 
 /**
@@ -59,7 +58,7 @@ export default class TextareaView extends View {
 
     const bind = this.bindTemplate;
 
-    this.template = new Template( {
+    this.setTemplate( {
       tag: 'textarea',
       attributes: {
         // type: 'text',

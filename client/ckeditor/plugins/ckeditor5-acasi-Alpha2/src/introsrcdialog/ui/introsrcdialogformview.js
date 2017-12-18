@@ -8,7 +8,6 @@
  */
 
 import View from '@ckeditor/ckeditor5-ui/src/view';
-import Template from '@ckeditor/ckeditor5-ui/src/template';
 import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection';
 
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
@@ -101,7 +100,8 @@ export default class IntroSrcDialogFormView extends View {
       }
     } );
 
-    Template.extend( this.saveButtonView.template, {
+    // Template.extend( this.saveButtonView.template, {
+    this.saveButtonView.extendTemplate( {
       attributes: {
         class: [
           'ck-button-action'
@@ -109,7 +109,7 @@ export default class IntroSrcDialogFormView extends View {
       }
     } );
 
-    this.template = new Template( {
+    this.setTemplate( {
       tag: 'form',
 
       attributes: {
@@ -132,17 +132,24 @@ export default class IntroSrcDialogFormView extends View {
             ]
           },
 
-          children: [
-            this.saveButtonView,
-            this.cancelButtonView
-          ]
-        }
-      ]
-    } );
+					children: [
+						this.saveButtonView,
+						this.cancelButtonView
+					]
+				}
+			]
+		} );
+	}
 
-    submitHandler( {
-      view: this
-    } );
+	/**
+	 * @inheritDoc
+	 */
+	render() {
+		super.render();
+
+		this.keystrokes.listenTo( this.element );
+
+		submitHandler( { view: this } );
 
     [ this.labeledInput, this.saveButtonView, this.cancelButtonView ]
       .forEach( v => {
@@ -154,25 +161,16 @@ export default class IntroSrcDialogFormView extends View {
       } );
   }
 
-  /**
-   * @inheritDoc
-   */
-  init() {
-    super.init();
-
-    this.keystrokes.listenTo( this.element );
-  }
-
-  /**
-   * Creates the button view.
-   *
-   * @private
-   * @param {String} label The button label
-   * @param {String} [eventName] The event name that the ButtonView#execute event will be delegated to.
-   * @returns {module:ui/button/buttonview~ButtonView} The button view instance.
-   */
-  _createButton( label, eventName ) {
-    const button = new ButtonView( this.locale );
+	/**
+	 * Creates the button view.
+	 *
+	 * @private
+	 * @param {String} label The button label
+	 * @param {String} [eventName] The event name that the ButtonView#execute event will be delegated to.
+	 * @returns {module:ui/button/buttonview~ButtonView} The button view instance.
+	 */
+	_createButton( label, eventName ) {
+		const button = new ButtonView( this.locale );
 
     button.label = label;
     button.withText = true;

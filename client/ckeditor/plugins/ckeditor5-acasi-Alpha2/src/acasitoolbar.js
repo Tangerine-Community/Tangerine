@@ -71,7 +71,8 @@ export default class AcasiToolbar extends Plugin {
     this._toolbar = new ToolbarView();
 
     // Add CSS class to the toolbar.
-    Template.extend( this._toolbar.template, {
+    // Template.extend( this._toolbar.template, {
+    this._toolbar.extendTemplate( {
       attributes: {
         class: 'ck-editor-toolbar'
       }

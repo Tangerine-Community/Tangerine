@@ -4,15 +4,15 @@
  */
 
 /**
- * @module ckeditor5-acasi/acasitoolbar
+ * @module ckeditor5-acasi/formtoolbar
  */
 
 import Template from '@ckeditor/ckeditor5-ui/src/template';
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import ToolbarView from '@ckeditor/ckeditor5-ui/src/toolbar/toolbarview';
 import ContextualBalloon from '@ckeditor/ckeditor5-ui/src/panel/balloon/contextualballoon';
-import { isAcasiWidgetSelected } from './utils';
-import { repositionContextualBalloon, getBalloonPositionData } from './utils';
+import { isCustomWidgetSelected } from './utils';
+import { repositionCustomWidgetContextualBalloon, getBalloonPositionData } from './utils';
 
 const balloonClassName = 'ck-toolbar-container ck-editor-toolbar-container';
 
@@ -26,7 +26,7 @@ const balloonClassName = 'ck-toolbar-container ck-editor-toolbar-container';
  *
  * @extends module:core/plugin~Plugin
  */
-export default class AcasiToolbar extends Plugin {
+export default class FormToolbar extends Plugin {
   /**
    * @inheritDoc
    */
@@ -38,7 +38,7 @@ export default class AcasiToolbar extends Plugin {
    * @inheritDoc
    */
   static get pluginName() {
-    return 'AcasiToolbar';
+    return 'FormToolbar';
   }
 
   /**
@@ -46,7 +46,7 @@ export default class AcasiToolbar extends Plugin {
    */
   afterInit() {
     const editor = this.editor;
-    const toolbarConfig = editor.config.get( 'acasi.toolbar' );
+    const toolbarConfig = editor.config.get( 'form.toolbar' );
 
     // Don't add the toolbar if there is no configuration.
     if ( !toolbarConfig || !toolbarConfig.length ) {
@@ -71,7 +71,8 @@ export default class AcasiToolbar extends Plugin {
     this._toolbar = new ToolbarView();
 
     // Add CSS class to the toolbar.
-    Template.extend( this._toolbar.template, {
+    // Template.extend( this._toolbar.template, {
+    this._toolbar.extendTemplate( {
       attributes: {
         class: 'ck-editor-toolbar'
       }
@@ -91,7 +92,7 @@ export default class AcasiToolbar extends Plugin {
     }, { priority: 'low' } );
   }
 
-  // _isAcasiWidgetSelected( viewSelection ) {
+  // _isCustomWidgetSelected( viewSelection ) {
   //   const viewElement = viewSelection.getSelectedElement();
   //
   //   return !!( viewElement && isImageWidget( viewElement ) );
@@ -109,7 +110,7 @@ export default class AcasiToolbar extends Plugin {
     if ( !editor.ui.focusTracker.isFocused ) {
       this._hideToolbar();
     } else {
-      if ( isAcasiWidgetSelected( editor.editing.view.selection ) ) {
+      if ( isCustomWidgetSelected( 'form', editor.editing.view.selection ) ) {
         this._showToolbar();
       } else {
         this._hideToolbar();
@@ -126,7 +127,7 @@ export default class AcasiToolbar extends Plugin {
     const editor = this.editor;
 
     if ( this._isVisible ) {
-      repositionContextualBalloon( editor );
+      repositionCustomWidgetContextualBalloon( 'form', editor );
     } else {
       if ( !this._balloon.hasView( this._toolbar ) ) {
         this._balloon.add( {

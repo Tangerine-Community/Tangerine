@@ -71,8 +71,7 @@ export default class FormToolbar extends Plugin {
     this._toolbar = new ToolbarView();
 
     // Add CSS class to the toolbar.
-    // Template.extend( this._toolbar.template, {
-    this._toolbar.extendTemplate( {
+    Template.extend( this._toolbar.template, {
       attributes: {
         class: 'ck-editor-toolbar'
       }

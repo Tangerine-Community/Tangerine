@@ -34,6 +34,7 @@ export default class Acasi extends Plugin {
   }
 
   init() {
+    console.log("Acasi plugin")
     const editor = this.editor;
     const doc = editor.document;
     const schema = doc.schema;
@@ -233,7 +234,7 @@ export default class Acasi extends Plugin {
       // this.listenTo( view, 'execute', () => {
         let url = prompt( 'Sound URL' );
         if (url == "") {
-          url = '../src/assets/1.mp3'
+          url = '/content/assets/1.mp3'
         }
 
         let urlArray = url.split('/')

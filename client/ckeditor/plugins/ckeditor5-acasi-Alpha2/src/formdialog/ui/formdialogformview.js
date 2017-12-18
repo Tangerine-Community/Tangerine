@@ -19,13 +19,15 @@ import submitHandler from '@ckeditor/ckeditor5-ui/src/bindings/submithandler';
 import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
 import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
 import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler';
+import BoxedEditorUIView from "@ckeditor/ckeditor5-ui/src/editorui/boxed/boxededitoruiview";
+import TextareaView from "../../textareaview";
 
 /**
  * The IntroSrcDialogFormView class.
  *
  * @extends module:ui/view~View
  */
-export default class IntroSrcDialogFormView extends View {
+export default class FormDialogFormView extends View {
   /**
    * @inheritDoc
    */
@@ -55,7 +57,14 @@ export default class IntroSrcDialogFormView extends View {
      *
      * @member {module:ui/labeledinput/labeledinputview~LabeledInputView} #labeledTextarea
      */
-    this.labeledInput = this._createLabeledInputView();
+    this.formIdInput = this._createFormIdInputView();
+
+    /**
+     * A textarea with a label.
+     *
+     * @member {module:ui/labeledinput/labeledinputview~LabeledInputView} #labeledTextarea
+     */
+    this.onchangeInput = this._createOnchangeInputView();
 
     /**
      * A button used to submit the form.
@@ -101,7 +110,8 @@ export default class IntroSrcDialogFormView extends View {
       }
     } );
 
-    Template.extend( this.saveButtonView.template, {
+    // Template.extend( this.saveButtonView.template, {
+    this.saveButtonView.extendTemplate( {
       attributes: {
         class: [
           'ck-button-action'
@@ -109,12 +119,12 @@ export default class IntroSrcDialogFormView extends View {
       }
     } );
 
-    this.template = new Template( {
-      tag: 'form',
+		this.setTemplate( {
+			tag: 'form',
 
       attributes: {
         class: [
-          'cke-text-alternative-form',
+          'cke-formId-form',
         ],
 
         // https://github.com/ckeditor/ckeditor5-image/issues/40
@@ -122,13 +132,28 @@ export default class IntroSrcDialogFormView extends View {
       },
 
       children: [
-        this.labeledInput,
+        this.formIdInput,
         {
           tag: 'div',
 
           attributes: {
             class: [
-              'cke-text-alternative-form__actions'
+              'cke-formId-form__actions'
+            ]
+          }
+          // ,
+          // children: [
+          //   this.saveButtonView,
+          //   this.cancelButtonView
+          // ]
+        },
+        this.onchangeInput,
+        {
+          tag: 'div',
+
+          attributes: {
+            class: [
+              'cke-onchangeInput-form__actions'
             ]
           },
 
@@ -139,12 +164,19 @@ export default class IntroSrcDialogFormView extends View {
         }
       ]
     } );
+  }
 
-    submitHandler( {
-      view: this
-    } );
+  /**
+   * @inheritDoc
+   */
+  render() {
+    super.render();
 
-    [ this.labeledInput, this.saveButtonView, this.cancelButtonView ]
+    this.keystrokes.listenTo( this.element );
+
+    submitHandler( { view: this } );
+
+    [ this.formIdInput, this.onchangeInput, this.saveButtonView, this.cancelButtonView ]
       .forEach( v => {
         // Register the view as focusable.
         this._focusables.add( v );
@@ -152,15 +184,6 @@ export default class IntroSrcDialogFormView extends View {
         // Register the view in the focus tracker.
         this.focusTracker.add( v.element );
       } );
-  }
-
-  /**
-   * @inheritDoc
-   */
-  init() {
-    super.init();
-
-    this.keystrokes.listenTo( this.element );
   }
 
   /**
@@ -190,11 +213,26 @@ export default class IntroSrcDialogFormView extends View {
    * @private
    * @return {module:ui/labeledinput/labeledinputview~LabeledInputView}
    */
-  _createLabeledInputView() {
+  _createFormIdInputView() {
     const t = this.locale.t;
-    const labeledInput = new LabeledInputView( this.locale, InputTextView );
-    labeledInput.label = t( 'Intro Source' );
+    const formIdInput = new LabeledInputView( this.locale, InputTextView );
+    formIdInput.label = t( 'Form id' );
 
-    return labeledInput;
+    return formIdInput;
+  }
+
+  /**
+   * Creates an input with a label.
+   *
+   * @private
+   * @return {module:ui/labeledinput/labeledinputview~LabeledInputView}
+   */
+  _createOnchangeInputView() {
+    const t = this.locale.t;
+    // const onchangeInput = new LabeledInputView( this.locale, InputTextView );
+    const onchangeInput = new LabeledInputView( this.locale, TextareaView );
+    onchangeInput.label = t( 'Onchange javascript' );
+
+    return onchangeInput;
   }
 }

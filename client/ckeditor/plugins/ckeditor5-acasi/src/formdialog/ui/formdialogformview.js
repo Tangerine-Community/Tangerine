@@ -110,8 +110,7 @@ export default class FormDialogFormView extends View {
       }
     } );
 
-    // Template.extend( this.saveButtonView.template, {
-    this.saveButtonView.extendTemplate( {
+    Template.extend( this.saveButtonView.template, {
       attributes: {
         class: [
           'ck-button-action'
@@ -119,8 +118,8 @@ export default class FormDialogFormView extends View {
       }
     } );
 
-		this.setTemplate( {
-			tag: 'form',
+    this.template = new Template( {
+      tag: 'form',
 
       attributes: {
         class: [
@@ -164,17 +163,10 @@ export default class FormDialogFormView extends View {
         }
       ]
     } );
-  }
 
-  /**
-   * @inheritDoc
-   */
-  render() {
-    super.render();
-
-    this.keystrokes.listenTo( this.element );
-
-    submitHandler( { view: this } );
+    submitHandler( {
+      view: this
+    } );
 
     [ this.formIdInput, this.onchangeInput, this.saveButtonView, this.cancelButtonView ]
       .forEach( v => {
@@ -184,6 +176,15 @@ export default class FormDialogFormView extends View {
         // Register the view in the focus tracker.
         this.focusTracker.add( v.element );
       } );
+  }
+
+  /**
+   * @inheritDoc
+   */
+  init() {
+    super.init();
+
+    this.keystrokes.listenTo( this.element );
   }
 
   /**
