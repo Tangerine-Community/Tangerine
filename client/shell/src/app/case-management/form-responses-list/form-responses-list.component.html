@@ -40,12 +40,13 @@
     <mat-header-cell *cdkHeaderCellDef> </mat-header-cell>
     <mat-cell *cdkCellDef="let formResponse">
       <i class="material-icons md-24">feedback</i>
-      <a href="/tangy-forms/index.html#form=/content/{{formResponse.formId}}/form.html&response-id={{formResponse.responseId}}">
-        <i class="material-icons md-24">speaker_notes</i>
+      <a [routerLink]="['/tangy-forms-player/']" [queryParams]="{formIndex:formResponse.formIndex, 'responseId':formResponse.responseId,database:formResponse.database}">
+        <!-- <a href="/tangy-forms/index.html#form=/content/{{formResponse.formSrc}}&response-id={{formResponse.responseId}}&database={{formResponse.database}} "> -->
+        <i class="material-icons md-24 ">speaker_notes</i>
       </a>
     </mat-cell>
   </ng-container>
 
-  <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+  <mat-header-row *cdkHeaderRowDef="displayedColumns "></mat-header-row>
+  <mat-row *cdkRowDef="let row; columns: displayedColumns; "></mat-row>
 </mat-table>
