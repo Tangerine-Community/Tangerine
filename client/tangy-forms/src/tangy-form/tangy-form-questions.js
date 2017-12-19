@@ -20,16 +20,10 @@ import '../tangy-checkboxes/tangy-checkboxes.js'
 import '../tangy-radio-buttons/tangy-radio-buttons.js'
 import '../tangy-location/tangy-location.js'
 import '../tangy-gps/tangy-gps.js'
+import '../tangy-toggle-button/tangy-toggle-button.js'
+import '../tangy-acasi/tangy-acasi.js'
 
-// <link rel="import" href="../tangy-timed/tangy-timed.html">
-//   <link rel="import" href="../tangy-gps/tangy-gps.html">
-//   <link rel="import" href="../tangy-location/tangy-location.html">
-//   <link rel="import" href="../tangy-checkbox/tangy-checkbox.html">
-//   <link rel="import" href="../tangy-checkboxes/tangy-checkboxes.html">
-//   <link rel="import" href="../tangy-radio-buttons/tangy-radio-buttons.html">
-//   <link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
-//   <link rel="import" href="../tangy-toggle-button/tangy-toggle-button.html">
-//
+
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
 //   <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
@@ -185,7 +179,7 @@ export class TangyFormQuestions extends PolymerElement {
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
- 
+
         // Notify store is open and send up the items if it does not have them.
         if (this.response.items.length === 0) {
           this.response.items = ([].slice.call(this.querySelectorAll('tangy-form-item'))).map((element) => element.getProps())
@@ -194,9 +188,9 @@ export class TangyFormQuestions extends PolymerElement {
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
           this.store.dispatch({
-            type: INPUT_VALUE_CHANGE,  
-            inputName: event.detail.inputName, 
-            inputValue: event.detail.inputValue, 
+            type: INPUT_VALUE_CHANGE,
+            inputName: event.detail.inputName,
+            inputValue: event.detail.inputValue,
             inputInvalid: event.detail.inputInvalid,
             inputIncomplete: event.detail.inputIncomplete
           })
@@ -214,7 +208,7 @@ export class TangyFormQuestions extends PolymerElement {
 
       // Prevent parallel reflects, leads to race conditions.
       throttledReflect(iAmQueued = false) {
-        // If there is an reflect already queued, we can quit. 
+        // If there is an reflect already queued, we can quit.
         if (this.reflectQueued && !iAmQueued) return
         if (this.reflectRunning) {
           this.reflectQueued = true
@@ -237,10 +231,10 @@ export class TangyFormQuestions extends PolymerElement {
         // Set state in tangy-form-item elements.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
-          let index = state.items.findIndex((itemState) => item.id == itemState.id) 
+          let index = state.items.findIndex((itemState) => item.id == itemState.id)
           if (index !== -1) item.setProps(state.items[index])
         })
-        
+
         // Set progress state.
         this.$.progress.setAttribute('value', state.progress)
 
@@ -294,7 +288,7 @@ export class TangyFormQuestions extends PolymerElement {
           let input = state.inputs.find((input) => input.name == name)
           if (input) return input.value
         }
-        let inputHide = tangyFormActions.inputHide 
+        let inputHide = tangyFormActions.inputHide
         let inputShow = tangyFormActions.inputShow
         let inputEnable = tangyFormActions.inputEnable
         let inputDisable = tangyFormActions.inputDisable
@@ -331,6 +325,6 @@ export class TangyFormQuestions extends PolymerElement {
 
     }
 
-    
+
     window.customElements.define(TangyFormQuestions.is, TangyFormQuestions);
 

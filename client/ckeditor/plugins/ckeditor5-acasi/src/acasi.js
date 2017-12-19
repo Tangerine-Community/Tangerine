@@ -74,7 +74,7 @@ export default class Acasi extends Plugin {
     schema.objects.add( 'paper-radio-button' );
 
     schema.registerItem( 'tangy-acasi' );
-    schema.allow( { name: 'tangy-acasi', attributes: [ 'intro-src' ], inside: 'form' } );
+    schema.allow( { name: 'tangy-acasi', attributes: [ 'intro-src', 'name' ], inside: 'form' } );
     // schema.allow( { name: 'tangy-acasi', inside: '$root' } );
     schema.allow( { name: '$inline', inside: 'tangy-acasi' } );
     schema.allow( { name: 'image', inside: 'tangy-acasi' } );
@@ -107,7 +107,9 @@ export default class Acasi extends Plugin {
       .toElement( (element) => {
         console.log("data.modelToView tangy-acasi element: ")
         const introSrc = element.item.getAttribute('intro-src')
-        let container = new ViewContainerElement( 'tangy-acasi', {'intro-src': introSrc} );
+        //const name = element.item.getAttribute('name')
+        const name = 'test'
+        let container = new ViewContainerElement( 'tangy-acasi', {'intro-src': introSrc, 'name': name} );
         return container
       })
     buildModelConverter().for( data.modelToView )
@@ -233,12 +235,15 @@ export default class Acasi extends Plugin {
       // this.listenTo( view, 'execute', () => {
         let url = prompt( 'Sound URL' );
         if (url == "") {
-          url = '../src/assets/1.mp3'
+          url = '/content/assets/1.mp3'
         }
 
         let urlArray = url.split('/')
         let filename = urlArray.slice(-1)[0]
-        let name = 't_' + filename;
+        let filenameArray = filename.split('.')
+        let fileIdentifier = filenameArray[0]
+        let name = 't_' + fileIdentifier;
+        let taName = 'ta_' + fileIdentifier;
 
         editor.document.enqueueChanges( () => {
           const imageElement1 = new ModelElement( 'image', { src: '/content/assets/images/never.png'});
@@ -253,7 +258,7 @@ export default class Acasi extends Plugin {
 
           // // const widgetElement = new ModelElement('figure', { class: 'fancy-widget' },imageElement)
           // editor.data.insertContent( imageElement, editor.document.selection );
-          const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url}, [prb1, prb2, prb3, prb4])
+          const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [prb1, prb2, prb3, prb4])
           const form = new ModelElement( 'form', {'id': '', 'onchange': ''}, [acasi])
           // const form = new ModelElement( 'form', {'id': ''}, [acasi])
           // const acasi = new ModelElement( 'tangy-acasi', { src: imageUrl });

@@ -43,9 +43,12 @@ ADD client/tangy-forms/webpack.config.js /tangerine/client/tangy-forms/webpack.c
 ADD client/tangy-forms/webpack-module-build.config.js /tangerine/client/tangy-forms/webpack-module-build.config.js
 ADD client/tangy-forms/assets /tangerine/client/tangy-forms/assets
 
+
 ADD client/tangy-forms/dist /tangerine/client/tangy-forms/dist
 ADD client/tangy-forms/src /tangerine/client/tangy-forms/src
 ADD client/tangy-forms/editor /tangerine/client/tangy-forms/editor
+ADD client/ckeditor/dist /tangerine/client/ckeditor/dist
+ADD client/ckeditor/plugins/ckeditor5-acasi /tangerine/client/ckeditor/plugins/ckeditor5-acasi
 RUN cd /tangerine/client/tangy-forms && yarn run build
 
 ADD client/app-updater/src /tangerine/client/app-updater/src
@@ -62,14 +65,15 @@ RUN cd /tangerine/client/shell && ./node_modules/.bin/ng build --base-href /tang
 
 ADD server/index.js server/index.js
 ADD server/editor.js server/editor.js
+ADD server/config.yml server/config.yml
 
 #
 # Add static assets.
 #
 
 ADD client/content /tangerine/client/content
-RUN cp -r /tangerine/client/content /tangerine/client/build/
-
+#RUN cp -r /tangerine/client/content /tangerine/client/build/
+RUN mkdir /tangerine/client/build/
 
 #
 # Glue build together.

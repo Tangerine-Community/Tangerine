@@ -24,6 +24,7 @@ docker run -it \
   --volume $(pwd)/client/app-updater/index.html:/tangerine/client/app-updater/index.html \
   --volume $(pwd)/client/app-updater/src:/tangerine/client/app-updater/src \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
+  --volume $(pwd)/client/ckeditor:/tangerine/client/ckeditor \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
   --volume $(pwd)/server/editor.js:/tangerine/server/editor.js \
   --volume $(pwd)/server/config.yml:/tangerine/server/config.yml \

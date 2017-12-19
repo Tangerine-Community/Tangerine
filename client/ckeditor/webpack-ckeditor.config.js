@@ -9,6 +9,7 @@ const path = require( 'path' );
 // const webpack = require( 'webpack' );
 // const { bundler } = require( '@ckeditor/ckeditor5-dev-utils' );
 const CKEditorWebpackPlugin = require( '@ckeditor/ckeditor5-dev-webpack-plugin' );
+const WebpackShellPlugin = require('webpack-shell-plugin');
 // const BabiliPlugin = require( 'babel-minify-webpack-plugin' );
 const buildConfig = require( './build-config' );
 
@@ -33,8 +34,9 @@ module.exports = {
   plugins: [
     new CKEditorWebpackPlugin( {
       languages: [ buildConfig.language ]
-    } )
-      // ,
+    } ),
+    new WebpackShellPlugin({onBuildStart:['echo "Webpack Start"'], onBuildEnd:['./copy_dist.sh']})
+    // ,
     // new BabiliPlugin( null, {
     //   comments: false
     // } ),
