@@ -9,9 +9,17 @@ import { SyncingService } from '../_services/syncing.service';
 })
 export class SyncRecordsComponent implements OnInit {
   isLoading = false;
+  docsNotUploaded;
+  docsUploaded;
+  syncPercentageComplete;
   constructor(private syncingService: SyncingService) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    const result = await this.syncingService.getDocsNotUploaded();
+    this.docsNotUploaded = result ? result.length : 0;
+    this.docsUploaded = 100;
+    this.syncPercentageComplete =
+      ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100);
   }
 
   async pushAllRecords() {
