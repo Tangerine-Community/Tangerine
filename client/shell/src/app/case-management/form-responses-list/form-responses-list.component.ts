@@ -65,11 +65,9 @@ export class FormResponsesListDataSource extends DataSource<any> {
               formId: item.doc.formId,
               formTitle: item.doc.formTitle,
               startDatetime: item.doc.startDatetime,
-              responseId: item.doc.responseId,
               _id: item.doc._id,
               formIndex: index,
-              formSrc: index > -1 ? this.formList[index].src : '',
-              database: this.userDatabase
+              formSrc: index > -1 ? this.formList[index].src : ''
             };
             flattenedData.push(doc);
           }

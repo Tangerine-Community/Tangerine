@@ -40,8 +40,7 @@
     <mat-header-cell *cdkHeaderCellDef> </mat-header-cell>
     <mat-cell *cdkCellDef="let formResponse">
       <i class="material-icons md-24">feedback</i>
-      <a [routerLink]="['/tangy-forms-player/']" [queryParams]="{formIndex:formResponse.formIndex, 'responseId':formResponse.responseId,database:formResponse.database}">
-        <!-- <a href="/tangy-forms/index.html#form=/content/{{formResponse.formSrc}}&response-id={{formResponse.responseId}}&database={{formResponse.database}} "> -->
+      <a [routerLink]="['/tangy-forms-player/']" [queryParams]="{formIndex:formResponse.formIndex, 'responseId':formResponse._id}">
         <i class="material-icons md-24 ">speaker_notes</i>
       </a>
     </mat-cell>
