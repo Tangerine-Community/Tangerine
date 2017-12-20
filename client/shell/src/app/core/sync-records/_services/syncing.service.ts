@@ -18,6 +18,10 @@ export class SyncingService {
     return appConfig.remoteCouchDBHost;
   }
 
+
+  async getDocsNotUploaded() {
+    return await this.getIDsFormsLockedAndNotUploaded();
+  }
   async pushAllrecords() {
 
     try {
