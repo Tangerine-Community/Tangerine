@@ -1,7 +1,10 @@
+import 'rxjs/add/operator/map';
+
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
+
 import { CaseManagementService } from '../_services/case-management.service';
-import 'rxjs/add/operator/map';
+
 @Component({
   selector: 'app-form-list',
   templateUrl: './form-list.component.html',

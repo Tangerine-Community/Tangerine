@@ -1,4 +1,3 @@
-
 <!-- dependencies -->
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -14,15 +13,18 @@
         display: block;
         color: var(--primary-text-color);
       }
+
       .form-link {
         padding: 15px;
         margin: 15px;
       }
+
       .launch-form {
         position: relative;
         left: 45px;
         top: 8px;
       }
+
       #form-view--nav {
         font-weight: heavy;
         font-size: 1.2em;
@@ -33,19 +35,15 @@
 
       <div id="form-list">
         <template is="dom-repeat" items="{{forms}}">
-            <paper-card 
-              class="form-link" 
-              image="images/noun_1018421_cc-small.png" 
-              alt="[[item.title]]" 
-              heading="[[item.title]]">
-                <div class="card-actions">
-                  <a href="?form=/content/[[item.src]]">
-                    <paper-button class="launch-form">
-                      <iron-icon icon="icons:launch"/>
-                    </paper-button>
-                  </a>
-                </div>
-            </paper-card>
+          <paper-card class="form-link" image="images/noun_1018421_cc-small.png" alt="[[item.title]]" heading="[[item.title]]">
+            <div class="card-actions">
+              <a href="?form=/content/[[item.src]]">
+                <paper-button class="launch-form">
+                  <iron-icon icon="icons:launch" />
+                </paper-button>
+              </a>
+            </div>
+          </paper-card>
         </template>
       </div>
 
@@ -75,9 +73,9 @@
     class TangyFormApp extends Polymer.Element {
 
       static get is() { return 'tangy-form-app'; }
-     
+
       connectedCallback() {
-        super.connectedCallback(); 
+        super.connectedCallback();
         let query = this.parseQuery(window.location.hash)
         if (query.form) {
           this.showForm(query.form)
@@ -87,7 +85,7 @@
         this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
       }
 
-			// For parsing window.location.hash parameters.
+      // For parsing window.location.hash parameters.
       parseQuery(qstr) {
         var query = {};
         var a = (qstr[0] === '#' ? qstr.substr(1) : qstr).split('&');
@@ -103,7 +101,7 @@
         this.$['form-list'].hidden = false
         // Load forms list.
         let formsJson = await fetch('../content/forms.json')
-        this.forms = await formsJson.json() 
+        this.forms = await formsJson.json()
       }
 
       onFormSrcChange(newValue, oldValue) {
@@ -118,7 +116,7 @@
       async showForm(formSrc) {
         let query = this.parseQuery(window.location.hash)
         this.$['form-view'].hidden = false
-        this.$['form-list'].hidden = true 
+        this.$['form-list'].hidden = true
         // Load the form into the DOM.
         let formHtml = await fetch(formSrc)
         // Put the formHtml in a template first so element do not initialize connectedCallback
@@ -127,12 +125,12 @@
         formTemplate.innerHTML = await formHtml.text()
         let formEl = formTemplate.querySelector('tangy-form')
         if (query.database) formEl.setAttribute('database-name', query.database)
-        if (query['linear-mode']) formEl.setAttribute('linear-mode', true) 
-        if (query['response-id']) formEl.setAttribute('response-id', query['response-id'])
-        if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true) 
-        if (query['hide-nav']) formEl.setAttribute('hide-nav', true) 
-        if (query['hide-responses']) formEl.setAttribute('hide-responses', true) 
-        this.innerHTML = formTemplate.innerHTML 
+        if (query['linear-mode']) formEl.setAttribute('linear-mode', true)
+        if (query.responseId) formEl.setAttribute('response-id', query.responseId)
+        if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true)
+        if (query['hide-nav']) formEl.setAttribute('hide-nav', true)
+        if (query['hide-responses']) formEl.setAttribute('hide-responses', true)
+        this.innerHTML = formTemplate.innerHTML
         let tangyForm = this.querySelector('tangy-form')
         tangyForm.addEventListener('ALL_ITEMS_CLOSED', () => {
           if (parent && parent.frames && parent.frames.ifr) {
