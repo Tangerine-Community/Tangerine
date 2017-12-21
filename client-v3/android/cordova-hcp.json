@@ -1,0 +1,7 @@
+{
+  "name": "Tangerine",
+  "ios_identifier": "",
+  "android_identifier": "org.rti.tangerineclient",
+  "update": "now",
+  "content_url": "http://192.168.0.100:8080"
+}

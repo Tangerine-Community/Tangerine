@@ -1,0 +1,57 @@
+<form on-change="
+
+  // Disable/enable radio_buttons_3 given radio_buttons_3_enable's value.
+  if (getValue('radio_buttons_3_enable')) inputEnable('radio_buttons_3')
+  if (!getValue('radio_buttons_3_enable')) inputDisable('radio_buttons_3')
+
+  // Show/hide radio_buttons_4 given radio_buttons_4_show's value.
+  if (getValue('radio_buttons_4_show')) inputShow('radio_buttons_4')
+  if (!getValue('radio_buttons_4_show')) inputHide('radio_buttons_4')
+
+
+">
+
+  <tangy-radio-buttons 
+    label="These are radio buttons."
+    name="radio_buttons_1" >
+    <option value="tangerine">Tangerine</option>
+    <option value="apple">Apple</option>
+    <option value="pear">Pear</option>
+    <option value="coconut">Coconut</option>
+  </tangy-radio-buttons>
+
+  <tangy-radio-buttons 
+    label="These are radio buttons where at least one selection is required."
+    name="radio_buttons_2"
+    required>
+    <option value="tangerine">Tangerine</option>
+    <option value="apple">Apple</option>
+    <option value="pear">Pear</option>
+    <option value="coconut">Coconut</option>
+  </tangy-radio-buttons>
+
+  <tangy-radio-buttons 
+    label="These are radio buttons that are disabled. If enabled, then a selection is required."
+    name="radio_buttons_3"
+    disabled
+    required>
+    <option value="tangerine">Tangerine</option>
+    <option value="apple">Apple</option>
+    <option value="pear">Pear</option>
+    <option value="coconut">Coconut</option>
+  </tangy-radio-buttons>
+  <tangy-checkbox name="radio_buttons_3_enable">Check this checkbox to enable the disabled radio buttons.</tangy-checkbox>
+
+  <tangy-radio-buttons 
+    label="These are radio buttons that are hidden. If not hidden, then a selection is required."
+    name="radio_buttons_4"
+    hidden
+    required>
+    <option value="tangerine">Tangerine</option>
+    <option value="apple">Apple</option>
+    <option value="pear">Pear</option>
+    <option value="coconut">Coconut</option>
+  </tangy-radio-buttons>
+  <tangy-checkbox name="radio_buttons_4_show">Check this checkbox to show the hidden radio buttons.</tangy-checkbox>
+
+</form>

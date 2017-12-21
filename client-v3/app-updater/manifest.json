@@ -1,0 +1,6 @@
+{
+  "name": "app-updater",
+  "short_name": "app-updater",
+  "start_url": "/",
+  "display": "standalone"
+}

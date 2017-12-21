@@ -1,0 +1,140 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+
+<dom-module id="app-updater">
+  <template>
+    <style>
+      :host {
+        display: block;
+        
+      }
+      #container {
+        margin: auto;
+        text-align: center;
+      }
+      #logo {
+        height: 200px;
+        margin-bottom: 15px;
+      }
+      #progress {
+        width: 350px;
+        margin: 0 auto 15px;
+
+      }
+      
+    </style>
+    <div id="container">
+      <img id="logo" src="logo.svg">
+      <paper-progress id="progress" indeterminate class="slow red"></paper-progress>
+      <span>[[message]]</span>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class AppUpdater extends Polymer.Element {
+      static get is() { return 'app-updater'; }
+      static get properties() {
+        return {
+          marginTop: {
+            type: String,
+            value: ''
+          },
+          message: {
+            type: String,
+            value: 'Checking for updates...'
+          }
+        };
+      }
+
+      constructor() {
+        super()
+        this.installReleaseUuid = ''
+        this.installReleaseUuid = ''
+      }
+
+      connectedCallback() {
+        super.connectedCallback()
+        this.$.container.style['margin-top'] = `${(window.innerHeight / 2) - 150}px`
+        this.checkForRelease()
+      }
+
+      checkForRelease() {
+        fetch('release-uuid.txt')
+        .then((response) => response.text())
+        .then((response) => {
+          this.foundReleaseUuid = (response).replace(/\n|\r/g, "")
+          this.storedReleaseUuid = localStorage.getItem('release-uuid')
+          if (!this.storedReleaseUuid) {
+            this.installReleaseUuid = this.foundReleaseUuid
+            this.message = 'Installing...'
+            this.updateServiceWorker()
+          }
+          else if (this.storedReleaseUuid !== this.foundReleaseUuid) {
+            this.message = 'Updating...'
+            this.updateServiceWorker()
+          } else {
+            this.message = 'No update found... '
+            this.redirect()
+          }
+        })
+      }
+
+      redirect() {
+        this.$.progress.removeAttribute('indeterminate')
+        console.log('Redirecting...')
+        this.message = 'Redirecting...'
+        setTimeout(() => {
+          window.location = window.location.href + '/tangerine/index.html';
+        }, 2000)
+
+      }
+
+      updateServiceWorker() {
+        var that = this
+        navigator.serviceWorker.register('/' + this.foundReleaseUuid + '.js')
+          .then(function (registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            if (registration.installing) {
+              console.log('registration.installing is available on service worker registration.')
+            }
+            registration.onupdatefound = function () {
+              console.log('registration.onupdatefound called')
+              var installingWorker = registration.installing;
+              installingWorker.onstatechange = function () {
+                // @TODO look for state of caching progress, show to user.
+                switch (installingWorker.state) {
+                  case 'installed':
+                    if (navigator.serviceWorker.controller) {
+                      that.message = 'Installation complete.'
+                      localStorage.setItem('release-uuid', that.foundReleaseUuid)
+                      that.redirect()
+                    } else {
+                      that.message = 'Installation complete.'
+                      console.log('This App has been installed and is now ready for offline use.');
+                      localStorage.setItem('release-uuid', that.foundReleaseUuid)
+                      that.redirect()
+                    }
+                    break;
+                  case 'redundant':
+                    console.error('The installing service worker became redundant.');
+                    this.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
+                    break;
+                }
+              };
+            };
+          }).catch(function (err) {
+            console.log('ServiceWorker registration failed: ', err);
+            that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
+          });
+      }
+
+    }
+
+    this.customElements.define(AppUpdater.is, AppUpdater);
+  </script>
+</dom-module>
