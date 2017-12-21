@@ -203,16 +203,16 @@ RUN cd /tangerine-server/client \
     && bower install --allow-root  
 
 # Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
-RUN cd /tangerine-server/client \
-    && ./node_modules/.bin/cordova platform add android@5.X.X \
-    && npm install cordova-plugin-whitelist \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
-    && npm install cordova-plugin-geolocation \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
-    && npm install cordova-plugin-camera \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-RUN cd /tangerine-server/client && npm run build:apk 
+WORKDIR /tangerine-server/client
+RUN ./node_modules/.bin/cordova platform add android@5.X.X 
+# RUN npm install cordova-plugin-whitelist 
+RUN ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save 
+# RUN npm install cordova-plugin-geolocation 
+RUN ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save 
+# RUN npm install cordova-plugin-camera 
+RUN ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save 
+RUN ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
+# RUN cd /tangerine-server/client && npm run build:apk 
 
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
@@ -243,6 +243,28 @@ RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
 
+# 
+# Get v3 client dependencies.
+#
+
+# Yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list && \
+    sudo apt-get update && sudo apt-get install yarn
+
+# nvm
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+RUN source ~/.nvm/nvm.sh && \
+  nvm install node
+
+ADD client-v3 /tangerine-server/client-v3
+
+RUN source ~/.nvm/nvm.sh && \
+  nvm use node && cd /tangerine-server/client-v3/tangy-forms && yarn install
+
+RUN source ~/.nvm/nvm.sh && \
+  nvm use node && cd /tangerine-server/client-v3/shell && npm install
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
