@@ -35,7 +35,7 @@ module.exports = {
     new CKEditorWebpackPlugin( {
       languages: [ buildConfig.language ]
     } ),
-    new WebpackShellPlugin({onBuildStart:['echo "Webpack Start"'], onBuildEnd:['./copy_dist.sh']})
+    new WebpackShellPlugin({onBuildStart:['echo "Webpack Start"'], onBuildExit:['./copy_dist.sh']})
     // ,
     // new BabiliPlugin( null, {
     //   comments: false

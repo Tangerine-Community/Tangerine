@@ -145,7 +145,7 @@ export default class FormDialog extends Plugin {
    * @private
    */
   _showForm() {
-    console.log("showing formity form form")
+    // console.log("showing formity form form")
     if ( this._isVisible ) {
       return;
     }

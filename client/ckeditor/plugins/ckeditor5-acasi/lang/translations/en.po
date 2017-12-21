@@ -24,3 +24,7 @@ msgstr "Form id"
 msgctxt "Label for the Onchange javascript form settings input."
 msgid "Onchange javascript"
 msgstr "Onchange javascript"
+
+msgctxt "Label for the Change ACASI widget settings form settings input."
+msgid "Change ACASI widget settings."
+msgstr "Change ACASI widget settings."

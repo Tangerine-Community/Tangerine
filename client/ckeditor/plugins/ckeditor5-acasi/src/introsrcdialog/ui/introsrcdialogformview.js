@@ -58,6 +58,13 @@ export default class IntroSrcDialogFormView extends View {
     this.labeledInput = this._createLabeledInputView();
 
     /**
+     * A textarea with a label.
+     *
+     * @member {module:ui/labeledinput/labeledinputview~LabeledInputView} #labeledTextarea
+     */
+    this.nameInput = this._createNameInputView();
+
+    /**
      * A button used to submit the form.
      *
      * @member {module:ui/button/buttonview~ButtonView} #saveButtonView
@@ -130,6 +137,22 @@ export default class IntroSrcDialogFormView extends View {
             class: [
               'cke-text-alternative-form__actions'
             ]
+          }
+          // ,
+          //
+          // children: [
+          //   this.saveButtonView,
+          //   this.cancelButtonView
+          // ]
+        },
+        this.nameInput,
+        {
+          tag: 'div',
+
+          attributes: {
+            class: [
+              'cke-nameInput-form__actions'
+            ]
           },
 
           children: [
@@ -144,7 +167,7 @@ export default class IntroSrcDialogFormView extends View {
       view: this
     } );
 
-    [ this.labeledInput, this.saveButtonView, this.cancelButtonView ]
+    [ this.labeledInput, this.nameInput, this.saveButtonView, this.cancelButtonView ]
       .forEach( v => {
         // Register the view as focusable.
         this._focusables.add( v );
@@ -196,5 +219,19 @@ export default class IntroSrcDialogFormView extends View {
     labeledInput.label = t( 'Intro Source' );
 
     return labeledInput;
+  }
+
+  /**
+   * Creates an input with a label.
+   *
+   * @private
+   * @return {module:ui/labeledinput/labeledinputview~LabeledInputView}
+   */
+  _createNameInputView() {
+    const t = this.locale.t;
+    const nameInput = new LabeledInputView( this.locale, InputTextView );
+    nameInput.label = t( 'Name' );
+
+    return nameInput;
   }
 }

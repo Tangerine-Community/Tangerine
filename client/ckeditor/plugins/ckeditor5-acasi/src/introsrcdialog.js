@@ -64,7 +64,7 @@ export default class IntroSrcDialog extends Plugin {
       const view = new ButtonView( locale );
 
       view.set( {
-        label: t( 'Change intro-src' ),
+        label: t( 'Change ACASI widget settings' ),
         icon: textAlternativeIcon,
         tooltip: true
       } );
@@ -104,7 +104,8 @@ export default class IntroSrcDialog extends Plugin {
 
     this.listenTo( this._form, 'submit', () => {
       editor.execute( 'introSrcDialog', {
-        newValue: this._form.labeledInput.inputView.element.value
+        newValue: this._form.labeledInput.inputView.element.value,
+        newValue2: this._form.nameInput.inputView.element.value,
       } );
 
       this._hideForm( true );
@@ -152,6 +153,7 @@ export default class IntroSrcDialog extends Plugin {
     const editor = this.editor;
     const command = editor.commands.get( 'introSrcDialog' );
     const labeledInput = this._form.labeledInput;
+    const nameInput = this._form.nameInput;
 
     if ( !this._balloon.hasView( this._form ) ) {
       this._balloon.add( {
@@ -166,6 +168,7 @@ export default class IntroSrcDialog extends Plugin {
     // old value instead of the actual value of the command.
     // https://github.com/ckeditor/ckeditor5-image/issues/114
     labeledInput.value = labeledInput.inputView.element.value = command.value || '';
+    nameInput.value = nameInput.inputView.element.value = command.value2 || '';
 
     this._form.labeledInput.select();
   }

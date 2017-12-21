@@ -9,6 +9,7 @@ import '../../node_modules/@polymer/paper-item/paper-item-body.js';
 import '../../node_modules/sortable-list/sortable-list';
 import '../tangy-form/tangy-form.js';
 import '../tangy-textarea/tangy-textarea.js';
+import '../tangy-acasi/tangy-acasi.js';
 
 /**
  * `tangy-form-app`
@@ -122,6 +123,7 @@ class TangyFormApp extends Element {
           <paper-card class="form-editor-link" alt="[[headerTitle]]" heading="[[headerTitle]]">
             <div class="card-actions">
               <div class="horizontal justified">
+              <a href="/tangy-forms" on-click="formSelected"><paper-icon-button icon="home" on-click="showFormsList"></paper-icon-button></a>
               <paper-icon-button
                   icon="add-circle-outline"
                   data-form-src="[[formHtmlPath]]"
@@ -130,9 +132,6 @@ class TangyFormApp extends Element {
                   data-item-order=null
                   on-click="createFormItemListener">
               </paper-icon-button>
-              <a href="/tangy-forms" on-click="formSelected">
-                <paper-icon-button icon="close" on-click="showFormsList"></paper-icon-button>
-              </a>
               </div>
             </div>
             <div id="save-order" hidden>

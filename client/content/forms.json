@@ -1,10 +1,1 @@
-[
-  {
-    "title": "Field Demos",
-    "src": "field-demo/form.html"
-  },
-  {
-    "title": "Item Demo",
-    "src": "item-demo/form.html"
-  }
-]
+[{"title":"Field Demos","src":"field-demo/form.html"},{"title":"Item Demo","src":"item-demo/form.html"},{"title":"Acasi demo","src":"acasidemo/form.html"}]

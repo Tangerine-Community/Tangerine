@@ -134,7 +134,8 @@ export function toAcasiWidget( viewElement, label ) {
  * @returns {Boolean}
  */
 export function isAcasiWidget( viewElement ) {
-  return !!viewElement.getCustomProperty( acasiSymbol ) && isWidget( viewElement );
+  let acasiTest = viewElement.getCustomProperty( acasiSymbol )
+  return !!acasiTest && isWidget( viewElement );
 }
 
 /**

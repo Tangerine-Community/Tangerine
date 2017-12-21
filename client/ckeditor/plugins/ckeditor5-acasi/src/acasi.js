@@ -54,6 +54,10 @@ export default class Acasi extends Plugin {
     }
 
     // Configure schema.
+    // Debugging schema problems is hard.
+    // Sometimes it does not pass a schema check because the attribute is empty.
+    // oOr if it is receiving an attribute it doesn't know about.
+    // Also - Check ViewConverterBuilder.toElement() if it passes ( !conversionApi.schema.check(
     schema.allow( { name: '$inline', inside: '$root' } );
     schema.allow( { name: '$block', inside: '$root' } );
 
@@ -66,19 +70,20 @@ export default class Acasi extends Plugin {
     schema.allow( { name: 'image', attributes: [ 'src' ], inside: 'figure' } );
     schema.objects.add( 'figure' );
 
-    schema.registerItem( 'paper-radio-button' );
-    schema.allow( { name: 'paper-radio-button', attributes: [ 'name', 'value' ], inside: 'tangy-acasi' } );
-    schema.allow( { name: '$inline', inside: 'paper-radio-button' } );
-    schema.allow( { name: 'image', inside: 'paper-radio-button' } );
+    // schema.registerItem( 'paper-radio-button' );
+    // schema.allow( { name: 'paper-radio-button', attributes: [ 'name', 'value' ], inside: 'tangy-acasi' } );
+    // schema.allow( { name: '$inline', inside: 'paper-radio-button' } );
+    // schema.allow( { name: 'image', inside: 'paper-radio-button' } );
     schema.allow( { name: 'figure', attributes: [ 'class' ], inside: 'paper-radio-button' } );
-    schema.objects.add( 'paper-radio-button' );
+    // schema.objects.add( 'paper-radio-button' );
 
     schema.registerItem( 'tangy-acasi' );
     schema.allow( { name: 'tangy-acasi', attributes: [ 'intro-src', 'name' ], inside: 'form' } );
     // schema.allow( { name: 'tangy-acasi', inside: '$root' } );
     schema.allow( { name: '$inline', inside: 'tangy-acasi' } );
     schema.allow( { name: 'image', inside: 'tangy-acasi' } );
-    schema.allow( { name: 'paper-radio-button', inside: 'tangy-acasi' } );
+    schema.allow( { name: 'figure', attributes: [ 'class' ], inside: 'tangy-acasi' } );
+    // schema.allow( { name: 'paper-radio-button', inside: 'tangy-acasi' } );
     schema.objects.add( 'tangy-acasi' );
 
     schema.registerItem( 'form' );
@@ -87,6 +92,7 @@ export default class Acasi extends Plugin {
     // schema.allow( { name: 'form', attributes: [ 'id' ], inside: '$root' } );
     schema.allow( { name: '$inline', inside: 'form' } );
     schema.allow( { name: 'image', inside: 'form' } );
+    schema.allow( { name: 'figure', attributes: [ 'class' ], inside: 'form' } );
     schema.allow( { name: 'tangy-acasi', inside: 'form' } );
     schema.objects.add( 'form' );
 
@@ -107,8 +113,8 @@ export default class Acasi extends Plugin {
       .toElement( (element) => {
         console.log("data.modelToView tangy-acasi element: ")
         const introSrc = element.item.getAttribute('intro-src')
-        //const name = element.item.getAttribute('name')
-        const name = 'test'
+        const name = element.item.getAttribute('name')
+        // const name = 'test'
         let container = new ViewContainerElement( 'tangy-acasi', {'intro-src': introSrc, 'name': name} );
         return container
       })
@@ -121,15 +127,15 @@ export default class Acasi extends Plugin {
       //   let container = new ViewContainerElement( 'figure', {'class': klass} );
       //   return container
       // })
-    buildModelConverter().for( data.modelToView )
-      .fromElement( 'paper-radio-button' )
-      .toElement( (element) => {
-        console.log("data.modelToView paper-radio-button element: ")
-        const name = element.item.getAttribute('name')
-        const value = element.item.getAttribute('value')
-        let container = new ViewContainerElement( 'paper-radio-button', {'name': name, 'value': value} );
-        return container
-      })
+    // buildModelConverter().for( data.modelToView )
+    //   .fromElement( 'paper-radio-button' )
+    //   .toElement( (element) => {
+    //     console.log("data.modelToView paper-radio-button element: ")
+    //     const name = element.item.getAttribute('name')
+    //     const value = element.item.getAttribute('value')
+    //     let container = new ViewContainerElement( 'paper-radio-button', {'name': name, 'value': value} );
+    //     return container
+    //   })
 
     //  Build converter from model element to view element for editing view pipeline. This affects how this element is rendered in the editor.
     buildModelConverter().for( editing.modelToView )
@@ -152,17 +158,17 @@ export default class Acasi extends Plugin {
         return widget;
       } );
 
-    buildModelConverter().for( editing.modelToView )
-      .fromElement( 'paper-radio-button' )
-      .toElement( (element) => {
-        console.log("modelToView paper-radio-button element")
-        // const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' }, toImageWidget(new ViewEmptyElement( 'img' )) );
-        // const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' }, toImageWidget(new ViewElement( 'img' , {'src': 'assets/images/never.png'}) ) );
-        const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' } );
-        const widget = toWidget( imageContainer );
-        widget.setAttribute( 'contenteditable', true );
-        return widget;
-      } );
+    // buildModelConverter().for( editing.modelToView )
+    //   .fromElement( 'paper-radio-button' )
+    //   .toElement( (element) => {
+    //     console.log("modelToView paper-radio-button element")
+    //     // const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' }, toImageWidget(new ViewEmptyElement( 'img' )) );
+    //     // const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' }, toImageWidget(new ViewElement( 'img' , {'src': 'assets/images/never.png'}) ) );
+    //     const imageContainer = new ViewContainerElement( 'radio', { class: 'paper-radio-button' } );
+    //     const widget = toWidget( imageContainer );
+    //     widget.setAttribute( 'contenteditable', true );
+    //     return widget;
+    //   } );
 
     buildModelConverter().for( editing.modelToView )
       .fromElement( 'figure' )
@@ -179,30 +185,27 @@ export default class Acasi extends Plugin {
     buildViewConverter().for(data.viewToModel).from({
       name: 'form',
       attribute: { id: /./ }
-    }).toElement(viewImage => new ModelElement('form', { id: viewImage.getAttribute('id') }));
-
-
-    // data.viewToModel.on( 'element:form', convertHoistableForm, { priority: 'low' } );
-    // data.viewToModel.on( 'element', hoistFormThroughElement, { priority: 'low' } );
-
-    // data.viewToModel.on( 'element:img', convertHoistableImage, { priority: 'low' } );
-    // data.viewToModel.on( 'element', hoistImageThroughElement, { priority: 'low' } );
+    })
+      .toElement( (viewImage) => {
+        return new ModelElement('form', {id: viewImage.getAttribute('id')})
+        });
 
     buildViewConverter().for(data.viewToModel).from({
       name: 'tangy-acasi',
       attribute: { 'intro-src': /./ }
-    }).toElement(viewImage => new ModelElement('tangy-acasi', { 'intro-src': viewImage.getAttribute('intro-src') }));
+    }).toElement(viewImage => {
+      return new ModelElement('tangy-acasi', {'intro-src': viewImage.getAttribute('intro-src'), 'name': viewImage.getAttribute('name')})
+    });
 
-    buildViewConverter().for(data.viewToModel).from({
-      name: 'paper-radio-button',
-      attribute: { 'name': /./ }
-    }).toElement(viewImage => new ModelElement('paper-radio-button', { 'name': viewImage.getAttribute('name') }));
+    // buildViewConverter().for(data.viewToModel).from({
+    //   name: 'paper-radio-button',
+    //   attribute: { 'name': /./ }
+    // }).toElement(viewImage => new ModelElement('paper-radio-button', { 'name': viewImage.getAttribute('name') }));
 
     buildViewConverter().for(data.viewToModel).from({
       name: 'figure',
       attribute: { 'class': /./ }
     }).toElement(viewImage => new ModelElement('figure', { 'class': viewImage.getAttribute('class') }));
-    // }).toElement(viewImage => new ModelElement('figure', { 'class': "stupid-placeholder" }));
 
     // Build converter for onchange attribute.
     // Note that by default attribute converters are added with `low` priority.
@@ -212,13 +215,13 @@ export default class Acasi extends Plugin {
       .consuming( { attribute: [ 'onchange' ] } )
       .toAttribute( viewForm => ( { key: 'onchange', value: viewForm.getAttribute( 'onchange' ) } ) );
 
-    buildViewConverter().for( data.viewToModel )
-      .from( { name: 'paper-radio-button', attribute: { value: /./ } } )
-      .consuming( { attribute: [ 'value' ] } )
-      .toAttribute( (viewForm) => {
-        console.log("converting prb.")
-        return { key: 'value', value: viewForm.getAttribute( 'value' ) }
-      } );
+    // buildViewConverter().for( data.viewToModel )
+    //   .from( { name: 'paper-radio-button', attribute: { value: /./ } } )
+    //   .consuming( { attribute: [ 'value' ] } )
+    //   .toAttribute( (viewForm) => {
+    //     console.log("converting prb.")
+    //     return { key: 'value', value: viewForm.getAttribute( 'value' ) }
+    //   } );
 
     // Add tangy-acasi button to feature components.
     editor.ui.componentFactory.add( 'acasi', locale => {
@@ -230,7 +233,7 @@ export default class Acasi extends Plugin {
       });
       // view.bind('isOn', 'isEnabled').to(command, 'value', 'isEnabled');
 
-      // Execute command.
+      // When the acasi button is pressed, display the widget in the editor.
       view.on( 'execute', () => {
       // this.listenTo( view, 'execute', () => {
         let url = prompt( 'Sound URL' );
@@ -244,6 +247,9 @@ export default class Acasi extends Plugin {
         let fileIdentifier = filenameArray[0]
         let name = 't_' + fileIdentifier;
         let taName = 'ta_' + fileIdentifier;
+        let formName = 'form_' + fileIdentifier;
+
+        console.log("taName: " + taName)
 
         editor.document.enqueueChanges( () => {
           const imageElement1 = new ModelElement( 'image', { src: '/content/assets/images/never.png'});
@@ -251,17 +257,15 @@ export default class Acasi extends Plugin {
           const imageElement3 = new ModelElement( 'image', { src: '/content/assets/images/few.png'});
           const imageElement4 = new ModelElement( 'image', { src: '/content/assets/images/many.png'});
 
-          const prb1 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'never'}, [imageElement1])
-          const prb2 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'once'}, [imageElement2])
-          const prb3 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'few'}, [imageElement3])
-          const prb4 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'many'}, [imageElement4])
+          // const prb1 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'never'}, [imageElement1])
+          // const prb2 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'once'}, [imageElement2])
+          // const prb3 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'few'}, [imageElement3])
+          // const prb4 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'many'}, [imageElement4])
 
-          // // const widgetElement = new ModelElement('figure', { class: 'fancy-widget' },imageElement)
-          // editor.data.insertContent( imageElement, editor.document.selection );
-          const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [prb1, prb2, prb3, prb4])
-          const form = new ModelElement( 'form', {'id': '', 'onchange': ''}, [acasi])
-          // const form = new ModelElement( 'form', {'id': ''}, [acasi])
-          // const acasi = new ModelElement( 'tangy-acasi', { src: imageUrl });
+          // const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [prb1, prb2, prb3, prb4])
+          const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [imageElement1, imageElement2, imageElement3, imageElement4])
+          const form = new ModelElement( 'form', {'id': formName, 'onchange': ''}, [acasi])
+
           editor.data.insertContent( form, editor.document.selection );
         } );
       });

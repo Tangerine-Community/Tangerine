@@ -34,6 +34,7 @@ export default class IntroSrcDialogCommand extends Command {
 
     if ( isAcasi( element ) && element.hasAttribute( 'intro-src' ) ) {
       this.value = element.getAttribute( 'intro-src' );
+      this.value2 = element.getAttribute('name');
       console.log("getting value of intro-src.")
     } else {
       this.value = false;
@@ -57,6 +58,7 @@ export default class IntroSrcDialogCommand extends Command {
       const batch = options.batch || doc.batch();
 
       batch.setAttribute( acasiElement, 'intro-src', options.newValue );
+      batch.setAttribute( acasiElement, 'name', options.newValue2 );
     } );
   }
 }

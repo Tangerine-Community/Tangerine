@@ -1,7 +1,9 @@
 {
 	"intro src widget": "Label for the intro src widget.",
 	"Intro Source": "Label for the Intro Source input.",
-	"Change form settings": "Label for the Change form settings input."
-	"Form id": "Label for the  form id settings input."
-	"Onchange javascript": "Label for the Onchange javascript form settings input."
+	"Change form settings": "Label for the Change form settings input.",
+	"Form id": "Label for the  form id settings input.",
+	"Onchange javascript": "Label for the Onchange javascript form settings input.",
+	"Change ACASI widget settings": "Label for the Change ACASI widget settings form settings input.",
+	"Name": "Name."
 }

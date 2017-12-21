@@ -16,7 +16,7 @@ docker run -it \
   --name tangerine-dev \
   -p 80:80 \
   -p 5984:5984 \
-  --volume $T_CONTENT_PATH:/tangerine/client/build/content \
+  --volume $(pwd)/client/content:/tangerine/client/content \
   --volume $(pwd)/db:/tangerine/server/db/ \
   --volume $(pwd)/client/tangy-forms/index.html:/tangerine/client/tangy-forms/index.html \
   --volume $(pwd)/client/tangy-forms/src:/tangerine/client/tangy-forms/src \
@@ -30,6 +30,4 @@ docker run -it \
   --volume $(pwd)/server/config.yml:/tangerine/server/config.yml \
   tangerine/tangerine:dev
 
-# docker logs -f tangerine-container
-#  -it \
-#  --entrypoint=/tangerine/entrypoint-develop.sh \
+

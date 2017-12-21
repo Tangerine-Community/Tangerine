@@ -14,13 +14,25 @@ import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/pol
 export class TangyAcasi extends PolymerElement {
   static get template () {
     return `
+    <style include="tangy-element-styles"></style>
+
     <style>
-      :host {
-        display: block;
+      paper-radio-button {
+        margin-right: 25px;
+        --paper-radio-button-size: 2em;
+      }
+      .eftouch-selected {
+        border: 10px solid #af0;
+        border-radius: 10px;
       }
     </style>
-    <div> [[statusmessage]] </div>
-    <slot></slot>`
+
+    <div class="container">
+      <label for="group">[[label]]</label>
+      <paper-radio-group name="group" id="paper-radio-group">
+      </paper-radio-group>
+    </div>
+    `
   }
 
   static get is () {
@@ -29,17 +41,62 @@ export class TangyAcasi extends PolymerElement {
 
   static get properties() {
     return {
-      statusmessage: {
+      name: {
         type: String,
-        value: 'Click start to begin'
+        value: ''
       },
+      value: {
+        type: String,
+        value: '',
+        reflectToAttribute: true,
+        observer: 'onValueChange'
+      },
+      required: {
+        type: Boolean,
+        value: false
+      },
+      disabled: {
+        type: Boolean,
+        value: false,
+        observer: 'onDisabledChange',
+        reflectToAttribute: true
+      },
+      label: {
+        type: String,
+        value: '',
+        reflectToAttribute: true
+      },
+      hidden: {
+        type: Boolean,
+        value: false,
+        observer: 'onHiddenChange',
+        reflectToAttribute: true
+      },
+      invalid: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+      incomplete: {
+        type: Boolean,
+        value: true,
+        reflectToAttribute: true
+      },
+      // name: {
+      //   type: String,
+      //   value: 'Click start to begin'
+      // },
+      // statusmessage: {
+      //   type: String,
+      //   value: 'Click start to begin'
+      // },
       display_sound_url: {
         type: String,
-        value: 'hoot'
+        value: '/content/assets/sounds/pop.mp3'
       },
       transition_sound_url: {
         type: String,
-        value: 'hoot'
+        value: '/content/assets/sounds/swish.mp3'
       }
     };
   }
@@ -49,16 +106,26 @@ export class TangyAcasi extends PolymerElement {
   // @TODO: Duplicating ready?
   connectedCallback() {
     super.connectedCallback();
-    // let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
-    let paperRadioGroupEl = this.querySelector('paper-radio-group')
+    this.isReady = false
+    let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
     paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
+    // Populate options as paper-radio-button elements
+    let options = this.querySelectorAll('img')
+    for (let option of options) {
+      let button = document.createElement('paper-radio-button')
+      button.name = option.alt
+      if (this.disabled) button.setAttribute('disabled', true)
+      button.innerHTML = option.outerHTML
+      paperRadioGroupEl.appendChild(button)
+    }
     paperRadioGroupEl.selected = this.value
     if (this.required) paperRadioGroupEl.required = true
+    this.isReady = true
   }
 
   ready() {
     super.ready();
-    this.status = this.statusmessage;
+    // this.status = this.statusmessage;
     this.ds = this.display_sound_url;
     this.ts = this.transition_sound_url;
     console.log("display_sound_url: " + this.display_sound_url);
@@ -81,7 +148,7 @@ export class TangyAcasi extends PolymerElement {
   _prepareForm() {
 
     // Find all our img elements.
-    this.imgElements = Array.prototype.slice.call(this.querySelectorAll('img'));
+    this.imgElements = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('img'));
     this.imgElements.forEach(element => {
       element.addEventListener('click', (event) => {
         this.imgElements.forEach(element => {
@@ -120,7 +187,7 @@ export class TangyAcasi extends PolymerElement {
     // Stop propagation of paper-radio-button change event so we can set the value of this element first.
     // Otherwise tangy-form-item will find the wrong value for this element.
     event.stopPropagation()
-    // if (!this.isReady) return
+    if (!this.isReady) return
     // The value we dispatch is the event.target.name. Remember, that's the option that was just selected
     // and the option's name selected is the value of this element.
     this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
@@ -135,12 +202,12 @@ export class TangyAcasi extends PolymerElement {
   }
 
   onValueChange(value) {
-    // if (!this.isReady) return
+    if (!this.isReady) return
     this.$['paper-radio-group'].selected = value
   }
 
   onDisabledChange(value) {
-    let paperRadioButtons = this.querySelectorAll('paper-radio-button')
+    let paperRadioButtons = this.shadowRoot.querySelectorAll('paper-radio-button')
     if (value == true) paperRadioButtons.forEach((button) => button.setAttribute('disabled', true))
     if (value == false) paperRadioButtons.forEach((button) => button.removeAttribute('disabled'))
   }
