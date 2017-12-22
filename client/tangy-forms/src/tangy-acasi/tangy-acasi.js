@@ -12,6 +12,8 @@ import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/pol
  * @demo demo/index.html
  */
 export class TangyAcasi extends PolymerElement {
+
+
   static get template () {
     return `
     <style include="tangy-element-styles"></style>
@@ -81,22 +83,6 @@ export class TangyAcasi extends PolymerElement {
         type: Boolean,
         value: true,
         reflectToAttribute: true
-      },
-      // name: {
-      //   type: String,
-      //   value: 'Click start to begin'
-      // },
-      // statusmessage: {
-      //   type: String,
-      //   value: 'Click start to begin'
-      // },
-      display_sound_url: {
-        type: String,
-        value: '/content/assets/sounds/pop.mp3'
-      },
-      transition_sound_url: {
-        type: String,
-        value: '/content/assets/sounds/swish.mp3'
       }
     };
   }
@@ -109,13 +95,22 @@ export class TangyAcasi extends PolymerElement {
     this.isReady = false
     let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
     paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
-    // Populate options as paper-radio-button elements
-    let options = this.querySelectorAll('img')
-    for (let option of options) {
+    // Populate paper-radio-button elements by using image data
+    // The radio-button value is taken from the img src value.
+    let images = this.querySelectorAll('img')
+    for (let image of images) {
       let button = document.createElement('paper-radio-button')
-      button.name = option.alt
+      if (image.alt !== '') {
+        button.name = image.alt
+      } else {
+        let src = image.src
+        let srcArray = src.split('/')
+        let filename = srcArray[srcArray.length-1]
+        let name = filename.replace('.png', '')
+        button.name = name
+      }
       if (this.disabled) button.setAttribute('disabled', true)
-      button.innerHTML = option.outerHTML
+      button.innerHTML = image.outerHTML
       paperRadioGroupEl.appendChild(button)
     }
     paperRadioGroupEl.selected = this.value
@@ -125,21 +120,14 @@ export class TangyAcasi extends PolymerElement {
 
   ready() {
     super.ready();
-    // this.status = this.statusmessage;
-    this.ds = this.display_sound_url;
-    this.ts = this.transition_sound_url;
-    console.log("display_sound_url: " + this.display_sound_url);
-    console.log("transition_sound_url: " + this.transition_sound_url);
-    if (this.transition_sound_url) {
-      this.transitionSound = new Audio(this.transition_sound_url);
-      this.transitionSound.play();
-    }
-    this.transitionSound.play();
-    if (this.display_sound_url) {
-      this.displaySound = new Audio(this.display_sound_url);
-      this.displaySound.load();
-    }
+    const display_sound_url = '/content/assets/sounds/pop.mp3'
+    const transition_sound_url = '/content/assets/sounds/swish.mp3'
 
+    this.transitionSound = new Audio(transition_sound_url);
+    this.transitionSound.play();
+
+    this.displaySound = new Audio(this.display_sound_url);
+    this.displaySound.load();
 
     // @TODO: Need to listen to slot for ready.
     setTimeout(() => this._prepareForm(), 200)

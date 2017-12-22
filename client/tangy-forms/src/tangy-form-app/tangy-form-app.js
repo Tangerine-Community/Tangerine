@@ -574,16 +574,21 @@ class TangyFormApp extends Element {
   async saveItem(event) {
     let item = {}
     const project = window.location.pathname.split("/")[3];
-    if (event.currentTarget.dataItemSrc !== '') {
+    if ((typeof event.currentTarget.dataItemSrc !== 'undefined') && (event.currentTarget.dataItemSrc !== '')) {
+      // editing a current item
       this.itemFilename = event.currentTarget.dataItemSrc
       this.itemId = event.currentTarget.dataItemId
     } else {
+      if (event.currentTarget.dataItemSrc === '') {
+        // This is a new form
+        this.formHtmlPath = null
+      }
+      // populate a new item
       const uuid = TangyUtils.UUID().generate();
       this.itemFilename = uuid + '.html'
       this.itemId = uuid
       item.formTitle = this.$.formTitle.value
       item.formName = this.$.formName.value
-      this.formHtmlPath = null
     }
     let itemTitle = this.$.itemTitle.value
     let itemHtmlText = Tangy.editor.getData();
@@ -600,9 +605,9 @@ class TangyFormApp extends Element {
     if (typeof item.itemId == 'undefined') {
       // todo : create filename from item title using sanitize
       console.log("item.itemId is undefined: " + item.itemId)
-      let len = this.items.length + 1
-      item.itemId= 'item-' + len
-      item.itemFilename = item.itemId + '.html'
+      // let len = this.items.length + 1
+      // item.itemId= 'item-' + len
+      // item.itemFilename = item.itemId + '.html'
     }
     let result = await fetch("/editor/item/save", {
       headers: {

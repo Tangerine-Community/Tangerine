@@ -235,7 +235,7 @@ app.post('/editor/item/save', async function (req, res) {
     } catch (e) {
       console.log('e', e);
     }
-    originalForm.replace('FORMNAME', formDirName)
+    originalForm = originalForm.replace('FORMNAME', formDirName)
     // create the path to the form and its form.html
     formDir = formDirName
     // now create the filesystem for formDir
@@ -264,47 +264,100 @@ app.post('/editor/item/save', async function (req, res) {
       })
     // Set formPath
     formPath = contentRoot + sep + formDir + sep + formName
+
+    // Now that we have originalForm, we can load it and add items to it.
+    const $ = cheerio.load(originalForm)
+    // search for tangy-form-item
+    let formItemList = $('tangy-form-item')
+    // console.log("html before: " + $.html())
+    // let clippedFormItemList = formItemList.not(function(i, el) {
+    //   // this === el
+    //   let id = $(this).attr('id')
+    //   let src = $(this).attr('src')
+    //   return src === itemFilename
+    // })
+    // console.log('formItemList: ' + formItemList.length + ' clippedFormItemList: ' + clippedFormItemList.length)
+
+    // create the form html that will be added
+    let newItem = '<tangy-form-item src="' + itemFilename + '" id="' + itemId + '" title="' + itemTitle + '">'
+    console.log('newItem: ' + newItem)
+    // $('tangy-form-item').remove()
+    // $(clippedFormItemList).appendTo('tangy-form')
+    $(newItem).appendTo('tangy-form')
+    console.log('html after: ' + $.html())
+    let form = $.html()
+    // await editor.saveForm(formPath, form);
+    console.log('now outputting ' + formPath)
+    await fs.outputFile(formPath, form)
+      .then(() => {
+        console.log('success! Updated file at: ' + formPath)
+
+      })
+      .catch(err => {
+        console.error("An error with form outputFile: " + err)
+        res.send(err)
+      })
+
   } else {
+    // Editing a form - check if this is a new item; otherwise, we only need to change the item's title in form.json
+
     formDir = formHtmlPath.split('/')[2]
     formName = formHtmlPath.split('/')[3]
     formPath = contentRoot + sep + formDir + sep + formName
+    console.log("formPath: " + formPath)
     originalForm = await openForm(formPath);
+
+    // Now that we have originalForm, we can load it and add items to it.
+    const $ = cheerio.load(originalForm)
+    // search for tangy-form-item
+    let formItemList = $('tangy-form-item')
+    // console.log("html before: " + $.html())
+    // let clippedFormItemList = formItemList.not(function(i, el) {
+    //   // this === el
+    //   let id = $(this).attr('id')
+    //   let src = $(this).attr('src')
+    //   return src === itemFilename
+    // })
+    // let clippedFormItem = $('tangy-form-item').attr('src', itemFilename).html()
+    let formItemListHtml = $('tangy-form-item', 'tangy-form').html()
+    let rootHtml = $.html()
+    console.log('itemFilename: ' + itemFilename +  ' formItemListHtml: ' + formItemListHtml + ' rootHtml: ' + rootHtml)
+    let isNewItem = true
+    // loop through the current items and see if this is an edit or a new item
+    let newItemList = $('tangy-form-item').each(function(i, elem) {
+      let src = $(this).attr('src')
+      console.log(" src: " + src)
+      if (src === itemFilename) {
+        console.log("matched  src: " + src)
+        $(this).attr('title', itemTitle).html()
+        isNewItem = false
+      }
+    });
+    console.log('newItemList: ' + newItemList + " isNewItem: " + isNewItem)
+
+    $('tangy-form-item').remove()
+    $(newItemList).appendTo('tangy-form')
+    if (isNewItem) {
+      // create the item html that will be added to the form.
+      let newItem = '<tangy-form-item src="' + itemFilename + '" id="' + itemId + '" title="' + itemTitle + '">'
+      console.log('newItem: ' + newItem)
+      $(newItem).appendTo('tangy-form')
+    }
+
+    console.log('html after: ' + $.html())
+    let form = $.html()
+    // await editor.saveForm(formPath, form);
+    console.log('now outputting ' + formPath)
+    await fs.outputFile(formPath, form)
+      .then(() => {
+        console.log('success! Updated file at: ' + formPath)
+
+      })
+      .catch(err => {
+        console.error("An error with form outputFile: " + err)
+        res.send(err)
+      })
   }
-
-  // Now that we have originalForm, we can load it and add items to it.
-  const $ = cheerio.load(originalForm)
-  // search for tangy-form-item
-  let formItemList = $('tangy-form-item')
-  // let html = $.html('tangy-form-item')
-  // console.log("html before: " + $.html())
-  let clippedFormItemList = formItemList.not(function(i, el) {
-    // this === el
-    let id = $(this).attr('id')
-    let src = $(this).attr('src')
-    return src === itemFilename
-  })
-  // console.log('formItemList: ' + formItemList.length + ' clippedFormItemList: ' + clippedFormItemList.length)
-
-  // create the form html that will be added
-  let newForm = '<tangy-form-item src="' + itemFilename + '" id="' + itemId + '" title="' + itemTitle + '">'
-  console.log('newForm: ' + newForm)
-  $('tangy-form-item').remove()
-  // todo: resolve ordering of these elements.
-  $(clippedFormItemList).appendTo('tangy-form')
-  $(newForm).appendTo('tangy-form')
-  // console.log('html after: ' + $.html())
-  let form = $.html()
-  // await editor.saveForm(formPath, form);
-  console.log('now outputting ' + formPath)
-  await fs.outputFile(formPath, form)
-    .then(() => {
-      console.log('success! Updated file at: ' + formPath)
-
-    })
-    .catch(err => {
-      console.error("An error with form outputFile: " + err)
-      res.send(err)
-    })
 
   // Save the item
   // let resp =  await editor.saveItem(formPath, itemFilename, itemHtmlText)
