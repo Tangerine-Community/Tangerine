@@ -258,13 +258,17 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 RUN source ~/.nvm/nvm.sh && \
   nvm install node
 
-ADD client-v3 /tangerine-server/client-v3
-
+ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
+ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
 RUN source ~/.nvm/nvm.sh && \
-  nvm use node && cd /tangerine-server/client-v3/tangy-forms && yarn install
+  nvm use node && cd /tangerine-server/client-v3/tangy-forms && yarn install && \
+  ./node_modules/.bin/bower install --allow-root
 
+ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
 RUN source ~/.nvm/nvm.sh && \
   nvm use node && cd /tangerine-server/client-v3/shell && npm install
+
+ADD client-v3 /tangerine-server/client-v3
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
