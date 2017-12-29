@@ -1,4 +1,8 @@
+#!/bin/bash
 set -x
+
+source ~/.nvm/nvm.sh && \
+nvm use node
 
 CONTENT_PATH="$1"
 
@@ -15,8 +19,8 @@ mv dist /tangerine-server/client-v3/build/tangy-forms
 
 cp /tangerine-server/client-v3/android/index.html /tangerine-server/client-v3/build/
 
-# cp "$CONTENT_PATH" /tangerine-server/client-v3/build/content
-cp /tangerine-server/client-v3/content /tangerine-server/client-v3/build/content
+# cp -r "$CONTENT_PATH" /tangerine-server/client-v3/build/content
+cp -r /tangerine-server/client-v3/content /tangerine-server/client-v3/build/content
 
 mv /tangerine-server/client/www /tangerine-server/client/www-tmp
 cp -r /tangerine-server/client-v3/build /tangerine-server/client/www
