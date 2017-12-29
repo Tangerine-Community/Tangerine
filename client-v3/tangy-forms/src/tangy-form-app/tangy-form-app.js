@@ -72,7 +72,7 @@ class TangyFormApp extends Element {
       let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
       console.log(`Setting <base> path using form directory: ${formDirectory}`)
       if (window.location.protocol === 'file:') {
-        window['base-path-loader'].innerHTML = `<base href="file:///android_asset/www/${formDirectory}/">`
+        window['base-path-loader'].innerHTML = `<base href="file:///android_asset/www${formDirectory}">`
       } else {
         window['base-path-loader'].innerHTML = `<base href="${formDirectory}/">`
       }
