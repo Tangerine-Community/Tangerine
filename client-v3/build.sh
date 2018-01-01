@@ -10,7 +10,7 @@ rm -r /tangerine-server/client-v3/build
 mkdir /tangerine-server/client-v3/build
 
 cd /tangerine-server/client-v3/shell
-./node_modules/.bin/ng build --base-href "/android_asset/www/tangerine/"
+./node_modules/.bin/ng build --base-href "./"
 mv dist /tangerine-server/client-v3/build/tangerine
 
 cd /tangerine-server/client-v3/tangy-forms
