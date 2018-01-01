@@ -30,7 +30,7 @@ export class CaseManagementService {
   }
   async getMyLocationVisits() {
 
-    const res = await fetch('/content/location-list.json');
+    const res = await this.http.get('../content/location-list.json').toPromise();
     const locationList = await res.json();
     const userProfile = await this.userService.getUserProfile();
 
@@ -61,7 +61,7 @@ export class CaseManagementService {
   }
 
   async getFormList() {
-    return await this.http.get('/content/forms.json')
+    return await this.http.get('../content/forms.json')
       .toPromise()
       .then(response => response.json()).catch(data => console.error(data));
   }

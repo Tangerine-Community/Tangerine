@@ -1,6 +1,7 @@
 import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
+import { Http } from '@angular/http';
 import * as PouchDB from 'pouchdb';
 
 import { AuthenticationService } from './core/auth/_services/authentication.service';
@@ -17,7 +18,9 @@ export class AppComponent implements OnInit {
   showNav;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
-    private windowRef: WindowRef, private userService: UserService,
+    private windowRef: WindowRef,
+    private userService: UserService,
+    private http: Http,
     private authenticationService: AuthenticationService,
     private router: Router) {
     windowRef.nativeWindow.PouchDB = PouchDB;
@@ -28,7 +31,7 @@ export class AppComponent implements OnInit {
 
     // Set location list as a global.
     const window = this.windowRef.nativeWindow;
-    const res = await fetch('/content/location-list.json');
+    const res = await this.http.get('../content/location-list.json').toPromise();
     window.locationList = await res.json();
 
     this.showNav = this.authenticationService.isLoggedIn();
