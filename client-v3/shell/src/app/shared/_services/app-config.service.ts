@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 
 @Injectable()
 export class AppConfigService {
-  constructor() { }
+  constructor(private http: Http) { }
   async getAppConfig() {
-    const res = await fetch('/content/app-config.json');
+    const res = await this.http.get('../content/app-config.json').toPromise();
     const appConfig = await res.json();
     return appConfig;
   }
