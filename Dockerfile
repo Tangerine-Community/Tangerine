@@ -266,7 +266,23 @@ RUN source ~/.nvm/nvm.sh && \
 
 ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
 RUN source ~/.nvm/nvm.sh && \
-  nvm use node && cd /tangerine-server/client-v3/shell && npm install
+  nvm use node && \
+  cd /tangerine-server/client-v3/shell && \
+  npm install
+
+#ADD client-v3/shell/src /tangerine-server/client-v3/shell/src
+ADD client-v3/shell /tangerine-server/client-v3/shell
+RUN source ~/.nvm/nvm.sh && \
+  nvm use node && \
+  cd /tangerine-server/client-v3/shell && \
+  ./node_modules/.bin/ng build --base-href "./"
+
+#ADD client-v3/tangy-forms/src /tangerine-server/client-v3/tangy-forms/src
+ADD client-v3/tangy-forms/ /tangerine-server/client-v3/tangy-forms/
+RUN source ~/.nvm/nvm.sh && \
+  nvm use node && \
+  cd /tangerine-server/client-v3/tangy-forms && \
+  npm run build 
 
 ADD client-v3 /tangerine-server/client-v3
 
@@ -275,6 +291,11 @@ ADD ./ /tangerine-server
 
 RUN mkdir /tangerine-server/logs
 
+ADD scripts/new-group.sh /tangerine-server/scripts/new-group.sh
+RUN mkdir /tangerine-server/data && \
+    mkdir /tangerine-server/data/groups && \
+    /tangerine-server/scripts/new-group.sh default
+    
 # Volumes
 VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks
