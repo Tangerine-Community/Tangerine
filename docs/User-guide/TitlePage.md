@@ -9,7 +9,7 @@ v\. November 2017
 **Authors:**
 
 Scott Kipp, RTI International
-*[skipp.Contractor@rti.org](mailto:%20skipp.Contractor@rti.org)*
+*[skipp@rti.org](mailto:%20skipp@rti.org)*
 
 Lachezar Hristov, RTI International
 *[lhristov@rti.org](mailto:lhristov@rti.org)*
