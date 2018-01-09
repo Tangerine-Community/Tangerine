@@ -190,7 +190,7 @@ class AssessmentImportView extends Backbone.View
 
       <h1>Tangerine Central Import</h1>
 
-      <a id='download-" + Tangerine.$db.name + "' download=''" + Tangerine.$db.name + ".json'>Download</a>
+      <a id='download-" + Tangerine.$db.name + "' download='" + Tangerine.$db.name + ".json' href='#'>Download File</a>
       <input type='file' id='fileinput' />
       <button class='filedownload command'>Download</button>
       #{importStep}
@@ -224,12 +224,13 @@ class AssessmentImportView extends Backbone.View
   downloadFile = (filename, text) -> 
     #element = document.createElement('a')
     element = document.getElementById('download-'+Tangerine.$db.name)
-    element.setAttribute('href' ,'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
-    #element.setAttribute('id', "download-" + filename)
+    element.setAttribute('href' ,'data:text/json;charset=utf-8,' + encodeURIComponent(text))
     #element.setAttribute('download', filename)
+    #element.setAttribute('id', "download-" + Tangerine.$db.name)
     #element.style.display = 'none'
     #document.body.appendChild(element)
-    #element.click()
+    element.click()
+    console.log("Download File:" + filename)
     #document.body.removeChild(element)
     
 
