@@ -22,7 +22,9 @@
       "styles": [
         "styles/_tangy-app-variables.scss",
         "styles/styles.scss",
-        "styles/tangerine-theme.scss"
+        "styles/tangerine-theme.scss",
+        "styles/materialize.scss"
+
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",
