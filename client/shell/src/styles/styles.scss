@@ -18,12 +18,18 @@ mat-toolbar{
     left: 0;
     z-index: 2;
 }
+
+
 .tangy-spacer{
-    flex: 1 1 auto; 
+    flex: 1 1 auto;
 }
 
 .tangy-foreground-primary{
     color: $tangy-foreground-primary;
+}
+
+.tangy-foreground-secondary {
+  color: #f26f10;
 }
 
 .tangy-no-text-decoration{
@@ -55,10 +61,11 @@ mat-toolbar{
 .tangy-location-list-icon{
   padding-right: 10px;
   padding-top:3.5px;
+  color: #f26f10;
 }
 
 .search-icon{
-padding-top:0px;   
+padding-top:0px;
 }
 .material-icons.mat-11 { font-size: 11px; }
 .material-icons.mat-14 { font-size: 14px; }
@@ -73,10 +80,10 @@ padding-top:0px;
 }
 /* Form Stuff*/
 .app-input-icon {
-    font-size: 16px;
+    font-size: 1.5em;
   }
-  
-  
+
+
   form {
     width: 220px;
     margin: 4em auto;
@@ -84,15 +91,15 @@ padding-top:0px;
     background: #fafafa;
     border: 1px solid #ebebeb;
     box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
-  
+
   }
-  
+
   .group {
     position: relative;
     margin-bottom: 45px;
-  
+
   }
-  
+
   .corner-ribbon{
     width: 200px;
     background: #e43;
@@ -106,17 +113,17 @@ padding-top:0px;
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
   }
-  
+
   /* Custom styles */
-  
+
   .corner-ribbon.sticky{
     position: fixed;
   }
-  
+
   .corner-ribbon.shadow{
     box-shadow: 0 0 3px rgba(0,0,0,.3);
   }
-  
+
   /* positions */
   .corner-ribbon.top-right{
     top: 25px;
