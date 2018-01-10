@@ -9,7 +9,13 @@ if [ "$DEBUG" != "" ]; then
   node index.js &
 
   cd /tangerine/client/shell
-  ./node_modules/.bin/ng build --base-href /tangerine/ --watch
+  ./node_modules/.bin/ng build --base-href /tangerine/ --watch &
+
+  cd /tangerine/client/tangy-forms
+  yarn run build &
+
+  cd /tangerine/client/tangy-forms
+  yarn run dev-mod
 
 else
 
