@@ -6,5 +6,9 @@
   {
     "title": "Item Demo",
     "src": "item-demo/form.html"
+  },
+  {
+    "title": "Acasi demo",
+    "src": "acasi-demo/form.html"
   }
 ]
