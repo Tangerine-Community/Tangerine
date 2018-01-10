@@ -1,0 +1,11 @@
+.tangy-foreground-primary {
+  font-weight: 700;
+  font-size: 18px;
+  text-transform: capitalize;
+}
+
+.tangy-location-list-icon {
+  color: #f26f10;
+  font-weight: 700;
+  font-size: 20px;
+}
