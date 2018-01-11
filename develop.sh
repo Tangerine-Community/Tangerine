@@ -20,6 +20,7 @@ docker run -it \
   --volume $(pwd)/client/tangy-forms/index.html:/tangerine/client/tangy-forms/index.html \
   --volume $(pwd)/client/tangy-forms/src:/tangerine/client/tangy-forms/src \
   --volume $(pwd)/client/tangy-forms/dist:/tangerine/client/tangy-forms/dist \
+  --volume $(pwd)/client/ckeditor/plugins:/tangerine/client/ckeditor/plugins \
   --volume $(pwd)/client/app-updater/index.html:/tangerine/client/app-updater/index.html \
   --volume $(pwd)/client/app-updater/src:/tangerine/client/app-updater/src \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
