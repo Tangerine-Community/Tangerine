@@ -9,6 +9,7 @@
     "prebuild": "NODE_ENV=production webpack --config webpack-module-build.config.js",
     "build": "NODE_ENV=production webpack --optimize-minimize",
     "dev": "NODE_ENV=production webpack --watch",
+    "dev-mod": "NODE_ENV=production webpack --config webpack-module-build.config.js --watch",
     "dev-server": "webpack-dev-server --hot --inline",
     "dev:module": "BROWSERS=module webpack-dev-server --hot --inline",
     "pretest": "yarn linkbower && yarn build",
@@ -53,6 +54,8 @@
     "fs-extra": "4.0.2",
     "http-server": "0.10.0",
     "lighthouse": "2.5.0",
+    "node-pty": "0.7.4",
+    "node-sass": "^4.6.0",
     "postcss": "6.0.13",
     "postcss-cssnext": "3.0.2",
     "postcss-loader": "2.0.8",
@@ -76,7 +79,9 @@
     "@polymer/paper-card": "3.0.0-pre.1",
     "@polymer/paper-checkbox": "3.0.0-pre.1",
     "@polymer/paper-fab": "3.0.0-pre.1",
+    "@polymer/paper-icon-button": "3.0.0-pre.1",
     "@polymer/paper-input": "3.0.0-pre.1",
+    "@polymer/paper-item": "3.0.0-pre.1",
     "@polymer/paper-progress": "3.0.0-pre.1",
     "@polymer/paper-radio-group": "3.0.0-pre.1",
     "@polymer/polymer": "LasaleFamine/polymer#3.0-preview",
@@ -85,6 +90,7 @@
     "moment": "2.19.3",
     "pouchdb-browser": "6.2.0",
     "redux": "3.7.2",
+    "sortable-list": "https://github.com/chrisekelley/sortable-list",
     "underscore": "1.8.3"
   }
 }
