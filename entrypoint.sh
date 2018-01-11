@@ -110,4 +110,11 @@ then
 	echo ""
 	echo "Monitoring for client chages..."
 	cd /tangerine-server/client && npm run debug
+	echo ""
+	echo ""
+	echo ""
+	echo "Starting v3 shell build process with watch..."
+  cd /tangerine-server/client-v3/shell
+  ./node_modules/.bin/ng build --base-href ./ --watch
+
 fi
