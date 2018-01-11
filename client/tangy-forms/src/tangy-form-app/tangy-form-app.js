@@ -11,7 +11,7 @@ import '../tangy-textarea/tangy-textarea.js';
 import '../tangy-acasi/tangy-acasi.js';
 /**
  * `tangy-form-app`
- * ... 
+ * ...
  *
  * @customElement
  * @polymer
@@ -290,7 +290,7 @@ class TangyFormApp extends Element {
     };
   }
   connectedCallback() {
-    super.connectedCallback(); 
+    super.connectedCallback();
     if (typeof Tangy === 'undefined') {
       window.Tangy = {}
     }
@@ -376,7 +376,7 @@ class TangyFormApp extends Element {
     window['base-path-loader'].innerHTML = `<base href="/tangy-forms">`
     // Load forms list.
     let formsJson = await fetch('../content/forms.json')
-    this.forms = await formsJson.json() 
+    this.forms = await formsJson.json()
     // Load editor forms
     let editorJson = await fetch('/tangy-editor/editor-forms.json')
     this.editorForms = await editorJson.json()
@@ -423,7 +423,7 @@ class TangyFormApp extends Element {
   }
 
   formSelected(ev) {
-    location.reload() 
+    location.reload()
   }
 
   async showForm(formSrc) {
@@ -431,7 +431,7 @@ class TangyFormApp extends Element {
     this.$['form-view'].hidden = false
     this.$['form-item-listing'].hidden = true
     this.$['item-edit'].hidden = true
-    this.$['form-list'].hidden = true 
+    this.$['form-list'].hidden = true
     this.$['item-create'].hidden = true
     // Load the form into the DOM.
     let formHtml = await fetch(formSrc)
@@ -441,14 +441,14 @@ class TangyFormApp extends Element {
     formTemplate.innerHTML = await formHtml.text()
     let formEl = formTemplate.querySelector('tangy-form')
     if (query.database) formEl.setAttribute('database-name', query.database)
-    if (query['linear-mode']) formEl.setAttribute('linear-mode', true) 
+    if (query['linear-mode']) formEl.setAttribute('linear-mode', true)
     if (query['response-id']) formEl.setAttribute('response-id', query['response-id'])
-    if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true) 
-    if (query['hide-nav']) formEl.setAttribute('hide-nav', true) 
-    if (query['hide-responses']) formEl.setAttribute('hide-responses', true) 
+    if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true)
+    if (query['hide-nav']) formEl.setAttribute('hide-nav', true)
+    if (query['hide-responses']) formEl.setAttribute('hide-responses', true)
     // this.innerHTML = formTemplate.innerHTML
     // let tangyForm = this.querySelector('tangy-form')
-    this.shadowRoot.innerHTML = formTemplate.innerHTML 
+    this.shadowRoot.innerHTML = formTemplate.innerHTML
     let tangyForm = this.shadowRoot.querySelector('tangy-form')
     tangyForm.addEventListener('ALL_ITEMS_CLOSED', () => {
       if (parent && parent.frames && parent.frames.ifr) {
@@ -518,26 +518,10 @@ class TangyFormApp extends Element {
     if (isNewForm !== true) {
       if (isNewItem === true) {
         this.headerTitle = "New Item"
-        // Load the form into the DOM.
-        // let frmSrc = this.formHtmlPath
-        // let array = frmSrc.split('/')
-        // let itemUrl = array[0] + '/' + array[1] + '/' + itemSrc
-        // todo try to grab local pouch version of item
-        // let itemHtml = await fetch(itemSrc)
-        // this.itemHtmlText = await itemHtml.text()
-        // console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
-        // if (this.itemHtmlText === '') {
-          Tangy.editor.setData('<p>&nbsp;</p>')
-        // } else {
-        //   Tangy.editor.setData(this.itemHtmlText)
-        //   // Tangy.editor.setData("bla bla bla")
-        // }
+        Tangy.editor.setData('<p>&nbsp;</p>')
       } else {
         this.headerTitle = "Edit Item"
         // Load the form into the DOM.
-        // let frmSrc = this.formHtmlPath
-        // let array = frmSrc.split('/')
-        // let itemUrl = array[0] + '/' + array[1] + '/' + itemSrc
         // todo try to grab local pouch version of item
         let itemHtml = await fetch(itemSrc)
         this.itemHtmlText = await itemHtml.text()
@@ -589,11 +573,7 @@ class TangyFormApp extends Element {
     item.formTitle = this.$.formTitle.value
     // Check if this is a new item
     if (typeof item.itemId == 'undefined') {
-      // todo : create filename from item title using sanitize
-      console.log("item.itemId is undefined: " + item.itemId)
-      // let len = this.items.length + 1
-      // item.itemId= 'item-' + len
-      // item.itemFilename = item.itemId + '.html'
+      // console.log("item.itemId is undefined: " + item.itemId)
     }
     let result = await fetch("/editor/item/save", {
       headers: {
