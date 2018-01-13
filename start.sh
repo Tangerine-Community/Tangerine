@@ -9,8 +9,12 @@ else
 fi
 
 # Allow to specify Tangerine Version as parameter in ./start.sh, other wise use the most recent tag.
-if [ "$T_TAG" = "" ]; then
-  T_TAG=$(git describe --tags --abbrev=0)
+if [ "$1" = "" ]; then
+    T_TAG=$(git describe --tags --abbrev=0)
+    echo "Pulling $T_TAG"
+    docker pull tangerine/tangerine:$T_TAG
+  else
+    T_TAG="$1"
 fi
 
 # Pull tag.
