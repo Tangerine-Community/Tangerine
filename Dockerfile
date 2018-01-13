@@ -202,18 +202,6 @@ RUN cd /tangerine-server/client \
 RUN cd /tangerine-server/client \
     && bower install --allow-root  
 
-# Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
-WORKDIR /tangerine-server/client
-RUN ./node_modules/.bin/cordova platform add android@5.X.X 
-# RUN npm install cordova-plugin-whitelist 
-RUN ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save 
-# RUN npm install cordova-plugin-geolocation 
-RUN ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save 
-# RUN npm install cordova-plugin-camera 
-RUN ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save 
-RUN ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-# RUN cd /tangerine-server/client && npm run build:apk 
-
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
 RUN cd /tangerine-server/cli \
