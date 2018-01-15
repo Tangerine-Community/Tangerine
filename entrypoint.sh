@@ -88,6 +88,7 @@ echo ""
 echo ""
 echo ""
 
+cd /tangerine-server/
 ./install-apk-dependencies-on-container-start.sh &
 
 if [ "$T_RUN_MODE" = "production" ]
