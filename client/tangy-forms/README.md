@@ -52,3 +52,21 @@ target to include the files you may be working on.
 # Viewing demos
 
 cd to client and run `yarn start` to run the http-server.
+
+# Class demo
+
+We're using a css grid for the student dashboard. The numeral in the grid-template-columns property should be the number of forms + 1.
+
+In this example , there are 2 forms, so the numeral is 3.
+
+```
+  #container-right {
+    display: grid;
+    grid-template-columns: repeat(3, [col] 100px ) ;
+    grid-auto-columns: 100px;
+    background-color: beige;
+  }
+```
+
+The Settings icon under the Class Dashboard header takes you to the form for creating a new class (if it’s the first time
+you’ve configured the app) and also has a link for creating Students.
