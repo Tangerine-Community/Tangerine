@@ -20,7 +20,6 @@ docker run \
   --volume $(pwd)/client/tangy-forms/index.html:/tangerine/client/tangy-forms/index.html \
   --volume $(pwd)/client/tangy-forms/package.json:/tangerine/client/tangy-forms/package.json \
   --volume $(pwd)/client/tangy-forms/yarn.lock:/tangerine/client/tangy-forms/yarn.lock \
-  --volume $(pwd)/client/tangy-forms/node_modules:/tangerine/client/tangy-forms/node_modules \
   --volume $(pwd)/client/tangy-forms/src:/tangerine/client/tangy-forms/src \
   --volume $(pwd)/client/tangy-forms/dist:/tangerine/client/tangy-forms/dist \
   --volume $(pwd)/client/app-updater/index.html:/tangerine/client/app-updater/index.html \
