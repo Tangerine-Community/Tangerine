@@ -14,7 +14,7 @@ const DB_ADMIN_URL = `${config.protocol}${config.admin.username}:${config.admin.
 app.use(config.dbServerEndpoint, require('express-pouchdb')(PouchDB.defaults({prefix: './db/'})));
 
 // Content at /content/*
-app.use('/content', express.static(path.join(__dirname, '../client/build/content')));
+app.use('/content', express.static(path.join(__dirname, config.contentRoot)))
 
 // If we are in DEBUG mode, then glue together various dev folders into a structure that reperesents the paths of what they would be built else 
 // mount the client build folder and don't worry about it.
@@ -22,7 +22,7 @@ if (process.env.DEBUG) {
   // Shell at /tangerine/*
   app.use('/tangerine', express.static(path.join(__dirname, '../client/shell/dist')));
   // Tangy Forms at /tangy-forms/*
-  app.use('/tangy-forms', express.static(path.join(__dirname, '../client/tangy-forms')));
+  app.use('/tangy-forms', express.static(path.join(__dirname, '../client/tangy-forms/dist')));
   // App updater at /*
   app.use('/', express.static(path.join(__dirname, '../client/app-updater')));
 } else {

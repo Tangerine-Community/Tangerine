@@ -1,0 +1,47 @@
+<form on-change="
+let _id = getStateValue('_id')
+Tangy.currentStudentId = _id
+console.log('Populating Tangy.currentStudentId: ' + Tangy.currentStudentId)
+let currentClassId = getStateValue('classId')
+if (typeof(currentClassId) === 'undefined') {
+console.log('currentClassId is undefined. Setting it to ' + Tangy.currentClassId)
+setValue('classId', Tangy.currentClassId)
+}
+">
+
+<tangy-input
+        name="student_name"
+        label="Full name"
+        type="text"
+        error-message="This is required."
+        required>
+</tangy-input>
+
+<tangy-input
+        name="gender"
+        label="Gender"
+        type="text"
+        error-message="This is required."
+        required>
+</tangy-input>
+
+<tangy-input
+        name="age"
+        label="Age"
+        type="text"
+        error-message="This is required."
+        required>
+</tangy-input>
+
+<tangy-input
+        name="classId"
+        label="Class id"
+        type="hidden"
+        error-message="This is required."
+        hidden
+        >
+</tangy-input>
+
+<a href="/tangy-forms/?dashboard=class" on-click="formSelected">
+    <paper-button raised class="green" on-click="formSelected">Class Dashboard</paper-button>
+</a>

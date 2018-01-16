@@ -74,6 +74,14 @@ export class TangyFormService {
     return r.rows.map((row) => row.doc)
   }
 
+  async getStudentRegistrations(formId) {
+    // let r = await this.db.query('tangy-form/responsesByFormIdAll', {key: formId, include_docs: true})
+    let r = await this.db.query('tangy-form/responsesByFormIdAll')
+    // return r.rows.map((row) => row.doc)
+    // let r = await this.db.allDocs({include_docs: true, descending: true});
+    // return r.rows
+    return r.rows.map((row) => row.value)
+  }
   async getResponsesByLocationId(locationId) {
     let r = await this.db.query('tangy-form/responsesByLocationId', {key: locationId, include_docs: true})
     return r.rows.map((row) => row.doc)
@@ -83,7 +91,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
     _id: '_design/tangy-form',
-    version: '10',
+    version: '45',
     views: {
       formByFormId: {
         map: function(doc) {
@@ -116,6 +124,45 @@ var tangyFormDesignDoc = {
         map: function(doc) {
           if (doc.collection !== 'TangyFormResponse') return
           emit(`${doc.formId}-${doc.startDatetime}`, true)
+        }.toString()
+      },
+      responsesByFormIdAll: {
+        map: function(doc) {
+          debugger;
+          if (doc.collection !== 'TangyFormResponse') return
+          // if (doc.form.id === 'student_registration') {
+          if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && doc.hasOwnProperty('formId') ) {
+            if (doc.formId === 'student-registration') {
+              // emit(doc.id, true)
+              var sr = {}
+              // const nameObj = doc.inputs.filter(item => item.hasOwnProperty('name') && item.name === 'student_name')
+              debugger;
+              for (let input of doc.inputs) {
+                let name = input.name
+                let inputValue = input.value
+                sr[name] = inputValue
+              }
+              sr['_id'] = doc._id
+              emit(doc._id, sr)
+            }
+          } else {
+            debugger;
+            if (doc.hasOwnProperty('form')) {
+              debugger;
+              if (doc.form.id === 'student-registration') {
+                debugger;
+                var sr = {}
+                // const nameObj = doc.inputs.filter(item => item.hasOwnProperty('name') && item.name === 'student_name')
+                for (let input of doc.inputs) {
+                  let name = input.name
+                  let inputValue = input.value
+                  sr[name] = inputValue
+                }
+                sr['_id'] = doc._id
+                emit(doc._id, sr)
+              }
+            }
+          }
         }.toString()
       },
       responseByUploadDatetime: {

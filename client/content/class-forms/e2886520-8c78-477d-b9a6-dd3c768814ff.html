@@ -1,0 +1,42 @@
+<form on-change="
+let _id = getStateValue('_id')
+Tangy.currentClassId = _id
+console.log('Populating Tangy.currentClassId: ' + Tangy.currentClassId)
+">
+
+<tangy-input
+        name="school_name"
+        label="School name"
+        type="text"
+        error-message="This is required."
+        required>
+</tangy-input>
+
+<tangy-input
+        name="school_year"
+        label="School year"
+        type="text"
+        error-message="This is required."
+        required>
+</tangy-input>
+
+<tangy-input
+        name="grade"
+        label="Grade"
+        type="text"
+        error-message="This is required."
+        required>
+</tangy-input>
+
+<tangy-input
+        name="stream"
+        label="Stream"
+        type="text"
+        error-message="This is required."
+        required>
+</tangy-input>
+
+</form>
+<a href="/tangy-forms/?path=/content/student-registration/form.html" on-click="formSelected">
+    <paper-button raised class="green" on-click="formSelected">Student Registration</paper-button>
+</a>
