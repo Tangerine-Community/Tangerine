@@ -5,6 +5,8 @@ EXPOSE 4200
 RUN mkdir /tangerine
 WORKDIR /tangerine
 
+# Install vim
+RUN apt-get update && apt-get -y install vim
 # Install server.
 ADD server/package.json server/package.json
 RUN cd /tangerine/server && npm install
@@ -40,8 +42,9 @@ ADD client/tangy-forms/postcss.config.js /tangerine/client/tangy-forms/postcss.c
 ADD client/tangy-forms/webpack.config.js /tangerine/client/tangy-forms/webpack.config.js
 ADD client/tangy-forms/webpack-module-build.config.js /tangerine/client/tangy-forms/webpack-module-build.config.js
 ADD client/tangy-forms/assets /tangerine/client/tangy-forms/assets
+ADD client/tangy-forms/dist /tangerine/client/tangy-forms/dist
 ADD client/tangy-forms/src /tangerine/client/tangy-forms/src
-RUN cd /tangerine/client/tangy-forms && yarn run build
+#RUN cd /tangerine/client/tangy-forms && yarn run build
 
 ADD client/app-updater/src /tangerine/client/app-updater/src
 ADD client/app-updater/index.html /tangerine/client/app-updater/index.html
@@ -56,6 +59,7 @@ ADD client/shell/.angular-cli.json /tangerine/client/shell/.angular-cli.json
 RUN cd /tangerine/client/shell && ./node_modules/.bin/ng build --base-href /tangerine/ 
 
 ADD server/index.js server/index.js
+ADD server/config.yml server/config.yml
 
 #
 # Add static assets.
@@ -64,8 +68,8 @@ ADD server/index.js server/index.js
 ADD client/tangy-forms/assets /tangerine/client/tangy-forms/assets
 ADD client/content /tangerine/client/content
 ADD logo.svg /tangerine/client/build/logo.svg
-RUN cp -r /tangerine/client/content /tangerine/client/build/
-
+# RUN cp -r /tangerine/client/content /tangerine/client/build/
+# RUN mkdir /tangerine/client/build/
 
 #
 # Glue build together.
