@@ -247,9 +247,12 @@ RUN source ~/.nvm/nvm.sh && \
   nvm install node
 
 ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
+ADD client-v3/tangy-forms/yarn.lock /tangerine-server/client-v3/tangy-forms/yarn.lock
 ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
 RUN source ~/.nvm/nvm.sh && \
-  nvm use node && cd /tangerine-server/client-v3/tangy-forms && yarn install && \
+  nvm use node && \
+  cd /tangerine-server/client-v3/tangy-forms && \
+  yarn install --frozen-lockfile && \
   ./node_modules/.bin/bower install --allow-root
 
 ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
@@ -267,10 +270,10 @@ RUN source ~/.nvm/nvm.sh && \
 
 #ADD client-v3/tangy-forms/src /tangerine-server/client-v3/tangy-forms/src
 ADD client-v3/tangy-forms/ /tangerine-server/client-v3/tangy-forms/
-# RUN source ~/.nvm/nvm.sh && \
-#   nvm use node && \
-#  cd /tangerine-server/client-v3/tangy-forms && \
-#  npm run build 
+RUN source ~/.nvm/nvm.sh && \
+  nvm use node && \
+ cd /tangerine-server/client-v3/tangy-forms && \
+ npm run build 
 
 ADD client-v3 /tangerine-server/client-v3
 
