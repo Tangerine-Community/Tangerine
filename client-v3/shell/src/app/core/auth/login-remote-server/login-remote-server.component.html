@@ -1,0 +1,15 @@
+<mat-grid-list cols="2" rowHeight="2:1">
+  <h2>Log in to Remote Server</h2>
+  <mat-grid-tile>
+    <mat-form-field>
+      <label>Username</label>
+      <input matInput [(ngModel)]="user.username" place>
+    </mat-form-field>
+    <mat-form-field>
+      <label>Password</label>
+      <input matInput [(ngModel)]="user.password" type="password">
+    </mat-form-field>
+    <button mat-raised-button (click)="loginForUpload()">Login</button>
+  </mat-grid-tile>
+  <mat-grid-tile></mat-grid-tile>
+</mat-grid-list>

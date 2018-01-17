@@ -88,6 +88,9 @@ echo ""
 echo ""
 echo ""
 
+cd /tangerine-server/
+./install-apk-dependencies-on-container-start.sh &
+
 if [ "$T_RUN_MODE" = "production" ]
 then
 	echo "Start the pm2 process"
@@ -109,5 +112,18 @@ then
 	echo ""
 	echo ""
 	echo "Monitoring for client chages..."
-	cd /tangerine-server/client && npm run debug
+	cd /tangerine-server/client && npm run debug &
+	echo ""
+	echo ""
+	echo ""
+	echo "Switching to more recent version of node..."
+  source ~/.nvm/nvm.sh
+  nvm use node
+	echo ""
+	echo ""
+	echo ""
+	echo "Starting v3 shell build process with watch..."
+  cd /tangerine-server/client-v3/shell
+  ./node_modules/.bin/ng build --base-href ./ --watch --output-path ../build/tangerine
+
 fi

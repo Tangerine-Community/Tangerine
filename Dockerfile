@@ -202,18 +202,6 @@ RUN cd /tangerine-server/client \
 RUN cd /tangerine-server/client \
     && bower install --allow-root  
 
-# Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
-RUN cd /tangerine-server/client \
-    && ./node_modules/.bin/cordova platform add android@5.X.X \
-    && npm install cordova-plugin-whitelist \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
-    && npm install cordova-plugin-geolocation \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
-    && npm install cordova-plugin-camera \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-RUN cd /tangerine-server/client && npm run build:apk 
-
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
 RUN cd /tangerine-server/cli \
@@ -243,12 +231,69 @@ RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
 
+# 
+# Get v3 client dependencies.
+#
+
+# Yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list && \
+    sudo apt-get update && sudo apt-get install yarn
+
+# nvm
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+RUN source ~/.nvm/nvm.sh && \
+  nvm install node
+
+ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
+ADD client-v3/tangy-forms/yarn.lock /tangerine-server/client-v3/tangy-forms/yarn.lock
+ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
+RUN source ~/.nvm/nvm.sh && \
+  nvm use node && \
+  cd /tangerine-server/client-v3/tangy-forms && \
+  yarn install --frozen-lockfile && \
+  ./node_modules/.bin/bower install --allow-root
+
+ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
+RUN source ~/.nvm/nvm.sh && \
+  nvm use node && \
+  cd /tangerine-server/client-v3/shell && \
+  npm install
+
+#ADD client-v3/shell/src /tangerine-server/client-v3/shell/src
+ADD client-v3/shell /tangerine-server/client-v3/shell
+RUN source ~/.nvm/nvm.sh && \
+  nvm use node && \
+  cd /tangerine-server/client-v3/shell && \
+  ./node_modules/.bin/ng build --base-href "./"
+
+#ADD client-v3/tangy-forms/src /tangerine-server/client-v3/tangy-forms/src
+ADD client-v3/tangy-forms/ /tangerine-server/client-v3/tangy-forms/
+RUN source ~/.nvm/nvm.sh && \
+  nvm use node && \
+ cd /tangerine-server/client-v3/tangy-forms && \
+ npm run build 
+
+ADD client-v3 /tangerine-server/client-v3
+
+RUN cd /tangerine-server/client-v3/ && \
+    mkdir build && \
+    cp -r tangy-forms build/ && \
+    cp -r shell/dist build/tangerine && \
+    cp -r app-updater/* build/ && \
+    cp -r content build/
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
 
 RUN mkdir /tangerine-server/logs
 
+# ADD scripts/new-group.sh /tangerine-server/scripts/new-group.sh
+# RUN mkdir /tangerine-server/data && \
+#    mkdir /tangerine-server/data/groups && \
+#    /tangerine-server/scripts/new-group.sh default
+    
 # Volumes
 VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks

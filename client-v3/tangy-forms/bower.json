@@ -1,0 +1,7 @@
+{
+  "name": "tangy",
+  "main": "index.html",
+  "dependencies": {
+    "pouchdb": "^6.3.4"
+  }
+}
