@@ -13,11 +13,11 @@ RUN cd /tangerine/server && npm install
 ADD client/package.json /tangerine/client/package.json
 RUN cd /tangerine/client && npm install
 
-# Install app-updater dependencies.
-ADD client/app-updater/package.json /tangerine/client/app-updater/package.json
-RUN cd /tangerine/client/app-updater && npm install
-ADD client/app-updater/bower.json /tangerine/client/app-updater/bower.json
-RUN cd /tangerine/client/app-updater && ./node_modules/.bin/bower --allow-root install
+# Install containers/pwa dependencies.
+ADD client/containers/pwa/package.json /tangerine/client/containers/pwa/package.json
+RUN cd /tangerine/client/containers/pwa && npm install
+ADD client/containers/pwa/bower.json /tangerine/client/containers/pwa/bower.json
+RUN cd /tangerine/client/containers/pwa && ./node_modules/.bin/bower --allow-root install
 
 # Install shell dependencies.
 ADD client/shell/package.json /tangerine/client/shell/package.json
@@ -43,9 +43,9 @@ ADD client/tangy-forms/assets /tangerine/client/tangy-forms/assets
 ADD client/tangy-forms/src /tangerine/client/tangy-forms/src
 RUN cd /tangerine/client/tangy-forms && yarn run build
 
-ADD client/app-updater/src /tangerine/client/app-updater/src
-ADD client/app-updater/index.html /tangerine/client/app-updater/index.html
-RUN cd /tangerine/client/app-updater && npm run build
+ADD client/containers/pwa/src /tangerine/client/containers/pwa/src
+ADD client/containers/pwa/index.html /tangerine/client/containers/pwa/index.html
+RUN cd /tangerine/client/containers/pwa && npm run build
 
 ADD client/shell/src /tangerine/client/shell/src
 ADD client/shell/Gulpfile.js /tangerine/client/shell/Gulpfile.js
@@ -68,22 +68,18 @@ RUN cp -r /tangerine/client/content /tangerine/client/build/
 
 
 #
-# Glue build together.
-#
-
-RUN cp -r /tangerine/client/app-updater/build/default/* /tangerine/client/build/ && \
-    cp -r /tangerine/client/shell/dist/ /tangerine/client/build/tangerine && \
-    cp -r /tangerine/client/tangy-forms/dist /tangerine/client/build/tangy-forms
-
-#
 # Add configuration.
 #
 
 # Add server default config.
 ADD server/config.yml server/config.yml
 
-# Add workbox configuration for generating service workers on releases.
-ADD client/workbox-cli-config.js /tangerine/client/workbox-cli-config.js
+
+# Android build tools.
+RUN npm install -g jszip-cli decompress-cli
+ADD client/containers/android client/containers/android
+
+ADD scripts scripts
 
 #
 # Entrypoint.
