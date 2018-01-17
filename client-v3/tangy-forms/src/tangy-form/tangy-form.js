@@ -220,7 +220,7 @@ export class TangyForm extends PolymerElement {
     this.store.subscribe(this.throttledSaveResponse.bind(this))
 
     // Set location list as a global.
-    let res = await fetch('../location-list.json')
+    let res = await fetch('../content/location-list.json')
     window.locationList = await res.json()
 
     // Show questions.

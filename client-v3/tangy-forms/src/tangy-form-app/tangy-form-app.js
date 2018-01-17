@@ -40,7 +40,7 @@ class TangyFormApp extends Element {
         <template is="dom-repeat" items="{{forms}}">
             <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
                 <div class="card-actions">
-                  <a href="#form=/content/[[item.src]]" on-click="formSelected">
+                  <a href="#form=[[item.src]]" on-click="formSelected">
                     <paper-button class="launch-form">
                       <iron-icon icon="icons:launch">
                     </iron-icon></paper-button>
@@ -69,14 +69,7 @@ class TangyFormApp extends Element {
     let query = this.parseQuery(window.location.hash)
     let formPath = query.form
     if (formPath) {
-      let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
-      console.log(`Setting <base> path using form directory: ${formDirectory}`)
-      if (window.location.protocol === 'file:') {
-        window['base-path-loader'].innerHTML = `<base href="file:///android_asset/www${formDirectory}">`
-      } else {
-        window['base-path-loader'].innerHTML = `<base href="${formDirectory}/">`
-      }
-      this.showForm('form.html')
+      this.showForm(formPath)
     } else {
       this.showFormsList()
     }
