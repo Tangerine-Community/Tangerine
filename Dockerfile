@@ -301,4 +301,4 @@ VOLUME /var/lib/couchb/
 
 EXPOSE 80
 
-ENTRYPOINT /tangerine-server/entrypoint.sh
+ENTRYPOINT /tangerine-server/scripts/entrypoint.sh
