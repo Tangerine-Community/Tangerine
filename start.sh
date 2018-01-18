@@ -46,6 +46,9 @@ RUN_OPTIONS="
   --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
+  --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
+  --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
+  --volume $(pwd)/data/client-v3/content:/tangerine-server/client-v3/content/groups \
 " 
 
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
