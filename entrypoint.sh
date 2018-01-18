@@ -88,8 +88,17 @@ echo ""
 echo ""
 echo ""
 
-cd /tangerine-server/
-./install-apk-dependencies-on-container-start.sh &
+# Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
+cd /tangerine-server/client \
+    && ./node_modules/.bin/cordova platform add android@5.X.X \
+    && npm install cordova-plugin-whitelist \
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
+    && npm install cordova-plugin-geolocation \
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
+    && npm install cordova-plugin-camera \
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save \
+    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
+cd /tangerine-server/client && npm run build:apk 
 
 if [ "$T_RUN_MODE" = "production" ]
 then
@@ -116,14 +125,7 @@ then
 	echo ""
 	echo ""
 	echo ""
-	echo "Switching to more recent version of node..."
-  source ~/.nvm/nvm.sh
-  nvm use node
-	echo ""
-	echo ""
-	echo ""
-	echo "Starting v3 shell build process with watch..."
-  cd /tangerine-server/client-v3/shell
-  ./node_modules/.bin/ng build --base-href ./ --watch --output-path ../build/tangerine
+	echo "Starting v3 development..."
+  cd /tangerine-server/client-v3/ && ./develop.sh
 
 fi
