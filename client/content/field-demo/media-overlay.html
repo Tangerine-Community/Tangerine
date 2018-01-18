@@ -1,0 +1,20 @@
+<form on-change="">
+
+  <tangy-radio-buttons 
+    label="Select a fruit."
+    name="fruit" >
+    <option value="banana">Banana</option>
+    <option value="apple">Apple</option>
+  </tangy-radio-buttons>
+
+  <tangy-radio-buttons 
+    label="Select the week."
+    name="week"
+    required>
+    <option value="week1.jpg">Week 1</option>
+    <option value="week2.jpg">Week 2</option>
+  </tangy-radio-buttons>
+
+  <tangy-media-overlay on-open="getValue('fruit') + '/' + getValue('week')" position="top-right"></tangy-media-overlay>
+
+</form>
