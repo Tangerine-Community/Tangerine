@@ -35,7 +35,9 @@ RUN_OPTIONS="
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
   --volume $(pwd)/client-v3/tangy-forms/src/:/tangerine-server/client-v3/tangy-forms/src/ \
   --volume $(pwd)/client-v3/shell/src/:/tangerine-server/client-v3/shell/src/ \
-  --volume $T_V3_CONTENT_PATH:/tangerine-server/client-v3/content/ \
+  --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
+  --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
+  --volume $(pwd)/data/client-v3/content:/tangerine-server/client-v3/content/groups \
 " 
 
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
