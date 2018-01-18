@@ -1,0 +1,20 @@
+{
+  "name": "pwa-wrapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/polymer build --js-compile --bundle",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "polymer-cli": "^1.5.7",
+    "uuid": "^3.1.0",
+    "workbox-cli": "^2.1.2"
+  }
+}
