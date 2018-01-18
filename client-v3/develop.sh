@@ -12,6 +12,4 @@ cd shell
 cd ..
 
 cd builds/dev
-hs -c-1
-
-
+../../node_modules/.bin/http-server -p 4200 -c-1
