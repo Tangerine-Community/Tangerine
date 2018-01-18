@@ -1,10 +1,10 @@
 module.exports = {
   "maximumFileSizeToCacheInBytes": 9915000000,
-  "globDirectory": "build/",
+  "globDirectory": ".pwa-temporary",
   "globPatterns": [
     "**/*.{md,html,json,png,txt,xml,ico,svg,jpg,gif,js,css}"
   ],
-  "swDest": "build/sw.js",
+  "swDest": ".pwa-temporary/sw.js",
   "skipWaiting": true,
   "globIgnores": [
     "../workbox-cli-config.js",
