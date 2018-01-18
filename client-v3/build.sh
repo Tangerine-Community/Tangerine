@@ -8,11 +8,11 @@ cd shell
 cd ..
 
 cd tangy-forms
-#npm run build 
+npm run build 
 cd ..
 
 cd wrappers/pwa
-#npm run build
+npm run build
 cd ../../
 
 rm -r builds
