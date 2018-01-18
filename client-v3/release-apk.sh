@@ -35,4 +35,4 @@ cd ../client
 rm -r ./www
 mv www-tmp www
 
-mv platforms/android/android-arm7-debug.apk ../client-v3/releases/apks/$SECRET.apk
+mv platforms/android/build/outputs/apk/android-armv7-debug.apk ../client-v3/releases/apks/$SECRET.apk
