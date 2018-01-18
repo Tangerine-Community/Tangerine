@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo "build APK"
+cd /tangerine-server/client && npm run build:apk 
+
 # Send nginx logs to docker logs.
 tail -f /var/log/nginx/access.log &
 tail -f /var/log/nginx/error.log &
