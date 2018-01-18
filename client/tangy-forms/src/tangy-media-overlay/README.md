@@ -7,9 +7,13 @@ The code for the image's path uses vars in the form (date, etc) to create the ur
 Example - collect data using a radio button (select one of 3 cats), take the value, compute the url, and display the cat
 
 Styling - keep it simple and functional, need to be able to zoom in on it. cover the screen with the image is fine.
-tap to close the window
+Tap to close the window
 
 Custom widget name: <tangy-media-overlay>
 Properties
 - on-open
 - position (bottom left, bottom-right, top-left, top-right
+
+```
+  <tangy-media-overlay on-open="getValue('fruit') + '/' + getValue('week')" position="top-right"></tangy-media-overlay>
+```
