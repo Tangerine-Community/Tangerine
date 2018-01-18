@@ -246,11 +246,14 @@ RUN source ~/.nvm/nvm.sh && \
   nvm install 8 && \
   nvm install 4
 # Install client v3
+ADD client-v3/package.json /tangerine-server/client-v3/package.json
 ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
 ADD client-v3/tangy-forms/yarn.lock /tangerine-server/client-v3/tangy-forms/yarn.lock
 ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
 ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
 ADD client-v3/shell /tangerine-server/client-v3/shell
+ADD client-v3/wrappers/pwa/package.json /tangerine-server/client-v3/wrappers/pwa/package.json
+ADD client-v3/wrappers/pwa/bower.json /tangerine-server/client-v3/wrappers/pwa/bower.json
 ADD client-v3/install.sh /tangerine-server/client-v3/install.sh
 RUN cd /tangerine-server/client-v3/ && ./install.sh
 # Build client v3.
@@ -273,4 +276,4 @@ VOLUME /var/lib/couchb/
 
 EXPOSE 80
 
-ENTRYPOINT /tangerine-server/scripts/entrypoint.sh
+ENTRYPOINT /tangerine-server/entrypoint.sh
