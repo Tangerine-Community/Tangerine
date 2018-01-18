@@ -70,20 +70,11 @@ app.use(function(err, req, res, next) {
 app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
 app.use('/client', express.static(__dirname + '/../client/src/'));
 
-// If we are in DEBUG mode, then glue together various dev folders into a structure that reperesents the paths of what they would be built else
-// mount the client build folder and don't worry about it.
 if (process.env.NODE_ENV == "development") {
-  // Shell at /tangerine/*
-  app.use('/client-v3/tangerine', express.static(path.join(__dirname, '../client-v3/shell/dist')));
-  // Tangy Forms at /tangy-forms/*
-  app.use('/client-v3/tangy-forms', express.static(path.join(__dirname, '../client-v3/tangy-forms')));
-  // Content.
-  app.use('/client-v3/content', express.static(path.join(__dirname, '../client-v3/content')));
-  // App updater at /*
-  app.use('/client-v3', express.static(path.join(__dirname, '../client-v3/app-updater')));
-} else {
-  app.use('/client-v3', express.static(path.join(__dirname, '../client-v3/build')));
+  app.use('/client-v3', express.static(path.join(__dirname, '../client-v3/builds/dev')));
 }
+app.use('/client-v3/releases/apks', express.static(path.join(__dirname, '../client-v3/releases/apks')));
+app.use('/client-v3/releases/pwas', express.static(path.join(__dirname, '../client-v3/releases/pwas')));
 
 // User routes
 app.get('/user/:name',    require('./routes/user/get-user'));
