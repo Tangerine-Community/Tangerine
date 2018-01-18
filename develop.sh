@@ -37,7 +37,7 @@ RUN_OPTIONS="
   --volume $(pwd)/client-v3/shell/src/:/tangerine-server/client-v3/shell/src/ \
   --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
   --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
-  --volume $(pwd)/data/client-v3/content:/tangerine-server/client-v3/content/groups \
+  --volume $(pwd)/data/client-v3/content/groups:/tangerine-server/client-v3/content/groups \
 " 
 
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
