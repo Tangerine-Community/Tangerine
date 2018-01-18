@@ -58,7 +58,7 @@ docker exec -it tangerine-container /tangerine-server/v2.0.0.sh
 
 Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
 
-## 3 Development
+## Development
 
 ### With Docker
 ```
