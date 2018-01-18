@@ -232,68 +232,40 @@ RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
 
 # 
-# Get v3 client dependencies.
+# Install and build Client v3 
 #
 
-# Yarn
+# Install yarn.
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list && \
     sudo apt-get update && sudo apt-get install yarn
-
-# nvm
+# Install node version manager along with Node 4 and 9.
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 RUN source ~/.nvm/nvm.sh && \
-  nvm install node
-
+  nvm install 8 && \
+  nvm install 4
+# Install client v3
 ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
 ADD client-v3/tangy-forms/yarn.lock /tangerine-server/client-v3/tangy-forms/yarn.lock
 ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
-RUN source ~/.nvm/nvm.sh && \
-  nvm use node && \
-  cd /tangerine-server/client-v3/tangy-forms && \
-  yarn install --frozen-lockfile && \
-  ./node_modules/.bin/bower install --allow-root
-
 ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
-RUN source ~/.nvm/nvm.sh && \
-  nvm use node && \
-  cd /tangerine-server/client-v3/shell && \
-  npm install
-
-#ADD client-v3/shell/src /tangerine-server/client-v3/shell/src
 ADD client-v3/shell /tangerine-server/client-v3/shell
-RUN source ~/.nvm/nvm.sh && \
-  nvm use node && \
-  cd /tangerine-server/client-v3/shell && \
-  ./node_modules/.bin/ng build --base-href "./"
-
-#ADD client-v3/tangy-forms/src /tangerine-server/client-v3/tangy-forms/src
-ADD client-v3/tangy-forms/ /tangerine-server/client-v3/tangy-forms/
-RUN source ~/.nvm/nvm.sh && \
-  nvm use node && \
- cd /tangerine-server/client-v3/tangy-forms && \
- npm run build 
-
+ADD client-v3/install.sh /tangerine-server/client-v3/install.sh
+RUN cd /tangerine-server/client-v3/ && ./install.sh
+# Build client v3.
 ADD client-v3 /tangerine-server/client-v3
+RUN cd /tangerine-server/client-v3/ && ./build.sh
 
-RUN cd /tangerine-server/client-v3/ && \
-    mkdir build && \
-    cp -r tangy-forms build/ && \
-    cp -r shell/dist build/tangerine && \
-    cp -r app-updater/* build/ && \
-    cp -r content build/
+#
+# Wrap up 
+#
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
 
 RUN mkdir /tangerine-server/logs
 
-# ADD scripts/new-group.sh /tangerine-server/scripts/new-group.sh
-# RUN mkdir /tangerine-server/data && \
-#    mkdir /tangerine-server/data/groups && \
-#    /tangerine-server/scripts/new-group.sh default
-    
 # Volumes
 VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks
