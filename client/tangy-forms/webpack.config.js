@@ -70,7 +70,8 @@ const copyStatics = {
     from: resolve('./node_modules/underscore/underscore.js'),
     to: join(outputPath, 'vendor'),
     flatten: true
-  }],
+  }
+  ],
   copyOthers: [{
     from: 'assets/**',
     context: resolve('./src'),
