@@ -88,14 +88,14 @@
         console.log('Redirecting...')
         this.message = 'Redirecting...'
         setTimeout(() => {
-          window.location = window.location.href + '/tangerine/index.html';
+          window.location = window.location.href + 'shell/index.html';
         }, 2000)
 
       }
 
       updateServiceWorker() {
         var that = this
-        navigator.serviceWorker.register('/' + this.foundReleaseUuid + '.js')
+        navigator.serviceWorker.register(this.foundReleaseUuid + '.js')
           .then(function (registration) {
             // Registration was successful
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
