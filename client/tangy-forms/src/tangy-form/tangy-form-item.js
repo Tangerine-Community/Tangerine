@@ -90,12 +90,18 @@ paper-card {
 :host([hide-buttons]) #close {
   display: none;
 }
-
+label.heading {
+  font-size: 20px !important;
+  margin-bottom: 20px;
+  display: block;
+}
 </style>
 
-<paper-card id="card" class="shrunk" heading="[[title]]">
+<paper-card id="card" class="shrunk">
+
 
   <div class="card-content">
+    <label class="heading">[[title]]</label>
     <div id="content"></div>
     <slot></slot>
   </div>
