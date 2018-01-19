@@ -1,35 +1,8 @@
-<mat-tab-group>
+<!--<mat-tab-group>
   <mat-tab label="My Forms">
     <br>
-    <mat-card class="tangy-card-content-container">
-      <mat-form-field class="tangy-full-width">
-        <input name="formName" #search type="text" matInput>
-        <mat-placeholder>
-          Filter Form By Name
-          <span>
-            <i class="material-icons mat-14 search-icon">search</i>
-          </span>
-        </mat-placeholder>
-      </mat-form-field>
-      <mat-list>
-        <mat-list-item class="tangy-location-list">
-          <span class="tangy-foreground-primary">Select Form</span>
-          <span class="tangy-spacer"></span>
-          <span class="tangy-foreground-primary">Count</span>
-        </mat-list-item>
-        <mat-list-item class="tangy-location-list" *ngFor="let form of formList; let formIndex=index">
-          <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:formIndex}>
-            <i class="material-icons md-24 tangy-location-list-icon">play_circle_filled</i>
-          </a>
-          <span>{{form.title}}</span>
-          <span class="tangy-spacer"></span>
-          <span>3</span>
-        </mat-list-item>
-      </mat-list>
-
-      <p *ngIf="!formList" class="mat-h3">No Forms Currently Defined</p>
-    </mat-card>
-  </mat-tab>
+  <!--old mat-card-->
+<!--  </mat-tab>
   <mat-tab label="Monthly Report">Content 2</mat-tab>
   <mat-tab label="Summary">
     <br>
@@ -37,4 +10,37 @@
       <app-form-responses-list></app-form-responses-list>
     </mat-card>
   </mat-tab>
-</mat-tab-group>
+</mat-tab-group>-->
+<mat-card class="tangy-card-content-container">
+  <div class="tangy-full-width">
+    <div class="mat-title tangy-half-width">
+      My Forms
+    </div>
+    <mat-form-field class="tangy-half-width">
+      <input name="formName" #search type="text" matInput>
+      <mat-placeholder>
+        Filter Form By Name
+        <span>
+              <i class="material-icons mat-14 search-icon">search</i>
+            </span>
+      </mat-placeholder>
+    </mat-form-field>
+  </div>
+  <mat-list>
+    <mat-list-item class="tangy-location-list">
+      <span class="tangy-foreground-primary">Select Form</span>
+      <span class="tangy-spacer"></span>
+      <span class="tangy-foreground-primary">Count</span>
+    </mat-list-item>
+    <mat-list-item class="tangy-location-list" *ngFor="let form of formList; let formIndex=index">
+      <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:formIndex}>
+        <i class="material-icons md-24 tangy-location-list-icon">play_circle_filled</i>
+      </a>
+      <span>{{form.title}}</span>
+      <span class="tangy-spacer"></span>
+      <span>3</span>
+    </mat-list-item>
+  </mat-list>
+
+  <p *ngIf="!formList" class="mat-h3">No Forms Currently Defined</p>
+</mat-card>

@@ -22,8 +22,7 @@
       "styles": [
         "styles/_tangy-app-variables.scss",
         "styles/styles.scss",
-        "styles/tangerine-theme.scss",
-        "styles/materialize.scss"
+        "styles/tangerine-theme.scss"
 
       ],
       "scripts": [],

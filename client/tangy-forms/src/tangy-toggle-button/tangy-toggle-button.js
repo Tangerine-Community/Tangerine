@@ -2,7 +2,7 @@ import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../tangy-form/tangy-element-styles.js';
 /**
  * `tangy-toggle-button`
- * 
+ *
  *
  * @customElement
  * @polymer
@@ -15,8 +15,8 @@ class TangyToggleButton extends Element {
       :host {
         display: inline-block;
         border: solid 3px #777;
-        border-radius: 15px;
-        padding: 15px;
+        border-radius: 10px;
+        padding: 0 15px;
         color: #777;
         font-size: 1em;
         text-align: center;
@@ -26,11 +26,11 @@ class TangyToggleButton extends Element {
         display: none;
       }
       :host([pressed]) {
-        background: var(--primary-color);
+        background-color: #3c5b8d;;
         color: #FFF;
       }
       :host([highlighted]) {
-        border-color: var(--accent-color);
+        border-color: #f26f10;
       }
       :host([required]:not([disabled])) label::before  { 
         content: "*"; 
@@ -45,10 +45,10 @@ class TangyToggleButton extends Element {
       }
       .text-inner {
         position: absolute;
-        top: 68%;
-        left: 50%;
+        top: 60%;
+        left: 60%;
         height: 30%;
-        width: 50%;
+        /*width: 50%;*/
         margin: -15% 0 0 -25%;
       }
 
