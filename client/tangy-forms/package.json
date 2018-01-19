@@ -22,7 +22,8 @@
     "lint:remark": "remark .",
     "linkbower": "node scripts/link-bower.js",
     "rmbower": "node scripts/link-bower.js remove",
-    "release": "standard-version"
+    "release": "standard-version",
+    "postinstall": "scripts/start_wml.sh"
   },
   "xo": {
     "space": true,

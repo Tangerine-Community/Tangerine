@@ -5,6 +5,27 @@ EXPOSE 4200
 RUN mkdir /tangerine
 WORKDIR /tangerine
 
+#
+# Add the tooling and scripts to aid dev experience
+# Adding wml here because yarn.lock is frozen.
+#
+
+RUN npm install -g wml
+RUN apt-get update &&\
+DEBIAN_FRONTEND=noninteractive apt-get install -y python-dev \
+&& rm -rf /var/lib/apt/lists/*
+# install watchman
+RUN \
+git clone https://github.com/facebook/watchman.git &&\
+cd watchman &&\
+git checkout v3.9.0 &&\
+./autogen.sh &&\
+./configure &&\
+make &&\
+make install
+
+ADD client/tangy-forms/scripts /tangerine/client/tangy-forms/scripts
+
 # Install server.
 ADD server/package.json server/package.json
 RUN cd /tangerine/server && npm install
@@ -66,7 +87,6 @@ ADD client/content /tangerine/client/content
 ADD logo.svg /tangerine/client/build/logo.svg
 RUN cp -r /tangerine/client/content /tangerine/client/build/
 
-
 #
 # Glue build together.
 #
@@ -80,7 +100,7 @@ RUN cp -r /tangerine/client/app-updater/build/default/* /tangerine/client/build/
 #
 
 # Add server default config.
-ADD server/config.yml server/config.yml
+ADD server/config.yml /tangerine/server/config.yml
 
 # Add workbox configuration for generating service workers on releases.
 ADD client/workbox-cli-config.js /tangerine/client/workbox-cli-config.js
