@@ -9,7 +9,7 @@ import '../tangy-toggle-button/tangy-toggle-button.js';
 import { tangyTimedModeChange, tangyTimedIncrement, tangyTimedLastAttempted, tangyTimedTimeSpent  } from '../tangy-form/tangy-form-actions.js'
 /**
  * `tangy-timed`
- * 
+ *
  *
  * @customElement
  * @polymer
@@ -30,12 +30,16 @@ class TangyTimed extends Element {
       :host {
         display: block;
       }
+      
+      :host #icon {
+        display: block;
+      }
 
       tangy-toggle-button { 
         display: inline-block;
         margin:10px 0 0 2%;
         flex-grow: 1;
-        height:100px;
+        height:60px;
       }
 
       #container {
@@ -52,9 +56,7 @@ class TangyTimed extends Element {
       #stopWatch paper-fab {
         color: #FFF;
       }
-      #stopWatch paper-fab {
-        margin: 0 auto 5px;
-      }
+      
       #stopWatch paper-fab.pressed {
         background: var(--primary-color);
       }
@@ -63,15 +65,48 @@ class TangyTimed extends Element {
        */
       #stopWatch {
         position: fixed;
-        top: 30px;
-        left: 7px;
-        font-size: 2em;
-        background: transparent;
-        border: solid 3px #AAA;
-        border-radius: 15px;
-        padding: 15px;
+        top: 10px;
+        right: 107px;
+        background: white;
+        border: solid 1px #c5c5c5;
+        border-radius: 10px;
+        padding: 5px;
         color: #333;
         text-align: center;
+        z-index: 1000000;
+      }
+      
+      #timeRemaining {
+        font-size: 2em;
+        position: relative;
+        top: 7px;
+      }
+      #timeRemaining,
+      paper-fab {
+        display: inline-block;
+      }
+      
+      #stopWatch {
+        padding: 5px 5px 10px 5px;
+      }
+      
+      #timeRemaining,
+      #stopWatch paper-fab {
+        margin: 0px 0px 0px 10px;
+      }
+      
+      paper-fab {
+        background-color: #f26f10 !important;
+      }
+      
+      paper-fab[disabled] {
+        background-color: #cccccc !important;
+      }
+      paper-fab.pressed {
+        background-color: #3c5b8d !important;
+      }
+      paper-fab.keyboard-focus {
+        background-color: #1976d2;
       }
     </style>
 
@@ -82,11 +117,11 @@ class TangyTimed extends Element {
 
       <div id="stopWatch">
         <div id="timeRemaining">[[timeRemaining]]⏱</div>
-        <paper-fab id="startButton" icon="av:play-arrow" on-click="onStartClick"></paper-fab>
-        <paper-fab id="stopButton" icon="av:stop" on-click="onStopClick"></paper-fab>
-        <paper-fab id="resetButton" icon="av:replay" on-click="onResetClick"></paper-fab>
-        <paper-fab id="markButton" icon="editor:mode-edit" on-click="onMarkClick"></paper-fab>
-        <paper-fab id="lastAttemptedButton" icon="av:playlist-add-check" on-click="onLastAttemptedClick"></paper-fab>
+        <paper-fab id="startButton" mini icon="av:play-arrow" on-click="onStartClick"></paper-fab>
+        <paper-fab id="stopButton" mini icon="av:stop" on-click="onStopClick"></paper-fab>
+        <paper-fab id="resetButton" mini icon="av:replay" on-click="onResetClick"></paper-fab>
+        <paper-fab id="markButton" mini icon="editor:mode-edit" on-click="onMarkClick"></paper-fab>
+        <paper-fab id="lastAttemptedButton" mini icon="av:playlist-add-check" on-click="onLastAttemptedClick"></paper-fab>
       </div>
 
       <div id="grid">
@@ -101,7 +136,7 @@ class TangyTimed extends Element {
     return {
       name: {
         type: String,
-        value: 'tangy-timed' 
+        value: 'tangy-timed'
       },
       value: {
         type: Array,
@@ -109,7 +144,7 @@ class TangyTimed extends Element {
         observer: 'reflect',
         reflectToAttribute: true
       },
-      // Use value for mode. 
+      // Use value for mode.
       mode: {
         state: true,
         value: TANGY_TIMED_MODE_UNTOUCHED,
@@ -198,7 +233,7 @@ class TangyTimed extends Element {
       let tangyToggleButton = document.createElement('tangy-toggle-button')
       tangyToggleButton.setAttribute('name', option.value)
       tangyToggleButton.style.width = columnWidthCalculation
-      tangyToggleButton.innerHTML = option.innerHTML 
+      tangyToggleButton.innerHTML = option.innerHTML
       tangyToggleButton.disabled = true
       this.$.grid.appendChild(tangyToggleButton)
     })
@@ -207,7 +242,7 @@ class TangyTimed extends Element {
     tangyToggleButtons.forEach ((button) => button.addEventListener('click', this.onTangyToggleButtonClick.bind(this)))
 
     this.reflect()
-  
+
   }
 
   // Note that mode is actually this.value.
@@ -221,22 +256,22 @@ class TangyTimed extends Element {
     controlElements.forEach(element => element.classList.remove('pressed'))
 
     switch (value) {
-      case TANGY_TIMED_MODE_UNTOUCHED: 
+      case TANGY_TIMED_MODE_UNTOUCHED:
         this.statusMessage = 'Click the play button to get started.';
-        this.$.startButton.disabled = false 
-        this.$.stopButton.disabled = true 
-        this.$.resetButton.disabled = true 
-        this.$.markButton.disabled = true 
-        this.$.lastAttemptedButton.disabled = true 
+        this.$.startButton.disabled = false
+        this.$.stopButton.disabled = true
+        this.$.resetButton.disabled = true
+        this.$.markButton.disabled = true
+        this.$.lastAttemptedButton.disabled = true
       break;
-      case TANGY_TIMED_MODE_RUN: 
+      case TANGY_TIMED_MODE_RUN:
         this.statusMessage = 'Tap items to mark them incorrect.';
         this.$.startButton.classList.add('pressed')
-        this.$.startButton.disabled = true 
-        this.$.stopButton.disabled = false 
-        this.$.resetButton.disabled = true 
-        this.$.markButton.disabled = true 
-        this.$.lastAttemptedButton.disabled = true 
+        this.$.startButton.disabled = true
+        this.$.stopButton.disabled = false
+        this.$.resetButton.disabled = true
+        this.$.markButton.disabled = true
+        this.$.lastAttemptedButton.disabled = true
         this.timer = setInterval(() => {
           this.timeRemaining--;
           this.timeSpent++;
@@ -249,37 +284,37 @@ class TangyTimed extends Element {
       case TANGY_TIMED_MODE_MARK:
         this.statusMessage = 'Tap any boxes that were incorrect during the test.'
         this.$.markButton.classList.add('pressed')
-        this.$.startButton.disabled = true 
-        this.$.stopButton.disabled = true 
-        this.$.resetButton.disabled = false 
-        this.$.markButton.disabled = true 
-        this.$.lastAttemptedButton.disabled = false 
+        this.$.startButton.disabled = true
+        this.$.stopButton.disabled = true
+        this.$.resetButton.disabled = false
+        this.$.markButton.disabled = true
+        this.$.lastAttemptedButton.disabled = false
       break
       case TANGY_TIMED_MODE_LAST_ATTEMPTED:
         tangyTimedTimeSpent(this.name, this.duration - this.timeRemaining)
         this.statusMessage = 'Tap the item last attempted.'
         this.$.lastAttemptedButton.classList.add('pressed')
-        this.$.startButton.disabled = true 
-        this.$.stopButton.disabled = true 
-        this.$.resetButton.disabled = false 
-        this.$.markButton.disabled = false 
-        this.$.lastAttemptedButton.disabled = true 
+        this.$.startButton.disabled = true
+        this.$.stopButton.disabled = true
+        this.$.resetButton.disabled = false
+        this.$.markButton.disabled = false
+        this.$.lastAttemptedButton.disabled = true
         tangyToggleButtons.forEach((button) => button.highlighted = false)
       break
       case TANGY_TIMED_MODE_DONE:
         this.statusMessage = 'You may proceed.'
-        this.$.startButton.disabled = true 
-        this.$.stopButton.disabled = true 
-        this.$.resetButton.disabled = false 
-        this.$.markButton.disabled = false 
-        this.$.lastAttemptedButton.disabled = false 
+        this.$.startButton.disabled = true
+        this.$.stopButton.disabled = true
+        this.$.resetButton.disabled = false
+        this.$.markButton.disabled = false
+        this.$.lastAttemptedButton.disabled = false
       break
 
     }
   }
 
   removeValueEntry(name) {
-    let newValue = [...this.value] 
+    let newValue = [...this.value]
     newValue.splice(newValue.indexOf(name), 1)
     this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
       inputName: this.name,
@@ -306,11 +341,11 @@ class TangyTimed extends Element {
     let value = ''
 
     switch (this.mode) {
-      case TANGY_TIMED_MODE_UNTOUCHED: 
+      case TANGY_TIMED_MODE_UNTOUCHED:
         // Do nothing.
       break
       case TANGY_TIMED_MODE_MARK:
-      case TANGY_TIMED_MODE_RUN: 
+      case TANGY_TIMED_MODE_RUN:
         event.target.pressed = !event.target.pressed
         if (event.target.pressed) {
           this.addValueEntry(event.target.name)
@@ -342,7 +377,7 @@ class TangyTimed extends Element {
     this.generateGrid()
     this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
       inputName: this.name,
-      inputValue: [] 
+      inputValue: []
     }}))
   }
 
