@@ -49,8 +49,7 @@ ADD client/tangy-forms/package.json /tangerine/client/tangy-forms/package.json
 ADD client/tangy-forms/.npmrc /tangerine/client/tangy-forms/.npmrc
 ADD client/tangy-forms/.yarnrc /tangerine/client/tangy-forms/.yarnrc
 ADD client/tangy-forms/yarn.lock /tangerine/client/tangy-forms/yarn.lock
-#RUN cd /tangerine/client/tangy-forms && yarn install --frozen-lockfile
-RUN cd /tangerine/client/tangy-forms && yarn install
+RUN cd /tangerine/client/tangy-forms && yarn install --frozen-lockfile
 ADD client/tangy-forms/bower.json /tangerine/client/tangy-forms/bower.json
 RUN cd /tangerine/client/tangy-forms && ./node_modules/.bin/bower --allow-root install
 
