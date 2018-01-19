@@ -81,18 +81,35 @@ export class TangyFormQuestions extends PolymerElement {
         #previousItemButton,
         #nextItemButton {
             position: relative;
+<<<<<<< HEAD
             color: #ffffff;
+=======
+            top: 5px;
+            color: #ffffff;
+            background: #f26f10;
+>>>>>>> ca7f6af5e4ae057403eae721f26ba70fce5fccf3
         }
         
         #previousItemButton[disabled],
         #nextItemButton[disabled] {
+<<<<<<< HEAD
             color: #979797;
         }
         #previousItemButton {
+=======
+            background: #cccccc;
+        }
+        #previousItemButton {
+          left: 7px;
+>>>>>>> ca7f6af5e4ae057403eae721f26ba70fce5fccf3
           float: left;
           
         }
         #nextItemButton {
+<<<<<<< HEAD
+=======
+          right: 7px;
+>>>>>>> ca7f6af5e4ae057403eae721f26ba70fce5fccf3
           float: right;
         }
         #markCompleteFab, #lockedFab {
@@ -119,7 +136,11 @@ export class TangyFormQuestions extends PolymerElement {
             width:100%;
             background-color: #3c5b8d;
             height: 70px;
+<<<<<<< HEAD
             position: relative;
+=======
+            position: fixed;
+>>>>>>> ca7f6af5e4ae057403eae721f26ba70fce5fccf3
             bottom: 0px;
         }
         
@@ -131,6 +152,7 @@ export class TangyFormQuestions extends PolymerElement {
             width: 50px;
           };
         }
+<<<<<<< HEAD
         paper-icon-button.large {
             width: 70px;
             height: 70px;
@@ -145,6 +167,19 @@ export class TangyFormQuestions extends PolymerElement {
       <div id="tangerine-footer">
          <paper-icon-button id="previousItemButton" class="large" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-icon-button>
          <paper-icon-button id="nextItemButton" class="large" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-icon-button>
+=======
+        
+      </style>
+      <slot></slot>
+      <div id="nav">
+        <paper-icon-button id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-icon-button>
+        <paper-fab id="lockedFab" icon="icons:lock" disabled></paper-fab>
+      </div>
+      <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
+      <div id="tangerine-footer">
+         <paper-fab id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-fab>
+         <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-fab>
+>>>>>>> ca7f6af5e4ae057403eae721f26ba70fce5fccf3
       </div>
         `
       }
