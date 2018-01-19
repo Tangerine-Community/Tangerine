@@ -18,6 +18,7 @@ $_documentContainer.innerHTML = `<custom-style>
       font-weight: 400;
       margin: 25px 0px 5px 15px;
     }
+    
   </style>
 </custom-style>`;
 

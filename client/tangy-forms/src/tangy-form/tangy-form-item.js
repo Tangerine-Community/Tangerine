@@ -41,7 +41,7 @@ export class TangyFormItem extends PolymerElement {
       return `
   <style>
 :host {
-  margin: 15px;
+  /*margin: 15px;*/
 }
 /*
  * Card
@@ -53,7 +53,7 @@ paper-card {
   -o-transition: .4s;
   display: block;
   max-width: 325px;
-  margin: 30px auto;
+  margin: /*30px*/ auto;
 }
 :host([open]) paper-card {
   -webkit-transition: .4s;

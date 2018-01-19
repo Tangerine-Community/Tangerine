@@ -1,8 +1,10 @@
-<mat-tab-group>
-  <mat-tab label="My Locations">
-    <br>
+
     <mat-card class="tangy-card-content-container">
-      <mat-form-field class="tangy-full-width">
+      <div class="tangy-full-width">
+        <div class="mat-title tangy-half-width">
+          My Locations
+        </div>
+        <mat-form-field class="tangy-half-width">
         <input name="locationName" #search type="text" matInput>
         <mat-placeholder>
           Filter Location By Name
@@ -11,6 +13,8 @@
           </span>
         </mat-placeholder>
       </mat-form-field>
+      </div>
+      <br/>
       <mat-list>
         <mat-list-item class="tangy-location-list">
           <span class="tangy-foreground-primary">Locations Not yet Visited This Month</span>
@@ -42,8 +46,7 @@
         </mat-list-item>
       </mat-list>
     </mat-card>
-  </mat-tab>
-  <mat-tab label="Monthly Report">Content 2</mat-tab>
+
+  <!--<mat-tab label="Monthly Report">Content 2</mat-tab>-->
 
   <!-- <mat-tab label="Monthly Report">Manage My Schools List</mat-tab> -->
-</mat-tab-group>

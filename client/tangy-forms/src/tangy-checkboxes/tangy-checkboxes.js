@@ -3,7 +3,7 @@ import '../../node_modules/@polymer/paper-checkbox/paper-checkbox.js';
 import '../tangy-form/tangy-element-styles.js';
 /**
  * `tangy-checkboxes`
- * 
+ *
  *
  * @customElement
  * @polymer
@@ -22,16 +22,25 @@ class TangyCheckboxes extends Element {
       paper-checkbox {
         margin-top: 15px;
         margin-right: 25px;
-        --paper-checkbox-size: 2em;
+        --paper-checkbox-size: 1.25em;
       }
       
       .container {
         position: relative;
       }
+      span {
+        font-size: .75em;
+        display: block;
+      }
+      
+      #checkboxes {
+       padding-left: 12px;
+      }
       
     </style>
     <div class="container">
       <label for="group">[[label]]</label>
+      <span class="secondary_color">select one or more</span>
       <div id="checkboxes">
       </div>
     </div>
@@ -127,16 +136,16 @@ class TangyCheckboxes extends Element {
       detail: {
         inputName: this.name,
         inputValue: value,
-        inputInvalid: false, 
-        inputIncomplete: isIncomplete 
-      }, 
+        inputInvalid: false,
+        inputIncomplete: isIncomplete
+      },
       bubbles: true
     }))
   }
 
   onDisabledChange(value) {
     let paperCheckboxes = this.shadowRoot.querySelectorAll('paper-checkbox')
-    if (value == true) paperCheckboxes.forEach((button) => button.setAttribute('disabled', true)) 
+    if (value == true) paperCheckboxes.forEach((button) => button.setAttribute('disabled', true))
     if (value == false) paperCheckboxes.forEach((button) => button.removeAttribute('disabled'))
   }
 }

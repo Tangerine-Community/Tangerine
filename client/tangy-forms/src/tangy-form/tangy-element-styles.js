@@ -45,10 +45,9 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
       label {
         display: block;
         text-transform: capitalize;
-        margin-bottom: 10px;
-        /*
+        /*margin-bottom: 10px;*/
         color: var(--primary-text-color);
-        */
+        
       }
       
       select option {
@@ -58,6 +57,8 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
       .secondary_color {
         color: #f26f10;
       }
+      
+      
  
  /* materialize theme */
  
@@ -483,6 +484,10 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
     /* @alternate */
     color: white;
     color: var(--mdc-theme-text-primary-on-dark, white); }
+     .mdc-select option:checked, option:hover {
+    color: #ffffff;
+    background-color: #3c5b8d;
+ }
 /* End of Materialize Select Styles */
 /* Beginning of Materialize Radio Buttons styles*/
 
