@@ -18,36 +18,66 @@ export class TangyMediaOverlay extends PolymerElement {
 
     <style>
     #overlay {
-    position: fixed; /* Sit on top of the page content */
-    display: none; /* Hidden by default */
-    width: 100%; /* Full width (cover the whole page) */
-    height: 100%; /* Full height (cover the whole page) */
-    top: 0; 
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-    cursor: pointer; /* Add a pointer on hover */
-    text-align:center;
+      position: fixed; /* Sit on top of the page content */
+      display: none; /* Hidden by default */
+      width: 100%; /* Full width (cover the whole page) */
+      height: 100%; /* Full height (cover the whole page) */
+      top: 0; 
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+      z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+      cursor: pointer; /* Add a pointer on hover */
+      text-align:center;
     }
     #lightbox {
-    width: calc(100vw - 100px);
-    height: calc(100vh - 100px);
-    /*margin: 0;*/
-    padding: 0;
-    background-color: #fafafa;
-    margin:auto;
+      width: calc(100vw - 100px);
+      height: calc(100vh - 100px);
+      /*margin: 0;*/
+      padding: 0;
+      background-color: #fafafa;
+      margin:auto;
     }
-    </style>
     
-    <a on-click="open">View Media Overlay</a>
+    .media-button-top-left {
+      left:20px;
+      padding: 10px;
+      margin-left: -10px;
+      margin-top: -20px;
+    }
+    .media-button-top-right {
+      position: absolute;
+      top:0;
+      right:20px;
+      padding: 10px;
+      z-index: 103;
+      margin-top: -20px;
+    }
+    .media-button-bottom-left {
+      position: absolute;
+      bottom:0;
+      left:20px;
+      margin:10px;
+    }
+    .media-button-bottom-right {
+      position: absolute;
+      bottom:0;
+      right:20px;
+      margin:10px;
+    }
 
+    </style>
+    <div id="media-button" >
+        <paper-button raised on-click="open">View Media Overlay</paper-button>
+    </div>
+    
     <div id="overlay">
         <div id="lightbox"on-click="off">
             <img src="[[url]]"/>
         </div>
     </div>
+    <br/>
     
     `
   }
@@ -79,7 +109,17 @@ export class TangyMediaOverlay extends PolymerElement {
     super.connectedCallback();
     // Set up the store.
     this.store = window.tangyFormStore
-    this.url = "/content/assets/cat.png"
+    // this.url = "/content/assets/cat.png"
+    if (this.position === 'top-right') {
+      this.shadowRoot.getElementById('media-button').className = 'media-button-top-right'
+    } else if (this.position === 'top-left') {
+      this.shadowRoot.getElementById('media-button').className = 'media-button-top-left'
+    } else if (this.position === 'bottom-right') {
+      this.shadowRoot.getElementById('media-button').className = 'media-button-bottom-right'
+    } else {
+      this.shadowRoot.getElementById('media-button').className = 'media-button-bottom-left'
+    }
+    console.log("hoot")
   }
 
   open(ev) {
