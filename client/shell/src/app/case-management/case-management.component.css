@@ -9,3 +9,25 @@
   font-weight: 700;
   font-size: 20px;
 }
+
+.mat-title {
+  color: #3c5b8d;
+  font-size: 1.75em;
+  font-weight: 400;
+  font-family: Roboto, "Helvetica Nue", sans-serif;
+  margin:.75em;
+}
+
+mat-form-field.tangy-half-width {
+  display:inline-block;
+  float:right;
+  position: relative;
+  top: 5px;
+}
+
+mat-list {
+  display:block;
+  width: 100%;
+}
+
+
