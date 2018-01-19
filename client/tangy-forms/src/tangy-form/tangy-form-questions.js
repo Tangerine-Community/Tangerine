@@ -33,7 +33,6 @@ import '../tangy-media-overlay/tangy-media-overlay.js'
 //
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
-import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
 //   <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 //   <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 //   <link rel="import" href="../../bower_components/paper-fab.html">
@@ -112,7 +111,7 @@ export class TangyFormQuestions extends PolymerElement {
       </style>
       <slot></slot>
       <div id="nav">
-        <paper-icon-button id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-icon-button>
+        <paper-fab id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-fab>
         <paper-fab id="lockedFab" icon="icons:lock" disabled></paper-fab>
         <paper-fab id="previousItemButton" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
         <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
