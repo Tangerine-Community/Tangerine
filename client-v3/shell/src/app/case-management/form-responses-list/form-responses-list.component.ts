@@ -11,6 +11,7 @@ import PouchDB from 'pouchdb';
 import { Observable } from 'rxjs/Rx';
 
 import { UserService } from '../../core/auth/_services/user.service';
+import { CaseManagementService } from '../_services/case-management.service';
 
 @Component({
   selector: 'app-form-responses-list',
@@ -19,27 +20,28 @@ import { UserService } from '../../core/auth/_services/user.service';
 })
 export class FormResponsesListComponent {
   userDatabase;
+  formList;
   dataSource;
   displayedColumns = ['formTitle', 'startDatetime', 'class', 'subject', 'stream', 'action'];
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService, private caseManagementService: CaseManagementService) {
     this.initialize();
   }
 
   async initialize() {
     this.userDatabase = await this.userService.getUserDatabase();
-    this.dataSource = new FormResponsesListDataSource(this.userDatabase);
+    this.formList = await this.caseManagementService.getFormList();
+    this.dataSource = new FormResponsesListDataSource(this.userDatabase, this.formList);
   }
 
 }
 
 export class FormResponsesListDataSource extends DataSource<any> {
   DB;
-  constructor(private userDatabase: string) {
+  constructor(private userDatabase: string, private formList) {
     super();
     this.DB = new PouchDB(this.userDatabase);
   }
-
 
   async getListOfResponses() {
     const results = await this.DB.query('tangy-form/responsesByFormId', { include_docs: true });
@@ -50,7 +52,6 @@ export class FormResponsesListDataSource extends DataSource<any> {
     }
   }
   connect(): Observable<any[]> {
-
     return Observable.merge()
       .startWith(null).switchMap(() => {
         return this.getListOfResponses();
@@ -59,16 +60,22 @@ export class FormResponsesListDataSource extends DataSource<any> {
         const flattenedData = [];
         data.forEach(item => {
           if (item.doc.formId !== 'user-profile') {
-            flattenedData.push({
+            const index = this.formList.findIndex(c => c.id === item.doc.formId);
+            const doc = {
               formId: item.doc.formId,
               formTitle: item.doc.formTitle,
               startDatetime: item.doc.startDatetime,
-              responseId: item.doc.responseId,
-              _id: item.doc._id
-            });
+              _id: item.doc._id,
+              formIndex: index,
+              formSrc: index > -1 ? this.formList[index].src : ''
+            };
+            flattenedData.push(doc);
           }
         });
         return flattenedData;
+      })
+      .map(data => {
+        return data;
       }).catch(() => {
         console.error('Could Not Load Form Responses');
         return Observable.of(null);

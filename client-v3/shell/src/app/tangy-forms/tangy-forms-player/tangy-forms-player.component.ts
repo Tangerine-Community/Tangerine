@@ -1,8 +1,8 @@
-import { UserService } from '../../core/auth/_services/user.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
 import { CaseManagementService } from '../../case-management/_services/case-management.service';
-import { Component, Input, OnInit, ElementRef } from '@angular/core';
+import { UserService } from '../../core/auth/_services/user.service';
 
 @Component({
   selector: 'app-tangy-forms-player',
@@ -12,16 +12,17 @@ import { Component, Input, OnInit, ElementRef } from '@angular/core';
 export class TangyFormsPlayerComponent implements OnInit {
   formUrl;
   formIndex: number;
+  responseId;
   constructor(
     private caseManagementService: CaseManagementService,
     private route: ActivatedRoute,
-    private userService: UserService,
-    private elementRef: ElementRef
+    private userService: UserService
   ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.formIndex = +params['formIndex'] || 0;
+      this.responseId = params['responseId'];
       this.getForm(this.formIndex);
     });
   }
@@ -30,15 +31,7 @@ export class TangyFormsPlayerComponent implements OnInit {
       const userDB = await this.userService.getUserDatabase();
       const form = await this.caseManagementService.getFormList();
       if (!(index >= form.length)) {
-        this.elementRef.nativeElement.innerHTML = `<iframe src="../tangy-forms/index.html#form=/content/${form[index]['src']}&database=${userDB}"></iframe>`
-        let iframeEl = this.elementRef.nativeElement.querySelector('iframe')
-        iframeEl.style.border = `none`
-        iframeEl.style.height = `${window.innerHeight - 70}px`
-        iframeEl.style.width = '100%'
-        //this.formUrl = `../tangy-forms/index.html#form=/content/${form[index]['src']}&database=${userDB}`;
-        //setTimout(() => {
-        //this.formUrl = `../tangy-forms/index.html#form=/content/${form[index]['src']}&database=${userDB}`;
-        //}, 2000)
+        this.formUrl = `/tangy-forms/index.html#form=/content/${form[index]['src']}&database=${userDB}&responseId=${this.responseId}`;
       } else {
         console.error('Item not Found');
       }
