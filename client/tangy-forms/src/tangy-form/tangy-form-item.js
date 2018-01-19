@@ -90,15 +90,13 @@ paper-card {
 :host([hide-buttons]) #close {
   display: none;
 }
-<<<<<<< HEAD
+
 label.heading {
   font-size: 20px !important;
   margin-bottom: 20px;
   display: block;
 }
-=======
 
->>>>>>> ca7f6af5e4ae057403eae721f26ba70fce5fccf3
 </style>
 
 <paper-card id="card" class="shrunk">

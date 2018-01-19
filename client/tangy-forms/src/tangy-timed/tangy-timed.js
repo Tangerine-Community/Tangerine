@@ -74,10 +74,7 @@ class TangyTimed extends Element {
         color: #333;
         text-align: center;
         z-index: 1000000;
-<<<<<<< HEAD
         box-shadow: 3px 3px 10px 1px rgba(0, 0, 255, .2);
-=======
->>>>>>> ca7f6af5e4ae057403eae721f26ba70fce5fccf3
       }
       
       #timeRemaining {
