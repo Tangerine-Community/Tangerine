@@ -38,6 +38,8 @@ RUN_OPTIONS="
   --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
   --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
   --volume $(pwd)/data/client-v3/content/groups:/tangerine-server/client-v3/content/groups \
+  --volume $(pwd)/server:/tangerine-server/server \
+  --volume $(pwd)/server-v3:/tangerine-server/server-v3 \
   --volume $T_V3_DEV_CONTENT:/tangerine-server/client-v3/builds/dev/content
 " 
 

@@ -40,6 +40,7 @@ ENV T_ROBBERT_PORT 4444
 ENV T_TREE_PORT 4445
 ENV T_BROCKMAN_PORT 4446
 ENV T_DECOMPRESSOR_PORT 4447
+ENV T_SERVER_V3_PORT 4448
 
 #
 # Stage 1 - Install global dependecies
@@ -212,6 +213,10 @@ ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
     && npm install
 
+# Install server-v3.
+ADD ./server-v3/package.json /tangerine-server/server-v3/package.json
+RUN cd /tangerine-server/server-v3 \
+    && npm install
 
 #
 # Stage 3 Compile 
@@ -250,6 +255,7 @@ ADD client-v3/package.json /tangerine-server/client-v3/package.json
 ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
 ADD client-v3/tangy-forms/yarn.lock /tangerine-server/client-v3/tangy-forms/yarn.lock
 ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
+
 ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
 ADD client-v3/shell /tangerine-server/client-v3/shell
 ADD client-v3/wrappers/pwa/package.json /tangerine-server/client-v3/wrappers/pwa/package.json
