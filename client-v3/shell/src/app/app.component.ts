@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
 
     // Set location list as a global.
     const window = this.windowRef.nativeWindow;
-    const res = await fetch('/content/location-list.json');
+    const res = await fetch('../content/location-list.json');
     window.locationList = await res.json();
 
     this.showNav = this.authenticationService.isLoggedIn();
