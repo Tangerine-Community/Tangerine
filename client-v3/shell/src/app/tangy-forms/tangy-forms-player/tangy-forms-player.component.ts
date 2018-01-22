@@ -31,7 +31,7 @@ export class TangyFormsPlayerComponent implements OnInit {
       const userDB = await this.userService.getUserDatabase();
       const form = await this.caseManagementService.getFormList();
       if (!(index >= form.length)) {
-        this.formUrl = `..//tangy-forms/index.html#form=${form[index]['src']}&database=${userDB}&responseId=${this.responseId}`;
+        this.formUrl = `../tangy-forms/index.html#form=${form[index]['src']}&database=${userDB}&responseId=${this.responseId}`;
       } else {
         console.error('Item not Found');
       }
