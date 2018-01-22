@@ -1,0 +1,21 @@
+{
+  "name": "server-v3",
+  "version": "0.0.0",
+  "description": "server =======",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "express-pouchdb": "^2.3.7",
+    "fs-extra": "^4.0.3",
+    "read-yaml": "^1.1.0",
+    "sanitize-filename": "^1.6.1"
+  }
+}
