@@ -91,7 +91,7 @@ let openForm = async function (path) {
   return form
 };
 
-app.post('/editor/itemsOrder/save', async function (req, res) {
+app.post('/itemsOrder/save', async function (req, res) {
   let contentRoot = config.contentRoot
   let itemsOrder = req.body.itemsOrder
   let formHtmlPath = req.body.formHtmlPath
@@ -169,6 +169,7 @@ app.post('/item/save', async function (req, res) {
   let itemId = req.body.itemId
   let contentRoot = config.contentRoot
   let formDir, formName, originalForm, formPath
+  let contentUrlPath = '../content/'
 
   // Need to populate the originalForm var
   // First, check if this is a new form, which don't have formHtmlPath,
@@ -200,7 +201,7 @@ app.post('/item/save', async function (req, res) {
 
     let formParameters = {
       "title": formTitle,
-      "src": formDirName + "/form.html"
+      "src": contentUrlPath + formDirName + "/form.html"
     }
     await saveFormsJson(formParameters, null)
       .then(() => {
@@ -218,7 +219,8 @@ app.post('/item/save', async function (req, res) {
     // search for tangy-form-item
     let formItemList = $('tangy-form-item')
     // create the form html that will be added
-    let newItem = '<tangy-form-item src="' + itemFilename + '" id="' + itemId + '" title="' + itemTitle + '">'
+    let itemUrlPath = contentUrlPath + formDirName + "/" + itemFilename
+    let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
     // console.log('newItem: ' + newItem)
     $(newItem).appendTo('tangy-form')
     // console.log('html after: ' + $.html())
@@ -260,10 +262,11 @@ app.post('/item/save', async function (req, res) {
     // console.log('newItemList: ' + newItemList + " isNewItem: " + isNewItem)
     $('tangy-form-item').remove()
     $(newItemList).appendTo('tangy-form')
+    let itemUrlPath = contentUrlPath + formDir + "/" + itemFilename
     if (isNewItem) {
       // create the item html that will be added to the form.
-      let newItem = '<tangy-form-item src="' + itemFilename + '" id="' + itemId + '" title="' + itemTitle + '">'
-      // console.log('newItem: ' + newItem)
+      let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
+      console.log('newItem: ' + newItem)
       $(newItem).appendTo('tangy-form')
     }
     // console.log('html after: ' + $.html())
