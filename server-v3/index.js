@@ -20,6 +20,9 @@ app.use(bodyParser.json()); // use json
 
 console.log("launching server.")
 
+app.use('/groups', express.static(path.join(__dirname, '../client-v3/content/groups')));
+app.use('/:group', express.static(path.join(__dirname, '../client-v3/builds/dev')));
+
 async function saveFormsJson(formParameters, project) {
   console.log("formParameters: " + JSON.stringify(formParameters))
   let contentRoot = config.contentRoot
