@@ -19,7 +19,6 @@
   <script src="vendor/redux.js"></script>
   <script src="vendor/moment-with-locales.min.js"></script>
   <script src="vendor/pouchdb.js"></script>
-  <script src="vendor/ckeditor.js"></script>
   <!--
     @TODO This should be imported by the Loc.js that depends on it but underscore doesn't play well with ES6 import
           Issue: https://github.com/jashkenas/underscore/issues/2152
@@ -67,7 +66,6 @@
 </div>
 
 <tangy-form-app></tangy-form-app>
-<div id="content" style = "display:none"></div>
 
 <div id="ce-babel-polyfill">
   <script type="text/javascript">
@@ -100,7 +98,7 @@
 
   <script src="./vendor/custom-elements-es5-adapter.js" async nomodule></script>
   <script src="./vendor/webcomponents-lite.js" async></script>
-  
+
   <!-- Fetch "polyfill" for replacing fetch with xml http requests when protocol is `file:`. -->
   <script>
 

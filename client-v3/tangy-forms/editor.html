@@ -21,8 +21,9 @@
   <script src="node_modules/underscore/underscore.js"></script>
   <script src="node_modules/moment/min/moment-with-locales.min.js"></script>
   <script src="bower_components/pouchdb/dist/pouchdb.js"></script>
+  <script src="../ckeditor/dist/ckeditor.js"></script>
 
-  <script type="module" src="src/index.js"></script>
+  <script type="module" src="src/editor.js"></script>
 
   <link href="assets/fonts/fonts.css" rel="stylesheet">
 
@@ -42,7 +43,8 @@
         <paper-progress style="margin: auto" indeterminate class="slow"></paper-progress>
     </div>
 
-    <tangy-form-app></tangy-form-app>
+    <tangy-editor-app></tangy-editor-app>
+    <div id="content" style = "display:none"></div>
   </body>
 
 </html>
