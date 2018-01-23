@@ -285,7 +285,11 @@ class TangyEditorApp extends Element {
       itemOrderDisabled: {  // item order in form
         type: Boolean,
         value: true,
-      }
+      },
+      groupId: {
+        type: String,
+        value: '',
+      },
     };
   }
   connectedCallback() {
@@ -297,6 +301,8 @@ class TangyEditorApp extends Element {
     let formPath = query.form
     let edit = query.edit
     let newForm = query.new
+    this.groupId = window.location.pathname.split("/")[2];
+
     if (formPath) {
       let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
       // console.log(`Setting <base> path using form directory: ${formDirectory}`)
@@ -371,10 +377,12 @@ class TangyEditorApp extends Element {
     this.$['item-edit'].hidden = true
     this.$['item-create'].hidden = true
     document.querySelector("#content").setAttribute('style', 'display:none;')
-    // Must reset base href path in case user is not currently at tangy-forms root.
-    // window['base-path-loader'].innerHTML = `<base href="/tangy-forms">`
     // Load forms list.
-    let formsJson = await fetch('../content/forms.json')
+    let formsJsonPath = '../content/forms.json'
+    if (this.groupId) {
+      formsJsonPath = '../../groups/' + this.groupId + '/forms.json'
+    }
+    let formsJson = await fetch(formsJsonPath)
     this.forms = await formsJson.json()
     // Load editor forms
     let editorJson = await fetch('editor/editor-forms.json')
@@ -433,7 +441,10 @@ class TangyEditorApp extends Element {
     this.$['form-list'].hidden = true
     this.$['item-create'].hidden = true
     // Load the form into the DOM.
-    let formHtml = await fetch(formSrc)
+
+    let formsPath = '../../groups/' + this.groupId + '/' + formSrc
+
+    let formHtml = await fetch(formsPath)
     // Put the formHtml in a template first so element do not initialize connectedCallback
     // before we modify them.
     let formTemplate = document.createElement('div')
