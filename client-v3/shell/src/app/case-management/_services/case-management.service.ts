@@ -30,8 +30,8 @@ export class CaseManagementService {
   }
   async getMyLocationVisits() {
 
-    const res = await fetch('../content/location-list.json');
-    const locationList = await res.json();
+    const res = await this.http.get('../content/location-list.json').toPromise();
+    const locationList = res.json();
     const userProfile = await this.userService.getUserProfile();
 
     // Calculate our locations by generating the path in the locationList object.
