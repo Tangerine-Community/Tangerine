@@ -1,1 +1,1 @@
-<iframe id="tangyFormsPlayer" [src]="formUrl|safeUrl" appSeamlessWithWindow></iframe>
+<iframe *ngIf="formUrl" id="tangyFormsPlayer" [src]="formUrl|safeUrl" appSeamlessWithWindow></iframe>
