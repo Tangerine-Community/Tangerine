@@ -32,7 +32,11 @@ export class TangyFormsPlayerComponent implements OnInit {
       const form = await this.caseManagementService.getFormList();
       if (!(index >= form.length)) {
         // Relative path to tangy forms app.
-        this.formUrl = `../tangy-forms/index.html#form=${form[index]['src']}&database=${userDB}&responseId=${this.responseId}`;
+        let formUrl = `../tangy-forms/index.html#form=${form[index]['src']}&database=${userDB}`;
+        if (this.responseId) {
+          formUrl += `&responseId=${this.responseId}`
+        }
+        this.formUrl = formUrl
       } else {
         console.error('Item not Found');
       }
