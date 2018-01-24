@@ -18,7 +18,9 @@ export class TangyCheckbox extends PolymerElement {
 
     <style>
       paper-checkbox {
-        --paper-checkbox-size: 2em;
+        --paper-checkbox-size: 1.25em;
+        --paper-checkbox-checked-color: #3c5b8d;
+        --paper-checkbox-checked-color: #3c5b8d;
       }
     </style>
 
