@@ -64,11 +64,16 @@ mat-toolbar{
   letter-spacing: 0.05em;
 }
 
-.tangy-location-list-icon {
+.mat-18.tangy-location-list-icon{
+  padding-right: 5px;
+  padding-top:3.5px;
+  color: #f26f10;
+}
+.menu-tangy-location-list-icon {
   color: #f26f10;
   position: relative;
   bottom: 2px;
-  margin-right:2px;
+  padding-right: 3px;
 }
 
 .search-icon{
