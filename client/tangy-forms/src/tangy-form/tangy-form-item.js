@@ -76,6 +76,7 @@ paper-card {
  */
 .card-actions {
   height: 45px;
+  margin-bottom: 100px;
 }
 :host([open]) #open {
   display: none;
@@ -92,9 +93,11 @@ paper-card {
 }
 
 label.heading {
-  font-size: 20px !important;
+  font-size: 21px !important;
   margin-bottom: 20px;
   display: block;
+  color: #3c5b8d;
+  font-weight: 700;
 }
 
 </style>

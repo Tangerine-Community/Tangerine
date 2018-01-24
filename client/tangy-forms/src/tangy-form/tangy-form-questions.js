@@ -121,8 +121,8 @@ export class TangyFormQuestions extends PolymerElement {
         #tangerine-footer {
             width:100%;
             background-color: #3c5b8d;
-            height: 70px;
-            position: relative;
+            height: 40px;
+            position: fixed;
             bottom: 0px;
         }
         
@@ -134,10 +134,7 @@ export class TangyFormQuestions extends PolymerElement {
             width: 50px;
           };
         }
-        paper-icon-button.large {
-            width: 70px;
-            height: 70px;
-        }
+        
       </style>
       <slot></slot>
       <div id="nav">
@@ -146,8 +143,8 @@ export class TangyFormQuestions extends PolymerElement {
       </div>
       <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
       <div id="tangerine-footer">
-         <paper-icon-button id="previousItemButton" class="large" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-icon-button>
-         <paper-icon-button id="nextItemButton" class="large" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-icon-button>
+         <paper-icon-button id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-icon-button>
+         <paper-icon-button id="nextItemButton" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-icon-button>
       </div>
         `
       }
