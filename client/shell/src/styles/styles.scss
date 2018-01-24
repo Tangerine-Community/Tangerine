@@ -132,7 +132,31 @@ div.more {
   background-color: #3c5b8d !important;
 }
 
+.mat-tab-labels {
+  background-color: #3c5b8d;
+  color: #fff;
+  font-weight: 700;
+}
+.mat-tab-label, .mat-tab-link {
+  color: #fff !important;
+  font-weight: 700 !important;
+}
 
+.mat-tab-label-active {
+  background-color: #f26f10;
+  opacity: 1.0 !important;
+  color: #fff;
+  font-weight: 700;
+}
+.mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #ff5a26 !important;
+  height: 5px;
+}
+
+.mat-tab-header {
+  margin-left: -10px;
+  margin-right: -10px;
+}
   form {
     width: 220px;
     margin: 4em auto;
