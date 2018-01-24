@@ -15,27 +15,21 @@ class TangyCheckboxes extends Element {
     <style include="tangy-element-styles"></style>
     <style>
 
-      :host {
-        @apply --paper-font-common-base;
-      }
       
       paper-checkbox {
         margin-top: 15px;
         margin-right: 25px;
         --paper-checkbox-size: 1.25em;
+        --paper-checkbox-checked-color: #3c5b8d;
+        --paper-checkbox-checked-color: #3c5b8d;
       }
       
-      .container {
-        position: relative;
-      }
       span {
         font-size: .75em;
         display: block;
       }
       
-      #checkboxes {
-       padding-left: 12px;
-      }
+      
       
     </style>
     <div class="container">

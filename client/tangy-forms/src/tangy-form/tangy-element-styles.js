@@ -33,7 +33,7 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
         color: var(--accent-color); 
         position: absolute;
         top: 14px;
-        right: -5px;
+        left: -5px;
         font-size: 21px;
       }
 
