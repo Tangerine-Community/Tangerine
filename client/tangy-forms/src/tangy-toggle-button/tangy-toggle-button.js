@@ -19,7 +19,6 @@ class TangyToggleButton extends Element {
         padding: 0 15px;
         color: #777;
         font-size: 1em;
-        text-align: center;
 
       }
       :host([hidden]) {
@@ -49,15 +48,14 @@ class TangyToggleButton extends Element {
       }
       .text-inner {
         position: absolute;
-        top: 60%;
-        left: 60%;
+        top: 20px;
+        left: 20px;
         height: 30%;
-        /*width: 50%;*/
-        margin: -15% 0 0 -25%;
+        /*width: 50%;
+        margin: -15% 0 0 -25%;*/
       }
 
       .text-inner ::slotted(*) {
-        text-align: center;
       }
       
     </style>
