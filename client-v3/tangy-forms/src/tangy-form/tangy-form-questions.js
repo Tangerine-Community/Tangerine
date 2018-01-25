@@ -20,6 +20,7 @@ import '../tangy-checkboxes/tangy-checkboxes.js'
 import '../tangy-radio-buttons/tangy-radio-buttons.js'
 import '../tangy-location/tangy-location.js'
 import '../tangy-gps/tangy-gps.js'
+import '../tangy-overlay/tangy-overlay.js'
 
 // <link rel="import" href="../tangy-timed/tangy-timed.html">
 //   <link rel="import" href="../tangy-gps/tangy-gps.html">

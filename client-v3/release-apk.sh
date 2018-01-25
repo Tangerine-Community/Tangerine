@@ -25,7 +25,8 @@ nvm use 4
 # Move aside v2 client code in Android project.
 mv ../client/www ../client/www-tmp
 cp -r ../client-v3/builds/apk ../client/www
-# @TODO COPY CONTENT PATH
+rm -r ../client/www/content
+cp -r $CONTENT_PATH ../client/www/content
 
 # APK build.
 cd ../client
