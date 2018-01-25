@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
-
-// const http = require('axios')
+const http = require('axios');
+const Conf = require('./Conf');
 const read = require('read-yaml')
 const express = require('express')
 const path = require('path')
@@ -9,10 +9,12 @@ const fs = require('fs-extra')
 const config = read.sync('./config.yml')
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
-// for json parsing in recieved requests
+// for json parsing in received requests
 const bodyParser = require('body-parser');
 // basic logging
 const requestLogger = require('./middlewares/requestLogger');
+const User = require('../server/User');
+let crypto = require('crypto');
 
 const sep = path.sep;
 const DB_URL = `${config.protocol}${config.domain}:${config.port}${config.dbServerEndpoint}`
@@ -20,7 +22,7 @@ const DB_ADMIN_URL = `${config.protocol}${config.admin.username}:${config.admin.
 
 app.use(bodyParser.json()); // use json
 app.use(bodyParser.urlencoded({ extended: false })) // parse application/x-www-form-urlencoded
-app.use(requestLogger);     // add some logging
+// app.use(requestLogger);     // uncomment this line to add some logging
 
 console.log("launching server.")
 
@@ -289,6 +291,15 @@ app.post('/item/save', async function (req, res) {
   res.json(resp)
 })
 
+async function makeUploader(groupName){
+  const uploaderPassword = crypto.randomBytes( 20 ).toString('hex');
+  let userAttributes = {
+    name     : 'uploader-' + groupName,
+    password : uploaderPassword
+  };
+  return (new User(userAttributes)).create();
+}
+
 app.post('/group/new', async function (req, res) {
   const contentRoot = config.contentRoot
   const editorTemplatesRoot = config.editorClientTemplates
@@ -296,6 +307,7 @@ app.post('/group/new', async function (req, res) {
   let groupName = req.body.groupName
   console.log("groupName: " + groupName)
   console.log("checking contentRoot + sep + formDir: " + contentRoot + sep + groupName)
+
   await fs.ensureDir(contentRoot + sep + groupName)
   await saveFormsJson(null, groupName)
     .then(() => {
@@ -313,11 +325,29 @@ app.post('/group/new', async function (req, res) {
       console.error("An error copying location-list: " + err)
       throw err;
     })
+
+
+  // Set up the app database.
+  try {
+    let groupCouch = Conf.calcGroupUrl( groupName )
+    console.log("groupCouch: " + groupCouch)
+    await http.put(groupCouch);
+    console.log("App database created.");
+  }
+  catch (err) {
+    console.log("We already have an app database.");
+  }
+
+  try {
+    makeUploader(groupName)
+  }
+  catch (err) {
+    console.log("Error: " + err);
+  }
   res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
+  // res.sendStatus(200)
 })
 
-// Bind the app to port 80.
-// app.listen(config.port);
 // kick it off
 var server = app.listen(config.port, function() {
   var host = server.address().address;
