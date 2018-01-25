@@ -9,7 +9,7 @@ import '../../node_modules/@polymer/paper-card/paper-card.js'
 import * as tangyFormActions from './tangy-form-actions.js'
 
 // Import relevant actions.
-import { 
+import {
   ITEM_OPEN,
   itemOpen,
   ITEM_CLOSE,
@@ -41,7 +41,7 @@ export class TangyFormItem extends PolymerElement {
       return `
   <style>
 :host {
-  margin: 15px;
+  /*margin: 15px;*/
 }
 /*
  * Card
@@ -53,7 +53,7 @@ paper-card {
   -o-transition: .4s;
   display: block;
   max-width: 325px;
-  margin: 30px auto;
+  margin: /*30px*/ auto;
 }
 :host([open]) paper-card {
   -webkit-transition: .4s;
@@ -76,6 +76,7 @@ paper-card {
  */
 .card-actions {
   height: 45px;
+  margin-bottom: 100px;
 }
 :host([open]) #open {
   display: none;
@@ -90,11 +91,22 @@ paper-card {
 :host([hide-buttons]) #close {
   display: none;
 }
+
+label.heading {
+  font-size: 21px !important;
+  margin-bottom: 20px;
+  display: block;
+  color: #3c5b8d;
+  font-weight: 700;
+}
+
 </style>
 
-<paper-card id="card" class="shrunk" heading="[[title]]">
+<paper-card id="card" class="shrunk">
+
 
   <div class="card-content">
+    <label class="heading">[[title]]</label>
     <div id="content"></div>
     <slot></slot>
   </div>
@@ -188,9 +200,9 @@ paper-card {
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.$.content.addEventListener('INPUT_VALUE_CHANGE', (event) => {
           this.store.dispatch({
-            type: 'INPUT_VALUE_CHANGE',  
-            inputName: event.detail.inputName, 
-            inputValue: event.detail.inputValue, 
+            type: 'INPUT_VALUE_CHANGE',
+            inputName: event.detail.inputName,
+            inputValue: event.detail.inputValue,
             inputInvalid: event.detail.inputInvalid,
             inputIncomplete: event.detail.inputIncomplete
           })
@@ -198,7 +210,7 @@ paper-card {
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
- 
+
     }
 
     disconnectedCallback() {
@@ -207,7 +219,7 @@ paper-card {
 
     // Prevent parallel reflects, leads to race conditions.
     throttledReflect(iAmQueued = false) {
-      // If there is an reflect already queued, we can quit. 
+      // If there is an reflect already queued, we can quit.
       if (this.reflectQueued && !iAmQueued) return
       if (this.reflectRunning) {
         this.reflectQueued = true
@@ -230,7 +242,7 @@ paper-card {
       // Set state in input elements.
       let inputs = [].slice.call(this.$.content.querySelectorAll('[name]'))
       inputs.forEach((input) => {
-        let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
+        let index = state.inputs.findIndex((inputState) => inputState.name == input.name)
         if (index !== -1) input.setProps(state.inputs[index])
       })
 
@@ -253,7 +265,7 @@ paper-card {
         let input = state.inputs.find((input) => input.name == name)
         if (input) return input.value
       }
-      let inputHide = tangyFormActions.inputHide 
+      let inputHide = tangyFormActions.inputHide
       let inputShow = tangyFormActions.inputShow
       let inputEnable = tangyFormActions.inputEnable
       let inputDisable = tangyFormActions.inputDisable
@@ -307,7 +319,7 @@ paper-card {
         return true
       }
     }
-    
+
 
   }
 

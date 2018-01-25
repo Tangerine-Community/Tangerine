@@ -5,7 +5,7 @@ import '../../node_modules/@polymer/paper-radio-group/paper-radio-group.js';
 import '../tangy-form/tangy-element-styles.js';
 /**
  * `tangy-radio-buttons`
- * 
+ *
  *
  * @customElement
  * @polymer
@@ -13,18 +13,26 @@ import '../tangy-form/tangy-element-styles.js';
  */
 class TangyRadioButtons extends Element {
   static get template() {
+    // language=HTML
+
     return `
     <style include="tangy-element-styles"></style>
 
     <style>
       paper-radio-button {
-        margin-right: 25px;
-        --paper-radio-button-size: 2em;
+        --paper-radio-button-size: 1.5em;
+        --paper-radio-button-checked-color: #3c5b8d;
+      }
+      
+      span {
+        font-size: .75em;
+        display: block;
       }
     </style>
 
     <div class="container">
       <label for="group">[[label]]</label>
+      <span class="secondary_color">select only one</span>
       <paper-radio-group name="group" id="paper-radio-group">
       </paper-radio-group>
     </div>
@@ -109,9 +117,9 @@ class TangyRadioButtons extends Element {
       detail: {
         inputName: this.name,
         inputValue: event.target.name,
-        inputInvalid: false, 
-        inputIncomplete: false 
-      }, 
+        inputInvalid: false,
+        inputIncomplete: false
+      },
       bubbles: true
     }))
   }

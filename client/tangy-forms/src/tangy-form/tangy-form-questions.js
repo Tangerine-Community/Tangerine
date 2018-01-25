@@ -32,6 +32,7 @@ import '../tangy-gps/tangy-gps.js'
 //
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
+import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
 //   <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 //   <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 //   <link rel="import" href="../../bower_components/paper-fab.html">
@@ -56,7 +57,6 @@ import '../../node_modules/@polymer/paper-fab/paper-fab.js';
 //   <link rel="import" href="../../bower_components/app-datepicker/app-datepicker.html">
 
 
-
     /**
      * `tangy-form-questions`
      * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
@@ -77,20 +77,31 @@ export class TangyFormQuestions extends PolymerElement {
           margin: 0px;
           padding: 0px;
         }
+        
+        #previousItemButton,
+        #nextItemButton {
+            position: relative;
+            color: #ffffff;
+        }
+        
+        #previousItemButton[disabled],
+        #nextItemButton[disabled] {
+            color: #979797;
+        }
+        
+        
         #previousItemButton {
-          position: fixed;
-          bottom: 73px;
-          right: 7px;
+          float: left;
+          
         }
         #nextItemButton {
-          position: fixed;
-          bottom: 10px;
-          right: 7px;
+          float: right;
         }
         #markCompleteFab, #lockedFab {
           position: fixed;
           top: 137px;
           right: 7px;
+          display: none !important;
         }
         :host(:not([linear-mode])) #nextItemButton,
         :host(:not([linear-mode])) #previousItemButton
@@ -107,15 +118,34 @@ export class TangyFormQuestions extends PolymerElement {
         paper-progress {
           width: 100%;
         }
+        #tangerine-footer {
+            width:100%;
+            background-color: #3c5b8d;
+            height: 40px;
+            position: fixed;
+            bottom: 0px;
+        }
+        
+        #previousItemButton,
+        #nextItemButton {
+          padding: 0;
+          --paper-fab-iron-icon: {
+            height: 50px;
+            width: 50px;
+          };
+        }
+        
       </style>
       <slot></slot>
       <div id="nav">
-        <paper-fab id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-fab>
-        <paper-fab id="lockedFab" icon="icons:lock" disabled></paper-fab>
-        <paper-fab id="previousItemButton" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
-        <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
+        <paper-icon-button id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-icon-button>
+        <paper-icon-button id="lockedFab" icon="icons:lock" disabled></paper-icon-button>
       </div>
       <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
+      <div id="tangerine-footer">
+         <paper-icon-button id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-icon-button>
+         <paper-icon-button id="nextItemButton" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-icon-button>
+      </div>
         `
       }
 
@@ -185,7 +215,7 @@ export class TangyFormQuestions extends PolymerElement {
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
- 
+
         // Notify store is open and send up the items if it does not have them.
         if (this.response.items.length === 0) {
           this.response.items = ([].slice.call(this.querySelectorAll('tangy-form-item'))).map((element) => element.getProps())
@@ -194,9 +224,9 @@ export class TangyFormQuestions extends PolymerElement {
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
           this.store.dispatch({
-            type: INPUT_VALUE_CHANGE,  
-            inputName: event.detail.inputName, 
-            inputValue: event.detail.inputValue, 
+            type: INPUT_VALUE_CHANGE,
+            inputName: event.detail.inputName,
+            inputValue: event.detail.inputValue,
             inputInvalid: event.detail.inputInvalid,
             inputIncomplete: event.detail.inputIncomplete
           })
@@ -214,7 +244,7 @@ export class TangyFormQuestions extends PolymerElement {
 
       // Prevent parallel reflects, leads to race conditions.
       throttledReflect(iAmQueued = false) {
-        // If there is an reflect already queued, we can quit. 
+        // If there is an reflect already queued, we can quit.
         if (this.reflectQueued && !iAmQueued) return
         if (this.reflectRunning) {
           this.reflectQueued = true
@@ -237,10 +267,10 @@ export class TangyFormQuestions extends PolymerElement {
         // Set state in tangy-form-item elements.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
-          let index = state.items.findIndex((itemState) => item.id == itemState.id) 
+          let index = state.items.findIndex((itemState) => item.id == itemState.id)
           if (index !== -1) item.setProps(state.items[index])
         })
-        
+
         // Set progress state.
         this.$.progress.setAttribute('value', state.progress)
 
@@ -294,7 +324,7 @@ export class TangyFormQuestions extends PolymerElement {
           let input = state.inputs.find((input) => input.name == name)
           if (input) return input.value
         }
-        let inputHide = tangyFormActions.inputHide 
+        let inputHide = tangyFormActions.inputHide
         let inputShow = tangyFormActions.inputShow
         let inputEnable = tangyFormActions.inputEnable
         let inputDisable = tangyFormActions.inputDisable
@@ -331,6 +361,6 @@ export class TangyFormQuestions extends PolymerElement {
 
     }
 
-    
+
     window.customElements.define(TangyFormQuestions.is, TangyFormQuestions);
 

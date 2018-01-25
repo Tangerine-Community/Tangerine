@@ -1,12 +1,13 @@
 // import {Element as PolymerElement} from "@polymer/polymer/polymer-element";
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import '../../node_modules/@polymer/paper-input/paper-input.js'
 
 import '../tangy-form/tangy-element-styles.js';
 // import '../../../underscore/underscore.js';
 import {Loc} from './loc.js';
 /**
  * `tangy-location`
- * 
+ *
  *
  * @customElement
  * @polymer
@@ -83,9 +84,9 @@ class TangyLocation extends Element {
     let selections = [...this.value]
     if (selections.length === 0) {
       levels.forEach(level => {
-        selections = [...selections, ...[{level, value: ''}]] 
+        selections = [...selections, ...[{level, value: ''}]]
       })
-    } 
+    }
 
     // Calculate the options for each select. Returns an object keyed by select level.
     let options = this.calculateLevelOptions(selections)
@@ -95,26 +96,19 @@ class TangyLocation extends Element {
 
       <label>
         ${this.label}
-      </label> <br>
+      </label>
 
       ${selections.map((selection, i) => `
 
-        <label ${(options[selection.level].length === 0) ? 'hidden' : ''}> 
-          ${selection.level} 
-        </label>
-
-        <select 
+        
+        <div class="mdc-select">
+            <select class="mdc-select__surface"
           name=${selection.level}
           ${(options[selection.level].length === 0) ? 'hidden' : ''}
           ${(this.disabled) ? 'disabled' : ''}
         > 
-
-          <option
-            ${(selection.value === '') ? 'selected' : ''} 
-            disabled='disabled'
-          >
-            Select...
-          </option>
+          <option value="" default selected ${(options[selection.level].length === 0) ? 'hidden' : ''} disabled='disabled'>Pick a ${selection.level} </option>
+          
 
           ${options[selection.level].map((option, i) => `
             <option 
@@ -125,8 +119,12 @@ class TangyLocation extends Element {
             </option>
           `)}
 
-        </select><br> 
-
+        </select>
+        <div class="mdc-select__bottom-line"></div>
+        
+        </div>
+        <br />
+        <br />
       `).join('')}
     `
 
@@ -138,9 +136,9 @@ class TangyLocation extends Element {
     let options = {}
     // Queries contain the Loc.query() parameters required to find options for a given level. Level is the key which points to an object where the properties
     // are the parameters for the Loc.query().
-    let queries = {} 
+    let queries = {}
     // firstLevelNotSelected is the first level with no selection and the last level we will bother calculating options for.
-    let firstLevelNotSelected = '' 
+    let firstLevelNotSelected = ''
     // Levels for querying.
     let levels = this.showLevels.split(',')
 
@@ -151,13 +149,13 @@ class TangyLocation extends Element {
     // Generate queries.
     selections.forEach((selection, i) => {
       // Only generate queries for levels that are selected or the first level not selected.
-      if (selection.value === '' && selection.level !== firstLevelNotSelected) return 
+      if (selection.value === '' && selection.level !== firstLevelNotSelected) return
       // Slice out the selections at this level from all selections.
-      let selectionsAtThisLevel = selections.slice(0, i) 
+      let selectionsAtThisLevel = selections.slice(0, i)
       // Transform the array of objects to an array of levels.
       let queryLevels = selectionsAtThisLevel.map(s => s.level)
       // Transform selectionsAtThisLevel Array to queryCriteria Object.
-      let queryCriteria = {} 
+      let queryCriteria = {}
       selectionsAtThisLevel.forEach(selection =>  queryCriteria[selection.level] = selection.value)
       // Set the query.
       queries[selection.level] = {
@@ -190,7 +188,7 @@ class TangyLocation extends Element {
     let selections = [...this.value]
     if (selections.length === 0) {
       levels.forEach(level => {
-        selections = [...selections, ...[{level, value: ''}]] 
+        selections = [...selections, ...[{level, value: ''}]]
       })
     }
 
@@ -199,17 +197,17 @@ class TangyLocation extends Element {
       // Modify the selection level associated with the event.
       if (selection.level === event.target.name) {
         return {
-          level: event.target.name, 
+          level: event.target.name,
           value: event.target.value
         }
-      } 
-      // Make sure to set the selection values to '' for all selections after the one just selected. 
+      }
+      // Make sure to set the selection values to '' for all selections after the one just selected.
       else if (levels.indexOf(selection.level) > levels.indexOf(event.target.name)) {
         return {
           level: selection.level,
           value: ''
         }
-      } 
+      }
       // Return unmodified selections if they are unrelated to this event.
       else {
         return selection
@@ -225,7 +223,7 @@ class TangyLocation extends Element {
       inputName: this.name,
       inputValue: newSelections,
       inputInvalid: false,
-      inputIncomplete 
+      inputIncomplete
     }
     this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
       detail,

@@ -45,12 +45,12 @@ export class TangyForm extends PolymerElement {
           margin: 0px;
           padding: 0px;
         }
-                #show-responses-fab {
+        #show-responses-fab {
           position: fixed;
           top: 73px;
           right: 7px;
         }
-                #new-response-fab {
+        #new-response-fab {
           position: fixed;
           top: 10px;
           right: 7px;
@@ -59,6 +59,10 @@ export class TangyForm extends PolymerElement {
         :host([hide-responses]) #show-responses-fab,
         :host([hide-responses]) #new-response-fab {
           display: none;
+        }
+        #show-responses-fab,
+        #new-response-fab {
+            display: none;
         }
       </style>
 
