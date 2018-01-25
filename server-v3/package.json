@@ -13,8 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
     "fs-extra": "^4.0.3",
     "read-yaml": "^1.1.0",
-    "sanitize-filename": "^1.6.1"
+    "sanitize-filename": "^1.6.1",
+    "winston": "^2.4.0"
   }
 }

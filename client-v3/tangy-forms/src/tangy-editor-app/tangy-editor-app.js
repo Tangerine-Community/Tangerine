@@ -441,8 +441,8 @@ class TangyEditorApp extends Element {
     this.$['form-list'].hidden = true
     this.$['item-create'].hidden = true
     // Load the form into the DOM.
-
-    let formsPath = '../../groups/' + this.groupId + '/' + formSrc
+    // let formsPath = '../../groups/' + this.groupId + '/' + formSrc
+    let formsPath = '../../groups/' + this.groupId + '/' + formSrc.replace('../content/', '')
 
     let formHtml = await fetch(formsPath)
     // Put the formHtml in a template first so element do not initialize connectedCallback
@@ -553,7 +553,7 @@ class TangyEditorApp extends Element {
   }
   async saveItem(event) {
     let item = {}
-    const project = window.location.pathname.split("/")[3];
+    const group = window.location.pathname.split("/")[2];
     if ((typeof event.currentTarget.dataItemSrc !== 'undefined') && (event.currentTarget.dataItemSrc !== '')) {
       // editing a current item
       this.itemFilename = event.currentTarget.dataItemSrc
@@ -573,7 +573,7 @@ class TangyEditorApp extends Element {
     let itemTitle = this.$.itemTitle.value
     let itemHtmlText = Tangy.editor.getData();
 //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
-    item.projectName = project
+    item.groupName = group
     item.formHtmlPath = this.formHtmlPath
     item.itemFilename = this.itemFilename
     item.itemId = this.itemId

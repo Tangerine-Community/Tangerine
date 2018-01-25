@@ -11,22 +11,74 @@ const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 // for json parsing in recieved requests
 const bodyParser = require('body-parser');
+// basic logging
+const requestLogger = require('./middlewares/requestLogger');
 
 const sep = path.sep;
 const DB_URL = `${config.protocol}${config.domain}:${config.port}${config.dbServerEndpoint}`
 const DB_ADMIN_URL = `${config.protocol}${config.admin.username}:${config.admin.password}@${config.domain}:${config.port}${config.dbServerEndpoint}`
 
 app.use(bodyParser.json()); // use json
+app.use(requestLogger);     // add some logging
 
 console.log("launching server.")
 
 app.use('/groups', express.static(path.join(__dirname, '../client-v3/content/groups')));
-app.use('/:group', express.static(path.join(__dirname, '../client-v3/builds/dev')));
+app.use('/:group/tangy-forms/', express.static(path.join(__dirname, '../client-v3/builds/dev/tangy-forms/')));
+app.use('/:group/ckeditor/', express.static(path.join(__dirname, '../client-v3/ckeditor/')));
+// app.use('/:group/content', express.static(path.join(__dirname, '../client-v3/content/groups' + req.params.group)));
 
-async function saveFormsJson(formParameters, project) {
+var contentPath = '../client-v3/content/groups'
+// kudos: https://github.com/expressjs/express/issues/3165#issuecomment-270825375
+// var dyn = createDynStatic(contentPath)
+// app.use(dyn) // setup your static here
+//
+// app.get('/:group/content', function (req, res) {
+//   let contentPath = '../client-v3/content/groups/' + req.params.group;
+//   dyn.setPath(contentPath)
+//   console.log("Setting path to " + contentPath)
+//   res.sendStatus(200)
+// })
+//
+// // app.get('/:group/tangy-forms', function (req, res) {
+// //   dyn.setPath('../client-v3/builds/dev')
+// //   res.sendStatus(200)
+// // })
+//
+// function createDynStatic (path) {
+//   var static = express.static(path)
+//   var dyn = function (req, res, next) {
+//     return static(req, res, next)
+//   }
+//   dyn.setPath = function (newPath) {
+//     static = express.static(newPath)
+//   }
+//   return dyn
+// }
+
+
+
+// app.use('/:group/content/location-list.json', function (req, res, next) {
+app.use('/:group/content', function (req, res, next) {
+  // let contentPath = '../client-v3/content/groups/' + req.params.group + '/location-list.json'
+  let contentPath = '../client-v3/content/groups/' + req.params.group
+  console.log("Setting path to " + path.join(__dirname, contentPath))
+  // return express.static(require('path').join('.', 'path', req.params.group + '/')).apply(this, arguments);
+  // return express.static(require('path').join('.', 'path', contentPath)).apply(this, arguments);
+  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+});
+
+// app.use('/:group/content/', function (req, res, next) {
+//   let contentPath = '../client-v3/content/groups/' + req.params.group;
+//   console.log("Setting path to " + contentPath)
+//   // return express.static(require('path').join('.', 'path', req.params.group + '/')).apply(this, arguments);
+//   return express.static(require('path').join('.', 'path', contentPath)).apply(this, arguments);
+// });
+
+async function saveFormsJson(formParameters, group) {
   console.log("formParameters: " + JSON.stringify(formParameters))
   let contentRoot = config.contentRoot
-  let formsJsonPath = contentRoot + '/forms.json'
+  let formsJsonPath = contentRoot + '/' + group + '/forms.json'
   console.log("formsJsonPath:" + formsJsonPath)
   let formJson
   try {
@@ -133,9 +185,9 @@ app.post('/item/save', async function (req, res) {
   let itemHtmlText = req.body.itemHtmlText
   let formHtmlPath = req.body.formHtmlPath
   let itemFilename = req.body.itemFilename
-  let projectName = req.body.projectName
+  let groupName = req.body.groupName
   let itemId = req.body.itemId
-  let contentRoot = config.contentRoot
+  let contentRoot = config.contentRoot + '/' + groupName
   let formDir, formName, originalForm, formPath
   let contentUrlPath = '../content/'
 
@@ -171,7 +223,7 @@ app.post('/item/save', async function (req, res) {
       "title": formTitle,
       "src": contentUrlPath + formDirName + "/form.html"
     }
-    await saveFormsJson(formParameters, null)
+    await saveFormsJson(formParameters, groupName)
       .then(() => {
         console.log("Updated forms.json")
       })
@@ -270,6 +322,12 @@ app.post('/item/save', async function (req, res) {
 })
 
 // Bind the app to port 80.
-app.listen(config.port);
-
+// app.listen(config.port);
+// kick it off
+var server = app.listen(config.port, function() {
+  var host = server.address().address;
+  var port = server.address().port;
+  console.log(server.address());
+  console.log('Server V3: http://%s:%s', host, port);
+});
 
