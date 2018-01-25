@@ -257,13 +257,13 @@ ADD client-v3/tangy-forms/yarn.lock /tangerine-server/client-v3/tangy-forms/yarn
 ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
 
 ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
-ADD client-v3/shell /tangerine-server/client-v3/shell
 ADD client-v3/wrappers/pwa/package.json /tangerine-server/client-v3/wrappers/pwa/package.json
 ADD client-v3/wrappers/pwa/bower.json /tangerine-server/client-v3/wrappers/pwa/bower.json
 ADD client-v3/install.sh /tangerine-server/client-v3/install.sh
 RUN cd /tangerine-server/client-v3/ && ./install.sh
 # Build client v3.
 ADD client-v3 /tangerine-server/client-v3
+ADD client-v3/shell /tangerine-server/client-v3/shell
 RUN cd /tangerine-server/client-v3/ && ./build.sh
 
 #
