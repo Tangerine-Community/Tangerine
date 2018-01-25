@@ -36,6 +36,7 @@ RUN_OPTIONS="
   --volume $(pwd)/client-v3/tangy-forms/src/:/tangerine-server/client-v3/tangy-forms/src/ \
   --volume $(pwd)/client-v3/tangy-forms/index.html:/tangerine-server/client-v3/tangy-forms/index.html \
   --volume $(pwd)/client-v3/tangy-forms/editor.html:/tangerine-server/client-v3/tangy-forms/editor.html \
+  --volume $(pwd)/client-v3/tangy-forms/editor/:/tangerine-server/client-v3/tangy-forms/editor/ \
   --volume $(pwd)/client-v3/shell/src/:/tangerine-server/client-v3/shell/src/ \
   --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
   --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
