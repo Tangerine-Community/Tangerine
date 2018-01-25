@@ -1,10 +1,11 @@
 'use strict';
 
 const winston = require('winston');
+const Settings = require('./Settings');
 
 // Set up the logger
 var logger = new winston.Logger({
-  level: 'info',
+  level: Settings.T_LOG_LEVEL,
   transports: [
     new (winston.transports.Console)(
       {
