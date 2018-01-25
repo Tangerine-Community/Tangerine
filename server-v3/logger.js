@@ -6,7 +6,14 @@ const winston = require('winston');
 var logger = new winston.Logger({
   level: 'info',
   transports: [
-    new (winston.transports.Console)()//,
+    new (winston.transports.Console)(
+      {
+        timestamp: function () {
+          var ts = new Date()
+          return JSON.stringify(ts)
+        }
+      }
+    )//,
     //new (winston.transports.File)({ filename: 'robbert.log' })
   ],
   formatter: function(options) {

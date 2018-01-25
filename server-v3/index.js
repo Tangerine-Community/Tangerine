@@ -19,61 +19,21 @@ const DB_URL = `${config.protocol}${config.domain}:${config.port}${config.dbServ
 const DB_ADMIN_URL = `${config.protocol}${config.admin.username}:${config.admin.password}@${config.domain}:${config.port}${config.dbServerEndpoint}`
 
 app.use(bodyParser.json()); // use json
+app.use(bodyParser.urlencoded({ extended: false })) // parse application/x-www-form-urlencoded
 app.use(requestLogger);     // add some logging
 
 console.log("launching server.")
 
+app.use('/', express.static(path.join(__dirname, '../client-v3/tangy-forms/editor')));
 app.use('/groups', express.static(path.join(__dirname, '../client-v3/content/groups')));
 app.use('/:group/tangy-forms/', express.static(path.join(__dirname, '../client-v3/builds/dev/tangy-forms/')));
 app.use('/:group/ckeditor/', express.static(path.join(__dirname, '../client-v3/ckeditor/')));
-// app.use('/:group/content', express.static(path.join(__dirname, '../client-v3/content/groups' + req.params.group)));
 
-var contentPath = '../client-v3/content/groups'
-// kudos: https://github.com/expressjs/express/issues/3165#issuecomment-270825375
-// var dyn = createDynStatic(contentPath)
-// app.use(dyn) // setup your static here
-//
-// app.get('/:group/content', function (req, res) {
-//   let contentPath = '../client-v3/content/groups/' + req.params.group;
-//   dyn.setPath(contentPath)
-//   console.log("Setting path to " + contentPath)
-//   res.sendStatus(200)
-// })
-//
-// // app.get('/:group/tangy-forms', function (req, res) {
-// //   dyn.setPath('../client-v3/builds/dev')
-// //   res.sendStatus(200)
-// // })
-//
-// function createDynStatic (path) {
-//   var static = express.static(path)
-//   var dyn = function (req, res, next) {
-//     return static(req, res, next)
-//   }
-//   dyn.setPath = function (newPath) {
-//     static = express.static(newPath)
-//   }
-//   return dyn
-// }
-
-
-
-// app.use('/:group/content/location-list.json', function (req, res, next) {
 app.use('/:group/content', function (req, res, next) {
-  // let contentPath = '../client-v3/content/groups/' + req.params.group + '/location-list.json'
   let contentPath = '../client-v3/content/groups/' + req.params.group
   console.log("Setting path to " + path.join(__dirname, contentPath))
-  // return express.static(require('path').join('.', 'path', req.params.group + '/')).apply(this, arguments);
-  // return express.static(require('path').join('.', 'path', contentPath)).apply(this, arguments);
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
-
-// app.use('/:group/content/', function (req, res, next) {
-//   let contentPath = '../client-v3/content/groups/' + req.params.group;
-//   console.log("Setting path to " + contentPath)
-//   // return express.static(require('path').join('.', 'path', req.params.group + '/')).apply(this, arguments);
-//   return express.static(require('path').join('.', 'path', contentPath)).apply(this, arguments);
-// });
 
 async function saveFormsJson(formParameters, group) {
   console.log("formParameters: " + JSON.stringify(formParameters))
@@ -82,21 +42,29 @@ async function saveFormsJson(formParameters, group) {
   console.log("formsJsonPath:" + formsJsonPath)
   let formJson
   try {
-    await fs.ensureFile(formsJsonPath)
-    console.log("formsJsonPath exists")
+    const exists = await fs.pathExists(formsJsonPath)
+    if (exists) {
+      console.log("formsJsonPath exists")
+      // read formsJsonPath and add formParameters to formJson
+        try {
+          formJson = await fs.readJson(formsJsonPath)
+          console.log("formJson: " + JSON.stringify(formJson))
+          console.log("formParameters: " + JSON.stringify(formParameters))
+          if (formParameters !== null) {
+            formJson.push(formParameters)
+          }
+          console.log("formJson with new formParameters: " + JSON.stringify(formJson))
+        } catch (err) {
+          console.error("An error reading the json form: " + err)
+        }
+    } else {
+      // create an empty formJson
+      formJson = []
+    }
   } catch (err) {
-    console.log("Creating empty formJson array" + err)
-    formJson = []
+    console.log("Error checking formJson: " + err)
   }
-  try {
-    formJson = await fs.readJson(formsJsonPath)
-    console.log("formJson: " + JSON.stringify(formJson))
-    console.log("formParameters: " + JSON.stringify(formParameters))
-    formJson.push(formParameters)
-    console.log("formJson with new formParameters: " + JSON.stringify(formJson))
-  } catch (err) {
-    console.error("An error reading the json form: " + err)
-  }
+
   await fs.writeJson(formsJsonPath, formJson)
 }
 
@@ -319,6 +287,33 @@ app.post('/item/save', async function (req, res) {
   }
   // console.log("resp: "+  JSON.stringify(resp))
   res.json(resp)
+})
+
+app.post('/group/new', async function (req, res) {
+  const contentRoot = config.contentRoot
+  const editorTemplatesRoot = config.editorClientTemplates
+  console.log("body: " + JSON.stringify(req.body))
+  let groupName = req.body.groupName
+  console.log("groupName: " + groupName)
+  console.log("checking contentRoot + sep + formDir: " + contentRoot + sep + groupName)
+  await fs.ensureDir(contentRoot + sep + groupName)
+  await saveFormsJson(null, groupName)
+    .then(() => {
+      console.log("Created forms.json")
+    })
+    .catch(err => {
+      console.error("An error saving the json form: " + err)
+      throw err;
+    })
+  await fs.copy(editorTemplatesRoot + sep +  'location-list.json', contentRoot + sep + groupName + sep + 'location-list.json', {overwrite:false} )
+    .then(() => {
+      console.log("Copied location-list.json")
+    })
+    .catch(err => {
+      console.error("An error copying location-list: " + err)
+      throw err;
+    })
+  res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
 })
 
 // Bind the app to port 80.
