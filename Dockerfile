@@ -231,8 +231,12 @@ RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
 
+
+
+
+
 # 
-# Install and build Client v3 
+#  v3 
 #
 
 # Install yarn.
@@ -245,6 +249,7 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 RUN source ~/.nvm/nvm.sh && \
   nvm install 8 && \
   nvm install 4
+
 # Install client v3
 ADD client-v3/package.json /tangerine-server/client-v3/package.json
 ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
@@ -255,10 +260,22 @@ ADD client-v3/wrappers/pwa/package.json /tangerine-server/client-v3/wrappers/pwa
 ADD client-v3/wrappers/pwa/bower.json /tangerine-server/client-v3/wrappers/pwa/bower.json
 ADD client-v3/install.sh /tangerine-server/client-v3/install.sh
 RUN cd /tangerine-server/client-v3/ && ./install.sh
+
 # Build client v3.
 ADD client-v3 /tangerine-server/client-v3
 ADD client-v3/shell /tangerine-server/client-v3/shell
 RUN cd /tangerine-server/client-v3/ && ./build.sh
+
+
+# Install server v3
+ADD server-v3/app/package.json /tangerine-server/server-v3/app/package.json
+ADD server-v3/install.sh /tangerine-server/server-v3/install.sh
+RUN cd /tangerine-server/server-v3/ && ./install.sh
+
+
+# Build server v3
+ADD server-v3 /tangerine-server/server-v3
+RUN cd /tangerine-server/server-v3 && ./build.sh
 
 #
 # Wrap up 

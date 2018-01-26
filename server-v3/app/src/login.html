@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+	<title>Tangerine</title>
+
+	<link rel="shortcut icon" type="image/x-icon" href="/assets/icon/favicon.ico">
+
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="/assets/css/material.min.css">
+	<link rel="stylesheet" href="/assets/css/tangerine.css">
+</head>
+
+<!-- required validation shows by default the way mdl is set up for this form so had to take that out for now -->
+
+<!-- if you want it fixed you can use this style that will only show the validation if it is invalid 
+and visibility has been set to visible through the js:
+
+/ TextField Error.
+.mdl-textfield__error {
+  color: $input-text-error-color;
+  position: absolute;
+  font-size: $input-text-floating-label-fontsize;
+  margin-top: 3px;
+  visibility: hidden;
+  display: block;
+
+  .mdl-textfield.is-invalid & {
+    visibility: visible;
+  }
+}
+see this url for full code : https://github.com/google/material-design-lite/blob/master/src/textfield/_textfield.scss
+(jw note)
+this style is not parf of the min code for some reason causing all text inside error field to always show by default
+-->
+
+<body class="login">
+	<app>
+		<div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout">
+
+			<main class="demo-main mdl-layout__content">
+
+				<div class="demo-container mdl-grid">
+					<div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--6-col">
+
+						<h3 class="mdl-color-text--deep-orange-900">Login to Tangerine</h3>
+						
+						<div id="msgDiv" class="mdl-textfield">
+                            <!-- mdl-js-textfield -->
+                            <span id="errMsg" class="xmdl-textfield__error"></span>
+               			</div>
+						<div class="mdl-textfield mdl-js-textfield">
+							<input class="mdl-textfield__input" type="text" id="username" required>
+							<label class="mdl-textfield__label" for="username">Username*</label>
+							<span class="mdl-textfield__error"></span>
+						</div>
+						<div class="mdl-textfield mdl-js-textfield">
+							<input class="mdl-textfield__input" type="password" id="password" required>
+							<label class="mdl-textfield__label" for="password">Password*</label>
+							<span class="mdl-textfield__error"></span>
+						</div>
+						<button id="sub" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+		      	    Login
+		      	</button>
+						<a href="/password" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--light-blue-700">Forgot Password?</a>
+						<div class="mdl-card__actions right mdl-color-text--light-blue-700">
+							Don't have an account? Learn more and <a href="/registration" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--light-blue-700">Register Now <i class="material-icons">chevron_right</i></a>
+						</div>
+					</div>
+				</div>
+
+			</main>
+		</div>
+	</app>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+	<script src="/assets/material.min.js"></script>
+	<script src="/assets/tangerine.js"></script>
+	
+	
+	<script>
+	$(document).ready(function(){
+		$("#sub").click(function(){
+			$.post("/auth/login/",
+			{
+			username: $('#username').val(),
+			password: $('#password').val()
+			},
+			function(data,status){
+				//alert("Data: " + data + "\nStatus: " + status);
+				localStorage.setItem('token', data.token);
+                localStorage.setItem('user_id', data.user_id);
+                localStorage.setItem('password', data.password);
+				//window.location.href="/?#/confirmation";
+				window.location.href="/confirmation";
+				
+			})
+			.fail(function(data) {
+				console.log(data); //console.log(JSON.stringify(data, null, 2))
+				var jsErr = JSON.parse(data.responseText);// to get error
+				//alert( "Error: "  + jsErr.message);
+				$('#errMsg').html("Error: "  +   jsErr.message);
+				$('#msgDiv').show()
+			});
+		});
+		
+		$('#msgDiv').hide()
+	});
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<div class="mdl-color--amber color-header clearfix">
+    <div class="color-explanation mdl-color-text--white">
+        <h4>Profile</h4>
+    </div>
+</div>
+<div class="mdl-grid mdl-grid--no-spacing">
+    <div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+        <div class="left-info-box">
+            <!--<h5><i class="material-icons">format_align_left</i> Help</h5>-->
+            <p>
+                <!--help text here -->
+            </p>
+        </div>
+    </div>
+    <div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone r-content">
+        <div class="body-content">
+            <div *ngIf="profile">
+                <mdl-card mdl-shadow="4">
+                    <mdl-card-title>
+                        <h2 mdl-card-title-text>{{profile.firstName}} {{profile.lastName}}</h2>
+                    </mdl-card-title>
+                    <mdl-card-supporting-text>
+                        <div>
+                            <label>State: </label>
+                            <select  floating-label [(ngModel)]="profile.state">
+                                <option [value]><em>None</em></option>
+                                <option *ngFor="let s of states" [value]="s.name">{{s.name | truncate: 30 : '...'}}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Country: </label>
+                            <select  floating-label [(ngModel)]="profile.location">
+                                <option [value]><em>None</em></option>
+                                <option *ngFor="let c of locations" [value]="c.name">{{c.name | truncate: 30 : '...'}}</option>
+                            </select>
+                        </div>
+                        <button (click)="goBack()">Back</button>
+                        <button (click)="save()">Save</button>
+
+                    </mdl-card-supporting-text>
+                </mdl-card>
+            </div>
+        </div>
+    </div>
+</div>
