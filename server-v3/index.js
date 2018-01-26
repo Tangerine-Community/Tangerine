@@ -273,7 +273,12 @@ app.post('/item/save', async function (req, res) {
       })
   }
   // Save the item
-  let onlyItemFilename = itemFilename.split('/')[3]
+  const itemFilenameArr = itemFilename.split('/');
+  let onlyItemFilename = itemFilenameArr[3]
+  // If it's a new form, the itemFilename is only the uuid. If you're editing a form, it is a path. Sorry.
+  if (itemFilenameArr.length === 1) {
+    onlyItemFilename = itemFilename
+  }
   let itemPath = formPath.substring(0, formPath.lastIndexOf("/")) + sep + onlyItemFilename;
   console.log("formPath : " + formPath + " itemFilename: " + itemFilename + " groupName: " + groupName)
   console.log("Saving item at : " + itemPath + "  itemHtmlText: " + itemHtmlText)
@@ -292,8 +297,6 @@ app.post('/item/save', async function (req, res) {
   // console.log("resp: "+  JSON.stringify(resp))
   res.json(resp)
 })
-
-
 
 app.post('/group/new', async function (req, res) {
   const contentRoot = config.contentRoot
@@ -339,7 +342,6 @@ app.post('/group/new', async function (req, res) {
     console.log("We already have an app database.");
   }
 
-  //todo add reporting db - groupName + "_reporting"
   let userAttributes, username, password, appConfig
   try {
     userAttributes = await makeUploader(groupName)
@@ -402,15 +404,6 @@ app.post('/group/new', async function (req, res) {
     .catch(function (error) {
     console.log("error: " + error)
   });
-
-  // const locationList = await fs.readJson(editorTemplatesRoot + sep +  'location-list.json')
-  //   .then((locationList) => {
-  //     console.log("Read location-list.json")
-  //   })
-  //   .catch(err => {
-  //     console.error("An error copying location-list: " + err)
-  //     throw err;
-  //   })
 
   await fs.copy(editorTemplatesRoot + sep +  'location-list.json', contentRoot + sep + groupName + sep + 'location-list.json', {overwrite:false} )
     .then(() => {
