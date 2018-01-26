@@ -5,5 +5,4 @@ nvm install 8
 nvm use 8
 
 cd app
-npm run ng build 
-
+./node_modules/.bin/ng build --base-href "./"
