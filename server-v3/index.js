@@ -291,14 +291,7 @@ app.post('/item/save', async function (req, res) {
   res.json(resp)
 })
 
-async function makeUploader(groupName){
-  const uploaderPassword = crypto.randomBytes( 20 ).toString('hex');
-  let userAttributes = {
-    name     : 'uploader-' + groupName,
-    password : uploaderPassword
-  };
-  return (new User(userAttributes)).create();
-}
+
 
 app.post('/group/new', async function (req, res) {
   const contentRoot = config.contentRoot
@@ -308,6 +301,37 @@ app.post('/group/new', async function (req, res) {
   console.log("groupName: " + groupName)
   console.log("checking contentRoot + sep + formDir: " + contentRoot + sep + groupName)
 
+  // Creates the upload user on the CouchDB
+  async function makeUploader(groupName){
+    const uploaderPassword = crypto.randomBytes( 20 ).toString('hex');
+    let userAttributes = {
+      name     : 'uploader-' + groupName,
+      password : uploaderPassword
+    };
+    new User(userAttributes).create();
+    return userAttributes
+    // todo: create app-config.json, security doc for database r/w perms
+  }
+
+  // Set up the app database.
+  try {
+    let groupCouch = Conf.calcGroupUrl(groupName)
+    console.log("groupCouch: " + groupCouch)
+    await http.put(groupCouch);
+    console.log("App database created.");
+  }
+  catch (err) {
+    console.log("We already have an app database.");
+  }
+  let userAttributes, username, password, appConfig
+  try {
+    userAttributes = await makeUploader(groupName)
+    username = userAttributes.name
+    password = userAttributes.password
+  }
+  catch (err) {
+    console.log("Error: " + err);
+  }
   await fs.ensureDir(contentRoot + sep + groupName)
   await saveFormsJson(null, groupName)
     .then(() => {
@@ -317,7 +341,35 @@ app.post('/group/new', async function (req, res) {
       console.error("An error saving the json form: " + err)
       throw err;
     })
-  await fs.copy(editorTemplatesRoot + sep +  'location-list.json', contentRoot + sep + groupName + sep + 'location-list.json', {overwrite:false} )
+  try {
+    appConfig = await fs.readFile(editorTemplatesRoot + sep + 'app-config-template.json', "utf8",)
+    let search = 'admin:password'
+    let userPass = username + ':' + password
+    appConfig = appConfig.replace(search , userPass)
+  } catch (err) {
+    console.error("An error copying location-list: " + err)
+    throw err;
+  }
+
+   await fs.writeFile(editorTemplatesRoot + sep +  'app-config.json', appConfig)
+    .then((locationList) => {
+      console.log("Wrote app-config.json")
+    })
+    .catch(err => {
+      console.error("An error copying app-config: " + err)
+      throw err;
+    })
+
+  const locationList = await fs.readJson(editorTemplatesRoot + sep +  'location-list.json')
+    .then((locationList) => {
+      console.log("Read location-list.json")
+    })
+    .catch(err => {
+      console.error("An error copying location-list: " + err)
+      throw err;
+    })
+
+  await fs.copy(editorTemplatesRoot + sep +  'app-config.json', contentRoot + sep + groupName + sep + 'app-config.json', {overwrite:false} )
     .then(() => {
       console.log("Copied location-list.json")
     })
@@ -326,24 +378,6 @@ app.post('/group/new', async function (req, res) {
       throw err;
     })
 
-
-  // Set up the app database.
-  try {
-    let groupCouch = Conf.calcGroupUrl( groupName )
-    console.log("groupCouch: " + groupCouch)
-    await http.put(groupCouch);
-    console.log("App database created.");
-  }
-  catch (err) {
-    console.log("We already have an app database.");
-  }
-
-  try {
-    makeUploader(groupName)
-  }
-  catch (err) {
-    console.log("Error: " + err);
-  }
   res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
   // res.sendStatus(200)
 })
