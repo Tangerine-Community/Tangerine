@@ -28,7 +28,7 @@ console.log("launching server.")
 
 app.use('/', express.static(path.join(__dirname, '../client-v3/tangy-forms/editor')));
 app.use('/groups', express.static(path.join(__dirname, '../client-v3/content/groups')));
-app.use('/:group/tangy-forms/', express.static(path.join(__dirname, '../client-v3/builds/dev/tangy-forms/')));
+app.use('/:group/tangy-forms/', express.static(path.join(__dirname, '../client-v3/tangy-forms/')));
 app.use('/:group/ckeditor/', express.static(path.join(__dirname, '../client-v3/ckeditor/')));
 
 app.use('/:group/content', function (req, res, next) {
