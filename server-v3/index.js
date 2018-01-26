@@ -1,4 +1,6 @@
 /* jshint esversion: 6 */
+const util = require('util');
+const exec = util.promisify(require('child_process').exec)
 const http = require('axios');
 const Conf = require('./Conf');
 const read = require('read-yaml')
@@ -405,6 +407,12 @@ app.post('/group/new', async function (req, res) {
     .catch(function (error) {
     console.log("error: " + error)
   });
+
+  await exec(`cd /tangerine-server/editor/app && \
+        couchapp push http://$T_ADMIN:$T_PASS@localhost:5984/group-${groupName} && \
+        couchapp push http://$T_ADMIN:$T_PASS@localhost:5984/group-${groupName}_reporting
+  `)
+        
 
   await fs.copy(editorTemplatesRoot + sep +  'location-list.json', contentRoot + sep + groupName + sep + 'location-list.json', {overwrite:false} )
     .then(() => {
