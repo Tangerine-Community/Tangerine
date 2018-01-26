@@ -35,10 +35,14 @@ RUN_OPTIONS="
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
   --volume $(pwd)/client-v3/tangy-forms/src/:/tangerine-server/client-v3/tangy-forms/src/ \
   --volume $(pwd)/client-v3/tangy-forms/index.html:/tangerine-server/client-v3/tangy-forms/index.html \
+  --volume $(pwd)/client-v3/tangy-forms/editor.html:/tangerine-server/client-v3/tangy-forms/editor.html \
+  --volume $(pwd)/client-v3/tangy-forms/editor/:/tangerine-server/client-v3/tangy-forms/editor/ \
   --volume $(pwd)/client-v3/shell/src/:/tangerine-server/client-v3/shell/src/ \
   --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
   --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
   --volume $(pwd)/data/client-v3/content/groups:/tangerine-server/client-v3/content/groups \
+  --volume $(pwd)/server:/tangerine-server/server \
+  --volume $(pwd)/server-v3:/tangerine-server/server-v3 \
   --volume $T_V3_DEV_CONTENT:/tangerine-server/client-v3/builds/dev/content
 " 
 
