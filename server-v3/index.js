@@ -273,8 +273,10 @@ app.post('/item/save', async function (req, res) {
       })
   }
   // Save the item
-  let itemPath = formPath.substring(0, formPath.lastIndexOf("/")) + sep + itemFilename;
-  // console.log("Saving item at : " + itemPath)
+  let onlyItemFilename = itemFilename.split('/')[3]
+  let itemPath = formPath.substring(0, formPath.lastIndexOf("/")) + sep + onlyItemFilename;
+  console.log("formPath : " + formPath + " itemFilename: " + itemFilename + " groupName: " + groupName)
+  console.log("Saving item at : " + itemPath + "  itemHtmlText: " + itemHtmlText)
   await fs.outputFile(itemPath, itemHtmlText)
     .then(() => {
       console.log('Success! Created item at: ' + itemPath)
@@ -313,16 +315,31 @@ app.post('/group/new', async function (req, res) {
     // todo: create app-config.json, security doc for database r/w perms
   }
 
-  // Set up the app database.
+  // Set up the group database.
   try {
     let groupCouch = Conf.calcGroupUrl(groupName)
     console.log("groupCouch: " + groupCouch)
     await http.put(groupCouch);
-    console.log("App database created.");
+    console.log("App database created for " + groupName);
   }
   catch (err) {
     console.log("We already have an app database.");
   }
+
+  // Set up the group reporting database.
+
+  const groupNameReports = groupName + '_reporting';
+  try {
+    let groupCouch = Conf.calcGroupUrl(groupNameReports)
+    console.log("groupCouch: " + groupCouch)
+    await http.put(groupCouch);
+    console.log("Reporting database created:" + groupNameReports);
+  }
+  catch (err) {
+    console.log("We already have an app database.");
+  }
+
+  //todo add reporting db - groupName + "_reporting"
   let userAttributes, username, password, appConfig
   try {
     userAttributes = await makeUploader(groupName)
@@ -351,7 +368,7 @@ app.post('/group/new', async function (req, res) {
     throw err;
   }
 
-   await fs.writeFile(editorTemplatesRoot + sep +  'app-config.json', appConfig)
+   await fs.writeFile(contentRoot + sep + groupName + sep + 'app-config.json', appConfig)
     .then((locationList) => {
       console.log("Wrote app-config.json")
     })
@@ -371,24 +388,31 @@ app.post('/group/new', async function (req, res) {
     }
   };
 
-  const securityUrl = Conf.calcSecurityUrl(groupName)
+  const securityGroupUrl = Conf.calcSecurityUrl(groupName)
+  const securityGroupReportsUrl = Conf.calcSecurityUrl(groupNameReports)
 
-  await http.put(securityUrl, securityDoc)
-    .then(function(){ console.log("Security doc created.")} )
+  await http.put(securityGroupUrl, securityDoc)
+    .then(function(){ console.log("Security doc created for group: " + groupName)} )
     .catch(function (error) {
     console.log("error: " + error)
   });
 
-  const locationList = await fs.readJson(editorTemplatesRoot + sep +  'location-list.json')
-    .then((locationList) => {
-      console.log("Read location-list.json")
-    })
-    .catch(err => {
-      console.error("An error copying location-list: " + err)
-      throw err;
-    })
+  await http.put(securityGroupReportsUrl, securityDoc)
+    .then(function(){ console.log("Security doc created for group reporting:" + groupNameReports)} )
+    .catch(function (error) {
+    console.log("error: " + error)
+  });
 
-  await fs.copy(editorTemplatesRoot + sep +  'app-config.json', contentRoot + sep + groupName + sep + 'app-config.json', {overwrite:false} )
+  // const locationList = await fs.readJson(editorTemplatesRoot + sep +  'location-list.json')
+  //   .then((locationList) => {
+  //     console.log("Read location-list.json")
+  //   })
+  //   .catch(err => {
+  //     console.error("An error copying location-list: " + err)
+  //     throw err;
+  //   })
+
+  await fs.copy(editorTemplatesRoot + sep +  'location-list.json', contentRoot + sep + groupName + sep + 'location-list.json', {overwrite:false} )
     .then(() => {
       console.log("Copied location-list.json")
     })
