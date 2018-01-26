@@ -34,6 +34,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
   --volume $(pwd)/client-v3/tangy-forms/src/:/tangerine-server/client-v3/tangy-forms/src/ \
+  --volume $(pwd)/client-v3/tangy-forms/index.html:/tangerine-server/client-v3/tangy-forms/index.html \
   --volume $(pwd)/client-v3/shell/src/:/tangerine-server/client-v3/shell/src/ \
   --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
   --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
