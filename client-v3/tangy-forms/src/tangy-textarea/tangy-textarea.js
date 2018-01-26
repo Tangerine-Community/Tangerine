@@ -67,13 +67,7 @@ export class TangyTextarea extends PolymerElement {
     super.ready();
     // retrieve the nested template
     let template = this.shadowRoot.querySelector('#special-template');
-
-    //
-//        for (let i=0; i<10; i++) {
-//          this.shadowRoot.appendChild(document.importNode(template.content, true));
     document.querySelector("#content").appendChild(document.importNode(template.content, true));
-//        }
-
   }
 
   created() {

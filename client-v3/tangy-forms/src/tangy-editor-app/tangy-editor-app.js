@@ -73,6 +73,30 @@ class TangyEditorApp extends Element {
       width: 30px;
       height: 30px;
       }
+      paper-button {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        font-weight: normal;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+      }
+      paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        };
+      }
+      paper-button.indigo:hover {
+        background-color: var(--paper-indigo-400);
+      }
+      paper-button.green {
+        background-color: var(--paper-green-500);
+        color: white;
+      }
+      paper-button.green[active] {
+        background-color: var(--paper-red-500);
+      }
     </style>
     <div class="tangy-form-app--container">
 
@@ -178,6 +202,7 @@ class TangyEditorApp extends Element {
             <!--<div style="width: 600px;margin-left: auto; margin-right: auto;">-->
               <form id="itemEditor">
                 <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
+                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>
                 <tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>
               </form>
             </div>
@@ -201,6 +226,7 @@ class TangyEditorApp extends Element {
               <paper-input id="formTitle" value="{{formTitle}}" label="form title"  always-float-label></paper-input>
               <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
               <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
+              <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>
             </form>
           </div>
       </div>
@@ -320,6 +346,7 @@ class TangyEditorApp extends Element {
       this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
     }
     this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
+    Tangy.editorUI = 'ckeditor5'
   }
 
   // For parsing window.location.hash parameters.
@@ -540,7 +567,9 @@ class TangyEditorApp extends Element {
           Tangy.editor.setData('<p>&nbsp;</p>')
         } else {
           Tangy.editor.setData(this.itemHtmlText)
-          // Tangy.editor.setData("bla bla bla")
+          // Also privde this code to the textarea so you can edit raw code.
+          let textarea = document.querySelector("#editor")
+          textarea.value = this.itemHtmlText
         }
       }
     } else {
@@ -552,7 +581,7 @@ class TangyEditorApp extends Element {
     }
   }
   async saveItem(event) {
-    let item = {}
+    let item = {}, itemHtmlText
     const group = window.location.pathname.split("/")[2];
     if ((typeof event.currentTarget.dataItemSrc !== 'undefined') && (event.currentTarget.dataItemSrc !== '')) {
       // editing a current item
@@ -571,7 +600,12 @@ class TangyEditorApp extends Element {
       item.formName = this.$.formName.value
     }
     let itemTitle = this.$.itemTitle.value
-    let itemHtmlText = Tangy.editor.getData();
+    if (Tangy.editorUI === 'ckeditor5') {
+      itemHtmlText = Tangy.editor.getData();
+    } else {
+      let textarea = document.querySelector("#editor")
+      itemHtmlText = textarea.value
+    }
 //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
     item.groupName = group
     item.formHtmlPath = this.formHtmlPath
@@ -605,6 +639,29 @@ class TangyEditorApp extends Element {
       }
     })
   }
+
+  switchEditor() {
+    let ckeditor = document.querySelector(".ck-editor")
+    let textarea = document.querySelector("#editor")
+    let switchEditorButton = this.shadowRoot.querySelector("#switchEditorButton")
+    console.log("switch the editor from " + Tangy.editorUI)
+
+    if (Tangy.editorUI === 'ckeditor5') {
+      Tangy.editorUI = 'plainText'
+      ckeditor.hidden = true
+      textarea.style.width = '600px'
+      textarea.style.height = '200px'
+      textarea.style.display = 'block'
+      switchEditorButton.class = 'indigo'
+    } else {
+      Tangy.editorUI = 'ckeditor5'
+      ckeditor.hidden = false
+      textarea.style.display = 'none'
+      switchEditorButton.class = 'green'
+    }
+
+  }
+
 }
 
 class TangyUtils {
