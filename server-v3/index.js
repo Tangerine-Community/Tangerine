@@ -360,6 +360,25 @@ app.post('/group/new', async function (req, res) {
       throw err;
     })
 
+  const securityDoc = {
+    admins: {
+      names : [],
+      roles : [`admin-${groupName}`] // for use on the server
+    },
+    members: {
+      names : [`uploader-${groupName}`], // used by the tablets for write access
+      roles : [`member-${groupName}`] // for use on the server
+    }
+  };
+
+  const securityUrl = Conf.calcSecurityUrl(groupName)
+
+  await http.put(securityUrl, securityDoc)
+    .then(function(){ console.log("Security doc created.")} )
+    .catch(function (error) {
+    console.log("error: " + error)
+  });
+
   const locationList = await fs.readJson(editorTemplatesRoot + sep +  'location-list.json')
     .then((locationList) => {
       console.log("Read location-list.json")
