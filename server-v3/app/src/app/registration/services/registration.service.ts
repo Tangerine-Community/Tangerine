@@ -36,31 +36,31 @@ export class RegistrationService {
         var headers = new Headers();
         var authheader = new Headers();
         headers.append('Content-Type', 'application/x-www-form-urlencoded');
-        var body = "username=" + value.username + "&password=" + value.password;
-        var body2 = "username=" + value.username;
-        return this.http.post('/auth/login/', body, {
+        var body = "name=" + value.username + "&password=" + value.password;
+        var body2 = "name=" + value.username;
+        return this.http.post('/db/_session/', body, {
                 headers: headers
             })
             .map((res : any) => {//this only runs if you get the actual data and not on error
                 let data = res.json();
-                // this.token = data.token;
-                // this.user_id = data.user_id;
-                // this.password = data.password;
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user_id', data.user_id);
-                localStorage.setItem('password', data.password);
+                // @TODO Still need these items?
+                localStorage.setItem('token', data.name);
+                localStorage.setItem('user_id', data.name);
+                localStorage.setItem('password', data.status);
 
                 authheader.append('Authorization', 'Bearer ' + data.token + ':' + data.password); 
 
             })
-            .flatMap((res) => //here we make another call to server to check if user has ever logged in and 
+            //.flatMap((res) => //here we make another call to server to check if user has ever logged in and 
             //ensure we log that user has logged. The status of this call is basis for what page they see when logging in.
+                /*
                 this.http.post('/api/trackLogin/', body2, {
-                headers: authheader}).map((res : any) => {
-                let data = res.json();
-                return data;
-            }));
-            
+                    headers: authheader}).map((res : any) => {
+                    let data = res.json();
+                    return data;
+                })
+                */
+            //);
             //.map(res => res.json());
     }
     
