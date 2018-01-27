@@ -44,6 +44,7 @@ RUN_OPTIONS="
   --volume $(pwd)/server/index.js:/tangerine-server/server/index.js \
   --volume $(pwd)/server-v3/app/src:/tangerine-server/server-v3/app/src \
   --volume $(pwd)/server-v3/index.js:/tangerine-server/server-v3/index.js \
+  --volume $(pwd)/server-v3/package.json:/tangerine-server/server-v3/package.json \
   --volume $T_V3_DEV_CONTENT:/tangerine-server/client-v3/builds/dev/content
 " 
 
