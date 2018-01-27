@@ -41,10 +41,11 @@ export class LoginFormComponent implements OnInit {
             data => { console.log(data); this.loggedIn = true;
                       this.loginStatus = data;
                       this.authService.setLoggedIn();//set subscription to logged in 
-                      let urlToNavigate = this.authService.redirectUrl || '/home';
+                      //let urlToNavigate = this.authService.redirectUrl || '/home';
                       //alert(this.loginStatus.firstTimeLoggin);
-                      if (this.loginStatus.firstTimeLoggin) this._router.navigate(['/plan']);//{window.location.href="/plan"}
-                      else { this._router.navigate([urlToNavigate]); }
+                      //if (this.loginStatus.firstTimeLoggin) this._router.navigate(['/plan']);//{window.location.href="/plan"}
+                      //else { this._router.navigate([urlToNavigate]); }
+                      this._router.navigate(['/projects']);
                       
              },
             err => {
