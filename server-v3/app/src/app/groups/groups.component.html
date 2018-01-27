@@ -18,6 +18,7 @@
                     <h2 class="mdl-card__title-text">Projects Report</h2>
                 </div>
                 <div class="mdl-card__supporting-text">
+                    <a routerLink="/new-group">+ Create a new group</a>
                     <div *ngIf="load_error">
                         An error occurred while loading the projects!
                     </div>
@@ -33,25 +34,23 @@
                                     <th>Members</th>
                                     <!--<th>Assessments</th>-->
                                     <th>Results</th>
-                                    <th class="mdl-data-table__cell--non-numeric">Notes</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let group of result">
-                                    <td class="mdl-data-table__cell--non-numeric">{{group.group}}</td>
+                                    <td class="mdl-data-table__cell--non-numeric"><a [routerLink]="['/group', group.attributes.name]">{{group.attributes.name}}</a> </td>
                                     <!--<td class="mdl-data-table__cell--non-numeric"><span *ngIf="group.created">{{ group.created | truncate: 10 : '' }}</span></td>
                 <td class="mdl-data-table__cell--non-numeric"><span *ngIf="group.modified">{{ group.modified | truncate: 10 : '' }}</span></td>-->
                                     <!--<td>{{group.admins.length }}</td>
                 <td>{{group.members.length}}</td>-->
                                     <td>
-                                        <div *ngFor="let admin of group.admins">{{admin.name}}</div>
+                                        <div *ngFor="let admin of group.admin">{{admin.name}}</div>
                                     </td>
                                     <td>
-                                        <div *ngFor="let member of group.members">{{member.name}}</div>
+                                        <div *ngFor="let member of group.member">{{member.name}}</div>
                                     </td>
                                     <!--<td>{{ group.instruments.length }}</td>-->
-                                    <td>{{group.results}}</td>
-                                    <td class="mdl-data-table__cell--non-numeric">{{group.notes}}</td>
+                                    <td>{{group.numberOfResults}}</td>
 
                                 </tr>
                             </tbody>

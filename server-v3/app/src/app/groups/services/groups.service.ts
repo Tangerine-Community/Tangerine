@@ -20,7 +20,7 @@ export class GroupsService {
        authheader.append('Authorization', 'Bearer ' + this.token + ':' + this.password); 
         //return this.http.get('/assets/users.json')
         //alert(this.user_id);
-        return this.http.get('/api/groups/', {
+        return this.http.get('/groups/', {
             headers: authheader
         })
             .map(res => res.json());         
