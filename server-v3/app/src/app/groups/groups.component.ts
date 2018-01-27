@@ -37,7 +37,9 @@ export class GroupsComponent implements OnInit {
         this._groupsService.getGroups() //tsiInstanceId passed in (variable stored in cookie?)
             .subscribe(
             data => {
-                console.log(data); this.result = data; this.readyForDisplay = true;
+                // Show only databases without _reporting.
+                this.result = data.filter((group) => group.attributes.name.indexOf('_reporting') == -1); 
+                this.readyForDisplay = true;
             },
             err => { console.log('error in getting data for groups: ' + JSON.stringify(err, null, 2)); this.error = true;}, 
             () => console.log('done')
