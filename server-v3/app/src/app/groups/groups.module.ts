@@ -6,6 +6,8 @@ import { GroupsComponent}  from './groups.component';
 import { GroupsService}  from './services/groups.service';
 import { GroupComponent } from './group/group.component';
 import { NewGroupComponent } from './new-group/new-group.component';
+import { ReleaseApkComponent } from './release-apk/release-apk.component';
+import { ReleasePwaComponent } from './release-pwa/release-pwa.component';
 
 
 @NgModule({
@@ -13,7 +15,7 @@ import { NewGroupComponent } from './new-group/new-group.component';
     CommonModule,
     GroupsRoutingModule
   ],
-  declarations: [GroupsComponent, GroupComponent, NewGroupComponent],
+  declarations: [GroupsComponent, GroupComponent, NewGroupComponent, ReleaseApkComponent, ReleasePwaComponent],
   providers: [GroupsService]
 })
 export class GroupsModule { }

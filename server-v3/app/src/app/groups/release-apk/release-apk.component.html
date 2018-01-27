@@ -1,0 +1,8 @@
+
+<p *ngIf="!buildApkIsComplete">
+  Your APK is building...
+</p>
+<p *ngIf="buildApkIsComplete">
+  Download your APK <a target='_new' href="/client-v3/releases/apks/{{secret}}.apk">here</a>.
+</p>
+

@@ -34,6 +34,26 @@ app.use('/groups', express.static(path.join(__dirname, '../client-v3/content/gro
 app.use('/:group/tangy-forms/', express.static(path.join(__dirname, '../client-v3/tangy-forms/')));
 app.use('/:group/ckeditor/', express.static(path.join(__dirname, '../client-v3/ckeditor/')));
 
+app.use('/release-apk/:secret/:group', async function (req, res, next) {
+  // @TODO Make sure user is member of group.
+  const secret = sanitize(req.params.secret)
+  const group = sanitize(req.params.group)
+  await exec(`cd /tangerine-server/client-v3 && \
+        ./release-apk.sh ${secret} ./content/groups/${group}
+  `)
+  res.send('ok')
+})
+
+app.use('/release-pwa/:secret/:group', async function (req, res, next) {
+  // @TODO Make sure user is member of group.
+  const secret = sanitize(req.params.secret)
+  const group = sanitize(req.params.group)
+  await exec(`cd /tangerine-server/client-v3 && \
+        ./release-pwa.sh ${secret} ./content/groups/${group}
+  `)
+  res.send('ok')
+})
+
 app.use('/:group/content', function (req, res, next) {
   let contentPath = '../client-v3/content/groups/' + req.params.group
   console.log("Setting path to " + path.join(__dirname, contentPath))
