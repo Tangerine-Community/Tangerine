@@ -55,6 +55,10 @@ const copyStatics = {
     to: join(outputPath, 'vendor'),
     flatten: true
   }, {
+    from: resolve('./bower_components/plotlyjs/plotly.js'),
+    to: join(outputPath, 'vendor'),
+    flatten: true
+  }, {
     from: resolve('./bower_components/pouchdb/dist/pouchdb.js'),
     to: join(outputPath, 'vendor'),
     flatten: true
