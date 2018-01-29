@@ -21,7 +21,7 @@ import ListPlugin from '@ckeditor/ckeditor5-list/src/list'
 import ParagraphPlugin from '@ckeditor/ckeditor5-paragraph/src/paragraph'
 import ImageuploadPlugin from '@ckeditor/ckeditor5-upload/src/imageupload'
 import Acasi from './plugins/ckeditor5-acasi'
-import Dumpdata from 'ckeditor5-dumpData'
+import Dumpdata from 'ckeditor5-dumpdata'
 import AcasiToolbar from './plugins/ckeditor5-acasi/src/acasitoolbar'
 import FormToolbar from './plugins/ckeditor5-acasi/src/formtoolbar'
 
