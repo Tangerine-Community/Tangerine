@@ -1,0 +1,24 @@
+{
+  "name": "server-v3",
+  "version": "0.0.0",
+  "description": "server =======",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "cheerio": "^1.0.0-rc.2",
+    "crypto": "^1.0.1",
+    "express": "^4.16.2",
+    "fs-extra": "^4.0.3",
+    "read-yaml": "^1.1.0",
+    "sanitize-filename": "^1.6.1",
+    "winston": "^2.4.0"
+  }
+}

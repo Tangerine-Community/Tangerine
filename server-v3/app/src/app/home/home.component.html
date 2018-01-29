@@ -1,0 +1,185 @@
+<div class="mdl-color--amber color-header-large clearfix">
+    <div class="color-explanation mdl-color-text--deep-orange-900">
+        <h4>Welcome!</h4>
+    </div>
+</div>
+
+<div class="mdl-grid dashboard-content">
+
+    <div class="demo-card-square mdl-card mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <div class="mdl-card__title mdl-color--light-green-500">
+            <h3 class="mdl-card__title-text dashboard-title">Usage</h3>
+        </div>
+        <div class="mdl-card__supporting-text right notice"><!--{{fractionUsed | percent}} (pipe currently broken in safari-->
+            <!--<div *ngIf="readyForDisplay">Current Usage: {{percentRounded}}% <a *ngIf="fractionUsed > 0.7" href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--deep-orange-900 mdl-color-text--white">Nearing your limit.</a></div>-->
+            <div *ngIf="readyForDisplay">Results Used: {{resultsUsed}}/{{resultsAllowed}} </div>
+            <div id="containerCircle"></div>
+        </div>
+        <div class="mdl-card__supporting-text main-content">
+            <!--Chart-->
+        </div>
+        <div class="mdl-card__actions">
+            <ul>
+                <li *ngIf="urlReadyForDisplay">URL: <a href="https://{{url}}.tangerinecentral.org" target="_blank">https://{{url}}.tangerinecentral.org</a></li>
+                <li (click)="getTSIPassword()" ><span><u>{{TSILabel}}</u></span> {{TSIPassword}}</li>
+                <li *ngIf="readyForDisplay">Subscription Type: {{plan}}</li>
+                <li *ngIf="readyForDisplay"> Expires: {{dateExpiredString}}<!--{{dateExpired | date}}--> <a  *ngIf="daysToExpiration < 90"  href="/plan">Renew</a></li><!-- {{daysToExpiration}} -->
+            </ul>
+            <a *ngIf="readyForDisplay" href="/plan" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color--blue-700 mdl-color-text--white f-right">Upgrade</a><!-- for now this goes to billing form, later we will add upgrade form as well for paid accounts jw -->
+        </div>
+    </div>
+    
+    <div class="demo-card-square mdl-card mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <div class="mdl-card__title mdl-color--light-blue-700">
+            <h3 class="mdl-card__title-text dashboard-title">Tweets</h3>
+        </div>
+        <div class="mdl-card__supporting-text main-content">
+            <!--<ul class="twitter-list">
+                <li *ngFor="#tweet of tweets"><strong>Tangerine Central {{tweet.author}}</strong> @tangerinecentral - Apr 7
+                    <div>
+                        You're invited to RTI's Networking Reception during <a href="#">#AERA16</a>! For details and to RSVP:
+                        <a href="#">http://ow.ly/10hbmt</a> <a href="#">#globaldev</a>
+                    </div>
+                </li>
+                <li><strong>Tangerine Central</strong> @tangerinecentral - Apr 7
+                    <div>
+                        Register now for #EGRA webinar: Updated Guidance and Tools for Conducting Early Grade Reading Assessments
+                        <a href="#">http://ow.ly/10mNYl</a> <a href="#">#globaldev</a>
+                    </div>
+                </li>
+            </ul>-->
+            <div id="example1"></div><!--twitter feed goes here -->
+        </div>
+        <div class="mdl-card__actions right">
+            <a href="https://twitter.com/tangerinetool" target="_blank" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--light-blue-700">More</a>
+        </div>
+    </div>
+
+
+    
+    <div class="demo-card-square mdl-card mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing mdl-shadow--2dp mdl-color--blue-A100 mdl-color-text--white">
+        <div class="mdl-card__supporting-text">
+            <div class="quote mdl-color-text--white">"Education is not the filling of a pail, but the lighting of a fire."</div>
+        </div>
+        <div class="mdl-card__supporting-text right mdl-color-text--white">
+            - William Butler Yeats
+        </div>
+    </div>
+
+</div>
+
+<div class="mdl-grid">
+
+    <div class="demo-card-square mdl-card mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <div class="mdl-card__title mdl-color--orange-700">
+            <h3 class="mdl-card__title-text dashboard-title">Available Updates</h3>
+        </div>
+        <div class="mdl-card__supporting-text main-content">
+            <table class="mdl-data-table mdl-js-data-table full-width">
+                <tbody>
+                    <tr>
+                        <td class="quarter-width">00/00/16</td>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">Update Title Goes Here 1</a></td>
+                    </tr>
+                    <tr>
+                        <td>00/00/16</td>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">Update Title Goes Here 2</a></td>
+                    </tr>
+                    <tr>
+                        <td>00/00/16</td>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">Update Title Goes Here 3</a></td>
+                    </tr>
+                    <tr>
+                        <td>00/00/16</td>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">Update Title Goes Here 4</a></td>
+                    </tr>
+                    <tr>
+                        <td>00/00/16</td>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">Update Title Goes Here 5</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="demo-card-square mdl-card mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <div class="mdl-card__title mdl-color--purple-300">
+            <h3 class="mdl-card__title-text dashboard-title">Alerts</h3>
+        </div>
+        <div class="mdl-card__supporting-text main-content mdl-grid mdl-grid-no-spacing">
+            <div class="mdl_cell mdl-cell--3-col mdl-cell--2-col-tablet mdl-cell--1-col-phone mdl-color-text--deep-orange-900">
+                00/00/16
+            </div>
+            <div class="mdl-cell mdl-cell--9-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone alert-text">
+                This is text to describe the alert/message. Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur,
+                adipisci velit.
+            </div>
+        </div>
+        <div class="mdl-card__actions right">
+            <a href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--light-blue-700">View All</a>
+        </div>
+    </div>
+    
+    <div class="demo-card-square mdl-card mdl-cell--4-col mdl-cell--8-col-tablet mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+        <div class="mdl-card__title mdl-color--orange-800">
+            <h3 class="mdl-card__title-text dashboard-title">Activity</h3>
+        </div>
+        <div class="mdl-card__supporting-text main-content">
+            <table class="mdl-data-table mdl-js-data-table full-width">
+                <tbody>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric third-width"><a href="#">User Name</a></td>
+                        <td class="mdl-data-table__cell--non-numeric third-width"><a href="#">Project Name</a></td>
+                        <td class="third-width">00/00/16</td>
+                    </tr>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">User Name</a></td>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">Project Name</a></td>
+                        <td>00/00/16</td>
+                    </tr>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">User Name</a></td>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">Project Name</a></td>
+                        <td>00/00/16</td>
+                    </tr>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">User Name</a></td>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">Project Name</a></td>
+                        <td>00/00/16</td>
+                    </tr>
+                    <tr>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">User Name</a></td>
+                        <td class="mdl-data-table__cell--non-numeric"><a href="#">Project Name</a></td>
+                        <td>00/00/16</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="mdl-card__actions right">
+            <a href="#" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--light-blue-700">View All Projects</a>
+        </div>
+    </div>
+
+</div>
+
+
+<!--<p>
+   The Hub is where you can manage your Tangerine projects and subscription account.  
+   Your dedicated Tangerine is available here:  <a href="" target="_blank">Go To My Tangerine</a> (this link is currently not active, but we will add this soon)
+</p>
+<p>Need help? Please email us at <a href="mailto:support@tangerinehelp.zendesk.com">support@tangerinehelp.zendesk.com</a>
+</p>-->
+
+<!--<div>-->
+
+<!--<p>Welcome to Tangerine-Hub</p>
+       
+   <a [routerLink]=" ['Registration'] ">Register</a>
+    <br />
+    
+    <a [routerLink]=" ['Login'] ">Login</a>
+    <br /><br /><br />-->
+
+
+<!--<pre>this.data = {{ data | json }}</pre>-->
+<!--</div>-->

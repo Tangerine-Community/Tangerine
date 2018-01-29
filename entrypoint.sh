@@ -125,7 +125,11 @@ then
 	echo ""
 	echo ""
 	echo ""
-	echo "Starting v3 development..."
-  cd /tangerine-server/client-v3/ && ./develop.sh
-
+	echo "Starting v3 client development..."
+  cd /tangerine-server/client-v3/ && ./develop.sh &
+	echo ""
+	echo ""
+	echo ""
+	echo "Starting v3 server development..."
+  cd /tangerine-server/server-v3/ && ./develop.sh
 fi

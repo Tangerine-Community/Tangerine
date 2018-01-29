@@ -1,0 +1,76 @@
+<div class="mdl-color--amber color-header clearfix">
+    <div class="color-explanation mdl-color-text--white">
+        <h4>Projects</h4>
+        <h6>Overview of your projects</h6>
+    </div>
+</div>
+<div class="mdl-grid mdl-grid--no-spacing">
+    <div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+        <div class="left-info-box">
+            <!--<h5><i class="material-icons">format_align_left</i> Help</h5>-->
+            <p></p>
+        </div>
+    </div>
+    <div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone r-content">
+        <div class="body-content">
+            <div class="mdl-card mdl-shadow--2dp change-width">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Projects Report</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <a routerLink="/new-group">+ Create a new group</a>
+                    <div *ngIf="load_error">
+                        An error occurred while loading the projects!
+                    </div>
+                    <div *ngIf="readyForDisplay">
+                        <table class="mdl-data-table mdl-js-data-table fullwidth">
+                            <!--mdl-data-table--selectable-->
+                            <thead>
+                                <tr>
+                                    <th class="mdl-data-table__cell--non-numeric">Project</th>
+                                    <!--<th class="mdl-data-table__cell--non-numeric">Created</th>
+                <th class="mdl-data-table__cell--non-numeric">Modified</th>-->
+                                    <th>Admins</th>
+                                    <th>Members</th>
+                                    <!--<th>Assessments</th>-->
+                                    <th>Results</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let group of result">
+                                    <td class="mdl-data-table__cell--non-numeric"><a [routerLink]="['/group', group.attributes.name]">{{group.attributes.name}}</a> </td>
+                                    <!--<td class="mdl-data-table__cell--non-numeric"><span *ngIf="group.created">{{ group.created | truncate: 10 : '' }}</span></td>
+                <td class="mdl-data-table__cell--non-numeric"><span *ngIf="group.modified">{{ group.modified | truncate: 10 : '' }}</span></td>-->
+                                    <!--<td>{{group.admins.length }}</td>
+                <td>{{group.members.length}}</td>-->
+                                    <td>
+                                        <div *ngFor="let admin of group.admin">{{admin.name}}</div>
+                                    </td>
+                                    <td>
+                                        <div *ngFor="let member of group.member">{{member.name}}</div>
+                                    </td>
+                                    <!--<td>{{ group.instruments.length }}</td>-->
+                                    <td>{{group.numberOfResults}}</td>
+                                    <td class="mdl-data-table__cell--non-numeric">
+                                        <ul>
+                                            <li><a [routerLink]="['/group', group.attributes.name]">Edit Forms</a> </li>
+                                            <li><a [routerLink]="['/group/release-apk', group.attributes.name]">Release APK</a> </li>
+                                            <li><a [routerLink]="['/group/release-pwa', group.attributes.name]">Release PWA</a> </li>
+
+                                        </ul>
+
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p *ngIf="result.length == 0"><br /><br />You have not yet added admins and members and results.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
