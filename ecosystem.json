@@ -32,6 +32,14 @@
       "error_file" : "../logs/decompressor-error.log",
       "out_file"   : "../logs/decompressor.log",
       "pid_file"   : "../pids/decompressor.pid"
+    },
+    {
+      "name"      : "server-v3",
+      "cwd"        : "./server-v3/",
+      "script"    : "server-v3/start.sh",
+      "error_file" : "../logs/server-v3-error.log",
+      "out_file"   : "../logs/server-v3.log",
+      "pid_file"   : "../pids/server-v3.pid"
     }
   ],
   "deploy" : {

@@ -1,0 +1,191 @@
+
+
+
+<div class="mdl-color--amber color-header clearfix">
+    <div class="color-explanation mdl-color-text--white">
+        <h4>Register for an account</h4>
+        <h6>Please register</h6>
+    </div>
+</div>
+<div class="mdl-grid mdl-grid--no-spacing">
+    <div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+        <div class="left-info-box">
+            <!--<h5><i class="material-icons">format_align_left</i> Help</h5>-->
+            <p>
+                <!--help text here -->
+            </p>
+        </div>
+    </div>
+    <div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone r-content">
+        <div class="body-content">
+            <div class="mdl-card mdl-shadow--2dp change-width">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Registration Form</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="form-horizontal" role="form">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="firstName" formControlName="firstName" />
+                            <label class="mdl-textfield__label" for="firstName">First Name *</label>
+                            <control-messages [control]="registerForm.controls['firstName']"></control-messages>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="lastName" formControlName="lastName" />
+                            <label for="lastName" class="mdl-textfield__label">Last Name *</label>
+                            <control-messages [control]="registerForm.controls['lastName']"></control-messages>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="email" formControlName="email"
+                             (focus)="emailInUse=false" (blur)="emailExists(registerForm.get('email').value)" />
+                            <label for="email" class="mdl-textfield__label">Email *</label>
+                            <control-messages [control]="registerForm.controls['email']"></control-messages>
+                            <div class="xmdl-textfield__error" *ngIf="emailInUse">
+                                {{registerForm.get('email').value}} has already been used
+                            </div>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="organizationName" formControlName="organizationName"
+                            />
+                            <label for="organizationName" class="mdl-textfield__label">Organization Name *</label>
+                            <control-messages [control]="registerForm.controls['organizationName']"></control-messages>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="organizationType" formControlName="organizationType" />
+                            <label for="organizationType" class="mdl-textfield__label">Organization Type *</label>
+                            <control-messages [control]="registerForm.controls['organizationType']"></control-messages>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="title" formControlName="title" />
+                            <label for="title" class="mdl-textfield__label">Title/Position *</label>
+                            <control-messages [control]="registerForm.controls['title']"></control-messages>
+                        </div>
+                        <!--<div class="wmdl-selectfield mdl-textfield mdl-js-textfield">                    
+                    <select class="form-control" id="location" #location="ngForm" [control]="registerForm.controls['location']" style="width: 180px;">
+                        <option *ngFor="#c of locations" [value]="c.name">{{c.name | truncate: 30 : '...'}}</option>
+                    </select>
+                    <label for="location" class="mdl-textfield__label">Location *</label>
+                    <div class="xmdl-textfield__error" [ngClass]="{'hidden': (location.valid || location.untouched)}">
+                        Required
+                    </div>                
+                </div>-->
+
+                        
+                        <div class="mdl-selectfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <select class="mdl-textfield__input" id="location" formControlName="location" (change)="requireState(registerForm.get('location').value)">
+                                <option value="">Select Location *</option><!--disabled selected hidden -->
+                                <option *ngFor="let c of locations" [value]="c.name">{{c.name | truncate: 30 : '...'}}</option>
+                            </select>
+                            <!--<label for="location" class="mdl-textfield__label">Location *</label>-->
+                            <div class="xmdl-textfield__error" [ngClass]="{'hidden': (registerForm.get('location').valid || registerForm.get('location').untouched)}">
+                                Required
+                            </div>
+                        </div>
+                        <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield&#45;&#45;floating-label">-->
+                            <!--<input class="mdl-textfield__input" type="text" id="city" formControlName="city" />-->
+                            <!--<label for="title" class="mdl-textfield__label">City</label>-->
+                            <!--<control-messages [control]="registerForm.controls['title']"></control-messages>-->
+                        <!--</div>-->
+                        <div class="mdl-selectfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label" *ngIf="hideElement">
+                            <select class="mdl-textfield__input" id="state" formControlName="state">
+                                <option value="">Select State</option><!--disabled selected hidden -->
+                                <option *ngFor="let s of states" [value]="s.name">{{s.name | truncate: 30 : '...'}}</option>
+                            </select>
+                            <!--<label for="location" class="mdl-textfield__label">Location *</label>-->
+
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input (blur)="transformUsername()"  (keyup)="transformUsername()" class="mdl-textfield__input" type="text" id="username" formControlName="username"  
+                                (focus)="usernameInUse=false" (blur)="usernameExists(registerForm.get('username').value)" />
+                            <control-messages control="username"></control-messages>
+                            <label for="username" class="mdl-textfield__label">Username *</label>
+                            <div class="xmdl-textfield__error" *ngIf="usernameInUse">
+                                <!-- when I get asyncvalidator fixed I wil ad this into the control-message above (jw)-->
+                                 {{registerForm.get('username').value}} is taken
+                            </div>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="password" id="password" formControlName="password" />
+                            <label for="password" class="mdl-textfield__label">Password *</label>
+                            <div class="xmdl-textfield__error" [ngClass]="{'hidden': (registerForm.get('password').valid || registerForm.get('password').pristine || registerForm.get('password').untouched)}">
+                                <!--<div [hidden]="password.valid || password.pristine || password.untouched">-->
+                                Make at least 6 characters long with a number
+                            </div>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="password" id="confirmPassword" formControlName="confirmPassword" 
+                                (blur)="passwordsMatch()" />
+                            <label for="confirmPassword" class="mdl-textfield__label">Confirm Password *</label>
+                            <div class="xmdl-textfield__error" [ngClass]="{'hidden': ((registerForm.get('password').value == registerForm.get('confirmPassword').value) || registerForm.get('confirmPassword').valid 
+                            || registerForm.get('confirmPassword').pristine || registerForm.get('confirmPassword').untouched)}  ">
+                                <!-- this will move to model once I have multi validators working-->
+                                Confirmed password needs to match password
+                            </div>
+                        </div>
+                        <div class="mdl-selectfield mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <!-- bug in angular2 (this bug is fixed in rc1 so can remove this when time jw note): value of select not passed into firefox and ie, so had oto create change event passing value and let angular add value manually to form control -->
+                            <select class="mdl-textfield__input" id="plan" formControlName="plan" (change)="requireUrl(registerForm.get('plan').value)" >
+                                <option value="">Select Annual Plan *</option><!--disabled selected hidden -->
+                                <option value="Free">Free - (2,000 results max)</option>
+                                <option value="Member">$3,500 - (10,000 results max)</option>
+                                <option value="Premium">$5,000 - (25,000 results max)</option> 
+                                <option value="Invoice">$6,000 - (unlimited results)</option> 
+                                <option value="Custom">Custom price (unlimited results)</option>                       
+                            </select>
+                            <!--<label for="location" class="mdl-textfield__label">Location *</label>-->
+                            <div class="xmdl-textfield__error" [ngClass]="{'hidden': (registerForm.get('plan').valid || registerForm.get('plan').untouched)}">
+                                Required
+                            </div>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" *ngIf="hideElementUrl">
+                            <input class="mdl-textfield__input" type="text"  
+                                id="url" formControlName="url" (focus)="urlInUse=false" (blur)="urlExists(registerForm.get('url').value)" />
+                            <label for="url" class="mdl-textfield__label">Subdomain * [Example: "MyTSI"]</label>
+                            <control-messages [control]="registerForm.controls['url']"></control-messages>
+                            <div class="xmdl-textfield__error" *ngIf="urlInUse">
+                                <!-- when I get asyncvalidator fixed I wil ad this into the control-message above (jw)-->
+                                 {{url.value}} is taken
+                            </div>
+                        </div>
+                        
+                        <div class="optout">
+                            <label for="termsOfUse" class="mdl-checkbox mdl-js-checkbox">
+                                <input type="checkbox" id="termsOfUse" formControlName="termsOfUse" class="mdl-checkbox__input" />
+                                <span class="mdl-checkbox__label">I agree with terms of use</span>
+                            </label>
+                            <div><a href="https://www.rti.org/sites/default/files/tangerine_ffp_quote_terms_final2.pdf" target="_blank">Terms of use</a></div>
+                            <!--not working for some reason, find out why: <control-messages control="termsOfUse"></control-messages>-->
+                            <div class="xmdl-textfield__error" [ngClass]="{'hidden': (registerForm.get('termsOfUse').value == true || registerForm.get('termsOfUse').pristine || registerForm.get('termsOfUse').untouched)}">
+                                <!--<div [hidden]="password.valid || password.pristine || password.untouched">-->
+                                Required
+                            </div>
+                        </div>
+                        <div class="optout">
+                            <label for="emailOptOut" class="mdl-checkbox mdl-js-checkbox">
+                                <input type="checkbox" id="emailOptOut" class="mdl-checkbox__input" formControlName="emailOptOut" />
+                                <span class="mdl-checkbox__label">Email notifications op-out</span>
+                            </label>
+                        </div>
+                        <div *ngIf="error" class="mdl-textfield">
+                            <span class="xmdl-textfield__error">Error: {{errorMessage}}</span>
+                        </div>
+                        <button type="submit" [disabled]="!registerForm.valid || !registerForm.get('termsOfUse').value == true || usernameInUse || urlInUse ||  submitted" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Register</button>
+                        <!-- get termsOfUse to work with regular validation to show invaild if not filled out, not working for some reason so made alternative solution for now-->
+                        <br /><br />
+                        <p>
+                            You will be signed up for free plan initially until payment is received. 
+                            Selecting plan above shows your intent. 
+                            RTI will email you  with more information if you select "Invoice" or "Custom Plan".
+                        </p>
+                        
+                    </form>
+                    <!--      
+        <h3>Form value:</h3>
+        <pre>{{value}}</pre>
+    -->
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

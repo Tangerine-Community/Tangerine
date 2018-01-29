@@ -1,0 +1,71 @@
+<div class="mdl-color--amber color-header clearfix">
+    <div class="color-explanation mdl-color-text--white">
+        <h4>Change your Password</h4>
+        <!--<h6>Use your credentials to login</h6>-->
+    </div>
+</div>
+<div class="mdl-grid mdl-grid--no-spacing">
+    <div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+        <div class="left-info-box">
+            <!--<h5><i class="material-icons">format_align_left</i> Help</h5>-->
+            <p>Enter your new password to have your password reset. (Must be entered within an hour of being issued.)</p>
+        </div>
+    </div>
+    <div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone r-content">
+        <div class="body-content">
+            <div class="mdl-card mdl-shadow--2dp change-width">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Change Password</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <form [ngClass]="{hideit: sentPW}" [formGroup]="pwchangeForm" (ngSubmit)="onSubmit()" class="form-horizontal" role="form">
+                        <div *ngIf="error" class="mdl-textfield">
+                            <!-- mdl-js-textfield -->
+                            <span class="xmdl-textfield__error">{{error}}</span><br />
+                        </div>
+
+                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="password" id="password" formControlName="password" />
+                            <label for="password" class="mdl-textfield__label">Password *</label>
+                            <div class="xmdl-textfield__error" [ngClass]="{'hidden': (pwchangeForm.get('password').valid || pwchangeForm.get('password').pristine || pwchangeForm.get('password').untouched)}">
+                                <!--<div [hidden]="password.valid || password.pristine || password.untouched">-->
+                                Make at least 6 characters long with a number
+                            </div>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="password" id="confirmPassword" formControlName="confirmPassword" (blur)="passwordsMatch()" />
+                            <label for="confirmPassword" class="mdl-textfield__label">Confirm Password *</label>
+                            <div class="xmdl-textfield__error" [ngClass]="{'hidden': (pwchangeForm.get('password').value == pwchangeForm.get('confirmPassword').value) || (pwchangeForm.get('confirmPassword').valid || pwchangeForm.get('confirmPassword').pristine 
+                            || pwchangeForm.get('confirmPassword').untouched)}  ">
+                                <!-- this will move to model once I have multi validators working-->
+                                Confirmed password needs to match password
+                            </div>
+                        </div>
+                        <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" [disabled]="!pwchangeForm.valid">
+                            Submit
+                        </button>
+						
+                    </form>
+                    <p *ngIf="sentPW">
+                       <span class="success">We have reset your password.</span><br />
+                   </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<!--<div *ngIf="loggedIn">
+       <p>Welcome to Tangerine-Hub</p>
+   </div>-->
+
+<!--<h3>Form value:</h3>
+              <pre>{{value}}</pre>               -->

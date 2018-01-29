@@ -52,3 +52,47 @@ target to include the files you may be working on.
 # Viewing demos
 
 cd to client and run `yarn start` to run the http-server.
+
+## Using the app
+
+http://localhost/tangy-forms/ - view form demos
+http://localhost/tangerine/ - view the Tangerine shell
+
+## Ckeditor5
+
+The ckeditor5 editor is built using webpack. Change to client/ckeditor and run `npm run dev` to watch for changes in the ckeditor5 code as well as in its plugins.
+It will copy dist/ckeditor.js and its .map file to ../tangy-forms/dist/vendor.
+
+Note that the `npm run dev` target does not watch for changes to the translation files in the plugins; you'll need to re-run  `npm run dev` in that case.
+
+Configure the ckeditor plugin at tangy-forms/src/ckeditor.js. Output is at tangy-forms/src/tangy--textarea/build.
+If you make any changes to ckeditor, be sure to run `yarn dev-mod` on the tangy-forms source code to view the updated ckeditor.
+ckeditor.js is imported and is part of the webpack bundle. It is a bundle inside a bundle!
+Discussion and screenshots here: https://github.com/ckeditor/ckeditor5-widget/issues/3#issuecomment-341706772
+
+### Ckeditor5 plugins
+
+Ckeditor5 plugin example and detailed plugin documentation:
+
+- https://github.com/chrisekelley/ckeditor5-acasi
+- https://github.com/chrisekelley/ckeditor5-dumpdata
+
+There are two ways of managing ckeditor5 plugins for Tangerine:
+
+#### Developing them in the Tangerine source code at /client/ckeditor/plugins
+
+- Create the new plugin in /client/ckeditor/plugins
+- Add the plugin to build-config.js and to src/tangy-form/ckeditor.js.
+
+#### Developing in their own file system and installing them into the tangy-forms project.
+
+Create a repo on github for the plugin and install into tangerine-forms. Add the plugin to build-config.js and to src/tangy-form/ckeditor.js.
+
+Do not use `npm link` when developing a plugin for ckeditor5. The command `npm link` and webpack do not work well together.
+Instead, use the [wml](https://github.com/wix/wml) to copy changed files.
+```
+brew update
+brew install watchman
+```
+wml add  ~/source/Tangerine-Community/ckeditor5-acasi ~/source/Tangerine-Community/Tangerine-3.x.x/Tangerine/tangerine-forms/node_modules/ckeditor5-acasi
+wml start

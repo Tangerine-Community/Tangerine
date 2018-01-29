@@ -1,0 +1,67 @@
+<div class="mdl-color--amber color-header clearfix">
+    <div class="color-explanation mdl-color-text--white">
+        <h4>Username Retrieval</h4>
+        <h6></h6>
+    </div>
+</div>
+<div class="mdl-grid mdl-grid--no-spacing">
+    <div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+        <div class="left-info-box">
+            <!--<h5><i class="material-icons">format_align_left</i> Help</h5>-->
+            <p>Use the email provided at registration to retrieve your username. We will send you an email with the username.</p>
+        </div>
+    </div>
+    <div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone r-content">
+        <div class="body-content">
+            <div class="mdl-card mdl-shadow--2dp change-width">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Forgot your username?</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <form [ngClass]="{hideit: sentPW}" [formGroup]="passwordForm" (ngSubmit)="onSubmit()" class="form-horizontal" role="form" ><!-- *ngIf="!sentPW" causes dom to loose reference to styles for form-->
+                        <div *ngIf="error" class="mdl-textfield">
+                            <!-- mdl-js-textfield -->
+                            <span class="xmdl-textfield__error">{{error}}</span><br />
+                        </div>
+
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <!-- mdl-js-textfield -->
+                            <input class="mdl-textfield__input" type="text" id="email" formControlName="email" />
+                            <label class="mdl-textfield__label" for="username">Email*</label>
+                            <control-messages [control]="passwordForm.controls['email']"></control-messages>
+                            <!--<span class="mdl-textfield__error">Required input</span>-->
+                        </div>
+                        
+                        <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" [disabled]="!passwordForm.valid || submitted">
+                            Submit
+                        </button>
+                        <br /><br />
+                    </form>
+                    
+                    <p *ngIf="sentPW && emailFound">
+                       <span class="success">We have emailed your username.</span><br />
+                   </p>
+                    <p *ngIf="sentPW && !emailFound">
+                       <span class="success">We did not find your email in our system.</span><br />
+                   </p>
+                    
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<!--<div *ngIf="loggedIn">
+       <p>Welcome to Tangerine-Hub</p>
+   </div>-->
+
+<!--<h3>Form value:</h3>
+              <pre>{{value}}</pre>                -->

@@ -1,0 +1,80 @@
+<!--THIS PAGE IS CURRENTLY NOT USED BUT IS AN EXAMPLE OF HOW IT COULD WORK -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Tangerine</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/icon/favicon.ico">
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="/assets/css/material.min.css">
+    <link rel="stylesheet" href="/assets/css/tangerine.css">
+
+</head>
+
+<body class="login">
+    <app>
+        <div class="demo-layout mdl-layout mdl-layout--fixed-header mdl-js-layout">
+
+            <main class="demo-main mdl-layout__content">
+
+                <div class="demo-container mdl-grid">
+                    <div class="demo-content mdl-color--white mdl-shadow--4dp content mdl-color-text--grey-800 mdl-cell mdl-cell--6-col">
+
+                        <h3 class="mdl-color-text--deep-orange-900">Subscription Levels</h3>
+
+                        <p>Subscription plans go on a page like this when we get those from Jason</p>
+                        <!--login link goes here if redirected from page that has user logged in already-->
+
+                        <button id="loginLink"   id="loginLink " class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored ">
+                            Login
+                        </button>
+
+                        <div id="ccLink "  class="mdl-card__actions right mdl-color-text--light-blue-700 ">
+							Get a paid plan: <a href="/billing " class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--light-blue-700
+                            ">Credit Card Form <i class="material-icons ">chevron_right</i></a>
+						</div>
+					</div>
+				</div>
+
+			</main>
+		</div>
+	</app>
+	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js "></script>-->
+	<script src="/assets/material.min.js "></script>
+	<script src="/assets/tangerine.js "></script>
+	
+	
+	<script>//when coming from server you are redirected to /?loggedIn=true if coming from other places you don't have this parameter
+        var field = 'loggedIn';
+        var url = window.location.href;
+        var checkUrl = function () {
+            if(url.indexOf('?' + field + '=') != -1)
+            { 
+                document.getElementById(loggedInLink).style.display = 'none';
+                document.getElementById(ccLink).style.display = 'block';
+            }
+            else if(url.indexOf('&' + field + '=') != -1)
+            { 
+                document.getElementById(loggedInLink).style.display = 'none';
+                document.getElementById(ccLink).style.display = 'block';
+            }
+            else //not logged in
+            { 
+                document.getElementById(loggedInLink).style.display = 'block';
+                document.getElementById(ccLink).style.display = 'none';
+            }
+        }  
+	</script>
+</body>
+
+</html>
