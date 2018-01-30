@@ -33,6 +33,7 @@ app.use('/app', express.static(path.join(__dirname, 'app/dist')));
 app.use('/groups', express.static(path.join(__dirname, '../client-v3/content/groups')));
 app.use('/:group/tangy-forms/', express.static(path.join(__dirname, '../client-v3/tangy-forms/')));
 app.use('/:group/ckeditor/', express.static(path.join(__dirname, '../client-v3/ckeditor/')));
+app.use('/assets/', express.static(path.join(__dirname, '../client-v3/content/assets/')));
 
 app.use('/release-apk/:secret/:group', async function (req, res, next) {
   // @TODO Make sure user is member of group.

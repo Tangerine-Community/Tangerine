@@ -41,6 +41,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
   --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
   --volume $(pwd)/data/client-v3/content/groups:/tangerine-server/client-v3/content/groups \
+  --volume $(pwd)/data/client-v3/content/assets:/tangerine-server/client-v3/content/assets \
   --volume $(pwd)/server/index.js:/tangerine-server/server/index.js \
   --volume $(pwd)/server-v3/app/src:/tangerine-server/server-v3/app/src \
   --volume $(pwd)/server-v3/index.js:/tangerine-server/server-v3/index.js \
