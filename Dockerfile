@@ -212,11 +212,7 @@ RUN cd /tangerine-server/cli \
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
     && npm install
-
-# Install server-v3.
-ADD ./server-v3/package.json /tangerine-server/server-v3/package.json
-RUN cd /tangerine-server/server-v3 \
-    && npm install
+ 
 
 #
 # Stage 3 Compile 
@@ -255,12 +251,18 @@ RUN source ~/.nvm/nvm.sh && \
   nvm install 8 && \
   nvm install 4
 
-# Install client v3
+# Install server-v3.
+ADD ./server-v3/package.json /tangerine-server/server-v3/package.json
+ADD ./server-v3/app/package.json /tangerine-server/server-v3/app/package.json
+ADD ./server-v3/install.sh /tangerine-server/server-v3/install.sh
+RUN cd /tangerine-server/server-v3 \
+    && ./install.sh
+
+# Install client-v3
 ADD client-v3/package.json /tangerine-server/client-v3/package.json
 ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
 ADD client-v3/tangy-forms/yarn.lock /tangerine-server/client-v3/tangy-forms/yarn.lock
 ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
-
 ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
 ADD client-v3/wrappers/pwa/package.json /tangerine-server/client-v3/wrappers/pwa/package.json
 ADD client-v3/wrappers/pwa/bower.json /tangerine-server/client-v3/wrappers/pwa/bower.json
@@ -271,13 +273,6 @@ RUN cd /tangerine-server/client-v3/ && ./install.sh
 ADD client-v3 /tangerine-server/client-v3
 ADD client-v3/shell /tangerine-server/client-v3/shell
 RUN cd /tangerine-server/client-v3/ && ./build.sh
-
-
-# Install server v3
-ADD server-v3/app/package.json /tangerine-server/server-v3/app/package.json
-ADD server-v3/install.sh /tangerine-server/server-v3/install.sh
-RUN cd /tangerine-server/server-v3/ && ./install.sh
-
 
 # Build server v3
 ADD server-v3 /tangerine-server/server-v3
