@@ -329,16 +329,18 @@ app.post('/group/new', async function (req, res) {
   // @TODO Make sure group does not exist.
 
   // Create upload user.
-  let userAttributes, username, password, appConfig
+  let uploadUserDoc, username, password, appConfig
   try {
-    const uploaderPassword = crypto.randomBytes( 20 ).toString('hex');
-    userAttributes = {
-      name     : 'uploader-' + groupName,
-      password : uploaderPassword
-    };
-    new User(userAttributes).create();
-    username = userAttributes.name
-    password = userAttributes.password
+    uploadUserDoc = {
+      "_id": `org.couchdb.user:uploader-${groupName}`,
+      "name"     : `uploader-${groupName}`,
+      "password" : crypto.randomBytes( 20 ).toString('hex'),
+      "roles": [`uploader-${groupName}`],
+      "type": "user"
+    }
+    http.post(`${process.env.T_PROTOCOL}://${process.env.T_ADMIN}:${process.env.T_PASS}@localhost:5984/_users`, uploadUserDoc)
+    username = uploadUserDoc.name
+    password = uploadUserDoc.password
   }
   catch (err) {
     console.log("Error: " + err);
