@@ -401,7 +401,7 @@ app.post('/group/new', async function (req, res) {
   // Edit the app-config.json.
   try {
     appConfig = JSON.parse(await fs.readFile(`/tangerine-server/client-v3/content/groups/${groupName}/app-config.json`, "utf8"))
-    appConfig.remoteCouchDBHost = `${process.env.T_PROTOCOL}://${username}:${password}@${process.env.T_HOST_NAME}/db/${groupName}` 
+    appConfig.remoteCouchDBHost = `${process.env.T_PROTOCOL}://${username}:${password}@${process.env.T_HOST_NAME}/db/group-${groupName}` 
   } catch (err) {
     console.error("An error reading app-config: " + err)
     throw err;
