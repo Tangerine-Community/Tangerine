@@ -70,7 +70,7 @@ requireVars.forEach(function processEnvVars(el){
 // Halt program if errors
 var missingSettings = Boolean(errors.length !== 0);
 if (missingSettings) {
-  console.log(`Robbert requires these environment variables:\n
+  console.log(`Server requires these environment variables:\n
 ${errors.map((el) => `${el.key}\t\t${el.desc}`).join('\n')}
 `);
   process.exit(1);
@@ -79,7 +79,7 @@ ${errors.map((el) => `${el.key}\t\t${el.desc}`).join('\n')}
 // Warn if defaults used.
 var warningsExist = Boolean(warns.length !== 0);
 if (warningsExist) {
-  console.log(`Robbert missing environment variables. Defaults used:\n
+  console.log(`Server missing environment variables. Defaults used:\n
 ${warns.map((el) => `${el.key}=${el.defaultValue}\t\t${el.desc}`).join('\n')}
 `);
 }

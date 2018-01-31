@@ -7,7 +7,14 @@ const Settings = require('./Settings');
 var logger = new winston.Logger({
   level: Settings.T_LOG_LEVEL,
   transports: [
-    new (winston.transports.Console)()//,
+    new (winston.transports.Console)(
+      {
+        timestamp: function () {
+          var ts = new Date()
+          return JSON.stringify(ts)
+        }
+      }
+    )//,
     //new (winston.transports.File)({ filename: 'robbert.log' })
   ],
   formatter: function(options) {
