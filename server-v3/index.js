@@ -322,86 +322,49 @@ app.post('/item/save', async function (req, res) {
 })
 
 app.post('/group/new', async function (req, res) {
-  const contentRoot = config.contentRoot
-  const editorTemplatesRoot = config.editorClientTemplates
-  console.log("body: " + JSON.stringify(req.body))
-  let groupName = req.body.groupName
-  console.log("groupName: " + groupName)
-  console.log("checking contentRoot + sep + formDir: " + contentRoot + sep + groupName)
 
-  // Creates the upload user on the CouchDB
-  async function makeUploader(groupName){
+  let groupName = req.body.groupName
+  let groupDatabaseUrl = Conf.calcGroupUrl(groupName)
+
+  // @TODO Make sure group does not exist.
+
+  // Create upload user.
+  let userAttributes, username, password, appConfig
+  try {
     const uploaderPassword = crypto.randomBytes( 20 ).toString('hex');
-    let userAttributes = {
+    userAttributes = {
       name     : 'uploader-' + groupName,
       password : uploaderPassword
     };
     new User(userAttributes).create();
-    return userAttributes
-    // todo: create app-config.json, security doc for database r/w perms
-  }
-
-  // Set up the group database.
-  try {
-    let groupCouch = Conf.calcGroupUrl(groupName)
-    console.log("groupCouch: " + groupCouch)
-    await http.put(groupCouch);
-    console.log("App database created for " + groupName);
-  }
-  catch (err) {
-    console.log("We already have an app database.");
-  }
-
-  // Set up the group reporting database.
-
-  const groupNameReports = groupName + '_reporting';
-  try {
-    let groupCouch = Conf.calcGroupUrl(groupNameReports)
-    console.log("groupCouch: " + groupCouch)
-    await http.put(groupCouch);
-    console.log("Reporting database created:" + groupNameReports);
-  }
-  catch (err) {
-    console.log("We already have an app database.");
-  }
-
-  let userAttributes, username, password, appConfig
-  try {
-    userAttributes = await makeUploader(groupName)
     username = userAttributes.name
     password = userAttributes.password
   }
   catch (err) {
     console.log("Error: " + err);
   }
-  await fs.ensureDir(contentRoot + sep + groupName)
-  await saveFormsJson(null, groupName)
-    .then(() => {
-      console.log("Created forms.json")
-    })
-    .catch(err => {
-      console.error("An error saving the json form: " + err)
-      throw err;
-    })
+
+  // Create the group database.
   try {
-    appConfig = await fs.readFile(editorTemplatesRoot + sep + 'app-config-template.json', "utf8",)
-    let search = 'admin:password'
-    let userPass = username + ':' + password
-    appConfig = appConfig.replace(search , userPass)
-  } catch (err) {
-    console.error("An error copying location-list: " + err)
-    throw err;
+    await http.put(groupDatabaseUrl);
+    console.log("App database created for " + groupName);
+  }
+  catch (err) {
+    console.log("We already have an app database.");
   }
 
-   await fs.writeFile(contentRoot + sep + groupName + sep + 'app-config.json', appConfig)
-    .then((locationList) => {
-      console.log("Wrote app-config.json")
-    })
-    .catch(err => {
-      console.error("An error copying app-config: " + err)
-      throw err;
-    })
+  // Create the group reporting database.
+  const groupNameReports = groupName + '_reporting';
+  try {
+    let groupReportsDatabaseUrl = Conf.calcGroupUrl(groupNameReports)
+    await http.put(groupReportsDatabaseUrl);
+    console.log("Reporting database created:" + groupNameReports);
+  }
+  catch (err) {
+    console.log("We already have an app database.");
+  }
 
+  // Secure the databases.
   const securityDoc = {
     admins: {
       names : [],
@@ -412,39 +375,43 @@ app.post('/group/new', async function (req, res) {
       roles : [`member-${groupName}`] // for use on the server
     }
   };
-
   const securityGroupUrl = Conf.calcSecurityUrl(groupName)
   const securityGroupReportsUrl = Conf.calcSecurityUrl(groupNameReports)
-
   await http.put(securityGroupUrl, securityDoc)
     .then(function(){ console.log("Security doc created for group: " + groupName)} )
     .catch(function (error) {
-    console.log("error: " + error)
-  });
-
+      console.log("error: " + error)
+    });
   await http.put(securityGroupReportsUrl, securityDoc)
     .then(function(){ console.log("Security doc created for group reporting:" + groupNameReports)} )
     .catch(function (error) {
-    console.log("error: " + error)
-  });
+      console.log("error: " + error)
+    });
 
-  await exec(`cd /tangerine-server/editor/app && \
-        couchapp push http://$T_ADMIN:$T_PASS@localhost:5984/group-${groupName} && \
-        couchapp push http://$T_ADMIN:$T_PASS@localhost:5984/group-${groupName}_reporting
+  // Add ojai design docs to group's databases.
+  await exec(`
+    cd /tangerine-server/editor/app && \
+    couchapp push http://$T_ADMIN:$T_PASS@localhost:5984/group-${groupName} && \
+    couchapp push http://$T_ADMIN:$T_PASS@localhost:5984/group-${groupName}_reporting
   `)
-        
 
-  await fs.copy(editorTemplatesRoot + sep +  'location-list.json', contentRoot + sep + groupName + sep + 'location-list.json', {overwrite:false} )
-    .then(() => {
-      console.log("Copied location-list.json")
-    })
-    .catch(err => {
-      console.error("An error copying location-list: " + err)
-      throw err;
-    })
+  // Create content directory for group.
+  await exec(`cp -r /tangerine-server/client-v3/content/default /tangerine-server/client-v3/content/groups/${groupName}`)
 
+  // Edit the app-config.json.
+  try {
+    appConfig = JSON.parse(await fs.readFile(`/tangerine-server/client-v3/content/groups/${groupName}/app-config.json`, "utf8"))
+    appConfig.remoteCouchDBHost = `${process.env.T_PROTOCOL}://${username}:${password}@${process.env.T_HOST_NAME}/db/${groupName}` 
+  } catch (err) {
+    console.error("An error reading app-config: " + err)
+    throw err;
+  }
+  await fs.writeFile(`/tangerine-server/client-v3/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
+    .then(status => console.log("Wrote app-config.json"))
+    .catch(err => console.error("An error copying app-config: " + err))
+  
+  // All done!
   res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
-  // res.sendStatus(200)
 })
 
 // kick it off
