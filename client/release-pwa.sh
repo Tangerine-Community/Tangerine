@@ -19,10 +19,6 @@ if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ]; then
   exit
 fi
 
-# Set node version.
-source ~/.nvm/nvm.sh
-nvm use 8
-
 # Create a temporary PWA folder that we'll move to the secret.
 cp -r builds/pwa .pwa-temporary 
 

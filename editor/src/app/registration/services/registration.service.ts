@@ -36,9 +36,8 @@ export class RegistrationService {
         var headers = new Headers();
         var authheader = new Headers();
         headers.append('Content-Type', 'application/x-www-form-urlencoded');
-        var body = "name=" + value.username + "&password=" + value.password;
-        var body2 = "name=" + value.username;
-        return this.http.post('/db/_session/', body, {
+        var body = "username=" + value.username + "&password=" + value.password;
+        return this.http.post('/login', body, {
                 headers: headers
             })
             .map((res : any) => {//this only runs if you get the actual data and not on error

@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatInputModule, MatCardModule } from '@angular/material';
@@ -19,6 +20,6 @@ import { SyncRecordsComponent } from './sync-records/sync-records.component';
     MatCardModule
   ],
   declarations: [SyncRecordsComponent],
-  providers: [SyncingService, UploadGuardService],
+  providers: [SyncingService, UploadGuardService, HttpClientModule],
 })
 export class SyncRecordsModule { }

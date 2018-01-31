@@ -1,8 +1,5 @@
 #!/bin/bash
 
-source ~/.nvm/nvm.sh
-nvm use 8
-
 cd shell
 ./node_modules/.bin/ng build --base-href "./"
 cd ..
