@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 SECRET="$1"
 CONTENT_PATH="$2"
@@ -17,23 +16,12 @@ if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ]; then
   echo "Then visit https://foo.tanerinecentral.org/apk/a4uw93.apk"
 fi
 
-
-# Set node version.
-source ~/.nvm/nvm.sh && \
-nvm use 4
-
-# Move aside v2 client code in Android project.
-mv ../client/www ../client/www-tmp
-cp -r ../client-v3/builds/apk ../client/www
-rm -r ../client/www/content
-cp -r $CONTENT_PATH ../client/www/content
-
-# APK build.
-cd ../client
-./node_modules/.bin/cordova build android
-
-# Put v2 client back.
-rm -r ./www
-mv www-tmp www
-
-mv platforms/android/build/outputs/apk/android-armv7-debug.apk ../client-v3/releases/apks/$SECRET.apk
+cp -r /tangerine-server/client /.tmp-client
+rm -r /.tmp-client/node_modules
+rm -r /.tmp-client/www
+cp -r /tangerine-server/client-v3/builds/apk /.tmp-client/www
+cp -r $CONTENT_PATH /.tmp-client/www/content
+cd /.tmp-client 
+rm /tangerine-server/client-v3/releases/apks/$SECRET.zip
+zip -rq /tangerine-server/client-v3/releases/apks/$SECRET.zip ./* 
+rm -r /.tmp-client

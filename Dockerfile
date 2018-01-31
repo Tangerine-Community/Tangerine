@@ -133,30 +133,30 @@ ENV GEM_PATH /usr/local/rvm/rubies/ruby-2.2.0
 ENV GEM_HOME /usr/local/rvm/rubies/ruby-2.2.0
 
 # Prepare to install Android Build Tools
-ENV GRADLE_OPTS -Dorg.gradle.jvmargs=-Xmx2048m
-ENV ANDROID_SDK_FILENAME android-sdk_r24.4.1-linux.tgz
-ENV ANDROID_SDK_URL http://dl.google.com/android/${ANDROID_SDK_FILENAME}
+#ENV GRADLE_OPTS -Dorg.gradle.jvmargs=-Xmx2048m
+#ENV ANDROID_SDK_FILENAME android-sdk_r24.4.1-linux.tgz
+#ENV ANDROID_SDK_URL http://dl.google.com/android/${ANDROID_SDK_FILENAME}
 # Support from Ice Cream Sandwich, 4.0.3 - 4.0.4, to Marshmallow version 6.0
-ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23
+#ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23
 # https://developer.android.com/studio/releases/build-tools.html
-ENV ANDROID_BUILD_TOOLS_VERSION 23.0.3
-ENV ANDROID_HOME /opt/android-sdk-linux
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+#ENV ANDROID_BUILD_TOOLS_VERSION 23.0.3
+#ENV ANDROID_HOME /opt/android-sdk-linux
+#ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
 # Install jd7
-RUN apt-get -y install default-jdk
+#RUN apt-get -y install default-jdk
 
 # Install Android SDK
-RUN cd /opt && \
-    wget -q $ANDROID_SDK_URL && \
-    tar -xzf $ANDROID_SDK_FILENAME && \
-    rm $ANDROID_SDK_FILENAME && \
-    echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
+#RUN cd /opt && \
+#    wget -q $ANDROID_SDK_URL && \
+#    tar -xzf $ANDROID_SDK_FILENAME && \
+#    rm $ANDROID_SDK_FILENAME && \
+#    echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
 
 # Install Cordova
-RUN npm update && \
-    npm install -g npm && \
-    npm install -g cordova 
+#RUN npm update && \
+#    npm install -g npm && \
+#    npm install -g cordova 
 
 
 
@@ -212,11 +212,7 @@ RUN cd /tangerine-server/cli \
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
     && npm install
-
-# Install server-v3.
-ADD ./server-v3/package.json /tangerine-server/server-v3/package.json
-RUN cd /tangerine-server/server-v3 \
-    && npm install
+ 
 
 #
 # Stage 3 Compile 
@@ -255,12 +251,20 @@ RUN source ~/.nvm/nvm.sh && \
   nvm install 8 && \
   nvm install 4
 
-# Install client v3
+RUN apt-get install -y zip
+
+# Install server-v3.
+ADD ./server-v3/package.json /tangerine-server/server-v3/package.json
+ADD ./server-v3/app/package.json /tangerine-server/server-v3/app/package.json
+ADD ./server-v3/install.sh /tangerine-server/server-v3/install.sh
+RUN cd /tangerine-server/server-v3 \
+    && ./install.sh
+
+# Install client-v3
 ADD client-v3/package.json /tangerine-server/client-v3/package.json
 ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
 ADD client-v3/tangy-forms/yarn.lock /tangerine-server/client-v3/tangy-forms/yarn.lock
 ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
-
 ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
 ADD client-v3/wrappers/pwa/package.json /tangerine-server/client-v3/wrappers/pwa/package.json
 ADD client-v3/wrappers/pwa/bower.json /tangerine-server/client-v3/wrappers/pwa/bower.json
@@ -271,13 +275,6 @@ RUN cd /tangerine-server/client-v3/ && ./install.sh
 ADD client-v3 /tangerine-server/client-v3
 ADD client-v3/shell /tangerine-server/client-v3/shell
 RUN cd /tangerine-server/client-v3/ && ./build.sh
-
-
-# Install server v3
-ADD server-v3/app/package.json /tangerine-server/server-v3/app/package.json
-ADD server-v3/install.sh /tangerine-server/server-v3/install.sh
-RUN cd /tangerine-server/server-v3/ && ./install.sh
-
 
 # Build server v3
 ADD server-v3 /tangerine-server/server-v3
