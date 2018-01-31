@@ -2,6 +2,6 @@
     "securityPolicy": [
         "password"
     ],
-    "remoteCouchDBHost": "http://admin:password@localhost/db/default",
+    "uploadUrl": "http://user1:password@localhost/upload/default",
     "homeUrl": "case-management"
 }

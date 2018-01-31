@@ -5,6 +5,8 @@ T_USER1="user1"
 T_USER1_PASSWORD="password"
 T_ADMIN="admin"
 T_PASS="password"
+T_UPLOAD_USER="uploader"
+T_UPLOAD_PASSWORD="password"
 
 # optional
 T_TAG=""

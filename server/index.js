@@ -1,61 +1,105 @@
 /* jshint esversion: 6 */
+
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const http = require('axios');
-const Conf = require('./Conf');
 const read = require('read-yaml')
 const express = require('express')
 const path = require('path')
 const app = express()
 const fs = require('fs-extra')
+const fsc = require('fs')
 const config = read.sync('./config.yml')
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
+const PouchDB = require('pouchdb')
 // for json parsing in received requests
 const bodyParser = require('body-parser');
 // basic logging
 const requestLogger = require('./middlewares/requestLogger');
-const User = require('../server/User');
 let crypto = require('crypto');
 
 const sep = path.sep;
-const DB_URL = `${config.protocol}${config.domain}:${config.port}${config.dbServerEndpoint}`
-const DB_ADMIN_URL = `${config.protocol}${config.admin.username}:${config.admin.password}@${config.domain}:${config.port}${config.dbServerEndpoint}`
 
 app.use(bodyParser.json()); // use json
 app.use(bodyParser.urlencoded({ extended: false })) // parse application/x-www-form-urlencoded
 // app.use(requestLogger);     // uncomment this line to add some logging
 
-console.log("launching server.")
+/*
+ * Auth
+ */
+var passport = require('passport')
+  , LocalStrategy = require('passport-local').Strategy;
 
-app.use('/', express.static(path.join(__dirname, '../client-v3/tangy-forms/editor')));
-app.use('/app', express.static(path.join(__dirname, 'app/dist')));
-app.use('/groups', express.static(path.join(__dirname, '../client-v3/content/groups')));
-app.use('/:group/tangy-forms/', express.static(path.join(__dirname, '../client-v3/tangy-forms/')));
-app.use('/:group/ckeditor/', express.static(path.join(__dirname, '../client-v3/ckeditor/')));
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    console.log('strategy!')
+    console.log(username)
+    console.log(password)
+    if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
+      console.log('login success!')
+      return done(null, {
+        "name": "user1"
+      });
+    } else {
+      console.log('login fail!')
+      return done(null, false, { message: 'Incorrect username or password' })
+    }
+  }
+));
 
-app.use('/release-apk/:secret/:group', async function (req, res, next) {
+passport.serializeUser(function(user, done) {
+  console.log('serialize!')
+  console.log(user)
+  done(null, user.name);
+});
+
+passport.deserializeUser(function(id, done) {
+  console.log('deserialize!')
+  console.log(id)
+  done(null, {name: id});
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.post('/login', 
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.send({name: 'user1', status: 'ok'});
+  });
+
+
+app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
+app.use('/app', express.static(path.join(__dirname, '../editor/dist')));
+app.use('/editor/groups', express.static(path.join(__dirname, '../client/content/groups')));
+app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
+app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../client/ckeditor/')));
+app.use('/client-v3/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )
+app.use('/client-v3/releases/apks/', express.static(path.join(__dirname, '../client/releases/apks')) )
+
+app.use('/editor/release-apk/:secret/:group', async function (req, res, next) {
   // @TODO Make sure user is member of group.
   const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
-  await exec(`cd /tangerine-server/client-v3 && \
+  await exec(`cd /tangerine/client && \
         ./release-apk.sh ${secret} ./content/groups/${group}
   `)
   res.send('ok')
 })
 
-app.use('/release-pwa/:secret/:group', async function (req, res, next) {
+app.use('/editor/release-pwa/:secret/:group', async function (req, res, next) {
   // @TODO Make sure user is member of group.
   const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
-  await exec(`cd /tangerine-server/client-v3 && \
+  await exec(`cd /tangerine/client && \
         ./release-pwa.sh ${secret} ./content/groups/${group}
   `)
   res.send('ok')
 })
 
-app.use('/:group/content', function (req, res, next) {
-  let contentPath = '../client-v3/content/groups/' + req.params.group
+app.use('/editor/:group/content', function (req, res, next) {
+  let contentPath = '../client/content/groups/' + req.params.group
   console.log("Setting path to " + path.join(__dirname, contentPath))
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
@@ -104,7 +148,7 @@ let openForm = async function (path) {
   return form
 };
 
-app.post('/itemsOrder/save', async function (req, res) {
+app.post('/editor/itemsOrder/save', async function (req, res) {
   let contentRoot = config.contentRoot
   let itemsOrder = req.body.itemsOrder
   let formHtmlPath = req.body.formHtmlPath
@@ -159,7 +203,7 @@ app.post('/itemsOrder/save', async function (req, res) {
 
 // Saves an item - and a new form when formName is passed.async
 // otherwise, the path to the existing form is extracted from formHtmlPath.
-app.post('/item/save', async function (req, res) {
+app.post('/editor/item/save', async function (req, res) {
   let displayFormsListing = false
   // console.log("req.body:" + JSON.stringify(req.body) + " req.body.itemTitle: " + req.body.itemTitle)
   let formTitle = req.body.formTitle
@@ -321,94 +365,21 @@ app.post('/item/save', async function (req, res) {
   res.json(resp)
 })
 
-app.post('/group/new', async function (req, res) {
+app.post('/editor/group/new', async function (req, res) {
 
   let groupName = req.body.groupName
-  let groupDatabaseUrl = Conf.calcGroupUrl(groupName)
-
-  // @TODO Make sure group does not exist.
-
-  // Create upload user.
-  let uploadUserDoc, username, password, appConfig
-  try {
-    uploadUserDoc = {
-      "_id": `org.couchdb.user:uploader-${groupName}`,
-      "name"     : `uploader-${groupName}`,
-      "password" : crypto.randomBytes( 20 ).toString('hex'),
-      "roles": [`uploader-${groupName}`],
-      "type": "user"
-    }
-    http.post(`${process.env.T_PROTOCOL}://${process.env.T_ADMIN}:${process.env.T_PASS}@localhost:5984/_users`, uploadUserDoc)
-    username = uploadUserDoc.name
-    password = uploadUserDoc.password
-  }
-  catch (err) {
-    console.log("Error: " + err);
-  }
-
-  // Create the group database.
-  try {
-    await http.put(groupDatabaseUrl);
-    console.log("App database created for " + groupName);
-  }
-  catch (err) {
-    console.log("We already have an app database.");
-  }
-
-  // Create the group reporting database.
-  const groupNameReports = groupName + '_reporting';
-  try {
-    let groupReportsDatabaseUrl = Conf.calcGroupUrl(groupNameReports)
-    await http.put(groupReportsDatabaseUrl);
-    console.log("Reporting database created:" + groupNameReports);
-  }
-  catch (err) {
-    console.log("We already have an app database.");
-  }
-
-  // Secure the databases.
-  const securityDoc = {
-    admins: {
-      names : [],
-      roles : [`admin-${groupName}`] // for use on the server
-    },
-    members: {
-      names : [`uploader-${groupName}`], // used by the tablets for write access
-      roles : [`member-${groupName}`] // for use on the server
-    }
-  };
-  const securityGroupUrl = Conf.calcSecurityUrl(groupName)
-  const securityGroupReportsUrl = Conf.calcSecurityUrl(groupNameReports)
-  await http.put(securityGroupUrl, securityDoc)
-    .then(function(){ console.log("Security doc created for group: " + groupName)} )
-    .catch(function (error) {
-      console.log("error: " + error)
-    });
-  await http.put(securityGroupReportsUrl, securityDoc)
-    .then(function(){ console.log("Security doc created for group reporting:" + groupNameReports)} )
-    .catch(function (error) {
-      console.log("error: " + error)
-    });
-
-  // Add ojai design docs to group's databases.
-  await exec(`
-    cd /tangerine-server/editor/app && \
-    couchapp push http://$T_ADMIN:$T_PASS@localhost:5984/group-${groupName} && \
-    couchapp push http://$T_ADMIN:$T_PASS@localhost:5984/group-${groupName}_reporting
-  `)
-
   // Create content directory for group.
-  await exec(`cp -r /tangerine-server/client-v3/content/default /tangerine-server/client-v3/content/groups/${groupName}`)
+  await exec(`cp -r /tangerine/client/content/default /tangerine/client/content/groups/${groupName}`)
 
   // Edit the app-config.json.
   try {
-    appConfig = JSON.parse(await fs.readFile(`/tangerine-server/client-v3/content/groups/${groupName}/app-config.json`, "utf8"))
-    appConfig.remoteCouchDBHost = `${process.env.T_PROTOCOL}://${username}:${password}@${process.env.T_HOST_NAME}/db/group-${groupName}` 
+    appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
+    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}` 
   } catch (err) {
     console.error("An error reading app-config: " + err)
     throw err;
   }
-  await fs.writeFile(`/tangerine-server/client-v3/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
+  await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
     .then(status => console.log("Wrote app-config.json"))
     .catch(err => console.error("An error copying app-config: " + err))
   
@@ -424,3 +395,29 @@ var server = app.listen(config.port, function() {
   console.log('Server V3: http://%s:%s', host, port);
 });
 
+app.get('/groups', async function (req, res) {
+  fsc.readdir('/tangerine/client/content/groups', function(err, files) {
+    console.log(files)
+    let groups = files.map((groupName) => { 
+      return {
+        attributes: { 
+          name: groupName 
+        },
+        member: [], 
+        admin: [], 
+        numberOfResults: 0 
+      }
+    })
+    res.send(groups)
+
+  })
+})
+
+app.post('/upload/:groupName', async function (req, res) {
+  console.log(req.params.groupName)
+  let db = new PouchDB(req.params.groupName)
+  // New docs should not have a rev or else insertion will fail.
+  delete req.body.doc._rev
+  await db.put(req.body.doc).catch(err => console.log(err))
+  res.send('ok')
+})

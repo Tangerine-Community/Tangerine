@@ -28,10 +28,6 @@ RUN_OPTIONS="
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   $T_PORT_MAPPING \
-  --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
-  --volume $(pwd)/data/apks/:/tangerine-server/tree/apks/ \
-  --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
-  --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
   --volume $(pwd)/client-v3/tangy-forms/src/:/tangerine-server/client-v3/tangy-forms/src/ \
   --volume $(pwd)/client-v3/tangy-forms/index.html:/tangerine-server/client-v3/tangy-forms/index.html \

@@ -3,8 +3,8 @@ admin:
   password: "password"
 domain: "127.0.0.1"
 protocol: "http://"
-port: 4448
+port: 80 
 dbServerEndpoint: '/db'
 appDatabase: 'app'
-contentRoot: '../client-v3/content/groups'
-editorClientTemplates: '../client-v3/tangy-forms/editor'
+contentRoot: '../client/content/groups'
+editorClientTemplates: '../client/tangy-forms/editor'
