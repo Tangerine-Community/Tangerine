@@ -421,3 +421,61 @@ app.post('/upload/:groupName', async function (req, res) {
   await db.put(req.body.doc).catch(err => console.log(err))
   res.send('ok')
 })
+
+const flatten = require('flat')
+const json2csv = require('json2csv')
+const _ = require('underscore')
+
+jlog = function(data) {
+  console.log(JSON.stringify(data, null, 2))
+}
+log = function(data) {
+  console.log(data)
+}
+
+
+app.get('/csv/:groupName', async function (req, res) {
+
+  let db = new PouchDB(req.params.groupName)
+  
+  //let allDocs = (await db.allDocs({include_docs: true})).map(row => row.doc)
+  let allDocs = await db.allDocs({include_docs: true})
+  // console.log(JSON.stringify(allDocs))
+
+  let responseRows = allDocs.rows.filter(row => row.doc.collection == 'TangyFormResponse') 
+  // log(responseRows)
+  let responseDocs = responseRows.map(row => row.doc) 
+  //jlog(responseDocs)
+
+  let variableDocs = responseDocs.map(doc => { 
+    let variables = {}
+    doc.inputs.forEach(item => { 
+      variables[item.name] = item.value 
+    })
+    return variables
+  })
+  console.log(variableDocs)
+
+  let flatVariableDocs = variableDocs.map(doc => flatten(doc))
+  //console.log(allDocs)
+
+  let keys = []
+  for (let doc of flatVariableDocs) {
+    keys = _.uniq(keys.concat(Object.getOwnPropertyNames(doc)))
+  }
+
+  try {
+    var result = json2csv({ data: flatVariableDocs, fields: keys });
+    console.log(result);
+  } catch (err) {
+    console.error(err);
+  }
+
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/csv');
+  res.write(result)
+  res.end()
+
+
+  
+})
