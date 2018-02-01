@@ -1,13 +1,16 @@
 [
   {
+    "id": "field-demo",
     "title": "Field Demos",
     "src": "../content/field-demo/form.html"
   },
   {
+    "id": "item-demo",
     "title": "Item Demo",
     "src": "../content/item-demo/form.html"
   },
   {
+    "id": "overlay-demo",
     "title": "Overlay Demo",
     "src": "../content/overlay-demo/form.html"
   }

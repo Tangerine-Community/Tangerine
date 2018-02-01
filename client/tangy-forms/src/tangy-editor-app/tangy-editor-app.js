@@ -109,11 +109,12 @@ class TangyEditorApp extends Element {
                       <iron-icon icon="icons:launch">
                     </iron-icon></paper-button>
                   </a>
-                    <a href="#form=[[item.src]]&edit=1" on-click="formSelected">
+                  <a href="#form=[[item.src]]&edit=1" on-click="formSelected">
                     <paper-button class="settings">
                         <iron-icon icon="icons:settings"/>
                     </paper-button>
-                    </a>
+                  </a>
+                  <a href="../../../csv/[[groupId]]/[[item.id]]">Download CSV</a>
                 </div>
             </paper-card>
         </template>

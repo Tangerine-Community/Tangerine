@@ -438,10 +438,12 @@ log = function(data) {
 }
 
 
-app.get('/csv/:groupName', async function (req, res) {
+app.get('/csv/:groupName/:formId', async function (req, res) {
   let db = new DB(req.params.groupName)
   let allDocs = await db.allDocs({include_docs: true})
-  let responseRows = allDocs.rows.filter(row => row.doc.collection == 'TangyFormResponse') 
+  let responseRows = allDocs.rows
+    .filter(row => row.doc.collection == 'TangyFormResponse')
+    .filter(row => row.doc.form.id == req.params.formId)
   let responseDocs = responseRows.map(row => row.doc) 
   let variableDocs = responseDocs.map(doc => { 
     let variables = {}
