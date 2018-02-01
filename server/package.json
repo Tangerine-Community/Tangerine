@@ -1,5 +1,5 @@
 {
-  "name": "server-v3",
+  "name": "server",
   "version": "0.0.0",
   "description": "server =======",
   "main": "index.js",
@@ -16,12 +16,15 @@
     "cheerio": "^1.0.0-rc.2",
     "crypto": "^1.0.1",
     "express": "^4.16.2",
+    "flat": "^4.0.0",
     "fs-extra": "^4.0.3",
+    "json2csv": "^3.11.5",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pouchdb": "^6.4.2",
     "read-yaml": "^1.1.0",
     "sanitize-filename": "^1.6.1",
+    "underscore": "^1.8.3",
     "winston": "^2.4.0"
   }
 }
