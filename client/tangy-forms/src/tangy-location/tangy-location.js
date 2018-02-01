@@ -1,6 +1,6 @@
 // import {Element as PolymerElement} from "@polymer/polymer/polymer-element";
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
-
+import '../../node_modules/@polymer/paper-input/paper-input.js'
 import '../tangy-form/tangy-element-styles.js';
 // import '../../../underscore/underscore.js';
 import {Loc} from './loc.js';
@@ -93,39 +93,33 @@ class TangyLocation extends Element {
     // Render template and assign to the container.
     this.$.container.innerHTML = `
 
-      <label>
-        ${this.label}
-      </label> <br>
-
-      ${selections.map((selection, i) => `
-
-        <label ${(options[selection.level].length === 0) ? 'hidden' : ''}> 
-          ${selection.level} 
-        </label>
-
-        <select 
-          name=${selection.level}
-          ${(options[selection.level].length === 0) ? 'hidden' : ''}
-          ${(this.disabled) ? 'disabled' : ''}
-        > 
-
-          <option
-            ${(selection.value === '') ? 'selected' : ''} 
-            disabled='disabled'
-          >
-            Select...
-          </option>
-
-          ${options[selection.level].map((option, i) => `
-            <option 
-              value="${option.id}" 
-              ${(selection.value === option.id) ? 'selected' : ''}
-             >
-              ${option.label}
-            </option>
-          `)}
-
-        </select><br> 
+    <label>
+    ${this.label}
+  </label>
+  ${selections.map((selection, i) => `
+    
+    <div class="mdc-select">
+        <select class="mdc-select__surface"
+      name=${selection.level}
+      ${(options[selection.level].length === 0) ? 'hidden' : ''}
+      ${(this.disabled) ? 'disabled' : ''}
+    > 
+      <option value="" default selected ${(options[selection.level].length === 0) ? 'hidden' : ''} disabled='disabled'>Pick a ${selection.level} </option>
+      
+      ${options[selection.level].map((option, i) => `
+        <option 
+          value="${option.id}" 
+          ${(selection.value === option.id) ? 'selected' : ''}
+         >
+          ${option.label}
+        </option>
+      `)}
+    </select>
+    <div class="mdc-select__bottom-line"></div>
+    
+    </div>
+    <br />
+    <br />
 
       `).join('')}
     `

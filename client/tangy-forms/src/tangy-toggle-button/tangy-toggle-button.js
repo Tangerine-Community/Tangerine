@@ -15,22 +15,24 @@ class TangyToggleButton extends Element {
       :host {
         display: inline-block;
         border: solid 3px #777;
-        border-radius: 15px;
-        padding: 15px;
+        border-radius: 10px;
+        padding: 0 15px;
         color: #777;
         font-size: 1em;
-        text-align: center;
-
       }
       :host([hidden]) {
         display: none;
       }
       :host([pressed]) {
-        background: var(--primary-color);
+        background-color: #3c5b8d;;
         color: #FFF;
+        background-image: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" fill="#FFFFFF" height="24" viewBox="0 0 24 24" width="24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+        background-repeat: no-repeat;
+        background-position: top left; 
       }
+      
       :host([highlighted]) {
-        border-color: var(--accent-color);
+        border-color: #f26f10;
       }
       :host([required]:not([disabled])) label::before  { 
         content: "*"; 
@@ -45,16 +47,15 @@ class TangyToggleButton extends Element {
       }
       .text-inner {
         position: absolute;
-        top: 68%;
-        left: 50%;
+        top: 20px;
+        left: 20px;
         height: 30%;
-        width: 50%;
-        margin: -15% 0 0 -25%;
+        /*width: 50%;
+        margin: -15% 0 0 -25%;*/
       }
-
       .text-inner ::slotted(*) {
-        text-align: center;
       }
+      
     </style>
     <div class="text-outer">
       <div class="text-inner">
