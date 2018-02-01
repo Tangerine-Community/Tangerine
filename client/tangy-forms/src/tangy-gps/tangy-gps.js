@@ -11,7 +11,7 @@ import { Element } from '../../node_modules/@polymer/polymer/polymer-element.js'
 class TangyGps extends Element {
   static get template() {
     return `
-  <style>
+    <style>
     :host {
       display: block;
     }
@@ -22,8 +22,24 @@ class TangyGps extends Element {
       top: 4px;
       right: 5px;
     }
+    paper-button.tangy-orange {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background-color: #f26f10;
+    color: white;
+    box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.26);
+   }
+    paper-button.tangy-orange:focus {
+    background-color: #3c5b8d;
+    color: #ffffff !important;
+    }
+    
+    .coordinates {
+    margin: 5px 15px;
+  }
+  
   </style>
-  <div>
+  <div class="coordinates">
     <b>Current Position</b>
     <div>
       <template is="dom-if" if="{{currentLatitude}}">
@@ -43,7 +59,7 @@ class TangyGps extends Element {
         Accuracy: {{recordedAccuracy}} meters<br> 
       </template>
     </div>
-    <paper-button raised on-click="clickedRecord">record position</paper-button>
+    <paper-button class="tangy-orange" on-click="clickedRecord">record position</paper-button>
     <slot></slot>
   </div> 
 `;
