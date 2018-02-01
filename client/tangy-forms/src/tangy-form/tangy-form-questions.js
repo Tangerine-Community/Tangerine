@@ -97,9 +97,11 @@ export class TangyFormQuestions extends PolymerElement {
         }
         #markCompleteFab, #lockedFab {
           position: fixed;
-          top: 137px;
           right: 7px;
+          top: 24px;
         }
+        
+        #markCompleteFab {}
         :host(:not([linear-mode])) #nextItemButton,
         :host(:not([linear-mode])) #previousItemButton
          {
@@ -131,15 +133,24 @@ export class TangyFormQuestions extends PolymerElement {
           width: 50px;
         };
       }
+      paper-fab {
+        background-color: #f26f10 !important;
+      }
+      
+      paper-fab[disabled] {
+        background-color: #cccccc !important;
+      }
+      paper-fab.pressed {
+        background-color: #3c5b8d !important;
+      }
+      paper-fab.keyboard-focus {
+        background-color: #1976d2;
+      }
       </style>
       <slot></slot>
       <div id="nav">
-        <!--paper-fab id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-fab>
-        <paper-fab id="lockedFab" icon="icons:lock" disabled></paper-fab>
-        <paper-fab id="previousItemButton" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
-        <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
-        <paper-icon-button id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-icon-button>
-        <paper-icon-button id="lockedFab" icon="icons:lock" disabled></paper-icon-button>-->
+        <paper-fab alt="complete" title="complete" id="markCompleteFab" mini on-click="markComplete" icon="icons:check"></paper-fab>
+        <paper-fab id="lockedFab" mini icon="icons:lock" disabled></paper-fab>
       </div>
       <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
       <div id="tangerine-footer">

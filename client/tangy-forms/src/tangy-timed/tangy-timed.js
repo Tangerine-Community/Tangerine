@@ -62,8 +62,8 @@ class TangyTimed extends Element {
        */
       #stopWatch {
         position: fixed;
-        top: 10px;
         right: 107px;
+        top: 7px;
         background: white;
         border: solid 1px #c5c5c5;
         border-radius: 10px;
@@ -90,7 +90,7 @@ class TangyTimed extends Element {
       
       #timeRemaining,
       #stopWatch paper-fab {
-        margin: 0px 0px 0px 10px;
+        /*margin: 0px 0px 0px 10px;*/
       }
       
       paper-fab {
@@ -106,21 +106,26 @@ class TangyTimed extends Element {
       paper-fab.keyboard-focus {
         background-color: #1976d2;
       }
+      #info {
+        margin-top: 70px;
+      }
     </style>
 
     <div id="container">
+      
       <div id="info">
-        <div id="statusMessage"> [[statusMessage]] </div>
+          <div id="statusMessage"> [[statusMessage]] </div>
+          <div id="stopWatch">
+            <div id="timeRemaining">[[timeRemaining]]⏱</div>
+            <paper-fab id="startButton" mini icon="av:play-arrow" on-click="onStartClick"></paper-fab>
+            <paper-fab id="stopButton" mini icon="av:stop" on-click="onStopClick"></paper-fab>
+            <paper-fab id="resetButton" mini icon="av:replay" on-click="onResetClick"></paper-fab>
+            <paper-fab id="markButton" mini icon="editor:mode-edit" on-click="onMarkClick"></paper-fab>
+            <paper-fab id="lastAttemptedButton" mini icon="av:playlist-add-check" on-click="onLastAttemptedClick"></paper-fab>
+          </div>
       </div>
 
-      <div id="stopWatch">
-        <div id="timeRemaining">[[timeRemaining]]⏱</div>
-        <paper-fab id="startButton" mini icon="av:play-arrow" on-click="onStartClick"></paper-fab>
-        <paper-fab id="stopButton" mini icon="av:stop" on-click="onStopClick"></paper-fab>
-        <paper-fab id="resetButton" mini icon="av:replay" on-click="onResetClick"></paper-fab>
-        <paper-fab id="markButton" mini icon="editor:mode-edit" on-click="onMarkClick"></paper-fab>
-        <paper-fab id="lastAttemptedButton" mini icon="av:playlist-add-check" on-click="onLastAttemptedClick"></paper-fab>
-      </div>
+      
 
       <div id="grid">
       </div>
