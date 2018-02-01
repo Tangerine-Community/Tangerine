@@ -11,17 +11,15 @@ if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ]; then
   echo "./release-apk.sh <secret> <content path>"
   echo ""
   echo "Usage:"
-  echo "  ./release-apk.sh a4uw93 /tangerine-server/data/content/group-a"
+  echo "  ./release-apk.sh a4uw93 ./content/group-a"
   echo ""
-  echo "Then visit https://foo.tanerinecentral.org/apk/a4uw93.apk"
+  echo "Then visit https://foo.tangerinecentral.org/releases/apk/a4uw93.apk"
 fi
 
-cp -r /tangerine-server/client /.tmp-client
-rm -r /.tmp-client/node_modules
-rm -r /.tmp-client/www
-cp -r /tangerine-server/client-v3/builds/apk /.tmp-client/www
-cp -r $CONTENT_PATH /.tmp-client/www/content
-cd /.tmp-client 
-rm /tangerine-server/client-v3/releases/apks/$SECRET.zip
-zip -rq /tangerine-server/client-v3/releases/apks/$SECRET.zip ./* 
-rm -r /.tmp-client
+cp -r /tangerine/client/builds/apk /.tmp-apk
+rm -r /.tmp-apk/www/content
+cp -r $CONTENT_PATH /.tmp-apk/www/content
+cd /.tmp-apk 
+rm /tangerine/client/releases/apks/$SECRET.zip
+zip -rq /tangerine/client/releases/apks/$SECRET.zip ./* 
+rm -r /.tmp-apk

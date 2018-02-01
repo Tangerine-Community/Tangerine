@@ -1,0 +1,14 @@
+env:
+  global:
+    - REPO="/Tangerine-Community/Tangerine/client"
+    - CI_HOME=`pwd`/$REPO
+language: node_js
+node_js:
+  - "node"
+before_install: npm install -g grunt-cli
+install: npm install
+before_script:
+  - npm install -g bower
+  - bower install
+notifications:
+  slack: rti:nBr3dvYD5mClKt1pAnuHgH8J
