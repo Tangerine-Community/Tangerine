@@ -40,10 +40,15 @@ export class CaseManagementService {
     location.value.forEach(levelObject => myLocations = myLocations[levelObject.value].children);
 
     const locations = [];
-
-    /** @TODO: Look up numnber of visits for each location
-     * do not hardcode to 0. Visits is how many unique days we have with Form Responses for that location.
-     *
+    let visits = await this.getVisitsByLocation();
+    function countVisits(key) {
+      let count = 0;
+      visits.forEach((item) => {
+        count += item.key.toString() === key.id.toString() ? 1 : 0;
+      })
+      return count;
+    }
+    /** 
      *  Check for ownProperty in myLocations
      * for ...in  iterate over all enumerable properties of the object
      * Also enumerates and those the object inherits from its constructor's prototype
@@ -53,7 +58,7 @@ export class CaseManagementService {
       if (myLocations.hasOwnProperty(locationId)) {
         locations.push({
           location: myLocations[locationId].label,
-          visits: 0
+          visits: countVisits(myLocations[locationId])
         });
       }
     }
@@ -65,6 +70,9 @@ export class CaseManagementService {
       .toPromise()
       .then(response => response.json()).catch(data => console.error(data));
   }
+
+  async getVisitsByLocation() {
+    const results = await this.userDB.query('tangy-form/responsesByLocationId');
+    return results.rows;
+  }
 }
-
-
