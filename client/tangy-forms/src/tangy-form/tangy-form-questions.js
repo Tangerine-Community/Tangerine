@@ -33,6 +33,7 @@ import '../tangy-overlay/tangy-overlay.js'
 //
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
+import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
 //   <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
 //   <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 //   <link rel="import" href="../../bower_components/paper-fab.html">
@@ -78,15 +79,21 @@ export class TangyFormQuestions extends PolymerElement {
           margin: 0px;
           padding: 0px;
         }
+        #previousItemButton,
+        #nextItemButton {
+            position: relative;
+            color: #ffffff;
+        }
+        
+        #previousItemButton[disabled],
+        #nextItemButton[disabled] {
+            color: #979797;
+        }
         #previousItemButton {
-          position: fixed;
-          bottom: 73px;
-          right: 7px;
+          float: left;
         }
         #nextItemButton {
-          position: fixed;
-          bottom: 10px;
-          right: 7px;
+          float: right;
         }
         #markCompleteFab, #lockedFab {
           position: fixed;
@@ -108,15 +115,37 @@ export class TangyFormQuestions extends PolymerElement {
         paper-progress {
           width: 100%;
         }
+        #tangerine-footer {
+          width:100%;
+          background-color: #3c5b8d;
+          height: 40px;
+          position: fixed;
+          bottom: 0px;
+      }
+      
+      #previousItemButton,
+      #nextItemButton {
+        padding: 0;
+        --paper-fab-iron-icon: {
+          height: 50px;
+          width: 50px;
+        };
+      }
       </style>
       <slot></slot>
       <div id="nav">
-        <paper-fab id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-fab>
+        <!--paper-fab id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-fab>
         <paper-fab id="lockedFab" icon="icons:lock" disabled></paper-fab>
         <paper-fab id="previousItemButton" on-click="focusOnPreviousItem" icon="hardware:keyboard-arrow-up"></paper-fab>
         <paper-fab id="nextItemButton" on-click="focusOnNextItem" icon="hardware:keyboard-arrow-down"></paper-fab>
+        <paper-icon-button id="markCompleteFab" on-click="markComplete" icon="icons:check"></paper-icon-button>
+        <paper-icon-button id="lockedFab" icon="icons:lock" disabled></paper-icon-button>-->
       </div>
       <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
+      <div id="tangerine-footer">
+          <paper-icon-button id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-icon-button>
+          <paper-icon-button id="nextItemButton" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-icon-button>
+      </div>
         `
       }
 

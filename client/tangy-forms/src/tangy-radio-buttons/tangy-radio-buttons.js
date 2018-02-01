@@ -18,13 +18,20 @@ class TangyRadioButtons extends Element {
 
     <style>
       paper-radio-button {
-        margin-right: 25px;
-        --paper-radio-button-size: 2em;
+        --paper-radio-button-size: 1.5em;
+        --paper-radio-button-checked-color: #3c5b8d;
+      }
+      
+      span {
+        font-size: .75em;
+        display: block;
       }
     </style>
 
+
     <div class="container">
       <label for="group">[[label]]</label>
+      <span class="secondary_color">select only one</span>
       <paper-radio-group name="group" id="paper-radio-group">
       </paper-radio-group>
     </div>

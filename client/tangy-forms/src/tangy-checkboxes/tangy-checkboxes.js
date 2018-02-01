@@ -22,16 +22,19 @@ class TangyCheckboxes extends Element {
       paper-checkbox {
         margin-top: 15px;
         margin-right: 25px;
-        --paper-checkbox-size: 2em;
+        --paper-checkbox-size: 1.25em;
+        --paper-checkbox-checked-color: #3c5b8d;
+      }
+      span {
+        font-size: .75em;
+        display: block;
       }
       
-      .container {
-        position: relative;
-      }
       
     </style>
     <div class="container">
       <label for="group">[[label]]</label>
+      <span class="secondary_color">select one or more</span>
       <div id="checkboxes">
       </div>
     </div>

@@ -30,14 +30,16 @@ class TangyTimed extends Element {
       :host {
         display: block;
       }
-
+      
+      :host #icon {
+        display: block;
+      }
       tangy-toggle-button { 
         display: inline-block;
         margin:10px 0 0 2%;
         flex-grow: 1;
-        height:100px;
+        height:60px;
       }
-
       #container {
         width: 100%;
         position: relative;
@@ -48,13 +50,10 @@ class TangyTimed extends Element {
         flex-wrap: wrap;
         width: 100%;
       }
-
       #stopWatch paper-fab {
         color: #FFF;
       }
-      #stopWatch paper-fab {
-        margin: 0 auto 5px;
-      }
+      
       #stopWatch paper-fab.pressed {
         background: var(--primary-color);
       }
@@ -63,15 +62,49 @@ class TangyTimed extends Element {
        */
       #stopWatch {
         position: fixed;
-        top: 30px;
-        left: 7px;
-        font-size: 2em;
-        background: transparent;
-        border: solid 3px #AAA;
-        border-radius: 15px;
-        padding: 15px;
+        top: 10px;
+        right: 107px;
+        background: white;
+        border: solid 1px #c5c5c5;
+        border-radius: 10px;
+        padding: 5px;
         color: #333;
         text-align: center;
+        z-index: 1000000;
+        box-shadow: 3px 3px 10px 1px rgba(0, 0, 255, .2);
+      }
+      
+      #timeRemaining {
+        font-size: 2em;
+        position: relative;
+        top: 7px;
+      }
+      #timeRemaining,
+      paper-fab {
+        display: inline-block;
+      }
+      
+      #stopWatch {
+        padding: 5px 5px 10px 5px;
+      }
+      
+      #timeRemaining,
+      #stopWatch paper-fab {
+        margin: 0px 0px 0px 10px;
+      }
+      
+      paper-fab {
+        background-color: #f26f10 !important;
+      }
+      
+      paper-fab[disabled] {
+        background-color: #cccccc !important;
+      }
+      paper-fab.pressed {
+        background-color: #3c5b8d !important;
+      }
+      paper-fab.keyboard-focus {
+        background-color: #1976d2;
       }
     </style>
 
@@ -82,11 +115,11 @@ class TangyTimed extends Element {
 
       <div id="stopWatch">
         <div id="timeRemaining">[[timeRemaining]]⏱</div>
-        <paper-fab id="startButton" icon="av:play-arrow" on-click="onStartClick"></paper-fab>
-        <paper-fab id="stopButton" icon="av:stop" on-click="onStopClick"></paper-fab>
-        <paper-fab id="resetButton" icon="av:replay" on-click="onResetClick"></paper-fab>
-        <paper-fab id="markButton" icon="editor:mode-edit" on-click="onMarkClick"></paper-fab>
-        <paper-fab id="lastAttemptedButton" icon="av:playlist-add-check" on-click="onLastAttemptedClick"></paper-fab>
+        <paper-fab id="startButton" mini icon="av:play-arrow" on-click="onStartClick"></paper-fab>
+        <paper-fab id="stopButton" mini icon="av:stop" on-click="onStopClick"></paper-fab>
+        <paper-fab id="resetButton" mini icon="av:replay" on-click="onResetClick"></paper-fab>
+        <paper-fab id="markButton" mini icon="editor:mode-edit" on-click="onMarkClick"></paper-fab>
+        <paper-fab id="lastAttemptedButton" mini icon="av:playlist-add-check" on-click="onLastAttemptedClick"></paper-fab>
       </div>
 
       <div id="grid">

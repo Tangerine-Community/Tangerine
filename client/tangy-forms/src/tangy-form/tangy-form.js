@@ -34,33 +34,36 @@ export class TangyForm extends PolymerElement {
   static get template() {
     return `
 
-      <style>
-        :host {
-          display: block;
-          margin: 0px;
-          padding: 0px;
-        }
-                #tangy-form-responses,
-                #tangy-form-questions {
-          margin: 0px;
-          padding: 0px;
-        }
-                #show-responses-fab {
-          position: fixed;
-          top: 73px;
-          right: 7px;
-        }
-                #new-response-fab {
-          position: fixed;
-          top: 10px;
-          right: 7px;
-        }
-
-        :host([hide-responses]) #show-responses-fab,
-        :host([hide-responses]) #new-response-fab {
-          display: none;
-        }
-      </style>
+    <style>
+    :host {
+      display: block;
+      margin: 0px;
+      padding: 0px;
+    }
+            #tangy-form-responses,
+            #tangy-form-questions {
+      margin: 0px;
+      padding: 0px;
+    }
+    #show-responses-fab {
+      position: fixed;
+      top: 73px;
+      right: 7px;
+    }
+    #new-response-fab {
+      position: fixed;
+      top: 10px;
+      right: 7px;
+    }
+    :host([hide-responses]) #show-responses-fab,
+    :host([hide-responses]) #new-response-fab {
+      display: none;
+    }
+    #show-responses-fab,
+    #new-response-fab {
+        display: none;
+    }
+  </style>
 
       <slot></slot>
 
