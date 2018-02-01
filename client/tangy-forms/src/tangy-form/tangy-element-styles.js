@@ -48,6 +48,7 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
         margin-bottom: 15px;
         color: var(--primary-text-color);
         text-transform: capitalize;
+        margin-bottom: 5px;
       }
 
       select option {
