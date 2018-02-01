@@ -40,7 +40,7 @@ export class CaseManagementService {
     location.value.forEach(levelObject => myLocations = myLocations[levelObject.value].children);
 
     const locations = [];
-    let visits = await this.getVisitsByLocation();
+    let visits = await this.getVisitsThisMonthByLocation();
     function countVisits(key) {
       let count = 0;
       visits.forEach((item) => {
@@ -71,8 +71,8 @@ export class CaseManagementService {
       .then(response => response.json()).catch(data => console.error(data));
   }
 
-  async getVisitsByLocation() {
-    const results = await this.userDB.query('tangy-form/responsesByLocationId');
+  async getVisitsThisMonthByLocation() {
+    const results = await this.userDB.query('tangy-form/responsesThisMonthByLocationId');
     return results.rows;
   }
 }
