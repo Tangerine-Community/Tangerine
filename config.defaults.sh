@@ -10,6 +10,6 @@ T_UPLOAD_PASSWORD="password"
 
 # optional
 T_TAG=""
-T_CONTAINER_NAME="tangerine-container"
+T_CONTAINER_NAME="tangerine"
 T_PORT_MAPPING="-p 80:80 -p 5984:5984"
-T_V3_DEV_CONTENT="$(pwd)/client-v3/content/default"
+T_DEV_CONTENT="$(pwd)/client/content/default"

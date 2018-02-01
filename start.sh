@@ -47,10 +47,9 @@ RUN_OPTIONS="
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/client/pwas:/tangerine/client/releases/pwas/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
-  --volume $(pwd)/server/index.js:/tangerine/server/index.js \
 " 
 
-CMD="docker run -it $RUN_OPTIONS tangerine/tangerine:$T_TAG"
+CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 
 echo "Running $T_CONTAINER_NAME at version $T_TAG"
 eval ${CMD}

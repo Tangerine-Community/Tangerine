@@ -74,12 +74,13 @@ app.post('/login',
 
 
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
-app.use('/app', express.static(path.join(__dirname, '../editor/dist')));
+app.use('/', express.static(path.join(__dirname, '../editor/dist')));
 app.use('/editor/groups', express.static(path.join(__dirname, '../client/content/groups')));
 app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../client/ckeditor/')));
-app.use('/client-v3/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )
-app.use('/client-v3/releases/apks/', express.static(path.join(__dirname, '../client/releases/apks')) )
+app.use('/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )
+app.use('/releases/apks/', express.static(path.join(__dirname, '../client/releases/apks')) )
+app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')) )
 
 app.use('/editor/release-apk/:secret/:group', async function (req, res, next) {
   // @TODO Make sure user is member of group.
