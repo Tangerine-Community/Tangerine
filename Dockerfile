@@ -1,6 +1,14 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
 FROM node 
 
+
+# Never ask for confirmations
+ENV DEBIAN_FRONTEND noninteractive
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+RUN apt update
+RUN apt install -y zip
+
 RUN npm install -g nodemon
 RUN echo foo
 

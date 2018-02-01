@@ -1,0 +1,4486 @@
+[
+  {
+    "_id": "00b33982-795c-13bf-7097-cde937bfa7cd",
+    "_rev": "1-9392e98c97d56ac52a9460d74e22d8e5",
+    "prompt": "3a) Lëb aŋo ame apwony märö pwonynyi kede?",
+    "name": "L_3a",
+    "hint": "",
+    "order": 3,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "d5f8a2cb-449a-7de4-9e38-cea321ac3a1b",
+    "collection": "question",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "o80eeg7Wmt0pJz9EN92TbfMNs88=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "04e61d8d-9e29-693b-943a-f675e8d800c7",
+    "_rev": "1-b5ac10d32ed1e653a369e63fc65a25d9",
+    "prompt": "6) Pupil's Gender",
+    "name": "female",
+    "hint": "",
+    "order": 6,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "boy",
+        "value": "0"
+      },
+      {
+        "label": "girl",
+        "value": "1"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "75769c3d-faa1-99d4-b469-ab24564d88c9",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "ffQsUpzjseQp8AxfoWsnE85xAv8=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "05f08926-4122-c9b1-5706-05e2c0390ae2",
+    "_rev": "1-b6616efd931c0e294a0db28bbdbcfee5",
+    "prompt": "2c) Is this teacher receiving Classroom Observation as part of the study?",
+    "name": "Observation",
+    "hint": "",
+    "order": 3,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know ",
+        "value": "88"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "250f17fb-5648-3d81-e846-53fe726d3aad",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "SOqJNSUBrHEnORjNrLDW1rTAKio=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "06de011f-b83a-9098-1e50-58239ca6be28",
+    "_rev": "9-4f4f2ec02e2e5393bbdf5e743f3cda42",
+    "prompt": "8) <font color=blue>Omusomesa wo owa nursery yakusomeseza mu lulimi ki ku ssomero?</font> </br>What language did your teacher teach you in at preschool or nursery school? ",
+    "name": "L_8",
+    "hint": "What language did your nursery teacher use?  ",
+    "order": 19,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Luganda",
+        "value": "1"
+      },
+      {
+        "label": "Lëblaŋo",
+        "value": "2"
+      },
+      {
+        "label": "Ateso",
+        "value": "3"
+      },
+      {
+        "label": "Runyankole/Rukiga",
+        "value": "4"
+      },
+      {
+        "label": "English",
+        "value": "5"
+      },
+      {
+        "label": "Other (specify in 8b)",
+        "value": "6"
+      },
+      {
+        "label": "Do not know/No response",
+        "value": "88"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "38097680-c79f-d696-0555-f07547e533b3",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"L_7\")isnt\"1\"",
+    "skippable": true,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:04 GMT+0300",
+    "hash": "iaWGSNUN0t8cygikV9MXtd92bb4=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "09b29138-836c-cbfd-8cf6-5a3dad84596a",
+    "_rev": "2-40cac2f03411c33619cdd62e762184dc",
+    "prompt": "9) Maloboozi ki agali mu \"fish\", \"fish\"?",
+    "name": "pa_phon_sound9",
+    "hint": "",
+    "order": 8,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/f/",
+        "value": "1"
+      },
+      {
+        "label": "/i/",
+        "value": "2"
+      },
+      {
+        "label": "/sh/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "badf1666-a3f3-4191-43d4-ab20ada771e5",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Thu Oct 02 2014 16:59:32 GMT+0300",
+    "hash": "WuFMVCCFgjy7mRvxdqpNezA70iM=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "09d3b04c-cd87-9932-a56f-df62285f51a8",
+    "_rev": "2-df559229c830a00280ba6fa43fe20bec",
+    "prompt": "4) Maloboozi ki agali mu \"me\", \"me\"?",
+    "name": "pa_phon_sound4",
+    "hint": "",
+    "order": 3,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/m/",
+        "value": "1"
+      },
+      {
+        "label": "/ee/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "c6137e81-3795-bb9d-f777-d6c7489bfe3f",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Thu Oct 02 2014 16:57:27 GMT+0300",
+    "hash": "AD6RgP7bTuljLslsPX1VQCl2u1s=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "0b78e361-7c54-8309-dbde-d1162701f40d",
+    "_rev": "39-1a2c6a620cef003d23617eb9af5462b4",
+    "studentDialog": "<p>Show the child the story in the pupil stimuli booklet. Say:<br /><br /><b>Here is a short English story. I want you to read it aloud, quickly but carefully. When you have finished, I will ask you some questions about what you have read.  When I say “begin,” read the story as best as you can.  I will keep quiet and listen to you, but if you come to a word you do not know I will tell you to go on. Ready? Begin.<br /><br /><font color=\"#3333ff\">Waliwo wano emboozi ey'Oluzungu.  Njagala oginsomere n’obwegendereza naye mu bwangu.  Ng’omalirizza, nja kukubuuza ebibuuzo ebikwata ku mboozi gy’osomye.  Bwe ŋŋamba nti “tandika”, soma bulungi ddala nga bw’osobola era mu bwangu.  Nja kusirika nkuwulirize, naye bwonasanga ekigambo ky'otomanyi nja kukugamba ogende mu maaso. Weetegese?  Tandika.</font></b></p><blockquote><ul><li>Follow along on your screen and mark any incorrect words by touching that word on the screen until it turns blue.</li><li>Mark self-corrections as correct by touching again until it returns to grey.</li><li>Stay quiet, except if the pupil hesitates for 3 seconds. Then point to the next word, and say,<b> “Please go on.”  / <font color=\"#3333ff\"> “Genda mu maaso.”</font> </b>Mark the skipped word as incorrect.</li><li>If the timer runs out before the last item is read, the screen will flash red and the timer will stop. Say, <b>“Stop.”  / “<font color=\"#3333ff\">Lekera awo.” </font></b>Mark the final word read by touching it so that a bracket ( ] ) appears, then press \"Next\"</li><li>If the child reaches the last item before the screen flashes red, stop the timer as soon as the child reads the last letter. Touch the last letter so that the bracket appears, then press \"Next\". Remove the passage from in front of the child.</li></ul></blockquote><p>Early stop rule: If the pupil does not give a single correct response on the first line of text, the screen will flash red and stop the timer automatically. Say <b>“Thank you!” /  <font color=\"#3333ff\">“Weebale nnyo!”</font></b>, discontinue this subtask, and go on to the next subtask.</p>",
+    "enumeratorHelp": "",
+    "transitionComment": "<b>Good effort! Let's go on to the next section. / <font color=\"#3333ff\">Weebale nnyo. Tweyongereyo.</font><br></b>",
+    "skippable": true,
+    "order": 2,
+    "prototype": "grid",
+    "name": "Subtask 2a. Oral Passage Reading (EN)",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "locations": [],
+    "prompt": "",
+    "items": [
+      "Sam",
+      "lives",
+      "on",
+      "a",
+      "farm.",
+      "He",
+      "has",
+      "goats.",
+      "Sam",
+      "likes",
+      "the",
+      "goats.",
+      "They",
+      "are",
+      "funny.",
+      "They",
+      "eat",
+      "anything.",
+      "He",
+      "feeds",
+      "the",
+      "goats",
+      "after",
+      "school.",
+      "Sam",
+      "puts",
+      "his",
+      "homework",
+      "near",
+      "the",
+      "goats.",
+      "He",
+      "plays",
+      "football.",
+      "Then",
+      "his",
+      "sister",
+      "calls",
+      "him.",
+      "His",
+      "homework",
+      "is",
+      "gone.",
+      "A",
+      "goat",
+      "is",
+      "eating",
+      "something",
+      "white.",
+      "Now",
+      "he",
+      "knows",
+      "where",
+      "his",
+      "homework",
+      "is."
+    ],
+    "columns": 5,
+    "autostop": 12,
+    "timer": 60,
+    "gridLinkId": "",
+    "collection": "subtest",
+    "captureLastAttempted": true,
+    "endOfLine": true,
+    "captureItemAtTime": false,
+    "captureAfterSeconds": 0,
+    "fontSize": "small",
+    "layoutMode": "fixed",
+    "randomize": false,
+    "variableName": "oral_read",
+    "displayCode": "@skip() if ResultOfPrevious(\"grade_p2_confirm\") isnt \"1\"",
+    "fontFamily": "",
+    "updated": "Wed Mar 02 2016 17:44:19 GMT+0100 (CET)",
+    "hash": "DUYdGnymtquCsW9yXIedlCCdOjI=",
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "editedBy": "tangerine",
+    "rtl": false,
+    "backButton": false,
+    "language": ""
+  },
+  {
+    "_id": "0de1e637-c008-d264-4ae9-1aa0a50380bf",
+    "_rev": "2-39bd1f4ddf8a15ba3899a4d1bbcefaa2",
+    "prompt": "8) Maloboozi ki agali mu \"bet\", \"bet\"?",
+    "name": "pa_phon_sound8",
+    "hint": "",
+    "order": 7,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/b/",
+        "value": "1"
+      },
+      {
+        "label": "/e/",
+        "value": "2"
+      },
+      {
+        "label": "/t/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "65716ff7-945c-9f76-5e2b-4f4ab181df9f",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Thu Oct 02 2014 16:59:12 GMT+0300",
+    "hash": "Cv3iGu8blINPF0M48BTyJVa0/j4=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "0efeaa61a566fa287e6d87653022b457",
+    "_rev": "3-70de9dd8cfe4a6916a6abd8a337af320",
+    "prompt": "11b) <font color=\"#3333ff\">Wasomera mu lino essomero omwaka ogwayita?</font><font color =\"#000000\"> Did you study in this school last year?</font>",
+    "name": "L_11b",
+    "hint": "",
+    "order": 24,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "50dddd25-3804-0203-dba9-3a27ec55b97c",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:07 GMT+0300",
+    "hash": "9zHBkSV/M55IXP5c+W61r/HbG08=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "162cb1d8-285d-4403-4971-bad9af693e38",
+    "_rev": "8-9055b38cbfeca2472cd70913b5e6001e",
+    "prompt": "6j) <font color=blue>Ewammwe mulinayo emmotoka, loole, oba eryato lya yingini?</font> </br>Do you have a car, truck or boat with engine at your home?  ",
+    "name": "L_6j",
+    "hint": "",
+    "order": 17,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know",
+        "value": "8"
+      },
+      {
+        "label": "No response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "82119962-b28d-334f-e94f-7da26554e617",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:03 GMT+0300",
+    "hash": "5N7fKCLjR771X7oqtT49WTq20g0=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "162d11c9-0655-ac02-8fa5-3facfe0fc5f4",
+    "_rev": "5-29450698e08e84aeae890fa1da792c7d",
+    "prompt": "7) Nnyingo ki eziri mu \"mukazi\", \"mukazi\"?",
+    "name": "r_pa_phon_sound7",
+    "hint": "[Say each word twice]",
+    "order": 6,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/mu/",
+        "value": "1"
+      },
+      {
+        "label": "/ka/",
+        "value": "2"
+      },
+      {
+        "label": "/zi/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "a4fc9e4e-f10a-3002-6dfc-3b6fd9165867",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"r_pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:50:30 GMT+0300",
+    "hash": "TgdoeFuR6pG5BKr2hZIIMJ3mpZY=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "1c7993a0-6082-1bb6-428b-89a6880e19e5",
+    "_rev": "1-8d604477fdbbfadc13fb69d2748517b9",
+    "prompt": "1) What are the sounds in \"if\"?",
+    "name": "pa_phon_sound1",
+    "hint": "",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/i/",
+        "value": "1"
+      },
+      {
+        "label": "/f/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "6c82e723-ac04-e07a-2b72-01af77c39d33",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "KHuB11s0+gCeb1siuGU/5aPEmlY=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "_rev": "46-189d4541a698294abca8ae3c97e813ce",
+    "name": "Grid Action on display for a survey",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "archived": false,
+    "collection": "assessment",
+    "sequences": [
+      [
+        null
+      ]
+    ],
+    "updated": "Wed Mar 02 2016 17:50:18 GMT+0100 (CET)",
+    "hash": "/fwjdxyoAqMH+jbmLLu1m3jvsmo=",
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "editedBy": "tangerine"
+  },
+  {
+    "_id": "221128f1-cea0-9c03-d457-09063da8cee6",
+    "_rev": "2-028a088e7da1309ade443463008bfa5b",
+    "prompt": "10) Nnyingo ki eziri mu \"akati\", \"akati\"?",
+    "name": "r_pa_phon_sound10",
+    "hint": "[Say each word twice]",
+    "order": 9,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/a/",
+        "value": "1"
+      },
+      {
+        "label": "/ka/",
+        "value": "2"
+      },
+      {
+        "label": "/ti/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "6be346ad-2a2a-a1d1-607d-35056ee72182",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"r_pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:52:12 GMT+0300",
+    "hash": "TEnYME32oWvc/8zMhbtIEKOzYYw=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "22f33f7c-0dde-b7e7-59fd-640020175849",
+    "_rev": "1-c2d8e0ddd8a1ae2861fcd158e4679b9e",
+    "prompt": "5) Pupil's Gender",
+    "name": "female",
+    "hint": "",
+    "order": 6,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "boy",
+        "value": "0"
+      },
+      {
+        "label": "girl",
+        "value": "1"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "75769c3d-faa1-99d4-b469-ab24564d88c9",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "LRQyX2CA7KWt5LjYgxlsTLkH7qM=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "23043130-ce88-2416-e560-bd5fcbb75014",
+    "_rev": "8-e7e6bae6cc896fd8370601aae02d4c3f",
+    "prompt": "12) <font color=blue>Olina ebitabo by’ojja ku ssomero n’otwala eka okusoma?</font> </br>Do you bring books (readers) from your classroom or from the school library to read at home (readers)?  ",
+    "name": "L_12",
+    "hint": "",
+    "order": 25,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know/No response",
+        "value": "88"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "b4a4f5d6-2545-f6ac-6063-57da85635baf",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:08 GMT+0300",
+    "hash": "rdoaDdsUvphUzyoqJRrTM/xttZw=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "25b0fd90-32c4-0df1-ca08-9656121fff5e",
+    "_rev": "8-1bea3af68ff6cdfa65fc68d122700995",
+    "prompt": "10) <font color=blue>Waliwo olunaku lwonna lw’otajja ku ssomero sabbiiti eyise?</font> </br>Is there any day last week you did not come to school?  ",
+    "name": "L_10",
+    "hint": "Do not include or count absence due to holiday",
+    "order": 22,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know/No response",
+        "value": "88"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "9ad1edbd-0155-c4e8-7d79-791d1f621679",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:05 GMT+0300",
+    "hash": "FdH0b2pM2ih0ve9hJu+e+jOKILA=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "270dd68a-5ec6-b5e1-352b-cc0783a0f5f4",
+    "_rev": "6-b179b409cb4c320b70ce90a8473b755b",
+    "prompt": "6) Nnyingo ki eziri mu \"sapatu\", \"sapatu\"?",
+    "name": "r_pa_phon_sound6",
+    "hint": "[Say each word twice]",
+    "order": 5,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/sa/",
+        "value": "1"
+      },
+      {
+        "label": "/pa/",
+        "value": "2"
+      },
+      {
+        "label": "/tu/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "a338a3c3-c19d-e1e1-0fd3-25c4e488192e",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"r_pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:49:49 GMT+0300",
+    "hash": "o4mv1yO0TK4GP7g5RiQX6Xlkv3w=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "299bf4c7-f9d1-3677-2c74-0f9045c7c5fc",
+    "_rev": "1-2b3a195e491924d96b713107629df47b",
+    "prompt": "9) What are the sounds in \"fish\"?",
+    "name": "pa_phon_sound9",
+    "hint": "",
+    "order": 8,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/f/",
+        "value": "1"
+      },
+      {
+        "label": "/i/",
+        "value": "2"
+      },
+      {
+        "label": "/sh/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "badf1666-a3f3-4191-43d4-ab20ada771e5",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "iKt9h6GnKvMdql5DAoZJdP19RYw=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "2ae94c5f-e005-ee04-aa2a-6af0b1421de7",
+    "_rev": "1-2b3d960419378bd18f64841082566c52",
+    "prompt": "4) Pupil's Age",
+    "name": "age",
+    "hint": "",
+    "order": 5,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "[5]",
+        "value": "5"
+      },
+      {
+        "label": "[6]",
+        "value": "6"
+      },
+      {
+        "label": "[7]",
+        "value": "7"
+      },
+      {
+        "label": "[8]",
+        "value": "8"
+      },
+      {
+        "label": "[9]",
+        "value": "9"
+      },
+      {
+        "label": "[10]",
+        "value": "10"
+      },
+      {
+        "label": "[11]",
+        "value": "11"
+      },
+      {
+        "label": "[12]",
+        "value": "12"
+      },
+      {
+        "label": "[13]",
+        "value": "13"
+      },
+      {
+        "label": "[14]",
+        "value": "14"
+      },
+      {
+        "label": "[15]",
+        "value": "15"
+      },
+      {
+        "label": "[16]",
+        "value": "16"
+      },
+      {
+        "label": "[17]",
+        "value": "17"
+      },
+      {
+        "label": "[18]",
+        "value": "18"
+      },
+      {
+        "label": "[19]",
+        "value": "19"
+      },
+      {
+        "label": "[20 or older]",
+        "value": "20"
+      },
+      {
+        "label": "Don't know",
+        "value": "88"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "3eac2609-1468-e8a7-57fd-a335c7fa6ef5",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "6iTgE+yJwgq+z5z2lGvLPXi7LG4=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "2b6c577b-ff34-5758-dc38-c3edcb8b8150",
+    "_rev": "3-014cb20066f525951a9ad6d5981b7087",
+    "prompt": "1) Nnyingo ki eziri mu \"lumu\", \"lumu\"?",
+    "name": "r_pa_phon_sound1",
+    "hint": "[Say each word twice]",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/lu/",
+        "value": "1"
+      },
+      {
+        "label": "/mu/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "6c82e723-ac04-e07a-2b72-01af77c39d33",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:46:18 GMT+0300",
+    "hash": "t51W6z+mem8cmAVWdexCKnX8mgQ=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "2ca5069b-c143-49a8-0241-b024e7bfd3b4",
+    "_rev": "8-e9cda5369c7b1e8bb9fa99a915846875",
+    "prompt": "14) <font color=blue>Olina omuntu gw’olaba ewammwe ng’asoma amawulire, ebitabo by’eddiini oba ebitabo ebirala byonna?</font> </br>Do you see anyone in your home read newspapers, religious texts or books?  ",
+    "name": "L_14",
+    "hint": "",
+    "order": 27,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know/No response",
+        "value": "88"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "bff82a7a-2712-c7fa-fce2-ee9048194430",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:09 GMT+0300",
+    "hash": "PVWP4HFOCma1TRGVRklvcA5y9Sw=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "2d12591d-e4cc-8a2d-f526-c59607586c80",
+    "_rev": "1-2d34a6b89ce06f77c6966c7b6786bbed",
+    "prompt": "3b) Other",
+    "name": "section_other",
+    "hint": "",
+    "order": 3,
+    "linkedGridScore": 0,
+    "type": "open",
+    "options": [],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "ec3353c5-6ca5-1245-47ce-62e4fc414b02",
+    "collection": "question",
+    "skipLogic": "parseInt(ResultOfQuestion( \"section\" ) ) < 6 or ResultOfQuestion(\"section\") is \"88\"",
+    "skippable": true,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "m15fHjD/JVjsv+ziZiYP6AshsV0=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "2deca963-8ded-a5a8-c7fd-bc85dcbb5309",
+    "_rev": "1-3482726b1794cad68dce55d0b3db24f0",
+    "prompt": "5) I tye wunu kede redio paco?",
+    "name": "L_5",
+    "hint": "",
+    "order": 6,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "81717333-5968-d771-5657-8c81db75208b",
+    "collection": "question",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "IKzQlbiv4vqckzlgAdvTHkvtOqE=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "3354015d-dc64-2cdb-4ed7-fd628bb3c5cf",
+    "_rev": "3-4592397ca669571ec8924fa8f9bc4db5",
+    "prompt": "1) Kaye omupiira yagusamba lwakumeka?  ",
+    "name": "r_read_comp1",
+    "hint": "[Lwakutaano]",
+    "order": 0,
+    "linkedGridScore": 5,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "692b12c6-b0c7-ff30-2e09-6bcad775bd94",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "4aac4c6d-f945-0dea-14ce-e7245ea46121",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:00:56 GMT+0300",
+    "hash": "w6b9gvOHubwwFQyf6k8akwJvALg=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "3599c958-7f49-8f50-624f-a611d1fe2078",
+    "_rev": "8-f3fadd372491b6a13dfac24ef6498b5c",
+    "prompt": "6a) <font color=blue>Ewammwe mulinayo lediyo?</font> </br>Do you have a radio at your home?  ",
+    "name": "L_6a",
+    "hint": "",
+    "order": 10,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't Know",
+        "value": "8"
+      },
+      {
+        "label": "No response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "81717333-5968-d771-5657-8c81db75208b",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:29:59 GMT+0300",
+    "hash": "zj5IsR2qjFI3Ey3wlfr2FZWr+G8=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "361d3d3e-fd17-db4a-3180-77318ecb4ddf",
+    "_rev": "2-743fccad88e33223bca65c69099db0f7",
+    "prompt": "4) Nnyingo ki eziri mu  \"bali\", \"bali\"?",
+    "name": "r_pa_phon_sound4",
+    "hint": "[Say each word twice]",
+    "order": 3,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/ba/",
+        "value": "1"
+      },
+      {
+        "label": "/li/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "c6137e81-3795-bb9d-f777-d6c7489bfe3f",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:48:17 GMT+0300",
+    "hash": "/Rcrs1CnXg0qZA5kcFGYjWo+UXY=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "381e8f30-09d9-277e-9a29-6da9a3043641",
+    "_rev": "1-503126bb0c5b9fbdd2ba5b8dea284a91",
+    "prompt": "6) What are the sounds in \"dog\"?",
+    "name": "pa_phon_sound6",
+    "hint": "",
+    "order": 5,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/d/",
+        "value": "1"
+      },
+      {
+        "label": "/o/",
+        "value": "2"
+      },
+      {
+        "label": "/g/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "a338a3c3-c19d-e1e1-0fd3-25c4e488192e",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "x6FikpqBLTP/o0RmGPXkcIybX/g=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "38d50542-4874-d078-96d4-5e415c0af836",
+    "_rev": "1-a1bcf9c2edfe857758c47452235159d9",
+    "prompt": "1) Teacher Last Name",
+    "name": "teacher",
+    "hint": "[all small case letters, no prefixes, e.g. \"Mrs.\" or \"Teacher\"]",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "open",
+    "options": [],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "925bbc08-83c6-5106-d312-0db09f44fee3",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "jb7lnGVQZsmb/eoZ0op6O5C4fdY=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "3a35ef0c-c058-964d-744a-7c9b294ddd19",
+    "_rev": "5-d8af61574ccafd7141addcc8518bf87a",
+    "prompt": "5) Olowooza lwaaki abaana baateeka amaggwa ku ntebe ya Kaye?",
+    "name": "r_read_comp5",
+    "hint": "[kubanga yali ateebye goolo, baali banyiivu kubanga baali bawanguddwa, baali baagala kumulumya]",
+    "order": 4,
+    "linkedGridScore": 56,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "692b12c6-b0c7-ff30-2e09-6bcad775bd94",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "c8b46eda-54c9-3231-5105-9ca608fd499d",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Sat Sep 12 2015 12:14:07 GMT+0300 (E. Africa Standard Time)",
+    "hash": "MChim9tyvvFyD8qP9Ef3gSL3F/0=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "3b0a41e6-5da8-6a6e-47ff-67474de9dc3f",
+    "_rev": "8-7f001b84f25b83fac32dbb58a46a80d4",
+    "prompt": "3) This is a pencil. [Hand the pencil to the child.] This is paper. [Point to the paper]. You will place the pencil where I tell you to put it. Put the pencil… <font color=blue>Eno kalaamu/pencil. [Hand the pencil to the child.] Luno lupapula/paper. [Point to the paper]. Ogenda kuteeka ekalaamu wenakugamba. Teeka ekalaamu …</font> </br> ",
+    "name": "vocab_eng3",
+    "hint": "Place a pencil and sheet of paper side by side infront of the child..",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "on the paper",
+        "value": "1"
+      },
+      {
+        "label": "next to the paper",
+        "value": "2"
+      },
+      {
+        "label": "behind you",
+        "value": "3"
+      },
+      {
+        "label": "under the paper",
+        "value": "4"
+      },
+      {
+        "label": "to the right of the paper",
+        "value": "5"
+      },
+      {
+        "label": "All correct",
+        "value": "9"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "45fb0b95-dc44-3e85-9417-e7da425e683f",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "3eed98c8-0e07-965d-a4d8-fbd5faeab671",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Tue Aug 18 2015 14:40:31 GMT+0300 (E. Africa Standard Time)",
+    "hash": "JrNcAg5Ghnm9aUJRM6CAIVNKkzs=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "3da2fd7b-ebeb-ad3a-33d2-ed3daaf529b4",
+    "_rev": "1-f91a7070d4a1023f46f64b10cd5059d2",
+    "prompt": "6) Ŋättörö i paco wu tye kede cim cïŋ?",
+    "name": "L_6",
+    "hint": "",
+    "order": 7,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "a03b585f-01fc-daf9-4240-7551575dfe45",
+    "collection": "question",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "IXgItEXEdbsdEZJLMGBasdYk2Ic=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "4162b5124911baf7038719fd550cc05c",
+    "_rev": "3-6a30ca1aed32825cd896e89c0811eb7c",
+    "prompt": "o/O",
+    "name": "Letter_Writing_letter1",
+    "hint": "",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "4162b5124911baf7038719fd550cb951",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "39097de1-c56d-ae91-1962-b2b912cec9e3",
+    "editedBy": "Remmy",
+    "updated": "Fri Feb 19 2016 11:08:34 GMT+0300 (E. Africa Standard Time)",
+    "hash": "y+a5mSQ1kt4vSMr90CIM0rTxnjs=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "4162b5124911baf7038719fd550cd023",
+    "_rev": "3-0c3470c00917ca6a980ff53e3530f100",
+    "prompt": "m/M",
+    "name": "Letter_Writing_letter2",
+    "hint": "",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "4162b5124911baf7038719fd550cb951",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "7e6ec121-889a-fbe3-ef53-dc5d2cc98350",
+    "editedBy": "Remmy",
+    "updated": "Wed Feb 17 2016 14:40:45 GMT+0300 (E. Africa Standard Time)",
+    "hash": "Zs07ZtokIImtjKvg5IXGINwV/gM=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "4162b5124911baf7038719fd550cda5f",
+    "_rev": "3-dd249356a47229ccc86e85de2a77f7c5",
+    "prompt": "s/S",
+    "name": "Letter_Writing_letter3",
+    "hint": "",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "4162b5124911baf7038719fd550cb951",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "a107c905-4557-c6fc-ffa0-f0328693467b",
+    "editedBy": "Remmy",
+    "updated": "Wed Feb 17 2016 14:42:51 GMT+0300 (E. Africa Standard Time)",
+    "hash": "cvzhZof5zwEfGxdT20R3fIMVuhs=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "4162b5124911baf7038719fd550ce53f",
+    "_rev": "4-226ffd80f1570eaf7ae13676923d80aa",
+    "prompt": "t / T",
+    "name": "Letter_Writing_letter4",
+    "hint": "",
+    "order": 3,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "4162b5124911baf7038719fd550cb951",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "6c42c348-4303-2a95-8b6c-ad10c92b83e3",
+    "editedBy": "Remmy",
+    "updated": "Wed Feb 17 2016 14:43:53 GMT+0300 (E. Africa Standard Time)",
+    "hash": "DXr3HDd9ZIuB2arJi2Dkzxj1Reg=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "4162b5124911baf7038719fd550ced98",
+    "_rev": "3-87a3985af3ae0d0179750644d8b4be9e",
+    "prompt": "b/B",
+    "name": "Letter_Writing_letter5",
+    "hint": "",
+    "order": 4,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "4162b5124911baf7038719fd550cb951",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "8a7fea20-9ac6-f734-f6b6-27c45032307e",
+    "editedBy": "Remmy",
+    "updated": "Wed Feb 17 2016 14:44:28 GMT+0300 (E. Africa Standard Time)",
+    "hash": "Yj2qFHTeg+TfJDmddbvec5LBbHA=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "44e934a8-a3c2-3624-c8df-6e3495aeb080",
+    "_rev": "8-60b4f2797f4dfc055bb2383e3218ae30",
+    "prompt": "6b) <font color=blue>Mulina omuntu yenna ewammwe alina essimu ey’omungalo?</font> </br>Does anyone at your home have a mobile phone?  ",
+    "name": "L_6b",
+    "hint": "",
+    "order": 11,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know",
+        "value": "8"
+      },
+      {
+        "label": "No Response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "d63ec69c-c5bf-8031-df47-e79078d9acc8",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:00 GMT+0300",
+    "hash": "cm4mpkKZuHRHMhBzadCCImMZHdg=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "45fb0b95-dc44-3e85-9417-e7da425e683f",
+    "_rev": "40-087a39288c47a831cc0dc7d8b9d4aab0",
+    "studentDialog": "<p><span style=\"font-weight: normal; \">You will ask the child to show parts of his/her body, objects in the environment, and check their understanding of spatial terms in English. The directions can be read in Luganda or English but the vocabulary words are stated in English.  Note the answers in the following manner:</span></p><ul><li style=\"margin: 0px; font-family: Arial; \">Touch the screen ONLY for each word that is <b>INCORRECT</b> so that it turns <span style=\"color: #ffcd42\"><b>YELLOW</b></span>.  </li><li style=\"margin: 0px; font-family: Arial; \"><p>Self-correcting: If the child initially gives a wrong answer but then corrects before the next item, count this item as correct. If you already marked the self-corrected letter as incorrect, touch it again to return to correct state.</p><p>Materials: a sheet of paper, pencil, rubber</p></li></ul>",
+    "enumeratorHelp": "",
+    "transitionComment": "",
+    "skippable": false,
+    "order": 4,
+    "prototype": "survey",
+    "name": "Subtask 3: English Vocabulary (EN)",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "locations": [],
+    "prompt": "",
+    "items": [
+      "Modou",
+      "wakes",
+      "up",
+      "very",
+      "early."
+    ],
+    "columns": 0,
+    "autostop": 0,
+    "timer": 60,
+    "gridLinkId": "",
+    "collection": "subtest",
+    "autostopLimit": 0,
+    "fontFamily": "",
+    "updated": "Wed Mar 02 2016 17:44:19 GMT+0100 (CET)",
+    "hash": "T8eRGZVkPrdLjzNSvIrwneADCsw=",
+    "displayCode": "",
+    "focusMode": false,
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "editedBy": "tangerine",
+    "rtl": false,
+    "backButton": false,
+    "language": ""
+  },
+  {
+    "_id": "47a8656f-804f-5b4c-690b-f7196afc4fd7",
+    "_rev": "2-cbe1f7e2bab6867a1c3f49cf6609f216",
+    "prompt": "5) Maloboozi ki agali mu \"say\", \"say\"?",
+    "name": "pa_phon_sound5",
+    "hint": "",
+    "order": 4,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/s/",
+        "value": "1"
+      },
+      {
+        "label": "/ae/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "4103ef2f-1c9e-3bb4-d44c-5bb04675d1b2",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Thu Oct 02 2014 16:57:49 GMT+0300",
+    "hash": "sVPGPhPDtpab4lHK4uGifnXeTBI=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "47cb54e1-a7b2-60a3-297f-89919031b1b7",
+    "_rev": "9-256d2bd01c4a1e0a2a1e149856ee3023",
+    "prompt": "13) <font color=blue>Waliwo omuntu akusomeramu oba gw’osoma naye ng’oli ewammwe?</font> </br>Does anyone read to you or with you at your home?  ",
+    "name": "L_13",
+    "hint": "",
+    "order": 26,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know/No response",
+        "value": "88"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "1e29a12b-be3f-e0f9-522d-49b1f87ec236",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Feb 29 2016 08:42:17 GMT+0300 (E. Africa Standard Time)",
+    "hash": "KaWzSbawCBCpKv8pMFQVLaqD1lA=",
+    "displayCode": "",
+    "fromInstanceId": "inlb-lzgi-lgtj"
+  },
+  {
+    "_id": "4e711481-4e8a-fc35-2aa2-2d538b884d19",
+    "_rev": "2-29d132d7e2975c1f8ab25e894ed932f7",
+    "prompt": "3) Lwaki maama wa Lule amugulira ebitabo bingi?",
+    "name": "r_list_comp3",
+    "hint": "[asobole okufuuka omusomesa/okumwagazisa okusoma/asobole okubisoma/kubanga ayagala nnyo okusoma ebitabo/asobole okuyiga]",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "c6629dac-7fd7-5729-6827-39217d8fd1b7",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "3eed98c8-0e07-965d-a4d8-fbd5faeab671",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:17:01 GMT+0300",
+    "hash": "/LFP6oFzExuoKOAY4Icr//5JdL8=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "53ee81c3-c515-ad27-b5c5-c739665b855c",
+    "_rev": "2-abc1c5d3347072b1413573aad65dd9f0",
+    "prompt": "9) Nnyingo ki eziri mu \"kabaka\", \"kabaka\"?",
+    "name": "r_pa_phon_sound9",
+    "hint": "[Say each word twice]",
+    "order": 8,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/ka/",
+        "value": "1"
+      },
+      {
+        "label": "/ba/",
+        "value": "2"
+      },
+      {
+        "label": "/ka/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "badf1666-a3f3-4191-43d4-ab20ada771e5",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"r_pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:51:31 GMT+0300",
+    "hash": "OBBE+DIAQHHVqkvmuCQxjdoMFzo=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "556f477e-23fa-31d7-21e0-f18320b99c70",
+    "_rev": "1-4938b749cf8b3ee8775246d3519275c9",
+    "prompt": "3a) Stream",
+    "name": "section",
+    "hint": "[For example, in a P3 class, a pupil might be in P3a or P3b.]",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "[a]",
+        "value": "1"
+      },
+      {
+        "label": "[b]",
+        "value": "2"
+      },
+      {
+        "label": "[c]",
+        "value": "3"
+      },
+      {
+        "label": "[d]",
+        "value": "4"
+      },
+      {
+        "label": "[e]",
+        "value": "5"
+      },
+      {
+        "label": "Other (specify)",
+        "value": "6"
+      },
+      {
+        "label": "N/A",
+        "value": "88"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "69a0df5a-e8aa-f199-b751-167d39792564",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": true,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "3W7ylZfSmrntgQhHuCBoilANumA=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "5e3de311-bd97-468d-798d-7a6fad909a67",
+    "_rev": "4-c9e6e140cfc7b6fe9a2d1cc67113ac8c",
+    "prompt": "2) What does Sam have? ",
+    "name": "read_comp2",
+    "hint": "[goats]",
+    "order": 1,
+    "linkedGridScore": 8,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "94e3fa7a-6a24-836a-6f29-589978387c2b",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "52828ebe-6a89-e2d9-8022-1761abc67bbd",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 08:42:28 GMT+0300",
+    "hash": "IciwmCGR5nn6zGPw5CZiiKPjlFo=",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "displayCode": ""
+  },
+  {
+    "_id": "601ce17d-048f-3385-5d8a-b3f754c2af93",
+    "_rev": "1-5b31225ab964d1d322ce854482957fd3",
+    "prompt": "2a) Stream",
+    "name": "section",
+    "hint": "For example, in a P3 class, a pupil might be in P3a or P3b.",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "[a]",
+        "value": "1"
+      },
+      {
+        "label": "[b]",
+        "value": "2"
+      },
+      {
+        "label": "[c]",
+        "value": "3"
+      },
+      {
+        "label": "[d]",
+        "value": "4"
+      },
+      {
+        "label": "[e]",
+        "value": "5"
+      },
+      {
+        "label": "Other (specify)",
+        "value": "6"
+      },
+      {
+        "label": "N/A Only one stream",
+        "value": "88"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "69a0df5a-e8aa-f199-b751-167d39792564",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": true,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "nSW9f7TiMSswNINUiVFKDnejNNc=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "61c6b610-a445-f86f-ea93-2e85adc24ec3",
+    "_rev": "5-a1955d2cdf8687b524d32e530dc77976",
+    "prompt": "3) Ku ntebe yasanga ko amaggwa ameka?",
+    "name": "r_read_comp3",
+    "hint": " [abiri]",
+    "order": 2,
+    "linkedGridScore": 32,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "692b12c6-b0c7-ff30-2e09-6bcad775bd94",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "aa1df65d-7e1d-4f31-c900-d51059365cdc",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:03:22 GMT+0300",
+    "hash": "2n14nbqfSMRa1LB2bseNUBKrvVg=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "647605d4-fd51-1a3c-c9c6-e399f9eac38c",
+    "_rev": "8-866061978296cdba0c787ef5f0de0462",
+    "prompt": "11) <font color=blue>Waliwo olunaku lwonna omusomesa wo lw’atajja ku ssomero sabbiiti eyise?</font> </br>Is there any day that your teacher did not come to school last week?  ",
+    "name": "L_11",
+    "hint": "Do not include or count absence due to holiday.  ",
+    "order": 23,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know/No response",
+        "value": "88"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "2ab516e6-a1b2-b59e-be74-8e825dcf61d7",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:06 GMT+0300",
+    "hash": "zO5jCChABVBIqv+oSK1TGytzWks=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "6494acc5620ea4c30041af12970860a6",
+    "_rev": "12-7733dc72db872f373d87ffe8b9f8cc97",
+    "prompt": "2b) <font color=blue>Lulimi ki lwosinga okwogera awaka ebiseera ebisinga obungi?</font> </br>What language do you speak at home most of the time?",
+    "name": "L_2b",
+    "hint": "",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "English",
+        "value": "1"
+      },
+      {
+        "label": "Runyankore/Rukiga",
+        "value": "2"
+      },
+      {
+        "label": "Other",
+        "value": "3"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "3ce3a66c-7c77-1675-335d-d4acb7787922",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:29:57 GMT+0300",
+    "hash": "19ifk1Dvu5T3QEbbO3jFukGag3o=",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"L_2\")isnt\"0\"",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "6494acc5620ea4c30041af1297089822",
+    "_rev": "7-c5f56ad44468d5e41ce20c478ed14848",
+    "prompt": "3b) <font color=blue>Omusomesa wo akusomesa mu lulimi ki ebiseera ebisinga obungi?</font> </br>What language does your teacher teach you in most of the time?",
+    "name": "L_3b",
+    "hint": "",
+    "order": 5,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "English",
+        "value": "1"
+      },
+      {
+        "label": "Runyankore/Rukiga",
+        "value": "2"
+      },
+      {
+        "label": "Other",
+        "value": "3"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "57878cd2-1b3b-3404-8cc0-a9a660913ab7",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:29:58 GMT+0300",
+    "hash": "/Mu6kRwDBmutClYefF5Q/I65ED0=",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"L_3a\")isnt\"0\"",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "6494acc5620ea4c30041af129708c194",
+    "_rev": "7-355803272be42d1815c8c1f08166af42",
+    "prompt": "6h) <font color=blue>Mulina eggaali awaka?</font> </br>Do you have a bicycle at your home?",
+    "name": "L_6h",
+    "hint": "",
+    "order": 15,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know",
+        "value": "8"
+      },
+      {
+        "label": "No response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "caf35084-3e91-fa1b-f2d4-94b71bdba9b7",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:02 GMT+0300",
+    "hash": "FhI961bXvhaeejKGbwDPojMdoeg=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "6494acc5620ea4c30041af129708c1e9",
+    "_rev": "7-81e40dea5341423481edf332cde10206",
+    "prompt": "6i) <font color=blue>Mulina pikipiki awaka?</font> </br>Do you have a motorcycle at your home?",
+    "name": "L_6i",
+    "hint": "",
+    "order": 16,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know",
+        "value": "8"
+      },
+      {
+        "label": "No response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "c366d1a0-b82c-5893-e041-27ca0094c1bd",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:02 GMT+0300",
+    "hash": "kBzZwLQTUJ5US6/Ky2oIA3eitZQ=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "662ec40f-e37c-b7bf-1296-2031bd03260b",
+    "_rev": "10-5bd7f12c2d9b764a9139d3835623b093",
+    "prompt": "1) <font color=blue>Obeera n’ani?</font> </br>Whom do you stay with?  ",
+    "name": "L_1",
+    "hint": "Who is the head of the household or the primary care provider?  ",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Mother and father",
+        "value": "1"
+      },
+      {
+        "label": "Mother",
+        "value": "2"
+      },
+      {
+        "label": "Father",
+        "value": "3"
+      },
+      {
+        "label": "Grandparent",
+        "value": "4"
+      },
+      {
+        "label": "Aunt/Uncle",
+        "value": "5"
+      },
+      {
+        "label": "Older sibling",
+        "value": "6"
+      },
+      {
+        "label": "Guardian/Other Caregiver",
+        "value": "7"
+      },
+      {
+        "label": "Other",
+        "value": "8"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "01152156-4075-3db4-69b7-ce51d891898a",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Thu Oct 08 2015 15:47:29 GMT+0300 (E. Africa Standard Time)",
+    "hash": "dTYnGB7k3EJqPBCthQfpReoFRpM=",
+    "displayCode": "",
+    "fromInstanceId": "buoh-xrxi-azmv"
+  },
+  {
+    "_id": "73956106-9874-34ad-bae1-7d9cf4e519ac",
+    "_rev": "1-6502b9a5157b27f310c5b7f061cfae8c",
+    "prompt": "5) What are the sounds in \"say\"?",
+    "name": "pa_phon_sound5",
+    "hint": "",
+    "order": 4,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/s/",
+        "value": "1"
+      },
+      {
+        "label": "/ae/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "4103ef2f-1c9e-3bb4-d44c-5bb04675d1b2",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "lxIyoY0SI558CsqQS46WAnK6ZXo=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "7493e3be-26f8-c9f2-5ff8-b7d652842c91",
+    "_rev": "1-d5e625a77447d31191870d7d3518f469",
+    "prompt": "2) Class",
+    "name": "grade",
+    "hint": "",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "[P1]",
+        "value": "1"
+      },
+      {
+        "label": "[P3]",
+        "value": "3"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "d5702840-c22b-e3f2-ce36-30e9534c01f9",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "FjFKX8iiicxiph35BDf2pDHmKJM=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "7692670a-a36d-39cd-a566-086561305a95",
+    "_rev": "1-32d0cc38685b90eaefdfa98039ae9b62",
+    "prompt": "4) Multigrade class",
+    "name": "multigrade",
+    "hint": "",
+    "order": 4,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "7a656df8-980c-2377-6428-641eb51d033f",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "HYXO1K79NNIt4SLslAcVdqEgnWU=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "7839d33f-b2a5-0889-dbee-c4141e157cc5",
+    "_rev": "2-3e7f0f23afa18acdbb14c087d411996c",
+    "prompt": "3) Maloboozi ki agali mu \"up\", \"up\"?",
+    "name": "pa_phon_sound3",
+    "hint": "",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/u/",
+        "value": "1"
+      },
+      {
+        "label": "/p/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "b89445d8-b93e-bf92-d89d-22bd131c9ec5",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Thu Oct 02 2014 16:57:07 GMT+0300",
+    "hash": "OHg4dmguIHpYqH2xP2p4iu6dWNA=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "794116a0-ba0c-01a4-246b-2f4906a54587",
+    "_rev": "1-1bed05f201bc806fb4b669d96eeff22b",
+    "prompt": "4) Kä i loko……………………. i nïäŋ?",
+    "name": "L_4",
+    "hint": "",
+    "order": 5,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "bdd70b3d-2a75-12d1-8ae5-b24c52209955",
+    "collection": "question",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "CGpB1y5CcAXM8ybrMUglZt4Gu7A=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "7af3d306-b7c6-18b7-1070-5b13c154ebef",
+    "_rev": "4-f8ef945d4b1a1419e80ccc9938fd885c",
+    "prompt": "3) What did Sam play? ",
+    "name": "read_comp3",
+    "hint": "[football]",
+    "order": 2,
+    "linkedGridScore": 34,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "94e3fa7a-6a24-836a-6f29-589978387c2b",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "aa1df65d-7e1d-4f31-c900-d51059365cdc",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 08:43:01 GMT+0300",
+    "hash": "zBiquXN6jV4RkjIR2MOXi+7rbm0=",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "displayCode": ""
+  },
+  {
+    "_id": "7c813f0e-1df6-d3fc-f475-58fefc97d275",
+    "_rev": "1-814b8e75098abce93af2aee63a0ee3a3",
+    "prompt": "3) Multigrade class",
+    "name": "multigrade",
+    "hint": "",
+    "order": 4,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "7a656df8-980c-2377-6428-641eb51d033f",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "z1QYSoFrYjt7vQahwhigFbNykWE=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "7d9967e0-265f-89ed-6272-071f07aace57",
+    "_rev": "7-32ea8507458df6618a98e1f4c6896c93",
+    "prompt": "3c) Specify other",
+    "name": "L_3c",
+    "hint": "",
+    "order": 6,
+    "linkedGridScore": 0,
+    "type": "open",
+    "options": [],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "e556ce09-7fb1-d5bd-e8a5-ba3040c5368e",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"L_3b\")isnt\"3\"",
+    "skippable": true,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:29:58 GMT+0300",
+    "hash": "/dyPhN8llpFNa1Nfob3bjZfVY0s=",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "displayCode": ""
+  },
+  {
+    "_id": "8747eb28-f36b-29aa-7d5d-7ccb1b2b253a",
+    "_rev": "8-650c8d6ce87562a9c81cd9af438cdab1",
+    "prompt": "6d) <font color=blue>Ewammwe mulinayo ttivi?</font> </br>Do you have television at your home?  ",
+    "name": "L_6d",
+    "hint": "",
+    "order": 13,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know",
+        "value": "8"
+      },
+      {
+        "label": "No response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "171c5e01-e677-e53f-21ac-3bbb93d7da36",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:01 GMT+0300",
+    "hash": "N9TmGZs59RggDJAzvq0h8Y+J3fo=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "889fe1e52df62b54904fe7750103097d",
+    "_rev": "4-7f0ff90c8dfd138eebb0638a6bbbec46",
+    "prompt": "Please confirm this is a <b><u> P1</u></b> learner:",
+    "name": "grade_p1_confirm",
+    "hint": "If NOT a P1 learner, please revise your response to question 1 accordingly.",
+    "order": 7,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes, I confirm this is a P1 learner",
+        "value": "1"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "2a16f20c-1b1a-dd44-ebea-38102cbccb86",
+    "editedBy": "Remmy",
+    "updated": "Thu Sep 04 2014 08:43:28 GMT+0300",
+    "hash": "qtLY7xOCMcEQNxF5mFviAk0TJKo=",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"grade\")isnt\"1\"",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "889fe1e52df62b54904fe77501031097",
+    "_rev": "3-975074766bb23f9013360b9ec5bab48a",
+    "prompt": "Please confirm this is a <b><u> P2</u></b> learner:",
+    "name": "grade_p2_confirm",
+    "hint": "If NOT a P2 learner, please revise your response to question 1 accordingly.",
+    "order": 8,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes, I confirm this is a P2 learner.",
+        "value": "1"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "8bcbaf3a-87ef-43ac-f159-1143b375cc0c",
+    "editedBy": "Remmy",
+    "updated": "Thu Sep 04 2014 08:43:50 GMT+0300",
+    "hash": "eh5xW0l9fKie00I8zgpIaWj8TKU=",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"grade\")isnt\"2\"",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "889fe1e52df62b54904fe77501031e1d",
+    "_rev": "5-f3bd0a39bdc3a9a1ad54055728a3af5a",
+    "prompt": "Please confirm this is a <b><u> P3</u></b> learner:",
+    "name": "grade_p3_confirm",
+    "hint": "If NOT a P3 learner, please revise your response to question 1 accordingly.",
+    "order": 9,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes, I confirm this is a P3 learner.",
+        "value": "1"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "226d4ed8-9ecc-f51c-8333-858480660698",
+    "editedBy": "Remmy",
+    "updated": "Thu Sep 04 2014 08:43:06 GMT+0300",
+    "hash": "EZX+CsvR8sydoJmtqARr7e/NpDQ=",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"grade\")isnt\"3\"",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "889fe1e52df62b54904fe77501032bbb",
+    "_rev": "3-8d3b08c89d3a8e893238b9cfb3e48eb4",
+    "prompt": "Please confirm this is a <b><u> P4</u></b> learner:",
+    "name": "grade_p4_confirm",
+    "hint": "If NOT a P4 learner, please revise your response to question 1 accordingly.",
+    "order": 10,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes, I confirm this is a P4 learner.",
+        "value": "1"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "6478b67d-b76d-c602-1c38-e8fc54d6c1b0",
+    "editedBy": "Remmy",
+    "updated": "Thu Sep 04 2014 08:44:15 GMT+0300",
+    "hash": "YrOkmv/GIt+TdHtOkJsv7DT5V3Y=",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"grade\")isnt\"4\"",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "8de35bb1-4120-da0e-7b58-38a6fd922fb6",
+    "_rev": "1-f4d2f6fd3e8611390068c47add1a1d1f",
+    "prompt": "2a) Lëb aŋo ame i märö loko paco?",
+    "name": "L_2a",
+    "hint": "[Multiple responses are allowed]",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "Luganda",
+        "value": "1"
+      },
+      {
+        "label": "Lango",
+        "value": "2"
+      },
+      {
+        "label": "Ateso",
+        "value": "3"
+      },
+      {
+        "label": "Runyankole/Rukiga",
+        "value": "4"
+      },
+      {
+        "label": "English",
+        "value": "5"
+      },
+      {
+        "label": "Other (specify in L_2b)",
+        "value": "6"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "36bfccde-a6d6-12eb-c6c9-ea86c2873595",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "MbKmH1KDy8jZxs/KIMinJ1bGCWs=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "_rev": "31-c4154f2ce7c42c8e8c22c48292f7ba8c",
+    "studentDialog": "",
+    "enumeratorHelp": "",
+    "transitionComment": "",
+    "skippable": false,
+    "order": 0,
+    "prototype": "survey",
+    "gridLinkId": "",
+    "name": "Student Information",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "collection": "subtest",
+    "autostopLimit": 0,
+    "updated": "Wed Mar 02 2016 17:44:19 GMT+0100 (CET)",
+    "hash": "ISABDHRRt/RP9GVPthwK9TgalUY=",
+    "displayCode": "",
+    "fontFamily": "",
+    "focusMode": false,
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "editedBy": "tangerine",
+    "rtl": false,
+    "backButton": false,
+    "language": ""
+  },
+  {
+    "_id": "90b7273a-0b17-5369-6ea1-d1545db178ec",
+    "_rev": "7-f89984d251ea2106d844cf465929ca87",
+    "prompt": "8b) Specify other:",
+    "name": "L_8b",
+    "hint": "",
+    "order": 20,
+    "linkedGridScore": 0,
+    "type": "open",
+    "options": [],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "f935576d-009a-0d13-8549-5958d77643fb",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"L_8\")isnt\"6\"",
+    "skippable": true,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:04 GMT+0300",
+    "hash": "r2BV9yXxrxmAYZw7og/haYg/Al4=",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "displayCode": ""
+  },
+  {
+    "_id": "92dc6667-508e-4192-daad-6b48ea81f465",
+    "_rev": "1-48cfb7481b65d6db41f2279a9a30f5ea",
+    "prompt": "7) What are the sounds in \"map\"?",
+    "name": "pa_phon_sound7",
+    "hint": "",
+    "order": 6,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/m/",
+        "value": "1"
+      },
+      {
+        "label": "/a/",
+        "value": "2"
+      },
+      {
+        "label": "/p/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "a4fc9e4e-f10a-3002-6dfc-3b6fd9165867",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "6LhhbE7vGoxCjOEOSDFeEv1ZnpM=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "94e3fa7a-6a24-836a-6f29-589978387c2b",
+    "_rev": "58-c7ac25993500da9169e8bf9fe94734b3",
+    "studentDialog": "<p>When 60 seconds are up or if the child finished reading the passage in less than 60 seconds, REMOVE the passage from the child's view, and ask the questions after saying:<br /><br /><b>Now I will ask you a few questions about the story you just read. Try to answer the questions as well as you can. <br /><br /><font color=\"#3333ff\">Kati ŋŋenda kubuuzaayo ebibuuzo bitonotono ku ebyo by’osomye.  Gezaako okuddamu obulungi nga bw’osobola.</font></b></p><p style=\"margin-left: 40px;\">-  Ask the child all the questions presented on the screen. They are automatically aligned with how far the child has read in the Oral Reading Passage.</p><p style=\"margin-left: 40px;\">- Mark each question as either “Correct” or “Incorrect”. Your selection will turn yellow. If the child does not answer after <u>10 seconds,</u> mark as “No response”, and continue to the next question.</p><p style=\"margin-left: 40px;\">- Responses with a similar meaning to those provided should be marked correct. If a child says “I don't know,” mark as “Incorrect”.</p>",
+    "enumeratorHelp": "<br>",
+    "transitionComment": "<b>Good Effort! Let's go on to the next section. / <font color=\"#3333ff\">Weebale nnyo. Tweyongereyo.</font><br></b>",
+    "skippable": true,
+    "order": 3,
+    "prototype": "survey",
+    "name": "Subtask 2b. Reading Comprehension (EN)",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "locations": [],
+    "prompt": "",
+    "items": [
+      "Modou",
+      "wakes",
+      "up",
+      "very",
+      "early."
+    ],
+    "columns": 0,
+    "autostop": 0,
+    "timer": 60,
+    "gridLinkId": "0b78e361-7c54-8309-dbde-d1162701f40d",
+    "collection": "subtest",
+    "autostopLimit": 0,
+    "updated": "Wed Mar 02 2016 17:44:19 GMT+0100 (CET)",
+    "hash": "ye3IOuwzRF+CzNNQ2303Dnzpdgw=",
+    "displayCode": "@skip() if ResultOfPrevious(\"grade_p2_confirm\") isnt \"1\"",
+    "fontFamily": "",
+    "focusMode": false,
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "editedBy": "tangerine",
+    "rtl": false,
+    "backButton": false,
+    "language": ""
+  },
+  {
+    "_id": "9657dfaa-d40d-6459-ec40-bb8534b02c08",
+    "_rev": "9-c8f55de011f6541004c5a3df8d78aa64",
+    "prompt": "6c) <font color=blue>Ewammwe mulinayo amasannyalaze?</font> </br>Do you have electricity at your home?  ",
+    "name": "L_6c",
+    "hint": "Electricity also includes solar, generator",
+    "order": 12,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know",
+        "value": "8"
+      },
+      {
+        "label": "No Response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "a03b585f-01fc-daf9-4240-7551575dfe45",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:00 GMT+0300",
+    "hash": "WPV6GH42y/SlCTJ/cSvyfQAbHc0=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "96864289-9e3f-56cb-91e1-492f5fc0d67d",
+    "_rev": "3-9110a63c72cd78cf0652926c18b74ba3",
+    "prompt": "5) Nnyingo ki eziri mu \"kutu\", \"kutu\"?",
+    "name": "r_pa_phon_sound5",
+    "hint": "[Say each word twice]",
+    "order": 4,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/ku/",
+        "value": "1"
+      },
+      {
+        "label": "/tu/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "4103ef2f-1c9e-3bb4-d44c-5bb04675d1b2",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:48:56 GMT+0300",
+    "hash": "kvYwATvh0aDGu4bqDE6md8WhvTU=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "96990591-be50-3447-21a3-72a9bb7c86f5",
+    "_rev": "8-599e2aff44cf5b7cf2435dc93a88b11c",
+    "prompt": "9) <font color=blue>Bw’oba nga wali mu pulayimale omwaka oguwedde, kibiina ki kye walimu?</font> </br>If you were in primary school last year, what class were you in?  What class were you in last year?  ",
+    "name": "L_9",
+    "hint": "",
+    "order": 21,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Not in primary school",
+        "value": "0"
+      },
+      {
+        "label": "P 1",
+        "value": "1"
+      },
+      {
+        "label": "P 2",
+        "value": "2"
+      },
+      {
+        "label": "P 3",
+        "value": "3"
+      },
+      {
+        "label": "P 4",
+        "value": "4"
+      },
+      {
+        "label": "Do not know/No response",
+        "value": "88"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "805a27b6-7a8f-f743-1500-7cff7d7faeb0",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:05 GMT+0300",
+    "hash": "bEV0pxzKKBKh3Q7oWfoEfL1K9o0=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "9afdec031b8c75e1e555a5c45b1a9865",
+    "_rev": "5-e576ec72d6155b36b2feb623fa790f82",
+    "prompt": "1) <font color=\"#3333ff\">Bino ssagala obisome kati. Ku lupapula luno, wa w'otandikira okusoma. Ndagawo n’olugalo lwo.</font>I don’t want you to read this now. On this page, where would you begin to read? Show me with your finger. ",
+    "name": "Orient_print1",
+    "hint": "[Child puts finger on the top row, left most word]",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "9afdec031b8c75e1e555a5c45b1a7e2c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "05f2a0c5-5f56-a69b-8824-89e7da5d75df",
+    "editedBy": "Remmy",
+    "updated": "Fri Feb 19 2016 10:56:28 GMT+0300 (E. Africa Standard Time)",
+    "hash": "ElPXXpU6HAClkOI2l4wJjzwfsSY=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "9afdec031b8c75e1e555a5c45b1aa1b6",
+    "_rev": "5-e6a072e8bf61e5f35a73108ae756c2a7",
+    "prompt": "2) (Assessor points to first word then says….) <font color=\"#3333ff\">Kati ndaga w'oddako okusoma.</font>Now show me where you would read next.",
+    "name": "Orient_print2",
+    "hint": "Point to first word and ask child \"where do you read after this?\" [Child moves finger from left to right]",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "9afdec031b8c75e1e555a5c45b1a7e2c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "f8fbcfbe-41f4-36c2-cb73-87d1154d22c5",
+    "editedBy": "Remmy",
+    "updated": "Fri Feb 19 2016 10:57:07 GMT+0300 (E. Africa Standard Time)",
+    "hash": "QFpdUxjYXV51Soo+YUvwDzkv/qI=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "9afdec031b8c75e1e555a5c45b1aa3e6",
+    "_rev": "4-bfc4bae0d37333efeccc716e165a5ed9",
+    "prompt": "3) Assessor points to the last word of the first line and says....<font color=\"#3333ff\">Bw'otuuka olunyiriri werukoma, wa w'oddako okusoma?</font>When you get to the end of the line, where would you read next? ",
+    "name": "Orient_print3",
+    "hint": "[Child moves finger to left most word of the second line]",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "9afdec031b8c75e1e555a5c45b1a7e2c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "4c00264d-e0e6-1466-b427-4e423cd77212",
+    "editedBy": "Remmy",
+    "updated": "Fri Feb 19 2016 10:57:51 GMT+0300 (E. Africa Standard Time)",
+    "hash": "6AvN0AuBP8epOhIOLZVG0CYhNhM=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": ""
+  },
+  {
+    "_id": "a70b59b5-dd51-1247-a4c6-fb56b7cbb5e1",
+    "_rev": "2-ae1b12b57a739733eb12fa5a2441bac2",
+    "prompt": "1) Maloboozi ki agali mu \"if\", \"if\"?",
+    "name": "pa_phon_sound1",
+    "hint": "",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/i/",
+        "value": "1"
+      },
+      {
+        "label": "/f/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "6c82e723-ac04-e07a-2b72-01af77c39d33",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Thu Oct 02 2014 16:56:14 GMT+0300",
+    "hash": "2I4xVA+FrDIoR5qiqzUeKFM7g0U=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "aacbb0cf-fb45-f425-27ee-7d8d91697142",
+    "_rev": "2-fbc7aa2e5ef7f9208c529df986826bb6",
+    "prompt": "7) Maloboozi ki agali mu \"map\", \"map\"?",
+    "name": "pa_phon_sound7",
+    "hint": "",
+    "order": 6,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/m/",
+        "value": "1"
+      },
+      {
+        "label": "/a/",
+        "value": "2"
+      },
+      {
+        "label": "/p/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "a4fc9e4e-f10a-3002-6dfc-3b6fd9165867",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Thu Oct 02 2014 16:58:49 GMT+0300",
+    "hash": "S/QaSlPYXyk0Smxwveac2pKzu1M=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "ab013923-dce7-9ec3-1d0f-174ba55eb43e",
+    "_rev": "2-aa50773711b9998ae4f30ec019abc97e",
+    "prompt": "2) Nnyingo ki eziri mu  \"weta\", \"weta\"?",
+    "name": "r_pa_phon_sound2",
+    "hint": "[Say each word twice]",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/we/",
+        "value": "1"
+      },
+      {
+        "label": "/ta/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "5ba2f21e-bce9-7d6f-916e-0b66e56bb227",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:47:09 GMT+0300",
+    "hash": "t+ifGMT9GpiR3VQghsmrnB7S9Z4=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "ad3fbb5e-7441-ce1b-122a-b133665b2f96",
+    "_rev": "1-51498022a81ffafdcb4a196556701378",
+    "prompt": "2b) Other",
+    "name": "L_2b",
+    "hint": "",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "open",
+    "options": [],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "56746eb8-2e78-2cdc-5ded-e99f1e8c2d9a",
+    "collection": "question",
+    "skipLogic": "ResultOfMultiple(\"L_2a\") isnt \"6\" ",
+    "skippable": true,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "+tW/930d9JL6JjWZHE7tH2GFTkw=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "aecf401a-2a7e-c24b-b84e-857492cc0c83",
+    "_rev": "7-5a2000d8b3d8e40b55816db79cbba42c",
+    "prompt": "4) observe learner:  Is learner wearing shoes?  ",
+    "name": "L_4",
+    "hint": "",
+    "order": 7,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "6ddb66c0-62b8-376e-d3ce-dec2f50cbf94",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:29:58 GMT+0300",
+    "hash": "hRZZu3Y/UHSJCuP4GqhQWmnzDrI=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "b42f6a68-121d-f289-732b-3b3ec07f5c79",
+    "_rev": "8-14ada81eb45e8230821496fdbee32005",
+    "prompt": "3a) <font color=blue>Omusomesa wo akusomeseza mu Luganda ebiseera ebisinga obungi?</font> </br>Does your  teacher teach you in Luganda most of the time?  ",
+    "name": "L_3a",
+    "hint": "",
+    "order": 4,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "d5f8a2cb-449a-7de4-9e38-cea321ac3a1b",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:29:58 GMT+0300",
+    "hash": "Rtf2p2EhYXMoXGbmj3mNGaTEdHQ=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "b5a0d23a-1da5-4438-c91b-eeb5f4b7b8bd",
+    "_rev": "4-85f596aecfb2adfca31f531f5ce69f41",
+    "prompt": "2) Kaye yawumulira wa? ",
+    "name": "r_read_comp2",
+    "hint": "[ku ntebe] ",
+    "order": 1,
+    "linkedGridScore": 15,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "692b12c6-b0c7-ff30-2e09-6bcad775bd94",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "52828ebe-6a89-e2d9-8022-1761abc67bbd",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Sat Sep 12 2015 12:13:31 GMT+0300 (E. Africa Standard Time)",
+    "hash": "j/TEGvJTqtdDfx8EQZnmWiQXmcE=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "be649af0-638c-7ece-5919-bbd149e8c0c8",
+    "_rev": "9-c5191380dceb3bff5db04fc3c14b9749",
+    "prompt": "7) <font color=blue>Wasomako nursery nga tonnagenda mu kibiina ekisooka (P1)?</font> </br>Did you go to school before P1?  ",
+    "name": "L_7",
+    "hint": "(nursery or other school) if no skip to question 9",
+    "order": 18,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Do not know",
+        "value": "8"
+      },
+      {
+        "label": "No response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "34461fa0-511d-7a77-e6e3-284c782aa092",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:03 GMT+0300",
+    "hash": "YgWpDnXNX+ATtm5Ls2rt/y1jgL0=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "befe9056-903d-975b-4b07-d5e7d80fdfd3",
+    "_rev": "2-a17c6121e2822637c9f72c137088294c",
+    "prompt": "10) Maloboozi ki agali mu \"lick\", \"lick\"?",
+    "name": "pa_phon_sound10",
+    "hint": "",
+    "order": 9,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/l/",
+        "value": "1"
+      },
+      {
+        "label": "/i/",
+        "value": "2"
+      },
+      {
+        "label": "/ck/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "6be346ad-2a2a-a1d1-607d-35056ee72182",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Thu Oct 02 2014 16:59:55 GMT+0300",
+    "hash": "JYG7kkCTczeml2Gj7bjkey8jT9E=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "bf4ee3ee-620b-ac87-836e-27fa1e9aa823",
+    "_rev": "1-73192feda13ae7e11baad11e9ad851f7",
+    "prompt": "2b) Other",
+    "name": "section_other",
+    "hint": "",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "open",
+    "options": [],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "ec3353c5-6ca5-1245-47ce-62e4fc414b02",
+    "collection": "question",
+    "skipLogic": "parseInt(ResultOfQuestion( \"section\" ) ) < 6 or ResultOfQuestion(\"section\") is \"88\"",
+    "skippable": true,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "QdfAf/lqLNxCz4TmQRPQDEDaNoo=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "c6092cc0-4a5a-0308-9998-f5584cde2348",
+    "_rev": "1-0d28f91b02c1da1cdded2b89e2dfe123",
+    "prompt": "3) What are the sounds in \"up\"?",
+    "name": "pa_phon_sound3",
+    "hint": "",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/u/",
+        "value": "1"
+      },
+      {
+        "label": "/p/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "b89445d8-b93e-bf92-d89d-22bd131c9ec5",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "0GY4XjsCbPKIjz514G2oUsKc4u8=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "c72cf379-4913-e0c3-880e-df3f6c62e471",
+    "_rev": "8-590ff5aab151264b263836ed9c722d93",
+    "prompt": "6e) <font color=blue>Mulina kompyuta ewammwe?</font> </br>Do you have a computer at your home?  ",
+    "name": "L_6e",
+    "hint": "",
+    "order": 14,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      },
+      {
+        "label": "Don't know",
+        "value": "8"
+      },
+      {
+        "label": "No response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "cca1a289-9902-5ace-abf5-caa5469e970f",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:30:01 GMT+0300",
+    "hash": "YHNiQTroH6e/OD8qhBhTyDpYuoo=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "c8077185-e994-073b-452c-9d5a8102a8de",
+    "_rev": "3-521f993dcac37ec272196269bdd74b0d",
+    "prompt": "6) Maloboozi ki agali mu \"dog\", \"dog\"?",
+    "name": "pa_phon_sound6",
+    "hint": "",
+    "order": 5,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/d/",
+        "value": "1"
+      },
+      {
+        "label": "/o/",
+        "value": "2"
+      },
+      {
+        "label": "/g/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "a338a3c3-c19d-e1e1-0fd3-25c4e488192e",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Mon Sep 14 2015 18:05:47 GMT+0300 (E. Africa Standard Time)",
+    "hash": "uFn8NsT5cbT8JOPViz6QASl/Gig=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "c838b56b-7d19-0982-0c1e-cf2e82738d84",
+    "_rev": "1-ff9c6a39164bfdcdbdf86fe1026eea1c",
+    "prompt": "1) I bedo wun kede ŋa?",
+    "name": "L_1",
+    "hint": "",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Mother and father",
+        "value": "1"
+      },
+      {
+        "label": "Mother",
+        "value": "2"
+      },
+      {
+        "label": "Father",
+        "value": "3"
+      },
+      {
+        "label": "Grandparent",
+        "value": "4"
+      },
+      {
+        "label": "Aunt/Uncle",
+        "value": "5"
+      },
+      {
+        "label": "Older sibling",
+        "value": "6"
+      },
+      {
+        "label": "Guardian/Other Caregiver",
+        "value": "7"
+      },
+      {
+        "label": "Other",
+        "value": "8"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "01152156-4075-3db4-69b7-ce51d891898a",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "IwDXUlL1ht93I4ApQ725adV8MDg=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "ccbf99ff-e9e2-e7db-7a85-f8bd8d943ee9",
+    "_rev": "3-65f53f3fc1053b23314263bf27740102",
+    "prompt": "4) Omusomesa bweyabuuza ataddewo amaggwa abayizi bassoka kukola ki? ",
+    "name": "r_read_comp4",
+    "hint": "[kwegaana, begaana]  ",
+    "order": 3,
+    "linkedGridScore": 40,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "692b12c6-b0c7-ff30-2e09-6bcad775bd94",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "0951089d-f5f7-d6c6-4fbf-d277fa880561",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:04:24 GMT+0300",
+    "hash": "uD2oU6eTP+AtiKk8QXgqVKOKIqM=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "ce39a8e3-2bec-6674-927f-67ab46342343",
+    "_rev": "1-1644fa0b63358bb798114b6e9af110bd",
+    "prompt": "4) What are the sounds in \"me\"?",
+    "name": "pa_phon_sound4",
+    "hint": "",
+    "order": 3,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/m/",
+        "value": "1"
+      },
+      {
+        "label": "/ee/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "c6137e81-3795-bb9d-f777-d6c7489bfe3f",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "ntG+QJRfKqI/vV/mNmyVzj0HVsU=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "cf53ed22-836f-5bee-da7b-3c642db3a896",
+    "_rev": "2-d38df99831ad9b429c4c7a67ead83b5a",
+    "prompt": "2) Maloboozi ki agali mu \"too\", \"too\"?",
+    "name": "pa_phon_sound2",
+    "hint": "",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/t/",
+        "value": "1"
+      },
+      {
+        "label": "/oo/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "f211b3e4-16f6-42bd-505b-ff2e9d221902",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "5ba2f21e-bce9-7d6f-916e-0b66e56bb227",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Thu Oct 02 2014 16:56:37 GMT+0300",
+    "hash": "DzXK+eTdydmWu6X6oPYj3GVIIGE=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "d029ef07-e9c6-6965-da5c-48bfaae285fa",
+    "_rev": "4-97a532e90304c65f447c4161ddc11cd0",
+    "prompt": "Now I will say other words and you show me examples of those words around us. /<font color=blue> Kati ngenda kwogera ekigambo nga bw’ondaga kyekitegeeza wano wetuli.</font> </br>",
+    "name": "vocab_eng2",
+    "hint": "",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "pencil",
+        "value": "1"
+      },
+      {
+        "label": "shoes",
+        "value": "2"
+      },
+      {
+        "label": "book",
+        "value": "3"
+      },
+      {
+        "label": "rubber",
+        "value": "4"
+      },
+      {
+        "label": "paper",
+        "value": "5"
+      },
+      {
+        "label": "ground (floor)",
+        "value": "6"
+      },
+      {
+        "label": "All correct",
+        "value": "9"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "45fb0b95-dc44-3e85-9417-e7da425e683f",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "d7778640-70ac-a4c7-316b-777ea3fcf474",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Wed Sep 03 2014 08:59:09 GMT+0300",
+    "hash": "f+zFFVvB0bWNUQ0eIlXNePLg7kY=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "db5fa3c2-a8ed-5c45-0a28-65ba68d2ba0d",
+    "_rev": "5-fdd4b5641b780e8387a456b87dfc20fc",
+    "prompt": "5) What happened to Sam’s homework? ",
+    "name": "read_comp5",
+    "hint": "[a goat ate it; it was gone]",
+    "order": 4,
+    "linkedGridScore": 56,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "94e3fa7a-6a24-836a-6f29-589978387c2b",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "c8b46eda-54c9-3231-5105-9ca608fd499d",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Sep 21 2015 12:41:05 GMT+0300 (E. Africa Standard Time)",
+    "hash": "4WjtxwV2yVTElJ9IgqdGhNSmQyo=",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "displayCode": ""
+  },
+  {
+    "_id": "dbf1909e-be67-cecb-baa8-920f391587a2",
+    "_rev": "4-04148896084bb3c6ae29e2e04ad766b7",
+    "prompt": "4) Who calls Sam? ",
+    "name": "read_comp4",
+    "hint": "[his sister]",
+    "order": 3,
+    "linkedGridScore": 39,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "94e3fa7a-6a24-836a-6f29-589978387c2b",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "0951089d-f5f7-d6c6-4fbf-d277fa880561",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 08:43:28 GMT+0300",
+    "hash": "hpYJKXM46LTsPP07EEpQm46aK28=",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "displayCode": ""
+  },
+  {
+    "_id": "e0464f60-7bbc-31e8-95f2-19f8bdf6aff6",
+    "_rev": "12-e83edc1a44200157c0dfbb99e15f89cd",
+    "prompt": "5b)   <font color=blue>Wakomye ddi okulya emmere/eky'okulya/eky'okunywa?</font> </br>When is the last time you ate a meal/ate food?",
+    "name": "L_5b",
+    "hint": "",
+    "order": 9,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "This morning before school",
+        "value": "1"
+      },
+      {
+        "label": "Yesterday evening",
+        "value": "2"
+      },
+      {
+        "label": "I ate some food at school today",
+        "value": "3"
+      },
+      {
+        "label": "Yesterday during the day",
+        "value": "4"
+      },
+      {
+        "label": "I did not eat today or yesterday",
+        "value": "5"
+      },
+      {
+        "label": "No response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "57d6a966-0c62-93c1-3125-4b8675afdf61",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:29:59 GMT+0300",
+    "hash": "rTssVwDybKFUkFSHmIGpnyR+uzU=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "e2d81d28-661f-a366-03c1-75bceb01e6b3",
+    "_rev": "73-f6f6fcb8f12984ac0789332c508b6fd1",
+    "studentDialog": "<p>Show the child the sheet of letters in the pupil stimuli booklet as you read the instructions. Say:<b style=\"font-weight: normal; \"><b> \"</b>Here is a page full of letters of the English alphabet. Please tell me the SOUNDS of as many letters as you can - not the NAMES of the letters, but the SOUNDS<b>.\"</b> </b></p><p><strong><font color=\"#3333ff\">Olupapula luuluno okuli ennyukuta za walifu eyo Luzungu. Mbuulira amaloboozi g’ennyukuta zonna z’omanyi—njagala MALOBOOZI gaazo so ssi MANNYA. </font></strong><br /><br />For example, the sound of this letter [point to u] is /u/ as in “up”.  <strong><font color=\"#3333ff\">Ekyokulabirako, eddoboozi ly’ennyukuta eno [point to u] liri  /u/ nga mu \"up\".</font></strong><br /><br />Let’s practise: tell me the sound of this letter. <strong><font color=\"#3333ff\"> Katwegezeemu: mbuulira eddoboozi ly’ennyukuta eno</font> </strong>[point to f]: </p><p>If the child responds correctly say:<b> Good, the sound of this letter is /f/. <font color=\"#3333ff\">Kirungi, eddoboozi ly’ennyukuta eno liri  /f/.</font></b><br /><br />If the child does not respond correctly, say: <b>The sound of this letter is /f/. <font color=\"#3333ff\">Eddoboozi ly’ennyukuta eno liri /f/.</font></b></p><p>Now try another one: tell me the sound of this letter. <strong><font color=\"#3333ff\">Kati gezaako eno: mbuulira eddoboozi ly’ennyukuta eno</font></strong> [point to L]:</p><blockquote>If the child responds correctly say<b>: Good, the sound of this letter is /l/.  <font color=\"#3333ff\">Kirungi, eddoboozi ly’ennyukuta eno liri /l/.</font></b><br /><br />If the child does not respond correctly, say:<b> The sound of this letter is /l/.  <font color=\"#3333ff\">Eddoboozi ly’ennyukuta eno liri /l/.</font></b></blockquote><p><b style=\"font-weight: normal; \">When I say “Begin,” please sound out the letters as quickly and carefully as you can. Tell me the sound of the letters, starting here and continuing this way.  </b><strong><font color=\"#3333ff\">Bwe ŋŋamba nti “Tandika,” wa amaloboozi g’ennyukuta mu bwangu ddala nga bw’osobola naye nga weegendereza. Tandikira wano weeyongereyo bw’oti. </font></strong>[Point to the first letter on the row after the example and draw your finger across the first line]. If you come to a letter sound you do not know, I will tell you to continue to the next one. If not, I will keep quiet and listen to you. Ready? Begin. <font color=\"#3333ff\"><strong>Nja kusirika nkuwulirize naye singa onosanga ennyukuta gy’otomanyi ddoboozi, nja kukugamba ogende mu maaso. Weetegese? Tandika</strong>.</font></p><blockquote><ul><li style=\"font-weight: normal; \">Start the timer when the child reads the first letter.</li><li>Follow along on your screen and mark any <b>INCORRECT</b> letters by touching that letter on the screen until it turns <font color=\"#3366ff\"><b>BLUE</b></font>.</li><li style=\"font-weight: normal; \">Mark self-corrections as correct by touching the screen again until it returns to grey.</li><li style=\"font-weight: normal; \">If the pupil skips an entire line, touch the star (*) at the end of the line to mark all of the letters incorrect.</li><li style=\"font-weight: normal; \">Stay quiet, except if the pupil hesitates for 3 seconds. Then point to the next letter and say, <b>“Please go on.” / <font color=\"#3333ff\">“Genda mu maaso”</font>.</b> Mark the skipped letter as incorrect.</li><li style=\"font-weight: normal; \">If the child gives you the letter name, rather than the sound,  say: <b>“Please tell me the sound of the letter”  /   <font color=\"#3333ff\">“Mbuliira eddoboozi lye nnyukuta.\"</font></b> This prompt may be given only once at the begining of the subtask.</li></ul></blockquote><p><br />If the timer runs out before the last item is read, the screen will flash red and the timer will stop. Say, <b style=\"font-weight: normal; \">“Stop.” /  <font color=\"#3333ff\">“Lekera awo.”</font></b>  Mark the final letter read by touching it so that a bracket appears. Then press \"Next\"<br /><br />If the child reaches the last item before the screen flashes red, stop the timer as soon as the child reads the last letter. Touch the last letter so the bracket appears. Then press \"Next\".<br /><br />Early stop rule: If the child does not provide a single correct response for the first 10 items, the screen will flash red and the timer will stop. Say, <b style=\"font-weight: normal; \">“Thank you!” / <font color=\"#3333ff\">“Weebale nnyo!”</font></b>, discontinue this subtask, and go on to the next subtask.</p><p> </p>",
+    "enumeratorHelp": "<br>",
+    "transitionComment": "<b>Good effort! Let's go on to the next section. / <font color=\"#3333ff\">Weebale nnyo. Tweyongereyo.</font></b><br>",
+    "skippable": true,
+    "order": 1,
+    "prototype": "grid",
+    "name": "Subtask 1. Letter Sound Knowledge (EN)",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "locations": [],
+    "prompt": "",
+    "items": [
+      "e",
+      "y",
+      "n",
+      "K",
+      "u",
+      "a",
+      "s",
+      "H",
+      "n",
+      "W",
+      "H",
+      "S",
+      "L",
+      "T",
+      "c",
+      "O",
+      "e",
+      "X",
+      "G",
+      "f",
+      "b",
+      "D",
+      "r",
+      "e",
+      "N",
+      "P",
+      "A",
+      "E",
+      "N",
+      "A",
+      "A",
+      "o",
+      "i",
+      "J",
+      "t",
+      "a",
+      "h",
+      "L",
+      "U",
+      "E",
+      "g",
+      "t",
+      "E",
+      "i",
+      "C",
+      "d",
+      "Q",
+      "s",
+      "V",
+      "D",
+      "Y",
+      "c",
+      "h",
+      "m",
+      "O",
+      "E",
+      "t",
+      "p",
+      "N",
+      "R",
+      "T",
+      "E",
+      "U",
+      "a",
+      "h",
+      "a",
+      "w",
+      "d",
+      "i",
+      "T",
+      "R",
+      "T",
+      "O",
+      "N",
+      "S",
+      "n",
+      "i",
+      "R",
+      "e",
+      "i",
+      "s",
+      "r",
+      "E",
+      "o",
+      "H",
+      "M",
+      "Z",
+      "L",
+      "o",
+      "e",
+      "i",
+      "S",
+      "t",
+      "i",
+      "O",
+      "e",
+      "A",
+      "T",
+      "L",
+      "F"
+    ],
+    "columns": 10,
+    "autostop": 10,
+    "timer": 60,
+    "collection": "subtest",
+    "captureLastAttempted": true,
+    "endOfLine": true,
+    "captureItemAtTime": false,
+    "captureAfterSeconds": 0,
+    "fontSize": "medium",
+    "layoutMode": "fixed",
+    "randomize": false,
+    "variableName": "letter_sound",
+    "updated": "Wed Mar 02 2016 17:44:19 GMT+0100 (CET)",
+    "hash": "u7f04ONnSqz8pyCkJb7UlxFo/ZM=",
+    "displayCode": "@skip() if ResultOfPrevious(\"grade_p1_confirm\") is \"1\"",
+    "fontFamily": "",
+    "fromInstanceId": "nrtg-uitb-pgyp",
+    "editedBy": "tangerine",
+    "rtl": false,
+    "backButton": false,
+    "language": ""
+  },
+  {
+    "_id": "e3388cd0-0599-af7a-76b7-4e077a9fc272",
+    "_rev": "10-99eff3c0b039c1025791a9af9692dd7b",
+    "prompt": "2) <font color=blue>Oyogera Luganda ebiseera ebisinga obungi awaka?</font> </br>Do you speak Luganda at home most of the time?  ",
+    "name": "L_2",
+    "hint": "",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes",
+        "value": "1"
+      },
+      {
+        "label": "No",
+        "value": "0"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "36bfccde-a6d6-12eb-c6c9-ea86c2873595",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:29:57 GMT+0300",
+    "hash": "McqBDD+fyreHnvR2fCMI1RPrH1Q=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "e599e67e-61f0-a379-80b3-3afb84d10466",
+    "_rev": "2-b6fabebe7f8666b6a540c30227d28112",
+    "prompt": "2) Mu kusoma Lule ayigiramu ki?",
+    "name": "r_list_comp2",
+    "hint": "[ebintu bingi]",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "c6629dac-7fd7-5729-6827-39217d8fd1b7",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "d7778640-70ac-a4c7-316b-777ea3fcf474",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:15:54 GMT+0300",
+    "hash": "BSSH6ZMYAPeHolUlMa+3AuqJxwg=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "e7f42dfb-5e18-ce7e-abae-b5059226a0ac",
+    "_rev": "3-b277e4295e701a49666e9335f25b10e2",
+    "prompt": "8) Nnyingo ki eziri mu \"bazina\", \"bazina\"?",
+    "name": "r_pa_phon_sound8",
+    "hint": "[Say each word twice]",
+    "order": 7,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/ba/",
+        "value": "1"
+      },
+      {
+        "label": "/zi/",
+        "value": "2"
+      },
+      {
+        "label": "/na/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "65716ff7-945c-9f76-5e2b-4f4ab181df9f",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"r_pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"r_pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:51:04 GMT+0300",
+    "hash": "vxPqZXyLmCyTekwGJT+vqvOhXxk=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "e850d58f-1680-444e-0aed-07588a7b4259",
+    "_rev": "2-589acbb82328d2b47f3571c13676dc4e",
+    "prompt": "1) Ki Lule ky’ayagala ennyo?",
+    "name": "r_list_comp1",
+    "hint": "[bitabo/okusoma ebitabo]",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "c6629dac-7fd7-5729-6827-39217d8fd1b7",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "bad48b58-2252-f10d-e26d-c12b6b8d1956",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:15:21 GMT+0300",
+    "hash": "cLS+qF3iYlg/2HYdCcmQFx6wiiA=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "ea0d8b20-0610-98b8-247e-46ce825e84cb",
+    "_rev": "1-66866c1a64f9bfc26340525dbb6f692b",
+    "prompt": "5) Pupil's Age",
+    "name": "age",
+    "hint": "",
+    "order": 5,
+    "linkedGridScore": 0,
+    "type": "open",
+    "options": [],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "3eac2609-1468-e8a7-57fd-a335c7fa6ef5",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "@answer > 3 and @answer < 20",
+    "customValidationMessage": "Enter a number between 4 and 20.",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "WS54xVX+pjzjbra89yI09QqN8hU=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "ec7417bb-8e48-d314-5e78-fbcabbe41252",
+    "_rev": "1-c664bddeb6f3e4f04420656ab2f2d49c",
+    "prompt": "3b) Other",
+    "name": "L_3b",
+    "hint": "",
+    "order": 4,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "e556ce09-7fb1-d5bd-e8a5-ba3040c5368e",
+    "collection": "question",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "+hMGULUqrOP2TFnModotBHewh8Y=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "ec9cc40a-6edd-12e3-637e-3b9d0d12cd56",
+    "_rev": "11-da7c6df160644d5a383bd16a8f38f547",
+    "prompt": "2c) Specify other",
+    "name": "L_2c",
+    "hint": "",
+    "order": 3,
+    "linkedGridScore": 0,
+    "type": "open",
+    "options": [],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "56746eb8-2e78-2cdc-5ded-e99f1e8c2d9a",
+    "collection": "question",
+    "skipLogic": "ResultOfQuestion(\"L_2b\")isnt\"3\" or ResultOfQuestion(\"L_2\")is\"1\"",
+    "skippable": true,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Sarah",
+    "updated": "Mon Sep 14 2015 13:26:40 GMT-0400 (EDT)",
+    "hash": "8k/MBQ2JXcS+w2Vbb4tjh0LLGWM=",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "displayCode": ""
+  },
+  {
+    "_id": "ed6ee710-08a0-42f3-113e-51eb96ac8567",
+    "_rev": "1-da0b174775516e87f20a8c8393daa457",
+    "prompt": "10) What are the sounds in \"lick\"?",
+    "name": "pa_phon_sound10",
+    "hint": "",
+    "order": 9,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/l/",
+        "value": "1"
+      },
+      {
+        "label": "/i/",
+        "value": "2"
+      },
+      {
+        "label": "/ck/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "6be346ad-2a2a-a1d1-607d-35056ee72182",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "+6vtpLuBI9uav8k4lHxuFz+tyi4=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "efe2e1fa-9f89-f937-3230-800116916f14",
+    "_rev": "12-9fcb2c94bc7a2e46c79a8c25cd33751c",
+    "prompt": "5)   <font color=blue>Waleese ekyokulya oba ekyokunywa oba essomero likuwa emmere/obuugi?</font> </br>Did you pack anything to drink or eat for your break or lunch today or will you get a meal or food from school?",
+    "name": "L_5",
+    "hint": "If child comes with money to school to buy eats it is the same as packing",
+    "order": 8,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "Yes,  I packed",
+        "value": "1"
+      },
+      {
+        "label": "No, I did not pack",
+        "value": "0"
+      },
+      {
+        "label": "I get a meal or food at school",
+        "value": "2"
+      },
+      {
+        "label": "No response",
+        "value": "9"
+      }
+    ],
+    "subtestId": "c414d92a-f28e-8847-5b32-c801f0703b9c",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "5def6319-ea3e-2b54-8997-776043fd761c",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 09:29:59 GMT+0300",
+    "hash": "WE3lHn9m90WomWl0fegVfGykkgY=",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "f0819d13-2604-9893-a69a-21b887f005f8",
+    "_rev": "1-7c2e1a1cde949c0b6ea1d037f4c8f072",
+    "prompt": "2) What are the sounds in \"too\"?",
+    "name": "pa_phon_sound2",
+    "hint": "",
+    "order": 1,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/t/",
+        "value": "1"
+      },
+      {
+        "label": "/oo/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "5ba2f21e-bce9-7d6f-916e-0b66e56bb227",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "gXripm8G9dcdeh8k54LOJXFRa7s=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "f6fc84d6-f74d-e20b-8f93-2e673e193017",
+    "_rev": "5-df7b4b466e0118d82ab2ac6efbc21f96",
+    "prompt": "1) I'll say words in English that represent parts of the body. Show me what part of your body the word means. Let's practice: \"nose\". <font color=blue>Ngenda kumenya amannya g’ebitundu by'omubiri mu Luzungu.  Bwenjogera ekigambo, nga ondaga ekitundu ky’omubiri ekyo. / Kale, twegezeemu  « nose »</font> </br> ",
+    "name": "vocab_eng1",
+    "hint": "[Point to your nose so that you model for the student: \"nose\" .  Wait for the child to gesture to his/her nose. Say \"head\" and tell the child to show you his/her head.  Say \"Good\"! Let's start. / Kirungi! Katutandike.",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "foot",
+        "value": "1"
+      },
+      {
+        "label": "arm",
+        "value": "2"
+      },
+      {
+        "label": "chin",
+        "value": "3"
+      },
+      {
+        "label": "knee",
+        "value": "4"
+      },
+      {
+        "label": "mouth",
+        "value": "5"
+      },
+      {
+        "label": "back",
+        "value": "6"
+      },
+      {
+        "label": "elbow",
+        "value": "7"
+      },
+      {
+        "label": "shoulder",
+        "value": "8"
+      },
+      {
+        "label": "All correct",
+        "value": "9"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "45fb0b95-dc44-3e85-9417-e7da425e683f",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "bad48b58-2252-f10d-e26d-c12b6b8d1956",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Wed Oct 01 2014 17:55:37 GMT+0300",
+    "hash": "dPksX4LzNFl3LimAe4dl3EuupEs=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "fa68a314-0f7c-2d3a-3ab4-e73fa1e789b0",
+    "_rev": "2-faf4a9803339533df50e13ec77dfe3ef",
+    "prompt": "3) Nnyingo ki eziri mu  \"wano\", \"wano\"?",
+    "name": "r_pa_phon_sound3",
+    "hint": "",
+    "order": 2,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/wa/",
+        "value": "1"
+      },
+      {
+        "label": "/no/",
+        "value": "2"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "All wrong or no response",
+        "value": "0"
+      }
+    ],
+    "subtestId": "101a9fd3-9d0a-492d-1e07-0257b9f6edf0",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "b89445d8-b93e-bf92-d89d-22bd131c9ec5",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "updated": "Wed Oct 01 2014 17:47:44 GMT+0300",
+    "hash": "+jmnSlT+RdaFq4Y3OsRpvA9FlRY=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "editedBy": "Remmy"
+  },
+  {
+    "_id": "fea72679-f22e-71e8-a2c7-77820410d613",
+    "_rev": "3-620d363a63513308228d20c31caf93d5",
+    "prompt": "1) Where does Sam live? ",
+    "name": "read_comp1",
+    "hint": "[on a farm]",
+    "order": 0,
+    "linkedGridScore": 5,
+    "type": "single",
+    "options": [
+      {
+        "label": "Correct",
+        "value": "1"
+      },
+      {
+        "label": "Incorrect",
+        "value": "0"
+      },
+      {
+        "label": "No response",
+        "value": "3"
+      }
+    ],
+    "subtestId": "94e3fa7a-6a24-836a-6f29-589978387c2b",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "4aac4c6d-f945-0dea-14ce-e7245ea46121",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "Remmy",
+    "updated": "Mon Aug 10 2015 08:41:46 GMT+0300",
+    "hash": "SAbNOOXuainQ7SIP2sD6Dko3ZNw=",
+    "fromInstanceId": "jygo-gvvc-fwja",
+    "displayCode": ""
+  },
+  {
+    "_id": "ff471755-b707-c146-b09f-27efc25bf1a6",
+    "_rev": "1-ea07abe55cb5ec98a4242cfe7f343002",
+    "prompt": "8) What are the sounds in \"bet\"?",
+    "name": "pa_phon_sound8",
+    "hint": "",
+    "order": 7,
+    "linkedGridScore": 0,
+    "type": "multiple",
+    "options": [
+      {
+        "label": "/b/",
+        "value": "1"
+      },
+      {
+        "label": "/e/",
+        "value": "2"
+      },
+      {
+        "label": "/t/",
+        "value": "3"
+      },
+      {
+        "label": "All correct",
+        "value": "4"
+      },
+      {
+        "label": "No response",
+        "value": "0"
+      }
+    ],
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "65716ff7-945c-9f76-5e2b-4f4ab181df9f",
+    "collection": "question",
+    "skipLogic": "\"0\" in ResultOfMultiple(\"pa_phon_sound1\") and \"0\" in ResultOfMultiple(\"pa_phon_sound2\") and \"0\" in ResultOfMultiple(\"pa_phon_sound3\") and \"0\" in ResultOfMultiple(\"pa_phon_sound4\") and \"0\" in ResultOfMultiple(\"pa_phon_sound5\")",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "IuX2wl3gEU3sXmDcW22pcJxZiG0=",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  },
+  {
+    "_id": "ffdeec9f-0acc-3ba9-f4e3-f798932eb7d0",
+    "_rev": "1-4600379c3ec035a9ac7c4acd034095dc",
+    "prompt": "1) Class",
+    "name": "grade",
+    "hint": "",
+    "order": 0,
+    "linkedGridScore": 0,
+    "type": "single",
+    "options": [
+      {
+        "label": "P1",
+        "value": "1"
+      },
+      {
+        "label": "P2",
+        "value": "2"
+      },
+      {
+        "label": "P3",
+        "value": "3"
+      },
+      {
+        "label": "P4",
+        "value": "4"
+      }
+    ],
+    "subtestId": "8e7c5398-d57b-95b6-bdb4-de4eea2b2811",
+    "assessmentId": "1dbda94c-b80d-d1ce-ea37-6ca20854d8c9",
+    "id": "d5702840-c22b-e3f2-ce36-30e9534c01f9",
+    "collection": "question",
+    "skipLogic": "",
+    "skippable": false,
+    "customValidationCode": "",
+    "customValidationMessage": "",
+    "editedBy": "carmen",
+    "updated": "Wed Oct 09 2013 10:23:06 GMT-0400 (EDT)",
+    "hash": "gKiEh5OdqlRn6JJ+j1Ir9hGslmw=",
+    "displayCode": "",
+    "fromInstanceId": "jygo-gvvc-fwja"
+  }
+]
