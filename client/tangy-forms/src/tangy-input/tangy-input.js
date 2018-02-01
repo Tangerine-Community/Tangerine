@@ -18,9 +18,10 @@ export class TangyInput extends PolymerElement {
 <style include="tangy-element-styles"></style>
 
     <div class="container">
+    <label>[[label]]</label>
       <paper-input 
         id="input" 
-        label="[[label]]" 
+        label="Enter your response to above question here" 
         type="[[type]]" 
         error-message="[[errorMessage]]" 
         value="[[value]]" 

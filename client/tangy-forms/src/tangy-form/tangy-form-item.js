@@ -41,7 +41,7 @@ export class TangyFormItem extends PolymerElement {
       return `
   <style>
 :host {
-  margin: 15px;
+  /*margin: 15px;*/
 }
 /*
  * Card
@@ -53,7 +53,7 @@ paper-card {
   -o-transition: .4s;
   display: block;
   max-width: 325px;
-  margin: 30px auto;
+  margin: /*30px*/ auto;
 }
 :host([open]) paper-card {
   -webkit-transition: .4s;
@@ -76,6 +76,7 @@ paper-card {
  */
 .card-actions {
   height: 45px;
+  margin-bottom: 100px;
 }
 :host([open]) #open {
   display: none;
@@ -90,11 +91,19 @@ paper-card {
 :host([hide-buttons]) #close {
   display: none;
 }
+label.heading {
+  font-size: 21px !important;
+  margin-bottom: 20px;
+  display: block;
+  color: #3c5b8d;
+  font-weight: 700;
+}
 </style>
 
-<paper-card id="card" class="shrunk" heading="[[title]]">
+<paper-card id="card" class="shrunk">
 
   <div class="card-content">
+  <label class="heading">[[title]]</label>
     <div id="content"></div>
     <slot></slot>
   </div>

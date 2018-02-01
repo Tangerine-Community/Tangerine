@@ -1,16 +1,20 @@
 <mat-tab-group>
   <mat-tab label="My Forms">
-    <br>
     <mat-card class="tangy-card-content-container">
-      <mat-form-field class="tangy-full-width">
-        <input name="formName" #search type="text" matInput>
-        <mat-placeholder>
-          Filter Form By Name
-          <span>
-            <i class="material-icons mat-14 search-icon">search</i>
-          </span>
-        </mat-placeholder>
-      </mat-form-field>
+      <div class="tangy-full-width">
+        <div class="mat-title tangy-half-width">
+          My Forms
+        </div>
+        <mat-form-field class="tangy-half-width">
+          <input name="formName" #search type="text" matInput>
+          <mat-placeholder>
+            Filter Form By Name
+            <span>
+              <i class="material-icons mat-14 search-icon">search</i>
+            </span>
+          </mat-placeholder>
+        </mat-form-field>
+      </div>
       <mat-list>
         <mat-list-item class="tangy-location-list">
           <span class="tangy-foreground-primary">Select Form</span>
@@ -29,12 +33,13 @@
 
       <p *ngIf="!formList" class="mat-h3">No Forms Currently Defined</p>
     </mat-card>
-  </mat-tab>
-  <mat-tab label="Monthly Report">Content 2</mat-tab>
+
+</mat-tab>
+  <!--<mat-tab label="Monthly Report">Content 2</mat-tab>
   <mat-tab label="Summary">
     <br>
     <mat-card class="tangy-card-content-container">
       <app-form-responses-list></app-form-responses-list>
     </mat-card>
-  </mat-tab>
+  </mat-tab>-->
 </mat-tab-group>
