@@ -1,3 +1,3 @@
-./build.sh
-./start.sh v3-slim
-docker logs -f tangerine-container
+docker build -t tangerine/tangerine:local .
+./start.sh local 
+docker logs -f tangerine
