@@ -5,7 +5,7 @@
   "angular-cli": {},
   "scripts": {
     "ng": "ng",
-    "dockerdev": "ng build --watch --poll 100 --dev",
+    "dockerdev": "ng build --watch --poll 100 --dev --base-href ./",
     "start": "ng serve",
     "lint": "tslint \"src/**/*.ts\"",
     "test": "ng test",

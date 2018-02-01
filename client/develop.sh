@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-source ~/.nvm/nvm.sh
-nvm use 8 
-
 # @TODO Do a continous build instead of symlinking.
 rm -r builds/dev/tangy-forms
 ln -s $(pwd)/tangy-forms $(pwd)/builds/dev/tangy-forms
