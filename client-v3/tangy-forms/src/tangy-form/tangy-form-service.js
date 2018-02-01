@@ -84,7 +84,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '12',
+  version: '13',
   views: {
     formByFormId: {
       map: function (doc) {
@@ -108,6 +108,25 @@ var tangyFormDesignDoc = {
     responsesByLocationId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && doc.complete === true && doc.hasOwnProperty('inputs')) {
+          const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
+          if (!locationFields || locationFields.length === 0) {
+            return;
+          }
+          locationFields.forEach((field) => {
+            const thisLocationId = field.value[field.value.length - 1].value;
+            emit(thisLocationId, true)
+          })
+        }
+      }.toString()
+    },
+    responsesThisMonthByLocationId: {
+      map: function (doc) {
+        const currentDate = new Date();
+        const startDatetime = new Date(doc.startDatetime)
+        if (doc.hasOwnProperty('collection')
+          && doc.collection === 'TangyFormResponse'
+          && startDatetime.getMonth() === currentDate.getMonth() && startDatetime.getFullYear() === currentDate.getFullYear()
+          && doc.complete === true && doc.hasOwnProperty('inputs')) {
           const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
           if (!locationFields || locationFields.length === 0) {
             return;
