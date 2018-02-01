@@ -10,6 +10,7 @@ cd ..
 
 cd wrappers/pwa
 npm run build
+cp logo.svg build/default/
 cd ../../
 
 rm -r builds
