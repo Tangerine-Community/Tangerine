@@ -5,6 +5,8 @@ const exec = util.promisify(require('child_process').exec)
 const http = require('axios');
 const read = require('read-yaml')
 const express = require('express')
+var session = require("express-session")
+const bodyParser = require('body-parser');
 const path = require('path')
 const app = express()
 const fs = require('fs-extra')
@@ -16,24 +18,16 @@ const PouchDB = require('pouchdb')
 const DB = PouchDB.defaults({
   prefix: '/tangerine/db/'
 });
-// for json parsing in received requests
-const bodyParser = require('body-parser');
-// basic logging
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
-
 const sep = path.sep;
-
-app.use(bodyParser.json()); // use json
-app.use(bodyParser.urlencoded({ extended: false })) // parse application/x-www-form-urlencoded
-// app.use(requestLogger);     // uncomment this line to add some logging
-
 /*
  * Auth
  */
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 
+// This determines wether or not a login is valid.
 passport.use(new LocalStrategy(
   function(username, password, done) {
     console.log('strategy!')
@@ -51,38 +45,68 @@ passport.use(new LocalStrategy(
   }
 ));
 
+// This decides what identifying piece of information to put in a cookie for the session.
 passport.serializeUser(function(user, done) {
   console.log('serialize!')
   console.log(user)
   done(null, user.name);
 });
 
+// This transforms the id in the session cookie to pass to req.user object.
 passport.deserializeUser(function(id, done) {
   console.log('deserialize!')
   console.log(id)
   done(null, {name: id});
 });
 
+
+// Use sessions.
+app.use(session({ 
+  secret: "cats", 
+  resave: false,
+  saveUninitialized: true 
+}));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json())
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Middleware to protect routes.
+var isAuthenticated = function (req, res, next) {
+  // @TODO Add HTTP AUTH.
+  if (req.isAuthenticated()) {
+    console.log('is authenticated')
+    return next();
+  } 
+  log(req.url)
+  console.log('is not authenticated')
+  res.redirect('/');
+}
+
+// Login service.
 app.post('/login', 
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
     res.send({name: 'user1', status: 'ok'});
-  });
+  }
+);
 
-
+// Static assets.
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
 app.use('/', express.static(path.join(__dirname, '../editor/dist')));
-app.use('/editor/groups', express.static(path.join(__dirname, '../client/content/groups')));
+app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
 app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../client/ckeditor/')));
 app.use('/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )
 app.use('/releases/apks/', express.static(path.join(__dirname, '../client/releases/apks')) )
 app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')) )
+app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
+  let contentPath = '../client/content/groups/' + req.params.group
+  console.log("Setting path to " + path.join(__dirname, contentPath))
+  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+});
 
-app.use('/editor/release-apk/:secret/:group', async function (req, res, next) {
+app.use('/editor/release-apk/:secret/:group', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
   const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
@@ -92,7 +116,7 @@ app.use('/editor/release-apk/:secret/:group', async function (req, res, next) {
   res.send('ok')
 })
 
-app.use('/editor/release-pwa/:secret/:group', async function (req, res, next) {
+app.use('/editor/release-pwa/:secret/:group', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
   const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
@@ -101,12 +125,6 @@ app.use('/editor/release-pwa/:secret/:group', async function (req, res, next) {
   `)
   res.send('ok')
 })
-
-app.use('/editor/:group/content', function (req, res, next) {
-  let contentPath = '../client/content/groups/' + req.params.group
-  console.log("Setting path to " + path.join(__dirname, contentPath))
-  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
-});
 
 async function saveFormsJson(formParameters, group) {
   console.log("formParameters: " + JSON.stringify(formParameters))
@@ -152,7 +170,7 @@ let openForm = async function (path) {
   return form
 };
 
-app.post('/editor/itemsOrder/save', async function (req, res) {
+app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let contentRoot = config.contentRoot
   let itemsOrder = req.body.itemsOrder
   let formHtmlPath = req.body.formHtmlPath
@@ -207,7 +225,7 @@ app.post('/editor/itemsOrder/save', async function (req, res) {
 
 // Saves an item - and a new form when formName is passed.async
 // otherwise, the path to the existing form is extracted from formHtmlPath.
-app.post('/editor/item/save', async function (req, res) {
+app.post('/editor/item/save', isAuthenticated, async function (req, res) {
   let displayFormsListing = false
   // console.log("req.body:" + JSON.stringify(req.body) + " req.body.itemTitle: " + req.body.itemTitle)
   let formTitle = req.body.formTitle
@@ -369,7 +387,7 @@ app.post('/editor/item/save', async function (req, res) {
   res.json(resp)
 })
 
-app.post('/editor/group/new', async function (req, res) {
+app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 
   let groupName = req.body.groupName
   // Create content directory for group.
@@ -399,7 +417,7 @@ var server = app.listen(config.port, function() {
   console.log('Server V3: http://%s:%s', host, port);
 });
 
-app.get('/groups', async function (req, res) {
+app.get('/groups', isAuthenticated, async function (req, res) {
   fsc.readdir('/tangerine/client/content/groups', function(err, files) {
     console.log(files)
     let groups = files.map((groupName) => { 
@@ -417,6 +435,7 @@ app.get('/groups', async function (req, res) {
   })
 })
 
+// @TODO: Middleware auth check for upload user.
 app.post('/upload/:groupName', async function (req, res) {
   console.log(req.params.groupName)
   let db = new DB(req.params.groupName)
@@ -438,7 +457,7 @@ log = function(data) {
 }
 
 
-app.get('/csv/:groupName/:formId', async function (req, res) {
+app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   let db = new DB(req.params.groupName)
   let allDocs = await db.allDocs({include_docs: true})
   let responseRows = allDocs.rows
@@ -468,7 +487,7 @@ app.get('/csv/:groupName/:formId', async function (req, res) {
   res.end()
 })
 
-app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', async function (req, res) {
+app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isAuthenticated, async function (req, res) {
   let db = new DB(req.params.groupName)
   const template = {"collection":"TangyFormResponse","form":{"id":"field-demo","databaseName":"r","responseId":"","onChange":"","linearMode":false,"hideClosedItems":false,"hideResponses":false,"hideCompleteButton":false,"tagName":"TANGY-FORM"},"items":[{"id":"item_1","src":"../content/field-demo/text-inputs.html","title":"Text Inputs","hideButtons":false,"inputs":["text_input_1","text_input_2","text_input_3","text_input_4","text_input_5"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_2","src":"../content/field-demo/checkboxes.html","title":"Checkboxes","hideButtons":false,"inputs":["checkbox_1","checkbox_2","checkbox_3","checkbox_4","checkbox_5","checkbox_6","checkbox_group_1","checkbox_group_2","checkbox_group_3","checkbox_group_4","checkbox_group_4_enable","checkbox_group_5","checkbox_group_5_show"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_3","src":"../content/field-demo/radio-buttons.html","title":"Radiobuttons","hideButtons":false,"inputs":["radio_buttons_1","radio_buttons_2","radio_buttons_3","radio_buttons_3_enable","radio_buttons_4","radio_buttons_4_show"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_4","src":"../content/field-demo/location.html","title":"Location","hideButtons":false,"inputs":["location"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_5","src":"../content/field-demo/timed-grid.html","title":"Timed Grid","hideButtons":false,"inputs":["class1_term2"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_6","src":"../content/field-demo/gps.html","title":"GPS","hideButtons":false,"inputs":["gps-coords"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"}],"inputs":[{"name":"text_input_1","label":"This is an input for text.","type":"text","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":false,"value":"S","allowedPattern":"","tagName":"TANGY-INPUT"},{"name":"text_input_2","label":"This is an input for text that is required.","type":"text","errorMessage":"This is required.","required":true,"disabled":true,"hidden":false,"invalid":false,"incomplete":false,"value":"af","allowedPattern":"","tagName":"TANGY-INPUT"},{"name":"text_input_3","label":"This text input is disabled.","type":"text","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","tagName":"TANGY-INPUT"},{"name":"text_input_4","label":"This text input requires a valid email address.","type":"email","errorMessage":"A valid email address is required.","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":false,"value":"3@kd.co","allowedPattern":"","tagName":"TANGY-INPUT"},{"name":"text_input_5","label":"This is a text input that only uses `allowed-pattern` to prevent users from entering input other than numbers 1 - 7. See http://www.html5pattern.com/ for more examples of patterns.","type":"text","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":false,"value":"353","allowedPattern":"[1-7]","tagName":"TANGY-INPUT"},{"name":"checkbox_1","required":false,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"checkbox_2","required":true,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"checkbox_3","required":true,"disabled":true,"invalid":false,"incomplete":true,"hidden":false,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"checkbox_4","required":false,"disabled":true,"invalid":false,"incomplete":true,"hidden":false,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"checkbox_5","required":true,"disabled":true,"invalid":false,"incomplete":true,"hidden":true,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"checkbox_6","required":false,"disabled":true,"invalid":false,"incomplete":true,"hidden":false,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"checkbox_group_1","value":["checkbox_group_1__checkbox_2"],"atLeast":0,"required":false,"disabled":true,"label":"This is a checkbox group.","hidden":false,"incomplete":false,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_2","value":["checkbox_group_2__checkbox_1","checkbox_group_2__checkbox_2","checkbox_group_2__checkbox_3"],"atLeast":0,"required":true,"disabled":true,"label":"This is a checkbox group that requires that it be saved with at least 1 checked checkbox.","hidden":false,"incomplete":false,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_3","value":["checkbox_group_3__checkbox_2"],"atLeast":2,"required":false,"disabled":true,"label":"This is a checkbox group that is not required, but if you do make a selection it is not valid until you check at least 2 checkboxes.","hidden":false,"incomplete":true,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_4","value":["checkbox_group_4__checkbox_3"],"atLeast":0,"required":true,"disabled":true,"label":"This is a disabled checkbox group.","hidden":false,"incomplete":false,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_4_enable","required":false,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"checkbox_group_5","value":["checkbox_group_5__checkbox_2","checkbox_group_5__checkbox_3"],"atLeast":0,"required":true,"disabled":true,"label":"This is a hidden checkbox group.","hidden":false,"incomplete":false,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_5_show","required":false,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"radio_buttons_1","value":"","required":false,"disabled":true,"label":"These are radio buttons.","hidden":false,"invalid":false,"incomplete":true,"tagName":"TANGY-RADIO-BUTTONS"},{"name":"radio_buttons_2","value":"apple","required":true,"disabled":true,"label":"These are radio buttons where at least one selection is required.","hidden":false,"invalid":false,"incomplete":false,"tagName":"TANGY-RADIO-BUTTONS"},{"name":"radio_buttons_3","value":"coconut","required":true,"disabled":true,"label":"These are radio buttons that are disabled. If enabled, then a selection is required.","hidden":false,"invalid":false,"incomplete":false,"tagName":"TANGY-RADIO-BUTTONS"},{"name":"radio_buttons_3_enable","required":false,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"radio_buttons_4","value":"","required":true,"disabled":true,"label":"These are radio buttons that are hidden. If not hidden, then a selection is required.","hidden":true,"invalid":false,"incomplete":true,"tagName":"TANGY-RADIO-BUTTONS"},{"name":"radio_buttons_4_show","required":false,"disabled":true,"invalid":false,"incomplete":true,"hidden":false,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"location","value":[{"level":"county","value":"county1"},{"level":"school","value":"school1"}],"label":"Select your school","required":true,"invalid":false,"locationSrc":"../location-list.json","showLevels":"county,school","hidden":false,"disabled":true,"tagName":"TANGY-LOCATION","incomplete":false},{"name":"class1_term2","value":["class1_term2-2","class1_term2-3","class1_term2-6","class1_term2-11","class1_term2-31"],"mode":"TANGY_TIMED_MODE_LAST_ATTEMPTED","duration":60,"columns":4,"invalid":false,"incomplete":false,"required":true,"lastAttempted":"class1_term2-32","timeSpent":5,"tagName":"TANGY-TIMED","disabled":true},{"name":"gps-coords","value":{"recordedLatitude":44.451448899999995,"recordedLongitude":-73.22411939999999,"recordedAccuracy":70},"tagName":"TANGY-GPS","invalid":false,"incomplete":false,"disabled":true}],"focusIndex":5,"nextFocusIndex":-1,"previousFocusIndex":4,"startDatetime":"1/31/2018, 8:53:29 PM","startUnixtime":1517450009259,"uploadDatetime":"","previousItemId":"item_5","progress":0,"complete":true,"_id":"993b5d56-da02-48cf-8189-3d42baa5114d","_rev":"77-5f6b79e709f2493387992163a75d53a3"}
   delete template._rev
