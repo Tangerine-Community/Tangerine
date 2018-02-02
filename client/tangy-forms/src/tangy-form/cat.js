@@ -20,6 +20,7 @@ HTMLElement.prototype.setAttributes = function (attributes = {}) {
   for (let attributeName in attributes) this.setAttribute(attributeName, attributes[attributeName])
 }
 
+// @TODO See one liner that TimvdLippe suggested https://github.com/Polymer/polymer/issues/4918#issuecomment-355835087
 HTMLElement.prototype.getProps = function () {
   let propertyInfo = this.constructor.properties
   // If no property info, then go off what attributes we do have.

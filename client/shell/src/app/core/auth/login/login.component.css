@@ -1,0 +1,28 @@
+.mat-title {
+    color: #3c5b8d;
+    font-size: 1.75em;
+    font-weight: 400;
+    font-family: Roboto, "Helvetica Nue", sans-serif;
+  }
+  
+  mat-placeholder i {
+    margin-right:.075em;
+  
+  }
+  
+  mat-placeholder span{
+  
+  }
+  
+  label span {
+  
+  }
+  
+  input.mat-input-element {
+    margin-top: 1em;
+  }
+  
+  .mat-placeholder-required.mat-form-field-required-marker.ng-tns-c6-2 .mat-form-field-invalid .mat-form-field-placeholder.mat-accent, .mat-form-field-invalid .mat-form-field-placeholder .mat-form-field-required-marker {
+  position:relative;
+    bottom: 1em !important;
+  }
