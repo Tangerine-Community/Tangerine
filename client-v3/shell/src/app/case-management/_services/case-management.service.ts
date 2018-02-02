@@ -41,13 +41,6 @@ export class CaseManagementService {
 
     const locations = [];
     let visits = await this.getVisitsThisMonthByLocation();
-    function countVisits(key) {
-      let count = 0;
-      visits.forEach((item) => {
-        count += item.key.toString() === key.id.toString() ? 1 : 0;
-      })
-      return count;
-    }
     /** 
      *  Check for ownProperty in myLocations
      * for ...in  iterate over all enumerable properties of the object
@@ -58,7 +51,7 @@ export class CaseManagementService {
       if (myLocations.hasOwnProperty(locationId)) {
         locations.push({
           location: myLocations[locationId].label,
-          visits: countVisits(myLocations[locationId])
+          visits: countUnique(visits, myLocations[locationId]['id'].toString())
         });
       }
     }
@@ -66,9 +59,22 @@ export class CaseManagementService {
   }
 
   async getFormList() {
-    return await this.http.get('../content/forms.json')
+    const forms = [];
+    const visits = await this.getResponsesByFormId();
+    const formList = await this.http.get('../content/forms.json')
       .toPromise()
       .then(response => response.json()).catch(data => console.error(data));
+    for (const form of formList) {
+      forms.push({
+        title: form['title'],
+        count: countUnique(visits, form['id']),
+        src: form['src'],
+        id: form['id']
+      })
+    }
+
+
+    return forms;
   }
 
   async getVisitsThisMonthByLocation() {
@@ -80,4 +86,16 @@ export class CaseManagementService {
     const results = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
     return results.rows;
   }
+  async getResponsesByFormId() {
+    const results = await this.userDB.query('tangy-form/responsesByFormId');
+    return results.rows;
+  }
+}
+
+function countUnique(array, key) {
+  let count = 0;
+  array.forEach((item) => {
+    count += item.key.toString() === key ? 1 : 0;
+  });
+  return count;
 }
