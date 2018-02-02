@@ -36,7 +36,7 @@ class TangyEditorApp extends Element {
         position: relative;
         /*left: 45px;*/
         top: 8px;
-        margin:auto;
+        /*margin:auto;*/
       }
       .launch-form {
         position: relative;
@@ -104,8 +104,8 @@ class TangyEditorApp extends Element {
         <template is="dom-repeat" items="{{forms}}">
             <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
                 <div class="card-actions">
-                  <a href="#form=[[item.src]]" on-click="formSelected">
-                    <paper-button class="launch-form">
+                  <a href="#form=[[item.src]]" on-click="formSelected" class="launch-form">
+                    <paper-button>
                       <iron-icon icon="icons:launch">
                     </iron-icon></paper-button>
                   </a>
