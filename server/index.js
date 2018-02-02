@@ -20,6 +20,7 @@ const DB = PouchDB.defaults({
 });
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
+const junk = require('junk');
 const sep = path.sep;
 /*
  * Auth
@@ -97,6 +98,8 @@ app.use('/', express.static(path.join(__dirname, '../editor/dist')));
 app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
 app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../client/ckeditor/')));
+app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
+
 app.use('/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )
 app.use('/releases/apks/', express.static(path.join(__dirname, '../client/releases/apks')) )
 app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')) )
@@ -279,9 +282,11 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // Update forms.json
 
     let formParameters = {
+      "id": formDirName,
       "title": formTitle,
       "src": contentUrlPath + formDirName + "/form.html"
     }
+    console.log("formParameters: " + JSON.stringify(formParameters))
     await saveFormsJson(formParameters, groupName)
       .then(() => {
         console.log("Updated forms.json")
@@ -419,8 +424,9 @@ var server = app.listen(config.port, function() {
 
 app.get('/groups', isAuthenticated, async function (req, res) {
   fsc.readdir('/tangerine/client/content/groups', function(err, files) {
-    console.log(files)
-    let groups = files.map((groupName) => { 
+    let filteredFiles = files.filter(junk.not)
+    console.log('/groups route lists these dirs: ' + filteredFiles)
+    let groups = filteredFiles.map((groupName) => {
       return {
         attributes: { 
           name: groupName 
