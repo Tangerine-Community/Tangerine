@@ -48,9 +48,9 @@ export default class Acasi extends Plugin {
     if ( contextualToolbar ) {
       this.listenTo( contextualToolbar, 'show', evt => {
         if ( isAcasiWidgetSelected( editor.editing.view.selection ) ) {
-          evt.stop();
-        }
-      }, { priority: 'high' } );
+        evt.stop();
+      }
+    }, { priority: 'high' } );
     }
 
     // Configure schema.
@@ -100,33 +100,33 @@ export default class Acasi extends Plugin {
     buildModelConverter().for( data.modelToView )
       .fromElement( 'form' )
       .toElement( (element) => {
-        console.log("data.modelToView form element: ")
-        const id = element.item.getAttribute('id')
-        const onchange = element.item.getAttribute('onchange')
-        let container = new ViewContainerElement( 'form', {'id': id, 'onchange': onchange} );
-        // let container = new ViewContainerElement( 'form', {'id': id} );
-        return container
-      })
+      console.log("data.modelToView form element: ")
+    const id = element.item.getAttribute('id')
+    const onchange = element.item.getAttribute('onchange')
+    let container = new ViewContainerElement( 'form', {'id': id, 'onchange': onchange} );
+    // let container = new ViewContainerElement( 'form', {'id': id} );
+    return container
+  })
     // Build converter from model element to view element is used to render the getData output for the widget when you create new Elements in the editor.
     buildModelConverter().for( data.modelToView )
       .fromElement( 'tangy-acasi' )
       .toElement( (element) => {
-        console.log("data.modelToView tangy-acasi element: ")
-        const introSrc = element.item.getAttribute('intro-src')
-        const name = element.item.getAttribute('name')
-        // const name = 'test'
-        let container = new ViewContainerElement( 'tangy-acasi', {'intro-src': introSrc, 'name': name} );
-        return container
-      })
+      console.log("data.modelToView tangy-acasi element: ")
+    const introSrc = element.item.getAttribute('intro-src')
+    const name = element.item.getAttribute('name')
+    // const name = 'test'
+    let container = new ViewContainerElement( 'tangy-acasi', {'intro-src': introSrc, 'name': name} );
+    return container
+  })
     buildModelConverter().for( data.modelToView )
       .fromElement( 'figure' )
       .toElement( 'figure' )
-      // .toElement( (element) => {
-      //   const klass = element.item.getAttribute('class')
-      //   console.log("data.modelToView figure element: " + klass)
-      //   let container = new ViewContainerElement( 'figure', {'class': klass} );
-      //   return container
-      // })
+    // .toElement( (element) => {
+    //   const klass = element.item.getAttribute('class')
+    //   console.log("data.modelToView figure element: " + klass)
+    //   let container = new ViewContainerElement( 'figure', {'class': klass} );
+    //   return container
+    // })
     // buildModelConverter().for( data.modelToView )
     //   .fromElement( 'paper-radio-button' )
     //   .toElement( (element) => {
@@ -141,22 +141,22 @@ export default class Acasi extends Plugin {
     buildModelConverter().for( editing.modelToView )
       .fromElement( 'form' )
       .toElement( (element) => {
-        console.log("modelToView form element")
-        const formContainer = new ViewContainerElement( 'figure', { class: 'tangy-form' } );
-        const formWdiget = toFormWidget( 'form', formContainer );
-        formWdiget.setAttribute( 'contenteditable', true );
-        return formWdiget;
-      } );
+      console.log("modelToView form element")
+    const formContainer = new ViewContainerElement( 'figure', { class: 'tangy-form' } );
+    const formWdiget = toFormWidget( 'form', formContainer );
+    formWdiget.setAttribute( 'contenteditable', true );
+    return formWdiget;
+  } );
 
     buildModelConverter().for( editing.modelToView )
       .fromElement( 'tangy-acasi' )
       .toElement( (element) => {
-        console.log("modelToView tangy-acasi element")
-        const widgetContainer = new ViewContainerElement( 'figure', { class: 'tangy-acasi' });
-        const widget = toAcasiWidget( widgetContainer );
-        widget.setAttribute( 'contenteditable', true );
-        return widget;
-      } );
+      console.log("modelToView tangy-acasi element")
+    const widgetContainer = new ViewContainerElement( 'figure', { class: 'tangy-acasi' });
+    const widget = toAcasiWidget( widgetContainer );
+    widget.setAttribute( 'contenteditable', true );
+    return widget;
+  } );
 
     // buildModelConverter().for( editing.modelToView )
     //   .fromElement( 'paper-radio-button' )
@@ -173,22 +173,22 @@ export default class Acasi extends Plugin {
     buildModelConverter().for( editing.modelToView )
       .fromElement( 'figure' )
       .toElement( (element) => {
-        console.log("modelToView figure element")
-        const klass = element.item.getAttribute('class')
-        const container = new ViewContainerElement( 'figure', { class: klass } );
-        // let container = new ViewContainerElement( 'figure', {'class': klass}, toImageWidget(new ViewEmptyElement( 'img' )) );
-        // const widget = toWidget( container );
-        // widget.setAttribute( 'contenteditable', true );
-        return container;
-      } );
+      console.log("modelToView figure element")
+    const klass = element.item.getAttribute('class')
+    const container = new ViewContainerElement( 'figure', { class: klass } );
+    // let container = new ViewContainerElement( 'figure', {'class': klass}, toImageWidget(new ViewEmptyElement( 'img' )) );
+    // const widget = toWidget( container );
+    // widget.setAttribute( 'contenteditable', true );
+    return container;
+  } );
 
     buildViewConverter().for(data.viewToModel).from({
       name: 'form',
       attribute: { id: /./ }
     })
       .toElement( (viewImage) => {
-        return new ModelElement('form', {id: viewImage.getAttribute('id')})
-        });
+      return new ModelElement('form', {id: viewImage.getAttribute('id')})
+    });
 
     buildViewConverter().for(data.viewToModel).from({
       name: 'tangy-acasi',
@@ -226,51 +226,51 @@ export default class Acasi extends Plugin {
     // Add tangy-acasi button to feature components.
     editor.ui.componentFactory.add( 'acasi', locale => {
       const view = new ButtonView(locale);
-      view.set({
-        label: 'Acasi',
-        icon: imageIcon,
-        tooltip: true
-      });
-      // view.bind('isOn', 'isEnabled').to(command, 'value', 'isEnabled');
-
-      // When the acasi button is pressed, display the widget in the editor.
-      view.on( 'execute', () => {
-      // this.listenTo( view, 'execute', () => {
-        let url = prompt( 'Sound URL' );
-        if (url == "") {
-          url = '/content/assets/1.mp3'
-        }
-
-        let urlArray = url.split('/')
-        let filename = urlArray.slice(-1)[0]
-        let filenameArray = filename.split('.')
-        let fileIdentifier = filenameArray[0]
-        let name = 't_' + fileIdentifier;
-        let taName = 'ta_' + fileIdentifier;
-        let formName = 'form_' + fileIdentifier;
-
-        console.log("taName: " + taName)
-
-        editor.document.enqueueChanges( () => {
-          const imageElement1 = new ModelElement( 'image', { src: '/content/assets/images/never.png'});
-          const imageElement2 = new ModelElement( 'image', { src: '/content/assets/images/once.png'});
-          const imageElement3 = new ModelElement( 'image', { src: '/content/assets/images/few.png'});
-          const imageElement4 = new ModelElement( 'image', { src: '/content/assets/images/many.png'});
-
-          // const prb1 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'never'}, [imageElement1])
-          // const prb2 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'once'}, [imageElement2])
-          // const prb3 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'few'}, [imageElement3])
-          // const prb4 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'many'}, [imageElement4])
-
-          // const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [prb1, prb2, prb3, prb4])
-          const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [imageElement1, imageElement2, imageElement3, imageElement4])
-          const form = new ModelElement( 'form', {'id': formName, 'onchange': ''}, [acasi])
-
-          editor.data.insertContent( form, editor.document.selection );
-        } );
-      });
-      return view;
+    view.set({
+      label: 'Acasi',
+      icon: imageIcon,
+      tooltip: true
     });
+    // view.bind('isOn', 'isEnabled').to(command, 'value', 'isEnabled');
+
+    // When the acasi button is pressed, display the widget in the editor.
+    view.on( 'execute', () => {
+      // this.listenTo( view, 'execute', () => {
+      let url = prompt( 'Sound URL' );
+    if (url == "") {
+      url = '../../assets/sounds/1.mp3'
+    }
+
+    let urlArray = url.split('/')
+    let filename = urlArray.slice(-1)[0]
+    let filenameArray = filename.split('.')
+    let fileIdentifier = filenameArray[0]
+    let name = 't_' + fileIdentifier;
+    let taName = 'ta_' + fileIdentifier;
+    let formName = 'form_' + fileIdentifier;
+
+    console.log("taName: " + taName)
+
+    editor.document.enqueueChanges( () => {
+      const imageElement1 = new ModelElement( 'image', { src: '../../assets/images/never.png'});
+    const imageElement2 = new ModelElement( 'image', { src: '../../assets/images/once.png'});
+    const imageElement3 = new ModelElement( 'image', { src: '../../assets/images/few.png'});
+    const imageElement4 = new ModelElement( 'image', { src: '../../assets/images/many.png'});
+
+    // const prb1 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'never'}, [imageElement1])
+    // const prb2 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'once'}, [imageElement2])
+    // const prb3 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'few'}, [imageElement3])
+    // const prb4 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'many'}, [imageElement4])
+
+    // const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [prb1, prb2, prb3, prb4])
+    const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [imageElement1, imageElement2, imageElement3, imageElement4])
+    const form = new ModelElement( 'form', {'id': formName, 'onchange': ''}, [acasi])
+
+    editor.data.insertContent( form, editor.document.selection );
+  } );
+  });
+    return view;
+  });
   }
 
 }

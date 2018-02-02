@@ -69624,7 +69624,7 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
       // this.listenTo( view, 'execute', () => {
         let url = prompt( 'Sound URL' );
         if (url == "") {
-          url = '/content/assets/1.mp3'
+          url = '../../assets/sounds/1.mp3'
         }
 
         let urlArray = url.split('/')
@@ -69638,10 +69638,10 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
         console.log("taName: " + taName)
 
         editor.document.enqueueChanges( () => {
-          const imageElement1 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '/content/assets/images/never.png'});
-          const imageElement2 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '/content/assets/images/once.png'});
-          const imageElement3 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '/content/assets/images/few.png'});
-          const imageElement4 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '/content/assets/images/many.png'});
+          const imageElement1 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../../assets/images/never.png'});
+          const imageElement2 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../../assets/images/once.png'});
+          const imageElement3 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../../assets/images/few.png'});
+          const imageElement4 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../../assets/images/many.png'});
 
           // const prb1 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'never'}, [imageElement1])
           // const prb2 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'once'}, [imageElement2])
