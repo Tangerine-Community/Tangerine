@@ -264,9 +264,11 @@ app.post('/editor/item/save', async function (req, res) {
     // Update forms.json
 
     let formParameters = {
+      "id": formDirName,
       "title": formTitle,
       "src": contentUrlPath + formDirName + "/form.html"
     }
+    console.log("formParameters: " + JSON.stringify(formParameters))
     await saveFormsJson(formParameters, groupName)
       .then(() => {
         console.log("Updated forms.json")
