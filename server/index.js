@@ -48,15 +48,11 @@ passport.use(new LocalStrategy(
 
 // This decides what identifying piece of information to put in a cookie for the session.
 passport.serializeUser(function(user, done) {
-  console.log('serialize!')
-  console.log(user)
   done(null, user.name);
 });
 
 // This transforms the id in the session cookie to pass to req.user object.
 passport.deserializeUser(function(id, done) {
-  console.log('deserialize!')
-  console.log(id)
   done(null, {name: id});
 });
 
@@ -74,13 +70,11 @@ app.use(passport.session());
 
 // Middleware to protect routes.
 var isAuthenticated = function (req, res, next) {
-  // @TODO Add HTTP AUTH.
+  // @TODO Add HTTP AUTH for clients like curl.
   if (req.isAuthenticated()) {
-    console.log('is authenticated')
     return next();
   } 
-  log(req.url)
-  console.log('is not authenticated')
+  console.log(`Permission denied at ${req.url}`)
   res.redirect('/');
 }
 
