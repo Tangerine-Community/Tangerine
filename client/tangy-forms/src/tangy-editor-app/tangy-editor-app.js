@@ -387,7 +387,8 @@ class TangyEditorApp extends Element {
         'Content-Type': 'application/json'
       },
       method: "POST",
-      body: JSON.stringify(formOrderObj)
+      body: JSON.stringify(formOrderObj),
+      credentials: 'include'
     }).then(function(response) {
       if(response.ok) {
         response.json().then(function(data) {
@@ -410,10 +411,10 @@ class TangyEditorApp extends Element {
     if (this.groupId) {
       formsJsonPath = '../../groups/' + this.groupId + '/forms.json'
     }
-    let formsJson = await fetch(formsJsonPath)
+    let formsJson = await fetch(formsJsonPath, {credentials: 'include'})
     this.forms = await formsJson.json()
     // Load editor forms
-    let editorJson = await fetch('editor/editor-forms.json')
+    let editorJson = await fetch('editor/editor-forms.json', {credentials: 'include'})
     this.editorForms = await editorJson.json()
     window['tangy-form-app-loading'].innerHTML = ''
   }
@@ -472,7 +473,7 @@ class TangyEditorApp extends Element {
     // let formsPath = '../../groups/' + this.groupId + '/' + formSrc
     let formsPath = '../../groups/' + this.groupId + '/' + formSrc.replace('../content/', '')
 
-    let formHtml = await fetch(formsPath)
+    let formHtml = await fetch(formsPath, {credentials: 'include'})
     // Put the formHtml in a template first so element do not initialize connectedCallback
     // before we modify them.
     let formTemplate = document.createElement('div')
@@ -503,7 +504,7 @@ class TangyEditorApp extends Element {
     this.$['item-create'].hidden = true
     document.querySelector("#content").setAttribute('style', 'display:none;')
     // Load the form into a temp DOM to get stuff out of it
-    let formHtml = await fetch(formSrc)
+    let formHtml = await fetch(formSrc, {credentials: 'include'})
     let innerHTML = await formHtml.text()
     this.form = innerHTML
     var doc = document.implementation.createHTMLDocument("New Document");
@@ -561,7 +562,7 @@ class TangyEditorApp extends Element {
         this.headerTitle = "Edit Item"
         // Load the form into the DOM.
         // todo try to grab local pouch version of item
-        let itemHtml = await fetch(itemSrc)
+        let itemHtml = await fetch(itemSrc, {credentials: 'include'})
         this.itemHtmlText = await itemHtml.text()
         // console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
         if (this.itemHtmlText === '') {
@@ -622,11 +623,12 @@ class TangyEditorApp extends Element {
     }
     let result = await fetch("/editor/item/save", {
       headers: {
-        'Accept': 'application/json',
+        //'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       method: "POST",
-      body: JSON.stringify(item)
+      body: JSON.stringify(item),
+      credentials: 'include'
     }).then(function(response) {
       if(response.ok) {
         response.json().then(function(data) {
