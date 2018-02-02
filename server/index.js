@@ -21,6 +21,7 @@ const bodyParser = require('body-parser');
 // basic logging
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
+const junk = require('junk');
 
 const sep = path.sep;
 
@@ -403,8 +404,9 @@ var server = app.listen(config.port, function() {
 
 app.get('/groups', async function (req, res) {
   fsc.readdir('/tangerine/client/content/groups', function(err, files) {
-    console.log(files)
-    let groups = files.map((groupName) => { 
+    let filteredFiles = files.filter(junk.not)
+    console.log('/groups route lists these dirs: ' + filteredFiles)
+    let groups = filteredFiles.map((groupName) => {
       return {
         attributes: { 
           name: groupName 
