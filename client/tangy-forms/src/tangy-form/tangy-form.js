@@ -40,8 +40,8 @@ export class TangyForm extends PolymerElement {
       margin: 0px;
       padding: 0px;
     }
-            #tangy-form-responses,
-            #tangy-form-questions {
+    #tangy-form-responses,
+    #tangy-form-questions {
       margin: 0px;
       padding: 0px;
     }
