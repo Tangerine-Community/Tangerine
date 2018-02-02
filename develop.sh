@@ -31,9 +31,11 @@ docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/client/pwas:/tangerine/client/releases/pwas/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
+  --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
+  --volume $(pwd)/client/ckeditor:/tangerine/client/ckeditor \
   --volume $(pwd)/client/tangy-forms/src:/tangerine/client/tangy-forms/src \
   --volume $(pwd)/client/tangy-forms/index.html:/tangerine/client/tangy-forms/index.html \
   --volume $T_DEV_CONTENT:/tangerine/client/builds/dev/content \

@@ -322,6 +322,14 @@ export class TangyForm extends PolymerElement {
     let keys = []
     for (let response of this.responses) {
       keys = _.uniq(keys.concat(Object.getOwnPropertyNames(response)))
+      let inputs = response.inputs
+      for (let input of inputs) {
+        let name = input.name
+        let inputValue = input.value
+        console.log("name: " + name + " inputValue: " + inputValue)
+        keys.push(name)
+        response[name] = inputValue
+      }
     }
     // Get all data row.
     blob = new Blob([blob, keys.join(',') + '\n'], { type: 'application/csv;charset=utf-8;' });
@@ -331,13 +339,19 @@ export class TangyForm extends PolymerElement {
       for (let key of keys) {
         if (response.hasOwnProperty(key)) {
           let value = response[key]
-          if (typeof value === 'object') value = JSON.stringify(value)
-          if (typeof value === 'number') value = value.toString()
-          // @TODO Using encodeURI for every string is a bummer, it makes output look weird.
-          // value = value.replace(/"/g,'\\\"')
-          // value = value.replace(/,/g,'\\,')
-          value = encodeURI(value)
-          row.push(`"${value}"`)
+          if (key === 'inputs') {
+            console.log("inputs have been flattened and added to the response object.")
+            row.push('""')
+          } else {
+            if (typeof value === 'object') value = JSON.stringify(value)
+            if (typeof value === 'number') value = value.toString()
+            // @TODO Using encodeURI for every string is a bummer, it makes output look weird.
+            // value = value.replace(/"/g,'\\\"')
+            // value = value.replace(/,/g,'\\,')
+            value = encodeURI(value)
+            row.push(`"${value}"`)
+          }
+
         } else {
           row.push('""')
         }

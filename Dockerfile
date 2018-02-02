@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 RUN apt update
-RUN apt install -y zip
+RUN apt install -y zip vim
 
 RUN npm install -g nodemon
 RUN echo foo
