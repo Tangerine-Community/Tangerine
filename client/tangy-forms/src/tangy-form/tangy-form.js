@@ -52,11 +52,14 @@ export class TangyForm extends PolymerElement {
     }
     #new-response-fab {
       position: fixed;
-      top: 10px;
+      top: 75px;
       right: 7px;
     }
     :host([hide-responses]) #show-responses-fab,
     :host([hide-responses]) #new-response-fab {
+      display: none;
+    }
+    #show-responses-fab {
       display: none;
     }
   </style>
@@ -65,8 +68,8 @@ export class TangyForm extends PolymerElement {
 
       <div id="tangy-form-questions">
         <!--<slot id="tangy-form-questions&#45;&#45;form"></slot>-->
-        <paper-fab id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
-        <paper-fab id="show-responses-fab" on-click="showResponses" icon="icons:save"></paper-fab>
+        <paper-fab mini id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
+        <paper-fab mini id="show-responses-fab" on-click="showResponses" icon="icons:save"></paper-fab>
       </div>
 
       <div id="tangy-form-responses" hidden>
