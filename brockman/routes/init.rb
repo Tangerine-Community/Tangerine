@@ -1,6 +1,0 @@
-require_relative 'email.rb'
-require_relative 'report.rb'
-require_relative 'reimbursement.rb'
-require_relative 'workflow.rb'
-require_relative 'assessment.rb'
-require_relative 'class.rb'

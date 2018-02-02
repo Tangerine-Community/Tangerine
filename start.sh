@@ -37,18 +37,16 @@ RUN_OPTIONS="
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_ADMIN=$T_ADMIN\" \
   --env \"T_PASS=$T_PASS\" \
+  --env \"T_UPLOAD_USER=$T_UPLOAD_USER\" \
+  --env \"T_UPLOAD_PASSWORD=$T_UPLOAD_PASSWORD\" \
   --env \"T_USER1=$T_USER1\" \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   $T_PORT_MAPPING \
-  --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
-  --volume $(pwd)/data/apks/:/tangerine-server/tree/apks/ \
-  --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
-  --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
-  --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
-  --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
-  --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
-  --volume $(pwd)/data/client-v3/content/groups:/tangerine-server/client-v3/content/groups \
+  --volume $(pwd)/data/client/apks:/tangerine/client/releases/apks/ \
+  --volume $(pwd)/data/db:/tangerine/db/ \
+  --volume $(pwd)/data/client/pwas:/tangerine/client/releases/pwas/ \
+  --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"

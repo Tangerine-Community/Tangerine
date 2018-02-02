@@ -1,0 +1,55 @@
+<mat-tab-group id="locations">
+  <mat-tab label="Locations">
+    <mat-card class="tangy-card-content-container">
+      <div class="tangy-full-width">
+        <div class="mat-title tangy-half-width">
+          My Locations
+        </div>
+        <mat-form-field class="tangy-half-width">
+        <input name="locationName" #search type="text" matInput>
+        <mat-placeholder>
+          Filter Location By Name
+          <span>
+            <i class="material-icons mat-14 search-icon">search</i>
+          </span>
+        </mat-placeholder>
+      </mat-form-field>
+      </div>
+      <br/>
+      <mat-list>
+        <mat-list-item class="tangy-location-list">
+          <span class="tangy-foreground-primary">Locations Not yet Visited This Month</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-primary">Visits</span>
+        </mat-list-item>
+        <mat-list-item class="tangy-location-list" *ngFor="let location of notYetVisitedLocations">
+          <a class="tangy-foreground-primary" routerLink="/forms-list">
+            <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
+          </a>
+          <span>{{location.location}}</span>
+          <span class="tangy-spacer"></span>
+          <span>{{location.visits}}</span>
+        </mat-list-item>
+      </mat-list>
+      <mat-list>
+        <mat-list-item class="tangy-location-list">
+          <span class="tangy-foreground-primary">Locations Already Visited This Month</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-primary">Visits</span>
+        </mat-list-item>
+        <mat-list-item class="tangy-location-list" *ngFor="let location of alreadyVistedLocations">
+          <a class="tangy-foreground-primary" routerLink="/forms-list">
+            <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
+          </a>
+          <span>{{location.location}}</span>
+          <span class="tangy-spacer"></span>
+          <span>{{location.visits}}</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+  </mat-tab>
+  <!--<mat-tab label="Monthly Report">Content 2</mat-tab>-->
+
+  <!-- <mat-tab label="Manage Schools">Manage My Schools List</mat-tab> -->
+</mat-tab-group>
+  

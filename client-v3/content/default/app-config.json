@@ -1,7 +1,0 @@
-{
-    "securityPolicy": [
-        "password"
-    ],
-    "remoteCouchDBHost": "http://admin:password@localhost/db/default",
-    "homeUrl": "case-management"
-}
