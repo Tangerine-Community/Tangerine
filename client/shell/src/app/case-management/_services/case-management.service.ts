@@ -40,10 +40,8 @@ export class CaseManagementService {
     location.value.forEach(levelObject => myLocations = myLocations[levelObject.value].children);
 
     const locations = [];
-
-    /** @TODO: Look up numnber of visits for each location
-     * do not hardcode to 0. Visits is how many unique days we have with Form Responses for that location.
-     *
+    let visits = await this.getVisitsThisMonthByLocation();
+    /** 
      *  Check for ownProperty in myLocations
      * for ...in  iterate over all enumerable properties of the object
      * Also enumerates and those the object inherits from its constructor's prototype
@@ -53,7 +51,7 @@ export class CaseManagementService {
       if (myLocations.hasOwnProperty(locationId)) {
         locations.push({
           location: myLocations[locationId].label,
-          visits: 0
+          visits: countUnique(visits, myLocations[locationId]['id'].toString())
         });
       }
     }
@@ -61,10 +59,43 @@ export class CaseManagementService {
   }
 
   async getFormList() {
-    return await this.http.get('../content/forms.json')
+    const forms = [];
+    const visits = await this.getResponsesByFormId();
+    const formList = await this.http.get('../content/forms.json')
       .toPromise()
       .then(response => response.json()).catch(data => console.error(data));
+    for (const form of formList) {
+      forms.push({
+        title: form['title'],
+        count: countUnique(visits, form['id']),
+        src: form['src'],
+        id: form['id']
+      })
+    }
+
+
+    return forms;
+  }
+
+  async getVisitsThisMonthByLocation() {
+    const results = await this.userDB.query('tangy-form/responsesThisMonthByLocationId');
+    return results.rows;
+  }
+
+  async getResponsesByLocationId(locationId: string) {
+    const results = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
+    return results.rows;
+  }
+  async getResponsesByFormId() {
+    const results = await this.userDB.query('tangy-form/responsesByFormId');
+    return results.rows;
   }
 }
 
-
+function countUnique(array, key) {
+  let count = 0;
+  array.forEach((item) => {
+    count += item.key.toString() === key ? 1 : 0;
+  });
+  return count;
+}
