@@ -75,4 +75,9 @@ export class CaseManagementService {
     const results = await this.userDB.query('tangy-form/responsesThisMonthByLocationId');
     return results.rows;
   }
+
+  async getResponsesByLocationId(locationId: string) {
+    const results = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
+    return results.rows;
+  }
 }
