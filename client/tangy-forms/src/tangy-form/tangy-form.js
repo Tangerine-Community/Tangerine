@@ -59,10 +59,6 @@ export class TangyForm extends PolymerElement {
     :host([hide-responses]) #new-response-fab {
       display: none;
     }
-    #show-responses-fab,
-    #new-response-fab {
-        display: none;
-    }
   </style>
 
       <slot></slot>
