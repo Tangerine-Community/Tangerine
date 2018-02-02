@@ -27,10 +27,22 @@ export class TangyAcasi extends PolymerElement {
         border: 10px solid #af0;
         border-radius: 10px;
       }
+      paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        };
+      }
+      paper-button.indigo:hover {
+        background-color: var(--paper-indigo-400);
+      }
     </style>
 
     <div class="container">
       <label for="group">[[label]]</label>
+      <paper-button id="replay" raised class="indigo" on-click="replay">Replay</paper-button>
       <paper-radio-group name="group" id="paper-radio-group">
       </paper-radio-group>
     </div>
@@ -148,6 +160,11 @@ export class TangyAcasi extends PolymerElement {
 
   _prepareForm() {
 
+    let radios = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('paper-radio-button'));
+    radios.forEach(radio => {
+      radio.$.radioContainer.style= 'display:none'
+    })
+
     // Find all our img elements.
     this.imgElements = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('img'));
     let soundifyImages = (event) => {
@@ -208,7 +225,13 @@ export class TangyAcasi extends PolymerElement {
     if (value == true) paperRadioButtons.forEach((button) => button.setAttribute('disabled', true))
     if (value == false) paperRadioButtons.forEach((button) => button.removeAttribute('disabled'))
   }
+
   onHiddenChange(value) {
+  }
+
+  replay() {
+    console.log("replay")
+    this.transitionSound.play();
   }
 
 }

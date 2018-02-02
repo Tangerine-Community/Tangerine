@@ -36,7 +36,7 @@ class TangyEditorApp extends Element {
         position: relative;
         /*left: 45px;*/
         top: 8px;
-        margin:auto;
+        /*margin:auto;*/
       }
       .launch-form {
         position: relative;
