@@ -17,26 +17,26 @@ export class SyncRecordsComponent implements OnInit {
   async ngOnInit() {
     const result = await this.syncingService.getDocsNotUploaded();
     this.docsNotUploaded = result ? result.length : 0;
-    this.docsUploaded = 100;
+    this.docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded();
     this.syncPercentageComplete =
       ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100);
   }
 
   async pushAllRecords() {
-    this.toggleIsLoading();
+    this.toggleIsSyncing();
     try {
       const result = await this.syncingService.pushAllrecords();
       if (result) {
-        this.toggleIsLoading();
+        this.toggleIsSyncing();
       }
     } catch (error) {
       console.error(error);
-      this.toggleIsLoading();
+      this.toggleIsSyncing();
     }
   }
 
 
-  toggleIsLoading() {
+  toggleIsSyncing() {
     this.isLoading = !this.isLoading;
   }
 }

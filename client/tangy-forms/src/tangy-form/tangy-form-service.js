@@ -105,6 +105,13 @@ var tangyFormDesignDoc = {
         }
       }.toString()
     },
+    responsesLockedAndUploaded: {
+      map: function (doc) {
+        if (doc.collection === 'TangyFormResponse' && doc.complete === true && !!doc.uploadDatetime) {
+          emit(doc._id, true)
+        }
+      }.toString()
+    },
     responsesByLocationId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && doc.complete === true && doc.hasOwnProperty('inputs')) {
