@@ -77,7 +77,8 @@ export class SyncingService {
   }
 
   async getNumberOfFormsLockedAndUploaded() {
-    return await this.getFormsLockedAndUploaded();
+    const result= await this.getFormsLockedAndUploaded();
+    return result.length||0;
   }
 
   async markDocsAsUploaded(replicatedDocIds) {
