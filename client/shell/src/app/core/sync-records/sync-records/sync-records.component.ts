@@ -23,20 +23,20 @@ export class SyncRecordsComponent implements OnInit {
   }
 
   async pushAllRecords() {
-    this.toggleIsSyncing();
+    this.toggleIsLoading();
     try {
       const result = await this.syncingService.pushAllrecords();
       if (result) {
-        this.toggleIsSyncing();
+        this.toggleIsLoading();
       }
     } catch (error) {
       console.error(error);
-      this.toggleIsSyncing();
+      this.toggleIsLoading();
     }
   }
 
 
-  toggleIsSyncing() {
+  toggleIsLoading() {
     this.isLoading = !this.isLoading;
   }
 }
