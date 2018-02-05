@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 # Send nginx logs to docker logs.
 tail -f /var/log/nginx/access.log &
 tail -f /var/log/nginx/error.log &
@@ -59,6 +60,20 @@ curl -XPOST -d \
   '{ "_id": "_design/_auth",   "language": "javascript",   "validate_doc_update": "function(newDoc, oldDoc, userCtx, secObj) { if (userCtx.roles.indexOf(\"_admin\") === -1) { throw({forbidden: \"Only admins may update this database.\"}); } }" }' \
   -H "Content-Type: application/json" \
   http://$T_ADMIN:$T_PASS@localhost:5984/tangerine
+
+if [ "$OTA_UPDATE" = "true" ]
+then
+  echo ""
+  echo ""
+  echo ""
+  echo ""
+  echo "Set up Cordova Hot Code Push configuration"
+  npm install -g cordova-hot-code-push-cli 
+  cd /tangerine-server/client
+  cat cordova-hcp.json_template | sed "s#REPLACE_URL#$T_PROTOCOL://$T_HOST_NAME#" > cordova-hcp.json
+  cat config.xml_template | sed "s#REPLACE_URL#$T_PROTOCOL://$T_HOST_NAME#" > config.xml
+  cordova-hcp build
+fi
 
 
 

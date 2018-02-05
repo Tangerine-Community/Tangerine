@@ -131,6 +131,13 @@ const makeApk = function(req, res) {
     });
   }
 
+  var buildOTAUpdateManifest = function(doneBuildOTAUpdateManifest) {
+    const execer = require('child_process').exec;
+    execer(`cd /tangerine-server/client/ && cordova-hcp build`, (error, stdout, stderr) => {
+      doneBuildOTAUpdateManifest()
+    })
+  }
+
   // BuildIt function to use soon.
   var buildIt = function(doneBuildingIt) {
     cd(`${__dirname}/../client`);
@@ -155,15 +162,25 @@ const makeApk = function(req, res) {
   // Go.
   prepareData(function(err) {
     if (err) return console.log(err)
-    buildIt(function(err) {
-      if (err) return console.log(err) 
-      res.status(HttpStatus.OK).json({
-          token : token
+    if (process.env.OTA_UPDATE) {
+      buildOTAUpdateManifest(function(err) {
+        if (err) return console.log(err) 
+        buildIt(function(err) {
+          if (err) return console.log(err) 
+          res.status(HttpStatus.OK).json({
+              token : token
+          })
+        })
       })
-    })
+    } else {
+      buildIt(function(err) {
+        if (err) return console.log(err) 
+        res.status(HttpStatus.OK).json({
+            token : token
+        })
+      })
+    }
   })
-
-    
 
 };
 

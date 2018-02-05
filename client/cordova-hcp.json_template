@@ -1,0 +1,7 @@
+{
+  "name": "Tangerine",
+  "ios_identifier": "",
+  "android_identifier": "org.rti.tangerine",
+  "update": "now",
+  "content_url": "REPLACE_URL/client/"
+}
