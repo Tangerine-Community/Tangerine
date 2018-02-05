@@ -4,12 +4,14 @@ import PouchDB from 'pouchdb';
 import * as PouchDBUpsert from 'pouchdb-upsert';
 
 import { AppConfigService } from '../../../shared/_services/app-config.service';
+import { UserService } from '../../auth/_services/user.service';
 
 @Injectable()
 export class SyncingService {
   constructor(
     private appConfigService: AppConfigService,
-    private http: Http
+    private http: Http,
+    private userService: UserService
   ) { }
 
   getUserDB(): string {
@@ -33,9 +35,11 @@ export class SyncingService {
       const remoteHost = await this.getRemoteHost();
       const DB = new PouchDB(userDB);
       const doc_ids = await this.getIDsFormsLockedAndNotUploaded();
+      const userUUID = await this.userService.getUserUUID();
       if (doc_ids && doc_ids.length > 0) {
         for (let doc_id of doc_ids) {
-          let doc = await DB.get(doc_id)
+          let doc = await DB.get(doc_id);
+          doc['inputs'].push({ name: 'userUUID', value: userUUID });
           await this.http.post(remoteHost, { doc }).toPromise()
           this.markDocsAsUploaded([doc_id]);
         }
@@ -77,8 +81,8 @@ export class SyncingService {
   }
 
   async getNumberOfFormsLockedAndUploaded() {
-    const result= await this.getFormsLockedAndUploaded();
-    return result.length||0;
+    const result = await this.getFormsLockedAndUploaded();
+    return result.length || 0;
   }
 
   async markDocsAsUploaded(replicatedDocIds) {
