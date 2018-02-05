@@ -67,6 +67,11 @@ export class TangyAcasi extends PolymerElement {
         type: String,
         value: '../../assets/sounds/swish.mp3'
       },
+      onChange: {
+        type: String,
+        value: '',
+        reflectToAttribute: true
+      },
       value: {
         type: String,
         value: '',

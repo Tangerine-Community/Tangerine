@@ -88,7 +88,7 @@ export default class Acasi extends Plugin {
 
     schema.registerItem( 'form' );
     schema.allow( { name: 'form', inside: '$root' } );
-    schema.allow( { name: 'form', attributes: [ 'id', 'onchange' ], inside: '$root' } );
+    schema.allow( { name: 'form', attributes: [ 'id', 'on-change' ], inside: '$root' } );
     // schema.allow( { name: 'form', attributes: [ 'id' ], inside: '$root' } );
     schema.allow( { name: '$inline', inside: 'form' } );
     schema.allow( { name: 'image', inside: 'form' } );
@@ -102,8 +102,8 @@ export default class Acasi extends Plugin {
       .toElement( (element) => {
       console.log("data.modelToView form element: ")
     const id = element.item.getAttribute('id')
-    const onchange = element.item.getAttribute('onchange')
-    let container = new ViewContainerElement( 'form', {'id': id, 'onchange': onchange} );
+    const onchange = element.item.getAttribute('on-change')
+    let container = new ViewContainerElement( 'form', {'id': id, 'on-change': onchange} );
     // let container = new ViewContainerElement( 'form', {'id': id} );
     return container
   })
@@ -207,13 +207,13 @@ export default class Acasi extends Plugin {
       attribute: { 'class': /./ }
     }).toElement(viewImage => new ModelElement('figure', { 'class': viewImage.getAttribute('class') }));
 
-    // Build converter for onchange attribute.
+    // Build converter for on-change attribute.
     // Note that by default attribute converters are added with `low` priority.
     // This converter will be thus fired after `convertHoistableImage` converter.
     buildViewConverter().for( data.viewToModel )
-      .from( { name: 'form', attribute: { onchange: /./ } } )
-      .consuming( { attribute: [ 'onchange' ] } )
-      .toAttribute( viewForm => ( { key: 'onchange', value: viewForm.getAttribute( 'onchange' ) } ) );
+      .from( { name: 'form', attribute: { 'on-change': /./ } } )
+      .consuming( { attribute: [ 'on-change' ] } )
+      .toAttribute( viewForm => ( { key: 'on-change', value: viewForm.getAttribute( 'on-change' ) } ) );
 
     // buildViewConverter().for( data.viewToModel )
     //   .from( { name: 'paper-radio-button', attribute: { value: /./ } } )
@@ -264,7 +264,7 @@ export default class Acasi extends Plugin {
 
     // const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [prb1, prb2, prb3, prb4])
     const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [imageElement1, imageElement2, imageElement3, imageElement4])
-    const form = new ModelElement( 'form', {'id': formName, 'onchange': ''}, [acasi])
+    const form = new ModelElement( 'form', {'id': formName, 'on-change': ''}, [acasi])
 
     editor.data.insertContent( form, editor.document.selection );
   } );
