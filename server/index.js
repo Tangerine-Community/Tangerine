@@ -73,9 +73,11 @@ var isAuthenticated = function (req, res, next) {
   // @TODO Add HTTP AUTH for clients like curl.
   if (req.isAuthenticated()) {
     return next();
-  } 
-  console.log(`Permission denied at ${req.url}`)
-  res.redirect('/');
+  }
+  let errorMessage = `Permission denied at ${req.url}`;
+  console.log(errorMessage)
+  // res.redirect('/');
+  res.status(401).send(errorMessage)
 }
 
 // Login service.
