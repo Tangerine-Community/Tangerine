@@ -15,18 +15,18 @@ export class UserService {
   USER_DATABASE_NAME = 'currentUser';
   constructor(private uuid: Uuid) { }
   async create(payload) {
-    const uuidCode = this.uuid.v1();
+    const userUUID = this.uuid.v1();
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(payload.password, salt);
     this.userData = payload;
-    this.userData['uuidCode'] = uuidCode;
+    this.userData['userUUID'] = userUUID;
     this.userData['password'] = hash;
 
     try {
       /**TODO: check if user exists before saving */
       const postUserdata = await this.DB.post(this.userData);
       if (postUserdata) {
-        const result = await this.initUserProfile(this.userData['username'], uuidCode);
+        const result = await this.initUserProfile(this.userData['username'], userUUID);
         return result;
       }
 
@@ -51,6 +51,19 @@ export class UserService {
     }
   }
 
+  async getUserUUID() {
+    const username = await this.getUserDatabase();
+    try {
+      PouchDB.plugin(PouchDBFind);
+      const result = await this.DB.find({ selector: { username } });
+      if (result.docs.length > 0) {
+        return result.docs[0]['userUUID'];
+      } else { console.error('Unsuccessful'); }
+    } catch (error) {
+
+      console.error(error);
+    }
+  }
   async getUserProfileId() {
     const userDBPath = await this.getUserDatabase();
     if (userDBPath) {

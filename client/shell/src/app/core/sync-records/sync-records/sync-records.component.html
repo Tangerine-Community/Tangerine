@@ -3,6 +3,9 @@
 <mat-card>
     <mat-card-content>
         <p class="mat-headline">Syncing Status</p>
+        <span *ngIf="isSyncSuccesful">Sync Successful</span>
+        <span *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined">Sync Was Unsuccessful. Please Retry</span>
+        <br/>
         <br>
         <p>Last Succesful Sync Timestamp:</p>
         <p>Docs uploaded: {{docsUploaded}}</p>
