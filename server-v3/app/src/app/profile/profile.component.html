@@ -1,0 +1,72 @@
+<div class="mdl-color--amber color-header clearfix">
+    <div class="color-explanation mdl-color-text--white">
+        <h4>Profile</h4>
+    </div>
+</div>
+<div class="mdl-grid mdl-grid--no-spacing">
+    <div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+        <div class="left-info-box">
+            <!--<h5><i class="material-icons">format_align_left</i> Help</h5>-->
+        </div>
+    </div>
+    <div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone r-content">
+        <div class="body-content">
+            <div *ngIf="profile">
+                <mdl-card mdl-shadow="4" *ngIf="isPaid">
+                    <mdl-card-title [class.payment-highlight]="isPaid">
+                        <h2 mdl-card-title-text>Welcome!</h2>
+                    </mdl-card-title>
+                    <mdl-card-supporting-text>
+                        <div>
+                            {{isPaidMessage}}
+                        </div>
+                    </mdl-card-supporting-text>
+                </mdl-card>
+                <mdl-card mdl-shadow="4">
+                    <mdl-card-title>
+                        <h2 mdl-card-title-text>Member</h2>
+                    </mdl-card-title>
+                    <mdl-card-supporting-text>
+                        <div>
+                            {{profile.firstName}} {{profile.firstName}}<br/>
+                            Email: {{profile.email}}<br/>
+                            Organization Name: {{profile.organizationName}}<br/>
+                            Organization Type: {{profile.organizationType}}<br/>
+                            Title: {{profile.title}}<br/>
+                            Location: {{profile.state}}, {{profile.location}} <button (click)="edit()">Edit</button><br/>
+                            Email Opt Out: {{profile.emailOptOut}}
+                        </div>
+                    </mdl-card-supporting-text>
+                </mdl-card>
+
+                <mdl-card mdl-shadow="4">
+                    <mdl-card-title>
+                        <h2 mdl-card-title-text>Site</h2>
+                    </mdl-card-title>
+                    <mdl-card-supporting-text>
+                    <div>
+                         URL: {{profile.url}}<br/>
+                         Username: {{profile.username}}<br/>
+                    </div>
+                    </mdl-card-supporting-text>
+                </mdl-card>
+                <mdl-card mdl-shadow="4">
+                    <mdl-card-title>
+                        <h2 mdl-card-title-text>Plan</h2>
+                    </mdl-card-title>
+                    <mdl-card-supporting-text>
+                        <div [class.payment-highlight]="isPaid">
+                            Plan: {{profile.officialPlan}}<br/>
+                            Plan Description: {{profile.planDescription}}<br/>
+                            Plan Expiry: {{profile.planExpiry | date:'medium'}}<br/>
+                            Last Paid Amount: ${{profile.officialLastPaidAmount}} on {{profile.officialLastPaidDate | date:'medium'}}<br/>
+                            Payment Reference: {{profile.pnref}}<br/>
+                            Initial Registration: {{profile.initialRegistration | date:'medium'}}
+                       </div>
+                    </mdl-card-supporting-text>
+                </mdl-card>
+            </div>
+        </div>
+    </div>
+</div>
+

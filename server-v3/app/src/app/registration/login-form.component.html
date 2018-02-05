@@ -1,0 +1,74 @@
+<div class="mdl-color--amber color-header clearfix">
+    <div class="color-explanation mdl-color-text--white">
+        <h4>Login to Tangerine</h4>
+        <h6>Use your credentials to login</h6>
+    </div>
+</div>
+<div class="mdl-grid mdl-grid--no-spacing">
+    <div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+        <div class="left-info-box">
+            <!--<h5><i class="material-icons">format_align_left</i> Help</h5>-->
+            <p></p>
+        </div>
+    </div>
+    <div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone r-content">
+        <div class="body-content">
+            <div class="mdl-card mdl-shadow--2dp change-width">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">Login</h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form-horizontal" role="form">
+                        <div *ngIf="error" class="mdl-textfield">
+                            <!-- mdl-js-textfield -->
+                            <span class="xmdl-textfield__error">{{error}}</span><br />
+                        </div>
+
+                        <!--<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="username" [ngFormControl]="loginForm.controls['username']" />
+                            <label class="mdl-textfield__label" for="username">Username*</label>
+                            <control-messages control="username"></control-messages>
+                        </div>-->
+
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <!-- mdl-js-textfield -->
+                            <input class="mdl-textfield__input" type="text" id="username" formControlName="username" />
+                            <label class="mdl-textfield__label" for="username">Username*</label>
+                            <control-messages [control]="loginForm.controls.username"></control-messages>
+                            <!--<span class="mdl-textfield__error">Required input</span>-->
+                        </div>
+
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="password" id="password" formControlName="password" />
+                            <label class="mdl-textfield__label" for="lname">Password*</label>
+                            <!--<span class="mdl-textfield__error">Required input</span>-->
+                            <control-messages [control]="loginForm.controls.password"></control-messages>
+                        </div>
+                        <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" [disabled]="!loginForm.valid" >
+                            Login
+                        </button>
+                        <a routerLink="/password"  class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--light-blue-700">Forgot Password?</a> <a routerLink="/username"  class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--light-blue-700">Forgot Username?</a>
+						<div class="mdl-card__actions right mdl-color-text--light-blue-700">
+							Don't have an account? Learn more and <a routerLink="/registration"  class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-color-text--light-blue-700">Register Now <i class="material-icons">chevron_right</i></a>
+						</div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<!--<div *ngIf="loggedIn">
+       <p>Welcome to Tangerine-Hub</p>
+   </div>-->
+
+<!--<h3>Form value:</h3>
+              <pre>{{value}}</pre>                -->

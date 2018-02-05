@@ -1,0 +1,86 @@
+<form on-change="
+  // Disable/enable checkbox_3 given checkbox_4's value.
+  if (getValue('checkbox_4')) inputEnable('checkbox_3')
+  if (!getValue('checkbox_4')) inputDisable('checkbox_3')
+
+  // Hide/show checkbox_5 given checkbox_6's value.
+  if (getValue('checkbox_6')) inputShow('checkbox_5')
+  if (!getValue('checkbox_6')) inputHide('checkbox_5')
+
+  // Disable/enable checkbox_group_4.
+  if (getValue('checkbox_group_4_enable')) inputEnable('checkbox_group_4')
+  if (!getValue('checkbox_group_4_enable')) inputDisable('checkbox_group_4')
+
+  // Disable/enable checkbox_group_5.
+  if (getValue('checkbox_group_5_show')) inputShow('checkbox_group_5')
+  if (!getValue('checkbox_group_5_show')) inputHide('checkbox_group_5')
+">
+
+  <h3>Checkboxes</h3> 
+
+  <p>
+    <tangy-checkbox name="checkbox_1">This checkbox is not required.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_2" required>This checkbox is required.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_3" disabled required>This checkbox is disabled, but if enabled, it is then also required.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_4">Check this checkbox to enable the disabled checkbox.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_5" hidden required>This checkbox is hidden, but if show, it is also required.</tangy-checkbox>
+    <tangy-checkbox name="checkbox_6">Check this checkbox to show the hidden checkbox.</tangy-checkbox>
+  </p>
+
+
+  <h3>Checkbox Groups</h3> 
+
+  <tangy-checkboxes 
+    name="checkbox_group_1" 
+    label="This is a checkbox group.">
+    <option value="checkbox_group_1__checkbox_1">Option 1</option>
+    <option value="checkbox_group_1__checkbox_2">Option 2</option>
+    <option value="checkbox_group_1__checkbox_3">Option 3</option>
+    <option value="checkbox_group_1__checkbox_4">Option 4</option>
+  </tangy-checkboxes>
+
+  <tangy-checkboxes 
+    name="checkbox_group_2" 
+    required
+    label="This is a checkbox group that requires that it be saved with at least 1 checked checkbox.">
+    <option value="checkbox_group_2__checkbox_1">Option 1</option>
+    <option value="checkbox_group_2__checkbox_2">Option 2</option>
+    <option value="checkbox_group_2__checkbox_3">Option 3</option>
+    <option value="checkbox_group_2__checkbox_4">Option 4</option>
+  </tangy-checkboxes>
+
+  <tangy-checkboxes 
+    name="checkbox_group_3" 
+    at-least=2 
+    label="This is a checkbox group that is not required, but if you do make a selection it is not valid until you check at least 2 checkboxes.">
+    <option value="checkbox_group_3__checkbox_1">Option 1</option>
+    <option value="checkbox_group_3__checkbox_2">Option 2</option>
+    <option value="checkbox_group_3__checkbox_3">Option 3</option>
+    <option value="checkbox_group_3__checkbox_4">Option 4</option>
+  </tangy-checkboxes>
+
+  <tangy-checkboxes 
+    name="checkbox_group_4" 
+    label="This is a disabled checkbox group."
+    required
+    disabled>
+    <option value="checkbox_group_4__checkbox_1" disabled>Option 1</option>
+    <option value="checkbox_group_4__checkbox_2" disabled>Option 2</option>
+    <option value="checkbox_group_4__checkbox_3" disabled>Option 3</option>
+    <option value="checkbox_group_4__checkbox_4" disabled>Option 4</option>
+  </tangy-checkboxes>
+  <tangy-checkbox name="checkbox_group_4_enable">Check this checkbox to enable another checkbox group. If the checkbox group is enabled it will be required to submit the form.</tangy-checkbox>
+
+  <tangy-checkboxes 
+    name="checkbox_group_5" 
+    label="This is a hidden checkbox group."
+    required
+    hidden>
+    <option value="checkbox_group_5__checkbox_1">Option 1</option>
+    <option value="checkbox_group_5__checkbox_2">Option 2</option>
+    <option value="checkbox_group_5__checkbox_3">Option 3</option>
+    <option value="checkbox_group_5__checkbox_4">Option 4</option>
+  </tangy-checkboxes>
+  <tangy-checkbox name="checkbox_group_5_show">Check this checkbox to show another checkbox group. If the checkbox group is shown it will be required to submit the form.</tangy-checkbox>
+
+</form>

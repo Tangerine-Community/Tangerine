@@ -1,5 +1,6 @@
 'use strict';
 
+const path = require('path');
 const unirest    = require('unirest');
 const express    = require('express');
 const HttpStatus = require('http-status-codes');
@@ -69,6 +70,12 @@ app.use(function(err, req, res, next) {
 app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
 app.use('/client', express.static(__dirname + '/../client/src/'));
 
+if (process.env.NODE_ENV == "development") {
+  app.use('/client-v3', express.static(path.join(__dirname, '../client-v3/builds/dev')));
+}
+app.use('/client-v3/releases/apks', express.static(path.join(__dirname, '../client-v3/releases/apks')));
+app.use('/client-v3/releases/pwas', express.static(path.join(__dirname, '../client-v3/releases/pwas')));
+
 // User routes
 app.get('/user/:name',    require('./routes/user/get-user'));
 app.put('/user',          require('./routes/user/new-user'));
@@ -97,7 +104,6 @@ app.delete('/group/:group/:user', require('./routes/group/leave-group'));
 
 // retrieve stored photo
 app.get('/media/resultphoto/:group/:result/:subtest', require('./routes/media/get-result-photo'))
-
 
 // landing
 app.get('/', function(req, res){

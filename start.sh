@@ -9,8 +9,16 @@ else
 fi
 
 # Allow to specify Tangerine Version as parameter in ./start.sh, other wise use the most recent tag.
-if [ "$T_TAG" = "" ]; then
-  T_TAG=$(git describe --tags --abbrev=0)
+if [ "$1" = "" ]; then
+  if [ "T_TAG" = "" ]; then
+    T_TAG=$(git describe --tags --abbrev=0)
+    echo "Pulling $T_TAG"
+    docker pull tangerine/tangerine:$T_TAG
+  else
+    T_TAG="$T_TAG"
+  fi
+else
+  T_TAG="$1"
 fi
 
 # Pull tag.
@@ -38,6 +46,9 @@ RUN_OPTIONS="
   --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
+  --volume $(pwd)/data/client-v3/apks:/tangerine-server/client-v3/releases/apks/ \
+  --volume $(pwd)/data/client-v3/pwas:/tangerine-server/client-v3/releases/pwas/ \
+  --volume $(pwd)/data/client-v3/content/groups:/tangerine-server/client-v3/content/groups \
 " 
 
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"

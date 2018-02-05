@@ -88,6 +88,18 @@ echo ""
 echo ""
 echo ""
 
+# Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
+#cd /tangerine-server/client \
+#    && ./node_modules/.bin/cordova platform add android@5.X.X \
+#    && npm install cordova-plugin-whitelist \
+#    && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
+#    && npm install cordova-plugin-geolocation \
+#    && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
+#    && npm install cordova-plugin-camera \
+#    && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save \
+#    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
+#cd /tangerine-server/client && npm run build:apk 
+
 if [ "$T_RUN_MODE" = "production" ]
 then
 	echo "Start the pm2 process"
@@ -109,5 +121,15 @@ then
 	echo ""
 	echo ""
 	echo "Monitoring for client chages..."
-	cd /tangerine-server/client && npm run debug
+	cd /tangerine-server/client && npm run debug &
+	echo ""
+	echo ""
+	echo ""
+	echo "Starting v3 client development..."
+  cd /tangerine-server/client-v3/ && ./develop.sh &
+	echo ""
+	echo ""
+	echo ""
+	echo "Starting v3 server development..."
+  cd /tangerine-server/server-v3/ && ./develop.sh
 fi

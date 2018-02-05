@@ -40,6 +40,7 @@ ENV T_ROBBERT_PORT 4444
 ENV T_TREE_PORT 4445
 ENV T_BROCKMAN_PORT 4446
 ENV T_DECOMPRESSOR_PORT 4447
+ENV T_SERVER_V3_PORT 4448
 
 #
 # Stage 1 - Install global dependecies
@@ -132,30 +133,30 @@ ENV GEM_PATH /usr/local/rvm/rubies/ruby-2.2.0
 ENV GEM_HOME /usr/local/rvm/rubies/ruby-2.2.0
 
 # Prepare to install Android Build Tools
-ENV GRADLE_OPTS -Dorg.gradle.jvmargs=-Xmx2048m
-ENV ANDROID_SDK_FILENAME android-sdk_r24.4.1-linux.tgz
-ENV ANDROID_SDK_URL http://dl.google.com/android/${ANDROID_SDK_FILENAME}
+#ENV GRADLE_OPTS -Dorg.gradle.jvmargs=-Xmx2048m
+#ENV ANDROID_SDK_FILENAME android-sdk_r24.4.1-linux.tgz
+#ENV ANDROID_SDK_URL http://dl.google.com/android/${ANDROID_SDK_FILENAME}
 # Support from Ice Cream Sandwich, 4.0.3 - 4.0.4, to Marshmallow version 6.0
-ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23
+#ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23
 # https://developer.android.com/studio/releases/build-tools.html
-ENV ANDROID_BUILD_TOOLS_VERSION 23.0.3
-ENV ANDROID_HOME /opt/android-sdk-linux
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+#ENV ANDROID_BUILD_TOOLS_VERSION 23.0.3
+#ENV ANDROID_HOME /opt/android-sdk-linux
+#ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
 # Install jd7
-RUN apt-get -y install default-jdk
+#RUN apt-get -y install default-jdk
 
 # Install Android SDK
-RUN cd /opt && \
-    wget -q $ANDROID_SDK_URL && \
-    tar -xzf $ANDROID_SDK_FILENAME && \
-    rm $ANDROID_SDK_FILENAME && \
-    echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
+#RUN cd /opt && \
+#    wget -q $ANDROID_SDK_URL && \
+#    tar -xzf $ANDROID_SDK_FILENAME && \
+#    rm $ANDROID_SDK_FILENAME && \
+#    echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
 
 # Install Cordova
-RUN npm update && \
-    npm install -g npm && \
-    npm install -g cordova 
+#RUN npm update && \
+#    npm install -g npm && \
+#    npm install -g cordova 
 
 
 
@@ -202,18 +203,6 @@ RUN cd /tangerine-server/client \
 RUN cd /tangerine-server/client \
     && bower install --allow-root  
 
-# Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
-RUN cd /tangerine-server/client \
-    && ./node_modules/.bin/cordova platform add android@5.X.X \
-    && npm install cordova-plugin-whitelist \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
-    && npm install cordova-plugin-geolocation \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
-    && npm install cordova-plugin-camera \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save \
-    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-RUN cd /tangerine-server/client && npm run build:apk 
-
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
 RUN cd /tangerine-server/cli \
@@ -223,7 +212,7 @@ RUN cd /tangerine-server/cli \
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
     && npm install
-
+ 
 
 #
 # Stage 3 Compile 
@@ -243,6 +232,57 @@ RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
 
+
+
+
+
+# 
+#  v3 
+#
+
+# Install yarn.
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list && \
+    sudo apt-get update && sudo apt-get install yarn
+# Install node version manager along with Node 4 and 9.
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+RUN source ~/.nvm/nvm.sh && \
+  nvm install 8 && \
+  nvm install 4
+
+RUN apt-get install -y zip
+
+# Install server-v3.
+ADD ./server-v3/package.json /tangerine-server/server-v3/package.json
+ADD ./server-v3/app/package.json /tangerine-server/server-v3/app/package.json
+ADD ./server-v3/install.sh /tangerine-server/server-v3/install.sh
+RUN cd /tangerine-server/server-v3 \
+    && ./install.sh
+
+# Install client-v3
+ADD client-v3/package.json /tangerine-server/client-v3/package.json
+ADD client-v3/tangy-forms/package.json /tangerine-server/client-v3/tangy-forms/package.json
+ADD client-v3/tangy-forms/yarn.lock /tangerine-server/client-v3/tangy-forms/yarn.lock
+ADD client-v3/tangy-forms/bower.json /tangerine-server/client-v3/tangy-forms/bower.json
+ADD client-v3/shell/package.json /tangerine-server/client-v3/shell/package.json
+ADD client-v3/wrappers/pwa/package.json /tangerine-server/client-v3/wrappers/pwa/package.json
+ADD client-v3/wrappers/pwa/bower.json /tangerine-server/client-v3/wrappers/pwa/bower.json
+ADD client-v3/install.sh /tangerine-server/client-v3/install.sh
+RUN cd /tangerine-server/client-v3/ && ./install.sh
+
+# Build client v3.
+ADD client-v3 /tangerine-server/client-v3
+ADD client-v3/shell /tangerine-server/client-v3/shell
+RUN cd /tangerine-server/client-v3/ && ./build.sh
+
+# Build server v3
+ADD server-v3 /tangerine-server/server-v3
+RUN cd /tangerine-server/server-v3 && ./build.sh
+
+#
+# Wrap up 
+#
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server

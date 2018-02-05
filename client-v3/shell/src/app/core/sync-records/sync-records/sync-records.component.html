@@ -1,0 +1,16 @@
+<br>
+<br>
+<mat-card>
+    <mat-card-content>
+        <p class="mat-headline">Syncing Status</p>
+        <br>
+        <p>Last Succesful Sync Timestamp:</p>
+        <p>Docs uploaded: {{docsUploaded}}</p>
+        <p>Docs not uploaded: {{docsNotUploaded}}</p>
+        <p>Percentage Complete: {{syncPercentageComplete|number:'1.2-2'}}%</p>
+    </mat-card-content>
+    <mat-card-actions>
+        <button color="primary" mat-raised-button (click)="pushAllRecords()">SYNC</button>
+    </mat-card-actions>
+</mat-card>
+<br>

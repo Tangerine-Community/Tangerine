@@ -58,6 +58,42 @@ docker exec -it tangerine-container /tangerine-server/v2.0.0.sh
 
 Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
 
+## Development
+
+### With Docker
+```
+git clone git@github.com:tangerine-community/tangerine
+cd tangerine
+cp config.defaults.sh config.sh
+./develop.sh
+```
+
+Now open http://localhost/ in your web browser. To see client v2 go to http://localhost/client/ and to see client v3 go to http://localhost/client-v3/.
+
+### Develop v3 client without Docker on a Mac. 
+
+1 - Install Brew and Yarn.
+```
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew install yarn
+```
+
+2 - Install nvm.
+```
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
+```
+
+3 - Start developing.
+```
+git clone git@github.com:tangerine-community/tangerine
+cd tangerine
+cd client-v3
+./install.sh
+./build.sh
+./develop.sh
+```
+
+Now open http://localhost:4200/ in your web browser.
 
 ## Technical Documentation
 Check out the [Tangerine Technical Documentation site on Github Pages](http://tangerine-community.github.io/Tangerine/index.html). Want to contribute documentation? Fork the Tangerine repository, commit to the `gh-pages` branch and send us a pull request.

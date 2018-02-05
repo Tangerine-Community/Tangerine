@@ -1,0 +1,28 @@
+<h2> Tangerine Form Multipage Example: Page 2 </h2>
+
+<tangerine-form formId="MultipageFormExample">
+
+  <tangerine-form-card>
+    title: 'Doge Wow!'
+    subtitle: 'So many squirrels, so little time.'
+    image: 'https://material.angular.io/assets/img/examples/shiba2.jpg'
+    avatarImage: 'assets/noun_727773_cc.png'
+    fields:
+      - type: 'input'
+        key: 'doge_name'
+        templateOptions: 
+          required: true
+          label: 'Your dogs name?'
+          type: 'text'
+      - type: 'input'
+        key: 'doge_color'
+        templateOptions: 
+          required: true
+          label: 'Your dogs favorite color?'
+          type: 'text'
+  </tangerine-form-card>
+
+  <a routerLink="/forms/multipage-form-example/page-1">◄ Page 1</a>
+  <a routerLink="/forms/multipage-form-example/page-3">Page 3 ►</a>
+  
+</tangerine-form>

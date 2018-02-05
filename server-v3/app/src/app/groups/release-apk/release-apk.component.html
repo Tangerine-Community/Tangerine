@@ -1,0 +1,8 @@
+
+<p *ngIf="!buildApkIsComplete">
+  Your APK is building...
+</p>
+<p *ngIf="buildApkIsComplete">
+  Download your Zip <a target='_new' href="/client-v3/releases/apks/{{secret}}.zip">here</a> and then upload to <a href="https://build.phonegap.com/apps">https://build.phonegap.com</a>.
+</p>
+
