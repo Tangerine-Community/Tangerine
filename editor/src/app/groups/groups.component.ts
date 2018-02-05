@@ -41,7 +41,14 @@ export class GroupsComponent implements OnInit {
                 this.result = data.filter((group) => group.attributes.name.indexOf('_reporting') == -1); 
                 this.readyForDisplay = true;
             },
-            err => { console.log('error in getting data for groups: ' + JSON.stringify(err, null, 2)); this.error = true;}, 
+            err => {
+                console.log('error in getting data for groups: ' + JSON.stringify(err, null, 2)); this.error = true;
+                if (err.status === 401) {
+                    alert('Please login. ' + err._body)
+                } else {
+                    alert(err._body)
+                }
+            },
             () => console.log('done')
             );
     }
