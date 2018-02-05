@@ -189,9 +189,32 @@ class AssessmentImportView extends Backbone.View
 
       <h1>Tangerine Central Import</h1>
 
+      <input type='file' id='fileinput' />
+
       #{importStep}
 
     "
+
+    readSingleFile = (evt) -> 
+
+      f = evt.target.files[0]  
+
+      if (f) 
+        r = new FileReader()
+        r.onload = (e) -> 
+            contents = e.target.result             
+            ct = r.result
+            try 
+              docs = JSON.parse(ct)
+              Tangerine.$db.bulkSave {docs: docs}
+            catch 
+              alert('Could not parse the file you uploaded.')
+              console.log e
+        r.readAsText(f)
+      else 
+        alert("Failed to load file")
+
+    @$el.find('#fileinput')[0].addEventListener('change', readSingleFile, false)
 
     @trigger "rendered"
 
