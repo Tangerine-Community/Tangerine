@@ -25,6 +25,7 @@ export class SyncingService {
   async getDocsNotUploaded() {
     return await this.getIDsFormsLockedAndNotUploaded();
   }
+
   async pushAllrecords() {
 
     try {
@@ -68,8 +69,15 @@ export class SyncingService {
     return docIds;
   }
 
-  async FormsLockedAndNotUploaded() {
-    const docIds = await this.getIDsFormsLockedAndNotUploaded();
+  async getFormsLockedAndUploaded() {
+    const userDB = this.getUserDB();
+    const DB = new PouchDB(userDB);
+    const results = await DB.query('tangy-form/responsesLockedAndUploaded');
+    return results.rows;
+  }
+
+  async getNumberOfFormsLockedAndUploaded() {
+    return await this.getFormsLockedAndUploaded();
   }
 
   async markDocsAsUploaded(replicatedDocIds) {
