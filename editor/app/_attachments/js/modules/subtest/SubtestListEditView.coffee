@@ -29,7 +29,7 @@ class SubtestListEditView extends Backbone.View
     
     targetSubtestCount = 0
     (new Subtests).fetch
-      key: "s" + targetAssessmentId
+      key: targetAssessmentId
       success: (collection) =>
 
         targetSubtestCount = collection.length

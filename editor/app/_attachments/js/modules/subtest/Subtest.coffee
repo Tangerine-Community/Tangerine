@@ -42,7 +42,7 @@ class Subtest extends Backbone.Model
 
         questions = new Questions
         questions.fetch
-          key: "q" + @get("assessmentId")
+          key: @get("assessmentId")
           error: -> Utils.sticky "There was an error copying."
           success: (questionCollection) =>
             subtestQuestions = questionCollection.where "subtestId" : @id
