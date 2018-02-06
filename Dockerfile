@@ -1,13 +1,6 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM node 
-
-
+FROM node:alpine
 # Never ask for confirmations
-ENV DEBIAN_FRONTEND noninteractive
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-
-RUN apt update
-RUN apt install -y zip vim
 
 RUN npm install -g nodemon
 RUN echo foo
@@ -28,7 +21,20 @@ ENV T_RUN_MODE production
 # Install server.
 ADD ./server/package.json /tangerine/server/package.json
 RUN cd /tangerine/server && \
-    npm install
+    apk add --no-cache --virtual .build-deps \
+      binutils-gold \
+      curl \
+      g++ \
+      gcc \
+      gnupg \
+      libgcc \
+      linux-headers \
+      make \
+      python && \
+    npm install && \
+    apk del .build-deps
+
+
 
 # Install editor.
 ADD ./editor/package.json /tangerine/editor/package.json
@@ -43,6 +49,7 @@ ADD client/tangy-forms/bower.json /tangerine/client/tangy-forms/bower.json
 ADD client/shell/package.json /tangerine/client/shell/package.json
 ADD client/wrappers/pwa/package.json /tangerine/client/wrappers/pwa/package.json
 ADD client/wrappers/pwa/bower.json /tangerine/client/wrappers/pwa/bower.json
+RUN apk update && apk add bash
 ADD client/install.sh /tangerine/client/install.sh
 RUN cd /tangerine/client/ && ./install.sh
 
