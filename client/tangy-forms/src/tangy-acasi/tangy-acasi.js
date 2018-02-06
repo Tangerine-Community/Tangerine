@@ -65,7 +65,7 @@ export class TangyAcasi extends PolymerElement {
       },
       transitionSrc: {
         type: String,
-        value: '../../assets/sounds/swish.mp3'
+        value: '../assets/sounds/swish.mp3'
       },
       onChange: {
         type: String,
@@ -145,8 +145,8 @@ export class TangyAcasi extends PolymerElement {
 
   ready() {
     super.ready();
-    const display_sound_url = '../../assets/sounds/pop.mp3'
-    const transition_sound_url = '../../assets/sounds/swish.mp3'
+    const display_sound_url = '../assets/sounds/pop.mp3'
+    const transition_sound_url = '../assets/sounds/swish.mp3'
 
     if (this.introSrc) {
       this.transitionSound = new Audio(this.introSrc);

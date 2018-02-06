@@ -25,6 +25,7 @@ cp -r builds/pwa .pwa-temporary
 # Install content into PWA.
 rm -r .pwa-temporary/content
 cp -r $CONTENT_PATH .pwa-temporary/content
+cp -r ./content/assets .pwa-temporary/assets
 
 # Generate service worker.
 ./node_modules/.bin/workbox generate:sw

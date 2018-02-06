@@ -94,7 +94,7 @@ app.use('/', express.static(path.join(__dirname, '../editor/dist')));
 app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
 app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../client/ckeditor/')));
-app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
+app.use('/editor/:group/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 
 app.use('/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )
 app.use('/releases/apks/', express.static(path.join(__dirname, '../client/releases/apks')) )
