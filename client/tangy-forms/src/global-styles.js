@@ -8,7 +8,7 @@ $_documentContainer.innerHTML = `<custom-style>
     html {
       --primary-text-color: var(--light-theme-text-color);
       --primary-color: var(--paper-blue-900);
-      --accent-color: var(--paper-deep-orange-500);
+      --accent-color: #f26f10;
       --error-color: var(--paper-red-500);
       --disabled-color: #BBB;
     }

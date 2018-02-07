@@ -41,10 +41,11 @@ class TangyFormApp extends Element {
         left: 45px;
         top: 8px;
       }
-      #form-view--nav {
-        font-weight: heavy;
-        font-size: 1.2em;
-        padding: 15px;
+      #new-response-fab {
+        position: absolute;
+        z-index: 999;
+        top: 75px;
+        right: 7px;
       }
     </style>
     <div class="tangy-form-app--container">
@@ -87,19 +88,17 @@ class TangyFormApp extends Element {
 
   async connectedCallback() {
     super.connectedCallback();
-
+    // Get params from hash.
     let params = window.getHashParams()
     let formId = params.hasOwnProperty('form') ? params.form : undefined
     let responseId = (params.hasOwnProperty('response_id')) ? params.response_id : undefined
-
     // Set up service.
     let databaseName = (params.databaseName) ? params.databaseName : 'tangy-form-app' 
     this.service = new TangyFormService({ databaseName })
     await this.service.initialize()
-
     // Save store when it changes.
     this.store.subscribe(this.throttledSaveResponse.bind(this))
-
+    // Load form or form list.
     if (formId) {
       this.$['form-view'].hidden = false
       this.$['form-list'].hidden = true
@@ -107,15 +106,15 @@ class TangyFormApp extends Element {
     } else {
       this.$['form-view'].hidden = true 
       this.$['form-list'].hidden = false 
-      this.loadFormsList()
+      await this.loadFormsList()
     }
-    
+    // Remove loading screen.
+    window['tangy-form-app-loading'].innerHTML = ''
   }
 
   async loadFormsList() {
     let formsJson = await fetch('../content/forms.json')
     this.forms = await formsJson.json()
-    window['tangy-form-app-loading'].innerHTML = ''
   }
 
   async loadForm(formSrc, responseId) {
