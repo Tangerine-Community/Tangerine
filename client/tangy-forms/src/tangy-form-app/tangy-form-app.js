@@ -64,8 +64,7 @@ class TangyFormApp extends Element {
       </div>
 
       <div id="form-view" hidden="">
-        <paper-fab mini id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
-        <paper-fab mini id="show-responses-fab" on-click="showResponses" icon="icons:save"></paper-fab>
+        <paper-fab mini id="new-response-fab" on-click="onClickNewResponseFab" icon="icons:add"></paper-fab>
         <div id="form-container"></div>
       </div>
 
@@ -90,6 +89,8 @@ class TangyFormApp extends Element {
     super.connectedCallback();
 
     let params = window.getHashParams()
+    let formId = params.hasOwnProperty('form') ? params.form : undefined
+    let responseId = (params.hasOwnProperty('response_id')) ? params.response_id : undefined
 
     // Set up service.
     let databaseName = (params.databaseName) ? params.databaseName : 'tangy-form-app' 
@@ -99,17 +100,10 @@ class TangyFormApp extends Element {
     // Save store when it changes.
     this.store.subscribe(this.throttledSaveResponse.bind(this))
 
-    // Load form and response.
-    if (params.form && params.response_id) {
+    if (formId) {
       this.$['form-view'].hidden = false
       this.$['form-list'].hidden = true
-      await this.loadForm(params.form)
-      this.loadResponse(params.response_id)
-    } else if (params.form) {
-      this.$['form-view'].hidden = false
-      this.$['form-list'].hidden = true
-      await this.loadForm(params.form)
-      this.newResponse()
+      await this.loadForm(formId, responseId)
     } else {
       this.$['form-view'].hidden = true 
       this.$['form-list'].hidden = false 
@@ -124,7 +118,8 @@ class TangyFormApp extends Element {
     window['tangy-form-app-loading'].innerHTML = ''
   }
 
-  async loadForm(formSrc) {
+  async loadForm(formSrc, responseId) {
+    // Put the form markup in the form container.
     let formHtml = await fetch(formSrc)
     this.$['form-container'].innerHTML = await formHtml.text()
     let formEl = this.$['form-container'].querySelector('tangy-form')
@@ -133,23 +128,23 @@ class TangyFormApp extends Element {
         parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
       }
     })
+    // Put a response in the store by issuing the FORM_OPEN action.
+    if (responseId) {
+      let response = await this.service.getResponse(responseId)
+      formOpen(response)
+    } else {
+      // Create new form response from the props on tangy-form and children tangy-form-item elements.
+      let form = this.$['form-container'].querySelector('tangy-form').getProps()
+      let items = []
+      this.shadowRoot.querySelectorAll('tangy-form-item').forEach((element) => items.push(element.getProps()))
+      let response = new TangyFormResponseModel({ form, items })
+      window.setHashParam('response_id', response._id)
+      formOpen(response)
+    }
   }
 
-  async loadResponse(responseId) {
-    let response = await this.service.getResponse(responseId)
-    formOpen(response)
-  }
-
-  async newResponse() {
-    let form = this.$['form-container'].querySelector('tangy-form').getProps()
-    let items = []
-    this.shadowRoot.querySelectorAll('tangy-form-item').forEach((element) => items.push(element.getProps()))
-    let response = new TangyFormResponseModel({ form, items })
-    window.setHashParam('response_id', response._id)
-    formOpen(response)
-  }
-
-  // Prevent parallel saves which leads to race conditions.
+  // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store. 
+  // Everything else in between we can ignore.
   async throttledSaveResponse() {
     // If already loaded, return.
     if (this.throttledSaveLoaded) return
@@ -176,6 +171,11 @@ class TangyFormApp extends Element {
     }
     let newStateDoc = Object.assign({}, state, { _rev: stateDoc._rev })
     await this.service.saveResponse(newStateDoc)
+  }
+
+  onClickNewResponseFab() {
+    let params = getHashParams()
+    this.loadForm(params.form)
   }
 
 }
