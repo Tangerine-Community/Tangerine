@@ -62,6 +62,16 @@ const inputShow = (inputName) => {
     let input = state.inputs.find(input => inputName === input.name)
     if (input && input.hidden === true) window.tangyFormStore.dispatch({ type: INPUT_SHOW, inputName: inputName })
 }
+const COMPLETE_FAB_SHOW = 'COMPLETE_FAB_SHOW'
+const completeFabShow = () => { 
+    let state = window.tangyFormStore.getState()
+    if (state.form.hideCompleteFab) window.tangyFormStore.dispatch({ type: COMPLETE_FAB_SHOW })
+}
+const COMPLETE_FAB_HIDE = 'COMPLETE_FAB_HIDE'
+const completeFabHide = () => { 
+    let state = window.tangyFormStore.getState()
+    if (!state.form.hideCompleteFab) window.tangyFormStore.dispatch({ type: COMPLETE_FAB_HIDE })
+}
 // Navigation
 const NAVIGATE_TO_NEXT_ITEM = 'NAVIGATE_TO_NEXT_ITEM'
 const NAVIGATE_TO_PREVIOUS_ITEM = 'NAVIGATE_TO_PREVIOUS_ITEM'
@@ -91,5 +101,6 @@ export {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem,
   ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
   ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
   INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
-  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
+  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, 
+  completeFabHide, COMPLETE_FAB_HIDE, completeFabShow, COMPLETE_FAB_SHOW, TANGY_TIMED_TIME_SPENT,
   tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement}
