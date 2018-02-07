@@ -3,7 +3,7 @@
 npm install
 
 cd tangy-forms
-yarn install --frozen-lockfile --production=false
+yarn install --production=false
 ./node_modules/.bin/bower install --allow-root
 cd ..
 

@@ -35,7 +35,7 @@ export default class FormDialogCommand extends Command {
 
     if ( this.isEnabled && element.hasAttribute( 'id' ) ) {
       this.value = element.getAttribute( 'id' );
-      this.value2 = element.getAttribute('onchange');
+      this.value2 = element.getAttribute('on-change');
       console.log("getting value of form: " + this.value + " this.value2: " + this.value2)
     } else {
       this.value = false;
@@ -59,7 +59,7 @@ export default class FormDialogCommand extends Command {
       const batch = options.batch || doc.batch();
 
       batch.setAttribute( element, 'id', options.newValue );
-      batch.setAttribute( element, 'onchange', options.newValue2 );
+      batch.setAttribute( element, 'on-change', options.newValue2 );
     } );
   }
 }
