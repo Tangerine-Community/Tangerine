@@ -3,7 +3,7 @@
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
 // import '../../node_modules/redux/dist/redux.js'
 import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
-  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
+  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT, completeFabHide, completeFabShow,
   ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
   INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
   NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
@@ -74,7 +74,7 @@ export class TangyForm extends PolymerElement {
          {
           display: none;
         }
-        :host([hide-complete-button]) #markCompleteFab {
+        :host([hide-complete-fab]) #markCompleteFab {
           display: none !important;
         }
         #progress {
@@ -149,7 +149,7 @@ export class TangyForm extends PolymerElement {
             value: false,
             reflectToAttribute: true
           },
-          hideCompleteButton: {
+          hideCompleteFab: {
             type: Boolean,
             value: false,
             reflectToAttribute: true
@@ -235,6 +235,8 @@ export class TangyForm extends PolymerElement {
         let state = this.store.getState()
         // Set initial this.previousState
         if (!this.previousState) this.previousState = state
+
+        this.setProps(state.form)
 
         // Set state in tangy-form-item elements.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
