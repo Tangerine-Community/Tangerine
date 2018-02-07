@@ -42,6 +42,7 @@ docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/client/tangy-forms/src:/tangerine/client/tangy-forms/src \
   --volume $(pwd)/client/tangy-forms/index.html:/tangerine/client/tangy-forms/index.html \
   --volume $(pwd)/client/tangy-forms/package.json:/tangerine/client/tangy-forms/package.json \
+  --volume $(pwd)/client/tangy-forms/yarn.lock:/tangerine/client/tangy-forms/yarn.lock \
   --volume $T_DEV_CONTENT:/tangerine/client/builds/dev/content \
   --volume $T_DEV_CONTENT:/tangerine/client/content/default \
  tangerine/tangerine:local
