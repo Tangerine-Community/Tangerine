@@ -43,7 +43,6 @@
     ]
   },
   "devDependencies": {
-    "@polymer/test-fixture": "PolymerX/test-fixture#3.0-preview",
     "babel-loader": "7.1.2",
     "babel-preset-env": "1.6.1",
     "chokidar": "1.7.0",
@@ -71,24 +70,27 @@
     "xo": "0.18.2"
   },
   "dependencies": {
-    "@polymer/iron-icon": "3.0.0-pre.1",
-    "@polymer/iron-icons": "3.0.0-pre.1",
-    "@polymer/paper-button": "3.0.0-pre.1",
-    "@polymer/paper-card": "3.0.0-pre.1",
-    "@polymer/paper-checkbox": "3.0.0-pre.1",
-    "@polymer/paper-fab": "3.0.0-pre.1",
-    "@polymer/paper-icon-button": "3.0.0-pre.1",
-    "@polymer/paper-input": "3.0.0-pre.1",
-    "@polymer/paper-item": "3.0.0-pre.1",
-    "@polymer/paper-progress": "3.0.0-pre.1",
-    "@polymer/paper-radio-group": "3.0.0-pre.1",
-    "@polymer/polymer": "3.0.0-pre.1",
+    "@polymer/iron-icon": "^3.0.0-pre.1",
+    "@polymer/iron-icons": "^3.0.0-pre.1",
+    "@polymer/paper-button": "^3.0.0-pre.1",
+    "@polymer/paper-card": "^3.0.0-pre.1",
+    "@polymer/paper-checkbox": "^3.0.0-pre.1",
+    "@polymer/paper-fab": "^3.0.0-pre.1",
+    "@polymer/paper-icon-button": "^3.0.0-pre.1",
+    "@polymer/paper-input": "^3.0.0-pre.1",
+    "@polymer/paper-item": "^3.0.0-pre.1",
+    "@polymer/paper-progress": "^3.0.0-pre.1",
+    "@polymer/paper-radio-group": "^3.0.0-pre.1",
+    "@polymer/polymer": "^3.0.0-pre.1",
     "babel-polyfill": "6.26.0",
     "bower": "1.8.2",
     "moment": "2.19.3",
+    "polymer": "0.4.1",
     "pouchdb-browser": "6.2.0",
     "redux": "3.7.2",
     "sortable-list": "https://github.com/chrisekelley/sortable-list",
     "underscore": "1.8.3"
   }
 }
+
+
