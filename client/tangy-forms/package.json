@@ -85,7 +85,6 @@
     "babel-polyfill": "6.26.0",
     "bower": "1.8.2",
     "moment": "2.19.3",
-    "polymer": "0.4.1",
     "pouchdb-browser": "6.2.0",
     "redux": "3.7.2",
     "sortable-list": "https://github.com/chrisekelley/sortable-list",
