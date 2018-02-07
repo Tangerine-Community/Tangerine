@@ -127,6 +127,10 @@ export class TangyForm extends PolymerElement {
 
       static get properties() {
         return {
+          id: {
+            type: String,
+            value: 'tangy-form'
+          },
           // Pass in code to be eval'd on any form input change.
           onChange: {
             type: String,
