@@ -42,7 +42,7 @@ class TangyFormApp extends Element {
         top: 8px;
       }
       #new-response-fab {
-        position: absolute;
+        position: fixed;
         z-index: 999;
         top: 75px;
         right: 7px;
@@ -135,7 +135,9 @@ class TangyFormApp extends Element {
       // Create new form response from the props on tangy-form and children tangy-form-item elements.
       let form = this.$['form-container'].querySelector('tangy-form').getProps()
       let items = []
-      this.shadowRoot.querySelectorAll('tangy-form-item').forEach((element) => items.push(element.getProps()))
+      this.$['form-container']
+        .querySelectorAll('tangy-form-item')
+        .forEach((element) => items.push(element.getProps()))
       let response = new TangyFormResponseModel({ form, items })
       window.setHashParam('response_id', response._id)
       formOpen(response)
