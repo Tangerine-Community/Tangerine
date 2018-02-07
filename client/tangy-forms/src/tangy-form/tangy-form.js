@@ -22,46 +22,13 @@ import '../tangy-location/tangy-location.js'
 import '../tangy-gps/tangy-gps.js'
 import '../tangy-overlay/tangy-overlay.js'
 
-// <link rel="import" href="../tangy-timed/tangy-timed.html">
-//   <link rel="import" href="../tangy-gps/tangy-gps.html">
-//   <link rel="import" href="../tangy-location/tangy-location.html">
-//   <link rel="import" href="../tangy-checkbox/tangy-checkbox.html">
-//   <link rel="import" href="../tangy-checkboxes/tangy-checkboxes.html">
-//   <link rel="import" href="../tangy-radio-buttons/tangy-radio-buttons.html">
-//   <link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
-//   <link rel="import" href="../tangy-toggle-button/tangy-toggle-button.html">
-//
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
 import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
-//   <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
-//   <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-//   <link rel="import" href="../../bower_components/paper-fab.html">
-//   <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
-//   <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
-//   <link rel="import" href="../../bower_components/iron-form/iron-form.html">
-//   <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
-//   <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-//   <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
-//   <link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
-//   <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-//   <link rel="import" href="../../bower_components/iron-form/iron-form.html">
-//   <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-//   <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
-//   <link rel="import" href="../../bower_components/paper-card/paper-card.html">
-//   <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
-//   <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
-//   <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-//   <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-//   <link rel="import" href="../../bower_components/paper-item/paper-item.html">
-//   <link rel="import" href="../../bower_components/gold-phone-input/gold-phone-input.html">
-//   <link rel="import" href="../../bower_components/app-datepicker/app-datepicker.html">
-
 
 
     /**
-     * `tangy-form-questions`
-     * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
+     * `tangy-form`
      *
      * @customElement
      * @polymer
@@ -133,10 +100,6 @@ export class TangyForm extends PolymerElement {
           width: 50px;
         };
       }
-      paper-fab {
-        background-color: #f26f10 !important;
-      }
-      
       paper-fab[disabled] {
         background-color: #cccccc !important;
       }
