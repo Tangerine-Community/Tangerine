@@ -1,7 +1,20 @@
 import { Element } from '../../node_modules/@polymer/polymer/polymer-element.js'
+import '../tangy-form/cat.js'
 import '../../node_modules/@polymer/paper-button/paper-button.js';
 import '../../node_modules/@polymer/paper-card/paper-card.js';
 import '../tangy-form/tangy-form.js';
+import { tangyFormReducer } from '../tangy-form/tangy-form-reducer.js'
+import {tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook} from '../tangy-form/tangy-form-redux-middleware.js'
+import { TangyFormModel } from '../tangy-form/tangy-form-model.js'
+import { TangyFormResponseModel } from '../tangy-form/tangy-form-response-model.js'
+import { TangyFormService } from '../tangy-form/tangy-form-service.js'
+import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
+  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
+  ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
+  INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
+  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
+  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from '../tangy-form/tangy-form-actions.js'
+
 /**
  * `tangy-form-app`
  * ... 
@@ -51,11 +64,9 @@ class TangyFormApp extends Element {
       </div>
 
       <div id="form-view" hidden="">
-        <div id="form-view--nav">
-          <!-- a href="/tangy-forms/index.html"><iron-icon icon="icons:close"></iron-icon></a-->
-          [[formTitle]]
-        </div>
-        <slot></slot>
+        <paper-fab mini id="new-response-fab" on-click="newResponse" icon="icons:add"></paper-fab>
+        <paper-fab mini id="show-responses-fab" on-click="showResponses" icon="icons:save"></paper-fab>
+        <div id="form-container"></div>
       </div>
 
     </div>
@@ -64,77 +75,109 @@ class TangyFormApp extends Element {
 
   static get is() { return 'tangy-form-app'; }
 
-  connectedCallback() {
+  constructor() {
+    super()
+    // Create Redux Store.
+    window.tangyFormStore = Redux.createStore(
+      tangyFormReducer,
+      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+      Redux.applyMiddleware(tangyReduxMiddlewareTangyHook)
+    )
+    this.store = window.tangyFormStore
+  }
+
+  async connectedCallback() {
     super.connectedCallback();
-    let query = this.parseQuery(window.location.hash)
-    let formPath = query.form
-    if (formPath) {
-      this.showForm(formPath)
+
+    let params = window.getHashParams()
+
+    // Set up service.
+    let databaseName = (params.databaseName) ? params.databaseName : 'tangy-form-app' 
+    this.service = new TangyFormService({ databaseName })
+    await this.service.initialize()
+
+    // Save store when it changes.
+    this.store.subscribe(this.throttledSaveResponse.bind(this))
+
+    // Load form and response.
+    if (params.form && params.response_id) {
+      this.$['form-view'].hidden = false
+      this.$['form-list'].hidden = true
+      await this.loadForm(params.form)
+      this.loadResponse(params.response_id)
+    } else if (params.form) {
+      this.$['form-view'].hidden = false
+      this.$['form-list'].hidden = true
+      await this.loadForm(params.form)
+      this.newResponse()
     } else {
-      this.showFormsList()
+      this.$['form-view'].hidden = true 
+      this.$['form-list'].hidden = false 
+      this.loadFormsList()
     }
-    this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
+    
   }
 
-  // For parsing window.location.hash parameters.
-  parseQuery(qstr) {
-    var query = {};
-    var a = (qstr[0] === '#' ? qstr.substr(1) : qstr).split('&');
-    for (var i = 0; i < a.length; i++) {
-      var b = a[i].split('=');
-      query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
-    }
-    return query;
-  }
-
-  async showFormsList() {
-    this.$['form-view'].hidden = true
-    this.$['form-list'].hidden = false
-    // Load forms list.
+  async loadFormsList() {
     let formsJson = await fetch('../content/forms.json')
     this.forms = await formsJson.json()
     window['tangy-form-app-loading'].innerHTML = ''
   }
 
-  onFormSrcChange(newValue, oldValue) {
-    if (newValue !== '') this.showForm(newValue)
-  }
-
-  async showFormListener(event) {
-    window.location.hash = event.currentTarget.dataFormSrc
-    this.formSrc = event.currentTarget.dataFormSrc
-  }
-
-  formSelected(ev) {
-    location.reload()
-  }
-
-  async showForm(formSrc) {
-    let query = this.parseQuery(window.location.hash)
-    this.$['form-view'].hidden = false
-    this.$['form-list'].hidden = true
-    // Load the form into the DOM.
+  async loadForm(formSrc) {
     let formHtml = await fetch(formSrc)
-    // Put the formHtml in a template first so element do not initialize connectedCallback
-    // before we modify them.
-    let formTemplate = document.createElement('div')
-    formTemplate.innerHTML = await formHtml.text()
-    let formEl = formTemplate.querySelector('tangy-form')
-    if (query.database) formEl.setAttribute('database-name', query.database)
-    if (query['linear-mode']) formEl.setAttribute('linear-mode', true)
-    if (query['response-id']) formEl.setAttribute('response-id', query['response-id'])
-    if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true)
-    if (query['hide-nav']) formEl.setAttribute('hide-nav', true)
-    if (query['hide-responses']) formEl.setAttribute('hide-responses', true)
-    this.shadowRoot.innerHTML = formTemplate.innerHTML
-    let tangyForm = this.shadowRoot.querySelector('tangy-form')
-    tangyForm.addEventListener('ALL_ITEMS_CLOSED', () => {
+    this.$['form-container'].innerHTML = await formHtml.text()
+    let formEl = this.$['form-container'].querySelector('tangy-form')
+    formEl.addEventListener('ALL_ITEMS_CLOSED', () => {
       if (parent && parent.frames && parent.frames.ifr) {
         parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
       }
     })
-    window['tangy-form-app-loading'].innerHTML = ''
   }
+
+  async loadResponse(responseId) {
+    let response = await this.service.getResponse(responseId)
+    formOpen(response)
+  }
+
+  async newResponse() {
+    let form = this.$['form-container'].querySelector('tangy-form').getProps()
+    let items = []
+    this.shadowRoot.querySelectorAll('tangy-form-item').forEach((element) => items.push(element.getProps()))
+    let response = new TangyFormResponseModel({ form, items })
+    window.setHashParam('response_id', response._id)
+    formOpen(response)
+  }
+
+  // Prevent parallel saves which leads to race conditions.
+  async throttledSaveResponse() {
+    // If already loaded, return.
+    if (this.throttledSaveLoaded) return
+    // Throttle this fire by waiting until last fire is done.
+    if (this.throttledSaveFiring) {
+      this.throttledSaveLoaded = true
+      while(this.throttledSaveFiring) await sleep(200)
+      this.throttledSaveLoaded = false
+    }
+    // Fire it.
+    this.throttledSaveFiring = true
+    await this.saveResponse()
+    this.throttledSaveFiring = false
+  }
+
+  async saveResponse() {
+    const state = this.store.getState()
+    let stateDoc = {}
+    try {
+      stateDoc = await this.service.getResponse(state._id)
+    } catch(e) {
+      let r = await this.service.saveResponse(state)
+      stateDoc = await this.service.getResponse(state._id)
+    }
+    let newStateDoc = Object.assign({}, state, { _rev: stateDoc._rev })
+    await this.service.saveResponse(newStateDoc)
+  }
+
 }
 
 window.customElements.define(TangyFormApp.is, TangyFormApp);
