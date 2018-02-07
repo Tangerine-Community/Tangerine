@@ -39,7 +39,6 @@ ClassicEditor.build = {
     EasyimagePlugin,
     HeadingPlugin,
     ImagePlugin,
-    ImagecaptionPlugin,
     ImagestylePlugin,
     ImagetoolbarPlugin,
     LinkPlugin,
@@ -73,13 +72,5 @@ ClassicEditor.build = {
     form: {
       toolbar: [ 'formDialog' ]
     },
-    image: {
-      toolbar: [
-        'imageStyleFull',
-        'imageStyleSide',
-        '|',
-        'imageTextAlternative'
-      ]
-    }
   }
 }

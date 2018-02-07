@@ -104,13 +104,13 @@ class TangyEditorApp extends Element {
         <template is="dom-repeat" items="{{forms}}">
             <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
                 <div class="card-actions">
-                  <a href="#form=[[item.src]]" on-click="formSelected" class="launch-form">
+                  <a href="#form=[[item.src]]" on-click="formSelected">
                     <paper-button>
                       <iron-icon icon="icons:launch">
                     </iron-icon></paper-button>
                   </a>
                   <a href="#form=[[item.src]]&edit=1" on-click="formSelected">
-                    <paper-button class="settings">
+                    <paper-button>
                         <iron-icon icon="icons:settings"/>
                     </paper-button>
                   </a>
@@ -122,7 +122,7 @@ class TangyEditorApp extends Element {
           <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
             <div class="card-actions">
               <a href="#form=editor/[[item.src]]&new=1" on-click="formSelected">
-                <paper-button class="settings">
+                <paper-button>
                   <iron-icon icon="icons:settings"/>
                 </paper-button>
                   </a>
