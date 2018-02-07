@@ -122,7 +122,7 @@ class TangyEditorApp extends Element {
           <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
             <div class="card-actions">
               <a href="#form=editor/[[item.src]]&new=1" on-click="formSelected">
-                <paper-button class="settings">
+                <paper-button>
                   <iron-icon icon="icons:settings"/>
                 </paper-button>
                   </a>
