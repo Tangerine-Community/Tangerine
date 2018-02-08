@@ -48,7 +48,7 @@
     "chokidar": "1.7.0",
     "clean-webpack-plugin": "0.1.17",
     "concurrently": "3.5.0",
-    "copy-webpack-plugin": "4.2.0",
+    "copy-webpack-plugin": "4.3.0",
     "cssnano": "3.10.0",
     "fs-extra": "4.0.2",
     "http-server": "0.10.0",
