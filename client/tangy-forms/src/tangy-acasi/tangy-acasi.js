@@ -27,10 +27,22 @@ export class TangyAcasi extends PolymerElement {
         border: 10px solid #af0;
         border-radius: 10px;
       }
+      paper-button.indigo {
+        background-color: var(--paper-indigo-500);
+        color: white;
+        --paper-button-raised-keyboard-focus: {
+          background-color: var(--paper-pink-a200) !important;
+          color: white !important;
+        };
+      }
+      paper-button.indigo:hover {
+        background-color: var(--paper-indigo-400);
+      }
     </style>
 
     <div class="container">
       <label for="group">[[label]]</label>
+      <paper-button id="replay" raised class="indigo" on-click="replay">Replay</paper-button>
       <paper-radio-group name="group" id="paper-radio-group">
       </paper-radio-group>
     </div>
@@ -46,6 +58,19 @@ export class TangyAcasi extends PolymerElement {
       name: {
         type: String,
         value: ''
+      },
+      introSrc: {
+        type: String,
+        value: ''
+      },
+      transitionSrc: {
+        type: String,
+        value: '../assets/sounds/swish.mp3'
+      },
+      onChange: {
+        type: String,
+        value: '',
+        reflectToAttribute: true
       },
       value: {
         type: String,
@@ -120,13 +145,18 @@ export class TangyAcasi extends PolymerElement {
 
   ready() {
     super.ready();
-    const display_sound_url = '/content/assets/sounds/pop.mp3'
-    const transition_sound_url = '/content/assets/sounds/swish.mp3'
+    const display_sound_url = '../assets/sounds/pop.mp3'
+    const transition_sound_url = '../assets/sounds/swish.mp3'
 
-    this.transitionSound = new Audio(transition_sound_url);
+    if (this.introSrc) {
+      this.transitionSound = new Audio(this.introSrc);
+    } else {
+      this.transitionSound = new Audio(transition_sound_url);
+    }
     this.transitionSound.play();
 
-    this.displaySound = new Audio(this.display_sound_url);
+
+    this.displaySound = new Audio(display_sound_url);
     this.displaySound.load();
 
     // @TODO: Need to listen to slot for ready.
@@ -135,39 +165,40 @@ export class TangyAcasi extends PolymerElement {
 
   _prepareForm() {
 
+    let radios = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('paper-radio-button'));
+    radios.forEach(radio => {
+      radio.$.radioContainer.style= 'display:none'
+    })
+
     // Find all our img elements.
     this.imgElements = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('img'));
-    this.imgElements.forEach(element => {
-      element.addEventListener('click', (event) => {
-        this.imgElements.forEach(element => {
-//                element.setAttribute('style', 'border: none;'); ;
-//                TangyUtils.removeClass(element, 'eftouch-selected');
-          var ele = element;
-          var cls = 'eftouch-selected';
-          var hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
-          if (hasClass) {
-            var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
-            ele.className=ele.className.replace(reg,' ');
-          }
-
-
-
-        });
-        const element = event.srcElement;
-//            element.setAttribute('style', 'border: 10px solid #af0; border-radius: 10px;'); ;
+    let soundifyImages = (event) => {
+      this.imgElements.forEach(element => {
         var ele = element;
-        var cls = 'eftouch-selected';
-        var hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
-        if (!hasClass) ele.className += " "+cls;
-
-        const inputEl = this.querySelector('#foo');
-        if (inputEl !== null) {
-          inputEl.value = event.srcElement.id;
-        }
-        this.displaySound.play();
-//            this.statusmessage = 'You may now proceed.';
-      });
+      var cls = 'eftouch-selected';
+      var hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
+      if (hasClass) {
+        var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+        ele.className=ele.className.replace(reg,' ');
+      }
     });
+      const element = event.srcElement;
+//            element.setAttribute('style', 'border: 10px solid #af0; border-radius: 10px;'); ;
+      var ele = element;
+      var cls = 'eftouch-selected';
+      var hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
+      if (!hasClass) ele.className += " "+cls;
+
+      const inputEl = this.querySelector('#foo');
+      if (inputEl !== null) {
+        inputEl.value = event.srcElement.id;
+      }
+      this.displaySound.play();
+//            this.statusmessage = 'You may now proceed.';
+    }
+    this.imgElements.forEach(element => {
+      element.addEventListener('click', soundifyImages);
+  });
 
   }
 
@@ -199,7 +230,13 @@ export class TangyAcasi extends PolymerElement {
     if (value == true) paperRadioButtons.forEach((button) => button.setAttribute('disabled', true))
     if (value == false) paperRadioButtons.forEach((button) => button.removeAttribute('disabled'))
   }
+
   onHiddenChange(value) {
+  }
+
+  replay() {
+    console.log("replay")
+    this.transitionSound.play();
   }
 
 }

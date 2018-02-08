@@ -31,10 +31,18 @@ docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/client/pwas:/tangerine/client/releases/pwas/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
+  --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
+  --volume $(pwd)/server/package.json:/tangerine/server/package.json \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
+  --volume $(pwd)/editor/package.json:/tangerine/editor/package.json \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
+  --volume $(pwd)/client/shell/package.json:/tangerine/client/shell/package.json \
+  --volume $(pwd)/client/ckeditor:/tangerine/client/ckeditor \
   --volume $(pwd)/client/tangy-forms/src:/tangerine/client/tangy-forms/src \
   --volume $(pwd)/client/tangy-forms/index.html:/tangerine/client/tangy-forms/index.html \
+  --volume $(pwd)/client/tangy-forms/package.json:/tangerine/client/tangy-forms/package.json \
+  --volume $(pwd)/client/tangy-forms/yarn.lock:/tangerine/client/tangy-forms/yarn.lock \
   --volume $T_DEV_CONTENT:/tangerine/client/builds/dev/content \
+  --volume $T_DEV_CONTENT:/tangerine/client/content/default \
  tangerine/tangerine:local

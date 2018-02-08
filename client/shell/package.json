@@ -80,6 +80,7 @@
     "sw-precache": "^5.2.0",
     "ts-node": "~2.0.0",
     "tslint": "~4.5.0",
-    "typescript": "~2.2.0"
+    "typescript": "~2.2.0",
+    "copy-webpack-plugin": "4.3.0"
   }
 }
