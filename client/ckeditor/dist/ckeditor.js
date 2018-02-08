@@ -40456,7 +40456,6 @@ ClassicEditor.build = {
     __WEBPACK_IMPORTED_MODULE_7__ckeditor_ckeditor5_easy_image_src_easyimage__["a" /* default */],
     __WEBPACK_IMPORTED_MODULE_8__ckeditor_ckeditor5_heading_src_heading__["a" /* default */],
     __WEBPACK_IMPORTED_MODULE_9__ckeditor_ckeditor5_image_src_image__["a" /* default */],
-    __WEBPACK_IMPORTED_MODULE_10__ckeditor_ckeditor5_image_src_imagecaption__["a" /* default */],
     __WEBPACK_IMPORTED_MODULE_11__ckeditor_ckeditor5_image_src_imagestyle__["a" /* default */],
     __WEBPACK_IMPORTED_MODULE_12__ckeditor_ckeditor5_image_src_imagetoolbar__["a" /* default */],
     __WEBPACK_IMPORTED_MODULE_13__ckeditor_ckeditor5_link_src_link__["a" /* default */],
@@ -40490,14 +40489,6 @@ ClassicEditor.build = {
     form: {
       toolbar: [ 'formDialog' ]
     },
-    image: {
-      toolbar: [
-        'imageStyleFull',
-        'imageStyleSide',
-        '|',
-        'imageTextAlternative'
-      ]
-    }
   }
 }
 
@@ -65071,7 +65062,7 @@ class ImageCaption extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_
 		return 'ImageCaption';
 	}
 }
-/* harmony export (immutable) */ __webpack_exports__["a"] = ImageCaption;
+/* unused harmony export default */
 
 
 
@@ -69434,9 +69425,9 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
     if ( contextualToolbar ) {
       this.listenTo( contextualToolbar, 'show', evt => {
         if ( Object(__WEBPACK_IMPORTED_MODULE_11__utils__["c" /* isAcasiWidgetSelected */])( editor.editing.view.selection ) ) {
-          evt.stop();
-        }
-      }, { priority: 'high' } );
+        evt.stop();
+      }
+    }, { priority: 'high' } );
     }
 
     // Configure schema.
@@ -69474,7 +69465,7 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
 
     schema.registerItem( 'form' );
     schema.allow( { name: 'form', inside: '$root' } );
-    schema.allow( { name: 'form', attributes: [ 'id', 'onchange' ], inside: '$root' } );
+    schema.allow( { name: 'form', attributes: [ 'id', 'on-change' ], inside: '$root' } );
     // schema.allow( { name: 'form', attributes: [ 'id' ], inside: '$root' } );
     schema.allow( { name: '$inline', inside: 'form' } );
     schema.allow( { name: 'image', inside: 'form' } );
@@ -69486,33 +69477,33 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
     Object(__WEBPACK_IMPORTED_MODULE_2__ckeditor_ckeditor5_engine_src_conversion_buildmodelconverter__["a" /* default */])().for( data.modelToView )
       .fromElement( 'form' )
       .toElement( (element) => {
-        console.log("data.modelToView form element: ")
-        const id = element.item.getAttribute('id')
-        const onchange = element.item.getAttribute('onchange')
-        let container = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'form', {'id': id, 'onchange': onchange} );
-        // let container = new ViewContainerElement( 'form', {'id': id} );
-        return container
-      })
+      console.log("data.modelToView form element: ")
+    const id = element.item.getAttribute('id')
+    const onchange = element.item.getAttribute('on-change')
+    let container = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'form', {'id': id, 'on-change': onchange} );
+    // let container = new ViewContainerElement( 'form', {'id': id} );
+    return container
+  })
     // Build converter from model element to view element is used to render the getData output for the widget when you create new Elements in the editor.
     Object(__WEBPACK_IMPORTED_MODULE_2__ckeditor_ckeditor5_engine_src_conversion_buildmodelconverter__["a" /* default */])().for( data.modelToView )
       .fromElement( 'tangy-acasi' )
       .toElement( (element) => {
-        console.log("data.modelToView tangy-acasi element: ")
-        const introSrc = element.item.getAttribute('intro-src')
-        const name = element.item.getAttribute('name')
-        // const name = 'test'
-        let container = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'tangy-acasi', {'intro-src': introSrc, 'name': name} );
-        return container
-      })
+      console.log("data.modelToView tangy-acasi element: ")
+    const introSrc = element.item.getAttribute('intro-src')
+    const name = element.item.getAttribute('name')
+    // const name = 'test'
+    let container = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'tangy-acasi', {'intro-src': introSrc, 'name': name} );
+    return container
+  })
     Object(__WEBPACK_IMPORTED_MODULE_2__ckeditor_ckeditor5_engine_src_conversion_buildmodelconverter__["a" /* default */])().for( data.modelToView )
       .fromElement( 'figure' )
       .toElement( 'figure' )
-      // .toElement( (element) => {
-      //   const klass = element.item.getAttribute('class')
-      //   console.log("data.modelToView figure element: " + klass)
-      //   let container = new ViewContainerElement( 'figure', {'class': klass} );
-      //   return container
-      // })
+    // .toElement( (element) => {
+    //   const klass = element.item.getAttribute('class')
+    //   console.log("data.modelToView figure element: " + klass)
+    //   let container = new ViewContainerElement( 'figure', {'class': klass} );
+    //   return container
+    // })
     // buildModelConverter().for( data.modelToView )
     //   .fromElement( 'paper-radio-button' )
     //   .toElement( (element) => {
@@ -69527,22 +69518,22 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
     Object(__WEBPACK_IMPORTED_MODULE_2__ckeditor_ckeditor5_engine_src_conversion_buildmodelconverter__["a" /* default */])().for( editing.modelToView )
       .fromElement( 'form' )
       .toElement( (element) => {
-        console.log("modelToView form element")
-        const formContainer = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'figure', { class: 'tangy-form' } );
-        const formWdiget = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["j" /* toFormWidget */])( 'form', formContainer );
-        formWdiget.setAttribute( 'contenteditable', true );
-        return formWdiget;
-      } );
+      console.log("modelToView form element")
+    const formContainer = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'figure', { class: 'tangy-form' } );
+    const formWdiget = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["j" /* toFormWidget */])( 'form', formContainer );
+    formWdiget.setAttribute( 'contenteditable', true );
+    return formWdiget;
+  } );
 
     Object(__WEBPACK_IMPORTED_MODULE_2__ckeditor_ckeditor5_engine_src_conversion_buildmodelconverter__["a" /* default */])().for( editing.modelToView )
       .fromElement( 'tangy-acasi' )
       .toElement( (element) => {
-        console.log("modelToView tangy-acasi element")
-        const widgetContainer = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'figure', { class: 'tangy-acasi' });
-        const widget = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["i" /* toAcasiWidget */])( widgetContainer );
-        widget.setAttribute( 'contenteditable', true );
-        return widget;
-      } );
+      console.log("modelToView tangy-acasi element")
+    const widgetContainer = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'figure', { class: 'tangy-acasi' });
+    const widget = Object(__WEBPACK_IMPORTED_MODULE_11__utils__["i" /* toAcasiWidget */])( widgetContainer );
+    widget.setAttribute( 'contenteditable', true );
+    return widget;
+  } );
 
     // buildModelConverter().for( editing.modelToView )
     //   .fromElement( 'paper-radio-button' )
@@ -69559,22 +69550,22 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
     Object(__WEBPACK_IMPORTED_MODULE_2__ckeditor_ckeditor5_engine_src_conversion_buildmodelconverter__["a" /* default */])().for( editing.modelToView )
       .fromElement( 'figure' )
       .toElement( (element) => {
-        console.log("modelToView figure element")
-        const klass = element.item.getAttribute('class')
-        const container = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'figure', { class: klass } );
-        // let container = new ViewContainerElement( 'figure', {'class': klass}, toImageWidget(new ViewEmptyElement( 'img' )) );
-        // const widget = toWidget( container );
-        // widget.setAttribute( 'contenteditable', true );
-        return container;
-      } );
+      console.log("modelToView figure element")
+    const klass = element.item.getAttribute('class')
+    const container = new __WEBPACK_IMPORTED_MODULE_5__ckeditor_ckeditor5_engine_src_view_containerelement__["a" /* default */]( 'figure', { class: klass } );
+    // let container = new ViewContainerElement( 'figure', {'class': klass}, toImageWidget(new ViewEmptyElement( 'img' )) );
+    // const widget = toWidget( container );
+    // widget.setAttribute( 'contenteditable', true );
+    return container;
+  } );
 
     Object(__WEBPACK_IMPORTED_MODULE_3__ckeditor_ckeditor5_engine_src_conversion_buildviewconverter__["a" /* default */])().for(data.viewToModel).from({
       name: 'form',
       attribute: { id: /./ }
     })
       .toElement( (viewImage) => {
-        return new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]('form', {id: viewImage.getAttribute('id')})
-        });
+      return new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]('form', {id: viewImage.getAttribute('id')})
+    });
 
     Object(__WEBPACK_IMPORTED_MODULE_3__ckeditor_ckeditor5_engine_src_conversion_buildviewconverter__["a" /* default */])().for(data.viewToModel).from({
       name: 'tangy-acasi',
@@ -69593,13 +69584,13 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
       attribute: { 'class': /./ }
     }).toElement(viewImage => new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]('figure', { 'class': viewImage.getAttribute('class') }));
 
-    // Build converter for onchange attribute.
+    // Build converter for on-change attribute.
     // Note that by default attribute converters are added with `low` priority.
     // This converter will be thus fired after `convertHoistableImage` converter.
     Object(__WEBPACK_IMPORTED_MODULE_3__ckeditor_ckeditor5_engine_src_conversion_buildviewconverter__["a" /* default */])().for( data.viewToModel )
-      .from( { name: 'form', attribute: { onchange: /./ } } )
-      .consuming( { attribute: [ 'onchange' ] } )
-      .toAttribute( viewForm => ( { key: 'onchange', value: viewForm.getAttribute( 'onchange' ) } ) );
+      .from( { name: 'form', attribute: { 'on-change': /./ } } )
+      .consuming( { attribute: [ 'on-change' ] } )
+      .toAttribute( viewForm => ( { key: 'on-change', value: viewForm.getAttribute( 'on-change' ) } ) );
 
     // buildViewConverter().for( data.viewToModel )
     //   .from( { name: 'paper-radio-button', attribute: { value: /./ } } )
@@ -69612,56 +69603,55 @@ class Acasi extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_core_src_plu
     // Add tangy-acasi button to feature components.
     editor.ui.componentFactory.add( 'acasi', locale => {
       const view = new __WEBPACK_IMPORTED_MODULE_6__ckeditor_ckeditor5_ui_src_button_buttonview__["a" /* default */](locale);
-      view.set({
-        label: 'Acasi',
-        icon: __WEBPACK_IMPORTED_MODULE_1__ckeditor_ckeditor5_core_theme_icons_picker_svg___default.a,
-        tooltip: true
-      });
-      // view.bind('isOn', 'isEnabled').to(command, 'value', 'isEnabled');
-
-      // When the acasi button is pressed, display the widget in the editor.
-      view.on( 'execute', () => {
-      // this.listenTo( view, 'execute', () => {
-        let url = prompt( 'Sound URL' );
-        if (url == "") {
-          url = '../../assets/sounds/1.mp3'
-        }
-
-        let urlArray = url.split('/')
-        let filename = urlArray.slice(-1)[0]
-        let filenameArray = filename.split('.')
-        let fileIdentifier = filenameArray[0]
-        let name = 't_' + fileIdentifier;
-        let taName = 'ta_' + fileIdentifier;
-        let formName = 'form_' + fileIdentifier;
-
-        console.log("taName: " + taName)
-
-        editor.document.enqueueChanges( () => {
-          const imageElement1 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../../assets/images/never.png'});
-          const imageElement2 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../../assets/images/once.png'});
-          const imageElement3 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../../assets/images/few.png'});
-          const imageElement4 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../../assets/images/many.png'});
-
-          // const prb1 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'never'}, [imageElement1])
-          // const prb2 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'once'}, [imageElement2])
-          // const prb3 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'few'}, [imageElement3])
-          // const prb4 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'many'}, [imageElement4])
-
-          // const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [prb1, prb2, prb3, prb4])
-          const acasi = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'tangy-acasi', {'intro-src':url, 'name': taName}, [imageElement1, imageElement2, imageElement3, imageElement4])
-          const form = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'form', {'id': formName, 'onchange': ''}, [acasi])
-
-          editor.data.insertContent( form, editor.document.selection );
-        } );
-      });
-      return view;
+    view.set({
+      label: 'Acasi',
+      icon: __WEBPACK_IMPORTED_MODULE_1__ckeditor_ckeditor5_core_theme_icons_picker_svg___default.a,
+      tooltip: true
     });
+    // view.bind('isOn', 'isEnabled').to(command, 'value', 'isEnabled');
+
+    // When the acasi button is pressed, display the widget in the editor.
+    view.on( 'execute', () => {
+      // this.listenTo( view, 'execute', () => {
+      let url = prompt( 'Sound URL' );
+    if (url == "") {
+      url = '../assets/sounds/1.mp3'
+    }
+
+    let urlArray = url.split('/')
+    let filename = urlArray.slice(-1)[0]
+    let filenameArray = filename.split('.')
+    let fileIdentifier = filenameArray[0]
+    let name = 't_' + fileIdentifier;
+    let taName = 'ta_' + fileIdentifier;
+    let formName = 'form_' + fileIdentifier;
+
+    console.log("taName: " + taName)
+
+    editor.document.enqueueChanges( () => {
+      const imageElement1 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../assets/images/never.png'});
+    const imageElement2 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../assets/images/once.png'});
+    const imageElement3 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../assets/images/few.png'});
+    const imageElement4 = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'image', { src: '../assets/images/many.png'});
+
+    // const prb1 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'never'}, [imageElement1])
+    // const prb2 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'once'}, [imageElement2])
+    // const prb3 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'few'}, [imageElement3])
+    // const prb4 = new ModelElement( 'paper-radio-button', {'name':name, 'value': 'many'}, [imageElement4])
+
+    // const acasi = new ModelElement( 'tangy-acasi', {'intro-src':url, 'name': taName}, [prb1, prb2, prb3, prb4])
+    const acasi = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'tangy-acasi', {'intro-src':url, 'name': taName}, [imageElement1, imageElement2, imageElement3, imageElement4])
+    const form = new __WEBPACK_IMPORTED_MODULE_4__ckeditor_ckeditor5_engine_src_model_element__["a" /* default */]( 'form', {'id': formName, 'on-change': ''}, [acasi])
+
+    editor.data.insertContent( form, editor.document.selection );
+  } );
+  });
+    return view;
+  });
   }
 
 }
 /* harmony export (immutable) */ __webpack_exports__["a"] = Acasi;
-
 
 
 /***/ }),
@@ -70473,7 +70463,7 @@ class FormDialogCommand extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_
 
     if ( this.isEnabled && element.hasAttribute( 'id' ) ) {
       this.value = element.getAttribute( 'id' );
-      this.value2 = element.getAttribute('onchange');
+      this.value2 = element.getAttribute('on-change');
       console.log("getting value of form: " + this.value + " this.value2: " + this.value2)
     } else {
       this.value = false;
@@ -70497,7 +70487,7 @@ class FormDialogCommand extends __WEBPACK_IMPORTED_MODULE_0__ckeditor_ckeditor5_
       const batch = options.batch || doc.batch();
 
       batch.setAttribute( element, 'id', options.newValue );
-      batch.setAttribute( element, 'onchange', options.newValue2 );
+      batch.setAttribute( element, 'on-change', options.newValue2 );
     } );
   }
 }

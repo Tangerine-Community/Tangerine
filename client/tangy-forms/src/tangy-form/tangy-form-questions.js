@@ -1,7 +1,6 @@
 /* jshint esversion: 6 */
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
-// import '../../node_modules/redux/dist/redux.js'
 import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
   ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
   ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
@@ -21,43 +20,11 @@ import '../tangy-radio-buttons/tangy-radio-buttons.js'
 import '../tangy-location/tangy-location.js'
 import '../tangy-gps/tangy-gps.js'
 import '../tangy-overlay/tangy-overlay.js'
+import '../tangy-acasi/tangy-acasi.js';
 
-// <link rel="import" href="../tangy-timed/tangy-timed.html">
-//   <link rel="import" href="../tangy-gps/tangy-gps.html">
-//   <link rel="import" href="../tangy-location/tangy-location.html">
-//   <link rel="import" href="../tangy-checkbox/tangy-checkbox.html">
-//   <link rel="import" href="../tangy-checkboxes/tangy-checkboxes.html">
-//   <link rel="import" href="../tangy-radio-buttons/tangy-radio-buttons.html">
-//   <link rel="import" href="../tangy-eftouch/tangy-eftouch.html">
-//   <link rel="import" href="../tangy-toggle-button/tangy-toggle-button.html">
-//
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
 import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
-//   <script src="../../bower_components/moment/min/moment-with-locales.min.js"></script>
-//   <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-//   <link rel="import" href="../../bower_components/paper-fab.html">
-//   <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
-//   <link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
-//   <link rel="import" href="../../bower_components/iron-form/iron-form.html">
-//   <link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
-//   <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-//   <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
-//   <link rel="import" href="../../bower_components/vaadin-icons/vaadin-icons.html">
-//   <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-//   <link rel="import" href="../../bower_components/iron-form/iron-form.html">
-//   <link rel="import" href="../../bower_components/paper-input/paper-input.html">
-//   <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
-//   <link rel="import" href="../../bower_components/paper-card/paper-card.html">
-//   <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
-//   <link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
-//   <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-//   <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-//   <link rel="import" href="../../bower_components/paper-item/paper-item.html">
-//   <link rel="import" href="../../bower_components/gold-phone-input/gold-phone-input.html">
-//   <link rel="import" href="../../bower_components/app-datepicker/app-datepicker.html">
-
-
 
     /**
      * `tangy-form-questions`
@@ -226,7 +193,7 @@ export class TangyFormQuestions extends PolymerElement {
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
- 
+
         // Notify store is open and send up the items if it does not have them.
         if (this.response.items.length === 0) {
           this.response.items = ([].slice.call(this.querySelectorAll('tangy-form-item'))).map((element) => element.getProps())
@@ -235,9 +202,9 @@ export class TangyFormQuestions extends PolymerElement {
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
           this.store.dispatch({
-            type: INPUT_VALUE_CHANGE,  
-            inputName: event.detail.inputName, 
-            inputValue: event.detail.inputValue, 
+            type: INPUT_VALUE_CHANGE,
+            inputName: event.detail.inputName,
+            inputValue: event.detail.inputValue,
             inputInvalid: event.detail.inputInvalid,
             inputIncomplete: event.detail.inputIncomplete
           })
@@ -255,7 +222,7 @@ export class TangyFormQuestions extends PolymerElement {
 
       // Prevent parallel reflects, leads to race conditions.
       throttledReflect(iAmQueued = false) {
-        // If there is an reflect already queued, we can quit. 
+        // If there is an reflect already queued, we can quit.
         if (this.reflectQueued && !iAmQueued) return
         if (this.reflectRunning) {
           this.reflectQueued = true
@@ -278,10 +245,10 @@ export class TangyFormQuestions extends PolymerElement {
         // Set state in tangy-form-item elements.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
-          let index = state.items.findIndex((itemState) => item.id == itemState.id) 
+          let index = state.items.findIndex((itemState) => item.id == itemState.id)
           if (index !== -1) item.setProps(state.items[index])
         })
-        
+
         // Set progress state.
         this.$.progress.setAttribute('value', state.progress)
 
@@ -335,7 +302,7 @@ export class TangyFormQuestions extends PolymerElement {
           let input = state.inputs.find((input) => input.name == name)
           if (input) return input.value
         }
-        let inputHide = tangyFormActions.inputHide 
+        let inputHide = tangyFormActions.inputHide
         let inputShow = tangyFormActions.inputShow
         let inputEnable = tangyFormActions.inputEnable
         let inputDisable = tangyFormActions.inputDisable
@@ -372,6 +339,6 @@ export class TangyFormQuestions extends PolymerElement {
 
     }
 
-    
+
     window.customElements.define(TangyFormQuestions.is, TangyFormQuestions);
 
