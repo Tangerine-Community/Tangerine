@@ -3,7 +3,7 @@
 import {FORM_OPEN, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, ITEM_OPEN, ITEM_CLOSE, ITEM_DISABLE, ITEM_ENABLE, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
   ITEM_BACK, ITEM_CLOSED, ITEM_DISABLED, ITEM_ENABLED, ITEM_VALID, INPUT_ADD, INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE,
   INPUT_INVALID,  INPUT_VALID, INPUT_HIDE, INPUT_SHOW, NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE,
-  TANGY_TIMED_TIME_SPENT, TANGY_TIMED_LAST_ATTEMPTED, TANGY_TIMED_INCREMENT} from './tangy-form-actions.js'// import './tangy-form-actions.js'
+  TANGY_TIMED_TIME_SPENT, TANGY_TIMED_LAST_ATTEMPTED, TANGY_TIMED_INCREMENT, COMPLETE_FAB_HIDE, COMPLETE_FAB_SHOW,} from './tangy-form-actions.js'// import './tangy-form-actions.js'
 
 
 // Probably never used, tangy-form will set the form with a TangyFormResponseModel.
@@ -240,6 +240,20 @@ const tangyFormReducer = function (state = initialState, action) {
       })})
       return Object.assign({}, newState, {
         items: itemsIncompleteCheck(newState, action.inputName)
+      })
+
+    case COMPLETE_FAB_HIDE:
+      return Object.assign({}, state, { 
+        form: Object.assign(state.form, {
+          hideCompleteFab: true 
+        }) 
+      })
+
+    case COMPLETE_FAB_SHOW:
+      return Object.assign({}, state, { 
+        form: Object.assign(state.form, {
+          hideCompleteFab: false
+        }) 
       })
 
     case TANGY_TIMED_MODE_CHANGE:
