@@ -1,11 +1,29 @@
-import {TangyForm} from './tangy-form.js'
-import {TangyFormItem} from './tangy-form-item.js'
-import {TangyInput} from '../tangy-input/tangy-input.js'
-import {TangyCheckbox} from '../tangy-checkbox/tangy-checkbox.js'
 
 window.sleep = (ms) => new Promise((res, rej) => {
   setTimeout(res, ms)
 })
+
+// For parsing window.location.hash parameters.
+window.getHashParams = () => {
+  var params = {}
+  var qstr = window.location.hash;
+  var a = (qstr[0] === '#' ? qstr.substr(1) : qstr).split('&');
+  for (var i = 0; i < a.length; i++) {
+    var b = a[i].split('=');
+    params[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
+  }
+  return params;
+}
+
+window.setHashParam = (name, value) => {
+  let params = getHashParams()
+  params[name] = value
+  let hash = '#'
+  for (let key in params) {
+    hash += `${key}=${params[key]}&`
+  }
+  window.location.hash = hash
+}
 
 // Perhaps props should always be based on the attributes... Stop dealing with this transformation of naming and deal with the fact a prop not existing means it is set to false.
 
