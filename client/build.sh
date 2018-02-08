@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 cd shell
 ./node_modules/.bin/ng build --base-href "./"
 cd ..
@@ -13,7 +15,6 @@ npm run build
 cp logo.svg build/default/
 cd ../../
 
-rm -r builds
 mkdir builds
 
 # Wrap up APK build.

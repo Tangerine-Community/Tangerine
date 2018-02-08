@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 # Load config.
 
 source ./config.defaults.sh
@@ -10,9 +12,8 @@ else
 fi
 
 docker build -t tangerine/tangerine:local .
-docker stop $T_CONTAINER_NAME 
-docker rm $T_CONTAINER_NAME
-
+[ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME 
+[ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME 
 
 docker run -it --name $T_CONTAINER_NAME \
   --entrypoint="/tangerine/entrypoint-development.sh" \
