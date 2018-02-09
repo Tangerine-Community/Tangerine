@@ -14,6 +14,7 @@ $_documentContainer.setAttribute('style', 'display: none;');
 $_documentContainer.innerHTML = `<custom-style>
   <style is="custom-style">
     html {
+      --document-background-color: #FAFAFA;
       --primary-text-color: var(--light-theme-text-color);
       --primary-color: var(--paper-blue-900);
       --accent-color: #f26f10;
