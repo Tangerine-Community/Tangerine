@@ -43,7 +43,7 @@ export class TangyFormItem extends PolymerElement {
   <style include="tangy-common-styles"></style>
   <style>
 :host {
-  /*margin: 15px;*/
+  margin: 15px;
 }
 /*
  * Card

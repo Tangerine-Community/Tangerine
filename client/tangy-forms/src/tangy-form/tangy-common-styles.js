@@ -23,6 +23,10 @@ $_documentStyleContainer.innerHTML = `
         --paper-checkbox-size: 1.25em;
         --paper-checkbox-checked-color: var(--primary-color);
       }
+      paper-radio-button {
+        --paper-radio-button-size: 1.5em;
+        --paper-radio-button-checked-color: var(--primary-color);
+      }
   </style>
   </template>
   </dom-module>

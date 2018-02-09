@@ -56,11 +56,7 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
         text-transform: capitalize;
         margin-bottom: 5px;
       }
-
-      select option {
-        text-transform: capitalize;
-      }
-        
+  
       .secondary_color {
         color: var(--accent-color);
       }
