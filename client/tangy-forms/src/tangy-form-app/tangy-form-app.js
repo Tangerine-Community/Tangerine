@@ -92,10 +92,10 @@ class TangyFormApp extends Element {
     super.connectedCallback();
     // Get params from hash.
     let params = window.getHashParams()
-    let formSrc = params.hasOwnProperty('form') ? params.form : undefined
+    let formSrc = params.hasOwnProperty('form_src') ? params.form_src : undefined
     let responseId = (params.hasOwnProperty('response_id')) ? params.response_id : undefined
+    let databaseName = (params.database_name) ? params.database_name : 'tangy-form-app' 
     // Set up service.
-    let databaseName = (params.databaseName) ? params.databaseName : 'tangy-form-app' 
     this.service = new TangyFormService({ databaseName })
     await this.service.initialize()
     // Save store when it changes.

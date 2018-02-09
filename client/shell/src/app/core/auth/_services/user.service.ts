@@ -7,6 +7,7 @@ import { Uuid } from 'ng2-uuid';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import { Observable } from 'rxjs/Observable';
+import { TangyFormService } from '../../../tangy-forms/tangy-form-service.js'
 
 @Injectable()
 export class UserService {
@@ -27,6 +28,8 @@ export class UserService {
       const postUserdata = await this.DB.post(this.userData);
       if (postUserdata) {
         const result = await this.initUserProfile(this.userData['username'], userUUID);
+        const tangyFormService = new TangyFormService({ databaseName: this.userData['username']});
+        await tangyFormService.initialize();
         return result;
       }
 
@@ -88,27 +91,10 @@ export class UserService {
   }
 
   async getUserProfile() {
-    const userDBPath = await this.getUserDatabase();
-    if (userDBPath) {
-      const userDB = new PouchDB(userDBPath);
-      let userProfileId: any;
-      PouchDB.plugin(PouchDBFind);
-      userDB.createIndex({
-        index: { fields: ['collection'] }
-      }).then((data) => { console.log('Indexing Succesful'); })
-        .catch(err => console.error(err));
-
-      try {
-        const result = await userDB.find({ selector: { formId: 'user-profile', collection: 'TangyFormResponse' } });
-        if (result.docs.length > 0) {
-          userProfileId = result.docs[0];
-        }
-      } catch (error) {
-        console.error(error);
-      }
-      const userProfile = await userDB.get(userProfileId._id);
-      return userProfile;
-    }
+    const databaseName = await this.getUserDatabase();
+    const tangyFormService = new TangyFormService({ databaseName });
+    const results = await tangyFormService.getResponsesByFormId('user-profile');
+    return results[0]
   }
 
   async doesUserExist(username) {
