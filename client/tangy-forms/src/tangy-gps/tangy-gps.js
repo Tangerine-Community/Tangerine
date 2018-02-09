@@ -31,14 +31,9 @@ class TangyGps extends Element {
     color: white;
     box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.26);
    }
-    paper-button.tangy-orange:focus {
-    background-color: #3c5b8d;
-    color: #ffffff !important;
-    }
-    
-    .coordinates {
-    margin: 5px 15px;
-  }
+   .coordinates {
+     margin: 5px 15px;
+   }
   
   </style>
   <div class="coordinates">
@@ -61,7 +56,8 @@ class TangyGps extends Element {
         Accuracy: {{recordedAccuracy}} meters<br> 
       </template>
     </div>
-    <paper-button class="tangy-orange" on-click="clickedRecord">record position</paper-button>
+    <br>
+    <paper-button on-click="clickedRecord">record position</paper-button>
     <slot></slot>
   </div> 
 `;
