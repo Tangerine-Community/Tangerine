@@ -103,7 +103,7 @@ class TangyTimed extends Element {
         background-color: #cccccc !important;
       }
       paper-fab.pressed {
-        background-color: #3c5b8d !important;
+        background-color: var(--primary-color) !important;
       }
       paper-fab.keyboard-focus {
         background-color: #1976d2;
