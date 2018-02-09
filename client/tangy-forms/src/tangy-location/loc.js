@@ -2,13 +2,13 @@
 
 export class Loc {
 
-  static query (levels, criteria, qCallback, context) {
+  static query (levels, criteria, locationList, qCallback, context) {
     var currentLevelIndex, i, j, len, level, levelIDs, levelMap, locationLevels, locations, resp, targetLevelIndex;
     if (criteria == null) {
       criteria = {};
     }
-    locations = window.locationList.locations;
-    locationLevels = window.locationList.locationsLevels;
+    locations = locationList.locations;
+    locationLevels = locationList.locationsLevels;
     targetLevelIndex = 0;
     levelIDs = [];
     levelMap = [];
