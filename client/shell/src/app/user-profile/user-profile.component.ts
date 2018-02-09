@@ -2,6 +2,7 @@ import { AfterContentInit, Component, ElementRef, OnInit, ViewChild } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { UserService } from '../core/auth/_services/user.service';
+import { TangyFormService } from '../tangy-forms/tangy-form-service.js'
 
 @Component({
   selector: 'app-user-profile',
@@ -24,15 +25,28 @@ export class UserProfileComponent implements OnInit, AfterContentInit {
   }
 
   ngAfterContentInit() {
-    this.iframe.nativeElement.addEventListener('ALL_ITEMS_CLOSED', () => {
-      // navigate to homescreen
-      this.router.navigate(['/home']);
-    });
+    
   }
 
   async getForm() {
-    const userDB = await this.userService.getUserDatabase();
-    this.formUrl = `../tangy-forms/index.html#form=../content/user-profile/form.html&database=${userDB}`;
+    const userDbName = await this.userService.getUserDatabase();
+    // @TODO: Look for form doc in user db, add response_id to url params if there is one.
+    let tangyFormService = new TangyFormService({databaseName: userDbName});
+    let profileDocs = await tangyFormService.getResponsesByFormId('user-profile') 
+    if (profileDocs.length > 0) {
+      this.formUrl = `../tangy-forms/index.html#form_src=../content/user-profile/form.html&database_name=${userDbName}&response_id=${profileDocs[0]._id}`;
+    } else {
+      this.formUrl = `../tangy-forms/index.html#form_src=../content/user-profile/form.html&database_name=${userDbName}`;
+    }
+    // This protects against binding again an element that does not yet exist because the
+    // the this.formUrl property was just set, the *ngIf="formUrl" on iframe will be in the
+    // process of producing that element.
+    setTimeout(() => {
+      this.iframe.nativeElement.addEventListener('ALL_ITEMS_CLOSED', () => {
+        // navigate to homescreen
+        this.router.navigate(['/case-management']);
+      });
+    }, 1500);
 
   }
 
