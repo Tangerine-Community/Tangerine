@@ -59,11 +59,11 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
 
       select option {
         text-transform: capitalize;
-        }
+      }
         
-        .secondary_color {
-          color: #f26f10;
-        }
+      .secondary_color {
+        color: var(--accent-color);
+      }
    
   
     </style>
