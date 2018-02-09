@@ -1,6 +1,8 @@
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../../node_modules/@polymer/paper-checkbox/paper-checkbox.js';
 import '../tangy-form/tangy-element-styles.js';
+import '../tangy-form/tangy-common-styles.js'
+
 /**
  * `tangy-checkboxes`
  * 
@@ -12,6 +14,7 @@ import '../tangy-form/tangy-element-styles.js';
 class TangyCheckboxes extends Element {
   static get template() {
     return `
+    <style include="tangy-common-styles"></style>
     <style include="tangy-element-styles"></style>
     <style>
 
@@ -22,8 +25,6 @@ class TangyCheckboxes extends Element {
       paper-checkbox {
         margin-top: 15px;
         margin-right: 25px;
-        --paper-checkbox-size: 1.25em;
-        --paper-checkbox-checked-color: #3c5b8d;
       }
       span {
         font-size: .75em;

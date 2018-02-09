@@ -1,5 +1,6 @@
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../tangy-form/tangy-element-styles.js';
+import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-toggle-button`
  * 
@@ -11,6 +12,7 @@ import '../tangy-form/tangy-element-styles.js';
 class TangyToggleButton extends Element {
   static get template() {
     return `
+    <style include="tangy-common-styles"></style>
     <style>
       :host {
         display: inline-block;
