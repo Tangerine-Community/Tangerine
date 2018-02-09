@@ -1,23 +1,26 @@
 /* jshint esversion: 6 */
 
 const util = require('util');
-const exec = util.promisify(require('child_process').exec)
+const exec = util.promisify(require('child_process').exec);
 const http = require('axios');
-const read = require('read-yaml')
-const express = require('express')
-var session = require("express-session")
+const read = require('read-yaml');
+const express = require('express');
+var session = require("express-session");
 const bodyParser = require('body-parser');
-const path = require('path')
-const app = express()
-const fs = require('fs-extra')
-const fsc = require('fs')
-const config = read.sync('./config.yml')
+const path = require('path');
+const app = express();
+const fs = require('fs-extra');
+const fsc = require('fs');
+const config = read.sync('./config.yml');
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
-const PouchDB = require('pouchdb')
+const chalk = require('chalk');
+const nano = require('nano');
+const PouchDB = require('pouchdb');
 const DB = PouchDB.defaults({
   prefix: '/tangerine/db/'
 });
+
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
@@ -57,14 +60,26 @@ passport.deserializeUser(function(id, done) {
 });
 
 
+/**
+ * Reports Controllers.
+ */
+
+const assessmentController = require('./reports/controllers/assessment');
+const resultController = require('./reports/controllers/result');
+const workflowController = require('./reports/controllers/workflow');
+const csvController = require('./reports/controllers/generate_csv');
+const changesController = require('./reports/controllers/changes');
+const tripController = require('./reports/controllers/trip');
+
+
 // Use sessions.
-app.use(session({ 
-  secret: "cats", 
+app.use(session({
+  secret: "cats",
   resave: false,
-  saveUninitialized: true 
+  saveUninitialized: true
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -78,10 +93,10 @@ var isAuthenticated = function (req, res, next) {
   console.log(errorMessage)
   // res.redirect('/');
   res.status(401).send(errorMessage)
-}
+};
 
 // Login service.
-app.post('/login', 
+app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function(req, res) {
     res.send({name: 'user1', status: 'ok'});
@@ -113,7 +128,7 @@ app.use('/editor/release-apk/:secret/:group', isAuthenticated, async function (r
         ./release-apk.sh ${secret} ./content/groups/${group}
   `)
   res.send('ok')
-})
+});
 
 app.use('/editor/release-pwa/:secret/:group', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
@@ -123,7 +138,7 @@ app.use('/editor/release-pwa/:secret/:group', isAuthenticated, async function (r
         ./release-pwa.sh ${secret} ./content/groups/${group}
   `)
   res.send('ok')
-})
+});
 
 async function saveFormsJson(formParameters, group) {
   console.log("formParameters: " + JSON.stringify(formParameters))
@@ -386,7 +401,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
   }
   // console.log("resp: "+  JSON.stringify(resp))
   res.json(resp)
-})
+});
 
 app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 
@@ -397,7 +412,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   // Edit the app-config.json.
   try {
     appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
-    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}` 
+    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}`
   } catch (err) {
     console.error("An error reading app-config: " + err)
     throw err;
@@ -405,10 +420,10 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
     .then(status => console.log("Wrote app-config.json"))
     .catch(err => console.error("An error copying app-config: " + err))
-  
+
   // All done!
   res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
-})
+});
 
 // kick it off
 var server = app.listen(config.port, function() {
@@ -424,18 +439,17 @@ app.get('/groups', isAuthenticated, async function (req, res) {
     console.log('/groups route lists these dirs: ' + filteredFiles)
     let groups = filteredFiles.map((groupName) => {
       return {
-        attributes: { 
-          name: groupName 
+        attributes: {
+          name: groupName
         },
-        member: [], 
-        admin: [], 
-        numberOfResults: 0 
+        member: [],
+        admin: [],
+        numberOfResults: 0
       }
     })
     res.send(groups)
-
   })
-})
+});
 
 // @TODO: Middleware auth check for upload user.
 app.post('/upload/:groupName', async function (req, res) {
@@ -445,7 +459,7 @@ app.post('/upload/:groupName', async function (req, res) {
   delete req.body.doc._rev
   await db.put(req.body.doc).catch(err => console.log(err))
   res.send('ok')
-})
+});
 
 const flatten = require('flat')
 const json2csv = require('json2csv')
@@ -465,11 +479,11 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   let responseRows = allDocs.rows
     .filter(row => row.doc.collection == 'TangyFormResponse')
     .filter(row => row.doc.form.id == req.params.formId)
-  let responseDocs = responseRows.map(row => row.doc) 
-  let variableDocs = responseDocs.map(doc => { 
+  let responseDocs = responseRows.map(row => row.doc)
+  let variableDocs = responseDocs.map(doc => {
     let variables = {}
-    doc.inputs.forEach(item => { 
-      variables[item.name] = item.value 
+    doc.inputs.forEach(item => {
+      variables[item.name] = item.value
     })
     return variables
   })
@@ -487,7 +501,54 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   res.setHeader('Content-Type', 'text/csv');
   res.write(result)
   res.end()
-})
+});
+
+/**
+ * Hook data processing function to couchDB changes feed.
+ */
+
+const dbConfig = require('./reports/config');
+const dbQuery = require('./reports/utils/dbQuery');
+const processChangedDocument = require('./reports/controllers/changes').processChangedDocument;
+
+// TODO: Uncomment all commented code to start processing from last update sequence
+// const checkUpdateSequence = require('./utils/dbQuery').checkUpdateSequence
+// let seq = await checkUpdateSequence(resultDbUrl);
+
+const BASE_DB = nano(dbConfig.base_db);
+const feed = BASE_DB.follow({ since: 'now', include_docs: true });
+
+feed.on('change', async (resp) => {
+  feed.pause();
+  processChangedDocument(resp, dbConfig.base_db, dbConfig.result_db);
+  setTimeout(function () { feed.resume() }, 500);
+});
+
+feed.on('error', (err) => Error(err));
+feed.follow();
+
+/**
+ * App routes for reports
+ */
+
+app.post('/assessment', assessmentController.all);
+app.post('/assessment/headers/all', assessmentController.generateAll);
+app.post('/assessment/headers/:id', assessmentController.generateHeader);
+
+app.post('/result', resultController.all);
+app.post('/assessment/result/all', resultController.processAll);
+app.post('/assessment/result/:id', resultController.processResult);
+
+app.post('/workflow', workflowController.all);
+app.post('/workflow/headers/all', workflowController.generateAll);
+app.post('/workflow/headers/:id', workflowController.generateHeader);
+
+app.post('/workflow/result/all', tripController.processAll);
+app.post('/workflow/result/:id', tripController.processResult);
+
+app.post('/generate_csv/:id', csvController.generate);
+app.post('/tangerine_changes', changesController.changes);
+app.post('/get_processed_results/:id', dbQuery.processedResultsById);
 
 app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isAuthenticated, async function (req, res) {
   let db = new DB(req.params.groupName)
@@ -498,5 +559,5 @@ app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isA
     await db.put(Object.assign({} , template, { _id: crypto.randomBytes( 20 ).toString('hex') }))
     i++
   }
-  res.send('ok')
-})
+  res.send('ok');
+});
