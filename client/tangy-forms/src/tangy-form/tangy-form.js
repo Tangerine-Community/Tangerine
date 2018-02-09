@@ -89,7 +89,7 @@ export class TangyForm extends PolymerElement {
         }
         #tangerine-footer {
           width:100%;
-          background-color: #3c5b8d;
+          background-color: var(--primary-color);
           height: 40px;
           position: fixed;
           bottom: 0px;

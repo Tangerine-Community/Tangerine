@@ -97,7 +97,7 @@ label.heading {
   font-size: 21px !important;
   margin-bottom: 20px;
   display: block;
-  color: #3c5b8d;
+  color: var(--primary-color);
   font-weight: 700;
 }
 </style>

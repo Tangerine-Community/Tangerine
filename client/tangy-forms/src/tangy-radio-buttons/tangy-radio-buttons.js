@@ -19,11 +19,6 @@ class TangyRadioButtons extends Element {
     <style include="tangy-common-styles"></style>
 
     <style>
-      paper-radio-button {
-        --paper-radio-button-size: 1.5em;
-        --paper-radio-button-checked-color: #3c5b8d;
-      }
-      
       span {
         font-size: .75em;
         display: block;

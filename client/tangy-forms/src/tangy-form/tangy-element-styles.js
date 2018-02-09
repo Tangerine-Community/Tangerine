@@ -1,11 +1,17 @@
 /* jshint esversion: 6 */
 
+/*
+ * CSS style module for Tangy Form Elements. 
+ * 
+ * This module keeps styling of state consistent for things like disabled, invalid,
+ * and required.
+ */
+
 const $_documentStyleContainer = document.createElement('div');
 $_documentStyleContainer.setAttribute('style', 'display: none;');
 
 $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
   <template><style is="tangy-element-styles">
-
       :host {
         color: var(--primary-text-color);
         display: block;

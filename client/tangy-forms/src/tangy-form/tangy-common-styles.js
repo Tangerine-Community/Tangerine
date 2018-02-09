@@ -1,5 +1,13 @@
 /* jshint esversion: 6 */
 
+/*
+ * CSS style module for all related Tangy Form components. 
+ * 
+ * This module keeps consistent the styling of common elements that tangy form 
+ * related elements use such as styles  paper-fab and paper-card.
+ * 
+ */
+
 const $_documentStyleContainer = document.createElement('div');
 $_documentStyleContainer.setAttribute('style', 'display: none;');
 
