@@ -467,7 +467,7 @@ class TangyLocation extends Element {
       },
       locationSrc: {
         type: String,
-        value: '../location-list.json'
+        value: '../content/location-list.json'
       },
       showLevels: {
         type: String,
@@ -485,14 +485,24 @@ class TangyLocation extends Element {
     };
   }
 
+  constructor() {
+    super()
+    this.localList = undefined
+  }
+
   async connectedCallback() {
     // super.connectedCallback();
     Element.prototype.connectedCallback.call(this);
     // When we hear change events, it's coming from users interacting with select lists.
     this.shadowRoot.addEventListener('change', this.onSelectionChange.bind(this))
+    let request = await fetch(this.locationSrc)
+    this.locationList = await request.json()
+    this.render()
   }
 
   render() {
+
+    if (!this.locationList) return this.$.container.innerHTML = `Loading...`
 
     // Get levels configured on this.showLevels.
     let levels = this.showLevels.split(',')
@@ -582,7 +592,7 @@ class TangyLocation extends Element {
     selections.forEach(selection => {
       if (queries[selection.level]) {
         let query = queries[selection.level]
-        Loc.query(levels, query.criteria, (res) => {
+        Loc.query(levels, query.criteria, this.locationList, (res) => {
           options[selection.level] = res
         })
       } else {
