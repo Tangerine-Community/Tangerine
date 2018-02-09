@@ -428,6 +428,10 @@ class TangyLocation extends Element {
       color: #ffffff;
       background-color: var(--primary-color);
    }
+
+    select option {
+      text-transform: capitalize;
+    }
   /* End of Materialize Select Styles */
       </style>
       <div id="container"></div>
