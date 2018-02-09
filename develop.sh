@@ -10,7 +10,7 @@ else
 fi
 
 docker build -t tangerine/tangerine:local .
-docker stop $T_CONTAINER_NAME 
+docker stop $T_CONTAINER_NAME
 docker rm $T_CONTAINER_NAME
 
 
@@ -34,6 +34,7 @@ docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json \
+  --volume $(pwd)/server/reports:/tangerine/server/reports \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
   --volume $(pwd)/editor/package.json:/tangerine/editor/package.json \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
