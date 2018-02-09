@@ -14,22 +14,18 @@ export class CreateProfileGuardService implements CanActivate {
     let isProfileComplete = false;
     this.userDatabase = await this.userService.getUserDatabase();
     this.DB = new PouchDB(this.userDatabase);
-    const results = await
-      this.DB.query('tangy-form/formByFormId',
-        { key: 'user-profile', include_docs: true });
+    const results = await this.DB.query('tangy-form/responsesByFormId', { 
+      key: 'user-profile', 
+      include_docs: true
+    });
 
     if (results.rows.length === 0) {
       isProfileComplete = false;
     } else {
-      const response_Id = results.rows[0].doc['responseId'] ?
-        results.rows[0].doc['responseId'] :
-        null;
-      if (response_Id) {
-        const responseDoc = await this.DB.get(response_Id, { include_docs: true });
-        isProfileComplete = responseDoc.items.find(item => {
-          return (item.incomplete === true);
-        }) ? false : true;
-      }
+      const responseDoc = results.rows[0].doc 
+      isProfileComplete = responseDoc.items.find(item => {
+        return (item.incomplete === true);
+      }) ? false : true;
     }
 
     if (!isProfileComplete) {
