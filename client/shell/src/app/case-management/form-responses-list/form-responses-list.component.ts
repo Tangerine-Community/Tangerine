@@ -59,10 +59,10 @@ export class FormResponsesListDataSource extends DataSource<any> {
       .map(data => {
         const flattenedData = [];
         data.forEach(item => {
-          if (item.doc.formId !== 'user-profile') {
-            const index = this.formList.findIndex(c => c.id === item.doc.formId);
+          if (item.doc.form.id !== 'user-profile') {
+            const index = this.formList.findIndex(c => c.id === item.doc.form.id);
             const doc = {
-              formId: item.doc.formId,
+              formId: item.doc.form.id,
               formTitle: item.doc.formTitle,
               startDatetime: item.doc.startDatetime,
               _id: item.doc._id,
