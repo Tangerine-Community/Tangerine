@@ -3,6 +3,7 @@ import '../tangy-form/cat.js'
 import '../../node_modules/@polymer/paper-button/paper-button.js';
 import '../../node_modules/@polymer/paper-card/paper-card.js';
 import '../tangy-form/tangy-form.js';
+import '../tangy-form/tangy-common-styles.js'
 import { tangyFormReducer } from '../tangy-form/tangy-form-reducer.js'
 import {tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook} from '../tangy-form/tangy-form-redux-middleware.js'
 import { TangyFormModel } from '../tangy-form/tangy-form-model.js'
@@ -27,6 +28,7 @@ import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem,
 class TangyFormApp extends Element {
   static get template() {
     return `
+    <style include="tangy-common-styles"></style>
     <style>
       :host {
         display: block;
@@ -90,7 +92,7 @@ class TangyFormApp extends Element {
     super.connectedCallback();
     // Get params from hash.
     let params = window.getHashParams()
-    let formId = params.hasOwnProperty('form') ? params.form : undefined
+    let formSrc = params.hasOwnProperty('form') ? params.form : undefined
     let responseId = (params.hasOwnProperty('response_id')) ? params.response_id : undefined
     // Set up service.
     let databaseName = (params.databaseName) ? params.databaseName : 'tangy-form-app' 
@@ -99,10 +101,10 @@ class TangyFormApp extends Element {
     // Save store when it changes.
     this.store.subscribe(this.throttledSaveResponse.bind(this))
     // Load form or form list.
-    if (formId) {
+    if (formSrc) {
       this.$['form-view'].hidden = false
       this.$['form-list'].hidden = true
-      await this.loadForm(formId, responseId)
+      await this.loadForm(formSrc, responseId)
     } else {
       this.$['form-view'].hidden = true 
       this.$['form-list'].hidden = false 

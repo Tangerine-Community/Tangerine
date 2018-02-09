@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import '../tangy-form/tangy-common-styles.js'
 
 /**
  * `tangy-overlay`
@@ -16,6 +17,7 @@ export class TangyOverlay extends PolymerElement {
   static get template () {
     return `
 
+    <style include="tangy-common-styles"></style>
     <style>
     #overlay {
       position: fixed; /* Sit on top of the page content */

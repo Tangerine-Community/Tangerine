@@ -8,6 +8,7 @@ import '../../node_modules/sortable-list/sortable-list.js';
 import '../tangy-form/tangy-form.js';
 import '../tangy-textarea/tangy-textarea.js';
 import '../tangy-acasi/tangy-acasi.js';
+import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-form-app`
  * ...
@@ -20,6 +21,7 @@ import '../tangy-acasi/tangy-acasi.js';
 class TangyEditorApp extends Element {
   static get template() {
     return `
+    <style include="tangy-common-styles"></style>
     <style>
       :host {
         display: block;
