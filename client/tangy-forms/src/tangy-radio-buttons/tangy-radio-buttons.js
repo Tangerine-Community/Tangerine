@@ -3,6 +3,7 @@ import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../../node_modules/@polymer/paper-radio-button/paper-radio-button.js';
 import '../../node_modules/@polymer/paper-radio-group/paper-radio-group.js';
 import '../tangy-form/tangy-element-styles.js';
+import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-radio-buttons`
  * 
@@ -15,6 +16,7 @@ class TangyRadioButtons extends Element {
   static get template() {
     return `
     <style include="tangy-element-styles"></style>
+    <style include="tangy-common-styles"></style>
 
     <style>
       paper-radio-button {

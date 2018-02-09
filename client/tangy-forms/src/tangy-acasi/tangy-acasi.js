@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import '../tangy-form/tangy-common-styles.js'
 // import '../tangy-form/tangy-element-styles.js'
 
 /**
@@ -16,6 +17,7 @@ export class TangyAcasi extends PolymerElement {
 
   static get template () {
     return `
+    <style include="tangy-common-styles"></style>
     <style include="tangy-element-styles"></style>
 
     <style>

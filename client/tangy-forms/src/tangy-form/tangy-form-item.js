@@ -2,6 +2,7 @@
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../../node_modules/@polymer/paper-card/paper-card.js'
+import './tangy-common-styles.js'
 
 // Import actions as a catchall so we can later declare variables of the same name as the properties for use
 // in form.on-change logic. This protects us against the bundler's renaming of imported variables and functions
@@ -39,6 +40,7 @@ export class TangyFormItem extends PolymerElement {
   static get template()
     {
       return `
+  <style include="tangy-common-styles"></style>
   <style>
 :host {
   /*margin: 15px;*/

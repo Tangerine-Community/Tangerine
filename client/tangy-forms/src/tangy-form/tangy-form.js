@@ -10,7 +10,7 @@ import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem,
   tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from './tangy-form-actions.js'
 import './tangy-form-item.js'
 import * as tangyFormActions from './tangy-form-actions.js'
-
+import './tangy-common-styles.js'
 //   <!-- Tangy Custom Inputs Elements -->
 
 import '../tangy-input/tangy-input.js'
@@ -39,6 +39,9 @@ export class TangyForm extends PolymerElement {
 
       static get template () {
         return `
+     
+      <style include="tangy-common-styles"></style>
+        
       <style>
         :host {
           width: 100%;

@@ -3,6 +3,7 @@ import '../tangy-form/cat.js'
 import '../../node_modules/@polymer/paper-button/paper-button.js';
 import '../../node_modules/@polymer/paper-card/paper-card.js';
 import '../tangy-form/tangy-form.js';
+import '../tangy-form/tangy-common-styles.js'
 import { tangyFormReducer } from '../tangy-form/tangy-form-reducer.js'
 import {tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook} from '../tangy-form/tangy-form-redux-middleware.js'
 import { TangyFormModel } from '../tangy-form/tangy-form-model.js'
@@ -27,6 +28,7 @@ import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem,
 class TangyFormApp extends Element {
   static get template() {
     return `
+    <style include="tangy-common-styles"></style>
     <style>
       :host {
         display: block;

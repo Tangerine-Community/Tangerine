@@ -2,6 +2,7 @@
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
 // import './build/ckeditor.js'
+import '../tangy-form/tangy-common-styles.js'
 
 
 /**
@@ -16,6 +17,7 @@ export class TangyTextarea extends PolymerElement {
 
   static get template () {
     return `
+        <style include="tangy-common-styles"></style>
         <template id="special-template" preserve-content>
             <textarea id="editor" hidden></textarea>
         </template>

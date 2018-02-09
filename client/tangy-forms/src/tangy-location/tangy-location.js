@@ -4,6 +4,7 @@ import '../../node_modules/@polymer/paper-input/paper-input.js'
 import '../tangy-form/tangy-element-styles.js';
 // import '../../../underscore/underscore.js';
 import {Loc} from './loc.js';
+import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-location`
  * 
@@ -15,6 +16,7 @@ import {Loc} from './loc.js';
 class TangyLocation extends Element {
   static get template() {
     return `
+      <style include="tangy-common-styles"></style>
       <style include="tangy-element-styles"></style>
       <div id="container"></div>
       <slot></slot>
