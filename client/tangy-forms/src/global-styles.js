@@ -20,6 +20,18 @@ $_documentContainer.innerHTML = `<custom-style>
       --accent-color: #f26f10;
       --error-color: var(--paper-red-500);
       --disabled-color: #BBB;
+      /*
+       * Hi. Test the application of colors variables with an override
+       * by uncommenting the code below.
+      --document-background-color: #93a2b4;
+      --primary-text-color: var(--light-theme-text-color);
+      --primary-color: #9FADBF;
+      --accent-color: #7edfce;
+      --error-color: var(--paper-red-500);
+      --disabled-color: #BBB;
+       */
+
+    
     }
     h1, h2, h3, h4, h5 {
       @apply --paper-font-common-base;
