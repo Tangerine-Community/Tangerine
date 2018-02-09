@@ -1,3 +1,11 @@
+
+/*
+ * Global style module. 
+ * 
+ */
+
+
+
 import '../node_modules/@polymer/polymer/lib/elements/custom-style.js';
 
 const $_documentContainer = document.createElement('div');
