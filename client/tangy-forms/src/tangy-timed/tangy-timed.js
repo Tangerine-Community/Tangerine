@@ -6,6 +6,7 @@ import '../../node_modules/@polymer/iron-icons/av-icons.js';
 import '../../node_modules/@polymer/iron-icons/editor-icons.js';
 import '../../node_modules/@polymer/iron-icon/iron-icon.js';
 import '../tangy-toggle-button/tangy-toggle-button.js';
+import '../tangy-form/tangy-common-styles.js'
 import { tangyTimedModeChange, tangyTimedIncrement, tangyTimedLastAttempted, tangyTimedTimeSpent  } from '../tangy-form/tangy-form-actions.js'
 /**
  * `tangy-timed`
@@ -26,6 +27,7 @@ const TANGY_TIMED_COMPLETE = 'TANGY_TIMED_COMPLETE'
 class TangyTimed extends Element {
   static get template() {
     return `
+    <style include="tangy-common-styles"></style>
     <style>
       :host {
         display: block;
@@ -94,14 +96,14 @@ class TangyTimed extends Element {
       }
       
       paper-fab {
-        background-color: #f26f10 !important;
+        background-color: var(--accent-color) !important;
       }
       
       paper-fab[disabled] {
         background-color: #cccccc !important;
       }
       paper-fab.pressed {
-        background-color: #3c5b8d !important;
+        background-color: var(--primary-color) !important;
       }
       paper-fab.keyboard-focus {
         background-color: #1976d2;

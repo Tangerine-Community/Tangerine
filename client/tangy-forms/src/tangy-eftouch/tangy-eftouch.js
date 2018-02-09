@@ -1,4 +1,5 @@
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-eftouch`
  *
@@ -10,6 +11,7 @@ import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
 class TangyEftouch extends Element {
   static get template() {
     return `
+      <style include="tangy-common-styles"></style>
         <style>
             :host {
                 display: block;

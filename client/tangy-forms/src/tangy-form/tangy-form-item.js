@@ -2,6 +2,7 @@
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../../node_modules/@polymer/paper-card/paper-card.js'
+import './tangy-common-styles.js'
 
 // Import actions as a catchall so we can later declare variables of the same name as the properties for use
 // in form.on-change logic. This protects us against the bundler's renaming of imported variables and functions
@@ -39,9 +40,10 @@ export class TangyFormItem extends PolymerElement {
   static get template()
     {
       return `
+  <style include="tangy-common-styles"></style>
   <style>
 :host {
-  /*margin: 15px;*/
+  margin: 15px;
 }
 /*
  * Card
@@ -95,7 +97,7 @@ label.heading {
   font-size: 21px !important;
   margin-bottom: 20px;
   display: block;
-  color: #3c5b8d;
+  color: var(--primary-color);
   font-weight: 700;
 }
 </style>
