@@ -96,7 +96,7 @@ class TangyTimed extends Element {
       }
       
       paper-fab {
-        background-color: #f26f10 !important;
+        background-color: var(--accent-color) !important;
       }
       
       paper-fab[disabled] {
