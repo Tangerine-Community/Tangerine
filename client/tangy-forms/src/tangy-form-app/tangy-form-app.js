@@ -92,7 +92,7 @@ class TangyFormApp extends Element {
     super.connectedCallback();
     // Get params from hash.
     let params = window.getHashParams()
-    let formId = params.hasOwnProperty('form') ? params.form : undefined
+    let formSrc = params.hasOwnProperty('form') ? params.form : undefined
     let responseId = (params.hasOwnProperty('response_id')) ? params.response_id : undefined
     // Set up service.
     let databaseName = (params.databaseName) ? params.databaseName : 'tangy-form-app' 
@@ -101,10 +101,10 @@ class TangyFormApp extends Element {
     // Save store when it changes.
     this.store.subscribe(this.throttledSaveResponse.bind(this))
     // Load form or form list.
-    if (formId) {
+    if (formSrc) {
       this.$['form-view'].hidden = false
       this.$['form-list'].hidden = true
-      await this.loadForm(formId, responseId)
+      await this.loadForm(formSrc, responseId)
     } else {
       this.$['form-view'].hidden = true 
       this.$['form-list'].hidden = false 
