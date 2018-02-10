@@ -70,7 +70,14 @@ export class TangyForm extends PolymerElement {
           right: 7px;
           top: 24px;
         }
-        
+
+        #markCompleteButton {
+          position: fixed;
+          right: 7px;
+          bottom: 2px;
+          color: var(--accent-text-color);
+        }
+
         #markCompleteFab {}
         :host(:not([linear-mode])) #nextItemButton,
         :host(:not([linear-mode])) #previousItemButton
@@ -95,6 +102,7 @@ export class TangyForm extends PolymerElement {
           bottom: 0px;
       }
       
+      #markCompleteButton,
       #previousItemButton,
       #nextItemButton {
         padding: 0;
@@ -115,13 +123,12 @@ export class TangyForm extends PolymerElement {
       </style>
       <slot></slot>
       <div id="nav">
-        <paper-fab alt="complete" title="complete" id="markCompleteFab" mini on-click="markComplete" icon="icons:check"></paper-fab>
-        <paper-fab id="lockedFab" mini icon="icons:lock" disabled></paper-fab>
       </div>
       <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
       <div id="tangerine-footer">
-          <paper-icon-button id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-icon-button>
-          <paper-icon-button id="nextItemButton" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-icon-button>
+        <paper-icon-button id="markCompleteButton" on-click="markComplete" icon="icons:check" hidden></paper-icon-button>
+        <paper-icon-button id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-icon-button>
+        <paper-icon-button id="nextItemButton" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-icon-button>
       </div>
         `
       }
@@ -259,19 +266,26 @@ export class TangyForm extends PolymerElement {
           }, 200)
         }
 
-        // Disable navigation buttons depending on wether there is a next or previous place to focus to.
-        this.$.nextItemButton.disabled = (state.nextFocusIndex === -1 ||
+        // If there is not a next item or the current item is incomplete, hide the next item button.
+        this.$.nextItemButton.hidden = (state.nextFocusIndex === -1 ||
                                           (state.items[state.focusIndex] && state.items[state.focusIndex].incomplete)
                                           ) ? true : false
-        // Allow navigating back even if incomplete.
-        this.$.previousItemButton.disabled = (state.previousFocusIndex === -1) ? true : false
-        if (state.complete === true) {
-          this.$.markCompleteFab.style.display =  'none'
-          this.$.lockedFab.style.display =  'block'
+        // Hide back navigation if there is no previous item. 
+        this.$.previousItemButton.hidden = (state.previousFocusIndex === -1) ? true : false
+        
+        // Enable nav buttons as they may have been disabled after clicked.
+        this.$.nextItemButton.disabled = false 
+        this.$.previousItemButton.disabled = false 
+
+        if ((state.items.findIndex(item => item.incomplete && !item.disabled)) == -1 
+              && state.nextFocusIndex == -1
+              && !state.complete) {
+            
+          this.$.markCompleteButton.hidden = false
         } else {
-          this.$.markCompleteFab.style.display =  'block'
-          this.$.lockedFab.style.display =  'none'
+          this.$.markCompleteButton.hidden = true
         }
+
         // Dispatch ALL_ITEMS_CLOSED if all items are now closed.
         let previouslyClosedItemCount = (this.previousState.items.filter(item => !item.open)).length
         let currentlyClosedItemCount = (state.items.filter(item => !item.open)).length
@@ -311,16 +325,20 @@ export class TangyForm extends PolymerElement {
       }
 
       focusOnPreviousItem(event) {
+        // Disable navigation buttons while changing focus.
         this.$.previousItemButton.setAttribute('disabled', true)
         this.$.nextItemButton.setAttribute('disabled', true)
+        // Dispatch action.
         let state = this.store.getState()
         let item = state.items.find(item => item.open)
         this.store.dispatch({ type: ITEM_BACK, itemId: item.id })
       }
 
       focusOnNextItem(event) {
+        // Disable navigation buttons while changing focus.
         this.$.previousItemButton.setAttribute('disabled', true)
         this.$.nextItemButton.setAttribute('disabled', true)
+        // Dispatch action.
         let state = this.store.getState()
         let item = state.items.find(item => item.open)
         this.store.dispatch({ type: ITEM_NEXT, itemId: item.id })

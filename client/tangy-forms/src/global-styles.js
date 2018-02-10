@@ -18,6 +18,7 @@ $_documentContainer.innerHTML = `<custom-style>
       --primary-text-color: var(--light-theme-text-color);
       --primary-color: var(--paper-blue-900);
       --accent-color: #f26f10;
+      --accent-text-color: #FFF;
       --error-color: var(--paper-red-500);
       --disabled-color: #BBB;
       /*
@@ -26,12 +27,11 @@ $_documentContainer.innerHTML = `<custom-style>
       --document-background-color: #93a2b4;
       --primary-text-color: var(--light-theme-text-color);
       --primary-color: #9FADBF;
+      --accent-text-color: #FFF;
       --accent-color: #7edfce;
       --error-color: var(--paper-red-500);
       --disabled-color: #BBB;
        */
-
-    
     }
     h1, h2, h3, h4, h5 {
       @apply --paper-font-common-base;
