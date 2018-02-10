@@ -8,7 +8,7 @@ export class TangyFormResponseModel {
     this.items = []
     this.inputs = []
     // States.
-    complete: false,
+    this.complete = false
     // Focus indexes.
     // @TODO: We can probably get rid of these indexes.
     this.focusIndex = 0

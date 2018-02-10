@@ -21,11 +21,30 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
         margin: 0 5px 5px 0px;
       }
 
-      :host([hidden]) {
-        display: none;
+      :host(:not([hidden])) {
+        -webkit-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        -moz-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        -ms-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        -o-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        opacity: 1;
+        max-height: 3000px;
       }
 
-      :host([disabled]) {
+      :host([hidden]) {
+        -webkit-transition: 
+          opacity .5s ease-in-out, 
+          max-height .5s ease-in-out,
+          border .5s ease-in-out, 
+          margin .5s ease-in-out, 
+          padding .5s ease-in-out;
+        opacity: 0;
+        max-height: 0px;
+        border: 0px;
+        margin: 0px;
+        padding: 0px;
+      }
+
+      :host([disabled]:not([hidden])) {
         color: var(--disabled-color);
         opacity: .7;
       }

@@ -43,11 +43,13 @@ class TangyFormApp extends Element {
         left: 45px;
         top: 8px;
       }
-      #new-response-fab {
+      #new-response-button {
         position: fixed;
+        color: #fff;
         z-index: 999;
-        top: 75px;
-        right: 7px;
+        bottom: 0px;
+        left: 50%;
+        margin-left: -20px;
       }
     </style>
     <div class="tangy-form-app--container">
@@ -56,7 +58,7 @@ class TangyFormApp extends Element {
         <template is="dom-repeat" items="{{forms}}">
             <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
                 <div class="card-actions">
-                  <a href="#form=[[item.src]]" on-click="formSelected">
+                  <a href="index.html#form_src=[[item.src]]" on-click="reload">
                     <paper-button class="launch-form">
                       <iron-icon icon="icons:launch">
                     </iron-icon></paper-button>
@@ -67,7 +69,7 @@ class TangyFormApp extends Element {
       </div>
 
       <div id="form-view" hidden="">
-        <paper-fab mini id="new-response-fab" on-click="onClickNewResponseFab" icon="icons:add"></paper-fab>
+        <paper-icon-button mini id="new-response-button" on-click="onClickNewResponseButton" icon="icons:add"></paper-icon-button>
         <div id="form-container"></div>
       </div>
 
@@ -176,9 +178,16 @@ class TangyFormApp extends Element {
     await this.service.saveResponse(newStateDoc)
   }
 
-  onClickNewResponseFab() {
-    let params = getHashParams()
-    this.loadForm(params.form)
+  onClickNewResponseButton() {
+    let confirmation = confirm("Are you sure you want to start a form response?")
+    if (confirmation) {
+      let params = getHashParams()
+      this.loadForm(params.form_src)
+    }
+  }
+
+  reload() {
+    window.location.reload()
   }
 
 }
