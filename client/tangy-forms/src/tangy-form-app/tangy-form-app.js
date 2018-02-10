@@ -56,7 +56,7 @@ class TangyFormApp extends Element {
         <template is="dom-repeat" items="{{forms}}">
             <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
                 <div class="card-actions">
-                  <a href="#form=[[item.src]]" on-click="formSelected">
+                  <a href="index.html#form_src=[[item.src]]" on-click="reload">
                     <paper-button class="launch-form">
                       <iron-icon icon="icons:launch">
                     </iron-icon></paper-button>
@@ -179,6 +179,10 @@ class TangyFormApp extends Element {
   onClickNewResponseFab() {
     let params = getHashParams()
     this.loadForm(params.form)
+  }
+
+  reload() {
+    window.location.reload()
   }
 
 }
