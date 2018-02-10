@@ -112,6 +112,9 @@ class TangyFormApp extends Element {
       this.$['form-list'].hidden = false 
       await this.loadFormsList()
     }
+    if (params.hasOwnProperty('hide_new_response_button')) {
+      this.$['new-response-button'].hidden = true
+    }
     // Remove loading screen.
     window['tangy-form-app-loading'].innerHTML = ''
   }
