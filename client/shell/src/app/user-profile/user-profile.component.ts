@@ -34,9 +34,9 @@ export class UserProfileComponent implements OnInit, AfterContentInit {
     let tangyFormService = new TangyFormService({databaseName: userDbName});
     let profileDocs = await tangyFormService.getResponsesByFormId('user-profile') 
     if (profileDocs.length > 0) {
-      this.formUrl = `../tangy-forms/index.html#form_src=../content/user-profile/form.html&database_name=${userDbName}&response_id=${profileDocs[0]._id}`;
+      this.formUrl = `../tangy-forms/index.html#form_src=../content/user-profile/form.html&hide_new_response_button=true&database_name=${userDbName}&response_id=${profileDocs[0]._id}`;
     } else {
-      this.formUrl = `../tangy-forms/index.html#form_src=../content/user-profile/form.html&database_name=${userDbName}`;
+      this.formUrl = `../tangy-forms/index.html#form_src=../content/user-profile/form.html&hide_new_response_button=true&database_name=${userDbName}`;
     }
     // This protects against binding again an element that does not yet exist because the
     // the this.formUrl property was just set, the *ngIf="formUrl" on iframe will be in the
