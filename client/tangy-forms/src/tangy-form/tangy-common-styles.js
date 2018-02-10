@@ -24,8 +24,8 @@ $_documentStyleContainer.innerHTML = `
         color: var(--accent-text-color);
         /* fix for the fact that padding is not being taken into account in 
            button position. There is probably a better way to do this. */
-        position: relative;
-        top: 13px;
+        display: inline-flex;
+        min-width: 1em;
       }
       paper-checkbox {
         --paper-checkbox-size: 1.25em;
