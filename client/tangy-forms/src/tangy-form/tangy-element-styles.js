@@ -21,8 +21,22 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
         margin: 0 5px 5px 0px;
       }
 
+      :host(:not([hidden])) {
+        -webkit-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        -moz-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        -ms-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        -o-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        opacity: 1;
+        max-height: 3000px;
+      }
+
       :host([hidden]) {
-        display: none;
+        -webkit-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        -moz-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        -ms-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        -o-transition: opacity .5s ease-in-out, max-height .5s ease-in-out;
+        opacity: 0;
+        max-height: 0px;
       }
 
       :host([disabled]) {
