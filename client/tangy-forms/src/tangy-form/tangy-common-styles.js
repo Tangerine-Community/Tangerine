@@ -21,7 +21,11 @@ $_documentStyleContainer.innerHTML = `
       }
       paper-button {
         background: var(--accent-color);
-        color: #FFF;
+        color: var(--accent-text-color);
+        /* fix for the fact that padding is not being taken into account in 
+           button position. There is probably a better way to do this. */
+        position: relative;
+        top: 13px;
       }
       paper-checkbox {
         --paper-checkbox-size: 1.25em;
