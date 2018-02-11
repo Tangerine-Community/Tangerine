@@ -97,6 +97,11 @@ class TangyCheckboxes extends Element {
     super.connectedCallback()
 
     this.$.checkboxes.addEventListener('change', this.onCheckboxChange.bind(this), false)
+    this.renderOptions()
+  }
+
+  renderOptions() {
+    this.$.checkboxes.innerHTML = ''
     // Populate options as paper-radio-button elements
     let options = this.querySelectorAll('option')
     for (let option of options) {
@@ -106,7 +111,6 @@ class TangyCheckboxes extends Element {
       checkbox.innerHTML = option.innerHTML
       this.$.checkboxes.appendChild(checkbox)
     }
-
   }
 
   onValueChange(value) {
