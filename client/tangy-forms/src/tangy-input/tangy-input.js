@@ -3,6 +3,7 @@
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../../node_modules/@polymer/paper-input/paper-input.js'
 import '../tangy-form/tangy-common-styles.js'
+import '../tangy-form/tangy-element-styles.js'
 
     /**
      * `tangy-input`
@@ -17,7 +18,7 @@ export class TangyInput extends PolymerElement {
   static get template () {
     return `
     <style include="tangy-common-styles"></style>
-<style include="tangy-element-styles"></style>
+    <style include="tangy-element-styles"></style>
 
     <div class="container">
     <label>[[label]]</label>
