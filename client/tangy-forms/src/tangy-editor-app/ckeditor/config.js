@@ -35,5 +35,5 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
 
-  config.extraPlugins = 'tangy-radio-buttons,tangy-checkboxes,tangy-input,tangy-location,tangy-timed'
+  config.extraPlugins = 'tangy-radio-buttons,tangy-checkboxes,tangy-input,tangy-location,tangy-timed,tangy-checkbox'
 };
