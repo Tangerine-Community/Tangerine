@@ -48,7 +48,7 @@ CKEDITOR.plugins.add( 'tangy-radio-buttons', {
 					this.element.$.appendChild(optionEl)
 				})
 				// Don't force render if not connected to DOM yet on first create.
-				if (this.element.$.hasOwnProperty('shadowRoot')) {
+				if (this.element.$.shadowRoot) {
 					this.element.$.renderOptions()
 				}
 			}
