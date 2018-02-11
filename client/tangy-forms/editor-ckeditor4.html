@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+	<title>Tangerine</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16x16.png">
+  <link rel="mask-icon" href="/assets/icons/safari-pinned-tab.svg" color="#4c60e3">
+  <link rel="shortcut icon" href="/assets/icons/favicon.ico">
+  <meta name="msapplication-config" content="/assets/icons/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Add dependencies that do not have ES6 module builds -->
+  <script src="node_modules/redux/dist/redux.js"></script>
+  <script src="node_modules/underscore/underscore.js"></script>
+  <script src="node_modules/moment/min/moment-with-locales.min.js"></script>
+  <script src="bower_components/pouchdb/dist/pouchdb.js"></script>
+  <script src="bower_components/plotlyjs/plotly.js"></script>
+  <script src="src/tangy-editor-app/ckeditor/ckeditor.js"></script>
+
+
+  <script type="module" src="src/index.js"></script>
+
+  <link href="assets/fonts/fonts.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+      body  {
+          min-height: 100vh;
+          padding: 0px;
+          margin: 0px;
+          background: var(--document-background-color);
+      }
+  </style>
+
+  <script>
+      function edit() {
+        window.content_region.contentEditable = "true"
+        CKEDITOR.inline( 'content_region' );
+      }
+  </script>
+
+  <body onload="edit()">
+      <div id="content_region">
+          hello world
+        
+    <tangy-radio-buttons required name="role">
+        <option value="coach">Coach</option>
+        <option value="city_manager">City Manager</option>
+        <option value="rti_staff">RTI Staff</option>
+        <option value="other">Other</option>
+    </tangy-radio-buttons>
+
+    <tangy-input 
+        error-message="required" 
+        type="text" 
+        name="employment_number" 
+        required 
+        label="Employment Number">
+    </tangy-input>
+
+    <tangy-input 
+        error-message="required" 
+        type="number" 
+        name="year_of_birth" 
+        required 
+        label="Year of birth">
+    </tangy-input>
+
+    <tangy-input 
+        error-message="required" 
+        type="text" 
+        name="first_name" 
+        required 
+        label="First name">
+    </tangy-input>
+
+    <tangy-input 
+        error-message="required" 
+        type="text" 
+        name="last_name" 
+        required 
+        label="Last name">
+    </tangy-input>
+
+    <tangy-location label="My County" name="location" show-levels="county">
+    </tangy-location>
+
+    <tangy-radio-buttons label="Gender" name="gender" required>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+    </tangy-radio-buttons>
+
+    <tangy-input 
+        error-message="required" 
+        type="number" 
+        name="phone" 
+        required 
+        label="Phone number">
+    </tangy-input>  
+      </div>
+  </body>
+
+</html>
