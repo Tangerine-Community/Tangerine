@@ -16,7 +16,6 @@ CKEDITOR.plugins.add( 'tangy-timed', {
 				return element.name == 'tangy-timed' ;
 			},
 			init: function() {
-				this.setData('label', this.element.$.label)
 				this.setData('columns', this.element.$.columns)
 				this.setData('duration', this.element.$.duration)
 				this.setData('name', this.element.$.name)
@@ -33,7 +32,6 @@ CKEDITOR.plugins.add( 'tangy-timed', {
 			data: function() {
 				this.element.$.setAttribute('columns', this.data.columns)
 				this.element.$.setAttribute('duration', this.data.duration)
-				this.element.$.setAttribute('label', this.data.label)
 				this.element.$.setAttribute('name', this.data.name)
 				if (this.data.required === 'required') {
 					this.element.$.setAttribute('required', true)

@@ -48,18 +48,6 @@ CKEDITOR.dialog.add( 'tangy-timed', function( editor ) {
 						}
 					},
 					{
-						id: 'label',
-						type: 'textarea',
-						label: 'label',
-						width: '100%',
-						setup: function( widget ) {
-							this.setValue( widget.data.label );
-						},
-						commit: function( widget ) {
-							widget.setData( 'label', this.getValue() );
-						}
-					},
-					{
 						id: 'duration',
 						type: 'text',
 						label: 'duration in seconds',
