@@ -32,18 +32,20 @@ export class SyncingService {
 
     try {
       const userDB = await this.getUserDB();
+      const userProfile = await this.userService.getUserProfile();
       const remoteHost = await this.getRemoteHost();
       const DB = new PouchDB(userDB);
       const doc_ids = await this.getIDsFormsLockedAndNotUploaded();
       const userUUID = await this.userService.getUserUUID();
       if (doc_ids && doc_ids.length > 0) {
-        for (let doc_id of doc_ids) {
-          let doc = await DB.get(doc_id);
+        for (const doc_id of doc_ids) {
+          const doc = await DB.get(doc_id);
           doc['inputs'].push({ name: 'userUUID', value: userUUID });
-          await this.http.post(remoteHost, { doc }).toPromise()
+          doc['inputs'].push(userProfile['inputs']);
+          await this.http.post(remoteHost, { doc }).toPromise();
           this.markDocsAsUploaded([doc_id]);
         }
-        Promise.resolve('Sync Succesfull')
+        Promise.resolve('Sync Succesfull');
         /*
         DB.replicate.to(remoteHost, { doc_ids })
           .on('change', async (data) => {
