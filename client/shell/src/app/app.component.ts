@@ -16,6 +16,7 @@ import { WindowRef } from './core/window-ref.service';
 export class AppComponent implements OnInit {
   title = 'Tangerine Client v3.x.x';
   showNav;
+  showUpdateAppLink;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
     private windowRef: WindowRef, private userService: UserService,
@@ -37,11 +38,25 @@ export class AppComponent implements OnInit {
     this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
       this.showNav = isLoggedIn;
     });
+    this.isAppUpdateAvailable();
   }
 
   logout() {
     this.authenticationService.logout();
     this.router.navigate(['login']);
     location.reload(); // @TODO find a way to load the page contents without reloading
+  }
+  async isAppUpdateAvailable() {
+    const response = await this.http.get('../release-uuid.txt').toPromise();
+    const foundReleaseUuid = (response.text()).replace(/\n|\r/g, '');
+    const storedReleaseUuid = localStorage.getItem('release-uuid');
+    this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
+  }
+  updateApp() {
+    const updateApp = confirm('Do you want to update the application?');
+    if (updateApp) {
+      const currentPath = window.location.pathname;
+      window.location.href = (currentPath.replace(/shell\//i, ''));
+    }
   }
 }
