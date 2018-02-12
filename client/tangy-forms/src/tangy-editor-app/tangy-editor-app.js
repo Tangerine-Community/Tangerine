@@ -6,7 +6,7 @@ import '../../node_modules/@polymer/paper-item/paper-icon-item.js';
 import '../../node_modules/@polymer/paper-item/paper-item-body.js';
 import '../../node_modules/sortable-list/sortable-list.js';
 import '../tangy-form/tangy-form.js';
-import '../tangy-textarea/tangy-textarea.js';
+// import '../tangy-textarea/tangy-textarea.js';
 import '../tangy-acasi/tangy-acasi.js';
 import '../tangy-form/tangy-common-styles.js'
 /**
@@ -206,7 +206,8 @@ class TangyEditorApp extends Element {
               <form id="itemEditor">
                 <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
                 <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>
-                <tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>
+                <!--<tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>-->
+                <!--<div id="editorDOM"></div>-->
               </form>
             </div>
           </div>
@@ -351,6 +352,14 @@ class TangyEditorApp extends Element {
     this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
     Tangy.defaultEditorUI = 'ckeditor4'
     Tangy.editorUI = 'ckeditor4'
+
+    CKEDITOR.on('dialogDefinition', function(e) {
+      var dialogName = e.data.name;
+      var dialogDefinition = e.data.definition;
+      dialogDefinition.onShow = function() {
+        this.move(this.getPosition().x,0); // Top center
+      }
+    })
   }
 
   // For parsing window.location.hash parameters.
@@ -577,15 +586,22 @@ class TangyEditorApp extends Element {
           html = this.itemHtmlText
         }
       }
-      if (Tangy.defaultEditorUI === 'ckeditor4') {
-        CKEDITOR.instances.editorCK.setData(html)
-      } else if (Tangy.defaultEditorUI === 'ckeditor5') {
-        CKEDITOR.setData(html)
-      }
+      // if (Tangy.defaultEditorUI === 'ckeditor4') {
+      //   CKEDITOR.instances.editorCK.setData(html)
+      // } else if (Tangy.defaultEditorUI === 'ckeditor5') {
+      //   CKEDITOR.setData(html)
+      // }
 
       // Also provide this code to the textarea so you can edit raw code.
-      let textarea = document.querySelector("#editor")
-      textarea.value = this.itemHtmlText
+      // let textarea = document.querySelector("#editor")
+      // textarea.value = this.itemHtmlText
+
+      let dom = document.querySelector("#editorDOM")
+      dom.innerHTML = this.itemHtmlText
+
+      // window.editorDOM.contentEditable = "true"
+      dom.contentEditable = "true"
+      CKEDITOR.inline( 'editorDOM' );
 
     } else {
       if (Tangy.defaultEditorUI === 'ckeditor4') {
