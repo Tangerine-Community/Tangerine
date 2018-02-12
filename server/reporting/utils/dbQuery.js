@@ -18,7 +18,7 @@ const nano = require('nano');
  */
 
 exports.getAllAssessment = (dbUrl) => {
-  let BASE_DB = nano(dbUrl);
+  const BASE_DB = nano(dbUrl);
   return new Promise((resolve, reject) => {
     BASE_DB.view('ojai', 'byCollection', {
       key: 'assessment',
@@ -43,7 +43,7 @@ exports.getAllAssessment = (dbUrl) => {
  */
 
 exports.getAllCurriculum = (dbUrl) => {
-  let BASE_DB = nano(dbUrl);
+  const BASE_DB = nano(dbUrl);
   return new Promise((resolve, reject) => {
     BASE_DB.view('ojai', 'byCollection', {
       key: 'curriculum',
