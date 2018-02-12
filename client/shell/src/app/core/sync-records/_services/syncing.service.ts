@@ -46,15 +46,6 @@ export class SyncingService {
           this.markDocsAsUploaded([doc_id]);
         }
         Promise.resolve('Sync Succesfull');
-        /*
-        DB.replicate.to(remoteHost, { doc_ids })
-          .on('change', async (data) => {
-            const replicatedDocIds = data.docs.map((doc) => doc._id);
-            this.markDocsAsUploaded(replicatedDocIds);
-          })
-          .on('complete', (data) => (Promise.resolve('Sync Succesfull')))
-          .on('error', (err) => (console.error(err)));
-        */
       } else {
         Promise.resolve('No Items to Sync');
       }

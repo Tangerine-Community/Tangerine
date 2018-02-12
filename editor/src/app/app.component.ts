@@ -5,9 +5,9 @@ import { RegistrationService } from './registration/services/registration.servic
 import { AuthService } from './auth.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
     name = 'Tangerine-Hub';
@@ -41,11 +41,12 @@ export class AppComponent implements OnInit {
     ngOnInit() {
         //Note: every time a loginstatus changes (by calling setLoggedOut or setLogged in in auth.service in any component ) this
         // code will run as we are subscribing tot the behaviorsubject as an observable
-        this._authService.getLoginStatus().subscribe(loginStatus => { console.log('subscription got triggered as observable chagnged or on initial page load');//whenever a new value is set for the subjects this executes as you are subscribing to a subject asObservable
+        this._authService.getLoginStatus().subscribe(loginStatus => {
+            console.log('subscription got triggered as observable chagnged or on initial page load');//whenever a new value is set for the subjects this executes as you are subscribing to a subject asObservable
             console.log('getLoginStatusRan: ' + loginStatus.loggedIn);
-            this.loggedIn = loginStatus.loggedIn; 
+            this.loggedIn = loginStatus.loggedIn;
             this.user_id = localStorage.getItem('user_id');//need a refresh to show
-        });   
+        });
     };
 
 }
