@@ -1,6 +1,6 @@
 CKEDITOR.dialog.add( 'tangy-timed', function( editor ) {
 	return {
-		title: 'Edit Tangy Radio Buttons',
+		title: 'Edit a Grid Test',
 		minWidth: 200,
 		minHeight: 100,
 		contents: [
