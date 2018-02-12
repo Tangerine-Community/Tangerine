@@ -413,8 +413,14 @@ class TangyEditorApp extends Element {
     if (this.groupId) {
       formsJsonPath = '../../groups/' + this.groupId + '/forms.json'
     }
-    let formsJson = await fetch(formsJsonPath, {credentials: 'include'})
-    this.forms = await formsJson.json()
+    try {
+      let formsJson = await fetch(formsJsonPath, {credentials: 'include'})
+      this.forms = await formsJson.json()
+    } catch (e) {
+      let formsJson = await fetch('../content/forms.json')
+      this.forms = await formsJson.json()
+    }
+
     // Load editor forms
     let editorJson = await fetch('editor/editor-forms.json', {credentials: 'include'})
     this.editorForms = await editorJson.json()
