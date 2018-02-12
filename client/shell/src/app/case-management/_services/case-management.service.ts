@@ -40,8 +40,8 @@ export class CaseManagementService {
     location.value.forEach(levelObject => myLocations = myLocations[levelObject.value].children);
 
     const locations = [];
-    let visits = await this.getVisitsThisMonthByLocation();
-    /** 
+    const visits = await this.getVisitsThisMonthByLocation();
+    /**
      *  Check for ownProperty in myLocations
      * for ...in  iterate over all enumerable properties of the object
      * Also enumerates and those the object inherits from its constructor's prototype
@@ -70,7 +70,7 @@ export class CaseManagementService {
         count: countUnique(visits, form['id']),
         src: form['src'],
         id: form['id']
-      })
+      });
     }
 
 
