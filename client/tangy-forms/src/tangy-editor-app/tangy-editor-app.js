@@ -360,7 +360,15 @@ class TangyEditorApp extends Element {
     // editor.setTheme("ace/theme/monokai");
     // editor.setTheme("/ace/src-min-noconflict/monokai");
     Tangy.ace.session.setMode("ace/mode/html");
-    Tangy.ace.setOption("maxLines", 40);
+    // Tangy.ace.setAutoScrollEditorIntoView(true);
+    // Tangy.ace.setOption("maxLines", 40);
+    // Tangy.ace.setOption("minLines", 20);
+    Tangy.ace.setOptions({
+      autoScrollEditorIntoView: true,
+      minLines: 10,
+      maxLines: 40
+    });
+    Tangy.ace.renderer.setScrollMargin(10, 10, 10, 10);
 
     CKEDITOR.on('dialogDefinition', function(e) {
       var dialogName = e.data.name;
@@ -582,6 +590,7 @@ class TangyEditorApp extends Element {
     content.setAttribute('style', 'display:block;width: 600px;margin-left: auto; margin-right: auto;')
     let tangyEditorApp = document.querySelector("tangy-editor-app")
     tangyEditorApp.setAttribute('style', 'min-height:0vh')
+
     // Check if this is a new item
     if (isNewForm !== true) {
       let html
@@ -603,76 +612,37 @@ class TangyEditorApp extends Element {
           html = this.itemHtmlText
         }
       }
-      // if (Tangy.defaultEditorUI === 'ckeditor4') {
-      //   CKEDITOR.instances.editorCK.setData(html)
-      // } else if (Tangy.defaultEditorUI === 'ckeditor5') {
-      //   CKEDITOR.setData(html)
-      // }
-
-      // Also provide this code to the textarea so you can edit raw code.
-      // let textarea = document.querySelector("#editorTEXT")
-      // textarea.value = this.itemHtmlText
-      // textarea.innerHTML = this.itemHtmlText
-      Tangy.ace.setValue(this.itemHtmlText);
-
-      let inlineEditor = document.querySelector("#editorCK")
-      inlineEditor.innerHTML = this.itemHtmlText
-
-      // window.editorCK.contentEditable = "true"
-      // dom.contentEditable = "true"
-      let contentEditable = inlineEditor.getAttribute( 'contenteditable')
-      if (contentEditable === 'false') {
-        inlineEditor.setAttribute( 'contenteditable', true );
-        let editor = CKEDITOR.inline( 'editorCK', {
-          // Allow some non-standard markup that we used in the introduction.
-          // extraAllowedContent: 'a(documentation);abbr[title];code',
-          allowedContent: true,
-          // removePlugins: 'stylescombo',
-          // extraPlugins: 'sourcedialog',
-          // extraPlugins: 'tangy-radio-buttons,tangy-checkboxes,tangy-input,tangy-location,tangy-timed,tangy-checkbox,tangy-gps',
-          // autoParagraph: false,
-          fillEmptyBlocks: false,
-          ignoreEmptyParagraph: true,
-          // Use disableAutoInline when explicitly using CKEDITOR.inline( 'editorCK' );
-          disableAutoInline: true,
-          // Show toolbar on startup (optional).
-          startupFocus: true
-        } );
-        editor.on( 'change', function( evt ) {
-          // getData() returns CKEditor's HTML content.
-          console.log( 'Total bytes: ' + evt.editor.getData().length );
-        });
-      }
-
-      // let inlineEditor = CKEDITOR.inline( 'editorCK' );
-      //
-      // inlineEditor.on('instanceReady', function (ev) {
-      // 	console.log("ckeditor instanceReady")
-      //   var writer = ev.editor.dataProcessor.writer;
-      //   // The character sequence to use for every indentation step.
-      //   writer.indentationChars = '  ';
-      //
-      //   var dtd = CKEDITOR.dtd;
-      //   // Elements taken as an example are: block-level elements (div or p), list items (li, dd), and table elements (td, tbody).
-      //   for (var e in CKEDITOR.tools.extend({}, dtd.$block, dtd.$listItem, dtd.$tableContent)) {
-      //     var writer = ev.editor.dataProcessor.writer;
-      //     writer.breakBeforeOpen= false
-      //     writer.breakAfterOpen= false
-      //     writer.breakBeforeClose= false
-      //     writer.breakAfterClose= false
-      //   }
-      // });
-
     } else {
-      if (Tangy.defaultEditorUI === 'ckeditor4') {
-        CKEDITOR.instances.editorCK.setData('<p>&nbsp;</p>')
-      } else if (Tangy.defaultEditorUI === 'ckeditor5') {
-        CKEDITOR.setData('<p>&nbsp;</p>')
-      }
       this.headerTitle = "Create Form"
-      this.itemHtmlText = ''
+      this.itemHtmlText = '<p>&nbsp;</p>\n'
       // this.itemOrder = null
       this.itemOrderDisabled = true;
+    }
+    // Set the text in the editors
+    // Also provide this code to the textarea so you can edit raw code.
+    Tangy.ace.setValue(this.itemHtmlText);
+    inlineEditor.innerHTML = this.itemHtmlText
+
+    let contentEditable = inlineEditor.getAttribute( 'contenteditable')
+    if (contentEditable === 'false') {
+      inlineEditor.setAttribute( 'contenteditable', true );
+      let editor = CKEDITOR.inline( 'editorCK', {
+        // Allow some non-standard markup that we used in the introduction.
+        // extraAllowedContent: 'a(documentation);abbr[title];code',
+        allowedContent: true,
+        // fillEmptyBlocks: false,
+        // ignoreEmptyParagraph: true,
+        // Use disableAutoInline when explicitly using CKEDITOR.inline( 'editorCK' );
+        disableAutoInline: true,
+        // Show toolbar on startup (optional).
+        startupFocus: true
+      } );
+      editor.on( 'change', function( evt ) {
+        // getData() returns CKEditor's HTML content.
+        let data = evt.editor.getData();
+        console.log( 'Total bytes: ' + data.length + " data: " + data);
+        // Tangy.ace.setValue(data);
+      });
     }
   }
   async saveItem(event) {
@@ -755,11 +725,17 @@ class TangyEditorApp extends Element {
       textarea.style.height = '200px'
       textarea.style.display = 'block'
       switchEditorButton.className = 'indigo'
+      let data = CKEDITOR.instances.editorCK.getData();
+      console.log( 'Total bytes: ' + data.length + " data: " + data);
+      Tangy.ace.setValue(data);
     } else {
       Tangy.editorUI = Tangy.defaultEditorUI
       ckeditor.hidden = false
       textarea.style.display = 'none'
       switchEditorButton.className = 'green'
+      let data = Tangy.ace.getValue();
+      console.log( 'Total bytes: ' + data.length + " data: " + data);
+      CKEDITOR.instances.editorCK.setData(data);
     }
 
   }
