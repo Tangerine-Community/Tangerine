@@ -454,28 +454,34 @@ class TangyLocation extends Element {
       },
       label: {
         type: String,
-        value: 'Location'
+        value: 'Location',
+        observer: 'render'
       },
       required: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: 'render'
       },
       invalid: {
         type: Boolean,
         value: false,
-        reflectToAttribute: true
+        reflectToAttribute: true,
+        observer: 'render'
       },
       locationSrc: {
         type: String,
-        value: '../content/location-list.json'
+        value: '../content/location-list.json',
+        observer: 'render'
       },
       showLevels: {
         type: String,
-        value: ''
+        value: '',
+        observer: 'render'
       },
       hidden: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: 'render'
       },
       disabled: {
         type: Boolean,
@@ -505,7 +511,12 @@ class TangyLocation extends Element {
     if (!this.locationList) return this.$.container.innerHTML = `Loading...`
 
     // Get levels configured on this.showLevels.
-    let levels = this.showLevels.split(',')
+    let levels = []
+    if (this.showLevels !== '') {
+      this.showLevels.split(',').forEach(level => levels.push(level))
+    } else {
+      this.locationList.locationsLevels.forEach(level => levels.push(level))
+    }
 
     // Get selections from this.value but scaffold out selections if there is no value.
     let selections = [...this.value]
@@ -516,45 +527,42 @@ class TangyLocation extends Element {
     } 
 
     // Calculate the options for each select. Returns an object keyed by select level.
-    let options = this.calculateLevelOptions(selections)
+    let options = this.calculateLevelOptions(selections, levels)
 
     // Render template and assign to the container.
     this.$.container.innerHTML = `
 
     <label>
-    ${this.label}
-  </label>
-  ${selections.map((selection, i) => `
-    
-    <div class="mdc-select">
+      ${this.label}
+    </label>
+    ${selections.map((selection, i) => `
+      <div class="mdc-select">
         <select class="mdc-select__surface"
-      name=${selection.level}
-      ${(options[selection.level].length === 0) ? 'hidden' : ''}
-      ${(this.disabled) ? 'disabled' : ''}
-    > 
-      <option value="" default selected ${(options[selection.level].length === 0) ? 'hidden' : ''} disabled='disabled'>Pick a ${selection.level} </option>
-      
-      ${options[selection.level].map((option, i) => `
-        <option 
-          value="${option.id}" 
-          ${(selection.value === option.id) ? 'selected' : ''}
-         >
-          ${option.label}
-        </option>
-      `)}
-    </select>
-    <div class="mdc-select__bottom-line"></div>
-    
-    </div>
-    <br />
-    <br />
+          name=${selection.level}
+          ${(options[selection.level].length === 0) ? 'hidden' : ''}
+          ${(this.disabled) ? 'disabled' : ''}
+        > 
+          <option value="" default selected ${(options[selection.level].length === 0) ? 'hidden' : ''} disabled='disabled'>Pick a ${selection.level} </option>
+          ${options[selection.level].map((option, i) => `
+            <option 
+              value="${option.id}" 
+              ${(selection.value === option.id) ? 'selected' : ''}
+            >
+              ${option.label}
+            </option>
+          `)}
+        </select>
+        <div class="mdc-select__bottom-line"></div>
+      </div>
+      <br />
+      <br />
 
       `).join('')}
     `
 
   }
 
-  calculateLevelOptions(selections) {
+  calculateLevelOptions(selections, levels) {
 
     // Options is an object where the keys are the level and the value is an array of location objects that are options given previously selected.
     let options = {}
@@ -563,8 +571,6 @@ class TangyLocation extends Element {
     let queries = {} 
     // firstLevelNotSelected is the first level with no selection and the last level we will bother calculating options for.
     let firstLevelNotSelected = '' 
-    // Levels for querying.
-    let levels = this.showLevels.split(',')
 
     // Find the first level not selected.
     let firstSelectionNotSelected = (selections.find(selection => (selection.value === '')))

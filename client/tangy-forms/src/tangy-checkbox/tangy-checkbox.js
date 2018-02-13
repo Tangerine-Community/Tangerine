@@ -16,14 +16,10 @@ import '../tangy-form/tangy-common-styles.js'
 export class TangyCheckbox extends PolymerElement {
   static get template () {
     return `
-    <style include="tangy-common-styles"></style>
-    <style include="tangy-element-styles"></style>
-
-    <style>
-      
-    </style>
-
-    <paper-checkbox id="checkbox"><slot></slot></paper-checkbox>`
+      <style include="tangy-common-styles"></style>
+      <style include="tangy-element-styles"></style>
+      <paper-checkbox id="checkbox">[[label]]</paper-checkbox>
+    `
   }
 
   static get is () {
@@ -33,6 +29,10 @@ export class TangyCheckbox extends PolymerElement {
   static get properties () {
     return {
       name: {
+        type: String,
+        value: ''
+      },
+      label: {
         type: String,
         value: ''
       },
@@ -77,6 +77,9 @@ export class TangyCheckbox extends PolymerElement {
   connectedCallback () {
     super.connectedCallback()
     if (this.value) this.$.checkbox.checked = true
+    if (this.label == '' && this.innerHTML !== '') {
+      this.label = this.innerHTML
+    }
     this.$.checkbox.addEventListener('change', (e) => {
       e.stopPropagation()
       let incomplete = (!e.target.checked)
