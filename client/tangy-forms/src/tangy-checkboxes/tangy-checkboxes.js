@@ -146,7 +146,6 @@ class TangyCheckboxes extends Element {
 
   renderOptions() {
     console.log("boop.")
-
   }
 }
 window.customElements.define(TangyCheckboxes.is, TangyCheckboxes );
