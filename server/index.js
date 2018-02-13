@@ -95,6 +95,7 @@ app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '
 app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../editor/src/ckeditor/')));
 app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
+app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-builds')));
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 
 app.use('/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )

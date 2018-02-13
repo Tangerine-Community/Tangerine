@@ -9,6 +9,7 @@ import '../tangy-form/tangy-form.js';
 // import '../tangy-textarea/tangy-textarea.js';
 import '../tangy-acasi/tangy-acasi.js';
 import '../tangy-form/tangy-common-styles.js'
+
 /**
  * `tangy-form-app`
  * ...
@@ -206,8 +207,9 @@ class TangyEditorApp extends Element {
               <form id="itemEditor">
                 <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
                 <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>
+                <p>&nbsp;</p>
                 <!--<tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>-->
-                <!--<div id="editorDOM"></div>-->
+                <!--<div id="editorCK"></div>-->
               </form>
             </div>
           </div>
@@ -231,6 +233,7 @@ class TangyEditorApp extends Element {
               <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
               <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
               <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>
+              <p>&nbsp;</p>
             </form>
           </div>
       </div>
@@ -353,6 +356,12 @@ class TangyEditorApp extends Element {
     Tangy.defaultEditorUI = 'ckeditor4'
     Tangy.editorUI = 'ckeditor4'
 
+    Tangy.ace = ace.edit("editorTEXT");
+    // editor.setTheme("ace/theme/monokai");
+    // editor.setTheme("/ace/src-min-noconflict/monokai");
+    Tangy.ace.session.setMode("ace/mode/html");
+    Tangy.ace.setOption("maxLines", 40);
+
     CKEDITOR.on('dialogDefinition', function(e) {
       var dialogName = e.data.name;
       var dialogDefinition = e.data.definition;
@@ -360,6 +369,7 @@ class TangyEditorApp extends Element {
         this.move(this.getPosition().x,0); // Top center
       }
     })
+
   }
 
   // For parsing window.location.hash parameters.
@@ -551,6 +561,13 @@ class TangyEditorApp extends Element {
    * @returns {Promise.<void>}
    */
   async editItem(itemSrc, isNewForm, isNewItem) {
+
+    let inlineEditor = document.querySelector("#editorCK")
+    inlineEditor.setAttribute( 'contenteditable', false );
+    if (typeof CKEDITOR.instances.editorCK !== 'undefined') {
+      CKEDITOR.instances.editorCK.destroy();
+    }
+
     this.$['form-view'].hidden = true
     this.$['form-item-listing'].hidden = false
     this.$['form-list'].hidden = true
@@ -593,15 +610,58 @@ class TangyEditorApp extends Element {
       // }
 
       // Also provide this code to the textarea so you can edit raw code.
-      // let textarea = document.querySelector("#editor")
+      // let textarea = document.querySelector("#editorTEXT")
       // textarea.value = this.itemHtmlText
+      // textarea.innerHTML = this.itemHtmlText
+      Tangy.ace.setValue(this.itemHtmlText);
 
-      let dom = document.querySelector("#editorDOM")
-      dom.innerHTML = this.itemHtmlText
+      let inlineEditor = document.querySelector("#editorCK")
+      inlineEditor.innerHTML = this.itemHtmlText
 
-      // window.editorDOM.contentEditable = "true"
-      dom.contentEditable = "true"
-      CKEDITOR.inline( 'editorDOM' );
+      // window.editorCK.contentEditable = "true"
+      // dom.contentEditable = "true"
+      let contentEditable = inlineEditor.getAttribute( 'contenteditable')
+      if (contentEditable === 'false') {
+        inlineEditor.setAttribute( 'contenteditable', true );
+        let editor = CKEDITOR.inline( 'editorCK', {
+          // Allow some non-standard markup that we used in the introduction.
+          // extraAllowedContent: 'a(documentation);abbr[title];code',
+          allowedContent: true,
+          // removePlugins: 'stylescombo',
+          // extraPlugins: 'sourcedialog',
+          // extraPlugins: 'tangy-radio-buttons,tangy-checkboxes,tangy-input,tangy-location,tangy-timed,tangy-checkbox,tangy-gps',
+          // autoParagraph: false,
+          fillEmptyBlocks: false,
+          ignoreEmptyParagraph: true,
+          // Use disableAutoInline when explicitly using CKEDITOR.inline( 'editorCK' );
+          disableAutoInline: true,
+          // Show toolbar on startup (optional).
+          startupFocus: true
+        } );
+        editor.on( 'change', function( evt ) {
+          // getData() returns CKEditor's HTML content.
+          console.log( 'Total bytes: ' + evt.editor.getData().length );
+        });
+      }
+
+      // let inlineEditor = CKEDITOR.inline( 'editorCK' );
+      //
+      // inlineEditor.on('instanceReady', function (ev) {
+      // 	console.log("ckeditor instanceReady")
+      //   var writer = ev.editor.dataProcessor.writer;
+      //   // The character sequence to use for every indentation step.
+      //   writer.indentationChars = '  ';
+      //
+      //   var dtd = CKEDITOR.dtd;
+      //   // Elements taken as an example are: block-level elements (div or p), list items (li, dd), and table elements (td, tbody).
+      //   for (var e in CKEDITOR.tools.extend({}, dtd.$block, dtd.$listItem, dtd.$tableContent)) {
+      //     var writer = ev.editor.dataProcessor.writer;
+      //     writer.breakBeforeOpen= false
+      //     writer.breakAfterOpen= false
+      //     writer.breakBeforeClose= false
+      //     writer.breakAfterClose= false
+      //   }
+      // });
 
     } else {
       if (Tangy.defaultEditorUI === 'ckeditor4') {
@@ -640,8 +700,10 @@ class TangyEditorApp extends Element {
     } else if (Tangy.editorUI === 'ckeditor4') {
       itemHtmlText = CKEDITOR.instances.editorCK.getData();
     } else {
-      let textarea = document.querySelector("#editor")
-      itemHtmlText = textarea.value
+      // let textarea = document.querySelector("#editorTEXT")
+      // itemHtmlText = textarea.value
+      itemHtmlText = Tangy.ace.getValue();
+
     }
 //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
     item.groupName = group
@@ -680,8 +742,8 @@ class TangyEditorApp extends Element {
 
   switchEditor() {
     // cke_editorCK
-    let ckeditor = document.querySelector("#cke_editorCK")
-    let textarea = document.querySelector("#editor")
+    let ckeditor = document.querySelector("#editorCK")
+    let textarea = document.querySelector("#editorTEXT")
     let switchEditorButton = this.shadowRoot.querySelector("#switchEditorButton")
     console.log("switch the editor from " + Tangy.editorUI)
 
@@ -692,12 +754,12 @@ class TangyEditorApp extends Element {
       textarea.style.width = '600px'
       textarea.style.height = '200px'
       textarea.style.display = 'block'
-      switchEditorButton.class = 'indigo'
+      switchEditorButton.className = 'indigo'
     } else {
       Tangy.editorUI = Tangy.defaultEditorUI
       ckeditor.hidden = false
       textarea.style.display = 'none'
-      switchEditorButton.class = 'green'
+      switchEditorButton.className = 'green'
     }
 
   }

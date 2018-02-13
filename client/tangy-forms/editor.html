@@ -22,7 +22,7 @@
   <script src="node_modules/moment/min/moment-with-locales.min.js"></script>
   <script src="bower_components/pouchdb/dist/pouchdb.js"></script>
   <script src="/ckeditor/ckeditor.js"></script>
-
+  <script src="/ace/src-min-noconflict/ace.js"></script>
 
   <script type="module" src="src/editor.js"></script>
 
@@ -35,6 +35,19 @@
           margin: 0px;
           background: #FAFAFA;
       }
+
+      /* Formatting to work around how ckeditor adds extra p between tags. */
+      p:not(:first-child):empty {
+        display:none
+      }
+      p:not(:first-child) > br {
+        display:none
+      }
+      #editorTEXT {
+        position: relative;
+        width: 500px;
+        height: 800px;
+      }
   </style>
 
   <body>
@@ -46,10 +59,10 @@
 
     <tangy-editor-app></tangy-editor-app>
     <div id="content" style = "display:none">
-      <div id="editorDOM"></div>
-      <textarea name="editorCK" id="editorCK" rows="10" cols="80">
-                This is my textarea to be replaced with CKEditor.
-            </textarea>
+      <div id="editorCK"></div>
+      <div id="editorTEXT" style = "display:none"></div>
+      <!--<textarea name="editorTEXT" id="editorTEXT" rows="15" cols="80" style='display:none'>-->
+            <!--</textarea>-->
       <div id="content_region"></div>
     </div>
   </body>
