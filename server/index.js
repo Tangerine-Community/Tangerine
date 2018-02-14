@@ -84,19 +84,25 @@ app.use(passport.session());
  */
 
 const dbConfig = require('./reporting/config');
+const GROUP_DB = new PouchDB(dbConfig.base_db);
+const RESULT_DB = new PouchDB(dbConfig.result_db);
 const dbQuery = require('./reporting/utils/dbQuery');
 const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
-const BASE_DB = nano(dbConfig.base_db);
-const feed = BASE_DB.follow({ since: 'now', include_docs: true });
 
-feed.on('change', async (resp) => {
-  feed.pause();
-  processChangedDocument(resp, dbConfig.base_db, dbConfig.result_db);
-  setTimeout(function () { feed.resume() }, 500);
-});
+// TODO: Confirm if you will need this part
+// let replicationHandler = GROUP_DB.replicate.to(RESULT_DB, { live: true, retry: true });
 
-feed.on('error', (err) => Error(err));
-feed.follow();
+// TODO: Update to PouchDB changes format
+// const feed = groupTabletDB.follow({ since: 'now', include_docs: true });
+
+// feed.on('change', async (resp) => {
+//   feed.pause();
+//   processChangedDocument(resp, dbConfig.base_db, dbConfig.result_db);
+//   setTimeout(function () { feed.resume() }, 500);
+// });
+
+// feed.on('error', (err) => Error(err));
+// feed.follow();
 
 
 // Middleware to protect routes.

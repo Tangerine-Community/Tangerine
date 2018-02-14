@@ -12,8 +12,8 @@ else
 fi
 
 docker build -t tangerine/tangerine:local .
-[ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME 
-[ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME 
+[ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
+[ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
 
 docker run -it --name $T_CONTAINER_NAME \
   --entrypoint="/tangerine/entrypoint-development.sh" \
@@ -35,6 +35,7 @@ docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json \
+  --volume $(pwd)/server/reporting:/tangerine/server/reporting \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
   --volume $(pwd)/editor/package.json:/tangerine/editor/package.json \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \

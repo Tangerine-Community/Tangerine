@@ -8,6 +8,12 @@
 
 const _ = require('lodash');
 const nano = require('nano');
+const PouchDB = require('pouchdb');
+PouchDB.plugin(require('pouchdb-find'));
+
+const dbConfig = require('./../config');
+const GROUP_DB = new PouchDB(dbConfig.base_db);
+const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * This function retrieves all assessment collections in the database.
@@ -142,27 +148,19 @@ exports.retrieveDoc = (docId, dbUrl) => {
  * @returns {Object} - saved document.
  */
 
-exports.saveHeaders = (doc, key, dbUrl) => {
-  const RESULT_DB = nano(dbUrl);
-  return new Promise((resolve, reject) => {
-    RESULT_DB.get(key, (error, existingDoc) => {
-      let docObj = { column_headers: doc };
-      docObj.updated_at = new Date().toISOString();
-
-      // if doc exists update it using its revision number.
-      if (!error) {
-        docObj = _.assignIn(existingDoc, docObj);
-      }
-      RESULT_DB.insert(docObj, key, (err, body) => {
-        if (err) {
-          reject(err);
-        }
-        else {
-          resolve(body);
-        }
-      });
-    });
-  });
+exports.saveHeaders = async (doc, key, dbUrl) => {
+  let existingDoc = await RESULT_DB.get(key);
+  let docObj = { column_headers: doc };
+  docObj.updated_at = new Date().toISOString();
+  if(!existingDoc.status) {
+    docObj = _.assignIn(existingDoc, docObj);
+  }
+  try {
+    let response = await RESULT_DB.put(docObj);
+    return response;
+  } catch(err) {
+    console.log(err);
+  }
 }
 
 /**
