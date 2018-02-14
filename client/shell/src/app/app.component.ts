@@ -3,7 +3,7 @@ import { Http } from '@angular/http';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
 import * as PouchDB from 'pouchdb';
-
+import { Observable } from 'rxjs/Observable';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
 import { UserService } from './core/auth/_services/user.service';
 import { WindowRef } from './core/window-ref.service';
@@ -39,6 +39,9 @@ export class AppComponent implements OnInit {
       this.showNav = isLoggedIn;
     });
     this.isAppUpdateAvailable();
+    this.getGeolocationPosition();
+    const getPosition = Observable.timer(0, 300000);
+    getPosition.subscribe(() => this.getGeolocationPosition());
   }
 
   logout() {
@@ -58,5 +61,18 @@ export class AppComponent implements OnInit {
       const currentPath = window.location.pathname;
       window.location.href = (currentPath.replace(/shell\//i, ''));
     }
+  }
+
+  getGeolocationPosition() {
+    const options = {
+      enableHighAccuracy: true
+    };
+    const currentPosition = navigator.geolocation.getCurrentPosition((position) => {
+      localStorage.setItem('currentLatitude', position.coords.latitude.toString());
+      localStorage.setItem('currentLongitude', position.coords.longitude.toString());
+      localStorage.setItem('currentAccuracy', position.coords.accuracy.toString());
+    },
+      (err) => { },
+      options);
   }
 }
