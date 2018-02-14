@@ -9,7 +9,7 @@ import { SyncingService } from '../_services/syncing.service';
 })
 export class SyncRecordsComponent implements OnInit {
   isSyncSuccesful: boolean = undefined;
-  syncStatus: string = '';
+  syncStatus = '';
   docsNotUploaded;
   docsUploaded;
   syncPercentageComplete;
@@ -24,7 +24,7 @@ export class SyncRecordsComponent implements OnInit {
     this.docsNotUploaded = result ? result.length : 0;
     this.docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded();
     this.syncPercentageComplete =
-      ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100);
+      ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100) || 0;
   }
   async pushAllRecords() {
     this.isSyncSuccesful = undefined;
