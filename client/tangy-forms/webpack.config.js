@@ -74,14 +74,6 @@ const copyStatics = {
     from: resolve('./node_modules/underscore/underscore.js'),
     to: join(outputPath, 'vendor'),
     flatten: true
-  }, {
-    from: resolve('../ckeditor/dist/ckeditor.js'),
-    to: join(outputPath, 'vendor'),
-    flatten: true
-  }, {
-    from: resolve('../ckeditor/dist/ckeditor.js.map'),
-    to: join(outputPath, 'vendor'),
-    flatten: true
   }],
   copyOthers: [{
     from: 'assets/**',

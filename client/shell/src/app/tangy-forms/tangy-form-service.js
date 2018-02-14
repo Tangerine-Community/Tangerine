@@ -9,7 +9,7 @@ export class TangyFormService {
   }
 
   async initialize() {
-    try {
+    try { 
       let designDoc = await this.db.get('_design/tangy-form')
       if (designDoc.version !== tangyFormDesignDoc.version) {
         let updatedDesignDoc = Object.assign({}, designDoc, tangyFormDesignDoc)

@@ -6,7 +6,7 @@ import '../tangy-form/tangy-element-styles.js';
 import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-radio-buttons`
- * 
+ *
  *
  * @customElement
  * @polymer
@@ -113,9 +113,9 @@ class TangyRadioButtons extends Element {
       detail: {
         inputName: this.name,
         inputValue: event.target.name,
-        inputInvalid: false, 
-        inputIncomplete: false 
-      }, 
+        inputInvalid: false,
+        inputIncomplete: false
+      },
       bubbles: true
     }))
   }
@@ -131,6 +131,9 @@ class TangyRadioButtons extends Element {
     if (value == false) paperRadioButtons.forEach((button) => button.removeAttribute('disabled'))
   }
   onHiddenChange(value) {
+  }
+  renderOptions() {
+    console.log("boop.")
   }
 }
 window.customElements.define(TangyRadioButtons.is, TangyRadioButtons);
