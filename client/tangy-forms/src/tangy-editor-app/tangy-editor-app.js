@@ -6,9 +6,10 @@ import '../../node_modules/@polymer/paper-item/paper-icon-item.js';
 import '../../node_modules/@polymer/paper-item/paper-item-body.js';
 import '../../node_modules/sortable-list/sortable-list.js';
 import '../tangy-form/tangy-form.js';
-import '../tangy-textarea/tangy-textarea.js';
+// import '../tangy-textarea/tangy-textarea.js';
 import '../tangy-acasi/tangy-acasi.js';
 import '../tangy-form/tangy-common-styles.js'
+
 /**
  * `tangy-form-app`
  * ...
@@ -205,8 +206,10 @@ class TangyEditorApp extends Element {
             <!--<div style="width: 600px;margin-left: auto; margin-right: auto;">-->
               <form id="itemEditor">
                 <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
-                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>
-                <tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>
+                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching; this will delete changes.
+                <p>&nbsp;</p>
+                <!--<tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>-->
+                <!--<div id="editorCK"></div>-->
               </form>
             </div>
           </div>
@@ -230,6 +233,7 @@ class TangyEditorApp extends Element {
               <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
               <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
               <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>
+              <p>&nbsp;</p>
             </form>
           </div>
       </div>
@@ -324,7 +328,12 @@ class TangyEditorApp extends Element {
   connectedCallback() {
     super.connectedCallback();
     if (typeof Tangy === 'undefined') {
-      window.Tangy = {}
+      // Tangy is a global to store editor settings
+      window.Tangy = {
+        defaultEditorUI:'ace', // default editor instance - ace, ckeditor4
+        currentEditorUI:'',  // current editor in-use - this is changed by the swithc button between the Ace plaintext editor and ckeditor.
+        ace:null, // stores the current Ace editor instance, used for copying data.
+      }
     }
     let query = this.parseQuery(window.location.hash)
     let formPath = query.form
@@ -349,7 +358,25 @@ class TangyEditorApp extends Element {
       this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
     }
     this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
-    Tangy.editorUI = 'ckeditor5'
+    Tangy.currentEditorUI = 'ace'
+
+    Tangy.ace = ace.edit("editorTEXT");
+    Tangy.ace.session.setMode("ace/mode/html");
+    Tangy.ace.setOptions({
+      autoScrollEditorIntoView: true,
+      minLines: 10,
+      maxLines: 40
+    });
+    // Tangy.ace.renderer.setScrollMargin(10, 10, 10, 10);
+
+    CKEDITOR.on('dialogDefinition', function(e) {
+      var dialogName = e.data.name;
+      var dialogDefinition = e.data.definition;
+      dialogDefinition.onShow = function() {
+        this.move(this.getPosition().x,0); // Top center
+      }
+    })
+
   }
 
   // For parsing window.location.hash parameters.
@@ -541,6 +568,14 @@ class TangyEditorApp extends Element {
    * @returns {Promise.<void>}
    */
   async editItem(itemSrc, isNewForm, isNewItem) {
+
+    // reset the ckeditor instance
+    let inlineEditor = document.querySelector("#editorCK")
+    inlineEditor.setAttribute( 'contenteditable', false );
+    if (typeof CKEDITOR.instances.editorCK !== 'undefined') {
+      CKEDITOR.instances.editorCK.destroy();
+    }
+
     this.$['form-view'].hidden = true
     this.$['form-item-listing'].hidden = false
     this.$['form-list'].hidden = true
@@ -555,11 +590,13 @@ class TangyEditorApp extends Element {
     content.setAttribute('style', 'display:block;width: 600px;margin-left: auto; margin-right: auto;')
     let tangyEditorApp = document.querySelector("tangy-editor-app")
     tangyEditorApp.setAttribute('style', 'min-height:0vh')
+
     // Check if this is a new item
     if (isNewForm !== true) {
+      let html
       if (isNewItem === true) {
         this.headerTitle = "New Item"
-        Tangy.editor.setData('<p>&nbsp;</p>')
+        html = '<p>&nbsp;</p>'
       } else {
         this.headerTitle = "Edit Item"
         // Load the form into the DOM.
@@ -567,21 +604,45 @@ class TangyEditorApp extends Element {
         let itemHtml = await fetch(itemSrc, {credentials: 'include'})
         this.itemHtmlText = await itemHtml.text()
         // console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
+
         if (this.itemHtmlText === '') {
-          Tangy.editor.setData('<p>&nbsp;</p>')
+          html ='<p>&nbsp;</p>'
         } else {
-          Tangy.editor.setData(this.itemHtmlText)
-          // Also privde this code to the textarea so you can edit raw code.
-          let textarea = document.querySelector("#editor")
-          textarea.value = this.itemHtmlText
+          // CKEDITOR.setData(this.itemHtmlText)
+          html = this.itemHtmlText
         }
       }
     } else {
-      Tangy.editor.setData('<p>&nbsp;</p>')
       this.headerTitle = "Create Form"
-      this.itemHtmlText = ''
+      this.itemHtmlText = '<p>&nbsp;</p>\n'
       // this.itemOrder = null
       this.itemOrderDisabled = true;
+    }
+    // Set the text in the editors
+    // Also provide this code to the textarea so you can edit raw code.
+    Tangy.ace.setValue(this.itemHtmlText);
+    inlineEditor.innerHTML = this.itemHtmlText
+
+    let contentEditable = inlineEditor.getAttribute( 'contenteditable')
+    if (contentEditable === 'false') {
+      inlineEditor.setAttribute( 'contenteditable', true );
+      let editor = CKEDITOR.inline( 'editorCK', {
+        // Allow some non-standard markup that we used in the introduction.
+        // extraAllowedContent: 'a(documentation);abbr[title];code',
+        allowedContent: true,
+        // fillEmptyBlocks: false,
+        // ignoreEmptyParagraph: true,
+        // Use disableAutoInline when explicitly using CKEDITOR.inline( 'editorCK' );
+        disableAutoInline: true,
+        // Show toolbar on startup (optional).
+        startupFocus: true
+      } );
+      editor.on( 'change', function( evt ) {
+        // getData() returns CKEditor's HTML content.
+        let data = evt.editor.getData();
+        console.log( 'Total bytes: ' + data.length + " data: " + data);
+        // Tangy.ace.setValue(data);
+      });
     }
   }
   async saveItem(event) {
@@ -604,11 +665,15 @@ class TangyEditorApp extends Element {
       item.formName = this.$.formName.value
     }
     let itemTitle = this.$.itemTitle.value
-    if (Tangy.editorUI === 'ckeditor5') {
+    if (Tangy.currentEditorUI === 'ckeditor5') {
       itemHtmlText = Tangy.editor.getData();
+    } else if (Tangy.currentEditorUI === 'ckeditor4') {
+      itemHtmlText = CKEDITOR.instances.editorCK.getData();
     } else {
-      let textarea = document.querySelector("#editor")
-      itemHtmlText = textarea.value
+      // let textarea = document.querySelector("#editorTEXT")
+      // itemHtmlText = textarea.value
+      itemHtmlText = Tangy.ace.getValue();
+
     }
 //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
     item.groupName = group
@@ -646,23 +711,34 @@ class TangyEditorApp extends Element {
   }
 
   switchEditor() {
-    let ckeditor = document.querySelector(".ck-editor")
-    let textarea = document.querySelector("#editor")
+    // cke_editorCK
+    let ckeditor = document.querySelector("#editorCK")
+    let aceEditor = document.querySelector("#editorTEXT")
     let switchEditorButton = this.shadowRoot.querySelector("#switchEditorButton")
-    console.log("switch the editor from " + Tangy.editorUI)
+    console.log("switch the editor from " + Tangy.currentEditorUI)
 
-    if (Tangy.editorUI === 'ckeditor5') {
-      Tangy.editorUI = 'plainText'
+    if (Tangy.currentEditorUI === 'ckeditor5' || Tangy.currentEditorUI === 'ckeditor4') {
+      Tangy.currentEditorUI = 'ace'
       ckeditor.hidden = true
-      textarea.style.width = '600px'
-      textarea.style.height = '200px'
-      textarea.style.display = 'block'
-      switchEditorButton.class = 'indigo'
+      aceEditor.hidden = false
+      aceEditor.style.width = '600px'
+      aceEditor.style.height = '200px'
+      aceEditor.style.display = 'block'
+      switchEditorButton.className = 'indigo'
+      // let data = CKEDITOR.instances.editorCK.getData();
+      let data = this.itemHtmlText
+      // console.log( 'Total bytes: ' + data.length + " data: " + data);
+      Tangy.ace.setValue(data);
     } else {
-      Tangy.editorUI = 'ckeditor5'
+      Tangy.currentEditorUI = 'ckeditor4'
       ckeditor.hidden = false
-      textarea.style.display = 'none'
-      switchEditorButton.class = 'green'
+      ckeditor.style.display = 'block'
+      aceEditor.style.display = 'none'
+      switchEditorButton.className = 'green'
+      // let data = Tangy.ace.getValue();
+      let data = this.itemHtmlText
+      // console.log( 'Total bytes: ' + data.length + " data: " + data);
+      CKEDITOR.instances.editorCK.setData(data);
     }
 
   }
