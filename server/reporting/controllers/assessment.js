@@ -12,12 +12,16 @@
 const _ = require('lodash');
 const Excel = require('exceljs');
 const nano = require('nano');
+const PouchDB = require('pouchdb');
 
 /**
  * Local dependency.
  */
 
 const dbQuery = require('./../utils/dbQuery');
+const dbConfig = require('./../config');
+const GROUP_DB = new PouchDB(dbConfig.base_db);
+const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * Retrieves all assessment collection in the database.
@@ -56,10 +60,9 @@ const dbQuery = require('./../utils/dbQuery');
  * @param res - HTTP response object
  */
 
-exports.all = (req, res) => {
-  dbQuery.getAllAssessment(req.body.base_db)
-    .then((data) => res.json({ count: data.length, assessments: data }))
-    .catch((err) => res.send(Error(err)));
+exports.all = async (req, res) => {
+  let assessments = await GROUP_DB.query('ojai/byCollection', { key: 'assessment', include_docs: true });
+  res.json({ count: assessments.rows.length, assessments: assessments.rows });
 }
 
 /**
@@ -96,12 +99,13 @@ exports.generateHeader = (req, res) => {
   const resultDbUrl = req.body.result_db;
   const assessmentId = req.params.id;
 
-  dbQuery.retrieveDoc(assessmentId, dbUrl)
+  GROUP_DB.get(assessmentId)
     .then(async(data) => {
       const docId = data.assessmentId || data.curriculumId;
       const colHeaders = await createColumnHeaders(data, 0, dbUrl);
       const saveResponse = await dbQuery.saveHeaders(colHeaders, docId, resultDbUrl);
-      res.json(saveResponse);
+      console.log(saveResponse);
+      res.json(colHeaders);
     })
     .catch((err) => res.send(Error(err)));
 }
