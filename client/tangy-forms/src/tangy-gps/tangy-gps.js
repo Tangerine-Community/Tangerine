@@ -8,6 +8,8 @@ import '../tangy-form/tangy-element-styles.js'
  *
  * @customElement
  * @polymer
+ * The attribute `advanced-mode` defaults to false. If set to true in the mark-up
+ * it shows the latitude, Longitude, Acuuracy, And accuracy Levels
  * @demo demo/index.html
  */
 class TangyGps extends Element {
@@ -26,13 +28,6 @@ class TangyGps extends Element {
       top: 4px;
       right: 5px;
     }
-    paper-button.tangy-orange {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    background-color: #f26f10;
-    color: white;
-    box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.26);
-   }
    .coordinates {
      margin: 5px 15px;
    }
@@ -41,25 +36,26 @@ class TangyGps extends Element {
   <div class="coordinates">
     <b>Current Position</b>
     <div>
-      <template is="dom-if" if="{{currentLatitude}}">
-        Latitude: {{currentLatitude}} <br> 
-        Longitude: {{currentLongitude}} <br>
-        Accuracy: {{currentAccuracy}} meters<br> 
+      <template is="dom-if" if="{{_isAdvancedMode(currentLatitude, advancedMode)}}">
+        Latitude: [[currentLatitude]] <br>
+        Longitude: [[currentLongitude]] <br>
       </template>
-      <template is="dom-if" if="{{!currentLatitude}}">
+    <div>
+      Accuracy: [[currentAccuracy]] meters<br>
+      Accuracy Level : [[accuracyLevel]]
+    </div>
+      <template is="dom-if" if="[[!currentLatitude]]">
         Searching...
       </template> 
     </div>
-    <b>Recorded Position</b>
     <div>
-      <template is="dom-if" if="{{recordedLatitude}}">
-        Latitude: {{recordedLatitude}} <br> 
-        Longitude: {{recordedLongitude}} <br>
-        Accuracy: {{recordedAccuracy}} meters<br> 
-      </template>
+      <h3>Tips</h3>
+      <p>Try standing next to a window</p>
+      <p>Try moving outside with a clear view of the sky</p>
+      <p>Try standing away from trees or buildings</p>
     </div>
     <br>
-    <paper-button on-click="clickedRecord">record position</paper-button>
+    
     <slot></slot>
   </div> 
 `;
@@ -71,12 +67,17 @@ class TangyGps extends Element {
     return {
       name: {
         type: String,
-        value: 'tangy-gps' 
+        value: 'tangy-gps'
       },
       value: {
         type: Object,
         value: {},
         observer: 'reflect',
+        reflectToAttribute: true
+      },
+      advancedMode: {
+        type: Boolean,
+        value: false,
         reflectToAttribute: true
       }
     };
@@ -84,30 +85,28 @@ class TangyGps extends Element {
 
   ready() {
     super.ready();
-    this.currentLatitude = ''
-    this.currentLongitude = ''
-    this.currentAccuracy = ''
-    // window.gpsPosition may already be watched from another location. Allow for that.
-    if (!window.gpsPosition) {
-      navigator.geolocation.watchPosition((position) => {
-        window.gpsPosition = {
-          latitude: position.coords.latitude, 
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy
-        }
-        this.updateWatchedPosition()
-      })
-    } else {
-      this.updateWatchedPosition()
-    }
-  }
+    this.currentLatitude = localStorage.getItem('currentLatitude');
+    this.currentLongitude = localStorage.getItem('currentLongitude');
+    this.currentAccuracy = localStorage.getItem('currentAccuracy');
 
-  updateWatchedPosition() {
-    setInterval(() => {
-      this.currentLatitude = window.gpsPosition.latitude
-      this.currentLongitude = window.gpsPosition.longitude
-      this.currentAccuracy = window.gpsPosition.accuracy
-    }, 2000)
+    navigator.geolocation.watchPosition((position) => {
+      // The accuracy is measured in meters. A lower value is more desirable
+      if (position.coords.accuracy <= this.currentAccuracy) {
+        this.currentLatitude = position.coords.latitude;
+        this.currentLongitude = position.coords.longitude;
+        this.currentAccuracy = position.coords.accuracy;
+      }
+      this.saveCurrentPosition();
+    });
+    if (this.currentAccuracy < 50) {
+      this.accuracyLevel = 'Good';
+    }
+    if (this.currentAccuracy > 100) {
+      this.accuracyLevel = 'Poor';
+    }
+    else {
+      this.accuracyLevel = 'Okay';
+    }
   }
 
   reflect() {
@@ -116,19 +115,23 @@ class TangyGps extends Element {
     this.recordedAccuracy = this.value.recordedAccuracy
   }
 
-  clickedRecord() {
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
-      inputName: this.name,
-      inputValue: {
-        recordedLatitude: this.currentLatitude,
-        recordedLongitude: this.currentLongitude,
-        recordedAccuracy: this.currentAccuracy
-      },
-      inputIncomplete: false,
-      inputInvalid: false 
-    }}))
+  saveCurrentPosition() {
+    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
+      bubbles: true, detail: {
+        inputName: this.name,
+        inputValue: {
+          recordedLatitude: this.currentLatitude,
+          recordedLongitude: this.currentLongitude,
+          recordedAccuracy: this.currentAccuracy
+        },
+        inputIncomplete: false,
+        inputInvalid: false
+      }
+    }));
   }
-
+  _isAdvancedMode(currentLatitude, advancedMode) {
+    return (currentLatitude && advancedMode);
+  }
 }
 
 window.customElements.define(TangyGps.is, TangyGps);
