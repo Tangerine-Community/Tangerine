@@ -1,9 +1,9 @@
 /* jshint esversion: 6 */
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
-// import '../tangy-form/tangy-element-styles.js'
 import '../../node_modules/@polymer/paper-checkbox/paper-checkbox.js'
 import '../tangy-form/tangy-common-styles.js'
+import '../tangy-form/tangy-element-styles.js'
 
     /**
      * `tangy-checkbox`
@@ -18,10 +18,6 @@ export class TangyCheckbox extends PolymerElement {
     return `
     <style include="tangy-common-styles"></style>
     <style include="tangy-element-styles"></style>
-
-    <style>
-      
-    </style>
 
     <paper-checkbox id="checkbox"><slot></slot></paper-checkbox>`
   }
@@ -78,7 +74,7 @@ export class TangyCheckbox extends PolymerElement {
     super.connectedCallback()
     if (this.value) this.$.checkbox.checked = true
     this.$.checkbox.addEventListener('change', (e) => {
-      e.stopPropagation()
+      // e.stopPropagation()
       let incomplete = (!e.target.checked)
       this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
         bubbles: true,
