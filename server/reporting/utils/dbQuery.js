@@ -7,7 +7,6 @@
  */
 
 const _ = require('lodash');
-const nano = require('nano');
 const PouchDB = require('pouchdb');
 
 /**
@@ -21,104 +20,6 @@ const GROUP_DB = new PouchDB(dbConfig.base_db);
 const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
- * This function retrieves all curriculum collections in the database.
- *
- * @param {string} dbUrl - database url.
- *
- * @returns {Array} – all curriculum documents.
- */
-
-exports.getAllCurriculum = (dbUrl) => {
-  const BASE_DB = nano(dbUrl);
-  return new Promise((resolve, reject) => {
-    BASE_DB.view('ojai', 'byCollection', {
-      key: 'curriculum',
-      include_docs: true
-    }, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(body.rows);
-      }
-    });
-  });
-}
-
-/**
- * This function retrieves all workflow collections in the database.
- *
- * @param {string} dbUrl - database url.
- *
- * @returns {Array} – all workflow documents.
- */
-
-exports.getAllWorkflow = (dbUrl) => {
-  const BASE_DB = nano(dbUrl);
-  return new Promise((resolve, reject) => {
-    BASE_DB.view('ojai', 'byCollection', {
-      key: 'workflow',
-      include_docs: true
-    }, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(body.rows);
-      }
-    });
-  });
-}
-
-/**
- * This function retrieves all result collections in the database.
- *
- * @param {string} dbUrl - database url.
- *
- * @returns {Array} – all result documents.
- */
-
-exports.getAllResult = (dbUrl) => {
-  const BASE_DB = nano(dbUrl);
-  return new Promise((resolve, reject) => {
-    BASE_DB.view('ojai', 'csvRows', {
-      include_docs: true
-    }, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        let resultCollection = _.map(body.rows, (data) => data.doc);
-        resolve(resultCollection);
-      }
-    });
-  });
-}
-
-/**
- * This function retrieves a document from the database.
- *
- * @param {string} docId - id of document.
- * @param {string} dbUrl - database url.
- *
- * @returns {Object} - retrieved document.
- */
-
-exports.retrieveDoc = (docId, dbUrl) => {
-  const DB = nano(dbUrl);
-  return new Promise ((resolve, reject) => {
-    DB.get(docId, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(body);
-      }
-    });
-  });
-}
-
-/**
  * This function saves/updates generated headers in the result database.
  *
  * @param {Array} doc - document to be saved.
@@ -128,9 +29,10 @@ exports.retrieveDoc = (docId, dbUrl) => {
  */
 
 exports.saveHeaders = async (doc, key) => {
-  let existingDoc = await RESULT_DB.get(key);
   let docObj = { column_headers: doc };
   docObj.updated_at = new Date().toISOString();
+  let existingDoc = await RESULT_DB.get(key);
+  // if doc exists update it using its revision number.
   if(!existingDoc.status) {
     docObj = _.assignIn(existingDoc, docObj);
   }
@@ -138,7 +40,7 @@ exports.saveHeaders = async (doc, key) => {
     let response = await RESULT_DB.put(docObj);
     return response;
   } catch(err) {
-    console.log(err);
+    console.error(err);
   }
 }
 
@@ -152,8 +54,7 @@ exports.saveHeaders = async (doc, key) => {
  * @returns {Object} - saved document.
  */
 
-exports.saveResult = (doc, dbUrl) => {
-  const RESULT_DB = nano(dbUrl);
+exports.saveResult = async (doc) => {
   const cloneDoc = _.clone(doc);
   let docKey = cloneDoc.indexKeys.ref;
   delete doc.indexKeys;
@@ -168,29 +69,23 @@ exports.saveResult = (doc, dbUrl) => {
     processed_results: doc
   };
 
-  return new Promise((resolve, reject) => {
-    RESULT_DB.get(docKey, (error, existingDoc) => {
-      // if doc exists update it using its revision number.
-      if (!error) {
-        docObj = _.assignIn(existingDoc, docObj);
-      }
-      RESULT_DB.insert(docObj, docKey, (err, body) => {
-        if (err) {
-          reject(err);
-        }
-        else {
-          resolve(body);
-        }
-      });
-    });
-  });
+  let existingDoc = await RESULT_DB.get(docKey);
+  // if doc exists update it using its revision number.
+  if (!existingDoc.status) {
+    docObj = _.assignIn(existingDoc, docObj);
+  }
+  try {
+    let response = await RESULT_DB.put(docObj, docKey);
+    return response;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 /**
  * This function retrieves all subtest linked to an assessment.
  *
  * @param {string} id - id of assessment document.
- * @param {string} dbUrl - database url.
  *
  * @returns {Array} - subtest documents.
  */
@@ -213,7 +108,6 @@ exports.getSubtests = (id) => {
  * This function retrieves all questions linked to a subtest document.
  *
  * @param {string} subtestId - id of subtest document.
- * @param {string} dbUrl - database url.
  *
  * @returns {Array} - question documents.
  */
@@ -252,7 +146,7 @@ exports.getProcessedResults = function (ref) {
  * @returns {Array} - result documents.
  */
 
-exports.getResults = function(id) {
+exports.getTripResults = function(id) {
   return new Promise((resolve, reject) => {
     GROUP_DB.query('dashReporting/byTripId', { key: id, include_docs: true })
       .then((body) => resolve(body.rows))
@@ -296,6 +190,12 @@ exports.getLocationList = function () {
   });
 }
 
+/**
+ * @description – This function retrieves the global settings
+ * of the instrument.
+ *
+ * @returns {Object} - settings document.
+ */
 exports.getSettings = function () {
   return new Promise((resolve, reject) => {
     GROUP_DB.get('settings')

@@ -61,8 +61,12 @@ const RESULT_DB = new PouchDB(dbConfig.result_db);
  */
 
 exports.all = async (req, res) => {
-  let assessments = await GROUP_DB.query('ojai/byCollection', { key: 'assessment', include_docs: true });
-  res.json({ count: assessments.rows.length, assessments: assessments.rows });
+  try {
+    let assessments = await GROUP_DB.query('ojai/byCollection', { key: 'assessment', include_docs: true });
+    res.json({ count: assessments.rows.length, assessments: assessments.rows });
+  } catch (error) {
+    res.send(error);
+  }
 }
 
 /**

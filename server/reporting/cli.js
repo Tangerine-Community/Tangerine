@@ -239,7 +239,7 @@ tangerine
   .command('workflow-result <id>')
   .description('process result for a workflow')
   .action(function(id) {
-    dbQuery.getResults(id, dbConfig.base_db)
+    dbQuery.getTripResults(id, dbConfig.base_db)
       .then(async(data) => {
         const result = processWorkflowResult(data);
         const saveResponse = await dbQuery.saveResult(result, dbConfig.result_db);

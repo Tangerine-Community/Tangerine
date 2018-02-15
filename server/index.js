@@ -534,13 +534,10 @@ app.post('/assessment', assessmentController.all);
 app.post('/assessment/headers/:id', assessmentController.generateHeader);
 
 app.post('/result', resultController.all);
-app.post('/assessment/result/all', resultController.processAll);
 app.post('/assessment/result/:id', resultController.processResult);
 
 app.post('/workflow', workflowController.all);
 app.post('/workflow/headers/:id', workflowController.generateHeader);
-
-app.post('/workflow/result/all', tripController.processAll);
 app.post('/workflow/result/:id', tripController.processResult);
 
 app.post('/generate_csv/:id', csvController.generate);
