@@ -18,6 +18,12 @@
 # under the License.
 #
 -->
-# Cordova Hooks
 
-Cordova Hooks represent special scripts which could be added by application and plugin developers or even by your own build system  to customize cordova commands. See Hooks Guide for more details:  http://cordova.apache.org/docs/en/edge/guide_appdev_hooks_index.md.html#Hooks%20Guide.
+Note that these image resources are not copied into a project when a project
+is created with the CLI. Although there are default image resources in a
+newly-created project, those come from the platform-specific project template,
+which can generally be found in the platform's `template` directory. Until
+icon and splashscreen support is added to the CLI, these image resources
+aren't used directly.
+
+See https://issues.apache.org/jira/browse/CB-5145

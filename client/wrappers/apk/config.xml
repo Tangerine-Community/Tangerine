@@ -1,19 +1,27 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.rti.tangerine" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="org.rti.tangerinev3" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Tangerine</name>
     <description>
-        Mobile data collection system.
+        A sample Apache Cordova application that responds to the deviceready event.
     </description>
-    <author email="ict-admin@rti.org" href="github.com/Tangerine-Community/Tangerine">
-        Tangerine dream team
+    <author email="dev@cordova.apache.org" href="http://cordova.io">
+        Apache Cordova Team
     </author>
     <content src="index.html" />
-    <icon src="res/icon.png" />
-    <allow-navigation href="tangerinecentral.org" />
-    <allow-intent href="*" />
+    <plugin name="cordova-plugin-whitelist" spec="1" />
     <access origin="*" />
-    <plugin name="cordova-plugin-file" spec="~4.1.0" />
-    <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
-    <preference name="xwalkMode" value="embedded" />
-    <preference name="xwalkMultipleApk" value="true" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+    <plugin name="cordova-plugin-crosswalk-webview" spec="^2.4.0" />
 </widget>
