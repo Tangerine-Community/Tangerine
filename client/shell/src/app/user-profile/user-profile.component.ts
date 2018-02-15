@@ -2,7 +2,7 @@ import { AfterContentInit, Component, ElementRef, OnInit, ViewChild } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { UserService } from '../core/auth/_services/user.service';
-import { TangyFormService } from '../tangy-forms/tangy-form-service.js'
+import { TangyFormService } from '../tangy-forms/tangy-form-service'
 
 @Component({
   selector: 'app-user-profile',
