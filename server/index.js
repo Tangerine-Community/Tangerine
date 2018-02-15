@@ -531,7 +531,6 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
  */
 
 app.post('/assessment', assessmentController.all);
-app.post('/assessment/headers/all', assessmentController.generateAll);
 app.post('/assessment/headers/:id', assessmentController.generateHeader);
 
 app.post('/result', resultController.all);
