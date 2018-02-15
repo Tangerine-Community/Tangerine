@@ -7,8 +7,8 @@
  * Module dependencies.
  */
 
-const nano = require('nano');
 const _ = require('lodash');
+const PouchDB = require('pouchdb');
 const Promise = require('bluebird');
 
 /**
@@ -17,6 +17,11 @@ const Promise = require('bluebird');
 
 const generateResult = require('./result').generateResult;
 const dbQuery = require('./../utils/dbQuery');
+const dbConfig = require('./../config');
+
+// Initialize database
+const GROUP_DB = new PouchDB(dbConfig.base_db);
+const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * Processes result for a workflow.
@@ -47,74 +52,16 @@ const dbQuery = require('./../utils/dbQuery');
  */
 
 exports.processResult = (req, res) => {
-  const dbUrl = req.body.base_db;
-  const resultDbUrl = req.body.result_db;
-  const tripId = req.params.id;
-
-  dbQuery.getResults(tripId, dbUrl)
+  dbQuery.getTripResults(req.params.id)
     .then(async(data) => {
       let totalResult = {};
-      const result = await processWorkflowResult(data, dbUrl);
+      const result = await processWorkflowResult(data);
       result.forEach(element => totalResult = Object.assign(totalResult, element));
-      const saveResponse = await dbQuery.saveResult(totalResult, resultDbUrl);
+      const saveResponse = await dbQuery.saveResult(totalResult);
       console.log(saveResponse);
       res.json(totalResult);
     })
-    .catch((err) => res.send(Error(err)));
-}
-
-/**
- * Process results for ALL workflows in the database.
- *
- * Example:
- *
- *    POST /workflow/result/_all
- *
- *  The request object must contain the main database url and a
- *  result database url where the generated headers will be saved.
- *     {
- *       "db_url": "http://admin:password@test.tangerine.org/database_name"
- *       "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
- *     }
- *
- * Response:
- *
- *   Returns an Object indicating the data has been saved.
- *      {
- *        "ok": true,
- *        "id": "a1234567890",
- *        "rev": "1-b123"
- *       }
- *
- * @param req - HTTP request object
- * @param res - HTTP response object
- */
-
-exports.processAll = (req, res) => {
-  const dbUrl = req.body.base_db;
-  const resultDbUrl = req.body.result_db;
-
-  dbQuery.getAllResult(dbUrl)
-    .then(async(data) => {
-      let saveResponse;
-      for (item of data) {
-        let resultDoc = [{ doc: item }];
-        let processedResult = {};
-        if (!item.tripId) {
-          let docId = item.assessmentId || item.curriculumId;
-          let assessmentResults = await generateResult(resultDoc, 0, dbUrl);
-          saveResponse = await dbQuery.saveResult(assessmentResults, resultDbUrl);
-          console.log(saveResponse);
-        } else {
-          let result = await processWorkflowResult(resultDoc, 0, dbUrl);
-          result.forEach(element => processedResult = Object.assign(processedResult, element));
-          saveResponse = await dbQuery.saveResult(processedResult, resultDbUrl);
-          console.log(saveResponse);
-        }
-      }
-      res.json(saveResponse);
-    })
-    .catch((err) => res.send(Error(err)));
+    .catch((err) => res.send(err));
 }
 
 
@@ -128,14 +75,13 @@ exports.processAll = (req, res) => {
  * This function processes the result for a workflow.
  *
  * @param {Array} data - an array of workflow results.
- * @param {string} dbUrl - database url.
  *
  * @returns {Object} - processed result for csv.
  */
 
-const processWorkflowResult = function (data, dbUrl) {
+const processWorkflowResult = function (data) {
   return Promise.map(data, (item, index) => {
-    return generateResult(item, index, dbUrl);
+    return generateResult(item, index);
   });
 }
 

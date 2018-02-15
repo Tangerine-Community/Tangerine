@@ -90,7 +90,7 @@ const processChangedDocument = async(resp, dbUrl, resultDbUrl) => {
   if (isWorkflowIdSet && isResult) {
     // seqDoc = { last_seq: resp.seq };
     console.info('\n<<<=== START PROCESSING WORKFLOW RESULT ===>>>\n');
-    dbQuery.getResults(resp.doc.tripId, dbUrl)
+    dbQuery.getTripResults(resp.doc.tripId, dbUrl)
       .then(async(data) => {
         let totalResult = {};
         const workflowResult = await processWorkflowResult(data, dbUrl);
