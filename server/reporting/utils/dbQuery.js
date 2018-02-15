@@ -254,67 +254,17 @@ exports.getProcessedResults = function (ref) {
 
 exports.getResults = function(id) {
   return new Promise((resolve, reject) => {
-    GROUP_DB.query('dashReporting/byTripId', {
-      key: id,
-      include_docs: true
-    }, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(body.rows);
-      }
-    });
+    GROUP_DB.query('dashReporting/byTripId', { key: id, include_docs: true })
+      .then((body) => resolve(body.rows))
+      .catch((err) => reject(err));
   });
 }
-
-exports.checkUpdateSequence = (dbUrl) => {
-  const DB = nano(dbUrl);
-  return new Promise((resolve, reject) => {
-    DB.get('last_update_sequence', (err, obj) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(obj);
-      }
-    });
-  });
-};
-
-exports.saveUpdateSequence = (dbUrl, doc) => {
-  const DB = nano(dbUrl)
-  return new Promise((resolve, reject) => {
-    DB.get(doc.key, (error, seqDoc) => {
-      if (!error) {
-        doc._rev = seqDoc._rev;
-      }
-      DB.insert(doc, doc.key, (err, body) => {
-        if (err) {
-          reject(err);
-        }
-        else {
-          resolve(body);
-        }
-      });
-    });
-  });
-};
 
 exports.processedResultsById = function (req, res) {
-  RESULT_DB.query('dashReporting/byParentId', {
-    key: req.params.id,
-    include_docs: true
-  }, (err, body) => {
-    if (err) {
-      res.send(err);
-    }
-    else {
-      res.json(body.rows);
-    }
-  });
+  RESULT_DB.query('dashReporting/byParentId', { key: req.params.id, include_docs: true })
+    .then((body) => res.json(body.rows))
+    .catch((err) => res.send(err));
 }
-
 
 /**
  * @description – This function retrieves enumerator information.
@@ -324,16 +274,11 @@ exports.processedResultsById = function (req, res) {
  * @returns {Object} - user document.
  */
 
-exports.getUserDetails = function (enumerator, dbUrl) {
+exports.getUserDetails = function (enumerator) {
   return new Promise((resolve, reject) => {
-    GROUP_DB.get(enumerator, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(body);
-      }
-    });
+    GROUP_DB.get(enumerator)
+      .then((body) => resolve(body))
+      .catch((err) => reject(err));
   });
 }
 
@@ -345,24 +290,16 @@ exports.getUserDetails = function (enumerator, dbUrl) {
 
 exports.getLocationList = function () {
   return new Promise((resolve, reject) => {
-    GROUP_DB.get('location-list', (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(body);
-      }
-    });
+    GROUP_DB.get('location-list')
+      .then((body) => resolve(body))
+      .catch((err) => reject(err));
   });
 }
 
 exports.getSettings = function () {
   return new Promise((resolve, reject) => {
-    GROUP_DB.get('settings', (err, body) => {
-      if(err)
-        reject(err)
-      else
-        resolve(body);
-    });
+    GROUP_DB.get('settings')
+      .then((body) => resolve(body))
+      .catch((err) => reject(err));
   });
 }
