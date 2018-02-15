@@ -11,13 +11,17 @@
 const _ = require('lodash');
 const chalk = require('chalk');
 const Excel = require('exceljs');
-const nano = require('nano');
+const PouchDB = require('pouchdb');
 
 /**
  * Local modules.
  */
 
 const dbQuery = require('./../utils/dbQuery');
+const dbConfig = require('./../config');
+
+// Initialize database
+const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * Generates a CSV file.
@@ -42,16 +46,13 @@ const dbQuery = require('./../utils/dbQuery');
  */
 
 exports.generate = (req, res) => {
-  const resultDbUrl = req.body.result_db;
-  const resultId = req.params.id;
-
-  dbQuery.retrieveDoc(resultId, resultDbUrl)
+  RESULT_DB.get(req.params.id)
     .then(async(docHeaders) => {
-      const result = await dbQuery.getProcessedResults(resultId, resultDbUrl);
+      const result = await dbQuery.getProcessedResults(req.params.id);
       generateCSV(docHeaders, result);
       res.json({ message: 'CSV Successfully Generated' });
     })
-    .catch((err) => Error(err));
+    .catch((err) => res.send(err));
 }
 
 /**
@@ -67,9 +68,9 @@ const generateCSV = function(columnData, resultData) {
   let workbook = new Excel.Workbook();
   workbook.creator = 'Brockman';
   workbook.lastModifiedBy = 'Matthew';
-  workbook.created = new Date(2017, 9, 1);
-  workbook.modified = new Date();
-  workbook.lastPrinted = new Date(2017, 7, 27);
+  workbook.created = new Date(2018, 9, 2);
+  workbook.modified = Date.now();
+  workbook.lastPrinted = new Date(2018, 7, 27);
 
   let excelSheet = workbook.addWorksheet('Workflow Sheet', {
     views: [{ xSplit: 1 }], pageSetup: { paperSize: 9, orientation: 'landscape' }
@@ -91,7 +92,7 @@ const generateCSV = function(columnData, resultData) {
     .then(() => {
       console.log(chalk.green(`✓ You have successfully created a new excel file at ${new Date()}`));
     })
-    .catch((err) => Error(err));
+    .catch((err) => err);
 
 }
 
