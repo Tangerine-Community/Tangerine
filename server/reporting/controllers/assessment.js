@@ -15,11 +15,13 @@ const nano = require('nano');
 const PouchDB = require('pouchdb');
 
 /**
- * Local dependency.
+ * Local dependencies.
  */
 
 const dbQuery = require('./../utils/dbQuery');
 const dbConfig = require('./../config');
+
+// Initialize database
 const GROUP_DB = new PouchDB(dbConfig.base_db);
 const RESULT_DB = new PouchDB(dbConfig.result_db);
 
@@ -95,63 +97,13 @@ exports.all = async (req, res) => {
  */
 
 exports.generateHeader = (req, res) => {
-  const dbUrl = req.body.base_db;
-  const resultDbUrl = req.body.result_db;
-  const assessmentId = req.params.id;
-
-  GROUP_DB.get(assessmentId)
+  GROUP_DB.get(req.params.id)
     .then(async(data) => {
       const docId = data.assessmentId || data.curriculumId;
-      const colHeaders = await createColumnHeaders(data, 0, dbUrl);
-      const saveResponse = await dbQuery.saveHeaders(colHeaders, docId, resultDbUrl);
+      const colHeaders = await createColumnHeaders(data);
+      const saveResponse = await dbQuery.saveHeaders(colHeaders, docId);
       console.log(saveResponse);
       res.json(colHeaders);
-    })
-    .catch((err) => res.send(Error(err)));
-}
-
-/**
- * Generates headers for ALL assessment collections in a database
- * and save them in a different database.
- *
- * Example:
- *
- *    POST /assessment/headers/_all
- *
- *  The request object must contain the main database url and a
- *  result database url where the generated header will be saved.
- *     {
- *       "db_url": "http://admin:password@test.tangerine.org/database_name"
- *       "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
- *     }
- *
- * Response:
- *
- *   Returns an Object indicating the data has been saved.
- *      {
- *        "ok": true,
- *        "id": "a1234567890",
- *        "rev": "1-b123"
- *      }
- *
- * @param req - HTTP request object
- * @param res - HTTP response object
- */
-exports.generateAll = (req, res) => {
-  const dbUrl = req.body.base_db;
-  const resultDbUrl = req.body.result_db;
-
-  dbQuery.getAllAssessment(dbUrl)
-    .then(async(data) => {
-      let saveResponse;
-
-      for (item of data) {
-        let assessmentId = item.doc.assessmentId;
-        let generatedHeaders = await createColumnHeaders(item.doc, 0, dbUrl);
-        saveResponse = await dbQuery.saveHeaders(generatedHeaders, assessmentId, resultDbUrl);
-        console.log(saveResponse);
-      }
-      res.json(saveResponse);
     })
     .catch((err) => res.send(Error(err)));
 }
@@ -171,13 +123,13 @@ exports.generateAll = (req, res) => {
  * @returns {Object} processed headers for csv.
  */
 
-const createColumnHeaders = function(doc, count = 0, dbUrl) {
+const createColumnHeaders = function(doc, count = 0) {
   let assessments = [];
   let docId = doc.workflowId || doc.assessmentId || doc.curriculumId;
   let collectionId = doc.typesId || doc.assessmentId || doc.curriculumId;
 
   return new Promise((resolve, reject) => {
-    dbQuery.retrieveDoc(collectionId, dbUrl)
+    GROUP_DB.get(collectionId)
       .then((item) => {
         let assessmentSuffix = count > 0 ? `_${count}` : '';
         assessments.push({ header: `assessment_id${assessmentSuffix}`, key: `${docId}.assessmentId${assessmentSuffix}` });
@@ -185,7 +137,7 @@ const createColumnHeaders = function(doc, count = 0, dbUrl) {
         assessments.push({ header: `enumerator${assessmentSuffix}`, key: `${docId}.enumerator${assessmentSuffix}` });
         assessments.push({ header: `start_time${assessmentSuffix}`, key: `${docId}.start_time${assessmentSuffix}` });
         assessments.push({ header: `order_map${assessmentSuffix}`, key: `${docId}.order_map${assessmentSuffix}` });
-        return dbQuery.getSubtests(collectionId, dbUrl);
+        return dbQuery.getSubtests(collectionId);
       })
       .then(async(subtestData) => {
         let subtestCounts = {
@@ -199,7 +151,6 @@ const createColumnHeaders = function(doc, count = 0, dbUrl) {
           gridCount: 0,
           timestampCount: 0
         };
-
         for (data of subtestData) {
           if (data.prototype === 'location') {
             let location = createLocation(data, subtestCounts);
@@ -226,13 +177,13 @@ const createColumnHeaders = function(doc, count = 0, dbUrl) {
             subtestCounts.timestampCount++;
           }
           if (data.prototype === 'survey') {
-            let surveys = await createSurvey(data._id, subtestCounts, dbUrl);
+            let surveys = await createSurvey(data._id, subtestCounts);
             assessments = assessments.concat(surveys);
             subtestCounts.surveyCount++;
             subtestCounts.timestampCount++;
           }
           if (data.prototype === 'grid') {
-            let grid = await createGrid(data, subtestCounts, dbUrl);
+            let grid = createGrid(data, subtestCounts);
             assessments = assessments.concat(grid.gridHeader);
             subtestCounts.gridCount++;
             subtestCounts.timestampCount = grid.timestampCount;
@@ -257,7 +208,6 @@ const createColumnHeaders = function(doc, count = 0, dbUrl) {
       })
       .catch((err) => reject(err));
   });
-
 }
 
 /***********************************************
@@ -363,14 +313,13 @@ function createId(doc, subtestCounts) {
  *
  * @param {Object} id - document to be processed.
  * @param {Object} subtestCounts - count.
- * @param {string} dbUrl - database url.
  *
  * @returns {Array} - generated survey headers.
  */
 
-async function createSurvey(id, subtestCounts, dbUrl) {
+async function createSurvey(id, subtestCounts) {
   let surveyHeader = [];
-  let questions = await dbQuery.getQuestionBySubtestId(id, dbUrl);
+  let questions = await dbQuery.getQuestionBySubtestId(id);
   let sortedDoc = _.sortBy(questions, [id, 'order']);
 
   for (doc of sortedDoc) {
@@ -396,7 +345,7 @@ async function createSurvey(id, subtestCounts, dbUrl) {
  * @returns {Array} - generated grid headers.
  */
 
-async function createGrid(doc, subtestCounts, dbUrl) {
+function createGrid(doc, subtestCounts) {
   let count = subtestCounts.gridCount;
   let gridHeader = [];
   let gridData = [doc];

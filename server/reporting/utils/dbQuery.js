@@ -9,36 +9,16 @@
 const _ = require('lodash');
 const nano = require('nano');
 const PouchDB = require('pouchdb');
-PouchDB.plugin(require('pouchdb-find'));
-
-const dbConfig = require('./../config');
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
- * This function retrieves all assessment collections in the database.
- *
- * @param {string} dbUrl - database url.
- *
- * @returns {Array} – all assessment documents.
+ * Local dependency.
  */
 
-exports.getAllAssessment = (dbUrl) => {
-  const BASE_DB = nano(dbUrl);
-  return new Promise((resolve, reject) => {
-    BASE_DB.view('ojai', 'byCollection', {
-      key: 'assessment',
-      include_docs: true
-    }, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(body.rows);
-      }
-    });
-  });
-}
+const dbConfig = require('./../config');
+
+// Initialize database
+const GROUP_DB = new PouchDB(dbConfig.base_db);
+const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * This function retrieves all curriculum collections in the database.
@@ -143,12 +123,11 @@ exports.retrieveDoc = (docId, dbUrl) => {
  *
  * @param {Array} doc - document to be saved.
  * @param {string} key - key for indexing.
- * @param {string} dbUrl - url of the result database.
  *
  * @returns {Object} - saved document.
  */
 
-exports.saveHeaders = async (doc, key, dbUrl) => {
+exports.saveHeaders = async (doc, key) => {
   let existingDoc = await RESULT_DB.get(key);
   let docObj = { column_headers: doc };
   docObj.updated_at = new Date().toISOString();
@@ -216,25 +195,17 @@ exports.saveResult = (doc, dbUrl) => {
  * @returns {Array} - subtest documents.
  */
 
-exports.getSubtests = (id, dbUrl) => {
-  const BASE_DB = nano(dbUrl);
+exports.getSubtests = (id) => {
   return new Promise((resolve, reject) => {
-    BASE_DB.view('ojai', 'subtestsByAssessmentId', {
-      key: id,
-      include_docs: true
-    }, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      if (body && body.rows) {
-        let subtestDoc = _.map(body.rows, (data) => data.doc);
-        let orderedSubtests = _.sortBy(subtestDoc, ['assessmentId', 'order']);
-        resolve(orderedSubtests);
-      }
-      else {
+    GROUP_DB.query('ojai/subtestsByAssessmentId', { key: id, include_docs: true })
+      .then((body) => {
+        if (body && body.rows) {
+          let subtestDoc = _.map(body.rows, (data) => data.doc);
+          let orderedSubtests = _.sortBy(subtestDoc, ['assessmentId', 'order']);
+          resolve(orderedSubtests);
+        }
         resolve(body);
-      }
-    })
+      }).catch((err) => reject(err));
   });
 }
 
@@ -247,21 +218,13 @@ exports.getSubtests = (id, dbUrl) => {
  * @returns {Array} - question documents.
  */
 
-exports.getQuestionBySubtestId = (subtestId, dbUrl) => {
-  const BASE_DB = nano(dbUrl);
+exports.getQuestionBySubtestId = (subtestId) => {
   return new Promise((resolve, reject) => {
-    BASE_DB.view('ojai', 'questionsByParentId', {
-      key: subtestId,
-      include_docs: true
-    }, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
+    GROUP_DB.query('ojai/questionsByParentId',{ key: subtestId, include_docs: true })
+      .then((body) => {
         let doc = _.map(body.rows, (data) => data.doc);
         resolve(doc);
-      }
-    });
+      }).catch((err) => reject(err));
   });
 }
 
@@ -269,25 +232,15 @@ exports.getQuestionBySubtestId = (subtestId, dbUrl) => {
  * This function retrieves all processed result for a given document id
  *
  * @param {string} ref - id of document.
- * @param {string} dbUrl - result database url.
  *
  * @returns {Array} - result documents.
  */
 
-exports.getProcessedResults = function (ref, dbUrl) {
-  const RESULT_DB = nano(dbUrl);
+exports.getProcessedResults = function (ref) {
   return new Promise((resolve, reject) => {
-    RESULT_DB.view('dashReporting', 'byParentId', {
-      key: ref,
-      include_docs: true
-    }, (err, body) => {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(body.rows);
-      }
-    });
+    RESULT_DB.query('dashReporting/byParentId', { key: ref, include_docs: true })
+      .then((body) => resolve(body.rows))
+      .catch((err) => reject(err));
   });
 }
 
@@ -295,15 +248,13 @@ exports.getProcessedResults = function (ref, dbUrl) {
  * This function retrieves a result document.
  *
  * @param {string} id - trip id of document.
- * @param {string} dbUrl - base database url.
  *
  * @returns {Array} - result documents.
  */
 
-exports.getResults = function(id, dbUrl) {
-  const BASE_DB = nano(dbUrl);
+exports.getResults = function(id) {
   return new Promise((resolve, reject) => {
-    BASE_DB.view('dashReporting', 'byTripId', {
+    GROUP_DB.query('dashReporting/byTripId', {
       key: id,
       include_docs: true
     }, (err, body) => {
@@ -351,8 +302,7 @@ exports.saveUpdateSequence = (dbUrl, doc) => {
 };
 
 exports.processedResultsById = function (req, res) {
-  const RESULT_DB = nano(req.body.result_db);
-  RESULT_DB.view('dashReporting', 'byParentId', {
+  RESULT_DB.query('dashReporting/byParentId', {
     key: req.params.id,
     include_docs: true
   }, (err, body) => {
@@ -370,15 +320,13 @@ exports.processedResultsById = function (req, res) {
  * @description – This function retrieves enumerator information.
  *
  * @param {string} enumerator - name of the enumerator.
- * @param {string} dbUrl - base database url.
  *
  * @returns {Object} - user document.
  */
 
 exports.getUserDetails = function (enumerator, dbUrl) {
-  const BASE_DB = nano(dbUrl);
   return new Promise((resolve, reject) => {
-    BASE_DB.get(enumerator, (err, body) => {
+    GROUP_DB.get(enumerator, (err, body) => {
       if (err) {
         reject(err);
       }
@@ -392,15 +340,12 @@ exports.getUserDetails = function (enumerator, dbUrl) {
 /**
  * @description – This function retrieves location list
  *
- * @param {string} dbUrl - base database url.
- *
  * @returns {Object} - location document.
  */
 
-exports.getLocationList = function (dbUrl) {
-  const BASE_DB = nano(dbUrl);
+exports.getLocationList = function () {
   return new Promise((resolve, reject) => {
-    BASE_DB.get('location-list', (err, body) => {
+    GROUP_DB.get('location-list', (err, body) => {
       if (err) {
         reject(err);
       }
@@ -411,11 +356,9 @@ exports.getLocationList = function (dbUrl) {
   });
 }
 
-
-exports.getSettings = function (dbUrl) {
-  const BASE_DB = nano(dbUrl);
+exports.getSettings = function () {
   return new Promise((resolve, reject) => {
-    BASE_DB.get('settings', (err, body) => {
+    GROUP_DB.get('settings', (err, body) => {
       if(err)
         reject(err)
       else
