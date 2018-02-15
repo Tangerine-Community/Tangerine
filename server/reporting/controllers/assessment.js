@@ -10,8 +10,6 @@
  */
 
 const _ = require('lodash');
-const Excel = require('exceljs');
-const nano = require('nano');
 const PouchDB = require('pouchdb');
 
 /**
