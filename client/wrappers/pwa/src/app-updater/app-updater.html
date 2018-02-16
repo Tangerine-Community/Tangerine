@@ -160,15 +160,14 @@
                     break;
                   case 'redundant':
                     console.error('The installing service worker became redundant.');
-                    that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
+                    that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later. <a href="shell/index.html">Click here to proceed.</a>'
                     break;
                 }
               };
             };
           }).catch(function (err) {
             console.log('ServiceWorker registration failed: ', err);
-            that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
-            that.redirect()
+            that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later. <a href="shell/index.html">Click here to proceed.</a>'
           });
       }
 
