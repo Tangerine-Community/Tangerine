@@ -20,10 +20,9 @@ const GROUP_DB = new PouchDB(dbConfig.base_db);
 const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
- * This function saves/updates generated headers in the result database.
+ * @description This function saves/updates generated headers in the result database.
  *
  * @param {Array} doc - document to be saved.
- * @param {string} key - key for indexing.
  *
  * @returns {Object} - saved document.
  */
@@ -32,24 +31,22 @@ exports.saveHeaders = async (doc, key) => {
   let docObj = { column_headers: doc };
   docObj.updated_at = new Date().toISOString();
   let existingDoc = await RESULT_DB.get(key);
+
   // if doc exists update it using its revision number.
-  if(!existingDoc.status) {
+  if(!existingDoc.error) {
     docObj = _.assignIn(existingDoc, docObj);
   }
   try {
-    let response = await RESULT_DB.put(docObj);
-    return response;
-  } catch(err) {
+    return await RESULT_DB.put(docObj);
+  } catch (err) {
     console.error(err);
   }
 }
 
 /**
- * This function saves/updates processed result in the result database.
+ * @description This function saves/updates processed result in the result database.
  *
  * @param {Object} doc - document to be saved.
- * @param {string} key - key for indexing.
- * @param {string} dbUrl - url of the result database.
  *
  * @returns {Object} - saved document.
  */
@@ -70,20 +67,20 @@ exports.saveResult = async (doc) => {
   };
 
   let existingDoc = await RESULT_DB.get(docKey);
+
   // if doc exists update it using its revision number.
-  if (!existingDoc.status) {
+  if (!existingDoc.error) {
     docObj = _.assignIn(existingDoc, docObj);
   }
   try {
-    let response = await RESULT_DB.put(docObj, docKey);
-    return response;
+    return await RESULT_DB.put(docObj, docKey);
   } catch (err) {
     console.error(err);
   }
 }
 
 /**
- * This function retrieves all subtest linked to an assessment.
+ * @description This function retrieves all subtest linked to an assessment.
  *
  * @param {string} id - id of assessment document.
  *
@@ -105,7 +102,7 @@ exports.getSubtests = (id) => {
 }
 
 /**
- * This function retrieves all questions linked to a subtest document.
+ * @description This function retrieves all questions linked to a subtest document.
  *
  * @param {string} subtestId - id of subtest document.
  *
@@ -123,7 +120,7 @@ exports.getQuestionBySubtestId = (subtestId) => {
 }
 
 /**
- * This function retrieves all processed result for a given document id
+ * @description This function retrieves all processed result for a given document id
  *
  * @param {string} ref - id of document.
  *
@@ -139,7 +136,7 @@ exports.getProcessedResults = function (ref) {
 }
 
 /**
- * This function retrieves a result document.
+ * @description This function retrieves all result documents with the same tripId.
  *
  * @param {string} id - trip id of document.
  *
@@ -154,6 +151,13 @@ exports.getTripResults = function(id) {
   });
 }
 
+/**
+ * @description – This function retrieves all processed results with the same parentId.
+ *
+ * @param {string} id - parent id of document.
+ *
+ * @returns {Array} - location document.
+ */
 exports.processedResultsById = function (req, res) {
   RESULT_DB.query('dashReporting/byParentId', { key: req.params.id, include_docs: true })
     .then((body) => res.json(body.rows))
@@ -191,8 +195,7 @@ exports.getLocationList = function () {
 }
 
 /**
- * @description – This function retrieves the global settings
- * of the instrument.
+ * @description – This function retrieves the global settings of the instrument.
  *
  * @returns {Object} - settings document.
  */
