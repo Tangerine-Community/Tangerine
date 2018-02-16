@@ -1,6 +1,6 @@
 CKEDITOR.dialog.add( 'tangy-acasi', function( editor ) {
 	return {
-		title: 'Edit Tangy ACASI',
+		title: 'Edit an ACASI section.',
 		minWidth: 200,
 		minHeight: 100,
 		contents: [
@@ -36,39 +36,40 @@ CKEDITOR.dialog.add( 'tangy-acasi', function( editor ) {
 						}
 					},
 					{
-						id: 'options',
+						id: 'images',
 						type: 'textarea',
-						label: 'Options',
+						label: 'Images to display',
 						width: '100%',
 						setup: function( widget ) {
-							this.setValue( widget.data.options );
+                this.setValue( widget.data.images );
 						},
 						commit: function( widget ) {
-							widget.setData( 'options', this.getValue() );
+							widget.setData( 'images', this.getValue() );
 						}
 					},
 					{
-						id: 'duration',
+						id: 'introSrc',
 						type: 'text',
-						label: 'duration in seconds',
+						label: 'Audio file to play when page is loaded',
+            'default':'../assets/sounds/1.mp3',
 						width: '100%',
 						setup: function( widget ) {
-							this.setValue( widget.data.duration );
+							this.setValue( widget.data.introSrc );
 						},
 						commit: function( widget ) {
-							widget.setData( 'duration', this.getValue() );
+							widget.setData( 'introSrc', this.getValue() );
 						}
 					},
 					{
-						id: 'columns',
+						id: 'transitionSrc',
 						type: 'text',
-						label: 'columns',
+						label: 'Transition sound between pages',
 						width: '100%',
 						setup: function( widget ) {
-							this.setValue( widget.data.columns );
+							this.setValue( widget.data.transitionSrc );
 						},
 						commit: function( widget ) {
-							widget.setData( 'columns', this.getValue() );
+							widget.setData( 'transitionSrc', this.getValue() );
 						}
 					}
 				]

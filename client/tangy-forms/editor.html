@@ -37,12 +37,12 @@
       }
 
       /* Formatting to work around how ckeditor adds extra p between tags. */
-      p:not(:first-child):empty {
-        display:none
-      }
-      p:not(:first-child) > br {
-        display:none
-      }
+      /*p:not(:first-child):empty {*/
+        /*display:none*/
+      /*}*/
+      /*p:not(:first-child) > br {*/
+        /*display:none*/
+      /*}*/
       #editorTEXT {
         position: relative;
         width: 500px;
@@ -62,6 +62,9 @@
       .scrollmargin {
         height: 80px;
         text-align: center;
+      }
+      #editorCK {
+        margin-top: 60px;
       }
   </style>
 
