@@ -80,7 +80,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 /**
- * Hook data processing function to couchDB changes feed.
+ * Hook data processing function to changes feed.
  */
 
 const dbConfig = require('./reporting/config');
@@ -89,21 +89,9 @@ const RESULT_DB = new PouchDB(dbConfig.result_db);
 const dbQuery = require('./reporting/utils/dbQuery');
 const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
 
-// TODO: Confirm if you will need this part
-// let replicationHandler = GROUP_DB.replicate.to(RESULT_DB, { live: true, retry: true });
-
-// TODO: Update to PouchDB changes format
-// const feed = groupTabletDB.follow({ since: 'now', include_docs: true });
-
-// feed.on('change', async (resp) => {
-//   feed.pause();
-//   processChangedDocument(resp, dbConfig.base_db, dbConfig.result_db);
-//   setTimeout(function () { feed.resume() }, 500);
-// });
-
-// feed.on('error', (err) => Error(err));
-// feed.follow();
-
+GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
+  .on('change', (body) => processChangedDocument(body))
+  .on('error', (err) => console.error(err));
 
 // Middleware to protect routes.
 var isAuthenticated = function (req, res, next) {

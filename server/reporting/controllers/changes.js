@@ -9,11 +9,10 @@
  */
 
 const _ = require('lodash');
-const Excel = require('exceljs');
-const nano = require('nano');
+const PouchDB = require('pouchdb');
 
 /**
- * Local Depencies.
+ * Local dependencies.
  */
 
 const dbConfig = require('./../config');
@@ -22,6 +21,10 @@ const generateAssessmentHeaders = require('./assessment').createColumnHeaders;
 const processAssessmentResult = require('./result').generateResult;
 const generateWorkflowHeaders = require('./workflow').createWorkflowHeaders;
 const processWorkflowResult = require('./trip').processWorkflowResult;
+
+// Initialize database
+const GROUP_DB = new PouchDB(dbConfig.base_db);
+const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * Processes any recently changed document in the database based on its collection type.
@@ -54,26 +57,15 @@ const processWorkflowResult = require('./trip').processWorkflowResult;
  */
 
 exports.changes = async(req, res) => {
-  const dbUrl = req.body.base_db || dbConfig.base_db;
-  const resultDbUrl = req.body.result_db || dbConfig.result_db;
-
-  // TODO: Uncomment all commented code to start processing from last update sequence
-  // let seq = await dbQuery.checkUpdateSequence(resultDbUrl);
-
-  const BASE_DB = nano(dbUrl);
-  const feed = BASE_DB.follow({ since: 'now', include_docs: true });
-
-  feed.on('change', async(resp) => {
-    feed.pause();
-    processChangedDocument(resp, dbUrl, resultDbUrl);
-    setTimeout(function() { feed.resume() }, 500);
-  });
-
-  feed.on('error', (err) => res.send(Error(err)));
-  feed.follow();
+  GROUP_DB.changes({ since: 'now', include_docs: true })
+    .on('change', (body) => {
+      processChangedDocument(body);
+      res.json(body);
+    })
+    .on('error', (err) => console.error(err));
 }
 
-const processChangedDocument = async(resp, dbUrl, resultDbUrl) => {
+const processChangedDocument = async(resp) => {
   const assessmentId = resp.doc.assessmentId;
   const workflowId = resp.doc.workflowId;
   const collectionType = resp.doc.collection;
@@ -85,52 +77,57 @@ const processChangedDocument = async(resp, dbUrl, resultDbUrl) => {
   const isCurriculum = (collectionType === 'curriculum') ? true : false;
   const isQuestion = (collectionType === 'question') ? true : false;
   const isSubtest = (collectionType === 'subtest') ? true : false;
-  // let seqDoc = { key: 'last_update_sequence' };
 
   if (isWorkflowIdSet && isResult) {
-    // seqDoc = { last_seq: resp.seq };
     console.info('\n<<<=== START PROCESSING WORKFLOW RESULT ===>>>\n');
-    dbQuery.getTripResults(resp.doc.tripId, dbUrl)
-      .then(async(data) => {
-        let totalResult = {};
-        const workflowResult = await processWorkflowResult(data, dbUrl);
-        workflowResult.forEach(element => totalResult = Object.assign(totalResult, element));
-        const saveResponse = await dbQuery.saveResult(totalResult, resultDbUrl);
-        console.log(saveResponse);
-        // await dbQuery.saveUpdateSequence(resultDbUrl, seqDoc);
-        console.info('\n<<<=== END PROCESSING WORKFLOW RESULT ===>>>\n');
-      })
-      .catch((err) => console.error(err));
+    let totalResult = {};
+    try {
+      let data = await dbQuery.getTripResults(resp.doc.tripId)
+      const workflowResult = await processWorkflowResult(data);
+      workflowResult.forEach(element => totalResult = Object.assign(totalResult, element));
+      const saveResponse = await dbQuery.saveResult(totalResult);
+      console.log(saveResponse);
+      console.info('\n<<<=== END PROCESSING WORKFLOW RESULT ===>>>\n');
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   if (!isWorkflowIdSet && isResult) {
-    // seqDoc = { last_seq: resp.seq };
-    console.info('\n<<<=== START PROCESSING ASSESSMENT RESULT  ===>>>\n');
-    const assessmentResult = await processAssessmentResult([resp], 0, dbUrl);
-    const saveResponse = await dbQuery.saveResult(assessmentResult, resultDbUrl);
-    console.log(saveResponse);
-    // await dbQuery.saveUpdateSequence(resultDbUrl, seqDoc);
-    console.info('\n<<<=== END PROCESSING ASSESSMENT RESULT ===>>>\n');
+    try {
+      console.info('\n<<<=== START PROCESSING ASSESSMENT RESULT  ===>>>\n');
+      const assessmentResult = await processAssessmentResult([resp]);
+      const saveResponse = await dbQuery.saveResult(assessmentResult);
+      console.log(saveResponse);
+      console.info('\n<<<=== END PROCESSING ASSESSMENT RESULT ===>>>\n');
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   if (isWorkflow) {
-    // seqDoc = { last_seq: resp.seq };
-    console.info('\n<<<=== START PROCESSING WORKFLOW COLLECTION  ===>>>\n');
-    const workflowHeaders = await generateWorkflowHeaders(resp.doc, dbUrl);
-    const saveResponse = await dbQuery.saveHeaders(workflowHeaders, workflowId, resultDbUrl);
-    console.log(saveResponse);
-    // await dbQuery.saveUpdateSequence(resultDbUrl, seqDoc);
-    console.info('\n<<<=== END PROCESSING WORKFLOW COLLECTION ===>>>\n');
+    try {
+      console.info('\n<<<=== START PROCESSING WORKFLOW COLLECTION  ===>>>\n');
+      const workflowHeaders = await generateWorkflowHeaders(resp.doc);
+      const saveResponse = await dbQuery.saveHeaders(workflowHeaders, workflowId);
+      console.log(saveResponse);
+      console.info('\n<<<=== END PROCESSING WORKFLOW COLLECTION ===>>>\n');
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   if (isAssessment || isCurriculum || isQuestion || isSubtest) {
-    // seqDoc = { last_seq: resp.seq };
-    console.info('\n<<<=== START PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION  ===>>>\n');
-    const assessmentHeaders = await generateAssessmentHeaders(assessmentId, 0, dbUrl);
-    const saveResponse = await dbQuery.saveHeaders(assessmentHeaders, assessmentId, resultDbUrl);
-    console.log(saveResponse);
-    // await dbQuery.saveUpdateSequence(resultDbUrl, seqDoc);
-    console.info('\n<<<=== END PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION ===>>>\n');
+    try {
+      console.info('\n<<<=== START PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION  ===>>>\n');
+      const assessmentHeaders = await generateAssessmentHeaders(assessmentId);
+      const saveResponse = await dbQuery.saveHeaders(assessmentHeaders, assessmentId);
+      console.log(saveResponse);
+      // await dbQuery.saveUpdateSequence(resultDbUrl, seqDoc);
+      console.info('\n<<<=== END PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION ===>>>\n');
+    } catch (err) {
+      console.error(err);
+    }
   }
 
 }
