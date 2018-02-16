@@ -1,9 +1,9 @@
 #!/bin/bash
 
-SECRET="$1"
+GROUP="$1"
 CONTENT_PATH="$2"
 
-if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ]; then
+if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ]; then
   echo ""
   echo "RELEASE PWA"
   echo "A command for releasing a PWA using a secret URL."
@@ -32,9 +32,8 @@ cp -r $CONTENT_PATH .pwa-temporary/content
 # Generate release UUID and name the service worker after it.
 UUID=$(./node_modules/.bin/uuid)
 mv .pwa-temporary/sw.js .pwa-temporary/$UUID.js
-echo $UUID > .pwa-temporary/release-uuid.txt
+mkdir .pwa-temporary releases/pwas/$GROUP
+cp wrappers/pwa/redirect-to-current-release.html releases/pwas/$GROUP/index.html
+mv .pwa-temporary releases/pwas/$GROUP/$UUID
+echo $UUID > releases/pwas/$GROUP/release-uuid.txt
 echo "Release with UUID of $UUID"
-
-# Move our release ready PWA to it's secret spot.
-rm -r releases/pwas/$SECRET
-mv .pwa-temporary releases/pwas/$SECRET

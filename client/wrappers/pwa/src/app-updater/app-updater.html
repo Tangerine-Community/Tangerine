@@ -47,7 +47,7 @@
           },
           message: {
             type: String,
-            value: 'Checking for updates...'
+            value: 'Checking...'
           }
         };
       }
@@ -65,7 +65,7 @@
       }
 
       checkForRelease() {
-        fetch('release-uuid.txt')
+        fetch('../release-uuid.txt')
           .then((response) => response.text())
           .then((response) => {
             this.foundReleaseUuid = (response).replace(/\n|\r/g, "")
@@ -85,14 +85,31 @@
           })
       }
 
-      redirect() {
-        this.$.progress.removeAttribute('indeterminate')
-        console.log('Redirecting...')
-        this.message = 'Redirecting...'
-        setTimeout(() => {
-          window.location = window.location.href + 'shell/index.html';
-        }, 2000)
+      onSuccess(newReleaseUUID) {
+        this.message = "Cleaning up..."
+        // Remove all caches not related to new release.
+        caches.keys().then((keys) => {
+          keys.forEach((key) => {
+            caches.open(key).then(cache => {
+              cache.keys().then(fileKeys => {
+                fileKeys.forEach(fileKey => {
+                  console.log(fileKey)
+                  if (fileKey.url.indexOf(newReleaseUUID) === -1) {
+                    console.log(`Deleting: ${fileKey.url}`)
+                    cache.delete(fileKey).then(response => {
+                      console.log(response)
+                    })
+                  }
+                })
+              })
+            })
+          })
+        }) 
+        setTimeout(this.redirect, 7000).bind(this)
+      }
 
+      redirect() {
+        window.location = window.location.href.replace('index.html', '') + 'shell/index.html';
       }
 
       updateServiceWorker() {
@@ -114,17 +131,18 @@
                     if (navigator.serviceWorker.controller) {
                       that.message = 'Installation complete.'
                       localStorage.setItem('release-uuid', that.foundReleaseUuid)
-                      that.redirect()
+                      that.onSuccess(that.foundReleaseUuid)
                     } else {
                       that.message = 'Installation complete.'
                       console.log('This App has been installed and is now ready for offline use.');
                       localStorage.setItem('release-uuid', that.foundReleaseUuid)
-                      that.redirect()
+                      that.onSuccess(that.foundReleaseUuid)
                     }
                     break;
                   case 'redundant':
                     console.error('The installing service worker became redundant.');
                     this.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
+                    that.revert()
                     break;
                 }
               };
@@ -132,6 +150,7 @@
           }).catch(function (err) {
             console.log('ServiceWorker registration failed: ', err);
             that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
+            that.revert()
           });
       }
 
