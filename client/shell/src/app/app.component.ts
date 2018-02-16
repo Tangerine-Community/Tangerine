@@ -59,7 +59,8 @@ export class AppComponent implements OnInit {
     const updateApp = confirm('Do you want to update the application?');
     if (updateApp) {
       const currentPath = window.location.pathname;
-      window.location.href = (currentPath.replace(/shell\//i, ''));
+      const storedReleaseUuid = localStorage.getItem('release-uuid');
+      window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
     }
   }
 
