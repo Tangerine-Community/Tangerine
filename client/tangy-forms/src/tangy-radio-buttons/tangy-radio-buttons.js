@@ -90,6 +90,16 @@ class TangyRadioButtons extends Element {
     paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
     // Populate options as paper-radio-button elements
     let options = this.querySelectorAll('option')
+    this.renderOptions() 
+    paperRadioGroupEl.selected = this.value
+    if (this.required) paperRadioGroupEl.required = true
+    this.isReady = true
+  }
+  renderOptions() {
+    let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
+    paperRadioGroupEl.innerHTML = ''
+    // Populate options as paper-radio-button elements
+    let options = this.querySelectorAll('option')
     for (let option of options) {
       let button = document.createElement('paper-radio-button')
       button.name = option.value
@@ -97,9 +107,6 @@ class TangyRadioButtons extends Element {
       button.innerHTML = option.innerHTML
       paperRadioGroupEl.appendChild(button)
     }
-    paperRadioGroupEl.selected = this.value
-    if (this.required) paperRadioGroupEl.required = true
-    this.isReady = true
   }
 
   onPaperRadioGroupChange(event) {
@@ -131,9 +138,6 @@ class TangyRadioButtons extends Element {
     if (value == false) paperRadioButtons.forEach((button) => button.removeAttribute('disabled'))
   }
   onHiddenChange(value) {
-  }
-  renderOptions() {
-    console.log("boop.")
   }
 }
 window.customElements.define(TangyRadioButtons.is, TangyRadioButtons);
