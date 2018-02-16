@@ -16,23 +16,18 @@ CKEDITOR.editorConfig = function( config ) {
 	// For complete reference see:
 	// http://docs.ckeditor.com/#!/api/CKEDITOR.config
 
-	// The toolbar groups arrangement, optimized for two toolbar rows.
-	config.toolbarGroups = [
-		{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-		{ name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
-		{ name: 'links' },
-		{ name: 'insert' },
-		{ name: 'forms' },
-		{ name: 'tools' },
-		{ name: 'document',	   groups: [ 'mode', 'document', 'doctools' ] },
-		{ name: 'others' },
-		'/',
-		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-		{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
-		{ name: 'styles' },
-		{ name: 'colors' },
-		{ name: 'about' }
-	];
+  config.toolbar = [
+    { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+    { name: 'table', items: [ 'Table' ] },
+    { name: 'tangerine', items: [ 'Tangy-checkbox', 'Tangy-checkboxes', 'Tangy-radio-buttons', 'Tangy-input', 'Tangy-location', 'Tangy-gps', 'Tangy-timed','Tangy-acasi'] },
+    { name: 'tools', items: [ 'Maximize' ] },
+    { name: 'document', items: [ 'Source' ] },
+    '/',
+    { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
+    { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote' ] },
+    { name: 'styles', items: [ 'Styles', 'Format' ] },
+    { name: 'about', items: [ 'About' ] }
+  ];
 
 	// Remove some buttons provided by the standard plugins, which are
 	// not needed in the Standard(s) toolbar.
@@ -46,7 +41,7 @@ CKEDITOR.editorConfig = function( config ) {
 
   config.allowedContent = true;
 
-  config.extraPlugins = 'tangy-radio-buttons,tangy-checkboxes,tangy-input,tangy-location,tangy-timed,tangy-checkbox,tangy-gps'
+  config.extraPlugins = 'tangy-checkbox,tangy-checkboxes,tangy-radio-buttons,tangy-input,tangy-location,tangy-gps,tangy-timed,tangy-acasi'
   // config.extraPlugins = 'tangy-radio-buttons,tangy-checkboxes,tangy-input,tangy-location,tangy-timed,tangy-gps'
 
 };

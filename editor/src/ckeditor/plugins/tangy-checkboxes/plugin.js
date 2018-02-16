@@ -10,7 +10,7 @@ CKEDITOR.plugins.add( 'tangy-checkboxes', {
 			requiredContent: 'div(tangy-checkboxes)',
 			template:
 				'<tangy-checkboxes></tangy-checkboxes>',
-			button: 'Create a tangy-checkboxes',
+			button: 'Create a tangy-checkboxes element',
 			dialog: 'tangy-checkboxes',
 			upcast: function( element ) {
 				return element.name == 'tangy-checkboxes' ;
