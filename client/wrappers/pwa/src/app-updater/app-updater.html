@@ -61,11 +61,17 @@
       connectedCallback() {
         super.connectedCallback()
         this.$.container.style['margin-top'] = `${(window.innerHeight / 2) - 150}px`
-        this.checkForRelease()
+        navigator.storage.persist().then(granted => {
+          if (granted) {
+            this.checkForRelease()
+          } else {
+            this.message = "Add to homescreen or bookmark. Then open again to install."
+          }
+        })
       }
 
       checkForRelease() {
-        fetch('../release-uuid.txt')
+        fetch('release-uuid.txt')
           .then((response) => response.text())
           .then((response) => {
             this.foundReleaseUuid = (response).replace(/\n|\r/g, "")
@@ -76,16 +82,24 @@
               this.updateServiceWorker()
             }
             else if (this.storedReleaseUuid !== this.foundReleaseUuid) {
-              this.message = 'Updating...'
-              this.updateServiceWorker()
+              let confirmation = confirm("Would you like to update?")
+              if (confirmation) {
+                this.message = 'Updating...'
+                this.updateServiceWorker()
+              } else {
+                this.redirect()
+              }
             } else {
               this.message = 'No update found... '
               this.redirect()
             }
           })
+          .catch(error => {
+            this.redirect()
+          })
       }
 
-      onSuccess(newReleaseUUID) {
+      clean(originalReleaseUuid) {
         this.message = "Cleaning up..."
         // Remove all caches not related to new release.
         caches.keys().then((keys) => {
@@ -94,7 +108,7 @@
               cache.keys().then(fileKeys => {
                 fileKeys.forEach(fileKey => {
                   console.log(fileKey)
-                  if (fileKey.url.indexOf(newReleaseUUID) === -1) {
+                  if (fileKey.url.indexOf(originalReleaseUuid) !== -1) {
                     console.log(`Deleting: ${fileKey.url}`)
                     cache.delete(fileKey).then(response => {
                       console.log(response)
@@ -105,15 +119,20 @@
             })
           })
         }) 
-        setTimeout(this.redirect, 7000).bind(this)
+        // @TODO Refactor above code signal when cleanup is done otherwise this might not clean up everything.
+        setTimeout(this.redirect, 3000).bind(this)
       }
 
       redirect() {
-        window.location = window.location.href.replace('index.html', '') + 'shell/index.html';
+        setTimeout(() => {
+          let currentReleaseUuid = localStorage.getItem('release-uuid')
+          window.location = `${window.location.href}${currentReleaseUuid}/shell/index.html`
+        }, 1500)
       }
 
       updateServiceWorker() {
         var that = this
+        let originalReleaseUuid = localStorage.getItem('release-uuid')
         navigator.serviceWorker.register(this.foundReleaseUuid + '.js')
           .then(function (registration) {
             // Registration was successful
@@ -131,18 +150,17 @@
                     if (navigator.serviceWorker.controller) {
                       that.message = 'Installation complete.'
                       localStorage.setItem('release-uuid', that.foundReleaseUuid)
-                      that.onSuccess(that.foundReleaseUuid)
+                      that.clean(originalReleaseUuid)
                     } else {
                       that.message = 'Installation complete.'
                       console.log('This App has been installed and is now ready for offline use.');
                       localStorage.setItem('release-uuid', that.foundReleaseUuid)
-                      that.onSuccess(that.foundReleaseUuid)
+                      that.clean(originalReleaseUuid)
                     }
                     break;
                   case 'redundant':
                     console.error('The installing service worker became redundant.');
-                    this.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
-                    that.revert()
+                    that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
                     break;
                 }
               };
@@ -150,7 +168,7 @@
           }).catch(function (err) {
             console.log('ServiceWorker registration failed: ', err);
             that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
-            that.revert()
+            that.redirect()
           });
       }
 
