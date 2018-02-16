@@ -206,7 +206,7 @@ class TangyEditorApp extends Element {
             <!--<div style="width: 600px;margin-left: auto; margin-right: auto;">-->
               <form id="itemEditor">
                 <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
-                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching; this will delete changes.
+                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching or your changes will be deleted.
                 <p>&nbsp;</p>
                 <!--<tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>-->
                 <!--<div id="editorCK"></div>-->
@@ -362,6 +362,7 @@ class TangyEditorApp extends Element {
 
     Tangy.ace = ace.edit("editorTEXT");
     Tangy.ace.session.setMode("ace/mode/html");
+    Tangy.ace.session.setUseWrapMode(true)
     Tangy.ace.setOptions({
       autoScrollEditorIntoView: true,
       minLines: 10,
@@ -642,12 +643,12 @@ class TangyEditorApp extends Element {
         // Show toolbar on startup (optional).
         startupFocus: true
       } );
-      editor.on( 'change', function( evt ) {
-        // getData() returns CKEditor's HTML content.
-        let data = evt.editor.getData();
-        console.log( 'Total bytes: ' + data.length + " data: " + data);
-        // Tangy.ace.setValue(data);
-      });
+      // editor.on( 'change', function( evt ) {
+      //   // getData() returns CKEditor's HTML content.
+      //   let data = evt.editor.getData();
+      //   console.log( 'Total bytes: ' + data.length + " data: " + data);
+      //   // Tangy.ace.setValue(data);
+      // });
     }
   }
   async saveItem(event) {
