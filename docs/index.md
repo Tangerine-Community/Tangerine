@@ -14,3 +14,6 @@ Welcome to the Tangerine Documentation site. This is an MDWiki hosted on Github 
 * [Documentation on Workflows](workflows.md)
 * [Location Subtests and Location Profile Fields](location-subtests-and-profile-fields.md)
 
+## V3
+* [Icons](v3.x.x/icons.md)
+
