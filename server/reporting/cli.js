@@ -10,6 +10,7 @@
 
 const tangerine = require('commander');
 const chalk = require('chalk');
+const PouchDB = require('pouchdb');
 
 /**
  * Local Dependencies.
@@ -24,6 +25,9 @@ const generateCSV = require('./controllers/generate_csv').generateCSV;
 const dbQuery = require('./utils/dbQuery');
 const dbConfig = require('./config');
 
+// Initialize database
+const GROUP_DB = new PouchDB(dbConfig.base_db);
+const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /******************************************
  *  HELPER FUNCTIONS FOR GENERATING AND   *
@@ -33,69 +37,68 @@ const dbConfig = require('./config');
 
 
 /**
- * This function creates and saves assessment headers.
+ * @description This function creates and saves assessment headers.
  *
  * @param {Array} data - database documents to be processed.
  *
- * @returns {Object} - couchDB save response
+ * @returns {Object} - database response
  */
 
 async function generateAssessmentHeaders(data) {
   let response;
   for (item of data) {
     let assessmentId = item.doc.assessmentId;
-    let generatedHeaders = await createColumnHeaders(item.doc, 0, dbConfig.base_db);
-    response = await dbQuery.saveHeaders(generatedHeaders, assessmentId, dbConfig.result_db);
+    let generatedHeaders = await createColumnHeaders(item.doc);
+    response = await dbQuery.saveHeaders(generatedHeaders, assessmentId);
     console.log(response);
   }
   return response;
 }
 
 /**
- * This function creates and saves workflow headers.
+ * @description This function creates and saves workflow headers.
  *
  * @param {Array} data - database documents to be processed.
  *
- * @returns {Object} - couchDB save response
+ * @returns {Object} - database response
  */
 
 async function generateworkflowHeaders(data) {
   let response;
   for (item of data) {
     let workflowId = item.id;
-    let generatedWorkflowHeaders = await createWorkflowHeaders(item.doc, dbConfig.base_db);
-    response = await dbQuery.saveHeaders(generatedWorkflowHeaders, workflowId, dbConfig.result_db);
+    let generatedWorkflowHeaders = await createWorkflowHeaders(item.doc);
+    response = await dbQuery.saveHeaders(generatedWorkflowHeaders, workflowId);
     console.log(response);
   }
   return response;
 }
 
 /**
- * This function creates and saves assessment results.
+ * @description This function creates and saves assessment results.
  *
  * @param {Array} data - database documents to be processed.
  *
- * @returns {Object} - couchDB save response
+ * @returns {Object} - database response
  */
 
 async function generateAssessmentResult(data) {
   let response;
   for (item of data) {
     let docId = item.assessmentId || item.curriculumId;
-    let ref = item._id;
-    let processedResult = await processAssessmentResult(docId, 0, dbConfig.base_db);
-    response = await dbQuery.saveResult(processedResult, ref, dbConfig.result_db);
+    let processedResult = await processAssessmentResult(docId);
+    response = await dbQuery.saveResult(processedResult);
     console.log(response);
   }
   return response;
 }
 
 /**
- * This function creates and saves workflow results.
+ * @description This function creates and saves workflow results.
  *
  * @param {Array} data - database documents to be processed.
  *
- * @returns {Object} - couchDB save response
+ * @returns {Object} - database response
  */
 
 async function generateWorkflowResult(data) {
@@ -105,11 +108,11 @@ async function generateWorkflowResult(data) {
     if (!item.tripId) {
       let docId = item.assessmentId || item.curriculumId;
       let assessmentResults = await processResult(resultDoc);
-      response = await dbQuery.saveResult(assessmentResults, resultDbUrl);
+      response = await dbQuery.saveResult(assessmentResults);
       console.log(response);
     } else {
       let processedResult = await processWorkflowResult(resultDoc);
-      response = await dbQuery.saveResult(processedResult, resultDbUrl);
+      response = await dbQuery.saveResult(processedResult);
       console.log(response);
     }
   }
@@ -122,49 +125,61 @@ async function generateWorkflowResult(data) {
  */
 
 /**
- * This part retrieves all assessments in the database.
+ * @description This part retrieves all assessments in the database.
  * It is executed when the command `tangerine-reporting assessments` is run.
  */
 tangerine
   .version('0.1.0')
   .command('assessments')
   .description('Retrieves all assessments in the database')
-  .action(async() => {
-    const db = dbConfig.base_db;
-    console.log(await dbQuery.getAllAssessment(db));
-    console.log(chalk.green('✓ Successfully retrieve all assessments'));
+  .action(async () => {
+    try {
+      let assessments = await GROUP_DB.query('ojai/byCollection', { key: 'assessment', include_docs: true });
+      console.log({ assessments: assessments.rows.length, count: assessments.rows.length });
+      console.log(chalk.green('✓ Successfully retrieve all assessments'));
+    } catch (err) {
+      console.error(err);
+    }
   });
 
 /**
- * This part retrieves all workflow documents in the database.
+ * @description This part retrieves all workflow documents in the database.
  * It is executed when the command `tangerine-reporting workflows` is run.
  */
 tangerine
   .version('0.1.0')
   .command('workflows')
   .description('Retrieves all workflows in the database')
-  .action(async() => {
-    const db = dbConfig.base_db;
-    console.log(await dbQuery.getAllWorkflow(db));
-    console.log(chalk.green('✓ Successfully retrieve all workflows'));
+  .action(async () => {
+    try {
+      let workflows = GROUP_DB.query('ojai/byCollection', { key: 'workflow', include_docs: true })
+      console.log({ workflows: workflows.rows, count: workflows.rows.length });
+      console.log(chalk.green('✓ Successfully retrieve all workflows'));
+    } catch (err) {
+      console.error(err);
+    }
   });
 
 /**
- * This part retrieves all result documents in the database.
+ * @description This part retrieves all result documents in the database.
  * It is executed when the command `tangerine-reporting results` is run.
  */
 tangerine
   .version('0.1.0')
   .command('results')
   .description('Retrieves all results in the database')
-  .action(async() => {
-    const db = dbConfig.base_db;
-    console.log(await dbQuery.getAllResult(db));
-    console.log(chalk.green('✓ Successfully retrieve all results'));
+  .action(async () => {
+    try {
+      let results = await GROUP_DB.query('ojai/byCollection', { key: 'result', include_docs: true })
+      console.log({ results: results.rows.length, count: results.rows.length });
+      console.log(chalk.green('✓ Successfully retrieve all results'));
+    } catch (err) {
+      console.error(err);
+    }
   });
 
 /**
- * This part generates an assessment header.
+ * @description This part generates an assessment header.
  * It is executed when the command `tangerine-reporting assessment-header <assessment_id>` is run.
  *
  * @param {string} id - assessment id is required.
@@ -173,20 +188,22 @@ tangerine
   .version('0.1.0')
   .command('assessment-header <id>')
   .description('generate header for an assessment')
-  .action((id) => {
-    dbQuery.retrieveDoc(id, dbConfig.base_db)
-      .then(async(data) => {
-        const docId = data.assessmentId || data.curriculumId;
-        const colHeaders = await createColumnHeaders(data, 0, dbConfig.base_db);
-        const saveResponse = await dbQuery.saveHeaders(colHeaders, docId, dbConfig.result_db);
-        console.log(saveResponse);
-        console.log(chalk.green('✓ Successfully generate and save assessment header'));
-      })
-      .catch((err) => Error(err));
+  .action(async (id) => {
+    try {
+      let data = await GROUP_DB.get(id);
+      const docId = data.assessmentId || data.curriculumId;
+      const colHeaders = await createColumnHeaders(data);
+      const saveResponse = await dbQuery.saveHeaders(colHeaders, docId);
+      console.log(saveResponse);
+      console.log(chalk.green('✓ Successfully generate and save assessment header'));
+    }
+    catch(err) {
+      console.error(err);
+    }
   });
 
 /**
- * This part processes an assessment result.
+ * @description This part processes an assessment result.
  * It is executed when the command `tangerine-reporting assessment-result <assessment_id>` is run.
  *
  * @param {string} id - assessment id is required.
@@ -195,20 +212,22 @@ tangerine
   .version('0.1.0')
   .command('assessment-result <id>')
   .description('process result for an assessment')
-  .action((id) => {
-    dbQuery.retrieveDoc(id, dbConfig.base_db)
-      .then(async(data) => {
-        let resultDoc = { doc: data };
-        const result = processAssessmentResult(resultDoc);
-        const saveResponse = await dbQuery.saveResult(result, dbConfig.result_db);
-        console.log(saveResponse);
-        console.log(chalk.green('✓ Successfully process and save assessment result'));
-      })
-      .catch((err) => Error(err));
+  .action(async (id) => {
+    try {
+      let data = await GROUP_DB.get(id);
+      let resultDoc = { doc: data };
+      const result = processAssessmentResult(resultDoc);
+      const saveResponse = await dbQuery.saveResult(result);
+      console.log(saveResponse);
+      console.log(chalk.green('✓ Successfully process and save assessment result'));
+    }
+    catch(err) {
+      console.error(err);
+    }
   });
 
 /**
- * This part generates a workflow header.
+ * @description This part generates a workflow header.
  * It is executed when the command `tangerine-reporting workflow-header <workflow_id>` is run.
  *
  * @param {string} id - workflow id is required.
@@ -217,19 +236,20 @@ tangerine
   .version('0.1.0')
   .command('workflow-header <id>')
   .description('generate headers for a workflow')
-  .action((id) => {
-    dbQuery.retrieveDoc(id, dbConfig.base_db)
-      .then(async(doc) => {
-        let colHeaders = await createWorkflowHeaders(doc, dbConfig.base_db);
-        const saveResponse = await dbQuery.saveHeaders(colHeaders, id, dbConfig.result_db);
-        console.log(saveResponse);
-        console.log(chalk.green('✓ Successfully generate and save workflow header'));
-      })
-      .catch((err) => Error(err));
+  .action(async (id) => {
+    try {
+      let doc = await GROUP_DB.get(id);
+      let colHeaders = await createWorkflowHeaders(doc);
+      const saveResponse = await dbQuery.saveHeaders(colHeaders, id);
+      console.log(saveResponse);
+      console.log(chalk.green('✓ Successfully generate and save workflow header'));
+    } catch(err) {
+      console.error(err);
+    }
   });
 
 /**
- * This part processes a workflow result.
+ * @description This part processes a workflow result.
  * It is executed when the command `tangerine-reporting workflow-result <workflow_id>` is run.
  *
  * @param {string} id - workflow id is required.
@@ -238,19 +258,18 @@ tangerine
   .version('0.1.0')
   .command('workflow-result <id>')
   .description('process result for a workflow')
-  .action(function(id) {
-    dbQuery.getTripResults(id, dbConfig.base_db)
-      .then(async(data) => {
-        const result = processWorkflowResult(data);
-        const saveResponse = await dbQuery.saveResult(result, dbConfig.result_db);
-        console.log(saveResponse);
-        console.log(chalk.green('✓ Successfully process and save workflow result'));
-      })
-      .catch((err) => Error(err));
+  .action((id) => {
+    dbQuery.getTripResults(id).then(async (data) => {
+      const result = processWorkflowResult(data);
+      const saveResponse = await dbQuery.saveResult(result);
+      console.log(saveResponse);
+      console.log(chalk.green('✓ Successfully process and save workflow result'));
+    })
+    .catch((err) => console.error(err));
   });
 
 /**
- * This part processes headers or results based on the flag passed to it.
+ * @description This part processes headers or results based on the flag passed to it.
  *
  * It is executed when the command `tangerine-reporting create-all [flags]` is run.
  * The various flags are required for this to execute.
@@ -315,17 +334,16 @@ tangerine
   .command('generate-csv <docId>')
   .description('creates a csv file')
   .action((docId) => {
-    dbQuery.retrieveDoc(docId, dbConfig.result_db)
-      .then(async(docHeaders) => {
-        const result = await dbQuery.getProcessedResults(docId, dbConfig.result_db);
-        await generateCSV(docHeaders, result);
-        console.log(chalk.green('✓ CSV Successfully Generated'));
-      })
-      .catch((err) => Error(err));
+    RESULT_DB.get(docId).then(async (docHeaders) => {
+      const result = await dbQuery.getProcessedResults(docId);
+      await generateCSV(docHeaders, result);
+      console.log(chalk.green('✓ CSV Successfully Generated'));
+    })
+    .catch((err) => console.error(err));
   });
 
 /**
- * This part retrieves a document from the database.
+ * @description This part retrieves a document from the database.
  * It is executed when the command `tangerine-reporting get <id>` is run.
  *
  * @param {string} id - id of the document
@@ -334,17 +352,16 @@ tangerine
   .version('0.1.0')
   .command('get <id>')
   .description('retrieve a document from the database')
-  .action(function(id) {
-    dbQuery.retrieveDoc(id, dbConfig.base_db)
-      .then((data) => {
-        console.log(data);
-        console.log(chalk.green('✓ Successfully get document'));
-      })
-      .catch((err) => Error(err));
+  .action((id) => {
+    GROUP_DB.get(id).then((data) => {
+      console.log(data);
+      console.log(chalk.green('✓ Successfully get document'));
+    })
+    .catch((err) => console.error(err));
   });
 
 /**
- * This part retrieves all result by tripId.
+ * @description This part retrieves all result by tripId.
  * It is executed when the command `tangerine-reporting get-result <id>` is run.
  *
  * @param {string} id - id of the result document
@@ -353,13 +370,12 @@ tangerine
   .version('0.1.0')
   .command('get-processed-result <id>')
   .description('retrieve all processed results by id from the database')
-  .action(function(id) {
-    dbQuery.getProcessedResults(id, dbConfig.result_db)
-      .then((data) => {
-        console.log(data);
-        console.log(chalk.green('✓ Successfully retrieved all processed results'));
-      })
-      .catch((err) => Error(err));
+  .action((id) => {
+    dbQuery.getProcessedResults(id).then((data) => {
+      console.log(data);
+      console.log(chalk.green('✓ Successfully retrieved all processed results'));
+    })
+    .catch((err) => console.error(err));
   });
 
 
