@@ -65,7 +65,9 @@
           if (granted) {
             this.checkForRelease()
           } else {
-            this.message = "Add to homescreen or bookmark. Then open again to install."
+            // @TODO Give some notice that persistent storage is not enabled.
+            // this.message = "Add to homescreen or bookmark. Then open again to install."
+            this.checkForRelease()
           }
         })
       }
