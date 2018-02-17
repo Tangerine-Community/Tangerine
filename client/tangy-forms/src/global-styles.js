@@ -21,6 +21,7 @@ $_documentContainer.innerHTML = `<custom-style>
       --accent-text-color: #FFF;
       --error-color: var(--paper-red-500);
       --disabled-color: #BBB;
+      font-size: 2em;
       /*
        * Hi. Test the application of colors variables with an override
        * by uncommenting the code below.
@@ -37,6 +38,7 @@ $_documentContainer.innerHTML = `<custom-style>
       @apply --paper-font-common-base;
       color: var(--primary-text-color);
       font-weight: 400;
+      font-size: 2em;
       margin: 25px 0px 5px 15px;
     }
   </style>

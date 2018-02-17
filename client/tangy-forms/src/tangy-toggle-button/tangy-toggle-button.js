@@ -18,9 +18,9 @@ class TangyToggleButton extends Element {
         display: inline-block;
         border: solid 3px #777;
         border-radius: 10px;
-        padding: 0 15px;
+        padding: 0 3px;
         color: #777;
-        font-size: 1em;
+        font-size: .7em;
       }
       :host([hidden]) {
         display: none;
@@ -48,6 +48,7 @@ class TangyToggleButton extends Element {
         height: 100%;
       }
       .text-inner {
+        /*
         position: absolute;
         top: 20px;
         left: 20px;
