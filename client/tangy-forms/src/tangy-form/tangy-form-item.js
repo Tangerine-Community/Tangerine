@@ -63,7 +63,7 @@ paper-card {
   -ms-transition: .4s;
   -o-transition: .4s;
   display: block;
-  max-width: 720px;
+  max-width: 920px;
 }
 :host([disabled]) paper-card {
   --paper-card-background-color: gray !important;
