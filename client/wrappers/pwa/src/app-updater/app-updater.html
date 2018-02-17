@@ -138,7 +138,7 @@
       redirect() {
         setTimeout(() => {
           let currentReleaseUuid = localStorage.getItem('release-uuid')
-          window.location = `${window.location.href}${currentReleaseUuid}/shell/index.html`
+          window.location = `${window.location.origin}${window.location.pathname}${currentReleaseUuid}/shell/index.html`
         }, 1500)
       }
 
