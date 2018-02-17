@@ -10,11 +10,13 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "cordova-plugin-crosswalk-webview": "^2.4.0"
+    "cordova-plugin-crosswalk-webview": "^2.4.0",
+    "cordova-plugin-geolocation": "^4.0.1"
   },
   "cordova": {
     "plugins": {
-      "cordova-plugin-crosswalk-webview": {}
+      "cordova-plugin-crosswalk-webview": {},
+      "cordova-plugin-geolocation": {}
     }
   }
 }
