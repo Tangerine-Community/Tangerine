@@ -15,12 +15,22 @@ import '../tangy-form/tangy-element-styles.js'
      */
 export class TangyInput extends PolymerElement {
 
+  constructor() {
+    super()
+    this.useThis = (this.getAttribute('type') === 'email' || 
+               this.getAttribute('type') === 'number' || 
+               this.getAttribute('type') === 'date' || 
+               this.getAttribute('allowed-pattern'))
+               ? 'paper-input' : 'paper-textarea' 
+    this.dontUseThis = (this.useThis === 'paper-input') ? 'paper-textarea' : 'paper-input' 
+  }
+
   static get template () {
     return `
     <style include="tangy-common-styles"></style>
     <style include="tangy-element-styles"></style>
     <style>
-      paper-textarea {
+      paper-input, paper-textarea {
         --paper-input-container-shared-input-style_-_font-size: 2em;
         --paper-font-subhead_-_font-size: 1em;
         --paper-font-subhead_-_line-height: 1em;
@@ -29,7 +39,7 @@ export class TangyInput extends PolymerElement {
     </style>
 
     <div class="container">
-    <label>[[label]]</label>
+      <label>[[label]]</label>
       <paper-textarea 
         id="input" 
         label="Enter your response to above question here" 
@@ -41,6 +51,17 @@ export class TangyInput extends PolymerElement {
           <div slot="suffix"></div>
         </template>
       </paper-textarea>
+      <paper-input 
+        id="input" 
+        label="Enter your response to above question here" 
+        type="[[type]]" 
+        error-message="[[errorMessage]]" 
+        value="[[value]]" 
+        allowed-pattern="[[allowedPattern]]">
+        <template is="dom-if" if="required">
+          <div slot="suffix"></div>
+        </template>
+      </paper-input>
     </div>
   `
   }
@@ -108,7 +129,8 @@ export class TangyInput extends PolymerElement {
 
       connectedCallback() {
         super.connectedCallback()
-        this.$.input.addEventListener('value-changed', (event) => {
+        this.shadowRoot.querySelector(this.dontUseThis).hidden = true
+        this.shadowRoot.querySelector(this.useThis).addEventListener('value-changed', (event) => {
           this.value = this.$.input.value
           // @TODO tangy-form-item's listener for change events is not capturing this.
           let incomplete = (event.target.value === '') ? true : false
@@ -126,34 +148,34 @@ export class TangyInput extends PolymerElement {
 
       onRequiredChange(value) {
         if (value === false) {
-          this.$.input.removeAttribute('required')
+          this.shadowRoot.querySelector(this.useThis).removeAttribute('required')
         } else {
-          this.$.input.setAttribute('required', true)
+          this.shadowRoot.querySelector(this.useThis).setAttribute('required', true)
         }
       }
 
       onDisabledChange(value) {
         if (value === false) {
-          this.$.input.removeAttribute('disabled')
+          this.shadowRoot.querySelector(this.useThis).removeAttribute('disabled')
         } else {
-          this.$.input.setAttribute('disabled', true)
+          this.shadowRoot.querySelector(this.useThis).setAttribute('disabled', true)
         }
       }
 
       onInvalidChange(value) {
         if (value === false) {
-          this.$.input.removeAttribute('invalid')
+          this.shadowRoot.querySelector(this.useThis).removeAttribute('invalid')
         } else {
-          this.$.input.setAttribute('invalid', true)
+          this.shadowRoot.querySelector(this.useThis).setAttribute('invalid', true)
         }
       }
 
       onValueChange(value) {
-        this.$.input.setAttribute('value', value) 
+        this.shadowRoot.querySelector(this.useThis).setAttribute('value', value) 
       }
 
       validate() {
-        return this.$.input.validate()
+        return this.shadowRoot.querySelector(this.useThis).validate()
       }
 
     }
