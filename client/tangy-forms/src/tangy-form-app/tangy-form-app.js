@@ -120,8 +120,8 @@ class TangyFormApp extends Element {
       this.$['form-list'].hidden = false 
       await this.loadFormsList()
     }
-    if (params.hasOwnProperty('hide_new_response_button')) {
-      this.$['new-response-button'].hidden = true
+    if (params.hasOwnProperty('hide_top_bar')) {
+      this.$['fake-top-bar'].hidden = true
     }
     // Remove loading screen.
     window['tangy-form-app-loading'].innerHTML = ''
