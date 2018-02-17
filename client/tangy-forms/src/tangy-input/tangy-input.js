@@ -28,19 +28,8 @@ export class TangyInput extends PolymerElement {
 
     </style>
 
-    <div class="container">
-    <label>[[label]]</label>
-      <paper-textarea 
-        id="input" 
-        label="Enter your response to above question here" 
-        type="[[type]]" 
-        error-message="[[errorMessage]]" 
-        value="[[value]]" 
-        allowed-pattern="[[allowedPattern]]">
-        <template is="dom-if" if="required">
-          <div slot="suffix"></div>
-        </template>
-      </paper-textarea>
+    <div id="container">
+      
     </div>
   `
   }
@@ -51,65 +40,93 @@ export class TangyInput extends PolymerElement {
         return {
           name: {
             type: String,
+            observer: 'render',
             value: ''
           },
           label: {
             type: String,
+            observer: 'render',
             value: ''
           },
           type: {
             type: String,
+            observer: 'render',
             value: ''
           },
           errorMessage: {
             type: String,
+            observer: 'render',
             value: ''
           },
           required: {
             type: Boolean,
             value: false,
-            observer: 'onRequiredChange',
+            observer: 'render',
             reflectToAttribute: true
           },
           disabled: {
             type: Boolean,
             value: false,
-            observer: 'onDisabledChange',
+            observer: 'render',
             reflectToAttribute: true
           },
           hidden: {
             type: Boolean,
             value: false,
+            observer: 'render',
             reflectToAttribute: true
           },
           invalid: {
             type: Boolean,
             value: false,
-            observer: 'onInvalidChange',
+            observer: 'render',
             reflectToAttribute: true
           },
           incomplete: {
             type: Boolean,
             value: true,
+            observer: 'render',
             reflectToAttribute: true
           },
           value: {
             type: String,
             value: '',
+            observer: 'render',
             reflectToAttribute: true
           },
           allowedPattern: {
             type: String,
             value: '',
+            observer: 'render',
             reflectToAttribute: true
           }
         }
       }
-
       connectedCallback() {
         super.connectedCallback()
-        this.$.input.addEventListener('value-changed', (event) => {
-          this.value = this.$.input.value
+        this.render()
+      }
+      render() {
+        this.shadowRoot.querySelector('#container').innerHTML = `
+          <label>${this.label}</label>
+          <${(this.type === 'email' || this.type === 'number' || this.type === 'date' || this.allowedPattern !== '') ? `paper-input` : `paper-textarea`}
+            id="input" 
+            label="Enter your response to above question here" 
+            type="${this.type}" 
+            error-message="${this.errorMessage}" 
+            value="${this.value}" 
+            ${this.required ? 'required' : ''}
+            ${this.disabled ? 'disabled' : ''}
+            ${this.invalid ? 'invalid' : ''}
+            allowed-pattern="${this.allowedPattern}">
+            ${this.required ? `<div slot="suffix"></div>` : ``}
+          </${(this.type === 'email' || 
+               this.type === 'number' || 
+               this.type === 'date' || 
+               this.allowedPattern !== '') 
+               ? `paper-input` : `paper-textarea`}>
+        `
+        this.shadowRoot.querySelector('#input').addEventListener('value-changed', (event) => {
           // @TODO tangy-form-item's listener for change events is not capturing this.
           let incomplete = (event.target.value === '') ? true : false
           this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
@@ -117,44 +134,14 @@ export class TangyInput extends PolymerElement {
               inputName: this.name,
               inputValue: event.target.value,
               inputIncomplete: incomplete,
-              inputInvalid: !this.$.input.validate()
+              inputInvalid: !event.target.validate()
             },
             bubbles: true
           }))
         })
       }
-
-      onRequiredChange(value) {
-        if (value === false) {
-          this.$.input.removeAttribute('required')
-        } else {
-          this.$.input.setAttribute('required', true)
-        }
-      }
-
-      onDisabledChange(value) {
-        if (value === false) {
-          this.$.input.removeAttribute('disabled')
-        } else {
-          this.$.input.setAttribute('disabled', true)
-        }
-      }
-
-      onInvalidChange(value) {
-        if (value === false) {
-          this.$.input.removeAttribute('invalid')
-        } else {
-          this.$.input.setAttribute('invalid', true)
-        }
-      }
-
-      onValueChange(value) {
-        this.$.input.setAttribute('value', value) 
-      }
-
       validate() {
-        return this.$.input.validate()
+        return this.shadowRoot.querySelector('#input').validate()
       }
-
     }
     window.customElements.define(TangyInput.is, TangyInput);
