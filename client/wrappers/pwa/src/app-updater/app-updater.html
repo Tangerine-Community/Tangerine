@@ -29,7 +29,13 @@
       <img id="logo" src="logo.svg">
       <paper-progress id="progress" indeterminate class="slow red"></paper-progress>
       <span>[[message]]</span>
+      <template is="dom-if" if="{{showLinkToProceed}}">
+        <p>
+          <a href="[[proceedToReleaseUuid]]/shell/index.html">Click here to proceed.</a>
+        </p>
+      </template>
     </div>
+    
   </template>
 
   <script>
@@ -47,7 +53,7 @@
           },
           message: {
             type: String,
-            value: 'Checking for updates...'
+            value: 'Checking...'
           }
         };
       }
@@ -56,12 +62,23 @@
         super()
         this.installReleaseUuid = ''
         this.installReleaseUuid = ''
+        this.firstInstall = false
+        this.showLinkToProceed = false
+        this.proceedToReleaseUuid = '' 
       }
 
       connectedCallback() {
         super.connectedCallback()
         this.$.container.style['margin-top'] = `${(window.innerHeight / 2) - 150}px`
-        this.checkForRelease()
+        navigator.storage.persist().then(granted => {
+          if (granted) {
+            this.checkForRelease()
+          } else {
+            // @TODO Give some notice that persistent storage is not enabled.
+            // this.message = "Add to homescreen or bookmark. Then open again to install."
+            this.checkForRelease()
+          }
+        })
       }
 
       checkForRelease() {
@@ -71,32 +88,79 @@
             this.foundReleaseUuid = (response).replace(/\n|\r/g, "")
             this.storedReleaseUuid = localStorage.getItem('release-uuid')
             if (!this.storedReleaseUuid) {
+              this.firstInstall = true
               this.installReleaseUuid = this.foundReleaseUuid
               this.message = 'Installing...'
               this.updateServiceWorker()
             }
             else if (this.storedReleaseUuid !== this.foundReleaseUuid) {
-              this.message = 'Updating...'
-              this.updateServiceWorker()
+              let confirmation = confirm("Would you like to update?")
+              if (confirmation) {
+                this.message = 'Updating...'
+                this.updateServiceWorker()
+              } else {
+                this.redirect()
+              }
             } else {
               this.message = 'No update found... '
               this.redirect()
             }
           })
+          .catch(error => {
+            this.redirect()
+          })
+      }
+
+      clean(originalReleaseUuid) {
+        this.message = "Cleaning up..."
+        // Remove all caches not related to new release.
+        caches.keys().then((keys) => {
+          keys.forEach((key) => {
+            caches.open(key).then(cache => {
+              cache.keys().then(fileKeys => {
+                fileKeys.forEach(fileKey => {
+                  console.log(fileKey)
+                  if (fileKey.url.indexOf(originalReleaseUuid) !== -1) {
+                    console.log(`Deleting: ${fileKey.url}`)
+                    cache.delete(fileKey).then(response => {
+                      console.log(response)
+                    })
+                  }
+                })
+              })
+            })
+          })
+        }) 
+        // @TODO Refactor above code signal when cleanup is done otherwise this might not clean up everything.
+        setTimeout(this.concludeSession, 3000).bind(this)
       }
 
       redirect() {
-        this.$.progress.removeAttribute('indeterminate')
-        console.log('Redirecting...')
-        this.message = 'Redirecting...'
         setTimeout(() => {
-          window.location = window.location.href + 'shell/index.html';
-        }, 2000)
+          let currentReleaseUuid = localStorage.getItem('release-uuid')
+          window.location = `${window.location.origin}${window.location.pathname}${currentReleaseUuid}/shell/index.html`
+        }, 1500)
+      }
 
+      concludeSession() {
+        this.$.progress.removeAttribute('indeterminate')
+        if (this.firstInstall && /Android/i.test(navigator.userAgent)) {
+          this.message = 'Application has been installed. Add to homescreen and then open from homescreen.'
+        } else if (this.firstInstall) {
+          // @TODO Could set a timer waiting until they bookmark, making sure we get persistent storage.
+          this.proceedToReleaseUuid = localStorage.getItem('release-uuid')
+          this.showLinkToProceed = true
+          this.message = 'Application has been installed. Bookmark this page.'
+        } else {
+          this.proceedToReleaseUuid = localStorage.getItem('release-uuid')
+          this.showLinkToProceed = true
+          this.message = 'Updates have been applied. '
+        }
       }
 
       updateServiceWorker() {
         var that = this
+        let originalReleaseUuid = localStorage.getItem('release-uuid')
         navigator.serviceWorker.register(this.foundReleaseUuid + '.js')
           .then(function (registration) {
             // Registration was successful
@@ -112,26 +176,25 @@
                 switch (installingWorker.state) {
                   case 'installed':
                     if (navigator.serviceWorker.controller) {
-                      that.message = 'Installation complete.'
                       localStorage.setItem('release-uuid', that.foundReleaseUuid)
-                      that.redirect()
+                      that.concludeSession()
                     } else {
                       that.message = 'Installation complete.'
                       console.log('This App has been installed and is now ready for offline use.');
                       localStorage.setItem('release-uuid', that.foundReleaseUuid)
-                      that.redirect()
+                      that.concludeSession()
                     }
                     break;
                   case 'redundant':
                     console.error('The installing service worker became redundant.');
-                    this.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
+                    that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later. <a href="shell/index.html">Click here to proceed.</a>'
                     break;
                 }
               };
             };
           }).catch(function (err) {
             console.log('ServiceWorker registration failed: ', err);
-            that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later.'
+            that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later. <a href="shell/index.html">Click here to proceed.</a>'
           });
       }
 

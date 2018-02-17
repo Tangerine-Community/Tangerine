@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
     location.reload(); // @TODO find a way to load the page contents without reloading
   }
   async isAppUpdateAvailable() {
-    const response = await this.http.get('../release-uuid.txt').toPromise();
+    const response = await this.http.get('../../release-uuid.txt').toPromise();
     const foundReleaseUuid = (response.text()).replace(/\n|\r/g, '');
     const storedReleaseUuid = localStorage.getItem('release-uuid');
     this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
@@ -59,7 +59,8 @@ export class AppComponent implements OnInit {
     const updateApp = confirm('Do you want to update the application?');
     if (updateApp) {
       const currentPath = window.location.pathname;
-      window.location.href = (currentPath.replace(/shell\//i, ''));
+      const storedReleaseUuid = localStorage.getItem('release-uuid');
+      window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
     }
   }
 

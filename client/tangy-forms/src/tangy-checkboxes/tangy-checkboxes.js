@@ -97,6 +97,10 @@ class TangyCheckboxes extends Element {
     super.connectedCallback()
 
     this.$.checkboxes.addEventListener('change', this.onCheckboxChange.bind(this), false)
+    this.renderOptions()
+  }
+  renderOptions() {
+    this.$.checkboxes.innerHTML = ''
     // Populate options as paper-radio-button elements
     let options = this.querySelectorAll('option')
     for (let option of options) {
@@ -144,8 +148,5 @@ class TangyCheckboxes extends Element {
     if (value == false) paperCheckboxes.forEach((button) => button.removeAttribute('disabled'))
   }
 
-  renderOptions() {
-    console.log("boop.")
-  }
 }
 window.customElements.define(TangyCheckboxes.is, TangyCheckboxes );

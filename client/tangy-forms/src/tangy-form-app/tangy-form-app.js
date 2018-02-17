@@ -51,6 +51,10 @@ class TangyFormApp extends Element {
         left: 50%;
         margin-left: -20px;
       }
+      #fake-top-bar {
+        background: var(--primary-color-dark);
+        padding: 8px 0px 0px 8px;
+      }
     </style>
     <div class="tangy-form-app--container">
 
@@ -69,7 +73,11 @@ class TangyFormApp extends Element {
       </div>
 
       <div id="form-view" hidden="">
-        <paper-icon-button mini id="new-response-button" on-click="onClickNewResponseButton" icon="icons:add"></paper-icon-button>
+        <div id="fake-top-bar">
+          <a id="home-button" href="../shell/index.html">
+              <img src="../logo.svg" width=45>
+          </a>
+        </div>
         <div id="form-container"></div>
       </div>
 

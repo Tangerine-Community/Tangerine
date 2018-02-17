@@ -1,6 +1,6 @@
 CKEDITOR.dialog.add( 'tangy-checkbox', function( editor ) {
 	return {
-		title: 'Edit Tangy Checkbox',
+		title: 'Edit Tangy Form',
 		minWidth: 200,
 		minHeight: 100,
 		contents: [
