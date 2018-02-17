@@ -29,7 +29,13 @@
       <img id="logo" src="logo.svg">
       <paper-progress id="progress" indeterminate class="slow red"></paper-progress>
       <span>[[message]]</span>
+      <template is="dom-if" if="{{showLinkToProceed}}">
+        <p>
+          <a href="[[proceedToReleaseUuid]]/shell/index.html">Click here to proceed.</a>
+        </p>
+      </template>
     </div>
+    
   </template>
 
   <script>
@@ -56,6 +62,9 @@
         super()
         this.installReleaseUuid = ''
         this.installReleaseUuid = ''
+        this.firstInstall = false
+        this.showLinkToProceed = false
+        this.proceedToReleaseUuid = '' 
       }
 
       connectedCallback() {
@@ -79,6 +88,7 @@
             this.foundReleaseUuid = (response).replace(/\n|\r/g, "")
             this.storedReleaseUuid = localStorage.getItem('release-uuid')
             if (!this.storedReleaseUuid) {
+              this.firstInstall = true
               this.installReleaseUuid = this.foundReleaseUuid
               this.message = 'Installing...'
               this.updateServiceWorker()
@@ -122,7 +132,7 @@
           })
         }) 
         // @TODO Refactor above code signal when cleanup is done otherwise this might not clean up everything.
-        setTimeout(this.redirect, 3000).bind(this)
+        setTimeout(this.concludeSession, 3000).bind(this)
       }
 
       redirect() {
@@ -130,6 +140,22 @@
           let currentReleaseUuid = localStorage.getItem('release-uuid')
           window.location = `${window.location.href}${currentReleaseUuid}/shell/index.html`
         }, 1500)
+      }
+
+      concludeSession() {
+        this.$.progress.removeAttribute('indeterminate')
+        if (this.firstInstall && /Android/i.test(navigator.userAgent)) {
+          this.message = 'Application has been installed. Add to homescreen and then open from homescreen.'
+        } else if (this.firstInstall) {
+          // @TODO Could set a timer waiting until they bookmark, making sure we get persistent storage.
+          this.proceedToReleaseUuid = localStorage.getItem('release-uuid')
+          this.showLinkToProceed = true
+          this.message = 'Application has been installed. Bookmark this page.'
+        } else {
+          this.proceedToReleaseUuid = localStorage.getItem('release-uuid')
+          this.showLinkToProceed = true
+          this.message = 'Updates have been applied. '
+        }
       }
 
       updateServiceWorker() {
@@ -150,14 +176,13 @@
                 switch (installingWorker.state) {
                   case 'installed':
                     if (navigator.serviceWorker.controller) {
-                      that.message = 'Installation complete.'
                       localStorage.setItem('release-uuid', that.foundReleaseUuid)
-                      that.clean(originalReleaseUuid)
+                      that.concludeSession()
                     } else {
                       that.message = 'Installation complete.'
                       console.log('This App has been installed and is now ready for offline use.');
                       localStorage.setItem('release-uuid', that.foundReleaseUuid)
-                      that.clean(originalReleaseUuid)
+                      that.concludeSession()
                     }
                     break;
                   case 'redundant':
