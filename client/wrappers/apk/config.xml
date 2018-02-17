@@ -24,4 +24,5 @@
         <allow-intent href="itms-apps:*" />
     </platform>
     <plugin name="cordova-plugin-crosswalk-webview" spec="^2.4.0" />
+    <plugin name="cordova-plugin-geolocation" spec="^4.0.1" />
 </widget>
