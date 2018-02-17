@@ -30,6 +30,9 @@ mv .pwa-temporary/release-uuid .pwa-temporary/$UUID
 rm -r .pwa-temporary/$UUID/content
 cp -r $CONTENT_PATH .pwa-temporary/$UUID/content
 
+# Add logo.
+cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
+
 # Generate service worker.
 ./node_modules/.bin/workbox generate:sw
 
