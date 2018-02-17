@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "./node_modules/.bin/polymer build --js-compile --bundle",
+    "build": "./node_modules/.bin/polymer build --js-compile --bundle && cp manifest.json build/default/manifest.json && cp -r assets build/default/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

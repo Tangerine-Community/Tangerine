@@ -1,4 +1,5 @@
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import '../tangy-form/cat.js'
 import '../../node_modules/@polymer/paper-button/paper-button.js';
 import '../../node_modules/@polymer/paper-card/paper-card.js';
 import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
@@ -9,6 +10,15 @@ import '../tangy-form/tangy-form.js';
 // import '../tangy-textarea/tangy-textarea.js';
 import '../tangy-acasi/tangy-acasi.js';
 import '../tangy-form/tangy-common-styles.js'
+import {tangyFormReducer} from "../tangy-form/tangy-form-reducer.js";
+import {tangyReduxMiddlewareTangyHook} from "../tangy-form/tangy-form-redux-middleware.js";
+import {TangyFormResponseModel} from "../tangy-form/tangy-form-response-model.js";
+import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
+  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
+  ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
+  INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
+  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
+  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from '../tangy-form/tangy-form-actions.js'
 
 /**
  * `tangy-form-app`
@@ -134,13 +144,19 @@ class TangyEditorApp extends Element {
         </template>
       </div>
 
+      <!--<div id="form-view" hidden="">-->
+        <!--<div id="form-view&#45;&#45;nav">-->
+          <!--&lt;!&ndash; a href="/tangy-forms/index.html"><iron-icon icon="icons:close"></iron-icon></a&ndash;&gt;-->
+          <!--[[formTitle]]-->
+        <!--</div>-->
+        <!--<slot></slot>-->
+      <!--</div>-->
+      
       <div id="form-view" hidden="">
-        <div id="form-view--nav">
-          <!-- a href="/tangy-forms/index.html"><iron-icon icon="icons:close"></iron-icon></a-->
-          [[formTitle]]
-        </div>
-        <slot></slot>
+        <paper-icon-button mini id="new-response-button" on-click="onClickNewResponseButton" icon="icons:add"></paper-icon-button>
+        <div id="form-container"></div>
       </div>
+      
       <div id="form-editor">
         <div id="form-item-listing" hidden style="max-width: 200px; float:left">
               <!--<paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>-->
@@ -206,7 +222,7 @@ class TangyEditorApp extends Element {
             <!--<div style="width: 600px;margin-left: auto; margin-right: auto;">-->
               <form id="itemEditor">
                 <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
-                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching; this will delete changes.
+                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching or your changes will be deleted.
                 <p>&nbsp;</p>
                 <!--<tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>-->
                 <!--<div id="editorCK"></div>-->
@@ -325,6 +341,18 @@ class TangyEditorApp extends Element {
       },
     };
   }
+
+  constructor() {
+    super()
+    // Create Redux Store.
+    window.tangyFormStore = Redux.createStore(
+      tangyFormReducer,
+      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+      Redux.applyMiddleware(tangyReduxMiddlewareTangyHook)
+    )
+    this.store = window.tangyFormStore
+  }
+
   connectedCallback() {
     super.connectedCallback();
     if (typeof Tangy === 'undefined') {
@@ -335,11 +363,14 @@ class TangyEditorApp extends Element {
         ace:null, // stores the current Ace editor instance, used for copying data.
       }
     }
+    // Get params from hash.
+    let params = window.getHashParams()
     let query = this.parseQuery(window.location.hash)
     let formPath = query.form
     let edit = query.edit
     let newForm = query.new
     this.groupId = window.location.pathname.split("/")[2];
+    let responseId = (params.hasOwnProperty('response_id')) ? params.response_id : undefined
 
     if (formPath) {
       let formDirectory = formPath.substring(0, formPath.lastIndexOf('\/')) + '/'
@@ -350,7 +381,7 @@ class TangyEditorApp extends Element {
       } else if (newForm) {
         this.showFormEditor(query.form, 'newForm')
       } else {
-      this.showForm(query.form)
+      this.loadForm(query.form, responseId)
       }
       this.addEventListener('tangy-form-item-list-opened', () => window['tangy-form-app-loading'].innerHTML = '')
     } else {
@@ -358,10 +389,15 @@ class TangyEditorApp extends Element {
       this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
     }
     this.addEventListener('tangy-form-item-opened', () => window['tangy-form-app-loading'].innerHTML = '')
+
+    // Remove loading screen.
+    window['tangy-form-app-loading'].innerHTML = ''
+
     Tangy.currentEditorUI = 'ace'
 
     Tangy.ace = ace.edit("editorTEXT");
     Tangy.ace.session.setMode("ace/mode/html");
+    Tangy.ace.session.setUseWrapMode(true)
     Tangy.ace.setOptions({
       autoScrollEditorIntoView: true,
       minLines: 10,
@@ -440,8 +476,13 @@ class TangyEditorApp extends Element {
     if (this.groupId) {
       formsJsonPath = '../../groups/' + this.groupId + '/forms.json'
     }
+    try {
     let formsJson = await fetch(formsJsonPath, {credentials: 'include'})
     this.forms = await formsJson.json()
+    } catch (e) {
+      let formsJson = await fetch('../content/forms.json')
+      this.forms = await formsJson.json()
+    }
     // Load editor forms
     let editorJson = await fetch('editor/editor-forms.json', {credentials: 'include'})
     this.editorForms = await editorJson.json()
@@ -449,7 +490,7 @@ class TangyEditorApp extends Element {
   }
 
   onFormSrcChange(newValue, oldValue) {
-    if (newValue !== '') this.showForm(newValue)
+    if (newValue !== '') this.loadForm(newValue)
   }
 
   async showFormListener(event) {
@@ -491,7 +532,7 @@ class TangyEditorApp extends Element {
     location.reload()
   }
 
-  async showForm(formSrc) {
+  async loadForm(formSrc, responseId) {
     let query = this.parseQuery(window.location.hash)
     this.$['form-view'].hidden = false
     this.$['form-item-listing'].hidden = true
@@ -505,25 +546,31 @@ class TangyEditorApp extends Element {
     let formHtml = await fetch(formsPath, {credentials: 'include'})
     // Put the formHtml in a template first so element do not initialize connectedCallback
     // before we modify them.
-    let formTemplate = document.createElement('div')
-    formTemplate.innerHTML = await formHtml.text()
-    let formEl = formTemplate.querySelector('tangy-form')
-    if (query.database) formEl.setAttribute('database-name', query.database)
-    if (query['linear-mode']) formEl.setAttribute('linear-mode', true)
-    if (query['response-id']) formEl.setAttribute('response-id', query['response-id'])
-    if (query['hide-closed-items']) formEl.setAttribute('hide-closed-items', true)
-    if (query['hide-nav']) formEl.setAttribute('hide-nav', true)
-    if (query['hide-responses']) formEl.setAttribute('hide-responses', true)
-    // this.innerHTML = formTemplate.innerHTML
-    // let tangyForm = this.querySelector('tangy-form')
-    this.shadowRoot.innerHTML = formTemplate.innerHTML
-    let tangyForm = this.shadowRoot.querySelector('tangy-form')
-    tangyForm.addEventListener('ALL_ITEMS_CLOSED', () => {
+    // let formTemplate = document.createElement('div')
+    // formTemplate.innerHTML = await formHtml.text()
+    // let formEl = formTemplate.querySelector('tangy-form')
+    this.$['form-container'].innerHTML = await formHtml.text()
+    let formEl = this.$['form-container'].querySelector('tangy-form')
+    formEl.addEventListener('ALL_ITEMS_CLOSED', () => {
       if (parent && parent.frames && parent.frames.ifr) {
         parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
       }
     })
-    window['tangy-form-app-loading'].innerHTML = ''
+    // Put a response in the store by issuing the FORM_OPEN action.
+    if (responseId) {
+      let response = await this.service.getResponse(responseId)
+      formOpen(response)
+    } else {
+      // Create new form response from the props on tangy-form and children tangy-form-item elements.
+      let form = this.$['form-container'].querySelector('tangy-form').getProps()
+      let items = []
+      this.$['form-container']
+        .querySelectorAll('tangy-form-item')
+        .forEach((element) => items.push(element.getProps()))
+      let response = new TangyFormResponseModel({ form, items })
+      window.setHashParam('response_id', response._id)
+      formOpen(response)
+    }
   }
   async showFormEditor(formSrc, isNew) {
     this.$['form-view'].hidden = true
@@ -637,12 +684,12 @@ class TangyEditorApp extends Element {
         // Show toolbar on startup (optional).
         startupFocus: true
       } );
-      editor.on( 'change', function( evt ) {
-        // getData() returns CKEditor's HTML content.
-        let data = evt.editor.getData();
-        console.log( 'Total bytes: ' + data.length + " data: " + data);
-        // Tangy.ace.setValue(data);
-      });
+      // editor.on( 'change', function( evt ) {
+      //   // getData() returns CKEditor's HTML content.
+      //   let data = evt.editor.getData();
+      //   console.log( 'Total bytes: ' + data.length + " data: " + data);
+      //   // Tangy.ace.setValue(data);
+      // });
     }
   }
   async saveItem(event) {
@@ -708,6 +755,14 @@ class TangyEditorApp extends Element {
         });
       }
     })
+  }
+
+  onClickNewResponseButton() {
+    let confirmation = confirm("Are you sure you want to start a form response?")
+    if (confirmation) {
+      let params = getHashParams()
+      this.loadForm(params.form)
+    }
   }
 
   switchEditor() {

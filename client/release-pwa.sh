@@ -1,9 +1,9 @@
 #!/bin/bash
 
-SECRET="$1"
+GROUP="$1"
 CONTENT_PATH="$2"
 
-if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ]; then
+if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ]; then
   echo ""
   echo "RELEASE PWA"
   echo "A command for releasing a PWA using a secret URL."
@@ -20,21 +20,22 @@ if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ]; then
 fi
 
 # Create a temporary PWA folder that we'll move to the secret.
-cp -r builds/pwa .pwa-temporary 
+cp -r builds/pwa .pwa-temporary
+
+# Generate release UUID and name the service worker after it.
+UUID=$(./node_modules/.bin/uuid)
+mv .pwa-temporary/release-uuid .pwa-temporary/$UUID
 
 # Install content into PWA.
-rm -r .pwa-temporary/content
-cp -r $CONTENT_PATH .pwa-temporary/content
+rm -r .pwa-temporary/$UUID/content
+cp -r $CONTENT_PATH .pwa-temporary/$UUID/content
 
 # Generate service worker.
 ./node_modules/.bin/workbox generate:sw
 
-# Generate release UUID and name the service worker after it.
-UUID=$(./node_modules/.bin/uuid)
 mv .pwa-temporary/sw.js .pwa-temporary/$UUID.js
 echo $UUID > .pwa-temporary/release-uuid.txt
-echo "Release with UUID of $UUID"
 
-# Move our release ready PWA to it's secret spot.
-rm -r releases/pwas/$SECRET
-mv .pwa-temporary releases/pwas/$SECRET
+rm -r releases/pwas/$GROUP
+mv .pwa-temporary releases/pwas/$GROUP
+echo "Release with UUID of $UUID"

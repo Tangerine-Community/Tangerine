@@ -97,7 +97,8 @@ export class TangyForm extends PolymerElement {
         #tangerine-footer {
           width:100%;
           background-color: var(--primary-color);
-          height: 40px;
+          color: var(--accent-color);
+          height: 70px;
           position: fixed;
           bottom: 0px;
       }
@@ -106,10 +107,19 @@ export class TangyForm extends PolymerElement {
       #previousItemButton,
       #nextItemButton {
         padding: 0;
+        color: var(--accent-color);
         --paper-fab-iron-icon: {
-          height: 50px;
-          width: 50px;
+          color: var(--accent-color);
+          height: 75px;
+          width: 75px;
         };
+      }
+      #markCompleteButton paper-icon-button,
+      #previousItemButton paper-icon-button,
+      #nextItemButton paper-icon-button, paper-icon-button {
+        width: 75px;
+        height: 75px;
+
       }
       paper-fab[disabled] {
         background-color: #cccccc !important;
@@ -127,8 +137,8 @@ export class TangyForm extends PolymerElement {
       <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
       <div id="tangerine-footer">
         <paper-icon-button id="markCompleteButton" on-click="markComplete" icon="icons:check" hidden></paper-icon-button>
-        <paper-icon-button id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-icon-button>
-        <paper-icon-button id="nextItemButton" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-icon-button>
+        <paper-icon-button id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:arrow-back"></paper-icon-button>
+        <paper-icon-button id="nextItemButton" on-click="focusOnNextItem" icon="icons:arrow-forward"></paper-icon-button>
       </div>
         `
       }

@@ -9,7 +9,7 @@ export class TangyFormService {
   }
 
   async initialize() {
-    this.db = new PouchDB(this.databaseName)
+    this.db = new PouchDB(this.databaseName, {auto_compaction: true})
     try {
       let designDoc = await this.db.get('_design/tangy-form')
       if (designDoc.version !== tangyFormDesignDoc.version) {

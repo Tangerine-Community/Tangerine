@@ -4,10 +4,6 @@ CKEDITOR.plugins.add( 'tangy-checkbox', {
 	init: function( editor ) {
 		CKEDITOR.dialog.add( 'tangy-checkbox', this.path + 'dialogs/tangy-checkbox.js' );
 		editor.widgets.add( 'tangy-checkbox', {
-			allowedContent:
-				'div(!tangy-checkbox,align-left,align-right,align-center){width};' +
-				'div(!tangy-checkbox-content); h2(!tangy-checkbox-title); tangy-section();',
-			requiredContent: 'div(tangy-checkbox)',
 			template:
 				'<tangy-checkbox></tangy-checkbox>',
 			button: 'Create a tangy-checkbox',

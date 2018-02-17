@@ -63,11 +63,15 @@ export class TangyAcasi extends PolymerElement {
       },
       introSrc: {
         type: String,
-        value: ''
+        value: '../content/assets/sounds/1.mp3'
       },
       transitionSrc: {
         type: String,
-        value: '../assets/sounds/swish.mp3'
+        value: '../content/assets/sounds/swish.mp3'
+      },
+      images: {
+        type: String,
+        value: '../content/assets/images/never.png,../content/assets/images/once.png,../content/assets/images/few.png,../content/assets/images/many.png'
       },
       onChange: {
         type: String,
@@ -120,8 +124,13 @@ export class TangyAcasi extends PolymerElement {
   connectedCallback() {
     super.connectedCallback();
     this.isReady = false
+    this.renderOptions()
+  }
+
+  renderOptions() {
     let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
     paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
+
     // Populate paper-radio-button elements by using image data
     // The radio-button value is taken from the img src value.
     let images = this.querySelectorAll('img')
@@ -147,8 +156,8 @@ export class TangyAcasi extends PolymerElement {
 
   ready() {
     super.ready();
-    const display_sound_url = '../assets/sounds/pop.mp3'
-    const transition_sound_url = '../assets/sounds/swish.mp3'
+    const display_sound_url = '../content/assets/sounds/pop.mp3'
+    const transition_sound_url = '../content/assets/sounds/swish.mp3'
 
     if (this.introSrc) {
       this.transitionSound = new Audio(this.introSrc);
