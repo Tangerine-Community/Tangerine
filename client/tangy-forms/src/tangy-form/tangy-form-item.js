@@ -100,6 +100,9 @@ label.heading {
   color: var(--primary-color);
   font-weight: 700;
 }
+paper-button {
+  font-size: .5em;
+}
 </style>
 
 <paper-card id="card" class="shrunk">

@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
-import '../../node_modules/@polymer/paper-input/paper-input.js'
+import '../../node_modules/@polymer/paper-input/paper-textarea.js'
 import '../tangy-form/tangy-common-styles.js'
 import '../tangy-form/tangy-element-styles.js'
 
@@ -19,10 +19,18 @@ export class TangyInput extends PolymerElement {
     return `
     <style include="tangy-common-styles"></style>
     <style include="tangy-element-styles"></style>
+    <style>
+      paper-textarea {
+        --paper-input-container-shared-input-style_-_font-size: 2em;
+        --paper-font-subhead_-_font-size: 1em;
+        --paper-font-subhead_-_line-height: 1em;
+      }
+
+    </style>
 
     <div class="container">
     <label>[[label]]</label>
-      <paper-input 
+      <paper-textarea 
         id="input" 
         label="Enter your response to above question here" 
         type="[[type]]" 
@@ -32,7 +40,7 @@ export class TangyInput extends PolymerElement {
         <template is="dom-if" if="required">
           <div slot="suffix"></div>
         </template>
-      </paper-input>
+      </paper-textarea>
     </div>
   `
   }
@@ -100,7 +108,7 @@ export class TangyInput extends PolymerElement {
 
       connectedCallback() {
         super.connectedCallback()
-        this.$.input.addEventListener('change', (event) => {
+        this.$.input.addEventListener('value-changed', (event) => {
           this.value = this.$.input.value
           // @TODO tangy-form-item's listener for change events is not capturing this.
           let incomplete = (event.target.value === '') ? true : false

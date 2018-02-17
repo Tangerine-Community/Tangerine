@@ -69,7 +69,6 @@ class TangyFormApp extends Element {
       </div>
 
       <div id="form-view" hidden="">
-        <paper-icon-button mini id="new-response-button" on-click="onClickNewResponseButton" icon="icons:add"></paper-icon-button>
         <div id="form-container"></div>
       </div>
 
