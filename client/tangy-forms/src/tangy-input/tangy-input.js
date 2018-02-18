@@ -20,6 +20,7 @@ export class TangyInput extends PolymerElement {
     this.useThis = (this.getAttribute('type') === 'email' || 
                this.getAttribute('type') === 'number' || 
                this.getAttribute('type') === 'date' || 
+               this.getAttribute('type') === 'time' || 
                this.getAttribute('allowed-pattern'))
                ? 'paper-input' : 'paper-textarea' 
     this.dontUseThis = (this.useThis === 'paper-input') ? 'paper-textarea' : 'paper-input' 
