@@ -29,7 +29,19 @@
       <img id="logo" src="logo.svg">
       <paper-progress id="progress" indeterminate class="slow red"></paper-progress>
       <span>[[message]]</span>
-      <template is="dom-if" if="{{showFailMessage}}">
+      <template is="dom-if" if="{{showInstallationFailedMessage}}">
+        <p>
+          Installation failed. Your network may be down.   
+          <a href="#reload" on-click="reload">To try again, click here to reload.</a>
+        </p>
+      </template>
+      <template is="dom-if" if="{{showNoConnectionMessage}}">
+        <p>
+          There is no network connection. 
+          <a href="[[originalReleaseUuid]]/shell/index.html">Click here to proceed.</a>
+        </p>
+      </template>
+      <template is="dom-if" if="{{showUpdateFailedMessage}}">
         <p>
           Update did not complete, keeping the app you have. 
           Your network may be down, please try again later. 
@@ -71,7 +83,8 @@
         this.originalReleaseUuid = ''
         this.firstInstall = false
         this.showLinkToProceed = false
-        this.showFailMessage = false
+        this.showUpdateFailedMessage = false
+        this.showNoConnectionMessage = false
         this.proceedToReleaseUuid = '' 
       }
 
@@ -116,7 +129,7 @@
             }
           })
           .catch(error => {
-            this.redirect()
+            this.noConnection()
           })
       }
 
@@ -207,9 +220,27 @@
           });
       }
 
-      fail() {
+      reload() {
+        window.location.reload()
+      }
+
+      noConnection() {
+        this.message = ''
+        this.$.progress.removeAttribute('indeterminate')
         this.originalReleaseUuid = localStorage.getItem('release-uuid')
-        this.showFailMessage = true
+        this.showNoConnectionMessage = true
+
+      }
+
+      fail() {
+        this.message = ''
+        this.$.progress.removeAttribute('indeterminate')
+        this.originalReleaseUuid = localStorage.getItem('release-uuid')
+        if (!this.originalReleaseUuid) {
+          this.showInstallationFailedMessage = true
+        } else {
+          this.showUpdateFailedMessage = true
+        }
       }
 
     }
