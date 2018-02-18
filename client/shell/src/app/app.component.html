@@ -30,6 +30,10 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
       <span>Update App</span>
     </button>
+    <button mat-menu-item (click)="updateApp()" *ngIf="!showUpdateAppLink">
+      <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
+      <span>Check for Update</span>
+    </button>
     <button mat-menu-item (click)="logout()">
       <mat-icon class="material-icons menu-tangy-location-list-icon">exit_to_app</mat-icon>
       <span>Log Out</span>

@@ -56,12 +56,9 @@ export class AppComponent implements OnInit {
     this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
   }
   updateApp() {
-    const updateApp = confirm('Do you want to update the application?');
-    if (updateApp) {
-      const currentPath = window.location.pathname;
-      const storedReleaseUuid = localStorage.getItem('release-uuid');
-      window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
-    }
+    const currentPath = window.location.pathname;
+    const storedReleaseUuid = localStorage.getItem('release-uuid');
+    window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
   }
 
   getGeolocationPosition() {

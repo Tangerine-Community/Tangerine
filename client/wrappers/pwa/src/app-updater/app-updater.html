@@ -29,6 +29,13 @@
       <img id="logo" src="logo.svg">
       <paper-progress id="progress" indeterminate class="slow red"></paper-progress>
       <span>[[message]]</span>
+      <template is="dom-if" if="{{showFailMessage}}">
+        <p>
+          Update did not complete, keeping the app you have. 
+          Your network may be down, please try again later. 
+          <a href="[[originalReleaseUuid]]/shell/index.html">Click here to proceed.</a>
+        </p>
+      </template>
       <template is="dom-if" if="{{showLinkToProceed}}">
         <p>
           <a href="[[proceedToReleaseUuid]]/shell/index.html">Click here to proceed.</a>
@@ -61,9 +68,10 @@
       constructor() {
         super()
         this.installReleaseUuid = ''
-        this.installReleaseUuid = ''
+        this.originalReleaseUuid = ''
         this.firstInstall = false
         this.showLinkToProceed = false
+        this.showFailMessage = false
         this.proceedToReleaseUuid = '' 
       }
 
@@ -85,6 +93,7 @@
         fetch('release-uuid.txt')
           .then((response) => response.text())
           .then((response) => {
+            // @TODO Too many properties on this for release UUIDs. Clean up.
             this.foundReleaseUuid = (response).replace(/\n|\r/g, "")
             this.storedReleaseUuid = localStorage.getItem('release-uuid')
             if (!this.storedReleaseUuid) {
@@ -187,15 +196,20 @@
                     break;
                   case 'redundant':
                     console.error('The installing service worker became redundant.');
-                    that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later. <a href="shell/index.html">Click here to proceed.</a>'
+                    that.fail()
                     break;
                 }
               };
             };
           }).catch(function (err) {
             console.log('ServiceWorker registration failed: ', err);
-            that.message = 'Update did not complete, keeping the app you have. Your network may be down, please try again later. <a href="shell/index.html">Click here to proceed.</a>'
+            that.fail()
           });
+      }
+
+      fail() {
+        this.originalReleaseUuid = localStorage.getItem('release-uuid')
+        this.showFailMessage = true
       }
 
     }
