@@ -37,6 +37,7 @@ class TangyEditorApp extends Element {
       :host {
         display: block;
         color: var(--primary-text-color);
+        font-size: medium;
       }
       .form-link {
         padding: 15px;
@@ -248,7 +249,7 @@ class TangyEditorApp extends Element {
               <paper-input id="formTitle" value="{{formTitle}}" label="form title"  always-float-label></paper-input>
               <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
               <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
-              <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>
+              <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching or your changes will be deleted.
               <p>&nbsp;</p>
             </form>
           </div>
@@ -637,10 +638,9 @@ class TangyEditorApp extends Element {
     content.setAttribute('style', 'display:block;width: 600px;margin-left: auto; margin-right: auto;')
     let tangyEditorApp = document.querySelector("tangy-editor-app")
     tangyEditorApp.setAttribute('style', 'min-height:0vh')
-
+    let html
     // Check if this is a new item
     if (isNewForm !== true) {
-      let html
       if (isNewItem === true) {
         this.headerTitle = "New Item"
         html = '<p>&nbsp;</p>'
@@ -662,13 +662,14 @@ class TangyEditorApp extends Element {
     } else {
       this.headerTitle = "Create Form"
       this.itemHtmlText = '<p>&nbsp;</p>\n'
+      html = this.itemHtmlText
       // this.itemOrder = null
       this.itemOrderDisabled = true;
     }
     // Set the text in the editors
     // Also provide this code to the textarea so you can edit raw code.
-    Tangy.ace.setValue(this.itemHtmlText);
-    inlineEditor.innerHTML = this.itemHtmlText
+    Tangy.ace.setValue(html);
+    inlineEditor.innerHTML = html
 
     let contentEditable = inlineEditor.getAttribute( 'contenteditable')
     if (contentEditable === 'false') {
