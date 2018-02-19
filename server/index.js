@@ -14,7 +14,6 @@ const fsc = require('fs');
 const config = read.sync('./config.yml');
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
-const nano = require('nano');
 const PouchDB = require('pouchdb');
 const DB = PouchDB.defaults({
   prefix: '/tangerine/db/'
