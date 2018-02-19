@@ -41,6 +41,9 @@ CKEDITOR.editorConfig = function( config ) {
 
   config.allowedContent = true;
 
+  // Show toolbar on startup (optional).
+  config.startupFocus = true;
+
   config.extraPlugins = 'tangy-checkbox,tangy-checkboxes,tangy-radio-buttons,tangy-input,tangy-location,tangy-gps,tangy-timed,tangy-acasi'
   // config.extraPlugins = 'tangy-radio-buttons,tangy-checkboxes,tangy-input,tangy-location,tangy-timed,tangy-gps'
 

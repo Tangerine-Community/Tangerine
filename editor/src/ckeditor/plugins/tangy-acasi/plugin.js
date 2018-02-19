@@ -17,10 +17,6 @@ CKEDITOR.plugins.add( 'tangy-acasi', {
 				this.setData('transitionSrc', this.element.$.transitionSrc)
 				this.setData('name', this.element.$.name)
 				this.setData('images', this.element.$.images)
-				let optionEls = this.element.$.querySelectorAll('option')
-				let optionsString = ''
-				optionEls.forEach(optionEl => optionsString += `${optionEl.innerText} `)
-				this.setData('images', optionsString)
 			},
 			data: function() {
 				this.element.$.setAttribute('introSrc', this.data.introSrc)
