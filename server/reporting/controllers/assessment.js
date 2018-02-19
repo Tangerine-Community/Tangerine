@@ -107,7 +107,7 @@ exports.generateHeader = (req, res) => {
       console.log(saveResponse);
       res.json(colHeaders);
     })
-    .catch((err) => res.send(Error(err)));
+    .catch((err) => res.send(err));
 }
 
 /*****************************
