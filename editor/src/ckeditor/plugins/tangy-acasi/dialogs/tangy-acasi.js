@@ -51,7 +51,7 @@ CKEDITOR.dialog.add( 'tangy-acasi', function( editor ) {
 						id: 'introSrc',
 						type: 'text',
 						label: 'Audio file to play when page is loaded',
-            'default':'../assets/sounds/1.mp3',
+            'default':'../content/assets/sounds/1.mp3',
 						width: '100%',
 						setup: function( widget ) {
 							this.setValue( widget.data.introSrc );
@@ -70,6 +70,18 @@ CKEDITOR.dialog.add( 'tangy-acasi', function( editor ) {
 						},
 						commit: function( widget ) {
 							widget.setData( 'transitionSrc', this.getValue() );
+						}
+					},
+					{
+						id: 'touchSrc',
+						type: 'textarea',
+						label: 'Sound when image is touched',
+						width: '100%',
+						setup: function( widget ) {
+							this.setValue( widget.data.touchSrc );
+						},
+						commit: function( widget ) {
+							widget.setData( 'touchSrc', this.getValue() );
 						}
 					}
 				]

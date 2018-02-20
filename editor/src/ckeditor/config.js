@@ -18,13 +18,13 @@ CKEDITOR.editorConfig = function( config ) {
 
   config.toolbar = [
     { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-    { name: 'table', items: [ 'Table' ] },
     { name: 'tangerine', items: [ 'Tangy-checkbox', 'Tangy-checkboxes', 'Tangy-radio-buttons', 'Tangy-input', 'Tangy-location', 'Tangy-gps', 'Tangy-timed','Tangy-acasi'] },
     { name: 'tools', items: [ 'Maximize' ] },
     { name: 'document', items: [ 'Source' ] },
     '/',
     { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
-    { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote' ] },
+    { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-'] },
+    { name: 'fancy', items: [ 'Table' ] },
     { name: 'styles', items: [ 'Styles', 'Format' ] },
     { name: 'about', items: [ 'About' ] }
   ];
