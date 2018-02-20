@@ -69,6 +69,13 @@ export class TangyAcasi extends PolymerElement {
         type: String,
         value: '../content/assets/sounds/swish.mp3'
       },
+      touchSrc: {
+        type: String,
+        value: '../content/assets/sounds/pop.mp3'
+      },
+      touchSources: {
+        type: Array
+      },
       images: {
         type: String,
         value: '../content/assets/images/never.png,../content/assets/images/once.png,../content/assets/images/few.png,../content/assets/images/many.png'
@@ -132,45 +139,61 @@ export class TangyAcasi extends PolymerElement {
     paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
 
     // Populate paper-radio-button elements by using image data
-    // The radio-button value is taken from the img src value.
-    let images = this.querySelectorAll('img')
-    for (let image of images) {
+    // The radio-button value is taken from the imageArray src value.
+    // Also create the image.
+    let images = this.getAttribute('images')
+    let imageArray = images.split(",")
+    for (let src of imageArray) {
       let button = document.createElement('paper-radio-button')
-      if (image.alt !== '') {
-        button.name = image.alt
-      } else {
-        let src = image.src
-        let srcArray = src.split('/')
-        let filename = srcArray[srcArray.length-1]
-        let name = filename.replace('.png', '')
-        button.name = name
-      }
+      let srcArray = src.split('/')
+      let filename = srcArray[srcArray.length-1]
+      let name = filename.replace('.png', '')
+      button.name = name
       if (this.disabled) button.setAttribute('disabled', true)
-      button.innerHTML = image.outerHTML
+      let imageEl = document.createElement('img')
+      imageEl.src = src
+      imageEl.className = "acasi-image";
+      button.innerHTML = imageEl.outerHTML
       paperRadioGroupEl.appendChild(button)
     }
     paperRadioGroupEl.selected = this.value
     if (this.required) paperRadioGroupEl.required = true
     this.isReady = true
+
+    // Find all our img elements and populate the dataTouchSrc for each image.
+    this.imgElements = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('img'));
+    for (let i = 0, len = this.imgElements.length; i < len; i++) {
+      let ele = this.imgElements[i];
+      if (typeof this.touchSources !== 'undefined' && this.touchSources.length > 1) {
+        let touchSrc = this.touchSources[i]
+        ele.dataTouchSrc = touchSrc
+      } else {
+        ele.dataTouchSrc = this.touchSrc
+      }
+    }
   }
 
   ready() {
     super.ready();
-    const display_sound_url = '../content/assets/sounds/pop.mp3'
     const transition_sound_url = '../content/assets/sounds/swish.mp3'
 
-    if (this.introSrc) {
-      this.transitionSound = new Audio(this.introSrc);
+    if (this.getAttribute('introSrc')) {
+      this.transitionSound = new Audio(this.getAttribute('introSrc'));
     } else {
       this.transitionSound = new Audio(transition_sound_url);
     }
     this.transitionSound.play();
 
+    if (this.getAttribute('touchsrc')) {
+      this.touchSources = this.getAttribute('touchsrc').split(",")
+      // preload the sound only if we have one sound
+      if (this.touchSources.length == 1) {
+        this.touchSound = new Audio(this.touchSrc);
+        this.touchSound.load();
+      }
+    }
 
-    this.displaySound = new Audio(display_sound_url);
-    this.displaySound.load();
-
-    // @TODO: Need to listen to slot for ready.
+      // @TODO: Need to listen to slot for ready.
     setTimeout(() => this._prepareForm(), 200)
   }
 
@@ -181,34 +204,41 @@ export class TangyAcasi extends PolymerElement {
       radio.$.radioContainer.style= 'display:none'
     })
 
-    // Find all our img elements.
-    this.imgElements = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('img'));
-    let soundifyImages = (event) => {
-      this.imgElements.forEach(element => {
-        var ele = element;
-      var cls = 'eftouch-selected';
-      var hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
-      if (hasClass) {
-        var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
-        ele.className=ele.className.replace(reg,' ');
+    let activateImages = (event) => {
+      // Find all our img elements, remove highlight from imgs already touched, and highlight this one
+      this.imgElements = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('img'));
+      for (let i = 0, len = this.imgElements.length; i < len; i++) {
+        let ele = this.imgElements[i];
+        let cls = 'eftouch-selected';
+        let hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
+        if (hasClass) {
+          let reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+          ele.className=ele.className.replace(reg,' ');
+        }
       }
-    });
+
       const element = event.srcElement;
 //            element.setAttribute('style', 'border: 10px solid #af0; border-radius: 10px;'); ;
-      var ele = element;
-      var cls = 'eftouch-selected';
-      var hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
+      let ele = element;
+      let cls = 'eftouch-selected';
+      let hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
       if (!hasClass) ele.className += " "+cls;
 
       const inputEl = this.querySelector('#foo');
       if (inputEl !== null) {
         inputEl.value = event.srcElement.id;
       }
-      this.displaySound.play();
-//            this.statusmessage = 'You may now proceed.';
+      if (this.touchSources.length > 1) {
+        let eleTouchSound = new Audio(ele.dataTouchSrc);
+        eleTouchSound.load();
+        eleTouchSound.play();
+      } else {
+        // already preloaded
+        this.touchSound.play();
+      }
     }
     this.imgElements.forEach(element => {
-      element.addEventListener('click', soundifyImages);
+      element.addEventListener('click', activateImages);
   });
 
   }
