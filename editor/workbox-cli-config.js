@@ -13,11 +13,11 @@ module.exports = {
   "runtimeCaching":  [
     {
       "urlPattern": new RegExp('/editor/'),
-      "handler": "cacheOnly"
+      "handler": "staleWhileRevalidate"
     },
     {
       "urlPattern": new RegExp('/ckeditor/'),
-      "handler": "cacheOnly"
+      "handler": "staleWhileRevalidate"
     }
   ]
 };
