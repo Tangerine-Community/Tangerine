@@ -24,6 +24,37 @@ const Settings = require('./Settings');
 const User = require('./User');
 const Group = require('./Group');
 
+const PouchDB = require('pouchdb');
+
+/**
+* Reporting Controllers.
+*/
+
+const assessmentController = require('./reporting/controllers/assessment');
+const resultController = require('./reporting/controllers/result');
+const workflowController = require('./reporting/controllers/workflow');
+const csvController = require('./reporting/controllers/generate_csv');
+const changesController = require('./reporting/controllers/changes');
+const tripController = require('./reporting/controllers/trip');
+
+/**
+* Hook data processing function to changes feed.
+*/
+
+// const dbConfig = require('./reporting/config');
+
+// const GROUP_DB = new PouchDB(dbConfig.base_db);
+const GROUP_DB = "http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/db/tayari_backup";
+// const RESULT_DB = new PouchDB(dbConfig.result_db);
+const RESULT_DB = "http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/db/tmp-result";
+const dbQuery = require('./reporting/utils/dbQuery');
+const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
+
+GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
+  .on('change', (body) => processChangedDocument(body))
+  .on('error', (err) => console.error(err));
+
+
 const app = express();
 
 // Enforce SSL behind Load Balancers.
@@ -98,6 +129,23 @@ app.delete('/group/:group/:user', require('./routes/group/leave-group'));
 // retrieve stored photo
 app.get('/media/resultphoto/:group/:result/:subtest', require('./routes/media/get-result-photo'))
 
+/**
+ * Reporting App routes
+ */
+
+app.post('/assessment', assessmentController.all);
+app.post('/assessment/headers/:id', assessmentController.generateHeader);
+
+app.post('/result', resultController.all);
+app.post('/assessment/result/:id', resultController.processResult);
+
+app.post('/workflow', workflowController.all);
+app.post('/workflow/headers/:id', workflowController.generateHeader);
+app.post('/workflow/result/:id', tripController.processResult);
+
+app.post('/generate_csv/:id', csvController.generate);
+app.post('/tangerine_changes', changesController.changes);
+app.post('/get_processed_results/:id', dbQuery.processedResultsById);
 
 // landing
 app.get('/', function(req, res){
