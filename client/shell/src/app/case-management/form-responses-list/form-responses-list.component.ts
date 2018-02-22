@@ -24,7 +24,10 @@ export class FormResponsesListComponent {
   dataSource;
   displayedColumns = ['formTitle', 'startDatetime', 'class', 'subject', 'stream', 'action'];
 
-  constructor(private userService: UserService, private caseManagementService: CaseManagementService) {
+  constructor(
+    private userService: UserService,
+    private caseManagementService: CaseManagementService
+  ) {
     this.initialize();
   }
 

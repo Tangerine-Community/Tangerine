@@ -33,11 +33,14 @@ export class CaseManagementService {
     const res = await this.http.get('../content/location-list.json').toPromise();
     const locationList = res.json();
     const userProfile = await this.userService.getUserProfile();
-
+    let parentPath = '';
     // Calculate our locations by generating the path in the locationList object.
     let myLocations = locationList.locations;
     const location = userProfile.inputs.find(input => input.name === 'location');
-    location.value.forEach(levelObject => myLocations = myLocations[levelObject.value].children);
+    location.value.forEach(levelObject => {
+      myLocations = myLocations[levelObject.value].children;
+      parentPath += `${levelObject.level}=${levelObject.value}&`;
+    });
 
     const locations = [];
     const visits = await this.getVisitsThisMonthByLocation();
@@ -51,7 +54,9 @@ export class CaseManagementService {
       if (myLocations.hasOwnProperty(locationId)) {
         locations.push({
           location: myLocations[locationId].label,
-          visits: countUnique(visits, myLocations[locationId]['id'].toString())
+          visits: countUnique(visits, myLocations[locationId]['id'].toString()),
+          id: myLocations[locationId]['id'],
+          parentPath: parentPath.slice(0, -1)// Remove the trailing `&` from the string
         });
       }
     }
