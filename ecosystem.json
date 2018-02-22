@@ -1,13 +1,13 @@
 {
   "apps" : [
-    {
-      "name"       : "server",
-      "script"     : "server/index.js",
-      "cwd"        : "./server/",
-      "error_file" : "../logs/server-error.log",
-      "out_file"   : "../logs/server.log",
-      "pid_file"   : "../pids/server.pid"
-    },
+//    {
+//      "name"       : "server",
+//      "script"     : "server/index.js",
+//      "cwd"        : "./server/",
+//      "error_file" : "../logs/server-error.log",
+//      "out_file"   : "../logs/server.log",
+//      "pid_file"   : "../pids/server.pid"
+//    },
     {
       "name"      : "tree",
       "script"    : "tree/index.js",

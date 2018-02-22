@@ -9,7 +9,7 @@ echo ""
 echo ""
 echo "Setting up database user"
 echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini
-sudo chown -R couchdb /var/run/couchdb
+chown -R couchdb /var/run/couchdb
 couchdb -k
 couchdb &
 echo ""
