@@ -6,7 +6,7 @@ import '../tangy-form/tangy-element-styles.js';
 import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-radio-buttons`
- * 
+ *
  *
  * @customElement
  * @polymer
@@ -90,6 +90,16 @@ class TangyRadioButtons extends Element {
     paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
     // Populate options as paper-radio-button elements
     let options = this.querySelectorAll('option')
+    this.renderOptions() 
+    paperRadioGroupEl.selected = this.value
+    if (this.required) paperRadioGroupEl.required = true
+    this.isReady = true
+  }
+  renderOptions() {
+    let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
+    paperRadioGroupEl.innerHTML = ''
+    // Populate options as paper-radio-button elements
+    let options = this.querySelectorAll('option')
     for (let option of options) {
       let button = document.createElement('paper-radio-button')
       button.name = option.value
@@ -97,9 +107,6 @@ class TangyRadioButtons extends Element {
       button.innerHTML = option.innerHTML
       paperRadioGroupEl.appendChild(button)
     }
-    paperRadioGroupEl.selected = this.value
-    if (this.required) paperRadioGroupEl.required = true
-    this.isReady = true
   }
 
   onPaperRadioGroupChange(event) {
@@ -113,9 +120,9 @@ class TangyRadioButtons extends Element {
       detail: {
         inputName: this.name,
         inputValue: event.target.name,
-        inputInvalid: false, 
-        inputIncomplete: false 
-      }, 
+        inputInvalid: false,
+        inputIncomplete: false
+      },
       bubbles: true
     }))
   }

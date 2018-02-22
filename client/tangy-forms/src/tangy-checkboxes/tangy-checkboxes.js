@@ -5,7 +5,7 @@ import '../tangy-form/tangy-common-styles.js'
 
 /**
  * `tangy-checkboxes`
- * 
+ *
  *
  * @customElement
  * @polymer
@@ -97,6 +97,10 @@ class TangyCheckboxes extends Element {
     super.connectedCallback()
 
     this.$.checkboxes.addEventListener('change', this.onCheckboxChange.bind(this), false)
+    this.renderOptions()
+  }
+  renderOptions() {
+    this.$.checkboxes.innerHTML = ''
     // Populate options as paper-radio-button elements
     let options = this.querySelectorAll('option')
     for (let option of options) {
@@ -131,17 +135,18 @@ class TangyCheckboxes extends Element {
       detail: {
         inputName: this.name,
         inputValue: value,
-        inputInvalid: false, 
-        inputIncomplete: isIncomplete 
-      }, 
+        inputInvalid: false,
+        inputIncomplete: isIncomplete
+      },
       bubbles: true
     }))
   }
 
   onDisabledChange(value) {
     let paperCheckboxes = this.shadowRoot.querySelectorAll('paper-checkbox')
-    if (value == true) paperCheckboxes.forEach((button) => button.setAttribute('disabled', true)) 
+    if (value == true) paperCheckboxes.forEach((button) => button.setAttribute('disabled', true))
     if (value == false) paperCheckboxes.forEach((button) => button.removeAttribute('disabled'))
   }
+
 }
 window.customElements.define(TangyCheckboxes.is, TangyCheckboxes );

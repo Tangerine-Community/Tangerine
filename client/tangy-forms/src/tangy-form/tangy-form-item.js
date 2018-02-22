@@ -63,7 +63,7 @@ paper-card {
   -ms-transition: .4s;
   -o-transition: .4s;
   display: block;
-  max-width: 720px;
+  max-width: 920px;
 }
 :host([disabled]) paper-card {
   --paper-card-background-color: gray !important;
@@ -99,6 +99,9 @@ label.heading {
   display: block;
   color: var(--primary-color);
   font-weight: 700;
+}
+paper-button {
+  font-size: .5em;
 }
 </style>
 

@@ -15,12 +15,14 @@ $_documentContainer.innerHTML = `<custom-style>
   <style is="custom-style">
     html {
       --document-background-color: #FAFAFA;
+      --primary-color-dark: #212a3f;
       --primary-text-color: var(--light-theme-text-color);
       --primary-color: var(--paper-blue-900);
       --accent-color: #f26f10;
       --accent-text-color: #FFF;
       --error-color: var(--paper-red-500);
       --disabled-color: #BBB;
+      font-size: 2em;
       /*
        * Hi. Test the application of colors variables with an override
        * by uncommenting the code below.
@@ -37,6 +39,7 @@ $_documentContainer.innerHTML = `<custom-style>
       @apply --paper-font-common-base;
       color: var(--primary-text-color);
       font-weight: 400;
+      font-size: 2em;
       margin: 25px 0px 5px 15px;
     }
   </style>
