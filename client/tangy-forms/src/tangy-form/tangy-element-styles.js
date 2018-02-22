@@ -18,7 +18,7 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
         position: relative;
         border: solid white 5px;
         padding: 10px;
-        margin: 0 5px 5px 0px;
+        margin: 10px 0 45px 0px;
       }
 
       :host(:not([hidden])) {
