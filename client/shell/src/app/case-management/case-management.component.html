@@ -23,7 +23,7 @@
           <span class="tangy-foreground-primary">Visits</span>
         </mat-list-item>
         <mat-list-item class="tangy-location-list" *ngFor="let location of notYetVisitedLocations">
-          <a class="tangy-foreground-primary" routerLink="/forms-list">
+          <a class="tangy-foreground-primary" [routerLink]="['/forms-list']" [queryParams]="{locationId:location.id,parentPath:location.parentPath}">
             <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
           </a>
           <span>{{location.location}}</span>
@@ -38,7 +38,7 @@
           <span class="tangy-foreground-primary">Visits</span>
         </mat-list-item>
         <mat-list-item class="tangy-location-list" *ngFor="let location of alreadyVistedLocations">
-          <a class="tangy-foreground-primary" routerLink="/forms-list">
+          <a class="tangy-foreground-primary" [routerLink]="['/forms-list']" [queryParams]="{locationId:location.id,parentPath:location.parentPath}">
             <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
           </a>
           <span>{{location.location}}</span>
