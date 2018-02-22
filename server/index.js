@@ -24,8 +24,7 @@ const Settings = require('./Settings');
 const User = require('./User');
 const Group = require('./Group');
 
-const PouchDB = require('pouchdb');
-
+// const PouchDB = require('pouchdb');
 /**
 * Reporting Controllers.
 */
@@ -36,7 +35,7 @@ const workflowController = require('./reporting/controllers/workflow');
 const csvController = require('./reporting/controllers/generate_csv');
 const changesController = require('./reporting/controllers/changes');
 const tripController = require('./reporting/controllers/trip');
-
+console.log("Hook data processing function to changes feed.")
 /**
 * Hook data processing function to changes feed.
 */
@@ -51,9 +50,8 @@ const dbQuery = require('./reporting/utils/dbQuery');
 const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
 
 GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
-  .on('change', (body) => processChangedDocument(body))
-  .on('error', (err) => console.error(err));
-
+  .on('change', function (body) { processChangedDocument(body)})
+  .on('error', function (err) {console.error(err)});
 
 const app = express();
 
