@@ -282,6 +282,10 @@ class TangyTimed extends Element {
           this.timeSpent++;
           if (this.timeRemaining === 0) {
             clearInterval(this.timer)
+            this.style.background = 'red'
+            setTimeout(() => this.style.background = 'white', 200)
+            setTimeout(() => this.style.background = 'red', 400)
+            setTimeout(() => this.style.background = 'white', 600)
             tangyTimedModeChange(this.name, TANGY_TIMED_MODE_LAST_ATTEMPTED)
           }
         }, 1000);
