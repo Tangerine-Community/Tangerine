@@ -183,29 +183,7 @@ export class TangyForm extends PolymerElement {
           item.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
           item.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
         })
-        // Register tangy redux hook.
-        window.tangyReduxHook_INPUT_VALUE_CHANGE = (store) => {
-          let state = store.getState()
-          let inputs = {}
-          state.inputs.forEach(input => inputs[input.name] = input)
-          let items = {}
-          state.items.forEach(item => items[item.name] = item)
-          let getValue = this.getValue.bind(this)
-          // Eval on-change on tangy-form.
-          eval(this.onChange)
-          // Eval on-change on forms.
-          let forms = [].slice.call(this.querySelectorAll('form[on-change]'))
-          forms.forEach((form) => {
-            if (form.hasAttribute('on-change')) {
-              try {
-                window.getValue = this.getValue.bind(this)
-                eval(form.getAttribute('on-change'))
-              } catch (error) {
-                console.log("Error: " + error)
-              }
-            }
-          })
-        }
+
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
@@ -225,17 +203,9 @@ export class TangyForm extends PolymerElement {
         this.hasNotYetFocused = true
 
       }
-
+      
       disconnectedCallback() {
         this.unsubscribe()
-      }
-
-      onItemBack(event) {
-        this.store.dispatch({
-          type: 'ITEM_SUBMIT',
-          item: event.target.getProps() 
-        })
-        this.focusOnPreviousItem()
       }
 
       onItemNext(event) {
@@ -253,7 +223,7 @@ export class TangyForm extends PolymerElement {
         })
         this.focusOnPreviousItem()
       }
-      
+
       // Prevent parallel reflects, leads to race conditions.
       throttledReflect(iAmQueued = false) {
         // If there is an reflect already queued, we can quit. 
@@ -318,9 +288,17 @@ export class TangyForm extends PolymerElement {
         // We have to do this because bundlers modify the names of things that are imported
         // but do not update the evaled code because it knows not of it.
         let getValue = (name) => {
-          let state = this.store.getState()
-          let input = state.inputs.find((input) => input.name == name)
-          if (input) return input.value
+          let state = window.tangyFormStore.getState()
+          let inputs = []
+          state.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          //return (inputs[name]) ? inputs[name].value : undefined
+          let inputFound = inputs.find(input => (input.name === name) ? input.value : false)
+          if (inputFound) {
+            return inputFound.value
+          } else {
+            return undefined
+          }
+
         }
         let inputHide = tangyFormActions.inputHide 
         let inputShow = tangyFormActions.inputShow
