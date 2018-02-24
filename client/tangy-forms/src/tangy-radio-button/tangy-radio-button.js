@@ -1,37 +1,38 @@
 /* jshint esversion: 6 */
 
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
-import '../../node_modules/@polymer/paper-checkbox/paper-checkbox.js'
+import '../../node_modules/@polymer/paper-radio-button/paper-radio-button.js'
 import '../tangy-form/tangy-common-styles.js'
 import '../tangy-form/tangy-element-styles.js'
 
     /**
-     * `tangy-checkbox`
+     * `tangy-radio-button`
      *
      *
      * @customElement
      * @polymer
      * @demo demo/index.html
      */
-export class TangyCheckbox extends PolymerElement {
+export class TangyRadioButton extends PolymerElement {
   static get template () {
     return `
     <style include="tangy-common-styles"></style>
     <style include="tangy-element-styles"></style>
 
-      <paper-checkbox id="checkbox">[[label]]</paper-checkbox>
+      <paper-radio-button id="radioButton">[[label]]</paper-radio-button>
     `
   }
 
   static get is () {
-    return 'tangy-checkbox'
+    return 'tangy-radio-button'
   }
 
   static get properties () {
     return {
       name: {
         type: String,
-        value: ''
+        value: '',
+        reflectToAttribute: true
       },
       label: {
         type: String,
@@ -77,11 +78,11 @@ export class TangyCheckbox extends PolymerElement {
 
   connectedCallback () {
     super.connectedCallback()
-    if (this.value) this.$.checkbox.checked = true
+    if (this.value) this.$.radioButton.checked = true
     if (this.label == '' && this.innerHTML !== '') {
       this.label = this.innerHTML
     }
-    this.$.checkbox.addEventListener('change', (e) => {
+    this.$.radioButton.addEventListener('change', (e) => {
       e.stopPropagation()
       let incomplete = (!e.target.checked)
       this.value = e.target.checked ? 'on' : ''
@@ -92,7 +93,7 @@ export class TangyCheckbox extends PolymerElement {
           inputName: this.name,
           inputValue: !!(e.target.checked),
           inputIncomplete: incomplete,
-          inputInvalid: !this.$.checkbox.validate()
+          inputInvalid: !this.$.radioButton.validate()
         }
       }))
     })
@@ -100,44 +101,31 @@ export class TangyCheckbox extends PolymerElement {
 
   onRequiredChange (value) {
     if (value === false) {
-      this.$.checkbox.removeAttribute('required')
+      this.$.radioButton.removeAttribute('required')
     } else {
-      this.$.checkbox.setAttribute('required', true)
+      this.$.radioButton.setAttribute('required', true)
     }
   }
 
   onInvalidChange (value) {
     if (value === false) {
-      this.$.checkbox.removeAttribute('invalid')
+      this.$.radioButton.removeAttribute('invalid')
     } else {
-      this.$.checkbox.setAttribute('invalid', true)
+      this.$.radioButton.setAttribute('invalid', true)
     }
   }
 
   onDisabledChange (value) {
     if (value === false) {
-      this.$.checkbox.removeAttribute('disabled')
+      this.$.radioButton.removeAttribute('disabled')
     } else {
-      this.$.checkbox.setAttribute('disabled', true)
+      this.$.radioButton.setAttribute('disabled', true)
     }
   }
 
   onValueChange (value) {
-    if (value) this.$.checkbox.setAttribute('checked', true)
-    if (!value) this.$.checkbox.removeAttribute('checked')
-  }
-
-  validate() {
-    if (this.required === true && 
-        this.value === '' && 
-        this.disabled === false && 
-        this.hidden === false) {
-      this.invalid = true
-      return false
-    } else {
-      this.invalid = false
-      return true
-    }
+    if (value) this.$.radioButton.setAttribute('checked', true)
+    if (!value) this.$.radioButton.removeAttribute('checked')
   }
 }
-window.customElements.define(TangyCheckbox.is, TangyCheckbox)
+window.customElements.define(TangyRadioButton.is, TangyRadioButton)

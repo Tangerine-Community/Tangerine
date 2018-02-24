@@ -208,10 +208,10 @@ class TangyTimed extends Element {
 
 
   reflect() {
-      this.$.grid.querySelectorAll('tangy-toggle-button').forEach(buttonEl => {
-        let matchingButtonState = this.value.find(buttonState => buttonEl.name == buttonState.name)
-        buttonEl.setProps(matchingButtonState)
-      })
+    this.shadowRoot.querySelectorAll('tangy-toggle-button').forEach(el => {
+      let matchingState = this.value.find(state => el.name == state.name)
+      el.setProps(matchingState)
+    })
   }
 
   render() {
@@ -379,18 +379,6 @@ class TangyTimed extends Element {
           return option
         }) 
         this.value = newValue
-        this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
-          inputName: this.name,
-          inputValue: newValue,
-          inputIncomplete: false,
-          inputInvalid: false
-        }}))
-        /*
-        this.shadowRoot
-          .querySelectorAll('tangy-toggle-button')
-          .forEach(buttonEl => buttonEl.highlighted = false)
-        event.target.highlighted = true
-        */
       break
     }
   }
@@ -431,6 +419,17 @@ class TangyTimed extends Element {
       option.disabled = true
       return option
     })
+  }
+
+  validate() {
+    let lastAttempted = this.value.find(state => (state.highlighted) ? state : false) 
+    if (this.required && !this.disabled && !this.hidden && lastAttempted) {
+      this.invalid = false
+      return true
+    } else {
+      this.invalid = true
+      return false
+    }
   }
 
 

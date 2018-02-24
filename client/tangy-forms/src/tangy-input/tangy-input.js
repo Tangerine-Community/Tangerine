@@ -135,7 +135,8 @@ export class TangyInput extends PolymerElement {
           this.value = this.$.input.value
           // @TODO tangy-form-item's listener for change events is not capturing this.
           let incomplete = (event.target.value === '') ? true : false
-          this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
+          this.value = event.target.value
+          this.dispatchEvent(new Event('change', {
             detail: {
               inputName: this.name,
               inputValue: event.target.value,
