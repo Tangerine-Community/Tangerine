@@ -134,12 +134,6 @@ export class TangyForm extends PolymerElement {
       <slot></slot>
       <div id="nav">
       </div>
-      <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
-      <div id="tangerine-footer">
-        <paper-icon-button id="markCompleteButton" on-click="markComplete" icon="icons:check" hidden></paper-icon-button>
-        <paper-icon-button id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:arrow-back"></paper-icon-button>
-        <paper-icon-button id="nextItemButton" on-click="focusOnNextItem" icon="icons:arrow-forward"></paper-icon-button>
-      </div>
         `
       }
 
@@ -186,6 +180,8 @@ export class TangyForm extends PolymerElement {
         // Move to reducer.
         this.querySelectorAll('tangy-form-item').forEach((item) => {
           if (this.linearMode) item.noButtons = true
+          item.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
+          item.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
         })
         // Register tangy redux hook.
         window.tangyReduxHook_INPUT_VALUE_CHANGE = (store) => {
@@ -234,6 +230,30 @@ export class TangyForm extends PolymerElement {
         this.unsubscribe()
       }
 
+      onItemBack(event) {
+        this.store.dispatch({
+          type: 'ITEM_SUBMIT',
+          item: event.target.getProps() 
+        })
+        this.focusOnPreviousItem()
+      }
+
+      onItemNext(event) {
+        this.store.dispatch({
+          type: 'ITEM_SUBMIT',
+          item: event.target.getProps() 
+        })
+        this.focusOnNextItem()
+      }
+
+      onItemBack(event) {
+        this.store.dispatch({
+          type: 'ITEM_SUBMIT',
+          item: event.target.getProps() 
+        })
+        this.focusOnPreviousItem()
+      }
+      
       // Prevent parallel reflects, leads to race conditions.
       throttledReflect(iAmQueued = false) {
         // If there is an reflect already queued, we can quit. 
@@ -265,35 +285,12 @@ export class TangyForm extends PolymerElement {
           if (index !== -1) item.setProps(state.items[index])
         })
         
-        // Set progress state.
-        this.$.progress.setAttribute('value', state.progress)
-
         // Find item to scroll to.
         if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused)) {
           this.hasNotYetFocused = false
           setTimeout(() => {
             if (items[state.focusIndex]) items[state.focusIndex].scrollIntoView({behavior: 'smooth', block: 'start'})
           }, 200)
-        }
-
-        // If there is not a next item or the current item is incomplete, hide the next item button.
-        this.$.nextItemButton.hidden = (state.nextFocusIndex === -1 ||
-                                          (state.items[state.focusIndex] && state.items[state.focusIndex].incomplete)
-                                          ) ? true : false
-        // Hide back navigation if there is no previous item. 
-        this.$.previousItemButton.hidden = (state.previousFocusIndex === -1) ? true : false
-        
-        // Enable nav buttons as they may have been disabled after clicked.
-        this.$.nextItemButton.disabled = false 
-        this.$.previousItemButton.disabled = false 
-
-        if ((state.items.findIndex(item => item.incomplete && !item.disabled)) == -1 
-              && state.nextFocusIndex == -1
-              && !state.complete) {
-            
-          this.$.markCompleteButton.hidden = false
-        } else {
-          this.$.markCompleteButton.hidden = true
         }
 
         // Dispatch ALL_ITEMS_CLOSED if all items are now closed.
@@ -335,9 +332,6 @@ export class TangyForm extends PolymerElement {
       }
 
       focusOnPreviousItem(event) {
-        // Disable navigation buttons while changing focus.
-        this.$.previousItemButton.setAttribute('disabled', true)
-        this.$.nextItemButton.setAttribute('disabled', true)
         // Dispatch action.
         let state = this.store.getState()
         let item = state.items.find(item => item.open)
@@ -345,9 +339,6 @@ export class TangyForm extends PolymerElement {
       }
 
       focusOnNextItem(event) {
-        // Disable navigation buttons while changing focus.
-        this.$.previousItemButton.setAttribute('disabled', true)
-        this.$.nextItemButton.setAttribute('disabled', true)
         // Dispatch action.
         let state = this.store.getState()
         let item = state.items.find(item => item.open)

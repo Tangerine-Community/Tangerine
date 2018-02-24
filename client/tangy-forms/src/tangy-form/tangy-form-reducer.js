@@ -137,6 +137,17 @@ const tangyFormReducer = function (state = initialState, action) {
       })
       return calculateTargets(newState)
 
+    case 'ITEM_SUBMIT':
+      newState = Object.assign({}, state, {
+        items: state.items.map((item) => {
+          if (item.id == action.item.id) {
+            return Object.assign({}, item, action.item)
+          }
+          return item
+        })
+      })
+      return calculateTargets(newState)
+
     case ITEM_DISABLE:
       newState = Object.assign({}, state, {
         items: state.items.map((item) => {
@@ -147,100 +158,6 @@ const tangyFormReducer = function (state = initialState, action) {
         })
       })
       return calculateTargets(newState)
-    
-    /*
-     * INPUT
-     */
-
-    case INPUT_ADD: 
-      // If this input does not yet
-      newState = Object.assign({}, state)
-      tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
-      if (!state.items[tmp.itemIndex].hasOwnProperty('inputs')) newState.items[tmp.itemIndex].inputs = []
-      // Save input name reference to item.
-      if (state.items[tmp.itemIndex].inputs.findIndex((input) => input.name === action.attributes.name) === -1) {
-        newState.items[tmp.itemIndex].inputs = [...newState.items[tmp.itemIndex].inputs, action.attributes.name]
-      }
-      // Save input in inputs.
-      if (state.inputs.findIndex((input) => input.name === action.attributes.name) === -1) {
-        newState.inputs = [...newState.inputs, action.attributes]
-      }
-      return newState 
-
-    case INPUT_VALUE_CHANGE:
-      newState = Object.assign({}, state, {inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {
-            value: action.inputValue, 
-            invalid: action.inputInvalid,
-            incomplete: action.inputIncomplete
-          })
-        }
-        return input 
-      })})
-      // Find out if item is complete if all required elements are not incomplete.
-      let incomplete = false
-      // Find item index.
-      let itemIndex = 0
-      newState.items.forEach((item, i) => {
-        if (item.inputs.includes(action.inputName)) itemIndex = i 
-      })
-      // Find any incomplete or invalid item in item that are not disabled and not hidden.
-      newState.inputs.forEach(input => {
-        if (newState.items[itemIndex].inputs.includes(input.name)) {
-          if (!input.disabled && !input.hidden && input.required) {
-            if (input.incomplete || input.invalid) {
-              incomplete = true 
-            }
-          }
-        }
-      })
-      newState.items[itemIndex].incomplete = incomplete 
-      return newState
-
-    case INPUT_DISABLE:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {disabled: true})
-        }
-        return input
-      })})
-      return Object.assign({}, newState, {
-        items: itemsIncompleteCheck(newState, action.inputName)
-      })
-
-    case INPUT_ENABLE:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {disabled: false})
-        }
-        return input
-      })})
-      return Object.assign({}, newState, {
-        items: itemsIncompleteCheck(newState, action.inputName)
-      })
-
-    case INPUT_SHOW:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {hidden: false})
-        }
-        return input
-      })})
-      return Object.assign({}, newState, {
-        items: itemsIncompleteCheck(newState, action.inputName)
-      })
-
-    case INPUT_HIDE:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {hidden: true})
-        }
-        return input
-      })})
-      return Object.assign({}, newState, {
-        items: itemsIncompleteCheck(newState, action.inputName)
-      })
 
     case COMPLETE_FAB_HIDE:
       return Object.assign({}, state, { 
@@ -255,53 +172,6 @@ const tangyFormReducer = function (state = initialState, action) {
           hideCompleteFab: false
         }) 
       })
-
-    case TANGY_TIMED_MODE_CHANGE:
-      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {mode: action.tangyTimedMode})
-        }
-        return input
-      })})
-
-    case TANGY_TIMED_LAST_ATTEMPTED:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {lastAttempted: action.lastAttempted, incomplete: false})
-        }
-        return input
-      })})
-      // Find out if item is complete if all required elements are not incomplete.
-      tmp.incomplete = false
-      // Find item index.
-      tmp.itemIndex = 0
-      newState.items.forEach((item, i) => {
-        if (item.inputs.includes(action.inputName)) tmp.itemIndex = i 
-      })
-      // Find any incomplete or invalid item in item that are not disabled and not hidden.
-      newState.inputs.forEach(input => {
-        if (newState.items[tmp.itemIndex].inputs.includes(input.name)) {
-          if (!input.disabled && !input.hidden && input.required) {
-            if (input.incomplete || input.invalid) {
-              tmp.incomplete = true 
-            }
-          }
-        }
-      })
-      newState.items[tmp.itemIndex].incomplete = tmp.incomplete 
-      return newState
-
-
-    case TANGY_TIMED_TIME_SPENT:
-      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {timeSpent: action.timeSpent})
-        }
-        return input
-      })})
-
-
-
 
     default: 
       return state

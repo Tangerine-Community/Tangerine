@@ -116,6 +116,8 @@ paper-button {
   <div class="card-actions">
     <paper-button id="open">open</paper-button>
     <paper-button id="close">close</paper-button>
+    <paper-button id="back" on-click="back">back</paper-button>
+    <paper-button id="submit" on-click="next">next</paper-button>
     <template is="dom-if" if="{{!incomplete}}">
       <iron-icon style="color: var(--primary-color); float: right; margin-top: 10px" icon="icons:check-circle"></iron-icon>
     </template>
@@ -156,6 +158,7 @@ paper-button {
         },
         inputs: {
           type: Array,
+          observer: 'reflect',
           value: []
         },
 
@@ -185,92 +188,66 @@ paper-button {
       };
     }
 
-    async connectedCallback() {
-
-        await PolymerElement.prototype.connectedCallback.call(this);
-
-        this.store = window.tangyFormStore
-        this.$.close.addEventListener('click', () => this.store.dispatch({
-          type: ITEM_CLOSE,
-          itemId: this.id
-        }));
-        this.$.open.addEventListener('click', () => this.store.dispatch({
-          type: ITEM_OPEN,
-          itemId: this.id
-        }));
-
-        // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
-        this.$.content.addEventListener('INPUT_VALUE_CHANGE', (event) => {
-          this.store.dispatch({
-            type: 'INPUT_VALUE_CHANGE',  
-            inputName: event.detail.inputName, 
-            inputValue: event.detail.inputValue, 
-            inputInvalid: event.detail.inputInvalid,
-            inputIncomplete: event.detail.inputIncomplete
-          })
-        })
-
-        // Subscribe to the store to reflect changes.
-        this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
- 
-    }
-
-    disconnectedCallback() {
-      this.unsubscribe()
-    }
-
-    // Prevent parallel reflects, leads to race conditions.
-    throttledReflect(iAmQueued = false) {
-      // If there is an reflect already queued, we can quit. 
-      if (this.reflectQueued && !iAmQueued) return
-      if (this.reflectRunning) {
-        this.reflectQueued = true
-        setTimeout(() => this.throttledReflect(true), 200)
-      } else {
-        this.reflectRunning = true
-        this.reflect()
-        this.reflectRunning = false
-        if (iAmQueued) this.reflectQueued = false
-      }
-    }
-
     // Apply state in the store to the DOM.
     reflect() {
-
-      let state = this.store.getState()
-      // Set initial this.previousState
-      if (!this.previousState) this.previousState = state
-
-      // Set state in input elements.
-      let inputs = [].slice.call(this.$.content.querySelectorAll('[name]'))
-      inputs.forEach((input) => {
-        let index = state.inputs.findIndex((inputState) => inputState.name == input.name) 
-        if (index !== -1) input.setProps(state.inputs[index])
+      this.inputs.forEach((inputState) => {
+        let inputEl = this.shadowRoot.querySelector(`[name=${inputState.name}]`)
+        if (inputEl) inputEl.setProps(inputState)
       })
-
-      this.fireOnChange()
-
     }
 
-    fireOnChange() {
-      // Register tangy redux hook.
-      let state = this.store.getState()
+    fireOnChange(event) {
+      let input = event.target
+      let state = window.tangyFormStore.getState()
       let inputs = {}
       state.inputs.forEach(input => inputs[input.name] = input)
       let items = {}
       state.items.forEach(item => items[item.name] = item)
+      let inputEls = this.shadowRoot.querySelectorAll('[name]')
       // Declare namespaces for helper functions for the eval context in form.on-change.
       // We have to do this because bundlers modify the names of things that are imported
       // but do not update the evaled code because it knows not of it.
       let getValue = (name) => {
-        let state = this.store.getState()
-        let input = state.inputs.find((input) => input.name == name)
-        if (input) return input.value
+        let foundIndex = undefined
+        let foundInput = this.shadowRoot.querySelector(`[name=${name}`)
+        if (foundInput) {
+          return foundInput.value
+        } else {
+          let state = window.tangyFormStore.getState()
+          let inputs = []
+          state.items.forEach(item => [...inputs, ...item.inputs])
+        }
       }
-      let inputHide = tangyFormActions.inputHide 
-      let inputShow = tangyFormActions.inputShow
-      let inputEnable = tangyFormActions.inputEnable
-      let inputDisable = tangyFormActions.inputDisable
+      let inputShow = (name) => {
+        inputEls.forEach(inputEl => {
+          if (inputEl.name === name) {
+            inputEl.hidden = false
+          }
+        })
+      } 
+
+      let inputHide = (name) => {
+        inputEls.forEach(inputEl => {
+          if (inputEl.name === name) {
+            inputEl.hidden = true
+          }
+        })
+      }
+      let inputEnable = (name) => {
+        inputEls.forEach(inputEl => {
+          if (inputEl.name === name) {
+            inputEl.disabled = false
+          }
+        })
+      } 
+
+      let inputDisable = (name) => {
+        inputEls.forEach(inputEl => {
+          if (inputEl.name === name) {
+            inputEl.disabled = true
+          }
+        })
+      } 
       // Eval on-change on forms.
       let formEl = this.shadowRoot.querySelector('form[on-change]')
       if (formEl) {
@@ -287,13 +264,12 @@ paper-button {
       if (open === true && !this.disabled && this.$.content.innerHTML === '') {
         let request = await fetch(this.src, {credentials: 'include'})
         this.$.content.innerHTML = await request.text()
-        this.$.content.querySelectorAll('[name]').forEach((input) => {
-          // @TODO Past tense?
-          this.store.dispatch({type: INPUT_ADD, itemId: this.id, attributes: input.getProps()})
-        })
-        // this.store.dispatch({type: ITEM_OPENED, itemId: this.id })
-        this.dispatchEvent(new CustomEvent('tangy-form-item-opened', {bubbles: true}))
+        this.$.content
+          .querySelectorAll('[name]')
+          .forEach(input => input.addEventListener('change', this.fireOnChange.bind(this)))
+        this.dispatchEvent(new CustomEvent('TANGY_FORM_ITEM_OPENED'))
       }
+      this.reflect()
     }
 
     onDisabledChange(newState, oldState) {
@@ -302,8 +278,27 @@ paper-button {
       }
     }
 
+    submit() {
+      let invalidInputNames = this.validate()
+      if (invalidInputNames.length !== 0) {
+        // @TODO Scroll to invalid input.
+        this.shadowRoot
+          .querySelector(`[name=${invalidInputNames[0]}]`)
+          .scrollIntoView({behavior: 'smooth', block: 'start'})
+        return false
+      } else {
+        let inputs = []
+         this
+          .shadowRoot
+          .querySelectorAll('[name]')
+          .forEach(input => inputs.push(input.getProps()))
+        this.inputs = inputs
+        return true
+      }
+    }
+
     validate() {
-      let inputs = this.querySelectorAll('[name]')
+      let inputs = this.shadowRoot.querySelectorAll('[name]')
       let invalidInputNames = []
       let validInputNames = []
       inputs.forEach((input) => {
@@ -313,15 +308,20 @@ paper-button {
           validInputNames.push(input.name)
         }
       })
-      if (invalidInputNames.length > 0) {
-        invalidInputNames.forEach(input => this.store.dispatch({ type: INPUT_INVALID, inputName: input.name }))
-        validInputNames.forEach(input => this.store.dispatch({ type: INPUT_VALID, inputName: input.name }))
-        return false
-      } else {
-        return true
+      return invalidInputNames
+    }
+
+    next() {
+      if(this.submit()) { 
+        this.dispatchEvent(new CustomEvent('ITEM_NEXT'))
       }
     }
-    
+
+    back() {
+      if(this.submit()) { 
+        this.dispatchEvent(new CustomEvent('ITEM_BACK'))
+      }
+    }
 
   }
 
