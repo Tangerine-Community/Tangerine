@@ -84,6 +84,8 @@ export class TangyCheckbox extends PolymerElement {
     this.$.checkbox.addEventListener('change', (e) => {
       e.stopPropagation()
       let incomplete = (!e.target.checked)
+      this.value = e.target.checked ? 'on' : ''
+      this.dispatchEvent(new Event('change', { bubbles: true }))
       this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
         bubbles: true,
         detail: {
