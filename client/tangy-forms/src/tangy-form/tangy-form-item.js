@@ -264,7 +264,7 @@ paper-button {
         this.$.content.innerHTML = ''
       }
       // Open it, but only if empty because we might be stuck.
-      if (open === true && !this.disabled && this.$.content.innerHTML === '') {
+      if (open === true && this.$.content.innerHTML === '') {
         let request = await fetch(this.src, {credentials: 'include'})
         this.$.content.innerHTML = await request.text()
         this.$.content
