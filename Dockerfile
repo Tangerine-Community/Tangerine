@@ -42,7 +42,7 @@ ENV T_BROCKMAN_PORT 4446
 ENV T_DECOMPRESSOR_PORT 4447
 
 #
-# Stage 1 - Install global dependecies
+# Stage 1 - Configure global dependecies
 #
 
 ADD ./tangerine.conf /tangerine-server/tangerine.conf
@@ -51,16 +51,6 @@ RUN cp /tangerine-server/tangerine.conf /etc/nginx/sites-available/tangerine.con
   && rm /etc/nginx/sites-enabled/default \
   && sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
 
-# Prepare to install Android Build Tools
-ENV GRADLE_OPTS -Dorg.gradle.jvmargs=-Xmx2048m
-ENV ANDROID_SDK_FILENAME android-sdk_r24.4.1-linux.tgz
-ENV ANDROID_SDK_URL http://dl.google.com/android/${ANDROID_SDK_FILENAME}
-# Support from Ice Cream Sandwich, 4.0.3 - 4.0.4, to Marshmallow version 6.0
-ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23
-# https://developer.android.com/studio/releases/build-tools.html
-ENV ANDROID_BUILD_TOOLS_VERSION 23.0.3
-ENV ANDROID_HOME /opt/android-sdk-linux
-ENV PATH ${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
 
 # 
 # Stage 2 Install application dependencies
@@ -103,19 +93,52 @@ RUN cd /tangerine-server/client \
 RUN cd /tangerine-server/client \
     && npm install 
 RUN cd /tangerine-server/client \
-    && bower install --allow-root  
+    && bower install --allow-root
 
-# Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
-#RUN cd /tangerine-server/client \
-#    && ./node_modules/.bin/cordova platform add android@5.X.X \
-#    && npm install cordova-plugin-whitelist \
-#    && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
-#    && npm install cordova-plugin-geolocation \
-#    && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save \
-#    && npm install cordova-plugin-camera \
-#    && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save \
-#    && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-#RUN cd /tangerine-server/client && npm run build:apk
+## Set up environment variables
+#ENV SDK_HOME /opt/android-sdk-linux
+#ENV SDK_URL https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
+#ENV GRADLE_URL https://services.gradle.org/distributions/gradle-4.5.1-all.zip
+#ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23,android-24,android-25,android-26
+#ENV ANDROID_BUILD_TOOLS_VERSION 27.0.3
+#
+#RUN echo "SDK_HOME: $SDK_HOME"
+#RUN echo "ANDROID_BUILD_TOOLS_VERSION: $ANDROID_BUILD_TOOLS_VERSION"
+#
+#WORKDIR /opt
+## Download Android SDK
+#RUN mkdir "$SDK_HOME" .android \
+# && cd "$SDK_HOME" \
+# && curl --silent -o sdk.zip $SDK_URL \
+# && unzip sdk.zip \
+# && rm sdk.zip \
+# && yes | $SDK_HOME/tools/bin/sdkmanager --licenses
+#
+#RUN echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
+#
+## Install Gradle
+#RUN wget -q $GRADLE_URL -O gradle.zip \
+# && unzip gradle.zip \
+# && mv gradle-4.5.1 gradle \
+# && rm gradle.zip \
+# && mkdir /root/.gradle
+#
+#ENV PATH="/opt/gradle/bin:${SDK_HOME}/tools:${SDK_HOME}/platform-tools:${PATH}"
+#
+## Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
+WORKDIR /tangerine-server/client
+#RUN npm install cordova-plugin-whitelist
+#RUN npm install cordova-plugin-geolocation
+#RUN npm install cordova-plugin-camera
+#RUN npm install cordova-plugin-crosswalk-webview
+
+RUN cordova platform add android@6.3.0
+RUN cordova plugin add cordova-plugin-whitelist --save
+RUN cordova plugin add cordova-plugin-geolocation --save
+RUN cordova plugin add cordova-plugin-camera --save
+RUN cordova plugin add cordova-plugin-crosswalk-webview --save
+
+RUN npm run build:apk
 
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
@@ -126,7 +149,6 @@ RUN cd /tangerine-server/cli \
 ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
     && npm install
-
 
 #
 # Stage 3 Compile 
