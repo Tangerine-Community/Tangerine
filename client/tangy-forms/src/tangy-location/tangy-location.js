@@ -663,7 +663,10 @@ class TangyLocation extends Element {
         foundIncomplete = true
       }
     })
-    if (this.required && !this.disabled && !this.hidden && !foundIncomplete) {
+    if (!this.required) {
+      this.invalid = false
+      return true
+    } else if (this.required && !this.disabled && !this.hidden && !foundIncomplete) {
       this.invalid = false
       return true
     } else {
