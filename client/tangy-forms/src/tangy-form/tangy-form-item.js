@@ -89,10 +89,6 @@ paper-card {
 :host([disabled]) #open {
   display: none;
 }
-:host([hide-buttons]) #open,
-:host([hide-buttons]) #close {
-  display: none;
-}
 label.heading {
   font-size: 21px !important;
   margin-bottom: 20px;
@@ -114,11 +110,17 @@ paper-button {
   </div>
 
   <div class="card-actions">
-    <paper-button id="open">open</paper-button>
-    <paper-button id="close">close</paper-button>
+    <template is="dom-if" if="{{!hideButtons}}">
+      <paper-button id="open" on-click="onOpenButtonPress">open</paper-button>
+      <paper-button id="close" on-click="onCloseButtonPress">close</paper-button>
+    </template>
     <template is="dom-if" if="{{open}}">
-      <paper-button id="back" on-click="back">back</paper-button>
-      <paper-button id="submit" on-click="next">next</paper-button>
+      <template is="dom-if" if="{{!hideBackButton}}">
+        <paper-button id="back" on-click="back">back</paper-button>
+      </template>
+      <template is="dom-if" if="{{!hideNextButton}}">
+        <paper-button id="submit" on-click="next">next</paper-button>
+      </template>
     </template>
     <template is="dom-if" if="{{!incomplete}}">
       <iron-icon style="color: var(--primary-color); float: right; margin-top: 10px" icon="icons:check-circle"></iron-icon>
@@ -153,7 +155,22 @@ paper-button {
           value: '',
           reflectToAttribute: true
         },
+        summary: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
         hideButtons: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        hideBackButton: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        hideNextButton: {
           type: Boolean,
           value: false,
           reflectToAttribute: true
@@ -258,6 +275,18 @@ paper-button {
       }
     }
 
+    onOpenButtonPress() {
+      this.open = true
+      this.dispatchEvent(new CustomEvent('ITEM_OPENED'))
+    }
+
+    onCloseButtonPress() {
+      if (this.submit()) {
+        this.open = false 
+        this.dispatchEvent(new CustomEvent('ITEM_CLOSED'))
+      }
+    }
+
     async onOpenChange(open) {
       // Close it.
       if (open === false) {
@@ -269,7 +298,10 @@ paper-button {
         this.$.content.innerHTML = await request.text()
         this.$.content
           .querySelectorAll('[name]')
-          .forEach(input => input.addEventListener('change', this.fireOnChange.bind(this)))
+          .forEach(input => {
+            input.addEventListener('change', this.fireOnChange.bind(this))
+            input.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
+          })
         this.dispatchEvent(new CustomEvent('TANGY_FORM_ITEM_OPENED'))
       }
       this.reflect()
@@ -278,6 +310,12 @@ paper-button {
     onDisabledChange(newState, oldState) {
       if (newState === true && oldState === false) {
         this.store.dispatch({type: ITEM_DISABLED, itemId: this.id })
+      }
+    }
+
+    onFormResponseComplete() {
+      if(this.submit()) {
+        this.dispatchEvent(new CustomEvent('FORM_RESPONSE_COMPLETE'))
       }
     }
 

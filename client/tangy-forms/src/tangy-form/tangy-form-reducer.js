@@ -26,7 +26,7 @@ const tangyFormReducer = function (state = initialState, action) {
     case FORM_OPEN:
       // tmp.response = Object.assign({}, action.response)
       newState = Object.assign({}, action.response) 
-      if (!newState.items.find(item => item.open)) newState.items[0].open = true
+      if (!newState.form.complete && !newState.items.find(item => item.open)) newState.items[0].open = true
       if (newState.form.hideClosedItems === true) newState.items.forEach(item => item.hidden = !item.open)
       if (newState.form.linearMode === true) newState.items.forEach(item => item.hideButtons = true)
       return newState
@@ -35,6 +35,7 @@ const tangyFormReducer = function (state = initialState, action) {
       return Object.assign({}, state, {
         complete: true,
         form: Object.assign({}, state.form, {
+          complete: true,
           linearMode: false,
           hideClosedItems: false
         }),
@@ -43,17 +44,54 @@ const tangyFormReducer = function (state = initialState, action) {
           // If the item has inputs, then it was opened and potentially touched so don't hide buttons
           // so that they may review what is inside.
           // Look at the inputs for the item, only show buttons if it does actually have input.
-          if (item.inputs.length === 0 || item.disabled) {
+          if (item.disabled) {
             props.hidden = true
           } else {
             props.hidden = false
             props.open = false
             props.hideButtons = false
           }
+          props.hideBackButton = true
+          props.hideNextButton = true
+          props.inputs = item.inputs.map(input => Object.assign({}, input, {disabled: true}))
+          if (item.feedback) {
+            props.open = true
+          }
           return Object.assign({}, item, props)
+         return item
         }),
         inputs: state.inputs.map(input => Object.assign({}, input, {disabled: true}))
       })
+
+    case 'SHOW_RESPONSE':
+      return Object.assign({}, state, { 
+        form: Object.assign({}, state.form, {
+          tabIndex: 1,
+          showResponse: true,
+          showSummary: false
+        }),
+        items: state.items.map((item) => {
+          if (item.summary) {
+            return Object.assign({}, item, { hidden: true })
+          } else {
+            return Object.assign({}, item, { hidden: false })
+          }
+      })})
+ 
+    case 'SHOW_SUMMARY':
+      return Object.assign({}, state, {
+        form: Object.assign({}, state.form, {
+          tabIndex: 0,
+          showResponse: false,
+          showSummary: true 
+        }),
+        items: state.items.map((item) => {
+          if (item.summary) {
+            return Object.assign({}, item, { open: true, hidden: false })
+          } else {
+            return Object.assign({}, item, { hidden: true })
+          }
+      })})     
 
     case ITEM_OPEN:
       newState = Object.assign({}, state)
@@ -137,7 +175,7 @@ const tangyFormReducer = function (state = initialState, action) {
       })
       return calculateTargets(newState)
 
-    case 'ITEM_SUBMIT':
+    case 'ITEM_SAVE':
       newState = Object.assign({}, state, {
         items: state.items.map((item) => {
           if (item.id == action.item.id) {
@@ -146,7 +184,7 @@ const tangyFormReducer = function (state = initialState, action) {
           return item
         })
       })
-      return calculateTargets(newState)
+      return newState
 
     case ITEM_DISABLE:
       newState = Object.assign({}, state, {
