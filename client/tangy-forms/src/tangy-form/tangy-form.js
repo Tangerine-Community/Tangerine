@@ -256,7 +256,6 @@ export class TangyForm extends PolymerElement {
           if (this.linearMode) item.noButtons = true
           item.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
           item.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
-          item.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
           item.addEventListener('ITEM_CLOSED', this.onItemClosed.bind(this))
           item.addEventListener('ITEM_OPENED', this.onItemOpened.bind(this))
           item.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
