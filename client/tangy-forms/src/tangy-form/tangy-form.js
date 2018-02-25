@@ -20,11 +20,14 @@ import '../tangy-checkboxes/tangy-checkboxes.js'
 import '../tangy-radio-buttons/tangy-radio-buttons.js'
 import '../tangy-location/tangy-location.js'
 import '../tangy-gps/tangy-gps.js'
+import '../tangy-complete-button/tangy-complete-button.js'
 import '../tangy-overlay/tangy-overlay.js'
 
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
 import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
+import '../../node_modules/@polymer/paper-tabs/paper-tab.js';
+import '../../node_modules/@polymer/paper-tabs/paper-tabs.js';
 
 
     /**
@@ -94,14 +97,22 @@ export class TangyForm extends PolymerElement {
         paper-progress {
           width: 100%;
         }
-        #tangerine-footer {
+        #bar {
           width:100%;
           background-color: var(--primary-color);
           color: var(--accent-color);
-          height: 70px;
+          height: 99px;
           position: fixed;
-          bottom: 0px;
-      }
+          top: 0px;
+          z-index:999;
+        }
+        #fake-top-bar {
+          background: var(--primary-color-dark);
+          padding: 8px 0px 0px 8px;
+        }
+        #bar-filler {
+          height: 45px;
+        }
       
       #markCompleteButton,
       #previousItemButton,
@@ -131,10 +142,53 @@ export class TangyForm extends PolymerElement {
         background-color: #1976d2;
       }
       </style>
+
+      <div id="nav"></div>
+      <template is="dom-if" if="{{complete}}">
+        <div id="bar-filler">filler</div>
+        <div id="bar">
+          <div id="fake-top-bar">
+            <a id="home-button" href="../shell/index.html">
+                <img src="../logo.svg" width=35>
+            </a>
+          </div>
+          <paper-tabs selected="[[tabIndex]]" scrollable>
+            <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
+            <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
+          </paper-tabs>
+          <!--template is="dom-if" if="{{showSummary}}">
+            <paper-tabs selected="0" scrollable>
+              <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
+              <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
+            </paper-tabs>
+          </template>
+          <template is="dom-if" if="{{showResponse}}">
+            <paper-tabs selected="1" scrollable>
+              <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
+              <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
+            </paper-tabs>
+          </template-->
+        </div>
+      </template>
       <slot></slot>
-      <div id="nav">
-      </div>
+
         `
+      }
+
+      onClickSummaryTab() {
+        this.store.dispatch({type: 'SHOW_SUMMARY'})
+        //this.querySelectorAll('tangy-form-item').forEach(el => el.hidden = true)
+        //this.querySelector('[summary]').hidden = false
+        //this.querySelector('[summary]').setAttribute('open', true)
+        setTimeout(() => {
+          this.querySelector('[summary]').scrollIntoView({behavior: 'smooth', block: 'start'})
+        }, 200)
+      }
+
+      onClickResponseTab() {
+        this.store.dispatch({type: 'SHOW_RESPONSE'})
+        //this.querySelectorAll('tangy-form-item').forEach(el => el.hidden = false)
+        this.querySelectorAll('tangy-form-item')[0].scrollIntoView({behavior: 'smooth', block: 'center'})
       }
 
       static get is() { return 'tangy-form'; }
@@ -151,7 +205,12 @@ export class TangyForm extends PolymerElement {
             value: '',
             reflectToAttribute: true
           },
-          // Set liniar-mode to turn on navigation and turn off item action buttons.
+          complete: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          // Set linear-mode to turn on navigation and turn off item action buttons.
           linearMode: {
             type: Boolean,
             value: false,
@@ -164,6 +223,21 @@ export class TangyForm extends PolymerElement {
             reflectToAttribute: true
           },
           hideCompleteFab: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          tabIndex: {
+            type: Number,
+            value: 0,
+            reflectToAttribute: true
+          },
+          showResponse: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          showSummary: {
             type: Boolean,
             value: false,
             reflectToAttribute: true
@@ -182,6 +256,10 @@ export class TangyForm extends PolymerElement {
           if (this.linearMode) item.noButtons = true
           item.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
           item.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
+          item.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
+          item.addEventListener('ITEM_CLOSED', this.onItemClosed.bind(this))
+          item.addEventListener('ITEM_OPENED', this.onItemOpened.bind(this))
+          item.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
         })
 
 
@@ -208,9 +286,20 @@ export class TangyForm extends PolymerElement {
         this.unsubscribe()
       }
 
+      onFormResponseComplete(event) {
+        this.store.dispatch({
+          type: 'ITEM_SAVE',
+          item: event.target.getProps() 
+        })
+        this.store.dispatch({
+          type: 'FORM_RESPONSE_COMPLETE'
+        })
+        this.store.dispatch({type: "SHOW_SUMMARY"})
+      }
+
       onItemNext(event) {
         this.store.dispatch({
-          type: 'ITEM_SUBMIT',
+          type: 'ITEM_SAVE',
           item: event.target.getProps() 
         })
         this.focusOnNextItem()
@@ -218,10 +307,24 @@ export class TangyForm extends PolymerElement {
 
       onItemBack(event) {
         this.store.dispatch({
-          type: 'ITEM_SUBMIT',
+          type: 'ITEM_SAVE',
           item: event.target.getProps() 
         })
         this.focusOnPreviousItem()
+      }
+
+      onItemOpened(event) {
+        this.store.dispatch({
+          type: 'ITEM_SAVE',
+          item: event.target.getProps() 
+        })
+      }
+
+      onItemClosed(event) {
+        this.store.dispatch({
+          type: 'ITEM_SAVE',
+          item: event.target.getProps() 
+        })
       }
 
       // Prevent parallel reflects, leads to race conditions.
@@ -248,6 +351,11 @@ export class TangyForm extends PolymerElement {
 
         this.setProps(state.form)
 
+        // Tabs
+        if (state.form.complete) {
+          //this.shadowRoot.querySelector('paper-tabs').selected = (state.form.showSummary) ? '0' : '1'
+        }
+
         // Set state in tangy-form-item elements.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
@@ -256,7 +364,7 @@ export class TangyForm extends PolymerElement {
         })
         
         // Find item to scroll to.
-        if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused)) {
+        if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused && !state.form.complete)) {
           this.hasNotYetFocused = false
           setTimeout(() => {
             if (items[state.focusIndex]) items[state.focusIndex].scrollIntoView({behavior: 'smooth', block: 'start'})
@@ -273,7 +381,7 @@ export class TangyForm extends PolymerElement {
         // Stash as previous state.
         this.previousState = Object.assign({}, state)
 
-        this.fireOnChange()
+        if (!this.complete) this.fireOnChange()
 
       }
 
@@ -321,10 +429,6 @@ export class TangyForm extends PolymerElement {
         let state = this.store.getState()
         let item = state.items.find(item => item.open)
         this.store.dispatch({ type: ITEM_NEXT, itemId: item.id })
-      }
-
-      markComplete() {
-        this.store.dispatch({type: "FORM_RESPONSE_COMPLETE"})
       }
 
       getValue(name) {
