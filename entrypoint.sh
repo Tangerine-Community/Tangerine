@@ -24,6 +24,11 @@ echo "CouchDB is ready"
 echo ""
 echo ""
 echo ""
+echo "waiting 3 seconds"
+sleep 3  # Waits 5 seconds.
+echo ""
+echo ""
+echo ""
 echo "Creating user1 at http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1"
 curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1" --data-binary '{"_id": "'"org.couchdb.user:$T_USER1"'","name": "'"$T_USER1"'","roles": ["manager"],"type": "user","password": "'"$T_USER1_PASSWORD"'"}'
 echo ""

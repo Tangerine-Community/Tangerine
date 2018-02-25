@@ -56,7 +56,7 @@ Usage
 
 robbert has a simple api that uses `POST` requests.
 
-### varaibles
+### variables
 
    action
    group

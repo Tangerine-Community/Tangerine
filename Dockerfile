@@ -1,5 +1,5 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:latest
+FROM tangerine/docker-tangerine-base-image:v2_node8
 
 #
 # ENV API for this container
@@ -45,7 +45,11 @@ ENV T_DECOMPRESSOR_PORT 4447
 # Stage 1 - Install global dependecies
 #
 
-ADD ./tangerine.conf /tangerine-server/tangerine.conf 
+ADD ./tangerine.conf /tangerine-server/tangerine.conf
+RUN cp /tangerine-server/tangerine.conf /etc/nginx/sites-available/tangerine.conf \
+  && ln -s /etc/nginx/sites-available/tangerine.conf /etc/nginx/sites-enabled/tangerine.conf \
+  && rm /etc/nginx/sites-enabled/default \
+  && sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
 
 # Prepare to install Android Build Tools
 ENV GRADLE_OPTS -Dorg.gradle.jvmargs=-Xmx2048m
@@ -140,8 +144,7 @@ RUN cd /tangerine-server/cli && npm link
 ADD ./client /tangerine-server/client
 RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
-RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
-
+RUN ln -s /tangerine-server/client/src /tangerine-server/client/www
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
@@ -152,9 +155,6 @@ RUN mkdir /tangerine-server/logs
 VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks
 VOLUME /var/lib/couchb/
-
-#RUN apt-get update && apt-get -y install \
-#    netcat-traditional
 
 EXPOSE 80
 

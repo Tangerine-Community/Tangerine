@@ -1,4 +1,0 @@
-{
-  "base_db": "http://docker.for.mac.localhost:5984/tayari_backup",
-  "result_db": "http://docker.for.mac.localhost:5984/tmp-result"
-}
