@@ -51,7 +51,6 @@ RUN cp /tangerine-server/tangerine.conf /etc/nginx/sites-available/tangerine.con
   && rm /etc/nginx/sites-enabled/default \
   && sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
 
-
 # 
 # Stage 2 Install application dependencies
 # 
@@ -95,36 +94,6 @@ RUN cd /tangerine-server/client \
 RUN cd /tangerine-server/client \
     && bower install --allow-root
 
-## Set up environment variables
-#ENV SDK_HOME /opt/android-sdk-linux
-#ENV SDK_URL https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
-#ENV GRADLE_URL https://services.gradle.org/distributions/gradle-4.5.1-all.zip
-#ENV ANDROID_API_LEVELS android-15,android-16,android-17,android-18,android-19,android-20,android-21,android-22,android-23,android-24,android-25,android-26
-#ENV ANDROID_BUILD_TOOLS_VERSION 27.0.3
-#
-#RUN echo "SDK_HOME: $SDK_HOME"
-#RUN echo "ANDROID_BUILD_TOOLS_VERSION: $ANDROID_BUILD_TOOLS_VERSION"
-#
-#WORKDIR /opt
-## Download Android SDK
-#RUN mkdir "$SDK_HOME" .android \
-# && cd "$SDK_HOME" \
-# && curl --silent -o sdk.zip $SDK_URL \
-# && unzip sdk.zip \
-# && rm sdk.zip \
-# && yes | $SDK_HOME/tools/bin/sdkmanager --licenses
-#
-#RUN echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
-#
-## Install Gradle
-#RUN wget -q $GRADLE_URL -O gradle.zip \
-# && unzip gradle.zip \
-# && mv gradle-4.5.1 gradle \
-# && rm gradle.zip \
-# && mkdir /root/.gradle
-#
-#ENV PATH="/opt/gradle/bin:${SDK_HOME}/tools:${SDK_HOME}/platform-tools:${PATH}"
-#
 ## Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 WORKDIR /tangerine-server/client
 #RUN npm install cordova-plugin-whitelist
