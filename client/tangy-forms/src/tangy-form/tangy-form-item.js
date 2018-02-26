@@ -216,10 +216,16 @@ paper-button {
     }
 
     fireOnChange(event) {
-      let input = event.target
+      this.fireHook('on-change', event)
+    }
+
+    fireHook(hook, event) {
+      if (hook === 'on-change') {
+        let input = event.target
+      }
       let state = window.tangyFormStore.getState()
       let inputs = {}
-      state.inputs.forEach(input => inputs[input.name] = input)
+      this.shadowRoot.querySelectorAll('[name]').forEach(input => inputs[input.name] = input)
       let items = {}
       state.items.forEach(item => items[item.name] = item)
       let inputEls = this.shadowRoot.querySelectorAll('[name]')
@@ -271,7 +277,7 @@ paper-button {
       // Eval on-change on forms.
       let formEl = this.shadowRoot.querySelector('form[on-change]')
       if (formEl) {
-        eval(formEl.getAttribute('on-change'))
+        eval(formEl.getAttribute(hook))
       }
     }
 
@@ -303,6 +309,10 @@ paper-button {
             input.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
           })
         this.dispatchEvent(new CustomEvent('TANGY_FORM_ITEM_OPENED'))
+      }
+      let form = this.shadowRoot.querySelector('form')
+      if (open === true && form && form.getAttribute('on-open')) {
+        this.fireHook('on-open')
       }
       this.reflect()
     }
