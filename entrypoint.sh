@@ -25,7 +25,7 @@ echo ""
 echo ""
 echo ""
 echo "waiting 3 seconds"
-sleep 3  # Waits 5 seconds.
+sleep 3  # Waits 3 seconds.
 echo ""
 echo ""
 echo ""

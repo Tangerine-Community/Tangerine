@@ -96,16 +96,14 @@ RUN cd /tangerine-server/client \
 
 ## Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 WORKDIR /tangerine-server/client
-#RUN npm install cordova-plugin-whitelist
-#RUN npm install cordova-plugin-geolocation
-#RUN npm install cordova-plugin-camera
-#RUN npm install cordova-plugin-crosswalk-webview
 
 RUN cordova platform add android@6.3.0
 RUN cordova plugin add cordova-plugin-whitelist --save
 RUN cordova plugin add cordova-plugin-geolocation --save
 RUN cordova plugin add cordova-plugin-camera --save
 RUN cordova plugin add cordova-plugin-crosswalk-webview --save
+
+RUN echo `which gradle`
 
 RUN npm run build:apk
 

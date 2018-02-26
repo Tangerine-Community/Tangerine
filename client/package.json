@@ -34,7 +34,6 @@
   "devDependencies": {
     "coffee-script": "^1.10.0",
     "commander": "^2.9.0",
-    "cordova": "7.1.0",
     "del": "^2.2.1",
     "fs-extra": "^0.30.0",
     "gulp": "^3.9.1",
