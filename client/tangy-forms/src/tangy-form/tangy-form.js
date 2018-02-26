@@ -21,6 +21,7 @@ import '../tangy-radio-buttons/tangy-radio-buttons.js'
 import '../tangy-location/tangy-location.js'
 import '../tangy-gps/tangy-gps.js'
 import '../tangy-overlay/tangy-overlay.js'
+import '../tangy-acasi/tangy-acasi.js';
 
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
@@ -213,13 +214,13 @@ export class TangyForm extends PolymerElement {
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
- 
+
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
           this.store.dispatch({
-            type: INPUT_VALUE_CHANGE,  
-            inputName: event.detail.inputName, 
-            inputValue: event.detail.inputValue, 
+            type: INPUT_VALUE_CHANGE,
+            inputName: event.detail.inputName,
+            inputValue: event.detail.inputValue,
             inputInvalid: event.detail.inputInvalid,
             inputIncomplete: event.detail.inputIncomplete
           })
@@ -236,7 +237,7 @@ export class TangyForm extends PolymerElement {
 
       // Prevent parallel reflects, leads to race conditions.
       throttledReflect(iAmQueued = false) {
-        // If there is an reflect already queued, we can quit. 
+        // If there is an reflect already queued, we can quit.
         if (this.reflectQueued && !iAmQueued) return
         if (this.reflectRunning) {
           this.reflectQueued = true
@@ -261,10 +262,10 @@ export class TangyForm extends PolymerElement {
         // Set state in tangy-form-item elements.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
-          let index = state.items.findIndex((itemState) => item.id == itemState.id) 
+          let index = state.items.findIndex((itemState) => item.id == itemState.id)
           if (index !== -1) item.setProps(state.items[index])
         })
-        
+
         // Set progress state.
         this.$.progress.setAttribute('value', state.progress)
 
@@ -280,17 +281,17 @@ export class TangyForm extends PolymerElement {
         this.$.nextItemButton.hidden = (state.nextFocusIndex === -1 ||
                                           (state.items[state.focusIndex] && state.items[state.focusIndex].incomplete)
                                           ) ? true : false
-        // Hide back navigation if there is no previous item. 
+        // Hide back navigation if there is no previous item.
         this.$.previousItemButton.hidden = (state.previousFocusIndex === -1) ? true : false
-        
-        // Enable nav buttons as they may have been disabled after clicked.
-        this.$.nextItemButton.disabled = false 
-        this.$.previousItemButton.disabled = false 
 
-        if ((state.items.findIndex(item => item.incomplete && !item.disabled)) == -1 
+        // Enable nav buttons as they may have been disabled after clicked.
+        this.$.nextItemButton.disabled = false
+        this.$.previousItemButton.disabled = false
+
+        if ((state.items.findIndex(item => item.incomplete && !item.disabled)) == -1
               && state.nextFocusIndex == -1
               && !state.complete) {
-            
+
           this.$.markCompleteButton.hidden = false
         } else {
           this.$.markCompleteButton.hidden = true
@@ -325,7 +326,7 @@ export class TangyForm extends PolymerElement {
           let input = state.inputs.find((input) => input.name == name)
           if (input) return input.value
         }
-        let inputHide = tangyFormActions.inputHide 
+        let inputHide = tangyFormActions.inputHide
         let inputShow = tangyFormActions.inputShow
         let inputEnable = tangyFormActions.inputEnable
         let inputDisable = tangyFormActions.inputDisable
@@ -366,6 +367,6 @@ export class TangyForm extends PolymerElement {
 
     }
 
-    
+
     window.customElements.define(TangyForm.is, TangyForm);
 
