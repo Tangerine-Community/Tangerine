@@ -1,16 +1,9 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM node 
+FROM tangerine/docker-tangerine-base-image:v3
 
-
-# Never ask for confirmations
-ENV DEBIAN_FRONTEND noninteractive
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-
-RUN apt update
-RUN apt install -y zip vim
+RUN apk update && apk add vim yarn python g++ make git && rm -rf /var/cache/apk/*
 
 RUN npm install -g nodemon
-RUN echo foo
 
 # T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
 ENV T_USER1 user1
