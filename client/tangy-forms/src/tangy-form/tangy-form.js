@@ -22,6 +22,7 @@ import '../tangy-location/tangy-location.js'
 import '../tangy-gps/tangy-gps.js'
 import '../tangy-complete-button/tangy-complete-button.js'
 import '../tangy-overlay/tangy-overlay.js'
+import '../tangy-acasi/tangy-acasi.js';
 
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
@@ -264,13 +265,13 @@ export class TangyForm extends PolymerElement {
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
- 
+
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
           this.store.dispatch({
-            type: INPUT_VALUE_CHANGE,  
-            inputName: event.detail.inputName, 
-            inputValue: event.detail.inputValue, 
+            type: INPUT_VALUE_CHANGE,
+            inputName: event.detail.inputName,
+            inputValue: event.detail.inputValue,
             inputInvalid: event.detail.inputInvalid,
             inputIncomplete: event.detail.inputIncomplete
           })
@@ -328,7 +329,7 @@ export class TangyForm extends PolymerElement {
 
       // Prevent parallel reflects, leads to race conditions.
       throttledReflect(iAmQueued = false) {
-        // If there is an reflect already queued, we can quit. 
+        // If there is an reflect already queued, we can quit.
         if (this.reflectQueued && !iAmQueued) return
         if (this.reflectRunning) {
           this.reflectQueued = true
@@ -358,10 +359,10 @@ export class TangyForm extends PolymerElement {
         // Set state in tangy-form-item elements.
         let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
-          let index = state.items.findIndex((itemState) => item.id == itemState.id) 
+          let index = state.items.findIndex((itemState) => item.id == itemState.id)
           if (index !== -1) item.setProps(state.items[index])
         })
-        
+
         // Find item to scroll to.
         if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused && !state.form.complete)) {
           this.hasNotYetFocused = false
@@ -407,7 +408,7 @@ export class TangyForm extends PolymerElement {
           }
 
         }
-        let inputHide = tangyFormActions.inputHide 
+        let inputHide = tangyFormActions.inputHide
         let inputShow = tangyFormActions.inputShow
         let inputEnable = tangyFormActions.inputEnable
         let inputDisable = tangyFormActions.inputDisable
@@ -438,6 +439,6 @@ export class TangyForm extends PolymerElement {
 
     }
 
-    
+
     window.customElements.define(TangyForm.is, TangyForm);
 
