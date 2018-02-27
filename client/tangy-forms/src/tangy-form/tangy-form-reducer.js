@@ -241,28 +241,6 @@ function itemsIncompleteCheck(state, inputName) {
   return items 
 }
 
-function validateItemInputs(state, itemIndex) {
-  return state.inputs.map(input => {
-    // Skip over if not in the item being closed.
-    if (state.items[itemIndex].inputs.indexOf(input.name) === -1) {
-      return Object.assign({}, input)
-    }
-    // Check to see if the item has value.
-    let hasValue = false
-    if (Array.isArray(input.value) && input.value.length > 0) hasValue = true
-    if (typeof input.value === 'string' && input.value.length > 0) hasValue = true
-    // Now check the validation.
-    if (input.required === true 
-        && !hasValue
-        && input.hidden === false
-        && input.disabled === false) {
-        return Object.assign({}, input, {invalid: true})
-    } else {
-      return Object.assign({}, input)
-    }
-  })
-}
-
 function calculateTargets(state) {
   let tmp = {}
   let newState = Object.assign({}, state)
@@ -293,4 +271,4 @@ function calculateTargets(state) {
   return newState
 }
 
-export {tangyFormReducer, itemsIncompleteCheck, validateItemInputs, calculateTargets}
+export {tangyFormReducer, itemsIncompleteCheck, calculateTargets}
