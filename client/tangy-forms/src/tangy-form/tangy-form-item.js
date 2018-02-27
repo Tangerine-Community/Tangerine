@@ -336,6 +336,7 @@ paper-button {
         this.shadowRoot
           .querySelector(`[name=${invalidInputNames[0]}]`)
           .scrollIntoView({behavior: 'smooth', block: 'start'})
+        this.inpcomplete = true
         return false
       } else {
         let inputs = []
@@ -344,6 +345,7 @@ paper-button {
           .querySelectorAll('[name]')
           .forEach(input => inputs.push(input.getProps()))
         this.inputs = inputs
+        this.incomplete = false 
         return true
       }
     }
