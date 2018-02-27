@@ -468,14 +468,21 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
     .filter(row => row.doc.collection == 'TangyFormResponse')
     .filter(row => row.doc.form.id == req.params.formId)
   let responseDocs = responseRows.map(row => row.doc) 
-  let variableDocs = responseDocs.map(doc => { 
+  let docsKeyedByVariableName = []
+  responseDocs.forEach(doc => { 
     let variables = {}
-    doc.inputs.forEach(item => { 
-      variables[item.name] = item.value 
+    doc.items.forEach(item => { 
+      item.inputs.forEach(input => { 
+        if (typeof input.value === 'object') {
+          input.value.forEach(subInput => variables[`${input.name}.${subInput.name}`] = subInput.value)
+        } else {
+          variables[input.name] = input.value
+        }
+      })
     })
-    return variables
+    docsKeyedByVariableName.push(variables)
   })
-  let flatVariableDocs = variableDocs.map(doc => flatten(doc))
+  let flatVariableDocs = docsKeyedByVariableName.map(doc => flatten(doc))
   let keys = []
   for (let doc of flatVariableDocs) {
     keys = _.uniq(keys.concat(Object.getOwnPropertyNames(doc)))
