@@ -36,7 +36,7 @@ export class CaseManagementService {
 
     // Calculate our locations by generating the path in the locationList object.
     let myLocations = locationList.locations;
-    const location = userProfile.inputs.find(input => input.name === 'location');
+    const location = userProfile.items[0].inputs.find(input => input.name === 'location');
     location.value.forEach(levelObject => myLocations = myLocations[levelObject.value].children);
 
     const locations = [];
