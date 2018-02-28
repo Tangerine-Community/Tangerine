@@ -33,7 +33,6 @@ export class CaseManagementService {
     const res = await this.http.get('../content/location-list.json').toPromise();
     const locationList = res.json();
     const userProfile = await this.userService.getUserProfile();
-    let parentPath = '';
     let isFinalLevel = false;
     // Calculate our locations by generating the path in the locationList object.
     let myLocations = locationList.locations;
@@ -60,8 +59,7 @@ export class CaseManagementService {
           location: myLocations[locationId].label,
           visits: countUnique(visits, myLocations[locationId]['id'].toString()),
           id: myLocations[locationId]['id'],
-          isFinalLevel,
-          parentPath: parentPath.slice(0, -1)// Remove the trailing `&` from the string
+          isFinalLevel
         });
       }
     }

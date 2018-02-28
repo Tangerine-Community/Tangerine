@@ -35,7 +35,6 @@ export class CaseManagementComponent implements OnInit, AfterViewInit {
       this.currentLocationId = params['currentLocationId'] ? params['currentLocationId'] : 0;
       this.getMyLocations();
       this.parentPath += this.currentLevelIndex <= -1 ? '' : `${this.locationLevels[this.currentLevelIndex]}=${this.currentLocationId}&`;
-      // this.parentPath + = this.locationLevels[this.currentLevelIndex]
       this.currentLevelIndex++
       this.locationLevels.length - 1 === this.currentLevelIndex ? this.parentPath = `'${this.parentPath.slice(0, -1)}'` : null;
     });
