@@ -1,6 +1,8 @@
 'use strict';
 
 let Conf = require('./Conf');
+var nano = require('nano')(Conf.protocol + Conf.auth + Conf.serverUrl);
+
 let User = require('./User');
 
 let HttpStatus = require('http-status-codes');
@@ -8,6 +10,7 @@ let HttpStatus = require('http-status-codes');
 let unirest = require('unirest');
 let crypto = require('crypto');
 const logger = require('./logger');
+const errorHandler = require('./utils/errorHandler');
 
 const JSON_OPTS = {
   'Content-Type' : 'application/json',
@@ -319,6 +322,78 @@ Group.prototype.name = function(value){
     return this.attributes.name = value;
   }
 };
+
+Group.prototype.getGroups = function () {
+  logger.info("getting groups.")
+
+  var getGroups = function(callback) {
+    var groupsArray = []
+    getGroupNames(function(err, groupNames) {
+      if (err) return done(err)
+      callback(null, groupsArray)
+      // var i = 0
+      // var getNextGroup = function() {
+      //   getGroup(groupNames[i], function(err, group) {
+      //     if (err) return done(err)
+      //     groupsArray.push(group)
+      //     i++
+      //     if (groupNames.length == i) {
+      //       logger.info("groupsArray:" + groupsArray)
+      //       callback(null, groupsArray)
+      //     }
+      //     else {
+      //       getNextGroup()
+      //     }
+      //   })
+      // }
+      // getNextGroup()
+    })
+  }
+
+  var getGroup = function(groupName, callback) {
+    const group = new Group({
+      name : groupName
+    });
+    group.assertExistence()
+      .then(function addAdmin() {
+        const roleKeys = undefined;
+        const splitRoles = true;
+        return group.getUsers(roleKeys, splitRoles); // function(roleKeys, split)
+      })
+      .then(function respondSuccess(response) {
+        group.users = response
+        var db = nano.db.use('group-' + groupName)
+        var options = { descending: false }
+        // if (req.params.hasOwnProperty('startdate')) options.startkey = parseInt(req.params.startdate)
+        // if (req.params.hasOwnProperty('enddate')) options.endkey = parseInt(req.params.enddate)
+        // db.view('ojai', 'resultsByUploadDate', options,  function(err, response) {
+        //   group.numberOfResults = response.rows.length
+        //   callback(null, group)
+        // })
+      })
+      .catch(errorHandler('foo'));
+  }
+
+  var getGroupNames = function(callback) {
+    nano.db.list(function(err, databases) {
+      if (err) return callback(err)
+      var groupNames = []
+      databases.forEach(function(databaseName) {
+        if (databaseName.search('group-') !== -1) {
+          groupNames.push(databaseName.replace('group-', ''))
+        }
+      })
+      logger.info("groupNames:" + groupNames)
+      callback(null, groupNames)
+    })
+  }
+
+  let groups = getGroups(function(err, groupsArray) {
+    return groupsArray
+  })
+  console.log("groups: " + groups)
+  return groups;
+}
 
 
 module.exports = Group;
