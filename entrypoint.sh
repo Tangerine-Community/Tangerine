@@ -107,12 +107,19 @@ then
 	pm2 start --no-daemon ecosystem.json &
 	echo ""
 	echo ""
+	echo "Stoppping server so we can use nodemon instead"
+	pm2 stop server
 	echo ""
-	echo "Monitoring for editor chages..."
+	echo ""
+	echo "Starting nodemon for server; watching for changes..."
+	npm run watch
+	echo ""
+	echo ""
+	echo "Monitoring for editor changes..."
 	cd /tangerine-server/editor && npm run debug &
 	echo ""
 	echo ""
 	echo ""
-	echo "Monitoring for client chages..."
+	echo "Monitoring for client changes..."
 	cd /tangerine-server/client && npm run debug
 fi
