@@ -22,9 +22,9 @@ var proxy = require('express-http-proxy');
 const Conf = require('./Conf');
 const Settings = require('./Settings');
 const User = require('./User');
-const Group = require('./Group');
 
 const PouchDB = require('pouchdb');
+const changesFeed = require('./changesFeed');
 /**
 * Reporting Controllers.
 */
@@ -54,6 +54,9 @@ const processChangedDocument = require('./reporting/controllers/changes').proces
 GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
   .on('change', (body) => processChangedDocument(body))
   .on('error', (err) => console.error(err));
+
+let feedInfo = changesFeed("test");
+console.log("feedInfo:" + feedInfo);
 
 const app = express();
 
