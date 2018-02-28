@@ -135,6 +135,8 @@ RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www
 
+RUN npm install -g nodemon
+
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
 
