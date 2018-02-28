@@ -23,7 +23,6 @@ const Conf = require('./Conf');
 const Settings = require('./Settings');
 const User = require('./User');
 
-const PouchDB = require('pouchdb');
 const changesFeed = require('./changesFeed');
 /**
 * Reporting Controllers.
@@ -39,24 +38,10 @@ console.log("Hook data processing function to changes feed.")
 /**
 * Hook data processing function to changes feed.
 */
-
-const dbConfig = require('./reporting/config');
-
-// const base_db = `http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/db/tayari_backup`;
-console.log("dbConfig.base_db: " + dbConfig.base_db)
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-// const result_db = `http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}:${Settings.T_COUCH_PORT}/db/tmp-result`;
-console.log("dbConfig.result_db: " + dbConfig.result_db)
-const RESULT_DB = new PouchDB(dbConfig.result_db);
 const dbQuery = require('./reporting/utils/dbQuery');
-const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
-
-GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
-  .on('change', (body) => processChangedDocument(body))
-  .on('error', (err) => console.error(err));
 
 let feedInfo = changesFeed("test");
-console.log("feedInfo:" + feedInfo);
+// console.log("feedInfo:" + feedInfo);
 
 const app = express();
 
