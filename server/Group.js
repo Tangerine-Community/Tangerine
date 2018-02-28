@@ -7,6 +7,7 @@ let HttpStatus = require('http-status-codes');
 
 let unirest = require('unirest');
 let crypto = require('crypto');
+const logger = require('./logger');
 
 const JSON_OPTS = {
   'Content-Type' : 'application/json',
@@ -53,9 +54,13 @@ Group.prototype.assertExistence = function() {
 
 /** Makes a new group. */
 Group.prototype.create = function create() {
+
   const uploaderPassword = crypto.randomBytes( 20 ).toString('hex');
   const self = this;
   const groupDbName = Conf.calcGroupPath( self.name() ).replace('/','');
+  const groupResultsDbName = groupDbName + '-result';
+  const groupResultsDbUrl = Conf.calcGroupUrl( self.name() + '-result' )
+
   return (new Promise(function newDatabase(resolve, reject) {
     unirest.put( Conf.calcGroupUrl( self.name() ) )
       .end( function onDbCreateResponse(response) {
@@ -136,7 +141,42 @@ Group.prototype.create = function create() {
           }
         });
     });
-  }); // return promise
+  }) // return promise
+  .then(function newResultsDatabase() {
+      return new Promise(function newResultsDatabasePromise(resolve, reject) {
+        logger.info("groupResultsDbUrl is: " + groupResultsDbUrl)
+        unirest.put(groupResultsDbUrl)
+          .end(function onDbCreateResponse(response) {
+            logger.info("response.status is: " + response.status)
+            if (response.status === HttpStatus.CREATED) {
+              return resolve();
+            } else if (response.status === HttpStatus.PRECONDITION_FAILED) {
+              return reject({
+                status: response.status,
+                message: `Group ${groupResultsDbName} already exists`
+              })
+            } else {
+              return reject(response);
+            }
+          })
+      })
+    })
+  .then(function replicate() {
+    return new Promise(function replicatePromise(resolve, reject){
+      unirest.post( Conf.replicateUrl ).headers(JSON_OPTS)
+        .json({
+          source  : 'tangerine',
+          target  : groupResultsDbName,
+          doc_ids : ['_design/ojai']
+        })
+        .end(function onReplicateResponse( response ){
+          if (response.status > 199 && response.status < 399 ) {
+            return resolve();
+          }
+          reject(response);
+        });
+    });
+  });
 }; // create
 
 // Replicates to a deleted- database.

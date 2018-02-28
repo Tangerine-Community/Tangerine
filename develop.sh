@@ -31,6 +31,7 @@ docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
   --volume $(pwd)/server/index.js:/tangerine-server/server/index.js \
+  --volume $(pwd)/server/Group.js:/tangerine-server/server/Group.js \
   --volume $(pwd)/server/package.json:/tangerine-server/server/package.json \
   --volume $(pwd)/server/reporting:/tangerine-server/server/reporting \
   --volume $(pwd)/server/routes:/tangerine-server/server/routes \
