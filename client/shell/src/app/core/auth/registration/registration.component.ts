@@ -68,7 +68,8 @@ export class RegistrationComponent implements OnInit {
 
     }
     doesUserExist(user) {
-        Observable.fromPromise(this.userService.doesUserExist(user.trim())).subscribe((data) => {
+        this.user.username = user.replace(/\s/g, ''); // Remove all whitespaces including spaces and tabs
+        Observable.fromPromise(this.userService.doesUserExist(user.replace(/\s/g, ''))).subscribe((data) => {
             this.isUsernameTaken = data;
             this.isUsernameTaken ?
                 this.statusMessage = this.userNameUnavailableMessage :

@@ -28,22 +28,26 @@ export class CaseManagementService {
     this.userDB = new PouchDB
       (authenticationService.getCurrentUserDBPath());
   }
-  async getMyLocationVisits() {
+  async getMyLocationVisits(locationId?: string) {
 
     const res = await this.http.get('../content/location-list.json').toPromise();
     const locationList = res.json();
     const userProfile = await this.userService.getUserProfile();
     let parentPath = '';
+    let isFinalLevel = false;
     // Calculate our locations by generating the path in the locationList object.
     let myLocations = locationList.locations;
-    const location = userProfile.inputs.find(input => input.name === 'location');
-    location.value.forEach(levelObject => {
-      myLocations = myLocations[levelObject.value].children;
-      parentPath += `${levelObject.level}=${levelObject.value}&`;
-    });
+    const location = findById(myLocations, locationId);
+    if (locationId && (location['children'])) {
+      myLocations = location['children'];
+    }
 
+    //Check if the first item in the loaction['children] has the propery children
+    if (locationId && typeof location['children'][Object.keys(location['children'])[0]]['children'] === 'undefined') {
+      isFinalLevel = true;
+    }
     const locations = [];
-    const visits = await this.getVisitsThisMonthByLocation();
+    const visits = await this.getVisitsThisMonthByLocation(locationId);
     /**
      *  Check for ownProperty in myLocations
      * for ...in  iterate over all enumerable properties of the object
@@ -56,6 +60,7 @@ export class CaseManagementService {
           location: myLocations[locationId].label,
           visits: countUnique(visits, myLocations[locationId]['id'].toString()),
           id: myLocations[locationId]['id'],
+          isFinalLevel,
           parentPath: parentPath.slice(0, -1)// Remove the trailing `&` from the string
         });
       }
@@ -82,7 +87,8 @@ export class CaseManagementService {
     return forms;
   }
 
-  async getVisitsThisMonthByLocation() {
+  async getVisitsThisMonthByLocation(locationId?: string) {
+    const options = { key: locationId ? locationId : '' }
     const results = await this.userDB.query('tangy-form/responsesThisMonthByLocationId');
     return results.rows;
   }
@@ -103,4 +109,21 @@ function countUnique(array, key) {
     count += item.key.toString() === key ? 1 : 0;
   });
   return count;
+}
+
+function findById(object, property) {
+  //Early return
+  if (object.id === property) {
+    return object;
+  }
+  var result, p;
+  for (p in object) {
+    if (object.hasOwnProperty(p) && typeof object[p] === 'object') {
+      result = findById(object[p], property);
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return result;
 }
