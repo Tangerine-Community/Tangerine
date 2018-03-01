@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { WindowRef } from '../../window-ref.service';
+import { NgIf } from '@angular/common';
 import { TangyFormService } from '../../../tangy-forms/tangy-form-service';
 import { updates } from './updates';
 import PouchDB from 'pouchdb';
@@ -11,6 +12,10 @@ import { TangerineFormPage } from '../../../../../e2e/app.po';
   styleUrls: ['./update.component.css']
 })
 export class UpdateComponent implements OnInit {
+
+  message = 'Checking for updates...';
+  totalUpdatesApplied = 0;
+  needsUpdating = false;
 
   constructor(
     private windowRef: WindowRef
@@ -31,12 +36,15 @@ export class UpdateComponent implements OnInit {
       let atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
       let lastUpdateIndex = updates.length-1
       if (lastUpdateIndex !== atUpdateIndex) {
+        this.needsUpdating = true;
+        this.message = "Applying updates...";
         let requiresViewsRefresh = false;
         while(lastUpdateIndex >= atUpdateIndex) {
           if (updates[atUpdateIndex].requiresViewsUpdate) {
             requiresViewsRefresh = true
           }
           await updates[atUpdateIndex].script(userDb);
+          this.totalUpdatesApplied++;
           atUpdateIndex++;
         }
         atUpdateIndex--;
@@ -47,8 +55,8 @@ export class UpdateComponent implements OnInit {
         infoDoc.atUpdateIndex = atUpdateIndex;
         await userDb.put(infoDoc);
       }
-
     }
+    this.message = '✓ Yay! You are up to date.';
   }
 
 }
