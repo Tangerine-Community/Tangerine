@@ -400,11 +400,17 @@ export class TangyForm extends PolymerElement {
           let inputs = []
           state.items.forEach(item => inputs = [...inputs, ...item.inputs])
           //return (inputs[name]) ? inputs[name].value : undefined
-          let inputFound = inputs.find(input => (input.name === name) ? input.value : false)
-          if (inputFound) {
-            return inputFound.value
+          let foundInput = inputs.find(input => (input.name === name) ? input.value : false)
+          if(foundInput && typeof foundInput.value === 'object') {
+            let values = []
+            foundInput.value.forEach(subInput => {
+              if (subInput.value) {
+                values.push(subInput.name)
+              }
+            })
+            return values
           } else {
-            return undefined
+            return foundInput.value
           }
 
         }
