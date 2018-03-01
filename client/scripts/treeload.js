@@ -150,7 +150,7 @@ del([ Path.join(Conf.PACK_PATH, 'pack*.json') ], {force: true})
     return get(SOURCE_GROUP);
   })
   .then(function getWorkflows(res) {
-    return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byCollection?keys=[\"workflow\"]"))
+    return post(urljoin(SOURCE_GROUP, "/_design/ojai/_view/byCollection?keys=[\"workflow\",\"feedback\"]"))
   })
   .then(function putWorkflowIdsInIdList(res) {
     res.body.rows.forEach(function(row) {
