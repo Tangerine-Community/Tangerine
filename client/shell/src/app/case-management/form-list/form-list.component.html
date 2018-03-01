@@ -1,33 +1,15 @@
 <mat-tab-group>
   <mat-tab label="My Forms">
     <mat-card class="tangy-card-content-container">
-      <div class="tangy-full-width">
-        <div class="mat-title tangy-half-width">
-          My Forms
-        </div>
-        <mat-form-field class="tangy-half-width">
-          <input name="formName" #search type="text" matInput>
-          <mat-placeholder>
-            Filter Form By Name
-            <span>
-              <i class="material-icons mat-14 search-icon">search</i>
-            </span>
-          </mat-placeholder>
-        </mat-form-field>
-      </div>
       <mat-list>
         <mat-list-item class="tangy-location-list">
           <span class="tangy-foreground-primary">Select Form</span>
-          <span class="tangy-spacer"></span>
-          <span class="tangy-foreground-primary">Count</span>
         </mat-list-item>
         <mat-list-item class="tangy-location-list" *ngFor="let form of formList; let formIndex=index">
           <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:formIndex}>
             <i class="material-icons md-24 tangy-location-list-icon">play_circle_filled</i>
           </a>
           <span>{{form.title}}</span>
-          <span class="tangy-spacer"></span>
-          <span>{{form.count}}</span>
         </mat-list-item>
       </mat-list>
 
@@ -35,11 +17,10 @@
     </mat-card>
 
   </mat-tab>
-  <!-- <mat-tab label="Monthly Report">Content 2</mat-tab> -->
-  <mat-tab label="Summary">
+  <mat-tab label="Schools Visited This Month">
     <br>
     <mat-card class="tangy-card-content-container">
-      <app-form-responses-list></app-form-responses-list>
+      <app-schools-visited></app-schools-visited>
     </mat-card>
   </mat-tab>
 </mat-tab-group>

@@ -7,9 +7,11 @@ import { MatCardModule, MatInputModule, MatListModule, MatTableModule, MatTabsMo
 import { SharedModule } from '../shared/shared.module';
 import { CaseManagementService } from './_services/case-management.service';
 import { CaseManagementRoutingModule } from './case-management-routing.module';
-import { CaseManagementComponent } from './case-management.component';
 import { FormListComponent } from './form-list/form-list.component';
-import { FormResponsesListComponent } from './form-responses-list/form-responses-list.component';
+import { SchoolsVisitedComponent } from './schools-visited/schools-visited.component';
+import { CaseDetailsComponent } from './case-details/case-details.component';
+import { CompletedObservationsComponent } from './completed-observations/completed-observations.component';
+import { IncompleteObservationsComponent } from './incomplete-observations/incomplete-observations.component';
 
 @NgModule({
   imports: [
@@ -24,7 +26,8 @@ import { FormResponsesListComponent } from './form-responses-list/form-responses
     MatTableModule,
     SharedModule
   ],
-  declarations: [CaseManagementComponent, FormListComponent, FormResponsesListComponent],
+  declarations: [FormListComponent, SchoolsVisitedComponent,
+    CaseDetailsComponent, CompletedObservationsComponent, IncompleteObservationsComponent],
   providers: [CaseManagementService]
 })
 export class CaseManagementModule { }
