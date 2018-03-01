@@ -85,7 +85,7 @@ Group.prototype.create = function create() {
         .json({
           source  : 'tangerine',
           target  : groupDbName,
-          doc_ids : ['_design/ojai', 'configuration', 'settings', 'templates', 'location-list']
+          doc_ids : ['_design/ojai', '_design/dashReporting', 'configuration', 'settings', 'templates', 'location-list']
         })
         .end(function onReplicateResponse( response ){
           if (response.status > 199 && response.status < 399 ) {
@@ -147,10 +147,10 @@ Group.prototype.create = function create() {
   }) // return promise
   .then(function newResultsDatabase() {
       return new Promise(function newResultsDatabasePromise(resolve, reject) {
-        logger.info("groupResultsDbUrl is: " + groupResultsDbUrl)
+        logger.info('groupResultsDbUrl is: ' + groupResultsDbUrl)
         unirest.put(groupResultsDbUrl)
           .end(function onDbCreateResponse(response) {
-            logger.info("response.status is: " + response.status)
+            logger.info('response.status is: ' + response.status)
             if (response.status === HttpStatus.CREATED) {
               return resolve();
             } else if (response.status === HttpStatus.PRECONDITION_FAILED) {
@@ -166,14 +166,16 @@ Group.prototype.create = function create() {
     })
   .then(function replicate() {
     return new Promise(function replicatePromise(resolve, reject){
-      unirest.post( Conf.replicateUrl ).headers(JSON_OPTS)
+      unirest
+        .post(Conf.replicateUrl)
+        .headers(JSON_OPTS)
         .json({
-          source  : 'tangerine',
-          target  : groupResultsDbName,
-          doc_ids : ['_design/ojai']
+          source: 'tangerine',
+          target: groupResultsDbName,
+          doc_ids: ['_design/ojai', '_design/dashReporting']
         })
-        .end(function onReplicateResponse( response ){
-          if (response.status > 199 && response.status < 399 ) {
+        .end(function onReplicateResponse(response) {
+          if (response.status > 199 && response.status < 399) {
             return resolve();
           }
           reject(response);
@@ -249,11 +251,11 @@ Group.prototype.destroy = function destroy() {
       const securityDoc = {
         admins: {
           names : [ process.env.T_ADMIN ],
-          roles : [] 
+          roles : []
         },
         members: {
-          names : [ process.env.T_ADMIN ], 
-          roles : [] 
+          names : [ process.env.T_ADMIN ],
+          roles : []
         }
       };
       return unirest.put( Conf.calcDeletedUrl(self.name()) + '/_security' ).headers(JSON_OPTS)
@@ -285,7 +287,7 @@ Group.prototype.getUsers = function(roleKeys, splitRoles) {
     roleKeys = [`admin-${self.name()}`,`member-${self.name()}`];
   }
   return new Promise(function(resolve, reject){
-    unirest.post(Conf.roleKeyUrl+"?group=true").headers(JSON_OPTS)
+    unirest.post(Conf.roleKeyUrl+'?group=true').headers(JSON_OPTS)
       .json({ keys : roleKeys })
       .end(function(response){
         if (response.status > 199 && response.status < 400) {
@@ -383,7 +385,7 @@ Group.prototype.getGroups = function () {
           groupNames.push(databaseName.replace('group-', ''))
         }
       })
-      logger.info("groupNames:" + groupNames)
+      logger.info('groupNames:' + groupNames)
       callback(null, groupNames)
     })
   }
@@ -391,7 +393,7 @@ Group.prototype.getGroups = function () {
   let groups = getGroups(function(err, groupsArray) {
     return groupsArray
   })
-  console.log("groups: " + groups)
+  console.log('groups: ' + groups)
   return groups;
 }
 

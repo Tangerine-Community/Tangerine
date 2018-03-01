@@ -24,6 +24,8 @@ const Settings = require('./Settings');
 const User = require('./User');
 
 const changesFeed = require('./changesFeed');
+const dbQuery = require('./reporting/utils/dbQuery');
+
 /**
 * Reporting Controllers.
 */
@@ -34,16 +36,11 @@ const workflowController = require('./reporting/controllers/workflow');
 const csvController = require('./reporting/controllers/generate_csv');
 const changesController = require('./reporting/controllers/changes');
 const tripController = require('./reporting/controllers/trip');
-console.log("Hook data processing function to changes feed.")
-/**
-* Hook data processing function to changes feed.
-*/
-const dbQuery = require('./reporting/utils/dbQuery');
-
-let feedInfo = changesFeed("test");
-// console.log("feedInfo:" + feedInfo);
 
 const app = express();
+
+console.log("Hook data processing function to changes feed.");
+changesFeed();
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
