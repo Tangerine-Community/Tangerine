@@ -10,10 +10,13 @@ class LocView extends Backbone.View
 
     index = parseInt($(event.target).attr('data-index'))
     @renderOne( index + 1 ) unless index + 1 is @levels.length
+    
     @trigger "change"
 
   initialize: (options={}) ->
     @showTitles = if options.showTitles? then options.showTitles else true
+    @filterByObj = if options.filterByObj? then options.filterByObj else false
+    @filterByObjData = if options.filterByObjData then options.filterByObjData else {}
     @levels = options.levels || Tangerine.locationList.attributes.locationsLevels || ["county", "zone", "school"]
     @addedOptions = if options.addedOptions? then options.addedOptions else false
     @selected = options.selected || []
@@ -50,11 +53,21 @@ class LocView extends Backbone.View
         else
           return 0
 
-      htmlOptions = res.map (el) ->
-        if @selected[@levels[index]]? and el.id is @selected[@levels[index]]
-          selected = "selected='selected'"
-        "<option value='#{el.id}' #{selected||''}>#{el.label}</option>"
-      , @
+      if @filterByObj
+        dataByLevel = @filterByObjData.indexBy(@levels[index])
+        htmlOptions = res.map (el) ->
+          if _.has dataByLevel, el.id
+            if @selected[@levels[index]]? and el.id is @selected[@levels[index]]
+              selected = "selected='selected'"
+            "<option value='#{el.id}' #{selected||''}>#{el.label} (#{dataByLevel[el.id]?.length || 0})</option>"
+        , @
+      else 
+        htmlOptions = res.map (el) ->
+          if @selected[@levels[index]]? and el.id is @selected[@levels[index]]
+            selected = "selected='selected'"
+          "<option value='#{el.id}' #{selected||''}>#{el.label}</option>"
+        , @
+
       # TODO: There is an off by one error here that when I try to fix it causes a huge number of fields to manifest. Needs work.
       title = @levels[index].titleize() if @showTitles
 
