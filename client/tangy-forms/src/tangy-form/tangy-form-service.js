@@ -72,5 +72,3 @@ export class TangyFormService {
 
 }
 
-
-export { tangyFormDesignDoc }
