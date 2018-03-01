@@ -26,11 +26,7 @@ echo ""
 docker run \
   -d \
   --name tangerine-container \
-<<<<<<< HEAD
   -p 80:80 -p 5984:5984\
-=======
-  -p 80:80 \
->>>>>>> origin/Sierra-Leone-Workflow-Feedback-Enhancements
   --env "DEBUG=1" \
   --env "NODE_ENV=development" \
   --env "T_VERSION=local" \
