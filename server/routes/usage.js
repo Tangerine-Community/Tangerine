@@ -62,8 +62,13 @@ console.log(req.params)
         if (req.params.hasOwnProperty('enddate')) options.endkey = parseInt(req.params.enddate)
         db.view('ojai', 'resultsByUploadDate', options,  function(err, response) {
           group.numberOfResults = response.rows.length
-          group.enumerator = response.rows[0].value
-          group.uploadDate = response.rows[0].key
+          if (response.rows.length == 0) {
+            group.enumerator = ""
+            group.uploadDate = ""
+          } else {
+            group.enumerator = response.rows[0].value
+            group.uploadDate = response.rows[0].key
+          }
           callback(null, group)
         })
       })
