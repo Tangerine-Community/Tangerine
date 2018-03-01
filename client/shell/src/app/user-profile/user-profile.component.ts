@@ -2,7 +2,7 @@ import { AfterContentInit, Component, ElementRef, OnInit, ViewChild } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { UserService } from '../core/auth/_services/user.service';
-import { TangyFormService } from '../tangy-forms/tangy-form-service.js'
+import { TangyFormService } from '../tangy-forms/tangy-form-service.js';
 
 @Component({
   selector: 'app-user-profile',
@@ -25,16 +25,17 @@ export class UserProfileComponent implements OnInit, AfterContentInit {
   }
 
   ngAfterContentInit() {
-    
+
   }
 
   async getForm() {
     const userDbName = await this.userService.getUserDatabase();
     // @TODO: Look for form doc in user db, add response_id to url params if there is one.
-    let tangyFormService = new TangyFormService({databaseName: userDbName});
-    let profileDocs = await tangyFormService.getResponsesByFormId('user-profile') 
+    const tangyFormService = new TangyFormService({ databaseName: userDbName });
+    const profileDocs = await tangyFormService.getResponsesByFormId('user-profile');
     if (profileDocs.length > 0) {
-      this.formUrl = `../tangy-forms/index.html#form_src=../content/user-profile/form.html&hide_top_bar=true&database_name=${userDbName}&response_id=${profileDocs[0]._id}`;
+      this.formUrl =
+        `../tangy-forms/index.html#form_src=../content/user-profile/form.html&hide_top_bar=true&database_name=${userDbName}&response_id=${profileDocs[0]._id}`;
     } else {
       this.formUrl = `../tangy-forms/index.html#form_src=../content/user-profile/form.html&hide_top_bar=true&database_name=${userDbName}`;
     }
@@ -44,7 +45,7 @@ export class UserProfileComponent implements OnInit, AfterContentInit {
     setTimeout(() => {
       this.iframe.nativeElement.addEventListener('ALL_ITEMS_CLOSED', () => {
         // navigate to homescreen
-        this.router.navigate(['/case-management']);
+        this.router.navigate(['/forms-list']);
       });
     }, 1500);
 

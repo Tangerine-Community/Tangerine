@@ -28,75 +28,51 @@ export class CaseManagementService {
     this.userDB = new PouchDB
       (authenticationService.getCurrentUserDBPath());
   }
-  async getMyLocationVisits(locationId?: string) {
+  async getMyLocationVisits() {
 
     const res = await this.http.get('../content/location-list.json').toPromise();
-    const locationList = res.json();
-    const userProfile = await this.userService.getUserProfile();
-    let isFinalLevel = false;
+    const locationListObject = res.json();
     // Calculate our locations by generating the path in the locationList object.
-    let myLocations = locationList.locations;
-    const location = findById(myLocations, locationId);
-    if (locationId && (location['children'])) {
-      myLocations = location['children'];
-    }
+    const locationList = locationListObject.locations;
+    const myLocations = [];
 
-    //Check if the first item in the loaction['children] has the propery children
-    if (locationId && typeof location['children'][Object.keys(location['children'])[0]]['children'] === 'undefined') {
-      isFinalLevel = true;
-    }
     const locations = [];
-    const visits = await this.getVisitsThisMonthByLocation(locationId);
-    /**
-     *  Check for ownProperty in myLocations
-     * for ...in  iterate over all enumerable properties of the object
-     * Also enumerates and those the object inherits from its constructor's prototype
-     * You may get unexpected properties from the prototype chain
-     */
-    for (const locationId in myLocations) {
-      if (myLocations.hasOwnProperty(locationId)) {
-        locations.push({
-          location: myLocations[locationId].label,
-          visits: countUnique(visits, myLocations[locationId]['id'].toString()),
-          id: myLocations[locationId]['id'],
-          isFinalLevel
-        });
-      }
-    }
+    const visits = await this.getVisitsThisMonthByLocation();
+
+    visits.forEach(visit => {
+      const item = findById(locationList, visit.key);
+      locations.push({
+        location: item.label,
+        visits: countUnique(visits, item['id'].toString()),
+        id: item['id']
+      });
+    });
     return locations;
   }
 
   async getFormList() {
     const forms = [];
-    const visits = await this.getResponsesByFormId();
     const formList = await this.http.get('../content/forms.json')
       .toPromise()
       .then(response => response.json()).catch(data => console.error(data));
     for (const form of formList) {
       forms.push({
         title: form['title'],
-        count: countUnique(visits, form['id']),
         src: form['src'],
         id: form['id']
       });
     }
-
-
     return forms;
   }
 
   async getVisitsThisMonthByLocation(locationId?: string) {
-    const options = { key: locationId ? locationId : '' }
-    const results = await this.userDB.query('tangy-form/responsesThisMonthByLocationId');
+    const options = { key: locationId };
+    const results = await this.userDB.query('tangy-form/responsesThisMonthByLocationId', options);
     return results.rows;
   }
 
   async getResponsesByLocationId(locationId: string) {
     const results = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
-    return results.rows;
-  }
-  async getResponsesByFormId() {
-    const results = await this.userDB.query('tangy-form/responsesByFormId');
     return results.rows;
   }
 }
@@ -110,12 +86,12 @@ function countUnique(array, key) {
 }
 
 function findById(object, property) {
-  //Early return
+  // Early return
   if (object.id === property) {
     return object;
   }
-  var result, p;
-  for (p in object) {
+  let result;
+  for (const p in object) {
     if (object.hasOwnProperty(p) && typeof object[p] === 'object') {
       result = findById(object[p], property);
       if (result) {
