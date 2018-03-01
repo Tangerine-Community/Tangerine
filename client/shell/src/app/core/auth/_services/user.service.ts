@@ -8,6 +8,7 @@ import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import { Observable } from 'rxjs/Observable';
 import { TangyFormService } from '../../../tangy-forms/tangy-form-service.js';
+import { updates } from '../../update/update/updates';
 
 @Injectable()
 export class UserService {
@@ -15,6 +16,7 @@ export class UserService {
   DB = new PouchDB('users');
   USER_DATABASE_NAME = 'currentUser';
   constructor(private uuid: Uuid) { }
+
   async create(payload) {
     const userUUID = this.uuid.v1();
     const salt = bcrypt.genSaltSync(10);
@@ -22,21 +24,24 @@ export class UserService {
     this.userData = payload;
     this.userData['userUUID'] = userUUID;
     this.userData['password'] = hash;
-
     try {
       /**TODO: check if user exists before saving */
       const postUserdata = await this.DB.post(this.userData);
+      const userDb = new PouchDB(this.userData['username']);
+
       if (postUserdata) {
         const result = await this.initUserProfile(this.userData['username'], userUUID);
         const tangyFormService = new TangyFormService({ databaseName: this.userData['username'] });
         await tangyFormService.initialize();
+        await userDb.put({
+          _id: 'info',
+          atUpdateIndex: updates.length-1
+        })
         return result;
       }
-
     } catch (error) {
       console.error(error);
     }
-
   }
 
   async initUserProfile(userDBPath, profileId) {
