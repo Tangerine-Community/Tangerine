@@ -94,6 +94,7 @@ const surveyValueMap = {
  */
 
 exports.all = (req, res) => {
+  const GROUP_DB = new PouchDB(req.body.base_db);
   GROUP_DB.query('ojai/byCollection', { key: 'result', include_docs: true })
     .then((data) => res.json({ count: data.rows.length, results: data.rows }))
     .catch((err) => res.json(err));
@@ -131,11 +132,15 @@ exports.all = (req, res) => {
  */
 
 exports.processResult = (req, res) => {
+  const baseDb = req.body.base_db;
+  const resultDb = req.body.result_db;
+  const GROUP_DB = new PouchDB(baseDb);
+
   GROUP_DB.get(req.params.id)
     .then(async(data) => {
       let resultDoc = { doc: data };
-      const result = await generateResult(resultDoc);
-      const saveResponse = await dbQuery.saveResult(result);
+      const result = await generateResult(resultDoc, 0, baseDb);
+      const saveResponse = await dbQuery.saveResult(result, resultDb);
       console.log(saveResponse);
       res.json(result);
     })
@@ -159,13 +164,13 @@ exports.processResult = (req, res) => {
  * @returns {Object} - processed result for csv.
  */
 
-const generateResult = async function(collections, count = 0) {
+const generateResult = async function(collections, count = 0, baseDb) {
   let enumeratorName, collection, collectionId, allTimestamps = [];
   let result = {};
   let indexKeys = {};
   let assessmentSuffix = count > 0 ? `_${count}` : '';
   let resultCollections = _.isArray(collections) ? collections : [collections];
-  let dbSettings = await dbQuery.getSettings();
+  let dbSettings = await dbQuery.getSettings(baseDb);
   let groupTimeZone = dbSettings.timeZone;
 
   for (let [index, data] of resultCollections.entries()) {
@@ -196,7 +201,7 @@ const generateResult = async function(collections, count = 0) {
         allTimestamps.push(doc.timestamp);
         if (doc.prototype === 'location') {
           doc.enumerator = enumeratorName;
-          let location = await processLocationResult(doc, subtestCounts, groupTimeZone);
+          let location = await processLocationResult(doc, subtestCounts, groupTimeZone, baseDb);
           result = _.assignIn(result, location);
           subtestCounts.locationCount++;
           subtestCounts.timestampCount++;
@@ -251,8 +256,9 @@ const generateResult = async function(collections, count = 0) {
     }
   }
   // Validate result from subtest timestamps
+
   allTimestamps = _.sortBy(allTimestamps);
-  let validationData = await validateResult(collection, groupTimeZone, allTimestamps);
+  let validationData = await validateResult(collection, groupTimeZone, baseDb, allTimestamps);
   result.isValid = validationData.isValid;
   result.isValidReason = validationData.reason;
 
@@ -270,7 +276,7 @@ const generateResult = async function(collections, count = 0) {
   // Include user metadata
   let username = `user-${enumeratorName}`;
   try {
-    let userDetails = await dbQuery.getUserDetails(enumeratorName);
+    let userDetails = await dbQuery.getUserDetails(enumeratorName, baseDb);
     result.userRole = userDetails.role;
     result.mPesaNumber = userDetails.mPesaNumber;
     result.phoneNumber = userDetails.phoneNumber || userDetails.phone;
@@ -297,12 +303,12 @@ const generateResult = async function(collections, count = 0) {
  * @returns {Object} processed location data.
  */
 
-async function processLocationResult(body, subtestCounts, groupTimeZone) {
+async function processLocationResult(body, subtestCounts, groupTimeZone, baseDb) {
   let count = subtestCounts.locationCount;
   let i, locationResult = {};
   let locSuffix = count > 0 ? `_${count}` : '';
   let subtestId = body.subtestId;
-  let locationNames = await getLocationName(body);
+  let locationNames = await getLocationName(body, baseDb);
   let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
 
   locationResult[`${subtestId}.county${locSuffix}`] = locationNames.county.label.replace(/\s/g,'-');
@@ -324,17 +330,17 @@ async function processLocationResult(body, subtestCounts, groupTimeZone) {
  *  subcounty, zone & school data.
  */
 
-async function getLocationName(body) {
+async function getLocationName(body, baseDb) {
   let i, j, locNames = {}, locIds = [];
   let schoolId = body.data.schoolId;
 
   // retrieve location-list from the base database.
-  let locationList = await dbQuery.getLocationList();
+  let locationList = await dbQuery.getLocationList(baseDb);
   let levels = locationList.locationsLevels;
 
   if (schoolId) {
     let username = `user-${body.enumerator}`;
-    let userDetails = await dbQuery.getUserDetails(username, dbUrl);
+    let userDetails = await dbQuery.getUserDetails(username, baseDb);
 
     for (const [label, id] of Object.entries(userDetails.location)) {
       for (j = 0; j < levels.length; j++) {
@@ -615,10 +621,10 @@ function translateGridValue(databaseValue) {
  * @returns {object} - result validity and other metadata.
  */
 
-async function validateResult(doc, groupTimeZone, allTimestamps) {
+async function validateResult(doc, groupTimeZone, baseDb, allTimestamps) {
   let startTime, endTime, isValid, reason;
   let docId = doc.workflowId || doc.assessmentId || doc.curriculumId;
-  let collection = await GROUP_DB.get(docId);
+  let collection = await GROUP_DB.get(docId, baseDb);
   let validationParams = collection.authenticityParameters;
   let instrumentConstraints = validationParams && validationParams.constraints;
 
