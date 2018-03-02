@@ -3,6 +3,7 @@
 import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../../node_modules/@polymer/paper-card/paper-card.js'
 import './tangy-common-styles.js'
+import { TangyFormItemHelpers } from './tangy-form-item-callback-helpers.js'
 
 // Import actions as a catchall so we can later declare variables of the same name as the properties for use
 // in form.on-change logic. This protects us against the bundler's renaming of imported variables and functions
@@ -232,48 +233,12 @@ paper-button {
       // Declare namespaces for helper functions for the eval context in form.on-change.
       // We have to do this because bundlers modify the names of things that are imported
       // but do not update the evaled code because it knows not of it.
-      let getValue = (name) => {
-        let foundIndex = undefined
-        let foundInput = this.shadowRoot.querySelector(`[name=${name}`)
-        if (foundInput) {
-          return foundInput.value
-        } else {
-          let state = window.tangyFormStore.getState()
-          let inputs = []
-          state.items.forEach(item => inputs = [...inputs, ...item.inputs])
-          return inputs[name]
-        }
-      }
-      let inputShow = (name) => {
-        inputEls.forEach(inputEl => {
-          if (inputEl.name === name) {
-            inputEl.hidden = false
-          }
-        })
-      } 
-
-      let inputHide = (name) => {
-        inputEls.forEach(inputEl => {
-          if (inputEl.name === name) {
-            inputEl.hidden = true
-          }
-        })
-      }
-      let inputEnable = (name) => {
-        inputEls.forEach(inputEl => {
-          if (inputEl.name === name) {
-            inputEl.disabled = false
-          }
-        })
-      } 
-
-      let inputDisable = (name) => {
-        inputEls.forEach(inputEl => {
-          if (inputEl.name === name) {
-            inputEl.disabled = true
-          }
-        })
-      } 
+      let helpers = new TangyFormItemHelpers(this)
+      let getValue = (name) => helpers.getValue(name)
+      let inputHide = (name) => helpers.inputHide(name)
+      let inputShow = (name) => helpers.inputShow(name)
+      let inputDisable = (name) => helpers.inputDisable(name)
+      let inputEnable = (name) => helpers.inputEnable(name)
       // Eval on-change on forms.
       let formEl = this.shadowRoot.querySelector('form[on-change]')
       if (formEl) {
@@ -313,6 +278,7 @@ paper-button {
       let form = this.shadowRoot.querySelector('form')
       if (open === true && form && form.getAttribute('on-open')) {
         this.fireHook('on-open')
+        this.fireHook('on-change')
       }
       this.reflect()
     }

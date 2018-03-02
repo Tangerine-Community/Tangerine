@@ -48,45 +48,55 @@ class TangyCheckboxes extends Element {
     return {
       name: {
         type: String,
-        value: ''
+        value: '',
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       value: {
         type: Array,
         value: [],
-        observer: 'reflect'
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       atLeast: {
         type: Number,
-        value: 0
+        value: 0,
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       required: {
         type: Boolean,
         value: false,
+        observer: 'reflect',
         reflectToAttribute: true
       },
       disabled: {
         type: Boolean,
         value: false,
-        observer: 'onDisabledChange',
+        observer: 'reflect',
         reflectToAttribute: true
       },
       label: {
         type: String,
+        observer: 'reflect',
         value: ''
       },
       hidden: {
         type: Boolean,
         value: false,
+        observer: 'reflect',
         reflectToAttribute: true
       },
       incomplete: {
         type: Boolean,
         value: true,
+        observer: 'reflect',
         reflectToAttribute: true
       },
       invalid: {
         type: Boolean,
         value: false,
+        observer: 'reflect',
         reflectToAttribute: true
       }
     }
@@ -102,6 +112,8 @@ class TangyCheckboxes extends Element {
     this.shadowRoot.querySelectorAll('tangy-checkbox').forEach(el => {
       let matchingState = this.value.find(state => el.name == state.name)
       el.setProps(matchingState)
+      el.disabled = this.disabled
+      el.hidden = this.hidden
     })
   }
 
@@ -124,7 +136,7 @@ class TangyCheckboxes extends Element {
         el.addEventListener('change', this.onCheckboxClick.bind(this))
         newValue.push(el.getProps())
       })
-    if (this.value.length < newValue.length) {
+    if (!this.value || (typeof this.value === 'object' && this.value.length < newValue.length)) {
       this.value = newValue
     }
 
@@ -136,16 +148,12 @@ class TangyCheckboxes extends Element {
       .querySelectorAll('tangy-checkbox')
       .forEach(el => newValue.push(el.getProps()))
     this.value = newValue
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
+    this.dispatchEvent(new CustomEvent('change', {bubbles: true, detail: {
       inputName: this.name,
       inputValue: newValue,
       inputIncomplete: false,
       inputInvalid: false
     }}))
-  }
-
-  onDisabledChange(value) {
-    this.value = this.value.map(state => Object.assign({}, state, { disabled: true }))
   }
 
 }
