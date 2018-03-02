@@ -75,6 +75,10 @@ export class CaseManagementService {
     const results = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
     return results.rows;
   }
+  async getIncompleteResponsesByLocationId(locationId: string) {
+    const results = await this.userDB.query('tangy-form/incompleteResponsesByLocationId', { key: locationId, include_docs: true });
+    return results.rows;
+  }
 }
 
 function countUnique(array, key) {

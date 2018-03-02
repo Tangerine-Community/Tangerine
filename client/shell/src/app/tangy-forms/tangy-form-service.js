@@ -83,7 +83,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '13',
+  version: '14',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -108,6 +108,20 @@ var tangyFormDesignDoc = {
     responsesByLocationId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && doc.complete === true && doc.hasOwnProperty('inputs')) {
+          const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
+          if (!locationFields || locationFields.length === 0) {
+            return;
+          }
+          locationFields.forEach((field) => {
+            const thisLocationId = field.value[field.value.length - 1].value;
+            emit(thisLocationId, true)
+          })
+        }
+      }.toString()
+    },
+    incompleteResponsesByLocationId: {
+      map: function (doc) {
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !!doc.complete === false && doc.hasOwnProperty('inputs')) {
           const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
           if (!locationFields || locationFields.length === 0) {
             return;
