@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
       this.showNav = isLoggedIn;
     });
     this.isAppUpdateAvailable();
-    setInterval(this.getGeolocationPosition, 1000);
+    // setInterval(this.getGeolocationPosition, 1000);
   }
 
   logout() {
