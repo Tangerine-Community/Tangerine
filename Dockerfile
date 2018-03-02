@@ -47,6 +47,9 @@ RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
 ADD client /tangerine/client
 RUN cd /tangerine/client/ && ./build.sh
 
+# Build tree
+ADD tree /tangerine/tree
+#RUN cd /tangerine/tree/ && ./build.sh
 
 # Add the rest of server.
 ADD server /tangerine/server

@@ -46,6 +46,8 @@ docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/client/tangy-forms/editor.html:/tangerine/client/tangy-forms/editor.html \
   --volume $(pwd)/client/tangy-forms/package.json:/tangerine/client/tangy-forms/package.json \
   --volume $(pwd)/client/tangy-forms/yarn.lock:/tangerine/client/tangy-forms/yarn.lock \
+  --volume $(pwd)/client/release-apk.sh:/tangerine/client/release-apk.sh \
+  --volume $(pwd)/tree:/tangerine/tree \
   --volume $T_DEV_CONTENT:/tangerine/client/builds/dev/content \
   --volume $T_DEV_CONTENT:/tangerine/client/content/default \
  tangerine/tangerine:local

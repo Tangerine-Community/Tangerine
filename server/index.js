@@ -111,6 +111,7 @@ app.use('/editor/release-apk/:secret/:group', isAuthenticated, async function (r
   // @TODO Make sure user is member of group.
   const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
+  console.log("in release-apk, secret: " + secret + " for group: " + group)
   await exec(`cd /tangerine/client && \
         ./release-apk.sh ${secret} ./content/groups/${group}
   `)
@@ -502,3 +503,9 @@ app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isA
   }
   res.send('ok')
 })
+//
+// // make an apk
+// app.get('/:group/*', isAuthenticated, require('../tree/routes/makeApk'));
+//
+// // get an apk
+// app.get('/:token', isAuthenticated, require('../tree/routes/getApk'));
