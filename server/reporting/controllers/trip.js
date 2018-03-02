@@ -17,11 +17,6 @@ const Promise = require('bluebird');
 
 const generateResult = require('./result').generateResult;
 const dbQuery = require('./../utils/dbQuery');
-const dbConfig = require('./../config');
-
-// Initialize database
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * Processes result for a workflow.
@@ -52,12 +47,15 @@ const RESULT_DB = new PouchDB(dbConfig.result_db);
  */
 
 exports.processResult = (req, res) => {
+  const baseDb = req.body.base_db;
+  const resultDb = req.body.result_db;
+
   dbQuery.getTripResults(req.params.id)
     .then(async(data) => {
       let totalResult = {};
-      const result = await processWorkflowResult(data);
+      const result = await processWorkflowResult(data, baseDb);
       result.forEach(element => totalResult = Object.assign(totalResult, element));
-      const saveResponse = await dbQuery.saveResult(totalResult);
+      const saveResponse = await dbQuery.saveResult(totalResult, resultDb);
       console.log(saveResponse);
       res.json(totalResult);
     })
@@ -79,9 +77,9 @@ exports.processResult = (req, res) => {
  * @returns {Object} - processed result for csv.
  */
 
-const processWorkflowResult = function (data) {
+const processWorkflowResult = function (data, baseDb) {
   return Promise.map(data, (item, index) => {
-    return generateResult(item, index);
+    return generateResult(item, index, baseDb);
   });
 }
 
