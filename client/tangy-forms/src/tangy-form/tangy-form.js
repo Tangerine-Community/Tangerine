@@ -409,8 +409,10 @@ export class TangyForm extends PolymerElement {
               }
             })
             return values
-          } else {
+          } else if (foundInput && foundInput.hasOwnProperty('value')) {
             return foundInput.value
+          } else {
+            return undefined
           }
 
         }
