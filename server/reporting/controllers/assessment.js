@@ -13,15 +13,10 @@ const _ = require('lodash');
 const PouchDB = require('pouchdb');
 
 /**
- * Local dependencies.
+ * Local dependency.
  */
 
 const dbQuery = require('./../utils/dbQuery');
-const dbConfig = require('./../config');
-
-// Initialize database
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * Retrieves all assessment collection in the database.
@@ -61,6 +56,7 @@ const RESULT_DB = new PouchDB(dbConfig.result_db);
  */
 
 exports.all = async (req, res) => {
+  const GROUP_DB = new PouchDB(req.body.base_db);
   try {
     let assessments = await GROUP_DB.query('ojai/byCollection', { key: 'assessment', include_docs: true });
     res.json({ count: assessments.rows.length, assessments: assessments.rows });
@@ -99,11 +95,16 @@ exports.all = async (req, res) => {
  */
 
 exports.generateHeader = (req, res) => {
-  GROUP_DB.get(req.params.id)
+  const baseDb = req.body.base_db;
+  const resultDb = req.body.result_db;
+  const assessmentId = req.params.id;
+  const GROUP_DB = new PouchDB(baseDb);
+
+  GROUP_DB.get(assessmentId, baseDb)
     .then(async(data) => {
       const docId = data.assessmentId || data.curriculumId;
-      const colHeaders = await createColumnHeaders(data);
-      const saveResponse = await dbQuery.saveHeaders(colHeaders, docId);
+      const colHeaders = await createColumnHeaders(data, 0, baseDb);
+      const saveResponse = await dbQuery.saveHeaders(colHeaders, docId, baseDb);
       console.log(saveResponse);
       res.json(colHeaders);
     })
@@ -125,13 +126,14 @@ exports.generateHeader = (req, res) => {
  * @returns {Object} processed headers for csv.
  */
 
-const createColumnHeaders = function(doc, count = 0) {
+const createColumnHeaders = function(doc, count = 0, baseDb) {
   let assessments = [];
   let docId = doc.workflowId || doc.assessmentId || doc.curriculumId;
   let collectionId = doc.typesId || doc.assessmentId || doc.curriculumId;
+  const GROUP_DB = new PouchDB(baseDb);
 
   return new Promise((resolve, reject) => {
-    GROUP_DB.get(collectionId)
+    GROUP_DB.get(collectionId, baseDb)
       .then((item) => {
         let assessmentSuffix = count > 0 ? `_${count}` : '';
         assessments.push({ header: `assessment_id${assessmentSuffix}`, key: `${docId}.assessmentId${assessmentSuffix}` });
@@ -139,10 +141,17 @@ const createColumnHeaders = function(doc, count = 0) {
         assessments.push({ header: `enumerator${assessmentSuffix}`, key: `${docId}.enumerator${assessmentSuffix}` });
         assessments.push({ header: `start_time${assessmentSuffix}`, key: `${docId}.start_time${assessmentSuffix}` });
         assessments.push({ header: `order_map${assessmentSuffix}`, key: `${docId}.order_map${assessmentSuffix}` });
-        return dbQuery.getSubtests(collectionId);
+        assessments.push({ header: `end_time${assessmentSuffix}`, key: `${docId}.end_time${assessmentSuffix}` });
+        if (count < 1) {
+          assessments.push({ header: 'user_role', key: `${docId}.userRole` });
+          assessments.push({ header: 'mpesa_number', key: `${docId}.mPesaNumber` });
+          assessments.push({ header: 'phone_number', key: `${docId}.phoneNumber` });
+          assessments.push({ header: 'full_name', key: `${docId}.fullName` });
+        }
+        return dbQuery.getSubtests(collectionId, baseDb);
       })
       .then(async(subtestData) => {
-        let subtestCounts = {
+        let subtestCount = {
           locationCount: 0,
           datetimeCount: 0,
           idCount: 0,
@@ -155,57 +164,54 @@ const createColumnHeaders = function(doc, count = 0) {
         };
         for (data of subtestData) {
           if (data.prototype === 'location') {
-            let location = createLocation(data, subtestCounts);
+            let location = createLocation(data, subtestCount);
             assessments = assessments.concat(location);
-            subtestCounts.locationCount++;
-            subtestCounts.timestampCount++;
+            subtestCount.locationCount++;
+            subtestCount.timestampCount++;
           }
           if (data.prototype === 'datetime') {
-            let datetime = createDatetime(data, subtestCounts);
+            let datetime = createDatetime(data, subtestCount);
             assessments = assessments.concat(datetime);
-            subtestCounts.datetimeCount++;
-            subtestCounts.timestampCount++;
+            subtestCount.datetimeCount++;
+            subtestCount.timestampCount++;
           }
           if (data.prototype === 'consent') {
-            let consent = createConsent(data, subtestCounts);
+            let consent = createConsent(data, subtestCount);
             assessments = assessments.concat(consent);
-            subtestCounts.consentCount++;
-            subtestCounts.timestampCount++;
+            subtestCount.consentCount++;
+            subtestCount.timestampCount++;
           }
           if (data.prototype === 'id') {
-            let id = createId(data, subtestCounts);
+            let id = createId(data, subtestCount);
             assessments = assessments.concat(id);
-            subtestCounts.idCount++;
-            subtestCounts.timestampCount++;
+            subtestCount.idCount++;
+            subtestCount.timestampCount++;
           }
           if (data.prototype === 'survey') {
-            let surveys = await createSurvey(data._id, subtestCounts);
+            let surveys = await createSurvey(data._id, subtestCount, baseDb);
             assessments = assessments.concat(surveys);
-            subtestCounts.surveyCount++;
-            subtestCounts.timestampCount++;
+            subtestCount.surveyCount++;
+            subtestCount.timestampCount++;
           }
           if (data.prototype === 'grid') {
-            let grid = createGrid(data, subtestCounts);
+            let grid = createGrid(data, subtestCount);
             assessments = assessments.concat(grid.gridHeader);
-            subtestCounts.gridCount++;
-            subtestCounts.timestampCount = grid.timestampCount;
+            subtestCount.gridCount++;
+            subtestCount.timestampCount = grid.timestampCount;
           }
           if (data.prototype === 'gps') {
-            let gps = createGps(data, subtestCounts);
+            let gps = createGps(data, subtestCount);
             assessments = assessments.concat(gps);
-            subtestCounts.gpsCount++;
-            subtestCounts.timestampCount++;
+            subtestCount.gpsCount++;
+            subtestCount.timestampCount++;
           }
           if (data.prototype === 'camera') {
-            let camera = createCamera(data, subtestCounts);
+            let camera = createCamera(data, subtestCount);
             assessments = assessments.concat(camera);
-            subtestCounts.cameraCount++;
-            subtestCounts.timestampCount++;
+            subtestCount.cameraCount++;
+            subtestCount.timestampCount++;
           }
         }
-        let assessmentSuffix = count > 0 ? `_${count}` : '';
-        assessments.push({ header: `end_time${assessmentSuffix}`, key: `${docId}.end_time${assessmentSuffix}` });
-
         resolve(assessments);
       })
       .catch((err) => reject(err));
@@ -222,13 +228,13 @@ const createColumnHeaders = function(doc, count = 0) {
  * This function creates headers for location prototypes.
  *
  * @param {Object} doc - document to be processed.
- * @param {Object} subtestCounts - count.
+ * @param {Object} subtestCount - count.
  *
  * @returns {Array} - generated location headers.
  */
 
-function createLocation(doc, subtestCounts) {
-  let count = subtestCounts.locationCount;
+function createLocation(doc, subtestCount) {
+  let count = subtestCount.locationCount;
   let locationHeader = [];
   let labels = doc.levels;
 
@@ -240,8 +246,8 @@ function createLocation(doc, subtestCounts) {
     });
   }
   locationHeader.push({
-    header: `timestamp_${subtestCounts.timestampCount}`,
-    key: `${doc._id}.timestamp_${subtestCounts.timestampCount}`
+    header: `timestamp_${subtestCount.timestampCount}`,
+    key: `${doc._id}.timestamp_${subtestCount.timestampCount}`
   });
 
   return locationHeader;
@@ -251,13 +257,13 @@ function createLocation(doc, subtestCounts) {
  * This function creates headers for datetime prototypes.
  *
  * @param {Object} doc - document to be processed.
- * @param {Object} subtestCounts - count.
+ * @param {Object} subtestCount - count.
  *
  * @returns {Array} - generated datetime headers.
  */
 
-function createDatetime(doc, subtestCounts) {
-  let count = subtestCounts.datetimeCount;
+function createDatetime(doc, subtestCount) {
+  let count = subtestCount.datetimeCount;
   let suffix, datetimeHeader = [];
   suffix = count > 0 ? `_${count}` : '';
 
@@ -265,7 +271,7 @@ function createDatetime(doc, subtestCounts) {
   datetimeHeader.push({ header: `month${suffix}`, key: `${doc._id}.month${suffix}` });
   datetimeHeader.push({ header: `day${suffix}`, key: `${doc._id}.day${suffix}` });
   datetimeHeader.push({ header: `assess_time${suffix}`, key: `${doc._id}.assess_time${suffix}` });
-  datetimeHeader.push({ header: `timestamp_${subtestCounts.timestampCount}`, key: `${doc._id}.timestamp_${subtestCounts.timestampCount}` });
+  datetimeHeader.push({ header: `timestamp_${subtestCount.timestampCount}`, key: `${doc._id}.timestamp_${subtestCount.timestampCount}` });
 
   return datetimeHeader;
 }
@@ -274,18 +280,18 @@ function createDatetime(doc, subtestCounts) {
  * This function creates headers for consent prototypes.
  *
  * @param {Object} doc - document to be processed.
- * @param {Object} subtestCounts - count.
+ * @param {Object} subtestCount - count.
  *
  * @returns {Array} - generated consent headers.
  */
 
-function createConsent(doc, subtestCounts) {
-  let count = subtestCounts.consentCount;
+function createConsent(doc, subtestCount) {
+  let count = subtestCount.consentCount;
   let suffix, consentHeader = [];
 
   suffix = count > 0 ? `_${count}` : '';
   consentHeader.push({ header: `consent${suffix}`, key: `${doc._id}.consent${suffix}` });
-  consentHeader.push({ header: `timestamp_${subtestCounts.timestampCount}`, key: `${doc._id}.timestamp_${subtestCounts.timestampCount}` });
+  consentHeader.push({ header: `timestamp_${subtestCount.timestampCount}`, key: `${doc._id}.timestamp_${subtestCount.timestampCount}` });
 
   return consentHeader;
 }
@@ -294,18 +300,18 @@ function createConsent(doc, subtestCounts) {
  * This function creates headers for id prototypes.
  *
  * @param {Object} doc - document to be processed.
- * @param {Object} subtestCounts - count.
+ * @param {Object} subtestCount - count.
  *
  * @returns {Array} - generated id headers.
  */
 
-function createId(doc, subtestCounts) {
-  let count = subtestCounts.idCount;
+function createId(doc, subtestCount) {
+  let count = subtestCount.idCount;
   let suffix, idHeader = [];
 
   suffix = count > 0 ? `_${count}` : '';
   idHeader.push({ header: `id${suffix}`, key: `${doc._id}.id${suffix}` });
-  idHeader.push({ header: `timestamp_${subtestCounts.timestampCount}`, key: `${doc._id}.timestamp_${subtestCounts.timestampCount}` });
+  idHeader.push({ header: `timestamp_${subtestCount.timestampCount}`, key: `${doc._id}.timestamp_${subtestCount.timestampCount}` });
 
   return idHeader;
 }
@@ -314,14 +320,14 @@ function createId(doc, subtestCounts) {
  * This function creates headers for survey prototypes.
  *
  * @param {Object} id - document to be processed.
- * @param {Object} subtestCounts - count.
+ * @param {Object} subtestCount - count.
  *
  * @returns {Array} - generated survey headers.
  */
 
-async function createSurvey(id, subtestCounts) {
+async function createSurvey(id, subtestCount, baseDb) {
   let surveyHeader = [];
-  let questions = await dbQuery.getQuestionBySubtestId(id);
+  let questions = await dbQuery.getQuestionBySubtestId(id, baseDb);
   let sortedDoc = _.sortBy(questions, [id, 'order']);
 
   for (doc of sortedDoc) {
@@ -331,8 +337,8 @@ async function createSurvey(id, subtestCounts) {
     });
   }
   surveyHeader.push({
-    header: `timestamp_${subtestCounts.timestampCount}`,
-    key: `${id}.timestamp_${subtestCounts.timestampCount}`
+    header: `timestamp_${subtestCount.timestampCount}`,
+    key: `${id}.timestamp_${subtestCount.timestampCount}`
   });
 
   return surveyHeader;
@@ -342,13 +348,13 @@ async function createSurvey(id, subtestCounts) {
  * This function creates headers for grid prototypes.
  *
  * @param {Object} doc - document to be processed.
- * @param {Object} subtestCounts - count.
+ * @param {Object} subtestCount - count.
  *
  * @returns {Array} - generated grid headers.
  */
 
-function createGrid(doc, subtestCounts) {
-  let count = subtestCounts.gridCount;
+function createGrid(doc, subtestCount) {
+  let count = subtestCount.gridCount;
   let gridHeader = [];
   let gridData = [doc];
   let suffix = count > 0 ? `_${count}` : '';
@@ -398,26 +404,26 @@ function createGrid(doc, subtestCounts) {
       });
     }
     gridHeader.push({
-      header: `timestamp_${subtestCounts.timestampCount}`,
-      key: `${subtestId}.timestamp_${subtestCounts.timestampCount}`
+      header: `timestamp_${subtestCount.timestampCount}`,
+      key: `${subtestId}.timestamp_${subtestCount.timestampCount}`
     });
-    subtestCounts.timestampCount++;
+    subtestCount.timestampCount++;
   }
 
-  return { gridHeader, timestampCount: subtestCounts.timestampCount };
+  return { gridHeader, timestampCount: subtestCount.timestampCount };
 }
 
 /**
  * This function creates headers for gps prototypes.
  *
  * @param {Object} doc - document to be processed.
- * @param {Object} subtestCounts - count.
+ * @param {Object} subtestCount - count.
  *
  * @returns {Array} - generated gps headers.
  */
 
-function createGps(doc, subtestCounts) {
-  let count = subtestCounts.gpsCount;
+function createGps(doc, subtestCount) {
+  let count = subtestCount.gpsCount;
   let gpsHeader = [];
   let suffix = count > 0 ? `_${count}` : '';
 
@@ -428,7 +434,7 @@ function createGps(doc, subtestCounts) {
   gpsHeader.push({ header: `altitudeAccuracy${suffix}`, key: `${doc._id}.altitudeAccuracy${suffix}` });
   gpsHeader.push({ header: `heading${suffix}`, key: `${doc._id}.heading${suffix}` });
   gpsHeader.push({ header: `speed${suffix}`, key: `${doc._id}.speed${suffix}` });
-  gpsHeader.push({ header: `timestamp_${subtestCounts.timestampCount}`, key: `${doc._id}.timestamp_${subtestCounts.timestampCount}` });
+  gpsHeader.push({ header: `timestamp_${subtestCount.timestampCount}`, key: `${doc._id}.timestamp_${subtestCount.timestampCount}` });
 
   return gpsHeader;
 }
@@ -437,20 +443,20 @@ function createGps(doc, subtestCounts) {
  * This function creates headers for camera prototypes.
  *
  * @param {Object} body - document to be processed.
- * @param {Object} subtestCounts - count.
+ * @param {Object} subtestCount - count.
  *
  * @returns {Array} - generated camera headers.
  */
 
-function createCamera(doc, subtestCounts) {
-  let count = subtestCounts.cameraCount;
+function createCamera(doc, subtestCount) {
+  let count = subtestCount.cameraCount;
   let cameraheader = [];
   let varName = doc.variableName;
   let suffix = count > 0 ? `_${count}` : '';
 
   cameraheader.push({ header: `${varName}_photo_captured${suffix}`, key: `${doc.subtestId}.${varName}_photo_captured${suffix}` });
   cameraheader.push({ header: `${varName}_photo_url${suffix}`, key: `${doc.subtestId}.${varName}_photo_url${suffix}` });
-  cameraheader.push({ header: `timestamp_${subtestCounts.timestampCount}`, key: `${doc.subtestId}.timestamp_${subtestCounts.timestampCount}` });
+  cameraheader.push({ header: `timestamp_${subtestCount.timestampCount}`, key: `${doc.subtestId}.timestamp_${subtestCount.timestampCount}` });
 
   return cameraheader;
 }

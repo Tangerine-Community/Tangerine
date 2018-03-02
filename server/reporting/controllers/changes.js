@@ -78,6 +78,8 @@ const processChangedDocument = async(resp, baseDb, resultDb) => {
   const isQuestion = (collectionType === 'question') ? true : false;
   const isSubtest = (collectionType === 'subtest') ? true : false;
 
+  console.info(`::: Processing ${collectionType} document on sequence ${resp.seq} :::`);
+
   if (isWorkflowIdSet && isResult) {
     console.info('\n<<<=== START PROCESSING WORKFLOW RESULT ===>>>\n');
     let totalResult = {};
@@ -120,7 +122,7 @@ const processChangedDocument = async(resp, baseDb, resultDb) => {
   if (isAssessment || isCurriculum || isQuestion || isSubtest) {
     try {
       console.info('\n<<<=== START PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION  ===>>>\n');
-      const assessmentHeaders = await generateAssessmentHeaders(assessmentId, 0, baseDb);
+      const assessmentHeaders = await generateAssessmentHeaders(resp.doc, 0, baseDb);
       const saveResponse = await dbQuery.saveHeaders(assessmentHeaders, assessmentId, resultDb);
       console.log(saveResponse);
       console.info('\n<<<=== END PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION ===>>>\n');
