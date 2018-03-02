@@ -38,9 +38,7 @@ export class AppComponent implements OnInit {
       this.showNav = isLoggedIn;
     });
     this.isAppUpdateAvailable();
-    // this.getGeolocationPosition();
-    // const getPosition = Observable.timer(0, 1000);
-    // getPosition.subscribe(() => this.getGeolocationPosition());
+    setInterval(this.getGeolocationPosition, 1000);
   }
 
   logout() {
@@ -64,11 +62,12 @@ export class AppComponent implements OnInit {
     const options = {
       enableHighAccuracy: true
     };
-    let queue = [];
+    const queue = [];
     JSON.parse(localStorage.getItem('gpsQueue')) ? queue.push(JSON.parse(localStorage.getItem('gpsQueue'))) : null;
     // queue = queue.filter(entry => entry.timestamp > now - 5minutes).push({ ...GPS.getReading(), ... {timestamp: now})
     const currentPosition = navigator.geolocation.getCurrentPosition((position) => {
-      console.log(position)
+
+      console.log(position);
     },
       (err) => { },
       options);
