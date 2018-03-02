@@ -256,7 +256,9 @@ const generateResult = async function(collections, count = 0, baseDb) {
     }
   }
   // Validate result from subtest timestamps
-
+  allTimestamps = allTimestamps.filter(time => {
+    if (time) return time;
+  });
   allTimestamps = _.sortBy(allTimestamps);
   let validationData = await validateResult(collection, groupTimeZone, baseDb, allTimestamps);
   result.isValid = validationData.isValid;
@@ -573,7 +575,7 @@ function processCamera(body, subtestCount, groupTimeZone) {
 
   cameraResult[`${body.subtestId}.${varName}_photo_captured${suffix}`] = body.data.imageBase64;
   cameraResult[`${body.subtestId}.${varName}_photo_url${suffix}`] = body.data.imageBase64;
-  cameraResult[`${body.subtestId}.timestamp_${subtestsCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+  cameraResult[`${body.subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
 
   return cameraResult;
 }
