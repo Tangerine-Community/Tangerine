@@ -83,7 +83,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '13',
+  version: '14',
   views: {
     responsesByFormId: {
       map: function (doc) {

@@ -39,7 +39,9 @@ class TangyRadioButtons extends Element {
     return {
       name: {
         type: String,
-        value: ''
+        value: '',
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       value: {
         type: Array,
@@ -49,17 +51,20 @@ class TangyRadioButtons extends Element {
       },
       required: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       disabled: {
         type: Boolean,
         value: false,
-        observer: 'onDisabledChange',
+        observer: 'reflect',
         reflectToAttribute: true
       },
       label: {
         type: String,
         value: '',
+        observer: 'reflect',
         reflectToAttribute: true
       },
       hidden: {
@@ -71,14 +76,21 @@ class TangyRadioButtons extends Element {
       invalid: {
         type: Boolean,
         value: false,
+        observer: 'reflect',
         reflectToAttribute: true
       },
       incomplete: {
         type: Boolean,
         value: true,
+        observer: 'reflect',
         reflectToAttribute: true
       }
     }
+  }
+
+  constructor() {
+    super()
+    this.value = []
   }
 
   connectedCallback() {
@@ -91,6 +103,8 @@ class TangyRadioButtons extends Element {
     this.shadowRoot.querySelectorAll('tangy-radio-button').forEach(el => {
       let matchingState = this.value.find(state => el.name == state.name)
       el.setProps(matchingState)
+      el.disabled = this.disabled
+      el.hidden = this.hidden
     })
   }
 
@@ -113,7 +127,7 @@ class TangyRadioButtons extends Element {
         el.addEventListener('change', this.onRadioButtonChange.bind(this))
         newValue.push(el.getProps())
       })
-    if (this.value.length < newValue.length) {
+    if (!this.value || (typeof this.value === 'object' && this.value.length < newValue.length)) {
       this.value = newValue
     }
 
@@ -138,40 +152,13 @@ class TangyRadioButtons extends Element {
       .querySelectorAll('tangy-radio-button')
       .forEach(el => newValue.push(el.getProps()))
     this.value = newValue
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
+    this.dispatchEvent(new CustomEvent('change', {bubbles: true, detail: {
       inputName: this.name,
       inputValue: newValue,
       inputIncomplete: false,
       inputInvalid: false
     }}))
 
-  }
-
-  onDisabledChange() {
-    /*
-    this
-      .$
-      .container
-      .querySelectorAll('tangy-radio-button').forEach(el => el.disabled = this.disabled)
-    let newValue = []
-    this.shadowRoot
-      .querySelectorAll('tangy-radio-button')
-      .forEach(el => newValue.push(el.getProps()))
-    this.value = newValue
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
-      inputName: this.name,
-      inputValue: newValue,
-      inputIncomplete: false,
-      inputInvalid: false
-    }}))
-    */
-    this.value = this.value.map(state => Object.assign({}, state, {disabled: this.disabled}))
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
-      inputName: this.name,
-      inputValue: this.value,
-      inputIncomplete: false,
-      inputInvalid: false
-    }}))
   }
 
   validate() {
