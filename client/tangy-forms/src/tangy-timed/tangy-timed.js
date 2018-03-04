@@ -244,7 +244,13 @@ class TangyTimed extends Element {
         button.addEventListener('click', this.onTangyToggleButtonClick.bind(this))
         newValue.push(button.getProps())
       })
+    // Grids may change, preserve old values. Ideally we don't need this in the future with 
+    // proper revisioning of forms.
     if (this.value.length < newValue.length) {
+      this.value.forEach(oldInputState => {
+        let index = newValue.findIndex(newInputState => (newInputState.name === oldInputState.name))
+        if (index !== -1) newValue[index] = oldInputState
+      })
       this.value = newValue
     }
 

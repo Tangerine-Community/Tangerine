@@ -22,6 +22,7 @@ import { AuthModule } from './core/auth/auth.module';
 import { SyncRecordsModule } from './core/sync-records/sync-records.module';
 import { WindowRef } from './core/window-ref.service';
 import { Loc } from './core/location.service';
+import { UpdateModule } from './core/update/update.module';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 
@@ -43,6 +44,7 @@ export { AppComponent }
     AuthModule,
     CaseManagementModule,
     UserProfileModule,
+    UpdateModule,
     SyncRecordsModule,
     AppRoutingModule,
     SharedModule
