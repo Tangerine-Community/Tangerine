@@ -54,6 +54,11 @@ ADD tree /tangerine/tree
 # Add the rest of server.
 ADD server /tangerine/server
 
+# Setup bash_profile
+#RUN echo 'export PS1="$(whoami):$(pwd)$ "' >> /root/.bashrc
+
+WORKDIR /tangerine
+
 #
 # Wrap up 
 #

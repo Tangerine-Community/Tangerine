@@ -45,8 +45,7 @@ export class TangyAcasi extends PolymerElement {
     <div class="container">
       <label for="group">[[label]]</label>
       <paper-button id="replay" raised class="indigo" on-click="replay">Replay</paper-button>
-      <paper-radio-group name="group" id="paper-radio-group">
-      </paper-radio-group>
+      <div id="container"></div>
     </div>
     `
   }
@@ -86,10 +85,10 @@ export class TangyAcasi extends PolymerElement {
         reflectToAttribute: true
       },
       value: {
-        type: String,
-        value: '',
-        reflectToAttribute: true,
-        observer: 'onValueChange'
+        type: Array,
+        value: [],
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       required: {
         type: Boolean,
@@ -132,13 +131,25 @@ export class TangyAcasi extends PolymerElement {
     super.connectedCallback();
     this.isReady = false
     this.renderOptions()
+    this.reflect()
+  }
+
+  reflect() {
+    this.shadowRoot.querySelectorAll('paper-radio-button').forEach(el => {
+      let matchingState = this.value.find(state => el.name == state.name)
+      el.setProps(matchingState)
+      el.disabled = this.disabled
+      el.hidden = this.hidden
+    })
   }
 
   renderOptions() {
-    let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
-    paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
+    // let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
+    // paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
 
-    // Populate paper-radio-button elements by using image data
+    this.$.container.innerHTML = ''
+
+    // Populate tangy-radio-button elements by using image data
     // The radio-button value is taken from the imageArray src value.
     // Also create the image.
     let images = this.getAttribute('images')
@@ -154,11 +165,24 @@ export class TangyAcasi extends PolymerElement {
       imageEl.src = src
       imageEl.className = "acasi-image";
       button.innerHTML = imageEl.outerHTML
-      paperRadioGroupEl.appendChild(button)
+      this.$.container.appendChild(button)
     }
-    paperRadioGroupEl.selected = this.value
-    if (this.required) paperRadioGroupEl.required = true
-    this.isReady = true
+    // paperRadioGroupEl.selected = this.value
+    // if (this.required) paperRadioGroupEl.required = true
+    // this.isReady = true
+
+    // detect change events and update the value
+    let newValue = []
+    this
+      .shadowRoot
+      .querySelectorAll('paper-radio-button')
+      .forEach ((el) => {
+        el.addEventListener('change', this.onRadioButtonChange.bind(this))
+        newValue.push(el.getProps())
+      })
+    if (!this.value || (typeof this.value === 'object' && this.value.length < newValue.length)) {
+      this.value = newValue
+    }
 
     // Find all our img elements and populate the dataTouchSrc for each image.
     this.imgElements = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('img'));
@@ -243,28 +267,28 @@ export class TangyAcasi extends PolymerElement {
 
   }
 
-  onPaperRadioGroupChange(event) {
-    // Stop propagation of paper-radio-button change event so we can set the value of this element first.
-    // Otherwise tangy-form-item will find the wrong value for this element.
-    event.stopPropagation()
-    if (!this.isReady) return
-    // The value we dispatch is the event.target.name. Remember, that's the option that was just selected
-    // and the option's name selected is the value of this element.
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
-      detail: {
-        inputName: this.name,
-        inputValue: event.target.name,
-        inputInvalid: false,
-        inputIncomplete: false
-      },
-      bubbles: true
-    }))
-  }
+  // onPaperRadioGroupChange(event) {
+  //   // Stop propagation of paper-radio-button change event so we can set the value of this element first.
+  //   // Otherwise tangy-form-item will find the wrong value for this element.
+  //   event.stopPropagation()
+  //   if (!this.isReady) return
+  //   // The value we dispatch is the event.target.name. Remember, that's the option that was just selected
+  //   // and the option's name selected is the value of this element.
+  //   this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
+  //     detail: {
+  //       inputName: this.name,
+  //       inputValue: event.target.name,
+  //       inputInvalid: false,
+  //       inputIncomplete: false
+  //     },
+  //     bubbles: true
+  //   }))
+  // }
 
-  onValueChange(value) {
-    if (!this.isReady) return
-    this.$['paper-radio-group'].selected = value
-  }
+  // onValueChange(value) {
+  //   // if (!this.isReady) return
+  //   // this.$['paper-radio-group'].selected = value
+  // }
 
   onDisabledChange(value) {
     let paperRadioButtons = this.shadowRoot.querySelectorAll('paper-radio-button')
@@ -278,6 +302,35 @@ export class TangyAcasi extends PolymerElement {
   replay() {
     console.log("replay")
     this.transitionSound.play();
+  }
+
+  onRadioButtonChange(event) {
+    let targetButton = event.target
+    if (targetButton.value = 'on') {
+      this
+        .$
+        .container
+        .querySelectorAll('paper-radio-button')
+        .forEach(el => {
+          if (el.name !== targetButton.name && targetButton.value == 'on') {
+            el.value = ''
+          }
+        })
+    }
+  }
+
+  validate() {
+    let foundOne = false
+    this.shadowRoot.querySelectorAll('paper-radio-button').forEach(el => {
+      if (el.value === 'on') foundOne = true
+    })
+    if (this.required && !this.hidden && !this.disabled && !foundOne) {
+      this.invalid = true
+      return false
+    } else {
+      this.invalid = false
+      return true
+    }
   }
 
 }
