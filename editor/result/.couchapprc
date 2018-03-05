@@ -1,0 +1,7 @@
+{
+  "env" : {
+    "default" : {
+      "db" : "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine"
+    }
+  }
+}

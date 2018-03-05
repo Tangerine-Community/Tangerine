@@ -146,24 +146,24 @@ Group.prototype.create = function create() {
     });
   }) // return promise
   .then(function newResultsDatabase() {
-      return new Promise(function newResultsDatabasePromise(resolve, reject) {
-        logger.info('groupResultsDbUrl is: ' + groupResultsDbUrl)
-        unirest.put(groupResultsDbUrl)
-          .end(function onDbCreateResponse(response) {
-            logger.info('response.status is: ' + response.status)
-            if (response.status === HttpStatus.CREATED) {
-              return resolve();
-            } else if (response.status === HttpStatus.PRECONDITION_FAILED) {
-              return reject({
-                status: response.status,
-                message: `Group ${groupResultsDbName} already exists`
-              })
-            } else {
-              return reject(response);
-            }
-          })
-      })
+    return new Promise(function newResultsDatabasePromise(resolve, reject) {
+      logger.info('groupResultsDbUrl is: ' + groupResultsDbUrl)
+      unirest.put(groupResultsDbUrl)
+        .end(function onDbCreateResponse(response) {
+          logger.info('response.status is: ' + response.status)
+          if (response.status === HttpStatus.CREATED) {
+            return resolve();
+          } else if (response.status === HttpStatus.PRECONDITION_FAILED) {
+            return reject({
+              status: response.status,
+              message: `Group ${groupResultsDbName} already exists`
+            })
+          } else {
+            return reject(response);
+          }
+        })
     })
+  })
   .then(function replicate() {
     return new Promise(function replicatePromise(resolve, reject){
       unirest
