@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="org.rti.tangerine" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="org.rti.tangerine" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Tangerine</name>
     <description>
         Mobile data collection system.
@@ -8,12 +8,22 @@
         Tangerine dream team
     </author>
     <content src="index.html" />
-    <icon src="res/icon.png" />
+    <access origin="*" />
+
     <allow-navigation href="tangerinecentral.org" />
     <allow-intent href="*" />
-    <access origin="*" />
-    <plugin name="cordova-plugin-file" spec="~4.1.0" />
-    <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
-    <preference name="xwalkMode" value="embedded" />
-    <preference name="xwalkMultipleApk" value="true" />
+
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
+    <plugin name="cordova-plugin-whitelist" spec="~1.3.3" />
+    <plugin name="cordova-plugin-geolocation" spec="~4.0.1" />
+    <plugin name="cordova-plugin-camera" spec="~4.0.2" />
+    <plugin name="cordova-plugin-crosswalk-webview" spec="~2.4.0">
+        <variable name="XWALK_VERSION" value="23+" />
+        <variable name="XWALK_LITEVERSION" value="xwalk_core_library_canary:17+" />
+        <variable name="XWALK_COMMANDLINE" value="--disable-pull-to-refresh-effect" />
+        <variable name="XWALK_MODE" value="embedded" />
+        <variable name="XWALK_MULTIPLEAPK" value="true" />
+    </plugin>
 </widget>

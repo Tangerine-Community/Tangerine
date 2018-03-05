@@ -35,6 +35,18 @@ CKEDITOR.dialog.add( 'tangy-radio-buttons', function( editor ) {
 							widget.setData( 'name', this.getValue() );
 						}
 					},
+          {
+            id: 'label',
+            type: 'textarea',
+            label: 'label',
+            width: '100%',
+            setup: function( widget ) {
+              this.setValue( widget.data.label );
+            },
+            commit: function( widget ) {
+              widget.setData( 'label', this.getValue() );
+            }
+          },
 					{
 						id: 'options',
 						type: 'textarea',
@@ -45,18 +57,6 @@ CKEDITOR.dialog.add( 'tangy-radio-buttons', function( editor ) {
 						},
 						commit: function( widget ) {
 							widget.setData( 'options', this.getValue() );
-						}
-					},
-					{
-						id: 'label',
-						type: 'textarea',
-						label: 'label',
-						width: '100%',
-						setup: function( widget ) {
-							this.setValue( widget.data.label );
-						},
-						commit: function( widget ) {
-							widget.setData( 'label', this.getValue() );
 						}
 					}
 				]

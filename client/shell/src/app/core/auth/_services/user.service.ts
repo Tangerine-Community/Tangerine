@@ -7,7 +7,7 @@ import { Uuid } from 'ng2-uuid';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import { Observable } from 'rxjs/Observable';
-import { TangyFormService } from '../../../tangy-forms/tangy-form-service.js';
+import { TangyFormService } from '../../../tangy-forms/tangy-form-service';
 import { updates } from '../../update/update/updates';
 
 @Injectable()
