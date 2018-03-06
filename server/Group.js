@@ -11,6 +11,7 @@ let unirest = require('unirest');
 let crypto = require('crypto');
 const logger = require('./logger');
 const errorHandler = require('./utils/errorHandler');
+const changesFeed = require('./changesFeed');
 
 const JSON_OPTS = {
   'Content-Type' : 'application/json',
@@ -60,12 +61,13 @@ Group.prototype.create = function create() {
 
   const uploaderPassword = crypto.randomBytes( 20 ).toString('hex');
   const self = this;
-  const groupDbName = Conf.calcGroupPath( self.name() ).replace('/','');
-  const groupResultsDbName = groupDbName + '-result';
-  const groupResultsDbUrl = Conf.calcGroupUrl( self.name() + '-result' )
+  const groupDbName = Conf.calcGroupPath(self.name()).replace('/','');
+  const groupDbNameUrl = Conf.calcGroupUrl(self.name());
+  const groupResultsDbName = `${groupDbName}-result`;
+  const groupResultsDbUrl = Conf.calcGroupUrl(self.name() + '-result');
 
   return (new Promise(function newDatabase(resolve, reject) {
-    unirest.put( Conf.calcGroupUrl( self.name() ) )
+    unirest.put(groupDbNameUrl)
       .end( function onDbCreateResponse(response) {
         if (response.status === HttpStatus.CREATED ) {
           return resolve();
@@ -95,7 +97,7 @@ Group.prototype.create = function create() {
         });
     });
   })
-  .then(function makeUploader(){
+  .then(function makeUploader() {
     let userAttributes = {
       name     : 'uploader-' + self.name(),
       password : uploaderPassword
@@ -104,13 +106,13 @@ Group.prototype.create = function create() {
   })
   .then( function changeSettings() {
     return new Promise(function changeSettingsPromise(resolve, reject){
-      unirest.get( Conf.calcGroupUrl( self.name() ) + '/settings').headers(JSON_OPTS)
+      unirest.get(groupDbNameUrl + '/settings').headers(JSON_OPTS)
         .end( function alterDoc( response ) {
           let newDoc = response.body;
           newDoc.groupCreated = (new Date()).toString();
           newDoc.upPass = uploaderPassword;
           newDoc.groupName = self.name();
-          unirest.post( Conf.calcGroupUrl( self.name() )).headers(JSON_OPTS)
+          unirest.post(groupDbNameUrl).headers(JSON_OPTS)
             .json( newDoc )
             .end(function saveDoc(response){
               if (response.status === 201 ) {
@@ -122,7 +124,7 @@ Group.prototype.create = function create() {
         });
     }); // changeSettingsPromise
   })
-  .then(function addGroupRoles(){
+  .then(function addGroupRoles() {
     return new Promise(function addGroupPromise(resolve, reject){
       const securityDoc = {
         admins: {
@@ -145,8 +147,8 @@ Group.prototype.create = function create() {
         });
     });
   }) // return promise
-  .then(function newResultsDatabase() {
-    return new Promise(function newResultsDatabasePromise(resolve, reject) {
+  .then(function newResultDatabase() {
+    return new Promise(function newResultDatabasePromise(resolve, reject) {
       logger.info('groupResultsDbUrl is: ' + groupResultsDbUrl)
       unirest.put(groupResultsDbUrl)
         .end(function onDbCreateResponse(response) {
@@ -165,17 +167,16 @@ Group.prototype.create = function create() {
     })
   })
   .then(function replicate() {
-    return new Promise(function replicatePromise(resolve, reject){
-      unirest
-        .post(Conf.replicateUrl)
-        .headers(JSON_OPTS)
+    return new Promise(function replicatePromise(resolve, reject) {
+      unirest.post(Conf.replicateUrl).headers(JSON_OPTS)
         .json({
           source: 'tangerine',
           target: groupResultsDbName,
           doc_ids: ['_design/ojai', '_design/dashReporting']
         })
-        .end(function onReplicateResponse(response) {
+        .end(async function onReplicateResponse(response) {
           if (response.status > 199 && response.status < 399) {
+            await changesFeed(groupDbNameUrl, groupResultsDbUrl);
             return resolve();
           }
           reject(response);
