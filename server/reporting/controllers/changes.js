@@ -15,7 +15,6 @@ const PouchDB = require('pouchdb');
  * Local dependencies.
  */
 
-const dbConfig = require('./../config');
 const dbQuery = require('./../utils/dbQuery');
 const generateAssessmentHeaders = require('./assessment').createColumnHeaders;
 const processAssessmentResult = require('./result').generateResult;
