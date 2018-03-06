@@ -100,6 +100,22 @@ label.heading {
 paper-button {
   font-size: .5em;
 }
+
+#next {
+  float: right;
+  width: 84px;
+}
+#next iron-icon {
+  margin: 0px 0px 0px 21px;
+}
+
+#back {
+  float: left;
+  width: 84px;
+}
+#back iron-icon {
+  margin: 0px 0px 0px 21px;
+}
 </style>
 
 <paper-card id="card" class="shrunk">
@@ -117,10 +133,14 @@ paper-button {
     </template>
     <template is="dom-if" if="{{open}}">
       <template is="dom-if" if="{{!hideBackButton}}">
-        <paper-button id="back" on-click="back">back</paper-button>
+        <paper-button id="back" on-click="back" >
+          <iron-icon icon="arrow-back"></iron-icon>
+        <paper-button>
       </template>
       <template is="dom-if" if="{{!hideNextButton}}">
-        <paper-button id="submit" on-click="next">next</paper-button>
+        <paper-button id="next" on-click="next" >
+          <iron-icon icon="arrow-forward"></iron-icon>
+        <paper-button>
       </template>
     </template>
     <template is="dom-if" if="{{!incomplete}}">
@@ -296,24 +316,13 @@ paper-button {
     }
 
     submit() {
-      let invalidInputNames = this.validate()
-      if (invalidInputNames.length !== 0) {
-        // @TODO Scroll to invalid input.
-        this.shadowRoot
-          .querySelector(`[name=${invalidInputNames[0]}]`)
-          .scrollIntoView({behavior: 'smooth', block: 'start'})
-        this.inpcomplete = true
-        return false
-      } else {
-        let inputs = []
-         this
-          .shadowRoot
-          .querySelectorAll('[name]')
-          .forEach(input => inputs.push(input.getProps()))
-        this.inputs = inputs
-        this.incomplete = false 
-        return true
-      }
+      let inputs = []
+        this
+        .shadowRoot
+        .querySelectorAll('[name]')
+        .forEach(input => inputs.push(input.getProps()))
+      this.inputs = inputs
+      return true
     }
 
     validate() {
@@ -327,19 +336,28 @@ paper-button {
           validInputNames.push(input.name)
         }
       })
-      return invalidInputNames
+      if (invalidInputNames.length !== 0) {
+        this.shadowRoot
+          .querySelector(`[name=${invalidInputNames[0]}]`)
+          .scrollIntoView({behavior: 'smooth', block: 'start'})
+        this.incomplete = true
+        return false 
+      } else {
+        this.incomplete = false
+        return true
+      }
     }
 
     next() {
-      if(this.submit()) { 
+      if (this.validate()) { 
+        this.submit()
         this.dispatchEvent(new CustomEvent('ITEM_NEXT'))
       }
     }
 
     back() {
-      if(this.submit()) { 
-        this.dispatchEvent(new CustomEvent('ITEM_BACK'))
-      }
+      this.submit()
+      this.dispatchEvent(new CustomEvent('ITEM_BACK'))
     }
 
   }
