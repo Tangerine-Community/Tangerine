@@ -45,7 +45,11 @@ export class UserProfileComponent implements OnInit, AfterContentInit {
       this.iframe.nativeElement.addEventListener('ALL_ITEMS_CLOSED', () => {
         // navigate to homescreen
         console.log("navigating to case-management")
-        this.router.navigate(['/case-management']);
+        try {
+          this.router.navigate(['/case-management']);
+        } catch (e) {
+          console.log("error navigating to case-management: " + e)
+        }
       });
     }, 1500);
 

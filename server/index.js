@@ -2,6 +2,8 @@
 
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
+// const spawn = util.promisify(require('child_process').spawn)
+// const spawn = require('child_process').spawn
 const http = require('axios');
 const read = require('read-yaml')
 const express = require('express')
@@ -115,6 +117,21 @@ app.use('/editor/release-apk/:secret/:group', isAuthenticated, async function (r
   await exec(`cd /tangerine/client && \
         ./release-apk.sh ${secret} ./content/groups/${group}
   `)
+  console.log( process.env.PATH );
+  // const defaults = {
+  //   cwd: ' /tangerine/client',
+  //   env: process.env
+  // };
+  // const releaseApk = await exec('./release-apk.sh ${secret} ./content/groups/${group}', defaults)
+  // const releaseApk = spawn('./release-apk.sh', ['bar', './content/groups/bar'], defaults)
+  // const releaseApk = spawn('ls', ['/tangerine/client']);
+  // releaseApk.stdout.on('data', function(data){
+  //   console.log(data);
+  // });
+  //
+  // releaseApk.stderr.on('data', function(data){
+  //   console.log(data);
+  // });
   res.send('ok')
 })
 
@@ -122,9 +139,16 @@ app.use('/editor/release-pwa/:secret/:group', isAuthenticated, async function (r
   // @TODO Make sure user is member of group.
   const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
-  await exec(`cd /tangerine/client && \
+  const releasePwa = await exec(`cd /tangerine/client && \
         ./release-pwa.sh ${secret} ./content/groups/${group}
   `)
+  releasePwa.stdout.on('data', function(data){
+    console.log(data);
+  });
+
+  releasePwa.stderr.on('data', function(data){
+    console.log(data);
+  });
   res.send('ok')
 })
 

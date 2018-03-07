@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "allowJs": true,
     "outDir": "./dist/out-tsc",
     "baseUrl": "src",
     "sourceMap": true,
@@ -14,8 +13,8 @@
       "node_modules/@types"
     ],
     "lib": [
-      "es2016",
-      "dom"
+      "dom",
+      "es2015"
     ]
   }
 }
