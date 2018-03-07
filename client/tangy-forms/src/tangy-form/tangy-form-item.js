@@ -272,7 +272,8 @@ paper-button {
     }
 
     onCloseButtonPress() {
-      if (this.submit()) {
+      if (this.validate()) {
+        this.submit()
         this.open = false 
         this.dispatchEvent(new CustomEvent('ITEM_CLOSED'))
       }
