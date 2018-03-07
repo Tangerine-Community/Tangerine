@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../core/auth/_services/user.service';
 import { ActivatedRoute } from '@angular/router';
+import { TangyFormService } from '../../tangy-forms/tangy-form-service';
 
 @Component({
   selector: 'app-case-details',
@@ -21,6 +22,9 @@ export class CaseDetailsComponent implements OnInit {
 
   async getForm() {
     const userDbName = await this.userService.getUserDatabase();
+    const tangyFormService = new TangyFormService({ databaseName: userDbName });
+    await tangyFormService.initialize();
+
     this.formUrl = `../tangy-forms/index.html#form_src=../content/reports/form.html&hide_top_bar=true&database_name=${userDbName}&locationId=${this.locationId}`;
   }
 
