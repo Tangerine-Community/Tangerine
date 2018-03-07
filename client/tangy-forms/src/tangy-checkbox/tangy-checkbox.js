@@ -31,11 +31,13 @@ export class TangyCheckbox extends PolymerElement {
     return {
       name: {
         type: String,
-        value: ''
+        value: '',
+        reflectToAttribute: true
       },
       label: {
         type: String,
-        value: ''
+        value: '',
+        reflectToAttribute: true
       },
       required: {
         type: Boolean,
