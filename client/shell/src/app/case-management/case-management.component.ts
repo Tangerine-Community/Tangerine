@@ -18,10 +18,12 @@ export class CaseManagementComponent implements OnInit, AfterViewInit {
   }
 
   async ngOnInit() {
+    console.log("ngOnInit Case Management Component.")
     this.getMyLocations();
   }
 
   ngAfterViewInit() {
+    console.log("ngAfterViewInit Case Management Component.")
     /**
      *The `(res.length < 1 || res.trim())` expression checks if the string entered in the searchbox is a series of whitespace or
      * a non-empty string after removing the whitespace.

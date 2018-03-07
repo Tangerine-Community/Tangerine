@@ -17,7 +17,11 @@ if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ]; then
 fi
 
 cp -r /tangerine/client/builds/apk /.tmp-apk
+rm -rf /.tmp-apk/www/content
 cp -r $CONTENT_PATH /.tmp-apk/www/content
+
+rm -rf /.tmp-apk/www/shell
+cp -r /tangerine/client/builds/apk/www/shell/ /.tmp-apk/www/shell/
 
 cd /.tmp-apk
 echo "RELEASE APK: running Cordova build."
@@ -31,4 +35,4 @@ cordova -v --no-telemetry
 cordova build --no-telemetry android
 cp /.tmp-apk/platforms/android/build/outputs/apk/android-armv7-debug.apk /tangerine/client/releases/apks/$SECRET.apk
 echo "Released apk for $SECRET"
-rm -r /.tmp-apk
+#rm -r /.tmp-apk
