@@ -129,7 +129,7 @@ paper-button {
   <div class="card-actions">
     <template is="dom-if" if="{{!hideButtons}}">
       <paper-button id="open" on-click="onOpenButtonPress">open</paper-button>
-      <paper-button id="close" on-click="onCloseButtonPress">close</paper-button>
+      <paper-button id="close" on-click="onCloseButtonPress">save</paper-button>
     </template>
     <template is="dom-if" if="{{open}}">
       <template is="dom-if" if="{{!hideBackButton}}">
@@ -272,7 +272,8 @@ paper-button {
     }
 
     onCloseButtonPress() {
-      if (this.submit()) {
+      if (this.validate()) {
+        this.submit()
         this.open = false 
         this.dispatchEvent(new CustomEvent('ITEM_CLOSED'))
       }
