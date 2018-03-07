@@ -47,10 +47,13 @@ export class AppComponent implements OnInit {
     location.reload(); // @TODO find a way to load the page contents without reloading
   }
   async isAppUpdateAvailable() {
-    const response = await this.http.get('../../release-uuid.txt').toPromise();
-    const foundReleaseUuid = (response.text()).replace(/\n|\r/g, '');
-    const storedReleaseUuid = localStorage.getItem('release-uuid');
-    this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
+    try {
+      const response = await this.http.get('../../release-uuid.txt').toPromise();
+      const foundReleaseUuid = (response.text()).replace(/\n|\r/g, '');
+      const storedReleaseUuid = localStorage.getItem('release-uuid');
+      this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
+    } catch(e) {
+    }
   }
   updateApp() {
     const currentPath = window.location.pathname;
