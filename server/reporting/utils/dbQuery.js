@@ -50,6 +50,7 @@ exports.saveResult = async (doc, resultDb) => {
   delete doc.indexKeys;
 
   let docObj = {
+    _id: docKey,
     updated_at: new Date().toISOString(),
     parent_id: cloneDoc.indexKeys.parent_id,
     result_time : cloneDoc.indexKeys.time,
@@ -59,14 +60,18 @@ exports.saveResult = async (doc, resultDb) => {
     processed_results: doc
   };
 
-  let existingDoc = await RESULT_DB.get(docKey);
-
-  // if doc exists update it using its revision number.
-  if (!existingDoc.error) {
-    docObj = _.assignIn(existingDoc, docObj);
-  }
   try {
-    return await RESULT_DB.put(docObj, docKey);
+    let existingDoc = await RESULT_DB.get(docKey);
+    // if doc exists update it using its revision number.
+    if (!existingDoc.error) {
+      docObj = _.assignIn(existingDoc, docObj);
+    }
+  } catch (error) {
+    console.log('Error finding document with key' + docKey);
+  }
+
+  try {
+    return await RESULT_DB.put(docObj);
   } catch (err) {
     console.error(err);
   }

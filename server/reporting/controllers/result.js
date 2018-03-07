@@ -19,11 +19,6 @@ moment().format();
  */
 
 const dbQuery = require('./../utils/dbQuery');
-const dbConfig = require('./../config');
-
-// Initialize database
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * Define value maps for grid and survey values.
@@ -159,7 +154,7 @@ exports.processResult = (req, res) => {
  *
  * @param {string} docId - assessment id.
  * @param {number} count - count
- * @param {string} dbUrl - database url.
+ * @param {string} baseDb - database url.
  *
  * @returns {Object} - processed result for csv.
  */
@@ -171,7 +166,7 @@ const generateResult = async function(collections, count = 0, baseDb) {
   let assessmentSuffix = count > 0 ? `_${count}` : '';
   let resultCollections = _.isArray(collections) ? collections : [collections];
   let dbSettings = await dbQuery.getSettings(baseDb);
-  let groupTimeZone = dbSettings.timeZone;
+  let groupTimeZone = dbSettings.timeZone || 0;
 
   for (let [index, data] of resultCollections.entries()) {
     collection = data.doc;
@@ -200,7 +195,6 @@ const generateResult = async function(collections, count = 0, baseDb) {
       for (doc of subtestData) {
         allTimestamps.push(doc.timestamp);
         if (doc.prototype === 'location') {
-          doc.enumerator = enumeratorName;
           let location = await processLocationResult(doc, subtestCount, groupTimeZone, baseDb);
           result = _.assignIn(result, location);
           subtestCount.locationCount++;
@@ -284,9 +278,8 @@ const generateResult = async function(collections, count = 0, baseDb) {
     result.phoneNumber = userDetails.phoneNumber || userDetails.phone;
     result.fullName = `${userDetails.firstName || userDetails.first} ${userDetails.lastName || userDetails.last}`;
   } catch (err) {
-    console.error(err);
+    console.error(err, 'Error:: Unable to get user metadata');
   }
-
   return result;
 }
 
@@ -341,20 +334,14 @@ async function getLocationName(body, baseDb) {
   let levels = locationList.locationsLevels;
 
   if (schoolId) {
-    let username = `user-${body.enumerator}`;
-    let userDetails = await dbQuery.getUserDetails(username, baseDb);
-
-    for (const [label, id] of Object.entries(userDetails.location)) {
-      for (j = 0; j < levels.length; j++) {
-        if (label == levels[j]) {
-          locIds.push(id);
-          break;
-        }
-      }
+    let locLabels = body.data.labels.map(loc => loc.toLowerCase());
+    for (j = 0; j < levels.length; j++) {
+      locNames[levels[j]] = {};
+      let level = levels[j] === 'school' ? 'schoolname' : levels[j];
+      let index = locLabels.indexOf(level);
+      locNames[levels[j]]['label'] = body.data.location[index].toLowerCase();
     }
-    if (locIds.length < levels.length) {
-      locIds.push(schoolId);
-    }
+    return locNames;
   } else {
     locIds = body.data.location;
   }
@@ -626,7 +613,8 @@ function translateGridValue(databaseValue) {
 async function validateResult(doc, groupTimeZone, baseDb, allTimestamps) {
   let startTime, endTime, isValid, reason;
   let docId = doc.workflowId || doc.assessmentId || doc.curriculumId;
-  let collection = await GROUP_DB.get(docId, baseDb);
+  let GROUP_DB = new PouchDB(baseDb);
+  let collection = await GROUP_DB.get(docId);
   let validationParams = collection.authenticityParameters;
   let instrumentConstraints = validationParams && validationParams.constraints;
 
