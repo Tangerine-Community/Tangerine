@@ -26,7 +26,7 @@ const tangyFormReducer = function (state = initialState, action) {
     case FORM_OPEN:
       // tmp.response = Object.assign({}, action.response)
       newState = Object.assign({}, action.response) 
-      if (!newState.items.find(item => item.open)) newState.items[0].open = true
+      if (!newState.form.complete && !newState.items.find(item => item.open)) newState.items[0].open = true
       if (newState.form.hideClosedItems === true) newState.items.forEach(item => item.hidden = !item.open)
       if (newState.form.linearMode === true) newState.items.forEach(item => item.hideButtons = true)
       return newState
@@ -35,6 +35,7 @@ const tangyFormReducer = function (state = initialState, action) {
       return Object.assign({}, state, {
         complete: true,
         form: Object.assign({}, state.form, {
+          complete: true,
           linearMode: false,
           hideClosedItems: false
         }),
@@ -43,17 +44,54 @@ const tangyFormReducer = function (state = initialState, action) {
           // If the item has inputs, then it was opened and potentially touched so don't hide buttons
           // so that they may review what is inside.
           // Look at the inputs for the item, only show buttons if it does actually have input.
-          if (item.inputs.length === 0 || item.disabled) {
+          if (item.disabled) {
             props.hidden = true
           } else {
             props.hidden = false
             props.open = false
             props.hideButtons = false
           }
+          props.hideBackButton = true
+          props.hideNextButton = true
+          props.inputs = item.inputs.map(input => Object.assign({}, input, {disabled: true}))
+          if (item.feedback) {
+            props.open = true
+          }
           return Object.assign({}, item, props)
+         return item
         }),
         inputs: state.inputs.map(input => Object.assign({}, input, {disabled: true}))
       })
+
+    case 'SHOW_RESPONSE':
+      return Object.assign({}, state, { 
+        form: Object.assign({}, state.form, {
+          tabIndex: 1,
+          showResponse: true,
+          showSummary: false
+        }),
+        items: state.items.map((item) => {
+          if (item.summary) {
+            return Object.assign({}, item, { hidden: true })
+          } else {
+            return Object.assign({}, item, { hidden: false })
+          }
+      })})
+ 
+    case 'SHOW_SUMMARY':
+      return Object.assign({}, state, {
+        form: Object.assign({}, state.form, {
+          tabIndex: 0,
+          showResponse: false,
+          showSummary: true 
+        }),
+        items: state.items.map((item) => {
+          if (item.summary) {
+            return Object.assign({}, item, { open: true, hidden: false })
+          } else {
+            return Object.assign({}, item, { hidden: true })
+          }
+      })})     
 
     case ITEM_OPEN:
       newState = Object.assign({}, state)
@@ -137,6 +175,17 @@ const tangyFormReducer = function (state = initialState, action) {
       })
       return calculateTargets(newState)
 
+    case 'ITEM_SAVE':
+      newState = Object.assign({}, state, {
+        items: state.items.map((item) => {
+          if (item.id == action.item.id) {
+            return Object.assign({}, item, action.item)
+          }
+          return item
+        })
+      })
+      return newState
+
     case ITEM_DISABLE:
       newState = Object.assign({}, state, {
         items: state.items.map((item) => {
@@ -147,100 +196,6 @@ const tangyFormReducer = function (state = initialState, action) {
         })
       })
       return calculateTargets(newState)
-    
-    /*
-     * INPUT
-     */
-
-    case INPUT_ADD: 
-      // If this input does not yet
-      newState = Object.assign({}, state)
-      tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
-      if (!state.items[tmp.itemIndex].hasOwnProperty('inputs')) newState.items[tmp.itemIndex].inputs = []
-      // Save input name reference to item.
-      if (state.items[tmp.itemIndex].inputs.findIndex((input) => input.name === action.attributes.name) === -1) {
-        newState.items[tmp.itemIndex].inputs = [...newState.items[tmp.itemIndex].inputs, action.attributes.name]
-      }
-      // Save input in inputs.
-      if (state.inputs.findIndex((input) => input.name === action.attributes.name) === -1) {
-        newState.inputs = [...newState.inputs, action.attributes]
-      }
-      return newState 
-
-    case INPUT_VALUE_CHANGE:
-      newState = Object.assign({}, state, {inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {
-            value: action.inputValue, 
-            invalid: action.inputInvalid,
-            incomplete: action.inputIncomplete
-          })
-        }
-        return input 
-      })})
-      // Find out if item is complete if all required elements are not incomplete.
-      let incomplete = false
-      // Find item index.
-      let itemIndex = 0
-      newState.items.forEach((item, i) => {
-        if (item.inputs.includes(action.inputName)) itemIndex = i 
-      })
-      // Find any incomplete or invalid item in item that are not disabled and not hidden.
-      newState.inputs.forEach(input => {
-        if (newState.items[itemIndex].inputs.includes(input.name)) {
-          if (!input.disabled && !input.hidden && input.required) {
-            if (input.incomplete || input.invalid) {
-              incomplete = true 
-            }
-          }
-        }
-      })
-      newState.items[itemIndex].incomplete = incomplete 
-      return newState
-
-    case INPUT_DISABLE:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {disabled: true})
-        }
-        return input
-      })})
-      return Object.assign({}, newState, {
-        items: itemsIncompleteCheck(newState, action.inputName)
-      })
-
-    case INPUT_ENABLE:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {disabled: false})
-        }
-        return input
-      })})
-      return Object.assign({}, newState, {
-        items: itemsIncompleteCheck(newState, action.inputName)
-      })
-
-    case INPUT_SHOW:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {hidden: false})
-        }
-        return input
-      })})
-      return Object.assign({}, newState, {
-        items: itemsIncompleteCheck(newState, action.inputName)
-      })
-
-    case INPUT_HIDE:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {hidden: true})
-        }
-        return input
-      })})
-      return Object.assign({}, newState, {
-        items: itemsIncompleteCheck(newState, action.inputName)
-      })
 
     case COMPLETE_FAB_HIDE:
       return Object.assign({}, state, { 
@@ -255,53 +210,6 @@ const tangyFormReducer = function (state = initialState, action) {
           hideCompleteFab: false
         }) 
       })
-
-    case TANGY_TIMED_MODE_CHANGE:
-      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {mode: action.tangyTimedMode})
-        }
-        return input
-      })})
-
-    case TANGY_TIMED_LAST_ATTEMPTED:
-      newState = Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {lastAttempted: action.lastAttempted, incomplete: false})
-        }
-        return input
-      })})
-      // Find out if item is complete if all required elements are not incomplete.
-      tmp.incomplete = false
-      // Find item index.
-      tmp.itemIndex = 0
-      newState.items.forEach((item, i) => {
-        if (item.inputs.includes(action.inputName)) tmp.itemIndex = i 
-      })
-      // Find any incomplete or invalid item in item that are not disabled and not hidden.
-      newState.inputs.forEach(input => {
-        if (newState.items[tmp.itemIndex].inputs.includes(input.name)) {
-          if (!input.disabled && !input.hidden && input.required) {
-            if (input.incomplete || input.invalid) {
-              tmp.incomplete = true 
-            }
-          }
-        }
-      })
-      newState.items[tmp.itemIndex].incomplete = tmp.incomplete 
-      return newState
-
-
-    case TANGY_TIMED_TIME_SPENT:
-      return Object.assign({}, state, { inputs: state.inputs.map((input) => {
-        if (input.name == action.inputName) {
-          return Object.assign({}, input, {timeSpent: action.timeSpent})
-        }
-        return input
-      })})
-
-
-
 
     default: 
       return state
@@ -331,28 +239,6 @@ function itemsIncompleteCheck(state, inputName) {
   })
   items[itemIndex].incomplete = incomplete 
   return items 
-}
-
-function validateItemInputs(state, itemIndex) {
-  return state.inputs.map(input => {
-    // Skip over if not in the item being closed.
-    if (state.items[itemIndex].inputs.indexOf(input.name) === -1) {
-      return Object.assign({}, input)
-    }
-    // Check to see if the item has value.
-    let hasValue = false
-    if (Array.isArray(input.value) && input.value.length > 0) hasValue = true
-    if (typeof input.value === 'string' && input.value.length > 0) hasValue = true
-    // Now check the validation.
-    if (input.required === true 
-        && !hasValue
-        && input.hidden === false
-        && input.disabled === false) {
-        return Object.assign({}, input, {invalid: true})
-    } else {
-      return Object.assign({}, input)
-    }
-  })
 }
 
 function calculateTargets(state) {
@@ -385,4 +271,4 @@ function calculateTargets(state) {
   return newState
 }
 
-export {tangyFormReducer, itemsIncompleteCheck, validateItemInputs, calculateTargets}
+export {tangyFormReducer, itemsIncompleteCheck, calculateTargets}
