@@ -23,6 +23,7 @@ const TANGY_TIMED_MODE_MARK = 'TANGY_TIMED_MODE_MARK'
 const TANGY_TIMED_MODE_LAST_ATTEMPTED = 'TANGY_TIMED_MODE_LAST_ATTEMPTED'
 const TANGY_TIMED_MODE_DONE = 'TANGY_TIMED_MODE_DONE'
 const TANGY_TIMED_COMPLETE = 'TANGY_TIMED_COMPLETE'
+const TANGY_TIMED_MODE_DISABLED = 'TANGY_TIMED_MODE_DISABLED'
 
 class TangyTimed extends Element {
   static get template() {
@@ -184,13 +185,12 @@ class TangyTimed extends Element {
         type: Boolean,
         value: false
       },
-      lastAttempted: {
-        type: String,
-        value: '',
-        observer: 'reflect',
-        reflectToAttribute: true
+      disabled: {
+        type: Boolean,
+        onserver: 'onDisabledChange',
+        value: false
       },
-      timeSpent: {
+      timeRemaining: {
         type: Number,
         value: 0,
         reflectToAttribute: true
@@ -200,40 +200,33 @@ class TangyTimed extends Element {
 
   ready() {
     super.ready();
-    // @TODO: Need to listen to slot for ready.
     setTimeout(() => {
-      this.generateGrid()
-      // this.reflectInputsToToggles()
+      this.render()
+      this.reflect()
     }, 400)
   }
 
 
   reflect() {
-      this.$.grid.querySelectorAll('tangy-toggle-button').forEach(button => {
-        button.pressed = (this.value.indexOf(button.name) === -1) ? false : true
-        button.highlighted = (this.lastAttempted === button.name) ? true : false
-      })
-
-      // if (input.value) tangyToggleButton.pressed = true
+    this.shadowRoot.querySelectorAll('tangy-toggle-button').forEach(el => {
+      let matchingState = this.value.find(state => el.name == state.name)
+      el.setProps(matchingState)
+    })
   }
 
-  generateGrid() {
+  render() {
 
     // Empty the grid, may be a reset.
     this.$.grid.innerHTML = ''
 
     // Set our countdown to the desired duration.
     this.timeRemaining = this.duration
-    this.timeSpent = 0
 
     // This column mapping is calibrated for a Nexus 7 in landscape mode.
     let columnsMap = [0, 1, 2.5, 4, 6, 8, 10, 12, 14, 16, 20]
     let columnWidthCalculation = `calc(100% * (1/${columnsMap[this.columns]}) - 10px - 1px)`
 
-    // Create tangy-toggle-button per option.
-    this.options = [].slice.call(this.querySelectorAll('option'))
-
-    this.options.forEach((option, i) => {
+    this.querySelectorAll('option').forEach((option, i) => {
       // Create the tangy toggle button.
       let tangyToggleButton = document.createElement('tangy-toggle-button')
       tangyToggleButton.setAttribute('name', option.value)
@@ -243,11 +236,25 @@ class TangyTimed extends Element {
       this.$.grid.appendChild(tangyToggleButton)
     })
 
-    let tangyToggleButtons = [].slice.call(this.shadowRoot.querySelectorAll('tangy-toggle-button'))
-    tangyToggleButtons.forEach ((button) => button.addEventListener('click', this.onTangyToggleButtonClick.bind(this)))
+    let newValue = []
+    this
+      .shadowRoot
+      .querySelectorAll('tangy-toggle-button')
+      .forEach ((button) => {
+        button.addEventListener('click', this.onTangyToggleButtonClick.bind(this))
+        newValue.push(button.getProps())
+      })
+    // Grids may change, preserve old values. Ideally we don't need this in the future with 
+    // proper revisioning of forms.
+    if (this.value.length < newValue.length) {
+      this.value.forEach(oldInputState => {
+        let index = newValue.findIndex(newInputState => (newInputState.name === oldInputState.name))
+        if (index !== -1) newValue[index] = oldInputState
+      })
+      this.value = newValue
+    }
 
-    this.reflect()
-  
+
   }
 
   // Note that mode is actually this.value.
@@ -261,7 +268,16 @@ class TangyTimed extends Element {
     controlElements.forEach(element => element.classList.remove('pressed'))
 
     switch (value) {
+      case TANGY_TIMED_MODE_DISABLED: 
+        this.timeRemaining = 0 
+        this.statusMessage = '';
+        this.$.startButton.disabled = false 
+        this.$.stopButton.disabled = false 
+        this.$.resetButton.disabled = false 
+        this.$.markButton.disabled = false 
+        this.$.lastAttemptedButton.disabled = true 
       case TANGY_TIMED_MODE_UNTOUCHED: 
+        this.timeRemaining = this.duration
         this.statusMessage = 'Click the play button to get started.';
         this.$.startButton.disabled = false 
         this.$.stopButton.disabled = true 
@@ -277,11 +293,20 @@ class TangyTimed extends Element {
         this.$.resetButton.disabled = true 
         this.$.markButton.disabled = true 
         this.$.lastAttemptedButton.disabled = true 
+        this.value = this.value.map(buttonState => {
+          buttonState.disabled = false
+          buttonState.highlighted = false
+          return buttonState
+        })
         this.timer = setInterval(() => {
           this.timeRemaining--;
           this.timeSpent++;
           if (this.timeRemaining === 0) {
             clearInterval(this.timer)
+            this.style.background = 'red'
+            setTimeout(() => this.style.background = 'white', 200)
+            setTimeout(() => this.style.background = 'red', 400)
+            setTimeout(() => this.style.background = 'white', 600)
             tangyTimedModeChange(this.name, TANGY_TIMED_MODE_LAST_ATTEMPTED)
           }
         }, 1000);
@@ -294,9 +319,12 @@ class TangyTimed extends Element {
         this.$.resetButton.disabled = false 
         this.$.markButton.disabled = true 
         this.$.lastAttemptedButton.disabled = false 
+        this.value = this.value.map(button => {
+          button.disabled = false
+          return button
+        })
       break
       case TANGY_TIMED_MODE_LAST_ATTEMPTED:
-        tangyTimedTimeSpent(this.name, this.duration - this.timeRemaining)
         this.statusMessage = 'Tap the item last attempted.'
         this.$.lastAttemptedButton.classList.add('pressed')
         this.$.startButton.disabled = true 
@@ -304,8 +332,13 @@ class TangyTimed extends Element {
         this.$.resetButton.disabled = false 
         this.$.markButton.disabled = false 
         this.$.lastAttemptedButton.disabled = true 
-        tangyToggleButtons.forEach((button) => button.highlighted = false)
+        this.value = this.value.map(button => {
+          button.disabled = true
+          button.highlighted = false 
+          return button
+        })
       break
+      // @TODO No longer being used.
       case TANGY_TIMED_MODE_DONE:
         this.statusMessage = 'You may proceed.'
         this.$.startButton.disabled = true 
@@ -313,86 +346,99 @@ class TangyTimed extends Element {
         this.$.resetButton.disabled = false 
         this.$.markButton.disabled = false 
         this.$.lastAttemptedButton.disabled = false 
+        this.shadowRoot.querySelectorAll('tangy-toggle-button').forEach(button => button.disabled = true)
       break
 
     }
   }
 
-  removeValueEntry(name) {
-    let newValue = [...this.value] 
-    newValue.splice(newValue.indexOf(name), 1)
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
-      inputName: this.name,
-      inputValue: newValue,
-      inputIncomplete: true,
-      inputInvalid: false
-    }}))
-  }
-
-  addValueEntry(name) {
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
-      inputName: this.name,
-      inputValue: [...this.value, name],
-      inputIncomplete: true,
-      inputInvalid: false
-
-    }}))
-  }
+  updateValue() {
+      }
 
   onTangyToggleButtonClick(event) {
 
     let tangyToggleButtons = [].slice.call(this.shadowRoot.querySelectorAll('tangy-toggle-button'))
     let inputElements = [].slice.call(this.querySelectorAll('[name]'))
-    let value = ''
+    let newValue = []
 
     switch (this.mode) {
       case TANGY_TIMED_MODE_UNTOUCHED: 
-        // Do nothing.
+         
       break
       case TANGY_TIMED_MODE_MARK:
       case TANGY_TIMED_MODE_RUN: 
-        event.target.pressed = !event.target.pressed
-        if (event.target.pressed) {
-          this.addValueEntry(event.target.name)
-        } else {
-          this.removeValueEntry(event.target.name)
-        }
+        // Get the props of the buttons, save to value.
+        this.shadowRoot
+          .querySelectorAll('tangy-toggle-button')
+          .forEach(button => newValue.push(button.getProps()))
+        this.value = newValue
+
       break
       case TANGY_TIMED_MODE_LAST_ATTEMPTED:
-        tangyTimedLastAttempted(this.name, event.target.name)
-        // Need to? Can just fire events and take care of it in the reducer.
-        // this.reflectTogglesToInputs()
+        // Set the state of the button, assign to value which will trigger reflecting to its element.
+        newValue = this.value.map(option => {
+          if (option.name === event.target.name) {
+            option.highlighted = true
+          } else {
+            option.highlighted = false
+          }
+          return option
+        }) 
+        this.value = newValue
       break
     }
   }
 
   onStartClick() {
-    tangyTimedModeChange(this.name, TANGY_TIMED_MODE_RUN)
+    this.reset()
+    this.mode = TANGY_TIMED_MODE_RUN
   }
 
   onStopClick() {
     clearInterval(this.timer);
-    tangyTimedModeChange(this.name, TANGY_TIMED_MODE_LAST_ATTEMPTED)
+    this.mode = TANGY_TIMED_MODE_LAST_ATTEMPTED
   }
 
   onResetClick() {
-    let inputEls = [].slice.call(this.querySelectorAll('[name]'))
-    inputEls.forEach(input => this.dispatchInputChange(input.name, ''))
-    tangyTimedModeChange(this.name, TANGY_TIMED_MODE_UNTOUCHED)
-    this.generateGrid()
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {bubbles: true, detail: {
-      inputName: this.name,
-      inputValue: [] 
-    }}))
+    this.reset()
+    this.mode = TANGY_TIMED_MODE_UNTOUCHED
+      // this.dispatchEvent(new Event('change', {bubbles: true}))
   }
 
   onMarkClick() {
-    tangyTimedModeChange(this.name, TANGY_TIMED_MODE_MARK)
+    this.mode = TANGY_TIMED_MODE_MARK
   }
 
   onLastAttemptedClick(element) {
-    tangyTimedModeChange(this.name, TANGY_TIMED_MODE_LAST_ATTEMPTED)
+    this.mode = TANGY_TIMED_MODE_LAST_ATTEMPTED
   }
+
+  onDisabledChange() {
+    if (this.disabled === true) this.mode = TANGY_TIMED_MODE_DISABLED
+  }
+
+  reset() {
+    this.value = this.value.map(option => {
+      option.highlighted = false
+      option.value = ''
+      option.pressed = false
+      option.disabled = true
+      return option
+    })
+  }
+
+  validate() {
+    let lastAttempted = this.value.find(state => (state.highlighted) ? state : false) 
+    if (this.required && !this.disabled && !this.hidden && lastAttempted) {
+      this.invalid = false
+      return true
+    } else {
+      this.invalid = true
+      return false
+    }
+  }
+
+
 }
 
 window.customElements.define(TangyTimed.is, TangyTimed);

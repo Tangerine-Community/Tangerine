@@ -70,8 +70,12 @@ class TangyGps extends Element {
         value: 'tangy-gps'
       },
       value: {
-        type: Object,
-        value: {},
+        type: Array,
+        value: [
+          {name: 'latitude', value: ''},
+          {name: 'longitude', value: ''},
+          {name: 'accuracy', value: ''}
+        ], 
         observer: 'reflect',
         reflectToAttribute: true
       },
