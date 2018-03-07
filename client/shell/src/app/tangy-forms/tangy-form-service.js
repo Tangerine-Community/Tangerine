@@ -16,7 +16,6 @@ export class TangyFormService {
         await this.db.put(updatedDesignDoc)
       }
     } catch (e) {
-      ``
       this.loadDesignDoc()
     }
   }
@@ -83,7 +82,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '14',
+  version: '15',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -133,13 +132,11 @@ var tangyFormDesignDoc = {
         }
       }.toString()
     },
-    responsesThisMonthByLocationId: {
+    responsesByYearMonthLocationId: {
       map: function (doc) {
-        const currentDate = new Date();
-        const startDatetime = new Date(doc.startDatetime)
+        const startDatetime = new Date(doc.startDatetime);
         if (doc.hasOwnProperty('collection')
           && doc.collection === 'TangyFormResponse'
-          && startDatetime.getMonth() === currentDate.getMonth() && startDatetime.getFullYear() === currentDate.getFullYear()
           && doc.complete === true && doc.hasOwnProperty('inputs')) {
           const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
           if (!locationFields || locationFields.length === 0) {
@@ -147,7 +144,7 @@ var tangyFormDesignDoc = {
           }
           locationFields.forEach((field) => {
             const thisLocationId = field.value[field.value.length - 1].value;
-            emit(thisLocationId, true)
+            emit(`${thisLocationId}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, true);
           })
         }
       }.toString()

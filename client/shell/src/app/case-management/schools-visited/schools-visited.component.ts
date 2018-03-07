@@ -15,8 +15,13 @@ export class SchoolsVisitedComponent implements OnInit {
     this.getMyLocations();
   }
   async getMyLocations() {
+    const currentDate = new Date();
     try {
-      const result = await this.caseManagementService.getMyLocationVisits();
+      /**
+       * getMonth() returns a number representing each month. It is zero indexed i.e. Jan is 0, Feb 1.
+       * So we add 1 to get the month as stored in the DB
+       */
+      const result = await this.caseManagementService.getMyLocationVisits(currentDate.getMonth() + 1, currentDate.getFullYear());
       const isVisited = true;
       this.schoolsVisitedThisMonth = this.filterLocationsByVisitStatus(result, isVisited);
     } catch (error) {
@@ -24,7 +29,7 @@ export class SchoolsVisitedComponent implements OnInit {
     }
   }
 
-  filterLocationsByVisitStatus(data, isVisited) {
+  filterLocationsByVisitStatus(data, isVisited?) {
     return data.filter((item) => {
       return (isVisited && item.visits > 0) || (!isVisited && item.visits < 1);
     });

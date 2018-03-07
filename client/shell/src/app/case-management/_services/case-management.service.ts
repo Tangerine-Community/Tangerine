@@ -28,7 +28,7 @@ export class CaseManagementService {
     this.userDB = new PouchDB
       (authenticationService.getCurrentUserDBPath());
   }
-  async getMyLocationVisits() {
+  async getMyLocationVisits(month: number, year: number) {
 
     const res = await this.http.get('../content/location-list.json').toPromise();
     const locationListObject = res.json();
@@ -37,15 +37,19 @@ export class CaseManagementService {
     const myLocations = [];
 
     const locations = [];
-    const visits = await this.getVisitsThisMonthByLocation();
+    const visits = await this.getVisitsByYearMonthLocationId();
 
     visits.forEach(visit => {
-      const item = findById(locationList, visit.key);
-      locations.push({
-        location: item.label,
-        visits: countUnique(visits, item['id'].toString()),
-        id: item['id']
-      });
+      const visitKey = visit.key.split('-');
+      if (visitKey[1].toString() === month.toString() && visitKey[2].toString() === year.toString()) {
+        const item = findById(locationList, visitKey[0]);
+        locations.push({
+          location: item.label,
+          visits: countUnique(visits, item['id'].toString()),
+          id: item['id']
+        });
+      }
+
     });
     return locations;
   }
@@ -65,9 +69,9 @@ export class CaseManagementService {
     return forms;
   }
 
-  async getVisitsThisMonthByLocation(locationId?: string) {
+  async getVisitsByYearMonthLocationId(locationId?: string) {
     const options = { key: locationId };
-    const results = await this.userDB.query('tangy-form/responsesThisMonthByLocationId', options);
+    const results = await this.userDB.query('tangy-form/responsesByYearMonthLocationId', options);
     return results.rows;
   }
 
@@ -84,7 +88,7 @@ export class CaseManagementService {
 function countUnique(array, key) {
   let count = 0;
   array.forEach((item) => {
-    count += item.key.toString() === key ? 1 : 0;
+    count += item.key.toString().startsWith(key) ? 1 : 0;
   });
   return count;
 }
