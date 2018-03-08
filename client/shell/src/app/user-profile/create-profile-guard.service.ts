@@ -11,14 +11,19 @@ export class CreateProfileGuardService implements CanActivate {
   constructor(private router: Router, private userService: UserService) { }
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    let results
     console.log("We're in the ProfileGuardService")
     let isProfileComplete = false;
     this.userDatabase = await this.userService.getUserDatabase();
     this.DB = new PouchDB(this.userDatabase);
-    const results = await this.DB.query('tangy-form/responsesByFormId', {
-      key: 'user-profile',
-      include_docs: true
-    });
+    try {
+        results = await this.DB.query('tangy-form/responsesByFormId', {
+          key: 'user-profile',
+          include_docs: true
+        });
+    } catch (e) {
+      console.log("Unable to run query: " + e)
+    }
 
     if (results.rows.length === 0) {
       isProfileComplete = false;
