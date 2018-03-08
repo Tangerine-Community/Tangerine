@@ -241,6 +241,10 @@ paper-button {
     }
 
     fireHook(hook, target) {
+      let formEl = this.shadowRoot.querySelector('form')
+      // Bail if no matching attribute given the hook called.
+      if (!formEl.hasAttribute(hook)) return
+      // Prepare some helper variables.
       let state = window.tangyFormStore.getState()
       let inputs = {}
       this.shadowRoot.querySelectorAll('[name]').forEach(input => inputs[input.name] = input)
@@ -256,11 +260,7 @@ paper-button {
       let inputShow = (name) => helpers.inputShow(name)
       let inputDisable = (name) => helpers.inputDisable(name)
       let inputEnable = (name) => helpers.inputEnable(name)
-      // Eval on-change on forms.
-      let formEl = this.shadowRoot.querySelector('form[on-change]')
-      if (formEl) {
-        eval(formEl.getAttribute(hook))
-      }
+      eval(formEl.getAttribute(hook))
     }
 
     onOpenButtonPress() {
