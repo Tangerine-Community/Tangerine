@@ -178,9 +178,6 @@ export class TangyForm extends PolymerElement {
 
       onClickSummaryTab() {
         this.store.dispatch({type: 'SHOW_SUMMARY'})
-        //this.querySelectorAll('tangy-form-item').forEach(el => el.hidden = true)
-        //this.querySelector('[summary]').hidden = false
-        //this.querySelector('[summary]').setAttribute('open', true)
         setTimeout(() => {
           this.querySelector('[summary]').scrollIntoView({behavior: 'smooth', block: 'start'})
         }, 200)
@@ -412,7 +409,7 @@ export class TangyForm extends PolymerElement {
           } else if (foundInput && foundInput.hasOwnProperty('value')) {
             return foundInput.value
           } else {
-            return undefined
+            return '' 
           }
 
         }
