@@ -21,13 +21,19 @@ const PouchDB = require('pouchdb');
 exports.saveHeaders = async (doc, key, resultDb) => {
   const RESULT_DB = new PouchDB(resultDb);
   let docObj = { column_headers: doc };
+  docObj._id = key;
   docObj.updated_at = new Date().toISOString();
-  let existingDoc = await RESULT_DB.get(key);
 
-  // if doc exists update it using its revision number.
-  if(!existingDoc.error) {
-    docObj = _.assignIn(existingDoc, docObj);
+  try {
+    let existingDoc = await RESULT_DB.get(key);
+    // if doc exists update it using its revision number.
+    if (!existingDoc.error) {
+      docObj = _.assignIn(existingDoc, docObj);
+    }
+  } catch (error) {
+    console.log('Error finding document with key: ' + key);
   }
+
   try {
     return await RESULT_DB.put(docObj);
   } catch (err) {
@@ -67,7 +73,7 @@ exports.saveResult = async (doc, resultDb) => {
       docObj = _.assignIn(existingDoc, docObj);
     }
   } catch (error) {
-    console.log('Error finding document with key' + docKey);
+    console.log('Error finding document with key: ' + docKey);
   }
 
   try {
