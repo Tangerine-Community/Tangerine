@@ -23,8 +23,8 @@ let changesFeed = function (groupDB, groupResultDB) {
       });
       logger.info('groupNames: ' + groupNames);
       groupNames.forEach(function(groupName) {
-        const baseDb = dbConfig.base_db + groupName;
-        const resultDb = dbConfig.base_db + groupName + '-result';
+        const baseDb = dbConfig.db_url + groupName;
+        const resultDb = dbConfig.db_url + groupName + '-result';
         monitorChange(baseDb, resultDb);
       });
     });
