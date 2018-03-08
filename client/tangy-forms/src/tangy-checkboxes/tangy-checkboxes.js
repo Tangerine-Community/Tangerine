@@ -156,5 +156,19 @@ class TangyCheckboxes extends Element {
     }}))
   }
 
+  validate() {
+    let foundOne = false
+    this.shadowRoot.querySelectorAll('[name]').forEach(el => {
+      if (el.value === 'on') foundOne = true
+    })
+    if (this.required && !this.hidden && !this.disabled && !foundOne) {
+      this.invalid = true
+      return false
+    } else {
+      this.invalid = false
+      return true
+    }
+  }
+
 }
 window.customElements.define(TangyCheckboxes.is, TangyCheckboxes );
