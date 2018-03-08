@@ -47,6 +47,24 @@ RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
 ADD client /tangerine/client
 RUN cd /tangerine/client/ && ./build.sh
 
+# Setup the Cordova app
+WORKDIR /tangerine
+
+RUN mkdir /.tmp-apk
+RUN cp -r /tangerine/client/builds/apk/. /.tmp-apk/
+WORKDIR /.tmp-apk
+
+RUN cordova platform --no-telemetry add android@7.0.0
+RUN cordova plugin --no-telemetry add cordova-plugin-whitelist --save
+RUN cordova plugin --no-telemetry add cordova-plugin-geolocation --save
+RUN cordova plugin --no-telemetry add cordova-plugin-camera --save
+RUN cordova plugin --no-telemetry add cordova-plugin-crosswalk-webview --save
+RUN cordova build --no-telemetry android
+
+RUN cordova -v --no-telemetry
+RUN cordova requirements --no-telemetry
+RUN echo "ANDROID_BUILD_TOOLS_VERSION: $ANDROID_BUILD_TOOLS_VERSION"
+
 # Build tree
 ADD tree /tangerine/tree
 #RUN cd /tangerine/tree/ && ./build.sh
@@ -56,8 +74,6 @@ ADD server /tangerine/server
 
 # Setup bash_profile
 #RUN echo 'export PS1="$(whoami):$(pwd)$ "' >> /root/.bashrc
-
-WORKDIR /tangerine
 
 #
 # Wrap up 
