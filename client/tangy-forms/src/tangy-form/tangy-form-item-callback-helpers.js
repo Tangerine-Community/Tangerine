@@ -9,6 +9,7 @@ export class TangyFormItemHelpers {
   }
 
   getValue(name) {
+    let value = ''
     let foundInput = undefined
     // Look in the shadow DOM.
     this.inputs.forEach(input => {
@@ -34,12 +35,14 @@ export class TangyFormItemHelpers {
           values.push(subInput.name)
         }
       })
-      return values
-    } 
-    if (foundInput && foundInput.hasOwnProperty('value')) {
-      return foundInput.value
+      value = values
+    } else if (foundInput && foundInput.hasOwnProperty('value')) {
+      value = foundInput.value
     }
-    return ''
+    if (!value) {
+      value = ''
+    }
+    return value
   }
 
   inputShow(name) {
