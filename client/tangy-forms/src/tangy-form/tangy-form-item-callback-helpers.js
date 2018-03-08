@@ -35,9 +35,11 @@ export class TangyFormItemHelpers {
         }
       })
       return values
-    } else {
+    } 
+    if (foundInput && foundInput.hasOwnProperty('value')) {
       return foundInput.value
     }
+    return ''
   }
 
   inputShow(name) {
