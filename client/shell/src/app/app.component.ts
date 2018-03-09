@@ -7,7 +7,6 @@ import { Observable } from 'rxjs/Observable';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
 import { UserService } from './core/auth/_services/user.service';
 import { WindowRef } from './core/window-ref.service';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -28,7 +27,6 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     // Set location list as a global.
     const window = this.windowRef.nativeWindow;
     const res = await this.http.get('../content/location-list.json').toPromise();
@@ -39,9 +37,8 @@ export class AppComponent implements OnInit {
       this.showNav = isLoggedIn;
     });
     this.isAppUpdateAvailable();
-    this.getGeolocationPosition();
-    const getPosition = Observable.timer(0, 300000);
-    getPosition.subscribe(() => this.getGeolocationPosition());
+    // setInterval(this.getGeolocationPosition, 1000);
+
   }
 
   logout() {
@@ -55,7 +52,7 @@ export class AppComponent implements OnInit {
       const foundReleaseUuid = (response.text()).replace(/\n|\r/g, '');
       const storedReleaseUuid = localStorage.getItem('release-uuid');
       this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
-    } catch(e) {
+    } catch (e) {
     }
   }
   updateApp() {
@@ -68,10 +65,12 @@ export class AppComponent implements OnInit {
     const options = {
       enableHighAccuracy: true
     };
+    const queue = [];
+    JSON.parse(localStorage.getItem('gpsQueue')) ? queue.push(JSON.parse(localStorage.getItem('gpsQueue'))) : null;
+    // queue = queue.filter(entry => entry.timestamp > now - 5minutes).push({ ...GPS.getReading(), ... {timestamp: now})
     const currentPosition = navigator.geolocation.getCurrentPosition((position) => {
-      localStorage.setItem('currentLatitude', position.coords.latitude.toString());
-      localStorage.setItem('currentLongitude', position.coords.longitude.toString());
-      localStorage.setItem('currentAccuracy', position.coords.accuracy.toString());
+
+      console.log(position);
     },
       (err) => { },
       options);

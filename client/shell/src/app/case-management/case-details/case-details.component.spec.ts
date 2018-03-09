@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TangyTooltipComponent } from './tangy-tooltip.component';
+import { CaseDetailsComponent } from './case-details.component';
 
-describe('TangyTooltipComponent', () => {
-  let component: TangyTooltipComponent;
-  let fixture: ComponentFixture<TangyTooltipComponent>;
+describe('CaseDetailsComponent', () => {
+  let component: CaseDetailsComponent;
+  let fixture: ComponentFixture<CaseDetailsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TangyTooltipComponent ]
+      declarations: [ CaseDetailsComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TangyTooltipComponent);
+    fixture = TestBed.createComponent(CaseDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
