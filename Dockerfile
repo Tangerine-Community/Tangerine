@@ -58,7 +58,8 @@ RUN cordova platform --no-telemetry add android@7.0.0
 RUN cordova plugin --no-telemetry add cordova-plugin-whitelist --save
 RUN cordova plugin --no-telemetry add cordova-plugin-geolocation --save
 RUN cordova plugin --no-telemetry add cordova-plugin-camera --save
-RUN cordova plugin --no-telemetry add cordova-plugin-crosswalk-webview --save
+#RUN cordova plugin --no-telemetry add cordova-plugin-crosswalk-webview --save
+RUN cordova plugin --no-telemetry add cordova-plugin-httpd --save
 RUN cordova build --no-telemetry android
 
 RUN cordova -v --no-telemetry
@@ -80,5 +81,8 @@ ADD server /tangerine/server
 #
 
 ADD ./ /tangerine
+
+WORKDIR /tangerine
+
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && node index.js 

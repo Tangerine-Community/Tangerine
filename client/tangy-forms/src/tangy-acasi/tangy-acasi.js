@@ -44,7 +44,7 @@ export class TangyAcasi extends PolymerElement {
 
     <div class="container">
       <label for="group">[[label]]</label>
-      <paper-button id="replay" raised class="indigo" on-click="replay">Replay</paper-button>
+      <paper-button id="replay" raised class="indigo" on-click="replay">Play</paper-button>
       <div id="container"></div>
     </div>
     `
@@ -135,9 +135,10 @@ export class TangyAcasi extends PolymerElement {
   }
 
   reflect() {
-    this.shadowRoot.querySelectorAll('paper-radio-button').forEach(el => {
+    console.log("i am a mirror")
+    this.shadowRoot.querySelectorAll('img').forEach(el => {
       let matchingState = this.value.find(state => el.name == state.name)
-      el.setProps(matchingState)
+      el.setAttributes(matchingState)
       el.disabled = this.disabled
       el.hidden = this.hidden
     })
@@ -155,17 +156,21 @@ export class TangyAcasi extends PolymerElement {
     let images = this.getAttribute('images')
     let imageArray = images.split(",")
     for (let src of imageArray) {
-      let button = document.createElement('paper-radio-button')
+      // let button = document.createElement('paper-radio-button')
       let srcArray = src.split('/')
       let filename = srcArray[srcArray.length-1]
       let name = filename.replace('.png', '')
-      button.name = name
-      if (this.disabled) button.setAttribute('disabled', true)
+      // button.name = name
+      // button.setAttribute("name", name)
+      // if (this.disabled) button.setAttribute('disabled', true)
       let imageEl = document.createElement('img')
+      imageEl.name = name
       imageEl.src = src
       imageEl.className = "acasi-image";
-      button.innerHTML = imageEl.outerHTML
-      this.$.container.appendChild(button)
+      // button.innerHTML = imageEl.outerHTML
+      this.$.container.appendChild(imageEl)
+      let brEl = document.createElement('br')
+      this.$.container.appendChild(brEl)
     }
     // paperRadioGroupEl.selected = this.value
     // if (this.required) paperRadioGroupEl.required = true
@@ -173,16 +178,17 @@ export class TangyAcasi extends PolymerElement {
 
     // detect change events and update the value
     let newValue = []
-    this
-      .shadowRoot
-      .querySelectorAll('paper-radio-button')
-      .forEach ((el) => {
-        el.addEventListener('change', this.onRadioButtonChange.bind(this))
-        newValue.push(el.getProps())
-      })
-    if (!this.value || (typeof this.value === 'object' && this.value.length < newValue.length)) {
-      this.value = newValue
-    }
+    // this
+    //   .shadowRoot
+    //   .querySelectorAll('paper-radio-button')
+    //   .forEach ((el) => {
+    //     el.addEventListener('change', this.onRadioButtonChange.bind(this))
+    //     // newValue.push(el.getProps())
+    //     newValue.push(el.getAttributes())
+    //   })
+    // if (!this.value || (typeof this.value === 'object' && this.value.length < newValue.length)) {
+    //   this.value = newValue
+    // }
 
     // Find all our img elements and populate the dataTouchSrc for each image.
     this.imgElements = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('img'));
@@ -194,6 +200,11 @@ export class TangyAcasi extends PolymerElement {
       } else {
         ele.dataTouchSrc = this.touchSrc
       }
+      ele.addEventListener('click', this.onImageChange.bind(this))
+      newValue.push(ele.getAttributes())
+    }
+    if (!this.value || (typeof this.value === 'object' && this.value.length < newValue.length)) {
+      this.value = newValue
     }
   }
 
@@ -223,10 +234,10 @@ export class TangyAcasi extends PolymerElement {
 
   _prepareForm() {
 
-    let radios = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('paper-radio-button'));
-    radios.forEach(radio => {
-      radio.$.radioContainer.style= 'display:none'
-    })
+    // let radios = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('paper-radio-button'));
+    // radios.forEach(radio => {
+    //   radio.$.radioContainer.style= 'display:none'
+    // })
 
     let activateImages = (event) => {
       // Find all our img elements, remove highlight from imgs already touched, and highlight this one
@@ -304,18 +315,45 @@ export class TangyAcasi extends PolymerElement {
     this.transitionSound.play();
   }
 
-  onRadioButtonChange(event) {
+  // onRadioButtonChange(event) {
+  //   let targetButton = event.target
+  //   if (targetButton.value = 'on') {
+  //     this
+  //       .$
+  //       .container
+  //       .querySelectorAll('paper-radio-button')
+  //       .forEach(el => {
+  //         if (el.name !== targetButton.name && targetButton.value == 'on') {
+  //           el.value = ''
+  //         }
+  //       })
+  //   }
+  // }
+
+  onImageChange(event) {
     let targetButton = event.target
+    let newvalue = []
     if (targetButton.value = 'on') {
       this
         .$
         .container
-        .querySelectorAll('paper-radio-button')
+        .querySelectorAll('img')
         .forEach(el => {
           if (el.name !== targetButton.name && targetButton.value == 'on') {
-            el.value = ''
+            el.setAttribute('value', '')
+          } else {
+            el.setAttribute('value', 'on')
           }
         })
+      this.value = this.value.map(input => {
+        if (input.name !== targetButton.name && targetButton.value == 'on') {
+          input.value = ''
+        } else {
+          input.value = 'on'
+        }
+        return input
+        })
+      this.dispatchEvent(new Event('change'))
     }
   }
 

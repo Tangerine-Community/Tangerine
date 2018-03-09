@@ -15,6 +15,8 @@ echo "Now let's make APK's"
 
 rm -r $(pwd)/builds/apk/www/shell
 ln -s $(pwd)/builds/dev/shell $(pwd)/builds/apk/www/shell
+rm -r $(pwd)/builds/apk/www/tangy-forms
+ln -s $(pwd)/tangy-forms/dist $(pwd)/builds/apk/www/tangy-forms
 
 echo "Launch the http server"
 

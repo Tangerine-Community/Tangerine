@@ -10,6 +10,7 @@ export class TangyFormService {
   databaseName = 'tangy-forms';
 
   constructor(props) {
+    Object.assign(this, props)
     this.db = new PouchDB(this.databaseName)
   }
 
