@@ -106,22 +106,22 @@ var tangyFormDesignDoc = {
     },
     responsesByLocationId: {
       map: function (doc) {
-        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && doc.complete === true && doc.hasOwnProperty('inputs')) {
-          const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
-          if (!locationFields || locationFields.length === 0) {
+        if (doc.hasOwnProperty('collection')
+          && doc.collection === 'TangyFormResponse'
+          && doc.hasOwnProperty('items')) {
+          const locationObject = doc.items.filter(item => item.hasOwnProperty('inputs') && item.hasOwnProperty('tagName') && item.tagName === 'TANGY-FORM-ITEM' && item.title === 'Location');
+          if (!locationObject || locationObject.length === 0) {
             return;
           }
-          locationFields.forEach((field) => {
-            const thisLocationId = field.value[field.value.length - 1].value;
-            emit(thisLocationId, true)
-          })
-        }
-      }.toString()
-    },
-    incompleteResponsesByLocationId: {
-      map: function (doc) {
-        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !!doc.complete === false && doc.hasOwnProperty('inputs')) {
-          const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
+          let locationFields = [];
+          locationObject.filter(item => item.hasOwnProperty('inputs')).map(item => {
+            item.inputs.forEach(i => {
+              if (i.hasOwnProperty('tagName') && i.tagName === 'TANGY-LOCATION') {
+                locationFields.push(i)
+              }
+            });
+          });
+
           if (!locationFields || locationFields.length === 0) {
             return;
           }
@@ -137,14 +137,26 @@ var tangyFormDesignDoc = {
         const startDatetime = new Date(doc.startDatetime);
         if (doc.hasOwnProperty('collection')
           && doc.collection === 'TangyFormResponse'
-          && doc.complete === true && doc.hasOwnProperty('inputs')) {
-          const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
+          && doc.hasOwnProperty('items')) {
+          const locationObject = doc.items.filter(item => item.hasOwnProperty('inputs') && item.hasOwnProperty('tagName') && item.tagName === 'TANGY-FORM-ITEM' && item.title === 'Location');
+          if (!locationObject || locationObject.length === 0) {
+            return;
+          }
+          let locationFields = [];
+          locationObject.filter(item => item.hasOwnProperty('inputs')).map(item => {
+            item.inputs.forEach(i => {
+              if (i.hasOwnProperty('tagName') && i.tagName === 'TANGY-LOCATION') {
+                locationFields.push(i)
+              }
+            });
+          });
+
           if (!locationFields || locationFields.length === 0) {
             return;
           }
           locationFields.forEach((field) => {
             const thisLocationId = field.value[field.value.length - 1].value;
-            emit(`${thisLocationId}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, true);
+            emit(`${thisLocationId}-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, true);
           })
         }
       }.toString()
