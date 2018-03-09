@@ -10,7 +10,7 @@ import { CaseManagementRoutingModule } from './case-management-routing.module';
 import { FormListComponent } from './form-list/form-list.component';
 import { SchoolsVisitedComponent } from './schools-visited/schools-visited.component';
 import { CaseDetailsComponent } from './case-details/case-details.component';
-import { AllObservationsComponent } from './all-observations/all-observations.component';
+//import { AllObservationsComponent } from './all-observations/all-observations.component';
 
 @NgModule({
   imports: [
@@ -26,8 +26,12 @@ import { AllObservationsComponent } from './all-observations/all-observations.co
     MatSelectModule,
     SharedModule
   ],
-  declarations: [FormListComponent, SchoolsVisitedComponent,
-    CaseDetailsComponent, AllObservationsComponent],
+  declarations: [
+    FormListComponent, 
+    SchoolsVisitedComponent,
+    CaseDetailsComponent 
+  ],
+    //, AllObservationsComponent],
   providers: [CaseManagementService]
 })
 export class CaseManagementModule { }
