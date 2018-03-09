@@ -1,16 +1,10 @@
 <mat-tab-group>
-  <mat-tab label="Completed Observations">
+  <mat-tab label="Observations">
     <br>
     <mat-card class="tangy-card-content-container">
       <app-completed-observations></app-completed-observations>
     </mat-card>
   </mat-tab>
-  <!-- <mat-tab label="Incomplete Observations">
-    <br>
-    <mat-card class="tangy-card-content-container">
-      <app-incomplete-observations></app-incomplete-observations>
-    </mat-card>
-  </mat-tab> -->
   <mat-tab label="Reports">
     <iframe *ngIf="formUrl" id="ifr" [src]="formUrl|safeUrl" appSeamlessWithWindow #iframe>
     </iframe>

@@ -35,13 +35,12 @@ export class CaseManagementService {
     // Calculate our locations by generating the path in the locationList object.
     const locationList = locationListObject.locations;
     const myLocations = [];
-
     const locations = [];
-    const visits = await this.getVisitsByYearMonthLocationId();
-
+    const results = await this.getVisitsByYearMonthLocationId();
+    const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
     visits.forEach(visit => {
       const visitKey = visit.key.split('-');
-      if (visitKey[1].toString() === month.toString() && visitKey[2].toString() === year.toString()) {
+      if (visitKey[2].toString() === month.toString() && visitKey[3].toString() === year.toString()) {
         const item = findById(locationList, visitKey[0]);
         locations.push({
           location: item.label,
@@ -52,6 +51,21 @@ export class CaseManagementService {
 
     });
     return locations;
+  }
+
+  async getFilterDatesForAllFormResponses() {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const results = await this.getVisitsByYearMonthLocationId();
+    const timeLapseFilter = [];
+    const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
+    visits.forEach(visit => {
+      const visitKey = visit.key.split('-');
+      timeLapseFilter.push({
+        value: `${visitKey[2].toString()}-${visitKey[3].toString()}`,
+        label: `${monthNames[visitKey[2].toString()]}, ${visitKey[3].toString()}`,
+      });
+    });
+    return removeDuplicates(timeLapseFilter, 'value');
   }
 
   async getFormList() {
@@ -68,7 +82,6 @@ export class CaseManagementService {
     }
     return forms;
   }
-
   async getVisitsByYearMonthLocationId(locationId?: string) {
     const options = { key: locationId };
     const results = await this.userDB.query('tangy-form/responsesByYearMonthLocationId', options);
@@ -79,12 +92,12 @@ export class CaseManagementService {
     const results = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
     return results.rows;
   }
-  async getIncompleteResponsesByLocationId(locationId: string) {
-    const results = await this.userDB.query('tangy-form/incompleteResponsesByLocationId', { key: locationId, include_docs: true });
-    return results.rows;
-  }
 }
-
+function removeDuplicates(array, property) {
+  return array.filter((obj, pos, arr) => {
+    return arr.map(mappedObject => mappedObject[property]).indexOf(obj[property]) === pos;
+  });
+}
 function countUnique(array, key) {
   let count = 0;
   array.forEach((item) => {

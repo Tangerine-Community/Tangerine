@@ -8,7 +8,8 @@ import { CaseManagementService } from '../_services/case-management.service';
 })
 export class SchoolsVisitedComponent implements OnInit {
 
-  schoolsVisitedThisMonth;
+  visits = [];
+  filterValuesForDates;
   constructor(private caseManagementService: CaseManagementService) { }
 
   ngOnInit() {
@@ -17,21 +18,24 @@ export class SchoolsVisitedComponent implements OnInit {
   async getMyLocations() {
     const currentDate = new Date();
     try {
-      /**
-       * getMonth() returns a number representing each month. It is zero indexed i.e. Jan is 0, Feb 1.
-       * So we add 1 to get the month as stored in the DB
-       */
-      const result = await this.caseManagementService.getMyLocationVisits(currentDate.getMonth() + 1, currentDate.getFullYear());
-      const isVisited = true;
-      this.schoolsVisitedThisMonth = this.filterLocationsByVisitStatus(result, isVisited);
+      this.visits =
+        await this.caseManagementService.getMyLocationVisits(currentDate.getMonth(), currentDate.getFullYear());
+      this.filterValuesForDates = await this.caseManagementService.getFilterDatesForAllFormResponses();
     } catch (error) {
       console.error(error);
     }
   }
-
-  filterLocationsByVisitStatus(data, isVisited?) {
-    return data.filter((item) => {
-      return (isVisited && item.visits > 0) || (!isVisited && item.visits < 1);
-    });
+  async onSelectDate(event) {
+    let dateParts = event.target.value;
+    try {
+      if (dateParts === '_') {
+        dateParts = this.filterValuesForDates[0].value;
+      }
+      dateParts = dateParts.split('-');
+      this.visits =
+        await this.caseManagementService.getMyLocationVisits(parseInt(dateParts[0], 10), parseInt(dateParts[1], 10));
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

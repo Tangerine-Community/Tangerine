@@ -7,7 +7,6 @@ import { Observable } from 'rxjs/Observable';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
 import { UserService } from './core/auth/_services/user.service';
 import { WindowRef } from './core/window-ref.service';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -39,6 +38,7 @@ export class AppComponent implements OnInit {
     });
     this.isAppUpdateAvailable();
     // setInterval(this.getGeolocationPosition, 1000);
+
   }
 
   logout() {
@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
       const foundReleaseUuid = (response.text()).replace(/\n|\r/g, '');
       const storedReleaseUuid = localStorage.getItem('release-uuid');
       this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
-    } catch(e) {
+    } catch (e) {
     }
   }
   updateApp() {
