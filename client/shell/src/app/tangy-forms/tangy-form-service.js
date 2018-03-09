@@ -9,14 +9,13 @@ export class TangyFormService {
   }
 
   async initialize() {
-    try { 
+    try {
       let designDoc = await this.db.get('_design/tangy-form')
       if (designDoc.version !== tangyFormDesignDoc.version) {
         let updatedDesignDoc = Object.assign({}, designDoc, tangyFormDesignDoc)
         await this.db.put(updatedDesignDoc)
       }
     } catch (e) {
-      ``
       this.loadDesignDoc()
     }
   }
@@ -83,7 +82,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '14',
+  version: '15',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -107,8 +106,22 @@ var tangyFormDesignDoc = {
     },
     responsesByLocationId: {
       map: function (doc) {
-        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && doc.complete === true && doc.hasOwnProperty('inputs')) {
-          const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
+        if (doc.hasOwnProperty('collection')
+          && doc.collection === 'TangyFormResponse'
+          && doc.hasOwnProperty('items')) {
+          const locationObject = doc.items.filter(item => item.hasOwnProperty('inputs') && item.hasOwnProperty('tagName') && item.tagName === 'TANGY-FORM-ITEM' && item.title === 'Location');
+          if (!locationObject || locationObject.length === 0) {
+            return;
+          }
+          let locationFields = [];
+          locationObject.filter(item => item.hasOwnProperty('inputs')).map(item => {
+            item.inputs.forEach(i => {
+              if (i.hasOwnProperty('tagName') && i.tagName === 'TANGY-LOCATION') {
+                locationFields.push(i)
+              }
+            });
+          });
+
           if (!locationFields || locationFields.length === 0) {
             return;
           }
@@ -119,21 +132,31 @@ var tangyFormDesignDoc = {
         }
       }.toString()
     },
-    responsesThisMonthByLocationId: {
+    responsesByYearMonthLocationId: {
       map: function (doc) {
-        const currentDate = new Date();
-        const startDatetime = new Date(doc.startDatetime)
+        const startDatetime = new Date(doc.startDatetime);
         if (doc.hasOwnProperty('collection')
           && doc.collection === 'TangyFormResponse'
-          && startDatetime.getMonth() === currentDate.getMonth() && startDatetime.getFullYear() === currentDate.getFullYear()
-          && doc.complete === true && doc.hasOwnProperty('inputs')) {
-          const locationFields = doc.inputs.filter(input => input.hasOwnProperty('tagName') && input.tagName === 'TANGY-LOCATION')
+          && doc.hasOwnProperty('items')) {
+          const locationObject = doc.items.filter(item => item.hasOwnProperty('inputs') && item.hasOwnProperty('tagName') && item.tagName === 'TANGY-FORM-ITEM' && item.title === 'Location');
+          if (!locationObject || locationObject.length === 0) {
+            return;
+          }
+          let locationFields = [];
+          locationObject.filter(item => item.hasOwnProperty('inputs')).map(item => {
+            item.inputs.forEach(i => {
+              if (i.hasOwnProperty('tagName') && i.tagName === 'TANGY-LOCATION') {
+                locationFields.push(i)
+              }
+            });
+          });
+
           if (!locationFields || locationFields.length === 0) {
             return;
           }
           locationFields.forEach((field) => {
             const thisLocationId = field.value[field.value.length - 1].value;
-            emit(thisLocationId, true)
+            emit(`${thisLocationId}-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, true);
           })
         }
       }.toString()

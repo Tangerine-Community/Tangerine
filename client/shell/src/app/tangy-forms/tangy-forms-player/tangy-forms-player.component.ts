@@ -36,9 +36,9 @@ export class TangyFormsPlayerComponent implements OnInit {
         // Relative path to tangy forms app.
         let formUrl = `../tangy-forms/index.html#form_src=${form[index]['src']}&database_name=${userDB}`;
         if (this.responseId) {
-          formUrl += `&response_id=${this.responseId}`
+          formUrl += `&response_id=${this.responseId}`;
         }
-        this.windowRef.nativeWindow.location = formUrl
+        this.windowRef.nativeWindow.location = formUrl;
       } else {
         console.error('Item not Found');
       }

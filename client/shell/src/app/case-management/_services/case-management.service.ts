@@ -28,57 +28,63 @@ export class CaseManagementService {
     this.userDB = new PouchDB
       (authenticationService.getCurrentUserDBPath());
   }
-  async getMyLocationVisits() {
+  async getMyLocationVisits(month: number, year: number) {
 
     const res = await this.http.get('../content/location-list.json').toPromise();
-    const locationList = res.json();
-    const userProfile = await this.userService.getUserProfile();
-
+    const locationListObject = res.json();
     // Calculate our locations by generating the path in the locationList object.
-    let myLocations = locationList.locations;
-    const location = userProfile.items[0].inputs.find(input => input.name === 'location');
-    location.value.forEach(levelObject => myLocations = myLocations[levelObject.value].children);
-
+    const locationList = locationListObject.locations;
+    const myLocations = [];
     const locations = [];
-    const visits = await this.getVisitsThisMonthByLocation();
-    /**
-     *  Check for ownProperty in myLocations
-     * for ...in  iterate over all enumerable properties of the object
-     * Also enumerates and those the object inherits from its constructor's prototype
-     * You may get unexpected properties from the prototype chain
-     */
-    for (const locationId in myLocations) {
-      if (myLocations.hasOwnProperty(locationId)) {
+    const results = await this.getVisitsByYearMonthLocationId();
+    const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
+    visits.forEach(visit => {
+      const visitKey = visit.key.split('-');
+      if (visitKey[2].toString() === month.toString() && visitKey[3].toString() === year.toString()) {
+        const item = findById(locationList, visitKey[0]);
         locations.push({
-          location: myLocations[locationId].label,
-          visits: countUnique(visits, myLocations[locationId]['id'].toString())
+          location: item.label,
+          visits: countUnique(visits, item['id'].toString()),
+          id: item['id']
         });
       }
-    }
+
+    });
     return locations;
+  }
+
+  async getFilterDatesForAllFormResponses() {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const results = await this.getVisitsByYearMonthLocationId();
+    const timeLapseFilter = [];
+    const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
+    visits.forEach(visit => {
+      const visitKey = visit.key.split('-');
+      timeLapseFilter.push({
+        value: `${visitKey[2].toString()}-${visitKey[3].toString()}`,
+        label: `${monthNames[visitKey[2].toString()]}, ${visitKey[3].toString()}`,
+      });
+    });
+    return removeDuplicates(timeLapseFilter, 'value');
   }
 
   async getFormList() {
     const forms = [];
-    const visits = await this.getResponsesByFormId();
     const formList = await this.http.get('../content/forms.json')
       .toPromise()
       .then(response => response.json()).catch(data => console.error(data));
     for (const form of formList) {
       forms.push({
         title: form['title'],
-        count: countUnique(visits, form['id']),
         src: form['src'],
         id: form['id']
       });
     }
-
-
     return forms;
   }
-
-  async getVisitsThisMonthByLocation() {
-    const results = await this.userDB.query('tangy-form/responsesThisMonthByLocationId');
+  async getVisitsByYearMonthLocationId(locationId?: string) {
+    const options = { key: locationId };
+    const results = await this.userDB.query('tangy-form/responsesByYearMonthLocationId', options);
     return results.rows;
   }
 
@@ -86,16 +92,33 @@ export class CaseManagementService {
     const results = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
     return results.rows;
   }
-  async getResponsesByFormId() {
-    const results = await this.userDB.query('tangy-form/responsesByFormId');
-    return results.rows;
-  }
 }
-
+function removeDuplicates(array, property) {
+  return array.filter((obj, pos, arr) => {
+    return arr.map(mappedObject => mappedObject[property]).indexOf(obj[property]) === pos;
+  });
+}
 function countUnique(array, key) {
   let count = 0;
   array.forEach((item) => {
-    count += item.key.toString() === key ? 1 : 0;
+    count += item.key.toString().startsWith(key) ? 1 : 0;
   });
   return count;
+}
+
+function findById(object, property) {
+  // Early return
+  if (object.id === property) {
+    return object;
+  }
+  let result;
+  for (const p in object) {
+    if (object.hasOwnProperty(p) && typeof object[p] === 'object') {
+      result = findById(object[p], property);
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return result;
 }
