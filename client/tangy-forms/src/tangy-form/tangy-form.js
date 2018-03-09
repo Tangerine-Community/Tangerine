@@ -198,7 +198,8 @@ export class TangyForm extends PolymerElement {
         return {
           id: {
             type: String,
-            value: 'tangy-form'
+            value: 'tangy-form',
+            reflectToAttribute: true
           },
           // Pass in code to be eval'd on any form input change.
           onChange: {
@@ -281,7 +282,7 @@ export class TangyForm extends PolymerElement {
         this.hasNotYetFocused = true
 
       }
-      
+
       disconnectedCallback() {
         this.unsubscribe()
       }
@@ -289,7 +290,7 @@ export class TangyForm extends PolymerElement {
       onFormResponseComplete(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
         this.store.dispatch({
           type: 'FORM_RESPONSE_COMPLETE'
@@ -300,7 +301,7 @@ export class TangyForm extends PolymerElement {
       onItemNext(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
         this.focusOnNextItem()
       }
@@ -308,7 +309,7 @@ export class TangyForm extends PolymerElement {
       onItemBack(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
         this.focusOnPreviousItem()
       }
@@ -316,14 +317,14 @@ export class TangyForm extends PolymerElement {
       onItemOpened(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
       }
 
       onItemClosed(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
       }
 

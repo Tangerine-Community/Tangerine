@@ -33,9 +33,9 @@ var passport = require('passport')
 // This determines wether or not a login is valid.
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    console.log('strategy!')
-    console.log(username)
-    console.log(password)
+    // console.log('strategy!')
+    // console.log(username)
+    // console.log(password)
     if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
       console.log('login success!')
       return done(null, {
@@ -99,10 +99,17 @@ app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../edit
 app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
 app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-builds')));
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
+app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 
 app.use('/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )
 app.use('/releases/apks/', express.static(path.join(__dirname, '../client/releases/apks')) )
 app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')) )
+
+app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, next) {
+  let contentPath = '../client/content/assets'
+  console.log("Setting path to " + path.join(__dirname, contentPath))
+  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+});
 app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
   let contentPath = '../client/content/groups/' + req.params.group
   console.log("Setting path to " + path.join(__dirname, contentPath))
@@ -142,13 +149,6 @@ app.use('/editor/release-pwa/:secret/:group', isAuthenticated, async function (r
   const releasePwa = await exec(`cd /tangerine/client && \
         ./release-pwa.sh ${secret} ./content/groups/${group}
   `)
-  releasePwa.stdout.on('data', function(data){
-    console.log(data);
-  });
-
-  releasePwa.stderr.on('data', function(data){
-    console.log(data);
-  });
   res.send('ok')
 })
 
