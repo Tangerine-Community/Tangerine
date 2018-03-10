@@ -39,19 +39,12 @@ ADD client/wrappers/pwa/bower.json /tangerine/client/wrappers/pwa/bower.json
 ADD client/install.sh /tangerine/client/install.sh
 RUN cd /tangerine/client/ && ./install.sh
 
-# Build editor 
-ADD editor /tangerine/editor
-RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
-
-# Build client v3.
-ADD client /tangerine/client
-RUN cd /tangerine/client/ && ./build.sh
-
 # Setup the Cordova app
 WORKDIR /tangerine
 
 RUN mkdir /.tmp-apk
-RUN cp -r /tangerine/client/builds/apk/. /.tmp-apk/
+ADD client/wrappers/apk /.tmp-apk/
+#RUN cp -r /tangerine/client/builds/apk/. /.tmp-apk/
 WORKDIR /.tmp-apk
 
 RUN cordova platform --no-telemetry add android@7.0.0
@@ -65,6 +58,14 @@ RUN cordova build --no-telemetry android
 RUN cordova -v --no-telemetry
 RUN cordova requirements --no-telemetry
 RUN echo "ANDROID_BUILD_TOOLS_VERSION: $ANDROID_BUILD_TOOLS_VERSION"
+
+# Build editor 
+ADD editor /tangerine/editor
+RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
+
+# Build client v3.
+ADD client /tangerine/client
+RUN cd /tangerine/client/ && ./build.sh
 
 # Build tree
 ADD tree /tangerine/tree

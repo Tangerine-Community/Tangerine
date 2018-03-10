@@ -77,7 +77,7 @@ export class TangyAcasi extends PolymerElement {
       },
       images: {
         type: String,
-        value: '../content/assets/images/never.png,../content/assets/images/once.png,../content/assets/images/few.png,../content/assets/images/many.png'
+        value: '../content/assets/images/never.png,../content/assets/images/once.png,../content/assets/images/few.png,../content/assets/images/many.png,../content/assets/images/dont_know.png'
       },
       onChange: {
         type: String,
@@ -135,7 +135,7 @@ export class TangyAcasi extends PolymerElement {
   }
 
   reflect() {
-    console.log("i am a mirror")
+    // console.log("i am a mirror")
     this.shadowRoot.querySelectorAll('img').forEach(el => {
       let matchingState = this.value.find(state => el.name == state.name)
       el.setAttributes(matchingState)
