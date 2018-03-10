@@ -441,10 +441,12 @@ class TangyEditorApp extends Element {
     console.log("sortedItems: " + sortedItems)
   }
   async saveItemsOrder(event) {
+    const group = window.location.pathname.split("/")[2];
     let that = this
     let formOrderObj = {
       itemsOrder: this.itemsOrder,
-      formHtmlPath: this.formHtmlPath
+      formHtmlPath: this.formHtmlPath,
+      groupName: group
     }
     console.log("formOrderObj" + JSON.stringify(formOrderObj))
     let result = await fetch("/editor/itemsOrder/save", {
@@ -721,8 +723,14 @@ class TangyEditorApp extends Element {
       // let textarea = document.querySelector("#editorTEXT")
       // itemHtmlText = textarea.value
       itemHtmlText = Tangy.ace.getValue();
-
     }
+
+    // potential way to filter out unwanted attributes, such as value:
+    // var doc = document.implementation.createHTMLDocument("New Document");
+    // doc.documentElement.innerHTML = itemHtmlText;
+    // let trb = doc.querySelectorAll("tangy-radio-buttons");
+    // console.log("trb: " + JSON.stringify(trb))
+
 //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
     item.groupName = group
     item.formHtmlPath = this.formHtmlPath
