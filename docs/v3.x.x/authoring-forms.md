@@ -12,6 +12,17 @@ When reading through this documentation you can refer to [this directory for exa
 
 ## Create a timed form
 ...
+## Create code to finalize a form
+A form must be marked 'complete' in order for it to be uploaded to the data center. You must include a tangy-complete-button on a form at the end of the assessment.
+
+Sample code:
+
+```
+    <p>
+    Tap the "Complete" button to mark this reponse as complete. This is important so your form response is uploaded.
+    </p>
+    <tangy-complete-button name="complete">Complete</tangy-complete-button>
+```
 
 ## Debugging Tangerine Forms 
 A response to a form is captured in a Tangerine Form Session. When entering a response into a form, you can watch live changes to the Tangerine Form Session by installing the [Redux DevTools Extension](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) for Chrome. The [PouchDB Inspector extension for Chrome](https://chrome.google.com/webstore/detail/pouchdb-inspector/hbhhpaojmpfimakffndmpmpndcmonkfa?hl=en) can be used for inspecting the data saved to the database.
