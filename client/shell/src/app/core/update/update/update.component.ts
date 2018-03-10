@@ -32,7 +32,14 @@ export class UpdateComponent implements OnInit {
       .map(doc => doc.username);
     for (let username of usernames) {
       let userDb = await new PouchDB(username);
-      let infoDoc = await userDb.get('info');
+      // Use try in case this is an old account where info doc was not created.
+      let infoDoc = { _id: '', atUpdateIndex: 0};
+      try {
+        infoDoc = await userDb.get('info');
+      } catch (e) {
+        await userDb.put({_id: 'info', atUpdateIndex: 0});
+        infoDoc = await userDb.get('info');
+      }
       let atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
       let lastUpdateIndex = updates.length-1
       if (lastUpdateIndex !== atUpdateIndex) {
