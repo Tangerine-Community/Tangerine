@@ -142,6 +142,10 @@ export class TangyForm extends PolymerElement {
       paper-fab.keyboard-focus {
         background-color: #1976d2;
       }
+      paper-icon-button.giant {
+      width: 100px;
+      height: 100px;
+    }
       </style>
 
       <div id="nav"></div>
@@ -153,10 +157,10 @@ export class TangyForm extends PolymerElement {
                 <img src="../logo.svg" width=35>
             </a>
           </div>
-          <paper-tabs selected="[[tabIndex]]" scrollable>
-            <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
-            <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
-          </paper-tabs>
+          <!--<paper-tabs selected="[[tabIndex]]" scrollable>-->
+            <!--<paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>-->
+            <!--<paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>-->
+          <!--</paper-tabs>-->
           <!--template is="dom-if" if="{{showSummary}}">
             <paper-tabs selected="0" scrollable>
               <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
@@ -169,6 +173,15 @@ export class TangyForm extends PolymerElement {
               <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
             </paper-tabs>
           </template-->
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p>&nbsp;</p>
+          <p>The form is marked as complete and can be uploaded. Click the home button below to do another assessment.</p>
+          <p>
+            <a href="../shell/index.html">
+                <paper-icon-button icon="home" title="Home" class="giant"></paper-icon-button>
+            </a>
+          </p>
         </div>
       </template>
       <slot></slot>
