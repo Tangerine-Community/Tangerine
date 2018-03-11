@@ -521,7 +521,14 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   let docsKeyedByVariableName = []
   responseDocs.forEach(doc => { 
     let variables = {}
-    doc.items.forEach(item => { 
+    variables['_id'] = doc._id
+    variables['formId'] = doc.form.id
+    variables['startDatetime'] = doc.startDatetime
+    variables['startUnixtime'] = doc.startUnixtime
+    doc.inputs.forEach(input => {
+      variables[input.name] = input.value
+    })
+    doc.items.forEach(item => {
       item.inputs.forEach(input => { 
         if (typeof input.value === 'object') {
           input.value.forEach(subInput => variables[`${input.name}.${subInput.name}`] = subInput.value)
@@ -532,6 +539,7 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
     })
     docsKeyedByVariableName.push(variables)
   })
+
   let flatVariableDocs = docsKeyedByVariableName.map(doc => flatten(doc))
   let keys = []
   for (let doc of flatVariableDocs) {
