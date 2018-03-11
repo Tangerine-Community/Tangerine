@@ -1,4 +1,25 @@
 
+window.fillUp = async (numberOfDocs, templateDoc, destroy = true) => {
+  let initialEstimate = await navigator.storage.estimate()
+  let dbName = `test-${new Date().getTime()}`
+  let db = new PouchDB(dbName)
+  delete templateDoc._rev
+  let i = 0
+  while (numberOfDocs > i) {
+    let doc = Object.assign({}, templateDoc, {_id: `${i}`}) 
+    await db.put(doc)
+    i++
+  }
+  let concludingEstimate = await navigator.storage.estimate()
+  console.log(`
+    initial estimate: ${JSON.stringify(initialEstimate)}
+    concluding estimate: ${JSON.stringify(concludingEstimate)}
+    usage difference: ${concludingEstimate.usage - initialEstimate.usage} bytes
+    average doc size: ${(concludingEstimate.usage - initialEstimate.usage) / numberOfDocs} bytes
+  `)
+  if (destroy) await db.destroy()
+}
+
 window.sleep = (ms) => new Promise((res, rej) => {
   setTimeout(res, ms)
 })
