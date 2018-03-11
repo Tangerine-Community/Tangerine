@@ -33,14 +33,6 @@ app.use(cors({
 }));
 app.options('*', cors()) // include before other routes
 
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header('Access-Control-Allow-Credentials', true);
-//   res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
-
 /*
  * Auth
  */
@@ -491,7 +483,7 @@ app.get('/groups', isAuthenticated, async function (req, res) {
 
 // @TODO: Middleware auth check for upload user.
 app.post('/editor/upload/:groupName', async function (req, res) {
-  console.log(req.params.groupName)
+  console.log('Upload from ' + req.params.groupName)
   let db = new DB(req.params.groupName)
   // New docs should not have a rev or else insertion will fail.
   delete req.body.doc._rev
