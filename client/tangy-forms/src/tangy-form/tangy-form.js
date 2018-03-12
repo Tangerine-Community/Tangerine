@@ -154,7 +154,7 @@ export class TangyForm extends PolymerElement {
         <div id="bar">
           <div id="fake-top-bar">
             <a id="home-button" href="../shell/index.html">
-                <img src="../logo.svg" width=35>
+                <img src="../content/assets/images/tangerine.png">
             </a>
           </div>
           <!--<paper-tabs selected="[[tabIndex]]" scrollable>-->
