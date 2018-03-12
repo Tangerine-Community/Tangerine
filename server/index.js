@@ -67,6 +67,7 @@ app.use(session({
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({limit: '1gb'}))
+app.use(bodyParser.text({limit: '1gb'}))
 app.use(passport.initialize());
 app.use(passport.session());
 
