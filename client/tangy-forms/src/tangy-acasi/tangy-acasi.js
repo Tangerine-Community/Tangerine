@@ -44,7 +44,7 @@ export class TangyAcasi extends PolymerElement {
 
     <div class="container">
       <label for="group">[[label]]</label>
-      <paper-button id="replay" raised class="indigo" on-click="replay">Play</paper-button>
+      <paper-button id="replay" raised class="indigo" on-click="replay">Replay</paper-button>
       <div id="container"></div>
     </div>
     `
