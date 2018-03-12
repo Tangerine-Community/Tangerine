@@ -15,6 +15,8 @@ const config = read.sync('./config.yml')
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
+const pako = require('pako')
+
 const DB = PouchDB.defaults({
   prefix: '/tangerine/db/'
 });
@@ -441,12 +443,16 @@ app.get('/groups', isAuthenticated, async function (req, res) {
 
 // @TODO: Middleware auth check for upload user.
 app.post('/upload/:groupName', async function (req, res) {
-  console.log(req.params.groupName)
   let db = new DB(req.params.groupName)
-  // New docs should not have a rev or else insertion will fail.
-  delete req.body.doc._rev
-  await db.put(req.body.doc).catch(err => console.log(err))
-  res.send('ok')
+  try {
+    const payload = pako.inflate(req.body, {to: 'string'})
+    const packet = JSON.parse(payload)
+    // New docs should not have a rev or else insertion will fail.
+    delete packet.doc._rev
+    await db.put(packet.doc).catch(err => console.log(err))
+    res.send('ok')
+  } catch(e) { console.log(e) }
+
 })
 
 const flatten = require('flat')
