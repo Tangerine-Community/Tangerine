@@ -10,7 +10,7 @@ import { CaseManagementRoutingModule } from './case-management-routing.module';
 import { FormListComponent } from './form-list/form-list.component';
 import { SchoolsVisitedComponent } from './schools-visited/schools-visited.component';
 import { CaseDetailsComponent } from './case-details/case-details.component';
-import { AllObservationsComponent } from './all-observations/all-observations.component';
+import { ObservationsByLocationComponent } from './observations-by-location/observations-by-location.component';
 
 @NgModule({
   imports: [
@@ -27,7 +27,7 @@ import { AllObservationsComponent } from './all-observations/all-observations.co
     SharedModule
   ],
   declarations: [FormListComponent, SchoolsVisitedComponent,
-    CaseDetailsComponent, AllObservationsComponent],
+    CaseDetailsComponent, ObservationsByLocationComponent],
   providers: [CaseManagementService]
 })
 export class CaseManagementModule { }
