@@ -18,7 +18,7 @@ import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem,
 
 /**
  * `tangy-form-app`
- * ... 
+ * ...
  *
  * @customElement
  * @polymer
@@ -75,7 +75,7 @@ class TangyFormApp extends Element {
       <div id="form-view" hidden="">
         <div id="fake-top-bar">
           <a id="home-button" href="../shell/index.html">
-              <img src="../logo.svg" width=45>
+              <img src="../content/assets/images/tangerine.png">
           </a>
         </div>
         <div id="form-container"></div>
@@ -104,7 +104,7 @@ class TangyFormApp extends Element {
     let params = window.getHashParams()
     let formSrc = params.hasOwnProperty('form_src') ? params.form_src : undefined
     let responseId = (params.hasOwnProperty('response_id')) ? params.response_id : undefined
-    let databaseName = (params.database_name) ? params.database_name : 'tangy-form-app' 
+    let databaseName = (params.database_name) ? params.database_name : 'tangy-form-app'
     // Set up service.
     this.service = new TangyFormService({ databaseName })
     await this.service.initialize()
@@ -116,8 +116,8 @@ class TangyFormApp extends Element {
       this.$['form-list'].hidden = true
       await this.loadForm(formSrc, responseId)
     } else {
-      this.$['form-view'].hidden = true 
-      this.$['form-list'].hidden = false 
+      this.$['form-view'].hidden = true
+      this.$['form-list'].hidden = false
       await this.loadFormsList()
     }
     if (params.hasOwnProperty('hide_top_bar')) {
@@ -159,7 +159,7 @@ class TangyFormApp extends Element {
     }
   }
 
-  // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store. 
+  // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
   // Everything else in between we can ignore.
   async throttledSaveResponse() {
     // If already loaded, return.
