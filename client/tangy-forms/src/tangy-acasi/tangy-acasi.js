@@ -169,8 +169,8 @@ export class TangyAcasi extends PolymerElement {
       imageEl.className = "acasi-image";
       // button.innerHTML = imageEl.outerHTML
       this.$.container.appendChild(imageEl)
-      let brEl = document.createElement('br')
-      this.$.container.appendChild(brEl)
+      // let brEl = document.createElement('br')
+      // this.$.container.appendChild(brEl)
     }
     // paperRadioGroupEl.selected = this.value
     // if (this.required) paperRadioGroupEl.required = true
