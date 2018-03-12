@@ -17,6 +17,7 @@ export class CaseManagementService {
   userDB;
   loc: Loc;
   userService: UserService;
+  monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   constructor(
     authenticationService: AuthenticationService,
     loc: Loc,
@@ -54,7 +55,7 @@ export class CaseManagementService {
   }
 
   async getFilterDatesForAllFormResponses() {
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
     const results = await this.getVisitsByYearMonthLocationId();
     const timeLapseFilter = [];
     const visits = removeDuplicates(results, 'key'); // Remove duplicates due to multiple form responses in a given location in a day
@@ -62,7 +63,20 @@ export class CaseManagementService {
       const visitKey = visit.key.split('-');
       timeLapseFilter.push({
         value: `${visitKey[2].toString()}-${visitKey[3].toString()}`,
-        label: `${monthNames[visitKey[2].toString()]}, ${visitKey[3].toString()}`,
+        label: `${this.monthNames[visitKey[2].toString()]}, ${visitKey[3].toString()}`,
+      });
+    });
+    return removeDuplicates(timeLapseFilter, 'value');
+  }
+
+  async  getFilterDatesForAllFormResponsesByLocationId(locationId: string) {
+    const result = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
+    const timeLapseFilter = [];
+    result.rows.forEach(observation => {
+      const date = new Date(observation.doc.startDatetime);
+      timeLapseFilter.push({
+        value: `${date.getMonth()}-${date.getFullYear()}`,
+        label: `${this.monthNames[date.getMonth()]}-${date.getFullYear()}`
       });
     });
     return removeDuplicates(timeLapseFilter, 'value');
@@ -84,13 +98,33 @@ export class CaseManagementService {
   }
   async getVisitsByYearMonthLocationId(locationId?: string) {
     const options = { key: locationId };
-    const results = await this.userDB.query('tangy-form/responsesByYearMonthLocationId', options);
-    return results.rows;
+    const result = await this.userDB.query('tangy-form/responsesByYearMonthLocationId', options);
+    return result.rows;
   }
 
-  async getResponsesByLocationId(locationId: string) {
-    const results = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
-    return results.rows;
+  async getResponsesByLocationId(locationId: string, period?: string) {
+    const result = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
+    const currentDate: Date = new Date();
+    const monthYear = period ? period : `${currentDate.getMonth()}-${currentDate.getFullYear()}`;
+    const monthYearParts = monthYear.split('-');
+    result.rows.filter(observation => {
+      const formStartDate = new Date(observation.doc.startDatetime);
+      return formStartDate.getMonth().toString() === monthYearParts[0] && formStartDate.getFullYear().toString() === monthYearParts[1];
+    });
+    return await this.transformResultSet(result.rows, monthYear);
+  }
+  async transformResultSet(result, monthYear) {
+    const formList = await this.getFormList();
+    const observations = result.map((observation) => {
+      const index = formList.findIndex(c => c.id === observation.doc.form['id']);
+      return {
+        formTitle: formList[index]['title'],
+        startDatetime: observation.doc.startDatetime,
+        formIndex: index,
+        _id: observation.doc._id
+      };
+    });
+    return observations;
   }
 }
 function removeDuplicates(array, property) {
