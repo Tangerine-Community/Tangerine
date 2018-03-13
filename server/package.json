@@ -14,6 +14,7 @@
   "dependencies": {
     "express-session": "1.15.6",
     "axios": "^0.17.1",
+    "pako": "^1.0.6",
     "cheerio": "^1.0.0-rc.2",
     "crypto": "^1.0.1",
     "compression": "^1.7.2",
