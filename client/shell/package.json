@@ -38,6 +38,7 @@
     "angular2-uuid": "^1.1.1",
     "async-child-process": "^1.1.1",
     "axios": "^0.16.2",
+    "pako": "^1.0.6",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^3.3.7",
     "concurrently": "^3.5.0",

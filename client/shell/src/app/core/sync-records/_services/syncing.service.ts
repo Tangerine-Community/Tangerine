@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import PouchDB from 'pouchdb';
 import * as PouchDBUpsert from 'pouchdb-upsert';
+import * as pako from 'pako';
 
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { UserService } from '../../auth/_services/user.service';
@@ -42,7 +43,8 @@ export class SyncingService {
           const doc = await DB.get(doc_id);
           doc['inputs'].push({ name: 'userUUID', value: userUUID });
           doc['inputs'].push(userProfile['inputs']);
-          await this.http.post(remoteHost, { doc }).toPromise();
+          const body = pako.deflate(JSON.stringify({ doc }), {to: 'string'})
+          await this.http.post(remoteHost, body).toPromise();
           this.markDocsAsUploaded([doc_id]);
         }
         Promise.resolve('Sync Succesfull');
