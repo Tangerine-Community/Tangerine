@@ -15,6 +15,7 @@ const config = read.sync('./config.yml')
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
+const compression = require('compression')
 const DB = PouchDB.defaults({
   prefix: '/tangerine/db/'
 });
@@ -22,6 +23,7 @@ const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
 const sep = path.sep;
+app.use(compression())
 /*
  * Auth
  */
