@@ -509,3 +509,19 @@ app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isA
   }
   res.send('ok')
 })
+
+let replicationEntries = []
+
+console.log(process.env.T_REPLICATE)
+try {
+  replicationEntries = JSON.parse(process.env.T_REPLICATE)
+} catch(e) { console.log(e) }
+
+if (replicationEntries.length > 0) {
+  for (let replicationEntry of replicationEntries) {
+    DB.replicate(
+      replicationEntry.from,
+      replicationEntry.to
+    )
+  }
+}
