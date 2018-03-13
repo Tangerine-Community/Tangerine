@@ -27,6 +27,7 @@ docker run -it --name $T_CONTAINER_NAME \
   --env "T_USER1=$T_USER1" \
   --env "T_USER1_PASSWORD=$T_USER1_PASSWORD" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
+  --env "T_REPLICATE=$T_REPLICATE" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/client/apks:/tangerine/client/releases/apks/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
