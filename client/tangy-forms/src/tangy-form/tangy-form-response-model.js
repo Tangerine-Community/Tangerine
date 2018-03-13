@@ -20,6 +20,21 @@ export class TangyFormResponseModel {
     this.uploadDatetime = ''
     Object.assign(this, props)
   }
+
+  flatten() {
+    variables = {}
+    this.items.forEach(item => { 
+      item.inputs.forEach(input => { 
+        if (typeof input.value === 'object') {
+          input.value.forEach(subInput => variables[`${input.name}.${subInput.name}`] = subInput.value)
+        } else {
+          variables[input.name] = input.value
+        }
+      })
+    })
+    return variables
+  }
+
 }
 
 function uuid() {
