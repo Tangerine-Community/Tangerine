@@ -18,6 +18,7 @@ const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
 const pako = require('pako')
+var compression = require('compression')
 
 const DB = PouchDB.defaults({
   prefix: '/tangerine/db/'
@@ -79,6 +80,7 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({limit: '1gb'}))
 app.use(bodyParser.text({limit: '1gb'}))
+app.use(compression())
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -485,7 +487,7 @@ app.get('/groups', isAuthenticated, async function (req, res) {
 })
 
 // @TODO: Middleware auth check for upload user.
-app.post('/upload/:groupName', async function (req, res) {
+app.post('/editor/upload/:groupName', async function (req, res) {
   let db = new DB(req.params.groupName)
   try {
     const payload = pako.inflate(req.body, {to: 'string'})
