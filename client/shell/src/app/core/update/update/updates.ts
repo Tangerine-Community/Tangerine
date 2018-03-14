@@ -106,6 +106,12 @@ export const updates = [
         resolve();
       })
     }
+  },
+  {
+    requiresViewsUpdate: true,
+    script: (userDb) => {
+      console.log('Updating views...')
+    }
   }
 
 ]
