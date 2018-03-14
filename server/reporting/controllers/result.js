@@ -698,7 +698,6 @@ function convertToTimeZone (timestamp, timeZone) {
   return timestamp + (offset * 60 * 60 * 1000);
 }
 
-
 exports.generateResult = generateResult;
 
 exports.validateResult = validateResult;
