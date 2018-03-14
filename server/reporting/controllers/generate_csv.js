@@ -73,15 +73,15 @@ exports.generate = (req, res) => {
 const generateCSV = function(columnData, resultData) {
   return new Promise((resolve, reject) => {
     let workbook = new Excel.Workbook();
-    workbook.creator = "Brockman";
-    workbook.lastModifiedBy = "Matthew";
+    workbook.creator = 'Brockman';
+    workbook.lastModifiedBy = 'Matthew';
     workbook.created = new Date(2017, 9, 1);
     workbook.modified = new Date();
     workbook.lastPrinted = new Date(2017, 7, 27);
 
-    let excelSheet = workbook.addWorksheet("Workflow Sheet", {
+    let excelSheet = workbook.addWorksheet('Workflow Sheet', {
       views: [{ xSplit: 1 }],
-      pageSetup: { paperSize: 9, orientation: "landscape" }
+      pageSetup: { paperSize: 9, orientation: 'landscape' }
     });
 
     // Add column headers and define column keys
@@ -96,7 +96,7 @@ const generateCSV = function(columnData, resultData) {
     let filename = `testcsvfile-${creationTime}.xlsx`;
 
     // create and fill Workbook;
-    workbook.xlsx.writeFile(filename, "utf8")
+    workbook.xlsx.writeFile(filename, 'utf8')
       .then(() => {
         console.log(chalk.green(`✓ You have successfully created a new excel file at ${new Date()}`)
         );
