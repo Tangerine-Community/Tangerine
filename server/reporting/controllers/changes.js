@@ -97,7 +97,24 @@ const processChangedDocument = async(resp, baseDb, resultDb) => {
   if (!isWorkflowIdSet && isResult) {
     try {
       console.info('\n<<<=== START PROCESSING ASSESSMENT RESULT  ===>>>\n');
-      const assessmentResult = await processAssessmentResult([resp], 0, baseDb);
+      let assessmentResult = await processAssessmentResult([resp], 0, baseDb);
+      let docId = assessmentResult.indexKeys.collectionId;
+      let groupTimeZone = assessmentResult.indexKeys.groupTimeZone;
+      let allTimestamps = _.sortBy(assessmentResult.indexKeys.timestamps);
+
+      // Validate result from all subtest timestamps
+      let validationData = await validateResult(docId, groupTimeZone, dbUrl, allTimestamps);
+      assessmentResult.isValid = validationData.isValid;
+      assessmentResult.isValidReason = validationData.reason;
+      assessmentResult[`${docId}.start_time`] = validationData.startTime;
+      assessmentResult[`${docId}.end_time`] = validationData.endTime;
+
+      assessmentResult.indexKeys.ref = assessmentResult.indexKeys.ref;
+      assessmentResult.indexKeys.parent_id = docId;
+      assessmentResult.indexKeys.year = validationData.indexKeys.year;
+      assessmentResult.indexKeys.month = validationData.indexKeys.month;
+      assessmentResult.indexKeys.day = validationData.indexKeys.day;
+
       const saveResponse = await dbQuery.saveResult(assessmentResult, resultDb);
       console.log(saveResponse);
       console.info('\n<<<=== END PROCESSING ASSESSMENT RESULT ===>>>\n');
