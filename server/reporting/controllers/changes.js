@@ -20,6 +20,7 @@ const generateAssessmentHeaders = require('./assessment').createColumnHeaders;
 const processAssessmentResult = require('./result').generateResult;
 const generateWorkflowHeaders = require('./workflow').createWorkflowHeaders;
 const processWorkflowResult = require('./trip').processWorkflowResult;
+const validateResult = require('./result').validateResult;
 
 /**
  * Processes any recently changed document in the database based on its collection type.
