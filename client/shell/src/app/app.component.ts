@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
       this.showNav = isLoggedIn;
     });
     this.isAppUpdateAvailable();
-    // setInterval(this.getGeolocationPosition, 1000);
+    setInterval(this.getGeolocationPosition, 5000);
 
   }
 
@@ -65,12 +65,23 @@ export class AppComponent implements OnInit {
     const options = {
       enableHighAccuracy: true
     };
-    const queue = [];
-    JSON.parse(localStorage.getItem('gpsQueue')) ? queue.push(JSON.parse(localStorage.getItem('gpsQueue'))) : null;
-    // queue = queue.filter(entry => entry.timestamp > now - 5minutes).push({ ...GPS.getReading(), ... {timestamp: now})
-    const currentPosition = navigator.geolocation.getCurrentPosition((position) => {
-
-      console.log(position);
+    const queue = JSON.parse(localStorage.getItem('gpsQueue')) ? (JSON.parse(localStorage.getItem('gpsQueue'))) : null;
+    navigator.geolocation.getCurrentPosition((position: Position) => {
+      // Accuracy is in meters, a lower reading is better
+      if (!queue || (typeof queue !== 'undefined' && ((position.timestamp - queue.timestamp) / 1000) >= 30) ||
+        queue.accuracy >= position.coords.accuracy) {
+        const x = {
+          accuracy: position.coords.accuracy,
+          altitude: position.coords.altitude,
+          altitudeAccuracy: position.coords.altitudeAccuracy,
+          heading: position.coords.heading,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          speed: position.coords.speed,
+          timestamp: position.timestamp
+        };
+        localStorage.setItem('gpsQueue', JSON.stringify(x));
+      } else { console.log(position); }
     },
       (err) => { },
       options);
