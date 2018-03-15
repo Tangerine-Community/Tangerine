@@ -11,7 +11,7 @@ export const updates = [
   },
   // Transform array style input.value from ['foo', 'bar'] to [{name: 'foo', value: 'on'}, {name: 'bar', value: 'on'}]
   {
-    requiresViewsUpdate: false,
+    requiresViewsUpdate: true,
     script: (userDb) => {
       return new Promise(async resolve => {
         let res = await userDb.allDocs({include_docs: true})
