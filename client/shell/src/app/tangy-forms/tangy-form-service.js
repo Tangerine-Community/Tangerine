@@ -109,26 +109,12 @@ var tangyFormDesignDoc = {
         if (doc.hasOwnProperty('collection')
           && doc.collection === 'TangyFormResponse'
           && doc.hasOwnProperty('items')) {
-          const locationObject = doc.items.filter(item => item.hasOwnProperty('inputs') && item.hasOwnProperty('tagName') && item.tagName === 'TANGY-FORM-ITEM' && item.title === 'Location');
-          if (!locationObject || locationObject.length === 0) {
-            return;
+          let inputs = [];
+          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)
+          if (location) {
+            return emit(location[location.length].value, true)
           }
-          let locationFields = [];
-          locationObject.filter(item => item.hasOwnProperty('inputs')).map(item => {
-            item.inputs.forEach(i => {
-              if (i.hasOwnProperty('tagName') && i.tagName === 'TANGY-LOCATION') {
-                locationFields.push(i)
-              }
-            });
-          });
-
-          if (!locationFields || locationFields.length === 0) {
-            return;
-          }
-          locationFields.forEach((field) => {
-            const thisLocationId = field.value[field.value.length - 1].value;
-            emit(thisLocationId, true)
-          })
         }
       }.toString()
     },
