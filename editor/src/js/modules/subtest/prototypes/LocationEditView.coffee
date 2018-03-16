@@ -82,11 +82,11 @@ class LocationEditView extends Backbone.View
 
     levels = @$el.find("#levels").val().split(/, */g)
     for level, i in levels
-      levels[i] = $.trim(level).replace(/[^a-zA-Z0-9']/g,"")
+      levels[i] = $.trim(level).replace(/[^a-zA-Z0-9\u0600-\u06FF']/g,"")
 
     locationCols = @$el.find("#locationCols").val().split(/, */g)
     for col, i in locationCols
-      col[i] = $.trim(col).replace(/[^a-zA-Z0-9']/g,"")
+      col[i] = $.trim(col).replace(/[^a-zA-Z0-9\u0600-\u06FF']/g,"")
 
     # removes /\s/
     locationsValue = $.trim(@$el.find("#data").val())
