@@ -7,6 +7,7 @@ import { AuthenticationService } from './core/auth/_services/authentication.serv
 import { UserService } from './core/auth/_services/user.service';
 import { WindowRef } from './core/window-ref.service';
 import { updates } from './core/update/update/updates';
+import { TangyFormService } from './tangy-forms/tangy-form-service.js';
 import PouchDB from 'pouchdb';
 @Component({
   selector: 'app-root',
@@ -40,7 +41,10 @@ export class AppComponent implements OnInit {
     this.isAppUpdateAvailable();
     this.checkIfUpdateScriptRequired();
     // setInterval(this.getGeolocationPosition, 1000);
-
+    // Initialize tangyFormService in case any views need to be updated.
+    let currentUser = await this.authenticationService.getCurrentUser()
+    let tangyFormService = new TangyFormService({databaseName: currentUser})
+    tangyFormService.initialize()
   }
 
   async checkIfUpdateScriptRequired() {
