@@ -212,7 +212,7 @@ RUN cd /tangerine-server/client \
 #   && npm install cordova-plugin-camera \
 #   && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save \
 #   && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-#UN cd /tangerine-server/client && npm run build:apk 
+#RUN cd /tangerine-server/client && npm run build:apk 
 
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
