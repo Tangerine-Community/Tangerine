@@ -248,6 +248,8 @@ paper-button {
       let state = window.tangyFormStore.getState()
       let inputs = {}
       this.shadowRoot.querySelectorAll('[name]').forEach(input => inputs[input.name] = input)
+      let elementsById = {}
+      this.shadowRoot.querySelectorAll('[id]').forEach(el => elementsById[el.id] = el)
       let items = {}
       state.items.forEach(item => items[item.name] = item)
       let inputEls = this.shadowRoot.querySelectorAll('[name]')
