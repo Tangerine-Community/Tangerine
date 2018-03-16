@@ -110,7 +110,7 @@ var tangyFormDesignDoc = {
           && doc.collection === 'TangyFormResponse'
           && doc.hasOwnProperty('items')) {
           let inputs = [];
-          doc.items.forEach(item => inputs = [...inputs, item.inputs])
+          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
           let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)
           if (location) {
             return emit(location[location.length].value, true)
