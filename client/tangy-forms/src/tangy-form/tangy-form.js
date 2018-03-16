@@ -198,12 +198,6 @@ export class TangyForm extends PolymerElement {
             type: String,
             value: 'tangy-form'
           },
-          // Pass in code to be eval'd on any form input change.
-          onChange: {
-            type: String,
-            value: '',
-            reflectToAttribute: true
-          },
           complete: {
             type: Boolean,
             value: false,
@@ -385,6 +379,7 @@ export class TangyForm extends PolymerElement {
 
       fireOnChange() {
         // Register tangy redux hook.
+        if (!this.hasAttribute('on-change')) return
         let state = this.store.getState()
         let inputs = {}
         state.inputs.forEach(input => inputs[input.name] = input)
@@ -420,7 +415,7 @@ export class TangyForm extends PolymerElement {
         let inputDisable = tangyFormActions.inputDisable
         let itemDisable = tangyFormActions.itemDisable
         let itemEnable = tangyFormActions.itemEnable
-        eval(this.onChange)
+        eval(this.getAttribute('on-change'))
       }
 
       focusOnPreviousItem(event) {
