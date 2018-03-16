@@ -796,7 +796,7 @@ progress {
 .assessment_menu {
   display: none;
 }
-.subtest-next {
+.subtest-next, .workflow-next {
   float: right;
 }
 .subtest-back {
@@ -1927,7 +1927,7 @@ label.no_help {
 /*
  * backbone-forms
  */
-[data-error] {
+[data-error], .error_message {
   color: red;
 }
 

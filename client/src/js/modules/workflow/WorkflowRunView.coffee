@@ -87,7 +87,7 @@ class WorkflowRunView extends Backbone.View
     
     if @currentStep.getType() == "message" && @index != @workflow.getChildren().length - 1
       nextButton = "
-        <div class='clearfix'><button class='nav-button next'>Next</button></div>
+        <div class='clearfix'><button class='workflow-next navigation next'>Next</button></div>
       "
     else
       nextButton = ""
