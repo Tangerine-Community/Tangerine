@@ -12,8 +12,16 @@ export class TangyFormService {
     try {
       let designDoc = await this.db.get('_design/tangy-form')
       if (designDoc.version !== tangyFormDesignDoc.version) {
-        let updatedDesignDoc = Object.assign({}, designDoc, tangyFormDesignDoc)
-        await this.db.put(updatedDesignDoc)
+        console.log('Time to update _design/tangy-form')
+        console.log('Removing _design/tangy-form')
+        await this.db.remove(designDoc)
+        console.log('Cleaning up view indexes')
+        // @TODO This causes conflicts with open databases. How to avoid??
+        //await this.db.viewCleanup()
+        console.log('Creating _design/tangy-form')
+        await this.db.put(tangyFormDesignDoc)
+        //let updatedDesignDoc = Object.assign({}, designDoc, tangyFormDesignDoc)
+        //await this.db.put(updatedDesignDoc)
       }
     } catch (e) {
       this.loadDesignDoc()
@@ -82,7 +90,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '15',
+  version: '29',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -106,58 +114,32 @@ var tangyFormDesignDoc = {
     },
     responsesByLocationId: {
       map: function (doc) {
-        if (doc.hasOwnProperty('collection')
-          && doc.collection === 'TangyFormResponse'
-          && doc.hasOwnProperty('items')) {
-          const locationObject = doc.items.filter(item => item.hasOwnProperty('inputs') && item.hasOwnProperty('tagName') && item.tagName === 'TANGY-FORM-ITEM' && item.title === 'Location');
-          if (!locationObject || locationObject.length === 0) {
-            return;
+        console.log(doc)
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
+          if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
+          let inputs = [];
+          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)
+          if (location) {
+            let lowestLevelLocation = location.value.pop()
+            emit(lowestLevelLocation.value, true);
           }
-          let locationFields = [];
-          locationObject.filter(item => item.hasOwnProperty('inputs')).map(item => {
-            item.inputs.forEach(i => {
-              if (i.hasOwnProperty('tagName') && i.tagName === 'TANGY-LOCATION') {
-                locationFields.push(i)
-              }
-            });
-          });
-
-          if (!locationFields || locationFields.length === 0) {
-            return;
-          }
-          locationFields.forEach((field) => {
-            const thisLocationId = field.value[field.value.length - 1].value;
-            emit(thisLocationId, true)
-          })
         }
       }.toString()
     },
     responsesByYearMonthLocationId: {
       map: function (doc) {
-        const startDatetime = new Date(doc.startDatetime);
-        if (doc.hasOwnProperty('collection')
-          && doc.collection === 'TangyFormResponse'
-          && doc.hasOwnProperty('items')) {
-          const locationObject = doc.items.filter(item => item.hasOwnProperty('inputs') && item.hasOwnProperty('tagName') && item.tagName === 'TANGY-FORM-ITEM' && item.title === 'Location');
-          if (!locationObject || locationObject.length === 0) {
-            return;
-          }
-          let locationFields = [];
-          locationObject.filter(item => item.hasOwnProperty('inputs')).map(item => {
-            item.inputs.forEach(i => {
-              if (i.hasOwnProperty('tagName') && i.tagName === 'TANGY-LOCATION') {
-                locationFields.push(i)
-              }
-            });
-          });
-
-          if (!locationFields || locationFields.length === 0) {
-            return;
-          }
-          locationFields.forEach((field) => {
-            const thisLocationId = field.value[field.value.length - 1].value;
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
+          if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
+          const startDatetime = new Date(doc.startDatetime);
+          let inputs = [];
+          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)
+          if (location) {
+            const lowestLevelLocation = location.value.pop()
+            const thisLocationId = lowestLevelLocation.value;
             emit(`${thisLocationId}-${startDatetime.getDate()}-${startDatetime.getMonth()}-${startDatetime.getFullYear()}`, true);
-          })
+          }
         }
       }.toString()
     },

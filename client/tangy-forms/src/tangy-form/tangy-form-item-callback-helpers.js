@@ -36,7 +36,7 @@ export class TangyFormItemHelpers {
         }
       })
       value = values
-    } else if (foundInput && foundInput.hasOwnProperty('value')) {
+    } else if (foundInput && foundInput.value !== undefined) {
       value = foundInput.value
     }
     if (!value) {
