@@ -93,7 +93,12 @@ class TangyGps extends Element {
 
   ready() {
     super.ready();
-    setInterval(() => this.getGeolocationPosition(), 100)
+    this.interval = setInterval(() => this.getGeolocationPosition(), 100)
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    clearInterval(this.interval);
   }
 
   reflect() {
@@ -144,18 +149,12 @@ class TangyGps extends Element {
       options);
   }
   saveCurrentPosition() {
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
-      bubbles: true, detail: {
-        inputName: this.name,
-        inputValue: {
-          recordedLatitude: this.currentLatitude,
-          recordedLongitude: this.currentLongitude,
-          recordedAccuracy: this.currentAccuracy
-        },
-        inputIncomplete: false,
-        inputInvalid: false
-      }
-    }));
+    this.value = {
+      latitude: this.currentLatitude,
+      longitude: this.currentLongitude,
+      accuracy: this.currentAccuracy
+    };
+    this.dispatchEvent(new Event('change'));
     if (this.currentAccuracy < 50) {
       this.accuracyLevel = 'Good';
     }
