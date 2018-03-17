@@ -41,12 +41,16 @@ class TangyGps extends Element {
         Longitude: [[currentLongitude]] <br>
       </template>
     <div>
-      Accuracy: [[currentAccuracy]] meters<br>
-      Accuracy Level : [[accuracyLevel]]
+    <template is="dom-if" if="[[currentLatitude]]">
+    Accuracy: [[currentAccuracy]] meters<br>
+    Accuracy Level : [[accuracyLevel]]
+    </template> 
     </div>
-      <template is="dom-if" if="[[!currentLatitude]]">
+    <div>
+    <template is="dom-if" if="[[!currentLatitude]]">
         Searching...
-      </template> 
+    </template> 
+    </div>
     </div>
     <div>
       <h3>Tips</h3>
@@ -72,10 +76,10 @@ class TangyGps extends Element {
       value: {
         type: Array,
         value: [
-          {name: 'latitude', value: ''},
-          {name: 'longitude', value: ''},
-          {name: 'accuracy', value: ''}
-        ], 
+          { name: 'latitude', value: '' },
+          { name: 'longitude', value: '' },
+          { name: 'accuracy', value: '' }
+        ],
         observer: 'reflect',
         reflectToAttribute: true
       },
@@ -89,28 +93,12 @@ class TangyGps extends Element {
 
   ready() {
     super.ready();
-    this.currentLatitude = localStorage.getItem('currentLatitude');
-    this.currentLongitude = localStorage.getItem('currentLongitude');
-    this.currentAccuracy = localStorage.getItem('currentAccuracy');
+    this.interval = setInterval(() => this.getGeolocationPosition(), 100)
+  }
 
-    navigator.geolocation.watchPosition((position) => {
-      // The accuracy is measured in meters. A lower value is more desirable
-      if (position.coords.accuracy <= this.currentAccuracy) {
-        this.currentLatitude = position.coords.latitude;
-        this.currentLongitude = position.coords.longitude;
-        this.currentAccuracy = position.coords.accuracy;
-      }
-      this.saveCurrentPosition();
-    });
-    if (this.currentAccuracy < 50) {
-      this.accuracyLevel = 'Good';
-    }
-    if (this.currentAccuracy > 100) {
-      this.accuracyLevel = 'Poor';
-    }
-    else {
-      this.accuracyLevel = 'Okay';
-    }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    clearInterval(this.interval);
   }
 
   reflect() {
@@ -118,20 +106,61 @@ class TangyGps extends Element {
     this.recordedLongitude = this.value.recordedLongitude
     this.recordedAccuracy = this.value.recordedAccuracy
   }
+  getGeolocationPosition() {
+    const options = {
+      enableHighAccuracy: true
+    };
+    const queue = JSON.parse(localStorage.getItem('gpsQueue')) ? (JSON.parse(localStorage.getItem('gpsQueue'))) : undefined;
+    if ((typeof queue !== 'undefined' && ((new Date).getTime() - queue.timestamp) / 1000 / 60 <= 5)) {
+      this.currentLatitude = queue.latitude;
+      this.currentLongitude = queue.longitude;
+      this.currentAccuracy = queue.accuracy;
+      this.saveCurrentPosition();
+    }
+    navigator.geolocation.getCurrentPosition((position) => {
+      // Accuracy is in meters, a lower reading is better
+      if (!queue || (typeof queue !== 'undefined' && ((position.timestamp - queue.timestamp) / 1000) >= 15) ||
+        queue.accuracy >= position.coords.accuracy) {
+        this.currentLatitude = position.coords.latitude;
+        this.currentLongitude = position.coords.longitude;
+        this.currentAccuracy = position.coords.accuracy;
+        const x = {
+          accuracy: position.coords.accuracy,
+          altitude: position.coords.altitude,
+          altitudeAccuracy: position.coords.altitudeAccuracy,
+          heading: position.coords.heading,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          speed: position.coords.speed,
+          timestamp: position.timestamp
+        };
+        localStorage.setItem('gpsQueue', JSON.stringify(x));
+        this.saveCurrentPosition();
 
-  saveCurrentPosition() {
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
-      bubbles: true, detail: {
-        inputName: this.name,
-        inputValue: {
-          recordedLatitude: this.currentLatitude,
-          recordedLongitude: this.currentLongitude,
-          recordedAccuracy: this.currentAccuracy
-        },
-        inputIncomplete: false,
-        inputInvalid: false
+      } else {
+        this.currentLatitude = queue.latitude;
+        this.currentLongitude = queue.longitude;
+        this.currentAccuracy = queue.accuracy;
+        this.saveCurrentPosition();
       }
-    }));
+
+    },
+      (err) => { },
+      options);
+  }
+  saveCurrentPosition() {
+    this.value = {
+      latitude: this.currentLatitude,
+      longitude: this.currentLongitude,
+      accuracy: this.currentAccuracy
+    };
+    this.dispatchEvent(new Event('change'));
+    if (this.currentAccuracy < 50) {
+      this.accuracyLevel = 'Good';
+    }
+    if (this.currentAccuracy > 50) {
+      this.accuracyLevel = 'Poor';
+    }
   }
   _isAdvancedMode(currentLatitude, advancedMode) {
     return (currentLatitude && advancedMode);

@@ -32,9 +32,9 @@ export class CaseManagementService {
   async getMyLocationVisits(month: number, year: number) {
 
     const res = await this.http.get('../content/location-list.json').toPromise();
-    const locationListObject = res.json();
+    const allLocations = res.json();
     // Calculate our locations by generating the path in the locationList object.
-    const locationList = locationListObject.locations;
+    const locationList = allLocations.locations;
     const myLocations = [];
     const locations = [];
     const results = await this.getVisitsByYearMonthLocationId();
