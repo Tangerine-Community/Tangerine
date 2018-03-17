@@ -18,6 +18,7 @@ import '../tangy-timed/tangy-timed.js'
 import '../tangy-checkbox/tangy-checkbox.js'
 import '../tangy-checkboxes/tangy-checkboxes.js'
 import '../tangy-radio-buttons/tangy-radio-buttons.js'
+import '../tangy-select/tangy-select.js'
 import '../tangy-location/tangy-location.js'
 import '../tangy-gps/tangy-gps.js'
 import '../tangy-complete-button/tangy-complete-button.js'
@@ -196,12 +197,6 @@ export class TangyForm extends PolymerElement {
           id: {
             type: String,
             value: 'tangy-form'
-          },
-          // Pass in code to be eval'd on any form input change.
-          onChange: {
-            type: String,
-            value: '',
-            reflectToAttribute: true
           },
           complete: {
             type: Boolean,
@@ -384,6 +379,7 @@ export class TangyForm extends PolymerElement {
 
       fireOnChange() {
         // Register tangy redux hook.
+        if (!this.hasAttribute('on-change')) return
         let state = this.store.getState()
         let inputs = {}
         state.inputs.forEach(input => inputs[input.name] = input)
@@ -419,7 +415,7 @@ export class TangyForm extends PolymerElement {
         let inputDisable = tangyFormActions.inputDisable
         let itemDisable = tangyFormActions.itemDisable
         let itemEnable = tangyFormActions.itemEnable
-        eval(this.onChange)
+        eval(this.getAttribute('on-change'))
       }
 
       focusOnPreviousItem(event) {

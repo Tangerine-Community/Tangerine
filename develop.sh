@@ -27,6 +27,7 @@ docker run -it --name $T_CONTAINER_NAME \
   --env "T_USER1=$T_USER1" \
   --env "T_USER1_PASSWORD=$T_USER1_PASSWORD" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
+  --env "T_REPLICATE=$T_REPLICATE" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/client/apks:/tangerine/client/releases/apks/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
@@ -35,6 +36,8 @@ docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json \
+  --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \
+  --volume $(pwd)/upgrades:/tangerine/upgrades \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
   --volume $(pwd)/editor/package.json:/tangerine/editor/package.json \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
