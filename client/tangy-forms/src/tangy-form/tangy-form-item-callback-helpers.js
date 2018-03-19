@@ -77,7 +77,7 @@ export class TangyFormItemHelpers {
     })
   }
 
-  wpm(input) {
+  itemsPerMinute(input) {
     if (!input) return
     if (input.tagName !== 'TANGY-TIMED') return
     let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1

@@ -269,7 +269,7 @@ paper-button {
       let inputShow = (name) => helpers.inputShow(name)
       let inputDisable = (name) => helpers.inputDisable(name)
       let inputEnable = (name) => helpers.inputEnable(name)
-      let wpm = (input) => helpers.wpm(input)
+      let itemsPerMinute = (input) => helpers.itemsPerMinute(input)
       eval(formEl.getAttribute(hook))
     }
 
