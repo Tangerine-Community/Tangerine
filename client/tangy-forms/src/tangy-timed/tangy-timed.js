@@ -372,7 +372,7 @@ class TangyTimed extends Element {
           .querySelectorAll('tangy-toggle-button')
           .forEach(button => newValue.push(button.getProps()))
         this.value = newValue
-
+        this.dispatchEvent(new Event('change'))
       break
       case TANGY_TIMED_MODE_LAST_ATTEMPTED:
         // Set the state of the button, assign to value which will trigger reflecting to its element.
@@ -385,6 +385,7 @@ class TangyTimed extends Element {
           return option
         }) 
         this.value = newValue
+        this.dispatchEvent(new Event('change'))
       break
     }
   }
