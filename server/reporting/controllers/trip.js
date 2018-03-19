@@ -80,7 +80,7 @@ const processWorkflowResult = function (data, baseDb) {
   const tripPromise = () => data.map((item, index) => {
     let itemId = item.doc.workflowId || item.doc.assessmentId || item.doc.curriculumId;
     if (itemId != undefined) {
-      return generateResult(item, index, dbUrl);
+      return generateResult(item, index, baseDb);
     }
   });
 
@@ -99,7 +99,7 @@ const processWorkflowResult = function (data, baseDb) {
       .value();
 
     // Validate result from all subtest timestamps
-    let validationData = await validateResult(docId, groupTimeZone, dbUrl, allTimestamps);
+    let validationData = await validateResult(docId, groupTimeZone, baseDb, allTimestamps);
     result.isValid = validationData.isValid;
     result.isValidReason = validationData.reason;
     result[`${docId}.start_time`] = validationData.startTime;

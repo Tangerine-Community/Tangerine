@@ -104,7 +104,7 @@ const processChangedDocument = async(resp, baseDb, resultDb) => {
       let allTimestamps = _.sortBy(assessmentResult.indexKeys.timestamps);
 
       // Validate result from all subtest timestamps
-      let validationData = await validateResult(docId, groupTimeZone, dbUrl, allTimestamps);
+      let validationData = await validateResult(docId, groupTimeZone, baseDb, allTimestamps);
       assessmentResult.isValid = validationData.isValid;
       assessmentResult.isValidReason = validationData.reason;
       assessmentResult[`${docId}.start_time`] = validationData.startTime;
