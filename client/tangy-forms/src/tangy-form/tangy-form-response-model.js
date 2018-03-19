@@ -1,7 +1,7 @@
-
 export class TangyFormResponseModel {
-  constructor(props) {
+  constructor(props, dbName) {
     this._id = uuid()
+    this._tangyRev = 0
     this.collection = 'TangyFormResponse'
     // Placeholders for where element.getProps() info will go.
     this.form = {}
@@ -18,7 +18,15 @@ export class TangyFormResponseModel {
     this.startDatetime = (new Date()).toLocaleString(),
     this.startUnixtime = Date.now(),
     this.uploadDatetime = ''
+    this.uploadTangyRev = undefined
     Object.assign(this, props)
+    this._dbName = dbName
+  }
+
+  save() {
+    this._tangyRev++
+    let db = new PouchDB(this._dbName)
+    db.put(this)
   }
 }
 
