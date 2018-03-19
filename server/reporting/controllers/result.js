@@ -622,7 +622,8 @@ function translateGridValue(databaseValue) {
 async function validateResult(docId, groupTimeZone, baseDb, allTimestamps) {
   let startTime, endTime, isValid, reason;
   let validData = { indexKeys: {} };
-  let collection = await dbQuery.retrieveDoc(docId, baseDb);
+  let GROUP_DB = new PouchDB(baseDb);
+  let collection = await GROUP_DB.get(docId);
   let validationParams = collection.authenticityParameters;
   let instrumentConstraints = validationParams && validationParams.constraints;
 
