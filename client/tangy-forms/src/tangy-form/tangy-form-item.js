@@ -246,10 +246,17 @@ paper-button {
       if (!formEl.hasAttribute(hook)) return
       // Prepare some helper variables.
       let state = window.tangyFormStore.getState()
-      let inputs = {}
-      this.shadowRoot.querySelectorAll('[name]').forEach(input => inputs[input.name] = input)
+      // Inputs.
+      let inputsArray = []
+      state.items.forEach(item => inputsArray = [...inputsArray, ...item.inputs])
+      this.shadowRoot.querySelectorAll('[name]').forEach(input => inputsArray.push(input))
+      let inputsKeyedByName = {}
+      inputsArray.forEach(input => inputsKeyedByName[input.name] = input)
+      let inputs = inputsKeyedByName
+      // Elements.
       let elementsById = {}
       this.shadowRoot.querySelectorAll('[id]').forEach(el => elementsById[el.id] = el)
+      // Items.
       let items = {}
       state.items.forEach(item => items[item.name] = item)
       let inputEls = this.shadowRoot.querySelectorAll('[name]')
