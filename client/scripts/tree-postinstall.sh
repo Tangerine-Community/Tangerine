@@ -8,7 +8,7 @@ $cordova platform add android@5.X.X --save
 
 # install plugins
 
-# crosswalk for older browser versioni compatibility 
+# crosswalk for older browser versioni compatibility
 $cordova plugin add cordova-plugin-crosswalk-webview --save --variable XWALK_VERSION="19+"
 
 # location services

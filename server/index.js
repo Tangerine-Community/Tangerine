@@ -73,6 +73,7 @@ app.use(mountpoint, function(req, res) {
   }
 });
 
+app.use(bodyParser.urlencoded()); // for form data
 app.use(bodyParser.json()); // use json
 app.use(cookieParser());    // use cookies
 app.use(couchAuth);         // use couchdb cookie authentication
@@ -128,9 +129,9 @@ app.post('/workflow', workflowController.all);
 app.post('/workflow/headers/:id', workflowController.generateHeader);
 app.post('/workflow/result/:id', tripController.processResult);
 
-app.post('/generate_csv/:id', csvController.generate);
+app.post('/generate_csv/:id/:year?/:month?', csvController.generate);
 app.post('/tangerine_changes', changesController.changes);
-app.post('/get_processed_results/:id', dbQuery.processedResultsById);
+app.post('/get_processed_results/:id/', dbQuery.processedResultsById);
 
 // landing
 app.get('/', function(req, res){
