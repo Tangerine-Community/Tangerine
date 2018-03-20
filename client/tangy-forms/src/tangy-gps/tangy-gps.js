@@ -42,8 +42,8 @@ class TangyGps extends Element {
       </template>
     <div>
     <template is="dom-if" if="[[currentLatitude]]">
-    Accuracy: [[currentAccuracy]] meters<br>
-    Accuracy Level : [[accuracyLevel]]
+      Accuracy: [[currentAccuracy]] meters<br>
+      Accuracy Level : [[accuracyLevel]]
     </template> 
     </div>
     <div>
@@ -74,12 +74,12 @@ class TangyGps extends Element {
         value: 'tangy-gps'
       },
       value: {
-        type: Array,
-        value: [
-          { name: 'latitude', value: '' },
-          { name: 'longitude', value: '' },
-          { name: 'accuracy', value: '' }
-        ],
+        type: Object,
+        value: {
+          latitude: undefined,
+          longitude: undefined,
+          accuracy: undefined 
+        },
         observer: 'reflect',
         reflectToAttribute: true
       },
@@ -93,12 +93,15 @@ class TangyGps extends Element {
 
   ready() {
     super.ready();
-    this.interval = setInterval(() => this.getGeolocationPosition(), 100)
+    this.active = true
+    this.getGeolocationPosition()
+    this.currentAccuracy = '...'
+    this.accuracyLevel = '...'
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    clearInterval(this.interval);
+    this.active = false
   }
 
   reflect() {
@@ -118,6 +121,8 @@ class TangyGps extends Element {
       this.saveCurrentPosition();
     }
     navigator.geolocation.getCurrentPosition((position) => {
+      // Bail if this element has been marked inactive on disconnected callback.
+      if (!this.active) return
       // Accuracy is in meters, a lower reading is better
       if (!queue || (typeof queue !== 'undefined' && ((position.timestamp - queue.timestamp) / 1000) >= 15) ||
         queue.accuracy >= position.coords.accuracy) {
@@ -143,6 +148,7 @@ class TangyGps extends Element {
         this.currentAccuracy = queue.accuracy;
         this.saveCurrentPosition();
       }
+      this.getGeolocationPosition()
 
     },
       (err) => { },
@@ -162,6 +168,16 @@ class TangyGps extends Element {
       this.accuracyLevel = 'Poor';
     }
   }
+
+  validate() {
+    if (this.value.latitude && this.value.longitude && this.value.accuracy) {
+      debugger
+      return true
+    } else {
+      return false
+    }
+  }
+
   _isAdvancedMode(currentLatitude, advancedMode) {
     return (currentLatitude && advancedMode);
   }
