@@ -18,9 +18,9 @@ echo "Pulling $T_TAG"
 docker pull tangerine/tangerine:$T_TAG
 
 echo "Stopping $T_CONTAINER_NAME"
-docker stop $T_CONTAINER_NAME > /dev/null 
+docker stop $T_CONTAINER_NAME > /dev/null
 echo "Removing $T_CONTAINER_NAME"
-docker rm $T_CONTAINER_NAME > /dev/null 
+docker rm $T_CONTAINER_NAME > /dev/null
 
 RUN_OPTIONS="
   --name $T_CONTAINER_NAME \
@@ -38,7 +38,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
   --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
-" 
+"
 
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 

@@ -18,6 +18,7 @@ const PouchDB = require('pouchdb');
  */
 
 const dbQuery = require('./../utils/dbQuery');
+const dbConfig = require('./../config');
 
 /**
  * Generates a CSV file.
@@ -30,7 +31,7 @@ const dbQuery = require('./../utils/dbQuery');
  *
  *  The request object must contain the result database url.
  *      {
- *        "result_db_url": "http://admin:password@test.tangerine.org/database_name"
+ *         "result_db_url": "http://admin:password@test.tangerine.org/database_name"
  *      }
  *
  * Response:
@@ -42,7 +43,9 @@ const dbQuery = require('./../utils/dbQuery');
  */
 
 exports.generate = (req, res) => {
-  const resultDb = req.body.result_db;
+  let resultDb = req.body.result_db;
+  resultDb = resultDb.includes('http') ? resultDb : dbConfig.db_url + resultDb + '-result';
+
   const RESULT_DB = new PouchDB(resultDb);
   const resultId = req.params.id;
   const resultYear = req.params.year;
@@ -55,8 +58,7 @@ exports.generate = (req, res) => {
   RESULT_DB.get(resultId, resultDb)
     .then(async(docHeaders) => {
       const result = await dbQuery.getProcessedResults(queryId, resultDb);
-      const csvFile = await generateCSV(docHeaders, result);
-      res.json({ message: 'CSV Successfully Generated', filepath: csvFile });
+      generateCSV(docHeaders, result, queryId, res);
     })
     .catch((err) => res.send(err));
 }
@@ -66,43 +68,40 @@ exports.generate = (req, res) => {
  *
  * @param {Object} columnData – column headers
  * @param {Array} resultData – the result data.
+ * @param {String} resultId – the result id.
+ * @param {Object} res – response object.
  *
  * @returns {Object} – generated response
  */
 
-const generateCSV = function(columnData, resultData) {
-  return new Promise((resolve, reject) => {
-    let workbook = new Excel.Workbook();
-    workbook.creator = 'Brockman';
-    workbook.lastModifiedBy = 'Matthew';
-    workbook.created = new Date(2017, 9, 1);
-    workbook.modified = new Date();
-    workbook.lastPrinted = new Date(2017, 7, 27);
+const generateCSV = function(columnData, resultData, resultId, res) {
+  const FILENAME = `${resultId}.xlsx`;
+  let workbook = new Excel.Workbook();
+  workbook.creator = 'New Brockman';
+  workbook.lastModifiedBy = 'Matthew';
+  workbook.created = new Date(2017, 9, 1);
+  workbook.modified = new Date();
+  workbook.lastPrinted = new Date(2017, 7, 27);
 
-    let excelSheet = workbook.addWorksheet('Workflow Sheet', {
-      views: [{ xSplit: 1 }],
-      pageSetup: { paperSize: 9, orientation: 'landscape' }
-    });
+  let excelSheet = workbook.addWorksheet('Tangerine Sheet', {
+    views: [{ xSplit: 1 }],
+    pageSetup: { paperSize: 9, orientation: 'landscape' }
+  });
 
-    // Add column headers and define column keys
-    excelSheet.columns = columnData.column_headers;
+  // Add column headers and define column keys
+  excelSheet.columns = columnData.column_headers;
 
-    // Add rows by key-value using the column keys
-    _.each(resultData, row => {
-      excelSheet.addRow(row.doc.processed_results);
-    });
+  // Add rows by key-value using the column keys
+  _.each(resultData, row => {
+    excelSheet.addRow(row.doc.processed_results);
+  });
 
-    let creationTime = new Date().toISOString();
-    let filename = `testcsvfile-${creationTime}.xlsx`;
-
-    // create and fill Workbook;
-    workbook.xlsx.writeFile(filename, 'utf8')
-      .then(() => {
-        console.log(chalk.green(`✓ You have successfully created a new excel file at ${new Date()}`)
-        );
-        resolve(filename);
-      })
-      .catch(err => reject(err));
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader('Content-Disposition', `attachment; filename=${FILENAME}`);
+  workbook.xlsx.write(res).then(function(data) {
+    console.log(chalk.green(`✓ You have successfully created a new excel file at ${new Date()}`));
+    res.end();
   });
 }
 
