@@ -482,7 +482,7 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
     let variables = {}
     doc.items.forEach(item => { 
       item.inputs.forEach(input => { 
-        if (typeof input.value === 'object') {
+        if (Array.isArray(input.value)) {
           input.value.forEach(subInput => variables[`${input.name}.${subInput.name}`] = subInput.value)
         } else {
           variables[input.name] = input.value
