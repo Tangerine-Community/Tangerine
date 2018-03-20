@@ -42,6 +42,10 @@ export class TangyFormItemHelpers {
     if (!value) {
       value = ''
     }
+    // Return radio buttons as a signle value chosen, not a single entry array.
+    if (foundInput && foundInput.tagName === 'TANGY-RADIO-BUTTONS' && Array.isArray(value)) {
+      value = value[0]
+    }
     return value
   }
 
