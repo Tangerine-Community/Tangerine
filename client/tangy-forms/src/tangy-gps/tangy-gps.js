@@ -83,6 +83,12 @@ class TangyGps extends Element {
         observer: 'reflect',
         reflectToAttribute: true
       },
+      required: {
+        type: Boolean,
+        value: false, 
+        observer: 'reflect',
+        reflectToAttribute: true
+      },
       advancedMode: {
         type: Boolean,
         value: false,
@@ -170,8 +176,8 @@ class TangyGps extends Element {
   }
 
   validate() {
+    if (!this.required) return true
     if (this.value.latitude && this.value.longitude && this.value.accuracy) {
-      debugger
       return true
     } else {
       return false
