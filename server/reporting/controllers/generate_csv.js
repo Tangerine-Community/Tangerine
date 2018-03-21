@@ -43,7 +43,7 @@ const dbConfig = require('./../config');
  */
 
 exports.generate = (req, res) => {
-  let resultDb = req.body.result_db;
+  let resultDb = req.body.result_db || req.params.db_name;
   resultDb = resultDb.includes('http') ? resultDb : dbConfig.db_url + resultDb + '-result';
 
   const RESULT_DB = new PouchDB(resultDb);
