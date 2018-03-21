@@ -39,7 +39,7 @@ const tripController = require('./reporting/controllers/trip');
 
 const app = express();
 
-console.log("Hook data processing function to changes feed.");
+console.log('Hook data processing function to changes feed.');
 changesFeed();
 
 // Enforce SSL behind Load Balancers.
@@ -57,7 +57,7 @@ if (process.env.T_PROTOCOL == 'https') {
 var couchProxy = proxy('localhost:5984', {
   forwardPath: function (req, res) {
     var path = require('url').parse(req.url).path;
-    console.log("path:" + path);
+    console.log('path:' + path);
     return path;
   }
 });
@@ -129,7 +129,9 @@ app.post('/workflow', workflowController.all);
 app.post('/workflow/headers/:id', workflowController.generateHeader);
 app.post('/workflow/result/:id', tripController.processResult);
 
+app.get('/generate_csv/:db_name/:id/:year?/:month?', csvController.generate);
 app.post('/generate_csv/:id/:year?/:month?', csvController.generate);
+
 app.post('/tangerine_changes', changesController.changes);
 app.post('/get_processed_results/:id/', dbQuery.processedResultsById);
 

@@ -183,9 +183,7 @@ class ResultsView extends Backbone.View
 
         <form action='/generate_csv/#{@assessment.id}' method='post'>
           <input type='hidden' name='result_db' value='#{Tangerine.db_name}'>
-
           <button type='submit' class='csv command'>#{@text.csv}</button>
-
           <!-- <a href='/brockman/assessment/#{Tangerine.db_name}/#{@assessment.id}'></a> -->
         </form>
 
