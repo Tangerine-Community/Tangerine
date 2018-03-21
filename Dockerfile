@@ -1,6 +1,9 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v2_node8
+FROM tangerine/docker-tangerine-base-image:v2_based_on_v3_wrapper
 
+#RUN apk update && apk add vim yarn python g++ make git && rm -rf /var/cache/apk/*
+
+RUN npm install -g nodemon
 #
 # ENV API for this container
 #
@@ -27,10 +30,6 @@ ENV PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT false
 # Other ENVs 
 #
 
-# Never ask for confirmations
-ENV DEBIAN_FRONTEND noninteractive
-RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-
 # Configure some things for use internally.
 ENV T_TREE_HOSTNAME / 
 ENV T_TREE_URL /tree 
@@ -41,80 +40,81 @@ ENV T_TREE_PORT 4445
 ENV T_BROCKMAN_PORT 4446
 ENV T_DECOMPRESSOR_PORT 4447
 
+
+
 #
 # Stage 1 - Configure global dependecies
 #
 
-ADD ./tangerine.conf /tangerine-server/tangerine.conf
-RUN cp /tangerine-server/tangerine.conf /etc/nginx/sites-available/tangerine.conf \
+ADD ./tangerine.conf /tangerine/tangerine.conf
+RUN cp /tangerine/tangerine.conf /etc/nginx/sites-available/tangerine.conf \
   && ln -s /etc/nginx/sites-available/tangerine.conf /etc/nginx/sites-enabled/tangerine.conf \
   && rm /etc/nginx/sites-enabled/default \
+  && rm /etc/nginx/conf.d/default.conf \
   && sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
 
 # 
 # Stage 2 Install application dependencies
 # 
 
-# Install brockman.
-ADD ./brockman/Gemfile /tangerine-server/brockman/Gemfile
-ADD ./brockman/Gemfile.lock /tangerine-server/brockman/Gemfile.lock
-RUN cd /tangerine-server/brockman \ 
-    && gem install bundler --no-ri --no-rdoc \
-    && bundle install --path vendor/bundle
+## Install brockman.
+#ADD ./brockman/Gemfile /tangerine/brockman/Gemfile
+#ADD ./brockman/Gemfile.lock /tangerine/brockman/Gemfile.lock
+#RUN cd /tangerine/brockman \
+#    && gem install bundler --no-ri --no-rdoc \
+#    && bundle install --path vendor/bundle
 
 # Install server.
-ADD ./server/package.json /tangerine-server/server/package.json
-RUN cd /tangerine-server/server \
+ADD ./server/package.json /tangerine/server/package.json
+RUN cd /tangerine/server \
     && npm install
 
 # Install editor.
-ADD ./editor/package.json /tangerine-server/editor/package.json
-RUN cd /tangerine-server/editor \
+ADD ./editor/package.json /tangerine/editor/package.json
+RUN cd /tangerine/editor \
     && npm install
 
 # Install tree.
-ADD ./tree/package.json /tangerine-server/tree/package.json
-RUN cd /tangerine-server/tree \
+ADD ./tree/package.json /tangerine/tree/package.json
+RUN cd /tangerine/tree \
     && npm install
 
 # Install client.
-ADD ./client/package.json /tangerine-server/client/package.json
-ADD ./client/bower.json /tangerine-server/client/bower.json
-ADD ./client/.bowerrc /tangerine-server/client/.bowerrc
-ADD ./client/scripts/postinstall.sh /tangerine-server/client/scripts/postinstall.sh
-ADD ./client/Gruntfile.js /tangerine-server/client/Gruntfile.js
-ADD ./client/config.xml /tangerine-server/client/config.xml
-RUN mkdir /tangerine-server/client/src
-RUN mkdir /tangerine-server/client/www
-ADD ./client/res /tangerine-server/client/res
-RUN cd /tangerine-server/client \
-    && sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js 
-RUN cd /tangerine-server/client \
+RUN npm install -g bower
+
+ADD ./client/package.json /tangerine/client/package.json
+ADD ./client/bower.json /tangerine/client/bower.json
+ADD ./client/.bowerrc /tangerine/client/.bowerrc
+ADD ./client/scripts/postinstall.sh /tangerine/client/scripts/postinstall.sh
+ADD ./client/Gruntfile.js /tangerine/client/Gruntfile.js
+ADD ./client/config.xml /tangerine/client/config.xml
+RUN mkdir /tangerine/client/src
+#RUN mkdir /tangerine/client/www
+#ADD ./client/res /tangerine/client/res
+#RUN cd /tangerine/client \
+#    && sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js
+RUN cd /tangerine/client \
     && npm install 
-RUN cd /tangerine-server/client \
+RUN cd /tangerine/client \
     && bower install --allow-root
 
 ## Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
-WORKDIR /tangerine-server/client
+WORKDIR /tangerine/client
 
-RUN cordova platform add android@6.3.0
-RUN cordova plugin add cordova-plugin-whitelist --save
-RUN cordova plugin add cordova-plugin-geolocation --save
-RUN cordova plugin add cordova-plugin-camera --save
-RUN cordova plugin add cordova-plugin-crosswalk-webview --save
+
 
 RUN echo `which gradle`
 
 RUN npm run build:apk
 
 # Install Tangerine CLI
-ADD ./cli/package.json /tangerine-server/cli/package.json
-RUN cd /tangerine-server/cli \
+ADD ./cli/package.json /tangerine/cli/package.json
+RUN cd /tangerine/cli \
     && npm install
 
 # Install decompressor.
-ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
-RUN cd /tangerine-server/decompressor \
+ADD ./decompressor/package.json /tangerine/decompressor/package.json
+RUN cd /tangerine/decompressor \
     && npm install
 
 #
@@ -122,31 +122,33 @@ RUN cd /tangerine-server/decompressor \
 # 
 
 # Compile editor.
-ADD ./editor /tangerine-server/editor
-RUN cd /tangerine-server/editor && npm start init
+ADD ./editor /tangerine/editor
+RUN cd /tangerine/editor && npm start init
 
 # Engage the Tangerine CLI so we can run commands like `sudo tangerine make-me-a-sandwich`.
-ADD ./cli /tangerine-server/cli
-RUN cd /tangerine-server/cli && npm link
+ADD ./cli /tangerine/cli
+RUN cd /tangerine/cli && npm link
 
 # Compile client. 
-ADD ./client /tangerine-server/client
-RUN cd /tangerine-server/client && npm run gulp init
-RUN rm -r /tangerine-server/client/www
-RUN ln -s /tangerine-server/client/src /tangerine-server/client/www
+ADD ./client /tangerine/client
+RUN cd /tangerine/client && npm run gulp init
+RUN rm -r /tangerine/client/www
+RUN ln -s /tangerine/client/src /tangerine/client/www
 
-RUN npm install -g nodemon
+RUN npm install -g nodemon pm2
 
 # Add all of the rest of the code 
-ADD ./ /tangerine-server
+ADD ./ /tangerine
 
-RUN mkdir /tangerine-server/logs
+RUN mkdir /tangerine/logs
+
+WORKDIR /tangerine
 
 # Volumes
-VOLUME /tangerine-server/logs
-VOLUME /tangerine-server/tree/apks
+VOLUME /tangerine/logs
+VOLUME /tangerine/tree/apks
 VOLUME /var/lib/couchb/
 
 EXPOSE 80
 
-ENTRYPOINT /tangerine-server/entrypoint.sh
+ENTRYPOINT /tangerine/entrypoint.sh

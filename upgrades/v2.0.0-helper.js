@@ -132,7 +132,7 @@ var upgrade = function() {
   .then(function getFileAcl() {
     console.log( "How the Access Control list works has changed. Add manager role to necessary users and overrwrite the acl document in the tangerine database.")
     return new Promise(function getFileAclPromise(resolve, reject){
-      fs.readFile( '/tangerine-server/documents-for-new-groups/acl.json', 'utf-8', function(err, data) { 
+      fs.readFile( '/tangerine/documents-for-new-groups/acl.json', 'utf-8', function(err, data) {
         if (err) { 
           console.log(err)
           reject(response);

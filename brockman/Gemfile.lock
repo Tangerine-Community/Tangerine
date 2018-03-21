@@ -7,7 +7,7 @@ GEM
       addressable
     hpricot (0.8.6)
     htmlentities (4.3.2)
-    json (1.8.1)
+    json (2.1.0)
     logger (1.2.8)
     mail (2.6.1)
       mime-types (>= 1.16, < 3)

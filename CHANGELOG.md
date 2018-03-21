@@ -27,13 +27,13 @@
 
 For example, if you are at Tangerine 0.4.6, then you must run...
 ```
-docker exec -it tangerine-container /tangerine-server/upgrades/v1.0.0.sh
-docker exec -it tangerine-container /tangerine-server/upgrades/v2.0.0.sh
+docker exec -it tangerine-container /tangerine/upgrades/v1.0.0.sh
+docker exec -it tangerine-container /tangerine/upgrades/v2.0.0.sh
 ```
 
 If you are at Tangerine 1.7.8, then you must run...
 ```
-docker exec -it tangerine-container /tangerine-server/upgrades/v2.0.0.sh
+docker exec -it tangerine-container /tangerine/upgrades/v2.0.0.sh
 ```
 
 ## v2.2.0
@@ -46,7 +46,7 @@ docker exec -it tangerine-container /tangerine-server/upgrades/v2.0.0.sh
 
 ### Upgrade direcections
 ```
-docker exec -it tangerine-container /tangerine-server/upgrades/v2.2.0.sh
+docker exec -it tangerine-container /tangerine/upgrades/v2.2.0.sh
 ```
 
 

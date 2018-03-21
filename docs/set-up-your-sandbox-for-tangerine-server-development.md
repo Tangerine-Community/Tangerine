@@ -16,7 +16,7 @@ Note: This is the easiest method for development but results in a sandbox where 
 ## Load test data 
 To load some test data, create a group called `g1` and then run the following command. 
 ```
-docker exec tangerine-container tangerine push-backup --path /tangerine-server/client/test/packs --url http://user1:password@127.0.0.1:5984/group-g1
+docker exec tangerine-container tangerine push-backup --path /tangerine/client/test/packs --url http://user1:password@127.0.0.1:5984/group-g1
 ```
 
 
@@ -51,13 +51,13 @@ we're making a trade-off due to the difficulties of developing this docker conta
 Follow the instructions in the Developers section. Get into a running container to play around.
 
 ```
-docker exec -it tangerine-server-container /bin/bash
+docker exec -it tangerine-container /bin/bash
 ```
 
 Go to the code for editor:
 
 ````
-cd /tangerine-server/editor
+cd /tangerine/editor
 npm run debug
 
 ````
@@ -88,9 +88,9 @@ Editor is served as a single page application by Robbert. Before launching Robbe
 If this is the first time launching editor, you must init the app. Go to the code for editor:
 
 ````
-cd /tangerine-server/editor
+cd /tangerine/editor
 npm install
-cd /tangerine-server/editor/app
+cd /tangerine/editor/app
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/configuration.json
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" _docs/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > _docs/settings.json
 couchapp push
@@ -101,13 +101,13 @@ This npm command will run the debug gulp command and watch for changes
 in your code. You may access the app from the index-dev.html page, which makes debugging much easier.
 Push the Robbert couchapp to populate byRoleKey view to the _users database:
 
-    cd /tangerine-server/robbert/couchapp
+    cd /tangerine/robbert/couchapp
     couchapp push
 
 Launch Robbert:
 
 ````
-cd /tangerine-server/robbert
+cd /tangerine/robbert
 npm install
 npm start
 

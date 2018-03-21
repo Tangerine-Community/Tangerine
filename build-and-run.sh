@@ -10,7 +10,7 @@ fi
 IMAGE_NAME=$(git rev-parse --abbrev-ref HEAD);
 echo IMAGE_NAME is $IMAGE_NAME
 docker build -t tangerine/tangerine:$IMAGE_NAME .
-docker kill $T_CONTAINER_NAME 
-docker rm $T_CONTAINER_NAME
+#docker kill $T_CONTAINER_NAME
+#docker rm $T_CONTAINER_NAME
 ./start.sh $IMAGE_NAME 
 docker logs -f $T_CONTAINER_NAME
