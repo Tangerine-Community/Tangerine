@@ -43,31 +43,31 @@ export class AppComponent implements OnInit {
     this.checkIfUpdateScriptRequired();
     // setInterval(this.getGeolocationPosition, 1000);
     // Initialize tangyFormService in case any views need to be updated.
-    let currentUser = await this.authenticationService.getCurrentUser()
-    let tangyFormService = new TangyFormService({databaseName: currentUser})
-    tangyFormService.initialize()
+    const currentUser = await this.authenticationService.getCurrentUser();
+    const tangyFormService = new TangyFormService({ databaseName: currentUser });
+    tangyFormService.initialize();
   }
 
   async checkIfUpdateScriptRequired() {
-    let usersDb = new PouchDB('users');
-    const response = await usersDb.allDocs({include_docs: true});
+    const usersDb = new PouchDB('users');
+    const response = await usersDb.allDocs({ include_docs: true });
     const usernames = response
       .rows
       .map(row => row.doc)
       .filter(doc => doc.hasOwnProperty('username'))
       .map(doc => doc.username);
-    for (let username of usernames) {
-      let userDb = await new PouchDB(username);
+    for (const username of usernames) {
+      const userDb = await new PouchDB(username);
       // Use try in case this is an old account where info doc was not created.
-      let infoDoc = { _id: '', atUpdateIndex: 0};
+      let infoDoc = { _id: '', atUpdateIndex: 0 };
       try {
         infoDoc = await userDb.get('info');
       } catch (e) {
-        await userDb.put({_id: 'info', atUpdateIndex: 0})
+        await userDb.put({ _id: 'info', atUpdateIndex: 0 });
         infoDoc = await userDb.get('info');
       }
-      let atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
-      let lastUpdateIndex = updates.length-1
+      const atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
+      const lastUpdateIndex = updates.length - 1;
       if (lastUpdateIndex !== atUpdateIndex) {
         this.router.navigate(['/update']);
       }
