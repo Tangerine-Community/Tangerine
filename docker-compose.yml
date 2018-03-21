@@ -1,0 +1,46 @@
+version: "3.1"
+services:
+
+    couchdb:
+      image: couchdb:1.7
+      container_name: couchdb
+      volumes:
+        - ./data/couchdb:/opt/couchdb/data
+      environment:
+        - COUCHDB_USER=${T_ADMIN}
+        - COUCHDB_PASSWORD=${T_PASS}
+      ports:
+        - "5984:5984"
+
+    tangerine:
+      image: tangerine/tangerine:local
+      container_name: tangerine
+      working_dir: /tangerine
+      volumes:
+          - ./data/apks/:/tangerine/tree/apks/
+          - ./data/logs/pm2/:/tangerine/logs
+          - ./data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log
+          - ./data/media_assets/:/tangerine/client/media_assets/
+          - ./server/index.js:/tangerine/server/index.js
+          - ./server/Group.js:/tangerine/server/Group.js
+          - ./server/changesFeed.js:/tangerine/server/changesFeed.js
+          - ./server/package.json:/tangerine/server/package.json
+          - ./server/reporting:/tangerine/server/reporting
+          - ./server/routes:/tangerine/server/routes
+          - ./ecosystem.json:/tangerine/ecosystem.json
+      environment:
+        - NODE_ENV=development
+        - T_VERSION=${T_TAG}
+        - T_PROTOCOL=${T_PROTOCOL}
+        - T_ADMIN=${T_ADMIN}
+        - T_PASS=${T_PASS}
+        - T_USER1
+        - T_USER1_PASSWORD
+        - T_HOST_NAME
+        - T_TAG
+        - T_COUCH_HOST
+      privileged: true
+      ports:
+       - "80:80"
+      links:
+      - couchdb

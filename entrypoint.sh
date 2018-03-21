@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
 
-# Send nginx logs to docker logs.
-tail -f /var/log/nginx/access.log &
-tail -f /var/log/nginx/error.log &
-
-echo ""
-echo ""
-echo ""
-echo "Setting up database user"
-echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini
-chown -R couchdb /var/run/couchdb
-couchdb -k
-couchdb &
+#echo ""
+#echo ""
+#echo ""
+#echo "Setting up database user"
+#echo "$T_ADMIN = $T_PASS" >> /etc/couchdb/local.ini
+#chown -R couchdb /var/run/couchdb
+#couchdb -k
+#couchdb &
 echo ""
 echo ""
 echo ""
@@ -29,24 +25,24 @@ sleep 3  # Waits 3 seconds.
 echo ""
 echo ""
 echo ""
-echo "Creating user1 at http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1"
-curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1" --data-binary '{"_id": "'"org.couchdb.user:$T_USER1"'","name": "'"$T_USER1"'","roles": ["manager"],"type": "user","password": "'"$T_USER1_PASSWORD"'"}'
+#echo "Creating user1 at http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1"
+#curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1" --data-binary '{"_id": "'"org.couchdb.user:$T_USER1"'","name": "'"$T_USER1"'","roles": ["manager"],"type": "user","password": "'"$T_USER1_PASSWORD"'"}'
 echo ""
 echo ""
 echo ""
 echo "Push the ojai design doc"
-cd /tangerine-server/editor/app
+cd /tangerine/editor/app
 couchapp push
 echo ""
 echo ""
 echo "Push the dashReporting design doc"
-cd /tangerine-server/editor/result
+cd /tangerine/editor/result
 couchapp push
 echo ""
 echo ""
 echo ""
 echo "Insert documents used for new groups."
-cd /tangerine-server/
+cd /tangerine/
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" ./documents-for-new-groups/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > ./documents-for-new-groups/configuration.json
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" ./documents-for-new-groups/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > ./documents-for-new-groups/settings.json
 curl -XPUT -d "@./documents-for-new-groups/LocationList.json" -H "Content-Type: application/json" http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/location-list
@@ -59,7 +55,7 @@ echo ""
 echo ""
 echo ""
 echo "Update globals in group databases."
-tangerine deploy-globals
+tangerine deploy-globals --couchUrl "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:5984"
 echo ""
 echo ""
 echo ""
@@ -85,15 +81,31 @@ echo ""
 fi
 
 echo "Push the server couchapp"
-cd /tangerine-server/server/couchapp
+cd /tangerine/server/couchapp
 couchapp push
 echo ""
 echo ""
 echo ""
 echo "Go nginx!"
 sed -i -e "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" /etc/nginx/sites-available/tangerine.conf
-service nginx start
-service nginx reload
+# These settings are from the Alpine aports version of nginx's initd comand: https://git.alpinelinux.org/cgit/aports/tree/main/nginx/nginx.initd?h=3.6-stable
+cfgfile=${cfgfile:-/etc/nginx/nginx.conf}
+pidfile=/run/nginx/nginx.pid
+command=/usr/sbin/nginx
+command_args="-c $cfgfile"
+#checkpath --directory --owner nginx:nginx ${pidfile%/*}
+# First check if the config file is correct - if there are no messages, all is good.
+$command $command_args -t -q
+# Now launch nginx
+$command $command_args
+echo ""
+echo ""
+echo ""
+
+# Send nginx logs to docker logs.
+tail -f /var/log/nginx/access.log &
+tail -f /var/log/nginx/error.log &
+
 echo ""
 echo ""
 echo ""
@@ -101,14 +113,14 @@ echo ""
 if [ "$T_RUN_MODE" = "production" ]
 then
 	echo "Start the pm2 process"
-	cd /tangerine-server
+	cd /tangerine
 	pm2 start --no-daemon ecosystem.json
 fi
 
 if [ "$T_RUN_MODE" = "development" ]
 then
 	echo "Start the pm2 process"
-	cd /tangerine-server
+	cd /tangerine
 	pm2 start --no-daemon ecosystem.json &
 	echo ""
 	echo ""
@@ -121,10 +133,10 @@ then
 	echo ""
 	echo ""
 	echo "Monitoring for editor changes..."
-	cd /tangerine-server/editor && npm run debug &
+	cd /tangerine/editor && npm run debug &
 	echo ""
 	echo ""
 	echo ""
 	echo "Monitoring for client changes..."
-	cd /tangerine-server/client && npm run debug
+	cd /tangerine/client && npm run debug
 fi

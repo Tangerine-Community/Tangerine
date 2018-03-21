@@ -32,11 +32,11 @@ let Path = require('path');
 Object.defineProperty(Conf, "PACK_DOC_SIZE", {value: 50, writeable: false, configurable: false, enumerable: true});
 
 // Where the json docs will go
-Object.defineProperty(Conf, "PACK_PATH", {value: `/tangerine-server/client/src/js/init`, writeable: false, configurable: false, enumerable: true})
+Object.defineProperty(Conf, "PACK_PATH", {value: `/tangerine/client/src/js/init`, writeable: false, configurable: false, enumerable: true})
 
 // Where the get the media assets
-Object.defineProperty(Conf, "MEDIA_PATH", {value: `/tangerine-server/client/media_assets/`, writeable: true, configurable: false, enumerable: true})
-Object.defineProperty(Conf, "APK_MEDIA_PATH", {value: `/tangerine-server/client/src/media_assets/`, writeable: true, configurable: false, enumerable: true})
+Object.defineProperty(Conf, "MEDIA_PATH", {value: `/tangerine/client/media_assets/`, writeable: true, configurable: false, enumerable: true})
+Object.defineProperty(Conf, "APK_MEDIA_PATH", {value: `/tangerine/client/src/media_assets/`, writeable: true, configurable: false, enumerable: true})
 
 /** Handle environment variables. */
 let Settings = require('../client/scripts/Settings');
@@ -96,7 +96,7 @@ const makeApk = function(req, res) {
   const token = Token.make();
   var prepareData = function(donePreparingData) {
     // delete any old packs if they're there
-    del([ '/tangerine-server/tree/client/src/js/init/pack*.json' ], {force: true})
+    del([ '/tangerine/tree/client/src/js/init/pack*.json' ], {force: true})
     .then( function (paths) {
       if ( paths.length !== 0 ) {
         logger.debug(`Old json packs deleted: ${paths.map((p)=>p.substring(Conf.PACK_PATH.length)).join(', ')}`);
