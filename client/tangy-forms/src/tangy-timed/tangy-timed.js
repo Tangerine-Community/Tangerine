@@ -304,6 +304,7 @@ class TangyTimed extends Element {
           if (this.timeRemaining === 0) {
             clearInterval(this.timer)
             this.style.background = 'red'
+            this.value = this.value.map((element, i) => Object.assign({}, element, { highlighted: (this.value.length-1 === i) ? true : false}))
             setTimeout(() => this.style.background = 'white', 200)
             setTimeout(() => this.style.background = 'red', 400)
             setTimeout(() => this.style.background = 'white', 600)
