@@ -334,7 +334,6 @@ class TangyTimed extends Element {
         this.$.lastAttemptedButton.disabled = true 
         this.value = this.value.map(button => {
           button.disabled = true
-          button.highlighted = false 
           return button
         })
       break
