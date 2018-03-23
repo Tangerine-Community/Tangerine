@@ -397,6 +397,7 @@ class TangyTimed extends Element {
 
   onStopClick() {
     clearInterval(this.timer);
+    this.value = this.value.map((element, i) => Object.assign({}, element, { highlighted: (this.value.length-1 === i) ? true : false}))
     this.mode = TANGY_TIMED_MODE_LAST_ATTEMPTED
   }
 
