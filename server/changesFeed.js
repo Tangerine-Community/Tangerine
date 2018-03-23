@@ -1,5 +1,6 @@
 const logger = require('./logger');
 const Conf = require('./Conf');
+const Group = require('./Group');
 const nano = require('nano')(Conf.protocol + Conf.auth + Conf.serverUrl);
 const PouchDB = require('pouchdb');
 
@@ -7,22 +8,40 @@ const dbConfig = require('./reporting/config');
 const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
 
 let changesFeed = function (groupDB, groupResultDB) {
-  logger.info('Running changes feed');
+  logger.info(' ::: Running changes feed ::: ');
   if (groupDB && groupResultDB) {
     monitorChange(groupDB, groupResultDB);
   } else {
     nano.db.list(function(err, databases) {
       if (err) return callback(err);
       let groupNames = [];
+      let groupResultNames = [];
+
       databases.forEach(function(databaseName) {
         if (databaseName.search('group-') !== -1) {
-          if (databaseName.search('-result') === -1) {
+          let isGroupResult = databaseName.search('-result') !== -1;
+          if (!isGroupResult) {
             groupNames.push(databaseName);
+          }
+          if (isGroupResult) {
+            groupResultNames.push(databaseName);
           }
         }
       });
-      logger.info('groupNames: ' + groupNames);
+
+      logger.info('Group Names: ' + groupNames, '\n GroupResult Names: ' + groupResultNames);
+
       groupNames.forEach(function(groupName) {
+        let groupExists = groupResultNames.find((groupResult) => groupResult === `${groupName}-result` );
+        if (!groupExists) {
+          const newGroupName = `${groupName}-result`;
+          const group = new Group({ name: newGroupName });
+
+          group.createResult(newGroupName)
+            .then(function responseMessage() {
+              logger.info(`New group '${newGroupName}' created`);
+            });
+        }
         const baseDb = dbConfig.db_url + groupName;
         const resultDb = dbConfig.db_url + groupName + '-result';
         monitorChange(baseDb, resultDb);
