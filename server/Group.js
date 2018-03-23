@@ -147,43 +147,56 @@ Group.prototype.create = function create() {
         });
     });
   }) // return promise
-  .then(function newResultDatabase() {
-    return new Promise(function newResultDatabasePromise(resolve, reject) {
-      logger.info('groupResultsDbUrl is: ' + groupResultsDbUrl)
-      unirest.put(groupResultsDbUrl)
-        .end(function onDbCreateResponse(response) {
-          logger.info('response.status is: ' + response.status)
-          if (response.status === HttpStatus.CREATED) {
-            return resolve();
-          } else if (response.status === HttpStatus.PRECONDITION_FAILED) {
-            return reject({
-              status: response.status,
-              message: `Group ${groupResultsDbName} already exists`
-            })
-          } else {
-            return reject(response);
-          }
-        })
-    })
-  })
-  .then(function replicate() {
-    return new Promise(function replicatePromise(resolve, reject) {
-      unirest.post(Conf.replicateUrl).headers(JSON_OPTS)
-        .json({
-          source: 'tangerine',
-          target: groupResultsDbName,
-          doc_ids: ['_design/ojai', '_design/dashReporting']
-        })
-        .end(async function onReplicateResponse(response) {
-          if (response.status > 199 && response.status < 399) {
-            await changesFeed(groupDbNameUrl, groupResultsDbUrl);
-            return resolve();
-          }
-          reject(response);
-        });
-    });
+  .then(function createResultDatabase() {
+    return self.createResult(groupResultsDbName);
   });
-}; // create
+}; // create group database
+
+
+/** Makes a new group result */
+Group.prototype.createResult = function (groupResultsDbName) {
+  const self = this;
+  const resultDbName = groupResultsDbName.replace('group-', '');
+  const groupDbNameUrl = Conf.calcGroupUrl(self.name());
+  const groupResultsDbUrl = Conf.calcGroupUrl(resultDbName);
+
+  return new Promise(function newResultDatabasePromise(resolve, reject) {
+    unirest.put(groupResultsDbUrl)
+      .end(function onDbCreateResponse(response) {
+        logger.info('response.status is: ' + response.status)
+        if (response.status === HttpStatus.CREATED) {
+          return resolve();
+        } else if (response.status === HttpStatus.PRECONDITION_FAILED) {
+          return reject({
+            status: response.status,
+            message: `Group ${groupResultsDbName} already exists`
+          })
+        } else {
+          return reject(response);
+        }
+      })
+    })
+    .then(function replicate() {
+      logger.info(`Running replication for ${groupResultsDbName} database`);
+      setTimeout(() => {
+        return new Promise(function replicatePromise(resolve, reject) {
+          unirest.post(Conf.replicateUrl).headers(JSON_OPTS)
+            .json({
+              source: 'tangerine',
+              target: groupResultsDbName,
+              doc_ids: ['_design/ojai', '_design/dashReporting']
+            })
+            .end(async function onReplicateResponse(response) {
+              if (response.status > 199 && response.status < 399) {
+                changesFeed(groupDbNameUrl, groupResultsDbUrl);
+                return resolve();
+              }
+              return reject(response);
+            });
+        });
+      }, 3000);
+  });
+} // create group-result database
 
 // Replicates to a deleted- database.
 // remove references to group on all users docs
@@ -316,7 +329,6 @@ Group.prototype.getUsers = function(roleKeys, splitRoles) {
   })
 };
 
-
 // Name getter/setter
 Group.prototype.name = function(value){
   if (value === undefined) {
@@ -334,22 +346,6 @@ Group.prototype.getGroups = function () {
     getGroupNames(function(err, groupNames) {
       if (err) return done(err)
       callback(null, groupsArray)
-      // var i = 0
-      // var getNextGroup = function() {
-      //   getGroup(groupNames[i], function(err, group) {
-      //     if (err) return done(err)
-      //     groupsArray.push(group)
-      //     i++
-      //     if (groupNames.length == i) {
-      //       logger.info("groupsArray:" + groupsArray)
-      //       callback(null, groupsArray)
-      //     }
-      //     else {
-      //       getNextGroup()
-      //     }
-      //   })
-      // }
-      // getNextGroup()
     })
   }
 
@@ -367,12 +363,6 @@ Group.prototype.getGroups = function () {
         group.users = response
         var db = nano.db.use('group-' + groupName)
         var options = { descending: false }
-        // if (req.params.hasOwnProperty('startdate')) options.startkey = parseInt(req.params.startdate)
-        // if (req.params.hasOwnProperty('enddate')) options.endkey = parseInt(req.params.enddate)
-        // db.view('ojai', 'resultsByUploadDate', options,  function(err, response) {
-        //   group.numberOfResults = response.rows.length
-        //   callback(null, group)
-        // })
       })
       .catch(errorHandler('foo'));
   }
