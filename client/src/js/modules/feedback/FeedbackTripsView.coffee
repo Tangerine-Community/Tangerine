@@ -64,7 +64,11 @@ class FeedbackTripsView extends Backbone.View
 
     @subViews = []
 
-    @locLevels = ["county", "zone", "school"]
+    @locLevels = options.levels || Tangerine.locationList.attributes.locationsLevels || []
+    console.log "Init: @levels: ", @levels
+
+    #@locLevels = ["county", "zone", "school"]
+    #console.log  "in init", @
 
     # TODO: Here is a good example of a poor seperation of Views and
     # Controllers. The route callback `fetch` has controller logic of getting a
@@ -77,7 +81,7 @@ class FeedbackTripsView extends Backbone.View
       success: => 
         # get county names
         Loc.query @locLevels, null, (res) =>
-          @countyNames = res.reduce ( (obj, cur) -> obj[cur.id]=cur.label; return obj ), {}
+          @levelNames = res.reduce ( (obj, cur) -> obj[cur.id]=cur.label; return obj ), {}
 
           @isReady = true
           @render()
@@ -175,6 +179,9 @@ class FeedbackTripsView extends Backbone.View
 
 
   render: =>
+
+    console.log "in render", @ 
+
     if @isReady and @trips.length == 0
       @$el.html " 
         <h1>Feedback</h1>
@@ -183,113 +190,59 @@ class FeedbackTripsView extends Backbone.View
       "
       return @trigger "rendered"
       
-    
     return unless @isReady
-    tripsByCounty = @trips.indexBy("county")
-    counties = _(@trips.pluck("county")).chain().compact().uniq().value().sort()
-    countyOptions = ("<option value='#{_(county).escape()}'>#{_(@countyNames[county]).escape()} (#{tripsByCounty[county]?.length || 0})</option>" for county in counties).join('')
-    countyOptions = "<option disabled='disabled' selected='selected'>Select a county</option>" + countyOptions
 
-    html = "
+    @$el.html "
       <h1>Feedback</h1>
       <h2>Visits</h2>
-      <div id='county-selection'>
-        <label for='county'>County</label>
-        <select id='county'>
-          #{countyOptions}
-        </select>
-      </div>
-      
-      <div id='zone-selection'>
-        <label for='zone'>Zone</label>
-        <select id='zone'>
-          <option disabled='disabled' selected='selected'></option>
-        </select>
-      </div>
-
-      <div id='school-selection'>
-        <label for='school'>School</label>
-        <select id='school'>
-          <option disabled='disabled' selected='selected'></option>
-        </select>
-      </div>
+      <div class='loc-container'></div>
       <br>
-      <div id='feedback-list'>
+      <div id='feedback-list'></div>
+      "
 
-      </div>
-    "
+    locViewParams = 
+      filterByObj: true
+      filterByObjData: @trips
 
-    @$el.html html
-
+    @locView = new LocView
+    @locView.initialize locViewParams
+    @locView.setElement @$el.find(".loc-container")
+    @locView.render()
+    @locView.on "change", () => @onSelectionChange()
+    
     @trigger "rendered"
 
-  onCountySelectionChange: (event) ->
+  # Handle the selection event from locView
+  onSelectionChange: () ->
+    if @locView.isComplete()
+      @selectedLocation = @locView.value()
+      @selectedTrips = @trips.where @selectedLocation
+      console.log "selected trips", @selectedTrips
 
-    @selectedCounty = $(event.target).val()
-    tripsByCounty  = @trips.indexBy("county")
-
-    # get zone names in county
-    Loc.query @locLevels, county: @selectedCounty
-    , (res) =>
-      @zoneNames = res.reduce ( (obj, cur) -> obj[cur.id]=cur.label; return obj ), {}
-
-      zones = _(tripsByCounty[@selectedCounty]).chain().map((a)->a.attributes['zone']).compact().uniq().value().sort()
-
-      zoneOptions = ''
-      for zone in zones
-        countInZone = tripsByCounty[@selectedCounty]?.map?((a)->a.get("zone")).filter((a)->a is zone)?.length || 0
-        zoneOptions += "<option value='#{_(zone).escape()}'>#{@zoneNames[zone]} (#{countInZone})</option>"
-      zoneOptions = "<option disabled='disabled' selected='selected'>Select a zone</option>" + zoneOptions
-
-
-      @$el.find("#zone").html zoneOptions
-
-      tripsByCounty[@selectedCounty]?.map?((a)-> a.get("zone")).filter?
-      ((a)->a==zone).length || 0
-
-  onZoneSelectionChange: ( event ) ->
-    @selectedZone = $(event.target).val()
-    tripsByZone  = @trips.indexBy("zone")
-
-    schools = _(tripsByZone[@selectedZone]).chain().map((a)->a.attributes['school']).compact().uniq().value().sort()
-
-    # get school names
-    #console.log "county #{@selectedCounty}"
-    #console.log "zone: #{@selectedZone}"
-    Loc.query @locLevels,
-      county : @selectedCounty
-      zone   : @selectedZone
-    , (res) =>
-      @schoolNames = res.reduce ( (obj, cur) -> obj[cur.id]=cur.label; return obj ), {}
-
-      schoolOptions = ''
-      for school in schools
-        countInSchool = tripsByZone[@selectedZone]?.map?((a)->a.get("school")).filter((a)->a is school)?.length || 0
-        schoolOptions += "<option value='#{_(school).escape()}'>#{_(@schoolNames[school]).escape()} (#{countInSchool})</option>"
-      schoolOptions = "<option disabled='disabled' selected='selected'>Select a school</option>" + schoolOptions
-
-      @$el.find("#school").html schoolOptions
-
-      tripsByZone[@selectedZone]?.map?((a)-> a.get("school")).filter?
-      ((a)->a==zone).length || 0
+      @updateFeedbackList()
+    else
+      @clearFeedbackList()
 
   getSortArrow: (attributeName) ->
     return "&#x25bc;" if @sortAttribute is attributeName and @sortDirection is 1
     return "&#x25b2;" if @sortAttribute is attributeName and @sortDirection is -1
     return ""
 
-  onSchoolSelectionChange: ( event ) ->
+  # onSchoolSelectionChange: ( event ) ->
 
-    @selectedSchool = @$el.find("#school").val()
-    @selectedZone   = @$el.find("#zone").val()
-    @selectedCounty = @$el.find("#county").val()
+  #   @selectedSchool = @$el.find("#school").val()
+  #   @selectedZone   = @$el.find("#zone").val()
+  #   @selectedCounty = @$el.find("#county").val()
 
-    @selectedTrips = @trips.where
-      county : @selectedCounty
-      zone   : @selectedZone
-      school : @selectedSchool
+  #   @selectedTrips = @trips.where
+  #     county : @selectedCounty
+  #     zone   : @selectedZone
+  #     school : @selectedSchool
 
-    @updateFeedbackList()
+  #   @updateFeedbackList()
+
+  clearFeedbackList: ->
+    @$el.find("#feedback-list").html ""
 
   updateFeedbackList: ->
 
@@ -315,8 +268,9 @@ class FeedbackTripsView extends Backbone.View
 
     @selectedTrips = @selectedTrips.sort sortFunction
 
+    #<h2>#{@schoolNames[@selectedTrips[0]?.get?("school")]? || ''}</h2>
     feedbackHtml = "
-      <h2>#{@schoolNames[@selectedTrips[0]?.get?("school")] || ''}</h2>
+      <!-- <h2>School name here</h2> -->
       <table id='feedback-table'>
         <thead>
           <tr>

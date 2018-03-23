@@ -1,40 +1,59 @@
 #!/usr/bin/env bash
 
-set -e
-
-# Load config.
-
 source ./config.defaults.sh
 if [ -f "./config.sh" ]; then
   source ./config.sh
-else
-  echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
-docker build -t tangerine/tangerine:local .
-[ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
-[ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
+echo ""
+echo "Building tangerine/tangerine:local from local files..."
+echo ""
+docker build -t tangerine/tangerine:local ./
 
-docker run -it --name $T_CONTAINER_NAME \
+echo ""
+echo "Stopping the container if it exists..."
+echo ""
+docker kill tangerine-container
+
+echo ""
+echo "Removing the container if it exists..."
+echo ""
+docker rm tangerine-container
+
+echo ""
+echo "Running the container..."
+echo ""
+docker run \
+  -d \
+  --name tangerine-container \
+  -p 80:80 -p 5984:5984\
+  --env "DEBUG=1" \
   --env "NODE_ENV=development" \
-  --env "T_VERSION=$T_TAG" \
-  --env "T_PROTOCOL=$T_PROTOCOL" \
+  --env "T_VERSION=local" \
+  --env "T_RUN_MODE=development" \
   --env "T_ADMIN=$T_ADMIN" \
   --env "T_PASS=$T_PASS" \
   --env "T_USER1=$T_USER1" \
   --env "T_USER1_PASSWORD=$T_USER1_PASSWORD" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
-  $T_PORT_MAPPING \
+  --env "T_PROTOCOL=$T_PROTOCOL" \
   --volume $(pwd)/data/couchdb/:/var/lib/couchdb \
-  --volume $(pwd)/data/apks/:/tangerine-server/tree/apks/ \
-  --volume $(pwd)/data/logs/pm2/:/tangerine-server/logs \
-  --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
+  --volume $(pwd)/data/apks/:/tangerine-server/tree/apks \
   --volume $(pwd)/data/media_assets/:/tangerine-server/client/media_assets/ \
+  --volume $(pwd)/data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log \
   --volume $(pwd)/server/index.js:/tangerine-server/server/index.js \
   --volume $(pwd)/server/Group.js:/tangerine-server/server/Group.js \
   --volume $(pwd)/server/changesFeed.js:/tangerine-server/server/changesFeed.js \
   --volume $(pwd)/server/package.json:/tangerine-server/server/package.json \
   --volume $(pwd)/server/reporting:/tangerine-server/server/reporting \
   --volume $(pwd)/server/routes:/tangerine-server/server/routes \
-  --volume $(pwd)/ecosystem.json:/tangerine-server/ecosystem.json \
- tangerine/tangerine:local
+  --volume $(pwd)/editor/src:/tangerine-server/editor/src \
+  --volume $(pwd)/editor/app:/tangerine-server/editor/app \
+  --volume $(pwd)/editor/Gulpfile.js:/tangerine-server/editor/Gulpfile.js \
+  --volume $(pwd)/entrypoint.sh:/tangerine-server/entrypoint.sh \
+  --volume $(pwd)/client/src:/tangerine-server/client/src \
+  --volume $(pwd)/upgrades:/tangerine-server/upgrades \
+  --volume $(pwd)/client/Gulpfile.js:/tangerine-server/client/Gulpfile.js \
+  --volume $(pwd)/cli/lib:/tangerine-server/cli/lib \
+  tangerine/tangerine:local
+docker logs -f tangerine-container
