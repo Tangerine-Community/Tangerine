@@ -5,7 +5,8 @@ services:
       image: couchdb:1.7
       container_name: couchdb
       volumes:
-        - ./data/couchdb:/opt/couchdb/data
+        - ./data/couchdb:/usr/local/var/lib/couchdb
+        - ./data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log
       environment:
         - COUCHDB_USER=${T_ADMIN}
         - COUCHDB_PASSWORD=${T_PASS}
@@ -19,10 +20,10 @@ services:
       volumes:
           - ./data/apks/:/tangerine/tree/apks/
           - ./data/logs/pm2/:/tangerine/logs
-          - ./data/logs/couchdb/couchdb.log:/var/log/couchdb/couchdb.log
           - ./data/media_assets/:/tangerine/client/media_assets/
           - ./server/index.js:/tangerine/server/index.js
           - ./server/Group.js:/tangerine/server/Group.js
+          - ./server/Acl.js:/tangerine/server/Acl.js
           - ./server/changesFeed.js:/tangerine/server/changesFeed.js
           - ./server/package.json:/tangerine/server/package.json
           - ./server/reporting:/tangerine/server/reporting

@@ -40,4 +40,9 @@ docker build -t tangerine/tangerine:local .
 # tangerine/tangerine:local
 
 #docker-compose up -e T_VERSION=$T_TAG -e $T_TAG=$T_TAG
-docker-compose up
+#docker-compose run -e T_VERSION=$T_TAG -e T_TAG=$T_TAG -e T_USER1=$T_USER1 -e T_USER1_PASSWORD=$T_USER1_PASSWORD tangerine bash
+#docker-compose run --name $T_CONTAINER_NAME -e T_VERSION=$T_TAG -e T_PROTOCOL=$T_PROTOCOL -e T_TAG=$T_TAG -e T_USER1=$T_USER1 -e T_USER1_PASSWORD=$T_USER1_PASSWORD -e "T_HOST_NAME=$T_HOST_NAME" -e "T_ADMIN=$T_ADMIN" -e "T_PASS=$T_PASS" -e "T_PASS=$T_PASS" --name $T_CONTAINER_NAME tangerine bash
+docker-compose run --service-ports -e T_VERSION=$T_TAG -e T_PROTOCOL=$T_PROTOCOL -e T_TAG=$T_TAG -e T_USER1=$T_USER1 -e T_USER1_PASSWORD=$T_USER1_PASSWORD -e T_HOST_NAME=$T_HOST_NAME -e T_ADMIN=$T_ADMIN -e T_PASS=$T_PASS tangerine bash
+
+
+#couchdb tangerine

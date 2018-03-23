@@ -25,8 +25,8 @@ sleep 3  # Waits 3 seconds.
 echo ""
 echo ""
 echo ""
-#echo "Creating user1 at http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1"
-#curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1" --data-binary '{"_id": "'"org.couchdb.user:$T_USER1"'","name": "'"$T_USER1"'","roles": ["manager"],"type": "user","password": "'"$T_USER1_PASSWORD"'"}'
+echo "Creating user1 at http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1"
+curl -HContent-Type:application/json -vXPUT "http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/_users/org.couchdb.user:$T_USER1" --data-binary '{"_id": "'"org.couchdb.user:$T_USER1"'","name": "'"$T_USER1"'","roles": ["manager"],"type": "user","password": "'"$T_USER1_PASSWORD"'"}'
 echo ""
 echo ""
 echo ""
@@ -64,7 +64,7 @@ echo "Locking down tangerine database in case it is not already secured."
 curl -XPOST -d \
   '{ "_id": "_design/_auth",   "language": "javascript",   "validate_doc_update": "function(newDoc, oldDoc, userCtx, secObj) { if (userCtx.roles.indexOf(\"_admin\") === -1) { throw({forbidden: \"Only admins may update this database.\"}); } }" }' \
   -H "Content-Type: application/json" \
-  http://$T_ADMIN:$T_PASS@localhost:5984/tangerine
+  http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine
 
 
 
