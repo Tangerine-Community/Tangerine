@@ -346,7 +346,7 @@ Tangerine.bootSequence =
 
   checkCSS : (callback) ->
     $ ->
-      if Tangerine.Settings.get("language") == "ar"
+      if (Tangerine.settings.get("language") == "ar")
         link = document.createElement('link');
         link.setAttribute('rel', 'stylesheet');
         link.setAttribute('type', 'text/css');
