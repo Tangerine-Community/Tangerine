@@ -375,9 +375,12 @@ class TangyTimed extends Element {
         this.dispatchEvent(new Event('change'))
       break
       case TANGY_TIMED_MODE_LAST_ATTEMPTED:
+        // Find the last marked and do not set last attempted if what is just clicked is >.
+        let lastMarkedIndex = 0
+        this.value.forEach((option, i) => lastMarkedIndex = (option.pressed) ? i : lastMarkedIndex)
         // Set the state of the button, assign to value which will trigger reflecting to its element.
-        newValue = this.value.map(option => {
-          if (option.name === event.target.name) {
+        newValue = this.value.map((option, i) => {
+          if (option.name === event.target.name && i >= lastMarkedIndex) {
             option.highlighted = true
           } else {
             option.highlighted = false
