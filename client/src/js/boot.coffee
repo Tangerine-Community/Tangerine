@@ -344,6 +344,16 @@ Tangerine.bootSequence =
       Utils.gpsPing
       callback()
 
+  checkCSS : (callback) ->
+    $ ->
+      if (Tangerine.settings.get("language") == "ar")
+        link = document.createElement('link');
+        link.setAttribute('rel', 'stylesheet');
+        link.setAttribute('type', 'text/css');
+        link.setAttribute('href', 'css/tangerine-rtl.css');
+        document.getElementsByTagName('head')[0].appendChild(link);
+      callback()
+
 Tangerine.boot = ->
 
   sequence = [
@@ -365,6 +375,7 @@ Tangerine.boot = ->
     Tangerine.bootSequence.reloadUserSession
     Tangerine.bootSequence.startBackbone
     Tangerine.bootSequence.removeLoadingOverlay
+    Tangerine.bootSequence.checkCSS
 #    Tangerine.bootSequence.monitorBrowserBack
   ]
 
