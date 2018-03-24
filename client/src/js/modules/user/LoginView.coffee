@@ -179,13 +179,13 @@ class LoginView extends Backbone.Marionette.View
     if @userSettings.passwordReset.enabled == true
       html += "
         <div class='tab_container'>
-          <div class='tab mode selected first' data-mode='login'>Login</div><div class='tab mode' data-mode='signup'>Sign up</div><div class='tab mode last' data-mode='reset'>Reset</div>
+          <div class='tab mode selected first' data-mode='login'>#{@text.login_tab}</div><div class='tab mode' data-mode='signup'>#{@text.sign_up_tab}</div><div class='tab mode last' data-mode='reset'>Reset</div>
         </div>
         "
     else
       html += "
         <div class='tab_container'>
-          <div class='tab mode selected first' data-mode='login'>Login</div><div class='tab mode last' data-mode='signup'>Sign up</div>
+          <div class='tab mode selected first' data-mode='login'>#{@text.login_tab}</div><div class='tab mode last' data-mode='signup'>#{@text.sign_up_tab}</div>
         </div>
         "
     html += "
