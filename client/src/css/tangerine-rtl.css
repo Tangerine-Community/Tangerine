@@ -797,10 +797,10 @@
      display: none;
    }
    .subtest-next, .workflow-next {
-     float: left;
+     float: left !important;
    }
    .subtest-back {
-     float: right;
+     float: right !important;
      display: none;
    }
    .skip {
@@ -814,6 +814,7 @@
    #content {
    /*  padding: 10px 5px 20px;
     */
+    direction: rtl;
    }
    #content-region {
      padding: 5px 15px;
