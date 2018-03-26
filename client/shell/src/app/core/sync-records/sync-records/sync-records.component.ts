@@ -42,7 +42,7 @@ export class SyncRecordsComponent implements OnInit {
       ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100) || 0;
   }
   async calculateUsersUploadProgress(username) {
-    const result = await this.syncingService.getDocsNotUploaded(username);
+    const result = await this.syncingService.getIDsFormsLockedAndNotUploaded(username);
     const docsNotUploaded = result ? result.length : 0;
     const docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded(username);
     const syncPercentageComplete =
@@ -57,9 +57,8 @@ export class SyncRecordsComponent implements OnInit {
   async pushAllRecords() {
     this.isSyncSuccesful = undefined;
     const usernames = await this.getUsernames();
-    await Promise.all(usernames.map(async username => {
+   usernames.map(async username => {
       try {
-        console.log(username)
         const result = await this.syncingService.pushAllrecords(username);
         if (result) {
           this.isSyncSuccesful = true;
@@ -70,7 +69,7 @@ export class SyncRecordsComponent implements OnInit {
         this.isSyncSuccesful = false;
         this.getUploadProgress();
       }
-    }));
+    });
   }
 
   async getUsernames() {
