@@ -194,6 +194,16 @@ class TangyTimed extends Element {
         type: Number,
         value: 0,
         reflectToAttribute: true
+      },
+      startTime: {
+        type: Number,
+        value: 0,
+        reflectToAttribute: true
+      },
+      endTime: {
+        type: Number,
+        value: 0,
+        reflectToAttribute: true
       }
     };
   }
@@ -286,6 +296,7 @@ class TangyTimed extends Element {
         this.$.lastAttemptedButton.disabled = true 
       break;
       case TANGY_TIMED_MODE_RUN: 
+        this.startTime = Date.now()
         this.statusMessage = 'Tap items to mark them incorrect.';
         this.$.startButton.classList.add('pressed')
         this.$.startButton.disabled = true 
@@ -299,9 +310,9 @@ class TangyTimed extends Element {
           return buttonState
         })
         this.timer = setInterval(() => {
-          this.timeRemaining--;
-          this.timeSpent++;
-          if (this.timeRemaining === 0) {
+          let timeSpent = Math.floor((Date.now() - this.startTime) / 1000)
+          this.timeRemaining = this.duration - timeSpent
+          if (this.timeRemaining <= 0) {
             clearInterval(this.timer)
             this.style.background = 'red'
             this.value = this.value.map((element, i) => Object.assign({}, element, { highlighted: (this.value.length-1 === i) ? true : false}))
@@ -311,7 +322,7 @@ class TangyTimed extends Element {
             setTimeout(() => alert(t('Please tap on last item attempted.')), 800)
             this.mode = TANGY_TIMED_MODE_LAST_ATTEMPTED
           }
-        }, 1000);
+        }, 200);
       break
       case TANGY_TIMED_MODE_MARK:
         this.statusMessage = 'Tap any boxes that were incorrect during the test.'
@@ -400,6 +411,7 @@ class TangyTimed extends Element {
   }
 
   onStopClick() {
+    this.endTime = Date.now()
     clearInterval(this.timer);
     this.value = this.value.map((element, i) => Object.assign({}, element, { highlighted: (this.value.length-1 === i) ? true : false}))
     this.mode = TANGY_TIMED_MODE_LAST_ATTEMPTED
