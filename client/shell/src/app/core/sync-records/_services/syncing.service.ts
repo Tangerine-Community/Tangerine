@@ -39,9 +39,9 @@ export class SyncingService {
           await this.http.post(remoteHost, body).toPromise();
           await this.markDocsAsUploaded([doc_id], username);
         }
-        return 'Sync Succesful';
+        return true;
       } else {
-        return 'No Items to Sync';
+        return false;// No Items to Sync
       }
     } catch (error) {
       throw (error);
