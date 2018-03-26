@@ -147,4 +147,3 @@ var server = app.listen(Settings.T_ROBBERT_PORT, function() {
   console.log(server.address());
   console.log('Robbert: http://%s:%s', host, port);
 });
-
