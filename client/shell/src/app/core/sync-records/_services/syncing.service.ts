@@ -24,33 +24,27 @@ export class SyncingService {
     const appConfig = await this.appConfigService.getAppConfig();
     return appConfig.uploadUrl;
   }
-  async getDocsNotUploaded(username?: string) {
-    return await this.getIDsFormsLockedAndNotUploaded(username);
-  }
+
   async pushAllrecords(username) {
     try {
       const userProfile = await this.userService.getUserProfile(username);
       const remoteHost = await this.getRemoteHost();
       const DB = new PouchDB(username);
       const doc_ids = await this.getIDsFormsLockedAndNotUploaded(username);
-      const userUUID = await this.userService.getUserUUID(username);
       if (doc_ids && doc_ids.length > 0) {
         for (const doc_id of doc_ids) {
           const doc = await DB.get(doc_id);
-          doc['inputs'].push({ name: 'userUUID', value: userUUID });
-          doc['inputs'].push(userProfile['inputs']);
+          doc['items'][0]['inputs'].push({ name: 'userProfileId', value: userProfile._id });
           const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
           await this.http.post(remoteHost, body).toPromise();
-          this.markDocsAsUploaded([doc_id], username);
+          await this.markDocsAsUploaded([doc_id], username);
         }
-        Promise.resolve('Sync Succesfull');
+        return 'Sync Succesful';
       } else {
-        Promise.resolve('No Items to Sync');
+        return 'No Items to Sync';
       }
-
-      return true;
     } catch (error) {
-      return Promise.reject(error);
+      throw (error);
     }
 
   }
@@ -78,7 +72,7 @@ export class SyncingService {
 
   async markDocsAsUploaded(replicatedDocIds, username) {
     PouchDB.plugin(PouchDBUpsert);
-    const userDB = username || await this.getLoggedInUser();
+    const userDB = username;
     const DB = new PouchDB(userDB);
     return await Promise.all(replicatedDocIds.map(docId => {
       DB.upsert(docId, (doc) => {
