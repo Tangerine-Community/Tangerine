@@ -1,4 +1,12 @@
 
+window.t = (fragment) => {
+  if (window.translation && window.translation[fragment]) {
+    return window.translation[fragment]
+  } else {
+    return fragment
+  }
+}
+
 window.fillUp = async (numberOfDocs, templateDoc, destroy = true) => {
   let initialEstimate = await navigator.storage.estimate()
   let dbName = `test-${new Date().getTime()}`

@@ -108,6 +108,13 @@ class TangyFormApp extends Element {
     // Set up service.
     this.service = new TangyFormService({ databaseName })
     await this.service.initialize()
+    // Load i18n.
+    try {
+      let response = await fetch('../content/translation.json')
+      window.translation = await response.json()
+    } catch(e) {
+      console.log('No translation found.')
+    }
     // Save store when it changes.
     this.store.subscribe(this.throttledSaveResponse.bind(this))
     // Load form or form list.

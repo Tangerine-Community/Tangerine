@@ -308,6 +308,7 @@ class TangyTimed extends Element {
             setTimeout(() => this.style.background = 'white', 200)
             setTimeout(() => this.style.background = 'red', 400)
             setTimeout(() => this.style.background = 'white', 600)
+            setTimeout(() => alert(t('Please tap on last item attempted.')), 800)
             this.mode = TANGY_TIMED_MODE_LAST_ATTEMPTED
           }
         }, 1000);
