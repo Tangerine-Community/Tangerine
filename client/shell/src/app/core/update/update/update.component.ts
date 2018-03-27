@@ -5,6 +5,7 @@ import { TangyFormService } from '../../../tangy-forms/tangy-form-service';
 import { updates } from './updates';
 import PouchDB from 'pouchdb';
 import { TangerineFormPage } from '../../../../../e2e/app.po';
+import { UserService } from '../../auth/_services/user.service';
 
 @Component({
   selector: 'app-update',
@@ -18,37 +19,35 @@ export class UpdateComponent implements OnInit {
   needsUpdating = false;
 
   constructor(
-    private windowRef: WindowRef
+    private windowRef: WindowRef,
+    private userService: UserService
   ) { }
 
   async ngOnInit() {
-    let window = this.windowRef.nativeWindow
-    let usersDb = new PouchDB('users');
-    const response = await usersDb.allDocs({include_docs: true});
+    const window = this.windowRef.nativeWindow;
+    const response = await this.userService.getAllUsers();
     const usernames = response
-      .rows
-      .map(row => row.doc)
-      .filter(doc => doc.hasOwnProperty('username'))
-      .map(doc => doc.username);
-    for (let username of usernames) {
-      let userDb = await new PouchDB(username);
+      .filter(user => user.hasOwnProperty('username'))
+      .map(user => user.username);
+    for (const username of usernames) {
+      const userDb = await new PouchDB(username);
       // Use try in case this is an old account where info doc was not created.
-      let infoDoc = { _id: '', atUpdateIndex: 0};
+      let infoDoc = { _id: '', atUpdateIndex: 0 };
       try {
         infoDoc = await userDb.get('info');
       } catch (e) {
-        await userDb.put({_id: 'info', atUpdateIndex: 0});
+        await userDb.put({ _id: 'info', atUpdateIndex: 0 });
         infoDoc = await userDb.get('info');
       }
       let atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
-      let lastUpdateIndex = updates.length-1
+      const lastUpdateIndex = updates.length - 1;
       if (lastUpdateIndex !== atUpdateIndex) {
         this.needsUpdating = true;
-        this.message = "Applying updates...";
+        this.message = 'Applying updates...';
         let requiresViewsRefresh = false;
-        while(lastUpdateIndex >= atUpdateIndex) {
+        while (lastUpdateIndex >= atUpdateIndex) {
           if (updates[atUpdateIndex].requiresViewsUpdate) {
-            requiresViewsRefresh = true
+            requiresViewsRefresh = true;
           }
           await updates[atUpdateIndex].script(userDb);
           this.totalUpdatesApplied++;
@@ -56,7 +55,7 @@ export class UpdateComponent implements OnInit {
         }
         atUpdateIndex--;
         if (requiresViewsRefresh) {
-          let tangyFormService = new TangyFormService(username)
+          const tangyFormService = new TangyFormService(username);
           await tangyFormService.initialize();
         }
         infoDoc.atUpdateIndex = atUpdateIndex;

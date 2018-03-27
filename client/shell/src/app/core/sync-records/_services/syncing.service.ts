@@ -15,7 +15,7 @@ export class SyncingService {
     private userService: UserService
   ) { }
 
-  getUserDB(): string {
+  getLoggedInUser(): string {
     return localStorage.getItem('currentUser');
   }
 
@@ -25,64 +25,54 @@ export class SyncingService {
     return appConfig.uploadUrl;
   }
 
-  async getDocsNotUploaded() {
-    return await this.getIDsFormsLockedAndNotUploaded();
-  }
-
-  async pushAllrecords() {
-
+  async pushAllrecords(username) {
     try {
-      const userDB = await this.getUserDB();
-      const userProfile = await this.userService.getUserProfile();
+      const userProfile = await this.userService.getUserProfile(username);
       const remoteHost = await this.getRemoteHost();
-      const DB = new PouchDB(userDB);
-      const doc_ids = await this.getIDsFormsLockedAndNotUploaded();
-      const userUUID = await this.userService.getUserUUID();
+      const DB = new PouchDB(username);
+      const doc_ids = await this.getIDsFormsLockedAndNotUploaded(username);
       if (doc_ids && doc_ids.length > 0) {
         for (const doc_id of doc_ids) {
           const doc = await DB.get(doc_id);
-          doc['inputs'].push({ name: 'userUUID', value: userUUID });
-          doc['inputs'].push(userProfile['inputs']);
-          const body = pako.deflate(JSON.stringify({ doc }), {to: 'string'})
+          doc['items'][0]['inputs'].push({ name: 'userProfileId', value: userProfile._id });
+          const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
           await this.http.post(remoteHost, body).toPromise();
-          this.markDocsAsUploaded([doc_id]);
+          await this.markDocsAsUploaded([doc_id], username);
         }
-        Promise.resolve('Sync Succesfull');
+        return true;
       } else {
-        Promise.resolve('No Items to Sync');
+        return false;// No Items to Sync
       }
-
-      return true;
     } catch (error) {
-      return Promise.reject(error);
+      throw (error);
     }
 
   }
 
 
-  async getIDsFormsLockedAndNotUploaded() {
-    const userDB = this.getUserDB();
+  async getIDsFormsLockedAndNotUploaded(username?: string) {
+    const userDB = username || await this.getLoggedInUser();
     const DB = new PouchDB(userDB);
     const results = await DB.query('tangy-form/responsesLockedAndNotUploaded');
     const docIds = results.rows.map(row => row.key);
     return docIds;
   }
 
-  async getFormsLockedAndUploaded() {
-    const userDB = this.getUserDB();
+  async getFormsLockedAndUploaded(username?: string) {
+    const userDB = username || await this.getLoggedInUser();
     const DB = new PouchDB(userDB);
     const results = await DB.query('tangy-form/responsesLockedAndUploaded');
     return results.rows;
   }
 
-  async getNumberOfFormsLockedAndUploaded() {
-    const result = await this.getFormsLockedAndUploaded();
+  async getNumberOfFormsLockedAndUploaded(username?: string) {
+    const result = username ? await this.getFormsLockedAndUploaded(username) : await this.getFormsLockedAndUploaded();
     return result.length || 0;
   }
 
-  async markDocsAsUploaded(replicatedDocIds) {
+  async markDocsAsUploaded(replicatedDocIds, username) {
     PouchDB.plugin(PouchDBUpsert);
-    const userDB = await this.getUserDB();
+    const userDB = username;
     const DB = new PouchDB(userDB);
     return await Promise.all(replicatedDocIds.map(docId => {
       DB.upsert(docId, (doc) => {
