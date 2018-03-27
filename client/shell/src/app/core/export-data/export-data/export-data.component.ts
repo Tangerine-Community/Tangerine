@@ -21,13 +21,13 @@ export class ExportDataComponent implements OnInit {
         docs
       };
     }));
-    downloadData(data, 'download.json', 'application/json')
+    downloadData(JSON.stringify(data), 'download.json', 'application/json')
   }
 }
 
 function downloadData(content, fileName, type) {
   var a = document.createElement("a");
-  var file = new Blob([JSON.stringify(content)], { type });
+  var file = new Blob([content], { type });
   a.href = URL.createObjectURL(file);
   a.download = fileName;
   a.click();

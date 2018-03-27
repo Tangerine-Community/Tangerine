@@ -19,7 +19,6 @@ export class SyncingService {
     return localStorage.getItem('currentUser');
   }
 
-  // @TODO refactor this to use node server
   async getRemoteHost() {
     const appConfig = await this.appConfigService.getAppConfig();
     return appConfig.uploadUrl;
