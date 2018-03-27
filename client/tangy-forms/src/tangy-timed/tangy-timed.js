@@ -59,6 +59,11 @@ class TangyTimed extends Element {
       #stopWatch paper-button.pressed {
         background: var(--primary-color);
       }
+
+      :host([disabled]) #bar {
+        display: none;
+      }
+
       #bar {
         position: fixed;
         right: 50px;
@@ -244,7 +249,7 @@ class TangyTimed extends Element {
       },
       timeRemaining: {
         type: Number,
-        value: 0,
+        value: undefined,
         reflectToAttribute: true
       },
       startTime: {
@@ -287,7 +292,7 @@ class TangyTimed extends Element {
     this.$.grid.innerHTML = ''
 
     // Set our countdown to the desired duration.
-    this.timeRemaining = this.duration
+    this.timeRemaining = (this.timeRemaining === undefined) ? this.duration : this.timeRemaining
 
     // This column mapping is calibrated for a Nexus 7 in landscape mode.
     let columnsMap = [0, 1, 2.5, 4, 6, 8, 10, 12, 14, 16, 20]
@@ -300,6 +305,7 @@ class TangyTimed extends Element {
       tangyToggleButton.style.width = columnWidthCalculation
       tangyToggleButton.innerHTML = option.innerHTML 
       tangyToggleButton.hidden = true
+      if (this.disabled) tangyToggleButton.disabled = true
       this.$.grid.appendChild(tangyToggleButton)
     })
 
@@ -343,6 +349,7 @@ class TangyTimed extends Element {
         this.$.resetButton.hidden = false 
         this.$.markButton.hidden = false 
         this.$.lastAttemptedButton.hidden = true 
+        this.shadowRoot.querySelectorAll('tangy-toggle-button').forEach(button => button.disabled = true)
       case TANGY_TIMED_MODE_UNTOUCHED: 
         this.timeRemaining = this.duration
         this.statusMessage = t('Click the play button to get started.')
