@@ -90,7 +90,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '29',
+  version: '30',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -114,7 +114,6 @@ var tangyFormDesignDoc = {
     },
     responsesByLocationId: {
       map: function (doc) {
-        console.log(doc)
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
           if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
           let inputs = [];
