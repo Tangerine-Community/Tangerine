@@ -8,7 +8,9 @@ const dbConfig = require('./reporting/config');
 const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
 
 let changesFeed = function (groupDB, groupResultDB) {
+
   logger.info(' ::: Running changes feed ::: ');
+
   if (groupDB && groupResultDB) {
     monitorChange(groupDB, groupResultDB);
   } else {
@@ -32,7 +34,10 @@ let changesFeed = function (groupDB, groupResultDB) {
       logger.info('Group Names: ' + groupNames, '\n GroupResult Names: ' + groupResultNames);
 
       groupNames.forEach(function(groupName) {
-        let groupExists = groupResultNames.find((groupResult) => groupResult === `${groupName}-result` );
+        let groupExists = groupResultNames.find((groupResult) => groupResult === `${groupName}-result`);
+        const baseDb = dbConfig.db_url + groupName;
+        const resultDb = dbConfig.db_url + groupName + '-result';
+
         if (!groupExists) {
           const newGroupName = `${groupName}-result`;
           const group = new Group({ name: newGroupName });
@@ -40,10 +45,10 @@ let changesFeed = function (groupDB, groupResultDB) {
           group.createResult(newGroupName)
             .then(function responseMessage() {
               logger.info(`New group '${newGroupName}' created`);
-            });
+            })
+            .catch((err) => console.error(err));
         }
-        const baseDb = dbConfig.db_url + groupName;
-        const resultDb = dbConfig.db_url + groupName + '-result';
+
         monitorChange(baseDb, resultDb);
       });
     });

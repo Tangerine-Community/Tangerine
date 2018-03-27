@@ -11,7 +11,6 @@ let unirest = require('unirest');
 let crypto = require('crypto');
 const logger = require('./logger');
 const errorHandler = require('./utils/errorHandler');
-const changesFeed = require('./changesFeed');
 
 const JSON_OPTS = {
   'Content-Type' : 'application/json',
