@@ -14,7 +14,7 @@ import { updates } from '../../update/update/updates';
 export class UserService {
   userData = {};
   DB = new PouchDB('users');
-  USER_DATABASE_NAME = 'currentUser';
+  LOGGED_IN_USER_DATABASE_NAME = 'currentUser';
   constructor(private uuid: Uuid) { }
 
   async create(payload) {
@@ -35,8 +35,8 @@ export class UserService {
         await tangyFormService.initialize();
         await userDb.put({
           _id: 'info',
-          atUpdateIndex: updates.length-1
-        })
+          atUpdateIndex: updates.length - 1
+        });
         return result;
       }
     } catch (error) {
@@ -59,44 +59,8 @@ export class UserService {
     }
   }
 
-  async getUserUUID() {
-    const username = await this.getUserDatabase();
-    try {
-      PouchDB.plugin(PouchDBFind);
-      const result = await this.DB.find({ selector: { username } });
-      if (result.docs.length > 0) {
-        return result.docs[0]['userUUID'];
-      } else { console.error('Unsuccessful'); }
-    } catch (error) {
-
-      console.error(error);
-    }
-  }
-  async getUserProfileId() {
-    const userDBPath = await this.getUserDatabase();
-    if (userDBPath) {
-      const userDB = new PouchDB(userDBPath);
-      let userProfileId: string;
-      PouchDB.plugin(PouchDBFind);
-      userDB.createIndex({
-        index: { fields: ['collection'] }
-      }).then((data) => { console.log('Indexing Succesful'); })
-        .catch(err => console.error(err));
-
-      try {
-        const result = await userDB.find({ selector: { collection: 'user-profile' } });
-        if (result.docs.length > 0) {
-          userProfileId = result.docs[0]['_id'];
-        }
-      } catch (error) {
-        console.error(error);
-      }
-      return userProfileId;
-    }
-  }
-
-  async getUserProfile() {
-    const databaseName = await this.getUserDatabase();
+  async getUserProfile(username?: string) {
+    const databaseName = username || await this.getUserDatabase();
     const tangyFormService = new TangyFormService({ databaseName });
     const results = await tangyFormService.getResponsesByFormId('user-profile');
     return results[0];
@@ -138,8 +102,7 @@ export class UserService {
       const users = [];
       Observable.from(result.rows).map(doc => doc).filter(doc => !doc['id'].startsWith('_design')).subscribe(doc => {
         users.push({
-          username: doc['doc'].username,
-          email: doc['doc'].email
+          username: doc['doc'].username
         });
       });
       return users;
@@ -149,15 +112,15 @@ export class UserService {
   }
 
   async setUserDatabase(username) {
-    return await localStorage.setItem(this.USER_DATABASE_NAME, username);
+    return await localStorage.setItem(this.LOGGED_IN_USER_DATABASE_NAME, username);
   }
 
   async getUserDatabase() {
-    return await localStorage.getItem(this.USER_DATABASE_NAME);
+    return await localStorage.getItem(this.LOGGED_IN_USER_DATABASE_NAME);
   }
 
   async removeUserDatabase() {
-    localStorage.removeItem(this.USER_DATABASE_NAME);
+    localStorage.removeItem(this.LOGGED_IN_USER_DATABASE_NAME);
   }
 
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { SyncingService } from '../_services/syncing.service';
+import { UserService } from '../../auth/_services/user.service';
 
 @Component({
   selector: 'app-sync-records',
@@ -10,36 +11,67 @@ import { SyncingService } from '../_services/syncing.service';
 export class SyncRecordsComponent implements OnInit {
   isSyncSuccesful: boolean = undefined;
   syncStatus = '';
-  docsNotUploaded;
-  docsUploaded;
-  syncPercentageComplete;
-  constructor(private syncingService: SyncingService) { }
+  allUsersSyncData;
+  docsNotUploaded: number;
+  docsUploaded: number;
+  syncPercentageComplete: number;
+
+  constructor(
+    private syncingService: SyncingService,
+    private userService: UserService
+  ) { }
 
   async ngOnInit() {
-    this.calculateUploadProgress();
+    this.getUploadProgress();
   }
 
-  async calculateUploadProgress() {
-    const result = await this.syncingService.getDocsNotUploaded();
-    this.docsNotUploaded = result ? result.length : 0;
-    this.docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded();
+  async getUploadProgress() {
+    const response = await this.userService.getAllUsers();
+    const usernames = await this.getUsernames();
+    this.allUsersSyncData = await Promise.all(usernames.map(async username => {
+      return await this.calculateUsersUploadProgress(username);
+    }));
+    this.docsNotUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsNotUploaded }, 0);
+    this.docsUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsUploaded }, 0);
     this.syncPercentageComplete =
       ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100) || 0;
   }
+  async calculateUsersUploadProgress(username) {
+    const result = await this.syncingService.getIDsFormsLockedAndNotUploaded(username);
+    const docsNotUploaded = result ? result.length : 0;
+    const docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded(username);
+    const syncPercentageComplete =
+      ((docsUploaded / (docsNotUploaded + docsUploaded)) * 100) || 0;
+    return {
+      username,
+      docsNotUploaded,
+      docsUploaded,
+      syncPercentageComplete
+    };
+  }
   async pushAllRecords() {
     this.isSyncSuccesful = undefined;
-    try {
-      const result = await this.syncingService.pushAllrecords();
-      if (result) {
-        this.isSyncSuccesful = true;
-        this.calculateUploadProgress();
+    const usernames = await this.getUsernames();
+    usernames.map(async username => {
+      try {
+        const result = await this.syncingService.pushAllrecords(username);
+        if (result) {
+          this.isSyncSuccesful = true;
+          this.getUploadProgress();
+        }
+      } catch (error) {
+        console.error(error);
+        this.isSyncSuccesful = false;
+        this.getUploadProgress();
       }
-    } catch (error) {
-      console.error(error);
-      this.isSyncSuccesful = false;
-      this.calculateUploadProgress();
-    }
+    });
   }
 
+  async getUsernames() {
+    const response = await this.userService.getAllUsers();
+    return response
+      .filter(user => user.hasOwnProperty('username'))
+      .map(user => user.username);
+  }
 
 }
