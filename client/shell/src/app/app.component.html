@@ -26,6 +26,10 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>Sync</span>
     </button>
+    <button routerLink="/export-data" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">import_export</mat-icon>
+      <span>Export Data</span>
+    </button>
     <button mat-menu-item (click)="updateApp()" *ngIf="showUpdateAppLink">
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
       <span>Update App</span>

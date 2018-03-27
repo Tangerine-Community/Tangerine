@@ -25,6 +25,7 @@ import { Loc } from './core/location.service';
 import { UpdateModule } from './core/update/update.module';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
+import { ExportDataModule } from './core/export-data/export-data.module';
 
 // import { CaseManagementModule } from './case-management/case-management.module';
 export { AppComponent }
@@ -46,6 +47,7 @@ export { AppComponent }
     UserProfileModule,
     UpdateModule,
     SyncRecordsModule,
+    ExportDataModule,
     AppRoutingModule,
     SharedModule
   ],

@@ -70,6 +70,19 @@ export class SyncingService {
     return result.length || 0;
   }
 
+  async getAllUsersDocs(username?: string) {
+    const userDB = username || await this.getLoggedInUser();
+    const DB = new PouchDB(userDB);
+    try {
+      const result = await DB.allDocs({
+        include_docs: true,
+        attachments: true
+      });
+      return result;
+    } catch (err) {
+      console.log(err);
+    }
+  }
   async markDocsAsUploaded(replicatedDocIds, username) {
     PouchDB.plugin(PouchDBUpsert);
     const userDB = username;
