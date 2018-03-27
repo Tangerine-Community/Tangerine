@@ -25,10 +25,7 @@ export class UpdateComponent implements OnInit {
 
   async ngOnInit() {
     const window = this.windowRef.nativeWindow;
-    const response = await this.userService.getAllUsers();
-    const usernames = response
-      .filter(user => user.hasOwnProperty('username'))
-      .map(user => user.username);
+    const usernames = await this.userService.getUsernames();
     for (const username of usernames) {
       const userDb = await new PouchDB(username);
       // Use try in case this is an old account where info doc was not created.
