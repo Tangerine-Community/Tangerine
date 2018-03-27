@@ -26,8 +26,7 @@ export class SyncRecordsComponent implements OnInit {
   }
 
   async getUploadProgress() {
-    const response = await this.userService.getAllUsers();
-    const usernames = await this.getUsernames();
+    const usernames = await this.userService.getUsernames();
     this.allUsersSyncData = await Promise.all(usernames.map(async username => {
       return await this.calculateUsersUploadProgress(username);
     }));
@@ -51,7 +50,7 @@ export class SyncRecordsComponent implements OnInit {
   }
   async pushAllRecords() {
     this.isSyncSuccesful = undefined;
-    const usernames = await this.getUsernames();
+    const usernames = await this.userService.getUsernames();
     usernames.map(async username => {
       try {
         const result = await this.syncingService.pushAllrecords(username);
@@ -65,13 +64,6 @@ export class SyncRecordsComponent implements OnInit {
         this.getUploadProgress();
       }
     });
-  }
-
-  async getUsernames() {
-    const response = await this.userService.getAllUsers();
-    return response
-      .filter(user => user.hasOwnProperty('username'))
-      .map(user => user.username);
   }
 
 }
