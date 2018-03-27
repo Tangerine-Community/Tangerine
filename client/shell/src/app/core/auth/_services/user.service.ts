@@ -111,6 +111,13 @@ export class UserService {
     }
   }
 
+  async getUsernames() {
+    const response = await this.getAllUsers();
+    return response
+      .filter(user => user.hasOwnProperty('username'))
+      .map(user => user.username);
+  }
+
   async setUserDatabase(username) {
     return await localStorage.setItem(this.LOGGED_IN_USER_DATABASE_NAME, username);
   }
