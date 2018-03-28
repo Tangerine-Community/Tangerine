@@ -12,8 +12,7 @@
     <allow-navigation href="tangerinecentral.org" />
     <allow-intent href="*" />
     <access origin="*" />
-    <plugin name="cordova-plugin-file" spec="~4.1.0" />
     <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
     <preference name="xwalkMode" value="embedded" />
-    <preference name="xwalkMultipleApk" value="true" />
+    <preference name="xwalkMultipleApk" value="false" />
 </widget>

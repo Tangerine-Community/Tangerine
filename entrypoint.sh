@@ -1,23 +1,5 @@
 #!/usr/bin/env bash
 
-echo "Setting cordova"
-echo "Whitelist"
-cd /tangerine-server/client && npm install cordova-plugin-whitelist && sleep 10 
-echo "Add Whitelist"
-cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save 
-echo "Geo"
-cd /tangerine-server/client && npm install cordova-plugin-geolocation 
-echo "Add Geo"
-cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save 
-echo "Camera"
-cd /tangerine-server/client && npm install cordova-plugin-camera 
-echo "Add Camera"
-cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save 
-echo "Add webview"
-cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-echo "build APK"
-cd /tangerine-server/client && npm run build:apk 
-
 # Send nginx logs to docker logs.
 tail -f /var/log/nginx/access.log &
 tail -f /var/log/nginx/error.log &
@@ -130,12 +112,12 @@ then
 	pm2 start --no-daemon ecosystem.json &
 	echo ""
 	echo ""
-	echo "Stoppping server so we can use nodemon instead"
+	echo "Stopping server so we can use nodemon instead"
 	pm2 stop server
 	echo ""
 	echo ""
 	echo "Starting nodemon for server; watching for changes..."
-	npm run watch
+	cd /tangerine-server/server && npm run watch
 	echo ""
 	echo ""
 	echo "Monitoring for editor changes..."
