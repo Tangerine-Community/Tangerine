@@ -35,7 +35,14 @@ export class SyncingService {
         for (const doc_id of doc_ids) {
           const doc = await DB.get(doc_id);
           doc['items'][0]['inputs'].push({ name: 'userProfileId', value: userProfile._id });
-          const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
+          doc['items'].forEach(item => {
+            item['inputs'].forEach(input => {
+              if (input.private) {
+                input.value = '';
+              }
+            })
+          })
+          const body = pako.deflate(JSON.stringify({ doc }), {to: 'string'})
           await this.http.post(remoteHost, body).toPromise();
           await this.markDocsAsUploaded([doc_id], username);
         }
