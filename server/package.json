@@ -20,23 +20,24 @@
   "homepage": "https://github.com/Tangerine-Community/robbert#readme",
   "dependencies": {
     "basic-auth": "^1.0.4",
+    "body-parser": "^1.14.1",
     "chalk": "^2.3.1",
     "commander": "^2.14.1",
-    "body-parser": "^1.14.1",
     "cookie-parser": "^1.4.0",
     "exceljs": "^0.8.3",
     "expect.js": "^0.3.1",
     "express": "^4.13.3",
-    "express-session": "1.15.6",
     "express-http-proxy": "^0.8.0",
+    "express-session": "1.15.6",
     "fs-extra": "^0.26.3",
     "http-status-codes": "^1.0.5",
     "lodash": "^4.17.5",
     "mocha": "^2.3.4",
     "moment": "^2.20.1",
     "nano": "^6.2.0",
+    "nodemon": "^1.17.2",
+    "pouchdb": "^6.4.2",
     "unirest": "^0.4.2",
-    "winston": "^2.1.1",
-    "pouchdb": "^6.4.2"
+    "winston": "^2.1.1"
   }
 }
