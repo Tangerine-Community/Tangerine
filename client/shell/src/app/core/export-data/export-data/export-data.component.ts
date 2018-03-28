@@ -26,8 +26,8 @@ export class ExportDataComponent implements OnInit {
 }
 
 function downloadData(content, fileName, type) {
-  var a = document.createElement("a");
-  var file = new Blob([content], { type });
+  const a = document.createElement("a");
+  const file = new Blob([content], { type });
   a.href = URL.createObjectURL(file);
   a.download = fileName;
   a.click();
