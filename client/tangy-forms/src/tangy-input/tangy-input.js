@@ -75,6 +75,10 @@ export class TangyInput extends PolymerElement {
             type: String,
             value: ''
           },
+          private: {
+            type: Boolean,
+            value: false
+          },
           label: {
             type: String,
             value: ''
