@@ -10,13 +10,6 @@
           <i class="material-icons mat-11 app-input-icon">face</i>Username
         </mat-placeholder>
       </mat-form-field>
-      <mat-form-field>
-        <input name="email" type="email" matInput [(ngModel)]="user.email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
-          required>
-        <mat-placeholder>
-          <i class="material-icons mat-11">mail_outline</i>Email
-        </mat-placeholder>
-      </mat-form-field>
       <br>
       <mat-form-field>
         <input name="password" matInput [(ngModel)]="user.password" type="password" required>
@@ -28,6 +21,12 @@
         <input name="confirmPassword" matInput [(ngModel)]="user.confirmPassword" type="password" required>
         <mat-placeholder>
           <i class="material-icons mat-11 app-input-icon">lock_open</i>Confirm Password
+        </mat-placeholder>
+      </mat-form-field>
+      <mat-form-field>
+        <input name="securityQuestionResponse" type="text" matInput [(ngModel)]="user.securityQuestionResponse" required>
+        <mat-placeholder>
+          <i class="material-icons mat-11 app-input-icon">security</i>{{securityQuestionText}}
         </mat-placeholder>
       </mat-form-field>
       <br>

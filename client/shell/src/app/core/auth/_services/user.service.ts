@@ -1,11 +1,11 @@
 import 'rxjs/add/observable/from';
 import 'rxjs/add/operator/filter';
-
 import { Injectable } from '@angular/core';
 import * as bcrypt from 'bcryptjs';
 import { Uuid } from 'ng2-uuid';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
+import * as PouchDBUpsert from 'pouchdb-upsert';
 import { Observable } from 'rxjs/Observable';
 import { TangyFormService } from '../../../tangy-forms/tangy-form-service.js';
 import { updates } from '../../update/update/updates';
@@ -19,13 +19,14 @@ export class UserService {
 
   async create(payload) {
     const userUUID = this.uuid.v1();
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(payload.password, salt);
+    const hashedPassword = await this.hashValue(payload.password);
     this.userData = payload;
     this.userData['userUUID'] = userUUID;
-    this.userData['password'] = hash;
+    this.userData['password'] = hashedPassword;
+    this.userData['securityQuestionResponse'] = this.userData['hashSecurityQuestion'] ?
+      await this.hashValue(payload.securityQuestionResponse) : this.userData['securityQuestionResponse'];
     try {
-      /**TODO: check if user exists before saving */
+      /** @TODO: check if user exists before saving */
       const postUserdata = await this.DB.post(this.userData);
       const userDb = new PouchDB(this.userData['username']);
 
@@ -118,6 +119,28 @@ export class UserService {
       .map(user => user.username);
   }
 
+
+  async changeUserPassword(user) {
+    PouchDB.plugin(PouchDBUpsert);
+    const DB = new PouchDB('users');
+    const password = await this.hashValue(user.newPassword);
+    try {
+      const result = await this.DB.find({ selector: { username: user.username } });
+      if (result.docs.length > 0) {
+        return await DB.upsert(result.docs[0]._id, (doc) => {
+          doc.password = password;
+          return doc;
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+  async hashValue(value) {
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(value, salt);
+  }
   async setUserDatabase(username) {
     return await localStorage.setItem(this.LOGGED_IN_USER_DATABASE_NAME, username);
   }
