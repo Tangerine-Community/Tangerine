@@ -20,6 +20,8 @@ export class LoginComponent implements OnInit {
   users = [];
   showRecoveryInput = false;
   securityQuestionText;
+  allUsernames;
+  listUsernamesOnLoginScreen;
   constructor(
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
@@ -32,6 +34,10 @@ export class LoginComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig();
     const homeUrl = appConfig.homeUrl;
     this.securityQuestionText = appConfig.securityQuestionText;
+    this.listUsernamesOnLoginScreen = appConfig.listUsernamesOnLoginScreen;
+    if (this.listUsernamesOnLoginScreen) {
+      this.allUsernames = await this.getAllUsernames();
+    }
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
     const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
     // TODO List users on login page
@@ -46,6 +52,14 @@ export class LoginComponent implements OnInit {
 
   async toggleRecoveryInput() {
     this.showRecoveryInput = !this.showRecoveryInput;
+  }
+
+  async getAllUsernames() {
+    return await this.usersService.getUsernames();
+  }
+
+  async onSelectUsername(event) {
+    this.user.username = event.target.value;
   }
 
   resetPassword() {
