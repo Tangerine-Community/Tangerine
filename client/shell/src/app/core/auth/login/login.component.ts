@@ -14,12 +14,12 @@ import { AuthenticationService } from './../_services/authentication.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-
-  loading = false;
   errorMessage = '';
   returnUrl: string; // stores the value of the url to redirect to after login
   user = { username: '', password: '' };
   users = [];
+  showRecoveryInput = false;
+  securityQuestionText;
   constructor(
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
@@ -29,8 +29,10 @@ export class LoginComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    const home_url = await this.appConfigService.getDefaultURL();
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || home_url;
+    const appConfig = await this.appConfigService.getAppConfig();
+    const homeUrl = appConfig.homeUrl;
+    this.securityQuestionText = appConfig.securityQuestionText;
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
     const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
     // TODO List users on login page
     // Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {
@@ -41,8 +43,24 @@ export class LoginComponent implements OnInit {
     }
 
   }
-  login(): void {
-    this.loading = true;
+
+  async toggleRecoveryInput() {
+    this.showRecoveryInput = !this.showRecoveryInput;
+  }
+
+  resetPassword() {
+    Observable.fromPromise(this.authenticationService.resetPassword(this.user)).subscribe(data => {
+      if (data) {
+        this.router.navigate([this.returnUrl]);
+      } else {
+        this.errorMessage = 'Password Reset Unsuccessful';
+      }
+    }, error => {
+      this.errorMessage = 'Password Reset Unsuccessful';
+
+    });
+  }
+  loginUser() {
     Observable.fromPromise(this.authenticationService.login(this.user.username, this.user.password)).subscribe(data => {
       if (data) {
         this.router.navigate(['' + this.returnUrl]);
@@ -50,7 +68,6 @@ export class LoginComponent implements OnInit {
         this.errorMessage = 'Login Unsuccessful';
       }
     }, error => {
-      this.loading = false;
       this.errorMessage = 'Login Unsuccessful';
 
     });

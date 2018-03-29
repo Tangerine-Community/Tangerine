@@ -19,7 +19,6 @@ export class SyncingService {
     return localStorage.getItem('currentUser');
   }
 
-  // @TODO refactor this to use node server
   async getRemoteHost() {
     const appConfig = await this.appConfigService.getAppConfig();
     return appConfig.uploadUrl;
@@ -46,7 +45,7 @@ export class SyncingService {
           await this.http.post(remoteHost, body).toPromise();
           await this.markDocsAsUploaded([doc_id], username);
         }
-        return true;
+        return true;// Sync Successful
       } else {
         return false;// No Items to Sync
       }
