@@ -1,6 +1,5 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM node 
-
+FROM tangerine/docker-tangerine-base-image:v3-node-base-with-wrapper
 
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
