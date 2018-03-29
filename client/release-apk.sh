@@ -27,6 +27,7 @@ rm -rf /.tmp-apk/www/shell
 cp -r /tangerine/client/builds/apk/www/shell/ /.tmp-apk/www/shell/
 rm -rf /.tmp-apk/www/tangy-forms
 #cp -r tangy-forms/dist builds/apk/www/tangy-forms
+cp /tangerine/client/tangy-forms/src/index.html /tangerine/client/builds/apk/www/tangy-forms/index.html
 cp /tangerine/client/tangy-forms/dist/module.bundle.js /tangerine/client/builds/apk/www/tangy-forms/
 cp /tangerine/client/tangy-forms/dist/module.bundle.js.map /tangerine/client/builds/apk/www/tangy-forms/
 cp -r /tangerine/client/builds/apk/www/tangy-forms/ /.tmp-apk/www/tangy-forms/

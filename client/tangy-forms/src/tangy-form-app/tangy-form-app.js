@@ -75,7 +75,7 @@ class TangyFormApp extends Element {
       <div id="form-view" hidden="">
         <div id="fake-top-bar">
           <a id="home-button" href="../shell/index.html">
-              <img src="../logo.svg" width=45>
+              <img src="../img/logo.svg" width=45>
           </a>
         </div>
         <div id="form-container"></div>
@@ -112,11 +112,11 @@ class TangyFormApp extends Element {
     try {
       let src = '../content/translation.json';
       let response = await fetch(src)
-        .then(this.processStatus)
-        .then(this.localFetch(src))
-        .catch(function (error) {
-          console.log("connectedCallback Trying to localFetch: " + src + " error: " + error);
-        });
+        // .then(this.processStatus)
+        // .then(this.localFetch(src))
+        // .catch(function (error) {
+        //   console.log("connectedCallback Trying to localFetch: " + src + " error: " + error);
+        // });
       window.translation = await response.json()
     } catch(e) {
       console.log('No translation found.')
@@ -142,98 +142,106 @@ class TangyFormApp extends Element {
 
   async loadFormsList() {
 
-    const processStatus = function (response) {
-      // status "0" to handle local files fetching (e.g. Cordova/Phonegap etc.)
-      if (response.status === 200 || response.status === 0) {
-        return Promise.resolve(response)
-      } else {
-        return Promise.reject(new Error(response.statusText))
-      }
-    };
-
-    const localFetch = function(url) {
-      return new Promise(function(resolve, reject) {
-        var xhr = new XMLHttpRequest
-        xhr.onload = function() {
-          console.log("Yes! I XMLHttpRequest'd " + url)
-          resolve(new Response(xhr.responseText, {status: xhr.status}))
-        }
-        xhr.onerror = function() {
-          reject(new TypeError('Local request failed for ' + url))
-        }
-        xhr.open('GET', url)
-        xhr.send(null)
-      })
-    }
+    // const processStatus = function (response) {
+    //   // status "0" to handle local files fetching (e.g. Cordova/Phonegap etc.)
+    //   if (response.status === 200 || response.status === 0) {
+    //     return Promise.resolve(response)
+    //   } else {
+    //     return Promise.reject(new Error(response.statusText))
+    //   }
+    // };
+    //
+    // const localFetch = function(url) {
+    //   return new Promise(function(resolve, reject) {
+    //     var xhr = new XMLHttpRequest
+    //     xhr.onload = function() {
+    //       console.log("Yes! I XMLHttpRequest'd " + url)
+    //       resolve(new Response(xhr.responseText, {status: xhr.status}))
+    //     }
+    //     xhr.onerror = function() {
+    //       reject(new TypeError('Local request failed for ' + url))
+    //     }
+    //     xhr.open('GET', url)
+    //     xhr.send(null)
+    //   })
+    // }
 
     const url = '../content/forms.json'
     let formsJson = await fetch(url)
-    .then(processStatus)
-        .then(localFetch(url))
-        .catch(function (error) {
-          console.log("loadFormsList Trying to localFetch: " + url + " error: " + error);
-        });
+    // .then(processStatus)
+    //     .then(localFetch(url))
+    //     .catch(function (error) {
+    //       console.log("loadFormsList Trying to localFetch: " + url + " error: " + error);
+    //     });
 
     this.forms = await formsJson.json()
   }
 
   async loadForm(formSrc, responseId) {
 
-    const processStatus = function (response) {
-      // status "0" to handle local files fetching (e.g. Cordova/Phonegap etc.)
-      if (response.status === 200 || response.status === 0) {
-        return Promise.resolve(response)
-      } else {
-        return Promise.reject(new Error(response.statusText))
-      }
-    };
-
-    const localFetch = function(url) {
-      return new Promise(function(resolve, reject) {
-        // var xhr = new XMLHttpRequest
-        // xhr.onload = function() {
-        //   console.log("Yes! I XMLHttpRequest'd " + url)
-        //   resolve(new Response(xhr.responseText, {status: xhr.status}))
-        // }
-        // xhr.onerror = function() {
-        //   reject(new TypeError('Local request failed for ' + url))
-        // }
-        const xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function(e) {
-          if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-              resolve(xhr.response)
-            } else {
-              reject(xhr.status)
-            }
-          }
-        }
-        xhr.open('GET', url)
-        xhr.send(null)
-      })
-    }
-
-    const fillContainer = (response) => {
-      console.log("loadForm response: " + JSON.stringify(response))
-      this.$['form-container'].innerHTML = response
-      // this.$['form-container'].innerHTML = await formHtml.text()
-      let formEl = this.$['form-container'].querySelector('tangy-form')
-      formEl.addEventListener('ALL_ITEMS_CLOSED', () => {
-        if (parent && parent.frames && parent.frames.ifr) {
-          parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
-        }
-      })
-      return response
-    }
+    // const processStatus = function (response) {
+    //   // status "0" to handle local files fetching (e.g. Cordova/Phonegap etc.)
+    //   if (response.status === 200 || response.status === 0) {
+    //     return Promise.resolve(response)
+    //   } else {
+    //     return Promise.reject(new Error(response.statusText))
+    //   }
+    // };
+    //
+    // const localFetch = function(url) {
+    //   return new Promise(function(resolve, reject) {
+    //     // var xhr = new XMLHttpRequest
+    //     // xhr.onload = function() {
+    //     //   console.log("Yes! I XMLHttpRequest'd " + url)
+    //     //   resolve(new Response(xhr.responseText, {status: xhr.status}))
+    //     // }
+    //     // xhr.onerror = function() {
+    //     //   reject(new TypeError('Local request failed for ' + url))
+    //     // }
+    //     const xhr = new XMLHttpRequest();
+    //     xhr.onreadystatechange = function(e) {
+    //       if (xhr.readyState === 4) {
+    //         if (xhr.status === 200) {
+    //           resolve(xhr.response)
+    //         } else {
+    //           reject(xhr.status)
+    //         }
+    //       }
+    //     }
+    //     xhr.open('GET', url)
+    //     xhr.send(null)
+    //   })
+    // }
+    //
+    // const fillContainer = (response) => {
+    //   console.log("loadForm response: " + JSON.stringify(response))
+    //   this.$['form-container'].innerHTML = response
+    //   // this.$['form-container'].innerHTML = await formHtml.text()
+    //   let formEl = this.$['form-container'].querySelector('tangy-form')
+    //   formEl.addEventListener('ALL_ITEMS_CLOSED', () => {
+    //     if (parent && parent.frames && parent.frames.ifr) {
+    //       parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
+    //     }
+    //   })
+    //   return response
+    // }
 
     // Put the form markup in the form container.
     let formHtml = await fetch(formSrc)
-      .then(processStatus)
-      .then(localFetch(formSrc).then(fillContainer))
-      .catch(function (error) {
-        console.log("loadForm Trying to localFetch: " + formSrc + " error: " + error);
-      });
-
+    //   .then(processStatus)
+    //   .then(localFetch(formSrc).then(fillContainer))
+    //   .catch(function (error) {
+    //     console.log("loadForm Trying to localFetch: " + formSrc + " error: " + error);
+    //   });
+    //
+    // this.$['form-container'].innerHTML = response
+    this.$['form-container'].innerHTML = await formHtml.text()
+    let formEl = this.$['form-container'].querySelector('tangy-form')
+    formEl.addEventListener('ALL_ITEMS_CLOSED', () => {
+      if (parent && parent.frames && parent.frames.ifr) {
+        parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
+      }
+    })
 
     // Put a response in the store by issuing the FORM_OPEN action.
     if (responseId) {
@@ -294,29 +302,29 @@ class TangyFormApp extends Element {
     window.location.reload()
   }
 
-  processStatus(response) {
-    // status "0" to handle local files fetching (e.g. Cordova/Phonegap etc.)
-    if (response.status === 200 || response.status === 0) {
-      return Promise.resolve(response)
-    } else {
-      return Promise.reject(new Error(response.statusText))
-    }
-  }
-
-  localFetch(url) {
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest
-      xhr.onload = function() {
-        console.log("Yes! I XMLHttpRequest'd " + url)
-        resolve(new Response(xhr.responseText, {status: xhr.status}))
-      }
-      xhr.onerror = function() {
-        reject(new TypeError('Local request failed for ' + url))
-      }
-      xhr.open('GET', url)
-      xhr.send(null)
-    })
-  }
+  // processStatus(response) {
+  //   // status "0" to handle local files fetching (e.g. Cordova/Phonegap etc.)
+  //   if (response.status === 200 || response.status === 0) {
+  //     return Promise.resolve(response)
+  //   } else {
+  //     return Promise.reject(new Error(response.statusText))
+  //   }
+  // }
+  //
+  // localFetch(url) {
+  //   return new Promise(function(resolve, reject) {
+  //     var xhr = new XMLHttpRequest
+  //     xhr.onload = function() {
+  //       console.log("Yes! I XMLHttpRequest'd " + url)
+  //       resolve(new Response(xhr.responseText, {status: xhr.status}))
+  //     }
+  //     xhr.onerror = function() {
+  //       reject(new TypeError('Local request failed for ' + url))
+  //     }
+  //     xhr.open('GET', url)
+  //     xhr.send(null)
+  //   })
+  // }
 
 }
 
