@@ -380,9 +380,10 @@ class TangyTimed extends Element {
         this.$.markButton.disabled = false 
         this.$.lastAttemptedButton.disabled = true 
         this.value = this.value.map(buttonState => {
-          buttonState.hidden = false
-          buttonState.highlighted = false
-          return buttonState
+          return Object.assign({}, buttonState, {
+            highlighted: false,
+            disabled: false
+          })
         })
         this.timer = setInterval(() => {
           let timeSpent = Math.floor((Date.now() - this.startTime) / 1000)
