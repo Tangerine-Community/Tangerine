@@ -36,6 +36,7 @@ export class TangyOverlay extends PolymerElement {
     #lightbox {
       width: calc(100vw - 100px);
       height: calc(100vh - 100px);
+      overflow-y: scroll;
       /*margin: 0;*/
       padding: 0;
       background-color: #fafafa;
