@@ -84,7 +84,7 @@ export class AuthenticationService {
     try {
       const result = await this.DB.find({ selector: { username: user.username } });
       if (result.docs.length > 0) {
-        doesAnswerMatch = result.docs[0].hashSecurityQuestion ?
+        doesAnswerMatch = result.docs[0].hashSecurityQuestionResponse ?
           await bcrypt.compare(user.securityQuestionResponse, result.docs[0].securityQuestionResponse) :
           user.securityQuestionResponse === result.docs[0].securityQuestionResponse;
       }
