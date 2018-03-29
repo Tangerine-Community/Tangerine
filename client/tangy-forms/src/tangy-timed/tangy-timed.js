@@ -245,7 +245,8 @@ class TangyTimed extends Element {
       disabled: {
         type: Boolean,
         onserver: 'onDisabledChange',
-        value: false
+        value: false,
+        reflectToAttribute: true
       },
       timeRemaining: {
         type: Number,
@@ -304,7 +305,7 @@ class TangyTimed extends Element {
       tangyToggleButton.setAttribute('name', option.value)
       tangyToggleButton.style.width = columnWidthCalculation
       tangyToggleButton.innerHTML = option.innerHTML 
-      tangyToggleButton.hidden = true
+      tangyToggleButton.disabled = true
       if (this.disabled) tangyToggleButton.disabled = true
       this.$.grid.appendChild(tangyToggleButton)
     })
@@ -349,7 +350,11 @@ class TangyTimed extends Element {
         this.$.resetButton.hidden = false 
         this.$.markButton.hidden = false 
         this.$.lastAttemptedButton.hidden = true 
-        this.shadowRoot.querySelectorAll('tangy-toggle-button').forEach(button => button.disabled = true)
+        this.value = this.value.map(buttonState => {
+          return Object.assign({}, buttonState, {
+            disabled: true
+          })
+        })
       case TANGY_TIMED_MODE_UNTOUCHED: 
         this.timeRemaining = this.duration
         this.statusMessage = t('Click the play button to get started.')
@@ -358,6 +363,11 @@ class TangyTimed extends Element {
         this.$.resetButton.hidden = true 
         this.$.markButton.disabled = true 
         this.$.lastAttemptedButton.disabled = true 
+        this.value = this.value.map(buttonState => {
+          return Object.assign({}, buttonState, {
+            disabled: true
+          })
+        })
       break;
       case TANGY_TIMED_MODE_RUN: 
         this.startTime = Date.now()
@@ -397,9 +407,10 @@ class TangyTimed extends Element {
         this.$.resetButton.hidden = false 
         this.$.markButton.disabled = true 
         this.$.lastAttemptedButton.disabled = false 
-        this.value = this.value.map(button => {
-          button.hidden = false
-          return button
+        this.value = this.value.map(buttonState => {
+          return Object.assign({}, buttonState, {
+            disabled: false
+          })
         })
       break
       case TANGY_TIMED_MODE_LAST_ATTEMPTED:
@@ -410,9 +421,10 @@ class TangyTimed extends Element {
         this.$.resetButton.hidden = false 
         this.$.markButton.disabled = false 
         this.$.lastAttemptedButton.disabled = true 
-        this.value = this.value.map(button => {
-          button.hidden = true
-          return button
+        this.value = this.value.map(buttonState => {
+          return Object.assign({}, buttonState, {
+            disabled: true
+          })
         })
       break
       // @TODO No longer being used.
@@ -423,7 +435,11 @@ class TangyTimed extends Element {
         this.$.resetButton.hidden = false 
         this.$.markButton.disabled = false 
         this.$.lastAttemptedButton.disabled = false 
-        this.shadowRoot.querySelectorAll('tangy-toggle-button').forEach(button => button.hidden = true)
+        this.value = this.value.map(buttonState => {
+          return Object.assign({}, buttonState, {
+            disabled: true
+          })
+        })
       break
 
     }
@@ -498,7 +514,7 @@ class TangyTimed extends Element {
   }
 
   onDisabledChange() {
-    if (this.hidden === true) this.mode = TANGY_TIMED_MODE_DISABLED
+    if (this.disabled === true) this.mode = TANGY_TIMED_MODE_DISABLED
   }
 
   reset() {
