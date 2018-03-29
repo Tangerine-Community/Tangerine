@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
     this.securityQuestionText = appConfig.securityQuestionText;
     this.listUsernamesOnLoginScreen = appConfig.listUsernamesOnLoginScreen;
     if (this.listUsernamesOnLoginScreen) {
-      this.allUsernames = await this.getAllUsernames();
+      this.allUsernames = await this.usersService.getUsernames();
     }
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
     const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
@@ -52,10 +52,6 @@ export class LoginComponent implements OnInit {
 
   async toggleRecoveryInput() {
     this.showRecoveryInput = !this.showRecoveryInput;
-  }
-
-  async getAllUsernames() {
-    return await this.usersService.getUsernames();
   }
 
   async onSelectUsername(event) {
