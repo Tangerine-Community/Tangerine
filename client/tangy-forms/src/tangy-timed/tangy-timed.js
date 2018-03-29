@@ -458,6 +458,15 @@ class TangyTimed extends Element {
       break
       case TANGY_TIMED_MODE_MARK:
       case TANGY_TIMED_MODE_RUN: 
+
+        // If this selection is past the a last attempted index, prevent it.
+        let itemLastAttemptedIndex = this.value.findIndex(item => (item.highlighted) ? true : false)
+        let itemLastMarkedIndex = this.value.findIndex(item => (item.name === event.target.name))
+        if (itemLastAttemptedIndex != -1 && itemLastAttemptedIndex < itemLastMarkedIndex) {
+          event.target.value = ''
+          alert(t('You may not mark an item incorrect that is beyond the last item attempted.'))
+          return
+        } 
         // Get the props of the buttons, save to value.
         this.shadowRoot
           .querySelectorAll('tangy-toggle-button')
