@@ -22,7 +22,7 @@ export class RegistrationComponent implements OnInit {
         password: '',
         confirmPassword: '',
         securityQuestionResponse: '',
-        hashSecurityQuestion: true
+        hashSecurityQuestionResponse: true
     };
     isUsernameTaken: boolean;
     returnUrl: string;
@@ -46,7 +46,7 @@ export class RegistrationComponent implements OnInit {
         const appConfig = await this.appConfigService.getAppConfig();
         const homeUrl = appConfig.homeUrl;
         this.securityQuestionText = appConfig.securityQuestionText;
-        this.user.hashSecurityQuestion = appConfig.hashSecurityQuestion;
+        this.user.hashSecurityQuestionResponse = appConfig.hashSecurityQuestionResponse;
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
         const isNoPasswordMode = await this.authenticationService.isNoPasswordMode();
         if (isNoPasswordMode) {

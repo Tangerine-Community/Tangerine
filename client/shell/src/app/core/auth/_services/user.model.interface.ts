@@ -3,5 +3,5 @@ export interface User {
     password: string;
     confirmPassword?: string;
     securityQuestionResponse: string;
-    hashSecurityQuestion: boolean;
+    hashSecurityQuestionResponse: boolean;
 }

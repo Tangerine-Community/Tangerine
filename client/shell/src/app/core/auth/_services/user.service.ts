@@ -23,7 +23,7 @@ export class UserService {
     this.userData = payload;
     this.userData['userUUID'] = userUUID;
     this.userData['password'] = hashedPassword;
-    this.userData['securityQuestionResponse'] = this.userData['hashSecurityQuestion'] ?
+    this.userData['securityQuestionResponse'] = this.userData['hashSecurityQuestionResponse'] ?
       await this.hashValue(payload.securityQuestionResponse) : this.userData['securityQuestionResponse'];
     try {
       /** @TODO: check if user exists before saving */
