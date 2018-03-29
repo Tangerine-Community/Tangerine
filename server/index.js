@@ -198,17 +198,11 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let contentRoot = config.contentRoot
   let itemsOrder = req.body.itemsOrder
   let formHtmlPath = req.body.formHtmlPath
-  let groupName = req.body.groupName
-
-
-  console.log("itemsOrder/save" + formHtmlPath)
 
   // fetch the original form
   let formDir = formHtmlPath.split('/')[2]
   let formName = formHtmlPath.split('/')[3]
-  let groupContentRoot = config.contentRoot + '/' + groupName
-  let formPath = groupContentRoot + sep + formDir + sep + formName
-
+  let formPath = contentRoot + sep + formDir + sep + formName
   let originalForm = await openForm(formPath);
 
   // Now that we have originalForm, we can load it and add items to it.
@@ -438,6 +432,22 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
     .then(status => console.log("Wrote app-config.json"))
     .catch(err => console.error("An error copying app-config: " + err))
+
+  // Edit the cordova-hcp.json.
+  try {
+    // cordovaHcp = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/cordova-hcp.json`, "utf8"))
+    cordovaHcp = {}
+    cordovaHcp.name = `Tangerine ${groupName}`
+    cordovaHcp.android_identifier = "org.rti.Tangerine"
+    cordovaHcp.update = "start"
+    cordovaHcp.content_url = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/releases/apks/${groupName}`
+  } catch (err) {
+    console.error("An error reading cordova-hcp.json: " + err)
+    throw err;
+  }
+  await fs.writeFile(`/tangerine/client/content/groups/${groupName}/cordova-hcp.json`, JSON.stringify(cordovaHcp))
+    .then(status => console.log("Wrote cordova-hcp.json.json"))
+    .catch(err => console.error("An error copying cordova-hcp.json: " + err))
   
   // All done!
   res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
