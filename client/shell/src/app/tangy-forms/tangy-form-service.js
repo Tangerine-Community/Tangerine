@@ -90,7 +90,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '30',
+  version: '31',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -100,7 +100,8 @@ var tangyFormDesignDoc = {
     },
     responsesLockedAndNotUploaded: {
       map: function (doc) {
-        if (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime) {
+        if ((doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime))) {
           emit(doc._id, true)
         }
       }.toString()
