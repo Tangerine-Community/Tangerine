@@ -15,8 +15,8 @@ const config = read.sync('./config.yml')
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
-const compression = require('compression')
 const pako = require('pako')
+const compression = require('compression')
 
 const DB = PouchDB.defaults({
   prefix: '/tangerine/db/'
@@ -24,8 +24,17 @@ const DB = PouchDB.defaults({
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
+const cors = require('cors')
+
 const sep = path.sep;
 app.use(compression())
+
+// Enable CORS
+app.use(cors({
+  credentials: true,
+}));
+app.options('*', cors()) // include before other routes
+
 /*
  * Auth
  */
@@ -35,9 +44,9 @@ var passport = require('passport')
 // This determines wether or not a login is valid.
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    console.log('strategy!')
-    console.log(username)
-    console.log(password)
+    // console.log('strategy!')
+    // console.log(username)
+    // console.log(password)
     if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
       console.log('login success!')
       return done(null, {
@@ -70,6 +79,7 @@ app.use(session({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({limit: '1gb'}))
 app.use(bodyParser.text({limit: '1gb'}))
+app.use(compression())
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -102,10 +112,17 @@ app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../edit
 app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
 app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-builds')));
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
+app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 
 app.use('/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )
 app.use('/releases/apks/', express.static(path.join(__dirname, '../client/releases/apks')) )
 app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')) )
+
+app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, next) {
+  let contentPath = '../client/content/assets'
+  console.log("Setting path to " + path.join(__dirname, contentPath))
+  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+});
 app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
   let contentPath = '../client/content/groups/' + req.params.group
   console.log("Setting path to " + path.join(__dirname, contentPath))
@@ -116,6 +133,7 @@ app.use('/editor/release-apk/:secret/:group', isAuthenticated, async function (r
   // @TODO Make sure user is member of group.
   const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
+  console.log("in release-apk, secret: " + secret + " for group: " + group)
   await exec(`cd /tangerine/client && \
         ./release-apk.sh ${secret} ./content/groups/${group}
   `)
@@ -180,11 +198,17 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let contentRoot = config.contentRoot
   let itemsOrder = req.body.itemsOrder
   let formHtmlPath = req.body.formHtmlPath
+  let groupName = req.body.groupName
+
+
+  console.log("itemsOrder/save" + formHtmlPath)
 
   // fetch the original form
   let formDir = formHtmlPath.split('/')[2]
   let formName = formHtmlPath.split('/')[3]
-  let formPath = contentRoot + sep + formDir + sep + formName
+  let groupContentRoot = config.contentRoot + '/' + groupName
+  let formPath = groupContentRoot + sep + formDir + sep + formName
+
   let originalForm = await openForm(formPath);
 
   // Now that we have originalForm, we can load it and add items to it.
@@ -231,6 +255,8 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
 
 // Saves an item - and a new form when formName is passed.async
 // otherwise, the path to the existing form is extracted from formHtmlPath.
+// contentUrlPath: path used to fetch content when using an APK or PWA. Used when setting 'src' attribute.
+// groupContentRoot: path to content on the editor filesystem.
 app.post('/editor/item/save', isAuthenticated, async function (req, res) {
   let displayFormsListing = false
   // console.log("req.body:" + JSON.stringify(req.body) + " req.body.itemTitle: " + req.body.itemTitle)
@@ -252,7 +278,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
   let itemFilename = req.body.itemFilename
   let groupName = req.body.groupName
   let itemId = req.body.itemId
-  let contentRoot = config.contentRoot + '/' + groupName
+  let groupContentRoot = config.contentRoot + '/' + groupName
   let formDir, formName, originalForm, formPath
   let contentUrlPath = '../content/'
 
@@ -273,10 +299,10 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // create the path to the form and its form.html
     formDir = formDirName
     // now create the filesystem for formDir
-    console.log("checking contentRoot + sep + formDir: " + contentRoot + sep + formDir)
-    await fs.ensureDir(contentRoot + sep + formDir)
+    console.log("checking groupContentRoot + sep + formDir: " + groupContentRoot + sep + formDir)
+    await fs.ensureDir(groupContentRoot + sep + formDir)
       .then(() => {
-        console.log('success! Created path to formDir: ' + contentRoot + sep + formDir)
+        console.log('success! Created path to formDir: ' + groupContentRoot + sep + formDir)
       })
       .catch(err => {
         console.error("An error: " + err)
@@ -299,14 +325,14 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
         throw err;
       })
     // Set formPath
-    formPath = contentRoot + sep + formDir + sep + formName
+    formPath = groupContentRoot + sep + formDir + sep + formName
 
     // Now that we have originalForm, we can load it and add items to it.
     const $ = cheerio.load(originalForm)
     // search for tangy-form-item
     let formItemList = $('tangy-form-item')
     // create the form html that will be added
-    let itemUrlPath = contentUrlPath + formDirName + "/" + itemFilename
+    let itemUrlPath = contentUrlPath + formDirName + sep + itemFilename
     let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
     // console.log('newItem: ' + newItem)
     $(newItem).appendTo('tangy-form')
@@ -325,7 +351,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // Editing a form - check if this is a new item; otherwise, we only need to change the item's title in form.json
     formDir = formHtmlPath.split('/')[2]
     formName = formHtmlPath.split('/')[3]
-    formPath = contentRoot + sep + formDir + sep + formName
+    formPath = groupContentRoot + sep + formDir + sep + formName
     console.log("formPath: " + formPath)
     originalForm = await openForm(formPath);
     // Now that we have originalForm, we can load it and add items to it.
@@ -349,7 +375,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // console.log('newItemList: ' + newItemList + " isNewItem: " + isNewItem)
     $('tangy-form-item').remove()
     $(newItemList).appendTo('tangy-form')
-    let itemUrlPath = contentUrlPath + formDir + "/" + itemFilename
+    let itemUrlPath = contentUrlPath + formDir + sep + itemFilename
     if (isNewItem) {
       // create the item html that will be added to the form.
       let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
@@ -480,7 +506,14 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   let docsKeyedByVariableName = []
   responseDocs.forEach(doc => { 
     let variables = {}
-    doc.items.forEach(item => { 
+    variables['_id'] = doc._id
+    variables['formId'] = doc.form.id
+    variables['startDatetime'] = doc.startDatetime
+    variables['startUnixtime'] = doc.startUnixtime
+    doc.inputs.forEach(input => {
+      variables[input.name] = input.value
+    })
+    doc.items.forEach(item => {
       item.inputs.forEach(input => { 
         if (Array.isArray(input.value)) {
           input.value.forEach(subInput => variables[`${input.name}.${subInput.name}`] = subInput.value)
@@ -491,6 +524,7 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
     })
     docsKeyedByVariableName.push(variables)
   })
+
   let flatVariableDocs = docsKeyedByVariableName.map(doc => flatten(doc))
   let keys = []
   for (let doc of flatVariableDocs) {

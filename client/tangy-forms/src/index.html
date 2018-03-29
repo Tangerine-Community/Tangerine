@@ -35,7 +35,7 @@
       background: var(--document-background-color);
     }
   </style>
-
+  <script src="./module.bundle.js"></script>
   <script>
 
     document.addEventListener('WebComponentsReady', function componentsReady() {
@@ -46,14 +46,14 @@
       script.src = './bundle.js';
       script.setAttribute('nomodule', true);
 
-      var scriptModule = document.createElement('script');
-      scriptModule.async = true
-      scriptModule.src = './module.bundle.js';
-      scriptModule.setAttribute('type', 'module');
+      // var scriptModule = document.createElement('script');
+      // scriptModule.async = true
+      // scriptModule.src = './module.bundle.js';
+      // scriptModule.setAttribute('type', 'module');
 
       var refScript = document.body.getElementsByTagName('script')[0];
       refScript.parentNode.insertBefore(script, refScript);
-      refScript.parentNode.insertBefore(scriptModule, refScript);
+      // refScript.parentNode.insertBefore(scriptModule, refScript);
   }, false);
   </script>
 </head>
