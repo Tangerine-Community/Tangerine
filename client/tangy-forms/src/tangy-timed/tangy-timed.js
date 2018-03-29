@@ -507,7 +507,7 @@ class TangyTimed extends Element {
   }
 
   onMarkClick() {
-    this.mode = TANGY_TIMED_MODE_MARK
+    if (this.mode != TANGY_TIMED_MODE_RUN) this.mode = TANGY_TIMED_MODE_MARK
   }
 
   onLastAttemptedClick(element) {
