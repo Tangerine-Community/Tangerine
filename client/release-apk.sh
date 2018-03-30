@@ -2,51 +2,61 @@
 
 SECRET="$1"
 CONTENT_PATH="$2"
-QA_DIRECTORY="/tangerine/client/releases/qa/apks/$SECRET"
-PROD_DIRECTORY="/tangerine/client/releases/prod/apks/$SECRET"
+RELEASE_TYPE="$3"
+T_PROTOCOL="$4"
+T_UPLOAD_USER="$5"
+T_UPLOAD_PASSWORD="$6"
+T_HOST_NAME="$7"
+CORDOVA_DIRECTORY="/tangerine/client/builds/apk"
+RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/$SECRET"
+URL="$T_PROTOCOL://$T_UPLOAD_USER:$T_UPLOAD_PASSWORD@$T_HOST_NAME/releases/prod/apks/$SECRET"
 
-if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "QA_DIRECTORY" = "" ] || [ "PROD_DIRECTORY" = "" ]; then
+echo "URL: $URL"
+
+if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ] || [ "$T_PROTOCOL" = "" ] || [ "$T_UPLOAD_USER" = "" ] || [ "$T_UPLOAD_PASSWORD" = "" ] || [ "$T_HOST_NAME" = "" ]; then
   echo ""
   echo "RELEASE APK"
   echo "A command for releasing an APK using a secret URL."
   echo ""
-  echo "./release-apk.sh <secret> <content path>"
+  echo "./release-apk.sh <secret> <content path> <release type> <protocol> <uploadUser> <password> <hostname>"
+  echo ""
+  echo "Release type is either qa or prod."
+  echo ""
+  echo "<protocol> <uploadUser> <password> <hostname> are for the update URL"
   echo ""
   echo "Usage:"
-  echo "  ./release-apk.sh a4uw93 ./content/groups/group-a"
+  echo "  ./release-apk.sh a4uw93 ./content/groups/group-a qa"
   echo ""
-  echo "Then visit https://foo.tangerinecentral.org/releases/apk/a4uw93.apk"
+  echo "Then visit https://foo.tangerinecentral.org/releases/qa/apk/a4uw93.apk"
+  exit 1
 fi
 
-# if [ ! -d "$QA_DIRECTORY" ]; then
-  # Seed with Cordova project from /cordova_base if $QA_DIRECTORY doesn't exist.
-  # When a new group is created, it copies over cordova_base, but this did not happen with existing groups.
-  cp -r /cordova_base $QA_DIRECTORY
-# fi
+if [ -d "$RELEASE_DIRECTORY" ]; then
+  # Clear out the Cordova project in $CORDOVA_DIRECTORY
+  rm -rf $RELEASE_DIRECTORY
+fi
 
-rm -rf $QA_DIRECTORY/www
-cp -R /tangerine/client/builds/apk/www $QA_DIRECTORY/www
+# Populate with the Cordova project from $CORDOVA_DIRECTORY
+cp -r $CORDOVA_DIRECTORY $RELEASE_DIRECTORY
 
-rm -rf $QA_DIRECTORY/www/content
-cp -r $CONTENT_PATH $QA_DIRECTORY/www/content
-cp -r ./content/assets $QA_DIRECTORY/www/content
+# Refresh the content dir in $RELEASE_DIRECTORY
+rm -rf $RELEASE_DIRECTORY/www/content
+cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/content
 
-cd $QA_DIRECTORY
+cd $RELEASE_DIRECTORY
 echo "RELEASE APK: running Cordova build."
-cordova -v --no-telemetry
+
 cordova build --no-telemetry android
-if [ ! -d "$RELEASES_DIRECTORY" ]; then
-# mkdir if $RELEASES_DIRECTORY doesn't exist.
-    mkdir $RELEASES_DIRECTORY
-else
-    rm -r $RELEASES_DIRECTORY/www
+
+if [ "$RELEASE_TYPE" = "prod" ]; then
+
+    echo "Copying cordova-hcp.json $RELEASE_DIRECTORY"
+
+    cp /tangerine/client/tangy-forms/editor/cordova-hcp-template.json $RELEASE_DIRECTORY/cordova-hcp.json
+    sed -i -e "s#URL#"$URL"#g" $RELEASE_DIRECTORY/cordova-hcp.json
 fi
 
-echo "Copying www and cordova-hcp.json $RELEASES_DIRECTORY"
-cp -R $QA_DIRECTORY/www $RELEASES_DIRECTORY/www
-cp -R $QA_DIRECTORY/cordova-hcp.json $RELEASES_DIRECTORY/cordova-hcp.json
+cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASE_DIRECTORY/$SECRET.apk
 
-cp $QA_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASES_DIRECTORY/$SECRET.apk
-
-echo "Released apk for $SECRET at $RELEASES_DIRECTORY"
+echo "Released apk for $SECRET at $RELEASE_DIRECTORY"
 
