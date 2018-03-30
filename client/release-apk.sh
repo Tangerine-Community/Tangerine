@@ -18,12 +18,10 @@ if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "QA_DIRECTORY" = "" ] || 
   echo "Then visit https://foo.tangerinecentral.org/releases/apk/a4uw93.apk"
 fi
 
-#cp -r /tangerine/client/builds/apk /.tmp-apk
-
-if [ ! -d "$QA_DIRECTORY" ]; then
-  # Control will enter here if $QA_DIRECTORY doesn't exist.
-  cp -R /.tmp-apk $QA_DIRECTORY
-fi
+# if [ ! -d "$QA_DIRECTORY" ]; then
+  # seed with Cordova project from /cordova_base if $QA_DIRECTORY doesn't exist.
+  cp -R /cordova_base $QA_DIRECTORY
+# fi
 
 rm -rf $QA_DIRECTORY/www/content
 cp -r $CONTENT_PATH $QA_DIRECTORY/www/content
@@ -45,13 +43,16 @@ echo "RELEASE APK: running Cordova build."
 cordova -v --no-telemetry
 cordova build --no-telemetry android
 if [ ! -d "$RELEASES_DIRECTORY" ]; then
-# Control will enter here if $RELEASES_DIRECTORY doesn't exist.
+# mkdir if $RELEASES_DIRECTORY doesn't exist.
     mkdir $RELEASES_DIRECTORY
 else
     rm -r $RELEASES_DIRECTORY/www
 fi
 
+echo "Copying www and cordova-hcp.json $RELEASES_DIRECTORY"
 cp -R $QA_DIRECTORY/www $RELEASES_DIRECTORY/www
+cp -R $QA_DIRECTORY/cordova-hcp.json $RELEASES_DIRECTORY/cordova-hcp.json
+
 cp $QA_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASES_DIRECTORY/$SECRET.apk
 
 echo "Released apk for $SECRET at $RELEASES_DIRECTORY"
