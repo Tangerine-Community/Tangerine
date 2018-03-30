@@ -27,7 +27,6 @@ const junk = require('junk');
 const cors = require('cors')
 
 const sep = path.sep;
-app.use(compression())
 
 // Enable CORS
 app.use(cors({
@@ -128,13 +127,15 @@ app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
 
-app.use('/editor/release-apk/:secret/:group', isAuthenticated, async function (req, res, next) {
+app.use('/editor/release-apk/:secret/:group/:releaseType', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
   const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
-  console.log("in release-apk, secret: " + secret + " for group: " + group)
+  const releaseType = sanitize(req.params.releaseType)
+  console.log("in release-apk, secret: " + secret + " for group: " + group + " releaseType: " + releaseType)
+  console.log(`The command: ./release-apk.sh ${secret} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
   await exec(`cd /tangerine/client && \
-        ./release-apk.sh ${secret} ./content/groups/${group}
+        ./release-apk.sh ${secret} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}
   `)
   res.send('ok')
 })
@@ -427,24 +428,6 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   // Create content directory for group.
   await exec(`cp -r /tangerine/client/content/default /tangerine/client/content/groups/${groupName}`)
 
-  // Create dirs for this group in qa and prod
-  const QA_DIRECTORY=`/tangerine/client/releases/qa/apks/${groupName}`
-  const PROD_DIRECTORY=`/tangerine/client/releases/prod/apks/${groupName}`
-
-  try {
-    await fs.copy('/cordova_base', QA_DIRECTORY, { overwrite: false, errorOnExist: true, preserveTimestamps: true })
-    console.log('Copied Cordova base to ' + QA_DIRECTORY)
-  } catch (err) {
-    console.error(QA_DIRECTORY + ' already exists.')
-  }
-
-  try {
-    await fs.ensureDir(PROD_DIRECTORY)
-    console.log('Created ' + PROD_DIRECTORY)
-  } catch (err) {
-    console.error(PROD_DIRECTORY + ' already exists.')
-  }
-
   // Edit the app-config.json.
   try {
     appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
@@ -456,43 +439,10 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
     .then(status => console.log("Wrote app-config.json"))
     .catch(err => console.error("An error copying app-config: " + err))
-
-  // Create the cordova-hcp.json.
-  try {
-    // cordovaHcp = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/cordova-hcp.json`, "utf8"))
-    cordovaHcp = {}
-    cordovaHcp.name = `Tangerine ${groupName}`
-    cordovaHcp.android_identifier = "org.rti.Tangerine"
-    cordovaHcp.update = "start"
-    cordovaHcp.content_url = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/releases/prod/apks/${groupName}`
-  } catch (err) {
-    console.error("An error reading cordova-hcp.json: " + err)
-    throw err;
-  }
-  await fs.writeJson(`/tangerine/client/content/groups/${groupName}/cordova-hcp.json`, cordovaHcp, {spaces: 2})
-    .then(status => console.log("Wrote cordova-hcp.json.json"))
-    .catch(err => console.error("An error copying cordova-hcp.json: " + err))
-
-  // cp cordova-hcp.json over to the root of the Cordova project –
-
-  try {
-    await fs.copy(`/tangerine/client/content/groups/${groupName}/cordova-hcp.json`, `${QA_DIRECTORY}/cordova-hcp.json`)
-    console.log('Copied cordova-hcp.json to ' + QA_DIRECTORY)
-  } catch (err) {
-    console.error(err)
-  }
   
   // All done!
   res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
 })
-
-// kick it off
-var server = app.listen(config.port, function() {
-  var host = server.address().address;
-  var port = server.address().port;
-  console.log(server.address());
-  console.log('Server V3: http://%s:%s', host, port);
-});
 
 app.get('/groups', isAuthenticated, async function (req, res) {
   fsc.readdir('/tangerine/client/content/groups', function(err, files) {
@@ -611,3 +561,11 @@ if (replicationEntries.length > 0) {
     )
   }
 }
+
+// Start the server.
+var server = app.listen(config.port, function() {
+  var host = server.address().address;
+  var port = server.address().port;
+  console.log(server.address());
+  console.log('Server V3: http://%s:%s', host, port);
+});
