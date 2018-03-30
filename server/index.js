@@ -114,8 +114,7 @@ app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 
-app.use('/releases/pwas/', express.static(path.join(__dirname, '../client/releases/pwas')) )
-app.use('/releases/apks/', express.static(path.join(__dirname, '../client/releases/apks')) )
+app.use('/releases/', express.static(path.join(__dirname, '../client/releases')) )
 app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')) )
 
 app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, next) {
@@ -417,9 +416,9 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
 
 /**
  * Sets up files and directories for a group:
- * Creates content, QA, and releases dirs for the group; seeds QA with Cordova project.
+ * Creates content, qa, and prod dirs for the group; seeds qa with Cordova project.
  * Edits app-config.json.
- * Creates cordova-hcp.json and copies to QA dir.
+ * Creates cordova-hcp.json and copies to qa dir.
  * Redirects user to editor page for the group.
  */
 app.post('/editor/group/new', isAuthenticated, async function (req, res) {
@@ -428,9 +427,9 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   // Create content directory for group.
   await exec(`cp -r /tangerine/client/content/default /tangerine/client/content/groups/${groupName}`)
 
-  // Create dirs for this group in QA and releases
-  const QA_DIRECTORY=`/tangerine/client/QA/apks/${groupName}`
-  const RELEASES_DIRECTORY=`/tangerine/client/releases/apks/${groupName}`
+  // Create dirs for this group in qa and prod
+  const QA_DIRECTORY=`/tangerine/client/releases/qa/apks/${groupName}`
+  const PROD_DIRECTORY=`/tangerine/client/releases/prod/apks/${groupName}`
 
   try {
     await fs.copy('/cordova_base', QA_DIRECTORY, { overwrite: false, errorOnExist: true, preserveTimestamps: true })
@@ -440,10 +439,10 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   }
 
   try {
-    await fs.ensureDir(RELEASES_DIRECTORY)
-    console.log('Created ' + RELEASES_DIRECTORY)
+    await fs.ensureDir(PROD_DIRECTORY)
+    console.log('Created ' + PROD_DIRECTORY)
   } catch (err) {
-    console.error(RELEASES_DIRECTORY + ' already exists.')
+    console.error(PROD_DIRECTORY + ' already exists.')
   }
 
   // Edit the app-config.json.
@@ -465,7 +464,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     cordovaHcp.name = `Tangerine ${groupName}`
     cordovaHcp.android_identifier = "org.rti.Tangerine"
     cordovaHcp.update = "start"
-    cordovaHcp.content_url = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/releases/apks/${groupName}`
+    cordovaHcp.content_url = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/releases/prod/apks/${groupName}`
   } catch (err) {
     console.error("An error reading cordova-hcp.json: " + err)
     throw err;

@@ -19,17 +19,24 @@ if [ "$SECRET" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "QA_DIRECTORY" = "" ] || 
 fi
 
 # if [ ! -d "$QA_DIRECTORY" ]; then
-  # Seed with Cordova project from /cordova_base if $QA_DIRECTORY doesn't exist.
-  # When a new group is created, it copies over cordova_base, but this did not happen with existing groups.
-  cp -r /cordova_base $QA_DIRECTORY
+  # seed with Cordova project from /cordova_base if $QA_DIRECTORY doesn't exist.
+  cp -R /cordova_base $QA_DIRECTORY
 # fi
-
-rm -rf $QA_DIRECTORY/www
-cp -R /tangerine/client/builds/apk/www $QA_DIRECTORY/www
 
 rm -rf $QA_DIRECTORY/www/content
 cp -r $CONTENT_PATH $QA_DIRECTORY/www/content
 cp -r ./content/assets $QA_DIRECTORY/www/content
+
+echo "Refreshing the shell - this is dev use only"
+
+rm -rf $QA_DIRECTORY/www/shell
+cp -r /tangerine/client/builds/apk/www/shell/ $QA_DIRECTORY/www/shell/
+rm -rf $QA_DIRECTORY/www/tangy-forms
+#cp -r tangy-forms/dist builds/apk/www/tangy-forms
+cp /tangerine/client/tangy-forms/src/index.html /tangerine/client/builds/apk/www/tangy-forms/index.html
+cp /tangerine/client/tangy-forms/dist/module.bundle.js /tangerine/client/builds/apk/www/tangy-forms/
+cp /tangerine/client/tangy-forms/dist/module.bundle.js.map /tangerine/client/builds/apk/www/tangy-forms/
+cp -r /tangerine/client/builds/apk/www/tangy-forms/ $QA_DIRECTORY/www/tangy-forms/
 
 cd $QA_DIRECTORY
 echo "RELEASE APK: running Cordova build."
