@@ -415,11 +415,36 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
   res.json(resp)
 })
 
+/**
+ * Sets up files and directories for a group:
+ * Creates content, QA, and releases dirs for the group; seeds QA with Cordova project.
+ * Edits app-config.json.
+ * Creates cordova-hcp.json and copies to QA dir.
+ * Redirects user to editor page for the group.
+ */
 app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 
   let groupName = req.body.groupName
   // Create content directory for group.
   await exec(`cp -r /tangerine/client/content/default /tangerine/client/content/groups/${groupName}`)
+
+  // Create dirs for this group in QA and releases
+  const QA_DIRECTORY=`/tangerine/client/QA/apks/${groupName}`
+  const RELEASES_DIRECTORY=`/tangerine/client/releases/apks/${groupName}`
+
+  try {
+    await fs.copy('/cordova_base', QA_DIRECTORY, { overwrite: false, errorOnExist: true, preserveTimestamps: true })
+    console.log('Copied Cordova base to ' + QA_DIRECTORY)
+  } catch (err) {
+    console.error(QA_DIRECTORY + ' already exists.')
+  }
+
+  try {
+    await fs.ensureDir(RELEASES_DIRECTORY)
+    console.log('Created ' + RELEASES_DIRECTORY)
+  } catch (err) {
+    console.error(RELEASES_DIRECTORY + ' already exists.')
+  }
 
   // Edit the app-config.json.
   try {
@@ -433,7 +458,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     .then(status => console.log("Wrote app-config.json"))
     .catch(err => console.error("An error copying app-config: " + err))
 
-  // Edit the cordova-hcp.json.
+  // Create the cordova-hcp.json.
   try {
     // cordovaHcp = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/cordova-hcp.json`, "utf8"))
     cordovaHcp = {}
@@ -445,9 +470,18 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     console.error("An error reading cordova-hcp.json: " + err)
     throw err;
   }
-  await fs.writeFile(`/tangerine/client/content/groups/${groupName}/cordova-hcp.json`, JSON.stringify(cordovaHcp))
+  await fs.writeJson(`/tangerine/client/content/groups/${groupName}/cordova-hcp.json`, cordovaHcp, {spaces: 2})
     .then(status => console.log("Wrote cordova-hcp.json.json"))
     .catch(err => console.error("An error copying cordova-hcp.json: " + err))
+
+  // cp cordova-hcp.json over to the root of the Cordova project –
+
+  try {
+    await fs.copy(`/tangerine/client/content/groups/${groupName}/cordova-hcp.json`, `${QA_DIRECTORY}/cordova-hcp.json`)
+    console.log('Copied cordova-hcp.json to ' + QA_DIRECTORY)
+  } catch (err) {
+    console.error(err)
+  }
   
   // All done!
   res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
