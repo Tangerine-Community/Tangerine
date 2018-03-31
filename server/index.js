@@ -134,7 +134,7 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   console.log("in release-apk, group: " + group + " releaseType: " + releaseType)
   console.log(`The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
   await exec(`cd /tangerine/client && \
-        ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}
+        ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME} 2>&1 | tee -a ../server/apk.log
   `)
   res.send('ok')
 })
