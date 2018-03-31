@@ -44,7 +44,7 @@ export class GroupsComponent implements OnInit {
             err => {
                 console.log('error in getting data for groups: ' + JSON.stringify(err, null, 2)); this.error = true;
                 if (err.status === 401) {
-                    alert('Please login. ' + err._body)
+                    window.location.href = 'http://localhost/#/login'
                 } else {
                     alert(err._body)
                 }

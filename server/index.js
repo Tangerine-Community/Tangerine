@@ -127,25 +127,25 @@ app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
 
-app.use('/editor/release-apk/:secret/:group/:releaseType', isAuthenticated, async function (req, res, next) {
+app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
-  const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  console.log("in release-apk, secret: " + secret + " for group: " + group + " releaseType: " + releaseType)
-  console.log(`The command: ./release-apk.sh ${secret} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
+  console.log("in release-apk, group: " + group + " releaseType: " + releaseType)
+  console.log(`The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
   await exec(`cd /tangerine/client && \
-        ./release-apk.sh ${secret} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}
+        ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}
   `)
   res.send('ok')
 })
 
-app.use('/editor/release-pwa/:secret/:group', isAuthenticated, async function (req, res, next) {
+app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
-  const secret = sanitize(req.params.secret)
   const group = sanitize(req.params.group)
+  const releaseType = sanitize(req.params.releaseType)
+  console.log("in release-pwa, group: " + group + " releaseType: " + releaseType)
   await exec(`cd /tangerine/client && \
-        ./release-pwa.sh ${secret} ./content/groups/${group}
+        ./release-pwa.sh ${group} ./content/groups/${group} ${releaseType}
   `)
   res.send('ok')
 })

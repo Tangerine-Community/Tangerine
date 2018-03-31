@@ -29,9 +29,7 @@ docker run -it --name $T_CONTAINER_NAME \
   --env "T_HOST_NAME=$T_HOST_NAME" \
   --env "T_REPLICATE=$T_REPLICATE" \
   $T_PORT_MAPPING \
-  --volume $(pwd)/data/client/apks:/tangerine/client/releases/apks/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
-  --volume $(pwd)/data/client/pwas:/tangerine/client/releases/pwas/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
