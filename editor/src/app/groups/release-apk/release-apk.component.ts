@@ -26,9 +26,10 @@ export class ReleaseApkComponent implements OnInit {
     this.sub = this.route.params.subscribe(params => {
       this.group = params['id'];
       // @TODO Generate a secret.
-      this.secret = params['id'];
+      // this.secret = params['id'];
       this.releaseType = params['releaseType'];
-      this.http.get(`/editor/release-apk/${this.secret}/${this.group}/${this.releaseType}`)
+      console.log("in release-apk, group: " + this.group + " releaseType: " + this.releaseType)
+      this.http.get(`/editor/release-apk/${this.group}/${this.releaseType}`)
         .subscribe((data) => this.buildApkIsComplete = true)
     });
   }
