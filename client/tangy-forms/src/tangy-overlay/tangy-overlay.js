@@ -77,11 +77,11 @@ export class TangyOverlay extends PolymerElement {
 
     </style>
 
-    <div id="media-button" on-click="handleClick" >
+    <div id="media-button" on-click="handleMediaButtonClick" >
     </div>
     
     <div id="overlay">
-        <div id="lightbox">
+        <div id="lightbox" on-click="handleLightboxClick">
         </div>
     </div>
     <br/>
@@ -169,9 +169,12 @@ export class TangyOverlay extends PolymerElement {
     if (input) return input.value
   }
 
-  handleClick() {
+  handleMediaButtonClick() {
     this.open = !this.open
   }
 
+  handleLightboxClick() {
+    if (!this.position) this.open = !this.open
+  }
 }
 window.customElements.define(TangyOverlay.is, TangyOverlay)
