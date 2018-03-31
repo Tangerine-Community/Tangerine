@@ -155,21 +155,11 @@ export class TangyForm extends PolymerElement {
             </a>
           </div>
           <paper-tabs selected="[[tabIndex]]" scrollable>
-            <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
+            <template is="dom-if" if="{{hasSummary}}">
+              <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
+            </template>
             <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
           </paper-tabs>
-          <!--template is="dom-if" if="{{showSummary}}">
-            <paper-tabs selected="0" scrollable>
-              <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
-              <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
-            </paper-tabs>
-          </template>
-          <template is="dom-if" if="{{showResponse}}">
-            <paper-tabs selected="1" scrollable>
-              <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
-              <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
-            </paper-tabs>
-          </template-->
         </div>
       </template>
       <slot></slot>
@@ -234,7 +224,13 @@ export class TangyForm extends PolymerElement {
             type: Boolean,
             value: false,
             reflectToAttribute: true
+          },
+          hasSummary: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
+
 
         }
       }
@@ -286,7 +282,11 @@ export class TangyForm extends PolymerElement {
         this.store.dispatch({
           type: 'FORM_RESPONSE_COMPLETE'
         })
-        this.store.dispatch({type: "SHOW_SUMMARY"})
+        if (this.hasSummary) {
+          this.store.dispatch({type: "SHOW_SUMMARY"})
+        } else {
+          this.store.dispatch({type: "SHOW_RESPONSE"})
+        }
       }
 
       onItemNext(event) {
