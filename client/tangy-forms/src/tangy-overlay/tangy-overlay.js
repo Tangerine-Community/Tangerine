@@ -77,11 +77,11 @@ export class TangyOverlay extends PolymerElement {
 
     </style>
 
-    <div id="media-button" on-click="open" >
+    <div id="media-button" on-click="handleClick" >
     </div>
     
     <div id="overlay">
-        <div id="lightbox" on-click="off">
+        <div id="lightbox">
         </div>
     </div>
     <br/>
@@ -98,6 +98,12 @@ export class TangyOverlay extends PolymerElement {
       onOpen: {
         type: String,
         value: ''
+      },
+      open: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true,
+        observer: 'reflect'
       },
       position: {
         type: String,
@@ -134,7 +140,14 @@ export class TangyOverlay extends PolymerElement {
     }
   }
 
-  open(ev) {
+  reflect(ev) {
+    // let currentDisplay = this.shadowRoot.getElementById("overlay").style.display
+    if (this.open) {
+      this.shadowRoot.getElementById("overlay").style.display = "block"
+    } else {
+      this.shadowRoot.getElementById("overlay").style.display = "none"
+    }
+
     if (this.onOpen) {
       let getValue = this.getValue.bind(this)
       let newOverlayContent = ''
@@ -148,7 +161,6 @@ export class TangyOverlay extends PolymerElement {
     } else {
       this.$.lightbox.innerHTML = this.innerHTML 
     }
-    this.on()
   }
 
   getValue(name) {
@@ -157,12 +169,8 @@ export class TangyOverlay extends PolymerElement {
     if (input) return input.value
   }
 
-  on() {
-    this.shadowRoot.getElementById("overlay").style.display = "block";
-  }
-
-  off() {
-    this.shadowRoot.getElementById("overlay").style.display = "none";
+  handleClick() {
+    this.open = !this.open
   }
 
 }
