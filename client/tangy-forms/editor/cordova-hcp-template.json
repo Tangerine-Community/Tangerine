@@ -3,5 +3,6 @@
   "ios_identifier": "",
   "android_identifier": "org.rti.Tangerine",
   "update": "start",
-  "content_url": "URL"
+  "content_url": "URL",
+  "min_native_interface": 1
 }

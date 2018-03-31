@@ -9,9 +9,11 @@ T_UPLOAD_PASSWORD="$6"
 T_HOST_NAME="$7"
 CORDOVA_DIRECTORY="/tangerine/client/builds/apk"
 RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP"
-URL="$T_PROTOCOL://$T_UPLOAD_USER:$T_UPLOAD_PASSWORD@$T_HOST_NAME/releases/prod/apks/$GROUP"
+URL="$T_PROTOCOL://$T_UPLOAD_USER:$T_UPLOAD_PASSWORD@$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP"
+CHCP_URL="$T_PROTOCOL://$T_UPLOAD_USER:$T_UPLOAD_PASSWORD@$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/chcp.json"
+DATE=`date '+%Y-%m-%d %H:%M:%S'`
 
-echo "URL: $URL"
+echo "RELEASE APK script started $DATE"
 
 if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ] || [ "$T_PROTOCOL" = "" ] || [ "$T_UPLOAD_USER" = "" ] || [ "$T_UPLOAD_PASSWORD" = "" ] || [ "$T_HOST_NAME" = "" ]; then
   echo ""
@@ -44,19 +46,24 @@ rm -rf $RELEASE_DIRECTORY/www/content
 cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/content
 
 cd $RELEASE_DIRECTORY
-echo "RELEASE APK: running Cordova build."
 
+# replace the URL property in config.xml
+sed -i -e "s#CHCP_URL#"$CHCP_URL"#g" $RELEASE_DIRECTORY/config.xml
+
+echo "Copying cordova-hcp.json $RELEASE_DIRECTORY"
+cp /tangerine/client/tangy-forms/editor/cordova-hcp-template.json $RELEASE_DIRECTORY/cordova-hcp.json
+sed -i -e "s#URL#"$URL"#g" $RELEASE_DIRECTORY/cordova-hcp.json
+
+# Create the chcp manifest.
+/tangerine/server/node_modules/cordova-hot-code-push-cli/bin/cordova-hcp build
+
+echo "RELEASE APK: running Cordova build."
 cordova build --no-telemetry android
 
-if [ "$RELEASE_TYPE" = "prod" ]; then
-
-    echo "Copying cordova-hcp.json $RELEASE_DIRECTORY"
-
-    cp /tangerine/client/tangy-forms/editor/cordova-hcp-template.json $RELEASE_DIRECTORY/cordova-hcp.json
-    sed -i -e "s#URL#"$URL"#g" $RELEASE_DIRECTORY/cordova-hcp.json
-fi
-
+# Copy the apk to the $RELEASE_DIRECTORY
 cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASE_DIRECTORY/$GROUP.apk
+echo "Released apk for $GROUP at $RELEASE_DIRECTORY on $DATE"
 
-echo "Released apk for $GROUP at $RELEASE_DIRECTORY"
+
+
 
