@@ -37,6 +37,7 @@ export class TangyOverlay extends PolymerElement {
       width: calc(100vw - 100px);
       height: calc(100vh - 100px);
       overflow-y: scroll;
+      overscroll-behavior: contain;
       /*margin: 0;*/
       padding: 0;
       background-color: #fafafa;
