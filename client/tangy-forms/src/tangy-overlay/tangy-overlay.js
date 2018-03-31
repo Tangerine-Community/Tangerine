@@ -45,30 +45,34 @@ export class TangyOverlay extends PolymerElement {
     }
     
     .media-button-top-left {
+      position: fixed;
       left:20px;
       padding: 10px;
       margin-left: -10px;
       margin-top: -20px;
+      z-index: 999999999999999;
     }
     .media-button-top-right {
-      position: absolute;
-      top:0;
-      right:20px;
+      position: fixed;
+      top:30px;
+      right:30px;
       padding: 10px;
-      z-index: 103;
       margin-top: -20px;
+      z-index: 999999999999999;
     }
     .media-button-bottom-left {
-      position: absolute;
+      position: fixed;
       bottom:0;
       left:20px;
       margin:10px;
+      z-index: 999999999999999;
     }
     .media-button-bottom-right {
-      position: absolute;
-      bottom:0;
-      right:20px;
-      margin:10px;
+      position: fixed;
+      bottom:50px;
+      right:50px;
+      margin:0px;
+      z-index: 999999999999999;
     }
 
     </style>
