@@ -54,6 +54,9 @@ export class TangyForm extends PolymerElement {
           margin: 0px;
           padding: 0px;
         }
+        :host([complete]) tangy-form-item[disabled] {
+          display: none;
+        }
         #previousItemButton,
         #nextItemButton {
             position: relative;
