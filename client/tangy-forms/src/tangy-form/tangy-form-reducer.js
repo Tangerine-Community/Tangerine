@@ -51,6 +51,7 @@ const tangyFormReducer = function (state = initialState, action) {
             props.open = false
             props.hideButtons = false
           }
+          props.locked = true
           props.hideBackButton = true
           props.hideNextButton = true
           props.inputs = item.inputs.map(input => {
