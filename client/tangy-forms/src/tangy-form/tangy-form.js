@@ -162,7 +162,7 @@ export class TangyForm extends PolymerElement {
           </paper-tabs>
         </div>
       </template>
-      <slot></slot>
+      <div id="items"></div>
 
         `
       }
@@ -242,18 +242,22 @@ export class TangyForm extends PolymerElement {
 
         // Move to reducer.
         this.querySelectorAll('tangy-form-item').forEach((item) => {
-          if (this.linearMode) item.noButtons = true
-          item.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
-          item.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
-          item.addEventListener('ITEM_CLOSED', this.onItemClosed.bind(this))
-          item.addEventListener('ITEM_OPENED', this.onItemOpened.bind(this))
-          item.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
+          let innerItem = document.createElement('tangy-form-item')
+          innerItem.setProps(item.getProps())
+          if (this.linearMode) innerItem.noButtons = true
+          innerItem.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
+          innerItem.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
+          innerItem.addEventListener('ITEM_CLOSED', this.onItemClosed.bind(this))
+          innerItem.addEventListener('ITEM_OPENED', this.onItemOpened.bind(this))
+          innerItem.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
+          this.$.items.appendChild(innerItem)
         })
 
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
 
+        // @TODO Still necessary?
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
           this.store.dispatch({
@@ -349,7 +353,7 @@ export class TangyForm extends PolymerElement {
         }
 
         // Set state in tangy-form-item elements.
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
+        let items = [].slice.call(this.shadowRoot.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
           let index = state.items.findIndex((itemState) => item.id == itemState.id)
           if (index !== -1) item.setProps(state.items[index])
