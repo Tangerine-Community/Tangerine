@@ -1,5 +1,33 @@
 #!/usr/bin/env bash
 
+if [ ! -d data ]; then
+  mkdir data
+fi
+if [ ! -d data/client ]; then
+  mkdir data/client
+fi
+if [ ! -d data/client/releases ]; then
+  mkdir data/client/releases
+fi
+if [ ! -d data/client/releases/prod ]; then
+  mkdir data/client/releases/prod
+fi
+if [ ! -d data/client/releases/prod/apks ]; then
+  mkdir data/client/releases/prod/apks
+fi
+if [ ! -d data/client/releases/prod/pwas ]; then
+  mkdir data/client/releases/prod/pwas
+fi
+if [ ! -d data/client/releases/qa ]; then
+  mkdir data/client/releases/qa
+fi
+if [ ! -d data/client/releases/qa/apks ]; then
+  mkdir data/client/releases/qa/apks
+fi
+if [ ! -d data/client/releases/qa/pwas ]; then
+  mkdir data/client/releases/qa/pwas
+fi
+
 # Load config.
 source ./config.defaults.sh
 if [ -f "./config.sh" ]; then
