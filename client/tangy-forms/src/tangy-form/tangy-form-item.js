@@ -223,6 +223,11 @@ paper-button {
           type: Boolean,
           value: false,
           relfectToAttribute: true
+        },
+        locked: {
+          type: Boolean,
+          value: false,
+          relfectToAttribute: true
         }
 
       };
@@ -241,6 +246,8 @@ paper-button {
     }
 
     fireHook(hook, target) {
+      // If locked, don't run any logic.
+      if (this.locked) return
       let formEl = this.shadowRoot.querySelector('form')
       // Bail if no matching attribute given the hook called.
       if (!formEl.hasAttribute(hook)) return

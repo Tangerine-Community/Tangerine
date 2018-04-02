@@ -104,7 +104,17 @@ class TangyFormApp extends Element {
     let params = window.getHashParams()
     let formSrc = params.hasOwnProperty('form_src') ? params.form_src : undefined
     let responseId = (params.hasOwnProperty('response_id')) ? params.response_id : undefined
+<<<<<<< HEAD
     let databaseName = (params.database_name) ? params.database_name : 'tangy-form-app'
+=======
+    let databaseName = (params.database_name) ? params.database_name : 'tangy-form-app' 
+    // Prevent accidental form exit.
+    this.$['home-button'].addEventListener('click', (ev) => {
+      ev.preventDefault()
+      let wantsToExit = confirm('Are you sure you would like to exit the form?')
+      if (wantsToExit) window.location.href = '../shell/index.html'
+    })
+>>>>>>> origin/v3
     // Set up service.
     this.service = new TangyFormService({ databaseName })
     await this.service.initialize()
