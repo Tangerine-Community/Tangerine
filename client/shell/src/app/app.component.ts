@@ -89,9 +89,20 @@ export class AppComponent implements OnInit {
     }
   }
   updateApp() {
-    const currentPath = window.location.pathname;
-    const storedReleaseUuid = localStorage.getItem('release-uuid');
-    window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
+    if (window.isCordovaApp) {
+      console.log("Running from APK")
+      let updateCallback = function(error, data) {
+        console.log("data:" + JSON.stringify(data))
+        console.log("error:" + JSON.stringify(error))
+      }
+
+      window.chcp.fetchUpdate(updateCallback)
+    } else {
+      const currentPath = window.location.pathname;
+      const storedReleaseUuid = localStorage.getItem('release-uuid');
+      window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
+    }
+
   }
 
   getGeolocationPosition() {
