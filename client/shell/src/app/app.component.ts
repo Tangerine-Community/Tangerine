@@ -91,11 +91,29 @@ export class AppComponent implements OnInit {
   updateApp() {
     if (window.isCordovaApp) {
       console.log("Running from APK")
+      let installationCallback = function(error) {
+        if (error) {
+          console.log('Failed to install the update with error code: ' + error.code);
+          console.log(error.description);
+        } else {
+          console.log('Update installed!');
+        }
+      }
       let updateCallback = function(error, data) {
         console.log("data:" + JSON.stringify(data))
-        console.log("error:" + JSON.stringify(error))
+        if (error) {
+          console.log("error:" + JSON.stringify(error))
+          alert("No update: " + JSON.stringify(error.description))
+        } else {
+          console.log('Update is loaded');
+          if (window.confirm("An update is available. Be sure to first sync your data before installing the update. If you have not done this, click 'No.' If you are ready to install the update, click 'Yes'.")) {
+            console.log("Installing update.")
+            window.chcp.installUpdate(installationCallback);
+          } else {
+            console.log("Cancelled install; did not install update.")
+          }
+        }
       }
-
       window.chcp.fetchUpdate(updateCallback)
     } else {
       const currentPath = window.location.pathname;
