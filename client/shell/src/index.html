@@ -7,7 +7,10 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
-  <script type="text/javascript" src="../cordova.js"></script>
+  <script>
+    var isCordovaApp = location.protocol === 'file:';
+  </script>
+  <script src="../cordova.js" onload="javascript:window.isCordovaApp = true;"></script>
 </head>
 
 <body>
