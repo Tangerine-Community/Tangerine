@@ -51,9 +51,16 @@ const tangyFormReducer = function (state = initialState, action) {
             props.open = false
             props.hideButtons = false
           }
+          props.locked = true
           props.hideBackButton = true
           props.hideNextButton = true
-          props.inputs = item.inputs.map(input => Object.assign({}, input, {disabled: true}))
+          props.inputs = item.inputs.map(input => {
+            if (input.tagName === 'TANGY-TIMED') {
+              return Object.assign({}, input, {disabled: true, mode: 'TANGY_TIMED_MODE_DISABLED'})
+            } else {
+              return Object.assign({}, input, {disabled: true})
+            }
+          })
           if (item.feedback) {
             props.open = true
           }

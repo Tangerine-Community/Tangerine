@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-import { LoginGuard } from './_guards/login-guard.service';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
+import { LoginGuard } from './_guards/login-guard.service';
 
 // @TODO Add edit-profile component.
 // import { EditProfileComponent } from './edit-profile/edit-profile.component';
