@@ -18,7 +18,7 @@ import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem,
 
 /**
  * `tangy-form-app`
- * ... 
+ * ...
  *
  * @customElement
  * @polymer
@@ -75,7 +75,7 @@ class TangyFormApp extends Element {
       <div id="form-view" hidden="">
         <div id="fake-top-bar">
           <a id="home-button" href="../shell/index.html">
-              <img src="../logo.svg" width=45>
+              <img src="../img/logo.svg" width=45>
           </a>
         </div>
         <div id="form-container"></div>
@@ -116,7 +116,8 @@ class TangyFormApp extends Element {
     await this.service.initialize()
     // Load i18n.
     try {
-      let response = await fetch('../content/translation.json')
+      let src = '../content/translation.json';
+      let response = await fetch(src)
       window.translation = await response.json()
     } catch(e) {
       console.log('No translation found.')
@@ -129,8 +130,8 @@ class TangyFormApp extends Element {
       this.$['form-list'].hidden = true
       await this.loadForm(formSrc, responseId)
     } else {
-      this.$['form-view'].hidden = true 
-      this.$['form-list'].hidden = false 
+      this.$['form-view'].hidden = true
+      this.$['form-list'].hidden = false
       await this.loadFormsList()
     }
     if (params.hasOwnProperty('hide_top_bar')) {
@@ -141,11 +142,13 @@ class TangyFormApp extends Element {
   }
 
   async loadFormsList() {
-    let formsJson = await fetch('../content/forms.json')
+    const url = '../content/forms.json'
+    let formsJson = await fetch(url)
     this.forms = await formsJson.json()
   }
 
   async loadForm(formSrc, responseId) {
+
     // Put the form markup in the form container.
     let formHtml = await fetch(formSrc)
     this.$['form-container'].innerHTML = await formHtml.text()
@@ -155,6 +158,7 @@ class TangyFormApp extends Element {
         parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
       }
     })
+
     // Put a response in the store by issuing the FORM_OPEN action.
     if (responseId) {
       let response = await this.service.getResponse(responseId)
@@ -172,7 +176,7 @@ class TangyFormApp extends Element {
     }
   }
 
-  // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store. 
+  // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
   // Everything else in between we can ignore.
   async throttledSaveResponse() {
     // If already loaded, return.

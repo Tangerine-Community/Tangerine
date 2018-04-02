@@ -240,6 +240,7 @@ export class TangyForm extends PolymerElement {
 
       connectedCallback() {
         super.connectedCallback()
+        console.log("Testing updates 04-02-2018 connectedCallback in tangy-form.js")
         // Set up the store.
         this.store = window.tangyFormStore
 
@@ -276,7 +277,7 @@ export class TangyForm extends PolymerElement {
         this.hasNotYetFocused = true
 
       }
-      
+
       disconnectedCallback() {
         this.unsubscribe()
       }
@@ -284,7 +285,7 @@ export class TangyForm extends PolymerElement {
       onFormResponseComplete(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
         this.store.dispatch({
           type: 'FORM_RESPONSE_COMPLETE'
@@ -299,7 +300,7 @@ export class TangyForm extends PolymerElement {
       onItemNext(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
         this.focusOnNextItem()
       }
@@ -307,7 +308,7 @@ export class TangyForm extends PolymerElement {
       onItemBack(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
         this.focusOnPreviousItem()
       }
@@ -315,14 +316,14 @@ export class TangyForm extends PolymerElement {
       onItemOpened(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
       }
 
       onItemClosed(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
       }
 
@@ -412,7 +413,7 @@ export class TangyForm extends PolymerElement {
           } else if (foundInput && foundInput.hasOwnProperty('value')) {
             return foundInput.value
           } else {
-            return '' 
+            return ''
           }
 
         }
