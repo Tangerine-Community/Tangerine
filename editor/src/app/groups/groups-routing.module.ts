@@ -12,8 +12,8 @@ const groupsRoutes: Routes = [
   { path: 'projects', component: GroupsComponent, canActivate: [AuthGuard] },
   { path: 'new-group', component: NewGroupComponent, canActivate: [AuthGuard] },
   { path: 'group/:id', component: GroupComponent, canActivate: [AuthGuard] },
-  { path: 'group/release-apk/:id', component: ReleaseApkComponent, canActivate: [AuthGuard] },
-  { path: 'group/release-pwa/:id', component: ReleasePwaComponent, canActivate: [AuthGuard] },
+  { path: 'group/release-apk/:id/:releaseType', component: ReleaseApkComponent, canActivate: [AuthGuard] },
+  { path: 'group/release-pwa/:id/:releaseType', component: ReleasePwaComponent, canActivate: [AuthGuard] },
 ];
 @NgModule({
   imports: [
