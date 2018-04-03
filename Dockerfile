@@ -256,6 +256,8 @@ ADD ./ /tangerine-server
 
 RUN mkdir /tangerine-server/logs
 
+RUN npm install -g nodemon
+
 # Volumes
 VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks
