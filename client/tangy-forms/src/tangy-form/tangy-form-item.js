@@ -222,12 +222,12 @@ paper-button {
         hidden: {
           type: Boolean,
           value: false,
-          relfectToAttribute: true
+          reflectToAttribute: true
         },
         locked: {
           type: Boolean,
           value: false,
-          relfectToAttribute: true
+          reflectToAttribute: true
         }
 
       };
