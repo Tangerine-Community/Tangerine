@@ -11,6 +11,7 @@ export class ObservationsByLocationComponent implements OnInit {
   observations = [];
   filterValuesForDates;
   locationId;
+  columns;
   constructor(
     private caseManagementService: CaseManagementService,
     private route: ActivatedRoute
@@ -20,12 +21,14 @@ export class ObservationsByLocationComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.locationId = params['locationId'];
       this.getObservations(this.locationId);
+
     });
 
   }
   async getObservations(locationId: string) {
     this.filterValuesForDates = await this.caseManagementService.getFilterDatesForAllFormResponsesByLocationId(locationId);
     this.observations = await this.caseManagementService.getResponsesByLocationId(locationId);
+    this.columns = this.observations[0]['columns'];
   }
 
   async onSelectDate(event) {
