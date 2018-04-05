@@ -75,7 +75,7 @@ class TangyFormApp extends Element {
       <div id="form-view" hidden="">
         <div id="fake-top-bar">
           <a id="home-button" href="../shell/index.html">
-              <img src="../img/logo.svg" width=45>
+              <img src="../logo.svg" width=45>
           </a>
         </div>
         <div id="form-container"></div>
