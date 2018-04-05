@@ -81,3 +81,7 @@ CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 
 echo "Running $T_CONTAINER_NAME at version $T_TAG"
 eval ${CMD}
+
+echo "Installing missing plugin..."
+docker exec tangerine bash -c "cd /tangerine/client/builds/apk/ && cordova --no-telemetry plugin add cordova-plugin-whitelist --save"
+echo "Done."
