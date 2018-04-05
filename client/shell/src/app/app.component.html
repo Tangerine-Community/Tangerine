@@ -1,3 +1,11 @@
+<div id="update-in-progress" *ngIf="updateIsRunning">
+  <div id="update-in-progress-inner">
+    <img src="../logo.svg"> <br>
+    Update is running. Please wait... <br><br>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+</div>
+
 <mat-toolbar color="primary" class="mat-typography mat-tangy-custom-toolbar">
   <span class="home-icon">
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="/home">
