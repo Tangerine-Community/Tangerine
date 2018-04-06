@@ -10,6 +10,7 @@ import {
   MatMenuModule,
   MatSidenavModule,
   MatToolbarModule,
+  MatProgressBarModule,
   MATERIAL_COMPATIBILITY_MODE
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
@@ -39,7 +40,7 @@ export { AppComponent }
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
-    MatButtonModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule,
+    MatButtonModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule,
     UuidModule,
     TangyFormsModule,
     AuthModule,
