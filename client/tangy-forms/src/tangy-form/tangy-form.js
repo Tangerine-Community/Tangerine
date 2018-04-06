@@ -54,6 +54,9 @@ export class TangyForm extends PolymerElement {
           margin: 0px;
           padding: 0px;
         }
+        :host([complete]) tangy-form-item[disabled] {
+          display: none;
+        }
         #previousItemButton,
         #nextItemButton {
             position: relative;
@@ -155,24 +158,14 @@ export class TangyForm extends PolymerElement {
             </a>
           </div>
           <paper-tabs selected="[[tabIndex]]" scrollable>
-            <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
+            <template is="dom-if" if="{{hasSummary}}">
+              <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
+            </template>
             <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
           </paper-tabs>
-          <!--template is="dom-if" if="{{showSummary}}">
-            <paper-tabs selected="0" scrollable>
-              <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
-              <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
-            </paper-tabs>
-          </template>
-          <template is="dom-if" if="{{showResponse}}">
-            <paper-tabs selected="1" scrollable>
-              <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
-              <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
-            </paper-tabs>
-          </template-->
         </div>
       </template>
-      <slot></slot>
+      <div id="items"></div>
 
         `
       }
@@ -234,30 +227,41 @@ export class TangyForm extends PolymerElement {
             type: Boolean,
             value: false,
             reflectToAttribute: true
+          },
+          hasSummary: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
+
 
         }
       }
 
       connectedCallback() {
         super.connectedCallback()
+        console.log("Testing updates 04-02-2018 connectedCallback in tangy-form.js")
         // Set up the store.
         this.store = window.tangyFormStore
 
         // Move to reducer.
         this.querySelectorAll('tangy-form-item').forEach((item) => {
-          if (this.linearMode) item.noButtons = true
-          item.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
-          item.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
-          item.addEventListener('ITEM_CLOSED', this.onItemClosed.bind(this))
-          item.addEventListener('ITEM_OPENED', this.onItemOpened.bind(this))
-          item.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
+          let innerItem = document.createElement('tangy-form-item')
+          innerItem.setProps(item.getProps())
+          if (this.linearMode) innerItem.noButtons = true
+          innerItem.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
+          innerItem.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
+          innerItem.addEventListener('ITEM_CLOSED', this.onItemClosed.bind(this))
+          innerItem.addEventListener('ITEM_OPENED', this.onItemOpened.bind(this))
+          innerItem.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
+          this.$.items.appendChild(innerItem)
         })
 
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
 
+        // @TODO Still necessary?
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
           this.store.dispatch({
@@ -273,7 +277,7 @@ export class TangyForm extends PolymerElement {
         this.hasNotYetFocused = true
 
       }
-      
+
       disconnectedCallback() {
         this.unsubscribe()
       }
@@ -281,18 +285,22 @@ export class TangyForm extends PolymerElement {
       onFormResponseComplete(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
         this.store.dispatch({
           type: 'FORM_RESPONSE_COMPLETE'
         })
-        this.store.dispatch({type: "SHOW_SUMMARY"})
+        if (this.hasSummary) {
+          this.store.dispatch({type: "SHOW_SUMMARY"})
+        } else {
+          this.store.dispatch({type: "SHOW_RESPONSE"})
+        }
       }
 
       onItemNext(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
         this.focusOnNextItem()
       }
@@ -300,7 +308,7 @@ export class TangyForm extends PolymerElement {
       onItemBack(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
         this.focusOnPreviousItem()
       }
@@ -308,14 +316,14 @@ export class TangyForm extends PolymerElement {
       onItemOpened(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
       }
 
       onItemClosed(event) {
         this.store.dispatch({
           type: 'ITEM_SAVE',
-          item: event.target.getProps() 
+          item: event.target.getProps()
         })
       }
 
@@ -349,7 +357,7 @@ export class TangyForm extends PolymerElement {
         }
 
         // Set state in tangy-form-item elements.
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
+        let items = [].slice.call(this.shadowRoot.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
           let index = state.items.findIndex((itemState) => item.id == itemState.id)
           if (index !== -1) item.setProps(state.items[index])
@@ -405,7 +413,7 @@ export class TangyForm extends PolymerElement {
           } else if (foundInput && foundInput.hasOwnProperty('value')) {
             return foundInput.value
           } else {
-            return '' 
+            return ''
           }
 
         }

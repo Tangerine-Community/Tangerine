@@ -55,6 +55,12 @@ class TangySelect extends Element {
         observer: 'reflect',
         reflectToAttribute: true
       },
+      secondaryLabel: {
+        type: String,
+        value: '',
+        observer: 'reflect',
+        reflectToAttribute: true
+      },
       hidden: {
         type: Boolean,
         value: false,
@@ -104,13 +110,16 @@ class TangySelect extends Element {
       <label for="group">${this.label}</label>
       <div class="mdc-select">
         <select class="mdc-select__surface" value="${this.value}">
-        ${options.map((option, i) => `
-          <option 
-            value="${option.value}" 
-          >
-            ${option.innerHTML}
-          </option>
-        `)}
+          ${ (this.secondaryLabel) ? `
+            <option value="" default selected disabled>${this.secondaryLabel}</option>
+          ` : ``}
+          ${options.map((option, i) => `
+            <option 
+              value="${option.value}" 
+            >
+              ${option.innerHTML}
+            </option>
+          `)}
         </select>
       </div>
       <div class="mdc-select__bottom-line"></div>

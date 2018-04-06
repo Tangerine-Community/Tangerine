@@ -2,23 +2,29 @@
 
 GROUP="$1"
 CONTENT_PATH="$2"
+RELEASE_TYPE="$3"
+RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/pwas/$GROUP"
 
-if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ]; then
+echo "RELEASE_DIRECTORY: $RELEASE_DIRECTORY"
+
+if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
   echo ""
   echo "RELEASE PWA"
   echo "A command for releasing a PWA using a secret URL."
   echo ""
-  echo "./release-pwa.sh <secret> <content path>"
+  echo "./release-pwa.sh <secret> <content path> <release type>"
+  echo ""
+  echo "Release type is either qa or prod."
   echo ""
   echo "Usage:"
-  echo "  ./release-pwa.sh a4uw93 /tangerine-server/data/content/group-a"
+  echo "  ./release-pwa.sh a4uw93 ./content/groups/group-a prod"
   echo ""
   echo "Then visit https://foo.tanerinecentral.org/pwa/a4uw93/"
   echo ""
   echo ""
   exit
 fi
-
+ q
 # Create a temporary PWA folder that we'll move to the secret.
 cp -r builds/pwa .pwa-temporary
 
@@ -39,6 +45,6 @@ cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
 mv .pwa-temporary/sw.js .pwa-temporary/$UUID.js
 echo $UUID > .pwa-temporary/release-uuid.txt
 
-rm -r releases/pwas/$GROUP
-mv .pwa-temporary releases/pwas/$GROUP
-echo "Release with UUID of $UUID"
+rm -r $RELEASE_DIRECTORY
+mv .pwa-temporary $RELEASE_DIRECTORY
+echo "Release with UUID of $UUID to $RELEASE_DIRECTORY"
