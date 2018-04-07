@@ -33,3 +33,9 @@ cp -r wrappers/dev builds/dev
 cp -r tangy-forms/dist builds/dev/tangy-forms
 cp -r shell/dist builds/dev/shell
 cp -r content/default builds/dev/content
+
+# Wrap up Dat build.
+cp -r wrappers/dat builds/dat
+cp -r tangy-forms/dist builds/dat/tangy-forms
+cp -r shell/dist builds/dat/shell
+cp -r content/default builds/dat/content

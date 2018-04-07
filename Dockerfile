@@ -7,7 +7,7 @@ RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selectio
 
 RUN apt update
 
-RUN npm install -g nodemon
+RUN npm install -g nodemon dat-party dat
 RUN echo foo
 
 # T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
