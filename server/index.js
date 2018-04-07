@@ -569,3 +569,6 @@ var server = app.listen(config.port, function() {
   console.log(server.address());
   console.log('Server V3: http://%s:%s', host, port);
 });
+
+exec(`cd /tangerine/releases/qa/dat && dat-party`)
+exec(`cd /tangerine/releases/prod/dat && dat-party`)

@@ -18,6 +18,9 @@ fi
 if [ ! -d data/client/releases/prod/pwas ]; then
   mkdir data/client/releases/prod/pwas
 fi
+if [ ! -d data/client/releases/prod/dat ]; then
+  mkdir data/client/releases/prod/dat
+fi
 if [ ! -d data/client/releases/qa ]; then
   mkdir data/client/releases/qa
 fi
@@ -26,6 +29,9 @@ if [ ! -d data/client/releases/qa/apks ]; then
 fi
 if [ ! -d data/client/releases/qa/pwas ]; then
   mkdir data/client/releases/qa/pwas
+fi
+if [ ! -d data/client/releases/qa/dat ]; then
+  mkdir data/client/releases/qa/dat
 fi
 
 # Load config.
