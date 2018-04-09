@@ -1,9 +1,10 @@
 <div class="login-app-content">
   <div class="group">
     <form role="form" #login='ngForm' novalidate>
-      <br>
       <h3 class="mat-title">Log in to Tangerine</h3>
-      <select style="width: 92%" *ngIf="listUsernamesOnLoginScreen" name="usernames" id="usernames" (change)="onSelectUsername($event)">
+      <br>
+      <br>
+      <select *ngIf="listUsernamesOnLoginScreen" name="usernames" id="usernames" (change)="onSelectUsername($event)">
         <option value="_">Select your Username</option>
         <option *ngFor="let username of allUsernames" [value]="username">{{username}}</option>
       </select>
@@ -46,18 +47,23 @@
           </mat-placeholder>
         </mat-form-field>
       </div>
+      <br>
+      <br>
       <span>
         <small>
           <a href="#" *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()">Click Here to Reset Password</a>
           <a href="#" *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()">Click Here to go to Login</a>
         </small>
       </span>
-      <p></p>
+      <br>
+      <br>
+      <br>
+      <br>
 
       <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">LOGIN</button>
       <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
         color="accent" name="action">Recover Account</button>
-      <a href="index.html#/register">REGISTER</a>
+      <a href="#/register">REGISTER</a>
       <br>
       <br>
       <span id="err">
