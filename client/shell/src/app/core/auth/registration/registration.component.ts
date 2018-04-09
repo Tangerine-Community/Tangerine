@@ -41,7 +41,6 @@ export class RegistrationComponent implements OnInit {
     ) {
         this.statusMessage = { type: '', message: '' };
     }
-
     async ngOnInit() {
         const appConfig = await this.appConfigService.getAppConfig();
         const homeUrl = appConfig.homeUrl;
