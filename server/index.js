@@ -512,6 +512,17 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   res.end()
 })
 
+app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isAuthenticated, async function (req, res) {
+  let db = new DB(req.params.groupName)
+  const template = require('./template');
+  delete template._rev
+  let i = 0
+  while (i <= parseInt(req.params.numberOfResponses)) {
+    await db.put(Object.assign({} , template, { _id: crypto.randomBytes( 20 ).toString('hex') }))
+    i++
+  }
+  res.send('ok')
+})
 
 /**
  * Reporting App routes
@@ -530,15 +541,3 @@ app.post('/workflow/result/:id', tripController.processResult);
 app.post('/generate_csv/:id', csvController.generate);
 app.post('/tangerine_changes', changesController.changes);
 app.post('/get_processed_results/:id', dbQuery.processedResultsById);
-
-app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isAuthenticated, async function (req, res) {
-  let db = new DB(req.params.groupName)
-  const template = require('./template');
-  delete template._rev
-  let i = 0
-  while (i <= parseInt(req.params.numberOfResponses)) {
-    await db.put(Object.assign({} , template, { _id: crypto.randomBytes( 20 ).toString('hex') }))
-    i++
-  }
-  res.send('ok')
-})
