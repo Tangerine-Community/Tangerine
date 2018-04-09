@@ -19,9 +19,10 @@ export class RegistrationComponent implements OnInit {
 
     user = <User>{
         username: '',
-        email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        securityQuestionResponse: '',
+        hashSecurityQuestionResponse: true
     };
     isUsernameTaken: boolean;
     returnUrl: string;
@@ -30,6 +31,7 @@ export class RegistrationComponent implements OnInit {
     userNameAvailableMessage = { type: 'success', message: 'Username Available.' };
     loginUnsucessfulMessage = { type: 'error', message: 'Login Unsuccessful' };
     couldNotCreateUserMessage = { type: 'error', message: 'Could Not Create User' };
+    securityQuestionText: string;
     constructor(
         private userService: UserService,
         private authenticationService: AuthenticationService,
@@ -41,8 +43,11 @@ export class RegistrationComponent implements OnInit {
     }
 
     async ngOnInit() {
-        const home_url = await this.appConfigService.getDefaultURL();
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || home_url;
+        const appConfig = await this.appConfigService.getAppConfig();
+        const homeUrl = appConfig.homeUrl;
+        this.securityQuestionText = appConfig.securityQuestionText;
+        this.user.hashSecurityQuestionResponse = appConfig.hashSecurityQuestionResponse;
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
         const isNoPasswordMode = await this.authenticationService.isNoPasswordMode();
         if (isNoPasswordMode) {
 
@@ -68,7 +73,8 @@ export class RegistrationComponent implements OnInit {
 
     }
     doesUserExist(user) {
-        Observable.fromPromise(this.userService.doesUserExist(user.trim())).subscribe((data) => {
+        this.user.username = user.replace(/\s/g, ''); // Remove all whitespaces including spaces and tabs
+        Observable.fromPromise(this.userService.doesUserExist(user.replace(/\s/g, ''))).subscribe((data) => {
             this.isUsernameTaken = data;
             this.isUsernameTaken ?
                 this.statusMessage = this.userNameUnavailableMessage :

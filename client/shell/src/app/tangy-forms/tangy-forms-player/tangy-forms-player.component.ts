@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { CaseManagementService } from '../../case-management/_services/case-management.service';
 import { UserService } from '../../core/auth/_services/user.service';
+import { WindowRef } from '../../core/window-ref.service';
 
 @Component({
   selector: 'app-tangy-forms-player',
@@ -16,7 +17,8 @@ export class TangyFormsPlayerComponent implements OnInit {
   constructor(
     private caseManagementService: CaseManagementService,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private windowRef: WindowRef
   ) { }
 
   ngOnInit() {
@@ -34,9 +36,9 @@ export class TangyFormsPlayerComponent implements OnInit {
         // Relative path to tangy forms app.
         let formUrl = `../tangy-forms/index.html#form_src=${form[index]['src']}&database_name=${userDB}`;
         if (this.responseId) {
-          formUrl += `&response_id=${this.responseId}`
+          formUrl += `&response_id=${this.responseId}`;
         }
-        this.formUrl = formUrl
+        this.windowRef.nativeWindow.location = formUrl;
       } else {
         console.error('Item not Found');
       }

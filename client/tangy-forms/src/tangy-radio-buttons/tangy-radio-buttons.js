@@ -1,12 +1,11 @@
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
 
-import '../../node_modules/@polymer/paper-radio-button/paper-radio-button.js';
-import '../../node_modules/@polymer/paper-radio-group/paper-radio-group.js';
+import '../tangy-radio-button/tangy-radio-button.js'
 import '../tangy-form/tangy-element-styles.js';
 import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-radio-buttons`
- * 
+ *
  *
  * @customElement
  * @polymer
@@ -29,8 +28,7 @@ class TangyRadioButtons extends Element {
     <div class="container">
       <label for="group">[[label]]</label>
       <span class="secondary_color">select only one</span>
-      <paper-radio-group name="group" id="paper-radio-group">
-      </paper-radio-group>
+      <div id="container"></div>
     </div>
 `;
   }
@@ -41,96 +39,136 @@ class TangyRadioButtons extends Element {
     return {
       name: {
         type: String,
-        value: ''
+        value: '',
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       value: {
-        type: String,
-        value: '',
-        reflectToAttribute: true,
-        observer: 'onValueChange'
+        type: Array,
+        value: [],
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       required: {
         type: Boolean,
-        value: false
+        value: false,
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       disabled: {
         type: Boolean,
         value: false,
-        observer: 'onDisabledChange',
+        observer: 'reflect',
         reflectToAttribute: true
       },
       label: {
         type: String,
         value: '',
+        observer: 'reflect',
         reflectToAttribute: true
       },
       hidden: {
         type: Boolean,
         value: false,
-        observer: 'onHiddenChange',
+        observer: 'reflect',
         reflectToAttribute: true
       },
       invalid: {
         type: Boolean,
         value: false,
+        observer: 'reflect',
         reflectToAttribute: true
       },
       incomplete: {
         type: Boolean,
         value: true,
+        observer: 'reflect',
         reflectToAttribute: true
       }
     }
   }
 
+  constructor() {
+    super()
+    this.value = []
+  }
+
   connectedCallback() {
     super.connectedCallback()
-    this.isReady = false
-    let paperRadioGroupEl = this.shadowRoot.querySelector('paper-radio-group')
-    paperRadioGroupEl.addEventListener('change', this.onPaperRadioGroupChange.bind(this), false)
-    // Populate options as paper-radio-button elements
+    this.render()
+    this.reflect()
+  }
+  
+  reflect() {
+    this.shadowRoot.querySelectorAll('tangy-radio-button').forEach(el => {
+      let matchingState = this.value.find(state => el.name == state.name)
+      el.setProps(matchingState)
+      el.disabled = this.disabled
+      el.hidden = this.hidden
+    })
+  }
+
+  render() {
+    this.$.container.innerHTML = ''
+    // Populate options as tangy-radio-button elements
     let options = this.querySelectorAll('option')
     for (let option of options) {
-      let button = document.createElement('paper-radio-button')
-      button.name = option.value
-      if (this.disabled) button.setAttribute('disabled', true)
-      button.innerHTML = option.innerHTML
-      paperRadioGroupEl.appendChild(button)
+      let el = document.createElement('tangy-radio-button')
+      el.name = option.value
+      el.innerHTML = option.innerHTML
+      this.$.container.appendChild(el)
     }
-    paperRadioGroupEl.selected = this.value
-    if (this.required) paperRadioGroupEl.required = true
-    this.isReady = true
+
+    let newValue = []
+    this
+      .shadowRoot
+      .querySelectorAll('tangy-radio-button')
+      .forEach ((el) => {
+        el.addEventListener('change', this.onRadioButtonChange.bind(this))
+        newValue.push(el.getProps())
+      })
+    if (!this.value || (typeof this.value === 'object' && this.value.length < newValue.length)) {
+      this.value = newValue
+    }
+
   }
 
-  onPaperRadioGroupChange(event) {
-    // Stop propagation of paper-radio-button change event so we can set the value of this element first.
-    // Otherwise tangy-form-item will find the wrong value for this element.
-    event.stopPropagation()
-    if (!this.isReady) return
-    // The value we dispatch is the event.target.name. Remember, that's the option that was just selected
-    // and the option's name selected is the value of this element.
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
-      detail: {
-        inputName: this.name,
-        inputValue: event.target.name,
-        inputInvalid: false, 
-        inputIncomplete: false 
-      }, 
-      bubbles: true
-    }))
+  onRadioButtonChange(event) {
+    let targetButton = event.target
+    if (targetButton.value = 'on') {
+      this
+        .$
+        .container
+        .querySelectorAll('tangy-radio-button')
+        .forEach(el => {
+          if (el.name !== targetButton.name && targetButton.value == 'on') {
+            el.value =  ''
+          } 
+        })
+    }
+
+    let newValue = []
+    this.shadowRoot
+      .querySelectorAll('tangy-radio-button')
+      .forEach(el => newValue.push(el.getProps()))
+    this.value = newValue
+    this.dispatchEvent(new CustomEvent('change'))
+
   }
 
-  onValueChange(value) {
-    if (!this.isReady) return
-    this.$['paper-radio-group'].selected = value
+  validate() {
+    let foundOne = false
+    this.shadowRoot.querySelectorAll('[name]').forEach(el => {
+      if (el.value === 'on') foundOne = true
+    })
+    if (this.required && !this.hidden && !this.disabled && !foundOne) {
+      this.invalid = true
+      return false
+    } else {
+      this.invalid = false
+      return true
+    }
   }
 
-  onDisabledChange(value) {
-    let paperRadioButtons = this.shadowRoot.querySelectorAll('paper-radio-button')
-    if (value == true) paperRadioButtons.forEach((button) => button.setAttribute('disabled', true))
-    if (value == false) paperRadioButtons.forEach((button) => button.removeAttribute('disabled'))
-  }
-  onHiddenChange(value) {
-  }
 }
 window.customElements.define(TangyRadioButtons.is, TangyRadioButtons);

@@ -18,7 +18,7 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
         position: relative;
         border: solid white 5px;
         padding: 10px;
-        margin: 0 5px 5px 0px;
+        margin: 10px 0 45px 0px;
       }
 
       :host(:not([hidden])) {
@@ -72,7 +72,6 @@ $_documentStyleContainer.innerHTML = `<dom-module id="tangy-element-styles">
         font-size: 1.2em;
         margin-bottom: 15px;
         color: var(--primary-text-color);
-        text-transform: capitalize;
         margin-bottom: 5px;
       }
   

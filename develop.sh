@@ -2,6 +2,34 @@
 
 set -e
 
+if [ ! -d data ]; then
+  mkdir data
+fi
+if [ ! -d data/client ]; then
+  mkdir data/client
+fi
+if [ ! -d data/client/releases ]; then
+  mkdir data/client/releases
+fi
+if [ ! -d data/client/releases/prod ]; then
+  mkdir data/client/releases/prod
+fi
+if [ ! -d data/client/releases/prod/apks ]; then
+  mkdir data/client/releases/prod/apks
+fi
+if [ ! -d data/client/releases/prod/pwas ]; then
+  mkdir data/client/releases/prod/pwas
+fi
+if [ ! -d data/client/releases/qa ]; then
+  mkdir data/client/releases/qa
+fi
+if [ ! -d data/client/releases/qa/apks ]; then
+  mkdir data/client/releases/qa/apks
+fi
+if [ ! -d data/client/releases/qa/pwas ]; then
+  mkdir data/client/releases/qa/pwas
+fi
+
 # Load config.
 
 source ./config.defaults.sh
@@ -27,15 +55,17 @@ docker run -it --name $T_CONTAINER_NAME \
   --env "T_USER1=$T_USER1" \
   --env "T_USER1_PASSWORD=$T_USER1_PASSWORD" \
   --env "T_HOST_NAME=$T_HOST_NAME" \
+  --env "T_REPLICATE=$T_REPLICATE" \
   $T_PORT_MAPPING \
-  --volume $(pwd)/data/client/apks:/tangerine/client/releases/apks/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
-  --volume $(pwd)/data/client/pwas:/tangerine/client/releases/pwas/ \
+  --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting \
+  --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \
+  --volume $(pwd)/upgrades:/tangerine/upgrades \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
   --volume $(pwd)/editor/package.json:/tangerine/editor/package.json \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
@@ -44,6 +74,7 @@ docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/client/tangy-forms/src:/tangerine/client/tangy-forms/src \
   --volume $(pwd)/client/tangy-forms/assets:/tangerine/client/tangy-forms/assets \
   --volume $(pwd)/client/tangy-forms/index.html:/tangerine/client/tangy-forms/index.html \
+  --volume $(pwd)/client/tangy-forms/editor.html:/tangerine/client/tangy-forms/editor.html \
   --volume $(pwd)/client/tangy-forms/package.json:/tangerine/client/tangy-forms/package.json \
   --volume $(pwd)/client/tangy-forms/yarn.lock:/tangerine/client/tangy-forms/yarn.lock \
   --volume $T_DEV_CONTENT:/tangerine/client/builds/dev/content \

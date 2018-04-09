@@ -10,6 +10,7 @@ import {
   MatMenuModule,
   MatSidenavModule,
   MatToolbarModule,
+  MatProgressBarModule,
   MATERIAL_COMPATIBILITY_MODE
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
@@ -22,8 +23,10 @@ import { AuthModule } from './core/auth/auth.module';
 import { SyncRecordsModule } from './core/sync-records/sync-records.module';
 import { WindowRef } from './core/window-ref.service';
 import { Loc } from './core/location.service';
+import { UpdateModule } from './core/update/update.module';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
+import { ExportDataModule } from './core/export-data/export-data.module';
 
 // import { CaseManagementModule } from './case-management/case-management.module';
 export { AppComponent }
@@ -37,13 +40,15 @@ export { AppComponent }
     FormsModule,
     HttpModule,
     BrowserAnimationsModule,
-    MatButtonModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule,
+    MatButtonModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule,
     UuidModule,
     TangyFormsModule,
     AuthModule,
     CaseManagementModule,
     UserProfileModule,
+    UpdateModule,
     SyncRecordsModule,
+    ExportDataModule,
     AppRoutingModule,
     SharedModule
   ],
