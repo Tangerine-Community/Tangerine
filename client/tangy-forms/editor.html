@@ -21,7 +21,8 @@
   <script src="node_modules/underscore/underscore.js"></script>
   <script src="node_modules/moment/min/moment-with-locales.min.js"></script>
   <script src="bower_components/pouchdb/dist/pouchdb.js"></script>
-  <script src="../ckeditor/dist/ckeditor.js"></script>
+  <script src="/ckeditor/ckeditor.js"></script>
+  <script src="/ace/src-min-noconflict/ace.js"></script>
 
   <script type="module" src="src/editor.js"></script>
 
@@ -34,6 +35,39 @@
           margin: 0px;
           background: #FAFAFA;
       }
+
+      /* Formatting to work around how ckeditor adds extra p between tags. */
+      /*p:not(:first-child):empty {*/
+        /*display:none*/
+      /*}*/
+      /*p:not(:first-child) > br {*/
+        /*display:none*/
+      /*}*/
+      #editorTEXT {
+        position: relative;
+        width: 500px;
+        height: 800px;
+      }
+      .ace_editor {
+        border: 1px solid lightgray;
+        margin: auto;
+        height: 200px;
+        width: 80%;
+      }
+
+      .ace_editor * {
+        font-family: 'Courier New', Courier, monospace !important;
+      }
+
+      .scrollmargin {
+        height: 80px;
+        text-align: center;
+      }
+      #editorCK {
+        margin-top: 60px;
+        border: 1px solid gray;
+        font-size: medium;
+      }
   </style>
 
   <body>
@@ -44,7 +78,11 @@
     </div>
 
     <tangy-editor-app></tangy-editor-app>
-    <div id="content" style = "display:none"></div>
+    <div id="content" style = "display:none">
+      <div id="editorCK" style = "display:none"></div>
+      <div id="editorTEXT"></div>
+      <div id="content_region"></div>
+    </div>
   </body>
 
 </html>

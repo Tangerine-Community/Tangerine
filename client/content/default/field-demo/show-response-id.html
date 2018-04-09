@@ -1,0 +1,8 @@
+<form on-open="
+inputs.response_id.value = state._id.substr(state._id.length - 5, state._id.length) 
+inputs.response_id.disabled = true
+">
+Response ID:
+<tangy-input name="response_id"></tangy-input>
+
+</form>

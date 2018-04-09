@@ -18,13 +18,18 @@ import '../tangy-timed/tangy-timed.js'
 import '../tangy-checkbox/tangy-checkbox.js'
 import '../tangy-checkboxes/tangy-checkboxes.js'
 import '../tangy-radio-buttons/tangy-radio-buttons.js'
+import '../tangy-select/tangy-select.js'
 import '../tangy-location/tangy-location.js'
 import '../tangy-gps/tangy-gps.js'
+import '../tangy-complete-button/tangy-complete-button.js'
 import '../tangy-overlay/tangy-overlay.js'
+import '../tangy-acasi/tangy-acasi.js';
 
 //   <!-- Dependencies -->
 import '../../node_modules/@polymer/paper-fab/paper-fab.js';
 import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
+import '../../node_modules/@polymer/paper-tabs/paper-tab.js';
+import '../../node_modules/@polymer/paper-tabs/paper-tabs.js';
 
 
     /**
@@ -48,6 +53,9 @@ export class TangyForm extends PolymerElement {
           display: block;
           margin: 0px;
           padding: 0px;
+        }
+        :host([complete]) tangy-form-item[disabled] {
+          display: none;
         }
         #previousItemButton,
         #nextItemButton {
@@ -94,22 +102,40 @@ export class TangyForm extends PolymerElement {
         paper-progress {
           width: 100%;
         }
-        #tangerine-footer {
+        #bar {
           width:100%;
           background-color: var(--primary-color);
-          height: 40px;
+          color: var(--accent-color);
+          height: 99px;
           position: fixed;
-          bottom: 0px;
-      }
+          top: 0px;
+          z-index:999;
+        }
+        #fake-top-bar {
+          background: var(--primary-color-dark);
+          padding: 8px 0px 0px 8px;
+        }
+        #bar-filler {
+          height: 45px;
+        }
       
       #markCompleteButton,
       #previousItemButton,
       #nextItemButton {
         padding: 0;
+        color: var(--accent-color);
         --paper-fab-iron-icon: {
-          height: 50px;
-          width: 50px;
+          color: var(--accent-color);
+          height: 75px;
+          width: 75px;
         };
+      }
+      #markCompleteButton paper-icon-button,
+      #previousItemButton paper-icon-button,
+      #nextItemButton paper-icon-button, paper-icon-button {
+        width: 75px;
+        height: 75px;
+
       }
       paper-fab[disabled] {
         background-color: #cccccc !important;
@@ -121,16 +147,40 @@ export class TangyForm extends PolymerElement {
         background-color: #1976d2;
       }
       </style>
-      <slot></slot>
-      <div id="nav">
-      </div>
-      <paper-progress id="progress" value="0" secondary-progress="0"></paper-progress>
-      <div id="tangerine-footer">
-        <paper-icon-button id="markCompleteButton" on-click="markComplete" icon="icons:check" hidden></paper-icon-button>
-        <paper-icon-button id="previousItemButton" on-click="focusOnPreviousItem" icon="icons:chevron-left"></paper-icon-button>
-        <paper-icon-button id="nextItemButton" on-click="focusOnNextItem" icon="icons:chevron-right"></paper-icon-button>
-      </div>
+
+      <div id="nav"></div>
+      <template is="dom-if" if="{{complete}}">
+        <div id="bar-filler">filler</div>
+        <div id="bar">
+          <div id="fake-top-bar">
+            <a id="home-button" href="../shell/index.html">
+                <img src="../logo.svg" width=35>
+            </a>
+          </div>
+          <paper-tabs selected="[[tabIndex]]" scrollable>
+            <template is="dom-if" if="{{hasSummary}}">
+              <paper-tab id="summary-button" on-click="onClickSummaryTab">summary</paper-tab>
+            </template>
+            <paper-tab id="response-button" on-click="onClickResponseTab">response</paper-tab>
+          </paper-tabs>
+        </div>
+      </template>
+      <div id="items"></div>
+
         `
+      }
+
+      onClickSummaryTab() {
+        this.store.dispatch({type: 'SHOW_SUMMARY'})
+        setTimeout(() => {
+          this.querySelector('[summary]').scrollIntoView({behavior: 'smooth', block: 'start'})
+        }, 200)
+      }
+
+      onClickResponseTab() {
+        this.store.dispatch({type: 'SHOW_RESPONSE'})
+        //this.querySelectorAll('tangy-form-item').forEach(el => el.hidden = false)
+        this.querySelectorAll('tangy-form-item')[0].scrollIntoView({behavior: 'smooth', block: 'center'})
       }
 
       static get is() { return 'tangy-form'; }
@@ -141,13 +191,12 @@ export class TangyForm extends PolymerElement {
             type: String,
             value: 'tangy-form'
           },
-          // Pass in code to be eval'd on any form input change.
-          onChange: {
-            type: String,
-            value: '',
+          complete: {
+            type: Boolean,
+            value: false,
             reflectToAttribute: true
           },
-          // Set liniar-mode to turn on navigation and turn off item action buttons.
+          // Set linear-mode to turn on navigation and turn off item action buttons.
           linearMode: {
             type: Boolean,
             value: false,
@@ -163,53 +212,62 @@ export class TangyForm extends PolymerElement {
             type: Boolean,
             value: false,
             reflectToAttribute: true
+          },
+          tabIndex: {
+            type: Number,
+            value: 0,
+            reflectToAttribute: true
+          },
+          showResponse: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          showSummary: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          hasSummary: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
+
 
         }
       }
 
       connectedCallback() {
         super.connectedCallback()
+        console.log("Testing updates 04-02-2018 connectedCallback in tangy-form.js")
         // Set up the store.
         this.store = window.tangyFormStore
 
         // Move to reducer.
         this.querySelectorAll('tangy-form-item').forEach((item) => {
-          if (this.linearMode) item.noButtons = true
+          let innerItem = document.createElement('tangy-form-item')
+          innerItem.setProps(item.getProps())
+          if (this.linearMode) innerItem.noButtons = true
+          innerItem.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
+          innerItem.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
+          innerItem.addEventListener('ITEM_CLOSED', this.onItemClosed.bind(this))
+          innerItem.addEventListener('ITEM_OPENED', this.onItemOpened.bind(this))
+          innerItem.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
+          this.$.items.appendChild(innerItem)
         })
-        // Register tangy redux hook.
-        window.tangyReduxHook_INPUT_VALUE_CHANGE = (store) => {
-          let state = store.getState()
-          let inputs = {}
-          state.inputs.forEach(input => inputs[input.name] = input)
-          let items = {}
-          state.items.forEach(item => items[item.name] = item)
-          let getValue = this.getValue.bind(this)
-          // Eval on-change on tangy-form.
-          eval(this.onChange)
-          // Eval on-change on forms.
-          let forms = [].slice.call(this.querySelectorAll('form[on-change]'))
-          forms.forEach((form) => {
-            if (form.hasAttribute('on-change')) {
-              try {
-                window.getValue = this.getValue.bind(this)
-                eval(form.getAttribute('on-change'))
-              } catch (error) {
-                console.log("Error: " + error)
-              }
-            }
-          })
-        }
+
 
         // Subscribe to the store to reflect changes.
         this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
- 
+
+        // @TODO Still necessary?
         // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
         this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
           this.store.dispatch({
-            type: INPUT_VALUE_CHANGE,  
-            inputName: event.detail.inputName, 
-            inputValue: event.detail.inputValue, 
+            type: INPUT_VALUE_CHANGE,
+            inputName: event.detail.inputName,
+            inputValue: event.detail.inputValue,
             inputInvalid: event.detail.inputInvalid,
             inputIncomplete: event.detail.inputIncomplete
           })
@@ -224,9 +282,54 @@ export class TangyForm extends PolymerElement {
         this.unsubscribe()
       }
 
+      onFormResponseComplete(event) {
+        this.store.dispatch({
+          type: 'ITEM_SAVE',
+          item: event.target.getProps()
+        })
+        this.store.dispatch({
+          type: 'FORM_RESPONSE_COMPLETE'
+        })
+        if (this.hasSummary) {
+          this.store.dispatch({type: "SHOW_SUMMARY"})
+        } else {
+          this.store.dispatch({type: "SHOW_RESPONSE"})
+        }
+      }
+
+      onItemNext(event) {
+        this.store.dispatch({
+          type: 'ITEM_SAVE',
+          item: event.target.getProps()
+        })
+        this.focusOnNextItem()
+      }
+
+      onItemBack(event) {
+        this.store.dispatch({
+          type: 'ITEM_SAVE',
+          item: event.target.getProps()
+        })
+        this.focusOnPreviousItem()
+      }
+
+      onItemOpened(event) {
+        this.store.dispatch({
+          type: 'ITEM_SAVE',
+          item: event.target.getProps()
+        })
+      }
+
+      onItemClosed(event) {
+        this.store.dispatch({
+          type: 'ITEM_SAVE',
+          item: event.target.getProps()
+        })
+      }
+
       // Prevent parallel reflects, leads to race conditions.
       throttledReflect(iAmQueued = false) {
-        // If there is an reflect already queued, we can quit. 
+        // If there is an reflect already queued, we can quit.
         if (this.reflectQueued && !iAmQueued) return
         if (this.reflectRunning) {
           this.reflectQueued = true
@@ -248,42 +351,24 @@ export class TangyForm extends PolymerElement {
 
         this.setProps(state.form)
 
+        // Tabs
+        if (state.form.complete) {
+          //this.shadowRoot.querySelector('paper-tabs').selected = (state.form.showSummary) ? '0' : '1'
+        }
+
         // Set state in tangy-form-item elements.
-        let items = [].slice.call(this.querySelectorAll('tangy-form-item'))
+        let items = [].slice.call(this.shadowRoot.querySelectorAll('tangy-form-item'))
         items.forEach((item) => {
-          let index = state.items.findIndex((itemState) => item.id == itemState.id) 
+          let index = state.items.findIndex((itemState) => item.id == itemState.id)
           if (index !== -1) item.setProps(state.items[index])
         })
-        
-        // Set progress state.
-        this.$.progress.setAttribute('value', state.progress)
 
         // Find item to scroll to.
-        if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused)) {
+        if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused && !state.form.complete)) {
           this.hasNotYetFocused = false
           setTimeout(() => {
             if (items[state.focusIndex]) items[state.focusIndex].scrollIntoView({behavior: 'smooth', block: 'start'})
           }, 200)
-        }
-
-        // If there is not a next item or the current item is incomplete, hide the next item button.
-        this.$.nextItemButton.hidden = (state.nextFocusIndex === -1 ||
-                                          (state.items[state.focusIndex] && state.items[state.focusIndex].incomplete)
-                                          ) ? true : false
-        // Hide back navigation if there is no previous item. 
-        this.$.previousItemButton.hidden = (state.previousFocusIndex === -1) ? true : false
-        
-        // Enable nav buttons as they may have been disabled after clicked.
-        this.$.nextItemButton.disabled = false 
-        this.$.previousItemButton.disabled = false 
-
-        if ((state.items.findIndex(item => item.incomplete && !item.disabled)) == -1 
-              && state.nextFocusIndex == -1
-              && !state.complete) {
-            
-          this.$.markCompleteButton.hidden = false
-        } else {
-          this.$.markCompleteButton.hidden = true
         }
 
         // Dispatch ALL_ITEMS_CLOSED if all items are now closed.
@@ -296,12 +381,13 @@ export class TangyForm extends PolymerElement {
         // Stash as previous state.
         this.previousState = Object.assign({}, state)
 
-        this.fireOnChange()
+        if (!this.complete) this.fireOnChange()
 
       }
 
       fireOnChange() {
         // Register tangy redux hook.
+        if (!this.hasAttribute('on-change')) return
         let state = this.store.getState()
         let inputs = {}
         state.inputs.forEach(input => inputs[input.name] = input)
@@ -311,23 +397,36 @@ export class TangyForm extends PolymerElement {
         // We have to do this because bundlers modify the names of things that are imported
         // but do not update the evaled code because it knows not of it.
         let getValue = (name) => {
-          let state = this.store.getState()
-          let input = state.inputs.find((input) => input.name == name)
-          if (input) return input.value
+          let state = window.tangyFormStore.getState()
+          let inputs = []
+          state.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          //return (inputs[name]) ? inputs[name].value : undefined
+          let foundInput = inputs.find(input => (input.name === name) ? input.value : false)
+          if(foundInput && typeof foundInput.value === 'object') {
+            let values = []
+            foundInput.value.forEach(subInput => {
+              if (subInput.value) {
+                values.push(subInput.name)
+              }
+            })
+            return values
+          } else if (foundInput && foundInput.hasOwnProperty('value')) {
+            return foundInput.value
+          } else {
+            return ''
+          }
+
         }
-        let inputHide = tangyFormActions.inputHide 
+        let inputHide = tangyFormActions.inputHide
         let inputShow = tangyFormActions.inputShow
         let inputEnable = tangyFormActions.inputEnable
         let inputDisable = tangyFormActions.inputDisable
         let itemDisable = tangyFormActions.itemDisable
         let itemEnable = tangyFormActions.itemEnable
-        eval(this.onChange)
+        eval(this.getAttribute('on-change'))
       }
 
       focusOnPreviousItem(event) {
-        // Disable navigation buttons while changing focus.
-        this.$.previousItemButton.setAttribute('disabled', true)
-        this.$.nextItemButton.setAttribute('disabled', true)
         // Dispatch action.
         let state = this.store.getState()
         let item = state.items.find(item => item.open)
@@ -335,17 +434,10 @@ export class TangyForm extends PolymerElement {
       }
 
       focusOnNextItem(event) {
-        // Disable navigation buttons while changing focus.
-        this.$.previousItemButton.setAttribute('disabled', true)
-        this.$.nextItemButton.setAttribute('disabled', true)
         // Dispatch action.
         let state = this.store.getState()
         let item = state.items.find(item => item.open)
         this.store.dispatch({ type: ITEM_NEXT, itemId: item.id })
-      }
-
-      markComplete() {
-        this.store.dispatch({type: "FORM_RESPONSE_COMPLETE"})
       }
 
       getValue(name) {
@@ -356,6 +448,6 @@ export class TangyForm extends PolymerElement {
 
     }
 
-    
+
     window.customElements.define(TangyForm.is, TangyForm);
 

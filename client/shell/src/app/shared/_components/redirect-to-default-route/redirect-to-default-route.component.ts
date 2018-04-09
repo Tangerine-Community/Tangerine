@@ -14,7 +14,7 @@ export class RedirectToDefaultRouteComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const defaultUrl = '/case-management';
+    const defaultUrl = '/forms-list';
     const home_url = await this.appConfigService.getDefaultURL();
     this.router.navigate([home_url]).then(data => {
       /**

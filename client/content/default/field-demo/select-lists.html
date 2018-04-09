@@ -1,0 +1,57 @@
+<form on-change="
+
+  // Disable/enable select_3 given select_3_enable's value.
+  if (getValue('select_3_enable')) inputEnable('select_3')
+  if (!getValue('select_3_enable')) inputDisable('select_3')
+
+  // Show/hide select_4 given select_4_show's value.
+  if (getValue('select_4_show')) inputShow('select_4')
+  if (!getValue('select_4_show')) inputHide('select_4')
+
+">
+
+  <tangy-select 
+    label="These are select lists."
+    secondary-label="Choose from this list of fruits"
+    name="select_1" >
+    <option value="tangerine">Tangerine</option>
+    <option value="apple">Apple</option>
+    <option value="pear">Pear</option>
+    <option value="coconut">Coconut</option>
+  </tangy-select>
+
+  <tangy-select 
+    label="These are select lists where at least one selection is required."
+    name="select_2"
+    required>
+    <option value="tangerine">Tangerine</option>
+    <option value="apple">Apple</option>
+    <option value="pear">Pear</option>
+    <option value="coconut">Coconut</option>
+  </tangy-select>
+
+  <tangy-select 
+    label="These are select lists that are disabled. If enabled, then a selection is required."
+    name="select_3"
+    disabled
+    required>
+    <option value="tangerine">Tangerine</option>
+    <option value="apple">Apple</option>
+    <option value="pear">Pear</option>
+    <option value="coconut">Coconut</option>
+  </tangy-select>
+  <tangy-checkbox name="select_3_enable">Check this checkbox to enable the disabled select.</tangy-checkbox>
+
+  <tangy-select 
+    label="These are select lists that are hidden. If not hidden, then a selection is required."
+    name="select_4"
+    hidden
+    required>
+    <option value="tangerine">Tangerine</option>
+    <option value="apple">Apple</option>
+    <option value="pear">Pear</option>
+    <option value="coconut">Coconut</option>
+  </tangy-select>
+  <tangy-checkbox name="select_4_show">Check this checkbox to show the hidden select.</tangy-checkbox>
+
+</form>

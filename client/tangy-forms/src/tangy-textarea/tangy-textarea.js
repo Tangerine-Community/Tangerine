@@ -36,33 +36,14 @@ export class TangyTextarea extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback()
-    const config = {
-//            toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'acasi', 'dumpdata' ],
-      toolbar: [ 'headings', 'bold', 'italic', 'link', 'bulletedList', 'numberedList' ],
-//            plugins: [ 'Heading', 'Bold', 'Italic', 'Link', 'List', 'Paragraph', 'typing',  'Image', 'ImageToolbar', 'ImageCaption', 'ImageStyle', 'ImageUpload', 'Acasi', 'Dumpdata' ],
-      plugins: [ 'Paragraph', 'Heading', 'Bold', 'Italic', 'Link', 'List', 'BlockQuote', 'Image', 'ImageUpload' ],
-      image: {
-        toolbar: [ 'imageTextAlternative', '|', 'imageStyleFull', 'imageStyleSide' ]
-      },
-      ckfinder: {
-        uploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files&responseType=json'
+    CKEDITOR.replace( 'editorCK' );
+    CKEDITOR.on('dialogDefinition', function(e) {
+      var dialogName = e.data.name;
+      var dialogDefinition = e.data.definition;
+      dialogDefinition.onShow = function() {
+        this.move(this.getPosition().x,0); // Top center
       }
-    };
-    ClassicEditor
-    // .create( window.document.querySelector("#editor"), config )
-      .create( window.document.querySelector("#editor") )
-      .then( editor => {
-        console.log( editor );
-        if (typeof Tangy == 'undefined') {
-          window.Tangy = new Object()
-          window.Tangy.editor = editor
-        } else {
-          window.Tangy.editor = editor
-        }
-      } )
-      .catch( error => {
-        console.error( error );
-      } );
+    })
   }
 
   ready() {

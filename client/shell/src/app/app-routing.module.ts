@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {
-    RedirectToDefaultRouteComponent,
+  RedirectToDefaultRouteComponent,
 } from 'app/shared/_components/redirect-to-default-route/redirect-to-default-route.component';
 import { CreateProfileGuardService } from 'app/user-profile/create-profile-guard.service';
 

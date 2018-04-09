@@ -15,8 +15,15 @@ export class AuthenticationService {
   public currentUserLoggedIn$: any;
   private _currentUserLoggedIn: boolean;
 
-  constructor(private userService: UserService, private appConfigService: AppConfigService) {
+  public userShouldResetPassword$: any;
+  private _userShouldResetPassword: boolean;
+
+  constructor(
+    private userService: UserService,
+    private appConfigService: AppConfigService
+  ) {
     this.currentUserLoggedIn$ = new Subject();
+    this.userShouldResetPassword$ = new Subject();
   }
 
   async login(username: string, password: string) {
@@ -35,6 +42,20 @@ export class AuthenticationService {
     }
 
     return isCredentialsValid;
+  }
+
+  async resetPassword(user) {
+    const userExists = await this.userService.doesUserExist(user.username);
+    const doesAnswerMatch = await this.confirmSecurityQuestion(user);
+    if (userExists && doesAnswerMatch && await this.userService.changeUserPassword(user)) {
+      localStorage.setItem('currentUser', user.username);
+      this._currentUserLoggedIn = true;
+      this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+      return true;
+    } else {
+      return false;
+    }
+
   }
 
   async confirmPassword(username, password) {
@@ -58,6 +79,20 @@ export class AuthenticationService {
     return doesPasswordMatch;
   };
 
+  async confirmSecurityQuestion(user) {
+    let doesAnswerMatch = false;
+    try {
+      const result = await this.DB.find({ selector: { username: user.username } });
+      if (result.docs.length > 0) {
+        doesAnswerMatch = result.docs[0].hashSecurityQuestionResponse ?
+          await bcrypt.compare(user.securityQuestionResponse, result.docs[0].securityQuestionResponse) :
+          user.securityQuestionResponse === result.docs[0].securityQuestionResponse;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return doesAnswerMatch;
+  }
   logout(): void {
     localStorage.removeItem('currentUser');
     this._currentUserLoggedIn = false;
@@ -71,22 +106,12 @@ export class AuthenticationService {
     return this._currentUserLoggedIn;
 
   }
-  isLoggedInForUpload(): boolean {
-    if (localStorage.getItem('loggedInForUploadUser')) {
-      return true;
-    }
-    return false;
+  shouldResetPassword() {
+    this._userShouldResetPassword = false;
+    this._userShouldResetPassword = !!localStorage.getItem('userShouldResetPassword');
+    this.userShouldResetPassword$.next(this._userShouldResetPassword);
+    return this._userShouldResetPassword;
   }
-  async loginForUpload(username: string, password: string) {
-    const uploadUser = environment.uploadUserCredentials;
-    let isCredentialsValid = false;
-    if (username === uploadUser.username && password === uploadUser.password) {
-      isCredentialsValid = true;
-      localStorage.setItem('loggedInForUploadUser', username);
-    }
-    return isCredentialsValid;
-  }
-
 
   async getSecurityPolicy() {
     const appConfig = await this.appConfigService.getAppConfig();

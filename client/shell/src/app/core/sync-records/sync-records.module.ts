@@ -3,8 +3,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatInputModule, MatCardModule } from '@angular/material';
-
-import { UploadGuardService } from '../auth/_guards/upload-guard.service';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { SyncingService } from './_services/syncing.service';
 import { SyncRecodsRoutingModule } from './sync-records-routing.module';
 import { SyncRecordsComponent } from './sync-records/sync-records.component';
@@ -17,9 +16,10 @@ import { SyncRecordsComponent } from './sync-records/sync-records.component';
     SyncRecodsRoutingModule,
     MatButtonModule,
     MatInputModule,
-    MatCardModule
+    MatCardModule,
+    MatExpansionModule
   ],
   declarations: [SyncRecordsComponent],
-  providers: [SyncingService, UploadGuardService, HttpClientModule],
+  providers: [SyncingService, HttpClientModule],
 })
 export class SyncRecordsModule { }

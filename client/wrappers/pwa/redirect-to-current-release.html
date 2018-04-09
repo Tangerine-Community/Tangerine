@@ -1,0 +1,12 @@
+<!doctype html><html>
+<body>
+Loading... <a href="tangerine/index.html">Click here to proceed</a>
+<script>
+fetch('release-uuid.txt').then(res => {
+	res.text().then(function (releaseUuid) {
+		window.location = window.location.href + `${releaseUuid}/index.html` 
+	});
+})
+</script>
+</body>
+</html>

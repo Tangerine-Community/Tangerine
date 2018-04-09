@@ -3,12 +3,12 @@ import { RouterModule } from '@angular/router';
 
 import { LoginGuard } from '../core/auth/_guards/login-guard.service';
 import { CreateProfileGuardService } from '../user-profile/create-profile-guard.service';
-import { CaseManagementComponent } from './case-management.component';
 import { FormListComponent } from './form-list/form-list.component';
+import { CaseDetailsComponent } from './case-details/case-details.component';
 
 const routes = [{
-  path: 'case-management',
-  component: CaseManagementComponent,
+  path: 'case-details',
+  component: CaseDetailsComponent,
   canActivate: [LoginGuard, CreateProfileGuardService]
 }, {
   path: 'forms-list',

@@ -13,3 +13,6 @@ T_TAG=""
 T_CONTAINER_NAME="tangerine"
 T_PORT_MAPPING="-p 80:80 -p 5984:5984"
 T_DEV_CONTENT="$(pwd)/client/content/default"
+# Add replication entries in this array to start on server boot in 
+# format of `{"from":"localDbName", "to":"remoteDbUrl", "continuous": true}`
+T_REPLICATE="[]"

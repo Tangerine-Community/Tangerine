@@ -55,11 +55,11 @@
                                     <td class="mdl-data-table__cell--non-numeric">
                                         <ul>
                                             <li><a [routerLink]="['/group', group.attributes.name]">Edit Forms</a> </li>
-                                            <li><a [routerLink]="['/group/release-apk', group.attributes.name]">Release APK</a> </li>
-                                            <li><a [routerLink]="['/group/release-pwa', group.attributes.name]">Release PWA</a> </li>
-
+                                            <li><a [routerLink]="['/group/release-apk', group.attributes.name, 'qa']">QA APK</a> </li>
+                                            <li><a [routerLink]="['/group/release-apk', group.attributes.name, 'prod']">Release APK to production</a> </li>
+                                            <li><a [routerLink]="['/group/release-pwa', group.attributes.name, 'qa']">QA PWA</a> </li>
+                                            <li><a [routerLink]="['/group/release-pwa', group.attributes.name, 'prod']">Release PWA to production</a> </li>
                                         </ul>
-
                                     </td>
 
                                 </tr>

@@ -1,5 +1,33 @@
 #!/usr/bin/env bash
 
+if [ ! -d data ]; then
+  mkdir data
+fi
+if [ ! -d data/client ]; then
+  mkdir data/client
+fi
+if [ ! -d data/client/releases ]; then
+  mkdir data/client/releases
+fi
+if [ ! -d data/client/releases/prod ]; then
+  mkdir data/client/releases/prod
+fi
+if [ ! -d data/client/releases/prod/apks ]; then
+  mkdir data/client/releases/prod/apks
+fi
+if [ ! -d data/client/releases/prod/pwas ]; then
+  mkdir data/client/releases/prod/pwas
+fi
+if [ ! -d data/client/releases/qa ]; then
+  mkdir data/client/releases/qa
+fi
+if [ ! -d data/client/releases/qa/apks ]; then
+  mkdir data/client/releases/qa/apks
+fi
+if [ ! -d data/client/releases/qa/pwas ]; then
+  mkdir data/client/releases/qa/pwas
+fi
+
 # Load config.
 source ./config.defaults.sh
 if [ -f "./config.sh" ]; then
@@ -42,10 +70,10 @@ RUN_OPTIONS="
   --env \"T_USER1=$T_USER1\" \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
+  --env "T_REPLICATE=$T_REPLICATE" \
   $T_PORT_MAPPING \
-  --volume $(pwd)/data/client/apks:/tangerine/client/releases/apks/ \
+  --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
-  --volume $(pwd)/data/client/pwas:/tangerine/client/releases/pwas/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
@@ -53,3 +81,7 @@ CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 
 echo "Running $T_CONTAINER_NAME at version $T_TAG"
 eval ${CMD}
+
+echo "Installing missing plugin..."
+docker exec tangerine bash -c "cd /tangerine/client/builds/apk/ && cordova --no-telemetry plugin add cordova-plugin-whitelist --save"
+echo "Done."
