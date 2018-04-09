@@ -15,16 +15,12 @@ const PouchDB = require('pouchdb');
  * Local dependencies.
  */
 
-const dbConfig = require('./../config');
 const dbQuery = require('./../utils/dbQuery');
 const generateAssessmentHeaders = require('./assessment').createColumnHeaders;
 const processAssessmentResult = require('./result').generateResult;
 const generateWorkflowHeaders = require('./workflow').createWorkflowHeaders;
 const processWorkflowResult = require('./trip').processWorkflowResult;
-
-// Initialize database
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-const RESULT_DB = new PouchDB(dbConfig.result_db);
+const validateResult = require('./result').validateResult;
 
 /**
  * Processes any recently changed document in the database based on its collection type.
@@ -57,17 +53,21 @@ const RESULT_DB = new PouchDB(dbConfig.result_db);
  */
 
 exports.changes = async(req, res) => {
+  const baseDb = req.body.base_db;
+  const resultDbUrl = req.body.result_db;
+  const GROUP_DB = new PouchDB(baseDb);
+
   GROUP_DB.changes({ since: 'now', include_docs: true })
     .on('change', (body) => {
-      processChangedDocument(body);
+      processChangedDocument(body, baseDb, resultDb);
       res.json(body);
     })
     .on('error', (err) => console.error(err));
 }
 
-const processChangedDocument = async(resp) => {
-  const assessmentId = resp.doc.assessmentId;
-  const workflowId = resp.doc.workflowId;
+const processChangedDocument = async(resp, baseDb, resultDb) => {
+  const assessmentId = resp.doc.assessmentId || resp.doc._id;
+  const workflowId = resp.doc.workflowId || resp.doc._id;
   const collectionType = resp.doc.collection;
 
   const isWorkflowIdSet = (workflowId) ? true : false;
@@ -78,14 +78,16 @@ const processChangedDocument = async(resp) => {
   const isQuestion = (collectionType === 'question') ? true : false;
   const isSubtest = (collectionType === 'subtest') ? true : false;
 
+  console.info(`::: Processing ${collectionType} document on sequence ${resp.seq} :::`);
+
   if (isWorkflowIdSet && isResult) {
     console.info('\n<<<=== START PROCESSING WORKFLOW RESULT ===>>>\n');
     let totalResult = {};
     try {
-      let data = await dbQuery.getTripResults(resp.doc.tripId)
-      const workflowResult = await processWorkflowResult(data);
+      let data = await dbQuery.getTripResults(resp.doc.tripId, baseDb);
+      const workflowResult = await processWorkflowResult(data, baseDb);
       workflowResult.forEach(element => totalResult = Object.assign(totalResult, element));
-      const saveResponse = await dbQuery.saveResult(totalResult);
+      const saveResponse = await dbQuery.saveResult(totalResult, resultDb);
       console.log(saveResponse);
       console.info('\n<<<=== END PROCESSING WORKFLOW RESULT ===>>>\n');
     } catch (error) {
@@ -96,8 +98,25 @@ const processChangedDocument = async(resp) => {
   if (!isWorkflowIdSet && isResult) {
     try {
       console.info('\n<<<=== START PROCESSING ASSESSMENT RESULT  ===>>>\n');
-      const assessmentResult = await processAssessmentResult([resp]);
-      const saveResponse = await dbQuery.saveResult(assessmentResult);
+      let assessmentResult = await processAssessmentResult([resp], 0, baseDb);
+      let docId = assessmentResult.indexKeys.collectionId;
+      let groupTimeZone = assessmentResult.indexKeys.groupTimeZone;
+      let allTimestamps = _.sortBy(assessmentResult.indexKeys.timestamps);
+
+      // Validate result from all subtest timestamps
+      let validationData = await validateResult(docId, groupTimeZone, baseDb, allTimestamps);
+      assessmentResult.isValid = validationData.isValid;
+      assessmentResult.isValidReason = validationData.reason;
+      assessmentResult[`${docId}.start_time`] = validationData.startTime;
+      assessmentResult[`${docId}.end_time`] = validationData.endTime;
+
+      assessmentResult.indexKeys.ref = assessmentResult.indexKeys.ref;
+      assessmentResult.indexKeys.parent_id = docId;
+      assessmentResult.indexKeys.year = validationData.indexKeys.year;
+      assessmentResult.indexKeys.month = validationData.indexKeys.month;
+      assessmentResult.indexKeys.day = validationData.indexKeys.day;
+
+      const saveResponse = await dbQuery.saveResult(assessmentResult, resultDb);
       console.log(saveResponse);
       console.info('\n<<<=== END PROCESSING ASSESSMENT RESULT ===>>>\n');
     } catch (err) {
@@ -108,8 +127,8 @@ const processChangedDocument = async(resp) => {
   if (isWorkflow) {
     try {
       console.info('\n<<<=== START PROCESSING WORKFLOW COLLECTION  ===>>>\n');
-      const workflowHeaders = await generateWorkflowHeaders(resp.doc);
-      const saveResponse = await dbQuery.saveHeaders(workflowHeaders, workflowId);
+      const workflowHeaders = await generateWorkflowHeaders(resp.doc, baseDb);
+      const saveResponse = await dbQuery.saveHeaders(workflowHeaders, workflowId, resultDb);
       console.log(saveResponse);
       console.info('\n<<<=== END PROCESSING WORKFLOW COLLECTION ===>>>\n');
     } catch (err) {
@@ -120,10 +139,9 @@ const processChangedDocument = async(resp) => {
   if (isAssessment || isCurriculum || isQuestion || isSubtest) {
     try {
       console.info('\n<<<=== START PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION  ===>>>\n');
-      const assessmentHeaders = await generateAssessmentHeaders(assessmentId);
-      const saveResponse = await dbQuery.saveHeaders(assessmentHeaders, assessmentId);
+      const assessmentHeaders = await generateAssessmentHeaders(resp.doc, 0, baseDb);
+      const saveResponse = await dbQuery.saveHeaders(assessmentHeaders, assessmentId, resultDb);
       console.log(saveResponse);
-      // await dbQuery.saveUpdateSequence(resultDbUrl, seqDoc);
       console.info('\n<<<=== END PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION ===>>>\n');
     } catch (err) {
       console.error(err);
