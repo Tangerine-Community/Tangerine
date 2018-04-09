@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../auth/_services/user.service';
 import { SyncingService } from '../../sync-records/_services/syncing.service';
-declare var device;
 @Component({
   selector: 'app-export-data',
   templateUrl: './export-data.component.html',
@@ -22,17 +21,7 @@ export class ExportDataComponent implements OnInit {
         docs
       };
     }));
-    const file = new Blob([data], { type: 'application/json' });
-    document.addEventListener('deviceready', () => {
-      alert(device.platform);
-    }, false);
-    if (window.isCordovaApp) {
-
-
-    } else {
-      // downloadData(JSON.stringify(data), 'download.json', 'application/json');
-    }
-
+    downloadData(JSON.stringify(data), 'download.json', 'application/json')
   }
 }
 
