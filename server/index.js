@@ -555,9 +555,14 @@ try {
 
 if (replicationEntries.length > 0) {
   for (let replicationEntry of replicationEntries) {
+    let options = {}
+    if (replicationEntry.continuous && replicationEntry.continuous === true) {
+      options.continuous = true
+    }
     DB.replicate(
       replicationEntry.from,
-      replicationEntry.to
+      replicationEntry.to,
+      options
     )
   }
 }
