@@ -16,11 +16,6 @@ const PouchDB = require('pouchdb');
 
 const createColumnHeaders = require('./assessment').createColumnHeaders;
 const dbQuery = require('./../utils/dbQuery');
-const dbConfig = require('./../config');
-
-// Initialize database
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * Retrieves all workflow collections in the database.
@@ -60,6 +55,7 @@ const RESULT_DB = new PouchDB(dbConfig.result_db);
  */
 
 exports.all = (req, res) => {
+  const GROUP_DB = new PouchDB(req.body.base_db);
   GROUP_DB.query('ojai/byCollection', { key: 'workflow', include_docs: true })
     .then((data) => res.json({ count: data.rows.length, workflows: data.rows }))
     .catch((err) => res.send(err));
@@ -95,10 +91,14 @@ exports.all = (req, res) => {
 
 exports.generateHeader = (req, res) => {
   const workflowId = req.params.id;
-  GROUP_DB.get(workflowId)
+  const baseDb = req.body.base_db;
+  const resultDb = req.body.result_db;
+  const GROUP_DB = new PouchDB(workflowId);
+
+  GROUP_DB.get(workflowId, baseDb)
     .then(async(doc) => {
-      let colHeaders = await createWorkflowHeaders(doc);
-      const saveResponse = await dbQuery.saveHeaders(colHeaders, workflowId);
+      let colHeaders = await createWorkflowHeaders(doc, baseDb);
+      const saveResponse = await dbQuery.saveHeaders(colHeaders, workflowId, resultDb);
       console.log(saveResponse);
       res.json(colHeaders);
     })
@@ -120,7 +120,7 @@ exports.generateHeader = (req, res) => {
  * @returns {Array} - generated headers for csv.
  */
 
-const createWorkflowHeaders = async function(data) {
+const createWorkflowHeaders = async function(data, baseDb) {
   let workflowHeaders = [];
   let workflowItems = [];
   let messageCount = 0;
@@ -133,7 +133,7 @@ const createWorkflowHeaders = async function(data) {
     let isCurriculumProcessed = item.type === 'curriculum' & !isProcessed.length;
 
     if (item.type === 'assessment' || isCurriculumProcessed) {
-      let assessmentHeaders = await createColumnHeaders(item, count);
+      let assessmentHeaders = await createColumnHeaders(item, count, baseDb);
       workflowHeaders.push(assessmentHeaders);
       count++;
     }
