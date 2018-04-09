@@ -7,6 +7,11 @@ const PouchDB = require('pouchdb');
 const dbConfig = require('./reporting/config');
 const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
 
+// Constants for replicating database
+const SOURCE_DB = 'tangerine';
+const GROUP_DOC_IDS = ['_design/ojai', '_design/dashReporting', 'configuration', 'settings', 'templates', 'location-list'];
+const RESULT_DOC_IDS = ['_design/ojai', '_design/dashReporting'];
+
 let changesFeed = function (groupDB, groupResultDB) {
 
   logger.info(' ::: Running changes feed ::: ');
@@ -45,6 +50,13 @@ let changesFeed = function (groupDB, groupResultDB) {
           group.createResult(newGroupName)
             .then(function responseMessage() {
               logger.info(`New group '${newGroupName}' created`);
+            })
+            .then(function replicateDatabase() {
+              logger.info(`Running replication for ${newGroupName} database`);
+              setTimeout(() => group.replicate(SOURCE_DB, newGroupName, RESULT_DOC_IDS), 3000);
+            })
+            .then(function addRoles() {
+              return group.addGroupRoles(newGroupName);
             })
             .catch((err) => console.error(err));
         }
