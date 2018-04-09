@@ -7,6 +7,7 @@ import PouchDB from 'pouchdb';
 import { AuthenticationService } from '../../core/auth/_services/authentication.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { Loc } from '../../core/location.service';
+import { AppConfigService } from '../../shared/_services/app-config.service';
 
 function _window(): any {
   return window;
@@ -22,7 +23,8 @@ export class CaseManagementService {
     authenticationService: AuthenticationService,
     loc: Loc,
     userService: UserService,
-    private http: Http
+    private http: Http,
+    private appConfigService: AppConfigService
   ) {
     this.loc = loc;
     this.userService = userService;
@@ -30,7 +32,6 @@ export class CaseManagementService {
       (authenticationService.getCurrentUserDBPath());
   }
   async getMyLocationVisits(month: number, year: number) {
-
     const res = await this.http.get('../content/location-list.json').toPromise();
     const allLocations = res.json();
     // Calculate our locations by generating the path in the locationList object.
@@ -96,8 +97,8 @@ export class CaseManagementService {
     }
     return forms;
   }
-  async getVisitsByYearMonthLocationId(locationId?: string) {
-    const options = { key: locationId };
+  async getVisitsByYearMonthLocationId(locationId?: string, include_docs?: boolean) {
+    const options = { key: locationId, include_docs };
     const result = await this.userDB.query('tangy-form/responsesByYearMonthLocationId', options);
     return result.rows;
   }
@@ -107,24 +108,44 @@ export class CaseManagementService {
     const currentDate: Date = new Date();
     const monthYear = period ? period : `${currentDate.getMonth()}-${currentDate.getFullYear()}`;
     const monthYearParts = monthYear.split('-');
-    result.rows.filter(observation => {
+    result.rows = result.rows.filter(observation => {
       const formStartDate = new Date(observation.doc.startDatetime);
       return formStartDate.getMonth().toString() === monthYearParts[0] && formStartDate.getFullYear().toString() === monthYearParts[1];
     });
-    return await this.transformResultSet(result.rows, monthYear);
+    const data = await this.transformResultSet(result.rows);
+    return data;
   }
-  async transformResultSet(result, monthYear) {
+  async transformResultSet(result) {
+    const appConfig = await this.appConfigService.getAppConfig();
+    const columnsToShow = appConfig.columnsOnVisitsTab;
     const formList = await this.getFormList();
-    const observations = result.map((observation) => {
+
+    const observations = result.map(async (observation) => {
+      let columns = await this.getDataForColumns(observation.doc['items'], columnsToShow);
+      columns = columns.filter(x => x !== undefined);
       const index = formList.findIndex(c => c.id === observation.doc.form['id']);
       return {
         formTitle: formList[index]['title'],
         startDatetime: observation.doc.startDatetime,
         formIndex: index,
-        _id: observation.doc._id
+        _id: observation.doc._id,
+        columns
       };
     });
-    return observations;
+    return Promise.all(observations);
+  }
+
+  async getDataForColumns(array, columns) {
+    return columns.map(column => {
+      const data = array.map(el => {
+        return el.inputs.find(e => e.name === column);
+      }).find(x => x);
+      return ({
+        name: data ? data.name : column,
+        value: data ? data.value : ''
+      });
+
+    });
   }
 }
 function removeDuplicates(array, property) {
