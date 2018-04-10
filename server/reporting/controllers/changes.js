@@ -67,7 +67,7 @@ exports.changes = async(req, res) => {
 
 const processChangedDocument = async(resp, baseDb, resultDb) => {
   const assessmentId = resp.doc.assessmentId || resp.doc._id;
-  const workflowId = resp.doc.workflowId || resp.doc._id;
+  const workflowId = resp.doc.workflowId;
   const collectionType = resp.doc.collection;
 
   const isWorkflowIdSet = (workflowId) ? true : false;
