@@ -6,4 +6,5 @@ interface NodeModule {
 interface Window {
   isCordovaApp: any;
   chcp: any;
+  resolveLocalFileSystemURL: any;
 }
