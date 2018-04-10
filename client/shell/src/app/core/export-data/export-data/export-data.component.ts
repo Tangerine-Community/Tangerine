@@ -22,16 +22,18 @@ export class ExportDataComponent implements OnInit {
         docs
       };
     }));
-    const file = new Blob([data], { type: 'application/json' });
-    const fileName = 'download.json';
+    const file = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    const currentUser = await localStorage.getItem('currentUser');
+    const now = new Date();
+    const fileName =
+      `${currentUser}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
     if (window.isCordovaApp) {
       document.addEventListener('deviceready', () => {
-        // const filePath = `${cordova.file.dataDirectory}download.json`;
-        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, (directoryEntry) => {
+        window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (directoryEntry) => {
           directoryEntry.getFile(fileName, { create: true }, (fileEntry) => {
             fileEntry.createWriter((fileWriter) => {
               fileWriter.onwriteend = (data) => {
-                alert(`File stored at ${cordova.file.dataDirectory}${fileName}`);
+                alert(`File stored at ${cordova.file.externalDataDirectory}${fileName}`);
               };
               fileWriter.onerror = (e) => {
                 alert(`Write Failed:` + e.toString());
