@@ -26,9 +26,10 @@ exports.saveHeaders = async (doc, key, resultDb) => {
 
   try {
     let existingDoc = await RESULT_DB.get(key);
-    // if doc exists update it using its revision number.
     if (!existingDoc.error) {
-      docObj = _.assignIn(existingDoc, docObj);
+      let docHeaders = _.unionBy(existingDoc.column_headers, docObj.column_headers, 'header');
+      docObj.column_headers = docHeaders;
+      docObj._rev = existingDoc._rev;
     }
   } catch (error) {
     console.log('Error finding document with key: ' + key);
@@ -70,7 +71,7 @@ exports.saveResult = async (doc, resultDb) => {
     let existingDoc = await RESULT_DB.get(docKey);
     // if doc exists update it using its revision number.
     if (!existingDoc.error) {
-      docObj = _.assignIn(existingDoc, docObj);
+      docObj = _.merge(existingDoc, docObj);
     }
   } catch (error) {
     console.log('Error finding document with key: ' + docKey);
