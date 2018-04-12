@@ -312,14 +312,24 @@ async function processLocationResult(body, subtestCount, groupTimeZone, baseDb) 
   let i, locationResult = {};
   let locSuffix = count > 0 ? `_${count}` : '';
   let subtestId = body.subtestId;
-  let locationNames = await getLocationName(body, baseDb);
-  let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
+  let locLabels = body.data.labels;
+  let locationData = body.data.location;
 
-  locationResult[`${subtestId}.county${locSuffix}`] = locationNames.county.label.replace(/\s/g,'-');
-  locationResult[`${subtestId}.subcounty${locSuffix}`] = locationNames.subcounty.label.replace(/\s/g,'-');
-  locationResult[`${subtestId}.zone${locSuffix}`] = locationNames.zone.label.replace(/\s/g,'-');
-  locationResult[`${subtestId}.school${locSuffix}`] = locationNames.school.label.replace(/\s/g,'-');
-  locationResult[`${subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+  if (locLabels.length == 0 || locLabels[0] == '') {
+    let locationNames = await getLocationName(body, baseDb);
+    let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
+
+    locationResult[`${subtestId}.county${locSuffix}`] = locationNames.county.label.replace(/\s/g,'-');
+    locationResult[`${subtestId}.subcounty${locSuffix}`] = locationNames.subcounty.label.replace(/\s/g,'-');
+    locationResult[`${subtestId}.zone${locSuffix}`] = locationNames.zone.label.replace(/\s/g,'-');
+    locationResult[`${subtestId}.school${locSuffix}`] = locationNames.school.label.replace(/\s/g,'-');
+    locationResult[`${subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+  }
+  else {
+    for (i = 0; i < locLabels.length; i++) {
+      locationResult[`${subtestId}.${locLabels[i]}`] = locationData[i];
+    }
+  }
 
   return locationResult;
 }
