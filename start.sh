@@ -81,7 +81,7 @@ RUN_OPTIONS="
 if [ "$T_COUCHDB_ENABLE" = "true"  ]; then
   docker stop $T_COUCHDB_CONTAINER_NAME
   docker rm $T_COUCHDB_CONTAINER_NAME
-  docker run -d --name $T_COUCHDB_CONTAINER_NAME couchdb
+  docker run -d -v $(pwd)/data/couchdb:/opt/couchdb/data --name $T_COUCHDB_CONTAINER_NAME couchdb
   RUN_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
     $RUN_OPTIONS
