@@ -18,9 +18,16 @@ const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
 
-const DB = PouchDB.defaults({
-  prefix: '/tangerine/db/'
-});
+var DB = {}
+if (process.env.T_COUCHDB_ENABLE === 'true') {
+  DB = PouchDB.defaults({
+    prefix: 'http://couchdb:5984'
+  });
+} else {
+  DB = PouchDB.defaults({
+    prefix: '/tangerine/db/'
+  });
+}
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
