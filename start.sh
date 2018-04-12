@@ -62,6 +62,7 @@ RUN_OPTIONS="
   --name $T_CONTAINER_NAME \
   --env \"NODE_ENV=production\" \
   --env \"T_VERSION=$T_TAG\" \
+  --env \"T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_ADMIN=$T_ADMIN\" \
   --env \"T_PASS=$T_PASS\" \
@@ -77,9 +78,21 @@ RUN_OPTIONS="
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
+if [ "$T_COUCHDB_ENABLE" = "true"  ]; then
+  docker stop $T_COUCHDB_CONTAINER_NAME
+  docker rm $T_COUCHDB_CONTAINER_NAME
+  docker run -d --name $T_COUCHDB_CONTAINER_NAME couchdb
+  RUN_OPTIONS="
+    --link $T_COUCHDB_CONTAINER_NAME:couchdb \
+    $RUN_OPTIONS
+  "
+fi
+
+
 CMD="docker run -d $RUN_OPTIONS tangerine/tangerine:$T_TAG"
 
 echo "Running $T_CONTAINER_NAME at version $T_TAG"
+echo "$CMD"
 eval ${CMD}
 
 echo "Installing missing plugin..."

@@ -7,6 +7,8 @@ T_ADMIN="admin"
 T_PASS="password"
 T_UPLOAD_USER="uploader"
 T_UPLOAD_PASSWORD="password"
+T_COUCHDB_ENABLE="true"
+T_COUCHDB_CONTAINER_NAME="couchdb"
 
 # optional
 T_TAG=""
