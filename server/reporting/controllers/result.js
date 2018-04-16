@@ -525,9 +525,9 @@ function processGridResult(body, subtestCount, groupTimeZone, assessmentSuffix) 
   gridResult[`${subtestId}.${varName}_time_intermediate_captured${suffix}`] = body.data.time_intermediate_captured;
   gridResult[`${subtestId}.${varName}_time_allowed${suffix}`] = body.data.time_allowed;
 
-  for (doc of body.data.items) {
+  for (let [index, doc] of body.data.items.entries()) {
     let gridValue = doc.itemResult === 'correct' ? translateGridValue(doc.itemResult) : 0;
-    gridResult[`${subtestId}.${varName}_${doc.itemLabel}`] = gridValue;
+    gridResult[`${subtestId}.${varName}_${index}`] = gridValue;
     correctSum += +gridValue;
   }
 
