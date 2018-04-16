@@ -78,12 +78,45 @@ RUN_OPTIONS="
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
-if [ "$T_COUCHDB_ENABLE" = "true"  ]; then
-  docker stop $T_COUCHDB_CONTAINER_NAME
-  docker rm $T_COUCHDB_CONTAINER_NAME
-  docker run -d -v $(pwd)/data/couchdb:/opt/couchdb/data --name $T_COUCHDB_CONTAINER_NAME couchdb
+if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_ENDPOINT" = "http://couchdb:5984" ]; then
+  if [ ! -d data/couchdb ]; then
+    mkdir data/couchdb
+  fi
+  if [ ! -d data/couchdb/data ]; then
+    mkdir data/couchdb/data
+  fi
+  if [ ! -d data/couchdb/local.d ]; then
+    mkdir data/couchdb/local.d
+  fi
+  if [ ! -f data/couchdb/local.d/local.ini ]; then
+    echo "
+[chttpd]
+bind_address = any
+
+[httpd]
+bind_address = any
+
+[couch_httpd_auth]
+require_valid_user = true
+
+[chttpd]
+require_valid_user = true
+    " > data/couchdb/local.d/local.ini
+  [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
+  [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
+  docker run -d \
+     -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
+     -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
+     -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
+     -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
+     --name $T_COUCHDB_CONTAINER_NAME \
+     couchdb
   RUN_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
+    -e T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE \
+    -e T_COUCHDB_ENDPOINT=$T_COUCHDB_ENDPOINT \
+    -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
+    -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
     $RUN_OPTIONS
   "
 fi
