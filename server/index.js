@@ -35,6 +35,40 @@ const cors = require('cors')
 
 const sep = path.sep;
 
+// Enforce SSL behind Load Balancers.
+if (process.env.T_PROTOCOL == 'https') {
+  app.use(function(req, res, next) {
+    if(req.get('X-Forwarded-Proto') == 'http') {
+      res.redirect('https://' + req.get('Host') + req.url);
+    }
+    else {
+      next();
+    }
+  });
+}
+
+// COUCHDB endpoint proxy
+if (process.env.T_COUCHDB_ENABLE === 'true') {
+  // proxy for couchdb
+  var proxy = require('express-http-proxy');
+  var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
+    forwardPath: function (req, res) {
+      var path = require('url').parse(req.url).path;
+      console.log("path:" + path);
+      return path;
+    }
+  });
+  var mountpoint = '/db';
+  app.use(mountpoint, couchProxy);
+  app.use(mountpoint, function(req, res) {
+    if (req.originalUrl === mountpoint) {
+      res.redirect(301, req.originalUrl + '/');
+    } else {
+      couchProxy;
+    }
+  });
+}
+
 // Enable CORS
 app.use(cors({
   credentials: true,
