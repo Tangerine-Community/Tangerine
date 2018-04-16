@@ -235,15 +235,20 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
 
 function createLocation(doc, subtestCount) {
   let count = subtestCount.locationCount;
-  let locationHeader = [];
-  let labels = doc.levels;
+  let i, locationHeader = [];
+  let locLevels = doc.levels;
+  let isLocLevelSet = locLevels && locLevels.length != 0;
 
-  for (i = 0; i < labels.length; i++) {
-    let locSuffix = count > 0 ? `_${count}` : '';
-    locationHeader.push({
-      header: `${labels[i]}${locSuffix}`,
-      key: `${doc._id}.${labels[i]}${locSuffix}`
-    });
+  if (isLocLevelSet) {
+    for (i = 0; i < locLevels.length; i++) {
+      let locSuffix = count > 0 ? `_${count}` : '';
+      if (locLevels[i] != '') {
+        locationHeader.push({
+          header: `${locLevels[i]}${locSuffix}`,
+          key: `${doc._id}.${locLevels[i]}${locSuffix}`
+        });
+      }
+    }
   }
   locationHeader.push({
     header: `timestamp_${subtestCount.timestampCount}`,
@@ -331,10 +336,19 @@ async function createSurvey(id, subtestCount, baseDb) {
   let sortedDoc = _.sortBy(questions, [id, 'order']);
 
   for (doc of sortedDoc) {
-    surveyHeader.push({
-      header: `${doc.name}`,
-      key: `${doc.subtestId}.${doc.name}`
-    });
+    if (doc.type == 'multiple') {
+      for (let opt of doc.options) {
+        surveyHeader.push({
+          header: `${doc.name}_${opt.label}`,
+          key: `${doc.subtestId}.${doc.name}_${opt.value}`
+        });
+      }
+    } else {
+      surveyHeader.push({
+        header: `${doc.name}`,
+        key: `${doc.subtestId}.${doc.name}`
+      });
+    }
   }
   surveyHeader.push({
     header: `timestamp_${subtestCount.timestampCount}`,
@@ -358,6 +372,7 @@ function createGrid(doc, subtestCount) {
   let gridHeader = [];
   let gridData = [doc];
   let suffix = count > 0 ? `_${count}` : '';
+  let itemPosition;
 
   for (sub of gridData) {
     let subtestId = sub._id;
@@ -394,13 +409,10 @@ function createGrid(doc, subtestCount) {
       key: `${subtestId}.${variableName}_time_allowed${suffix}`
     });
 
-    let i; let items = sub.items;
-
-    for (i = 0; i < items.length; i++) {
-      let label = items[i];
+    for (itemPosition = 1; itemPosition <= sub.items.length; itemPosition++) {
       gridHeader.push({
-        header: `${variableName}_${label}${suffix}`,
-        key: `${subtestId}.${variableName}_${label}${suffix}`
+        header: `${variableName}_${itemPosition}`,
+        key: `${subtestId}.${variableName}_${itemPosition}`
       });
     }
     gridHeader.push({
