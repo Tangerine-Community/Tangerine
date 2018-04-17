@@ -13,8 +13,7 @@ const GROUP_DOC_IDS = ['_design/ojai', '_design/dashReporting', 'configuration',
 const RESULT_DOC_IDS = ['_design/ojai', '_design/dashReporting'];
 
 let changesFeed = function (groupDB, groupResultDB) {
-
-  logger.info(' ::: Running changes feed ::: ');
+  logger.info('::: Running changes feed :::');
 
   if (groupDB && groupResultDB) {
     monitorChange(groupDB, groupResultDB);
@@ -36,9 +35,9 @@ let changesFeed = function (groupDB, groupResultDB) {
         }
       });
 
-      logger.info('Group Names: ' + groupNames, '\n GroupResult Names: ' + groupResultNames);
+      logger.info('GroupNames: ' + groupNames, '\n GroupResult Names: ' + groupResultNames);
 
-      groupNames.forEach(function(groupName) {
+      groupNames.forEach((groupName) => {
         let groupExists = groupResultNames.find((groupResult) => groupResult === `${groupName}-result`);
         const baseDb = dbConfig.db_url + groupName;
         const resultDb = dbConfig.db_url + groupName + '-result';
@@ -48,16 +47,22 @@ let changesFeed = function (groupDB, groupResultDB) {
           const group = new Group({ name: newGroupName });
 
           group.createResult(newGroupName)
-            .then(function responseMessage() {
-              logger.info(`New group '${newGroupName}' created`);
-            })
             .then(function replicateDatabase() {
+              logger.info(`New group '${newGroupName}' created`);
               logger.info(`Running replication for ${newGroupName} database`);
-              setTimeout(() => group.replicate(SOURCE_DB, newGroupName, RESULT_DOC_IDS), 3000);
+              return setTimeout(() => group.replicate(SOURCE_DB, newGroupName, RESULT_DOC_IDS), 3000);
             })
             .then(function addRoles() {
               return group.addGroupRoles(newGroupName);
             })
+            .then(function processOldChanges() {
+              // Process all results in group database into new result database.
+              const GROUP_DB = new PouchDB(baseDb);
+              return GROUP_DB.changes({ since: 0, include_docs: true })
+                .on('change', body => setTimeout(() => processChangedDocument(body, baseDb, resultDb)), 10000)
+                .on('complete', info => console.log(`All changes in ${groupName} have been processed into ${newGroupName}`, info))
+                .on('error', err => console.error(err));
+              })
             .catch((err) => console.error(err));
         }
 

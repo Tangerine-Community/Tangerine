@@ -32,13 +32,13 @@ exports.saveHeaders = async (doc, key, resultDb) => {
       docObj._rev = existingDoc._rev;
     }
   } catch (error) {
-    console.log('Error finding document with key: ' + key);
+    console.log('Could not find header document with key: ' + key);
   }
 
   try {
     return await RESULT_DB.put(docObj);
   } catch (err) {
-    console.error(err);
+    console.error({ message: 'Could not save generated headers', reason: err.message });
   }
 }
 
@@ -74,13 +74,14 @@ exports.saveResult = async (doc, resultDb) => {
       docObj = _.merge(existingDoc, docObj);
     }
   } catch (error) {
-    console.log('Error finding document with key: ' + docKey);
+    console.log('Could not find result document with key: ' + docKey);
   }
 
   try {
     return await RESULT_DB.put(docObj);
   } catch (err) {
     console.error(err);
+    console.error({ message: 'Could not save processed results', reason: err.message });
   }
 }
 
