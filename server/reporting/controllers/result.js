@@ -285,7 +285,7 @@ const generateResult = async function(collections, count = 0, baseDb) {
       result[`${collectionId}.phoneNumber`] = userDetails.phoneNumber || userDetails.phone;
       result[`${collectionId}.fullName`] = `${userDetails.firstName || userDetails.first} ${userDetails.lastName || userDetails.last}`;
     } catch (err) {
-      console.error('Error:: Unable to fetch user metadata');
+      console.error({ message: 'Could not find user metadata', reason: err.message });
     }
   }
 
