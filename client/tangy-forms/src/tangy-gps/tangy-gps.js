@@ -93,6 +93,11 @@ class TangyGps extends Element {
         type: Boolean,
         value: false,
         reflectToAttribute: true
+      },
+      disabled: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
       }
     };
   }
@@ -124,7 +129,7 @@ class TangyGps extends Element {
       this.currentLatitude = queue.latitude;
       this.currentLongitude = queue.longitude;
       this.currentAccuracy = queue.accuracy;
-      this.saveCurrentPosition();
+      if (!this.disabled) this.saveCurrentPosition();
     }
     navigator.geolocation.getCurrentPosition((position) => {
       // Bail if this element has been marked inactive on disconnected callback.
@@ -146,13 +151,13 @@ class TangyGps extends Element {
           timestamp: position.timestamp
         };
         localStorage.setItem('gpsQueue', JSON.stringify(x));
-        this.saveCurrentPosition();
+        if (!this.disabled) this.saveCurrentPosition();
 
       } else {
         this.currentLatitude = queue.latitude;
         this.currentLongitude = queue.longitude;
         this.currentAccuracy = queue.accuracy;
-        this.saveCurrentPosition();
+        if (!this.disabled) this.saveCurrentPosition();
       }
       this.getGeolocationPosition()
 

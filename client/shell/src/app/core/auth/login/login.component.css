@@ -1,20 +1,12 @@
 .mat-title {
     color: #3c5b8d;
-    font-size: 1.75em;
+    font-size: 1.5em;
     font-weight: 400;
     font-family: Roboto, "Helvetica Nue", sans-serif;
   }
   
   mat-placeholder i {
     margin-right:.075em;
-  
-  }
-  
-  mat-placeholder span{
-  
-  }
-  
-  label span {
   
   }
   
@@ -26,3 +18,8 @@
   position:relative;
     bottom: 1em !important;
   }
+
+  .mat-form-field {
+    width: 76%;
+  }
+  

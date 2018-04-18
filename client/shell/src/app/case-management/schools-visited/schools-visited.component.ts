@@ -10,16 +10,19 @@ export class SchoolsVisitedComponent implements OnInit {
 
   visits = [];
   filterValuesForDates;
+  currentDate;
+  monthNames;
   constructor(private caseManagementService: CaseManagementService) { }
 
   ngOnInit() {
     this.getMyLocations();
+
   }
   async getMyLocations() {
-    const currentDate = new Date();
+    this.currentDate = new Date();
     try {
       this.visits =
-        await this.caseManagementService.getMyLocationVisits(currentDate.getMonth(), currentDate.getFullYear());
+        await this.caseManagementService.getMyLocationVisits(this.currentDate.getMonth(), this.currentDate.getFullYear());
       this.filterValuesForDates = await this.caseManagementService.getFilterDatesForAllFormResponses();
     } catch (error) {
       console.error(error);
