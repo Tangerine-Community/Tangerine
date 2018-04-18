@@ -56,9 +56,9 @@ exports.generate = (req, res) => {
   let queryId = resultMonth && resultYear ? `${resultId}_${resultYear}_${resultMonth}` : resultId;
 
   RESULT_DB.get(resultId, resultDb)
-    .then(async(docHeaders) => {
+    .then(async(colHeaders) => {
       const result = await dbQuery.getProcessedResults(queryId, resultDb);
-      generateCSV(docHeaders, result, queryId, res);
+      generateCSV(colHeaders, result, res);
     })
     .catch((err) => res.send(err));
 }
@@ -68,20 +68,15 @@ exports.generate = (req, res) => {
  *
  * @param {Object} columnData – column headers
  * @param {Array} resultData – the result data.
- * @param {String} resultId – the result id.
  * @param {Object} res – response object.
  *
  * @returns {Object} – generated response
  */
 
-const generateCSV = function(columnData, resultData, resultId, res) {
-  const FILENAME = `${resultId}.xlsx`;
+const generateCSV = function(columnData, resultData, res) {
+  const FILENAME = columnData.name.replace(/\s/g, '_');
   let workbook = new Excel.Workbook();
-  workbook.creator = 'New Brockman';
-  workbook.lastModifiedBy = 'Matthew';
-  workbook.created = new Date(2017, 9, 1);
-  workbook.modified = new Date();
-  workbook.lastPrinted = new Date(2017, 7, 27);
+  workbook.creator = 'Tangerine';
 
   let excelSheet = workbook.addWorksheet('Tangerine Sheet', {
     views: [{ xSplit: 1 }],
@@ -98,9 +93,9 @@ const generateCSV = function(columnData, resultData, resultId, res) {
 
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.setHeader('Content-Disposition', `attachment; filename=${FILENAME}`);
+  res.setHeader('Content-Disposition', `attachment; filename=${FILENAME}.xlsx`);
   workbook.xlsx.write(res).then(function(data) {
-    console.log(chalk.green(`✓ You have successfully created a new excel file at ${new Date()}`));
+    console.log(chalk.green(`✓ You have successfully created ${FILENAME}.xlsx file at ${new Date()}`));
     res.end();
   });
 }

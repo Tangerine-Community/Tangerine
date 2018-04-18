@@ -25,10 +25,6 @@ const generateCSV = require('./controllers/generate_csv').generateCSV;
 const dbQuery = require('./utils/dbQuery');
 const dbConfig = require('./config');
 
-// Initialize database
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-const RESULT_DB = new PouchDB(dbConfig.result_db);
-
 /******************************************
  *  HELPER FUNCTIONS FOR GENERATING AND   *
  *      SAVING HEADERS AND RESULTS        *
