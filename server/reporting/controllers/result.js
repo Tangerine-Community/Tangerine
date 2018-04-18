@@ -285,7 +285,7 @@ const generateResult = async function(collections, count = 0, baseDb) {
       result[`${collectionId}.phoneNumber`] = userDetails.phoneNumber || userDetails.phone;
       result[`${collectionId}.fullName`] = `${userDetails.firstName || userDetails.first} ${userDetails.lastName || userDetails.last}`;
     } catch (err) {
-      console.error(err, 'Error:: Unable to get user metadata');
+      console.error({ message: 'Could not find user metadata', reason: err.message });
     }
   }
 
@@ -312,14 +312,24 @@ async function processLocationResult(body, subtestCount, groupTimeZone, baseDb) 
   let i, locationResult = {};
   let locSuffix = count > 0 ? `_${count}` : '';
   let subtestId = body.subtestId;
-  let locationNames = await getLocationName(body, baseDb);
-  let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
+  let locLabels = body.data.labels;
+  let locationData = body.data.location;
 
-  locationResult[`${subtestId}.county${locSuffix}`] = locationNames.county.label.replace(/\s/g,'-');
-  locationResult[`${subtestId}.subcounty${locSuffix}`] = locationNames.subcounty.label.replace(/\s/g,'-');
-  locationResult[`${subtestId}.zone${locSuffix}`] = locationNames.zone.label.replace(/\s/g,'-');
-  locationResult[`${subtestId}.school${locSuffix}`] = locationNames.school.label.replace(/\s/g,'-');
-  locationResult[`${subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+  if (locLabels.length == 0 || locLabels[0] == '') {
+    let locationNames = await getLocationName(body, baseDb);
+    let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
+
+    locationResult[`${subtestId}.county${locSuffix}`] = locationNames.county.label.replace(/\s/g,'-');
+    locationResult[`${subtestId}.subcounty${locSuffix}`] = locationNames.subcounty.label.replace(/\s/g,'-');
+    locationResult[`${subtestId}.zone${locSuffix}`] = locationNames.zone.label.replace(/\s/g,'-');
+    locationResult[`${subtestId}.school${locSuffix}`] = locationNames.school.label.replace(/\s/g,'-');
+    locationResult[`${subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+  }
+  else {
+    for (i = 0; i < locLabels.length; i++) {
+      locationResult[`${subtestId}.${locLabels[i]}`] = locationData[i];
+    }
+  }
 
   return locationResult;
 }
@@ -471,14 +481,12 @@ function processSurveyResult(body, subtestCount, groupTimeZone) {
   let count = subtestCount.surveyCount;
   let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
   let surveyResult = {};
-  let response = [];
 
   for (doc in body.data) {
     if (typeof body.data[doc] === 'object') {
       for (item in body.data[doc]) {
         let surveyValue = translateSurveyValue(body.data[doc][item]);
-        response.push(surveyValue);
-        surveyResult[`${body.subtestId}.${doc}`] = response.join(',');
+        surveyResult[`${body.subtestId}.${doc}_${item}`] = surveyValue;
       }
     } else {
       let value = translateSurveyValue(body.data[doc]);
@@ -515,9 +523,9 @@ function processGridResult(body, subtestCount, groupTimeZone, assessmentSuffix) 
   gridResult[`${subtestId}.${varName}_time_intermediate_captured${suffix}`] = body.data.time_intermediate_captured;
   gridResult[`${subtestId}.${varName}_time_allowed${suffix}`] = body.data.time_allowed;
 
-  for (doc of body.data.items) {
+  for (let [index, doc] of body.data.items.entries()) {
     let gridValue = doc.itemResult === 'correct' ? translateGridValue(doc.itemResult) : 0;
-    gridResult[`${subtestId}.${varName}_${doc.itemLabel}`] = gridValue;
+    gridResult[`${subtestId}.${varName}_${index + 1}`] = gridValue;
     correctSum += +gridValue;
   }
 

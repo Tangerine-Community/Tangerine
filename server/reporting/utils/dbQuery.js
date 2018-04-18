@@ -9,15 +9,6 @@
 const _ = require('lodash');
 const PouchDB = require('pouchdb');
 
-/**
- * Local dependency.
- */
-
-const dbConfig = require('./../config');
-
-// Initialize database
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-const RESULT_DB = new PouchDB(dbConfig.result_db);
 
 /**
  * @description This function saves/updates generated headers in the result database.
@@ -27,19 +18,29 @@ const RESULT_DB = new PouchDB(dbConfig.result_db);
  * @returns {Object} - saved document.
  */
 
-exports.saveHeaders = async (doc, key) => {
-  let docObj = { column_headers: doc };
-  docObj.updated_at = new Date().toISOString();
-  let existingDoc = await RESULT_DB.get(key);
+exports.saveHeaders = async (doc, key, resultDb) => {
+  const RESULT_DB = new PouchDB(resultDb);
+  let docObj = {
+    name: doc.shift(),
+    updated_at: new Date().toISOString(),
+    column_headers: doc
+  };
 
-  // if doc exists update it using its revision number.
-  if(!existingDoc.error) {
-    docObj = _.assignIn(existingDoc, docObj);
+  try {
+    let existingDoc = await RESULT_DB.get(key);
+    if (!existingDoc.error) {
+      let docHeaders = _.unionBy(existingDoc.column_headers, docObj.column_headers, 'header');
+      docObj.column_headers = docHeaders;
+      docObj._rev = existingDoc._rev;
+    }
+  } catch (error) {
+    console.log('Could not find header document with key: ' + key);
   }
+
   try {
     return await RESULT_DB.put(docObj);
   } catch (err) {
-    console.error(err);
+    console.error({ message: 'Could not save generated headers', reason: err.message });
   }
 }
 
@@ -51,12 +52,14 @@ exports.saveHeaders = async (doc, key) => {
  * @returns {Object} - saved document.
  */
 
-exports.saveResult = async (doc) => {
+exports.saveResult = async (doc, resultDb) => {
+  const RESULT_DB = new PouchDB(resultDb);
   const cloneDoc = _.clone(doc);
   let docKey = cloneDoc.indexKeys.ref;
   delete doc.indexKeys;
 
   let docObj = {
+    _id: docKey,
     updated_at: new Date().toISOString(),
     parent_id: cloneDoc.indexKeys.parent_id,
     result_time : cloneDoc.indexKeys.time,
@@ -66,16 +69,21 @@ exports.saveResult = async (doc) => {
     processed_results: doc
   };
 
-  let existingDoc = await RESULT_DB.get(docKey);
-
-  // if doc exists update it using its revision number.
-  if (!existingDoc.error) {
-    docObj = _.assignIn(existingDoc, docObj);
-  }
   try {
-    return await RESULT_DB.put(docObj, docKey);
+    let existingDoc = await RESULT_DB.get(docKey);
+    // if doc exists update it using its revision number.
+    if (!existingDoc.error) {
+      docObj = _.merge(existingDoc, docObj);
+    }
+  } catch (error) {
+    console.log('Could not find result document with key: ' + docKey);
+  }
+
+  try {
+    return await RESULT_DB.put(docObj);
   } catch (err) {
     console.error(err);
+    console.error({ message: 'Could not save processed results', reason: err.message });
   }
 }
 
@@ -87,7 +95,8 @@ exports.saveResult = async (doc) => {
  * @returns {Array} - subtest documents.
  */
 
-exports.getSubtests = (id) => {
+exports.getSubtests = (id, baseDb) => {
+  const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.query('ojai/subtestsByAssessmentId', { key: id, include_docs: true })
       .then((body) => {
@@ -109,7 +118,8 @@ exports.getSubtests = (id) => {
  * @returns {Array} - question documents.
  */
 
-exports.getQuestionBySubtestId = (subtestId) => {
+exports.getQuestionBySubtestId = (subtestId, baseDb) => {
+  const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.query('ojai/questionsByParentId',{ key: subtestId, include_docs: true })
       .then((body) => {
@@ -127,7 +137,8 @@ exports.getQuestionBySubtestId = (subtestId) => {
  * @returns {Array} - result documents.
  */
 
-exports.getProcessedResults = function (ref) {
+exports.getProcessedResults = function (ref, resultDb) {
+  const RESULT_DB = new PouchDB(resultDb);
   return new Promise((resolve, reject) => {
     RESULT_DB.query('dashReporting/byParentId', { key: ref, include_docs: true })
       .then((body) => resolve(body.rows))
@@ -143,7 +154,8 @@ exports.getProcessedResults = function (ref) {
  * @returns {Array} - result documents.
  */
 
-exports.getTripResults = function(id) {
+exports.getTripResults = function(id, baseDb) {
+  const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.query('dashReporting/byTripId', { key: id, include_docs: true })
       .then((body) => resolve(body.rows))
@@ -159,6 +171,7 @@ exports.getTripResults = function(id) {
  * @returns {Array} - location document.
  */
 exports.processedResultsById = function (req, res) {
+  const RESULT_DB = new PouchDB(req.body.result_db);
   RESULT_DB.query('dashReporting/byParentId', { key: req.params.id, include_docs: true })
     .then((body) => res.json(body.rows))
     .catch((err) => res.send(err));
@@ -172,7 +185,8 @@ exports.processedResultsById = function (req, res) {
  * @returns {Object} - user document.
  */
 
-exports.getUserDetails = function (enumerator) {
+exports.getUserDetails = function (enumerator, baseDb) {
+  const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.get(enumerator)
       .then((body) => resolve(body))
@@ -186,7 +200,8 @@ exports.getUserDetails = function (enumerator) {
  * @returns {Object} - location document.
  */
 
-exports.getLocationList = function () {
+exports.getLocationList = function (baseDb) {
+  const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.get('location-list')
       .then((body) => resolve(body))
@@ -199,7 +214,8 @@ exports.getLocationList = function () {
  *
  * @returns {Object} - settings document.
  */
-exports.getSettings = function () {
+exports.getSettings = function (baseDb) {
+  const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.get('settings')
       .then((body) => resolve(body))

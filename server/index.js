@@ -92,20 +92,6 @@ app.use(compression())
 app.use(passport.initialize());
 app.use(passport.session());
 
-/**
- * Hook data processing function to changes feed.
- */
-
-const dbConfig = require('./reporting/config');
-const GROUP_DB = new PouchDB(dbConfig.base_db);
-const RESULT_DB = new PouchDB(dbConfig.result_db);
-const dbQuery = require('./reporting/utils/dbQuery');
-const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
-
-GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
-  .on('change', (body) => processChangedDocument(body))
-  .on('error', (err) => console.error(err));
-
 // Middleware to protect routes.
 var isAuthenticated = function (req, res, next) {
   // @TODO Add HTTP AUTH for clients like curl.
