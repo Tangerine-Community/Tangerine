@@ -58,7 +58,7 @@ exports.generate = (req, res) => {
   RESULT_DB.get(resultId, resultDb)
     .then(async(colHeaders) => {
       const result = await dbQuery.getProcessedResults(queryId, resultDb);
-      generateCSV(colHeaders, result, resultDb, res);
+      generateCSV(colHeaders, result, res);
     })
     .catch((err) => res.send(err));
 }
@@ -68,45 +68,36 @@ exports.generate = (req, res) => {
  *
  * @param {Object} columnData – column headers
  * @param {Array} resultData – the result data.
- * @param {String} resultId – the result id.
- * @param {String} dbName – the name of the result database.
  * @param {Object} res – response object.
  *
  * @returns {Object} – generated response
  */
 
-const generateCSV = function(columnData, resultData, dbName, res) {
-  let docId = columnData._id;
-  let groupDB = dbName.replace('-result', '');
-  const GROUP_DB = new PouchDB(groupDB);
+const generateCSV = function(columnData, resultData, res) {
+  const FILENAME = columnData.name.replace(/\s/g, '_');
+  let workbook = new Excel.Workbook();
+  workbook.creator = 'Tangerine';
 
-  GROUP_DB.get(docId).then((doc) => {
-    let FILENAME = doc.name || doc.assessmentName;
-    let workbook = new Excel.Workbook();
-    workbook.creator = 'Tangerine';
+  let excelSheet = workbook.addWorksheet('Tangerine Sheet', {
+    views: [{ xSplit: 1 }],
+    pageSetup: { paperSize: 9, orientation: 'landscape' }
+  });
 
-    let excelSheet = workbook.addWorksheet('Tangerine Sheet', {
-      views: [{ xSplit: 1 }],
-      pageSetup: { paperSize: 9, orientation: 'landscape' }
-    });
+  // Add column headers and define column keys
+  excelSheet.columns = columnData.column_headers;
 
-    // Add column headers and define column keys
-    excelSheet.columns = columnData.column_headers;
+  // Add rows by key-value using the column keys
+  _.each(resultData, row => {
+    excelSheet.addRow(row.doc.processed_results);
+  });
 
-    // Add rows by key-value using the column keys
-    _.each(resultData, row => {
-      excelSheet.addRow(row.doc.processed_results);
-    });
-
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename=${FILENAME}.xlsx`);
-    workbook.xlsx.write(res).then(function(data) {
-      console.log(chalk.green(`✓ You have successfully created ${FILENAME}.xlsx file at ${new Date()}`));
-      res.end();
-    });
-
-  }).catch((err) => console.error('Error retrieving document name for CSV generation', err));
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader('Content-Disposition', `attachment; filename=${FILENAME}.xlsx`);
+  workbook.xlsx.write(res).then(function(data) {
+    console.log(chalk.green(`✓ You have successfully created ${FILENAME}.xlsx file at ${new Date()}`));
+    res.end();
+  });
 }
 
 exports.generateCSV = generateCSV;

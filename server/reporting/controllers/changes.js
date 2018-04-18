@@ -82,12 +82,10 @@ const processChangedDocument = async(resp, baseDb, resultDb) => {
 
   if (isWorkflowIdSet && isResult) {
     console.info('\n<<<=== START PROCESSING WORKFLOW RESULT ===>>>\n');
-    let totalResult = {};
     try {
       let data = await dbQuery.getTripResults(resp.doc.tripId, baseDb);
       const workflowResult = await processWorkflowResult(data, baseDb);
-      workflowResult.forEach(element => totalResult = Object.assign(totalResult, element));
-      const saveResponse = await dbQuery.saveResult(totalResult, resultDb);
+      const saveResponse = await dbQuery.saveResult(workflowResult, resultDb);
       console.log(saveResponse);
       console.info('\n<<<=== END PROCESSING WORKFLOW RESULT ===>>>\n');
     } catch (error) {

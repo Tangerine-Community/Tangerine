@@ -20,9 +20,11 @@ const PouchDB = require('pouchdb');
 
 exports.saveHeaders = async (doc, key, resultDb) => {
   const RESULT_DB = new PouchDB(resultDb);
-  let docObj = { column_headers: doc };
-  docObj._id = key;
-  docObj.updated_at = new Date().toISOString();
+  let docObj = {
+    name: doc.shift(),
+    updated_at: new Date().toISOString(),
+    column_headers: doc
+  };
 
   try {
     let existingDoc = await RESULT_DB.get(key);
