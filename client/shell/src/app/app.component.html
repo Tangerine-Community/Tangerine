@@ -1,7 +1,9 @@
 <div id="update-in-progress" *ngIf="updateIsRunning">
   <div id="update-in-progress-inner">
-    <img src="../logo.svg"> <br>
-    Update is running. Please wait... <br><br>
+    <img src="../logo.svg">
+    <br> Update is running. Please wait...
+    <br>
+    <br>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 </div>
@@ -26,10 +28,10 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
       <span>Manage Profile</span>
     </button>
-    <button routerLink="/home" mat-menu-item>
+    <!-- <button routerLink="/home" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">settings</mat-icon>
       <span>My Settings</span>
-    </button>
+    </button> -->
     <button routerLink="/sync-records" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>Sync</span>
