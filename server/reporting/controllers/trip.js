@@ -52,8 +52,7 @@ exports.processResult = (req, res) => {
 
   dbQuery.getTripResults(req.params.id)
     .then(async(data) => {
-      let totalResult = {};
-      const result = await processWorkflowResult(data, baseDb);
+      const totalResult = await processWorkflowResult(data, baseDb);
       const saveResponse = await dbQuery.saveResult(totalResult, resultDb);
       console.log(saveResponse);
       res.json(totalResult);

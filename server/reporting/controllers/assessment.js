@@ -104,6 +104,7 @@ exports.generateHeader = (req, res) => {
     .then(async(data) => {
       const docId = data.assessmentId || data.curriculumId;
       const colHeaders = await createColumnHeaders(data, 0, baseDb);
+      colHeaders.unshift(data.name); // Add assessment name. Needed for csv file name.
       const saveResponse = await dbQuery.saveHeaders(colHeaders, docId, baseDb);
       console.log(saveResponse);
       res.json(colHeaders);
