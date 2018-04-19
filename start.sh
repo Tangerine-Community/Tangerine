@@ -78,7 +78,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
-if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_ENDPOINT" = "http://couchdb:5984" ]; then
+if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_LOCAL" = "true" ]; then
   if [ ! -d data/couchdb ]; then
     mkdir data/couchdb
   fi
