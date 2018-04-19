@@ -8,9 +8,10 @@ T_PASS="password"
 T_UPLOAD_USER="uploader"
 T_UPLOAD_PASSWORD="password"
 T_COUCHDB_ENABLE="true"
+T_COUCHDB_LOCAL="true"
 T_COUCHDB_USER_ADMIN_NAME="admin"
 T_COUCHDB_USER_ADMIN_PASS="password"
-T_COUCHDB_ENDPOINT="http://couchdb:5984"
+T_COUCHDB_ENDPOINT="http://admin:password@couchdb:5984"
 T_COUCHDB_CONTAINER_NAME="couchdb"
 
 # optional

@@ -21,7 +21,7 @@ const compression = require('compression')
 var DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
-    prefix: 'http://couchdb:5984'
+    prefix: process.env.T_COUCHDB_ENDPOINT
   });
 } else {
   DB = PouchDB.defaults({
