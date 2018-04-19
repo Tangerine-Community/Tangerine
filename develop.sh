@@ -44,7 +44,7 @@ docker build -t tangerine/tangerine:local .
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME 
 
 COUCHDB_OPTIONS=""
-if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_ENDPOINT" = "http://couchdb:5984" ]; then
+if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_LOCAL" = "true" ]; then
   if [ ! -d data/couchdb ]; then
     mkdir data/couchdb
   fi
@@ -82,7 +82,7 @@ require_valid_user = true
   COUCHDB_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
     -e T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE \
-    -e T_COUCHDB_ENDPOINT=$T_COUCHDB_ENDPOINT \
+    -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
     -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
     -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
   "
