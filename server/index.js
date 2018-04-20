@@ -17,7 +17,7 @@ const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
-
+const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
 const _ = require('underscore')
@@ -274,7 +274,7 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   // save the updated list back to the form.
   $('tangy-form-item').remove()
   $('tangy-form').append(sortedItemList)
-  let form = $.html()
+  let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
   await fs.outputFile(formPath, form)
     .then(() => {
       let msg = "Success! Updated file at: " + formPath
@@ -385,7 +385,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // console.log('newItem: ' + newItem)
     $(newItem).appendTo('tangy-form')
     // console.log('html after: ' + $.html())
-    let form = $('body').html()
+    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
@@ -430,7 +430,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
       console.log('newItem: ' + newItem)
       $(newItem).appendTo('tangy-form')
     }
-    let form = $('body').html()
+    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
