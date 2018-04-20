@@ -17,16 +17,69 @@ const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
+const pretty = require('pretty')
+const flatten = require('flat')
+const json2csv = require('json2csv')
+const _ = require('underscore')
 
-const DB = PouchDB.defaults({
-  prefix: '/tangerine/db/'
-});
+jlog = function(data) {
+  console.log(JSON.stringify(data, null, 2))
+}
+log = function(data) {
+  console.log(data)
+}
+
+
+var DB = {}
+if (process.env.T_COUCHDB_ENABLE === 'true') {
+  DB = PouchDB.defaults({
+    prefix: process.env.T_COUCHDB_ENDPOINT
+  });
+} else {
+  DB = PouchDB.defaults({
+    prefix: '/tangerine/db/'
+  });
+}
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
 const cors = require('cors')
 
 const sep = path.sep;
+
+// Enforce SSL behind Load Balancers.
+if (process.env.T_PROTOCOL == 'https') {
+  app.use(function(req, res, next) {
+    if(req.get('X-Forwarded-Proto') == 'http') {
+      res.redirect('https://' + req.get('Host') + req.url);
+    }
+    else {
+      next();
+    }
+  });
+}
+
+// COUCHDB endpoint proxy
+if (process.env.T_COUCHDB_ENABLE === 'true') {
+  // proxy for couchdb
+  var proxy = require('express-http-proxy');
+  var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
+    forwardPath: function (req, res) {
+      var path = require('url').parse(req.url).path;
+      console.log("path:" + path);
+      return path;
+    }
+  });
+  var mountpoint = '/db';
+  app.use(mountpoint, couchProxy);
+  app.use(mountpoint, function(req, res) {
+    if (req.originalUrl === mountpoint) {
+      res.redirect(301, req.originalUrl + '/');
+    } else {
+      couchProxy;
+    }
+  });
+}
 
 // Enable CORS
 app.use(cors({
@@ -43,9 +96,6 @@ var passport = require('passport')
 // This determines wether or not a login is valid.
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    // console.log('strategy!')
-    // console.log(username)
-    // console.log(password)
     if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
       console.log('login success!')
       return done(null, {
@@ -190,7 +240,6 @@ let openForm = async function (path) {
   } catch (e) {
     console.log("Error opening form: ", e);
   }
-  // console.log("openForm will return form: " + JSON.stringify(form))
   return form
 };
 
@@ -212,7 +261,6 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let sortedItemList = []
   for (let itemScr of itemsOrder) {
     if (itemScr !== null) {
-      // console.log("itemScr: " + itemScr)
       let item = formItemList.is(function(i, el) {
         let src = $(this).attr('src')
         if (src === itemScr) {
@@ -222,17 +270,14 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
       })
     }
   }
-  // console.log("sortedItemList: " + sortedItemList)
   let tangyform = $('tangy-form')
   // save the updated list back to the form.
   $('tangy-form-item').remove()
   $('tangy-form').append(sortedItemList)
-  // console.log('html after: ' + $.html())
-  let form = $.html()
+  let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
   await fs.outputFile(formPath, form)
     .then(() => {
       let msg = "Success! Updated file at: " + formPath
-      // let message = {message: msg}
       let resp = {
         "message": msg
       }
@@ -245,6 +290,15 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
       console.error(message)
       res.send(message)
     })
+})
+
+app.post('/editor/file/save', isAuthenticated, async function (req, res) {
+  const filePath = req.body.filePath
+  const groupId = req.body.groupId
+  const fileContents = req.body.fileContents
+  const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
+  await fs.writeFile(actualFilePath, fileContents)
+  res.send('ok')
 })
 
 // Saves an item - and a new form when formName is passed.async
@@ -331,7 +385,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // console.log('newItem: ' + newItem)
     $(newItem).appendTo('tangy-form')
     // console.log('html after: ' + $.html())
-    let form = $.html()
+    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
@@ -376,8 +430,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
       console.log('newItem: ' + newItem)
       $(newItem).appendTo('tangy-form')
     }
-    // console.log('html after: ' + $.html())
-    let form = $.html()
+    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
@@ -411,7 +464,6 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     "message": 'Item saved: ' + itemPath,
     "displayFormsListing":displayFormsListing
   }
-  // console.log("resp: "+  JSON.stringify(resp))
   res.json(resp)
 })
 
@@ -476,18 +528,6 @@ app.post('/upload/:groupName', async function (req, res) {
   } catch(e) { console.log(e) }
 
 })
-
-const flatten = require('flat')
-const json2csv = require('json2csv')
-const _ = require('underscore')
-
-jlog = function(data) {
-  console.log(JSON.stringify(data, null, 2))
-}
-log = function(data) {
-  console.log(data)
-}
-
 
 app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   let db = new DB(req.params.groupName)
