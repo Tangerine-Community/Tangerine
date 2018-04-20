@@ -381,7 +381,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // console.log('newItem: ' + newItem)
     $(newItem).appendTo('tangy-form')
     // console.log('html after: ' + $.html())
-    let form = $.html()
+    let form = $('body').html()
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
@@ -427,7 +427,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
       $(newItem).appendTo('tangy-form')
     }
     // console.log('html after: ' + $.html())
-    let form = $.html()
+    let form = $('body').html()
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
