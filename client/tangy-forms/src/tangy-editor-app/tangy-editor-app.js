@@ -173,6 +173,14 @@ class TangyEditorApp extends Element {
                   data-item-order=null
                   on-click="createFormItemListener">
               </paper-icon-button>
+              <paper-icon-button
+                  icon="assignment"
+                  data-form-src="[[formHtmlPath]]"
+                  data-item-title="Edit form.html"
+                  data-item-src='form-metadata.html'
+                  data-item-order=null
+                  on-click="editFormListener">
+              </paper-icon-button>
               </div>
             </div>
             <div id="save-order" hidden>
@@ -368,6 +376,7 @@ class TangyEditorApp extends Element {
     let params = window.getHashParams()
     let query = this.parseQuery(window.location.hash)
     let formPath = query.form
+    this.formPath = formPath
     let edit = query.edit
     let newForm = query.new
     this.groupId = window.location.pathname.split("/")[2];
@@ -499,9 +508,13 @@ class TangyEditorApp extends Element {
     this.formSrc = event.currentTarget.dataFormSrc
   }
   async editFormListener(event) {
-//        window.location.hash = event.currentTarget.dataFormSrc
-    this.formHtmlPath = event.currentTarget.dataFormSrc
-    this.showFormEditor(this.formHtmlPath)
+    this.showFormHtmlEditor(this.formPath)
+  }
+  async showFormHtmlEditor(formPath) {
+    document.querySelector("#content").setAttribute('style', 'display:block;')
+    let res = await fetch(formPath, {credentials: 'include'})
+    const formHtml = await res.text()
+    Tangy.ace.setValue(formHtml)
   }
   async editFormItemListener(event) {
 //        window.location.hash = event.currentTarget.dataFormSrc
