@@ -288,6 +288,15 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
     })
 })
 
+app.post('/editor/file/save', isAuthenticated, async function (req, res) {
+  const filePath = req.body.filePath
+  const groupId = req.body.groupId
+  const fileContents = req.body.fileContents
+  const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
+  await fs.writeFile(actualFilePath, fileContents)
+  res.send('ok')
+})
+
 // Saves an item - and a new form when formName is passed.async
 // otherwise, the path to the existing form is extracted from formHtmlPath.
 // contentUrlPath: path used to fetch content when using an APK or PWA. Used when setting 'src' attribute.
