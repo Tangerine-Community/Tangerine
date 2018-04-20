@@ -18,6 +18,18 @@ const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
 
+const flatten = require('flat')
+const json2csv = require('json2csv')
+const _ = require('underscore')
+
+jlog = function(data) {
+  console.log(JSON.stringify(data, null, 2))
+}
+log = function(data) {
+  console.log(data)
+}
+
+
 var DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -84,9 +96,6 @@ var passport = require('passport')
 // This determines wether or not a login is valid.
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    // console.log('strategy!')
-    // console.log(username)
-    // console.log(password)
     if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
       console.log('login success!')
       return done(null, {
@@ -231,7 +240,6 @@ let openForm = async function (path) {
   } catch (e) {
     console.log("Error opening form: ", e);
   }
-  // console.log("openForm will return form: " + JSON.stringify(form))
   return form
 };
 
@@ -253,7 +261,6 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let sortedItemList = []
   for (let itemScr of itemsOrder) {
     if (itemScr !== null) {
-      // console.log("itemScr: " + itemScr)
       let item = formItemList.is(function(i, el) {
         let src = $(this).attr('src')
         if (src === itemScr) {
@@ -263,17 +270,14 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
       })
     }
   }
-  // console.log("sortedItemList: " + sortedItemList)
   let tangyform = $('tangy-form')
   // save the updated list back to the form.
   $('tangy-form-item').remove()
   $('tangy-form').append(sortedItemList)
-  // console.log('html after: ' + $.html())
   let form = $.html()
   await fs.outputFile(formPath, form)
     .then(() => {
       let msg = "Success! Updated file at: " + formPath
-      // let message = {message: msg}
       let resp = {
         "message": msg
       }
@@ -426,7 +430,6 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
       console.log('newItem: ' + newItem)
       $(newItem).appendTo('tangy-form')
     }
-    // console.log('html after: ' + $.html())
     let form = $('body').html()
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
@@ -461,7 +464,6 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     "message": 'Item saved: ' + itemPath,
     "displayFormsListing":displayFormsListing
   }
-  // console.log("resp: "+  JSON.stringify(resp))
   res.json(resp)
 })
 
@@ -526,18 +528,6 @@ app.post('/upload/:groupName', async function (req, res) {
   } catch(e) { console.log(e) }
 
 })
-
-const flatten = require('flat')
-const json2csv = require('json2csv')
-const _ = require('underscore')
-
-jlog = function(data) {
-  console.log(JSON.stringify(data, null, 2))
-}
-log = function(data) {
-  console.log(data)
-}
-
 
 app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   let db = new DB(req.params.groupName)
