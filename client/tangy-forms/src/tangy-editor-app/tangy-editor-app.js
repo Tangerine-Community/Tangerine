@@ -505,6 +505,17 @@ class TangyEditorApp extends Element {
       let formsJson = await fetch('../content/forms.json')
       this.forms = await formsJson.json()
     }
+    // Add some hard coded forms that are not listed in forms.json.
+    this.forms.push({
+      "id": "user-profile",
+      "title": "User Profile",
+      "src": "../content/user-profile/form.html"
+    })
+    this.forms.push({
+      "id": "reports",
+      "title": "Reports",
+      "src": "../content/reports/form.html"
+    })
     // Load editor forms
     let editorJson = await fetch('editor/editor-forms.json', {credentials: 'include'})
     this.editorForms = await editorJson.json()
