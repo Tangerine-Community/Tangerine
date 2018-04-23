@@ -21,6 +21,7 @@ const PouchDB = require('pouchdb');
 exports.saveHeaders = async (doc, key, resultDb) => {
   const RESULT_DB = new PouchDB(resultDb);
   let docObj = {
+    _id: key,
     name: doc.shift(),
     updated_at: new Date().toISOString(),
     column_headers: doc
