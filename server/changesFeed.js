@@ -22,6 +22,7 @@ let changesFeed = function (groupDB, groupResultDB) {
       if (err) return callback(err);
       let groupNames = [];
       let groupResultNames = [];
+      let newResultGroup = [];
 
       databases.forEach(function(databaseName) {
         if (databaseName.search('group-') !== -1) {
@@ -45,6 +46,7 @@ let changesFeed = function (groupDB, groupResultDB) {
         if (!groupExists) {
           const newGroupName = `${groupName}-result`;
           const group = new Group({ name: newGroupName });
+          newResultGroup.push(newGroupName);
 
           group.createResult(newGroupName)
             .then(function replicateDatabase() {
@@ -55,19 +57,16 @@ let changesFeed = function (groupDB, groupResultDB) {
             .then(function addRoles() {
               return group.addGroupRoles(newGroupName);
             })
-            .then(function processOldChanges() {
-              // Process all results in group database into new result database.
-              const GROUP_DB = new PouchDB(baseDb);
-              return GROUP_DB.changes({ since: 0, include_docs: true })
-                .on('change', body => setTimeout(() => processChangedDocument(body, baseDb, resultDb)), 10000)
-                .on('complete', info => console.log(`All changes in ${groupName} have been processed into ${newGroupName}`, info))
-                .on('error', err => console.error(err));
-              })
             .catch((err) => console.error(err));
         }
 
         monitorChange(baseDb, resultDb);
       });
+
+      if (newResultGroup.length > 0) {
+        processOldResult(newResultGroup);
+      }
+
     });
   }
 }
@@ -76,6 +75,30 @@ function monitorChange(baseDb, resultDb) {
   const GROUP_DB = new PouchDB(baseDb);
   GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
     .on('change', body => processChangedDocument(body, baseDb, resultDb))
+    .on('error', err => console.error(err));
+}
+
+function processOldResult(groupResultNames) {
+  let groupResult = groupResultNames.shift();
+  const groupName = groupResult.replace('-result', '');
+  const baseDb = dbConfig.db_url + groupName;
+  const resultDb = dbConfig.db_url + groupResult;
+  const GROUP_DB = new PouchDB(baseDb);
+
+  console.log({ g: groupResultNames, n: groupResult, r: groupName, b: baseDb, res: resultDb });
+
+  logger.info(':: Processing old results')
+
+  return GROUP_DB.changes({ since: 0, include_docs: true })
+    .on('change', body => setTimeout(() => processChangedDocument(body, baseDb, resultDb)), 1000)
+    .on('complete', info => {
+      console.log(`All changes in ${groupName} have been processed into ${groupResult}`);
+      if (groupResultNames.length > 0) {
+        return processOldResult(groupResultNames);
+      } else {
+        logger.info('::: All old results have been successfully processed :::')
+      }
+    })
     .on('error', err => console.error(err));
 }
 
