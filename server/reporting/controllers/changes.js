@@ -126,7 +126,7 @@ const processChangedDocument = async(resp, baseDb, resultDb) => {
     try {
       console.info('\n<<<=== START PROCESSING WORKFLOW COLLECTION  ===>>>\n');
       const workflowHeaders = await generateWorkflowHeaders(resp.doc, baseDb);
-      const saveResponse = await dbQuery.saveHeaders(workflowHeaders, workflowId, resultDb);
+      const saveResponse = await dbQuery.saveHeaders(workflowHeaders, resp.doc._id, resultDb);
       console.log(saveResponse);
       console.info('\n<<<=== END PROCESSING WORKFLOW COLLECTION ===>>>\n');
     } catch (err) {
@@ -137,7 +137,10 @@ const processChangedDocument = async(resp, baseDb, resultDb) => {
   if (isAssessment || isCurriculum || isQuestion || isSubtest) {
     try {
       console.info('\n<<<=== START PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION  ===>>>\n');
-      const assessmentHeaders = await generateAssessmentHeaders(resp.doc, 0, baseDb);
+      const GROUP_DB = new PouchDB(baseDb);
+      let assessmentDoc = await GROUP_DB.get(assessmentId);
+      let assessmentHeaders = await generateAssessmentHeaders(resp.doc, 0, baseDb);
+      assessmentHeaders.unshift(assessmentDoc.name); // Add assessment name. Needed for csv file name.
       const saveResponse = await dbQuery.saveHeaders(assessmentHeaders, assessmentId, resultDb);
       console.log(saveResponse);
       console.info('\n<<<=== END PROCESSING ASSESSMENT or CURRICULUM or SUBTEST or QUESTION COLLECTION ===>>>\n');
