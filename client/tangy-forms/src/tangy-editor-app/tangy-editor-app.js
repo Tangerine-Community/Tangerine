@@ -40,6 +40,11 @@ class TangyEditorApp extends Element {
         color: var(--primary-text-color);
         font-size: medium;
       }
+      h2 {
+        padding: 15px 0px 0px 20px;
+        margin: 0px;
+        color: #444;
+      }
       .form-link {
         padding: 15px;
         margin: 15px;
@@ -119,6 +124,7 @@ class TangyEditorApp extends Element {
     <div class="tangy-form-app--container">
 
       <div id="form-list">
+        <h2> Forms </h2>
         <template is="dom-repeat" items="{{forms}}">
             <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
                 <div class="card-actions">
@@ -147,6 +153,7 @@ class TangyEditorApp extends Element {
                 </div>
             </paper-card>
         </template>
+        <h2> Configuration </h2>
         <tangy-editor-file-list group-id="{{groupId}}"></tangy-editor-file-list>
       </div>
 
