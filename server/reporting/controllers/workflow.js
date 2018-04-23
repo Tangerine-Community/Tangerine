@@ -125,8 +125,9 @@ const createWorkflowHeaders = async function(data, baseDb) {
   let workflowItems = [];
   let messageCount = 0;
   let count = 0;
+  let workflowName = data.name || 'Untitled';
 
-  workflowHeaders.push(data.name);  // Add workflow name. Needed for csv file name
+  workflowHeaders.push(workflowName);  // Add workflow name. Needed for csv file name
 
   for (item of data.children) {
     item.workflowId = data._id;
