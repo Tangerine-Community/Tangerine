@@ -100,6 +100,8 @@ class TangyFormApp extends Element {
 
   async connectedCallback() {
     super.connectedCallback();
+    // Prevent accidental back button by filling up the history.
+    for (let i = 0; i < 50; i++) { history.pushState({}, "Tangerine", window.location); }
     // Get params from hash.
     let params = window.getHashParams()
     let formSrc = params.hasOwnProperty('form_src') ? params.form_src : undefined
