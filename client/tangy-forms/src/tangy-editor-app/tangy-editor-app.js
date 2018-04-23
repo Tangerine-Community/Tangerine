@@ -1,4 +1,5 @@
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import './tangy-editor-file-list.js'
 import '../tangy-form/cat.js'
 import '../../node_modules/@polymer/paper-button/paper-button.js';
 import '../../node_modules/@polymer/paper-card/paper-card.js';
@@ -146,6 +147,7 @@ class TangyEditorApp extends Element {
                 </div>
             </paper-card>
         </template>
+        <tangy-editor-file-list group-id="{{groupId}}"></tangy-editor-file-list>
       </div>
 
       <!--<div id="form-view" hidden="">-->
