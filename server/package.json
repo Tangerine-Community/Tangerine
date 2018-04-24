@@ -18,6 +18,7 @@
     "cordova-hot-code-push-cli": "^1.1.1",
     "cors": "^2.8.4",
     "crypto": "^1.0.1",
+    "exceljs": "^1.2.1",
     "express": "^4.16.2",
     "express-http-proxy": "^1.1.0",
     "express-session": "1.15.6",
