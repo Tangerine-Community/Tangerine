@@ -52,7 +52,7 @@ export class CaseManagementService {
       }
 
     });
-    return locations;
+    return removeDuplicates(locations, 'id');
   }
 
   async getFilterDatesForAllFormResponses() {
