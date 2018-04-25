@@ -29,7 +29,6 @@ log = function(data) {
   console.log(data)
 }
 
-
 var DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
