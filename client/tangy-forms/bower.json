@@ -3,6 +3,7 @@
   "main": "index.html",
   "dependencies": {
     "pouchdb": "^6.3.4",
-    "plotlyjs": "plotly#^1.18.1"
+    "plotlyjs": "plotly#^1.18.1",
+    "juicy-ace-editor": "^2.0.5"
   }
 }
