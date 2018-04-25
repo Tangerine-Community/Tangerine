@@ -63,7 +63,7 @@
       <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">LOGIN</button>
       <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
         color="accent" name="action">Recover Account</button>
-      <a href="#/register">REGISTER</a>
+      <a class="register-link" href="#/register">REGISTER</a>
       <br>
       <br>
       <span id="err">
