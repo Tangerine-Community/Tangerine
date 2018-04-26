@@ -24,7 +24,6 @@ const Settings = require('./Settings');
 const User = require('./User');
 
 const changesFeed = require('./changesFeed');
-const dbQuery = require('./reporting/utils/dbQuery');
 
 /**
 * Reporting Controllers.
@@ -133,7 +132,6 @@ app.get('/generate_csv/:db_name/:id/:year?/:month?', csvController.generate);
 app.post('/generate_csv/:id/:year?/:month?', csvController.generate);
 
 app.post('/tangerine_changes', changesController.changes);
-app.post('/get_processed_results/:id/', dbQuery.processedResultsById);
 
 // landing
 app.get('/', function(req, res){
