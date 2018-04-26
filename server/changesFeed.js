@@ -64,7 +64,10 @@ let changesFeed = function (groupDB, groupResultDB) {
       });
 
       if (newResultGroup.length > 0) {
-        processOldResult(newResultGroup);
+        newResultGroup.forEach(async (result) => {
+          logger.info('==== Processing old results from ', result);
+          await processOldResult(result);
+        });
       }
 
     });
@@ -78,28 +81,23 @@ function monitorChange(baseDb, resultDb) {
     .on('error', err => console.error(err));
 }
 
-function processOldResult(groupResultNames) {
-  let groupResult = groupResultNames.shift();
-  const groupName = groupResult.replace('-result', '');
-  const baseDb = dbConfig.db_url + groupName;
-  const resultDb = dbConfig.db_url + groupResult;
-  const GROUP_DB = new PouchDB(baseDb);
+function processOldResult(groupResult) {
+  return new Promise((resolve) => {
+    const groupName = groupResult.replace('-result', '');
+    const baseDb = dbConfig.db_url + groupName;
+    const resultDb = dbConfig.db_url + groupResult;
+    const GROUP_DB = new PouchDB(baseDb);
 
-  console.log({ g: groupResultNames, n: groupResult, r: groupName, b: baseDb, res: resultDb });
+    logger.info('::: Processing old results :::');
 
-  logger.info(':: Processing old results')
-
-  return GROUP_DB.changes({ since: 0, include_docs: true })
-    .on('change', body => setTimeout(() => processChangedDocument(body, baseDb, resultDb)), 1000)
-    .on('complete', info => {
-      console.log(`All changes in ${groupName} have been processed into ${groupResult}`);
-      if (groupResultNames.length > 0) {
-        return processOldResult(groupResultNames);
-      } else {
-        logger.info('::: All old results have been successfully processed :::')
-      }
-    })
-    .on('error', err => console.error(err));
+    GROUP_DB.changes({ since: 0, include_docs: true })
+      .on('change', body => setTimeout(() => processChangedDocument(body, baseDb, resultDb)), 1000)
+      .on('complete', info => {
+        console.log(`==== All changes in ${groupName} have been processed into ${groupResult} ====`);
+        resolve();
+      })
+      .on('error', err => console.error(err));
+  });
 }
 
 module.exports = changesFeed;

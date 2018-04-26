@@ -125,8 +125,9 @@ const processChangedDocument = async(resp, baseDb, resultDb) => {
   if (isWorkflow) {
     try {
       console.info('\n<<<=== START PROCESSING WORKFLOW COLLECTION  ===>>>\n');
+      const docId = workflowId || resp.doc._id;
       const workflowHeaders = await generateWorkflowHeaders(resp.doc, baseDb);
-      const saveResponse = await dbQuery.saveHeaders(workflowHeaders, resp.doc._id, resultDb);
+      const saveResponse = await dbQuery.saveHeaders(workflowHeaders, docId, resultDb);
       console.log(saveResponse);
       console.info('\n<<<=== END PROCESSING WORKFLOW COLLECTION ===>>>\n');
     } catch (err) {

@@ -39,7 +39,7 @@ exports.saveHeaders = async (doc, key, resultDb) => {
   }
 
   try {
-    return await RESULT_DB.put(docObj);
+    return await RESULT_DB.put(docObj, { force: true });
   } catch (err) {
     console.error({ message: 'Could not save generated headers', reason: err.message });
   }
@@ -81,9 +81,8 @@ exports.saveResult = async (doc, resultDb) => {
   }
 
   try {
-    return await RESULT_DB.put(docObj);
+    return await RESULT_DB.put(docObj, { force: true });
   } catch (err) {
-    console.error(err);
     console.error({ message: 'Could not save processed results', reason: err.message });
   }
 }
