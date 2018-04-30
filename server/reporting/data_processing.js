@@ -18,6 +18,16 @@ const PouchDB = require('pouchdb');
  *
  * @returns {array} generated headers for csv
  */
+let DB = {}
+if (process.env.T_COUCHDB_ENABLE === 'true') {
+  DB = PouchDB.defaults({
+    prefix: process.env.T_COUCHDB_ENDPOINT
+  });
+} else {
+  DB = PouchDB.defaults({
+    prefix: '/tangerine/db/'
+  });
+}
 
 const generateHeaders = function (formData) {
   let formResponseHeaders = [];
@@ -67,7 +77,7 @@ const generateHeaders = function (formData) {
  * @returns {object} processed results for csv
  */
 
-const processFormResponse = function(formData) {
+const processFormResponse = function (formData) {
   let formID = formData.form.id;
   let formResponseResult = {};
 
@@ -84,7 +94,7 @@ const processFormResponse = function(formData) {
         });
       }
       // create headers for all values that are pure objects
-      if (typeof (item && item.value) === 'object' &&!Array.isArray(item) && item !== null) {
+      if (typeof (item && item.value) === 'object' && !Array.isArray(item) && item !== null) {
         let elementKeys = Object.keys(item.value);
         elementKeys.forEach(key => {
           formResponseResult[`${formID}.${data.title}.${item.name}.${key}`] = item.value[key];
@@ -107,7 +117,7 @@ const processFormResponse = function(formData) {
  */
 
 const saveProcessedFormData = async function (formData, resultDB) {
-  const RESULT_DB = new PouchDB(resultDB);
+  const RESULT_DB = new DB(resultDB);
   let formID = formData.form.id;
   let formHeaders = { _id: formID };
   let formResult = { _id: formData._id, formId: formID };
