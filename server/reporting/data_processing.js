@@ -1,7 +1,8 @@
 /**
- * This file creates header for CSV and processes the form response.
+ * This file creates headers for CSV, processes the form response
+ * and saves them into the result database.
  *
- *  Modules: generateHeaders, processFormResponse.
+ *  Modules: generateHeaders, processFormResponse, saveProcessedFormData
  */
 
 
@@ -11,13 +12,6 @@
 
 const PouchDB = require('pouchdb');
 
-
-/** This function generates headers for csv.
- *
- * @param {object} formData - form response from database
- *
- * @returns {array} generated headers for csv
- */
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -29,35 +23,54 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
   });
 }
 
+/** This function generates headers for csv.
+ *
+ * @param {object} formData - form response from database
+ *
+ * @returns {array} generated headers for csv
+ */
+
 const generateHeaders = function (formData) {
   let formResponseHeaders = [];
 
   formData.items.forEach(data => {
-
     data.inputs.forEach(item => {
+      let formTitle = data.title.trim().replace(/\s/g, '_');
+
       // create headers for all values that are strings
       if (typeof (item && item.value) === 'string') {
         formResponseHeaders.push({
-          header: `${data.title}_${item.name}`,
-          key: `${formData.form.id}.${data.title}.${item.name}`
+          header: `${formTitle}_${item.name}`,
+          key: `${formData.form.id}.${formTitle}.${item.name}`
         });
       }
+
       // create headers for all values that are arrays
       if (Array.isArray(item.value)) {
-        item.value.forEach(group => {
-          formResponseHeaders.push({
-            header: `${data.title}_${item.name}_${group.name}`,
-            key: `${formData.form.id}.${data.title}.${item.name}.${group.name}`
+        if (item.tagName === 'TANGY-LOCATION') {
+          item.value.forEach(group => {
+            formResponseHeaders.push({
+              header: `${formTitle}_${item.name}_${group.level}`,
+              key: `${formData.form.id}.${formTitle}.${item.name}.${group.level}`
+            });
           });
-        });
+        } else {
+          item.value.forEach(group => {
+            formResponseHeaders.push({
+              header: `${formTitle}_${item.name}_${group.name}`,
+              key: `${formData.form.id}.${formTitle}.${item.name}.${group.name}`
+            });
+          });
+        }
       }
+
       // create headers for all values that are pure objects
       if (typeof (item && item.value) === 'object' && !Array.isArray(item) && item !== null) {
         let elementKeys = Object.keys(item.value);
         elementKeys.forEach(key => {
           formResponseHeaders.push({
-            headers: `${data.title}_${item.name}_${key}`,
-            key: `${formData.form.id}.${data.title}.${item.name}.${key}`
+            headers: `${formTitle}_${item.name}_${key}`,
+            key: `${formData.form.id}.${formTitle}.${item.name}.${key}`
           });
         })
       }
@@ -70,7 +83,7 @@ const generateHeaders = function (formData) {
 }
 
 
-/** This function processes form responses for csv.
+/** This function processes form response for csv.
  *
  * @param {object} formData - form response from database
  *
@@ -83,21 +96,32 @@ const processFormResponse = function (formData) {
 
   formData.items.forEach(data => {
     data.inputs.forEach(item => {
+      let formTitle = data.title.trim().replace(/\s/g, '_');
+
       // create headers for all values that are strings
       if (typeof (item && item.value) === 'string') {
-        formResponseResult[`${formID}.${data.title}.${item.name}`] = item.value;
+        formResponseResult[`${formID}.${formTitle}.${item.name}`] = item.value;
       }
+
+
       // create headers for all values that are arrays
       if (Array.isArray(item.value)) {
-        item.value.forEach(group => {
-          formResponseResult[`${formID}.${data.title}.${item.name}.${group.name}`] = group.value;
-        });
+        if (item.tagName === 'TANGY-LOCATION') {
+          item.value.forEach(group => {
+            formResponseResult[`${formID}.${formTitle}.${item.name}.${group.level}`] = group.value;
+          });
+        } else {
+          item.value.forEach(group => {
+            formResponseResult[`${formID}.${formTitle}.${item.name}.${group.name}`] = group.value;
+          });
+        }
       }
+
       // create headers for all values that are pure objects
       if (typeof (item && item.value) === 'object' && !Array.isArray(item) && item !== null) {
         let elementKeys = Object.keys(item.value);
         elementKeys.forEach(key => {
-          formResponseResult[`${formID}.${data.title}.${item.name}.${key}`] = item.value[key];
+          formResponseResult[`${formID}.${formTitle}.${item.name}.${key}`] = item.value[key];
         });
       }
 
@@ -107,6 +131,7 @@ const processFormResponse = function (formData) {
 
   return formResponseResult;
 };
+
 
 /** This function saves processed form response.
  *
@@ -146,5 +171,7 @@ const saveProcessedFormData = async function (formData, resultDB) {
 
 
 exports.generateHeaders = generateHeaders;
+
 exports.processFormResponse = processFormResponse;
+
 exports.saveProcessedFormData = saveProcessedFormData;
