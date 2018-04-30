@@ -106,7 +106,7 @@ const processFormResponse = function(formData) {
  * @returns {object} - saved document
  */
 
-const saveProcessedFormData = function(formData, resultDB) {
+const saveProcessedFormData = async function (formData, resultDB) {
   const RESULT_DB = new PouchDB(resultDB);
   let formID = formData.form.id;
   let formHeaders = { _id: formID };
@@ -136,5 +136,5 @@ const saveProcessedFormData = function(formData, resultDB) {
 
 
 exports.generateHeaders = generateHeaders;
-
 exports.processFormResponse = processFormResponse;
+exports.saveProcessedFormData = saveProcessedFormData;

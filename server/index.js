@@ -18,7 +18,7 @@ const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
 const chokidar = require('chokidar');
-
+const tangyReporting = require('../server/reporting/data_processing');
 var DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -636,7 +636,6 @@ const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lsta
 function watchGroups() {
   const CONTENT_PATH = '../client/content/groups/';
   let groups = getDirectories(CONTENT_PATH);
-  console.log(groups)
   groups.map(group => monitorDatabaseChangesFeed(group.trim()));
 
   chokidar.watch(CONTENT_PATH, { ignored: ['**.*', '/**/*'], ignoreInitial: true }).on('all', (event, path) => {
@@ -669,21 +668,12 @@ async function monitorDatabaseChangesFeed(name) {
   try {
     database.changes({ since: 'now', include_docs: true, live: true })
       .on('change', (body) => {
-        if (!body.deleted) processChangedDocument(body, database, resultDatabase);// Dont send deleted docs for processing
+        if (!body.deleted) tangyReporting.saveProcessedFormData(body, resultDatabase);// Dont send deleted docs for processing
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
     console.err(err);
   }
-}
-/**
- * 
- * @param {Array<Object>} body 
- * @param {string} baseDb 
- * @param {string} resultDb 
- */
-function processChangedDocument(body, baseDb, resultDb) {
-  console.log(body);
 }
 
 /**
