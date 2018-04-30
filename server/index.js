@@ -623,10 +623,18 @@ app.get('/csv/byPeriodAndFormId/:groupName/:year/:/month/:formId', isAuthenticat
  * Watch for Filesystem changes. Only watch creation of subdirectories in `../client/content/groups/`
  * Ignore files in the content path
  * Ignore files subdirectories of the directories in the content path
+ * @example It will listen directory/folder creation events in the top level directory of `..client/content/groups/`
+ *          When a directory is created in `..client/content/groups/`, the callback fires.
+ *          When a directory is created within the groups folder for instance in `..client/content/groups/group1`
+ *          no callback is called.
  */
 
 function watchGroups() {
   const CONTENT_PATH = '../client/content/groups/';
+  /**
+   * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
+   * @param {string} srcPath The content folder in which holds the groups directoies.
+   */
   const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lstatSync(path.join(srcPath, file)).isDirectory());
   let groups = getDirectories(CONTENT_PATH);
   groups.map(group => monitorDatabaseChangesFeed(group.trim()));
@@ -645,14 +653,15 @@ function watchGroups() {
 watchGroups();
 
 /**
- * 
- * @param {string} name 
+ * Listens to the changes feed of a database and passes new documents to `processChangedDocument()` for processing and saving
+ * in the corresponding group results database.
+ * @param {string} name the group's database for which to listen to the changes feed.
  */
 async function monitorDatabaseChangesFeed(name) {
   const database = new DB(name);
   const resultDatabase = new DB(`${name}-result`);
   /**
-   * Instantiate the database. A method call on the database creates it database doesnt exist.
+   * Instantiate the database. A method call on the database creates the database if database doesnt exist.
    */
   await resultDatabase.info().catch(e => {
     console.error(e);
@@ -660,11 +669,11 @@ async function monitorDatabaseChangesFeed(name) {
   try {
     database.changes({ since: 'now', include_docs: true, live: true })
       .on('change', (body) => {
-        if (!body.deleted) processChangedDocument(body, database, 'resultDb');// Dont send deleted docs for processing
+        if (!body.deleted) processChangedDocument(body, database, resultDatabase);// Dont send deleted docs for processing
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
-    console.log(err);
+    console.err(err);
   }
 }
 /**
@@ -678,7 +687,8 @@ function processChangedDocument(body, baseDb, resultDb) {
 }
 
 /**
- * 
+ * Given the params `groupName`, `year`, `month`, `formId` generate a CSV based on the
+ * groupName, the formId and for a specific year and month combination
  * @param {string} groupName 
  * @param {string} year 
  * @param {string} month 
