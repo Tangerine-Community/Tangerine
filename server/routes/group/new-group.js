@@ -10,7 +10,7 @@ const HttpStatus = require('http-status-codes');
 
 const errorHandler = require('../../utils/errorHandler');
 const changesFeed = require('../../changesFeed');
-const dbConfig = require('../../reporting/config');
+const dbConfig = require('../../../tang-reporting/config');
 
 // for mkdirp
 const fse = require('fs-extra');
@@ -18,8 +18,11 @@ const fse = require('fs-extra');
 /** Creates a new group.
  * Makes new database, and uploader user.
  * replicates from trunk
+ * creates a result database
+ * monitor changes
  * alters settings doc
  */
+
 function newGroup(req, res) {
 
   logger.info(`New group: ${JSON.stringify(req.body)}`);

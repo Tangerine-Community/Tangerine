@@ -31,6 +31,15 @@
       "error_file": "../logs/decompressor-error.log",
       "out_file": "../logs/decompressor.log",
       "pid_file": "../pids/decompressor.pid"
+    },
+    {
+      "name"       : "tang-reporting",
+      "cwd"        : "/tang-reporting",
+      "script"     : "app.js",
+      "args"       : ["-p", "5555"],
+      "error_file" : "../logs/tangerine-reporting-error.log",
+      "out_file"   : "../logs/tangerine-reporting.log",
+      "pid_file"   : "../pids/tangerine-reporting.pid"
     }
   ],
   "deploy": {

@@ -24,18 +24,16 @@ const dbConfig = require('./../config');
  *
  * Example:
  *
- *    POST /generate_csv/:id
+ *    POST  /generate_csv/:id/:year?/:month?
+ *    GET   /generate_csv/:db_name/:id/:year?/:month?
  *
  *  where id refers to the id of the generated document in the result database.
- *
- *  The request object must contain the result database url.
- *      {
- *         "result_db_url": "http://admin:password@test.tangerine.org/database_name"
- *      }
+ *  and db_name is the result database name
+ *  year and month are the respective year and month the result was conducted.
  *
  * Response:
  *
- *  Returns an object containing a success message.
+ *  Returns a csv file to be downloaded.
  *
  * @param req - HTTP request object
  * @param res - HTTP response object
