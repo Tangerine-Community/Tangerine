@@ -88,7 +88,7 @@ const surveyValueMap = {
  * @param res - HTTP response object
  */
 
-exports.all = (req, res) => {
+exports.all = function(req, res) {
   const GROUP_DB = new PouchDB(req.body.base_db);
   GROUP_DB.query('ojai/byCollection', { key: 'result', include_docs: true })
     .then((data) => res.json({ count: data.rows.length, results: data.rows }))
@@ -126,7 +126,7 @@ exports.all = (req, res) => {
  * @param res - HTTP response object
  */
 
-exports.processResult = (req, res) => {
+exports.processResult = function(req, res) {
   const baseDb = req.body.base_db;
   const resultDb = req.body.result_db;
   const GROUP_DB = new PouchDB(baseDb);
@@ -302,7 +302,9 @@ const generateResult = async function(collections, count = 0, baseDb) {
  * This function processes result for a location prototype.
  *
  * @param {Object} body - document to be processed.
- * @param {Object} subtestCount - count.
+ * @param {string} subtestCount - count.
+ * @param {string} groupTimeZone - time zone from db settings.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Object} processed location data.
  */
@@ -339,6 +341,7 @@ async function processLocationResult(body, subtestCount, groupTimeZone, baseDb) 
  * subcounty, zone and school data from the location list.
  *
  * @param {object} body - subtest location details.
+ * @param {string} baseDb - base database url.
  *
  * @returns {object} - An object containing the county,
  *  subcounty, zone & school data.
@@ -409,7 +412,8 @@ async function getLocationName(body, baseDb) {
  * This function processes result for a datetime prototype.
  *
  * @param {Object} body - document to be processed.
- * @param {Object} subtestCount - count.
+ * @param {string} subtestCount - count.
+ * @param {string} groupTimeZone - time zone from db settings.
  *
  * @returns {Object} processed datetime data.
  */
@@ -432,7 +436,8 @@ function processDatetimeResult(body, subtestCount, groupTimeZone) {
  * This function processes a consent prototype subtest data.
  *
  * @param {Object} body - document to be processed.
- * @param {Object} subtestCount - count.
+ * @param {string} subtestCount - count.
+ * @param {string} groupTimeZone - time zone from db settings.
  *
  * @returns {Object} processed consent data.
  */
@@ -452,7 +457,8 @@ function processConsentResult(body, subtestCount, groupTimeZone) {
  * This function processes an id prototype subtest data.
  *
  * @param {Object} body - document to be processed.
- * @param {Object} subtestCount - count.
+ * @param {string} subtestCount - count.
+ * @param {string} groupTimeZone - time zone from db settings.
  *
  * @returns {Object} processed id data.
  */
@@ -472,7 +478,8 @@ function processIDResult(body, subtestCount, groupTimeZone) {
  * This function processes a survey prototype subtest data.
  *
  * @param {Object} body - document to be processed.
- * @param {Object} subtestCount - count.
+ * @param {string} subtestCount - count.
+ * @param {string} groupTimeZone - time zone from db settings.
  *
  * @returns {Object} processed survey data.
  */
@@ -502,7 +509,9 @@ function processSurveyResult(body, subtestCount, groupTimeZone) {
  * This function processes a grid prototype subtest data.
  *
  * @param {Object} body - document to be processed.
- * @param {Object} subtestCount - count.
+ * @param {string} subtestCount - count.
+ * @param {string} groupTimeZone - time zone from db settings.
+ * @param {number} assessmentSuffix - assessment count.
  *
  * @returns {Object} processed grid data.
  */
@@ -540,7 +549,8 @@ function processGridResult(body, subtestCount, groupTimeZone, assessmentSuffix) 
  * This function processes a gps prototype subtest data.
  *
  * @param {Object} body - document to be processed.
- * @param {Object} subtestCount - count.
+ * @param {string} subtestCount - count.
+ * @param {string} groupTimeZone - time zone from db settings.
  *
  * @returns {Object} processed gps data.
  */
@@ -566,7 +576,8 @@ function processGpsResult(doc, subtestCount, groupTimeZone) {
  * This function processes a camera prototype subtest data.
  *
  * @param {Object} body - document to be processed.
- * @param {Object} subtestCount - count.
+ * @param {string} subtestCount - count.
+ * @param {string} groupTimeZone - time zone from db settings.
  *
  * @returns {Object} processed camera data.
  */
@@ -622,6 +633,7 @@ function translateGridValue(databaseValue) {
  *
  * @param {object} docId - result collection id.
  * @param {string} groupTimeZone - group time zone from db settings.
+ * @param {string} baseDb - base database url.
  * @param {Array} allTimestamps - instrument timestamp from each subtest.
  *
  * @returns {object} - result validity and other metadata.
@@ -635,7 +647,7 @@ async function validateResult(docId, groupTimeZone, baseDb, allTimestamps) {
   let validationParams = collection.authenticityParameters;
   let instrumentConstraints = validationParams && validationParams.constraints;
 
-  // Convert to time zone.
+  // Convert to time zone from db settings.
   let beginTimestamp = convertToTimeZone(allTimestamps[0], groupTimeZone);
   let endTimestamp = convertToTimeZone( allTimestamps[allTimestamps.length - 1], groupTimeZone);
 
@@ -693,10 +705,10 @@ async function validateResult(docId, groupTimeZone, baseDb, allTimestamps) {
  * @param {string} timestamp - instrument timestamp
  * @param {string} timeZone - group time zone from db settings
  *
- * @returns {number} - timestamp in its appropriate time zone.
+ * @returns {number} - timestamp in its appropriate time zone from db settings.
  */
 
-function convertToTimeZone (timestamp, timeZone) {
+function convertToTimeZone(timestamp, timeZone) {
   let offset;
   if (timeZone) {
     offset = timeZone.split(':');

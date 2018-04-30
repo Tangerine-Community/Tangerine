@@ -29,12 +29,12 @@ const changesFeed = require('./changesFeed');
 * Reporting Controllers.
 */
 
-const assessmentController = require('./reporting/controllers/assessment');
-const resultController = require('./reporting/controllers/result');
-const workflowController = require('./reporting/controllers/workflow');
-const csvController = require('./reporting/controllers/generate_csv');
-const changesController = require('./reporting/controllers/changes');
-const tripController = require('./reporting/controllers/trip');
+const assessmentController = require('./../reporting/controllers/assessment');
+const resultController = require('./../reporting/controllers/result');
+const workflowController = require('./../reporting/controllers/workflow');
+const csvController = require('./../reporting/controllers/generate_csv');
+const changesController = require('./../reporting/controllers/changes');
+const tripController = require('./../reporting/controllers/trip');
 
 const app = express();
 
@@ -118,23 +118,23 @@ app.get('/media/resultphoto/:group/:result/:subtest', require('./routes/media/ge
  * Reporting App routes
  */
 
-app.post('/assessment', assessmentController.all);
-app.post('/assessment/headers/:id', assessmentController.generateHeader);
+app.post('/reporting/assessment', assessmentController.all);
+app.post('/reporting/assessment/headers/:id', assessmentController.generateHeader);
 
-app.post('/result', resultController.all);
-app.post('/assessment/result/:id', resultController.processResult);
+app.post('/reporting/result', resultController.all);
+app.post('/reporting/assessment/result/:id', resultController.processResult);
 
-app.post('/workflow', workflowController.all);
-app.post('/workflow/headers/:id', workflowController.generateHeader);
-app.post('/workflow/result/:id', tripController.processResult);
+app.post('/reporting/workflow', workflowController.all);
+app.post('/reporting/workflow/headers/:id', workflowController.generateHeader);
+app.post('/reporting/workflow/result/:id', tripController.processResult);
 
-app.get('/generate_csv/:db_name/:id/:year?/:month?', csvController.generate);
-app.post('/generate_csv/:id/:year?/:month?', csvController.generate);
+app.get('/reporting/generate_csv/:db_name/:id/:year?/:month?', csvController.generate);
+app.post('/reporting/generate_csv/:id/:year?/:month?', csvController.generate);
 
 app.post('/tangerine_changes', changesController.changes);
 
-// landing
-app.get('/', function(req, res){
+// landing page
+app.get('/', function(req, res) {
   res.redirect('/app/tangerine/index.html')
 })
 

@@ -14,11 +14,13 @@ const PouchDB = require('pouchdb');
  * @description This function saves/updates generated headers in the result database.
  *
  * @param {Array} doc - document to be saved.
+ * @param {string} key - the unique identifier.
+ * @param {string} resultDb - result database url.
  *
  * @returns {Object} - saved document.
  */
 
-exports.saveHeaders = async (doc, key, resultDb) => {
+exports.saveHeaders = async function(doc, key, resultDb) {
   const RESULT_DB = new PouchDB(resultDb);
   let docObj = {
     _id: key,
@@ -49,11 +51,12 @@ exports.saveHeaders = async (doc, key, resultDb) => {
  * @description This function saves/updates processed result in the result database.
  *
  * @param {Object} doc - document to be saved.
+ * @param {string} resultDb - result database url.
  *
  * @returns {Object} - saved document.
  */
 
-exports.saveResult = async (doc, resultDb) => {
+exports.saveResult = async function(doc, resultDb) {
   const RESULT_DB = new PouchDB(resultDb);
   const cloneDoc = _.clone(doc);
   let docKey = cloneDoc.indexKeys.ref;
@@ -91,11 +94,12 @@ exports.saveResult = async (doc, resultDb) => {
  * @description This function retrieves all subtest linked to an assessment.
  *
  * @param {string} id - id of assessment document.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Array} - subtest documents.
  */
 
-exports.getSubtests = (id, baseDb) => {
+exports.getSubtests = function(id, baseDb) {
   const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.query('ojai/subtestsByAssessmentId', { key: id, include_docs: true })
@@ -118,7 +122,7 @@ exports.getSubtests = (id, baseDb) => {
  * @returns {Array} - question documents.
  */
 
-exports.getQuestionBySubtestId = (subtestId, baseDb) => {
+exports.getQuestionBySubtestId = function(subtestId, baseDb) {
   const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.query('ojai/questionsByParentId',{ key: subtestId, include_docs: true })
@@ -137,7 +141,7 @@ exports.getQuestionBySubtestId = (subtestId, baseDb) => {
  * @returns {Array} - result documents.
  */
 
-exports.getProcessedResults = function (ref, resultDb) {
+exports.getProcessedResults = function(ref, resultDb) {
   const RESULT_DB = new PouchDB(resultDb);
   return new Promise((resolve, reject) => {
     RESULT_DB.query('dashReporting/byParentId', { key: ref, include_docs: true })
@@ -170,7 +174,7 @@ exports.getTripResults = function(id, baseDb) {
  *
  * @returns {Array} - location document.
  */
-exports.processedResultsById = function (req, res) {
+exports.processedResultsById = function(req, res) {
   const RESULT_DB = new PouchDB(req.body.result_db);
   RESULT_DB.query('dashReporting/byParentId', { key: req.params.id, include_docs: true })
     .then((body) => res.json(body.rows))
@@ -185,7 +189,7 @@ exports.processedResultsById = function (req, res) {
  * @returns {Object} - user document.
  */
 
-exports.getUserDetails = function (enumerator, baseDb) {
+exports.getUserDetails = function(enumerator, baseDb) {
   const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.get(enumerator)
@@ -200,7 +204,7 @@ exports.getUserDetails = function (enumerator, baseDb) {
  * @returns {Object} - location document.
  */
 
-exports.getLocationList = function (baseDb) {
+exports.getLocationList = function(baseDb) {
   const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.get('location-list')
@@ -214,7 +218,7 @@ exports.getLocationList = function (baseDb) {
  *
  * @returns {Object} - settings document.
  */
-exports.getSettings = function (baseDb) {
+exports.getSettings = function(baseDb) {
   const GROUP_DB = new PouchDB(baseDb);
   return new Promise((resolve, reject) => {
     GROUP_DB.get('settings')

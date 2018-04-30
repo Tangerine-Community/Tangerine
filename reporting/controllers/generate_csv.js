@@ -8,7 +8,6 @@
  * Module dependencies
  */
 
-const _ = require('lodash');
 const chalk = require('chalk');
 const Excel = require('exceljs');
 const PouchDB = require('pouchdb');
@@ -42,7 +41,7 @@ const dbConfig = require('./../config');
  * @param res - HTTP response object
  */
 
-exports.generate = (req, res) => {
+exports.generate = function(req, res) {
   let resultDb = req.body.result_db || req.params.db_name;
   resultDb = resultDb.includes('http') ? resultDb : dbConfig.db_url + resultDb + '-result';
 
@@ -87,7 +86,7 @@ const generateCSV = function(columnData, resultData, res) {
   excelSheet.columns = columnData.column_headers;
 
   // Add rows by key-value using the column keys
-  _.each(resultData, row => {
+  resultData.forEach(resultData, row => {
     excelSheet.addRow(row.doc.processed_results);
   });
 
