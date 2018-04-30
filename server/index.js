@@ -19,7 +19,7 @@ const pako = require('pako')
 const compression = require('compression')
 const chokidar = require('chokidar');
 const tangyReporting = require('../server/reporting/data_processing');
-var DB = {}
+let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
     prefix: process.env.T_COUCHDB_ENDPOINT
@@ -658,7 +658,8 @@ watchGroups();
  */
 async function monitorDatabaseChangesFeed(name) {
   const GROUP_DB = new DB(name);
-  const RESULT_DB = new DB(`${name}-result`);
+  const RESULT_DB_NAME = `${name}-result`;
+  const RESULT_DB = new DB(RESULT_DB_NAME);
   /**
    * Instantiate the database. A method call on the database creates the database if database doesnt exist.
    */
@@ -667,8 +668,8 @@ async function monitorDatabaseChangesFeed(name) {
   });
   try {
     GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
-      .on('change', (body) => {
-        if (!body.deleted) tangyReporting.saveProcessedFormData(body, RESULT_DB);// Dont send deleted docs for processing
+      .on('change', async (body) => {
+        if (!body.deleted) await tangyReporting.saveProcessedFormData(body['doc'], RESULT_DB_NAME);// Dont send deleted docs for processing
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
