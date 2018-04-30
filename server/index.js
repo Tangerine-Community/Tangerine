@@ -657,18 +657,18 @@ watchGroups();
  * @param {string} name the group's database for which to listen to the changes feed.
  */
 async function monitorDatabaseChangesFeed(name) {
-  const database = new DB(name);
-  const resultDatabase = new DB(`${name}-result`);
+  const GROUP_DB = new DB(name);
+  const RESULT_DB = new DB(`${name}-result`);
   /**
    * Instantiate the database. A method call on the database creates the database if database doesnt exist.
    */
-  await resultDatabase.info().catch(e => {
+  await RESULT_DB.info().catch(e => {
     console.error(e);
   });
   try {
-    database.changes({ since: 'now', include_docs: true, live: true })
+    GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
       .on('change', (body) => {
-        if (!body.deleted) tangyReporting.saveProcessedFormData(body, resultDatabase);// Dont send deleted docs for processing
+        if (!body.deleted) tangyReporting.saveProcessedFormData(body, RESULT_DB);// Dont send deleted docs for processing
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
