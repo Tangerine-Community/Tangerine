@@ -152,9 +152,19 @@ RUN cd /opt && \
     rm $ANDROID_SDK_FILENAME && \
     echo y | android update sdk --no-ui -a --filter tools,platform-tools,$ANDROID_API_LEVELS,build-tools-$ANDROID_BUILD_TOOLS_VERSION,extra-android-support,extra-android-m2repository
 
+# Install nvm for other node binaries.
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+RUN export NVM_DIR="$HOME/.nvm" \
+ && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \ 
+ && nvm install 8 \
+ && nvm install 9 \
+ && nvm install 4
+
+
+
+
 # Install Cordova
 RUN npm update && \
-    npm install -g npm && \
     npm install -g cordova 
 
 
@@ -243,6 +253,13 @@ RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
 
+# Add reporting
+ADD ./reporting /tangerine-server/reporting
+RUN cd /tangerine-server/reporting && \ 
+ export NVM_DIR="$HOME/.nvm" && \
+ [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \ 
+ nvm use 8 && \
+ npm install
 
 # Add all of the rest of the code 
 ADD ./ /tangerine-server
