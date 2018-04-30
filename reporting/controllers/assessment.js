@@ -9,7 +9,7 @@
  * Module dependencies.
  */
 
-const _ = require('lodash');
+const sortBy = require('lodash').sortBy;
 const PouchDB = require('pouchdb');
 
 /**
@@ -122,7 +122,7 @@ exports.generateHeader = (req, res) => {
  *
  * @param {string} docId - assessmentId.
  * @param {number} count - count.
- * @param {string} dbUrl - database url.
+ * @param {string} baseDb - database url.
  *
  * @returns {Object} processed headers for csv.
  */
@@ -327,6 +327,7 @@ function createId(doc, subtestCount) {
  *
  * @param {Object} id - document to be processed.
  * @param {Object} subtestCount - count.
+ * @param {string} baseDb - base database.
  *
  * @returns {Array} - generated survey headers.
  */
@@ -334,7 +335,7 @@ function createId(doc, subtestCount) {
 async function createSurvey(id, subtestCount, baseDb) {
   let surveyHeader = [];
   let questions = await dbQuery.getQuestionBySubtestId(id, baseDb);
-  let sortedDoc = _.sortBy(questions, [id, 'order']);
+  let sortedDoc = sortBy(questions, [id, 'order']);
 
   for (doc of sortedDoc) {
     if (doc.type == 'multiple') {

@@ -8,8 +8,9 @@
  * Module Dependencies.
  */
 
-const _ = require('lodash');
+const sortBy = require('lodash').sortBy;
 const PouchDB = require('pouchdb');
+
 
 /**
  * Local dependencies.
@@ -52,7 +53,7 @@ const validateResult = require('./result').validateResult;
  * @param res - HTTP response object
  */
 
-exports.changes = async(req, res) => {
+exports.changes = async function(req, res) {
   const baseDb = req.body.base_db;
   const resultDbUrl = req.body.result_db;
   const GROUP_DB = new PouchDB(baseDb);
@@ -65,7 +66,17 @@ exports.changes = async(req, res) => {
     .on('error', (err) => console.error(err));
 }
 
-const processChangedDocument = async(resp, baseDb, resultDb) => {
+/**
+ * This function processes document changes in the database
+ *
+ * @param {string} resp - assessmentId.
+ * @param {string} baseDb - base database url.
+ * @param {number} resultDb - result database url.
+ *
+ * @returns {Object} saved response.
+ */
+
+const processChangedDocument = async function(resp, baseDb, resultDb) {
   const assessmentId = resp.doc.assessmentId || resp.doc._id;
   const workflowId = resp.doc.workflowId;
   const collectionType = resp.doc.collection;
@@ -99,7 +110,7 @@ const processChangedDocument = async(resp, baseDb, resultDb) => {
       let assessmentResult = await processAssessmentResult([resp], 0, baseDb);
       let docId = assessmentResult.indexKeys.collectionId;
       let groupTimeZone = assessmentResult.indexKeys.groupTimeZone;
-      let allTimestamps = _.sortBy(assessmentResult.indexKeys.timestamps);
+      let allTimestamps = sortBy(assessmentResult.indexKeys.timestamps);
 
       // Validate result from all subtest timestamps
       let validationData = await validateResult(docId, groupTimeZone, baseDb, allTimestamps);

@@ -7,7 +7,8 @@
  * Module dependencies
  */
 
-const _ = require('lodash');
+const filter = require('lodash').filter;
+const flatten = require('lodash').flatten;
 const PouchDB = require('pouchdb');
 
 /**
@@ -54,7 +55,7 @@ const dbQuery = require('./../utils/dbQuery');
  * @param res - HTTP response object
  */
 
-exports.all = (req, res) => {
+exports.all = function(req, res) {
   const GROUP_DB = new PouchDB(req.body.base_db);
   GROUP_DB.query('ojai/byCollection', { key: 'workflow', include_docs: true })
     .then((data) => res.json({ count: data.rows.length, workflows: data.rows }))
@@ -89,7 +90,7 @@ exports.all = (req, res) => {
  * @param res - HTTP response object
  */
 
-exports.generateHeader = (req, res) => {
+exports.generateHeader = function(req, res) {
   const workflowId = req.params.id;
   const baseDb = req.body.base_db;
   const resultDb = req.body.result_db;
@@ -115,7 +116,8 @@ exports.generateHeader = (req, res) => {
 /**
  * This function creates headers for a workflow.
  *
- * @param {string} docId - worklfow id of the document.
+ * @param {Object} data - worklfow result data.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Array} - generated headers for csv.
  */
@@ -131,7 +133,7 @@ const createWorkflowHeaders = async function(data, baseDb) {
 
   for (item of data.children) {
     item.workflowId = data._id;
-    let isProcessed = _.filter(workflowItems, { typesId: item.typesId });
+    let isProcessed = filter(workflowItems, { typesId: item.typesId });
     // this part is needed to avoid processing duplicates.
     let isCurriculumProcessed = item.type === 'curriculum' & !isProcessed.length;
 
@@ -140,14 +142,17 @@ const createWorkflowHeaders = async function(data, baseDb) {
       workflowHeaders.push(assessmentHeaders);
       count++;
     }
+
     if (item.type === 'message') {
       let messageSuffix = messageCount > 0 ? `_${messageCount}` : '';
       workflowHeaders.push({ header: `message${messageSuffix}`, key: `${data._id}.message${messageSuffix}` });
       messageCount++;
     }
+
     workflowItems.push(item);
   }
-  workflowHeaders = _.flatten(workflowHeaders);
+
+  workflowHeaders = flatten(workflowHeaders);
 
   return workflowHeaders;
 }

@@ -7,7 +7,7 @@
  * Module dependencies.
  */
 
-const _ = require('lodash');
+const chain = require('lodash').chain;
 const PouchDB = require('pouchdb');
 
 /**
@@ -15,7 +15,7 @@ const PouchDB = require('pouchdb');
  */
 
 const generateResult = require('./result').generateResult;
-const validateResult = require("./result").validateResult;
+const validateResult = require('./result').validateResult;
 const dbQuery = require('./../utils/dbQuery');
 
 /**
@@ -46,7 +46,7 @@ const dbQuery = require('./../utils/dbQuery');
  * @param res - HTTP response object
  */
 
-exports.processResult = (req, res) => {
+exports.processResult = function(req, res) {
   const baseDb = req.body.base_db;
   const resultDb = req.body.result_db;
 
@@ -71,6 +71,7 @@ exports.processResult = (req, res) => {
  * This function processes the result for a workflow.
  *
  * @param {Array} data - an array of workflow results.
+ * @param {Array} baseDb - base database url.
  *
  * @returns {Object} - processed result for csv.
  */
@@ -90,7 +91,7 @@ const processWorkflowResult = function (data, baseDb) {
     let docId = body[0].indexKeys.collectionId;
     let groupTimeZone = body[0].indexKeys.groupTimeZone;
 
-    let allTimestamps = _.chain(body)
+    let allTimestamps = chain(body)
       .map(el => el && el.indexKeys.timestamps)
       .filter(val => val != null || undefined)
       .flatten()
