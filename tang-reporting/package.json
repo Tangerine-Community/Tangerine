@@ -1,0 +1,46 @@
+{
+  "name": "tangerine-reporting",
+  "version": "1.0.0",
+  "description": "A node application that processes data and generates CSV.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tangerine-Community/Tangering-Reporting.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tangerine-Community/Tangering-Reporting/issues"
+  },
+  "homepage": "https://github.com/Tangerine-Community/Tangering-Reporting#readme",
+  "engines": {
+    "node": "8.11.0",
+    "npm": "5.6.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "chalk": "^2.0.1",
+    "commander": "^2.11.0",
+    "errorhandler": "^1.5.0",
+    "exceljs": "^0.4.14",
+    "express": "^4.15.3",
+    "lodash": "^4.17.4",
+    "moment": "^2.19.2",
+    "morgan": "^1.8.2",
+    "pouchdb": "^6.4.2"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.4.2",
+    "nodemon": "^1.11.0"
+  },
+  "bin": {
+    "tangerine-reporting": "./cli.js"
+  }
+}

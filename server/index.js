@@ -22,9 +22,24 @@ var proxy = require('express-http-proxy');
 const Conf = require('./Conf');
 const Settings = require('./Settings');
 const User = require('./User');
-const Group = require('./Group');
+
+const changesFeed = require('./changesFeed');
+
+/**
+* Reporting Controllers.
+*/
+
+const assessmentController = require('./../tang-reporting/controllers/assessment');
+const resultController = require('./../tang-reporting/controllers/result');
+const workflowController = require('./../tang-reporting/controllers/workflow');
+const csvController = require('./../tang-reporting/controllers/generate_csv');
+const changesController = require('./../tang-reporting/controllers/changes');
+const tripController = require('./../tang-reporting/controllers/trip');
 
 const app = express();
+
+console.log('Hook data processing function to changes feed.');
+changesFeed();
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
@@ -41,7 +56,7 @@ if (process.env.T_PROTOCOL == 'https') {
 var couchProxy = proxy('localhost:5984', {
   forwardPath: function (req, res) {
     var path = require('url').parse(req.url).path;
-    console.log("path:" + path);
+    console.log('path:' + path);
     return path;
   }
 });
@@ -57,6 +72,7 @@ app.use(mountpoint, function(req, res) {
   }
 });
 
+app.use(bodyParser.urlencoded()); // for form data
 app.use(bodyParser.json()); // use json
 app.use(cookieParser());    // use cookies
 app.use(couchAuth);         // use couchdb cookie authentication
@@ -98,9 +114,27 @@ app.delete('/group/:group/:user', require('./routes/group/leave-group'));
 // retrieve stored photo
 app.get('/media/resultphoto/:group/:result/:subtest', require('./routes/media/get-result-photo'))
 
+/**
+ * Reporting App routes
+ */
 
-// landing
-app.get('/', function(req, res){
+app.post('/reporting/assessment', assessmentController.all);
+app.post('/reporting/assessment/headers/:id', assessmentController.generateHeader);
+
+app.post('/reporting/result', resultController.all);
+app.post('/reporting/assessment/result/:id', resultController.processResult);
+
+app.post('/reporting/workflow', workflowController.all);
+app.post('/reporting/workflow/headers/:id', workflowController.generateHeader);
+app.post('/reporting/workflow/result/:id', tripController.processResult);
+
+app.get('/reporting/generate_csv/:db_name/:id/:year?/:month?', csvController.generate);
+app.post('/reporting/generate_csv/:id/:year?/:month?', csvController.generate);
+
+app.post('/tangerine_changes', changesController.changes);
+
+// landing page
+app.get('/', function(req, res) {
   res.redirect('/app/tangerine/index.html')
 })
 
@@ -111,4 +145,3 @@ var server = app.listen(Settings.T_ROBBERT_PORT, function() {
   console.log(server.address());
   console.log('Robbert: http://%s:%s', host, port);
 });
-

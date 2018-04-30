@@ -1,0 +1,54 @@
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.swp
+*.xlsx
+*.csv
+*.xls
+
+pids
+logs
+results
+tmp
+dist
+
+# Dependency directory
+node_modules
+
+# IDEs and editors
+.env
+.idea
+.project
+*.iml
+.classpath
+.c9/
+*.launch
+.settings/
+
+# IDE - VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+*.log
+
+/config.json
