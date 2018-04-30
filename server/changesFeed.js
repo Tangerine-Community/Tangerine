@@ -4,8 +4,8 @@ const Group = require('./Group');
 const nano = require('nano')(Conf.protocol + Conf.auth + Conf.serverUrl);
 const PouchDB = require('pouchdb');
 
-const dbConfig = require('./reporting/config');
-const processChangedDocument = require('./reporting/controllers/changes').processChangedDocument;
+const dbConfig = require('./../tang-reporting/config');
+const processChangedDocument = require('./../tang-reporting/controllers/changes').processChangedDocument;
 
 // Constants for replicating database
 const SOURCE_DB = 'tangerine';

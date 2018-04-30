@@ -45,7 +45,7 @@ docker run \
   --volume $(pwd)/server/Group.js:/tangerine-server/server/Group.js \
   --volume $(pwd)/server/changesFeed.js:/tangerine-server/server/changesFeed.js \
   --volume $(pwd)/server/package.json:/tangerine-server/server/package.json \
-  --volume $(pwd)/server/reporting:/tangerine-server/server/reporting \
+  --volume $(pwd)/tang-reporting:/tangerine-server/tang-reporting \
   --volume $(pwd)/server/routes:/tangerine-server/server/routes \
   --volume $(pwd)/editor/src:/tangerine-server/editor/src \
   --volume $(pwd)/editor/app:/tangerine-server/editor/app \

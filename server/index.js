@@ -29,12 +29,12 @@ const changesFeed = require('./changesFeed');
 * Reporting Controllers.
 */
 
-const assessmentController = require('./../reporting/controllers/assessment');
-const resultController = require('./../reporting/controllers/result');
-const workflowController = require('./../reporting/controllers/workflow');
-const csvController = require('./../reporting/controllers/generate_csv');
-const changesController = require('./../reporting/controllers/changes');
-const tripController = require('./../reporting/controllers/trip');
+const assessmentController = require('./../tang-reporting/controllers/assessment');
+const resultController = require('./../tang-reporting/controllers/result');
+const workflowController = require('./../tang-reporting/controllers/workflow');
+const csvController = require('./../tang-reporting/controllers/generate_csv');
+const changesController = require('./../tang-reporting/controllers/changes');
+const tripController = require('./../tang-reporting/controllers/trip');
 
 const app = express();
 
