@@ -24,6 +24,17 @@ const Settings = require('./Settings');
 const User = require('./User');
 const Group = require('./Group');
 
+/**
+* Reporting Controllers.
+*/
+
+const assessmentController = require('./../reporting/controllers/assessment');
+const resultController = require('./../reporting/controllers/result');
+const workflowController = require('./../reporting/controllers/workflow');
+const csvController = require('./../reporting/controllers/generate_csv');
+const changesController = require('./../reporting/controllers/changes');
+const tripController = require('./../reporting/controllers/trip');
+
 const app = express();
 
 // Enforce SSL behind Load Balancers.
@@ -97,6 +108,25 @@ app.delete('/group/:group/:user', require('./routes/group/leave-group'));
 
 // retrieve stored photo
 app.get('/media/resultphoto/:group/:result/:subtest', require('./routes/media/get-result-photo'))
+
+/**
+ * Reporting App routes
+ */
+
+app.post('/reporting/assessment', assessmentController.all);
+app.post('/reporting/assessment/headers/:id', assessmentController.generateHeader);
+
+app.post('/reporting/result', resultController.all);
+app.post('/reporting/assessment/result/:id', resultController.processResult);
+
+app.post('/reporting/workflow', workflowController.all);
+app.post('/reporting/workflow/headers/:id', workflowController.generateHeader);
+app.post('/reporting/workflow/result/:id', tripController.processResult);
+
+app.get('/reporting/generate_csv/:db_name/:id/:year?/:month?', csvController.generate);
+app.post('/reporting/generate_csv/:id/:year?/:month?', csvController.generate);
+
+app.post('/reporting/tangerine_changes', changesController.changes);
 
 
 // landing

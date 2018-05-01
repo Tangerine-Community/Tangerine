@@ -1,18 +1,26 @@
 'use strict';
 
 let Conf = require('./Conf');
+var nano = require('nano')(Conf.protocol + Conf.auth + Conf.serverUrl);
+
 let User = require('./User');
 
 let HttpStatus = require('http-status-codes');
 
 let unirest = require('unirest');
 let crypto = require('crypto');
+const logger = require('./logger');
+const errorHandler = require('./utils/errorHandler');
 
 const JSON_OPTS = {
   'Content-Type' : 'application/json',
   'Accept'       : 'application/json'
 };
 
+// Constants for replicating database
+const SOURCE_DB = 'tangerine';
+const GROUP_DOC_IDS = ['_design/ojai', '_design/dashReporting', 'configuration', 'settings', 'templates', 'location-list'];
+const RESULT_DOC_IDS = ['_design/ojai', '_design/dashReporting'];
 
 
 /** Group represents a CouchDB database.
@@ -53,11 +61,15 @@ Group.prototype.assertExistence = function() {
 
 /** Makes a new group. */
 Group.prototype.create = function create() {
-  const uploaderPassword = crypto.randomBytes( 20 ).toString('hex');
   const self = this;
-  const groupDbName = Conf.calcGroupPath( self.name() ).replace('/','');
+  const uploaderPassword = crypto.randomBytes(20).toString('hex');
+  const groupDbName = Conf.calcGroupPath(self.name()).replace('/','');
+  const groupDbNameUrl = Conf.calcGroupUrl(self.name());
+  const groupResultsDbName = `${groupDbName}-result`;
+  const groupResultsDbUrl = Conf.calcGroupUrl(self.name() + '-result');
+
   return (new Promise(function newDatabase(resolve, reject) {
-    unirest.put( Conf.calcGroupUrl( self.name() ) )
+    unirest.put(groupDbNameUrl)
       .end( function onDbCreateResponse(response) {
         if (response.status === HttpStatus.CREATED ) {
           return resolve();
@@ -71,23 +83,11 @@ Group.prototype.create = function create() {
         }
       })
   }))
-  .then(function replicate() {
-    return new Promise(function replicatePromise(resolve, reject){
-      unirest.post( Conf.replicateUrl ).headers(JSON_OPTS)
-        .json({
-          source  : 'tangerine',
-          target  : groupDbName,
-          doc_ids : ['_design/ojai', 'configuration', 'settings', 'templates', 'location-list']
-        })
-        .end(function onReplicateResponse( response ){
-          if (response.status > 199 && response.status < 399 ) {
-            return resolve();
-          }
-          reject(response);
-        });
-    });
+  .then(function replicateDatabase() {
+    logger.info(`Running replication for ${groupDbName} database`);
+    return self.replicate(SOURCE_DB, groupDbName, GROUP_DOC_IDS);
   })
-  .then(function makeUploader(){
+  .then(function makeUploader() {
     let userAttributes = {
       name     : 'uploader-' + self.name(),
       password : uploaderPassword
@@ -96,13 +96,13 @@ Group.prototype.create = function create() {
   })
   .then( function changeSettings() {
     return new Promise(function changeSettingsPromise(resolve, reject){
-      unirest.get( Conf.calcGroupUrl( self.name() ) + '/settings').headers(JSON_OPTS)
+      unirest.get(groupDbNameUrl + '/settings').headers(JSON_OPTS)
         .end( function alterDoc( response ) {
           let newDoc = response.body;
           newDoc.groupCreated = (new Date()).toString();
           newDoc.upPass = uploaderPassword;
           newDoc.groupName = self.name();
-          unirest.post( Conf.calcGroupUrl( self.name() )).headers(JSON_OPTS)
+          unirest.post(groupDbNameUrl).headers(JSON_OPTS)
             .json( newDoc )
             .end(function saveDoc(response){
               if (response.status === 201 ) {
@@ -114,40 +114,101 @@ Group.prototype.create = function create() {
         });
     }); // changeSettingsPromise
   })
-  .then(function addGroupRoles(){
-    return new Promise(function addGroupPromise(resolve, reject){
-      const securityDoc = {
-        admins: {
-          names : [],
-          roles : [`admin-${self.name()}`] // for use on the server
-        },
-        members: {
-          names : [`uploader-${self.name()}`], // used by the tablets for write access
-          roles : [`member-${self.name()}`] // for use on the server
+  .then(function addRoles() {
+    return self.addGroupRoles(groupDbName);
+  })
+  .then(function createResultDatabase() {
+    return self.createResult(groupResultsDbName);
+  })
+  .then(function replicateDatabase() {
+    logger.info(`Running replication for ${groupResultsDbName} database`);
+    setTimeout(() => self.replicate(SOURCE_DB, groupResultsDbName, RESULT_DOC_IDS), 3000);
+  })
+  .then(function addRoles() {
+    return self.addGroupRoles(groupResultsDbName);
+  });
+}; // create group database
+
+
+/** Create group-result database */
+Group.prototype.createResult = function (groupResultsDbName) {
+  const self = this;
+  const resultDbName = groupResultsDbName.replace('group-', '');
+  const groupDbNameUrl = Conf.calcGroupUrl(self.name());
+  const groupResultsDbUrl = Conf.calcGroupUrl(resultDbName);
+
+  return new Promise(function newResultDatabasePromise(resolve, reject) {
+    unirest.put(groupResultsDbUrl)
+      .end(function onDbCreateResponse(response) {
+        logger.info('response.status is: ' + response.status)
+        if (response.status === HttpStatus.CREATED) {
+          return resolve();
+        } else if (response.status === HttpStatus.PRECONDITION_FAILED) {
+          return reject({
+            status: response.status,
+            message: `Group ${groupResultsDbName} already exists`
+          })
+        } else {
+          return reject(response);
         }
-      };
-      return unirest.put( Conf.calcSecurityUrl(self.name()) ).headers(JSON_OPTS)
-        .json(securityDoc)
-        .end(function(response) {
-          if (response.status === 200 ) {
-            resolve();
-          } else {
-            reject(response);
-          }
-        });
+      })
+  });
+}
+
+// Replicates a given database
+Group.prototype.replicate = function(source, target, docIds) {
+  return new Promise(function replicatePromise(resolve, reject) {
+    unirest.post( Conf.replicateUrl ).headers(JSON_OPTS)
+      .json({
+        source  : source,
+        target  : target,
+        doc_ids : docIds
+      })
+      .end(function onReplicateResponse(response ) {
+        if (response.status > 199 && response.status < 399) {
+          return resolve();
+        }
+        reject(response);
+      });
     });
-  }); // return promise
-}; // create
+}
+
+// Add security roles to database
+Group.prototype.addGroupRoles = function(dbName) {
+  const resultDbName = dbName.replace('group-', '');
+  return new Promise(function addGroupPromise(resolve, reject){
+    const securityDoc = {
+      admins: {
+        names : [],
+        roles : [`admin-${resultDbName}`] // for use on the server
+      },
+      members: {
+        names : [`uploader-${resultDbName}`], // used by the tablets for write access
+        roles : [`member-${resultDbName}`] // for use on the server
+      }
+    };
+    return unirest.put(Conf.calcSecurityUrl(resultDbName)).headers(JSON_OPTS)
+      .json(securityDoc)
+      .end(function(response) {
+        if (response.status === 200 ) {
+          resolve();
+        } else {
+          reject(response);
+        }
+      });
+  });
+}
 
 // Replicates to a deleted- database.
 // remove references to group on all users docs
 // get all those user's docs and remove this group from their group
 // remove the uploader user altogether
+// Removes the corresponding result database.
 Group.prototype.destroy = function destroy() {
   const self = this;
   const groupName = self.name();
-  const groupDbName = Conf.calcGroupPath( groupName ).replace('/','');
-  const deletedDbName = Conf.calcDeletedPath( groupName ).replace('/','');
+  const groupDbName = Conf.calcGroupPath(groupName).replace('/','');
+  const deletedDbName = Conf.calcDeletedPath(groupName).replace('/','');
   return (new Promise(function(resolve, reject){
     // back up first
     unirest.post( Conf.replicateUrl ).headers(JSON_OPTS)
@@ -189,7 +250,7 @@ Group.prototype.destroy = function destroy() {
     let uploader = new User({ name : 'uploader-' + groupName })
     return uploader.delete();
   })
-  .then(function deleteDatabase(){
+  .then(function deleteDatabase() {
     return new Promise(function(resolve, reject){
       unirest.delete(Conf.calcGroupUrl(self.name())).header(JSON_OPTS)
         .end(function(response){
@@ -201,16 +262,16 @@ Group.prototype.destroy = function destroy() {
         })
     });
   })
-  .then(function lockDownDeletedGroup(){
+  .then(function lockDownDeletedGroup() {
     return new Promise(function addGroupPromise(resolve, reject){
       const securityDoc = {
         admins: {
           names : [ process.env.T_ADMIN ],
-          roles : [] 
+          roles : []
         },
         members: {
-          names : [ process.env.T_ADMIN ], 
-          roles : [] 
+          names : [ process.env.T_ADMIN ],
+          roles : []
         }
       };
       return unirest.put( Conf.calcDeletedUrl(self.name()) + '/_security' ).headers(JSON_OPTS)
@@ -223,15 +284,28 @@ Group.prototype.destroy = function destroy() {
           }
         });
     });
+  })
+  .then(function deleteResultDatabase() {
+    let groupResultName = groupName.replace('group-', '');
+    groupResultName = `${groupName}-result`;
+    return new Promise(function(resolve, reject) {
+      unirest.delete(Conf.calcGroupUrl(groupResultName)).header(JSON_OPTS)
+        .end(function(response) {
+          if (response.status > 199 && response.status < 400 ) {
+            resolve();
+          } else {
+            reject(response);
+          }
+        })
+    });
   });
-
 };
 
-Group.prototype.getAdmins = function(){
+Group.prototype.getAdmins = function() {
   return this.getUsers([`admin-${self.name()}`]);
 }
 
-Group.prototype.getMembers = function(){
+Group.prototype.getMembers = function() {
   return this.getUsers([`member-${self.name()}`]);
 }
 
@@ -242,7 +316,7 @@ Group.prototype.getUsers = function(roleKeys, splitRoles) {
     roleKeys = [`admin-${self.name()}`,`member-${self.name()}`];
   }
   return new Promise(function(resolve, reject){
-    unirest.post(Conf.roleKeyUrl+"?group=true").headers(JSON_OPTS)
+    unirest.post(Conf.roleKeyUrl+'?group=true').headers(JSON_OPTS)
       .json({ keys : roleKeys })
       .end(function(response){
         if (response.status > 199 && response.status < 400) {
@@ -270,15 +344,64 @@ Group.prototype.getUsers = function(roleKeys, splitRoles) {
   })
 };
 
-
 // Name getter/setter
-Group.prototype.name = function(value){
+Group.prototype.name = function(value) {
   if (value === undefined) {
     return this.attributes.name;
   } else {
     return this.attributes.name = value;
   }
 };
+
+Group.prototype.getGroups = function() {
+  logger.info('Getting groups.')
+
+  var getGroups = function(callback) {
+    var groupsArray = []
+    getGroupNames(function(err, groupNames) {
+      if (err) return done(err)
+      callback(null, groupsArray)
+    })
+  }
+
+  var getGroup = function(groupName, callback) {
+    const group = new Group({
+      name : groupName
+    });
+    group.assertExistence()
+      .then(function addAdmin() {
+        const roleKeys = undefined;
+        const splitRoles = true;
+        return group.getUsers(roleKeys, splitRoles); // function(roleKeys, split)
+      })
+      .then(function respondSuccess(response) {
+        group.users = response
+        var db = nano.db.use('group-' + groupName)
+        var options = { descending: false }
+      })
+      .catch(errorHandler('foo'));
+  }
+
+  var getGroupNames = function(callback) {
+    nano.db.list(function(err, databases) {
+      if (err) return callback(err)
+      var groupNames = []
+      databases.forEach(function(databaseName) {
+        if (databaseName.search('group-') !== -1) {
+          groupNames.push(databaseName.replace('group-', ''))
+        }
+      })
+      logger.info('groupNames: ' + groupNames)
+      callback(null, groupNames)
+    })
+  }
+
+  let groups = getGroups(function(err, groupsArray) {
+    return groupsArray
+  })
+  console.log('groups: ' + groups)
+  return groups;
+}
 
 
 module.exports = Group;
