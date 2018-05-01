@@ -10,7 +10,6 @@ const HttpStatus = require('http-status-codes');
 
 const errorHandler = require('../../utils/errorHandler');
 const changesFeed = require('../../');
-const dbConfig = require('../../../reporting/config');
 
 // for mkdirp
 const fse = require('fs-extra');
