@@ -70,7 +70,7 @@ class WorkflowMenuView extends Backbone.View
       <button class='command' data-action='generate'>Generate Report</button>
       </div>
     "
-    
+
     Utils.modal modalContent
 
     $button = $("#csvReportForm button")
@@ -89,7 +89,7 @@ class WorkflowMenuView extends Backbone.View
           $csvYear
           $csvMonth
         ].join('/')
-        
+
         document.location = url
 
       Utils.modal false
@@ -101,7 +101,7 @@ class WorkflowMenuView extends Backbone.View
     @workflows = new Workflows
     @workflows.fetch
       success: =>
-        @feedbacks = new Feedbacks 
+        @feedbacks = new Feedbacks
         @feedbacks.fetch
           success: =>
             @ready = true
@@ -114,9 +114,9 @@ class WorkflowMenuView extends Backbone.View
     htmlWorkflows = ""
 
     for workflow in @workflows.models
-      
-      csvUrl = "/brockman/workflow/#{Tangerine.db_name}/#{workflow.id}"
-      
+
+      csvUrl = "/reporting/generate_csv/#{Tangerine.db_name}/#{workflow.id}"
+
       feedback = @feedbacks.get(workflow.id+"-feedback")
 
       if feedback? and feedback.get("children")?.length > 0
@@ -150,7 +150,7 @@ class WorkflowMenuView extends Backbone.View
     "
 
     @updateWorkflows()
-    
+
     @trigger "rendered"
 
   updateWorkflows: ->

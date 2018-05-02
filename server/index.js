@@ -13,6 +13,9 @@ const cookieParser = require('cookie-parser');
 // for cookie authorization
 const couchAuth = require('./middlewares/couchAuth');
 
+// for database monitoring
+const notifyReportingServer = require('./notifyReportingServer');
+
 // basic logging
 const requestLogger = require('./middlewares/requestLogger');
 
@@ -65,6 +68,9 @@ app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
+
+// Notify reporting server for database monitoring
+notifyReportingServer();
 
 app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
 app.use('/client', express.static(__dirname + '/../client/src/'));
