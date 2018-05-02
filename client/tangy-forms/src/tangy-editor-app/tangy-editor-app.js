@@ -503,32 +503,38 @@ class TangyEditorApp extends Element {
     this.$['item-create'].hidden = true
     document.querySelector("#content").setAttribute('style', 'display:none;')
     // Load forms list.
+    this.forms = await this.getForms() 
+    // Load editor forms
+    let editorJson = await fetch('editor/editor-forms.json', {credentials: 'include'})
+    this.editorForms = await editorJson.json()
+    window['tangy-form-app-loading'].innerHTML = ''
+  }
+
+  async getForms() {
+    let forms = []
     let formsJsonPath = '../content/forms.json'
     if (this.groupId) {
       formsJsonPath = '../../groups/' + this.groupId + '/forms.json'
     }
     try {
-    let formsJson = await fetch(formsJsonPath, {credentials: 'include'})
-    this.forms = await formsJson.json()
+      let formsJson = await fetch(formsJsonPath, {credentials: 'include'})
+      forms = await formsJson.json()
     } catch (e) {
       let formsJson = await fetch('../content/forms.json')
-      this.forms = await formsJson.json()
+      forms = await formsJson.json()
     }
     // Add some hard coded forms that are not listed in forms.json.
-    this.forms.push({
+    forms.push({
       "id": "user-profile",
       "title": "User Profile",
       "src": "../content/user-profile/form.html"
     })
-    this.forms.push({
+    forms.push({
       "id": "reports",
       "title": "Reports",
       "src": "../content/reports/form.html"
     })
-    // Load editor forms
-    let editorJson = await fetch('editor/editor-forms.json', {credentials: 'include'})
-    this.editorForms = await editorJson.json()
-    window['tangy-form-app-loading'].innerHTML = ''
+    return forms
   }
 
   onFormSrcChange(newValue, oldValue) {
@@ -610,7 +616,35 @@ class TangyEditorApp extends Element {
     location.reload()
   }
 
-  async loadForm(formSrc, responseId) {
+  async exportFormResponseModels() {
+    let forms = await this.getForms()
+    for (let form of forms) {
+      // Create Redux Store.
+      window.tangyFormStore = Redux.createStore(
+        tangyFormReducer,
+        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+        Redux.applyMiddleware(tangyReduxMiddlewareTangyHook)
+      )
+      this.store = window.tangyFormStore
+      await this.loadForm(form.src)
+      let formEl = this.$['form-container'].querySelector('tangy-form')
+      let dataModel = await formEl.exportDataModel()
+      await fetch("/editor/file/save", {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: "POST",
+        body: JSON.stringify({
+          fileContents: JSON.stringify(dataModel),
+          filePath: form.src.replace('../content/', '') + '.json',
+          groupId: this.groupId
+        }),
+        credentials: 'include'
+      })
+    }
+  }
+
+  async loadForm(formSrc, responseId, exportDataModel = false) {
     let query = this.parseQuery(window.location.hash)
     this.$['form-view'].hidden = false
     this.$['form-item-listing'].hidden = true
