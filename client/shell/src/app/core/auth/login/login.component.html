@@ -1,11 +1,11 @@
 <div class="login-app-content">
   <div class="group">
     <form role="form" #login='ngForm' novalidate>
-      <h3 class="mat-title">Log in to Tangerine</h3>
+      <h3 class="mat-title">{{t('Log in to Tangerine')}}</h3>
       <br>
       <br>
       <select *ngIf="listUsernamesOnLoginScreen" name="usernames" id="usernames" (change)="onSelectUsername($event)">
-        <option value="_">Select your Username</option>
+        <option value="_">{{t('Select your Username')}}</option>
         <option *ngFor="let username of allUsernames" [value]="username">{{username}}</option>
       </select>
       <mat-form-field *ngIf="!listUsernamesOnLoginScreen">
@@ -21,7 +21,7 @@
         <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>
-          <span>Password</span>
+          <span>{{t('Password')}}</span>
         </mat-placeholder>
       </mat-form-field>
       <div *ngIf="showRecoveryInput">
@@ -37,13 +37,13 @@
         <mat-form-field>
           <input name="newPassword" matInput [(ngModel)]="user.newPassword" type="password" required>
           <mat-placeholder>
-            <i class="material-icons mat-11 app-input-icon">lock_open</i>New Password
+            <i class="material-icons mat-11 app-input-icon">lock_open</i>{{t('New Password')}}
           </mat-placeholder>
         </mat-form-field>
         <mat-form-field>
           <input name="confirmNewPassword" matInput [(ngModel)]="user.confirmNewPassword" type="password" required>
           <mat-placeholder>
-            <i class="material-icons mat-11 app-input-icon">lock_open</i>Confirm New Password
+            <i class="material-icons mat-11 app-input-icon">lock_open</i>{{t('Confirm New Password')}}
           </mat-placeholder>
         </mat-form-field>
       </div>
@@ -51,8 +51,8 @@
       <br>
       <span>
         <small>
-          <a href="#" *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()">Click Here to Reset Password</a>
-          <a href="#" *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()">Click Here to go to Login</a>
+          <a href="#" *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()">{{t('Click Here to Reset Password')}}</a>
+          <a href="#" *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()">{{t('Click Here to go to Login')}}</a>
         </small>
       </span>
       <br>
@@ -60,10 +60,10 @@
       <br>
       <br>
 
-      <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">LOGIN</button>
+      <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">{{t('LOGIN')}}</button>
       <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
-        color="accent" name="action">Recover Account</button>
-      <a class="register-link" href="#/register">REGISTER</a>
+        color="accent" name="action">{{t('Recover Account')}}</button>
+      <a class="register-link" href="#/register">{{t('REGISTER')}}</a>
       <br>
       <br>
       <span id="err">
