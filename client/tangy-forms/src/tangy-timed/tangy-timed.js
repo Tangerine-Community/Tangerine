@@ -268,10 +268,10 @@ class TangyTimed extends Element {
 
   ready() {
     super.ready();
-    setTimeout(() => {
+    //setTimeout(() => {
       this.render()
       this.reflect()
-    }, 400)
+    //}, 400)
     this.markLabel = t('MARK')
     this.lastAttemptedLabel = t('LAST ATTEMPTED')
     this.startLabel = t('START')
