@@ -70,10 +70,21 @@ app.use(function(err, req, res, next) {
 });
 
 // Notify reporting server for database monitoring, but wait two minutes for it to start.
-setTimeout(function() {
-  console.log('Notifying REPORTING server of groups...')
-  notifyReportingServer();
-}, 2*60*1000)
+function checkAndNotifyReportingServer() {
+  unirest.get('http://localhost:5555')
+    .end(function(response) {
+      if (response.error) {
+        console.log('Reporting server not ready yet. Waiting...')
+        setTimeout(function() {
+          checkAndNotifyReportingServer()
+        }, 5*1000)
+      } else {
+        console.log('Reporting server is ready. Notifying it of groups...')
+        notifyReportingServer();
+      }
+    })
+}
+checkAndNotifyReportingServer()
 
 app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
 app.use('/client', express.static(__dirname + '/../client/src/'));
