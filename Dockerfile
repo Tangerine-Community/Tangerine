@@ -1,30 +1,30 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM ubuntu:14.04 
+FROM ubuntu:14.04
 
 #
 # ENV API for this container
 #
 
-# T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
+# T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions.
 ENV T_USER1 user1
 ENV T_USER1_PASSWORD password
 # T_ADMIN is the admin user for your database. Make sure to change this so the outside world does not have access.
 ENV T_ADMIN admin
 ENV T_PASS password
 # T_HOST_NAME is the URL without protocol (like http://) you will be accessing your Tangerine server at.
-ENV T_HOST_NAME 127.0.0.1 
+ENV T_HOST_NAME 127.0.0.1
 # If you have set up SSL on your server, you must change this to "https".
 ENV T_PROTOCOL http
 # Set to "development" for live code reload of editor and client.
 ENV T_RUN_MODE production
-# If true, this will run couchapp push again on all of your group databases. Good for making sure 
+# If true, this will run couchapp push again on all of your group databases. Good for making sure
 # your groups have the most recent updates but may cause Views to reindex when you don't want them to.
 # WARNING: If set to true, you will need to manually update all of your group's `settings` and `configuration` docs because
 # they will now be overwritten with defaults. This includes properties like the group's name.
 ENV PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT false
 
 #
-# Other ENVs 
+# Other ENVs
 #
 
 # Never ask for confirmations
@@ -32,8 +32,8 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # Configure some things for use internally.
-ENV T_TREE_HOSTNAME / 
-ENV T_TREE_URL /tree 
+ENV T_TREE_HOSTNAME /
+ENV T_TREE_URL /tree
 ENV T_COUCH_HOST localhost
 ENV T_COUCH_PORT 5984
 ENV T_ROBBERT_PORT 4444
@@ -45,7 +45,7 @@ ENV T_DECOMPRESSOR_PORT 4447
 # Stage 1 - Install global dependecies
 #
 
-ADD ./tangerine.conf /tangerine-server/tangerine.conf 
+ADD ./tangerine.conf /tangerine-server/tangerine.conf
 
 # Install some core utilities
 RUN apt-get update && apt-get -y install \
@@ -90,14 +90,14 @@ RUN apt-get update && apt-get -y install \
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash - \
   && apt-get -y install nodejs \
   && npm install -g pm2 \
-  && npm install -g bower 
+  && npm install -g bower
 
 # Install and configure nginx
 RUN apt-get -y install nginx \
   && cp /tangerine-server/tangerine.conf /etc/nginx/sites-available/tangerine.conf \
   && ln -s /etc/nginx/sites-available/tangerine.conf /etc/nginx/sites-enabled/tangerine.conf \
   && rm /etc/nginx/sites-enabled/default \
-  && sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf 
+  && sed -i "s/sendfile on;/sendfile off;\n\tclient_max_body_size 128M;/" /etc/nginx/nginx.conf
 
 
 # Install Couchdb
@@ -117,7 +117,7 @@ RUN apt-get -y install software-properties-common \
 RUN apt-get install build-essential python-dev -y \
   && curl -O https://bootstrap.pypa.io/get-pip.py \
   && python get-pip.py \
-  && pip install couchapp 
+  && pip install couchapp
 
 ## Install Ruby
 RUN gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 \
@@ -155,7 +155,7 @@ RUN cd /opt && \
 # Install nvm for other node binaries.
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 RUN export NVM_DIR="$HOME/.nvm" \
- && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \ 
+ && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" \
  && nvm install 8 \
  && nvm install 9 \
  && nvm install 4
@@ -165,18 +165,18 @@ RUN export NVM_DIR="$HOME/.nvm" \
 
 # Install Cordova
 RUN npm update && \
-    npm install -g cordova 
+    npm install -g cordova
 
 
 
-# 
+#
 # Stage 2 Install application dependencies
-# 
+#
 
 # Install brockman.
 ADD ./brockman/Gemfile /tangerine-server/brockman/Gemfile
 ADD ./brockman/Gemfile.lock /tangerine-server/brockman/Gemfile.lock
-RUN cd /tangerine-server/brockman \ 
+RUN cd /tangerine-server/brockman \
     && gem install bundler --no-ri --no-rdoc \
     && bundle install --path vendor/bundle
 
@@ -206,15 +206,15 @@ RUN mkdir /tangerine-server/client/src
 RUN mkdir /tangerine-server/client/www
 ADD ./client/res /tangerine-server/client/res
 RUN cd /tangerine-server/client \
-    && sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js 
+    && sed -i'' -r 's/^( +, uidSupport = ).+$/\1false/' /usr/lib/node_modules/npm/node_modules/uid-number/uid-number.js
 RUN cd /tangerine-server/client \
-    && npm install 
+    && npm install
 RUN cd /tangerine-server/client \
-    && bower install --allow-root  
+    && bower install --allow-root
 
 # Install cordova-plugin-whitelist otherwise the folllowing `cordova plugin add` fails with `Error: spawn ETXTBSY`.
 RUN cd /tangerine-server/client \
-    && ./node_modules/.bin/cordova platform add android@5.X.X 
+    && ./node_modules/.bin/cordova platform add android@5.X.X
 #   && npm install cordova-plugin-whitelist \
 #   && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save \
 #   && npm install cordova-plugin-geolocation \
@@ -222,7 +222,7 @@ RUN cd /tangerine-server/client \
 #   && npm install cordova-plugin-camera \
 #   && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save \
 #   && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-#RUN cd /tangerine-server/client && npm run build:apk 
+#RUN cd /tangerine-server/client && npm run build:apk
 
 # Install Tangerine CLI
 ADD ./cli/package.json /tangerine-server/cli/package.json
@@ -236,8 +236,8 @@ RUN cd /tangerine-server/decompressor \
 
 
 #
-# Stage 3 Compile 
-# 
+# Stage 3 Compile
+#
 
 # Compile editor.
 ADD ./editor /tangerine-server/editor
@@ -247,21 +247,21 @@ RUN cd /tangerine-server/editor && npm start init
 ADD ./cli /tangerine-server/cli
 RUN cd /tangerine-server/cli && npm link
 
-# Compile client. 
+# Compile client.
 ADD ./client /tangerine-server/client
 RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
-RUN ln -s /tangerine-server/client/src /tangerine-server/client/www 
+RUN ln -s /tangerine-server/client/src /tangerine-server/client/www
 
 # Add reporting
-ADD ./reporting /tangerine-server/reporting
-RUN cd /tangerine-server/reporting && \ 
+ADD ./reporting/package.json /tangerine-server/reporting/package.json
+RUN cd /tangerine-server/reporting && \
  export NVM_DIR="$HOME/.nvm" && \
- [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \ 
+ [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
  nvm use 8 && \
  npm install
 
-# Add all of the rest of the code 
+# Add all of the rest of the code
 ADD ./ /tangerine-server
 
 RUN mkdir /tangerine-server/logs
@@ -269,7 +269,7 @@ RUN mkdir /tangerine-server/logs
 # Volumes
 VOLUME /tangerine-server/logs
 VOLUME /tangerine-server/tree/apks
-VOLUME /var/lib/couchb/ 
+VOLUME /var/lib/couchb/
 
 EXPOSE 80
 

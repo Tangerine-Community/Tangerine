@@ -1,26 +1,26 @@
 #!/usr/bin/env bash
 
-echo "Setting cordova"
-echo "Whitelist"
-cd /tangerine-server/client && npm install cordova-plugin-whitelist && sleep 10 
-echo "Add Whitelist"
-cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save 
-echo "Geo"
-cd /tangerine-server/client && npm install cordova-plugin-geolocation 
-echo "Add Geo"
-cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save 
-echo "Camera"
-cd /tangerine-server/client && npm install cordova-plugin-camera 
-echo "Add Camera"
-cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save 
-echo "Add webview"
-cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-echo "build APK"
-cd /tangerine-server/client && npm run build:apk 
+# echo "Setting cordova"
+# echo "Whitelist"
+# cd /tangerine-server/client && npm install cordova-plugin-whitelist && sleep 10
+# echo "Add Whitelist"
+# cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save
+# echo "Geo"
+# cd /tangerine-server/client && npm install cordova-plugin-geolocation
+# echo "Add Geo"
+# cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save
+# echo "Camera"
+# cd /tangerine-server/client && npm install cordova-plugin-camera
+# echo "Add Camera"
+# cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save
+# echo "Add webview"
+# cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
+# echo "build APK"
+# cd /tangerine-server/client && npm run build:apk
 
 # Send nginx logs to docker logs.
-tail -f /var/log/nginx/access.log &
-tail -f /var/log/nginx/error.log &
+# tail -f /var/log/nginx/access.log &
+# tail -f /var/log/nginx/error.log &
 
 echo ""
 echo ""
@@ -56,7 +56,7 @@ echo ""
 echo "Insert documents used for new groups."
 cd /tangerine-server/
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" ./documents-for-new-groups/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > ./documents-for-new-groups/configuration.json
-sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" ./documents-for-new-groups/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > ./documents-for-new-groups/settings.json 
+sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" ./documents-for-new-groups/settings.template | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > ./documents-for-new-groups/settings.json
 curl -XPUT -d "@./documents-for-new-groups/LocationList.json" -H "Content-Type: application/json" http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/location-list
 curl -XPUT -d "@./documents-for-new-groups/acl.json" -H "Content-Type: application/json" http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/acl
 curl -XPUT -d "@./documents-for-new-groups/settings.json" -H "Content-Type: application/json" http://$T_ADMIN:$T_PASS@$T_COUCH_HOST:$T_COUCH_PORT/tangerine/settings
@@ -80,7 +80,7 @@ curl -XPOST -d \
 
 
 
-if [ $PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT = true ] 
+if [ $PUSH_COUCHAPP_TO_ALL_GROUPS_ON_ENTRYPOINT = true ]
 then
 echo ""
 echo ""
@@ -99,7 +99,7 @@ echo ""
 echo ""
 echo ""
 echo "Go nginx!"
-sed -i -e "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" /etc/nginx/sites-available/tangerine.conf 
+sed -i -e "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" /etc/nginx/sites-available/tangerine.conf
 service nginx start
 service nginx reload
 echo ""
