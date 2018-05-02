@@ -69,8 +69,11 @@ app.use(function(err, req, res, next) {
   res.status(500).send('Something broke!');
 });
 
-// Notify reporting server for database monitoring
-notifyReportingServer();
+// Notify reporting server for database monitoring, but wait two minutes for it to start.
+setTimeout(function() {
+  console.log('Notifying REPORTING server of groups...')
+  notifyReportingServer();
+}, 2*60*1000)
 
 app.use('/app/:group', express.static(__dirname + '/../editor/src/'));
 app.use('/client', express.static(__dirname + '/../client/src/'));
