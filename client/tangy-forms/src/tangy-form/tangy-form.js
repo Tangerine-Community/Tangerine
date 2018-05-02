@@ -446,6 +446,36 @@ export class TangyForm extends PolymerElement {
         if (input) return input.value
       }
 
+      async exportDataModel() {
+        var itemsDone = []
+        let items = this.shadowRoot.querySelectorAll('tangy-form-item')
+        items.forEach((item) => {
+          item.addEventListener('TANGY_FORM_ITEM_OPENED', () => {
+            item.submit()
+            this.store.dispatch({
+              type: 'ITEM_SAVE',
+              item: item.getProps()
+            })
+            itemsDone.push(item)
+          })
+          item.open = false
+          item.disabled = false
+          item.locked = true
+          item.hidden = false
+          item.open = true
+        })
+        let timeout = 15
+        let timer = 0
+        while (items.length !== itemsDone.length && timer < timeout) {
+          // do nothing.
+          await sleep(2)
+          timer = timer + 2
+        }
+        if (timer > timeout) console.log('timed out')
+        console.log('done')
+        return Object.assign({}, this.store.getState())
+      }
+
     }
 
 
