@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from 'app/shared/_services/app-config.service';
 import { Observable } from 'rxjs/Observable';
 
+import { t } from '../_services/t.service';
 import { UserService } from '../_services/user.service';
 import { AuthenticationService } from './../_services/authentication.service';
 
@@ -23,6 +24,7 @@ export class LoginComponent implements OnInit {
   allUsernames;
   listUsernamesOnLoginScreen;
   constructor(
+    private t: t,
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
