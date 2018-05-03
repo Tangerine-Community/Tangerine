@@ -279,7 +279,7 @@ const generateResult = async function(collections, count = 0, baseDb) {
     // Include user metadata
     let username = `user-${enumeratorName}`;
     try {
-      let userDetails = await dbQuery.getUserDetails(enumeratorName, baseDb);
+      let userDetails = await dbQuery.getUserDetails(username, baseDb);
       result[`${collectionId}.userRole`] = userDetails.role;
       result[`${collectionId}.mPesaNumber`] = userDetails.mPesaNumber;
       result[`${collectionId}.phoneNumber`] = userDetails.phoneNumber || userDetails.phone;
