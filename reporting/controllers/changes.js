@@ -53,15 +53,39 @@ const validateResult = require('./result').validateResult;
  * @param res - HTTP response object
  */
 
+
 exports.changes = function(req, res) {
   const baseDb = req.body.baseDb;
   const resultDb = req.body.resultDb;
   const GROUP_DB = new PouchDB(baseDb);
 
   GROUP_DB.changes({ since: req.body.startPoint, include_docs: true, live: req.body.isLive })
-    .on('change', (body) => setTimeout(() => processChangedDocument(body, baseDb, resultDb), 1000))
+    .on('change', (body) => setTimeout(() => queueProcessChangedDocument({body, baseDb, resultDb}), 1000))
     .on('error', (err) => console.error(err));
 }
+
+var queue = []
+var isProcessing = false
+const queueProcessChangedDocument = async function(job) {
+  queue.push(job)
+}
+
+var sleep = (delay) => {
+  return new Promise((res) => {
+    setTimeout(res, delay)
+  })
+}
+
+let startQueue = async() => {
+  while(true) {
+    await sleep(200)
+    if (queue.length > 0) {
+      let job = queue.shift()
+      await processChangedDocument(job.body, job.baseDb, job.resultDb) 
+    }
+  }
+}
+startQueue()
 
 /**
  * This function processes document changes in the database
