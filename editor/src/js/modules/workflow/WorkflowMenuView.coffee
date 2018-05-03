@@ -63,7 +63,7 @@ class WorkflowMenuView extends Backbone.View
       <br/>
       <label for='csvMonth'>Month:</label>
       <select id='csvMonth' name='csvName'>
-        #{("<option  value='#{index}' #{if index is thisMonth then 'selected="true"' else ''}>#{@MONTHS[index]}</option>"  for index in [1..12]).join('')}
+        #{("<option  value='#{@MONTHS[index]}' #{if index is thisMonth then 'selected="true"' else ''}>#{@MONTHS[index]}</option>"  for index in [1..12]).join('')}
       </select>
       <br/>
       <button class='command' data-action='cancel'>Cancel</button>
