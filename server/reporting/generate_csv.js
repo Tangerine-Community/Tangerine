@@ -24,7 +24,7 @@ const PouchDB = require('pouchdb');
 
 function getResultsByFormId(formId, resultDB) {
   return new Promise((resolve, reject) => {
-    GROUP_DB.query('reporting/byFormId', { key: formId, include_docs: true })
+    GROUP_DB.query('tangy-reporting/resultsByGroupFormId', { key: formId, include_docs: true })
       .then((body) => resolve(body.rows))
       .catch((err) => reject(err));
   });
@@ -41,7 +41,7 @@ function getResultsByFormId(formId, resultDB) {
  * @returns {Object} – csv file
  */
 
-const generateCSV = async function(formId, resultDB, res) {
+const generateCSV = async function (formId, resultDB, res) {
   const RESULT_DB = new DB(resultDB);
   let workbook = new Excel.Workbook();
   let excelSheet = workbook.addWorksheet('Tangerine Sheet', {
@@ -62,7 +62,7 @@ const generateCSV = async function(formId, resultDB, res) {
   excelSheet.columns = columnHeaders;
 
   // Add rows by key-value using the column keys
-  resultData.forEach(function(row) {
+  resultData.forEach(function (row) {
     excelSheet.addRow(row.doc.processed_results);
   });
 
@@ -70,7 +70,7 @@ const generateCSV = async function(formId, resultDB, res) {
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader('Content-Disposition', `attachment; filename=${FILENAME}.xlsx`);
 
-  workbook.xlsx.write(res).then(function(data) {
+  workbook.xlsx.write(res).then(function (data) {
     console.log(chalk.green(`✓ You have successfully created "${FILENAME}.xlsx" file at ${new Date()}`));
     res.end();
   });
