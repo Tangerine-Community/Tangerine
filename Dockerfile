@@ -259,6 +259,7 @@ RUN cd /tangerine-server/reporting && \
  export NVM_DIR="$HOME/.nvm" && \
  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
  nvm use 8 && \
+ npm install -g nodemon && \
  npm install
 
 # Add all of the rest of the code
