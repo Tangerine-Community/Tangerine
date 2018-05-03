@@ -10,6 +10,11 @@ const unirest = require('unirest');
 
 const errorHandler = require('../../utils/errorHandler');
 
+const JSON_OPTS = {
+  'Content-Type' : 'application/json',
+  'Accept'       : 'application/json'
+};
+
 // for mkdirp
 const fse = require('fs-extra');
 
@@ -73,8 +78,8 @@ function newGroup(req, res) {
         const groupDbNameUrl = Conf.calcGroupUrl(groupName);
         const groupResultsDbUrl = Conf.calcGroupUrl(`${groupName}-result`);
         let changeOption = { startPoint: 'now', isLive: true, baseDb: groupDbNameUrl, resultDb: groupResultsDbUrl };
-        unirest.post('http://localhost:5555/tangerine_changes',JSON_OPTS, changeOption)
-          .end(function(response) { logger.info('Response is done '); });
+        unirest.post('http://localhost:5555/tangerine_changes', JSON_OPTS, changeOption)
+          .end(function(response) { logger.info('Reporting server has been notified of new group ' + groupName); });
       })
       .then(function setupMediaAssetsDir(){
         fse.ensureDir('/tangerine-server/client/media_assets/'+groupName, function(err) {
