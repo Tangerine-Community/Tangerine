@@ -62,12 +62,6 @@ const notifyReportingServer = function () {
           .then(function addRoles() {
             return group.addGroupRoles(newGroupName);
           })
-          .then(function processOldChanges() {
-            // Process all results in group database into new result database.
-            let processOption = { startPoint: 0, isLive: false, baseDb: baseDb, resultDb: resultDb };
-            unirest.post('http://localhost:5555/tangerine_changes', JSON_OPTS, processOption)
-              .end(function(response) { logger.info('Response is: done'); });
-          })
           .catch(function(err) {
             console.error(err);
           });
