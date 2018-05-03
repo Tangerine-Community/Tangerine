@@ -18,7 +18,9 @@ const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
 const chokidar = require('chokidar');
+const chalk = require('chalk');
 const tangyReporting = require('../server/reporting/data_processing');
+const generateCSV = require('../server/reporting/generate_csv');
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -663,7 +665,7 @@ async function monitorDatabaseChangesFeed(name) {
   /**
    * Instantiate the database. A method call on the database creates the database if database doesnt exist.
    */
-  await RESULT_DB.info().catch(e => {
+  await RESULT_DB.info(async info => await createDesignDocument(RESULT_DB_NAME)).catch(e => {
     console.error(e);
   });
   try {
@@ -678,6 +680,58 @@ async function monitorDatabaseChangesFeed(name) {
 }
 
 /**
+ * @description Function to create Design Documents in a given Database
+ * @param {string} database The Database to use when for creating the Design Document
+ * 
+ * `tangyReportingDesignDoc` is an Object that holds the Design Doc with views to be stored in the DB
+ * 
+ * For compound keys in the design doc use string concatenation as a compilation error is thrown when using template strings 
+ * @example 
+ * use form.docId+'-'+doc.completed not `${doc.docId}-${doc.completed}`
+ */
+async function createDesignDocument(database) {
+  const RESULT_DB = new DB(database);
+
+  const tangyReportingDesignDoc = {
+    _id: '_design/tangy-reporting',
+    version: '1',
+    views: {
+      resultsByGroupFormIdYearMonthDate: {
+        map: function (doc) {
+          if (doc.startDatetime) {
+            const startDatetime = new Date(doc.startDatetime);
+            const key = doc.formId + '-' + startDatetime.getFullYear() + '-' + startDatetime.getMonth() + '-' + startDatetime.getDate();
+            //The emmitted key is in the form cct-lesson-observation-2018-4-3 i.e `formId-Year-Month-Date`
+            emit(key);
+          }
+        }.toString()
+      }
+    },
+    resultsByGroupFormId: {
+      map: function (doc) { if (doc.formId) emit(doc.formId); }.toString()
+    }
+  }
+
+  try {
+    const designDoc = await RESULT_DB.get('_design/tangy-reporting');
+    if (designDoc.version !== tangyReportingDesignDoc.version) {
+      console.log(chalk.white(`✓ Time to update _design/tangy-reporting for ${database}`));
+      console.info(chalk.yellow(`Removing _design/tangy-reporting for ${database}`));
+      await RESULT_DB.remove(designDoc)
+      console.log(chalk.red(`Cleaning up view indexes for ${database}`));
+      // @TODO This causes conflicts with open databases. How to avoid??
+      //await RESULT_DB.viewCleanup()
+      console.info(chalk.yellow(`Creating _design/tangy-reporting for ${database}`));
+      await RESULT_DB.put(tangyReportingDesignDoc).
+        then(info => console.log(chalk.green(`√ Created _design/tangy-reporting for ${database} succesfully`)));
+    }
+  } catch (error) {
+    if (error.error === 'not_found') {
+      await RESULT_DB.put(tangyReportingDesignDoc).catch(err => console.error(err));
+    }
+  }
+}
+/**
  * Given the params `groupName`, `year`, `month`, `formId` generate a CSV based on the
  * groupName, the formId and for a specific year and month combination
  * @param {string} groupName 
@@ -686,6 +740,9 @@ async function monitorDatabaseChangesFeed(name) {
  * @param {string} formId 
  */
 async function generateCSVByPeriodAndFormId(groupName, year, month, formId) {
+  await generateCSV.generateCSV('cct-lesson-observation', 'mygroup-result', function (csv) {
+    res.send(csv)
+  })
 }
 // Start the server.
 var server = app.listen(config.port, function () {
