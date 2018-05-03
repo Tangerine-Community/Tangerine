@@ -115,7 +115,7 @@ class WorkflowMenuView extends Backbone.View
 
     for workflow in @workflows.models
 
-      csvUrl = "/reporting/generate_csv/#{Tangerine.db_name}/#{workflow.id}"
+      csvUrl = "/reporting/generate_csv/#{workflow.id}/#{Tangerine.db_name}"
 
       feedback = @feedbacks.get(workflow.id+"-feedback")
 

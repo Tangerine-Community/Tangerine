@@ -168,20 +168,6 @@ exports.getTripResults = function(id, baseDb) {
 }
 
 /**
- * @description – This function retrieves all processed results with the same parentId.
- *
- * @param {string} id - parent id of document.
- *
- * @returns {Array} - location document.
- */
-exports.processedResultsById = function(req, res) {
-  const RESULT_DB = new PouchDB(req.body.result_db);
-  RESULT_DB.query('dashReporting/byParentId', { key: req.params.id, include_docs: true })
-    .then((body) => res.json(body.rows))
-    .catch((err) => res.send(err));
-}
-
-/**
  * @description – This function retrieves enumerator information.
  *
  * @param {string} enumerator - name of the enumerator.
