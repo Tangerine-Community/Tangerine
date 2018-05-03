@@ -24,8 +24,8 @@ const dbConfig = require('./../config');
  *
  * Example:
  *
- *    POST  /generate_csv/:id/:year?/:month?
- *    GET   /generate_csv/:db_name/:id/:year?/:month?
+ *    POST  /generate_csv/:id/:db_name/:year?/:month?
+ *    GET   /generate_csv/:id/:db_name/:year?/:month?
  *
  *  where id refers to the id of the generated document in the result database.
  *  and db_name is the result database name
@@ -40,8 +40,8 @@ const dbConfig = require('./../config');
  */
 
 exports.generate = function(req, res) {
-  let resultDb = req.body.result_db || req.params.db_name;
-  resultDb = resultDb.includes('http') ? resultDb : dbConfig.db_url + resultDb + '-result';
+  let groupName = req.params.db_name || req.body.resultDb;
+  let resultDb = groupName.includes('http') ? groupName : dbConfig.db_url + groupName + '-result';
 
   const RESULT_DB = new PouchDB(resultDb);
   const resultId = req.params.id;
@@ -52,7 +52,7 @@ exports.generate = function(req, res) {
 
   let queryId = resultMonth && resultYear ? `${resultId}_${resultYear}_${resultMonth}` : resultId;
 
-  RESULT_DB.get(resultId, resultDb)
+  RESULT_DB.get(resultId)
     .then(async(colHeaders) => {
       const result = await dbQuery.getProcessedResults(queryId, resultDb);
       generateCSV(colHeaders, result, res);
@@ -67,7 +67,7 @@ exports.generate = function(req, res) {
  * @param {Array} resultData – the result data.
  * @param {Object} res – response object.
  *
- * @returns {Object} – generated response
+ * @returns {file} – generated csv file.
  */
 
 const generateCSV = function(columnData, resultData, res) {
@@ -84,7 +84,7 @@ const generateCSV = function(columnData, resultData, res) {
   excelSheet.columns = columnData.column_headers;
 
   // Add rows by key-value using the column keys
-  resultData.forEach(resultData, row => {
+  resultData.forEach(row => {
     excelSheet.addRow(row.doc.processed_results);
   });
 

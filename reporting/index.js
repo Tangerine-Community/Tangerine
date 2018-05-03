@@ -64,8 +64,8 @@ app.post('/assessment/result/:id', resultController.processResult);
 app.post('/workflow/result/:id', tripController.processResult);
 
 
-app.get('/generate_csv/:db_name/:id/:year?/:month?', csvController.generate);
-app.post('/generate_csv/:id/:year?/:month?', csvController.generate);
+app.get('/generate_csv/:id/:db_name/:year?/:month?', csvController.generate);
+app.post('/generate_csv/:id/:db_name/:year?/:month?', csvController.generate);
 
 app.post('/tangerine_changes', changesController.changes);
 

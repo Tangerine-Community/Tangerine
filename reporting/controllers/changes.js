@@ -54,22 +54,12 @@ const validateResult = require('./result').validateResult;
  */
 
 exports.changes = function(req, res) {
-  console.log('------------------------------------------- WE GOT HERE');
-
-  console.log('++++++++++++++++++++++', req.body);
-
-  console.log('===========', );
-
   const baseDb = req.body.baseDb;
   const resultDb = req.body.resultDb;
   const GROUP_DB = new PouchDB(baseDb);
 
-
   GROUP_DB.changes({ since: req.body.startPoint, include_docs: true, live: req.body.isLive })
-    .on('change', (body) => {
-      setTimeout(() => processChangedDocument(body, baseDb, resultDb), 3000);
-      res.json(body);
-    })
+    .on('change', (body) => setTimeout(() => processChangedDocument(body, baseDb, resultDb), 1000))
     .on('error', (err) => console.error(err));
 }
 
