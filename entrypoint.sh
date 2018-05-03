@@ -53,6 +53,12 @@ couchapp push
 echo ""
 echo ""
 echo ""
+echo "Push the dashReporting design doc"
+cd /tangerine-server/editor/result
+couchapp push
+echo ""
+echo ""
+echo ""
 echo "Insert documents used for new groups."
 cd /tangerine-server/
 sed "s#INSERT_HOST_NAME#"$T_HOST_NAME"#g" ./documents-for-new-groups/configuration.template | sed "s#INSERT_TREE_URL#"$T_TREE_URL"#g" | sed "s#INSERT_PROTOCOL#"$T_PROTOCOL"#g" > ./documents-for-new-groups/configuration.json
