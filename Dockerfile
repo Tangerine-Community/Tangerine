@@ -234,14 +234,20 @@ ADD ./decompressor/package.json /tangerine-server/decompressor/package.json
 RUN cd /tangerine-server/decompressor \
     && npm install
 
+# Add reporting
+ADD ./reporting/package.json /tangerine-server/reporting/package.json
+RUN cd /tangerine-server/reporting && \
+ export NVM_DIR="$HOME/.nvm" && \
+ [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
+ nvm use 8 && \
+ npm install -g nodemon && \
+ npm install
+
+
 
 #
 # Stage 3 Compile
 #
-
-# Compile editor.
-ADD ./editor /tangerine-server/editor
-RUN cd /tangerine-server/editor && npm start init
 
 # Engage the Tangerine CLI so we can run commands like `sudo tangerine make-me-a-sandwich`.
 ADD ./cli /tangerine-server/cli
@@ -253,14 +259,10 @@ RUN cd /tangerine-server/client && npm run gulp init
 RUN rm -r /tangerine-server/client/www
 RUN ln -s /tangerine-server/client/src /tangerine-server/client/www
 
-# Add reporting
-ADD ./reporting/package.json /tangerine-server/reporting/package.json
-RUN cd /tangerine-server/reporting && \
- export NVM_DIR="$HOME/.nvm" && \
- [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
- nvm use 8 && \
- npm install -g nodemon && \
- npm install
+# Compile editor.
+ADD ./editor /tangerine-server/editor
+RUN cd /tangerine-server/editor && npm start init
+
 
 # Add all of the rest of the code
 ADD ./ /tangerine-server
