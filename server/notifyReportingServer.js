@@ -69,7 +69,7 @@ const notifyReportingServer = function () {
 
       let changeOption = { startPoint: 'now', isLive: true, baseDb: baseDb, resultDb: resultDb };
       unirest.post('http://localhost:5555/tangerine_changes', JSON_OPTS, changeOption)
-        .end(function(response) { logger.info('Response is done'); });
+        .end(function(response) { logger.info('Reporting server has been notified of ' + groupName); });
 
     });
 
