@@ -465,12 +465,12 @@ function createGps(doc, subtestCount) {
 function createCamera(doc, subtestCount) {
   let count = subtestCount.cameraCount;
   let cameraheader = [];
-  let varName = doc.variableName;
+  let varName = doc.name || doc.variableName;
   let suffix = count > 0 ? `_${count}` : '';
 
-  cameraheader.push({ header: `${varName}_photo_captured${suffix}`, key: `${doc.subtestId}.${varName}_photo_captured${suffix}` });
-  cameraheader.push({ header: `${varName}_photo_url${suffix}`, key: `${doc.subtestId}.${varName}_photo_url${suffix}` });
-  cameraheader.push({ header: `timestamp_${subtestCount.timestampCount}`, key: `${doc.subtestId}.timestamp_${subtestCount.timestampCount}` });
+  cameraheader.push({ header: `${varName}_photo_captured${suffix}`, key: `${doc._id}.${varName}_photo_captured${suffix}` });
+  cameraheader.push({ header: `${varName}_photo_url${suffix}`, key: `${doc._id}.${varName}_photo_url${suffix}` });
+  cameraheader.push({ header: `timestamp_${subtestCount.timestampCount}`, key: `${doc._id}.timestamp_${subtestCount.timestampCount}` });
 
   return cameraheader;
 }
