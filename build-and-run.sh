@@ -8,8 +8,8 @@ else
 fi
 
 IMAGE_NAME=$(git rev-parse --abbrev-ref HEAD);
-docker build -t tangerine/tangerine:$IMAGE_NAME .
+docker build -t tangerine/tangerine:local .
 docker kill $T_CONTAINER_NAME 
 docker rm $T_CONTAINER_NAME
-./start.sh $IMAGE_NAME 
+./start.sh local 
 docker logs -f $T_CONTAINER_NAME

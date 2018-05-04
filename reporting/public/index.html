@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="./style.css">
+  <title>Tusome CSV Generator</title>
+</head>
+
+<body>
+
+  <div class="main-container">
+    <div class="top center">
+      <img src="./tangerine_logo.png" alt="Tangerine Logo">
+      <h2>Tusome CSV Generation Form</h2>
+    </div>
+    <div class="form-container">
+      <form action="/download_csv" method="post">
+        <div class="form-control">
+          <label for="workflow">Workflow: </label>
+          <select name="workflowId" id="workflowId" class="select">
+            <option value="hide">-- Workflow Name --</option>
+            <option value="c835fc38-de99-d064-59d3-e772ccefcf7d">
+              Classroom observation with pupils books
+            </option>
+            <option value="84088f36-4255-ba8c-6298-a8fd27f039e3">
+              Tablet assessment study - CSO tool
+            </option>
+            <option value="62fd1403-193f-20be-7662-5589ffcfadee">
+              Maths Teachers Observation Tool
+            </option>
+            <option value="24c5d8c0-352d-49e7-96e2-a4193535939f">
+              Tusome classroom observation tool for SNE
+            </option>
+            <option value="27469912-1fa9-cac1-6810-b4e962a82b42">
+              Class 3 lesson observation without pupils books
+            </option>
+            <option value="cf82f02c-229a-2e77-1a99-ee41ce572c21">
+              Tablet Assessment Study - control level - CDE/TSC CD tool
+            </option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label for="year">Year: </label>
+          <select name="year" class="select">
+              <option value="hide">-- Year --</option>
+              <option value="2015">2015</option>
+              <option value="2016">2016</option>
+              <option value="2017">2017</option>
+              <option value="2018">2018</option>
+          </select> &nbsp; &nbsp; &nbsp;
+          <label for="month">Month: </label>
+          <select name="month" class="select">
+            <option value="hide">-- Month --</option>
+            <option value="Jan">January</option>
+            <option value="Feb">February</option>
+            <option value="Mar">March</option>
+            <option value="Apr">April</option>
+            <option value="May">May</option>
+            <option value="Jun">June</option>
+            <option value="Jul">July</option>
+            <option value="Aug">August</option>
+            <option value="Sep">September</option>
+            <option value="Oct">October</option>
+            <option value="Nov">November</option>
+            <option value="Dec">December</option>
+          </select>
+        </div>
+        <div class="center">
+          <button type="submit" class="btn">Generate CSV</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -181,7 +181,9 @@ class ResultsView extends Backbone.View
       <h2>#{@text.saveOptions}</h2>
       <div class='menu_box'>
 
-        <a href='/brockman/assessment/#{Tangerine.db_name}/#{@assessment.id}'><button class='csv command'>#{@text.csv}</button></a>
+        <form action='/reporting/generate_csv/#{@assessment.id}/#{Tangerine.db_name}' method='post'>
+          <button type='submit' class='csv command'>#{@text.csv}</button>
+        </form>
 
         <!--div class='small_grey clickable show_advanced'>#{@text.advanced}</div-->
         <div id='advanced' class='confirmation'>

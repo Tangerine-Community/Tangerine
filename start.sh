@@ -8,6 +8,10 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
+if [ "$1" != "" ]; then
+  T_TAG="$1"
+fi
+
 # Allow to specify Tangerine Version as parameter in ./start.sh, other wise use the most recent tag.
 if [ "$T_TAG" = "" ]; then
   T_TAG=$(git describe --tags --abbrev=0)

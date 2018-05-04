@@ -63,14 +63,14 @@ class WorkflowMenuView extends Backbone.View
       <br/>
       <label for='csvMonth'>Month:</label>
       <select id='csvMonth' name='csvName'>
-        #{("<option  value='#{index}' #{if index is thisMonth then 'selected="true"' else ''}>#{@MONTHS[index]}</option>"  for index in [1..12]).join('')}
+        #{("<option  value='#{@MONTHS[index]}' #{if index is thisMonth then 'selected="true"' else ''}>#{@MONTHS[index]}</option>"  for index in [1..12]).join('')}
       </select>
       <br/>
       <button class='command' data-action='cancel'>Cancel</button>
       <button class='command' data-action='generate'>Generate Report</button>
       </div>
     "
-    
+
     Utils.modal modalContent
 
     $button = $("#csvReportForm button")
@@ -89,7 +89,7 @@ class WorkflowMenuView extends Backbone.View
           $csvYear
           $csvMonth
         ].join('/')
-        
+
         document.location = url
 
       Utils.modal false
@@ -101,7 +101,7 @@ class WorkflowMenuView extends Backbone.View
     @workflows = new Workflows
     @workflows.fetch
       success: =>
-        @feedbacks = new Feedbacks 
+        @feedbacks = new Feedbacks
         @feedbacks.fetch
           success: =>
             @ready = true
@@ -114,9 +114,9 @@ class WorkflowMenuView extends Backbone.View
     htmlWorkflows = ""
 
     for workflow in @workflows.models
-      
-      csvUrl = "/brockman/workflow/#{Tangerine.db_name}/#{workflow.id}"
-      
+
+      csvUrl = "/reporting/generate_csv/#{workflow.id}/#{Tangerine.db_name}"
+
       feedback = @feedbacks.get(workflow.id+"-feedback")
 
       if feedback? and feedback.get("children")?.length > 0
@@ -150,7 +150,7 @@ class WorkflowMenuView extends Backbone.View
     "
 
     @updateWorkflows()
-    
+
     @trigger "rendered"
 
   updateWorkflows: ->
