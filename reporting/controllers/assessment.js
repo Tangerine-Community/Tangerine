@@ -100,7 +100,7 @@ exports.generateHeader = (req, res) => {
   const assessmentId = req.params.id;
   const GROUP_DB = new PouchDB(baseDb);
 
-  GROUP_DB.get(assessmentId, baseDb)
+  GROUP_DB.get(assessmentId)
     .then(async(data) => {
       const docId = data.assessmentId || data.curriculumId;
       const colHeaders = await createColumnHeaders(data, 0, baseDb);
@@ -165,7 +165,7 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
         };
         for (data of subtestData) {
           if (data.prototype === 'location') {
-            let location = createLocation(data, subtestCount);
+            let location = await createLocation(data, subtestCount, baseDb);
             assessments = assessments.concat(location);
             subtestCount.locationCount++;
             subtestCount.timestampCount++;
@@ -230,25 +230,27 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
  *
  * @param {Object} doc - document to be processed.
  * @param {number} subtestCount - count.
+ * @param {string} baseDb - base database.
  *
  * @returns {Array} - generated location headers.
  */
 
-function createLocation(doc, subtestCount) {
+async function createLocation(doc, subtestCount, baseDb) {
   let count = subtestCount.locationCount;
   let locSuffix = count > 0 ? `_${count}` : '';
   let i, locationHeader = [];
   let locLevels = doc.levels;
-  let isLocLevelSet = locLevels && locLevels.length != 0;
+  let isLocLevelSet = locLevels && locLevels.length === 0 || locLevels[0] === '';
 
   if (isLocLevelSet) {
+    let locationList = await dbQuery.getLocationList(baseDb);
+    locLevels = locationList.locationsLevels;
+
     for (i = 0; i < locLevels.length; i++) {
-      if (locLevels[i] != '') {
-        locationHeader.push({
-          header: `${locLevels[i]}`,
-          key: `${doc._id}.${locLevels[i]}`
-        });
-      }
+      locationHeader.push({
+        header: `${locLevels[i]}`,
+        key: `${doc._id}.${locLevels[i]}`
+      });
     }
   }
   locationHeader.push({

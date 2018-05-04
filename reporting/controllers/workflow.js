@@ -94,9 +94,9 @@ exports.generateHeader = function(req, res) {
   const workflowId = req.params.id;
   const baseDb = req.body.base_db;
   const resultDb = req.body.result_db;
-  const GROUP_DB = new PouchDB(workflowId);
+  const GROUP_DB = new PouchDB(baseDb);
 
-  GROUP_DB.get(workflowId, baseDb)
+  GROUP_DB.get(workflowId)
     .then(async(doc) => {
       let colHeaders = await createWorkflowHeaders(doc, baseDb);
       const saveResponse = await dbQuery.saveHeaders(colHeaders, workflowId, resultDb);

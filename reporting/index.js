@@ -56,17 +56,24 @@ app.post('/download_csv', (req, res) => {
 
 });
 
+// get all routes
 app.post('/assessment', assessmentController.all);
 app.post('/result', resultController.all);
 app.post('/workflow', workflowController.all);
 
+// result routes
 app.post('/assessment/result/:id', resultController.processResult);
 app.post('/workflow/result/:id', tripController.processResult);
 
+// header routes
+app.post('/assessment/headers/:id', assessmentController.generateHeader);
+app.post('/workflow/headers/:id', workflowController.generateHeader);
 
+// csv routes
 app.get('/generate_csv/:id/:db_name/:year?/:month?', csvController.generate);
 app.post('/generate_csv/:id/:db_name/:year?/:month?', csvController.generate);
 
+// changes feed route
 app.post('/tangerine_changes', changesController.changes);
 
 
