@@ -32,8 +32,9 @@ exports.saveHeaders = async function(doc, key, resultDb) {
   try {
     let existingDoc = await RESULT_DB.get(key);
     if (!existingDoc.error) {
-      let docHeaders = _.unionBy(existingDoc.column_headers, docObj.column_headers, 'header');
-      docObj.column_headers = docHeaders;
+      let joinByHeader = _.unionBy(existingDoc.column_headers, docObj.column_headers, 'header');
+      let joinBykey = _.unionBy(existingDoc.column_headers, docObj.column_headers, 'key');
+      docObj.column_headers = _.union(joinByHeaders, joinBykey);
       docObj._rev = existingDoc._rev;
     }
   } catch (error) {
