@@ -355,9 +355,9 @@ async function getLocationName(body, baseDb) {
   // retrieve location-list from the base database.
   let locationList = await dbQuery.getLocationList(baseDb);
   let levels = locationList.locationsLevels;
+  let locLabels = body.data.labels.map(loc => loc.toLowerCase());
 
   if (schoolId) {
-    let locLabels = body.data.labels.map(loc => loc.toLowerCase());
     for (j = 0; j < levels.length; j++) {
       locNames[levels[j]] = {};
       let level = levels[j] === 'school' ? 'schoolname' : levels[j];
