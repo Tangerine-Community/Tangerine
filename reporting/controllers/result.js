@@ -311,27 +311,28 @@ const generateResult = async function(collections, count = 0, baseDb) {
 
 async function processLocationResult(body, subtestCount, groupTimeZone, baseDb) {
   let count = subtestCount.locationCount;
-  let i, locationResult = {};
+  let i, j, locationResult = {};
   let locSuffix = count > 0 ? `_${count}` : '';
   let subtestId = body.subtestId;
   let locLabels = body.data.labels;
   let locationData = body.data.location;
+  let schoolId = body.data.schoolId;
+  let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
 
-  if (locLabels.length == 0 || locLabels[0] == '') {
+  if (!schoolId || locLabels.length == 0 || locLabels[0] == '') {
     let locationNames = await getLocationName(body, baseDb);
-    let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
-
-    locationResult[`${subtestId}.county${locSuffix}`] = locationNames.county.label.replace(/\s/g,'-');
-    locationResult[`${subtestId}.subcounty${locSuffix}`] = locationNames.subcounty.label.replace(/\s/g,'-');
-    locationResult[`${subtestId}.zone${locSuffix}`] = locationNames.zone.label.replace(/\s/g,'-');
-    locationResult[`${subtestId}.school${locSuffix}`] = locationNames.school.label.replace(/\s/g,'-');
-    locationResult[`${subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+    let locKeys = Object.keys(locationNames);
+    for (j = 0; j < locKeys.length; j++) {
+      let key = locKeys[j];
+      locationResult[`${subtestId}.${locKeys[j]}${locSuffix}`] = locationNames[key].label.replace(/\s/g,'-');
+    }
   }
   else {
     for (i = 0; i < locLabels.length; i++) {
       locationResult[`${subtestId}.${locLabels[i]}`] = locationData[i];
     }
   }
+  locationResult[`${subtestId}.timestamp_${subtestCount.locationCount}`] = timestamp;
 
   return locationResult;
 }
