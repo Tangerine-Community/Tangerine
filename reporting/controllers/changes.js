@@ -64,15 +64,16 @@ exports.changes = function(req, res) {
     .on('error', (err) => console.error(err));
 }
 
-var queue = []
-var isProcessing = false
+var queue = [];
+var isProcessing = false;
+
 const queueProcessChangedDocument = async function(job) {
-  queue.push(job)
+  queue.push(job);
 }
 
 var sleep = (delay) => {
   return new Promise((res) => {
-    setTimeout(res, delay)
+    setTimeout(res, delay);
   })
 }
 
@@ -80,12 +81,14 @@ let startQueue = async() => {
   while(true) {
     await sleep(200)
     if (queue.length > 0) {
-      let job = queue.shift()
-      await processChangedDocument(job.body, job.baseDb, job.resultDb) 
+      let job = queue.shift();
+      await processChangedDocument(job.body, job.baseDb, job.resultDb);
     }
   }
 }
-startQueue()
+
+startQueue();
+
 
 /**
  * This function processes document changes in the database

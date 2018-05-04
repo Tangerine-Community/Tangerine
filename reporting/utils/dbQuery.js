@@ -34,11 +34,11 @@ exports.saveHeaders = async function(doc, key, resultDb) {
     if (!existingDoc.error) {
       let joinByHeader = _.unionBy(existingDoc.column_headers, docObj.column_headers, 'header');
       let joinBykey = _.unionBy(existingDoc.column_headers, docObj.column_headers, 'key');
-      docObj.column_headers = _.union(joinByHeaders, joinBykey);
+      docObj.column_headers = _.union(joinByHeader, joinBykey);
       docObj._rev = existingDoc._rev;
     }
   } catch (error) {
-    console.log('Could not find header document with key: ' + key);
+    console.log(error);
   }
 
   try {
@@ -81,7 +81,7 @@ exports.saveResult = async function(doc, resultDb) {
       docObj = _.merge(existingDoc, docObj);
     }
   } catch (error) {
-    console.log('Could not find result document with key: ' + docKey);
+    console.log(error)
   }
 
   try {
