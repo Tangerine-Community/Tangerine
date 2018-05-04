@@ -26,6 +26,14 @@
       "pid_file"   : "../pids/brockman.pid"
     },
     {
+      "name"       : "reporting",
+      "cwd"        : "./reporting",
+      "script"     : "./start.sh",
+      "error_file" : "../logs/reporting-error.log",
+      "out_file"   : "../logs/reporting.log",
+      "pid_file"   : "../pids/reporting.pid"
+    },
+    {
       "name"      : "decompressor",
       "cwd"        : "./decompressor/",
       "script"    : "decompressor/index.js",
