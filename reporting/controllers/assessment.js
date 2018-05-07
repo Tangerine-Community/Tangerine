@@ -240,7 +240,7 @@ async function createLocation(doc, subtestCount, baseDb) {
   let locSuffix = count > 0 ? `_${count}` : '';
   let i, locationHeader = [];
   let locLevels = doc.levels;
-  let isLocLevelSet = locLevels && locLevels.length === 0 || locLevels[0] === '';
+  let isLocLevelSet = (locLevels && locLevels.length === 0) || (locLevels && locLevels[0] === '');
 
   if (isLocLevelSet) {
     let locationList = await dbQuery.getLocationList(baseDb);
