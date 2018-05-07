@@ -9,6 +9,7 @@ import { WindowRef } from './core/window-ref.service';
 import { updates } from './core/update/update/updates';
 import { TangyFormService } from './tangy-forms/tangy-form-service.js';
 import PouchDB from 'pouchdb';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -24,9 +25,12 @@ export class AppComponent implements OnInit {
     private windowRef: WindowRef, private userService: UserService,
     private authenticationService: AuthenticationService,
     private http: Http,
-    private router: Router) {
+    private router: Router,
+    translate: TranslateService
+  ) {
     windowRef.nativeWindow.PouchDB = PouchDB;
-
+    translate.setDefaultLang('translation');
+    translate.use('translation');
   }
 
   async ngOnInit() {
