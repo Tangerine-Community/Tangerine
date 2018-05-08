@@ -38,10 +38,8 @@ fi
 
 # Allow to specify Tangerine Version as parameter in ./start.sh, other wise use the most recent tag.
 if [ "$1" = "" ]; then
-  if [ "T_TAG" = "" ]; then
+  if [ "$T_TAG" = "" ]; then
     T_TAG=$(git describe --tags --abbrev=0)
-    echo "Pulling $T_TAG"
-    docker pull tangerine/tangerine:$T_TAG
   else
     T_TAG="$T_TAG"
   fi
@@ -71,7 +69,7 @@ RUN_OPTIONS="
   --env \"T_USER1=$T_USER1\" \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
-  --env "T_REPLICATE=$T_REPLICATE" \
+  --env \"T_REPLICATE=$T_REPLICATE\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
@@ -102,6 +100,7 @@ require_valid_user = true
 [chttpd]
 require_valid_user = true
     " > data/couchdb/local.d/local.ini
+  fi
   [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
   [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
   docker run -d \
