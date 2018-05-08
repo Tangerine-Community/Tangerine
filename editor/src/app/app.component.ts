@@ -10,14 +10,14 @@ import { AuthService } from './auth.service';
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-    name = 'Tangerine-Hub';
+    name = 'Tangerine';
     loggedIn: boolean = false;
     user_id: string = localStorage.getItem('user_id');
     private childValue: string;
     //subTitleToUse: string;
     //subscription: Subscription;
     history: string[] = [];
-    pgTitle = "Tangerine Hub";
+    pgTitle = "Tangerine";
     pgTagline = "Use this site to manage your Tangerine subscription.";
     pgInstruction = "You can view users of your Tangerine server and their projects.....";
     pgCardTitle = "Welcome!";
