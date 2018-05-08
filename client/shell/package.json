@@ -13,7 +13,8 @@
     "i18n:create": "gulp i18n-init --languages",
     "i18n:update": "gulp i18n-update",
     "i18n:extract": "ng xi18n --output-path src/i18n",
-    "test-publish": "npm run build && cd dist && hs -c-1"
+    "test-publish": "npm run build && cd dist && hs -c-1",
+    "extract": "ngx-translate-extract --input ./src --output ../content/default/i18n/translation.json --clean --sort --format namespaced-json"
   },
   "private": true,
   "dependencies": {
@@ -60,10 +61,12 @@
   "devDependencies": {
     "@angular/cli": "^1.5.0",
     "@angular/compiler-cli": "^4.0.0",
+    "@biesbjerg/ngx-translate-extract": "^2.3.4",
     "@types/jasmine": "2.5.38",
     "@types/node": "~6.0.60",
     "async": "^2.4.1",
     "codelyzer": "~2.0.0",
+    "copy-webpack-plugin": "4.3.0",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-cheerio": "^0.6.2",
@@ -84,7 +87,6 @@
     "sw-precache": "^5.2.0",
     "ts-node": "~2.0.0",
     "tslint": "~4.5.0",
-    "typescript": "~2.2.0",
-    "copy-webpack-plugin": "4.3.0"
+    "typescript": "~2.2.0"
   }
 }
