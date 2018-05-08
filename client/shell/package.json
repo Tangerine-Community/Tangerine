@@ -11,7 +11,7 @@
     "e2e": "ng e2e",
     "precache": "sw-precache --verbose --config=sw-precache-config.js",
     "test-publish": "npm run build && cd dist && hs -c-1",
-    "i18n:extract": "ngx-translate-extract --input ./src --output ../content/default/i18n/translation.json --clean --sort --format namespaced-json"
+    "i18n:extract": "ngx-translate-extract --input ./src --output ../content/default/i18n/translation.json --clean --sort --format namespaced-json --m _TRANSLATE"
   },
   "private": true,
   "dependencies": {
