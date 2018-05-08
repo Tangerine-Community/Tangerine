@@ -10,11 +10,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "precache": "sw-precache --verbose --config=sw-precache-config.js",
-    "i18n:create": "gulp i18n-init --languages",
-    "i18n:update": "gulp i18n-update",
-    "i18n:extract": "ng xi18n --output-path src/i18n",
     "test-publish": "npm run build && cd dist && hs -c-1",
-    "extract": "ngx-translate-extract --input ./src --output ../content/default/i18n/translation.json --clean --sort --format namespaced-json"
+    "i18n:extract": "ngx-translate-extract --input ./src --output ../content/default/i18n/translation.json --clean --sort --format namespaced-json"
   },
   "private": true,
   "dependencies": {
