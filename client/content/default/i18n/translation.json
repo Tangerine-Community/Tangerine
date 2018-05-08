@@ -41,6 +41,34 @@
 		"updateApp": "Update App",
 		"updateIsRunning": "Update is Running. Please Wait ...",
 		"username": "Username",
-		"visits": "Visits"
+		"visits": "Visits",
+		"zz": {
+			"alert": {
+				"fileStoredAt": "File Stored At",
+				"writeFailed": "Write Failed"
+			},
+			"log": {
+				"applyingUpdates": "Applying Updates...",
+				"cancelledInstall": "Cancelled install; did not install update.",
+				"checkingForUpdates": "Checking For Updates...",
+				"confirmUpdate": "An update is available. Be sure to first sync your data before installing the update. If you have not done this, click 'Cancel.' If you are ready to install the update, click 'Yes'.'",
+				"couldNotCreateUser": "Could Not Create User",
+				"couldNotLoadListOfForms": "Could Not Load List Of Forms",
+				"data": "Data",
+				"error": "Error",
+				"failedToInStallUpdate": "Failed to install the update with error code:",
+				"installingUpdate": "Installing Update",
+				"itemeNotFound": "Item Not Found",
+				"loginUnsuccesful": "Login Unsuccesful",
+				"noUpdate": "No Update",
+				"passwordResetUnsuccesful": "Password Reset Unsuccesful",
+				"runningFromAPK": "'Running from APK'",
+				"updateInstalled": "Update Instaled",
+				"updateIsLoaded": "Update is Loaded",
+				"usernameAvailable": "Username Available",
+				"usernameUnavailable": "Username Unavailable",
+				"youAreUpToDate": "✓ Yay! You are up to date."
+			}
+		}
 	}
 }
