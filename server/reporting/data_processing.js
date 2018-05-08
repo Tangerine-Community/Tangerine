@@ -145,21 +145,19 @@ const saveProcessedFormData = async function (formData, resultDB) {
   const RESULT_DB = new DB(resultDB);
   let formID = formData.form.id;
   let formHeaders = { _id: formID };
-  let formResult = {
-    _id: formData._id,
-    formId: formID,
-    complete: formData.complete,
-    startDatetime: formData.startDatetime
-  };
+  let formResult = { _id: formData._id, formId: formID };
+
   // generate column headers
   let docHeaders = generateHeaders(formData);
-  docHeaders.push({ headers: `Complete`, key: formData.complete });
-  docHeaders.push({ headers: `Start Date Time`, key: formData.startDatetime });
+  docHeaders.push({ headers: 'Complete', key: `${formID}.${formData.complete}` });
+  docHeaders.push({ headers: 'Start Date Time', key: `${formID}.${formData.startDatetime}` });
   formHeaders.columnHeaders = docHeaders;
 
   // process form result
   let processedResult = processFormResponse(formData);
   formResult.processedResult = processedResult;
+  formResult[`${formID}.${formData.startDatetime}`] = formData.startDatetime;
+  formResult[`${formID}.${formData.complete}`] = formData.complete;
 
   try {
     await RESULT_DB.put(formHeaders);
