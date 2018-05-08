@@ -173,8 +173,8 @@ class TangyEditorApp extends Element {
       <div id="form-editor">
 
         <!-- FORM ITEM LISTING -->
-        <div id="form-item-listing" hidden style="max-width: 200px; float:left">
-          <paper-card class="form-editor-link" alt="[[headerTitle]]" heading="[[headerTitle]]">
+        <div id="form-item-listing" hidden style="float:left">
+          <paper-card class="form-editor-link" style="width: 180px" alt="[[headerTitle]]" heading="[[headerTitle]]">
             <div class="card-actions">
               <div class="horizontal justified">
               <a href="../tangy-forms/editor.html" on-click="formSelected"><paper-icon-button icon="home" on-click="showFormsList"></paper-icon-button></a>
@@ -210,7 +210,7 @@ class TangyEditorApp extends Element {
               <sortable-list on-sort-finish="onSortFinish" sortable=".sortable">
               <template is="dom-repeat" items="{{items}}">
                   <paper-item-body
-                      one-line
+                      style="border: solid #CCC; border-width: 0px 0px 0px 5px; margin: 5px 0px 0px 0px; width: 155px; padding: 0px 0px 0px 5px;"
                       class="sortable"
                       on-click="editFormItemListener"
                       data-item-id="[[item.id]]"
