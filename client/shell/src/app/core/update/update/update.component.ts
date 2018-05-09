@@ -15,7 +15,7 @@ import { _TRANSLATE } from '../../../shared/translation-marker';
 })
 export class UpdateComponent implements OnInit {
 
-  message = _TRANSLATE('app.zz.log.checkingForUpdates');
+  message = _TRANSLATE('checkingForUpdates');
   totalUpdatesApplied = 0;
   needsUpdating = false;
 
@@ -41,7 +41,7 @@ export class UpdateComponent implements OnInit {
       const lastUpdateIndex = updates.length - 1;
       if (lastUpdateIndex !== atUpdateIndex) {
         this.needsUpdating = true;
-        this.message = _TRANSLATE('app.zz.log.applyingUpdates');
+        this.message = _TRANSLATE('applyingUpdates');
         let requiresViewsRefresh = false;
         while (lastUpdateIndex >= atUpdateIndex) {
           if (updates[atUpdateIndex].requiresViewsUpdate) {
@@ -60,7 +60,7 @@ export class UpdateComponent implements OnInit {
         await userDb.put(infoDoc);
       }
     }
-    this.message = _TRANSLATE('app.zz.log.youAreUpToDate');
+    this.message = _TRANSLATE('youAreUpToDate');
   }
 
 }

@@ -28,10 +28,10 @@ export class RegistrationComponent implements OnInit {
     isUsernameTaken: boolean;
     returnUrl: string;
     statusMessage: object;
-    userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('app.zz.log.usernameUnavailable') };
-    userNameAvailableMessage = { type: 'success', message: _TRANSLATE('app.zz.log.usernameAvailable') };
-    loginUnsucessfulMessage = { type: 'error', message: _TRANSLATE('app.zz.log.loginUnsuccesful') };
-    couldNotCreateUserMessage = { type: 'error', message: _TRANSLATE('app.zz.log.couldNotCreateUser') };
+    userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('usernameUnavailable') };
+    userNameAvailableMessage = { type: 'success', message: _TRANSLATE('usernameAvailable') };
+    loginUnsucessfulMessage = { type: 'error', message: _TRANSLATE('loginUnsuccesful') };
+    couldNotCreateUserMessage = { type: 'error', message: _TRANSLATE('couldNotCreateUser') };
     securityQuestionText: string;
     constructor(
         private userService: UserService,

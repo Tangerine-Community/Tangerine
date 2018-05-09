@@ -64,10 +64,10 @@ export class LoginComponent implements OnInit {
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
-        this.errorMessage = _TRANSLATE('app.zz.log.passwordResetUnsuccesful');
+        this.errorMessage = _TRANSLATE('passwordResetUnsuccesful');
       }
     }, error => {
-      this.errorMessage = _TRANSLATE('app.zz.log.passwordResetUnsuccesful');
+      this.errorMessage = _TRANSLATE('passwordResetUnsuccesful');
 
     });
   }
@@ -76,10 +76,10 @@ export class LoginComponent implements OnInit {
       if (data) {
         this.router.navigate(['' + this.returnUrl]);
       } else {
-        this.errorMessage = _TRANSLATE('app.zz.log.loginUnsuccesful');
+        this.errorMessage = _TRANSLATE('loginUnsuccesful');
       }
     }, error => {
-      this.errorMessage = _TRANSLATE('app.zz.log.loginUnsuccesful');
+      this.errorMessage = _TRANSLATE('loginUnsuccesful');
 
     });
   }

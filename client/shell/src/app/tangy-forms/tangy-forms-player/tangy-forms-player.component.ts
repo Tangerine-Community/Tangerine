@@ -41,10 +41,10 @@ export class TangyFormsPlayerComponent implements OnInit {
         }
         this.windowRef.nativeWindow.location = formUrl;
       } else {
-        console.error(_TRANSLATE('app.zz.log.itemeNotFound'));
+        console.error(_TRANSLATE('itemeNotFound'));
       }
     } catch (error) {
-      console.error(_TRANSLATE('app.zz.log.couldNotLoadListOfForms'));
+      console.error(_TRANSLATE('couldNotLoadListOfForms'));
     }
   }
 
