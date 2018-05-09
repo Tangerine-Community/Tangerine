@@ -11,6 +11,7 @@
  */
 
 const PouchDB = require('pouchdb');
+const _ = require('lodash');
 
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
@@ -148,31 +149,60 @@ const saveProcessedFormData = async function (formData, resultDB) {
 
   // generate column headers
   let docHeaders = generateHeaders(formData);
-  docHeaders.push({ headers: 'Complete', key: `${formID}.${formData.complete}` });
-  docHeaders.push({ headers: 'Start Date Time', key: `${formID}.${formData.startDatetime}` });
+  docHeaders.push({ headers: 'Complete', key: `${formID}.complete` });
+  docHeaders.push({ headers: 'Start Date Time', key: `${formID}.startDatetime` });
   formHeaders.columnHeaders = docHeaders;
 
   // process form result
   let processedResult = processFormResponse(formData);
   formResult.processedResult = processedResult;
-  formResult[`${formID}.${formData.startDatetime}`] = formData.startDatetime;
-  formResult[`${formID}.${formData.complete}`] = formData.complete;
+  formResult.processedResult[`${formID}.startDatetime`] = formData.startDatetime;
+  formResult.processedResult[`${formID}.complete`] = formData.complete;
 
   try {
-    await RESULT_DB.put(formHeaders);
+    await saveFormHeaders(formHeaders, RESULT_DB);
   } catch (err) {
-    console.error({ message: 'Could not save generated headers', reason: err.message });
-    // @TODO: Rewrite to handle updates to headers { message: 'Could not save generated headers', reason: 'Document update conflict.' }
+    console.error(err);
   }
 
   try {
-    return await RESULT_DB.put(formResult);
+    await saveFormResult(formResult, RESULT_DB);
   } catch (err) {
-    console.error({ message: 'Could not save processed results', reason: err.message });
+    console.error(err);
   }
 
 };
 
+function saveFormHeaders(doc, db) {
+  db.get(doc._id).then(origDoc => {
+    let newDoc = { _rev: origDoc._rev };
+    let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
+    let joinByHeader = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'header');
+    newDoc.columnHeaders = _.union(joinByHeader, joinBykey);
+    return db.put(newDoc, { force: true });
+  })
+  .catch(err => {
+    if (err.status === 409) {
+      return saveFormHeaders(doc);
+    } else {
+      return db.put(doc); // save new doc
+    }
+  });
+}
+
+function saveFormResult(doc, db) {
+  db.get(doc._id).then(oldDoc => {
+    let newDoc = _.merge(oldDoc, doc);
+    return db.put(newDoc, { force: true });
+  }).catch(err => {
+    if (err.status === 409) {
+      console.log(err.message, '...Retry saving result');
+      return saveFormResult(doc);
+    } else {
+      return db.put(doc); // save new doc
+    }
+  });
+}
 
 exports.generateHeaders = generateHeaders;
 
