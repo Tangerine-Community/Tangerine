@@ -94,30 +94,30 @@ export class AppComponent implements OnInit {
   }
   updateApp() {
     if (window.isCordovaApp) {
-      console.log(_TRANSLATE('app.zz.log.runningFromAPK'));
+      console.log(_TRANSLATE('runningFromAPK'));
       const installationCallback = (error) => {
         if (error) {
-          console.log(_TRANSLATE('app.zz.log.failedToInStallUpdate') + error.code);
+          console.log(_TRANSLATE('failedToInStallUpdate') + error.code);
           console.log(error.description);
           this.updateIsRunning = false;
         } else {
-          console.log(_TRANSLATE('app.zz.log.updateInstalled'));
+          console.log(_TRANSLATE('updateInstalled'));
           this.updateIsRunning = false;
         }
       };
       const updateCallback = (error, data) => {
-        console.log(_TRANSLATE('app.zz.log.data') + JSON.stringify(data));
+        console.log(_TRANSLATE('data') + JSON.stringify(data));
         if (error) {
-          console.log(_TRANSLATE('app.zz.log.error') + JSON.stringify(error));
-          alert(_TRANSLATE('app.zz.log.noUpdate') + JSON.stringify(error.description));
+          console.log(_TRANSLATE('error') + JSON.stringify(error));
+          alert(_TRANSLATE('noUpdate') + JSON.stringify(error.description));
         } else {
-          console.log(_TRANSLATE('app.zz.log.updateIsLoaded'));
-          if (window.confirm(_TRANSLATE('app.zz.log.confirmUpdate'))) {
+          console.log(_TRANSLATE('updateIsLoaded'));
+          if (window.confirm(_TRANSLATE('confirmUpdate'))) {
             this.updateIsRunning = true;
-            console.log(_TRANSLATE('app.zz.log.installingUpdate'));
+            console.log(_TRANSLATE('installingUpdate'));
             window.chcp.installUpdate(installationCallback);
           } else {
-            console.log(_TRANSLATE('app.zz.log.cancelledInstall'));
+            console.log(_TRANSLATE('cancelledInstall'));
             this.updateIsRunning = false;
           }
         }
