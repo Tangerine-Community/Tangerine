@@ -12,7 +12,7 @@ module.exports = {
   "skipWaiting": true,
   "runtimeCaching":  [
     {
-      "urlPattern": new RegExp('/editor/'),
+      "urlPattern": new RegExp('/editor(?!\/group)'),
       "handler": "staleWhileRevalidate"
     },
     {
