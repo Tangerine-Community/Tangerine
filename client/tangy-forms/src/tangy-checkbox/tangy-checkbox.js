@@ -31,11 +31,13 @@ export class TangyCheckbox extends PolymerElement {
     return {
       name: {
         type: String,
-        value: ''
+        value: '',
+        reflectToAttribute: true
       },
       label: {
         type: String,
-        value: ''
+        value: '',
+        reflectToAttribute: true
       },
       required: {
         type: Boolean,
@@ -84,6 +86,8 @@ export class TangyCheckbox extends PolymerElement {
     this.$.checkbox.addEventListener('change', (e) => {
       e.stopPropagation()
       let incomplete = (!e.target.checked)
+      this.value = e.target.checked ? 'on' : ''
+      this.dispatchEvent(new Event('change', { bubbles: true }))
       this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
         bubbles: true,
         detail: {
@@ -123,6 +127,19 @@ export class TangyCheckbox extends PolymerElement {
   onValueChange (value) {
     if (value) this.$.checkbox.setAttribute('checked', true)
     if (!value) this.$.checkbox.removeAttribute('checked')
+  }
+
+  validate() {
+    if (this.required === true && 
+        this.value === '' && 
+        this.disabled === false && 
+        this.hidden === false) {
+      this.invalid = true
+      return false
+    } else {
+      this.invalid = false
+      return true
+    }
   }
 }
 window.customElements.define(TangyCheckbox.is, TangyCheckbox)

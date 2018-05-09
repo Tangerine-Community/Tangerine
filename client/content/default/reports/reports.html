@@ -1,0 +1,89 @@
+<form id="" on-open="
+
+var database = document.URL.split('&')[1].split('=')[1]
+var db = new PouchDB(database);
+Plotly.setPlotConfig({
+  mapboxAccessToken: 'pk.eyJ1IjoibGFjaGtvIiwiYSI6ImNqZDYyZTM5bjF3OGcycW53a203M2tnd2QifQ.2cHvc7TfYyLBsZaQqPMF7A'
+})
+var pl = Plotly 
+var pl1 = Plotly 
+//var data = []
+var b = false
+db
+.allDocs({include_docs: true})
+.then(function (result) {
+  let xAxis = []
+  let yAxis = []
+  let long = []
+  let lat = []
+  for (let r of result.rows) {
+    if (r.doc.form != undefined) {
+      // @TODO Just use doc.startTime
+      let inputs = []
+      r.doc.items.forEach((item) => item.inputs.forEach(input => inputs.push(input)))
+      debugger
+      for (let i of inputs) {
+        //console.log(i)
+        if (i.name.substring(0,4) == 'date'){
+            var xIndex = xAxis.indexOf(i.value)
+            if (xIndex != -1)  {
+              yAxis[xIndex]=yAxis[xIndex]+1
+            } else {
+              xAxis.push(i.value)
+              yAxis.push(1)
+            }
+        }
+        if (i.name == 'gps-coordinates' && typeof i.value.recordedLongitude != 'undefined'){
+            long.push(i.value.recordedLongitude)
+            lat.push(i.value.recordedLatitude)
+      }
+    }
+  }
+    
+} 
+return ({xAxis,yAxis,long,lat})
+}).then (function (trace) {
+  debugger
+  var trace1 = {
+    x: trace.xAxis,
+    y: trace.yAxis,
+    mode: 'markers',
+    type: 'scatter'
+  };
+  
+  let element = elementsById.plotly
+  pl.newPlot(element, [trace1]);
+  
+  element = elementsById.plotly1
+  
+  
+    var data =  [{
+      type:'scattermapbox',
+      lat:trace.lat,
+      lon:trace.long,
+      mode:'markers', marker: {size:14},
+      text:['Visit']
+    }]
+  var layout = { autosize: true, hovermode:'closest', mapbox: { bearing:0, center: { lat:45, lon:-73}, pitch:0, zoom:5 }, }
+  pl1.newPlot(element, data);
+  Plotly.plot(element, data, layout)
+})
+//let element = document.createElement('div', 'plotly')
+//this.shadowRoot.getElementById('show_feedback').appendChild(element)
+  
+//JSON.stringify(r.doc.inputs[0].value)
+//{recordedLatitude:41.3782178,recordedLongitude:2.1667373999999997,recordedAccuracy:35}
+  
+  
+  ">
+  <tangy-checkbox name="show_feedback_chk" hidden>Show Feedback</tangy-checkbox>  
+  <div id="show_feedback">
+    <div id="plotly">
+    </div>
+    <div id="plotly1">
+    </div>
+  
+  </div>
+
+
+</form>

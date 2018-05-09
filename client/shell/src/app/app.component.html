@@ -1,3 +1,13 @@
+<div id="update-in-progress" *ngIf="updateIsRunning">
+  <div id="update-in-progress-inner">
+    <img src="../logo.svg">
+    <br> Update is running. Please wait...
+    <br>
+    <br>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+</div>
+
 <mat-toolbar color="primary" class="mat-typography mat-tangy-custom-toolbar">
   <span class="home-icon">
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="/home">
@@ -18,13 +28,17 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
       <span>Manage Profile</span>
     </button>
-    <button routerLink="/home" mat-menu-item>
+    <!-- <button routerLink="/home" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">settings</mat-icon>
       <span>My Settings</span>
-    </button>
+    </button> -->
     <button routerLink="/sync-records" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>Sync</span>
+    </button>
+    <button routerLink="/export-data" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">import_export</mat-icon>
+      <span>Export Data</span>
     </button>
     <button mat-menu-item (click)="updateApp()" *ngIf="showUpdateAppLink">
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
@@ -45,24 +59,3 @@
 <div class="tangerine-app-content mat-typography">
   <router-outlet></router-outlet>
 </div>
-
-<!-- <mat-sidenav-container style="margin-top:64px">
-  <mat-sidenav #sidenav class="sidenav mat-typography">
-    <mat-nav-list>
-      <mat-list-item>
-        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="forms-list">Forms List</a>
-      </mat-list-item>
-      <br>
-      <mat-list-item>
-        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="case-management">Case Management</a>
-      </mat-list-item>
-      <br>
-      <mat-list-item>
-        <a class="tangy-no-text-decoration tangy-foreground-primary" routerLink="sync-records">Sync Records</a>
-      </mat-list-item>
-    </mat-nav-list>
-  </mat-sidenav>
-  <div class="tangerine-app-content mat-typography">
-    <router-outlet></router-outlet>
-  </div>
-</mat-sidenav-container> -->

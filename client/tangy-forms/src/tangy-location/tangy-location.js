@@ -543,7 +543,7 @@ class TangyLocation extends Element {
       ${(options[selection.level].length === 0) ? 'hidden' : ''}
       ${(this.disabled) ? 'disabled' : ''}
     > 
-      <option value="" default selected ${(options[selection.level].length === 0) ? 'hidden' : ''} disabled='disabled'>Pick a ${selection.level} </option>
+      <option value="" default selected ${(options[selection.level].length === 0) ? 'hidden' : ''} disabled='disabled'>${t('Pick a')} ${selection.level} </option>
       
       ${options[selection.level].map((option, i) => `
         <option 
@@ -651,19 +651,31 @@ class TangyLocation extends Element {
     let inputIncomplete = false
     if (newSelections.find(selection => selection.value === '')) inputIncomplete = true
 
-    // Dispatch the event only if selections at all levels are made.
-    let detail = {
-      inputName: this.name,
-      inputValue: newSelections,
-      inputInvalid: false,
-      inputIncomplete 
-    }
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
-      detail,
-      bubbles: true
-    }))
+    this.value = newSelections
+    this.dispatchEvent(new Event('change'))
 
   }
+
+  validate() {
+    let foundIncomplete = false
+    this.shadowRoot.querySelectorAll('select').forEach(el => {
+      if (!el.value) {
+        foundIncomplete = true
+      }
+    })
+    if (!this.required) {
+      this.invalid = false
+      return true
+    } else if (this.required && !this.disabled && !this.hidden && !foundIncomplete) {
+      this.invalid = false
+      return true
+    } else {
+      this.invalid = true
+      return false
+    }
+  }
+
+
 }
 
 window.customElements.define(TangyLocation.is, TangyLocation);

@@ -1,5 +1,5 @@
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
-import '../../node_modules/@polymer/paper-checkbox/paper-checkbox.js';
+import '../tangy-checkbox/tangy-checkbox.js'
 import '../tangy-form/tangy-element-styles.js';
 import '../tangy-form/tangy-common-styles.js'
 
@@ -19,10 +19,10 @@ class TangyCheckboxes extends Element {
     <style>
 
       :host {
-        @apply --paper-font-common-base;
+        @apply --tangy-font-common-base;
       }
       
-      paper-checkbox {
+      tangy-checkbox {
         margin-top: 15px;
         margin-right: 25px;
       }
@@ -48,104 +48,126 @@ class TangyCheckboxes extends Element {
     return {
       name: {
         type: String,
-        value: ''
+        value: '',
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       value: {
         type: Array,
         value: [],
-        observer: 'onValueChange'
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       atLeast: {
         type: Number,
-        value: 0
+        value: 0,
+        observer: 'reflect',
+        reflectToAttribute: true
       },
       required: {
         type: Boolean,
         value: false,
+        observer: 'reflect',
         reflectToAttribute: true
       },
       disabled: {
         type: Boolean,
         value: false,
-        observer: 'onDisabledChange',
+        observer: 'reflect',
         reflectToAttribute: true
       },
       label: {
         type: String,
+        observer: 'reflect',
         value: ''
       },
       hidden: {
         type: Boolean,
         value: false,
+        observer: 'reflect',
         reflectToAttribute: true
       },
       incomplete: {
         type: Boolean,
         value: true,
+        observer: 'reflect',
         reflectToAttribute: true
       },
       invalid: {
         type: Boolean,
         value: false,
+        observer: 'reflect',
         reflectToAttribute: true
       }
     }
   }
 
   connectedCallback() {
-
     super.connectedCallback()
-
-    this.$.checkboxes.addEventListener('change', this.onCheckboxChange.bind(this), false)
-    this.renderOptions()
+    this.render()
+    this.reflect()
   }
-  renderOptions() {
+
+  reflect() {
+    this.shadowRoot.querySelectorAll('tangy-checkbox').forEach(el => {
+      let matchingState = this.value.find(state => el.name == state.name)
+      el.setProps(matchingState)
+      el.disabled = this.disabled
+      el.hidden = this.hidden
+    })
+  }
+
+  render() {
     this.$.checkboxes.innerHTML = ''
-    // Populate options as paper-radio-button elements
+    // Populate options as tangy-radio-button elements
     let options = this.querySelectorAll('option')
     for (let option of options) {
-      let checkbox = document.createElement('paper-checkbox')
+      let checkbox = document.createElement('tangy-checkbox')
       checkbox.name = option.value
-      if (this.disabled) checkbox.setAttribute('disabled', true)
       checkbox.innerHTML = option.innerHTML
       this.$.checkboxes.appendChild(checkbox)
     }
 
-  }
-
-  onValueChange(value) {
-    this.shadowRoot.querySelectorAll(`paper-checkbox`).forEach(checkbox => checkbox.checked = value.includes(checkbox.name))
-  }
-
-  onCheckboxChange(event) {
-    // Needs hasAttribute no checked==true?
-    let checkedElements = [].slice.call(this.$.checkboxes.querySelectorAll('paper-checkbox')).filter(checkbox => checkbox.checked === true)
-    // The name of the checkbox is an entry in this value array.
-    let value = checkedElements.map(el => el.name)
-    // If not hidden and/or disabled, check for incomplete state.
-    let isIncomplete = false
-    // @TODO Check not needed? Wouldn't change if it was hidden or disabled. :P
-    if (this.hidden !== true && this.disabled !== true) {
-      if (value.length < this.atLeast) isIncomplete = true
-      if (this.required === true && value.length === 0) isIncomplete = true
+    let newValue = []
+    this
+      .shadowRoot
+      .querySelectorAll('tangy-checkbox')
+      .forEach ((el) => {
+        el.addEventListener('change', this.onCheckboxClick.bind(this))
+        newValue.push(el.getProps())
+      })
+    if (!this.value || (typeof this.value === 'object' && this.value.length < newValue.length)) {
+      this.value = newValue
     }
-    // Dispatch the event.
-    // @TODO: Could call inputValueChange() action. Would be less moving parts, less magic.
-    this.dispatchEvent(new CustomEvent('INPUT_VALUE_CHANGE', {
-      detail: {
-        inputName: this.name,
-        inputValue: value,
-        inputInvalid: false,
-        inputIncomplete: isIncomplete
-      },
-      bubbles: true
-    }))
+
   }
 
-  onDisabledChange(value) {
-    let paperCheckboxes = this.shadowRoot.querySelectorAll('paper-checkbox')
-    if (value == true) paperCheckboxes.forEach((button) => button.setAttribute('disabled', true))
-    if (value == false) paperCheckboxes.forEach((button) => button.removeAttribute('disabled'))
+  onCheckboxClick(event) {
+    let newValue = []
+    this.shadowRoot
+      .querySelectorAll('tangy-checkbox')
+      .forEach(el => newValue.push(el.getProps()))
+    this.value = newValue
+    this.dispatchEvent(new CustomEvent('change', {bubbles: true, detail: {
+      inputName: this.name,
+      inputValue: newValue,
+      inputIncomplete: false,
+      inputInvalid: false
+    }}))
+  }
+
+  validate() {
+    let foundOne = false
+    this.shadowRoot.querySelectorAll('[name]').forEach(el => {
+      if (el.value === 'on') foundOne = true
+    })
+    if (this.required && !this.hidden && !this.disabled && !foundOne) {
+      this.invalid = true
+      return false
+    } else {
+      this.invalid = false
+      return true
+    }
   }
 
 }

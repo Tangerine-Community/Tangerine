@@ -1,24 +1,36 @@
-env:
-  global:
-    - REPO="client"
-    - CI_HOME=`pwd`/$REPO
+os:
+  - linux
+services:
+  - docker
 language: node_js
 node_js:
-  - "node"
+  - "8.4.0"
+addons:
+  apt:
+    sources:
+    - google-chrome
+    packages:
+    - google-chrome-stable
+cache:
+  yarn: true
+  directories:
+    - $HOME/.yarn-cache
+    - client/shell/node_modules
 before_install:
-  - echo TRAVIS_BUILD_DIR= ${TRAVIS_BUILD_DIR}
-  - echo CI_HOME= ${CI_HOME}
-  - cd $CI_HOME
-  - npm install -g grunt-cli
-  - npm install -g gulp
-install: npm install
-before_script:
-  - echo TRAVIS_BUILD_DIR= ${TRAVIS_BUILD_DIR}
-  - echo CI_HOME= ${CI_HOME}
-  - cd $CI_HOME
-  - npm install -g bower
-  - bower install
-  - npm run gulp init
+  - export CHROME_BIN=/usr/bin/google-chrome
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  # Repo for Yarn
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH=$HOME/.yarn/bin:$PATH
+  - yarn global add @angular/cli
+install:
+  - cd client/shell && yarn install
+script:
+  - npm run build
+  - npm run e2e
 notifications:
-  slack: rti:nBr3dvYD5mClKt1pAnuHgH8J
-  email: false
+  webhooks:
+    on_success: change
+    on_failure: always
+    on_start: false

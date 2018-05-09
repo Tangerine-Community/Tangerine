@@ -15,10 +15,8 @@ npm run build
 cp logo.svg build/default/
 cd ../../
 
-mkdir builds
 
 # Wrap up APK build.
-cp -r wrappers/apk builds/apk
 cp -r tangy-forms/dist builds/apk/www/tangy-forms
 cp -r shell/dist builds/apk/www/shell
 cp -r content/default builds/apk/www/content

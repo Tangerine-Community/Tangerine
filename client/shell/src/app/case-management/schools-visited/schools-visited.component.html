@@ -1,0 +1,21 @@
+<!-- The month value is 0 indexed to correspond to Javascript's zero index on date.getMonth()-->
+<select name="datefilter" id="datefiler" (change)="onSelectDate($event)">
+  <option value="_">Filter</option>
+  <option *ngFor="let date of filterValuesForDates" [value]="date.value">{{date.label}}</option>
+</select>
+<mat-list>
+  <mat-list-item class="tangy-location-list">
+    <span class="tangy-foreground-primary">School</span>
+    <span class="tangy-spacer"></span>
+    <span class="tangy-foreground-primary">Visits</span>
+  </mat-list-item>
+  <mat-list-item class="tangy-location-list" *ngFor="let location of visits">
+    <a class="tangy-foreground-primary" [routerLink]="['/case-details']" [queryParams]="{locationId:location.id}">
+      <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
+    </a>
+    <span>{{location.location}}</span>
+    <span class="tangy-spacer"></span>
+    <span>{{location.visits}}</span>
+  </mat-list-item>
+  <mat-list-item *ngIf="visits.length<=0" class="tangy-location-list">No Data for {{currentDate|date:'MMM, yyyy'}}</mat-list-item>
+</mat-list>
