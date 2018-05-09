@@ -55,6 +55,7 @@ class TangyToggleButton extends Element {
         height: 30%;
         /*width: 50%;
         margin: -15% 0 0 -25%;*/
+        text-align: center;
       }
       .text-inner ::slotted(*) {
       }

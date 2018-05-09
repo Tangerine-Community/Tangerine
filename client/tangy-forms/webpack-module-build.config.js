@@ -1,6 +1,7 @@
 const {resolve} = require('path');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 
 const pkg = require('./package.json');
 
@@ -19,7 +20,19 @@ const processEnv = {
  */
 const plugins = [
   new webpack.DefinePlugin({'process.env': processEnv}),
-  new CleanWebpackPlugin([outputPath], {verbose: true})
+  new CleanWebpackPlugin([outputPath], {verbose: true}),
+  new UglifyJsPlugin({
+    uglifyOptions:
+      {
+        ecma: 5,
+        compress:false,
+        output: {
+          beautify: true,
+          preamble: "/* uglified */"
+        }
+      },
+    sourceMap: true
+  })
 ];
 
 /**
@@ -34,23 +47,24 @@ module.exports = {
   devtool: 'source-map',
   module: {
     rules: [
-      {
-        test: /\.js$/,
-        // We need to transpile Polymer itself and other ES6 code
-        // exclude: /(node_modules)/,
-        // use: {
-        //   loader: 'babel-loader',
-        //   options: {
-        //     presets: [[
-        //       'env',
-        //       {
-        //         targets: {browsers: ['last 2 Chrome versions']},
-        //         debug: true
-        //       }
-        //     ]]
-        //   }
-        // }
-      },
+      // {
+      //   test: /\.js$/,
+      //   // We need to transpile Polymer itself and other ES6 code
+      //   // exclude: /(node_modules)/,
+      //   use: {
+      //     loader: 'babel-loader',
+      //     options: {
+      //       // presets: [[
+      //       //   'env',
+      //       //   {
+      //       //     targets: {browsers: ['last 2 Chrome versions']},
+      //       //     debug: true
+      //       //   }
+      //       // ]]
+      //       presets: ['env']
+      //     }
+      //   }
+      // },
       {
         test: /\.html$/,
         use: ['text-loader']

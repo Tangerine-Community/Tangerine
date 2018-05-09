@@ -46,6 +46,7 @@
     "js-yaml": "^3.8.4",
     "material-design-icons-iconfont": "^3.0.3",
     "ng2-uuid": "0.0.3",
+    "pako": "^1.0.6",
     "pouchdb": "^6.2.0",
     "pouchdb-find": "^6.3.4",
     "pouchdb-upsert": "^2.2.0",

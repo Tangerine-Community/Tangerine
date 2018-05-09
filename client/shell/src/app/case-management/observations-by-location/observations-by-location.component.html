@@ -1,0 +1,33 @@
+<select name="datefilter" id="datefiler" (change)="onSelectDate($event)">
+  <option value="_">Filter</option>
+  <option *ngFor="let date of filterValuesForDates" [value]="date.value">{{date.label}}</option>
+</select>
+<br>
+<br>
+<table class="observations">
+  <thead>
+    <tr>
+      <th>Form Name</th>
+      <th *ngFor="let col of columns">
+        {{col.name}}
+      </th>
+      <th>Date and Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let observation of observations">
+      <td>
+        <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player']" [queryParams]="{formIndex:observation.formIndex, 'responseId':observation._id}">
+          <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
+        </a>
+        {{observation.formTitle}}
+      </td>
+      <td *ngFor="let col of observation.columns">
+        {{col.value|json}}
+      </td>
+      <td>
+        {{observation.startDatetime| date:'MMM d, y, h:mm a'}}
+      </td>
+    </tr>
+  </tbody>
+</table>

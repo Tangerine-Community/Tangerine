@@ -9,11 +9,12 @@ import { ReleaseApkComponent }    from './release-apk/release-apk.component';
 import { ReleasePwaComponent }    from './release-pwa/release-pwa.component';
 const groupsRoutes: Routes = [
   //{ path: 'projects',  component: GroupsComponent },
+  { path: '', component: GroupsComponent, canActivate: [AuthGuard] },
   { path: 'projects', component: GroupsComponent, canActivate: [AuthGuard] },
   { path: 'new-group', component: NewGroupComponent, canActivate: [AuthGuard] },
   { path: 'group/:id', component: GroupComponent, canActivate: [AuthGuard] },
-  { path: 'group/release-apk/:id', component: ReleaseApkComponent, canActivate: [AuthGuard] },
-  { path: 'group/release-pwa/:id', component: ReleasePwaComponent, canActivate: [AuthGuard] },
+  { path: 'group/release-apk/:id/:releaseType', component: ReleaseApkComponent, canActivate: [AuthGuard] },
+  { path: 'group/release-pwa/:id/:releaseType', component: ReleasePwaComponent, canActivate: [AuthGuard] },
 ];
 @NgModule({
   imports: [

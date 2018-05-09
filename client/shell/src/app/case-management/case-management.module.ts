@@ -1,15 +1,16 @@
 import { CdkTableModule } from '@angular/cdk/table';
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatCardModule, MatInputModule, MatListModule, MatTableModule, MatTabsModule } from '@angular/material';
+import { MatCardModule, MatInputModule, MatListModule, MatTableModule, MatTabsModule, MatSelectModule } from '@angular/material';
 
 import { SharedModule } from '../shared/shared.module';
 import { CaseManagementService } from './_services/case-management.service';
 import { CaseManagementRoutingModule } from './case-management-routing.module';
-import { CaseManagementComponent } from './case-management.component';
 import { FormListComponent } from './form-list/form-list.component';
-import { FormResponsesListComponent } from './form-responses-list/form-responses-list.component';
+import { SchoolsVisitedComponent } from './schools-visited/schools-visited.component';
+import { CaseDetailsComponent } from './case-details/case-details.component';
+import { ObservationsByLocationComponent } from './observations-by-location/observations-by-location.component';
 
 @NgModule({
   imports: [
@@ -22,9 +23,11 @@ import { FormResponsesListComponent } from './form-responses-list/form-responses
     MatCardModule,
     CdkTableModule,
     MatTableModule,
+    MatSelectModule,
     SharedModule
   ],
-  declarations: [CaseManagementComponent, FormListComponent, FormResponsesListComponent],
+  declarations: [FormListComponent, SchoolsVisitedComponent,
+    CaseDetailsComponent, ObservationsByLocationComponent],
   providers: [CaseManagementService]
 })
 export class CaseManagementModule { }

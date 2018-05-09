@@ -63,6 +63,7 @@
     "stylelint-config-standard": "17.0.0",
     "text-loader": "0.0.1",
     "touch": "3.1.0",
+    "uglifyjs-webpack-plugin": "1.2.4",
     "web-component-tester": "6.3.0",
     "webpack": "3.8.1",
     "webpack-dev-server": "2.9.3",
@@ -81,6 +82,7 @@
     "@polymer/paper-item": "^3.0.0-pre.1",
     "@polymer/paper-progress": "^3.0.0-pre.1",
     "@polymer/paper-radio-group": "^3.0.0-pre.1",
+    "@polymer/paper-tabs": "3.0.0-pre.10",
     "@polymer/polymer": "^3.0.0-pre.1",
     "babel-polyfill": "6.26.0",
     "bower": "1.8.2",
@@ -91,5 +93,3 @@
     "underscore": "1.8.3"
   }
 }
-
-
