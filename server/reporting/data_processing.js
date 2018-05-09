@@ -65,7 +65,7 @@ const generateHeaders = function (formData) {
       }
 
       // create headers for all values that are pure objects
-      if (typeof (item && item.value) === 'object' && !Array.isArray(item) && item !== null) {
+      if (typeof (item && item.value) === 'object' && !Array.isArray(item && item.value) && (item && item.value) !== null) {
         let elementKeys = Object.keys(item.value);
         elementKeys.forEach(key => {
           formResponseHeaders.push({
@@ -103,7 +103,6 @@ const processFormResponse = function (formData) {
         formResponseResult[`${formID}.${formTitle}.${item.name}`] = item.value;
       }
 
-
       // create headers for all values that are arrays
       if (Array.isArray(item.value)) {
         if (item.tagName === 'TANGY-LOCATION') {
@@ -118,7 +117,7 @@ const processFormResponse = function (formData) {
       }
 
       // create headers for all values that are pure objects
-      if (typeof (item && item.value) === 'object' && !Array.isArray(item) && item !== null) {
+      if (typeof (item && item.value) === 'object' && !Array.isArray(item && item.value) && (item && item.value) !== null) {
         let elementKeys = Object.keys(item.value);
         elementKeys.forEach(key => {
           formResponseResult[`${formID}.${formTitle}.${item.name}.${key}`] = item.value[key];
