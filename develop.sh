@@ -111,7 +111,6 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \
   --volume $(pwd)/upgrades:/tangerine/upgrades \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
-  --volume $(pwd)/editor/package.json:/tangerine/editor/package.json \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
   --volume $(pwd)/client/shell/package.json:/tangerine/client/shell/package.json \
   --volume $(pwd)/client/ckeditor:/tangerine/client/ckeditor \

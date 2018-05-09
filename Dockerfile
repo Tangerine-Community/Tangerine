@@ -47,6 +47,8 @@ RUN cd /tangerine/client/ && ./install.sh
 # Build editor 
 ADD editor /tangerine/editor
 RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
+RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
+
 
 # Build client v3.
 ADD client /tangerine/client
