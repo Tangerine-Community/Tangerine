@@ -66,21 +66,21 @@ class TangyEditorApp extends Element {
         border-top: 1px solid #e8e8e8;
         border-bottom: 1px solid #e8e8e8;
         padding: 5px 16px;
-        position: relative; 
-        background-color: #e8e8e8;        
+        position: relative;
+        background-color: #e8e8e8;
       }
      .item-edit {
         border-top: 1px solid #e8e8e8;
         border-bottom: 1px solid #e8e8e8;
         padding: 5px 16px;
-        position: relative; 
+        position: relative;
       }
      #save-order {
         border-top: 1px solid #e8e8e8;
         border-bottom: 1px solid #e8e8e8;
         padding: 2px 2px;
-        position: relative; 
-        text-align: center;  
+        position: relative;
+        text-align: center;
         background-color: pink;
       }
       paper-icon-button.small {
@@ -128,7 +128,8 @@ class TangyEditorApp extends Element {
                         <iron-icon icon="icons:settings"/>
                     </paper-button>
                   </a>
-                  <a href="../../../csv/[[groupId]]/[[item.id]]">Download CSV</a>
+                  <!-- <a href="../../../csv/[[groupId]]/[[item.id]]">Download CSV</a> -->
+                  <a href="../../../csv/byPeriodAndFormId/[[groupId]]/[[item.id]]">Download CSV</a>
                 </div>
             </paper-card>
         </template>
@@ -152,12 +153,12 @@ class TangyEditorApp extends Element {
         <!--</div>-->
         <!--<slot></slot>-->
       <!--</div>-->
-      
+
       <div id="form-view" hidden="">
         <paper-icon-button mini id="new-response-button" on-click="onClickNewResponseButton" icon="icons:add"></paper-icon-button>
         <div id="form-container"></div>
       </div>
-      
+
       <div id="form-editor">
         <div id="form-item-listing" hidden style="max-width: 200px; float:left">
               <!--<paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>-->
@@ -218,7 +219,7 @@ class TangyEditorApp extends Element {
                 <iron-icon icon="icons:save"/>
               </paper-button>
             </div>
-          </div>        
+          </div>
           <div class="card-content">
             <!--<div style="width: 600px;margin-left: auto; margin-right: auto;">-->
               <form id="itemEditor">
@@ -245,7 +246,7 @@ class TangyEditorApp extends Element {
                     <iron-icon icon="icons:save"/>
                   </paper-button>
                 </div>
-              </div>          
+              </div>
               <paper-input id="formTitle" value="{{formTitle}}" label="form title"  always-float-label></paper-input>
               <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
               <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
