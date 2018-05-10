@@ -21,6 +21,7 @@
   <script src="node_modules/underscore/underscore.js"></script>
   <script src="node_modules/moment/min/moment-with-locales.min.js"></script>
   <script src="bower_components/pouchdb/dist/pouchdb.js"></script>
+  <link rel="import" href="bower_components/juicy-ace-editor/juicy-ace-editor.html">
   <script src="/ckeditor/ckeditor.js"></script>
   <script src="/ace/src-min-noconflict/ace.js"></script>
 
@@ -44,9 +45,8 @@
         /*display:none*/
       /*}*/
       #editorTEXT {
-        position: relative;
-        width: 500px;
         height: 800px;
+        float: right;
       }
       .ace_editor {
         border: 1px solid lightgray;
@@ -64,11 +64,16 @@
         text-align: center;
       }
       #editorCK {
-        margin-top: 60px;
+        margin-top: 30px;
         border: 1px solid gray;
         font-size: medium;
+        float: right;
       }
   </style>
+  <script> 
+    setInterval(() => document.querySelector('#editorTEXT').style.width = `${window.innerWidth-290}px`, 500)
+    setInterval(() => document.querySelector('#editorCK').style.width = `${window.innerWidth-290}px`, 500)
+  </script>
 
   <body>
 
