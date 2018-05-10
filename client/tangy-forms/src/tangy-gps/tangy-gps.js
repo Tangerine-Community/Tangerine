@@ -37,26 +37,26 @@ class TangyGps extends Element {
     <b>Current Position</b>
     <div>
       <template is="dom-if" if="{{_isAdvancedMode(currentLatitude, advancedMode)}}">
-        Latitude: [[currentLatitude]] <br>
-        Longitude: [[currentLongitude]] <br>
+        ${t('latitude')} [[currentLatitude]] <br>
+        ${t('longitude')} [[currentLongitude]] <br>
       </template>
     <div>
     <template is="dom-if" if="[[currentLatitude]]">
-      Accuracy: [[currentAccuracy]] meters<br>
-      Accuracy Level : [[accuracyLevel]]
+      ${t('accuracy')} [[currentAccuracy]] ${t('meters')}<br>
+      ${t('accuracyLevel')} [[accuracyLevel]]
     </template> 
     </div>
     <div>
     <template is="dom-if" if="[[!currentLatitude]]">
-        Searching...
+        ${t('searching')}
     </template> 
     </div>
     </div>
     <div>
-      <h3>Tips</h3>
-      <p>Try standing next to a window</p>
-      <p>Try moving outside with a clear view of the sky</p>
-      <p>Try standing away from trees or buildings</p>
+      <h3>${t('tips')}</h3>
+      <p>${t('standNextToWindow')}</p>
+      <p>${t('moveOutside')}</p>
+      <p>${t('standAway')}</p>
     </div>
     <br>
     

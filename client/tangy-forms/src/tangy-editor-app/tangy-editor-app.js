@@ -128,7 +128,7 @@ class TangyEditorApp extends Element {
                         <iron-icon icon="icons:settings"/>
                     </paper-button>
                   </a>
-                  <a href="../../../csv/[[groupId]]/[[item.id]]">Download CSV</a>
+                  <a href="../../../csv/[[groupId]]/[[item.id]]">${t('downloadCSV')}</a>
                 </div>
             </paper-card>
         </template>
@@ -168,7 +168,7 @@ class TangyEditorApp extends Element {
               <paper-icon-button
                   icon="add-circle-outline"
                   data-form-src="[[formHtmlPath]]"
-                  data-item-title="New Item"
+                  data-item-title="${t('newItem')}"
                   data-item-src='form-metadata.html'
                   data-item-order=null
                   on-click="createFormItemListener">
@@ -223,7 +223,7 @@ class TangyEditorApp extends Element {
             <!--<div style="width: 600px;margin-left: auto; margin-right: auto;">-->
               <form id="itemEditor">
                 <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
-                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching or your changes will be deleted.
+                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>${t('saveBeforeSwitching')}
                 <p>&nbsp;</p>
                 <!--<tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>-->
                 <!--<div id="editorCK"></div>-->
@@ -246,10 +246,10 @@ class TangyEditorApp extends Element {
                   </paper-button>
                 </div>
               </div>          
-              <paper-input id="formTitle" value="{{formTitle}}" label="form title"  always-float-label></paper-input>
-              <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
-              <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
-              <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching or your changes will be deleted.
+              <paper-input id="formTitle" value="{{formTitle}}" label="${t('formTitle')}"  always-float-label></paper-input>
+              <paper-input id="formName" value="{{formName}}" label="${t('formName')} (for url)"  always-float-label></paper-input>
+              <paper-input id="itemTitle" value="{{itemTitle}}" label="${'itemTitle'}"  always-float-label></paper-input>
+              <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">${t('switchEditor')}</paper-button> ${t('saveBeforeSwitching')}
               <p>&nbsp;</p>
             </form>
           </div>
@@ -598,16 +598,16 @@ class TangyEditorApp extends Element {
       this.items.push(item)
     }
     if (isNew) {
-      this.headerTitle = "New form"
+      this.headerTitle = t('newForm')
       // this.createFormItemListener()
       let query = this.parseQuery(window.location.hash)
       let formPath = query.form
       this.formHtmlPath = formPath
       this.editItem(this.formHtmlPath, true)
     } else {
-      this.headerTitle = "Item Listing"
+      this.headerTitle = t('itemListing')
     }
-    this.dispatchEvent(new CustomEvent('tangy-form-item-list-opened', {bubbles: true}))
+    this.dispatchEvent(new CustomEvent('tangy-form-item-list-opened', { bubbles: true }))
   }
   /**
    * This can be used to create new items or edit items.
@@ -642,25 +642,25 @@ class TangyEditorApp extends Element {
     // Check if this is a new item
     if (isNewForm !== true) {
       if (isNewItem === true) {
-        this.headerTitle = "New Item"
+        this.headerTitle = t('newItem')
         html = '<p>&nbsp;</p>'
       } else {
-        this.headerTitle = "Edit Item"
+        this.headerTitle = t('editItem')
         // Load the form into the DOM.
         // todo try to grab local pouch version of item
-        let itemHtml = await fetch(itemSrc, {credentials: 'include'})
+        let itemHtml = await fetch(itemSrc, { credentials: 'include' })
         this.itemHtmlText = await itemHtml.text()
         // console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
 
         if (this.itemHtmlText === '') {
-          html ='<p>&nbsp;</p>'
+          html = '<p>&nbsp;</p>'
         } else {
           // CKEDITOR.setData(this.itemHtmlText)
           html = this.itemHtmlText
         }
       }
     } else {
-      this.headerTitle = "Create Form"
+      this.headerTitle = t('createForm')
       this.itemHtmlText = '<p>&nbsp;</p>\n'
       html = this.itemHtmlText
       // this.itemOrder = null
@@ -759,7 +759,7 @@ class TangyEditorApp extends Element {
   }
 
   onClickNewResponseButton() {
-    let confirmation = confirm("Are you sure you want to start a form response?")
+    let confirmation = confirm(t('confirmStartingFormResponse'))
     if (confirmation) {
       let params = getHashParams()
       this.loadForm(params.form)
