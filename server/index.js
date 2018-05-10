@@ -17,6 +17,10 @@ const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
+const chokidar = require('chokidar');
+const chalk = require('chalk');
+const tangyReporting = require('../server/reporting/data_processing');
+const generateCSV = require('../server/reporting/generate_csv').generateCSV;
 const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
@@ -48,8 +52,8 @@ const sep = path.sep;
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
-  app.use(function(req, res, next) {
-    if(req.get('X-Forwarded-Proto') == 'http') {
+  app.use(function (req, res, next) {
+    if (req.get('X-Forwarded-Proto') == 'http') {
       res.redirect('https://' + req.get('Host') + req.url);
     }
     else {
@@ -71,7 +75,7 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
   });
   var mountpoint = '/db';
   app.use(mountpoint, couchProxy);
-  app.use(mountpoint, function(req, res) {
+  app.use(mountpoint, function (req, res) {
     if (req.originalUrl === mountpoint) {
       res.redirect(301, req.originalUrl + '/');
     } else {
@@ -108,25 +112,25 @@ passport.use(new LocalStrategy(
 ));
 
 // This decides what identifying piece of information to put in a cookie for the session.
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user.name);
 });
 
 // This transforms the id in the session cookie to pass to req.user object.
-passport.deserializeUser(function(id, done) {
-  done(null, {name: id});
+passport.deserializeUser(function (id, done) {
+  done(null, { name: id });
 });
 
 
 // Use sessions.
-app.use(session({ 
-  secret: "cats", 
+app.use(session({
+  secret: "cats",
   resave: false,
-  saveUninitialized: true 
+  saveUninitialized: true
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({limit: '1gb'}))
-app.use(bodyParser.text({limit: '1gb'}))
+app.use(bodyParser.json({ limit: '1gb' }))
+app.use(bodyParser.text({ limit: '1gb' }))
 app.use(compression())
 app.use(passport.initialize());
 app.use(passport.session());
@@ -144,10 +148,10 @@ var isAuthenticated = function (req, res, next) {
 }
 
 // Login service.
-app.post('/login', 
+app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.send({name: 'user1', status: 'ok'});
+  function (req, res) {
+    res.send({ name: 'user1', status: 'ok' });
   }
 );
 
@@ -162,8 +166,8 @@ app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 
-app.use('/releases/', express.static(path.join(__dirname, '../client/releases')) )
-app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')) )
+app.use('/releases/', express.static(path.join(__dirname, '../client/releases')))
+app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')))
 
 app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, next) {
   let contentPath = '../client/content/assets'
@@ -210,17 +214,17 @@ async function saveFormsJson(formParameters, group) {
     if (exists) {
       console.log("formsJsonPath exists")
       // read formsJsonPath and add formParameters to formJson
-        try {
-          formJson = await fs.readJson(formsJsonPath)
-          console.log("formJson: " + JSON.stringify(formJson))
-          console.log("formParameters: " + JSON.stringify(formParameters))
-          if (formParameters !== null) {
-            formJson.push(formParameters)
-          }
-          console.log("formJson with new formParameters: " + JSON.stringify(formJson))
-        } catch (err) {
-          console.error("An error reading the json form: " + err)
+      try {
+        formJson = await fs.readJson(formsJsonPath)
+        console.log("formJson: " + JSON.stringify(formJson))
+        console.log("formParameters: " + JSON.stringify(formParameters))
+        if (formParameters !== null) {
+          formJson.push(formParameters)
         }
+        console.log("formJson with new formParameters: " + JSON.stringify(formJson))
+      } catch (err) {
+        console.error("An error reading the json form: " + err)
+      }
     } else {
       // create an empty formJson
       formJson = []
@@ -285,7 +289,7 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
     })
     .catch(err => {
       let msg = "An error with form outputFile: " + err
-      let message = {message: msg};
+      let message = { message: msg };
       console.error(message)
       res.send(message)
     })
@@ -318,7 +322,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
   let formDirName = req.body.formName
   // console.log("formDirName: "+ formDirName)
   if (typeof formDirName !== 'undefined') {
-    formDirName = sanitize(req.body.formName).replace(/ /g,'')
+    formDirName = sanitize(req.body.formName).replace(/ /g, '')
   }
   let itemHtmlText = req.body.itemHtmlText
   let formHtmlPath = req.body.formHtmlPath
@@ -338,7 +342,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // Setup the new form by populating the template with the formDirName
     let templatePath = config.editorClientTemplates + sep + 'form-template.html'
     try {
-      originalForm = await fs.readFile(templatePath,'utf8')
+      originalForm = await fs.readFile(templatePath, 'utf8')
     } catch (e) {
       console.log('e', e);
     }
@@ -410,7 +414,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // console.log('itemFilename: ' + itemFilename +  ' formItemListHtml: ' + formItemListHtml + ' rootHtml: ' + rootHtml)
     let isNewItem = true
     // loop through the current items and see if this is an edit or a new item
-    let newItemList = $('tangy-form-item').each(function(i, elem) {
+    let newItemList = $('tangy-form-item').each(function (i, elem) {
       let src = $(this).attr('src')
       // console.log("src: " + src)
       if (src === itemFilename) {
@@ -461,7 +465,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     })
   let resp = {
     "message": 'Item saved: ' + itemPath,
-    "displayFormsListing":displayFormsListing
+    "displayFormsListing": displayFormsListing
   }
   res.json(resp)
 })
@@ -482,7 +486,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   // Edit the app-config.json.
   try {
     appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
-    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}` 
+    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}`
   } catch (err) {
     console.error("An error reading app-config: " + err)
     throw err;
@@ -490,23 +494,23 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
     .then(status => console.log("Wrote app-config.json"))
     .catch(err => console.error("An error copying app-config: " + err))
-  
+
   // All done!
   res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
 })
 
 app.get('/groups', isAuthenticated, async function (req, res) {
-  fsc.readdir('/tangerine/client/content/groups', function(err, files) {
+  fsc.readdir('/tangerine/client/content/groups', function (err, files) {
     let filteredFiles = files.filter(junk.not)
     console.log('/groups route lists these dirs: ' + filteredFiles)
     let groups = filteredFiles.map((groupName) => {
       return {
-        attributes: { 
-          name: groupName 
+        attributes: {
+          name: groupName
         },
-        member: [], 
-        admin: [], 
-        numberOfResults: 0 
+        member: [],
+        admin: [],
+        numberOfResults: 0
       }
     })
     res.send(groups)
@@ -518,25 +522,25 @@ app.get('/groups', isAuthenticated, async function (req, res) {
 app.post('/upload/:groupName', async function (req, res) {
   let db = new DB(req.params.groupName)
   try {
-    const payload = pako.inflate(req.body, {to: 'string'})
+    const payload = pako.inflate(req.body, { to: 'string' })
     const packet = JSON.parse(payload)
     // New docs should not have a rev or else insertion will fail.
     delete packet.doc._rev
     await db.put(packet.doc).catch(err => console.log(err))
     res.send('ok')
-  } catch(e) { console.log(e) }
+  } catch (e) { console.log(e) }
 
 })
 
 app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   let db = new DB(req.params.groupName)
-  let allDocs = await db.allDocs({include_docs: true})
+  let allDocs = await db.allDocs({ include_docs: true })
   let responseRows = allDocs.rows
     .filter(row => row.doc.collection == 'TangyFormResponse')
     .filter(row => row.doc.form.id == req.params.formId)
-  let responseDocs = responseRows.map(row => row.doc) 
+  let responseDocs = responseRows.map(row => row.doc)
   let docsKeyedByVariableName = []
-  responseDocs.forEach(doc => { 
+  responseDocs.forEach(doc => {
     let variables = {}
     variables['_id'] = doc._id
     variables['formId'] = doc.form.id
@@ -546,7 +550,7 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
       variables[input.name] = input.value
     })
     doc.items.forEach(item => {
-      item.inputs.forEach(input => { 
+      item.inputs.forEach(input => {
         if (Array.isArray(input.value)) {
           input.value.forEach(subInput => variables[`${input.name}.${subInput.name}`] = subInput.value)
         } else {
@@ -575,11 +579,11 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
 
 app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isAuthenticated, async function (req, res) {
   let db = new DB(req.params.groupName)
-  const template = {"collection":"TangyFormResponse","form":{"id":"field-demo","databaseName":"r","responseId":"","onChange":"","linearMode":false,"hideClosedItems":false,"hideResponses":false,"hideCompleteButton":false,"tagName":"TANGY-FORM"},"items":[{"id":"item_1","src":"../content/field-demo/text-inputs.html","title":"Text Inputs","hideButtons":false,"inputs":["text_input_1","text_input_2","text_input_3","text_input_4","text_input_5"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_2","src":"../content/field-demo/checkboxes.html","title":"Checkboxes","hideButtons":false,"inputs":["checkbox_1","checkbox_2","checkbox_3","checkbox_4","checkbox_5","checkbox_6","checkbox_group_1","checkbox_group_2","checkbox_group_3","checkbox_group_4","checkbox_group_4_enable","checkbox_group_5","checkbox_group_5_show"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_3","src":"../content/field-demo/radio-buttons.html","title":"Radiobuttons","hideButtons":false,"inputs":["radio_buttons_1","radio_buttons_2","radio_buttons_3","radio_buttons_3_enable","radio_buttons_4","radio_buttons_4_show"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_4","src":"../content/field-demo/location.html","title":"Location","hideButtons":false,"inputs":["location"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_5","src":"../content/field-demo/timed-grid.html","title":"Timed Grid","hideButtons":false,"inputs":["class1_term2"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"},{"id":"item_6","src":"../content/field-demo/gps.html","title":"GPS","hideButtons":false,"inputs":["gps-coords"],"open":false,"incomplete":false,"disabled":false,"hidden":false,"tagName":"TANGY-FORM-ITEM"}],"inputs":[{"name":"text_input_1","label":"This is an input for text.","type":"text","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":false,"value":"S","allowedPattern":"","tagName":"TANGY-INPUT"},{"name":"text_input_2","label":"This is an input for text that is required.","type":"text","errorMessage":"This is required.","required":true,"disabled":true,"hidden":false,"invalid":false,"incomplete":false,"value":"af","allowedPattern":"","tagName":"TANGY-INPUT"},{"name":"text_input_3","label":"This text input is disabled.","type":"text","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":true,"value":"","allowedPattern":"","tagName":"TANGY-INPUT"},{"name":"text_input_4","label":"This text input requires a valid email address.","type":"email","errorMessage":"A valid email address is required.","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":false,"value":"3@kd.co","allowedPattern":"","tagName":"TANGY-INPUT"},{"name":"text_input_5","label":"This is a text input that only uses `allowed-pattern` to prevent users from entering input other than numbers 1 - 7. See http://www.html5pattern.com/ for more examples of patterns.","type":"text","errorMessage":"","required":false,"disabled":true,"hidden":false,"invalid":false,"incomplete":false,"value":"353","allowedPattern":"[1-7]","tagName":"TANGY-INPUT"},{"name":"checkbox_1","required":false,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"checkbox_2","required":true,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"checkbox_3","required":true,"disabled":true,"invalid":false,"incomplete":true,"hidden":false,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"checkbox_4","required":false,"disabled":true,"invalid":false,"incomplete":true,"hidden":false,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"checkbox_5","required":true,"disabled":true,"invalid":false,"incomplete":true,"hidden":true,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"checkbox_6","required":false,"disabled":true,"invalid":false,"incomplete":true,"hidden":false,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"checkbox_group_1","value":["checkbox_group_1__checkbox_2"],"atLeast":0,"required":false,"disabled":true,"label":"This is a checkbox group.","hidden":false,"incomplete":false,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_2","value":["checkbox_group_2__checkbox_1","checkbox_group_2__checkbox_2","checkbox_group_2__checkbox_3"],"atLeast":0,"required":true,"disabled":true,"label":"This is a checkbox group that requires that it be saved with at least 1 checked checkbox.","hidden":false,"incomplete":false,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_3","value":["checkbox_group_3__checkbox_2"],"atLeast":2,"required":false,"disabled":true,"label":"This is a checkbox group that is not required, but if you do make a selection it is not valid until you check at least 2 checkboxes.","hidden":false,"incomplete":true,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_4","value":["checkbox_group_4__checkbox_3"],"atLeast":0,"required":true,"disabled":true,"label":"This is a disabled checkbox group.","hidden":false,"incomplete":false,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_4_enable","required":false,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"checkbox_group_5","value":["checkbox_group_5__checkbox_2","checkbox_group_5__checkbox_3"],"atLeast":0,"required":true,"disabled":true,"label":"This is a hidden checkbox group.","hidden":false,"incomplete":false,"invalid":false,"tagName":"TANGY-CHECKBOXES"},{"name":"checkbox_group_5_show","required":false,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"radio_buttons_1","value":"","required":false,"disabled":true,"label":"These are radio buttons.","hidden":false,"invalid":false,"incomplete":true,"tagName":"TANGY-RADIO-BUTTONS"},{"name":"radio_buttons_2","value":"apple","required":true,"disabled":true,"label":"These are radio buttons where at least one selection is required.","hidden":false,"invalid":false,"incomplete":false,"tagName":"TANGY-RADIO-BUTTONS"},{"name":"radio_buttons_3","value":"coconut","required":true,"disabled":true,"label":"These are radio buttons that are disabled. If enabled, then a selection is required.","hidden":false,"invalid":false,"incomplete":false,"tagName":"TANGY-RADIO-BUTTONS"},{"name":"radio_buttons_3_enable","required":false,"disabled":true,"invalid":false,"incomplete":false,"hidden":false,"value":true,"tagName":"TANGY-CHECKBOX"},{"name":"radio_buttons_4","value":"","required":true,"disabled":true,"label":"These are radio buttons that are hidden. If not hidden, then a selection is required.","hidden":true,"invalid":false,"incomplete":true,"tagName":"TANGY-RADIO-BUTTONS"},{"name":"radio_buttons_4_show","required":false,"disabled":true,"invalid":false,"incomplete":true,"hidden":false,"value":"","tagName":"TANGY-CHECKBOX"},{"name":"location","value":[{"level":"county","value":"county1"},{"level":"school","value":"school1"}],"label":"Select your school","required":true,"invalid":false,"locationSrc":"../location-list.json","showLevels":"county,school","hidden":false,"disabled":true,"tagName":"TANGY-LOCATION","incomplete":false},{"name":"class1_term2","value":["class1_term2-2","class1_term2-3","class1_term2-6","class1_term2-11","class1_term2-31"],"mode":"TANGY_TIMED_MODE_LAST_ATTEMPTED","duration":60,"columns":4,"invalid":false,"incomplete":false,"required":true,"lastAttempted":"class1_term2-32","timeSpent":5,"tagName":"TANGY-TIMED","disabled":true},{"name":"gps-coords","value":{"recordedLatitude":44.451448899999995,"recordedLongitude":-73.22411939999999,"recordedAccuracy":70},"tagName":"TANGY-GPS","invalid":false,"incomplete":false,"disabled":true}],"focusIndex":5,"nextFocusIndex":-1,"previousFocusIndex":4,"startDatetime":"1/31/2018, 8:53:29 PM","startUnixtime":1517450009259,"uploadDatetime":"","previousItemId":"item_5","progress":0,"complete":true,"_id":"993b5d56-da02-48cf-8189-3d42baa5114d","_rev":"77-5f6b79e709f2493387992163a75d53a3"}
+  const template = require('./template.json');
   delete template._rev
   let i = 0
   while (i <= parseInt(req.params.numberOfResponses)) {
-    await db.put(Object.assign({} , template, { _id: crypto.randomBytes( 20 ).toString('hex') }))
+    await db.put(Object.assign({}, template, { _id: crypto.randomBytes(20).toString('hex') }))
     i++
   }
   res.send('ok')
@@ -590,7 +594,7 @@ let replicationEntries = []
 console.log(process.env.T_REPLICATE)
 try {
   replicationEntries = JSON.parse(process.env.T_REPLICATE)
-} catch(e) { console.log(e) }
+} catch (e) { console.log(e) }
 
 if (replicationEntries.length > 0) {
   for (let replicationEntry of replicationEntries) {
@@ -606,8 +610,131 @@ if (replicationEntries.length > 0) {
   }
 }
 
+
+app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthenticated, (req, res) => {
+  const groupName = req.params.groupName;
+  const year = req.params.year;
+  const month = req.params.month;
+  const formId = req.params.formId;
+  const groupResultName = groupName + '-result';
+
+  generateCSV(formId, groupResultName, res);
+});
+
+
+/**
+ * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
+ * @param {string} srcPath The path to the directory
+ */
+const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lstatSync(path.join(srcPath, file)).isDirectory());
+/**
+ * Watch for Filesystem changes. Only watch creation of subdirectories in `../client/content/groups/`
+ * Ignore files in the content path
+ * Ignore files subdirectories of the directories in the content path
+ * @example It will listen directory/folder creation events in the top level directory of `..client/content/groups/`
+ *          When a directory is created in `..client/content/groups/`, the callback fires.
+ *          When a directory is created within the groups folder for instance in `..client/content/groups/group1`
+ *          no callback is called.
+ */
+
+function watchGroups() {
+  const CONTENT_PATH = '../client/content/groups/';
+  let groups = getDirectories(CONTENT_PATH);
+  groups.map(group => monitorDatabaseChangesFeed(group.trim()));
+
+  chokidar.watch(CONTENT_PATH, { ignored: ['**.*', '/**/*'], ignoreInitial: true }).on('all', (event, path) => {
+    if (event === 'addDir') {
+      /**
+       * The Path is a string in the form `../client/content/groups/:groupName`
+       * Split the string to get the groupName from the `path` variable
+       */
+      monitorDatabaseChangesFeed((path.split('/')[4].trim()));
+    }
+  });
+
+}
+watchGroups();
+
+/**
+ * Listens to the changes feed of a database and passes new documents to `processChangedDocument()` for processing and saving
+ * in the corresponding group results database.
+ * @param {string} name the group's database for which to listen to the changes feed.
+ */
+async function monitorDatabaseChangesFeed(name) {
+  const GROUP_DB = new DB(name);
+  const RESULT_DB_NAME = `${name}-result`;
+  const RESULT_DB = new DB(RESULT_DB_NAME);
+  /**
+   * Instantiate the database. A method call on the database creates the database if database doesnt exist.
+   */
+  await RESULT_DB.info(async info => await createDesignDocument(RESULT_DB_NAME)).catch(e => {
+    console.error(e);
+  });
+  try {
+    GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
+      .on('change', async (body) => {
+        if (!body.deleted) await tangyReporting.saveProcessedFormData(body['doc'], RESULT_DB_NAME);// Dont send deleted docs for processing
+      })
+      .on('error', (err) => console.error(err));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+/**
+ * @description Function to create Design Documents in a given Database
+ * @param {string} database The Database to use when for creating the Design Document
+ *
+ * `tangyReportingDesignDoc` is an Object that holds the Design Doc with views to be stored in the DB
+ *
+ * For compound keys in the design doc use string concatenation as a compilation error is thrown when using template strings
+ * @example
+ * use form.docId+'-'+doc.completed not `${doc.docId}-${doc.completed}`
+ */
+async function createDesignDocument(database) {
+  const RESULT_DB = new DB(database);
+
+  const tangyReportingDesignDoc = {
+    _id: '_design/tangy-reporting',
+    version: '1',
+    views: {
+      resultsByGroupFormId: {
+        map: function (doc) {
+          if (doc.formId) {
+            const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const startDatetime = new Date(doc.startDatetime);
+            const key = doc.formId + '_' + startDatetime.getFullYear() + '_' + MONTHS[startDatetime.getMonth()];
+            //The emmitted value is in the form "formId" i.e `formId` and also "formId_2018_May" i.e `formId_Year_Month`
+            emit(doc.formId);
+            emit(key);
+          }
+        }.toString()
+      }
+    }
+  }
+
+  try {
+    const designDoc = await RESULT_DB.get('_design/tangy-reporting');
+    if (designDoc.version !== tangyReportingDesignDoc.version) {
+      console.log(chalk.white(`✓ Time to update _design/tangy-reporting for ${database}`));
+      console.info(chalk.yellow(`Removing _design/tangy-reporting for ${database}`));
+      await RESULT_DB.remove(designDoc)
+      console.log(chalk.red(`Cleaning up view indexes for ${database}`));
+      // @TODO This causes conflicts with open databases. How to avoid??
+      //await RESULT_DB.viewCleanup()
+      console.info(chalk.yellow(`Creating _design/tangy-reporting for ${database}`));
+      await RESULT_DB.put(tangyReportingDesignDoc).
+        then(info => console.log(chalk.green(`√ Created _design/tangy-reporting for ${database} succesfully`)));
+    }
+  } catch (error) {
+    if (error.error === 'not_found') {
+      await RESULT_DB.put(tangyReportingDesignDoc).catch(err => console.error(err));
+    }
+  }
+}
+
 // Start the server.
-var server = app.listen(config.port, function() {
+var server = app.listen(config.port, function () {
   var host = server.address().address;
   var port = server.address().port;
   console.log(server.address());

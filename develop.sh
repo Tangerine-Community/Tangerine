@@ -40,8 +40,8 @@ else
 fi
 
 docker build -t tangerine/tangerine:local .
-[ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME 
-[ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME 
+[ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
+[ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
 
 COUCHDB_OPTIONS=""
 if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_LOCAL" = "true" ]; then
@@ -88,6 +88,8 @@ require_valid_user = true
   "
 fi
 
+sleep 10
+
 CMD="docker run -it --name $T_CONTAINER_NAME \
   $COUCHDB_OPTIONS \
   --entrypoint=\"/tangerine/entrypoint-development.sh\" \
@@ -108,6 +110,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
+  --volume $(pwd)/server/reporting:/tangerine/server/reporting \
   --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \
   --volume $(pwd)/upgrades:/tangerine/upgrades \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
