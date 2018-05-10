@@ -12,6 +12,16 @@ const chalk = require('chalk');
 const Excel = require('exceljs');
 const PouchDB = require('pouchdb');
 
+let DB = {}
+if (process.env.T_COUCHDB_ENABLE === 'true') {
+  DB = PouchDB.defaults({
+    prefix: process.env.T_COUCHDB_ENDPOINT
+  });
+} else {
+  DB = PouchDB.defaults({
+    prefix: '/tangerine/db/'
+  });
+}
 
 /**
  * This function retrieves all processed result for a given form id
@@ -22,11 +32,11 @@ const PouchDB = require('pouchdb');
  * @returns {Array} - result documents.
  */
 
-function getResultsByFormId(formId, resultDB) {
+function getResultsByFormId(formId, db) {
   return new Promise((resolve, reject) => {
-    GROUP_DB.query('tangy-reporting/resultsByGroupFormId', { key: formId, include_docs: true })
-      .then((body) => resolve(body.rows))
-      .catch((err) => reject(err));
+    db.query('tangy-reporting/resultsByGroupFormId', { key: formId, include_docs: true })
+      .then(body => resolve(body.rows))
+      .catch(err => reject(err));
   });
 }
 
@@ -51,15 +61,15 @@ const generateCSV = async function (formId, resultDB, res) {
   workbook.creator = 'Tangerine';
 
   // Fetch column headers
-  let columnHeaders = await RESULT_DB.get(formId);
+  let columnData = await RESULT_DB.get(formId);
 
   // Fetch processed form result
-  let resultData = await getResultsByFormId(formId);
+  let resultData = await getResultsByFormId(formId, RESULT_DB);
 
   const FILENAME = resultData.formId;
 
   // Add column headers and define column keys
-  excelSheet.columns = columnHeaders;
+  excelSheet.columns = columnData.columnHeaders;
 
   // Add rows by key-value using the column keys
   resultData.forEach(function (row) {

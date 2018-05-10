@@ -145,7 +145,7 @@ const saveProcessedFormData = async function (formData, resultDB) {
   const RESULT_DB = new DB(resultDB);
   let formID = formData.form.id;
   let formHeaders = { _id: formID };
-  let formResult = { _id: formData._id, formId: formID };
+  let formResult = { _id: formData._id, formId: formID, startDatetime: formData.startDatetime };
 
   // generate column headers
   let docHeaders = generateHeaders(formData);
