@@ -14,16 +14,16 @@ window.fillUp = async (numberOfDocs, templateDoc, destroy = true) => {
   delete templateDoc._rev
   let i = 0
   while (numberOfDocs > i) {
-    let doc = Object.assign({}, templateDoc, {_id: `${i}`}) 
+    let doc = Object.assign({}, templateDoc, { _id: `${i}` })
     await db.put(doc)
     i++
   }
   let concludingEstimate = await navigator.storage.estimate()
   console.log(`
-    initial estimate: ${JSON.stringify(initialEstimate)}
-    concluding estimate: ${JSON.stringify(concludingEstimate)}
-    usage difference: ${concludingEstimate.usage - initialEstimate.usage} bytes
-    average doc size: ${(concludingEstimate.usage - initialEstimate.usage) / numberOfDocs} bytes
+    ${t('initialEstimate')} ${JSON.stringify(initialEstimate)}
+    ${t('concludingEstimate')} ${JSON.stringify(concludingEstimate)}
+    ${t('usageDifference')} ${concludingEstimate.usage - initialEstimate.usage} ${t('bytes')}
+    ${t('averageDocSize')} ${(concludingEstimate.usage - initialEstimate.usage) / numberOfDocs} ${t('bytes')}
   `)
   if (destroy) await db.destroy()
 }
