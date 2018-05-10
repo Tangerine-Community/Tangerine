@@ -543,7 +543,7 @@ class TangyLocation extends Element {
       ${(options[selection.level].length === 0) ? 'hidden' : ''}
       ${(this.disabled) ? 'disabled' : ''}
     > 
-      <option value="" default selected ${(options[selection.level].length === 0) ? 'hidden' : ''} disabled='disabled'>Pick a ${selection.level} </option>
+      <option value="" default selected ${(options[selection.level].length === 0) ? 'hidden' : ''} disabled='disabled'>${t('Pick a')} ${selection.level} </option>
       
       ${options[selection.level].map((option, i) => `
         <option 
