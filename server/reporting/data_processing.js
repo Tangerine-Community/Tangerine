@@ -173,15 +173,22 @@ const saveProcessedFormData = async function (formData, resultDB) {
 };
 
 function saveFormHeaders(doc, db) {
+  /**
+   * find document by id.
+   * if found update revision number and column headers
+   * else save document as new doc
+   */
   db.get(doc._id).then(origDoc => {
     let newDoc = { _rev: origDoc._rev };
-    let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
     let joinByHeader = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'header');
+    let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
     newDoc.columnHeaders = _.union(joinByHeader, joinBykey);
-    return db.put(newDoc, { force: true });
+    return db.put(newDoc);
   })
   .catch(err => {
     if (err.status === 409) {
+      // For document update conflict retry saving the header.
+      console.log(err.message, '...Retry saving header');
       return saveFormHeaders(doc);
     } else {
       return db.put(doc); // save new doc
@@ -190,11 +197,17 @@ function saveFormHeaders(doc, db) {
 }
 
 function saveFormResult(doc, db) {
+  /**
+   * find document by id.
+   * if found update revision number and column headers
+   * else save document as new doc
+   */
   db.get(doc._id).then(oldDoc => {
     let newDoc = _.merge(oldDoc, doc);
-    return db.put(newDoc, { force: true });
+    return db.put(newDoc);
   }).catch(err => {
     if (err.status === 409) {
+      // For document update conflict retry saving the result.
       console.log(err.message, '...Retry saving result');
       return saveFormResult(doc);
     } else {
