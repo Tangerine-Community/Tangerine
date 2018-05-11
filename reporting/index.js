@@ -31,31 +31,6 @@ const csvController = require('./controllers/generate_csv');
 const changesController = require('./controllers/changes');
 const tripController = require('./controllers/trip');
 
-
-/**
- * App routes.
- */
-
-app.get('/', (req, res) => res.send('index'));
-
-app.post('/download_csv', (req, res) => {
-  const resultDbUrl =  dbConfig.result_db;
-  const resultId = req.body.workflowId;
-  const resultYear = req.body.year;
-  let resultMonth = req.body.month;
-  resultMonth = resultMonth ? resultMonth : false;
-
-  let queryId = resultMonth && resultYear ? `${resultId}_${resultYear}_${resultMonth}` : resultId;
-
-  dbQuery.retrieveDoc(resultId, resultDbUrl)
-    .then(async docHeaders => {
-      const result = await dbQuery.getProcessedResults(queryId, resultDbUrl);
-      generateCSV(docHeaders, result, res);
-    })
-    .catch(err => res.send(err));
-
-});
-
 // get all routes
 app.post('/assessment', assessmentController.all);
 app.post('/result', resultController.all);
