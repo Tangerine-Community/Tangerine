@@ -2,32 +2,32 @@
 <br>
 <mat-card>
     <mat-card-content>
-        <p class="mat-headline">Syncing Status-Summary</p>
-        <span *ngIf="isSyncSuccesful">Sync Successful</span>
-        <span *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined">Sync Was Unsuccessful. Please Retry</span>
+        <p class="mat-headline">{{'syncingStatusSummary'|translate}}</p>
+        <span *ngIf="isSyncSuccesful">{{'syncSuccesful'|translate}}</span>
+        <span *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined">{{'syncUnsuccesful'|translate}}</span>
         <br/>
         <br>
-        <p>Last Succesful Sync Timestamp:</p>
-        <p>Total Docs uploaded: {{docsUploaded}}</p>
-        <p>Total Docs not uploaded: {{docsNotUploaded}}</p>
-        <p>Total Percentage Complete: {{syncPercentageComplete|number:'1.2-2'}}%</p>
+        <p>{{'lastSuccesfulSyncTimestamp'|translate}}:</p>
+        <p>{{'totalDocsUploaded'|translate}} {{docsUploaded}}</p>
+        <p>{{'totalDocsNotUploaded'|translate}} {{docsNotUploaded}}</p>
+        <p>{{'totalPercentageComplete'|translate}} {{syncPercentageComplete|number:'1.2-2'}}%</p>
     </mat-card-content>
     <mat-card-actions>
-        <button color="primary" mat-raised-button (click)="pushAllRecords()">SYNC DATA FOR ALL USERS</button>
+        <button color="primary" mat-raised-button (click)="pushAllRecords()">{{'syncDataForAllUsers'|translate}}</button>
     </mat-card-actions>
 </mat-card>
 <br>
 <br>
-<p class="mat-headline">Syncing Status by User</p>
+<p class="mat-headline">{{'syncingStatusByUser'|translate}}</p>
 <mat-accordion>
     <mat-expansion-panel *ngFor="let syncData of allUsersSyncData">
         <mat-expansion-panel-header>
-            Username: {{syncData.username}}
+            {{'username'|translate}}: {{syncData.username}}
         </mat-expansion-panel-header>
 
-        <p>Docs uploaded: {{syncData.docsUploaded}}</p>
-        <p>Docs not uploaded: {{syncData.docsNotUploaded}}</p>
-        <p>Percentage Complete: {{syncData.syncPercentageComplete|number:'1.2-2'}}%</p>
+        <p>{{'docsUploaded'|translate}} {{syncData.docsUploaded}}</p>
+        <p>{{'docsNotUploaded'|translate}} {{syncData.docsNotUploaded}}</p>
+        <p>{{'percentageComplete'|translate}}: {{syncData.syncPercentageComplete|number:'1.2-2'}}%</p>
 
     </mat-expansion-panel>
 

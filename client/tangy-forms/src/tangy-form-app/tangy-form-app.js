@@ -106,11 +106,11 @@ class TangyFormApp extends Element {
     let params = window.getHashParams()
     let formSrc = params.hasOwnProperty('form_src') ? params.form_src : undefined
     let responseId = (params.hasOwnProperty('response_id')) ? params.response_id : undefined
-    let databaseName = (params.database_name) ? params.database_name : 'tangy-form-app' 
+    let databaseName = (params.database_name) ? params.database_name : 'tangy-form-app'
     // Prevent accidental form exit.
     this.$['home-button'].addEventListener('click', (ev) => {
       ev.preventDefault()
-      let wantsToExit = confirm('Are you sure you would like to exit the form?')
+      let wantsToExit = confirm(t('confirmExitingFormResponse'))
       if (wantsToExit) window.location.href = '../shell/index.html'
     })
     // Set up service.
@@ -121,8 +121,8 @@ class TangyFormApp extends Element {
       let src = '../content/translation.json';
       let response = await fetch(src)
       window.translation = await response.json()
-    } catch(e) {
-      console.log('No translation found.')
+    } catch (e) {
+      console.log(t('noTranslationFound'))
     }
     try {
       let appConfigResponse = await fetch('../content/app-config.json')
@@ -227,7 +227,7 @@ class TangyFormApp extends Element {
   }
 
   onClickNewResponseButton() {
-    let confirmation = confirm("Are you sure you want to start a form response?")
+    let confirmation = confirm(t('confirmStartingFormResponse'))
     if (confirmation) {
       let params = getHashParams()
       this.loadForm(params.form_src)

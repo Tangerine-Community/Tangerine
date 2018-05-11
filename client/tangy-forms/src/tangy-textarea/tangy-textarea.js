@@ -54,22 +54,22 @@ export class TangyTextarea extends PolymerElement {
   }
 
   created() {
-    console.log(this.localName + '#' + this.id + ' was created');
+    console.log(this.localName + '#' + this.id + t('wasCreated'));
   }
 
   attached() {
     super.attached();
-    console.log(this.localName + '#' + this.id + ' was attached');
+    console.log(this.localName + '#' + this.id + t('wasAttached'));
 
   }
 
   detached() {
-    console.log(this.localName + '#' + this.id + ' was detached');
+    console.log(this.localName + '#' + this.id + t('wasDetached'));
   }
 
   attributeChanged(name, type) {
     console.log(this.localName + '#' + this.id + ' attribute ' + name +
-      ' was changed to ' + this.getAttribute(name));
+      t('wasChangedTo') + this.getAttribute(name));
   }
 
 }

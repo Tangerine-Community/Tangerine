@@ -9,13 +9,14 @@ import { WindowRef } from './core/window-ref.service';
 import { updates } from './core/update/update/updates';
 import { TangyFormService } from './tangy-forms/tangy-form-service.js';
 import PouchDB from 'pouchdb';
+import { TranslateService } from '@ngx-translate/core';
+import { _TRANSLATE } from './shared/translation-marker';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'Tangerine Client v3.x.x';
   showNav;
   showUpdateAppLink;
   updateIsRunning = false;
@@ -24,9 +25,12 @@ export class AppComponent implements OnInit {
     private windowRef: WindowRef, private userService: UserService,
     private authenticationService: AuthenticationService,
     private http: Http,
-    private router: Router) {
+    private router: Router,
+    translate: TranslateService
+  ) {
     windowRef.nativeWindow.PouchDB = PouchDB;
-
+    translate.setDefaultLang('translation');
+    translate.use('translation');
   }
 
   async ngOnInit() {
@@ -90,30 +94,30 @@ export class AppComponent implements OnInit {
   }
   updateApp() {
     if (window.isCordovaApp) {
-      console.log('Running from APK');
+      console.log(_TRANSLATE('runningFromAPK'));
       const installationCallback = (error) => {
         if (error) {
-          console.log('Failed to install the update with error code: ' + error.code);
+          console.log(_TRANSLATE('failedToInStallUpdate') + error.code);
           console.log(error.description);
           this.updateIsRunning = false;
         } else {
-          console.log('Update installed');
+          console.log(_TRANSLATE('updateInstalled'));
           this.updateIsRunning = false;
         }
       };
       const updateCallback = (error, data) => {
-        console.log('data:' + JSON.stringify(data));
+        console.log(_TRANSLATE('data') + JSON.stringify(data));
         if (error) {
-          console.log('error:' + JSON.stringify(error));
-          alert('No update: ' + JSON.stringify(error.description));
+          console.log(_TRANSLATE('error') + JSON.stringify(error));
+          alert(_TRANSLATE('noUpdate') + JSON.stringify(error.description));
         } else {
-          console.log('Update is loaded');
-          if (window.confirm('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click \'Cancel.\' If you are ready to install the update, click \'Yes\'.')) {
+          console.log(_TRANSLATE('updateIsLoaded'));
+          if (window.confirm(_TRANSLATE('confirmUpdate'))) {
             this.updateIsRunning = true;
-            console.log('Installing update.');
+            console.log(_TRANSLATE('installingUpdate'));
             window.chcp.installUpdate(installationCallback);
           } else {
-            console.log('Cancelled install; did not install update.');
+            console.log(_TRANSLATE('cancelledInstall'));
             this.updateIsRunning = false;
           }
         }
