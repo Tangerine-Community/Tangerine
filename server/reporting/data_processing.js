@@ -32,46 +32,46 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
  */
 
 const generateHeaders = function (formData) {
+  let formID = formData.form.id;
   let formResponseHeaders = [];
 
-  formData.items.forEach(data => {
-    data.inputs.forEach(item => {
-      let formTitle = data.title.trim().replace(/\s/g, '_');
-
+  formData.items.forEach(item => {
+    item.inputs.forEach(input => {
       // create headers for all values that are strings
-      if (typeof (item && item.value) === 'string') {
+      if (input && (typeof input.value === 'string')) {
         formResponseHeaders.push({
-          header: `${formTitle}_${item.name}`,
-          key: `${formData.form.id}.${formTitle}.${item.name}`
+          header: `${item.id}_${input.name}`,
+          key: `${formID}.${item.id}.${input.name}`
         });
       }
 
       // create headers for all values that are arrays
-      if (Array.isArray(item.value)) {
-        if (item.tagName === 'TANGY-LOCATION') {
-          item.value.forEach(group => {
+      if (input && Array.isArray(input.value)) {
+        //@TODO: Remove this if-block when tangy-location follows the name and value data structure.
+        if (input.tagName === 'TANGY-LOCATION') {
+          input.value.forEach(group => {
             formResponseHeaders.push({
-              header: `${formTitle}_${item.name}_${group.level}`,
-              key: `${formData.form.id}.${formTitle}.${item.name}.${group.level}`
+              header: `${item.id}_${input.name}_${group.level}`,
+              key: `${formID}.${item.id}.${input.name}.${group.level}`
             });
           });
         } else {
-          item.value.forEach(group => {
+          input.value.forEach(group => {
             formResponseHeaders.push({
-              header: `${formTitle}_${item.name}_${group.name}`,
-              key: `${formData.form.id}.${formTitle}.${item.name}.${group.name}`
+              header: `${item.id}_${input.name}_${group.name}`,
+              key: `${formID}.${item.id}.${input.name}.${group.name}`
             });
           });
         }
       }
 
       // create headers for all values that are pure objects
-      if (typeof (item && item.value) === 'object' && !Array.isArray(item && item.value) && (item && item.value) !== null) {
-        let elementKeys = Object.keys(item.value);
+      if (input && (typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
+        let elementKeys = Object.keys(input.value);
         elementKeys.forEach(key => {
           formResponseHeaders.push({
-            headers: `${formTitle}_${item.name}_${key}`,
-            key: `${formData.form.id}.${formTitle}.${item.name}.${key}`
+            headers: `${item.id}_${input.name}_${key}`,
+            key: `${formID}.${item.id}.${input.name}.${key}`
           });
         })
       }
@@ -95,33 +95,32 @@ const processFormResponse = function (formData) {
   let formID = formData.form.id;
   let formResponseResult = {};
 
-  formData.items.forEach(data => {
-    data.inputs.forEach(item => {
-      let formTitle = data.title.trim().replace(/\s/g, '_');
-
+  formData.items.forEach(item => {
+    item.inputs.forEach(input => {
       // create headers for all values that are strings
-      if (typeof (item && item.value) === 'string') {
-        formResponseResult[`${formID}.${formTitle}.${item.name}`] = item.value;
+      if (input && typeof input.value === 'string') {
+        formResponseResult[`${formID}.${item.id}.${input.name}`] = input.value;
       }
 
       // create headers for all values that are arrays
-      if (Array.isArray(item.value)) {
-        if (item.tagName === 'TANGY-LOCATION') {
-          item.value.forEach(group => {
-            formResponseResult[`${formID}.${formTitle}.${item.name}.${group.level}`] = group.value;
+      if (input && Array.isArray(input.value)) {
+        //@TODO: Remove this if-block when tangy-location follows the name and value data structure.
+        if (input.tagName === 'TANGY-LOCATION') {
+          input.value.forEach(group => {
+            formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
           });
         } else {
-          item.value.forEach(group => {
-            formResponseResult[`${formID}.${formTitle}.${item.name}.${group.name}`] = group.value;
+          input.value.forEach(group => {
+            formResponseResult[`${formID}.${item.id}.${input.name}.${group.name}`] = group.value;
           });
         }
       }
 
       // create headers for all values that are pure objects
-      if (typeof (item && item.value) === 'object' && !Array.isArray(item && item.value) && (item && item.value) !== null) {
-        let elementKeys = Object.keys(item.value);
+      if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
+        let elementKeys = Object.keys(input.value);
         elementKeys.forEach(key => {
-          formResponseResult[`${formID}.${formTitle}.${item.name}.${key}`] = item.value[key];
+          formResponseResult[`${formID}.${item.id}.${input.name}.${key}`] = input.value[key];
         });
       }
 
@@ -174,15 +173,22 @@ const saveProcessedFormData = async function (formData, resultDB) {
 };
 
 function saveFormHeaders(doc, db) {
+  /**
+   * find document by id.
+   * if found update revision number and column headers
+   * else save document as new doc
+   */
   db.get(doc._id).then(origDoc => {
     let newDoc = { _rev: origDoc._rev };
-    let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
     let joinByHeader = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'header');
+    let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
     newDoc.columnHeaders = _.union(joinByHeader, joinBykey);
-    return db.put(newDoc, { force: true });
+    return db.put(newDoc);
   })
   .catch(err => {
     if (err.status === 409) {
+      // For document update conflict retry saving the header.
+      console.log(err.message, '...Retry saving header');
       return saveFormHeaders(doc);
     } else {
       return db.put(doc); // save new doc
@@ -191,11 +197,17 @@ function saveFormHeaders(doc, db) {
 }
 
 function saveFormResult(doc, db) {
+  /**
+   * find document by id.
+   * if found update revision number and column headers
+   * else save document as new doc
+   */
   db.get(doc._id).then(oldDoc => {
     let newDoc = _.merge(oldDoc, doc);
-    return db.put(newDoc, { force: true });
+    return db.put(newDoc);
   }).catch(err => {
     if (err.status === 409) {
+      // For document update conflict retry saving the result.
       console.log(err.message, '...Retry saving result');
       return saveFormResult(doc);
     } else {
