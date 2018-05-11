@@ -6,5 +6,5 @@
   "listUsernamesOnLoginScreen": true,
   "uploadUrl": "http://upload:password@localhost/upload",
   "homeUrl": "case-management",
-  "direction": "rtl"
+  "direction": "ltr"
 }
