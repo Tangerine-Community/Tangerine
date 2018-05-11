@@ -38,6 +38,24 @@ export class AppComponent implements OnInit {
     const window = this.windowRef.nativeWindow;
     const res = await this.http.get('../content/location-list.json').toPromise();
     window.locationList = res.json();
+    try {
+      let appConfigResponse = await fetch('../content/app-config.json')
+      window.appConfig = await appConfigResponse.json()
+    } catch(e) {
+      console.log('No app config found.')
+    }
+    if (window.appConfig.direction === 'rtl') {
+      let styleContainer = window.document.createElement('div')
+      styleContainer.innerHTML = `
+        <style>
+          * {
+              text-align: right;
+              direction: rtl;
+          }
+      </style>
+      `
+      window.document.body.appendChild(styleContainer)
+    }
 
     this.showNav = this.authenticationService.isLoggedIn();
     this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
