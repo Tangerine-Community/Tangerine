@@ -66,14 +66,14 @@ const generateCSV = async function (formId, resultDB, res) {
   // Fetch processed form result
   let resultData = await getResultsByFormId(formId, RESULT_DB);
 
-  const FILENAME = resultData.formId;
+  const FILENAME = columnData._id;
 
   // Add column headers and define column keys
   excelSheet.columns = columnData.columnHeaders;
 
   // Add rows by key-value using the column keys
   resultData.forEach(function (row) {
-    excelSheet.addRow(row.doc.processed_results);
+    excelSheet.addRow(row.doc.processedResults);
   });
 
   res.statusCode = 200;
