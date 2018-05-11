@@ -18,7 +18,7 @@ class TangyEftouch extends Element {
             }
         </style>
         <div>
-            <p><b>Click a Picture</b></p>
+            <p><b>${t('clickAPicture')}</b></p>
 
             <slot></slot>
         </div>
@@ -54,12 +54,12 @@ class TangyEftouch extends Element {
   }
 
   _playing(newValue, oldValue) {
-    console.log("isPlaying changed to " + newValue);
+    console.log(t('isPlayingChangedTo') + newValue);
   }
 
   validate() {
     return Tangy._valid
-//          return true;
+    //          return true;
   }
 
   // Element class can define custom element reactions
@@ -78,15 +78,15 @@ class TangyEftouch extends Element {
       if (!isPlaying) {
         Tangy.displaySound = new Audio(this.introSrc);
         Tangy.displaySound.play();
-//              this.$['up-fab'].setAttribute('disabled', true)
-//              this.$['down-fab'].setAttribute('disabled', true)
+        //              this.$['up-fab'].setAttribute('disabled', true)
+        //              this.$['down-fab'].setAttribute('disabled', true)
 
         var audioLoop = setInterval(checkAudio, 500);
         function checkAudio() {
           var isPlaying = Tangy.displaySound && Tangy.displaySound.currentTime > 0 && !Tangy.displaySound.paused && !Tangy.displaySound.ended
             && Tangy.displaySound.readyState > 2;
           Tangy._valid = false;
-          console.log("isPlaying currentTime: " + Tangy.displaySound.currentTime + " _valid: " + Tangy._valid)
+          console.log(t('isPlayingCurrentTime') + Tangy.displaySound.currentTime + " _valid: " + Tangy._valid)
           if (!isPlaying) {
             Tangy._valid = true;
             console.log("isPlaying: " + isPlaying + " _valid: " + Tangy._valid)
@@ -94,7 +94,7 @@ class TangyEftouch extends Element {
           }
         }
       } else {
-        console.log("isPlaying currentTime: " + Tangy.displaySound.currentTime)
+        console.log(t('isPlayingCurrentTime') + Tangy.displaySound.currentTime)
         Tangy.isPlaying = true
       }
 

@@ -35,7 +35,7 @@ class TangyCheckboxes extends Element {
     </style>
     <div class="container">
       <label for="group">[[label]]</label>
-      <span class="secondary_color">select one or more</span>
+      <span class="secondary_color">${t('selectOneOrMore')}</span>
       <div id="checkboxes">
       </div>
     </div>

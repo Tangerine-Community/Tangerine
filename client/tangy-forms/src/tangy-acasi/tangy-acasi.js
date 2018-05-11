@@ -276,7 +276,7 @@ export class TangyAcasi extends PolymerElement {
   }
 
   replay() {
-    console.log("replay")
+    console.log(t('replay'))
     this.transitionSound.play();
   }
 

@@ -508,7 +508,7 @@ class TangyLocation extends Element {
 
   render() {
 
-    if (!this.locationList) return this.$.container.innerHTML = `Loading...`
+    if (!this.locationList) return this.$.container.innerHTML = t('loading')
 
     // Get levels configured on this.showLevels.
     let levels = []

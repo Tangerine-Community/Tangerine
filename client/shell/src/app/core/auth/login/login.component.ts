@@ -7,6 +7,7 @@ import { Observable } from 'rxjs/Observable';
 
 import { UserService } from '../_services/user.service';
 import { AuthenticationService } from './../_services/authentication.service';
+import { _TRANSLATE } from '../../../shared/translation-marker';
 
 @Component({
   selector: 'app-login',
@@ -63,10 +64,10 @@ export class LoginComponent implements OnInit {
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
-        this.errorMessage = 'Password Reset Unsuccessful';
+        this.errorMessage = _TRANSLATE('passwordResetUnsuccesful');
       }
     }, error => {
-      this.errorMessage = 'Password Reset Unsuccessful';
+      this.errorMessage = _TRANSLATE('passwordResetUnsuccesful');
 
     });
   }
@@ -75,10 +76,10 @@ export class LoginComponent implements OnInit {
       if (data) {
         this.router.navigate(['' + this.returnUrl]);
       } else {
-        this.errorMessage = 'Login Unsuccessful';
+        this.errorMessage = _TRANSLATE('loginUnsuccesful');
       }
     }, error => {
-      this.errorMessage = 'Login Unsuccessful';
+      this.errorMessage = _TRANSLATE('loginUnsuccesful');
 
     });
   }

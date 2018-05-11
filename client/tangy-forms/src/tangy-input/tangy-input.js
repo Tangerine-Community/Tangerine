@@ -43,7 +43,7 @@ export class TangyInput extends PolymerElement {
       <label>[[label]]</label>
       <paper-textarea 
         id="input" 
-        label="Enter your response to above question here" 
+        label="${t('enterResponseToQuestion')}" 
         type="[[type]]" 
         error-message="[[errorMessage]]" 
         value="[[value]]" 
@@ -54,7 +54,7 @@ export class TangyInput extends PolymerElement {
       </paper-textarea>
       <paper-input 
         id="input" 
-        label="Enter your response to above question here" 
+        label="${t('enterResponseToQuestion')}" 
         type="[[type]]" 
         error-message="[[errorMessage]]" 
         value="[[value]]" 
