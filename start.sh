@@ -118,6 +118,7 @@ require_valid_user = true
     -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
     $RUN_OPTIONS
   "
+  sleep 10
 fi
 
 
