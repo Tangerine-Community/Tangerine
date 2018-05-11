@@ -124,6 +124,24 @@ class TangyFormApp extends Element {
     } catch(e) {
       console.log('No translation found.')
     }
+    try {
+      let appConfigResponse = await fetch('../content/app-config.json')
+      window.appConfig = await appConfigResponse.json()
+    } catch(e) {
+      console.log('No app config found.')
+    }
+    if (window.appConfig.direction === 'rtl') {
+      let styleContainer = document.createElement('div')
+      styleContainer.innerHTML = `
+        <style>
+          * {
+              text-align: right;
+              direction: rtl;
+          }
+      </style>
+      `
+      document.body.appendChild(styleContainer)
+    }
     // Save store when it changes.
     this.store.subscribe(this.throttledSaveResponse.bind(this))
     // Load form or form list.
