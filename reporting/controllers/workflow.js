@@ -56,7 +56,7 @@ const dbQuery = require('./../utils/dbQuery');
  */
 
 exports.all = function(req, res) {
-  const GROUP_DB = new PouchDB(req.body.base_db);
+  const GROUP_DB = new PouchDB(req.body.baseDb);
   GROUP_DB.query('ojai/byCollection', { key: 'workflow', include_docs: true })
     .then((data) => res.json({ count: data.rows.length, workflows: data.rows }))
     .catch((err) => res.send(err));
@@ -92,8 +92,8 @@ exports.all = function(req, res) {
 
 exports.generateHeader = function(req, res) {
   const workflowId = req.params.id;
-  const baseDb = req.body.base_db;
-  const resultDb = req.body.result_db;
+  const baseDb = req.body.baseDb;
+  const resultDb = req.body.resultDb;
   const GROUP_DB = new PouchDB(baseDb);
 
   GROUP_DB.get(workflowId)

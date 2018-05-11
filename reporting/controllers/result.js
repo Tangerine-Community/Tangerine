@@ -89,7 +89,7 @@ const surveyValueMap = {
  */
 
 exports.all = function(req, res) {
-  const GROUP_DB = new PouchDB(req.body.base_db);
+  const GROUP_DB = new PouchDB(req.body.baseDb);
   GROUP_DB.query('ojai/byCollection', { key: 'result', include_docs: true })
     .then((data) => res.json({ count: data.rows.length, results: data.rows }))
     .catch((err) => res.json(err));
@@ -127,8 +127,8 @@ exports.all = function(req, res) {
  */
 
 exports.processResult = function(req, res) {
-  const baseDb = req.body.base_db;
-  const resultDb = req.body.result_db;
+  const baseDb = req.body.baseDb;
+  const resultDb = req.body.resultDb;
   const GROUP_DB = new PouchDB(baseDb);
 
   GROUP_DB.get(req.params.id)

@@ -56,7 +56,7 @@ const dbQuery = require('./../utils/dbQuery');
  */
 
 exports.all = async (req, res) => {
-  const GROUP_DB = new PouchDB(req.body.base_db);
+  const GROUP_DB = new PouchDB(req.body.baseDb);
   try {
     let assessments = await GROUP_DB.query('ojai/byCollection', { key: 'assessment', include_docs: true });
     res.json({ count: assessments.rows.length, assessments: assessments.rows });
@@ -95,8 +95,8 @@ exports.all = async (req, res) => {
  */
 
 exports.generateHeader = (req, res) => {
-  const baseDb = req.body.base_db;
-  const resultDb = req.body.result_db;
+  const baseDb = req.body.baseDb;
+  const resultDb = req.body.resultDb;
   const assessmentId = req.params.id;
   const GROUP_DB = new PouchDB(baseDb);
 
