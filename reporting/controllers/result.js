@@ -319,12 +319,15 @@ async function processLocationResult(body, subtestCount, groupTimeZone, baseDb) 
   let schoolId = body.data.schoolId;
   let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
 
-  if (!schoolId || locLabels.length == 0 || locLabels[0] == '') {
+  if (schoolId || locLabels.length == 0 || locLabels[0] == '') {
     let locationNames = await getLocationName(body, baseDb);
     let locKeys = Object.keys(locationNames);
-    for (j = 0; j < locKeys.length; j++) {
-      let key = locKeys[j];
-      locationResult[`${subtestId}.${locKeys[j]}${locSuffix}`] = locationNames[key].label.replace(/\s/g,'-');
+    if (locKeys.length > 0) {
+      for (j = 0; j < locKeys.length; j++) {
+        let key = locKeys[j];
+        let location = location[key] && location[key].label;
+        locationResult[`${subtestId}.${locKeys[j]}${locSuffix}`] = location ? location.replace(/\s/g,'-') : location;
+      }
     }
   }
   else {
@@ -355,7 +358,9 @@ async function getLocationName(body, baseDb) {
   // retrieve location-list from the base database.
   let locationList = await dbQuery.getLocationList(baseDb);
   let levels = locationList.locationsLevels;
-  let locLabels = body.data.labels.map(loc => loc.toLowerCase());
+  let locLabels = body.data.labels.map(label => label.toLowerCase());
+  let isLocationLabelSet = locLabels && locLabels.length === 0;
+  let isLocationListSet = _.isEmpty(locationList.location);
 
   if (schoolId) {
     for (j = 0; j < levels.length; j++) {
@@ -369,40 +374,44 @@ async function getLocationName(body, baseDb) {
     locIds = body.data.location;
   }
 
-  for (i = 0; i < levels.length; i++) {
-    locNames[levels[i]] = _.get(locationList.locations, locIds[i]);
+  //Note: this location details can cater for up to 4 levels and not more.
+  //@TODO: Update it to accommodate more than 4 levels.
+  if (!isLocationLabelSet && !isLocationListSet) {
+    for (i = 0; i < levels.length; i++) {
+      locNames[levels[i]] = _.get(locationList.locations, locIds[i]);
 
-    if (locNames[levels[i]]) {
-      locNames[levels[i+1]] = _.get(locNames[levels[i]].children, locIds[i+1]);
+      if (locNames[levels[i]]) {
+        locNames[levels[i+1]] = _.get(locNames[levels[i]].children, locIds[i+1]);
 
-      if (!locNames[levels[i+1]]) {
-        for (const [key, val] of Object.entries(locNames[levels[i]].children)) {
-          locNames[levels[i+2]] =  _.get(val.children, locIds[i+1]);
+        if (!locNames[levels[i+1]]) {
+          for (const [key, val] of Object.entries(locNames[levels[i]].children)) {
+            locNames[levels[i+2]] =  _.get(val.children, locIds[i+1]);
 
-          if (locNames[levels[i+2]]) {
-            locNames[levels[i+1]] = val;
-            locNames[levels[i+3]] = _.get(locNames[levels[i+2]].children, locIds[i+2]);
-            break;
-          } else {
+            if (locNames[levels[i+2]]) {
+              locNames[levels[i+1]] = val;
+              locNames[levels[i+3]] = _.get(locNames[levels[i+2]].children, locIds[i+2]);
+              break;
+            } else {
 
-            for (const [prop, value] of Object.entries(locNames[levels[i]].children)) {
-              locNames[levels[i+3]] = _.get(value.children, locIds[i+1]);
+              for (const [prop, value] of Object.entries(locNames[levels[i]].children)) {
+                locNames[levels[i+3]] = _.get(value.children, locIds[i+1]);
 
-              if (locNames[levels[i+3]]) {
-                locNames[levels[i+2]] = value;
-                locNames[levels[i+1]] = val;
-                break;
+                if (locNames[levels[i+3]]) {
+                  locNames[levels[i+2]] = value;
+                  locNames[levels[i+1]] = val;
+                  break;
+                }
               }
             }
           }
+        } else {
+          locNames[locLabels[i+2]] = _.get(locNames[locLabels[i+1]].children, locIds[i+2]);
+          if (locNames[locLabels[i+2]]) {
+            locNames[locLabels[i+3]] = _.get(locNames[locLabels[i+2]].children, locIds[i+3]);
+          }
         }
-      } else {
-        locNames[locLabels[i+2]] = _.get(locNames[locLabels[i+1]].children, locIds[i+2]);
-        if (locNames[locLabels[i+2]]) {
-          locNames[locLabels[i+3]] = _.get(locNames[locLabels[i+2]].children, locIds[i+3]);
-        }
+        break;
       }
-      break;
     }
   }
 
