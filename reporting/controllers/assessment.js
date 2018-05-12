@@ -240,12 +240,17 @@ async function createLocation(doc, subtestCount, baseDb) {
   let locSuffix = count > 0 ? `_${count}` : '';
   let i, locationHeader = [];
   let locLevels = doc.levels;
-  let isLocLevelSet = (locLevels && locLevels.length === 0) || (locLevels && locLevels[0] === '');
+  // check if the geographical level is available
+  let isLocLevelSet = (locLevels && locLevels.length > 0) && (locLevels && locLevels[0] !== '');
 
-  if (isLocLevelSet) {
+  if (!isLocLevelSet) {
+    // check if the location-list level is available
     let locationList = await dbQuery.getLocationList(baseDb);
     locLevels = locationList.locationsLevels;
+    isLocLevelSet = (locLevels && locLevels.length > 0) && (locLevels && locLevels[0] !== '');
+  }
 
+  if (isLocLevelSet) {
     for (i = 0; i < locLevels.length; i++) {
       locationHeader.push({
         header: `${locLevels[i]}`,
@@ -253,6 +258,7 @@ async function createLocation(doc, subtestCount, baseDb) {
       });
     }
   }
+
   locationHeader.push({
     header: `timestamp_${subtestCount.timestampCount}`,
     key: `${doc._id}.timestamp_${subtestCount.timestampCount}`
