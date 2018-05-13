@@ -64,10 +64,10 @@ export class LoginComponent implements OnInit {
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
-        this.errorMessage = _TRANSLATE('passwordResetUnsuccesful');
+        this.errorMessage = _TRANSLATE('Password Reset Unsuccesful');
       }
     }, error => {
-      this.errorMessage = _TRANSLATE('passwordResetUnsuccesful');
+      this.errorMessage = _TRANSLATE('Password Reset Unsuccesful');
 
     });
   }
@@ -76,10 +76,10 @@ export class LoginComponent implements OnInit {
       if (data) {
         this.router.navigate(['' + this.returnUrl]);
       } else {
-        this.errorMessage = _TRANSLATE('loginUnsuccesful');
+        this.errorMessage = _TRANSLATE('Login Unsuccesful');
       }
     }, error => {
-      this.errorMessage = _TRANSLATE('loginUnsuccesful');
+      this.errorMessage = _TRANSLATE('Login Unsuccesful');
 
     });
   }
