@@ -5,16 +5,18 @@ import '../../node_modules/@polymer/paper-card/paper-card.js';
 import '../tangy-form/tangy-form.js';
 import '../tangy-form/tangy-common-styles.js'
 import { tangyFormReducer } from '../tangy-form/tangy-form-reducer.js'
-import {tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook} from '../tangy-form/tangy-form-redux-middleware.js'
+import { tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook } from '../tangy-form/tangy-form-redux-middleware.js'
 import { TangyFormModel } from '../tangy-form/tangy-form-model.js'
 import { TangyFormResponseModel } from '../tangy-form/tangy-form-response-model.js'
 import { TangyFormService } from '../tangy-form/tangy-form-service.js'
-import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
+import {
+  FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
   ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
-  ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
+  ITEM_BACK, ITEM_CLOSED, ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
   INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
   NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
-  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from '../tangy-form/tangy-form-actions.js'
+  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement
+} from '../tangy-form/tangy-form-actions.js'
 
 /**
  * `tangy-form-app`
@@ -110,7 +112,7 @@ class TangyFormApp extends Element {
     // Prevent accidental form exit.
     this.$['home-button'].addEventListener('click', (ev) => {
       ev.preventDefault()
-      let wantsToExit = confirm(t('confirmExitingFormResponse'))
+      let wantsToExit = confirm(t('Are you sure you would like to exit the form?'))
       if (wantsToExit) window.location.href = '../shell/index.html'
     })
     // Set up service.
@@ -122,7 +124,7 @@ class TangyFormApp extends Element {
       let response = await fetch(src)
       window.translation = await response.json()
     } catch (e) {
-      console.log(t('noTranslationFound'))
+      console.log('No translation found.')
     }
     // Save store when it changes.
     this.store.subscribe(this.throttledSaveResponse.bind(this))
@@ -186,7 +188,7 @@ class TangyFormApp extends Element {
     // Throttle this fire by waiting until last fire is done.
     if (this.throttledSaveFiring) {
       this.throttledSaveLoaded = true
-      while(this.throttledSaveFiring) await sleep(200)
+      while (this.throttledSaveFiring) await sleep(200)
       this.throttledSaveLoaded = false
     }
     // Fire it.
@@ -200,7 +202,7 @@ class TangyFormApp extends Element {
     let stateDoc = {}
     try {
       stateDoc = await this.service.getResponse(state._id)
-    } catch(e) {
+    } catch (e) {
       let r = await this.service.saveResponse(state)
       stateDoc = await this.service.getResponse(state._id)
     }
@@ -209,7 +211,7 @@ class TangyFormApp extends Element {
   }
 
   onClickNewResponseButton() {
-    let confirmation = confirm(t('confirmStartingFormResponse'))
+    let confirmation = confirm(t('Are you sure you want to start a form response?'))
     if (confirmation) {
       let params = getHashParams()
       this.loadForm(params.form_src)

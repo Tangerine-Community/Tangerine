@@ -20,10 +20,10 @@ window.fillUp = async (numberOfDocs, templateDoc, destroy = true) => {
   }
   let concludingEstimate = await navigator.storage.estimate()
   console.log(`
-    ${t('initialEstimate')} ${JSON.stringify(initialEstimate)}
-    ${t('concludingEstimate')} ${JSON.stringify(concludingEstimate)}
-    ${t('usageDifference')} ${concludingEstimate.usage - initialEstimate.usage} ${t('bytes')}
-    ${t('averageDocSize')} ${(concludingEstimate.usage - initialEstimate.usage) / numberOfDocs} ${t('bytes')}
+    Initial Estimate: ${JSON.stringify(initialEstimate)}
+    Concluding estimate: ${JSON.stringify(concludingEstimate)}
+    Usage Difference: ${concludingEstimate.usage - initialEstimate.usage} bytes
+    Average Doc Size: ${(concludingEstimate.usage - initialEstimate.usage) / numberOfDocs} bytes
   `)
   if (destroy) await db.destroy()
 }
@@ -72,7 +72,7 @@ HTMLElement.prototype.getProps = function () {
   let propertyInfo = this.constructor.properties
   // If no property info, then go off what attributes we do have.
   if (!propertyInfo) {
-    return Object.assign({}, this.getAttributes(), {tagName: this.tagName, constructorName: this.constructor.name})
+    return Object.assign({}, this.getAttributes(), { tagName: this.tagName, constructorName: this.constructor.name })
   }
   let props = {}
   for (let propName in propertyInfo) {
@@ -80,10 +80,10 @@ HTMLElement.prototype.getProps = function () {
       if (!this.hasOwnProperty(propName) || this[propName] === false) props[propName] = false
       if (this[propName] === '' || this[propName] === true) props[propName] = true
     } else {
-      props[propName] = this[propName] 
+      props[propName] = this[propName]
     }
   }
-  return Object.assign({}, props, {tagName: this.tagName})
+  return Object.assign({}, props, { tagName: this.tagName })
 }
 
 HTMLElement.prototype.setProps = function (props = {}) {
