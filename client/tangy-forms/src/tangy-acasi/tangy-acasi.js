@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-import {Element as PolymerElement} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import { Element as PolymerElement } from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../tangy-form/tangy-common-styles.js'
 // import '../tangy-form/tangy-element-styles.js'
 
@@ -15,7 +15,7 @@ import '../tangy-form/tangy-common-styles.js'
 export class TangyAcasi extends PolymerElement {
 
 
-  static get template () {
+  static get template() {
     return `
     <style include="tangy-common-styles"></style>
     <style include="tangy-element-styles"></style>
@@ -44,14 +44,14 @@ export class TangyAcasi extends PolymerElement {
 
     <div class="container">
       <label for="group">[[label]]</label>
-      <paper-button id="replay" raised class="indigo" on-click="replay">Replay</paper-button>
+      <paper-button id="replay" raised class="indigo" on-click="replay">${t('replay')}</paper-button>
       <paper-radio-group name="group" id="paper-radio-group">
       </paper-radio-group>
     </div>
     `
   }
 
-  static get is () {
+  static get is() {
     return 'tangy-acasi'
   }
 
@@ -146,7 +146,7 @@ export class TangyAcasi extends PolymerElement {
     for (let src of imageArray) {
       let button = document.createElement('paper-radio-button')
       let srcArray = src.split('/')
-      let filename = srcArray[srcArray.length-1]
+      let filename = srcArray[srcArray.length - 1]
       let name = filename.replace('.png', '')
       button.name = name
       if (this.disabled) button.setAttribute('disabled', true)
@@ -193,7 +193,7 @@ export class TangyAcasi extends PolymerElement {
       }
     }
 
-      // @TODO: Need to listen to slot for ready.
+    // @TODO: Need to listen to slot for ready.
     setTimeout(() => this._prepareForm(), 200)
   }
 
@@ -201,7 +201,7 @@ export class TangyAcasi extends PolymerElement {
 
     let radios = Array.prototype.slice.call(this.shadowRoot.querySelectorAll('paper-radio-button'));
     radios.forEach(radio => {
-      radio.$.radioContainer.style= 'display:none'
+      radio.$.radioContainer.style = 'display:none'
     })
 
     let activateImages = (event) => {
@@ -210,19 +210,19 @@ export class TangyAcasi extends PolymerElement {
       for (let i = 0, len = this.imgElements.length; i < len; i++) {
         let ele = this.imgElements[i];
         let cls = 'eftouch-selected';
-        let hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
+        let hasClass = !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
         if (hasClass) {
-          let reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
-          ele.className=ele.className.replace(reg,' ');
+          let reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+          ele.className = ele.className.replace(reg, ' ');
         }
       }
 
       const element = event.srcElement;
-//            element.setAttribute('style', 'border: 10px solid #af0; border-radius: 10px;'); ;
+      //            element.setAttribute('style', 'border: 10px solid #af0; border-radius: 10px;'); ;
       let ele = element;
       let cls = 'eftouch-selected';
-      let hasClass = !!ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'))
-      if (!hasClass) ele.className += " "+cls;
+      let hasClass = !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
+      if (!hasClass) ele.className += " " + cls;
 
       const inputEl = this.querySelector('#foo');
       if (inputEl !== null) {
@@ -239,7 +239,7 @@ export class TangyAcasi extends PolymerElement {
     }
     this.imgElements.forEach(element => {
       element.addEventListener('click', activateImages);
-  });
+    });
 
   }
 
@@ -276,7 +276,7 @@ export class TangyAcasi extends PolymerElement {
   }
 
   replay() {
-    console.log(t('replay'))
+    console.log('Replay')
     this.transitionSound.play();
   }
 

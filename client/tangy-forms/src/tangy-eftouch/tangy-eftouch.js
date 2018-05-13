@@ -1,4 +1,4 @@
-import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import { Element } from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-eftouch`
@@ -18,7 +18,7 @@ class TangyEftouch extends Element {
             }
         </style>
         <div>
-            <p><b>${t('clickAPicture')}</b></p>
+            <p><b>${t('Click a Picture')}</b></p>
 
             <slot></slot>
         </div>
@@ -54,7 +54,7 @@ class TangyEftouch extends Element {
   }
 
   _playing(newValue, oldValue) {
-    console.log(t('isPlayingChangedTo') + newValue);
+    console.log('isPlaying Changed To' + newValue);
   }
 
   validate() {
@@ -67,10 +67,10 @@ class TangyEftouch extends Element {
   connectedCallback() {
     super.connectedCallback();
     if (typeof window.Tangy == 'undefined') {
-      window.Tangy =  {}
+      window.Tangy = {}
     }
     Tangy._valid = false;
-//          this.name = this.getAttribute("name")
+    //          this.name = this.getAttribute("name")
 
     if (this.introSrc) {
       var isPlaying = Tangy.displaySound && Tangy.displaySound.currentTime > 0 && !Tangy.displaySound.paused && !Tangy.displaySound.ended
@@ -86,7 +86,7 @@ class TangyEftouch extends Element {
           var isPlaying = Tangy.displaySound && Tangy.displaySound.currentTime > 0 && !Tangy.displaySound.paused && !Tangy.displaySound.ended
             && Tangy.displaySound.readyState > 2;
           Tangy._valid = false;
-          console.log(t('isPlayingCurrentTime') + Tangy.displaySound.currentTime + " _valid: " + Tangy._valid)
+          console.log('isPlaying currentTime:' + Tangy.displaySound.currentTime + " _valid: " + Tangy._valid)
           if (!isPlaying) {
             Tangy._valid = true;
             console.log("isPlaying: " + isPlaying + " _valid: " + Tangy._valid)
@@ -94,7 +94,7 @@ class TangyEftouch extends Element {
           }
         }
       } else {
-        console.log(t('isPlayingCurrentTime') + Tangy.displaySound.currentTime)
+        console.log('isPlaying currentTime:' + Tangy.displaySound.currentTime)
         Tangy.isPlaying = true
       }
 
