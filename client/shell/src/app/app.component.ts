@@ -94,30 +94,30 @@ export class AppComponent implements OnInit {
   }
   updateApp() {
     if (window.isCordovaApp) {
-      console.log(_TRANSLATE('runningFromAPK'));
+      console.log('Running from APK');
       const installationCallback = (error) => {
         if (error) {
-          console.log(_TRANSLATE('failedToInStallUpdate') + error.code);
+          console.log('Failed to install the update with error code:' + error.code);
           console.log(error.description);
           this.updateIsRunning = false;
         } else {
-          console.log(_TRANSLATE('updateInstalled'));
+          console.log('Update Instaled');
           this.updateIsRunning = false;
         }
       };
       const updateCallback = (error, data) => {
-        console.log(_TRANSLATE('data') + JSON.stringify(data));
+        console.log('data: ' + JSON.stringify(data));
         if (error) {
-          console.log(_TRANSLATE('error') + JSON.stringify(error));
-          alert(_TRANSLATE('noUpdate') + JSON.stringify(error.description));
+          console.log('error: ' + JSON.stringify(error));
+          alert('No Update: ' + JSON.stringify(error.description));
         } else {
-          console.log(_TRANSLATE('updateIsLoaded'));
-          if (window.confirm(_TRANSLATE('confirmUpdate'))) {
+          console.log('Update is Loaded');
+          if (window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `Cancel`. If you are ready to install the update, click `Yes`'))) {
             this.updateIsRunning = true;
-            console.log(_TRANSLATE('installingUpdate'));
+            console.log('Installing Update');
             window.chcp.installUpdate(installationCallback);
           } else {
-            console.log(_TRANSLATE('cancelledInstall'));
+            console.log('Cancelled install; did not install update.');
             this.updateIsRunning = false;
           }
         }

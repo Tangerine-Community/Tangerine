@@ -1,7 +1,7 @@
 <div id="update-in-progress" *ngIf="updateIsRunning">
   <div id="update-in-progress-inner">
     <img src="../logo.svg">
-    <br> {{'updateIsRunning'|translate}}
+    <br> {{'Update is Running. Please Wait ...'|translate}}
     <br>
     <br>
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -16,7 +16,7 @@
   </span>
 
   <span>
-    <a class="tangy-no-text-decoration tangy-app-name" routerLink="home">{{'applicationName'|translate}}</a>
+    <a class="tangy-no-text-decoration tangy-app-name" routerLink="home">{{'Tangerine'|translate}}</a>
   </span>
   <span class="tangy-spacer"></span>
 
@@ -26,7 +26,7 @@
   <mat-menu #appMenu="matMenu">
     <button routerLink="manage-user-profile" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
-      <span>{{'manageProfile'|translate}}</span>
+      <span>{{'Manage Profile'|translate}}</span>
     </button>
     <!-- <button routerLink="/home" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">settings</mat-icon>
@@ -34,23 +34,23 @@
     </button> -->
     <button routerLink="/sync-records" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
-      <span>{{'sync'|translate}}</span>
+      <span>{{'Sync'|translate}}</span>
     </button>
     <button routerLink="/export-data" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">import_export</mat-icon>
-      <span>{{'exportData'|translate}}</span>
+      <span>{{'Export Data'|translate}}</span>
     </button>
     <button mat-menu-item (click)="updateApp()" *ngIf="showUpdateAppLink">
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
-      <span>{{'updateApp'|translate}}</span>
+      <span>{{'Update App'|translate}}</span>
     </button>
     <button mat-menu-item (click)="updateApp()" *ngIf="!showUpdateAppLink">
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
-      <span>{{'checkForUpdate'|translate}}</span>
+      <span>{{'Check for Update'|translate}}</span>
     </button>
     <button mat-menu-item (click)="logout()">
       <mat-icon class="material-icons menu-tangy-location-list-icon">exit_to_app</mat-icon>
-      <span>{{'logout'|translate}}</span>
+      <span>{{'Logout'|translate}}</span>
     </button>
 
   </mat-menu>
