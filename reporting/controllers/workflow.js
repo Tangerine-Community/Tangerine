@@ -63,6 +63,53 @@ exports.all = function(req, res) {
 }
 
 /**
+ * Generates headers for ALL workflows in the database.
+ *
+ * Example:
+ *
+ *    POST /workflow/headers/_all
+ *
+ *  The request object must contain the main database url and a
+ *  result database url where the generated headers will be saved.
+ *     {
+ *       "db_url": "http://admin:password@test.tangerine.org/database_name"
+ *       "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *     }
+ *
+ * Response:
+ *
+ *   Returns an Object indicating the data has been saved.
+ *      {
+ *        "ok": true,
+ *        "id": "a1234567890",
+ *        "rev": "1-b123"
+ *       }
+ *
+ * @param req - HTTP request object
+ * @param res - HTTP response object
+ */
+
+exports.generateAll = async function (req, res) {
+  const baseDb = req.body.baseDb;
+  const resultDbUrl = req.body.resultDb;
+  const GROUP_DB = new PouchDB(baseDb);
+
+  try {
+    let workflows = await GROUP_DB.query('ojai/byCollection', { key: 'workflow', include_docs: true });
+    for (item of workflows.rows) {
+      let workflowId = item.id;
+      let generatedWorkflowHeaders = await createWorkflowHeaders(item.doc, baseDb);
+      let saveResponse = await dbQuery.saveHeaders(generatedWorkflowHeaders, workflowId, resultDbUrl);
+      console.log(saveResponse);
+    }
+    res.json(workflows);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+/**
  * Generates headers for a workflow.
  *
  * Example:
