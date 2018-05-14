@@ -134,7 +134,7 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
   const GROUP_DB = new PouchDB(baseDb);
 
   return new Promise((resolve, reject) => {
-    GROUP_DB.get(collectionId, baseDb)
+    GROUP_DB.get(collectionId)
       .then((item) => {
         let assessmentSuffix = count > 0 ? `_${count}` : '';
         assessments.push({ header: `assessment_id${assessmentSuffix}`, key: `${docId}.assessmentId${assessmentSuffix}` });
@@ -164,53 +164,55 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
           timestampCount: 0
         };
         for (data of subtestData) {
-          if (data.prototype === 'location') {
-            let location = await createLocation(data, subtestCount, baseDb);
-            assessments = assessments.concat(location);
-            subtestCount.locationCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'datetime') {
-            let datetime = createDatetime(data, subtestCount);
-            assessments = assessments.concat(datetime);
-            subtestCount.datetimeCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'consent') {
-            let consent = createConsent(data, subtestCount);
-            assessments = assessments.concat(consent);
-            subtestCount.consentCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'id') {
-            let id = createId(data, subtestCount);
-            assessments = assessments.concat(id);
-            subtestCount.idCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'survey') {
-            let surveys = await createSurvey(data._id, subtestCount, baseDb);
-            assessments = assessments.concat(surveys);
-            subtestCount.surveyCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'grid') {
-            let grid = createGrid(data, subtestCount);
-            assessments = assessments.concat(grid.gridHeader);
-            subtestCount.gridCount++;
-            subtestCount.timestampCount = grid.timestampCount;
-          }
-          if (data.prototype === 'gps') {
-            let gps = createGps(data, subtestCount);
-            assessments = assessments.concat(gps);
-            subtestCount.gpsCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'camera') {
-            let camera = createCamera(data, subtestCount);
-            assessments = assessments.concat(camera);
-            subtestCount.cameraCount++;
-            subtestCount.timestampCount++;
+          if (data !== null) {
+            if (data.prototype === 'location') {
+              let location = await createLocation(data, subtestCount, baseDb);
+              assessments = assessments.concat(location);
+              subtestCount.locationCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'datetime') {
+              let datetime = createDatetime(data, subtestCount);
+              assessments = assessments.concat(datetime);
+              subtestCount.datetimeCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'consent') {
+              let consent = createConsent(data, subtestCount);
+              assessments = assessments.concat(consent);
+              subtestCount.consentCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'id') {
+              let id = createId(data, subtestCount);
+              assessments = assessments.concat(id);
+              subtestCount.idCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'survey') {
+              let surveys = await createSurvey(data._id, subtestCount, baseDb);
+              assessments = assessments.concat(surveys);
+              subtestCount.surveyCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'grid') {
+              let grid = createGrid(data, subtestCount);
+              assessments = assessments.concat(grid.gridHeader);
+              subtestCount.gridCount++;
+              subtestCount.timestampCount = grid.timestampCount;
+            }
+            if (data.prototype === 'gps') {
+              let gps = createGps(data, subtestCount);
+              assessments = assessments.concat(gps);
+              subtestCount.gpsCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'camera') {
+              let camera = createCamera(data, subtestCount);
+              assessments = assessments.concat(camera);
+              subtestCount.cameraCount++;
+              subtestCount.timestampCount++;
+            }
           }
         }
         resolve(assessments);
@@ -253,8 +255,8 @@ async function createLocation(doc, subtestCount, baseDb) {
   if (isLocLevelSet) {
     for (i = 0; i < locLevels.length; i++) {
       locationHeader.push({
-        header: `${locLevels[i]}`,
-        key: `${doc._id}.${locLevels[i]}`
+        header: `${locLevels[i]}${locSuffix}`,
+        key: `${doc._id}.${locLevels[i]}${locSuffix}`
       });
     }
   }

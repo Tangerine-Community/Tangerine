@@ -60,7 +60,7 @@ exports.changes = function(req, res) {
   const GROUP_DB = new PouchDB(baseDb);
 
   GROUP_DB.changes({ since: req.body.startPoint, include_docs: true, live: req.body.isLive })
-    .on('change', (body) => setTimeout(() => queueProcessChangedDocument({body, baseDb, resultDb}), 1000))
+    .on('change', (body) => setTimeout(() => queueProcessChangedDocument({body, baseDb, resultDb}), 200))
     .on('error', (err) => console.error(err));
 }
 
@@ -113,7 +113,7 @@ const processChangedDocument = async function(resp, baseDb, resultDb) {
   const isQuestion = (collectionType === 'question') ? true : false;
   const isSubtest = (collectionType === 'subtest') ? true : false;
 
-  console.info(`::: Processing ${collectionType} document on sequence ${resp.seq} :::`);
+  console.info(`::: Processing ${resp.doc.collection} document on sequence ${resp.seq} :::`);
 
   if (isWorkflowIdSet && isResult) {
     console.info('\n<<<=== START PROCESSING WORKFLOW RESULT ===>>>\n');
