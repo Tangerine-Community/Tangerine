@@ -63,7 +63,7 @@
       <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
       <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
         color="accent" name="action">{{'RECOVER ACCOUNT'|translate}}</button>
-      <a href="#/register">{{'REGISTER'|translate}}</a>
+      <a class="register-link" href="#/register">{{'REGISTER'|translate}}</a>
       <br>
       <br>
       <span id="err">
