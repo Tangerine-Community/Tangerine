@@ -28,10 +28,10 @@ export class RegistrationComponent implements OnInit {
     isUsernameTaken: boolean;
     returnUrl: string;
     statusMessage: object;
-    userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('usernameUnavailable') };
-    userNameAvailableMessage = { type: 'success', message: _TRANSLATE('usernameAvailable') };
-    loginUnsucessfulMessage = { type: 'error', message: _TRANSLATE('loginUnsuccesful') };
-    couldNotCreateUserMessage = { type: 'error', message: _TRANSLATE('couldNotCreateUser') };
+    userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('Username Unavailable') };
+    userNameAvailableMessage = { type: 'success', message: _TRANSLATE('Username Available') };
+    loginUnsucessfulMessage = { type: 'error', message: _TRANSLATE('Login Unsuccesful') };
+    couldNotCreateUserMessage = { type: 'error', message: _TRANSLATE('Could Not Create User') };
     securityQuestionText: string;
     constructor(
         private userService: UserService,

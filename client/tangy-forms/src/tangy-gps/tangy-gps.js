@@ -37,26 +37,26 @@ class TangyGps extends Element {
     <b>Current Position</b>
     <div>
       <template is="dom-if" if="{{_isAdvancedMode(currentLatitude, advancedMode)}}">
-        ${t('latitude')} [[currentLatitude]] <br>
-        ${t('longitude')} [[currentLongitude]] <br>
+        ${t('Latitude')} [[currentLatitude]] <br>
+        ${t('Longitude')} [[currentLongitude]] <br>
       </template>
     <div>
     <template is="dom-if" if="[[currentLatitude]]">
-      ${t('accuracy')} [[currentAccuracy]] ${t('meters')}<br>
-      ${t('accuracyLevel')} [[accuracyLevel]]
+      ${t('Accuracy')} [[currentAccuracy]] ${t('Meters')}<br>
+      ${t('Accuracy Level:')} [[accuracyLevel]]
     </template> 
     </div>
     <div>
     <template is="dom-if" if="[[!currentLatitude]]">
-        ${t('searching')}
+        ${t('Searching...')}
     </template> 
     </div>
     </div>
     <div>
-      <h3>${t('tips')}</h3>
-      <p>${t('standNextToWindow')}</p>
-      <p>${t('moveOutside')}</p>
-      <p>${t('standAway')}</p>
+      <h3>${t('Tips')}</h3>
+      <p>${t('Try standing next to a window')}</p>
+      <p>${t('Try moving outside with a clear view of the sky')}</p>
+      <p>${t('Try standing away from trees or buildings')}</p>
     </div>
     <br>
     
@@ -78,14 +78,14 @@ class TangyGps extends Element {
         value: {
           latitude: undefined,
           longitude: undefined,
-          accuracy: undefined 
+          accuracy: undefined
         },
         observer: 'reflect',
         reflectToAttribute: true
       },
       required: {
         type: Boolean,
-        value: false, 
+        value: false,
         observer: 'reflect',
         reflectToAttribute: true
       },
