@@ -178,22 +178,27 @@ function saveFormHeaders(doc, db) {
    * if found update revision number and column headers
    * else save document as new doc
    */
-  db.get(doc._id).then(origDoc => {
-    let newDoc = { _rev: origDoc._rev };
-    let joinByHeader = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'header');
-    let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
-    newDoc.columnHeaders = _.union(joinByHeader, joinBykey);
-    return db.put(newDoc);
+  return new Promise((res, rej) => {
+    db.get(doc._id).then(async origDoc => {
+      let newDoc = { _id: doc._id, _rev: origDoc._rev };
+      let joinByHeader = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'header');
+      let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
+      newDoc.columnHeaders = _.union(joinByHeader, joinBykey);
+      await db.put(newDoc);
+      res(true)
+    })
+    .catch(async err => {
+      if (err.status === 409) {
+        // For document update conflict retry saving the header.
+        console.log(err.message, '...Retry saving header');
+        await saveFormHeaders(doc);
+        res(true)
+      } else {
+        await db.put(doc); // save new doc
+        res(true)
+      }
+    });
   })
-  .catch(err => {
-    if (err.status === 409) {
-      // For document update conflict retry saving the header.
-      console.log(err.message, '...Retry saving header');
-      return saveFormHeaders(doc);
-    } else {
-      return db.put(doc); // save new doc
-    }
-  });
 }
 
 function saveFormResult(doc, db) {
@@ -202,18 +207,23 @@ function saveFormResult(doc, db) {
    * if found update revision number and column headers
    * else save document as new doc
    */
-  db.get(doc._id).then(oldDoc => {
-    let newDoc = _.merge(oldDoc, doc);
-    return db.put(newDoc);
-  }).catch(err => {
-    if (err.status === 409) {
-      // For document update conflict retry saving the result.
-      console.log(err.message, '...Retry saving result');
-      return saveFormResult(doc);
-    } else {
-      return db.put(doc); // save new doc
-    }
-  });
+  return new Promise((res, rej) => {
+    db.get(doc._id).then(async oldDoc => {
+      let newDoc = _.merge(oldDoc, doc);
+      await db.put(newDoc);
+      res(true)
+    }).catch(async err => {
+      if (err.status === 409) {
+        // For document update conflict retry saving the result.
+        console.log(err.message, '...Retry saving result');
+        await saveFormResult(doc);
+        res(true)
+      } else {
+        await db.put(doc); // save new doc
+        res(true)
+      }
+    });
+  })
 }
 
 exports.generateHeaders = generateHeaders;
