@@ -325,7 +325,7 @@ async function processLocationResult(body, subtestCount, groupTimeZone, baseDb) 
     if (locKeys.length > 0) {
       for (j = 0; j < locKeys.length; j++) {
         let key = locKeys[j];
-        let location = location[key] && location[key].label;
+        let location = locationNames[key] ? locationNames[key].label : locationNames[key];
         locationResult[`${subtestId}.${locKeys[j]}${locSuffix}`] = location ? location.replace(/\s/g,'-') : location;
       }
     }
@@ -359,8 +359,7 @@ async function getLocationName(body, baseDb) {
   let locationList = await dbQuery.getLocationList(baseDb);
   let levels = locationList.locationsLevels;
   let locLabels = body.data.labels.map(label => label.toLowerCase());
-  let isLocationLabelSet = locLabels && locLabels.length === 0;
-  let isLocationListSet = _.isEmpty(locationList.location);
+  let isLocationListSet = _.isEmpty(locationList.locations);
 
   if (schoolId) {
     for (j = 0; j < levels.length; j++) {
@@ -376,7 +375,7 @@ async function getLocationName(body, baseDb) {
 
   //Note: this location details can cater for up to 4 levels and not more.
   //@TODO: Update it to accommodate more than 4 levels.
-  if (!isLocationLabelSet && !isLocationListSet) {
+  if (!isLocationListSet) {
     for (i = 0; i < levels.length; i++) {
       locNames[levels[i]] = _.get(locationList.locations, locIds[i]);
 
@@ -405,9 +404,10 @@ async function getLocationName(body, baseDb) {
             }
           }
         } else {
-          locNames[locLabels[i+2]] = _.get(locNames[locLabels[i+1]].children, locIds[i+2]);
-          if (locNames[locLabels[i+2]]) {
-            locNames[locLabels[i+3]] = _.get(locNames[locLabels[i+2]].children, locIds[i+3]);
+          locNames[levels[i+2]] = _.get(locNames[levels[i+1]].children, locIds[i+2]);
+
+          if (locNames[levels[i+2]]) {
+            locNames[levels[i+3]] = _.get(locNames[levels[i+2]].children, locIds[i+3]);
           }
         }
         break;
@@ -594,7 +594,7 @@ function processGpsResult(doc, subtestCount, groupTimeZone) {
 
 function processCamera(body, subtestCount, groupTimeZone) {
   let cameraResult = {};
-  let varName = body.data.variableName;
+  let varName = body.data.variableName || body.name;
   let suffix = subtestCount.cameraCount > 0 ? `_${subtestCount.cameraCount}` : '';
   let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
 
