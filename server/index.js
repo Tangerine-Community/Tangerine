@@ -17,7 +17,6 @@ const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
-const chokidar = require('chokidar');
 const chalk = require('chalk');
 const tangyReporting = require('../server/reporting/data_processing');
 const generateCSV = require('../server/reporting/generate_csv');
@@ -464,6 +463,9 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
  * Creates content, qa, and prod dirs for the group; seeds qa with Cordova project.
  * Edits app-config.json.
  * Creates cordova-hcp.json and copies to qa dir.
+ * Creates Results Database for the corresponding group
+ * Inserts the design Doc into the results database
+ * Sets up watching of the group DB to listen to the changes feed on the database
  * Redirects user to editor page for the group.
  */
 app.post('/editor/group/new', isAuthenticated, async function (req, res) {
@@ -483,6 +485,22 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
     .then(status => console.log("Wrote app-config.json"))
     .catch(err => console.error("An error copying app-config: " + err))
+
+  //#region wire group DB and result db
+
+  const RESULT_DB_NAME = `${groupName}-result`;
+  const RESULT_DB = new DB(RESULT_DB_NAME);
+  /**
+   * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
+   * Also create the design doc for the resultsDB
+   */
+  await RESULT_DB.info(async info => await createDesignDocument(RESULT_DB_NAME)).catch(e => {
+    console.error(e);
+  });
+
+  // Set up watching of groupDb for changes.
+  monitorDatabaseChangesFeed((groupName.trim()));
+  //#endregion
 
   // All done!
   res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
@@ -625,33 +643,18 @@ app.get('/csv/byPeriodAndFormId/:groupName/:year/:/month/:formId', isAuthenticat
  * @param {string} srcPath The path to the directory
  */
 const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lstatSync(path.join(srcPath, file)).isDirectory());
-/**
- * Watch for Filesystem changes. Only watch creation of subdirectories in `../client/content/groups/`
- * Ignore files in the content path
- * Ignore files subdirectories of the directories in the content path
- * @example It will listen directory/folder creation events in the top level directory of `..client/content/groups/`
- *          When a directory is created in `..client/content/groups/`, the callback fires.
- *          When a directory is created within the groups folder for instance in `..client/content/groups/group1`
- *          no callback is called.
- */
 
-function watchGroups() {
+/**
+ * Gets the list of all the existing groups from the content folder
+ * Listens for the changes feed on each of the group's database
+ */
+function listenToChangesFeedOnExistingGroups() {
   const CONTENT_PATH = '../client/content/groups/';
-  let groups = getDirectories(CONTENT_PATH);
+  const groups = getDirectories(CONTENT_PATH);
   groups.map(group => monitorDatabaseChangesFeed(group.trim()));
 
-  chokidar.watch(CONTENT_PATH, { ignored: ['**.*', '/**/*'], ignoreInitial: true }).on('all', (event, path) => {
-    if (event === 'addDir') {
-      /**
-       * The Path is a string in the form `../client/content/groups/:groupName`
-       * Split the string to get the groupName from the `path` variable
-       */
-      monitorDatabaseChangesFeed((path.split('/')[4].trim()));
-    }
-  });
-
 }
-watchGroups();
+listenToChangesFeedOnExistingGroups();
 
 /**
  * Listens to the changes feed of a database and passes new documents to `processChangedDocument()` for processing and saving
@@ -660,14 +663,6 @@ watchGroups();
  */
 async function monitorDatabaseChangesFeed(name) {
   const GROUP_DB = new DB(name);
-  const RESULT_DB_NAME = `${name}-result`;
-  const RESULT_DB = new DB(RESULT_DB_NAME);
-  /**
-   * Instantiate the database. A method call on the database creates the database if database doesnt exist.
-   */
-  await RESULT_DB.info(async info => await createDesignDocument(RESULT_DB_NAME)).catch(e => {
-    console.error(e);
-  });
   try {
     GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
       .on('change', async (body) => {
