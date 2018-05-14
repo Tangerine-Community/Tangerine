@@ -34,10 +34,10 @@ export class ExportDataComponent implements OnInit {
           directoryEntry.getFile(fileName, { create: true }, (fileEntry) => {
             fileEntry.createWriter((fileWriter) => {
               fileWriter.onwriteend = (data) => {
-                alert(`${_TRANSLATE('fileStoredAt')} ${cordova.file.externalDataDirectory}${fileName}`);
+                alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${fileName}`);
               };
               fileWriter.onerror = (e) => {
-                alert(`${_TRANSLATE('writeFailed')}` + e.toString());
+                alert(`${_TRANSLATE('Write Failed')}` + e.toString());
               };
               fileWriter.write(file);
             });

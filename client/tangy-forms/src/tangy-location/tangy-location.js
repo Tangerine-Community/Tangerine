@@ -1,9 +1,9 @@
 // import {Element as PolymerElement} from "@polymer/polymer/polymer-element";
-import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import { Element } from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../../node_modules/@polymer/paper-input/paper-input.js'
 import '../tangy-form/tangy-element-styles.js';
 // import '../../../underscore/underscore.js';
-import {Loc} from './loc.js';
+import { Loc } from './loc.js';
 import '../tangy-form/tangy-common-styles.js'
 /**
  * `tangy-location`
@@ -522,9 +522,9 @@ class TangyLocation extends Element {
     let selections = [...this.value]
     if (selections.length === 0) {
       levels.forEach(level => {
-        selections = [...selections, ...[{level, value: ''}]] 
+        selections = [...selections, ...[{ level, value: '' }]]
       })
-    } 
+    }
 
     // Calculate the options for each select. Returns an object keyed by select level.
     let options = this.calculateLevelOptions(selections, levels)
@@ -571,9 +571,9 @@ class TangyLocation extends Element {
     let options = {}
     // Queries contain the Loc.query() parameters required to find options for a given level. Level is the key which points to an object where the properties
     // are the parameters for the Loc.query().
-    let queries = {} 
+    let queries = {}
     // firstLevelNotSelected is the first level with no selection and the last level we will bother calculating options for.
-    let firstLevelNotSelected = '' 
+    let firstLevelNotSelected = ''
 
     // Find the first level not selected.
     let firstSelectionNotSelected = (selections.find(selection => (selection.value === '')))
@@ -582,14 +582,14 @@ class TangyLocation extends Element {
     // Generate queries.
     selections.forEach((selection, i) => {
       // Only generate queries for levels that are selected or the first level not selected.
-      if (selection.value === '' && selection.level !== firstLevelNotSelected) return 
+      if (selection.value === '' && selection.level !== firstLevelNotSelected) return
       // Slice out the selections at this level from all selections.
-      let selectionsAtThisLevel = selections.slice(0, i) 
+      let selectionsAtThisLevel = selections.slice(0, i)
       // Transform the array of objects to an array of levels.
       let queryLevels = selectionsAtThisLevel.map(s => s.level)
       // Transform selectionsAtThisLevel Array to queryCriteria Object.
-      let queryCriteria = {} 
-      selectionsAtThisLevel.forEach(selection =>  queryCriteria[selection.level] = selection.value)
+      let queryCriteria = {}
+      selectionsAtThisLevel.forEach(selection => queryCriteria[selection.level] = selection.value)
       // Set the query.
       queries[selection.level] = {
         levels: queryLevels,
@@ -621,26 +621,26 @@ class TangyLocation extends Element {
     let selections = [...this.value]
     if (selections.length === 0) {
       levels.forEach(level => {
-        selections = [...selections, ...[{level, value: ''}]] 
+        selections = [...selections, ...[{ level, value: '' }]]
       })
     }
 
     // Calculate our new value.
-    let newSelections =  selections.map(selection => {
+    let newSelections = selections.map(selection => {
       // Modify the selection level associated with the event.
       if (selection.level === event.target.name) {
         return {
-          level: event.target.name, 
+          level: event.target.name,
           value: event.target.value
         }
-      } 
+      }
       // Make sure to set the selection values to '' for all selections after the one just selected. 
       else if (levels.indexOf(selection.level) > levels.indexOf(event.target.name)) {
         return {
           level: selection.level,
           value: ''
         }
-      } 
+      }
       // Return unmodified selections if they are unrelated to this event.
       else {
         return selection

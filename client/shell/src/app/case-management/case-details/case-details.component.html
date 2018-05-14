@@ -1,11 +1,11 @@
 <mat-tab-group>
-  <mat-tab [label]="'observations'|translate">
+  <mat-tab [label]="'Observations'|translate">
     <br>
     <mat-card class="tangy-card-content-container">
       <app-observations-by-location></app-observations-by-location>
     </mat-card>
   </mat-tab>
-  <mat-tab [label]="'reports'|translate">
+  <mat-tab [label]="'Reports'|translate">
     <iframe *ngIf="formUrl" id="ifr" [src]="formUrl|safeUrl" appSeamlessWithWindow #iframe>
     </iframe>
   </mat-tab>

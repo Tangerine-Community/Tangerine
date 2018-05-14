@@ -1,5 +1,5 @@
 <select name="datefilter" id="datefiler" (change)="onSelectDate($event)">
-  <option value="_">{{'filter'|translate}}</option>
+  <option value="_">{{'Filter'|translate}}</option>
   <option *ngFor="let date of filterValuesForDates" [value]="date.value">{{date.label}}</option>
 </select>
 <br>
@@ -7,11 +7,11 @@
 <table class="observations">
   <thead>
     <tr>
-      <th>{{'formName'|translate}}</th>
+      <th>{{'Form Name'|translate}}</th>
       <th *ngFor="let col of columns">
         {{col.name}}
       </th>
-      <th>{{'dateTime'|translate}}</th>
+      <th>{{'Date and Time'|translate}}</th>
     </tr>
   </thead>
   <tbody>

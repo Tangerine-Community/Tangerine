@@ -1,4 +1,4 @@
-import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import { Element } from '../../node_modules/@polymer/polymer/polymer-element.js'
 import '../tangy-checkbox/tangy-checkbox.js'
 import '../tangy-form/tangy-element-styles.js';
 import '../tangy-form/tangy-common-styles.js'
@@ -35,7 +35,7 @@ class TangyCheckboxes extends Element {
     </style>
     <div class="container">
       <label for="group">[[label]]</label>
-      <span class="secondary_color">${t('selectOneOrMore')}</span>
+      <span class="secondary_color">${t('Select one or more')}</span>
       <div id="checkboxes">
       </div>
     </div>
@@ -132,7 +132,7 @@ class TangyCheckboxes extends Element {
     this
       .shadowRoot
       .querySelectorAll('tangy-checkbox')
-      .forEach ((el) => {
+      .forEach((el) => {
         el.addEventListener('change', this.onCheckboxClick.bind(this))
         newValue.push(el.getProps())
       })
@@ -148,12 +148,14 @@ class TangyCheckboxes extends Element {
       .querySelectorAll('tangy-checkbox')
       .forEach(el => newValue.push(el.getProps()))
     this.value = newValue
-    this.dispatchEvent(new CustomEvent('change', {bubbles: true, detail: {
-      inputName: this.name,
-      inputValue: newValue,
-      inputIncomplete: false,
-      inputInvalid: false
-    }}))
+    this.dispatchEvent(new CustomEvent('change', {
+      bubbles: true, detail: {
+        inputName: this.name,
+        inputValue: newValue,
+        inputIncomplete: false,
+        inputInvalid: false
+      }
+    }))
   }
 
   validate() {
@@ -171,4 +173,4 @@ class TangyCheckboxes extends Element {
   }
 
 }
-window.customElements.define(TangyCheckboxes.is, TangyCheckboxes );
+window.customElements.define(TangyCheckboxes.is, TangyCheckboxes);
