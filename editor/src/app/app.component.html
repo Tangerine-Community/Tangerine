@@ -40,10 +40,6 @@
             </button>
             <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="useropts">
                 <li *ngIf="loggedIn" router-active><a routerLink="/support" routerLinkActive="active" class="mdl-menu__item"><i class="material-icons">help</i> Help</a></li>
-                <!--<li router-active><a [routerLink]=" ['Account'] " class="mdl-menu__item"><i class="material-icons">fingerprint</i> My Profile</a></li>
-                <li router-active><a [routerLink]=" ['Account'] " class="mdl-menu__item"><i class="material-icons">account_box</i> Account</a></li>
-                <li router-active><a (click) = "announce('billing')" [routerLink]=" ['BillingForm'] " class="mdl-menu__item"><i class="material-icons">credit_card</i> Billing</a></li>-->
-                <li *ngIf="loggedIn" router-active><a routerLink="/bills" routerLinkActive="active" class="mdl-menu__item"><i class="material-icons">credit_card</i> Billing</a></li>
                 <li *ngIf="!loggedIn" router-active><a routerLink="/registration" routerLinkActive="active" class="mdl-menu__item"><i class="material-icons">exit_to_app</i> Register</a></li>
                 <li *ngIf="!loggedIn" router-active><a routerLink="/login" routerLinkActive="active" class="mdl-menu__item"><i class="material-icons">exit_to_app</i> Login</a></li>
                 <li *ngIf="loggedIn" router-active><a (click)="logout();" routerLink="/login" routerLinkActive="active" class="mdl-menu__item"><i class="material-icons">exit_to_app</i> Logout</a></li>
@@ -58,9 +54,6 @@
         </header>
         <nav class="demo-navigation mdl-navigation mdl-color--grey-900">
             <ul>
-                <li router-active><a routerLink="/home"class="mdl-navigation__link" routerLinkActive="active" ><i class="material-icons" role="presentation">home</i>Home</a></li>
-                <!--<li router-active><a [routerLink]=" ['Users'] " class="mdl-navigation__link" href=""><i class="material-icons" role="presentation">assignment_ind</i>Users</a></li>-->
-                <!--<li router-active><a [routerLink]=" ['Assessments'] " class="mdl-navigation__link" href=""><i class="material-icons" role="presentation">assessment</i>Assessments</a></li>-->
                 <li *ngIf="loggedIn" router-active><a routerLink="/projects" routerLinkActive="active" class="mdl-navigation__link"><i class="material-icons" role="presentation">group_work</i>Projects</a></li>
                 <li *ngIf="loggedIn" router-active><a routerLink="/support" routerLinkActive="active" class="mdl-navigation__link"><i class="material-icons" role="presentation">help_outline</i>Support</a></li>
             </ul>

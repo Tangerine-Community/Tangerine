@@ -20,8 +20,20 @@ const compression = require('compression')
 const chokidar = require('chokidar');
 const chalk = require('chalk');
 const tangyReporting = require('../server/reporting/data_processing');
-const generateCSV = require('../server/reporting/generate_csv');
-let DB = {}
+const generateCSV = require('../server/reporting/generate_csv').generateCSV;
+const pretty = require('pretty')
+const flatten = require('flat')
+const json2csv = require('json2csv')
+const _ = require('underscore')
+
+jlog = function(data) {
+  console.log(JSON.stringify(data, null, 2))
+}
+log = function(data) {
+  console.log(data)
+}
+
+var DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
     prefix: process.env.T_COUCHDB_ENDPOINT
@@ -86,10 +98,7 @@ var passport = require('passport')
 
 // This determines wether or not a login is valid.
 passport.use(new LocalStrategy(
-  function (username, password, done) {
-    // console.log('strategy!')
-    // console.log(username)
-    // console.log(password)
+  function(username, password, done) {
     if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
       console.log('login success!')
       return done(null, {
@@ -234,7 +243,6 @@ let openForm = async function (path) {
   } catch (e) {
     console.log("Error opening form: ", e);
   }
-  // console.log("openForm will return form: " + JSON.stringify(form))
   return form
 };
 
@@ -256,8 +264,7 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let sortedItemList = []
   for (let itemScr of itemsOrder) {
     if (itemScr !== null) {
-      // console.log("itemScr: " + itemScr)
-      let item = formItemList.is(function (i, el) {
+      let item = formItemList.is(function(i, el) {
         let src = $(this).attr('src')
         if (src === itemScr) {
           sortedItemList.push($(this))
@@ -266,17 +273,14 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
       })
     }
   }
-  // console.log("sortedItemList: " + sortedItemList)
   let tangyform = $('tangy-form')
   // save the updated list back to the form.
   $('tangy-form-item').remove()
   $('tangy-form').append(sortedItemList)
-  // console.log('html after: ' + $.html())
-  let form = $.html()
+  let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
   await fs.outputFile(formPath, form)
     .then(() => {
       let msg = "Success! Updated file at: " + formPath
-      // let message = {message: msg}
       let resp = {
         "message": msg
       }
@@ -289,6 +293,15 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
       console.error(message)
       res.send(message)
     })
+})
+
+app.post('/editor/file/save', isAuthenticated, async function (req, res) {
+  const filePath = req.body.filePath
+  const groupId = req.body.groupId
+  const fileContents = req.body.fileContents
+  const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
+  await fs.writeFile(actualFilePath, fileContents)
+  res.send('ok')
 })
 
 // Saves an item - and a new form when formName is passed.async
@@ -375,7 +388,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // console.log('newItem: ' + newItem)
     $(newItem).appendTo('tangy-form')
     // console.log('html after: ' + $.html())
-    let form = $.html()
+    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
@@ -420,8 +433,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
       console.log('newItem: ' + newItem)
       $(newItem).appendTo('tangy-form')
     }
-    // console.log('html after: ' + $.html())
-    let form = $.html()
+    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
@@ -455,7 +467,6 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     "message": 'Item saved: ' + itemPath,
     "displayFormsListing": displayFormsListing
   }
-  // console.log("resp: "+  JSON.stringify(resp))
   res.json(resp)
 })
 
@@ -520,18 +531,6 @@ app.post('/upload/:groupName', async function (req, res) {
   } catch (e) { console.log(e) }
 
 })
-
-const flatten = require('flat')
-const json2csv = require('json2csv')
-const _ = require('underscore')
-
-jlog = function (data) {
-  console.log(JSON.stringify(data, null, 2))
-}
-log = function (data) {
-  console.log(data)
-}
-
 
 app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   let db = new DB(req.params.groupName)
@@ -612,14 +611,17 @@ if (replicationEntries.length > 0) {
 }
 
 
-app.get('/csv/byPeriodAndFormId/:groupName/:year/:/month/:formId', isAuthenticated, async (req, res) => {
-
+app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthenticated, (req, res) => {
   const groupName = req.params.groupName;
   const year = req.params.year;
   const month = req.params.month;
   const formId = req.params.formId;
-  await generateCSVByPeriodAndFormId(groupName, year, month, formId);
+  const groupResultName = groupName + '-result';
+
+  generateCSV(formId, groupResultName, res);
 });
+
+
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
  * @param {string} srcPath The path to the directory
@@ -682,11 +684,11 @@ async function monitorDatabaseChangesFeed(name) {
 /**
  * @description Function to create Design Documents in a given Database
  * @param {string} database The Database to use when for creating the Design Document
- * 
+ *
  * `tangyReportingDesignDoc` is an Object that holds the Design Doc with views to be stored in the DB
- * 
- * For compound keys in the design doc use string concatenation as a compilation error is thrown when using template strings 
- * @example 
+ *
+ * For compound keys in the design doc use string concatenation as a compilation error is thrown when using template strings
+ * @example
  * use form.docId+'-'+doc.completed not `${doc.docId}-${doc.completed}`
  */
 async function createDesignDocument(database) {
@@ -696,19 +698,18 @@ async function createDesignDocument(database) {
     _id: '_design/tangy-reporting',
     version: '1',
     views: {
-      resultsByGroupFormIdYearMonthDate: {
+      resultsByGroupFormId: {
         map: function (doc) {
-          if (doc.startDatetime) {
+          if (doc.formId) {
+            const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const startDatetime = new Date(doc.startDatetime);
-            const key = doc.formId + '-' + startDatetime.getFullYear() + '-' + startDatetime.getMonth() + '-' + startDatetime.getDate();
-            //The emmitted key is in the form cct-lesson-observation-2018-4-3 i.e `formId-Year-Month-Date`
+            const key = doc.formId + '_' + startDatetime.getFullYear() + '_' + MONTHS[startDatetime.getMonth()];
+            //The emmitted value is in the form "formId" i.e `formId` and also "formId_2018_May" i.e `formId_Year_Month`
+            emit(doc.formId);
             emit(key);
           }
         }.toString()
       }
-    },
-    resultsByGroupFormId: {
-      map: function (doc) { if (doc.formId) emit(doc.formId); }.toString()
     }
   }
 
@@ -731,19 +732,7 @@ async function createDesignDocument(database) {
     }
   }
 }
-/**
- * Given the params `groupName`, `year`, `month`, `formId` generate a CSV based on the
- * groupName, the formId and for a specific year and month combination
- * @param {string} groupName 
- * @param {string} year 
- * @param {string} month 
- * @param {string} formId 
- */
-async function generateCSVByPeriodAndFormId(groupName, year, month, formId) {
-  await generateCSV.generateCSV('cct-lesson-observation', 'mygroup-result', function (csv) {
-    res.send(csv)
-  })
-}
+
 // Start the server.
 var server = app.listen(config.port, function () {
   var host = server.address().address;
