@@ -54,7 +54,7 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
   // proxy for couchdb
   var proxy = require('express-http-proxy');
   var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
-    forwardPath: function (req, res) {
+    proxyReqPathResolver: function (req, res) {
       var path = require('url').parse(req.url).path;
       console.log("path:" + path);
       return path;
@@ -663,10 +663,14 @@ listenToChangesFeedOnExistingGroups();
  */
 async function monitorDatabaseChangesFeed(name) {
   const GROUP_DB = new DB(name);
+  const RESULT_DB_NAME = `${name}-result`;
   try {
     GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
       .on('change', async (body) => {
-        if (!body.deleted) await tangyReporting.saveProcessedFormData(body['doc'], RESULT_DB_NAME);// Dont send deleted docs for processing
+        /** check if doc is FormResponse before sending to saveProcessedFormData.
+         * Dont send deleted docs for processing
+         */
+        if (!body.deleted && body.doc.collection === 'TangyFormResponse') await tangyReporting.saveProcessedFormData(body['doc'], RESULT_DB_NAME);
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
