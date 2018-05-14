@@ -41,6 +41,8 @@ app.post('/assessment/result/:id', resultController.processResult);
 app.post('/workflow/result/:id', tripController.processResult);
 
 // header routes
+app.post('/assessment/headers/all', assessmentController.generateAll);
+app.post('/workflow/headers/all', workflowController.generateAll);
 app.post('/assessment/headers/:id', assessmentController.generateHeader);
 app.post('/workflow/headers/:id', workflowController.generateHeader);
 
