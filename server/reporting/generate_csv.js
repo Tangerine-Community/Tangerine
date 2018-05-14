@@ -73,7 +73,7 @@ const generateCSV = async function (formId, resultDB, res) {
 
   // Add rows by key-value using the column keys
   resultData.forEach(function (row) {
-    excelSheet.addRow(row.doc.processedResults);
+    excelSheet.addRow(row.doc.processedResult);
   });
 
   res.statusCode = 200;
