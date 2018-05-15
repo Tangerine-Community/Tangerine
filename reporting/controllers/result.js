@@ -359,7 +359,7 @@ async function getLocationName(body, baseDb) {
   let locationList = await dbQuery.getLocationList(baseDb);
   let levels = locationList.locationsLevels;
   let locLabels = body.data.labels.map(label => label.toLowerCase());
-  let isLocationListSet = _.isEmpty(locationList.locations);
+  let isLocationListSet = !(_.isEmpty(locationList.locations));
 
   if (schoolId) {
     for (j = 0; j < levels.length; j++) {
@@ -373,9 +373,9 @@ async function getLocationName(body, baseDb) {
     locIds = body.data.location;
   }
 
-  //Note: this location details can cater for up to 4 levels and not more.
+  //Note: this location details processes up to 4 levels and not more.
   //@TODO: Update it to accommodate more than 4 levels.
-  if (!isLocationListSet) {
+  if (isLocationListSet) {
     for (i = 0; i < levels.length; i++) {
       locNames[levels[i]] = _.get(locationList.locations, locIds[i]);
 
