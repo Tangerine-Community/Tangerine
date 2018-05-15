@@ -67,17 +67,17 @@ exports.all = async (req, res) => {
 
 /**
  * Generates headers for ALL assessment collections in a database
- * and save them in a different database.
+ * and save them in a result database.
  *
  * Example:
  *
- *    POST /assessment/headers/_all
+ *    POST /assessment/headers/all
  *
  *  The request object must contain the main database url and a
  *  result database url where the generated header will be saved.
  *     {
  *       "db_url": "http://admin:password@test.tangerine.org/database_name"
- *       "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *       "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
  *     }
  *
  * Response:
@@ -126,7 +126,7 @@ exports.generateAll = async function(req, res) {
  *  result database url where the generated header will be saved.
  *     {
  *       "db_url": "http://admin:password@test.tangerine.org/database_name"
- *       "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *       "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
  *     }
  *
  * Response:
@@ -168,9 +168,9 @@ exports.generateHeader = (req, res) => {
 /**
  * This function processes the headers for an assessment.
  *
- * @param {string} docId - assessmentId.
+ * @param {string} doc - assessment document.
  * @param {number} count - count.
- * @param {string} baseDb - database url.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Object} processed headers for csv.
  */
@@ -280,7 +280,7 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
  *
  * @param {Object} doc - document to be processed.
  * @param {number} subtestCount - count.
- * @param {string} baseDb - base database.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Array} - generated location headers.
  */
@@ -385,7 +385,7 @@ function createId(doc, subtestCount) {
  *
  * @param {Object} id - document to be processed.
  * @param {number} subtestCount - count.
- * @param {string} baseDb - base database.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Array} - generated survey headers.
  */
