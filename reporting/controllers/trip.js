@@ -30,7 +30,7 @@ const dbQuery = require('./../utils/dbQuery');
  *  result database url where the generated headers will be saved.
  *     {
  *       "db_url": "http://admin:password@test.tangerine.org/database_name"
- *       "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *       "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
  *     }
  *
  * Response:

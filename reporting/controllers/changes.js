@@ -33,7 +33,7 @@ const validateResult = require('./result').validateResult;
  *  The request object must contain the database url and the result database url.
  *       {
  *         "db_url": "http://admin:password@test.tangerine.org/database_name"
- *         "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *         "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
  *       }
  *
  * Response:
@@ -64,6 +64,8 @@ exports.changes = function(req, res) {
     .on('error', (err) => console.error(err));
 }
 
+
+// Event queue for processing changed document
 var queue = [];
 var isProcessing = false;
 
@@ -87,11 +89,13 @@ let startQueue = async() => {
   }
 }
 
+// initiate event queue
 startQueue();
 
 
-/**
- * This function processes document changes in the database
+/** @description This function processess document changes
+ * in the database based on the collection type i.e. result,
+ * assessment, workflow, subtest, question and curriculum.
  *
  * @param {string} resp - assessmentId.
  * @param {string} baseDb - base database url.
