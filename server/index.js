@@ -18,6 +18,8 @@ const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
+const { Subject } = require('rxjs');
+const { mergeMap } = require('rxjs/operators');
 const tangyReporting = require('../server/reporting/data_processing');
 const generateCSV = require('../server/reporting/generate_csv');
 let DB = {}
@@ -656,6 +658,18 @@ function listenToChangesFeedOnExistingGroups() {
 }
 listenToChangesFeedOnExistingGroups();
 
+const ChangesFeedQueue = function () {
+  let queue = new Subject();
+  const results = queue
+    .pipe(mergeMap(async (data) => await tangyReporting.saveProcessedFormData(data.data, data.database), null, 1));
+
+  function addToQueue(data, database) {
+    queue.next({ data, database });
+  }
+  return { results, addToQueue }
+}
+const instance = new ChangesFeedQueue();
+instance.results.subscribe(res => console.log('got res: ' + res));
 /**
  * Listens to the changes feed of a database and passes new documents to `processChangedDocument()` for processing and saving
  * in the corresponding group results database.
@@ -670,7 +684,7 @@ async function monitorDatabaseChangesFeed(name) {
         /** check if doc is FormResponse before sending to saveProcessedFormData.
          * Dont send deleted docs for processing
          */
-        if (!body.deleted && body.doc.collection === 'TangyFormResponse') await tangyReporting.saveProcessedFormData(body['doc'], RESULT_DB_NAME);
+        if (!body.deleted && body.doc.collection === 'TangyFormResponse') instance.addToQueue(body['doc'], RESULT_DB_NAME);
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
