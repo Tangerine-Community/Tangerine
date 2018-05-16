@@ -1,20 +1,12 @@
-# Tangerine-Reporting
+# Tangerine Reporting Service
 
-This application processes data and generates CSV.
-
+This application processes data for generating CSV and dashboard reporting.
 
 ## Installation
 
-Before installing the app you must have [node](https://nodejs.org/en/download/) installed on your machine, then follow the steps below:
+This is automatically installed as part of the tangerine main application.
 
-* Run `git clone git@github.com:Tangerine-Community/Tangerine-Reporting.git`
-
-* cd `Tangerine-Reporting`
-
-* Run `npm install` to install application packages
-
-* Run `npm start` to start the app locally
-
+To check the stand alone application, check [here](https://github.com/Tangerine-Community/Tangerine-Reporting)
 
 ## License
 
