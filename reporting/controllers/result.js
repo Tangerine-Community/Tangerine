@@ -310,16 +310,22 @@ const generateResult = async function(collections, count = 0, baseDb) {
  */
 
 async function processLocationResult(body, subtestCount, groupTimeZone, baseDb) {
-  let count = subtestCount.locationCount;
   let i, j, locationResult = {};
-  let locSuffix = count > 0 ? `_${count}` : '';
+  let locSuffix = subtestCount.locationCount > 0 ? `_${subtestCount.locationCount}` : '';
   let subtestId = body.subtestId;
   let locLabels = body.data.labels;
   let locationData = body.data.location;
   let schoolId = body.data.schoolId;
   let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
 
-  if (schoolId || locLabels.length == 0 || locLabels[0] == '') {
+  // check if the geographical level is available
+  let allSubtestData = await dbQuery.getSubtests(doc.assessmentId, baseDb);
+  let locationSubtest = _.find(allSubtestData, ['_id', subtestId ])
+  let locLevels = locationSubtest.levels;
+  let isLocLevelSet = (locLevels && locLevels.length > 0) && (locLevels && locLevels[0] !== '');
+
+  // if the location levels is not available then check the location-list
+  if (!isLocLevelSet || schoolId) {
     let locationNames = await getLocationName(body, baseDb);
     let locKeys = Object.keys(locationNames);
     if (locKeys.length > 0) {
