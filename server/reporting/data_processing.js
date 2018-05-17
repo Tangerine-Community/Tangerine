@@ -150,13 +150,12 @@ const saveProcessedFormData = async function (formData, resultDB) {
   let docHeaders = generateHeaders(formData);
   docHeaders.push({ headers: 'Complete', key: `${formID}.complete` });
   docHeaders.push({ headers: 'Start Date Time', key: `${formID}.startDatetime` });
-  formHeaders.columnHeaders = docHeaders;
+  formHeaders.column_headers = docHeaders;
 
   // process form result
-  let processedResult = processFormResponse(formData);
-  formResult.processedResult = processedResult;
-  formResult.processedResult[`${formID}.startDatetime`] = formData.startDatetime;
-  formResult.processedResult[`${formID}.complete`] = formData.complete;
+  formResult.processed_results = processFormResponse(formData);
+  formResult.processed_results[`${formID}.startDatetime`] = formData.startDatetime;
+  formResult.processed_results[`${formID}.complete`] = formData.complete;
 
   try {
     await saveFormHeaders(formHeaders, RESULT_DB);
@@ -181,9 +180,9 @@ function saveFormHeaders(doc, db) {
   return new Promise((res, rej) => {
     db.get(doc._id).then(async origDoc => {
       let newDoc = { _id: doc._id, _rev: origDoc._rev };
-      let joinByHeader = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'header');
-      let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
-      newDoc.columnHeaders = _.union(joinByHeader, joinBykey);
+      let joinByHeader = _.unionBy(origDoc.column_headers, doc.column_headers, 'header');
+      let joinBykey = _.unionBy(origDoc.column_headers, doc.column_headers, 'key');
+      newDoc.column_headers = _.union(joinByHeader, joinBykey);
       await db.put(newDoc);
       res(true)
     })
