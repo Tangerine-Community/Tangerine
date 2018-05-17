@@ -632,13 +632,15 @@ if (replicationEntries.length > 0) {
 
 
 app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthenticated, (req, res) => {
-  const groupName = req.params.groupName;
   const year = req.params.year;
   const month = req.params.month;
   const formId = req.params.formId;
-  const groupResultName = groupName + '-result';
+  const groupResultName = req.params.groupName + '-result';
 
-  generateCSV(formId, groupResultName, res);
+  const queryKey = year && month ? `${formId}_${year}_${month}` : formId;
+  const csvOptions = { formId, queryKey, groupResultName };
+
+  generateCSV(csvOptions, res);
 });
 
 
