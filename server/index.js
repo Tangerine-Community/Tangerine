@@ -658,21 +658,16 @@ function listenToChangesFeedOnExistingGroups() {
 }
 listenToChangesFeedOnExistingGroups();
 
-const ChangesFeedQueue = function () {
-  let queue = new Subject();
-  const results = queue
-    .pipe(mergeMap(async (data) => await tangyReporting.saveProcessedFormData(data.data, data.database), null, 1));
-
-  function addToQueue(data, database) {
-    queue.next({ data, database });
-  }
-  return { results, addToQueue }
-}
-const instance = new ChangesFeedQueue();
-instance.results.subscribe(res => console.log('got res: ' + res));
+let queue = new Subject();
+//Concurrency of 1 on mergeMap ensures the data is processed one by one
+queue
+  .pipe(
+    mergeMap(async (data) => await tangyReporting.saveProcessedFormData(data.data, data.database), null, 1))
+  .subscribe(res => console.log('got res: ' + res));
+  
 /**
- * Listens to the changes feed of a database and passes new documents to `processChangedDocument()` for processing and saving
- * in the corresponding group results database.
+ * Listens to the changes feed of a database and passes new documents to the queue
+ * which sends the docs one by one in `processChangedDocument()` for processing and saving in the corresponding group results database.
  * @param {string} name the group's database for which to listen to the changes feed.
  */
 async function monitorDatabaseChangesFeed(name) {
@@ -681,10 +676,10 @@ async function monitorDatabaseChangesFeed(name) {
   try {
     GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
       .on('change', async (body) => {
-        /** check if doc is FormResponse before sending to saveProcessedFormData.
-         * Dont send deleted docs for processing
+        /** check if doc is FormResponse before adding to queue to be processesd by the saveProcessedFormData.
+         * Dont add deleted docs to the queue
          */
-        if (!body.deleted && body.doc.collection === 'TangyFormResponse') instance.addToQueue(body['doc'], RESULT_DB_NAME);
+        if (!body.deleted && body.doc.collection === 'TangyFormResponse') queue.next({ data: body['doc'], database: RESULT_DB_NAME });
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
