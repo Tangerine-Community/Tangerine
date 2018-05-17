@@ -69,11 +69,11 @@ const generateCSV = async function (csvOptions, res) {
   const FILENAME = columnData._id;
 
   // Add column headers and define column keys
-  excelSheet.columns = columnData.columnHeaders;
+  excelSheet.columns = columnData.column_headers;
 
   // Add rows by key-value using the column keys
   resultData.forEach(function (row) {
-    excelSheet.addRow(row.doc.processedResult);
+    excelSheet.addRow(row.doc.processed_results);
   });
 
   res.statusCode = 200;
