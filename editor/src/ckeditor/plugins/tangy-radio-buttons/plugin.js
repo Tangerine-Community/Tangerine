@@ -49,7 +49,7 @@ CKEDITOR.plugins.add( 'tangy-radio-buttons', {
 				})
 				// Don't force render if not connected to DOM yet on first create.
 				if (this.element.$.shadowRoot) {
-					this.element.$.renderOptions()
+					this.element.$.render()
 				}
 			}
 		} );
