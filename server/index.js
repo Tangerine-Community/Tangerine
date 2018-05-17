@@ -658,11 +658,12 @@ function listenToChangesFeedOnExistingGroups() {
 }
 listenToChangesFeedOnExistingGroups();
 
-let queue = new Subject();
+let changesFeedSubject = new Subject();
 // Using concatMap ensures the data is processed one by one
-queue
+changesFeedSubject
   .pipe(
-    concatMap(async (data) => await tangyReporting.saveProcessedFormData(data.data, data.database), null, 1))
+    concatMap( async data => await tangyReporting.saveProcessedFormData(data.data, data.database) )
+  )
   .subscribe(res => console.log('got res: ' + res));
 
 /**
@@ -679,7 +680,7 @@ async function monitorDatabaseChangesFeed(name) {
         /** check if doc is FormResponse before adding to queue to be processesd by the saveProcessedFormData.
          * Dont add deleted docs to the queue
          */
-        if (!body.deleted && body.doc.collection === 'TangyFormResponse') queue.next({ data: body['doc'], database: RESULT_DB_NAME });
+        if (!body.deleted && body.doc.collection === 'TangyFormResponse') changesFeedSubject.next({ data: body['doc'], database: RESULT_DB_NAME });
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
