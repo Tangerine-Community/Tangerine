@@ -1,11 +1,5 @@
 /* jshint esversion: 6 */
 
-import {FORM_OPEN, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, ITEM_OPEN, ITEM_CLOSE, ITEM_DISABLE, ITEM_ENABLE, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
-  ITEM_BACK, ITEM_CLOSED, ITEM_DISABLED, ITEM_ENABLED, ITEM_VALID, INPUT_ADD, INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE,
-  INPUT_INVALID,  INPUT_VALID, INPUT_HIDE, INPUT_SHOW, NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE,
-  TANGY_TIMED_TIME_SPENT, TANGY_TIMED_LAST_ATTEMPTED, TANGY_TIMED_INCREMENT, COMPLETE_FAB_HIDE, COMPLETE_FAB_SHOW,} from './tangy-form-actions.js'// import './tangy-form-actions.js'
-
-
 // Probably never used, tangy-form will set the form with a TangyFormResponseModel.
 const initialState = {
   _id: 'form-1',
@@ -23,15 +17,14 @@ const tangyFormReducer = function (state = initialState, action) {
   var tmp = {}
   switch(action.type) {
 
-    case FORM_OPEN:
-      // tmp.response = Object.assign({}, action.response)
+    case 'FORM_OPEN':
       newState = Object.assign({}, action.response) 
       if (!newState.form.complete && !newState.items.find(item => item.open)) newState.items[0].open = true
       if (newState.form.hideClosedItems === true) newState.items.forEach(item => item.hidden = !item.open)
       if (newState.form.linearMode === true) newState.items.forEach(item => item.hideButtons = true)
       return newState
 
-    case FORM_RESPONSE_COMPLETE:
+    case 'FORM_RESPONSE_COMPLETE':
       return Object.assign({}, state, {
         complete: true,
         form: Object.assign({}, state.form, {
@@ -102,7 +95,7 @@ const tangyFormReducer = function (state = initialState, action) {
           }
       })})     
 
-    case ITEM_OPEN:
+    case 'ITEM_OPEN':
       newState = Object.assign({}, state)
       // Find the current index of the item opening.
       newState.focusIndex = newState.items.findIndex(item => (item.id === action.itemId))
@@ -115,7 +108,7 @@ const tangyFormReducer = function (state = initialState, action) {
       break
 
 
-    case ITEM_CLOSE:
+    case 'ITEM_CLOSE':
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
       newState = Object.assign({}, state)
 
@@ -133,8 +126,8 @@ const tangyFormReducer = function (state = initialState, action) {
       Object.assign(newState, calculateTargets(newState))
       return newState
 
-    case ITEM_BACK:
-    case ITEM_NEXT:
+    case 'ITEM_BACK':
+    case 'ITEM_NEXT':
       tmp.itemIndex = state.items.findIndex(item => item.id === action.itemId)
       newState = Object.assign({}, state)
       // In case it next and previous hasn't been calculated yet.
@@ -153,10 +146,10 @@ const tangyFormReducer = function (state = initialState, action) {
           if (item.id == action.itemId) {
             props.open = false 
           }
-          if (action.type === ITEM_BACK && newState.previousItemId === item.id) {
+          if (action.type === 'ITEM_BACK' && newState.previousItemId === item.id) {
             props.open = true
           }
-          if (action.type === ITEM_NEXT && newState.nextItemId === item.id) {
+          if (action.type === 'ITEM_NEXT' && newState.nextItemId === item.id) {
             props.open = true
           }
           if (newState.form.hideClosedItems === true && !props.open) {
@@ -173,7 +166,7 @@ const tangyFormReducer = function (state = initialState, action) {
 
 
 
-    case ITEM_ENABLE:
+    case 'ITEM_ENABLE':
       newState = Object.assign({}, state, {
         items: state.items.map((item) => {
           if (item.id == action.itemId) {
@@ -195,7 +188,7 @@ const tangyFormReducer = function (state = initialState, action) {
       })
       return newState
 
-    case ITEM_DISABLE:
+    case 'ITEM_DISABLE':
       newState = Object.assign({}, state, {
         items: state.items.map((item) => {
           if (item.id == action.itemId) {
@@ -206,27 +199,12 @@ const tangyFormReducer = function (state = initialState, action) {
       })
       return calculateTargets(newState)
 
-    case COMPLETE_FAB_HIDE:
-      return Object.assign({}, state, { 
-        form: Object.assign(state.form, {
-          hideCompleteFab: true 
-        }) 
-      })
-
-    case COMPLETE_FAB_SHOW:
-      return Object.assign({}, state, { 
-        form: Object.assign(state.form, {
-          hideCompleteFab: false
-        }) 
-      })
-
     default: 
       return state
   }
   return state
-
-
 }
+
 function itemsIncompleteCheck(state, inputName) {
   let items = [...state.items]
   // Find out if item is complete if all required elements are not incomplete.
@@ -280,4 +258,4 @@ function calculateTargets(state) {
   return newState
 }
 
-export {tangyFormReducer, itemsIncompleteCheck, calculateTargets}
+export {tangyFormReducer}
