@@ -19,7 +19,7 @@ const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
 const { Subject } = require('rxjs');
-const { mergeMap } = require('rxjs/operators');
+const { concatMap } = require('rxjs/operators');
 const tangyReporting = require('../server/reporting/data_processing');
 const generateCSV = require('../server/reporting/generate_csv');
 let DB = {}
@@ -659,12 +659,12 @@ function listenToChangesFeedOnExistingGroups() {
 listenToChangesFeedOnExistingGroups();
 
 let queue = new Subject();
-//Concurrency of 1 on mergeMap ensures the data is processed one by one
+// Using concatMap ensures the data is processed one by one
 queue
   .pipe(
-    mergeMap(async (data) => await tangyReporting.saveProcessedFormData(data.data, data.database), null, 1))
+    concatMap(async (data) => await tangyReporting.saveProcessedFormData(data.data, data.database), null, 1))
   .subscribe(res => console.log('got res: ' + res));
-  
+
 /**
  * Listens to the changes feed of a database and passes new documents to the queue
  * which sends the docs one by one in `processChangedDocument()` for processing and saving in the corresponding group results database.
