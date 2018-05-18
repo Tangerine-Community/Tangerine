@@ -246,7 +246,7 @@ export class TangyForm extends PolymerElement {
     let initialResponse = new TangyFormResponseModel() 
     initialResponse.form = this.getProps()
     // Pass the items to the shadow root.
-    this.shadowRoot.innerHTML = this.innerHTML
+    this.$.items.innerHTML = this.innerHTML
     // Pass events of items to the reducer.
     this.shadowRoot.querySelectorAll('tangy-form-item').forEach((item) => {
       // Pass in the store so on-change and on-open logic can access it.
