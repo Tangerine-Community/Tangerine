@@ -131,16 +131,37 @@ paper-button {
       <paper-button id="close" on-click="onCloseButtonPress">${t('Save')}</paper-button>
     </template>
     <template is="dom-if" if="{{open}}">
-      <template is="dom-if" if="{{!hideBackButton}}">
-        <paper-button id="back" on-click="back" >
-          <iron-icon icon="arrow-back"></iron-icon>
-        <paper-button>
+
+      <template is="dom-if" if="{{rightToLeft}}">
+
+        <template is="dom-if" if="{{!hideNextButton}}">
+          <paper-button id="back" on-click="next" >
+            <iron-icon icon="arrow-back"></iron-icon>
+          <paper-button>
+        </template>
+        <template is="dom-if" if="{{!hideBackButton}}">
+          <paper-button id="next" on-click="back" >
+            <iron-icon icon="arrow-forward"></iron-icon>
+          <paper-button>
+        </template>
+
       </template>
-      <template is="dom-if" if="{{!hideNextButton}}">
-        <paper-button id="next" on-click="next" >
-          <iron-icon icon="arrow-forward"></iron-icon>
-        <paper-button>
+
+      <template is="dom-if" if="{{!rightToLeft}}">
+
+        <template is="dom-if" if="{{!hideBackButton}}">
+          <paper-button id="back" on-click="back" >
+            <iron-icon icon="arrow-back"></iron-icon>
+          <paper-button>
+        </template>
+        <template is="dom-if" if="{{!hideNextButton}}">
+          <paper-button id="next" on-click="next" >
+            <iron-icon icon="arrow-forward"></iron-icon>
+          <paper-button>
+        </template>
+
       </template>
+
     </template>
     <template is="dom-if" if="{{!incomplete}}">
       <iron-icon style="color: var(--primary-color); float: right; margin-top: 10px" icon="icons:check-circle"></iron-icon>
@@ -186,6 +207,11 @@ paper-button {
         reflectToAttribute: true
       },
       hideBackButton: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+      rightToLeft: {
         type: Boolean,
         value: false,
         reflectToAttribute: true
