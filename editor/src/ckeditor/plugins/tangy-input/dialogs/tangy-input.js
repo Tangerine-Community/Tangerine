@@ -15,6 +15,10 @@ CKEDITOR.dialog.add( 'tangy-input', function( editor ) {
 						items: [
 							[ 'text', 'text' ],
 							[ 'number', 'number' ],
+							[ 'email', 'email' ],
+							[ 'date', 'date' ],
+							[ 'time', 'time' ],
+							[ 'password', 'password' ],
 						],
 						setup: function( widget ) {
 							this.setValue( widget.data.type );
