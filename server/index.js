@@ -278,7 +278,7 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   // save the updated list back to the form.
   $('tangy-form-item').remove()
   $('tangy-form').append(sortedItemList)
-  let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
+  let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
   await fs.outputFile(formPath, form)
     .then(() => {
       let msg = "Success! Updated file at: " + formPath
@@ -389,7 +389,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // console.log('newItem: ' + newItem)
     $(newItem).appendTo('tangy-form')
     // console.log('html after: ' + $.html())
-    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
+    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
@@ -434,7 +434,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
       console.log('newItem: ' + newItem)
       $(newItem).appendTo('tangy-form')
     }
-    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>'))
+    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
     console.log('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
