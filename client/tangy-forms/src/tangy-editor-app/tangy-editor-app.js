@@ -720,7 +720,20 @@ class TangyEditorApp extends Element {
     if (isNewForm !== true) {
       if (isNewItem === true) {
         this.headerTitle = t('New Item')
-        html = '<p>&nbsp;</p>'
+        html = `
+          <form 
+            on-change="
+              // On change logic goes here.
+            "
+            on-open="
+              // On open logic goes here.
+            "
+          >
+
+            <!-- Place input elements here -->
+
+          </form>
+        `
       } else {
         this.headerTitle = t('Edit Item')
         // Load the form into the DOM.
