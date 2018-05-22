@@ -2,17 +2,9 @@
 
 import { Element as PolymerElement } from '../../node_modules/@polymer/polymer/polymer-element.js'
 // import '../../node_modules/redux/dist/redux.js'
-import {
-  FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
-  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT, completeFabHide, completeFabShow,
-  ITEM_BACK, ITEM_CLOSED, ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
-  INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
-  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
-  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement
-} from './tangy-form-actions.js'
 import './tangy-form-item.js'
-import * as tangyFormActions from './tangy-form-actions.js'
 import './tangy-common-styles.js'
+import { tangyFormReducer } from './tangy-form-reducer.js'
 //   <!-- Tangy Custom Inputs Elements -->
 
 import '../tangy-input/tangy-input.js'
@@ -32,6 +24,7 @@ import '../../node_modules/@polymer/paper-fab/paper-fab.js';
 import '../../node_modules/@polymer/paper-icon-button/paper-icon-button.js';
 import '../../node_modules/@polymer/paper-tabs/paper-tab.js';
 import '../../node_modules/@polymer/paper-tabs/paper-tabs.js';
+import { TangyFormResponseModel } from './tangy-form-response-model.js';
 
 
 /**
@@ -240,39 +233,43 @@ export class TangyForm extends PolymerElement {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback()
-    console.log("Testing updates 04-02-2018 connectedCallback in tangy-form.js")
+  ready() {
+    super.ready()
+
     // Set up the store.
-    this.store = window.tangyFormStore
+    this.store = Redux.createStore(
+      tangyFormReducer,
+      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    )
 
-    // Move to reducer.
-    this.querySelectorAll('tangy-form-item').forEach((item) => {
-      let innerItem = document.createElement('tangy-form-item')
-      innerItem.setProps(item.getProps())
-      if (this.linearMode) innerItem.noButtons = true
-      innerItem.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
-      innerItem.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
-      innerItem.addEventListener('ITEM_CLOSED', this.onItemClosed.bind(this))
-      innerItem.addEventListener('ITEM_OPENED', this.onItemOpened.bind(this))
-      innerItem.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
-      this.$.items.appendChild(innerItem)
+    // Set up and initial response, bind item events, and put initial response in the store.
+    let initialResponse = new TangyFormResponseModel() 
+    initialResponse.form = this.getProps()
+    // Pass the items to the shadow root.
+    this.$.items.innerHTML = this.innerHTML
+    // Pass events of items to the reducer.
+    this.shadowRoot.querySelectorAll('tangy-form-item').forEach((item) => {
+      // Pass in the store so on-change and on-open logic can access it.
+      item.store = this.store
+      if (this.linearMode) item.noButtons = true
+      item.addEventListener('ITEM_NEXT', this.onItemNext.bind(this))
+      item.addEventListener('ITEM_BACK', this.onItemBack.bind(this))
+      item.addEventListener('ITEM_CLOSED', this.onItemClosed.bind(this))
+      item.addEventListener('ITEM_OPENED', this.onItemOpened.bind(this))
+      item.addEventListener('FORM_RESPONSE_COMPLETE', this.onFormResponseComplete.bind(this))
+      initialResponse.items.push(item.getProps())
     })
-
 
     // Subscribe to the store to reflect changes.
     this.unsubscribe = this.store.subscribe(this.throttledReflect.bind(this))
 
-    // @TODO Still necessary?
-    // Listen for tangy inputs dispatching INPUT_VALUE_CHANGE.
-    this.addEventListener('INPUT_VALUE_CHANGE', (event) => {
-      this.store.dispatch({
-        type: INPUT_VALUE_CHANGE,
-        inputName: event.detail.inputName,
-        inputValue: event.detail.inputValue,
-        inputInvalid: event.detail.inputInvalid,
-        inputIncomplete: event.detail.inputIncomplete
-      })
+    // Populate new form response.
+    this.store.dispatch({ type: 'FORM_OPEN', response: initialResponse })
+
+    // Dispatch events out when state changes.
+    this.store.subscribe(state => {
+      this.response = state
+      this.dispatchEvent(new CustomEvent('TANGY_FORM_UPDATE'))
     })
 
     // Flag for first render.
@@ -354,7 +351,7 @@ export class TangyForm extends PolymerElement {
     this.setProps(state.form)
 
     // Tabs
-    if (state.form.complete) {
+    if (state.form && state.form.complete) {
       //this.shadowRoot.querySelector('paper-tabs').selected = (state.form.showSummary) ? '0' : '1'
     }
 
@@ -366,7 +363,7 @@ export class TangyForm extends PolymerElement {
     })
 
     // Find item to scroll to.
-    if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused && !state.form.complete)) {
+    if (state.focusIndex !== this.previousState.focusIndex || (this.linearMode && this.hasNotYetFocused && (state.form && !state.form.complete))) {
       this.hasNotYetFocused = false
       setTimeout(() => {
         if (items[state.focusIndex]) items[state.focusIndex].scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -399,7 +396,7 @@ export class TangyForm extends PolymerElement {
     // We have to do this because bundlers modify the names of things that are imported
     // but do not update the evaled code because it knows not of it.
     let getValue = (name) => {
-      let state = window.tangyFormStore.getState()
+      let state = this.store.getState()
       let inputs = []
       state.items.forEach(item => inputs = [...inputs, ...item.inputs])
       //return (inputs[name]) ? inputs[name].value : undefined
@@ -419,12 +416,18 @@ export class TangyForm extends PolymerElement {
       }
 
     }
-    let inputHide = tangyFormActions.inputHide
-    let inputShow = tangyFormActions.inputShow
-    let inputEnable = tangyFormActions.inputEnable
-    let inputDisable = tangyFormActions.inputDisable
-    let itemDisable = tangyFormActions.itemDisable
-    let itemEnable = tangyFormActions.itemEnable
+
+    // on-change hook.
+    const itemDisable = (itemId) => { 
+        let state = this.store.getState()
+        let item = state.items.find(item => itemId === item.id)
+        if (item && !item.disabled) this.store.dispatch({ type: 'ITEM_DISABLE', itemId: itemId })
+    }
+    const itemEnable = (itemId) => {
+        let state = this.store.getState()
+        let item = state.items.find(item => itemId === item.id)
+        if (item && item.disabled) this.store.dispatch({ type: 'ITEM_ENABLE', itemId: itemId })
+    }
     eval(this.getAttribute('on-change'))
   }
 
@@ -432,14 +435,14 @@ export class TangyForm extends PolymerElement {
     // Dispatch action.
     let state = this.store.getState()
     let item = state.items.find(item => item.open)
-    this.store.dispatch({ type: ITEM_BACK, itemId: item.id })
+    this.store.dispatch({ type: 'ITEM_BACK', itemId: item.id })
   }
 
   focusOnNextItem(event) {
     // Dispatch action.
     let state = this.store.getState()
     let item = state.items.find(item => item.open)
-    this.store.dispatch({ type: ITEM_NEXT, itemId: item.id })
+    this.store.dispatch({ type: 'ITEM_NEXT', itemId: item.id })
   }
 
   getValue(name) {

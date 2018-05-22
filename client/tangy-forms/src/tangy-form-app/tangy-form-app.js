@@ -4,19 +4,9 @@ import '../../node_modules/@polymer/paper-button/paper-button.js';
 import '../../node_modules/@polymer/paper-card/paper-card.js';
 import '../tangy-form/tangy-form.js';
 import '../tangy-form/tangy-common-styles.js'
-import { tangyFormReducer } from '../tangy-form/tangy-form-reducer.js'
-import { tangyReduxMiddlewareLogger, tangyReduxMiddlewareCrashReporter, tangyReduxMiddlewareTangyHook } from '../tangy-form/tangy-form-redux-middleware.js'
 import { TangyFormModel } from '../tangy-form/tangy-form-model.js'
 import { TangyFormResponseModel } from '../tangy-form/tangy-form-response-model.js'
 import { TangyFormService } from '../tangy-form/tangy-form-service.js'
-import {
-  FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
-  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
-  ITEM_BACK, ITEM_CLOSED, ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
-  INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
-  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
-  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement
-} from '../tangy-form/tangy-form-actions.js'
 
 /**
  * `tangy-form-app`
@@ -89,17 +79,6 @@ class TangyFormApp extends Element {
 
   static get is() { return 'tangy-form-app'; }
 
-  constructor() {
-    super()
-    // Create Redux Store.
-    window.tangyFormStore = Redux.createStore(
-      tangyFormReducer,
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-      Redux.applyMiddleware(tangyReduxMiddlewareTangyHook)
-    )
-    this.store = window.tangyFormStore
-  }
-
   async connectedCallback() {
     super.connectedCallback();
     // Prevent accidental back button by filling up the history.
@@ -144,9 +123,7 @@ class TangyFormApp extends Element {
       `
       document.body.appendChild(styleContainer)
     }
-    // Save store when it changes.
-    this.store.subscribe(this.throttledSaveResponse.bind(this))
-    // Load form or form list.
+      // Load form or form list.
     if (formSrc) {
       this.$['form-view'].hidden = false
       this.$['form-list'].hidden = true
@@ -184,23 +161,21 @@ class TangyFormApp extends Element {
     // Put a response in the store by issuing the FORM_OPEN action.
     if (responseId) {
       let response = await this.service.getResponse(responseId)
-      formOpen(response)
+      formEl.store.dispatch({ type: 'FORM_OPEN', response })
     } else {
-      // Create new form response from the props on tangy-form and children tangy-form-item elements.
-      let form = this.$['form-container'].querySelector('tangy-form').getProps()
-      let items = []
-      this.$['form-container']
-        .querySelectorAll('tangy-form-item')
-        .forEach((element) => items.push(element.getProps()))
-      let response = new TangyFormResponseModel({ form, items })
-      window.setHashParam('response_id', response._id)
-      formOpen(response)
+      let state = formEl.store.getState()
+      window.setHashParam('response_id', state._id)
     }
+    // Listen up, save in the db.
+    formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
+      let response = _.target.store.getState()
+      this.throttledSaveResponse(response)
+    })
   }
 
   // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
   // Everything else in between we can ignore.
-  async throttledSaveResponse() {
+  async throttledSaveResponse(response) {
     // If already loaded, return.
     if (this.throttledSaveLoaded) return
     // Throttle this fire by waiting until last fire is done.
@@ -211,12 +186,11 @@ class TangyFormApp extends Element {
     }
     // Fire it.
     this.throttledSaveFiring = true
-    await this.saveResponse()
+    await this.saveResponse(response)
     this.throttledSaveFiring = false
   }
 
-  async saveResponse() {
-    const state = this.store.getState()
+  async saveResponse(state) {
     let stateDoc = {}
     try {
       stateDoc = await this.service.getResponse(state._id)

@@ -5,28 +5,6 @@ import '../../node_modules/@polymer/paper-card/paper-card.js'
 import './tangy-common-styles.js'
 import { TangyFormItemHelpers } from './tangy-form-item-callback-helpers.js'
 
-// Import actions as a catchall so we can later declare variables of the same name as the properties for use
-// in form.on-change logic. This protects us against the bundler's renaming of imported variables and functions
-// so that Editor written code will still be able to reference actions by actual name.
-import * as tangyFormActions from './tangy-form-actions.js'
-
-// Import relevant actions.
-import {
-  ITEM_OPEN,
-  itemOpen,
-  ITEM_CLOSE,
-  itemClose,
-  ITEM_DISABLE,
-  itemDisable,
-  ITEM_ENABLE,
-  itemEnable,
-  ITEMS_INVALID,
-  ITEM_CLOSE_STUCK,
-  ITEM_NEXT,
-  INPUT_ADD
-} from './tangy-form-actions.js'
-
-
 /**
  * `tangy-form-item`
  * An element used to encapsulate form elements for multipage forms with a response in PouchDB.
@@ -277,7 +255,7 @@ paper-button {
     // Bail if no matching attribute given the hook called.
     if (!formEl.hasAttribute(hook)) return
     // Prepare some helper variables.
-    let state = window.tangyFormStore.getState()
+    let state = this.store.getState()
     // Inputs.
     let inputsArray = []
     state.items.forEach(item => inputsArray = [...inputsArray, ...item.inputs])
@@ -345,7 +323,7 @@ paper-button {
 
   onDisabledChange(newState, oldState) {
     if (newState === true && oldState === false) {
-      this.store.dispatch({ type: ITEM_DISABLED, itemId: this.id })
+      this.dispatch({ type: ITEM_DISABLED, itemId: this.id })
     }
   }
 
