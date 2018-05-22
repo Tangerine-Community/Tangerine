@@ -8,20 +8,9 @@ import '../../node_modules/@polymer/paper-item/paper-icon-item.js';
 import '../../node_modules/@polymer/paper-item/paper-item-body.js';
 import '../../node_modules/sortable-list/sortable-list.js';
 import '../tangy-form/tangy-form.js';
-// import '../tangy-textarea/tangy-textarea.js';
 import '../tangy-acasi/tangy-acasi.js';
 import '../tangy-form/tangy-common-styles.js'
-import { tangyFormReducer } from "../tangy-form/tangy-form-reducer.js";
-import { tangyReduxMiddlewareTangyHook } from "../tangy-form/tangy-form-redux-middleware.js";
 import { TangyFormResponseModel } from "../tangy-form/tangy-form-response-model.js";
-import {
-  FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
-  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
-  ITEM_BACK, ITEM_CLOSED, ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
-  INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
-  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
-  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement
-} from '../tangy-form/tangy-form-actions.js'
 
 /**
  * `tangy-form-app`
@@ -374,13 +363,6 @@ class TangyEditorApp extends Element {
 
   constructor() {
     super()
-    // Create Redux Store.
-    window.tangyFormStore = Redux.createStore(
-      tangyFormReducer,
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-      Redux.applyMiddleware(tangyReduxMiddlewareTangyHook)
-    )
-    this.store = window.tangyFormStore
   }
 
   connectedCallback() {
@@ -634,21 +616,6 @@ class TangyEditorApp extends Element {
         parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
       }
     })
-    // Put a response in the store by issuing the FORM_OPEN action.
-    if (responseId) {
-      let response = await this.service.getResponse(responseId)
-      formOpen(response)
-    } else {
-      // Create new form response from the props on tangy-form and children tangy-form-item elements.
-      let form = this.$['form-container'].querySelector('tangy-form').getProps()
-      let items = []
-      this.$['form-container']
-        .querySelectorAll('tangy-form-item')
-        .forEach((element) => items.push(element.getProps()))
-      let response = new TangyFormResponseModel({ form, items })
-      window.setHashParam('response_id', response._id)
-      formOpen(response)
-    }
   }
   async showFormEditor(formSrc, isNew) {
     this.$['form-view'].hidden = true

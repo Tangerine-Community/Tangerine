@@ -6,7 +6,7 @@ import '../../node_modules/@polymer/iron-icons/editor-icons.js';
 import '../../node_modules/@polymer/iron-icon/iron-icon.js';
 import '../tangy-toggle-button/tangy-toggle-button.js';
 import '../tangy-form/tangy-common-styles.js'
-import { tangyTimedModeChange, tangyTimedIncrement, tangyTimedLastAttempted, tangyTimedTimeSpent } from '../tangy-form/tangy-form-actions.js'
+
 /**
  * `tangy-timed`
  * 
