@@ -23,6 +23,7 @@
     "express": "^4.16.2",
     "express-http-proxy": "^1.1.0",
     "express-session": "1.15.6",
+    "session-pouchdb-store": "0.2.1",
     "flat": "^4.0.0",
     "fs-extra": "^4.0.3",
     "json2csv": "^3.11.5",
