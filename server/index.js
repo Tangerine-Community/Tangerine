@@ -6,6 +6,7 @@ const http = require('axios');
 const read = require('read-yaml')
 const express = require('express')
 var session = require("express-session")
+const PouchSession = require("session-pouchdb-store")
 const bodyParser = require('body-parser');
 const path = require('path')
 const app = express()
@@ -127,7 +128,7 @@ passport.deserializeUser(function (id, done) {
 app.use(session({
   secret: "cats",
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: new PouchSession(new DB('sessions')) 
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '1gb' }))
