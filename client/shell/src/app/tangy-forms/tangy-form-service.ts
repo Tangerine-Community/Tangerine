@@ -2,6 +2,9 @@ import PouchDB from 'pouchdb';
 
 export class TangyFormService {
 
+  db:any;
+  databaseName: String;
+
   constructor(props) {
     this.databaseName = 'tangy-forms'
     Object.assign(this, props)
