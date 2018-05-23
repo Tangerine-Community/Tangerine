@@ -1,5 +1,10 @@
 import PouchDB from 'pouchdb';
 
+// A dummy function so TS does not complain about our use of emit in our pouchdb queries.
+const emit = (key, value) => {
+  return true;
+}
+
 export class TangyFormService {
 
   db:any;
