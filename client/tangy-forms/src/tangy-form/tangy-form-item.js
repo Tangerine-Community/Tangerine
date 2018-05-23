@@ -280,6 +280,7 @@ paper-button {
     let inputDisable = (name) => helpers.inputDisable(name)
     let inputEnable = (name) => helpers.inputEnable(name)
     let itemsPerMinute = (input) => helpers.itemsPerMinute(input)
+    let tangyFormStore = this.store
     eval(formEl.getAttribute(hook))
   }
 

@@ -19,7 +19,7 @@ export class TangyFormItemHelpers {
     })
     // Look in the store.
     if (!foundInput) {
-      let state = window.tangyFormStore.getState()
+      let state = this.element.store.getState()
       let inputs = []
       state.items.forEach(item => inputs = [...inputs, ...item.inputs])
       foundInput = inputs.find(input => {
