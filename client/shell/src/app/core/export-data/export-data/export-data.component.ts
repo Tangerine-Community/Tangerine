@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../auth/_services/user.service';
 import { SyncingService } from '../../sync-records/_services/syncing.service';
+import { _TRANSLATE } from '../../../shared/translation-marker';
+declare const cordova: any;
 @Component({
   selector: 'app-export-data',
   templateUrl: './export-data.component.html',
@@ -21,14 +23,37 @@ export class ExportDataComponent implements OnInit {
         docs
       };
     }));
-    downloadData(JSON.stringify(data), 'download.json', 'application/json')
+    const file = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    const currentUser = await localStorage.getItem('currentUser');
+    const now = new Date();
+    const fileName =
+      `${currentUser}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
+    if (window.isCordovaApp) {
+      document.addEventListener('deviceready', () => {
+        window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (directoryEntry) => {
+          directoryEntry.getFile(fileName, { create: true }, (fileEntry) => {
+            fileEntry.createWriter((fileWriter) => {
+              fileWriter.onwriteend = (data) => {
+                alert(`${_TRANSLATE('File Stored At')} ${cordova.file.externalDataDirectory}${fileName}`);
+              };
+              fileWriter.onerror = (e) => {
+                alert(`${_TRANSLATE('Write Failed')}` + e.toString());
+              };
+              fileWriter.write(file);
+            });
+          });
+        });
+      }, false);
+    } else {
+      downloadData(file, fileName, 'application/json');
+    }
+
   }
 }
 
 function downloadData(content, fileName, type) {
-  const a = document.createElement("a");
-  const file = new Blob([content], { type });
-  a.href = URL.createObjectURL(file);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(content);
   a.download = fileName;
   a.click();
 }

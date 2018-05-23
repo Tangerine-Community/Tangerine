@@ -9,23 +9,28 @@ import { WindowRef } from './core/window-ref.service';
 import { updates } from './core/update/update/updates';
 import { TangyFormService } from './tangy-forms/tangy-form-service.js';
 import PouchDB from 'pouchdb';
+import { TranslateService } from '@ngx-translate/core';
+import { _TRANSLATE } from './shared/translation-marker';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'Tangerine Client v3.x.x';
   showNav;
   showUpdateAppLink;
+  updateIsRunning = false;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
     private windowRef: WindowRef, private userService: UserService,
     private authenticationService: AuthenticationService,
     private http: Http,
-    private router: Router) {
+    private router: Router,
+    translate: TranslateService
+  ) {
     windowRef.nativeWindow.PouchDB = PouchDB;
-
+    translate.setDefaultLang('translation');
+    translate.use('translation');
   }
 
   async ngOnInit() {
@@ -33,6 +38,24 @@ export class AppComponent implements OnInit {
     const window = this.windowRef.nativeWindow;
     const res = await this.http.get('../content/location-list.json').toPromise();
     window.locationList = res.json();
+    try {
+      let appConfigResponse = await fetch('../content/app-config.json')
+      window.appConfig = await appConfigResponse.json()
+    } catch(e) {
+      console.log('No app config found.')
+    }
+    if (window.appConfig.direction === 'rtl') {
+      let styleContainer = window.document.createElement('div')
+      styleContainer.innerHTML = `
+        <style>
+          * {
+              text-align: right;
+              direction: rtl;
+          }
+      </style>
+      `
+      window.document.body.appendChild(styleContainer)
+    }
 
     this.showNav = this.authenticationService.isLoggedIn();
     this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
@@ -77,7 +100,6 @@ export class AppComponent implements OnInit {
   logout() {
     this.authenticationService.logout();
     this.router.navigate(['login']);
-    location.reload(); // @TODO find a way to load the page contents without reloading
   }
   async isAppUpdateAvailable() {
     try {
@@ -89,9 +111,42 @@ export class AppComponent implements OnInit {
     }
   }
   updateApp() {
-    const currentPath = window.location.pathname;
-    const storedReleaseUuid = localStorage.getItem('release-uuid');
-    window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
+    if (window.isCordovaApp) {
+      console.log('Running from APK');
+      const installationCallback = (error) => {
+        if (error) {
+          console.log('Failed to install the update with error code:' + error.code);
+          console.log(error.description);
+          this.updateIsRunning = false;
+        } else {
+          console.log('Update Instaled');
+          this.updateIsRunning = false;
+        }
+      };
+      const updateCallback = (error, data) => {
+        console.log('data: ' + JSON.stringify(data));
+        if (error) {
+          console.log('error: ' + JSON.stringify(error));
+          alert('No Update: ' + JSON.stringify(error.description));
+        } else {
+          console.log('Update is Loaded');
+          if (window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `Cancel`. If you are ready to install the update, click `Yes`'))) {
+            this.updateIsRunning = true;
+            console.log('Installing Update');
+            window.chcp.installUpdate(installationCallback);
+          } else {
+            console.log('Cancelled install; did not install update.');
+            this.updateIsRunning = false;
+          }
+        }
+      };
+      window.chcp.fetchUpdate(updateCallback);
+    } else {
+      const currentPath = window.location.pathname;
+      const storedReleaseUuid = localStorage.getItem('release-uuid');
+      window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
+    }
+
   }
 
   getGeolocationPosition() {

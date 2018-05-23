@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CaseManagementService } from '../../case-management/_services/case-management.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { WindowRef } from '../../core/window-ref.service';
+import { _TRANSLATE } from '../../shared/translation-marker';
 
 @Component({
   selector: 'app-tangy-forms-player',
@@ -40,10 +41,10 @@ export class TangyFormsPlayerComponent implements OnInit {
         }
         this.windowRef.nativeWindow.location = formUrl;
       } else {
-        console.error('Item not Found');
+        console.error('Item Not Found');
       }
     } catch (error) {
-      console.error('Could not load list of Forms');
+      console.error('Could Not Load List Of Forms');
     }
   }
 

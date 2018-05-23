@@ -37,26 +37,26 @@ class TangyGps extends Element {
     <b>Current Position</b>
     <div>
       <template is="dom-if" if="{{_isAdvancedMode(currentLatitude, advancedMode)}}">
-        Latitude: [[currentLatitude]] <br>
-        Longitude: [[currentLongitude]] <br>
+        ${t('Latitude')} [[currentLatitude]] <br>
+        ${t('Longitude')} [[currentLongitude]] <br>
       </template>
     <div>
     <template is="dom-if" if="[[currentLatitude]]">
-      Accuracy: [[currentAccuracy]] meters<br>
-      Accuracy Level : [[accuracyLevel]]
+      ${t('Accuracy')} [[currentAccuracy]] ${t('Meters')}<br>
+      ${t('Accuracy Level:')} [[accuracyLevel]]
     </template> 
     </div>
     <div>
     <template is="dom-if" if="[[!currentLatitude]]">
-        Searching...
+        ${t('Searching...')}
     </template> 
     </div>
     </div>
     <div>
-      <h3>Tips</h3>
-      <p>Try standing next to a window</p>
-      <p>Try moving outside with a clear view of the sky</p>
-      <p>Try standing away from trees or buildings</p>
+      <h3>${t('Tips')}</h3>
+      <p>${t('Try standing next to a window')}</p>
+      <p>${t('Try moving outside with a clear view of the sky')}</p>
+      <p>${t('Try standing away from trees or buildings')}</p>
     </div>
     <br>
     
@@ -78,18 +78,23 @@ class TangyGps extends Element {
         value: {
           latitude: undefined,
           longitude: undefined,
-          accuracy: undefined 
+          accuracy: undefined
         },
         observer: 'reflect',
         reflectToAttribute: true
       },
       required: {
         type: Boolean,
-        value: false, 
+        value: false,
         observer: 'reflect',
         reflectToAttribute: true
       },
       advancedMode: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+      disabled: {
         type: Boolean,
         value: false,
         reflectToAttribute: true
@@ -124,7 +129,7 @@ class TangyGps extends Element {
       this.currentLatitude = queue.latitude;
       this.currentLongitude = queue.longitude;
       this.currentAccuracy = queue.accuracy;
-      this.saveCurrentPosition();
+      if (!this.disabled) this.saveCurrentPosition();
     }
     navigator.geolocation.getCurrentPosition((position) => {
       // Bail if this element has been marked inactive on disconnected callback.
@@ -146,13 +151,13 @@ class TangyGps extends Element {
           timestamp: position.timestamp
         };
         localStorage.setItem('gpsQueue', JSON.stringify(x));
-        this.saveCurrentPosition();
+        if (!this.disabled) this.saveCurrentPosition();
 
       } else {
         this.currentLatitude = queue.latitude;
         this.currentLongitude = queue.longitude;
         this.currentAccuracy = queue.accuracy;
-        this.saveCurrentPosition();
+        if (!this.disabled) this.saveCurrentPosition();
       }
       this.getGeolocationPosition()
 

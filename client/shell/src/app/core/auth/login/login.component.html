@@ -1,17 +1,18 @@
 <div class="login-app-content">
   <div class="group">
     <form role="form" #login='ngForm' novalidate>
+      <h3 class="mat-title">{{'LOGIN'|translate}}</h3>
       <br>
-      <h3 class="mat-title">Log in to Tangerine</h3>
-      <select style="width: 92%" *ngIf="listUsernamesOnLoginScreen" name="usernames" id="usernames" (change)="onSelectUsername($event)">
-        <option value="_">Select your Username</option>
+      <br>
+      <select *ngIf="listUsernamesOnLoginScreen" name="usernames" id="usernames" (change)="onSelectUsername($event)">
+        <option value="_">{{'Select your Username'|translate}}</option>
         <option *ngFor="let username of allUsernames" [value]="username">{{username}}</option>
       </select>
       <mat-form-field *ngIf="!listUsernamesOnLoginScreen">
         <input matInput type="text" required [(ngModel)]="user.username" id="username" name="username">
         <mat-placeholder>
           <i class="material-icons app-input-icon">face</i>
-          <span>Username</span>
+          <span>{{'Username'|translate}}</span>
         </mat-placeholder>
       </mat-form-field>
       <br>
@@ -20,7 +21,7 @@
         <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>
-          <span>Password</span>
+          <span>{{'Password'|translate}}</span>
         </mat-placeholder>
       </mat-form-field>
       <div *ngIf="showRecoveryInput">
@@ -36,28 +37,33 @@
         <mat-form-field>
           <input name="newPassword" matInput [(ngModel)]="user.newPassword" type="password" required>
           <mat-placeholder>
-            <i class="material-icons mat-11 app-input-icon">lock_open</i>New Password
+            <i class="material-icons mat-11 app-input-icon">lock_open</i>{{'New Password'|translate}}
           </mat-placeholder>
         </mat-form-field>
         <mat-form-field>
           <input name="confirmNewPassword" matInput [(ngModel)]="user.confirmNewPassword" type="password" required>
           <mat-placeholder>
-            <i class="material-icons mat-11 app-input-icon">lock_open</i>Confirm New Password
+            <i class="material-icons mat-11 app-input-icon">lock_open</i>{{'Confirm New Password'|translate}}
           </mat-placeholder>
         </mat-form-field>
       </div>
+      <br>
+      <br>
       <span>
         <small>
-          <a href="#" *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()">Click Here to Reset Password</a>
-          <a href="#" *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()">Click Here to go to Login</a>
+          <a href="#" *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()">{{'RESET PASSWORD'|translate}}</a>
+          <a href="#" *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()">{{'LOGIN'|translate}}</a>
         </small>
       </span>
-      <p></p>
+      <br>
+      <br>
+      <br>
+      <br>
 
-      <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">LOGIN</button>
+      <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
       <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
-        color="accent" name="action">Recover Account</button>
-      <a href="index.html#/register">REGISTER</a>
+        color="accent" name="action">{{'RECOVER ACCOUNT'|translate}}</button>
+      <a class="register-link" href="#/register">{{'REGISTER'|translate}}</a>
       <br>
       <br>
       <span id="err">

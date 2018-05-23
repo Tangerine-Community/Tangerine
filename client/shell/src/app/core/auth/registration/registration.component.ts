@@ -8,6 +8,7 @@ import { Observable } from 'rxjs/Observable';
 import { AuthenticationService } from '../_services/authentication.service';
 import { UserService } from '../_services/user.service';
 import { User } from './../_services/user.model.interface';
+import { _TRANSLATE } from '../../../shared/translation-marker';
 
 
 @Component({
@@ -27,10 +28,10 @@ export class RegistrationComponent implements OnInit {
     isUsernameTaken: boolean;
     returnUrl: string;
     statusMessage: object;
-    userNameUnavailableMessage = { type: 'error', message: 'Username Unavailable.' };
-    userNameAvailableMessage = { type: 'success', message: 'Username Available.' };
-    loginUnsucessfulMessage = { type: 'error', message: 'Login Unsuccessful' };
-    couldNotCreateUserMessage = { type: 'error', message: 'Could Not Create User' };
+    userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('Username Unavailable') };
+    userNameAvailableMessage = { type: 'success', message: _TRANSLATE('Username Available') };
+    loginUnsucessfulMessage = { type: 'error', message: _TRANSLATE('Login Unsuccesful') };
+    couldNotCreateUserMessage = { type: 'error', message: _TRANSLATE('Could Not Create User') };
     securityQuestionText: string;
     constructor(
         private userService: UserService,
@@ -41,7 +42,6 @@ export class RegistrationComponent implements OnInit {
     ) {
         this.statusMessage = { type: '', message: '' };
     }
-
     async ngOnInit() {
         const appConfig = await this.appConfigService.getAppConfig();
         const homeUrl = appConfig.homeUrl;

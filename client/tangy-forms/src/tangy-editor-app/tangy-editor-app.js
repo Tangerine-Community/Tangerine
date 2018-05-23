@@ -1,4 +1,5 @@
 import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import './tangy-editor-file-list.js'
 import '../tangy-form/cat.js'
 import '../../node_modules/@polymer/paper-button/paper-button.js';
 import '../../node_modules/@polymer/paper-card/paper-card.js';
@@ -7,18 +8,9 @@ import '../../node_modules/@polymer/paper-item/paper-icon-item.js';
 import '../../node_modules/@polymer/paper-item/paper-item-body.js';
 import '../../node_modules/sortable-list/sortable-list.js';
 import '../tangy-form/tangy-form.js';
-// import '../tangy-textarea/tangy-textarea.js';
 import '../tangy-acasi/tangy-acasi.js';
 import '../tangy-form/tangy-common-styles.js'
-import {tangyFormReducer} from "../tangy-form/tangy-form-reducer.js";
-import {tangyReduxMiddlewareTangyHook} from "../tangy-form/tangy-form-redux-middleware.js";
-import {TangyFormResponseModel} from "../tangy-form/tangy-form-response-model.js";
-import {FORM_OPEN, formOpen, FORM_RESPONSE_COMPLETE, FOCUS_ON_ITEM, focusOnItem, ITEM_OPEN, itemOpen, ITEM_CLOSE, itemClose,
-  ITEM_DISABLE, itemDisable, ITEM_ENABLE, itemEnable, ITEMS_INVALID, ITEM_CLOSE_STUCK, ITEM_NEXT,
-  ITEM_BACK,ITEM_CLOSED,ITEM_DISABLED, inputDisable, ITEM_ENABLED, inputEnable, ITEM_VALID, inputInvalid, INPUT_ADD,
-  INPUT_VALUE_CHANGE, INPUT_DISABLE, INPUT_ENABLE, INPUT_INVALID, INPUT_VALID, INPUT_HIDE, inputHide, INPUT_SHOW, inputShow,
-  NAVIGATE_TO_NEXT_ITEM, NAVIGATE_TO_PREVIOUS_ITEM, TANGY_TIMED_MODE_CHANGE, tangyTimedModeChange, TANGY_TIMED_TIME_SPENT,
-  tangyTimedTimeSpent, TANGY_TIMED_LAST_ATTEMPTED, tangyTimedLastAttempted, TANGY_TIMED_INCREMENT, tangyTimedIncrement} from '../tangy-form/tangy-form-actions.js'
+import { TangyFormResponseModel } from "../tangy-form/tangy-form-response-model.js";
 
 /**
  * `tangy-form-app`
@@ -38,6 +30,11 @@ class TangyEditorApp extends Element {
         display: block;
         color: var(--primary-text-color);
         font-size: medium;
+      }
+      h2 {
+        padding: 15px 0px 0px 20px;
+        margin: 0px;
+        color: #444;
       }
       .form-link {
         padding: 15px;
@@ -66,21 +63,21 @@ class TangyEditorApp extends Element {
         border-top: 1px solid #e8e8e8;
         border-bottom: 1px solid #e8e8e8;
         padding: 5px 16px;
-        position: relative; 
-        background-color: #e8e8e8;        
+        position: relative;
+        background-color: #e8e8e8;
       }
      .item-edit {
         border-top: 1px solid #e8e8e8;
         border-bottom: 1px solid #e8e8e8;
         padding: 5px 16px;
-        position: relative; 
+        position: relative;
       }
      #save-order {
         border-top: 1px solid #e8e8e8;
         border-bottom: 1px solid #e8e8e8;
         padding: 2px 2px;
-        position: relative; 
-        text-align: center;  
+        position: relative;
+        text-align: center;
         background-color: pink;
       }
       paper-icon-button.small {
@@ -111,10 +108,14 @@ class TangyEditorApp extends Element {
       paper-button.green[active] {
         background-color: var(--paper-red-500);
       }
+      juicy-ace-editor {
+        height: 100vh;
+      }
     </style>
     <div class="tangy-form-app--container">
 
       <div id="form-list">
+        <h2> Forms </h2>
         <template is="dom-repeat" items="{{forms}}">
             <paper-card class="form-link" alt="[[item.title]]" heading="[[item.title]]">
                 <div class="card-actions">
@@ -128,7 +129,7 @@ class TangyEditorApp extends Element {
                         <iron-icon icon="icons:settings"/>
                     </paper-button>
                   </a>
-                  <a href="../../../csv/[[groupId]]/[[item.id]]">Download CSV</a>
+                  <a href="../../../csv/byPeriodAndFormId/[[groupId]]/[[item.id]]">${t('Download CSV')}</a>
                 </div>
             </paper-card>
         </template>
@@ -143,6 +144,8 @@ class TangyEditorApp extends Element {
                 </div>
             </paper-card>
         </template>
+        <h2> Configuration </h2>
+        <tangy-editor-file-list group-id="{{groupId}}"></tangy-editor-file-list>
       </div>
 
       <!--<div id="form-view" hidden="">-->
@@ -152,26 +155,35 @@ class TangyEditorApp extends Element {
         <!--</div>-->
         <!--<slot></slot>-->
       <!--</div>-->
-      
+
       <div id="form-view" hidden="">
         <paper-icon-button mini id="new-response-button" on-click="onClickNewResponseButton" icon="icons:add"></paper-icon-button>
         <div id="form-container"></div>
       </div>
-      
+
       <div id="form-editor">
-        <div id="form-item-listing" hidden style="max-width: 200px; float:left">
-              <!--<paper-icon-button icon="menu" onclick="drawer.toggle()"></paper-icon-button>-->
-          <paper-card class="form-editor-link" alt="[[headerTitle]]" heading="[[headerTitle]]">
+
+        <!-- FORM ITEM LISTING -->
+        <div id="form-item-listing" hidden style="float:left">
+          <paper-card class="form-editor-link" style="width: 250px" alt="[[headerTitle]]" heading="[[headerTitle]]">
             <div class="card-actions">
               <div class="horizontal justified">
               <a href="../tangy-forms/editor.html" on-click="formSelected"><paper-icon-button icon="home" on-click="showFormsList"></paper-icon-button></a>
               <paper-icon-button
                   icon="add-circle-outline"
                   data-form-src="[[formHtmlPath]]"
-                  data-item-title="New Item"
+                  data-item-title="${t('New Item')}"
                   data-item-src='form-metadata.html'
                   data-item-order=null
                   on-click="createFormItemListener">
+              </paper-icon-button>
+              <paper-icon-button
+                  icon="assignment"
+                  data-form-src="[[formHtmlPath]]"
+                  data-item-title="Edit form.html"
+                  data-item-src='form-metadata.html'
+                  data-item-order=null
+                  on-click="editFormListener">
               </paper-icon-button>
               </div>
             </div>
@@ -189,7 +201,7 @@ class TangyEditorApp extends Element {
               <sortable-list on-sort-finish="onSortFinish" sortable=".sortable">
               <template is="dom-repeat" items="{{items}}">
                   <paper-item-body
-                      one-line
+                      style="border: solid #CCC; border-width: 0px 0px 0px 5px; margin: 5px 0px 0px 0px; width: 215px; padding: 0px 0px 0px 5px;"
                       class="sortable"
                       on-click="editFormItemListener"
                       data-item-id="[[item.id]]"
@@ -206,33 +218,38 @@ class TangyEditorApp extends Element {
           </div>
           </paper-card>
         </div>
+
+        <!-- FORM HTML EDIT -->
+        <div id="edit-region">
+        </div>
+
+        <!-- ITEM EDIT -->
         <div id="item-edit" hidden>
-        <!--<paper-card  style="width: 600px;margin-left: auto; margin-right: auto;">-->
-        <div style="width: 600px;margin-left: auto; margin-right: auto;">
-          <div class="item-edit">
-            <div class="horizontal justified" style="text-align: right">
-              <paper-button
-                      data-item-src="[[itemFilename]]"
-                      data-item-id="[[itemId]]"
-                      on-tap="saveItem">
-                <iron-icon icon="icons:save"/>
-              </paper-button>
+          <div style="width: 500px;margin-left: auto; margin-right: auto;">
+            <div class="item-edit">
+              <div class="horizontal justified" style="text-align: right">
+                <paper-button
+                        data-item-src="[[itemFilename]]"
+                        data-item-id="[[itemId]]"
+                        on-tap="saveItem">
+                  <iron-icon icon="icons:save"/>
+                </paper-button>
+              </div>
             </div>
-          </div>        
-          <div class="card-content">
-            <!--<div style="width: 600px;margin-left: auto; margin-right: auto;">-->
+            <div class="card-content">
               <form id="itemEditor">
                 <paper-input id="itemTitle" value="{{itemTitle}}" label="title" always-float-label></paper-input>
-                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching or your changes will be deleted.
+                <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button>${t('Save before switching or your changes will be deleted.')}
                 <p>&nbsp;</p>
                 <!--<tangy-textarea value="{{itemHtmlText}}"></tangy-textarea>-->
                 <!--<div id="editorCK"></div>-->
               </form>
             </div>
           </div>
-          <!--</paper-card>-->
         </div>
-      <div id="item-create" hidden>
+
+        <!-- ITEM CREATE -->
+        <div id="item-create" hidden>
           <div style="width: 600px;margin-left: auto; margin-right: auto;">
             <form id="itemEditor">
               <div class="item-edit">
@@ -245,15 +262,16 @@ class TangyEditorApp extends Element {
                     <iron-icon icon="icons:save"/>
                   </paper-button>
                 </div>
-              </div>          
-              <paper-input id="formTitle" value="{{formTitle}}" label="form title"  always-float-label></paper-input>
-              <paper-input id="formName" value="{{formName}}" label="form name (for url)"  always-float-label></paper-input>
-              <paper-input id="itemTitle" value="{{itemTitle}}" label="item title"  always-float-label></paper-input>
-              <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">Switch editor</paper-button> Save before switching or your changes will be deleted.
+              </div>
+              <paper-input id="formTitle" value="{{formTitle}}" label="${t('Form Title')}"  always-float-label></paper-input>
+              <paper-input id="formName" value="{{formName}}" label="${t('Form Name')} (for url)"  always-float-label></paper-input>
+              <paper-input id="itemTitle" value="{{itemTitle}}" label="${t('Item Title')}"  always-float-label></paper-input>
+              <paper-button id="switchEditorButton" raised class="indigo" on-click="switchEditor">${t('Switch Editor')}</paper-button> ${t('Save before switching or your changes will be deleted.')}
               <p>&nbsp;</p>
             </form>
           </div>
-      </div>
+        </div>
+
       </div>
 
     </div>
@@ -345,13 +363,6 @@ class TangyEditorApp extends Element {
 
   constructor() {
     super()
-    // Create Redux Store.
-    window.tangyFormStore = Redux.createStore(
-      tangyFormReducer,
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-      Redux.applyMiddleware(tangyReduxMiddlewareTangyHook)
-    )
-    this.store = window.tangyFormStore
   }
 
   connectedCallback() {
@@ -359,15 +370,18 @@ class TangyEditorApp extends Element {
     if (typeof Tangy === 'undefined') {
       // Tangy is a global to store editor settings
       window.Tangy = {
-        defaultEditorUI:'ace', // default editor instance - ace, ckeditor4
-        currentEditorUI:'',  // current editor in-use - this is changed by the swithc button between the Ace plaintext editor and ckeditor.
-        ace:null, // stores the current Ace editor instance, used for copying data.
+        defaultEditorUI: 'ace', // default editor instance - ace, ckeditor4
+        currentEditorUI: '',  // current editor in-use - this is changed by the swithc button between the Ace plaintext editor and ckeditor.
+        ace: null, // stores the current Ace editor instance, used for copying data.
       }
     }
     // Get params from hash.
     let params = window.getHashParams()
     let query = this.parseQuery(window.location.hash)
     let formPath = query.form
+    this.formPath = formPath
+    // @TODO: formPath is not formId.
+    this.formId = formPath
     let edit = query.edit
     let newForm = query.new
     this.groupId = window.location.pathname.split("/")[2];
@@ -382,7 +396,7 @@ class TangyEditorApp extends Element {
       } else if (newForm) {
         this.showFormEditor(query.form, 'newForm')
       } else {
-      this.loadForm(query.form, responseId)
+        this.loadForm(query.form, responseId)
       }
       this.addEventListener('tangy-form-item-list-opened', () => window['tangy-form-app-loading'].innerHTML = '')
     } else {
@@ -406,11 +420,11 @@ class TangyEditorApp extends Element {
     });
     // Tangy.ace.renderer.setScrollMargin(10, 10, 10, 10);
 
-    CKEDITOR.on('dialogDefinition', function(e) {
+    CKEDITOR.on('dialogDefinition', function (e) {
       var dialogName = e.data.name;
       var dialogDefinition = e.data.definition;
-      dialogDefinition.onShow = function() {
-        this.move(this.getPosition().x,0); // Top center
+      dialogDefinition.onShow = function () {
+        this.move(this.getPosition().x, 0); // Top center
       }
     })
 
@@ -455,9 +469,9 @@ class TangyEditorApp extends Element {
       method: "POST",
       body: JSON.stringify(formOrderObj),
       credentials: 'include'
-    }).then(function(response) {
-      if(response.ok) {
-        response.json().then(function(data) {
+    }).then(function (response) {
+      if (response.ok) {
+        response.json().then(function (data) {
           console.log("result: " + JSON.stringify(data))
           that.$['save-order'].hidden = true
           that.itemsOrder = null
@@ -478,14 +492,25 @@ class TangyEditorApp extends Element {
       formsJsonPath = '../../groups/' + this.groupId + '/forms.json'
     }
     try {
-    let formsJson = await fetch(formsJsonPath, {credentials: 'include'})
-    this.forms = await formsJson.json()
+      let formsJson = await fetch(formsJsonPath, { credentials: 'include' })
+      this.forms = await formsJson.json()
     } catch (e) {
       let formsJson = await fetch('../content/forms.json')
       this.forms = await formsJson.json()
     }
+    // Add some hard coded forms that are not listed in forms.json.
+    this.forms.push({
+      "id": "user-profile",
+      "title": "User Profile",
+      "src": "../content/user-profile/form.html"
+    })
+    this.forms.push({
+      "id": "reports",
+      "title": "Reports",
+      "src": "../content/reports/form.html"
+    })
     // Load editor forms
-    let editorJson = await fetch('editor/editor-forms.json', {credentials: 'include'})
+    let editorJson = await fetch('editor/editor-forms.json', { credentials: 'include' })
     this.editorForms = await editorJson.json()
     window['tangy-form-app-loading'].innerHTML = ''
   }
@@ -498,13 +523,47 @@ class TangyEditorApp extends Element {
     window.location.hash = event.currentTarget.dataFormSrc
     this.formSrc = event.currentTarget.dataFormSrc
   }
+
   async editFormListener(event) {
-//        window.location.hash = event.currentTarget.dataFormSrc
-    this.formHtmlPath = event.currentTarget.dataFormSrc
-    this.showFormEditor(this.formHtmlPath)
+    // Hide other regions.
+    let content = document.querySelector("#content")
+    content.setAttribute('style', 'display:none;')
+    this.$['item-create'].setAttribute('hidden', true)
+    this.$['item-edit'].setAttribute('hidden', true)
+    this.$['edit-region'].removeAttribute('hidden')
+    // Set the content in the edit region.
+    this.$['edit-region'].innerHTML = `
+      <div class="horizontal justified" style="text-align: right">
+        <paper-button class="save-button">
+          <iron-icon icon="icons:save"/>
+        </paper-button>
+      </div>
+      <juicy-ace-editor> </juicy-ace-editor>
+    `
+    // Set the ace editor contents.
+    let res = await fetch(this.formPath, {credentials: 'include'})
+    const formHtml = await res.text()
+    this.$['edit-region'].querySelector('juicy-ace-editor').value = formHtml
+    // Listen for save.
+    this.$['edit-region'].querySelector('.save-button').addEventListener('click', async ev => {
+      await fetch("/editor/file/save", {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: "POST",
+        body: JSON.stringify({
+          fileContents: this.$['edit-region'].querySelector('juicy-ace-editor').value,
+          filePath: this.formPath.replace('../content/', ''),
+          groupId: this.groupId
+        }),
+        credentials: 'include'
+      })
+      alert('Form saved.')
+    })
   }
+
   async editFormItemListener(event) {
-//        window.location.hash = event.currentTarget.dataFormSrc
+    this.$['edit-region'].innerHTML = ''
     this.formHtmlPath = event.currentTarget.dataFormSrc
     this.itemFilename = event.currentTarget.dataItemSrc
     this.itemId = event.currentTarget.dataItemId
@@ -513,7 +572,7 @@ class TangyEditorApp extends Element {
     if (this.itemFilename !== '') this.editItem(this.itemFilename)
   }
   async createFormItemListener(event) {
-//        window.location.hash = event.currentTarget.dataFormSrc
+    this.$['edit-region'].setAttribute('hidden', true)
     let query = this.parseQuery(window.location.hash)
     let formPath = query.form
     this.formHtmlPath = formPath
@@ -544,7 +603,7 @@ class TangyEditorApp extends Element {
     // let formsPath = '../../groups/' + this.groupId + '/' + formSrc
     let formsPath = '../../groups/' + this.groupId + '/' + formSrc.replace('../content/', '')
 
-    let formHtml = await fetch(formsPath, {credentials: 'include'})
+    let formHtml = await fetch(formsPath, { credentials: 'include' })
     // Put the formHtml in a template first so element do not initialize connectedCallback
     // before we modify them.
     // let formTemplate = document.createElement('div')
@@ -557,21 +616,6 @@ class TangyEditorApp extends Element {
         parent.frames.ifr.dispatchEvent(new CustomEvent('ALL_ITEMS_CLOSED'))
       }
     })
-    // Put a response in the store by issuing the FORM_OPEN action.
-    if (responseId) {
-      let response = await this.service.getResponse(responseId)
-      formOpen(response)
-    } else {
-      // Create new form response from the props on tangy-form and children tangy-form-item elements.
-      let form = this.$['form-container'].querySelector('tangy-form').getProps()
-      let items = []
-      this.$['form-container']
-        .querySelectorAll('tangy-form-item')
-        .forEach((element) => items.push(element.getProps()))
-      let response = new TangyFormResponseModel({ form, items })
-      window.setHashParam('response_id', response._id)
-      formOpen(response)
-    }
   }
   async showFormEditor(formSrc, isNew) {
     this.$['form-view'].hidden = true
@@ -581,7 +625,7 @@ class TangyEditorApp extends Element {
     this.$['item-create'].hidden = true
     document.querySelector("#content").setAttribute('style', 'display:none;')
     // Load the form into a temp DOM to get stuff out of it
-    let formHtml = await fetch(formSrc, {credentials: 'include'})
+    let formHtml = await fetch(formSrc, { credentials: 'include' })
     let innerHTML = await formHtml.text()
     this.form = innerHTML
     var doc = document.implementation.createHTMLDocument("New Document");
@@ -598,16 +642,16 @@ class TangyEditorApp extends Element {
       this.items.push(item)
     }
     if (isNew) {
-      this.headerTitle = "New form"
+      this.headerTitle = t('New Form')
       // this.createFormItemListener()
       let query = this.parseQuery(window.location.hash)
       let formPath = query.form
       this.formHtmlPath = formPath
       this.editItem(this.formHtmlPath, true)
     } else {
-      this.headerTitle = "Item Listing"
+      this.headerTitle = t('Item Listing')
     }
-    this.dispatchEvent(new CustomEvent('tangy-form-item-list-opened', {bubbles: true}))
+    this.dispatchEvent(new CustomEvent('tangy-form-item-list-opened', { bubbles: true }))
   }
   /**
    * This can be used to create new items or edit items.
@@ -619,7 +663,7 @@ class TangyEditorApp extends Element {
 
     // reset the ckeditor instance
     let inlineEditor = document.querySelector("#editorCK")
-    inlineEditor.setAttribute( 'contenteditable', false );
+    inlineEditor.setAttribute('contenteditable', false);
     if (typeof CKEDITOR.instances.editorCK !== 'undefined') {
       CKEDITOR.instances.editorCK.destroy();
     }
@@ -635,32 +679,45 @@ class TangyEditorApp extends Element {
       this.$['item-create'].hidden = false
     }
     let content = document.querySelector("#content")
-    content.setAttribute('style', 'display:block;width: 600px;margin-left: auto; margin-right: auto;')
+    content.setAttribute('style', 'display:block;')
     let tangyEditorApp = document.querySelector("tangy-editor-app")
     tangyEditorApp.setAttribute('style', 'min-height:0vh')
     let html
     // Check if this is a new item
     if (isNewForm !== true) {
       if (isNewItem === true) {
-        this.headerTitle = "New Item"
-        html = '<p>&nbsp;</p>'
+        this.headerTitle = t('New Item')
+        html = `
+          <form 
+            on-change="
+              // On change logic goes here.
+            "
+            on-open="
+              // On open logic goes here.
+            "
+          >
+
+            <!-- Place input elements here -->
+
+          </form>
+        `
       } else {
-        this.headerTitle = "Edit Item"
+        this.headerTitle = t('Edit Item')
         // Load the form into the DOM.
         // todo try to grab local pouch version of item
-        let itemHtml = await fetch(itemSrc, {credentials: 'include'})
+        let itemHtml = await fetch(itemSrc, { credentials: 'include' })
         this.itemHtmlText = await itemHtml.text()
         // console.log("itemHtmlText: " + JSON.stringify(this.itemHtmlText))
 
         if (this.itemHtmlText === '') {
-          html ='<p>&nbsp;</p>'
+          html = '<p>&nbsp;</p>'
         } else {
           // CKEDITOR.setData(this.itemHtmlText)
           html = this.itemHtmlText
         }
       }
     } else {
-      this.headerTitle = "Create Form"
+      this.headerTitle = t('Create Form')
       this.itemHtmlText = '<p>&nbsp;</p>\n'
       html = this.itemHtmlText
       // this.itemOrder = null
@@ -671,10 +728,10 @@ class TangyEditorApp extends Element {
     Tangy.ace.setValue(html);
     inlineEditor.innerHTML = html
 
-    let contentEditable = inlineEditor.getAttribute( 'contenteditable')
+    let contentEditable = inlineEditor.getAttribute('contenteditable')
     if (contentEditable === 'false') {
-      inlineEditor.setAttribute( 'contenteditable', true );
-      let editor = CKEDITOR.inline( 'editorCK', {
+      inlineEditor.setAttribute('contenteditable', true);
+      let editor = CKEDITOR.inline('editorCK', {
         // Allow some non-standard markup that we used in the introduction.
         // extraAllowedContent: 'a(documentation);abbr[title];code',
         allowedContent: true,
@@ -684,7 +741,7 @@ class TangyEditorApp extends Element {
         disableAutoInline: true,
         // Show toolbar on startup (optional).
         startupFocus: true
-      } );
+      });
       // editor.on( 'change', function( evt ) {
       //   // getData() returns CKEditor's HTML content.
       //   let data = evt.editor.getData();
@@ -723,7 +780,7 @@ class TangyEditorApp extends Element {
       itemHtmlText = Tangy.ace.getValue();
 
     }
-//        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
+    //        this.itemHtmlText = event.currentTarget.parentElement.children[0].value
     item.groupName = group
     item.formHtmlPath = this.formHtmlPath
     item.itemFilename = this.itemFilename
@@ -744,9 +801,9 @@ class TangyEditorApp extends Element {
       method: "POST",
       body: JSON.stringify(item),
       credentials: 'include'
-    }).then(function(response) {
-      if(response.ok) {
-        response.json().then(function(data) {
+    }).then(function (response) {
+      if (response.ok) {
+        response.json().then(function (data) {
           console.log("result: " + JSON.stringify(data))
           if (data.displayFormsListing === true) {
             location.href = '../tangy-forms/editor.html'
@@ -759,7 +816,7 @@ class TangyEditorApp extends Element {
   }
 
   onClickNewResponseButton() {
-    let confirmation = confirm("Are you sure you want to start a form response?")
+    let confirmation = confirm(t('Are you sure you want to start a form response?'))
     if (confirmation) {
       let params = getHashParams()
       this.loadForm(params.form)
@@ -812,7 +869,7 @@ class TangyUtils {
     'use strict';
     var self = {};
     var lut = [];
-    for(var i = 0; i < 256; i++) {
+    for (var i = 0; i < 256; i++) {
       lut[i] = (i < 16 ? '0' : '') + (i).toString(16);
     }
     /**

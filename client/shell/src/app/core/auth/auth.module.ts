@@ -10,6 +10,7 @@ import { UserService } from './_services/user.service';
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -20,7 +21,8 @@ import { RegistrationComponent } from './registration/registration.component';
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    AuthRoutingModule
+    AuthRoutingModule,
+    SharedModule
   ],
   providers: [LoginGuard, AuthenticationService, UserService],
   declarations: [LoginComponent, RegistrationComponent]

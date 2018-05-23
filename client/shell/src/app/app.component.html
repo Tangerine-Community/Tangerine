@@ -1,3 +1,13 @@
+<div id="update-in-progress" *ngIf="updateIsRunning">
+  <div id="update-in-progress-inner">
+    <img src="../logo.svg">
+    <br> {{'Update is Running. Please Wait ...'|translate}}
+    <br>
+    <br>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+</div>
+
 <mat-toolbar color="primary" class="mat-typography mat-tangy-custom-toolbar">
   <span class="home-icon">
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="/home">
@@ -6,7 +16,7 @@
   </span>
 
   <span>
-    <a class="tangy-no-text-decoration tangy-app-name" routerLink="home">Tangerine</a>
+    <a class="tangy-no-text-decoration tangy-app-name" routerLink="home">{{'Tangerine'|translate}}</a>
   </span>
   <span class="tangy-spacer"></span>
 
@@ -16,31 +26,31 @@
   <mat-menu #appMenu="matMenu">
     <button routerLink="manage-user-profile" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
-      <span>Manage Profile</span>
+      <span>{{'Manage Profile'|translate}}</span>
     </button>
-    <button routerLink="/home" mat-menu-item>
+    <!-- <button routerLink="/home" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">settings</mat-icon>
       <span>My Settings</span>
-    </button>
+    </button> -->
     <button routerLink="/sync-records" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
-      <span>Sync</span>
+      <span>{{'Sync'|translate}}</span>
     </button>
     <button routerLink="/export-data" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">import_export</mat-icon>
-      <span>Export Data</span>
+      <span>{{'Export Data'|translate}}</span>
     </button>
     <button mat-menu-item (click)="updateApp()" *ngIf="showUpdateAppLink">
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
-      <span>Update App</span>
+      <span>{{'Update App'|translate}}</span>
     </button>
     <button mat-menu-item (click)="updateApp()" *ngIf="!showUpdateAppLink">
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
-      <span>Check for Update</span>
+      <span>{{'Check for Update'|translate}}</span>
     </button>
     <button mat-menu-item (click)="logout()">
       <mat-icon class="material-icons menu-tangy-location-list-icon">exit_to_app</mat-icon>
-      <span>Log Out</span>
+      <span>{{'Logout'|translate}}</span>
     </button>
 
   </mat-menu>

@@ -6,6 +6,7 @@ import { updates } from './updates';
 import PouchDB from 'pouchdb';
 import { TangerineFormPage } from '../../../../../e2e/app.po';
 import { UserService } from '../../auth/_services/user.service';
+import { _TRANSLATE } from '../../../shared/translation-marker';
 
 @Component({
   selector: 'app-update',
@@ -14,7 +15,7 @@ import { UserService } from '../../auth/_services/user.service';
 })
 export class UpdateComponent implements OnInit {
 
-  message = 'Checking for updates...';
+  message = _TRANSLATE('Checking For Updates...');
   totalUpdatesApplied = 0;
   needsUpdating = false;
 
@@ -40,7 +41,7 @@ export class UpdateComponent implements OnInit {
       const lastUpdateIndex = updates.length - 1;
       if (lastUpdateIndex !== atUpdateIndex) {
         this.needsUpdating = true;
-        this.message = 'Applying updates...';
+        this.message = _TRANSLATE('Applying Updates...');
         let requiresViewsRefresh = false;
         while (lastUpdateIndex >= atUpdateIndex) {
           if (updates[atUpdateIndex].requiresViewsUpdate) {
@@ -59,7 +60,7 @@ export class UpdateComponent implements OnInit {
         await userDb.put(infoDoc);
       }
     }
-    this.message = '✓ Yay! You are up to date.';
+    this.message = _TRANSLATE('✓ Yay! You are up to date.');
   }
 
 }
