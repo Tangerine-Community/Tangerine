@@ -18,7 +18,9 @@
       "prefix": "app",
       "mobile": false,
       "styles": [
-        "styles.css"
+        "styles/_tangy-app-variables.scss",
+        "styles/styles.scss",
+        "styles/tangerine-theme.scss"
       ],
       "scripts": [],
       "environmentSource": "environments/environment.ts",

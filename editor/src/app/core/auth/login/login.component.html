@@ -1,0 +1,64 @@
+<div class="login-app-content">
+  <div class="group">
+    <form role="form" #login='ngForm' novalidate>
+      <br>
+      <h3 class="mat-title">Log in to Tangerine Editor</h3>
+      <mat-form-field *ngIf="!listUsernamesOnLoginScreen">
+        <input matInput type="text" required [(ngModel)]="user.username" id="username" name="username">
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">face</i>
+          <span>Username</span>
+        </mat-placeholder>
+      </mat-form-field>
+      <br>
+      <br>
+      <mat-form-field *ngIf="!showRecoveryInput">
+        <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">lock_open</i>
+          <span>Password</span>
+        </mat-placeholder>
+      </mat-form-field>
+      <div *ngIf="showRecoveryInput">
+        <mat-form-field>
+          <input matInput type="text" required [(ngModel)]="user.securityQuestionResponse" id="securityQuestionResponse" name="securityQuestionResponse">
+          <mat-placeholder>
+            <i class="material-icons app-input-icon">security</i>
+            <span>{{securityQuestionText}}</span>
+          </mat-placeholder>
+        </mat-form-field>
+        <br>
+        <br>
+        <mat-form-field>
+          <input name="newPassword" matInput [(ngModel)]="user.newPassword" type="password" required>
+          <mat-placeholder>
+            <i class="material-icons mat-11 app-input-icon">lock_open</i>New Password
+          </mat-placeholder>
+        </mat-form-field>
+        <mat-form-field>
+          <input name="confirmNewPassword" matInput [(ngModel)]="user.confirmNewPassword" type="password" required>
+          <mat-placeholder>
+            <i class="material-icons mat-11 app-input-icon">lock_open</i>Confirm New Password
+          </mat-placeholder>
+        </mat-form-field>
+      </div>
+      <span>
+        <small>
+          <a href="#" *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()">Click Here to Reset Password</a>
+          <a href="#" *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()">Click Here to go to Login</a>
+        </small>
+      </span>
+      <p></p>
+
+      <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">LOGIN</button>
+      <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
+        color="accent" name="action">Recover Account</button>
+      <a href="index.html#/register">REGISTER</a>
+      <br>
+      <br>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
+    </form>
+  </div>
+</div>
