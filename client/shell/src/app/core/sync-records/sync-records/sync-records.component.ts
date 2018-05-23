@@ -30,8 +30,8 @@ export class SyncRecordsComponent implements OnInit {
     this.allUsersSyncData = await Promise.all(usernames.map(async username => {
       return await this.calculateUsersUploadProgress(username);
     }));
-    this.docsNotUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsNotUploaded }, 0);
-    this.docsUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsUploaded }, 0);
+    this.docsNotUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsNotUploaded; }, 0);
+    this.docsUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsUploaded; }, 0);
     this.syncPercentageComplete =
       ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100) || 0;
   }

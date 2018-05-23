@@ -30,9 +30,7 @@ export class GroupComponent implements OnInit {
     this.elementRef.nativeElement.appendChild(container);
     container.innerHTML = `<iframe src="/editor/${this.id}/tangy-forms/editor.html"></iframe>`;
     const iframe = container.querySelector('iframe')
-    // @TODO Could use better iframe resizing and removal of event binding.
-    //this.screenResizer = setInterval(() => iframe.style.setProperty('height', window.innerHeight - 60))
-    setInterval(() => iframe.style.setProperty('height', '2000px'), 500)
+    iframe.style.setProperty('height', '100vh')
   }
 
   ngOnDestroy() {

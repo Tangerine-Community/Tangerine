@@ -52,7 +52,7 @@ export class CaseManagementService {
       }
 
     });
-    return locations;
+    return removeDuplicates(locations, 'id');
   }
 
   async getFilterDatesForAllFormResponses() {
@@ -140,9 +140,9 @@ export class CaseManagementService {
       const data = array.map(el => {
         return el.inputs.find(e => e.name === column);
       }).find(x => x);
-      return data && ({
-        name: data.name || '',
-        value: data.value || ''
+      return ({
+        name: data ? data.name : column,
+        value: data ? data.value : ''
       });
 
     });

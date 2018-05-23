@@ -15,6 +15,7 @@ export class ReleasePwaComponent implements OnInit {
   buildPwaIsComplete = false;
   secret = '';
   group = '';
+  releaseType = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -25,8 +26,9 @@ export class ReleasePwaComponent implements OnInit {
     this.sub = this.route.params.subscribe(params => {
       this.group = params['id'];
       // @TODO Generate a secret.
-      this.secret = params['id'];
-      this.http.get(`/editor/release-pwa/${this.secret}/${this.group}`)
+      // this.secret = params['id'];
+      this.releaseType = params['releaseType'];
+      this.http.get(`/editor/release-pwa/${this.group}/${this.releaseType}`)
         .subscribe((data) => this.buildPwaIsComplete = true)
     });
   }

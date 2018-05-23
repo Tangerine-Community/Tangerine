@@ -70,6 +70,11 @@ class TangyCompleteButton extends Element {
         value: false,
         observer: 'onDisabledChange',
         reflectToAttribute: true
+      },
+      goHome: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
       }
     };
   }
@@ -81,6 +86,7 @@ class TangyCompleteButton extends Element {
 
   completePressed() {
     this.dispatchEvent(new CustomEvent('FORM_RESPONSE_COMPLETE', {bubbles: true}))
+    if (this.goHome) window.location.href = '../shell/index.html'
 
     if (this.disabled) return
     if (this.value == '') {

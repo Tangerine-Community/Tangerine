@@ -39,20 +39,19 @@ export class SyncingService {
               if (input.private) {
                 input.value = '';
               }
-            })
-          })
-          const body = pako.deflate(JSON.stringify({ doc }), {to: 'string'})
+            });
+          });
+          const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
           await this.http.post(remoteHost, body).toPromise();
           await this.markDocsAsUploaded([doc_id], username);
         }
-        return true;// Sync Successful
+        return true; // Sync Successful
       } else {
-        return false;// No Items to Sync
+        return false; // No Items to Sync
       }
     } catch (error) {
       throw (error);
     }
-
   }
 
 

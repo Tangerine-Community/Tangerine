@@ -1,9 +1,9 @@
 <mat-tab-group>
-  <mat-tab label="My Forms">
+  <mat-tab label="{{'My Forms'|translate}}">
     <mat-card class="tangy-card-content-container">
       <mat-list>
         <mat-list-item class="tangy-location-list">
-          <span class="tangy-foreground-primary">Select Form</span>
+          <span class="tangy-foreground-primary">{{'Select Form Name'|translate}}</span>
         </mat-list-item>
         <mat-list-item class="tangy-location-list" *ngFor="let form of formList; let formIndex=index">
           <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:formIndex}>
@@ -13,11 +13,11 @@
         </mat-list-item>
       </mat-list>
 
-      <p *ngIf="!formList" class="mat-h3">No Forms Currently Defined</p>
+      <p *ngIf="!formList" class="mat-h3">{{'No Forms Currently Defined'|translate}}</p>
     </mat-card>
 
   </mat-tab>
-  <mat-tab label="Visits">
+  <mat-tab label="{{'Visits'|translate}}">
     <br>
     <mat-card class="tangy-card-content-container">
       <app-schools-visited></app-schools-visited>

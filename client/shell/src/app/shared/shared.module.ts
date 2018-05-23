@@ -10,6 +10,7 @@ import {
 import { TangySvgLogoComponent } from './_components/tangy-svg-logo/tangy-svg-logo.component';
 import { SeamlessWithWindowDirective } from './_directives/seamless-with-window.directive';
 import { TruncateValuePipe } from './_pipes/truncate-value.pipe';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
@@ -24,6 +25,6 @@ import { TruncateValuePipe } from './_pipes/truncate-value.pipe';
 
   exports: [RedirectToDefaultRouteComponent, SafeUrlPipe,
     SeamlessWithWindowDirective, TangySvgLogoComponent,
-    TruncateValuePipe]
+    TruncateValuePipe, TranslateModule]
 })
 export class SharedModule { }

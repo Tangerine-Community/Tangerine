@@ -14,7 +14,7 @@ export class LoginGuard implements CanActivate {
     //   this.router.navigate(['/login-nopassword'], { queryParams: { returnUrl: state.url } });
     //   return true;
     // }
-    this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+    this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
     return false;
   }
 

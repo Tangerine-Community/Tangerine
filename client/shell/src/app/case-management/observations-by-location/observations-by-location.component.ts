@@ -21,7 +21,6 @@ export class ObservationsByLocationComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.locationId = params['locationId'];
       this.getObservations(this.locationId);
-
     });
 
   }

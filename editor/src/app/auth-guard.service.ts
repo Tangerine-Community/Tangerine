@@ -18,9 +18,18 @@ export class AuthGuard implements CanActivate {
         .subscribe(
         data => { console.log('data returned from getSession call: ' + JSON.stringify(data)); this.authService.setLoggedIn(); },//this.result = data,
         //on err we are doing a delayed redirect as session has espired for some reason like server restart. (also removing localstorage userid here as if set default value for observable is true for logged in in auth.service.ts)
-        err => { if (err.status && err.status == 401) { this.authService.setLoggedOut(); localStorage.removeItem('user_id');  {console.log('delayed logout so redirect happens on expired session restart server');this.router.navigate(['/login']); } } }, 
+        err => {
+          if (err.status && err.status == 401) {
+            this.authService.setLoggedOut();
+            localStorage.removeItem('user_id');
+            console.log('delayed logout so redirect happens on expired session restart server');
+            this.router.navigate(['/login']);
+          }
+          },
         //returns status 401 if not logged in 
-        () => console.log('done authguard loginstatuscall')
+        () => {
+            console.log('done authguard loginstatuscall')
+          }
         );
     return this.checkLogin(url);
   }

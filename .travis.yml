@@ -28,6 +28,7 @@ install:
   - cd client/shell && yarn install
 script:
   - npm run build
+  - npm run e2e
 notifications:
   webhooks:
     on_success: change

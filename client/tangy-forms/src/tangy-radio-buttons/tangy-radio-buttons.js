@@ -1,4 +1,4 @@
-import {Element} from '../../node_modules/@polymer/polymer/polymer-element.js'
+import { Element } from '../../node_modules/@polymer/polymer/polymer-element.js'
 
 import '../tangy-radio-button/tangy-radio-button.js'
 import '../tangy-form/tangy-element-styles.js';
@@ -27,7 +27,7 @@ class TangyRadioButtons extends Element {
 
     <div class="container">
       <label for="group">[[label]]</label>
-      <span class="secondary_color">select only one</span>
+      <span class="secondary_color">${t('Select only One')}</span>
       <div id="container"></div>
     </div>
 `;
@@ -98,7 +98,7 @@ class TangyRadioButtons extends Element {
     this.render()
     this.reflect()
   }
-  
+
   reflect() {
     this.shadowRoot.querySelectorAll('tangy-radio-button').forEach(el => {
       let matchingState = this.value.find(state => el.name == state.name)
@@ -123,7 +123,7 @@ class TangyRadioButtons extends Element {
     this
       .shadowRoot
       .querySelectorAll('tangy-radio-button')
-      .forEach ((el) => {
+      .forEach((el) => {
         el.addEventListener('change', this.onRadioButtonChange.bind(this))
         newValue.push(el.getProps())
       })
@@ -142,8 +142,8 @@ class TangyRadioButtons extends Element {
         .querySelectorAll('tangy-radio-button')
         .forEach(el => {
           if (el.name !== targetButton.name && targetButton.value == 'on') {
-            el.value =  ''
-          } 
+            el.value = ''
+          }
         })
     }
 

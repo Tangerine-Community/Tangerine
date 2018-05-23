@@ -30,7 +30,8 @@ export class AuthService {
         console.log('getSession: Get Data');
         var authheader = new Headers(); 
         authheader.append('Authorization', 'Bearer ' + token + ':' + password); 
-        return this.http.get('/auth/session/', {
+        // return this.http.get('/auth/session/', {
+        return this.http.get('/groups/', {
             headers: authheader
         }).take(1)
             .map(res => res.json());         

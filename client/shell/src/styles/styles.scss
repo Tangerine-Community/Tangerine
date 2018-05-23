@@ -6,6 +6,11 @@ body {
 }
 .login-app-content{
   margin-top: 180px;
+  font-size: 1.75em;
+}
+select{
+  font-size: 1.3em;
+  width: 76%;
 }
 button.tangy-froms-margin-left{
    margin-left:3rem
@@ -24,7 +29,6 @@ mat-toolbar{
     left: 0;
     z-index: 2;
 }
-
 
 .tangy-spacer{
     flex: 1 1 auto;
@@ -168,7 +172,7 @@ div.more {
   margin-right: -10px;
 }
   form {
-    width: 220px;
+    width: 20em;
     margin: 4em auto;
     padding: 3em 2em 2em 2em;
     background: #fafafa;
@@ -220,4 +224,8 @@ div.more {
   }
   #success{
     color :$tangy-foreground-success-message;
+  }
+
+  .material-icons  { 
+    vertical-align: text-bottom;
   }

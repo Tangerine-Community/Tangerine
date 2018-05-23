@@ -1,13 +1,11 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM node 
-
+FROM tangerine/docker-tangerine-base-image:v3-node-base-with-wrapper
 
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 RUN apt update
-RUN apt install -y zip vim
 
 RUN npm install -g nodemon
 RUN echo foo
@@ -49,6 +47,8 @@ RUN cd /tangerine/client/ && ./install.sh
 # Build editor 
 ADD editor /tangerine/editor
 RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
+RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
+
 
 # Build client v3.
 ADD client /tangerine/client
@@ -63,5 +63,6 @@ ADD server /tangerine/server
 #
 
 ADD ./ /tangerine
+
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && node index.js 

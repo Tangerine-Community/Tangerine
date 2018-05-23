@@ -7,6 +7,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { SyncingService } from './_services/syncing.service';
 import { SyncRecodsRoutingModule } from './sync-records-routing.module';
 import { SyncRecordsComponent } from './sync-records/sync-records.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import { SyncRecordsComponent } from './sync-records/sync-records.component';
     MatButtonModule,
     MatInputModule,
     MatCardModule,
-    MatExpansionModule
+    MatExpansionModule,
+    SharedModule
   ],
   declarations: [SyncRecordsComponent],
   providers: [SyncingService, HttpClientModule],
