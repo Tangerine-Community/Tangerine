@@ -148,8 +148,8 @@ const saveProcessedFormData = async function (formData, resultDB) {
 
   // generate column headers
   let docHeaders = generateHeaders(formData);
-  docHeaders.push({ headers: 'Complete', key: `${formID}.complete` });
-  docHeaders.push({ headers: 'Start Date Time', key: `${formID}.startDatetime` });
+  docHeaders.push({ header: 'Complete', key: `${formID}.complete` });
+  docHeaders.push({ header: 'Start Date Time', key: `${formID}.startDatetime` });
   formHeaders.columnHeaders = docHeaders;
 
   // process form result
