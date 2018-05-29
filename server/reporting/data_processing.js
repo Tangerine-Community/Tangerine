@@ -24,6 +24,46 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
   });
 }
 
+/** This function saves processed form response.
+ *
+ * @param {object} formData - form response from database
+ * @param {string} resultDB - result database url
+ *
+ * @returns {object} - saved document
+ */
+
+const processFormResponse = async function (formData, groupName) {
+  const REPORTING_DB = new DB(`${groupName}-reporting`);
+  let formID = formData.form.id;
+  let formHeaders = { _id: formID };
+  let formResult = { _id: formData._id, formId: formID, startDatetime: formData.startDatetime };
+
+  // generate column headers
+  let docHeaders = generateHeadersFromFormResponse(formData);
+  docHeaders.push({ header: 'Complete', key: `${formID}.complete` });
+  docHeaders.push({ header: 'Start Date Time', key: `${formID}.startDatetime` });
+  formHeaders.columnHeaders = docHeaders;
+
+  // process form result
+  let processedResult = generateFlatObjectFromFormResponse(formData, groupName);
+  formResult.processedResult = processedResult;
+  formResult.processedResult[`${formID}.startDatetime`] = formData.startDatetime;
+  formResult.processedResult[`${formID}.complete`] = formData.complete;
+
+  try {
+    await saveFormResponseHeaders(formHeaders, REPORTING_DB);
+  } catch (err) {
+    console.error(err);
+  }
+
+  try {
+    await saveFlattenedFormResponse(formResult, REPORTING_DB);
+  } catch (err) {
+    console.error(err);
+  }
+
+};
+
 /** This function generates headers for csv.
  *
  * @param {object} formData - form response from database
@@ -31,7 +71,7 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
  * @returns {array} generated headers for csv
  */
 
-const generateHeaders = function (formData) {
+const generateHeadersFromFormResponse = function (formData) {
   let formID = formData.form.id;
   let formResponseHeaders = [];
 
@@ -53,6 +93,12 @@ const generateHeaders = function (formData) {
             formResponseHeaders.push({
               header: `${input.name}_${group.level}`,
               key: `${formID}.${item.id}.${input.name}.${group.level}`
+            });
+          });
+          input.value.forEach(group => {
+            formResponseHeaders.push({
+              header: `${input.name}_${group.level}_label`,
+              key: `${formID}.${item.id}.${input.name}.${group.level}_label`
             });
           });
         } else {
@@ -91,7 +137,7 @@ const generateHeaders = function (formData) {
  * @returns {object} processed results for csv
  */
 
-const processFormResponse = function (formData) {
+const generateFlatObjectFromFormResponse = function (formData) {
   let formID = formData.form.id;
   let formResponseResult = {};
 
@@ -108,6 +154,7 @@ const processFormResponse = function (formData) {
         if (input.tagName === 'TANGY-LOCATION') {
           input.value.forEach(group => {
             formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
+            formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}_label`] = group.value;
           });
         } else {
           input.value.forEach(group => {
@@ -132,47 +179,7 @@ const processFormResponse = function (formData) {
 };
 
 
-/** This function saves processed form response.
- *
- * @param {object} formData - form response from database
- * @param {string} resultDB - result database url
- *
- * @returns {object} - saved document
- */
-
-const saveProcessedFormData = async function (formData, resultDB) {
-  const RESULT_DB = new DB(resultDB);
-  let formID = formData.form.id;
-  let formHeaders = { _id: formID };
-  let formResult = { _id: formData._id, formId: formID, startDatetime: formData.startDatetime };
-
-  // generate column headers
-  let docHeaders = generateHeaders(formData);
-  docHeaders.push({ header: 'Complete', key: `${formID}.complete` });
-  docHeaders.push({ header: 'Start Date Time', key: `${formID}.startDatetime` });
-  formHeaders.columnHeaders = docHeaders;
-
-  // process form result
-  let processedResult = processFormResponse(formData);
-  formResult.processedResult = processedResult;
-  formResult.processedResult[`${formID}.startDatetime`] = formData.startDatetime;
-  formResult.processedResult[`${formID}.complete`] = formData.complete;
-
-  try {
-    await saveFormHeaders(formHeaders, RESULT_DB);
-  } catch (err) {
-    console.error(err);
-  }
-
-  try {
-    await saveFormResult(formResult, RESULT_DB);
-  } catch (err) {
-    console.error(err);
-  }
-
-};
-
-function saveFormHeaders(doc, db) {
+function saveFormResponseHeaders(doc, db) {
   /**
    * find document by id.
    * if found update revision number and column headers
@@ -201,7 +208,7 @@ function saveFormHeaders(doc, db) {
   })
 }
 
-function saveFormResult(doc, db) {
+function saveFlattenedFormResponse(doc, db) {
   /**
    * find document by id.
    * if found update revision number and column headers
@@ -226,8 +233,4 @@ function saveFormResult(doc, db) {
   })
 }
 
-exports.generateHeaders = generateHeaders;
-
 exports.processFormResponse = processFormResponse;
-
-exports.saveProcessedFormData = saveProcessedFormData;

@@ -502,13 +502,13 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 
   //#region wire group DB and result db
 
-  const RESULT_DB_NAME = `${groupName}-result`;
-  const RESULT_DB = new DB(RESULT_DB_NAME);
+  const REPORTING_DB_NAME = `${groupName}-reporting`;
+  const REPORTING_DB = new DB(REPORTING_DB_NAME);
   /**
    * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
    * Also create the design doc for the resultsDB
    */
-  await RESULT_DB.info(async info => await createDesignDocument(RESULT_DB_NAME)).catch(e => {
+  await REPORTING_DB.info(async info => await createDesignDocument(REPORTING_DB_NAME)).catch(e => {
     console.error(e);
   });
 
@@ -637,9 +637,9 @@ app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthentica
   const year = req.params.year;
   const month = req.params.month;
   const formId = req.params.formId;
-  const groupResultName = groupName + '-result';
+  const groupReportingDbName = groupName + '-reporting';
 
-  generateCSV(formId, groupResultName, res);
+  generateCSV(formId, groupReportingDbName, res);
 });
 
 
@@ -665,7 +665,7 @@ let changesFeedSubject = new Subject();
 // Using concatMap ensures the data is processed one by one
 changesFeedSubject
   .pipe(
-    concatMap( async data => await tangyReporting.saveProcessedFormData(data.data, data.database) )
+    concatMap( async data => await tangyReporting.processFormResponse(data.data, data.groupName) )
   )
   .subscribe(res => console.log('got res: ' + res));
 
@@ -674,16 +674,15 @@ changesFeedSubject
  * which sends the docs one by one in `processChangedDocument()` for processing and saving in the corresponding group results database.
  * @param {string} name the group's database for which to listen to the changes feed.
  */
-async function monitorDatabaseChangesFeed(name) {
-  const GROUP_DB = new DB(name);
-  const RESULT_DB_NAME = `${name}-result`;
+async function monitorDatabaseChangesFeed(groupName) {
+  const GROUP_DB = new DB(groupName);
   try {
     GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
       .on('change', async (body) => {
         /** check if doc is FormResponse before adding to queue to be processesd by the saveProcessedFormData.
          * Dont add deleted docs to the queue
          */
-        if (!body.deleted && body.doc.collection === 'TangyFormResponse') changesFeedSubject.next({ data: body['doc'], database: RESULT_DB_NAME });
+        if (!body.deleted && body.doc.collection === 'TangyFormResponse') changesFeedSubject.next({ data: body['doc'], groupName });
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
@@ -702,7 +701,7 @@ async function monitorDatabaseChangesFeed(name) {
  * use form.docId+'-'+doc.completed not `${doc.docId}-${doc.completed}`
  */
 async function createDesignDocument(database) {
-  const RESULT_DB = new DB(database);
+  const REPORTING_DB = new DB(database);
 
   const tangyReportingDesignDoc = {
     _id: '_design/tangy-reporting',
@@ -724,21 +723,21 @@ async function createDesignDocument(database) {
   }
 
   try {
-    const designDoc = await RESULT_DB.get('_design/tangy-reporting');
+    const designDoc = await REPORTING_DB.get('_design/tangy-reporting');
     if (designDoc.version !== tangyReportingDesignDoc.version) {
       console.log(chalk.white(`✓ Time to update _design/tangy-reporting for ${database}`));
       console.info(chalk.yellow(`Removing _design/tangy-reporting for ${database}`));
-      await RESULT_DB.remove(designDoc)
+      await REPORTING_DB.remove(designDoc)
       console.log(chalk.red(`Cleaning up view indexes for ${database}`));
       // @TODO This causes conflicts with open databases. How to avoid??
-      //await RESULT_DB.viewCleanup()
+      //await REPORTING_DB.viewCleanup()
       console.info(chalk.yellow(`Creating _design/tangy-reporting for ${database}`));
-      await RESULT_DB.put(tangyReportingDesignDoc).
+      await REPORTING_DB.put(tangyReportingDesignDoc).
         then(info => console.log(chalk.green(`√ Created _design/tangy-reporting for ${database} succesfully`)));
     }
   } catch (error) {
     if (error.error === 'not_found') {
-      await RESULT_DB.put(tangyReportingDesignDoc).catch(err => console.error(err));
+      await REPORTING_DB.put(tangyReportingDesignDoc).catch(err => console.error(err));
     }
   }
 }
