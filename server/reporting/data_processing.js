@@ -12,6 +12,9 @@
 
 const PouchDB = require('pouchdb');
 const _ = require('lodash');
+const {promisify} = require('util');
+const fs = require('fs');
+const readFile = promisify(fs.readFile);
 
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
@@ -37,6 +40,7 @@ const processFormResponse = async function (formData, groupName) {
   let formID = formData.form.id;
   let formHeaders = { _id: formID };
   let formResult = { _id: formData._id, formId: formID, startDatetime: formData.startDatetime };
+  let locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${groupName}/location-list.json`))
 
   // generate column headers
   let docHeaders = generateHeadersFromFormResponse(formData);
@@ -45,7 +49,7 @@ const processFormResponse = async function (formData, groupName) {
   formHeaders.columnHeaders = docHeaders;
 
   // process form result
-  let processedResult = generateFlatObjectFromFormResponse(formData, groupName);
+  let processedResult = generateFlatObjectFromFormResponse(formData, locationList);
   formResult.processedResult = processedResult;
   formResult.processedResult[`${formID}.startDatetime`] = formData.startDatetime;
   formResult.processedResult[`${formID}.complete`] = formData.complete;
@@ -133,47 +137,43 @@ const generateHeadersFromFormResponse = function (formData) {
 /** This function processes form response for csv.
  *
  * @param {object} formData - form response from database
+ * @param {object} locationList - location list doing label lookups on TANGY-LOCATION inputs 
  *
  * @returns {object} processed results for csv
  */
 
-const generateFlatObjectFromFormResponse = function (formData) {
+const generateFlatObjectFromFormResponse = function (formData, locationList) {
   let formID = formData.form.id;
   let formResponseResult = {};
 
-  formData.items.forEach(item => {
-    item.inputs.forEach(input => {
-      // create headers for all values that are strings
-      if (input && typeof input.value === 'string') {
-        formResponseResult[`${formID}.${item.id}.${input.name}`] = input.value;
-      }
-
-      // create headers for all values that are arrays
-      if (input && Array.isArray(input.value)) {
-        //@TODO: Remove this if-block when tangy-location follows the name and value data structure.
-        if (input.tagName === 'TANGY-LOCATION') {
-          input.value.forEach(group => {
-            formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
-            formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}_label`] = group.value;
-          });
-        } else {
-          input.value.forEach(group => {
-            formResponseResult[`${formID}.${item.id}.${input.name}.${group.name}`] = group.value;
-          });
+  for (let item of formData.items) {
+    for (let input of item.inputs) {
+      // TANGY-LOCATION has it's own custom format.
+      if (input.tagName === 'TANGY-LOCATION') {
+        locationKeys = []
+        for (let group of input.value) {
+          formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
+          locationKeys.push(group.value)
+          formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}_label`] = getLocationLabel(locationKeys, locationList);
         }
-      }
-
-      // create headers for all values that are pure objects
-      if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
+      // Case for inputs that have string values.
+      } else if (input && typeof input.value === 'string') {
+        formResponseResult[`${formID}.${item.id}.${input.name}`] = input.value;
+      // Case for inputs whos value are arrays of objects following the name/value property convention.
+      } else if (input && Array.isArray(input.value)) {
+        for (let group of input.value) {
+          formResponseResult[`${formID}.${item.id}.${input.name}.${group.name}`] = group.value;
+        }
+      // Case for Object following the name/value property convention.
+      } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
         let elementKeys = Object.keys(input.value);
-        elementKeys.forEach(key => {
+        for (let key of elementKeys) {
           formResponseResult[`${formID}.${item.id}.${input.name}.${key}`] = input.value[key];
-        });
+        };
       }
+    }
 
-    });
-
-  });
+  }
 
   return formResponseResult;
 };
@@ -231,6 +231,15 @@ function saveFlattenedFormResponse(doc, db) {
       }
     });
   })
+}
+
+function getLocationLabel(keys, locationList) {
+  let locationKeys = [...keys]
+  let currentLevel = locationList.locations[locationKeys.shift()]
+  for (let key of locationKeys ) {
+    currentLevel = currentLevel.children[key]
+  }
+  return currentLevel.label
 }
 
 exports.processFormResponse = processFormResponse;
