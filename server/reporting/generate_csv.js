@@ -51,8 +51,8 @@ function getResultsByFormId(formId, db) {
  * @returns {Object} – csv file
  */
 
-const generateCSV = async function (formId, resultDB, res) {
-  const RESULT_DB = new DB(resultDB);
+const generateCSV = async function (formId, reportingDB, res) {
+  const REPORTING_DB = new DB(reportingDB);
   let workbook = new Excel.Workbook();
   let excelSheet = workbook.addWorksheet('Tangerine Sheet', {
     views: [{ xSplit: 1 }],
@@ -61,10 +61,10 @@ const generateCSV = async function (formId, resultDB, res) {
   workbook.creator = 'Tangerine';
 
   // Fetch column headers
-  let columnData = await RESULT_DB.get(formId);
+  let columnData = await REPORTING_DB.get(formId);
 
   // Fetch processed form result
-  let resultData = await getResultsByFormId(formId, RESULT_DB);
+  let resultData = await getResultsByFormId(formId, REPORTING_DB);
 
   const FILENAME = columnData._id;
 
