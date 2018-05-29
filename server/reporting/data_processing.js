@@ -40,7 +40,7 @@ const generateHeaders = function (formData) {
       // create headers for all values that are strings
       if (input && (typeof input.value === 'string')) {
         formResponseHeaders.push({
-          header: `${item.id}_${input.name}`,
+          header: `${input.name}`,
           key: `${formID}.${item.id}.${input.name}`
         });
       }
@@ -51,14 +51,14 @@ const generateHeaders = function (formData) {
         if (input.tagName === 'TANGY-LOCATION') {
           input.value.forEach(group => {
             formResponseHeaders.push({
-              header: `${item.id}_${input.name}_${group.level}`,
+              header: `${input.name}_${group.level}`,
               key: `${formID}.${item.id}.${input.name}.${group.level}`
             });
           });
         } else {
           input.value.forEach(group => {
             formResponseHeaders.push({
-              header: `${item.id}_${input.name}_${group.name}`,
+              header: `${input.name}_${group.name}`,
               key: `${formID}.${item.id}.${input.name}.${group.name}`
             });
           });
@@ -70,7 +70,7 @@ const generateHeaders = function (formData) {
         let elementKeys = Object.keys(input.value);
         elementKeys.forEach(key => {
           formResponseHeaders.push({
-            headers: `${item.id}_${input.name}_${key}`,
+            headers: `${input.name}_${key}`,
             key: `${formID}.${item.id}.${input.name}.${key}`
           });
         })
