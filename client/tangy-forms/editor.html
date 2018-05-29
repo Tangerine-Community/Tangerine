@@ -71,23 +71,10 @@
       }
   </style>
   <script> 
-    setInterval(() => document.querySelector('#editorTEXT').style.width = `${window.innerWidth-290}px`, 500)
-    setInterval(() => document.querySelector('#editorCK').style.width = `${window.innerWidth-290}px`, 500)
   </script>
 
   <body>
-
-    <div id="tangy-form-app-loading" style="text-align: center; margin: auto; width: 300px">
-        Loading...
-        <paper-progress style="margin: auto" indeterminate class="slow"></paper-progress>
-    </div>
-
-    <tangy-editor-app></tangy-editor-app>
-    <div id="content" style = "display:none">
-      <div id="editorCK" style = "display:none"></div>
-      <div id="editorTEXT"></div>
-      <div id="content_region"></div>
-    </div>
+    <tangy-form-editor></tangy-form-editor>
   </body>
 
 </html>
