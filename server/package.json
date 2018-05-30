@@ -15,6 +15,7 @@
     "axios": "^0.17.1",
     "cheerio": "^1.0.0-rc.2",
     "compression": "^1.7.2",
+    "session-pouchdb-store": "0.2.1",
     "cordova-hot-code-push-cli": "^1.1.1",
     "cors": "^2.8.4",
     "crypto": "^1.0.1",

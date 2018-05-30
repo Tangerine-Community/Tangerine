@@ -17,6 +17,7 @@ const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
+const PouchSession = require("session-pouchdb-store")
 
 const DB = PouchDB.defaults({
   prefix: '/tangerine/db/'
@@ -73,7 +74,7 @@ passport.deserializeUser(function(id, done) {
 app.use(session({ 
   secret: "cats", 
   resave: false,
-  saveUninitialized: true 
+  saveUninitialized: new PouchSession(new DB('sessions'))
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({limit: '1gb'}))
