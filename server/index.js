@@ -27,8 +27,8 @@ const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
 const _ = require('underscore')
-const log = require('tangerine-log').TangerineLog
-const clog = require('tangerine-log').clog
+const log = require('tangy-log').log
+const clog = require('tangy-log').clog
 
 var DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
