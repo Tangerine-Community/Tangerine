@@ -191,6 +191,7 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
         assessments.push({ header: `start_time${assessmentSuffix}`, key: `${docId}.start_time${assessmentSuffix}` });
         assessments.push({ header: `order_map${assessmentSuffix}`, key: `${docId}.order_map${assessmentSuffix}` });
         assessments.push({ header: `end_time${assessmentSuffix}`, key: `${docId}.end_time${assessmentSuffix}` });
+        assessments.push({ header: `comment${assessmentSuffix}`, key: `${docId}.comment${assessmentSuffix}` });
         if (count < 1) {
           assessments.push({ header: 'user_role', key: `${docId}.userRole` });
           assessments.push({ header: 'mpesa_number', key: `${docId}.mPesaNumber` });

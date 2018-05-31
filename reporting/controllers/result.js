@@ -264,6 +264,7 @@ const generateResult = async function(collections, count = 0, baseDb) {
         if (doc.prototype === 'complete') {
           let endTimestamp = convertToTimeZone(doc.data.end_time, groupTimeZone);
           result[`${collectionId}.end_time${assessmentSuffix}`] = moment(endTimestamp).format('MMM D YYYY hh:mm');
+          result[`${collectionId}.comment${assessmentSuffix}`] = doc.data.comment;
         }
       }
     }
