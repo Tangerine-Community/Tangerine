@@ -34,29 +34,7 @@ Now visit your Tangerine-server installation at the IP address or hostname of yo
 
 
 ## Upgrade
-Monitor https://github.com/Tangerine-Community/Tangerine/releases for new stable releases. Note that a "Pre-release" may not be stable, might corrupt your data, and there will not be an upgrade path for you.
-
-SSH into your server and run the following commands.
-```
-cd Tangerine
-git fetch origin
-git checkout <version tag>
-# Set up config.sh again.
-cp config.sh config.sh_backup
-cp config.defaults.sh config.sh
-# Migrate settings from config backup to config.sh.
-vim -O config.sh config.sh_backup
-rm config.sh_backup
-./start.sh
-# Check for upgrade scripts that need to be run. Note that you can only run scripts that end in .sh and you need to 
-# run every script between your prior version to version you have upgraded to. Also always check the release notes for
-# any special instructions
-docker exec -it tangerine-container ls /tangerine-server/upgrades
-# Run an upgrade script.
-docker exec -it tangerine-container /tangerine-server/v2.0.0.sh
-```
-
-Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
+You can sign up to be notified of releases via email by signing up at the [Tangerine Releases Google Group](https://groups.google.com/forum/#!forum/tangerine-releases). When a release is issued, you will find it listed on the Github Releases page https://github.com/Tangerine-Community/Tangerine/releases. Note that a release marked "Pre-release" may not be stable, may corrupt your data, and there will not be an upgrade path for you.  Each release listed on Github Releases come with Release Notes attached which contain upgrade instructions for that release.
 
 
 ## Technical Documentation
