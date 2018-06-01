@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+if (!process.argv[2]) {
+  console.log('Usage:')
+  console.log('       ./bin.js <delayBetweenBatchesInMilliseconds> <batchSize> <numberOfUploads> <url>')
+  process.exit()
+}
+
 const pako = require('pako')
 const axios = require('axios')
 const uuidv1 = require('uuid/v1');
@@ -8,7 +14,6 @@ const delay = parseInt(process.argv[2])
 const batchSize = parseInt(process.argv[3])
 const numberOfUploads = parseInt(process.argv[4])
 const url = process.argv[5]
-console.log(process.argv)
 
 const sleep = (milliseconds) => {
   return new Promise((res, rej) => {
@@ -24,8 +29,6 @@ async function go() {
     for(var i=0; i < batchSize; i++){
       let doc = Object.assign({}, templateDoc, { _id: uuidv1() })
       let body = pako.deflate(JSON.stringify({ doc }), {to: 'string'})
-
-      console.log(body)
       bodies.push(body)
     }
     let batch = bodies.map((body) => axios({method: 'post', url, data: `${body}`, headers: { 'content-type': 'text/plain' },}))
