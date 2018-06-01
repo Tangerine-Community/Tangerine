@@ -38,6 +38,6 @@
     "rxjs": "^6.1.0",
     "sanitize-filename": "^1.6.1",
     "underscore": "^1.8.3",
-    "winston": "^2.4.0"
+    "tangy-log": "^1.0.0"
   }
 }

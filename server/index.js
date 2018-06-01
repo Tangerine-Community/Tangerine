@@ -27,13 +27,8 @@ const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
 const _ = require('underscore')
-
-jlog = function(data) {
-  console.log(JSON.stringify(data, null, 2))
-}
-log = function(data) {
-  console.log(data)
-}
+const log = require('tangy-log').log
+const clog = require('tangy-log').clog
 
 var DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
@@ -71,7 +66,7 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
   var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
     proxyReqPathResolver: function (req, res) {
       var path = require('url').parse(req.url).path;
-      console.log("path:" + path);
+      clog("path:" + path);
       return path;
     }
   });
@@ -102,12 +97,12 @@ var passport = require('passport')
 passport.use(new LocalStrategy(
   function(username, password, done) {
     if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
-      console.log('login success!')
+      log.info(`${username} login success`)
       return done(null, {
         "name": "user1"
       });
     } else {
-      console.log('login fail!')
+      log.info(`${username} login fail`)
       return done(null, false, { message: 'Incorrect username or password' })
     }
   }
@@ -144,7 +139,7 @@ var isAuthenticated = function (req, res, next) {
     return next();
   }
   let errorMessage = `Permission denied at ${req.url}`;
-  console.log(errorMessage)
+  log.warning(errorMessage)
   // res.redirect('/');
   res.status(401).send(errorMessage)
 }
@@ -173,12 +168,12 @@ app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev'))
 
 app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, next) {
   let contentPath = '../client/content/assets'
-  console.log("Setting path to " + path.join(__dirname, contentPath))
+  clog("Setting path to " + path.join(__dirname, contentPath))
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
 app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
   let contentPath = '../client/content/groups/' + req.params.group
-  console.log("Setting path to " + path.join(__dirname, contentPath))
+  clog("Setting path to " + path.join(__dirname, contentPath))
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
 
@@ -186,8 +181,7 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  console.log("in release-apk, group: " + group + " releaseType: " + releaseType)
-  console.log(`The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
+  log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
   await exec(`cd /tangerine/client && \
         ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME} 2>&1 | tee -a ../server/apk.log
   `)
@@ -198,7 +192,7 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  console.log("in release-pwa, group: " + group + " releaseType: " + releaseType)
+  clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   await exec(`cd /tangerine/client && \
         ./release-pwa.sh ${group} ./content/groups/${group} ${releaseType}
   `)
@@ -206,33 +200,33 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
 })
 
 async function saveFormsJson(formParameters, group) {
-  console.log("formParameters: " + JSON.stringify(formParameters))
+  clog("formParameters: " + JSON.stringify(formParameters))
   let contentRoot = config.contentRoot
   let formsJsonPath = contentRoot + '/' + group + '/forms.json'
-  console.log("formsJsonPath:" + formsJsonPath)
+  clog("formsJsonPath:" + formsJsonPath)
   let formJson
   try {
     const exists = await fs.pathExists(formsJsonPath)
     if (exists) {
-      console.log("formsJsonPath exists")
+      clog("formsJsonPath exists")
       // read formsJsonPath and add formParameters to formJson
       try {
         formJson = await fs.readJson(formsJsonPath)
-        console.log("formJson: " + JSON.stringify(formJson))
-        console.log("formParameters: " + JSON.stringify(formParameters))
+        clog("formJson: " + JSON.stringify(formJson))
+        clog("formParameters: " + JSON.stringify(formParameters))
         if (formParameters !== null) {
           formJson.push(formParameters)
         }
-        console.log("formJson with new formParameters: " + JSON.stringify(formJson))
+        clog("formJson with new formParameters: " + JSON.stringify(formJson))
       } catch (err) {
-        console.error("An error reading the json form: " + err)
+        log.error("An error reading the json form: " + err)
       }
     } else {
       // create an empty formJson
       formJson = []
     }
   } catch (err) {
-    console.log("Error checking formJson: " + err)
+    log.error("Error checking formJson: " + err)
   }
 
   await fs.writeJson(formsJsonPath, formJson)
@@ -243,7 +237,7 @@ let openForm = async function (path) {
   try {
     form = await fs.readFile(path, 'utf8')
   } catch (e) {
-    console.log("Error opening form: ", e);
+    log.error("Error opening form: ", e);
   }
   return form
 };
@@ -286,13 +280,13 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
       let resp = {
         "message": msg
       }
-      console.log(resp)
+      clog(resp)
       res.send(resp)
     })
     .catch(err => {
       let msg = "An error with form outputFile: " + err
       let message = { message: msg };
-      console.error(message)
+      log.error(message)
       res.send(message)
     })
 })
@@ -312,7 +306,6 @@ app.post('/editor/file/save', isAuthenticated, async function (req, res) {
 // groupContentRoot: path to content on the editor filesystem.
 app.post('/editor/item/save', isAuthenticated, async function (req, res) {
   let displayFormsListing = false
-  // console.log("req.body:" + JSON.stringify(req.body) + " req.body.itemTitle: " + req.body.itemTitle)
   let formTitle = req.body.formTitle
   if (typeof formTitle !== 'undefined') {
     formTitle = sanitize(formTitle)
@@ -322,7 +315,6 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     itemTitle = sanitize(itemTitle)
   }
   let formDirName = req.body.formName
-  // console.log("formDirName: "+ formDirName)
   if (typeof formDirName !== 'undefined') {
     formDirName = sanitize(req.body.formName).replace(/ /g, '')
   }
@@ -338,7 +330,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
   // Need to populate the originalForm var
   // First, check if this is a new form, which don't have formHtmlPath,
   if (formHtmlPath === null) {
-    console.log("Creating a new form.")
+    log.info("Creating a new form.")
     // Append displayFormsListing:true to res if new form.
     displayFormsListing = true
     // Setup the new form by populating the template with the formDirName
@@ -346,16 +338,16 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     try {
       originalForm = await fs.readFile(templatePath, 'utf8')
     } catch (e) {
-      console.log('e', e);
+      log.error(e);
     }
     originalForm = originalForm.replace('FORMNAME', formDirName)
     // create the path to the form and its form.html
     formDir = formDirName
     // now create the filesystem for formDir
-    console.log("checking groupContentRoot + sep + formDir: " + groupContentRoot + sep + formDir)
+    clog("checking groupContentRoot + sep + formDir: " + groupContentRoot + sep + formDir)
     await fs.ensureDir(groupContentRoot + sep + formDir)
       .then(() => {
-        console.log('success! Created path to formDir: ' + groupContentRoot + sep + formDir)
+        log.info('success! Created path to formDir: ' + groupContentRoot + sep + formDir)
       })
       .catch(err => {
         console.error("An error: " + err)
@@ -368,13 +360,13 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
       "title": formTitle,
       "src": contentUrlPath + formDirName + "/form.html"
     }
-    console.log("formParameters: " + JSON.stringify(formParameters))
+    clog("formParameters: " + JSON.stringify(formParameters))
     await saveFormsJson(formParameters, groupName)
       .then(() => {
-        console.log("Updated forms.json")
+        log.info("Updated forms.json")
       })
       .catch(err => {
-        console.error("An error saving the json form: " + err)
+        log.error("An error saving the json form: " + err)
         throw err;
       })
     // Set formPath
@@ -387,14 +379,12 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     // create the form html that will be added
     let itemUrlPath = contentUrlPath + formDirName + sep + itemFilename
     let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
-    // console.log('newItem: ' + newItem)
     $(newItem).appendTo('tangy-form')
-    // console.log('html after: ' + $.html())
     let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
-    console.log('now outputting ' + formPath)
+    clog('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
-        console.log('success! Updated file at: ' + formPath)
+        log.info('success! Updated file at: ' + formPath)
       })
       .catch(err => {
         console.error("An error with form outputFile: " + err)
@@ -405,7 +395,7 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     formDir = formHtmlPath.split('/')[2]
     formName = formHtmlPath.split('/')[3]
     formPath = groupContentRoot + sep + formDir + sep + formName
-    console.log("formPath: " + formPath)
+    clog("formPath: " + formPath)
     originalForm = await openForm(formPath);
     // Now that we have originalForm, we can load it and add items to it.
     const $ = cheerio.load(originalForm)
@@ -413,37 +403,33 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     let formItemList = $('tangy-form-item')
     let formItemListHtml = $('tangy-form-item', 'tangy-form').html()
     let rootHtml = $.html()
-    // console.log('itemFilename: ' + itemFilename +  ' formItemListHtml: ' + formItemListHtml + ' rootHtml: ' + rootHtml)
     let isNewItem = true
     // loop through the current items and see if this is an edit or a new item
     let newItemList = $('tangy-form-item').each(function (i, elem) {
       let src = $(this).attr('src')
-      // console.log("src: " + src)
       if (src === itemFilename) {
-        // console.log("matched  src: " + src)
         $(this).attr('title', itemTitle).html()
         isNewItem = false
       }
     });
-    // console.log('newItemList: ' + newItemList + " isNewItem: " + isNewItem)
     $('tangy-form-item').remove()
     $(newItemList).appendTo('tangy-form')
     let itemUrlPath = contentUrlPath + formDir + sep + itemFilename
     if (isNewItem) {
       // create the item html that will be added to the form.
       let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
-      console.log('newItem: ' + newItem)
+      log.info('newItem: ' + newItem)
       $(newItem).appendTo('tangy-form')
     }
     let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
-    console.log('now outputting ' + formPath)
+    clog('now outputting ' + formPath)
     await fs.outputFile(formPath, form)
       .then(() => {
-        console.log('success! Updated file at: ' + formPath)
+        log.info('success! Updated file at: ' + formPath)
 
       })
       .catch(err => {
-        console.error("An error with form outputFile: " + err)
+        log.error("An error with form outputFile: " + err)
         res.send(err)
       })
   }
@@ -455,14 +441,14 @@ app.post('/editor/item/save', isAuthenticated, async function (req, res) {
     onlyItemFilename = itemFilename
   }
   let itemPath = formPath.substring(0, formPath.lastIndexOf("/")) + sep + onlyItemFilename;
-  console.log("formPath : " + formPath + " itemFilename: " + itemFilename + " groupName: " + groupName)
-  console.log("Saving item at : " + itemPath + "  itemHtmlText: " + itemHtmlText)
+  clog("formPath : " + formPath + " itemFilename: " + itemFilename + " groupName: " + groupName)
+  clog("Saving item at : " + itemPath + "  itemHtmlText: " + itemHtmlText)
   await fs.outputFile(itemPath, itemHtmlText)
     .then(() => {
-      console.log('Success! Created item at: ' + itemPath)
+      log.info('Success! Created item at: ' + itemPath)
     })
     .catch(err => {
-      console.error("An error with item outputFile: " + err)
+      log.error("An error with item outputFile: " + err)
       res.send(err)
     })
   let resp = {
@@ -493,12 +479,12 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
     appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}`
   } catch (err) {
-    console.error("An error reading app-config: " + err)
+    log.error("An error reading app-config: " + err)
     throw err;
   }
   await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
-    .then(status => console.log("Wrote app-config.json"))
-    .catch(err => console.error("An error copying app-config: " + err))
+    .then(status => log.info("Wrote app-config.json"))
+    .catch(err => log.error("An error copying app-config: " + err))
 
   //#region wire group DB and result db
 
@@ -509,7 +495,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
    * Also create the design doc for the resultsDB
    */
   await REPORTING_DB.info(async info => await createDesignDocument(REPORTING_DB_NAME)).catch(e => {
-    console.error(e);
+    log.error(e);
   });
 
   // Set up watching of groupDb for changes.
@@ -523,7 +509,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 app.get('/groups', isAuthenticated, async function (req, res) {
   fsc.readdir('/tangerine/client/content/groups', function (err, files) {
     let filteredFiles = files.filter(junk.not)
-    console.log('/groups route lists these dirs: ' + filteredFiles)
+    clog('/groups route lists these dirs: ' + filteredFiles)
     let groups = filteredFiles.map((groupName) => {
       return {
         attributes: {
@@ -547,9 +533,9 @@ app.post('/upload/:groupName', async function (req, res) {
     const packet = JSON.parse(payload)
     // New docs should not have a rev or else insertion will fail.
     delete packet.doc._rev
-    await db.put(packet.doc).catch(err => console.log(err))
+    await db.put(packet.doc).catch(err => log.error(err))
     res.send('ok')
-  } catch (e) { console.log(e) }
+  } catch (e) { log.error(e) }
 
 })
 
@@ -590,7 +576,7 @@ app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
   try {
     var result = json2csv({ data: flatVariableDocs, fields: keys });
   } catch (err) {
-    console.error(err);
+    log.error(err);
   }
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/csv');
@@ -612,10 +598,10 @@ app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isA
 
 let replicationEntries = []
 
-console.log(process.env.T_REPLICATE)
+clog(process.env.T_REPLICATE)
 try {
   replicationEntries = JSON.parse(process.env.T_REPLICATE)
-} catch (e) { console.log(e) }
+} catch (e) { log.error(e) }
 
 if (replicationEntries.length > 0) {
   for (let replicationEntry of replicationEntries) {
@@ -667,7 +653,7 @@ changesFeedSubject
   .pipe(
     concatMap( async data => await tangyReporting.processFormResponse(data.data, data.groupName) )
   )
-  .subscribe(res => console.log('got res: ' + res));
+  .subscribe(res => log.info('Processed a change in the changes feed.'));
 
 /**
  * Listens to the changes feed of a database and passes new documents to the queue
@@ -684,9 +670,9 @@ async function monitorDatabaseChangesFeed(groupName) {
          */
         if (!body.deleted && body.doc.collection === 'TangyFormResponse') changesFeedSubject.next({ data: body['doc'], groupName });
       })
-      .on('error', (err) => console.error(err));
+      .on('error', (err) => log.error(err));
   } catch (err) {
-    console.error(err);
+    log.error(err);
   }
 }
 
@@ -725,19 +711,19 @@ async function createDesignDocument(database) {
   try {
     const designDoc = await REPORTING_DB.get('_design/tangy-reporting');
     if (designDoc.version !== tangyReportingDesignDoc.version) {
-      console.log(chalk.white(`✓ Time to update _design/tangy-reporting for ${database}`));
-      console.info(chalk.yellow(`Removing _design/tangy-reporting for ${database}`));
+      log.info(`✓ Time to update _design/tangy-reporting for ${database}`);
+      log.info(`Removing _design/tangy-reporting for ${database}`);
       await REPORTING_DB.remove(designDoc)
-      console.log(chalk.red(`Cleaning up view indexes for ${database}`));
+      log.info(`Cleaning up view indexes for ${database}`);
       // @TODO This causes conflicts with open databases. How to avoid??
       //await REPORTING_DB.viewCleanup()
-      console.info(chalk.yellow(`Creating _design/tangy-reporting for ${database}`));
+      log.info(`Creating _design/tangy-reporting for ${database}`);
       await REPORTING_DB.put(tangyReportingDesignDoc).
-        then(info => console.log(chalk.green(`√ Created _design/tangy-reporting for ${database} succesfully`)));
+        then(info => log.info(`√ Created _design/tangy-reporting for ${database} succesfully`));
     }
   } catch (error) {
     if (error.error === 'not_found') {
-      await REPORTING_DB.put(tangyReportingDesignDoc).catch(err => console.error(err));
+      await REPORTING_DB.put(tangyReportingDesignDoc).catch(err => log.error(err));
     }
   }
 }
@@ -746,6 +732,6 @@ async function createDesignDocument(database) {
 var server = app.listen(config.port, function () {
   var host = server.address().address;
   var port = server.address().port;
-  console.log(server.address());
-  console.log('Server V3: http://%s:%s', host, port);
+  log.info(server.address());
+  log.info('Server V3: http://%s:%s', host, port);
 });
