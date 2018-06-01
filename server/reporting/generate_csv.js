@@ -8,9 +8,12 @@
  * Module dependencies
  */
 
-const chalk = require('chalk');
 const Excel = require('exceljs');
 const PouchDB = require('pouchdb');
+const log = require('tangy-log').log
+const clog = require('tangy-log').clog
+
+
 
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
@@ -81,7 +84,7 @@ const generateCSV = async function (formId, reportingDB, res) {
   res.setHeader('Content-Disposition', `attachment; filename=${FILENAME}.xlsx`);
 
   workbook.xlsx.write(res).then(function (data) {
-    console.log(chalk.green(`✓ You have successfully created "${FILENAME}.xlsx" file at ${new Date()}`));
+    log.info(`✓ You have successfully created "${FILENAME}.xlsx" file at ${new Date()}`);
     res.end();
   });
 

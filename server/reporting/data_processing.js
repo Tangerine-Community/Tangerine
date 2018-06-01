@@ -15,6 +15,8 @@ const _ = require('lodash');
 const {promisify} = require('util');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
+const log = require('tangy-log').log
+const clog = require('tangy-log').clog
 
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
@@ -43,13 +45,13 @@ const processFormResponse = async function (formData, groupName) {
   let locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${groupName}/location-list.json`))
 
   // generate column headers
-  let docHeaders = generateHeadersFromFormResponse(formData);
+  let docHeaders = generateHeaders(formData);
   docHeaders.push({ header: 'Complete', key: `${formID}.complete` });
   docHeaders.push({ header: 'Start Date Time', key: `${formID}.startDatetime` });
   formHeaders.columnHeaders = docHeaders;
 
   // process form result
-  let processedResult = generateFlatObjectFromFormResponse(formData, locationList);
+  let processedResult = generateFlatObject(formData, locationList);
   formResult.processedResult = processedResult;
   formResult.processedResult[`${formID}.startDatetime`] = formData.startDatetime;
   formResult.processedResult[`${formID}.complete`] = formData.complete;
@@ -57,13 +59,13 @@ const processFormResponse = async function (formData, groupName) {
   try {
     await saveFormResponseHeaders(formHeaders, REPORTING_DB);
   } catch (err) {
-    console.error(err);
+    log.error(err);
   }
 
   try {
     await saveFlattenedFormResponse(formResult, REPORTING_DB);
   } catch (err) {
-    console.error(err);
+    log.error(err);
   }
 
 };
@@ -75,61 +77,48 @@ const processFormResponse = async function (formData, groupName) {
  * @returns {array} generated headers for csv
  */
 
-const generateHeadersFromFormResponse = function (formData) {
+const generateHeaders = function (formData) {
   let formID = formData.form.id;
   let formResponseHeaders = [];
-
   formData.items.forEach(item => {
     item.inputs.forEach(input => {
-      // create headers for all values that are strings
-      if (input && (typeof input.value === 'string')) {
+      if (input && input.tagName === 'TANGY-LOCATION') {
+        // Create columns for each level's ID and Label.
+        input.value.forEach(group => {
+          formResponseHeaders.push({
+            header: `${input.name}_${group.level}`,
+            key: `${formID}.${item.id}.${input.name}.${group.level}`
+          });
+        });
+        input.value.forEach(group => {
+          formResponseHeaders.push({
+            header: `${input.name}_${group.level}_label`,
+            key: `${formID}.${item.id}.${input.name}.${group.level}_label`
+          });
+        });
+      } else if (input && (typeof input.value === 'string')) {
         formResponseHeaders.push({
           header: `${input.name}`,
           key: `${formID}.${item.id}.${input.name}`
         });
-      }
-
-      // create headers for all values that are arrays
-      if (input && Array.isArray(input.value)) {
-        //@TODO: Remove this if-block when tangy-location follows the name and value data structure.
-        if (input.tagName === 'TANGY-LOCATION') {
-          input.value.forEach(group => {
-            formResponseHeaders.push({
-              header: `${input.name}_${group.level}`,
-              key: `${formID}.${item.id}.${input.name}.${group.level}`
-            });
+      } else if (input && Array.isArray(input.value)) {
+        input.value.forEach(group => {
+          formResponseHeaders.push({
+            header: `${input.name}_${group.name}`,
+            key: `${formID}.${item.id}.${input.name}.${group.name}`
           });
-          input.value.forEach(group => {
-            formResponseHeaders.push({
-              header: `${input.name}_${group.level}_label`,
-              key: `${formID}.${item.id}.${input.name}.${group.level}_label`
-            });
-          });
-        } else {
-          input.value.forEach(group => {
-            formResponseHeaders.push({
-              header: `${input.name}_${group.name}`,
-              key: `${formID}.${item.id}.${input.name}.${group.name}`
-            });
-          });
-        }
-      }
-
-      // create headers for all values that are pure objects
-      if (input && (typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
+        });
+      } else if (input && typeof input.value === 'object') {
         let elementKeys = Object.keys(input.value);
         elementKeys.forEach(key => {
           formResponseHeaders.push({
-            headers: `${input.name}_${key}`,
+            header: `${input.name}_${key}`,
             key: `${formID}.${item.id}.${input.name}.${key}`
           });
         })
       }
-
     });
-
   });
-
   return formResponseHeaders;
 }
 
@@ -142,29 +131,25 @@ const generateHeadersFromFormResponse = function (formData) {
  * @returns {object} processed results for csv
  */
 
-const generateFlatObjectFromFormResponse = function (formData, locationList) {
+const generateFlatObject = function (formData, locationList) {
   let formID = formData.form.id;
   let formResponseResult = {};
-
   for (let item of formData.items) {
     for (let input of item.inputs) {
-      // TANGY-LOCATION has it's own custom format.
       if (input.tagName === 'TANGY-LOCATION') {
+        // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
           formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
           locationKeys.push(group.value)
           formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}_label`] = getLocationLabel(locationKeys, locationList);
         }
-      // Case for inputs that have string values.
       } else if (input && typeof input.value === 'string') {
         formResponseResult[`${formID}.${item.id}.${input.name}`] = input.value;
-      // Case for inputs whos value are arrays of objects following the name/value property convention.
       } else if (input && Array.isArray(input.value)) {
         for (let group of input.value) {
           formResponseResult[`${formID}.${item.id}.${input.name}.${group.name}`] = group.value;
         }
-      // Case for Object following the name/value property convention.
       } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
         let elementKeys = Object.keys(input.value);
         for (let key of elementKeys) {
@@ -172,9 +157,7 @@ const generateFlatObjectFromFormResponse = function (formData, locationList) {
         };
       }
     }
-
   }
-
   return formResponseResult;
 };
 
@@ -197,7 +180,7 @@ function saveFormResponseHeaders(doc, db) {
     .catch(async err => {
       if (err.status === 409) {
         // For document update conflict retry saving the header.
-        console.log(err.message, '...Retry saving header');
+        clog(err.message, '...Retry saving header');
         await saveFormHeaders(doc);
         res(true)
       } else {
@@ -222,7 +205,7 @@ function saveFlattenedFormResponse(doc, db) {
     }).catch(async err => {
       if (err.status === 409) {
         // For document update conflict retry saving the result.
-        console.log(err.message, '...Retry saving result');
+        log.error(err.message, '...Retry saving result');
         await saveFormResult(doc);
         res(true)
       } else {

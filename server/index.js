@@ -134,12 +134,13 @@ app.use(passport.session());
 
 // Middleware to protect routes.
 var isAuthenticated = function (req, res, next) {
-  // @TODO Add HTTP AUTH for clients like curl.
+  // Uncomment this when you want to turn off authentication during development.
+  //  return next();
   if (req.isAuthenticated()) {
     return next();
   }
   let errorMessage = `Permission denied at ${req.url}`;
-  log.warning(errorMessage)
+  log.warn(errorMessage)
   // res.redirect('/');
   res.status(401).send(errorMessage)
 }
