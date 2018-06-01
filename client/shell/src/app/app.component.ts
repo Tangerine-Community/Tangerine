@@ -7,7 +7,7 @@ import { AuthenticationService } from './core/auth/_services/authentication.serv
 import { UserService } from './core/auth/_services/user.service';
 import { WindowRef } from './core/window-ref.service';
 import { updates } from './core/update/update/updates';
-import { TangyFormService } from './tangy-forms/tangy-form-service.js';
+import { TangyFormService } from './tangy-forms/tangy-form-service';
 import PouchDB from 'pouchdb';
 import { TranslateService } from '@ngx-translate/core';
 import { _TRANSLATE } from './shared/translation-marker';
