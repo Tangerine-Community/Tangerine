@@ -144,8 +144,8 @@ const processChangedDocument = async function(resp, baseDb, resultDb) {
       let validationData = await validateResult(docId, groupTimeZone, baseDb, allTimestamps);
       assessmentResult.isValid = validationData.isValid;
       assessmentResult.isValidReason = validationData.reason;
-      assessmentResult[`${docId}.start_time`] = validationData.startTime;
-      assessmentResult[`${docId}.end_time`] = validationData.endTime;
+      assessmentResult[`${docId}.start_time`] = validationData[`${docId}.start_time`];
+      assessmentResult[`${docId}.end_time`] = validationData[`${docId}.start_time`];
 
       assessmentResult.indexKeys.ref = assessmentResult.indexKeys.ref;
       assessmentResult.indexKeys.parent_id = docId;
