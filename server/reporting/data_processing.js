@@ -29,6 +29,58 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
   });
 }
 
+// Passes off a change to the corresponding chache processing function. Returns a promise.
+function processChange(change, dbName) {
+  switch (change.doc.collection) {
+    case 'TangyFormRespone':
+      return processFormResponse(doc, dbName)
+  }
+}
+
+async function processBatch(dbCacheEntries, batchSize) {
+  let batchDidRun = false 
+  const dbNames = DB.allDbs().filter(dbName => dbName.indexOf('-result') === -1)
+  for (let dbName of dbNames) {
+    let dbCacheEntry = dbCacheEntries(cache => cache.dbName === dbName)
+    if (dbCacheEntry) {
+      dbCacheEntries.push({ dbName, sequence: 0 })
+      dbCacheEntry = dbCacheEntries(cache => cache.dbName === dbName)
+    }
+    const STORE = new DB(dbName);
+    // Include docs so we don't have to make additional requests to the db. This is ok as long as we don't end up getting backed up, which this shouldn't.
+    const changes = STORE.changes({ since: dbCacheEntry.sequence, limit: batchSize, include_docs: true })
+    const batch = changes.map(change => processChange(change, dbName))
+    await Promise.all(batch)
+    dbCacheEntry.sequence = changes[changes.length-1].sequence
+  }
+  return {
+    batchDidRun,
+    queues
+  }
+}
+
+exports.startCacheProcessing = function() {
+  var batchIsRunning = false
+  // @TODO Load this from a persistent store so we don't process from sequence 0 for every database everytime we start.
+  var queues = []
+  var batchSize = 5
+  // Keep the cache processing alive.
+  // Could be an infinite while statement, but this is easier on CPUs.
+  return setInterval(async () => {
+    // Semaphore for preventing parallel cache processes from running.
+    if (batchIsRunning === true) return
+    batchIsRunning = true
+    batchStatus = await processBatch(cacheEntries, batchSize)
+    // Sleep if there was not a batch to process. All is quiet.
+    if (!batchStatus.batchDidRun === false) {
+      setTimeout(() => batchIsRunning = flase, 10*1000)
+    } else {
+      batchIsRunning = false
+    }
+  }, 100)
+}
+
+
 /** This function saves processed form response.
  *
  * @param {object} formData - form response from database
@@ -225,4 +277,3 @@ function getLocationLabel(keys, locationList) {
   return currentLevel.label
 }
 
-exports.processFormResponse = processFormResponse;
