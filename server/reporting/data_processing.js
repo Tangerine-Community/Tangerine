@@ -73,7 +73,7 @@ exports.startCacheProcessing = function() {
     batchStatus = await processBatch(cacheEntries, batchSize)
     // Sleep if there was not a batch to process. All is quiet.
     if (!batchStatus.batchDidRun === false) {
-      setTimeout(() => batchIsRunning = flase, 10*1000)
+      setTimeout(() => batchIsRunning = false, 10*1000)
     } else {
       batchIsRunning = false
     }
