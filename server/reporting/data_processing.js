@@ -37,21 +37,24 @@ function processChange(change, dbName) {
   }
 }
 
-async function processBatch(dbCacheEntries, batchSize) {
+async function processBatch(queues, batchSize) {
   let batchDidRun = false 
   const dbNames = DB.allDbs().filter(dbName => dbName.indexOf('-result') === -1)
   for (let dbName of dbNames) {
-    let dbCacheEntry = dbCacheEntries(cache => cache.dbName === dbName)
-    if (dbCacheEntry) {
-      dbCacheEntries.push({ dbName, sequence: 0 })
-      dbCacheEntry = dbCacheEntries(cache => cache.dbName === dbName)
+    let queue = queues.find(cache => queue.dbName === dbName)
+    if (queue) {
+      queues.push({ dbName, sequence: 0 })
+      queue = queues(queue => queue.dbName === dbName)
     }
     const STORE = new DB(dbName);
     // Include docs so we don't have to make additional requests to the db. This is ok as long as we don't end up getting backed up, which this shouldn't.
-    const changes = STORE.changes({ since: dbCacheEntry.sequence, limit: batchSize, include_docs: true })
-    const batch = changes.map(change => processChange(change, dbName))
-    await Promise.all(batch)
-    dbCacheEntry.sequence = changes[changes.length-1].sequence
+    const changes = STORE.changes({ since: queue.sequence, limit: batchSize, include_docs: true })
+    if (changes) {
+      batchDidRun = true
+      const batch = changes.map(change => processChange(change, dbName))
+      await Promise.all(batch)
+      queue.sequence = changes[changes.length-1].sequence
+    }
   }
   return {
     batchDidRun,
@@ -70,7 +73,7 @@ exports.startCacheProcessing = function() {
     // Semaphore for preventing parallel cache processes from running.
     if (batchIsRunning === true) return
     batchIsRunning = true
-    batchStatus = await processBatch(cacheEntries, batchSize)
+    batchStatus = await processBatch(queues, batchSize)
     // Sleep if there was not a batch to process. All is quiet.
     if (!batchStatus.batchDidRun === false) {
       setTimeout(() => batchIsRunning = false, 10*1000)
