@@ -21,7 +21,8 @@ const compression = require('compression')
 const chalk = require('chalk');
 const { Subject } = require('rxjs');
 const { concatMap } = require('rxjs/operators');
-const tangyReporting = require('../server/reporting/data_processing');
+const { catchError } = require('rxjs/operators');
+const dataProcessing = require('../server/reporting/data_processing');
 const generateCSV = require('../server/reporting/generate_csv').generateCSV;
 const pretty = require('pretty')
 const flatten = require('flat')
@@ -629,54 +630,6 @@ app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthentica
   generateCSV(formId, groupReportingDbName, res);
 });
 
-
-/**
- * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
- * @param {string} srcPath The path to the directory
- */
-const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lstatSync(path.join(srcPath, file)).isDirectory());
-
-/**
- * Gets the list of all the existing groups from the content folder
- * Listens for the changes feed on each of the group's database
- */
-function listenToChangesFeedOnExistingGroups() {
-  const CONTENT_PATH = '../client/content/groups/';
-  const groups = getDirectories(CONTENT_PATH);
-  groups.map(group => monitorDatabaseChangesFeed(group.trim()));
-
-}
-listenToChangesFeedOnExistingGroups();
-
-let changesFeedSubject = new Subject();
-// Using concatMap ensures the data is processed one by one
-changesFeedSubject
-  .pipe(
-    concatMap( async data => await tangyReporting.processFormResponse(data.data, data.groupName) )
-  )
-  .subscribe(res => log.info('Processed a change in the changes feed.'));
-
-/**
- * Listens to the changes feed of a database and passes new documents to the queue
- * which sends the docs one by one in `processChangedDocument()` for processing and saving in the corresponding group results database.
- * @param {string} name the group's database for which to listen to the changes feed.
- */
-async function monitorDatabaseChangesFeed(groupName) {
-  const GROUP_DB = new DB(groupName);
-  try {
-    GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
-      .on('change', async (body) => {
-        /** check if doc is FormResponse before adding to queue to be processesd by the saveProcessedFormData.
-         * Dont add deleted docs to the queue
-         */
-        if (!body.deleted && body.doc.collection === 'TangyFormResponse') changesFeedSubject.next({ data: body['doc'], groupName });
-      })
-      .on('error', (err) => log.error(err));
-  } catch (err) {
-    log.error(err);
-  }
-}
-
 /**
  * @description Function to create Design Documents in a given Database
  * @param {string} database The Database to use when for creating the Design Document
@@ -728,6 +681,8 @@ async function createDesignDocument(database) {
     }
   }
 }
+
+let cacheProcess = dataProcessing.startCacheProcessing()
 
 // Start the server.
 var server = app.listen(config.port, function () {
