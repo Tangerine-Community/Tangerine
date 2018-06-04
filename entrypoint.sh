@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
 
-#echo "Setting cordova"
-#echo "Whitelist"
-#cd /tangerine-server/client && npm install cordova-plugin-whitelist && sleep 10
-#echo "Add Whitelist"
-#cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save
-#echo "Geo"
-#cd /tangerine-server/client && npm install cordova-plugin-geolocation
-#echo "Add Geo"
-#cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save
-#echo "Camera"
-#cd /tangerine-server/client && npm install cordova-plugin-camera
-#echo "Add Camera"
-#cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save
-#echo "Add webview"
-#cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
-#echo "build APK"
-#cd /tangerine-server/client && npm run build:apk
+echo "Setting cordova"
+echo "Whitelist"
+cd /tangerine-server/client && npm install cordova-plugin-whitelist && sleep 10
+echo "Add Whitelist"
+cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-whitelist --save
+echo "Geo"
+cd /tangerine-server/client && npm install cordova-plugin-geolocation
+echo "Add Geo"
+cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-geolocation --save
+echo "Camera"
+cd /tangerine-server/client && npm install cordova-plugin-camera
+echo "Add Camera"
+cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-camera --save
+echo "Add webview"
+cd /tangerine-server/client && ./node_modules/.bin/cordova plugin add cordova-plugin-crosswalk-webview --variable XWALK_VERSION="19+"
+echo "build APK"
+cd /tangerine-server/client && npm run build:apk
 
 # Send nginx logs to docker logs.
 tail -f /var/log/nginx/access.log &
