@@ -102,8 +102,8 @@ const processWorkflowResult = function (data, baseDb) {
     let validationData = await validateResult(docId, groupTimeZone, baseDb, allTimestamps);
     result.isValid = validationData.isValid;
     result.isValidReason = validationData.reason;
-    result[`${docId}.start_time`] = validationData.startTime;
-    result[`${docId}.end_time`] = validationData.endTime;
+    result[`${docId}.start_time`] = validationData[`${docId}.start_time`];
+    result[`${docId}.end_time`] = validationData[`${docId}.end_time`] ;
 
     result.indexKeys.ref = body[0].indexKeys.ref;
     result.indexKeys.parent_id = docId;
