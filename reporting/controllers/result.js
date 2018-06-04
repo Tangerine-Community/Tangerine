@@ -703,8 +703,8 @@ async function validateResult(docId, groupTimeZone, baseDb, allTimestamps) {
     reason = 'Validation params not enabled.';
   }
 
-  validData[`${docId}.start_time`] = startTime;
-  validData[`${docId}.end_time`] = endTime;
+  validData[`${docId}.start_time`] = moment(beginTimestamp).format('MMM D YYYY hh:mm');
+  validData[`${docId}.end_time`] = moment(endTimestamp).format('MMM D YYYY hh:mm');
   validData.isValid = isValid;
   validData.reason = reason;
   validData.indexKeys.year = moment(startTime).year();
