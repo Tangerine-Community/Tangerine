@@ -38,8 +38,12 @@ class PouchDbChangesFeedWorker extends EventEmitter {
         const db = new this._PouchDB(feed.dbName)
         const changes = await db.changes({ since: feed.sequence, limit: this._batchSize, include_docs: false })
         if (changes.results.length > 0) {
-          const batch = changes.results.map(change => this._changeProcessor(change, db))
-          let batchResponses = await Promise.all(batch)
+          try {
+            const batch = changes.results.map(change => this._changeProcessor(change, db))
+            let batchResponses = await Promise.all(batch)
+          } catch (e) {
+            this.emit('error', e)
+          }
           feed.sequence = changes.results[changes.results.length-1].seq
           changesProcessed += changes.results.length
         }

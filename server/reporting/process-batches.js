@@ -28,6 +28,7 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
 const processBatches = (feeds, batchLimit) => {
   return new Promise((res, rej) => {
     let worker = new PouchDbChangesFeedWorker(feeds, changeProcessor, DB, 1, 0, 0, batchLimit)
+    worker.on('error', error => process.stderr.write(JSON.stringify(err)))
     worker.on('done', feeds => res(feeds))
     worker.start()
   })
