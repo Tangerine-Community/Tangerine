@@ -5,7 +5,7 @@ const log = require('tangy-log').log
 class PouchDbChangesFeedWorker extends EventEmitter {
 
   // @TODO Instead of napTime, we could subscribe to the changes feed and wake on activity.
-  constructor (feeds = [], changeProcessor, PouchDB, batchSize = 5, sleepTimeAfterBatchProcessed = 0, sleepTimeAfterNoChanges = 3000) {
+  constructor (feeds = [], changeProcessor, PouchDB, batchSize = 5, sleepTimeAfterBatchProcessed = 0, sleepTimeAfterNoChanges = 3000, batchLimit = undefined) {
     super()
     this._feeds = feeds
     this._changeProcessor = changeProcessor
@@ -13,6 +13,8 @@ class PouchDbChangesFeedWorker extends EventEmitter {
     this._batchSize = batchSize
     this._sleepTimeAfterBatchProcessed = sleepTimeAfterBatchProcessed 
     this._sleepTimeAfterNoChanges = sleepTimeAfterNoChanges 
+    this._batchLimit = batchLimit
+    this._batchCount = 0
   }
 
   start() {
@@ -40,16 +42,21 @@ class PouchDbChangesFeedWorker extends EventEmitter {
           let batchResponses = await Promise.all(batch)
           feed.sequence = changes.results[changes.results.length-1].seq
           changesProcessed += changes.results.length
-          this.emit('batchProcessed')
-          await sleep(this._sleepTimeAfterBatchProcessed)
         }
       }
-      // Sleep if there was not a batch to process. All is quiet.
-      if (changesProcessed === 0) {
-        this.emit('done', this._feeds)
-        await sleep(this._sleepTimeAfterNoChanges)
-      }  
+      this._batchCount++
+      this.emit('batchProcessed')
+      if (this._batchLimit !== undefined && this._batchCount === this._batchLimit) {
+        this.stop()
+      } else if (this._shouldProcess === true) { 
+        await sleep(this._sleepTimeAfterBatchProcessed)
+        // Sleep if there was not a batch to process. All is quiet.
+        if (changesProcessed === 0) {
+          await sleep(this._sleepTimeAfterNoChanges)
+        }
+      }
     }
+    this.emit('done', this._feeds)
   }
 
 
