@@ -201,7 +201,9 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
         if (count < 1) {
           if (typeof userSchema !== 'undefined') {
             Object.keys(userSchema).forEach(function(key,index) {
-              assessments.push({header: key, key: `${docId}.${key}`});
+              if (key !== 'password' && key !== 'passwordConfirm') {
+                assessments.push({header: key, key: `${docId}.${key}`});
+              }
             });
           } else {
               assessments.push({header: 'user_role', key: `${docId}.userRole`});
@@ -210,7 +212,7 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
               assessments.push({header: 'full_name', key: `${docId}.fullName`});
           }
         }
-        
+
         return dbQuery.getSubtests(collectionId, baseDb);
       })
       .then(async(subtestData) => {
