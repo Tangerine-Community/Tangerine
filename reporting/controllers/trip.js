@@ -30,7 +30,7 @@ const dbQuery = require('./../utils/dbQuery');
  *  result database url where the generated headers will be saved.
  *     {
  *       "db_url": "http://admin:password@test.tangerine.org/database_name"
- *       "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *       "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
  *     }
  *
  * Response:
@@ -47,8 +47,8 @@ const dbQuery = require('./../utils/dbQuery');
  */
 
 exports.processResult = function(req, res) {
-  const baseDb = req.body.base_db;
-  const resultDb = req.body.result_db;
+  const baseDb = req.body.baseDb;
+  const resultDb = req.body.resultDb;
 
   dbQuery.getTripResults(req.params.id)
     .then(async(data) => {
@@ -102,8 +102,8 @@ const processWorkflowResult = function (data, baseDb) {
     let validationData = await validateResult(docId, groupTimeZone, baseDb, allTimestamps);
     result.isValid = validationData.isValid;
     result.isValidReason = validationData.reason;
-    result[`${docId}.start_time`] = validationData.startTime;
-    result[`${docId}.end_time`] = validationData.endTime;
+    result[`${docId}.start_time`] = validationData[`${docId}.start_time`];
+    result[`${docId}.end_time`] = validationData[`${docId}.end_time`] ;
 
     result.indexKeys.ref = body[0].indexKeys.ref;
     result.indexKeys.parent_id = docId;

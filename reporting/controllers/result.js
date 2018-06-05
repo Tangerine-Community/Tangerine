@@ -89,7 +89,7 @@ const surveyValueMap = {
  */
 
 exports.all = function(req, res) {
-  const GROUP_DB = new PouchDB(req.body.base_db);
+  const GROUP_DB = new PouchDB(req.body.baseDb);
   GROUP_DB.query('ojai/byCollection', { key: 'result', include_docs: true })
     .then((data) => res.json({ count: data.rows.length, results: data.rows }))
     .catch((err) => res.json(err));
@@ -127,8 +127,8 @@ exports.all = function(req, res) {
  */
 
 exports.processResult = function(req, res) {
-  const baseDb = req.body.base_db;
-  const resultDb = req.body.result_db;
+  const baseDb = req.body.baseDb;
+  const resultDb = req.body.resultDb;
   const GROUP_DB = new PouchDB(baseDb);
 
   GROUP_DB.get(req.params.id)
@@ -143,8 +143,8 @@ exports.processResult = function(req, res) {
       let validationData = await validateResult(docId, groupTimeZone, baseDb, allTimestamps);
       result.isValid = validationData.isValid;
       result.isValidReason = validationData.reason;
-      result[`${docId}.start_time`] = validationData.startTime;
-      result[`${docId}.end_time`] = validationData.endTime;
+      result[`${docId}.start_time`] = validationData[`${docId}.start_time`];
+      result[`${docId}.end_time`] = validationData[`${docId}.end_time`] ;
 
       result.indexKeys.ref = result.indexKeys.ref;
       result.indexKeys.parent_id = docId;
@@ -263,7 +263,8 @@ const generateResult = async function(collections, count = 0, baseDb) {
         }
         if (doc.prototype === 'complete') {
           let endTimestamp = convertToTimeZone(doc.data.end_time, groupTimeZone);
-          result[`${collectionId}.end_time${assessmentSuffix}`] = moment(endTimestamp).format('hh:mm');
+          result[`${collectionId}.end_time${assessmentSuffix}`] = moment(endTimestamp).format('MMM D YYYY hh:mm');
+          result[`${collectionId}.comment${assessmentSuffix}`] = doc.data.comment;
         }
       }
     }
@@ -280,10 +281,11 @@ const generateResult = async function(collections, count = 0, baseDb) {
     let username = `user-${enumeratorName}`;
     try {
       let userDetails = await dbQuery.getUserDetails(username, baseDb);
-      result[`${collectionId}.userRole`] = userDetails.role;
-      result[`${collectionId}.mPesaNumber`] = userDetails.mPesaNumber;
-      result[`${collectionId}.phoneNumber`] = userDetails.phoneNumber || userDetails.phone;
-      result[`${collectionId}.fullName`] = `${userDetails.firstName || userDetails.first} ${userDetails.lastName || userDetails.last}`;
+      Object.keys(userDetails).forEach(function (key, index) {
+        if (key !== 'preferences' && key !== 'salt' && key !== 'updated' && key !== 'uploadDate' && key !== '_id' && key !== '_rev' && key !== 'collection' && key !== 'pass' && key !== 'location' && key !== 'yearOfBirth') {
+          result[`${collectionId}.${key}`] = userDetails[key];
+        }
+      });
     } catch (err) {
       console.error({ message: 'Could not find user metadata', reason: err.message });
     }
@@ -310,21 +312,30 @@ const generateResult = async function(collections, count = 0, baseDb) {
  */
 
 async function processLocationResult(body, subtestCount, groupTimeZone, baseDb) {
-  let count = subtestCount.locationCount;
   let i, j, locationResult = {};
-  let locSuffix = count > 0 ? `_${count}` : '';
+  let locSuffix = subtestCount.locationCount > 0 ? `_${subtestCount.locationCount}` : '';
   let subtestId = body.subtestId;
   let locLabels = body.data.labels;
   let locationData = body.data.location;
   let schoolId = body.data.schoolId;
   let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
 
-  if (!schoolId || locLabels.length == 0 || locLabels[0] == '') {
+  // check if the geographical level is available
+  let allSubtestData = await dbQuery.getSubtests(doc.assessmentId, baseDb);
+  let locationSubtest = _.find(allSubtestData, ['_id', subtestId ])
+  let locLevels = locationSubtest.levels;
+  let isLocLevelSet = (locLevels && locLevels.length > 0) && (locLevels && locLevels[0] !== '');
+
+  // if the location levels is not available then check the location-list
+  if (!isLocLevelSet || schoolId) {
     let locationNames = await getLocationName(body, baseDb);
     let locKeys = Object.keys(locationNames);
-    for (j = 0; j < locKeys.length; j++) {
-      let key = locKeys[j];
-      locationResult[`${subtestId}.${locKeys[j]}${locSuffix}`] = locationNames[key].label.replace(/\s/g,'-');
+    if (locKeys.length > 0) {
+      for (j = 0; j < locKeys.length; j++) {
+        let key = locKeys[j];
+        let location = locationNames[key] ? locationNames[key].label : locationNames[key];
+        locationResult[`${subtestId}.${locKeys[j]}${locSuffix}`] = location ? location.replace(/\s/g,'-') : location;
+      }
     }
   }
   else {
@@ -332,7 +343,7 @@ async function processLocationResult(body, subtestCount, groupTimeZone, baseDb) 
       locationResult[`${subtestId}.${locLabels[i]}`] = locationData[i];
     }
   }
-  locationResult[`${subtestId}.timestamp_${subtestCount.locationCount}`] = moment(timestamp).format('hh:mm');
+  locationResult[`${subtestId}.timestamp_${subtestCount.locationCount}`] = moment(timestamp).format('MMM D YYYY hh:mm');
 
   return locationResult;
 }
@@ -355,7 +366,8 @@ async function getLocationName(body, baseDb) {
   // retrieve location-list from the base database.
   let locationList = await dbQuery.getLocationList(baseDb);
   let levels = locationList.locationsLevels;
-  let locLabels = body.data.labels.map(loc => loc.toLowerCase());
+  let locLabels = body.data.labels.map(label => label.toLowerCase());
+  let isLocationListSet = !(_.isEmpty(locationList.locations));
 
   if (schoolId) {
     for (j = 0; j < levels.length; j++) {
@@ -369,40 +381,45 @@ async function getLocationName(body, baseDb) {
     locIds = body.data.location;
   }
 
-  for (i = 0; i < levels.length; i++) {
-    locNames[levels[i]] = _.get(locationList.locations, locIds[i]);
+  //Note: this location details processes up to 4 levels and not more.
+  //@TODO: Update it to accommodate more than 4 levels.
+  if (isLocationListSet) {
+    for (i = 0; i < levels.length; i++) {
+      locNames[levels[i]] = _.get(locationList.locations, locIds[i]);
 
-    if (locNames[levels[i]]) {
-      locNames[levels[i+1]] = _.get(locNames[levels[i]].children, locIds[i+1]);
+      if (locNames[levels[i]]) {
+        locNames[levels[i+1]] = _.get(locNames[levels[i]].children, locIds[i+1]);
 
-      if (!locNames[levels[i+1]]) {
-        for (const [key, val] of Object.entries(locNames[levels[i]].children)) {
-          locNames[levels[i+2]] =  _.get(val.children, locIds[i+1]);
+        if (!locNames[levels[i+1]]) {
+          for (const [key, val] of Object.entries(locNames[levels[i]].children)) {
+            locNames[levels[i+2]] =  _.get(val.children, locIds[i+1]);
 
-          if (locNames[levels[i+2]]) {
-            locNames[levels[i+1]] = val;
-            locNames[levels[i+3]] = _.get(locNames[levels[i+2]].children, locIds[i+2]);
-            break;
-          } else {
+            if (locNames[levels[i+2]]) {
+              locNames[levels[i+1]] = val;
+              locNames[levels[i+3]] = _.get(locNames[levels[i+2]].children, locIds[i+2]);
+              break;
+            } else {
 
-            for (const [prop, value] of Object.entries(locNames[levels[i]].children)) {
-              locNames[levels[i+3]] = _.get(value.children, locIds[i+1]);
+              for (const [prop, value] of Object.entries(locNames[levels[i]].children)) {
+                locNames[levels[i+3]] = _.get(value.children, locIds[i+1]);
 
-              if (locNames[levels[i+3]]) {
-                locNames[levels[i+2]] = value;
-                locNames[levels[i+1]] = val;
-                break;
+                if (locNames[levels[i+3]]) {
+                  locNames[levels[i+2]] = value;
+                  locNames[levels[i+1]] = val;
+                  break;
+                }
               }
             }
           }
+        } else {
+          locNames[levels[i+2]] = _.get(locNames[levels[i+1]].children, locIds[i+2]);
+
+          if (locNames[levels[i+2]]) {
+            locNames[levels[i+3]] = _.get(locNames[levels[i+2]].children, locIds[i+3]);
+          }
         }
-      } else {
-        locNames[locLabels[i+2]] = _.get(locNames[locLabels[i+1]].children, locIds[i+2]);
-        if (locNames[locLabels[i+2]]) {
-          locNames[locLabels[i+3]] = _.get(locNames[locLabels[i+2]].children, locIds[i+3]);
-        }
+        break;
       }
-      break;
     }
   }
 
@@ -428,7 +445,7 @@ function processDatetimeResult(body, subtestCount, groupTimeZone) {
     [`${body.subtestId}.month${suffix}`]: body.data.month,
     [`${body.subtestId}.day${suffix}`]: body.data.day,
     [`${body.subtestId}.assess_time${suffix}`]: body.data.time,
-    [`${body.subtestId}.timestamp_${subtestCount.timestampCount}`]: moment(timestamp).format('hh:mm')
+    [`${body.subtestId}.timestamp_${subtestCount.timestampCount}`]: moment(timestamp).format('MMM D YYYY hh:mm')
   }
   return datetimeResult;
 }
@@ -449,7 +466,7 @@ function processConsentResult(body, subtestCount, groupTimeZone) {
 
   consentResult = {
     [`${body.subtestId}.consent${suffix}`]: body.data.consent,
-    [`${body.subtestId}.timestamp_${subtestCount.timestampCount}`]: moment(timestamp).format('hh:mm')
+    [`${body.subtestId}.timestamp_${subtestCount.timestampCount}`]: moment(timestamp).format('MMM D YYYY hh:mm')
   };
   return consentResult;
 }
@@ -470,7 +487,7 @@ function processIDResult(body, subtestCount, groupTimeZone) {
 
   idResult = {
     [`${body.subtestId}.id${suffix}`]: body.data.participant_id,
-    [`${body.subtestId}.timestamp_${subtestCount.timestampCount}`]: moment(timestamp).format('hh:mm')
+    [`${body.subtestId}.timestamp_${subtestCount.timestampCount}`]: moment(timestamp).format('MMM D YYYY hh:mm')
   };
   return idResult;
 }
@@ -501,7 +518,7 @@ function processSurveyResult(body, subtestCount, groupTimeZone) {
       surveyResult[`${body.subtestId}.${doc}`] = value;
     }
   }
-  surveyResult[`${body.subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+  surveyResult[`${body.subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('MMM D YYYY hh:mm');
 
   return surveyResult;
 }
@@ -541,7 +558,7 @@ function processGridResult(body, subtestCount, groupTimeZone, assessmentSuffix) 
 
   let fluencyRate = Math.round(correctSum / (1 - body.data.time_remain / body.data.time_allowed));
   gridResult[`${subtestId}.fluency_rate${assessmentSuffix}`] = fluencyRate;
-  gridResult[`${subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+  gridResult[`${subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('MMM D YYYY hh:mm');
 
   return gridResult;
 }
@@ -568,7 +585,7 @@ function processGpsResult(doc, subtestCount, groupTimeZone) {
   gpsResult[`${doc.subtestId}.altitudeAccuracy${suffix}`] = doc.data.altAcc;
   gpsResult[`${doc.subtestId}.heading${suffix}`] = doc.data.heading;
   gpsResult[`${doc.subtestId}.speed${suffix}`] = doc.data.speed;
-  gpsResult[`${doc.subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+  gpsResult[`${doc.subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('MMM D YYYY hh:mm');
 
   return gpsResult;
 }
@@ -585,13 +602,13 @@ function processGpsResult(doc, subtestCount, groupTimeZone) {
 
 function processCamera(body, subtestCount, groupTimeZone) {
   let cameraResult = {};
-  let varName = body.data.variableName;
+  let varName = body.data.variableName || body.name;
   let suffix = subtestCount.cameraCount > 0 ? `_${subtestCount.cameraCount}` : '';
   let timestamp = convertToTimeZone(body.timestamp, groupTimeZone);
 
   cameraResult[`${body.subtestId}.${varName}_photo_captured${suffix}`] = body.data.imageBase64;
   cameraResult[`${body.subtestId}.${varName}_photo_url${suffix}`] = body.data.imageBase64;
-  cameraResult[`${body.subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('hh:mm');
+  cameraResult[`${body.subtestId}.timestamp_${subtestCount.timestampCount}`] = moment(timestamp).format('MMM D YYYY hh:mm');
 
   return cameraResult;
 }
@@ -687,8 +704,8 @@ async function validateResult(docId, groupTimeZone, baseDb, allTimestamps) {
     reason = 'Validation params not enabled.';
   }
 
-  validData[`${docId}.start_time`] = startTime;
-  validData[`${docId}.end_time`] = endTime;
+  validData[`${docId}.start_time`] = moment(beginTimestamp).format('MMM D YYYY hh:mm');
+  validData[`${docId}.end_time`] = moment(endTimestamp).format('MMM D YYYY hh:mm');
   validData.isValid = isValid;
   validData.reason = reason;
   validData.indexKeys.year = moment(startTime).year();
