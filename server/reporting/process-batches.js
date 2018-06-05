@@ -7,7 +7,7 @@ const changeProcessor = require('./data_processing').changeProcessor;
 
 if (process.argv[2] === '--help') {
   console.log('Usage:')
-  console.log('  cat feeds.json ./process-batches.json 5')
+  console.log(`  echo '[{"dbName": "group1", sequence: 0}]' | ./process-batches.json 5`)
   process.exit(0)
 }
 
