@@ -157,7 +157,10 @@ exports.generateHeader = (req, res) => {
       console.log(saveResponse);
       res.json(colHeaders);
     })
-    .catch((err) => res.send(err));
+    .catch((err) => {
+      console.log("error getting " + assessmentId + " msg: " + err)
+      res.send(err)
+    });
 }
 
 /*****************************
