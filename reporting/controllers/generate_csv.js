@@ -60,7 +60,10 @@ exports.generate = function(req, res) {
       const result = await dbQuery.getProcessedResults(queryId, resultDb);
       generateCSV(colHeaders, result, res);
     })
-    .catch((err) => res.send(err));
+    .catch((err) => {
+      console.log("error fetching " + queryId + " msg: " + JSON.stringify(err))
+      res.send(err)
+    });
 }
 
 /**
