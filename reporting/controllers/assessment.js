@@ -185,12 +185,14 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
     GROUP_DB.get(collectionId)
       .then(async (item) => {
         let assessmentSuffix = count > 0 ? `_${count}` : '';
-        assessments.push({header: `assessment_id${assessmentSuffix}`, key: `${docId}.assessmentId${assessmentSuffix}`});
-        assessments.push({
-          header: `assessment_name${assessmentSuffix}`,
-          key: `${docId}.assessmentName${assessmentSuffix}`
-        });
-        assessments.push({header: `enumerator${assessmentSuffix}`, key: `${docId}.enumerator${assessmentSuffix}`});
+        // assessments.push({header: `assessment_id${assessmentSuffix}`, key: `${docId}.assessmentId${assessmentSuffix}`});
+        // assessments.push({
+        //   header: `assessment_name${assessmentSuffix}`,
+        //   key: `${docId}.assessmentName${assessmentSuffix}`
+        // });
+        if (count === 0) {
+          assessments.push({header: `enumerator${assessmentSuffix}`, key: `${docId}.enumerator${assessmentSuffix}`});
+        }
         assessments.push({header: `start_time${assessmentSuffix}`, key: `${docId}.start_time${assessmentSuffix}`});
         assessments.push({header: `order_map${assessmentSuffix}`, key: `${docId}.order_map${assessmentSuffix}`});
         assessments.push({header: `end_time${assessmentSuffix}`, key: `${docId}.end_time${assessmentSuffix}`});
@@ -201,17 +203,11 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
         if (count < 1) {
           if (typeof userSchema !== 'undefined') {
             Object.keys(userSchema).forEach(function (key, index) {
-              if (key !== 'password' && key !== 'passwordConfirm') {
+              if (key !== 'password' && key !== 'passwordConfirm' && key !== 'location') {
                 assessments.push({header: key, key: `${docId}.${key}`});
               }
             });
           }
-          // } else {
-          //     assessments.push({header: 'user_role', key: `${docId}.userRole`});
-          //     assessments.push({header: 'mpesa_number', key: `${docId}.mPesaNumber`});
-          //     assessments.push({header: 'phone_number', key: `${docId}.phoneNumber`});
-          //     assessments.push({header: 'full_name', key: `${docId}.fullName`});
-          // }
         }
 
         return dbQuery.getSubtests(collectionId, baseDb);
