@@ -14,10 +14,9 @@ const PouchDB = require('pouchdb');
 const _ = require('lodash');
 const {promisify} = require('util');
 const fs = require('fs');
+const path = require('path')
 const readFile = promisify(fs.readFile);
 const log = require('tangy-log').log
-const clog = require('tangy-log').clog
-
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -29,60 +28,21 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
   });
 }
 
-// Passes off a change to the corresponding chache processing function. Returns a promise.
-function processChange(change, dbName) {
-  switch (change.doc.collection) {
-    case 'TangyFormRespone':
-      return processFormResponse(doc, dbName)
-  }
-}
-
-async function processBatch(queues, batchSize) {
-  let batchDidRun = false 
-  const dbNames = DB.allDbs().filter(dbName => dbName.indexOf('-result') === -1)
-  for (let dbName of dbNames) {
-    let queue = queues.find(cache => queue.dbName === dbName)
-    if (queue) {
-      queues.push({ dbName, sequence: 0 })
-      queue = queues(queue => queue.dbName === dbName)
+// Function to pass to PouchDbChangesFeedWorker.
+exports.changeProcessor = (change, sourceDb) => {
+  return new Promise(async (res, rej) => {
+    let doc = await sourceDb.get(change.id).catch(err => log.error(err))
+    switch (doc.collection) {
+      case 'TangyFormResponse':
+        log.info(`Processing ${doc._id} for db ${sourceDb.name}`)
+        await processFormResponse(doc, sourceDb).catch(err => log.error(err))
+        return res({status: 'ok', seq: change.seq, dbName: sourceDb.name})
     }
-    const STORE = new DB(dbName);
-    // Include docs so we don't have to make additional requests to the db. This is ok as long as we don't end up getting backed up, which this shouldn't.
-    const changes = STORE.changes({ since: queue.sequence, limit: batchSize, include_docs: true })
-    if (changes) {
-      batchDidRun = true
-      const batch = changes.map(change => processChange(change, dbName))
-      await Promise.all(batch)
-      queue.sequence = changes[changes.length-1].sequence
-    }
-  }
-  return {
-    batchDidRun,
-    queues
-  }
-}
+    log.warn(`A doc not of type TangyFormResponse found with _id of ${doc._id}`)
+    return res({status: 'ok', seq: change.seq, dbName: sourceDb.name})
 
-exports.startCacheProcessing = function() {
-  var batchIsRunning = false
-  // @TODO Load this from a persistent store so we don't process from sequence 0 for every database everytime we start.
-  var queues = []
-  var batchSize = 5
-  // Keep the cache processing alive.
-  // Could be an infinite while statement, but this is easier on CPUs.
-  return setInterval(async () => {
-    // Semaphore for preventing parallel cache processes from running.
-    if (batchIsRunning === true) return
-    batchIsRunning = true
-    batchStatus = await processBatch(queues, batchSize)
-    // Sleep if there was not a batch to process. All is quiet.
-    if (!batchStatus.batchDidRun === false) {
-      setTimeout(() => batchIsRunning = false, 10*1000)
-    } else {
-      batchIsRunning = false
-    }
-  }, 100)
+  })
 }
-
 
 /** This function saves processed form response.
  *
@@ -92,35 +52,32 @@ exports.startCacheProcessing = function() {
  * @returns {object} - saved document
  */
 
-const processFormResponse = async function (formData, groupName) {
-  const REPORTING_DB = new DB(`${groupName}-reporting`);
-  let formID = formData.form.id;
-  let formHeaders = { _id: formID };
-  let formResult = { _id: formData._id, formId: formID, startDatetime: formData.startDatetime };
-  let locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${groupName}/location-list.json`))
-
-  // generate column headers
-  let docHeaders = generateHeaders(formData);
-  docHeaders.push({ header: 'Complete', key: `${formID}.complete` });
-  docHeaders.push({ header: 'Start Date Time', key: `${formID}.startDatetime` });
-  formHeaders.columnHeaders = docHeaders;
-
-  // process form result
-  let processedResult = generateFlatObject(formData, locationList);
-  formResult.processedResult = processedResult;
-  formResult.processedResult[`${formID}.startDatetime`] = formData.startDatetime;
-  formResult.processedResult[`${formID}.complete`] = formData.complete;
-
+const processFormResponse = async (doc, sourceDb) => {
   try {
+    const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
+    const GROUP_DB = sourceDb;
+    if (doc.collection !== 'TangyFormResponse') return
+    let formData = doc
+    let formID = formData.form.id;
+    let formHeaders = { _id: formID };
+    let formResult = { _id: formData._id, formId: formID, startDatetime: formData.startDatetime };
+    let locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+
+    // generate column headers
+    let docHeaders = generateHeaders(formData);
+    docHeaders.push({ header: 'Complete', key: `${formID}.complete` });
+    docHeaders.push({ header: 'Start Date Time', key: `${formID}.startDatetime` });
+    formHeaders.columnHeaders = docHeaders;
+
+    // process form result
+    let processedResult = generateFlatObject(formData, locationList);
+    formResult.processedResult = processedResult;
+    formResult.processedResult[`${formID}.startDatetime`] = formData.startDatetime;
+    formResult.processedResult[`${formID}.complete`] = formData.complete;
     await saveFormResponseHeaders(formHeaders, REPORTING_DB);
-  } catch (err) {
-    log.error(err);
-  }
-
-  try {
     await saveFlattenedFormResponse(formResult, REPORTING_DB);
   } catch (err) {
-    log.error(err);
+    log.error(`Error: ${err} processing doc ${doc._id} in database ${sourceDb.name}`);
   }
 
 };
@@ -229,17 +186,16 @@ function saveFormResponseHeaders(doc, db) {
       let joinByHeader = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'header');
       let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
       newDoc.columnHeaders = _.union(joinByHeader, joinBykey);
-      await db.put(newDoc);
+      await db.put(newDoc).catch(err => log.error(err));
       res(true)
     })
     .catch(async err => {
       if (err.status === 409) {
         // For document update conflict retry saving the header.
-        clog(err.message, '...Retry saving header');
         await saveFormHeaders(doc);
         res(true)
       } else {
-        await db.put(doc); // save new doc
+        await db.put(doc).catch(err => log.error(err)); // save new doc
         res(true)
       }
     });
@@ -254,19 +210,12 @@ function saveFlattenedFormResponse(doc, db) {
    */
   return new Promise((res, rej) => {
     db.get(doc._id).then(async oldDoc => {
-      let newDoc = _.merge(oldDoc, doc);
-      await db.put(newDoc);
+      let updatedDoc = Object.assign({}, doc, { _rev: oldDoc._rev });
+      await db.put(updatedDoc);
       res(true)
     }).catch(async err => {
-      if (err.status === 409) {
-        // For document update conflict retry saving the result.
-        log.error(err.message, '...Retry saving result');
-        await saveFormResult(doc);
-        res(true)
-      } else {
-        await db.put(doc); // save new doc
-        res(true)
-      }
+      await db.put(doc).catch(err => log.error(err)); // save new doc
+      res(true)
     });
   })
 }
@@ -277,6 +226,7 @@ function getLocationLabel(keys, locationList) {
   for (let key of locationKeys ) {
     currentLevel = currentLevel.children[key]
   }
-  return currentLevel.label
+  if (!currentLevel) log.warn(`No level found. keys: ${JSON.stringify(keys)}`)
+  return (currentLevel && currentLevel.hasOwnProperty('label')) ? currentLevel.label : ''
 }
 
