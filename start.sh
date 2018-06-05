@@ -27,9 +27,10 @@ fi
 if [ ! -d data/client/releases/qa/pwas ]; then
   mkdir data/client/releases/qa/pwas
 fi
-if [ ! -f data/feeds.json ]; then
-  echo '[]' > data/feeds.json
+if [ ! -f data/worker-state.json ]; then
+  echo '{}' > data/worker-state.json
 fi
+
 
 # Load config.
 source ./config.defaults.sh
@@ -74,7 +75,7 @@ RUN_OPTIONS="
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   --env \"T_REPLICATE=$T_REPLICATE\" \
   $T_PORT_MAPPING \
-  --volume $(pwd)/data/feeds.json:/tangerine/feeds.json \
+  --volume $(pwd)/data/worker-state.json:/worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
