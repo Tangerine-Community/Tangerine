@@ -34,7 +34,6 @@ exports.changeProcessor = (change, sourceDb) => {
     let doc = await sourceDb.get(change.id).catch(err => log.error(err))
     switch (doc.collection) {
       case 'TangyFormResponse':
-        log.info(`Processing ${doc._id} for db ${sourceDb.name}`)
         await processFormResponse(doc, sourceDb).catch(err => log.error(err))
         return res({status: 'ok', seq: change.seq, dbName: sourceDb.name})
     }
