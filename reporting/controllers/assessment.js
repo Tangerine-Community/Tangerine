@@ -200,17 +200,18 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
         let userSchema = dbSettings.userSchema;
         if (count < 1) {
           if (typeof userSchema !== 'undefined') {
-            Object.keys(userSchema).forEach(function(key,index) {
+            Object.keys(userSchema).forEach(function (key, index) {
               if (key !== 'password' && key !== 'passwordConfirm') {
                 assessments.push({header: key, key: `${docId}.${key}`});
               }
             });
-          } else {
-              assessments.push({header: 'user_role', key: `${docId}.userRole`});
-              assessments.push({header: 'mpesa_number', key: `${docId}.mPesaNumber`});
-              assessments.push({header: 'phone_number', key: `${docId}.phoneNumber`});
-              assessments.push({header: 'full_name', key: `${docId}.fullName`});
           }
+          // } else {
+          //     assessments.push({header: 'user_role', key: `${docId}.userRole`});
+          //     assessments.push({header: 'mpesa_number', key: `${docId}.mPesaNumber`});
+          //     assessments.push({header: 'phone_number', key: `${docId}.phoneNumber`});
+          //     assessments.push({header: 'full_name', key: `${docId}.fullName`});
+          // }
         }
 
         return dbQuery.getSubtests(collectionId, baseDb);

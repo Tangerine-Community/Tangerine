@@ -281,10 +281,16 @@ const generateResult = async function(collections, count = 0, baseDb) {
     let username = `user-${enumeratorName}`;
     try {
       let userDetails = await dbQuery.getUserDetails(username, baseDb);
-      result[`${collectionId}.userRole`] = userDetails.role;
-      result[`${collectionId}.mPesaNumber`] = userDetails.mPesaNumber;
-      result[`${collectionId}.phoneNumber`] = userDetails.phoneNumber || userDetails.phone;
-      result[`${collectionId}.fullName`] = `${userDetails.firstName || userDetails.first} ${userDetails.lastName || userDetails.last}`;
+      // result[`${collectionId}.userRole`] = userDetails.role;
+      // result[`${collectionId}.mPesaNumber`] = userDetails.mPesaNumber;
+      // result[`${collectionId}.phoneNumber`] = userDetails.phoneNumber || userDetails.phone;
+      // result[`${collectionId}.fullName`] = `${userDetails.firstName || userDetails.first} ${userDetails.lastName || userDetails.last}`;
+      Object.keys(userDetails).forEach(function (key, index) {
+        if (key !== 'preferences' && key !== 'salt' && key !== 'updated' && key !== 'uploadDate' && key !== '_id' && key !== '_rev' && key !== 'collection' && key !== 'pass') {
+          // assessments.push({header: key, key: `${docId}.${key}`});
+          result[`${collectionId}.${key}`] = userDetails[key];
+        }
+      });
     } catch (err) {
       console.error({ message: 'Could not find user metadata', reason: err.message });
     }
