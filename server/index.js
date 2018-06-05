@@ -35,16 +35,14 @@ const log = require('tangy-log').log
 const clog = require('tangy-log').clog
 let newGroupQueue = []
 
-var DB = {}
+pouchDbDefaults = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
-  DB = PouchDB.defaults({
-    prefix: process.env.T_COUCHDB_ENDPOINT
-  });
+  pouchDbDefaults = { prefix: process.env.T_COUCHDB_ENDPOINT }
 } else {
-  DB = PouchDB.defaults({
-    prefix: '/tangerine/db/'
-  });
+  pouchDbDefaults = { prefix: '/tangerine/db/' }
 }
+const  DB = PouchDB.defaults(pouchDbDefaults)
+
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
@@ -706,12 +704,14 @@ function allGroups() {
 const processBatches = async initialGroups => {
 
   // Populate feeds.json if there any initialGroups not currently being watched.
-  let feeds = JSON.parse(await readFile('/tangerine/feeds.json', 'utf-8'))
+  let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+  if (!workerState.feeds) workerState.feeds = []
   for (let groupName of initialGroups) {
-    let feed = feeds.find(feed => feed.dbName === groupName)
-    if (!feed) feeds.push({dbName: groupName, sequence: 0})
+    let feed = workerState.feeds.find(feed => feed.dbName === groupName)
+    if (!feed) workerState.feeds.push({dbName: groupName, sequence: 0})
   }
-  await writeFile('/tangerine/feeds.json', JSON.stringify(feeds), 'utf-8')
+  workerState.pouchDbDefaults = pouchDbDefaults
+  await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
 
   let response = {
     stdout: '',
@@ -720,14 +720,14 @@ const processBatches = async initialGroups => {
   while(true) {
     // Update feeds.json if there a new group just added.
     while (newGroupQueue.length > 0) {
-      let feeds = JSON.parse(await readFile('/tangerine/feeds.json', 'utf-8'))
-      feeds.push({dbName: newGroupQueue.pop(), sequence: 0})
-      await writeFile('/tangerine/feeds.json', JSON.stringify(feeds), 'utf-8')
+      let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+      workerState.feeds.push({dbName: newGroupQueue.pop(), sequence: 0})
+      await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
     }
     try {
-      response = await exec('cat /tangerine/feeds.json | /tangerine/server/reporting/process-batches.js 10 > /tangerine/feeds-out.json');
+      response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js 10 > /worker-state.json.out');
       if (!response.stderr) {
-        await exec('cat /tangerine/feeds-out.json > /tangerine/feeds.json');
+        await exec('cat /worker-state.json.out > /worker-state.json');
       } else {
         log.error(response.stderr)
       }

@@ -8,4 +8,3 @@ cd /tangerine/client
 sleep 3
 cd /tangerine/editor
 npm run dockerdev
-rm /tangerine/editor/dist/sw.js
