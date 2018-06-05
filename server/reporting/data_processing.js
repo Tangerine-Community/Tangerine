@@ -31,13 +31,13 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
 // Function to pass to PouchDbChangesFeedWorker.
 exports.changeProcessor = (change, sourceDb) => {
   return new Promise(async (res, rej) => {
-    let doc = await sourceDb.get(change.id).catch(err => log.error(err))
+    let doc = await sourceDb.get(change.id)
     switch (doc.collection) {
       case 'TangyFormResponse':
-        await processFormResponse(doc, sourceDb).catch(err => log.error(err))
+        await processFormResponse(doc, sourceDb)
         return res({status: 'ok', seq: change.seq, dbName: sourceDb.name})
     }
-    log.warn(`A doc not of type TangyFormResponse found with _id of ${doc._id}`)
+    //log.warn(`A doc not of type TangyFormResponse found with _id of ${doc._id}`)
     return res({status: 'ok', seq: change.seq, dbName: sourceDb.name})
 
   })
@@ -76,7 +76,7 @@ const processFormResponse = async (doc, sourceDb) => {
     await saveFormResponseHeaders(formHeaders, REPORTING_DB);
     await saveFlattenedFormResponse(formResult, REPORTING_DB);
   } catch (err) {
-    log.error(`Error: ${err} processing doc ${doc._id} in database ${sourceDb.name}`);
+    //log.error(`Error: ${err} processing doc ${doc._id} in database ${sourceDb.name}`);
   }
 
 };
@@ -185,16 +185,28 @@ function saveFormResponseHeaders(doc, db) {
       let joinByHeader = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'header');
       let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
       newDoc.columnHeaders = _.union(joinByHeader, joinBykey);
-      await db.put(newDoc).catch(err => log.error(err));
+      try {
+        await db.put(newDoc)
+      } catch (e) {
+        return rej(e)
+      }
       res(true)
     })
     .catch(async err => {
       if (err.status === 409) {
         // For document update conflict retry saving the header.
-        await saveFormHeaders(doc);
+        try {
+          await saveFormHeaders(doc);
+        } catch (e) {
+          return rej(e)
+        }
         res(true)
       } else {
-        await db.put(doc).catch(err => log.error(err)); // save new doc
+        try {
+          await db.put(doc) // save new doc
+        } catch (e) {
+          return rej(e)
+        }
         res(true)
       }
     });
@@ -210,10 +222,18 @@ function saveFlattenedFormResponse(doc, db) {
   return new Promise((res, rej) => {
     db.get(doc._id).then(async oldDoc => {
       let updatedDoc = Object.assign({}, doc, { _rev: oldDoc._rev });
-      await db.put(updatedDoc);
+      try {
+        await db.put(updatedDoc);
+      } catch (e) {
+        return rej(e)
+      }
       res(true)
     }).catch(async err => {
-      await db.put(doc).catch(err => log.error(err)); // save new doc
+      try {
+        await db.put(doc) // save new doc
+      } catch (e) {
+        return rej(e)
+      }
       res(true)
     });
   })
@@ -225,7 +245,7 @@ function getLocationLabel(keys, locationList) {
   for (let key of locationKeys ) {
     currentLevel = currentLevel.children[key]
   }
-  if (!currentLevel) log.warn(`No level found. keys: ${JSON.stringify(keys)}`)
+  //if (!currentLevel) log.warn(`No level found. keys: ${JSON.stringify(keys)}`)
   return (currentLevel && currentLevel.hasOwnProperty('label')) ? currentLevel.label : ''
 }
 

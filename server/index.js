@@ -12,6 +12,8 @@ const path = require('path')
 const app = express()
 const fs = require('fs-extra')
 const fsc = require('fs')
+const readFile = util.promisify(fsc.readFile);
+const writeFile = util.promisify(fsc.writeFile);
 const config = read.sync('./config.yml')
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
@@ -31,6 +33,7 @@ const json2csv = require('json2csv')
 const _ = require('underscore')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
+let newGroupQueue = []
 
 var DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
@@ -501,6 +504,8 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     log.error(e);
   });
 
+  newGroupQueue.push(groupName)
+
   // Set up watching of groupDb for changes.
   //#endregion
 
@@ -696,33 +701,45 @@ function allGroups() {
   const CONTENT_PATH = '../client/content/groups/'
   const groups = getDirectories(CONTENT_PATH)
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
-
 }
 
-const saveFeeds = async feeds => {
-  fs.writeFile('/tangerine/feeds.json', JSON.stringify(feeds))
-}
+const processBatches = async initialGroups => {
 
-const startCacheProcess = async _ => {
-  // @TODO Load queues from disk.
-  const groupNames = allGroups()
-  let feeds = groupNames.map(groupName => { return { dbName: groupName, sequence: 0 } })
-  log.info(`Starting PouchDbChangesFeedWorder with feeds of ${JSON.stringify(feeds)}`)
-  let worker = new PouchDbChangesFeedWorker(feeds, dataProcessing.changeProcessor, DB, 1, 1000)
-  worker.on('done', feeds => saveFeeds(feeds))
-  worker.start()
-  setInterval(async () => {
-    const groupNames = await allGroups() 
-    for (let groupName of groupNames) {
-      let feed = feeds.find(feed => feed.dbName === groupName)
-      if (!feed) {
-        log.info(`Adding feed to PouchDbChangesFeedWorker for group ${groupName}.`)
-        worker.addFeed({ dbName: groupName, sequence: 0 })
-      }
+  // Populate feeds.json if there any initialGroups not currently being watched.
+  let feeds = JSON.parse(await readFile('/tangerine/feeds.json', 'utf-8'))
+  for (let groupName of initialGroups) {
+    let feed = feeds.find(feed => feed.dbName === groupName)
+    if (!feed) feeds.push({dbName: groupName, sequence: 0})
+  }
+  await writeFile('/tangerine/feeds.json', JSON.stringify(feeds), 'utf-8')
+
+  let response = {
+    stdout: '',
+    stderr: ''
+  } 
+  while(true) {
+    // Update feeds.json if there a new group just added.
+    while (newGroupQueue.length > 0) {
+      let feeds = JSON.parse(await readFile('/tangerine/feeds.json', 'utf-8'))
+      feeds.push({dbName: newGroupQueue.pop(), sequence: 0})
+      await writeFile('/tangerine/feeds.json', JSON.stringify(feeds), 'utf-8')
     }
-  }, 10*1000)
+    try {
+      response = await exec('cat /tangerine/feeds.json | /tangerine/server/reporting/process-batches.js 10 > /tangerine/feeds-out.json');
+      if (!response.stderr) {
+        await exec('cat /tangerine/feeds-out.json > /tangerine/feeds.json');
+      } else {
+        log.error(response.stderr)
+      }
+    } catch(e) {
+      log.error(e)
+    }
+  }
 }
-startCacheProcess()
+
+const initialGroups = allGroups()
+processBatches(initialGroups)
+
 
 
 // Start the server.

@@ -27,6 +27,9 @@ fi
 if [ ! -d data/client/releases/qa/pwas ]; then
   mkdir data/client/releases/qa/pwas
 fi
+if [ ! -f data/feeds.json ]; then
+  echo '[]' > data/feeds.json
+fi
 
 # Load config.
 source ./config.defaults.sh
