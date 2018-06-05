@@ -24,6 +24,7 @@ const { concatMap } = require('rxjs/operators');
 const { catchError } = require('rxjs/operators');
 const dataProcessing = require('../server/reporting/data_processing');
 const generateCSV = require('../server/reporting/generate_csv').generateCSV;
+const PouchDbChangesFeedWorker = require('../server/reporting/PouchDbChangesFeedWorker.js').PouchDbChangesFeedWorker
 const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
@@ -501,7 +502,6 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   });
 
   // Set up watching of groupDb for changes.
-  monitorDatabaseChangesFeed((groupName.trim()));
   //#endregion
 
   // All done!
@@ -682,7 +682,48 @@ async function createDesignDocument(database) {
   }
 }
 
-let cacheProcess = dataProcessing.startCacheProcessing()
+/**
+ * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
+ * @param {string} srcPath The path to the directory
+ */
+const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lstatSync(path.join(srcPath, file)).isDirectory())
+
+/**
+ * Gets the list of all the existing groups from the content folder
+ * Listens for the changes feed on each of the group's database
+ */
+function allGroups() {
+  const CONTENT_PATH = '../client/content/groups/'
+  const groups = getDirectories(CONTENT_PATH)
+  return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
+
+}
+
+const saveFeeds = async feeds => {
+  fs.writeFile('/tangerine/feeds.json', JSON.stringify(feeds))
+}
+
+const startCacheProcess = async _ => {
+  // @TODO Load queues from disk.
+  const groupNames = allGroups()
+  let feeds = groupNames.map(groupName => { return { dbName: groupName, sequence: 0 } })
+  log.info(`Starting PouchDbChangesFeedWorder with feeds of ${JSON.stringify(feeds)}`)
+  let worker = new PouchDbChangesFeedWorker(feeds, dataProcessing.changeProcessor, DB, 1, 1000)
+  worker.on('done', feeds => saveFeeds(feeds))
+  worker.start()
+  setInterval(async () => {
+    const groupNames = await allGroups() 
+    for (let groupName of groupNames) {
+      let feed = feeds.find(feed => feed.dbName === groupName)
+      if (!feed) {
+        log.info(`Adding feed to PouchDbChangesFeedWorker for group ${groupName}.`)
+        worker.addFeed({ dbName: groupName, sequence: 0 })
+      }
+    }
+  }, 10*1000)
+}
+startCacheProcess()
+
 
 // Start the server.
 var server = app.listen(config.port, function () {

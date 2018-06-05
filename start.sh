@@ -71,6 +71,7 @@ RUN_OPTIONS="
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   --env \"T_REPLICATE=$T_REPLICATE\" \
   $T_PORT_MAPPING \
+  --volume $(pwd)/data/feeds.json:/tangerine/feeds.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
