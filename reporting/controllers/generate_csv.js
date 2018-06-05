@@ -17,7 +17,10 @@ const PouchDB = require('pouchdb');
  */
 
 const dbQuery = require('./../utils/dbQuery');
-const dbConfig = require('./../config');
+const Settings = require('./../../server/Settings');
+
+const DB_URL =  `http://${Settings.T_ADMIN}:${Settings.T_PASS}@${Settings.T_COUCH_HOST}/db/`;
+
 
 /**
  * Generates a CSV file.
@@ -41,7 +44,7 @@ const dbConfig = require('./../config');
 
 exports.generate = function(req, res) {
   let groupName = req.params.db_name || req.body.resultDb;
-  let resultDb = groupName.includes('http') ? groupName : dbConfig.db_url + groupName + '-result';
+  let resultDb = groupName.includes('http') ? groupName : DB_URL + groupName + '-result';
 
   const RESULT_DB = new PouchDB(resultDb);
   const resultId = req.params.id;
@@ -57,7 +60,10 @@ exports.generate = function(req, res) {
       const result = await dbQuery.getProcessedResults(queryId, resultDb);
       generateCSV(colHeaders, result, res);
     })
-    .catch((err) => res.send(err));
+    .catch((err) => {
+      console.log("error fetching " + queryId + " msg: " + JSON.stringify(err))
+      res.send(err)
+    });
 }
 
 /**

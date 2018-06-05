@@ -119,6 +119,7 @@ exports.getSubtests = function(id, baseDb) {
  * @description This function retrieves all questions linked to a subtest document.
  *
  * @param {string} subtestId - id of subtest document.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Array} - question documents.
  */
@@ -138,6 +139,7 @@ exports.getQuestionBySubtestId = function(subtestId, baseDb) {
  * @description This function retrieves all processed result for a given document id
  *
  * @param {string} ref - id of document.
+ * @param {string} resultDB - result database url
  *
  * @returns {Array} - result documents.
  */
@@ -155,6 +157,7 @@ exports.getProcessedResults = function(ref, resultDb) {
  * @description This function retrieves all result documents with the same tripId.
  *
  * @param {string} id - trip id of document.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Array} - result documents.
  */
@@ -172,6 +175,7 @@ exports.getTripResults = function(id, baseDb) {
  * @description – This function retrieves enumerator information.
  *
  * @param {string} enumerator - name of the enumerator.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Object} - user document.
  */
@@ -188,6 +192,8 @@ exports.getUserDetails = function(enumerator, baseDb) {
 /**
  * @description – This function retrieves location list
  *
+ * @param {string} baseDb - base database url.
+ *
  * @returns {Object} - location document.
  */
 
@@ -202,6 +208,8 @@ exports.getLocationList = function(baseDb) {
 
 /**
  * @description – This function retrieves the global settings of the instrument.
+ *
+ * @param {string} baseDb - base database url.
  *
  * @returns {Object} - settings document.
  */

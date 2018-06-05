@@ -33,7 +33,7 @@ const validateResult = require('./result').validateResult;
  *  The request object must contain the database url and the result database url.
  *       {
  *         "db_url": "http://admin:password@test.tangerine.org/database_name"
- *         "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *         "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
  *       }
  *
  * Response:
@@ -60,10 +60,12 @@ exports.changes = function(req, res) {
   const GROUP_DB = new PouchDB(baseDb);
 
   GROUP_DB.changes({ since: req.body.startPoint, include_docs: true, live: req.body.isLive })
-    .on('change', (body) => setTimeout(() => queueProcessChangedDocument({body, baseDb, resultDb}), 1000))
+    .on('change', (body) => setTimeout(() => queueProcessChangedDocument({body, baseDb, resultDb}), 200))
     .on('error', (err) => console.error(err));
 }
 
+
+// Event queue for processing changed document
 var queue = [];
 var isProcessing = false;
 
@@ -87,11 +89,13 @@ let startQueue = async() => {
   }
 }
 
+// initiate event queue
 startQueue();
 
 
-/**
- * This function processes document changes in the database
+/** @description This function processess document changes
+ * in the database based on the collection type i.e. result,
+ * assessment, workflow, subtest, question and curriculum.
  *
  * @param {string} resp - assessmentId.
  * @param {string} baseDb - base database url.
@@ -113,7 +117,7 @@ const processChangedDocument = async function(resp, baseDb, resultDb) {
   const isQuestion = (collectionType === 'question') ? true : false;
   const isSubtest = (collectionType === 'subtest') ? true : false;
 
-  console.info(`::: Processing ${collectionType} document on sequence ${resp.seq} :::`);
+  console.info(`::: Processing ${resp.doc.collection} document on sequence ${resp.seq} :::`);
 
   if (isWorkflowIdSet && isResult) {
     console.info('\n<<<=== START PROCESSING WORKFLOW RESULT ===>>>\n');
@@ -140,8 +144,8 @@ const processChangedDocument = async function(resp, baseDb, resultDb) {
       let validationData = await validateResult(docId, groupTimeZone, baseDb, allTimestamps);
       assessmentResult.isValid = validationData.isValid;
       assessmentResult.isValidReason = validationData.reason;
-      assessmentResult[`${docId}.start_time`] = validationData.startTime;
-      assessmentResult[`${docId}.end_time`] = validationData.endTime;
+      assessmentResult[`${docId}.start_time`] = validationData[`${docId}.start_time`];
+      assessmentResult[`${docId}.end_time`] = validationData[`${docId}.start_time`];
 
       assessmentResult.indexKeys.ref = assessmentResult.indexKeys.ref;
       assessmentResult.indexKeys.parent_id = docId;

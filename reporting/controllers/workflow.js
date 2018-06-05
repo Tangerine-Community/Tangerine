@@ -56,11 +56,58 @@ const dbQuery = require('./../utils/dbQuery');
  */
 
 exports.all = function(req, res) {
-  const GROUP_DB = new PouchDB(req.body.base_db);
+  const GROUP_DB = new PouchDB(req.body.baseDb);
   GROUP_DB.query('ojai/byCollection', { key: 'workflow', include_docs: true })
     .then((data) => res.json({ count: data.rows.length, workflows: data.rows }))
     .catch((err) => res.send(err));
 }
+
+/**
+ * Generates headers for ALL workflows in the database.
+ *
+ * Example:
+ *
+ *    POST /workflow/headers/all
+ *
+ *  The request object must contain the main database url and a
+ *  result database url where the generated headers will be saved.
+ *     {
+ *       "db_url": "http://admin:password@test.tangerine.org/database_name"
+ *       "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *     }
+ *
+ * Response:
+ *
+ *   Returns an Object indicating the data has been saved.
+ *      {
+ *        "ok": true,
+ *        "id": "a1234567890",
+ *        "rev": "1-b123"
+ *       }
+ *
+ * @param req - HTTP request object
+ * @param res - HTTP response object
+ */
+
+exports.generateAll = async function (req, res) {
+  const baseDb = req.body.baseDb;
+  const resultDbUrl = req.body.resultDb;
+  const GROUP_DB = new PouchDB(baseDb);
+
+  try {
+    let workflows = await GROUP_DB.query('ojai/byCollection', { key: 'workflow', include_docs: true });
+    for (item of workflows.rows) {
+      let workflowId = item.id;
+      let generatedWorkflowHeaders = await createWorkflowHeaders(item.doc, baseDb);
+      let saveResponse = await dbQuery.saveHeaders(generatedWorkflowHeaders, workflowId, resultDbUrl);
+      console.log(saveResponse);
+    }
+    res.json(workflows);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 
 /**
  * Generates headers for a workflow.
@@ -74,7 +121,7 @@ exports.all = function(req, res) {
  *  result database url where the generated headers will be saved.
  *     {
  *       "db_url": "http://admin:password@test.tangerine.org/database_name"
- *       "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *       "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
  *     }
  *
  * Response:
@@ -92,8 +139,8 @@ exports.all = function(req, res) {
 
 exports.generateHeader = function(req, res) {
   const workflowId = req.params.id;
-  const baseDb = req.body.base_db;
-  const resultDb = req.body.result_db;
+  const baseDb = req.body.baseDb;
+  const resultDb = req.body.resultDb;
   const GROUP_DB = new PouchDB(baseDb);
 
   GROUP_DB.get(workflowId)

@@ -26,7 +26,7 @@ echo ""
 docker run \
   -d \
   --name tangerine-container \
-  -p 80:80 -p 5984:5984\
+  -p 80:80 -p 5984:5984 \
   --env "DEBUG=1" \
   --env "NODE_ENV=development" \
   --env "T_VERSION=local" \

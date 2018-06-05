@@ -56,12 +56,60 @@ const dbQuery = require('./../utils/dbQuery');
  */
 
 exports.all = async (req, res) => {
-  const GROUP_DB = new PouchDB(req.body.base_db);
+  const GROUP_DB = new PouchDB(req.body.baseDb);
   try {
     let assessments = await GROUP_DB.query('ojai/byCollection', { key: 'assessment', include_docs: true });
     res.json({ count: assessments.rows.length, assessments: assessments.rows });
   } catch (error) {
     res.send(error);
+  }
+}
+
+/**
+ * Generates headers for ALL assessment collections in a database
+ * and save them in a result database.
+ *
+ * Example:
+ *
+ *    POST /assessment/headers/all
+ *
+ *  The request object must contain the main database url and a
+ *  result database url where the generated header will be saved.
+ *     {
+ *       "db_url": "http://admin:password@test.tangerine.org/database_name"
+ *       "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *     }
+ *
+ * Response:
+ *
+ *   Returns an Object indicating the data has been saved.
+ *      {
+ *        "ok": true,
+ *        "id": "a1234567890",
+ *        "rev": "1-b123"
+ *      }
+ *
+ * @param req - HTTP request object
+ * @param res - HTTP response object
+ */
+
+exports.generateAll = async function(req, res) {
+  const baseDb = req.body.baseDb;
+  const resultDbUrl = req.body.resultDb;
+  const GROUP_DB = new PouchDB(baseDb);
+
+  try {
+    let assessments = await GROUP_DB.query('ojai/byCollection', { key: 'assessment', include_docs: true });
+    for (item of assessments.rows) {
+      let assessmentId = item.doc.assessmentId;
+      let generatedHeaders = await createColumnHeaders(item.doc, 0, baseDb);
+      generatedHeaders.unshift(item.doc.name);
+      let saveResponse = await dbQuery.saveHeaders(generatedHeaders, assessmentId, resultDbUrl);
+      console.log(saveResponse);
+    }
+    res.json(assessments);
+  } catch (error) {
+    console.log(error);
   }
 }
 
@@ -78,7 +126,7 @@ exports.all = async (req, res) => {
  *  result database url where the generated header will be saved.
  *     {
  *       "db_url": "http://admin:password@test.tangerine.org/database_name"
- *       "another_db_url": "http://admin:password@test.tangerine.org/result_database_name"
+ *       "result_db_url": "http://admin:password@test.tangerine.org/result_database_name"
  *     }
  *
  * Response:
@@ -95,8 +143,8 @@ exports.all = async (req, res) => {
  */
 
 exports.generateHeader = (req, res) => {
-  const baseDb = req.body.base_db;
-  const resultDb = req.body.result_db;
+  const baseDb = req.body.baseDb;
+  const resultDb = req.body.resultDb;
   const assessmentId = req.params.id;
   const GROUP_DB = new PouchDB(baseDb);
 
@@ -109,7 +157,10 @@ exports.generateHeader = (req, res) => {
       console.log(saveResponse);
       res.json(colHeaders);
     })
-    .catch((err) => res.send(err));
+    .catch((err) => {
+      console.log("error getting " + assessmentId + " msg: " + err)
+      res.send(err)
+    });
 }
 
 /*****************************
@@ -120,9 +171,9 @@ exports.generateHeader = (req, res) => {
 /**
  * This function processes the headers for an assessment.
  *
- * @param {string} docId - assessmentId.
+ * @param {string} doc - assessment document.
  * @param {number} count - count.
- * @param {string} baseDb - database url.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Object} processed headers for csv.
  */
@@ -134,21 +185,34 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
   const GROUP_DB = new PouchDB(baseDb);
 
   return new Promise((resolve, reject) => {
-    GROUP_DB.get(collectionId, baseDb)
-      .then((item) => {
+    GROUP_DB.get(collectionId)
+      .then(async (item) => {
         let assessmentSuffix = count > 0 ? `_${count}` : '';
-        assessments.push({ header: `assessment_id${assessmentSuffix}`, key: `${docId}.assessmentId${assessmentSuffix}` });
-        assessments.push({ header: `assessment_name${assessmentSuffix}`, key: `${docId}.assessmentName${assessmentSuffix}` });
-        assessments.push({ header: `enumerator${assessmentSuffix}`, key: `${docId}.enumerator${assessmentSuffix}` });
-        assessments.push({ header: `start_time${assessmentSuffix}`, key: `${docId}.start_time${assessmentSuffix}` });
-        assessments.push({ header: `order_map${assessmentSuffix}`, key: `${docId}.order_map${assessmentSuffix}` });
-        assessments.push({ header: `end_time${assessmentSuffix}`, key: `${docId}.end_time${assessmentSuffix}` });
-        if (count < 1) {
-          assessments.push({ header: 'user_role', key: `${docId}.userRole` });
-          assessments.push({ header: 'mpesa_number', key: `${docId}.mPesaNumber` });
-          assessments.push({ header: 'phone_number', key: `${docId}.phoneNumber` });
-          assessments.push({ header: 'full_name', key: `${docId}.fullName` });
+        // assessments.push({header: `assessment_id${assessmentSuffix}`, key: `${docId}.assessmentId${assessmentSuffix}`});
+        // assessments.push({
+        //   header: `assessment_name${assessmentSuffix}`,
+        //   key: `${docId}.assessmentName${assessmentSuffix}`
+        // });
+        if (count === 0) {
+          assessments.push({header: `enumerator${assessmentSuffix}`, key: `${docId}.enumerator${assessmentSuffix}`});
         }
+        assessments.push({header: `start_time${assessmentSuffix}`, key: `${docId}.start_time${assessmentSuffix}`});
+        assessments.push({header: `order_map${assessmentSuffix}`, key: `${docId}.order_map${assessmentSuffix}`});
+        assessments.push({header: `end_time${assessmentSuffix}`, key: `${docId}.end_time${assessmentSuffix}`});
+        assessments.push({header: `comment${assessmentSuffix}`, key: `${docId}.comment${assessmentSuffix}`});
+
+        let dbSettings = await dbQuery.getSettings(baseDb);
+        let userSchema = dbSettings.userSchema;
+        if (count < 1) {
+          if (typeof userSchema !== 'undefined') {
+            Object.keys(userSchema).forEach(function (key, index) {
+              if (key !== 'password' && key !== 'passwordConfirm' && key !== 'location' && key !== 'yearOfBirth') {
+                assessments.push({header: key, key: `${docId}.${key}`});
+              }
+            });
+          }
+        }
+
         return dbQuery.getSubtests(collectionId, baseDb);
       })
       .then(async(subtestData) => {
@@ -164,53 +228,55 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
           timestampCount: 0
         };
         for (data of subtestData) {
-          if (data.prototype === 'location') {
-            let location = await createLocation(data, subtestCount, baseDb);
-            assessments = assessments.concat(location);
-            subtestCount.locationCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'datetime') {
-            let datetime = createDatetime(data, subtestCount);
-            assessments = assessments.concat(datetime);
-            subtestCount.datetimeCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'consent') {
-            let consent = createConsent(data, subtestCount);
-            assessments = assessments.concat(consent);
-            subtestCount.consentCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'id') {
-            let id = createId(data, subtestCount);
-            assessments = assessments.concat(id);
-            subtestCount.idCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'survey') {
-            let surveys = await createSurvey(data._id, subtestCount, baseDb);
-            assessments = assessments.concat(surveys);
-            subtestCount.surveyCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'grid') {
-            let grid = createGrid(data, subtestCount);
-            assessments = assessments.concat(grid.gridHeader);
-            subtestCount.gridCount++;
-            subtestCount.timestampCount = grid.timestampCount;
-          }
-          if (data.prototype === 'gps') {
-            let gps = createGps(data, subtestCount);
-            assessments = assessments.concat(gps);
-            subtestCount.gpsCount++;
-            subtestCount.timestampCount++;
-          }
-          if (data.prototype === 'camera') {
-            let camera = createCamera(data, subtestCount);
-            assessments = assessments.concat(camera);
-            subtestCount.cameraCount++;
-            subtestCount.timestampCount++;
+          if (data !== null) {
+            if (data.prototype === 'location') {
+              let location = await createLocation(data, subtestCount, baseDb);
+              assessments = assessments.concat(location);
+              subtestCount.locationCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'datetime') {
+              let datetime = createDatetime(data, subtestCount);
+              assessments = assessments.concat(datetime);
+              subtestCount.datetimeCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'consent') {
+              let consent = createConsent(data, subtestCount);
+              assessments = assessments.concat(consent);
+              subtestCount.consentCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'id') {
+              let id = createId(data, subtestCount);
+              assessments = assessments.concat(id);
+              subtestCount.idCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'survey') {
+              let surveys = await createSurvey(data._id, subtestCount, baseDb);
+              assessments = assessments.concat(surveys);
+              subtestCount.surveyCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'grid') {
+              let grid = createGrid(data, subtestCount);
+              assessments = assessments.concat(grid.gridHeader);
+              subtestCount.gridCount++;
+              subtestCount.timestampCount = grid.timestampCount;
+            }
+            if (data.prototype === 'gps') {
+              let gps = createGps(data, subtestCount);
+              assessments = assessments.concat(gps);
+              subtestCount.gpsCount++;
+              subtestCount.timestampCount++;
+            }
+            if (data.prototype === 'camera') {
+              let camera = createCamera(data, subtestCount);
+              assessments = assessments.concat(camera);
+              subtestCount.cameraCount++;
+              subtestCount.timestampCount++;
+            }
           }
         }
         resolve(assessments);
@@ -230,7 +296,7 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
  *
  * @param {Object} doc - document to be processed.
  * @param {number} subtestCount - count.
- * @param {string} baseDb - base database.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Array} - generated location headers.
  */
@@ -240,19 +306,25 @@ async function createLocation(doc, subtestCount, baseDb) {
   let locSuffix = count > 0 ? `_${count}` : '';
   let i, locationHeader = [];
   let locLevels = doc.levels;
-  let isLocLevelSet = (locLevels && locLevels.length === 0) || (locLevels && locLevels[0] === '');
+  // check if the geographical level is available
+  let isLocLevelSet = (locLevels && locLevels.length > 0) && (locLevels && locLevels[0] !== '');
 
-  if (isLocLevelSet) {
+  if (!isLocLevelSet) {
+    // check if the location-list level is available
     let locationList = await dbQuery.getLocationList(baseDb);
     locLevels = locationList.locationsLevels;
+    isLocLevelSet = (locLevels && locLevels.length > 0) && (locLevels && locLevels[0] !== '');
+  }
 
+  if (isLocLevelSet) {
     for (i = 0; i < locLevels.length; i++) {
       locationHeader.push({
-        header: `${locLevels[i]}`,
-        key: `${doc._id}.${locLevels[i]}`
+        header: `${locLevels[i]}${locSuffix}`,
+        key: `${doc._id}.${locLevels[i]}${locSuffix}`
       });
     }
   }
+
   locationHeader.push({
     header: `timestamp_${subtestCount.timestampCount}`,
     key: `${doc._id}.timestamp_${subtestCount.timestampCount}`
@@ -329,7 +401,7 @@ function createId(doc, subtestCount) {
  *
  * @param {Object} id - document to be processed.
  * @param {number} subtestCount - count.
- * @param {string} baseDb - base database.
+ * @param {string} baseDb - base database url.
  *
  * @returns {Array} - generated survey headers.
  */
@@ -467,7 +539,7 @@ function createGps(doc, subtestCount) {
 function createCamera(doc, subtestCount) {
   let count = subtestCount.cameraCount;
   let cameraheader = [];
-  let varName = doc.name || doc.variableName;
+  let varName = doc.variableName || doc.name;
   let suffix = count > 0 ? `_${count}` : '';
 
   cameraheader.push({ header: `${varName}_photo_captured${suffix}`, key: `${doc._id}.${varName}_photo_captured${suffix}` });
