@@ -206,7 +206,7 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
         if (count < 1) {
           if (typeof userSchema !== 'undefined') {
             Object.keys(userSchema).forEach(function (key, index) {
-              if (key !== 'password' && key !== 'passwordConfirm' && key !== 'location') {
+              if (key !== 'password' && key !== 'passwordConfirm' && key !== 'location' && key !== 'yearOfBirth') {
                 assessments.push({header: key, key: `${docId}.${key}`});
               }
             });

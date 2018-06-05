@@ -282,7 +282,7 @@ const generateResult = async function(collections, count = 0, baseDb) {
     try {
       let userDetails = await dbQuery.getUserDetails(username, baseDb);
       Object.keys(userDetails).forEach(function (key, index) {
-        if (key !== 'preferences' && key !== 'salt' && key !== 'updated' && key !== 'uploadDate' && key !== '_id' && key !== '_rev' && key !== 'collection' && key !== 'pass' && key !== 'location') {
+        if (key !== 'preferences' && key !== 'salt' && key !== 'updated' && key !== 'uploadDate' && key !== '_id' && key !== '_rev' && key !== 'collection' && key !== 'pass' && key !== 'location' && key !== 'yearOfBirth') {
           result[`${collectionId}.${key}`] = userDetails[key];
         }
       });
