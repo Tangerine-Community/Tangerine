@@ -36,7 +36,7 @@ exports.changeProcessor = (change, sourceDb) => {
           case 'TangyFormResponse':
             processFormResponse(doc, sourceDb)
               .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
-              .catch(error => { console.log(error); reject(error); })
+              .catch(error => { reject(error) })
             break
           default:
             resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
