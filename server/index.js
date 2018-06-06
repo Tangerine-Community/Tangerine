@@ -701,10 +701,10 @@ function allGroups() {
 const keepAliveReportingWorker = async initialGroups => {
   // Populate worker-state.json if there any initialGroups not currently being watched.
   let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
-  if (!workerState.feeds) workerState.feeds = []
+  if (!workerState.databases) workerState.databases = []
   for (let groupName of initialGroups) {
-    let feed = workerState.feeds.find(feed => feed.dbName === groupName)
-    if (!feed) workerState.feeds.push({dbName: groupName, sequence: 0})
+    let feed = workerState.databases.find(database => database.name === groupName)
+    if (!feed) workerState.databases.push({name: groupName, sequence: 0})
   }
   workerState.pouchDbDefaults = pouchDbDefaults
   await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
@@ -718,27 +718,30 @@ const keepAliveReportingWorker = async initialGroups => {
     // Hook in and add a new group if it is queued.
     while (newGroupQueue.length > 0) {
       workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
-      workerState.feeds.push({dbName: newGroupQueue.pop(), sequence: 0})
+      workerState.databases.push({name: newGroupQueue.pop(), sequence: 0})
       await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
     }
     // Run the worker.
     try {
-      response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js 10 > /worker-state.json.out');
-      if (!response.stderr) {
-        await exec('cat /worker-state.json.out > /worker-state.json');
-      } else {
-        log.error(response.stderr)
+      response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
+      //await exec('cat /worker-state.json.out > /worker-state.json');
+      if (response.stderr) log.warn(`run-worker.js STDERR: ${response.stderr}`)
+      try {
+        workerState = JSON.parse(response.stdout)
+        // Wrap up. If nothing was last processed, sleep for 30 seconds.
+        if (workerState.processed === 0) {
+          await sleep (30*1000) 
+        } else {
+          log.info(`Processed ${workerState.processed} changes.`)
+        }
+        await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+      } catch (error) {
+        log.warn(error)
       }
-    } catch(e) {
-      log.error(e)
+    } catch(error) {
+      log.error(error)
     }
-    workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
-    // Wrap up. If nothing was last processed, sleep for 30 seconds.
-    if (workerState.lastRunChangesProcessed === 0) {
-      await sleep (30*1000) 
-    } else {
-      log.info(`Processed ${workerState.lastRunChangesProcessed} changes.`)
-    }
+    
   }
 }
 const initialGroups = allGroups()

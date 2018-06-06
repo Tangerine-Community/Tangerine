@@ -79,7 +79,7 @@ const processFormResponse = async (doc, sourceDb) => {
     await saveFormResponseHeaders(formHeaders, REPORTING_DB);
     await saveFlattenedFormResponse(formResult, REPORTING_DB);
   } catch (error) {
-    throw new Error(`Could not process form repsonse because of Error of ${JSON.stringify(error)}`)
+    throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error)}`)
   }
 };
 
@@ -186,14 +186,14 @@ function saveFormResponseHeaders(doc, db) {
         db.put(newDoc)
           .then(() => resolve(true))
           .catch(error => {
-            reject(`Could not save Form Response Headers ${newDoc._id} because Error of ${JSON.stringify(error)}`)
+            reject(`Could not save new Form Response Headers ${newDoc._id} because Error of ${JSON.stringify(error)}`)
           })
       })
       .catch(async err => {
         db.put(doc)
           .then(() => resolve(true))
           .catch(err => {
-            reject(`Could not save Form Response Headers ${JSON.stringify(doc._id)} because Error of ${JSON.stringify(err)}`)
+            reject(`Could not save updated Form Response Headers ${JSON.stringify(doc._id)} because Error of ${JSON.stringify(err)}`)
           })
       })
   })
