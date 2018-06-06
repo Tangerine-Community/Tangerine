@@ -12,6 +12,8 @@ const path = require('path')
 const app = express()
 const fs = require('fs-extra')
 const fsc = require('fs')
+const readFile = util.promisify(fsc.readFile);
+const writeFile = util.promisify(fsc.writeFile);
 const config = read.sync('./config.yml')
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
@@ -19,9 +21,6 @@ const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
-const { Subject } = require('rxjs');
-const { concatMap } = require('rxjs/operators');
-const tangyReporting = require('../server/reporting/data_processing');
 const generateCSV = require('../server/reporting/generate_csv').generateCSV;
 const pretty = require('pretty')
 const flatten = require('flat')
@@ -29,17 +28,18 @@ const json2csv = require('json2csv')
 const _ = require('underscore')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+// Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
+let newGroupQueue = []
 
-var DB = {}
+pouchDbDefaults = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
-  DB = PouchDB.defaults({
-    prefix: process.env.T_COUCHDB_ENDPOINT
-  });
+  pouchDbDefaults = { prefix: process.env.T_COUCHDB_ENDPOINT }
 } else {
-  DB = PouchDB.defaults({
-    prefix: '/tangerine/db/'
-  });
+  pouchDbDefaults = { prefix: '/tangerine/db/' }
 }
+const  DB = PouchDB.defaults(pouchDbDefaults)
+
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
@@ -499,8 +499,9 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     log.error(e);
   });
 
+  newGroupQueue.push(groupName)
+
   // Set up watching of groupDb for changes.
-  monitorDatabaseChangesFeed((groupName.trim()));
   //#endregion
 
   // All done!
@@ -629,54 +630,6 @@ app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthentica
   generateCSV(formId, groupReportingDbName, res);
 });
 
-
-/**
- * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
- * @param {string} srcPath The path to the directory
- */
-const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lstatSync(path.join(srcPath, file)).isDirectory());
-
-/**
- * Gets the list of all the existing groups from the content folder
- * Listens for the changes feed on each of the group's database
- */
-function listenToChangesFeedOnExistingGroups() {
-  const CONTENT_PATH = '../client/content/groups/';
-  const groups = getDirectories(CONTENT_PATH);
-  groups.map(group => monitorDatabaseChangesFeed(group.trim()));
-
-}
-listenToChangesFeedOnExistingGroups();
-
-let changesFeedSubject = new Subject();
-// Using concatMap ensures the data is processed one by one
-changesFeedSubject
-  .pipe(
-    concatMap( async data => await tangyReporting.processFormResponse(data.data, data.groupName) )
-  )
-  .subscribe(res => log.info('Processed a change in the changes feed.'));
-
-/**
- * Listens to the changes feed of a database and passes new documents to the queue
- * which sends the docs one by one in `processChangedDocument()` for processing and saving in the corresponding group results database.
- * @param {string} name the group's database for which to listen to the changes feed.
- */
-async function monitorDatabaseChangesFeed(groupName) {
-  const GROUP_DB = new DB(groupName);
-  try {
-    GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
-      .on('change', async (body) => {
-        /** check if doc is FormResponse before adding to queue to be processesd by the saveProcessedFormData.
-         * Dont add deleted docs to the queue
-         */
-        if (!body.deleted && body.doc.collection === 'TangyFormResponse') changesFeedSubject.next({ data: body['doc'], groupName });
-      })
-      .on('error', (err) => log.error(err));
-  } catch (err) {
-    log.error(err);
-  }
-}
-
 /**
  * @description Function to create Design Documents in a given Database
  * @param {string} database The Database to use when for creating the Design Document
@@ -728,6 +681,71 @@ async function createDesignDocument(database) {
     }
   }
 }
+
+/**
+ * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
+ * @param {string} srcPath The path to the directory
+ */
+const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lstatSync(path.join(srcPath, file)).isDirectory())
+
+/**
+ * Gets the list of all the existing groups from the content folder
+ * Listens for the changes feed on each of the group's database
+ */
+function allGroups() {
+  const CONTENT_PATH = '../client/content/groups/'
+  const groups = getDirectories(CONTENT_PATH)
+  return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
+}
+
+const keepAliveReportingWorker = async initialGroups => {
+  // Populate worker-state.json if there any initialGroups not currently being watched.
+  let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+  if (!workerState.databases) workerState.databases = []
+  for (let groupName of initialGroups) {
+    let feed = workerState.databases.find(database => database.name === groupName)
+    if (!feed) workerState.databases.push({name: groupName, sequence: 0})
+  }
+  workerState.pouchDbDefaults = pouchDbDefaults
+  await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+  // Declare variables now so they don't have to be delared continuously and garbage collected later.
+  let response = {
+    stdout: '',
+    stderr: ''
+  } 
+  // Keep alive.
+  while(true) {
+    // Hook in and add a new group if it is queued.
+    while (newGroupQueue.length > 0) {
+      workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+      workerState.databases.push({name: newGroupQueue.pop(), sequence: 0})
+      await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+    }
+    // Run the worker.
+    try {
+      response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
+      //await exec('cat /worker-state.json.out > /worker-state.json');
+      if (response.stderr) log.warn(`run-worker.js STDERR: ${response.stderr}`)
+      try {
+        workerState = JSON.parse(response.stdout)
+        // Wrap up. If nothing was last processed, sleep for 30 seconds.
+        if (workerState.processed === 0) {
+          await sleep (30*1000) 
+        } else {
+          log.info(`Processed ${workerState.processed} changes.`)
+        }
+        await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+      } catch (error) {
+        log.warn(error)
+      }
+    } catch(error) {
+      log.error(error)
+    }
+    
+  }
+}
+const initialGroups = allGroups()
+keepAliveReportingWorker(initialGroups)
 
 // Start the server.
 var server = app.listen(config.port, function () {
