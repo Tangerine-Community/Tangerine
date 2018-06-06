@@ -196,6 +196,11 @@ const generateResult = async function(collections, count = 0, baseDb) {
     result[`${collectionId}.assessmentName${assessmentSuffix}`] = collection.assessmentName;
     result[`${collectionId}.enumerator${assessmentSuffix}`] = enumeratorName.replace(/\s/g,'-');
     result[`${collectionId}.order_map${assessmentSuffix}`] = collection.order_map ? collection.order_map.join(',') : '';
+    // result[`${collectionId}.start_time${assessmentSuffix}`] = collection.start_time;
+    let beginTimestamp = convertToTimeZone(collection.start_time, groupTimeZone);
+    // let endTimestamp = convertToTimeZone( allTimestamps[allTimestamps.length - 1], groupTimeZone);
+    result[`${collectionId}.start_time${assessmentSuffix}`] = moment(beginTimestamp).format('MMM D YYYY hh:mm');
+    // validData[`${docId}.end_time`] = moment(endTimestamp).format('MMM D YYYY hh:mm');
 
     let subtestCount = {
       locationCount: 0,
