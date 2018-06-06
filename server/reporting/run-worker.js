@@ -5,69 +5,45 @@ const path = require('path')
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 const changeProcessor = require('./data_processing').changeProcessor;
 const defaultState = { 
-  "totalChangesProcessed": 0, 
-  "lastRunChangesProcessed": 0,
-  "lastRunStart": 0,
-  "lastRunEnd": 0,
-  "batchLimit": 5,
-  // @TODO We can only do one doc at a time otherwise form headers will not save and process gets stuck.
-  "batchSize": 1,
-  "sleepTimeAfterBatch": 0,
-  "feeds": [],
+  "tally": 0, 
+  "processed": 0,
+  "startTime": 0,
+  "endTime": 0,
+  "batchSizePerDatabase": 5,
+  "databases": [],
   "pouchDbDefaults": {
     "prefix": "/tangerine/db/"
   }
 }
 
 
-const processBatches = (givenState) => {
-  return new Promise(async (res, rej) => {
-
-    let state = Object.assign({} , defaultState, givenState)
-    const DB = PouchDB.defaults(state.pouchDbDefaults)
-    const startTime = new Date().toISOString()
-    let shouldProcess = true
-    let changesProcessed = 0
-    let batchesProcessed = 0
-
-    while (shouldProcess) {
-
-
-      // Process batch.
-      let batchChangesProcessed = 0
-      for (let feed of state.feeds) { 
-        const db = new DB(feed.dbName)
-        const changes = await db.changes({ since: feed.sequence, limit: state.batchSize, include_docs: false })
-        if (changes.results.length > 0) {
-          try {
-            const batch = changes.results.map(change => changeProcessor(change, db))
-            let batchResponses = await Promise.all(batch)
-          } catch (e) {
-            process.stderr.write(`${e}`)
-            process.stderr.write(JSON.stringify(e))
-          }
-          feed.sequence = changes.results[changes.results.length-1].seq
-          batchChangesProcessed += changes.results.length
+const processBatch = async (givenState) => {
+  let state = Object.assign({} , defaultState, givenState)
+  const DB = PouchDB.defaults(state.pouchDbDefaults)
+  const startTime = new Date().toISOString()
+  let processed = 0
+  // Process batch.
+  for (let database of state.databases) { 
+    const db = new DB(database.name)
+    const changes = await db.changes({ since: database.sequence, limit: state.batchSizePerDatabase, include_docs: false })
+    if (changes.results.length > 0) {
+      for (let change of changes.results) {
+        try {
+          await changeProcessor(change, db)
+          processed++
+        } catch (error) {
+          process.stderr.write(`Error on change sequence ${change.seq} with id ${changes.id} - ${error} ::::: `)
         }
       }
-
-      changesProcessed += batchChangesProcessed 
-      batchesProcessed++
-      if (batchesProcessed === state.batchLimit) {
-        shouldProcess = false
-      } else if (batchChangesProcessed > 0) { 
-        await sleep(state.sleepTimeAfterBatch)
-      }
-
+      // Even if an error was thrown, continue on with the next sequences.
+      database.sequence = changes.results[changes.results.length-1].seq
     }
-
-    res(Object.assign({}, state, {
-      totalChangesProcessed: state.totalChangesProcessed + changesProcessed,
-      lastRunChangesProcessed: changesProcessed,
-      lastRunStart: startTime,
-      lastRunEnd: new Date().toISOString()
-    }))
-
+  }
+  return Object.assign({}, state, {
+    tally: state.tally + processed,
+    endTime: new Date().toISOString(),
+    processed,
+    startTime
   })
 }
 
@@ -83,10 +59,13 @@ process.stdin.on('readable', () => {
 
 process.stdin.on('end', () => {
   if (stateJson !== '') {
-    processBatches(JSON.parse(stateJson))
+    processBatch(JSON.parse(stateJson))
       .then(state => {
         process.stdout.write(JSON.stringify(state));
         process.exit(0)
+      })
+      .catch(error => {
+        process.stderr.write(`${error}`);
       })
   }
 });
