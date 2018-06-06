@@ -10,7 +10,8 @@ const defaultState = {
   "lastRunStart": 0,
   "lastRunEnd": 0,
   "batchLimit": 5,
-  "batchSize": 5,
+  // @TODO We can only do one doc at a time otherwise form headers will not save and process gets stuck.
+  "batchSize": 1,
   "sleepTimeAfterBatch": 0,
   "feeds": [],
   "pouchDbDefaults": {
@@ -42,6 +43,7 @@ const processBatches = (givenState) => {
             const batch = changes.results.map(change => changeProcessor(change, db))
             let batchResponses = await Promise.all(batch)
           } catch (e) {
+            process.stderr.write(`${e}`)
             process.stderr.write(JSON.stringify(e))
           }
           feed.sequence = changes.results[changes.results.length-1].seq
