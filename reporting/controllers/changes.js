@@ -145,7 +145,7 @@ const processChangedDocument = async function(resp, baseDb, resultDb) {
       assessmentResult.isValid = validationData.isValid;
       assessmentResult.isValidReason = validationData.reason;
       assessmentResult[`${docId}.start_time`] = validationData[`${docId}.start_time`];
-      assessmentResult[`${docId}.end_time`] = validationData[`${docId}.start_time`];
+      assessmentResult[`${docId}.end_time`] = validationData[`${docId}.end_time`];
 
       assessmentResult.indexKeys.ref = assessmentResult.indexKeys.ref;
       assessmentResult.indexKeys.parent_id = docId;
