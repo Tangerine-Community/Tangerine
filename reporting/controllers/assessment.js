@@ -188,11 +188,6 @@ const createColumnHeaders = function(doc, count = 0, baseDb) {
     GROUP_DB.get(collectionId)
       .then(async (item) => {
         let assessmentSuffix = count > 0 ? `_${count}` : '';
-        // assessments.push({header: `assessment_id${assessmentSuffix}`, key: `${docId}.assessmentId${assessmentSuffix}`});
-        // assessments.push({
-        //   header: `assessment_name${assessmentSuffix}`,
-        //   key: `${docId}.assessmentName${assessmentSuffix}`
-        // });
         if (count === 0) {
           assessments.push({header: `enumerator${assessmentSuffix}`, key: `${docId}.enumerator${assessmentSuffix}`});
         }
