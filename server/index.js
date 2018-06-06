@@ -21,18 +21,15 @@ const PouchDB = require('pouchdb')
 const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
-const { Subject } = require('rxjs');
-const { concatMap } = require('rxjs/operators');
-const { catchError } = require('rxjs/operators');
-const dataProcessing = require('../server/reporting/data_processing');
 const generateCSV = require('../server/reporting/generate_csv').generateCSV;
-const PouchDbChangesFeedWorker = require('../server/reporting/PouchDbChangesFeedWorker.js').PouchDbChangesFeedWorker
 const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
 const _ = require('underscore')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+// Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
 let newGroupQueue = []
 
 pouchDbDefaults = {}
@@ -701,9 +698,8 @@ function allGroups() {
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
 }
 
-const processBatches = async initialGroups => {
-
-  // Populate feeds.json if there any initialGroups not currently being watched.
+const keepAliveReportingWorker = async initialGroups => {
+  // Populate worker-state.json if there any initialGroups not currently being watched.
   let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
   if (!workerState.feeds) workerState.feeds = []
   for (let groupName of initialGroups) {
@@ -712,18 +708,20 @@ const processBatches = async initialGroups => {
   }
   workerState.pouchDbDefaults = pouchDbDefaults
   await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
-
+  // Declare variables now so they don't have to be delared continuously and garbage collected later.
   let response = {
     stdout: '',
     stderr: ''
   } 
+  // Keep alive.
   while(true) {
-    // Update feeds.json if there a new group just added.
+    // Hook in and add a new group if it is queued.
     while (newGroupQueue.length > 0) {
-      let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+      workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
       workerState.feeds.push({dbName: newGroupQueue.pop(), sequence: 0})
       await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
     }
+    // Run the worker.
     try {
       response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js 10 > /worker-state.json.out');
       if (!response.stderr) {
@@ -734,13 +732,17 @@ const processBatches = async initialGroups => {
     } catch(e) {
       log.error(e)
     }
+    workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+    // Wrap up. If nothing was last processed, sleep for 30 seconds.
+    if (workerState.lastRunChangesProcessed === 0) {
+      await sleep (30*1000) 
+    } else {
+      log.info(`Processed ${workerState.lastRunChangesProcessed} changes.`)
+    }
   }
 }
-
 const initialGroups = allGroups()
-processBatches(initialGroups)
-
-
+keepAliveReportingWorker(initialGroups)
 
 // Start the server.
 var server = app.listen(config.port, function () {
