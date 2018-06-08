@@ -11,6 +11,8 @@ const CSV = require('comma-separated-values')
 const axios = require('axios')
 const PouchDB = require('pouchdb')
 const sleep = (mseconds) => new Promise((res) => setTimeout(() => res(), mseconds))
+const util = require('util');
+const exec = util.promisify(require('child_process').exec)
 
 const params = {
   dbDefaults: JSON.parse(process.argv[2]),
