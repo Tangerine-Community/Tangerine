@@ -32,6 +32,10 @@ async function go(params) {
   const DB = PouchDB.defaults(params.dbDefaults)
   const db = new DB(params.dbName)
   const docs = await getData(db, params.formId, params.skip, params.limit)
+  if (docs.length === 0) {
+    process.stderr.write('No docs in that range')
+    return process.exit()
+  }
   // Order each datum's properties by the headers for consistent columns.
   const rows = docs.map(doc => params.headers.map(header => (doc[header]) ? doc[header] : ''))
   const output = new CSV(rows).encode()

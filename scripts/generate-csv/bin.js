@@ -70,9 +70,12 @@ async function go(state) {
       // Add a new line.
       await exec(`echo '' >> ${state.outputPath}`)
       // Determine next step.
-      if (state.skip === state.totalRows) shouldRun = false
-      state.skip += state.batchSize
-      if (state.skip > state.totalRows) state.skip = state.totalRows 
+      if (response.stderr) {
+        // Will get error when there is nothing left to process.
+        shouldRun = false
+      } else {
+        state.skip += state.batchSize
+      }
     }
     clearInterval(updateStateJsonInterval)
     state.complete = true
