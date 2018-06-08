@@ -15,6 +15,8 @@ const PouchDB = require('pouchdb')
 const sleep = (mseconds) => new Promise((res) => setTimeout(() => res(), mseconds))
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
+const fs = require('fs')
+const writeFile = util.promisify(fs.writeFile);
 
 const params = {
   dbDefaults: JSON.parse(process.argv[2]),
@@ -37,6 +39,8 @@ async function go(state) {
   state.totalRows = queryInfo.total_rows
   const headersDoc = await db.get(state.formId)
   state.headersKeys = headersDoc.columnHeaders.map(header => header.key)
+  const headersRow = new CSV([state.headersKeys]).encode()
+  await writeFile(state.outputPath, headersRow, 'utf-8')
   //  Run batches.
   let shouldRun = true
   let response = { stdout: '', stderr: '' }
