@@ -122,7 +122,8 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting \
   --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \
   --volume $(pwd)/upgrades:/tangerine/upgrades \
-  --volume $(pwd)/scripts:/tangerine/scripts \
+  --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js \
+  --volume $(pwd)/scripts/generate-csv/generate-lines.js:/tangerine/scripts/generate-csv/generate-lines.js \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
   --volume $(pwd)/client/shell/package.json:/tangerine/client/shell/package.json \
