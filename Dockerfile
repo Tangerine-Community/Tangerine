@@ -23,6 +23,10 @@ ENV T_PROTOCOL http
 # Set to "development" for live code reload of editor and client.
 ENV T_RUN_MODE production
 
+# Install Scripts.
+ADD ./scripts/generate-csv/package.json /tangerine/scripts/generate-csv/package.json
+RUN cd /tangerine/scripts/generate-csv && npm install
+
 # Install server.
 ADD ./server/package.json /tangerine/server/package.json
 RUN cd /tangerine/server && \
@@ -63,6 +67,8 @@ ADD server /tangerine/server
 #
 
 ADD ./ /tangerine
+
+RUN mkdir /csv
 
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && node index.js 
