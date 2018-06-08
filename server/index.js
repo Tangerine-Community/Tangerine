@@ -163,6 +163,7 @@ app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor
 app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-builds')));
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
+app.use('/csv/', express.static('/csv/'));
 
 app.use('/releases/', express.static(path.join(__dirname, '../client/releases')))
 app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')))
@@ -541,49 +542,19 @@ app.post('/upload/:groupName', async function (req, res) {
 
 })
 
-app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
-  let db = new DB(req.params.groupName)
-  let allDocs = await db.allDocs({ include_docs: true })
-  let responseRows = allDocs.rows
-    .filter(row => row.doc.collection == 'TangyFormResponse')
-    .filter(row => row.doc.form.id == req.params.formId)
-  let responseDocs = responseRows.map(row => row.doc)
-  let docsKeyedByVariableName = []
-  responseDocs.forEach(doc => {
-    let variables = {}
-    variables['_id'] = doc._id
-    variables['formId'] = doc.form.id
-    variables['startDatetime'] = doc.startDatetime
-    variables['startUnixtime'] = doc.startUnixtime
-    doc.inputs.forEach(input => {
-      variables[input.name] = input.value
-    })
-    doc.items.forEach(item => {
-      item.inputs.forEach(input => {
-        if (Array.isArray(input.value)) {
-          input.value.forEach(subInput => variables[`${input.name}.${subInput.name}`] = subInput.value)
-        } else {
-          variables[input.name] = input.value
-        }
-      })
-    })
-    docsKeyedByVariableName.push(variables)
+app.get('/csv/:groupName/:formId', async function (req, res) {
+  const groupName = sanitize(req.params.groupName)
+  const formId = sanitize(req.params.formId)
+  const fileName = `${groupName}-${formId}-${Date.now()}.csv`
+  const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
+  const outputPath = `/csv/${fileName}`
+  const cmd = `cd /tangerine/scripts/generate-csv/ && ./bin.js '${JSON.stringify(pouchDbDefaults)}' ${groupName}-reporting ${formId} ${outputPath} ${batchSize}`
+  clog(cmd)
+  exec(cmd)
+  res.send({
+    stateUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.csv', '.state.json')}`,
+    downloadUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
   })
-
-  let flatVariableDocs = docsKeyedByVariableName.map(doc => flatten(doc))
-  let keys = []
-  for (let doc of flatVariableDocs) {
-    keys = _.uniq(keys.concat(Object.getOwnPropertyNames(doc)))
-  }
-  try {
-    var result = json2csv({ data: flatVariableDocs, fields: keys });
-  } catch (err) {
-    log.error(err);
-  }
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/csv');
-  res.write(result)
-  res.end()
 })
 
 app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isAuthenticated, async function (req, res) {
