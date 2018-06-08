@@ -5,6 +5,9 @@ set -e
 if [ ! -d data ]; then
   mkdir data
 fi
+if [ ! -d data/csv ]; then
+  mkdir data/csv
+fi
 if [ ! -d data/client ]; then
   mkdir data/client
 fi
@@ -107,8 +110,10 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   --env \"T_REPLICATE=$T_REPLICATE\" \
+  --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/db:/tangerine/db/ \
+  --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
@@ -117,6 +122,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting \
   --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \
   --volume $(pwd)/upgrades:/tangerine/upgrades \
+  --volume $(pwd)/scripts:/tangerine/scripts \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
   --volume $(pwd)/client/shell/package.json:/tangerine/client/shell/package.json \
