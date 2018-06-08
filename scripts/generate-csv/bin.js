@@ -4,7 +4,7 @@ if (!process.argv[2] || !process.argv[3] || !process.argv[4] || !process.argv[4]
   console.log('Usage:')
   console.log('  ./bin.js <dbDefaults> <dbName> <formId> <outputPath> [batchSize]  ')
   console.log('Example:')
-  console.log('  ./bin.js '{"prefix":"http://admin:password@couchdb:5984"}' g2-reporting class-12-lesson-observation-with-pupil-books ./output.csv
+  console.log(`  ./bin.js '{"prefix":"http://admin:password@couchdb:5984"}' g2-reporting class-12-lesson-observation-with-pupil-books ./output.csv`)
   process.exit()
 }
 
