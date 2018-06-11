@@ -10,7 +10,10 @@
       "assets": [
         "assets",
         "favicon.ico",
-        "manifest.json"
+        "manifest.json",
+{"glob": "web*.js", "input": "../node_modules/@webcomponents/webcomponentsjs", "output": "./wc_polyfills/"},
+{"glob": "custom*.js", "input": "../node_modules/@webcomponents/webcomponentsjs", "output": "./wc_polyfills/"},
+{"glob": "**/*", "input": "./wc_polyfills", "output": "./wc_polyfills/"}
       ],
       "index": "index.html",
       "main": "main.ts",
