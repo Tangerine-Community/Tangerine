@@ -695,8 +695,11 @@ const keepAliveReportingWorker = async initialGroups => {
     // Run the worker.
     try {
       response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
-      //await exec('cat /worker-state.json.out > /worker-state.json');
-      if (response.stderr) log.warn(`run-worker.js STDERR: ${response.stderr}`)
+      if (typeof response.stderr === 'object') {
+        log.warn(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
+      } else if (response.stderr) {
+        log.warn(`run-worker.js STDERR: ${response.stderr}`)
+      }
       try {
         workerState = JSON.parse(response.stdout)
         // Wrap up. If nothing was last processed, sleep for 30 seconds.
