@@ -27,6 +27,7 @@ const params = {
 }
 
 let state = Object.assign({}, params, {
+  complete: false,
   startTime: new Date().toISOString(),
   skip: 0,
   headersKeys: [],
@@ -36,6 +37,7 @@ let state = Object.assign({}, params, {
 async function updateStateJson(state) {
   try {
     await writeFile(state.outputPath.replace('.csv', '.state.json'), JSON.stringify({
+      complete: state.complete,
       startTime: state.startTime,
       dbName: state.dbName,
       formId: state.formId,
