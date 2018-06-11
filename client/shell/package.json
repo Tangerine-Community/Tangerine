@@ -33,6 +33,7 @@
     "@ngx-translate/core": "^7.2.2",
     "@ngx-translate/http-loader": "^3.0.1",
     "@types/js-yaml": "^3.5.31",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
     "angular-tree-component": "^3.7.2",
     "angular2-uuid": "^1.1.1",
     "async-child-process": "^1.1.1",
@@ -50,6 +51,7 @@
     "pouchdb-upsert": "^2.2.0",
     "read-yaml": "^1.1.0",
     "rxjs": "^5.1.0",
+    "tangy-form": "^1.0.0",
     "watch": "^1.0.2",
     "zone.js": "^0.8.4"
   },
