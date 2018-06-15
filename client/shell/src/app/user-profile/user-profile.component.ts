@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterContentInit, ElementRef, Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { UserService } from '../core/auth/_services/user.service';
@@ -13,7 +13,6 @@ export class UserProfileComponent implements AfterContentInit {
 
   tangyFormSrc: any;
   tangyFormResponse: {};
-  //@ViewChild(TangyFormLoaderComponent) tangyFormLoader: TangyFormLoaderComponent 
   @ViewChild('container') container: ElementRef;
 
   constructor(
