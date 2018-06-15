@@ -10,6 +10,7 @@ import {
   MatMenuModule,
   MatSidenavModule,
   MatToolbarModule,
+  MatIconModule,
   MatProgressBarModule
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
@@ -42,7 +43,7 @@ export function HttpClientLoaderFactory(httpClient: HttpClient) {
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatButtonModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule,
+    MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule,
     TangyFormsModule,
     AuthModule,
     CaseManagementModule,

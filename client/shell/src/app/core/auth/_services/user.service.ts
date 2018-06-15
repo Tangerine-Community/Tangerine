@@ -102,7 +102,6 @@ export class UserService {
 
     try {
       const result = await this.DB.allDocs({ include_docs: true });
-
       const users = [];
       observableFrom(result.rows).pipe(map(doc => doc),filter(doc => !doc['id'].startsWith('_design')),).subscribe(doc => {
         users.push({
