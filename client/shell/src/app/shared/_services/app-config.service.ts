@@ -7,7 +7,7 @@ export class AppConfigService {
     private http: HttpClient
   ) { }
   async getAppConfig() {
-    const res = await this.http.get('../content/app-config.json').toPromise();
+    const res = await this.http.get('./assets/content/app-config.json').toPromise();
     const appConfig:any = res;
     return appConfig;
   }

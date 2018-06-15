@@ -32,7 +32,7 @@ export class CaseManagementService {
       (authenticationService.getCurrentUserDBPath());
   }
   async getMyLocationVisits(month: number, year: number) {
-    const res = await this.http.get('../content/location-list.json').toPromise();
+    const res = await this.http.get('./assets/content/location-list.json').toPromise();
     const allLocations:any = Object.assign({}, res);
     // Calculate our locations by generating the path in the locationList object.
     const locationList = allLocations.locations;
@@ -85,7 +85,7 @@ export class CaseManagementService {
 
   async getFormList() {
     const forms = [];
-    const formList:any = await this.http.get('../content/forms.json')
+    const formList:any = await this.http.get('./assets/content/forms.json')
       .toPromise()
     for (const form of formList) {
       forms.push({
