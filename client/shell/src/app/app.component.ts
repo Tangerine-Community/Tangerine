@@ -68,8 +68,10 @@ export class AppComponent implements OnInit {
     // setInterval(this.getGeolocationPosition, 1000);
     // Initialize tangyFormService in case any views need to be updated.
     const currentUser = await this.authenticationService.getCurrentUser();
-    const tangyFormService = new TangyFormService({ databaseName: currentUser });
-    tangyFormService.initialize();
+    if (currentUser) {
+      const tangyFormService = new TangyFormService({ databaseName: currentUser });
+      tangyFormService.initialize();
+    }
   }
 
   async checkIfUpdateScriptRequired() {

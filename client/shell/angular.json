@@ -23,6 +23,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/material-design-icons/iconfont/material-icons.css",
               "src/styles.css"
             ],
             "scripts": []

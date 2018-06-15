@@ -73,15 +73,20 @@ export class RegistrationComponent implements OnInit {
         }
 
     }
-    doesUserExist(user) {
-        this.user.username = user.replace(/\s/g, ''); // Remove all whitespaces including spaces and tabs
-        observableFrom(this.userService.doesUserExist(user.replace(/\s/g, ''))).subscribe((data) => {
-            this.isUsernameTaken = data;
-            this.isUsernameTaken ?
-                this.statusMessage = this.userNameUnavailableMessage :
-                this.statusMessage = this.userNameAvailableMessage;
-            return this.isUsernameTaken;
-        });
+    async doesUserExist(user) {
+      this.user.username = user.replace(/\s/g, ''); // Remove all whitespaces including spaces and tabs
+      try {
+        let data = await this.userService.doesUserExist(user.replace(/\s/g, ''));
+        this.isUsernameTaken = data;
+        this.isUsernameTaken ?
+            this.statusMessage = this.userNameUnavailableMessage :
+            this.statusMessage = this.userNameAvailableMessage;
+        return this.isUsernameTaken;
+
+      } catch (error) {
+        console.log(error)
+      }
+          
     }
 
     loginUserAfterRegistration(username, password) {
