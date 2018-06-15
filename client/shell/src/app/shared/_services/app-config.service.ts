@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class AppConfigService {
   constructor(
-    private http: Http
+    private http: HttpClient
   ) { }
   async getAppConfig() {
     const res = await this.http.get('../content/app-config.json').toPromise();
-    const appConfig = res.json();
+    const appConfig:any = res;
     return appConfig;
   }
   public async getDefaultURL() {
-    const result = await this.getAppConfig();
+    const result:any = await this.getAppConfig();
     return result.homeUrl;
   }
 }

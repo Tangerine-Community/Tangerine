@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { AppConfigService } from 'app/shared/_services/app-config.service';
+import { AppConfigService } from '../shared/_services/app-config.service';
 
 import { SafeUrlPipe } from '../tangy-forms/safe-url.pipe';
 import {

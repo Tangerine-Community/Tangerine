@@ -1,9 +1,9 @@
-import 'rxjs/add/observable/pairs';
+
 
 import { Injectable } from '@angular/core';
-import * as bcrypt from 'bcryptjs';
+//import * as bcrypt from 'bcryptjs';
 import PouchDB from 'pouchdb';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { environment } from './../../../../environments/environment';
@@ -63,7 +63,7 @@ export class AuthenticationService {
     try {
       const result = await this.DB.find({ selector: { username } });
       if (result.docs.length > 0) {
-        doesPasswordMatch = await bcrypt.compare(password, result.docs[0].password);
+        //doesPasswordMatch = await bcrypt.compare(password, result.docs[0].password);
         if (doesPasswordMatch) {
           /**
            * @TODO we will probably need to save the current timestamp when the user logged in for security policy use
@@ -84,9 +84,9 @@ export class AuthenticationService {
     try {
       const result = await this.DB.find({ selector: { username: user.username } });
       if (result.docs.length > 0) {
-        doesAnswerMatch = result.docs[0].hashSecurityQuestionResponse ?
-          await bcrypt.compare(user.securityQuestionResponse, result.docs[0].securityQuestionResponse) :
-          user.securityQuestionResponse === result.docs[0].securityQuestionResponse;
+        //doesAnswerMatch = result.docs[0].hashSecurityQuestionResponse ?
+          //await bcrypt.compare(user.securityQuestionResponse, result.docs[0].securityQuestionResponse) :
+         // user.securityQuestionResponse === result.docs[0].securityQuestionResponse;
       }
     } catch (error) {
       console.error(error);

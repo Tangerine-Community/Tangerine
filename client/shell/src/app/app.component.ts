@@ -1,8 +1,8 @@
 import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
 import { UserService } from './core/auth/_services/user.service';
 import { WindowRef } from './core/window-ref.service';
@@ -19,12 +19,13 @@ import { _TRANSLATE } from './shared/translation-marker';
 export class AppComponent implements OnInit {
   showNav;
   showUpdateAppLink;
+  window;
   updateIsRunning = false;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
     private windowRef: WindowRef, private userService: UserService,
     private authenticationService: AuthenticationService,
-    private http: Http,
+    private http: HttpClient,
     private router: Router,
     translate: TranslateService
   ) {
@@ -35,17 +36,17 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
     // Set location list as a global.
-    const window = this.windowRef.nativeWindow;
+    this.window = this.windowRef.nativeWindow;
     const res = await this.http.get('../content/location-list.json').toPromise();
-    window.locationList = res.json();
+    this.window.locationList = res;
     try {
       let appConfigResponse = await fetch('../content/app-config.json')
-      window.appConfig = await appConfigResponse.json()
+      this.window.appConfig = await appConfigResponse.json()
     } catch(e) {
       console.log('No app config found.')
     }
-    if (window.appConfig.direction === 'rtl') {
-      let styleContainer = window.document.createElement('div')
+    if (this.window.appConfig.direction === 'rtl') {
+      let styleContainer = this.window.document.createElement('div')
       styleContainer.innerHTML = `
         <style>
           * {
@@ -54,7 +55,7 @@ export class AppComponent implements OnInit {
           }
       </style>
       `
-      window.document.body.appendChild(styleContainer)
+      this.window.document.body.appendChild(styleContainer)
     }
 
     this.showNav = this.authenticationService.isLoggedIn();
@@ -104,14 +105,14 @@ export class AppComponent implements OnInit {
   async isAppUpdateAvailable() {
     try {
       const response = await this.http.get('../../release-uuid.txt').toPromise();
-      const foundReleaseUuid = (response.text()).replace(/\n|\r/g, '');
+      const foundReleaseUuid = `${response}`.replace(/\n|\r/g, '');
       const storedReleaseUuid = localStorage.getItem('release-uuid');
       this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
     } catch (e) {
     }
   }
   updateApp() {
-    if (window.isCordovaApp) {
+    if (this.window.isCordovaApp) {
       console.log('Running from APK');
       const installationCallback = (error) => {
         if (error) {
@@ -130,21 +131,21 @@ export class AppComponent implements OnInit {
           alert('No Update: ' + JSON.stringify(error.description));
         } else {
           console.log('Update is Loaded');
-          if (window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `Cancel`. If you are ready to install the update, click `Yes`'))) {
+          if (this.window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `Cancel`. If you are ready to install the update, click `Yes`'))) {
             this.updateIsRunning = true;
             console.log('Installing Update');
-            window.chcp.installUpdate(installationCallback);
+            this.window.chcp.installUpdate(installationCallback);
           } else {
             console.log('Cancelled install; did not install update.');
             this.updateIsRunning = false;
           }
         }
       };
-      window.chcp.fetchUpdate(updateCallback);
+      this.window.chcp.fetchUpdate(updateCallback);
     } else {
-      const currentPath = window.location.pathname;
+      const currentPath = this.window.location.pathname;
       const storedReleaseUuid = localStorage.getItem('release-uuid');
-      window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
+      this.window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
     }
 
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { CanActivate } from '@angular/router/src/interfaces';
-import { UserService } from 'app/core/auth/_services/user.service';
+import { UserService } from '../core/auth/_services/user.service';
 import PouchDB from 'pouchdb';
 
 @Injectable()

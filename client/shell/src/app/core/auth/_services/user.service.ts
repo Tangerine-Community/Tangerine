@@ -1,12 +1,15 @@
-import 'rxjs/add/observable/from';
-import 'rxjs/add/operator/filter';
+
+import {from as observableFrom,  Observable } from 'rxjs';
+
+import {filter, map} from 'rxjs/operators';
+
+
 import { Injectable } from '@angular/core';
-import * as bcrypt from 'bcryptjs';
-import { Uuid } from 'ng2-uuid';
+//import * as bcrypt from 'bcryptjs';
+import { uuid } from 'js-uuid';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import * as PouchDBUpsert from 'pouchdb-upsert';
-import { Observable } from 'rxjs/Observable';
 import { TangyFormService } from '../../../tangy-forms/tangy-form-service';
 import { updates } from '../../update/update/updates';
 
@@ -15,7 +18,7 @@ export class UserService {
   userData = {};
   DB = new PouchDB('users');
   LOGGED_IN_USER_DATABASE_NAME = 'currentUser';
-  constructor(private uuid: Uuid) { }
+  constructor(private uuid: uuid) { }
 
   async create(payload) {
     const userUUID = this.uuid.v1();
@@ -101,7 +104,7 @@ export class UserService {
       const result = await this.DB.allDocs({ include_docs: true });
 
       const users = [];
-      Observable.from(result.rows).map(doc => doc).filter(doc => !doc['id'].startsWith('_design')).subscribe(doc => {
+      observableFrom(result.rows).pipe(map(doc => doc),filter(doc => !doc['id'].startsWith('_design')),).subscribe(doc => {
         users.push({
           username: doc['doc'].username
         });
@@ -138,8 +141,9 @@ export class UserService {
     }
   }
   async hashValue(value) {
-    const salt = bcrypt.genSaltSync(10);
-    return bcrypt.hashSync(value, salt);
+    //const salt = bcrypt.genSaltSync(10);
+    //return bcrypt.hashSync(value, salt);
+    return true
   }
   async setUserDatabase(username) {
     return await localStorage.setItem(this.LOGGED_IN_USER_DATABASE_NAME, username);

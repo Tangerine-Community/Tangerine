@@ -1,9 +1,10 @@
-import 'rxjs/add/observable/fromPromise';
+
+import {from as observableFrom,  Observable } from 'rxjs';
+
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppConfigService } from 'app/shared/_services/app-config.service';
-import { Observable } from 'rxjs/Observable';
+import { AppConfigService } from '../../../shared/_services/app-config.service';
 
 import { AuthenticationService } from '../_services/authentication.service';
 import { UserService } from '../_services/user.service';
@@ -61,7 +62,7 @@ export class RegistrationComponent implements OnInit {
         delete this.user.confirmPassword;
         const userData = Object.assign({}, this.user);
         if (!this.isUsernameTaken) {
-            Observable.fromPromise(this.userService.create(userData)).subscribe(data => {
+            observableFrom(this.userService.create(userData)).subscribe(data => {
                 this.loginUserAfterRegistration(userData.username, this.user.password);
             }, error => {
                 console.log(error);
@@ -74,7 +75,7 @@ export class RegistrationComponent implements OnInit {
     }
     doesUserExist(user) {
         this.user.username = user.replace(/\s/g, ''); // Remove all whitespaces including spaces and tabs
-        Observable.fromPromise(this.userService.doesUserExist(user.replace(/\s/g, ''))).subscribe((data) => {
+        observableFrom(this.userService.doesUserExist(user.replace(/\s/g, ''))).subscribe((data) => {
             this.isUsernameTaken = data;
             this.isUsernameTaken ?
                 this.statusMessage = this.userNameUnavailableMessage :
@@ -84,7 +85,7 @@ export class RegistrationComponent implements OnInit {
     }
 
     loginUserAfterRegistration(username, password) {
-        Observable.fromPromise(this.authenticationService.login(username, password)).subscribe(data => {
+        observableFrom(this.authenticationService.login(username, password)).subscribe(data => {
             if (data) {
                 this.router.navigate(['' + '/manage-user-profile']);
             } else { this.statusMessage = this.loginUnsucessfulMessage; }

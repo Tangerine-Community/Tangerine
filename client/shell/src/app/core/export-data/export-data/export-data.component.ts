@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../auth/_services/user.service';
 import { SyncingService } from '../../sync-records/_services/syncing.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
+import { WindowRef } from '../../../core/window-ref.service';
 declare const cordova: any;
 @Component({
   selector: 'app-export-data',
@@ -10,7 +11,11 @@ declare const cordova: any;
 })
 export class ExportDataComponent implements OnInit {
 
-  constructor(private userService: UserService, private syncingService: SyncingService) { }
+  window;
+
+  constructor(private windowRef: WindowRef, private userService: UserService, private syncingService: SyncingService) { 
+    this.window = this.windowRef.nativeWindow;
+  }
 
   ngOnInit() {
   }
@@ -28,9 +33,9 @@ export class ExportDataComponent implements OnInit {
     const now = new Date();
     const fileName =
       `${currentUser}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-${now.getHours()}-${now.getMinutes()}-${now.getSeconds()}.json`;
-    if (window.isCordovaApp) {
+    if (this.window.isCordovaApp) {
       document.addEventListener('deviceready', () => {
-        window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (directoryEntry) => {
+        this.window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (directoryEntry) => {
           directoryEntry.getFile(fileName, { create: true }, (fileEntry) => {
             fileEntry.createWriter((fileWriter) => {
               fileWriter.onwriteend = (data) => {

@@ -1,7 +1,7 @@
-import 'rxjs/add/operator/toPromise';
+
 
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import PouchDB from 'pouchdb';
 
 import { AuthenticationService } from '../../core/auth/_services/authentication.service';
@@ -23,7 +23,7 @@ export class CaseManagementService {
     authenticationService: AuthenticationService,
     loc: Loc,
     userService: UserService,
-    private http: Http,
+    private http: HttpClient,
     private appConfigService: AppConfigService
   ) {
     this.loc = loc;
@@ -33,7 +33,7 @@ export class CaseManagementService {
   }
   async getMyLocationVisits(month: number, year: number) {
     const res = await this.http.get('../content/location-list.json').toPromise();
-    const allLocations = res.json();
+    const allLocations:any = Object.assign({}, res);
     // Calculate our locations by generating the path in the locationList object.
     const locationList = allLocations.locations;
     const myLocations = [];
@@ -85,9 +85,8 @@ export class CaseManagementService {
 
   async getFormList() {
     const forms = [];
-    const formList = await this.http.get('../content/forms.json')
+    const formList:any = await this.http.get('../content/forms.json')
       .toPromise()
-      .then(response => response.json()).catch(data => console.error(data));
     for (const form of formList) {
       forms.push({
         title: form['title'],

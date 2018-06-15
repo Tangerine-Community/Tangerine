@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CreateProfileGuardService } from 'app/user-profile/create-profile-guard.service';
+import { CreateProfileGuardService } from '../user-profile/create-profile-guard.service';
 
 import { LoginGuard } from '../core/auth/_guards/login-guard.service';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
