@@ -1,9 +1,10 @@
-import 'rxjs/add/observable/fromPromise';
+
+import {from as observableFrom,  Observable } from 'rxjs';
+
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppConfigService } from 'app/shared/_services/app-config.service';
-import { Observable } from 'rxjs/Observable';
+import { AppConfigService } from '../../../shared/_services/app-config.service';
 
 import { UserService } from '../_services/user.service';
 import { AuthenticationService } from './../_services/authentication.service';
@@ -60,7 +61,7 @@ export class LoginComponent implements OnInit {
   }
 
   resetPassword() {
-    Observable.fromPromise(this.authenticationService.resetPassword(this.user)).subscribe(data => {
+    observableFrom(this.authenticationService.resetPassword(this.user)).subscribe(data => {
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
@@ -72,7 +73,7 @@ export class LoginComponent implements OnInit {
     });
   }
   loginUser() {
-    Observable.fromPromise(this.authenticationService.login(this.user.username, this.user.password)).subscribe(data => {
+    observableFrom(this.authenticationService.login(this.user.username, this.user.password)).subscribe(data => {
       if (data) {
         this.router.navigate(['' + this.returnUrl]);
       } else {

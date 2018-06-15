@@ -4,7 +4,6 @@ import { NgIf } from '@angular/common';
 import { TangyFormService } from '../../../tangy-forms/tangy-form-service';
 import { updates } from './updates';
 import PouchDB from 'pouchdb';
-import { TangerineFormPage } from '../../../../../e2e/app.po';
 import { UserService } from '../../auth/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 

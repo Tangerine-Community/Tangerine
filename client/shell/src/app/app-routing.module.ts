@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import {
-  RedirectToDefaultRouteComponent,
-} from 'app/shared/_components/redirect-to-default-route/redirect-to-default-route.component';
-import { CreateProfileGuardService } from 'app/user-profile/create-profile-guard.service';
+  RedirectToDefaultRouteComponent
+} from './shared/_components/redirect-to-default-route/redirect-to-default-route.component';
+import { CreateProfileGuardService } from './user-profile/create-profile-guard.service';
 
 import { LoginGuard } from './core/auth/_guards/login-guard.service';
 

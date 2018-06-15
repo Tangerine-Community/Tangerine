@@ -1,4 +1,4 @@
-import 'rxjs/add/operator/map';
+
 
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs/Rx';

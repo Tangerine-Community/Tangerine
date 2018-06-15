@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import PouchDB from 'pouchdb';
 import * as PouchDBUpsert from 'pouchdb-upsert';
 import * as pako from 'pako';
@@ -11,7 +11,7 @@ import { UserService } from '../../auth/_services/user.service';
 export class SyncingService {
   constructor(
     private appConfigService: AppConfigService,
-    private http: Http,
+    private http: HttpClient,
     private userService: UserService
   ) { }
 
