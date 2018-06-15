@@ -21,7 +21,7 @@ export class CaseDetailsComponent implements OnInit {
 
   async setURL() {
     const userDbName = await this.userService.getUserDatabase();
-    this.formUrl = `../tangy-forms/index.html#form_src=../content/reports/form.html&hide_top_bar=true&database_name=${userDbName}&locationId=${this.locationId}`;
+    this.formUrl = `../tangy-forms/index.html#form_src=./assets/content/reports/form.html&hide_top_bar=true&database_name=${userDbName}&locationId=${this.locationId}`;
   }
 
 }

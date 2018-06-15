@@ -37,10 +37,10 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     // Set location list as a global.
     this.window = this.windowRef.nativeWindow;
-    const res = await this.http.get('../content/location-list.json').toPromise();
+    const res = await this.http.get('./assets/content/location-list.json').toPromise();
     this.window.locationList = res;
     try {
-      let appConfigResponse = await fetch('../content/app-config.json')
+      let appConfigResponse = await fetch('./assets/content/app-config.json')
       this.window.appConfig = await appConfigResponse.json()
     } catch(e) {
       console.log('No app config found.')

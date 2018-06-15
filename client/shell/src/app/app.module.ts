@@ -32,7 +32,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 // import { CaseManagementModule } from './case-management/case-management.module';
 export { AppComponent }
 export function HttpClientLoaderFactory(httpClient: HttpClient) {
-  return new TranslateHttpLoader(httpClient, '../content/', '.json');
+  return new TranslateHttpLoader(httpClient, './assets/content/', '.json');
 }
 @NgModule({
   declarations: [
