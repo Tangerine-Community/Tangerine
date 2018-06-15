@@ -9,46 +9,36 @@ import { TangyFormService } from '../tangy-forms/tangy-form-service';
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
-export class UserProfileComponent implements OnInit, AfterContentInit {
+export class UserProfileComponent implements AfterContentInit {
 
-  @ViewChild('iframe') iframe: ElementRef;
-  formUrl;
+  tangyFormSrc: any;
+  tangyFormResponse: {};
+  //@ViewChild(TangyFormLoaderComponent) tangyFormLoader: TangyFormLoaderComponent 
+  @ViewChild('container') container: ElementRef;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService
   ) { }
 
-
-  ngOnInit() {
-    this.getForm();
-  }
-
-  ngAfterContentInit() {
-
-  }
-
-  async getForm() {
+  async ngAfterContentInit() {
     const userDbName = await this.userService.getUserDatabase();
-    // @TODO: Look for form doc in user db, add response_id to url params if there is one.
     const tangyFormService = new TangyFormService({ databaseName: userDbName });
     const profileDocs = await tangyFormService.getResponsesByFormId('user-profile');
+    const container = this.container.nativeElement
+    let formHtml = await fetch('./assets/content/user-profile/form.html')
+    container.innerHTML = await formHtml.text()
+    let formEl = container.querySelector('tangy-form')
+    formEl.addEventListener('ALL_ITEMS_CLOSED', async () => {
+      const profileDoc = formEl.store.getState()
+      await tangyFormService.saveResponse(profileDoc)
+      this.router.navigate(['/forms-list']);
+    })
+    // Put a response in the store by issuing the FORM_OPEN action.
     if (profileDocs.length > 0) {
-      this.formUrl =
-        `../tangy-forms/index.html#form_src=./assets/content/user-profile/form.html&hide_top_bar=true&database_name=${userDbName}&response_id=${profileDocs[0]._id}`;
-    } else {
-      this.formUrl = `../tangy-forms/index.html#form_src=./assets/content/user-profile/form.html&hide_top_bar=true&database_name=${userDbName}`;
-    }
-    // This protects against binding again an element that does not yet exist because the
-    // the this.formUrl property was just set, the *ngIf="formUrl" on iframe will be in the
-    // process of producing that element.
-    setTimeout(() => {
-      this.iframe.nativeElement.addEventListener('ALL_ITEMS_CLOSED', () => {
-        // navigate to homescreen
-        this.router.navigate(['/forms-list']);
-      });
-    }, 1500);
-
+      formEl.store.dispatch({ type: 'FORM_OPEN', response: profileDocs[0] })
+    } 
   }
 
 }
