@@ -1,12 +1,8 @@
-import { Element } from '../../node_modules/@polymer/polymer/polymer-element.js'
-import '../tangy-form/cat.js'
-import '../../node_modules/@polymer/paper-button/paper-button.js';
-import '../../node_modules/@polymer/paper-card/paper-card.js';
-import '../tangy-form/tangy-form.js';
-import '../tangy-form/tangy-common-styles.js'
-import { TangyFormModel } from '../tangy-form/tangy-form-model.js'
-import { TangyFormResponseModel } from '../tangy-form/tangy-form-response-model.js'
-import { TangyFormService } from '../tangy-form/tangy-form-service.js'
+import { Element } from '@polymer/polymer/polymer-element.js'
+import 'tangy-form/tangy-form.js';
+import { TangyFormModel } from 'tangy-form/tangy-form-model.js';
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
+import { TangyFormService } from './tangy-form-service.js'
 
 /**
  * `tangy-form-app`

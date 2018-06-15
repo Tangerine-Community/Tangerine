@@ -71,25 +71,13 @@
     "xo": "0.18.2"
   },
   "dependencies": {
-    "@polymer/iron-icon": "^3.0.0-pre.1",
-    "@polymer/iron-icons": "^3.0.0-pre.1",
-    "@polymer/paper-button": "^3.0.0-pre.1",
-    "@polymer/paper-card": "^3.0.0-pre.1",
-    "@polymer/paper-checkbox": "^3.0.0-pre.1",
-    "@polymer/paper-fab": "^3.0.0-pre.1",
-    "@polymer/paper-icon-button": "^3.0.0-pre.1",
-    "@polymer/paper-input": "^3.0.0-pre.1",
-    "@polymer/paper-item": "^3.0.0-pre.1",
-    "@polymer/paper-progress": "^3.0.0-pre.1",
-    "@polymer/paper-radio-group": "^3.0.0-pre.1",
-    "@polymer/paper-tabs": "3.0.0-pre.10",
-    "@polymer/polymer": "^3.0.0-pre.1",
+    "@polymer/polymer": "^3.0.0",
     "babel-polyfill": "6.26.0",
     "bower": "1.8.2",
     "moment": "2.19.3",
     "pouchdb-browser": "6.2.0",
     "redux": "3.7.2",
-    "sortable-list": "https://github.com/chrisekelley/sortable-list",
+    "tangy-form": "1.0.0",
     "underscore": "1.8.3"
   }
 }
