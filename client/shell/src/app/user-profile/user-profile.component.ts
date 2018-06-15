@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { UserService } from '../core/auth/_services/user.service';
 import { TangyFormService } from '../tangy-forms/tangy-form-service';
+import 'tangy-form/tangy-form.js';
 
 @Component({
   selector: 'app-user-profile',
