@@ -24,6 +24,7 @@
     "@angular/router": "^6.0.3",
     "@ngx-translate/core": "^10.0.2",
     "@ngx-translate/http-loader": "^3.0.1",
+    "@webcomponents/webcomponentsjs": "^2.0.2",
     "bcryptjs": "^2.4.3",
     "core-js": "^2.5.4",
     "hammerjs": "^2.0.8",
@@ -35,6 +36,8 @@
     "pouchdb-upsert": "^2.2.0",
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.2.1",
+    "tangy-form": "^1.0.0",
+    "underscore": "^1.9.1",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

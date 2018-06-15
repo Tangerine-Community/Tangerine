@@ -2,6 +2,12 @@
 // Fix for global undefined https://github.com/angular/angular-cli/issues/9920#issuecomment-393424161
 (window as any).global = window;
 
+import * as Redux from 'redux';
+(window as any).Redux = Redux;
+
+import * as _ from 'underscore';
+(window as any)._ = _;
+
 // An attempt to fix something...
 //import 'core-js/es7/reflect';
 
@@ -9,6 +15,10 @@
 // Also probably fixes other things that try to use node process global.
 import process from 'process';
 (window as any).process = process
+
+
+//import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
+import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
 
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.

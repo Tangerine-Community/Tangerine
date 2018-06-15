@@ -64,6 +64,7 @@ export class AuthenticationService {
       const result = await this.DB.find({ selector: { username } });
       if (result.docs.length > 0) {
         //doesPasswordMatch = await bcrypt.compare(password, result.docs[0].password);
+        doesPasswordMatch = (password === result.docs[0].password) ? true : false;
         if (doesPasswordMatch) {
           /**
            * @TODO we will probably need to save the current timestamp when the user logged in for security policy use

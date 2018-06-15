@@ -1,6 +1,6 @@
 import { SharedModule } from './shared/shared.module';
 import 'hammerjs';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import {
@@ -38,6 +38,7 @@ export function HttpClientLoaderFactory(httpClient: HttpClient) {
   declarations: [
     AppComponent
   ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   imports: [
     BrowserModule,
     FormsModule,

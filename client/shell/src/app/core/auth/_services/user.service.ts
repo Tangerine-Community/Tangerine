@@ -5,8 +5,10 @@ import {filter, map} from 'rxjs/operators';
 
 
 import { Injectable } from '@angular/core';
-//import * as bcrypt from 'bcryptjs';
-import { uuid } from 'js-uuid';
+// bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71
+import * as bcrypt from 'bcryptjs';
+
+//import { uuid as Uuid } from 'js-uuid';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import * as PouchDBUpsert from 'pouchdb-upsert';
@@ -18,10 +20,12 @@ export class UserService {
   userData = {};
   DB = new PouchDB('users');
   LOGGED_IN_USER_DATABASE_NAME = 'currentUser';
-  constructor(private uuid: uuid) { }
+  //constructor(private uuid: Uuid) { }
+  constructor() { }
 
   async create(payload) {
-    const userUUID = this.uuid.v1();
+    //const userUUID = this.uuid.v1();
+    const userUUID = this.getUuid(); 
     const hashedPassword = await this.hashValue(payload.password);
     this.userData = payload;
     this.userData['userUUID'] = userUUID;
@@ -79,11 +83,12 @@ export class UserService {
        */
       this.DB.createIndex({
         index: { fields: ['username'] }
-      }).then((data) => { console.log('Indexing Succesful'); })
-        .catch(err => console.error(err));
+      })
+      .then(data => console.log('Indexing Succesful'))
+      .catch(err => console.error(err));
 
       try {
-        const result = await this.DB.find({ selector: { username } });
+        const result = await this.DB.find({ selector: { username } })
         if (result.docs.length > 0) {
           userExists = true;
         } else { userExists = false; }
@@ -140,9 +145,10 @@ export class UserService {
     }
   }
   async hashValue(value) {
+    // Bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71j
     //const salt = bcrypt.genSaltSync(10);
     //return bcrypt.hashSync(value, salt);
-    return true
+    return value
   }
   async setUserDatabase(username) {
     return await localStorage.setItem(this.LOGGED_IN_USER_DATABASE_NAME, username);
@@ -154,6 +160,93 @@ export class UserService {
 
   async removeUserDatabase() {
     localStorage.removeItem(this.LOGGED_IN_USER_DATABASE_NAME);
+  }
+
+  // Example from https://gist.github.com/vbfox/1987edc194626c12d9c0dc31da084744
+  getUuid() {
+
+    function getRandomFromMathRandom() {
+      const result = new Array(16);
+
+      let r = 0;
+      for (let i = 0; i < 16; i++) {
+          if ((i & 0x03) === 0) {
+              r = Math.random() * 0x100000000;
+          }
+          result[i] = r >>> ((i & 0x03) << 3) & 0xff;
+      }
+
+      return result as ArrayLike<number>;
+    }
+
+    function getRandomFunction() {
+        // tslint:disable-next-line:no-string-literal
+        const browserCrypto = window.crypto || (window["msCrypto"] as Crypto);
+        if (browserCrypto && browserCrypto.getRandomValues) {
+            // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
+            //
+            // Moderately fast, high quality
+            try {
+            return function getRandomFromCryptoRandom() {
+                const result = new Uint8Array(16);
+                browserCrypto.getRandomValues(result);
+                return result as any;
+            };
+          } catch (e) { /* fallback*/ }
+        }
+
+        // Math.random()-based (RNG)
+        //
+        // If all else fails, use Math.random().  It's fast, but is of unspecified
+        // quality.
+        return getRandomFromMathRandom;
+    }
+
+    const getRandom = getRandomFunction();
+
+    class ByteHexMappings {
+        byteToHex: string[] = [];
+        hexToByte: { [hex: string]: number; } = {};
+
+        constructor() {
+            for (let i = 0; i < 256; i++) {
+                this.byteToHex[i] = (i + 0x100).toString(16).substr(1);
+                this.hexToByte[this.byteToHex[i]] = i;
+            }
+        }
+    }
+
+    const byteHexMappings = new ByteHexMappings();
+
+    function getUuidV4() {
+        const result = getRandom();
+
+        // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+        result[6] = (result[6] & 0x0f) | 0x40;
+        result[8] = (result[8] & 0x3f) | 0x80;
+
+        return result;
+    }
+
+    function uuidToString(buf: ArrayLike<number>, offset: number = 0) {
+        let i = offset;
+        const bth = byteHexMappings.byteToHex;
+        return  bth[buf[i++]] + bth[buf[i++]] +
+                bth[buf[i++]] + bth[buf[i++]] + "-" +
+                bth[buf[i++]] + bth[buf[i++]] + "-" +
+                bth[buf[i++]] + bth[buf[i++]] + "-" +
+                bth[buf[i++]] + bth[buf[i++]] + "-" +
+                bth[buf[i++]] + bth[buf[i++]] +
+                bth[buf[i++]] + bth[buf[i++]] +
+                bth[buf[i++]] + bth[buf[i++]];
+    }
+
+    function getUuidV4String() {
+        return uuidToString(getUuidV4());
+    }
+
+
+    return getUuidV4String()
   }
 
 }
