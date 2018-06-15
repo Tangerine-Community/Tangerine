@@ -14,7 +14,7 @@ const BROWSERS = process.env.BROWSERS === 'module' ?
   ['Chrome > 61'] : ['> 1%', 'last 2 versions', 'Firefox ESR', 'not ie <= 11'];
   // ['Chrome > 61'] : ['Chrome > 48'];
 const IS_MODULE_BUILD = BROWSERS[0].includes('Chrome > 61');
-const outputPath = isDev ? resolve('src') : resolve('dist');
+const outputPath = isDev ? resolve('src') : resolve('../shell/src/assets/tangy-form-app');
 const processEnv = {
   NODE_ENV: JSON.stringify(ENV),
   appVersion: JSON.stringify(pkg.version)
