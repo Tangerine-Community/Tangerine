@@ -38,15 +38,17 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       const userDbName = await this.userService.getUserDatabase();
       const tangyFormService = new TangyFormService({ databaseName: userDbName });
       this.service = tangyFormService
-      const formResponseDocs = await tangyFormService.getResponsesByFormId(formInfo.id);
+      const formResponse = await tangyFormService.getResponse(this.responseId);
       const container = this.container.nativeElement
       let formHtml = await fetch(formInfo.src)
       container.innerHTML = await formHtml.text()
       let formEl = container.querySelector('tangy-form')
       // Put a response in the store by issuing the FORM_OPEN action.
-      if (formResponseDocs.length > 0) {
-        formEl.store.dispatch({ type: 'FORM_OPEN', response: formResponseDocs[0] })
-      } 
+      if (formResponse) {
+        formEl.store.dispatch({ type: 'FORM_OPEN', response: formResponse })
+      } else {
+        //formEl.store.dispatch({ type: 'FORM_OPEN', response: {} })
+      }
       // Listen up, save in the db.
       formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
         let response = _.target.store.getState()
