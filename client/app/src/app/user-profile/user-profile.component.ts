@@ -1,5 +1,6 @@
 import { AfterContentInit, ElementRef, Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 import { UserService } from '../core/auth/_services/user.service';
 import { TangyFormService } from '../tangy-forms/tangy-form-service';
@@ -19,6 +20,7 @@ export class UserProfileComponent implements AfterContentInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private http: HttpClient,
     private userService: UserService
   ) { }
 
@@ -27,8 +29,8 @@ export class UserProfileComponent implements AfterContentInit {
     const tangyFormService = new TangyFormService({ databaseName: userDbName });
     const profileDocs = await tangyFormService.getResponsesByFormId('user-profile');
     const container = this.container.nativeElement
-    let formHtml = await fetch('./assets/user-profile/form.html')
-    container.innerHTML = await formHtml.text()
+    let formHtml =  await this.http.get('./assets/user-profile/form.html', {responseType: 'text'}).toPromise();
+    container.innerHTML = formHtml
     let formEl = container.querySelector('tangy-form')
     formEl.addEventListener('ALL_ITEMS_CLOSED', async () => {
       const profileDoc = formEl.store.getState()
