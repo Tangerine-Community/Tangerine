@@ -39,10 +39,7 @@ RUN cd /tangerine/editor && \
 
 # Install client
 ADD client/package.json /tangerine/client/package.json
-ADD client/tangy-forms/package.json /tangerine/client/tangy-forms/package.json
-ADD client/tangy-forms/yarn.lock /tangerine/client/tangy-forms/yarn.lock
-ADD client/tangy-forms/bower.json /tangerine/client/tangy-forms/bower.json
-ADD client/shell/package.json /tangerine/client/shell/package.json
+ADD client/app/package.json /tangerine/client/app/package.json
 ADD client/wrappers/pwa/package.json /tangerine/client/wrappers/pwa/package.json
 ADD client/wrappers/pwa/bower.json /tangerine/client/wrappers/pwa/bower.json
 ADD client/install.sh /tangerine/client/install.sh

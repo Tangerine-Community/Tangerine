@@ -5,7 +5,7 @@ data
 node_modules
 editor/node_modules
 client/node_modules
-client/shell/node_modules
+client/app/node_modules
 client/tangy-forms/node_modules
 client/tangy-forms/bower_components
 server/node_modules

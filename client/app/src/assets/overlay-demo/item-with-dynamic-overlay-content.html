@@ -1,0 +1,29 @@
+<form on-change="">
+
+  <tangy-radio-buttons 
+    label="Select a fruit."
+    name="fruit"
+    required >
+    <option value="banana">Banana</option>
+    <option value="apple">Apple</option>
+  </tangy-radio-buttons>
+
+  <tangy-radio-buttons 
+    label="Select the week."
+    name="week"
+    required >
+    <option value="week1">Week 1</option>
+    <option value="week2">Week 2</option>
+  </tangy-radio-buttons>
+
+  <tangy-overlay on-open='
+    let fruit = getValue("fruit")
+    let week = getValue("week")
+    if (fruit && week) {
+      return `<img src="./assets/overlay-demo/assets/${fruit}/${week}.jpg" style="width: 100%">`
+    } else {
+      return `Select Fruit and Week.`
+    }
+  ' position="bottom-right"></tangy-overlay>
+
+</form>
