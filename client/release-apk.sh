@@ -42,8 +42,8 @@ fi
 cp -r $CORDOVA_DIRECTORY $RELEASE_DIRECTORY
 
 # Refresh the content dir in $RELEASE_DIRECTORY
-rm -rf $RELEASE_DIRECTORY/www/content
-cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/content
+rm -rf $RELEASE_DIRECTORY/www/assets
+cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/assets
 cp /tangerine/logo.svg $RELEASE_DIRECTORY/www/
 
 cd $RELEASE_DIRECTORY
