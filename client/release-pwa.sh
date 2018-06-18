@@ -33,8 +33,8 @@ UUID=$(./node_modules/.bin/uuid)
 mv .pwa-temporary/release-uuid .pwa-temporary/$UUID
 
 # Install content into PWA.
-rm -r .pwa-temporary/$UUID/content
-cp -r $CONTENT_PATH .pwa-temporary/$UUID/content
+rm -r .pwa-temporary/$UUID/app/assets
+cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
 
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
