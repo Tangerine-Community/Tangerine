@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 import { CaseManagementService } from '../../case-management/_services/case-management.service';
 import { UserService } from '../../core/auth/_services/user.service';
@@ -26,6 +27,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   constructor(
     private caseManagementService: CaseManagementService,
     private route: ActivatedRoute,
+    private http: HttpClient,
     private userService: UserService,
     private windowRef: WindowRef
   ) { }
@@ -40,8 +42,8 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       this.service = tangyFormService
       const formResponse = await tangyFormService.getResponse(this.responseId);
       const container = this.container.nativeElement
-      let formHtml = await fetch(formInfo.src)
-      container.innerHTML = await formHtml.text()
+      let formHtml =  await this.http.get(formInfo.src, {responseType: 'text'}).toPromise();
+      container.innerHTML = formHtml
       let formEl = container.querySelector('tangy-form')
       // Put a response in the store by issuing the FORM_OPEN action.
       if (formResponse) {
