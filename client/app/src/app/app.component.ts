@@ -40,8 +40,7 @@ export class AppComponent implements OnInit {
     const res = await this.http.get('./assets/location-list.json').toPromise();
     this.window.locationList = res;
     try {
-      let appConfigResponse = await fetch('./assets/app-config.json')
-      this.window.appConfig = await appConfigResponse.json()
+      this.window.appConfig = await this.http.get('./assets/app-config.json').toPromise()
     } catch(e) {
       console.log('No app config found.')
     }
