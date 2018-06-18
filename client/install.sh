@@ -4,12 +4,7 @@ set -e
 
 npm install
 
-cd tangy-forms
-yarn install --production=false
-./node_modules/.bin/bower install --allow-root
-cd ..
-
-cd shell
+cd app 
 npm install
 cd ..
 

@@ -38,19 +38,19 @@
       <template is="dom-if" if="{{showNoConnectionMessage}}">
         <p>
           There is no network connection. 
-          <a href="[[originalReleaseUuid]]/shell/index.html">Click here to proceed.</a>
+          <a href="[[originalReleaseUuid]]/app/index.html">Click here to proceed.</a>
         </p>
       </template>
       <template is="dom-if" if="{{showUpdateFailedMessage}}">
         <p>
           Update did not complete, keeping the app you have. 
           Your network may be down, please try again later. 
-          <a href="[[originalReleaseUuid]]/shell/index.html">Click here to proceed.</a>
+          <a href="[[originalReleaseUuid]]/app/index.html">Click here to proceed.</a>
         </p>
       </template>
       <template is="dom-if" if="{{showLinkToProceed}}">
         <p>
-          <a href="[[proceedToReleaseUuid]]/shell/index.html">Click here to proceed.</a>
+          <a href="[[proceedToReleaseUuid]]/app/index.html">Click here to proceed.</a>
         </p>
       </template>
     </div>
@@ -160,7 +160,7 @@
       redirect() {
         setTimeout(() => {
           let currentReleaseUuid = localStorage.getItem('release-uuid')
-          window.location = `${window.location.origin}${window.location.pathname}${currentReleaseUuid}/shell/index.html`
+          window.location = `${window.location.origin}${window.location.pathname}${currentReleaseUuid}/app/index.html`
         }, 1500)
       }
 
