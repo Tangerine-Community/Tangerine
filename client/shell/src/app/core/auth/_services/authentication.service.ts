@@ -47,7 +47,11 @@ export class AuthenticationService {
   async resetPassword(user) {
     const userExists = await this.userService.doesUserExist(user.username);
     const doesAnswerMatch = await this.confirmSecurityQuestion(user);
-    if (userExists && doesAnswerMatch && await this.userService.changeUserPassword(user)) {
+    if (
+      userExists &&
+      doesAnswerMatch &&
+      (await this.userService.changeUserPassword(user))
+    ) {
       localStorage.setItem('currentUser', user.username);
       this._currentUserLoggedIn = true;
       this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
@@ -55,7 +59,6 @@ export class AuthenticationService {
     } else {
       return false;
     }
-
   }
 
   async confirmPassword(username, password) {
@@ -63,30 +66,38 @@ export class AuthenticationService {
     try {
       const result = await this.DB.find({ selector: { username } });
       if (result.docs.length > 0) {
-        doesPasswordMatch = await bcrypt.compare(password, result.docs[0].password);
+        doesPasswordMatch = await bcrypt.compare(
+          password,
+          result.docs[0].password
+        );
         if (doesPasswordMatch) {
           /**
            * @TODO we will probably need to save the current timestamp when the user logged in for security policy use
            * Security policy Example: 1) Expire user after 5 minutes or 2) never
            * @TODO Refactor for Redux send Action to Current User store. Dont do this until our ngrx stores are backed up by local storage
            */
-
         }
       }
     } catch (error) {
       console.error(error);
     }
     return doesPasswordMatch;
-  };
+  }
 
   async confirmSecurityQuestion(user) {
     let doesAnswerMatch = false;
     try {
-      const result = await this.DB.find({ selector: { username: user.username } });
+      const result = await this.DB.find({
+        selector: { username: user.username }
+      });
       if (result.docs.length > 0) {
-        doesAnswerMatch = result.docs[0].hashSecurityQuestionResponse ?
-          await bcrypt.compare(user.securityQuestionResponse, result.docs[0].securityQuestionResponse) :
-          user.securityQuestionResponse === result.docs[0].securityQuestionResponse;
+        doesAnswerMatch = result.docs[0].hashSecurityQuestionResponse
+          ? await bcrypt.compare(
+              user.securityQuestionResponse,
+              result.docs[0].securityQuestionResponse
+            )
+          : user.securityQuestionResponse ===
+            result.docs[0].securityQuestionResponse;
       }
     } catch (error) {
       console.error(error);
@@ -104,11 +115,12 @@ export class AuthenticationService {
     this._currentUserLoggedIn = !!localStorage.getItem('currentUser');
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
     return this._currentUserLoggedIn;
-
   }
   shouldResetPassword() {
     this._userShouldResetPassword = false;
-    this._userShouldResetPassword = !!localStorage.getItem('userShouldResetPassword');
+    this._userShouldResetPassword = !!localStorage.getItem(
+      'userShouldResetPassword'
+    );
     this.userShouldResetPassword$.next(this._userShouldResetPassword);
     return this._userShouldResetPassword;
   }
@@ -119,7 +131,7 @@ export class AuthenticationService {
   }
   async isNoPasswordMode() {
     const policy = await this.getSecurityPolicy();
-    const isNoPasswordMode = await policy.find(p => p === 'noPassword');
+    const isNoPasswordMode = await policy.find((p) => p === 'noPassword');
     return isNoPasswordMode === 'noPassword';
   }
 
@@ -129,6 +141,4 @@ export class AuthenticationService {
   getCurrentUserDBPath() {
     return localStorage.getItem('currentUser');
   }
-
-
 }

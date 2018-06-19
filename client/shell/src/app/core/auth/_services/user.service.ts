@@ -1,11 +1,11 @@
-import 'rxjs/add/observable/from';
-import 'rxjs/add/operator/filter';
 import { Injectable } from '@angular/core';
 import * as bcrypt from 'bcryptjs';
 import { Uuid } from 'ng2-uuid';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import * as PouchDBUpsert from 'pouchdb-upsert';
+import 'rxjs/add/observable/from';
+import 'rxjs/add/operator/filter';
 import { Observable } from 'rxjs/Observable';
 import { TangyFormService } from '../../../tangy-forms/tangy-form-service.js';
 import { updates } from '../../update/update/updates';
