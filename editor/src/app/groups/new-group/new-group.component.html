@@ -1,0 +1,21 @@
+<mat-card>
+    <mat-card-title class="tangy-foreground-secondary">
+        {{'New Group'|translate}}
+    </mat-card-title>
+    <mat-card-content>
+        <div class="tangy-full-width">
+            <form class="tangy-full-width" novalidate #newGroupForm="ngForm">
+                <mat-form-field class="tangy-full-width">
+                    <input name="groupNameInput" [(ngModel)]="groupName" #groupNameInput="ngModel" matInput placeholder="{{'Group Name'|translate}}"
+                        required>
+                    <mat-error *ngIf="(groupNameInput.invalid||groupNameInput.errors) && (groupNameInput.dirty || groupNameInput.touched)">
+                        {{'This Field is Required'|translate}}
+                    </mat-error>
+                </mat-form-field>
+                <br>
+                <br>
+                <button [disabled]="newGroupForm.invalid" mat-raised-button color="warn" (click)="createGroup();newGroupForm.reset()">{{'New Group'|translate}}</button>
+            </form>
+        </div>
+    </mat-card-content>
+</mat-card>
