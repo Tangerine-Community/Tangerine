@@ -2,7 +2,7 @@
 @import '~styles/_tangy-app-variables.scss';
 
 body {
-  background: #fafafa;
+  background-color: #fafafa;
 }
 .login-app-content{
   margin-top: 180px;
@@ -167,11 +167,11 @@ div.more {
   margin-left: -10px;
   margin-right: -10px;
 }
-  form {
+  form, mat-card-content>*{
     width: 220px;
     margin: 4em auto;
     padding: 3em 2em 2em 2em;
-    background: #fafafa;
+    background: white;
     border: 1px solid #ebebeb;
     box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
 
@@ -183,19 +183,19 @@ div.more {
 
   }
 
-  .corner-ribbon{
-    width: 200px;
-    background: #e43;
-    position: absolute;
-    top: 25px;
-    left: -50px;
-    text-align: center;
-    line-height: 50px;
-    letter-spacing: 1px;
-    color: #f0f0f0;
-    transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
-  }
+  // .corner-ribbon{
+  //   width: 200px;
+  //   background: #e43;
+  //   position: absolute;
+  //   top: 25px;
+  //   left: -50px;
+  //   text-align: center;
+  //   line-height: 50px;
+  //   letter-spacing: 1px;
+  //   color: #f0f0f0;
+  //   transform: rotate(-45deg);
+  //   -webkit-transform: rotate(-45deg);
+  // }
 
   /* Custom styles */
 
