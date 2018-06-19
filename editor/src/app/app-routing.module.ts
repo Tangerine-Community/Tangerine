@@ -1,10 +1,10 @@
-import { NgModule }              from '@angular/core';
-import { RouterModule, Routes }  from '@angular/router';
-import {SupportComponent} from './support/support.component';
-import { AuthGuard }                from './auth-guard.service';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { LoginGuard } from './core/auth/_guards/login-guard.service';
+import { SupportComponent } from './support/support.component';
 
 const appRoutes: Routes = [
-  { path: 'support', component: SupportComponent, canActivate: [AuthGuard] }
+  { path: 'support', component: SupportComponent, canActivate: [LoginGuard] }
 ];
 @NgModule({
   imports: [
@@ -14,5 +14,5 @@ const appRoutes: Routes = [
     RouterModule
   ]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
 
