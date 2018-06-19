@@ -1,41 +1,42 @@
 /* jshint esversion: 6 */
-
 const util = require('util');
-const exec = util.promisify(require('child_process').exec)
+const exec = util.promisify(require('child_process').exec);
 const http = require('axios');
-const read = require('read-yaml')
-const express = require('express')
-var session = require("express-session")
-const PouchSession = require("session-pouchdb-store")
+const read = require('read-yaml');
+const express = require('express');
+var session = require('express-session');
+const PouchSession = require('session-pouchdb-store');
 const bodyParser = require('body-parser');
-const path = require('path')
-const app = express()
-const fs = require('fs-extra')
-const fsc = require('fs')
-const config = read.sync('./config.yml')
+const path = require('path');
+const app = express();
+const fs = require('fs-extra');
+const fsc = require('fs');
+const config = read.sync('./config.yml');
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
-const PouchDB = require('pouchdb')
-const pako = require('pako')
-const compression = require('compression')
+const PouchDB = require('pouchdb');
+PouchDB.plugin(require('pouchdb-find'));
+const pako = require('pako');
+const compression = require('compression');
 const chalk = require('chalk');
-const { Subject } = require('rxjs');
+const { Subject, Observable, from } = require('rxjs');
 const { concatMap } = require('rxjs/operators');
 const tangyReporting = require('../server/reporting/data_processing');
 const generateCSV = require('../server/reporting/generate_csv').generateCSV;
-const pretty = require('pretty')
-const flatten = require('flat')
-const json2csv = require('json2csv')
-const _ = require('underscore')
-
+const pretty = require('pretty');
+const flatten = require('flat');
+const json2csv = require('json2csv');
+const _ = require('underscore');
+const bcrypt = require('bcryptjs');
+const { map, filter } = require('rxjs/operators');
 jlog = function(data) {
-  console.log(JSON.stringify(data, null, 2))
-}
+  console.log(JSON.stringify(data, null, 2));
+};
 log = function(data) {
-  console.log(data)
-}
+  console.log(data);
+};
 
-var DB = {}
+var DB = {};
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
     prefix: process.env.T_COUCHDB_ENDPOINT
@@ -48,17 +49,16 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
-const cors = require('cors')
+const cors = require('cors');
 
 const sep = path.sep;
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
-  app.use(function (req, res, next) {
+  app.use(function(req, res, next) {
     if (req.get('X-Forwarded-Proto') == 'http') {
       res.redirect('https://' + req.get('Host') + req.url);
-    }
-    else {
+    } else {
       next();
     }
   });
@@ -69,15 +69,15 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
   // proxy for couchdb
   var proxy = require('express-http-proxy');
   var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
-    proxyReqPathResolver: function (req, res) {
+    proxyReqPathResolver: function(req, res) {
       var path = require('url').parse(req.url).path;
-      console.log("path:" + path);
+      console.log('path:' + path);
       return path;
     }
   });
   var mountpoint = '/db';
   app.use(mountpoint, couchProxy);
-  app.use(mountpoint, function (req, res) {
+  app.use(mountpoint, function(req, res) {
     if (req.originalUrl === mountpoint) {
       res.redirect(301, req.originalUrl + '/');
     } else {
@@ -87,443 +87,649 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
 }
 
 // Enable CORS
-app.use(cors({
-  credentials: true,
-}));
-app.options('*', cors()) // include before other routes
+app.use(
+  cors({
+    credentials: true
+  })
+);
+app.options('*', cors()); // include before other routes
 
 /*
  * Auth
  */
-var passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
+var passport = require('passport'),
+  LocalStrategy = require('passport-local').Strategy;
 
 // This determines wether or not a login is valid.
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
-      console.log('login success!')
+passport.use(
+  new LocalStrategy(function(username, password, done) {
+    if (
+      username === process.env.T_USER1 &&
+      password === process.env.T_USER1_PASSWORD
+    ) {
+      console.log('login success!');
       return done(null, {
-        "name": "user1"
+        name: 'user1'
       });
     } else {
-      console.log('login fail!')
-      return done(null, false, { message: 'Incorrect username or password' })
+      console.log('login fail!');
+      return done(null, false, { message: 'Incorrect username or password' });
     }
-  }
-));
+  })
+);
 
 // This decides what identifying piece of information to put in a cookie for the session.
-passport.serializeUser(function (user, done) {
+passport.serializeUser(function(user, done) {
   done(null, user.name);
 });
 
 // This transforms the id in the session cookie to pass to req.user object.
-passport.deserializeUser(function (id, done) {
+passport.deserializeUser(function(id, done) {
   done(null, { name: id });
 });
 
-
 // Use sessions.
-app.use(session({
-  secret: "cats",
-  resave: false,
-  saveUninitialized: new PouchSession(new DB('sessions')) 
-}));
+app.use(
+  session({
+    secret: 'cats',
+    resave: false,
+    saveUninitialized: new PouchSession(new DB('sessions'))
+  })
+);
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({ limit: '1gb' }))
-app.use(bodyParser.text({ limit: '1gb' }))
-app.use(compression())
+app.use(bodyParser.json({ limit: '1gb' }));
+app.use(bodyParser.text({ limit: '1gb' }));
+app.use(compression());
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Middleware to protect routes.
-var isAuthenticated = function (req, res, next) {
+var isAuthenticated = function(req, res, next) {
   // @TODO Add HTTP AUTH for clients like curl.
   if (req.isAuthenticated()) {
     return next();
   }
   let errorMessage = `Permission denied at ${req.url}`;
-  console.log(errorMessage)
+  console.log(errorMessage);
   // res.redirect('/');
-  res.status(401).send(errorMessage)
-}
+  res.status(401).send(errorMessage);
+};
 
 // Login service.
-app.post('/login',
+app.post(
+  '/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
-  function (req, res) {
-    res.send({ name: 'user1', status: 'ok' });
+  function(req, res) {
+    res.send({ name: 'user1', status: 200, statusMessage: 'ok' });
   }
 );
 
 // Static assets.
-app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
+app.use(
+  '/editor',
+  express.static(path.join(__dirname, '../client/tangy-forms/editor'))
+);
 app.use('/', express.static(path.join(__dirname, '../editor/dist')));
-app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
-app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
-app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../editor/src/ckeditor/')));
-app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
-app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-builds')));
-app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
-app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
+app.use(
+  '/editor/groups',
+  isAuthenticated,
+  express.static(path.join(__dirname, '../client/content/groups'))
+);
+app.use(
+  '/editor/:group/tangy-forms/',
+  express.static(path.join(__dirname, '../client/tangy-forms/'))
+);
+app.use(
+  '/editor/:group/ckeditor/',
+  express.static(path.join(__dirname, '../editor/src/ckeditor/'))
+);
+app.use(
+  '/ckeditor',
+  express.static(path.join(__dirname, '../editor/src/ckeditor'))
+);
+app.use(
+  '/ace',
+  express.static(path.join(__dirname, '../editor/node_modules/ace-builds'))
+);
+app.use(
+  '/editor/assets/',
+  express.static(path.join(__dirname, '../client/content/assets/'))
+);
+app.use(
+  '/client/content/assets/',
+  express.static(path.join(__dirname, '../client/content/assets/'))
+);
 
-app.use('/releases/', express.static(path.join(__dirname, '../client/releases')))
-app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')))
+app.use(
+  '/releases/',
+  express.static(path.join(__dirname, '../client/releases'))
+);
+app.use(
+  '/client/',
+  express.static(path.join(__dirname, '../client/builds/dev'))
+);
 
-app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, next) {
-  let contentPath = '../client/content/assets'
-  console.log("Setting path to " + path.join(__dirname, contentPath))
-  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+app.use('/editor/:group/content/assets', isAuthenticated, function(
+  req,
+  res,
+  next
+) {
+  let contentPath = '../client/content/assets';
+  console.log('Setting path to ' + path.join(__dirname, contentPath));
+  return express
+    .static(path.join(__dirname, contentPath))
+    .apply(this, arguments);
 });
-app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
-  let contentPath = '../client/content/groups/' + req.params.group
-  console.log("Setting path to " + path.join(__dirname, contentPath))
-  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+app.use('/editor/:group/content', isAuthenticated, function(req, res, next) {
+  let contentPath = '../client/content/groups/' + req.params.group;
+  console.log('Setting path to ' + path.join(__dirname, contentPath));
+  return express
+    .static(path.join(__dirname, contentPath))
+    .apply(this, arguments);
 });
 
-app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async function (req, res, next) {
-  // @TODO Make sure user is member of group.
-  const group = sanitize(req.params.group)
-  const releaseType = sanitize(req.params.releaseType)
-  console.log("in release-apk, group: " + group + " releaseType: " + releaseType)
-  console.log(`The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
-  await exec(`cd /tangerine/client && \
-        ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME} 2>&1 | tee -a ../server/apk.log
-  `)
-  res.send('ok')
-})
+app.use(
+  '/editor/release-apk/:group/:releaseType',
+  isAuthenticated,
+  async function(req, res, next) {
+    // @TODO Make sure user is member of group.
+    const group = sanitize(req.params.group);
+    const releaseType = sanitize(req.params.releaseType);
+    console.log(
+      'in release-apk, group: ' + group + ' releaseType: ' + releaseType
+    );
+    console.log(
+      `The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${
+        process.env.T_PROTOCOL
+      } ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${
+        process.env.T_HOST_NAME
+      }`
+    );
+    await exec(`cd /tangerine/client && \
+        ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${
+      process.env.T_PROTOCOL
+    } ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${
+      process.env.T_HOST_NAME
+    } 2>&1 | tee -a ../server/apk.log
+  `);
+    res.send('ok');
+  }
+);
 
-app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async function (req, res, next) {
-  // @TODO Make sure user is member of group.
-  const group = sanitize(req.params.group)
-  const releaseType = sanitize(req.params.releaseType)
-  console.log("in release-pwa, group: " + group + " releaseType: " + releaseType)
-  await exec(`cd /tangerine/client && \
+app.use(
+  '/editor/release-pwa/:group/:releaseType',
+  isAuthenticated,
+  async function(req, res, next) {
+    // @TODO Make sure user is member of group.
+    const group = sanitize(req.params.group);
+    const releaseType = sanitize(req.params.releaseType);
+    console.log(
+      'in release-pwa, group: ' + group + ' releaseType: ' + releaseType
+    );
+    await exec(`cd /tangerine/client && \
         ./release-pwa.sh ${group} ./content/groups/${group} ${releaseType}
-  `)
-  res.send('ok')
-})
+  `);
+    res.send('ok');
+  }
+);
 
 async function saveFormsJson(formParameters, group) {
-  console.log("formParameters: " + JSON.stringify(formParameters))
-  let contentRoot = config.contentRoot
-  let formsJsonPath = contentRoot + '/' + group + '/forms.json'
-  console.log("formsJsonPath:" + formsJsonPath)
-  let formJson
+  console.log('formParameters: ' + JSON.stringify(formParameters));
+  let contentRoot = config.contentRoot;
+  let formsJsonPath = contentRoot + '/' + group + '/forms.json';
+  console.log('formsJsonPath:' + formsJsonPath);
+  let formJson;
   try {
-    const exists = await fs.pathExists(formsJsonPath)
+    const exists = await fs.pathExists(formsJsonPath);
     if (exists) {
-      console.log("formsJsonPath exists")
+      console.log('formsJsonPath exists');
       // read formsJsonPath and add formParameters to formJson
       try {
-        formJson = await fs.readJson(formsJsonPath)
-        console.log("formJson: " + JSON.stringify(formJson))
-        console.log("formParameters: " + JSON.stringify(formParameters))
+        formJson = await fs.readJson(formsJsonPath);
+        console.log('formJson: ' + JSON.stringify(formJson));
+        console.log('formParameters: ' + JSON.stringify(formParameters));
         if (formParameters !== null) {
-          formJson.push(formParameters)
+          formJson.push(formParameters);
         }
-        console.log("formJson with new formParameters: " + JSON.stringify(formJson))
+        console.log(
+          'formJson with new formParameters: ' + JSON.stringify(formJson)
+        );
       } catch (err) {
-        console.error("An error reading the json form: " + err)
+        console.error('An error reading the json form: ' + err);
       }
     } else {
       // create an empty formJson
-      formJson = []
+      formJson = [];
     }
   } catch (err) {
-    console.log("Error checking formJson: " + err)
+    console.log('Error checking formJson: ' + err);
   }
 
-  await fs.writeJson(formsJsonPath, formJson)
+  await fs.writeJson(formsJsonPath, formJson);
 }
 
-let openForm = async function (path) {
-  let form
+let openForm = async function(path) {
+  let form;
   try {
-    form = await fs.readFile(path, 'utf8')
+    form = await fs.readFile(path, 'utf8');
   } catch (e) {
-    console.log("Error opening form: ", e);
+    console.log('Error opening form: ', e);
   }
-  return form
+  return form;
 };
 
-app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
-  let contentRoot = config.contentRoot
-  let itemsOrder = req.body.itemsOrder
-  let formHtmlPath = req.body.formHtmlPath
+const USERS_DB = new DB('users');
+
+app.get('/users', isAuthenticated, async (req, res) => {
+  const result = await USERS_DB.allDocs({ include_docs: true });
+  const data = result.rows
+    .map((doc) => doc)
+    .filter((doc) => !doc['id'].startsWith('_design'))
+    .map((doc) => {
+      const user = doc['doc'];
+      return { _id: user._id, username: user.username, email: user.email };
+    });
+  res.send({ statusCode: 200, data });
+});
+
+app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
+  let data;
+  try {
+    data = await doesUserExist(req.params.username);
+  } catch (error) {
+    console.error(error);
+    res.send({ statusCode: 500, data: true }).sendStatus(500); // In case of error assume user exists. Helps avoid same username used multiple times
+  }
+  if (!data) {
+    res.send({ statusCode: 200, data });
+  } else {
+    res.send({ statusCode: 409, data }).sendStatus(409);
+  }
+});
+
+async function doesUserExist(username) {
+  try {
+    await USERS_DB.createIndex({ index: { fields: ['username'] } });
+    const data = await USERS_DB.find({ selector: { username } });
+    return data.docs.length > 0;
+  } catch (error) {
+    console.error(error);
+    return true; // In case of error assume user exists. Helps avoid same username used multiple times
+  }
+}
+app.post('/users/register-user', isAuthenticated, async (req, res) => {
+  try {
+    if (!(await doesUserExist(req.body.username))) {
+      const user = req.body;
+      user.password = await hashPassword(user.password);
+      const data = await USERS_DB.post(user);
+      res.send({ statusCode: 200, data });
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    return false; // @TODO return meaningful error
+  }
+});
+
+async function hashPassword(password) {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = bcrypt.hash(password, salt);
+    return hashedPassword;
+  } catch (error) {
+    console.error(error);
+  }
+}
+app.post('/editor/itemsOrder/save', isAuthenticated, async function(req, res) {
+  let contentRoot = config.contentRoot;
+  let itemsOrder = req.body.itemsOrder;
+  let formHtmlPath = req.body.formHtmlPath;
 
   // fetch the original form
-  let formDir = formHtmlPath.split('/')[2]
-  let formName = formHtmlPath.split('/')[3]
-  let formPath = contentRoot + sep + formDir + sep + formName
+  let formDir = formHtmlPath.split('/')[2];
+  let formName = formHtmlPath.split('/')[3];
+  let formPath = contentRoot + sep + formDir + sep + formName;
   let originalForm = await openForm(formPath);
 
   // Now that we have originalForm, we can load it and add items to it.
-  const $ = cheerio.load(originalForm)
+  const $ = cheerio.load(originalForm);
   // search for tangy-form-item
-  let formItemList = $('tangy-form-item')
-  let sortedItemList = []
+  let formItemList = $('tangy-form-item');
+  let sortedItemList = [];
   for (let itemScr of itemsOrder) {
     if (itemScr !== null) {
       let item = formItemList.is(function(i, el) {
-        let src = $(this).attr('src')
+        let src = $(this).attr('src');
         if (src === itemScr) {
-          sortedItemList.push($(this))
-          return src === itemScr
+          sortedItemList.push($(this));
+          return src === itemScr;
         }
-      })
+      });
     }
   }
-  let tangyform = $('tangy-form')
+  let tangyform = $('tangy-form');
   // save the updated list back to the form.
-  $('tangy-form-item').remove()
-  $('tangy-form').append(sortedItemList)
-  let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
-  await fs.outputFile(formPath, form)
+  $('tangy-form-item').remove();
+  $('tangy-form').append(sortedItemList);
+  let form = pretty(
+    $
+      .html({ decodeEntities: false })
+      .replace('<html><head></head><body>', '')
+      .replace('</body></html>', '')
+  );
+  await fs
+    .outputFile(formPath, form)
     .then(() => {
-      let msg = "Success! Updated file at: " + formPath
+      let msg = 'Success! Updated file at: ' + formPath;
       let resp = {
-        "message": msg
-      }
-      console.log(resp)
-      res.send(resp)
+        message: msg
+      };
+      console.log(resp);
+      res.send(resp);
     })
-    .catch(err => {
-      let msg = "An error with form outputFile: " + err
+    .catch((err) => {
+      let msg = 'An error with form outputFile: ' + err;
       let message = { message: msg };
-      console.error(message)
-      res.send(message)
-    })
-})
+      console.error(message);
+      res.send(message);
+    });
+});
 
-app.post('/editor/file/save', isAuthenticated, async function (req, res) {
-  const filePath = req.body.filePath
-  const groupId = req.body.groupId
-  const fileContents = req.body.fileContents
-  const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
-  await fs.writeFile(actualFilePath, fileContents)
-  res.send('ok')
-})
+app.post('/editor/file/save', isAuthenticated, async function(req, res) {
+  const filePath = req.body.filePath;
+  const groupId = req.body.groupId;
+  const fileContents = req.body.fileContents;
+  const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`;
+  await fs.writeFile(actualFilePath, fileContents);
+  res.send('ok');
+});
 
 // Saves an item - and a new form when formName is passed.async
 // otherwise, the path to the existing form is extracted from formHtmlPath.
 // contentUrlPath: path used to fetch content when using an APK or PWA. Used when setting 'src' attribute.
 // groupContentRoot: path to content on the editor filesystem.
-app.post('/editor/item/save', isAuthenticated, async function (req, res) {
-  let displayFormsListing = false
+app.post('/editor/item/save', isAuthenticated, async function(req, res) {
+  let displayFormsListing = false;
   // console.log("req.body:" + JSON.stringify(req.body) + " req.body.itemTitle: " + req.body.itemTitle)
-  let formTitle = req.body.formTitle
+  let formTitle = req.body.formTitle;
   if (typeof formTitle !== 'undefined') {
-    formTitle = sanitize(formTitle)
+    formTitle = sanitize(formTitle);
   }
-  let itemTitle = req.body.itemTitle
+  let itemTitle = req.body.itemTitle;
   if (typeof itemTitle !== 'undefined') {
-    itemTitle = sanitize(itemTitle)
+    itemTitle = sanitize(itemTitle);
   }
-  let formDirName = req.body.formName
+  let formDirName = req.body.formName;
   // console.log("formDirName: "+ formDirName)
   if (typeof formDirName !== 'undefined') {
-    formDirName = sanitize(req.body.formName).replace(/ /g, '')
+    formDirName = sanitize(req.body.formName).replace(/ /g, '');
   }
-  let itemHtmlText = req.body.itemHtmlText
-  let formHtmlPath = req.body.formHtmlPath
-  let itemFilename = req.body.itemFilename
-  let groupName = req.body.groupName
-  let itemId = req.body.itemId
-  let groupContentRoot = config.contentRoot + '/' + groupName
-  let formDir, formName, originalForm, formPath
-  let contentUrlPath = '../content/'
+  let itemHtmlText = req.body.itemHtmlText;
+  let formHtmlPath = req.body.formHtmlPath;
+  let itemFilename = req.body.itemFilename;
+  let groupName = req.body.groupName;
+  let itemId = req.body.itemId;
+  let groupContentRoot = config.contentRoot + '/' + groupName;
+  let formDir, formName, originalForm, formPath;
+  let contentUrlPath = '../content/';
 
   // Need to populate the originalForm var
   // First, check if this is a new form, which don't have formHtmlPath,
   if (formHtmlPath === null) {
-    console.log("Creating a new form.")
+    console.log('Creating a new form.');
     // Append displayFormsListing:true to res if new form.
-    displayFormsListing = true
+    displayFormsListing = true;
     // Setup the new form by populating the template with the formDirName
-    let templatePath = config.editorClientTemplates + sep + 'form-template.html'
+    let templatePath =
+      config.editorClientTemplates + sep + 'form-template.html';
     try {
-      originalForm = await fs.readFile(templatePath, 'utf8')
+      originalForm = await fs.readFile(templatePath, 'utf8');
     } catch (e) {
       console.log('e', e);
     }
-    originalForm = originalForm.replace('FORMNAME', formDirName)
+    originalForm = originalForm.replace('FORMNAME', formDirName);
     // create the path to the form and its form.html
-    formDir = formDirName
+    formDir = formDirName;
     // now create the filesystem for formDir
-    console.log("checking groupContentRoot + sep + formDir: " + groupContentRoot + sep + formDir)
-    await fs.ensureDir(groupContentRoot + sep + formDir)
+    console.log(
+      'checking groupContentRoot + sep + formDir: ' +
+        groupContentRoot +
+        sep +
+        formDir
+    );
+    await fs
+      .ensureDir(groupContentRoot + sep + formDir)
       .then(() => {
-        console.log('success! Created path to formDir: ' + groupContentRoot + sep + formDir)
+        console.log(
+          'success! Created path to formDir: ' +
+            groupContentRoot +
+            sep +
+            formDir
+        );
       })
-      .catch(err => {
-        console.error("An error: " + err)
-      })
-    formName = 'form.html'
+      .catch((err) => {
+        console.error('An error: ' + err);
+      });
+    formName = 'form.html';
     // Update forms.json
 
     let formParameters = {
-      "id": formDirName,
-      "title": formTitle,
-      "src": contentUrlPath + formDirName + "/form.html"
-    }
-    console.log("formParameters: " + JSON.stringify(formParameters))
+      id: formDirName,
+      title: formTitle,
+      src: contentUrlPath + formDirName + '/form.html'
+    };
+    console.log('formParameters: ' + JSON.stringify(formParameters));
     await saveFormsJson(formParameters, groupName)
       .then(() => {
-        console.log("Updated forms.json")
+        console.log('Updated forms.json');
       })
-      .catch(err => {
-        console.error("An error saving the json form: " + err)
+      .catch((err) => {
+        console.error('An error saving the json form: ' + err);
         throw err;
-      })
+      });
     // Set formPath
-    formPath = groupContentRoot + sep + formDir + sep + formName
+    formPath = groupContentRoot + sep + formDir + sep + formName;
 
     // Now that we have originalForm, we can load it and add items to it.
-    const $ = cheerio.load(originalForm)
+    const $ = cheerio.load(originalForm);
     // search for tangy-form-item
-    let formItemList = $('tangy-form-item')
+    let formItemList = $('tangy-form-item');
     // create the form html that will be added
-    let itemUrlPath = contentUrlPath + formDirName + sep + itemFilename
-    let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
+    let itemUrlPath = contentUrlPath + formDirName + sep + itemFilename;
+    let newItem =
+      '<tangy-form-item src="' +
+      itemUrlPath +
+      '" id="' +
+      itemId +
+      '" title="' +
+      itemTitle +
+      '">';
     // console.log('newItem: ' + newItem)
-    $(newItem).appendTo('tangy-form')
+    $(newItem).appendTo('tangy-form');
     // console.log('html after: ' + $.html())
-    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
-    console.log('now outputting ' + formPath)
-    await fs.outputFile(formPath, form)
+    let form = pretty(
+      $
+        .html({ decodeEntities: false })
+        .replace('<html><head></head><body>', '')
+        .replace('</body></html>', '')
+    );
+    console.log('now outputting ' + formPath);
+    await fs
+      .outputFile(formPath, form)
       .then(() => {
-        console.log('success! Updated file at: ' + formPath)
+        console.log('success! Updated file at: ' + formPath);
       })
-      .catch(err => {
-        console.error("An error with form outputFile: " + err)
-        res.send(err)
-      })
+      .catch((err) => {
+        console.error('An error with form outputFile: ' + err);
+        res.send(err);
+      });
   } else {
     // Editing a form - check if this is a new item; otherwise, we only need to change the item's title in form.json
-    formDir = formHtmlPath.split('/')[2]
-    formName = formHtmlPath.split('/')[3]
-    formPath = groupContentRoot + sep + formDir + sep + formName
-    console.log("formPath: " + formPath)
+    formDir = formHtmlPath.split('/')[2];
+    formName = formHtmlPath.split('/')[3];
+    formPath = groupContentRoot + sep + formDir + sep + formName;
+    console.log('formPath: ' + formPath);
     originalForm = await openForm(formPath);
     // Now that we have originalForm, we can load it and add items to it.
-    const $ = cheerio.load(originalForm)
+    const $ = cheerio.load(originalForm);
     // search for tangy-form-item
-    let formItemList = $('tangy-form-item')
-    let formItemListHtml = $('tangy-form-item', 'tangy-form').html()
-    let rootHtml = $.html()
+    let formItemList = $('tangy-form-item');
+    let formItemListHtml = $('tangy-form-item', 'tangy-form').html();
+    let rootHtml = $.html();
     // console.log('itemFilename: ' + itemFilename +  ' formItemListHtml: ' + formItemListHtml + ' rootHtml: ' + rootHtml)
-    let isNewItem = true
+    let isNewItem = true;
     // loop through the current items and see if this is an edit or a new item
-    let newItemList = $('tangy-form-item').each(function (i, elem) {
-      let src = $(this).attr('src')
+    let newItemList = $('tangy-form-item').each(function(i, elem) {
+      let src = $(this).attr('src');
       // console.log("src: " + src)
       if (src === itemFilename) {
         // console.log("matched  src: " + src)
-        $(this).attr('title', itemTitle).html()
-        isNewItem = false
+        $(this)
+          .attr('title', itemTitle)
+          .html();
+        isNewItem = false;
       }
     });
     // console.log('newItemList: ' + newItemList + " isNewItem: " + isNewItem)
-    $('tangy-form-item').remove()
-    $(newItemList).appendTo('tangy-form')
-    let itemUrlPath = contentUrlPath + formDir + sep + itemFilename
+    $('tangy-form-item').remove();
+    $(newItemList).appendTo('tangy-form');
+    let itemUrlPath = contentUrlPath + formDir + sep + itemFilename;
     if (isNewItem) {
       // create the item html that will be added to the form.
-      let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
-      console.log('newItem: ' + newItem)
-      $(newItem).appendTo('tangy-form')
+      let newItem =
+        '<tangy-form-item src="' +
+        itemUrlPath +
+        '" id="' +
+        itemId +
+        '" title="' +
+        itemTitle +
+        '">';
+      console.log('newItem: ' + newItem);
+      $(newItem).appendTo('tangy-form');
     }
-    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
-    console.log('now outputting ' + formPath)
-    await fs.outputFile(formPath, form)
+    let form = pretty(
+      $
+        .html({ decodeEntities: false })
+        .replace('<html><head></head><body>', '')
+        .replace('</body></html>', '')
+    );
+    console.log('now outputting ' + formPath);
+    await fs
+      .outputFile(formPath, form)
       .then(() => {
-        console.log('success! Updated file at: ' + formPath)
-
+        console.log('success! Updated file at: ' + formPath);
       })
-      .catch(err => {
-        console.error("An error with form outputFile: " + err)
-        res.send(err)
-      })
+      .catch((err) => {
+        console.error('An error with form outputFile: ' + err);
+        res.send(err);
+      });
   }
   // Save the item
   const itemFilenameArr = itemFilename.split('/');
-  let onlyItemFilename = itemFilenameArr[3]
+  let onlyItemFilename = itemFilenameArr[3];
   // If it's a new form, the itemFilename is only the uuid. If you're editing a form, it is a path. Sorry.
   if (itemFilenameArr.length === 1) {
-    onlyItemFilename = itemFilename
+    onlyItemFilename = itemFilename;
   }
-  let itemPath = formPath.substring(0, formPath.lastIndexOf("/")) + sep + onlyItemFilename;
-  console.log("formPath : " + formPath + " itemFilename: " + itemFilename + " groupName: " + groupName)
-  console.log("Saving item at : " + itemPath + "  itemHtmlText: " + itemHtmlText)
-  await fs.outputFile(itemPath, itemHtmlText)
+  let itemPath =
+    formPath.substring(0, formPath.lastIndexOf('/')) + sep + onlyItemFilename;
+  console.log(
+    'formPath : ' +
+      formPath +
+      ' itemFilename: ' +
+      itemFilename +
+      ' groupName: ' +
+      groupName
+  );
+  console.log(
+    'Saving item at : ' + itemPath + '  itemHtmlText: ' + itemHtmlText
+  );
+  await fs
+    .outputFile(itemPath, itemHtmlText)
     .then(() => {
-      console.log('Success! Created item at: ' + itemPath)
+      console.log('Success! Created item at: ' + itemPath);
     })
-    .catch(err => {
-      console.error("An error with item outputFile: " + err)
-      res.send(err)
-    })
+    .catch((err) => {
+      console.error('An error with item outputFile: ' + err);
+      res.send(err);
+    });
   let resp = {
-    "message": 'Item saved: ' + itemPath,
-    "displayFormsListing": displayFormsListing
-  }
-  res.json(resp)
-})
+    message: 'Item saved: ' + itemPath,
+    displayFormsListing: displayFormsListing
+  };
+  res.json(resp);
+});
 
 /**
  * Sets up files and directories for a group:
  * Creates content, qa, and prod dirs for the group; seeds qa with Cordova project.
  * Edits app-config.json.
  * Creates cordova-hcp.json and copies to qa dir.
- * Creates Results Database for the corresponding group
- * Inserts the design Doc into the results database
+ * Creates datas Database for the corresponding group
+ * Inserts the design Doc into the datas database
  * Sets up watching of the group DB to listen to the changes feed on the database
  * Redirects user to editor page for the group.
  */
-app.post('/editor/group/new', isAuthenticated, async function (req, res) {
-
-  let groupName = req.body.groupName
+app.post('/editor/group/new', isAuthenticated, async function(req, res) {
+  let groupName = req.body.groupName;
   // Create content directory for group.
-  await exec(`cp -r /tangerine/client/content/default /tangerine/client/content/groups/${groupName}`)
+  await exec(
+    `cp -r /tangerine/client/content/default /tangerine/client/content/groups/${groupName}`
+  );
 
   // Edit the app-config.json.
   try {
-    appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
-    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}`
+    appConfig = JSON.parse(
+      await fs.readFile(
+        `/tangerine/client/content/groups/${groupName}/app-config.json`,
+        'utf8'
+      )
+    );
+    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${
+      process.env.T_UPLOAD_USER
+    }:${process.env.T_UPLOAD_PASSWORD}@${
+      process.env.T_HOST_NAME
+    }/upload/${groupName}`;
   } catch (err) {
-    console.error("An error reading app-config: " + err)
+    console.error('An error reading app-config: ' + err);
     throw err;
   }
-  await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
-    .then(status => console.log("Wrote app-config.json"))
-    .catch(err => console.error("An error copying app-config: " + err))
+  await fs
+    .writeFile(
+      `/tangerine/client/content/groups/${groupName}/app-config.json`,
+      JSON.stringify(appConfig)
+    )
+    .then((status) => console.log('Wrote app-config.json'))
+    .catch((err) => console.error('An error copying app-config: ' + err));
 
-  //#region wire group DB and result db
+  //#region wire group DB and data db
 
-  const RESULT_DB_NAME = `${groupName}-result`;
-  const RESULT_DB = new DB(RESULT_DB_NAME);
+  const data_DB_NAME = `${groupName}-data`;
+  const data_DB = new DB(data_DB_NAME);
   /**
-   * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
-   * Also create the design doc for the resultsDB
+   * Instantiate the datas database. A method call on the database creates the database if database doesnt exist.
+   * Also create the design doc for the datasDB
    */
-  await RESULT_DB.info(async info => await createDesignDocument(RESULT_DB_NAME)).catch(e => {
-    console.error(e);
-  });
+  await data_DB
+    .info(async (info) => await createDesignDocument(data_DB_NAME))
+    .catch((e) => {
+      console.error(e);
+    });
 
   // Set up watching of groupDb for changes.
-  monitorDatabaseChangesFeed((groupName.trim()));
+  monitorDatabaseChangesFeed(groupName.trim());
   //#endregion
 
   // All done!
-  res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
-})
+  res.send({ data: 'Group Created Succesfully', statusCode: 200 });
+  // res.redirect('/editor/' + groupName + '/tangy-forms/editor.html');
+});
 
-app.get('/groups', isAuthenticated, async function (req, res) {
-  fsc.readdir('/tangerine/client/content/groups', function (err, files) {
-    let filteredFiles = files.filter(junk.not)
-    console.log('/groups route lists these dirs: ' + filteredFiles)
+app.get('/groups', isAuthenticated, async function(req, res) {
+  fsc.readdir('/tangerine/client/content/groups', function(err, files) {
+    let filteredFiles = files.filter(junk.not);
+    console.log('/groups route lists these dirs: ' + filteredFiles);
     let groups = filteredFiles.map((groupName) => {
       return {
         attributes: {
@@ -531,123 +737,137 @@ app.get('/groups', isAuthenticated, async function (req, res) {
         },
         member: [],
         admin: [],
-        numberOfResults: 0
-      }
-    })
-    res.send(groups)
-
-  })
-})
+        numberOfdatas: 0
+      };
+    });
+    res.send(groups);
+  });
+});
 
 // @TODO: Middleware auth check for upload user.
-app.post('/upload/:groupName', async function (req, res) {
-  let db = new DB(req.params.groupName)
+app.post('/upload/:groupName', async function(req, res) {
+  let db = new DB(req.params.groupName);
   try {
-    const payload = pako.inflate(req.body, { to: 'string' })
-    const packet = JSON.parse(payload)
+    const payload = pako.inflate(req.body, { to: 'string' });
+    const packet = JSON.parse(payload);
     // New docs should not have a rev or else insertion will fail.
-    delete packet.doc._rev
-    await db.put(packet.doc).catch(err => console.log(err))
-    res.send('ok')
-  } catch (e) { console.log(e) }
+    delete packet.doc._rev;
+    await db.put(packet.doc).catch((err) => console.log(err));
+    res.send('ok');
+  } catch (e) {
+    console.log(e);
+  }
+});
 
-})
-
-app.get('/csv/:groupName/:formId', isAuthenticated, async function (req, res) {
-  let db = new DB(req.params.groupName)
-  let allDocs = await db.allDocs({ include_docs: true })
+app.get('/csv/:groupName/:formId', isAuthenticated, async function(req, res) {
+  let db = new DB(req.params.groupName);
+  let allDocs = await db.allDocs({ include_docs: true });
   let responseRows = allDocs.rows
-    .filter(row => row.doc.collection == 'TangyFormResponse')
-    .filter(row => row.doc.form.id == req.params.formId)
-  let responseDocs = responseRows.map(row => row.doc)
-  let docsKeyedByVariableName = []
-  responseDocs.forEach(doc => {
-    let variables = {}
-    variables['_id'] = doc._id
-    variables['formId'] = doc.form.id
-    variables['startDatetime'] = doc.startDatetime
-    variables['startUnixtime'] = doc.startUnixtime
-    doc.inputs.forEach(input => {
-      variables[input.name] = input.value
-    })
-    doc.items.forEach(item => {
-      item.inputs.forEach(input => {
+    .filter((row) => row.doc.collection == 'TangyFormResponse')
+    .filter((row) => row.doc.form.id == req.params.formId);
+  let responseDocs = responseRows.map((row) => row.doc);
+  let docsKeyedByVariableName = [];
+  responseDocs.forEach((doc) => {
+    let variables = {};
+    variables['_id'] = doc._id;
+    variables['formId'] = doc.form.id;
+    variables['startDatetime'] = doc.startDatetime;
+    variables['startUnixtime'] = doc.startUnixtime;
+    doc.inputs.forEach((input) => {
+      variables[input.name] = input.value;
+    });
+    doc.items.forEach((item) => {
+      item.inputs.forEach((input) => {
         if (Array.isArray(input.value)) {
-          input.value.forEach(subInput => variables[`${input.name}.${subInput.name}`] = subInput.value)
+          input.value.forEach(
+            (subInput) =>
+              (variables[`${input.name}.${subInput.name}`] = subInput.value)
+          );
         } else {
-          variables[input.name] = input.value
+          variables[input.name] = input.value;
         }
-      })
-    })
-    docsKeyedByVariableName.push(variables)
-  })
+      });
+    });
+    docsKeyedByVariableName.push(variables);
+  });
 
-  let flatVariableDocs = docsKeyedByVariableName.map(doc => flatten(doc))
-  let keys = []
+  let flatVariableDocs = docsKeyedByVariableName.map((doc) => flatten(doc));
+  let keys = [];
   for (let doc of flatVariableDocs) {
-    keys = _.uniq(keys.concat(Object.getOwnPropertyNames(doc)))
+    keys = _.uniq(keys.concat(Object.getOwnPropertyNames(doc)));
   }
   try {
-    var result = json2csv({ data: flatVariableDocs, fields: keys });
+    var data = json2csv({ data: flatVariableDocs, fields: keys });
   } catch (err) {
     console.error(err);
   }
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/csv');
-  res.write(result)
-  res.end()
-})
+  res.write(data);
+  res.end();
+});
 
-app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isAuthenticated, async function (req, res) {
-  let db = new DB(req.params.groupName)
-  const template = require('./template.json');
-  delete template._rev
-  let i = 0
-  while (i <= parseInt(req.params.numberOfResponses)) {
-    await db.put(Object.assign({}, template, { _id: crypto.randomBytes(20).toString('hex') }))
-    i++
+app.get(
+  '/test/generate-tangy-form-responses/:numberOfResponses/:groupName',
+  isAuthenticated,
+  async function(req, res) {
+    let db = new DB(req.params.groupName);
+    const template = require('./template.json');
+    delete template._rev;
+    let i = 0;
+    while (i <= parseInt(req.params.numberOfResponses)) {
+      await db.put(
+        Object.assign({}, template, {
+          _id: crypto.randomBytes(20).toString('hex')
+        })
+      );
+      i++;
+    }
+    res.send('ok');
   }
-  res.send('ok')
-})
+);
 
-let replicationEntries = []
+let replicationEntries = [];
 
-console.log(process.env.T_REPLICATE)
+console.log(process.env.T_REPLICATE);
 try {
-  replicationEntries = JSON.parse(process.env.T_REPLICATE)
-} catch (e) { console.log(e) }
+  replicationEntries = JSON.parse(process.env.T_REPLICATE);
+} catch (e) {
+  console.log(e);
+}
 
 if (replicationEntries.length > 0) {
   for (let replicationEntry of replicationEntries) {
-    let options = {}
+    let options = {};
     if (replicationEntry.continuous && replicationEntry.continuous === true) {
-      options.continuous = true
+      options.continuous = true;
     }
-    DB.replicate(
-      replicationEntry.from,
-      replicationEntry.to,
-      options
-    )
+    DB.replicate(replicationEntry.from, replicationEntry.to, options);
   }
 }
 
+app.get(
+  '/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?',
+  isAuthenticated,
+  (req, res) => {
+    const groupName = req.params.groupName;
+    const year = req.params.year;
+    const month = req.params.month;
+    const formId = req.params.formId;
+    const groupdataName = groupName + '-data';
 
-app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthenticated, (req, res) => {
-  const groupName = req.params.groupName;
-  const year = req.params.year;
-  const month = req.params.month;
-  const formId = req.params.formId;
-  const groupResultName = groupName + '-result';
-
-  generateCSV(formId, groupResultName, res);
-});
-
+    generateCSV(formId, groupdataName, res);
+  }
+);
 
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
  * @param {string} srcPath The path to the directory
  */
-const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lstatSync(path.join(srcPath, file)).isDirectory());
+const getDirectories = (srcPath) =>
+  fs
+    .readdirSync(srcPath)
+    .filter((file) => fs.lstatSync(path.join(srcPath, file)).isDirectory());
 
 /**
  * Gets the list of all the existing groups from the content folder
@@ -656,8 +876,7 @@ const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lsta
 function listenToChangesFeedOnExistingGroups() {
   const CONTENT_PATH = '../client/content/groups/';
   const groups = getDirectories(CONTENT_PATH);
-  groups.map(group => monitorDatabaseChangesFeed(group.trim()));
-
+  groups.map((group) => monitorDatabaseChangesFeed(group.trim()));
 }
 listenToChangesFeedOnExistingGroups();
 
@@ -665,25 +884,32 @@ let changesFeedSubject = new Subject();
 // Using concatMap ensures the data is processed one by one
 changesFeedSubject
   .pipe(
-    concatMap( async data => await tangyReporting.saveProcessedFormData(data.data, data.database) )
+    concatMap(
+      async (data) =>
+        await tangyReporting.saveProcessedFormData(data.data, data.database)
+    )
   )
-  .subscribe(res => console.log('got res: ' + res));
+  .subscribe((res) => console.log('got res: ' + res));
 
 /**
  * Listens to the changes feed of a database and passes new documents to the queue
- * which sends the docs one by one in `processChangedDocument()` for processing and saving in the corresponding group results database.
+ * which sends the docs one by one in `processChangedDocument()` for processing and saving in the corresponding group datas database.
  * @param {string} name the group's database for which to listen to the changes feed.
  */
 async function monitorDatabaseChangesFeed(name) {
   const GROUP_DB = new DB(name);
-  const RESULT_DB_NAME = `${name}-result`;
+  const data_DB_NAME = `${name}-data`;
   try {
     GROUP_DB.changes({ since: 'now', include_docs: true, live: true })
       .on('change', async (body) => {
         /** check if doc is FormResponse before adding to queue to be processesd by the saveProcessedFormData.
          * Dont add deleted docs to the queue
          */
-        if (!body.deleted && body.doc.collection === 'TangyFormResponse') changesFeedSubject.next({ data: body['doc'], database: RESULT_DB_NAME });
+        if (!body.deleted && body.doc.collection === 'TangyFormResponse')
+          changesFeedSubject.next({
+            data: body['doc'],
+            database: data_DB_NAME
+          });
       })
       .on('error', (err) => console.error(err));
   } catch (err) {
@@ -702,18 +928,36 @@ async function monitorDatabaseChangesFeed(name) {
  * use form.docId+'-'+doc.completed not `${doc.docId}-${doc.completed}`
  */
 async function createDesignDocument(database) {
-  const RESULT_DB = new DB(database);
+  const data_DB = new DB(database);
 
   const tangyReportingDesignDoc = {
     _id: '_design/tangy-reporting',
     version: '1',
     views: {
-      resultsByGroupFormId: {
-        map: function (doc) {
+      datasByGroupFormId: {
+        map: function(doc) {
           if (doc.formId) {
-            const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const MONTHS = [
+              'Jan',
+              'Feb',
+              'Mar',
+              'Apr',
+              'May',
+              'Jun',
+              'Jul',
+              'Aug',
+              'Sep',
+              'Oct',
+              'Nov',
+              'Dec'
+            ];
             const startDatetime = new Date(doc.startDatetime);
-            const key = doc.formId + '_' + startDatetime.getFullYear() + '_' + MONTHS[startDatetime.getMonth()];
+            const key =
+              doc.formId +
+              '_' +
+              startDatetime.getFullYear() +
+              '_' +
+              MONTHS[startDatetime.getMonth()];
             //The emmitted value is in the form "formId" i.e `formId` and also "formId_2018_May" i.e `formId_Year_Month`
             emit(doc.formId);
             emit(key);
@@ -721,30 +965,45 @@ async function createDesignDocument(database) {
         }.toString()
       }
     }
-  }
+  };
 
   try {
-    const designDoc = await RESULT_DB.get('_design/tangy-reporting');
+    const designDoc = await data_DB.get('_design/tangy-reporting');
     if (designDoc.version !== tangyReportingDesignDoc.version) {
-      console.log(chalk.white(`✓ Time to update _design/tangy-reporting for ${database}`));
-      console.info(chalk.yellow(`Removing _design/tangy-reporting for ${database}`));
-      await RESULT_DB.remove(designDoc)
+      console.log(
+        chalk.white(`✓ Time to update _design/tangy-reporting for ${database}`)
+      );
+      console.info(
+        chalk.yellow(`Removing _design/tangy-reporting for ${database}`)
+      );
+      await data_DB.remove(designDoc);
       console.log(chalk.red(`Cleaning up view indexes for ${database}`));
       // @TODO This causes conflicts with open databases. How to avoid??
-      //await RESULT_DB.viewCleanup()
-      console.info(chalk.yellow(`Creating _design/tangy-reporting for ${database}`));
-      await RESULT_DB.put(tangyReportingDesignDoc).
-        then(info => console.log(chalk.green(`√ Created _design/tangy-reporting for ${database} succesfully`)));
+      //await data_DB.viewCleanup()
+      console.info(
+        chalk.yellow(`Creating _design/tangy-reporting for ${database}`)
+      );
+      await data_DB
+        .put(tangyReportingDesignDoc)
+        .then((info) =>
+          console.log(
+            chalk.green(
+              `√ Created _design/tangy-reporting for ${database} succesfully`
+            )
+          )
+        );
     }
   } catch (error) {
     if (error.error === 'not_found') {
-      await RESULT_DB.put(tangyReportingDesignDoc).catch(err => console.error(err));
+      await data_DB
+        .put(tangyReportingDesignDoc)
+        .catch((err) => console.error(err));
     }
   }
 }
 
 // Start the server.
-var server = app.listen(config.port, function () {
+var server = app.listen(config.port, function() {
   var host = server.address().address;
   var port = server.address().port;
   console.log(server.address());
