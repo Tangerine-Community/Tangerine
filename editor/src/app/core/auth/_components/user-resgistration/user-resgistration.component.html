@@ -1,0 +1,68 @@
+<mat-card>
+  <mat-card-title class="tangy-foreground-secondary">
+    {{'Add New User'|translate}}
+  </mat-card-title>
+  <mat-card-content>
+    <form class="tangy-full-width" novalidate #registrationForm="ngForm">
+      <mat-form-field class="tangy-full-width">
+        <input name="username" [(ngModel)]="user.username" #username="ngModel" matInput placeholder="{{'Username'|translate}}" (blur)="doesUserExist(user.username)"
+          required>
+        <br>
+        <br>
+        <span>
+          <mat-error *ngIf="userExists" style="font-size:75%;"> {{'Username Unavailable'|translate}}</mat-error>
+          <mat-error *ngIf="(userExists!==null&&!userExists)&&(username.dirty || username.touched)" style="font-size:75%;color: green"> {{'Username Available'|translate}}</mat-error>
+          <mat-error *ngIf="(username.invalid||username.errors) && (username.dirty || username.touched)">
+            {{'This Field is Required'|translate}}
+          </mat-error>
+        </span>
+      </mat-form-field>
+      <br>
+      <br>
+
+      <mat-form-field class="tangy-full-width">
+        <input name="firstName" [(ngModel)]="user.firstName" #firstName="ngModel" matInput placeholder="{{'First Name'|translate}}"
+          required>
+          <mat-error *ngIf="(firstName.invalid||firstName.errors) && (firstName.dirty || firstName.touched)">
+            {{'This Field is Required'|translate}}
+          </mat-error>
+      </mat-form-field>
+      <br>
+      <br>
+      <mat-form-field class="tangy-full-width">
+        <input name="lastName" [(ngModel)]="user.lastName" #lastName="ngModel" matInput placeholder="{{'Last Name'|translate}}"
+          required>
+          <mat-error *ngIf="(lastName.invalid||lastName.errors) && (lastName.dirty || lastName.touched)">
+            {{'This Field is Required'|translate}}
+          </mat-error>
+      </mat-form-field>
+      <br>
+      <br>
+      <mat-form-field class="tangy-full-width">
+        <input name="email" [(ngModel)]="user.email" #email="ngModel" name="email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+          matInput placeholder="{{'Email'|translate}}" required>
+        <mat-error *ngIf="(email.invalid||email.errors) && (email.dirty || email.touched)">
+          {{'Please enter a valid email address'|translate}}
+        </mat-error>
+      </mat-form-field>
+      <br>
+      <br>
+      <mat-form-field class="tangy-full-width">
+        <input name="password" [(ngModel)]="user.password" #password="ngModel" type="password" matInput placeholder="{{'Password'|translate}}"
+          required>
+      </mat-form-field>
+      <br>
+      <br>
+      <mat-form-field class="tangy-full-width">
+        <input name="confirmPassword" [(ngModel)]="user.confirmPassword" #confirmPassword="ngModel" type="password" matInput placeholder="{{'Confirm Password'|translate}}"
+          required>
+        <mat-error *ngIf="(user.password!==user.confirmPassword) && ((confirmPassword.dirty || confirmPassword.touched)||(password.dirty||password.touched))">
+          {{'Passwords do not match'|translate}}
+        </mat-error>
+      </mat-form-field>
+      <br>
+      <br>
+      <button [disabled]="registrationForm.invalid||userExists" mat-raised-button color="warn" (click)="createUser();registrationForm.reset()">{{'REGISTER'|translate}}</button>
+    </form>
+  </mat-card-content>
+</mat-card>

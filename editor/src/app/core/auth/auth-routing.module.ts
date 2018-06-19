@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { UserResgistrationComponent } from './user-resgistration/user-resgistration.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './_components/login/login.component';
+import { ManageUsersComponent } from './_components/manage-users/manage-users.component';
+import { UserResgistrationComponent } from './_components/user-resgistration/user-resgistration.component';
+import { LoginGuard } from './_guards/login-guard.service';
 const routes: Routes = [{
   path: 'register-user',
   component: UserResgistrationComponent
@@ -9,6 +11,15 @@ const routes: Routes = [{
 {
   path: 'login',
   component: LoginComponent
+}, {
+  path: 'manage-users',
+  component: ManageUsersComponent,
+  canActivate: [LoginGuard]
+},
+{
+  path: 'manage-users/new-user',
+  component: UserResgistrationComponent,
+  canActivate: [LoginGuard]
 }];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
