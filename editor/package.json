@@ -39,10 +39,10 @@
     "ts-helpers": "^1.1.1",
     "uuid": "^3.0.1",
     "workbox-cli": "^2.1.2",
-    "zone.js": "^0.7.2"
+    "zone.js": "^0.8.4"
   },
   "devDependencies": {
-    "@angular/cli": "^1.0.0",
+    "@angular/cli": "^1.7.4",
     "@angular/compiler-cli": "^4.4.7",
     "@types/jasmine": "2.5.38",
     "@types/node": "^6.0.42",
