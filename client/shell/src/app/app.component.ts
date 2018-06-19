@@ -22,7 +22,8 @@ export class AppComponent implements OnInit {
   updateIsRunning = false;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
-    private windowRef: WindowRef, private userService: UserService,
+    private windowRef: WindowRef,
+    private userService: UserService,
     private authenticationService: AuthenticationService,
     private http: Http,
     private router: Router,
@@ -36,16 +37,18 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     // Set location list as a global.
     const window = this.windowRef.nativeWindow;
-    const res = await this.http.get('../content/location-list.json').toPromise();
+    const res = await this.http
+      .get('../content/location-list.json')
+      .toPromise();
     window.locationList = res.json();
     try {
-      let appConfigResponse = await fetch('../content/app-config.json')
-      window.appConfig = await appConfigResponse.json()
-    } catch(e) {
-      console.log('No app config found.')
+      const appConfigResponse = await fetch('../content/app-config.json');
+      window.appConfig = await appConfigResponse.json();
+    } catch (e) {
+      console.log('No app config found.');
     }
     if (window.appConfig.direction === 'rtl') {
-      let styleContainer = window.document.createElement('div')
+      const styleContainer = window.document.createElement('div');
       styleContainer.innerHTML = `
         <style>
           * {
@@ -53,8 +56,8 @@ export class AppComponent implements OnInit {
               direction: rtl;
           }
       </style>
-      `
-      window.document.body.appendChild(styleContainer)
+      `;
+      window.document.body.appendChild(styleContainer);
     }
 
     this.showNav = this.authenticationService.isLoggedIn();
@@ -67,18 +70,19 @@ export class AppComponent implements OnInit {
     // setInterval(this.getGeolocationPosition, 1000);
     // Initialize tangyFormService in case any views need to be updated.
     const currentUser = await this.authenticationService.getCurrentUser();
-    const tangyFormService = new TangyFormService({ databaseName: currentUser });
+    const tangyFormService = new TangyFormService({
+      databaseName: currentUser
+    });
     tangyFormService.initialize();
   }
 
   async checkIfUpdateScriptRequired() {
     const usersDb = new PouchDB('users');
     const response = await usersDb.allDocs({ include_docs: true });
-    const usernames = response
-      .rows
-      .map(row => row.doc)
-      .filter(doc => doc.hasOwnProperty('username'))
-      .map(doc => doc.username);
+    const usernames = response.rows
+      .map((row) => row.doc)
+      .filter((doc) => doc.hasOwnProperty('username'))
+      .map((doc) => doc.username);
     for (const username of usernames) {
       const userDb = await new PouchDB(username);
       // Use try in case this is an old account where info doc was not created.
@@ -89,7 +93,9 @@ export class AppComponent implements OnInit {
         await userDb.put({ _id: 'info', atUpdateIndex: 0 });
         infoDoc = await userDb.get('info');
       }
-      const atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
+      const atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex')
+        ? infoDoc.atUpdateIndex
+        : 0;
       const lastUpdateIndex = updates.length - 1;
       if (lastUpdateIndex !== atUpdateIndex) {
         this.router.navigate(['/update']);
@@ -103,19 +109,23 @@ export class AppComponent implements OnInit {
   }
   async isAppUpdateAvailable() {
     try {
-      const response = await this.http.get('../../release-uuid.txt').toPromise();
-      const foundReleaseUuid = (response.text()).replace(/\n|\r/g, '');
+      const response = await this.http
+        .get('../../release-uuid.txt')
+        .toPromise();
+      const foundReleaseUuid = response.text().replace(/\n|\r/g, '');
       const storedReleaseUuid = localStorage.getItem('release-uuid');
-      this.showUpdateAppLink = foundReleaseUuid === storedReleaseUuid ? false : true;
-    } catch (e) {
-    }
+      this.showUpdateAppLink =
+        foundReleaseUuid === storedReleaseUuid ? false : true;
+    } catch (e) {}
   }
   updateApp() {
     if (window.isCordovaApp) {
       console.log('Running from APK');
       const installationCallback = (error) => {
         if (error) {
-          console.log('Failed to install the update with error code:' + error.code);
+          console.log(
+            'Failed to install the update with error code:' + error.code
+          );
           console.log(error.description);
           this.updateIsRunning = false;
         } else {
@@ -130,7 +140,13 @@ export class AppComponent implements OnInit {
           alert('No Update: ' + JSON.stringify(error.description));
         } else {
           console.log('Update is Loaded');
-          if (window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `Cancel`. If you are ready to install the update, click `Yes`'))) {
+          if (
+            window.confirm(
+              _TRANSLATE(
+                'An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `Cancel`. If you are ready to install the update, click `Yes`'
+              )
+            )
+          ) {
             this.updateIsRunning = true;
             console.log('Installing Update');
             window.chcp.installUpdate(installationCallback);
@@ -144,34 +160,46 @@ export class AppComponent implements OnInit {
     } else {
       const currentPath = window.location.pathname;
       const storedReleaseUuid = localStorage.getItem('release-uuid');
-      window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
+      window.location.href = currentPath.replace(
+        `${storedReleaseUuid}\/shell\/`,
+        ''
+      );
     }
-
   }
 
   getGeolocationPosition() {
     const options = {
       enableHighAccuracy: true
     };
-    const queue = JSON.parse(localStorage.getItem('gpsQueue')) ? (JSON.parse(localStorage.getItem('gpsQueue'))) : null;
-    navigator.geolocation.getCurrentPosition((position: Position) => {
-      // Accuracy is in meters, a lower reading is better
-      if (!queue || (typeof queue !== 'undefined' && ((position.timestamp - queue.timestamp) / 1000) >= 30) ||
-        queue.accuracy >= position.coords.accuracy) {
-        const x = {
-          accuracy: position.coords.accuracy,
-          altitude: position.coords.altitude,
-          altitudeAccuracy: position.coords.altitudeAccuracy,
-          heading: position.coords.heading,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          speed: position.coords.speed,
-          timestamp: position.timestamp
-        };
-        localStorage.setItem('gpsQueue', JSON.stringify(x));
-      } else { console.log(position); }
-    },
-      (err) => { },
-      options);
+    const queue = JSON.parse(localStorage.getItem('gpsQueue'))
+      ? JSON.parse(localStorage.getItem('gpsQueue'))
+      : null;
+    navigator.geolocation.getCurrentPosition(
+      (position: Position) => {
+        // Accuracy is in meters, a lower reading is better
+        if (
+          !queue ||
+          (typeof queue !== 'undefined' &&
+            (position.timestamp - queue.timestamp) / 1000 >= 30) ||
+          queue.accuracy >= position.coords.accuracy
+        ) {
+          const x = {
+            accuracy: position.coords.accuracy,
+            altitude: position.coords.altitude,
+            altitudeAccuracy: position.coords.altitudeAccuracy,
+            heading: position.coords.heading,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            speed: position.coords.speed,
+            timestamp: position.timestamp
+          };
+          localStorage.setItem('gpsQueue', JSON.stringify(x));
+        } else {
+          console.log(position);
+        }
+      },
+      (err) => {},
+      options
+    );
   }
 }
