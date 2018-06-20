@@ -149,7 +149,7 @@ var isAuthenticated = function (req, res, next) {
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function (req, res) {
-    res.send({ name: 'user1', status: 'ok' });
+    res.send({ name: 'user1', statusCode: 200, statusMessage: 'ok' });
   }
 );
 
@@ -244,6 +244,69 @@ let openForm = async function (path) {
   return form
 };
 
+const USERS_DB = new DB('users');
+
+app.get('/users', isAuthenticated, async (req, res) => {
+  const result = await USERS_DB.allDocs({ include_docs: true });
+  const data = result.rows
+    .map((doc) => doc)
+    .filter((doc) => !doc['id'].startsWith('_design'))
+    .map((doc) => {
+      const user = doc['doc'];
+      return { _id: user._id, username: user.username, email: user.email };
+    });
+  res.send({ statusCode: 200, data });
+});
+
+app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
+  let data;
+  try {
+    data = await doesUserExist(req.params.username);
+  } catch (error) {
+    console.error(error);
+    res.send({ statusCode: 500, data: true }).sendStatus(500); // In case of error assume user exists. Helps avoid same username used multiple times
+  }
+  if (!data) {
+    res.send({ statusCode: 200, data });
+  } else {
+    res.send({ statusCode: 409, data }).sendStatus(409);
+  }
+});
+
+async function doesUserExist(username) {
+  try {
+    await USERS_DB.createIndex({ index: { fields: ['username'] } });
+    const data = await USERS_DB.find({ selector: { username } });
+    return data.docs.length > 0;
+  } catch (error) {
+    console.error(error);
+    return true; // In case of error assume user exists. Helps avoid same username used multiple times
+  }
+}
+app.post('/users/register-user', isAuthenticated, async (req, res) => {
+  try {
+    if (!(await doesUserExist(req.body.username))) {
+      const user = req.body;
+      user.password = await hashPassword(user.password);
+      const data = await USERS_DB.post(user);
+      res.send({ statusCode: 200, data });
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    return false; // @TODO return meaningful error
+  }
+});
+
+async function hashPassword(password) {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = bcrypt.hash(password, salt);
+    return hashedPassword;
+  } catch (error) {
+    console.error(error);
+  }
+}
 app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let contentRoot = config.contentRoot
   let itemsOrder = req.body.itemsOrder
@@ -506,7 +569,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   //#endregion
 
   // All done!
-  res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
+  res.send({ data: 'Group Created Succesfully', statusCode: 200 });
 })
 
 app.get('/groups', isAuthenticated, async function (req, res) {
