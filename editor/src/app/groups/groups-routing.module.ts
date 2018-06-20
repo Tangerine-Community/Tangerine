@@ -1,20 +1,20 @@
-import { NgModule }             from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard }                from '../auth-guard.service';
+import { LoginGuard } from '../core/auth/_guards/login-guard.service';
+import { GroupDetailsComponent } from './group-details/group-details.component';
+import { GroupsComponent } from './groups.component';
+import { NewGroupComponent } from './new-group/new-group.component';
+import { ReleaseApkComponent } from './release-apk/release-apk.component';
+import { ReleasePwaComponent } from './release-pwa/release-pwa.component';
 
-import { GroupsComponent }    from './groups.component';
-import { GroupComponent }    from './group/group.component';
-import { NewGroupComponent }    from './new-group/new-group.component';
-import { ReleaseApkComponent }    from './release-apk/release-apk.component';
-import { ReleasePwaComponent }    from './release-pwa/release-pwa.component';
 const groupsRoutes: Routes = [
-  //{ path: 'projects',  component: GroupsComponent },
-  { path: '', component: GroupsComponent, canActivate: [AuthGuard] },
-  { path: 'projects', component: GroupsComponent, canActivate: [AuthGuard] },
-  { path: 'new-group', component: NewGroupComponent, canActivate: [AuthGuard] },
-  { path: 'group/:id', component: GroupComponent, canActivate: [AuthGuard] },
-  { path: 'group/release-apk/:id/:releaseType', component: ReleaseApkComponent, canActivate: [AuthGuard] },
-  { path: 'group/release-pwa/:id/:releaseType', component: ReleasePwaComponent, canActivate: [AuthGuard] },
+  // { path: 'projects',  component: GroupsComponent },
+  { path: '', component: GroupsComponent, canActivate: [LoginGuard] },
+  { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:id', component: GroupDetailsComponent, canActivate: [LoginGuard] },
+  { path: 'group/release-apk/:id/:releaseType', component: ReleaseApkComponent, canActivate: [LoginGuard] },
+  { path: 'group/release-pwa/:id/:releaseType', component: ReleasePwaComponent, canActivate: [LoginGuard] },
 ];
 @NgModule({
   imports: [
