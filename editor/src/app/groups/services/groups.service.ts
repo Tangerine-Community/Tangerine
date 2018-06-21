@@ -56,4 +56,26 @@ export class GroupsService {
       }
     }
   }
+
+  async downloadCSV(groupName: string, formId: string) {
+    try {
+      const result = await this.httpClient.get(`/csv/${groupName}/${formId}`).toPromise();
+      return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async checkCSVDownloadStatus(stateUrl: string) {
+    try {
+      const result = await this.httpClient.get(stateUrl).toPromise();
+      return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
 }
