@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Http, Headers } from '@angular/http';
+import { GroupsService } from '../services/groups.service';
+import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
+import { _TRANSLATE } from '../../shared/_services/translation-marker';
 
 @Component({
   selector: 'app-release-apk',
@@ -9,29 +12,34 @@ import { Http, Headers } from '@angular/http';
 })
 export class ReleaseApkComponent implements OnInit {
 
-  message = "Creating APK...";
-  id: string;
-  sub: any;
   buildApkIsComplete = false;
-  secret = '';
-  group = '';
+  groupName = '';
   releaseType = '';
+  errorGeneratingAPK;
 
   constructor(
     private route: ActivatedRoute,
-    private http: Http
-  ) { }
+    private groupsService: GroupsService,
+    private errorHandler: TangyErrorHandler) { }
 
-  ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      this.group = params['id'];
-      // @TODO Generate a secret.
-      // this.secret = params['id'];
+  async ngOnInit() {
+    this.route.params.subscribe(params => {
+      this.groupName = params['id'];
       this.releaseType = params['releaseType'];
-      console.log("in release-apk, group: " + this.group + " releaseType: " + this.releaseType)
-      this.http.get(`/editor/release-apk/${this.group}/${this.releaseType}`)
-        .subscribe((data) => this.buildApkIsComplete = true)
     });
+    await this.releaseAPK();
+  }
+
+  async releaseAPK() {
+    try {
+      const result: any = await this.groupsService.releaseAPK(this.groupName, this.releaseType);
+      this.buildApkIsComplete = result.statusCode === 200;
+    } catch (error) {
+      this.errorGeneratingAPK = true;
+      this.buildApkIsComplete = false;
+      console.error(error);
+      this.errorHandler.handleError(_TRANSLATE('Could Not Generate APK'));
+    }
   }
 
 }

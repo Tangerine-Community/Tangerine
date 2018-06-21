@@ -184,10 +184,16 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
   log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
-  await exec(`cd /tangerine/client && \
+
+  try {
+    await exec(`cd /tangerine/client && \
         ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME} 2>&1 | tee -a ../server/apk.log
   `)
-  res.send('ok')
+    res.send({ statusCode: 200, data: 'ok' })
+  } catch (error) {
+    res.send({ statusCode: 500, data: error })
+  }
+
 })
 
 app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async function (req, res, next) {
@@ -195,10 +201,14 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
-  await exec(`cd /tangerine/client && \
+  try {
+    await exec(`cd /tangerine/client && \
         ./release-pwa.sh ${group} ./content/groups/${group} ${releaseType}
   `)
-  res.send('ok')
+  res.send({ statusCode: 200, data: 'ok' })
+  } catch (error) {
+    res.send({ statusCode: 500, data: error })
+  }
 })
 
 async function saveFormsJson(formParameters, group) {

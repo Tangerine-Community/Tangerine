@@ -78,4 +78,26 @@ export class GroupsService {
       }
     }
   }
+
+  async releasePWA(groupName: string, releaseType: string) {
+    try {
+      const result = await this.httpClient.get(`/editor/release-pwa/${groupName}/${releaseType}`).toPromise();
+      return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async releaseAPK(groupName: string, releaseType: string) {
+    try {
+      const result = await this.httpClient.get(`/editor/release-apk/${groupName}/${releaseType}`).toPromise();
+      return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
 }

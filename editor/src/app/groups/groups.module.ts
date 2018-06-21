@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatCardModule, MatListModule, MatInputModule, MatButtonModule } from '@angular/material';
+import { MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule } from '@angular/material';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
 import { GroupsComponent } from './groups.component';
@@ -25,9 +25,18 @@ import { DownloadCsvComponent } from './download-csv/download-csv.component';
     GroupsRoutingModule,
     MatCardModule,
     MatListModule,
+    MatTabsModule,
     SharedModule
   ],
-  declarations: [GroupsComponent, GroupComponent, NewGroupComponent, ReleaseApkComponent, ReleasePwaComponent, GroupDetailsComponent, DownloadCsvComponent],
+  declarations: [
+    GroupsComponent,
+    GroupComponent,
+    NewGroupComponent,
+    ReleaseApkComponent,
+    ReleasePwaComponent,
+    GroupDetailsComponent,
+    DownloadCsvComponent
+  ],
   providers: [GroupsService]
 })
 export class GroupsModule { }
