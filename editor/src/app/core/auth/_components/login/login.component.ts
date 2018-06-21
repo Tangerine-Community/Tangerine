@@ -27,7 +27,6 @@ export class LoginComponent implements OnInit {
   async loginUser() {
     try {
       const data = await this.authenticationService.login(this.user.username, this.user.password);
-      console.log(data);
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
