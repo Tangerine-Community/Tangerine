@@ -13,9 +13,13 @@ export class GroupDetailsComponent implements OnInit {
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
-      this.groupName = params.id;
+      this.groupName = params.groupName;
     });
-    this.forms = await this.groupsService.getFormsList(this.groupName);
+    try {
+      this.forms = await this.groupsService.getFormsList(this.groupName);
+    } catch (error) {
+
+    }
   }
 
 }

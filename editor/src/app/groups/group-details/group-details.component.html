@@ -2,7 +2,7 @@
   <mat-card-title>{{'Group Details'|translate}}</mat-card-title>
   <mat-card-content>
     <div class="tangy-full-width">
-      <h4>Forms</h4>
+      <h4>{{'Forms'|translate}}</h4>
       <div>
         <a routerLink="/editor/{{groupName}}/tangy-forms/editor.html#form=editor/form.html&new=1">{{'+ Create a New Form'|translate}}</a>
       </div>
@@ -26,7 +26,7 @@
           <span class="tangy-foreground-secondary ">{{form.title}}</span>
           <span class="tangy-spacer "></span>
           <span>
-            <a class="tangy-foreground-secondary " [routerLink]=" '../csv/byPeriodAndFormId/'+groupName+ '/'+form.id ">{{'Download CSV'|translate}}</a>
+            <a class="tangy-foreground-secondary " [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">{{'Download CSV'|translate}}</a>
           </span>
         </mat-list-item>
       </mat-list>

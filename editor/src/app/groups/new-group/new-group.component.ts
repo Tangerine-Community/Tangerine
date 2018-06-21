@@ -25,6 +25,7 @@ export class NewGroupComponent implements OnInit {
         this.errorHandler.handleError(_TRANSLATE('Group Created Succesfully'));
       }
     } catch (error) {
+      console.log(error);
     }
   }
 
