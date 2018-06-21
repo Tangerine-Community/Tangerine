@@ -1,7 +1,8 @@
 <mat-card>
   <mat-card-title>{{'Download CSV'|translate}}</mat-card-title>
   <mat-card-content>
-    <div class="tangy-full-width">
+    <p class="tangy-full-width" *ngIf="!result">{{'Loading'|translate}}</p>
+    <div *ngIf="result" class="tangy-full-width">
       <h4 *ngIf="!isDownloadComplete&&!errorDownloadingFile">{{'Generating CSV'|translate}}</h4>
       <h4 *ngIf="errorDownloadingFile">{{'Error Downloading File'|translate}}</h4>
       <p>{{'Group Name'|translate}}: {{groupName}}</p>
