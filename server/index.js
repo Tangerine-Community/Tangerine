@@ -604,7 +604,7 @@ app.post('/upload/:groupName', async function (req, res) {
   } catch (e) { log.error(e) }
 
 })
-
+// TODO Notify caller if group doesnt have form response, to avoid infinite polling  
 app.get('/csv/:groupName/:formId', async function (req, res) {
   const groupName = sanitize(req.params.groupName)
   const formId = sanitize(req.params.formId)
