@@ -11,6 +11,7 @@ import { GroupsService } from './services/groups.service';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GroupDetailsComponent } from './group-details/group-details.component';
+import { DownloadCsvComponent } from './download-csv/download-csv.component';
 
 
 
@@ -26,7 +27,7 @@ import { GroupDetailsComponent } from './group-details/group-details.component';
     MatListModule,
     SharedModule
   ],
-  declarations: [GroupsComponent, GroupComponent, NewGroupComponent, ReleaseApkComponent, ReleasePwaComponent, GroupDetailsComponent],
+  declarations: [GroupsComponent, GroupComponent, NewGroupComponent, ReleaseApkComponent, ReleasePwaComponent, GroupDetailsComponent, DownloadCsvComponent],
   providers: [GroupsService]
 })
 export class GroupsModule { }
