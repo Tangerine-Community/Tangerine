@@ -547,7 +547,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 
   let groupName = req.body.groupName
   // Create content directory for group.
-  await exec(`cp -r /tangerine/client/content/default /tangerine/client/content/groups/${groupName}`)
+  await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
 
   // Edit the app-config.json.
   try {

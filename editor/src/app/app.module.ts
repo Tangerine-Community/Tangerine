@@ -18,7 +18,6 @@ import { SharedModule } from './shared/shared.module';
 import { RequestInterceptor } from './shared/_services/request-interceptor.service';
 import { TangyErrorHandler } from './shared/_services/tangy-error-handler.service';
 import { SupportComponent } from './support/support.component';
-import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { WindowRef } from './core/window-ref.service';
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, '../client/content/', '.json');
@@ -39,7 +38,6 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     MdlModule,
     RegistrationModule, // @TODO remove as soon as we have refactored all hub specific functionality. All Registration and Login will be in Auth Module
     SharedModule,
-    TangyFormsModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
