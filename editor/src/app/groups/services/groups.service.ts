@@ -1,29 +1,103 @@
-﻿import {Injectable} from '@angular/core';
-import {Http, Headers} from '@angular/http';
-
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { _TRANSLATE } from '../../shared/_services/translation-marker';
+import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
+export interface Forms {
+  id: string;
+  title: string;
+  src: string;
+}
 @Injectable()
 export class GroupsService {
-    result: Object;
-    error: Object;
-    token: string;
-    user_id: string;
-    password: string;
-    
-    constructor(public http: Http) {
-    this.token = localStorage.getItem('token');
-    this.password = localStorage.getItem('password');
-    this.user_id = localStorage.getItem('user_id');
-    }
-    //note jw: http service in Angular 2.0 is using Observables not promises
-    getGroups() {
-       var authheader = new Headers(); 
-       authheader.append('Authorization', 'Bearer ' + this.token + ':' + this.password); 
-        //return this.http.get('/assets/users.json')
-        //alert(this.user_id);
-        return this.http.get('/groups/', {
-            headers: authheader
-        })
-            .map(res => res.json());         
-    }
 
+  constructor(private httpClient: HttpClient, private errorHandler: TangyErrorHandler) { }
+  async getAllGroups() {
+    try {
+      const data: any = await this.httpClient.get('/groups/').toPromise();
+      return data.filter((group) => group.attributes.name.indexOf('_reporting') === -1);
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async createGroup(groupName: string) {
+    try {
+      const result = await this.httpClient.post('/editor/group/new', { groupName }).toPromise();
+      return result;
+    } catch (error) {
+      console.error(error);
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async getFormsList(groupName: string) {
+    try {
+      let result = await this.httpClient.get('../editor/groups/' + groupName + '/forms.json').toPromise() as Forms[];
+
+      result.unshift({
+        id: 'user-profile',
+        title: 'User Profile',
+        src: '../content/user-profile/form.html'
+      }, {
+          id: 'reports',
+          title: 'Reports',
+          src: '../content/reports/form.html'
+        });
+
+      return result;
+    } catch (error) {
+      console.error(error);
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async downloadCSV(groupName: string, formId: string) {
+    try {
+      const result = await this.httpClient.get(`/csv/${groupName}/${formId}`).toPromise();
+      return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async checkCSVDownloadStatus(stateUrl: string) {
+    try {
+      const result = await this.httpClient.get(stateUrl).toPromise();
+      return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async releasePWA(groupName: string, releaseType: string) {
+    try {
+      const result = await this.httpClient.get(`/editor/release-pwa/${groupName}/${releaseType}`).toPromise();
+      return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async releaseAPK(groupName: string, releaseType: string) {
+    try {
+      const result = await this.httpClient.get(`/editor/release-apk/${groupName}/${releaseType}`).toPromise();
+      return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
 }
