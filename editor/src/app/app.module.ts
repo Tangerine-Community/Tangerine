@@ -1,42 +1,52 @@
-
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { NgModule } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpModule, JsonpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';//not sure if this is needed
-import {ApplicationInitStatus, ApplicationRef, NgModule} from '@angular/core';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-import 'rxjs/add/operator/map'; //added so we could use map in services as needed to avoid red squigglies
-import 'rxjs/add/operator/mergeMap'; 
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { MdlModule } from 'angular2-mdl';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mergeMap';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { SupportComponent } from './support/support.component';
-import { RegistrationModule } from './registration/registration.module';
+import { AuthModule } from './core/auth/auth.module';
 import { GroupsModule } from './groups/groups.module';
-import { AuthGuard } from './auth-guard.service';
-import { AuthService } from './auth.service';
-import { JsonpModule } from '@angular/http';
-import {ProfileModule} from "./profile/profile.module";
-import {MdlModule} from "angular2-mdl";
-
+import { ProfileModule } from './profile/profile.module';
+import { RegistrationModule } from './registration/registration.module';
+import { SharedModule } from './shared/shared.module';
+import { RequestInterceptor } from './shared/_services/request-interceptor.service';
+import { TangyErrorHandler } from './shared/_services/tangy-error-handler.service';
+import { SupportComponent } from './support/support.component';
+import { WindowRef } from './core/window-ref.service';
+export function HttpLoaderFactory(httpClient: HttpClient) {
+  return new TranslateHttpLoader(httpClient, '../client/content/', '.json');
+}
 @NgModule({
-  declarations: [
-    AppComponent,
-    SupportComponent
-  ],
+  declarations: [AppComponent, SupportComponent],
   imports: [
     AppRoutingModule,
-    RegistrationModule,
+    AuthModule,
     ProfileModule,
     GroupsModule,
     BrowserModule,
     ReactiveFormsModule,
     FormsModule,
     HttpModule,
+    HttpClientModule,
     JsonpModule,
-    MdlModule
+    MdlModule,
+    RegistrationModule, // @TODO remove as soon as we have refactored all hub specific functionality. All Registration and Login will be in Auth Module
+    SharedModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
+    })
   ],
-  providers: [ AuthGuard, AuthService  ],
+  providers: [TangyErrorHandler, WindowRef, { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
-export class AppModule {
-
-}
+export class AppModule { }

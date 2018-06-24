@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Http, Headers } from '@angular/http';
+import { GroupsService } from '../services/groups.service';
+import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
+import { _TRANSLATE } from '../../shared/_services/translation-marker';
 
 @Component({
   selector: 'app-release-pwa',
@@ -9,28 +12,33 @@ import { Http, Headers } from '@angular/http';
 })
 export class ReleasePwaComponent implements OnInit {
 
-  message = "Creating PWA...";
-  id: string;
-  sub: any;
   buildPwaIsComplete = false;
-  secret = '';
-  group = '';
+  groupName = '';
   releaseType = '';
-
+  errorGeneratingPWA;
   constructor(
     private route: ActivatedRoute,
-    private http: Http
-  ) { }
+    private groupsService: GroupsService,
+    private errorHandler: TangyErrorHandler) { }
 
-  ngOnInit() {
-    this.sub = this.route.params.subscribe(params => {
-      this.group = params['id'];
-      // @TODO Generate a secret.
-      // this.secret = params['id'];
+  async ngOnInit() {
+    this.route.params.subscribe(params => {
+      this.groupName = params['id'];
       this.releaseType = params['releaseType'];
-      this.http.get(`/editor/release-pwa/${this.group}/${this.releaseType}`)
-        .subscribe((data) => this.buildPwaIsComplete = true)
     });
+    await this.releasePWA();
+  }
+
+  async releasePWA() {
+    try {
+      const result: any = await this.groupsService.releasePWA(this.groupName, this.releaseType);
+      this.buildPwaIsComplete = result.statusCode === 200;
+    } catch (error) {
+      this.errorGeneratingPWA = true;
+      this.buildPwaIsComplete = false;
+      console.error(error);
+      this.errorHandler.handleError(_TRANSLATE('Could Not Generate PWA'));
+    }
   }
 
 }

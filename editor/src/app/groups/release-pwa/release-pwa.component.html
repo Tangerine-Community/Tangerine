@@ -1,8 +1,8 @@
-
-
-<p *ngIf="!buildPwaIsComplete">
-  Your PWA is building...
+<p *ngIf="!buildPwaIsComplete&&!errorGeneratingPWA">
+  {{'Your PWA is building...'|translate}}
 </p>
+<p *ngIf="errorGeneratingPWA">{{'Could Not Generate PWA'|translate}}</p>
 <p *ngIf="buildPwaIsComplete">
-  View your PWA <a target='_new' href="/releases/{{releaseType}}/pwas/{{group}}">here</a>.
+  {{'View your PWA'|translate}}
+  <a target='_new' href="/releases/{{releaseType}}/pwas/{{groupName}}">{{'here'|translate}}</a>.
 </p>

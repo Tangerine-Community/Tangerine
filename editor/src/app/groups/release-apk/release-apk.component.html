@@ -1,8 +1,8 @@
-
-<p *ngIf="!buildApkIsComplete">
-  Your APK is building...
+<p *ngIf="!buildApkIsComplete&&!errorGeneratingAPK">
+  {{'Your APK is building...'|translate}}
 </p>
+<p *ngIf="errorGeneratingAPK">{{'Could Not Generate APK'|translate}}</p>
 <p *ngIf="buildApkIsComplete">
-  Download your APK <a target='_new' href="/releases/{{releaseType}}/apks/{{group}}/{{group}}.apk">here</a>.
+  {{'Download your APK'|translate}}
+  <a target='_new' href="/releases/{{releaseType}}/apks/{{groupName}}/{{groupName}}.apk">{{'here'|translate}}</a>.
 </p>
-
