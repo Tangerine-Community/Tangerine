@@ -39,7 +39,7 @@ async function batch() {
   } else {
     // Order each datum's properties by the headers for consistent columns.
     const rows = docs.map(doc => state.headersKeys.map(header => (doc[header]) ? doc[header] : ''))
-    const output = new CSV(rows).encode()
+    const output = `\n${new CSV(rows).encode()}`
     await appendFile(state.outputPath, output)
     // Off by one error???
     state.skip += state.batchSize
