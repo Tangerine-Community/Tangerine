@@ -1,4 +1,7 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { GroupsService } from '../services/groups.service';
+import { _TRANSLATE } from '../../shared/_services/translation-marker';
+import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 
 @Component({
   selector: 'app-new-group',
@@ -7,16 +10,23 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 })
 export class NewGroupComponent implements OnInit {
 
-  constructor(
-    private elementRef: ElementRef
-  ) { }
+  groupName = '';
+  constructor(private groupsService: GroupsService, private errorHandler: TangyErrorHandler) { }
 
   ngOnInit() {
-    const container = document.createElement('div');
-    this.elementRef.nativeElement.appendChild(container);
-    container.innerHTML = `<iframe src="/editor/"></iframe>`;
-    const iframe = container.querySelector('iframe')
-    iframe.style.setProperty('height', '100vh')
+
+  }
+
+  async createGroup() {
+    try {
+      const result: any = await this.groupsService.createGroup(this.groupName);
+      if (result && result.statusCode && result.statusCode === 200) {
+        this.groupName = '';
+        this.errorHandler.handleError(_TRANSLATE('Group Created Succesfully'));
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
 }
