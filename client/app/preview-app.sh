@@ -3,6 +3,7 @@ const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const appDir = `${__dirname}/dist/tangerine-client`
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+const fs = require('fs-extra')
 const go = async _ => {
     let cmd = ``
 
@@ -10,13 +11,7 @@ const go = async _ => {
     console.log('Preparing assets')
     console.log('')
 
-    cmd = `rm -r "${appDir}/assets"`
-
-    console.log('')
-    console.log(cmd)
-    console.log('')
-
-    await exec(cmd).catch(console.log)
+    await fs.remove(`"${appDir}/assets"`)
 
     console.log('')
     console.log('Syncing assets...')
