@@ -1,6 +1,6 @@
 {
-  "name": "tangerine-client",
-  "version": "0.0.0",
+  "name": "tangy",
+  "version": "3.0.0-beta12-rc11",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +9,10 @@
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
-  "private": true,
+  "bin": {
+    "tangy": "preview-app.sh"
+  },
+  "private": false,
   "dependencies": {
     "@angular/animations": "^6.0.3",
     "@angular/cdk": "^6.2.1",
