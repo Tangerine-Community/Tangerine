@@ -1,6 +1,6 @@
 {
   "name": "tangy",
-  "version": "3.0.0-beta12-rc11",
+  "version": "3.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
