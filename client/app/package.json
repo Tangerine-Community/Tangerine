@@ -36,7 +36,7 @@
     "pouchdb-upsert": "^2.2.0",
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.2.1",
-    "tangy-form": "^1.0.0",
+    "tangy-form": "^1.0.5",
     "underscore": "^1.9.1",
     "zone.js": "^0.8.26"
   },
