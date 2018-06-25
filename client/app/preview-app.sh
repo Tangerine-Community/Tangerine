@@ -18,8 +18,6 @@ const go = async _ => {
 
     await exec(cmd).catch(console.log)
 
-    //await exec(`ln -s ${process.cwd()} ${appDir}/assets `).catch(console.log)
-
     console.log('')
     console.log('Syncing assets...')
     console.log('')
@@ -43,6 +41,12 @@ const go = async _ => {
     console.log('')
     console.log(cmd)
     console.log('')
+
+    console.log('')
+    console.log('')
+    console.log('')
+    console.log('')
+    console.log('  In a browser, open http://localhost:8008')
 
     await exec(cmd)
         .then(console.log)
