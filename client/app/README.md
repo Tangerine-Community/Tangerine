@@ -3,7 +3,7 @@
 ## Installation
 Requires node 8+.
 ```
-npm install -g serve sync-files tangerine
+npm install -g serve sync-files tangerine-client
 ```
 
 ## Usage
