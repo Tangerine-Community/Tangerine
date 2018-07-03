@@ -28,8 +28,8 @@ import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { ExportDataModule } from './core/export-data/export-data.module';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-
-// import { CaseManagementModule } from './case-management/case-management.module';
+import {FooManagementModule} from "./foo-management/foo-management.module";
+import {ClassModule} from "./class/class.module";
 export { AppComponent }
 export function HttpClientLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
@@ -48,6 +48,8 @@ export function HttpClientLoaderFactory(httpClient: HttpClient) {
     TangyFormsModule,
     AuthModule,
     CaseManagementModule,
+    FooManagementModule,
+    ClassModule,
     UserProfileModule,
     UpdateModule,
     SyncRecordsModule,

@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserService } from '../core/auth/_services/user.service';
 import { TangyFormService } from '../tangy-forms/tangy-form-service';
 import 'tangy-form/tangy-form.js';
+import {AppConfigService} from "../shared/_services/app-config.service";
 
 @Component({
   selector: 'app-user-profile',
@@ -15,16 +16,21 @@ export class UserProfileComponent implements AfterContentInit {
 
   tangyFormSrc: any;
   tangyFormResponse: {};
+  returnUrl: string; // stores the value of the url to redirect to after login
   @ViewChild('container') container: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private userService: UserService
+    private userService: UserService,
+    private appConfigService: AppConfigService
   ) { }
 
   async ngAfterContentInit() {
+    const appConfig = await this.appConfigService.getAppConfig();
+    const homeUrl = appConfig.homeUrl;
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
     const userDbName = await this.userService.getUserDatabase();
     const tangyFormService = new TangyFormService({ databaseName: userDbName });
     const profileDocs = await tangyFormService.getResponsesByFormId('user-profile');
@@ -35,12 +41,12 @@ export class UserProfileComponent implements AfterContentInit {
     formEl.addEventListener('ALL_ITEMS_CLOSED', async () => {
       const profileDoc = formEl.store.getState()
       await tangyFormService.saveResponse(profileDoc)
-      this.router.navigate(['/forms-list']);
+      this.router.navigate([this.returnUrl]);
     })
     // Put a response in the store by issuing the FORM_OPEN action.
     if (profileDocs.length > 0) {
       formEl.store.dispatch({ type: 'FORM_OPEN', response: profileDocs[0] })
-    } 
+    }
   }
 
 }

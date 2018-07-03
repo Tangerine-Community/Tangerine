@@ -1,17 +1,30 @@
 [
   {
-    "id": "field-demo",
-    "title": "Field Demos",
-    "src": "./assets/field-demo/form.html"
+    "id": "class-registration",
+    "title": "Class Registration",
+    "src": "./assets/class-registration/form.html"
   },
   {
-    "id": "item-demo",
-    "title": "Item Demo",
-    "src": "./assets/item-demo/form.html"
+    "id": "student-registration",
+    "title": "Student Registration",
+    "src": "./assets/student-registration/form.html"
   },
   {
-    "id": "overlay-demo",
-    "title": "Overlay Demo",
-    "src": "./assets/overlay-demo/form.html"
+    "id": "grade-1",
+    "title": "Grade 1",
+    "src": "./assets/field-demo/form.html",
+    "curriculum": "Grade 1"
+  },
+  {
+    "id": "grade-2",
+    "title": "Grade 2",
+    "src": "./assets/item-demo/form.html",
+    "curriculum": "Grade 2"
+  },
+  {
+    "id": "grade-3",
+    "title": "Grade 3",
+    "src": "./assets/item-demo/form.html",
+    "curriculum": "Grade 3"
   }
 ]

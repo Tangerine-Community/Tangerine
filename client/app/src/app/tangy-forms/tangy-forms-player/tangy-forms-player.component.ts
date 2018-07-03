@@ -34,9 +34,16 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     this.route.queryParams.subscribe(async params => {
+      const formInfo;
       this.formIndex = +params['formIndex'] || 0;
+      this.formId = params['formId'];
+      this.formItem = params['formItem'];
       this.responseId = params['responseId'];
-      const formInfo = await this.getFormInfoByIndex(this.formIndex);
+      if (typeof this.formId !== 'undefined') {
+        formInfo = await this.getFormInfoById(this.formId);
+      } else {
+        formInfo = await this.getFormInfoByIndex(this.formIndex);
+      }
       const userDbName = await this.userService.getUserDatabase();
       const tangyFormService = new TangyFormService({ databaseName: userDbName });
       this.service = tangyFormService
@@ -96,6 +103,16 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
         // Relative path to tangy forms app.
         return form[index]
       }
+    } catch (err) { console.log(err) }
+
+  }
+
+  async getFormInfoById(formId) {
+    try {
+      const userDB = await this.userService.getUserDatabase();
+      const form = await this.caseManagementService.getFormList();
+      let selectedForm = form.find(testForm => (testForm.id === formId) ? true : false)
+      return selectedForm;
     } catch (err) { console.log(err) }
 
   }

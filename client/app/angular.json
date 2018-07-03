@@ -24,7 +24,8 @@
             ],
             "styles": [
               "./node_modules/material-design-icons/iconfont/material-icons.css",
-              "src/styles.css"
+              "src/styles.scss",
+              "src/tangerine-theme.scss"
             ],
             "scripts": []
           },
@@ -73,7 +74,8 @@
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
-              "src/styles.css"
+              "src/styles.scss",
+              "src/tangerine-theme.scss"
             ],
             "scripts": [],
             "assets": [

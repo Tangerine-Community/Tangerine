@@ -1,0 +1,32 @@
+/*#class-container {*/
+  /*display: grid;*/
+  /*grid-template-columns: 20% 80%;*/
+  /*background-color: aquamarine;*/
+  /*margin: 1em;*/
+/*}*/
+
+
+/*#class-container-left {*/
+  /*display: grid;*/
+  /*position:fixed;*/
+  /*background-color: aquamarine;*/
+/*}*/
+
+/*#class-container-right {*/
+  /*display: grid;*/
+  /*grid-template-columns: repeat(3, [col] 100px ) ;*/
+  /*grid-auto-columns: 100px;*/
+  /*background-color: beige;*/
+/*}*/
+
+.hideme {
+  display:none;
+}
+
+.mat-table {
+  width:100%;
+}
+
+.mat-column-select {
+  overflow: initial;
+}
