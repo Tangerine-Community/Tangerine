@@ -5,6 +5,6 @@
   "hashSecurityQuestionResponse": false,
   "listUsernamesOnLoginScreen": true,
   "uploadUrl": "http://upload:password@localhost/upload",
-  "homeUrl": "case-management",
+  "homeUrl": "dashboard",
   "direction": "ltr"
 }

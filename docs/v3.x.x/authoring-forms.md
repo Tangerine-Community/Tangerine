@@ -2,7 +2,8 @@
 When reading through this documentation you can refer to [this directory for examples](https://github.com/Tangerine-Community/Tangerine/tree/v3.x.x/client-v3/pages) and also try the [live demo of those examples](http://tangerine-v3-demo.github.io/).
 
 ## Getting Started with Pages
-...
+
+Default content is at client/app/src/assets
 
 ## Creating your first form
 ...
@@ -18,4 +19,10 @@ A response to a form is captured in a Tangerine Form Session. When entering a re
 
 Start by opening the Chrome Dev Tools by clicking on Chrome's hamburger menu, go to "More tools", and click on "Developer Tools". Redux DevTools and PouchDB Inspector are then available as tabs.
 ![tangerine form session in redux devtools and pouchdb inspector](assets/tangerine-forms--inspect-tangerine-sessions-with-redux-devtools-and-pouchdb-inspector.gif)
+
+## Form events
+
+### on-open
+
+### on-change
 

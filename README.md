@@ -20,7 +20,7 @@ SSH into your machine from a terminal, [install Docker](https://docs.docker.com/
 git clone https://github.com/Tangerine-Community/Tangerine.git
 cd Tangerine
 git checkout <version tag>
-# Create config.sh and edit to match your desired settings. Make sure to set `TANGERINE_VERSION` to the same as what `<version tag>` in the prior commands. 
+# Create config.sh and edit to match your desired settings. Make sure to set `T_CONTAINER_NAME` to the same as what `<version tag>` in the prior commands.
 cp config.defaults.sh config.sh
 nano config.sh
 # Start the software.
@@ -79,6 +79,8 @@ cd client/app
 npm install
 npm start
 ```
+
+View the app at http://localhost:4200.
 
 If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
 
