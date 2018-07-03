@@ -12,6 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './core/auth/auth.module';
 import { GroupsModule } from './groups/groups.module';
+import { NgTangyFormEditorModule } from './ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { ProfileModule } from './profile/profile.module';
 import { RegistrationModule } from './registration/registration.module';
 import { SharedModule } from './shared/shared.module';
@@ -31,6 +32,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     ProfileModule,
     GroupsModule,
     BrowserModule,
+    NgTangyFormEditorModule,
     ReactiveFormsModule,
     FormsModule,
     HttpModule,
