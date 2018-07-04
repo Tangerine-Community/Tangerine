@@ -12,19 +12,19 @@
   {
     "id": "grade-1",
     "title": "Grade 1",
-    "src": "./assets/field-demo/form.html",
+    "src": "./assets/grade-1/form.html",
     "curriculum": "Grade 1"
   },
   {
     "id": "grade-2",
     "title": "Grade 2",
-    "src": "./assets/item-demo/form.html",
+    "src": "./assets/grade-2/form.html",
     "curriculum": "Grade 2"
   },
   {
     "id": "grade-3",
     "title": "Grade 3",
-    "src": "./assets/item-demo/form.html",
+    "src": "./assets/grade-3/form.html",
     "curriculum": "Grade 3"
   }
 ]

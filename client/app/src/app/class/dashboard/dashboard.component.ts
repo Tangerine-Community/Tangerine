@@ -10,7 +10,7 @@ import {Router} from "@angular/router";
 export interface StudentResult {
   id: string;
   name: string;
-  results:[];
+  forms:any;
 }
 
 @Component({
@@ -54,15 +54,19 @@ export class DashboardComponent implements OnInit {
     this.renderGrid();
   }
 
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  /** Populate the querystring with the form info. */
   selectCheckbox(column, i) {
     // let el = this.selection.select(row);
     this.selection.toggle()
     let selectedForm = column.forms[i];
     let selectedFormId = selectedForm.formId
     let selectedId = selectedForm.curriculum
+    let src = selectedForm.src
+    let title = selectedForm.title
     // console.log("boom! " + selectedId)
-    this.router.navigate(['tangy-forms-player'], { queryParams: { formId: selectedId } });
+    this.router.navigate(['tangy-forms-player'], { queryParams:
+        { formId: selectedId, itemId: selectedFormId, src: src, title: title }
+    });
   }
 
   private renderGrid() {
@@ -84,6 +88,7 @@ export class DashboardComponent implements OnInit {
         let formResult = {};
         formResult["formId"] = form.id
         formResult["curriculum"] = this.curriculum
+        formResult["title"] = form.title
         formResult["src"] = form.src
         formResult["results"] = [];
         studentResults["forms"].push(formResult)
@@ -130,7 +135,6 @@ export class DashboardComponent implements OnInit {
   async populateFormList() {
     try {
       this.formList = await this.dashboardService.getFormList();
-      console.log("this.formList")
     } catch (error) {
       console.error(error);
     }
