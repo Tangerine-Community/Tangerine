@@ -41,12 +41,35 @@ export class ClassViewService {
 
 var tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '1',
+  version: '7',
   views: {
-    responsesByClassId: {
+    responsesByClassIdFormIdStartDatetime: {
+      map: function (doc) {
+        if (doc.collection !== 'TangyFormResponse') return
+          let inputs = [];
+          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          let input = inputs.find(input => (input.name === 'classId') ? true : false)
+          if (input) {
+            emit(`${input.value}-${doc.form.id}-${doc.startDatetime}`, true)
+          }
+      }.toString()
+    },
+    responsesForStudentRegByClassId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
           if (doc.form.id !== 'student-registration') return
+          let inputs = [];
+          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          let input = inputs.find(input => (input.name === 'classId') ? true : false)
+          if (input) {
+            emit(input.value, true);
+          }
+        }
+      }.toString()
+    },
+    responsesByClassId: {
+      map: function (doc) {
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
           let inputs = [];
           doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
           let input = inputs.find(input => (input.name === 'classId') ? true : false)

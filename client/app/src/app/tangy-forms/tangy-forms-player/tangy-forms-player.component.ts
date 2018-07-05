@@ -38,7 +38,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     this.route.queryParams.subscribe(async params => {
-      const formInfo;
+      let formInfo; let formItemHtml;
       this.formIndex = +params['formIndex'] || 0;
       this.formId = params['formId'];
       this.formItem = params['itemId'];
@@ -52,11 +52,11 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       }
       if (typeof this.formItem !== 'undefined') {
         // ./assets/grade-1/form.html
-        let tangyFormWidgetStart = "<tangy-form has-summary linear-mode hide-closed-items id=\"" + this.formId
+        let tangyFormWidgetStart = "<tangy-form has-summary linear-mode hide-closed-items id=\"" + this.formItem
           + "\" on-change=\"\">\n"
         let tangyFormWidgetEnd = "</tangy-form>"
-        let tangyFormItem = "  <tangy-form-item src=\"" + this.formSrc + "\" id=\"" + this.formId + "\" title=\"" + this.formTitle + "\" hide-back-button></tangy-form-item>\n"
-        let formItemHtml = tangyFormWidgetStart + tangyFormItem + tangyFormWidgetEnd;
+        let tangyFormItem = "  <tangy-form-item src=\"" + this.formSrc + "\" id=\"" + this.formItem + "\" title=\"" + this.formTitle + "\" hide-back-button></tangy-form-item>\n"
+        formItemHtml = tangyFormWidgetStart + tangyFormItem + tangyFormWidgetEnd;
         let formItemInfo = {
           // title: formInfo['title'] + this.formId,
           title: this.formTitle,

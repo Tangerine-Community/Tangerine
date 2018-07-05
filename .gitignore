@@ -35,3 +35,7 @@ editor/src/compiled/*
 client/src/index-dev.html
 editor/src/index-dev.html
 .DS_Store
+client/app/src/assets/grade-1/
+client/app/src/assets/grade-2/
+client/app/src/assets/grade-3/
+client/app/src/assets/grade-4/
