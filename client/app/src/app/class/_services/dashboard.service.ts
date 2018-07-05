@@ -23,33 +23,14 @@ export class DashboardService {
   databaseName: String;
 
   async getFormList() {
-    // const forms = [];
     const formList:any = await this.http.get('./assets/forms.json')
       .toPromise()
-    // for (const form of formList) {
-    //   forms.push({
-    //     title: form['title'],
-    //     src: form['src'],
-    //     id: form['id'],
-    //     curricula: form['curricula']
-    //   });
-    // }
+
     return formList;
   }
 
   async getCurriculaForms(curriculum) {
-    // const forms = [];
-
     let formHtml =  await this.http.get(`./assets/${curriculum}/form.html`, {responseType: 'text'}).toPromise();
-
-    // for (const form of formList) {
-    //   forms.push({
-    //     title: form['title'],
-    //     src: form['src'],
-    //     id: form['id'],
-    //     curricula: form['curricula']
-    //   });
-    // }
     return formHtml;
   }
 
@@ -71,7 +52,7 @@ export class DashboardService {
 
   async getMyStudents(selectedClass: any) {
     console.log("selectedClass: " + selectedClass)
-    const result = await this.userDB.query('tangy-class/responsesByClassId', {
+    const result = await this.userDB.query('tangy-class/responsesForStudentRegByClassId', {
     // const result = await this.userDB.query('tangy-form/responsesByFormId', {
       key: selectedClass,
       // key: 'student-registration',
@@ -86,9 +67,72 @@ export class DashboardService {
     //     console.log("input: " + input.value)
     //   }
     // }
-
-
     return result.rows;
+  }
+
+  async getResultsByClass(classId: any, forms) {
+    console.log("classId: " + classId)
+    const result = await this.userDB.query('tangy-class/responsesByClassId', {
+      key: classId,
+      include_docs: true
+    });
+    const data = await this.transformResultSet(result.rows, forms);
+    // clean the array
+    Array.prototype.clean = function(deleteValue) {
+      for (var i = 0; i < this.length; i++) {
+        if (this[i] == deleteValue) {
+          this.splice(i, 1);
+          i--;
+        }
+      }
+      return this;
+    };
+    data.clean(undefined);
+    return data;
+  }
+
+  async transformResultSet(result, formList) {
+    // const appConfig = await this.appConfigService.getAppConfig();
+    // const columnsToShow = appConfig.columnsOnVisitsTab;
+    const columnsToShow = ["studentId"];
+    // const formList = await this.getCurriculaForms(curriculum);
+
+    const observations = result.map(async (observation) => {
+      let columns = await this.getDataForColumns(observation.doc['items'], columnsToShow);
+      // columns = columns.filter(x => x !== undefined);
+      const index = formList.findIndex(c => c.id === observation.doc.form['id']);
+      if (formList[index]) {
+        let response = {
+          formTitle: formList[index]['title'],
+          formId: formList[index]['id'],
+          startDatetime: observation.doc.startDatetime,
+          formIndex: index,
+          _id: observation.doc._id,
+          count: observation.doc['items'][0].inputs.length,
+          columns
+        };
+        return response;
+      }
+    });
+    return Promise.all(observations);
+  }
+
+  async getDataForColumns(array, columns) {
+    let data = {}
+      columns.map(column => {
+      // const data = array.map(el => {
+      //   return el.inputs.find(e => e.name === column);
+      // }).find(x => x);
+      // return ({
+      //   name: data ? data.name : column,
+      //   value: data ? data.value : ''
+      // });
+      let input = array[0].inputs.find(input => (input.name === column) ? true : false)
+      if (input) {
+        data[column] = input.value;
+      }
+    });
+    return data;
   }
 
 }
