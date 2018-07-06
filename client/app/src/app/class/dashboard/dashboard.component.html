@@ -48,7 +48,12 @@
                             [checked]="selection.isSelected(element)">
               </mat-checkbox>
               </span>
-              <span *ngIf="element['forms'][i]['response']"><br/>{{element["forms"][i]['response'].startDatetime}}<br/>Count: {{element["forms"][i]['response'].count}}</span>
+              <span *ngIf="element['forms'][i]['response']">
+                <mat-checkbox (click)="$event.stopPropagation()"
+                (change)="$event ? selectCheckboxResult(element,i) : null"
+                [checked]="true"
+                [disabled]="true">
+              </mat-checkbox><br/>Count: {{element["forms"][i]['response'].count}}</span>
             </td>
           </ng-container>
 
