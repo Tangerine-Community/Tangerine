@@ -152,6 +152,24 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  /** Populate the querystring with the form info. */
+  selectCheckboxResult(column, i) {
+    // let el = this.selection.select(row);
+    this.selection.toggle()
+    let selectedForm = column.forms[i];
+    let studentId = column.id
+    let classId = column.classId
+    let selectedFormId = selectedForm.formId
+    let selectedId = selectedForm.curriculum
+    let src = selectedForm.src
+    let title = selectedForm.title
+    let responseId = selectedForm.response._id
+    // console.log("boom! " + selectedId)
+    this.router.navigate(['tangy-forms-player'], { queryParams:
+        { formId: selectedId, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title, responseId: responseId }
+    });
+  }
+
   private renderGrid() {
     // let allStudentResults:StudentResult = [];
     let allStudentResults = [];
