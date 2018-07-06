@@ -11,6 +11,14 @@
           </mat-list-item>
           <mat-list-item >
             <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:1,classId:class.doc._id}>Add Student</a>)</span>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <mat-form-field>
+              Report: <mat-select [(value)]="selectedReport">
+                <mat-option>None</mat-option>
+                <mat-option value="progress">Progress Graph</mat-option>
+                <mat-option value="mastery">Mastery Check Table</mat-option>
+                <mat-option value="grouping">Class Grouping Table</mat-option>
+              </mat-select>
+            </mat-form-field>
           </mat-list-item>
             <mat-list-item *ngIf="!students">
               <p class="mat-h3">{{'No Students currently registered.'|translate}}</p>
@@ -47,6 +55,11 @@
           <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
           <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
         </table>
+        <!--<span>curriculumFormsList: {{curriculumFormsList?.length}}</span>-->
+        <mat-paginator [length]="pageLength"
+                       [pageSize]="pageSize"
+                       [pageSizeOptions]="pageSizeOptions">
+        </mat-paginator>
       </mat-card>
     </ng-template>
   </mat-tab>

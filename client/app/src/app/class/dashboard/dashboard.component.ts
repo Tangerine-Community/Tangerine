@@ -1,11 +1,12 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {DashboardService} from "../_services/dashboard.service";
-import {MatTabChangeEvent, MatTableDataSource} from "@angular/material";
+import {MatTabChangeEvent, MatPaginator, MatTableDataSource, PageEvent} from "@angular/material";
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
 import {ClassViewService} from "../_services/class-view.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {Router} from "@angular/router";
+import {tap} from "rxjs/internal/operators";
 
 export interface StudentResult {
   id: string;
@@ -20,13 +21,26 @@ export interface StudentResult {
 })
 export class DashboardComponent implements OnInit {
 
-  formList;classes;students;currentClassId;selectedTab;curriculum;curriculumForms;dataSource;columnsToDisplay;
+  formList;classes;students;selectedTab;curriculum;curriculumForms;dataSource;columnsToDisplay;selectedReport;
+  currentClassId;currentClassIndex;curriculumFormsList
   studentsResponses:any[];
   allStudentResults:StudentResult[];
   formColumns: string[] = [];
+  formColumnsDS;
   // columnsToDisplay: string[] = ["Name"];
   selection = new SelectionModel<StudentResult>(false, []);
+
+  // MatPaginator Inputs
+  // length = 10;
+  pageLength = 10;
+  pageSize = 5;
+  pageSizeOptions: number[] = [5, 10, 15, 100];
+
+  // MatPaginator Output
+  // pageEvent: PageEvent;
+
   @ViewChild('container') container: ElementRef;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
     private http: HttpClient,
@@ -36,10 +50,10 @@ export class DashboardComponent implements OnInit {
   ) { }
 
 
-
   async ngOnInit() {
     await this.populateFormList();
-    this.initDashboard();
+    await this.initDashboard();
+    // this.formColumnsDS.paginator = this.paginator;
     (<any>window).Tangy = {}
     const currentUser = await this.authenticationService.getCurrentUser();
     if (currentUser) {
@@ -48,35 +62,18 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  // ngAfterViewInit() {
+  //   this.paginator.page
+  //     .pipe(
+  //       tap(() => this.loadGrid())
+  //     )
+  //     .subscribe();
+  // }
+
   async initDashboard() {
     try {
       this.classes = await this.getMyClasses();
       if (this.classes.length > 0) {
-        // let inputs = [];
-        // this.classes[0].doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-        // let input = inputs.find(input => (input.name === 'curriculum') ? true : false)
-        // if (input) {
-        //   this.curriculum = input.value;
-        //   //todo: persist curricula in memory and find curriculum.name.
-        //   this.curriculumForms = await this.getCurriculaForms(this.curriculum)
-        // }
-        //
-        // this.currentClassId = this.classes[0].id;
-        // this.students = await this.getMyStudents(this.currentClassId);
-        // let results = await this.getResultsByClass(this.currentClassId, this.curriculumForms);
-        // this.studentsResponses = {};
-        // for (const response of results) {
-        //   console.log("response: " + JSON.stringify(response))
-        //   // studentsResponses.push();
-        //   let studentId = response.columns.studentId
-        //   let studentReponses = this.studentsResponses[studentId];
-        //   if (typeof studentReponses === 'undefined') {
-        //     studentReponses = {}
-        //   }
-        //   let formId = response.formId;
-        //   studentReponses[formId] = response;
-        //   this.studentsResponses[studentId] = studentReponses
-        // }
         await this.populateGridData(0)
         this.renderGrid();
       }
@@ -93,23 +90,38 @@ export class DashboardComponent implements OnInit {
     this.renderGrid();
   }
 
-  private async populateGridData(index) {
+  private async loadGrid() {
+    console.log("this.paginator.pageIndex: " + this.paginator.pageIndex + " this.paginator.pageSize: " + this.paginator.pageSize);
+    await this.populateGridData(this.currentClassIndex, this.paginator.pageIndex, this.paginator.pageSize);
+    this.renderGrid();
+  }
+
+  private async populateGridData(classIndex, pageIndex, pageSize) {
     let inputs = [];
-    this.classes[index].doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+    this.currentClassIndex = classIndex;
+    this.classes[this.currentClassIndex].doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
     let input = inputs.find(input => (input.name === 'curriculum') ? true : false)
     if (input) {
       this.curriculum = input.value;
       //todo: persist curricula in memory and find curriculum.name.
-      this.curriculumForms = await this.getCurriculaForms(this.curriculum)
+      let pi = pageIndex
+      let ps = pageSize
+      if (typeof pi === 'undefined') {
+        pi = 0
+      }
+      if (typeof ps === 'undefined') {
+        ps = 5
+      }
+      this.curriculumForms = await this.getCurriculaForms(this.curriculum, pi, ps)
     }
-    let currentClass = this.classes[index];
+    let currentClass = this.classes[this.currentClassIndex];
     if (typeof currentClass !== 'undefined') {
       this.currentClassId = currentClass.id;
       this.students = await this.getMyStudents(this.currentClassId);
       let results = await this.getResultsByClass(this.currentClassId, this.curriculumForms);
       this.studentsResponses = {};
       for (const response of results) {
-        console.log("response: " + JSON.stringify(response))
+        // console.log("response: " + JSON.stringify(response))
         // studentsResponses.push();
         let studentId = response.columns.studentId
         let studentReponses = this.studentsResponses[studentId];
@@ -156,6 +168,13 @@ export class DashboardComponent implements OnInit {
       this.columnsToDisplay.push(form.title);
       // this.columnsToDisplay.push(formEl);
     }
+    this.formColumnsDS = new MatTableDataSource(this.formColumns);
+    this.paginator.page
+      .pipe(
+        tap(() => this.loadGrid())
+      )
+      .subscribe();
+
     for (const student of this.students) {
       let studentResults = {};
       studentResults["id"] = student.id
@@ -179,7 +198,7 @@ export class DashboardComponent implements OnInit {
     }
     this.allStudentResults = allStudentResults;
     this.dataSource = new MatTableDataSource<StudentResult>(allStudentResults);
-
+    // this.dataSource.paginator = this.paginator;
   }
 
   async populateFormList() {
@@ -189,27 +208,52 @@ export class DashboardComponent implements OnInit {
       console.error(error);
     }
   }
-  async getCurriculaForms(curriculum) {
-    try {
-      let formHtml = await this.dashboardService.getCurriculaForms(curriculum);
-      const container = this.container.nativeElement
-      container.innerHTML = formHtml
-      let formEl = container.querySelectorAll('tangy-form-item')
-      var output = "";
-      let curriculumForms = [];
-      for (const el of formEl) {
-        var attrs = el.attributes;
-        let obj = {}
-        for(var i = attrs.length - 1; i >= 0; i--) {
-          // output = attrs[i].name + "->" + attrs[i].value;
-          obj[attrs[i].name] = attrs[i].value;
-          // console.log("this.formEl:" + output )
-        }
-        curriculumForms.push(obj)
-      }
 
-      // console.log("this.curriculumForms:" + JSON.stringify(curriculumForms) )
-      return curriculumForms;
+  /**
+   * Fetch ./assets/${curriculum}/form.html, attach to the container, select all tangy-form-item objects
+   * and push into a string array, limited by pageIndex and pageSize
+   * @param curriculum
+   * @param pageIndex
+   * @param pageSize
+   * @returns {Promise<any[]>}
+   */
+  async getCurriculaForms(curriculum, pageIndex, pageSize) {
+    try {
+      // this only needs to happen once.
+      if (typeof this.curriculumFormHtml === 'undefined') {
+        let curriculumForms = [];
+        let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculum);
+        const container = this.container.nativeElement
+        container.innerHTML = curriculumFormHtml
+        let formEl = container.querySelectorAll('tangy-form-item')
+        var output = "";
+        for (const el of formEl) {
+          var attrs = el.attributes;
+          let obj = {}
+          for(var i = attrs.length - 1; i >= 0; i--) {
+            // output = attrs[i].name + "->" + attrs[i].value;
+            obj[attrs[i].name] = attrs[i].value;
+            // console.log("this.formEl:" + output )
+          }
+          curriculumForms.push(obj)
+        }
+        this.curriculumFormsList = curriculumForms;
+        // this.length = this.curriculumFormsList.length
+        this.pageLength = this.curriculumFormsList.length
+      }
+      let selectedCurriculumForms, start, end;
+      let i = 1
+      if (pageIndex === 0) {
+        start = 0;
+        end = pageSize;
+      } else {
+        start = (i*pageIndex) + pageSize;
+        end = start + pageSize;
+      }
+      selectedCurriculumForms  = curriculumForms.slice(start, end);
+      // selectedCurriculumForms  = curriculumForms;
+      console.log("start: " + start + " end" + end + " this.curriculumFormsList.length: " + this.curriculumFormsList.length + " selectedCurriculumForms:" + JSON.stringify(selectedCurriculumForms) )
+      return selectedCurriculumForms;
     } catch (error) {
       console.error(error);
     }
