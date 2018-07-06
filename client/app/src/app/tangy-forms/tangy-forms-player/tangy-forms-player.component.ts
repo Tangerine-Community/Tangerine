@@ -52,10 +52,10 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       }
       if (typeof this.formItem !== 'undefined') {
         // ./assets/grade-1/form.html
-        let tangyFormWidgetStart = "<tangy-form has-summary linear-mode hide-closed-items id=\"" + this.formItem
+        let tangyFormWidgetStart = "<tangy-form linear-mode hide-closed-items id=\"" + this.formItem
           + "\" on-change=\"\">\n"
         let tangyFormWidgetEnd = "</tangy-form>"
-        let tangyFormItem = "  <tangy-form-item src=\"" + this.formSrc + "\" id=\"" + this.formItem + "\" title=\"" + this.formTitle + "\" hide-back-button></tangy-form-item>\n"
+        let tangyFormItem = "  <tangy-form-item src=\"" + this.formSrc + "\" id=\"" + this.formItem + "\" title=\"" + this.formTitle + "\" hide-back-button hide-next-button></tangy-form-item>\n"
         formItemHtml = tangyFormWidgetStart + tangyFormItem + tangyFormWidgetEnd;
         let formItemInfo = {
           // title: formInfo['title'] + this.formId,

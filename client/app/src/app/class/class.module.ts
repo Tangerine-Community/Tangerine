@@ -8,6 +8,7 @@ import {CdkTableModule} from "@angular/cdk/table";
 import {SharedModule} from "../shared/shared.module";
 import {DashboardService} from "./_services/dashboard.service";
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatTableModule,
     MatSelectModule,
     SharedModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatPaginatorModule
   ],
   declarations: [DashboardComponent],
   providers: [DashboardService]
