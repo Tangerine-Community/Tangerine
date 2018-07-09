@@ -32,7 +32,8 @@ export class UserProfileComponent implements AfterContentInit {
     let formHtml =  await this.http.get('./assets/user-profile/form.html', {responseType: 'text'}).toPromise();
     container.innerHTML = formHtml
     let formEl = container.querySelector('tangy-form')
-    formEl.addEventListener('ALL_ITEMS_CLOSED', async () => {
+    formEl.addEventListener('submit', async (event) => {
+      event.preventDefault()
       const profileDoc = formEl.store.getState()
       await tangyFormService.saveResponse(profileDoc)
       this.router.navigate(['/forms-list']);
