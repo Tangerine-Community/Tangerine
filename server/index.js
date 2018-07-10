@@ -313,9 +313,14 @@ app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
 
 async function doesUserExist(username) {
   try {
-    await USERS_DB.createIndex({ index: { fields: ['username'] } });
-    const data = await findUserByUsername(username);
-    return data && data.username && data.username.length > 0;
+    if (await isSuperAdmin(username)) {
+      return true;
+    } else {
+      await USERS_DB.createIndex({ index: { fields: ['username'] } });
+      const data = await findUserByUsername(username);
+      return data && data.username && data.username.length > 0;
+    }
+
   } catch (error) {
     console.error(error);
     return true; // In case of error assume user exists. Helps avoid same username used multiple times
