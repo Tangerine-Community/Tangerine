@@ -372,7 +372,8 @@ app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const fileContents = req.body.fileContents
   const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
   await fs.writeFile(actualFilePath, fileContents)
-  res.send('ok')
+  res.send({status: 'ok'})
+  // ok
 })
 
 // Saves an item - and a new form when formName is passed.async
