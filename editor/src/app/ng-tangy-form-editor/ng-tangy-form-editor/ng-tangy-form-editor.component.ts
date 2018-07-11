@@ -58,6 +58,24 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   async saveFiles() {
     let files = []
     let state = this.editorElRef.nativeElement.store.getState()
+    // Update forms.json.
+    let formsJson = await this.http.get<Array<any>>(`/editor/${this.route.snapshot.paramMap.get('groupName')}/content/forms.json`).toPromise()
+    const updatedFormsJson = formsJson.map(formInfo => {
+      if (formInfo.id !== state.form.id) return Object.assign({}, formInfo)
+      return Object.assign({}, formInfo, {
+        form: {
+          id: state.form.id,
+          src: state.form.src,
+          title: state.form.title
+        }
+      })
+    })
+    files.push({
+      groupId: this.route.snapshot.paramMap.get('groupName'),
+      filePath:`./forms.json`,
+      fileContents: JSON.stringify(updatedFormsJson)
+    })
+    // Update form.html.
     files.push({
       groupId: this.route.snapshot.paramMap.get('groupName'),
       filePath:`./${state.form.id}/form.html`,
@@ -69,6 +87,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
         </tangy-form>
       `
     })
+    // Update items html.
     state.items.forEach(item => {
       files.push({
         groupId: this.route.snapshot.paramMap.get('groupName'),
@@ -76,6 +95,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
         fileContents: item.fileContents
       })
     })
+    // Send to server.
     for (let file of files) {
       await this.http.post('/editor/file/save', file).toPromise()
     }
