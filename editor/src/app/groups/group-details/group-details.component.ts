@@ -86,6 +86,8 @@ export class GroupDetailsComponent implements OnInit {
       await this.http.post('/editor/file/save', file).toPromise()
     }
 
+    this.forms = await this.groupsService.getFormsList(this.groupName);
+
 
   }
 
