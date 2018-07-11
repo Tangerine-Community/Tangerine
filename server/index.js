@@ -610,7 +610,7 @@ app.post('/upload/:groupName', async function (req, res) {
     // New docs should not have a rev or else insertion will fail.
     delete packet.doc._rev
     await db.put(packet.doc).catch(err => log.error(err))
-    res.send('ok')
+    res.send({ status: 'ok'})
   } catch (e) { log.error(e) }
 
 })
