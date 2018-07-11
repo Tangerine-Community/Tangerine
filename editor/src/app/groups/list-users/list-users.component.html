@@ -1,0 +1,42 @@
+<mat-card>
+  <mat-card-title class="tangy-foreground-secondary">
+    {{'Manage Users'|translate}}
+  </mat-card-title>
+  <mat-card-content>
+    <div class="tangy-full-width">
+      <div>
+        <a [routerLink]="['/groups/',groupName,'addUser']">{{'+ Add User to Group'|translate}}</a>
+        <br>
+        <br>
+        <mat-form-field class="tangy-full-width">
+          <input type="text" placeholder="Choose User" #search matInput placeholder="{{'Username'|translate}}">
+        </mat-form-field>
+      </div>
+
+      <mat-list>
+        <mat-list-item class="tangy-location-list">
+          <span class="tangy-foreground-primary">{{'Username'|translate}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-primary">{{'Email'|translate}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-spacer">Actions</span>
+        </mat-list-item>
+      </mat-list>
+
+      <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let user of users">
+          <a class="tangy-foreground-primary" [routerLink]="['/manage-users/users', user._id]">
+            <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
+          </a>
+          <span class="tangy-foreground-secondary">{{user.username}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-primary">{{user.email}}</span>
+          <span class="tangy-spacer"></span>
+          <a class="tangy-foreground-primary" (click)="removeUserFromGroup(user.username)">
+            <i class="material-icons mat-18 tangy-location-list-icon">delete</i>
+          </a>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-card-content>
+</mat-card>
