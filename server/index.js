@@ -744,6 +744,22 @@ app.get('/groups/users/byGroupAndUsername/:groupName/:username', isAuthenticated
     res.sendStatus(500);
   }
 })
+
+app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req, res) => {
+  try {
+    const username = req.body.username;
+    const groupName = req.params.groupName;
+    const user = await findUserByUsername(username);
+    if (user && user._id) {
+      user.groups = user.groups.filter(group => group.groupName !== groupName);
+      const data = await USERS_DB.put(user);
+      res.send({ statusCode: 200, data, statusMessage: `User: ${username} removed from Group: ${groupName}` })
+    }
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+})
 // @TODO: Middleware auth check for upload user.
 app.post('/upload/:groupName', async function (req, res) {
   let db = new DB(req.params.groupName)
