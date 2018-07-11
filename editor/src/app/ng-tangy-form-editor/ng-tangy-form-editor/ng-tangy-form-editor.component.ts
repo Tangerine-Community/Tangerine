@@ -50,8 +50,35 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
           ]
         }
       })
+      tangyFormEditorEl.store.subscribe(state => this.saveFiles())
     }, 1000)
     
+  }
+
+  async saveFiles() {
+    let files = []
+    let state = this.editorElRef.nativeElement.store.getState()
+    files.push({
+      groupId: this.route.snapshot.paramMap.get('groupName'),
+      filePath:`./${state.form.id}/form.html`,
+      fileContents: `
+        <tangy-form id="${state.form.id}">
+          ${state.items.map(item => `
+            <tangy-form-item id="${item.id}" src="./assets/${state.form.id}/${item.id}.html" title="${item.title}"${(item.hideBackButton) ? ` hide-back-button` : ''}${(item.summary) ? ` summary` : ``}${(item.rightToLeft) ? ` right-to-left` : ''}></tangy-form-item>
+          `).join('')}
+        </tangy-form>
+      `
+    })
+    state.items.forEach(item => {
+      files.push({
+        groupId: this.route.snapshot.paramMap.get('groupName'),
+        filePath: `./${state.form.id}/${item.id}.html`,
+        fileContents: item.fileContents
+      })
+    })
+    for (let file of files) {
+      await this.http.post('/editor/file/save', file).toPromise()
+    }
   }
 
 }
