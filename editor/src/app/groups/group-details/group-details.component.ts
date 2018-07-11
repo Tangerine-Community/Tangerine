@@ -18,7 +18,7 @@ export class GroupDetailsComponent implements OnInit {
     try {
       this.forms = await this.groupsService.getFormsList(this.groupName);
     } catch (error) {
-
+      console.log(error);
     }
   }
 
