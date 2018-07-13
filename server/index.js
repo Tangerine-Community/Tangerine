@@ -350,7 +350,26 @@ app.get('/users/byUsername/:username', isAuthenticated, async (req, res) => {
     res.send({ data, statusCode: 200, statusMessage: 'Ok' });
   } catch (error) {
     console.error(error);
-    res.sendStatus(500)
+    res.sendStatus(500);
+  }
+});
+
+app.get('/users/isSuperAdminUser/:username', isAuthenticated, async (req, res) => {
+  try {
+    const data = await isSuperAdmin(req.params.username);
+    res.send({ data, statusCode: 200, statusMessage: 'ok' })
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+app.get('/users/isAdminUser/:username', isAuthenticated, async (req, res) => {
+  try {
+    const data = await isAdminUser(req.params.username);
+    res.send({ data, statusCode: 200, statusMessage: 'ok' })
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
   }
 });
 async function hashPassword(password) {
@@ -380,7 +399,7 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let sortedItemList = []
   for (let itemScr of itemsOrder) {
     if (itemScr !== null) {
-      let item = formItemList.is(function(i, el) {
+      let item = formItemList.is(function (i, el) {
         let src = $(this).attr('src')
         if (src === itemScr) {
           sortedItemList.push($(this))
@@ -628,40 +647,68 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 })
 
 app.get('/groups', isAuthenticated, async function (req, res) {
-  if (await isSuperAdmin(req.user.name)) {
-    fsc.readdir('/tangerine/client/content/groups', function (err, files) {
-      let filteredFiles = files.filter(junk.not)
-      let groups = [];
-      clog('/groups route lists these dirs: ' + filteredFiles)
-      groups = filteredFiles.map((groupName) => {
-        return {
-          attributes: {
-            name: groupName
-          }
+
+  try {
+    const groups = await getGroupsByUser(req.user.name);
+    res.send(groups);
+  } catch (error) {
+    res.sendStatus(500)
+  }
+})
+
+async function getGroupsByUser(username) {
+  if (await isSuperAdmin(username)) {
+    const readdirPromisified = util.promisify(fs.readdir)
+    const files = await readdirPromisified('/tangerine/client/content/groups');
+    let filteredFiles = files.filter(junk.not)
+    let groups = [];
+    clog('/groups route lists these dirs: ' + filteredFiles)
+    groups = filteredFiles.map((groupName) => {
+      return {
+        attributes: {
+          name: groupName,
+          role: 'admin'
         }
-      })
-      res.send(groups)
+      }
     })
+    return groups;
   } else {
-    const user = await findUserByUsername(req.user.name);
+    const user = await findUserByUsername(username);
     let groups = [];
     if (typeof user.groups !== 'undefined') {
       groups = user.groups.map(group => {
         return {
           attributes: {
-            name: group.groupName
+            name: group.groupName,
+            role: group.role
           }
         }
       });
     }
-    res.send(groups)
+    return groups;
   }
-})
-
+}
 async function isSuperAdmin(username) {
   return username === process.env.T_USER1;
 }
 
+// If is not admin, return false else return the list of the groups to which user isAdmin
+async function isAdminUser(username) {
+  try {
+    const groups = await getGroupsByUser(username);
+    const data = groups.filter(group => group.attributes.role === 'admin');
+    console.log(data)
+    // console.log(groups)
+    if (data.length < 1) {
+      data = false;
+    }
+    return data;
+  }
+  catch (error) {
+    return false;
+    console.log(error)
+  }
+}
 app.post('/groups/:groupName/addUserToGroup', isAuthenticated, async (req, res) => {
   const payload = req.body;
   const groupName = req.params.groupName;
@@ -902,52 +949,55 @@ function allGroups() {
 }
 
 const keepAliveReportingWorker = async initialGroups => {
-  // Populate worker-state.json if there any initialGroups not currently being watched.
-  let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
-  if (!workerState.databases) workerState.databases = []
-  for (let groupName of initialGroups) {
-    let feed = workerState.databases.find(database => database.name === groupName)
-    if (!feed) workerState.databases.push({name: groupName, sequence: 0})
-  }
-  workerState.pouchDbDefaults = pouchDbDefaults
-  await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
-  // Declare variables now so they don't have to be delared continuously and garbage collected later.
-  let response = {
-    stdout: '',
-    stderr: ''
-  } 
-  // Keep alive.
-  while(true) {
-    // Hook in and add a new group if it is queued.
-    while (newGroupQueue.length > 0) {
-      workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
-      workerState.databases.push({name: newGroupQueue.pop(), sequence: 0})
-      await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+  try {
+    // Populate worker-state.json if there any initialGroups not currently being watched.
+    let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+    if (!workerState.databases) workerState.databases = []
+    for (let groupName of initialGroups) {
+      let feed = workerState.databases.find(database => database.name === groupName)
+      if (!feed) workerState.databases.push({ name: groupName, sequence: 0 })
     }
-    // Run the worker.
-    try {
-      response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
-      if (typeof response.stderr === 'object') {
-        log.warn(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
-      } else if (response.stderr) {
-        log.warn(`run-worker.js STDERR: ${response.stderr}`)
-      }
-      try {
-        workerState = JSON.parse(response.stdout)
-        // Wrap up. If nothing was last processed, sleep for 30 seconds.
-        if (workerState.processed === 0) {
-          await sleep (30*1000) 
-        } else {
-          log.info(`Processed ${workerState.processed} changes.`)
-        }
+    workerState.pouchDbDefaults = pouchDbDefaults
+    await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+    // Declare variables now so they don't have to be delared continuously and garbage collected later.
+    let response = {
+      stdout: '',
+      stderr: ''
+    }
+    // Keep alive.
+    while (true) {
+      // Hook in and add a new group if it is queued.
+      while (newGroupQueue.length > 0) {
+        workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+        workerState.databases.push({ name: newGroupQueue.pop(), sequence: 0 })
         await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
-      } catch (error) {
-        log.warn(error)
       }
-    } catch(error) {
-      log.error(error)
+      // Run the worker.
+      try {
+        response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
+        if (typeof response.stderr === 'object') {
+          log.warn(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
+        } else if (response.stderr) {
+          log.warn(`run-worker.js STDERR: ${response.stderr}`)
+        }
+        try {
+          workerState = JSON.parse(response.stdout)
+          // Wrap up. If nothing was last processed, sleep for 30 seconds.
+          if (workerState.processed === 0) {
+            await sleep(30 * 1000)
+          } else {
+            log.info(`Processed ${workerState.processed} changes.`)
+          }
+          await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+        } catch (error) {
+          log.warn(error)
+        }
+      } catch (error) {
+        log.error(error)
+      }
     }
-    
+  } catch (error) {
+    log.error(error)
   }
 }
 const initialGroups = allGroups()

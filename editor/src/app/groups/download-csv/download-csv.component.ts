@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
-import { ActivatedRoute } from '../../../../node_modules/@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { setInterval } from 'timers';
 
 @Component({
