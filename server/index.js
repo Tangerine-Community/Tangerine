@@ -697,8 +697,6 @@ async function isAdminUser(username) {
   try {
     const groups = await getGroupsByUser(username);
     const data = groups.filter(group => group.attributes.role === 'admin');
-    console.log(data)
-    // console.log(groups)
     if (data.length < 1) {
       data = false;
     }
