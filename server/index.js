@@ -157,10 +157,8 @@ app.post('/login',
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
 app.use('/', express.static(path.join(__dirname, '../editor/dist')));
 app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
-app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../editor/src/ckeditor/')));
 app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
-app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-builds')));
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/csv/', express.static('/csv/'));
@@ -371,7 +369,7 @@ app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const groupId = req.body.groupId
   const fileContents = req.body.fileContents
   const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
-  await fs.writeFile(actualFilePath, fileContents)
+  await fs.outputFile(actualFilePath, fileContents)
   res.send({status: 'ok'})
   // ok
 })
