@@ -14,7 +14,6 @@ import { GroupDetailsComponent } from './group-details/group-details.component';
 import { DownloadCsvComponent } from './download-csv/download-csv.component';
 import { AddUserComponent } from './add-users/add-user.component';
 import { ListUsersComponent } from './list-users/list-users.component';
-import { UserDetailsComponent } from './user-details/user-details.component';
 
 
 
@@ -42,8 +41,7 @@ import { UserDetailsComponent } from './user-details/user-details.component';
     GroupDetailsComponent,
     DownloadCsvComponent,
     AddUserComponent,
-    ListUsersComponent,
-    UserDetailsComponent
+    ListUsersComponent
   ],
   providers: [GroupsService]
 })
