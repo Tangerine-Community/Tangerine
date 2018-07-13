@@ -32,16 +32,22 @@ export class GroupDetailsComponent implements OnInit {
     return 'form-' + Math.random()
   }
 
+  generateUuid() {
+    return Math.random()
+
+  }
+
   async addForm() {
     console.log('add form')
     let formId = this.generateFormId()
+    let formTitle = `New Form`
     let itemOneId = Math.random()
     let itemTwoId = Math.random()
 
     let formsJson = await this.http.get<Array<any>>(`/editor/${this.groupName}/content/forms.json`).toPromise()
     formsJson.push({
       id: formId,
-      title: `New Form ${formId}`,
+      title: formTitle,
       src: `./assets/${formId}/form.html`
     })
 
@@ -56,28 +62,18 @@ export class GroupDetailsComponent implements OnInit {
         groupId: this.groupName,
         filePath: `./${formId}/form.html`,
         fileContents: `
-        <tangy-form id="${formId}">
-          <tangy-form-item id="${itemOneId}" src="./assets/${formId}/${itemOneId}.html" title="Item 1"></tangy-form-item>
-          <tangy-form-item id="${itemTwoId}" src="./assets/${formId}/${itemTwoId}.html" title="Summary" summary></tangy-form-item>
+        <tangy-form id="${formId}" title="${formTitle}">
+          <tangy-form-item id="${this.generateUuid()}" title="Item 1">
+            <template>
+              <tangy-input name="input1" label="First question..."></tangy-input>
+            </template>
+          </tangy-form-item>
+          <tangy-form-item id="${this.generateUuid()}" title="Summary" summary>
+            <template>
+              Thank you for filling out our survey.
+            </template>
+          </tangy-form-item>
         </tangy-form>
-        ` 
-      },
-      {
-        groupId: this.groupName,
-        filePath: `./${formId}/${itemOneId}.html`,
-        fileContents: `
-        <form on-open="" on-change="">
-          <tangy-input name="input1" label="First question..."></tangy-input>
-        </form>
-        ` 
-      },
-      {
-        groupId: this.groupName,
-        filePath: `./${formId}/${itemTwoId}.html`,
-        fileContents: `
-        <form on-open="" on-change="">
-          Thank you for filling out our survey.
-        </form>
         ` 
       }
     ]
