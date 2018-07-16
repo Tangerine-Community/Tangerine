@@ -239,32 +239,37 @@ div.more {
     vertical-align: text-bottom;
   }
 
-button.mat-raised-button {
-  font-family: Roboto,"Helvetica Neue",sans-serif;
-  font-size: 1.2em;
-  font-weight: 500;
-}
 
-a.mat-tab-label, a.mat-tab-link {
-  color: #fff !important;
-  font-weight: 700 !important;
-  text-decoration: none;
-}
+  tangy-form > *, tangy-form {
+    font-size: 1.2em;
+    line-height: 1.2em;
+    --paper-input-container-shared-input-style_-_line-height: 1.2em;
+  }
 
-a.undecorate-link {
-  text-decoration: none;
-}
+  button.mat-raised-button {
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    font-size: 1.2em;
+    font-weight: 500;
+  }
 
-.test-size-reset {
-  font-size:medium;
-}
+  a.mat-tab-label, a.mat-tab-link {
+    color: #fff !important;
+    font-weight: 700 !important;
+    text-decoration: none;
+  }
 
-.mat-form-field-infix {
-  font-size: 14px;
-}
+  a.undecorate-link {
+    text-decoration: none;
+  }
 
-.mat-select-value {
-  font-size: 14px;
-}
+  .test-size-reset {
+    font-size:medium;
+  }
 
+  .mat-form-field-infix {
+    font-size: 14px;
+  }
 
+  .mat-select-value {
+    font-size: 14px;
+  }

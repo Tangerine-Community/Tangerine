@@ -20,11 +20,10 @@ const params = {
 }
 
 function getData(db, formId, skip, batchSize) {
-  // Off by one error???
-  const limit = batchSize + 1
+  const limit = batchSize
   return new Promise((resolve, reject) => {
     db.query('tangy-reporting/resultsByGroupFormId', { key: formId, include_docs: true, skip, limit })
-      .then(body => resolve(body.rows.map(row => row.doc).map(doc => doc.processedResult)))
+      .then(body => resolve(body.rows.map(row => row.doc)))
       .catch(err => reject(err));
   });
 }
@@ -38,10 +37,9 @@ async function batch() {
     state.complete = true
   } else {
     // Order each datum's properties by the headers for consistent columns.
-    const rows = docs.map(doc => state.headersKeys.map(header => (doc[header]) ? doc[header] : ''))
-    const output = new CSV(rows).encode()
+    const rows = docs.map(doc => [ doc._id, ...state.headersKeys.map(header => (doc.processedResult[header]) ? doc.processedResult[header] : '') ])
+    const output = `\n${new CSV(rows).encode()}`
     await appendFile(state.outputPath, output)
-    // Off by one error???
     state.skip += state.batchSize
   }
   await writeFile(state.statePath, JSON.stringify(state), 'utf-8')

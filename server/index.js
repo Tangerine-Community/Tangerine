@@ -149,7 +149,7 @@ var isAuthenticated = function (req, res, next) {
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function (req, res) {
-    res.send({ name: 'user1', status: 'ok' });
+    res.send({ name: 'user1', statusCode: 200, statusMessage: 'ok' });
   }
 );
 
@@ -157,10 +157,8 @@ app.post('/login',
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
 app.use('/', express.static(path.join(__dirname, '../editor/dist')));
 app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
-app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../editor/src/ckeditor/')));
 app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
-app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-builds')));
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/csv/', express.static('/csv/'));
@@ -184,10 +182,16 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
   log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
-  await exec(`cd /tangerine/client && \
+
+  try {
+    await exec(`cd /tangerine/client && \
         ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME} 2>&1 | tee -a ../server/apk.log
   `)
-  res.send('ok')
+    res.send({ statusCode: 200, data: 'ok' })
+  } catch (error) {
+    res.send({ statusCode: 500, data: error })
+  }
+
 })
 
 app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async function (req, res, next) {
@@ -195,10 +199,14 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
-  await exec(`cd /tangerine/client && \
+  try {
+    await exec(`cd /tangerine/client && \
         ./release-pwa.sh ${group} ./content/groups/${group} ${releaseType}
   `)
-  res.send('ok')
+  res.send({ statusCode: 200, data: 'ok' })
+  } catch (error) {
+    res.send({ statusCode: 500, data: error })
+  }
 })
 
 async function saveFormsJson(formParameters, group) {
@@ -244,6 +252,69 @@ let openForm = async function (path) {
   return form
 };
 
+const USERS_DB = new DB('users');
+
+app.get('/users', isAuthenticated, async (req, res) => {
+  const result = await USERS_DB.allDocs({ include_docs: true });
+  const data = result.rows
+    .map((doc) => doc)
+    .filter((doc) => !doc['id'].startsWith('_design'))
+    .map((doc) => {
+      const user = doc['doc'];
+      return { _id: user._id, username: user.username, email: user.email };
+    });
+  res.send({ statusCode: 200, data });
+});
+
+app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
+  let data;
+  try {
+    data = await doesUserExist(req.params.username);
+  } catch (error) {
+    console.error(error);
+    res.send({ statusCode: 500, data: true }).sendStatus(500); // In case of error assume user exists. Helps avoid same username used multiple times
+  }
+  if (!data) {
+    res.send({ statusCode: 200, data });
+  } else {
+    res.send({ statusCode: 409, data }).sendStatus(409);
+  }
+});
+
+async function doesUserExist(username) {
+  try {
+    await USERS_DB.createIndex({ index: { fields: ['username'] } });
+    const data = await USERS_DB.find({ selector: { username } });
+    return data.docs.length > 0;
+  } catch (error) {
+    console.error(error);
+    return true; // In case of error assume user exists. Helps avoid same username used multiple times
+  }
+}
+app.post('/users/register-user', isAuthenticated, async (req, res) => {
+  try {
+    if (!(await doesUserExist(req.body.username))) {
+      const user = req.body;
+      user.password = await hashPassword(user.password);
+      const data = await USERS_DB.post(user);
+      res.send({ statusCode: 200, data });
+      return data;
+    }
+  } catch (error) {
+    console.log(error);
+    return false; // @TODO return meaningful error
+  }
+});
+
+async function hashPassword(password) {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = bcrypt.hash(password, salt);
+    return hashedPassword;
+  } catch (error) {
+    console.error(error);
+  }
+}
 app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let contentRoot = config.contentRoot
   let itemsOrder = req.body.itemsOrder
@@ -298,8 +369,9 @@ app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const groupId = req.body.groupId
   const fileContents = req.body.fileContents
   const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
-  await fs.writeFile(actualFilePath, fileContents)
-  res.send('ok')
+  await fs.outputFile(actualFilePath, fileContents)
+  res.send({status: 'ok'})
+  // ok
 })
 
 // Saves an item - and a new form when formName is passed.async
@@ -474,7 +546,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 
   let groupName = req.body.groupName
   // Create content directory for group.
-  await exec(`cp -r /tangerine/client/content/default /tangerine/client/content/groups/${groupName}`)
+  await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
 
   // Edit the app-config.json.
   try {
@@ -506,7 +578,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   //#endregion
 
   // All done!
-  res.redirect('/editor/' + groupName + '/tangy-forms/editor.html')
+  res.send({ data: 'Group Created Succesfully', statusCode: 200 });
 })
 
 app.get('/groups', isAuthenticated, async function (req, res) {
@@ -537,11 +609,11 @@ app.post('/upload/:groupName', async function (req, res) {
     // New docs should not have a rev or else insertion will fail.
     delete packet.doc._rev
     await db.put(packet.doc).catch(err => log.error(err))
-    res.send('ok')
+    res.send({ status: 'ok'})
   } catch (e) { log.error(e) }
 
 })
-
+// TODO Notify caller if group doesnt have form response, to avoid infinite polling  
 app.get('/csv/:groupName/:formId', async function (req, res) {
   const groupName = sanitize(req.params.groupName)
   const formId = sanitize(req.params.formId)

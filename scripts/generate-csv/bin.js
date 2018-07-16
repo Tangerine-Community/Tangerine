@@ -39,8 +39,10 @@ async function go(state) {
     // Create the headers.
     const queryInfo = await db.query('tangy-reporting/resultsByGroupFormId', { key: state.formId, include_docs: false, limit: 0 })
     const headersDoc = await db.get(state.formId)
+    state.headers = headersDoc.columnHeaders.map(header => header.header)
     state.headersKeys = headersDoc.columnHeaders.map(header => header.key)
-    const headersRow = new CSV([state.headersKeys]).encode()
+    state.headers.unshift('_id')
+    const headersRow = new CSV([state.headers]).encode()
     await writeFile(state.outputPath, headersRow, 'utf-8')
     // Create initial state for batches.
     await writeFile(state.statePath, JSON.stringify(state), 'utf-8')
