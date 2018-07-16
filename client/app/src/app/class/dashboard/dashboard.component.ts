@@ -22,7 +22,7 @@ export interface StudentResult {
 export class DashboardComponent implements OnInit {
 
   formList;classes;students;selectedTab;curriculum;curriculumForms;dataSource;columnsToDisplay;selectedReport;
-  currentClassId;currentClassIndex;curriculumFormsList
+  currentClassId;currentClassIndex;curriculumFormsList;curriculumFormHtml
   studentsResponses:any[];
   allStudentResults:StudentResult[];
   formColumns: string[] = [];
@@ -53,7 +53,6 @@ export class DashboardComponent implements OnInit {
   async ngOnInit() {
     await this.populateFormList();
     await this.initDashboard();
-    // this.formColumnsDS.paginator = this.paginator;
     (<any>window).Tangy = {}
     const currentUser = await this.authenticationService.getCurrentUser();
     if (currentUser) {
@@ -61,14 +60,6 @@ export class DashboardComponent implements OnInit {
       classViewService.initialize();
     }
   }
-
-  // ngAfterViewInit() {
-  //   this.paginator.page
-  //     .pipe(
-  //       tap(() => this.loadGrid())
-  //     )
-  //     .subscribe();
-  // }
 
   async initDashboard() {
     try {
@@ -86,12 +77,12 @@ export class DashboardComponent implements OnInit {
     this.selectedTab = tabChangeEvent.tab;
     // console.log('tabChangeEvent => ', tabChangeEvent);
     // console.log('index => ', tabChangeEvent.index);
-    await this.populateGridData(tabChangeEvent.index);
+    await this.populateGridData(tabChangeEvent.index, this.paginator.pageIndex, this.paginator.pageSize);
     this.renderGrid();
   }
 
   private async loadGrid() {
-    console.log("this.paginator.pageIndex: " + this.paginator.pageIndex + " this.paginator.pageSize: " + this.paginator.pageSize);
+    // console.log("this.paginator.pageIndex: " + this.paginator.pageIndex + " this.paginator.pageSize: " + this.paginator.pageSize);
     await this.populateGridData(this.currentClassIndex, this.paginator.pageIndex, this.paginator.pageSize);
     this.renderGrid();
   }
