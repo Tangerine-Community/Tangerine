@@ -11,6 +11,7 @@ import 'rxjs/add/operator/mergeMap';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './core/auth/auth.module';
+import { WindowRef } from './core/window-ref.service';
 import { GroupsModule } from './groups/groups.module';
 import { ProfileModule } from './profile/profile.module';
 import { RegistrationModule } from './registration/registration.module';
@@ -18,8 +19,6 @@ import { SharedModule } from './shared/shared.module';
 import { RequestInterceptor } from './shared/_services/request-interceptor.service';
 import { TangyErrorHandler } from './shared/_services/tangy-error-handler.service';
 import { SupportComponent } from './support/support.component';
-import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
-import { WindowRef } from './core/window-ref.service';
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, '../client/content/', '.json');
 }
@@ -39,7 +38,6 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     MdlModule,
     RegistrationModule, // @TODO remove as soon as we have refactored all hub specific functionality. All Registration and Login will be in Auth Module
     SharedModule,
-    TangyFormsModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
