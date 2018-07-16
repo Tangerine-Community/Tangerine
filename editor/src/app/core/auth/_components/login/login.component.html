@@ -1,0 +1,38 @@
+<div class="login-app-content">
+  <div class="group">
+    <form role="form" #login='ngForm' novalidate>
+      <h3 class="mat-title">{{'LOGIN'|translate}}</h3>
+      <br>
+      <br>
+      <mat-form-field>
+        <input matInput type="text" required [(ngModel)]="user.username" id="username" name="username">
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">face</i>
+          <span>{{'Username'|translate}}</span>
+        </mat-placeholder>
+      </mat-form-field>
+      <br>
+      <br>
+      <mat-form-field>
+        <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">lock_open</i>
+          <span>{{'Password'|translate}}</span>
+        </mat-placeholder>
+      </mat-form-field>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+
+      <button (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
+      <br>
+      <br>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
+    </form>
+  </div>
+</div>

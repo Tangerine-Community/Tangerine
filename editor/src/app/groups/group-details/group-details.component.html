@@ -1,0 +1,77 @@
+<mat-card>
+  <mat-card-title>{{'Group Details'|translate}}</mat-card-title>
+  <mat-card-content>
+    <mat-tab-group class="tangy-full-width">
+      <mat-tab label="{{'Forms'|translate}}">
+        <div class="tangy-full-width">
+          <h4>{{'Forms'|translate}}</h4>
+          <!-- <div>
+            <a routerLink="/editor/{{groupName}}/tangy-forms/editor.html#form=editor/form.html&new=1">{{'+ Create a New Form'|translate}}</a>
+          </div> -->
+          <paper-button raised class="green" (click)="addForm()">add form</paper-button>
+
+          <mat-list>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-primary">{{'Form Name'|translate}}</span>
+              <span class="tangy-spacer"></span>
+              <span></span>
+            </mat-list-item>
+          </mat-list>
+
+          <mat-list role="list">
+            <mat-list-item role="listitem" *ngFor="let form of forms">
+            <!-- <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]="{form:form.src}">
+              <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
+            </a>-->
+              <a class="tangy-foreground-primary" [routerLink]="['/tangy-form-editor/', groupName, form.id]">
+                <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
+              </a>
+              <span class="tangy-foreground-secondary ">{{form.title}}</span>
+              <span class="tangy-spacer "></span>
+              <span>
+                <a class="tangy-foreground-secondary " [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">{{'Download CSV'|translate}}</a>
+              </span>
+            </mat-list-item>
+          </mat-list>
+
+
+        </div>
+      </mat-tab>
+
+      <mat-tab label="{{'Generate APK/PWA'|translate}}">
+        <mat-list>
+          <mat-list-item class="tangy-location-list">
+            <span class="tangy-foreground-secondary">
+              <a [routerLink]="['/group/release-apk',groupName,'qa']">
+                {{'Release APK to QA'|translate}}
+              </a>
+            </span>
+          </mat-list-item>
+          <mat-list-item class="tangy-location-list">
+            <span class="tangy-foreground-secondary">
+              <a [routerLink]="['/group/release-apk',groupName,'prod']">
+                {{'Release APK to Production'|translate}}
+              </a>
+            </span>
+          </mat-list-item>
+          <mat-list-item class="tangy-location-list">
+            <span class="tangy-foreground-secondary">
+              <a [routerLink]="['/group/release-pwa',groupName,'qa']">
+                {{'Release PWA to QA'|translate}}
+              </a>
+            </span>
+          </mat-list-item>
+          <mat-list-item class="tangy-location-list">
+            <span class="tangy-foreground-secondary">
+              <a [routerLink]="['/group/release-pwa',groupName,'prod']">
+                {{'Release PWA to Production'|translate}}
+              </a>
+            </span>
+          </mat-list-item>
+
+        </mat-list>
+      </mat-tab>
+      <mat-tab label="{{'Manage Users'|translate}}"></mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>
