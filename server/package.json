@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.17.1",
+    "bcryptjs": "^2.4.3",
     "chalk": "^2.4.1",
     "cheerio": "^1.0.0-rc.2",
     "compression": "^1.7.2",
@@ -33,6 +34,7 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pouchdb": "^6.4.2",
+    "pouchdb-find": "^6.4.3",
     "pretty": "^2.0.0",
     "read-yaml": "^1.1.0",
     "rxjs": "^6.1.0",
