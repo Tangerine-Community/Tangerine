@@ -20,6 +20,9 @@ import process from 'process';
 //import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
 import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
 
+import * as moment from 'moment'
+(window as any).moment = moment 
+
 /**
  * This file includes polyfills needed by Angular and is loaded before the app.
  * You can add your own extra polyfills to this file.
