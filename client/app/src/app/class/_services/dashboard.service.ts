@@ -51,35 +51,20 @@ export class DashboardService {
   }
 
   async getMyStudents(selectedClass: any) {
-    // console.log("selectedClass: " + selectedClass)
     const result = await this.userDB.query('tangy-class/responsesForStudentRegByClassId', {
-    // const result = await this.userDB.query('tangy-form/responsesByFormId', {
       key: selectedClass,
-      // key: 'student-registration',
       include_docs: true
     });
-    // let results = result.rows;
-    // for (const result of results) {
-    //   let inputs = [];
-    //   result.doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-    //   let input = inputs.find(input => (input.name === 'classId') ? true : false)
-    //   if (input) {
-    //     console.log("input: " + input.value)
-    //   }
-    // }
     return result.rows;
   }
 
   async getResultsByClass(classId: any, forms) {
-    // console.log("classId: " + classId)
     const result = await this.userDB.query('tangy-class/responsesByClassId', {
       key: classId,
       include_docs: true
     });
     const data = await this.transformResultSet(result.rows, forms);
     // clean the array
-
-    // data.clean(undefined);
     let cleanData = this.clean(data, undefined);
     return cleanData;
   }
@@ -123,13 +108,6 @@ export class DashboardService {
   async getDataForColumns(array, columns) {
     let data = {}
       columns.map(column => {
-      // const data = array.map(el => {
-      //   return el.inputs.find(e => e.name === column);
-      // }).find(x => x);
-      // return ({
-      //   name: data ? data.name : column,
-      //   value: data ? data.value : ''
-      // });
       let input = array[0].inputs.find(input => (input.name === column) ? true : false)
       if (input) {
         data[column] = input.value;
