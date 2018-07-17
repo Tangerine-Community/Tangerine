@@ -182,10 +182,8 @@ app.post('/login',
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
 app.use('/', express.static(path.join(__dirname, '../editor/dist')));
 app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
-app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../editor/src/ckeditor/')));
 app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
-app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-builds')));
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/csv/', express.static('/csv/'));
@@ -435,8 +433,9 @@ app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const groupId = req.body.groupId
   const fileContents = req.body.fileContents
   const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
-  await fs.writeFile(actualFilePath, fileContents)
-  res.send('ok')
+  await fs.outputFile(actualFilePath, fileContents)
+  res.send({status: 'ok'})
+  // ok
 })
 
 // Saves an item - and a new form when formName is passed.async
@@ -611,7 +610,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 
   let groupName = req.body.groupName
   // Create content directory for group.
-  await exec(`cp -r /tangerine/client/content/default /tangerine/client/content/groups/${groupName}`)
+  await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
 
   // Edit the app-config.json.
   try {
@@ -814,7 +813,7 @@ app.post('/upload/:groupName', async function (req, res) {
     // New docs should not have a rev or else insertion will fail.
     delete packet.doc._rev
     await db.put(packet.doc).catch(err => log.error(err))
-    res.send('ok')
+    res.send({ status: 'ok'})
   } catch (e) { log.error(e) }
 
 })
