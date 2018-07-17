@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params }   from '@angular/router';
-import { Location }                 from '@angular/common';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Location } from '@angular/common';
 import 'rxjs/add/operator/switchMap';
 
-import {ProfileService} from "./services/profile.service";
-import {Profile} from "./profile.model";
-import {StatesService} from "app/registration/services/states.service";
-import {CountriesService} from "../registration/services/countries.service";
+import { ProfileService } from "./services/profile.service";
+import { Profile } from "./profile.model";
+import { StatesService } from "../registration/services/states.service";
+import { CountriesService } from "../registration/services/countries.service";
 @Component({
     selector: 'profile-edit',
     templateUrl: './profile-edit.component.html',
-    styleUrls: [ './profile-edit.component.css' ]
+    styleUrls: ['./profile-edit.component.css']
 })
 
 export class ProfileEditComponent implements OnInit {
@@ -25,7 +25,7 @@ export class ProfileEditComponent implements OnInit {
         private location: Location,
         private _countriesService: CountriesService,
         private _statesService: StatesService
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.getCounties();
