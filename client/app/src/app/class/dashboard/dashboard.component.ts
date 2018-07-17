@@ -86,12 +86,14 @@ export class DashboardComponent implements OnInit {
     // console.log('index => ', tabChangeEvent.index);
     if (this.paginator) {
       this.selectedTab = tabChangeEvent.tab;
-      await this.populateGridData(tabChangeEvent.index, this.paginator.pageIndex, this.paginator.pageSize);
-      this.renderGrid();
+      // No need to populate grid if this is the Add Class link.
+      if (this.classes.length !== tabChangeEvent.index) {
+        await this.populateGridData(tabChangeEvent.index, this.paginator.pageIndex, this.paginator.pageSize);
+        this.renderGrid();
+      }
     } else {
       this.selectedIndex = 0;
     }
-    // console.log("tabChanged")
   }
 
   private async loadGrid() {

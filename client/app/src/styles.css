@@ -1,14 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
-@import '~material-design-icons-iconfont/dist/material-design-icons.css';
-/*!* TODO: I'm not sure this is having any affect *!*/
-@import '_tangy-app-variables.scss';
-
 /* This is a suggestion found at https://theinfogrid.com/tech/developers/angular/material-icons-angular-5/ */
 .material-icons {
   vertical-align: middle;
 }
+
+@import '~material-design-icons-iconfont/dist/material-design-icons.css';
+/* TODO: I'm not sure this is having any affect */
+@import '~_tangy-app-variables.scss';
 
 body {
   background: #fafafa;
@@ -239,37 +239,8 @@ div.more {
     vertical-align: text-bottom;
   }
 
-
   tangy-form > *, tangy-form {
     font-size: 1.2em;
     line-height: 1.2em;
     --paper-input-container-shared-input-style_-_line-height: 1.2em;
-  }
-
-  button.mat-raised-button {
-    font-family: Roboto,"Helvetica Neue",sans-serif;
-    font-size: 1.2em;
-    font-weight: 500;
-  }
-
-  a.mat-tab-label, a.mat-tab-link {
-    color: #fff !important;
-    font-weight: 700 !important;
-    text-decoration: none;
-  }
-
-  a.undecorate-link {
-    text-decoration: none;
-  }
-
-  .test-size-reset {
-    font-size:medium;
-  }
-
-  .mat-form-field-infix {
-    font-size: 14px;
-  }
-
-  .mat-select-value {
-    font-size: 14px;
   }
