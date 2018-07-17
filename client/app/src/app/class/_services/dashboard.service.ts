@@ -51,7 +51,7 @@ export class DashboardService {
   }
 
   async getMyStudents(selectedClass: any) {
-    console.log("selectedClass: " + selectedClass)
+    // console.log("selectedClass: " + selectedClass)
     const result = await this.userDB.query('tangy-class/responsesForStudentRegByClassId', {
     // const result = await this.userDB.query('tangy-form/responsesByFormId', {
       key: selectedClass,
@@ -71,25 +71,28 @@ export class DashboardService {
   }
 
   async getResultsByClass(classId: any, forms) {
-    console.log("classId: " + classId)
+    // console.log("classId: " + classId)
     const result = await this.userDB.query('tangy-class/responsesByClassId', {
       key: classId,
       include_docs: true
     });
     const data = await this.transformResultSet(result.rows, forms);
     // clean the array
-    Array.prototype.clean = function(deleteValue) {
-      for (var i = 0; i < this.length; i++) {
-        if (this[i] == deleteValue) {
-          this.splice(i, 1);
-          i--;
-        }
-      }
-      return this;
-    };
-    data.clean(undefined);
-    return data;
+
+    // data.clean(undefined);
+    let cleanData = this.clean(data, undefined);
+    return cleanData;
   }
+
+  clean = function(obj, deleteValue) {
+    for (var i = 0; i < obj.length; i++) {
+      if (obj[i] == deleteValue) {
+        obj.splice(i, 1);
+        i--;
+      }
+    }
+    return obj;
+  };
 
   async transformResultSet(result, formList) {
     // const appConfig = await this.appConfigService.getAppConfig();

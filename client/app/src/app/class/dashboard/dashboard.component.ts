@@ -7,11 +7,17 @@ import {ClassViewService} from "../_services/class-view.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {Router} from "@angular/router";
 import {tap} from "rxjs/internal/operators";
+import {FormControl} from "@angular/forms";
 
 export interface StudentResult {
   id: string;
   name: string;
   forms:any;
+}
+export interface StudentResponse {
+  id: string;
+  formId: string;
+  columns:any;
 }
 
 @Component({
@@ -21,7 +27,7 @@ export interface StudentResult {
 })
 export class DashboardComponent implements OnInit {
 
-  formList;classes;students;selectedTab;curriculum;curriculumForms;dataSource;columnsToDisplay;selectedReport;
+  formList;classes;students;selectedTab;selectedIndex;curriculum;curriculumForms;dataSource;columnsToDisplay;selectedReport;
   currentClassId;currentClassIndex;curriculumFormsList;curriculumFormHtml
   studentsResponses:any[];
   allStudentResults:StudentResult[];
@@ -35,6 +41,7 @@ export class DashboardComponent implements OnInit {
   pageLength = 10;
   pageSize = 5;
   pageSizeOptions: number[] = [5, 10, 15, 100];
+  // selected = new FormControl(0);
 
   // MatPaginator Output
   // pageEvent: PageEvent;
@@ -65,20 +72,26 @@ export class DashboardComponent implements OnInit {
     try {
       this.classes = await this.getMyClasses();
       if (this.classes.length > 0) {
-        await this.populateGridData(0)
+        await this.populateGridData(0, 0, 5)
         this.renderGrid();
+        this.selectedIndex = 0;
       }
     } catch (error) {
       console.error(error);
     }
   }
 
-  tabChanged = async (tabChangeEvent: MatTabChangeEvent): void => {
-    this.selectedTab = tabChangeEvent.tab;
+  tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
     // console.log('tabChangeEvent => ', tabChangeEvent);
     // console.log('index => ', tabChangeEvent.index);
-    await this.populateGridData(tabChangeEvent.index, this.paginator.pageIndex, this.paginator.pageSize);
-    this.renderGrid();
+    if (this.paginator) {
+      this.selectedTab = tabChangeEvent.tab;
+      await this.populateGridData(tabChangeEvent.index, this.paginator.pageIndex, this.paginator.pageSize);
+      this.renderGrid();
+    } else {
+      this.selectedIndex = 0;
+    }
+    // console.log("tabChanged")
   }
 
   private async loadGrid() {
@@ -97,10 +110,10 @@ export class DashboardComponent implements OnInit {
       //todo: persist curricula in memory and find curriculum.name.
       let pi = pageIndex
       let ps = pageSize
-      if (typeof pi === 'undefined') {
+      if (pi === null || typeof pi === 'undefined') {
         pi = 0
       }
-      if (typeof ps === 'undefined') {
+      if (ps === null || typeof ps === 'undefined') {
         ps = 5
       }
       this.curriculumForms = await this.getCurriculaForms(this.curriculum, pi, ps)
@@ -110,8 +123,8 @@ export class DashboardComponent implements OnInit {
       this.currentClassId = currentClass.id;
       this.students = await this.getMyStudents(this.currentClassId);
       let results = await this.getResultsByClass(this.currentClassId, this.curriculumForms);
-      this.studentsResponses = {};
-      for (const response of results) {
+      this.studentsResponses = [];
+      for (const response of results as any[] ) {
         // console.log("response: " + JSON.stringify(response))
         // studentsResponses.push();
         let studentId = response.columns.studentId
@@ -129,7 +142,7 @@ export class DashboardComponent implements OnInit {
   /** Populate the querystring with the form info. */
   selectCheckbox(column, i) {
     // let el = this.selection.select(row);
-    this.selection.toggle()
+    this.selection.toggle(column)
     let selectedForm = column.forms[i];
     let studentId = column.id
     let classId = column.classId
@@ -146,7 +159,7 @@ export class DashboardComponent implements OnInit {
   /** Populate the querystring with the form info. */
   selectCheckboxResult(column, i) {
     // let el = this.selection.select(row);
-    this.selection.toggle()
+    this.selection.toggle(column)
     let selectedForm = column.forms[i];
     let studentId = column.id
     let classId = column.classId
@@ -228,9 +241,9 @@ export class DashboardComponent implements OnInit {
    */
   async getCurriculaForms(curriculum, pageIndex, pageSize) {
     try {
+      let curriculumForms = [];
       // this only needs to happen once.
       if (typeof this.curriculumFormHtml === 'undefined') {
-        let curriculumForms = [];
         let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculum);
         const container = this.container.nativeElement
         container.innerHTML = curriculumFormHtml
@@ -239,7 +252,7 @@ export class DashboardComponent implements OnInit {
         for (const el of formEl) {
           var attrs = el.attributes;
           let obj = {}
-          for(var i = attrs.length - 1; i >= 0; i--) {
+          for(let i = attrs.length - 1; i >= 0; i--) {
             // output = attrs[i].name + "->" + attrs[i].value;
             obj[attrs[i].name] = attrs[i].value;
             // console.log("this.formEl:" + output )
@@ -261,7 +274,7 @@ export class DashboardComponent implements OnInit {
       }
       selectedCurriculumForms  = curriculumForms.slice(start, end);
       // selectedCurriculumForms  = curriculumForms;
-      console.log("start: " + start + " end" + end + " this.curriculumFormsList.length: " + this.curriculumFormsList.length + " selectedCurriculumForms:" + JSON.stringify(selectedCurriculumForms) )
+      // console.log("start: " + start + " end" + end + " this.curriculumFormsList.length: " + this.curriculumFormsList.length + " selectedCurriculumForms:" + JSON.stringify(selectedCurriculumForms) )
       return selectedCurriculumForms;
     } catch (error) {
       console.error(error);

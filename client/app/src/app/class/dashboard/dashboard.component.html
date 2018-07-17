@@ -1,4 +1,4 @@
-<mat-tab-group #ClassesTabGroup (selectedTabChange)="tabChanged($event)">
+<mat-tab-group #ClassesTabGroup (selectedTabChange)="tabChanged($event)" [selectedIndex]="selectedIndex">
   <mat-tab
     *ngFor="let class of classes; let classIndex=index"
     label="{{class.doc.items[0].inputs[2].value}}"
