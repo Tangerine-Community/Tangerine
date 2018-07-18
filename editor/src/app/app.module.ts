@@ -11,7 +11,6 @@ import 'rxjs/add/operator/mergeMap';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './core/auth/auth.module';
-import { WindowRef } from './core/window-ref.service';
 import { GroupsModule } from './groups/groups.module';
 import { NgTangyFormEditorModule } from './ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { ProfileModule } from './profile/profile.module';
