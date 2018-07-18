@@ -41,7 +41,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
 
   async saveForm(formHtml) {
     let files = []
-    let state = this.containerEl.querySelector('tangy-form-editor').formJson
+    let state = this.containerEl.querySelector('tangy-form-editor').store.getState()
     // Update forms.json.
     let formsJson = await this.http.get<Array<any>>(`/editor/${this.route.snapshot.paramMap.get('groupName')}/content/forms.json`).toPromise()
     const updatedFormsJson = formsJson.map(formInfo => {
