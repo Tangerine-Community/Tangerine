@@ -146,7 +146,7 @@ export class AppComponent implements OnInit {
     } else {
       const currentPath = this.window.location.pathname;
       const storedReleaseUuid = localStorage.getItem('release-uuid');
-      this.window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
+      this.window.location.href = (currentPath.replace(`${storedReleaseUuid}\/app\/`, ''));
     }
 
   }
