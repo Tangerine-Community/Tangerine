@@ -38,7 +38,7 @@
         </div>
       </mat-tab>
 
-      <mat-tab label="{{'Generate APK/PWA'|translate}}">
+      <mat-tab *ngIf="isGroupAdminUser" label="{{'Generate APK/PWA'|translate}}">
         <mat-list>
           <mat-list-item class="tangy-location-list">
             <span class="tangy-foreground-secondary">
@@ -71,7 +71,9 @@
 
         </mat-list>
       </mat-tab>
-      <mat-tab label="{{'Manage Users'|translate}}"></mat-tab>
+      <mat-tab *ngIf="isSuperAdminUser" label="{{'Manage Users'|translate}}">
+        <app-list-users class="tangy-full-width"></app-list-users>
+      </mat-tab>
     </mat-tab-group>
   </mat-card-content>
 </mat-card>

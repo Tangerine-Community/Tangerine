@@ -80,9 +80,9 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       let formEl = container.querySelector('tangy-form')
       // Put a response in the store by issuing the FORM_OPEN action.
       if (formResponse) {
-        formEl.store.dispatch({ type: 'FORM_OPEN', response: formResponse })
+        formEl.response = formResponse
       } else {
-        //formEl.store.dispatch({ type: 'FORM_OPEN', response: {} })
+        formEl.newResponse()
       }
       // Listen up, save in the db.
       formEl.addEventListener('TANGY_FORM_UPDATE', _ => {

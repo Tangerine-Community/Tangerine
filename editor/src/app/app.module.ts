@@ -20,6 +20,7 @@ import { RequestInterceptor } from './shared/_services/request-interceptor.servi
 import { TangyErrorHandler } from './shared/_services/tangy-error-handler.service';
 import { SupportComponent } from './support/support.component';
 import { WindowRef } from './core/window-ref.service';
+
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, '../client/content/', '.json');
 }

@@ -9,6 +9,7 @@
       "outDir": "dist",
       "assets": [
         "assets",
+        "ckeditor",
         "favicon.ico"
       ],
       "index": "index.html",

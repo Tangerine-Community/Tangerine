@@ -11,7 +11,8 @@
     "test": "ng test",
     "pree2e": "webdriver-manager update --standalone false --gecko false",
     "e2e": "protractor",
-    "dev": "lite-server -c=bs-config.json"
+    "dev": "lite-server -c=bs-config.json",
+    "i18n:extract": "ngx-translate-extract --input ./src --output ../client/app/src/assets/translation.json  --sort  --m _TRANSLATE"
   },
   "private": true,
   "dependencies": {
@@ -29,6 +30,7 @@
     "@angular/platform-browser-dynamic": "^4.4.7",
     "@angular/platform-server": "^4.4.7",
     "@angular/router": "^4.4.7",
+    "@biesbjerg/ngx-translate-extract": "^2.3.4",
     "@ngx-translate/core": "^7.2.2",
     "@ngx-translate/http-loader": "^3.0.1",
     "@webcomponents/webcomponentsjs": "^2.0.2",
@@ -42,7 +44,7 @@
     "process": "^0.11.10",
     "redux": "^4.0.0",
     "rxjs": "^5.0.1",
-    "tangy-form-editor": "1.1.0",
+    "tangy-form-editor": "2.0.0",
     "ts-helpers": "^1.1.1",
     "underscore": "^1.9.1",
     "uuid": "^3.0.1",
