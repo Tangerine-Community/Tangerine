@@ -6,7 +6,7 @@ const emit = (key, value) => {
   return true;
 }
 
-export class ClassViewService {
+export class ClassFormService {
 
   db:any;
   databaseName: String;
@@ -37,11 +37,49 @@ export class ClassViewService {
     await this.userDB.put(tangyClassDesignDoc)
   }
 
+  // Would be nice if this was queue based so if two saves get called at the same time, the differentials are sequentials updated
+  // into the database. Using a getter and setter for property fields, this would be one way to queue.
+  async saveResponse(responseDoc) {
+    let r
+    if (!responseDoc._id) {
+      r = await this.userDB.post(responseDoc)
+    }
+    else {
+      r = await this.userDB.put(responseDoc)
+    }
+    return await this.userDB.get(r.id)
+
+  }
+
+  async getResponse(responseId) {
+    try {
+      let doc = await this.userDB.get(responseId)
+      return doc
+    } catch (e) {
+      return false
+    }
+  }
+  async getResponsesByStudentId(studentId) {
+    const result = await this.userDB.query('tangy-class/responsesByStudentId', {
+      key: studentId,
+      include_docs: true
+    });
+    return result.rows;
+  }
+
+  // async getStudentProfile(studentId) {
+  //   const result = await this.userDB.query('tangy-class/responsesByFormId', {
+  //     key: studentId,
+  //     include_docs: true
+  //   });
+  //   return result.rows;
+  // }
+
 }
 
 var tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '7',
+  version: '9',
   views: {
     responsesByClassIdFormIdStartDatetime: {
       map: function (doc) {
@@ -67,12 +105,37 @@ var tangyClassDesignDoc = {
         }
       }.toString()
     },
+    // responsesForStudentReg: {
+    //   map: function (doc) {
+    //     if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
+    //       if (doc.form.id !== 'student-registration') return
+    //       let inputs = [];
+    //       doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+    //       let input = inputs.find(input => (input.name === 'classId') ? true : false)
+    //       if (input) {
+    //         emit(input.value, true);
+    //       }
+    //     }
+    //   }.toString()
+    // },
     responsesByClassId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
           let inputs = [];
           doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
           let input = inputs.find(input => (input.name === 'classId') ? true : false)
+          if (input) {
+            emit(input.value, true);
+          }
+        }
+      }.toString()
+    },
+    responsesByStudentId: {
+      map: function (doc) {
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
+          let inputs = [];
+          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          let input = inputs.find(input => (input.name === 'studentId') ? true : false)
           if (input) {
             emit(input.value, true);
           }

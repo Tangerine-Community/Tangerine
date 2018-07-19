@@ -9,6 +9,7 @@ import {SharedModule} from "../shared/shared.module";
 import {DashboardService} from "./_services/dashboard.service";
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
+import { ClassFormsPlayerComponent } from './class-forms-player/class-forms-player.component';
 
 
 @NgModule({
@@ -26,7 +27,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     MatCheckboxModule,
     MatPaginatorModule
   ],
-  declarations: [DashboardComponent],
+  declarations: [DashboardComponent, ClassFormsPlayerComponent],
   providers: [DashboardService]
 })
 export class ClassModule { }

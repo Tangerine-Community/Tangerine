@@ -42,14 +42,6 @@ export class DashboardService {
     return result.rows;
   }
 
-  async getMyResults(studentId) {
-    const result = await this.userDB.query('tangy-class/responsesByStudentId', {
-      key: 'class-registration',
-      include_docs: true
-    });
-    return result.rows;
-  }
-
   async getMyStudents(selectedClass: any) {
     const result = await this.userDB.query('tangy-class/responsesForStudentRegByClassId', {
       key: selectedClass,

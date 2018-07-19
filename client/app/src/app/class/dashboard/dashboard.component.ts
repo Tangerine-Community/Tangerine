@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {DashboardService} from "../_services/dashboard.service";
 import {MatTabChangeEvent, MatPaginator, MatTableDataSource, PageEvent} from "@angular/material";
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
-import {ClassViewService} from "../_services/class-view.service";
+import {ClassFormService} from "../_services/class-form.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {Router} from "@angular/router";
 import {tap} from "rxjs/internal/operators";
@@ -63,7 +63,7 @@ export class DashboardComponent implements OnInit {
     (<any>window).Tangy = {}
     const currentUser = await this.authenticationService.getCurrentUser();
     if (currentUser) {
-      const classViewService = new ClassViewService({databaseName: currentUser});
+      const classViewService = new ClassFormService({databaseName: currentUser});
       classViewService.initialize();
     }
   }
@@ -149,12 +149,12 @@ export class DashboardComponent implements OnInit {
     let studentId = column.id
     let classId = column.classId
     let selectedFormId = selectedForm.formId
-    let selectedId = selectedForm.curriculum
+    let curriculum = selectedForm.curriculum
     let src = selectedForm.src
     let title = selectedForm.title
     // console.log("boom! " + selectedId)
-    this.router.navigate(['tangy-forms-player'], { queryParams:
-        { formId: selectedId, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title }
+    this.router.navigate(['class-forms-player'], { queryParams:
+        { formId: selectedFormId, curriculum: curriculum, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title }
     });
   }
 
