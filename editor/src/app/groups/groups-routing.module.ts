@@ -7,6 +7,7 @@ import { NewGroupComponent } from './new-group/new-group.component';
 import { ReleaseApkComponent } from './release-apk/release-apk.component';
 import { ReleasePwaComponent } from './release-pwa/release-pwa.component';
 import { DownloadCsvComponent } from './download-csv/download-csv.component';
+import { AddUserComponent } from './add-users/add-user.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects',  component: GroupsComponent },
@@ -14,9 +15,10 @@ const groupsRoutes: Routes = [
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName', component: GroupDetailsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/download-csv/:formId', component: DownloadCsvComponent, canActivate: [LoginGuard] },
   { path: 'group/release-apk/:id/:releaseType', component: ReleaseApkComponent, canActivate: [LoginGuard] },
-  { path: 'group/release-pwa/:id/:releaseType', component: ReleasePwaComponent, canActivate: [LoginGuard] },
+  { path: 'group/release-pwa/:id/:releaseType', component: ReleasePwaComponent, canActivate: [LoginGuard] }
 ];
 @NgModule({
   imports: [
