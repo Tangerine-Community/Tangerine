@@ -159,6 +159,8 @@ const generateFlatObject = function (formData, locationList) {
         }
       } else if (input && typeof input.value === 'string') {
         formResponseResult[`${formID}.${item.id}.${input.name}`] = input.value;
+      } else if (input && typeof input.value === 'number') {
+        formResponseResult[`${formID}.${item.id}.${input.name}`] = input.value;
       } else if (input && Array.isArray(input.value)) {
         for (let group of input.value) {
           formResponseResult[`${formID}.${item.id}.${input.name}.${group.name}`] = group.value;
