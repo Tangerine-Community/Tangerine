@@ -9,7 +9,7 @@
       "outDir": "dist",
       "assets": [
         "assets",
-        "ckeditor",
+        { "glob": "**/*", "input": "../node_modules/tangy-form-editor/ckeditor/", "output": "./ckeditor/" },
         "favicon.ico"
       ],
       "index": "index.html",
