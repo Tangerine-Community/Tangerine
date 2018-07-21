@@ -10,6 +10,7 @@
       "assets": [
         "assets",
         { "glob": "**/*", "input": "../node_modules/tangy-form-editor/ckeditor/", "output": "./ckeditor/" },
+        { "glob": "**/*", "input": "../node_modules/ace-builds/src-noconflict/", "output": "./" },
         "favicon.ico"
       ],
       "index": "index.html",
