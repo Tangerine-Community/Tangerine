@@ -28,6 +28,7 @@ import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { ExportDataModule } from './core/export-data/export-data.module';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TangerineEditorModule } from './tangerine-editor/tangerine-editor.module';
 
 // import { CaseManagementModule } from './case-management/case-management.module';
 export { AppComponent }
@@ -46,6 +47,7 @@ export function HttpClientLoaderFactory(httpClient: HttpClient) {
     BrowserAnimationsModule,
     MatButtonModule, MatIconModule, MatCheckboxModule, MatInputModule, MatToolbarModule, MatSidenavModule, MatMenuModule, MatProgressBarModule,
     TangyFormsModule,
+    TangerineEditorModule,
     AuthModule,
     CaseManagementModule,
     UserProfileModule,

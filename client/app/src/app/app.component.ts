@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
   showUpdateAppLink;
   window;
   updateIsRunning = false;
+  hasWritePermission = false;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
     private windowRef: WindowRef, private userService: UserService,
@@ -35,8 +36,13 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    // Set location list as a global.
     this.window = this.windowRef.nativeWindow;
+    // Determine if we can show the editor dashboard.
+    if (this.window.DatArchive) {
+      let archive = new this.window.DatArchive(this.window.location.origin)
+      this.hasWritePermission = ((await archive.getInfo()).isOwner) ? true : false;
+    }
+    // Set location list as a global.
     const res = await this.http.get('./assets/location-list.json').toPromise();
     this.window.locationList = res;
     try {

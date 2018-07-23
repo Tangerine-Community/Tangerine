@@ -19,6 +19,9 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
+              { "glob": "**/*", "input": "./node_modules/tangy-form-editor/ckeditor/", "output": "./ckeditor/" },
+              { "glob": "**/*", "input": "./node_modules/ace-builds/src-noconflict/", "output": "./" },
+              "src/app/tangerine-editor/beautify-html.js",
               "src/favicon.ico",
               "src/assets"
             ],
@@ -77,6 +80,9 @@
             ],
             "scripts": [],
             "assets": [
+              { "glob": "**/*", "input": "./node_modules/tangy-form-editor/ckeditor/", "output": "./ckeditor/" },
+              { "glob": "**/*", "input": "./node_modules/ace-builds/src-noconflict/", "output": "./" },
+              "src/app/tangerine-editor/beautify-html.js",
               "src/favicon.ico",
               "src/assets"
             ]

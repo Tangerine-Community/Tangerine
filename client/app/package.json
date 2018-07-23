@@ -42,6 +42,7 @@
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.2.1",
     "tangy-form": "2.0.0",
+    "tangy-form-editor": "^2.2.0",
     "underscore": "^1.9.1",
     "zone.js": "^0.8.26"
   },

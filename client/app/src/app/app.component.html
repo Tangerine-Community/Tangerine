@@ -19,7 +19,10 @@
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="home"></a>
   </span>
   <span class="tangy-spacer"></span>
-
+  <button *ngIf="hasWritePermission" routerLink="tangerine-editor" mat-button>
+    <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
+    <span>{{'Editor Dashboard'|translate}}</span>
+  </button>
   <button *ngIf="showNav" [matMenuTriggerFor]="appMenu" mat-button>
     <i class="material-icons">account_box</i>
   </button>

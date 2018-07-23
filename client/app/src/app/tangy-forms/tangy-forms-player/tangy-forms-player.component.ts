@@ -7,7 +7,6 @@ import { UserService } from '../../core/auth/_services/user.service';
 import { WindowRef } from '../../core/window-ref.service';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form-service';
-import 'tangy-form/tangy-form.js';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 
