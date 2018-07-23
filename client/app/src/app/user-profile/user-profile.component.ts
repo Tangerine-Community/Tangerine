@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 
 import { UserService } from '../core/auth/_services/user.service';
 import { TangyFormService } from '../tangy-forms/tangy-form-service';
-import 'tangy-form/tangy-form.js';
 
 @Component({
   selector: 'app-user-profile',

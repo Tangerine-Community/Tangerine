@@ -1,0 +1,16 @@
+<mat-card class="tangy-card-content-container">
+  <mat-list>
+    <mat-list-item class="tangy-location-list" *ngFor="let form of formList; let formIndex=index">
+      <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:formIndex}>
+        <i class="material-icons md-24 tangy-location-list-icon">play_circle_filled</i>
+      </a>
+      <a class="tangy-foreground-primary" [routerLink]="['/tangerine-editor/form-editor/']" [queryParams]={formIndex:formIndex}>
+        <i class="material-icons md-24 tangy-location-list-icon">edit</i>
+      </a>
+      <span>{{form.title}}</span>
+    </mat-list-item>
+  </mat-list>
+
+  <p *ngIf="!formList" class="mat-h3">{{'No Forms Currently Defined'|translate}}</p>
+</mat-card>
+
