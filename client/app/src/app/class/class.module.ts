@@ -10,7 +10,8 @@ import {
   MatTableModule,
   MatTabsModule,
   MatSelectModule,
-  MatMenuModule
+  MatMenuModule,
+  MatPaginatorIntl
 } from '@angular/material';
 import {CdkTableModule} from "@angular/cdk/table";
 import {SharedModule} from "../shared/shared.module";
@@ -19,7 +20,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { ClassFormsPlayerComponent } from './class-forms-player/class-forms-player.component';
 import { ReportsComponent } from './reports/reports.component';
-// import {ClassUtils} from "./class-utils.js";
+import {MatPaginationIntlService} from "./_services/mat-pagination-intl.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @NgModule({
   imports: [
@@ -38,6 +40,14 @@ import { ReportsComponent } from './reports/reports.component';
     MatPaginatorModule
   ],
   declarations: [DashboardComponent, ClassFormsPlayerComponent, ReportsComponent],
-  providers: [DashboardService]
+  providers: [DashboardService, {
+    provide: MatPaginatorIntl,
+    useFactory: (translate) => {
+      const service = new MatPaginationIntlService();
+      service.injectTranslateService(translate);
+      return service;
+    },
+    deps: [TranslateService]
+  }]
 })
 export class ClassModule { }
