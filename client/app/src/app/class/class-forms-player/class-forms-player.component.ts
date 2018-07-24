@@ -35,30 +35,36 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     this.route.queryParams.subscribe(async params => {
-      // this.responseId = params['responseId'];
+      this.responseId = params['responseId'];
       this.formId = params['formId'];
       this.classId = params['classId'];
       this.curriculum = params['curriculum'];
       this.studentId = params['studentId'];
+      if (typeof this.formId === 'undefined') {
+        // this is student reg or class reg.
+        this.formId = this.curriculum
+      }
       const appConfig = await this.appConfigService.getAppConfig();
       const userDbName = await this.userService.getUserDatabase();
       const classFormService = new ClassFormService({databaseName: userDbName});
       this.service = classFormService
       let formResponse;
-      if (typeof this.responseId === 'undefined') {
-        // might have come from a stale dashboard, so check using the curriculum and student id
-        const responses = await classFormService.getResponsesByStudentId(this.studentId);
-        for (const response of responses as any[] ) {
-          const resp = this.getInputValues(response.doc)
-          if (resp['classId'] === this.classId) {
-            formResponse = response.doc
+      if (typeof this.studentId !== 'undefined') {
+        if (typeof this.responseId === 'undefined') {
+          // might have come from a stale dashboard, so check using the curriculum and student id
+          const responses = await classFormService.getResponsesByStudentId(this.studentId);
+          for (const response of responses as any[] ) {
+            const resp = this.getInputValues(response.doc)
+            if (resp['classId'] === this.classId) {
+              formResponse = response.doc
+            }
           }
+        } else {
+          formResponse = await classFormService.getResponse(this.responseId);
         }
-      } else {
-        formResponse = await classFormService.getResponse(this.responseId);
       }
-      const studentRegistrationDoc = await classFormService.getResponse(this.studentId);
-      const srValues = this.getInputValues(studentRegistrationDoc);
+
+      // enable the requested subform to be viewed
       const container = this.container.nativeElement
       let formHtml = await this.http.get('./assets/'+ this.curriculum + '/form.html', {responseType: 'text'}).toPromise();
       container.innerHTML = formHtml
@@ -93,14 +99,20 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
         // formEl.store.dispatch({ type: 'FORM_OPEN', response: formResponse })
         formEl.response = formResponse
       } else {
-        //formEl.store.dispatch({ type: 'FORM_OPEN', response: {} })
+        // formEl.store.dispatch({ type: 'FORM_OPEN', response: {} })
         formEl.newResponse()
       }
+
       formEl.addEventListener('submit', async (event) => {
         event.preventDefault()
         let response = formEl.response;
         if (!formResponse) {
-          response.metadata = {"studentRegistrationDoc":srValues}
+          if (response.form.id !== "student-registration" && response.form.id !== "class-registration") {
+            const studentRegistrationDoc = await classFormService.getResponse(this.studentId);
+            const srValues = this.getInputValues(studentRegistrationDoc);
+            srValues['id'] = this.studentId;
+            response.metadata = {"studentRegistrationDoc":srValues}
+          }
         }
         this.throttledSaveResponse(response)
         this.router.navigate(['dashboard']);
@@ -138,6 +150,28 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
     }
 
     let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
+    newStateDoc.items = newStateDoc.items.map(item => {
+      if (item.disabled === false) {
+        let lastModified = Date.now()
+        // get the metadata field
+        if (typeof item.metadata !== 'undefined') {
+          item.metadata.lastModified = lastModified
+        } else {
+          let metadata = {};
+          metadata['lastModified'] = lastModified
+          item.metadata = metadata
+        }
+        return item
+      } else {
+        return item
+      }
+      // if (itemsToDisable.indexOf(item.id) !== -1) {
+      //   return Object.assign({}, item, {disabled: true})
+      // }
+      // else {
+      //   return Object.assign({}, item, {disabled: false})
+      // }
+    })
     await this.service.saveResponse(newStateDoc)
   }
 

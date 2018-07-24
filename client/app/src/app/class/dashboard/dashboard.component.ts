@@ -27,11 +27,12 @@ export interface StudentResponse {
 })
 export class DashboardComponent implements OnInit {
 
-  formList;classes;students;selectedTab;selectedIndex;curriculum;curriculumForms;dataSource;columnsToDisplay;selectedReport;
+  classes;students;selectedTab;selectedIndex;curriculum;curriculumForms;dataSource;columnsToDisplay;selectedReport;
   currentClassId;currentClassIndex;curriculumFormsList;curriculumFormHtml
   studentsResponses:any[];
   allStudentResults:StudentResult[];
   formColumns: string[] = [];
+  formList: any[] = [];
   formColumnsDS;
   // columnsToDisplay: string[] = ["Name"];
   selection = new SelectionModel<StudentResult>(false, []);
@@ -41,6 +42,12 @@ export class DashboardComponent implements OnInit {
   pageLength = 10;
   pageSize = 5;
   pageSizeOptions: number[] = [5, 10, 15, 100];
+  reportsMenu;
+  groupingMenu;
+  studentRegistrationCurriculum = "student-registration";
+  classRegistrationParams = {
+    curriculum:"class-registration"
+  }
   // selected = new FormControl(0);
 
   // MatPaginator Output
@@ -58,7 +65,7 @@ export class DashboardComponent implements OnInit {
 
 
   async ngOnInit() {
-    await this.populateFormList();
+    // await this.populateFormList();
     await this.initDashboard();
     (<any>window).Tangy = {}
     const currentUser = await this.authenticationService.getCurrentUser();
@@ -66,6 +73,7 @@ export class DashboardComponent implements OnInit {
       const classViewService = new ClassFormService({databaseName: currentUser});
       classViewService.initialize();
     }
+
   }
 
   async initDashboard() {
@@ -129,7 +137,7 @@ export class DashboardComponent implements OnInit {
       for (const response of results as any[] ) {
         // console.log("response: " + JSON.stringify(response))
         // studentsResponses.push();
-        let studentId = response.columns.studentId
+        let studentId = response.studentId
         let studentReponses = this.studentsResponses[studentId];
         if (typeof studentReponses === 'undefined') {
           studentReponses = {}
@@ -138,6 +146,29 @@ export class DashboardComponent implements OnInit {
         studentReponses[formId] = response;
         this.studentsResponses[studentId] = studentReponses
       }
+      let allStudentResults = [];
+      for (const student of this.students) {
+        let studentResults = {};
+        studentResults["id"] = student.id
+        studentResults["name"] = student.doc.items[0].inputs[0].value
+        studentResults["classId"] = student.doc.items[0].inputs[3].value
+        studentResults["forms"] = [];
+        // studentResults["forms"] = {};
+        for (const form of this.curriculumForms) {
+          let formResult = {};
+          formResult["formId"] = form.id
+          formResult["curriculum"] = this.curriculum
+          formResult["title"] = form.title
+          formResult["src"] = form.src
+          if (this.studentsResponses[student.id]) {
+            formResult["response"] = this.studentsResponses[student.id][form.id]
+          }
+          studentResults["forms"].push(formResult)
+          // studentResults["forms"][form.id] = formResult
+        }
+        allStudentResults.push(studentResults)
+      }
+      this.allStudentResults = allStudentResults;
     }
   }
 
@@ -166,27 +197,28 @@ export class DashboardComponent implements OnInit {
     let studentId = column.id
     let classId = column.classId
     let selectedFormId = selectedForm.formId
-    let selectedId = selectedForm.curriculum
+    let curriculum = selectedForm.curriculum
     let src = selectedForm.src
     let title = selectedForm.title
     let responseId = selectedForm.response._id
-    // console.log("boom! " + selectedId)
-    this.router.navigate(['tangy-forms-player'], { queryParams:
-        { formId: selectedId, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title, responseId: responseId }
+    console.log("responseId boom! " + responseId)
+    this.router.navigate(['class-forms-player'], { queryParams:
+        { formId: selectedFormId, curriculum: curriculum, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title, responseId: responseId }
     });
   }
 
   private renderGrid() {
     // let allStudentResults:StudentResult = [];
-    let allStudentResults = [];
     // re-init the formColumns and columnsToDisplay
     this.formColumns = [];
     this.columnsToDisplay = ["Name"];
     for (const form of this.curriculumForms) {
       let formEl = {
         "title":form.title,
-        "id":form.id
+        "id":form.id,
+        "classId":this.currentClassId
       };
+      this.formList.push(formEl)
       this.formColumns.push(form.title)
       // this.formColumns.push(formEl)
       this.columnsToDisplay.push(form.title);
@@ -199,38 +231,21 @@ export class DashboardComponent implements OnInit {
       )
       .subscribe();
 
-    for (const student of this.students) {
-      let studentResults = {};
-      studentResults["id"] = student.id
-      studentResults["name"] = student.doc.items[0].inputs[0].value
-      studentResults["classId"] = student.doc.items[0].inputs[3].value
-      studentResults["forms"] = [];
-      // studentResults["forms"] = {};
-      for (const form of this.curriculumForms) {
-        let formResult = {};
-        formResult["formId"] = form.id
-        formResult["curriculum"] = this.curriculum
-        formResult["title"] = form.title
-        formResult["src"] = form.src
-        if (this.studentsResponses[student.id]) {
-          formResult["response"] = this.studentsResponses[student.id][form.id]
-        }
-        studentResults["forms"].push(formResult)
-        // studentResults["forms"][form.id] = formResult
-      }
-      allStudentResults.push(studentResults)
-    }
-    this.allStudentResults = allStudentResults;
-    this.dataSource = new MatTableDataSource<StudentResult>(allStudentResults);
+
+    this.dataSource = new MatTableDataSource<StudentResult>(this.allStudentResults);
     // this.dataSource.paginator = this.paginator;
   }
 
-  async populateFormList() {
-    try {
-      this.formList = await this.dashboardService.getFormList();
-    } catch (error) {
-      console.error(error);
-    }
+  // async populateFormList() {
+  //   try {
+  //     this.formList = await this.dashboardService.getFormList();
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
+  selectReport(reportId) {
+    console.log("reportId: " + reportId)
   }
 
   /**

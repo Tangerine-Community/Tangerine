@@ -77,24 +77,62 @@ export class DashboardService {
     const columnsToShow = ["studentId"];
     // const formList = await this.getCurriculaForms(curriculum);
 
-    const observations = result.map(async (observation) => {
-      let columns = await this.getDataForColumns(observation.doc['items'], columnsToShow);
+    // const observations = result.map(async (observation) => {
+    const observations = [];
+    result.forEach(async observation => {
+      // let columns = await this.getDataForColumns(observation.doc['items'], columnsToShow);
       // columns = columns.filter(x => x !== undefined);
-      const index = formList.findIndex(c => c.id === observation.doc.form['id']);
-      if (formList[index]) {
+      // const index = formList.findIndex(c => c.id === observation.doc.form['id']);
+      // loop through the formList
+      for (var i = 0; i < formList.length; i++) {
+
+        let itemCount = null;
+        let lastModified = null;
+        let answeredQuestions = [];
+        let percentCorrect = null;
+        if (observation.doc['items'][i]) {
+          itemCount = observation.doc['items'][i].inputs.length
+          let metadata = observation.doc['items'][i].metadata;
+          if (metadata) {
+            lastModified = metadata['lastModified']
+          }
+          observation.doc['items'][i].inputs.forEach(item => {
+            // inputs = [...inputs, ...item.value]
+            if (item.value !== "") {
+              let data = {}
+              data[item.name] = item.value;
+              answeredQuestions.push(data)
+            }
+          })
+          if (answeredQuestions.length > 0) {
+            percentCorrect =  (answeredQuestions.length/itemCount) * 100
+          } else {
+            percentCorrect = 0
+          }
+        }
+        // if (formList[index]) {
         let response = {
-          formTitle: formList[index]['title'],
-          formId: formList[index]['id'],
+          formTitle: formList[i]['title'],
+          formId: formList[i]['id'],
           startDatetime: observation.doc.startDatetime,
-          formIndex: index,
+          formIndex: i,
           _id: observation.doc._id,
-          count: observation.doc['items'][0].inputs.length,
-          columns
+          itemCount: itemCount,
+          studentId: observation.doc.metadata.studentRegistrationDoc.id,
+          lastModified: lastModified,
+          answeredQuestions: answeredQuestions,
+          percentCorrect: percentCorrect
+          // columns
         };
-        return response;
+
+        // return response;
+        observations.push(response)
+        // }
       }
     });
-    return Promise.all(observations);
+    // });
+    // return Promise.all(observations);
+    return observations;
   }
 
   async getDataForColumns(array, columns) {
