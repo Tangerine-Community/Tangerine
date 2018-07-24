@@ -7,18 +7,19 @@
       <mat-card class="tangy-card-content-container">
         <mat-list>
           <mat-list-item >
-            <span class="tangy-foreground-primary" *ngIf="curriculum">Curriculum: {{curriculum}}</span>
+            <span class="tangy-foreground-primary" *ngIf="curriculum"><strong>{{'Curriculum'|translate}}</strong> {{curriculum}}</span>
           </mat-list-item>
           <mat-list-item >
-            <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:1,classId:class.doc._id}>Add Student</a>)</span>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <mat-form-field>
-              Report: <mat-select [(value)]="selectedReport">
-                <mat-option>None</mat-option>
-                <mat-option value="progress">Progress Graph</mat-option>
-                <mat-option value="mastery">Mastery Check Table</mat-option>
-                <mat-option value="grouping">Class Grouping Table</mat-option>
-              </mat-select>
-            </mat-form-field>
+            <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a title="Add Student" class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:class.doc._id}>{{'Add Student'|translate}}</a>)</span>
+            <span>&nbsp;&nbsp;&nbsp;
+              <button mat-button [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+              <mat-menu #reportsMenu="matMenu">
+                <button mat-menu-item [matMenuTriggerFor]="groupingMenu">Class grouping</button>
+              </mat-menu>
+              <mat-menu #groupingMenu="matMenu">
+                <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/{{item.id}}/{{item.classId}}">{{item.title}}</button>
+              </mat-menu>
+            </span>
           </mat-list-item>
             <mat-list-item *ngIf="!students">
               <p class="mat-h3">{{'No Students currently registered.'|translate}}</p>
@@ -42,18 +43,24 @@
             <!--(change)="$event ? selection.toggle(column) : null"-->
 
             <td mat-cell *matCellDef="let element,i">
-              <span *ngIf="!element['forms'][i]['response']">
+              <!--<span *ngIf="!element['forms'][i]['response'] ">-->
+              <!--<mat-checkbox (click)="$event.stopPropagation()"-->
+                            <!--(change)="$event ? selectCheckbox(element,i) : null"-->
+                            <!--[checked]="selection.isSelected(element)">-->
+              <!--</mat-checkbox>-->
+              <!--</span>-->
+              <span *ngIf="!element['forms'][i]['response'] || element['forms'][i]['response']?.itemCount == 0 ">
               <mat-checkbox (click)="$event.stopPropagation()"
                             (change)="$event ? selectCheckbox(element,i) : null"
                             [checked]="selection.isSelected(element)">
               </mat-checkbox>
               </span>
-              <span *ngIf="element['forms'][i]['response']">
-                <mat-checkbox (click)="$event.stopPropagation()"
-                (change)="$event ? selectCheckboxResult(element,i) : null"
+              <span *ngIf="element['forms'][i]['response']?.itemCount > 0 ">
+                <mat-checkbox (click)="$event ? selectCheckboxResult(element,i) : null"
                 [checked]="true"
                 [disabled]="true">
-              </mat-checkbox><br/>Count: {{element["forms"][i]['response'].count}}</span>
+              </mat-checkbox><br/>Correct: {{element["forms"][i]['response'].percentCorrect}}%
+              </span>
             </td>
           </ng-container>
 
@@ -71,14 +78,14 @@
 
   <mat-tab>
     <ng-template mat-tab-label>
-      <a class="mat-tab-label" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:0}>
+      <a class="mat-tab-label" [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>
         <span>Add Class</span>
     </a>
     </ng-template>
     <br>
     <mat-card class="tangy-card-content-container">
       <mat-list-item class="tangy-location-list">
-        <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:0}>
+        <a class="tangy-foreground-primary" [routerLink]="['/class-forms-player/']" [queryParams]={formIndex:0}>
           Add Class
         </a>
       </mat-list-item>

@@ -66,6 +66,22 @@ export class ClassFormService {
     });
     return result.rows;
   }
+  async getResponsesByFormId(formId) {
+    let r = await this.db.query('tangy-class/responsesByFormId', { key: formId, include_docs: true })
+    return r.rows.map((row) => row.doc)
+  }
+
+  getInputValues(doc) {
+    let inputs = doc.items.reduce((acc, item) => [...acc, ...item.inputs], [])
+    let obj = {}
+    for (const el of inputs) {
+      var attrs = inputs.attributes;
+      for(let i = inputs.length - 1; i >= 0; i--) {
+        obj[inputs[i].name] = inputs[i].value;
+      }
+    }
+    return obj;
+  }
 
   // async getStudentProfile(studentId) {
   //   const result = await this.userDB.query('tangy-class/responsesByFormId', {
@@ -79,7 +95,7 @@ export class ClassFormService {
 
 var tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '9',
+  version: '11',
   views: {
     responsesByClassIdFormIdStartDatetime: {
       map: function (doc) {
@@ -121,11 +137,14 @@ var tangyClassDesignDoc = {
     responsesByClassId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
-          let inputs = [];
-          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-          let input = inputs.find(input => (input.name === 'classId') ? true : false)
-          if (input) {
-            emit(input.value, true);
+          // let inputs = [];
+          // doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          // let input = inputs.find(input => (input.name === 'classId') ? true : false)
+          // if (input) {
+          //   emit(input.value, true);
+          // }
+          if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.classId) {
+            emit(doc.metadata.studentRegistrationDoc.classId, true);
           }
         }
       }.toString()

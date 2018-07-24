@@ -4,6 +4,7 @@ import {CreateProfileGuardService} from "../user-profile/create-profile-guard.se
 import {LoginGuard} from "../core/auth/_guards/login-guard.service";
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {ClassFormsPlayerComponent} from "./class-forms-player/class-forms-player.component";
+import {ReportsComponent} from "./reports/reports.component";
 
 const routes = [
   {
@@ -14,6 +15,11 @@ const routes = [
   {
     path: 'class-forms-player',
     component: ClassFormsPlayerComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
+    path: 'reports/:type/:classId',
+    component: ReportsComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   }
 ];
