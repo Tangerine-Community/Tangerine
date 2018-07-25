@@ -19,7 +19,8 @@ export class NewGroupComponent implements OnInit {
 
   async createGroup() {
     try {
-      const result: any = await this.groupsService.createGroup(this.groupName);
+      const result: any = await this.groupsService.createGroup(this.groupName.toLowerCase().replace(' ', '-').replace(/[^a-z]+|\s+/gmi, ''));
+      console.log('foo')
       if (result && result.statusCode && result.statusCode === 200) {
         this.groupName = '';
         this.errorHandler.handleError(_TRANSLATE('Group Created Succesfully'));
