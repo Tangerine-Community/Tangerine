@@ -31,7 +31,9 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
 
     this.containerEl.innerHTML = `
       <tangy-form-editor>
-        ${formHtml}
+        <template>
+          ${formHtml}
+        </template>
       </tangy-form-editor>
     `
     const tangyFormEditorEl = this.containerEl.querySelector('tangy-form-editor')
