@@ -979,16 +979,17 @@ const keepAliveReportingWorker = async initialGroups => {
         }
         try {
           workerState = JSON.parse(response.stdout)
+          await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
           // Wrap up. If nothing was last processed, sleep for 30 seconds.
           if (workerState.processed === 0) {
+            log.info('No changes processed. Sleeping...')
             await sleep(30 * 1000)
           } else {
             log.info(`Processed ${workerState.processed} changes.`)
           }
-          await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
         } catch (error) {
           log.error(error)
-          log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
+          log.info('keepAliveReportingWorker had an error trying to save state. Sleeping for 30 seconds.')
           await sleep(30*1000)
         }
       } catch (error) {
