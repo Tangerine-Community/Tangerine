@@ -973,9 +973,9 @@ const keepAliveReportingWorker = async initialGroups => {
       try {
         response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
         if (typeof response.stderr === 'object') {
-          log.warn(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
+          log.error(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
         } else if (response.stderr) {
-          log.warn(`run-worker.js STDERR: ${response.stderr}`)
+          log.error(`run-worker.js STDERR: ${response.stderr}`)
         }
         try {
           workerState = JSON.parse(response.stdout)
@@ -987,14 +987,21 @@ const keepAliveReportingWorker = async initialGroups => {
           }
           await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
         } catch (error) {
-          log.warn(error)
+          log.error(error)
+          log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
+          await sleep(30*1000)
         }
       } catch (error) {
         log.error(error)
+        log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
+        await sleep(30*1000)
       }
     }
   } catch (error) {
     log.error(error)
+    log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
+    await sleep(30*1000)
+
   }
 }
 const initialGroups = allGroups()
