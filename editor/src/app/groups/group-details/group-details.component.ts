@@ -71,12 +71,9 @@ export class GroupDetailsComponent implements OnInit {
         <tangy-form id="${formId}" title="${formTitle}">
           <tangy-form-item id="${this.generateUuid()}" title="Item 1">
             <template>
-              <tangy-input name="input1" label="First question..."></tangy-input>
-            </template>
-          </tangy-form-item>
-          <tangy-form-item id="${this.generateUuid()}" title="Summary" summary>
-            <template>
-              Thank you for filling out our survey.
+              <form>
+                <tangy-input name="input1" label="First question..."></tangy-input>
+              </form>
             </template>
           </tangy-form-item>
         </tangy-form>
