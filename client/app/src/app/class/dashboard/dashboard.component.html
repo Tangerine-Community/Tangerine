@@ -11,10 +11,10 @@
           </mat-list-item>
           <mat-list-item >
             <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a title="Add Student" class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:class.doc._id}>{{'Add Student'|translate}}</a>)</span>
-            <span>&nbsp;&nbsp;&nbsp;
+            <span dir="rtl">&nbsp;&nbsp;&nbsp;
               <button mat-button [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
               <mat-menu #reportsMenu="matMenu">
-                <button mat-menu-item [matMenuTriggerFor]="groupingMenu">Class grouping</button>
+                <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
               </mat-menu>
               <mat-menu #groupingMenu="matMenu">
                 <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/{{item.id}}/{{item.classId}}">{{item.title}}</button>
@@ -59,7 +59,7 @@
                 <mat-checkbox (click)="$event ? selectCheckboxResult(element,i) : null"
                 [checked]="true"
                 [disabled]="true">
-              </mat-checkbox><br/>Correct: {{element["forms"][i]['response'].percentCorrect}}%
+              </mat-checkbox><br/>{{'Correct'|translate}}: {{element["forms"][i]['response'].percentCorrect}}%
               </span>
             </td>
           </ng-container>
@@ -79,14 +79,14 @@
   <mat-tab>
     <ng-template mat-tab-label>
       <a class="mat-tab-label" [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>
-        <span>Add Class</span>
+        <span>{{'Add Class'|translate}}</span>
     </a>
     </ng-template>
     <br>
     <mat-card class="tangy-card-content-container">
       <mat-list-item class="tangy-location-list">
         <a class="tangy-foreground-primary" [routerLink]="['/class-forms-player/']" [queryParams]={formIndex:0}>
-          Add Class
+          {{'Add Class'|translate}}
         </a>
       </mat-list-item>
     </mat-card>

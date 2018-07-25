@@ -6,6 +6,7 @@ import {StudentResult} from "../dashboard/dashboard.component";
 import {ClassFormService} from "../_services/class-form.service";
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
 import {ClassUtils} from "../class-utils.js";
+import { _TRANSLATE } from '../../shared/translation-marker';
 
 export interface ClassGroupingReport {
   id: string;
@@ -46,7 +47,7 @@ export class ReportsComponent implements OnInit {
   }
   classFormService:ClassFormService;
   classUtils: ClassUtils
-  status:string[] =  ["Concerning", "Poor", "Good", "Great"]
+  status:string[] =  [_TRANSLATE('Status.Concerning'), _TRANSLATE('Status.Poor'), _TRANSLATE('Status.Good'), _TRANSLATE('Status.Great')]
 
   @ViewChild('container') container: ElementRef;
   constructor(
@@ -109,6 +110,7 @@ export class ReportsComponent implements OnInit {
       studentResults["name"] = student.doc.items[0].inputs[0].value
       studentResults["classId"] = student.doc.items[0].inputs[3].value
       studentResults["forms"] = [];
+      let aCorrect = 0;
       // studentResults["forms"] = {};
       for (const form of curriculumFormsList) {
         // let formResult = {};
