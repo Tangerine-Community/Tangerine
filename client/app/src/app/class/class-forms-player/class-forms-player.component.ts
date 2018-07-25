@@ -6,6 +6,8 @@ import {HttpClient} from "@angular/common/http";
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import {DashboardService} from "../_services/dashboard.service";
 import {ClassFormService} from "../_services/class-form.service";
+import {ClassUtils} from "../class-utils.js";
+
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -23,6 +25,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
   studentId;
   formId;
   classId;
+  classUtils: ClassUtils;
   @ViewChild('container') container: ElementRef;
 
   constructor(
@@ -35,6 +38,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     this.route.queryParams.subscribe(async params => {
+      this.classUtils = new ClassUtils();
       this.responseId = params['responseId'];
       this.formId = params['formId'];
       this.classId = params['classId'];
@@ -67,21 +71,28 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       // enable the requested subform to be viewed
       const container = this.container.nativeElement
       let formHtml = await this.http.get('./assets/'+ this.curriculum + '/form.html', {responseType: 'text'}).toPromise();
+      let curriculumFormsList = await this.classUtils.createCurriculumFormsList(formHtml, container);
       container.innerHTML = formHtml
-      let formItems = container.querySelectorAll('tangy-form-item')
+      // let formItems = container.querySelectorAll('tangy-form-item')
       let itemsToDisable = []
       // disable all tangy-form-items except for the one you want to view.
-      for (const el of formItems) {
-        var attrs = el.attributes;
-        let obj = {}
-        for(let i = attrs.length - 1; i >= 0; i--) {
-          obj[attrs[i].name] = attrs[i].value;
-        }
-        if (obj['id'] !== this.formId) {
-          itemsToDisable.push(obj['id'])
-          container.querySelector('#' + obj['id']).disabled = true
+      for(const el of curriculumFormsList) {
+        if (el['id'] !== this.formId) {
+          itemsToDisable.push(el['id'])
+          container.querySelector('#' + el['id']).disabled = true
         }
       }
+      // for (const el of formItems) {
+      //   var attrs = el.attributes;
+      //   let obj = {}
+      //   for(let i = attrs.length - 1; i >= 0; i--) {
+      //     obj[attrs[i].name] = attrs[i].value;
+      //   }
+      //   if (obj['id'] !== this.formId) {
+      //     itemsToDisable.push(obj['id'])
+      //     container.querySelector('#' + obj['id']).disabled = true
+      //   }
+      // }
       if (typeof formResponse !== 'undefined') {
         formResponse.items = formResponse.items.map(item => {
           if (itemsToDisable.indexOf(item.id) !== -1) {

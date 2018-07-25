@@ -105,7 +105,7 @@ export class DashboardService {
             }
           })
           if (answeredQuestions.length > 0) {
-            percentCorrect =  (answeredQuestions.length/itemCount) * 100
+            percentCorrect =  Math.round((answeredQuestions.length/itemCount) * 100)
           } else {
             percentCorrect = 0
           }

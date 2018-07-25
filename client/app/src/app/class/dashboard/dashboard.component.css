@@ -10,3 +10,11 @@
   overflow: initial;
 }
 
+.mat-column-Name {
+  padding-right:5px;
+}
+
+th.mat-header-cell {
+  text-align: right;
+}
+
