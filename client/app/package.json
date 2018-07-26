@@ -36,6 +36,7 @@
     "material-design-icons": "^3.0.1",
     "moment": "^2.22.2",
     "pako": "^1.0.6",
+    "plotly.js-dist": "^1.39.3",
     "pouchdb": "^6.4.3",
     "pouchdb-find": "^6.4.3",
     "pouchdb-upsert": "^2.2.0",
