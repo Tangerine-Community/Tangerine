@@ -17,6 +17,7 @@ export class DownloadCsvComponent implements OnInit {
   errorDownloadingFile;
   result;
   checkDownloadStatusInterval;
+  nothingToDownload = false;
   constructor(private groupsService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
@@ -42,7 +43,12 @@ export class DownloadCsvComponent implements OnInit {
     try {
       this.result = await this.groupsService.checkCSVDownloadStatus(this.stateUrl);
       this.isDownloadComplete = this.result.complete;
-      if (this.isDownloadComplete) clearInterval(this.checkDownloadStatusInterval)
+      if (this.isDownloadComplete) {
+        clearInterval(this.checkDownloadStatusInterval)
+        if (!this.result.skip) {
+          this.nothingToDownload = true;
+        }
+      }
     } catch (error) {
       this.errorDownloadingFile = true;
       console.log(error);
