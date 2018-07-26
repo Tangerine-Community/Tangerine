@@ -2,7 +2,7 @@
   <mat-card-title>{{'Download CSV'|translate}}</mat-card-title>
   <mat-card-content>
     <p class="tangy-full-width" *ngIf="!result">{{'Loading...'|translate}}</p>
-    <div *ngIf="result" class="tangy-full-width">
+    <div *ngIf="result && nothingToDownload === false" class="tangy-full-width">
       <h4 *ngIf="!isDownloadComplete&&!errorDownloadingFile">{{'Generating CSV'|translate}}</h4>
       <h4 *ngIf="errorDownloadingFile">{{'Error Downloading File'|translate}}</h4>
       <p>{{'Group Name'|translate}}: {{groupName}}</p>
@@ -12,6 +12,9 @@
       <div *ngIf="isDownloadComplete">
         <a target="_blank" href="{{downloadUrl}}">{{'Click to Download'|translate}}</a>
       </div>
+    </div>
+    <div *ngIf="result && nothingToDownload === true" class="tangy-full-width">
+      There are no uploaded form responses for this form.
     </div>
   </mat-card-content>
 </mat-card>
