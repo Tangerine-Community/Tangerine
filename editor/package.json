@@ -44,7 +44,7 @@
     "process": "^0.11.10",
     "redux": "^4.0.0",
     "rxjs": "^5.0.1",
-    "tangy-form-editor": "3.1.0",
+    "tangy-form-editor": "3.1.1",
     "ts-helpers": "^1.1.1",
     "underscore": "^1.9.1",
     "uuid": "^3.0.1",
