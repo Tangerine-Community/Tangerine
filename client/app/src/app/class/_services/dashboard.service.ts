@@ -50,12 +50,12 @@ export class DashboardService {
     return result.rows;
   }
 
-  async getResultsByClass(classId: any, forms) {
+  async getResultsByClass(classId: any, curriculumFormsList) {
     const result = await this.userDB.query('tangy-class/responsesByClassId', {
       key: classId,
       include_docs: true
     });
-    const data = await this.transformResultSet(result.rows, forms);
+    const data = await this.transformResultSet(result.rows, curriculumFormsList);
     // clean the array
     let cleanData = this.clean(data, undefined);
     return cleanData;
@@ -71,49 +71,78 @@ export class DashboardService {
     return obj;
   };
 
-  async transformResultSet(result, formList) {
-    // const appConfig = await this.appConfigService.getAppConfig();
-    // const columnsToShow = appConfig.columnsOnVisitsTab;
-    const columnsToShow = ["studentId"];
-    // const formList = await this.getCurriculaForms(curriculum);
+  /**
+   *
+   * @param result
+   * @param curriculumFormsList - use to find if the form is a grid subtest.
+   * @returns {Promise<any[]>}
+   */
+  async transformResultSet(result, curriculumFormsList) {
 
-    // const observations = result.map(async (observation) => {
     const observations = [];
     result.forEach(async observation => {
-      // let columns = await this.getDataForColumns(observation.doc['items'], columnsToShow);
-      // columns = columns.filter(x => x !== undefined);
-      // const index = formList.findIndex(c => c.id === observation.doc.form['id']);
       // loop through the formList
-      for (var i = 0; i < formList.length; i++) {
+      for (var i = 0; i < curriculumFormsList.length; i++) {
 
         let itemCount = null;
         let lastModified = null;
         let answeredQuestions = [];
         let percentCorrect = null;
+        let correct = 0;
+        let incorrect = 0;
+        let noResponse = 0;
+        let score = 0;
+
         if (observation.doc['items'][i]) {
           itemCount = observation.doc['items'][i].inputs.length
           let metadata = observation.doc['items'][i].metadata;
           if (metadata) {
             lastModified = metadata['lastModified']
           }
+          // populate answeredQuestions array
           observation.doc['items'][i].inputs.forEach(item => {
             // inputs = [...inputs, ...item.value]
             if (item.value !== "") {
               let data = {}
               data[item.name] = item.value;
               answeredQuestions.push(data)
+              if (item.name === curriculumFormsList[i]['id'] + "_score") {
+                score = item.value
+              }
             }
           })
-          if (answeredQuestions.length > 0) {
-            percentCorrect =  Math.round((answeredQuestions.length/itemCount) * 100)
-          } else {
-            percentCorrect = 0
-          }
+          // loop through answeredQuestions and calculate correct, incorrect, and missing.
+        //   if (curriculumFormsList[i]['prototype'] === 'grid') {
+        //
+        //   }  else {
+        //     for (const answer of answeredQuestions) {
+        //       let values = Object.values(answer)
+        //       if (typeof values !== 'undefined') {
+        //         for (const value of values) {
+        //           if (value['tagName'] === 'TANGY-RADIO-BUTTON') {
+        //             if (value['label'] === 'Correct' && value['value'] === 'on') {
+        //               correct++
+        //             } else if (value['label'] === 'Incorrect' && value['value'] === 'on') {
+        //               incorrect++
+        //             } else if (value['label'] === '>No response' && value['value'] === 'on') {
+        //               noResponse++
+        //             }
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        //   if (answeredQuestions.length > 0) {
+        //     percentCorrect =  Math.round((answeredQuestions.length/itemCount) * 100)
+        //   } else {
+        //     percentCorrect = 0
+        //   }
         }
-        // if (formList[index]) {
+
         let response = {
-          formTitle: formList[i]['title'],
-          formId: formList[i]['id'],
+          formTitle: curriculumFormsList[i]['title'],
+          formId: curriculumFormsList[i]['id'],
+          prototype: curriculumFormsList[i]['prototype'],
           startDatetime: observation.doc.startDatetime,
           formIndex: i,
           _id: observation.doc._id,
@@ -121,7 +150,11 @@ export class DashboardService {
           studentId: observation.doc.metadata.studentRegistrationDoc.id,
           lastModified: lastModified,
           answeredQuestions: answeredQuestions,
-          percentCorrect: percentCorrect
+          percentCorrect: percentCorrect,
+          correct: correct,
+          incorrect: incorrect,
+          noResponse: noResponse,
+          score: score
           // columns
         };
 

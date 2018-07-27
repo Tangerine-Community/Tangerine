@@ -183,9 +183,12 @@ export class DashboardComponent implements OnInit {
     let curriculum = selectedForm.curriculum
     let src = selectedForm.src
     let title = selectedForm.title
-    // console.log("boom! " + selectedId)
+    let responseId = null;
+    if (selectedForm.response) {
+      responseId = selectedForm.response._id
+    }
     this.router.navigate(['class-forms-player'], { queryParams:
-        { formId: selectedFormId, curriculum: curriculum, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title }
+        { formId: selectedFormId, curriculum: curriculum, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title, responseId: responseId }
     });
   }
 
@@ -201,7 +204,6 @@ export class DashboardComponent implements OnInit {
     let src = selectedForm.src
     let title = selectedForm.title
     let responseId = selectedForm.response._id
-    console.log("responseId boom! " + responseId)
     this.router.navigate(['class-forms-player'], { queryParams:
         { formId: selectedFormId, curriculum: curriculum, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title, responseId: responseId }
     });

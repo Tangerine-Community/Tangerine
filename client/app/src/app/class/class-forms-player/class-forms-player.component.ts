@@ -82,17 +82,6 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
           container.querySelector('#' + el['id']).disabled = true
         }
       }
-      // for (const el of formItems) {
-      //   var attrs = el.attributes;
-      //   let obj = {}
-      //   for(let i = attrs.length - 1; i >= 0; i--) {
-      //     obj[attrs[i].name] = attrs[i].value;
-      //   }
-      //   if (obj['id'] !== this.formId) {
-      //     itemsToDisable.push(obj['id'])
-      //     container.querySelector('#' + obj['id']).disabled = true
-      //   }
-      // }
       if (typeof formResponse !== 'undefined') {
         formResponse.items = formResponse.items.map(item => {
           if (itemsToDisable.indexOf(item.id) !== -1) {

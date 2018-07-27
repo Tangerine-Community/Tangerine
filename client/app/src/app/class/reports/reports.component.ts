@@ -121,20 +121,21 @@ export class ReportsComponent implements OnInit {
         if (this.studentsResponses[student.id]) {
           if (form.id === type) {
             studentResults["response"] = this.studentsResponses[student.id][form.id]
-            let pc = studentResults["response"]["percentCorrect"]
-            console.log("name: "+ studentResults["name"] + " pc: "+ pc)
-
-            let index;
-            if (pc >= 80) {
-              index = 3
-            } else if (pc >= 60 && pc <= 79) {
-              index = 2
-            } else if (pc >= 30 && pc <= 59) {
-              index = 1
-            } else {
-              index = 0
-            }
-            studentResults["status"] = this.status[index]
+            // let pc = studentResults["response"]["percentCorrect"]
+            let score = studentResults["response"]["score"]
+            console.log("name: "+ studentResults["name"] + " score: "+ score)
+            studentResults["score"] = score
+            // let index;
+            // if (pc >= 80) {
+            //   index = 3
+            // } else if (pc >= 60 && pc <= 79) {
+            //   index = 2
+            // } else if (pc >= 30 && pc <= 59) {
+            //   index = 1
+            // } else {
+            //   index = 0
+            // }
+            // studentResults["status"] = this.status[index]
             studentsAssessed ++
           }
         } else {
@@ -163,10 +164,10 @@ export class ReportsComponent implements OnInit {
     }
   }
 
-  async getResultsByClass(selectedClass: any, forms) {
+  async getResultsByClass(selectedClass: any, curriculumFormsList) {
     try {
       // find which class is selected
-      return await this.dashboardService.getResultsByClass(selectedClass, forms);
+      return await this.dashboardService.getResultsByClass(selectedClass, curriculumFormsList);
     } catch (error) {
       console.error(error);
     }
