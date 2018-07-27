@@ -35,7 +35,7 @@ export class ReportsComponent implements OnInit {
   // allStudentResults:StudentResult[] = [];
   allStudentResults = [];
   studentsResponses:any[];
-  columnsToDisplay: string[] = ['name', 'correct', 'status'];
+  columnsToDisplay: string[] = ['name', 'status'];
   classGroupReport:ClassGroupingReport = {
     id:null,
     subtestName: null,
