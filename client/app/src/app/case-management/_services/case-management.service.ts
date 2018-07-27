@@ -123,8 +123,16 @@ export class CaseManagementService {
       let columns = await this.getDataForColumns(observation.doc['items'], columnsToShow);
       columns = columns.filter(x => x !== undefined);
       const index = formList.findIndex(c => c.id === observation.doc.form['id']);
+      let formTitle = ''
+      if (index !== -1) {
+        formTitle = formList[index]['title']
+      } else if (observation.doc.form.title) {
+        formTitle = observation.doc.form.title
+      } else {
+        formTitle = observation.doc.form.id
+      }
       return {
-        formTitle: formList[index]['title'],
+        formTitle,
         startDatetime: observation.doc.startDatetime,
         formIndex: index,
         _id: observation.doc._id,
