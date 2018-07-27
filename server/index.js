@@ -825,8 +825,12 @@ app.get('/csv/:groupName/:formId', async function (req, res) {
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   const outputPath = `/csv/${fileName}`
   const cmd = `cd /tangerine/scripts/generate-csv/ && ./bin.js '${JSON.stringify(pouchDbDefaults)}' ${groupName}-reporting ${formId} ${outputPath} ${batchSize}`
-  clog(cmd)
-  exec(cmd)
+  log.info(`generating csv start: ${cmd}`)
+  exec(cmd).then(status => {
+    log.info(`generate csv done: ${JSON.stringify(status)}`)
+  }).catch(error => {
+    log.error(error)
+  })
   res.send({
     stateUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.csv', '.state.json')}`,
     downloadUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
@@ -973,28 +977,36 @@ const keepAliveReportingWorker = async initialGroups => {
       try {
         response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
         if (typeof response.stderr === 'object') {
-          log.warn(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
+          log.error(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
         } else if (response.stderr) {
-          log.warn(`run-worker.js STDERR: ${response.stderr}`)
+          log.error(`run-worker.js STDERR: ${response.stderr}`)
         }
         try {
           workerState = JSON.parse(response.stdout)
+          await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
           // Wrap up. If nothing was last processed, sleep for 30 seconds.
           if (workerState.processed === 0) {
+            log.info('No changes processed. Sleeping...')
             await sleep(30 * 1000)
           } else {
             log.info(`Processed ${workerState.processed} changes.`)
           }
-          await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
         } catch (error) {
-          log.warn(error)
+          log.error(error)
+          log.info('keepAliveReportingWorker had an error trying to save state. Sleeping for 30 seconds.')
+          await sleep(30*1000)
         }
       } catch (error) {
         log.error(error)
+        log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
+        await sleep(30*1000)
       }
     }
   } catch (error) {
     log.error(error)
+    log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
+    await sleep(30*1000)
+
   }
 }
 const initialGroups = allGroups()

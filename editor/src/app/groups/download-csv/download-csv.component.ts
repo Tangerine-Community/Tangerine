@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
-import { setInterval } from 'timers';
+import { setInterval, clearInterval } from 'timers';
 
 @Component({
   selector: 'app-download-csv',
@@ -16,6 +16,8 @@ export class DownloadCsvComponent implements OnInit {
   isDownloadComplete;
   errorDownloadingFile;
   result;
+  checkDownloadStatusInterval;
+  nothingToDownload = false;
   constructor(private groupsService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
@@ -31,7 +33,7 @@ export class DownloadCsvComponent implements OnInit {
       this.stateUrl = result.stateUrl;
       this.downloadUrl = result.downloadUrl;
       // TODO call download status immediately then after every few second, Probably use RXJS to ensure we only use the latest values
-      setInterval(async () => { await this.checkDownloadStatus(); }, 5000);
+      this.checkDownloadStatusInterval = setInterval(async () => { await this.checkDownloadStatus(); }, 5000);
     } catch (error) {
       console.log(error);
     }
@@ -41,6 +43,12 @@ export class DownloadCsvComponent implements OnInit {
     try {
       this.result = await this.groupsService.checkCSVDownloadStatus(this.stateUrl);
       this.isDownloadComplete = this.result.complete;
+      if (this.isDownloadComplete) {
+        clearInterval(this.checkDownloadStatusInterval)
+        if (!this.result.skip) {
+          this.nothingToDownload = true;
+        }
+      }
     } catch (error) {
       this.errorDownloadingFile = true;
       console.log(error);
