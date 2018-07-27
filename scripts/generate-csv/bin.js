@@ -39,8 +39,15 @@ async function go(state) {
     const DB = PouchDB.defaults(state.dbDefaults)
     const db = new DB(state.dbName)
     // Create the headers.
-    const queryInfo = await db.query('tangy-reporting/resultsByGroupFormId', { key: state.formId, include_docs: false, limit: 0 })
-    const headersDoc = await db.get(state.formId)
+      let headersDoc = {} 
+    try {
+      headersDoc = await db.get(state.formId)
+    } catch (err) {
+      console.log('Nothing to process.')
+      await writeFile(state.outputPath, '', 'utf-8')
+      await writeFile(state.statePath, JSON.stringify(Object.assign(state, {complete: true})), 'utf-8')
+      process.exit()
+    }
     state.headers = headersDoc.columnHeaders.map(header => header.header)
     state.headersKeys = headersDoc.columnHeaders.map(header => header.key)
     state.headers.unshift('_id')
@@ -57,7 +64,8 @@ async function go(state) {
     }
     process.exit()
   } catch (error) {
-    console.log(error)
+    console.error(error)
+    process.exit(1)
   }
 }
 go(state)

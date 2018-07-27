@@ -72,7 +72,7 @@ process.stdin.on('end', () => {
         process.exit(0)
       })
       .catch(error => {
-        process.stderr.write(`${error}`);
+        process.stderr.write(`${JSON.stringify(error)}`);
       })
   }
 });

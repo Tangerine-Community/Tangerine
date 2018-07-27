@@ -30,8 +30,10 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     let formHtml = await this.http.get(`/editor/${groupName}/content/${formId}/form.html`, {responseType: 'text'}).toPromise()
 
     this.containerEl.innerHTML = `
-      <tangy-form-editor>
-        ${formHtml}
+      <tangy-form-editor style="margin:15px">
+        <template>
+          ${formHtml}
+        </template>
       </tangy-form-editor>
     `
     const tangyFormEditorEl = this.containerEl.querySelector('tangy-form-editor')
