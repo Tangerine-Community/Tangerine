@@ -14,18 +14,18 @@ export class ClassUtils {
 
   async createCurriculumFormsList(curriculumFormHtml, container) {
     let curriculumForms = [];
-      let templateEl = document.createElement("template")
-      templateEl.innerHTML = curriculumFormHtml
-      let formEl = templateEl.content.querySelectorAll('tangy-form-item')
-      var output = "";
-      for (const el of formEl) {
-        let obj = el.getProps()
-        let nodeList = el.querySelectorAll('tangy-timed')
-        if (nodeList.length > 0) {
-          obj['prototype'] = "grid";
-        }
-        curriculumForms.push(obj)
+    let templateEl = document.createElement("template")
+    templateEl.innerHTML = curriculumFormHtml
+    let formEl = templateEl.content.querySelectorAll('tangy-form-item')
+    var output = "";
+    for (const el of formEl) {
+      let obj = el.getProps()
+      let nodeList = el.querySelectorAll('tangy-timed')
+      if (nodeList.length > 0) {
+        obj['prototype'] = "grid";
       }
+      curriculumForms.push(obj)
+    }
   return curriculumForms
   }
 

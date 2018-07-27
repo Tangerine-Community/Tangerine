@@ -95,7 +95,7 @@ export class ClassFormService {
 
 var tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '11',
+  version: '14',
   views: {
     responsesByClassIdFormIdStartDatetime: {
       map: function (doc) {
@@ -152,11 +152,14 @@ var tangyClassDesignDoc = {
     responsesByStudentId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
-          let inputs = [];
-          doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-          let input = inputs.find(input => (input.name === 'studentId') ? true : false)
-          if (input) {
-            emit(input.value, true);
+          // let inputs = [];
+          // doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+          // let input = inputs.find(input => (input.name === 'studentId') ? true : false)
+          // if (input) {
+          //   emit(input.value, true);
+          // }
+          if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.id) {
+            emit(doc.metadata.studentRegistrationDoc.id, true);
           }
         }
       }.toString()
