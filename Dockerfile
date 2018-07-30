@@ -64,10 +64,7 @@ ADD server /tangerine/server
 
 ADD ./ /tangerine
 
-ARG T_MODULES
 ADD ./scripts/modules/ /tangerine/scripts/modules/
-RUN cd /tangerine/scripts/modules/
-RUN /tangerine/scripts/modules/modules.sh
 
 RUN mkdir /csv
 

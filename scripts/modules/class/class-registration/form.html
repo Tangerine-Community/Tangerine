@@ -1,7 +1,7 @@
 <tangy-form has-summary linear-mode hide-closed-items id="class-registration" on-change="" >
   <tangy-form-item id="class-registration" title="صف دراسي" hide-back-button hide-next-button on-open="
     async function loadCurricula(that) {
-     let url = './assets/curricula.json'
+     let url = './assets/forms.json'
      let response = await fetch(url);
      var data = await response.json();
      var el = that.$.content.querySelector('tangy-select[name=\'curriculum\']')
@@ -10,7 +10,9 @@
      var sel = el.$.container.querySelector('select[name=\'curriculum\']');
       sel.options[sel.options.length] = new Option('Select a curriculum', '');
      data.forEach(function(el) {
-     sel.options[sel.options.length] = new Option(el.name, el.id);
+     	if (el.id !=='class-registration' && el.id !=='student-registration' && el.id !=='example') {
+    		sel.options[sel.options.length] = new Option(el.title, el.id);
+     	}
      }
      )
      }
