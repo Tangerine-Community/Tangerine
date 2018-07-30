@@ -45,7 +45,7 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
-docker build -t tangerine/tangerine:local .
+docker build --build-arg T_MODULES=$T_MODULES -t tangerine/tangerine:local .
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
 
@@ -111,6 +111,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   --env \"T_REPLICATE=$T_REPLICATE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
+  --env \"T_MODULES=$T_MODULES\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/csv:/csv/ \

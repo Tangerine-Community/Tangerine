@@ -55,7 +55,6 @@ RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw
 ADD client /tangerine/client
 RUN cd /tangerine/client/ && ./build.sh
 
-
 # Add the rest of server.
 ADD server /tangerine/server
 
@@ -64,6 +63,11 @@ ADD server /tangerine/server
 #
 
 ADD ./ /tangerine
+
+ARG T_MODULES
+ADD ./scripts/modules/ /tangerine/scripts/modules/
+RUN cd /tangerine/scripts/modules/
+RUN /tangerine/scripts/modules/modules.sh
 
 RUN mkdir /csv
 

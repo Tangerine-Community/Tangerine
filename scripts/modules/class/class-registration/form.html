@@ -1,0 +1,52 @@
+<tangy-form has-summary linear-mode hide-closed-items id="class-registration" on-change="" >
+  <tangy-form-item id="class-registration" title="صف دراسي" hide-back-button hide-next-button on-open="
+    async function loadCurricula(that) {
+     let url = './assets/curricula.json'
+     let response = await fetch(url);
+     var data = await response.json();
+     var el = that.$.content.querySelector('tangy-select[name=\'curriculum\']')
+     let options = []
+     el.$.container
+     var sel = el.$.container.querySelector('select[name=\'curriculum\']');
+      sel.options[sel.options.length] = new Option('Select a curriculum', '');
+     data.forEach(function(el) {
+     sel.options[sel.options.length] = new Option(el.name, el.id);
+     }
+     )
+     }
+     let that = this;
+     loadCurricula(that);
+
+    ">
+    <template>
+      <tangy-input
+        name="school_name"
+        label="School name"
+        type="text"
+        error-message="This is required."
+        required>
+      </tangy-input>
+
+      <tangy-input
+        name="school_year"
+        label="School year"
+        type="text"
+        error-message="This is required."
+        required>
+      </tangy-input>
+
+      <tangy-input
+        name="grade"
+        label="Grade"
+        type="text"
+        error-message="This is required."
+        required>
+      </tangy-input>
+
+      <tangy-select
+        label="Curriculum"
+        name="curriculum" >
+      </tangy-select>
+    </template>
+  </tangy-form-item>
+</tangy-form>
