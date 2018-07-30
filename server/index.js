@@ -612,10 +612,27 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   // Create content directory for group.
   await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
 
+
+
   // Edit the app-config.json.
   try {
     appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
     appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}`
+    let modulesString = process.env.T_MODULES;
+    modulesString = modulesString.replace(/'/g, '"');
+    let moduleEntries = JSON.parse(modulesString)
+    if (moduleEntries.length > 0) {
+      for (let moduleEntry of moduleEntries) {
+        if (moduleEntry === "class") {
+          clog("Setting homeUrl to dashboard")
+          appConfig.homeUrl =  "dashboard"
+        } else {
+          clog("moduleEntry: " + moduleEntry)
+          // appConfig.homeUrl =  "case-management"
+        }
+      }
+    }
+    clog("appConfig.homeUrl: " + appConfig.homeUrl)
   } catch (err) {
     log.error("An error reading app-config: " + err)
     throw err;
@@ -662,6 +679,7 @@ async function getGroupsByUser(username) {
     let filteredFiles = files.filter(junk.not)
     let groups = [];
     clog('/groups route lists these dirs: ' + filteredFiles)
+
     groups = filteredFiles.map((groupName) => {
       return {
         attributes: {
