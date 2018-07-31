@@ -88,4 +88,28 @@ export class GroupDetailsComponent implements OnInit {
 
   }
 
+  async deleteForm(groupName, formId) {
+    console.log(groupName)
+    console.log(formId)
+    let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
+    let newFormsJson = formsJson.filter(formInfo => formInfo.id !== formId)
+    console.log(newFormsJson)
+
+    await this.http.post('/editor/file/save', {
+      groupId: groupName,
+      filePath: './forms.json',
+      fileContents: JSON.stringify(newFormsJson)
+    }).toPromise()
+
+    /* TODO: Need a delete api first.
+    await this.http.delete('/editor/file/save', {
+      groupId: groupName,
+      filePath: `./${formId}`
+    }).toPromise()
+    */
+
+    this.forms = await this.groupsService.getFormsList(this.groupName);
+
+    
+  }
 }
