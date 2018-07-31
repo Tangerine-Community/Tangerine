@@ -26,6 +26,9 @@
               <a class="tangy-foreground-primary" [routerLink]="['/tangy-form-editor/', groupName, form.id]">
                 <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
               </a>
+              <a *ngIf="form.id !== 'user-profile' && form.id !== 'reports'" class="tangy-foreground-primary" (click)="deleteForm(groupName, form.id)">
+                <i class="material-icons mat-18 tangy-location-list-icon ">delete</i>
+              </a>
               <span class="tangy-foreground-secondary ">{{form.title}}</span>
               <span class="tangy-spacer "></span>
               <span>
