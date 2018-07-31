@@ -27,7 +27,7 @@ export interface StudentResponse {
 })
 export class DashboardComponent implements OnInit {
 
-  classes;students;selectedTab;selectedIndex;curriculum;curriculumForms;dataSource;columnsToDisplay;selectedReport;
+  classes;students;selectedTab;selectedIndex;curriculum;curriculumTitle; curriculumForms;dataSource;columnsToDisplay;selectedReport;
   currentClassId;currentClassIndex;curriculumFormsList;curriculumFormHtml
   studentsResponses:any[];
   allStudentResults:StudentResult[];
@@ -133,7 +133,14 @@ export class DashboardComponent implements OnInit {
       if (ps === null || typeof ps === 'undefined') {
         ps = 5
       }
-      this.curriculumForms = await this.getCurriculaForms(this.curriculum, pi, ps)
+      try {
+        this.curriculumForms = await this.getCurriculaForms(this.curriculum, pi, ps)
+      } catch (e) {
+        console.log("Error fetching this.curriculumForms: " + e)
+      }
+      if (typeof this.curriculumForms === 'undefined') {
+        console.log("This is an error - there are no this.curriculumForms for this curriculum or range.")
+      }
     }
     let currentClass = this.classes[this.currentClassIndex];
     if (typeof currentClass !== 'undefined') {
@@ -154,14 +161,16 @@ export class DashboardComponent implements OnInit {
         this.studentsResponses[studentId] = studentReponses
       }
       let allStudentResults = [];
-      for (const student of this.students) {
+      // for (const student of this.students) {
+      this.students.forEach((student) => {
         let studentResults = {};
         studentResults["id"] = student.id
         studentResults["name"] = student.doc.items[0].inputs[0].value
         studentResults["classId"] = student.doc.items[0].inputs[3].value
         studentResults["forms"] = [];
         // studentResults["forms"] = {};
-        for (const form of this.curriculumForms) {
+        // for (const form of this.curriculumForms) {
+        this.curriculumForms.forEach((form) => {
           let formResult = {};
           formResult["formId"] = form.id
           formResult["curriculum"] = this.curriculum
@@ -172,9 +181,9 @@ export class DashboardComponent implements OnInit {
           }
           studentResults["forms"].push(formResult)
           // studentResults["forms"][form.id] = formResult
-        }
+        })
         allStudentResults.push(studentResults)
-      }
+      })
       this.allStudentResults = allStudentResults;
     }
   }
