@@ -240,13 +240,12 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   const releaseType = sanitize(req.params.releaseType)
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
-    let status = await exec(`cd /tangerine/client && \
+    const status = await exec(`cd /tangerine/client && \
         ./release-dat.sh ${group} ./content/groups/${group} ${releaseType}
     `)
-    let datUrl = status.stdout.replace('\u001b[?25l','')
-    console.log()
-    await sleep(4*1000)
-    res.send({ statusCode: 200, datUrl })
+    // Clean up whitespace.
+    const datArchiveUrl = status.stdout.replace('\u001b[?25l','')
+    res.send({ statusCode: 200, datArchiveUrl })
   } catch (error) {
     res.send({ statusCode: 500, data: error })
   }

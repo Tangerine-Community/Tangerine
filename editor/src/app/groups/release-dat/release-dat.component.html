@@ -1,0 +1,8 @@
+<p *ngIf="!buildDatIsComplete&&!errorGeneratingDat">
+  {{'Your Dat Archive is building...'|translate}}
+</p>
+<p *ngIf="errorGeneratingDat">{{'Could Not Generate Dat Archive'|translate}}</p>
+<p *ngIf="buildDatIsComplete">
+  {{'View your Dat Archive'|translate}}<br>
+  <input value="{{datArchiveUrl}}">
+</p>
