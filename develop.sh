@@ -112,6 +112,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_REPLICATE=$T_REPLICATE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_MODULES=$T_MODULES\" \
+  --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/csv:/csv/ \

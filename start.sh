@@ -79,6 +79,7 @@ RUN_OPTIONS="
   --env \"T_REPLICATE=$T_REPLICATE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_MODULES=$T_MODULES\" \
+  --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
