@@ -17,8 +17,9 @@ We recommend using AWS for hosting have documented detailed [instructions for AW
 SSH into your machine from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
 ```
 # Get the software.
-git clone https://github.com/Tangerine-Community/Tangerine.git
-cd Tangerine
+git clone https://github.com/tangerine-community/tangerine.git
+cd tangerine
+# See releases tab on github for versions.
 git checkout <version tag>
 # Create config.sh and edit to match your desired settings. Make sure to set `TANGERINE_VERSION` to the same as what `<version tag>` in the prior commands. 
 cp config.defaults.sh config.sh
@@ -27,10 +28,20 @@ nano config.sh
 ./start.sh
 ```
 
-If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine-server folder.
+If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine folder.
 
 To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine and set the `T_PROTOCOL` variable in `config.sh` to `https` before running `start.sh`. At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. How to set this up is detailed in our [instructions for AWS](docs/install-on-aws.md).  If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
-Now visit your Tangerine-server installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network.
+Now visit your Tangerine installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network.
+
+__For Dat Archive support__: Because there are some details to work out around Dat working inside of a Docker Container (https://github.com/datproject/dat/issues/858), you will need to install nodejs and run `dat-party` from the host machine inside of a screen session.
+
+```
+npm install -g dat-party
+screen -R dat-party
+cd tangerine/data/client/releases/prod/dat
+dat-party
+```
+Then press `control-a` `control-d` to detach from the "screen session" and leave it running.
 
 
 ## Upgrade
