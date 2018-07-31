@@ -6,9 +6,9 @@
     <ng-template matTabContent>
       <mat-card class="tangy-card-content-container">
         <mat-list>
-          <mat-list-item >
-            <span class="tangy-foreground-primary" *ngIf="curriculum"><strong>{{'Curriculum'|translate}}</strong> {{curriculum}}</span>
-          </mat-list-item>
+          <!--<mat-list-item >-->
+            <!--<span class="tangy-foreground-primary" *ngIf="curriculum"><strong>{{'Curriculum'|translate}}</strong> {{curriculum}}</span>-->
+          <!--</mat-list-item>-->
           <mat-list-item >
             <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a title="Add Student" class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:class.doc._id}>{{'Add Student'|translate}}</a>)</span>
             <span dir="rtl">&nbsp;&nbsp;&nbsp;
@@ -75,10 +75,10 @@
         <span>{{'Add Class'|translate}}</span>
     </a>
     </ng-template>
-    <br>
-    <mat-card class="tangy-card-content-container">
-      <p></p>
-    </mat-card>
+    <!--<br>-->
+    <!--<mat-card class="tangy-card-content-container">-->
+      <!--<p></p>-->
+    <!--</mat-card>-->
   </mat-tab>
 
 </mat-tab-group>
