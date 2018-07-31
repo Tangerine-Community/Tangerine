@@ -30,6 +30,13 @@ fi
 if [ ! -d data/client/releases/qa/pwas ]; then
   mkdir data/client/releases/qa/pwas
 fi
+if [ ! -d data/client/releases/prod/dat ]; then
+  mkdir data/client/releases/prod/dat
+fi
+if [ ! -d data/client/releases/qa/dat ]; then
+  mkdir data/client/releases/qa/dat
+fi
+
 if [ ! -f data/worker-state.json ]; then
   echo '{}' > data/worker-state.json
 fi
