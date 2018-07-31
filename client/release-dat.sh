@@ -44,5 +44,8 @@ fi
 
 rm -r $TMP_DIR
 
+# Wait for dat-party to start.
+sleep 1
+
 cd $RELEASE_DIR
 dat status | grep dat | tr -d '[:space:]'
