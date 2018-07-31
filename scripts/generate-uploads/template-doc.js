@@ -2,7 +2,7 @@ exports.doc = {
   "_id": "f49c3256-f056-46ea-aca2-4066d5df515f",
   "collection": "TangyFormResponse",
   "form": {
-    "id": "field-demo",
+    "id": "example",
     "complete": true,
     "linearMode": false,
     "hideClosedItems": false,

@@ -4,6 +4,7 @@
     </mat-card-title>
     <mat-card-content>
         <div class="tangy-full-width">
+            {{'Only a - z lowercase letters allowed. Any spaces or special characters will be removed.' | translate}}
             <form class="tangy-full-width" novalidate #newGroupForm="ngForm">
                 <mat-form-field class="tangy-full-width">
                     <input name="groupNameInput" [(ngModel)]="groupName" #groupNameInput="ngModel" matInput placeholder="{{'Group Name'|translate}}"

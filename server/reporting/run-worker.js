@@ -25,6 +25,7 @@ const processBatch = async (givenState) => {
   // Process batch.
   for (let database of state.databases) { 
     const db = new DB(database.name)
+    const reportingDb = new DB(`${database.name}-reporting`)
     const changes = await db.changes({ since: database.sequence, limit: state.batchSizePerDatabase, include_docs: false })
     if (changes.results.length > 0) {
       for (let change of changes.results) {
@@ -37,6 +38,12 @@ const processBatch = async (givenState) => {
       }
       // Even if an error was thrown, continue on with the next sequences.
       database.sequence = changes.results[changes.results.length-1].seq
+      // Index the view. It might time out so issue a try statement.:q
+      try {
+        await reportingDb.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+      } catch (err) {
+        // do nothing
+      }
     }
   }
   return Object.assign({}, state, {
@@ -65,7 +72,7 @@ process.stdin.on('end', () => {
         process.exit(0)
       })
       .catch(error => {
-        process.stderr.write(`${error}`);
+        process.stderr.write(`${JSON.stringify(error)}`);
       })
   }
 });

@@ -1,17 +1,7 @@
 [
   {
-    "id": "field-demo",
-    "title": "Field Demos",
-    "src": "./assets/field-demo/form.html"
-  },
-  {
-    "id": "item-demo",
-    "title": "Item Demo",
-    "src": "./assets/item-demo/form.html"
-  },
-  {
-    "id": "overlay-demo",
-    "title": "Overlay Demo",
-    "src": "./assets/overlay-demo/form.html"
+    "title": "Example Form",
+    "src": "./assets/example/form.html",
+    "id": "example"
   }
 ]

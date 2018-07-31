@@ -14,7 +14,7 @@ cd ../../
 # Wrap up APK build.
 # TODO: Where is the apk wrapper???
 #cp -r wrappers/apk builds/apk
-cp -r app/dist/tangerine-client builds/apk/www/app
+cp -r app/dist/tangerine-client builds/apk/www/shell
 
 # Wrap up PWA build.
 cp -r wrappers/pwa/build/default builds/pwa

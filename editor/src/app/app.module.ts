@@ -1,5 +1,5 @@
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule, JsonpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
@@ -12,6 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './core/auth/auth.module';
 import { GroupsModule } from './groups/groups.module';
+import { NgTangyFormEditorModule } from './ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { ProfileModule } from './profile/profile.module';
 import { RegistrationModule } from './registration/registration.module';
 import { SharedModule } from './shared/shared.module';
@@ -19,10 +20,12 @@ import { RequestInterceptor } from './shared/_services/request-interceptor.servi
 import { TangyErrorHandler } from './shared/_services/tangy-error-handler.service';
 import { SupportComponent } from './support/support.component';
 import { WindowRef } from './core/window-ref.service';
+
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, '../client/content/', '.json');
 }
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [AppComponent, SupportComponent],
   imports: [
     AppRoutingModule,
@@ -30,6 +33,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     ProfileModule,
     GroupsModule,
     BrowserModule,
+    NgTangyFormEditorModule,
     ReactiveFormsModule,
     FormsModule,
     HttpModule,

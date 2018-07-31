@@ -1,3 +1,33 @@
-<tangy-form hide-nav hide-responses hide-complete-button id="user-profile">
-  <tangy-form-item hide-back-button hide-next-button src="./assets/user-profile/item-1.html" id="item-1" title="User Profile"></tangy-form-item>
+<tangy-form id="user-profile" title="User Profile">
+  <tangy-form-item id="item-1" title="User Profile">
+    <template>
+      <tangy-input 
+        error-message="required" 
+        type="text" 
+        name="first_name" 
+        required 
+        label="First name">
+      </tangy-input>
+      <tangy-input 
+        error-message="required" 
+        type="text" 
+        name="last_name" 
+        required 
+        label="Last name">
+      </tangy-input>
+      <tangy-location location-src="./assets/location-list.json" label="My County" name="location" show-levels="county">
+      </tangy-location>
+      <tangy-radio-buttons label="Gender" name="gender" required>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+      </tangy-radio-buttons>
+      <tangy-input 
+        error-message="required" 
+        type="number" 
+        name="phone" 
+        required 
+        label="Phone number">
+      </tangy-input>
+    </template>
+  </tangy-form-item>
 </tangy-form>

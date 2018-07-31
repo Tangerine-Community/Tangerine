@@ -39,6 +39,8 @@ export class AppComponent implements OnInit {
     this.window = this.windowRef.nativeWindow;
     const res = await this.http.get('./assets/location-list.json').toPromise();
     this.window.locationList = res;
+    const translation = await this.http.get('./assets/translation.json').toPromise();
+    this.window.translation = translation
     try {
       this.window.appConfig = await this.http.get('./assets/app-config.json').toPromise()
     } catch(e) {
@@ -146,7 +148,7 @@ export class AppComponent implements OnInit {
     } else {
       const currentPath = this.window.location.pathname;
       const storedReleaseUuid = localStorage.getItem('release-uuid');
-      this.window.location.href = (currentPath.replace(`${storedReleaseUuid}\/shell\/`, ''));
+      this.window.location.href = (currentPath.replace(`${storedReleaseUuid}\/app\/`, ''));
     }
 
   }
