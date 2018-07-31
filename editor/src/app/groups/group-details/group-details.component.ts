@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-group-details',
@@ -103,12 +104,10 @@ export class GroupDetailsComponent implements OnInit {
       fileContents: JSON.stringify(newFormsJson)
     }).toPromise()
 
-    /* TODO: Need a delete api first.
-    await this.http.delete('/editor/file/save', {
-      groupId: groupName,
-      filePath: `./${formId}`
+    await this.http.delete('/editor/file/save', {params: new HttpParams()
+      .set('groupId', groupName)
+      .set('filePath', `./${formId}`)
     }).toPromise()
-    */
 
     this.forms = await this.groupsService.getFormsList(this.groupName);
 
