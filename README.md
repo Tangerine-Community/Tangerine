@@ -33,7 +33,10 @@ If your server restarts or the container stops, you can later run the `./start.s
 To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine and set the `T_PROTOCOL` variable in `config.sh` to `https` before running `start.sh`. At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. How to set this up is detailed in our [instructions for AWS](docs/install-on-aws.md).  If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
 Now visit your Tangerine installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network.
 
-__For Dat Archive support__: Because there are some details to work out around Dat working inside of a Docker Container (https://github.com/datproject/dat/issues/858), you will need to install nodejs and run `dat-party` from the host machine inside of a screen session.
+## Enable P2P offline sync
+You can release your Tangerine Apps as dat archives and access them using [Beaker Browser](https://beakerbrowser.com/) on Mac, Windows (see afforable $100 Windows tablet https://goo.gl/JgZ5c3), and Linux. The major advantage to releasing your Tangerine app as a dat archive is that it can be synced between devices while offline. If you have Android tablets, you can install [Bunsen Browser](https://play.google.com/store/apps/details?id=org.bunsenbrowser&hl=en_US) however there is currently an [issue with offline sync](https://github.com/bunsenbrowser/bunsen/issues/27). 
+
+To enable dat archives on your server, you will need to install nodejs and run `dat-party` from the host machine inside of a screen session. In the future we hope there will not be this extra step because there are some details to work out around Dat working inside of a Docker Container (https://github.com/datproject/dat/issues/858).
 
 ```
 npm install -g dat-party
