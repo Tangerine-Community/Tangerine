@@ -48,13 +48,20 @@ export class DashboardComponent implements OnInit {
   classRegistrationParams = {
     curriculum:"class-registration"
   }
+  isLoading;
   // selected = new FormControl(0);
 
   // MatPaginator Output
   // pageEvent: PageEvent;
+  private paginator: MatPaginator;
 
   @ViewChild('container') container: ElementRef;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    console.log("Set this.paginator")
+    // this.setDataSourceAttributes();
+  }
 
   constructor(
     private http: HttpClient,
@@ -227,12 +234,15 @@ export class DashboardComponent implements OnInit {
       // this.columnsToDisplay.push(formEl);
     }
     this.formColumnsDS = new MatTableDataSource(this.formColumns);
-    this.paginator.page
-      .pipe(
-        tap(() => this.loadGrid())
-      )
-      .subscribe();
-
+    if (this.paginator) {
+      this.paginator.page
+        .pipe(
+          tap(() => this.loadGrid())
+        )
+        .subscribe();
+    } else {
+      console.log("this.paginator is not defined.")
+    }
 
     this.dataSource = new MatTableDataSource<StudentResult>(this.allStudentResults);
     // this.dataSource.paginator = this.paginator;
