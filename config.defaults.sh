@@ -26,3 +26,4 @@ T_DEV_CONTENT="$(pwd)/client/content/default"
 T_REPLICATE="[]"
 # Modify app-config to use the Class dashboard - set to ['class']
 T_MODULES="[]"
+T_LANG_DIRECTION="ltr"
