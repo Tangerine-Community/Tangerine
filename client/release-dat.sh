@@ -4,7 +4,7 @@ CONTENT_PATH="$2"
 RELEASE_TYPE="$3"
 RELEASE_DIR="/tangerine/client/releases/$RELEASE_TYPE/dat/$GROUP"
 
-echo "RELEASE_DIR: $RELEASE_DIR"
+# cho "RELEASE_DIR: $RELEASE_DIR"
 
 if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
   echo ""
@@ -43,3 +43,6 @@ if [ ! -d $RELEASE_DIR ]; then
 fi
 
 rm -r $TMP_DIR
+
+cd $RELEASE_DIR
+dat status | grep dat | tr -d '[:space:]'
