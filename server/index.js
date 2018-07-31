@@ -234,6 +234,23 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   }
 })
 
+app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async function (req, res, next) {
+  // @TODO Make sure user is member of group.
+  const group = sanitize(req.params.group)
+  const releaseType = sanitize(req.params.releaseType)
+  clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
+  try {
+    const status = await exec(`cd /tangerine/client && \
+        ./release-dat.sh ${group} ./content/groups/${group} ${releaseType}
+    `)
+    // Clean up whitespace.
+    const datArchiveUrl = status.stdout.replace('\u001b[?25l','')
+    res.send({ statusCode: 200, datArchiveUrl })
+  } catch (error) {
+    res.send({ statusCode: 500, data: error })
+  }
+})
+
 async function saveFormsJson(formParameters, group) {
   clog("formParameters: " + JSON.stringify(formParameters))
   let contentRoot = config.contentRoot

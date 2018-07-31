@@ -41,7 +41,7 @@
         </div>
       </mat-tab>
 
-      <mat-tab *ngIf="isGroupAdminUser" label="{{'Generate APK/PWA'|translate}}">
+      <mat-tab *ngIf="isGroupAdminUser" label="{{'Release'|translate}}">
         <mat-list>
           <mat-list-item class="tangy-location-list">
             <span class="tangy-foreground-secondary">
@@ -68,6 +68,13 @@
             <span class="tangy-foreground-secondary">
               <a [routerLink]="['/group/release-pwa',groupName,'prod']">
                 {{'Release PWA to Production'|translate}}
+              </a>
+            </span>
+          </mat-list-item>
+          <mat-list-item class="tangy-location-list">
+            <span class="tangy-foreground-secondary">
+              <a [routerLink]="['/group/release-dat',groupName,'prod']">
+                {{'Release Dat to Production'|translate}}
               </a>
             </span>
           </mat-list-item>
