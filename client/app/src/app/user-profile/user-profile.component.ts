@@ -40,7 +40,9 @@ export class UserProfileComponent implements AfterContentInit {
     })
     // Put a response in the store by issuing the FORM_OPEN action.
     if (profileDocs.length > 0) {
-      formEl.store.dispatch({ type: 'FORM_OPEN', response: profileDocs[0] })
+      formEl.response = profileDocs[0]
+    } else {
+      formEl.newResponse()
     } 
   }
 

@@ -11,6 +11,19 @@ export interface Forms {
 export class GroupsService {
 
   constructor(private httpClient: HttpClient, private errorHandler: TangyErrorHandler) { }
+
+  async getUsersByUsername(username: string) {
+    try {
+      const data: any = await this.httpClient.get(`/users/byUsername/${username}`).toPromise();
+      return data.data;
+    } catch (error) {
+      console.error(error);
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
   async getAllGroups() {
     try {
       const data: any = await this.httpClient.get('/groups/').toPromise();
@@ -34,6 +47,28 @@ export class GroupsService {
     }
   }
 
+  async addUserToGroup(groupName: string, username: string, role: string) {
+    try {
+      const result = await this.httpClient.post(`groups/${groupName}/addUserToGroup`, { username, role }).toPromise();
+      return result;
+    } catch (error) {
+      console.error(error);
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+  async removeUserFromGroup(groupName: string, username: string) {
+    try {
+      const result = await this.httpClient.patch(`groups/removeUserFromGroup/${groupName}`, { groupName, username }).toPromise();
+      return result;
+    } catch (error) {
+      console.error(error);
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
   async getFormsList(groupName: string) {
     try {
       let result = await this.httpClient.get('../editor/groups/' + groupName + '/forms.json').toPromise() as Forms[];
@@ -94,6 +129,28 @@ export class GroupsService {
     try {
       const result = await this.httpClient.get(`/editor/release-apk/${groupName}/${releaseType}`).toPromise();
       return result;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async getUsersByGroup(groupName: string) {
+    try {
+      const result: any = await this.httpClient.get(`/groups/users/byGroup/${groupName}`).toPromise();
+      return result.data;
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async getUsersByGroupAndUsername(groupName: string, username: string) {
+    try {
+      const result: any = await this.httpClient.get(`/groups/users/byGroupAndUsername/${groupName}/${username}`).toPromise();
+      return result.data;
     } catch (error) {
       if (typeof error.status === 'undefined') {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));

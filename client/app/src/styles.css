@@ -238,3 +238,9 @@ div.more {
   .material-icons  { 
     vertical-align: text-bottom;
   }
+
+  tangy-form > *, tangy-form {
+    font-size: 1.2em;
+    line-height: 1.2em;
+    --paper-input-container-shared-input-style_-_line-height: 1.2em;
+  }

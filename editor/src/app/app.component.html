@@ -22,31 +22,24 @@
                     <i class="material-icons">account_circle</i> {{user_id}}
                 </span>
             </div>
-
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
-                <!-- <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
-                    <i class="material-icons">search</i>
-                </label>
-                <div class="mdl-textfield__expandable-holder">
-                    <input class="mdl-textfield__input" type="text" id="search">
-                    <label class="mdl-textfield__label" for="search">Enter your query...</label>
-                </div>-->
+            <div class="user-info" *ngIf="!loggedIn">
+                <span>
+                    <a routerLink="/login">
+                        <i class="material-icons">exit_to_app</i> {{'Login'|translate}}
+                    </a>
+                </span>
             </div>
             <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="useropts">
                 <i class="material-icons">more_vert</i>
             </button>
-            <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="useropts">
+            <ul *ngIf="loggedIn" class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="useropts">
                 <li *ngIf="loggedIn" router-active>
                     <a routerLink="/support" routerLinkActive="active" class="mdl-menu__item">
-                        <i class="material-icons">help</i> Help</a>
-                </li>
-                <li *ngIf="!loggedIn" router-active>
-                    <a routerLink="/login" routerLinkActive="active" class="mdl-menu__item">
-                        <i class="material-icons">exit_to_app</i> Login</a>
+                        <i class="material-icons">help</i> {{'Help'|translate}}</a>
                 </li>
                 <li *ngIf="loggedIn" router-active>
                     <a (click)="logout();" routerLink="/login" routerLinkActive="active" class="mdl-menu__item">
-                        <i class="material-icons">exit_to_app</i> Logout</a>
+                        <i class="material-icons">exit_to_app</i> {{'Logout'|translate}}</a>
                 </li>
             </ul>
         </div>
@@ -57,19 +50,19 @@
                 <img src="/assets/img/stacked-logo.png" alt="Tangerine Logo">
             </div>
         </header>
-        <nav class="demo-navigation mdl-navigation mdl-color--grey-900">
+        <nav *ngIf="loggedIn" class="demo-navigation mdl-navigation mdl-color--grey-900">
             <ul>
-                <li *ngIf="loggedIn" router-active>
+                <li router-active>
                     <a routerLink="/projects" routerLinkActive="active" class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">group_work</i>Projects</a>
+                        <i class="material-icons" role="presentation">group_work</i>{{'Projects'|translate}}</a>
                 </li>
-                <li *ngIf="loggedIn" router-active>
+                <li router-active>
                     <a routerLink="/manage-users" routerLinkActive="active" class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">account_circle</i>Manage Users</a>
+                        <i class="material-icons" role="presentation">account_circle</i>{{'Manage Users'|translate}}</a>
                 </li>
-                <li *ngIf="loggedIn" router-active>
+                <li router-active>
                     <a routerLink="/support" routerLinkActive="active" class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">help_outline</i>Support</a>
+                        <i class="material-icons" role="presentation">help_outline</i>{{'Support'|translate}}</a>
                 </li>
             </ul>
         </nav>

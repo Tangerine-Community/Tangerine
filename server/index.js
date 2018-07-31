@@ -18,6 +18,7 @@ const config = read.sync('./config.yml')
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
+PouchDB.plugin(require('pouchdb-find'));
 const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
@@ -25,6 +26,7 @@ const generateCSV = require('../server/reporting/generate_csv').generateCSV;
 const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
+const bcrypt = require('bcryptjs');
 const _ = require('underscore')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
@@ -38,8 +40,8 @@ if (process.env.T_COUCHDB_ENABLE === 'true') {
 } else {
   pouchDbDefaults = { prefix: '/tangerine/db/' }
 }
-const  DB = PouchDB.defaults(pouchDbDefaults)
-
+const DB = PouchDB.defaults(pouchDbDefaults)
+const USERS_DB = new DB('users');
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
@@ -95,11 +97,11 @@ var passport = require('passport')
 
 // This determines wether or not a login is valid.
 passport.use(new LocalStrategy(
-  function(username, password, done) {
-    if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
+  async function (username, password, done) {
+    if (await areCredentialsValid(username, password)) {
       log.info(`${username} login success`)
       return done(null, {
-        "name": "user1"
+        name: username
       });
     } else {
       log.info(`${username} login fail`)
@@ -107,7 +109,29 @@ passport.use(new LocalStrategy(
     }
   }
 ));
-
+async function findUserByUsername(username) {
+  const result = await USERS_DB.find({ selector: { username } });
+  return result.docs[0];
+}
+async function areCredentialsValid(username, password) {
+  try {
+    let isValid = false;
+    if (username == process.env.T_USER1 && password == process.env.T_USER1_PASSWORD) {
+      isValid = true;
+      return isValid;
+    } else {
+      if (await doesUserExist(username)) {
+        const data = await findUserByUsername(username);
+        const hashedPassword = data.password;
+        isValid = await bcrypt.compare(password, hashedPassword);
+        return isValid;
+      }
+      else { return isValid; }
+    }
+  } catch (error) {
+    return false;
+  }
+}
 // This decides what identifying piece of information to put in a cookie for the session.
 passport.serializeUser(function (user, done) {
   done(null, user.name);
@@ -123,7 +147,7 @@ passport.deserializeUser(function (id, done) {
 app.use(session({
   secret: "cats",
   resave: false,
-  saveUninitialized: new PouchSession(new DB('sessions')) 
+  saveUninitialized: new PouchSession(new DB('sessions'))
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '1gb' }))
@@ -134,8 +158,9 @@ app.use(passport.session());
 
 // Middleware to protect routes.
 var isAuthenticated = function (req, res, next) {
-  // Uncomment this when you want to turn off authentication during development.
-  //  return next();
+  // Uncomment next two lines when you want to turn off authentication during development.
+  // req.user = {}; req.user.name = 'user1';
+  // return next();
   if (req.isAuthenticated()) {
     return next();
   }
@@ -149,7 +174,7 @@ var isAuthenticated = function (req, res, next) {
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
   function (req, res) {
-    res.send({ name: 'user1', statusCode: 200, statusMessage: 'ok' });
+    res.send({ name: req.user.name, statusCode: 200, statusMessage: 'ok' });
   }
 );
 
@@ -157,10 +182,8 @@ app.post('/login',
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
 app.use('/', express.static(path.join(__dirname, '../editor/dist')));
 app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
-app.use('/editor/:group/tangy-forms/', express.static(path.join(__dirname, '../client/tangy-forms/')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../editor/src/ckeditor/')));
 app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
-app.use('/ace', express.static(path.join(__dirname, '../editor/node_modules/ace-builds')));
 app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
 app.use('/csv/', express.static('/csv/'));
@@ -205,7 +228,7 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
     await exec(`cd /tangerine/client && \
         ./release-pwa.sh ${group} ./content/groups/${group} ${releaseType}
   `)
-  res.send({ statusCode: 200, data: 'ok' })
+    res.send({ statusCode: 200, data: 'ok' })
   } catch (error) {
     res.send({ statusCode: 500, data: error })
   }
@@ -254,7 +277,7 @@ let openForm = async function (path) {
   return form
 };
 
-const USERS_DB = new DB('users');
+
 
 app.get('/users', isAuthenticated, async (req, res) => {
   const result = await USERS_DB.allDocs({ include_docs: true });
@@ -270,24 +293,32 @@ app.get('/users', isAuthenticated, async (req, res) => {
 
 app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
   let data;
+  let statusCode;
   try {
     data = await doesUserExist(req.params.username);
+    if (!data) {
+      statusCode = 200;
+    } else {
+      statusCode = 409;
+    }
+    res.send({ statusCode, data: !!data });
   } catch (error) {
-    console.error(error);
-    res.send({ statusCode: 500, data: true }).sendStatus(500); // In case of error assume user exists. Helps avoid same username used multiple times
+    statusCode = 500;
+    res.send({ statusCode, data: true }); // In case of error assume user exists. Helps avoid same username used multiple times
   }
-  if (!data) {
-    res.send({ statusCode: 200, data });
-  } else {
-    res.send({ statusCode: 409, data }).sendStatus(409);
-  }
+
 });
 
 async function doesUserExist(username) {
   try {
-    await USERS_DB.createIndex({ index: { fields: ['username'] } });
-    const data = await USERS_DB.find({ selector: { username } });
-    return data.docs.length > 0;
+    if (await isSuperAdmin(username)) {
+      return true;
+    } else {
+      await USERS_DB.createIndex({ index: { fields: ['username'] } });
+      const data = await findUserByUsername(username);
+      return data && data.username && data.username.length > 0;
+    }
+
   } catch (error) {
     console.error(error);
     return true; // In case of error assume user exists. Helps avoid same username used multiple times
@@ -298,6 +329,7 @@ app.post('/users/register-user', isAuthenticated, async (req, res) => {
     if (!(await doesUserExist(req.body.username))) {
       const user = req.body;
       user.password = await hashPassword(user.password);
+      user.groups = [];
       const data = await USERS_DB.post(user);
       res.send({ statusCode: 200, data });
       return data;
@@ -307,11 +339,41 @@ app.post('/users/register-user', isAuthenticated, async (req, res) => {
     return false; // @TODO return meaningful error
   }
 });
+app.get('/users/byUsername/:username', isAuthenticated, async (req, res) => {
+  const username = req.params.username;
+  try {
+    await USERS_DB.createIndex({ index: { fields: ['username'] } });
+    const results = await USERS_DB.find({ selector: { username: { '$regex': `(?i)${username}` } } });
+    const data = results.docs.map(username => username.username)
+    res.send({ data, statusCode: 200, statusMessage: 'Ok' });
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
 
+app.get('/users/isSuperAdminUser/:username', isAuthenticated, async (req, res) => {
+  try {
+    const data = await isSuperAdmin(req.params.username);
+    res.send({ data, statusCode: 200, statusMessage: 'ok' })
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+app.get('/users/isAdminUser/:username', isAuthenticated, async (req, res) => {
+  try {
+    const data = await isAdminUser(req.params.username);
+    res.send({ data, statusCode: 200, statusMessage: 'ok' })
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
 async function hashPassword(password) {
   try {
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(password, salt);
     return hashedPassword;
   } catch (error) {
     console.error(error);
@@ -335,7 +397,7 @@ app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
   let sortedItemList = []
   for (let itemScr of itemsOrder) {
     if (itemScr !== null) {
-      let item = formItemList.is(function(i, el) {
+      let item = formItemList.is(function (i, el) {
         let src = $(this).attr('src')
         if (src === itemScr) {
           sortedItemList.push($(this))
@@ -371,8 +433,9 @@ app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const groupId = req.body.groupId
   const fileContents = req.body.fileContents
   const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
-  await fs.writeFile(actualFilePath, fileContents)
-  res.send('ok')
+  await fs.outputFile(actualFilePath, fileContents)
+  res.send({status: 'ok'})
+  // ok
 })
 
 // Saves an item - and a new form when formName is passed.async
@@ -579,28 +642,168 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   //#endregion
 
   // All done!
-  res.send({ data: 'Group Created Succesfully', statusCode: 200 });
+  res.send({ data: 'Group Created Successfully', statusCode: 200 });
 })
 
 app.get('/groups', isAuthenticated, async function (req, res) {
-  fsc.readdir('/tangerine/client/content/groups', function (err, files) {
-    let filteredFiles = files.filter(junk.not)
-    clog('/groups route lists these dirs: ' + filteredFiles)
-    let groups = filteredFiles.map((groupName) => {
-      return {
-        attributes: {
-          name: groupName
-        },
-        member: [],
-        admin: [],
-        numberOfResults: 0
-      }
-    })
-    res.send(groups)
 
-  })
+  try {
+    const groups = await getGroupsByUser(req.user.name);
+    res.send(groups);
+  } catch (error) {
+    res.sendStatus(500)
+  }
 })
 
+async function getGroupsByUser(username) {
+  if (await isSuperAdmin(username)) {
+    const readdirPromisified = util.promisify(fs.readdir)
+    const files = await readdirPromisified('/tangerine/client/content/groups');
+    let filteredFiles = files.filter(junk.not)
+    let groups = [];
+    clog('/groups route lists these dirs: ' + filteredFiles)
+    groups = filteredFiles.map((groupName) => {
+      return {
+        attributes: {
+          name: groupName,
+          role: 'admin'
+        }
+      }
+    })
+    return groups;
+  } else {
+    const user = await findUserByUsername(username);
+    let groups = [];
+    if (typeof user.groups !== 'undefined') {
+      groups = user.groups.map(group => {
+        return {
+          attributes: {
+            name: group.groupName,
+            role: group.role
+          }
+        }
+      });
+    }
+    return groups;
+  }
+}
+async function isSuperAdmin(username) {
+  return username === process.env.T_USER1;
+}
+
+// If is not admin, return false else return the list of the groups to which user isAdmin
+async function isAdminUser(username) {
+  try {
+    const groups = await getGroupsByUser(username);
+    const data = groups.filter(group => group.attributes.role === 'admin');
+    if (data.length < 1) {
+      data = false;
+    }
+    return data;
+  }
+  catch (error) {
+    return false;
+    console.log(error)
+  }
+}
+app.post('/groups/:groupName/addUserToGroup', isAuthenticated, async (req, res) => {
+  const payload = req.body;
+  const groupName = req.params.groupName;
+  try {
+    const user = await findUserByUsername(payload.username)
+    /**
+     *  If the groups array is existent on the user object, check if the is already in the groups array i.e. it is being updated
+     *    If it exists, update the role, otherwise add a new record to the groups array and save.
+     * 
+     * If the groups array is non existent on the user object, assign the groups array with the corresponding groupname and role
+     * This is needful especially for users created before role management was added.
+     * 
+     */
+    if (typeof user.groups !== 'undefined') {
+      const index = user.groups.findIndex(group => group.groupName === groupName);
+      if (index > -1) {
+        user.groups[index] = { groupName, role: payload.role }
+      } else {
+        user.groups.push({ groupName, role: payload.role })
+      }
+    } else {
+      user.groups = [{ groupName, role: payload.role }];
+    }
+    const data = await USERS_DB.put(user);
+    res.send({ data, statusCode: 200, statusMessage: `User Added to Group ${groupName}` })
+
+  } catch (error) {
+    console.error('Could not Add user to Group')
+    res.sendStatus(500)
+  }
+});
+
+app.get('/groups/users/byGroup/:groupName', isAuthenticated, async (req, res) => {
+  try {
+    const groupName = req.params.groupName;
+    // Mango search in Arrays, Documentation in : https://stackoverflow.com/questions/43892556/mango-search-in-arrays-couchdb
+    await USERS_DB.createIndex({ index: { fields: ['groups[].groupName'] }, type: 'json' });
+    const results = await USERS_DB.find({ selector: { 'groups': { $elemMatch: { groupName } } } });
+    const data = results.docs.map(result => {
+      return {
+        _id: result._id,
+        username: result.username,
+        email: result.email,
+        firstName: result.firstName,
+        lastName: result.lastName
+      }
+    });
+    res.send({ data, statusCode: 200, statusMessage: 'ok' })
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+})
+
+app.get('/groups/users/byGroupAndUsername/:groupName/:username', isAuthenticated, async (req, res) => {
+  try {
+    const groupName = req.params.groupName;
+    const username = req.params.username;
+    // Mango search in Arrays, Documentation in : https://stackoverflow.com/questions/43892556/mango-search-in-arrays-couchdb
+    await USERS_DB.createIndex({ index: { fields: ['groups[].groupName'] }, type: 'json' });
+
+    const results = await USERS_DB.find({
+      selector: {
+        groups: { $elemMatch: { groupName } },
+        username: { '$regex': `(?i)${username}` }
+      }
+    });
+    const data = results.docs.map(result => {
+      return {
+        _id: result._id,
+        username: result.username,
+        email: result.email,
+        firstName: result.firstName,
+        lastName: result.lastName
+      }
+    });
+    res.send({ data, statusCode: 200, statusMessage: 'ok' })
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+})
+
+app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req, res) => {
+  try {
+    const username = req.body.username;
+    const groupName = req.params.groupName;
+    const user = await findUserByUsername(username);
+    if (user && user._id) {
+      user.groups = user.groups.filter(group => group.groupName !== groupName);
+      const data = await USERS_DB.put(user);
+      res.send({ statusCode: 200, data, statusMessage: `User: ${username} removed from Group: ${groupName}` })
+    }
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+})
 // @TODO: Middleware auth check for upload user.
 app.post('/upload/:groupName', async function (req, res) {
   let db = new DB(req.params.groupName)
@@ -610,7 +813,7 @@ app.post('/upload/:groupName', async function (req, res) {
     // New docs should not have a rev or else insertion will fail.
     delete packet.doc._rev
     await db.put(packet.doc).catch(err => log.error(err))
-    res.send('ok')
+    res.send({ status: 'ok'})
   } catch (e) { log.error(e) }
 
 })
@@ -622,8 +825,12 @@ app.get('/csv/:groupName/:formId', async function (req, res) {
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   const outputPath = `/csv/${fileName}`
   const cmd = `cd /tangerine/scripts/generate-csv/ && ./bin.js '${JSON.stringify(pouchDbDefaults)}' ${groupName}-reporting ${formId} ${outputPath} ${batchSize}`
-  clog(cmd)
-  exec(cmd)
+  log.info(`generating csv start: ${cmd}`)
+  exec(cmd).then(status => {
+    log.info(`generate csv done: ${JSON.stringify(status)}`)
+  }).catch(error => {
+    log.error(error)
+  })
   res.send({
     stateUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.csv', '.state.json')}`,
     downloadUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
@@ -743,52 +950,63 @@ function allGroups() {
 }
 
 const keepAliveReportingWorker = async initialGroups => {
-  // Populate worker-state.json if there any initialGroups not currently being watched.
-  let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
-  if (!workerState.databases) workerState.databases = []
-  for (let groupName of initialGroups) {
-    let feed = workerState.databases.find(database => database.name === groupName)
-    if (!feed) workerState.databases.push({name: groupName, sequence: 0})
-  }
-  workerState.pouchDbDefaults = pouchDbDefaults
-  await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
-  // Declare variables now so they don't have to be delared continuously and garbage collected later.
-  let response = {
-    stdout: '',
-    stderr: ''
-  } 
-  // Keep alive.
-  while(true) {
-    // Hook in and add a new group if it is queued.
-    while (newGroupQueue.length > 0) {
-      workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
-      workerState.databases.push({name: newGroupQueue.pop(), sequence: 0})
-      await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+  try {
+    // Populate worker-state.json if there any initialGroups not currently being watched.
+    let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+    if (!workerState.databases) workerState.databases = []
+    for (let groupName of initialGroups) {
+      let feed = workerState.databases.find(database => database.name === groupName)
+      if (!feed) workerState.databases.push({ name: groupName, sequence: 0 })
     }
-    // Run the worker.
-    try {
-      response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
-      if (typeof response.stderr === 'object') {
-        log.warn(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
-      } else if (response.stderr) {
-        log.warn(`run-worker.js STDERR: ${response.stderr}`)
-      }
-      try {
-        workerState = JSON.parse(response.stdout)
-        // Wrap up. If nothing was last processed, sleep for 30 seconds.
-        if (workerState.processed === 0) {
-          await sleep (30*1000) 
-        } else {
-          log.info(`Processed ${workerState.processed} changes.`)
-        }
+    workerState.pouchDbDefaults = pouchDbDefaults
+    await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+    // Declare variables now so they don't have to be delared continuously and garbage collected later.
+    let response = {
+      stdout: '',
+      stderr: ''
+    }
+    // Keep alive.
+    while (true) {
+      // Hook in and add a new group if it is queued.
+      while (newGroupQueue.length > 0) {
+        workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
+        workerState.databases.push({ name: newGroupQueue.pop(), sequence: 0 })
         await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
-      } catch (error) {
-        log.warn(error)
       }
-    } catch(error) {
-      log.error(error)
+      // Run the worker.
+      try {
+        response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
+        if (typeof response.stderr === 'object') {
+          log.error(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
+        } else if (response.stderr) {
+          log.error(`run-worker.js STDERR: ${response.stderr}`)
+        }
+        try {
+          workerState = JSON.parse(response.stdout)
+          await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+          // Wrap up. If nothing was last processed, sleep for 30 seconds.
+          if (workerState.processed === 0) {
+            log.info('No changes processed. Sleeping...')
+            await sleep(30 * 1000)
+          } else {
+            log.info(`Processed ${workerState.processed} changes.`)
+          }
+        } catch (error) {
+          log.error(error)
+          log.info('keepAliveReportingWorker had an error trying to save state. Sleeping for 30 seconds.')
+          await sleep(30*1000)
+        }
+      } catch (error) {
+        log.error(error)
+        log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
+        await sleep(30*1000)
+      }
     }
-    
+  } catch (error) {
+    log.error(error)
+    log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
+    await sleep(30*1000)
+
   }
 }
 const initialGroups = allGroups()

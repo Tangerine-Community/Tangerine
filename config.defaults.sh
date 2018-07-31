@@ -11,7 +11,8 @@ T_COUCHDB_ENABLE="true"
 T_COUCHDB_LOCAL="true"
 T_COUCHDB_USER_ADMIN_NAME="admin"
 T_COUCHDB_USER_ADMIN_PASS="password"
-T_COUCHDB_ENDPOINT="http://admin:password@couchdb:5984"
+# Note that the / at the end is required.
+T_COUCHDB_ENDPOINT="http://admin:password@couchdb:5984/"
 T_COUCHDB_CONTAINER_NAME="couchdb"
 
 # optional
