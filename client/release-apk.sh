@@ -52,7 +52,7 @@ cd $RELEASE_DIRECTORY
 sed -i -e "s#CHCP_URL#"$CHCP_URL"#g" $RELEASE_DIRECTORY/config.xml
 
 echo "Copying cordova-hcp.json $RELEASE_DIRECTORY"
-cp /tangerine/client/tangy-forms/editor/cordova-hcp-template.json $RELEASE_DIRECTORY/cordova-hcp.json
+cp /tangerine/client/wrappers/apk/cordova-hcp-template.json $RELEASE_DIRECTORY/cordova-hcp.json
 sed -i -e "s#URL#"$URL"#g" $RELEASE_DIRECTORY/cordova-hcp.json
 
 # Create the chcp manifest.
