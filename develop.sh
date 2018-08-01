@@ -20,6 +20,12 @@ fi
 if [ ! -d data/client/releases/prod/apks ]; then
   mkdir data/client/releases/prod/apks
 fi
+if [ ! -d data/client/releases/prod/dat ]; then
+  mkdir data/client/releases/prod/dat
+fi
+if [ ! -d data/client/releases/qa/dat ]; then
+  mkdir data/client/releases/qa/dat
+fi
 if [ ! -d data/client/releases/prod/pwas ]; then
   mkdir data/client/releases/prod/pwas
 fi
@@ -127,6 +133,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js \
   --volume $(pwd)/scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
+  --volume $(pwd)/client/release-dat.sh:/tangerine/client/release-dat.sh \
   --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
   --volume $(pwd)/client/shell/package.json:/tangerine/client/shell/package.json \
   --volume $(pwd)/client/ckeditor:/tangerine/client/ckeditor \
