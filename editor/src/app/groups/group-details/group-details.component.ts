@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-group-details',
@@ -88,4 +89,28 @@ export class GroupDetailsComponent implements OnInit {
 
   }
 
+  async deleteForm(groupName, formId) {
+    console.log(groupName)
+    console.log(formId)
+    let confirmation = confirm('Are you sure you would like to remove this form?')
+    if (!confirmation) return
+    let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
+    let newFormsJson = formsJson.filter(formInfo => formInfo.id !== formId)
+    console.log(newFormsJson)
+
+    await this.http.post('/editor/file/save', {
+      groupId: groupName,
+      filePath: './forms.json',
+      fileContents: JSON.stringify(newFormsJson)
+    }).toPromise()
+
+    await this.http.delete('/editor/file/save', {params: new HttpParams()
+      .set('groupId', groupName)
+      .set('filePath', `./${formId}`)
+    }).toPromise()
+
+    this.forms = await this.groupsService.getFormsList(this.groupName);
+
+    
+  }
 }
