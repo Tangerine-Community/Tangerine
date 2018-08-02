@@ -39,7 +39,7 @@ You can release your Tangerine Apps as dat archives and access them using [Beake
 To enable dat archives on your server, you will need to install nodejs and run `dat-party` from the host machine inside of a screen session. In the future we hope there will not be this extra step because there are some details to work out around Dat working inside of a Docker Container (https://github.com/datproject/dat/issues/858).
 
 ```
-npm install -g dat-party
+npm install -g dat dat-party
 screen -R dat-party
 cd tangerine/data/client/releases/prod/dat
 dat-party
