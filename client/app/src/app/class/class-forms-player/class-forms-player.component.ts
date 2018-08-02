@@ -103,7 +103,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
         formEl.newResponse()
       }
 
-      formEl.addEventListener('submit', async (event) => {
+      formEl.addEventListener('tangy-form-complete', async (event) => {
         event.preventDefault()
         let response = formEl.response;
         if (!formResponse) {

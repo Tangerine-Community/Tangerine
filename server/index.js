@@ -677,8 +677,6 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     if (typeof homeUrl !== 'undefined') {
       appConfig.homeUrl = homeUrl
     }
-    let direction = `${process.env.T_LANG_DIRECTION_ZZZ}`
-    clog("direction: " + direction)
     appConfig.direction = `${process.env.T_LANG_DIRECTION}`
     clog("appConfig.homeUrl: " + appConfig.homeUrl)
   } catch (err) {
