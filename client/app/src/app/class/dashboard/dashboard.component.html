@@ -1,0 +1,74 @@
+<mat-tab-group #ClassesTabGroup (selectedTabChange)="tabChanged($event)" [selectedIndex]="selectedIndex">
+  <mat-tab
+    *ngFor="let class of classes; let classIndex=index"
+    label="{{class.doc.items[0].inputs[2].value}}"
+    attr.data-classId = "{{class.id}}">
+    <ng-template matTabContent>
+      <mat-card class="tangy-card-content-container">
+        <mat-list>
+          <mat-list-item >
+            <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a title="Add Student" class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:class.doc._id}>{{'Add Student'|translate}}</a>)</span>
+            <span dir="rtl">&nbsp;&nbsp;&nbsp;
+              <button mat-button [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+              <mat-menu #reportsMenu="matMenu">
+                <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
+              </mat-menu>
+              <mat-menu #groupingMenu="matMenu">
+                <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/{{item.id}}/{{item.classId}}">{{item.title}}</button>
+              </mat-menu>
+            </span>
+          </mat-list-item>
+            <mat-list-item *ngIf="!students">
+              <p class="mat-h3">{{'No Students currently registered.'|translate}}</p>
+            </mat-list-item>
+        </mat-list>
+        <div [hidden]="isLoading">
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="Name">
+              <th mat-header-cell *matHeaderCellDef> Student </th>
+              <td mat-cell *matCellDef="let element"> {{element["name"]}} </td>
+            </ng-container>
+
+            <ng-container [matColumnDef]="column" *ngFor="let column of formColumns;let i=index" >
+              <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+              <td mat-cell *matCellDef="let element,i">
+              <span *ngIf="!element['forms'][i]['response'] || element['forms'][i]['response']?.itemCount == 0 ">
+              <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selectCheckbox(element,i) : null"
+                            [checked]="selection.isSelected(element)">
+              </mat-checkbox>
+              </span>
+                <span *ngIf="element['forms'][i]['response']?.itemCount > 0 ">
+                <mat-checkbox (click)="$event ? selectCheckboxResult(element,i) : null"
+                              [checked]="true"
+                              [disabled]="true">
+              </mat-checkbox>
+              </span>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+          </table>
+          <mat-paginator [length]="pageLength"
+                         [pageSize]="pageSize"
+                         [pageSizeOptions]="pageSizeOptions">
+          </mat-paginator>
+        </div>
+
+      </mat-card>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <a class="mat-tab-label" [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>
+        <span>{{'Add Class'|translate}}</span>
+    </a>
+    </ng-template>
+  </mat-tab>
+
+</mat-tab-group>
+
+<div #container class = "hideme"> </div>

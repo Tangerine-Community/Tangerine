@@ -23,6 +23,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   throttledSaveLoaded;
   throttledSaveFiring;
   service: TangyFormService;
+  formId;
   @ViewChild('container') container: ElementRef;
   constructor(
     private caseManagementService: CaseManagementService,
@@ -34,15 +35,21 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     this.route.queryParams.subscribe(async params => {
+      let formInfo; let formItemHtml;
       this.formIndex = +params['formIndex'] || 0;
+      this.formId = params['formId'];
       this.responseId = params['responseId'];
-      const formInfo = await this.getFormInfoByIndex(this.formIndex);
+      if (typeof this.formId !== 'undefined') {
+        formInfo = await this.getFormInfoById(this.formId);
+      } else {
+        formInfo = await this.getFormInfoByIndex(this.formIndex);
+      }
       const userDbName = await this.userService.getUserDatabase();
       const tangyFormService = new TangyFormService({ databaseName: userDbName });
       this.service = tangyFormService
       const formResponse = await tangyFormService.getResponse(this.responseId);
       const container = this.container.nativeElement
-      let formHtml =  await this.http.get(formInfo.src, {responseType: 'text'}).toPromise();
+      let  formHtml =  await this.http.get(formInfo.src, {responseType: 'text'}).toPromise();
       container.innerHTML = formHtml
       let formEl = container.querySelector('tangy-form')
       // Put a response in the store by issuing the FORM_OPEN action.
@@ -96,6 +103,16 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
         // Relative path to tangy forms app.
         return form[index]
       }
+    } catch (err) { console.log(err) }
+
+  }
+
+  async getFormInfoById(formId) {
+    try {
+      const userDB = await this.userService.getUserDatabase();
+      const form = await this.caseManagementService.getFormList();
+      let selectedForm = form.find(testForm => (testForm.id === formId) ? true : false)
+      return selectedForm;
     } catch (err) { console.log(err) }
 
   }

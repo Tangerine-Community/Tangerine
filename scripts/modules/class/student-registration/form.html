@@ -1,0 +1,54 @@
+  <tangy-form has-summary linear-mode hide-closed-items id="student-registration" on-change="">
+  <!--<tangy-form-item src="./assets/student-registration/student-registration.html" id="student-registration" title="Student" hide-back-button hide-next-button></tangy-form-item>-->
+  <tangy-form-item id="student-registration" title="Student Registration" hide-back-button hide-next-button on-open="
+    // https://stackoverflow.com/a/35672609/6726094
+    var hash = window.location.hash.substr(1);
+    var result = hash.split('&').reduce(function (result, item) {
+        var parts = item.split('=');
+        result[parts[0]] = parts[1];
+        return result;
+    }, {});
+    var classId = result.classId;
+    console.log('Setting classId to ' + classId)
+    var el = this.$.content.querySelector('tangy-input[name=\'classId\']')
+    el.value = classId;
+    ">
+    <template>
+      <tangy-input
+        name="student_name"
+        label="Full name"
+        type="text"
+        error-message="This is required."
+        required>
+      </tangy-input>
+
+      <tangy-input
+        name="gender"
+        label="Gender"
+        type="text"
+        error-message="This is required."
+        required>
+      </tangy-input>
+
+      <tangy-input
+        name="age"
+        label="Age"
+        type="text"
+        error-message="This is required."
+        required>
+      </tangy-input>
+
+      <tangy-input
+        name="classId"
+        label="Class id"
+        type="hidden"
+        error-message="This is required."
+        hidden>
+      </tangy-input>
+    </template>
+  </tangy-form-item>
+</tangy-form>
+
+  <!--<tangy-form hide-nav hide-responses hide-complete-button id="student-registration" on-change="">-->
+    <!--<tangy-form-item src="./assets/student-registration/student-registration.html" id="student-registration" title="Student" hide-back-button hide-next-button></tangy-form-item>-->
+  <!--</tangy-form>  -->

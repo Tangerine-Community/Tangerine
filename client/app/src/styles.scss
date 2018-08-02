@@ -8,7 +8,7 @@
 
 @import '~material-design-icons-iconfont/dist/material-design-icons.css';
 /* TODO: I'm not sure this is having any affect */
-@import '~_tangy-app-variables.scss';
+@import './_tangy-app-variables.scss';
 
 body {
   background: #fafafa;
@@ -235,7 +235,7 @@ div.more {
     color :$tangy-foreground-success-message;
   }
 
-  .material-icons  { 
+  .material-icons  {
     vertical-align: text-bottom;
   }
 
