@@ -24,9 +24,6 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   throttledSaveFiring;
   service: TangyFormService;
   formId;
-  formItem;
-  formTitle;
-  formSrc;
   @ViewChild('container') container: ElementRef;
   constructor(
     private caseManagementService: CaseManagementService,
@@ -41,41 +38,18 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       let formInfo; let formItemHtml;
       this.formIndex = +params['formIndex'] || 0;
       this.formId = params['formId'];
-      this.formItem = params['itemId']; // Used to build a Class form dynamically
-      this.formTitle = params['title']; // Used to build a Class form dynamically
-      this.formSrc = params['src'];     // Used to build a Class form dynamically
       this.responseId = params['responseId'];
       if (typeof this.formId !== 'undefined') {
         formInfo = await this.getFormInfoById(this.formId);
       } else {
         formInfo = await this.getFormInfoByIndex(this.formIndex);
       }
-      // formItem is sent if this is a Class instance. Need to build the form dynamically.
-      if (typeof this.formItem !== 'undefined') {
-        // ./assets/grade-1/form.html
-        let tangyFormWidgetStart = "<tangy-form linear-mode hide-closed-items id=\"" + this.formItem
-          + "\" on-change=\"\">\n"
-        let tangyFormWidgetEnd = "</tangy-form>"
-        let tangyFormItem = "  <tangy-form-item src=\"" + this.formSrc + "\" id=\"" + this.formItem + "\" title=\"" + this.formTitle + "\" hide-back-button hide-next-button></tangy-form-item>\n"
-        formItemHtml = tangyFormWidgetStart + tangyFormItem + tangyFormWidgetEnd;
-        let formItemInfo = {
-          title: this.formTitle,
-          src: this.formSrc,
-          id: this.formId
-        }
-        formInfo = formItemInfo;
-      }
       const userDbName = await this.userService.getUserDatabase();
       const tangyFormService = new TangyFormService({ databaseName: userDbName });
       this.service = tangyFormService
       const formResponse = await tangyFormService.getResponse(this.responseId);
       const container = this.container.nativeElement
-      let formHtml
-      if (typeof formItemHtml !== 'undefined') {
-        formHtml = formItemHtml
-      } else {
-        formHtml =  await this.http.get(formInfo.src, {responseType: 'text'}).toPromise();
-      }
+      let  formHtml =  await this.http.get(formInfo.src, {responseType: 'text'}).toPromise();
       container.innerHTML = formHtml
       let formEl = container.querySelector('tangy-form')
       // Put a response in the store by issuing the FORM_OPEN action.

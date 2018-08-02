@@ -64,8 +64,6 @@ ADD server /tangerine/server
 
 ADD ./ /tangerine
 
-ADD ./scripts/modules/ /tangerine/scripts/modules/
-
 RUN mkdir /csv
 
 EXPOSE 80
