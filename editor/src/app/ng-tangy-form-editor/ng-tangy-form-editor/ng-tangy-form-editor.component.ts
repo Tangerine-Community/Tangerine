@@ -37,7 +37,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
       </tangy-form-editor>
     `
     const tangyFormEditorEl = this.containerEl.querySelector('tangy-form-editor')
-    tangyFormEditorEl.addEventListener('change', event => this.saveForm(event.detail))
+    tangyFormEditorEl.addEventListener('tangy-form-editor-change', event => this.saveForm(event.detail))
     
   }
 
