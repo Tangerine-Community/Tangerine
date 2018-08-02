@@ -1,0 +1,20 @@
+.hideme {
+  display:none;
+}
+
+.mat-table {
+  width:100%;
+}
+
+.mat-column-select {
+  overflow: initial;
+}
+
+.mat-column-Name {
+  padding-right:5px;
+}
+
+th.mat-header-cell {
+  text-align: right;
+}
+
