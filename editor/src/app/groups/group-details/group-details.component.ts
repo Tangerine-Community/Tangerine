@@ -44,7 +44,7 @@ export class GroupDetailsComponent implements OnInit {
 
   }
 
-  UUID(separator) {
+  UUID(separator?:string) {
     if (!separator) {
         separator = '';
     }
