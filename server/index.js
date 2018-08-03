@@ -641,14 +641,18 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 
   // See if this instance supports the class module, copy the class forms, and set homeUrl
   let homeUrl;
+  let syncProtocol;
+  let modules = [];
   let modulesString = process.env.T_MODULES;
   modulesString = modulesString.replace(/'/g, '"');
   let moduleEntries = JSON.parse(modulesString)
   if (moduleEntries.length > 0) {
     for (let moduleEntry of moduleEntries) {
+      modules.push(moduleEntry);
       if (moduleEntry === "class") {
         clog("Setting homeUrl to dashboard")
         homeUrl =  "dashboard"
+        syncProtocol = "replication"
         // copy the class forms
         const exists = await fs.pathExists('/tangerine/client/app/src/assets/class-registration')
         if (!exists) {
@@ -661,7 +665,6 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
         }
       } else {
         clog("moduleEntry: " + moduleEntry)
-        // appConfig.homeUrl =  "case-management"
       }
     }
   }
@@ -676,6 +679,13 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}`
     if (typeof homeUrl !== 'undefined') {
       appConfig.homeUrl = homeUrl
+    }
+    if (typeof syncProtocol !== 'undefined') {
+      appConfig.syncProtocol = syncProtocol
+      appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_SYNC_SERVER}/${groupName}`
+    }
+    if (modules.length > 0) {
+      appConfig.modules = modules;
     }
     appConfig.direction = `${process.env.T_LANG_DIRECTION}`
     clog("appConfig.homeUrl: " + appConfig.homeUrl)
@@ -881,6 +891,7 @@ app.post('/upload/:groupName', async function (req, res) {
   } catch (e) { log.error(e) }
 
 })
+
 // TODO Notify caller if group doesnt have form response, to avoid infinite polling  
 app.get('/csv/:groupName/:formId', async function (req, res) {
   const groupName = sanitize(req.params.groupName)
