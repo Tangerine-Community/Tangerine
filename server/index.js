@@ -891,19 +891,7 @@ app.post('/upload/:groupName', async function (req, res) {
   } catch (e) { log.error(e) }
 
 })
-// @TODO: Middleware auth check for upload user.
-app.post('/replicate/:groupName', async function (req, res) {
-  let db = new DB(req.params.groupName)
-  try {
-    const payload = pako.inflate(req.body, { to: 'string' })
-    const packet = JSON.parse(payload)
-    // New docs should not have a rev or else insertion will fail.
-    delete packet.doc._rev
-    await db.put(packet.doc).catch(err => log.error(err))
-    res.send({ status: 'ok'})
-  } catch (e) { log.error(e) }
 
-})
 // TODO Notify caller if group doesnt have form response, to avoid infinite polling  
 app.get('/csv/:groupName/:formId', async function (req, res) {
   const groupName = sanitize(req.params.groupName)
