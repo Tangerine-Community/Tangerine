@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../auth/_services/user.service';
+import {AppConfigService} from "../../../shared/_services/app-config.service";
 
 @Component({
   selector: 'app-sync-records',
@@ -18,7 +19,8 @@ export class SyncRecordsComponent implements OnInit {
 
   constructor(
     private syncingService: SyncingService,
-    private userService: UserService
+    private userService: UserService,
+    private appConfigService: AppConfigService,
   ) { }
 
   async ngOnInit() {
@@ -51,12 +53,18 @@ export class SyncRecordsComponent implements OnInit {
   async pushAllRecords() {
     this.isSyncSuccesful = undefined;
     const usernames = await this.userService.getUsernames();
+    const appConfig = await this.appConfigService.getAppConfig();
+    const syncProtocol = appConfig.syncProtocol
     usernames.map(async username => {
       try {
-        const result = await this.syncingService.pushAllrecords(username);
-        if (result) {
-          this.isSyncSuccesful = true;
-          this.getUploadProgress();
+        if (typeof syncProtocol !== 'undefined' && syncProtocol === 'replication') {
+          const result = await this.syncingService.replicate(username);
+        } else {
+          const result = await this.syncingService.pushAllrecords(username);
+          if (result) {
+            this.isSyncSuccesful = true;
+            this.getUploadProgress();
+          }
         }
       } catch (error) {
         console.error(error);
