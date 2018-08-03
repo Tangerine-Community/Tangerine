@@ -87,6 +87,7 @@ RUN_OPTIONS="
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_MODULES=$T_MODULES\" \
   --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
+  --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
