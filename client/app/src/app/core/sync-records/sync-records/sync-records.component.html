@@ -7,10 +7,13 @@
         <span *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined">{{'Sync Unsuccessful. Please Retry'|translate}}</span>
         <br/>
         <br>
+      <div *ngIf="syncProtocol != 'replication'">
         <p>{{'Last Successful Sync Timestamp'|translate}}:</p>
         <p>{{'Total Docs Uploaded'|translate}} {{docsUploaded}}</p>
         <p>{{'Total Docs not Uploaded'|translate}} {{docsNotUploaded}}</p>
         <p>{{'Total Percentage Complete'|translate}} {{syncPercentageComplete|number:'1.2-2'}}%</p>
+      </div>
+
     </mat-card-content>
     <mat-card-actions>
         <button color="primary" mat-raised-button (click)="pushAllRecords()">{{'SYNC DATA FOR ALL USERS'|translate}}</button>

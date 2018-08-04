@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../auth/_services/user.service';
 import {AppConfigService} from "../../../shared/_services/app-config.service";
+import PouchDB from 'pouchdb';
 
 @Component({
   selector: 'app-sync-records',
@@ -16,6 +17,7 @@ export class SyncRecordsComponent implements OnInit {
   docsNotUploaded: number;
   docsUploaded: number;
   syncPercentageComplete: number;
+  syncProtocol = '';
 
   constructor(
     private syncingService: SyncingService,
@@ -24,7 +26,12 @@ export class SyncRecordsComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.getUploadProgress();
+    const appConfig = await this.appConfigService.getAppConfig();
+    this.syncProtocol = appConfig.syncProtocol
+    if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
+    } else {
+      this.getUploadProgress();
+    }
   }
 
   async getUploadProgress() {
@@ -50,15 +57,37 @@ export class SyncRecordsComponent implements OnInit {
       syncPercentageComplete
     };
   }
+  async getRemoteHost() {
+    const appConfig = await this.appConfigService.getAppConfig();
+    return appConfig.uploadUrl;
+  }
   async pushAllRecords() {
     this.isSyncSuccesful = undefined;
     const usernames = await this.userService.getUsernames();
     const appConfig = await this.appConfigService.getAppConfig();
-    const syncProtocol = appConfig.syncProtocol
+    this.syncProtocol = appConfig.syncProtocol
     usernames.map(async username => {
       try {
-        if (typeof syncProtocol !== 'undefined' && syncProtocol === 'replication') {
-          const result = await this.syncingService.replicate(username);
+        if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
+
+          const userProfile = await this.userService.getUserProfile(username);
+          const remoteHost = await this.getRemoteHost();
+          const localDB = new PouchDB(username);
+          const remoteDB = new PouchDB(remoteHost);
+          localDB.replicate.to(remoteDB, {push:true}).on('complete', function (info) {
+            console.log("yeah, we're done!" + info)
+            this.isSyncSuccesful = true;
+            alert("Sync is complete")
+          }).on('error', function (err) {
+            // boo, something went wrong!
+            console.log("boo, something went wrong! error: " + err)
+          });
+
+          // const result = await this.syncingService.replicate(username);
+          // if (result) {
+          //   this.isSyncSuccesful = true;
+          //   // this.getUploadProgress();
+          // }
         } else {
           const result = await this.syncingService.pushAllrecords(username);
           if (result) {
