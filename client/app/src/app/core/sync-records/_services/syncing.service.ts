@@ -54,20 +54,6 @@ export class SyncingService {
     }
   }
 
-  async replicate(username) {
-    const userProfile = await this.userService.getUserProfile(username);
-    const remoteHost = await this.getRemoteHost();
-    const localDB = new PouchDB(username);
-    const remoteDB = new PouchDB(remoteHost);
-    localDB.replicate.to(remoteDB).on('complete', function () {
-      console.log("yeah, we're done!")
-    }).on('error', function (err) {
-      // boo, something went wrong!
-      console.log("boo, something went wrong! error: " + err)
-    });
-  }
-
-
   async getIDsFormsLockedAndNotUploaded(username?: string) {
     const userDB = username || await this.getLoggedInUser();
     const DB = new PouchDB(userDB);
