@@ -10,11 +10,13 @@
             <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a title="Add Student" class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:class.doc._id}>{{'Add Student'|translate}}</a>)</span>
             <span dir="rtl">&nbsp;&nbsp;&nbsp;
               <button mat-button [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+              <mat-menu #groupingMenu="matMenu">
+                <ng-template matMenuContent>
+                <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/{{item.id}}/{{item.classId}}">{{item.title}}</button>
+                </ng-template>
+              </mat-menu>
               <mat-menu #reportsMenu="matMenu">
                 <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
-              </mat-menu>
-              <mat-menu #groupingMenu="matMenu">
-                <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/{{item.id}}/{{item.classId}}">{{item.title}}</button>
               </mat-menu>
             </span>
           </mat-list-item>

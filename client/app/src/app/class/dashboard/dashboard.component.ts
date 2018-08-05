@@ -229,6 +229,7 @@ export class DashboardComponent implements OnInit {
     // let allStudentResults:StudentResult = [];
     // re-init the formColumns and columnsToDisplay
     this.formColumns = [];
+    this.formList = [];
     this.columnsToDisplay = ["Name"];
     for (const form of this.curriculumForms) {
       let formEl = {
