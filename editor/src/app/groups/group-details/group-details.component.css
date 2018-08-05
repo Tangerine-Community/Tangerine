@@ -4,3 +4,11 @@
 span.tangy-foreground-secondary{
     padding-top: 0.3rem;
 }
+span.form-list-header {
+    font-size: 20px;
+    font-weight: bold;
+    padding-left: 10px;
+}
+.mat-card-content {
+    padding-top: 1em;
+}
