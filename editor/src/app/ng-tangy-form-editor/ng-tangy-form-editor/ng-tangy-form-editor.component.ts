@@ -1,6 +1,7 @@
 import { AfterContentInit, ElementRef, Component, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import {MatTabChangeEvent} from "@angular/material";
 
 @Component({
   selector: 'app-ng-tangy-form-editor',
@@ -10,7 +11,9 @@ import { HttpClient } from '@angular/common/http';
 export class NgTangyFormEditorComponent implements AfterContentInit {
 
   @ViewChild('container') container: ElementRef;
+  @ViewChild('header') header: ElementRef;
   containerEl: any;
+  groupId;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,6 +31,8 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
     let formInfo = formsJson.find(formInfo => formInfo.id === formId)
     let formHtml = await this.http.get(`/editor/${groupName}/content/${formId}/form.html`, {responseType: 'text'}).toPromise()
+    let pathArray = window.location.hash.split( '/' );
+    this.groupId = pathArray[2];
 
     this.containerEl.innerHTML = `
       <tangy-form-editor style="margin:15px">
@@ -38,7 +43,15 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     `
     const tangyFormEditorEl = this.containerEl.querySelector('tangy-form-editor')
     tangyFormEditorEl.addEventListener('tangy-form-editor-change', event => this.saveForm(event.detail))
-    
+  }
+
+  tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
+      // console.log('tabChangeEvent => ', tabChangeEvent);
+      // console.log('index => ', tabChangeEvent.index);
+      if (tabChangeEvent.index === 1) {
+        let url = `/#/groups/${this.groupId}`;
+        window.location.replace(url);
+      }
   }
 
   async saveForm(formHtml) {
