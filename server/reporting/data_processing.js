@@ -16,6 +16,7 @@ const {promisify} = require('util');
 const fs = require('fs');
 const path = require('path')
 const readFile = promisify(fs.readFile);
+const http = require('axios')
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -78,6 +79,8 @@ const processFormResponse = async (doc, sourceDb) => {
     formResult.processedResult[`${formID}.complete`] = formData.complete;
     await saveFormResponseHeaders(formHeaders, REPORTING_DB);
     await saveFlattenedFormResponse(formResult, REPORTING_DB);
+    await ensureIndex(formResult)
+    await indexFlattenedFormResponse(formResult);
   } catch (error) {
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error)}`)
   }
@@ -197,6 +200,43 @@ function saveFormResponseHeaders(doc, db) {
           .catch(err => {
             reject(`Could not save updated Form Response Headers ${JSON.stringify(doc._id)} because Error of ${JSON.stringify(err)}`)
           })
+      })
+  })
+}
+
+
+function ensureIndex(doc) {
+  return new Promise((resolve, reject) => {
+    http.get(`http://elasticsearch:9200/${doc.formId}`)
+      .then(_ => resolve(true))
+      .catch(err => {
+        http.put(`http://elasticsearch:9200/${doc.formId}`)
+          .then(_ => resolve(true))
+          .catch(err => reject(err))
+      })
+  })
+}
+
+function indexFlattenedFormResponse(doc) {
+  return new Promise((resolve, reject) => {
+    let safeDoc = Object.assign({}, doc.processedResult)
+    let indexDoc = {}
+    for (let prop in safeDoc) {
+      // elasticsearch gets confused about periods, replace them with underscores.
+      let indexProp = prop.replace(/\./g, '_')
+      if (typeof safeDoc[prop] === 'boolean') {
+        indexDoc[indexProp] = (safeDoc[prop]) ? 'true' : 'false'
+      }
+      else if (!safeDoc[prop]) {
+        indexDoc[indexProp] = ''
+      } else {
+        indexDoc[indexProp] = safeDoc[prop]
+      }
+    }
+    http.put(`http://elasticsearch:9200/${doc.formId}/_doc/${doc._id}`, indexDoc)
+      .then(_ => resolve(true))
+      .catch(err => {
+        reject(err)
       })
   })
 }
