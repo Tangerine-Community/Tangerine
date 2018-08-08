@@ -51,6 +51,26 @@ else
   echo "You have no config.sh. Copy config.defaults.sh to config.sh, change the passwords and try again." && exit 1;
 fi
 
+docker stop elasticsearch
+docker rm elasticsearch
+docker stop kibana
+docker rm kibana
+
+docker run -d \
+  -v $(pwd)/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro \
+  -p 9200:9200 \
+  -p 9300:9300 \
+  -e ES_JAVA_OPTS="-Xmx256m -Xms256m" \
+  --name elasticsearch \
+  docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0
+
+docker run -d \
+  -v $(pwd)/kibana/config/:/usr/share/kibana/config:ro \
+  -p 5601:5601 \
+  --link elasticsearch:elasticsearch \
+  --name kibana \
+  docker.elastic.co/kibana/kibana-oss:6.3.0
+
 docker build -t tangerine/tangerine:local .
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
@@ -120,6 +140,8 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_MODULES=$T_MODULES\" \
   --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
+  --link elasticsearch:elasticsearch \
+  --link kibana:kibana \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/csv:/csv/ \
