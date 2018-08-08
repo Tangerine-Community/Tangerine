@@ -170,6 +170,19 @@ var isAuthenticated = function (req, res, next) {
   res.status(401).send(errorMessage)
 }
 
+var hasKibanaAuth = function (req, res, next) {
+  // Uncomment next two lines when you want to turn off authentication during development.
+  // req.user = {}; req.user.name = 'user1';
+  // return next();
+  if (req.isAuthenticated() && req.user.name === 'user1') {
+    return next();
+  }
+  let errorMessage = `Permission denied at ${req.url}`;
+  log.warn(errorMessage)
+  // res.redirect('/');
+  res.status(401).send(errorMessage)
+}
+
 // Login service.
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
@@ -1086,6 +1099,23 @@ const keepAliveReportingWorker = async initialGroups => {
 }
 const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
+
+var kibanaProxy = proxy('http://kibana:5601/', {
+  proxyReqPathResolver: function (req, res) {
+    var path = require('url').parse(req.url).path;
+    clog("path:" + path);
+    return path;
+  }
+});
+var kibanaMountpoint = '/kibana';
+app.use(kibanaMountpoint, hasKibanaAuth, kibanaProxy);
+app.use(kibanaMountpoint, hasKibanaAuth, function (req, res) {
+  if (req.originalUrl === kibanaMountpoint) {
+    res.redirect(301, req.originalUrl + '/');
+  } else {
+    kibanaProxy;
+  }
+});
 
 // Start the server.
 var server = app.listen(config.port, function () {

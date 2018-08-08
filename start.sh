@@ -41,6 +41,25 @@ if [ ! -f data/worker-state.json ]; then
   echo '{}' > data/worker-state.json
 fi
 
+docker stop elasticsearch
+docker rm elasticsearch
+docker stop kibana
+docker rm kibana
+
+docker run -d \
+  -v $(pwd)/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro \
+  -p 9200:9200 \
+  -p 9300:9300 \
+  -e ES_JAVA_OPTS="-Xmx256m -Xms256m" \
+  --name elasticsearch \
+  docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0
+
+docker run -d \
+  -v $(pwd)/kibana/config/:/usr/share/kibana/config:ro \
+  -p 5601:5601 \
+  --link elasticsearch:elasticsearch \
+  --name kibana \
+  docker.elastic.co/kibana/kibana-oss:6.3.0
 
 # Load config.
 source ./config.defaults.sh
@@ -133,6 +152,8 @@ require_valid_user = true
      couchdb
   RUN_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
+    --link elasticsearch:elasticsearch \
+    --link kibana:kibana \
     -e T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE \
     -e T_COUCHDB_ENDPOINT=$T_COUCHDB_ENDPOINT \
     -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
