@@ -12,7 +12,7 @@ export class TangerineReportsComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     this.containerEl = this.container.nativeElement 
-    this.containerEl.innerHTML = `<iframe src="/kibana" height=2000></iframe>`
+    this.containerEl.innerHTML = `<iframe src="/reports" height=2000></iframe>`
   }
 
 }
