@@ -24,9 +24,9 @@
     "express": "^4.16.2",
     "express-http-proxy": "^1.1.0",
     "express-session": "1.15.6",
-    "session-pouchdb-store": "0.2.1",
     "flat": "^4.0.0",
     "fs-extra": "^4.0.3",
+    "http-proxy": "^1.17.0",
     "json2csv": "^3.11.5",
     "junk": "^2.1.0",
     "lodash": "^4.17.10",
@@ -39,7 +39,8 @@
     "read-yaml": "^1.1.0",
     "rxjs": "^6.1.0",
     "sanitize-filename": "^1.6.1",
-    "underscore": "^1.8.3",
-    "tangy-log": "^1.0.0"
+    "session-pouchdb-store": "0.2.1",
+    "tangy-log": "^1.0.0",
+    "underscore": "^1.8.3"
   }
 }

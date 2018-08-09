@@ -4,5 +4,5 @@
 #
 server.name: kibana
 server.host: "0"
-server.basePath: "/kibana"
+server.basePath: "/reports"
 elasticsearch.url: http://elasticsearch:9200
