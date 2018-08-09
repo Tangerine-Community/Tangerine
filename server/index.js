@@ -1100,6 +1100,24 @@ const keepAliveReportingWorker = async initialGroups => {
 const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
 
+var httpProxy = require('http-proxy');
+
+var esUrl = 'http://elasticsearch:9200'
+var proxyget = httpProxy.createProxyServer({target:esUrl});
+var proxypost = httpProxy.createProxyServer({target:esUrl});
+
+app.get('/reports/elasticsearch/_msearch', function(req, res) {
+  console.log(req.method + ' : ' + req.url);
+  req.url = req.url.replace('/reports','');
+  proxyget.web(req, res, { target: esUrl});
+});
+
+app.post('/reports/elasticsearch/_msearch', function(req, res) {
+  console.log(req.method + ' : ' + req.url);
+  req.url = req.url.replace('/reports','');
+  proxypost.web(req, res, { target: esUrl});
+});
+
 var kibanaProxy = proxy('http://kibana:5601/', {
   proxyReqPathResolver: function (req, res) {
     var path = require('url').parse(req.url).path;
@@ -1107,9 +1125,10 @@ var kibanaProxy = proxy('http://kibana:5601/', {
     return path;
   }
 });
-var kibanaMountpoint = '/kibana';
-app.use(kibanaMountpoint, hasKibanaAuth, kibanaProxy);
-app.use(kibanaMountpoint, hasKibanaAuth, function (req, res) {
+
+var kibanaMountpoint = '/reports';
+app.use(kibanaMountpoint,  kibanaProxy);
+app.use(kibanaMountpoint,  function (req, res) {
   if (req.originalUrl === kibanaMountpoint) {
     res.redirect(301, req.originalUrl + '/');
   } else {
