@@ -41,10 +41,10 @@ if [ ! -f data/worker-state.json ]; then
   echo '{}' > data/worker-state.json
 fi
 
-docker stop elasticsearch
-docker rm elasticsearch
-docker stop kibana
-docker rm kibana
+[ "$(docker ps | grep elasticsearch)" ] && docker stop elasticsearch 
+[ "$(docker ps -a | grep elasticsearch)" ] && docker rm elasticsearch 
+[ "$(docker ps | grep kibana)" ] && docker stop kibana 
+[ "$(docker ps -a | grep kibana)" ] && docker rm kibana 
 
 docker run -d \
   -v $(pwd)/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro \
@@ -52,6 +52,7 @@ docker run -d \
   -p 9300:9300 \
   -e ES_JAVA_OPTS="-Xmx256m -Xms256m" \
   --name elasticsearch \
+  --volume $(pwd)/data/elasticsearch:/usr/share/elasticsearch/data \
   docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0
 
 docker run -d \
