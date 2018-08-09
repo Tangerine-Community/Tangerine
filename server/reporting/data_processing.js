@@ -79,8 +79,8 @@ const processFormResponse = async (doc, sourceDb) => {
     formResult.processedResult[`${formID}.complete`] = formData.complete;
     await saveFormResponseHeaders(formHeaders, REPORTING_DB);
     await saveFlattenedFormResponse(formResult, REPORTING_DB);
-    await ensureIndex(formResult)
-    await indexFlattenedFormResponse(formResult);
+    await ensureIndex(formResult, sourceDb.name)
+    await indexFlattenedFormResponse(formResult, sourceDb.name);
   } catch (error) {
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error)}`)
   }
@@ -205,19 +205,19 @@ function saveFormResponseHeaders(doc, db) {
 }
 
 
-function ensureIndex(doc) {
+function ensureIndex(doc, groupName) {
   return new Promise((resolve, reject) => {
-    http.get(`http://elasticsearch:9200/${doc.formId}`)
+    http.get(`http://elasticsearch:9200/${groupName}-${doc.formId}`)
       .then(_ => resolve(true))
       .catch(err => {
-        http.put(`http://elasticsearch:9200/${doc.formId}`)
+        http.put(`http://elasticsearch:9200/${groupName}-${doc.formId}`)
           .then(_ => resolve(true))
           .catch(err => reject(err))
       })
   })
 }
 
-function indexFlattenedFormResponse(doc) {
+function indexFlattenedFormResponse(doc, groupName) {
   return new Promise((resolve, reject) => {
     let safeDoc = Object.assign({}, doc.processedResult)
     let indexDoc = {}
@@ -233,7 +233,7 @@ function indexFlattenedFormResponse(doc) {
         indexDoc[indexProp] = safeDoc[prop]
       }
     }
-    http.put(`http://elasticsearch:9200/${doc.formId}/_doc/${doc._id}`, indexDoc)
+    http.put(`http://elasticsearch:9200/${groupName}-${doc.formId}/_doc/${doc._id}`, indexDoc)
       .then(_ => resolve(true))
       .catch(err => {
         reject(err)
