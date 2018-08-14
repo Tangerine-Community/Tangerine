@@ -79,8 +79,9 @@ const processFormResponse = async (doc, sourceDb) => {
     formResult.processedResult[`${formID}.complete`] = formData.complete;
     await saveFormResponseHeaders(formHeaders, REPORTING_DB);
     await saveFlattenedFormResponse(formResult, REPORTING_DB);
+    // Send data to elastic search.
     await ensureIndex(formResult, sourceDb.name)
-    await indexFlattenedFormResponse(formResult, sourceDb.name);
+    await indexFlattenedFormResponse(formResult, sourceDb.name, doc);
   } catch (error) {
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error)}`)
   }
@@ -217,7 +218,7 @@ function ensureIndex(doc, groupName) {
   })
 }
 
-function indexFlattenedFormResponse(doc, groupName) {
+function indexFlattenedFormResponse(doc, groupName, originalDoc) {
   return new Promise((resolve, reject) => {
     let safeDoc = Object.assign({}, doc.processedResult)
     let indexDoc = {}
