@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /tangerine/server 
-nodemon --legacy-watch index.js &
+nodemon --inspect=0.0.0.0:9229 --legacy-watch index.js &
 sleep 3
 cd /tangerine/client 
 ./develop.sh & 
