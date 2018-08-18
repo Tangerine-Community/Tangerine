@@ -120,6 +120,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_MODULES=$T_MODULES\" \
   --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
+  --env \"T_CATEGORIES=$T_CATEGORIES\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/csv:/csv/ \
