@@ -308,12 +308,14 @@ export class DashboardComponent implements OnInit {
         start = 0;
         end = pageSize;
       } else {
-        start = (i*pageIndex) + pageSize;
-        end = start + pageSize;
+        this.pageLength = Math.max(this.pageLength, 0);
+        start = ((pageIndex * pageSize) > this.pageLength) ?
+          (Math.ceil(this.pageLength / pageSize) - 1) * pageSize:
+          pageIndex * pageSize;
+        end = Math.min(start + pageSize, this.pageLength);
+        console.log( start + 1 + ' - ' + end + '  of  ' + this.pageLength)
       }
       selectedCurriculumForms  = curriculumForms.slice(start, end);
-      // selectedCurriculumForms  = curriculumForms;
-      // console.log("start: " + start + " end" + end + " this.curriculumFormsList.length: " + this.curriculumFormsList.length + " selectedCurriculumForms:" + JSON.stringify(selectedCurriculumForms) )
       return selectedCurriculumForms;
     } catch (error) {
       console.error(error);
