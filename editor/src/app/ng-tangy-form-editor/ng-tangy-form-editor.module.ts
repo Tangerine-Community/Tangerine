@@ -14,6 +14,6 @@ import {MatTabsModule} from "@angular/material";
     MatTabsModule,
     SharedModule
   ],
-  declarations: [NgTangyFormEditorComponent],
+  declarations: [NgTangyFormEditorComponent]
 })
 export class NgTangyFormEditorModule { }
