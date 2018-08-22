@@ -692,8 +692,6 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     categoriesString = categoriesString.replace(/'/g, '"');
     let categoriesEntries = JSON.parse(categoriesString)
     appConfig.categories = categoriesEntries;
-
-    clog("Packed the following data into appConfig: " + JSON.stringify(appConfig))
   } catch (err) {
     log.error("An error reading app-config: " + err)
     throw err;
