@@ -2,6 +2,7 @@ import { AfterContentInit, ElementRef, Component, ViewChild } from '@angular/cor
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {MatTabChangeEvent} from "@angular/material";
+import {AppConfigService} from "../../shared/_services/app-config.service";
 
 @Component({
   selector: 'app-ng-tangy-form-editor',
@@ -18,7 +19,8 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private appConfigService: AppConfigService
   ) { }
 
   async ngAfterContentInit() {
@@ -34,8 +36,13 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     let pathArray = window.location.hash.split( '/' );
     this.groupId = pathArray[2];
 
+    const appConfig = await this.appConfigService.getAppConfig(groupName);
+    const appConfigCategories = appConfig.categories;
+    const categories = JSON.stringify(appConfigCategories);
+
+    // Categories is an string of an array: categories ='["one","two","three","four"]'>
     this.containerEl.innerHTML = `
-      <tangy-form-editor style="margin:15px">
+      <tangy-form-editor style="margin:15px" categories ='${categories}'>
         <template>
           ${formHtml}
         </template>
