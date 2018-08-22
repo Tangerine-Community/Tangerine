@@ -40,9 +40,9 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     const appConfigCategories = appConfig.categories;
     const categories = JSON.stringify(appConfigCategories);
 
+    // Categories is an string of an array: categories ='["one","two","three","four"]'>
     this.containerEl.innerHTML = `
       <tangy-form-editor style="margin:15px" categories ='${categories}'>
-      <!--<tangy-form-editor style="margin:15px" categories ='["one","two","three","four"]'>-->
         <template>
           ${formHtml}
         </template>
