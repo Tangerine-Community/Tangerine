@@ -1,0 +1,14 @@
+<table>
+  <tr *ngFor="let student of studentCategorizedResults">
+    <td valign="top">{{ student.name }}</td>
+    <td>
+      <table>
+        <tr *ngFor="let item of generateArray(student.results)">
+          <td>{{item.key}}</td>
+          <td *ngFor="let res of generateArray(item.value)">{{res.key}}: {{res.value}}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<div #container class = "hideme"> </div>

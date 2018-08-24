@@ -5,6 +5,9 @@ import {LoginGuard} from "../core/auth/_guards/login-guard.service";
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {ClassFormsPlayerComponent} from "./class-forms-player/class-forms-player.component";
 import {ReportsComponent} from "./reports/reports.component";
+import {StudentSubtestReportComponent} from "./reports/student-subtest-report/student-subtest-report.component";
+import {StudentGroupingReportComponent} from "./reports/student-grouping-report/student-grouping-report.component";
+
 
 const routes = [
   {
@@ -18,8 +21,13 @@ const routes = [
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
   {
-    path: 'reports/:type/:classId',
-    component: ReportsComponent,
+    path: 'reports/grouping/:type/:classId',
+    component: StudentGroupingReportComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
+    path: 'reports/studentSubtestReport/:classId',
+    component: StudentSubtestReportComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   }
 ];

@@ -19,9 +19,10 @@ import {DashboardService} from "./_services/dashboard.service";
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { ClassFormsPlayerComponent } from './class-forms-player/class-forms-player.component';
-import { ReportsComponent } from './reports/reports.component';
 import {MatPaginationIntlService} from "./_services/mat-pagination-intl.service";
 import {TranslateService} from "@ngx-translate/core";
+import { StudentSubtestReportComponent } from './reports/student-subtest-report/student-subtest-report.component';
+import { StudentGroupingReportComponent } from './reports/student-grouping-report/student-grouping-report.component';
 
 @NgModule({
   imports: [
@@ -39,7 +40,7 @@ import {TranslateService} from "@ngx-translate/core";
     MatCheckboxModule,
     MatPaginatorModule
   ],
-  declarations: [DashboardComponent, ClassFormsPlayerComponent, ReportsComponent],
+  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent],
   providers: [DashboardService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
