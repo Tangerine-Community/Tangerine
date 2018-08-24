@@ -129,6 +129,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
+  --volume $(pwd)/server/src:/tangerine/server/src \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting \
   --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \
   --volume $(pwd)/upgrades:/tangerine/upgrades \

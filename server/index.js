@@ -33,6 +33,8 @@ const clog = require('tangy-log').clog
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 // Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
 let newGroupQueue = []
+insertGroupViews = require(`./src/insert-group-views.js`)
+
 
 pouchDbDefaults = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
@@ -668,11 +670,10 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
       }
     }
   }
-
   let groupName = req.body.groupName
   // Copy the content directory for the new group.
   await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
-
+  await insertGroupViews(groupName, DB)
   // Edit the app-config.json.
   try {
     appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
@@ -708,10 +709,11 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
    * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
    * Also create the design doc for the resultsDB
    */
-  await REPORTING_DB.info(async info => await createDesignDocument(REPORTING_DB_NAME)).catch(e => {
+  await REPORTING_DB.info(async info => await createReportingDesignDocuments(REPORTING_DB_NAME)).catch(e => {
     log.error(e);
   });
 
+  // The keepReportingWorkerAlive function finds groups this way and adds them to the worker.
   newGroupQueue.push(groupName)
 
   // Set up watching of groupDb for changes.
@@ -959,6 +961,54 @@ app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthentica
   generateCSV(formId, groupReportingDbName, res);
 });
 
+app.get('/api/:groupId/:docId', isAuthenticated, async (req, res) => {
+  const groupDb = new DB(req.params.groupId)
+  let doc = {}
+  try {
+    doc = await groupDb.get(req.params.docId)
+  } catch (err) {
+    res.status(500).send(err);
+  }
+  res.send(doc)
+})
+
+app.put('/api/:groupId/:docId', isAuthenticated, async (req, res) => {
+  const groupDb = new DB(req.params.groupId)
+  let doc = req.body
+  let existingDoc = {}
+  try {
+    existingDoc = await groupDb.get(req.params.docId)
+  } catch (err) {
+    // Do nothing. It's ok.
+  }
+  if (existingDoc && existingDoc._rev) {
+    doc._rev = existingDoc._rev
+  }
+  doc._id = req.params.docId
+  try {
+    await groupDb.post(doc)
+  } catch (err) {
+    return res.status(500).send(err);
+  }
+  return res.send(doc)
+})
+
+app.get('/api/:groupId/responsesByFormId/:formId/:limit', isAuthenticated, async (req, res) => {
+  try {
+    const groupDb = new DB(groupId)
+    let options = {key: req.params.formId, include_docs: true}
+    if (req.params.limit) {
+      options.limit = req.params.limit
+    }
+    const results = await groupDb.query('responsesByFormId', options);
+    const docs = results.rows.map(row => row.doc)
+    res.send(docs)
+  } catch (error) {
+    log.error(error);
+    res.status(500).send(error);
+  }
+})
+
 /**
  * @description Function to create Design Documents in a given Database
  * @param {string} database The Database to use when for creating the Design Document
@@ -969,7 +1019,7 @@ app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthentica
  * @example
  * use form.docId+'-'+doc.completed not `${doc.docId}-${doc.completed}`
  */
-async function createDesignDocument(database) {
+async function createReportingDesignDocuments(database) {
   const REPORTING_DB = new DB(database);
 
   const tangyReportingDesignDoc = {
