@@ -35,6 +35,7 @@ export class StudentSubtestReportComponent implements OnInit {
     students:null
   }
   studentCategorizedResults:any
+  categories: any;
 
   @ViewChild('container') container: ElementRef;
 
@@ -68,7 +69,7 @@ export class StudentSubtestReportComponent implements OnInit {
     let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml, container);
     // this.subtestReport.students = await this.getMyStudents(classId);
     const appConfig = await this.appConfigService.getAppConfig();
-    const categories = appConfig.categories;
+    this.categories = appConfig.categories;
     let students = await this.getMyStudents(classId);
     let studentResults = {}
     for (const student of students) {
@@ -88,7 +89,7 @@ export class StudentSubtestReportComponent implements OnInit {
       let category = result.category
       let score = result.score
       let resultObject = {}
-      for (const thisCategory of categories) {
+      for (const thisCategory of this.categories) {
         resultObject[thisCategory] = null
       }
       resultObject[category] = score

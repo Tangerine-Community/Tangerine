@@ -1,14 +1,31 @@
-<table>
-  <tr *ngFor="let student of studentCategorizedResults">
-    <td valign="top">{{ student.name }}</td>
-    <td>
-      <table>
-        <tr *ngFor="let item of generateArray(student.results)">
-          <td>{{item.key}}</td>
-          <td *ngFor="let res of generateArray(item.value)">{{res.key}}: {{res.value}}</td>
-        </tr>
-      </table>
-    </td>
-  </tr>
+<table class="subtest">
+  <tr>
+    <th>Student</th>
+    <th>Subtask</th>
+    <th>&nbsp;</th>
+    <th *ngFor="let category of categories">{{category}}</th>
+  <tr>
+    <th>&nbsp;</th>
+    <th>&nbsp;</th>
+    <th>Totals</th>
+    <th *ngFor="let category of categories">&nbsp;</th>
+</tr>
+  <ng-container *ngFor="let student of studentCategorizedResults">
+    <tr>
+      <td valign="top">{{ student.name }}</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td *ngFor="let category of categories">&nbsp;</td>
+    </tr>
+    <tr *ngFor="let item of generateArray(student.results)">
+      <td>&nbsp;</td>
+      <td>{{item.key}}</td>
+      <td>&nbsp;</td>
+      <td *ngFor="let res of generateArray(item.value)"><!--{{res.key}}: -->{{res.value}}</td>
+      <ng-container *ngIf="!item.value">
+        <td *ngFor="let category of categories">{{category}}</td>
+      </ng-container>
+    </tr>
+  </ng-container>
 </table>
 <div #container class = "hideme"> </div>
