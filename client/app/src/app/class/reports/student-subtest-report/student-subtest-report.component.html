@@ -8,7 +8,7 @@
     <th>&nbsp;</th>
     <th>&nbsp;</th>
     <th>Totals</th>
-    <th *ngFor="let category of categories">&nbsp;</th>
+    <th *ngFor="let category of categories">{{totals[category]}}</th>
 </tr>
   <ng-container *ngFor="let student of studentCategorizedResults">
     <tr>
@@ -22,8 +22,9 @@
       <td>{{item.key}}</td>
       <td>&nbsp;</td>
       <td *ngFor="let res of generateArray(item.value)"><!--{{res.key}}: -->{{res.value}}</td>
-      <ng-container *ngIf="!item.value">
-        <td *ngFor="let category of categories">{{category}}</td>
+
+      <ng-container *ngIf="isEmpty(item.value)">
+        <td *ngFor="let category of categories"></td>
       </ng-container>
     </tr>
   </ng-container>

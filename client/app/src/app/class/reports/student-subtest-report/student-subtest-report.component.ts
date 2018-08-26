@@ -36,6 +36,7 @@ export class StudentSubtestReportComponent implements OnInit {
   }
   studentCategorizedResults:any
   categories: any;
+  totals:any;
 
   @ViewChild('container') container: ElementRef;
 
@@ -70,6 +71,10 @@ export class StudentSubtestReportComponent implements OnInit {
     // this.subtestReport.students = await this.getMyStudents(classId);
     const appConfig = await this.appConfigService.getAppConfig();
     this.categories = appConfig.categories;
+    this.totals = {}
+    for (const thisCategory of this.categories) {
+      this.totals[thisCategory] = 0
+    }
     let students = await this.getMyStudents(classId);
     let studentResults = {}
     for (const student of students) {
@@ -87,12 +92,14 @@ export class StudentSubtestReportComponent implements OnInit {
       let formTitle = result.formTitle
       let studentId = result.studentId
       let category = result.category
-      let score = result.score
+      let score = parseInt(result.score)
       let resultObject = {}
       for (const thisCategory of this.categories) {
         resultObject[thisCategory] = null
       }
       resultObject[category] = score
+      let currentTotal = this.totals[category]
+      this.totals[category] = currentTotal + score
       let forms = studentResults[studentId]
       forms[formTitle] = resultObject
     }
@@ -104,11 +111,19 @@ export class StudentSubtestReportComponent implements OnInit {
       result["results"] = studentResults[studentId]
       this.studentCategorizedResults.push(result)
     }
-      console.log("done.")
   }
 
   generateArray(obj){
     return Object.keys(obj).map((key)=>{ return {key:key, value:obj[key]}});
+  }
+
+  isEmpty(obj) {
+    let stringy = JSON.stringify(obj)
+    if (Object.keys(obj).length === 0) {
+      return true
+    } else {
+      return false
+    }
   }
 
   async getMyStudents(classId: any) {
