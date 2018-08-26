@@ -1,12 +1,11 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
-import {DashboardService} from "../_services/dashboard.service";
+import {DashboardService} from "../../_services/dashboard.service";
+import {AuthenticationService} from "../../../core/auth/_services/authentication.service";
+import {_TRANSLATE} from "../../../shared/translation-marker";
 import {MatTableDataSource} from "@angular/material";
-import {StudentResult} from "../dashboard/dashboard.component";
-import {ClassFormService} from "../_services/class-form.service";
-import {AuthenticationService} from "../../core/auth/_services/authentication.service";
-import {ClassUtils} from "../class-utils.js";
-import { _TRANSLATE } from '../../shared/translation-marker';
+import {ClassFormService} from "../../_services/class-form.service";
+import {ActivatedRoute} from "@angular/router";
+import {ClassUtils} from "../../class-utils";
 
 export interface ClassGroupingReport {
   id: string;
@@ -23,13 +22,12 @@ export interface StudentResult {
   name: string;
   forms:any;
 }
-
 @Component({
-  selector: 'app-reports',
-  templateUrl: './reports.component.html',
-  styleUrls: ['./reports.component.css']
+  selector: 'app-student-grouping-report',
+  templateUrl: './student-grouping-report.component.html',
+  styleUrls: ['./student-grouping-report.component.css']
 })
-export class ReportsComponent implements OnInit {
+export class StudentGroupingReportComponent implements OnInit {
 
   students;dataSource;
   // allStudentResults:StudentResult[] = [];
