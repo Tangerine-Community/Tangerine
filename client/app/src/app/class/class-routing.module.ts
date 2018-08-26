@@ -4,7 +4,6 @@ import {CreateProfileGuardService} from "../user-profile/create-profile-guard.se
 import {LoginGuard} from "../core/auth/_guards/login-guard.service";
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {ClassFormsPlayerComponent} from "./class-forms-player/class-forms-player.component";
-import {ReportsComponent} from "./reports/reports.component";
 import {StudentSubtestReportComponent} from "./reports/student-subtest-report/student-subtest-report.component";
 import {StudentGroupingReportComponent} from "./reports/student-grouping-report/student-grouping-report.component";
 
