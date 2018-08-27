@@ -72,7 +72,7 @@ export class DashboardService {
   };
 
   /**
-   *
+   * Creates a list of forms with the results populated
    * @param result
    * @param curriculumFormsList - use to find if the form is a grid subtest.
    * @returns {Promise<any[]>}
@@ -84,7 +84,7 @@ export class DashboardService {
       // loop through the formList
       for (var i = 0; i < curriculumFormsList.length; i++) {
 
-        let itemCount = null;
+        let itemCount = 0;
         let lastModified = null;
         let answeredQuestions = [];
         let percentCorrect = null;
@@ -138,29 +138,40 @@ export class DashboardService {
         //     percentCorrect = 0
         //   }
         }
+        if (itemCount > 0) {
+          let studentId
+          if (observation.doc.metadata && observation.doc.metadata.studentRegistrationDoc) {
+            studentId = observation.doc.metadata.studentRegistrationDoc.id;
+          }
+          let category = curriculumFormsList[i]['category']
+          if (category !== null) {
+            category = category.replace(/\s+/g, '');
+          }
 
-        let response = {
-          formTitle: curriculumFormsList[i]['title'],
-          formId: curriculumFormsList[i]['id'],
-          prototype: curriculumFormsList[i]['prototype'],
-          startDatetime: observation.doc.startDatetime,
-          formIndex: i,
-          _id: observation.doc._id,
-          itemCount: itemCount,
-          studentId: observation.doc.metadata.studentRegistrationDoc.id,
-          lastModified: lastModified,
-          answeredQuestions: answeredQuestions,
-          percentCorrect: percentCorrect,
-          correct: correct,
-          incorrect: incorrect,
-          noResponse: noResponse,
-          score: score
-          // columns
-        };
+          let response = {
+            formTitle: curriculumFormsList[i]['title'],
+            formId: curriculumFormsList[i]['id'],
+            prototype: curriculumFormsList[i]['prototype'],
+            category: category,
+            startDatetime: observation.doc.startDatetime,
+            formIndex: i,
+            _id: observation.doc._id,
+            itemCount: itemCount,
+            studentId: studentId,
+            lastModified: lastModified,
+            answeredQuestions: answeredQuestions,
+            percentCorrect: percentCorrect,
+            correct: correct,
+            incorrect: incorrect,
+            noResponse: noResponse,
+            score: score
+            // columns
+          };
 
-        // return response;
-        observations.push(response)
-        // }
+          // return response;
+          observations.push(response)
+          // }
+        }
       }
     });
     // });
