@@ -180,6 +180,13 @@ app.get('/api/:groupId/responsesByFormId/:formId/:limit', isAuthenticated, requi
 // Static assets.
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
 app.use('/', express.static(path.join(__dirname, '../editor/dist')));
+app.use('/app/:group/', express.static(path.join(__dirname, '../editor/dist')));
+app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
+  let contentPath = '../client/content/groups/' + req.params.group
+  clog("Setting path to " + path.join(__dirname, contentPath))
+  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+});
+
 app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../editor/src/ckeditor/')));
 app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
