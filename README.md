@@ -82,7 +82,7 @@ cp config.defaults.sh config.sh
 ./develop.sh
 ```
 
-Now open http://localhost/ in your web browser. 
+Now open http://localhost/ in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
 
 ### Develop for Client 
 Prereqs include node 8+ and `npm install -g @angular/cli`.
