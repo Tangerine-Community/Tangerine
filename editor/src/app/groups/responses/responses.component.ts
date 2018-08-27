@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import * as moment from 'moment'
 
 @Component({
   selector: 'app-responses',
@@ -8,8 +9,11 @@ import { Component, OnInit, Input } from '@angular/core';
 export class ResponsesComponent implements OnInit {
 
   @Input() responses = [];
+  moment;
 
-  constructor() { }
+  constructor() {
+    this.moment = moment
+  }
 
   ngOnInit() {
   }

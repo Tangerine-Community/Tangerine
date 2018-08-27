@@ -10,9 +10,9 @@
   </tr>
   <tr *ngFor="let response of responses">
     <td>{{response._id}}</td>
-    <td>{{response.startDateTime}}</td>
+    <td>{{moment(response.startUnixtime).format()}}</td>
     <td>{{response.form.id}}</td>
-    <td>{{response.userId}}</td>
+    <td>{{(response.userProfileId) ? response.userProfileId : 'anonymous'}}</td>
     <td>[edit]</td>
     <td>[delete]</td>
   </tr>
