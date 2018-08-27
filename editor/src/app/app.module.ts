@@ -20,6 +20,7 @@ import { RequestInterceptor } from './shared/_services/request-interceptor.servi
 import { TangyErrorHandler } from './shared/_services/tangy-error-handler.service';
 import { SupportComponent } from './support/support.component';
 import { WindowRef } from './core/window-ref.service';
+import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
@@ -33,6 +34,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     ProfileModule,
     GroupsModule,
     BrowserModule,
+    TangyFormsModule,
     NgTangyFormEditorModule,
     ReactiveFormsModule,
     FormsModule,

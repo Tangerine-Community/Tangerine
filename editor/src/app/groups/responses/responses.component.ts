@@ -9,6 +9,7 @@ import * as moment from 'moment'
 export class ResponsesComponent implements OnInit {
 
   @Input() responses = [];
+  @Input() groupName = '';
   moment;
 
   constructor() {
