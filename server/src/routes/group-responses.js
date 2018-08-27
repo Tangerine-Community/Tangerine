@@ -5,7 +5,7 @@ const log = require('tangy-log').log
 module.exports = async (req, res) => {
   try {
     const groupDb = new DB(req.params.groupId)
-    let options = {key: req.params.formId, include_docs: true}
+    let options = {key: req.params.formId, include_docs: true, descending: true}
     if (req.params.limit) {
       options.limit = req.params.limit
     }

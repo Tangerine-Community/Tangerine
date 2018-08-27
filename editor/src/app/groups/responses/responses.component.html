@@ -1,4 +1,3 @@
-[create new form response]
 <table>
   <tr>
     <th>ID</th>
@@ -13,7 +12,17 @@
     <td>{{moment(response.startUnixtime).format()}}</td>
     <td>{{response.form.id}}</td>
     <td>{{(response.userProfileId) ? response.userProfileId : 'anonymous'}}</td>
-    <td>[edit]</td>
-    <td>[delete]</td>
+    <td>
+      <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: response.form.id, groupName: groupName, responseId: response._id}">
+        <paper-button raised>
+          view
+        </paper-button>
+      </a>
+    </td>
+    <td>
+      <paper-button raised>
+        delete
+      </paper-button>
+    </td>
   </tr>
 </table>

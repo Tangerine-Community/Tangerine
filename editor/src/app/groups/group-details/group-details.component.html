@@ -24,6 +24,9 @@
         <!-- <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]="{form:form.src}">
           <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
         </a>-->
+          <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
+            <i class="material-icons mat-18 tangy-location-list-icon ">play_arrow</i>
+          </a>
           <a class="tangy-foreground-primary" [routerLink]="['/tangy-form-editor/', groupName, form.id]">
             <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
           </a>
@@ -49,7 +52,7 @@
       </mat-card-title>
       <mat-card-content>
         <div class="tangy-full-width">
-          <app-responses [responses]="responses"></app-responses>
+          <app-responses [groupName]="groupName" [responses]="responses"></app-responses>
         </div>
       </mat-card-content>
     </mat-card>
