@@ -71,7 +71,7 @@ export class GroupsService {
   }
   async getFormsList(groupName: string) {
     try {
-      let result = await this.httpClient.get('../editor/groups/' + groupName + '/forms.json').toPromise() as Forms[];
+      let result = await this.httpClient.get('/editor/groups/' + groupName + '/forms.json').toPromise() as Forms[];
 
       result.unshift({
         id: 'user-profile',
