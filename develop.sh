@@ -122,6 +122,11 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
   $T_PORT_MAPPING \
+  -p 9229:9229 \
+  -p 9228:9228 \
+  -p 9227:9227 \
+  -p 9226:9226 \
+  -p 9225:9225 \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
