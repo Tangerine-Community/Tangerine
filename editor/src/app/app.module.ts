@@ -22,7 +22,7 @@ import { SupportComponent } from './support/support.component';
 import { WindowRef } from './core/window-ref.service';
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
-  return new TranslateHttpLoader(httpClient, '../client/content/', '.json');
+  return new TranslateHttpLoader(httpClient, './assets/', '.json');
 }
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
