@@ -35,7 +35,6 @@ export class GroupDetailsComponent implements OnInit {
       console.log(error);
     }
     let responses = await this.http.get(`/api/${this.groupName}/responses`).toPromise()
-    debugger
     this.responses = responses
   }
 
