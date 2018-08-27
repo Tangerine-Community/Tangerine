@@ -42,6 +42,19 @@
     </mat-card>
   </mat-tab>
 
+  <mat-tab *ngIf="isGroupAdminUser" label="Responses">
+    <mat-card>
+      <mat-card-title class="tangy-foreground-secondary">
+        Responses
+      </mat-card-title>
+      <mat-card-content>
+        <div class="tangy-full-width">
+          <app-responses [responses]="responses"></app-responses>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
+
   <mat-tab *ngIf="isGroupAdminUser" label="{{'Release'|translate}}">
     <mat-card>
     <mat-card-title class="tangy-foreground-secondary">

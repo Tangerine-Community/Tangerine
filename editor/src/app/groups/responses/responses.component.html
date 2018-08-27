@@ -1,0 +1,19 @@
+[create new form response]
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Date</th>
+    <th>Form</th>
+    <th>User ID</th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr *ngFor="let response of responses">
+    <td>{{response._id}}</td>
+    <td>{{response.startDateTime}}</td>
+    <td>{{response.form.id}}</td>
+    <td>{{response.userId}}</td>
+    <td>[edit]</td>
+    <td>[delete]</td>
+  </tr>
+</table>
