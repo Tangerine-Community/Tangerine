@@ -1,3 +1,9 @@
+Filter:
+<select name="form" (change)="filterByForm($event)">
+  <option value="*">*</option>
+  <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
+</select>
+
 <table>
   <tr>
     <th>ID</th>
