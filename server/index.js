@@ -175,6 +175,7 @@ app.get('/api/:groupId/responses/:limit?/:skip?', require('./src/routes/group-re
 app.get('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-read.js'))
 app.put('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
 app.post('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
+app.delete('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-delete.js'))
 app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses-by-form-id.js'))
 
 

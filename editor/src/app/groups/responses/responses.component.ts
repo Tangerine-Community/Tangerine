@@ -46,10 +46,16 @@ export class ResponsesComponent implements OnInit {
     this.getResponses();
   }
 
+  async deleteResponse(id) {
+    await this.http.delete(`/api/${this.groupName}/${id}`).toPromise()
+    this.getResponses()
+  }
+
   nextPage() {
     this.skip = this.skip + this.limit
     this.getResponses();
   }
+
   previousPage() {
     this.skip = this.skip - this.limit
     this.getResponses();
