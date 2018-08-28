@@ -62,19 +62,19 @@ const processFormResponse = async (doc, sourceDb) => {
     let formData = doc
     let formID = formData.form.id;
     let formHeaders = { _id: formID };
-    let formResult = { _id: formData._id, formId: formID, startDatetime: formData.startDatetime };
+    let formResult = { _id: formData._id, formId: formID, startUnixtime: formData.startUnixtime };
     let locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
 
     // generate column headers
     let docHeaders = generateHeaders(formData);
     docHeaders.push({ header: 'Complete', key: `${formID}.complete` });
-    docHeaders.push({ header: 'Start Date Time', key: `${formID}.startDatetime` });
+    docHeaders.push({ header: 'Start Unix Time in Milliseconds', key: `${formID}.startUnixtime` });
     formHeaders.columnHeaders = docHeaders;
 
     // process form result
     let processedResult = generateFlatObject(formData, locationList);
     formResult.processedResult = processedResult;
-    formResult.processedResult[`${formID}.startDatetime`] = formData.startDatetime;
+    formResult.processedResult[`${formID}.startUnixtime`] = formData.startUnixtime;
     formResult.processedResult[`${formID}.complete`] = formData.complete;
     await saveFormResponseHeaders(formHeaders, REPORTING_DB);
     await saveFlattenedFormResponse(formResult, REPORTING_DB);
