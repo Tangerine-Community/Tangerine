@@ -74,7 +74,7 @@ export class CaseManagementService {
     const result = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
     const timeLapseFilter = [];
     result.rows.forEach(observation => {
-      const date = new Date(observation.doc.startDatetime);
+      const date = new Date(observation.doc.startUnixtime);
       timeLapseFilter.push({
         value: `${date.getMonth()}-${date.getFullYear()}`,
         label: `${this.monthNames[date.getMonth()]}-${date.getFullYear()}`
@@ -108,7 +108,7 @@ export class CaseManagementService {
     const monthYear = period ? period : `${currentDate.getMonth()}-${currentDate.getFullYear()}`;
     const monthYearParts = monthYear.split('-');
     result.rows = result.rows.filter(observation => {
-      const formStartDate = new Date(observation.doc.startDatetime);
+      const formStartDate = new Date(observation.doc.startUnixtime);
       return formStartDate.getMonth().toString() === monthYearParts[0] && formStartDate.getFullYear().toString() === monthYearParts[1];
     });
     const data = await this.transformResultSet(result.rows);
@@ -133,7 +133,7 @@ export class CaseManagementService {
       }
       return {
         formTitle,
-        startDatetime: observation.doc.startDatetime,
+        startDatetime: observation.doc.startUnixtime,
         formIndex: index,
         _id: observation.doc._id,
         columns
