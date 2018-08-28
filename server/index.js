@@ -688,10 +688,12 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
       appConfig.modules = modules;
     }
     appConfig.direction = `${process.env.T_LANG_DIRECTION}`
-    let categoriesString = `${process.env.T_CATEGORIES}`
-    categoriesString = categoriesString.replace(/'/g, '"');
-    let categoriesEntries = JSON.parse(categoriesString)
-    appConfig.categories = categoriesEntries;
+    if (process.env.T_CATEGORIES) {
+      let categoriesString = `${process.env.T_CATEGORIES}`
+      categoriesString = categoriesString.replace(/'/g, '"');
+      let categoriesEntries = JSON.parse(categoriesString)
+      appConfig.categories = categoriesEntries;
+    }
   } catch (err) {
     log.error("An error reading app-config: " + err)
     throw err;
