@@ -982,8 +982,8 @@ async function createDesignDocument(database) {
         map: function (doc) {
           if (doc.formId) {
             const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const startDatetime = new Date(doc.startDatetime);
-            const key = doc.formId + '_' + startDatetime.getFullYear() + '_' + MONTHS[startDatetime.getMonth()];
+            const startUnixtime = new Date(doc.startUnixtime);
+            const key = doc.formId + '_' + startUnixtime.getFullYear() + '_' + MONTHS[startUnixtime.getMonth()];
             //The emmitted value is in the form "formId" i.e `formId` and also "formId_2018_May" i.e `formId_Year_Month`
             emit(doc.formId);
             emit(key);
