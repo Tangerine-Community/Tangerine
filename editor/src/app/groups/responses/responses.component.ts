@@ -47,8 +47,10 @@ export class ResponsesComponent implements OnInit {
   }
 
   async deleteResponse(id) {
-    await this.http.delete(`/api/${this.groupName}/${id}`).toPromise()
-    this.getResponses()
+    if(confirm('Are you sure you want to delete this form response?')) {
+      await this.http.delete(`/api/${this.groupName}/${id}`).toPromise()
+      this.getResponses()
+    }
   }
 
   nextPage() {
