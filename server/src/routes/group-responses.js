@@ -9,6 +9,9 @@ module.exports = async (req, res) => {
     if (req.params.limit) {
       options.limit = req.params.limit
     }
+    if (req.params.skip) {
+      options.skip = req.params.skip
+    }
     const results = await groupDb.query('responsesByStartUnixTime', options);
     const docs = results.rows.map(row => row.doc)
     res.send(docs)

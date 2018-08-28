@@ -13,6 +13,9 @@ export class ResponsesComponent implements OnInit {
   @Input() groupName = '';
   moment;
   responses;
+  skip = 0;
+  limit = 30;
+  filter = '*';
   forms = [];
 
   constructor(
@@ -23,19 +26,36 @@ export class ResponsesComponent implements OnInit {
   }
 
   async ngOnInit() {
-    let responses = await this.http.get(`/api/${this.groupName}/responses`).toPromise()
-    this.responses = responses
     this.forms = await this.groupsService.getFormsList(this.groupName);
+    await this.getResponses()
   }
 
-  async filterByForm(event) {
-    if (event.target.value === '*') {
-      let responses = await this.http.get(`/api/${this.groupName}/responses`).toPromise()
+  async getResponses() {
+    if (this.filter === '*') {
+      let responses = await this.http.get(`/api/${this.groupName}/responses/${this.limit}/${this.skip}`).toPromise()
       this.responses = responses
     } else {
-      let responses = await this.http.get(`/api/${this.groupName}/responsesByFormId/${event.target.value}`).toPromise()
+      let responses = await this.http.get(`/api/${this.groupName}/responsesByFormId/${this.filter}/${this.limit}/${this.skip}`).toPromise()
       this.responses = responses
     }
   }
+
+  async filterByForm(event) {
+    this.filter = event.target['value'];
+    this.skip = 0;
+    this.getResponses();
+  }
+
+  nextPage() {
+    this.skip = this.skip + this.limit
+    this.getResponses();
+  }
+  previousPage() {
+    this.skip = this.skip - this.limit
+    this.getResponses();
+  }
+
+
+
 
 }

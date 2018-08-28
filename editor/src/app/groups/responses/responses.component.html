@@ -32,3 +32,5 @@ Filter:
     </td>
   </tr>
 </table>
+<paper-button *ngIf="this.skip !== 0" (click)="previousPage()">< back</paper-button>
+<paper-button (click)="nextPage()">next ></paper-button>
