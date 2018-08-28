@@ -12,6 +12,8 @@
 
 body {
   background: #fafafa;
+  margin: 0px;
+  padding: 0px;
 }
 .login-app-content{
   margin-top: 180px;
@@ -29,7 +31,12 @@ button.tangy-froms-margin-left{
 }
 .tangerine-app-content{
     /* min-height: 100vh; */
-    margin-top: 64px;
+    @media screen and (max-width: 600px) {
+      margin-top: 56px;
+    }
+    @media screen and (min-width: 600px) {
+      margin-top: 64px;
+    }
 }
 mat-toolbar{
     position: fixed;
