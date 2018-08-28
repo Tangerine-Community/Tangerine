@@ -447,10 +447,12 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
       appConfig.modules = modules;
     }
     appConfig.direction = `${process.env.T_LANG_DIRECTION}`
-    let categoriesString = `${process.env.T_CATEGORIES}`
-    categoriesString = categoriesString.replace(/'/g, '"');
-    let categoriesEntries = JSON.parse(categoriesString)
-    appConfig.categories = categoriesEntries;
+    if (process.env.T_CATEGORIES) {
+      let categoriesString = `${process.env.T_CATEGORIES}`
+      categoriesString = categoriesString.replace(/'/g, '"');
+      let categoriesEntries = JSON.parse(categoriesString)
+      appConfig.categories = categoriesEntries;
+    }
   } catch (err) {
     log.error("An error reading app-config: " + err)
     throw err;
@@ -710,8 +712,8 @@ async function createReportingDesignDocuments(database) {
         map: function (doc) {
           if (doc.formId) {
             const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const startDatetime = new Date(doc.startDatetime);
-            const key = doc.formId + '_' + startDatetime.getFullYear() + '_' + MONTHS[startDatetime.getMonth()];
+            const startUnixtime = new Date(doc.startUnixtime);
+            const key = doc.formId + '_' + startUnixtime.getFullYear() + '_' + MONTHS[startUnixtime.getMonth()];
             //The emmitted value is in the form "formId" i.e `formId` and also "formId_2018_May" i.e `formId_Year_Month`
             emit(doc.formId);
             emit(key);

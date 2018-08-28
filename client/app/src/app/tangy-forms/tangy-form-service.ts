@@ -139,7 +139,8 @@ var tangyFormDesignDoc = {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
           if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
-          const startDatetime = new Date(doc.startDatetime);
+          // @TODO Take into account timezone.
+          const startDatetime = new Date(doc.startUnixtime);
           let inputs = [];
           doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
           let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)
