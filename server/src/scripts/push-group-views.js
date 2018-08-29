@@ -20,13 +20,13 @@ const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lsta
  * Listens for the changes feed on each of the group's database
  */
 function allGroups() {
-  const CONTENT_PATH = '../../client/content/groups/'
+  const CONTENT_PATH = '/tangerine/client/content/groups/'
   const groups = getDirectories(CONTENT_PATH)
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
 }
 
-const insertGroupViews = require(`../../server/src/insert-group-views.js`)
-const DB = require(`../../server/src/db.js`)
+const insertGroupViews = require(`../insert-group-views.js`)
+const DB = require(`../db.js`)
 async function go() {
   for (let groupName of allGroups()) {
     await insertGroupViews(groupName, DB)
