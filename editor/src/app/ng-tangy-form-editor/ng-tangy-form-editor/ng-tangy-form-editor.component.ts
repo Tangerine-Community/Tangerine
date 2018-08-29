@@ -14,7 +14,9 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   @ViewChild('container') container: ElementRef;
   @ViewChild('header') header: ElementRef;
   containerEl: any;
+  selectedIndex = 1;
   groupId;
+  groupName;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +31,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
 
     let formId = this.route.snapshot.paramMap.get('formId');
     let groupName = this.route.snapshot.paramMap.get('groupName');
+    this.groupName = groupName;
 
     let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
     let formInfo = formsJson.find(formInfo => formInfo.id === formId)
@@ -55,8 +58,8 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
       // console.log('tabChangeEvent => ', tabChangeEvent);
       // console.log('index => ', tabChangeEvent.index);
-      if (tabChangeEvent.index === 1) {
-        let url = `/#/groups/${this.groupId}`;
+      if (tabChangeEvent.index === 0) {
+        let url = `/app/${this.groupName}/#/groups/${this.groupName}`;
         window.location.replace(url);
       }
   }
