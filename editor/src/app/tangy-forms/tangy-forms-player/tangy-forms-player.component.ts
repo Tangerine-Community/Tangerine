@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import {MatTabChangeEvent} from "@angular/material";
 
 import { UserService } from '../../core/auth/_services/user.service';
 import { WindowRef } from '../../core/window-ref.service';
@@ -19,6 +20,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   responseId;
   throttledSaveLoaded;
   throttledSaveFiring;
+  selectedIndex = 1;
   groupName;
   @ViewChild('container') container: ElementRef;
   constructor(
@@ -49,7 +51,21 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
         let response = _.target.store.getState()
         this.throttledSaveResponse(response)
       })
+      if (formEl.getAttribute('id') === 'user-profile') {
+        formEl.addEventListener('submit', _ => {
+          _.preventDefault()
+          let response = _.target.store.getState()
+          this.throttledSaveResponse(response)
+        })
+      }
     });
+  }
+
+  tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
+    if (tabChangeEvent.index === 0) {
+      let url = `/app/${this.groupName}/#/groups/${this.groupName}`;
+      window.location.replace(url);
+    }
   }
 
   // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
