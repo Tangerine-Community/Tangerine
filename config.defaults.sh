@@ -21,6 +21,7 @@ T_CONTAINER_NAME="tangerine"
 T_PORT_MAPPING="-p 80:80"
 T_CSV_BATCH_SIZE=50
 T_DEV_CONTENT="$(pwd)/client/content/default"
+T_REGISTRATION_REQUIRES_SERVER_USER="false"
 # Add replication entries in this array to start on server boot in 
 # format of `{"from":"localDbName", "to":"remoteDbUrl", "continuous": true}`
 T_REPLICATE="[]"

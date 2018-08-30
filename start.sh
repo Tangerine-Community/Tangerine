@@ -89,6 +89,7 @@ RUN_OPTIONS="
   --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
+  --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
