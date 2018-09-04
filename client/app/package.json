@@ -27,6 +27,7 @@
     "@angular/router": "^6.0.3",
     "@ngx-translate/core": "^10.0.2",
     "@ngx-translate/http-loader": "^3.0.1",
+    "@polymer/lit-element": "^0.5.2",
     "@webcomponents/webcomponentsjs": "^2.0.2",
     "bcryptjs": "^2.4.3",
     "core-js": "^2.5.4",
