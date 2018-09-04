@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MatListModule } from '@angular/material';
 
 import { SharedModule } from '../shared/shared.module';
@@ -7,7 +7,10 @@ import { CreateProfileGuardService } from './create-profile-guard.service';
 import { UserProfileRoutingModule } from './user-profile-routing.module';
 import { UserProfileComponent } from './user-profile.component';
 
+import './user-badge.component'
+
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [CreateProfileGuardService],
   imports: [
     CommonModule,
