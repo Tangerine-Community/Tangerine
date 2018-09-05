@@ -223,13 +223,13 @@ export class DashboardComponent implements OnInit {
     let selectedForm = formsArray[i];
     let studentId = column.id
     let classId = column.classId
-    let selectedFormId = selectedForm.formId
-    let curriculum = selectedForm.curriculum
-    let src = selectedForm.src
-    let title = selectedForm.title
+    let selectedFormId = selectedForm['formId']
+    let curriculum = selectedForm['curriculum']
+    let src = selectedForm['src']
+    let title = selectedForm['title']
     let responseId = null;
-    if (selectedForm.response) {
-      responseId = selectedForm.response._id
+    if (selectedForm['response']) {
+      responseId = selectedForm['response']['_id']
     }
     this.router.navigate(['class-forms-player'], { queryParams:
         { formId: selectedFormId, curriculum: curriculum, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title, responseId: responseId }
@@ -240,14 +240,15 @@ export class DashboardComponent implements OnInit {
   selectCheckboxResult(column, i) {
     // let el = this.selection.select(row);
     this.selection.toggle(column)
-    let selectedForm = column.forms[i];
+    let formsArray = Object.values(column.forms)
+    let selectedForm = formsArray[i];
     let studentId = column.id
     let classId = column.classId
-    let selectedFormId = selectedForm.formId
-    let curriculum = selectedForm.curriculum
-    let src = selectedForm.src
-    let title = selectedForm.title
-    let responseId = selectedForm.response._id
+    let selectedFormId = selectedForm['formId']
+    let curriculum = selectedForm['curriculum']
+    let src = selectedForm['src']
+    let title = selectedForm['title']
+    let responseId = selectedForm['response']['_id']
     this.router.navigate(['class-forms-player'], { queryParams:
         { formId: selectedFormId, curriculum: curriculum, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title, responseId: responseId }
     });
