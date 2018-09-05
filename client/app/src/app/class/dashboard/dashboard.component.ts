@@ -22,16 +22,19 @@ export interface StudentResponse {
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
+  templateUrl: './dashboard-simple.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 
-  classes;students;selectedTab;selectedIndex;curriculum;curriculumTitle; curriculumForms;dataSource;columnsToDisplay;selectedReport;
-  currentClassId;currentClassIndex;curriculumFormsList;curriculumFormHtml
+  classes;students;selectedTab;selectedIndex;curriculum;curriculumTitle; dataSource;columnsToDisplay;selectedReport;
+  currentClassId;currentClassIndex;
+  curriculumFormsList;  // list of all curriculum forms
+  curriculumForms;  // a subset of curriculumFormsList
   studentsResponses:any[];
   allStudentResults:StudentResult[];
   formColumns: string[] = [];
+  formIds: string[] = [];
   formList: any[] = [];
   formColumnsDS;
   // columnsToDisplay: string[] = ["Name"];
@@ -41,6 +44,8 @@ export class DashboardComponent implements OnInit {
   // length = 10;
   pageLength = 10;
   pageSize = 5;
+  pageIndex = 0;
+  pageStart = 0;
   pageSizeOptions: number[] = [5, 10, 15, 100];
   reportsMenu;
   groupingMenu;
@@ -52,7 +57,7 @@ export class DashboardComponent implements OnInit {
   // selected = new FormControl(0);
 
   // MatPaginator Output
-  // pageEvent: PageEvent;
+  pageEvent: PageEvent;
   private paginator: MatPaginator;
 
   @ViewChild('container') container: ElementRef;
@@ -117,6 +122,21 @@ export class DashboardComponent implements OnInit {
     this.renderGrid();
   }
 
+  private async paginate(dir) {
+    console.log("this.pageIndex: " + this.pageIndex + " this.pageSize: " + this.pageSize);
+    if (dir === 0) {  //prev
+      this.pageIndex = --this.pageIndex
+    } else {
+      this.pageIndex = ++this.pageIndex
+    }
+    if (dir === 0 && this.pageIndex < 0) {
+      console.log("no mas.")
+    } else {
+      await this.populateGridData(this.currentClassIndex, this.pageIndex, this.pageSize);
+      this.renderGrid();
+    }
+  }
+
   private async populateGridData(classIndex, pageIndex, pageSize) {
     let inputs = [];
     this.currentClassIndex = classIndex;
@@ -146,19 +166,26 @@ export class DashboardComponent implements OnInit {
     if (typeof currentClass !== 'undefined') {
       this.currentClassId = currentClass.id;
       this.students = await this.getMyStudents(this.currentClassId);
-      let results = await this.getResultsByClass(this.currentClassId, this.curriculumForms);
+      let results = await this.getResultsByClass(this.currentClassId, this.curriculumFormsList);
       this.studentsResponses = [];
+      let formsTodisplay = {}
+      this.curriculumForms.forEach(form => {
+        formsTodisplay[form.id] = form
+      })
       for (const response of results as any[] ) {
         // console.log("response: " + JSON.stringify(response))
         // studentsResponses.push();
-        let studentId = response.studentId
-        let studentReponses = this.studentsResponses[studentId];
-        if (typeof studentReponses === 'undefined') {
-          studentReponses = {}
+        if (formsTodisplay[response.formId] !== 'undefined') {
+          let studentId = response.studentId
+          let studentReponses = this.studentsResponses[studentId];
+          if (typeof studentReponses === 'undefined') {
+            studentReponses = {}
+          }
+          let formId = response.formId;
+          studentReponses[formId] = response;
+          this.studentsResponses[studentId] = studentReponses
+          console.log("response id: " + response._id)
         }
-        let formId = response.formId;
-        studentReponses[formId] = response;
-        this.studentsResponses[studentId] = studentReponses
       }
       let allStudentResults = [];
       // for (const student of this.students) {
@@ -167,8 +194,8 @@ export class DashboardComponent implements OnInit {
         studentResults["id"] = student.id
         studentResults["name"] = student.doc.items[0].inputs[0].value
         studentResults["classId"] = student.doc.items[0].inputs[3].value
-        studentResults["forms"] = [];
-        // studentResults["forms"] = {};
+        // studentResults["forms"] = [];
+        studentResults["forms"] = {};
         // for (const form of this.curriculumForms) {
         this.curriculumForms.forEach((form) => {
           let formResult = {};
@@ -179,8 +206,8 @@ export class DashboardComponent implements OnInit {
           if (this.studentsResponses[student.id]) {
             formResult["response"] = this.studentsResponses[student.id][form.id]
           }
-          studentResults["forms"].push(formResult)
-          // studentResults["forms"][form.id] = formResult
+          // studentResults["forms"].push(formResult)
+          studentResults["forms"][form.id] = formResult
         })
         allStudentResults.push(studentResults)
       })
@@ -192,7 +219,8 @@ export class DashboardComponent implements OnInit {
   selectCheckbox(column, i) {
     // let el = this.selection.select(row);
     this.selection.toggle(column)
-    let selectedForm = column.forms[i];
+    let formsArray = Object.values(column.forms)
+    let selectedForm = formsArray[i];
     let studentId = column.id
     let classId = column.classId
     let selectedFormId = selectedForm.formId
@@ -229,6 +257,7 @@ export class DashboardComponent implements OnInit {
     // let allStudentResults:StudentResult = [];
     // re-init the formColumns and columnsToDisplay
     this.formColumns = [];
+    this.formIds = [];
     this.formList = [];
     this.columnsToDisplay = ["Name"];
     for (const form of this.curriculumForms) {
@@ -239,22 +268,24 @@ export class DashboardComponent implements OnInit {
       };
       this.formList.push(formEl)
       this.formColumns.push(form.title)
+      this.formIds.push(form.id)
       // this.formColumns.push(formEl)
       this.columnsToDisplay.push(form.title);
       // this.columnsToDisplay.push(formEl);
     }
-    this.formColumnsDS = new MatTableDataSource(this.formColumns);
-    if (this.paginator) {
-      this.paginator.page
-        .pipe(
-          tap(() => this.loadGrid())
-        )
-        .subscribe();
-    } else {
-      console.log("this.paginator is not defined.")
-    }
+    console.log("renderGrid done")
+    // this.formColumnsDS = new MatTableDataSource(this.formColumns);
+    // if (this.paginator) {
+    //   this.paginator.page
+    //     .pipe(
+    //       tap(() => this.loadGrid())
+    //     )
+    //     .subscribe();
+    // } else {
+    //   console.log("this.paginator is not defined.")
+    // }
 
-    this.dataSource = new MatTableDataSource<StudentResult>(this.allStudentResults);
+    // this.dataSource = new MatTableDataSource<StudentResult>(this.allStudentResults);
     // this.dataSource.paginator = this.paginator;
   }
 
@@ -280,29 +311,7 @@ export class DashboardComponent implements OnInit {
    */
   async getCurriculaForms(curriculum, pageIndex, pageSize) {
     try {
-      let curriculumForms = [];
-      // this only needs to happen once.
-      if (typeof this.curriculumFormHtml === 'undefined') {
-        let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculum);
-        const container = this.container.nativeElement
-        container.innerHTML = curriculumFormHtml
-        let formEl = container.querySelectorAll('tangy-form-item')
-        var output = "";
-        for (const el of formEl) {
-          var attrs = el.attributes;
-          let obj = {}
-          for(let i = attrs.length - 1; i >= 0; i--) {
-            // output = attrs[i].name + "->" + attrs[i].value;
-            obj[attrs[i].name] = attrs[i].value;
-            // console.log("this.formEl:" + output )
-          }
-          curriculumForms.push(obj)
-        }
-        this.curriculumFormsList = curriculumForms;
-        // this.length = this.curriculumFormsList.length
-        this.pageLength = this.curriculumFormsList.length
-      }
-      let selectedCurriculumForms, start, end;
+      let selectedCurriculumForms, start, end, curriculumForms = [];
       let i = 1
       if (pageIndex === 0) {
         start = 0;
@@ -312,9 +321,30 @@ export class DashboardComponent implements OnInit {
         start = ((pageIndex * pageSize) > this.pageLength) ?
           (Math.ceil(this.pageLength / pageSize) - 1) * pageSize:
           pageIndex * pageSize;
+        this.pageStart = start
         end = Math.min(start + pageSize, this.pageLength);
         console.log( start + 1 + ' - ' + end + '  of  ' + this.pageLength)
       }
+
+      // this only needs to happen once.
+      let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculum);
+      const container = this.container.nativeElement
+      container.innerHTML = curriculumFormHtml
+      let formEl = container.querySelectorAll('tangy-form-item')
+      var output = "";
+      for (const el of formEl) {
+        var attrs = el.attributes;
+        let obj = {}
+        for(let i = attrs.length - 1; i >= 0; i--) {
+          // output = attrs[i].name + "->" + attrs[i].value;
+          obj[attrs[i].name] = attrs[i].value;
+          // console.log("this.formEl:" + output )
+        }
+        curriculumForms.push(obj)
+      }
+      this.curriculumFormsList = curriculumForms;
+      // this.length = this.curriculumFormsList.length
+      this.pageLength = this.curriculumFormsList.length
       selectedCurriculumForms  = curriculumForms.slice(start, end);
       return selectedCurriculumForms;
     } catch (error) {
