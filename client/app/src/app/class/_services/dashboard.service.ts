@@ -157,7 +157,7 @@ export class DashboardService {
             studentId = observation.doc.metadata.studentRegistrationDoc.id;
           }
           let category = curriculumFormsList[i]['category']
-          if (category !== null) {
+          if (typeof category !== 'undefined' && category !== null) {
             category = category.replace(/\s+/g, '');
           }
 
