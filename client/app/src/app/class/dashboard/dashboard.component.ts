@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {DashboardService} from "../_services/dashboard.service";
-import {MatTabChangeEvent, MatPaginator, MatTableDataSource, PageEvent} from "@angular/material";
+import {MatTabChangeEvent, PageEvent} from "@angular/material";
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
 import {ClassFormService} from "../_services/class-form.service";
 import {SelectionModel} from "@angular/cdk/collections";
@@ -58,15 +58,15 @@ export class DashboardComponent implements OnInit {
 
   // MatPaginator Output
   pageEvent: PageEvent;
-  private paginator: MatPaginator;
+  // private paginator;
 
   @ViewChild('container') container: ElementRef;
   // @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-    this.paginator = mp;
-    console.log("Set this.paginator")
-    // this.setDataSourceAttributes();
-  }
+  // @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+  //   this.paginator = mp;
+  //   console.log("Set this.paginator")
+  //   // this.setDataSourceAttributes();
+  // }
 
   constructor(
     private http: HttpClient,
@@ -104,21 +104,21 @@ export class DashboardComponent implements OnInit {
   tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
     // console.log('tabChangeEvent => ', tabChangeEvent);
     // console.log('index => ', tabChangeEvent.index);
-    if (this.paginator) {
+    // if (this.paginator) {
       this.selectedTab = tabChangeEvent.tab;
       // No need to populate grid if this is the Add Class link.
       if (this.classes.length !== tabChangeEvent.index) {
-        await this.populateGridData(tabChangeEvent.index, this.paginator.pageIndex, this.paginator.pageSize);
+        await this.populateGridData(tabChangeEvent.index, this.pageIndex, this.pageSize);
         this.renderGrid();
       }
-    } else {
-      this.selectedIndex = 0;
-    }
+    // } else {
+    //   this.selectedIndex = 0;
+    // }
   }
 
   private async loadGrid() {
     // console.log("this.paginator.pageIndex: " + this.paginator.pageIndex + " this.paginator.pageSize: " + this.paginator.pageSize);
-    await this.populateGridData(this.currentClassIndex, this.paginator.pageIndex, this.paginator.pageSize);
+    await this.populateGridData(this.currentClassIndex, this.pageIndex, this.pageSize);
     this.renderGrid();
   }
 
