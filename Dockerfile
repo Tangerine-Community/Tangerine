@@ -186,7 +186,6 @@ RUN cd /opt && \
 
 # Install Cordova
 RUN npm update && \
-    npm install -g npm && \
     npm install -g cordova
 
 #
