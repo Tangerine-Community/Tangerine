@@ -27,8 +27,8 @@
     "fs-extra": "^0.26.3",
     "http-status-codes": "^1.0.5",
     "mocha": "^2.3.4",
-    "request": "^2.81.0",
     "nano": "^6.2.0",
+    "request": "^2.81.0",
     "unirest": "^0.4.2",
     "winston": "^2.1.1"
   }

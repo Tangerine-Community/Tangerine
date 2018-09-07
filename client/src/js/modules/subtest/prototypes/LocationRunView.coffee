@@ -107,7 +107,8 @@ class LocationRunView extends Backbone.View
       for level, i in @levels
         previousLevel = ''
         if previous
-          previousLevel = previous.location[i]
+          if previous.location
+            previousLevel = previous.location[i]
         html += "
           <div class='label_value'>
             <label for='level_#{i}'>#{level}</label><br>
@@ -126,7 +127,8 @@ class LocationRunView extends Backbone.View
 
         previousLevel = ''
         if previous
-          previousLevel = previous.location[i]
+          if previous.location
+            previousLevel = previous.location[i]
         
         levelOptions = @getOptions(i, previousLevel)
 
