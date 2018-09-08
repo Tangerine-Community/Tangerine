@@ -81,7 +81,7 @@ class Result extends Backbone.Model
 
   getByHash: ( hash ) ->
     for subtest in @get("subtestData")
-      if hash is subtest.subtestHash
+      if hash? && hash is subtest.subtestHash
         return subtest.data
     return null
 
