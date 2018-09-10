@@ -158,7 +158,7 @@ export class DashboardService {
           }
           let category = curriculumFormsList[i]['category']
           if (typeof category !== 'undefined' && category !== null) {
-            category = category.replace(/\s+/g, '');
+            category = category.trim()
           }
 
           let response = {
