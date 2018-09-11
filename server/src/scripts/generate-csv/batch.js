@@ -8,23 +8,22 @@ if (!process.argv[2]) {
 
 const util = require('util');
 const axios = require('axios')
-const exec = util.promisify(require('child_process').exec)
 const fs = require('fs')
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const appendFile = util.promisify(fs.appendFile);
 const CSV = require('comma-separated-values')
-const PouchDB = require('pouchdb')
+const dbDefaults = require('../../db-defaults.js')
 
 const params = {
   statePath: process.argv[2]
 }
 
-function getData(url, dbName, formId, skip, batchSize) {
+function getData(dbName, formId, skip, batchSize) {
   const limit = batchSize
   return new Promise((resolve, reject) => {
     try {
-      const target = `${url}/${dbName}/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${formId}"]&include_docs=true&skip=${skip}&limit=${limit}`
+      const target = `${dbDefaults.prefix}/${dbName}-reporting/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${formId}"]&include_docs=true&skip=${skip}&limit=${limit}`
       console.log(target)
       axios.get(target)
         .then(response => resolve(response.data.rows.map(row => row.doc)))
@@ -37,9 +36,7 @@ function getData(url, dbName, formId, skip, batchSize) {
 
 async function batch() {
   const state = JSON.parse(await readFile(params.statePath))
-  const DB = PouchDB.defaults(Object.assign({}, state.dbDefaults, {timeout: 50000}))
-  const db = new DB(state.dbName)
-  const docs = await getData(state.dbDefaults.prefix, state.dbName, state.formId, state.skip, state.batchSize)
+  const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize)
   if (docs.length === 0) {
     state.complete = true
   } else {
