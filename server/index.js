@@ -671,7 +671,7 @@ app.get('/csv/:groupName/:formId', async function (req, res) {
   const fileName = `${groupName}-${formId}-${Date.now()}.csv`
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   const outputPath = `/csv/${fileName}`
-  const cmd = `cd /tangerine/scripts/generate-csv/ && ./bin.js '${JSON.stringify(pouchDbDefaults)}' ${groupName}-reporting ${formId} ${outputPath} ${batchSize}`
+  const cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${groupName}-reporting ${formId} ${outputPath} ${batchSize}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
     log.info(`generate csv done: ${JSON.stringify(status)}`)
