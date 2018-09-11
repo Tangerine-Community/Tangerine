@@ -1,9 +1,10 @@
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
+const views = require(`./group-views.js`)
+const dbConnection = require('./db')
 
-module.exports = async function insertGroupViews(databaseName, dbConnection) {
+module.exports = async function insertGroupViews(databaseName) {
   let groupDb = new dbConnection(databaseName)
-  const views = require(`./group-views.js`)
   for (let prop in views) {
     const view = views[prop]
     designDoc = {
