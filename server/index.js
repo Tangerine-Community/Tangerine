@@ -504,7 +504,7 @@ async function getGroupsByUser(username) {
   if (await isSuperAdmin(username)) {
     const readdirPromisified = util.promisify(fs.readdir)
     const files = await readdirPromisified('/tangerine/client/content/groups');
-    let filteredFiles = files.filter(junk.not)
+    let filteredFiles = files.filter(junk.not).filter(name => name !== '.git' && name !== 'README.md')
     let groups = [];
     clog('/groups route lists these dirs: ' + filteredFiles)
 
