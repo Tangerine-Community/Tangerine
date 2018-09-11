@@ -24,6 +24,9 @@
         <!-- <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]="{form:form.src}">
           <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
         </a>-->
+          <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
+            <i class="material-icons mat-18 tangy-location-list-icon ">play_arrow</i>
+          </a>
           <a class="tangy-foreground-primary" [routerLink]="['/tangy-form-editor/', groupName, form.id]">
             <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
           </a>
@@ -37,6 +40,19 @@
           </span>
         </mat-list-item>
       </mat-list>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
+
+  <mat-tab *ngIf="isGroupAdminUser" label="Responses">
+    <mat-card>
+      <mat-card-title class="tangy-foreground-secondary">
+        Responses
+      </mat-card-title>
+      <mat-card-content>
+        <div class="tangy-full-width">
+          <app-responses [groupName]="groupName"></app-responses>
         </div>
       </mat-card-content>
     </mat-card>

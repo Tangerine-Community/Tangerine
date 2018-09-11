@@ -15,6 +15,7 @@ export class GroupDetailsComponent implements OnInit {
   groupName;
   isSuperAdminUser;
   isGroupAdminUser;
+  responses;
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,
@@ -33,6 +34,8 @@ export class GroupDetailsComponent implements OnInit {
     } catch (error) {
       console.log(error);
     }
+    let responses = await this.http.get(`/api/${this.groupName}/responses`).toPromise()
+    this.responses = responses
   }
 
   generateFormId() {

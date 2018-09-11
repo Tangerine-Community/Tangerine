@@ -2,15 +2,15 @@
 
 if (!process.argv[2] || !process.argv[3] || !process.argv[4] || !process.argv[4]) {
   console.log('Usage:')
-  console.log('  ./bin.js <dbDefaults> <dbName> <formId> <outputPath> [batchSize]  ')
+  console.log('  ./bin.js <groupName> <formId> <outputPath> [batchSize]  ')
   console.log('Example:')
-  console.log(`  ./bin.js '{"prefix":"http://admin:password@couchdb:5984"}' g2-reporting class-12-lesson-observation-with-pupil-books ./output.csv`)
+  console.log(`  ./bin.js g2 class-12-lesson-observation-with-pupil-books ./output.csv`)
   process.exit()
 }
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 const CSV = require('comma-separated-values')
-const PouchDB = require('pouchdb')
+const DB = require('../../db.js')
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 const fs = require('fs')
@@ -18,12 +18,11 @@ const writeFile = util.promisify(fs.writeFile);
 const readFile = util.promisify(fs.readFile);
 
 const params = {
-  dbDefaults: JSON.parse(process.argv[2]),
-  dbName: process.argv[3],
-  formId: process.argv[4],
-  outputPath: process.argv[5],
-  batchSize: (process.argv[6]) ? parseInt(process.argv[6]) : 5,
-  sleepTimeBetweenBatches: (process.argv[7]) ? parseInt(process.argv[7]) : 0
+  dbName: process.argv[2],
+  formId: process.argv[3],
+  outputPath: process.argv[4],
+  batchSize: (process.argv[5]) ? parseInt(process.argv[5]) : 5,
+  sleepTimeBetweenBatches: (process.argv[6]) ? parseInt(process.argv[6]) : 0
 }
 
 let state = Object.assign({}, params, {
@@ -36,8 +35,7 @@ let state = Object.assign({}, params, {
 
 async function go(state) {
   try {
-    const DB = PouchDB.defaults(state.dbDefaults)
-    const db = new DB(state.dbName)
+    const db = new DB(`${state.dbName}-reporting`)
     // Create the headers.
       let headersDoc = {} 
     try {

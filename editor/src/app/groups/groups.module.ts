@@ -15,6 +15,7 @@ import { DownloadCsvComponent } from './download-csv/download-csv.component';
 import { AddUserComponent } from './add-users/add-user.component';
 import { ListUsersComponent } from './list-users/list-users.component';
 import { ReleaseDatComponent } from './release-dat/release-dat.component';
+import { ResponsesComponent } from './responses/responses.component';
 
 
 
@@ -44,7 +45,8 @@ import { ReleaseDatComponent } from './release-dat/release-dat.component';
     DownloadCsvComponent,
     AddUserComponent,
     ListUsersComponent,
-    ReleaseDatComponent
+    ReleaseDatComponent,
+    ResponsesComponent
   ],
   providers: [GroupsService]
 })
