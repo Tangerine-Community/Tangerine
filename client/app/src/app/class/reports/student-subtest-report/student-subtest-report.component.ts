@@ -71,6 +71,7 @@ export class StudentSubtestReportComponent implements OnInit {
     // this.subtestReport.students = await this.getMyStudents(classId);
     const appConfig = await this.appConfigService.getAppConfig();
     this.categories = appConfig.categories;
+    this.categories.push("Unassigned Category")
     this.totals = {}
     for (const thisCategory of this.categories) {
       this.totals[thisCategory] = 0
@@ -92,6 +93,9 @@ export class StudentSubtestReportComponent implements OnInit {
       let formTitle = result.formTitle
       let studentId = result.studentId
       let category = result.category
+      if (category === "") {
+        category = "Unassigned Category"
+      }
       let score = parseInt(result.score)
       let resultObject = {}
       for (const thisCategory of this.categories) {
