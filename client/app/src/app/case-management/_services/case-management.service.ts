@@ -43,12 +43,20 @@ export class CaseManagementService {
     visits.forEach(visit => {
       const visitKey = visit.key.split('-');
       if (visitKey[2].toString() === month.toString() && visitKey[3].toString() === year.toString()) {
-        const item = findById(locationList, visitKey[0]);
-        locations.push({
-          location: item.label,
-          visits: countUnique(visits, item['id'].toString()),
-          id: item['id']
-        });
+        let item = findById(locationList, visitKey[0]);
+        if (!item) {
+          locations.push({
+            location: visitKey[0],
+            visits: countUnique(visits, visitKey[0]),
+            id: visitKey[0]
+          })
+        } else {
+          locations.push({
+            location: item.label,
+            visits: countUnique(visits, item['id'].toString()),
+            id: item['id']
+          });
+        }
       }
 
     });

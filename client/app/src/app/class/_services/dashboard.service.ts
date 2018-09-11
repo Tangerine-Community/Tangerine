@@ -80,8 +80,20 @@ export class DashboardService {
   async transformResultSet(result, curriculumFormsList) {
 
     const observations = [];
+    // let forms = {}
+    // curriculumFormsList.forEach(form => {
+    //   forms[form.id] = form
+    // })
+
     result.forEach(async observation => {
-      // loop through the formList
+      let items = observation.doc['items']
+      // filter out the forms we're currently not interested in
+      // let formId = observation.doc.form.id
+      // if (typeof forms[formId] !== 'undefined') {
+      //   // we want this result.
+      //
+      // }
+
       for (var i = 0; i < curriculumFormsList.length; i++) {
 
         let itemCount = 0;
@@ -93,14 +105,15 @@ export class DashboardService {
         let noResponse = 0;
         let score = 0;
 
-        if (observation.doc['items'][i]) {
-          itemCount = observation.doc['items'][i].inputs.length
-          let metadata = observation.doc['items'][i].metadata;
+        let item = observation.doc['items'][i];
+        if (item) {
+          itemCount = item.inputs.length
+          let metadata = item.metadata;
           if (metadata) {
             lastModified = metadata['lastModified']
           }
           // populate answeredQuestions array
-          observation.doc['items'][i].inputs.forEach(item => {
+          item.inputs.forEach(item => {
             // inputs = [...inputs, ...item.value]
             if (item.value !== "") {
               let data = {}
@@ -144,8 +157,8 @@ export class DashboardService {
             studentId = observation.doc.metadata.studentRegistrationDoc.id;
           }
           let category = curriculumFormsList[i]['category']
-          if (category !== null) {
-            category = category.replace(/\s+/g, '');
+          if (typeof category !== 'undefined' && category !== null) {
+            category = category.trim()
           }
 
           let response = {

@@ -11,7 +11,8 @@ import {
   MatTabsModule,
   MatSelectModule,
   MatMenuModule,
-  MatPaginatorIntl
+  MatPaginatorIntl,
+  MatButtonModule
 } from '@angular/material';
 import {CdkTableModule} from "@angular/cdk/table";
 import {SharedModule} from "../shared/shared.module";
@@ -38,7 +39,8 @@ import { StudentGroupingReportComponent } from './reports/student-grouping-repor
     MatSelectModule,
     SharedModule,
     MatCheckboxModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatButtonModule
   ],
   declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent],
   providers: [DashboardService, {
