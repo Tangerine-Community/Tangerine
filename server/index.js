@@ -33,6 +33,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 // Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
 var newGroupQueue = []
 const insertGroupViews = require(`./src/insert-group-views.js`)
+const insertGroupReportingViews = require('./src/insert-group-reporting-views')
 const DB = require('./src/db.js')
 const USERS_DB = new DB('users');
 const requestLogger = require('./middlewares/requestLogger');
@@ -475,7 +476,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
    * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
    * Also create the design doc for the resultsDB
    */
-  await REPORTING_DB.info(async info => await createReportingDesignDocuments(REPORTING_DB_NAME)).catch(e => {
+  await REPORTING_DB.info(async info => await insertGroupReportingViews(REPORTING_DB_NAME)).catch(e => {
     log.error(e);
   });
 
@@ -697,57 +698,6 @@ app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthentica
 
 
 
-/**
- * @description Function to create Design Documents in a given Database
- * @param {string} database The Database to use when for creating the Design Document
- *
- * `tangyReportingDesignDoc` is an Object that holds the Design Doc with views to be stored in the DB
- *
- * For compound keys in the design doc use string concatenation as a compilation error is thrown when using template strings
- * @example
- * use form.docId+'-'+doc.completed not `${doc.docId}-${doc.completed}`
- */
-async function createReportingDesignDocuments(database) {
-  const REPORTING_DB = new DB(database);
-
-  const tangyReportingDesignDoc = {
-    _id: '_design/tangy-reporting',
-    version: '1',
-    views: {
-      resultsByGroupFormId: {
-        map: function (doc) {
-          if (doc.formId) {
-            const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const startUnixtime = new Date(doc.startUnixtime);
-            const key = doc.formId + '_' + startUnixtime.getFullYear() + '_' + MONTHS[startUnixtime.getMonth()];
-            //The emmitted value is in the form "formId" i.e `formId` and also "formId_2018_May" i.e `formId_Year_Month`
-            emit(doc.formId);
-            emit(key);
-          }
-        }.toString()
-      }
-    }
-  }
-
-  try {
-    const designDoc = await REPORTING_DB.get('_design/tangy-reporting');
-    if (designDoc.version !== tangyReportingDesignDoc.version) {
-      log.info(`✓ Time to update _design/tangy-reporting for ${database}`);
-      log.info(`Removing _design/tangy-reporting for ${database}`);
-      await REPORTING_DB.remove(designDoc)
-      log.info(`Cleaning up view indexes for ${database}`);
-      // @TODO This causes conflicts with open databases. How to avoid??
-      //await REPORTING_DB.viewCleanup()
-      log.info(`Creating _design/tangy-reporting for ${database}`);
-      await REPORTING_DB.put(tangyReportingDesignDoc).
-        then(info => log.info(`√ Created _design/tangy-reporting for ${database} succesfully`));
-    }
-  } catch (error) {
-    if (error.error === 'not_found') {
-      await REPORTING_DB.put(tangyReportingDesignDoc).catch(err => log.error(err));
-    }
-  }
-}
 
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
