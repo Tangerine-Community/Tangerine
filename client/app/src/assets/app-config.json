@@ -3,7 +3,10 @@
   "columnsOnVisitsTab": [],
   "securityQuestionText": "What is your year of birth?",
   "hashSecurityQuestionResponse": false,
+  "registrationRequiresServerUser": false,
   "listUsernamesOnLoginScreen": true,
+  "serverUrl": "http://localhost/",
+  "groupName": "",
   "uploadUrl": "http://upload:password@localhost/upload",
   "homeUrl": "case-management",
   "direction": "ltr"
