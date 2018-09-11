@@ -35,9 +35,10 @@ export class CreateProfileGuardService implements CanActivate {
       if (this.appConfig.registrationRequiresServerUser) {
         this.router.navigate(['/import-user-profile'], { queryParams: { returnUrl: state.url } });
       } else {
-        debugger
-        if (state.url !== '/manage-user-profile') {
+        if (state.url.substr(0,20) !== '/manage-user-profile') {
           this.router.navigate(['/manage-user-profile'], { queryParams: { returnUrl: state.url } });
+        } else {
+          return true;
         }
       }
     }
