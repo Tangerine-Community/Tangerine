@@ -16,6 +16,7 @@ import { AddUserComponent } from './add-users/add-user.component';
 import { ListUsersComponent } from './list-users/list-users.component';
 import { ReleaseDatComponent } from './release-dat/release-dat.component';
 import { ResponsesComponent } from './responses/responses.component';
+import { LocationListEditorComponent } from './location-list-editor/location-list-editor.component';
 
 
 
@@ -36,6 +37,7 @@ import { ResponsesComponent } from './responses/responses.component';
     SharedModule
   ],
   declarations: [
+    LocationListEditorComponent,
     GroupsComponent,
     GroupComponent,
     NewGroupComponent,
