@@ -34,8 +34,6 @@ export class GroupDetailsComponent implements OnInit {
     } catch (error) {
       console.log(error);
     }
-    let responses = await this.http.get(`/api/${this.groupName}/responses`).toPromise()
-    this.responses = responses
   }
 
   generateFormId() {
