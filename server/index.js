@@ -470,15 +470,11 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
 
   //#region wire group DB and result db
 
-  const REPORTING_DB_NAME = `${groupName}-reporting`;
-  const REPORTING_DB = new DB(REPORTING_DB_NAME);
   /**
    * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
    * Also create the design doc for the resultsDB
    */
-  await REPORTING_DB.info(async info => await insertGroupReportingViews(REPORTING_DB_NAME)).catch(e => {
-    log.error(e);
-  });
+  await insertGroupReportingViews(groupName)
 
   // The keepReportingWorkerAlive function finds groups this way and adds them to the worker.
   newGroupQueue.push(groupName)
@@ -671,7 +667,7 @@ app.get('/csv/:groupName/:formId', async function (req, res) {
   const fileName = `${groupName}-${formId}-${Date.now()}.csv`
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   const outputPath = `/csv/${fileName}`
-  const cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${groupName}-reporting ${formId} ${outputPath} ${batchSize}`
+  const cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${groupName} ${formId} ${outputPath} ${batchSize}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
     log.info(`generate csv done: ${JSON.stringify(status)}`)
