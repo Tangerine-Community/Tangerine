@@ -2,7 +2,7 @@
 
 if (!process.argv[2]) {
   console.log('Usage:')
-  console.log('       ./bin.js <delayBetweenBatchesInMilliseconds> <batchSize> <numberOfUploads> <url>')
+  console.log('       ./bin.js <numberOfUploads> <groupName> [delayBetweenBatchesInMilliseconds] [batchSize]')
   process.exit()
 }
 
@@ -10,10 +10,10 @@ const pako = require('pako')
 const axios = require('axios')
 const uuidv1 = require('uuid/v1');
 const templateDoc = require('./template-doc.js').doc
-const delay = parseInt(process.argv[2])
-const batchSize = parseInt(process.argv[3])
-const numberOfUploads = parseInt(process.argv[4])
-const url = process.argv[5]
+const numberOfUploads = parseInt(process.argv[2])
+const url = `http://localhost/upload/${process.argv[3]}`
+const delay = process.argv[4] ? parseInt(process.argv[4]) : 2000
+const batchSize = process.argv[5] ? parseInt(process.argv[5]) : 100
 
 const sleep = (milliseconds) => {
   return new Promise((res, rej) => {
