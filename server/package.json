@@ -16,6 +16,7 @@
     "bcryptjs": "^2.4.3",
     "chalk": "^2.4.1",
     "cheerio": "^1.0.0-rc.2",
+    "comma-separated-values": "^3.6.4",
     "compression": "^1.7.2",
     "cordova-hot-code-push-cli": "^1.1.1",
     "cors": "^2.8.4",
