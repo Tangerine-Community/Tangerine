@@ -166,7 +166,7 @@ export class DashboardService {
             formId: curriculumFormsList[i]['id'],
             prototype: curriculumFormsList[i]['prototype'],
             category: category,
-            startDatetime: observation.doc.startDatetime,
+            startDatetime: observation.doc.startUnixtime,
             formIndex: i,
             _id: observation.doc._id,
             itemCount: itemCount,
