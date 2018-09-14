@@ -16,10 +16,10 @@ Filter:
   <tr *ngFor="let response of responses">
     <td>{{response._id}}</td>
     <td>{{moment(response.startUnixtime).format()}}</td>
-    <td>{{response.form.id}}</td>
+    <td>{{response.form?.id}}</td>
     <td>{{(response.userProfileId) ? response.userProfileId : 'anonymous'}}</td>
     <td>
-      <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: response.form.id, groupName: groupName, responseId: response._id}">
+      <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: response.form?.id, groupName: groupName, responseId: response._id}">
         <paper-button raised>
           view
         </paper-button>
