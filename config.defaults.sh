@@ -27,5 +27,8 @@ T_REGISTRATION_REQUIRES_SERVER_USER="false"
 T_REPLICATE="[]"
 # To enable the Class dashboard, set to "['class']"
 T_MODULES="[]"
+# To populate categories in Class:
+#T_CATEGORIES="['one','two','three','four']"
 T_LANG_DIRECTION="ltr"
 T_SYNC_SERVER="localhost:5984"
+
