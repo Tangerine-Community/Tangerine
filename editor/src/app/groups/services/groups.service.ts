@@ -9,12 +9,16 @@ export interface Forms {
 }
 @Injectable()
 export class GroupsService {
-
-  constructor(private httpClient: HttpClient, private errorHandler: TangyErrorHandler) { }
+  constructor(
+    private httpClient: HttpClient,
+    private errorHandler: TangyErrorHandler
+  ) { }
 
   async getUsersByUsername(username: string) {
     try {
-      const data: any = await this.httpClient.get(`/users/byUsername/${username}`).toPromise();
+      const data: any = await this.httpClient
+        .get(`/users/byUsername/${username}`)
+        .toPromise();
       return data.data;
     } catch (error) {
       console.error(error);
@@ -49,7 +53,9 @@ export class GroupsService {
 
   async addUserToGroup(groupName: string, username: string, role: string) {
     try {
-      const result = await this.httpClient.post(`groups/${groupName}/addUserToGroup`, { username, role }).toPromise();
+      const result = await this.httpClient
+        .post(`/groups/${groupName}/addUserToGroup`, { username, role })
+        .toPromise();
       return result;
     } catch (error) {
       console.error(error);
@@ -60,7 +66,12 @@ export class GroupsService {
   }
   async removeUserFromGroup(groupName: string, username: string) {
     try {
-      const result = await this.httpClient.patch(`groups/removeUserFromGroup/${groupName}`, { groupName, username }).toPromise();
+      const result = await this.httpClient
+        .patch(`/groups/removeUserFromGroup/${groupName}`, {
+          groupName,
+          username
+        })
+        .toPromise();
       return result;
     } catch (error) {
       console.error(error);
@@ -71,17 +82,22 @@ export class GroupsService {
   }
   async getFormsList(groupName: string) {
     try {
-      let result = await this.httpClient.get('/editor/groups/' + groupName + '/forms.json').toPromise() as Forms[];
+      let result = (await this.httpClient
+        .get('/editor/groups/' + groupName + '/forms.json')
+        .toPromise()) as Forms[];
 
-      result.unshift({
-        id: 'user-profile',
-        title: 'User Profile',
-        src: '../content/user-profile/form.html'
-      }, {
+      result.unshift(
+        {
+          id: 'user-profile',
+          title: 'User Profile',
+          src: '../content/user-profile/form.html'
+        },
+        {
           id: 'reports',
           title: 'Reports',
           src: '../content/reports/form.html'
-        });
+        }
+      );
 
       return result;
     } catch (error) {
@@ -94,7 +110,9 @@ export class GroupsService {
 
   async downloadCSV(groupName: string, formId: string) {
     try {
-      const result = await this.httpClient.get(`/csv/${groupName}/${formId}`).toPromise();
+      const result = await this.httpClient
+        .get(`/csv/${groupName}/${formId}`)
+        .toPromise();
       return result;
     } catch (error) {
       if (typeof error.status === 'undefined') {
