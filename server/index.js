@@ -211,12 +211,10 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
-
+  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} 2>&1 | tee -a /apk.log`
+  log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ${cmd}`)
   try {
-    await exec(`cd /tangerine/client && \
-        ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME} 2>&1 | tee -a ../server/apk.log
-  `)
+    await exec(cmd)
     res.send({ statusCode: 200, data: 'ok' })
   } catch (error) {
     res.send({ statusCode: 500, data: error })
@@ -230,8 +228,8 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   const releaseType = sanitize(req.params.releaseType)
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
-    await exec(`cd /tangerine/client && \
-        ./release-pwa.sh ${group} ./content/groups/${group} ${releaseType}
+    await exec(`cd /tangerine/server/src/scripts && \
+        ./release-pwa.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
   `)
     res.send({ statusCode: 200, data: 'ok' })
   } catch (error) {
@@ -246,7 +244,7 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
     const status = await exec(`cd /tangerine/client && \
-        ./release-dat.sh ${group} ./content/groups/${group} ${releaseType}
+        ./release-dat.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
     `)
     // Clean up whitespace.
     const datArchiveUrl = status.stdout.replace('\u001b[?25l','')

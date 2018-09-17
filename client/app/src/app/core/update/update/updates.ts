@@ -118,5 +118,11 @@ export const updates = [
     script: (userDb) => {
       console.log('Updating views...')
     }
+  },
+  {
+    requiresViewsUpdate: true,
+    script: (userDb) => {
+      console.log('Updating to v3.0.0...')
+    }
   }
 ]
