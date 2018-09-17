@@ -7,7 +7,9 @@ module.exports = async function groupUploadCheck(req, res) {
     const groupDb = new DB(req.params.groupId)
     const keys = req.body.keys
     let response = await groupDb.allDocs({keys})
-    res.send(response.rows.map(row => row.key))
+    res.send(response.rows
+      .filter(row => !row.error)
+      .map(row => row.key))
   } catch(error) {
     log.error(error)
   }
