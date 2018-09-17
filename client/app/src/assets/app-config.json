@@ -7,7 +7,7 @@
   "listUsernamesOnLoginScreen": true,
   "serverUrl": "http://localhost/",
   "groupName": "",
-  "uploadUrl": "http://upload:password@localhost/upload",
+  "uploadToken": "change_this_token",
   "homeUrl": "case-management",
   "direction": "ltr"
 }
