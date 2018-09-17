@@ -6,6 +6,11 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 RUN apt update
+RUN rm /usr/local/bin/node && rm /usr/local/bin/npm
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install -y nodejs
+RUN ln -s /usr/bin/node /usr/local/bin/node 
+
 
 RUN npm install -g nodemon dat
 RUN echo foo
