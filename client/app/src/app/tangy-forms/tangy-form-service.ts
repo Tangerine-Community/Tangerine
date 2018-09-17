@@ -98,12 +98,20 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '31',
+  version: '32',
   views: {
     responsesByFormId: {
       map: function (doc) {
         if (doc.collection !== 'TangyFormResponse') return
         emit(`${doc.form.id}`, true)
+      }.toString()
+    },
+    responsesCompleted: {
+      map: function (doc) {
+        if ((doc.collection === 'TangyFormResponse' && doc.complete === true ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile'))) {
+          emit(doc._id, true)
+        }
       }.toString()
     },
     responsesLockedAndNotUploaded: {
