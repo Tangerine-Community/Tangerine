@@ -431,7 +431,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
   // Edit the app-config.json.
   try {
     appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
-    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}`
+    appConfig.uploadToken = process.env.T_UPLOAD_TOKEN 
     appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
     appConfig.groupName = groupName
     appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
