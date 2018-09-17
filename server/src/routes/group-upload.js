@@ -4,7 +4,7 @@ const log = require('tangy-log').log
 const pako = require('pako')
 
 module.exports = async function groupUpload(req, res) {
-  let db = new DB(req.params.groupName)
+  let db = new DB(req.params.groupId)
   try {
     const payload = pako.inflate(req.body, { to: 'string' })
     const packet = JSON.parse(payload)
