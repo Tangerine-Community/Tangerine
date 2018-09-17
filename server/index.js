@@ -32,8 +32,6 @@ const clog = require('tangy-log').clog
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 // Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
 var newGroupQueue = []
-const insertGroupViews = require(`./src/insert-group-views.js`)
-const insertGroupReportingViews = require('./src/insert-group-reporting-views')
 const DB = require('./src/db.js')
 const USERS_DB = new DB('users');
 const requestLogger = require('./middlewares/requestLogger');
@@ -126,12 +124,12 @@ async function areCredentialsValid(username, password) {
   }
 }
 // This decides what identifying piece of information to put in a cookie for the session.
-passport.serializeUser(function (user, done) {
+passport.serializeUser(function serializeUser(user, done) {
   done(null, user.name);
 });
 
 // This transforms the id in the session cookie to pass to req.user object.
-passport.deserializeUser(function (id, done) {
+passport.deserializeUser(function deserializeUser(id, done) {
   done(null, { name: id });
 });
 
@@ -166,7 +164,7 @@ var isAuthenticated = function (req, res, next) {
 // Login service.
 app.post('/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
-  function (req, res) {
+  function routeLogin(req, res) {
     res.send({ name: req.user.name, statusCode: 200, statusMessage: 'ok' });
   }
 );
@@ -186,7 +184,7 @@ app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', 
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
 app.use('/', express.static(path.join(__dirname, '../editor/dist')));
 app.use('/app/:group/', express.static(path.join(__dirname, '../editor/dist')));
-app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
+app.use('/app/:group/assets', isAuthenticated, function routeAppGroupAssets(req, res, next) {
   let contentPath = '../client/content/groups/' + req.params.group
   clog("Setting path to " + path.join(__dirname, contentPath))
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
@@ -202,18 +200,19 @@ app.use('/csv/', express.static('/csv/'));
 app.use('/releases/', express.static(path.join(__dirname, '../client/releases')))
 app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')))
 
-app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, next) {
+app.use('/editor/:group/content/assets', isAuthenticated, function routeEditorGroupContentAssets(req, res, next) {
   let contentPath = '../client/content/assets'
   clog("Setting path to " + path.join(__dirname, contentPath))
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
-app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
+
+app.use('/editor/:group/content', isAuthenticated, function routeEditorGroupContent(req, res, next) {
   let contentPath = '../client/content/groups/' + req.params.group
   clog("Setting path to " + path.join(__dirname, contentPath))
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
 
-app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async function (req, res, next) {
+app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async function routeEditorReleaseApkGroupReleaseType(req, res, next) {
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
@@ -230,7 +229,7 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
 
 })
 
-app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async function (req, res, next) {
+app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async function routeEditorReleasePwaGroupReleaseType(req, res, next) {
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
@@ -245,7 +244,7 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   }
 })
 
-app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async function (req, res, next) {
+app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async function routeEditorReleaseDatGroupReleaseType(req, res, next) {
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
@@ -262,7 +261,7 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   }
 })
 
-app.get('/users', isAuthenticated, async (req, res) => {
+app.get('/users', isAuthenticated, async function routeUsers(req, res) {
   const result = await USERS_DB.allDocs({ include_docs: true });
   const data = result.rows
     .map((doc) => doc)
@@ -274,7 +273,7 @@ app.get('/users', isAuthenticated, async (req, res) => {
   res.send({ statusCode: 200, data });
 });
 
-app.get('/users/userExists/:username', isAuthenticated, async (req, res) => {
+app.get('/users/userExists/:username', isAuthenticated, async function routeUsersUserExistsUsername(req, res) {
   let data;
   let statusCode;
   try {
@@ -308,7 +307,7 @@ async function doesUserExist(username) {
   }
 }
 
-app.post('/users/register-user', isAuthenticated, async (req, res) => {
+app.post('/users/register-user', isAuthenticated, async function routeUsersRegisterUser(req, res) {
   try {
     if (!(await doesUserExist(req.body.username))) {
       const user = req.body;
@@ -324,7 +323,7 @@ app.post('/users/register-user', isAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/users/byUsername/:username', isAuthenticated, async (req, res) => {
+app.get('/users/byUsername/:username', isAuthenticated, async function routeUsersByUsernameUsername(req, res) {
   const username = req.params.username;
   try {
     await USERS_DB.createIndex({ index: { fields: ['username'] } });
@@ -337,7 +336,7 @@ app.get('/users/byUsername/:username', isAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/users/isSuperAdminUser/:username', isAuthenticated, async (req, res) => {
+app.get('/users/isSuperAdminUser/:username', isAuthenticated, async function routeUsersIsSuperAdminUsername(req, res) {
   try {
     const data = await isSuperAdmin(req.params.username);
     res.send({ data, statusCode: 200, statusMessage: 'ok' })
@@ -347,7 +346,7 @@ app.get('/users/isSuperAdminUser/:username', isAuthenticated, async (req, res) =
   }
 });
 
-app.get('/users/isAdminUser/:username', isAuthenticated, async (req, res) => {
+app.get('/users/isAdminUser/:username', isAuthenticated, async function routeUsersIsAdminUserUsername (req, res) {
   try {
     const data = await isAdminUser(req.params.username);
     res.send({ data, statusCode: 200, statusMessage: 'ok' })
@@ -367,7 +366,7 @@ async function hashPassword(password) {
   }
 }
 
-app.post('/editor/file/save', isAuthenticated, async function (req, res) {
+app.post('/editor/file/save', isAuthenticated, async function routePostEditorFileSave(req, res) {
   const filePath = req.body.filePath
   const groupId = req.body.groupId
   const fileContents = req.body.fileContents
@@ -377,7 +376,7 @@ app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   // ok
 })
 
-app.delete('/editor/file/save', isAuthenticated, async function (req, res) {
+app.delete('/editor/file/save', isAuthenticated, async function routeDeleteEditorFileSave(req, res) {
   const filePath = req.query.filePath
   const groupId = req.query.groupId
   clog(req.params)
@@ -401,92 +400,9 @@ app.delete('/editor/file/save', isAuthenticated, async function (req, res) {
  * Sets up watching of the group DB to listen to the changes feed on the database
  * Redirects user to editor page for the group.
  */
-app.post('/editor/group/new', isAuthenticated, async function (req, res) {
+app.post('/editor/group/new', isAuthenticated, require('./src/routes/group-new'))
 
-  // See if this instance supports the class module, copy the class forms, and set homeUrl
-  let homeUrl;
-  let syncProtocol;
-  let modules = [];
-  let modulesString = process.env.T_MODULES;
-  modulesString = modulesString.replace(/'/g, '"');
-  let moduleEntries = JSON.parse(modulesString)
-  if (moduleEntries.length > 0) {
-    for (let moduleEntry of moduleEntries) {
-      modules.push(moduleEntry);
-      if (moduleEntry === "class") {
-        clog("Setting homeUrl to dashboard")
-        homeUrl =  "dashboard"
-        syncProtocol = "replication"
-        // copy the class forms
-        const exists = await fs.pathExists('/tangerine/client/app/src/assets/class-registration')
-        if (!exists) {
-          try {
-            await fs.copy('/tangerine/scripts/modules/class/', '/tangerine/client/app/src/assets/')
-            console.log('Copied class module forms.')
-          } catch (err) {
-            console.error(err)
-          }
-        }
-      } else {
-        clog("moduleEntry: " + moduleEntry)
-      }
-    }
-  }
-  let groupName = req.body.groupName
-  // Copy the content directory for the new group.
-  await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
-  await insertGroupViews(groupName, DB)
-  // Edit the app-config.json.
-  try {
-    appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
-    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}`
-    appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
-    appConfig.groupName = groupName
-    appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
-    if (typeof homeUrl !== 'undefined') {
-      appConfig.homeUrl = homeUrl
-    }
-    if (typeof syncProtocol !== 'undefined') {
-      appConfig.syncProtocol = syncProtocol
-      appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_SYNC_SERVER}/${groupName}`
-    }
-    if (modules.length > 0) {
-      appConfig.modules = modules;
-    }
-    appConfig.direction = `${process.env.T_LANG_DIRECTION}`
-    if (process.env.T_CATEGORIES) {
-      let categoriesString = `${process.env.T_CATEGORIES}`
-      categoriesString = categoriesString.replace(/'/g, '"');
-      let categoriesEntries = JSON.parse(categoriesString)
-      appConfig.categories = categoriesEntries;
-    }
-  } catch (err) {
-    log.error("An error reading app-config: " + err)
-    throw err;
-  }
-  await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
-    .then(status => log.info("Wrote app-config.json"))
-    .catch(err => log.error("An error copying app-config: " + err))
-
-  //#region wire group DB and result db
-
-  /**
-   * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
-   * Also create the design doc for the resultsDB
-   */
-  await insertGroupReportingViews(groupName)
-
-  // The keepReportingWorkerAlive function finds groups this way and adds them to the worker.
-  newGroupQueue.push(groupName)
-
-  // Set up watching of groupDb for changes.
-  //#endregion
-
-  // All done!
-  res.send({ data: 'Group Created Successfully', statusCode: 200 });
-})
-
-app.get('/groups', isAuthenticated, async function (req, res) {
+app.get('/groups', isAuthenticated, async function routeGroups(req, res) {
 
   try {
     const groups = await getGroupsByUser(req.user.name);
@@ -548,7 +464,7 @@ async function isAdminUser(username) {
     console.log(error)
   }
 }
-app.post('/groups/:groupName/addUserToGroup', isAuthenticated, async (req, res) => {
+app.post('/groups/:groupName/addUserToGroup', isAuthenticated, async function routeGroupsGroupNameAddUserToGroup(req, res) {
   const payload = req.body;
   const groupName = req.params.groupName;
   try {
@@ -580,7 +496,7 @@ app.post('/groups/:groupName/addUserToGroup', isAuthenticated, async (req, res) 
   }
 });
 
-app.get('/groups/users/byGroup/:groupName', isAuthenticated, async (req, res) => {
+app.get('/groups/users/byGroup/:groupName', isAuthenticated, async function routeGroupsUsersByGroupGroupName(req, res) {
   try {
     const groupName = req.params.groupName;
     // Mango search in Arrays, Documentation in : https://stackoverflow.com/questions/43892556/mango-search-in-arrays-couchdb
@@ -602,7 +518,7 @@ app.get('/groups/users/byGroup/:groupName', isAuthenticated, async (req, res) =>
   }
 })
 
-app.get('/groups/users/byGroupAndUsername/:groupName/:username', isAuthenticated, async (req, res) => {
+app.get('/groups/users/byGroupAndUsername/:groupName/:username', isAuthenticated, async function routeGroupsUsersByGroupAndUsername(req, res) {
   try {
     const groupName = req.params.groupName;
     const username = req.params.username;
@@ -631,7 +547,7 @@ app.get('/groups/users/byGroupAndUsername/:groupName/:username', isAuthenticated
   }
 })
 
-app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req, res) => {
+app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async function routeGroupsRemoveUserFromGroupGroupName(req, res) {
   try {
     const username = req.body.username;
     const groupName = req.params.groupName;
@@ -647,7 +563,7 @@ app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req,
   }
 })
 // @TODO: Middleware auth check for upload user.
-app.post('/upload/:groupName', async function (req, res) {
+app.post('/upload/:groupName', async function routeUploadGroupName(req, res) {
   let db = new DB(req.params.groupName)
   try {
     const payload = pako.inflate(req.body, { to: 'string' })
@@ -661,7 +577,7 @@ app.post('/upload/:groupName', async function (req, res) {
 })
 
 // TODO Notify caller if group doesnt have form response, to avoid infinite polling  
-app.get('/csv/:groupName/:formId', async function (req, res) {
+app.get('/csv/:groupName/:formId', async function routeCsvGroupNameFormId(req, res) {
   const groupName = sanitize(req.params.groupName)
   const formId = sanitize(req.params.formId)
   const fileName = `${groupName}-${formId}-${Date.now()}.csv`
@@ -692,9 +608,6 @@ app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthentica
 });
 */
 
-
-
-
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
  * @param {string} srcPath The path to the directory
@@ -711,7 +624,8 @@ function allGroups() {
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
 }
 
-const keepAliveReportingWorker = async initialGroups => {
+async function keepAliveReportingWorker(initialGroups) {
+  const SLEEP_DURATION  = 100 
   try {
     // Populate worker-state.json if there any initialGroups not currently being watched.
     let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
@@ -755,44 +669,32 @@ const keepAliveReportingWorker = async initialGroups => {
           // Wrap up. If nothing was last processed, sleep for 30 seconds.
           if (workerState.processed === 0) {
             log.info('No changes processed. Sleeping...')
-            await sleep(30 * 1000)
+            await sleep(SLEEP_DURATION)
           } else {
             log.info(`Processed ${workerState.processed} changes.`)
           }
         } catch (error) {
           log.error(error)
           log.info('keepAliveReportingWorker had an error trying to save state. Sleeping for 30 seconds.')
-          await sleep(30*1000)
+          await sleep(SLEEP_DURATION)
         }
       } catch (error) {
         log.error(error)
         log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
-        await sleep(30*1000)
+        await sleep(SLEEP_DURATION)
       }
     }
   } catch (error) {
     log.error(error)
     console.log(error)
     log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
-    await sleep(30*1000)
+    await sleep(SLEEP_DURATION)
 
   }
 }
+
 const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
-
-async function getTin() {
-  const db = new DB('tintin')
-  let result = {}
-  try {
-    result = await db.query('byFormId', {'key': 'example'})
-  } catch(err) {
-    clog(err)
-  }
-  clog(result)
-}
-//getTin()
-
 
 // Start the server.
 var server = app.listen('80', function () {
