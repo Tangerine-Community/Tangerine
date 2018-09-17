@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+import { WindowRef } from '../../../core/window-ref.service';
 import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../auth/_services/user.service';
 import {AppConfigService} from "../../../shared/_services/app-config.service";
@@ -18,12 +19,17 @@ export class SyncRecordsComponent implements OnInit {
   docsUploaded: number;
   syncPercentageComplete: number;
   syncProtocol = '';
+  contentVersion = '';
+  window: any;
 
   constructor(
+    private windowRef: WindowRef,
     private syncingService: SyncingService,
     private userService: UserService,
     private appConfigService: AppConfigService,
-  ) { }
+  ) {
+    this.window = this.windowRef.nativeWindow;
+  }
 
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();
@@ -31,6 +37,9 @@ export class SyncRecordsComponent implements OnInit {
     if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
     } else {
       this.getUploadProgress();
+    }
+    if (this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin') !== -1) {
+      this.contentVersion = this.window.location.href.split('/')[this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin')+1]
     }
   }
 
