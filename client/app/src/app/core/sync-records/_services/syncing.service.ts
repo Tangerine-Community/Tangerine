@@ -44,10 +44,14 @@ export class SyncingService {
           }).toPromise();
           await this.markDocsAsUploaded([doc_id], username);
         }
-        return true; // Sync Successful
-      } else {
-        return false; // No Items to Sync
       }
+      const userProfileBody = pako.deflate(JSON.stringify({ doc: userProfile }), { to: 'string' });
+      await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload?force=true`, userProfileBody, {
+        headers: new HttpHeaders({
+          'Authorization': appConfig.uploadToken
+        }) 
+      }).toPromise();
+      return true; // No Items to Sync
     } catch (error) {
       throw (error);
     }
