@@ -150,18 +150,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Middleware to protect routes.
-var isAuthenticated = function (req, res, next) {
-  // Uncomment next two lines when you want to turn off authentication during development.
-  // req.user = {}; req.user.name = 'user1';
-  // return next();
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  let errorMessage = `Permission denied at ${req.url}`;
-  log.warn(errorMessage)
-  // res.redirect('/');
-  res.status(401).send(errorMessage)
-}
+var isAuthenticated = require('./src/middleware/is-authenticated.js')
+var hasUploadToken = require('./src/middleware/has-upload-token.js')
 
 // Login service.
 app.post('/login',
@@ -172,15 +162,19 @@ app.post('/login',
 );
 
 // API
+app.post('/api/:groupId/upload-check', hasUploadToken, require('./src/routes/group-upload-check.js'))
+app.post('/api/:groupId/upload', hasUploadToken, require('./src/routes/group-upload.js'))
 app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses.js'))
+app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses-by-form-id.js'))
+// Note that the lack of security middleware here is intentional. User IDs are UUIDs and thus sufficiently hard to guess.
+app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./src/routes/group-responses-by-user-profile-id.js'))
 app.get('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-read.js'))
 app.put('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
 app.post('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
 app.delete('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-delete.js'))
-app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses-by-form-id.js'))
-// Note that the lack of security middleware here is intentional. User IDs are UUIDs and thus sufficiently hard to guess.
-app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./src/routes/group-responses-by-user-profile-id.js'))
-
+if (process.env.T_LEGACY === "true") {
+  app.post('/upload/:groupName', require('./src/routes/group-upload.js'))
+}
 
 // Static assets.
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
@@ -646,19 +640,7 @@ app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req,
     res.sendStatus(500);
   }
 })
-// @TODO: Middleware auth check for upload user.
-app.post('/upload/:groupName', async function (req, res) {
-  let db = new DB(req.params.groupName)
-  try {
-    const payload = pako.inflate(req.body, { to: 'string' })
-    const packet = JSON.parse(payload)
-    // New docs should not have a rev or else insertion will fail.
-    delete packet.doc._rev
-    await db.put(packet.doc).catch(err => log.error(err))
-    res.send({ status: 'ok'})
-  } catch (e) { log.error(e) }
 
-})
 
 // TODO Notify caller if group doesnt have form response, to avoid infinite polling  
 app.get('/csv/:groupName/:formId', async function (req, res) {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import PouchDB from 'pouchdb';
 import * as PouchDBUpsert from 'pouchdb-upsert';
 import * as pako from 'pako';
@@ -57,9 +57,30 @@ export class SyncingService {
   async getIDsFormsLockedAndNotUploaded(username?: string) {
     const userDB = username || await this.getLoggedInUser();
     const DB = new PouchDB(userDB);
-    const results = await DB.query('tangy-form/responsesLockedAndNotUploaded');
-    const docIds = results.rows.map(row => row.key);
-    return docIds;
+    const allDocsRequest = await DB.allDocs();
+    const appConfig = await this.appConfigService.getAppConfig()
+    try {
+      const hasKeys = await this.http.post(
+        `${appConfig.serverUrl}/api/${appConfig.groupId}/upload-check`, 
+        {
+          keys: allDocsRequest.rows
+            .filter(row => row.id.substr(0,7) !== '_design')
+            .map(row => row.id)
+        }, 
+        {
+          headers: new HttpHeaders({
+            'Authorization': appConfig.uploadToken
+          }) 
+        }
+      ).toPromise()
+      const docIds = allDocsRequest.rows
+        .filter(row => hasKeys['indexOf'](row.id) !== -1)
+        .map(row => row.id);
+      return docIds;
+    }
+    catch(err) {
+      console.log(err)
+    }
   }
 
   async getFormsLockedAndUploaded(username?: string) {
