@@ -78,17 +78,17 @@ RUN_OPTIONS="
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_ADMIN=$T_ADMIN\" \
   --env \"T_PASS=$T_PASS\" \
-  --env \"T_UPLOAD_USER=$T_UPLOAD_USER\" \
-  --env \"T_UPLOAD_PASSWORD=$T_UPLOAD_PASSWORD\" \
   --env \"T_USER1=$T_USER1\" \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
+  --env \"T_UPLOAD_TOKEN=$T_UPLOAD_TOKEN\" \
   --env \"T_REPLICATE=$T_REPLICATE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_MODULES=$T_MODULES\" \
   --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
+  --env \"T_LEGACY=$T_LEGACY\" \
   --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
