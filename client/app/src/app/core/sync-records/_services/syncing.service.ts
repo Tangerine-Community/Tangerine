@@ -37,7 +37,7 @@ export class SyncingService {
             });
           });
           const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
-          await this.http.post(`${appConfig.serverUrl}/api/${appConfig.groupId}/upload`, body, {
+          await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload`, body, {
             headers: new HttpHeaders({
               'Authorization': appConfig.uploadToken
             }) 
@@ -60,7 +60,7 @@ export class SyncingService {
     const appConfig = await this.appConfigService.getAppConfig()
     try {
       const hasKeys = await this.http.post(
-        `${appConfig.serverUrl}/api/${appConfig.groupId}/upload-check`, 
+        `${appConfig.serverUrl}api/${appConfig.groupName}/upload-check`, 
         {
           keys: allDocsRequest.rows.map(row => row.id)
         }, 
