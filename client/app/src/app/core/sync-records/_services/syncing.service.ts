@@ -19,15 +19,10 @@ export class SyncingService {
     return localStorage.getItem('currentUser');
   }
 
-  async getRemoteHost() {
-    const appConfig = await this.appConfigService.getAppConfig();
-    return appConfig.uploadUrl;
-  }
-
   async pushAllrecords(username) {
     try {
       const userProfile = await this.userService.getUserProfile(username);
-      const remoteHost = await this.getRemoteHost();
+      const appConfig = await this.appConfigService.getAppConfig()
       const DB = new PouchDB(username);
       const doc_ids = await this.getIDsFormsLockedAndNotUploaded(username);
       if (doc_ids && doc_ids.length > 0) {
@@ -42,7 +37,11 @@ export class SyncingService {
             });
           });
           const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
-          await this.http.post(remoteHost, body).toPromise();
+          await this.http.post(`${appConfig.serverUrl}/api/${appConfig.groupId}/upload`, body, {
+            headers: new HttpHeaders({
+              'Authorization': appConfig.uploadToken
+            }) 
+          }).toPromise();
           await this.markDocsAsUploaded([doc_id], username);
         }
         return true; // Sync Successful
@@ -57,15 +56,13 @@ export class SyncingService {
   async getIDsFormsLockedAndNotUploaded(username?: string) {
     const userDB = username || await this.getLoggedInUser();
     const DB = new PouchDB(userDB);
-    const allDocsRequest = await DB.allDocs();
+    const allDocsRequest = await DB.query('tangy-form/responsesCompleted');
     const appConfig = await this.appConfigService.getAppConfig()
     try {
       const hasKeys = await this.http.post(
         `${appConfig.serverUrl}/api/${appConfig.groupId}/upload-check`, 
         {
-          keys: allDocsRequest.rows
-            .filter(row => row.id.substr(0,7) !== '_design')
-            .map(row => row.id)
+          keys: allDocsRequest.rows.map(row => row.id)
         }, 
         {
           headers: new HttpHeaders({
@@ -74,7 +71,7 @@ export class SyncingService {
         }
       ).toPromise()
       const docIds = allDocsRequest.rows
-        .filter(row => hasKeys['indexOf'](row.id) !== -1)
+        .filter(row => hasKeys['indexOf'](row.id) === -1)
         .map(row => row.id);
       return docIds;
     }
