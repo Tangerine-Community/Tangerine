@@ -2,7 +2,7 @@ const DB = require('../db.js')
 const clog = require('tangy-log').clog
 const log = require('tangy-log').log
 
-module.exports = async (req, res) => {
+module.exports = async function routeGroupDocRead(req, res) {
   const groupDb = new DB(req.params.groupId)
   let doc = {}
   try {
