@@ -24,7 +24,9 @@ if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ]; th
   echo ""
   exit
 fi
- q
+
+cd /tangerine/client
+
 # Create a temporary PWA folder that we'll move to the secret.
 cp -r builds/pwa .pwa-temporary
 
