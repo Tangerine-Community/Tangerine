@@ -84,6 +84,13 @@ npm start
 ```
 Then open http://localhost:4200 in your web browser. The content is found in the `tangerine/client/app/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
 
+If the process has stopped, you can restart by running...
+
+```
+cd tangerine/client/app
+npm start
+```
+
 To update to a new version of tangerine, run...
 
 ```
