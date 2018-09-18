@@ -72,7 +72,31 @@ docker exec -it tangerine /tangerine/upgrades/v2.0.0.sh
 
 Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
 
-## Development
+## Local Content Development
+Install nodejs and git on your local machine. Then run the following commands.
+```
+git clone https://github.com/tangerine-community/tangerine
+cd tangerine
+git checkout <most recent release version, ie. v3.0.0-rc5>
+cd client/app
+npm install
+npm start
+```
+Then open http://localhost:4200 in your web browser. The content is found in the `tangerine/client/app/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
+
+To update to a new version of tangerine, run...
+
+```
+cd tangerine
+git fetch
+git checkout <new version listed in the releases tab on github>
+cd client/app/
+rm -r node_modules
+npm install
+npm start
+```
+
+## App Development
 
 ### Develop for Editor and Server 
 ```
