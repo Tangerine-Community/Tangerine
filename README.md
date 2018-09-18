@@ -73,7 +73,7 @@ docker exec -it tangerine /tangerine/upgrades/v2.0.0.sh
 Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
 
 ## Local Content Development
-Install nodejs and git on your local machine. Then run the following commands.
+Install [nodejs](https://nodejs.org/en/) and [git](https://git-scm.com/) on your local machine. Then run the following commands.
 ```
 git clone https://github.com/tangerine-community/tangerine
 cd tangerine
