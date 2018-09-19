@@ -1,0 +1,30 @@
+
+<h3>
+  <span *ngFor="let breadcrumb of breadcrumbs" (click)="onClickBreadcrumb(breadcrumb.id)"> > {{breadcrumb.label}}</span>
+</h3>
+
+<mat-card>
+  <div *ngIf="currentLocation">
+    <div>
+      Label: {{currentLocation.label}}
+    </div>
+    <div>
+      ID: {{currentLocation.id}}
+    </div>
+  </div>
+  <div id="children">
+    Children:
+    <ul>
+      <li *ngFor="let child of locationChildren" (click)="onChildClick(child.id)">
+        {{child.label}} ({{child.id}})
+      </li>
+    </ul>
+  </div>
+  <mat-card-actions>
+    <button mat-button>edit</button>
+    <button mat-button>delete</button>
+    <button mat-button>move</button>
+  </mat-card-actions>
+</mat-card>
+
+

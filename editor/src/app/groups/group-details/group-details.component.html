@@ -1,5 +1,10 @@
 <mat-tab-group class="tangy-full-width">
-  <mat-tab label="{{'Group Details'|translate}}">
+
+  <mat-tab *ngIf="isGroupAdminUser" label="Location List">
+    <app-location-list-editor></app-location-list-editor>
+  </mat-tab>
+
+  <mat-tab label="{{'Forms'|translate}}">
     <mat-card>
       <mat-card-title class="tangy-foreground-secondary">
         {{'Group Details'|translate}}
