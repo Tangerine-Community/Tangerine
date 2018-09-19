@@ -1,8 +1,5 @@
 <mat-tab-group class="tangy-full-width">
 
-  <mat-tab *ngIf="isGroupAdminUser" label="Location List">
-    <app-location-list-editor></app-location-list-editor>
-  </mat-tab>
 
   <mat-tab label="{{'Forms'|translate}}">
     <mat-card>
@@ -111,6 +108,9 @@
       </div>
     </mat-card-content>
     </mat-card>
+  </mat-tab>
+  <mat-tab *ngIf="isGroupAdminUser" label="Location List">
+    <app-location-list-editor></app-location-list-editor>
   </mat-tab>
   <mat-tab *ngIf="isSuperAdminUser" label="{{'Manage Users'|translate}}">
     <app-list-users class="tangy-full-width"></app-list-users>
