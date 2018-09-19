@@ -41,6 +41,10 @@ export class UserProfileComponent implements AfterContentInit {
     formEl.addEventListener('submit', async (event) => {
       event.preventDefault()
       const profileDoc = formEl.store.getState()
+      // Queue for upload.
+      if (profileDoc.uploadDatetime) {
+        profileDoc.uploadDatetime = null
+      }
       await tangyFormService.saveResponse(profileDoc)
       this.router.navigate([this.returnUrl]);
     })
