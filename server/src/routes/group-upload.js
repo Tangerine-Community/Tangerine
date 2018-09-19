@@ -8,15 +8,11 @@ module.exports = async function groupUpload(req, res) {
   try {
     const payload = pako.inflate(req.body, { to: 'string' })
     const packet = JSON.parse(payload)
-    // New docs should not have a rev or else insertion will fail.
-    if (req.query.force === "true") {
-      try {
-        let doc = await db.get(packet.doc._id)
-        packet.doc._rev = doc._rev
-      } catch (err) {
-        delete packet.doc._rev
-      }
-    } else {
+    // Force insert even if doc exists.
+    try {
+      let doc = await db.get(packet.doc._id)
+      packet.doc._rev = doc._rev
+    } catch (err) {
       delete packet.doc._rev
     }
     await db.put(packet.doc).catch(err => log.error(err))

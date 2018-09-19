@@ -98,7 +98,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '32',
+  version: '33',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -116,15 +116,22 @@ var tangyFormDesignDoc = {
     },
     responsesLockedAndNotUploaded: {
       map: function (doc) {
-        if ((doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime ||
-          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime))) {
+        if (
+          (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime) 
+          ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
+        ) {
           emit(doc._id, true)
         }
       }.toString()
     },
     responsesLockedAndUploaded: {
       map: function (doc) {
-        if (doc.collection === 'TangyFormResponse' && doc.complete === true && !!doc.uploadDatetime) {
+        if (
+          (doc.collection === 'TangyFormResponse' && doc.complete === true && !!doc.uploadDatetime) 
+          ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
+        ) {
           emit(doc._id, true)
         }
       }.toString()
