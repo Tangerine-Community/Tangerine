@@ -50,9 +50,10 @@ export class DashboardService {
     return result.rows;
   }
 
-  async getResultsByClass(classId: any, curriculumFormsList) {
-    const result = await this.userDB.query('tangy-class/responsesByClassId', {
-      key: classId,
+  async getResultsByClass(classId: any, curriculum, curriculumFormsList) {
+    const theKey = [classId,curriculum]
+    const result = await this.userDB.query('tangy-class/responsesByClassIdCurriculumId', {
+      key: theKey,
       include_docs: true
     });
     const data = await this.transformResultSet(result.rows, curriculumFormsList);
