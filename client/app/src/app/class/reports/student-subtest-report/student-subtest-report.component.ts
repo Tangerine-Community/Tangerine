@@ -6,10 +6,12 @@ import {AuthenticationService} from "../../../core/auth/_services/authentication
 import {ClassUtils} from "../../class-utils";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 
-export interface SubtestReport {
-  id: string;
-  name: string;
-  students:any;
+export class SubtestReport {
+  curriculumId:any
+  label:any
+  categories: any;
+  totals:any;
+  studentCategorizedResults:any
 }
 
 export interface StudentResult {
@@ -29,14 +31,11 @@ export class StudentSubtestReportComponent implements OnInit {
   classUtils: ClassUtils
   curriculumFormsList
   students:any
-  subtestReport:SubtestReport = {
-    id:null,
-    name: null,
-    students:null
-  }
   studentCategorizedResults:any
   categories: any;
   totals:any;
+  curriculums:any;
+  subtestReports:any;
 
   @ViewChild('container') container: ElementRef;
 
@@ -59,62 +58,84 @@ export class StudentSubtestReportComponent implements OnInit {
 
   async getReport() {
     const classId = this.route.snapshot.paramMap.get('classId');
-    console.log("type: " + classId)
+    // console.log("type: " + classId)
     let classDoc = await this.classFormService.getResponse(classId);
     let classRegistration = this.classUtils.getInputValues(classDoc);
 
     // Get data about this particular subtest
-    let curriculumId = classRegistration.curriculum;
-    let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-    const container = this.container.nativeElement
-    let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml, container);
-    // this.subtestReport.students = await this.getMyStudents(classId);
-    const appConfig = await this.appConfigService.getAppConfig();
-    this.categories = appConfig.categories;
-    this.categories.push("Unassigned Category")
-    this.totals = {}
-    for (const thisCategory of this.categories) {
-      this.totals[thisCategory] = 0
-    }
-    let students = await this.getMyStudents(classId);
-    let studentResults = {}
-    for (const student of students) {
-      let studentId = student.id
-      let forms = {}
-      for (const form of curriculumFormsList) {
-        let name = form.title
-        forms[name] = {}
+    this.curriculums = classRegistration.curriculum;
+    console.log("curriculums")
+    this.subtestReports = [];
+    for (const curriculum of this.curriculums) {
+      let curriculumId = curriculum.name;
+      let label = curriculum.label;
+      let subtestReport = new SubtestReport()
+      subtestReport.curriculumId = curriculumId;
+      subtestReport.label = label;
+
+
+      let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
+      const container = this.container.nativeElement
+      let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml, container);
+      // this.subtestReport.students = await this.getMyStudents(classId);
+      const appConfig = await this.appConfigService.getAppConfig();
+      this.categories = appConfig.categories;
+      this.categories.push("Unassigned Category")
+
+      subtestReport.categories = this.categories;
+
+      this.totals = {}
+      for (const thisCategory of this.categories) {
+        this.totals[thisCategory] = 0
       }
-      studentResults[studentId] = forms
+
+      subtestReport.totals = this.totals;
+
+      let students = await this.getMyStudents(classId);
+      let studentResults = {}
+      for (const student of students) {
+        let studentId = student.id
+        let forms = {}
+        for (const form of curriculumFormsList) {
+          let name = form.title
+          forms[name] = {}
+        }
+        studentResults[studentId] = forms
+      }
+
+      let results = await this.getResultsByClass(classId, curriculumId, curriculumFormsList);
+      for (const result of results) {
+        let formTitle = result.formTitle
+        let studentId = result.studentId
+        let category = result.category
+        if (category === "") {
+          category = "Unassigned Category"
+        }
+        let score = parseInt(result.score)
+        let resultObject = {}
+        for (const thisCategory of this.categories) {
+          resultObject[thisCategory] = null
+        }
+        resultObject[category] = score
+        let currentTotal = this.totals[category]
+        this.totals[category] = currentTotal + score
+        let forms = studentResults[studentId]
+        forms[formTitle] = resultObject
+      }
+      this.studentCategorizedResults = []
+      for (const student of students) {
+        let studentId = student.id
+        let result = {}
+        result["name"] = student.student_name
+        result["results"] = studentResults[studentId]
+        this.studentCategorizedResults.push(result)
+      }
+
+      subtestReport.studentCategorizedResults = this.studentCategorizedResults;
+
+      this.subtestReports.push(subtestReport)
     }
 
-    let results = await this.getResultsByClass(classId, curriculumFormsList);
-    for (const result of results) {
-      let formTitle = result.formTitle
-      let studentId = result.studentId
-      let category = result.category
-      if (category === "") {
-        category = "Unassigned Category"
-      }
-      let score = parseInt(result.score)
-      let resultObject = {}
-      for (const thisCategory of this.categories) {
-        resultObject[thisCategory] = null
-      }
-      resultObject[category] = score
-      let currentTotal = this.totals[category]
-      this.totals[category] = currentTotal + score
-      let forms = studentResults[studentId]
-      forms[formTitle] = resultObject
-    }
-    this.studentCategorizedResults = []
-    for (const student of students) {
-      let studentId = student.id
-      let result = {}
-      result["name"] = student.student_name
-      result["results"] = studentResults[studentId]
-      this.studentCategorizedResults.push(result)
-    }
   }
 
   generateArray(obj){
@@ -155,10 +176,10 @@ export class StudentSubtestReportComponent implements OnInit {
     return observations
   }
 
-  async getResultsByClass(selectedClass: any, curriculumFormsList) {
+  async getResultsByClass(selectedClass: any, curriculum, curriculumFormsList) {
     try {
       // find which class is selected
-      return await this.dashboardService.getResultsByClass(selectedClass, curriculumFormsList);
+      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, curriculumFormsList);
     } catch (error) {
       console.error(error);
     }

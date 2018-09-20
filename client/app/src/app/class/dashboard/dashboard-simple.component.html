@@ -1,22 +1,30 @@
-<mat-tab-group #ClassesTabGroup (selectedTabChange)="tabChanged($event)" [selectedIndex]="selectedIndex">
+<mat-tab-group #ClassesTabGroup (selectedTabChange)="tabChanged($event,'class')" [selectedIndex]="selectedIndex">
   <mat-tab
     *ngFor="let class of classes; let classIndex=index"
     label="{{class.doc.items[0].inputs[2].value}}"
     attr.data-classId = "{{class.id}}">
     <ng-template matTabContent>
+        <mat-tab-group class="tangy-tab-curriculum" (selectedTabChange)="tabChanged($event, 'curriculum')" [selectedIndex]="selectedIndex">
+          <mat-tab
+            *ngFor="let curriculum of currArray"
+            label="{{curriculum.label}}"
+          >
+          </mat-tab>
+        </mat-tab-group>
+
       <mat-card class="tangy-card-content-container">
         <mat-list>
           <mat-list-item >
             <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a title="Add Student" class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:class.doc._id}>{{'Add Student'|translate}}</a>)</span>
             <span dir="rtl">&nbsp;&nbsp;&nbsp;
               <button mat-button [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
-              <mat-menu #groupingMenu="matMenu">
-                <ng-template matMenuContent>
-                <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}">{{item.title}}</button>
-                </ng-template>
-              </mat-menu>
+              <!--<mat-menu #groupingMenu="matMenu">-->
+                <!--<ng-template matMenuContent>-->
+                <!--<button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}">{{item.title}}</button>-->
+                <!--</ng-template>-->
+              <!--</mat-menu>-->
               <mat-menu #reportsMenu="matMenu">
-                <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
+                <!--<button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>-->
                 <button mat-menu-item routerLink="/reports/studentSubtestReport/{{class.id}}">{{'Student Subtest Report'|translate}}</button>
               </mat-menu>
             </span>
