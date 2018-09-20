@@ -27,8 +27,12 @@ export interface StudentResponse {
 })
 export class DashboardComponent implements OnInit {
 
-  classes;students;selectedTab;selectedIndex;curriculum;curriculumTitle; dataSource;columnsToDisplay;selectedReport;
+  classes;students;dataSource;columnsToDisplay;selectedReport;
   currentClassId;currentClassIndex;
+  // tabs
+  selectedTab;selectedIndex;selectedCurrTab;selectedTabIndex;curriculumIndex
+  curriculumBackground = 'red';
+
   curriculumFormsList;  // list of all curriculum forms
   curriculumForms;  // a subset of curriculumFormsList
   studentsResponses:any[];
@@ -59,6 +63,8 @@ export class DashboardComponent implements OnInit {
   // MatPaginator Output
   pageEvent: PageEvent;
   // private paginator;
+  curriculum; // object that contains name and value of curriculum.
+  currArray: any[]; // array of curriculums in a class.
 
   @ViewChild('container') container: ElementRef;
   // @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -92,7 +98,7 @@ export class DashboardComponent implements OnInit {
     try {
       this.classes = await this.getMyClasses();
       if (this.classes.length > 0) {
-        await this.populateGridData(0, 0, 5)
+        await this.populateGridData(0, 0, 0, 5)
         this.renderGrid();
         this.selectedIndex = 0;
       }
@@ -101,16 +107,28 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
-    // console.log('tabChangeEvent => ', tabChangeEvent);
-    // console.log('index => ', tabChangeEvent.index);
-    // if (this.paginator) {
-      this.selectedTab = tabChangeEvent.tab;
-      // No need to populate grid if this is the Add Class link.
-      if (this.classes.length !== tabChangeEvent.index) {
-        await this.populateGridData(tabChangeEvent.index, this.pageIndex, this.pageSize);
-        this.renderGrid();
+  tabChanged = async (tabChangeEvent: MatTabChangeEvent, type:String): Promise<void> => {
+    console.log('tabChangeEvent => ', tabChangeEvent);
+    console.log('index => ', tabChangeEvent.index);
+    if (type === 'curriculum') {
+      // reset this.pageIndex is curriculum has changed.
+      if (this.curriculumIndex !== tabChangeEvent.index) {
+        this.pageIndex = 0
       }
+      this.curriculumIndex = tabChangeEvent.index
+      this.selectedCurrTab = tabChangeEvent.tab;
+    } else {
+      this.curriculumIndex = 0;
+      this.selectedTab = tabChangeEvent.tab;
+      this.selectedTabIndex = tabChangeEvent.index
+    }
+
+    // No need to populate grid if this is the Add Class link.
+    if (this.classes.length !== this.selectedTabIndex) {
+      await this.populateGridData(this.selectedTabIndex, this.curriculumIndex, this.pageIndex, this.pageSize);
+      this.renderGrid();
+    }
+
     // } else {
     //   this.selectedIndex = 0;
     // }
@@ -118,7 +136,7 @@ export class DashboardComponent implements OnInit {
 
   private async loadGrid() {
     // console.log("this.paginator.pageIndex: " + this.paginator.pageIndex + " this.paginator.pageSize: " + this.paginator.pageSize);
-    await this.populateGridData(this.currentClassIndex, this.pageIndex, this.pageSize);
+    await this.populateGridData(this.currentClassIndex, 0, this.pageIndex, this.pageSize);
     this.renderGrid();
   }
 
@@ -132,18 +150,19 @@ export class DashboardComponent implements OnInit {
     if (dir === 0 && this.pageIndex < 0) {
       console.log("no mas.")
     } else {
-      await this.populateGridData(this.currentClassIndex, this.pageIndex, this.pageSize);
+      await this.populateGridData(this.currentClassIndex, this.curriculumIndex, this.pageIndex, this.pageSize);
       this.renderGrid();
     }
   }
 
-  private async populateGridData(classIndex, pageIndex, pageSize) {
+  private async populateGridData(classIndex, curriculumIndex, pageIndex, pageSize) {
     let inputs = [];
     this.currentClassIndex = classIndex;
     this.classes[this.currentClassIndex].doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
     let input = inputs.find(input => (input.name === 'curriculum') ? true : false)
     if (input) {
-      this.curriculum = input.value;
+      this.currArray = input.value;
+      this.curriculum = this.currArray[curriculumIndex];
       //todo: persist curricula in memory and find curriculum.name.
       let pi = pageIndex
       let ps = pageSize
@@ -154,7 +173,7 @@ export class DashboardComponent implements OnInit {
         ps = 5
       }
       try {
-        this.curriculumForms = await this.getCurriculaForms(this.curriculum, pi, ps)
+        this.curriculumForms = await this.getCurriculaForms(this.curriculum.name, pi, ps)
       } catch (e) {
         console.log("Error fetching this.curriculumForms: " + e)
       }
@@ -166,7 +185,7 @@ export class DashboardComponent implements OnInit {
     if (typeof currentClass !== 'undefined') {
       this.currentClassId = currentClass.id;
       this.students = await this.getMyStudents(this.currentClassId);
-      let results = await this.getResultsByClass(this.currentClassId, this.curriculumFormsList);
+      let results = await this.getResultsByClass(this.currentClassId, this.curriculum.name, this.curriculumFormsList);
       this.studentsResponses = [];
       let formsTodisplay = {}
       this.curriculumForms.forEach(form => {
@@ -200,7 +219,7 @@ export class DashboardComponent implements OnInit {
         this.curriculumForms.forEach((form) => {
           let formResult = {};
           formResult["formId"] = form.id
-          formResult["curriculum"] = this.curriculum
+          formResult["curriculum"] = this.curriculum.name
           formResult["title"] = form.title
           formResult["src"] = form.src
           if (this.studentsResponses[student.id]) {
@@ -372,10 +391,10 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  async getResultsByClass(selectedClass: any, forms) {
+  async getResultsByClass(selectedClass: any, curriculum, forms) {
     try {
       // find which class is selected
-      return await this.dashboardService.getResultsByClass(selectedClass, forms);
+      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, forms);
     } catch (error) {
       console.error(error);
     }

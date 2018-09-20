@@ -84,7 +84,7 @@ export class StudentGroupingReportComponent implements OnInit {
     this.classGroupReport.subtestName = subtest[0].title
 
     this.students = await this.getMyStudents(classId);
-    let results = await this.getResultsByClass(classId, curriculumFormsList);
+    let results = await this.getResultsByClass(classId, curriculumId, curriculumFormsList);
     this.studentsResponses = [];
     for (const response of results as any[] ) {
       // console.log("response: " + JSON.stringify(response))
@@ -162,10 +162,10 @@ export class StudentGroupingReportComponent implements OnInit {
     }
   }
 
-  async getResultsByClass(selectedClass: any, curriculumFormsList) {
+  async getResultsByClass(selectedClass: any, curriculum, curriculumFormsList) {
     try {
       // find which class is selected
-      return await this.dashboardService.getResultsByClass(selectedClass, curriculumFormsList);
+      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, curriculumFormsList);
     } catch (error) {
       console.error(error);
     }
