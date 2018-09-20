@@ -134,7 +134,7 @@ export class AppComponent implements OnInit {
           alert('No Update: ' + JSON.stringify(error.description));
         } else {
           console.log('Update is Loaded');
-          if (this.window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `Cancel`. If you are ready to install the update, click `Yes`'))) {
+          if (this.window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `CANCEL`. If you are ready to install the update, click `OK`'))) {
             this.updateIsRunning = true;
             console.log('Installing Update');
             this.window.chcp.installUpdate(installationCallback);
