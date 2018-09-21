@@ -1,5 +1,15 @@
 #!/bin/bash
 
+
+
+set -x
+
+if [ -f /release-apk.lock ]; then
+  echo "Another APK is being generated."
+  exit 1
+fi
+touch /release-apk.lock
+
 GROUP="$1"
 CONTENT_PATH="$2"
 RELEASE_TYPE="$3"
@@ -56,6 +66,7 @@ sed -i -e "s#URL#"$URL"#g" $RELEASE_DIRECTORY/cordova-hcp.json
 # Create the chcp manifest.
 /tangerine/server/node_modules/cordova-hot-code-push-cli/bin/cordova-hcp build
 
+pwd
 echo "RELEASE APK: running Cordova build."
 cordova build --no-telemetry android
 
@@ -63,6 +74,4 @@ cordova build --no-telemetry android
 cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASE_DIRECTORY/$GROUP.apk
 echo "Released apk for $GROUP at $RELEASE_DIRECTORY on $DATE"
 
-
-
-
+rm /release-apk.lock
