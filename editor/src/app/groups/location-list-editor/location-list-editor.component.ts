@@ -1,84 +1,116 @@
 import { Component, OnInit, Input } from '@angular/core';
-
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-location-list-editor',
   templateUrl: './location-list-editor.component.html',
   styleUrls: ['./location-list-editor.component.css']
 })
 export class LocationListEditorComponent implements OnInit {
-
   locationList: any;
-  currentPath = []
+  currentPath = [];
   currentLocation: any;
-  locationChildren = []
-  breadcrumbs = []
+  locationChildren = [];
+  breadcrumbs = [];
+  locationsLevels;
+  locationsLevelsLength;
+  newItemLabel;
+  newItemId;
+  metaData: any = {};
+  isFormShown = false;
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
-  ngOnInit() {
-    this.setLocationList({
-      "locationsLevels": ["county", "school"],
-      "locations": {
-        "county1": {
-          "id": "county1",
-          "label": "County 1",
-          "children": {
-            "school1": {
-              "id": "school1",
-              "label": "School 1"
-            },
-            "school2": {
-              "id": "school2",
-              "label": "School 2"
-            }
-          }
-        },
-        "county2": {
-          "id": "county2",
-          "label": "County 2",
-          "children": {
-            "school3": {
-              "id": "school3",
-              "label": "School 3"
-            },
-            "school4": {
-              "id": "school4",
-              "label": "School 4"
-            }
-          }
-        }
-      }
-    })
+  async ngOnInit() {
+    const data: any = await this.http.get('./assets/location-list.json').toPromise();
+    this.locationsLevels = data.locationsLevels;
+    this.locationsLevelsLength = data.locationsLevels.length;
+    await this.setLocationList(data);
   }
 
-  setLocationList(locationList) {
-    this.locationList = locationList
-    this.openPath([])
+  async setLocationList(locationList) {
+    this.locationList = locationList;
+    this.openPath([]);
   }
 
   openPath(path) {
-    this.currentPath = path
-    let currentChildren = []
-    let currentLocation = { id: 'root', label: 'root', children: this.locationList.locations }
-    let breadcrumbs = [currentLocation]
+    this.currentPath = path;
+    let currentChildren = [];
+    let currentLocation = {
+      id: 'root',
+      label: 'root',
+      children: this.locationList.locations
+    };
+    let breadcrumbs = [currentLocation];
     for (let fragment of this.currentPath) {
-      currentLocation = currentLocation.children[fragment]
-      breadcrumbs.push(currentLocation)
+      currentLocation = currentLocation.children[fragment];
+      breadcrumbs.push(currentLocation);
     }
     for (let prop in currentLocation.children) {
-      currentChildren.push(currentLocation.children[prop])
+      currentChildren.push(currentLocation.children[prop]);
     }
-    this.locationChildren = currentChildren 
-    this.currentLocation = currentLocation
-    this.breadcrumbs = breadcrumbs
+    this.locationChildren = currentChildren;
+    this.currentLocation = currentLocation;
+    this.breadcrumbs = breadcrumbs;
   }
 
   onChildClick(id) {
-    this.openPath([...this.currentPath, ...id])
+    this.openPath([...this.currentPath, ...id]);
   }
 
   onClickBreadcrumb(id) {
-    this.openPath(this.currentPath.slice(0, this.currentPath.indexOf(id)+1))
+    this.openPath(this.currentPath.slice(0, this.currentPath.indexOf(id) + 1));
   }
 
+  async addItem(item) {
+    this.newItemId = this.newItemLabel;
+    const newItem = { [this.newItemId]: { label: this.newItemLabel, id: this.newItemId, ...this.metaData } };
+    if (this.breadcrumbs.length === 1) {
+      this.locationList['locations'] = { ...this.locationList['locations'], ...newItem };
+    } else {
+      this.locationList = findAndAdd(this.locationList, item.id, newItem);
+    }
+
+
+    await this.setLocationList(this.locationList);
+    this.newItemId = '';
+    this.newItemLabel = '';
+    this.metaData = {};
+    this.isFormShown = false;
+  }
+  async editItem(item) {
+    const newItem = { label: this.newItemLabel };
+    this.locationList = findAndEdit(this.locationList, item.id, newItem);
+    await this.setLocationList(this.locationList);
+  }
+}
+function findAndAdd(object, value, replaceValue) {
+  for (let x in object) {
+    if (object.hasOwnProperty(x)) {
+      if (typeof object[x] === 'object') {
+        findAndAdd(object[x], value, replaceValue);
+      }
+      if (object[x] === value) {
+        object['children'] = { ...object['children'], ...replaceValue };
+        break;
+      }
+    }
+  }
+  return object;
+}
+function findAndEdit(object, value, replaceValue) {
+  for (let x in object) {
+
+    if (object.hasOwnProperty(x)) {
+      parent = object;
+      if (typeof object[x] === 'object') {
+        findAndEdit(object[x], value, replaceValue);
+      }
+      if (object[x] === value) {
+        object.label = replaceValue.label;
+        // object.children = objectCopy.children;
+        break;
+      }
+    }
+  }
+  return object;
 }
