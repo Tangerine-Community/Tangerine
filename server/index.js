@@ -207,18 +207,23 @@ app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
 
+const childProcessExec = require('child_process').exec
 app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} 2>&1 | tee -a /apk.log`
+  const cmd = `/tangerine/server/src/scripts/release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} 2>&1 | tee -a /apk.log`
   log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ${cmd}`)
-  try {
-    await exec(cmd)
-    res.send({ statusCode: 200, data: 'ok' })
-  } catch (error) {
-    res.send({ statusCode: 500, data: error })
-  }
+  childProcessExec(cmd, function(error, stdout, stderr) {
+    if (stderr || error || stdout.includes('Another APK is being generated')) {
+      log.error(stderr)
+      log.error(error)
+      //res.send({ statusCode: 500, data: error })
+    } else {
+      log.info('apk success')
+      res.send({ statusCode: 200, data: 'ok' })
+    }
+  })
 
 })
 
@@ -394,96 +399,100 @@ app.delete('/editor/file/save', isAuthenticated, async function (req, res) {
  * Redirects user to editor page for the group.
  */
 app.post('/editor/group/new', isAuthenticated, async function (req, res) {
-
-  // See if this instance supports the class module, copy the class forms, and set homeUrl
-  let homeUrl;
-  let syncProtocol;
-  let modules = [];
-  let modulesString = process.env.T_MODULES;
-  modulesString = modulesString.replace(/'/g, '"');
-  let moduleEntries = JSON.parse(modulesString)
-  if (moduleEntries.length > 0) {
-    for (let moduleEntry of moduleEntries) {
-      modules.push(moduleEntry);
-      if (moduleEntry === "class") {
-        clog("Setting homeUrl to dashboard")
-        homeUrl =  "dashboard"
-        syncProtocol = "replication"
-        // copy the class forms
-        const exists = await fs.pathExists('/tangerine/client/app/src/assets/class-registration')
-        if (!exists) {
-          try {
-            await fs.copy('/tangerine/scripts/modules/class/', '/tangerine/client/app/src/assets/')
-            console.log('Copied class module forms.')
-          } catch (err) {
-            console.error(err)
+  try {
+    // See if this instance supports the class module, copy the class forms, and set homeUrl
+    let homeUrl;
+    let syncProtocol;
+    let modules = [];
+    let modulesString = process.env.T_MODULES;
+    modulesString = modulesString.replace(/'/g, '"');
+    let moduleEntries = JSON.parse(modulesString)
+    if (moduleEntries.length > 0) {
+      for (let moduleEntry of moduleEntries) {
+        modules.push(moduleEntry);
+        if (moduleEntry === "class") {
+          clog("Setting homeUrl to dashboard")
+          homeUrl =  "dashboard"
+          syncProtocol = "replication"
+          // copy the class forms
+          const exists = await fs.pathExists('/tangerine/client/app/src/assets/class-registration')
+          if (!exists) {
+            try {
+              await fs.copy('/tangerine/scripts/modules/class/', '/tangerine/client/app/src/assets/')
+              console.log('Copied class module forms.')
+            } catch (err) {
+              console.error(err)
+            }
           }
+        } else {
+          clog("moduleEntry: " + moduleEntry)
         }
-      } else {
-        clog("moduleEntry: " + moduleEntry)
       }
     }
+    let groupName = req.body.groupName
+    // Copy the content directory for the new group.
+    await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
+    await insertGroupViews(groupName, DB)
+    // Edit the app-config.json.
+    try {
+      appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
+      appConfig.uploadToken = process.env.T_UPLOAD_TOKEN 
+      appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
+      appConfig.groupName = groupName
+      appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
+      if (typeof homeUrl !== 'undefined') {
+        appConfig.homeUrl = homeUrl
+      }
+      if (typeof syncProtocol !== 'undefined') {
+        appConfig.syncProtocol = syncProtocol
+        appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_SYNC_SERVER}/${groupName}`
+      }
+      if (modules.length > 0) {
+        appConfig.modules = modules;
+      }
+      appConfig.direction = `${process.env.T_LANG_DIRECTION}`
+      if (process.env.T_CATEGORIES) {
+        let categoriesString = `${process.env.T_CATEGORIES}`
+        categoriesString = categoriesString.replace(/'/g, '"');
+        let categoriesEntries = JSON.parse(categoriesString)
+        appConfig.categories = categoriesEntries;
+      }
+    } catch (err) {
+      log.error("An error reading app-config: " + err)
+      throw err;
+    }
+    await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
+      .then(status => log.info("Wrote app-config.json"))
+      .catch(err => log.error("An error copying app-config: " + err))
+
+    //#region wire group DB and result db
+
+    /**
+     * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
+     * Also create the design doc for the resultsDB
+     */
+    await insertGroupReportingViews(groupName)
+
+    // The keepReportingWorkerAlive function finds groups this way and adds them to the worker.
+    newGroupQueue.push(groupName)
+
+    // Set up watching of groupDb for changes.
+    //#endregion
+
+    // All done!
+    res.send({ data: 'Group Created Successfully', statusCode: 200 });
+  } catch (error) {
+    log.error(error)
+    res.sendStatus(500)
   }
-  let groupName = req.body.groupName
-  // Copy the content directory for the new group.
-  await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
-  await insertGroupViews(groupName, DB)
-  // Edit the app-config.json.
-  try {
-    appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
-    appConfig.uploadToken = process.env.T_UPLOAD_TOKEN 
-    appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
-    appConfig.groupName = groupName
-    appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
-    if (typeof homeUrl !== 'undefined') {
-      appConfig.homeUrl = homeUrl
-    }
-    if (typeof syncProtocol !== 'undefined') {
-      appConfig.syncProtocol = syncProtocol
-      appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_SYNC_SERVER}/${groupName}`
-    }
-    if (modules.length > 0) {
-      appConfig.modules = modules;
-    }
-    appConfig.direction = `${process.env.T_LANG_DIRECTION}`
-    if (process.env.T_CATEGORIES) {
-      let categoriesString = `${process.env.T_CATEGORIES}`
-      categoriesString = categoriesString.replace(/'/g, '"');
-      let categoriesEntries = JSON.parse(categoriesString)
-      appConfig.categories = categoriesEntries;
-    }
-  } catch (err) {
-    log.error("An error reading app-config: " + err)
-    throw err;
-  }
-  await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
-    .then(status => log.info("Wrote app-config.json"))
-    .catch(err => log.error("An error copying app-config: " + err))
-
-  //#region wire group DB and result db
-
-  /**
-   * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
-   * Also create the design doc for the resultsDB
-   */
-  await insertGroupReportingViews(groupName)
-
-  // The keepReportingWorkerAlive function finds groups this way and adds them to the worker.
-  newGroupQueue.push(groupName)
-
-  // Set up watching of groupDb for changes.
-  //#endregion
-
-  // All done!
-  res.send({ data: 'Group Created Successfully', statusCode: 200 });
 })
 
 app.get('/groups', isAuthenticated, async function (req, res) {
-
   try {
     const groups = await getGroupsByUser(req.user.name);
     res.send(groups);
   } catch (error) {
+    log.error(error)
     res.sendStatus(500)
   }
 })
