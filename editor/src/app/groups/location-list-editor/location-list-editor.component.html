@@ -11,15 +11,8 @@
         </mat-chip-list>
       </div>
       <div class="button-row">
-        <!-- <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length===1" mat-raised-button (click)="addItem(breadcrumbs[breadcrumbs.length-1])">ADD
-          CHILD to ROOT
-          {{breadcrumbs.length===1?'Root':breadcrumbs[breadcrumbs.length-1]['label']}}</button> -->
         <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1" mat-raised-button (click)="isFormShown=!isFormShown">ADD
           {{locationsLevels[breadcrumbs.length-1]}} to
-          {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-        <button (click)="editItem(breadcrumbs[breadcrumbs.length-1])" *ngIf="breadcrumbs.length>1" mat-raised-button>EDIT
-          {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-        <button *ngIf="locationsLevelsLength+1===breadcrumbs.length" mat-raised-button>MOVE
           {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
       </div>
       <div *ngIf="isFormShown">

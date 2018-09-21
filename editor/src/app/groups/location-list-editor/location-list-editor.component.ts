@@ -1,5 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
+import { TangyErrorHandler } from 'app/shared/_services/tangy-error-handler.service';
+
 @Component({
   selector: 'app-location-list-editor',
   templateUrl: './location-list-editor.component.html',
@@ -17,14 +20,24 @@ export class LocationListEditorComponent implements OnInit {
   newItemId;
   metaData: any = {};
   isFormShown = false;
+  groupName = '';
+  locationListFileName = 'location-list.json';
 
-  constructor(private http: HttpClient) { }
+
+  constructor(private http: HttpClient, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
 
   async ngOnInit() {
-    const data: any = await this.http.get('./assets/location-list.json').toPromise();
-    this.locationsLevels = data.locationsLevels;
-    this.locationsLevelsLength = data.locationsLevels.length;
-    await this.setLocationList(data);
+    this.route.params.subscribe(params => {
+      this.groupName = params.groupName;
+    });
+    try {
+      const data: any = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
+      this.locationsLevels = data.locationsLevels;
+      this.locationsLevelsLength = data.locationsLevels.length;
+      await this.setLocationList(data);
+    } catch (error) {
+      this.errorHandler.handleError('Could Not Load Location List Data');
+    }
   }
 
   async setLocationList(locationList) {
@@ -69,8 +82,7 @@ export class LocationListEditorComponent implements OnInit {
     } else {
       this.locationList = findAndAdd(this.locationList, item.id, newItem);
     }
-
-
+    await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
     this.newItemId = '';
     this.newItemLabel = '';
@@ -81,6 +93,16 @@ export class LocationListEditorComponent implements OnInit {
     const newItem = { label: this.newItemLabel };
     this.locationList = findAndEdit(this.locationList, item.id, newItem);
     await this.setLocationList(this.locationList);
+  }
+  async saveLocationListToDisk() {
+    try {
+      const payload = { filePath: this.locationListFileName, groupId: this.groupName, fileContents: JSON.stringify(this.locationList) };
+      await this.http.post(`/editor/file/save`, payload).toPromise();
+      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
+    } catch (error) {
+      console.log(error);
+      this.errorHandler.handleError('Error Saving Location Lits File to disk');
+    }
   }
 }
 function findAndAdd(object, value, replaceValue) {
