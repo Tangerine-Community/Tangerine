@@ -144,6 +144,7 @@ export class AppComponent implements OnInit {
           }
         }
       };
+      alert(_TRANSLATE('The app will now check for an application update and attempt to download. Please stay connected to the Internet during this process. Tap OK to proceed.'))
       this.window.chcp.fetchUpdate(updateCallback);
     } else {
       const currentPath = this.window.location.pathname;
