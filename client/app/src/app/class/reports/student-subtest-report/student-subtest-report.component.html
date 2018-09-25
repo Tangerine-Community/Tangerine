@@ -1,5 +1,7 @@
-
-<div *ngFor="let subtestReport of subtestReports">
+<div class="subtest-report-div">
+  <h1>{{'Subtest Report'|translate}}</h1>
+</div>
+<div *ngFor="let subtestReport of subtestReports" class="subtest-report-div">
   <h2>{{subtestReport.label}}</h2>
 
   <table class="subtest">
