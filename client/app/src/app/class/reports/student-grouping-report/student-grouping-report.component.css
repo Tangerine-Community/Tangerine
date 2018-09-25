@@ -1,3 +1,8 @@
 .hideme {
   display:none;
 }
+
+.mat-button {
+  padding-right: 0px;
+}
+
