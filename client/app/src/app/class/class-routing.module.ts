@@ -6,9 +6,9 @@ import {DashboardComponent} from "./dashboard/dashboard.component";
 import {ClassFormsPlayerComponent} from "./class-forms-player/class-forms-player.component";
 import {StudentSubtestReportComponent} from "./reports/student-subtest-report/student-subtest-report.component";
 import {StudentGroupingReportComponent} from "./reports/student-grouping-report/student-grouping-report.component";
+import {PageNotFoundComponent} from "./page-not-found.component";
 
-
-const routes = [
+const appRoutes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -20,7 +20,7 @@ const routes = [
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
   {
-    path: 'reports/grouping/:type/:classId',
+    path: 'reports/grouping/:type/:classId/:curriculumId',
     component: StudentGroupingReportComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
@@ -32,7 +32,7 @@ const routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(appRoutes)],
   exports: [RouterModule]
 })
 export class ClassRoutingModule { }

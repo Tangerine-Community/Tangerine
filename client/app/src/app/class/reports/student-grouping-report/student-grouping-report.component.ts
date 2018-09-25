@@ -4,8 +4,9 @@ import {AuthenticationService} from "../../../core/auth/_services/authentication
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {MatTableDataSource} from "@angular/material";
 import {ClassFormService} from "../../_services/class-form.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {ClassUtils} from "../../class-utils";
+
 
 export interface ClassGroupingReport {
   id: string;
@@ -45,39 +46,75 @@ export class StudentGroupingReportComponent implements OnInit {
   }
   classFormService:ClassFormService;
   classUtils: ClassUtils
+  formList: any[] = []; // used for the user interface - creates Class grouping list
   status:string[] =  [_TRANSLATE('Status.Concerning'), _TRANSLATE('Status.Poor'), _TRANSLATE('Status.Good'), _TRANSLATE('Status.Great')]
+  navigationSubscription
 
   @ViewChild('container') container: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private dashboardService: DashboardService,
     private authenticationService: AuthenticationService,
-    // private classUtils: ClassUtils
-  ) { }
+    private router: Router
+  )  {
+    // subscribe to the router events - storing the subscription so
+    // we can unsubscribe later.
+    this.navigationSubscription = this.router.events.subscribe(async (e: any) => {
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        // this.initialiseInvites();
+        await this.getReport();
+      }
+    });
+  }
 
   async ngOnInit() {
+
+    await this.getReport()
+  }
+
+  ngOnDestroy() {
+    // avoid memory leaks here by cleaning up after ourselves. If we
+    // don't then we will continue to run our initialiseInvites()
+    // method on every navigationEnd event.
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
+  }
+
+
+  async getReport() {
+
     const currentUser = await this.authenticationService.getCurrentUser();
     if (currentUser) {
       const classFormService = new ClassFormService({databaseName: currentUser});
       this.classFormService = classFormService
       this.classUtils = new ClassUtils();
     }
-    await this.getReport()
-  }
 
-
-  async getReport() {
     const type = this.route.snapshot.paramMap.get('type');
     const classId = this.route.snapshot.paramMap.get('classId');
+    let curriculumId = this.route.snapshot.paramMap.get('curriculumId');
     console.log("type: " + type)
     let classDoc = await this.classFormService.getResponse(classId);
     let classRegistration = this.classUtils.getInputValues(classDoc);
 
     // Get data about this particular subtest
-    let curriculumId = classRegistration.curriculum;
     let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
     const container = this.container.nativeElement
     let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml, container);
+
+    this.formList = [];
+    for (const form of curriculumFormsList) {
+      let formEl = {
+        "title":form.title,
+        "id":form.id,
+        "classId":classId,
+        "curriculumId":curriculumId
+      };
+      this.formList.push(formEl)
+    }
+
     let subtest = curriculumFormsList.filter(obj => {
       return obj.id === type
     })
@@ -120,9 +157,12 @@ export class StudentGroupingReportComponent implements OnInit {
           if (form.id === type) {
             studentResults["response"] = this.studentsResponses[student.id][form.id]
             // let pc = studentResults["response"]["percentCorrect"]
-            let score = studentResults["response"]["score"]
-            console.log("name: "+ studentResults["name"] + " score: "+ score)
-            studentResults["score"] = score
+            if (studentResults["response"]) {
+              let score = studentResults["response"]["score"]
+              console.log("name: "+ studentResults["name"] + " score: "+ score)
+              studentResults["score"] = score
+            }
+
             // let index;
             // if (pc >= 80) {
             //   index = 3
@@ -169,6 +209,17 @@ export class StudentGroupingReportComponent implements OnInit {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  displayReport(item) {
+    let url = '/reports/grouping/' + item.id + '/' + item.classId + '/' + item.curriculumId;
+    console.log("displaying report for " + url)
+    let ts = Date.now();
+
+    this.router.navigate([url]);
+    // window.location.replace('/#' + url);
+    // window.location.replace = '/#' + url + '?' + ts;
+    // window.location.reload();
   }
 
 }

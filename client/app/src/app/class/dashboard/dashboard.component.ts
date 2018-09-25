@@ -39,7 +39,7 @@ export class DashboardComponent implements OnInit {
   allStudentResults:StudentResult[];
   formColumns: string[] = [];
   formIds: string[] = [];
-  formList: any[] = [];
+  formList: any[] = []; // used for the Dashbiard user interface - creates Class grouping list
   formColumnsDS;
   // columnsToDisplay: string[] = ["Name"];
   selection = new SelectionModel<StudentResult>(false, []);
@@ -284,7 +284,6 @@ export class DashboardComponent implements OnInit {
     // re-init the formColumns and columnsToDisplay
     this.formColumns = [];
     this.formIds = [];
-    this.formList = [];
     this.columnsToDisplay = ["Name"];
     for (const form of this.curriculumForms) {
       let formEl = {
@@ -292,7 +291,6 @@ export class DashboardComponent implements OnInit {
         "id":form.id,
         "classId":this.currentClassId
       };
-      this.formList.push(formEl)
       this.formColumns.push(form.title)
       this.formIds.push(form.id)
       // this.formColumns.push(formEl)
@@ -369,6 +367,18 @@ export class DashboardComponent implements OnInit {
         curriculumForms.push(obj)
       }
       this.curriculumFormsList = curriculumForms;
+
+      this.formList = [];
+      for (const form of this.curriculumFormsList) {
+        let formEl = {
+          "title":form.title,
+          "id":form.id,
+          "classId":this.currentClassId,
+          "curriculumId":curriculum
+        };
+        this.formList.push(formEl)
+      }
+
       // this.length = this.curriculumFormsList.length
       this.pageLength = this.curriculumFormsList.length
       selectedCurriculumForms  = curriculumForms.slice(start, end);
