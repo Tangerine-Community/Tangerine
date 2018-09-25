@@ -63,8 +63,15 @@ export class StudentSubtestReportComponent implements OnInit {
     let classRegistration = this.classUtils.getInputValues(classDoc);
 
     // Get data about this particular subtest
-    this.curriculums = classRegistration.curriculum;
-    console.log("curriculums")
+
+    this.curriculums = []
+    let allCurriculums = classRegistration.curriculum;
+    for (const curriculum of allCurriculums as any[] ) {
+      if (curriculum['value'] === 'on') {
+        this.curriculums.push(curriculum)
+      }
+    }
+
     this.subtestReports = [];
     for (const curriculum of this.curriculums) {
       let curriculumId = curriculum.name;

@@ -161,7 +161,13 @@ export class DashboardComponent implements OnInit {
     this.classes[this.currentClassIndex].doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
     let input = inputs.find(input => (input.name === 'curriculum') ? true : false)
     if (input) {
-      this.currArray = input.value;
+      this.currArray = []
+      let allCurriculums = input.value;
+      for (const curriculum of allCurriculums as any[] ) {
+        if (curriculum['value'] === 'on') {
+          this.currArray.push(curriculum)
+        }
+      }
       this.curriculum = this.currArray[curriculumIndex];
       //todo: persist curricula in memory and find curriculum.name.
       let pi = pageIndex
