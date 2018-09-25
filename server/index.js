@@ -173,7 +173,7 @@ app.put('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc
 app.post('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
 app.delete('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-delete.js'))
 if (process.env.T_LEGACY === "true") {
-  app.post('/upload/:groupName', require('./src/routes/group-upload.js'))
+  app.post('/upload/:groupId', require('./src/routes/group-upload.js'))
 }
 
 // Static assets.
