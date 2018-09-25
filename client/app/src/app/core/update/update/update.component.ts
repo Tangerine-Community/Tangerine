@@ -6,6 +6,7 @@ import { updates } from './updates';
 import PouchDB from 'pouchdb';
 import { UserService } from '../../auth/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-update',
@@ -17,9 +18,11 @@ export class UpdateComponent implements OnInit {
   message = _TRANSLATE('Checking For Updates...');
   totalUpdatesApplied = 0;
   needsUpdating = false;
+  complete = false;
 
   constructor(
     private windowRef: WindowRef,
+    translate: TranslateService,
     private userService: UserService
   ) { }
 
@@ -59,6 +62,7 @@ export class UpdateComponent implements OnInit {
         await userDb.put(infoDoc);
       }
     }
+    this.complete = true
     this.message = _TRANSLATE('✓ Yay! You are up to date.');
   }
 

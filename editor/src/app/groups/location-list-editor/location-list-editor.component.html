@@ -1,30 +1,46 @@
-
-<h3>
-  <span *ngFor="let breadcrumb of breadcrumbs" (click)="onClickBreadcrumb(breadcrumb.id)"> > {{breadcrumb.label}}</span>
-</h3>
-
 <mat-card>
-  <div *ngIf="currentLocation">
-    <div>
-      Label: {{currentLocation.label}}
+  <mat-card-title class="tangy-foreground-secondary">
+    {{'Manage Locations'|translate}}
+  </mat-card-title>
+  <mat-card-content>
+    <div class="tangy-full-width">
+      <div>
+        <mat-chip-list>
+          <mat-chip [color]="breadcrumbs[breadcrumbs.length-1]['label']===breadcrumb.label?'accent':'primary'" selected
+            *ngFor="let breadcrumb of breadcrumbs" (click)="onClickBreadcrumb(breadcrumb.id)">{{breadcrumb.label}}</mat-chip>
+        </mat-chip-list>
+      </div>
+      <div class="button-row">
+        <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1" mat-raised-button (click)="isFormShown=!isFormShown">ADD
+          {{locationsLevels[breadcrumbs.length-1]}} to
+          {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
+      </div>
+      <div *ngIf="isFormShown">
+        <form class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
+          <mat-form-field class="tangy-full-width">
+            <input name="newItemLabel" [(ngModel)]="newItemLabel" matInput placeholder="{{'Label'|translate}}" required>
+          </mat-form-field>
+          <mat-form-field class="tangy-full-width" *ngFor="let item of locationList.metaData[locationsLevels[breadcrumbs.length-1]]">
+            <input name="{{item.id}}" matInput [type]="item.type" [(ngModel)]="metaData[item.id]" placeholder="{{item.label}}"
+              [required]="item.required">
+          </mat-form-field>
+          <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
+        </form>
+      </div>
+
+
+      <mat-list>
+        <mat-list-item class="tangy-location-list">
+          <span *ngIf="locationChildren.length>0" class="tangy-foreground-primary">{{'Children'|translate}} of
+            {{breadcrumbs[breadcrumbs.length-1]['label']}}</span>
+          <span *ngIf="locationChildren.length<1" class="tangy-foreground-primary">{{'No Children'|translate}}</span>
+        </mat-list-item>
+      </mat-list>
+      <mat-list role="list" *ngIf="locationChildren.length>0">
+        <mat-list-item role="listitem" *ngFor="let child of locationChildren" (click)="onChildClick(child.id)">
+          <span class="faux-anchor tangy-foreground-secondary">{{child.label}} - id {{child.id}}</span>
+        </mat-list-item>
+      </mat-list>
     </div>
-    <div>
-      ID: {{currentLocation.id}}
-    </div>
-  </div>
-  <div id="children">
-    Children:
-    <ul>
-      <li *ngFor="let child of locationChildren" (click)="onChildClick(child.id)">
-        {{child.label}} ({{child.id}})
-      </li>
-    </ul>
-  </div>
-  <mat-card-actions>
-    <button mat-button>edit</button>
-    <button mat-button>delete</button>
-    <button mat-button>move</button>
-  </mat-card-actions>
+  </mat-card-content>
 </mat-card>
-
-
