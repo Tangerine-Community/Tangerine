@@ -434,6 +434,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     appConfig.uploadToken = process.env.T_UPLOAD_TOKEN 
     appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
     appConfig.groupName = groupName
+    appConfig.hideProfile = (process.env.T_HIDE_PROFILE === 'true') ? true : false 
     appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
     if (typeof homeUrl !== 'undefined') {
       appConfig.homeUrl = homeUrl

@@ -116,6 +116,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   --env \"T_REPLICATE=$T_REPLICATE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
+  --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_MODULES=$T_MODULES\" \
   --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   --env \"T_LEGACY=$T_LEGACY\" \
