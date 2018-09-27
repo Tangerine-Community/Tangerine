@@ -44,7 +44,7 @@ export class ExportDataComponent implements OnInit {
               fileWriter.onerror = (e) => {
                 alert(`${_TRANSLATE('Write Failed')}` + e.toString());
               };
-              fileWriter.write(file);
+              fileWriter.write(JSON.stringify(data));
             });
           });
         });
