@@ -17,6 +17,9 @@ fi
 if [ ! -d data/client/releases/prod ]; then
   mkdir data/client/releases/prod
 fi
+if [ ! -d data/client/releases/qa ]; then
+  mkdir data/client/releases/qa
+fi
 if [ ! -d data/client/releases/prod/apks ]; then
   mkdir data/client/releases/prod/apks
 fi
