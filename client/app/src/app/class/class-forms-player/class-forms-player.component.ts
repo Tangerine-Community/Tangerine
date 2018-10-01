@@ -150,9 +150,11 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
     }
 
     let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
+    // let lastModified = Date.now()
+    let lastModified = new Date();
+    newStateDoc['lastModified'] = lastModified
     newStateDoc.items = newStateDoc.items.map(item => {
       if (item.disabled === false) {
-        let lastModified = Date.now()
         // get the metadata field
         if (typeof item.metadata !== 'undefined') {
           item.metadata.lastModified = lastModified

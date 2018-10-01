@@ -134,8 +134,7 @@ var tangyClassDesignDoc = {
           // }
           if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.classId) {
             console.log("matching: " + doc.metadata.studentRegistrationDoc.classId)
-            debugger;
-            emit([doc.metadata.studentRegistrationDoc.classId, doc.form.id], true);
+             emit([doc.metadata.studentRegistrationDoc.classId, doc.form.id], true);
           }
         }
       }.toString()

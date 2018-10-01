@@ -18,6 +18,7 @@ export class SyncRecordsComponent implements OnInit {
   docsNotUploaded: number;
   docsUploaded: number;
   syncPercentageComplete: number;
+  docsNotUploadedNames;
   syncProtocol = '';
   contentVersion = '';
   window: any;
@@ -52,18 +53,35 @@ export class SyncRecordsComponent implements OnInit {
     this.docsUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsUploaded; }, 0);
     this.syncPercentageComplete =
       ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100) || 0;
+    // this.docsNotUploadedNames = this.allUsersSyncData.result
   }
   async calculateUsersUploadProgress(username) {
-    const result = await this.syncingService.getIDsFormsLockedAndNotUploaded(username);
-    const docsNotUploaded = result ? result.length : 0;
-    const docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded(username);
+    const uploadQueueResultObject = await this.syncingService.getUploadQueue(username, true);
+    const uploadQueueResults = uploadQueueResultObject['uploadQueue']
+    const docsNotUploaded = uploadQueueResults ? uploadQueueResults.length : 0;
+    // const docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded(username);
+    const docRowsUploaded = username ? await this.syncingService.getDocsUploaded(username) : await this.syncingService.getDocsUploaded();
+    const docsUploaded = docRowsUploaded.length || 0;
+
     const syncPercentageComplete =
       ((docsUploaded / (docsNotUploaded + docsUploaded)) * 100) || 0;
+    let uploadQueueFormNames = []
+    for (var i = 0; i < uploadQueueResults.length; i++) {
+      let name = uploadQueueResults[i]
+      let obj = {}
+      let arr = name.split('_')
+      obj['id'] = arr[0]
+      // using slice instead of split because the form name could have an underscore in it.
+      let nameSlice = arr.slice(1);
+      obj['name'] = nameSlice.toString();
+      uploadQueueFormNames.push(obj)
+    }
     return {
       username,
       docsNotUploaded,
       docsUploaded,
-      syncPercentageComplete
+      syncPercentageComplete,
+      uploadQueueFormNames
     };
   }
   async getRemoteHost() {
@@ -78,7 +96,6 @@ export class SyncRecordsComponent implements OnInit {
     usernames.map(async username => {
       try {
         if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
-
           const userProfile = await this.userService.getUserProfile(username);
           const remoteHost = await this.getRemoteHost();
           const localDB = new PouchDB(username);
@@ -93,12 +110,6 @@ export class SyncRecordsComponent implements OnInit {
             // boo, something went wrong!
             console.log("boo, something went wrong! error: " + err)
           });
-
-          // const result = await this.syncingService.replicate(username);
-          // if (result) {
-          //   this.isSyncSuccesful = true;
-          //   // this.getUploadProgress();
-          // }
         } else {
           const result = await this.syncingService.pushAllrecords(username);
           if (result) {
