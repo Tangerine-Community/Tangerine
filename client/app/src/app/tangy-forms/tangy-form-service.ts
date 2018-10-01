@@ -98,7 +98,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '49',
+  version: '50',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -201,7 +201,6 @@ var tangyFormDesignDoc = {
           ||
           (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
         ) {
-          debugger;
           emit(doc._id, doc.form.id)
           // emit(doc._id, true)
         }

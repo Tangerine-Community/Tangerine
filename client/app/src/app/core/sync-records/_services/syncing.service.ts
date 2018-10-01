@@ -80,66 +80,34 @@ export class SyncingService {
       queryUploaded = 'responsesUnLockedAndUploaded' + queryExtra
     }
 
-    // let localFormsArray: string[] = [] // stores kv pairs if using includeName
-    let localForms = {} // stores kv pairs if using includeName
-    const localNotUploaded = await DB.query('tangy-form/' + queryNotUploaded);
-    let localNotUploadedForms =  localNotUploaded.rows.map(row => {
-      // return {"id":row.key, "val":row.value}
-      // return new Map([[row.key, row.value]]);
-      // return localForms[row.key] = row.value
-      return {"id":row.key, "val":row.value}
-    })
-    // queueMap = queueMap.concat(localNotUploadedForms)
-    // queueMap = new Map([...queueMap, ...localNotUploadedForms]);
-    // let queueMap = new Map([...Object.keys(localForms), ...localNotUploadedForms.keys()]);
-
-    const localNotUploadedDocIds = localNotUploaded.rows.map(row => row.key);
-    let uploadQueue = []
+    const results = await DB.query('tangy-form/' + queryNotUploaded);
+    const localNotUploadedDocIds = results.rows.map(row => row.key);
     if (!this.window.navigator.onLine) {
-      let queueMap = new Map([...Object.keys(localForms), ...localNotUploadedForms.keys()]);
-
-      uploadQueue = localNotUploadedDocIds
-      let result = {
-        'uploadQueue':uploadQueue,
-        'queueMap':queueMap
-      }
-      return result
+      return localNotUploadedDocIds
     } else {
       let localUploaded;
-        localUploaded = await DB.query('tangy-form/' + queryUploaded);
-        let localUploadedForms =  localNotUploaded.rows.map(row => {
-          return {"id":row.key, "val":row.value}
-        })
-        // queueMap = queueMap.concat(localUploadedForms)
-      let queueMap = new Map([...localNotUploadedForms.keys(), ...localUploadedForms.keys()]);
-
+      localUploaded = await DB.query('tangy-form/' + queryUploaded);
       // Look for responses marked as uploaded but the server doesn't have.
       try {
         const hasKeys = await this.http.post(
           `${appConfig.serverUrl}api/${appConfig.groupName}/upload-check`,
-            { keys: localUploaded.rows.map(row => row.id) },
-            { headers: new HttpHeaders({ 'Authorization': appConfig.uploadToken })
+          { keys: localUploaded.rows.map(row => row.id) },
+          { headers: new HttpHeaders({ 'Authorization': appConfig.uploadToken })
           }).toPromise()
         // Filter out the keys (id's) that are already on the server.
         let localMissingUploads = localUploaded.rows
           .filter(row => {
             let result = hasKeys['indexOf'](row.id) === -1
-            console.log("row.id: " + row.id + ":" + result)
+            // console.log("row.id: " + row.id + ":" + result)
             return result
           })
           .map(row => row.id);
         // merge both the array of local non-uploaded ids and missing id's from the server query
-        uploadQueue = [
+        let uploadQueue = [
           ...localNotUploadedDocIds,
           ...localMissingUploads
         ];
-        // return uploadQueue
-        let result = {
-          'uploadQueue':uploadQueue,
-          'queueMap':queueMap
-        }
-        return result
-
+        return uploadQueue
       }
       catch(err) {
         // Perhaps window.onLine is true but we're having trouble communicating with the server.
@@ -164,29 +132,6 @@ export class SyncingService {
     const results = await DB.query('tangy-form/' + queryUploaded);
     return results.rows;
   }
-
-  // async getFormsLockedAndUploaded(username?: string) {
-  //   const userDB = username || await this.getLoggedInUser();
-  //   const DB = new PouchDB(userDB);
-  //   const results = await DB.query('tangy-form/responsesLockedAndUploaded');
-  //   return results.rows;
-  // }
-
-  // async getFormsUnLockedAndUploaded(username?: string, includeName?: boolean) {
-  //   let queryExtra = ""
-  //   if (includeName) {
-  //     queryExtra = "WithName"
-  //   }
-  //   const userDB = username || await this.getLoggedInUser();
-  //   const DB = new PouchDB(userDB);
-  //   const results = await DB.query('tangy-form/responsesLockedAndUploaded' + queryExtra);
-  //   return results.rows;
-  // }
-
-  // async getNumberOfFormsLockedAndUploaded(username?: string) {
-  //   const result = username ? await this.getFormsLockedAndUploaded(username) : await this.getFormsLockedAndUploaded();
-  //   return result.length || 0;
-  // }
 
   async getAllUsersDocs(username?: string) {
     const userDB = username || await this.getLoggedInUser();
