@@ -30,8 +30,12 @@ export class ImportUserProfileComponent implements AfterContentInit {
     const db = new PouchDB(userDbName)
     const userId = this.userIdInput.nativeElement.value
     this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupName}/responsesByUserProfileId/${userId}`).toPromise()
-    this.docs.forEach(doc => delete doc._rev)
-    await db.bulkDocs(this.docs);
+    if (this.appConfig.syncProtocol === 'replication') {
+      await PouchDB.replicate(this.appConfig.dbUrl, db, {doc_ids: this.docs.map(doc => doc._id)})
+    } else {
+      this.docs.forEach(doc => delete doc._rev)
+      await db.bulkDocs(this.docs);
+    }
     this.router.navigate([`/${this.appConfig.homeUrl}`] );
   }
 
