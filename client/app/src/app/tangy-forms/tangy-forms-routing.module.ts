@@ -5,6 +5,7 @@ import { CreateProfileGuardService } from '../user-profile/create-profile-guard.
 
 import { LoginGuard } from '../core/auth/_guards/login-guard.service';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
+import { _TRANSLATE } from '../shared/translation-marker';
 
 import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 
@@ -18,7 +19,7 @@ class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponent> {
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot
   ): Observable<boolean>|Promise<boolean>|boolean {
-    return confirm('Are you sure you want to navigate away from this form?')
+    return confirm(_TRANSLATE('Are you sure you would like to exit the form?'))
   }
 }
 
