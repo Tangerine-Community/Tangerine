@@ -56,7 +56,7 @@ export class SyncRecordsComponent implements OnInit {
     // this.docsNotUploadedNames = this.allUsersSyncData.result
   }
   async calculateUsersUploadProgress(username) {
-    const uploadQueueResults = await this.syncingService.getUploadQueue(username, true);
+    const uploadQueueResults = await this.syncingService.getUploadQueue(username, false);
     const docsNotUploaded = uploadQueueResults ? uploadQueueResults.length : 0;
     // const docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded(username);
     const docRowsUploaded = username ? await this.syncingService.getDocsUploaded(username) : await this.syncingService.getDocsUploaded();
@@ -71,8 +71,8 @@ export class SyncRecordsComponent implements OnInit {
       let arr = name.split('_')
       obj['id'] = arr[0]
       // using slice instead of split because the form name could have an underscore in it.
-      let nameSlice = arr.slice(1);
-      obj['name'] = nameSlice.toString();
+      // let nameSlice = arr.slice(1);
+      // obj['name'] = nameSlice.toString();
       uploadQueueFormNames.push(obj)
     }
     return {
