@@ -14,6 +14,7 @@ body {
   background: #fafafa;
   margin: 0px;
   padding: 0px;
+  overscroll-behavior: contain;
 }
 .login-app-content{
   margin-top: 180px;
