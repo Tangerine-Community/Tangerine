@@ -26,10 +26,15 @@ function getData(dbName, formId, skip, batchSize) {
       const target = `${dbDefaults.prefix}/${dbName}-reporting/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${formId}"]&include_docs=true&skip=${skip}&limit=${limit}`
       console.log(target)
       axios.get(target)
-        .then(response => resolve(response.data.rows.map(row => row.doc)))
-        .catch(err => reject(err));
+        .then(response => {
+          resolve(response.data.rows.map(row => row.doc))
+        })
+        .catch(err => {
+          reject(err)
+        });
     } catch (err) {
-      console.log(err)
+      process.stderr.write(err)
+      process.exit(1)
     }
   });
 }
@@ -41,12 +46,22 @@ async function batch() {
     state.complete = true
   } else {
     // Order each datum's properties by the headers for consistent columns.
-    const rows = docs.map(doc => [ doc._id, ...state.headersKeys.map(header => (doc.processedResult[header]) ? doc.processedResult[header] : '') ])
-    const output = `\n${new CSV(rows).encode()}`
-    await appendFile(state.outputPath, output)
-    state.skip = state.skip + state.batchSize
+    try {
+      const rows = docs.map(doc => [ doc._id, ...state.headersKeys.map(header => (doc[header]) ? doc[header] : '') ])
+      const output = `\n${new CSV(rows).encode()}`
+      await appendFile(state.outputPath, output)
+      state.skip = state.skip + state.batchSize
+    } catch(err) {
+      process.stderr.write(error)
+      process.exit(1)
+    }
   }
   await writeFile(state.statePath, JSON.stringify(state), 'utf-8')
   process.exit()
 }
-batch()
+try {
+  batch()
+} catch (error) {
+  process.stderr.write(error)
+  process.exit(1)
+}
