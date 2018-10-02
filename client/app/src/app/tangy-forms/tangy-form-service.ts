@@ -98,7 +98,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '50',
+  version: '51',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -125,18 +125,6 @@ var tangyFormDesignDoc = {
         }
       }.toString()
     },
-    responsesLockedAndNotUploadedWithName: {
-      map: function (doc) {
-        if (
-          (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime)
-          ||
-          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
-        ) {
-          emit(doc._id, doc.form.id)
-          // emit(doc._id, true)
-        }
-      }.toString()
-    },
     responsesUnLockedAndNotUploaded: {
       map: function (doc) {
         if (
@@ -145,18 +133,6 @@ var tangyFormDesignDoc = {
           (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
         ) {
           emit(doc._id, true)
-        }
-      }.toString()
-    },
-    responsesUnLockedAndNotUploadedWithName: {
-      map: function (doc) {
-        if (
-          (doc.collection === 'TangyFormResponse' && (!doc.uploadDatetime || doc.lastModified > doc.uploadDatetime))
-          ||
-          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
-        ) {
-          emit(doc._id, doc.form.id)
-          // emit(doc._id, true)
         }
       }.toString()
     },
@@ -171,18 +147,6 @@ var tangyFormDesignDoc = {
         }
       }.toString()
     },
-    responsesLockedAndUploadedWithName: {
-      map: function (doc) {
-        if (
-          (doc.collection === 'TangyFormResponse' && doc.complete === true && !!doc.uploadDatetime)
-          ||
-          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
-        ) {
-          emit(doc._id, doc.form.id)
-          // emit(doc._id, true)
-        }
-      }.toString()
-    },
     responsesUnLockedAndUploaded: {
       map: function (doc) {
         if (
@@ -191,18 +155,6 @@ var tangyFormDesignDoc = {
           (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
         ) {
           emit(doc._id, true)
-        }
-      }.toString()
-    },
-    responsesUnLockedAndUploadedWithName: {
-      map: function (doc) {
-        if (
-          (doc.collection === 'TangyFormResponse' && (doc.uploadDatetime || doc.lastModified <= doc.uploadDatetime))
-          ||
-          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
-        ) {
-          emit(doc._id, doc.form.id)
-          // emit(doc._id, true)
         }
       }.toString()
     },
