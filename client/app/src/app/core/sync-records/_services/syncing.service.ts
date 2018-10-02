@@ -113,13 +113,9 @@ export class SyncingService {
 
   async getDocsUploaded(username?: string, includeName?: boolean) {
     const appConfig = await this.appConfigService.getAppConfig()
-    let queryExtra = ""
-    if (includeName) {
-      queryExtra = "WithName"
-    }
-    let queryUploaded = 'responsesLockedAndUploaded' + queryExtra
+    let queryUploaded = 'responsesLockedAndUploaded'
     if (appConfig.uploadUnlockedFormReponses && appConfig.uploadUnlockedFormReponses === true) {
-      queryUploaded = 'responsesUnLockedAndUploaded' + queryExtra
+      queryUploaded = 'responsesUnLockedAndUploaded'
     }
     const userDB = username || await this.getLoggedInUser();
     const DB = new PouchDB(userDB);

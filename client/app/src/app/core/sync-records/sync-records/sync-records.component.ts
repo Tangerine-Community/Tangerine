@@ -64,14 +64,6 @@ export class SyncRecordsComponent implements OnInit {
 
     const syncPercentageComplete =
       ((docsUploaded / (docsNotUploaded + docsUploaded)) * 100) || 0;
-    let uploadQueueFormNames = []
-    for (var i = 0; i < uploadQueueResults.length; i++) {
-      let name = uploadQueueResults[i]
-      let obj = {}
-      let arr = name.split('_')
-      obj['id'] = arr[0]
-      uploadQueueFormNames.push(obj)
-    }
     return {
       username,
       docsNotUploaded,
