@@ -762,19 +762,6 @@ const keepAliveReportingWorker = async initialGroups => {
 const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
 
-async function getTin() {
-  const db = new DB('tintin')
-  let result = {}
-  try {
-    result = await db.query('byFormId', {'key': 'example'})
-  } catch(err) {
-    clog(err)
-  }
-  clog(result)
-}
-//getTin()
-
-
 // Start the server.
 var server = app.listen('80', function () {
   var host = server.address().address;
