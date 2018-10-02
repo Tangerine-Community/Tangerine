@@ -41,10 +41,8 @@ export class DashboardComponent implements OnInit {
   formIds: string[] = [];
   formList: any[] = []; // used for the Dashbiard user interface - creates Class grouping list
   formColumnsDS;
-  // columnsToDisplay: string[] = ["Name"];
   selection = new SelectionModel<StudentResult>(false, []);
 
-  // MatPaginator Inputs
   // length = 10;
   pageLength = 10;
   pageSize = 5;
@@ -60,19 +58,11 @@ export class DashboardComponent implements OnInit {
   isLoading;
   // selected = new FormControl(0);
 
-  // MatPaginator Output
   pageEvent: PageEvent;
-  // private paginator;
   curriculum; // object that contains name and value of curriculum.
   currArray: any[]; // array of curriculums in a class.
 
   @ViewChild('container') container: ElementRef;
-  // @ViewChild(MatPaginator) paginator: MatPaginator;
-  // @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
-  //   this.paginator = mp;
-  //   console.log("Set this.paginator")
-  //   // this.setDataSourceAttributes();
-  // }
 
   constructor(
     private http: HttpClient,
@@ -108,8 +98,8 @@ export class DashboardComponent implements OnInit {
   }
 
   tabChanged = async (tabChangeEvent: MatTabChangeEvent, type:String): Promise<void> => {
-    console.log('tabChangeEvent => ', tabChangeEvent);
-    console.log('index => ', tabChangeEvent.index);
+    // console.log('tabChangeEvent => ', tabChangeEvent);
+    // console.log('index => ', tabChangeEvent.index);
     if (type === 'curriculum') {
       // reset this.pageIndex is curriculum has changed.
       if (this.curriculumIndex !== tabChangeEvent.index) {
@@ -128,10 +118,6 @@ export class DashboardComponent implements OnInit {
       await this.populateGridData(this.selectedTabIndex, this.curriculumIndex, this.pageIndex, this.pageSize);
       this.renderGrid();
     }
-
-    // } else {
-    //   this.selectedIndex = 0;
-    // }
   }
 
   private async loadGrid() {
@@ -280,7 +266,6 @@ export class DashboardComponent implements OnInit {
   }
 
   private renderGrid() {
-    // let allStudentResults:StudentResult = [];
     // re-init the formColumns and columnsToDisplay
     this.formColumns = [];
     this.formIds = [];
@@ -293,33 +278,9 @@ export class DashboardComponent implements OnInit {
       };
       this.formColumns.push(form.title)
       this.formIds.push(form.id)
-      // this.formColumns.push(formEl)
       this.columnsToDisplay.push(form.title);
-      // this.columnsToDisplay.push(formEl);
     }
-    console.log("renderGrid done")
-    // this.formColumnsDS = new MatTableDataSource(this.formColumns);
-    // if (this.paginator) {
-    //   this.paginator.page
-    //     .pipe(
-    //       tap(() => this.loadGrid())
-    //     )
-    //     .subscribe();
-    // } else {
-    //   console.log("this.paginator is not defined.")
-    // }
-
-    // this.dataSource = new MatTableDataSource<StudentResult>(this.allStudentResults);
-    // this.dataSource.paginator = this.paginator;
   }
-
-  // async populateFormList() {
-  //   try {
-  //     this.formList = await this.dashboardService.getFormList();
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }
 
   selectReport(reportId) {
     console.log("reportId: " + reportId)
@@ -415,7 +376,4 @@ export class DashboardComponent implements OnInit {
       console.error(error);
     }
   }
-
-
-
 }
