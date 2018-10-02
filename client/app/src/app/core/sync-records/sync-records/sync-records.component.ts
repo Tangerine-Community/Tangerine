@@ -18,7 +18,6 @@ export class SyncRecordsComponent implements OnInit {
   docsNotUploaded: number;
   docsUploaded: number;
   syncPercentageComplete: number;
-  docsNotUploadedNames;
   syncProtocol = '';
   contentVersion = '';
   window: any;
@@ -53,7 +52,6 @@ export class SyncRecordsComponent implements OnInit {
     this.docsUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsUploaded; }, 0);
     this.syncPercentageComplete =
       ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100) || 0;
-    // this.docsNotUploadedNames = this.allUsersSyncData.result
   }
   async calculateUsersUploadProgress(username) {
     const uploadQueueResults = await this.syncingService.getUploadQueue(username);

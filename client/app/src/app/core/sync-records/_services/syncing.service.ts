@@ -111,7 +111,7 @@ export class SyncingService {
     }
   }
 
-  async getDocsUploaded(username?: string, includeName?: boolean) {
+  async getDocsUploaded(username?: string) {
     const appConfig = await this.appConfigService.getAppConfig()
     let queryUploaded = 'responsesLockedAndUploaded'
     if (appConfig.uploadUnlockedFormReponses && appConfig.uploadUnlockedFormReponses === true) {
@@ -142,7 +142,7 @@ export class SyncingService {
     const DB = new PouchDB(userDB);
     return await Promise.all(replicatedDocIds.map(docId => {
       DB.upsert(docId, (doc) => {
-        doc.uploadDatetime = new Date();
+        doc.uploadDatetime = Date.now();
         return doc;
       });
     }));

@@ -150,7 +150,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
     }
 
     let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
-    let lastModified = new Date();
+    let lastModified = Date.now();
     newStateDoc['lastModified'] = lastModified
     newStateDoc.items = newStateDoc.items.map(item => {
       if (item.disabled === false) {
