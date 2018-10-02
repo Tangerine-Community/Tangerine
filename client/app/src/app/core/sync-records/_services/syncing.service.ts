@@ -61,25 +61,19 @@ export class SyncingService {
   /**
    *
    * @param {string} username
-   * @param {boolean} includeName - run the view that returns the form name as value instead of true
    * @returns {Promise<any>}
    */
-  async getUploadQueue(username?: string, includeName?: boolean) {
+  async getUploadQueue(username?: string) {
     const userProfile = await this.userService.getUserProfile(username);
     const userDB = username || await this.getLoggedInUser();
     const DB = new PouchDB(userDB);
     const appConfig = await this.appConfigService.getAppConfig()
-    let queryExtra = ""
-    if (includeName) {
-      queryExtra = "WithName"
-    }
-    let queryNotUploaded = 'responsesLockedAndNotUploaded' + queryExtra
-    let queryUploaded = 'responsesLockedAndUploaded' + queryExtra
+    let queryNotUploaded = 'responsesLockedAndNotUploaded'
+    let queryUploaded = 'responsesLockedAndUploaded'
     if (appConfig.uploadUnlockedFormReponses && appConfig.uploadUnlockedFormReponses === true) {
-      queryNotUploaded = 'responsesUnLockedAndNotUploaded' + queryExtra
-      queryUploaded = 'responsesUnLockedAndUploaded' + queryExtra
+      queryNotUploaded = 'responsesUnLockedAndNotUploaded'
+      queryUploaded = 'responsesUnLockedAndUploaded'
     }
-
     const results = await DB.query('tangy-form/' + queryNotUploaded);
     const localNotUploadedDocIds = results.rows.map(row => row.key);
     if (!this.window.navigator.onLine) {

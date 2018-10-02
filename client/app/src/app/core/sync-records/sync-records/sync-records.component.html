@@ -29,8 +29,8 @@
 
         <p>{{'Docs Uploaded'|translate}}: {{syncData.docsUploaded}}</p>
         <p>{{'Docs Not Uploaded'|translate}}: {{syncData.docsNotUploaded}}</p>
-          <ul *ngIf="syncData.uploadQueueFormNames.length > 0">
-            <li *ngFor="let form of syncData.uploadQueueFormNames">{{form.id}}</li>
+          <ul *ngIf="syncData.uploadQueueResults.length > 0">
+            <li *ngFor="let formId of syncData.uploadQueueResults">{{formId}}</li>
           </ul>
         <p>{{'Percentage Complete'|translate}}: {{syncData.syncPercentageComplete|number:'1.2-2'}}%</p>
 
