@@ -98,7 +98,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '33',
+  version: '51',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -117,7 +117,18 @@ var tangyFormDesignDoc = {
     responsesLockedAndNotUploaded: {
       map: function (doc) {
         if (
-          (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime) 
+          (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime)
+          ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
+        ) {
+          emit(doc._id, true)
+        }
+      }.toString()
+    },
+    responsesUnLockedAndNotUploaded: {
+      map: function (doc) {
+        if (
+          (doc.collection === 'TangyFormResponse' && (!doc.uploadDatetime || doc.lastModified > doc.uploadDatetime))
           ||
           (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
         ) {
@@ -128,7 +139,18 @@ var tangyFormDesignDoc = {
     responsesLockedAndUploaded: {
       map: function (doc) {
         if (
-          (doc.collection === 'TangyFormResponse' && doc.complete === true && !!doc.uploadDatetime) 
+          (doc.collection === 'TangyFormResponse' && doc.complete === true && !!doc.uploadDatetime)
+          ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
+        ) {
+          emit(doc._id, true)
+        }
+      }.toString()
+    },
+    responsesUnLockedAndUploaded: {
+      map: function (doc) {
+        if (
+          (doc.collection === 'TangyFormResponse' && (doc.uploadDatetime || doc.lastModified <= doc.uploadDatetime))
           ||
           (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
         ) {

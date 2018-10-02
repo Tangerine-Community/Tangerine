@@ -54,16 +54,20 @@ export class SyncRecordsComponent implements OnInit {
       ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100) || 0;
   }
   async calculateUsersUploadProgress(username) {
-    const result = await this.syncingService.getIDsFormsLockedAndNotUploaded(username);
-    const docsNotUploaded = result ? result.length : 0;
-    const docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded(username);
+    const uploadQueueResults = await this.syncingService.getUploadQueue(username);
+    const docsNotUploaded = uploadQueueResults ? uploadQueueResults.length : 0;
+    // const docsUploaded = await this.syncingService.getNumberOfFormsLockedAndUploaded(username);
+    const docRowsUploaded = username ? await this.syncingService.getDocsUploaded(username) : await this.syncingService.getDocsUploaded();
+    const docsUploaded = docRowsUploaded.length || 0;
+
     const syncPercentageComplete =
       ((docsUploaded / (docsNotUploaded + docsUploaded)) * 100) || 0;
     return {
       username,
       docsNotUploaded,
       docsUploaded,
-      syncPercentageComplete
+      syncPercentageComplete,
+      uploadQueueResults
     };
   }
   async getRemoteHost() {
@@ -78,7 +82,6 @@ export class SyncRecordsComponent implements OnInit {
     usernames.map(async username => {
       try {
         if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
-
           const userProfile = await this.userService.getUserProfile(username);
           const remoteHost = await this.getRemoteHost();
           const localDB = new PouchDB(username);
@@ -93,12 +96,6 @@ export class SyncRecordsComponent implements OnInit {
             // boo, something went wrong!
             console.log("boo, something went wrong! error: " + err)
           });
-
-          // const result = await this.syncingService.replicate(username);
-          // if (result) {
-          //   this.isSyncSuccesful = true;
-          //   // this.getUploadProgress();
-          // }
         } else {
           const result = await this.syncingService.pushAllrecords(username);
           if (result) {
