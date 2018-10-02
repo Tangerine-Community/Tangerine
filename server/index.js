@@ -21,7 +21,6 @@ PouchDB.plugin(require('pouchdb-find'));
 const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
-const generateCSV = require('../server/reporting/generate_csv').generateCSV;
 const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
