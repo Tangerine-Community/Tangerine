@@ -83,19 +83,11 @@ export class ClassFormService {
     return obj;
   }
 
-  // async getStudentProfile(studentId) {
-  //   const result = await this.userDB.query('tangy-class/responsesByFormId', {
-  //     key: studentId,
-  //     include_docs: true
-  //   });
-  //   return result.rows;
-  // }
-
 }
 
 var tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '18',
+  version: '19',
   views: {
     responsesForStudentRegByClassId: {
       map: function (doc) {
@@ -110,32 +102,12 @@ var tangyClassDesignDoc = {
         }
       }.toString()
     },
-    // responsesForStudentReg: {
-    //   map: function (doc) {
-    //     if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
-    //       if (doc.form.id !== 'student-registration') return
-    //       let inputs = [];
-    //       doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-    //       let input = inputs.find(input => (input.name === 'classId') ? true : false)
-    //       if (input) {
-    //         emit(input.value, true);
-    //       }
-    //     }
-    //   }.toString()
-    // },
     responsesByClassIdCurriculumId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
-          // let inputs = [];
-          // doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-          // let input = inputs.find(input => (input.name === 'classId') ? true : false)
-          // if (input) {
-          //   emit(input.value, true);
-          // }
           if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.classId) {
-            console.log("matching: " + doc.metadata.studentRegistrationDoc.classId)
-            debugger;
-            emit([doc.metadata.studentRegistrationDoc.classId, doc.form.id], true);
+            // console.log("matching: " + doc.metadata.studentRegistrationDoc.classId)
+             emit([doc.metadata.studentRegistrationDoc.classId, doc.form.id], true);
           }
         }
       }.toString()
@@ -143,12 +115,6 @@ var tangyClassDesignDoc = {
     responsesByClassId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
-          // let inputs = [];
-          // doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-          // let input = inputs.find(input => (input.name === 'classId') ? true : false)
-          // if (input) {
-          //   emit(input.value, true);
-          // }
           if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.classId) {
             emit(doc.metadata.studentRegistrationDoc.classId, true);
           }
@@ -158,12 +124,6 @@ var tangyClassDesignDoc = {
     responsesByStudentId: {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
-          // let inputs = [];
-          // doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-          // let input = inputs.find(input => (input.name === 'studentId') ? true : false)
-          // if (input) {
-          //   emit(input.value, true);
-          // }
           if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.id) {
             emit(doc.metadata.studentRegistrationDoc.id, true);
           }
