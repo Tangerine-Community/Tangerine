@@ -1,3 +1,11 @@
+<paper-tabs selected="0">
+  <paper-tab>
+      {{'LOGIN'|translate}}
+  </paper-tab>
+  <paper-tab>
+    <a href="#/register">{{'REGISTER'|translate}}</a>
+  </paper-tab>
+</paper-tabs>
 <div class="login-app-content">
   <div class="group">
     <form role="form" #login='ngForm' novalidate>
@@ -48,25 +56,20 @@
         </mat-form-field>
       </div>
       <br>
-      <br>
       <span>
         <small>
-          <a href="#" *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()">{{'RESET PASSWORD'|translate}}</a>
-          <a href="#" *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()">{{'LOGIN'|translate}}</a>
         </small>
       </span>
       <br>
-      <br>
-      <br>
-      <br>
 
       <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
+
+      <button *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()" mat-raised-button color="accent">{{'RESET PASSWORD'|translate}}</button>
       <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
-        color="accent" name="action">{{'RECOVER ACCOUNT'|translate}}</button>
-      <br>
-      <br>
-      <a class="register-link" href="#/register">{{'REGISTER'|translate}}</a>
-      <br>
+        color="accent" name="action">{{'SUBMIT'|translate}}</button>
+
+      <button *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()" mat-raised-button
+        color="accent" name="action">{{'CANCEL'|translate}}</button>
       <br>
       <span id="err">
         <small>{{errorMessage}}</small>
