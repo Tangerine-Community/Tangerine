@@ -101,7 +101,11 @@ const generateFlatResponse = function (formResponse, locationList) {
         for (let group of input.value) {
           flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
           locationKeys.push(group.value)
-          flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = getLocationLabel(locationKeys, locationList);
+          try {
+            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = getLocationLabel(locationKeys, locationList);
+          } catch(e) {
+            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = 'orphaned';
+          }
         }
       } else if (input && typeof input.value === 'string') {
         flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value;
