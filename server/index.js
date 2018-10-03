@@ -10,6 +10,7 @@ const PouchSession = require("session-pouchdb-store")
 const bodyParser = require('body-parser');
 const path = require('path')
 const app = express()
+var tangyModules = require('./src/modules/index.js')()
 const fs = require('fs-extra')
 const fsc = require('fs')
 const readFile = util.promisify(fsc.readFile);
@@ -425,6 +426,7 @@ app.post('/editor/group/new', isAuthenticated, async function (req, res) {
     }
   }
   let groupName = req.body.groupName
+  await tangyModules.hook('onCreateGroup', groupName)
   // Copy the content directory for the new group.
   await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
   await insertGroupViews(groupName, DB)
