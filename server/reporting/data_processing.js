@@ -18,6 +18,8 @@ const {promisify} = require('util');
 const fs = require('fs');
 const path = require('path')
 const readFile = promisify(fs.readFile);
+const tangyModules = require('../src/modules/index.js')()
+
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -61,11 +63,24 @@ const processFormResponse = async (doc, sourceDb) => {
     const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
     const GROUP_DB = sourceDb;
     const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-    const flatResponse = generateFlatResponse(doc, locationList);
+    const flatResponse = await generateFlatResponse(doc, locationList);
     await saveFormInfo(flatResponse, REPORTING_DB);
     await saveFlatFormResponse(flatResponse, REPORTING_DB);
   } catch (error) {
-    throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error)}`)
+    function replaceErrors(key, value) {
+      if (value instanceof Error) {
+        var error = {};
+
+        Object.getOwnPropertyNames(value).forEach(function (key) {
+          error[key] = value[key];
+        });
+
+        return error;
+      }
+
+      return value;
+    }
+    throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)
   }
 };
 
@@ -85,7 +100,7 @@ const processFormResponse = async (doc, sourceDb) => {
  * @returns {object} processed results for csv
  */
 
-const generateFlatResponse = function (formResponse, locationList) {
+const generateFlatResponse = async function (formResponse, locationList) {
   if (formResponse.form.id === '') {
     formResponse.form.id = 'blank'
   }
@@ -138,7 +153,8 @@ const generateFlatResponse = function (formResponse, locationList) {
       }
     }
   }
-  return flatFormResponse;
+  let data = await tangyModules.hook("flatFormReponse", {flatFormResponse, formResponse});
+  return data.flatFormResponse;
 };
 
 function saveFormInfo(flatResponse, db) {
