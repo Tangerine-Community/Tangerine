@@ -13,7 +13,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
   appConfig;
   docs;
 
-  @ViewChild('userId') userIdInput: ElementRef;
+  @ViewChild('userShortCode') userShortCodeInput: ElementRef;
 
   constructor(
     private router: Router,
@@ -28,8 +28,8 @@ export class ImportUserProfileComponent implements AfterContentInit {
     this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
     const userDbName = await this.userService.getUserDatabase();
     const db = new PouchDB(userDbName)
-    const userId = this.userIdInput.nativeElement.value
-    this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupName}/responsesByUserProfileId/${userId}`).toPromise()
+    const shortCode = this.userShortCodeInput.nativeElement.value
+    this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupName}/responsesByUserProfileShortCode/${shortCode}`).toPromise()
     this.docs.forEach(doc => delete doc._rev)
     await db.bulkDocs(this.docs);
     this.router.navigate([`/${this.appConfig.homeUrl}`] );

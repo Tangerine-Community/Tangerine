@@ -101,6 +101,9 @@ const processFormResponse = async (doc, sourceDb) => {
  */
 
 const generateFlatResponse = async function (formResponse, locationList) {
+  if (formResponse.form.id === '') {
+    formResponse.form.id = 'blank'
+  }
   let flatFormResponse = {
     _id: formResponse._id,
     formId: formResponse.form.id,
