@@ -49,7 +49,9 @@ import { LocationListEditorComponent } from './location-list-editor/location-lis
     AddUserComponent,
     ListUsersComponent,
     ReleaseDatComponent,
-    ResponsesComponent
+    ResponsesComponent,
+    ManageLocationListLevelsComponent,
+    CreateLocationListMetadataComponent
   ],
   providers: [GroupsService]
 })

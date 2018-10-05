@@ -1,6 +1,11 @@
 <mat-tab-group class="tangy-full-width">
 
-  <mat-tab *ngIf="isGroupAdminUser" label="Location List">
+  <mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Levels">
+
+    <app-manage-location-list-levels></app-manage-location-list-levels>
+  </mat-tab>
+  <mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Content">
+
     <app-location-list-editor></app-location-list-editor>
   </mat-tab>
 
@@ -11,40 +16,42 @@
       </mat-card-title>
       <mat-card-content>
         <div class="tangy-full-width">
-      <!-- <div>
+          <!-- <div>
         <a routerLink="/editor/{{groupName}}/tangy-forms/editor.html#form=editor/form.html&new=1">{{'+ Create a New Form'|translate}}</a>
       </div> -->
-          <span class="form-list-header">{{'Forms '|translate}}</span> <paper-button raised class="green" (click)="addForm()">add form</paper-button>
+          <span class="form-list-header">{{'Forms '|translate}}</span>
+          <paper-button raised class="green" (click)="addForm()">add form</paper-button>
 
-      <mat-list>
-        <mat-list-item class="tangy-location-list">
-          <span class="tangy-foreground-primary">{{'Form Name'|translate}}</span>
-          <span class="tangy-spacer"></span>
-          <span></span>
-        </mat-list-item>
-      </mat-list>
+          <mat-list>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-primary">{{'Form Name'|translate}}</span>
+              <span class="tangy-spacer"></span>
+              <span></span>
+            </mat-list-item>
+          </mat-list>
 
-      <mat-list role="list">
-        <mat-list-item role="listitem" *ngFor="let form of forms">
-        <!-- <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]="{form:form.src}">
+          <mat-list role="list">
+            <mat-list-item role="listitem" *ngFor="let form of forms">
+              <!-- <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]="{form:form.src}">
           <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
         </a>-->
-          <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
-            <i class="material-icons mat-18 tangy-location-list-icon ">play_arrow</i>
-          </a>
-          <a class="tangy-foreground-primary" [routerLink]="['/tangy-form-editor/', groupName, form.id]">
-            <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
-          </a>
-          <a *ngIf="form.id !== 'user-profile' && form.id !== 'reports'" class="tangy-foreground-primary" (click)="deleteForm(groupName, form.id)">
-            <i class="material-icons mat-18 tangy-location-list-icon ">delete</i>
-          </a>
-          <span class="tangy-foreground-secondary "><a class="tangy-foreground-primary" [routerLink]="['/tangy-form-editor/', groupName, form.id]">{{form.title}}</a></span>
-          <span class="tangy-spacer "></span>
-          <span>
-            <a class="tangy-foreground-secondary " [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">{{'Download CSV'|translate}}</a>
-          </span>
-        </mat-list-item>
-      </mat-list>
+              <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
+                <i class="material-icons mat-18 tangy-location-list-icon ">play_arrow</i>
+              </a>
+              <a class="tangy-foreground-primary" [routerLink]="['/tangy-form-editor/', groupName, form.id]">
+                <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
+              </a>
+              <a *ngIf="form.id !== 'user-profile' && form.id !== 'reports'" class="tangy-foreground-primary" (click)="deleteForm(groupName, form.id)">
+                <i class="material-icons mat-18 tangy-location-list-icon ">delete</i>
+              </a>
+              <span class="tangy-foreground-secondary "><a class="tangy-foreground-primary" [routerLink]="['/tangy-form-editor/', groupName, form.id]">{{form.title}}</a></span>
+              <span class="tangy-spacer "></span>
+              <span>
+                <a class="tangy-foreground-secondary " [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">{{'Download
+                  CSV'|translate}}</a>
+              </span>
+            </mat-list-item>
+          </mat-list>
         </div>
       </mat-card-content>
     </mat-card>
@@ -65,51 +72,51 @@
 
   <mat-tab *ngIf="isGroupAdminUser" label="{{'Release'|translate}}">
     <mat-card>
-    <mat-card-title class="tangy-foreground-secondary">
-      {{'Release'|translate}}
-    </mat-card-title>
-    <mat-card-content>
-      <div class="tangy-full-width">
-        <mat-list>
-          <mat-list-item class="tangy-location-list">
-            <span class="tangy-foreground-secondary">
-              <a [routerLink]="['/group/release-apk',groupName,'qa']">
-                {{'Release APK to QA'|translate}}
-              </a>
-            </span>
-          </mat-list-item>
-          <mat-list-item class="tangy-location-list">
-            <span class="tangy-foreground-secondary">
-              <a [routerLink]="['/group/release-apk',groupName,'prod']">
-                {{'Release APK to Production'|translate}}
-              </a>
-            </span>
-          </mat-list-item>
-          <mat-list-item class="tangy-location-list">
-            <span class="tangy-foreground-secondary">
-              <a [routerLink]="['/group/release-pwa',groupName,'qa']">
-                {{'Release PWA to QA'|translate}}
-              </a>
-            </span>
-          </mat-list-item>
-          <mat-list-item class="tangy-location-list">
-            <span class="tangy-foreground-secondary">
-              <a [routerLink]="['/group/release-pwa',groupName,'prod']">
-                {{'Release PWA to Production'|translate}}
-              </a>
-            </span>
-          </mat-list-item>
-          <mat-list-item class="tangy-location-list">
-            <span class="tangy-foreground-secondary">
-              <a [routerLink]="['/group/release-dat',groupName,'prod']">
-                {{'Release Dat to Production'|translate}}
-              </a>
-            </span>
-          </mat-list-item>
+      <mat-card-title class="tangy-foreground-secondary">
+        {{'Release'|translate}}
+      </mat-card-title>
+      <mat-card-content>
+        <div class="tangy-full-width">
+          <mat-list>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-secondary">
+                <a [routerLink]="['/group/release-apk',groupName,'qa']">
+                  {{'Release APK to QA'|translate}}
+                </a>
+              </span>
+            </mat-list-item>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-secondary">
+                <a [routerLink]="['/group/release-apk',groupName,'prod']">
+                  {{'Release APK to Production'|translate}}
+                </a>
+              </span>
+            </mat-list-item>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-secondary">
+                <a [routerLink]="['/group/release-pwa',groupName,'qa']">
+                  {{'Release PWA to QA'|translate}}
+                </a>
+              </span>
+            </mat-list-item>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-secondary">
+                <a [routerLink]="['/group/release-pwa',groupName,'prod']">
+                  {{'Release PWA to Production'|translate}}
+                </a>
+              </span>
+            </mat-list-item>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-secondary">
+                <a [routerLink]="['/group/release-dat',groupName,'prod']">
+                  {{'Release Dat to Production'|translate}}
+                </a>
+              </span>
+            </mat-list-item>
 
-        </mat-list>
-      </div>
-    </mat-card-content>
+          </mat-list>
+        </div>
+      </mat-card-content>
     </mat-card>
   </mat-tab>
   <mat-tab *ngIf="isSuperAdminUser" label="{{'Manage Users'|translate}}">
