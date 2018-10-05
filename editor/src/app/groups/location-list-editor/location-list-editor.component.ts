@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { TangyErrorHandler } from 'app/shared/_services/tangy-error-handler.service';
+import { GroupsService } from '../services/groups.service';
 
 @Component({
   selector: 'app-location-list-editor',
@@ -14,17 +15,24 @@ export class LocationListEditorComponent implements OnInit {
   currentLocation: any;
   locationChildren = [];
   breadcrumbs = [];
+  levelHasMetadata = false;
   locationsLevels;
   locationsLevelsLength;
   newItemLabel;
   newItemId;
-  metaData: any = {};
-  isFormShown = false;
+  metadata: any = {};
+  isAddLocationItemFormShown = false;
   groupName = '';
   locationListFileName = 'location-list.json';
-
-
-  constructor(private http: HttpClient, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
+  isMoveLocationFormShown = false;
+  parentItemsForMoveLocation;
+  moveLocationParentLevelId;
+  constructor(
+    private http: HttpClient,
+    private route: ActivatedRoute,
+    private errorHandler: TangyErrorHandler,
+    private groupsService: GroupsService
+  ) { }
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
@@ -46,6 +54,7 @@ export class LocationListEditorComponent implements OnInit {
   }
 
   openPath(path) {
+    this.isAddLocationItemFormShown = false;
     this.currentPath = path;
     let currentChildren = [];
     let currentLocation = {
@@ -64,6 +73,11 @@ export class LocationListEditorComponent implements OnInit {
     this.locationChildren = currentChildren;
     this.currentLocation = currentLocation;
     this.breadcrumbs = breadcrumbs;
+    this.levelHasMetadata = this.locationList.metadata
+      && typeof this.locationList.metadata[this.locationsLevels[breadcrumbs.length - 1]] !== 'undefined'
+      ? true
+      : false;
+
   }
 
   onChildClick(id) {
@@ -74,25 +88,63 @@ export class LocationListEditorComponent implements OnInit {
     this.openPath(this.currentPath.slice(0, this.currentPath.indexOf(id) + 1));
   }
 
-  async addItem(item) {
-    this.newItemId = this.newItemLabel;
-    const newItem = { [this.newItemId]: { label: this.newItemLabel, id: this.newItemId, ...this.metaData } };
-    if (this.breadcrumbs.length === 1) {
+  async addItem(parentItem) {
+    this.newItemId = this.groupsService.createUserReadableUUID(this.newItemLabel);
+    const newItem = { [this.newItemId]: { label: this.newItemLabel, id: this.newItemId, ...this.metadata } };
+    if (this.breadcrumbs.length === 1) {// Adding location item to root of location-list.locations
       this.locationList['locations'] = { ...this.locationList['locations'], ...newItem };
     } else {
-      this.locationList = findAndAdd(this.locationList, item.id, newItem);
+      this.locationList = findAndAdd(this.locationList, parentItem.id, newItem);
     }
     await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
     this.newItemId = '';
     this.newItemLabel = '';
-    this.metaData = {};
-    this.isFormShown = false;
+    this.metadata = {};
+    this.isAddLocationItemFormShown = false;
   }
   async editItem(item) {
-    const newItem = { label: this.newItemLabel };
+    const newItem = { label: this.newItemLabel, ...this.metadata };
     this.locationList = findAndEdit(this.locationList, item.id, newItem);
     await this.setLocationList(this.locationList);
+  }
+
+  showMoveLocationForm() {
+    this.isMoveLocationFormShown = true;
+
+    if (this.currentPath.length === 2) {
+      this.parentItemsForMoveLocation = Object.keys(this.locationList.locations).map(key => {
+        return {
+          id: this.locationList.locations[key]['id'],
+          label: this.locationList.locations[key]['label'],
+        };
+      });
+    }
+    if (this.currentPath.length > 2) {
+      let path = '';
+      [...this.currentPath.slice(0, this.currentPath.length - 2)].map((item, index) => {
+        if (index === 0) {
+          return path += `${item}.children`;
+        }
+        return path += `.${item}.children`;
+      });
+      const children = findChildren(this.locationList.locations, path);
+      this.parentItemsForMoveLocation = Object.keys(children).map(key => {
+        return {
+          id: children[key]['id'],
+          label: children[key]['label'],
+        };
+      });
+    }
+
+  }
+
+  async moveItem(item) {
+    this.locationList.locations = findAndAdd(this.locationList.locations, this.moveLocationParentLevelId, { [item.id]: { ...item } });
+    await this.saveLocationListToDisk();
+    await this.setLocationList(this.locationList);
+    this.isMoveLocationFormShown = false;
+    this.parentItemsForMoveLocation = null;
   }
   async saveLocationListToDisk() {
     try {
@@ -100,11 +152,11 @@ export class LocationListEditorComponent implements OnInit {
       await this.http.post(`/editor/file/save`, payload).toPromise();
       this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
     } catch (error) {
-      console.log(error);
       this.errorHandler.handleError('Error Saving Location Lits File to disk');
     }
   }
 }
+
 function findAndAdd(object, value, replaceValue) {
   for (let x in object) {
     if (object.hasOwnProperty(x)) {
@@ -119,20 +171,39 @@ function findAndAdd(object, value, replaceValue) {
   }
   return object;
 }
-function findAndEdit(object, value, replaceValue) {
+function findAndDelete(object, value) {
   for (let x in object) {
-
     if (object.hasOwnProperty(x)) {
-      parent = object;
       if (typeof object[x] === 'object') {
-        findAndEdit(object[x], value, replaceValue);
+        findAndDelete(object[x], value);
       }
       if (object[x] === value) {
-        object.label = replaceValue.label;
-        // object.children = objectCopy.children;
+        object = {};
+        console.log(object);
         break;
       }
     }
   }
   return object;
+}
+function findAndEdit(object, value, replaceValue) {
+  for (let x in object) {
+
+    if (object.hasOwnProperty(x)) {
+      if (typeof object[x] === 'object') {
+        findAndEdit(object[x], value, replaceValue);
+      }
+      if (object[x] === value) {
+        object.label = replaceValue.label;
+        break;
+      }
+    }
+  }
+  return object;
+}
+
+function findChildren(obj, key) {
+  return key.split('.').reduce((result, i) => {
+    return result[i];
+  }, obj);
 }
