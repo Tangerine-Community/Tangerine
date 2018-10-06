@@ -1,4 +1,5 @@
 import PouchDB from 'pouchdb';
+import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
@@ -86,7 +87,7 @@ export class TangyFormService {
 
   async getResponsesByFormId(formId) {
     let r = await this.db.query('tangy-form/responsesByFormId', { key: formId, include_docs: true })
-    return r.rows.map((row) => row.doc)
+    return r.rows.map((row) => new TangyFormResponseModel(row.doc))
   }
 
   async getResponsesByLocationId(locationId) {
