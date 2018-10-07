@@ -9,6 +9,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "tangerine": "./src/scripts/tangerine.js"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -16,6 +19,7 @@
     "bcryptjs": "^2.4.3",
     "chalk": "^2.4.1",
     "cheerio": "^1.0.0-rc.2",
+    "commander": "^2.18.0",
     "comma-separated-values": "^3.6.4",
     "compression": "^1.7.2",
     "cordova-hot-code-push-cli": "^1.1.1",
