@@ -211,7 +211,7 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} 2>&1 | tee -a /apk.log`
+  const cmd = `tangerine release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} 2>&1 | tee -a /apk.log`
   log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ${cmd}`)
   try {
     await exec(cmd)
@@ -228,8 +228,7 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   const releaseType = sanitize(req.params.releaseType)
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
-    await exec(`cd /tangerine/server/src/scripts && \
-        ./release-pwa.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
+    await exec(`tangerine release-pwa ${group} /tangerine/client/content/groups/${group} ${releaseType}
   `)
     res.send({ statusCode: 200, data: 'ok' })
   } catch (error) {
@@ -243,8 +242,7 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   const releaseType = sanitize(req.params.releaseType)
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
-    const status = await exec(`cd /tangerine/client && \
-        ./release-dat.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
+    const status = await exec(`tangerine release-dat ${group} /tangerine/client/content/groups/${group} ${releaseType}
     `)
     // Clean up whitespace.
     const datArchiveUrl = status.stdout.replace('\u001b[?25l','')
@@ -648,7 +646,7 @@ app.get('/csv/:groupName/:formId', async function (req, res) {
   const fileName = `${groupName}-${formId}-${Date.now()}.csv`
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   const outputPath = `/csv/${fileName}`
-  const cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${groupName} ${formId} ${outputPath} ${batchSize}`
+  const cmd = `tangerine generate-csv ${groupName} ${formId} ${outputPath} ${batchSize}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
     log.info(`generate csv done: ${JSON.stringify(status)}`)

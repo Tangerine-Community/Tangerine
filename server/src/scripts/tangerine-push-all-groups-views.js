@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+console.log('yam')
 const fs = require('fs-extra')
 const path = require('path')
 const groupsList = require('/tangerine/server/src/groups-list.js')

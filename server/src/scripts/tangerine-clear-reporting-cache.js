@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+console.log('bar')
 
 const fs = require('fs-extra')
 const path = require('path')

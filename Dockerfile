@@ -53,6 +53,8 @@ RUN cd /tangerine/client/ && ./build.sh
 
 # Add the rest of server.
 ADD server /tangerine/server
+# Enable the tangerine CLI.
+RUN cd /tangerine/server/ && npm link
 
 #
 # Wrap up 
