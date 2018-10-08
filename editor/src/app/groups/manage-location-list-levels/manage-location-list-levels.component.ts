@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { TangyErrorHandler } from 'app/shared/_services/tangy-error-handler.service';
 import { v4 as uuid } from 'uuid';
+import { WindowRef } from '../../core/window-ref.service';
 @Component({
   selector: 'app-manage-location-list-levels',
   templateUrl: './manage-location-list-levels.component.html',
@@ -16,7 +17,8 @@ export class ManageLocationListLevelsComponent implements OnInit {
   locationLabel;
   parentLevel;
   locationListData;
-  constructor(private http: HttpClient, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
+  constructor(private http: HttpClient, private window: WindowRef, private route: ActivatedRoute, private errorHandler: TangyErrorHandler) { }
+
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
@@ -48,6 +50,7 @@ export class ManageLocationListLevelsComponent implements OnInit {
         this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
         this.locationLabel = '';
         this.parentLevel = '';
+        this.window.nativeWindow.location.reload()
       } catch (error) {
         this.errorHandler.handleError('Error Saving Location Lits File to disk');
       }
