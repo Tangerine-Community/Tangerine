@@ -77,7 +77,7 @@ export class UserService {
   async getUserLocations(username?: string) {
     const userProfile = username ? await this.getUserProfile(username) : await this.getUserProfile();
     return userProfile.inputs.reduce((locationIds, input) => {
-      if (input.tagName === 'TANGY-LOCATION') { 
+      if (input.tagName === 'TANGY-LOCATION' && input.value && input.value.length > 0) { 
         // Collect a unique list of the last entries selected.
         return Array.from(new Set([...locationIds, input.value[input.value.length-1].value]).values())
       } else {
