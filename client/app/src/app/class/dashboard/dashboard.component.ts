@@ -265,6 +265,16 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  /** Populate the querystring with the form info. */
+  selectStudentName(column) {
+    let formsArray = Object.values(column.forms)
+    let studentId = column.id
+    let classId = column.classId
+    this.router.navigate(['class-forms-player'], { queryParams:
+        { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId }
+    });
+  }
+
   private renderGrid() {
     // re-init the formColumns and columnsToDisplay
     this.formColumns = [];

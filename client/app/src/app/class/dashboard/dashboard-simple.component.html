@@ -50,7 +50,7 @@
               <th *ngFor="let column of formColumns;let i=index"> {{column}} </th>
             </tr>
             <tr *ngFor="let element of allStudentResults">
-              <td> {{element["name"]}} </td>
+              <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
               <td *ngFor="let form of curriculumForms;let i=index">
                 <span *ngIf="element.forms[form.id]?.response ; else elseBlock ">
                   <mat-checkbox (click)="$event ? selectCheckboxResult(element,i) : null"

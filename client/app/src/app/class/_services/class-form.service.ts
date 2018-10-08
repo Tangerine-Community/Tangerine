@@ -87,7 +87,7 @@ export class ClassFormService {
 
 var tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '19',
+  version: '27',
   views: {
     responsesForStudentRegByClassId: {
       map: function (doc) {
@@ -95,9 +95,10 @@ var tangyClassDesignDoc = {
           if (doc.form.id !== 'student-registration') return
           let inputs = [];
           doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-          let input = inputs.find(input => (input.name === 'classId') ? true : false)
-          if (input) {
-            emit(input.value, true);
+          let classIdInput = inputs.find(input => (input.name === 'classId') ? true : false)
+          if (classIdInput) {
+            let studentNameInput = inputs.find(input => (input.name === 'student_name') ? true : false)
+            emit([classIdInput.value, studentNameInput.value], true);
           }
         }
       }.toString()
