@@ -140,7 +140,8 @@ export class LocationListEditorComponent implements OnInit {
   }
 
   async moveItem(item) {
-    this.locationList.locations = findAndAdd(this.locationList.locations, this.moveLocationParentLevelId, { [item.id]: { ...item } });
+    const locationObject = findAndDeleteChild(this.locationList.locations, this.breadcrumbs[this.breadcrumbs.length - 2]['id'], item.id);
+    this.locationList.locations = findAndAdd(locationObject, this.moveLocationParentLevelId, { [item.id]: { ...item } });
     await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
     this.isMoveLocationFormShown = false;
@@ -171,15 +172,14 @@ function findAndAdd(object, value, replaceValue) {
   }
   return object;
 }
-function findAndDelete(object, value) {
+function findAndDeleteChild(object, parentId, childId) {
   for (let x in object) {
     if (object.hasOwnProperty(x)) {
       if (typeof object[x] === 'object') {
-        findAndDelete(object[x], value);
+        findAndDeleteChild(object[x], parentId, childId);
       }
-      if (object[x] === value) {
-        object = {};
-        console.log(object);
+      if (object[x] === parentId) {
+        delete object['children'][childId];
         break;
       }
     }
