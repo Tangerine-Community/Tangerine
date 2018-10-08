@@ -17,6 +17,8 @@ import { ListUsersComponent } from './list-users/list-users.component';
 import { ReleaseDatComponent } from './release-dat/release-dat.component';
 import { ResponsesComponent } from './responses/responses.component';
 import { LocationListEditorComponent } from './location-list-editor/location-list-editor.component';
+import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
+import { CreateLocationListMetadataComponent } from './create-location-list-metadata/create-location-list-metadata.component';
 
 
 
@@ -49,7 +51,9 @@ import { LocationListEditorComponent } from './location-list-editor/location-lis
     AddUserComponent,
     ListUsersComponent,
     ReleaseDatComponent,
-    ResponsesComponent
+    ResponsesComponent,
+    ManageLocationListLevelsComponent,
+    CreateLocationListMetadataComponent
   ],
   providers: [GroupsService]
 })

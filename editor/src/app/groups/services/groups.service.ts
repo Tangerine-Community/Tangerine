@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
+import { v4 as uuid } from 'uuid';
 export interface Forms {
   id: string;
   title: string;
@@ -185,5 +186,12 @@ export class GroupsService {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
       }
     }
+  }
+  /**
+   * concatenates the first part of the UUID generated with the supplied string which has all non word characters removed
+   */
+  createUserReadableUUID(str = '') {
+    const UUID = uuid();
+    return `${UUID.split('-')[0]}-${str.trim().replace(/\W+/g, '-').toLowerCase()}`;
   }
 }
