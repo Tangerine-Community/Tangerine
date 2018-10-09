@@ -40,18 +40,8 @@
           <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
         </form>
       </div>
-      <div *ngIf="isMoveLocationFormShown">
-        <form name="moveLocationForm" class="tangy-full-width" novalidate #moveLocationForm="ngForm">
-          <mat-form-field class="tangy-full-width">
-            <mat-select name="moveLocationParentLevelId" placeholder="Move to " [(ngModel)]="moveLocationParentLevelId"
-              required>
-              <mat-option *ngFor="let location of parentItemsForMoveLocation" [value]="location.id">
-                {{location.label}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <button type="button" [disabled]="moveLocationForm.invalid" mat-raised-button color="warn" (click)="moveItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
-        </form>
+      <div [hidden]="!isMoveLocationFormShown" #container>
+        <div ></div>
       </div>
 
 
