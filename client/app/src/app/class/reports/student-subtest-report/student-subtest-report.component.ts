@@ -80,7 +80,6 @@ export class StudentSubtestReportComponent implements OnInit {
       subtestReport.curriculumId = curriculumId;
       subtestReport.label = label;
 
-
       let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
       const container = this.container.nativeElement
       let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml, container);
@@ -127,7 +126,9 @@ export class StudentSubtestReportComponent implements OnInit {
         let currentTotal = this.totals[category]
         this.totals[category] = currentTotal + score
         let forms = studentResults[studentId]
-        forms[formTitle] = resultObject
+        if (typeof forms !== 'undefined') {
+          forms[formTitle] = resultObject
+        }
       }
       this.studentCategorizedResults = []
       for (const student of students) {

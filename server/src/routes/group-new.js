@@ -8,13 +8,12 @@ const fs = require('fs-extra')
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
 
-
-
 module.exports = async (req, res) => {
 
   // See if this instance supports the class module, copy the class forms, and set homeUrl
   let homeUrl;
   let syncProtocol;
+  let uploadUnlockedFormReponses;
   let modules = [];
   let modulesString = process.env.T_MODULES;
   modulesString = modulesString.replace(/'/g, '"');
@@ -25,7 +24,7 @@ module.exports = async (req, res) => {
       if (moduleEntry === "class") {
         clog("Setting homeUrl to dashboard")
         homeUrl =  "dashboard"
-        syncProtocol = "replication"
+        uploadUnlockedFormReponses =  true
         // copy the class forms
         const exists = await fs.pathExists('/tangerine/client/app/src/assets/class-registration')
         if (!exists) {
@@ -55,6 +54,9 @@ module.exports = async (req, res) => {
     appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
     if (typeof homeUrl !== 'undefined') {
       appConfig.homeUrl = homeUrl
+    }
+    if (typeof uploadUnlockedFormReponses !== 'undefined') {
+      appConfig.uploadUnlockedFormReponses = uploadUnlockedFormReponses
     }
     if (typeof syncProtocol !== 'undefined') {
       appConfig.syncProtocol = syncProtocol
