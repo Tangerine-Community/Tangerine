@@ -1,29 +1,54 @@
 <tangy-form has-summary linear-mode hide-closed-items id="class-registration" on-change="" >
   <tangy-form-item id="class-registration" title="صف دراسي" hide-back-button hide-next-button on-open="
-    async function loadCurricula(that) {
-       let url = './assets/forms.json'
-       let response = await fetch(url);
-       let data = await response.json();
-       let tcsEl = that.$.content.querySelector('tangy-checkboxes[name=\'curriculum\']')
-       let cbDiv = tcsEl.$.checkboxes;
-       cbDiv.innerHTML = ''
-       data.forEach(function(el) {
-          if (el.id !=='class-registration' && el.id !=='student-registration' && el.id !=='example') {
-              let checkbox = document.createElement('tangy-checkbox')
-              checkbox.name = el.id
-              checkbox.innerHTML = el.title
-              cbDiv.appendChild(checkbox)
+    function fetchLocal(url) {
+      return new Promise(function(resolve, reject) {
+        var xhr = new XMLHttpRequest
+        xhr.onload = function() {
+          if (xhr.status < 200 || xhr.status >= 300) {
+            reject({request: xhr});
+          } else {
+          resolve(new Response(xhr.responseText, {status: xhr.status}))
           }
-       })
+        }
+        xhr.open('GET', url)
+        xhr.send(null)
+      })
+    }
+
+    async function loadCurricula(that) {
+      let filePath = './assets/forms.json'
+      let data;
+      await fetchLocal(filePath)
+      .then(async function (datums) {
+        await datums.json().then(function(json) {
+          data = json
+        });
+      })
+      .catch(function (err) {
+        console.error('Augh, there was an error!', err.request.status);
+      });
+
+      let tcsEl = that.$.content.querySelector('tangy-checkboxes[name=\'curriculum\']')
+      let cbDiv = tcsEl.$.checkboxes;
+      cbDiv.innerHTML = ''
+      data.forEach(function(el) {
+        if (el.id !=='class-registration' && el.id !=='student-registration' && el.id !=='example') {
+            let checkbox = document.createElement('tangy-checkbox')
+            checkbox.name = el.id
+            checkbox.innerHTML = el.title
+            cbDiv.appendChild(checkbox)
+        }
+      })
       let newValue = []
       cbDiv.querySelectorAll('tangy-checkbox')
-        .forEach((el) => {
-          el.addEventListener('change', tcsEl.onCheckboxClick.bind(tcsEl))
-          newValue.push(el.getProps())
-        })
+      .forEach((el) => {
+        el.addEventListener('change', tcsEl.onCheckboxClick.bind(tcsEl))
+        newValue.push(el.getProps())
+      })
       if (!that.value || (typeof that.value === 'object' && that.value.length < newValue.length)) {
-        that.value = newValue
+      that.value = newValue
       }
+
     }
      let that = this;
      loadCurricula(that);
