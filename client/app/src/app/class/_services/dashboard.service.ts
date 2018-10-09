@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import PouchDB from 'pouchdb';
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
-import {ClassFormService} from "./class-form.service";
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
@@ -17,13 +16,11 @@ export class DashboardService {
   ) {
     this.userDB = new PouchDB
     (authenticationService.getCurrentUserDBPath());
-      // this.classFormService = new ClassFormService({databaseName: authenticationService.getCurrentUserDBPath()});
   }
 
   userDB;
   db:any;
   databaseName: String;
-  // classFormService;
 
   async getFormList() {
     const formList:any = await this.http.get('./assets/forms.json')
