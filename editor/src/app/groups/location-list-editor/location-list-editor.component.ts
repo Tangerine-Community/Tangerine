@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { TangyErrorHandler } from 'app/shared/_services/tangy-error-handler.service';
@@ -28,6 +28,7 @@ export class LocationListEditorComponent implements OnInit {
   isMoveLocationFormShown = false;
   parentItemsForMoveLocation;
   moveLocationParentLevelId;
+  @ViewChild('container') container: ElementRef;
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
@@ -115,7 +116,13 @@ export class LocationListEditorComponent implements OnInit {
 
   showMoveLocationForm() {
     this.isMoveLocationFormShown = true;
+    const refineToLevel = ['county','zone']
+    this.container.nativeElement.innerHTML = `
+      <tangy-location show-levels="${refineToLevel.join(',')}" location-src="/editor/${this.groupName}/content/${this.locationListFileName}">
+    `
+    this.container.nativeElement.querySelector('tangy-location').addEventListener('change', event => console.log(event.target.value))
 
+    /*
     if (this.currentPath.length === 2) {
       this.parentItemsForMoveLocation = Object.keys(this.locationList.locations).map(key => {
         return {
@@ -140,6 +147,7 @@ export class LocationListEditorComponent implements OnInit {
         };
       });
     }
+    */
 
   }
 
