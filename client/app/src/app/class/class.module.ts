@@ -12,7 +12,8 @@ import {
   MatSelectModule,
   MatMenuModule,
   MatPaginatorIntl,
-  MatButtonModule
+  MatButtonModule,
+  MatIconModule
 } from '@angular/material';
 import {CdkTableModule} from "@angular/cdk/table";
 import {SharedModule} from "../shared/shared.module";
@@ -41,7 +42,8 @@ import {PageNotFoundComponent} from "./page-not-found.component";
     SharedModule,
     MatCheckboxModule,
     MatPaginatorModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent],
   providers: [DashboardService, {
