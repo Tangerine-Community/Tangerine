@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { TangyErrorHandler } from 'app/shared/_services/tangy-error-handler.service';
 import { GroupsService } from '../services/groups.service';
+import { Loc } from 'tangy-form/loc.js'
 
 @Component({
   selector: 'app-location-list-editor',
@@ -40,6 +41,9 @@ export class LocationListEditorComponent implements OnInit {
     });
     try {
       const data: any = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
+      const flatLocationList = Loc.flatten(data)
+      const zoneLevelLocations = flatLocationList.locations.filter(location => location.level === 'zone')
+      debugger
       this.locationsLevels = data.locationsLevels;
       this.locationsLevelsLength = data.locationsLevels.length;
       await this.setLocationList(data);
