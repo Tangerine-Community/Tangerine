@@ -7,6 +7,7 @@
   "registrationRequiresServerUser": false,
   "listUsernamesOnLoginScreen": true,
   "serverUrl": "http://localhost/",
+  "uploadUnlockedFormReponses": false,
   "groupName": "",
   "uploadToken": "change_this_token",
   "homeUrl": "case-management",
