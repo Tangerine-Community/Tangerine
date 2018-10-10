@@ -6,8 +6,7 @@ import {AuthenticationService} from "../../core/auth/_services/authentication.se
 import {ClassFormService} from "../_services/class-form.service";
 import {SelectionModel} from "@angular/cdk/collections";
 import {Router} from "@angular/router";
-import {tap} from "rxjs/internal/operators";
-import {FormControl} from "@angular/forms";
+import {_TRANSLATE} from "../../shared/translation-marker";
 
 export interface StudentResult {
   id: string;
@@ -61,6 +60,7 @@ export class DashboardComponent implements OnInit {
   pageEvent: PageEvent;
   curriculum; // object that contains name and value of curriculum.
   currArray: any[]; // array of curriculums in a class.
+  classViewService;
 
   @ViewChild('container') container: ElementRef;
 
@@ -78,8 +78,8 @@ export class DashboardComponent implements OnInit {
     (<any>window).Tangy = {}
     const currentUser = await this.authenticationService.getCurrentUser();
     if (currentUser) {
-      const classViewService = new ClassFormService({databaseName: currentUser});
-      classViewService.initialize();
+      this.classViewService = new ClassFormService({databaseName: currentUser});
+      this.classViewService.initialize();
     }
 
   }
@@ -263,6 +263,39 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['class-forms-player'], { queryParams:
         { formId: selectedFormId, curriculum: curriculum, studentId: studentId, classId: classId, itemId: selectedFormId, src: src, title: title, responseId: responseId }
     });
+  }
+
+  /** Populate the querystring with the form info. */
+  selectStudentName(column) {
+    let formsArray = Object.values(column.forms)
+    let studentId = column.id
+    let classId = column.classId
+    this.router.navigate(['class-forms-player'], { queryParams:
+        { curriculum: 'student-registration', studentId: studentId, classId: classId, responseId: studentId }
+    });
+  }
+
+  async archiveStudent(column) {
+    let studentId = column.id
+    console.log("Archiving student:" + studentId)
+    let deleteConfirmed = confirm(_TRANSLATE("Delete this student?"));
+    if (deleteConfirmed) {
+      try {
+        let responses = await this.classViewService.getResponsesByStudentId(studentId)
+        for (const response of responses as any[] ) {
+          response.doc.archive = true;
+          let lastModified = Date.now();
+          response.doc.lastModified = lastModified
+          const archiveResult = await this.classViewService.saveResponse(response.doc)
+          console.log("archiveResult: " + archiveResult)
+        }
+        let result = await this.dashboardService.archiveStudentRegistration(studentId)
+        console.log("result: " + result)
+      } catch (e) {
+        console.log("Error deleting student: " + e)
+        return false;
+      }
+    }
   }
 
   private renderGrid() {

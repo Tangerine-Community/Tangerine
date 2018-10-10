@@ -87,24 +87,25 @@ export class ClassFormService {
 
 var tangyClassDesignDoc = {
   _id: '_design/tangy-class',
-  version: '19',
+  version: '28',
   views: {
     responsesForStudentRegByClassId: {
       map: function (doc) {
-        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
           if (doc.form.id !== 'student-registration') return
           let inputs = [];
           doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-          let input = inputs.find(input => (input.name === 'classId') ? true : false)
-          if (input) {
-            emit(input.value, true);
+          let classIdInput = inputs.find(input => (input.name === 'classId') ? true : false)
+          if (classIdInput) {
+            let studentNameInput = inputs.find(input => (input.name === 'student_name') ? true : false)
+            emit([classIdInput.value, studentNameInput.value], true);
           }
         }
       }.toString()
     },
     responsesByClassIdCurriculumId: {
       map: function (doc) {
-        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
           if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.classId) {
             // console.log("matching: " + doc.metadata.studentRegistrationDoc.classId)
              emit([doc.metadata.studentRegistrationDoc.classId, doc.form.id], true);
@@ -114,7 +115,7 @@ var tangyClassDesignDoc = {
     },
     responsesByClassId: {
       map: function (doc) {
-        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
           if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.classId) {
             emit(doc.metadata.studentRegistrationDoc.classId, true);
           }
@@ -123,7 +124,7 @@ var tangyClassDesignDoc = {
     },
     responsesByStudentId: {
       map: function (doc) {
-        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
+        if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse' && !doc.archive) {
           if (doc.hasOwnProperty('metadata') && doc.metadata.studentRegistrationDoc.id) {
             emit(doc.metadata.studentRegistrationDoc.id, true);
           }
@@ -133,7 +134,9 @@ var tangyClassDesignDoc = {
     responsesByFormId: {
       map: function (doc) {
         if (doc.collection !== 'TangyFormResponse') return
-        emit(`${doc.form.id}`, true)
+        if (!doc.archive) {
+          emit(`${doc.form.id}`, true)
+        }
       }.toString()
     }
   }

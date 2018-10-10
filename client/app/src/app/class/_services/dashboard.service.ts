@@ -44,7 +44,8 @@ export class DashboardService {
 
   async getMyStudents(selectedClass: any) {
     const result = await this.userDB.query('tangy-class/responsesForStudentRegByClassId', {
-      key: selectedClass,
+      startkey: [selectedClass],
+      endkey: [selectedClass,{}],
       include_docs: true
     });
     return result.rows;
@@ -71,6 +72,24 @@ export class DashboardService {
     }
     return obj;
   };
+
+  /**
+   * Acts like a delete but archives instead so that it will get sync'd.
+   * @param id
+   */
+  async archiveStudentRegistration(id) {
+    try {
+      let doc = await this.userDB.get(id)
+      doc.archive = true
+      let lastModified = Date.now();
+      doc.lastModified = lastModified
+      const result = await this.userDB.put(doc)
+      return result
+    } catch (e) {
+      console.log("Error deleting student: " + e)
+    }
+
+  }
 
   /**
    * Creates a list of forms with the results populated
@@ -114,16 +133,28 @@ export class DashboardService {
             lastModified = metadata['lastModified']
           }
           // populate answeredQuestions array
-          item.inputs.forEach(item => {
-            // inputs = [...inputs, ...item.value]
-            if (item.value !== "") {
+          item.inputs.forEach(input => {
+            // inputs = [...inputs, ...input.value]
+            if (input.value !== "") {
               let data = {}
-              data[item.name] = item.value;
+              let valueField = input.value;
+              let value;
+              if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+                valueField.forEach(option => {
+                  if (option.value !== "") {
+                    value = option.name
+                  }
+                })
+              } else {
+                value = input.value
+              }
+              data[input.name] = value;
               answeredQuestions.push(data)
-              if (item.name === curriculumFormsList[i]['id'] + "_score") {
-                score = item.value
+              if (input.name === curriculumFormsList[i]['id'] + "_score") {
+                score = value
               }
             }
+
           })
           // loop through answeredQuestions and calculate correct, incorrect, and missing.
         //   if (curriculumFormsList[i]['prototype'] === 'grid') {
