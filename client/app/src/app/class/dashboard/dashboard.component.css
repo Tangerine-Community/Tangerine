@@ -48,5 +48,11 @@ th.mat-header-cell {
   margin-left:10px;
 }
 
+.student-name {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+}
+
 
 
