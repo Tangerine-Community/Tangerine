@@ -133,16 +133,28 @@ export class DashboardService {
             lastModified = metadata['lastModified']
           }
           // populate answeredQuestions array
-          item.inputs.forEach(item => {
-            // inputs = [...inputs, ...item.value]
-            if (item.value !== "") {
+          item.inputs.forEach(input => {
+            // inputs = [...inputs, ...input.value]
+            if (input.value !== "") {
               let data = {}
-              data[item.name] = item.value;
+              let valueField = input.value;
+              let value;
+              if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+                valueField.forEach(option => {
+                  if (option.value !== "") {
+                    value = option.name
+                  }
+                })
+              } else {
+                value = input.value
+              }
+              data[input.name] = value;
               answeredQuestions.push(data)
-              if (item.name === curriculumFormsList[i]['id'] + "_score") {
-                score = item.value
+              if (input.name === curriculumFormsList[i]['id'] + "_score") {
+                score = value
               }
             }
+
           })
           // loop through answeredQuestions and calculate correct, incorrect, and missing.
         //   if (curriculumFormsList[i]['prototype'] === 'grid') {
