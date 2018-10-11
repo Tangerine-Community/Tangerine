@@ -5,6 +5,9 @@ const writeFile = util.promisify(fs.writeFile)
 const groupsList = require('./groups-list')
 const { log } = require('tangy-log')
 const { get, put } = require('axios')
+const DB = require('./db')
+
+const PAID_BATCH_SIZE=5
 
 const allowance = process.env.T_PAID_ALLOWANCE ? process.env.T_PAID_ALLOWANCE : 'unlimited'
 const defaultState = {
@@ -15,7 +18,12 @@ const defaultState = {
 
 async function runPaidWorker() {
   let state = JSON.parse(await readFile('/paid-worker-state.json', 'utf-8'))
-  state = await runBatch(state)
+  // Have we exceeded our allowance? Bail.
+  if (state.totalMarkedPaid >= allowance) {
+    state = Object.assign({}, state, {batchMarkedPaid: 0})
+  } else {
+    state = await runBatch(state)
+  }
   await writeFile('/paid-worker-state.json', JSON.stringify(state), 'utf-8')
   return state
 }
@@ -37,8 +45,6 @@ async function runBatch(currentState) {
       return Object.assign({}, groupEntry, {deleted: false})
     }
   })
-  // Have we exceeded our allowance? Bail.
-  if (state.totalMarkedPaid >= allowance) return Object.assign({}, state, {batchMarkedPaid: 0})
   // Process state.groups.
   let processedGroups = []
   let totalMarkedPaid = state.groups.reduce((totalMarkedPaid, groupEntry) => totalMarkedPaid + groupEntry.totalMarkedPaid, 0)
@@ -64,9 +70,14 @@ async function runBatch(currentState) {
 async function processGroup(groupEntry) {
   let batchMarkedPaid = 0
   let totalMarkedPaid = groupEntry.totalMarkedPaid
+  let db = new DB(groupEntry.name)
   // Test.
-  batchMarkedPaid = 5
-  //get()
+  const response = await db.query('unpaid', {limit: PAID_BATCH_SIZE, include_docs:true})
+  const docs = response.rows.map(row => row.doc)
+  for (let doc of docs) {
+    await db.put(Object.assign({}, doc, {paid: true}))
+  }
+  batchMarkedPaid = docs.length
   totalMarkedPaid = totalMarkedPaid + batchMarkedPaid
   return Object.assign({}, groupEntry, {batchMarkedPaid, totalMarkedPaid})
 
