@@ -95,4 +95,4 @@ async function processGroup(groupEntry) {
 
 }
 
-module.exports = runPaidWorker }
+module.exports = runPaidWorker
