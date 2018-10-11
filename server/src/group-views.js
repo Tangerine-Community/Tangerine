@@ -32,6 +32,12 @@ module.exports.responsesByUserProfileId = function(doc) {
   }
 }
 
+module.exports.unpaid = function(doc) {
+  if (doc.collection = "TangyFormResponse" && !doc.paid) {
+    emit(true, true)
+  }
+}
+
 module.exports.responsesByUserProfileShortCode = function(doc) {
   if (doc.collection = "TangyFormResponse") {
     if (doc.form && doc.form.id === 'user-profile') {
