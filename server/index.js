@@ -672,6 +672,26 @@ const keepAliveReportingWorker = async initialGroups => {
 const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
 
+const runPaidWorker = require('./src/paid-worker')
+
+async function keepAlivePaidWorker() {
+  let state = {}
+  while(true) {
+    try {
+      state = await runPaidWorker()
+      if (state.batchMarkedPaid === 0) {
+        log.info('No responses marked as paid. Sleeping...')
+        await sleep(1*1000)
+      }
+    } catch (error) {
+      debugger
+      log.error(error)
+      await sleep(1*1000)
+    }
+  }
+}
+keepAlivePaidWorker()
+
 // Start the server.
 var server = app.listen('80', function () {
   var host = server.address().address;

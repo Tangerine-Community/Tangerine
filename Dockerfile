@@ -61,6 +61,8 @@ ADD server /tangerine/server
 ADD ./ /tangerine
 
 RUN mkdir /csv
+RUN mkdir /groups
+RUN echo {} > /paid-worker-state.json
 
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && node index.js 
