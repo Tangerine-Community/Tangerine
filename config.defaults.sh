@@ -18,6 +18,8 @@ T_TAG=""
 T_CONTAINER_NAME="tangerine"
 T_COUCHDB_CONTAINER_NAME="couchdb"
 T_PORT_MAPPING="-p 80:80"
+# Other option is "group" which will make sure allowance applies to the group level.
+T_PAID_MODE="site"
 T_PAID_ALLOWANCE="unlimited"
 T_CSV_BATCH_SIZE=50
 T_HIDE_PROFILE="false"

@@ -119,6 +119,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   --env \"T_REPLICATE=$T_REPLICATE\" \
   --env \"T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE\" \
+  --env \"T_PAID_MODE=$T_PAID_MODE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_MODULES=$T_MODULES\" \
@@ -137,6 +138,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
+  --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \

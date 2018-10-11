@@ -684,8 +684,8 @@ async function keepAlivePaidWorker() {
         await sleep(1*1000)
       }
     } catch (error) {
-      debugger
-      log.error(error)
+      log.error(error.message)
+      console.log(error)
       await sleep(1*1000)
     }
   }
