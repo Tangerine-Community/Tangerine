@@ -17,6 +17,18 @@ const defaultState = {
 }
 
 async function runPaidWorker() {
+  if (process.env.T_PAID_MODE === 'group') {
+    return await runPaidGroupWorker()
+  } else if (process.env.T_PAID_MODE === 'site') {
+    return await runPaidSiteWorker()
+  }
+}
+
+async function runPaidGroupWorker() {
+
+}
+
+async function runPaidSiteWorker() {
   let state = JSON.parse(await readFile('/paid-worker-state.json', 'utf-8'))
   // Have we exceeded our allowance? Bail.
   if (state.totalMarkedPaid >= allowance) {
@@ -83,4 +95,4 @@ async function processGroup(groupEntry) {
 
 }
 
-module.exports = runPaidWorker
+module.exports = runPaidWorker }
