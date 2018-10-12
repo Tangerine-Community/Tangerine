@@ -175,6 +175,10 @@ app.delete('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-
 if (process.env.T_LEGACY === "true") {
   app.post('/upload/:groupId', require('./src/routes/group-upload.js'))
 }
+app.get('/usage', require('./src/routes/usage'));
+app.get('/usage/:startdate', require('./src/routes/usage'));
+app.get('/usage/:startdate/:enddate', require('./src/routes/usage'));
+
 
 // Static assets.
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
@@ -673,7 +677,6 @@ const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
 
 const runPaidWorker = require('./src/paid-worker')
-
 async function keepAlivePaidWorker() {
   let state = {}
   while(true) {
