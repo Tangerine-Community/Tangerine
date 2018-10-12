@@ -684,12 +684,14 @@ async function keepAlivePaidWorker() {
       state = await runPaidWorker()
       if (state.batchMarkedPaid === 0) {
         log.info('No responses marked as paid. Sleeping...')
-        await sleep(1*1000)
+        await sleep(30*1000)
+      } else {
+        log.info(`Marked ${state.batchMarkedPaid} responses as paid.`)
       }
     } catch (error) {
       log.error(error.message)
       console.log(error)
-      await sleep(1*1000)
+      await sleep(30*1000)
     }
   }
 }
