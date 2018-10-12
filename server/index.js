@@ -175,6 +175,10 @@ app.delete('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-
 if (process.env.T_LEGACY === "true") {
   app.post('/upload/:groupId', require('./src/routes/group-upload.js'))
 }
+app.get('/usage', require('./src/routes/usage'));
+app.get('/usage/:startdate', require('./src/routes/usage'));
+app.get('/usage/:startdate/:enddate', require('./src/routes/usage'));
+
 
 // Static assets.
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
@@ -671,6 +675,27 @@ const keepAliveReportingWorker = async initialGroups => {
 }
 const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
+
+const runPaidWorker = require('./src/paid-worker')
+async function keepAlivePaidWorker() {
+  let state = {}
+  while(true) {
+    try {
+      state = await runPaidWorker()
+      if (state.batchMarkedPaid === 0) {
+        log.info('No responses marked as paid. Sleeping...')
+        await sleep(30*1000)
+      } else {
+        log.info(`Marked ${state.batchMarkedPaid} responses as paid.`)
+      }
+    } catch (error) {
+      log.error(error.message)
+      console.log(error)
+      await sleep(30*1000)
+    }
+  }
+}
+keepAlivePaidWorker()
 
 // Start the server.
 var server = app.listen('80', function () {
