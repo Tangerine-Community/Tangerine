@@ -9,7 +9,8 @@ const DB = require('./db')
 
 const PAID_BATCH_SIZE=5
 
-const allowance = process.env.T_PAID_ALLOWANCE ? process.env.T_PAID_ALLOWANCE : 'unlimited'
+const allowance = (process.env.T_PAID_ALLOWANCE && process.env.T_PAID_ALLOWANCE !== 'unlimited') ? parseInt(process.env.T_PAID_ALLOWANCE) : 'unlimited'
+
 const defaultState = {
   batchMarkedPaid: 0,
   totalMarkedPaid: 0,
@@ -17,30 +18,7 @@ const defaultState = {
 }
 
 async function runPaidWorker() {
-  if (process.env.T_PAID_MODE === 'group') {
-    return await runPaidGroupWorker()
-  } else if (process.env.T_PAID_MODE === 'site') {
-    return await runPaidSiteWorker()
-  }
-}
-
-async function runPaidGroupWorker() {
-
-}
-
-async function runPaidSiteWorker() {
-  let state = JSON.parse(await readFile('/paid-worker-state.json', 'utf-8'))
-  // Have we exceeded our allowance? Bail.
-  if (state.totalMarkedPaid >= allowance) {
-    state = Object.assign({}, state, {batchMarkedPaid: 0})
-  } else {
-    state = await runBatch(state)
-  }
-  await writeFile('/paid-worker-state.json', JSON.stringify(state), 'utf-8')
-  return state
-}
-
-async function runBatch(currentState) {
+  let currentState = JSON.parse(await readFile('/paid-worker-state.json', 'utf-8'))
   let state = Object.assign({}, defaultState, currentState)
   const groupNames = await groupsList()
   // Ensure all groups are accounted for in state.groups array.
@@ -57,26 +35,27 @@ async function runBatch(currentState) {
       return Object.assign({}, groupEntry, {deleted: false})
     }
   })
-  // Process state.groups.
   let processedGroups = []
   let totalMarkedPaid = state.groups.reduce((totalMarkedPaid, groupEntry) => totalMarkedPaid + groupEntry.totalMarkedPaid, 0)
   for (let groupEntry of state.groups) {
-    if (totalMarkedPaid < allowance) {
+    if (
+      (process.env.T_PAID_MODE === 'site' && totalMarkedPaid < allowance)
+      || 
+      (process.env.T_PAID_MODE === 'group' && groupEntry.totalMarkedPaid < allowance)
+    ) {
       const processedGroup = await processGroup(groupEntry)
-      totalMarkedPaid = processedGroup.batchMarkedPaid + totalMarkedPaid
+      totalMarkedPaid = totalMarkedPaid + processedGroup.batchMarkedPaid
       processedGroups.push(processedGroup)
+    } else {
+      processedGroups.push(Object.assign({}, groupEntry, {batchMarkedPaid: 0}))
     }
   }
-  const batchMarkedPaid = processedGroups.reduce((batchMarkedPaid, groupEntry) => batchMarkedPaid + groupEntry.batchMarkedPaid, 0)
-  const groups = state.groups.map(groupEntry => {
-    const processedGroup = processedGroups.find(processedGroup => processedGroup.name === groupEntry.name)
-    if (processedGroup) {
-      return Object.assign({}, groupEntry, processedGroup)
-    } else {
-      return groupEntry
-    }
-  }) 
-  return Object.assign({}, state, {batchMarkedPaid, totalMarkedPaid, groups})
+  state.groups = processedGroups
+  state.batchMarkedPaid = state.groups.reduce((batchMarkedPaid, groupEntry) => batchMarkedPaid + groupEntry.batchMarkedPaid, 0)
+  state.totalMarkedPaid = state.groups.reduce((totalMarkedPaid, groupEntry) => totalMarkedPaid + groupEntry.totalMarkedPaid, 0)
+  await writeFile('/paid-worker-state.json', JSON.stringify(state), 'utf-8')
+  return state
+
 }
 
 async function processGroup(groupEntry) {
@@ -92,7 +71,6 @@ async function processGroup(groupEntry) {
   batchMarkedPaid = docs.length
   totalMarkedPaid = totalMarkedPaid + batchMarkedPaid
   return Object.assign({}, groupEntry, {batchMarkedPaid, totalMarkedPaid})
-
 }
 
 module.exports = runPaidWorker
