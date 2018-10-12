@@ -40,6 +40,10 @@ fi
 if [ ! -f data/worker-state.json ]; then
   echo '{}' > data/worker-state.json
 fi
+if [ ! -f data/paid-state.json ]; then
+  echo '{}' > data/paid-state.json
+fi
+
 
 
 # Load config.
@@ -88,14 +92,18 @@ RUN_OPTIONS="
   --env \"T_MODULES=$T_MODULES\" \
   --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
+  --env \"T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE\" \
+  --env \"T_PAID_MODE=$T_PAID_MODE\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
   --env \"T_LEGACY=$T_LEGACY\" \
   --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
+  --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
+  --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
