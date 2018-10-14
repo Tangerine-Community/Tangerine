@@ -32,11 +32,11 @@ export class ResponsesComponent implements OnInit {
 
   async getResponses() {
     if (this.filter === '*') {
-      let responses = await this.http.get(`/api/${this.groupName}/responses/${this.limit}/${this.skip}`).toPromise()
-      this.responses = responses
+      let responses = <any>await this.http.get(`/api/${this.groupName}/responses/${this.limit}/${this.skip}`).toPromise()
+      this.responses = responses.map(response => Object.assign({}, response, {userProfileId: response.items[0].inputs.reduce((userProfileId, input) => input.name === 'userProfileId' ? input.value : userProfileId, 'anonymous')}))
     } else {
-      let responses = await this.http.get(`/api/${this.groupName}/responsesByFormId/${this.filter}/${this.limit}/${this.skip}`).toPromise()
-      this.responses = responses
+      let responses = <any>await this.http.get(`/api/${this.groupName}/responsesByFormId/${this.filter}/${this.limit}/${this.skip}`).toPromise()
+      this.responses = responses.map(response => Object.assign({}, response, {userProfileId: response.items[0].inputs.reduce((userProfileId, input) => input.name === 'userProfileId' ? input.value : userProfileId, 'anonymous')}))
     }
   }
 
