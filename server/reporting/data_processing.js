@@ -38,9 +38,13 @@ exports.changeProcessor = (change, sourceDb) => {
       .then(doc => {
         switch (doc.collection) {
           case 'TangyFormResponse':
-            processFormResponse(doc, sourceDb)
-              .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
-              .catch(error => { reject(error) })
+            if (process.env.T_PAID_ALLOWANCE !== 'unlimited' && !doc.paid) {
+              resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
+            } else {
+              processFormResponse(doc, sourceDb)
+                .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
+                .catch(error => { reject(error) })
+            }
             break
           default:
             resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
