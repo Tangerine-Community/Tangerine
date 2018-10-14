@@ -51,3 +51,8 @@ If you want to keep the cache worker running, use watch.
 watch -n 1 "cat /worker-state.json | node /tangerine/server/reporting/run-worker.js | tee /.worker-state.json | json_pp && cp /.worker-state.json /worker-state.json"
 ```
 
+If you need to clear a reporting cache, don't simply delete the reporting db. Use
+```
+cd /tangerine/server/src/scripts
+./clear-reporting-cache.js
+```
