@@ -19,10 +19,9 @@
           mat-raised-button (click)="isAddLocationItemFormShown=!isAddLocationItemFormShown">Hide Form</button>
         <button (click)="editItem(breadcrumbs[breadcrumbs.length-1])" *ngIf="breadcrumbs.length>1" mat-raised-button>EDIT
           {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-        <button *ngIf="locationsLevelsLength+1===breadcrumbs.length&&!isMoveLocationFormShown" mat-raised-button
-          (click)="showMoveLocationForm()">MOVE
+        <button *ngIf="breadcrumbs.length>2&&!isMoveLocationFormShown" mat-raised-button (click)="showMoveLocationForm()">MOVE
           {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-        <button *ngIf="locationsLevelsLength+1===breadcrumbs.length&&isMoveLocationFormShown" mat-raised-button (click)="isMoveLocationFormShown=!isMoveLocationFormShown">HIDE
+        <button *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" mat-raised-button (click)="isMoveLocationFormShown=!isMoveLocationFormShown">HIDE
           FORM</button>
       </div>
 
