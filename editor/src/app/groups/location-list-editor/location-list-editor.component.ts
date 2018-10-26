@@ -44,8 +44,8 @@ export class LocationListEditorComponent implements OnInit {
     try {
       const data: any = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
       const flatLocationList = Loc.flatten(data);
+      // TODO Why do we need zoneLevelLocations???
       const zoneLevelLocations = flatLocationList.locations.filter(location => location.level === 'zone');
-      // debugger;
       this.locationsLevels = data.locationsLevels;
       this.locationsLevelsLength = data.locationsLevels.length;
       await this.setLocationList(data);
@@ -88,10 +88,12 @@ export class LocationListEditorComponent implements OnInit {
 
   onChildClick(id) {
     this.openPath([...this.currentPath, ...id]);
+    this.updateMoveLocationForm();
   }
 
   onClickBreadcrumb(id) {
     this.openPath(this.currentPath.slice(0, this.currentPath.indexOf(id) + 1));
+    this.updateMoveLocationForm();
   }
 
   async addItem(parentItem) {
@@ -117,17 +119,18 @@ export class LocationListEditorComponent implements OnInit {
 
   showMoveLocationForm() {
     this.isMoveLocationFormShown = true;
-    const refineToLevel = [...this.locationsLevels].slice(0, this.locationsLevels.length - 1);
+  }
+  updateMoveLocationForm() {
+    const refineToLevel = [...this.locationsLevels].slice(0, this.breadcrumbs.length - 2);
     this.container.nativeElement.innerHTML = `
       <tangy-location show-levels="${refineToLevel.join(',')}" 
         location-src="/editor/${this.groupName}/content/${this.locationListFileName}">
     `;
     this.container.nativeElement.querySelector('tangy-location').
       addEventListener('change', event => this.onTangyLocationChange(event.target.value));
-
   }
   onTangyLocationChange(value) {
-    const itemId = value[value.length - 1]['value'];
+    const itemId = value[this.breadcrumbs.length - 3]['value'];
     this.canMoveItem = itemId ? true : false;
     this.moveLocationParentLevelId = this.canMoveItem ? itemId : '';
   }
