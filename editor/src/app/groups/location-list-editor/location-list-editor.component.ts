@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { TangyErrorHandler } from 'app/shared/_services/tangy-error-handler.service';
 import { GroupsService } from '../services/groups.service';
-import { Loc } from 'tangy-form/loc.js'
+import { Loc } from 'tangy-form/loc.js';
 
 @Component({
   selector: 'app-location-list-editor',
@@ -28,6 +28,7 @@ export class LocationListEditorComponent implements OnInit {
   isMoveLocationFormShown = false;
   parentItemsForMoveLocation;
   moveLocationParentLevelId;
+  canMoveItem = false;
   @ViewChild('container') container: ElementRef;
   constructor(
     private http: HttpClient,
@@ -42,9 +43,9 @@ export class LocationListEditorComponent implements OnInit {
     });
     try {
       const data: any = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
-      const flatLocationList = Loc.flatten(data)
-      const zoneLevelLocations = flatLocationList.locations.filter(location => location.level === 'zone')
-      debugger
+      const flatLocationList = Loc.flatten(data);
+      const zoneLevelLocations = flatLocationList.locations.filter(location => location.level === 'zone');
+      // debugger;
       this.locationsLevels = data.locationsLevels;
       this.locationsLevelsLength = data.locationsLevels.length;
       await this.setLocationList(data);
@@ -116,43 +117,27 @@ export class LocationListEditorComponent implements OnInit {
 
   showMoveLocationForm() {
     this.isMoveLocationFormShown = true;
-    const refineToLevel = ['county','zone']
+    const refineToLevel = [...this.locationsLevels].slice(0, this.locationsLevels.length - 1);
     this.container.nativeElement.innerHTML = `
-      <tangy-location show-levels="${refineToLevel.join(',')}" location-src="/editor/${this.groupName}/content/${this.locationListFileName}">
-    `
-    this.container.nativeElement.querySelector('tangy-location').addEventListener('change', event => console.log(event.target.value))
-
-    /*
-    if (this.currentPath.length === 2) {
-      this.parentItemsForMoveLocation = Object.keys(this.locationList.locations).map(key => {
-        return {
-          id: this.locationList.locations[key]['id'],
-          label: this.locationList.locations[key]['label'],
-        };
-      });
-    }
-    if (this.currentPath.length > 2) {
-      let path = '';
-      [...this.currentPath.slice(0, this.currentPath.length - 2)].map((item, index) => {
-        if (index === 0) {
-          return path += `${item}.children`;
-        }
-        return path += `.${item}.children`;
-      });
-      const children = findChildren(this.locationList.locations, path);
-      this.parentItemsForMoveLocation = Object.keys(children).map(key => {
-        return {
-          id: children[key]['id'],
-          label: children[key]['label'],
-        };
-      });
-    }
-    */
+      <tangy-location show-levels="${refineToLevel.join(',')}" 
+        location-src="/editor/${this.groupName}/content/${this.locationListFileName}">
+    `;
+    this.container.nativeElement.querySelector('tangy-location').
+      addEventListener('change', event => this.onTangyLocationChange(event.target.value));
 
   }
+  onTangyLocationChange(value) {
+    const itemId = value[value.length - 1]['value'];
+    this.canMoveItem = itemId ? true : false;
+    this.moveLocationParentLevelId = this.canMoveItem ? itemId : '';
+  }
 
+  onSubmitMoveItem() {
+    this.moveItem(this.breadcrumbs[this.breadcrumbs.length - 1]);
+  }
   async moveItem(item) {
-    this.locationList.locations = findAndAdd(this.locationList.locations, this.moveLocationParentLevelId, { [item.id]: { ...item } });
+    const locationObject = findAndDeleteChild(this.locationList.locations, this.breadcrumbs[this.breadcrumbs.length - 2]['id'], item.id);
+    this.locationList.locations = findAndAdd(locationObject, this.moveLocationParentLevelId, { [item.id]: { ...item } });
     await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
     this.isMoveLocationFormShown = false;
@@ -183,15 +168,14 @@ function findAndAdd(object, value, replaceValue) {
   }
   return object;
 }
-function findAndDelete(object, value) {
+function findAndDeleteChild(object, parentId, childId) {
   for (let x in object) {
     if (object.hasOwnProperty(x)) {
       if (typeof object[x] === 'object') {
-        findAndDelete(object[x], value);
+        findAndDeleteChild(object[x], parentId, childId);
       }
-      if (object[x] === value) {
-        object = {};
-        console.log(object);
+      if (object[x] === parentId) {
+        delete object['children'][childId];
         break;
       }
     }

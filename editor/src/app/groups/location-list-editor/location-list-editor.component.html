@@ -40,9 +40,13 @@
           <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
         </form>
       </div>
-      <div [hidden]="!isMoveLocationFormShown" #container>
-        <div ></div>
+      <div [hidden]="!isMoveLocationFormShown">
+        <div #container>
+          <div></div>
+        </div>
+        <button type="button" [disabled]="!canMoveItem" mat-raised-button color="warn" (click)="onSubmitMoveItem()">{{'Submit'|translate}}</button>
       </div>
+
 
 
       <mat-list>
