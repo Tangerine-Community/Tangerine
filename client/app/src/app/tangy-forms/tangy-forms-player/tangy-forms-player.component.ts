@@ -44,6 +44,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       } else {
         formInfo = await this.getFormInfoByIndex(this.formIndex);
       }
+      this.windowRef.nativeWindow.tangyLocationFilterBy = (await this.userService.getUserLocations()).join(',')
       const userDbName = await this.userService.getUserDatabase();
       const tangyFormService = new TangyFormService({ databaseName: userDbName });
       this.service = tangyFormService

@@ -15,6 +15,7 @@ export class GroupDetailsComponent implements OnInit {
   groupName;
   isSuperAdminUser;
   isGroupAdminUser;
+  responses;
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,

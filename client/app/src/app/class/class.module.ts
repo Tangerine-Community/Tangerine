@@ -11,7 +11,9 @@ import {
   MatTabsModule,
   MatSelectModule,
   MatMenuModule,
-  MatPaginatorIntl
+  MatPaginatorIntl,
+  MatButtonModule,
+  MatIconModule
 } from '@angular/material';
 import {CdkTableModule} from "@angular/cdk/table";
 import {SharedModule} from "../shared/shared.module";
@@ -19,9 +21,11 @@ import {DashboardService} from "./_services/dashboard.service";
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { ClassFormsPlayerComponent } from './class-forms-player/class-forms-player.component';
-import { ReportsComponent } from './reports/reports.component';
 import {MatPaginationIntlService} from "./_services/mat-pagination-intl.service";
 import {TranslateService} from "@ngx-translate/core";
+import { StudentSubtestReportComponent } from './reports/student-subtest-report/student-subtest-report.component';
+import { StudentGroupingReportComponent } from './reports/student-grouping-report/student-grouping-report.component';
+import {PageNotFoundComponent} from "./page-not-found.component";
 
 @NgModule({
   imports: [
@@ -37,9 +41,11 @@ import {TranslateService} from "@ngx-translate/core";
     MatSelectModule,
     SharedModule,
     MatCheckboxModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatButtonModule,
+    MatIconModule
   ],
-  declarations: [DashboardComponent, ClassFormsPlayerComponent, ReportsComponent],
+  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent],
   providers: [DashboardService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {

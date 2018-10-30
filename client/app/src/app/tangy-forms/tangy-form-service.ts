@@ -1,4 +1,5 @@
 import PouchDB from 'pouchdb';
+import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
@@ -86,7 +87,7 @@ export class TangyFormService {
 
   async getResponsesByFormId(formId) {
     let r = await this.db.query('tangy-form/responsesByFormId', { key: formId, include_docs: true })
-    return r.rows.map((row) => row.doc)
+    return r.rows.map((row) => new TangyFormResponseModel(row.doc))
   }
 
   async getResponsesByLocationId(locationId) {
@@ -98,7 +99,7 @@ export class TangyFormService {
 
 var tangyFormDesignDoc = {
   _id: '_design/tangy-form',
-  version: '31',
+  version: '51',
   views: {
     responsesByFormId: {
       map: function (doc) {
@@ -106,17 +107,54 @@ var tangyFormDesignDoc = {
         emit(`${doc.form.id}`, true)
       }.toString()
     },
+    responsesCompleted: {
+      map: function (doc) {
+        if ((doc.collection === 'TangyFormResponse' && doc.complete === true ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile'))) {
+          emit(doc._id, true)
+        }
+      }.toString()
+    },
     responsesLockedAndNotUploaded: {
       map: function (doc) {
-        if ((doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime ||
-          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime))) {
+        if (
+          (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime)
+          ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
+        ) {
+          emit(doc._id, true)
+        }
+      }.toString()
+    },
+    responsesUnLockedAndNotUploaded: {
+      map: function (doc) {
+        if (
+          (doc.collection === 'TangyFormResponse' && (!doc.uploadDatetime || doc.lastModified > doc.uploadDatetime))
+          ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
+        ) {
           emit(doc._id, true)
         }
       }.toString()
     },
     responsesLockedAndUploaded: {
       map: function (doc) {
-        if (doc.collection === 'TangyFormResponse' && doc.complete === true && !!doc.uploadDatetime) {
+        if (
+          (doc.collection === 'TangyFormResponse' && doc.complete === true && !!doc.uploadDatetime)
+          ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
+        ) {
+          emit(doc._id, true)
+        }
+      }.toString()
+    },
+    responsesUnLockedAndUploaded: {
+      map: function (doc) {
+        if (
+          (doc.collection === 'TangyFormResponse' && (doc.uploadDatetime || doc.lastModified <= doc.uploadDatetime))
+          ||
+          (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
+        ) {
           emit(doc._id, true)
         }
       }.toString()
@@ -139,7 +177,8 @@ var tangyFormDesignDoc = {
       map: function (doc) {
         if (doc.hasOwnProperty('collection') && doc.collection === 'TangyFormResponse') {
           if (doc.form.id === 'user-profile' || doc.form.id === 'reports') return
-          const startDatetime = new Date(doc.startDatetime);
+          // @TODO Take into account timezone.
+          const startDatetime = new Date(doc.startUnixtime);
           let inputs = [];
           doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
           let location = inputs.find(input => (input.tagName === 'TANGY-LOCATION') ? true : false)

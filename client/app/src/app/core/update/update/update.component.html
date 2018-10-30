@@ -7,3 +7,6 @@
 <h1 *ngIf="needsUpdating">
   {{'Total Updates Applied'|translate}} {{totalUpdatesApplied}}
 </h1>
+<button routerLink="/home" *ngIf="complete" mat-raised-button>
+  {{'continue'|translate}}
+</button>

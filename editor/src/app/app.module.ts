@@ -21,11 +21,10 @@ import { TangyErrorHandler } from './shared/_services/tangy-error-handler.servic
 import { SupportComponent } from './support/support.component';
 import { WindowRef } from './core/window-ref.service';
 import { TangerineReportsModule } from './tangerine-reports/tangerine-reports.module';
-
-
+import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
-  return new TranslateHttpLoader(httpClient, '../client/content/', '.json');
+  return new TranslateHttpLoader(httpClient, './assets/', '.json');
 }
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -36,6 +35,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     ProfileModule,
     GroupsModule,
     BrowserModule,
+    TangyFormsModule,
     NgTangyFormEditorModule,
     TangerineReportsModule,
     ReactiveFormsModule,

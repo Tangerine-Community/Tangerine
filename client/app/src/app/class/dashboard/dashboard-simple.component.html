@@ -1,0 +1,89 @@
+<mat-tab-group #ClassesTabGroup (selectedTabChange)="tabChanged($event,'class')" [selectedIndex]="selectedIndex">
+  <mat-tab
+    *ngFor="let class of classes; let classIndex=index"
+    label="{{class.doc.items[0].inputs[2].value}}"
+    attr.data-classId = "{{class.id}}">
+    <ng-template matTabContent>
+        <mat-tab-group class="tangy-tab-curriculum" (selectedTabChange)="tabChanged($event, 'curriculum')" [selectedIndex]="selectedIndex">
+          <mat-tab
+            *ngFor="let curriculum of currArray"
+            label="{{curriculum.label}}"
+          >
+          </mat-tab>
+        </mat-tab-group>
+
+      <mat-card class="tangy-card-content-container">
+        <mat-list>
+          <mat-list-item >
+            <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a title="Add Student" class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:class.doc._id}>{{'Add Student'|translate}}</a>)</span>
+            <span dir="rtl">&nbsp;&nbsp;&nbsp;
+              <button mat-button [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+              <mat-menu #groupingMenu="matMenu">
+                <ng-template matMenuContent>
+                <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+                </ng-template>
+              </mat-menu>
+              <mat-menu #reportsMenu="matMenu">
+                <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
+                <button mat-menu-item routerLink="/reports/studentSubtestReport/{{class.id}}">{{'Student Subtest Report'|translate}}</button>
+              </mat-menu>
+            </span>
+          </mat-list-item>
+            <mat-list-item *ngIf="!students">
+              <p class="mat-h3">{{'No Students currently registered.'|translate}}</p>
+            </mat-list-item>
+        </mat-list>
+        <div [hidden]="isLoading">
+          <table>
+            <tr>
+              <th>&nbsp;</th>
+              <th>Student</th>
+              <th *ngFor="let column of formColumns;let i=index"> {{column}} </th>
+            </tr>
+            <tr *ngFor="let element of allStudentResults">
+              <td (click)="$event ? archiveStudent(element) : null" >
+                <button routerLink="manage-user-profile" mat-menu-item>
+                  <mat-icon class="material-icons menu-tangy-location-list-icon">delete</mat-icon>
+                </button>
+              </td>
+              <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
+              <td *ngFor="let form of curriculumForms;let i=index">
+                <span *ngIf="element.forms[form.id]?.response ; else elseBlock ">
+                  <mat-checkbox (click)="$event ? selectCheckboxResult(element,i) : null"
+                            [checked]="true"
+                            [disabled]="true">
+                  </mat-checkbox>
+                </span>
+                <ng-template #elseBlock>
+                  <span>
+                <mat-checkbox (click)="$event.stopPropagation()"
+                (change)="$event ? selectCheckbox(element,i) : null"
+                [checked]="selection.isSelected(element)">
+                </mat-checkbox>
+                </span>
+                </ng-template>
+
+              </td>
+            </tr>
+          </table>
+          <div class="button-row">
+          <button mat-raised-button (click)="paginate(0)">{{'Prev'|translate}}</button>
+          <button mat-raised-button (click)="paginate(1)">{{'Next'|translate}}</button>
+          </div>
+        </div>
+
+      </mat-card>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <a class="mat-tab-label" [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>
+        <span>{{'Add Class'|translate}}</span>
+    </a>
+    </ng-template>
+  </mat-tab>
+
+</mat-tab-group>
+
+<div #container class = "hideme"> </div>

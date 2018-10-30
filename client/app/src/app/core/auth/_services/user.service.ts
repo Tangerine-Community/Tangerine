@@ -74,6 +74,18 @@ export class UserService {
     return results[0];
   }
 
+  async getUserLocations(username?: string) {
+    const userProfile = username ? await this.getUserProfile(username) : await this.getUserProfile();
+    return userProfile.inputs.reduce((locationIds, input) => {
+      if (input.tagName === 'TANGY-LOCATION' && input.value && input.value.length > 0) { 
+        // Collect a unique list of the last entries selected.
+        return Array.from(new Set([...locationIds, input.value[input.value.length-1].value]).values())
+      } else {
+        return locationIds
+      }
+    }, [])
+  }
+
   async doesUserExist(username) {
     let userExists: boolean;
     if (username) {

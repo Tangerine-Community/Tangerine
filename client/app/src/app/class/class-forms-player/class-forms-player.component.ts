@@ -55,11 +55,13 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       let formResponse;
       if (typeof this.studentId !== 'undefined') {
         if (typeof this.responseId === 'undefined') {
-          // might have come from a stale dashboard, so check using the curriculum and student id
+          // This is either a new subtest or from a stale dashboard, so check using the curriculum and student id
           const responses = await classFormService.getResponsesByStudentId(this.studentId);
           for (const response of responses as any[] ) {
             const resp = this.getInputValues(response.doc)
-            if (resp['classId'] === this.classId) {
+            let respClassId = response.doc.metadata.studentRegistrationDoc.classId
+            let respCurrId = response.doc.form.id
+            if (respClassId === this.classId && respCurrId === this.curriculum) {
               formResponse = response.doc
             }
           }
@@ -150,27 +152,10 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
     }
 
     let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
+    let lastModified = Date.now();
+    newStateDoc['lastModified'] = lastModified
     newStateDoc.items = newStateDoc.items.map(item => {
-      if (item.disabled === false) {
-        let lastModified = Date.now()
-        // get the metadata field
-        if (typeof item.metadata !== 'undefined') {
-          item.metadata.lastModified = lastModified
-        } else {
-          let metadata = {};
-          metadata['lastModified'] = lastModified
-          item.metadata = metadata
-        }
-        return item
-      } else {
-        return item
-      }
-      // if (itemsToDisable.indexOf(item.id) !== -1) {
-      //   return Object.assign({}, item, {disabled: true})
-      // }
-      // else {
-      //   return Object.assign({}, item, {disabled: false})
-      // }
+      return item
     })
     await this.service.saveResponse(newStateDoc)
   }

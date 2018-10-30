@@ -17,6 +17,9 @@ fi
 if [ ! -d data/client/releases/prod ]; then
   mkdir data/client/releases/prod
 fi
+if [ ! -d data/client/releases/qa ]; then
+  mkdir data/client/releases/qa
+fi
 if [ ! -d data/client/releases/prod/apks ]; then
   mkdir data/client/releases/prod/apks
 fi
@@ -41,6 +44,10 @@ fi
 if [ ! -f data/worker-state.json ]; then
   echo '{}' > data/worker-state.json
 fi
+if [ ! -f data/paid-worker-state.json ]; then
+  echo '{}' > data/paid-worker-state.json
+fi
+
 
 # Load config.
 
@@ -75,6 +82,14 @@ docker run -d \
 docker build -t tangerine/tangerine:local .
 [ "$(docker ps | grep $T_CONTAINER_NAME)" ] && docker stop $T_CONTAINER_NAME
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
+
+ELASTIC_SEARCH_OPTIONS=""
+if [ "$T_ELASTIC_SEARCH_ENABLE" = "true" ]; then
+ELASTIC_SEARCH_OPTIONS="
+  --link elasticsearch:elasticsearch \
+  --link kibana:kibana \
+"
+fi
 
 COUCHDB_OPTIONS=""
 if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_LOCAL" = "true" ]; then
@@ -125,24 +140,28 @@ sleep 10
 
 CMD="docker run -it --name $T_CONTAINER_NAME \
   $COUCHDB_OPTIONS \
+  $ELASTIC_SEARCH_OPTIONS \
   --entrypoint=\"/tangerine/entrypoint-development.sh\" \
   --env \"NODE_ENV=development\" \
   --env \"T_VERSION=$T_TAG\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_ADMIN=$T_ADMIN\" \
   --env \"T_PASS=$T_PASS\" \
-  --env \"T_UPLOAD_USER=$T_UPLOAD_USER\" \
-  --env \"T_UPLOAD_PASSWORD=$T_UPLOAD_PASSWORD\" \
+  --env \"T_UPLOAD_TOKEN=$T_UPLOAD_TOKEN\" \
   --env \"T_USER1=$T_USER1\" \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
   --env \"T_REPLICATE=$T_REPLICATE\" \
+  --env \"T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE\" \
+  --env \"T_PAID_MODE=$T_PAID_MODE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
+  --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_MODULES=$T_MODULES\" \
   --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
+  --env \"T_LEGACY=$T_LEGACY\" \
   --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
-  --link elasticsearch:elasticsearch \
-  --link kibana:kibana \
+  --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
+  --env \"T_CATEGORIES=$T_CATEGORIES\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
@@ -150,12 +169,15 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   -p 9226:9226 \
   -p 9225:9225 \
   --volume $(pwd)/data/db:/tangerine/db/ \
+  --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
+  --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
+  --volume $(pwd)/server/src:/tangerine/server/src \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting \
   --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \
   --volume $(pwd)/upgrades:/tangerine/upgrades \

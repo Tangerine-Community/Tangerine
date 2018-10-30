@@ -25,7 +25,7 @@
             <div class="user-info" *ngIf="!loggedIn">
                 <span>
                     <a routerLink="/login">
-                        <i class="material-icons">exit_to_app</i> {{'Login'|translate}}
+                        <i class="material-icons">exit_to_app</i> {{'Login'}}
                     </a>
                 </span>
             </div>
@@ -35,11 +35,11 @@
             <ul *ngIf="loggedIn" class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="useropts">
                 <li *ngIf="loggedIn" router-active>
                     <a routerLink="/support" routerLinkActive="active" class="mdl-menu__item">
-                        <i class="material-icons">help</i> {{'Help'|translate}}</a>
+                        <i class="material-icons">help</i> {{'Help'}}</a>
                 </li>
                 <li *ngIf="loggedIn" router-active>
                     <a (click)="logout();" routerLink="/login" routerLinkActive="active" class="mdl-menu__item">
-                        <i class="material-icons">exit_to_app</i> {{'Logout'|translate}}</a>
+                        <i class="material-icons">exit_to_app</i> {{'Logout'}}</a>
                 </li>
             </ul>
         </div>
@@ -54,11 +54,11 @@
             <ul>
                 <li router-active>
                     <a routerLink="/projects" routerLinkActive="active" class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">group_work</i>{{'Groups'|translate}}</a>
+                        <i class="material-icons" role="presentation">group_work</i>{{'Groups'}}</a>
                 </li>
                 <li router-active>
                     <a routerLink="/manage-users" routerLinkActive="active" class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">account_circle</i>{{'Manage Users'|translate}}</a>
+                        <i class="material-icons" role="presentation">account_circle</i>{{'Manage Users'}}</a>
                 </li>
                 <li router-active>
                     <a routerLink="/tangerine-reports" routerLinkActive="active" class="mdl-navigation__link">
@@ -66,7 +66,7 @@
                 </li>
                 <li router-active>
                     <a routerLink="/support" routerLinkActive="active" class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">help_outline</i>{{'Support'|translate}}</a>
+                        <i class="material-icons" role="presentation">help_outline</i>{{'Support'}}</a>
                 </li>
             </ul>
         </nav>

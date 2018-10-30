@@ -18,3 +18,41 @@ th.mat-header-cell {
   text-align: right;
 }
 
+.button-row button,
+.button-row a {
+  margin-right: 8px;
+}
+
+.mat-tab-label-active {
+  background-color: greenyellow;
+}
+
+/*.tangy-tab-curriculum {*/
+  /*background-color: greenyellow;*/
+/*}*/
+
+::ng-deep .tangy-tab-curriculum .mat-tab-labels {
+  background-color: #05608d;
+  color: #fff;
+  font-weight: 500;
+  line-height: 10px;
+  height: 45px;
+  font-size:12px;
+}
+
+::ng-deep .tangy-tab-curriculum .mat-tab-label-active {
+  background-color: #f29d38;
+}
+
+::ng-deep #checkboxContainer {
+  margin-left:10px;
+}
+
+.student-name {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+}
+
+
+
