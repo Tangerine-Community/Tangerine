@@ -24,7 +24,29 @@ export class SyncingService {
     return localStorage.getItem('currentUser');
   }
 
-  async pushAllrecords(username) {
+  async sync(username) {
+    await this.pull(username)
+    await this.push(username)
+    return true
+  }
+
+  async pull(username) {
+    const appConfig = await this.appConfigService.getAppConfig()
+    if (appConfig.centrallyManagedUserProfile) {
+      // Pull the user profile.
+      const userProfile = await this.userService.getUserProfile(username);
+      const userProfileOnServer = await this.http.get(`${appConfig.serverUrl}api/${appConfig.groupName}/${userProfile._id}`, {
+        headers: new HttpHeaders({
+          'Authorization': appConfig.uploadToken
+        })
+      }).toPromise();
+      const DB = new PouchDB(username)
+      await DB.put(Object.assign({}, userProfileOnServer, {_rev: userProfile._rev}))
+    }
+
+  }
+
+  async push(username) {
     try {
       const userProfile = await this.userService.getUserProfile(username);
       const appConfig = await this.appConfigService.getAppConfig()
