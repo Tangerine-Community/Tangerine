@@ -11,5 +11,6 @@
   "groupName": "",
   "uploadToken": "change_this_token",
   "homeUrl": "case-management",
+  "centrallyManagedUserProfile": false,
   "direction": "ltr"
 }
