@@ -25,6 +25,7 @@ T_CSV_BATCH_SIZE=50
 T_HIDE_PROFILE="false"
 T_DEV_CONTENT="$(pwd)/client/content/default"
 T_REGISTRATION_REQUIRES_SERVER_USER="false"
+T_CENTRALLY_MANAGED_USER_PROFILE="false"
 # Add replication entries in this array to start on server boot in 
 # format of `{"from":"localDbName", "to":"remoteDbUrl", "continuous": true}`
 T_REPLICATE="[]"

@@ -97,6 +97,7 @@ RUN_OPTIONS="
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
   --env \"T_LEGACY=$T_LEGACY\" \
   --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
+  --env \"T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
   --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \

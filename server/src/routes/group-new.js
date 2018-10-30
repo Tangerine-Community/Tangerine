@@ -52,6 +52,7 @@ module.exports = async (req, res) => {
     appConfig.groupName = groupName
     appConfig.hideProfile = (process.env.T_HIDE_PROFILE === 'true') ? true : false 
     appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
+    appConfig.centrallyManagedUserProfile = (process.env.T_CENTRALLY_MANAGED_USER_PROFILE === 'true') ? true : false
     if (typeof homeUrl !== 'undefined') {
       appConfig.homeUrl = homeUrl
     }
