@@ -1,12 +1,10 @@
-
-
 import { Injectable } from '@angular/core';
-//import * as bcrypt from 'bcryptjs';
+// import * as bcrypt from 'bcryptjs';
 import PouchDB from 'pouchdb';
+import PouchDBFind from 'pouchdb-find';
 import { Subject } from 'rxjs';
 
 import { AppConfigService } from '../../../shared/_services/app-config.service';
-import { environment } from './../../../../environments/environment';
 import { UserService } from './user.service';
 
 @Injectable()
@@ -47,7 +45,11 @@ export class AuthenticationService {
   async resetPassword(user) {
     const userExists = await this.userService.doesUserExist(user.username);
     const doesAnswerMatch = await this.confirmSecurityQuestion(user);
-    if (userExists && doesAnswerMatch && await this.userService.changeUserPassword(user)) {
+    if (
+      userExists &&
+      doesAnswerMatch &&
+      (await this.userService.changeUserPassword(user))
+    ) {
       localStorage.setItem('currentUser', user.username);
       this._currentUserLoggedIn = true;
       this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
@@ -55,39 +57,44 @@ export class AuthenticationService {
     } else {
       return false;
     }
-
   }
 
   async confirmPassword(username, password) {
     let doesPasswordMatch = false;
+    PouchDB.plugin(PouchDBFind);
     try {
       const result = await this.DB.find({ selector: { username } });
       if (result.docs.length > 0) {
-        //doesPasswordMatch = await bcrypt.compare(password, result.docs[0].password);
-        doesPasswordMatch = (password === result.docs[0].password) ? true : false;
+        // doesPasswordMatch = await bcrypt.compare(password, result.docs[0].password);
+        doesPasswordMatch = password === result.docs[0].password ? true : false;
         if (doesPasswordMatch) {
           /**
            * @TODO we will probably need to save the current timestamp when the user logged in for security policy use
            * Security policy Example: 1) Expire user after 5 minutes or 2) never
            * @TODO Refactor for Redux send Action to Current User store. Dont do this until our ngrx stores are backed up by local storage
            */
-
         }
       }
     } catch (error) {
       console.error(error);
     }
     return doesPasswordMatch;
-  };
+  }
 
   async confirmSecurityQuestion(user) {
     let doesAnswerMatch = false;
+    PouchDB.plugin(PouchDBFind);
     try {
-      const result = await this.DB.find({ selector: { username: user.username } });
+      const result = await this.DB.find({
+        selector: { username: user.username }
+      });
       if (result.docs.length > 0) {
-        //doesAnswerMatch = result.docs[0].hashSecurityQuestionResponse ?
-          //await bcrypt.compare(user.securityQuestionResponse, result.docs[0].securityQuestionResponse) :
-         // user.securityQuestionResponse === result.docs[0].securityQuestionResponse;
+        // doesAnswerMatch = result.docs[0].hashSecurityQuestionResponse ?
+        // await bcrypt.compare(user.securityQuestionResponse, result.docs[0].securityQuestionResponse) :
+        // user.securityQuestionResponse === result.docs[0].securityQuestionResponse;
+        doesAnswerMatch =
+          user.securityQuestionResponse ===
+          result.docs[0].securityQuestionResponse;
       }
     } catch (error) {
       console.error(error);
@@ -130,6 +137,4 @@ export class AuthenticationService {
   getCurrentUserDBPath() {
     return localStorage.getItem('currentUser');
   }
-
-
 }

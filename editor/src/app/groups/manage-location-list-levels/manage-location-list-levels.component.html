@@ -1,0 +1,37 @@
+<mat-card>
+  <mat-card-title class="tangy-foreground-secondary">
+    {{'Manage Location Levels'|translate}}
+  </mat-card-title>
+  <mat-card-content>
+    <div class="tangy-full-width">
+      <div>
+        <a class="faux-anchor" (click)="isFormShown=!isFormShown">{{isFormShown?'Hide Form':'+ Create a New Location
+          Level'|translate}}</a>
+      </div>
+      <div *ngIf="isFormShown">
+        <form class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
+          <mat-form-field class="tangy-full-width">
+            <input name="locationLabel" [(ngModel)]="locationLabel" matInput placeholder="{{'Label'|translate}}"
+              required>
+          </mat-form-field>
+          <mat-form-field class="tangy-full-width">
+            <mat-select name="parentLevel" placeholder="Parent Level" [(ngModel)]="parentLevel">
+              <mat-option *ngFor="let location of locationsLevels" [value]="location">
+                {{location}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addLocationLevel()">{{'Submit'|translate}}</button>
+        </form>
+      </div>
+      <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let location of locationsLevels">
+          <a class="tangy-foreground-primary" href="/app/{{groupName}}/index.html#/groups/{{groupName}}/create-location-list-metadata/{{location}}">
+            <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
+          </a>
+          <span class="tangy-foreground-secondary">{{location}}</span>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-card-content>
+</mat-card>

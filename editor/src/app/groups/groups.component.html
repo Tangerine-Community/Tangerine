@@ -16,7 +16,7 @@
 
             <mat-list role="list">
                 <mat-list-item role="listitem" *ngFor="let group of groups">
-                    <a class="tangy-foreground-primary" [routerLink]="['/groups/', group.attributes.name]">
+                    <a class="tangy-foreground-primary" href="/app/{{group.attributes.name}}/index.html#/groups/{{group.attributes.name}}">
                         <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
                     </a>
                     <span class="tangy-foreground-secondary">{{group.attributes.name}}</span>

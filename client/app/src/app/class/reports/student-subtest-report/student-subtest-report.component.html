@@ -1,0 +1,41 @@
+<div class="subtest-report-div">
+  <h1>{{'Subtest Report'|translate}}</h1>
+</div>
+<div *ngFor="let subtestReport of subtestReports" class="subtest-report-div">
+  <h2>{{subtestReport.label}}</h2>
+
+  <table class="subtest">
+    <tr>
+      <th>Student</th>
+      <th>Subtask</th>
+      <th>&nbsp;</th>
+      <th *ngFor="let category of subtestReport.categories">{{category}}</th>
+    </tr>
+    <tr>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+      <th>Totals</th>
+      <th *ngFor="let category of subtestReport.categories">{{subtestReport.totals[category]}}</th>
+    </tr>
+    <ng-container *ngFor="let student of subtestReport.studentCategorizedResults">
+      <tr>
+        <td valign="top">{{ student.name }}</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td *ngFor="let category of subtestReport.categories">&nbsp;</td>
+      </tr>
+      <tr *ngFor="let item of generateArray(student.results)">
+        <td>&nbsp;</td>
+        <td>{{item.key}}</td>
+        <td>&nbsp;</td>
+        <td *ngFor="let res of generateArray(item.value)"><!--{{res.key}}: -->{{res.value}}</td>
+
+        <ng-container *ngIf="isEmpty(item.value)">
+          <td *ngFor="let category of subtestReport.categories"></td>
+        </ng-container>
+      </tr>
+    </ng-container>
+  </table>
+</div>
+
+<div #container class = "hideme"> </div>

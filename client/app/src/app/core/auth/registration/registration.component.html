@@ -1,3 +1,9 @@
+<paper-tabs selected="1">
+  <paper-tab>
+      <a href="#/login">{{'LOGIN'|translate}}</a>
+  </paper-tab>
+  <paper-tab>{{'REGISTER'|translate}}</paper-tab>
+</paper-tabs>
 <div class="login-app-content">
   <div class="group">
 
@@ -32,8 +38,9 @@
         </mat-placeholder>
       </mat-form-field>
       <br>
-      <button mat-raised-button color="accent" type="submit" [disabled]="registration.invalid||user.password!==user.confirmPassword">{{'REGISTER'|translate}}</button>
-      <a href="#/login">{{'LOGIN'|translate}}</a>
+      <button mat-raised-button color="accent" type="submit" [disabled]="registration.invalid||user.password!==user.confirmPassword">{{'SUBMIT'|translate}}</button>
+      <br>
+      <br>
       <span [id]="statusMessage.type">
         <small>{{statusMessage.message}}</small>
       </span>

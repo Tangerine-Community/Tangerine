@@ -40,27 +40,32 @@ fi
 if [ ! -f data/worker-state.json ]; then
   echo '{}' > data/worker-state.json
 fi
+if [ ! -f data/paid-state.json ]; then
+  echo '{}' > data/paid-state.json
+fi
 
-[ "$(docker ps | grep elasticsearch)" ] && docker stop elasticsearch 
-[ "$(docker ps -a | grep elasticsearch)" ] && docker rm elasticsearch 
-[ "$(docker ps | grep kibana)" ] && docker stop kibana 
-[ "$(docker ps -a | grep kibana)" ] && docker rm kibana 
 
-docker run -d \
-  -v $(pwd)/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro \
-  -p 9200:9200 \
-  -p 9300:9300 \
-  -e ES_JAVA_OPTS="-Xmx256m -Xms256m" \
-  --name elasticsearch \
-  --volume $(pwd)/data/elasticsearch:/usr/share/elasticsearch/data \
-  docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0
+if [ "$T_ELASTIC_SEARCH_ENABLE" = "true" ]; then
+  [ "$(docker ps | grep elasticsearch)" ] && docker stop elasticsearch 
+  [ "$(docker ps -a | grep elasticsearch)" ] && docker rm elasticsearch 
+  [ "$(docker ps | grep kibana)" ] && docker stop kibana 
+  [ "$(docker ps -a | grep kibana)" ] && docker rm kibana 
+  docker run -d \
+    -v $(pwd)/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro \
+    -p 9200:9200 \
+    -p 9300:9300 \
+    -e ES_JAVA_OPTS="-Xmx256m -Xms256m" \
+    --name elasticsearch \
+    --volume $(pwd)/data/elasticsearch:/usr/share/elasticsearch/data \
+    docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0
 
-docker run -d \
-  -v $(pwd)/kibana/config/:/usr/share/kibana/config:ro \
-  -p 5601:5601 \
-  --link elasticsearch:elasticsearch \
-  --name kibana \
-  docker.elastic.co/kibana/kibana-oss:6.3.0
+  docker run -d \
+    -v $(pwd)/kibana/config/:/usr/share/kibana/config:ro \
+    -p 5601:5601 \
+    --link elasticsearch:elasticsearch \
+    --name kibana \
+    docker.elastic.co/kibana/kibana-oss:6.3.0
+fi
 
 # Load config.
 source ./config.defaults.sh
@@ -98,21 +103,28 @@ RUN_OPTIONS="
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_ADMIN=$T_ADMIN\" \
   --env \"T_PASS=$T_PASS\" \
-  --env \"T_UPLOAD_USER=$T_UPLOAD_USER\" \
-  --env \"T_UPLOAD_PASSWORD=$T_UPLOAD_PASSWORD\" \
   --env \"T_USER1=$T_USER1\" \
   --env \"T_USER1_PASSWORD=$T_USER1_PASSWORD\" \
   --env \"T_HOST_NAME=$T_HOST_NAME\" \
+  --env \"T_UPLOAD_TOKEN=$T_UPLOAD_TOKEN\" \
   --env \"T_REPLICATE=$T_REPLICATE\" \
+  --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_MODULES=$T_MODULES\" \
   --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
+  --env \"T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE\" \
+  --env \"T_PAID_MODE=$T_PAID_MODE\" \
+  --env \"T_CATEGORIES=$T_CATEGORIES\" \
+  --env \"T_LEGACY=$T_LEGACY\" \
+  --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
+  --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
+  --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
@@ -162,6 +174,14 @@ require_valid_user = true
     $RUN_OPTIONS
   "
   sleep 10
+fi
+
+if [ "$T_ELASTIC_SEARCH_ENABLE" = "true" ]; then
+RUN_OPTIONS="
+  --link elasticsearch:elasticsearch \
+  --link kibana:kibana \
+  $RUN_OPTIONS
+"
 fi
 
 

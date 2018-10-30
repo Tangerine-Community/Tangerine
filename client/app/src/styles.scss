@@ -9,14 +9,35 @@
 @import '~material-design-icons-iconfont/dist/material-design-icons.css';
 /* TODO: I'm not sure this is having any affect */
 @import './_tangy-app-variables.scss';
+html {
+  --document-background-color: #FAFAFA;
+  --primary-color-dark: #3c5b8d;
+  --primary-text-color: var(--light-theme-text-color);
+  --primary-color: #3c5b8d;
+  --accent-color: #f26f10;
+  --accent-text-color: #FFF;
+  --error-color: var(--paper-red-500);
+  --disabled-color: #BBB;
+}
 
+
+paper-tabs {
+  background: var(--primary-color);
+  color: #FFF;
+}
+paper-tab a:-webkit-any-link {
+  color: #FFF;
+  text-decoration: none;
+  height: 42%;
+  text-align: center;
+}
 body {
   background: #fafafa;
+  margin: 0px;
+  padding: 0px;
+  overscroll-behavior: contain;
 }
-.login-app-content{
-  margin-top: 180px;
-  font-size: 1.75em;
-}
+
 select{
   font-size: 1.3em;
   width: 76%;
@@ -24,12 +45,21 @@ select{
 button.tangy-froms-margin-left{
    margin-left:3rem
 }
+paper-tab[aria-selected=true] {
+  background: #f26f10;
+  color: #FFF
+}
 #icon {
   display: block;
 }
 .tangerine-app-content{
     /* min-height: 100vh; */
-    margin-top: 64px;
+    @media screen and (max-width: 600px) {
+      margin-top: 56px;
+    }
+    @media screen and (min-width: 600px) {
+      margin-top: 64px;
+    }
 }
 mat-toolbar{
     position: fixed;

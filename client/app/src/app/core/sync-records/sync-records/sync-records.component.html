@@ -8,10 +8,9 @@
         <br/>
         <br>
       <div *ngIf="syncProtocol != 'replication'">
-        <p>{{'Last Successful Sync Timestamp'|translate}}:</p>
-        <p>{{'Total Docs Uploaded'|translate}} {{docsUploaded}}</p>
-        <p>{{'Total Docs not Uploaded'|translate}} {{docsNotUploaded}}</p>
-        <p>{{'Total Percentage Complete'|translate}} {{syncPercentageComplete|number:'1.2-2'}}%</p>
+        <p>{{'Number of responses uploaded'|translate}}: {{docsUploaded}}</p>
+        <p>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</p>
+        <p>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</p>
       </div>
 
     </mat-card-content>
@@ -28,10 +27,15 @@
             {{'Username'|translate}}: {{syncData.username}}
         </mat-expansion-panel-header>
 
-        <p>{{'Docs Uploaded'|translate}} {{syncData.docsUploaded}}</p>
-        <p>{{'Docs Not Uploaded'|translate}} {{syncData.docsNotUploaded}}</p>
+        <p>{{'Docs Uploaded'|translate}}: {{syncData.docsUploaded}}</p>
+        <p>{{'Docs Not Uploaded'|translate}}: {{syncData.docsNotUploaded}}</p>
+          <ul *ngIf="syncData.uploadQueueResults.length > 0">
+            <li *ngFor="let formResponseId of syncData.uploadQueueResults">{{formResponseId}}</li>
+          </ul>
         <p>{{'Percentage Complete'|translate}}: {{syncData.syncPercentageComplete|number:'1.2-2'}}%</p>
 
     </mat-expansion-panel>
 
 </mat-accordion>
+<br><br>
+<div *ngIf="contentVersion">Content version: {{contentVersion}}</div>

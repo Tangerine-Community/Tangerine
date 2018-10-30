@@ -11,12 +11,16 @@
  */
 
 const PouchDB = require('pouchdb');
+const log = require('tangy-log').log
+const clog = require('tangy-log').clog
 const _ = require('lodash');
 const {promisify} = require('util');
 const fs = require('fs');
 const path = require('path')
 const readFile = promisify(fs.readFile);
 const http = require('axios')
+const tangyModules = require('../src/modules/index.js')()
+
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -35,9 +39,13 @@ exports.changeProcessor = (change, sourceDb) => {
       .then(doc => {
         switch (doc.collection) {
           case 'TangyFormResponse':
-            processFormResponse(doc, sourceDb)
-              .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
-              .catch(error => { reject(error) })
+            if (process.env.T_PAID_ALLOWANCE !== 'unlimited' && !doc.paid) {
+              resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
+            } else {
+              processFormResponse(doc, sourceDb)
+                .then(_ => resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name}))
+                .catch(error => { reject(error) })
+            }
             break
           default:
             resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
@@ -59,6 +67,8 @@ const processFormResponse = async (doc, sourceDb) => {
   try {
     const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
     const GROUP_DB = sourceDb;
+    // @TODO Leaving this broken until we come back to this branch.
+<<<<<<< HEAD
     if (doc.collection !== 'TangyFormResponse') return
     let formData = doc
     let formID = formData.form.id;
@@ -82,8 +92,27 @@ const processFormResponse = async (doc, sourceDb) => {
     // Send data to elastic search.
     await ensureIndex(formResult, sourceDb.name)
     await indexFlattenedFormResponse(formResult, sourceDb.name, doc);
+=======
+    const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+    const flatResponse = await generateFlatResponse(doc, locationList);
+    await saveFormInfo(flatResponse, REPORTING_DB);
+    await saveFlatFormResponse(flatResponse, REPORTING_DB);
+>>>>>>> origin/v3
   } catch (error) {
-    throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error)}`)
+    function replaceErrors(key, value) {
+      if (value instanceof Error) {
+        var error = {};
+
+        Object.getOwnPropertyNames(value).forEach(function (key) {
+          error[key] = value[key];
+        });
+
+        return error;
+      }
+
+      return value;
+    }
+    throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)
   }
 };
 
@@ -94,51 +123,6 @@ const processFormResponse = async (doc, sourceDb) => {
  * @returns {array} generated headers for csv
  */
 
-const generateHeaders = function (formData) {
-  let formID = formData.form.id;
-  let formResponseHeaders = [];
-  formData.items.forEach(item => {
-    item.inputs.forEach(input => {
-      if (input && input.tagName === 'TANGY-LOCATION') {
-        // Create columns for each level's ID and Label.
-        input.value.forEach(group => {
-          formResponseHeaders.push({
-            header: `${input.name}_${group.level}`,
-            key: `${formID}.${item.id}.${input.name}.${group.level}`
-          });
-        });
-        input.value.forEach(group => {
-          formResponseHeaders.push({
-            header: `${input.name}_${group.level}_label`,
-            key: `${formID}.${item.id}.${input.name}.${group.level}_label`
-          });
-        });
-      } else if (input && (typeof input.value === 'string')) {
-        formResponseHeaders.push({
-          header: `${input.name}`,
-          key: `${formID}.${item.id}.${input.name}`
-        });
-      } else if (input && Array.isArray(input.value)) {
-        input.value.forEach(group => {
-          formResponseHeaders.push({
-            header: `${input.name}_${group.name}`,
-            key: `${formID}.${item.id}.${input.name}.${group.name}`
-          });
-        });
-      } else if (input && typeof input.value === 'object') {
-        let elementKeys = Object.keys(input.value);
-        elementKeys.forEach(key => {
-          formResponseHeaders.push({
-            header: `${input.name}_${key}`,
-            key: `${formID}.${item.id}.${input.name}.${key}`
-          });
-        })
-      }
-    });
-  });
-  return formResponseHeaders;
-}
-
 
 /** This function processes form response for csv.
  *
@@ -148,63 +132,97 @@ const generateHeaders = function (formData) {
  * @returns {object} processed results for csv
  */
 
-const generateFlatObject = function (formData, locationList) {
-  let formID = formData.form.id;
-  let formResponseResult = {};
-  for (let item of formData.items) {
+const generateFlatResponse = async function (formResponse, locationList) {
+  if (formResponse.form.id === '') {
+    formResponse.form.id = 'blank'
+  }
+  let flatFormResponse = {
+    _id: formResponse._id,
+    formId: formResponse.form.id,
+    startUnixtime: formResponse.startUnixtime,
+    complete: formResponse.complete
+  };
+  let formID = formResponse.form.id;
+  for (let item of formResponse.items) {
     for (let input of item.inputs) {
       if (input.tagName === 'TANGY-LOCATION') {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
-          formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
+          flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
           locationKeys.push(group.value)
-          formResponseResult[`${formID}.${item.id}.${input.name}.${group.level}_label`] = getLocationLabel(locationKeys, locationList);
+          try {
+            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = getLocationLabel(locationKeys, locationList);
+          } catch(e) {
+            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = 'orphaned';
+          }
         }
       } else if (input && typeof input.value === 'string') {
-        formResponseResult[`${formID}.${item.id}.${input.name}`] = input.value;
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value;
       } else if (input && typeof input.value === 'number') {
-        formResponseResult[`${formID}.${item.id}.${input.name}`] = input.value;
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value;
       } else if (input && Array.isArray(input.value)) {
         for (let group of input.value) {
-          formResponseResult[`${formID}.${item.id}.${input.name}.${group.name}`] = group.value;
+          flatFormResponse[`${formID}.${item.id}.${input.name}.${group.name}`] = group.value;
         }
       } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
         let elementKeys = Object.keys(input.value);
         for (let key of elementKeys) {
-          formResponseResult[`${formID}.${item.id}.${input.name}.${key}`] = input.value[key];
+          flatFormResponse[`${formID}.${item.id}.${input.name}.${key}`] = input.value[key];
         };
+      }
+      if (input.tagName === 'TANGY-TIMED') {
+        flatFormResponse[`${formID}.${item.id}.${input.name}.duration`] = input.duration 
+        flatFormResponse[`${formID}.${item.id}.${input.name}.time_remaining`] = input.timeRemaining
+        // Calculate Items Per Minute.
+        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect 
+        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_correct`] = numberOfItemsCorrect
+        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
+        let timeSpent = input.duration - input.timeRemaining
+        flatFormResponse[`${formID}.${item.id}.${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
       }
     }
   }
-  return formResponseResult;
+  let data = await tangyModules.hook("flatFormReponse", {flatFormResponse, formResponse});
+  return data.flatFormResponse;
 };
 
-
-function saveFormResponseHeaders(doc, db) {
-  return new Promise((resolve, reject) => {
-    db.get(doc._id)
-      .then(async origDoc => {
-        let newDoc = { _id: doc._id, _rev: origDoc._rev };
-        let joinByHeader = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'header');
-        let joinBykey = _.unionBy(origDoc.columnHeaders, doc.columnHeaders, 'key');
-        newDoc.columnHeaders = _.union(joinByHeader, joinBykey);
-        db.put(newDoc)
-          .then(() => resolve(true))
-          .catch(error => {
-            reject(`Could not save new Form Response Headers ${newDoc._id} because Error of ${JSON.stringify(error)}`)
-          })
-      })
-      .catch(async err => {
-        db.put(doc)
-          .then(() => resolve(true))
-          .catch(err => {
-            reject(`Could not save updated Form Response Headers ${JSON.stringify(doc._id)} because Error of ${JSON.stringify(err)}`)
-          })
-      })
+function saveFormInfo(flatResponse, db) {
+  return new Promise(async (resolve, reject) => {
+    // Find any new headers and insert them into the headers doc.
+    let foundNewHeaders = false
+    let formDoc = {
+      _id: flatResponse.formId,
+      columnHeaders: []
+    }
+    // Get the doc if it already exists.
+    try {
+      let doc = await db.get(formDoc._id)
+      formDoc = doc
+    } catch(e) {
+      // It's a new doc, no worries.
+    }
+    Object.keys(flatResponse).forEach(key => {
+      if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
+        formDoc.columnHeaders.push({ key, header: key })
+        foundNewHeaders = true
+      }
+    })
+    if (foundNewHeaders) {
+      try {
+        await db.put(formDoc)
+      } catch(err) {
+        log.error(err)
+        reject(err)
+      }
+    }
+    resolve(true)
   })
 }
 
+<<<<<<< HEAD
 
 function ensureIndex(doc, groupName) {
   return new Promise((resolve, reject) => {
@@ -243,7 +261,11 @@ function indexFlattenedFormResponse(doc, groupName, originalDoc) {
 }
 
 function saveFlattenedFormResponse(doc, db) {
+=======
+function saveFlatFormResponse(doc, db) {
+>>>>>>> origin/v3
   return new Promise((resolve, reject) => {
+    debugger
     db.get(doc._id)
       .then(oldDoc => {
         // Overrite the _rev property with the _rev in the db and save again.

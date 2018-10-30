@@ -44,15 +44,17 @@ export class DashboardService {
 
   async getMyStudents(selectedClass: any) {
     const result = await this.userDB.query('tangy-class/responsesForStudentRegByClassId', {
-      key: selectedClass,
+      startkey: [selectedClass],
+      endkey: [selectedClass,{}],
       include_docs: true
     });
     return result.rows;
   }
 
-  async getResultsByClass(classId: any, curriculumFormsList) {
-    const result = await this.userDB.query('tangy-class/responsesByClassId', {
-      key: classId,
+  async getResultsByClass(classId: any, curriculum, curriculumFormsList) {
+    const theKey = [classId,curriculum]
+    const result = await this.userDB.query('tangy-class/responsesByClassIdCurriculumId', {
+      key: theKey,
       include_docs: true
     });
     const data = await this.transformResultSet(result.rows, curriculumFormsList);
@@ -72,7 +74,25 @@ export class DashboardService {
   };
 
   /**
-   *
+   * Acts like a delete but archives instead so that it will get sync'd.
+   * @param id
+   */
+  async archiveStudentRegistration(id) {
+    try {
+      let doc = await this.userDB.get(id)
+      doc.archive = true
+      let lastModified = Date.now();
+      doc.lastModified = lastModified
+      const result = await this.userDB.put(doc)
+      return result
+    } catch (e) {
+      console.log("Error deleting student: " + e)
+    }
+
+  }
+
+  /**
+   * Creates a list of forms with the results populated
    * @param result
    * @param curriculumFormsList - use to find if the form is a grid subtest.
    * @returns {Promise<any[]>}
@@ -80,11 +100,23 @@ export class DashboardService {
   async transformResultSet(result, curriculumFormsList) {
 
     const observations = [];
+    // let forms = {}
+    // curriculumFormsList.forEach(form => {
+    //   forms[form.id] = form
+    // })
+
     result.forEach(async observation => {
-      // loop through the formList
+      let items = observation.doc['items']
+      // filter out the forms we're currently not interested in
+      // let formId = observation.doc.form.id
+      // if (typeof forms[formId] !== 'undefined') {
+      //   // we want this result.
+      //
+      // }
+
       for (var i = 0; i < curriculumFormsList.length; i++) {
 
-        let itemCount = null;
+        let itemCount = 0;
         let lastModified = null;
         let answeredQuestions = [];
         let percentCorrect = null;
@@ -93,23 +125,36 @@ export class DashboardService {
         let noResponse = 0;
         let score = 0;
 
-        if (observation.doc['items'][i]) {
-          itemCount = observation.doc['items'][i].inputs.length
-          let metadata = observation.doc['items'][i].metadata;
+        let item = observation.doc['items'][i];
+        if (item) {
+          itemCount = item.inputs.length
+          let metadata = item.metadata;
           if (metadata) {
             lastModified = metadata['lastModified']
           }
           // populate answeredQuestions array
-          observation.doc['items'][i].inputs.forEach(item => {
-            // inputs = [...inputs, ...item.value]
-            if (item.value !== "") {
+          item.inputs.forEach(input => {
+            // inputs = [...inputs, ...input.value]
+            if (input.value !== "") {
               let data = {}
-              data[item.name] = item.value;
+              let valueField = input.value;
+              let value;
+              if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+                valueField.forEach(option => {
+                  if (option.value !== "") {
+                    value = option.name
+                  }
+                })
+              } else {
+                value = input.value
+              }
+              data[input.name] = value;
               answeredQuestions.push(data)
-              if (item.name === curriculumFormsList[i]['id'] + "_score") {
-                score = item.value
+              if (input.name === curriculumFormsList[i]['id'] + "_score") {
+                score = value
               }
             }
+
           })
           // loop through answeredQuestions and calculate correct, incorrect, and missing.
         //   if (curriculumFormsList[i]['prototype'] === 'grid') {
@@ -138,29 +183,40 @@ export class DashboardService {
         //     percentCorrect = 0
         //   }
         }
+        if (itemCount > 0) {
+          let studentId
+          if (observation.doc.metadata && observation.doc.metadata.studentRegistrationDoc) {
+            studentId = observation.doc.metadata.studentRegistrationDoc.id;
+          }
+          let category = curriculumFormsList[i]['category']
+          if (typeof category !== 'undefined' && category !== null) {
+            category = category.trim()
+          }
 
-        let response = {
-          formTitle: curriculumFormsList[i]['title'],
-          formId: curriculumFormsList[i]['id'],
-          prototype: curriculumFormsList[i]['prototype'],
-          startDatetime: observation.doc.startDatetime,
-          formIndex: i,
-          _id: observation.doc._id,
-          itemCount: itemCount,
-          studentId: observation.doc.metadata.studentRegistrationDoc.id,
-          lastModified: lastModified,
-          answeredQuestions: answeredQuestions,
-          percentCorrect: percentCorrect,
-          correct: correct,
-          incorrect: incorrect,
-          noResponse: noResponse,
-          score: score
-          // columns
-        };
+          let response = {
+            formTitle: curriculumFormsList[i]['title'],
+            formId: curriculumFormsList[i]['id'],
+            prototype: curriculumFormsList[i]['prototype'],
+            category: category,
+            startDatetime: observation.doc.startUnixtime,
+            formIndex: i,
+            _id: observation.doc._id,
+            itemCount: itemCount,
+            studentId: studentId,
+            lastModified: lastModified,
+            answeredQuestions: answeredQuestions,
+            percentCorrect: percentCorrect,
+            correct: correct,
+            incorrect: incorrect,
+            noResponse: noResponse,
+            score: score
+            // columns
+          };
 
-        // return response;
-        observations.push(response)
-        // }
+          // return response;
+          observations.push(response)
+          // }
+        }
       }
     });
     // });

@@ -1,0 +1,19 @@
+.tangy-full-width{
+    width: 95%;
+  }
+span.tangy-foreground-secondary{
+    padding-top: 0.3rem;
+}
+
+mat-chip{
+    text-transform: capitalize;
+    cursor: pointer;
+}
+span.faux-anchor{
+cursor: pointer;
+}
+
+.button-row button {
+  margin-right: 8px;
+  margin-TOP: 8px;
+}

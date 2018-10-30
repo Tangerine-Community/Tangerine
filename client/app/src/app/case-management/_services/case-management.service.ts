@@ -43,12 +43,20 @@ export class CaseManagementService {
     visits.forEach(visit => {
       const visitKey = visit.key.split('-');
       if (visitKey[2].toString() === month.toString() && visitKey[3].toString() === year.toString()) {
-        const item = findById(locationList, visitKey[0]);
-        locations.push({
-          location: item.label,
-          visits: countUnique(visits, item['id'].toString()),
-          id: item['id']
-        });
+        let item = findById(locationList, visitKey[0]);
+        if (!item) {
+          locations.push({
+            location: visitKey[0],
+            visits: countUnique(visits, visitKey[0]),
+            id: visitKey[0]
+          })
+        } else {
+          locations.push({
+            location: item.label,
+            visits: countUnique(visits, item['id'].toString()),
+            id: item['id']
+          });
+        }
       }
 
     });
@@ -74,7 +82,7 @@ export class CaseManagementService {
     const result = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
     const timeLapseFilter = [];
     result.rows.forEach(observation => {
-      const date = new Date(observation.doc.startDatetime);
+      const date = new Date(observation.doc.startUnixtime);
       timeLapseFilter.push({
         value: `${date.getMonth()}-${date.getFullYear()}`,
         label: `${this.monthNames[date.getMonth()]}-${date.getFullYear()}`
@@ -108,7 +116,7 @@ export class CaseManagementService {
     const monthYear = period ? period : `${currentDate.getMonth()}-${currentDate.getFullYear()}`;
     const monthYearParts = monthYear.split('-');
     result.rows = result.rows.filter(observation => {
-      const formStartDate = new Date(observation.doc.startDatetime);
+      const formStartDate = new Date(observation.doc.startUnixtime);
       return formStartDate.getMonth().toString() === monthYearParts[0] && formStartDate.getFullYear().toString() === monthYearParts[1];
     });
     const data = await this.transformResultSet(result.rows);
@@ -133,7 +141,7 @@ export class CaseManagementService {
       }
       return {
         formTitle,
-        startDatetime: observation.doc.startDatetime,
+        startDatetime: observation.doc.startUnixtime,
         formIndex: index,
         _id: observation.doc._id,
         columns

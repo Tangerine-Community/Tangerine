@@ -24,7 +24,7 @@
     <i class="material-icons">account_box</i>
   </button>
   <mat-menu #appMenu="matMenu">
-    <button routerLink="manage-user-profile" mat-menu-item>
+    <button *ngIf="window && window.appConfig && !window.appConfig.hideProfile" routerLink="manage-user-profile" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
       <span>{{'Manage Profile'|translate}}</span>
     </button>

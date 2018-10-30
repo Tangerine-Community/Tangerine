@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule, MatAutocompleteModule, MatSelectModule } from '@angular/material';
+import { MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule, MatAutocompleteModule, MatSelectModule, MatChipsModule } from '@angular/material';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
 import { GroupsComponent } from './groups.component';
@@ -15,6 +15,10 @@ import { DownloadCsvComponent } from './download-csv/download-csv.component';
 import { AddUserComponent } from './add-users/add-user.component';
 import { ListUsersComponent } from './list-users/list-users.component';
 import { ReleaseDatComponent } from './release-dat/release-dat.component';
+import { ResponsesComponent } from './responses/responses.component';
+import { LocationListEditorComponent } from './location-list-editor/location-list-editor.component';
+import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
+import { CreateLocationListMetadataComponent } from './create-location-list-metadata/create-location-list-metadata.component';
 
 
 
@@ -32,9 +36,11 @@ import { ReleaseDatComponent } from './release-dat/release-dat.component';
     MatCardModule,
     MatListModule,
     MatTabsModule,
+    MatChipsModule,
     SharedModule
   ],
   declarations: [
+    LocationListEditorComponent,
     GroupsComponent,
     GroupComponent,
     NewGroupComponent,
@@ -44,7 +50,10 @@ import { ReleaseDatComponent } from './release-dat/release-dat.component';
     DownloadCsvComponent,
     AddUserComponent,
     ListUsersComponent,
-    ReleaseDatComponent
+    ReleaseDatComponent,
+    ResponsesComponent,
+    ManageLocationListLevelsComponent,
+    CreateLocationListMetadataComponent
   ],
   providers: [GroupsService]
 })

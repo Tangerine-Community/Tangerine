@@ -14,7 +14,6 @@ const fs = require('fs-extra')
 const fsc = require('fs')
 const readFile = util.promisify(fsc.readFile);
 const writeFile = util.promisify(fsc.writeFile);
-const config = read.sync('./config.yml')
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
@@ -22,7 +21,6 @@ PouchDB.plugin(require('pouchdb-find'));
 const pako = require('pako')
 const compression = require('compression')
 const chalk = require('chalk');
-const generateCSV = require('../server/reporting/generate_csv').generateCSV;
 const pretty = require('pretty')
 const flatten = require('flat')
 const json2csv = require('json2csv')
@@ -32,21 +30,15 @@ const log = require('tangy-log').log
 const clog = require('tangy-log').clog
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 // Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
-let newGroupQueue = []
-
-pouchDbDefaults = {}
-if (process.env.T_COUCHDB_ENABLE === 'true') {
-  pouchDbDefaults = { prefix: process.env.T_COUCHDB_ENDPOINT }
-} else {
-  pouchDbDefaults = { prefix: '/tangerine/db/' }
-}
-const DB = PouchDB.defaults(pouchDbDefaults)
+var newGroupQueue = []
+const insertGroupViews = require(`./src/insert-group-views.js`)
+const insertGroupReportingViews = require('./src/insert-group-reporting-views')
+const DB = require('./src/db.js')
 const USERS_DB = new DB('users');
 const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
 const cors = require('cors')
-
 const sep = path.sep;
 
 // Enforce SSL behind Load Balancers.
@@ -157,18 +149,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Middleware to protect routes.
-var isAuthenticated = function (req, res, next) {
-  // Uncomment next two lines when you want to turn off authentication during development.
-  // req.user = {}; req.user.name = 'user1';
-  // return next();
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  let errorMessage = `Permission denied at ${req.url}`;
-  log.warn(errorMessage)
-  // res.redirect('/');
-  res.status(401).send(errorMessage)
-}
+var isAuthenticated = require('./src/middleware/is-authenticated.js')
+var hasUploadToken = require('./src/middleware/has-upload-token.js')
 
 var hasKibanaAuth = function (req, res, next) {
   // Uncomment next two lines when you want to turn off authentication during development.
@@ -191,9 +173,36 @@ app.post('/login',
   }
 );
 
+// API
+app.post('/api/:groupId/upload-check', hasUploadToken, require('./src/routes/group-upload-check.js'))
+app.post('/api/:groupId/upload', hasUploadToken, require('./src/routes/group-upload.js'))
+app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses.js'))
+app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses-by-form-id.js'))
+// Note that the lack of security middleware here is intentional. User IDs are UUIDs and thus sufficiently hard to guess.
+app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./src/routes/group-responses-by-user-profile-id.js'))
+app.get('/api/:groupId/responsesByUserProfileShortCode/:userProfileShortCode/:limit?/:skip?', require('./src/routes/group-responses-by-user-profile-short-code.js'))
+app.get('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-read.js'))
+app.put('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
+app.post('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
+app.delete('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-delete.js'))
+if (process.env.T_LEGACY === "true") {
+  app.post('/upload/:groupId', require('./src/routes/group-upload.js'))
+}
+app.get('/usage', require('./src/routes/usage'));
+app.get('/usage/:startdate', require('./src/routes/usage'));
+app.get('/usage/:startdate/:enddate', require('./src/routes/usage'));
+
+
 // Static assets.
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
 app.use('/', express.static(path.join(__dirname, '../editor/dist')));
+app.use('/app/:group/', express.static(path.join(__dirname, '../editor/dist')));
+app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
+  let contentPath = '../client/content/groups/' + req.params.group
+  clog("Setting path to " + path.join(__dirname, contentPath))
+  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+});
+
 app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
 app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../editor/src/ckeditor/')));
 app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
@@ -215,16 +224,21 @@ app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
   return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
 });
 
+const queueNewGroupMiddleware = function (req, res, next) {
+  newGroupQueue.push(req.body.groupName)
+  next()
+}
+
+app.post('/editor/group/new', isAuthenticated, queueNewGroupMiddleware, require('./src/routes/group-new.js'))
+
 app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME}`)
-
+  const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} 2>&1 | tee -a /apk.log`
+  log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ${cmd}`)
   try {
-    await exec(`cd /tangerine/client && \
-        ./release-apk.sh ${group} ./content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_UPLOAD_USER} ${process.env.T_UPLOAD_PASSWORD} ${process.env.T_HOST_NAME} 2>&1 | tee -a ../server/apk.log
-  `)
+    await exec(cmd)
     res.send({ statusCode: 200, data: 'ok' })
   } catch (error) {
     res.send({ statusCode: 500, data: error })
@@ -238,8 +252,8 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   const releaseType = sanitize(req.params.releaseType)
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
-    await exec(`cd /tangerine/client && \
-        ./release-pwa.sh ${group} ./content/groups/${group} ${releaseType}
+    await exec(`cd /tangerine/server/src/scripts && \
+        ./release-pwa.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
   `)
     res.send({ statusCode: 200, data: 'ok' })
   } catch (error) {
@@ -254,7 +268,7 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
     const status = await exec(`cd /tangerine/client && \
-        ./release-dat.sh ${group} ./content/groups/${group} ${releaseType}
+        ./release-dat.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
     `)
     // Clean up whitespace.
     const datArchiveUrl = status.stdout.replace('\u001b[?25l','')
@@ -263,51 +277,6 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
     res.send({ statusCode: 500, data: error })
   }
 })
-
-async function saveFormsJson(formParameters, group) {
-  clog("formParameters: " + JSON.stringify(formParameters))
-  let contentRoot = config.contentRoot
-  let formsJsonPath = contentRoot + '/' + group + '/forms.json'
-  clog("formsJsonPath:" + formsJsonPath)
-  let formJson
-  try {
-    const exists = await fs.pathExists(formsJsonPath)
-    if (exists) {
-      clog("formsJsonPath exists")
-      // read formsJsonPath and add formParameters to formJson
-      try {
-        formJson = await fs.readJson(formsJsonPath)
-        clog("formJson: " + JSON.stringify(formJson))
-        clog("formParameters: " + JSON.stringify(formParameters))
-        if (formParameters !== null) {
-          formJson.push(formParameters)
-        }
-        clog("formJson with new formParameters: " + JSON.stringify(formJson))
-      } catch (err) {
-        log.error("An error reading the json form: " + err)
-      }
-    } else {
-      // create an empty formJson
-      formJson = []
-    }
-  } catch (err) {
-    log.error("Error checking formJson: " + err)
-  }
-
-  await fs.writeJson(formsJsonPath, formJson)
-}
-
-let openForm = async function (path) {
-  let form
-  try {
-    form = await fs.readFile(path, 'utf8')
-  } catch (e) {
-    log.error("Error opening form: ", e);
-  }
-  return form
-};
-
-
 
 app.get('/users', isAuthenticated, async (req, res) => {
   const result = await USERS_DB.allDocs({ include_docs: true });
@@ -354,6 +323,7 @@ async function doesUserExist(username) {
     return true; // In case of error assume user exists. Helps avoid same username used multiple times
   }
 }
+
 app.post('/users/register-user', isAuthenticated, async (req, res) => {
   try {
     if (!(await doesUserExist(req.body.username))) {
@@ -369,6 +339,7 @@ app.post('/users/register-user', isAuthenticated, async (req, res) => {
     return false; // @TODO return meaningful error
   }
 });
+
 app.get('/users/byUsername/:username', isAuthenticated, async (req, res) => {
   const username = req.params.username;
   try {
@@ -391,6 +362,7 @@ app.get('/users/isSuperAdminUser/:username', isAuthenticated, async (req, res) =
     res.sendStatus(500);
   }
 });
+
 app.get('/users/isAdminUser/:username', isAuthenticated, async (req, res) => {
   try {
     const data = await isAdminUser(req.params.username);
@@ -400,6 +372,7 @@ app.get('/users/isAdminUser/:username', isAuthenticated, async (req, res) => {
     res.sendStatus(500);
   }
 });
+
 async function hashPassword(password) {
   try {
     const salt = await bcrypt.genSalt(10);
@@ -409,54 +382,6 @@ async function hashPassword(password) {
     console.error(error);
   }
 }
-app.post('/editor/itemsOrder/save', isAuthenticated, async function (req, res) {
-  let contentRoot = config.contentRoot
-  let itemsOrder = req.body.itemsOrder
-  let formHtmlPath = req.body.formHtmlPath
-
-  // fetch the original form
-  let formDir = formHtmlPath.split('/')[2]
-  let formName = formHtmlPath.split('/')[3]
-  let formPath = contentRoot + sep + formDir + sep + formName
-  let originalForm = await openForm(formPath);
-
-  // Now that we have originalForm, we can load it and add items to it.
-  const $ = cheerio.load(originalForm)
-  // search for tangy-form-item
-  let formItemList = $('tangy-form-item')
-  let sortedItemList = []
-  for (let itemScr of itemsOrder) {
-    if (itemScr !== null) {
-      let item = formItemList.is(function (i, el) {
-        let src = $(this).attr('src')
-        if (src === itemScr) {
-          sortedItemList.push($(this))
-          return src === itemScr
-        }
-      })
-    }
-  }
-  let tangyform = $('tangy-form')
-  // save the updated list back to the form.
-  $('tangy-form-item').remove()
-  $('tangy-form').append(sortedItemList)
-  let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
-  await fs.outputFile(formPath, form)
-    .then(() => {
-      let msg = "Success! Updated file at: " + formPath
-      let resp = {
-        "message": msg
-      }
-      clog(resp)
-      res.send(resp)
-    })
-    .catch(err => {
-      let msg = "An error with form outputFile: " + err
-      let message = { message: msg };
-      log.error(message)
-      res.send(message)
-    })
-})
 
 app.post('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.body.filePath
@@ -482,257 +407,7 @@ app.delete('/editor/file/save', isAuthenticated, async function (req, res) {
   }
 })
 
-// Saves an item - and a new form when formName is passed.async
-// otherwise, the path to the existing form is extracted from formHtmlPath.
-// contentUrlPath: path used to fetch content when using an APK or PWA. Used when setting 'src' attribute.
-// groupContentRoot: path to content on the editor filesystem.
-app.post('/editor/item/save', isAuthenticated, async function (req, res) {
-  let displayFormsListing = false
-  let formTitle = req.body.formTitle
-  if (typeof formTitle !== 'undefined') {
-    formTitle = sanitize(formTitle)
-  }
-  let itemTitle = req.body.itemTitle
-  if (typeof itemTitle !== 'undefined') {
-    itemTitle = sanitize(itemTitle)
-  }
-  let formDirName = req.body.formName
-  if (typeof formDirName !== 'undefined') {
-    formDirName = sanitize(req.body.formName).replace(/ /g, '')
-  }
-  let itemHtmlText = req.body.itemHtmlText
-  let formHtmlPath = req.body.formHtmlPath
-  let itemFilename = req.body.itemFilename
-  let groupName = req.body.groupName
-  let itemId = req.body.itemId
-  let groupContentRoot = config.contentRoot + '/' + groupName
-  let formDir, formName, originalForm, formPath
-  let contentUrlPath = '../content/'
-
-  // Need to populate the originalForm var
-  // First, check if this is a new form, which don't have formHtmlPath,
-  if (formHtmlPath === null) {
-    log.info("Creating a new form.")
-    // Append displayFormsListing:true to res if new form.
-    displayFormsListing = true
-    // Setup the new form by populating the template with the formDirName
-    let templatePath = config.editorClientTemplates + sep + 'form-template.html'
-    try {
-      originalForm = await fs.readFile(templatePath, 'utf8')
-    } catch (e) {
-      log.error(e);
-    }
-    originalForm = originalForm.replace('FORMNAME', formDirName)
-    // create the path to the form and its form.html
-    formDir = formDirName
-    // now create the filesystem for formDir
-    clog("checking groupContentRoot + sep + formDir: " + groupContentRoot + sep + formDir)
-    await fs.ensureDir(groupContentRoot + sep + formDir)
-      .then(() => {
-        log.info('success! Created path to formDir: ' + groupContentRoot + sep + formDir)
-      })
-      .catch(err => {
-        console.error("An error: " + err)
-      })
-    formName = 'form.html'
-    // Update forms.json
-
-    let formParameters = {
-      "id": formDirName,
-      "title": formTitle,
-      "src": contentUrlPath + formDirName + "/form.html"
-    }
-    clog("formParameters: " + JSON.stringify(formParameters))
-    await saveFormsJson(formParameters, groupName)
-      .then(() => {
-        log.info("Updated forms.json")
-      })
-      .catch(err => {
-        log.error("An error saving the json form: " + err)
-        throw err;
-      })
-    // Set formPath
-    formPath = groupContentRoot + sep + formDir + sep + formName
-
-    // Now that we have originalForm, we can load it and add items to it.
-    const $ = cheerio.load(originalForm)
-    // search for tangy-form-item
-    let formItemList = $('tangy-form-item')
-    // create the form html that will be added
-    let itemUrlPath = contentUrlPath + formDirName + sep + itemFilename
-    let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
-    $(newItem).appendTo('tangy-form')
-    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
-    clog('now outputting ' + formPath)
-    await fs.outputFile(formPath, form)
-      .then(() => {
-        log.info('success! Updated file at: ' + formPath)
-      })
-      .catch(err => {
-        console.error("An error with form outputFile: " + err)
-        res.send(err)
-      })
-  } else {
-    // Editing a form - check if this is a new item; otherwise, we only need to change the item's title in form.json
-    formDir = formHtmlPath.split('/')[2]
-    formName = formHtmlPath.split('/')[3]
-    formPath = groupContentRoot + sep + formDir + sep + formName
-    clog("formPath: " + formPath)
-    originalForm = await openForm(formPath);
-    // Now that we have originalForm, we can load it and add items to it.
-    const $ = cheerio.load(originalForm)
-    // search for tangy-form-item
-    let formItemList = $('tangy-form-item')
-    let formItemListHtml = $('tangy-form-item', 'tangy-form').html()
-    let rootHtml = $.html()
-    let isNewItem = true
-    // loop through the current items and see if this is an edit or a new item
-    let newItemList = $('tangy-form-item').each(function (i, elem) {
-      let src = $(this).attr('src')
-      if (src === itemFilename) {
-        $(this).attr('title', itemTitle).html()
-        isNewItem = false
-      }
-    });
-    $('tangy-form-item').remove()
-    $(newItemList).appendTo('tangy-form')
-    let itemUrlPath = contentUrlPath + formDir + sep + itemFilename
-    if (isNewItem) {
-      // create the item html that will be added to the form.
-      let newItem = '<tangy-form-item src="' + itemUrlPath + '" id="' + itemId + '" title="' + itemTitle + '">'
-      log.info('newItem: ' + newItem)
-      $(newItem).appendTo('tangy-form')
-    }
-    let form = pretty($.html({decodeEntities: false}).replace('<html><head></head><body>', '').replace('</body></html>', ''))
-    clog('now outputting ' + formPath)
-    await fs.outputFile(formPath, form)
-      .then(() => {
-        log.info('success! Updated file at: ' + formPath)
-
-      })
-      .catch(err => {
-        log.error("An error with form outputFile: " + err)
-        res.send(err)
-      })
-  }
-  // Save the item
-  const itemFilenameArr = itemFilename.split('/');
-  let onlyItemFilename = itemFilenameArr[3]
-  // If it's a new form, the itemFilename is only the uuid. If you're editing a form, it is a path. Sorry.
-  if (itemFilenameArr.length === 1) {
-    onlyItemFilename = itemFilename
-  }
-  let itemPath = formPath.substring(0, formPath.lastIndexOf("/")) + sep + onlyItemFilename;
-  clog("formPath : " + formPath + " itemFilename: " + itemFilename + " groupName: " + groupName)
-  clog("Saving item at : " + itemPath + "  itemHtmlText: " + itemHtmlText)
-  await fs.outputFile(itemPath, itemHtmlText)
-    .then(() => {
-      log.info('Success! Created item at: ' + itemPath)
-    })
-    .catch(err => {
-      log.error("An error with item outputFile: " + err)
-      res.send(err)
-    })
-  let resp = {
-    "message": 'Item saved: ' + itemPath,
-    "displayFormsListing": displayFormsListing
-  }
-  res.json(resp)
-})
-
-/**
- * Sets up files and directories for a group:
- * Creates content, qa, and prod dirs for the group; seeds qa with Cordova project.
- * Edits app-config.json.
- * Creates cordova-hcp.json and copies to qa dir.
- * Creates Results Database for the corresponding group
- * Inserts the design Doc into the results database
- * Sets up watching of the group DB to listen to the changes feed on the database
- * Redirects user to editor page for the group.
- */
-app.post('/editor/group/new', isAuthenticated, async function (req, res) {
-
-  // See if this instance supports the class module, copy the class forms, and set homeUrl
-  let homeUrl;
-  let syncProtocol;
-  let modules = [];
-  let modulesString = process.env.T_MODULES;
-  modulesString = modulesString.replace(/'/g, '"');
-  let moduleEntries = JSON.parse(modulesString)
-  if (moduleEntries.length > 0) {
-    for (let moduleEntry of moduleEntries) {
-      modules.push(moduleEntry);
-      if (moduleEntry === "class") {
-        clog("Setting homeUrl to dashboard")
-        homeUrl =  "dashboard"
-        syncProtocol = "replication"
-        // copy the class forms
-        const exists = await fs.pathExists('/tangerine/client/app/src/assets/class-registration')
-        if (!exists) {
-          try {
-            await fs.copy('/tangerine/scripts/modules/class/', '/tangerine/client/app/src/assets/')
-            console.log('Copied class module forms.')
-          } catch (err) {
-            console.error(err)
-          }
-        }
-      } else {
-        clog("moduleEntry: " + moduleEntry)
-      }
-    }
-  }
-
-  let groupName = req.body.groupName
-  // Copy the content directory for the new group.
-  await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
-
-  // Edit the app-config.json.
-  try {
-    appConfig = JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, "utf8"))
-    appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_HOST_NAME}/upload/${groupName}`
-    if (typeof homeUrl !== 'undefined') {
-      appConfig.homeUrl = homeUrl
-    }
-    if (typeof syncProtocol !== 'undefined') {
-      appConfig.syncProtocol = syncProtocol
-      appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_SYNC_SERVER}/${groupName}`
-    }
-    if (modules.length > 0) {
-      appConfig.modules = modules;
-    }
-    appConfig.direction = `${process.env.T_LANG_DIRECTION}`
-    clog("appConfig.homeUrl: " + appConfig.homeUrl)
-  } catch (err) {
-    log.error("An error reading app-config: " + err)
-    throw err;
-  }
-  await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
-    .then(status => log.info("Wrote app-config.json"))
-    .catch(err => log.error("An error copying app-config: " + err))
-
-  //#region wire group DB and result db
-
-  const REPORTING_DB_NAME = `${groupName}-reporting`;
-  const REPORTING_DB = new DB(REPORTING_DB_NAME);
-  /**
-   * Instantiate the results database. A method call on the database creates the database if database doesnt exist.
-   * Also create the design doc for the resultsDB
-   */
-  await REPORTING_DB.info(async info => await createDesignDocument(REPORTING_DB_NAME)).catch(e => {
-    log.error(e);
-  });
-
-  newGroupQueue.push(groupName)
-
-  // Set up watching of groupDb for changes.
-  //#endregion
-
-  // All done!
-  res.send({ data: 'Group Created Successfully', statusCode: 200 });
-})
-
 app.get('/groups', isAuthenticated, async function (req, res) {
-
   try {
     const groups = await getGroupsByUser(req.user.name);
     res.send(groups);
@@ -745,7 +420,7 @@ async function getGroupsByUser(username) {
   if (await isSuperAdmin(username)) {
     const readdirPromisified = util.promisify(fs.readdir)
     const files = await readdirPromisified('/tangerine/client/content/groups');
-    let filteredFiles = files.filter(junk.not)
+    let filteredFiles = files.filter(junk.not).filter(name => name !== '.git' && name !== 'README.md')
     let groups = [];
     clog('/groups route lists these dirs: ' + filteredFiles)
 
@@ -891,19 +566,7 @@ app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req,
     res.sendStatus(500);
   }
 })
-// @TODO: Middleware auth check for upload user.
-app.post('/upload/:groupName', async function (req, res) {
-  let db = new DB(req.params.groupName)
-  try {
-    const payload = pako.inflate(req.body, { to: 'string' })
-    const packet = JSON.parse(payload)
-    // New docs should not have a rev or else insertion will fail.
-    delete packet.doc._rev
-    await db.put(packet.doc).catch(err => log.error(err))
-    res.send({ status: 'ok'})
-  } catch (e) { log.error(e) }
 
-})
 
 // TODO Notify caller if group doesnt have form response, to avoid infinite polling  
 app.get('/csv/:groupName/:formId', async function (req, res) {
@@ -912,7 +575,7 @@ app.get('/csv/:groupName/:formId', async function (req, res) {
   const fileName = `${groupName}-${formId}-${Date.now()}.csv`
   const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
   const outputPath = `/csv/${fileName}`
-  const cmd = `cd /tangerine/scripts/generate-csv/ && ./bin.js '${JSON.stringify(pouchDbDefaults)}' ${groupName}-reporting ${formId} ${outputPath} ${batchSize}`
+  const cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${groupName} ${formId} ${outputPath} ${batchSize}`
   log.info(`generating csv start: ${cmd}`)
   exec(cmd).then(status => {
     log.info(`generate csv done: ${JSON.stringify(status)}`)
@@ -925,40 +588,7 @@ app.get('/csv/:groupName/:formId', async function (req, res) {
   })
 })
 
-app.get('/test/generate-tangy-form-responses/:numberOfResponses/:groupName', isAuthenticated, async function (req, res) {
-  let db = new DB(req.params.groupName)
-  const template = require('./template.json');
-  delete template._rev
-  let i = 0
-  while (i <= parseInt(req.params.numberOfResponses)) {
-    await db.put(Object.assign({}, template, { _id: crypto.randomBytes(20).toString('hex') }))
-    i++
-  }
-  res.send('ok')
-})
-
-let replicationEntries = []
-
-clog(process.env.T_REPLICATE)
-try {
-  replicationEntries = JSON.parse(process.env.T_REPLICATE)
-} catch (e) { log.error(e) }
-
-if (replicationEntries.length > 0) {
-  for (let replicationEntry of replicationEntries) {
-    let options = {}
-    if (replicationEntry.continuous && replicationEntry.continuous === true) {
-      options.continuous = true
-    }
-    DB.replicate(
-      replicationEntry.from,
-      replicationEntry.to,
-      options
-    )
-  }
-}
-
-
+/* @TODO This is not complete. The generate-csv script needs to be updated to support this.
 app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthenticated, (req, res) => {
   const groupName = req.params.groupName;
   const year = req.params.year;
@@ -968,58 +598,10 @@ app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthentica
 
   generateCSV(formId, groupReportingDbName, res);
 });
+*/
 
-/**
- * @description Function to create Design Documents in a given Database
- * @param {string} database The Database to use when for creating the Design Document
- *
- * `tangyReportingDesignDoc` is an Object that holds the Design Doc with views to be stored in the DB
- *
- * For compound keys in the design doc use string concatenation as a compilation error is thrown when using template strings
- * @example
- * use form.docId+'-'+doc.completed not `${doc.docId}-${doc.completed}`
- */
-async function createDesignDocument(database) {
-  const REPORTING_DB = new DB(database);
 
-  const tangyReportingDesignDoc = {
-    _id: '_design/tangy-reporting',
-    version: '1',
-    views: {
-      resultsByGroupFormId: {
-        map: function (doc) {
-          if (doc.formId) {
-            const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const startDatetime = new Date(doc.startDatetime);
-            const key = doc.formId + '_' + startDatetime.getFullYear() + '_' + MONTHS[startDatetime.getMonth()];
-            //The emmitted value is in the form "formId" i.e `formId` and also "formId_2018_May" i.e `formId_Year_Month`
-            emit(doc.formId);
-            emit(key);
-          }
-        }.toString()
-      }
-    }
-  }
 
-  try {
-    const designDoc = await REPORTING_DB.get('_design/tangy-reporting');
-    if (designDoc.version !== tangyReportingDesignDoc.version) {
-      log.info(`✓ Time to update _design/tangy-reporting for ${database}`);
-      log.info(`Removing _design/tangy-reporting for ${database}`);
-      await REPORTING_DB.remove(designDoc)
-      log.info(`Cleaning up view indexes for ${database}`);
-      // @TODO This causes conflicts with open databases. How to avoid??
-      //await REPORTING_DB.viewCleanup()
-      log.info(`Creating _design/tangy-reporting for ${database}`);
-      await REPORTING_DB.put(tangyReportingDesignDoc).
-        then(info => log.info(`√ Created _design/tangy-reporting for ${database} succesfully`));
-    }
-  } catch (error) {
-    if (error.error === 'not_found') {
-      await REPORTING_DB.put(tangyReportingDesignDoc).catch(err => log.error(err));
-    }
-  }
-}
 
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
@@ -1045,6 +627,12 @@ const keepAliveReportingWorker = async initialGroups => {
     for (let groupName of initialGroups) {
       let feed = workerState.databases.find(database => database.name === groupName)
       if (!feed) workerState.databases.push({ name: groupName, sequence: 0 })
+    }
+    var pouchDbDefaults = {}
+    if (process.env.T_COUCHDB_ENABLE === 'true') {
+      pouchDbDefaults = { prefix: process.env.T_COUCHDB_ENDPOINT }
+    } else {
+      pouchDbDefaults = { prefix: '/tangerine/db/' }
     }
     workerState.pouchDbDefaults = pouchDbDefaults
     await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
@@ -1092,6 +680,7 @@ const keepAliveReportingWorker = async initialGroups => {
     }
   } catch (error) {
     log.error(error)
+    console.log(error)
     log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
     await sleep(30*1000)
 
@@ -1101,49 +690,74 @@ const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
 
 
-/*
- * Use http-proxy instead of express-http-proxy for the /elasticsearch/_msearch route due to the bug here: https://github.com/elastic/kibana/issues/21838
- */
-var httpProxy = require('http-proxy');
-var esUrl = 'http://elasticsearch:9200'
-var proxyget = httpProxy.createProxyServer({target:esUrl});
-var proxypost = httpProxy.createProxyServer({target:esUrl});
+if (process.env.T_ELASTIC_SEARCH_ENABLE === 'true') {
+  /*
+  * Use http-proxy instead of express-http-proxy for the /elasticsearch/_msearch route due to the bug here: https://github.com/elastic/kibana/issues/21838
+  */
+  var httpProxy = require('http-proxy');
+  var esUrl = 'http://elasticsearch:9200'
+  var proxyget = httpProxy.createProxyServer({target:esUrl});
+  var proxypost = httpProxy.createProxyServer({target:esUrl});
 
-app.get('/reports/elasticsearch/_msearch', isAuthenticated, function(req, res) {
-  console.log(req.method + ' : ' + req.url);
-  req.url = req.url.replace('/reports','');
-  proxyget.web(req, res, { target: esUrl});
-});
+  app.get('/reports/elasticsearch/_msearch', isAuthenticated, function(req, res) {
+    console.log(req.method + ' : ' + req.url);
+    req.url = req.url.replace('/reports','');
+    proxyget.web(req, res, { target: esUrl});
+  });
 
-app.post('/reports/elasticsearch/_msearch', isAuthenticated, function(req, res) {
-  console.log(req.method + ' : ' + req.url);
-  req.url = req.url.replace('/reports','');
-  proxypost.web(req, res, { target: esUrl});
-});
+  app.post('/reports/elasticsearch/_msearch', isAuthenticated, function(req, res) {
+    console.log(req.method + ' : ' + req.url);
+    req.url = req.url.replace('/reports','');
+    proxypost.web(req, res, { target: esUrl});
+  });
 
-/*
- * Mount kibana to /reports
- */
-var kibanaProxy = proxy('http://kibana:5601/', {
-  proxyReqPathResolver: function (req, res) {
-    var path = require('url').parse(req.url).path;
-    clog("path:" + path);
-    return path;
+  /*
+  * Mount kibana to /reports
+  */
+  var kibanaProxy = proxy('http://kibana:5601/', {
+    proxyReqPathResolver: function (req, res) {
+      var path = require('url').parse(req.url).path;
+      clog("path:" + path);
+      return path;
+    }
+  });
+
+  var kibanaMountpoint = '/reports';
+  app.use(kibanaMountpoint, isAuthenticated, kibanaProxy);
+  app.use(kibanaMountpoint, isAuthenticated,  function (req, res) {
+    if (req.originalUrl === kibanaMountpoint) {
+      res.redirect(301, req.originalUrl + '/');
+    } else {
+      kibanaProxy;
+    }
+  });
+} else {
+  app.use('/get', (req, res) => res.send('Enable Elastic Search to create reports and dashboards.'))
+}
+
+const runPaidWorker = require('./src/paid-worker')
+async function keepAlivePaidWorker() {
+  let state = {}
+  while(true) {
+    try {
+      state = await runPaidWorker()
+      if (state.batchMarkedPaid === 0) {
+        log.info('No responses marked as paid. Sleeping...')
+        await sleep(30*1000)
+      } else {
+        log.info(`Marked ${state.batchMarkedPaid} responses as paid.`)
+      }
+    } catch (error) {
+      log.error(error.message)
+      console.log(error)
+      await sleep(30*1000)
+    }
   }
-});
-
-var kibanaMountpoint = '/reports';
-app.use(kibanaMountpoint, isAuthenticated, kibanaProxy);
-app.use(kibanaMountpoint, isAuthenticated,  function (req, res) {
-  if (req.originalUrl === kibanaMountpoint) {
-    res.redirect(301, req.originalUrl + '/');
-  } else {
-    kibanaProxy;
-  }
-});
+}
+keepAlivePaidWorker()
 
 // Start the server.
-var server = app.listen(config.port, function () {
+var server = app.listen('80', function () {
   var host = server.address().address;
   var port = server.address().port;
   log.info(server.address());

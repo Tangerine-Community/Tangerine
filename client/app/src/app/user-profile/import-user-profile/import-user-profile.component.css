@@ -1,0 +1,8 @@
+:host {
+    /* not working? */
+    padding: 15px;
+    margin: 15px;
+}
+paper-input {
+    margin: 15px;
+}

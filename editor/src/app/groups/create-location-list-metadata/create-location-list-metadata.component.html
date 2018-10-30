@@ -1,0 +1,46 @@
+<mat-card>
+  <mat-card-title class="tangy-foreground-secondary">
+    {{'Create Location List Metadata'|translate}}
+  </mat-card-title>
+  <mat-card-content>
+    <div class="tangy-full-width">
+      <div>
+        <a class="faux-anchor" (click)="isFormShown=!isFormShown">{{isFormShown?'Hide Form':'+ Create a New Metadata
+          Record'|translate}}</a>
+      </div>
+      <div *ngIf="isFormShown">
+        <form class="tangy-full-width" novalidate #newMetadataItemForm="ngForm">
+          <mat-form-field class="tangy-full-width">
+            <input name="locationLabel" [(ngModel)]="form.label" matInput placeholder="{{'Label'|translate}}" required>
+          </mat-form-field>
+          <mat-form-field class="tangy-full-width">
+            <mat-select name="parentLevel" placeholder="Input Type" [(ngModel)]="form.type" required>
+              <mat-option value="text">
+                {{'Text Input'|translate}}
+              </mat-option>
+              <mat-option value="number">
+                {{'Number Input'|translate}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="tangy-full-width">
+            <mat-select name="isFieldRequired" placeholder="Required Field" [(ngModel)]="form.requiredField" required>
+              <mat-option [value]="true">
+                {{'Required'|translate}}
+              </mat-option>
+              <mat-option [value]="false">
+                {{'Optional'|translate}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button type="button" [disabled]="newMetadataItemForm.invalid" mat-raised-button color="warn" (click)="addMetadataItem()">{{'Submit'|translate}}</button>
+        </form>
+      </div>
+      <mat-list role="list">
+        <mat-list-item role="listitem" *ngFor="let item of currentMetadata">
+          <span class="tangy-foreground-secondary">{{item.label}} : {{item.type}}: {{item.requiredField}}</span>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-card-content>
+</mat-card>

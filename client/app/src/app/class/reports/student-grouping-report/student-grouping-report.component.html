@@ -1,0 +1,61 @@
+<mat-card class="tangy-card-content-container">
+  <button mat-button [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+  <mat-menu #reportsMenu="matMenu">
+    <ng-template matMenuContent>
+      <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+      <!--<button mat-menu-item *ngFor="let item of formList" (click)="displayReport(item)">{{item.title}}</button>-->
+    </ng-template>
+  </mat-menu>
+
+
+  <h2 title="Summary">{{'Summary'|translate}}</h2>
+
+  <table class="mat-elevation-z8" >
+    <tr>
+      <td title="Subtest Name">{{'Subtest Name'|translate}}</td><td>{{classGroupReport.subtestName}}</td>
+    </tr>
+    <tr>
+      <td title="Class Size">{{'Class Size'|translate}}</td><td>{{students?.length}}</td>
+    </tr>
+    <tr>
+      <td title="Students Assessed">{{'Students Assessed'|translate}}</td><td>{{classGroupReport.studentsAssessed}}</td>
+    </tr>
+    <tr>
+      <td title="Average Correct (%)">{{'Average Correct (%)'|translate}}</td><td></td>
+    </tr>
+    <tr>
+      <td title="Average Correct">{{'Average Correct'|translate}}</td><td></td>
+    </tr>
+    <tr>
+      <td title="Students to watch">{{'Students to watch'|translate}}</td><td>{{classGroupReport.studentsToWatch}}</td>
+    </tr>
+  </table>
+
+
+  <h2 title="Student Grouping">{{'Student Grouping'|translate}}</h2>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <!-- Name Column -->
+    <!-- {{'Student'|translate}} -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef title="Student"> {{'Student'|translate}} </th>
+      <td mat-cell *matCellDef="let element"> {{element["name"]}} </td>
+    </ng-container>
+
+    <!-- {{'Status'|translate}} -->
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef title="Status"> {{'Score'|translate}} </th>
+      <td mat-cell *matCellDef="let element"> {{element.score| translate}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+  </table>
+
+</mat-card>
+
+<div #container class = "hideme"> </div>
+
+

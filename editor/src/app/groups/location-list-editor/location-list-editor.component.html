@@ -1,0 +1,71 @@
+<mat-card>
+  <mat-card-title class="tangy-foreground-secondary">
+    {{'Manage Locations'|translate}}
+  </mat-card-title>
+  <mat-card-content>
+    <div class="tangy-full-width">
+      <div>
+        <mat-chip-list>
+          <mat-chip [color]="breadcrumbs[breadcrumbs.length-1]['label']===breadcrumb.label?'accent':'primary'" selected
+            *ngFor="let breadcrumb of breadcrumbs" (click)="onClickBreadcrumb(breadcrumb.id)">{{breadcrumb.label}}</mat-chip>
+        </mat-chip-list>
+      </div>
+      <div class="button-row">
+        <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&!isAddLocationItemFormShown"
+          mat-raised-button (click)="isAddLocationItemFormShown=!isAddLocationItemFormShown">ADD
+          {{locationsLevels[breadcrumbs.length-1]}} to
+          {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
+        <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&isAddLocationItemFormShown"
+          mat-raised-button (click)="isAddLocationItemFormShown=!isAddLocationItemFormShown">Hide Form</button>
+        <button (click)="editItem(breadcrumbs[breadcrumbs.length-1])" *ngIf="breadcrumbs.length>1" mat-raised-button>EDIT
+          {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
+        <button *ngIf="locationsLevelsLength+1===breadcrumbs.length&&!isMoveLocationFormShown" mat-raised-button
+          (click)="showMoveLocationForm()">MOVE
+          {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
+        <button *ngIf="locationsLevelsLength+1===breadcrumbs.length&&isMoveLocationFormShown" mat-raised-button (click)="isMoveLocationFormShown=!isMoveLocationFormShown">HIDE
+          FORM</button>
+      </div>
+
+      <div *ngIf="isAddLocationItemFormShown">
+        <form name="newLocationItemForm" class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
+          <mat-form-field class="tangy-full-width">
+            <input name="newItemLabel" [(ngModel)]="newItemLabel" matInput placeholder="{{'Label'|translate}}" required>
+          </mat-form-field>
+          <div *ngIf="levelHasMetadata">
+            <mat-form-field class="tangy-full-width" *ngFor="let item of locationList.metadata[locationsLevels[breadcrumbs.length-1]]">
+              <input name="metadataInput" matInput [type]="item.type" [(ngModel)]="metadata[item.id]" placeholder="{{item.label}}"
+                [required]="item.requiredField">
+            </mat-form-field>
+          </div>
+          <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
+        </form>
+      </div>
+      <div *ngIf="isMoveLocationFormShown">
+        <form name="moveLocationForm" class="tangy-full-width" novalidate #moveLocationForm="ngForm">
+          <mat-form-field class="tangy-full-width">
+            <mat-select name="moveLocationParentLevelId" placeholder="Move to " [(ngModel)]="moveLocationParentLevelId"
+              required>
+              <mat-option *ngFor="let location of parentItemsForMoveLocation" [value]="location.id">
+                {{location.label}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button type="button" [disabled]="moveLocationForm.invalid" mat-raised-button color="warn" (click)="moveItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
+        </form>
+      </div>
+
+
+      <mat-list>
+        <mat-list-item class="tangy-location-list">
+          <span *ngIf="locationChildren.length>0" class="tangy-foreground-primary">{{'Children'|translate}} of
+            {{breadcrumbs[breadcrumbs.length-1]['label']}}</span>
+        </mat-list-item>
+      </mat-list>
+      <mat-list role="list" *ngIf="locationChildren.length>0">
+        <mat-list-item role="listitem" *ngFor="let child of locationChildren" (click)="onChildClick(child.id)">
+          <span class="faux-anchor tangy-foreground-secondary">{{child.label}} - id {{child.id}}</span>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,36 @@
+Filter:
+<select name="form" (change)="filterByForm($event)">
+  <option value="*">*</option>
+  <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
+</select>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Date</th>
+    <th>Form</th>
+    <th>User ID</th>
+    <th></th>
+    <th></th>
+  </tr>
+  <tr *ngFor="let response of responses">
+    <td>{{response._id}}</td>
+    <td>{{moment(response.startUnixtime).format()}}</td>
+    <td>{{response.form?.id}}</td>
+    <td>{{(response.userProfileId) ? response.userProfileId : 'anonymous'}}</td>
+    <td>
+      <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: response.form?.id, groupName: groupName, responseId: response._id}">
+        <paper-button raised>
+          view
+        </paper-button>
+      </a>
+    </td>
+    <td>
+      <paper-button (click)="deleteResponse(response._id)" raised>
+        delete
+      </paper-button>
+    </td>
+  </tr>
+</table>
+<paper-button *ngIf="this.skip !== 0" (click)="previousPage()">< back</paper-button>
+<paper-button (click)="nextPage()">next ></paper-button>
