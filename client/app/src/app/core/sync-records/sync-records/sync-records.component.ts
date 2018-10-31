@@ -74,7 +74,7 @@ export class SyncRecordsComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig();
     return appConfig.uploadUrl;
   }
-  async pushAllRecords() {
+  async sync() {
     this.isSyncSuccesful = undefined;
     const usernames = await this.userService.getUsernames();
     const appConfig = await this.appConfigService.getAppConfig();
