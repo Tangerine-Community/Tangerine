@@ -74,7 +74,7 @@ export class SyncRecordsComponent implements OnInit {
     const appConfig = await this.appConfigService.getAppConfig();
     return appConfig.uploadUrl;
   }
-  async pushAllRecords() {
+  async sync() {
     this.isSyncSuccesful = undefined;
     const usernames = await this.userService.getUsernames();
     const appConfig = await this.appConfigService.getAppConfig();
@@ -97,7 +97,7 @@ export class SyncRecordsComponent implements OnInit {
             console.log("boo, something went wrong! error: " + err)
           });
         } else {
-          const result = await this.syncingService.pushAllrecords(username);
+          const result = await this.syncingService.sync(username);
           if (result) {
             this.isSyncSuccesful = true;
             this.getUploadProgress();

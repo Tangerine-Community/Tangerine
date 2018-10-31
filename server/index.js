@@ -151,6 +151,7 @@ app.use(passport.session());
 // Middleware to protect routes.
 var isAuthenticated = require('./src/middleware/is-authenticated.js')
 var hasUploadToken = require('./src/middleware/has-upload-token.js')
+var isAuthenticatedOrHasUploadToken = require('./src/middleware/is-authenticated-or-has-upload-token.js')
 
 // Login service.
 app.post('/login',
@@ -168,7 +169,7 @@ app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticate
 // Note that the lack of security middleware here is intentional. User IDs are UUIDs and thus sufficiently hard to guess.
 app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./src/routes/group-responses-by-user-profile-id.js'))
 app.get('/api/:groupId/responsesByUserProfileShortCode/:userProfileShortCode/:limit?/:skip?', require('./src/routes/group-responses-by-user-profile-short-code.js'))
-app.get('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-read.js'))
+app.get('/api/:groupId/:docId', isAuthenticatedOrHasUploadToken, require('./src/routes/group-doc-read.js'))
 app.put('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
 app.post('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
 app.delete('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-delete.js'))
