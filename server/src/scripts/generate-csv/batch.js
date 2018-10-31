@@ -42,12 +42,19 @@ function getData(dbName, formId, skip, batchSize) {
 async function batch() {
   const state = JSON.parse(await readFile(params.statePath))
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize)
+  const relatedProfileDocs = await getRelatedProfileDocs(docs)
   if (docs.length === 0) {
     state.complete = true
   } else {
     // Order each datum's properties by the headers for consistent columns.
     try {
-      const rows = docs.map(doc => [ doc._id, ...state.headersKeys.map(header => (doc[header]) ? doc[header] : '') ])
+      const rows = docs.map(doc => [ doc._id, ...state.headersKeys.map(header => {
+        if (header.contains('user-profile.')) {
+          return relatedProfileDocs[doc.userProfileId][header.replace('user-profile.', '')] ? relatedProfileDocs[doc.userProfileId][header.replace('user-profile.', '')] : ''
+        } else {
+          return doc[header] ? doc[header] : ''
+        }
+      })])
       const output = `\n${new CSV(rows).encode()}`
       await appendFile(state.outputPath, output)
       state.skip = state.skip + state.batchSize

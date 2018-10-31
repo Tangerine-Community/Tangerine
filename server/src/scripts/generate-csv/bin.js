@@ -48,6 +48,16 @@ async function go(state) {
     }
     state.headers = headersDoc.columnHeaders.map(header => header.header)
     state.headersKeys = headersDoc.columnHeaders.map(header => header.key)
+    // Join user-profile headers.
+    if (state.formId !== 'user-profile') {
+      try {
+        const userProfileHeadersDoc = await db.get('user-profile')
+        state.headers = [...state.headers, ...userProfileHeadersDoc.columnHeaders.map(header => `user-profile.${header.header}`)]
+        state.headersKeys = [...state.headersKeys, ...userProfileHeadersDoc.columnHeaders.map(header => `user-profile.${header.key}`)]
+      } catch(e) {
+        // No user-profile form. No worries.
+      }
+    }
     state.headers.unshift('_id')
     const headersRow = new CSV([state.headers]).encode()
     await writeFile(state.outputPath, headersRow, 'utf-8')
