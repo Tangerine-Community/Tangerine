@@ -35,6 +35,7 @@ export class ManageLocationListLevelsComponent implements OnInit {
 
   async addLocationLevel() {
     const index = this.locationListData.locationsLevels.indexOf(this.parentLevel);
+    this.locationLabel = this.locationLabel.replace(/\W+/g, '_');
     const doesItemExist = this.locationListData.locationsLevels.indexOf(this.locationLabel.trim());
     if (doesItemExist >= 0) {
       this.errorHandler.handleError('Level with same name found');
@@ -50,7 +51,7 @@ export class ManageLocationListLevelsComponent implements OnInit {
         this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
         this.locationLabel = '';
         this.parentLevel = '';
-        this.window.nativeWindow.location.reload()
+        this.window.nativeWindow.location.reload();
       } catch (error) {
         this.errorHandler.handleError('Error Saving Location Lits File to disk');
       }

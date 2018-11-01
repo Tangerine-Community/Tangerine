@@ -1,0 +1,75 @@
+<mat-card>
+  <mat-card-title class="tangy-foreground-secondary">
+    {{'Manage Location List Metadata'|translate}}
+  </mat-card-title>
+  <mat-card-content>
+    <div class="tangy-full-width">
+      <div>
+        <a [routerLink]="['/groups/',groupName]">{{'Go To Group Homepage'|translate}}</a>
+        <br /><br />
+        <a class="faux-anchor" (click)="isFormShown=!isFormShown">{{isFormShown?'Hide Form':'+ Create a New Metadata
+          Record'|translate}}</a>
+      </div>
+      <div *ngIf="isFormShown">
+        <span *ngIf="isItemMarkedForUpdate">Editing {{itemToUpdate.label}}</span>
+        <form class="tangy-full-width" novalidate #newMetadataItemForm="ngForm">
+          <mat-form-field class="tangy-full-width">
+            <input name="locationLabel" [(ngModel)]="form.label" matInput placeholder="{{'Label'|translate}}" required>
+          </mat-form-field>
+          <mat-form-field class="tangy-full-width">
+            <mat-select name="parentLevel" placeholder="Input Type" [(ngModel)]="form.type" required>
+              <mat-option value="text">
+                {{'Text Input'|translate}}
+              </mat-option>
+              <mat-option value="number">
+                {{'Number Input'|translate}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field class="tangy-full-width">
+            <mat-select name="isFieldRequired" placeholder="Required Field" [(ngModel)]="form.requiredField" required>
+              <mat-option [value]="true">
+                {{'Required'|translate}}
+              </mat-option>
+              <mat-option [value]="false">
+                {{'Optional'|translate}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button type="button" [hidden]="isItemMarkedForUpdate" [disabled]="newMetadataItemForm.invalid"
+            mat-raised-button color="warn" (click)="addMetadataItem()">{{'Submit'|translate}}</button>
+          <button type="button" *ngIf="isItemMarkedForUpdate" [disabled]="newMetadataItemForm.invalid"
+            mat-raised-button color="warn" (click)="updateItem()">{{'Update Record'|translate}}</button>
+        </form>
+      </div>
+
+      <mat-list>
+        <mat-list-item class="tangy-location-list">
+          <span class="tangy-foreground-primary">{{'Label'|translate}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-primary">{{'Input Type'|translate}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-primary">{{'Is Field Required?'|translate}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-primary">{{'Actions'|translate}}</span>
+        </mat-list-item>
+      </mat-list>
+      <mat-list>
+        <mat-list-item class="tangy-location-list" *ngFor="let item of currentMetadata">
+          <span class="tangy-foreground-secondary">{{item.label}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-secondary">{{item.type}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-secondary">{{item.requiredField?'Yes':'No'}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-secondary faux-anchor" (click)="showEditForm(item)">
+            <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
+          </span>
+          <span class="tangy-foreground-primary faux-anchor" (click)="deleteItem(item)">
+            <i class="material-icons mat-18 tangy-location-list-icon ">delete</i>
+          </span>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -18,12 +18,12 @@ import { ReleaseDatComponent } from './release-dat/release-dat.component';
 import { ResponsesComponent } from './responses/responses.component';
 import { LocationListEditorComponent } from './location-list-editor/location-list-editor.component';
 import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
-import { CreateLocationListMetadataComponent } from './create-location-list-metadata/create-location-list-metadata.component';
+import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
 
 
 
 @NgModule({
-  schemas: [ CUSTOM_ELEMENTS_SCHEMA],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
     FormsModule,
@@ -53,7 +53,7 @@ import { CreateLocationListMetadataComponent } from './create-location-list-meta
     ReleaseDatComponent,
     ResponsesComponent,
     ManageLocationListLevelsComponent,
-    CreateLocationListMetadataComponent
+    ManageLocationListMetadataComponent
   ],
   providers: [GroupsService]
 })
