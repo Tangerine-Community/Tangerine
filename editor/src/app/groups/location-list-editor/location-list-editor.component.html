@@ -11,59 +11,67 @@
         </mat-chip-list>
       </div>
       <div class="button-row">
-        <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&!isAddLocationItemFormShown"
-          mat-raised-button (click)="isAddLocationItemFormShown=!isAddLocationItemFormShown">ADD
+        <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&!showLocationForm"
+          mat-raised-button (click)="showLocationForm=!showLocationForm">ADD
           {{locationsLevels[breadcrumbs.length-1]}} to
           {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-        <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&isAddLocationItemFormShown"
-          mat-raised-button (click)="isAddLocationItemFormShown=!isAddLocationItemFormShown">Hide Form</button>
-        <button (click)="editItem(breadcrumbs[breadcrumbs.length-1])" *ngIf="breadcrumbs.length>1" mat-raised-button>EDIT
+        <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&showLocationForm"
+          mat-raised-button (click)="hideLocationForm()">Hide Editing Form</button>
+        <button *ngIf="breadcrumbs.length>2&&!isMoveLocationFormShown" mat-raised-button (click)="showMoveLocationForm()">MOVE
           {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-        <button *ngIf="locationsLevelsLength+1===breadcrumbs.length&&!isMoveLocationFormShown" mat-raised-button
-          (click)="showMoveLocationForm()">MOVE
-          {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-        <button *ngIf="locationsLevelsLength+1===breadcrumbs.length&&isMoveLocationFormShown" mat-raised-button (click)="isMoveLocationFormShown=!isMoveLocationFormShown">HIDE
+        <button *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" mat-raised-button (click)="hideLocationForm()">HIDE
           FORM</button>
       </div>
+      <br />
+      <span *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" class="tangy-foreground-primary">{{'Move'|translate}}
+        {{breadcrumbs[breadcrumbs.length-1]['label']}}
 
-      <div *ngIf="isAddLocationItemFormShown">
+        to another {{locationsLevels[breadcrumbs.length-3]}}</span>
+
+      <div *ngIf="showLocationForm">
         <form name="newLocationItemForm" class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
           <mat-form-field class="tangy-full-width">
-            <input name="newItemLabel" [(ngModel)]="newItemLabel" matInput placeholder="{{'Label'|translate}}" required>
+            <input name="newItemLabel" [(ngModel)]="form.label" matInput placeholder="{{'Label'|translate}}" required>
           </mat-form-field>
           <div *ngIf="levelHasMetadata">
             <mat-form-field class="tangy-full-width" *ngFor="let item of locationList.metadata[locationsLevels[breadcrumbs.length-1]]">
-              <input name="metadataInput" matInput [type]="item.type" [(ngModel)]="metadata[item.id]" placeholder="{{item.label}}"
+              <input [name]="item.id" matInput [type]="item.type" [(ngModel)]="form.metadata[item.id]" placeholder="{{item.label}}"
                 [required]="item.requiredField">
             </mat-form-field>
           </div>
-          <button type="button" [disabled]="newLocationItemForm.invalid" mat-raised-button color="warn" (click)="addItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
+          <button [hidden]="isItemMarkedForUpdate" type="button" [disabled]="newLocationItemForm.invalid"
+            mat-raised-button color="warn" (click)="addItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
+          <button *ngIf="isItemMarkedForUpdate" type="button" [disabled]="newLocationItemForm.invalid"
+            mat-raised-button color="warn" (click)="editItem()">{{'Update
+            Record'|translate}}</button>
         </form>
       </div>
-      <div *ngIf="isMoveLocationFormShown">
-        <form name="moveLocationForm" class="tangy-full-width" novalidate #moveLocationForm="ngForm">
-          <mat-form-field class="tangy-full-width">
-            <mat-select name="moveLocationParentLevelId" placeholder="Move to " [(ngModel)]="moveLocationParentLevelId"
-              required>
-              <mat-option *ngFor="let location of parentItemsForMoveLocation" [value]="location.id">
-                {{location.label}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <button type="button" [disabled]="moveLocationForm.invalid" mat-raised-button color="warn" (click)="moveItem(breadcrumbs[breadcrumbs.length-1])">{{'Submit'|translate}}</button>
-        </form>
+      <div [hidden]="!isMoveLocationFormShown">
+        <div #container>
+          <div></div>
+        </div>
+        <button type="button" [disabled]="!canMoveItem" mat-raised-button color="warn" (click)="onSubmitMoveItem()">{{'Submit'|translate}}</button>
       </div>
+
 
 
       <mat-list>
         <mat-list-item class="tangy-location-list">
           <span *ngIf="locationChildren.length>0" class="tangy-foreground-primary">{{'Children'|translate}} of
             {{breadcrumbs[breadcrumbs.length-1]['label']}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-primary">{{'Actions'|translate}}</span>
+
         </mat-list-item>
       </mat-list>
       <mat-list role="list" *ngIf="locationChildren.length>0">
-        <mat-list-item role="listitem" *ngFor="let child of locationChildren" (click)="onChildClick(child.id)">
-          <span class="faux-anchor tangy-foreground-secondary">{{child.label}} - id {{child.id}}</span>
+        <mat-list-item role="listitem" *ngFor="let child of locationChildren">
+          <span class="faux-anchor tangy-foreground-secondary" (click)="onChildClick(child.id)">{{child.label}} - id
+            {{child.id}}</span>
+          <span class="tangy-spacer"></span>
+          <span class="tangy-foreground-secondary faux-anchor" (click)="showEditForm(child)">
+            <i class="material-icons mat-18 tangy-location-list-icon ">edit</i>
+          </span>
         </mat-list-item>
       </mat-list>
     </div>

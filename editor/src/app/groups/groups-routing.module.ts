@@ -10,7 +10,7 @@ import { ReleaseDatComponent } from './release-dat/release-dat.component';
 import { DownloadCsvComponent } from './download-csv/download-csv.component';
 import { AddUserComponent } from './add-users/add-user.component';
 import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
-import { CreateLocationListMetadataComponent } from './create-location-list-metadata/create-location-list-metadata.component';
+import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects',  component: GroupsComponent },
@@ -22,8 +22,8 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {
-    path: 'groups/:groupName/create-location-list-metadata/:locationLevel',
-    component: CreateLocationListMetadataComponent, canActivate: [LoginGuard]
+    path: 'groups/:groupName/manage-location-list-metadata/:locationLevel',
+    component: ManageLocationListMetadataComponent, canActivate: [LoginGuard]
   },
   { path: 'groups/:groupName/download-csv/:formId', component: DownloadCsvComponent, canActivate: [LoginGuard] },
   { path: 'group/release-apk/:id/:releaseType', component: ReleaseApkComponent, canActivate: [LoginGuard] },
