@@ -96,6 +96,8 @@ export class LocationListEditorComponent implements OnInit {
   onClickBreadcrumb(id) {
     this.openPath(this.currentPath.slice(0, this.currentPath.indexOf(id) + 1));
     this.updateMoveLocationForm();
+    this.isMoveLocationFormShown = false;
+    this.showLocationForm = false;
   }
 
   async addItem(parentItem) {
@@ -117,11 +119,10 @@ export class LocationListEditorComponent implements OnInit {
     this.form = { ...this.form, ...item };
     this.isItemMarkedForUpdate = true;
   }
-
   async editItem() {
     const flatLocationList = Loc.flatten(this.locationList);
     const index = flatLocationList.locations.findIndex(location => location.id === this.form.id);
-    flatLocationList.locations[index] = { ...this.form };
+    flatLocationList.locations[index] = { ...flatLocationList.locations[index], ...this.form };
     this.locationList = Loc.unflatten(flatLocationList);
     await this.setLocationList(this.locationList);
     await this.saveLocationListToDisk();
@@ -132,9 +133,11 @@ export class LocationListEditorComponent implements OnInit {
     this.form = { label: '', id: '', metadata: {} };
     this.showLocationForm = false;
     this.isItemMarkedForUpdate = false;
+    this.isMoveLocationFormShown = false;
   }
   showMoveLocationForm() {
     this.isMoveLocationFormShown = true;
+    this.showLocationForm = false;
   }
   updateMoveLocationForm() {
     const refineToLevel = [...this.locationsLevels].slice(0, this.breadcrumbs.length - 2);
