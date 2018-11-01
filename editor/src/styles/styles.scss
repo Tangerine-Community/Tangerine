@@ -4,69 +4,68 @@
 body {
   background-color: #fafafa;
 }
-.login-app-content{
+.login-app-content {
   margin-top: 180px;
 }
-button.tangy-froms-margin-left{
-   margin-left:3rem
+button.tangy-froms-margin-left {
+  margin-left: 3rem;
 }
 #icon {
   display: block;
 }
-.tangerine-app-content{
-    /* min-height: 100vh; */
-    margin-top: 64px;
+.tangerine-app-content {
+  /* min-height: 100vh; */
+  margin-top: 64px;
 }
-mat-toolbar{
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 2;
-}
-
-
-.tangy-spacer{
-    flex: 1 1 auto;
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
 }
 
-.tangy-foreground-primary{
-    color: $tangy-foreground-primary;
+.tangy-spacer {
+  flex: 1 1 auto;
+}
+
+.tangy-foreground-primary {
+  color: $tangy-foreground-primary;
 }
 
 .tangy-foreground-secondary {
   color: #f26f10;
 }
 
-.tangy-no-text-decoration{
-    text-decoration: none;
+.tangy-no-text-decoration {
+  text-decoration: none;
 }
-.tangy-app-name{
+.tangy-app-name {
   color: $tangy-app-name;
 }
-.tangy-unstyled-list{
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+.tangy-unstyled-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
-.tangy-card-content-container{
+.tangy-card-content-container {
   margin-left: 3%;
   width: 90%;
-  margin-right:5%;
+  margin-right: 5%;
   min-height: vh;
 }
 
 .tangy-location-list {
-  border-bottom: 1px solid rgba(0,0,0,.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   font-size: 14px;
-  color: rgba(0,0,0,.87);
+  color: rgba(0, 0, 0, 0.87);
   letter-spacing: 0.05em;
 }
 
-.tangy-location-list-icon{
+.tangy-location-list-icon {
   padding-right: 5px;
-  padding-top:3.5px;
+  padding-top: 3.5px;
   color: #f26f10;
 }
 .menu-tangy-location-list-icon {
@@ -76,36 +75,47 @@ mat-toolbar{
   padding-right: 3px;
 }
 
-.search-icon{
-padding-top:0px;
+.search-icon {
+  padding-top: 0px;
 }
 
 iron-icon {
   color: #3c5b8d !important;
 }
-.material-icons.mat-11 { font-size: 11px; }
-.material-icons.mat-14 { font-size: 14px; }
-.material-icons.mat-18 { font-size: 18px; }
-.material-icons.mat-24 { font-size: 24px; }
-.material-icons.mat-36 { font-size: 36px; }
-.material-icons.mat-48 { font-size: 48px; }
+.material-icons.mat-11 {
+  font-size: 11px;
+}
+.material-icons.mat-14 {
+  font-size: 14px;
+}
+.material-icons.mat-18 {
+  font-size: 18px;
+}
+.material-icons.mat-24 {
+  font-size: 24px;
+}
+.material-icons.mat-36 {
+  font-size: 36px;
+}
+.material-icons.mat-48 {
+  font-size: 48px;
+}
 
-
-.tangy-full-width{
+.tangy-full-width {
   width: 100%;
 }
 
 .tangy-half-width {
   width: 50%;
   margin: 0;
-  padding:0;
+  padding: 0;
   display: inline-block;
 }
 
 /* Form Stuff*/
 .app-input-icon {
-    font-size: 1.5em;
-  }
+  font-size: 1.5em;
+}
 
 .header .title-text {
   color: #3c5b8d;
