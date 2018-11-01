@@ -50,7 +50,7 @@ export class ManageLocationListLevelsComponent implements OnInit {
         this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
         this.locationLabel = '';
         this.parentLevel = '';
-        this.window.nativeWindow.location.reload()
+        this.window.nativeWindow.location.reload();
       } catch (error) {
         this.errorHandler.handleError('Error Saving Location Lits File to disk');
       }

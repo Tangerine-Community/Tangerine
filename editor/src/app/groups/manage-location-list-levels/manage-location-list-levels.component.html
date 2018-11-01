@@ -26,7 +26,7 @@
       </div>
       <mat-list role="list">
         <mat-list-item role="listitem" *ngFor="let location of locationsLevels">
-          <a class="tangy-foreground-primary" href="/app/{{groupName}}/index.html#/groups/{{groupName}}/create-location-list-metadata/{{location}}">
+          <a class="tangy-foreground-primary" [routerLink]="['/groups/',groupName,'manage-location-list-metadata',location]">
             <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
           </a>
           <span class="tangy-foreground-secondary">{{location}}</span>

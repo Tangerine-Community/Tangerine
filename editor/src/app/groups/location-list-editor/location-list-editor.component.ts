@@ -22,13 +22,15 @@ export class LocationListEditorComponent implements OnInit {
   newItemLabel;
   newItemId;
   metadata: any = {};
-  isAddLocationItemFormShown = false;
+  showLocationForm = false;
   groupName = '';
   locationListFileName = 'location-list.json';
   isMoveLocationFormShown = false;
   parentItemsForMoveLocation;
   moveLocationParentLevelId;
   canMoveItem = false;
+  isItemMarkedForUpdate = false;
+  form: any = { label: '', id: '', metadata: {} };
   @ViewChild('container') container: ElementRef;
   constructor(
     private http: HttpClient,
@@ -60,7 +62,7 @@ export class LocationListEditorComponent implements OnInit {
   }
 
   openPath(path) {
-    this.isAddLocationItemFormShown = false;
+    this.showLocationForm = false;
     this.currentPath = path;
     let currentChildren = [];
     let currentLocation = {
@@ -97,8 +99,8 @@ export class LocationListEditorComponent implements OnInit {
   }
 
   async addItem(parentItem) {
-    this.newItemId = this.groupsService.createUserReadableUUID(this.newItemLabel);
-    const newItem = { [this.newItemId]: { label: this.newItemLabel, id: this.newItemId, ...this.metadata } };
+    this.newItemId = this.groupsService.createUserReadableUUID(this.form.label);
+    const newItem = { [this.newItemId]: { label: this.form.label, id: this.newItemId, metadata: this.form.metadata } };
     if (this.breadcrumbs.length === 1) {// Adding location item to root of location-list.locations
       this.locationList['locations'] = { ...this.locationList['locations'], ...newItem };
     } else {
@@ -106,17 +108,31 @@ export class LocationListEditorComponent implements OnInit {
     }
     await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
-    this.newItemId = '';
-    this.newItemLabel = '';
-    this.metadata = {};
-    this.isAddLocationItemFormShown = false;
-  }
-  async editItem(item) {
-    const newItem = { label: this.newItemLabel, ...this.metadata };
-    this.locationList = findAndEdit(this.locationList, item.id, newItem);
-    await this.setLocationList(this.locationList);
+    this.form = { label: '', id: '', metadata: {} };
+    this.showLocationForm = false;
   }
 
+  showEditForm(item) {
+    this.showLocationForm = true;
+    this.form = { ...this.form, ...item };
+    this.isItemMarkedForUpdate = true;
+  }
+
+  async editItem() {
+    const flatLocationList = Loc.flatten(this.locationList);
+    const index = flatLocationList.locations.findIndex(location => location.id === this.form.id);
+    flatLocationList.locations[index] = { ...this.form };
+    this.locationList = Loc.unflatten(flatLocationList);
+    await this.setLocationList(this.locationList);
+    await this.saveLocationListToDisk();
+    this.isItemMarkedForUpdate = false;
+    this.hideLocationForm();
+  }
+  hideLocationForm() {
+    this.form = { label: '', id: '', metadata: {} };
+    this.showLocationForm = false;
+    this.isItemMarkedForUpdate = false;
+  }
   showMoveLocationForm() {
     this.isMoveLocationFormShown = true;
   }
@@ -138,6 +154,7 @@ export class LocationListEditorComponent implements OnInit {
   onSubmitMoveItem() {
     this.moveItem(this.breadcrumbs[this.breadcrumbs.length - 1]);
   }
+
   async moveItem(item) {
     const locationObject = findAndDeleteChild(this.locationList.locations, this.breadcrumbs[this.breadcrumbs.length - 2]['id'], item.id);
     this.locationList.locations = findAndAdd(locationObject, this.moveLocationParentLevelId, { [item.id]: { ...item } });
@@ -193,7 +210,7 @@ function findAndEdit(object, value, replaceValue) {
         findAndEdit(object[x], value, replaceValue);
       }
       if (object[x] === value) {
-        object.label = replaceValue.label;
+        object = replaceValue;
         break;
       }
     }
