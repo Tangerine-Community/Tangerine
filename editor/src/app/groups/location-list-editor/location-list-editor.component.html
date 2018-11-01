@@ -22,6 +22,11 @@
         <button *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" mat-raised-button (click)="hideLocationForm()">HIDE
           FORM</button>
       </div>
+      <br />
+      <span *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" class="tangy-foreground-primary">{{'Move'|translate}}
+        {{breadcrumbs[breadcrumbs.length-1]['label']}}
+
+        to another {{locationsLevels[breadcrumbs.length-3]}}</span>
 
       <div *ngIf="showLocationForm">
         <form name="newLocationItemForm" class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
