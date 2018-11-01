@@ -202,24 +202,3 @@ function findAndDeleteChild(object, parentId, childId) {
   }
   return object;
 }
-function findAndEdit(object, value, replaceValue) {
-  for (let x in object) {
-
-    if (object.hasOwnProperty(x)) {
-      if (typeof object[x] === 'object') {
-        findAndEdit(object[x], value, replaceValue);
-      }
-      if (object[x] === value) {
-        object = replaceValue;
-        break;
-      }
-    }
-  }
-  return object;
-}
-
-function findChildren(obj, key) {
-  return key.split('.').reduce((result, i) => {
-    return result[i];
-  }, obj);
-}
