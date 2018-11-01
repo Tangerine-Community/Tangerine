@@ -150,7 +150,7 @@ export class LocationListEditorComponent implements OnInit {
   }
   onTangyLocationChange(value) {
     const itemId = value[this.breadcrumbs.length - 3]['value'];
-    this.canMoveItem = itemId ? true : false;
+    this.canMoveItem = !!itemId;
     this.moveLocationParentLevelId = this.canMoveItem ? itemId : '';
   }
 
