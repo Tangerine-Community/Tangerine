@@ -19,11 +19,12 @@ const params = {
   statePath: process.argv[2]
 }
 
-function getData(dbName, formId, skip, batchSize) {
+function getData(dbName, formId, skip, batchSize, year, month) {
   const limit = batchSize
   return new Promise((resolve, reject) => {
     try {
-      const target = `${dbDefaults.prefix}/${dbName}-reporting/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${formId}"]&include_docs=true&skip=${skip}&limit=${limit}`
+      const key = (year && month) ? `${formId}_${year}_${month}` : formId
+      const target = `${dbDefaults.prefix}/${dbName}-reporting/_design/tangy-reporting/_view/resultsByGroupFormId?keys=["${key}"]&include_docs=true&skip=${skip}&limit=${limit}`
       console.log(target)
       axios.get(target)
         .then(response => {
@@ -55,7 +56,7 @@ async function getRelatedProfileDocs(docs, state) {
 
 async function batch() {
   const state = JSON.parse(await readFile(params.statePath))
-  const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize)
+  const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
   const relatedProfileDocs = await getRelatedProfileDocs(docs, state)
   if (docs.length === 0) {
     state.complete = true
