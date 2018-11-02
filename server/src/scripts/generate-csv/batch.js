@@ -39,27 +39,46 @@ function getData(dbName, formId, skip, batchSize) {
   });
 }
 
+async function getRelatedProfileDocs(docs, state) {
+  let userProfileDocs = []
+  for (let doc of docs) {
+    const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
+    try {
+      let response = await axios.get(`${dbDefaults.prefix}/${state.dbName}-reporting/${doc[userProfileIdKey]}`)
+      if (response.data) userProfileDocs.push(response.data)
+    } catch (e) {
+      // Doesn't exist? Hmm...
+    }
+  }
+  return userProfileDocs
+}
+
 async function batch() {
   const state = JSON.parse(await readFile(params.statePath))
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize)
-  const relatedProfileDocs = await getRelatedProfileDocs(docs)
+  const relatedProfileDocs = await getRelatedProfileDocs(docs, state)
   if (docs.length === 0) {
     state.complete = true
   } else {
     // Order each datum's properties by the headers for consistent columns.
     try {
-      const rows = docs.map(doc => [ doc._id, ...state.headersKeys.map(header => {
-        if (header.contains('user-profile.')) {
-          return relatedProfileDocs[doc.userProfileId][header.replace('user-profile.', '')] ? relatedProfileDocs[doc.userProfileId][header.replace('user-profile.', '')] : ''
-        } else {
-          return doc[header] ? doc[header] : ''
-        }
-      })])
+      const rows = docs.map(doc => {
+        const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
+        const userProfileId = doc[userProfileIdKey]
+        const userProfileDoc = relatedProfileDocs.find(doc => doc._id === userProfileId)
+        return [ doc._id, ...state.headersKeys.map(header => {
+          if (header.includes('user-profile.') && userProfileDoc) {
+            return userProfileDoc[header.replace('user-profile.', '')] ? userProfileDoc[header.replace('user-profile.', '')] : ''
+          } else {
+            return doc[header] ? doc[header] : ''
+          }
+        })]
+      })
       const output = `\n${new CSV(rows).encode()}`
       await appendFile(state.outputPath, output)
       state.skip = state.skip + state.batchSize
     } catch(err) {
-      process.stderr.write(error)
+      process.stderr.write(err)
       process.exit(1)
     }
   }
