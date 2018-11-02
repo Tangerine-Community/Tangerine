@@ -1,8 +1,20 @@
 <mat-card>
   <mat-card-title>{{'Download CSV'|translate}}</mat-card-title>
   <mat-card-content>
+    <div *ngIf="!processing" class="tangy-full-width">
+      <h1>{{'CSV' | translate}}</h1>
+      <h2>{{'Select month and year of data for ' | translate}} Form ID of {{formId}}</h2>
+      <form>
+        <select name="month">
+          <option *ngFor="let month of months" value="{{month}}">{{month}}</option>
+        </select>
+        <select name="year">
+          <option *ngFor="let year of years" value="{{year}}">{{year}}</option>
+        </select>
+      </form>
+    </div>
     <p class="tangy-full-width" *ngIf="!result">{{'Loading...'|translate}}</p>
-    <div *ngIf="result && nothingToDownload === false" class="tangy-full-width">
+    <div *ngIf="processing && result && nothingToDownload === false" class="tangy-full-width">
       <h4 *ngIf="!isDownloadComplete&&!errorDownloadingFile">{{'Generating CSV'|translate}}</h4>
       <h4 *ngIf="errorDownloadingFile">{{'Error Downloading File'|translate}}</h4>
       <p>{{'Group Name'|translate}}: {{groupName}}</p>
@@ -13,7 +25,7 @@
         <a target="_blank" href="{{downloadUrl}}">{{'Click to Download'|translate}}</a>
       </div>
     </div>
-    <div *ngIf="result && nothingToDownload === true" class="tangy-full-width">
+    <div *ngIf="processing && result && nothingToDownload === true" class="tangy-full-width">
       There are no uploaded form responses for this form.
     </div>
   </mat-card-content>

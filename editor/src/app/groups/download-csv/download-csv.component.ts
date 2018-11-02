@@ -9,6 +9,9 @@ import { setInterval, clearInterval } from 'timers';
   styleUrls: ['./download-csv.component.css']
 })
 export class DownloadCsvComponent implements OnInit {
+  months = [];
+  years = [];
+  processing = false;
   stateUrl;
   downloadUrl;
   groupName;
@@ -21,11 +24,13 @@ export class DownloadCsvComponent implements OnInit {
   constructor(private groupsService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
+    this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    this.years = [2018, 2017];
     this.route.params.subscribe(params => {
       this.groupName = params['groupName'];
       this.formId = params['formId'];
     });
-    await this.getData();
+    //await this.getData();
   }
   async getData() {
     try {
