@@ -14,13 +14,16 @@
         <option name="banana">Banana</option>
         <option name="tangerine">Tangerine</option>
       </tangy-select>
+    </template>
+  </tangy-form-item>
+  <tangy-form-item id="item-2" title="Item 2">
+    <template>
       <tangy-checkboxes name="fruit_time" label="What time do you take fruit?">
         <option name="morning">Morning</option>
         <option name="afternoon">Afternoon</option>
         <option name="evening">Evening</option>
       </tangy-checkboxes>
       Where do you eat fruit?
-      <tangy-location name="location" show-levels="county,school" filter-by-global></tangy-location>
       <tangy-gps name="gps"></tangy-gps>
       Have the assessee read aloud the following fruits and mark the items they pronounce incorrectly.
       <tangy-timed show-labels required columns="3" duration=20 name="pronounse_fruits">
@@ -31,16 +34,6 @@
         <option value="coconut">Coconut</option>
         <option value="strawberry">Strawberry</option>
       </tangy-timed>
-    </template>
-  </tangy-form-item>
-  <tangy-form-item id="item-2" title="Item 2">
-    <template>
-      <tangy-input-groups name="cars">
-        Which cars have you owned?
-        <tangy-input name="make" label="Make"></tangy-input>
-        <tangy-input name="model" label="Model"></tangy-input>
-        <tangy-input name="year" label="Year" type="number"></tangy-input>
-      </tangy-input-groups>
     </template>
   </tangy-form-item>
 </tangy-form>
