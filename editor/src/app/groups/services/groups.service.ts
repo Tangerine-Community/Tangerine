@@ -109,12 +109,19 @@ export class GroupsService {
     }
   }
 
-  async downloadCSV(groupName: string, formId: string) {
+  async downloadCSV(groupName: string, formId: string, selectedYear='*', selectedMonth='*') {
     try {
-      const result = await this.httpClient
-        .get(`/csv/${groupName}/${formId}`)
-        .toPromise();
-      return result;
+      if(selectedMonth === '*' || selectedYear === '*') {
+        const result = await this.httpClient
+          .get(`/api/csv/${groupName}/${formId}`)
+          .toPromise();
+        return result;
+      } else {
+        const result = await this.httpClient
+          .get(`/api/csv/${groupName}/${formId}/${selectedYear}/${selectedMonth}`)
+          .toPromise();
+        return result;
+      }
     } catch (error) {
       if (typeof error.status === 'undefined') {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
