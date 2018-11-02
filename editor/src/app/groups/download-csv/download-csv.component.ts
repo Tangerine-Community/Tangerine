@@ -9,6 +9,11 @@ import { setInterval, clearInterval } from 'timers';
   styleUrls: ['./download-csv.component.css']
 })
 export class DownloadCsvComponent implements OnInit {
+  months = [];
+  years = [];
+  selectedMonth = '*';
+  selectedYear = '*';
+  processing = false;
   stateUrl;
   downloadUrl;
   groupName;
@@ -21,15 +26,25 @@ export class DownloadCsvComponent implements OnInit {
   constructor(private groupsService: GroupsService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
+    this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    for (let i = 0; i<10; i++) {
+      this.years = [new Date().getFullYear()-i, ...this.years]
+    }
+    this.years = this.years.reverse()
     this.route.params.subscribe(params => {
       this.groupName = params['groupName'];
       this.formId = params['formId'];
     });
-    await this.getData();
   }
-  async getData() {
+
+  async process() {
+    if ((this.selectedMonth === '*' && this.selectedYear !== '*') || (this.selectedMonth !== '*' && this.selectedYear === '*')) {
+      alert('You must choose a month and a year.')
+      return
+    }
+    this.processing = true
     try {
-      const result: any = await this.groupsService.downloadCSV(this.groupName, this.formId);
+      const result: any = await this.groupsService.downloadCSV(this.groupName, this.formId, this.selectedYear, this.selectedMonth);
       this.stateUrl = result.stateUrl;
       this.downloadUrl = result.downloadUrl;
       // TODO call download status immediately then after every few second, Probably use RXJS to ensure we only use the latest values

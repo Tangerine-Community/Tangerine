@@ -1,8 +1,25 @@
 <mat-card>
   <mat-card-title>{{'Download CSV'|translate}}</mat-card-title>
   <mat-card-content>
-    <p class="tangy-full-width" *ngIf="!result">{{'Loading...'|translate}}</p>
-    <div *ngIf="result && nothingToDownload === false" class="tangy-full-width">
+    <div *ngIf="!processing" class="tangy-full-width">
+      <form>
+        Month:
+        <select [(ngModel)]="selectedMonth" name="month">
+          <option value="*" selected="selected">*</option>
+          <option *ngFor="let month of months" value="{{month}}">{{month}}</option>
+        </select>
+        <br>
+        Year:
+        <select [(ngModel)]="selectedYear" name="year">
+          <option value="*" selected="selected">*</option>
+          <option *ngFor="let year of years" value="{{year}}">{{year}}</option>
+        </select>
+        <br>
+        <button (click)="process()">submit</button>
+      </form>
+    </div>
+    <p class="tangy-full-width" *ngIf="processing && !result">{{'Loading...'|translate}}</p>
+    <div *ngIf="processing && result && nothingToDownload === false" class="tangy-full-width">
       <h4 *ngIf="!isDownloadComplete&&!errorDownloadingFile">{{'Generating CSV'|translate}}</h4>
       <h4 *ngIf="errorDownloadingFile">{{'Error Downloading File'|translate}}</h4>
       <p>{{'Group Name'|translate}}: {{groupName}}</p>
@@ -13,8 +30,11 @@
         <a target="_blank" href="{{downloadUrl}}">{{'Click to Download'|translate}}</a>
       </div>
     </div>
-    <div *ngIf="result && nothingToDownload === true" class="tangy-full-width">
-      There are no uploaded form responses for this form.
+    <div *ngIf="selectedMonth === '*' && processing && result && nothingToDownload === true" class="tangy-full-width">
+      There are no form responses for this form.
+    </div>
+    <div *ngIf="selectedMonth !== '*' && processing && result && nothingToDownload === true" class="tangy-full-width">
+      There are no form responses for this form in the month and year that you selected.
     </div>
   </mat-card-content>
 </mat-card>
