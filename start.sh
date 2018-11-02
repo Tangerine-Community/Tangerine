@@ -40,8 +40,8 @@ fi
 if [ ! -f data/worker-state.json ]; then
   echo '{}' > data/worker-state.json
 fi
-if [ ! -f data/paid-state.json ]; then
-  echo '{}' > data/paid-state.json
+if [ ! -f data/paid-worker-state.json ]; then
+  echo '{}' > data/paid-worker-state.json
 fi
 
 
