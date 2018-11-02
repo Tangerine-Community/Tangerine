@@ -176,6 +176,10 @@ app.delete('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-
 if (process.env.T_LEGACY === "true") {
   app.post('/upload/:groupId', require('./src/routes/group-upload.js'))
 }
+app.get('/api/csv/:groupId/:formId', isAuthenticated, require('./src/routes/group-csv.js'))
+app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, require('./src/routes/group-csv.js'))
+app.get('/api/usage', require('./src/routes/usage'));
+// For backwards compatibility for older consumers of this API.
 app.get('/usage', require('./src/routes/usage'));
 app.get('/usage/:startdate', require('./src/routes/usage'));
 app.get('/usage/:startdate/:enddate', require('./src/routes/usage'));
@@ -554,42 +558,6 @@ app.patch('/groups/removeUserFromGroup/:groupName', isAuthenticated, async (req,
     res.sendStatus(500);
   }
 })
-
-
-// TODO Notify caller if group doesnt have form response, to avoid infinite polling  
-app.get('/csv/:groupName/:formId', async function (req, res) {
-  const groupName = sanitize(req.params.groupName)
-  const formId = sanitize(req.params.formId)
-  const fileName = `${groupName}-${formId}-${Date.now()}.csv`
-  const batchSize = (process.env.T_CSV_BATCH_SIZE) ? process.env.T_CSV_BATCH_SIZE : 5
-  const outputPath = `/csv/${fileName}`
-  const cmd = `cd /tangerine/server/src/scripts/generate-csv/ && ./bin.js ${groupName} ${formId} ${outputPath} ${batchSize}`
-  log.info(`generating csv start: ${cmd}`)
-  exec(cmd).then(status => {
-    log.info(`generate csv done: ${JSON.stringify(status)}`)
-  }).catch(error => {
-    log.error(error)
-  })
-  res.send({
-    stateUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName.replace('.csv', '.state.json')}`,
-    downloadUrl: `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/csv/${fileName}`
-  })
-})
-
-/* @TODO This is not complete. The generate-csv script needs to be updated to support this.
-app.get('/csv/byPeriodAndFormId/:groupName/:formId/:year?/:month?', isAuthenticated, (req, res) => {
-  const groupName = req.params.groupName;
-  const year = req.params.year;
-  const month = req.params.month;
-  const formId = req.params.formId;
-  const groupReportingDbName = groupName + '-reporting';
-
-  generateCSV(formId, groupReportingDbName, res);
-});
-*/
-
-
-
 
 /**
  * @function`getDirectories` returns an array of strings of the top level directories found in the path supplied
