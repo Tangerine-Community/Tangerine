@@ -5,6 +5,7 @@ if (!process.argv[2] || !process.argv[3] || !process.argv[4] || !process.argv[4]
   console.log('  ./bin.js <groupName> <formId> <outputPath> [batchSize]  ')
   console.log('Example:')
   console.log(`  ./bin.js g2 class-12-lesson-observation-with-pupil-books ./output.csv`)
+  console.log(`  ./bin.js g2 class-12-lesson-observation-with-pupil-books ./output.csv 0 2018 Jan`)
   process.exit()
 }
 
@@ -22,7 +23,9 @@ const params = {
   formId: process.argv[3],
   outputPath: process.argv[4],
   batchSize: (process.argv[5]) ? parseInt(process.argv[5]) : 5,
-  sleepTimeBetweenBatches: (process.argv[6]) ? parseInt(process.argv[6]) : 0
+  sleepTimeBetweenBatches: (process.argv[6]) ? parseInt(process.argv[6]) : 0,
+  year: (process.argv[7]) ? process.argv[7] : null,
+  month: (process.argv[8]) ? process.argv[8] : null
 }
 
 let state = Object.assign({}, params, {
