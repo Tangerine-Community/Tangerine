@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   showNav;
   showUpdateAppLink;
   window;
+  dir = 'ltr';
   updateIsRunning = false;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
@@ -47,6 +48,7 @@ export class AppComponent implements OnInit {
       console.log('No app config found.')
     }
     if (this.window.appConfig.direction === 'rtl') {
+      this.dir = 'rtl'
       let styleContainer = this.window.document.createElement('div')
       styleContainer.innerHTML = `
         <style>
@@ -54,7 +56,7 @@ export class AppComponent implements OnInit {
               text-align: right;
               direction: rtl;
           }
-      </style>
+        </style>
       `
       this.window.document.body.appendChild(styleContainer)
     }
