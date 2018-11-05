@@ -1,6 +1,10 @@
 <div class="subtest-report-div">
   <h1>{{'Subtest Report'|translate}}</h1>
 </div>
+<select (change)="onStudentSelect($event)">
+  <option value="none" selected>---</option>
+  <option *ngFor="let student of students" value="{{student.id}}">{{student.student_name}}</option>
+</select>
 <div *ngFor="let subtestReport of subtestReports" class="subtest-report-div">
   <h2>{{subtestReport.label}}</h2>
 
@@ -28,7 +32,7 @@
         <td>&nbsp;</td>
         <td>{{item.key}}</td>
         <td>&nbsp;</td>
-        <td *ngFor="let res of generateArray(item.value)"><!--{{res.key}}: -->{{res.value}}</td>
+        <td *ngFor="let res of generateArray(item.value)">{{res.value}}</td>
 
         <ng-container *ngIf="isEmpty(item.value)">
           <td *ngFor="let category of subtestReport.categories"></td>
