@@ -178,7 +178,8 @@ function saveFormInfo(flatResponse, db) {
     }
     Object.keys(flatResponse).forEach(key => {
       if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
-        formDoc.columnHeaders.push({ key, header: key })
+        // Make the header property (AKA label) just the variable name.
+        formDoc.columnHeaders.push({ key, header: key.substr(key.lastIndexOf('.')+1, key.length) })
         foundNewHeaders = true
       }
     })
