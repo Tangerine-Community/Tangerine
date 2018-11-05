@@ -35,7 +35,7 @@ export class StudentSubtestReportComponent implements OnInit {
   categories: any;
   totals:any;
   curriculums:any;
-  subtestReports:any;
+  subtestReports:any
 
   @ViewChild('container') container: ElementRef;
 
@@ -53,10 +53,17 @@ export class StudentSubtestReportComponent implements OnInit {
       this.classFormService = classFormService
       this.classUtils = new ClassUtils();
     }
-    await this.getReport()
+    const classId = this.route.snapshot.paramMap.get('classId');
+    this.students = (await this.getMyStudents(classId)).sort((a, b) => a.student_name.localeCompare(b.student_name))
   }
 
-  async getReport() {
+  onStudentSelect(event) {
+    if (event.target && event.target.value && event.target.value !== 'none') {
+      this.getReport([event.target.value])
+    }
+  }
+
+  async getReport(studentIds = []) {
     const classId = this.route.snapshot.paramMap.get('classId');
     // console.log("type: " + classId)
     let classDoc = await this.classFormService.getResponse(classId);
@@ -97,7 +104,9 @@ export class StudentSubtestReportComponent implements OnInit {
 
       subtestReport.totals = this.totals;
 
-      let students = await this.getMyStudents(classId);
+      let students = (studentIds.length > 0) 
+        ? (await this.getMyStudents(classId)).filter(student => studentIds.indexOf(student.id) !== -1) 
+        : await this.getMyStudents(classId);
       let studentResults = {}
       for (const student of students) {
         let studentId = student.id
@@ -109,7 +118,8 @@ export class StudentSubtestReportComponent implements OnInit {
         studentResults[studentId] = forms
       }
 
-      let results = await this.getResultsByClass(classId, curriculumId, curriculumFormsList);
+      let results = (await this.getResultsByClass(classId, curriculumId, curriculumFormsList))
+        .filter(result => studentIds.indexOf(result.studentId) !== -1)
       for (const result of results) {
         let formTitle = result.formTitle
         let studentId = result.studentId
