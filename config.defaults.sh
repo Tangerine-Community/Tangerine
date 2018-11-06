@@ -34,8 +34,8 @@ T_CENTRALLY_MANAGED_USER_PROFILE="false"
 # Add replication entries in this array to start on server boot in 
 # format of `{"from":"localDbName", "to":"remoteDbUrl", "continuous": true}`
 T_REPLICATE="[]"
-# To enable the Class dashboard, set to "['class']"
-T_MODULES="[]"
+# To enable the Class dashboard, set to "['csv','class']"
+T_MODULES="['csv']"
 # To populate categories in Class:
 #T_CATEGORIES="['one','two','three','four']"
 # This will set the default direction of text flow on new groups.
