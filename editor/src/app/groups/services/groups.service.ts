@@ -205,7 +205,7 @@ export class GroupsService {
     if (index < 0) {
       return ID;
     } else {
-      this.generateLocationIDs(locations);
+      return this.generateLocationIDs(locations);
     }
   }
 }
