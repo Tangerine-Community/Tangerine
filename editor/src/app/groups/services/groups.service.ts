@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
-import { v4 as uuid } from 'uuid';
+import { id as generate } from 'rangen';
+import { Loc } from 'tangy-form/loc.js';
 export interface Forms {
   id: string;
   title: string;
@@ -188,10 +189,23 @@ export class GroupsService {
     }
   }
   /**
-   * concatenates the first part of the UUID generated with the supplied string which has all non word characters removed
+   *
+   * @param length `The length of the ID to be generated`
+   * @returns`string` of `ID` omitting characters that can be confused i.e 0,1,i,I,o,O
    */
-  createUserReadableUUID(str = '') {
-    const UUID = uuid();
-    return `${UUID.split('-')[0]}-${str.trim().replace(/\W+/g, '-').toLowerCase()}`;
+  generateID(length = 8) {
+    const charSet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+    return generate({ length: length, charSet });
+  }
+
+  generateLocationIDs(locations) {
+    const flatLocationList = Loc.flatten(locations);
+    const ID = this.generateID();
+    const index = flatLocationList.locations.findIndex(location => location.id === ID);
+    if (index < 0) {
+      return ID;
+    } else {
+      this.generateLocationIDs(locations);
+    }
   }
 }

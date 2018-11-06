@@ -44,7 +44,7 @@ export class ManageLocationListMetadataComponent implements OnInit {
 
     let levelMetadata = this.currentMetadata;
     levelMetadata = levelMetadata.filter(item => item.label.trim() !== this.form.label.trim());
-    this.form.id = this.groupsService.createUserReadableUUID(this.form.label);
+    this.form.id = this.groupsService.generateLocationIDs(this.locationListData);
     levelMetadata = [...levelMetadata, ...this.form];
     this.form = { label: '', id: '', requiredField: null };
     this.locationListData.metadata[this.locationLevel] = levelMetadata;
