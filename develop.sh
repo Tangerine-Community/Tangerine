@@ -8,6 +8,9 @@ fi
 if [ ! -d data/csv ]; then
   mkdir data/csv
 fi
+if [ ! -d data/transformers ]; then
+  mkdir data/transformers
+fi
 if [ ! -d data/client ]; then
   mkdir data/client
 fi
@@ -142,6 +145,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/csv:/csv/ \
+  --volume $(pwd)/data/transformers:/transformers/ \
   --volume $(pwd)/data/worker-state.json:/worker-state.json \
   --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \

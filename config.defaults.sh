@@ -34,8 +34,6 @@ T_CENTRALLY_MANAGED_USER_PROFILE="false"
 # Add replication entries in this array to start on server boot in 
 # format of `{"from":"localDbName", "to":"remoteDbUrl", "continuous": true}`
 T_REPLICATE="[]"
-# To enable the Class dashboard, set to "['csv','class']"
-T_MODULES="['csv']"
 # To populate categories in Class:
 #T_CATEGORIES="['one','two','three','four']"
 # This will set the default direction of text flow on new groups.
@@ -46,6 +44,14 @@ T_LEGACY="false"
 T_DEV_CONTENT="$(pwd)/client/content/default"
 # Override the docker image version of Tangerine to use. Note you must also check out that version in git.
 T_TAG=""
+
+#
+# Modules
+#
+
+# To enable the Class dashboard, set to "['csv','class']"
+T_MODULES="['csv']"
+T_MODULE_ELASTIC_SEARCH_URL="http://localhost:9200"
 
 # @TODO Deprecated? 
 T_SYNC_SERVER="localhost:5984"
