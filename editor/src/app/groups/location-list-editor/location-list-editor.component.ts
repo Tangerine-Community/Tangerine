@@ -101,7 +101,7 @@ export class LocationListEditorComponent implements OnInit {
   }
 
   async addItem(parentItem) {
-    this.newItemId = this.groupsService.createUserReadableUUID(this.form.label);
+    this.newItemId = this.groupsService.generateLocationIDs(this.locationList);
     const newItem = { [this.newItemId]: { label: this.form.label, id: this.newItemId, metadata: this.form.metadata } };
     if (this.breadcrumbs.length === 1) {// Adding location item to root of location-list.locations
       this.locationList['locations'] = { ...this.locationList['locations'], ...newItem };
