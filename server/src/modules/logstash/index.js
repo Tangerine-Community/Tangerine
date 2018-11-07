@@ -8,8 +8,14 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
           const {flatResponse, doc, sourceDb} = data
           const logstashDb = new DB(`${sourceDb.name}-logstash`);
-          const builtResponse = await attachUserProfile(flatResponse, logstashDb)
-          await pushResponse(builtResponse, logstashDb);
+          const processedResult = await attachUserProfile(flatResponse, logstashDb)
+          await pushResponse({ 
+            _id: processedResult._id,
+            formId: processedResult.formId,
+            startDatetime: new Date(processedResult.startUnixtime).toISOString(),
+            startUnixtime: processedResult.startUnixtime,
+            processedResult
+          }, logstashDb);
           resolve(data)
       })
     }
