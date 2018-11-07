@@ -7,7 +7,9 @@ module.exports = {
     reportingOutputs: function(data) {
       return new Promise(async (resolve, reject) => {
           const {flatResponse, doc, sourceDb} = data
+          // @TODO Rename `-reporting` to `-csv`.
           const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
+          // @TODO Ensure design docs are in the database.
           await saveFormInfo(flatResponse, REPORTING_DB);
           await saveFlatFormResponse(flatResponse, REPORTING_DB);
           resolve(data)
@@ -54,7 +56,6 @@ function saveFormInfo(flatResponse, db) {
 
 function saveFlatFormResponse(doc, db) {
   return new Promise((resolve, reject) => {
-    debugger
     db.get(doc._id)
       .then(oldDoc => {
         // Overrite the _rev property with the _rev in the db and save again.
