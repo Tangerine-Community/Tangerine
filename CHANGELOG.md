@@ -64,8 +64,8 @@ For existing groups, you need to edit their `app-config.json` files in the `./da
     - To impact new groups, change `T_CENTRALLY_MANAGED_USER_PROFILE` to `"true"` in `config.sh`.
     - To modify existing groups, change `"centrallyManagedUserProfile"` in group level `app-config.json` to `true`.
 - Editor views tangy-timed items_per_minute calculation in the CSV #1100
+- `<tangy-location>` can be filtered by entries in the profile by adding attribute `<tangy-location filter-by-global>`. In the editor when editing a `<tangy-location>` you will find a new option "Filter by locations in the user profile?" you can check.
 - Advanced forms features (no GUI for these features)
-  - `<tangy-location>` can be filtered by entries in the profile by adding attribute `<tangy-location filter-by-global>`.
   -  `<tangy-input-group>` can be used to create repeatable groups of inputs. See the demo [here](https://github.com/Tangerine-Community/Tangerine/issues/1055#issuecomment-427451539). 
   - Geofence for v3 #941
     - If you location list has `latitude` and `longitude` properties for each location, you can validate your `<tangy-location>` selection given a geofence in `<tangy-gps>`. See the screenshots [here](https://github.com/Tangerine-Community/Tangerine/issues/941#issuecomment-400778890) and a code example of how to build this in your form [here](https://github.com/rjsteinert/tangerine-forms-for-cyanobacteria-surveillance-at-burlington-vermont-beaches/blob/master/cyanobacteria-surveillance-form/item-1.html).
