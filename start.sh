@@ -6,6 +6,9 @@ fi
 if [ ! -d data/csv ]; then
   mkdir data/csv
 fi
+if [ ! -d data/archives ]; then
+  mkdir data/archives
+fi
 if [ ! -d data/client ]; then
   mkdir data/client
 fi
@@ -103,6 +106,7 @@ RUN_OPTIONS="
   --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/csv:/csv/ \
+  --volume $(pwd)/data/archives:/archives/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
