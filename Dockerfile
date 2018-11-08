@@ -63,6 +63,7 @@ ADD ./ /tangerine
 RUN mkdir /csv
 RUN mkdir /groups
 RUN echo {} > /paid-worker-state.json
+RUN cd /tangerine/server/ && npm link
 
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && node index.js 
