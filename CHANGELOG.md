@@ -1,5 +1,91 @@
 # Changelog
 
+## v3.0.0 (release candidate)
+
+### Upgrade instructions from v3 betas
+```bash
+git fetch origin
+git checkout v3.0.0
+# Note the new T_UPLOAD_TOKEN variable which is a replacement for the old upload account variables.
+mv config.sh config.sh_backup
+cp config.defaults.sh config.sh
+vim config.sh
+./start.sh
+docker exec tangerine push-all-groups-views
+docker exec tangerine clear-reporting-cache
+```
+
+For existing groups, you need to edit their `app-config.json` files in the `./data/client/content/groups` folders. Replace them with the following template and make sure to update variables such as `groupName`, `uploadToken`, and `serverUrl`.
+```json
+{
+   "listUsernamesOnLoginScreen" : true,
+   "modules" : [ ],
+   "groupName" : "pineapple",
+   "securityQuestionText" : "What is your year of birth?",
+   "hideProfile" : false,
+   "direction" : "ltr",
+   "columnsOnVisitsTab" : [],
+   "hashSecurityQuestionResponse" : false,
+   "uploadUnlockedFormReponses" : false,
+   "uploadToken" : "change this to match T_UPLOAD_TOKEN in config.sh",
+   "securityPolicy" : [
+      "password"
+   ],
+   "homeUrl" : "case-management",
+   "serverUrl" : "https://f571f419.ngrok.io/",
+   "centrallyManagedUserProfile" : false,
+   "registrationRequiresServerUser" : false
+}
+```
+
+### New features since v3.0.0-beta12
+- Server admin imports client archives into server #1166
+  - After exporting data from clients, we now have an easy command line tool to import them. Place those exported files in `./data/archives` folder and then run `docker exec tangerine import-archives`.
+- Consumers of reporting API find user profile data appended to form responses #1147
+  - New `logstash` module for installations that want to use logstash to migrate data to an Elastic Search instance.
+  - Enable by adding `logstash` to the list of modules in `config.sh`, then clear reporting caches `docker exec -it tangerine bash; cd /tangerine/server/src/scripts; ./clear-all-reporting-cache.js;`.  You will find new `<groupName>-logstash` databases in CouchDB that you can configure logstash to consume.
+- Upload Tokens instead of upload usernames and passwords. 
+  - In your `config.sh` change `T_UPLOAD_TOKEN` to a secret phrase and then in existing groups add that to `app-config.json` as an `"uploadToken"` property and `uploadUrl` to `serverUrl` but without the username and password and `upload/<groupName>`. For example, `"uploadUrl": "http://uploader:password@foo.tangerinecentral.org/upload/foo"` would become `"serverUrl":"http://foo.tangerinecentral.org", "groupName":"foo", "uploadToken":"secret_foo_passphrase"`.
+  - If you not planning on updating clients right away, in `config.sh` set `T_LEGACY="true"` to support the older upload API that those clients expect. When all clients are upgraded, set that variable back to false.
+
+- Editor edits location list for group #982
+  - @TODO
+- Editor creates, edits, and deletes form responses on the server #1047
+- Editor exports CSV of a form for a month of their choosing #1143
+- Editor sees user profile form related columns joined to CSV of all forms #1142
+- On client, prevent users from editing their own profile.
+  - To impact new groups, change `T_HIDE_PROFILE` to `"true"` in `config.sh` .
+  - To modify existing groups, change `"hideProfile"` in group level `app-config.json` to `true`.
+- Assessor registers on tablet, downloads form responses created on server #1129
+  - On device registration, after user creates account, will force user to enter 6 character code that references online account.
+  - To impact new groups, change `T_REGISTRATION_REQUIRES_SERVER_USER` to `"true"`.
+  - To modify existing groups, change `"registrationRequiresServerUser"` in group level `app-config.json` to `true`.
+- Editor updates client user profile on server, Assessor sees updated profile after next sync #1134
+  -  On client sync, will result in any changes made to a user profile on the server to be downloaded and reflected on the client.
+    - To impact new groups, change `T_CENTRALLY_MANAGED_USER_PROFILE` to `"true"` in `config.sh`.
+    - To modify existing groups, change `"centrallyManagedUserProfile"` in group level `app-config.json` to `true`.
+- Editor views tangy-timed items_per_minute calculation in the CSV #1100
+- Advanced forms features (no GUI for these features)
+  - `<tangy-location>` can be filtered by entries in the profile by adding attribute `<tangy-location filter-by-global>`.
+  -  `<tangy-input-group>` can be used to create repeatable groups of inputs. See the demo [here](https://github.com/Tangerine-Community/Tangerine/issues/1055#issuecomment-427451539). 
+  - Geofence for v3 #941
+    - If you location list has `latitude` and `longitude` properties for each location, you can validate your `<tangy-location>` selection given a geofence in `<tangy-gps>`. See the screenshots [here](https://github.com/Tangerine-Community/Tangerine/issues/941#issuecomment-400778890) and a code example of how to build this in your form [here](https://github.com/rjsteinert/tangerine-forms-for-cyanobacteria-surveillance-at-burlington-vermont-beaches/blob/master/cyanobacteria-surveillance-form/item-1.html).
+- Upload incomplete form responses (important for Class module)
+  - To modify existing groups, set `"uploadUnlockedFormReponses"` to `true` in `app-config.json`.
+- Server Admin clears reporting cache #1064
+- Server Admin runs script to update views in databases #962
+- Server Admin limits by site or by group the number of form responses uploaded end up in reporting outputs #1155
+  - This feature brings two new settings to `config.sh`.
+  - Set `T_PAID_MODE` to `"site"` to limit on a sitewide level, use `"group"` to limit on a per group level.
+  - Set `T_PAID_ALLOWANCE` from `"umlimited"` to a specific number like `"1000"` to limit form responses that end up in reporting outputs to one thousand. 
+  - This mechanism works by marking uploaded form responses as "paid". When you first upgrade to this release, none of your form responses will be marked as paid and will not end up in reporting outputs until they are marked as paid against the allowance. If you want to mark all current uploaded form responses as paid and only mark against their allowance for future uploads, set the allowance to unlimited and after the reporting caches have been built, set the allowance desired and run `./start.sh` again. 
+- Optional Modules you can turn on and off in `config.sh` `T_MODULES` list.
+  - Note that if you are going to override the default `T_MODULES` list with an additional module such as `class`, don't forget to add modules such as `csv` if you still need them! 
+
+### Known issues
+- Memory leak results in `Error: spawn ENOMEM` #886
+  - On the server command line run `crontab -e` and then add the following entry to restart the program every 24 hours `0 0 * * * docker stop tangerine; docker start tangerine`.
+
 ## 2.0.0 (pre-release)
 
 ### User Stories
