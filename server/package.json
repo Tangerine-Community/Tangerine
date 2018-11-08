@@ -6,8 +6,19 @@
   "directories": {
     "test": "tests"
   },
+  "bin": {
+    "help": "./src/scripts/help.sh",
+    "clear-reporting-cache": "./src/scripts/clear-reporting-cache.js",
+    "generate-csv": "./src/scripts/generate-csv/bin.js",
+    "generate-uploads": "./src/scripts/generate-uploads/bin.js",
+    "push-all-groups-views": "./src/scripts/push-all-groups-views.js",
+    "find-missing-records": "./src/scripts/find-missing-records.js",
+    "import-archives": "./src/scripts/import-archives/bin.js",
+    "release-dat": "./src/scripts/release-dat.sh",
+    "release-apk": "./src/scripts/release-apk.sh",
+    "release-pwa": "./src/scripts/release-pwa.sh"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
