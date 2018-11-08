@@ -191,10 +191,11 @@ export class GroupsService {
   /**
    *
    * @param length `The length of the ID to be generated`
-   * @returns`string` of `ID` omitting characters that can be confused i.e 0,1,i,I,o,O
+   * TODO @returns`string` of `ID` omitting characters that can be confused i.e 0,1,i,I,o,O
    */
   generateID(length = 8) {
-    const charSet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+    // const charSet = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+    const charSet = 'alphanum';
     return generate({ length: length, charSet });
   }
 
