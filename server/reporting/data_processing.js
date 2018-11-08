@@ -120,7 +120,9 @@ const generateFlatResponse = async function (formResponse, locationList) {
           flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
           locationKeys.push(group.value)
           try {
-            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = getLocationLabel(locationKeys, locationList);
+            const location = getLocationByKeys(locationKeys, locationList) 
+            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = (location && location.hasOwnProperty('label')) ? location.label : '';
+            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_children`] = (location && location.children) ? parseInt(Object.keys(location.children).length) : `0`;
           } catch(e) {
             flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = 'orphaned';
           }
@@ -157,12 +159,11 @@ const generateFlatResponse = async function (formResponse, locationList) {
   return data.flatFormResponse;
 };
 
-function getLocationLabel(keys, locationList) {
+function getLocationByKeys(keys, locationList) {
   let locationKeys = [...keys]
   let currentLevel = locationList.locations[locationKeys.shift()]
   for (let key of locationKeys ) {
     currentLevel = currentLevel.children[key]
   }
-  return (currentLevel && currentLevel.hasOwnProperty('label')) ? currentLevel.label : ''
+  return currentLevel
 }
-
