@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "bin": {
-    "help": "./src/scripts/help.sh",
+    "info": "./src/scripts/info.sh",
     "clear-reporting-cache": "./src/scripts/clear-reporting-cache.js",
     "generate-csv": "./src/scripts/generate-csv/bin.js",
     "generate-uploads": "./src/scripts/generate-uploads/bin.js",
