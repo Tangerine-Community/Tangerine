@@ -47,7 +47,6 @@ For existing groups, you need to edit their `app-config.json` files in the `./da
 - Upload Tokens instead of upload usernames and passwords. 
   - In your `config.sh` change `T_UPLOAD_TOKEN` to a secret phrase and then in existing groups add that to `app-config.json` as an `"uploadToken"` property and `uploadUrl` to `serverUrl` but without the username and password and `upload/<groupName>`. For example, `"uploadUrl": "http://uploader:password@foo.tangerinecentral.org/upload/foo"` would become `"serverUrl":"http://foo.tangerinecentral.org", "groupName":"foo", "uploadToken":"secret_foo_passphrase"`.
   - If you not planning on updating clients right away, in `config.sh` set `T_LEGACY="true"` to support the older upload API that those clients expect. When all clients are upgraded, set that variable back to false.
-
 - Editor edits location list for group #982
   - @TODO
 - Editor creates, edits, and deletes form responses on the server #1047
@@ -81,6 +80,7 @@ For existing groups, you need to edit their `app-config.json` files in the `./da
   - This mechanism works by marking uploaded form responses as "paid". When you first upgrade to this release, none of your form responses will be marked as paid and will not end up in reporting outputs until they are marked as paid against the allowance. If you want to mark all current uploaded form responses as paid and only mark against their allowance for future uploads, set the allowance to unlimited and after the reporting caches have been built, set the allowance desired and run `./start.sh` again. 
 - Optional Modules you can turn on and off in `config.sh` `T_MODULES` list.
   - Note that if you are going to override the default `T_MODULES` list with an additional module such as `class`, don't forget to add modules such as `csv` if you still need them! 
+- Reporting outputs (inluding CSVs) include the information about the number of children a location has. #1174
 
 ### Known issues
 - Memory leak results in `Error: spawn ENOMEM` #886
