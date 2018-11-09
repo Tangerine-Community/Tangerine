@@ -8,7 +8,9 @@
   },
   "bin": {
     "info": "./src/scripts/info.sh",
-    "clear-reporting-cache": "./src/scripts/clear-reporting-cache.js",
+    "reporting-cache-clear": "./src/scripts/clear-reporting-cache.js",
+    "reporting-worker-start": "./src/scripts/reporting-worker-start.js",
+    "reporting-worker-stop": "./src/scripts/reporting-worker-stop.js",
     "generate-csv": "./src/scripts/generate-csv/bin.js",
     "generate-uploads": "./src/scripts/generate-uploads/bin.js",
     "push-all-groups-views": "./src/scripts/push-all-groups-views.js",
