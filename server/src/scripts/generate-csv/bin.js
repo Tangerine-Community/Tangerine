@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-if (!process.argv[2] || !process.argv[3] || !process.argv[4] || !process.argv[4]) {
+if (process.argv[2] === '--help') {
   console.log('Usage:')
-  console.log('  ./bin.js <groupName> <formId> <outputPath> [batchSize]  ')
+  console.log('  generate-csv <groupName> <formId> <outputPath> [batchSize]  ')
   console.log('Example:')
-  console.log(`  ./bin.js g2 class-12-lesson-observation-with-pupil-books ./output.csv`)
-  console.log(`  ./bin.js g2 class-12-lesson-observation-with-pupil-books ./output.csv 0 2018 Jan`)
+  console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv`)
+  console.log(`  generate-csv g2 class-12-lesson-observation-with-pupil-books ./output.csv 0 2018 Jan`)
   process.exit()
 }
 

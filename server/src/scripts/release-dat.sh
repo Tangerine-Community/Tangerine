@@ -6,7 +6,7 @@ RELEASE_DIR="/tangerine/client/releases/$RELEASE_TYPE/dat/$GROUP"
 
 # cho "RELEASE_DIR: $RELEASE_DIR"
 
-if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
+if [ "$2" = "--help" ] || [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
   echo ""
   echo "RELEASE PWA"
   echo "A command for releasing a PWA using a secret URL."
@@ -16,7 +16,7 @@ if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ]; th
   echo "Release type is either qa or prod."
   echo ""
   echo "Usage:"
-  echo "  ./release-dat.sh a4uw93 ./content/groups/group-a prod"
+  echo "  release-dat a4uw93 ./content/groups/group-a prod"
   echo ""
   echo ""
   echo ""
