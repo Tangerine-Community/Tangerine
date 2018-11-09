@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 const PouchDB = require('pouchdb')
-const fs = require('fs-extra')
-const path = require('path')
-const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
-const changeProcessor = require('./data_processing').changeProcessor;
+const log = require('tangy-log').log
+const changeProcessor = require('./data-processing').changeProcessor;
 const defaultState = { 
   "tally": 0, 
   "processed": 0,
@@ -16,7 +14,6 @@ const defaultState = {
   }
 }
 
-
 const processBatch = async (givenState) => {
   let state = Object.assign({} , defaultState, givenState)
   const DB = PouchDB.defaults(state.pouchDbDefaults)
@@ -25,7 +22,6 @@ const processBatch = async (givenState) => {
   // Process batch.
   for (let database of state.databases) { 
     const db = new DB(database.name)
-    const reportingDb = new DB(`${database.name}-reporting`)
     const changes = await db.changes({ since: database.sequence, limit: state.batchSizePerDatabase, include_docs: false })
     if (changes.results.length > 0) {
       for (let change of changes.results) {
@@ -33,17 +29,11 @@ const processBatch = async (givenState) => {
           await changeProcessor(change, db)
           processed++
         } catch (error) {
-          process.stderr.write(`Error on change sequence ${change.seq} with id ${changes.id} - ${error} ::::: `)
+          log.error(`Error on change sequence ${change.seq} with id ${changes.id} - ${error} ::::: `)
         }
       }
       // Even if an error was thrown, continue on with the next sequences.
       database.sequence = changes.results[changes.results.length-1].seq
-      // Index the view. It might time out so issue a try statement.:q
-      try {
-        await reportingDb.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
-      } catch (err) {
-        // do nothing
-      }
     }
   }
   return Object.assign({}, state, {
@@ -54,26 +44,4 @@ const processBatch = async (givenState) => {
   })
 }
 
-process.stdin.setEncoding('utf8');
-
-var stateJson = ''
-process.stdin.on('readable', () => {
-  const chunk = process.stdin.read();
-  if (chunk !== null) {
-    stateJson += chunk
-  }
-});
-
-process.stdin.on('end', () => {
-  if (stateJson !== '') {
-    processBatch(JSON.parse(stateJson))
-      .then(state => {
-        process.stdout.write(JSON.stringify(state));
-        process.exit(0)
-      })
-      .catch(error => {
-        process.stderr.write(`${JSON.stringify(error)}`);
-      })
-  }
-});
-
+module.exports = processBatch
