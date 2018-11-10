@@ -577,78 +577,34 @@ function allGroups() {
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
 }
 
-async function prepareForReportingWorker(initialGroups) {
-  await writeFile(REPORTING_WORKER_RUNNING, '', 'utf-8')
-  let workerState = {}
-  try {
-      workerState = JSON.parse(await readFile('/reporting-worker-state.json', 'utf-8'))
-  } catch(err) {
-    // do nothing.
-  }
-  // Populate initial groups if they are not there.
-  if (!workerState.databases) workerState.databases = []
-  for (let groupName of initialGroups) {
-    let feed = workerState.databases.find(database => database.name === groupName)
-    if (!feed) workerState.databases.push({ name: groupName, sequence: 0 })
-  }
-  // Set database connection.
-  workerState.pouchDbDefaults = { prefix: process.env.T_COUCHDB_ENDPOINT }
-  // Update worker state.
-  await writeFile('/reporting-worker-state.json', JSON.stringify(workerState), 'utf-8')
-  await unlink(REPORTING_WORKER_RUNNING)
-  // All done.
-  return workerState
-}
-
-const reportingProcessBatch = require('./src/reporting/process-batch.js')
-const { 
-  REPORTING_WORKER_PAUSE_LENGTH, 
-  REPORTING_WORKER_PAUSE, 
-  REPORTING_WORKER_STATE,
-  REPORTING_WORKER_RUNNING
-} = require('./src/reporting/constants')
-
-const keepAliveReportingWorker = async initialGroups => {
-  let workerState = await prepareForReportingWorker(initialGroups)
-  let reportingWorkerPause = await pathExists(REPORTING_WORKER_PAUSE)
+const reportingWorker = require('./src/reporting/reporting-worker.js')
+async function keepAliveReportingWorker(initialGroups) {
+  await reportingWorker.prepare(initialGroups)
+  let workerState = await reportingWorker.getWorkerState()
   // Keep alive.
   while (true) {
     try {
-      // Something may have paused the process like clearing cache.
-      reportingWorkerPause = await pathExists(REPORTING_WORKER_PAUSE)
-      while (reportingWorkerPause) {
-        await sleep(REPORTING_WORKER_PAUSE_LENGTH)
-        reportingWorkerPause = await pathExists(REPORTING_WORKER_PAUSE)
-      }
-      // Set semaphore to tell other processes not to mess with the state file.
-      await writeFile(REPORTING_WORKER_RUNNING, '', 'utf-8')
-      // Now it's safe to get the state.
-      workerState = JSON.parse(await readFile(REPORTING_WORKER_STATE, 'utf-8'))
+      workerState = await reportingWorker.getWorkerState()
       // Add new groups if there are entries in the newGroupQueue array (see /api/group/new route above).
       while (newGroupQueue.length > 0) {
-        workerState.databases.push({ name: newGroupQueue.pop(), sequence: 0 })
-        await writeFile(REPORTING_WORKER_STATE, JSON.stringify(workerState), 'utf-8')
+        await reportingWorker.addGroup(newGroupQueue.pop())
       }
-      // Run the worker.
-      workerState = await reportingProcessBatch(workerState)
-      // Persist state to disk.
-      await writeFile(REPORTING_WORKER_STATE, JSON.stringify(workerState), 'utf-8')
-      // Remove semaphore.
-      await unlink(REPORTING_WORKER_RUNNING)
+      // Use a child process to limit memory usage.
+      await exec('reporting-worker-batch')
+      workerState = await reportingWorker.prepare(initialGroups)
       // Sleep if we did not process anything.
       if (workerState.processed === 0) {
-        await sleep(REPORTING_WORKER_PAUSE_LENGTH)
+        await sleep(3*1000)
       } else {
         log.info(`Processed ${workerState.processed} changes.`)
       }
     } catch (error) {
       log.error('Reporting process had an error.')
       console.log(error)
-      await sleep(REPORTING_WORKER_PAUSE_LENGTH)
+      await sleep(3*1000)
     }
   }
 }
-
 const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
 
@@ -659,15 +615,15 @@ async function keepAlivePaidWorker() {
     try {
       state = await runPaidWorker()
       if (state.batchMarkedPaid === 0) {
-        log.info('No responses marked as paid. Sleeping...')
-        await sleep(REPORTING_WORKER_PAUSE_LENGTH)
+        //log.info('No responses marked as paid. Sleeping...')
+        await sleep(10*1000)
       } else {
         log.info(`Marked ${state.batchMarkedPaid} responses as paid.`)
       }
     } catch (error) {
       log.error(error.message)
       console.log(error)
-      await sleep(REPORTING_WORKER_PAUSE_LENGTH)
+      await sleep(10*1000)
     }
   }
 }

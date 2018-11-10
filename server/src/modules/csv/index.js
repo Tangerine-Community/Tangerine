@@ -6,7 +6,6 @@ const insertGroupReportingViews = require(`../../insert-group-reporting-views.js
 module.exports = {
   hooks: {
     clearReportingCache: async function(data) {
-      console.log('insert g r v')
       const { groupNames } = data
       for (let groupName of groupNames) {
         const db = DB(`${groupName}-reporting`)

@@ -14,15 +14,25 @@ const defaultState = {
   }
 }
 
-const processBatch = async (givenState) => {
-  let state = Object.assign({} , defaultState, givenState)
+const processBatch = async () => {
+  // Something may have paused the process like clearing cache.
+  reportingWorkerPause = await pathExists(REPORTING_WORKER_PAUSE)
+  while (reportingWorkerPause) {
+    await sleep(REPORTING_WORKER_PAUSE_LENGTH)
+    reportingWorkerPause = await pathExists(REPORTING_WORKER_PAUSE)
+  }
+  // Set semaphore to tell other processes not to mess with the state file.
+  await writeFile(REPORTING_WORKER_RUNNING, '', 'utf-8')
+  // Now it's safe to get the state.
+  workerState = JSON.parse(await readFile(REPORTING_WORKER_STATE, 'utf-8'))
+  workerState = Object.assign({} , defaultState, workerState)
   const DB = PouchDB.defaults(state.pouchDbDefaults)
   const startTime = new Date().toISOString()
   let processed = 0
   // Process batch.
-  for (let database of state.databases) { 
+  for (let database of workerState.databases) { 
     const db = new DB(database.name)
-    const changes = await db.changes({ since: database.sequence, limit: state.batchSizePerDatabase, include_docs: false })
+    const changes = await db.changes({ since: database.sequence, limit: workerState.batchSizePerDatabase, include_docs: false })
     if (changes.results.length > 0) {
       for (let change of changes.results) {
         try {
@@ -36,12 +46,11 @@ const processBatch = async (givenState) => {
       database.sequence = changes.results[changes.results.length-1].seq
     }
   }
-  return Object.assign({}, state, {
-    tally: state.tally + processed,
-    endTime: new Date().toISOString(),
-    processed,
-    startTime
-  })
+  // Persist state to disk.
+  await writeFile(REPORTING_WORKER_STATE, JSON.stringify(workerState), 'utf-8')
+  // Remove semaphore.
+  await unlink(REPORTING_WORKER_RUNNING)
+  return 
 }
 
 module.exports = processBatch
