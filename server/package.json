@@ -9,6 +9,7 @@
   "bin": {
     "info": "./src/scripts/info.sh",
     "reporting-cache-clear": "./src/scripts/reporting-cache-clear.js",
+    "reporting-worker-batch": "./src/scripts/reporting-worker-batch.js",
     "reporting-worker-unpause": "./src/scripts/reporting-worker-unpause.sh",
     "reporting-worker-pause": "./src/scripts/reporting-worker-pause.sh",
     "generate-csv": "./src/scripts/generate-csv/bin.js",
