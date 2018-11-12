@@ -12,7 +12,7 @@ cp config.defaults.sh config.sh
 vim config.sh
 ./start.sh
 docker exec tangerine push-all-groups-views
-docker exec tangerine clear-reporting-cache
+docker exec tangerine reporting-cache-clear
 ```
 
 For existing groups, you need to edit their `app-config.json` files in the `./data/client/content/groups` folders. Replace them with the following template and make sure to update variables such as `groupName`, `uploadToken`, and `serverUrl`.
