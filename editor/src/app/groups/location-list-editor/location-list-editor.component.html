@@ -35,7 +35,7 @@
           </mat-form-field>
           <div *ngIf="levelHasMetadata">
             <mat-form-field class="tangy-full-width" *ngFor="let item of locationList.metadata[locationsLevels[breadcrumbs.length-1]]">
-              <input [name]="item.id" matInput [type]="item.type" [(ngModel)]="form.metadata[item.id]" placeholder="{{item.label}}"
+              <input [name]="item.variableName" matInput [type]="item.type" [(ngModel)]="form[item.variableName]" placeholder="{{item.label}}"
                 [required]="item.requiredField">
             </mat-form-field>
           </div>
