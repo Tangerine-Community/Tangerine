@@ -44,8 +44,8 @@ fi
 if [ ! -d data/client/releases/qa/pwas ]; then
   mkdir data/client/releases/qa/pwas
 fi
-if [ ! -f data/worker-state.json ]; then
-  echo '{}' > data/worker-state.json
+if [ ! -f data/reporting-worker-state.json ]; then
+  echo '{}' > data/reporting-worker-state.json
 fi
 if [ ! -f data/paid-worker-state.json ]; then
   echo '{}' > data/paid-worker-state.json
@@ -146,12 +146,13 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/archives:/archives/ \
-  --volume $(pwd)/data/worker-state.json:/worker-state.json \
+  --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
   --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/index.js:/tangerine/server/index.js \
+  --volume $(pwd)/server/package.json:/tangerine/server/package.json \
   --volume $(pwd)/server/src:/tangerine/server/src \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting \
   --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \

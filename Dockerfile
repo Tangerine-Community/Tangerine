@@ -54,6 +54,11 @@ RUN cd /tangerine/client/ && ./build.sh
 # Add the rest of server.
 ADD server /tangerine/server
 
+# Link up global commands.
+RUN cd /tangerine/server && \
+    npm link
+
+
 #
 # Wrap up 
 #
@@ -63,7 +68,6 @@ ADD ./ /tangerine
 RUN mkdir /csv
 RUN mkdir /groups
 RUN echo {} > /paid-worker-state.json
-RUN cd /tangerine/server/ && npm link
 
 EXPOSE 80
 ENTRYPOINT cd /tangerine/server/ && node index.js 

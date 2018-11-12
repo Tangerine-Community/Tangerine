@@ -7,7 +7,7 @@ RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/pwas/$GROUP"
 
 echo "RELEASE_DIRECTORY: $RELEASE_DIRECTORY"
 
-if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
+if [ "$2" = "--help" ] || [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ]; then
   echo ""
   echo "RELEASE PWA"
   echo "A command for releasing a PWA using a secret URL."
@@ -17,7 +17,7 @@ if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ]; th
   echo "Release type is either qa or prod."
   echo ""
   echo "Usage:"
-  echo "  ./release-pwa.sh a4uw93 ./content/groups/group-a prod"
+  echo "  release-pwa a4uw93 ./content/groups/group-a prod"
   echo ""
   echo "Then visit https://foo.tanerinecentral.org/pwa/a4uw93/"
   echo ""

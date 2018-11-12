@@ -13,7 +13,7 @@ DATE=`date '+%Y-%m-%d %H:%M:%S'`
 
 echo "RELEASE APK script started $DATE"
 
-if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ] || [ "$T_PROTOCOL" = "" ] || [ "$T_HOST_NAME" = "" ]; then
+if [ "$2" = "--help" ] || [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ] || [ "$T_PROTOCOL" = "" ] || [ "$T_HOST_NAME" = "" ]; then
   echo ""
   echo "RELEASE APK"
   echo "A command for releasing an APK using a group URL."
@@ -25,7 +25,7 @@ if [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$RELEASE_TYPE" = "" ] || 
   echo "<protocol> <hostname> are for the update URL"
   echo ""
   echo "Usage:"
-  echo "  ./release-apk.sh a4uw93 ./content/groups/group-a qa"
+  echo "  release-apk a4uw93 ./content/groups/group-a qa"
   echo ""
   echo "Then visit https://foo.tangerinecentral.org/releases/qa/apk/a4uw93.apk"
   exit 1

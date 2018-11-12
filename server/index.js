@@ -11,9 +11,11 @@ const bodyParser = require('body-parser');
 const path = require('path')
 const app = express()
 const fs = require('fs-extra')
+const pathExists = require('fs-extra').pathExists
 const fsc = require('fs')
 const readFile = util.promisify(fsc.readFile);
 const writeFile = util.promisify(fsc.writeFile);
+const unlink = util.promisify(fsc.unlink)
 const sanitize = require('sanitize-filename');
 const cheerio = require('cheerio');
 const PouchDB = require('pouchdb')
@@ -575,71 +577,32 @@ function allGroups() {
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
 }
 
-const keepAliveReportingWorker = async initialGroups => {
-  try {
-    // Populate worker-state.json if there any initialGroups not currently being watched.
-    let workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
-    if (!workerState.databases) workerState.databases = []
-    for (let groupName of initialGroups) {
-      let feed = workerState.databases.find(database => database.name === groupName)
-      if (!feed) workerState.databases.push({ name: groupName, sequence: 0 })
-    }
-    var pouchDbDefaults = {}
-    if (process.env.T_COUCHDB_ENABLE === 'true') {
-      pouchDbDefaults = { prefix: process.env.T_COUCHDB_ENDPOINT }
-    } else {
-      pouchDbDefaults = { prefix: '/tangerine/db/' }
-    }
-    workerState.pouchDbDefaults = pouchDbDefaults
-    await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
-    // Declare variables now so they don't have to be delared continuously and garbage collected later.
-    let response = {
-      stdout: '',
-      stderr: ''
-    }
-    // Keep alive.
-    while (true) {
-      // Hook in and add a new group if it is queued.
+const reportingWorker = require('./src/reporting/reporting-worker.js')
+async function keepAliveReportingWorker(initialGroups) {
+  await reportingWorker.prepare(initialGroups)
+  let workerState = await reportingWorker.getWorkerState()
+  // Keep alive.
+  while (true) {
+    try {
+      workerState = await reportingWorker.getWorkerState()
+      // Add new groups if there are entries in the newGroupQueue array (see /api/group/new route above).
       while (newGroupQueue.length > 0) {
-        workerState = JSON.parse(await readFile('/worker-state.json', 'utf-8'))
-        workerState.databases.push({ name: newGroupQueue.pop(), sequence: 0 })
-        await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
+        await reportingWorker.addGroup(newGroupQueue.pop())
       }
-      // Run the worker.
-      try {
-        response = await exec('cat /worker-state.json | /tangerine/server/reporting/run-worker.js');
-        if (typeof response.stderr === 'object') {
-          log.error(`run-worker.js STDERR: ${JSON.stringify(response.stderr)}`)
-        } else if (response.stderr) {
-          log.error(`run-worker.js STDERR: ${response.stderr}`)
-        }
-        try {
-          workerState = JSON.parse(response.stdout)
-          await writeFile('/worker-state.json', JSON.stringify(workerState), 'utf-8')
-          // Wrap up. If nothing was last processed, sleep for 30 seconds.
-          if (workerState.processed === 0) {
-            log.info('No changes processed. Sleeping...')
-            await sleep(30 * 1000)
-          } else {
-            log.info(`Processed ${workerState.processed} changes.`)
-          }
-        } catch (error) {
-          log.error(error)
-          log.info('keepAliveReportingWorker had an error trying to save state. Sleeping for 30 seconds.')
-          await sleep(30*1000)
-        }
-      } catch (error) {
-        log.error(error)
-        log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
-        await sleep(30*1000)
+      // Use a child process to limit memory usage.
+      await exec('reporting-worker-batch')
+      workerState = await reportingWorker.prepare(initialGroups)
+      // Sleep if we did not process anything.
+      if (workerState.processed === 0) {
+        await sleep(3*1000)
+      } else {
+        log.info(`Processed ${workerState.processed} changes.`)
       }
+    } catch (error) {
+      log.error('Reporting process had an error.')
+      console.log(error)
+      await sleep(3*1000)
     }
-  } catch (error) {
-    log.error(error)
-    console.log(error)
-    log.info('keepAliveReportingWorker had an error. Sleeping for 30 seconds.')
-    await sleep(30*1000)
-
   }
 }
 const initialGroups = allGroups()
@@ -652,15 +615,15 @@ async function keepAlivePaidWorker() {
     try {
       state = await runPaidWorker()
       if (state.batchMarkedPaid === 0) {
-        log.info('No responses marked as paid. Sleeping...')
-        await sleep(30*1000)
+        //log.info('No responses marked as paid. Sleeping...')
+        await sleep(10*1000)
       } else {
         log.info(`Marked ${state.batchMarkedPaid} responses as paid.`)
       }
     } catch (error) {
       log.error(error.message)
       console.log(error)
-      await sleep(30*1000)
+      await sleep(10*1000)
     }
   }
 }
