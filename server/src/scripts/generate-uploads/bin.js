@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-if (!process.argv[2]) {
+if (process.argv[2] === '--help') {
   console.log('Usage:')
-  console.log('       ./bin.js <numberOfUploads> <groupName> [delayBetweenBatchesInMilliseconds] [batchSize] [alternativeTemplate]')
+  console.log('       generate-uploads <numberOfUploads> <groupName> [delayBetweenBatchesInMilliseconds] [batchSize] [alternativeTemplate]')
   process.exit()
 }
 
