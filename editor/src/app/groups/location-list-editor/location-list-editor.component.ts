@@ -30,7 +30,7 @@ export class LocationListEditorComponent implements OnInit {
   moveLocationParentLevelId;
   canMoveItem = false;
   isItemMarkedForUpdate = false;
-  form: any = { label: '', id: '', metadata: {} };
+  form: any = { label: '', id: '' };
   @ViewChild('container') container: ElementRef;
   constructor(
     private http: HttpClient,
@@ -102,7 +102,7 @@ export class LocationListEditorComponent implements OnInit {
 
   async addItem(parentItem) {
     this.newItemId = this.groupsService.generateLocationIDs(this.locationList);
-    const newItem = { [this.newItemId]: { label: this.form.label, id: this.newItemId, metadata: this.form.metadata } };
+    const newItem = { [this.newItemId]: { label: this.form.label, ...this.form, id: this.newItemId } };
     if (this.breadcrumbs.length === 1) {// Adding location item to root of location-list.locations
       this.locationList['locations'] = { ...this.locationList['locations'], ...newItem };
     } else {
@@ -110,7 +110,7 @@ export class LocationListEditorComponent implements OnInit {
     }
     await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
-    this.form = { label: '', id: '', metadata: {} };
+    this.form = { label: '', id: '' };
     this.showLocationForm = false;
   }
 
@@ -130,7 +130,7 @@ export class LocationListEditorComponent implements OnInit {
     this.hideLocationForm();
   }
   hideLocationForm() {
-    this.form = { label: '', id: '', metadata: {} };
+    this.form = { label: '', id: '' };
     this.showLocationForm = false;
     this.isItemMarkedForUpdate = false;
     this.isMoveLocationFormShown = false;
