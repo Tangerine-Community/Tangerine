@@ -4,6 +4,15 @@ const clog = require('tangy-log').clog
 
 module.exports = {
   hooks: {
+    clearReportingCache: async function(data) {
+      const { groupNames } = data
+      for (let groupName of groupNames) {
+        console.log(`removing db ${groupName}-logstash`)
+        const db = new DB(`${groupName}-logstash`)
+        await db.destroy()
+      }
+      return data
+    },
     reportingOutputs: function(data) {
       return new Promise(async (resolve, reject) => {
           const {flatResponse, doc, sourceDb} = data

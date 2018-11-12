@@ -13,12 +13,10 @@
 const PouchDB = require('pouchdb');
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
-const _ = require('lodash');
 const {promisify} = require('util');
 const fs = require('fs');
-const path = require('path')
 const readFile = promisify(fs.readFile);
-const tangyModules = require('../src/modules/index.js')()
+const tangyModules = require('../modules/index.js')()
 
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
