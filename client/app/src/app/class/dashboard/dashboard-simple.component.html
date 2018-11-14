@@ -49,17 +49,15 @@
               <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
               <td *ngFor="let form of curriculumForms;let i=index">
                 <span *ngIf="element.forms[form.id]?.response ; else elseBlock ">
-                  <mat-checkbox (click)="$event ? selectCheckboxResult(element,i) : null"
-                            [checked]="true"
-                            [disabled]="true">
-                  </mat-checkbox>
+                  <input type="checkbox"
+                            (change)="$event ? selectCheckboxResult(element,i,$event) : null"
+                            [checked]="true"/>
                 </span>
                 <ng-template #elseBlock>
                   <span>
-                <mat-checkbox (click)="$event.stopPropagation()"
+                <input type="checkbox" (click)="$event.stopPropagation()"
                 (change)="$event ? selectCheckbox(element,i) : null"
-                [checked]="selection.isSelected(element)">
-                </mat-checkbox>
+                />
                 </span>
                 </ng-template>
 
