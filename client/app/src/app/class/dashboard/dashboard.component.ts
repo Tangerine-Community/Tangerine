@@ -4,7 +4,7 @@ import {DashboardService} from "../_services/dashboard.service";
 import {MatTabChangeEvent, PageEvent} from "@angular/material";
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
 import {ClassFormService} from "../_services/class-form.service";
-import {SelectionModel} from "@angular/cdk/collections";
+// import {SelectionModel} from "@angular/cdk/collections";
 import {Router} from "@angular/router";
 import {_TRANSLATE} from "../../shared/translation-marker";
 
@@ -40,7 +40,7 @@ export class DashboardComponent implements OnInit {
   formIds: string[] = [];
   formList: any[] = []; // used for the Dashbiard user interface - creates Class grouping list
   formColumnsDS;
-  selection = new SelectionModel<StudentResult>(false, []);
+  // selection = new SelectionModel<StudentResult>(false, []);
 
   // length = 10;
   pageLength = 10;
@@ -229,7 +229,7 @@ export class DashboardComponent implements OnInit {
   /** Populate the querystring with the form info. */
   selectCheckbox(column, i) {
     // let el = this.selection.select(row);
-    this.selection.toggle(column)
+    // this.selection.toggle(column)
     let formsArray = Object.values(column.forms)
     let selectedForm = formsArray[i];
     let studentId = column.id
@@ -248,9 +248,10 @@ export class DashboardComponent implements OnInit {
   }
 
   /** Populate the querystring with the form info. */
-  selectCheckboxResult(column, i) {
-    // let el = this.selection.select(row);
-    this.selection.toggle(column)
+  selectCheckboxResult(column, i, event) {
+    // let el = this.selection.select(column);
+    event.currentTarget.checked = true
+    // this.selection.toggle(column)
     let formsArray = Object.values(column.forms)
     let selectedForm = formsArray[i];
     let studentId = column.id
