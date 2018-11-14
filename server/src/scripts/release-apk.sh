@@ -7,6 +7,7 @@ T_PROTOCOL="$4"
 T_HOST_NAME="$5"
 CORDOVA_DIRECTORY="/tangerine/client/builds/apk"
 RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP"
+STATUS_FILE="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP.json"
 URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www"
 CHCP_URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www/chcp.json"
 DATE=`date '+%Y-%m-%d %H:%M:%S'`
@@ -30,6 +31,9 @@ if [ "$2" = "--help" ] || [ "$GROUP" = "" ] || [ "$CONTENT_PATH" = "" ] || [ "$R
   echo "Then visit https://foo.tangerinecentral.org/releases/qa/apk/a4uw93.apk"
   exit 1
 fi
+
+# Mark build status early.
+echo '{"processing":true}' > $STATUS_FILE
 
 if [ -d "$RELEASE_DIRECTORY" ]; then
   # Clear out the Cordova project in $CORDOVA_DIRECTORY
@@ -61,6 +65,8 @@ cordova build --no-telemetry android
 
 # Copy the apk to the $RELEASE_DIRECTORY
 cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASE_DIRECTORY/$GROUP.apk
+
+echo '{"processing":false}' > $STATUS_FILE
 echo "Released apk for $GROUP at $RELEASE_DIRECTORY on $DATE"
 
 
