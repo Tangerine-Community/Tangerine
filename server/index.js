@@ -231,13 +231,9 @@ app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async functi
   const releaseType = sanitize(req.params.releaseType)
   const cmd = `cd /tangerine/server/src/scripts && ./release-apk.sh ${group} /tangerine/client/content/groups/${group} ${releaseType} ${process.env.T_PROTOCOL} ${process.env.T_HOST_NAME} 2>&1 | tee -a /apk.log`
   log.info("in release-apk, group: " + group + " releaseType: " + releaseType + `The command: ${cmd}`)
-  try {
-    await exec(cmd)
-    res.send({ statusCode: 200, data: 'ok' })
-  } catch (error) {
-    res.send({ statusCode: 500, data: error })
-  }
-
+  // Do not await. The browser just needs to know the process has started and will monitor the status file.
+  exec(cmd).catch(log.error)
+  res.send({ statusCode: 200, data: 'ok' })
 })
 
 app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async function (req, res, next) {
