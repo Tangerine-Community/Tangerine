@@ -21,13 +21,14 @@ export interface StudentResponse {
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './dashboard-simple.component.html',
+  templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 
   classes;students;dataSource;columnsToDisplay;selectedReport;
   currentClassId;currentClassIndex;
+  selectedClass;selectedCurriculum;
   // tabs
   selectedTab;selectedIndex;selectedCurrTab;selectedTabIndex;curriculumIndex
   curriculumBackground = 'red';
@@ -105,6 +106,7 @@ export class DashboardComponent implements OnInit {
       if (this.curriculumIndex !== tabChangeEvent.index) {
         this.pageIndex = 0
       }
+      this.selectedTabIndex = 0;
       this.curriculumIndex = tabChangeEvent.index
       this.selectedCurrTab = tabChangeEvent.tab;
     } else {
@@ -112,6 +114,9 @@ export class DashboardComponent implements OnInit {
       this.selectedTab = tabChangeEvent.tab;
       this.selectedTabIndex = tabChangeEvent.index
     }
+
+    this.selectedCurriculum = this.currArray[this.curriculumIndex];
+    this.selectedClass = this.classes[this.selectedTabIndex];
 
     // No need to populate grid if this is the Add Class link.
     if (this.classes.length !== this.selectedTabIndex) {
