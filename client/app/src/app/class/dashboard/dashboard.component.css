@@ -1,3 +1,7 @@
+html {
+  box-sizing: border-box;
+}
+
 .hideme {
   display:none;
 }
@@ -74,10 +78,60 @@ input[type=checkbox]:not(:checked) {
 
 .classDashboard {
   position:relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
-.class-dashboard-button-spacer {
+.classDashboard button {
+  background-color: white;
+}
+
+.class-dashboard-button-spacer-left {
   margin-left: 10px;
+}
+
+.class-dashboard-button-spacer-right {
+  margin-right: 10px;
+}
+
+.class-dashboard-curr-button-spacer {
+  margin-left: 2px;
+}
+
+.selectedClassLabel {
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+ }
+
+.selectedClassLabel p {
+  text-align: center;
+ }
+
+.dashboard-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.dashboard-table th {
+  border: 1px solid #ddd;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #f29d38;
+  color: white;
+}
+
+.tangy-class-card-content-container {
+  margin-left: 3%;
+  /*width: 90%;*/
+  margin-right: 5%;
+  /*min-height: vh;*/
 }
 
 
