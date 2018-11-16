@@ -89,6 +89,8 @@ export class DashboardComponent implements OnInit {
     try {
       this.classes = await this.getMyClasses();
       if (this.classes.length > 0) {
+        this.curriculumIndex = 0;
+        this.selectedTabIndex = 0;
         await this.populateGridData(0, 0, 0, 5)
         this.renderGrid();
         this.selectedIndex = 0;
@@ -101,6 +103,10 @@ export class DashboardComponent implements OnInit {
   tabChanged = async (tabChangeEvent: MatTabChangeEvent, type:String): Promise<void> => {
     // console.log('tabChangeEvent => ', tabChangeEvent);
     // console.log('index => ', tabChangeEvent.index);
+
+    this.selectedCurriculum = null;
+    this.selectedClass = null;
+
     if (type === 'curriculum') {
       // reset this.pageIndex is curriculum has changed.
       if (this.curriculumIndex !== tabChangeEvent.index) {
@@ -115,8 +121,33 @@ export class DashboardComponent implements OnInit {
       this.selectedTabIndex = tabChangeEvent.index
     }
 
-    this.selectedCurriculum = this.currArray[this.curriculumIndex];
-    this.selectedClass = this.classes[this.selectedTabIndex];
+    // No need to populate grid if this is the Add Class link.
+    if (this.classes.length !== this.selectedTabIndex) {
+      await this.populateGridData(this.selectedTabIndex, this.curriculumIndex, this.pageIndex, this.pageSize);
+      this.renderGrid();
+    }
+  }
+
+  selectCurriculum = async (classIndex, curriculumIndex): Promise<void> => {
+    // console.log('tabChangeEvent => ', tabChangeEvent);
+    // console.log('index => ', tabChangeEvent.index);
+
+    this.selectedCurriculum = null;
+    this.selectedClass = null;
+
+    // if (type === 'curriculum') {
+    //   // reset this.pageIndex is curriculum has changed.
+    //   if (this.curriculumIndex !== tabChangeEvent.index) {
+    //     this.pageIndex = 0
+    //   }
+    //   this.selectedTabIndex = 0;
+    //   this.curriculumIndex = tabChangeEvent.index
+    //   this.selectedCurrTab = tabChangeEvent.tab;
+    // } else {
+      this.curriculumIndex = curriculumIndex;
+      // this.selectedTab = tabChangeEvent.tab;
+      this.selectedTabIndex = classIndex
+    // }
 
     // No need to populate grid if this is the Add Class link.
     if (this.classes.length !== this.selectedTabIndex) {
@@ -155,9 +186,9 @@ export class DashboardComponent implements OnInit {
       this.currArray = []
       let allCurriculums = input.value;
       for (const curriculum of allCurriculums as any[] ) {
-        if (curriculum['value'] === 'on') {
+        // if (curriculum['value'] === 'on') {
           this.currArray.push(curriculum)
-        }
+        // }
       }
       this.curriculum = this.currArray[curriculumIndex];
       //todo: persist curricula in memory and find curriculum.name.
@@ -319,6 +350,9 @@ export class DashboardComponent implements OnInit {
       this.formIds.push(form.id)
       this.columnsToDisplay.push(form.title);
     }
+
+    this.selectedCurriculum = this.currArray[this.curriculumIndex];
+    this.selectedClass = this.classes[this.selectedTabIndex];
   }
 
   selectReport(reportId) {

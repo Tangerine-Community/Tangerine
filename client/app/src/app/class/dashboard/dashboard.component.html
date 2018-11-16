@@ -1,60 +1,84 @@
-<mat-menu #appMenu="matMenu">
-  <button mat-menu-item>Settings</button>
-  <button mat-menu-item>Help</button>
-</mat-menu>
+<!--<mat-tab-group #ClassesTabGroup (selectedTabChange)="tabChanged($event,'class')" [selectedIndex]="selectedIndex">-->
+  <!--<mat-tab-->
+    <!--*ngFor="let class of classes; let classIndex=index"-->
+    <!--label="{{class.doc.items[0].inputs[2].value}}"-->
+    <!--attr.data-classId = "{{class.id}}">-->
+    <!--<ng-template matTabContent>-->
+        <!--<mat-tab-group class="tangy-tab-curriculum" (selectedTabChange)="tabChanged($event, 'curriculum')" [selectedIndex]="selectedIndex">-->
+          <!--<mat-tab-->
+            <!--*ngFor="let curriculum of currArray"-->
+            <!--label="{{curriculum.label}}"-->
+          <!--&gt;-->
+          <!--</mat-tab>-->
+        <!--</mat-tab-group>-->
+    <!--</ng-template>-->
+  <!--</mat-tab>-->
 
-<mat-tab-group #ClassesTabGroup (selectedTabChange)="tabChanged($event,'class')" [selectedIndex]="selectedIndex">
-  <mat-tab
-    *ngFor="let class of classes; let classIndex=index"
-    label="{{class.doc.items[0].inputs[2].value}}"
-    attr.data-classId = "{{class.id}}">
-    <ng-template matTabContent>
-        <mat-tab-group class="tangy-tab-curriculum" (selectedTabChange)="tabChanged($event, 'curriculum')" [selectedIndex]="selectedIndex">
-          <mat-tab
-            *ngFor="let curriculum of currArray"
-            label="{{curriculum.label}}"
-          >
-          </mat-tab>
-        </mat-tab-group>
+  <!--<mat-tab>-->
+    <!--<ng-template mat-tab-label>-->
+      <!--<a class="mat-tab-label" [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>-->
+        <!--<span>{{'Add Class'|translate}}</span>-->
+    <!--</a>-->
+    <!--</ng-template>-->
+  <!--</mat-tab>-->
 
-
-    </ng-template>
-  </mat-tab>
-
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <a class="mat-tab-label" [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>
-        <span>{{'Add Class'|translate}}</span>
-    </a>
-    </ng-template>
-  </mat-tab>
-
-</mat-tab-group>
+<!--</mat-tab-group>-->
 
 <!--<ng-template>-->
+
+<mat-toolbar *ngIf="selectedClass" class="classDashboard">
+  <!--<mat-menu-item class="tangy-list-header">-->
+      <span class="class-dashboard-button-spacer">
+        {{'Student Dashboard'|translate}}
+        </span>
+      <span class="class-dashboard-button-spacer">
+        <button mat-stroked-button color="primary"
+                [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
+          {{'Add Student'|translate}}
+        </button>
+      </span>
+
+    <span dir="rtl" *ngFor="let class of classes; let classIndex=index" class="class-dashboard-button-spacer">
+        <button mat-stroked-button color="primary" [matMenuTriggerFor]="catMenu" class="mat-button"
+                attr.data-classId = "{{class.id}}">
+          {{class.doc.items[0].inputs[2].value}}
+        </button>
+        <mat-menu #catMenu="matMenu">
+          <ng-template matMenuContent>
+            <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value; let curriculumIndex=index;">
+              <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="selectCurriculum(classIndex, curriculumIndex)">{{curriculum.label}}</button>
+            </span>
+          </ng-template>
+        </mat-menu>
+      </span>
+
+    <span dir="rtl">&nbsp;&nbsp;&nbsp;
+        <button mat-stroked-button color="primary" [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+        <mat-menu #groupingMenu="matMenu">
+          <ng-template matMenuContent>
+          <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+          </ng-template>
+        </mat-menu>
+        <mat-menu #reportsMenu="matMenu">
+          <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
+          <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
+        </mat-menu>
+      </span>
+  <!--</mat-menu-item>-->
+  <!--<mat-menu-item *ngIf="!students">-->
+    <p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p>
+  <!--</mat-menu-item>-->
+  <!--<mat-list-item *ngIf="students">-->
+    <!--<span class="selectedClassLabel">{{selectedClass.doc.items[0].inputs[2].value}} - {{selectedCurriculum.label}}</span>-->
+  <!--</mat-list-item>-->
+</mat-toolbar>
+
 <mat-card class="tangy-card-content-container" *ngIf="selectedClass">
   <!--{{selectedClass.doc._id}}-->
-  <mat-list>
-    <mat-list-item >
-      <span class="tangy-foreground-primary">{{'Student Dashboard'|translate}} (<a title="Add Student" class="tangy-foreground-primary undecorate-link test-size-reset" [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>{{'Add Student'|translate}}</a>)</span>
-      <span dir="rtl">&nbsp;&nbsp;&nbsp;
-              <button mat-button [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
-              <mat-menu #groupingMenu="matMenu">
-                <ng-template matMenuContent>
-                <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
-                </ng-template>
-              </mat-menu>
-              <mat-menu #reportsMenu="matMenu">
-                <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
-                <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
-              </mat-menu>
-            </span>
-    </mat-list-item>
-    <mat-list-item *ngIf="!students">
-      <p class="mat-h3">{{'No Students currently registered.'|translate}}</p>
-    </mat-list-item>
-  </mat-list>
+
+
   <div [hidden]="isLoading">
+    <span class="selectedClassLabel">{{selectedClass.doc.items[0].inputs[2].value}} - {{selectedCurriculum.label}}</span>
     <table>
       <tr>
         <th>&nbsp;</th>
