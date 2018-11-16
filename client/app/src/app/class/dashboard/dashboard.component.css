@@ -63,6 +63,23 @@ input[type=checkbox]:not(:checked) {
   outline: 1px solid #1e5180
 }
 
+.tangy-list-header {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 8px 20px;
+  background: rgba(0,0,0,.03);
+}
+
+.classDashboard {
+  position:relative;
+}
+
+.class-dashboard-button-spacer {
+  margin-left: 10px;
+}
+
 
 
 
