@@ -166,4 +166,10 @@ eval ${CMD}
 
 echo "Installing missing plugin..."
 docker exec tangerine bash -c "cd /tangerine/client/builds/apk/ && cordova --no-telemetry plugin add cordova-plugin-whitelist --save"
-echo "Done."
+echo ""
+echo ""
+echo ""
+echo "🍊  Woohoo! Tangerine is running! 🍊"
+echo ""
+echo "Run 'docker exec tangerine info' to get a list of commands."
+echo ""
