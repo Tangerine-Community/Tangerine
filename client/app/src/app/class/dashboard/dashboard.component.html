@@ -1,7 +1,14 @@
 <mat-toolbar *ngIf="selectedClass" class="classDashboard">
+
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"
-            [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
+            [routerLink]="['/class-forms-player/']"
+            [queryParams]='classRegistrationParams'>
+      {{'Add Class'|translate}}
+    </button>
+    <button mat-stroked-button color="primary"
+            [routerLink]="['/class-forms-player/']"
+            [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
       {{'Add Student'|translate}}
     </button>
   </span>
@@ -31,6 +38,15 @@
       </mat-menu>
     </span>
   <span dir="rtl"><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
+</mat-toolbar>
+
+<mat-toolbar *ngIf="!selectedClass" class="classDashboard">
+  <span dir="rtl" class="class-dashboard-button-spacer-left">
+    <button mat-stroked-button color="primary"
+            [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>
+      {{'Add Class'|translate}}
+    </button>
+  </span>
 </mat-toolbar>
 
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
