@@ -124,6 +124,10 @@ export class DashboardService {
         let incorrect = 0;
         let noResponse = 0;
         let score = 0;
+        let totalGridIncorrect = 0;
+        let totalGridCorrect = 0;
+        let totalGridAnswers = 0;
+        let totalGridPercentageCorrect = 0;
 
         let item = observation.doc['items'][i];
         if (item) {
@@ -182,6 +186,34 @@ export class DashboardService {
         //   } else {
         //     percentCorrect = 0
         //   }
+
+          // Check if there are grid subtests aka tangy-timed in this response
+          let form = curriculumFormsList[i]
+          let childElements = form.children
+          if (childElements) {
+            for (const child of childElements) {
+              // console.log("child name: " + child.name)
+              if (child.tagName === 'TANGY-TIMED') {
+                for (const answer of answeredQuestions) {
+                  let value = answer[child.name]
+                  totalGridAnswers = value.length;
+                  // console.log("child.name: " + child.name + " value: " + JSON.stringify(value))
+                  const reducer = (accumulator, button) => {
+                    if (button.pressed === true) {
+                      return ++accumulator;
+                    } else {
+                      return accumulator
+                    }
+                  }
+                  totalGridIncorrect = value.reduce(reducer, 0)
+                  totalGridCorrect = totalGridAnswers - totalGridIncorrect
+                  totalGridPercentageCorrect = Math.round(totalGridCorrect/totalGridAnswers * 100)
+                  // console.log("subtest name: " + child.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers)
+                }
+              }
+            }
+          }
+
         }
         if (itemCount > 0) {
           let studentId
@@ -209,8 +241,11 @@ export class DashboardService {
             correct: correct,
             incorrect: incorrect,
             noResponse: noResponse,
-            score: score
-            // columns
+            score: score,
+            totalGridIncorrect: totalGridIncorrect,
+            totalGridAnswers: totalGridAnswers,
+            totalGridCorrect: totalGridCorrect,
+            totalGridPercentageCorrect: totalGridPercentageCorrect
           };
 
           // return response;
