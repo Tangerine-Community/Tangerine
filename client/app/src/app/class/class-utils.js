@@ -20,13 +20,29 @@ export class ClassUtils {
     var output = "";
     for (const el of formEl) {
       let obj = el.getProps()
-      let nodeList = el.querySelectorAll('tangy-timed')
-      if (nodeList.length > 0) {
-        obj['prototype'] = "grid";
+      let htmlCollection = el.children[0].content.children
+      let children = []
+      for (const item of htmlCollection) {
+        let child = item.getProps()
+        if (child.name) {
+          obj[child.name] = child
+        }
+        children.push(child)
       }
+      obj['children'] = children
       curriculumForms.push(obj)
     }
   return curriculumForms
   }
 
+  decimals(num, decimals) {
+    let m;
+    m = Math.pow(10, decimals);
+    num *= m;
+    num = num + (num<0?-0.5:+0.5 >> 0);
+    return num /= m;
+  }
+
 }
+
+
