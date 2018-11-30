@@ -1,15 +1,16 @@
-<mat-card class="tangy-card-content-container">
-  <mat-toolbar class="classDashboard">
-  <button mat-stroked-button color="primary"  [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
-  <mat-menu #reportsMenu="matMenu">
-    <ng-template matMenuContent>
-      <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
-      <!--<button mat-menu-item *ngFor="let item of formList" (click)="displayReport(item)">{{item.title}}</button>-->
-    </ng-template>
-  </mat-menu>
-  </mat-toolbar>
+<mat-toolbar class="classDashboard">
+  <span dir="rtl" class="class-dashboard-button-spacer-left">
+    <button mat-stroked-button color="primary"  [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+  </span>
+<mat-menu #reportsMenu="matMenu">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+    <!--<button mat-menu-item *ngFor="let item of formList" (click)="displayReport(item)">{{item.title}}</button>-->
+  </ng-template>
+</mat-menu>
+</mat-toolbar>
 
-
+ <mat-card class="tangy-card-content-container">
   <h2 title="Summary">{{'Summary'|translate}}</h2>
 
   <table class="mat-elevation-z8" >
