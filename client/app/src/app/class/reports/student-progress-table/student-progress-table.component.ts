@@ -1,32 +1,18 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from "@angular/router";
 import {ClassFormService} from "../../_services/class-form.service";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {DashboardService} from "../../_services/dashboard.service";
 import {AuthenticationService} from "../../../core/auth/_services/authentication.service";
 import {ClassUtils} from "../../class-utils";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
-
-export class SubtestReport {
-  curriculumId:any
-  label:any
-  categories: any;
-  totals:any;
-  studentCategorizedResults:any
-  noCategories:any
-}
-
-export interface StudentResult {
-  id: string;
-  name: string;
-  results:any;
-}
+import {SubtestReport} from "../student-subtest-report/student-subtest-report.component";
 
 @Component({
-  selector: 'app-student-subtest-report',
-  templateUrl: './student-subtest-report.component.html',
-  styleUrls: ['./student-subtest-report.component.css']
+  selector: 'app-student-progress-table',
+  templateUrl: './student-progress-table.component.html',
+  styleUrls: ['./student-progress-table.component.css']
 })
-export class StudentSubtestReportComponent implements OnInit {
+export class StudentProgressTableComponent implements OnInit {
 
   classFormService:ClassFormService;
   classUtils: ClassUtils
@@ -34,7 +20,6 @@ export class StudentSubtestReportComponent implements OnInit {
   students:any
   studentCategorizedResults:any
   categories: any;
-  noCategories: any;
   totals:any;
   curriculums:any;
   subtestReports:any
@@ -95,17 +80,7 @@ export class StudentSubtestReportComponent implements OnInit {
       // this.subtestReport.students = await this.getMyStudents(classId);
       const appConfig = await this.appConfigService.getAppConfig();
       this.categories = appConfig.categories;
-      let categoryName;
-      if (this.categories.length === 0) {
-        subtestReport.noCategories = true;
-        categoryName = "Results";
-      } else {
-        subtestReport.noCategories = false;
-        categoryName = "Unassigned Category";
-      }
-
-
-      this.categories.push(categoryName)
+      this.categories.push("Unassigned Category")
 
       subtestReport.categories = this.categories;
 
@@ -116,8 +91,8 @@ export class StudentSubtestReportComponent implements OnInit {
 
       subtestReport.totals = this.totals;
 
-      let students = (studentIds.length > 0) 
-        ? (await this.getMyStudents(classId)).filter(student => studentIds.indexOf(student.id) !== -1) 
+      let students = (studentIds.length > 0)
+        ? (await this.getMyStudents(classId)).filter(student => studentIds.indexOf(student.id) !== -1)
         : await this.getMyStudents(classId);
       let studentResults = {}
       for (const student of students) {
@@ -140,10 +115,6 @@ export class StudentSubtestReportComponent implements OnInit {
           category = "Unassigned Category"
         }
         let score = parseInt(result.score)
-        let totalGridCorrect = result.totalGridCorrect
-        if (totalGridCorrect) {
-          score = totalGridCorrect
-        }
         let resultObject = {}
         for (const thisCategory of this.categories) {
           resultObject[thisCategory] = null

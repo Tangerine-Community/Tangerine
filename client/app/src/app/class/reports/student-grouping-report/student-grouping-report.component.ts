@@ -15,6 +15,8 @@ export interface ClassGroupingReport {
   studentsAssessed:number;
   aveCorrectPerc:number;
   aveCorrect:number;
+  attempted:number;
+  duration:number;
   studentsToWatch:string[];
 }
 
@@ -42,7 +44,9 @@ export class StudentGroupingReportComponent implements OnInit {
     studentsAssessed: null,
     aveCorrectPerc: null,
     aveCorrect: null,
-    studentsToWatch: null
+    attempted: null,
+    studentsToWatch: null,
+    duration: null
   }
   classFormService:ClassFormService;
   classUtils: ClassUtils
@@ -144,7 +148,9 @@ export class StudentGroupingReportComponent implements OnInit {
     let studentsAssessed = 0;
     let aveCorrect = 0;
     let aveCorrectPerc = 0;
+    let attempted = 0;
     let studentsToWatch = [];
+    let duration = 0;
 
     for (const student of this.students) {
       let studentResults = {};
@@ -152,18 +158,20 @@ export class StudentGroupingReportComponent implements OnInit {
       studentResults["name"] = student.doc.items[0].inputs[0].value
       studentResults["classId"] = student.doc.items[0].inputs[3].value
       studentResults["forms"] = [];
-      for (const form of curriculumFormsList) {
+      // for (const form of curriculumFormsList) {
         if (this.studentsResponses[student.id]) {
-          if (form.id === tangyFormItem) {
-            let studentResponse = this.studentsResponses[student.id][form.id]
-            studentResults["response"] = studentResponse
+          // if (form.id === tangyFormItem) {
+            let studentResponse = this.studentsResponses[student.id][tangyFormItem]
             if (studentResponse) {
+              studentResults["response"] = studentResponse
               let score = studentResponse["score"]
               if (score) {
                 studentResults["score"] = score
               }
               let totalGridCorrect = studentResponse["totalGridCorrect"]
               let totalGridPercentageCorrect = studentResponse["totalGridPercentageCorrect"]
+              let totalGridAnswers = studentResponse["totalGridAnswers"]
+              duration = studentResponse["duration"]
               if (totalGridPercentageCorrect) {
                 studentResults["score"] = totalGridPercentageCorrect
                 let index;
@@ -184,10 +192,13 @@ export class StudentGroupingReportComponent implements OnInit {
               }
               aveCorrect += totalGridCorrect
               aveCorrectPerc += totalGridPercentageCorrect
+              attempted += totalGridAnswers
+              studentsAssessed ++
               // TODO: calculate percentile and stdDev.
+              // TODO: factor correct answers per minute.
+              // TODO: factor attempted vs not attempted.
             }
-            studentsAssessed ++
-          }
+          // }
         }
         // else {
         //   if (form.id === tangyFormItem) {
@@ -195,14 +206,15 @@ export class StudentGroupingReportComponent implements OnInit {
         //     studentsToWatch.push(studentResults["name"])
         //   }
         // }
-      }
+      // }
       allStudentResults.push(studentResults)
     }
 
     // aveCorrectPerc = this.classUtils.decimals( aveCorrectPerc / this.students.length, 0 )
     // aveCorrect = this.classUtils.decimals( aveCorrect / this.students.length, 2 )
-    aveCorrectPerc = this.classUtils.round( aveCorrectPerc / this.students.length, 0 )
-    aveCorrect = this.classUtils.round( aveCorrect / this.students.length, 2 )
+    aveCorrectPerc = this.classUtils.round( aveCorrectPerc / studentsAssessed, 0 )
+    aveCorrect = this.classUtils.round( aveCorrect / studentsAssessed, 2 )
+    attempted = this.classUtils.round( attempted / studentsAssessed, 2 )
 
 
     function compare(a,b) {
@@ -217,6 +229,8 @@ export class StudentGroupingReportComponent implements OnInit {
     this.classGroupReport.studentsAssessed = studentsAssessed
     this.classGroupReport.aveCorrectPerc = aveCorrectPerc
     this.classGroupReport.aveCorrect = aveCorrect
+    this.classGroupReport.attempted = attempted
+    this.classGroupReport.duration = duration
     this.classGroupReport.studentsToWatch = studentsToWatch
     this.dataSource = new MatTableDataSource<StudentResult>(this.allStudentResults);
   }
