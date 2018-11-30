@@ -199,8 +199,10 @@ export class StudentGroupingReportComponent implements OnInit {
       allStudentResults.push(studentResults)
     }
 
-    aveCorrectPerc = this.classUtils.decimals( aveCorrectPerc / this.students.length, 0 )
-    aveCorrect = this.classUtils.decimals( aveCorrect / this.students.length, 2 )
+    // aveCorrectPerc = this.classUtils.decimals( aveCorrectPerc / this.students.length, 0 )
+    // aveCorrect = this.classUtils.decimals( aveCorrect / this.students.length, 2 )
+    aveCorrectPerc = this.classUtils.round( aveCorrectPerc / this.students.length, 0 )
+    aveCorrect = this.classUtils.round( aveCorrect / this.students.length, 2 )
 
 
     function compare(a,b) {

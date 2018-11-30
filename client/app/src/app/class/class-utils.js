@@ -43,6 +43,10 @@ export class ClassUtils {
     return num /= m;
   }
 
+   round(value, decimals) {
+    return Number(Math.round(value+'e'+decimals)+'e-'+decimals);
+  }
+
 }
 
 

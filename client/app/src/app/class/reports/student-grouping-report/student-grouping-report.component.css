@@ -1,9 +1,34 @@
+html {
+  box-sizing: border-box;
+}
+
 .hideme {
   display:none;
 }
 
-.mat-button {
-  padding-right: 0px;
+.mat-table {
+  width:100%;
+}
+
+.mat-column-select {
+  overflow: initial;
+}
+
+.mat-column-Name {
+  padding-right:5px;
+}
+
+th.mat-header-cell {
+  text-align: right;
+}
+
+.button-row button,
+.button-row a {
+  margin-right: 8px;
+}
+
+.mat-tab-label-active {
+  background-color: greenyellow;
 }
 
 /*
@@ -51,6 +76,18 @@ table th {
 
 .classDashboard button {
   background-color: white;
+}
+
+.class-dashboard-button-spacer-left {
+  margin-left: 10px;
+}
+
+.class-dashboard-button-spacer-right {
+  margin-right: 10px;
+}
+
+.class-dashboard-curr-button-spacer {
+  margin-left: 2px;
 }
 
 p {
