@@ -27,6 +27,7 @@ import {TranslateService} from "@ngx-translate/core";
 import { StudentSubtestReportComponent } from './reports/student-subtest-report/student-subtest-report.component';
 import { StudentGroupingReportComponent } from './reports/student-grouping-report/student-grouping-report.component';
 import {PageNotFoundComponent} from "./page-not-found.component";
+import { StudentProgressTableComponent } from './reports/student-progress-table/student-progress-table.component';
 
 @NgModule({
   imports: [
@@ -47,7 +48,7 @@ import {PageNotFoundComponent} from "./page-not-found.component";
     MatIconModule,
     MatToolbarModule
   ],
-  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent],
+  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent],
   providers: [DashboardService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {

@@ -351,11 +351,16 @@ export class DashboardComponent implements OnInit {
       this.curriculumFormsList = curriculumForms;
 
       this.formList = [];
+      let currentClassId;
+      let currentClass = this.classes[this.currentClassIndex];
+      if (typeof currentClass !== 'undefined') {
+        currentClassId = currentClass.id
+      }
       for (const form of this.curriculumFormsList) {
         let formEl = {
           "title":form.title,
           "id":form.id,
-          "classId":this.currentClassId,
+          "classId":currentClassId,
           "curriculumId":curriculum
         };
         this.formList.push(formEl)

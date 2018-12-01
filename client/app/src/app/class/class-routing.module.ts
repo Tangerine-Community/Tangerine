@@ -7,6 +7,7 @@ import {ClassFormsPlayerComponent} from "./class-forms-player/class-forms-player
 import {StudentSubtestReportComponent} from "./reports/student-subtest-report/student-subtest-report.component";
 import {StudentGroupingReportComponent} from "./reports/student-grouping-report/student-grouping-report.component";
 import {PageNotFoundComponent} from "./page-not-found.component";
+import {StudentProgressTableComponent} from "./reports/student-progress-table/student-progress-table.component";
 
 const appRoutes = [
   {
@@ -27,6 +28,11 @@ const appRoutes = [
   {
     path: 'reports/studentSubtestReport/:classId',
     component: StudentSubtestReportComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
+    path: 'reports/studentPtogressTable/:type/:classId/:curriculumId',
+    component: StudentProgressTableComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   }
 ];

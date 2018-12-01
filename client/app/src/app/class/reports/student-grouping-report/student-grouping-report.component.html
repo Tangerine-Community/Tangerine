@@ -1,13 +1,16 @@
-<mat-card class="tangy-card-content-container">
-  <button mat-button [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
-  <mat-menu #reportsMenu="matMenu">
-    <ng-template matMenuContent>
-      <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
-      <!--<button mat-menu-item *ngFor="let item of formList" (click)="displayReport(item)">{{item.title}}</button>-->
-    </ng-template>
-  </mat-menu>
+<mat-toolbar class="classDashboard">
+  <span dir="rtl" class="class-dashboard-button-spacer-left">
+    <button mat-stroked-button color="primary"  [matMenuTriggerFor]="reportsMenu" class="mat-button">{{'Select Report'|translate}}</button>
+  </span>
+<mat-menu #reportsMenu="matMenu">
+  <ng-template matMenuContent>
+    <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+    <!--<button mat-menu-item *ngFor="let item of formList" (click)="displayReport(item)">{{item.title}}</button>-->
+  </ng-template>
+</mat-menu>
+</mat-toolbar>
 
-
+ <mat-card class="tangy-card-content-container">
   <h2 title="Summary">{{'Summary'|translate}}</h2>
 
   <table class="mat-elevation-z8" >
@@ -21,13 +24,21 @@
       <td title="Students Assessed">{{'Students Assessed'|translate}}</td><td>{{classGroupReport.studentsAssessed}}</td>
     </tr>
     <tr>
-      <td title="Average Correct (%)">{{'Average Correct (%)'|translate}}</td><td></td>
+      <td title="Average Correct (%)">{{'Average Correct (%)'|translate}}</td><td>{{classGroupReport.aveCorrectPerc}}</td>
     </tr>
     <tr>
-      <td title="Average Correct">{{'Average Correct'|translate}}</td><td></td>
+      <td title="Average Correct">{{'Average Correct'|translate}}</td><td>{{classGroupReport.aveCorrect}} / {{classGroupReport.attempted}}</td>
     </tr>
+    <!--<tr *ngIf="classGroupReport.duration">-->
+      <!--<td title="Duration">{{'Duration'|translate}}</td><td>{{classGroupReport.duration}} {{'seconds'|translate}}</td>-->
+    <!--</tr>-->
     <tr>
-      <td title="Students to watch">{{'Students to watch'|translate}}</td><td>{{classGroupReport.studentsToWatch}}</td>
+      <td title="Students to watch">{{'Students to watch'|translate}}</td>
+      <td>
+          <p *ngFor="let student of classGroupReport.studentsToWatch">
+            {{student}}
+          </p>
+    </td>
     </tr>
   </table>
 
@@ -43,15 +54,24 @@
       <td mat-cell *matCellDef="let element"> {{element["name"]}} </td>
     </ng-container>
 
-    <!-- {{'Status'|translate}} -->
+    <!-- Score Column -->
+    <ng-container matColumnDef="score">
+      <th mat-header-cell *matHeaderCellDef title="Score"> {{'Score'|translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="element.score">{{element.score}} % </span>
+      </td>
+    </ng-container>
+
     <!-- Status Column -->
     <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef title="Status"> {{'Score'|translate}} </th>
-      <td mat-cell *matCellDef="let element"> {{element.score| translate}} </td>
+      <th mat-header-cell *matHeaderCellDef title="Status"> {{'Status'|translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="element.status">{{element.status}}</span>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+    <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" [ngClass]="element.colorClass"></tr>
   </table>
 
 </mat-card>
