@@ -124,6 +124,12 @@ export class DashboardService {
         let incorrect = 0;
         let noResponse = 0;
         let score = 0;
+        let totalGridIncorrect = 0;
+        let totalGridCorrect = 0;
+        let totalGridAnswers = 0;
+        let totalGridPercentageCorrect = 0;
+        let duration = 0;
+        let prototype = 0;
 
         let item = observation.doc['items'][i];
         if (item) {
@@ -154,7 +160,6 @@ export class DashboardService {
                 score = value
               }
             }
-
           })
           // loop through answeredQuestions and calculate correct, incorrect, and missing.
         //   if (curriculumFormsList[i]['prototype'] === 'grid') {
@@ -182,6 +187,46 @@ export class DashboardService {
         //   } else {
         //     percentCorrect = 0
         //   }
+
+          let form = curriculumFormsList[i]
+          let childElements = form.children
+          if (childElements) {
+            for (const child of childElements) {
+              // console.log("child name: " + child.name)
+              // Check if there are grid subtests aka tangy-timed in this response
+              if (child.tagName === 'TANGY-TIMED') {
+                for (const answer of answeredQuestions) {
+                  let value = answer[child.name]
+                  totalGridAnswers = value.length;
+                  // console.log("child.name: " + child.name + " value: " + JSON.stringify(value))
+                  const reducer = (accumulator, button) => {
+                    if (button.pressed === true) {
+                      return ++accumulator;
+                    } else {
+                      return accumulator
+                    }
+                  }
+                  totalGridIncorrect = value.reduce(reducer, 0)
+                  totalGridCorrect = totalGridAnswers - totalGridIncorrect
+                  totalGridPercentageCorrect = Math.round(totalGridCorrect/totalGridAnswers * 100)
+                  // console.log("subtest name: " + child.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers)
+                }
+                duration = child.duration;
+                prototype = child.tagName
+              } else {
+                // one of the answeredQuestions is the _score, so don't count it.
+                const totalAnswers =  item.inputs.length - 1
+                if (totalAnswers > 0) {
+                  totalGridAnswers = totalAnswers
+                  totalGridCorrect = Number(score)
+                  totalGridIncorrect = totalAnswers - totalGridCorrect
+                  totalGridPercentageCorrect = Math.round(totalGridCorrect/totalGridAnswers * 100)
+                  prototype = child.tagName
+                  console.log("subtest name: " + child.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers + " score: " + score)
+                }
+              }
+            }
+          }
         }
         if (itemCount > 0) {
           let studentId
@@ -209,9 +254,17 @@ export class DashboardService {
             correct: correct,
             incorrect: incorrect,
             noResponse: noResponse,
-            score: score
-            // columns
+            score: score,
+            totalGridIncorrect: totalGridIncorrect,
+            totalGridAnswers: totalGridAnswers,
+            totalGridCorrect: totalGridCorrect,
+            totalGridPercentageCorrect: totalGridPercentageCorrect,
+            duration: duration
           };
+
+          if (prototype) {
+            response['prototype'] = prototype
+          }
 
           // return response;
           observations.push(response)

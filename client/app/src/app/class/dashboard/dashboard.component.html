@@ -1,7 +1,14 @@
 <mat-toolbar *ngIf="selectedClass" class="classDashboard">
+
   <span dir="rtl" class="class-dashboard-button-spacer-left">
     <button mat-stroked-button color="primary"
-            [routerLink]="['/class-forms-player/']" [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
+            [routerLink]="['/class-forms-player/']"
+            [queryParams]='classRegistrationParams'>
+      {{'Add Class'|translate}}
+    </button>
+    <button mat-stroked-button color="primary"
+            [routerLink]="['/class-forms-player/']"
+            [queryParams]={curriculum:studentRegistrationCurriculum,classId:selectedClass.doc._id}>
       {{'Add Student'|translate}}
     </button>
   </span>
@@ -25,12 +32,27 @@
         <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
         </ng-template>
       </mat-menu>
+      <mat-menu #progressMenu="matMenu">
+        <ng-template matMenuContent>
+        <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentPtogressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
+        </ng-template>
+      </mat-menu>
       <mat-menu #reportsMenu="matMenu">
         <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
+        <button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>
         <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
       </mat-menu>
     </span>
   <span dir="rtl"><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
+</mat-toolbar>
+
+<mat-toolbar *ngIf="!selectedClass" class="classDashboard">
+  <span dir="rtl" class="class-dashboard-button-spacer-left">
+    <button mat-stroked-button color="primary"
+            [routerLink]="['/class-forms-player/']" [queryParams]='classRegistrationParams'>
+      {{'Add Class'|translate}}
+    </button>
+  </span>
 </mat-toolbar>
 
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
