@@ -13,6 +13,7 @@ export class SubtestReport {
   totals:any;
   studentCategorizedResults:any
   noCategories:any
+  usingPercentages:any
 }
 
 export interface StudentResult {
@@ -35,6 +36,7 @@ export class StudentSubtestReportComponent implements OnInit {
   studentCategorizedResults:any
   categories: any;
   noCategories: any;
+  usingPercentages: any;
   totals:any;
   curriculums:any;
   subtestReports:any
@@ -60,8 +62,8 @@ export class StudentSubtestReportComponent implements OnInit {
   }
 
   onStudentSelect(event) {
-    if (event.target && event.target.value && event.target.value !== 'none') {
-      this.getReport([event.target.value])
+    if (event.value && event.value !== 'none') {
+      this.getReport([event.value])
     }
   }
 
@@ -139,10 +141,13 @@ export class StudentSubtestReportComponent implements OnInit {
         if (category === "") {
           category = "Unassigned Category"
         }
-        let score = parseInt(result.score)
-        let totalGridCorrect = result.totalGridCorrect
-        if (totalGridCorrect) {
-          score = totalGridCorrect
+        let score = parseInt(result.score).toString()
+        let percentCorrect = result.totalGridPercentageCorrect
+        if (percentCorrect) {
+          score = percentCorrect + "%"
+          subtestReport.usingPercentages = true;
+        } else {
+          let score = result.totalGridCorrect
         }
         let resultObject = {}
         for (const thisCategory of this.categories) {
