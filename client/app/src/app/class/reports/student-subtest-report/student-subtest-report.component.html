@@ -40,7 +40,7 @@
               <td *ngFor="let category of subtestReport.categories"></td>
             </ng-container>
           </ng-container>
-          <ng-container *ngIf="subtestReport.noCategories && !subtestReport.usingPercentages">
+          <ng-container *ngIf="subtestReport.noCategories">
             <td>
               <span *ngFor="let res of generateArray(item.value)">{{res.value}}</span>
             </td>
