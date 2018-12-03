@@ -14,33 +14,33 @@
       <tr>
         <th>Student</th>
         <th>Subtask</th>
-        <th *ngIf="!subtestReport.noCategories">&nbsp;</th>
+        <th *ngIf="!subtestReport.noCategories && !subtestReport.usingPercentages">&nbsp;</th>
         <th *ngFor="let category of subtestReport.categories">{{category}}</th>
       </tr>
-      <tr *ngIf="!subtestReport.noCategories">
+      <tr *ngIf="!subtestReport.noCategories && !subtestReport.usingPercentages">
         <th>&nbsp;</th>
         <th>&nbsp;</th>
-        <th *ngIf="!subtestReport.noCategories">Totals</th>
+        <th>Totals</th>
         <th *ngFor="let category of subtestReport.categories">{{subtestReport.totals[category]}}</th>
       </tr>
       <ng-container *ngFor="let student of subtestReport.studentCategorizedResults">
         <tr>
           <td valign="top">{{ student.name }}</td>
           <td>&nbsp;</td>
-          <td *ngIf="!subtestReport.noCategories">&nbsp;</td>
+          <td *ngIf="!subtestReport.noCategories && !subtestReport.usingPercentages">&nbsp;</td>
           <td *ngFor="let category of subtestReport.categories">&nbsp;</td>
         </tr>
         <tr *ngFor="let item of generateArray(student.results)">
           <td>&nbsp;</td>
           <td>{{item.key}}</td>
-          <td *ngIf="!subtestReport.noCategories">&nbsp;</td>
+          <td *ngIf="!subtestReport.noCategories && !subtestReport.usingPercentages">&nbsp;</td>
           <ng-container *ngIf="!subtestReport.noCategories">
             <td *ngFor="let res of generateArray(item.value)">{{res.value}}</td>
             <ng-container *ngIf="isEmpty(item.value)">
               <td *ngFor="let category of subtestReport.categories"></td>
             </ng-container>
           </ng-container>
-          <ng-container *ngIf="subtestReport.noCategories">
+          <ng-container *ngIf="subtestReport.noCategories && !subtestReport.usingPercentages">
             <td>
               <span *ngFor="let res of generateArray(item.value)">{{res.value}}</span>
             </td>
