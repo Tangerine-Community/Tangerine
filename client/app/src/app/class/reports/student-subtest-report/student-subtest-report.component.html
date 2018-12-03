@@ -1,51 +1,54 @@
-<div class="subtest-report-div">
-  <h1>{{'Subtest Report'|translate}}</h1>
-</div>
-<select (change)="onStudentSelect($event)">
-  <option value="none" selected>---</option>
-  <option *ngFor="let student of students" value="{{student.id}}">{{student.student_name}}</option>
-</select>
-<div *ngFor="let subtestReport of subtestReports" class="subtest-report-div">
-  <h2>{{subtestReport.label}}</h2>
+<mat-card class="tangy-card-content-container">
+  <div class="subtest-report-div">
+    <h1>{{'Subtest Report'|translate}}</h1>
+    <mat-select id="studentSelect" placeholder="{{'Select Student'|translate}}" (selectionChange)="onStudentSelect($event)">
+      <mat-option value="none" selected>---</mat-option>
+      <mat-option *ngFor="let student of students" value="{{student.id}}">{{student.student_name}}</mat-option>
+    </mat-select>
+  </div>
 
-  <table class="subtest">
-    <tr>
-      <th>Student</th>
-      <th>Subtask</th>
-      <th *ngIf="!subtestReport.noCategories">&nbsp;</th>
-      <th *ngFor="let category of subtestReport.categories">{{category}}</th>
-    </tr>
-    <tr *ngIf="!subtestReport.noCategories">
-      <th>&nbsp;</th>
-      <th>&nbsp;</th>
-      <th *ngIf="!subtestReport.noCategories">Totals</th>
-      <th *ngFor="let category of subtestReport.categories">{{subtestReport.totals[category]}}</th>
-    </tr>
-    <ng-container *ngFor="let student of subtestReport.studentCategorizedResults">
+  <div *ngFor="let subtestReport of subtestReports" class="subtest-report-div">
+    <h2>{{subtestReport.label}}</h2>
+
+    <table class="subtest">
       <tr>
-        <td valign="top">{{ student.name }}</td>
-        <td>&nbsp;</td>
-        <td *ngIf="!subtestReport.noCategories">&nbsp;</td>
-        <td *ngFor="let category of subtestReport.categories">&nbsp;</td>
+        <th>Student</th>
+        <th>Subtask</th>
+        <th *ngIf="!subtestReport.noCategories && !subtestReport.usingPercentages">&nbsp;</th>
+        <th *ngFor="let category of subtestReport.categories">{{category}}</th>
       </tr>
-      <tr *ngFor="let item of generateArray(student.results)">
-        <td>&nbsp;</td>
-        <td>{{item.key}}</td>
-        <td *ngIf="!subtestReport.noCategories">&nbsp;</td>
-        <ng-container *ngIf="!subtestReport.noCategories">
-          <td *ngFor="let res of generateArray(item.value)">{{res.value}}</td>
-          <ng-container *ngIf="isEmpty(item.value)">
-            <td *ngFor="let category of subtestReport.categories"></td>
+      <tr *ngIf="!subtestReport.noCategories && !subtestReport.usingPercentages">
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+        <th>Totals</th>
+        <th *ngFor="let category of subtestReport.categories">{{subtestReport.totals[category]}}</th>
+      </tr>
+      <ng-container *ngFor="let student of subtestReport.studentCategorizedResults">
+        <tr>
+          <td valign="top">{{ student.name }}</td>
+          <td>&nbsp;</td>
+          <td *ngIf="!subtestReport.noCategories && !subtestReport.usingPercentages">&nbsp;</td>
+          <td *ngFor="let category of subtestReport.categories">&nbsp;</td>
+        </tr>
+        <tr *ngFor="let item of generateArray(student.results)">
+          <td>&nbsp;</td>
+          <td>{{item.key}}</td>
+          <td *ngIf="!subtestReport.noCategories && !subtestReport.usingPercentages">&nbsp;</td>
+          <ng-container *ngIf="!subtestReport.noCategories">
+            <td *ngFor="let res of generateArray(item.value)">{{res.value}}</td>
+            <ng-container *ngIf="isEmpty(item.value)">
+              <td *ngFor="let category of subtestReport.categories"></td>
+            </ng-container>
           </ng-container>
-        </ng-container>
-        <ng-container *ngIf="subtestReport.noCategories">
-          <td>
-            <span *ngFor="let res of generateArray(item.value)">{{res.value}}</span>
-          </td>
-        </ng-container>
-      </tr>
-    </ng-container>
-  </table>
-</div>
+          <ng-container *ngIf="subtestReport.noCategories">
+            <td>
+              <span *ngFor="let res of generateArray(item.value)">{{res.value}}</span>
+            </td>
+          </ng-container>
+        </tr>
+      </ng-container>
+    </table>
+  </div>
+</mat-card>
 
 <div #container class = "hideme"> </div>
