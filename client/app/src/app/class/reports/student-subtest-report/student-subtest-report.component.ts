@@ -60,8 +60,8 @@ export class StudentSubtestReportComponent implements OnInit {
   }
 
   onStudentSelect(event) {
-    if (event.target && event.target.value && event.target.value !== 'none') {
-      this.getReport([event.target.value])
+    if (event.value && event.value !== 'none') {
+      this.getReport([event.value])
     }
   }
 
@@ -139,10 +139,12 @@ export class StudentSubtestReportComponent implements OnInit {
         if (category === "") {
           category = "Unassigned Category"
         }
-        let score = parseInt(result.score)
-        let totalGridCorrect = result.totalGridCorrect
-        if (totalGridCorrect) {
-          score = totalGridCorrect
+        let score = parseInt(result.score).toString()
+        let percentCorrect = result.totalGridPercentageCorrect
+        if (percentCorrect) {
+          score = percentCorrect + "%"
+        } else {
+          let score = result.totalGridCorrect
         }
         let resultObject = {}
         for (const thisCategory of this.categories) {
