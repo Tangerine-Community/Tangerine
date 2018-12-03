@@ -1,6 +1,6 @@
 # Changelog
 
-## v3.0.0 (release candidate)
+## v3.0.0-beta13 (in progress)
 
 ### Upgrade instructions from v3 betas
 ```bash
