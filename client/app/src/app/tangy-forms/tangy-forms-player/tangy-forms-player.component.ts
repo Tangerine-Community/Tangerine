@@ -24,6 +24,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   throttledSaveFiring;
   service: TangyFormService;
   formId;
+  formEl;
   @ViewChild('container') container: ElementRef;
   constructor(
     private caseManagementService: CaseManagementService,
@@ -32,6 +33,16 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
     private userService: UserService,
     private windowRef: WindowRef
   ) { }
+
+  isDirty() {
+    const state = this.formEl.store.getState()
+    const isDirty = state.items.reduce((acc, item) => item.isDirty || acc ? true : false, false)
+    return isDirty 
+  }
+
+  isComplete() {
+    return this.formEl.store.getState().form.complete
+  }
 
   async ngAfterContentInit() {
     this.route.queryParams.subscribe(async params => {
@@ -53,6 +64,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       let  formHtml =  await this.http.get(formInfo.src, {responseType: 'text'}).toPromise();
       container.innerHTML = formHtml
       let formEl = container.querySelector('tangy-form')
+      this.formEl = formEl;
       // Put a response in the store by issuing the FORM_OPEN action.
       if (formResponse) {
         formEl.response = formResponse
