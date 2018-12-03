@@ -13,6 +13,7 @@ export class SubtestReport {
   totals:any;
   studentCategorizedResults:any
   noCategories:any
+  usingPercentages:any
 }
 
 export interface StudentResult {
@@ -35,6 +36,7 @@ export class StudentSubtestReportComponent implements OnInit {
   studentCategorizedResults:any
   categories: any;
   noCategories: any;
+  usingPercentages: any;
   totals:any;
   curriculums:any;
   subtestReports:any
@@ -143,6 +145,7 @@ export class StudentSubtestReportComponent implements OnInit {
         let percentCorrect = result.totalGridPercentageCorrect
         if (percentCorrect) {
           score = percentCorrect + "%"
+          subtestReport.usingPercentages = true;
         } else {
           let score = result.totalGridCorrect
         }
