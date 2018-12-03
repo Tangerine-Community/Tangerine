@@ -17,6 +17,7 @@ const {promisify} = require('util');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../modules/index.js')()
+const Loc = require('./loc.js')
 
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
@@ -119,8 +120,12 @@ const generateFlatResponse = async function (formResponse, locationList) {
           locationKeys.push(group.value)
           try {
             const location = getLocationByKeys(locationKeys, locationList) 
-            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = (location && location.hasOwnProperty('label')) ? location.label : '';
-            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_children`] = (location && location.children) ? parseInt(Object.keys(location.children).length) : `0`;
+            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = (location && location.hasOwnProperty('label')) 
+                ? location.label 
+                : '';
+            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_children`] = (location && location.children) ? 
+                Loc.filterToDecendentsByParentIdAndLevel(locationList, location.id, locationList.locationsLevels[locationList.locationsLevels.length-1]).length
+                : `0`;
           } catch(e) {
             flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = 'orphaned';
           }

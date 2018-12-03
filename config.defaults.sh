@@ -34,7 +34,9 @@ T_CENTRALLY_MANAGED_USER_PROFILE="false"
 # Add replication entries in this array to start on server boot in 
 # format of `{"from":"localDbName", "to":"remoteDbUrl", "continuous": true}`
 T_REPLICATE="[]"
-# To enable the Class dashboard, set to "['csv','class']"
+# Available modules: csv, logstash, class
+# To enable modules, list them like so: 
+# T_MODULES="['csv','class', 'logstash']"
 T_MODULES="['csv']"
 # To populate categories in Class:
 #T_CATEGORIES="['one','two','three','four']"
