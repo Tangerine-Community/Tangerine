@@ -1,10 +1,13 @@
-<div class="subtest-report-div">
+<mat-card class="tangy-card-content-container">
+  <div class="subtest-report-div">
   <h1>{{'Progress Table'|translate}}</h1>
-</div>
-<select (change)="onStudentSelect($event)">
-  <option value="none" selected>---</option>
-  <option *ngFor="let student of students" value="{{student.id}}">{{student.student_name}}</option>
-</select>
+
+  <mat-select id="studentSelect" placeholder="{{'Select Student'|translate}}" (selectionChange)="onStudentSelect($event)">
+    <mat-option value="none" selected>---</mat-option>
+    <mat-option *ngFor="let student of students" value="{{student.id}}">{{student.student_name}}</mat-option>
+  </mat-select>
+
+  </div>
 <!--<div *ngFor="let subtestReport of subtestReports" class="subtest-report-div">-->
   <!--<h2>{{subtestReport.label}}</h2>-->
 
@@ -41,5 +44,6 @@
     <!--</ng-container>-->
   <!--</table>-->
 <!--</div>-->
+</mat-card>
 
 <div #container class = "hideme"> </div>
