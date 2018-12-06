@@ -19,7 +19,13 @@ class CanDeactivateForm implements CanDeactivate<TangyFormsPlayerComponent> {
     currentState: RouterStateSnapshot,
     nextState: RouterStateSnapshot
   ): Observable<boolean>|Promise<boolean>|boolean {
-    return confirm(_TRANSLATE('Are you sure you would like to exit the form?'))
+    if (component.isDirty()) {
+      return confirm(_TRANSLATE('There is unsaved data. Are you sure you would like to exit the form?'));
+    } else if (!component.isComplete()) {
+      return confirm(_TRANSLATE('The form is not yet complete. Are you sure you would like to exit the form?'));
+    } else {
+      return true;
+    }
   }
 }
 

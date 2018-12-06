@@ -122,7 +122,13 @@ export const updates = [
   {
     requiresViewsUpdate: true,
     script: (userDb) => {
-      console.log('Updating to v3.0.0...')
+      console.log('Updating to v3.0.0-beta12...')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: (userDb) => {
+      console.log('Updating to v3.0.0-beta13...')
     }
   }
 ]
