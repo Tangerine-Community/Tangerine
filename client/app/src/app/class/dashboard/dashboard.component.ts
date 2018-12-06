@@ -397,7 +397,7 @@ export class DashboardComponent implements OnInit {
   async getResultsByClass(selectedClass: any, curriculum, forms) {
     try {
       // find which class is selected
-      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, forms);
+      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, forms, null);
     } catch (error) {
       console.error(error);
     }

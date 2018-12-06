@@ -63,11 +63,11 @@ export class StudentSubtestReportComponent implements OnInit {
 
   onStudentSelect(event) {
     if (event.value && event.value !== 'none') {
-      this.getReport([event.value])
+      this.getReport(event.value)
     }
   }
 
-  async getReport(studentIds = []) {
+  async getReport(studentId) {
     const classId = this.route.snapshot.paramMap.get('classId');
     // console.log("type: " + classId)
     let classDoc = await this.classFormService.getResponse(classId);
@@ -118,23 +118,30 @@ export class StudentSubtestReportComponent implements OnInit {
 
       subtestReport.totals = this.totals;
 
-      let students = (studentIds.length > 0) 
-        ? (await this.getMyStudents(classId)).filter(student => studentIds.indexOf(student.id) !== -1) 
-        : await this.getMyStudents(classId);
+      // let students = (studentIds.length > 0)
+      //   ? (await this.getMyStudents(classId)).filter(student => studentIds.indexOf(student.id) !== -1)
+      //   : await this.getMyStudents(classId);
       let studentResults = {}
-      for (const student of students) {
-        let studentId = student.id
+      // for (const student of students) {
+      //   let studentId = student.id
         let forms = {}
         for (const form of curriculumFormsList) {
           let name = form.title
           forms[name] = {}
         }
         studentResults[studentId] = forms
-      }
+      // }
 
-      let results = (await this.getResultsByClass(classId, curriculumId, curriculumFormsList))
-        .filter(result => studentIds.indexOf(result.studentId) !== -1)
+      // let results = (await this.getResultsByClass(classId, curriculumId, curriculumFormsList))
+      //   .filter(result => studentIds.indexOf(result.studentId) !== -1)
+      let responses = await this.classFormService.getResponsesByStudentId(studentId);
+      const data = await this.dashboardService.transformResultSet(responses, curriculumFormsList, null);
+      // clean the array
+      let results = this.dashboardService.clean(data, undefined);
+      let student = this.students.find(x => x.id === studentId)
+
       for (const result of results) {
+        // TODO filter by curriculum
         let formTitle = result.formTitle
         let studentId = result.studentId
         let category = result.category
@@ -162,13 +169,13 @@ export class StudentSubtestReportComponent implements OnInit {
         }
       }
       this.studentCategorizedResults = []
-      for (const student of students) {
-        let studentId = student.id
+      // for (const student of students) {
+      //   let studentId = student.id
         let result = {}
         result["name"] = student.student_name
         result["results"] = studentResults[studentId]
         this.studentCategorizedResults.push(result)
-      }
+      // }
 
       subtestReport.studentCategorizedResults = this.studentCategorizedResults;
 
@@ -218,7 +225,7 @@ export class StudentSubtestReportComponent implements OnInit {
   async getResultsByClass(selectedClass: any, curriculum, curriculumFormsList) {
     try {
       // find which class is selected
-      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, curriculumFormsList);
+      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, curriculumFormsList, null);
     } catch (error) {
       console.error(error);
     }
