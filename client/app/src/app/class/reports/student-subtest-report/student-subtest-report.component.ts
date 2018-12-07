@@ -98,15 +98,15 @@ export class StudentSubtestReportComponent implements OnInit {
       const appConfig = await this.appConfigService.getAppConfig();
       this.categories = appConfig.categories;
       let categoryName;
-      if (this.categories.length === 0) {
+      if (typeof this.categories === 'undefined' || this.categories.length === 0) {
+        this.categories = []
         subtestReport.noCategories = true;
         categoryName = "Results";
       } else {
         subtestReport.noCategories = false;
         categoryName = "Unassigned Category";
       }
-
-
+      
       this.categories.push(categoryName)
 
       subtestReport.categories = this.categories;
