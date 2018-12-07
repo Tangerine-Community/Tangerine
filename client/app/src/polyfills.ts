@@ -11,6 +11,22 @@ import * as Redux from 'redux';
 import * as _ from 'underscore';
 (window as any)._ = _;
 
+
+//   <!-- Tangy Elements -->
+import 'tangy-form/tangy-form.js'
+import 'tangy-form/input/tangy-box.js'
+import 'tangy-form/input/tangy-input.js'
+import 'tangy-form/input/tangy-timed.js'
+import 'tangy-form/input/tangy-checkbox.js'
+import 'tangy-form/input/tangy-checkboxes.js'
+import 'tangy-form/input/tangy-radio-buttons.js'
+import 'tangy-form/input/tangy-select.js'
+import 'tangy-form/input/tangy-location.js'
+import 'tangy-form/input/tangy-gps.js'
+import 'tangy-form/input/tangy-acasi.js';
+import 'tangy-form/input/tangy-eftouch.js';
+
+
 // An attempt to fix something...
 //import 'core-js/es7/reflect';
 
