@@ -106,7 +106,7 @@ export class StudentSubtestReportComponent implements OnInit {
         subtestReport.noCategories = false;
         categoryName = "Unassigned Category";
       }
-      
+
       this.categories.push(categoryName)
 
       subtestReport.categories = this.categories;
@@ -148,21 +148,27 @@ export class StudentSubtestReportComponent implements OnInit {
         if (category === "") {
           category = "Unassigned Category"
         }
-        let score = parseInt(result.score).toString()
+        let rawScore = parseInt(result.score).toString()
+        let percentage = rawScore
         let percentCorrect = result.totalGridPercentageCorrect
         if (percentCorrect) {
-          score = percentCorrect + "%"
+          percentage = percentCorrect + "%"
           subtestReport.usingPercentages = true;
         } else {
-          let score = result.totalGridCorrect
+          let percentage = result.totalGridCorrect
         }
         let resultObject = {}
         for (const thisCategory of this.categories) {
           resultObject[thisCategory] = null
         }
-        resultObject[category] = score
+        let scores = {
+          rawScore:result.score,
+          totalGridAnswers:result.totalGridAnswers,
+          percentage: percentage
+        }
+        resultObject[category] = scores
         let currentTotal = this.totals[category]
-        this.totals[category] = currentTotal + score
+        this.totals[category] = currentTotal + parseInt(result.score)
         let forms = studentResults[studentId]
         if (typeof forms !== 'undefined') {
           forms[formTitle] = resultObject
@@ -185,7 +191,9 @@ export class StudentSubtestReportComponent implements OnInit {
   }
 
   generateArray(obj){
-    return Object.keys(obj).map((key)=>{ return {key:key, value:obj[key]}});
+    let result =  Object.keys(obj).map((key)=>{ return {key:key, value:obj[key]}});
+    // console.log("result: " + JSON.stringify(result))
+    return result
   }
 
   isEmpty(obj) {

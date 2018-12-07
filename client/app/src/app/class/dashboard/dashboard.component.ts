@@ -91,7 +91,7 @@ export class DashboardComponent implements OnInit {
           this.currentClassIndex = 0;
         }
         if (curriculumIndex !== "") {
-          this.curriculumIndex = classIndex;
+          this.curriculumIndex = curriculumIndex;
         } else {
           this.curriculumIndex = null;
         }
