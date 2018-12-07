@@ -13,7 +13,7 @@
  <mat-card class="tangy-card-content-container">
   <h2 title="Summary">{{'Summary'|translate}}</h2>
 
-  <table class="mat-elevation-z8" >
+  <table class="mat-elevation-z8" *ngIf="classGroupReport.studentsAssessed > 0" >
     <tr>
       <td title="Subtest Name">{{'Subtest Name'|translate}}</td><td>{{classGroupReport.subtestName}}</td>
     </tr>
@@ -42,10 +42,22 @@
     </tr>
   </table>
 
+   <table class="mat-elevation-z8" *ngIf="classGroupReport.studentsAssessed === 0">
+     <tr>
+       <td title="Subtest Name">{{'Subtest Name'|translate}}</td><td>{{classGroupReport.subtestName}}</td>
+     </tr>
+     <tr>
+       <td title="Class Size">{{'Class Size'|translate}}</td><td>{{students?.length}}</td>
+     </tr>
+     <tr>
+       <td title="Students Assessed">{{'Students Assessed'|translate}}</td><td>0</td>
+     </tr>
+   </table>
 
-  <h2 title="Student Grouping">{{'Student Grouping'|translate}}</h2>
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <h2 title="Student Grouping" *ngIf="classGroupReport.studentsAssessed > 0">{{'Student Grouping'|translate}}</h2>
+
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="classGroupReport.studentsAssessed > 0">
 
     <!-- Name Column -->
     <!-- {{'Student'|translate}} -->
@@ -73,6 +85,8 @@
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" [ngClass]="element.colorClass"></tr>
   </table>
+
+
 
 </mat-card>
 

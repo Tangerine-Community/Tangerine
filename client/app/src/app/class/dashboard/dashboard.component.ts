@@ -6,6 +6,7 @@ import {AuthenticationService} from "../../core/auth/_services/authentication.se
 import {ClassFormService} from "../_services/class-form.service";
 import {Router} from "@angular/router";
 import {_TRANSLATE} from "../../shared/translation-marker";
+import {CookieService} from "ngx-cookie-service";
 
 export interface StudentResult {
   id: string;
@@ -63,7 +64,8 @@ export class DashboardComponent implements OnInit {
     private http: HttpClient,
     private dashboardService: DashboardService,
     private authenticationService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private cookieService: CookieService
   ) { }
 
   async ngOnInit() {
@@ -80,8 +82,23 @@ export class DashboardComponent implements OnInit {
     try {
       this.classes = await this.getMyClasses();
       if (this.classes.length > 0) {
-        this.currentClassIndex = 0;
-        this.curriculumIndex = null;
+        let classIndex = this.cookieService.get('classIndex');
+        let curriculumIndex = this.cookieService.get('curriculumIndex');
+        let curriculumName = this.cookieService.get('curriculumName');
+        if (classIndex !== "") {
+          this.currentClassIndex = classIndex;
+        } else {
+          this.currentClassIndex = 0;
+        }
+        if (curriculumIndex !== "") {
+          this.curriculumIndex = classIndex;
+        } else {
+          this.curriculumIndex = null;
+        }
+
+        let currentClass = this.classes[this.currentClassIndex];
+        console.log("classIndex: " + classIndex + " curriculumIndex: " + curriculumIndex + " currentClass: " + currentClass + " curriculumName: " + curriculumName)
+
         await this.populateGridData(this.currentClassIndex, this.curriculumIndex, 0, 5)
         this.renderGrid();
       }
@@ -90,13 +107,17 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  selectCurriculum = async (classIndex, curriculumIndex): Promise<void> => {
+  selectCurriculum = async (classIndex, curriculumIndex, curriculumName): Promise<void> => {
     this.selectedCurriculum = null;
     this.selectedClass = null;
 
     this.curriculumIndex = curriculumIndex;
     this.currentClassIndex = classIndex
 
+    this.cookieService.set( 'classIndex', classIndex );
+    this.cookieService.set( 'curriculumIndex', curriculumIndex );
+    this.cookieService.set( 'curriculumName', curriculumName );
+    console.log("classIndex: " + classIndex + " curriculumIndex: " + curriculumIndex + " curriculumName: " + curriculumName)
     // No need to populate grid if this is the Add Class link.
     if (this.classes.length !== this.currentClassIndex) {
       await this.populateGridData(this.currentClassIndex, this.curriculumIndex, this.pageIndex, this.pageSize);
