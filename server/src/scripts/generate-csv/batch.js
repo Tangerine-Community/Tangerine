@@ -57,7 +57,7 @@ async function getRelatedProfileDocs(docs, state) {
 async function batch() {
   const state = JSON.parse(await readFile(params.statePath))
   const docs = await getData(state.dbName, state.formId, state.skip, state.batchSize, state.year, state.month)
-  const relatedProfileDocs = await getRelatedProfileDocs(docs, state)
+  const relatedProfileDocs = state.formId !== 'user-profile' ? await getRelatedProfileDocs(docs, state): []
   if (docs.length === 0) {
     state.complete = true
   } else {
