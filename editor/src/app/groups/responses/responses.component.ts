@@ -17,6 +17,7 @@ export class ResponsesComponent implements OnInit {
   limit = 30;
   filter = '*';
   forms = [];
+  datUrl = 'Loading...';
 
   constructor(
     private groupsService: GroupsService,
@@ -27,6 +28,11 @@ export class ResponsesComponent implements OnInit {
 
   async ngOnInit() {
     this.forms = await this.groupsService.getFormsList(this.groupName);
+    this.http.get(`/app/${this.groupName}/dat-output-url`)
+      .toPromise()
+      .then((response: any) => {
+        this.datUrl = response.datUrl
+      })
     await this.getResponses()
   }
 
