@@ -50,7 +50,9 @@ fi
 if [ ! -f data/paid-worker-state.json ]; then
   echo '{}' > data/paid-worker-state.json
 fi
-
+if [ ! -d data/dat-output ]; then
+  mkdir data/dat-output
+fi
 
 # Load config.
 
@@ -142,6 +144,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   -p 9227:9227 \
   -p 9226:9226 \
   -p 9225:9225 \
+  --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/csv:/csv/ \
