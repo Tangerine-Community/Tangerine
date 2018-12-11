@@ -42,6 +42,7 @@ let crypto = require('crypto');
 const junk = require('junk');
 const cors = require('cors')
 const sep = path.sep;
+const tangyModules = require('./src/modules/index.js')()
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
@@ -626,9 +627,11 @@ async function keepAlivePaidWorker() {
 keepAlivePaidWorker()
 
 // Start the server.
-var server = app.listen('80', function () {
-  var host = server.address().address;
-  var port = server.address().port;
-  log.info(server.address());
-  log.info('Server V3: http://%s:%s', host, port);
-});
+tangyModules.hook('declareAppRoutes', {app}).then(() => {
+  var server = app.listen('80', function () {
+    var host = server.address().address;
+    var port = server.address().port;
+    log.info(server.address());
+    log.info('Server V3: http://%s:%s', host, port);
+  });
+})
