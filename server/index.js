@@ -165,6 +165,7 @@ app.post('/login',
 );
 
 // API
+app.get('/api/modules', isAuthenticated, require('./src/routes/modules.js'))
 app.post('/api/:groupId/upload-check', hasUploadToken, require('./src/routes/group-upload-check.js'))
 app.post('/api/:groupId/upload', hasUploadToken, require('./src/routes/group-upload.js'))
 app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses.js'))
