@@ -114,7 +114,7 @@ async function addGroup(groupName) {
   // Now it's safe to get the state.
   let workerState = await getWorkerState()
   workerState.databases.push({ name: groupName, sequence: 0 })
-  await reportingWorker.setWorkerState(workerState)
+  await setWorkerState(workerState)
   await unsetWorkingFlag()
   return 
 }
