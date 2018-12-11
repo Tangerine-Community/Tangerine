@@ -18,6 +18,7 @@ export class ResponsesComponent implements OnInit {
   filter = '*';
   forms = [];
   datUrl = 'Loading...';
+  datOutputsModuleEnabled = false;
 
   constructor(
     private groupsService: GroupsService,
@@ -28,11 +29,16 @@ export class ResponsesComponent implements OnInit {
 
   async ngOnInit() {
     this.forms = await this.groupsService.getFormsList(this.groupName);
-    this.http.get(`/app/${this.groupName}/dat-output-url`)
-      .toPromise()
-      .then((response: any) => {
-        this.datUrl = response.datUrl
-      })
+
+    const modulesEnabled:any = await this.http.get(`/api/modules`).toPromise()
+    if (modulesEnabled.indexOf('dat-output') !== -1) {
+      this.datOutputsModuleEnabled = true;
+      this.http.get(`/app/${this.groupName}/dat-output-url`)
+        .toPromise()
+        .then((response: any) => {
+          this.datUrl = response.datUrl
+        });
+      }
     await this.getResponses()
   }
 
