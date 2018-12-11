@@ -102,7 +102,7 @@ export class StudentGroupingReportComponent implements OnInit {
       this.classUtils = new ClassUtils();
     }
 
-    const tangyFormItem = this.route.snapshot.paramMap.get('type');
+    const itemId = this.route.snapshot.paramMap.get('type');
     const classId = this.route.snapshot.paramMap.get('classId');
     let curriculumId = this.route.snapshot.paramMap.get('curriculumId');
     let classDoc = await this.classFormService.getResponse(classId);
@@ -125,12 +125,13 @@ export class StudentGroupingReportComponent implements OnInit {
     }
 
     let subtest = curriculumFormsList.filter(obj => {
-      return obj.id === tangyFormItem
+      return obj.id === itemId
     })
-    this.classGroupReport.subtestName = subtest[0].title
+    let item = subtest[0]
+    this.classGroupReport.subtestName = item.title
 
     this.students = await this.getMyStudents(classId);
-    let results = await this.getResultsByClass(classId, curriculumId, curriculumFormsList);
+    let results = await this.getResultsByClass(classId, curriculumId, curriculumFormsList, item);
     this.studentsResponses = [];
     for (const response of results as any[] ) {
       // console.log("response: " + JSON.stringify(response))
@@ -160,8 +161,8 @@ export class StudentGroupingReportComponent implements OnInit {
       studentResults["forms"] = [];
       // for (const form of curriculumFormsList) {
         if (this.studentsResponses[student.id]) {
-          // if (form.id === tangyFormItem) {
-            let studentResponse = this.studentsResponses[student.id][tangyFormItem]
+          // if (form.id === itemId) {
+            let studentResponse = this.studentsResponses[student.id][itemId]
             if (studentResponse) {
               studentResults["response"] = studentResponse
               let score = studentResponse["score"]
@@ -202,7 +203,7 @@ export class StudentGroupingReportComponent implements OnInit {
           // }
         }
         // else {
-        //   if (form.id === tangyFormItem) {
+        //   if (form.id === itemId) {
         //     studentResults["status"] = this.status[0]
         //     studentsToWatch.push(studentResults["name"])
         //   }
@@ -245,10 +246,10 @@ export class StudentGroupingReportComponent implements OnInit {
     }
   }
 
-  async getResultsByClass(selectedClass: any, curriculum, curriculumFormsList) {
+  async getResultsByClass(selectedClass: any, curriculum, curriculumFormsList, item) {
     try {
       // find which class is selected
-      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, curriculumFormsList);
+      return await this.dashboardService.getResultsByClass(selectedClass, curriculum, curriculumFormsList, item);
     } catch (error) {
       console.error(error);
     }
