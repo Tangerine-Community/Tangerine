@@ -4,6 +4,7 @@ const log = require('tangy-log').log
 const insertGroupViews = require(`../insert-group-views.js`)
 const insertGroupReportingViews = require('../insert-group-reporting-views.js')
 const fs = require('fs-extra')
+const tangyModules = require('../modules/index.js')()
 
 const util = require('util');
 const exec = util.promisify(require('child_process').exec)
@@ -77,6 +78,8 @@ module.exports = async (req, res) => {
     log.error("An error reading app-config: " + err)
     throw err;
   }
+  const data = await tangyModules.hook('groupNew', {groupName, appConfig})
+  appConfig = data.appConfig
   await fs.writeFile(`/tangerine/client/content/groups/${groupName}/app-config.json`, JSON.stringify(appConfig))
     .then(status => log.info("Wrote app-config.json"))
     .catch(err => log.error("An error copying app-config: " + err))
