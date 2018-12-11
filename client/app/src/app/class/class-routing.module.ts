@@ -31,7 +31,7 @@ const appRoutes = [
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
   {
-    path: 'reports/studentPtogressTable/:type/:classId/:curriculumId',
+    path: 'reports/studentProgressTable/:type/:classId/:curriculumId',
     component: StudentProgressTableComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   }

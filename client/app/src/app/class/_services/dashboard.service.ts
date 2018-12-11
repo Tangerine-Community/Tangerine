@@ -51,13 +51,13 @@ export class DashboardService {
     return result.rows;
   }
 
-  async getResultsByClass(classId: any, curriculum, curriculumFormsList) {
+  async getResultsByClass(classId: any, curriculum, curriculumFormsList, tangyFormItem) {
     const theKey = [classId,curriculum]
     const result = await this.userDB.query('tangy-class/responsesByClassIdCurriculumId', {
       key: theKey,
       include_docs: true
     });
-    const data = await this.transformResultSet(result.rows, curriculumFormsList);
+    const data = await this.transformResultSet(result.rows, curriculumFormsList, tangyFormItem);
     // clean the array
     let cleanData = this.clean(data, undefined);
     return cleanData;
@@ -93,188 +93,174 @@ export class DashboardService {
 
   /**
    * Creates a list of forms with the results populated
-   * @param result
+   * @param resultSet
    * @param curriculumFormsList - use to find if the form is a grid subtest.
+   * @param tangyFormItem - use to filter by tangyFormItem
    * @returns {Promise<any[]>}
    */
-  async transformResultSet(result, curriculumFormsList) {
+  async transformResultSet(resultSet, curriculumFormsList, item) {
 
-    const observations = [];
-    // let forms = {}
-    // curriculumFormsList.forEach(form => {
-    //   forms[form.id] = form
-    // })
-
-    result.forEach(async observation => {
-      let items = observation.doc['items']
-      // filter out the forms we're currently not interested in
-      // let formId = observation.doc.form.id
-      // if (typeof forms[formId] !== 'undefined') {
-      //   // we want this result.
-      //
-      // }
-
-      for (var i = 0; i < curriculumFormsList.length; i++) {
-
-        let itemCount = 0;
-        let lastModified = null;
-        let answeredQuestions = [];
-        let percentCorrect = null;
-        let correct = 0;
-        let incorrect = 0;
-        let noResponse = 0;
-        let score = 0;
-        let totalGridIncorrect = 0;
-        let totalGridCorrect = 0;
-        let totalGridAnswers = 0;
-        let totalGridPercentageCorrect = 0;
-        let duration = 0;
-        let prototype = 0;
-
-        let item = observation.doc['items'][i];
-        if (item) {
-          itemCount = item.inputs.length
-          let metadata = item.metadata;
-          if (metadata) {
-            lastModified = metadata['lastModified']
-          }
-          // populate answeredQuestions array
-          item.inputs.forEach(input => {
-            // inputs = [...inputs, ...input.value]
-            if (input.value !== "") {
-              let data = {}
-              let valueField = input.value;
-              let value;
-              if (input.tagName === 'TANGY-RADIO-BUTTONS') {
-                valueField.forEach(option => {
-                  if (option.value !== "") {
-                    value = option.name
-                  }
-                })
-              } else {
-                value = input.value
-              }
-              data[input.name] = value;
-              answeredQuestions.push(data)
-              if (input.name === curriculumFormsList[i]['id'] + "_score") {
-                score = value
-              }
-            }
-          })
-          // loop through answeredQuestions and calculate correct, incorrect, and missing.
-        //   if (curriculumFormsList[i]['prototype'] === 'grid') {
-        //
-        //   }  else {
-        //     for (const answer of answeredQuestions) {
-        //       let values = Object.values(answer)
-        //       if (typeof values !== 'undefined') {
-        //         for (const value of values) {
-        //           if (value['tagName'] === 'TANGY-RADIO-BUTTON') {
-        //             if (value['label'] === 'Correct' && value['value'] === 'on') {
-        //               correct++
-        //             } else if (value['label'] === 'Incorrect' && value['value'] === 'on') {
-        //               incorrect++
-        //             } else if (value['label'] === '>No response' && value['value'] === 'on') {
-        //               noResponse++
-        //             }
-        //           }
-        //         }
-        //       }
-        //     }
-        //   }
-        //   if (answeredQuestions.length > 0) {
-        //     percentCorrect =  Math.round((answeredQuestions.length/itemCount) * 100)
-        //   } else {
-        //     percentCorrect = 0
-        //   }
-
-          let form = curriculumFormsList[i]
-          let childElements = form.children
-          if (childElements) {
-            for (const child of childElements) {
-              // console.log("child name: " + child.name)
-              // Check if there are grid subtests aka tangy-timed in this response
-              if (child.tagName === 'TANGY-TIMED') {
-                for (const answer of answeredQuestions) {
-                  let value = answer[child.name]
-                  totalGridAnswers = value.length;
-                  // console.log("child.name: " + child.name + " value: " + JSON.stringify(value))
-                  const reducer = (accumulator, button) => {
-                    if (button.pressed === true) {
-                      return ++accumulator;
-                    } else {
-                      return accumulator
-                    }
-                  }
-                  totalGridIncorrect = value.reduce(reducer, 0)
-                  totalGridCorrect = totalGridAnswers - totalGridIncorrect
-                  totalGridPercentageCorrect = Math.round(totalGridCorrect/totalGridAnswers * 100)
-                  // console.log("subtest name: " + child.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers)
-                }
-                duration = child.duration;
-                prototype = child.tagName
-              } else {
-                // one of the answeredQuestions is the _score, so don't count it.
-                const totalAnswers =  item.inputs.length - 1
-                if (totalAnswers > 0) {
-                  totalGridAnswers = totalAnswers
-                  totalGridCorrect = Number(score)
-                  totalGridIncorrect = totalAnswers - totalGridCorrect
-                  totalGridPercentageCorrect = Math.round(totalGridCorrect/totalGridAnswers * 100)
-                  prototype = child.tagName
-                  console.log("subtest name: " + child.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers + " score: " + score)
-                }
-              }
-            }
-          }
-        }
-        if (itemCount > 0) {
-          let studentId
-          if (observation.doc.metadata && observation.doc.metadata.studentRegistrationDoc) {
-            studentId = observation.doc.metadata.studentRegistrationDoc.id;
-          }
-          let category = curriculumFormsList[i]['category']
-          if (typeof category !== 'undefined' && category !== null) {
-            category = category.trim()
-          }
-
-          let response = {
-            formTitle: curriculumFormsList[i]['title'],
-            formId: curriculumFormsList[i]['id'],
-            prototype: curriculumFormsList[i]['prototype'],
-            category: category,
-            startDatetime: observation.doc.startUnixtime,
-            formIndex: i,
-            _id: observation.doc._id,
-            itemCount: itemCount,
-            studentId: studentId,
-            lastModified: lastModified,
-            answeredQuestions: answeredQuestions,
-            percentCorrect: percentCorrect,
-            correct: correct,
-            incorrect: incorrect,
-            noResponse: noResponse,
-            score: score,
-            totalGridIncorrect: totalGridIncorrect,
-            totalGridAnswers: totalGridAnswers,
-            totalGridCorrect: totalGridCorrect,
-            totalGridPercentageCorrect: totalGridPercentageCorrect,
-            duration: duration
-          };
-
-          if (prototype) {
-            response['prototype'] = prototype
-          }
-
-          // return response;
-          observations.push(response)
-          // }
+    const transformedResults = [];
+    resultSet.forEach(async observation => {
+      if (item) {
+        let form = curriculumFormsList.find(x => x.id === item.id)
+        let items = observation.doc['items']
+        let thisItem = items.find(x => x.id === item.id)
+        let response = this.poopulateTransformedResult(thisItem, i, form, observation);
+        transformedResults.push(response)
+      } else {
+        let items = observation.doc['items']
+        for (var i = 0; i < items.length; i++) {
+          let item = items[i];
+          let form = curriculumFormsList.find(x => x.id === item.id)
+          let response = this.poopulateTransformedResult(item, i, form, observation);
+          transformedResults.push(response)
         }
       }
+
     });
-    // });
-    // return Promise.all(observations);
-    return observations;
+    // return Promise.all(transformedResults);
+    return transformedResults;
+  }
+
+  private poopulateTransformedResult(item, i: number, form, observation) {
+
+    let itemCount = 0;
+    let lastModified = null;
+    let answeredQuestions = [];
+    let percentCorrect = null;
+    let correct = 0;
+    let incorrect = 0;
+    let noResponse = 0;
+    let score = 0;
+    let totalGridIncorrect = 0;
+    let totalGridCorrect = 0;
+    let totalGridAnswers = 0;
+    let totalGridPercentageCorrect = 0;
+    let duration = 0;
+    let prototype = 0;
+
+    if (item) {
+      itemCount = item.inputs.length
+      let metadata = item.metadata;
+      if (metadata) {
+        lastModified = metadata['lastModified']
+      }
+      // populate answeredQuestions array
+      item.inputs.forEach(input => {
+        // inputs = [...inputs, ...input.value]
+        if (input.value !== "") {
+          let data = {}
+          let valueField = input.value;
+          let value;
+          if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+            valueField.forEach(option => {
+              if (option.value !== "") {
+                value = option.name
+              }
+            })
+          } else {
+            value = input.value
+          }
+          data[input.name] = value;
+          answeredQuestions.push(data)
+          // if (input.name === curriculumFormsList[i]['id'] + "_score") {
+          if (input.name === form['id'] + "_score") {
+            score = value
+          }
+        }
+      })
+
+      // let form = curriculumFormsList[i]
+      let childElements = form.children
+      if (childElements) {
+        let alreadyAnswered = false
+        for (const element of childElements) {
+          // console.log("element name: " + element.name)
+          // Check if there are grid subtests aka tangy-timed in this response
+          if (element.tagName === 'TANGY-TIMED') {
+            for (const answer of answeredQuestions) {
+              let value = answer[element.name]
+              if (typeof value !== 'undefined') {
+                totalGridAnswers = value.length;
+                // console.log("element.name: " + element.name + " value: " + JSON.stringify(value))
+                const reducer = (accumulator, button) => {
+                  if (button.pressed === true) {
+                    return ++accumulator;
+                  } else {
+                    return accumulator
+                  }
+                }
+                totalGridIncorrect = value.reduce(reducer, 0)
+                totalGridCorrect = totalGridAnswers - totalGridIncorrect
+                totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                alreadyAnswered = true
+              }
+              // console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers)
+            }
+            duration = element.duration;
+            prototype = element.tagName
+          } else {
+            // Don't want to process the element if it is the _score field
+            // if (element.name && !element.name.includes(form.id)) {
+            // don't talley if already answered, in the case of a grid subtest.
+            if (element.name && !alreadyAnswered) {
+              // one of the answeredQuestions is the _score, so don't count it.
+              const totalAnswers = item.inputs.length - 1
+              if (totalAnswers > 0) {
+                totalGridAnswers = totalAnswers
+                totalGridCorrect = Number(score)
+                totalGridIncorrect = totalAnswers - totalGridCorrect
+                totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                prototype = element.tagName
+                console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers + " score: " + score)
+              }
+            }
+          }
+        }
+      }
+    }
+    if (itemCount > 0) {
+      let studentId
+      if (observation.doc.metadata && observation.doc.metadata.studentRegistrationDoc) {
+        studentId = observation.doc.metadata.studentRegistrationDoc.id;
+      }
+      let category = form['category']
+      if (typeof category !== 'undefined' && category !== null) {
+        category = category.trim()
+      }
+
+      let response = {
+        formTitle: item['title'],
+        formId: item['id'],
+        prototype: item['prototype'],
+        category: category,
+        startDatetime: observation.doc.startUnixtime,
+        formIndex: i,
+        _id: observation.doc._id,
+        itemCount: itemCount,
+        studentId: studentId,
+        lastModified: lastModified,
+        answeredQuestions: answeredQuestions,
+        percentCorrect: percentCorrect,
+        correct: correct,
+        incorrect: incorrect,
+        noResponse: noResponse,
+        score: score,
+        totalGridIncorrect: totalGridIncorrect,
+        totalGridAnswers: totalGridAnswers,
+        totalGridCorrect: totalGridCorrect,
+        totalGridPercentageCorrect: totalGridPercentageCorrect,
+        duration: duration
+      };
+
+      if (prototype) {
+        response['prototype'] = prototype
+      }
+
+      // observations.push(response)
+      return response
+    }
   }
 
   async getDataForColumns(array, columns) {
