@@ -1,6 +1,8 @@
-Dat URL:
-<input value="{{datUrl}}">
-<br><br>
+<div *ngIf="datOutputsModuleEnabled">
+  Dat URL:
+  <input value="{{datUrl}}">
+  <br><br>
+</div>
 Filter:
 <select name="form" (change)="filterByForm($event)">
   <option value="*">*</option>
