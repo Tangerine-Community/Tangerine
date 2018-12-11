@@ -17,13 +17,13 @@ cat /worker-state.json
 
 Seed the `foo` group with 100 form responses.
 ```
-cd /tangerine/server/src/scripts/generate-uploads
-./bin.js 100 foo
+docker exec tangerine generate-uploads 100 foo
 ```
 
+//@TODO OUTDATED
 Now manually trigger a batch. After the command finishes, verify the batch by checking `http://localhost:5984/_utils/#database/foo-reporting/_all_docs`.
 ```
-cat /worker-state.json | node /tangerine/server/reporting/run-worker.js | tee /worker-state.json_tmp
+node --inspect-brk=0.0.0.0:9228 $(which reporting-worker-batch)
 ```
 
 If no errors occured, copy the temporary state to the current state.
