@@ -259,7 +259,7 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   const releaseType = sanitize(req.params.releaseType)
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
-    const status = await exec(`cd /tangerine/client && \
+    const status = await exec(`cd /tangerine/server/src/scripts && \
         ./release-dat.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
     `)
     // Clean up whitespace.
