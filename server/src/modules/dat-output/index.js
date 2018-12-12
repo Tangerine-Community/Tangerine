@@ -38,6 +38,7 @@ module.exports = {
           } catch (e) { }
           try {
             await mkdir(`/dat-output/${groupName}`)
+            await exec(`cp /tangerine/server/src/modules/dat-output/response-viewer-app.html /dat-output/${groupName}/index.html`)
           } catch(e) { }
           resolve(data)
       })
