@@ -25,6 +25,7 @@ import 'tangy-form/input/tangy-location.js'
 import 'tangy-form/input/tangy-gps.js'
 import 'tangy-form/input/tangy-acasi.js';
 import 'tangy-form/input/tangy-eftouch.js';
+import 'tangy-form/input/tangy-photo-capture.js';
 
 
 // An attempt to fix something...
