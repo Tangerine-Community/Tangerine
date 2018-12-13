@@ -28,6 +28,7 @@ import { StudentSubtestReportComponent } from './reports/student-subtest-report/
 import { StudentGroupingReportComponent } from './reports/student-grouping-report/student-grouping-report.component';
 import {PageNotFoundComponent} from "./page-not-found.component";
 import { StudentProgressTableComponent } from './reports/student-progress-table/student-progress-table.component';
+import { CookieService } from "ngx-cookie-service";
 
 @NgModule({
   imports: [
@@ -49,7 +50,7 @@ import { StudentProgressTableComponent } from './reports/student-progress-table/
     MatToolbarModule
   ],
   declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent],
-  providers: [DashboardService, {
+  providers: [DashboardService, CookieService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
       const service = new MatPaginationIntlService();

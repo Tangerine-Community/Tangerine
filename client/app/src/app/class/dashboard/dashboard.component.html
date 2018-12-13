@@ -20,7 +20,7 @@
       <mat-menu #catMenu="matMenu">
         <ng-template matMenuContent>
           <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value; let curriculumIndex=index;">
-            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="selectCurriculum(classIndex, curriculumIndex)">{{curriculum.label}}</button>
+            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="selectCurriculum(classIndex, curriculumIndex, curriculum.name)">{{curriculum.label}}</button>
           </span>
         </ng-template>
       </mat-menu>
@@ -32,14 +32,14 @@
         <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/grouping/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
         </ng-template>
       </mat-menu>
-      <mat-menu #progressMenu="matMenu">
-        <ng-template matMenuContent>
-        <button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentPtogressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>
-        </ng-template>
-      </mat-menu>
+      <!--<mat-menu #progressMenu="matMenu">-->
+        <!--<ng-template matMenuContent>-->
+        <!--<button mat-menu-item *ngFor="let item of formList" routerLink="/reports/studentProgressTable/{{item.id}}/{{item.classId}}/{{item.curriculumId}}">{{item.title}}</button>-->
+        <!--</ng-template>-->
+      <!--</mat-menu>-->
       <mat-menu #reportsMenu="matMenu">
         <button mat-menu-item [matMenuTriggerFor]="groupingMenu">{{'Class grouping'|translate}}</button>
-        <button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>
+        <!--<button mat-menu-item [matMenuTriggerFor]="progressMenu">{{'Student Progress Table'|translate}}</button>-->
         <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
       </mat-menu>
     </span>
