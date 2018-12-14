@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { TangyErrorHandler } from 'app/shared/_services/tangy-error-handler.service';
+import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 import { GroupsService } from '../services/groups.service';
 import * as snakeCase from 'just-snake-case';
 @Component({

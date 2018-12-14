@@ -1,8 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router, RouterStateSnapshot } from '@angular/router';
-import 'rxjs/add/operator/do';
-import { Observable } from 'rxjs/Observable';
+import { take } from 'rxjs/operators'
 import { TangyErrorHandler } from './tangy-error-handler.service';
 import { _TRANSLATE } from './translation-marker';
 
@@ -10,8 +9,12 @@ import { _TRANSLATE } from './translation-marker';
 export class RequestInterceptor implements HttpInterceptor {
 
   constructor(private errorHandler: TangyErrorHandler, private router: Router) { }
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(request).do((event: HttpEvent<any>) => { }, (err: any) => {
+  intercept(request: HttpRequest<any>, next: HttpHandler) {
+    return next.handle(request)
+  }
+  /*
+  intercept(request: HttpRequest<any>, next: HttpHandler) {
+    return next.handle(request).subscribe(event => { }, (err: any) => {
       if (err instanceof HttpErrorResponse) {
         if (err.status === 401) {
           this.errorHandler.handleError(_TRANSLATE('Permission Denied. Login to Continue'));
@@ -26,4 +29,5 @@ export class RequestInterceptor implements HttpInterceptor {
       }
     });
   }
+  */
 }

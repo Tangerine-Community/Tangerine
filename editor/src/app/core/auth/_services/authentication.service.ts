@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/toPromise';
 import { UserService } from './user.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 @Injectable()
 export class AuthenticationService {
   public currentUserLoggedIn$: any;

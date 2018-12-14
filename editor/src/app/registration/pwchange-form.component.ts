@@ -5,8 +5,6 @@ import { ValidationService } from '../validation/validation.service';//not an in
 import { RegistrationService } from './services/registration.service'
 import { ControlMessages } from '../validation/validation.component';
 
-import 'rxjs/add/operator/switchMap';
-
 declare var componentHandler: any;//needed to get js in materia.js to work with forms
 
 @Component({

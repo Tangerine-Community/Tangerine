@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Http, RequestOptions, URLSearchParams, Headers} from '@angular/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Profile} from './../profile.model';
-import 'rxjs/add/operator/toPromise';
-import {Observable} from "rxjs/Observable";
+import { map } from 'rxjs/operators'
 
 
 @Injectable()
@@ -16,7 +15,7 @@ export class ProfileService {
     profile: Profile
     user_id: string;
 
-    constructor(public http: Http) {
+    constructor(public http: HttpClient) {
         this.token = localStorage.getItem('token');
         this.password = localStorage.getItem('password');
         this.user_id = localStorage.getItem('user_id');
@@ -41,21 +40,21 @@ export class ProfileService {
     //         .catch(this.handleError);
     // }
 
-    getProfile(): Observable<Profile> {
+    getProfile():any {
         console.log('profile: getProfile for ' + this.user_id);
-        let params: URLSearchParams = new URLSearchParams();
+        let params = new HttpParams();
         params.set('user_id', this.user_id)
         // authheader.append('Authorization', 'Bearer ' + this.token + ':' + this.password);
         let authToken = this.token + ':' + this.password;
         console.log("Profile service getProfile authToken: " + authToken);
-        this.headers.append('Authorization', 'Bearer ' + authToken);
+        //this.headers.append('Authorization', 'Bearer ' + authToken);
         return this.http.get('/api/get-profile', {
-            headers: this.headers,
-            search: params
+            //headers: this.headers,
+            params: params
         })
-            .map(res =>
-                this.profile = res.json() as Profile
-            );
+        .pipe(map(res =>
+            this.profile = res as Profile
+        ));
     }
 
     private handleError(error: any): Promise<any> {
@@ -68,24 +67,21 @@ export class ProfileService {
         console.log("Profile now: " + JSON.stringify(profile))
         // const url = `${this.profileUrl}/${profile._id}`;
         let bodyString = JSON.stringify(profile); // Stringify payload
-        let headers      = new Headers({ 'Content-Type': 'application/json' }); // ... Set content type to JSON
+        let headers      = new HttpHeaders({ 'Content-Type': 'application/json' }); // ... Set content type to JSON
         // let headers      = new Headers({ 'Content-Type': 'x-www-form-urlencoded' }); // ... Set content type to JSON
         headers.append('Authorization', 'Bearer ' + this.token + ':' + this.password);
-
         // const url = `${this.profileUrl}`;
-
-        let options       = new RequestOptions({ headers: headers }); // Create a request option
         var url = "/api/profile";
         // return this.http .post(url, bodyString, options)
         return this.http .post(url, bodyString, { headers: headers })
             // .toPromise()
             // .then(() => profile)
             // .catch(this.handleError);
-            .map((res : any) => {
+            .pipe(map((res : any) => {
                 let data = res.json();
                 console.log("data in update from server: " + JSON.stringify(data));
                 return data;
-            });
+            }));
     }
 
 }

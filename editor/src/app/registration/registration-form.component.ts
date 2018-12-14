@@ -153,7 +153,7 @@ export class RegistrationFormComponent implements OnInit {
         //alert('protocol:' + window.location.protocol + 'host: ' + window.location.hostname)
         this._registrationService.emailCheck(email.value)
             .subscribe(
-            data => {
+            (data:any) => {
                 console.log(data);
                 //alert(data.rows.length) is the same as below
                 //alert(data["rows"].length);
@@ -174,7 +174,7 @@ export class RegistrationFormComponent implements OnInit {
         //alert('protocol:' + window.location.protocol + 'host: ' + window.location.hostname)
         this._registrationService.usernameCheck(username.value)
             .subscribe(
-            data => {
+            (data:any) => {
                 console.log(data);
                 //alert(data.rows.length) is the same as below
                 //alert(data["rows"].length);
@@ -195,7 +195,7 @@ export class RegistrationFormComponent implements OnInit {
         //alert('protocol:' + window.location.protocol + 'host: ' + window.location.hostname)
         this._registrationService.urlCheck(url.value)
             .subscribe(
-            data => {
+            (data:any) => {
                 console.log(data);
                 if (data.rows.length) //empty array if nothing is found
                 {
