@@ -164,56 +164,59 @@ export class DashboardService {
           }
           data[input.name] = value;
           answeredQuestions.push(data)
-          // if (input.name === curriculumFormsList[i]['id'] + "_score") {
-          if (input.name === form['id'] + "_score") {
-            score = value
+          if (typeof form !== 'undefined') {
+            if (input.name === form['id'] + "_score") {
+              score = value
+            }
           }
         }
       })
 
-      // let form = curriculumFormsList[i]
-      let childElements = form.children
-      if (childElements) {
-        let alreadyAnswered = false
-        for (const element of childElements) {
-          // console.log("element name: " + element.name)
-          // Check if there are grid subtests aka tangy-timed in this response
-          if (element.tagName === 'TANGY-TIMED') {
-            for (const answer of answeredQuestions) {
-              let value = answer[element.name]
-              if (typeof value !== 'undefined') {
-                totalGridAnswers = value.length;
-                // console.log("element.name: " + element.name + " value: " + JSON.stringify(value))
-                const reducer = (accumulator, button) => {
-                  if (button.pressed === true) {
-                    return ++accumulator;
-                  } else {
-                    return accumulator
+      // Check if tangy-form-item has been removed.
+      if (typeof form !== 'undefined') {
+        let childElements = form.children
+        if (childElements) {
+          let alreadyAnswered = false
+          for (const element of childElements) {
+            // console.log("element name: " + element.name)
+            // Check if there are grid subtests aka tangy-timed in this response
+            if (element.tagName === 'TANGY-TIMED') {
+              for (const answer of answeredQuestions) {
+                let value = answer[element.name]
+                if (typeof value !== 'undefined') {
+                  totalGridAnswers = value.length;
+                  // console.log("element.name: " + element.name + " value: " + JSON.stringify(value))
+                  const reducer = (accumulator, button) => {
+                    if (button.pressed === true) {
+                      return ++accumulator;
+                    } else {
+                      return accumulator
+                    }
                   }
+                  totalGridIncorrect = value.reduce(reducer, 0)
+                  totalGridCorrect = totalGridAnswers - totalGridIncorrect
+                  totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                  alreadyAnswered = true
                 }
-                totalGridIncorrect = value.reduce(reducer, 0)
-                totalGridCorrect = totalGridAnswers - totalGridIncorrect
-                totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
-                alreadyAnswered = true
+                // console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers)
               }
-              // console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers)
-            }
-            duration = element.duration;
-            prototype = element.tagName
-          } else {
-            // Don't want to process the element if it is the _score field
-            // if (element.name && !element.name.includes(form.id)) {
-            // don't talley if already answered, in the case of a grid subtest.
-            if (element.name && !alreadyAnswered) {
-              // one of the answeredQuestions is the _score, so don't count it.
-              const totalAnswers = item.inputs.length - 1
-              if (totalAnswers > 0) {
-                totalGridAnswers = totalAnswers
-                totalGridCorrect = Number(score)
-                totalGridIncorrect = totalAnswers - totalGridCorrect
-                totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
-                prototype = element.tagName
-                console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers + " score: " + score)
+              duration = element.duration;
+              prototype = element.tagName
+            } else {
+              // Don't want to process the element if it is the _score field
+              // if (element.name && !element.name.includes(form.id)) {
+              // don't talley if already answered, in the case of a grid subtest.
+              if (element.name && !alreadyAnswered) {
+                // one of the answeredQuestions is the _score, so don't count it.
+                const totalAnswers = item.inputs.length - 1
+                if (totalAnswers > 0) {
+                  totalGridAnswers = totalAnswers
+                  totalGridCorrect = Number(score)
+                  totalGridIncorrect = totalAnswers - totalGridCorrect
+                  totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                  prototype = element.tagName
+                  // console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers + " score: " + score)
+                }
               }
             }
           }
@@ -225,9 +228,12 @@ export class DashboardService {
       if (observation.doc.metadata && observation.doc.metadata.studentRegistrationDoc) {
         studentId = observation.doc.metadata.studentRegistrationDoc.id;
       }
-      let category = form['category']
-      if (typeof category !== 'undefined' && category !== null) {
-        category = category.trim()
+      let category
+      if (typeof form !== 'undefined') {
+        category = form['category']
+        if (typeof category !== 'undefined' && category !== null) {
+          category = category.trim()
+        }
       }
 
       let response = {

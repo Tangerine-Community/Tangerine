@@ -1,12 +1,16 @@
 import {AfterContentInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {TangyFormService} from "../../tangy-forms/tangy-form-service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {UserService} from "../../core/auth/_services/user.service";
 import {HttpClient} from "@angular/common/http";
 import {AppConfigService} from "../../shared/_services/app-config.service";
-import {DashboardService} from "../_services/dashboard.service";
 import {ClassFormService} from "../_services/class-form.service";
 import {ClassUtils} from "../class-utils.js";
+import 'tangy-form/tangy-form.js';
+
+import 'tangy-form/input/tangy-input.js'
+import 'tangy-form/input/tangy-radio-buttons.js'
+import 'tangy-form/input/tangy-checkboxes.js'
+import 'tangy-form/input/tangy-timed.js'
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -86,7 +90,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       }
       if (typeof formResponse !== 'undefined') {
         formResponse.items = formResponse.items.map(item => {
-          if (itemsToDisable.indexOf(item.id) !== -1) {
+          if (itemsToDisable.includes(item.id)) {
             return Object.assign({}, item, {disabled: true})
           }
           else {
