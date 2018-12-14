@@ -189,7 +189,7 @@ app.get('/usage/:startdate/:enddate', require('./src/routes/usage'));
 
 // Static assets.
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
-app.use('/', express.static(path.join(__dirname, '../editor/dist')));
+app.use('/', express.static(path.join(__dirname, '../editor/dist/tangerine-editor')));
 app.use('/app/:group/', express.static(path.join(__dirname, '../editor/dist')));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
   let contentPath = '../client/content/groups/' + req.params.group

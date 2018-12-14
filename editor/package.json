@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "dockerdev": "ng build --watch --poll 100 --base-href ./",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -35,6 +36,7 @@
     "tangy-form-editor": "^4.11.0",
     "tslib": "^1.9.0",
     "underscore": "^1.9.1",
+    "workbox-cli": "^2.1.2",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
