@@ -84,7 +84,6 @@ export class DashboardComponent implements OnInit {
       if (this.classes.length > 0) {
         let classIndex = this.cookieService.get('classIndex');
         let curriculumIndex = this.cookieService.get('curriculumIndex');
-        let curriculumName = this.cookieService.get('curriculumName');
         if (classIndex !== "") {
           this.currentClassIndex = classIndex;
         } else {
@@ -95,10 +94,6 @@ export class DashboardComponent implements OnInit {
         } else {
           this.curriculumIndex = null;
         }
-
-        let currentClass = this.classes[this.currentClassIndex];
-        console.log("classIndex: " + classIndex + " curriculumIndex: " + curriculumIndex + " currentClass: " + currentClass + " curriculumName: " + curriculumName)
-
         await this.populateGridData(this.currentClassIndex, this.curriculumIndex, 0, 5)
         this.renderGrid();
       }
@@ -116,8 +111,6 @@ export class DashboardComponent implements OnInit {
 
     this.cookieService.set( 'classIndex', classIndex );
     this.cookieService.set( 'curriculumIndex', curriculumIndex );
-    this.cookieService.set( 'curriculumName', curriculumName );
-    console.log("classIndex: " + classIndex + " curriculumIndex: " + curriculumIndex + " curriculumName: " + curriculumName)
     // No need to populate grid if this is the Add Class link.
     if (this.classes.length !== this.currentClassIndex) {
       await this.populateGridData(this.currentClassIndex, this.curriculumIndex, this.pageIndex, this.pageSize);
