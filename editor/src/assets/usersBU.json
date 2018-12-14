@@ -1,0 +1,41 @@
+[
+    {
+      "firstName": "Jorgen",
+      "lastName": "Waldermo",
+      "email": "jwaldermo@rti.org",
+      "affiliation": "Independent",
+      "joinedOn": "2015-01-21T13:28:06.419Z",
+      "lastLogin": "2013-10-21T13:28:06.419Z",
+      "groups": [
+        "jw_trial2016",
+        "anotherGroup",
+        "group2"
+      ],
+      "notes": "Notes to use with the notes field"
+    },
+    {
+      "firstName": "Larry",
+      "lastName": "Bond",
+      "email": "lbond@rti.org",
+      "affiliation": "RTI Affiliation",
+      "joinedOn": "2015-01-21T13:28:06.419Z",
+      "lastLogin": "2012-03-21T13:28:06.419Z",
+      "groups": [
+        "jw_trial2016"
+      ],
+      "notes": "How are you today notes"
+    },
+    {
+      "firstName": "Peter",
+      "lastName": "Pan",
+      "email": "ppan@rti.org",
+      "affiliation": "NPR",
+      "joinedOn": "2013-11-31T13:28:06.419Z",
+      "lastLogin": "2013-10-11T13:28:06.419Z",
+      "groups": [
+        "jw_trial2016",        
+        "anotherGroup"
+      ],
+      "notes": "Test note from Peter Pan"
+    }
+  ]
