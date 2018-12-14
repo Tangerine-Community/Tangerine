@@ -1,5 +1,7 @@
 # Tangerine
 
+__Looking for the latest Tangerine? Go to the [v3 branch](https://github.com/Tangerine-Community/Tangerine/tree/v3).__
+
 ![Tangerine](http://static1.squarespace.com/static/55c4e56fe4b0852b09fa2f29/t/55c4ec18e4b0f8bc41c735ae/1461960019800/?format=1500w)
 
 [![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine.svg)](https://travis-ci.org/Tangerine-Community/Tangerine)
