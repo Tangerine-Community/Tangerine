@@ -168,7 +168,7 @@ export class StudentGroupingReportComponent implements OnInit {
               let score = studentResponse["score"]
               if (score) {
                 studentResults["score"] = score
-                console.log("student: " + studentResults["name"] + " score: " + score)
+                // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
               }
               let totalGridCorrect = studentResponse["totalGridCorrect"]
               let totalGridPercentageCorrect = studentResponse["totalGridPercentageCorrect"]
