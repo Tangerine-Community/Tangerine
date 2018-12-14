@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
-import { Observable } from 'rxjs';
+import { fromEvent, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 @Component({
@@ -26,11 +27,11 @@ export class AddUserComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.group = params.groupName;
     });
-    Observable.fromEvent(this.search.nativeElement, 'keyup')
-      .debounceTime(500)
-      .distinctUntilChanged()
-      .map(val => val['target'].value.trim())
-      .subscribe(async (value) => value ? await this.getUsers(value.trim()) : Observable.of([])); // Dont send request for empty username
+    fromEvent(this.search.nativeElement, 'keyup')
+      .pipe(debounceTime(500))
+      .pipe(distinctUntilChanged())
+      .pipe(map(val => val['target'].value.trim()))
+      .subscribe(async (value) => value ? await this.getUsers(value.trim()) : of([])); // Dont send request for empty username
   }
   async getUsers(username: string) {
     try {

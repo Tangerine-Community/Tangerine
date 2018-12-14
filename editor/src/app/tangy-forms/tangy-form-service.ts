@@ -1,4 +1,3 @@
-import {Http} from '@angular/http';
 import {Injectable} from '@angular/core';
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
@@ -11,7 +10,7 @@ export class TangyFormService {
   db:any;
   databaseName: String;
 
-  constructor(public http: Http) {
+  constructor() {
     this.databaseName = 'tangy-forms'
   }
 

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import 'rxjs/add/operator/toPromise';
 import { TangyErrorHandler } from '../../../shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from '../../../shared/_services/translation-marker';
 @Injectable()
