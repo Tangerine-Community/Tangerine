@@ -30,6 +30,7 @@
     "just-snake-case": "^1.1.0",
     "moment": "^2.23.0",
     "rangen": "^1.0.0",
+    "material-design-icons-iconfont": "^3.0.3",
     "redux": "^4.0.1",
     "rxjs": "~6.3.3",
     "tangy-form": "^3.1.0",
