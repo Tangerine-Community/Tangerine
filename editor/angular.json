@@ -24,7 +24,10 @@
             ],
             "styles": [
               "src/custom-theme.scss",
-              "src/styles.css"
+              "src/styles.css",
+              "src/styles/_tangy-app-variables.scss",
+              "src/styles/styles.scss",
+              "src/styles/tangerine-theme.scss"
             ],
             "scripts": []
           },
