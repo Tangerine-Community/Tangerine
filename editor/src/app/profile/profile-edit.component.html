@@ -1,0 +1,45 @@
+<div class="mat-color--amber color-header clearfix">
+    <div class="color-explanation mat-color-text--white">
+        <h4>Profile</h4>
+    </div>
+</div>
+<div class="mat-grid mat-grid--no-spacing">
+    <div class="mat-cell mat-cell--3-col mat-cell--12-col-tablet mat-cell--12-col-phone mat-color--grey-100">
+        <div class="left-info-box">
+            <!--<h5><i class="material-icons">format_align_left</i> Help</h5>-->
+            <p>
+                <!--help text here -->
+            </p>
+        </div>
+    </div>
+    <div class="mat-cell mat-cell--9-col mat-cell--12-col-tablet mat-cell--12-col-phone r-content">
+        <div class="body-content">
+            <div *ngIf="profile">
+                <mat-card mat-shadow="4">
+                    <mat-card-title>
+                        <h2 mat-card-title-text>{{profile.firstName}} {{profile.lastName}}</h2>
+                    </mat-card-title>
+                    <mat-card-subtitle>
+                        <div>
+                            <label>State: </label>
+                            <select  floating-label [(ngModel)]="profile.state">
+                                <option [value]><em>None</em></option>
+                                <option *ngFor="let s of states" [value]="s.name">{{s.name | truncate: 30 : '...'}}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Country: </label>
+                            <select  floating-label [(ngModel)]="profile.location">
+                                <option [value]><em>None</em></option>
+                                <option *ngFor="let c of locations" [value]="c.name">{{c.name | truncate: 30 : '...'}}</option>
+                            </select>
+                        </div>
+                        <button (click)="goBack()">Back</button>
+                        <button (click)="save()">Save</button>
+
+                    </mat-card-subtitle>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>

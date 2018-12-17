@@ -1,0 +1,73 @@
+﻿[
+    {
+      "group": "jw_trial2016",
+      "results": "9244",
+      "created": "2012-08-10T13:28:06.419Z",
+      "modified": "2013-05-22T13:28:06.419Z",
+      "notes": "Notes to use with the notes field",
+      "members": [        
+        {
+          "email": "lbond@rti.org",
+          "dateJoined": "2014-10-21T13:28:06.419Z"
+        },
+        {
+          "email": "ppan@rti.org",
+          "dateJoined": "2015-10-21T13:28:06.419Z"
+        }
+      ],
+      "admins": [
+        {
+          "email": "jwaldermo@rti.org",
+          "dateJoined": "2013-10-21T13:28:06.419Z"
+        } 
+      ],
+      "instruments": [
+        "Driver Assessment",
+        "Unsafe Driver Questionnaire",
+        "Fast Driver Assessment"
+      ]
+    },
+    {
+      "group": "anotherGroup",
+      "results": "221",
+      "created": "2015-10-11T13:28:06.419Z",
+      "modified": "2015-11-24T13:28:06.419Z",
+      "notes": "Notes 2",
+      "members": [        
+        {
+          "email": "ppan@rti.org",
+          "type": "member"
+        }
+      ],
+      "admins": [
+        {
+          "email": "jwaldermo@rti.org",
+          "dateJoined": "2013-10-21T13:28:06.419Z"
+        } 
+       ],
+      "instruments": [
+        "Pupil Assessment",
+        "Teacher Questionnaire",
+        "Another Assessment"
+      ]
+    },
+    {
+      "group": "group2",
+      "results": "33",
+      "created": "2010-01-31T13:28:06.419Z",
+      "modified": "2013-12-011T13:28:06.419Z",
+      "notes": "Notes 3",
+      "members": [        
+      ],
+      "admins": [
+        {
+          "email": "jwaldermo@rti.org",
+          "dateJoined": "2013-10-21T13:28:06.419Z"
+        } 
+       ],
+      "instruments": [
+        "Pupil3 Assessment",
+        "Teacher3 Questionnaire"
+      ]
+    }
+  ]

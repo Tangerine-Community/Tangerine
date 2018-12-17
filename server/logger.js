@@ -1,13 +1,19 @@
 'use strict';
 
 const winston = require('winston');
-const Settings = require('./Settings');
 
 // Set up the logger
 var logger = new winston.Logger({
-  level: Settings.T_LOG_LEVEL,
+  level: '',
   transports: [
-    new (winston.transports.Console)()//,
+    new (winston.transports.Console)(
+      {
+        timestamp: function () {
+          var ts = new Date()
+          return JSON.stringify(ts)
+        }
+      }
+    )//,
     //new (winston.transports.File)({ filename: 'robbert.log' })
   ],
   formatter: function(options) {

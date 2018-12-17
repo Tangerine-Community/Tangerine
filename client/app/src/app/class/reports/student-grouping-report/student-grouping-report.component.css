@@ -1,0 +1,95 @@
+html {
+  box-sizing: border-box;
+}
+
+.hideme {
+  display:none;
+}
+
+.mat-column-select {
+  overflow: initial;
+}
+
+.mat-column-Name {
+  padding-right:5px;
+}
+
+th.mat-header-cell {
+  text-align: right;
+}
+
+.button-row button,
+.button-row a {
+  margin-right: 8px;
+}
+
+.mat-tab-label-active {
+  background-color: greenyellow;
+}
+
+/*
+ * KlassGroupingView
+ */
+.concerning {
+  background-color: #de9c75 !important;
+}
+.poor {
+  background-color: #e5d095 !important;
+}
+.good {
+  background-color: #c9dc88 !important;
+}
+.great {
+  background-color: #87db90 !important;
+}
+table {
+  border: 2px solid white;
+  background-color: #eee;
+  margin-bottom: 2em;
+}
+table td,
+table th {
+  padding: 0.2em;
+  border: 2px solid white;
+}
+table th {
+  font-size: initial;
+  font-weight: normal;
+  color:initial;
+  background-color: whitesmoke;
+  text-align: left;
+  /*border: 1px solid black;*/
+}
+
+.classDashboard {
+  position:relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.classDashboard button {
+  background-color: white;
+}
+
+.class-dashboard-button-spacer-left {
+  margin-left: 10px;
+}
+
+.class-dashboard-button-spacer-right {
+  margin-right: 10px;
+}
+
+.class-dashboard-curr-button-spacer {
+  margin-left: 2px;
+}
+
+p {
+  margin-top: 0px;
+  margin-right: 0px;
+  margin-bottom: 2px;
+  margin-left: 0px;
+}
+
