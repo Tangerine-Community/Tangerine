@@ -1,0 +1,48 @@
+
+<mat-toolbar color="primary" *ngIf="loggedIn">
+    <span>
+        <mat-toolbar-row>
+            <button id="menu-button" mat-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item *ngIf="loggedIn" router-active>
+                    <a routerLink="/projects" routerLinkActive="active" class="mdl-navigation__link">
+                        <i class="material-icons" role="presentation">group_work</i>{{'Groups'}}
+                    </a>
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" router-active>
+                    <a routerLink="/manage-users" routerLinkActive="active" class="mdl-navigation__link">
+                        <i class="material-icons" role="presentation">account_circle</i>{{'Manage Users'}}
+                    </a>
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" router-active>
+                    <a routerLink="/support" routerLinkActive="active" class="mdl-menu__item">
+                        <i class="material-icons">help</i> {{'Help'}}
+                    </a>
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" router-active>
+                    <a (click)="logout();" routerLink="/login" routerLinkActive="active" class="mdl-menu__item">
+                        <i class="material-icons">exit_to_app</i> {{'Logout'}}
+                    </a>
+                </button>
+                <button mat-menu-item *ngIf="!loggedIn">
+                    <a routerLink="/login">
+                        <i class="material-icons">exit_to_app</i> {{'Login'}}
+                    </a>
+                </button>
+            </mat-menu>
+        </mat-toolbar-row>
+        <a id="home-link" routerLink="/">
+            Tangerine Editor
+        </a>
+    </span>
+    <span class="example-spacer"></span>
+    <button id="account-badge" mat-menu-item *ngIf="loggedIn">
+        <i class="material-icons account-circle">account_circle</i> {{user_id}}
+    </button>
+</mat-toolbar>
+
+<main class="mdl-layout__content mdl-color--grey-100">
+    <section>
+        <router-outlet></router-outlet>
+    </section>
+</main>

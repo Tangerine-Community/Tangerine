@@ -1,0 +1,22 @@
+<form class="tangy-full-width" novalidate #addUserToGroupForm="ngForm">
+  <mat-form-field class="tangy-full-width">
+    <input type="text" placeholder="Choose User" #search aria-label="Number" matInput [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)='usernameSelected($event.option.value)'>
+      <mat-option *ngFor="let username of users" [value]="username">
+        {{ username }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <br>
+  <br>
+  <mat-form-field class="tangy-full-width">
+    <mat-select [(value)]="role" placeholder="Role" required>
+      <mat-option value="_">None</mat-option>
+      <mat-option value="admin">Admin</mat-option>
+      <mat-option value="member">Member</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br>
+  <br>
+  <button [disabled]="role==='_'||!role||!selectedUser" mat-raised-button color="warn" (click)="addUserToGroup();addUserToGroupForm.reset()">{{'Add User to Group'|translate}}</button>
+</form>
