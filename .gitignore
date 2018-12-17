@@ -1,5 +1,6 @@
 tanerine-env-vars.sh
 .idea
+.history
 
 client/src/media_assets/
 data
