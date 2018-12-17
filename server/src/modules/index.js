@@ -3,6 +3,7 @@ class TangyModules {
   constructor() {
     let enabledModules = JSON.parse(process.env.T_MODULES.replace(/\'/g,`"`))
     this.modules = enabledModules.map(moduleName => require(`/tangerine/server/src/modules/${moduleName}/index.js`))
+    this.enabledModules = enabledModules
   }
 
   async hook(hookName, data) {
