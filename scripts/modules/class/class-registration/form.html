@@ -27,10 +27,7 @@
     async function loadCurricula(that) {
       let filePath = './assets/forms.json'
       let data;
-      await fetchLocal(filePath)
-      .then(async function (res) {
-      	data = res
-      })
+      let data = await fetchLocal(filePath)
       .catch(function (err) {
         console.error('Augh, there was an error!', err.request.status);
       });
