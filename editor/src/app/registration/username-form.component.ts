@@ -46,7 +46,7 @@ export class UsernameFormComponent {
         }
         this._registrationService.retrieveID(this.passwordForm.value)
             .subscribe(
-            data => {console.log("useridData: " + JSON.stringify(data)); this.sentPW = true; this.emailFound = data.IDSent; },//  window.location.href="/"; temporarily using windows.location until fixin issue with js library not loading on redirect. //this.result = data, //this._router.navigate(['Projects']);
+            (data:any) => {console.log("useridData: " + JSON.stringify(data)); this.sentPW = true; this.emailFound = data.IDSent; },//  window.location.href="/"; temporarily using windows.location until fixin issue with js library not loading on redirect. //this.result = data, //this._router.navigate(['Projects']);
             err => {
                 if(err.status == "404")//404 if not found
                 { 

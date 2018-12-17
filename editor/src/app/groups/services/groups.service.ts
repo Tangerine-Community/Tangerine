@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 import { id as generate } from 'rangen';
-import { Loc } from 'tangy-form/loc.js';
+import { Loc } from 'tangy-form/util/loc.js';
 export interface Forms {
   id: string;
   title: string;

@@ -1,13 +1,9 @@
 import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpModule, JsonpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { MdlModule } from 'angular2-mdl';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthModule } from './core/auth/auth.module';
@@ -21,6 +17,9 @@ import { TangyErrorHandler } from './shared/_services/tangy-error-handler.servic
 import { SupportComponent } from './support/support.component';
 import { WindowRef } from './core/window-ref.service';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatButtonModule, MatIconModule, MatCheckboxModule, MatCardModule, MatMenuModule} from '@angular/material';
+
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
@@ -29,6 +28,12 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [AppComponent, SupportComponent],
   imports: [
+    MatButtonModule,
+    MatCheckboxModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatMenuModule,
+    MatCardModule,
     AppRoutingModule,
     AuthModule,
     ProfileModule,
@@ -38,10 +43,7 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
     NgTangyFormEditorModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpModule,
     HttpClientModule,
-    JsonpModule,
-    MdlModule,
     RegistrationModule, // @TODO remove as soon as we have refactored all hub specific functionality. All Registration and Login will be in Auth Module
     SharedModule,
     TranslateModule.forRoot({
@@ -50,7 +52,8 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
-    })
+    }),
+    BrowserAnimationsModule
   ],
   providers: [TangyErrorHandler, WindowRef, { provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true }],
   bootstrap: [AppComponent]

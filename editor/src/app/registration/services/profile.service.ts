@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Http, Response, Headers} from '@angular/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Profile} from './../profile.model';
+import { map } from 'rxjs/operators'
 
 @Injectable()
 export class ProfileService {
@@ -10,20 +11,20 @@ export class ProfileService {
     password: string;
     profile: Profile
 
-    constructor(public http: Http) {
+    constructor(public http: HttpClient) {
         this.token = localStorage.getItem('token');
         this.password = localStorage.getItem('password');
     }
 
     getProfile() {
         console.log('profile: Get Data');
-        var authheader = new Headers();
+        var authheader = new HttpHeaders();
         authheader.append('Authorization', 'Bearer ' + this.token + ':' + this.password);
-        return this.http.get('/api/get-url/', {
+        return this.http.get<Profile>('/api/get-url/', {
             headers: authheader
         })
-            .map(res =>
-                this.profile = res.json()
-            );
+        .pipe(map(res =>
+            this.profile = res
+        ));
     }
 }

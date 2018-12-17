@@ -1,32 +1,32 @@
-<div class="mdl-color--amber color-header clearfix">
-    <div class="color-explanation mdl-color-text--white">
+<div class="mat-color--amber color-header clearfix">
+    <div class="color-explanation mat-color-text--white">
         <h4>Profile</h4>
     </div>
 </div>
-<div class="mdl-grid mdl-grid--no-spacing">
-    <div class="mdl-cell mdl-cell--3-col mdl-cell--12-col-tablet mdl-cell--12-col-phone mdl-color--grey-100">
+<div class="mat-grid mat-grid--no-spacing">
+    <div class="mat-cell mat-cell--3-col mat-cell--12-col-tablet mat-cell--12-col-phone mat-color--grey-100">
         <div class="left-info-box">
             <!--<h5><i class="material-icons">format_align_left</i> Help</h5>-->
         </div>
     </div>
-    <div class="mdl-cell mdl-cell--9-col mdl-cell--12-col-tablet mdl-cell--12-col-phone r-content">
+    <div class="mat-cell mat-cell--9-col mat-cell--12-col-tablet mat-cell--12-col-phone r-content">
         <div class="body-content">
             <div *ngIf="profile">
-                <mdl-card mdl-shadow="4" *ngIf="isPaid">
-                    <mdl-card-title [class.payment-highlight]="isPaid">
-                        <h2 mdl-card-title-text>Welcome!</h2>
-                    </mdl-card-title>
-                    <mdl-card-supporting-text>
+                <mat-card mat-shadow="4" *ngIf="isPaid">
+                    <mat-card-title [class.payment-highlight]="isPaid">
+                        <h2 mat-card-title-text>Welcome!</h2>
+                    </mat-card-title>
+                    <mat-card-subtitle>
                         <div>
                             {{isPaidMessage}}
                         </div>
-                    </mdl-card-supporting-text>
-                </mdl-card>
-                <mdl-card mdl-shadow="4">
-                    <mdl-card-title>
-                        <h2 mdl-card-title-text>Member</h2>
-                    </mdl-card-title>
-                    <mdl-card-supporting-text>
+                    </mat-card-subtitle>
+                </mat-card>
+                <mat-card mat-shadow="4">
+                    <mat-card-title>
+                        <h2 mat-card-title-text>Member</h2>
+                    </mat-card-title>
+                    <mat-card-subtitle>
                         <div>
                             {{profile.firstName}} {{profile.firstName}}<br/>
                             Email: {{profile.email}}<br/>
@@ -36,25 +36,25 @@
                             Location: {{profile.state}}, {{profile.location}} <button (click)="edit()">Edit</button><br/>
                             Email Opt Out: {{profile.emailOptOut}}
                         </div>
-                    </mdl-card-supporting-text>
-                </mdl-card>
+                    </mat-card-subtitle>
+                </mat-card>
 
-                <mdl-card mdl-shadow="4">
-                    <mdl-card-title>
-                        <h2 mdl-card-title-text>Site</h2>
-                    </mdl-card-title>
-                    <mdl-card-supporting-text>
+                <mat-card mat-shadow="4">
+                    <mat-card-title>
+                        <h2 mat-card-title-text>Site</h2>
+                    </mat-card-title>
+                    <mat-card-subtitle>
                     <div>
                          URL: {{profile.url}}<br/>
                          Username: {{profile.username}}<br/>
                     </div>
-                    </mdl-card-supporting-text>
-                </mdl-card>
-                <mdl-card mdl-shadow="4">
-                    <mdl-card-title>
-                        <h2 mdl-card-title-text>Plan</h2>
-                    </mdl-card-title>
-                    <mdl-card-supporting-text>
+                    </mat-card-subtitle>
+                </mat-card>
+                <mat-card mat-shadow="4">
+                    <mat-card-title>
+                        <h2 mat-card-title-text>Plan</h2>
+                    </mat-card-title>
+                    <mat-card-subtitle>
                         <div [class.payment-highlight]="isPaid">
                             Plan: {{profile.officialPlan}}<br/>
                             Plan Description: {{profile.planDescription}}<br/>
@@ -63,8 +63,8 @@
                             Payment Reference: {{profile.pnref}}<br/>
                             Initial Registration: {{profile.initialRegistration | date:'medium'}}
                        </div>
-                    </mdl-card-supporting-text>
-                </mdl-card>
+                    </mat-card-subtitle>
+                </mat-card>
             </div>
         </div>
     </div>

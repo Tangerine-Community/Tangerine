@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import 'rxjs/add/observable/fromPromise';
-import { Observable } from 'rxjs/Observable';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { _TRANSLATE } from '../../../../shared/_services/translation-marker';
 
