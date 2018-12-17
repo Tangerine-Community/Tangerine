@@ -56,11 +56,8 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   }
 
   tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
-      // console.log('tabChangeEvent => ', tabChangeEvent);
-      // console.log('index => ', tabChangeEvent.index);
-      if (tabChangeEvent.index === 0) {
-        let url = `/app/${this.groupName}/#/groups/${this.groupName}`;
-        window.location.replace(url);
+     if (tabChangeEvent.index === 0) {
+        this.router.navigate(['groups', this.groupName])
       }
   }
 
