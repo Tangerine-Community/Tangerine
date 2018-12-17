@@ -1,75 +1,48 @@
-<!--<h1>
-  {{title}} tt
-</h1>
 
-<strong>Angular Router</strong>
-    <nav>
-      <a routerLink="/registration" routerLinkActive="active">Registration</a>
-      <a routerLink="/login" routerLinkActive="active">Registration</a>
-    </nav>-->
-
-<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
-    <header class="demo-header mdl-layout__header mdl-color--white mdl-color--grey-100 mdl-color-text--grey-600">
-        <div class="mdl-layout__header-row">
-            <!--<span class="mdl-layout-title">Home</span>-->
-            <div class="mdl-layout-spacer"></div>
-
-            <!--<div class="user-info">               
-                <i class="material-icons">account_circle</i> {{user_id}}               
-            </div>-->
-            <div class="user-info" *ngIf="loggedIn">
-                <span>
-                    <i class="material-icons">account_circle</i> {{user_id}}
-                </span>
-            </div>
-            <div class="user-info" *ngIf="!loggedIn">
-                <span>
+<mat-toolbar color="primary">
+    <span>
+        <mat-toolbar-row>
+            <button id="menu-button" mat-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item *ngIf="loggedIn" router-active>
+                    <a routerLink="/projects" routerLinkActive="active" class="mdl-navigation__link">
+                        <i class="material-icons" role="presentation">group_work</i>{{'Groups'}}
+                    </a>
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" router-active>
+                    <a routerLink="/manage-users" routerLinkActive="active" class="mdl-navigation__link">
+                        <i class="material-icons" role="presentation">account_circle</i>{{'Manage Users'}}
+                    </a>
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" router-active>
+                    <a routerLink="/support" routerLinkActive="active" class="mdl-menu__item">
+                        <i class="material-icons">help</i> {{'Help'}}
+                    </a>
+                </button>
+                <button mat-menu-item *ngIf="loggedIn" router-active>
+                    <a (click)="logout();" routerLink="/login" routerLinkActive="active" class="mdl-menu__item">
+                        <i class="material-icons">exit_to_app</i> {{'Logout'}}
+                    </a>
+                </button>
+                <button mat-menu-item *ngIf="!loggedIn">
                     <a routerLink="/login">
                         <i class="material-icons">exit_to_app</i> {{'Login'}}
                     </a>
-                </span>
-            </div>
-            <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="useropts">
-                <i class="material-icons">more_vert</i>
-            </button>
-            <ul *ngIf="loggedIn" class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="useropts">
-                <li *ngIf="loggedIn" router-active>
-                    <a routerLink="/support" routerLinkActive="active" class="mdl-menu__item">
-                        <i class="material-icons">help</i> {{'Help'}}</a>
-                </li>
-                <li *ngIf="loggedIn" router-active>
-                    <a (click)="logout();" routerLink="/login" routerLinkActive="active" class="mdl-menu__item">
-                        <i class="material-icons">exit_to_app</i> {{'Logout'}}</a>
-                </li>
-            </ul>
-        </div>
-    </header>
-    <div class="demo-drawer mdl-layout__drawer mdl-color--grey-900 mdl-color-text--orange-50">
-        <header class="demo-drawer-header mdl-color--black">
-            <div class="tangerine-logo">
-                <img src="/assets/img/stacked-logo.png" alt="Tangerine Logo">
-            </div>
-        </header>
-        <nav *ngIf="loggedIn" class="demo-navigation mdl-navigation mdl-color--grey-900">
-            <ul>
-                <li router-active>
-                    <a routerLink="/projects" routerLinkActive="active" class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">group_work</i>{{'Groups'}}</a>
-                </li>
-                <li router-active>
-                    <a routerLink="/manage-users" routerLinkActive="active" class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">account_circle</i>{{'Manage Users'}}</a>
-                </li>
-                <li router-active>
-                    <a routerLink="/support" routerLinkActive="active" class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">help_outline</i>{{'Support'}}</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    <main class="mdl-layout__content mdl-color--grey-100">
-        <section>
-            <router-outlet></router-outlet>
-        </section>
-    </main>
-</div>
+                </button>
+            </mat-menu>
+        </mat-toolbar-row>
+        <a id="home-link" routerLink="/">
+            Tangerine Editor
+        </a>
+    </span>
+    <span class="example-spacer"></span>
+    <button id="account-badge" mat-menu-item *ngIf="loggedIn">
+        <i class="material-icons account-circle">account_circle</i> {{user_id}}
+    </button>
+</mat-toolbar>
+
+<main class="mdl-layout__content mdl-color--grey-100">
+    <section>
+        <router-outlet></router-outlet>
+    </section>
+</main>
