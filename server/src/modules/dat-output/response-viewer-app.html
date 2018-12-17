@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+  <script>
+    async function showResponse(event) {
+      event.preventDefault()
+      const archive = new DatArchive(window.location.href)
+      const responseId = window.response_id.value
+      if (responseId === '') return alert('Enter a response ID')
+      try {
+        const responseJson = await archive.readFile(`${responseId}.json`)
+        const responseInfo = JSON.parse(responseJson)
+        window.response_details.innerHTML = `
+          <br><br>
+          ${Object.keys(responseInfo).map(key => `
+            ${key}: ${responseInfo[key]}<br>
+          `).join('')}
+        `
+      } catch(e) { 
+        alert(e)
+      }
+    }
+  </script>
+  <form onsubmit="showResponse(event)">
+    Enter response ID:
+    <input type="text" id="response_id"><button type="submit">submit</button>
+  </form>
+  <div id="response_details">
+  </div>
+</body>
+</html>
