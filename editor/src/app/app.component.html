@@ -1,5 +1,5 @@
 
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" *ngIf="loggedIn">
     <span>
         <mat-toolbar-row>
             <button id="menu-button" mat-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
