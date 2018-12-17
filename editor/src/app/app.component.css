@@ -1,0 +1,40 @@
+#account-badge {
+    float: right;
+    display: span;
+    width: 20%;
+    text-align: right;
+    color: white;
+}
+mat-toolbar {
+    background: black;
+    color: white;
+}
+mat-toolbar a {
+    text-decoration: none;
+    color: white;
+}
+
+#home-link {
+    margin-top: 15px;
+    position: relative;
+    top: 6px;
+}
+
+#menu-button {
+    position: relative;
+    top: 4px;
+}
+
+.mat-menu-item button a:visited,
+.mat-menu-item button a {
+    color: #f26f10;
+    text-decoration: none;
+}
+
+.account-circle {
+    position: relative;
+    top: 6px;
+}
+main {
+    margin-top: 48px;
+}

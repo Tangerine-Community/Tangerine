@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
-import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import { fromEvent, of } from 'rxjs';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 
@@ -25,11 +26,11 @@ export class ListUsersComponent implements OnInit {
       this.groupName = params.groupName;
     });
     await this.getUsersByGroup();
-    Observable.fromEvent(this.search.nativeElement, 'keyup')
-      .debounceTime(500)
-      .distinctUntilChanged()
-      .map(val => val['target'].value.trim())
-      .subscribe(async val => val ? await this.getUsersByGroupAndUsername(val.trim()) : Observable.of([]));
+    fromEvent(this.search.nativeElement, 'keyup')
+      .pipe(debounceTime(500))
+      .pipe(distinctUntilChanged())
+      .pipe(map(val => val['target'].value.trim()))
+      .subscribe(async val => val ? await this.getUsersByGroupAndUsername(val.trim()) : of([]));
   }
 
   async getUsersByGroupAndUsername(username: string) {

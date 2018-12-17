@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { TangyErrorHandler } from 'app/shared/_services/tangy-error-handler.service';
+import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 import { GroupsService } from '../services/groups.service';
-import { Loc } from 'tangy-form/loc.js';
+import { Loc } from 'tangy-form/util/loc.js';
 
 @Component({
   selector: 'app-location-list-editor',

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
-import { setInterval, clearInterval } from 'timers';
 
 @Component({
   selector: 'app-download-csv',
