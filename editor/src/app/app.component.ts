@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
 import { RegistrationService } from './registration/services/registration.service';
+import { WindowRef } from './core/window-ref.service'
 
 
 @Component({
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit {
     titleToUse: string;
 
     constructor(
+        private windowRef: WindowRef,
         private router: Router,
         private _registrationService: RegistrationService,
         private authenticationService: AuthenticationService,
@@ -41,6 +43,16 @@ export class AppComponent implements OnInit {
             this.loggedIn = isLoggedIn;
             this.user_id = localStorage.getItem('user_id');
         });
+
+        // Remove splash.
+        setTimeout(() => {
+            this.windowRef.nativeWindow['splash-container'].classList.add('hide-splash')
+            this.windowRef.nativeWindow['app-root'].classList.add('loaded')
+        }, 2000)
+        setTimeout(() => {
+            this.windowRef.nativeWindow['splash-container'].remove()
+        }, 3000)
+
     };
 
 }
