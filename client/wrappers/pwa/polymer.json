@@ -1,0 +1,10 @@
+{
+	"builds": [{
+		"bundle": true
+	}],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  }
+}

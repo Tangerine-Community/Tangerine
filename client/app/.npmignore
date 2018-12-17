@@ -1,0 +1,1 @@
+# Files to ignore by npm publish. Keep this so that .gitignore is not used which would exlude the dist directory.

@@ -1,0 +1,11 @@
+.tangy-full-width {
+  width: 95%;
+}
+span.tangy-foreground-secondary {
+  padding-top: 0.3rem;
+}
+
+a.faux-anchor,
+span.faux-anchor {
+  cursor: pointer;
+}
