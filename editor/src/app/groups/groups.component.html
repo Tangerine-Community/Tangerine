@@ -1,0 +1,27 @@
+<mat-card>
+    <mat-card-title class="tangy-foreground-secondary">
+        {{'Manage Groups'|translate}}
+    </mat-card-title>
+    <mat-card-content>
+        <div class="tangy-full-width">
+            <div>
+                <a routerLink="/groups/new-group">{{'+ Create a New Group'|translate}}</a>
+            </div>
+
+            <mat-list>
+                <mat-list-item class="tangy-location-list">
+                    <span class="tangy-foreground-primary">{{'Group'|translate}}</span>
+                </mat-list-item>
+            </mat-list>
+
+            <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let group of groups">
+                    <a class="tangy-foreground-primary" [routerLink]="['/groups/',group.attributes.name]">
+                        <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
+                    </a>
+                    <span class="tangy-foreground-secondary">{{group.attributes.name}}</span>
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </mat-card-content>
+</mat-card>

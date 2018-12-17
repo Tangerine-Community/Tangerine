@@ -1,8 +1,0 @@
-[
-  ".*coffee$",
-  "docs.*",
-  "tests.*",
-  ".*\\.DS_Store$",
-  ".*couchapprc\\.sample$",
-  ".*\\.gitignore$"
-]
