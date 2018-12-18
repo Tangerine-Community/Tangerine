@@ -94,8 +94,12 @@ export class DashboardComponent implements OnInit {
         } else {
           this.curriculumIndex = null;
         }
-        await this.populateGridData(this.currentClassIndex, this.curriculumIndex, 0, 5)
-        this.renderGrid();
+        try {
+          await this.populateGridData(this.currentClassIndex, this.curriculumIndex, 0, 5)
+          this.renderGrid();
+        } catch (e) {
+          console.error(e)
+        }
       }
     } catch (error) {
       console.error(error);
@@ -170,7 +174,9 @@ export class DashboardComponent implements OnInit {
         console.log("Error fetching this.curriculumForms: " + e)
       }
       if (typeof this.curriculumForms === 'undefined') {
-        console.log("This is an error - there are no this.curriculumForms for this curriculum or range.")
+        let msg = "This is an error - there are no this.curriculumForms for this curriculum or range. Check if the config files are available.";
+        console.log(msg)
+        alert(msg)
       }
     }
     if (typeof currentClass !== 'undefined') {
