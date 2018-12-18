@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
         const exists = await fs.pathExists('/tangerine/client/app/src/assets/class-registration')
         if (!exists) {
           try {
-            await fs.copy('/tangerine/scripts/modules/class/', '/tangerine/client/app/src/assets/')
+            await fs.copy('/tangerine/server/src/modules/class/', '/tangerine/client/app/src/assets/')
             console.log('Copied class module forms.')
           } catch (err) {
             console.error(err)
