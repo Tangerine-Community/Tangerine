@@ -23,7 +23,7 @@ export class AuthenticationService {
     return await result.toPromise().then((data: any) => data.statusCode === 200);
   }
 
-  async isLoggedIn() {
+  async isLoggedIn():Promise<boolean> {
     this._currentUserLoggedIn = false;
     this._currentUserLoggedIn = !!localStorage.getItem('user_id');
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
