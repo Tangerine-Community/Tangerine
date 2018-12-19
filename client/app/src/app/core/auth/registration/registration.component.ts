@@ -93,6 +93,11 @@ export class RegistrationComponent implements OnInit {
           
     }
 
+    // Prevent native `submit` events from POSTing beause this crashes APKs.
+    greaseTrap(event) {
+        event.preventDefault()
+    }
+
     loginUserAfterRegistration(username, password) {
         observableFrom(this.authenticationService.login(username, password)).subscribe(data => {
             if (data) {
