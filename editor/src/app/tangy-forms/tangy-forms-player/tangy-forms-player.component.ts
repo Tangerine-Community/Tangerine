@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {MatTabChangeEvent} from "@angular/material";
 
@@ -25,6 +25,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   @ViewChild('container') container: ElementRef;
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private http: HttpClient,
     private windowRef: WindowRef
   ) { }
@@ -63,8 +64,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
 
   tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
     if (tabChangeEvent.index === 0) {
-      let url = `/app/${this.groupName}/#/groups/${this.groupName}`;
-      window.location.replace(url);
+      this.router.navigate(['groups', this.groupName])
     }
   }
 
