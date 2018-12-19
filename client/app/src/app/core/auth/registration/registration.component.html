@@ -7,7 +7,7 @@
 <div class="login-app-content">
   <div class="group">
 
-    <form role="form" #registration='ngForm' novalidate >
+    <form role="form" #registration='ngForm' novalidate (submit)="greaseTrap($event)" >
       <br>
       <h3 class="mat-title">{{'REGISTER'|translate}}</h3>
       <mat-form-field>
