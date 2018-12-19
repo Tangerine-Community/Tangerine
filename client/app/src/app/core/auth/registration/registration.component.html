@@ -7,7 +7,7 @@
 <div class="login-app-content">
   <div class="group">
 
-    <form role="form" #registration='ngForm' novalidate (submit)="register()">
+    <form role="form" #registration='ngForm' novalidate >
       <br>
       <h3 class="mat-title">{{'REGISTER'|translate}}</h3>
       <mat-form-field>
@@ -38,7 +38,7 @@
         </mat-placeholder>
       </mat-form-field>
       <br>
-      <button mat-raised-button color="accent" type="submit" [disabled]="registration.invalid||user.password!==user.confirmPassword">{{'SUBMIT'|translate}}</button>
+      <button mat-raised-button color="accent" (click)="register()">{{'SUBMIT'|translate}}</button>
       <br>
       <br>
       <span [id]="statusMessage.type">
