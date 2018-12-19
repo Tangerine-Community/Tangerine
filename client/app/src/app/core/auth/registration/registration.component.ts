@@ -29,6 +29,7 @@ export class RegistrationComponent implements OnInit {
     isUsernameTaken: boolean;
     returnUrl: string;
     statusMessage: object;
+    passwordsDoNotMatchMessage = { type: 'error', message: _TRANSLATE('Passwords do not match') };
     userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('Username Unavailable') };
     userNameAvailableMessage = { type: 'success', message: _TRANSLATE('Username Available') };
     loginUnsucessfulMessage = { type: 'error', message: _TRANSLATE('Login Unsuccesful') };
@@ -59,7 +60,10 @@ export class RegistrationComponent implements OnInit {
     }
 
     register(): void {
-        delete this.user.confirmPassword;
+        if (this.user.password!==this.user.confirmPassword) {
+            this.statusMessage = this.passwordsDoNotMatchMessage
+            return 
+        }
         const userData = Object.assign({}, this.user);
         if (!this.isUsernameTaken) {
             observableFrom(this.userService.create(userData)).subscribe(data => {
@@ -87,6 +91,11 @@ export class RegistrationComponent implements OnInit {
         console.log(error)
       }
           
+    }
+
+    // Prevent native `submit` events from POSTing beause this crashes APKs.
+    greaseTrap(event) {
+        event.preventDefault()
     }
 
     loginUserAfterRegistration(username, password) {
