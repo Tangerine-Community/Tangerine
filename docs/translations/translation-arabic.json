@@ -125,5 +125,9 @@
 	"You may not mark an item incorrect that is beyond the last item attempted.": "You may not mark an item incorrect that is beyond the last item attempted.",
 	"You may proceed.": "You may proceed.",
 	"Item Title": "Item Title",
-	"✓ Yay! You are up to date.": "✓ Yay! You are up to date."
+	"✓ Yay! You are up to date.": "✓ Yay! You are up to date.",
+	"open": "open",
+	"close": "close",
+	"save": "save",
+	"submit": "submit"
 }

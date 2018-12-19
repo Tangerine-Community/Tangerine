@@ -22,23 +22,7 @@ module.exports = async (req, res) => {
   if (moduleEntries.length > 0) {
     for (let moduleEntry of moduleEntries) {
       modules.push(moduleEntry);
-      if (moduleEntry === "class") {
-        clog("Setting homeUrl to dashboard")
-        homeUrl =  "dashboard"
-        uploadUnlockedFormReponses =  true
-        // copy the class forms
-        const exists = await fs.pathExists('/tangerine/client/app/src/assets/class-registration')
-        if (!exists) {
-          try {
-            await fs.copy('/tangerine/scripts/modules/class/', '/tangerine/client/app/src/assets/')
-            console.log('Copied class module forms.')
-          } catch (err) {
-            console.error(err)
-          }
-        }
-      } else {
-        clog("moduleEntry: " + moduleEntry)
-      }
+      clog("moduleEntry: " + moduleEntry)
     }
   }
   let groupName = req.body.groupName
@@ -54,16 +38,6 @@ module.exports = async (req, res) => {
     appConfig.hideProfile = (process.env.T_HIDE_PROFILE === 'true') ? true : false 
     appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
     appConfig.centrallyManagedUserProfile = (process.env.T_CENTRALLY_MANAGED_USER_PROFILE === 'true') ? true : false
-    if (typeof homeUrl !== 'undefined') {
-      appConfig.homeUrl = homeUrl
-    }
-    if (typeof uploadUnlockedFormReponses !== 'undefined') {
-      appConfig.uploadUnlockedFormReponses = uploadUnlockedFormReponses
-    }
-    if (typeof syncProtocol !== 'undefined') {
-      appConfig.syncProtocol = syncProtocol
-      appConfig.uploadUrl = `${process.env.T_PROTOCOL}://${process.env.T_UPLOAD_USER}:${process.env.T_UPLOAD_PASSWORD}@${process.env.T_SYNC_SERVER}/${groupName}`
-    }
     if (modules.length > 0) {
       appConfig.modules = modules;
     }
