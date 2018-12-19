@@ -72,17 +72,15 @@ export class StudentProgressTableComponent implements OnInit {
   }
 
   async getReport(studentId) {
-    const container = this.container.nativeElement
 
     const tangyFormItem = this.route.snapshot.paramMap.get('type');
     const classId = this.route.snapshot.paramMap.get('classId');
     let curriculumId = this.route.snapshot.paramMap.get('curriculumId');
     let classDoc = await this.classFormService.getResponse(classId);
-    let classRegistration = this.classUtils.getInputValues(classDoc);
 
     // Get data about this particular subtest
     let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-    let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml, container);
+    let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
 
     let subtest = curriculumFormsList.filter(obj => {
       return obj.id === tangyFormItem

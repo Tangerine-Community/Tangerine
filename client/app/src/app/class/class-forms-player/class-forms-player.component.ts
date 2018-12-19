@@ -77,7 +77,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       // enable the requested subform to be viewed
       const container = this.container.nativeElement
       let formHtml = await this.http.get('./assets/'+ this.curriculum + '/form.html', {responseType: 'text'}).toPromise();
-      let curriculumFormsList = await this.classUtils.createCurriculumFormsList(formHtml, container);
+      let curriculumFormsList = await this.classUtils.createCurriculumFormsList(formHtml);
       container.innerHTML = formHtml
       // let formItems = container.querySelectorAll('tangy-form-item')
       let itemsToDisable = []

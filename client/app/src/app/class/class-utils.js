@@ -12,36 +12,38 @@ export class ClassUtils {
     return obj;
   }
 
-  async createCurriculumFormsList(curriculumFormHtml, container) {
-    let curriculumForms = [];
+  /**
+   * Creates an array of tangy-form-items; each item has an array of children elements populated with the item's children with a name attribute
+   * @param curriculumFormHtml
+   * @returns {Promise<*[]>}
+   */
+  async createCurriculumFormsList(curriculumFormHtml) {
     let templateEl = document.createElement("template")
     templateEl.innerHTML = curriculumFormHtml
-    let formEl = templateEl.content.querySelectorAll('tangy-form-item')
-    var output = "";
-    for (const el of formEl) {
-      let obj = el.getProps()
-      let htmlCollection = el.children[0].content.children
-      let children = []
-      for (const item of htmlCollection) {
-        let child = item.getProps()
-        if (child.name) {
-          obj[child.name] = child
-        }
-        children.push(child)
-      }
+    let curriculumForms = [...templateEl.content.querySelectorAll('tangy-form-item')].map(itemEl => {
+      let obj = itemEl.getProps()
+      let children = [...itemEl.children[0].content.querySelectorAll('[name]')].map(child =>  child.getProps())
       obj['children'] = children
-      curriculumForms.push(obj)
-    }
+      return obj
+    })
   return curriculumForms
   }
 
   decimals(num, decimals) {
-    let m;
+    var m;
     m = Math.pow(10, decimals);
     num *= m;
-    num = num + (num<0?-0.5:+0.5 >> 0);
+    num = num + num<0?-0.5:+0.5 >> 0;
     return num /= m;
   }
+
+  // decimals = function(num, decimals) {
+  //   var m;
+  //   m = Math.pow(10, decimals);
+  //   num *= m;
+  //   num = num + num<0?-0.5:+0.5 >> 0;
+  //   return num /= m;
+  // };
 
    round(value, decimals) {
     return Number(Math.round(value+'e'+decimals)+'e-'+decimals);

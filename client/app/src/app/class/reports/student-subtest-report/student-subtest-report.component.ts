@@ -92,8 +92,7 @@ export class StudentSubtestReportComponent implements OnInit {
       subtestReport.label = label;
 
       let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-      const container = this.container.nativeElement
-      let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml, container);
+      let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
       // this.subtestReport.students = await this.getMyStudents(classId);
       const appConfig = await this.appConfigService.getAppConfig();
       this.categories = appConfig.categories;
