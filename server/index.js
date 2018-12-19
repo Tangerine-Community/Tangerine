@@ -42,6 +42,7 @@ let crypto = require('crypto');
 const junk = require('junk');
 const cors = require('cors')
 const sep = path.sep;
+const tangyModules = require('./src/modules/index.js')()
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
@@ -164,6 +165,7 @@ app.post('/login',
 );
 
 // API
+app.get('/api/modules', isAuthenticated, require('./src/routes/modules.js'))
 app.post('/api/:groupId/upload-check', hasUploadToken, require('./src/routes/group-upload-check.js'))
 app.post('/api/:groupId/upload', hasUploadToken, require('./src/routes/group-upload.js'))
 app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses.js'))
@@ -190,7 +192,7 @@ app.get('/usage/:startdate/:enddate', require('./src/routes/usage'));
 // Static assets.
 app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
 app.use('/', express.static(path.join(__dirname, '../editor/dist/tangerine-editor')));
-app.use('/app/:group/', express.static(path.join(__dirname, '../editor/dist')));
+app.use('/app/:group/', express.static(path.join(__dirname, '../editor/dist/tangerine-editor')));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
   let contentPath = '../client/content/groups/' + req.params.group
   clog("Setting path to " + path.join(__dirname, contentPath))
@@ -257,7 +259,7 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   const releaseType = sanitize(req.params.releaseType)
   clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
-    const status = await exec(`cd /tangerine/client && \
+    const status = await exec(`cd /tangerine/server/src/scripts && \
         ./release-dat.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
     `)
     // Clean up whitespace.
@@ -625,10 +627,11 @@ async function keepAlivePaidWorker() {
 }
 keepAlivePaidWorker()
 
-// Start the server.
-var server = app.listen('80', function () {
-  var host = server.address().address;
-  var port = server.address().port;
-  log.info(server.address());
-  log.info('Server V3: http://%s:%s', host, port);
-});
+tangyModules.hook('declareAppRoutes', {app}).then(() => {
+  var server = app.listen('80', function () {
+    var host = server.address().address;
+    var port = server.address().port;
+    log.info(server.address());
+    log.info('Server V3: http://%s:%s', host, port);
+  });
+})
