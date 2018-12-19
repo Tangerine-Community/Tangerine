@@ -1,3 +1,17 @@
+# Tangy Modules
+
+Modules provide additional features to Tangerine, such as:
+ - automatically add forms to the client when a new group is created (via groupNew hook)
+ - data transformation for reporting (via flatFormReponse hook)
+
+Steps to add a module
+ - Create an index.js file inside server/src/modules/moduleName using the sample below as a guide.
+ - Implement any relevant hooks. See the examples for flatFormReponse and groupNew, below.
+ - Forms that need to be copied over to the client should be placed in server/src/modules/moduleName.
+
+## Sample module index.js
+
+ ```
 const clog = require('tangy-log').clog
 const fs = require('fs-extra')
 
@@ -37,3 +51,6 @@ module.exports = {
     },
   }
 }
+ ```
+
+This code will be automatically run when the TangyModules (server/src/modules/index.js) is run
