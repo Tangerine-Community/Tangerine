@@ -16,4 +16,5 @@ Welcome to the Tangerine Documentation site. This is an MDWiki hosted on Github 
 
 ## V3
 * [Icons](v3.x.x/icons.md)
+* [Modules](modules.md)
 
