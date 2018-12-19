@@ -1,6 +1,5 @@
-const DB = require('../../db.js')
-const log = require('tangy-log').log
 const clog = require('tangy-log').clog
+const fs = require('fs-extra')
 
 module.exports = {
   hooks: {
@@ -19,6 +18,22 @@ module.exports = {
           }
           resolve({flatFormResponse, formResponse})
       })
-    }
+    },
+    groupNew: function(data) {
+      return new Promise(async (resolve, reject) => {
+        const {groupName, appConfig} = data
+        clog("Setting homeUrl to dashboard and uploadUnlockedFormReponses to true.")
+        appConfig.homeUrl =  "dashboard"
+        appConfig.uploadUnlockedFormReponses =  true
+        // copy the class forms
+        try {
+          await fs.copy('/tangerine/server/src/modules/class/', `/tangerine/client/content/groups/${groupName}`)
+          clog("Copied class module forms.")
+        } catch (err) {
+          console.error(err)
+        }
+        resolve(data)
+      })
+    },
   }
 }
