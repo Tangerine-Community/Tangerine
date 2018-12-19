@@ -9,8 +9,8 @@ export class LoginGuard implements CanActivate {
     private router: Router,
     private authenticationService: AuthenticationService
   ) { }
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.authenticationService.isLoggedIn()) {
+  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    if (await this.authenticationService.isLoggedIn()) {
       return true;
     }
     this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
