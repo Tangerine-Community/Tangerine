@@ -29,6 +29,7 @@ export class RegistrationComponent implements OnInit {
     isUsernameTaken: boolean;
     returnUrl: string;
     statusMessage: object;
+    disableSubmit = false;
     passwordsDoNotMatchMessage = { type: 'error', message: _TRANSLATE('Passwords do not match') };
     userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('Username Unavailable') };
     userNameAvailableMessage = { type: 'success', message: _TRANSLATE('Username Available') };
@@ -60,8 +61,10 @@ export class RegistrationComponent implements OnInit {
     }
 
     register(): void {
+        this.disableSubmit = true
         if (this.user.password!==this.user.confirmPassword) {
             this.statusMessage = this.passwordsDoNotMatchMessage
+            this.disableSubmit = false
             return 
         }
         const userData = Object.assign({}, this.user);
@@ -74,6 +77,7 @@ export class RegistrationComponent implements OnInit {
             });
         } else {
             this.statusMessage = this.userNameUnavailableMessage;
+            this.disableSubmit = false
         }
 
     }

@@ -38,7 +38,7 @@
         </mat-placeholder>
       </mat-form-field>
       <br>
-      <button mat-raised-button color="accent" (click)="register()">{{'SUBMIT'|translate}}</button>
+      <button [disabled]="disableSubmit" mat-raised-button color="accent" (click)="register()">{{'SUBMIT'|translate}}</button>
       <br>
       <br>
       <span [id]="statusMessage.type">
