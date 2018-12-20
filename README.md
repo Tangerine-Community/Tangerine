@@ -48,6 +48,11 @@ If your server restarts or the container stops, you can later run the `./start.s
 To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine and set the `T_PROTOCOL` variable in `config.sh` to `https` before running `start.sh`. At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. How to set this up is detailed in our [instructions for AWS](docs/install-on-aws.md).  If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
 Now visit your Tangerine installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network.
 
+Lastly, to reset caches and free up memory every so often, we recommend restarting the server every evening using cron to automate it. As a user with docker permission on the command line run `crontab -e` and add the following line.
+```
+0 0 * * * docker stop tangerine && docker start tangerine
+```
+
 ## Enable P2P offline sync
 You can release your Tangerine Apps as dat archives and access them using [Beaker Browser](https://beakerbrowser.com/) on Mac, Windows (see afforable $100 Windows tablet https://goo.gl/JgZ5c3), and Linux. The major advantage to releasing your Tangerine app as a dat archive is that it can be synced between devices while offline. If you have Android tablets, you can install [Bunsen Browser](https://play.google.com/store/apps/details?id=org.bunsenbrowser&hl=en_US) however there is currently an [issue with offline sync](https://github.com/bunsenbrowser/bunsen/issues/27). 
 
