@@ -184,8 +184,12 @@ export class StudentGroupingReportComponent implements OnInit {
       allStudentResults.push(studentResults)
     }
 
-    // aveCorrectPerc = this.classUtils.decimals( aveCorrectPerc / this.students.length, 0 )
-    // aveCorrect = this.classUtils.decimals( aveCorrect / this.students.length, 2 )
+
+
+    let aveCorrectPercReport = this.classUtils.round( aveCorrectPerc / studentsAssessed, 0 )
+    let aveCorrectReport = this.classUtils.round( aveCorrect / studentsAssessed, 2 )
+    let attemptedReport = this.classUtils.round( attempted / studentsAssessed, 2 )
+    
     aveCorrectPerc = this.classUtils.decimals( aveCorrectPerc / studentsAssessed, 0 )
     aveCorrect = this.classUtils.decimals( aveCorrect / studentsAssessed, 2 )
     attempted = this.classUtils.decimals( attempted / studentsAssessed, 2 )
@@ -261,9 +265,10 @@ export class StudentGroupingReportComponent implements OnInit {
     let allStudentResultsSorted = allStudentResults.sort(compare);
     this.allStudentResults = allStudentResultsSorted;
     this.classGroupReport.studentsAssessed = studentsAssessed
-    this.classGroupReport.aveCorrectPerc = aveCorrectPerc
-    this.classGroupReport.aveCorrect = aveCorrect
-    this.classGroupReport.attempted = attempted
+
+    this.classGroupReport.aveCorrectPerc = aveCorrectPercReport
+    this.classGroupReport.aveCorrect = aveCorrectReport
+    this.classGroupReport.attempted = attemptedReport
     this.classGroupReport.duration = duration
     this.classGroupReport.studentsToWatch = studentsToWatch
     this.dataSource = new MatTableDataSource<StudentResult>(this.allStudentResults);
