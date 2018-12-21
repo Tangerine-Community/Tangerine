@@ -36,7 +36,7 @@ export class StudentGroupingReportComponent implements OnInit {
   // allStudentResults:StudentResult[] = [];
   allStudentResults = [];
   studentsResponses:any[];
-  columnsToDisplay: string[] = ['name', 'score', 'status'];
+  columnsToDisplay: string[] = ['name', 'percentile', 'score', 'status'];
   classGroupReport:ClassGroupingReport = {
     id:null,
     subtestName: null,
@@ -172,29 +172,11 @@ export class StudentGroupingReportComponent implements OnInit {
           studentResults["totalGridPercentageCorrect"] = totalGridPercentageCorrect
           let totalGridAnswers = studentResponse["totalGridAnswers"]
           duration = studentResponse["duration"]
-          if (totalGridPercentageCorrect) {
-            studentResults["score"] = totalGridPercentageCorrect
-            let index;
-            if (totalGridPercentageCorrect >= 80)
-              index = 3
-            else if (totalGridPercentageCorrect >= 60 && totalGridPercentageCorrect <= 79)
-              index = 2
-            else if (totalGridPercentageCorrect >= 30 && totalGridPercentageCorrect <= 59)
-              index = 1
-            else
-              index = 0
-            studentResults["index"] = index
-            studentResults["status"] = status[index]
-            studentResults["colorClass"] = colorClass[index]
-            if (index === 0) {
-              studentsToWatch.push(studentResults["name"])
-            }
-          }
+
           aveCorrect += totalGridCorrect
           aveCorrectPerc += totalGridPercentageCorrect
           attempted += totalGridAnswers
           studentsAssessed ++
-          // TODO: calculate percentile and stdDev.
           // TODO: factor correct answers per minute.
           // TODO: factor attempted vs not attempted.
         }
@@ -209,12 +191,6 @@ export class StudentGroupingReportComponent implements OnInit {
     attempted = this.classUtils.decimals( attempted / studentsAssessed, 2 )
 
     let stdDev = 0
-
-    // for (const studentResult of allStudentResults) {
-    //   let totalGridPercentageCorrect = studentResult['totalGridPercentageCorrect']
-    //   // @summary.stdDev += Math.pow(person.pCorrect - @summary.aCorrect, 2)
-    //   stdDev += Math.pow(totalGridPercentageCorrect - aveCorrectPerc, 2)
-    // }
 
     var squareDiffs = allStudentResults.map(function(studentResult){
       let totalGridPercentageCorrect = studentResult['totalGridPercentageCorrect']
@@ -253,6 +229,25 @@ export class StudentGroupingReportComponent implements OnInit {
         percentile = 100 * Math.round(50 - 100 * normalCurve[devIndex * -1] ) / 100
       else
         percentile = 50
+
+      studentResult["score"] = totalGridPercentageCorrect
+      let index;
+      if (totalGridPercentageCorrect >= 80)
+        index = 3
+      else if (totalGridPercentageCorrect >= 60 && totalGridPercentageCorrect <= 79)
+        index = 2
+      else if (totalGridPercentageCorrect >= 30 && totalGridPercentageCorrect <= 59)
+        index = 1
+      else
+        index = 0
+
+      studentResult["index"] = index
+      studentResult["status"] = status[index]
+      studentResult["colorClass"] = colorClass[index]
+      if (index === 0) {
+        studentsToWatch.push(studentResult["name"])
+      }
+
       studentResult['percentile'] = percentile
     }
 
