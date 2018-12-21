@@ -66,6 +66,14 @@
       <td mat-cell *matCellDef="let element"> {{element["name"]}} </td>
     </ng-container>
 
+    <!-- Percentile Column -->
+    <ng-container matColumnDef="percentile">
+      <th mat-header-cell *matHeaderCellDef title="Score"> {{'Percentile'|translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="element.score">{{element.percentile}} % </span>
+      </td>
+    </ng-container>
+
     <!-- Score Column -->
     <ng-container matColumnDef="score">
       <th mat-header-cell *matHeaderCellDef title="Score"> {{'Score'|translate}} </th>
