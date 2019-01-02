@@ -16,6 +16,7 @@ export interface ClassGroupingReport {
   aveCorrectPerc:number;
   aveCorrect:number;
   attempted:number;
+  max:number;
   duration:number;
   studentsToWatch:string[];
 }
@@ -45,6 +46,7 @@ export class StudentGroupingReportComponent implements OnInit {
     aveCorrectPerc: null,
     aveCorrect: null,
     attempted: null,
+    max: null,
     studentsToWatch: null,
     duration: null
   }
@@ -167,6 +169,11 @@ export class StudentGroupingReportComponent implements OnInit {
             studentResults["score"] = score
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
+          let max = studentResponse["max"]
+          if (max) {
+            studentResults["max"] = max
+            this.classGroupReport.max = max
+          }
           let totalGridCorrect = studentResponse["totalGridCorrect"]
           let totalGridPercentageCorrect = studentResponse["totalGridPercentageCorrect"]
           studentResults["totalGridPercentageCorrect"] = totalGridPercentageCorrect
@@ -191,8 +198,8 @@ export class StudentGroupingReportComponent implements OnInit {
     let attemptedReport = this.classUtils.round( attempted / studentsAssessed, 2 )
     
     aveCorrectPerc = this.classUtils.decimals( aveCorrectPerc / studentsAssessed, 0 )
-    aveCorrect = this.classUtils.decimals( aveCorrect / studentsAssessed, 2 )
-    attempted = this.classUtils.decimals( attempted / studentsAssessed, 2 )
+    // aveCorrect = this.classUtils.decimals( aveCorrect / studentsAssessed, 2 )
+    // attempted = this.classUtils.decimals( attempted / studentsAssessed, 2 )
 
     let stdDev = 0
 
@@ -221,38 +228,39 @@ export class StudentGroupingReportComponent implements OnInit {
 
     for (const studentResult of allStudentResults) {
       let totalGridPercentageCorrect = studentResult['totalGridPercentageCorrect']
-      // dev = (person.pCorrect - @summary.aCorrect) / @summary.stdDev
-      let dev = (totalGridPercentageCorrect - aveCorrectPerc) / stdDev
-      let devIndex = Math.round(dev * 100)
-      let percentile
-      if (devIndex > 409 || devIndex < -409)
-        percentile = 0
-      else if (devIndex > 0)
-        percentile = 100 * Math.round(50 + 100 * normalCurve[devIndex] ) / 100
-      else if (devIndex < 0)
-        percentile = 100 * Math.round(50 - 100 * normalCurve[devIndex * -1] ) / 100
-      else
-        percentile = 50
+      if (typeof totalGridPercentageCorrect !== 'undefined') {
+        // dev = (person.pCorrect - @summary.aCorrect) / @summary.stdDev
+        let dev = (totalGridPercentageCorrect - aveCorrectPerc) / stdDev
+        let devIndex = Math.round(dev * 100)
+        let percentile
+        if (devIndex > 409 || devIndex < -409)
+          percentile = 0
+        else if (devIndex > 0)
+          percentile = 100 * Math.round(50 + 100 * normalCurve[devIndex] ) / 100
+        else if (devIndex < 0)
+          percentile = 100 * Math.round(50 - 100 * normalCurve[devIndex * -1] ) / 100
+        else
+          percentile = 50
 
-      studentResult["score"] = totalGridPercentageCorrect
-      let index;
-      if (totalGridPercentageCorrect >= 80)
-        index = 3
-      else if (totalGridPercentageCorrect >= 60 && totalGridPercentageCorrect <= 79)
-        index = 2
-      else if (totalGridPercentageCorrect >= 30 && totalGridPercentageCorrect <= 59)
-        index = 1
-      else
-        index = 0
+        studentResult["score"] = totalGridPercentageCorrect
+        let index;
+        if (totalGridPercentageCorrect >= 80)
+          index = 3
+        else if (totalGridPercentageCorrect >= 60 && totalGridPercentageCorrect <= 79)
+          index = 2
+        else if (totalGridPercentageCorrect >= 30 && totalGridPercentageCorrect <= 59)
+          index = 1
+        else
+          index = 0
 
-      studentResult["index"] = index
-      studentResult["status"] = status[index]
-      studentResult["colorClass"] = colorClass[index]
-      if (index === 0) {
-        studentsToWatch.push(studentResult["name"])
+        studentResult["index"] = index
+        studentResult["status"] = status[index]
+        studentResult["colorClass"] = colorClass[index]
+        if (index === 0) {
+          studentsToWatch.push(studentResult["name"])
+        }
+        studentResult['percentile'] = percentile
       }
-
-      studentResult['percentile'] = percentile
     }
 
     function compare(a,b) {

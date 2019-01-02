@@ -133,6 +133,7 @@ export class DashboardService {
     let incorrect = 0;
     let noResponse = 0;
     let score = 0;
+    let max = null;
     let totalGridIncorrect = 0;
     let totalGridCorrect = 0;
     let totalGridAnswers = 0;
@@ -153,6 +154,11 @@ export class DashboardService {
           let data = {}
           let valueField = input.value;
           let value;
+          if (input.tagName === 'TANGY-INPUT') {
+            if (typeof input.max !== 'undefined' && input.max !== '') {
+              max = input.max
+            }
+          }
           if (input.tagName === 'TANGY-RADIO-BUTTONS') {
             valueField.forEach(option => {
               if (option.value !== "") {
@@ -205,7 +211,11 @@ export class DashboardService {
                   totalGridAnswers = totalAnswers
                   totalGridCorrect = Number(score)
                   totalGridIncorrect = totalAnswers - totalGridCorrect
-                  totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                  if (max) {
+                    totalGridPercentageCorrect =  Math.round(score / max * 100)
+                  } else {
+                    totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                  }
                   prototype = element.tagName
                   // console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers + " score: " + score)
                 }
@@ -245,6 +255,7 @@ export class DashboardService {
         incorrect: incorrect,
         noResponse: noResponse,
         score: score,
+        max: max,
         totalGridIncorrect: totalGridIncorrect,
         totalGridAnswers: totalGridAnswers,
         totalGridCorrect: totalGridCorrect,
