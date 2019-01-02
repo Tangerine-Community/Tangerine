@@ -133,6 +133,7 @@ export class DashboardService {
     let incorrect = 0;
     let noResponse = 0;
     let score = 0;
+    let max = null;
     let totalGridIncorrect = 0;
     let totalGridCorrect = 0;
     let totalGridAnswers = 0;
@@ -153,6 +154,11 @@ export class DashboardService {
           let data = {}
           let valueField = input.value;
           let value;
+          if (input.tagName === 'TANGY-INPUT') {
+            if (typeof input.max !== 'undefined' && input.max !== '') {
+              max = input.max
+            }
+          }
           if (input.tagName === 'TANGY-RADIO-BUTTONS') {
             valueField.forEach(option => {
               if (option.value !== "") {
@@ -185,14 +191,7 @@ export class DashboardService {
                 let value = answer[element.name]
                 if (typeof value !== 'undefined') {
                   totalGridAnswers = value.length;
-                  // console.log("element.name: " + element.name + " value: " + JSON.stringify(value))
-                  const reducer = (accumulator, button) => {
-                    if (button.pressed === true) {
-                      return ++accumulator;
-                    } else {
-                      return accumulator
-                    }
-                  }
+                  const reducer = (incorrect, button) => button.pressed ? ++incorrect : incorrect
                   totalGridIncorrect = value.reduce(reducer, 0)
                   totalGridCorrect = totalGridAnswers - totalGridIncorrect
                   totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
@@ -204,16 +203,19 @@ export class DashboardService {
               prototype = element.tagName
             } else {
               // Don't want to process the element if it is the _score field
-              // if (element.name && !element.name.includes(form.id)) {
               // don't talley if already answered, in the case of a grid subtest.
-              if (element.name && !alreadyAnswered) {
+              if (!alreadyAnswered) {
                 // one of the answeredQuestions is the _score, so don't count it.
                 const totalAnswers = item.inputs.length - 1
                 if (totalAnswers > 0) {
                   totalGridAnswers = totalAnswers
                   totalGridCorrect = Number(score)
                   totalGridIncorrect = totalAnswers - totalGridCorrect
-                  totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                  if (max) {
+                    totalGridPercentageCorrect =  Math.round(score / max * 100)
+                  } else {
+                    totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                  }
                   prototype = element.tagName
                   // console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers + " score: " + score)
                 }
@@ -253,6 +255,7 @@ export class DashboardService {
         incorrect: incorrect,
         noResponse: noResponse,
         score: score,
+        max: max,
         totalGridIncorrect: totalGridIncorrect,
         totalGridAnswers: totalGridAnswers,
         totalGridCorrect: totalGridCorrect,

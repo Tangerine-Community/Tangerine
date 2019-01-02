@@ -27,7 +27,9 @@
       <td title="Average Correct (%)">{{'Average Correct (%)'|translate}}</td><td>{{classGroupReport.aveCorrectPerc}}</td>
     </tr>
     <tr>
-      <td title="Average Correct">{{'Average Correct'|translate}}</td><td>{{classGroupReport.aveCorrect}} / {{classGroupReport.attempted}}</td>
+      <td title="Average Correct">{{'Average Correct'|translate}}</td>
+      <td *ngIf="classGroupReport.max">{{classGroupReport.aveCorrect}} / {{classGroupReport.max}}</td>
+      <td *ngIf="!classGroupReport.max">{{classGroupReport.aveCorrect}} / {{classGroupReport.attempted}}</td>
     </tr>
     <!--<tr *ngIf="classGroupReport.duration">-->
       <!--<td title="Duration">{{'Duration'|translate}}</td><td>{{classGroupReport.duration}} {{'seconds'|translate}}</td>-->
@@ -64,6 +66,14 @@
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef title="Student"> {{'Student'|translate}} </th>
       <td mat-cell *matCellDef="let element"> {{element["name"]}} </td>
+    </ng-container>
+
+    <!-- Percentile Column -->
+    <ng-container matColumnDef="percentile">
+      <th mat-header-cell *matHeaderCellDef title="Score"> {{'Percentile'|translate}} </th>
+      <td mat-cell *matCellDef="let element">
+        <span *ngIf="element.score">{{element.percentile}} % </span>
+      </td>
     </ng-container>
 
     <!-- Score Column -->
