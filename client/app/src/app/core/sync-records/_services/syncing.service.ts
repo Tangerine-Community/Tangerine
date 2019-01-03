@@ -57,6 +57,7 @@ export class SyncingService {
           const doc = await DB.get(doc_id);
           // Insert the userProfileId as an input.
           doc['items'][0]['inputs'].push({ name: 'userProfileId', value: userProfile._id });
+          doc['items'][0]['inputs'].push({ name: 'tabletUserId', value: username });
           // Redact any fields marked as private.
           doc['items'].forEach(item => {
             item['inputs'].forEach(input => {
