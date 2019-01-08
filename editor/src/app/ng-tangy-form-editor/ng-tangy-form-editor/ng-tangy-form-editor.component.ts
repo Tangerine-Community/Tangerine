@@ -15,6 +15,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   @ViewChild('header') header: ElementRef;
   containerEl: any;
   selectedIndex = 1;
+  print = false;
   groupId;
   groupName;
 
@@ -31,6 +32,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
 
     let formId = this.route.snapshot.paramMap.get('formId');
     let groupName = this.route.snapshot.paramMap.get('groupName');
+    this.print = !!this.route.snapshot.paramMap.get('print');
     this.groupName = groupName;
 
     let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
@@ -44,15 +46,30 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     const categories = JSON.stringify(appConfigCategories);
 
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
-    this.containerEl.innerHTML = `
-      <tangy-form-editor style="margin:15px" categories ='${categories}'>
-        <template>
-          ${formHtml}
-        </template>
-      </tangy-form-editor>
-    `
-    const tangyFormEditorEl = this.containerEl.querySelector('tangy-form-editor')
-    tangyFormEditorEl.addEventListener('tangy-form-editor-change', event => this.saveForm(event.detail))
+    if (!this.print) {
+      this.containerEl.innerHTML = `
+        <tangy-form-editor style="margin:15px" categories ='${categories}'>
+          <template>
+            ${formHtml}
+          </template>
+        </tangy-form-editor>
+      `
+      const tangyFormEditorEl = this.containerEl.querySelector('tangy-form-editor')
+      tangyFormEditorEl.addEventListener('tangy-form-editor-change', event => this.saveForm(event.detail))
+    } else {
+      this.containerEl.innerHTML = `
+        <style>
+        mat-toolbar, mat-tab-header {
+          display:none !important;
+        }
+        </style>
+        <tangy-form-editor style="margin:15px" categories ='${categories}' print>
+          <template>
+            ${formHtml}
+          </template>
+        </tangy-form-editor>
+      `
+    }
   }
 
   tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {

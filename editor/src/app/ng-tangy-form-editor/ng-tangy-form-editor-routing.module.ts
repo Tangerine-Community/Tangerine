@@ -5,6 +5,7 @@ import { NgTangyFormEditorComponent } from './ng-tangy-form-editor/ng-tangy-form
 const routes: Routes = [
 
     { path: 'tangy-form-editor/:groupName/:formId', component: NgTangyFormEditorComponent },
+    { path: 'tangy-form-editor/:groupName/:formId/:print', component: NgTangyFormEditorComponent },
 ];
 
 @NgModule({
