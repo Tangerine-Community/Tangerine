@@ -167,8 +167,9 @@ export class LocationListEditorComponent implements OnInit {
     this.parentItemsForMoveLocation = null;
   }
   async saveLocationListToDisk() {
+    const locationListWithDescendants = Loc.calculateDescendentCounts(this.locationList);
     try {
-      const payload = { filePath: this.locationListFileName, groupId: this.groupName, fileContents: JSON.stringify(this.locationList) };
+      const payload = { filePath: this.locationListFileName, groupId: this.groupName, fileContents: JSON.stringify(locationListWithDescendants) };
       await this.http.post(`/editor/file/save`, payload).toPromise();
       this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
     } catch (error) {
