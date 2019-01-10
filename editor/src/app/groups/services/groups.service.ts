@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 import { id as generate } from 'rangen';
+import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
 export interface Forms {
   id: string;
@@ -12,6 +13,7 @@ export interface Forms {
 @Injectable()
 export class GroupsService {
   constructor(
+    private windowRef: WindowRef,
     private httpClient: HttpClient,
     private errorHandler: TangyErrorHandler
   ) { }
@@ -101,7 +103,8 @@ export class GroupsService {
         }
       );
 
-      return result;
+      return result.map(result => { return {...result, printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${groupName}/${result.id}/print` } });
+
     } catch (error) {
       console.error(error);
       if (typeof error.status === 'undefined') {
