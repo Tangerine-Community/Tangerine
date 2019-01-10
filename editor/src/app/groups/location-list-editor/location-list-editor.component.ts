@@ -108,6 +108,7 @@ export class LocationListEditorComponent implements OnInit {
     } else {
       this.locationList = findAndAdd(this.locationList, parentItem.id, newItem);
     }
+    await this.calculateDescendants();
     await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
     this.form = { label: '', id: '' };
@@ -161,15 +162,22 @@ export class LocationListEditorComponent implements OnInit {
   async moveItem(item) {
     const locationObject = findAndDeleteChild(this.locationList.locations, this.breadcrumbs[this.breadcrumbs.length - 2]['id'], item.id);
     this.locationList.locations = findAndAdd(locationObject, this.moveLocationParentLevelId, { [item.id]: { ...item } });
+    await this.calculateDescendants();
     await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
     this.isMoveLocationFormShown = false;
     this.parentItemsForMoveLocation = null;
   }
+  async calculateDescendants() {
+    // Check if the item being added or moved is at the last level of the hierarchy. 
+    // The descendentsCount needs update ony when the last level has a new item or an item is moved
+    if (this.locationsLevelsLength === this.breadcrumbs.length) {
+      this.locationList = Loc.calculateDescendentCounts(this.locationList);
+    }
+  }
   async saveLocationListToDisk() {
-    const locationListWithDescendants = Loc.calculateDescendentCounts(this.locationList);
     try {
-      const payload = { filePath: this.locationListFileName, groupId: this.groupName, fileContents: JSON.stringify(locationListWithDescendants) };
+      const payload = { filePath: this.locationListFileName, groupId: this.groupName, fileContents: JSON.stringify(this.locationList) };
       await this.http.post(`/editor/file/save`, payload).toPromise();
       this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
     } catch (error) {
