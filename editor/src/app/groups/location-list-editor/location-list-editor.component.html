@@ -2,7 +2,9 @@
   <mat-card-title class="tangy-foreground-secondary">
     {{'Manage Locations'|translate}}
   </mat-card-title>
+
   <mat-card-content>
+
     <div class="tangy-full-width">
       <div>
         <mat-chip-list>
@@ -27,7 +29,9 @@
         {{breadcrumbs[breadcrumbs.length-1]['label']}}
 
         to another {{locationsLevels[breadcrumbs.length-3]}}</span>
-
+      <div *ngIf="isLoading">
+        <app-tangy-loading></app-tangy-loading>
+      </div>
       <div *ngIf="showLocationForm">
         <form name="newLocationItemForm" class="tangy-full-width" novalidate #newLocationItemForm="ngForm">
           <mat-form-field class="tangy-full-width">
@@ -35,8 +39,8 @@
           </mat-form-field>
           <div *ngIf="levelHasMetadata">
             <mat-form-field class="tangy-full-width" *ngFor="let item of locationList.metadata[locationsLevels[breadcrumbs.length-1]]">
-              <input [name]="item.variableName" matInput [type]="item.type" [(ngModel)]="form[item.variableName]" placeholder="{{item.label}}"
-                [required]="item.requiredField">
+              <input [name]="item.variableName" matInput [type]="item.type" [(ngModel)]="form[item.variableName]"
+                placeholder="{{item.label}}" [required]="item.requiredField">
             </mat-form-field>
           </div>
           <button [hidden]="isItemMarkedForUpdate" type="button" [disabled]="newLocationItemForm.invalid"
