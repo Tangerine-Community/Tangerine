@@ -30,6 +30,7 @@ export class LocationListEditorComponent implements OnInit {
   moveLocationParentLevelId;
   canMoveItem = false;
   isItemMarkedForUpdate = false;
+  isLoading = false;
   form: any = { label: '', id: '' };
   @ViewChild('container') container: ElementRef;
   constructor(
@@ -177,10 +178,13 @@ export class LocationListEditorComponent implements OnInit {
   }
   async saveLocationListToDisk() {
     try {
+      this.isLoading = true;
       const payload = { filePath: this.locationListFileName, groupId: this.groupName, fileContents: JSON.stringify(this.locationList) };
       await this.http.post(`/editor/file/save`, payload).toPromise();
+      this.isLoading = false;
       this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
     } catch (error) {
+      this.isLoading = false;
       this.errorHandler.handleError('Error Saving Location Lits File to disk');
     }
   }
