@@ -6,7 +6,6 @@ import {MatTabChangeEvent} from "@angular/material";
 import { UserService } from '../../core/auth/_services/user.service';
 import { WindowRef } from '../../core/window-ref.service';
 import { TangyFormService } from '../tangy-form-service';
-import 'tangy-form/tangy-form.js';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 

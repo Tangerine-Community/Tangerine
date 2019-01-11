@@ -33,7 +33,7 @@
     "material-design-icons-iconfont": "^3.0.3",
     "redux": "^4.0.1",
     "rxjs": "~6.3.3",
-    "tangy-form": "^3.3.0",
+    "tangy-form": "^3.3.2",
     "tangy-form-editor": "^5.1.0",
     "tslib": "^1.9.0",
     "underscore": "^1.9.1",
