@@ -173,7 +173,7 @@ export class LocationListEditorComponent implements OnInit {
     // Check if the item being added or moved is at the last level of the hierarchy. 
     // The descendentsCount needs update ony when the last level has a new item or an item is moved
     if (this.locationsLevelsLength === this.breadcrumbs.length) {
-      this.locationList = Loc.calculateDescendentCounts(this.locationList);
+      this.locationList = Loc.calculateDescendantCounts(this.locationList);
     }
   }
   async saveLocationListToDisk() {
