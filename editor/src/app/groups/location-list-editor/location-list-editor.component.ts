@@ -30,6 +30,7 @@ export class LocationListEditorComponent implements OnInit {
   moveLocationParentLevelId;
   canMoveItem = false;
   isItemMarkedForUpdate = false;
+  isLoading = false;
   form: any = { label: '', id: '' };
   @ViewChild('container') container: ElementRef;
   constructor(
@@ -108,6 +109,7 @@ export class LocationListEditorComponent implements OnInit {
     } else {
       this.locationList = findAndAdd(this.locationList, parentItem.id, newItem);
     }
+    await this.calculateDescendants();
     await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
     this.form = { label: '', id: '' };
@@ -161,17 +163,28 @@ export class LocationListEditorComponent implements OnInit {
   async moveItem(item) {
     const locationObject = findAndDeleteChild(this.locationList.locations, this.breadcrumbs[this.breadcrumbs.length - 2]['id'], item.id);
     this.locationList.locations = findAndAdd(locationObject, this.moveLocationParentLevelId, { [item.id]: { ...item } });
+    await this.calculateDescendants();
     await this.saveLocationListToDisk();
     await this.setLocationList(this.locationList);
     this.isMoveLocationFormShown = false;
     this.parentItemsForMoveLocation = null;
   }
+  async calculateDescendants() {
+    // Check if the item being added or moved is at the last level of the hierarchy. 
+    // The descendentsCount needs update ony when the last level has a new item or an item is moved
+    if (this.locationsLevelsLength === this.breadcrumbs.length) {
+      this.locationList = Loc.calculateDescendantCounts(this.locationList);
+    }
+  }
   async saveLocationListToDisk() {
     try {
+      this.isLoading = true;
       const payload = { filePath: this.locationListFileName, groupId: this.groupName, fileContents: JSON.stringify(this.locationList) };
       await this.http.post(`/editor/file/save`, payload).toPromise();
+      this.isLoading = false;
       this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
     } catch (error) {
+      this.isLoading = false;
       this.errorHandler.handleError('Error Saving Location Lits File to disk');
     }
   }
