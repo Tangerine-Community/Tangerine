@@ -1,0 +1,12 @@
+<h1>{{event.name}}</h1>
+<p>
+  {{event.description}}
+</p>
+<ul>
+  <li *ngFor="let form of event.forms">
+    <a href="#/case/{{case._id}}/event/{{event._id}}/{{form.formId}}">
+      <span *ngIf="form.required === true">*</span>
+      {{form.title}}
+    </a>
+  </li>
+</ul>
