@@ -1,0 +1,9 @@
+<p>
+  Case: {{case._id}}
+  <ul>
+    <li *ngFor="let event of case.events">
+      <a href="#/case/{{case.id}}/event/{{event.id}}">{{event.name}}</a>
+    </li>
+  </ul>
+</p>
+

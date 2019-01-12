@@ -1,0 +1,42 @@
+{
+  "caseDefinitionId": "case_type_1",
+  "caseDefinitionRevision": 1,
+  "caseRelationTypes": [],
+  "locationAssociationLevel": "facility",
+  "autoOpenOnFirstEvent": true,
+  "statusOptions": [ "initialized", "screened", "enrolled", "closed", "invalid", "duplicate" ],
+  "defaultStatus": "initialized",
+  "onFormCompleteHook": "",
+  "caseInfoTemplate": "",
+  "defaultsVariablesList": {
+    "dateEventOneComplete": ""
+  },
+  "allowLocationReassignment": false,
+  "eventDefinitions": [
+    {
+      "name": "Screening",
+      "description": "A screening.",
+      "windows": [],
+      "repeatable": false,
+      "forms": [
+        {
+          "formId": "form1",
+          "title": "Form 1",
+          "required": true
+        },
+        {
+          "formId": "form2",
+          "title": "Form 2",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "First visit",
+      "description": "The first visit",
+      "windows": [],
+      "repeatable": false,
+      "forms": []
+    }
+  ]
+}
