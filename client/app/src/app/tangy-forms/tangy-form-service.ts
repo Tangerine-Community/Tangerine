@@ -25,12 +25,8 @@ export class TangyFormService {
         console.log('Removing _design/tangy-form')
         await this.db.remove(designDoc)
         console.log('Cleaning up view indexes')
-        // @TODO This causes conflicts with open databases. How to avoid??
-        //await this.db.viewCleanup()
         console.log('Creating _design/tangy-form')
         await this.db.put(tangyFormDesignDoc)
-        //let updatedDesignDoc = Object.assign({}, designDoc, tangyFormDesignDoc)
-        //await this.db.put(updatedDesignDoc)
       }
     } catch (e) {
       this.loadDesignDoc()
