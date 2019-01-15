@@ -122,6 +122,9 @@ const generateFlatResponse = async function (formResponse, locationList) {
             flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = (location && location.hasOwnProperty('label')) 
                 ? location.label 
                 : '';
+            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_descendants_count`] = (location && location.hasOwnProperty('descendantsCount')) 
+                ? location.descendantsCount
+                : '';
           } catch(e) {
             flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = 'orphaned';
           }
