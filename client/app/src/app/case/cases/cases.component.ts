@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../core/auth/_services/user.service';
 import PouchDB from 'pouchdb';
 
+
 @Component({
   selector: 'app-cases',
   templateUrl: './cases.component.html',
@@ -9,15 +10,19 @@ import PouchDB from 'pouchdb';
 })
 export class CasesComponent implements OnInit {
 
+  cases = []
+
   constructor(
-    private userService: UserService,
+    private userService: UserService
   ) { }
 
   async ngOnInit() {
     const userDbName = await this.userService.getUserDatabase();
     const db = new PouchDB(userDbName);
-    const caseDocs = await db.allDocs({include_docs: true})
-      .filter(doc => doc.collection === 'case')
+    this.cases = (await db.allDocs({include_docs: true}))
+      .rows
+      .map(row => row.doc)
+      .filter(doc => doc.collection === 'CaseInstance')
   }
 
 }

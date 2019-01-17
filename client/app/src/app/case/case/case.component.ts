@@ -10,7 +10,7 @@ import PouchDB from 'pouchdb'
 })
 export class CaseComponent implements OnInit, AfterContentInit {
 
-  case = {};
+  caseInstance = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -21,9 +21,9 @@ export class CaseComponent implements OnInit, AfterContentInit {
   }
 
   async ngAfterContentInit() {
-    this.route.queryParams.subscribe(async params => {
-      const db = new PouchDB(this.userService.getUserDbName())
-      this.case = await db.get(params['id'])
+    this.route.params.subscribe(async params => {
+      const db = new PouchDB(localStorage.getItem('currentUser'))
+      this.caseInstance = await db.get(params['id'])
     })
   }
 

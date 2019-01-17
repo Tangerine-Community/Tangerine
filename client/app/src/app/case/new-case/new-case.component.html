@@ -1,3 +1,6 @@
-<p>
-  new-case works!
-</p>
+<h1>New Case</h1>
+<ul>
+  <li *ngFor="let caseDefinition of caseDefinitions">
+    <a (click)="onCaseDefinitionSelect(caseDefinition.id)">{{caseDefinition.name}}</a>
+  </li>
+</ul>
