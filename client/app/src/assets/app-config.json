@@ -10,7 +10,7 @@
   "uploadUnlockedFormReponses": false,
   "groupName": "",
   "uploadToken": "change_this_token",
-  "homeUrl": "case-management",
+  "homeUrl": "cases",
   "centrallyManagedUserProfile": false,
   "direction": "ltr"
 }

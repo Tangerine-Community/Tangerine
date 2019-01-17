@@ -1,3 +1,5 @@
-<p>
-  cases works!
-</p>
+<h1>Cases</h1>
+<paper-button routerLink="/new-case">new case</paper-button>
+<ul>
+  <li *ngFor="let case of cases" routerLink="/case/{{case._id}}">{{case._id}}</li>
+</ul>

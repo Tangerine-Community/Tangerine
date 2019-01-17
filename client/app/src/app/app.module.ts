@@ -19,6 +19,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CaseManagementModule } from './case-management/case-management.module';
+import { CaseModule } from './case/case.module';
 import { AuthModule } from './core/auth/auth.module';
 import { SyncRecordsModule } from './core/sync-records/sync-records.module';
 import { WindowRef } from './core/window-ref.service';
@@ -48,6 +49,7 @@ export function HttpClientLoaderFactory(httpClient: HttpClient) {
     AuthModule,
     CaseManagementModule,
     ClassModule,
+    CaseModule,
     UserProfileModule,
     UpdateModule,
     SyncRecordsModule,
