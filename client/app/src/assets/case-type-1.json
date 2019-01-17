@@ -1,6 +1,6 @@
 {
-  "caseDefinitionId": "case_type_1",
-  "caseDefinitionRevision": 1,
+  "id": "case-type-1",
+  "revision": 1,
   "caseRelationTypes": [],
   "locationAssociationLevel": "facility",
   "autoOpenOnFirstEvent": true,
