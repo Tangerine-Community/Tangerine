@@ -6,6 +6,7 @@ import { _TRANSLATE } from '../shared/translation-marker';
 import { CasesComponent } from './cases/cases.component';
 import { NewCaseComponent } from './new-case/new-case.component';
 import { CaseComponent } from './case/case.component';
+import { EventComponent } from './event/event.component'
 import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 
 const routes: Routes = [
@@ -17,6 +18,11 @@ const routes: Routes = [
   {
     path: 'case/:id',
     component: CaseComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
+    path: 'case/event/:caseId/:eventId',
+    component: EventComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
   {

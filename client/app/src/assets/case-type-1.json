@@ -1,6 +1,7 @@
 {
   "id": "case-type-1",
   "revision": 1,
+  "name": "Case Type 1",
   "caseRelationTypes": [],
   "locationAssociationLevel": "facility",
   "autoOpenOnFirstEvent": true,
@@ -14,24 +15,28 @@
   "allowLocationReassignment": false,
   "eventDefinitions": [
     {
+      "id": "event-definition-screening",
       "name": "Screening",
       "description": "A screening.",
       "windows": [],
       "repeatable": false,
       "forms": [
         {
+          "id": "event-form-1",
           "formId": "form1",
-          "title": "Form 1",
+          "name": "Form 1",
           "required": true
         },
         {
+          "id": "event-form-2",
           "formId": "form2",
-          "title": "Form 2",
+          "name": "Form 2",
           "required": true
         }
       ]
     },
     {
+      "id": "event-definition-first-visit",
       "name": "First visit",
       "description": "The first visit",
       "windows": [],

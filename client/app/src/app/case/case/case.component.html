@@ -1,13 +1,17 @@
-<p>
-  Case: {{caseInstance._id}}
+<p *ngIf="caseService">
 </p>
 
-<p>
-  Events:
-  <ul>
-    <li *ngFor="let eventDefinition of caseDefinition.eventDefinitions">
-      {{eventDefinition.name}}
-      <!--a href="#/case/{{caseInstance.id}}/event/{{event.id}}">{{event.name}}</a-->
-    </li>
-  </ul>
-</p>
+<h2>Events</h2>
+<ul *ngIf="caseService">
+  <li *ngFor="let eventInfo of caseService.eventsInfo">
+    <h3>
+      {{eventInfo.eventDefinition.name}}
+    </h3>
+    <paper-button *ngIf="eventInfo.canCreateInstance" (click)="startEvent(eventInfo.eventDefinition.id)">start event</paper-button>
+    <ul>
+      <li *ngFor="let eventInstance of eventInfo.instances">
+        <a routerLink="#/case/{{caseInstance._id}}/event/{{eventInstance._id}}">{{eventInfo.name}}</a>
+      </li>
+    </ul>
+  </li>
+</ul>
