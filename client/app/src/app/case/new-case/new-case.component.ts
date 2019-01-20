@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../core/auth/_services/authentication.service';
 import { HttpClient } from '@angular/common/http';
-import PouchDB from 'pouchdb';
-import { Case } from '../case.class'
+import { CaseService } from '../case.service'
+import { CaseDefinitionsService } from '../case-definitions.service'
 
 @Component({
   selector: 'app-new-case',
@@ -21,18 +21,14 @@ export class NewCaseComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.caseDefinitions = await this.http.get('./assets/case-definitions.json').toPromise();
+    const caseDefinitionsService = new CaseDefinitionsService();
+    this.caseDefinitions = await caseDefinitionsService.load();
+    debugger
   }
 
   async onCaseDefinitionSelect(caseDefinitionId = '') {
-    const caseDefinitionSrc = this
-      .caseDefinitions
-      .find(caseDefinition => caseDefinition.id === caseDefinitionId)
-      .src;
-    const caseDefinition = await this.http.get(caseDefinitionSrc).toPromise();
-    const caseInstance = new Case(caseDefinition);
-    const db = new PouchDB(localStorage.getItem('currentUser'));
-    await db.put(caseInstance)
-    this.router.navigate(['case', caseInstance._id])
+    const caseService = new CaseService()
+    await caseService.create(caseDefinitionId)
+    this.router.navigate(['case', caseService.case._id])
   }
 }

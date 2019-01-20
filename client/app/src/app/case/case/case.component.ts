@@ -1,9 +1,11 @@
 import { Component, OnInit, AfterContentInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../core/auth/_services/user.service';
 import PouchDB from 'pouchdb'
-import { Case } from '../case.class'
+import { Case } from '../classes/case.class'
+import { CaseEvent } from '../classes/case-event.class'
 import { HttpClient } from '@angular/common/http';
+import { CaseService } from '../case.service'
 
 @Component({
   selector: 'app-case',
@@ -11,29 +13,27 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./case.component.css']
 })
 export class CaseComponent implements OnInit, AfterContentInit {
-
-  caseInstance:Case;
-  caseDefinition:any;
-
+  caseService:CaseService;
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private http: HttpClient,
     private userService: UserService
   ) { }
-
   async ngOnInit() {
   }
-
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
-      const db = new PouchDB(localStorage.getItem('currentUser'))
-      this.caseInstance = await db.get(params['id'])
-      const caseDefinitions:any = await this.http.get('./assets/case-definitions.json').toPromise();
-      const caseDefinitionSrc = caseDefinitions
-        .find(caseDefinition => caseDefinition.id === this.caseInstance.caseDefinitionId)
-        .src;
-      this.caseDefinition = await this.http.get(caseDefinitionSrc).toPromise();
+      const caseService = new CaseService()
+      await caseService.load(params.id)
+      this.caseService = caseService
     })
+  }
+
+  async startEvent(eventDefinitionId) {
+    const caseEvent = this.caseService.startEvent(eventDefinitionId)
+    await this.caseService.save()
+    this.router.navigate(['case', 'event', this.caseService.case._id, caseEvent.id])
   }
 
 }

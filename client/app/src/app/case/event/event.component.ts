@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../core/auth/_services/user.service';
-import PouchDB from 'pouchdb'
+import { CaseService } from '../case.service'
+import { CaseEvent } from '../classes/case-event.class'
 
 
 
@@ -12,7 +13,8 @@ import PouchDB from 'pouchdb'
 })
 export class EventComponent implements OnInit, AfterContentInit {
 
-  case = {};
+  caseService:CaseService
+  caseEvent:CaseEvent
 
   constructor(
     private route: ActivatedRoute,
@@ -23,9 +25,17 @@ export class EventComponent implements OnInit, AfterContentInit {
   }
 
   async ngAfterContentInit() {
-    this.route.queryParams.subscribe(async params => {
-      const db = new PouchDB(this.userService.getUserDbName())
-      this.case = await db.get(params['id'])
+    this.route.params.subscribe(async params => {
+      this.caseService = new CaseService()
+      await this.caseService.load(params.caseId)
+      // @TODO Why is TS having issues with not seeing that CaseEvent comes out of
+      // case.events?
+      const caseEvent = this
+        .caseService
+        .case
+        .events
+        .find(caseEvent => caseEvent.id === params.eventId)
+      this.caseEvent = caseEvent
     })
   }
 
