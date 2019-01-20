@@ -1,0 +1,23 @@
+<h1>{{caseEvent ? caseEvent.name : ''}}</h1>
+<!--
+<p>
+  {{event.description}}
+</p>
+-->
+<ul>
+  <li *ngFor="let formInfo of formsInfo">
+    <span *ngIf="formInfo.required === true">*</span>
+    {{form.name}}
+    <a *ngIf="formInfo.canStart" href="#/case/event/form/start/{{caseService.case._id}}/{{caseEvent.id}}/{{formInfo.eventFormId}}">
+      start
+    </a>
+    <ul>
+      <li *ngFor="let eventFormResponse of eventFormResponses">
+        <a href="#/case/event/form/resume/{{caseService.case._id}}/{{caseEvent.id}}/{{formInfo.eventFormId}}">
+          resume
+        </a>
+
+      </li>
+    </ul>
+  </li>
+</ul>

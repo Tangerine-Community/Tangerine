@@ -1,11 +1,6 @@
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../../core/auth/_services/user.service';
-import PouchDB from 'pouchdb'
-import { Case } from '../classes/case.class'
-import { CaseEvent } from '../classes/case-event.class'
-import { HttpClient } from '@angular/common/http';
-import { CaseService } from '../case.service'
+import { CaseService } from '../../services/case.service'
 
 @Component({
   selector: 'app-case',
@@ -16,9 +11,7 @@ export class CaseComponent implements OnInit, AfterContentInit {
   caseService:CaseService;
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
-    private http: HttpClient,
-    private userService: UserService
+    private router: Router
   ) { }
   async ngOnInit() {
   }
