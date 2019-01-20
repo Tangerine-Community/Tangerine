@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService } from '../../core/auth/_services/authentication.service';
+import { AuthenticationService } from '../../../core/auth/_services/authentication.service';
 import { HttpClient } from '@angular/common/http';
-import { CaseService } from '../case.service'
-import { CaseDefinitionsService } from '../case-definitions.service'
+import { CaseService } from '../../services/case.service'
+import { CaseDefinitionsService } from '../../services/case-definitions.service'
 
 @Component({
   selector: 'app-new-case',
@@ -23,7 +23,6 @@ export class NewCaseComponent implements OnInit {
   async ngOnInit() {
     const caseDefinitionsService = new CaseDefinitionsService();
     this.caseDefinitions = await caseDefinitionsService.load();
-    debugger
   }
 
   async onCaseDefinitionSelect(caseDefinitionId = '') {

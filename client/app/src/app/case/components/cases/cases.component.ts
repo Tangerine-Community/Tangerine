@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../core/auth/_services/user.service';
+import { UserService } from '../../../core/auth/_services/user.service';
 import PouchDB from 'pouchdb';
 
 

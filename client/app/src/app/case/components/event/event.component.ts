@@ -1,8 +1,9 @@
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { UserService } from '../../core/auth/_services/user.service';
-import { CaseService } from '../case.service'
-import { CaseEvent } from '../classes/case-event.class'
+import { UserService } from '../../../core/auth/_services/user.service';
+import { CaseService } from '../../services/case.service'
+import { CaseEvent } from '../../classes/case-event.class'
+import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 
 
 
@@ -15,6 +16,7 @@ export class EventComponent implements OnInit, AfterContentInit {
 
   caseService:CaseService
   caseEvent:CaseEvent
+  caseEventDefinition: CaseEventDefinition
 
   constructor(
     private route: ActivatedRoute,
@@ -28,14 +30,17 @@ export class EventComponent implements OnInit, AfterContentInit {
     this.route.params.subscribe(async params => {
       this.caseService = new CaseService()
       await this.caseService.load(params.caseId)
-      // @TODO Why is TS having issues with not seeing that CaseEvent comes out of
-      // case.events?
       const caseEvent = this
         .caseService
         .case
         .events
         .find(caseEvent => caseEvent.id === params.eventId)
       this.caseEvent = caseEvent
+      this.caseEventDefinition = this
+        .caseService
+        .caseDefinition
+        .eventDefinitions
+        .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
     })
   }
 

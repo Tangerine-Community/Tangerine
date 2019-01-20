@@ -3,11 +3,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { CreateProfileGuardService } from '../user-profile/create-profile-guard.service';
 import { LoginGuard } from '../core/auth/_guards/login-guard.service';
 import { _TRANSLATE } from '../shared/translation-marker';
-import { CasesComponent } from './cases/cases.component';
-import { NewCaseComponent } from './new-case/new-case.component';
-import { CaseComponent } from './case/case.component';
-import { EventComponent } from './event/event.component'
-import { CanDeactivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
+import { CasesComponent } from './components/cases/cases.component';
+import { NewCaseComponent } from './components/new-case/new-case.component';
+import { CaseComponent } from './components/case/case.component';
+import { EventComponent } from './components/event/event.component'
 
 const routes: Routes = [
   {

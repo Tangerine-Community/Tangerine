@@ -5,7 +5,7 @@ class CaseEvent {
   id:string;
   name:string;
   caseEventDefinitionId:string; 
-  formResponses:Array<TangyFormResponse>;
+  ///form:Array<TangyFormResponse>;
   constructor(data?) {
     this.id = data.id
       ? data.id

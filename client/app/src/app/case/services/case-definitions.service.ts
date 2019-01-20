@@ -1,4 +1,4 @@
-import { CaseDefinition } from './classes/case-definition.class'
+import { CaseDefinition } from '../classes/case-definition.class'
 import axios from 'axios';
 export class CaseDefinitionsService {
   async load():Promise<any> {

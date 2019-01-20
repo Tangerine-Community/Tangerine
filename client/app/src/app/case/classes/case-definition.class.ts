@@ -6,11 +6,16 @@ class CaseDefinition {
   revision:string;
   name:string;
   eventDefinitions: Array<CaseEventDefinition> = [];
-  constructor(caseDefinitionData) {
+  constructor(init:CaseDefinition) {
+    Object.assign(this, init);
+    /*
     this.id = caseDefinitionData.id;
     this.revision = caseDefinitionData.revision;
     this.name = caseDefinitionData.name;
-    this.eventDefinitions = caseDefinitionData.eventDefinitions.map(eventDefinition => new CaseEventDefinition(eventDefinition))
+    this.eventDefinitions = caseDefinitionData
+      .eventDefinitions
+      .map(eventDefinition => new CaseEventDefinition(eventDefinition))
+    */
   }
 }
 

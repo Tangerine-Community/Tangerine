@@ -1,10 +1,9 @@
-import UUID from 'uuid/v4';
-import { CaseEventDefinition } from './classes/case-event-definition.class'
-import { Case } from './classes/case.class'
-import { CaseEvent } from './classes/case-event.class'
-import PouchDB from 'pouchdb';
-import { CaseDefinition } from './classes/case-definition.class';
+import { CaseEventDefinition } from '../classes/case-event-definition.class'
+import { Case } from '../classes/case.class'
+import { CaseEvent } from '../classes/case-event.class'
+import { CaseDefinition } from '../classes/case-definition.class';
 import { CaseDefinitionsService } from './case-definitions.service';
+import PouchDB from 'pouchdb';
 
 class EventInfo {
   canCreateInstance:boolean;
