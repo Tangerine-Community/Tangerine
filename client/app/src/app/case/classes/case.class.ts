@@ -1,6 +1,5 @@
 import UUID from 'uuid/v4';
 import { CaseEvent } from './case-event.class'
-import { CaseEventDefinition } from './case-event-definition.class'
 
 class Case {
   _id:string;
@@ -15,7 +14,11 @@ class Case {
     this._id = data._id
     this._rev = data._rev
     this.caseDefinitionId = data.caseDefinitionId
-    this.events = data.events.map(eventData => new CaseEvent(eventData))
+    this.events = data.events.map(caseEventData => new CaseEvent(
+      caseEventData.id,
+      caseEventData.name,
+      caseEventData.caseEventDefinitionId
+    ))
   }
 }
 

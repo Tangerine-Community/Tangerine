@@ -1,4 +1,3 @@
-import UUID from 'uuid/v4';
 import { CaseEventDefinition } from './case-event-definition.class'
 
 class CaseDefinition {

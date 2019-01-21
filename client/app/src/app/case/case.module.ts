@@ -6,6 +6,7 @@ import { EventComponent } from './components/event/event.component';
 import { CasesComponent } from './components/cases/cases.component';
 import { NewCaseComponent } from './components/new-case/new-case.component';
 import { CaseRoutingModule } from './case-routing.module';
+import { EventFormComponent } from './components/event-form/event-form.component';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -17,7 +18,8 @@ import { CaseRoutingModule } from './case-routing.module';
     EventComponent,
     CasesComponent,
     CaseComponent,
-    NewCaseComponent
+    NewCaseComponent,
+    EventFormComponent
   ]
 })
 export class CaseModule { }

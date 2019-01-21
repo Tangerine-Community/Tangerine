@@ -5,15 +5,15 @@
 </p>
 -->
 <ul>
-  <li *ngFor="let formInfo of formsInfo">
-    <span *ngIf="formInfo.required === true">*</span>
-    {{form.name}}
-    <a *ngIf="formInfo.canStart" href="#/case/event/form/start/{{caseService.case._id}}/{{caseEvent.id}}/{{formInfo.eventFormId}}">
+  <li *ngFor="let eventFormInfo of eventFormsInfo">
+    <span *ngIf="eventFormInfo.required === true">*</span>
+    {{eventFormInfo.name}}
+    <a *ngIf="eventFormInfo.canStart" (click)="startEventForm(eventFormInfo.eventFormDefinitionId)">
       start
     </a>
     <ul>
-      <li *ngFor="let eventFormResponse of eventFormResponses">
-        <a href="#/case/event/form/resume/{{caseService.case._id}}/{{caseEvent.id}}/{{formInfo.eventFormId}}">
+      <li *ngFor="let formResponse of eventFormInfo.responses">
+        <a href="#/case/event/form/{{caseService.case._id}}/{{caseEvent.id}}/{{formResponse._id}}">
           resume
         </a>
 

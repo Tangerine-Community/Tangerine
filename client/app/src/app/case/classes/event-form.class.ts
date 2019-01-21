@@ -1,12 +1,16 @@
-export class EventForm {
+class EventForm {
   id:string;
-  formId:string;
-  name:string;
-  required:boolean;
-  constructor(data) {
-    this.id = data.id
-    this.formId = data.formid
-    this.name = data.name
-    this.required = data.required
+  caseId:string; 
+  caseEventId:string;
+  eventFormDefinitionId:string;
+  formResponseId:string;
+  constructor(id, caseId, caseEventId, eventFormDefinitionId, formResponseId?) {
+    this.id = id
+    this.caseId = caseId
+    this.caseEventId = caseEventId
+    this.eventFormDefinitionId = eventFormDefinitionId
+    this.formResponseId = formResponseId ? formResponseId : ''
   }
 }
+
+export { EventForm }
