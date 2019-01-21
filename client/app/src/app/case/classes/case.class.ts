@@ -17,7 +17,8 @@ class Case {
     this.events = data.events.map(caseEventData => new CaseEvent(
       caseEventData.id,
       caseEventData.name,
-      caseEventData.caseEventDefinitionId
+      caseEventData.caseEventDefinitionId,
+      caseEventData.eventForms
     ))
   }
 }

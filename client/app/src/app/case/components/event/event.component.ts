@@ -72,7 +72,7 @@ export class EventComponent implements OnInit, AfterContentInit {
     // Make this function...
     const eventForm = await this.caseService.startEventForm(this.caseEvent.id, eventFormDefinitionId)
     // Then navigate
-    this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.eventFormDefinitionId, eventForm.id])
+    this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])
   }
 
 }
