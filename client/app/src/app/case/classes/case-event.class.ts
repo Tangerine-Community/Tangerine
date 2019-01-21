@@ -5,12 +5,12 @@ class CaseEvent {
   name:string;
   caseEventDefinitionId:string; 
   eventForms?:Array<EventForm> = [];
-  constructor(id, name, caseEventDefinitionId, eventFormResponses?) {
+  constructor(id, name, caseEventDefinitionId, eventForms?) {
     this.id = id
     this.name = name
     this.caseEventDefinitionId = caseEventDefinitionId 
-    this.eventForms = eventFormResponses
-      ? eventFormResponses
+    this.eventForms = eventForms
+      ? eventForms
       : this.eventForms
   }
 }

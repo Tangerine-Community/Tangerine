@@ -66,15 +66,15 @@ class CaseService {
     return caseEvent
   }
   async startEventForm(caseEventId, eventFormId):Promise<EventForm> {
-    const eventFormResponse = new EventForm(UUID(), this.case._id, caseEventId, eventFormId)
+    const eventForm = new EventForm(UUID(), this.case._id, caseEventId, eventFormId)
     this
       .case
       .events
       .find(caseEvent => caseEvent.id === caseEventId)
       .eventForms
-      .push(eventFormResponse)
+      .push(eventForm)
     await this.save()
-    return eventFormResponse
+    return eventForm
   }
 }
 
