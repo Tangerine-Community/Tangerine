@@ -5,12 +5,12 @@
 <ul *ngIf="caseService">
   <li *ngFor="let eventInfo of caseService.eventsInfo">
     <h3>
-      {{eventInfo.eventDefinition.name}}
+      {{eventInfo.caseEventDefinition.name}}
     </h3>
-    <paper-button *ngIf="eventInfo.canCreateInstance" (click)="startEvent(eventInfo.eventDefinition.id)">start event</paper-button>
+    <paper-button *ngIf="eventInfo.canCreate" (click)="startEvent(eventInfo.caseEventDefinition.id)">start event</paper-button>
     <ul>
-      <li *ngFor="let eventInstance of eventInfo.instances">
-        <a routerLink="#/case/{{caseInstance._id}}/event/{{eventInstance._id}}">{{eventInfo.name}}</a>
+      <li *ngFor="let caseEvent of eventInfo.caseEvents">
+        <a routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">{{caseEvent.name}}</a>
       </li>
     </ul>
   </li>

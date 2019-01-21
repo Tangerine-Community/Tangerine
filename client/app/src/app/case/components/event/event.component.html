@@ -12,8 +12,8 @@
       start
     </a>
     <ul>
-      <li *ngFor="let formResponse of eventFormInfo.responses">
-        <a href="#/case/event/form/{{caseService.case._id}}/{{caseEvent.id}}/{{formResponse._id}}">
+      <li *ngFor="let eventForm of eventFormInfo.eventForms">
+        <a href="#/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}">
           resume
         </a>
 
