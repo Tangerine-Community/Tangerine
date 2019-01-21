@@ -37,14 +37,14 @@ class CaseService {
     this.eventsInfo = this
       .caseDefinition
       .eventDefinitions
-      .map(eventDefinition => {
+      .map(caseEventDefinition => {
         return {
-          eventDefinition,
+          caseEventDefinition,
           // @TODO: If there is an event, show a link...
           //If there is an event and this event type can have many then show "start event"
           //If there is not an event then show "start event"
-          canCreateInstance: true,
-          eventInstances: caseInstance.events.filter(eventInstance => eventInstance.eventDefinitionId === eventDefinition.id)
+          canCreate: true,
+          caseEvents: caseInstance.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id)
         }
       }) 
   }

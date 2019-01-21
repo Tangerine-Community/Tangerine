@@ -24,7 +24,6 @@ export class EventFormComponent implements AfterContentInit {
   tangyFormEl:any
   throttledSaveLoaded:boolean;
   throttledSaveFiring:boolean;
-  // @TODO Should be type TangyFormResponse but we need to build that out.
   formResponse:any
   @ViewChild('container') container: ElementRef;
   constructor(
@@ -63,6 +62,8 @@ export class EventFormComponent implements AfterContentInit {
         this.tangyFormEl.response = this.formResponse
       } else {
         this.tangyFormEl.newResponse()
+        this.eventForm.formResponseId = this.tangyFormEl.store.getState()._id
+        await this.caseService.save()
       }
       this.tangyFormEl.addEventListener('TANGY_FORM_UPDATE', _ => {
         let response = _.target.store.getState()

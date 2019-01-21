@@ -6,6 +6,7 @@ class Case {
   _rev:string;
   caseDefinitionId:string;
   events: Array<CaseEvent> = [];
+  collection:string = 'Case'
   constructor(data?:any) {
     if (!data) {
       this._id = UUID()

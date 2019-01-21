@@ -8,5 +8,11 @@
     "title": "Form 1",
     "src": "./assets/form1/form.html",
     "id": "form1"
+  },
+  {
+    "title": "Form 2",
+    "src": "./assets/form2/form.html",
+    "id": "form2"
   }
+
 ]
