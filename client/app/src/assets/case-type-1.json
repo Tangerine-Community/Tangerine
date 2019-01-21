@@ -33,7 +33,7 @@
           "formId": "form2",
           "name": "Form 2",
           "required": true,
-          "repeatable": false
+          "repeatable": true 
         }
       ]
     },
