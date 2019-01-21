@@ -1,19 +1,17 @@
-import UUID from 'uuid/v4';
-import { TangyFormResponse } from '../../tangy-forms/tangy-form-response.class'
+import { EventForm } from './event-form.class'
 
 class CaseEvent {
-  id:string;
+  id?:string;
   name:string;
   caseEventDefinitionId:string; 
-  ///form:Array<TangyFormResponse>;
-  constructor(data?) {
-    this.id = data.id
-      ? data.id
-      : UUID();
-    this.caseEventDefinitionId = data.caseEventDefinitionId 
-      ? data.caseEventDefinitionId
-      : '';
-    this.name = data.name ? data.name : ''
+  eventForms?:Array<EventForm> = [];
+  constructor(id, name, caseEventDefinitionId, eventFormResponses?) {
+    this.id = id
+    this.name = name
+    this.caseEventDefinitionId = caseEventDefinitionId 
+    this.eventForms = eventFormResponses
+      ? eventFormResponses
+      : this.eventForms
   }
 }
 

@@ -2,9 +2,13 @@ export class EventFormDefinition {
   id:string
   formId:string
   name:string
+  repeatable: boolean
   required:boolean
-  repeatable:boolean
-  public constructor(init:EventFormDefinition) {
-    Object.assign(this, init);
+  constructor(data) {
+    this.id = data.id
+    this.formId = data.formid
+    this.name = data.name
+    this.required = data.required
+    this.repeatable = data.repeatable
   }
 }
