@@ -3,5 +3,10 @@
     "title": "Example Form",
     "src": "./assets/example/form.html",
     "id": "example"
+  },
+  {
+    "title": "Form 1",
+    "src": "./assets/form1/form.html",
+    "id": "form1"
   }
 ]
