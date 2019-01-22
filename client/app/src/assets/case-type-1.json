@@ -28,13 +28,6 @@
           "name": "Form 1",
           "required": true,
           "repeatable": false
-        },
-        {
-          "id": "event-form-2",
-          "formId": "form2",
-          "name": "Form 2",
-          "required": true,
-          "repeatable": true 
         }
       ]
     },
@@ -55,7 +48,23 @@
         {
           "id": "event-form-2",
           "formId": "form2",
-          "name": "Form 2",
+          "name": "Form 2 (repeatable)",
+          "required": true,
+          "repeatable": true 
+        }
+      ]
+    },
+    {
+      "id": "event-definition-repeatable-event",
+      "name": "A Repeatable Event",
+      "description": "A repeatable event.",
+      "windows": [],
+      "repeatable": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-1",
+          "formId": "form1",
+          "name": "Form 1",
           "required": true,
           "repeatable": false
         }
