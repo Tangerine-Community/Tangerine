@@ -60,16 +60,10 @@
     <div class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{selectedClass.doc.items[0].inputs[2].value}} - {{selectedCurriculum.label}}</p></div>
     <table class="dashboard-table">
       <tr>
-        <th>&nbsp;</th>
         <th>Student</th>
         <th *ngFor="let column of formColumns;let i=index"> {{column}} </th>
       </tr>
       <tr *ngFor="let element of allStudentResults">
-        <td (click)="$event ? archiveStudent(element) : null" >
-          <button routerLink="manage-user-profile" mat-menu-item>
-            <mat-icon class="material-icons menu-tangy-location-list-icon">delete</mat-icon>
-          </button>
-        </td>
         <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
         <td *ngFor="let form of curriculumForms;let i=index">
                 <span *ngIf="element.forms[form.id]?.response ; else elseBlock ">
