@@ -1,6 +1,13 @@
-<h1>New Case</h1>
-<ul>
-  <li *ngFor="let caseDefinition of caseDefinitions">
-    <a (click)="onCaseDefinitionSelect(caseDefinition.id)">{{caseDefinition.name}}</a>
-  </li>
-</ul>
+<div class="wrapper">
+  <h1>Case Definitions</h1>
+  <div class="case-definition-cards">
+    <paper-card class="case-definition-card" heading="{{caseDefinition.name}}" class="case-definition-card" *ngFor="let caseDefinition of caseDefinitions">
+      <div class="card-content">
+        {{caseDefinition.description}}
+      </div>
+      <div class="card-actions">
+        <paper-button (click)="onCaseDefinitionSelect(caseDefinition.id)">open</paper-button>
+      </div>
+    </paper-card>
+  </div>
+</div>

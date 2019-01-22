@@ -14,21 +14,30 @@ class EventInfo {
 }
 
 class CaseService {
-  _id:string;
-  _rev:string;
-  db:PouchDB;
-  case:Case;
-  caseDefinition:CaseDefinition;
-  eventsInfo:Array<any>;
+
+  _id:string
+  _rev:string
+  db:PouchDB
+  case:Case
+  caseDefinition:CaseDefinition
+  caseDefinitionService:CaseDefinitionsService
+  eventsInfo:Array<any>
+
   constructor() {
     this.db = new PouchDB(localStorage.getItem('currentUser'));
+    this.caseDefinitionService = new CaseDefinitionsService()
   }
+
   async create(caseDefinitionId) {
     const caseInstance = new Case()
     caseInstance.caseDefinitionId = caseDefinitionId;
+    caseInstance.label = (await this.caseDefinitionService.load())
+      .find(caseDefinition => caseDefinition.id === caseDefinitionId)
+      .name
     await this.setCase(caseInstance)
     await this.save()
   }
+
   async setCase(caseInstance) {
     this.case = caseInstance
     const caseDefinitionService = new CaseDefinitionsService();
@@ -59,7 +68,9 @@ class CaseService {
     const caseEvent = new CaseEvent(
       UUID(),
       eventDefinitionId,
-      eventDefinitionId
+      eventDefinitionId,
+      [],
+      Date.now()
     )
     this.case.events.push(caseEvent)
     await this.save()

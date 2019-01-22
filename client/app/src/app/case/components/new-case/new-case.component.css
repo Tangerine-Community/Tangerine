@@ -1,0 +1,18 @@
+
+.wrapper {
+    margin: 65px 15px 0px;
+}
+paper-button {
+    background: var(--accent-color);
+    color: white;
+}
+paper-card {
+    text-align: left;
+}
+.case-definition-cards {
+    text-align: center;
+}
+.case-definition-card {
+    width: 90%;
+    margin-bottom: 15px;
+}

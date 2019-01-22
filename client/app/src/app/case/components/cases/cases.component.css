@@ -1,0 +1,15 @@
+
+.wrapper {
+    margin: 15px;
+    margin: 65px 15px 0px;
+}
+paper-fab {
+    background: var(--accent-color);
+    color: white;
+}
+
+.new-case-link {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+}

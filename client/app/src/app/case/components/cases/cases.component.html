@@ -1,5 +1,14 @@
-<h1>Cases</h1>
-<paper-button routerLink="/new-case">new case</paper-button>
-<ul>
-  <li *ngFor="let case of cases" routerLink="/case/{{case._id}}">{{case._id}}</li>
-</ul>
+
+<div class="wrapper">
+  <h1>Cases</h1>
+  <paper-fab class="new-case-link" routerLink="/new-case" icon="create-new-folder">new case</paper-fab>
+  <div role="listbox">
+    <paper-icon-item *ngFor="let case of cases" routerLink="/case/{{case._id}}">
+      <iron-icon icon="folder-shared" slot="item-icon"></iron-icon> 
+      <paper-item-body two-line>
+          <div>{{case.label}} ({{case._id.substr(0,6)}})</div>
+          <div secondary>{{case.openedDate | date:'medium'}}</div>
+      </paper-item-body>
+    </paper-icon-item>
+  </div>
+</div>

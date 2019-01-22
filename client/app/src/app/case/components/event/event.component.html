@@ -1,5 +1,8 @@
 <div class="wrapper">
-  <h1>Event: {{caseEvent ? caseEvent.name : ''}} {{caseEvent ? caseEvent.id.substr(0,6) : ''}}</h1>
+  <h1>
+    <iron-icon icon="event"></iron-icon> 
+    {{caseEvent ? caseEvent.name : ''}} ({{caseEvent ? caseEvent.id.substr(0,6) : ''}})
+  </h1>
   <div class="form-cards" *ngIf="caseService">
     <paper-card 
       heading="{{eventFormInfo.name}}"
