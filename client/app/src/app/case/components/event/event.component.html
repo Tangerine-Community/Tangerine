@@ -14,16 +14,23 @@
         <span *ngIf="eventFormInfo.eventForms.length === 0">
           You have not started this form.
         </span>
-        <ol>
-          <li *ngFor="let eventForm of eventFormInfo.eventForms">
-            <a href="#/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}">
-              {{eventFormInfo.name}} {{eventForm.id.substr(0,6)}}
-            </a>
-          </li>
-        </ol>
+        <div *ngIf="eventFormInfo.eventForms.length > 0" role="listbox">
+          <paper-icon-item 
+            *ngFor="let eventForm of eventFormInfo.eventForms"
+            routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}"
+          >
+            <iron-icon icon="assignment" slot="item-icon"></iron-icon> 
+            <paper-item-body two-line>
+              <div>
+                {{eventFormInfo.name}} {{eventForm.id.substr(0,6)}}
+              </div>
+              <div secondary>{{eventFormInfo.startDate | date:'medium'}}</div>
+            </paper-item-body>
+          </paper-icon-item>
+        </div>
       </div>
-      <div class="card-actions">
-        <paper-button *ngIf="eventFormInfo.canStart" (click)="startEventForm(eventFormInfo.eventFormDefinitionId)">
+      <div class="card-actions" *ngIf="eventFormInfo.canStart">
+        <paper-button (click)="startEventForm(eventFormInfo.eventFormDefinitionId)">
           start
         </paper-button>
       </div>

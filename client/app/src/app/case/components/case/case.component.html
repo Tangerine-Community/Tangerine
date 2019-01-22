@@ -24,7 +24,7 @@
           </paper-icon-item>
         </div>
       </div>
-      <div class="card-actions">
+      <div class="card-actions" *ngIf="eventInfo.canCreate">
         <paper-button 
           *ngIf="eventInfo.canCreate && eventInfo.caseEvents.length === 0" 
           (click)="startEvent(eventInfo.caseEventDefinition.id)">
