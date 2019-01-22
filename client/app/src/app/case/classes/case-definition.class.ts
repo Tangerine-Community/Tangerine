@@ -1,10 +1,13 @@
 import { CaseEventDefinition } from './case-event-definition.class'
 
 class CaseDefinition {
-  id:string;
-  revision:string;
-  name:string;
-  eventDefinitions: Array<CaseEventDefinition> = [];
+
+  id:string
+  revision:string
+  name:string
+  description:string
+  eventDefinitions: Array<CaseEventDefinition> = []
+
   constructor(init:CaseDefinition) {
     Object.assign(this, init);
     /*
@@ -16,6 +19,7 @@ class CaseDefinition {
       .map(eventDefinition => new CaseEventDefinition(eventDefinition))
     */
   }
+
 }
 
 export { CaseDefinition }
