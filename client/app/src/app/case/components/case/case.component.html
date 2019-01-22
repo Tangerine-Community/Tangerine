@@ -1,3 +1,4 @@
+<app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id"></app-case-breadcrumb>
 <div class="wrapper">
   <h1 *ngIf="caseService">
     <iron-icon icon="folder-shared"></iron-icon> 

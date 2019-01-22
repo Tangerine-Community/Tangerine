@@ -1,3 +1,4 @@
+<app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
 <div class="wrapper">
   <h1>
     <iron-icon icon="event"></iron-icon> 
