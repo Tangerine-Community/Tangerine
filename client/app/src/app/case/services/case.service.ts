@@ -49,10 +49,15 @@ class CaseService {
       .map(caseEventDefinition => {
         return {
           caseEventDefinition,
-          // @TODO: If there is an event, show a link...
-          //If there is an event and this event type can have many then show "start event"
-          //If there is not an event then show "start event"
-          canCreate: true,
+          canCreate: 
+            caseEventDefinition.repeatable 
+            || 
+            this.case.events.reduce((numberOfMatchingEvents, caseEvent) => caseEvent.caseEventDefinitionId === caseEventDefinition.id 
+              ? numberOfMatchingEvents + 1 
+              : numberOfMatchingEvents
+            , 0) === 0
+            ? true 
+            : false,
           caseEvents: caseInstance.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id)
         }
       }) 
