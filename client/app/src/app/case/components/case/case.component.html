@@ -1,17 +1,36 @@
-<p *ngIf="caseService">
-</p>
+<div class="wrapper">
+  <h1 *ngIf="caseService">
+    Case: {{caseService.case._id.substr(0,6)}}
+  </h1>
 
-<h2>Events</h2>
-<ul *ngIf="caseService">
-  <li *ngFor="let eventInfo of caseService.eventsInfo">
-    <h3>
-      {{eventInfo.caseEventDefinition.name}}
-    </h3>
-    <paper-button *ngIf="eventInfo.canCreate" (click)="startEvent(eventInfo.caseEventDefinition.id)">start event</paper-button>
-    <ul>
-      <li *ngFor="let caseEvent of eventInfo.caseEvents">
-        <a routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">{{caseEvent.name}}</a>
-      </li>
-    </ul>
-  </li>
-</ul>
+  <h2>Events</h2>
+  <div class="event-cards" *ngIf="caseService">
+    <paper-card class="event-card" heading="{{eventInfo.caseEventDefinition.name}}" *ngFor="let eventInfo of caseService.eventsInfo">
+      <div class="card-content">
+        <span *ngIf="eventInfo.caseEvents.length === 0">
+          You have not started this event.
+        </span>
+        <ol *ngIf="eventInfo.caseEvents.length > 0">
+          <li *ngFor="let caseEvent of eventInfo.caseEvents">
+            <a routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">
+              {{eventInfo.caseEventDefinition.name}} {{caseEvent.id.substr(0,6)}}
+            </a>
+          </li>
+        </ol>
+      </div>
+      <div class="card-actions">
+        <paper-button 
+          *ngIf="eventInfo.canCreate && eventInfo.caseEvents.length === 0" 
+          (click)="startEvent(eventInfo.caseEventDefinition.id)">
+          start event
+        </paper-button>
+        <paper-button 
+          *ngIf="eventInfo.canCreate && eventInfo.caseEvents.length > 0" 
+          (click)="startEvent(eventInfo.caseEventDefinition.id)">
+          start another
+        </paper-button>
+      </div>
+
+    </paper-card>
+  </div>
+</div>

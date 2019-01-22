@@ -1,0 +1,18 @@
+
+.wrapper {
+    margin: 65px 15px 0px;
+}
+paper-button {
+    background: var(--accent-color);
+    color: white;
+}
+paper-card {
+    text-align: left;
+}
+.form-cards {
+    text-align: center;
+}
+.form-card {
+    width: 90%;
+    margin-bottom: 15px;
+}
