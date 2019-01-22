@@ -1,23 +1,30 @@
-<h1>{{caseEvent ? caseEvent.name : ''}}</h1>
-<!--
-<p>
-  {{event.description}}
-</p>
--->
-<ul>
-  <li *ngFor="let eventFormInfo of eventFormsInfo">
-    <span *ngIf="eventFormInfo.required === true">*</span>
-    {{eventFormInfo.name}}
-    <a *ngIf="eventFormInfo.canStart" (click)="startEventForm(eventFormInfo.eventFormDefinitionId)">
-      start
-    </a>
-    <ul>
-      <li *ngFor="let eventForm of eventFormInfo.eventForms">
-        <a href="#/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}">
-          resume
-        </a>
+<div class="wrapper">
+  <h1>Event: {{caseEvent ? caseEvent.name : ''}} {{caseEvent ? caseEvent.id.substr(0,6) : ''}}</h1>
+  <div class="form-cards" *ngIf="caseService">
+    <paper-card 
+      heading="{{eventFormInfo.name}}"
+      class="form-card" 
+      *ngFor="let eventFormInfo of eventFormsInfo"
+    >
+      <div class="card-content">
+        <span *ngIf="eventFormInfo.required === true">*</span>
+        <span *ngIf="eventFormInfo.eventForms.length === 0">
+          You have not started this form.
+        </span>
+        <ol>
+          <li *ngFor="let eventForm of eventFormInfo.eventForms">
+            <a href="#/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}">
+              {{eventFormInfo.name}} {{eventForm.id.substr(0,6)}}
+            </a>
+          </li>
+        </ol>
+      </div>
+      <div class="card-actions">
+        <paper-button *ngIf="eventFormInfo.canStart" (click)="startEventForm(eventFormInfo.eventFormDefinitionId)">
+          start
+        </paper-button>
+      </div>
 
-      </li>
-    </ul>
-  </li>
-</ul>
+    </paper-card>
+  </div>
+</div>
