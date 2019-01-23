@@ -17,6 +17,7 @@ class Case {
     }
     this._id = data._id
     this._rev = data._rev
+    this.openedDate = data.openedDate
     this.caseDefinitionId = data.caseDefinitionId
     this.label = data.label
     this.events = data.events.map(caseEventData => new CaseEvent(

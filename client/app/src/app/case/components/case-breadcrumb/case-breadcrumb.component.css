@@ -1,7 +1,7 @@
 :host {
-    float: left;
-    width: 100%;
-    margin-top: 15px;
-    margin-left: 15px;
-    margin-bottom: 15px;
+    position: fixed;
+    top: 17px;
+    left: 15px;
+    z-index: 99999;
+    color: white;
 }
