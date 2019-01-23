@@ -1,8 +1,8 @@
 <iron-icon icon="home" routerLink="/"></iron-icon>
 <span *ngFor="let crumb of crumbs">
   <iron-icon icon="chevron-right"></iron-icon>
-  <a routerLink="{{crumb.url}}">
+  <span routerLink="{{crumb.url}}">
     <iron-icon icon="{{crumb.icon}}"></iron-icon> 
     {{crumb.label}}
-  </a>
+  </span>
 </span>

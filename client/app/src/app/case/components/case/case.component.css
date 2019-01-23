@@ -1,7 +1,26 @@
+.subject-header {
+    background: #212a3f;
+    color: white;
+    font-size: 1em;
+    padding: 15px;
+}
+
+.subject-header iron-icon {
+    width: 72px;
+    height: 72px;
+    position: relative;
+    bottom: 5px; 
+}
+.subject-header h1 {
+    font-size: 3em;
+}
+
+.subject-header div[secondary] {
+    margin-left: 10px;
+}
 
 .wrapper {
     margin: 15px;
-    margin: 65px 15px 0px;
 }
 paper-button {
     background: var(--accent-color);
