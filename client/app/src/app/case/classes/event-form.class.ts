@@ -1,11 +1,13 @@
 class EventForm {
   id:string;
+  complete:boolean = false
   caseId:string; 
   caseEventId:string;
   eventFormDefinitionId:string;
   formResponseId:string;
-  constructor(id, caseId, caseEventId, eventFormDefinitionId, formResponseId?) {
+  constructor(id, complete, caseId, caseEventId, eventFormDefinitionId, formResponseId?) {
     this.id = id
+    this.complete = complete
     this.caseId = caseId
     this.caseEventId = caseEventId
     this.eventFormDefinitionId = eventFormDefinitionId

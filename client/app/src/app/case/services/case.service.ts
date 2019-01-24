@@ -72,6 +72,7 @@ class CaseService {
   async startEvent(eventDefinitionId:string):Promise<CaseEvent> {
     const caseEvent = new CaseEvent(
       UUID(),
+      false,
       eventDefinitionId,
       eventDefinitionId,
       [],
@@ -82,7 +83,7 @@ class CaseService {
     return caseEvent
   }
   async startEventForm(caseEventId, eventFormId):Promise<EventForm> {
-    const eventForm = new EventForm(UUID(), this.case._id, caseEventId, eventFormId)
+    const eventForm = new EventForm(UUID(), false, this.case._id, caseEventId, eventFormId)
     this
       .case
       .events
@@ -91,6 +92,30 @@ class CaseService {
       .push(eventForm)
     await this.save()
     return eventForm
+  }
+  
+  async markEventFormComplete(caseEventId:string, eventFormId:string) {
+    //
+    let caseEvent = this.case.events
+      .find(caseEvent => caseEvent.id === caseEventId)
+    let eventDefinition = this.caseDefinition.eventDefinitions.find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+    //
+    caseEvent
+      .eventForms
+      .find(eventForm => eventForm.id === eventForm.id)
+      .complete = true
+    //
+    // Test this by opening case type 1, second event, filling out two of the second form, should be evrnt incomplete, then the first form, shoud be event complete
+    let eventForms = caseEvent.eventForms.filter(eventForm => eventForm.eventFormDefinitionId === eventDefinition.id)
+    let numberOfEventFormsRequired = eventDefinition.eventFormDefinitions.reduce((acc, eventFormDefinition) => eventFormDefinition.required ? acc + 1 : acc, 0)
+    let numberOfUniqueCompleteEventForms = eventForms
+      .reduce((acc, eventForm) => eventForm.complete ? Array.from(new Set([...acc, eventForm.eventFormDefinitionId])) : acc, []).length
+    this.case.events.find(caseEvent => caseEvent.id === caseEventId)
+      .complete = numberOfEventFormsRequired === numberOfUniqueCompleteEventForms ? true : false
+    //
+    await this.save()
+
+    
   }
 }
 
