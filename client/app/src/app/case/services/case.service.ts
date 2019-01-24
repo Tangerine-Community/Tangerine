@@ -62,13 +62,16 @@ class CaseService {
         }
       }) 
   }
+
   async load(id:string) {
     await this.setCase(new Case(await this.db.get(id)))
   }
+
   async save() {
     await this.db.put(this.case)
     await this.setCase(await this.db.get(this.case._id))
   }
+
   async startEvent(eventDefinitionId:string):Promise<CaseEvent> {
     const caseEvent = new CaseEvent(
       UUID(),
@@ -82,6 +85,7 @@ class CaseService {
     await this.save()
     return caseEvent
   }
+
   async startEventForm(caseEventId, eventFormId):Promise<EventForm> {
     const eventForm = new EventForm(UUID(), false, this.case._id, caseEventId, eventFormId)
     this
@@ -96,9 +100,14 @@ class CaseService {
   
   async markEventFormComplete(caseEventId:string, eventFormId:string) {
     //
-    let caseEvent = this.case.events
+    let caseEvent = this
+      .case
+      .events
       .find(caseEvent => caseEvent.id === caseEventId)
-    let eventDefinition = this.caseDefinition.eventDefinitions.find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+    let eventDefinition = this
+      .caseDefinition
+      .eventDefinitions
+      .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
     //
     caseEvent
       .eventForms
@@ -117,17 +126,30 @@ class CaseService {
           : acc
         , [])
         .length
-    debugger
     this
       .case
       .events
       .find(caseEvent => caseEvent.id === caseEventId)
       .complete = numberOfEventFormsRequired === numberOfUniqueCompleteEventForms ? true : false
-    //
+    // Check to see if all required Events are complete in Case. If so, mark Case complete.
+    let numberOfCaseEventsRequired = this.caseDefinition
+      .eventDefinitions
+      .reduce((acc, definition) => definition.required ? acc + 1 : acc, 0)
+    let numberOfUniqueCompleteCaseEvents = this.case
+      .events
+      .reduce((acc, instance) => instance.complete 
+          ? Array.from(new Set([...acc, instance.caseEventDefinitionId])) 
+          : acc
+        , [])
+        .length
+    this
+      .case
+      .complete = numberOfCaseEventsRequired === numberOfUniqueCompleteCaseEvents ? true : false
     await this.save()
 
     
   }
+
 }
 
 export { CaseService }

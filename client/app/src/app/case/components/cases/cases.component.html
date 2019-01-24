@@ -5,14 +5,14 @@
     <iron-icon icon="apps" slot="item-icon"></iron-icon> 
     Cases
   </h1>
-  <div secondary>{{cases.length}} open cases</div>
+  <div secondary>{{numberOfOpenCases}} open cases</div>
 </div>
 
 <div class="wrapper">
   <paper-fab class="new-case-link" routerLink="/new-case" icon="create-new-folder">new case</paper-fab>
   <div role="listbox">
     <paper-icon-item *ngFor="let case of cases" routerLink="/case/{{case._id}}">
-      <iron-icon icon="folder-shared" slot="item-icon"></iron-icon> 
+      <iron-icon icon="{{case.complete ? 'notification:folder-special' : 'folder'}}" slot="item-icon"></iron-icon> 
       <paper-item-body two-line>
           <div>{{case.label}} ({{case._id.substr(0,6)}})</div>
           <div secondary>{{case.openedDate | date:'medium'}}</div>
