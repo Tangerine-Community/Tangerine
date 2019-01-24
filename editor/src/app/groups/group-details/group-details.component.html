@@ -122,7 +122,7 @@
     <app-location-list-editor></app-location-list-editor>
   </mat-tab>
 
-  <mat-tab *ngIf="isSuperAdminUser||isGroupAdminUser" label="{{'Manage Users'|translate}}">
+  <mat-tab *ngIf="isGroupAdminUser" label="{{'Manage Users'|translate}}">
     <app-list-users class="tangy-full-width"></app-list-users>
   </mat-tab>
 
