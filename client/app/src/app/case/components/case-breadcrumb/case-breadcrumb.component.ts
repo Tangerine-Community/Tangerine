@@ -28,7 +28,7 @@ export class CaseBreadcrumbComponent implements OnInit {
         <Crumb>{
           url: `/case/${this.caseId}`,
           label: `Case ${this.caseId.substr(0,6)}`,
-          icon: 'folder-shared'
+          icon: 'folder'
         }
       ]
     }

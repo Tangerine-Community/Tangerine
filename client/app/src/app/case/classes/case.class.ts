@@ -1,13 +1,14 @@
-import UUID from 'uuid/v4';
+import UUID from 'uuid/v4'
 import { CaseEvent } from './case-event.class'
 
 class Case {
-  _id:string;
-  _rev:string;
-  caseDefinitionId:string;
-  label:string;
-  openedDate:number;
-  events: Array<CaseEvent> = [];
+  _id:string
+  _rev:string
+  complete: boolean = false
+  caseDefinitionId:string
+  label:string
+  openedDate:number
+  events: Array<CaseEvent> = []
   collection:string = 'Case'
   constructor(data?:any) {
     if (!data) {
@@ -17,6 +18,7 @@ class Case {
     }
     this._id = data._id
     this._rev = data._rev
+    this.complete = data.complete
     this.openedDate = data.openedDate
     this.caseDefinitionId = data.caseDefinitionId
     this.label = data.label
