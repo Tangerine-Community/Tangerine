@@ -11,7 +11,7 @@ import { UserResgistrationComponent } from './_components/user-resgistration/use
 import { LoginGuard } from './_guards/login-guard.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
-import { SuperAdminUserGuard } from './_guards/super-admin-user-guard.service';
+import { AdminUserGuard } from './_guards/admin-user-guard.service';
 @NgModule({
   imports: [
     CommonModule,
@@ -28,6 +28,6 @@ import { SuperAdminUserGuard } from './_guards/super-admin-user-guard.service';
 
   ],
   declarations: [UserResgistrationComponent, LoginComponent, ManageUsersComponent],
-  providers: [AuthenticationService, LoginGuard, SuperAdminUserGuard, UserService]
+  providers: [AuthenticationService, LoginGuard, AdminUserGuard, UserService]
 })
 export class AuthModule { }
