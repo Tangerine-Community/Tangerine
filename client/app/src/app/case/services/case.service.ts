@@ -102,15 +102,26 @@ class CaseService {
     //
     caseEvent
       .eventForms
-      .find(eventForm => eventForm.id === eventForm.id)
+      .find(eventForm => eventForm.id === eventFormId)
       .complete = true
     //
     // Test this by opening case type 1, second event, filling out two of the second form, should be evrnt incomplete, then the first form, shoud be event complete
-    let eventForms = caseEvent.eventForms.filter(eventForm => eventForm.eventFormDefinitionId === eventDefinition.id)
-    let numberOfEventFormsRequired = eventDefinition.eventFormDefinitions.reduce((acc, eventFormDefinition) => eventFormDefinition.required ? acc + 1 : acc, 0)
-    let numberOfUniqueCompleteEventForms = eventForms
-      .reduce((acc, eventForm) => eventForm.complete ? Array.from(new Set([...acc, eventForm.eventFormDefinitionId])) : acc, []).length
-    this.case.events.find(caseEvent => caseEvent.id === caseEventId)
+    //let eventForms = caseEvent.eventForms.filter(eventForm => eventForm.eventFormDefinitionId === eventDefinition.id)
+    let numberOfEventFormsRequired = eventDefinition
+      .eventFormDefinitions
+      .reduce((acc, eventFormDefinition) => eventFormDefinition.required ? acc + 1 : acc, 0)
+    let numberOfUniqueCompleteEventForms = caseEvent
+      .eventForms
+      .reduce((acc, eventForm) => eventForm.complete 
+          ? Array.from(new Set([...acc, eventForm.eventFormDefinitionId])) 
+          : acc
+        , [])
+        .length
+    debugger
+    this
+      .case
+      .events
+      .find(caseEvent => caseEvent.id === caseEventId)
       .complete = numberOfEventFormsRequired === numberOfUniqueCompleteEventForms ? true : false
     //
     await this.save()
