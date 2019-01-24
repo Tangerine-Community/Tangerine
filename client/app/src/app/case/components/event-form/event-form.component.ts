@@ -31,6 +31,7 @@ export class EventFormComponent implements AfterContentInit {
     private router: Router,
     private userService: UserService
   ) { }
+
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       this.caseService = new CaseService()
@@ -69,6 +70,10 @@ export class EventFormComponent implements AfterContentInit {
         let response = _.target.store.getState()
         this.throttledSaveResponse(response)
       })
+      this.tangyFormEl.addEventListener('submit', async _ => {
+        await this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
+        await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+      })
     })
   }
 
@@ -100,4 +105,5 @@ export class EventFormComponent implements AfterContentInit {
     let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
     await this.tangyFormService.saveResponse(newStateDoc)
   }
+
 }

@@ -5,7 +5,7 @@
     <iron-icon icon="event" slot="item-icon"></iron-icon> 
     {{caseEvent ? caseEvent.name : ''}} ({{caseEvent ? caseEvent.id.substr(0,6) : ''}})
   </h1>
-  <div secondary>Opened: {{caseEvent.startDate | date:'medium'}}</div>
+  <div secondary>Opened: {{caseEvent.startDate | date:'medium'}}, Status: {{caseEvent.complete ? 'Complete' : 'Incomplete'}}</div>
 </div>
 
 <div class="wrapper">
