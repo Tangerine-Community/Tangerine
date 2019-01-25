@@ -1,8 +1,11 @@
-<iron-icon icon="apps" routerLink="/"></iron-icon>
-<span *ngFor="let crumb of crumbs">
-  <iron-icon icon="chevron-right"></iron-icon>
-  <span routerLink="{{crumb.url}}">
-    <iron-icon icon="{{crumb.icon}}"></iron-icon> 
-    {{crumb.label}}
+<div class="logo-cover"></div>
+<div class="breadcrumbs">
+  <iron-icon icon="apps" routerLink="/"></iron-icon>
+  <span *ngFor="let crumb of crumbs">
+    <iron-icon icon="chevron-right"></iron-icon>
+    <span routerLink="{{crumb.url}}">
+      <iron-icon icon="{{crumb.icon}}"></iron-icon> 
+      {{crumb.label}}
+    </span>
   </span>
-</span>
+</div>
