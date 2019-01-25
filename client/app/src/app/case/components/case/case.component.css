@@ -35,4 +35,18 @@ paper-card {
 .event-card {
     width: 90%;
     margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.required::before {
+    content: "*";
+    position: absolute;
+    top: -3px;
+    color: red;
+    left: -9px;
+    font-size: 42px;
+}
+
+:host {
+    position: relative;
 }

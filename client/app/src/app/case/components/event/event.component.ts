@@ -10,6 +10,7 @@ class EventFormDefinitionInfo {
   eventFormDefinitionId: string
   name:string
   canStart:boolean
+  required: boolean
   eventForms:Array<EventForm>
 }
 
@@ -56,6 +57,7 @@ export class EventComponent implements OnInit, AfterContentInit {
           return <EventFormDefinitionInfo>{
             eventFormDefinitionId: eventFormDefinition.id,
             name: eventFormDefinition.name,
+            required: eventFormDefinition.required,
             canStart: this.caseEvent.eventForms.filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id).length === 0 || eventFormDefinition.repeatable
               ? true
               : false,

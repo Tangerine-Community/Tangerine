@@ -10,7 +10,12 @@
 
 <div class="wrapper">
   <div class="event-cards" *ngIf="caseService">
-    <paper-card class="event-card" icon="event" heading="{{eventInfo.caseEventDefinition.name}}" *ngFor="let eventInfo of caseService.eventsInfo">
+    <paper-card 
+      class="event-card {{eventInfo.required ? 'required' : ''}}" 
+      icon="event"
+      heading="{{eventInfo.caseEventDefinition.name}}"
+      *ngFor="let eventInfo of caseService.eventsInfo"
+    >
       <div class="card-content">
         <span *ngIf="eventInfo.caseEvents.length === 0">
           You have not started this event.
