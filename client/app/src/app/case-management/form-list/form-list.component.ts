@@ -1,7 +1,7 @@
 
 
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 
 import { CaseManagementService } from '../_services/case-management.service';
 
