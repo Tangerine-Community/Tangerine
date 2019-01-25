@@ -11,12 +11,11 @@
 <div class="wrapper">
   <div class="form-cards" *ngIf="caseService">
     <paper-card 
-      heading="{{eventFormInfo.name}}"
-      class="form-card" 
+      heading="{{eventFormInfo.name}}{{eventFormInfo.required === true ? ' (required)' : ''}}"
       *ngFor="let eventFormInfo of eventFormsInfo"
+      class="form-card {{eventFormInfo.required === true ? 'required' : ''}}"
     >
       <div class="card-content">
-        <span *ngIf="eventFormInfo.required === true">*</span>
         <span *ngIf="eventFormInfo.eventForms.length === 0">
           You have not started this form.
         </span>

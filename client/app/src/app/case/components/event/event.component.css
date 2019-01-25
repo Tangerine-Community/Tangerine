@@ -21,7 +21,7 @@
 
 
 .wrapper {
-    margin: 65px 15px 0px;
+    margin: 30px 15px 0px;
 }
 paper-button {
     background: var(--accent-color);
@@ -36,4 +36,15 @@ paper-card {
 .form-card {
     width: 90%;
     margin-bottom: 15px;
+}
+.required::before {
+    content: "*";
+    position: absolute;
+    top: -3px;
+    color: red;
+    left: -9px;
+    font-size: 42px;
+}
+:host {
+    position: relative;
 }

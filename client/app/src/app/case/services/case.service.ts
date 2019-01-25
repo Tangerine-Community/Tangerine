@@ -49,6 +49,7 @@ class CaseService {
       .map(caseEventDefinition => {
         return {
           caseEventDefinition,
+          required: caseEventDefinition.required,
           canCreate: 
             caseEventDefinition.repeatable 
             || 
