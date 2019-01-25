@@ -21,6 +21,7 @@
       "description": "A screening.",
       "windows": [],
       "repeatable": false,
+      "required": true,
       "eventFormDefinitions": [
         {
           "id": "event-form-1",
@@ -37,6 +38,7 @@
       "description": "The first visit",
       "windows": [],
       "repeatable": false,
+      "required": true,
       "eventFormDefinitions": [
         {
           "id": "event-form-1",
@@ -60,6 +62,24 @@
       "description": "A repeatable event.",
       "windows": [],
       "repeatable": true,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-1",
+          "formId": "form1",
+          "name": "Form 1",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-not-required-event",
+      "name": "A Event that is not require",
+      "description": "An event that is not required.",
+      "windows": [],
+      "repeatable": true,
+      "required": false,
       "eventFormDefinitions": [
         {
           "id": "event-form-1",

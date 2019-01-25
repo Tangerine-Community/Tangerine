@@ -42,6 +42,7 @@ import process from 'process';
 import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
 import '@polymer/paper-item/paper-icon-item.js';
 import '@polymer/paper-item/paper-item-body.js';
+import '@polymer/iron-icons/notification-icons.js';
 
 import * as moment from 'moment'
 (window as any).moment = moment 
