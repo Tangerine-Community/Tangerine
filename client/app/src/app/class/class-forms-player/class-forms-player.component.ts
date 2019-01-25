@@ -23,15 +23,16 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 })
 export class ClassFormsPlayerComponent implements AfterContentInit {
 
-  service: ClassFormService;
-  throttledSaveLoaded;
-  throttledSaveFiring;
-  responseId;
-  curriculum;
-  studentId;
-  formId;
-  classId;
-  classUtils: ClassUtils;
+  service: ClassFormService
+  throttledSaveLoaded
+  throttledSaveFiring
+  responseId
+  curriculum
+  studentId
+  formId
+  classId
+  classUtils: ClassUtils
+  viewRecord:boolean = false
   @ViewChild('container') container: ElementRef;
 
   constructor(
@@ -51,6 +52,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       this.classId = params['classId'];
       this.curriculum = params['curriculum'];
       this.studentId = params['studentId'];
+      this.viewRecord = params['viewRecord'];
       if (typeof this.formId === 'undefined') {
         // this is student reg or class reg.
         this.formId = this.curriculum
@@ -105,12 +107,11 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       let formEl = container.querySelector('tangy-form')
       // Put a response in the store by issuing the FORM_OPEN action.
       if (formResponse) {
-        // formEl.store.dispatch({ type: 'FORM_OPEN', response: formResponse })
-        formEl.hideResponseBar = true
-        formEl.hideButtons = true
         formEl.response = formResponse
-        formEl.showFormResponse(this.curriculum)
-
+        if (this.viewRecord) {
+          formEl.enableItemReadOnly()
+          formEl.hideItemButtons()
+        }
       } else {
         // formEl.store.dispatch({ type: 'FORM_OPEN', response: {} })
         formEl.newResponse()
@@ -183,8 +184,8 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
     return obj;
   }
 
-  async archiveStudent(column) {
-    let studentId = column.id
+  async archiveStudent(studentId) {
+    // let studentId = studentId
     console.log("Archiving student:" + studentId)
     let deleteConfirmed = confirm(_TRANSLATE("Delete this student?"));
     if (deleteConfirmed) {
@@ -198,12 +199,17 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
           console.log("archiveResult: " + archiveResult)
         }
         let result = await this.dashboardService.archiveStudentRegistration(studentId)
-        console.log("result: " + result)
       } catch (e) {
         console.log("Error deleting student: " + e)
         return false;
       }
     }
+  }
+
+  enableEditing(studentId, classId, event) {
+    const container = this.container.nativeElement
+    let formEl = container.querySelector('tangy-form')
+    formEl.disableItemReadOnly()
   }
 
 }
