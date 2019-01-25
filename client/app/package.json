@@ -46,6 +46,7 @@
     "pouchdb-upsert": "^2.2.0",
     "rxjs": "^6.0.0",
     "rxjs-compat": "^6.2.1",
+    "tangerine-client-components": "file:web-components",
     "tangy-form": "^3.4.0",
     "underscore": "^1.9.1",
     "uuid-browser": "^3.1.0",
