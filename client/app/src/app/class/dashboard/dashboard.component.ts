@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit {
 
   classes;students;columnsToDisplay;
   currentClassId;currentClassIndex;
-  currentItemId;
+  currentItemId;curriculumId;
   selectedClass;selectedCurriculum;curriculumIndex
 
   curriculumFormsList;  // list of all curriculum forms
@@ -265,6 +265,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async populateCurriculum (classIndex, curriculumIndex, curriculumName) {
+    this.cookieService.delete('currentItemId');
     this.selectedCurriculum = null;
     this.selectedClass = null;
 
@@ -272,14 +273,24 @@ export class DashboardComponent implements OnInit {
     this.currentClassIndex = classIndex
 
     this.cookieService.set( 'classIndex', classIndex );
+    let currentClass = this.classes[this.currentClassIndex];
+    this.selectedClass = currentClass;
+    this.currentClassId = currentClass.id
+    this.cookieService.set( 'currentClassId', this.currentClassId );
+
+
     this.cookieService.set( 'curriculumIndex', curriculumIndex );
     this.curriculum = this.currArray[this.curriculumIndex];
     let curriculumId = this.curriculum.id
     this.cookieService.set( 'curriculumId', curriculumId );
     // No need to populate grid if this is the Add Class link.
     if (this.classes.length !== this.currentClassIndex) {
-      await this.populateGridData(this.currentClassIndex, this.curriculumIndex, this.pageIndex, this.pageSize);
-      this.renderGrid();
+      // await this.populateGridData(this.currentClassIndex, this.curriculumIndex, this.pageIndex, this.pageSize);
+      // this.renderGrid();
+      await this.populateFormsMetadata(curriculumName)
+      // if (this.currentItemId) {
+      //   this.selectSubTask(this.currentItemId, this.currentClassId, curriculumName)
+      // }
     }
   }
 
@@ -298,101 +309,101 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  private async populateGridData(classIndex, curriculumIndex, pageIndex, pageSize) {
-    if (!this.curriculumForms) {
-      this.curriculumForms = this.curriculumFormsList
-    }
-    this.currentClassIndex = classIndex;
-    let currentClass = this.classes[this.currentClassIndex];
-    let inputs = [];
-    currentClass.doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
-    let input = inputs.find(input => (input.name === 'curriculum') ? true : false)
-    if (input) {
-      this.currArray = []
-      let allCurriculums = input.value;
-      let initCurriculumIndex = false;
-      for (let i = 0; i < allCurriculums.length; i++) {
-          let curriculum = allCurriculums[i]
-          this.currArray.push(curriculum)
-          if (curriculumIndex === null) {
-            if (curriculum['value'] === 'on' && !initCurriculumIndex) {
-              curriculumIndex = i
-              this.curriculumIndex = curriculumIndex
-              initCurriculumIndex = true
-            }
-          }
-        }
-      this.curriculum = this.currArray[curriculumIndex];
-      //todo: persist curricula in memory and find curriculum.name.
-      let pi = pageIndex
-      let ps = pageSize
-      if (pi === null || typeof pi === 'undefined') {
-        pi = 0
-      }
-      if (ps === null || typeof ps === 'undefined') {
-        ps = 5
-      }
-      try {
-        this.curriculumForms = await this.getCurriculaForms(this.curriculum.name, pi, ps)
-      } catch (e) {
-        console.log("Error fetching this.curriculumForms: " + e)
-      }
-      if (typeof this.curriculumForms === 'undefined') {
-        let msg = "This is an error - there are no this.curriculumForms for this curriculum or range. Check if the config files are available.";
-        console.log(msg)
-        alert(msg)
-      }
-    }
-    if (typeof currentClass !== 'undefined') {
-      this.currentClassId = currentClass.id;
-      this.students = await this.getMyStudents(this.currentClassId);
-      let results = await this.getResultsByClass(this.currentClassId, this.curriculum.name, this.curriculumFormsList);
-      this.studentsResponses = [];
-      let formsTodisplay = {}
-      this.curriculumForms.forEach(form => {
-        formsTodisplay[form.id] = form
-      })
-      for (const response of results as any[] ) {
-        // console.log("response: " + JSON.stringify(response))
-        // studentsResponses.push();
-        if (formsTodisplay[response.formId] !== 'undefined') {
-          let studentId = response.studentId
-          let studentReponses = this.studentsResponses[studentId];
-          if (typeof studentReponses === 'undefined') {
-            studentReponses = {}
-          }
-          let formId = response.formId;
-          studentReponses[formId] = response;
-          this.studentsResponses[studentId] = studentReponses
-        }
-      }
-      let allStudentResults = [];
-      // for (const student of this.students) {
-      this.students.forEach((student) => {
-        let studentResults = {};
-        studentResults["id"] = student.id
-        studentResults["name"] = student.doc.items[0].inputs[0].value
-        studentResults["classId"] = student.doc.items[0].inputs[3].value
-        // studentResults["forms"] = [];
-        studentResults["forms"] = {};
-        // for (const form of this.curriculumForms) {
-        this.curriculumForms.forEach((form) => {
-          let formResult = {};
-          formResult["formId"] = form.id
-          formResult["curriculum"] = this.curriculum.name
-          formResult["title"] = form.title
-          formResult["src"] = form.src
-          if (this.studentsResponses[student.id]) {
-            formResult["response"] = this.studentsResponses[student.id][form.id]
-          }
-          // studentResults["forms"].push(formResult)
-          studentResults["forms"][form.id] = formResult
-        })
-        allStudentResults.push(studentResults)
-      })
-      this.allStudentResults = allStudentResults;
-    }
-  }
+  // private async populateGridData(classIndex, curriculumIndex, pageIndex, pageSize) {
+  //   if (!this.curriculumForms) {
+  //     this.curriculumForms = this.curriculumFormsList
+  //   }
+  //   this.currentClassIndex = classIndex;
+  //   let currentClass = this.classes[this.currentClassIndex];
+  //   let inputs = [];
+  //   currentClass.doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+  //   let input = inputs.find(input => (input.name === 'curriculum') ? true : false)
+  //   if (input) {
+  //     this.currArray = []
+  //     let allCurriculums = input.value;
+  //     let initCurriculumIndex = false;
+  //     for (let i = 0; i < allCurriculums.length; i++) {
+  //         let curriculum = allCurriculums[i]
+  //         this.currArray.push(curriculum)
+  //         if (curriculumIndex === null) {
+  //           if (curriculum['value'] === 'on' && !initCurriculumIndex) {
+  //             curriculumIndex = i
+  //             this.curriculumIndex = curriculumIndex
+  //             initCurriculumIndex = true
+  //           }
+  //         }
+  //       }
+  //     this.curriculum = this.currArray[curriculumIndex];
+  //     //todo: persist curricula in memory and find curriculum.name.
+  //     let pi = pageIndex
+  //     let ps = pageSize
+  //     if (pi === null || typeof pi === 'undefined') {
+  //       pi = 0
+  //     }
+  //     if (ps === null || typeof ps === 'undefined') {
+  //       ps = 5
+  //     }
+  //     try {
+  //       this.curriculumForms = await this.getCurriculaForms(this.curriculum.name, pi, ps)
+  //     } catch (e) {
+  //       console.log("Error fetching this.curriculumForms: " + e)
+  //     }
+  //     if (typeof this.curriculumForms === 'undefined') {
+  //       let msg = "This is an error - there are no this.curriculumForms for this curriculum or range. Check if the config files are available.";
+  //       console.log(msg)
+  //       alert(msg)
+  //     }
+  //   }
+  //   if (typeof currentClass !== 'undefined') {
+  //     this.currentClassId = currentClass.id;
+  //     this.students = await this.getMyStudents(this.currentClassId);
+  //     let results = await this.getResultsByClass(this.currentClassId, this.curriculum.name, this.curriculumFormsList);
+  //     this.studentsResponses = [];
+  //     let formsTodisplay = {}
+  //     this.curriculumForms.forEach(form => {
+  //       formsTodisplay[form.id] = form
+  //     })
+  //     for (const response of results as any[] ) {
+  //       // console.log("response: " + JSON.stringify(response))
+  //       // studentsResponses.push();
+  //       if (formsTodisplay[response.formId] !== 'undefined') {
+  //         let studentId = response.studentId
+  //         let studentReponses = this.studentsResponses[studentId];
+  //         if (typeof studentReponses === 'undefined') {
+  //           studentReponses = {}
+  //         }
+  //         let formId = response.formId;
+  //         studentReponses[formId] = response;
+  //         this.studentsResponses[studentId] = studentReponses
+  //       }
+  //     }
+  //     let allStudentResults = [];
+  //     // for (const student of this.students) {
+  //     this.students.forEach((student) => {
+  //       let studentResults = {};
+  //       studentResults["id"] = student.id
+  //       studentResults["name"] = student.doc.items[0].inputs[0].value
+  //       studentResults["classId"] = student.doc.items[0].inputs[3].value
+  //       // studentResults["forms"] = [];
+  //       studentResults["forms"] = {};
+  //       // for (const form of this.curriculumForms) {
+  //       this.curriculumForms.forEach((form) => {
+  //         let formResult = {};
+  //         formResult["formId"] = form.id
+  //         formResult["curriculum"] = this.curriculum.name
+  //         formResult["title"] = form.title
+  //         formResult["src"] = form.src
+  //         if (this.studentsResponses[student.id]) {
+  //           formResult["response"] = this.studentsResponses[student.id][form.id]
+  //         }
+  //         // studentResults["forms"].push(formResult)
+  //         studentResults["forms"][form.id] = formResult
+  //       })
+  //       allStudentResults.push(studentResults)
+  //     })
+  //     this.allStudentResults = allStudentResults;
+  //   }
+  // }
 
   private renderGrid() {
     // re-init the formColumns and columnsToDisplay
