@@ -20,9 +20,7 @@
   </span>
   <span class="tangy-spacer"></span>
 
-  <button *ngIf="showNav" [matMenuTriggerFor]="appMenu" mat-button>
-    <i class="material-icons">account_box</i>
-  </button>
+  <paper-icon-button icon="more-vert" *ngIf="showNav" [matMenuTriggerFor]="appMenu"></paper-icon-button>
   <mat-menu #appMenu="matMenu">
     <button *ngIf="window && window.appConfig && !window.appConfig.hideProfile" routerLink="manage-user-profile" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>

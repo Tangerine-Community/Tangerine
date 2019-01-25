@@ -2,10 +2,10 @@
 
 <div *ngIf="caseService" class="subject-header">
   <h1>
-    <iron-icon icon="folder-shared"></iron-icon> 
+    <iron-icon icon="{{caseService.case.complete ? 'notification:folder-special' : 'folder'}}"></iron-icon> 
     {{caseService.case.label}} ({{caseService.case._id.substr(0,6)}})
   </h1>
-  <div secondary>Opened: {{caseService.case.openedDate | date:'medium'}}</div>
+  <div secondary>Opened: {{caseService.case.openedDate | date:'medium'}}, Status: {{caseService.case.complete ? 'Complete' : 'Incomplete'}} </div>
 </div>
 
 <div class="wrapper">
@@ -20,10 +20,10 @@
             *ngFor="let caseEvent of eventInfo.caseEvents"
             routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}"
           >
-            <iron-icon icon="event" slot="item-icon"></iron-icon> 
+            <iron-icon icon="{{caseEvent.complete ? 'notification:event-available' : 'event'}}" slot="item-icon"></iron-icon> 
             <paper-item-body two-line>
               <div>{{eventInfo.caseEventDefinition.name}} ({{caseEvent.id.substr(0,6)}})</div>
-              <div secondary>{{caseEvent.startDate | date:'medium'}}</div>
+              <div secondary>Opened: {{caseEvent.startDate | date:'medium'}}, Status: {{caseEvent.complete ? 'Complete' : 'Incomplete'}}</div>
             </paper-item-body>
           </paper-icon-item>
         </div>

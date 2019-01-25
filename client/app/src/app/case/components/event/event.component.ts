@@ -56,7 +56,7 @@ export class EventComponent implements OnInit, AfterContentInit {
           return <EventFormDefinitionInfo>{
             eventFormDefinitionId: eventFormDefinition.id,
             name: eventFormDefinition.name,
-            canStart: this.caseEvent.eventForms.length === 0 || eventFormDefinition.repeatable
+            canStart: this.caseEvent.eventForms.filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id).length === 0 || eventFormDefinition.repeatable
               ? true
               : false,
             eventForms: this
