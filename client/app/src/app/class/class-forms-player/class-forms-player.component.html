@@ -1,10 +1,16 @@
 <div #container> </div>
-<div id="profile-mgmt">
-  <div (click)="$event ? archiveStudent(element) : null" >
-  <span>{{'Archive Student'|translate}}</span>
-  <button routerLink="manage-user-profile" mat-menu-item>
-    <mat-icon class="material-icons menu-tangy-location-list-icon">delete</mat-icon>
-  </button>
+<div id="profile-mgmt" *ngIf="curriculum === 'student-registration'">
+  <div id="profile-toolbar">
+    <div (click)="$event ? archiveStudent(studentId) : null" >
+      <button routerLink="dashboard" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">delete</mat-icon>
+    </button>
+    </div>
+    <div (click)="$event ? enableEditing(studentId, classId, $event) : null" >
+    <button mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">edit</mat-icon>
+    </button>
+    </div>
   </div>
 </div>
 
