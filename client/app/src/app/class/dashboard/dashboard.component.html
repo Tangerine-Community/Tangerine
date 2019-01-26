@@ -20,7 +20,7 @@
       <mat-menu #catMenu="matMenu">
         <ng-template matMenuContent>
           <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value; let curriculumIndex=index;">
-            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculumIndex, curriculum.name)">{{curriculum.label}}</button>
+            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculum, curriculum.name)">{{curriculum.label}}</button>
           </span>
         </ng-template>
       </mat-menu>
