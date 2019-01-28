@@ -264,7 +264,7 @@ export class DashboardComponent implements OnInit {
     // let el = this.selection.select(row);
     // this.selection.toggle(column)
     let formsArray = Object.values(column.forms)
-    let selectedForm = formsArray.find(input => (input.formId === itemId) ? true : false)
+    let selectedForm = formsArray.find(input => (input['formId'] === itemId) ? true : false)
     let studentId = column.id
     let classId = column.classId
     let selectedFormId = selectedForm['formId']
@@ -286,7 +286,7 @@ export class DashboardComponent implements OnInit {
     event.currentTarget.checked = true
     // this.selection.toggle(column)
     let formsArray = Object.values(column.forms)
-    let selectedForm = formsArray.find(input => (input.formId === itemId) ? true : false)
+    let selectedForm = formsArray.find(input => (input['formId'] === itemId) ? true : false)
     let studentId = column.id
     let classId = column.classId
     let selectedFormId = selectedForm['formId']
