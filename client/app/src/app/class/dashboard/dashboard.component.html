@@ -20,7 +20,7 @@
       <mat-menu #catMenu="matMenu">
         <ng-template matMenuContent>
           <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value; let curriculumIndex=index;">
-            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="selectCurriculum(classIndex, curriculumIndex, curriculum.name)">{{curriculum.label}}</button>
+            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculum.name)">{{curriculum.label}}</button>
           </span>
         </ng-template>
       </mat-menu>
@@ -43,7 +43,6 @@
         <button mat-menu-item routerLink="/reports/studentSubtestReport/{{selectedClass.id}}">{{'Student Subtest Report'|translate}}</button>
       </mat-menu>
     </span>
-  <span dir="rtl"><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
 </mat-toolbar>
 
 <mat-toolbar *ngIf="!selectedClass" class="classDashboard">
@@ -57,41 +56,41 @@
 
 <mat-card class="tangy-class-card-content-container" *ngIf="selectedClass">
   <div [hidden]="isLoading">
-    <div class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{selectedClass.doc.items[0].inputs[2].value}} - {{selectedCurriculum.label}}</p></div>
+    <div *ngIf="selectedCurriculum" class="selectedClassLabel"><p>{{'Student Dashboard'|translate}}: {{selectedClass.doc.items[0].inputs[2].value}} - {{selectedCurriculum.label}}</p></div>
+
+    <mat-form-field>
+      <mat-label>Select SubTask</mat-label>
+      <mat-select [(value)]="currentItemId" placeholder="Select SubTask">
+        <mat-option>None</mat-option>
+        <mat-option *ngFor="let item of formList;" value="{{item.id}}"
+                    (click)="selectSubTask(item.id,item.classId,item.curriculumId)">{{item.title}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
     <table class="dashboard-table">
       <tr>
-        <th>&nbsp;</th>
         <th>Student</th>
-        <th *ngFor="let column of formColumns;let i=index"> {{column}} </th>
+        <th>Result</th>
       </tr>
       <tr *ngFor="let element of allStudentResults">
-        <td (click)="$event ? archiveStudent(element) : null" >
-          <button routerLink="manage-user-profile" mat-menu-item>
-            <mat-icon class="material-icons menu-tangy-location-list-icon">delete</mat-icon>
-          </button>
-        </td>
         <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
-        <td *ngFor="let form of curriculumForms;let i=index">
-                <span *ngIf="element.forms[form.id]?.response ; else elseBlock ">
+                <td *ngIf="element.forms[currentItemId]?.response ; else elseBlock ">
                   <input type="checkbox"
-                         (change)="$event ? selectCheckboxResult(element,i,$event) : null"
+                         (change)="$event ? selectCheckboxResult(element,currentItemId,$event) : null"
                          [checked]="true"/>
-                </span>
+                </td>
           <ng-template #elseBlock>
-                  <span>
+                  <td>
                 <input type="checkbox" (click)="$event.stopPropagation()"
-                       (change)="$event ? selectCheckbox(element,i) : null"
+                       (change)="$event ? selectCheckbox(element,currentItemId) : null"
                 />
-                </span>
+                </td>
           </ng-template>
-
-        </td>
       </tr>
     </table>
-    <div class="button-row">
-      <button mat-raised-button (click)="paginate(0)">{{'Prev'|translate}}</button>
-      <button mat-raised-button (click)="paginate(1)">{{'Next'|translate}}</button>
-    </div>
+    <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
+
   </div>
 </mat-card>
 
