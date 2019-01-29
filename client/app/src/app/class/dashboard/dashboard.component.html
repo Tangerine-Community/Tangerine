@@ -20,7 +20,7 @@
       <mat-menu #catMenu="matMenu">
         <ng-template matMenuContent>
           <span *ngFor="let curriculum of class.doc.items[0].inputs[3].value; let curriculumIndex=index;">
-            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculum, curriculum.name)">{{curriculum.label}}</button>
+            <button mat-menu-item *ngIf="curriculum.value ==='on'" (click)="populateCurriculum(classIndex, curriculum.name)">{{curriculum.label}}</button>
           </span>
         </ng-template>
       </mat-menu>
@@ -75,8 +75,6 @@
       </tr>
       <tr *ngFor="let element of allStudentResults">
         <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
-        <!--<td>{{currentItemId}}</td>-->
-        <!--<td *ngFor="let form of curriculumForms;let i=index">-->
                 <td *ngIf="element.forms[currentItemId]?.response ; else elseBlock ">
                   <input type="checkbox"
                          (change)="$event ? selectCheckboxResult(element,currentItemId,$event) : null"
@@ -89,14 +87,8 @@
                 />
                 </td>
           </ng-template>
-
-        <!--</td>-->
       </tr>
     </table>
-    <!--<div class="button-row">-->
-      <!--<button mat-raised-button (click)="paginate(0)">{{'Prev'|translate}}</button>-->
-      <!--<button mat-raised-button (click)="paginate(1)">{{'Next'|translate}}</button>-->
-    <!--</div>-->
     <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
 
   </div>

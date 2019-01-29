@@ -249,7 +249,7 @@ export class DashboardComponent implements OnInit {
   }
 
   // Triggered by dropdown selection in UI.
-  async populateCurriculum (classIndex, classId, curriculumId) {
+  async populateCurriculum (classIndex, curriculumId) {
     let currentClass = this.classes[classIndex];
     let currentClassId = currentClass.id
     this.initDashboard(classIndex, currentClassId, curriculumId)
