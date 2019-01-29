@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
   showUpdateAppLink;
   window;
   dir = 'ltr';
+  freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit {
     windowRef.nativeWindow.PouchDB = PouchDB;
     translate.setDefaultLang('translation');
     translate.use('translation');
+    this.freespaceCorrectionOccuring = false;
   }
 
   async ngOnInit() {
@@ -68,13 +70,45 @@ export class AppComponent implements OnInit {
     this.isAppUpdateAvailable();
     setInterval(this.getGeolocationPosition, 5000);
     this.checkIfUpdateScriptRequired();
-    // setInterval(this.getGeolocationPosition, 1000);
+    this.checkStorageUsage()
+    setInterval(this.checkStorageUsage.bind(this), 60*1000); 
     // Initialize tangyFormService in case any views need to be updated.
     const currentUser = await this.authenticationService.getCurrentUser();
     if (currentUser) {
       const tangyFormService = new TangyFormService({ databaseName: currentUser });
       tangyFormService.initialize();
     }
+  }
+
+  async checkStorageUsage() {
+    const storageEstimate = await navigator.storage.estimate()
+    const freeSpace = storageEstimate.quota - storageEstimate.usage
+    if (freeSpace < this.window.appConfig.minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
+      this.correctFreeSpace()
+    }
+  }
+
+  async correctFreeSpace() {
+    console.log('Making freespace...')
+    this.freespaceCorrectionOccuring = true
+    let storageEstimate = await navigator.storage.estimate()
+    let freeSpace = storageEstimate.quota - storageEstimate.usage
+    while(freeSpace < this.window.appConfig.minimumFreeSpace) {
+      const DB = new PouchDB(this.window.localStorage.getItem('currentUser'))
+      const results = await DB.query('tangy-form/responseByUploadDatetime', {
+        descending: false,
+        limit: this.window.appConfig.usageCleanupBatchSize,
+        include_docs: true 
+      });
+      for(let row of results.rows) {
+        await DB.remove(row.doc)
+      }
+      await DB.compact()
+      storageEstimate = await navigator.storage.estimate()
+      freeSpace = storageEstimate.quota - storageEstimate.usage
+    }
+    console.log('Finished making freespace...')
+    this.freespaceCorrectionOccuring = false
   }
 
   async checkIfUpdateScriptRequired() {
@@ -107,6 +141,7 @@ export class AppComponent implements OnInit {
     this.authenticationService.logout();
     this.router.navigate(['login']);
   }
+
   async isAppUpdateAvailable() {
     try {
       const response = await this.http.get('../../release-uuid.txt').toPromise();
@@ -116,6 +151,7 @@ export class AppComponent implements OnInit {
     } catch (e) {
     }
   }
+
   updateApp() {
     if (this.window.isCordovaApp) {
       console.log('Running from APK');

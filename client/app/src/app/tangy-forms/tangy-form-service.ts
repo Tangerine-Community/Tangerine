@@ -194,7 +194,7 @@ var tangyFormDesignDoc = {
     },
     responseByUploadDatetime: {
       map: function (doc) {
-        if (doc.collection !== 'TangyFormResponse') return
+        if (doc.collection !== 'TangyFormResponse' || !doc.uploadDatetime) return
         emit(doc.uploadDatetime, true)
       }.toString()
     }
