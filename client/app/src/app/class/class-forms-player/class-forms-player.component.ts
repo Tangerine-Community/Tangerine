@@ -11,6 +11,8 @@ import 'tangy-form/input/tangy-input.js'
 import 'tangy-form/input/tangy-radio-buttons.js'
 import 'tangy-form/input/tangy-checkboxes.js'
 import 'tangy-form/input/tangy-timed.js'
+import {DashboardService} from "../_services/dashboard.service";
+import {_TRANSLATE} from "../../shared/translation-marker";
 
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
@@ -21,15 +23,16 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 })
 export class ClassFormsPlayerComponent implements AfterContentInit {
 
-  service: ClassFormService;
-  throttledSaveLoaded;
-  throttledSaveFiring;
-  responseId;
-  curriculum;
-  studentId;
-  formId;
-  classId;
-  classUtils: ClassUtils;
+  service: ClassFormService
+  throttledSaveLoaded
+  throttledSaveFiring
+  responseId
+  curriculum
+  studentId
+  formId
+  classId
+  classUtils: ClassUtils
+  viewRecord:boolean = false
   @ViewChild('container') container: ElementRef;
 
   constructor(
@@ -37,7 +40,8 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
     private router: Router,
     private http: HttpClient,
     private userService: UserService,
-    private appConfigService: AppConfigService
+    private appConfigService: AppConfigService,
+    private dashboardService: DashboardService,
   ) { }
 
   async ngAfterContentInit() {
@@ -48,6 +52,7 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       this.classId = params['classId'];
       this.curriculum = params['curriculum'];
       this.studentId = params['studentId'];
+      this.viewRecord = params['viewRecord'];
       if (typeof this.formId === 'undefined') {
         // this is student reg or class reg.
         this.formId = this.curriculum
@@ -102,8 +107,11 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       let formEl = container.querySelector('tangy-form')
       // Put a response in the store by issuing the FORM_OPEN action.
       if (formResponse) {
-        // formEl.store.dispatch({ type: 'FORM_OPEN', response: formResponse })
         formEl.response = formResponse
+        if (this.viewRecord) {
+          formEl.enableItemReadOnly()
+          formEl.hideItemButtons()
+        }
       } else {
         // formEl.store.dispatch({ type: 'FORM_OPEN', response: {} })
         formEl.newResponse()
@@ -174,6 +182,34 @@ export class ClassFormsPlayerComponent implements AfterContentInit {
       }
     }
     return obj;
+  }
+
+  async archiveStudent(studentId) {
+    // let studentId = studentId
+    console.log("Archiving student:" + studentId)
+    let deleteConfirmed = confirm(_TRANSLATE("Delete this student?"));
+    if (deleteConfirmed) {
+      try {
+        let responses = await this.service.getResponsesByStudentId(studentId)
+        for (const response of responses as any[] ) {
+          response.doc.archive = true;
+          let lastModified = Date.now();
+          response.doc.lastModified = lastModified
+          const archiveResult = await this.service.saveResponse(response.doc)
+          console.log("archiveResult: " + archiveResult)
+        }
+        let result = await this.dashboardService.archiveStudentRegistration(studentId)
+      } catch (e) {
+        console.log("Error deleting student: " + e)
+        return false;
+      }
+    }
+  }
+
+  enableEditing(studentId, classId, event) {
+    const container = this.container.nativeElement
+    let formEl = container.querySelector('tangy-form')
+    formEl.disableItemReadOnly()
   }
 
 }
