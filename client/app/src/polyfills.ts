@@ -12,6 +12,7 @@ import * as _ from 'underscore';
 (window as any)._ = _;
 
 
+
 //   <!-- Tangy Elements -->
 import 'tangy-form/tangy-form.js'
 import 'tangy-form/input/tangy-box.js'
@@ -39,6 +40,9 @@ import process from 'process';
 
 //import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
 import '@webcomponents/webcomponentsjs/webcomponents-loader.js';
+import '@polymer/paper-item/paper-icon-item.js';
+import '@polymer/paper-item/paper-item-body.js';
+import '@polymer/iron-icons/notification-icons.js';
 
 import * as moment from 'moment'
 (window as any).moment = moment 
