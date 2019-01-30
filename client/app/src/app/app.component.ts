@@ -84,22 +84,29 @@ export class AppComponent implements OnInit {
 
   async checkStorageUsage() {
     const storageEstimate = await navigator.storage.estimate()
-    const freeSpace = storageEstimate.quota - storageEstimate.usage
-    if (freeSpace < this.window.appConfig.minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
-      this.correctFreeSpace()
+    const availableFreeSpace = storageEstimate.quota - storageEstimate.usage
+    const minimumFreeSpace = this.window.appConfig.minimumFreeSpace
+      ? this.window.appConfig.minimumFreeSpace
+      : 50*1000*1000
+    if (availableFreeSpace < minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
+      const batchSize = this.window.appConfig.usageCleanupBatchSize 
+        ? this.window.appConfig.usageCleanupBatchSize 
+        : 10
+      this.freespaceCorrectionOccuring = true
+      await this.correctFreeSpace(minimumFreeSpace, batchSize)
+      this.freespaceCorrectionOccuring = false
     }
   }
 
-  async correctFreeSpace() {
+  async correctFreeSpace(minimumFreeSpace, batchSize) {
     console.log('Making freespace...')
-    this.freespaceCorrectionOccuring = true
     let storageEstimate = await navigator.storage.estimate()
-    let freeSpace = storageEstimate.quota - storageEstimate.usage
-    while(freeSpace < this.window.appConfig.minimumFreeSpace) {
+    let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
+    while(availableFreeSpace < minimumFreeSpace) {
       const DB = new PouchDB(this.window.localStorage.getItem('currentUser'))
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
-        limit: this.window.appConfig.usageCleanupBatchSize,
+        limit: batchSize,
         include_docs: true 
       });
       for(let row of results.rows) {
@@ -111,10 +118,9 @@ export class AppComponent implements OnInit {
       await sleep(60*1000)
       // Get a new estimate.
       storageEstimate = await navigator.storage.estimate()
-      freeSpace = storageEstimate.quota - storageEstimate.usage
+      availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     }
     console.log('Finished making freespace...')
-    this.freespaceCorrectionOccuring = false
   }
 
   async checkIfUpdateScriptRequired() {
