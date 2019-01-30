@@ -11,6 +11,8 @@ import { TangyFormService } from './tangy-forms/tangy-form-service';
 import PouchDB from 'pouchdb';
 import { TranslateService } from '@ngx-translate/core';
 import { _TRANSLATE } from './shared/translation-marker';
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -21,6 +23,7 @@ export class AppComponent implements OnInit {
   showUpdateAppLink;
   window;
   dir = 'ltr';
+  freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
@@ -33,6 +36,7 @@ export class AppComponent implements OnInit {
     windowRef.nativeWindow.PouchDB = PouchDB;
     translate.setDefaultLang('translation');
     translate.use('translation');
+    this.freespaceCorrectionOccuring = false;
   }
 
   async ngOnInit() {
@@ -68,13 +72,55 @@ export class AppComponent implements OnInit {
     this.isAppUpdateAvailable();
     setInterval(this.getGeolocationPosition, 5000);
     this.checkIfUpdateScriptRequired();
-    // setInterval(this.getGeolocationPosition, 1000);
+    this.checkStorageUsage()
+    setInterval(this.checkStorageUsage.bind(this), 60*1000); 
     // Initialize tangyFormService in case any views need to be updated.
     const currentUser = await this.authenticationService.getCurrentUser();
     if (currentUser) {
       const tangyFormService = new TangyFormService({ databaseName: currentUser });
       tangyFormService.initialize();
     }
+  }
+
+  async checkStorageUsage() {
+    const storageEstimate = await navigator.storage.estimate()
+    const availableFreeSpace = storageEstimate.quota - storageEstimate.usage
+    const minimumFreeSpace = this.window.appConfig.minimumFreeSpace
+      ? this.window.appConfig.minimumFreeSpace
+      : 50*1000*1000
+    if (availableFreeSpace < minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
+      const batchSize = this.window.appConfig.usageCleanupBatchSize 
+        ? this.window.appConfig.usageCleanupBatchSize 
+        : 10
+      this.freespaceCorrectionOccuring = true
+      await this.correctFreeSpace(minimumFreeSpace, batchSize)
+      this.freespaceCorrectionOccuring = false
+    }
+  }
+
+  async correctFreeSpace(minimumFreeSpace, batchSize) {
+    console.log('Making freespace...')
+    let storageEstimate = await navigator.storage.estimate()
+    let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
+    while(availableFreeSpace < minimumFreeSpace) {
+      const DB = new PouchDB(this.window.localStorage.getItem('currentUser'))
+      const results = await DB.query('tangy-form/responseByUploadDatetime', {
+        descending: false,
+        limit: batchSize,
+        include_docs: true 
+      });
+      for(let row of results.rows) {
+        await DB.remove(row.doc)
+      }
+      await DB.compact()
+      // Sleep so we give time for IndexedDB to adjust itself and also not to overload the main task a user might
+      // be trying to complete.
+      await sleep(60*1000)
+      // Get a new estimate.
+      storageEstimate = await navigator.storage.estimate()
+      availableFreeSpace = storageEstimate.quota - storageEstimate.usage
+    }
+    console.log('Finished making freespace...')
   }
 
   async checkIfUpdateScriptRequired() {
@@ -107,6 +153,7 @@ export class AppComponent implements OnInit {
     this.authenticationService.logout();
     this.router.navigate(['login']);
   }
+
   async isAppUpdateAvailable() {
     try {
       const response = await this.http.get('../../release-uuid.txt').toPromise();
@@ -116,6 +163,7 @@ export class AppComponent implements OnInit {
     } catch (e) {
     }
   }
+
   updateApp() {
     if (this.window.isCordovaApp) {
       console.log('Running from APK');

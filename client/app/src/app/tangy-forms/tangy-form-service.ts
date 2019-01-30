@@ -14,7 +14,7 @@ export class TangyFormService {
   constructor(props) {
     this.databaseName = 'tangy-forms'
     Object.assign(this, props)
-    this.db = new PouchDB(this.databaseName)
+    this.db = new PouchDB(this.databaseName, {auto_compaction: true, revs_limit: 1})
   }
 
   async initialize() {
@@ -194,7 +194,7 @@ var tangyFormDesignDoc = {
     },
     responseByUploadDatetime: {
       map: function (doc) {
-        if (doc.collection !== 'TangyFormResponse') return
+        if (doc.collection !== 'TangyFormResponse' || !doc.uploadDatetime) return
         emit(doc.uploadDatetime, true)
       }.toString()
     }
