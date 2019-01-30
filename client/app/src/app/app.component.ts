@@ -11,6 +11,8 @@ import { TangyFormService } from './tangy-forms/tangy-form-service';
 import PouchDB from 'pouchdb';
 import { TranslateService } from '@ngx-translate/core';
 import { _TRANSLATE } from './shared/translation-marker';
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -104,6 +106,10 @@ export class AppComponent implements OnInit {
         await DB.remove(row.doc)
       }
       await DB.compact()
+      // Sleep so we give time for IndexedDB to adjust itself and also not to overload the main task a user might
+      // be trying to complete.
+      await sleep(60*1000)
+      // Get a new estimate.
       storageEstimate = await navigator.storage.estimate()
       freeSpace = storageEstimate.quota - storageEstimate.usage
     }
