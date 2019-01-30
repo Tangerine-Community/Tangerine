@@ -130,5 +130,12 @@ export const updates = [
     script: (userDb) => {
       console.log('Updating to v3.0.0-beta13...')
     }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb) => {
+      console.log('Updating to v3.1.0...')
+      await userDb.compact()
+    }
   }
 ]
