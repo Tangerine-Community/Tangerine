@@ -5,7 +5,7 @@ import { TangyErrorHandler } from '../../../shared/_services/tangy-error-handler
 import { _TRANSLATE } from '../../../shared/_services/translation-marker';
 
 @Injectable()
-export class SuperAdminUserGuard implements CanActivate {
+export class AdminUserGuard implements CanActivate {
 
   constructor(
     private router: Router,
@@ -13,7 +13,7 @@ export class SuperAdminUserGuard implements CanActivate {
     private errorHandler: TangyErrorHandler
   ) { }
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (await this.userService.isCurrentUserSuperAdmin()) {
+    if (await this.userService.isCurrentUserAdmin()) {
       return true;
     };
     this.errorHandler.handleError(_TRANSLATE('Permission Denied.'));

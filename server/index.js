@@ -449,7 +449,7 @@ async function isSuperAdmin(username) {
 async function isAdminUser(username) {
   try {
     const groups = await getGroupsByUser(username);
-    const data = groups.filter(group => group.attributes.role === 'admin');
+    let data = groups.filter(group => group.attributes.role === 'admin');
     if (data.length < 1) {
       data = false;
     }
