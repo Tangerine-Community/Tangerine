@@ -12,7 +12,5 @@
   "uploadToken": "change_this_token",
   "homeUrl": "case-management",
   "centrallyManagedUserProfile": false,
-  "minimumFreeSpace": 33200337809, 
-  "usageCleanupBatchSize": 10, 
   "direction": "ltr"
 }
