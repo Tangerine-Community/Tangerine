@@ -31,13 +31,16 @@ export class FeedbackService {
     if (typeof this.form.feedbackItems === 'undefined') {
       this.form.feedbackItems = []
     }
+    // delete the previous version
+    let feedbackItem = this.form.feedbackItems.find(item => item.formItem === feedback.formItem && item.percentile === feedback.percentile)
+    const filteredItems = this.form.feedbackItems.filter(item => item !== feedbackItem)
+    this.form.feedbackItems = filteredItems
     this.form.feedbackItems.push(feedback)
     let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
     const updatedFormsJson = formsJson.map(formInfo => {
       if (formInfo.id !== this.form.id) return Object.assign({}, formInfo)
       return Object.assign({}, formInfo, this.form)
     })
-    // console.log("updatedFormsJson" + JSON.stringify(updatedFormsJson))
     let file = {
       groupId: groupName,
       filePath:`./forms.json`,
@@ -59,7 +62,6 @@ export class FeedbackService {
       if (formInfo.id !== this.form.id) return Object.assign({}, formInfo)
       return Object.assign({}, formInfo, this.form)
     })
-    // console.log("updatedFormsJson" + JSON.stringify(updatedFormsJson))
     let file = {
       groupId: groupName,
       filePath:`./forms.json`,

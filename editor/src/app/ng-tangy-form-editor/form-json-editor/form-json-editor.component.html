@@ -7,7 +7,7 @@
     <mat-tab-group>
       <mat-tab label="Feedback">
         <mat-dialog-content>
-        <button mat-raised-button class="add-feedback-button" (click) = "showAddFeedbackForm()">Add Feedback</button>
+        <button mat-raised-button class="add-feedback-button" (click) = "showAddFeedbackForm()" *ngIf="!showFeedbackForm">Add Feedback</button>
         <div id="feedback-listing" *ngIf = "showFeedbackListing" >
           <h3>Tasks/Subtasks with Feedback</h3>
           <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -34,7 +34,7 @@
             <!-- percentile Column -->
             <ng-container matColumnDef="percentile">
               <th mat-header-cell *matHeaderCellDef> Percentile </th>
-              <td mat-cell *matCellDef="let element"> {{element.percentile}} </td>
+              <td mat-cell *matCellDef="let element"> {{element.percentileTitle}} </td>
             </ng-container>
 
             <!-- example Column -->
@@ -56,21 +56,20 @@
 
         <div class="feedback-form" *ngIf="showFeedbackForm">
             <mat-form-field>
-              <mat-select placeholder="Subtask" [(ngModel)]="formItem">
-                <mat-option *ngFor="let item of formItems" [value]="item.id" >
+              <mat-select placeholder="Subtask"  (selectionChange)="changeFormItem($event.value)" [(value)]="formItem">
+                <mat-option *ngFor="let item of formItems" value="{{item.id}}">
                   {{item.title}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            <mat-form-field>
-              <mat-select placeholder="Percentile" [(ngModel)]="percentile">
-                <mat-option value="5">81% - 100%</mat-option>
-                <mat-option value="4">61% - 80%</mat-option>
-                <mat-option value="3">41% - 60%</mat-option>
-                <mat-option value="2">21% - 40%</mat-option>
-                <mat-option value="1">0% - 20%</mat-option>
+          <mat-form-field>
+              <mat-select placeholder="Percentile" [(value)]="percentile">
+                <mat-option *ngFor="let option of percentileOptions" value="{{option.id}}">
+                  {{option.title}}
+                </mat-option>
               </mat-select>
             </mat-form-field>
+          <div *ngIf="percentileOptions.length === 0">Please chose another Subtask.</div>
             <mat-form-field>
               <textarea matInput placeholder="Feedback example" [(ngModel)]="example">{{example}}</textarea>
             </mat-form-field>
@@ -78,15 +77,16 @@
               <input matInput placeholder="Skill" [(ngModel)]="skill" value = "{{skill}}">
             </mat-form-field>
             <mat-form-field>
-              <input matInput placeholder="Assignment" [(ngModel)]="assignment">
+              <input matInput placeholder="Assignment" [(ngModel)]="assignment" value = "{{assignment}}">
             </mat-form-field>
             <mat-form-field>
-              <textarea matInput placeholder="Feedback message" [(ngModel)]="message"></textarea>
+              <textarea matInput placeholder="Feedback message" [(ngModel)]="message">{{message}}</textarea>
             </mat-form-field>
           <div style="display: flex; justify-content: flex-end">
             <div mat-dialog-actions>
               <button mat-button (click)="onNoClick()">Cancel</button>  <button mat-raised-button color="primary" (click)="save()">Save feedback</button>
             </div>
+            <p>&nbsp;</p>
           </div>
 
           <p>&nbsp;</p>
