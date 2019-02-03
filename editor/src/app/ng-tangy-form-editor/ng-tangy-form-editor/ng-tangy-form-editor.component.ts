@@ -96,8 +96,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed: ' + JSON.stringify(result));
-
+      // console.log('The dialog was closed: ' + JSON.stringify(result));
     });
 
   }

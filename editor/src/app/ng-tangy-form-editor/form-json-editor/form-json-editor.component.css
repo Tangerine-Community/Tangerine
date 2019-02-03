@@ -8,7 +8,7 @@
 }
 
 form, mat-card-content>*{
-  width: 400px;
+  width: 500px;
   margin: .5em auto;
   padding: .5em .5em .5em .5em;
   background: white;
@@ -61,13 +61,18 @@ th.mat-header-cell:first-of-type {
 }
 
 .mat-column-percentile {
-  flex: 0 0 20% !important;
+  flex: 0 0 25% !important;
+  width: 15% !important;
   text-align:center;
   vertical-align: top;
 }
 
 .mat-column-example {
-  flex: 0 0 45% !important;
+  flex: 0 0 40% !important;
   vertical-align: top;
   padding-left: 5px;
+}
+.mat-tab-body-content {
+  height: 100%;
+   overflow: revert;
 }
