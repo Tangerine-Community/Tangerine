@@ -196,7 +196,7 @@ export class FormJsonEditorComponent implements OnInit {
     let feedbackItemsForForm:Array<Feedback> = this.feedbackItems.filter(item => item.formItem === this.formItem)
     if (feedbackItemsForForm) {
       let percentagesUsed = feedbackItemsForForm.map(feedback => parseInt(String(feedback.percentile)))
-      let percentiles = [1,2,3,4,5]
+      let percentiles = [0,1,2,3,4]
       let intersection = percentiles.filter(x => !percentagesUsed.includes(x));
       // console.log("These are available for this form: " + JSON.stringify(intersection))
       this.percentileOptions = this.createPercentileOptions(intersection).filter(function(e){return e});
