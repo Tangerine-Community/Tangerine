@@ -11,90 +11,89 @@
 </mat-toolbar>
 
  <mat-card class="tangy-card-content-container">
-  <h2 title="Summary">{{'Summary'|translate}}</h2>
-
-  <table class="mat-elevation-z8" *ngIf="classGroupReport.studentsAssessed > 0" >
-    <tr>
-      <td title="Subtest Name">{{'Subtest Name'|translate}}</td><td>{{classGroupReport.subtestName}}</td>
-    </tr>
-    <tr>
-      <td title="Class Size">{{'Class Size'|translate}}</td><td>{{students?.length}}</td>
-    </tr>
-    <tr>
-      <td title="Students Assessed">{{'Students Assessed'|translate}}</td><td>{{classGroupReport.studentsAssessed}}</td>
-    </tr>
-    <tr>
-      <td title="Average Correct (%)">{{'Average Correct (%)'|translate}}</td><td>{{classGroupReport.aveCorrectPerc}}</td>
-    </tr>
-    <tr>
-      <td title="Average Correct">{{'Average Correct'|translate}}</td>
-      <td *ngIf="classGroupReport.max">{{classGroupReport.aveCorrect}} / {{classGroupReport.max}}</td>
-      <td *ngIf="!classGroupReport.max">{{classGroupReport.aveCorrect}} / {{classGroupReport.attempted}}</td>
-    </tr>
-    <!--<tr *ngIf="classGroupReport.duration">-->
-      <!--<td title="Duration">{{'Duration'|translate}}</td><td>{{classGroupReport.duration}} {{'seconds'|translate}}</td>-->
-    <!--</tr>-->
-    <tr>
-      <td title="Students to watch">{{'Students to watch'|translate}}</td>
-      <td>
-          <p *ngFor="let student of classGroupReport.studentsToWatch">
+    <div id="reportContainer">
+      <div id="stats">
+        <h2 title="Student Grouping">{{'Student Grouping'|translate}}: {{classGroupReport.subtestName}}</h2>
+        <h3>{{'Students Assessed'|translate}}: {{classGroupReport.studentsAssessed}} / {{students?.length}}</h3>
+        <h3 *ngIf="classGroupReport.max">{{'Average Correct'|translate}}: {{classGroupReport.aveCorrect}} / {{classGroupReport.max}} ({{classGroupReport.aveCorrectPerc}}%)</h3>
+        <h3 *ngIf="!classGroupReport.max">{{'Average Correct'|translate}}: {{classGroupReport.aveCorrect}} / {{classGroupReport.attempted}} ({{classGroupReport.aveCorrectPerc}}%)</h3>
+        <h3 *ngIf="classGroupReport.studentsToWatch">{{'Students to watch'|translate}}</h3>
+        <ul *ngIf="classGroupReport.studentsToWatch">
+          <li *ngFor="let student of classGroupReport.studentsToWatch">
             {{student}}
-          </p>
-    </td>
-    </tr>
-  </table>
+          </li>
+        </ul>
 
-   <table class="mat-elevation-z8" *ngIf="classGroupReport.studentsAssessed === 0">
-     <tr>
-       <td title="Subtest Name">{{'Subtest Name'|translate}}</td><td>{{classGroupReport.subtestName}}</td>
-     </tr>
-     <tr>
-       <td title="Class Size">{{'Class Size'|translate}}</td><td>{{students?.length}}</td>
-     </tr>
-     <tr>
-       <td title="Students Assessed">{{'Students Assessed'|translate}}</td><td>0</td>
-     </tr>
-   </table>
+        <h2 title="Student Grouping" *ngIf="classGroupReport.studentsAssessed > 0">{{'Student Grouping'|translate}}</h2>
+
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="classGroupReport.studentsAssessed > 0">
+
+          <!-- Name Column -->
+          <!-- {{'Student'|translate}} -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef title="Student"> {{'Student'|translate}} </th>
+            <td mat-cell *matCellDef="let element"> {{element["name"]}} </td>
+          </ng-container>
+
+          <!-- Percentile Column -->
+          <ng-container matColumnDef="percentile">
+            <th mat-header-cell *matHeaderCellDef title="Score"> {{'Percentile'|translate}} </th>
+            <td mat-cell *matCellDef="let element">
+              <span *ngIf="element.score">{{element.percentile}} % </span>
+            </td>
+          </ng-container>
+
+          <!-- Score Column -->
+          <ng-container matColumnDef="score">
+            <th mat-header-cell *matHeaderCellDef title="Score"> {{'Score'|translate}} </th>
+            <td mat-cell *matCellDef="let element">
+              <span *ngIf="element.score">{{element.score}} % </span>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef title="Status"> {{'Status'|translate}} </th>
+            <td mat-cell *matCellDef="let element">
+              <span *ngIf="element.status">{{element.status}}</span>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+          <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" [ngClass]="element.colorClass"></tr>
+        </table>
 
 
-  <h2 title="Student Grouping" *ngIf="classGroupReport.studentsAssessed > 0">{{'Student Grouping'|translate}}</h2>
+        <table class="mat-elevation-z8" *ngIf="classGroupReport.studentsAssessed === 0">
+          <tr>
+            <td title="Subtest Name">{{'Subtest Name'|translate}}</td><td>{{classGroupReport.subtestName}}</td>
+          </tr>
+          <tr>
+            <td title="Class Size">{{'Class Size'|translate}}</td><td>{{students?.length}}</td>
+          </tr>
+          <tr>
+            <td title="Students Assessed">{{'Students Assessed'|translate}}</td><td>0</td>
+          </tr>
+        </table>
+      </div>
+      <div id="feedback">
+        <div>
+          <mat-card>
+            <mat-card-title>Feedback</mat-card-title>
+            <mat-card-content>
+              <!--{{classGroupReport?.feedback?.message}}-->
+              <span [innerHTML]="classGroupReport?.feedback?.message"></span>
+            </mat-card-content>
+          </mat-card>
+          <!--{{classGroupReport?.feedback?.message}}-->
+        </div>
+      </div>
+    </div>
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="classGroupReport.studentsAssessed > 0">
 
-    <!-- Name Column -->
-    <!-- {{'Student'|translate}} -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef title="Student"> {{'Student'|translate}} </th>
-      <td mat-cell *matCellDef="let element"> {{element["name"]}} </td>
-    </ng-container>
 
-    <!-- Percentile Column -->
-    <ng-container matColumnDef="percentile">
-      <th mat-header-cell *matHeaderCellDef title="Score"> {{'Percentile'|translate}} </th>
-      <td mat-cell *matCellDef="let element">
-        <span *ngIf="element.score">{{element.percentile}} % </span>
-      </td>
-    </ng-container>
 
-    <!-- Score Column -->
-    <ng-container matColumnDef="score">
-      <th mat-header-cell *matHeaderCellDef title="Score"> {{'Score'|translate}} </th>
-      <td mat-cell *matCellDef="let element">
-        <span *ngIf="element.score">{{element.score}} % </span>
-      </td>
-    </ng-container>
 
-    <!-- Status Column -->
-    <ng-container matColumnDef="status">
-      <th mat-header-cell *matHeaderCellDef title="Status"> {{'Status'|translate}} </th>
-      <td mat-cell *matCellDef="let element">
-        <span *ngIf="element.status">{{element.status}}</span>
-      </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" [ngClass]="element.colorClass"></tr>
-  </table>
 
 
 

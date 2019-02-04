@@ -23,7 +23,7 @@ export class DashboardService {
   databaseName: String;
 
   async getFormList() {
-    const formList:any = await this.http.get('./assets/forms.json')
+    const formList:Array<any> = await this.http.get<Array<any>>('./assets/forms.json')
       .toPromise()
 
     return formList;

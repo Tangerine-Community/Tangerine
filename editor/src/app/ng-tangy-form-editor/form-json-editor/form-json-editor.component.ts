@@ -206,11 +206,11 @@ export class FormJsonEditorComponent implements OnInit {
 
   createPercentileOptions(optionsToDisplay:Array<number>) {
     let percentileOptions = [
-      {"id":"1", "title": "0% - 20%"},
-      {"id":"2", "title": "21% - 40%"},
-      {"id":"3", "title": "41% - 60%"},
-      {"id":"4", "title": "61% - 80%"},
-      {"id":"5", "title": "81% - 100%"}
+      {"id":"0", "title": "0% - 19%"},
+      {"id":"1", "title": "20% - 39%"},
+      {"id":"2", "title": "40% - 59%"},
+      {"id":"3", "title": "60% - 79%"},
+      {"id":"4", "title": "80% - 100%"}
     ]
 
     if (optionsToDisplay) {

@@ -96,3 +96,24 @@ p {
   margin-left: 0px;
 }
 
+#reportContainer {
+  display: flex;
+  justify-content:space-between;
+  /*flex-wrap: wrap;*/
+}
+
+.reportStats {
+  background-color:transparent;
+}
+
+#feedback {
+  width:45%;
+}
+
+.feedback-example {
+  padding:1em;
+  background-color: lightgoldenrodyellow;
+}
+
+
+
