@@ -205,7 +205,7 @@ export class FormJsonEditorComponent implements OnInit {
   }
 
   createPercentileOptions(optionsToDisplay:Array<number>) {
-    let percentileOptions = [
+    let percentileOptions:Array<any> = [
       {"id":"0", "title": "0% - 19%"},
       {"id":"1", "title": "20% - 39%"},
       {"id":"2", "title": "40% - 59%"},
@@ -214,10 +214,8 @@ export class FormJsonEditorComponent implements OnInit {
     ]
 
     if (optionsToDisplay) {
-      let filtered = percentileOptions.map(option => {
-        if (optionsToDisplay.find(x => parseInt(option.id) === x )) {
-          return option
-        }
+      let filtered:Array<any> = optionsToDisplay.map(percentile => {
+        return percentileOptions.find(option => parseInt(option.id) === percentile)
       })
       return filtered
     } else {
