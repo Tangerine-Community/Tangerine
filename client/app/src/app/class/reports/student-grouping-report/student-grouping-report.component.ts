@@ -6,6 +6,8 @@ import {MatTableDataSource} from "@angular/material";
 import {ClassFormService} from "../../_services/class-form.service";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {ClassUtils} from "../../class-utils";
+import {FormMetadata} from "../../form-metadata";
+import {Feedback} from "../../feedback";
 
 
 export interface ClassGroupingReport {
@@ -19,6 +21,7 @@ export interface ClassGroupingReport {
   max:number;
   duration:number;
   studentsToWatch:string[];
+  feedback:Feedback;
 }
 
 export interface StudentResult {
@@ -48,13 +51,15 @@ export class StudentGroupingReportComponent implements OnInit {
     attempted: null,
     max: null,
     studentsToWatch: null,
-    duration: null
+    duration: null,
+    feedback: null
   }
   classFormService:ClassFormService;
   classUtils: ClassUtils
   formList: any[] = []; // used for the user interface - creates Class grouping list
   status:string[] =  [_TRANSLATE('Status.Concerning'), _TRANSLATE('Status.Poor'), _TRANSLATE('Status.Good'), _TRANSLATE('Status.Great')]
   navigationSubscription
+  feedbackViewInited:boolean = false
 
   @ViewChild('container') container: ElementRef;
   constructor(
@@ -75,8 +80,26 @@ export class StudentGroupingReportComponent implements OnInit {
   }
 
   async ngOnInit() {
-
     await this.getReport()
+  }
+
+  ngAfterViewChecked() {
+    if (!this.feedbackViewInited) {
+      let el: HTMLElement = document.querySelector(".feedback-example")
+      if (el) {
+        el.style.backgroundColor = "lightgoldenrodyellow"
+        el.style.margin = "1em"
+        el.style.padding = "1em"
+        this.feedbackViewInited = true
+      }
+      el = document.querySelector(".feedback-assignment")
+      if (el) {
+        el.style.backgroundColor = "lightgoldenrodyellow"
+        el.style.margin = "1em"
+        el.style.padding = "1em"
+        this.feedbackViewInited = true
+      }
+    }
   }
 
   ngOnDestroy() {
@@ -87,7 +110,6 @@ export class StudentGroupingReportComponent implements OnInit {
       this.navigationSubscription.unsubscribe();
     }
   }
-
 
   async getReport() {
 
@@ -191,8 +213,6 @@ export class StudentGroupingReportComponent implements OnInit {
       allStudentResults.push(studentResults)
     }
 
-
-
     let aveCorrectPercReport = this.classUtils.round( aveCorrectPerc / studentsAssessed, 0 )
     let aveCorrectReport = this.classUtils.round( aveCorrect / studentsAssessed, 2 )
     let attemptedReport = this.classUtils.round( attempted / studentsAssessed, 2 )
@@ -243,17 +263,7 @@ export class StudentGroupingReportComponent implements OnInit {
           percentile = 50
 
         studentResult["score"] = totalGridPercentageCorrect
-        let index;
-        if (totalGridPercentageCorrect >= 80)
-          index = 4
-        else if (totalGridPercentageCorrect >= 60 && totalGridPercentageCorrect <= 79)
-          index = 3
-        else if (totalGridPercentageCorrect >= 40 && totalGridPercentageCorrect <= 59)
-          index = 2
-        else if (totalGridPercentageCorrect >= 20 && totalGridPercentageCorrect <= 29)
-          index = 1
-        else
-          index = 0
+        let index = this.calculatePercentile(totalGridPercentageCorrect);
 
         studentResult["index"] = index
         studentResult["status"] = status[index]
@@ -272,6 +282,19 @@ export class StudentGroupingReportComponent implements OnInit {
         return -1;
       return 0;
     }
+
+    let feedback
+    let forDefs = await this.dashboardService.getFormList();
+    let formMetadata:FormMetadata = forDefs.find(form => form.id === curriculumId)
+    if (formMetadata.feedbackItems) {
+      let classPercentile = this.calculatePercentile(aveCorrectPercReport);
+      feedback = formMetadata.feedbackItems.find(item => item.formItem === itemId && String(item.percentile) === String(classPercentile))
+      if (feedback) {
+        let tpl = eval('`'+feedback.message+'`');
+        feedback.message = tpl
+      }
+    }
+
     let allStudentResultsSorted = allStudentResults.sort(compare);
     this.allStudentResults = allStudentResultsSorted;
     this.classGroupReport.studentsAssessed = studentsAssessed
@@ -281,7 +304,23 @@ export class StudentGroupingReportComponent implements OnInit {
     this.classGroupReport.attempted = attemptedReport
     this.classGroupReport.duration = duration
     this.classGroupReport.studentsToWatch = studentsToWatch
+    this.classGroupReport.feedback = feedback
     this.dataSource = new MatTableDataSource<StudentResult>(this.allStudentResults);
+  }
+
+  private calculatePercentile(score) {
+    let index;
+    if (score >= 80)
+      index = 4
+    else if (score >= 60 && score <= 79)
+      index = 3
+    else if (score >= 40 && score <= 59)
+      index = 2
+    else if (score >= 20 && score <= 29)
+      index = 1
+    else
+      index = 0
+    return index;
   }
 
   async getMyStudents(classId: any) {

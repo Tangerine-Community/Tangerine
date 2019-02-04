@@ -69,7 +69,7 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-          <div *ngIf="percentileOptions.length === 0">Please chose another Subtask.</div>
+          <div *ngIf="percentileOptions.length === 0" style="color:red;">Please choose another Subtask.</div>
             <mat-form-field>
               <textarea matInput placeholder="Feedback example" [(ngModel)]="example">{{example}}</textarea>
             </mat-form-field>
