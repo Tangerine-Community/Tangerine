@@ -11,13 +11,14 @@ import { DownloadCsvComponent } from './download-csv/download-csv.component';
 import { AddUserComponent } from './add-users/add-user.component';
 import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
 import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
+import { SuperAdminUserGuard } from '../core/auth/_guards/super-admin-user-guard.service';
 import { AdminUserGuard } from '../core/auth/_guards/admin-user-guard.service';
 
 const groupsRoutes: Routes = [
   // { path: 'projects',  component: GroupsComponent },
   { path: '', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
-  { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, AdminUserGuard] },
+  { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, SuperAdminUserGuard] },
   { path: 'groups/:groupName', component: GroupDetailsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName', component: GroupDetailsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
