@@ -41,7 +41,6 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     this.print = !!this.route.snapshot.paramMap.get('print');
     this.groupName = groupName;
 
-    // let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
     let formHtml = await this.http.get(`/editor/${groupName}/content/${formId}/form.html`, {responseType: 'text'}).toPromise()
     let pathArray = window.location.hash.split( '/' );
     this.groupId = pathArray[2];
@@ -131,17 +130,3 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
 
 }
 
-// @Component({
-//   selector: 'app-form-json-editor',
-//   templateUrl: '../form-json-editor/form-json-editor.component.html',
-//   styleUrls: ['../form-json-editor/form-json-editor.component.css']
-// })
-// // export class FormJsonEditorComponent implements OnInit {
-// export class FormJsonEditorComponent {
-//
-//   constructor(
-//     public dialogRef: MatDialogRef<FormJsonEditorComponent>,
-//     @Inject(MAT_DIALOG_DATA) public data: formData) {}
-//
-//
-// }
