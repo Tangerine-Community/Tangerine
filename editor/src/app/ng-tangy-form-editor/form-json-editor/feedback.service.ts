@@ -36,7 +36,7 @@ export class FeedbackService {
     const filteredItems = this.form.feedbackItems.filter(item => item !== feedbackItem)
     this.form.feedbackItems = filteredItems
     this.form.feedbackItems.push(feedback)
-    let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
+    let formsJson = await this.http.get<Array<FormMetadata>>(`/editor/${groupName}/content/forms.json`).toPromise()
     const updatedFormsJson = formsJson.map(formInfo => {
       if (formInfo.id !== this.form.id) return Object.assign({}, formInfo)
       return Object.assign({}, formInfo, this.form)
@@ -57,7 +57,7 @@ export class FeedbackService {
       const filteredItems = this.form.feedbackItems.filter(item => item !== feedbackItem)
       this.form.feedbackItems = filteredItems
     }
-    let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
+    let formsJson = await this.http.get<Array<FormMetadata>>(`/editor/${groupName}/content/forms.json`).toPromise()
     const updatedFormsJson = formsJson.map(formInfo => {
       if (formInfo.id !== this.form.id) return Object.assign({}, formInfo)
       return Object.assign({}, formInfo, this.form)
@@ -78,7 +78,7 @@ export class FeedbackService {
   }
 
   public async getForm(groupName: string, formId: string) {
-    let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
+    let formsJson = await this.http.get<Array<FormMetadata>>(`/editor/${groupName}/content/forms.json`).toPromise()
     let formMetadata:FormMetadata = formsJson.find(form => form.id === formId)
     return formMetadata;
   }

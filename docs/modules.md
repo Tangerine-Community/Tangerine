@@ -4,6 +4,9 @@ Modules provide additional features to Tangerine, such as:
  - automatically add forms to the client when a new group is created (via groupNew hook)
  - data transformation for reporting (via flatFormReponse hook)
 
+Modules:
+ - [Class](class.md)
+
 Steps to add a module
  - Create an index.js file inside server/src/modules/moduleName using the sample below as a guide.
  - Implement any relevant hooks. See the examples for flatFormReponse and groupNew, below.
