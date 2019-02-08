@@ -2,7 +2,10 @@
     
     <mat-tab label="{{'< Back to Group'|translate}}">
     </mat-tab>
-    <mat-tab label="{{'Form Editor'|translate}}">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        {{'Form Editor'|translate}} <mat-icon (click)="openFormSettings()" class="form-editor-settings-icon">settings</mat-icon>
+      </ng-template>
         <div #container></div>
     </mat-tab>
 </mat-tab-group>

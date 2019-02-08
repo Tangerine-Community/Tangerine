@@ -1,0 +1,100 @@
+<mat-card class="form-settings" id="form-settings">
+  <!--<mat-card-title>-->
+    <!--<h2 mat-card-title-text>Settings for {{data.title}} </h2>-->
+  <!--</mat-card-title>-->
+  <!--<mat-card-content>-->
+
+    <mat-tab-group>
+      <mat-tab label="Feedback">
+        <mat-dialog-content>
+        <button mat-raised-button class="add-feedback-button" (click) = "showAddFeedbackForm()" *ngIf="!showFeedbackForm">Add Feedback</button>
+        <div id="feedback-listing" *ngIf = "showFeedbackListing" >
+          <h3>Tasks/Subtasks with Feedback</h3>
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <!-- operations Column -->
+            <ng-container matColumnDef="operations">
+              <th mat-header-cell *matHeaderCellDef> Actions </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-icon-button color="primary">
+                  <mat-icon aria-label="Edit"(click)="editFeedback(element.groupName, element.formId, element.formItem, element.percentile)">edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteFeedback(element.groupName, element.formId, element.formItem, element.percentile)">
+                  <mat-icon aria-label="Delete">delete_forever</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <!-- formItemName Column -->
+            <ng-container matColumnDef="formItemName">
+              <th mat-header-cell *matHeaderCellDef> Subtask </th>
+              <td mat-cell *matCellDef="let element"> {{element.formItemName}} </td>
+            </ng-container>
+
+            <!-- percentile Column -->
+            <ng-container matColumnDef="percentile">
+              <th mat-header-cell *matHeaderCellDef> Percentile </th>
+              <td mat-cell *matCellDef="let element"> {{element.percentileTitle}} </td>
+            </ng-container>
+
+            <!-- example Column -->
+            <ng-container matColumnDef="example">
+              <th mat-header-cell *matHeaderCellDef> Feedback </th>
+              <td mat-cell *matCellDef="let element"> {{element.example}}
+                <p>Skill: {{element.skill}}</p>
+                <p>Assignment:{{element.assignment}} </p>
+                <p>Message:{{element.message}} </p>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+
+          <p>&nbsp;</p>
+        </div>
+
+        <div class="feedback-form" *ngIf="showFeedbackForm">
+            <mat-form-field>
+              <mat-select placeholder="Subtask"  (selectionChange)="changeFormItem($event.value)" [(value)]="formItem">
+                <mat-option *ngFor="let item of formItems" value="{{item.id}}">
+                  {{item.title}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          <mat-form-field>
+              <mat-select placeholder="Percentile" [(value)]="percentile">
+                <mat-option *ngFor="let option of percentileOptions" value="{{option.id}}">
+                  {{option.title}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          <div *ngIf="percentileOptions.length === 0" style="color:red;">Please choose another Subtask.</div>
+            <mat-form-field>
+              <textarea matInput placeholder="Feedback example" [(ngModel)]="example">{{example}}</textarea>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Skill" [(ngModel)]="skill" value = "{{skill}}">
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput placeholder="Assignment" [(ngModel)]="assignment" value = "{{assignment}}">
+            </mat-form-field>
+            <mat-form-field>
+              <textarea matInput placeholder="Feedback message" [(ngModel)]="message">{{message}}</textarea>
+            </mat-form-field>
+          <div style="display: flex; justify-content: flex-end">
+            <div mat-dialog-actions>
+              <button mat-button (click)="onNoClick()">Cancel</button>  <button mat-raised-button color="primary" (click)="save()">Save feedback</button>
+            </div>
+            <p>&nbsp;</p>
+          </div>
+
+          <p>&nbsp;</p>
+        </div>
+        </mat-dialog-content>
+      </mat-tab>
+      <mat-tab label="Form Item Grouping">
+        <div>Grouping of tangy-form-items</div>
+      </mat-tab>
+    </mat-tab-group>
+</mat-card>
