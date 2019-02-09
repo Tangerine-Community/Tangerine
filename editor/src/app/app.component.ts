@@ -13,6 +13,7 @@ import { WindowRef } from './core/window-ref.service'
 })
 export class AppComponent implements OnInit {
     loggedIn = false;
+    validSession:boolean
     user_id: string = localStorage.getItem('user_id');
     private childValue: string;
 
@@ -37,11 +38,14 @@ export class AppComponent implements OnInit {
 
     async ngOnInit() {
 
-        this.loggedIn = await this.authenticationService.isLoggedIn();
+        // Ensure user is logged in every 60 seconds.
+        await this.ensureLoggedIn()
+        setInterval(() => this.ensureLoggedIn(), 60*1000)
 
         this.authenticationService.currentUserLoggedIn$.subscribe(isLoggedIn => {
             this.loggedIn = isLoggedIn;
             this.user_id = localStorage.getItem('user_id');
+            if (!isLoggedIn) this.router.navigate(['login']);
         });
 
         // Remove splash.
@@ -54,5 +58,14 @@ export class AppComponent implements OnInit {
         }, 3000)
 
     };
+
+    async ensureLoggedIn() {
+        this.loggedIn = await this.authenticationService.isLoggedIn();
+        if (this.loggedIn && await this.authenticationService.validateSession() === false) {
+            console.log('found invalid session')
+            this.logout()
+        }
+    }
+
 
 }

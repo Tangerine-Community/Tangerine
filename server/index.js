@@ -164,6 +164,16 @@ app.post('/login',
   }
 );
 
+app.get('/login/validate/:userName',
+  function (req, res) {
+    if (req.user && req.params.userName === req.user.name) {
+      res.send({ valid: true });
+    } else {
+      res.send({ valid: false });
+    }
+  }
+);
+
 // API
 app.get('/api/modules', isAuthenticated, require('./src/routes/modules.js'))
 app.post('/api/:groupId/upload-check', hasUploadToken, require('./src/routes/group-upload-check.js'))
