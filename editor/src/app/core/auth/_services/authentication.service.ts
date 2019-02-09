@@ -32,7 +32,7 @@ export class AuthenticationService {
 
   async validateSession():Promise<boolean> {
     const status = await this.httpClient.get(`/login/validate/${localStorage.getItem('user_id')}`).toPromise()
-    return status.valid
+    return status['valid']
   }
 
 
