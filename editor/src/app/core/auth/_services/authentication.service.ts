@@ -30,6 +30,12 @@ export class AuthenticationService {
     return this._currentUserLoggedIn;
   }
 
+  async validateSession():Promise<boolean> {
+    const status = await this.httpClient.get(`/login/validate/${localStorage.getItem('user_id')}`).toPromise()
+    return status.valid
+  }
+
+
   async logout() {
     await localStorage.removeItem('token');
     await localStorage.removeItem('user_id');
