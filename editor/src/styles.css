@@ -2,3 +2,16 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+:root {
+    --document-background-color: #FAFAFA;
+    --mdc-theme-primary: #3c5b8d !important;
+    --mdc-theme-secondary: #f26f10 !important;
+    --primary-color-dark: #3c5b8d;
+    --primary-text-color: var(--light-theme-text-color);
+    --primary-color: #3c5b8d;
+    --accent-color: #f26f10;
+    --accent-text-color: #FFF;
+    --error-color: var(--paper-red-500);
+    --disabled-color: #BBB;
+  }
+  
