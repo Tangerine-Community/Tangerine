@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef, MatTable} from "@angular/material";
 import {FormMetadata} from "./form-metadata";
 import {Feedback} from "./feedback";
@@ -8,15 +8,15 @@ import {HttpClient} from "@angular/common/http";
 
 
 @Component({
-  selector: 'app-form-json-editor',
-  templateUrl: './form-json-editor.component.html',
-  styleUrls: ['./form-json-editor.component.css']
+  selector: 'feedback-editor',
+  templateUrl: './feedback-editor.component.html',
+  styleUrls: ['./feedback-editor.component.css']
 })
-export class FormJsonEditorComponent implements OnInit {
+export class FeedbackEditorComponent implements OnInit {
 
   showFeedbackForm = false;
-  groupName:string
-  formId:string
+  @Input() groupName:string
+  @Input() formId:string
   feedbackItems:Array<Feedback> = []
   feedback:Feedback
   percentile:number
@@ -27,7 +27,6 @@ export class FormJsonEditorComponent implements OnInit {
   formItems:any
   formItem:string
   formItemName:string
-  // displayedColumns: string[] = ['formItemName','percentile', 'example', 'skill', 'assignment', 'message'];
   displayedColumns: string[] = ['operations','formItemName','percentile', 'example'];
   dataSource
   showFeedbackListing = true
@@ -36,17 +35,13 @@ export class FormJsonEditorComponent implements OnInit {
   @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(
-    public dialogRef: MatDialogRef<FormJsonEditorComponent>,
     public feedbackService:FeedbackService,
     private route: ActivatedRoute,
-    @Inject(MAT_DIALOG_DATA) public data: FormMetadata,
+    public data: FormMetadata,
     private http: HttpClient) {}
 
   async ngOnInit() {
-    console.log("I'm here now babe.")
     this.feedback = this.getFeedback()
-    this.groupName = this.data['groupName'];
-    this.formId = this.data['id'];
     let formHtml = await this.http.get(`/editor/${this.groupName}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
     this.formItems = await this.feedbackService.createFormItemsList(formHtml);
     this.percentileOptions = this.createPercentileOptions(null)
@@ -93,6 +88,8 @@ export class FormJsonEditorComponent implements OnInit {
       let denormed = form.feedbackItems.map(fb => {
         let formItem = this.formItems.find(item => item.id === fb['formItem'])
         fb.formItemName = formItem.title
+        fb.messageTruncated = fb.message.substring(0,30)
+        fb.exampleTruncated = fb.example.substring(0,30)
 
         let percentileOption = this.createPercentileOptions(null).find(item => item.id === String(fb['percentile']))
         if (percentileOption) {
@@ -192,15 +189,12 @@ export class FormJsonEditorComponent implements OnInit {
   }
 
   changeFormItem(value) {
-    console.log("changeFormItem: " + this.formItem + " value: " + value)
     let feedbackItemsForForm:Array<Feedback> = this.feedbackItems.filter(item => item.formItem === this.formItem)
     if (feedbackItemsForForm) {
       let percentagesUsed = feedbackItemsForForm.map(feedback => parseInt(String(feedback.percentile)))
       let percentiles = [0,1,2,3,4]
       let intersection = percentiles.filter(x => !percentagesUsed.includes(x));
-      // console.log("These are available for this form: " + JSON.stringify(intersection))
       this.percentileOptions = this.createPercentileOptions(intersection).filter(function(e){return e});
-      // console.log("These are this.options for this form: " + JSON.stringify(this.percentileOptions))
     }
   }
 

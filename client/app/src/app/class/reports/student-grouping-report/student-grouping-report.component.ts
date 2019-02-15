@@ -13,7 +13,13 @@ import {Feedback} from "../../feedback";
 export interface StudentResult {
   id: string;
   name: string;
-  forms:any;
+  classId:string;
+  forms:[];
+  response:any;
+  score:any;
+  max:any;
+  totalGridPercentageCorrect:number;
+  percentile: string;
 }
 @Component({
   selector: 'app-student-grouping-report',

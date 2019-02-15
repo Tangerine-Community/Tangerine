@@ -1,11 +1,10 @@
 import {AfterContentInit, ElementRef, Component, ViewChild, Inject} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTabChangeEvent} from "@angular/material";
+import {MatTabChangeEvent} from "@angular/material";
 import {AppConfigService} from "../../shared/_services/app-config.service";
-import {FormJsonEditorComponent} from "../form-json-editor/form-json-editor.component";
-import {FormMetadata} from "../form-json-editor/form-metadata";
-import {Feedback} from "../form-json-editor/feedback";
+import {FormMetadata} from "../feedback-editor/form-metadata";
+import {Feedback} from "../feedback-editor/feedback";
 
 @Component({
   selector: 'app-ng-tangy-form-editor',
@@ -20,34 +19,41 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   selectedIndex = 1;
   print = false;
   groupId;
+  formId;
   groupName;
   form:FormMetadata;
   feedback:Feedback;
+  modules:any;
+  hasClassModule = false
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
     private appConfigService: AppConfigService,
-    public dialog: MatDialog
   ) { }
 
   async ngAfterContentInit() {
 
     this.containerEl = this.container.nativeElement
 
-    let formId = this.route.snapshot.paramMap.get('formId');
+    this.formId = this.route.snapshot.paramMap.get('formId');
     let groupName = this.route.snapshot.paramMap.get('groupName');
     this.print = !!this.route.snapshot.paramMap.get('print');
     this.groupName = groupName;
 
-    let formHtml = await this.http.get(`/editor/${groupName}/content/${formId}/form.html`, {responseType: 'text'}).toPromise()
+    let formHtml = await this.http.get(`/editor/${groupName}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
     let pathArray = window.location.hash.split( '/' );
     this.groupId = pathArray[2];
 
     const appConfig = await this.appConfigService.getAppConfig(groupName);
     const appConfigCategories = appConfig.categories;
+    const appConfigModules = appConfig.modules;
+    if (appConfigModules && appConfigModules.includes('class')) {
+      this.hasClassModule = true;
+    }
     const categories = JSON.stringify(appConfigCategories);
+
 
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
     if (!this.print) {
@@ -79,25 +85,9 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
      if (tabChangeEvent.index === 0) {
         this.router.navigate(['groups', this.groupName])
-      }
-  }
-
-  async openFormSettings() {
-    let formId = this.route.snapshot.paramMap.get('formId');
-    let groupName = this.route.snapshot.paramMap.get('groupName');
-    let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
-    this.form = formsJson.find(form => form.id === formId)
-    this.form['groupName'] = groupName
-    // console.log("formInfo: " + JSON.stringify(this.form))
-    const dialogRef = this.dialog.open(FormJsonEditorComponent, {
-      width: '500px',
-      data: this.form
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      // console.log('The dialog was closed: ' + JSON.stringify(result));
-    });
-
+      } else if  (tabChangeEvent.index === 1) {
+       this.ngAfterContentInit()
+     }
   }
 
   async saveForm(formHtml) {
