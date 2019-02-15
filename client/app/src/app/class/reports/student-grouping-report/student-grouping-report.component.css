@@ -108,11 +108,28 @@ p {
 
 #feedback {
   width:45%;
+  margin-left: 1em;
 }
 
 .feedback-example {
   padding:1em;
   background-color: lightgoldenrodyellow;
+}
+
+.flexbox-horizontal-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+#overview div:not(:last-child) {
+  margin-right: 40px;
+}
+
+#overview ul {
+  list-style: none;
+  padding-left: 0;
 }
 
 

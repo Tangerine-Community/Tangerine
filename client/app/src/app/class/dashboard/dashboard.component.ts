@@ -1,12 +1,14 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {DashboardService} from "../_services/dashboard.service";
-import {PageEvent} from "@angular/material";
+import {MatTableDataSource, PageEvent} from "@angular/material";
 import {AuthenticationService} from "../../core/auth/_services/authentication.service";
 import {ClassFormService} from "../_services/class-form.service";
 import {Router} from "@angular/router";
 import {_TRANSLATE} from "../../shared/translation-marker";
 import {CookieService} from "ngx-cookie-service";
+import {ClassUtils} from "../class-utils";
+import {ClassGroupingReport} from "../reports/student-grouping-report/class-grouping-report";
 
 export interface StudentResult {
   id: string;
@@ -27,7 +29,7 @@ export interface StudentResponse {
 export class DashboardComponent implements OnInit {
 
   cookieVersion = "1"
-  classes;students;columnsToDisplay;
+  classes;students;
   currentClassId;currentClassIndex;
   currentItemId;curriculumId;
   selectedClass;selectedCurriculum;
@@ -59,6 +61,10 @@ export class DashboardComponent implements OnInit {
   curriculum; // object that contains name and value of curriculum.
   currArray: any[]; // array of curriculums in a class.
   classViewService;
+  classUtils: ClassUtils;
+  classGroupReport: ClassGroupingReport;
+  displayClassGroupReport:boolean = false;
+  feedbackViewInited:boolean = false;
 
   @ViewChild('container') container: ElementRef;
 
@@ -71,14 +77,15 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.classes = await this.getMyClasses();
-    await this.initDashboard(null, null, null);
     (<any>window).Tangy = {}
     const currentUser = await this.authenticationService.getCurrentUser();
     if (currentUser) {
       this.classViewService = new ClassFormService({databaseName: currentUser});
       this.classViewService.initialize();
     }
+    this.classes = await this.getMyClasses();
+    this.classUtils = new ClassUtils();
+    await this.initDashboard(null, null, null);
   }
 
   async initDashboard(classIndex, currentClassId, curriculumId) {
@@ -135,6 +142,30 @@ export class DashboardComponent implements OnInit {
       if (this.currentItemId) {
         this.selectSubTask(this.currentItemId, this.currentClassId, this.curriculumId)
       }
+
+      // await this.populateFeedback(curriculumId);
+      // console.log("this.classGroupReport item: " + item + " this.currentClassId: " + this.currentClassId + " curriculumId: " + curriculumId + "results: "  + JSON.stringify(results))
+      // console.log("this.classGroupReport feedback: " + JSON.stringify(this.classGroupReport.feedback))
+    }
+  }
+
+  private async populateFeedback(curriculumId) {
+    let subtest = this.curriculumFormsList.filter(obj => {
+      return obj.id === this.currentItemId
+    })
+    let item = subtest[0]
+    let results = await this.getResultsByClass(this.currentClassId, curriculumId, this.curriculumFormsList, item);
+    this.classGroupReport = await this.dashboardService.getClassGroupReport(item, this.currentClassId, curriculumId, results)
+    if (this.classGroupReport) {
+      if (this.classGroupReport.studentsAssessed && this.classGroupReport.classSize) {
+        let percentComplete = this.classGroupReport.studentsAssessed/this.classGroupReport.classSize
+        if (percentComplete && percentComplete >= .8) {
+          this.displayClassGroupReport = true
+        } else {
+          this.displayClassGroupReport = false
+        }
+      }
+
     }
   }
 
@@ -156,18 +187,8 @@ export class DashboardComponent implements OnInit {
     let curriculumForms = [];
     // this only needs to happen once.
     let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
-    const container = this.container.nativeElement
-    container.innerHTML = curriculumFormHtml
-    let formEl = container.querySelectorAll('tangy-form-item')
-    for (const el of formEl) {
-      var attrs = el.attributes;
-      let obj = {}
-      for(let i = attrs.length - 1; i >= 0; i--) {
-        obj[attrs[i].name] = attrs[i].value;
-      }
-      curriculumForms.push(obj)
-    }
-    this.curriculumFormsList = curriculumForms;
+    this.curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
+
     if (typeof this.curriculumFormsList === 'undefined') {
       let msg = "This is an error - there are no this.curriculumForms for this curriculum or range. Check if the config files are available.";
       console.log(msg)
@@ -195,7 +216,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async selectSubTask(itemId, classId, curriculumId) {
-    console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
+    // console.log("selectSubTask itemId: " + itemId + " classId: " + classId + " curriculumId: " + curriculumId)
     this.cookieService.set( 'currentItemId', itemId );
 
     // this.currentClassId = this.selectedClass.id;
@@ -246,6 +267,7 @@ export class DashboardComponent implements OnInit {
       allStudentResults.push(studentResults)
     })
     this.allStudentResults = allStudentResults;
+    // await this.populateFeedback(curriculumId);
   }
 
   // Triggered by dropdown selection in UI.
@@ -427,4 +449,23 @@ export class DashboardComponent implements OnInit {
       console.error(error);
     }
   }
+
+  // ngAfterViewChecked() {
+  //   if (!this.feedbackViewInited) {
+  //     let el: HTMLElement = document.querySelector(".feedback-example")
+  //     if (el) {
+  //       el.style.backgroundColor = "lightgoldenrodyellow"
+  //       el.style.margin = "1em"
+  //       el.style.padding = "1em"
+  //       this.feedbackViewInited = true
+  //     }
+  //     el = document.querySelector(".feedback-assignment")
+  //     if (el) {
+  //       el.style.backgroundColor = "lightgoldenrodyellow"
+  //       el.style.margin = "1em"
+  //       el.style.padding = "1em"
+  //       this.feedbackViewInited = true
+  //     }
+  //   }
+  // }
 }

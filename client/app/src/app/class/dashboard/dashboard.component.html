@@ -67,29 +67,62 @@
       </mat-select>
     </mat-form-field>
 
-
-    <table class="dashboard-table">
-      <tr>
-        <th>Student</th>
-        <th>Result</th>
-      </tr>
-      <tr *ngFor="let element of allStudentResults">
-        <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
-                <td *ngIf="element.forms[currentItemId]?.response ; else elseBlock ">
-                  <input type="checkbox"
-                         (change)="$event ? selectCheckboxResult(element,currentItemId,$event) : null"
-                         [checked]="true"/>
-                </td>
-          <ng-template #elseBlock>
-                  <td>
+    <!--<div class="flexbox-horizontal-container">-->
+    <div>
+      <!--<div class="d1">-->
+      <div>
+        <table class="dashboard-table">
+          <tr>
+            <th>Student</th>
+            <th>Completed?</th>
+          </tr>
+          <tr *ngFor="let element of allStudentResults">
+            <td (click)="$event ? selectStudentName(element) : null" class="student-name"> {{element["name"]}} </td>
+            <td class="checkbox-response" *ngIf="element.forms[currentItemId]?.response ; else elseBlock ">
+              <input type="checkbox"
+                     (change)="$event ? selectCheckboxResult(element,currentItemId,$event) : null"
+                     [checked]="true"/>
+            </td>
+            <ng-template #elseBlock>
+              <td class="checkbox-response">
                 <input type="checkbox" (click)="$event.stopPropagation()"
                        (change)="$event ? selectCheckbox(element,currentItemId) : null"
                 />
-                </td>
-          </ng-template>
-      </tr>
-    </table>
-    <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
+              </td>
+            </ng-template>
+          </tr>
+        </table>
+        <span><p class="mat-h3" *ngIf="!students">{{'No Students currently registered.'|translate}}</p></span>
+      </div>
+      <!--<div class="d2" *ngIf="classGroupReport?.feedback">-->
+        <!--<mat-card class="card-feedback">-->
+          <!--<mat-card-title>Feedback</mat-card-title>-->
+          <!--<mat-card-content>-->
+            <!--<p>-->
+            <!--<span *ngIf="classGroupReport?.max">-->
+              <!--{{'Average Correct'|translate}}: {{classGroupReport?.aveCorrect}} / {{classGroupReport?.max}} ({{classGroupReport?.aveCorrectPerc}}%)-->
+              <!--{{'of'|translate}} {{'Students Assessed'|translate}}: {{classGroupReport?.studentsAssessed}} / {{classGroupReport?.classSize}}-->
+            <!--</span>-->
+            <!--<span *ngIf="!classGroupReport?.max">-->
+              <!--{{'Average Correct'|translate}}: {{classGroupReport?.aveCorrect}} / {{classGroupReport?.attempted}} ({{classGroupReport?.aveCorrectPerc}}%)-->
+              <!--{{'of'|translate}} {{'Students Assessed'|translate}}: {{classGroupReport?.studentsAssessed}} / {{classGroupReport?.classSize}}-->
+            <!--</span>-->
+            <!--<span *ngIf="classGroupReport?.studentsToWatch"><br/>{{'Students to watch'|translate}}: </span>-->
+            <!--<span *ngIf="classGroupReport?.studentsToWatch">-->
+              <!--<span *ngFor="let student of classGroupReport?.studentsToWatch">-->
+                <!--{{student}}-->
+              <!--</span>-->
+            <!--</span>-->
+
+            <!--</p>-->
+            <!--<span [innerHTML]="classGroupReport?.feedback?.message" *ngIf="displayClassGroupReport"></span>-->
+            <!--<p><br/><a href="/#/reports/grouping/{{currentItemId}}/{{selectedClass.doc._id}}/{{curriculumId}}">{{classGroupReport?.subtestName}} report</a></p>-->
+          <!--</mat-card-content>-->
+        <!--</mat-card>-->
+      <!--</div>-->
+    </div>
+
+
 
   </div>
 </mat-card>

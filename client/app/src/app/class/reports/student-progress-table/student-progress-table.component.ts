@@ -5,7 +5,6 @@ import {DashboardService} from "../../_services/dashboard.service";
 import {AuthenticationService} from "../../../core/auth/_services/authentication.service";
 import {ClassUtils} from "../../class-utils";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
-import {ClassGroupingReport} from "../student-grouping-report/student-grouping-report.component";
 
 export interface ClassProgressReport {
   id: string;
