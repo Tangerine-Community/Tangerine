@@ -56,6 +56,7 @@ th.mat-header-cell {
   cursor:pointer;
   color:blue;
   text-decoration:underline;
+  padding-left: 1em;
 }
 
 input[type=checkbox] {
@@ -127,11 +128,48 @@ input[type=checkbox]:not(:checked) {
   color: white;
 }
 
+.dashboard-table .checkbox-response {
+  text-align: center;
+}
+
 .tangy-class-card-content-container {
   margin-left: 3%;
   /*width: 90%;*/
   margin-right: 5%;
   /*min-height: vh;*/
+}
+.flexbox-horizontal-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+}
+.d1 {
+  width: 50%;
+}
+.d2 {
+  width: 50%;
+}
+mat-card.card-feedback {
+  background-color: #f29d38;
+  padding: 16px 10px 10px;
+  border-radius:unset;
+}
+mat-card-header {
+  font-size: 10px;
+}
+mat-card-content {
+  background-color: white;
+  padding:1em;
+}
+mat-card-title {
+  color: white;
+  font: 400 14px/20px Roboto, "Helvetica Neue", sans-serif;
+  font-weight: bold;
+}
+
+::ng-deep .cdk-overlay-pane {
+  top: 120px !important;
 }
 
 

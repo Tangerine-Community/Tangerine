@@ -6,5 +6,7 @@ export class Feedback {
   example:string;
   skill:string;
   assignment:string;
-  message:string
+  message:string;
+  calculatedScore:string;
+  percentileRange: string;
 }
