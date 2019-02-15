@@ -120,7 +120,9 @@ const generateFlatResponse = async function (formResponse, locationList) {
           try {
             const location = getLocationByKeys(locationKeys, locationList) 
             for (let keyName in location) {
-              flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_${keyName}`] = location[keyName]
+              if (keyName !== 'children') {
+                flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_${keyName}`] = location[keyName]
+              }
             }
           } catch(e) {
             flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = 'orphaned';
