@@ -45,15 +45,15 @@
           <ng-container matColumnDef="calculatedScore">
             <th mat-header-cell *matHeaderCellDef title="Score"> {{'Score'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
-              <span *ngIf="element.calculatedScore">{{element.calculatedScore}} % </span>
+              <span *ngIf="element.calculatedScore">{{element.calculatedScore}}</span>
             </td>
           </ng-container>
 
-          <!-- Score Column -->
+          <!-- Percentile Column -->
           <ng-container matColumnDef="score">
-            <th mat-header-cell *matHeaderCellDef title="Score"> {{'Percentile'|translate}} </th>
+            <th mat-header-cell *matHeaderCellDef title="Percentile"> {{'Percentile'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
-              <span *ngIf="element.score">{{element.score}} % </span>
+              <span *ngIf="element.totalGridPercentageCorrect > -1">{{element.totalGridPercentageCorrect}} % </span>
             </td>
           </ng-container>
 
