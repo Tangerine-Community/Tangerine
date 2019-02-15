@@ -23,6 +23,8 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   groupName;
   form:FormMetadata;
   feedback:Feedback;
+  modules:any;
+  hasClassModule = false
 
   constructor(
     private route: ActivatedRoute,
@@ -46,7 +48,12 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
 
     const appConfig = await this.appConfigService.getAppConfig(groupName);
     const appConfigCategories = appConfig.categories;
+    const appConfigModules = appConfig.modules;
+    if (appConfigModules && appConfigModules.includes('class')) {
+      this.hasClassModule = true;
+    }
     const categories = JSON.stringify(appConfigCategories);
+
 
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
     if (!this.print) {
@@ -81,24 +88,6 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
       } else if  (tabChangeEvent.index === 1) {
        this.ngAfterContentInit()
      }
-  }
-
-  async openFormSettings() {
-    let formId = this.route.snapshot.paramMap.get('formId');
-    let groupName = this.route.snapshot.paramMap.get('groupName');
-    let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
-    this.form = formsJson.find(form => form.id === formId)
-    this.form['groupName'] = groupName
-    // console.log("formInfo: " + JSON.stringify(this.form))
-    // const dialogRef = this.dialog.open(FeedbackEditorComponent, {
-    //   width: '500px',
-    //   data: this.form
-    // });
-
-    // dialogRef.afterClosed().subscribe(result => {
-    //   // console.log('The dialog was closed: ' + JSON.stringify(result));
-    // });
-
   }
 
   async saveForm(formHtml) {

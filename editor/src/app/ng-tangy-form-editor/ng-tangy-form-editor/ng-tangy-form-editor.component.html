@@ -8,7 +8,7 @@
       </ng-template>
         <div #container></div>
     </mat-tab>
-    <mat-tab>
+    <mat-tab *ngIf="hasClassModule" >
       <ng-template mat-tab-label>
         {{'Feedback Editor'|translate}}
       </ng-template>
