@@ -398,7 +398,7 @@ export class DashboardService {
         else
           calculatedScore = 50
 
-        studentResult["score"] = totalGridPercentageCorrect
+        studentResult["totalGridPercentageCorrect"] = totalGridPercentageCorrect
         let percentile = this.calculatePercentile(totalGridPercentageCorrect);
 
         studentResult["percentile"] = percentile
@@ -408,6 +408,7 @@ export class DashboardService {
           studentsToWatch.push(studentResult["name"])
         }
         studentResult['calculatedScore'] = calculatedScore
+        // console.log("Student name: " + studentResult.name + " percentile: " + studentResult.percentile + " totalGridPercentageCorrect: " + totalGridPercentageCorrect + " calculatedScore: " + calculatedScore )
       }
     }
 

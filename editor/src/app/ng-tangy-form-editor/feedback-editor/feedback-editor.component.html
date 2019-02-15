@@ -4,9 +4,10 @@
   <!--</mat-card-title>-->
   <!--<mat-card-content>-->
 
-    <mat-tab-group>
-      <mat-tab label="Feedback">
-        <mat-dialog-content>
+    <!--<mat-tab-group>-->
+      <!--<mat-tab label="Feedback">-->
+        <!--<mat-dialog-content>-->
+          <h2>{{'Feedback Editor'|translate}}</h2>
         <button mat-raised-button class="add-feedback-button" (click) = "showAddFeedbackForm()" *ngIf="!showFeedbackForm">Add Feedback</button>
         <div id="feedback-listing" *ngIf = "showFeedbackListing" >
           <h3>Tasks/Subtasks with Feedback</h3>
@@ -40,10 +41,11 @@
             <!-- example Column -->
             <ng-container matColumnDef="example">
               <th mat-header-cell *matHeaderCellDef> Feedback </th>
-              <td mat-cell *matCellDef="let element"> {{element.example}}
-                <p>Skill: {{element.skill}}</p>
-                <p>Assignment:{{element.assignment}} </p>
-                <p>Message:{{element.message}} </p>
+              <td mat-cell *matCellDef="let element">
+                <strong>Example:</strong> {{element.exampleTruncated}}
+                <br><strong>Skill:</strong> {{element.skill}}
+                <br><strong>Assignment:</strong> {{element.assignment}}
+                <br><strong>Message:</strong> {{element.messageTruncated}}
               </td>
             </ng-container>
 
@@ -91,10 +93,10 @@
 
           <p>&nbsp;</p>
         </div>
-        </mat-dialog-content>
-      </mat-tab>
-      <mat-tab label="Form Item Grouping">
-        <div>Grouping of tangy-form-items</div>
-      </mat-tab>
-    </mat-tab-group>
+        <!--</mat-dialog-content>-->
+      <!--</mat-tab>-->
+      <!--<mat-tab label="Form Item Grouping">-->
+        <!--<div>Grouping of tangy-form-items</div>-->
+      <!--</mat-tab>-->
+    <!--</mat-tab-group>-->
 </mat-card>

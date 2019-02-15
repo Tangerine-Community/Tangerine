@@ -7,5 +7,5 @@ export class StudentResult {
   response:any;
   score:any;
   max:any;
-  totalGridPercentageCorrect:any;
+  totalGridPercentageCorrect:number;
 }
