@@ -27,7 +27,6 @@ export class FeedbackEditorComponent implements OnInit {
   formItems:any
   formItem:string
   formItemName:string
-  // displayedColumns: string[] = ['formItemName','percentile', 'example', 'skill', 'assignment', 'message'];
   displayedColumns: string[] = ['operations','formItemName','percentile', 'example'];
   dataSource
   showFeedbackListing = true
@@ -36,17 +35,13 @@ export class FeedbackEditorComponent implements OnInit {
   @ViewChild(MatTable) table: MatTable<any>;
 
   constructor(
-    // public dialogRef: MatDialogRef<FeedbackEditorComponent>,
     public feedbackService:FeedbackService,
     private route: ActivatedRoute,
-    // @Inject(MAT_DIALOG_DATA) public data: FormMetadata,
     public data: FormMetadata,
     private http: HttpClient) {}
 
   async ngOnInit() {
     this.feedback = this.getFeedback()
-    // this.groupName = this.data['groupName'];
-    // this.formId = this.data['id'];
     let formHtml = await this.http.get(`/editor/${this.groupName}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
     this.formItems = await this.feedbackService.createFormItemsList(formHtml);
     this.percentileOptions = this.createPercentileOptions(null)
@@ -194,15 +189,12 @@ export class FeedbackEditorComponent implements OnInit {
   }
 
   changeFormItem(value) {
-    // console.log("changeFormItem: " + this.formItem + " value: " + value)
     let feedbackItemsForForm:Array<Feedback> = this.feedbackItems.filter(item => item.formItem === this.formItem)
     if (feedbackItemsForForm) {
       let percentagesUsed = feedbackItemsForForm.map(feedback => parseInt(String(feedback.percentile)))
       let percentiles = [0,1,2,3,4]
       let intersection = percentiles.filter(x => !percentagesUsed.includes(x));
-      // console.log("These are available for this form: " + JSON.stringify(intersection))
       this.percentileOptions = this.createPercentileOptions(intersection).filter(function(e){return e});
-      // console.log("These are this.options for this form: " + JSON.stringify(this.percentileOptions))
     }
   }
 
