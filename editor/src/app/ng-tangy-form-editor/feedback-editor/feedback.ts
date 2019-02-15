@@ -4,7 +4,9 @@ export class Feedback {
   percentile:number;
   percentileTitle:string;
   example:string;
+  exampleTruncated:string;
   skill:string;
   assignment:string;
-  message:string
+  message:string;
+  messageTruncated: string; // for listing
 }

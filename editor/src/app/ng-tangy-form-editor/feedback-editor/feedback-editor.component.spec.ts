@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormJsonEditorComponent } from './form-json-editor.component';
+import { FeedbackEditorComponent } from './feedback-editor.component';
 
 describe('FormJsonEditorComponent', () => {
-  let component: FormJsonEditorComponent;
-  let fixture: ComponentFixture<FormJsonEditorComponent>;
+  let component: FeedbackEditorComponent;
+  let fixture: ComponentFixture<FeedbackEditorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormJsonEditorComponent ]
+      declarations: [ FeedbackEditorComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FormJsonEditorComponent);
+    fixture = TestBed.createComponent(FeedbackEditorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

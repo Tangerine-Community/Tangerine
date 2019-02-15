@@ -4,9 +4,15 @@
     </mat-tab>
     <mat-tab>
       <ng-template mat-tab-label>
-        {{'Form Editor'|translate}} <mat-icon (click)="openFormSettings()" class="form-editor-settings-icon">settings</mat-icon>
+        {{'Form Editor'|translate}}
       </ng-template>
         <div #container></div>
+    </mat-tab>
+    <mat-tab *ngIf="hasClassModule" >
+      <ng-template mat-tab-label>
+        {{'Feedback Editor'|translate}}
+      </ng-template>
+      <feedback-editor [groupName]="groupName" [formId]="formId"></feedback-editor>
     </mat-tab>
 </mat-tab-group>
 

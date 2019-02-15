@@ -16,12 +16,6 @@ export class SubtestReport {
   usingPercentages:any
 }
 
-export interface StudentResult {
-  id: string;
-  name: string;
-  results:any;
-}
-
 @Component({
   selector: 'app-student-subtest-report',
   templateUrl: './student-subtest-report.component.html',

@@ -131,6 +131,12 @@ p {
   list-style: none;
   padding-left: 0;
 }
+#stats td:not(:first-child) {
+  text-align: center;
+}
+#stats td:first-child {
+  padding-left: 5px;
+}
 
 
 
