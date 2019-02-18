@@ -16,13 +16,13 @@
      <div class="flexbox-horizontal-container">
        <div>
          <p>{{'Students Assessed'|translate}}: {{classGroupReport?.studentsAssessed}} / {{classGroupReport?.classSize}}</p>
-         <p *ngIf="classGroupReport?.studentsToWatch">{{'Students to watch'|translate}}:
+         <p *ngIf="classGroupReport?.studentsToWatch.length > 0">{{'Students to watch'|translate}}:
            <span *ngFor="let student of classGroupReport?.studentsToWatch">
              {{student}} &nbsp;
            </span>
          </p>
        </div>
-       <div>
+       <div *ngIf="classGroupReport?.studentsAssessed > 0">
          <p *ngIf="classGroupReport?.max">{{'Average Correct'|translate}}: {{classGroupReport?.aveCorrect}} / {{classGroupReport?.max}} ({{classGroupReport?.aveCorrectPerc}}%)</p>
          <p *ngIf="!classGroupReport?.max">{{'Average Correct'|translate}}: {{classGroupReport?.aveCorrect}} / {{classGroupReport?.attempted}} ({{classGroupReport?.aveCorrectPerc}}%)</p>
        </div>
@@ -45,7 +45,7 @@
           <ng-container matColumnDef="calculatedScore">
             <th mat-header-cell *matHeaderCellDef title="Score"> {{'Score'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
-              <span *ngIf="element.calculatedScore">{{element.calculatedScore}}</span>
+              <span *ngIf="element.score">{{element.score}} / {{element.maxValueAnswer}}</span>
             </td>
           </ng-container>
 
@@ -53,7 +53,7 @@
           <ng-container matColumnDef="score">
             <th mat-header-cell *matHeaderCellDef title="Percentile"> {{'Percentile'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
-              <span *ngIf="element.totalGridPercentageCorrect > -1">{{element.totalGridPercentageCorrect}} % </span>
+              <span *ngIf="element.scorePercentageCorrect > -1">{{element.scorePercentageCorrect}} % </span>
             </td>
           </ng-container>
 
@@ -68,20 +68,8 @@
           <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
           <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" [ngClass]="element.colorClass"></tr>
         </table>
-
-        <table class="mat-elevation-z8" *ngIf="classGroupReport?.studentsAssessed === 0">
-          <tr>
-            <td title="Subtest Name">{{'Subtest Name'|translate}}</td><td>{{classGroupReport.subtestName}}</td>
-          </tr>
-          <tr>
-            <td title="Class Size">{{'Class Size'|translate}}</td><td>{{students?.length}}</td>
-          </tr>
-          <tr>
-            <td title="Students Assessed">{{'Students Assessed'|translate}}</td><td>0</td>
-          </tr>
-        </table>
       </div>
-      <div #feedback id="feedback">
+      <div #feedback id="feedback" *ngIf="classGroupReport?.studentsAssessed > 0">
         <div #feedbackMessage id="feedback-message">
           <mat-card  *ngIf="classGroupReport?.feedback">
             <mat-card-title>{{'Feedback'|translate}}</mat-card-title>

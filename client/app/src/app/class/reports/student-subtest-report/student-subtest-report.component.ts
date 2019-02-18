@@ -5,6 +5,7 @@ import {DashboardService} from "../../_services/dashboard.service";
 import {AuthenticationService} from "../../../core/auth/_services/authentication.service";
 import {ClassUtils} from "../../class-utils";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
+import {StudentResult} from "../student-grouping-report/student-result";
 
 export class SubtestReport {
   curriculumId:any
@@ -13,7 +14,8 @@ export class SubtestReport {
   totals:any;
   studentCategorizedResults:any
   noCategories:any
-  usingPercentages:any
+  usingPercentages:boolean = false;
+  cssName: string;
 }
 
 @Component({
@@ -35,7 +37,8 @@ export class StudentSubtestReportComponent implements OnInit {
   curriculums:any;
   subtestReports:any
 
-  @ViewChild('container') container: ElementRef;
+  @ViewChild('subTestReport') subTestReport: ElementRef;
+  @ViewChild('curriculumSelectPara') curriculumSelect: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,9 +58,23 @@ export class StudentSubtestReportComponent implements OnInit {
     this.students = (await this.getMyStudents(classId)).sort((a, b) => a.student_name.localeCompare(b.student_name))
   }
 
-  onStudentSelect(event) {
+  async onStudentSelect(event) {
     if (event.value && event.value !== 'none') {
-      this.getReport(event.value)
+      await this.getReport(event.value)
+      this.curriculumSelect.nativeElement.style.display = "block"
+    }
+  }
+
+  onCurriculumSelect(event) {
+    if (event.value && event.value !== 'none') {
+      let el = this.subTestReport.nativeElement.querySelector(`#curr-${event.value}`)
+      if (el) {
+        this.subtestReports.forEach(subtestReport => {
+          let childEl = this.subTestReport.nativeElement.querySelector("#curr-" + subtestReport['cssName'])
+          childEl.style.display = "none"
+        })
+        el.style.display = "block"
+      }
     }
   }
 
@@ -80,10 +97,12 @@ export class StudentSubtestReportComponent implements OnInit {
     this.subtestReports = [];
     for (const curriculum of this.curriculums) {
       let curriculumId = curriculum.name;
+      let cssName = curriculumId.replace(/\./g, "-")
       let label = curriculum.label;
       let subtestReport = new SubtestReport()
       subtestReport.curriculumId = curriculumId;
       subtestReport.label = label;
+      subtestReport.cssName = cssName;
 
       let curriculumFormHtml = await this.dashboardService.getCurriculaForms(curriculumId);
       let curriculumFormsList = await this.classUtils.createCurriculumFormsList(curriculumFormHtml);
@@ -130,7 +149,7 @@ export class StudentSubtestReportComponent implements OnInit {
       let responses = await this.classFormService.getResponsesByStudentId(studentId);
       const data = await this.dashboardService.transformResultSet(responses, curriculumFormsList, null);
       // clean the array
-      let results = this.dashboardService.clean(data, undefined);
+      let results:Array<StudentResult> = this.dashboardService.clean(data, undefined);
       let student = this.students.find(x => x.id === studentId)
 
       for (const result of results) {
@@ -138,17 +157,27 @@ export class StudentSubtestReportComponent implements OnInit {
         let formTitle = result.formTitle
         let studentId = result.studentId
         let category = result.category
+        let isCategory = this.categories.find(function(item) {
+          return item === category;
+        });
+        if (!isCategory && typeof category !=='undefined' && category !== "") {
+          // console.log("!isCategory: " + category)
+          this.categories.push(category)
+          this.totals[category] = 0
+        }
         if (category === "") {
           category = "Unassigned Category"
         }
         let rawScore = parseInt(result.score).toString()
-        let percentage = rawScore
-        let percentCorrect = result.totalGridPercentageCorrect
+        // let percentage = rawScore
+        let percentage, totalCorrect;
+        let percentCorrect = result.scorePercentageCorrect
         if (percentCorrect) {
           percentage = percentCorrect + "%"
           subtestReport.usingPercentages = true;
         } else {
-          let percentage = result.totalGridCorrect
+          // percentage = result.totalCorrect
+          totalCorrect = result.totalCorrect
         }
         let resultObject = {}
         for (const thisCategory of this.categories) {
@@ -156,8 +185,9 @@ export class StudentSubtestReportComponent implements OnInit {
         }
         let scores = {
           rawScore:result.score,
-          totalGridAnswers:result.totalGridAnswers,
-          percentage: percentage
+          totalGridAnswers:result.maxValueAnswer,
+          percentage: percentage,
+          totalCorrect: totalCorrect
         }
         resultObject[category] = scores
         let currentTotal = this.totals[category]

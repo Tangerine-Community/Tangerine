@@ -7,5 +7,10 @@ export class StudentResult {
   response:any;
   score:any;
   max:any;
-  totalGridPercentageCorrect:number;
+  scorePercentageCorrect:number;
+  maxValueAnswer:number;
+  totalCorrect:number;
+  formTitle:string;
+  studentId:string;
+  category:string;
 }

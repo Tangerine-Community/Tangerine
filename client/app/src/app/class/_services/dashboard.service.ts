@@ -7,6 +7,7 @@ import {StudentResult} from "../reports/student-grouping-report/student-result";
 import {Feedback} from "../feedback";
 import {ClassGroupingReport} from "../reports/student-grouping-report/class-grouping-report";
 import {ClassUtils} from "../class-utils";
+// import Stats from 'stats-lite';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
@@ -139,10 +140,10 @@ export class DashboardService {
     let noResponse = 0;
     let score = 0;
     let max = null;
-    let totalGridIncorrect = 0;
-    let totalGridCorrect = 0;
-    let totalGridAnswers = 0;
-    let totalGridPercentageCorrect = 0;
+    let totalIncorrect = 0;
+    let totalCorrect = 0;
+    let maxValueAnswer = 0;
+    let scorePercentageCorrect = 0;
     let duration = 0;
     let prototype = 0;
 
@@ -195,14 +196,15 @@ export class DashboardService {
               for (const answer of answeredQuestions) {
                 let value = answer[element.name]
                 if (typeof value !== 'undefined') {
-                  totalGridAnswers = value.length;
+                  maxValueAnswer = value.length;
                   const reducer = (incorrect, button) => button.pressed ? ++incorrect : incorrect
-                  totalGridIncorrect = value.reduce(reducer, 0)
-                  totalGridCorrect = totalGridAnswers - totalGridIncorrect
-                  totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                  totalIncorrect = value.reduce(reducer, 0)
+                  totalCorrect = maxValueAnswer - totalIncorrect
+                  score = totalCorrect
+                  scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100)
                   alreadyAnswered = true
                 }
-                // console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers)
+                // console.log("TANGY-TIMED subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer)
               }
               duration = element.duration;
               prototype = element.tagName
@@ -213,16 +215,18 @@ export class DashboardService {
                 // one of the answeredQuestions is the _score, so don't count it.
                 const totalAnswers = item.inputs.length - 1
                 if (totalAnswers > 0) {
-                  totalGridAnswers = totalAnswers
-                  totalGridCorrect = Number(score)
-                  totalGridIncorrect = totalAnswers - totalGridCorrect
+                  totalCorrect = Number(score)
+                  maxValueAnswer = totalAnswers
                   if (max) {
-                    totalGridPercentageCorrect =  Math.round(score / max * 100)
+                    maxValueAnswer = max
+                    totalIncorrect = totalAnswers - totalCorrect
+                    scorePercentageCorrect =  Math.round(score / max * 100)
                   } else {
-                    totalGridPercentageCorrect = Math.round(totalGridCorrect / totalGridAnswers * 100)
+                    // con't calculate scorePercentageCorrect is there is no max.
+                    // scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100)
                   }
                   prototype = element.tagName
-                  // console.log("subtest name: " + element.name + " totalGridIncorrect: " + totalGridIncorrect + " of " + totalGridAnswers + " score: " + score)
+                  // console.log("element.tagName: " + element.tagName + " subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer + " score: " + score + " scorePercentageCorrect: " + scorePercentageCorrect)
                 }
               }
             }
@@ -261,10 +265,10 @@ export class DashboardService {
         noResponse: noResponse,
         score: score,
         max: max,
-        totalGridIncorrect: totalGridIncorrect,
-        totalGridAnswers: totalGridAnswers,
-        totalGridCorrect: totalGridCorrect,
-        totalGridPercentageCorrect: totalGridPercentageCorrect,
+        totalIncorrect: totalIncorrect,
+        maxValueAnswer: maxValueAnswer,
+        totalCorrect: totalCorrect,
+        scorePercentageCorrect: scorePercentageCorrect,
         duration: duration
       };
 
@@ -321,33 +325,34 @@ export class DashboardService {
 
     for (const student of students) {
       let studentResults:StudentResult = new StudentResult();
-      studentResults["id"] = student.id
-      studentResults["name"] = student.doc.items[0].inputs[0].value
-      studentResults["classId"] = student.doc.items[0].inputs[3].value
-      studentResults["forms"] = [];
+      studentResults.id = student.id
+      studentResults.name = student.doc.items[0].inputs[0].value
+      studentResults.classId = student.doc.items[0].inputs[3].value
+      studentResults.forms = [];
       if (studentsResponses[student.id]) {
         let studentResponse = studentsResponses[student.id][itemId]
         if (studentResponse) {
-          studentResults["response"] = studentResponse
-          let score = studentResponse["score"]
+          studentResults.response = studentResponse
+          let score = studentResponse.score
           if (score) {
-            studentResults["score"] = score
+            studentResults.score = score
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
-          let max = studentResponse["max"]
+          let max = studentResponse.max
           if (max) {
-            studentResults["max"] = max
+            studentResults.max = max
             classGroupReportMax = max
           }
-          let totalGridCorrect = studentResponse["totalGridCorrect"]
-          let totalGridPercentageCorrect = studentResponse["totalGridPercentageCorrect"]
-          studentResults["totalGridPercentageCorrect"] = totalGridPercentageCorrect
-          let totalGridAnswers = studentResponse["totalGridAnswers"]
-          duration = studentResponse["duration"]
+          let totalCorrect = studentResponse.totalCorrect
+          let scorePercentageCorrect = studentResponse.scorePercentageCorrect
+          studentResults.scorePercentageCorrect = scorePercentageCorrect
+          let maxValueAnswer = studentResponse.maxValueAnswer
+          studentResults.maxValueAnswer = maxValueAnswer
+          duration = studentResponse.duration
 
-          aveCorrect += totalGridCorrect
-          aveCorrectPerc += totalGridPercentageCorrect
-          attempted += totalGridAnswers
+          aveCorrect += totalCorrect
+          aveCorrectPerc += scorePercentageCorrect
+          attempted += maxValueAnswer
           studentsAssessed ++
           // TODO: factor correct answers per minute.
           // TODO: factor attempted vs not attempted.
@@ -363,15 +368,19 @@ export class DashboardService {
     aveCorrectPerc = this.classUtils.decimals( aveCorrectPerc / studentsAssessed, 0 )
 
     var squareDiffs = allStudentResults.map(function(studentResult){
-      let totalGridPercentageCorrect = studentResult['totalGridPercentageCorrect']
-      var diff = totalGridPercentageCorrect - aveCorrectPerc;
-      var sqr = diff * diff;
+      let scorePercentageCorrect = studentResult.scorePercentageCorrect;
+      let diff = scorePercentageCorrect - aveCorrectPerc;
+      let sqr = diff * diff;
       return sqr;
     });
 
     var avgSquareDiff = average(squareDiffs);
 
     let stdDev = Math.sqrt(avgSquareDiff);
+
+    // let vals = allStudentResults.map(studentResult => studentResult.score)
+    // let stdDev2 = Stats.stdev(vals)
+    // console.log("stdDev: " + stdDev + " stdDev2: " + stdDev2)
 
     function average(data){
       var sum = data.reduce(function(sum, value){
@@ -383,10 +392,10 @@ export class DashboardService {
     }
 
     for (const studentResult of allStudentResults) {
-      let totalGridPercentageCorrect = studentResult['totalGridPercentageCorrect']
-      if (typeof totalGridPercentageCorrect !== 'undefined') {
+      let scorePercentageCorrect = studentResult.scorePercentageCorrect;
+      if (typeof scorePercentageCorrect !== 'undefined') {
         // dev = (person.pCorrect - @summary.aCorrect) / @summary.stdDev
-        let dev = (totalGridPercentageCorrect - aveCorrectPerc) / stdDev
+        let dev = (scorePercentageCorrect - aveCorrectPerc) / stdDev
         let devIndex = Math.round(dev * 100)
         let calculatedScore
         if (devIndex > 409 || devIndex < -409)
@@ -398,8 +407,7 @@ export class DashboardService {
         else
           calculatedScore = 50
 
-        studentResult["totalGridPercentageCorrect"] = totalGridPercentageCorrect
-        let percentile = this.calculatePercentile(totalGridPercentageCorrect);
+        let percentile = this.calculatePercentile(scorePercentageCorrect);
 
         studentResult["percentile"] = percentile
         studentResult["status"] = status[percentile]
@@ -408,12 +416,18 @@ export class DashboardService {
           studentsToWatch.push(studentResult["name"])
         }
         studentResult['calculatedScore'] = calculatedScore
-        // console.log("Student name: " + studentResult.name + " percentile: " + studentResult.percentile + " totalGridPercentageCorrect: " + totalGridPercentageCorrect + " calculatedScore: " + calculatedScore )
+        // console.log("Student name: " + studentResult.name + " percentile: " + studentResult.percentile + " scorePercentageCorrect: " + scorePercentageCorrect + " calculatedScore: " + calculatedScore )
       }
     }
 
 
     function compare(a,b) {
+      if (typeof a.score === 'undefined' && b.score) {
+        return 1;
+      }
+      if (a.score && typeof b.score === 'undefined') {
+        return -1;
+      }
       if (a.score < b.score)
         return 1;
       if (a.score > b.score)
@@ -496,6 +510,10 @@ export class DashboardService {
       if (feedback) {
         let tpl = eval('`' + feedback.message + '`');
         feedback.message = tpl
+      } else {
+        feedback = new Feedback()
+        feedback.percentile = percentile
+        feedback.message = "No feedback available for this percentile."
       }
     }
     return feedback
