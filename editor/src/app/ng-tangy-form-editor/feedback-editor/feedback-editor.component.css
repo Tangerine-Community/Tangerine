@@ -1,6 +1,7 @@
 .feedback-form {
   display: flex;
   flex-direction: column;
+  margin: 1em;
 }
 
 .feedback-form > * {
@@ -8,13 +9,15 @@
 }
 
 form, mat-card-content>*{
-  width: 500px;
+  width: 80%;
   margin: .5em auto;
   padding: .5em .5em .5em .5em;
-  background: white;
-  border: 1px solid #ebebeb;
-  box-shadow: rgba(0,0,0,0.14902) 0px 1px 1px 0px,rgba(0,0,0,0.09804) 0px 1px 2px 0px;
 }
+
+#form-settings {
+  margin: 1em;
+}
+
 #form-settings.mat-tab-label-active {
   background-color: #f1a167;
 }

@@ -7,7 +7,11 @@
     <!--<mat-tab-group>-->
       <!--<mat-tab label="Feedback">-->
         <!--<mat-dialog-content>-->
-          <h2>{{'Feedback Editor'|translate}}</h2>
+  <mat-card-header>
+    <mat-card-title>{{'Feedback Editor'|translate}}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
         <button mat-raised-button class="add-feedback-button" (click) = "showAddFeedbackForm()" *ngIf="!showFeedbackForm">Add Feedback</button>
         <div id="feedback-listing" *ngIf = "showFeedbackListing" >
           <h3>Tasks/Subtasks with Feedback</h3>
@@ -90,9 +94,10 @@
             </div>
             <p>&nbsp;</p>
           </div>
-
           <p>&nbsp;</p>
         </div>
+    </div>
+  </mat-card-content>
         <!--</mat-dialog-content>-->
       <!--</mat-tab>-->
       <!--<mat-tab label="Form Item Grouping">-->
