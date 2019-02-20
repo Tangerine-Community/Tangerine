@@ -12,3 +12,12 @@ span.form-list-header {
 .mat-card-content {
     padding-top: 1em;
 }
+
+h1.section-title {
+  color: var(--accent-color);
+  margin-left: 30px
+}
+
+table.release-table {
+  padding: 15px;
+}
