@@ -85,12 +85,17 @@ export class DashboardComponent implements OnInit {
     }
     this.classes = await this.getMyClasses();
     this.classUtils = new ClassUtils();
-    await this.initDashboard(null, null, null);
+    await this.initDashboard(null, null, null, null);
   }
 
-  async initDashboard(classIndex, currentClassId, curriculumId) {
+  async initDashboard(classIndex, currentClassId, curriculumId, resetCookies) {
     if (this.classes.length > 0) {
       let currentClass, currentItemId = ""
+      if (resetCookies) {
+        this.cookieService.set('classIndex', classIndex);
+        this.cookieService.set('currentClassId', currentClassId);
+        this.cookieService.set('curriculumId', curriculumId);
+      }
       if (classIndex === null) {
         let cookieVersion = this.cookieService.get('cookieVersion');
         if (isNaN(parseInt(cookieVersion)) || cookieVersion !== this.cookieVersion) {
@@ -274,7 +279,7 @@ export class DashboardComponent implements OnInit {
   async populateCurriculum (classIndex, curriculumId) {
     let currentClass = this.classes[classIndex];
     let currentClassId = currentClass.id
-    this.initDashboard(classIndex, currentClassId, curriculumId)
+    await this.initDashboard(classIndex, currentClassId, curriculumId, true)
   }
 
   selectReport(reportId) {
