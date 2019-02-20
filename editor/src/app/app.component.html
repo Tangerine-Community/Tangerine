@@ -4,28 +4,28 @@
         <mat-toolbar-row>
             <button id="menu-button" mat-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
             <mat-menu #menu="matMenu">
-                <button mat-menu-item *ngIf="loggedIn" router-active>
-                    <a routerLink="/projects" routerLinkActive="active" class="mdl-navigation__link">
+                <button routerLink="/projects" routerLinkActive="active" mat-menu-item *ngIf="loggedIn" router-active>
+                    <a class="mdl-navigation__link">
                         <i class="material-icons" role="presentation">group_work</i>{{'Groups'}}
                     </a>
                 </button>
-                <button mat-menu-item *ngIf="loggedIn" router-active>
-                    <a routerLink="/manage-users" routerLinkActive="active" class="mdl-navigation__link">
+                <button routerLink="/manage-users" routerLinkActive="active" mat-menu-item *ngIf="loggedIn" router-active>
+                    <a class="mdl-navigation__link">
                         <i class="material-icons" role="presentation">account_circle</i>{{'Manage Users'}}
                     </a>
                 </button>
-                <button mat-menu-item *ngIf="loggedIn" router-active>
-                    <a routerLink="/support" routerLinkActive="active" class="mdl-menu__item">
+                <button routerLink="/support" routerLinkActive="active" mat-menu-item *ngIf="loggedIn" router-active>
+                    <a class="mdl-menu__item">
                         <i class="material-icons">help</i> {{'Help'}}
                     </a>
                 </button>
-                <button mat-menu-item *ngIf="loggedIn" router-active>
-                    <a (click)="logout();" routerLink="/login" routerLinkActive="active" class="mdl-menu__item">
+                <button (click)="logout();" routerLink="/login" routerLinkActive="active" mat-menu-item *ngIf="loggedIn" router-active>
+                    <a class="mdl-menu__item">
                         <i class="material-icons">exit_to_app</i> {{'Logout'}}
                     </a>
                 </button>
-                <button mat-menu-item *ngIf="!loggedIn">
-                    <a routerLink="/login">
+                <button routerLink="/login" mat-menu-item *ngIf="!loggedIn">
+                    <a>
                         <i class="material-icons">exit_to_app</i> {{'Login'}}
                     </a>
                 </button>
