@@ -1,5 +1,5 @@
 <div #container> </div>
-<div id="profile-mgmt" *ngIf="curriculum === 'student-registration'">
+<div id="profile-mgmt" *ngIf="curriculum === 'student-registration' && studentId">
   <div id="profile-toolbar">
     <div (click)="$event ? archiveStudent(studentId) : null" >
       <button routerLink="dashboard" mat-menu-item>

@@ -14,6 +14,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {FeedbackService} from "./feedback-editor/feedback.service";
 import {MatTableModule} from '@angular/material/table';
 import {FormMetadata} from "./feedback-editor/form-metadata";
+import {MatCardModule} from '@angular/material/card';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -28,6 +29,7 @@ import {FormMetadata} from "./feedback-editor/form-metadata";
     MatFormFieldModule,
     MatButtonModule,
     MatTableModule,
+    MatCardModule,
     SharedModule
   ],
   declarations: [NgTangyFormEditorComponent, FeedbackEditorComponent],
