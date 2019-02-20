@@ -29,6 +29,7 @@ import { StudentGroupingReportComponent } from './reports/student-grouping-repor
 import {PageNotFoundComponent} from "./page-not-found.component";
 import { StudentProgressTableComponent } from './reports/student-progress-table/student-progress-table.component';
 import { CookieService } from "ngx-cookie-service";
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 @NgModule({
   imports: [
@@ -47,7 +48,8 @@ import { CookieService } from "ngx-cookie-service";
     MatPaginatorModule,
     MatButtonModule,
     MatIconModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatButtonToggleModule
   ],
   declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent],
   providers: [DashboardService, CookieService, {

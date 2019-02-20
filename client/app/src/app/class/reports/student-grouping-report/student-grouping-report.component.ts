@@ -20,6 +20,7 @@ export interface StudentResult {
   max:any;
   totalGridPercentageCorrect:number;
   percentile: string;
+  maxValueAnswer: number;
 }
 @Component({
   selector: 'app-student-grouping-report',
@@ -151,8 +152,10 @@ export class StudentGroupingReportComponent implements OnInit {
   async getFeedbackForPercentile(event, percentile, curriculumId, itemId) {
     // console.log("Get feedback for " + JSON.stringify(element))
     let feedback:Feedback = await this.dashboardService.getFeedback(percentile, curriculumId, itemId)
-    feedback.percentileRange = this.dashboardService.calculatePercentileRange(percentile)
-    this.classGroupReport.feedback = feedback
+    if (feedback) {
+      feedback.percentileRange = this.dashboardService.calculatePercentileRange(percentile)
+      this.classGroupReport.feedback = feedback
+    }
 
     // let xPosition = event.clientX;
     let yPositionEvent = event.clientY;
@@ -174,7 +177,7 @@ export class StudentGroupingReportComponent implements OnInit {
     if (finalPosition < 0) {
       finalPosition = 0
     }
-    console.log("yPositionEvent: " + yPositionEvent + " parentPosition: " + parentPositionTop.y + " clickPosition.y: " + clickPosition.y + " yPosition: " + yPosition + " finalPosition: " + finalPosition)
+    // console.log("yPositionEvent: " + yPositionEvent + " parentPosition: " + parentPositionTop.y + " clickPosition.y: " + clickPosition.y + " yPosition: " + yPosition + " finalPosition: " + finalPosition)
     this.renderer.setStyle(this.feedbackMessage.nativeElement, 'position',  "relative")
     this.renderer.setStyle(this.feedbackMessage.nativeElement, 'top',  finalPosition + "px")
     // console.log("Get feedback for " + JSON.stringify(feedback))

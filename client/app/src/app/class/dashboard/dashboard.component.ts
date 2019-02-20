@@ -85,25 +85,30 @@ export class DashboardComponent implements OnInit {
     }
     this.classes = await this.getMyClasses();
     this.classUtils = new ClassUtils();
-    await this.initDashboard(null, null, null);
+    await this.initDashboard(null, null, null, null);
   }
 
-  async initDashboard(classIndex, currentClassId, curriculumId) {
+  async initDashboard(classIndex:number, currentClassId, curriculumId, resetCookies) {
     if (this.classes.length > 0) {
       let currentClass, currentItemId = ""
+      if (resetCookies) {
+        this.cookieService.set('classIndex', classIndex.toString());
+        this.cookieService.set('currentClassId', currentClassId);
+        this.cookieService.set('curriculumId', curriculumId);
+      }
       if (classIndex === null) {
         let cookieVersion = this.cookieService.get('cookieVersion');
         if (isNaN(parseInt(cookieVersion)) || cookieVersion !== this.cookieVersion) {
           this.cookieService.deleteAll();
           this.cookieService.set('cookieVersion', this.cookieVersion);
         } else {
-          classIndex = this.cookieService.get('classIndex');
+          classIndex = parseInt(this.cookieService.get('classIndex'));
           currentItemId = this.cookieService.get('currentItemId');
           currentClassId = this.cookieService.get('currentClassId');
           curriculumId = this.cookieService.get('curriculumId');
         }
       }
-      if (classIndex && classIndex !== "") {
+      if (classIndex !== null) {
         this.currentClassIndex = classIndex;
       } else {
         this.currentClassIndex = 0;
@@ -172,13 +177,10 @@ export class DashboardComponent implements OnInit {
   private populateCurrentCurriculums(currentClass) {
     let inputs = [];
     currentClass.doc.items.forEach(item => inputs = [...inputs, ...item.inputs])
+    // find the curriculum element
     let input = inputs.find(input => (input.name === 'curriculum') ? true : false)
-    let currArray = []
-    let allCurriculums = input.value;
-    for (let i = 0; i < allCurriculums.length; i++) {
-      let curriculum = allCurriculums[i]
-      currArray.push(curriculum)
-    }
+    // find the options that are set to 'on'
+    let currArray = input.value.filter(input => (input.value === 'on') ? true : false)
     return currArray;
   }
 
@@ -274,7 +276,7 @@ export class DashboardComponent implements OnInit {
   async populateCurriculum (classIndex, curriculumId) {
     let currentClass = this.classes[classIndex];
     let currentClassId = currentClass.id
-    this.initDashboard(classIndex, currentClassId, curriculumId)
+    await this.initDashboard(classIndex, currentClassId, curriculumId, true)
   }
 
   selectReport(reportId) {
