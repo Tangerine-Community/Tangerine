@@ -112,14 +112,14 @@ export class DashboardService {
         let form = curriculumFormsList.find(x => x.id === item.id)
         let items = observation.doc['items']
         let thisItem = items.find(x => x.id === item.id)
-        let response = this.poopulateTransformedResult(thisItem, i, form, observation);
+        let response = this.populateTransformedResult(thisItem, i, form, observation);
         transformedResults.push(response)
       } else {
         let items = observation.doc['items']
         for (var i = 0; i < items.length; i++) {
           let item = items[i];
           let form = curriculumFormsList.find(x => x.id === item.id)
-          let response = this.poopulateTransformedResult(item, i, form, observation);
+          let response = this.populateTransformedResult(item, i, form, observation);
           transformedResults.push(response)
         }
       }
@@ -129,7 +129,7 @@ export class DashboardService {
     return transformedResults;
   }
 
-  private poopulateTransformedResult(item, i: number, form, observation) {
+  private populateTransformedResult(item, i: number, form, observation) {
 
     let itemCount = 0;
     let lastModified = null;
@@ -138,14 +138,15 @@ export class DashboardService {
     let correct = 0;
     let incorrect = 0;
     let noResponse = 0;
-    let score = 0;
-    let max = null;
-    let totalIncorrect = 0;
-    let totalCorrect = 0;
-    let maxValueAnswer = 0;
-    let scorePercentageCorrect = 0;
-    let duration = 0;
-    let prototype = 0;
+    let score:number = null;
+    let max:number = null;
+    let totalIncorrect:number = 0;
+    let totalCorrect:number= 0;
+    let maxValueAnswer:number = 0;
+    let scorePercentageCorrect:number = 0;
+    let duration:number = 0;
+    let prototype:number = 0;
+    let usingScorefield = null;
 
     if (item) {
       itemCount = item.inputs.length
@@ -153,7 +154,13 @@ export class DashboardService {
       if (metadata) {
         lastModified = metadata['lastModified']
       }
-      // populate answeredQuestions array
+
+      //usingScorefield can be useful to determine if we need to manually calculate the score.
+      if (form) {
+        usingScorefield = item.inputs.find(input => input.name === form['id'] + "_score")
+      }
+
+      // populate answeredQuestions array with value, score, and max.
       item.inputs.forEach(input => {
         // inputs = [...inputs, ...input.value]
         if (input.value !== "") {
@@ -168,27 +175,35 @@ export class DashboardService {
           if (input.tagName === 'TANGY-RADIO-BUTTONS') {
             valueField.forEach(option => {
               if (option.value !== "") {
-                value = option.name
+                value = parseFloat(option.name)
+                if (value > max) {
+                  max = value;
+                }
               }
             })
           } else {
             value = input.value
           }
+          score = value
           data[input.name] = value;
-          answeredQuestions.push(data)
           if (typeof form !== 'undefined') {
             if (input.name === form['id'] + "_score") {
               score = value
             }
           }
+          data['score'] = value;
+          data['max'] = max;
+          answeredQuestions.push(data)
         }
       })
 
+      // The previous code block should have populated the score field for this tangy-form-item.
+      // Now deal with the special case of TANGY-TIMED and get some aggregate scores.
       // Check if tangy-form-item has been removed.
       if (typeof form !== 'undefined') {
         let childElements = form.children
         if (childElements) {
-          let alreadyAnswered = false
+          let alreadyAnswered = false;
           for (const element of childElements) {
             // console.log("element name: " + element.name)
             // Check if there are grid subtests aka tangy-timed in this response
@@ -208,28 +223,38 @@ export class DashboardService {
               }
               duration = element.duration;
               prototype = element.tagName
-            } else {
-              // Don't want to process the element if it is the _score field
-              // don't talley if already answered, in the case of a grid subtest.
-              if (!alreadyAnswered) {
-                // one of the answeredQuestions is the _score, so don't count it.
-                const totalAnswers = item.inputs.length - 1
-                if (totalAnswers > 0) {
-                  totalCorrect = Number(score)
-                  maxValueAnswer = totalAnswers
-                  if (max) {
-                    maxValueAnswer = max
-                    totalIncorrect = totalAnswers - totalCorrect
-                    scorePercentageCorrect =  Math.round(score / max * 100)
-                  } else {
-                    // con't calculate scorePercentageCorrect is there is no max.
-                    // scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100)
-                  }
-                  prototype = element.tagName
-                  // console.log("element.tagName: " + element.tagName + " subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer + " score: " + score + " scorePercentageCorrect: " + scorePercentageCorrect)
-                }
-              }
             }
+          }
+
+          // for tangy-form-items that use the _score field
+          if (usingScorefield) {
+            let totalAnswers = item.inputs.length - 1
+            if (totalAnswers > 0) {
+              totalCorrect = Number(score)
+              maxValueAnswer = totalAnswers
+              if (max) {
+                maxValueAnswer = max
+                totalIncorrect = totalAnswers - totalCorrect
+                scorePercentageCorrect =  Math.round(score / max * 100)
+              }
+              // prototype = element.tagName
+              // console.log("element.tagName: " + element.tagName + " subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer + " score: " + score + " scorePercentageCorrect: " + scorePercentageCorrect)
+            }
+          }
+
+          if (!scorePercentageCorrect) {
+            // Auto-calculate scores for tangy form items that don't use _score or are not tangy-timed grids.
+            let totalAnswers = item.inputs.length
+            // calculate the total score manually.
+            for (const answer of answeredQuestions) {
+              // let value = answer[element.name];
+              let answerScore = parseFloat(answer['score']);
+              let max = parseFloat(answer['max']);
+              totalCorrect = totalCorrect + answerScore;
+              maxValueAnswer = maxValueAnswer + max;
+            }
+            score = totalCorrect;
+            scorePercentageCorrect = Math.round(totalCorrect / maxValueAnswer * 100);
           }
         }
       }
