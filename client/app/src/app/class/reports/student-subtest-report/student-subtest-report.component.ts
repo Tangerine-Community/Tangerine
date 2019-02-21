@@ -62,6 +62,9 @@ export class StudentSubtestReportComponent implements OnInit {
     if (event.value && event.value !== 'none') {
       await this.getReport(event.value)
       this.curriculumSelect.nativeElement.style.display = "block"
+      let firstReport = this.subtestReports[0];
+      let el = this.subTestReport.nativeElement.querySelector("#curr-" + firstReport['cssName'])
+      el.style.display = "block"
     }
   }
 
