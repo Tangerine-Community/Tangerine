@@ -162,11 +162,10 @@ export class DashboardService {
         usingScorefield = item.inputs.find(input => input.name === form['id'] + "_score")
       }
 
-      // populate answeredQuestions array with value, score, and max.
+      // populate value, score, max, and totalMax
 
       item.inputs.forEach(input => {
         // inputs = [...inputs, ...input.value]
-        if (input.value !== "") {
           let data = {}
           let valueField = input.value;
           let value;
@@ -174,7 +173,10 @@ export class DashboardService {
           if (input.tagName === 'TANGY-INPUT') {
             if (typeof input.max !== 'undefined' && input.max !== '') {
               max = parseFloat(input.max);
-              totalMax = totalMax + max
+              // don't add to totalMax if it's the _score field
+              if (input.name !== form['id'] + "_score") {
+                totalMax = totalMax + max
+              }
             }
           } else  if (input.tagName === 'TANGY-RADIO-BUTTONS') {
             valueField.forEach(option => {
@@ -187,6 +189,11 @@ export class DashboardService {
               }
               totalMax =  totalMax + max;
             })
+          } else  if (input.tagName === 'TANGY-CHECKBOX') {
+            if (input.value !== "") {
+              value = 1;
+            }
+            ++totalMax;
           } else  if (input.tagName === 'TANGY-CHECKBOXES') {
             valueField.forEach(option => {
               let optionValue = parseFloat(option.name);
@@ -203,15 +210,16 @@ export class DashboardService {
           } else  if (input.tagName.includes('WIDGET')) {
             // ignore
           } else {
-            value = input.value
-            totalMax =  ++totalMax;
+            if (input.value !== "") {
+              value = input.value
+            }
+            totalMax = ++totalMax;
           }
           data[input.name] = value;
 
           data['score'] = score;
           data['max'] = max;
           answeredQuestions.push(data)
-        }
       })
 
       if (usingScorefield) {
