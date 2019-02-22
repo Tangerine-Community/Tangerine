@@ -139,7 +139,7 @@ export class DashboardService {
     let incorrect = 0;
     let noResponse = 0;
     let score:number = null;
-    let max:number = null;
+    // let max:number = null;
     let totalIncorrect:number = 0;
     let totalCorrect:number= 0;
     let maxValueAnswer:number = 0;
@@ -147,6 +147,8 @@ export class DashboardService {
     let duration:number = 0;
     let prototype:number = 0;
     let usingScorefield = null;
+    let formItemTalley = {};
+    let totalMax:number = 0;
 
     if (item) {
       itemCount = item.inputs.length
@@ -161,41 +163,62 @@ export class DashboardService {
       }
 
       // populate answeredQuestions array with value, score, and max.
+
       item.inputs.forEach(input => {
         // inputs = [...inputs, ...input.value]
         if (input.value !== "") {
           let data = {}
           let valueField = input.value;
           let value;
+          let max:number = null;
           if (input.tagName === 'TANGY-INPUT') {
             if (typeof input.max !== 'undefined' && input.max !== '') {
-              max = input.max
+              max = parseFloat(input.max);
+              totalMax = totalMax + max
             }
-          }
-          if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+          } else  if (input.tagName === 'TANGY-RADIO-BUTTONS') {
             valueField.forEach(option => {
+              let optionValue = parseFloat(option.name);
               if (option.value !== "") {
-                value = parseFloat(option.name)
-                if (value > max) {
-                  max = value;
-                }
+                value = optionValue;
               }
+              if (optionValue > max) {
+                max = optionValue;
+              }
+              totalMax =  totalMax + max;
             })
+          } else  if (input.tagName === 'TANGY-CHECKBOXES') {
+            valueField.forEach(option => {
+              let optionValue = parseFloat(option.name);
+              if (option.value !== "") {
+                value = optionValue;
+              }
+              if (optionValue > max && optionValue !== 888) {
+                max = optionValue;
+              }
+              totalMax = totalMax + max;
+            })
+          } else  if (input.tagName === 'TANGY-BOX') {
+            // ignore
+          } else  if (input.tagName.includes('WIDGET')) {
+            // ignore
           } else {
             value = input.value
+            totalMax =  ++totalMax;
           }
-          score = value
           data[input.name] = value;
-          if (typeof form !== 'undefined') {
-            if (input.name === form['id'] + "_score") {
-              score = value
-            }
-          }
-          data['score'] = value;
+
+          data['score'] = score;
           data['max'] = max;
           answeredQuestions.push(data)
         }
       })
+
+      if (usingScorefield) {
+        formItemTalley['score'] = parseFloat(usingScorefield.value)
+      }
+
+      formItemTalley['totalMax'] =  totalMax
 
       // The previous code block should have populated the score field for this tangy-form-item.
       // Now deal with the special case of TANGY-TIMED and get some aggregate scores.
@@ -230,12 +253,14 @@ export class DashboardService {
           if (usingScorefield) {
             let totalAnswers = item.inputs.length - 1
             if (totalAnswers > 0) {
-              totalCorrect = Number(score)
+              score = formItemTalley['score']
+              totalCorrect = score
+              // maxValueAnswer = totalAnswers
               maxValueAnswer = totalAnswers
-              if (max) {
-                maxValueAnswer = max
+              if (formItemTalley['totalMax']) {
+                maxValueAnswer = formItemTalley['totalMax']
                 totalIncorrect = totalAnswers - totalCorrect
-                scorePercentageCorrect =  Math.round(score / max * 100)
+                scorePercentageCorrect =  Math.round(score / formItemTalley['totalMax'] * 100)
               }
               // prototype = element.tagName
               // console.log("element.tagName: " + element.tagName + " subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer + " score: " + score + " scorePercentageCorrect: " + scorePercentageCorrect)
@@ -289,7 +314,7 @@ export class DashboardService {
         incorrect: incorrect,
         noResponse: noResponse,
         score: score,
-        max: max,
+        max: formItemTalley['totalMax'],
         totalIncorrect: totalIncorrect,
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
