@@ -15,7 +15,7 @@ export class AdminUserGuard implements CanActivate {
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (await this.userService.isCurrentUserAdmin()) {
       return true;
-    };
+    }
     this.errorHandler.handleError(_TRANSLATE('Permission Denied.'));
     this.router.navigate(['projects']);
     return false;
