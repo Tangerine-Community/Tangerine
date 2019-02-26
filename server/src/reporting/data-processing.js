@@ -128,6 +128,10 @@ const generateFlatResponse = async function (formResponse, locationList) {
             flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = 'orphaned';
           }
         }
+      } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value.find(input => input.value == 'on')
+          ? input.value.find(input => input.value == 'on').name
+          : ''
       } else if (input && typeof input.value === 'string') {
         flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value;
       } else if (input && typeof input.value === 'number') {
