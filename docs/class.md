@@ -39,13 +39,20 @@ There are 3 options for scoring in Class:
 - Using a hidden formId+_score field to store the calculated score value when the form is submitted using the on-change javascript
 - Using a score calculated at report run-time.
 
-The dashboard.service populaceTransformedResult function loops through the inputs; for each item type, it calculates the value, score, and max
+The dashboard.service populaceTransformedResult function loops through the inputs; for each item type, it calculates the value, score, and max. 
+
+It also keeps a running tally of the sum of all max values (totalMax).
+
 Here are the default rules for each input type:
 * TANGY-INPUT:
    * value: value field
    * score: value field
    * max: max field
 * TANGY-RADIO-BUTTONS:
+   * value: loops through the options and uses the value from the non-empty option
+   * score: value 
+   * max: Use value of the highest option.
+* TANGY-CHECKBOXES:
    * value: loops through the options and uses the value from the non-empty option
    * score: value 
    * max: Use value of the highest option.

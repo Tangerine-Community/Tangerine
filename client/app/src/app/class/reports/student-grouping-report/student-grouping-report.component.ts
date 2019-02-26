@@ -104,21 +104,26 @@ export class StudentGroupingReportComponent implements OnInit {
   }
 
   ngAfterViewChecked() {
-    if (!this.feedbackViewInited) {
-      let el: HTMLElement = document.querySelector(".feedback-example")
-      if (el) {
-        el.style.backgroundColor = "lightgoldenrodyellow"
-        el.style.margin = "1em"
-        el.style.padding = "1em"
-        this.feedbackViewInited = true
-      }
-      el = document.querySelector(".feedback-assignment")
-      if (el) {
-        el.style.backgroundColor = "lightgoldenrodyellow"
-        el.style.margin = "1em"
-        el.style.padding = "1em"
-        this.feedbackViewInited = true
-      }
+    // if (!this.feedbackViewInited) {
+      this.initFeedbackStyles();
+      // this.feedbackViewInited = true
+    // }
+  }
+
+  private initFeedbackStyles() {
+    let el: HTMLElement = document.querySelector(".feedback-example")
+    if (el) {
+      el.style.backgroundColor = "lightgoldenrodyellow"
+      el.style.margin = "1em"
+      el.style.padding = "1em"
+      // this.feedbackViewInited = true
+    }
+    el = document.querySelector(".feedback-assignment")
+    if (el) {
+      el.style.backgroundColor = "lightgoldenrodyellow"
+      el.style.margin = "1em"
+      el.style.padding = "1em"
+      // this.feedbackViewInited = true
     }
   }
 
@@ -180,6 +185,7 @@ export class StudentGroupingReportComponent implements OnInit {
     // console.log("yPositionEvent: " + yPositionEvent + " parentPosition: " + parentPositionTop.y + " clickPosition.y: " + clickPosition.y + " yPosition: " + yPosition + " finalPosition: " + finalPosition)
     this.renderer.setStyle(this.feedbackMessage.nativeElement, 'position',  "relative")
     this.renderer.setStyle(this.feedbackMessage.nativeElement, 'top',  finalPosition + "px")
+    this.initFeedbackStyles();
     // console.log("Get feedback for " + JSON.stringify(feedback))
   }
 
