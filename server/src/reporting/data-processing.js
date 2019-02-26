@@ -18,6 +18,8 @@ const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../modules/index.js')()
 
+const CODE_SKIP = '999'
+
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -111,7 +113,10 @@ const generateFlatResponse = async function (formResponse, locationList) {
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
-      if (input.tagName === 'TANGY-LOCATION') {
+      if (input.hidden || item.disabled) {
+        // If the input is disabled or hidden, or the the item is disabled, set SKIP code.
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = CODE_SKIP 
+      } else if (input.tagName === 'TANGY-LOCATION') {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
