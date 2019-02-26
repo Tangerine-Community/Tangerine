@@ -139,7 +139,7 @@ export class DashboardService {
     let incorrect = 0;
     let noResponse = 0;
     let score:number = null;
-    let max:number = null;
+    // let max:number = null;
     let totalIncorrect:number = 0;
     let totalCorrect:number= 0;
     let maxValueAnswer:number = 0;
@@ -147,6 +147,8 @@ export class DashboardService {
     let duration:number = 0;
     let prototype:number = 0;
     let usingScorefield = null;
+    let formItemTalley = {};
+    let totalMax:number = 0;
 
     if (item) {
       itemCount = item.inputs.length
@@ -160,42 +162,71 @@ export class DashboardService {
         usingScorefield = item.inputs.find(input => input.name === form['id'] + "_score")
       }
 
-      // populate answeredQuestions array with value, score, and max.
+      // populate value, score, max, and totalMax
+
       item.inputs.forEach(input => {
         // inputs = [...inputs, ...input.value]
-        if (input.value !== "") {
           let data = {}
           let valueField = input.value;
           let value;
+          let max:number = null;
           if (input.tagName === 'TANGY-INPUT') {
             if (typeof input.max !== 'undefined' && input.max !== '') {
-              max = input.max
-            }
-          }
-          if (input.tagName === 'TANGY-RADIO-BUTTONS') {
-            valueField.forEach(option => {
-              if (option.value !== "") {
-                value = parseFloat(option.name)
-                if (value > max) {
-                  max = value;
-                }
+              max = parseFloat(input.max);
+              // don't add to totalMax if it's the _score field
+              if (input.name !== form['id'] + "_score") {
+                totalMax = totalMax + max
               }
-            })
-          } else {
-            value = input.value
-          }
-          score = value
-          data[input.name] = value;
-          if (typeof form !== 'undefined') {
-            if (input.name === form['id'] + "_score") {
-              score = value
             }
+          } else  if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+            valueField.forEach(option => {
+              let optionValue = parseFloat(option.name);
+              if (option.value !== "") {
+                value = optionValue;
+              }
+              if (optionValue > max) {
+                max = optionValue;
+              }
+              totalMax =  totalMax + max;
+            })
+          } else  if (input.tagName === 'TANGY-CHECKBOX') {
+            if (input.value !== "") {
+              value = 1;
+            }
+            ++totalMax;
+          } else  if (input.tagName === 'TANGY-CHECKBOXES') {
+            valueField.forEach(option => {
+              let optionValue = parseFloat(option.name);
+              if (option.value !== "") {
+                value = optionValue;
+              }
+              if (optionValue > max && optionValue !== 888) {
+                max = optionValue;
+              }
+              totalMax = totalMax + max;
+            })
+          } else  if (input.tagName === 'TANGY-BOX') {
+            // ignore
+          } else  if (input.tagName.includes('WIDGET')) {
+            // ignore
+          } else {
+            if (input.value !== "") {
+              value = input.value
+            }
+            totalMax = ++totalMax;
           }
-          data['score'] = value;
+          data[input.name] = value;
+
+          data['score'] = score;
           data['max'] = max;
           answeredQuestions.push(data)
-        }
       })
+
+      if (usingScorefield) {
+        formItemTalley['score'] = parseFloat(usingScorefield.value)
+      }
+
+      formItemTalley['totalMax'] =  totalMax
 
       // The previous code block should have populated the score field for this tangy-form-item.
       // Now deal with the special case of TANGY-TIMED and get some aggregate scores.
@@ -230,12 +261,14 @@ export class DashboardService {
           if (usingScorefield) {
             let totalAnswers = item.inputs.length - 1
             if (totalAnswers > 0) {
-              totalCorrect = Number(score)
+              score = formItemTalley['score']
+              totalCorrect = score
+              // maxValueAnswer = totalAnswers
               maxValueAnswer = totalAnswers
-              if (max) {
-                maxValueAnswer = max
+              if (formItemTalley['totalMax']) {
+                maxValueAnswer = formItemTalley['totalMax']
                 totalIncorrect = totalAnswers - totalCorrect
-                scorePercentageCorrect =  Math.round(score / max * 100)
+                scorePercentageCorrect =  Math.round(score / formItemTalley['totalMax'] * 100)
               }
               // prototype = element.tagName
               // console.log("element.tagName: " + element.tagName + " subtest name: " + element.name + " totalIncorrect: " + totalIncorrect + " of " + maxValueAnswer + " score: " + score + " scorePercentageCorrect: " + scorePercentageCorrect)
@@ -289,7 +322,7 @@ export class DashboardService {
         incorrect: incorrect,
         noResponse: noResponse,
         score: score,
-        max: max,
+        max: formItemTalley['totalMax'],
         totalIncorrect: totalIncorrect,
         maxValueAnswer: maxValueAnswer,
         totalCorrect: totalCorrect,
