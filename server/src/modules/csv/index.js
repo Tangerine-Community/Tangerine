@@ -47,10 +47,12 @@ function saveFormInfo(flatResponse, db) {
     }
     Object.keys(flatResponse).forEach(key => {
       if (formDoc.columnHeaders.find(header => header.key === key) === undefined) {
+        // Carve out the string that editor puts in IDs in order to make periods more reliable for determining data according to period delimited convention.
+        let safeKey = key.replace('form-0.', '')
         // Make the header property (AKA label) just the variable name.
-        const firstOccurenceIndex = key.indexOf('.')
-        const secondOccurenceIndex = key.indexOf('.', firstOccurenceIndex+1)
-        formDoc.columnHeaders.push({ key, header: key.substr(secondOccurenceIndex+1, key.length) })
+        const firstOccurenceIndex = safeKey.indexOf('.')
+        const secondOccurenceIndex = safeKey.indexOf('.', firstOccurenceIndex+1)
+        formDoc.columnHeaders.push({ key, header: safeKey.substr(secondOccurenceIndex+1, safeKey.length) })
         foundNewHeaders = true
       }
     })
