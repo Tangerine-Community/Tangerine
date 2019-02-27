@@ -18,6 +18,8 @@ const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../modules/index.js')()
 
+const CODE_SKIP = '999'
+
 let DB = {}
 if (process.env.T_COUCHDB_ENABLE === 'true') {
   DB = PouchDB.defaults({
@@ -111,7 +113,10 @@ const generateFlatResponse = async function (formResponse, locationList) {
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
-      if (input.tagName === 'TANGY-LOCATION') {
+      if (input.hidden || item.disabled) {
+        // If the input is disabled or hidden, or the the item is disabled, set SKIP code.
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = CODE_SKIP 
+      } else if (input.tagName === 'TANGY-LOCATION') {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
@@ -128,6 +133,47 @@ const generateFlatResponse = async function (formResponse, locationList) {
             flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = 'orphaned';
           }
         }
+      } else if (input.tagName === 'TANGY-RADIO-BUTTONS') {
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value.find(input => input.value == 'on')
+          ? input.value.find(input => input.value == 'on').name
+          : ''
+      } else if (input.tagName === 'TANGY-CHECKBOXES') {
+        for (let checkboxInput of input.value) {
+          flatFormResponse[`${formID}.${item.id}.${input.name}_${checkboxInput.name}`] = checkboxInput.value
+            ? "1"
+            : "0"
+        };
+      } else if (input.tagName === 'TANGY-TIMED') {
+        let hitLastAttempted = false
+        for (let toggleInput of input.value) {
+          let derivedValue = ''
+          if (hitLastAttempted === true) {
+            // Not attempted.
+            derivedValue = '.'
+          } else if (toggleInput.value === 'on') {
+            // Incorrect.
+            derivedValue = '0'
+          } else {
+            // Correct.
+            derivedValue = '1'
+          }
+          flatFormResponse[`${formID}.${item.id}.${input.name}_${toggleInput.name}`] = derivedValue
+          if (toggleInput.highlighted === true) {
+            hitLastAttempted = true
+          }
+        };
+        flatFormResponse[`${formID}.${item.id}.${input.name}.duration`] = input.duration 
+        flatFormResponse[`${formID}.${item.id}.${input.name}.time_remaining`] = input.timeRemaining
+        // Calculate Items Per Minute.
+        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect 
+        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_correct`] = numberOfItemsCorrect
+        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
+        let timeSpent = input.duration - input.timeRemaining
+        flatFormResponse[`${formID}.${item.id}.${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
+      } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
+        // Do nothing :).
       } else if (input && typeof input.value === 'string') {
         flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value;
       } else if (input && typeof input.value === 'number') {
@@ -142,18 +188,7 @@ const generateFlatResponse = async function (formResponse, locationList) {
           flatFormResponse[`${formID}.${item.id}.${input.name}.${key}`] = input.value[key];
         };
       }
-      if (input.tagName === 'TANGY-TIMED') {
-        flatFormResponse[`${formID}.${item.id}.${input.name}.duration`] = input.duration 
-        flatFormResponse[`${formID}.${item.id}.${input.name}.time_remaining`] = input.timeRemaining
-        // Calculate Items Per Minute.
-        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
-        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
-        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect 
-        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_correct`] = numberOfItemsCorrect
-        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
-        let timeSpent = input.duration - input.timeRemaining
-        flatFormResponse[`${formID}.${item.id}.${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
-      }
+
     }
   }
   let data = await tangyModules.hook("flatFormReponse", {flatFormResponse, formResponse});
