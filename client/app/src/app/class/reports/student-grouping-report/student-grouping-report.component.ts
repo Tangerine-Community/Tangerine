@@ -42,6 +42,8 @@ export class StudentGroupingReportComponent implements OnInit {
   feedbackViewInited:boolean = false
   curriculumFormsList;  // list of all curriculum forms
   classGroupReport:ClassGroupingReport;
+  checkFeedbackMessagePosition:boolean = false;
+  clickPosition;
 
   @ViewChild('container') container: ElementRef;
   @ViewChild('feedback') feedbackElement: ElementRef;
@@ -96,7 +98,6 @@ export class StudentGroupingReportComponent implements OnInit {
     })
     let item = subtest[0]
     let results = await this.getResultsByClass(classId, curriculumId, this.curriculumFormsList, item);
-
     this.classGroupReport = await this.dashboardService.getClassGroupReport(item, classId, curriculumId, results)
     // console.log("this.classGroupReport item: " + item + " classId: " + classId + " curriculumId: " + curriculumId + "results: "  + JSON.stringify(results))
     // console.log("this.classGroupReport feedback: " + JSON.stringify(this.classGroupReport.feedback))
@@ -108,6 +109,20 @@ export class StudentGroupingReportComponent implements OnInit {
       this.initFeedbackStyles();
       // this.feedbackViewInited = true
     // }
+    if (this.checkFeedbackMessagePosition) {
+      let feedbackMessageHeight = this.feedbackMessage.nativeElement.clientHeight;
+      let parentPositionTop = this.getPosition(this.feedbackElement.nativeElement);
+      // console.log("feedbackMessageHeight: " + feedbackMessageHeight + " parentPositionTop y: " + parentPositionTop.y)
+      let finalPosition =  (this.clickPosition.y - parentPositionTop.y) - feedbackMessageHeight;
+      if (finalPosition < 0) {
+        finalPosition = 0
+      }
+      // console.log("yPositionEvent: " + yPositionEvent + " parentPosition: " + parentPositionTop.y + " clickPosition.y: " + clickPosition.y + " yPosition: " + yPosition + " finalPosition: " + finalPosition)
+      this.renderer.setStyle(this.feedbackMessage.nativeElement, 'position',  "relative")
+      this.renderer.setStyle(this.feedbackMessage.nativeElement, 'top',  finalPosition + "px")
+      this.initFeedbackStyles();
+      this.checkFeedbackMessagePosition = false;
+    }
   }
 
   private initFeedbackStyles() {
@@ -161,32 +176,8 @@ export class StudentGroupingReportComponent implements OnInit {
       feedback.percentileRange = this.dashboardService.calculatePercentileRange(percentile)
       this.classGroupReport.feedback = feedback
     }
-
-    // let xPosition = event.clientX;
-    let yPositionEvent = event.clientY;
-    let feedbackPosition = this.getPosition(this.feedbackMessage.nativeElement);
-    let parentPositionTop = this.getPosition(this.feedbackElement.nativeElement);
-    let parentPositionHeight = this.feedbackElement.nativeElement.clientHeight;
-    let feedbackMessageHeight = this.feedbackMessage.nativeElement.clientHeight;
-    let parentBottom = parentPositionTop.y + parentPositionHeight
-    console.log("feedbackMessageHeight: " + feedbackMessageHeight)
-    // let styles = getComputedStyle(this.feedbackMessage.nativeElement);
-    // console.log("this.feedbackMessage.nativeElement.offsetHeight: " + this.feedbackMessage.nativeElement.offsetHeight)
-    // let yPosition = event.clientY - parentPosition.y - (this.feedbackMessage.nativeElement.offsetHeight / 2);
-    // let yPosition = event.clientY - parentPosition.y
-    // let yPosition = event.clientY
-    let clickPosition = this.getPosition(event.target);
-    let yPosition = clickPosition.y
-    // let finalPosition = parentBottom - feedbackMessageHeight - (clickPosition.y - parentPositionTop.y)
-    let finalPosition =  (clickPosition.y - parentPositionTop.y) - feedbackMessageHeight;
-    if (finalPosition < 0) {
-      finalPosition = 0
-    }
-    // console.log("yPositionEvent: " + yPositionEvent + " parentPosition: " + parentPositionTop.y + " clickPosition.y: " + clickPosition.y + " yPosition: " + yPosition + " finalPosition: " + finalPosition)
-    this.renderer.setStyle(this.feedbackMessage.nativeElement, 'position',  "relative")
-    this.renderer.setStyle(this.feedbackMessage.nativeElement, 'top',  finalPosition + "px")
-    this.initFeedbackStyles();
-    // console.log("Get feedback for " + JSON.stringify(feedback))
+    this.clickPosition = this.getPosition(event.target);
+    this.checkFeedbackMessagePosition = true;
   }
 
   // Helper function to get an element's exact position

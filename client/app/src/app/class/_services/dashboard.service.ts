@@ -57,6 +57,13 @@ export class DashboardService {
     return result.rows;
   }
 
+  /**
+   *
+   * @param classId
+   * @param curriculum
+   * @param curriculumFormsList
+   * @param tangyFormItem - optional
+   */
   async getResultsByClass(classId: any, curriculum, curriculumFormsList, tangyFormItem) {
     const theKey = [classId,curriculum]
     const result = await this.userDB.query('tangy-class/responsesByClassIdCurriculumId', {
@@ -275,7 +282,7 @@ export class DashboardService {
             }
           }
 
-          if (!scorePercentageCorrect) {
+          if (typeof scorePercentageCorrect === 'undefined') {
             // Auto-calculate scores for tangy form items that don't use _score or are not tangy-timed grids.
             let totalAnswers = item.inputs.length
             // calculate the total score manually.
@@ -392,7 +399,7 @@ export class DashboardService {
         if (studentResponse) {
           studentResults.response = studentResponse
           let score = studentResponse.score
-          if (score) {
+          if (typeof score !== 'undefined') {
             studentResults.score = score
             // console.log("student: " + studentResults["name"]  + " form item: " + studentResults["response"]["formTitle"]  + " score: " + score)
           }
@@ -528,7 +535,7 @@ export class DashboardService {
     return classGroupReport
   }
 
-  private calculatePercentile(score) {
+  public calculatePercentile(score) {
     let percentile;
     if (score >= 80)
       percentile = 4
