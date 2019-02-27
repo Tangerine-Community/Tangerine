@@ -1,0 +1,58 @@
+<mat-card class="tangy-card-content-container">
+  <div class="subtest-report-header">
+    <h1>{{'Task Report'|translate}}</h1>
+    <p>{{'Choose a task report from one of the following selections:'|translate}}</p>
+<div #curriculumSelectDiv id="curriculumSelectDiv" >
+  <mat-button-toggle-group name="curriculumSelect" aria-label="Select Curr" (change)="onCurriculumSelect($event)">
+    <mat-button-toggle *ngFor="let curriculum of curriculi" value="{{curriculum.name}}">{{curriculum.label}}</mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+  </div>
+
+    <div class="subtask-report" *ngIf="totals.length > 0">
+      <h2 title="Task Report">{{'SubTask Report'|translate}}: {{curriculumName}}</h2>
+    </div>
+    <div class="reportContainer">
+      <div class="stats" *ngIf="totals.length > 0">
+        <table mat-table [dataSource]="dataSourceTotals" class="mat-elevation-z8" >
+          <ng-container matColumnDef="itemName">
+            <th mat-header-cell *matHeaderCellDef title="itemName"> {{'Subtask'|translate}} </th>
+            <td mat-cell *matCellDef="let element"> {{element["itemName"]}} </td>
+          </ng-container>
+          <ng-container matColumnDef="average">
+            <th mat-header-cell *matHeaderCellDef title="itemId"> {{'Average'|translate}} </th>
+            <td mat-cell *matCellDef="let element"> {{element["average"]}}% </td>
+          </ng-container>
+          <ng-container matColumnDef="studentsAssessed">
+            <th mat-header-cell *matHeaderCellDef title="itemId"> {{'Students Assessed'|translate}} </th>
+            <td mat-cell *matCellDef="let element"> {{element["studentsAssessed"]}} / {{element["classSize"]}} </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+          <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" [ngClass]="element.colorClass"></tr>
+        </table>
+      </div>
+    </div>
+    <div class="subtask-report" *ngIf="groupings?.length > 0">
+      <h2 title="Grouping Report">{{'Grouping Report'|translate}}</h2>
+    </div>
+    <div class="reportContainer">
+      <div class="stats" *ngIf="groupings?.length > 0">
+        <table mat-table [dataSource]="dataSourceReportCard" class="mat-elevation-z8" >
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef title="name"> {{'Name'|translate}} </th>
+            <td mat-cell *matCellDef="let element"> {{element["name"]}} </td>
+          </ng-container>
+          <ng-container matColumnDef="results">
+            <th mat-header-cell *matHeaderCellDef title="itemId"> {{'Average'|translate}} </th>
+            <td mat-cell *matCellDef="let element"> {{element.result.scorePercentageCorrect}}% </td>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef title="status"> {{'Status'|translate}} </th>
+            <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnsToDisplayGrouping"></tr>
+          <tr mat-row *matRowDef="let element; columns: columnsToDisplayGrouping;" [ngClass]="element.colorClass"></tr>
+        </table>
+      </div>
+    </div>
+</mat-card>
