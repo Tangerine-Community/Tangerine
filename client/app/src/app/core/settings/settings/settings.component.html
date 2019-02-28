@@ -1,0 +1,9 @@
+<form id="settings-form" #form>
+  <label for="translation">{{'Language'}}: </label>
+  <select name="translation">
+    <option *ngFor="let languageInfo of translations" [selected]="languageInfo.languageCode === languageCode" value="{{languageInfo.languageCode}}">
+      {{languageInfo.label}}
+    </option>
+  </select> 
+  <button type="submit">submit</button>
+</form>

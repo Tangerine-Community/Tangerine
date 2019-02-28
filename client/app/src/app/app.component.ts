@@ -25,6 +25,8 @@ export class AppComponent implements OnInit {
   dir = 'ltr';
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
+  languageCode:string
+  translate: TranslateService
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
     private windowRef: WindowRef, private userService: UserService,
@@ -34,18 +36,24 @@ export class AppComponent implements OnInit {
     translate: TranslateService
   ) {
     windowRef.nativeWindow.PouchDB = PouchDB;
-    translate.setDefaultLang('translation');
-    translate.use('translation');
     this.freespaceCorrectionOccuring = false;
+    this.window = this.windowRef.nativeWindow;
+    this.languageCode = this.window.localStorage.getItem('languageCode')
+      ? this.window.localStorage.getItem('languageCode')
+      : 'en'
+    translate.setDefaultLang(`translation.${this.languageCode}`);
+    translate.use(`translation.${this.languageCode}`);
+
   }
 
   async ngOnInit() {
     // Set location list as a global.
-    this.window = this.windowRef.nativeWindow;
     const res = await this.http.get('./assets/location-list.json').toPromise();
     this.window.locationList = res;
-    const translation = await this.http.get('./assets/translation.json').toPromise();
+    const translation = await this.http.get(`./assets/translation.${this.languageCode}.json`).toPromise();
     this.window.translation = translation
+    this.window.document.documentElement.lang = this.languageCode; 
+    this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
     try {
       this.window.appConfig = await this.http.get('./assets/app-config.json').toPromise()
     } catch(e) {
