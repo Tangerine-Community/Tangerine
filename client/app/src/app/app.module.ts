@@ -25,6 +25,7 @@ import { SyncRecordsModule } from './core/sync-records/sync-records.module';
 import { WindowRef } from './core/window-ref.service';
 import { Loc } from './core/location.service';
 import { UpdateModule } from './core/update/update.module';
+import { SettingsModule } from './core/settings/settings.module';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { ExportDataModule } from './core/export-data/export-data.module';
@@ -51,6 +52,7 @@ export function HttpClientLoaderFactory(httpClient: HttpClient) {
     ClassModule,
     CaseModule,
     UserProfileModule,
+    SettingsModule,
     UpdateModule,
     SyncRecordsModule,
     ExportDataModule,

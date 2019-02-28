@@ -1,0 +1,18 @@
+[
+  {
+    "label": "English",
+    "languageCode": "en"
+  },
+  {
+    "label": "Jordanian",
+    "languageCode": "JO_ar"
+  },
+  {
+    "label": "Khmer",
+    "languageCode": "KH_km"
+  },
+  {
+    "label": "Test",
+    "languageCode": "test"
+  }
+]
