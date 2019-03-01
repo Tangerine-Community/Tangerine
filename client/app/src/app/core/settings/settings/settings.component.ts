@@ -23,9 +23,10 @@ export class SettingsComponent implements OnInit {
 
   async ngOnInit() {
     this.translations = await this.http.get('./assets/translations.json').toPromise();
-    this.form.nativeElement.addEventListener('submit', (event) => {
-      event.preventDefault()
-      localStorage.setItem('languageCode', event.target.querySelector('[name=translation]').value)
+    this.form.nativeElement.querySelector('[type="submit"]').addEventListener('click', (event) => {
+      const selectedLanguage = this.translations.find(languageInfo => languageInfo.languageCode === this.form.nativeElement.querySelector('[name=translation]').value)
+      localStorage.setItem('languageCode', selectedLanguage.languageCode)
+      localStorage.setItem('languageDirection', selectedLanguage.languageDirection)
       this.window.location.reload()
     })
   }
