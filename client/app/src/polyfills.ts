@@ -28,6 +28,7 @@ import 'tangy-form/input/tangy-acasi.js';
 import 'tangy-form/input/tangy-eftouch.js';
 import 'tangy-form/input/tangy-photo-capture.js';
 
+import `translation-web-component/t-lang.js'
 
 // An attempt to fix something...
 //import 'core-js/es7/reflect';
