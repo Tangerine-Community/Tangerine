@@ -25,6 +25,7 @@ export class EventComponent implements OnInit, AfterContentInit {
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
   eventFormsInfo:Array<EventFormDefinitionInfo>
+  loaded = false
 
 
   constructor(
@@ -67,6 +68,7 @@ export class EventComponent implements OnInit, AfterContentInit {
               .filter(eventFormResponse => eventFormResponse.eventFormDefinitionId === eventFormDefinition.id)
           }
         })
+      this.loaded = true
     })
   }
 
