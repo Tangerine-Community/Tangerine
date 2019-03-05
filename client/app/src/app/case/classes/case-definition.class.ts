@@ -7,6 +7,7 @@ class CaseDefinition {
   name:string
   description:string
   eventDefinitions: Array<CaseEventDefinition> = []
+  startFormOnOpen: CaseFormPath
 
   constructor(init:CaseDefinition) {
     Object.assign(this, init);
@@ -20,6 +21,11 @@ class CaseDefinition {
     */
   }
 
+}
+
+class CaseFormPath {
+  eventId:string
+  eventFormId:string
 }
 
 export { CaseDefinition }
