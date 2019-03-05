@@ -147,6 +147,12 @@ class CaseService {
     
   }
 
+  disableEventDefinition(eventDefinitionId) {
+    if (this.case.disabledEventDefinitionIds.indexOf(eventDefinitionId) === -1) {
+      this.case.disabledEventDefinitionIds.push(eventDefinitionId)
+    }
+  }
+
 }
 
 export { CaseService }
