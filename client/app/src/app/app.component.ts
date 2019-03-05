@@ -27,7 +27,8 @@ export class AppComponent implements OnInit {
   updateIsRunning = false;
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
   constructor(
-    private windowRef: WindowRef, private userService: UserService,
+    private windowRef: WindowRef,
+    private userService: UserService,
     private authenticationService: AuthenticationService,
     private http: HttpClient,
     private router: Router,
