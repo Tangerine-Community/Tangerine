@@ -28,6 +28,12 @@ export class NewCaseComponent implements OnInit {
   async onCaseDefinitionSelect(caseDefinitionId = '') {
     const caseService = new CaseService()
     await caseService.create(caseDefinitionId)
-    this.router.navigate(['case', caseService.case._id])
+    if (caseService.caseDefinition.startFormOnOpen && caseService.caseDefinition.startFormOnOpen.eventFormId) {
+      const caseEvent = await caseService.startEvent(caseService.caseDefinition.startFormOnOpen.eventId)
+      const eventForm = await caseService.startEventForm(caseEvent.id, caseService.caseDefinition.startFormOnOpen.eventFormId) 
+      this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])
+    } else {
+      this.router.navigate(['case', caseService.case._id])
+    }
   }
 }
