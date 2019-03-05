@@ -24,7 +24,8 @@ export class CaseComponent implements OnInit, AfterContentInit {
   }
 
   async startEvent(eventDefinitionId) {
-    const caseEvent = await this.caseService.startEvent(eventDefinitionId)
+    const caseEvent = this.caseService.startEvent(eventDefinitionId)
+    await this.caseService.save()
     this.router.navigate(['case', 'event', this.caseService.case._id, caseEvent.id])
   }
 
