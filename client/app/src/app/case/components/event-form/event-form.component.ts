@@ -72,7 +72,8 @@ export class EventFormComponent implements AfterContentInit {
         this.throttledSaveResponse(response)
       })
       this.tangyFormEl.addEventListener('submit', async _ => {
-        await this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
+        this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
+        await this.caseService.save()
         await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
       })
       this.loaded = true
