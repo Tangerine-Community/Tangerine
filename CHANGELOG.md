@@ -8,7 +8,7 @@
 git fetch origin
 git checkout v3.2.0
 ./start.sh
-docker exec tangerine translations-update
+docker exec tangerine /tangerine/upgrades/v3.2.0.js 
 ```
 
 ## v3.1.0
