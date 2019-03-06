@@ -3,6 +3,7 @@
 ## v3.2.0
 - Features
   - #1315 Assessor changes language of App
+  - #1362 Assessor starts new Case is immediately forwarded to first form
 
 ```bash
 git fetch origin
