@@ -137,5 +137,13 @@ export const updates = [
       console.log('Updating to v3.1.0...')
       await userDb.compact()
     }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig) => {
+      console.log('Updating to v3.2.0...')
+      localStorage.setItem('languageCode', 'LEGACY')
+      localStorage.setItem('languageDirection', appConfig.direction)
+    }
   }
 ]
