@@ -45,7 +45,7 @@
           <ng-container matColumnDef="calculatedScore">
             <th mat-header-cell *matHeaderCellDef title="Score"> {{'Score'|translate}} </th>
             <td mat-cell *matCellDef="let element" (click)="getFeedbackForPercentile($event, element.percentile, classGroupReport.curriculumId, classGroupReport.itemId)">
-              <span *ngIf="element.score">{{element.score}} / {{element.maxValueAnswer}}</span>
+              <span *ngIf="element.score !== undefined">{{element.score}} / {{element.maxValueAnswer}}</span>
             </td>
           </ng-container>
 

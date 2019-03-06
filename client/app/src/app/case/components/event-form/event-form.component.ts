@@ -25,6 +25,7 @@ export class EventFormComponent implements AfterContentInit {
   throttledSaveLoaded:boolean;
   throttledSaveFiring:boolean;
   formResponse:any
+  loaded = false
   @ViewChild('container') container: ElementRef;
   constructor(
     private route: ActivatedRoute,
@@ -74,6 +75,7 @@ export class EventFormComponent implements AfterContentInit {
         await this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
         await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
       })
+      this.loaded = true
     })
   }
 
