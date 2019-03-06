@@ -9,12 +9,16 @@
   - Ability to mark an entire row as incorrect on grids #1333
   - Assessor's backed up form responses are archived when storage is filling up #1304
   - Assessor scans a QR Code into form #1309
+  - All hidden inputs have reporting values of `"999"` #1349
 - Bug fixes
   - Editor not properly logging users out resulting in getting stuck every 24 hours #1314 
   - Min and Max for input number cannot be saved through the interface #1297
   - time on grids cannot be changes and is always 60 seconds #1301
   - Unclosed tags in html container can break form #1289
   - Tangy timed option values disappear #1302
+
+
+Note that #1349 will bve optional in future releases and you may not want to upgrade until that time.
 
 Upgrade instructions:
 ```bash
