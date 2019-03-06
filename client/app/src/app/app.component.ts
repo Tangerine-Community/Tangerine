@@ -18,6 +18,7 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+
   showNav;
   showUpdateAppLink;
   window;
@@ -27,8 +28,10 @@ export class AppComponent implements OnInit {
   updateIsRunning = false;
   languageCode:string
   languageDirection:string
+  languagePath:string
   translate: TranslateService
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
+
   constructor(
     private windowRef: WindowRef,
     private userService: UserService,
@@ -38,6 +41,8 @@ export class AppComponent implements OnInit {
     translate: TranslateService
   ) {
     windowRef.nativeWindow.PouchDB = PouchDB;
+    this.checkIfUpdateScriptRequired();
+    if (!localStorage.getItem('languageCode')) return
     this.freespaceCorrectionOccuring = false;
     this.window = this.windowRef.nativeWindow;
     this.installed = localStorage.getItem('installed') ? true : false
@@ -55,9 +60,11 @@ export class AppComponent implements OnInit {
     } else {
       this.languageCode = this.window.localStorage.getItem('languageCode')
       this.languageDirection = this.window.localStorage.getItem('languageDirection')
+      // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
+      this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
       // Set up ngx-translate.
-      translate.setDefaultLang(`translation.${this.languageCode}`);
-      translate.use(`translation.${this.languageCode}`);
+      translate.setDefaultLang(this.languagePath);
+      translate.use(this.languagePath);
       // Set required config for use of <t-lang> Web Component.
       this.window.document.documentElement.lang = this.languageCode; 
       this.window.document.documentElement.dir = this.languageDirection; 
@@ -67,19 +74,19 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+    if (!localStorage.getItem('languageCode')) return
     // Bail if the app is not yet installed.
     if (!this.installed) return
     // Load up the app config.
     this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
     this.window.appConfig = this.appConfig
     // Set translation for t function used in Web Components.
-    const translation = await this.http.get(`./assets/translation.${this.languageCode}.json`).toPromise();
+    const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
     this.showNav = this.authenticationService.isLoggedIn();
     this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
       this.showNav = isLoggedIn;
     });
-    this.isAppUpdateAvailable();
     // Keep GPS chip warm.
     // @TODO Make this configurable. Not all installations use GPS and don't need to waste the battery.
     setInterval(this.getGeolocationPosition, 5000);
