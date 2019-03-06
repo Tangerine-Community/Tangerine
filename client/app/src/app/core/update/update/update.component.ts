@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterContentInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { WindowRef } from '../../window-ref.service';
-import { NgIf } from '@angular/common';
 import { TangyFormService } from '../../../tangy-forms/tangy-form-service';
 import { updates } from './updates';
 import PouchDB from 'pouchdb';
@@ -13,7 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './update.component.html',
   styleUrls: ['./update.component.css']
 })
-export class UpdateComponent implements OnInit {
+export class UpdateComponent implements AfterContentInit {
 
   message = _TRANSLATE('Checking For Updates...');
   totalUpdatesApplied = 0;
@@ -22,11 +23,21 @@ export class UpdateComponent implements OnInit {
 
   constructor(
     private windowRef: WindowRef,
+    private router: Router,
     translate: TranslateService,
+    private http: HttpClient,
     private userService: UserService
   ) { }
 
-  async ngOnInit() {
+  async ngAfterContentInit() {
+    if (localStorage.getItem('updateJustApplied')) {
+      console.log("update has been applied")
+      localStorage.setItem('updateJustApplied', '')
+      this.message = _TRANSLATE('✓ Yay! You are up to date.')
+      this.complete = true
+      return
+    }
+    const appConfig = await this.http.get('./assets/app-config.json').toPromise()
     const window = this.windowRef.nativeWindow;
     const usernames = await this.userService.getUsernames();
     for (const username of usernames) {
@@ -49,7 +60,7 @@ export class UpdateComponent implements OnInit {
           if (updates[atUpdateIndex].requiresViewsUpdate) {
             requiresViewsRefresh = true;
           }
-          await updates[atUpdateIndex].script(userDb);
+          await updates[atUpdateIndex].script(userDb, appConfig);
           this.totalUpdatesApplied++;
           atUpdateIndex++;
         }
@@ -62,8 +73,8 @@ export class UpdateComponent implements OnInit {
         await userDb.put(infoDoc);
       }
     }
-    this.complete = true
-    this.message = _TRANSLATE('✓ Yay! You are up to date.');
+    localStorage.setItem('updateJustApplied', 'true')
+    this.windowRef.nativeWindow.location.reload()
   }
 
 }

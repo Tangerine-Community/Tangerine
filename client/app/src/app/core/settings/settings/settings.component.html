@@ -1,0 +1,10 @@
+<h1>{{'Settings'|translate}}</h1>
+<form id="settings-form" #form>
+  <label for="translation">{{'Language'|translate}}: </label>
+  <select name="translation">
+    <option *ngFor="let languageInfo of translations" [selected]="languageInfo.languageCode === languageCode" value="{{languageInfo.languageCode}}">
+      {{languageInfo.label|translate}}
+    </option>
+  </select> 
+  <paper-button type="submit">{{'submit'|translate}}</paper-button>
+</form>
