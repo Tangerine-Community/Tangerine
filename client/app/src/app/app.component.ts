@@ -2,7 +2,6 @@ import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
 import { UserService } from './core/auth/_services/user.service';
 import { WindowRef } from './core/window-ref.service';
@@ -19,62 +18,83 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
+
   showNav;
   showUpdateAppLink;
   window;
-  dir = 'ltr';
+  appConfig:any;
+  installed = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
+  languageCode:string
+  languageDirection:string
+  languagePath:string
+  translate: TranslateService
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
+
   constructor(
-    private windowRef: WindowRef, private userService: UserService,
+    private windowRef: WindowRef,
+    private userService: UserService,
     private authenticationService: AuthenticationService,
     private http: HttpClient,
     private router: Router,
     translate: TranslateService
   ) {
     windowRef.nativeWindow.PouchDB = PouchDB;
-    translate.setDefaultLang('translation');
-    translate.use('translation');
+    this.checkIfUpdateScriptRequired();
+    if (!localStorage.getItem('languageCode')) return
     this.freespaceCorrectionOccuring = false;
+    this.window = this.windowRef.nativeWindow;
+    this.installed = localStorage.getItem('installed') ? true : false
+    // Detect if this is the first time the app has loaded.
+    if (!this.installed) {
+      this.http.get('./assets/app-config.json')
+        .toPromise()
+        .then((config:any) => {
+          this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
+          this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
+          this.window.localStorage.setItem('installed', true)
+          this.window.location.reload()
+        })
+
+    } else {
+      this.languageCode = this.window.localStorage.getItem('languageCode')
+      this.languageDirection = this.window.localStorage.getItem('languageDirection')
+      // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
+      this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
+      // Set up ngx-translate.
+      translate.setDefaultLang(this.languagePath);
+      translate.use(this.languagePath);
+      // Set required config for use of <t-lang> Web Component.
+      this.window.document.documentElement.lang = this.languageCode; 
+      this.window.document.documentElement.dir = this.languageDirection; 
+      this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
+    }
+
   }
 
   async ngOnInit() {
-    // Set location list as a global.
-    this.window = this.windowRef.nativeWindow;
-    const res = await this.http.get('./assets/location-list.json').toPromise();
-    this.window.locationList = res;
-    const translation = await this.http.get('./assets/translation.json').toPromise();
+    if (!localStorage.getItem('languageCode')) return
+    // Bail if the app is not yet installed.
+    if (!this.installed) return
+    // Load up the app config.
+    this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
+    this.window.appConfig = this.appConfig
+    // Set translation for t function used in Web Components.
+    const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
-    try {
-      this.window.appConfig = await this.http.get('./assets/app-config.json').toPromise()
-    } catch(e) {
-      console.log('No app config found.')
-    }
-    if (this.window.appConfig.direction === 'rtl') {
-      this.dir = 'rtl'
-      let styleContainer = this.window.document.createElement('div')
-      styleContainer.innerHTML = `
-        <style>
-          * {
-              text-align: right;
-              direction: rtl;
-          }
-        </style>
-      `
-      this.window.document.body.appendChild(styleContainer)
-    }
-
     this.showNav = this.authenticationService.isLoggedIn();
     this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
       this.showNav = isLoggedIn;
     });
-    this.isAppUpdateAvailable();
+    // Keep GPS chip warm.
+    // @TODO Make this configurable. Not all installations use GPS and don't need to waste the battery.
     setInterval(this.getGeolocationPosition, 5000);
     this.checkIfUpdateScriptRequired();
     this.checkStorageUsage()
     setInterval(this.checkStorageUsage.bind(this), 60*1000); 
     // Initialize tangyFormService in case any views need to be updated.
+    // @TODO Is this necessary? 
     const currentUser = await this.authenticationService.getCurrentUser();
     if (currentUser) {
       const tangyFormService = new TangyFormService({ databaseName: currentUser });
@@ -85,12 +105,12 @@ export class AppComponent implements OnInit {
   async checkStorageUsage() {
     const storageEstimate = await navigator.storage.estimate()
     const availableFreeSpace = storageEstimate.quota - storageEstimate.usage
-    const minimumFreeSpace = this.window.appConfig.minimumFreeSpace
-      ? this.window.appConfig.minimumFreeSpace
+    const minimumFreeSpace = this.appConfig.minimumFreeSpace
+      ? this.appConfig.minimumFreeSpace
       : 50*1000*1000
     if (availableFreeSpace < minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
-      const batchSize = this.window.appConfig.usageCleanupBatchSize 
-        ? this.window.appConfig.usageCleanupBatchSize 
+      const batchSize = this.appConfig.usageCleanupBatchSize 
+        ? this.appConfig.usageCleanupBatchSize 
         : 10
       this.freespaceCorrectionOccuring = true
       await this.correctFreeSpace(minimumFreeSpace, batchSize)

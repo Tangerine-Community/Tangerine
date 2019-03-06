@@ -1,5 +1,46 @@
 # Changelog
 
+## v3.2.0
+- Features
+  - #1315 Assessor changes language of App
+
+```bash
+git fetch origin
+git checkout v3.2.0
+./start.sh
+docker exec tangerine /tangerine/upgrades/v3.2.0.js 
+```
+
+## v3.1.0
+- Features
+  - Item Editor UX Improvements #810 
+  - Assessor verifies correct location selected by reviewing metadata of location #1191
+  - As an assessor I'd like to include a hint option to be displayed below the question text #1279
+  - Grids: helper functions for grids #1183
+  - Ability to mark an entire row as incorrect on grids #1333
+  - Assessor's backed up form responses are archived when storage is filling up #1304
+  - Assessor scans a QR Code into form #1309
+  - All hidden inputs have reporting values of `"999"` #1349
+  - Merge reporting output of radiobuttons into one column.
+- Bug fixes
+  - Editor not properly logging users out resulting in getting stuck every 24 hours #1314 
+  - Min and Max for input number cannot be saved through the interface #1297
+  - time on grids cannot be changes and is always 60 seconds #1301
+  - Unclosed tags in html container can break form #1289
+  - Tangy timed option values disappear #1302
+
+
+Note that #1349 will bve optional in future releases and you may not want to upgrade until that time.
+
+Upgrade instructions:
+```bash
+git fetch origin
+git checkout v3.1.0
+./start.sh
+docker exec tangerine reporting-cache-clear
+```
+
+
 ## v3.0.0-beta13 (in progress)
 
 ### Upgrade instructions from v3 betas

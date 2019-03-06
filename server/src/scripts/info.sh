@@ -14,6 +14,7 @@ echo "import-archives          (Import client archives from the ./data/archives 
 echo "release-apk              (Release a Group App as an APK)"
 echo "release-pwa              (Release a Group App as a PWA)"
 echo "release-dat              (Release a Group APP as a Dat Archive)"
+echo "translations-update      (Update translation files in all group content folders using latest)"
 echo ""
 echo "Add --help option to any command for command specific documentation."
 
