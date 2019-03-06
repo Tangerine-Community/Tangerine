@@ -36,6 +36,7 @@ export class StudentSubtestReportComponent implements OnInit {
   totals:any;
   curriculums:any;
   subtestReports:any
+  revealReport:boolean = false;
 
   @ViewChild('subTestReport') subTestReport: ElementRef;
   @ViewChild('curriculumSelectPara') curriculumSelect: ElementRef;
@@ -58,13 +59,23 @@ export class StudentSubtestReportComponent implements OnInit {
     this.students = (await this.getMyStudents(classId)).sort((a, b) => a.student_name.localeCompare(b.student_name))
   }
 
+  ngAfterViewChecked() {
+    if (this.revealReport) {
+      let firstReport = this.subtestReports[0];
+      let el = this.subTestReport.nativeElement.querySelector("#curr-" + firstReport['cssName'])
+      if (el) {
+        el.style.display = "block"
+      }
+      this.revealReport = false;
+    }
+  }
+
   async onStudentSelect(event) {
     if (event.value && event.value !== 'none') {
       await this.getReport(event.value)
       this.curriculumSelect.nativeElement.style.display = "block"
-      let firstReport = this.subtestReports[0];
-      let el = this.subTestReport.nativeElement.querySelector("#curr-" + firstReport['cssName'])
-      el.style.display = "block"
+      // the view needs to be refreshed before we can access this report; thus revealReport in ngAfterViewChecked;
+      this.revealReport = true;
     }
   }
 

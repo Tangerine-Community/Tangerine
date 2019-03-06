@@ -13,4 +13,5 @@ export class StudentResult {
   formTitle:string;
   studentId:string;
   category:string;
+  results:Array<StudentResult>;
 }

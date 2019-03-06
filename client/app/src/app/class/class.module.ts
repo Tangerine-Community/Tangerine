@@ -30,6 +30,7 @@ import {PageNotFoundComponent} from "./page-not-found.component";
 import { StudentProgressTableComponent } from './reports/student-progress-table/student-progress-table.component';
 import { CookieService } from "ngx-cookie-service";
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { TaskReportComponent } from './reports/task-report/task-report.component';
 
 @NgModule({
   imports: [
@@ -51,7 +52,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     MatToolbarModule,
     MatButtonToggleModule
   ],
-  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent],
+  declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent],
   providers: [DashboardService, CookieService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
