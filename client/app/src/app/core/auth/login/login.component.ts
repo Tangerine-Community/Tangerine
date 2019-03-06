@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
   returnUrl: string; // stores the value of the url to redirect to after login
   user = { username: '', password: '' };
   users = [];
+  installed = false
   showRecoveryInput = false;
   securityQuestionText;
   allUsernames;
@@ -30,7 +31,9 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private usersService: UserService,
     private appConfigService: AppConfigService
-  ) { }
+  ) {
+    this.installed = localStorage.getItem('installed') ? true : false
+  }
 
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();

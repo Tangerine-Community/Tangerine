@@ -1,17 +1,17 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { UpdateRoutingModule } from './update-routing.module';
-import { UpdateComponent } from './update/update.component';
+import { SettingsRoutingModule } from './settings-routing.module';
+import { SettingsComponent } from './settings/settings.component';
 import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
+  declarations: [SettingsComponent],
   imports: [
     CommonModule,
-    UpdateRoutingModule,
+    SettingsRoutingModule,
     SharedModule
-  ],
-  declarations: [UpdateComponent]
+  ]
 })
-export class UpdateModule { }
+export class SettingsModule { }

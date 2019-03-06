@@ -1,7 +1,15 @@
 # Changelog
 
 ## v3.2.0
+- Features
+  - #1315 Assessor changes language of App
 
+```bash
+git fetch origin
+git checkout v3.2.0
+./start.sh
+docker exec tangerine /tangerine/upgrades/v3.2.0.js 
+```
 
 ## v3.1.0
 - Features
