@@ -8,13 +8,17 @@ import { CaseService } from '../../services/case.service'
   styleUrls: ['./case.component.css']
 })
 export class CaseComponent implements OnInit, AfterContentInit {
+
   caseService:CaseService;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router
   ) { }
+
   async ngOnInit() {
   }
+
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       const caseService = new CaseService()

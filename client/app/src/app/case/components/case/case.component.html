@@ -10,11 +10,12 @@
 
 <div class="wrapper">
   <div class="event-cards" *ngIf="caseService">
+    <div *ngFor="let eventInfo of caseService.eventsInfo">
     <paper-card 
       class="event-card {{eventInfo.required ? 'required' : ''}}" 
       icon="event"
       heading="{{eventInfo.caseEventDefinition.name}}"
-      *ngFor="let eventInfo of caseService.eventsInfo"
+      *ngIf="caseService.case.disabledEventDefinitionIds.indexOf(eventInfo.caseEventDefinition.id) === -1"
     >
       <div class="card-content">
         <span *ngIf="eventInfo.caseEvents.length === 0">
@@ -47,5 +48,6 @@
       </div>
 
     </paper-card>
+    </div>
   </div>
 </div>
