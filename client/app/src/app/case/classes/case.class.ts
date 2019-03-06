@@ -8,6 +8,7 @@ class Case {
   caseDefinitionId:string
   label:string
   openedDate:number
+  disabledEventDefinitionIds: Array<string> = []
   events: Array<CaseEvent> = []
   collection:string = 'Case'
   constructor(data?:any) {
@@ -20,6 +21,7 @@ class Case {
     this._rev = data._rev
     this.complete = data.complete
     this.openedDate = data.openedDate
+    this.disabledEventDefinitionIds = data.disabledEventDefinitionIds ? data.disabledEventDefinitionIds : []
     this.caseDefinitionId = data.caseDefinitionId
     this.label = data.label
     this.events = data.events.map(caseEventData => new CaseEvent(

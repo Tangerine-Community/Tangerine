@@ -4,6 +4,7 @@
 - Features
   - #1315 Assessor changes language of App
   - #1362 Assessor starts new Case is immediately forwarded to first form
+  - #1363 Assessor finds Form and Event in Case has been disabled/enabled due to custom logic
 
 ```bash
 git fetch origin
