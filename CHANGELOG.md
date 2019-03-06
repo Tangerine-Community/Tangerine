@@ -13,6 +13,7 @@
   - Assessor's backed up form responses are archived when storage is filling up #1304
   - Assessor scans a QR Code into form #1309
   - All hidden inputs have reporting values of `"999"` #1349
+  - Merge reporting output of radiobuttons into one column.
 - Bug fixes
   - Editor not properly logging users out resulting in getting stuck every 24 hours #1314 
   - Min and Max for input number cannot be saved through the interface #1297
