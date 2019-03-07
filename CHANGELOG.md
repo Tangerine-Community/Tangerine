@@ -5,6 +5,7 @@
   - #1315 Assessor changes language of App
   - #1362 Assessor starts new Case is immediately forwarded to first form
   - #1363 Assessor finds Form and Event in Case has been disabled/enabled due to custom logic
+  - Editors that are comfortable writing HTML in their forms can now provide inline content translations using the `<t-lang>` element. See the [translation-web-component documentation](https://github.com/ICTatRTI/translation-web-component) for more info.
 
 Upgrade instructions:
 ```bash
