@@ -6,12 +6,15 @@
   - #1362 Assessor starts new Case is immediately forwarded to first form
   - #1363 Assessor finds Form and Event in Case has been disabled/enabled due to custom logic
 
+Upgrade instructions:
 ```bash
 git fetch origin
 git checkout v3.2.0
 ./start.sh
 docker exec tangerine /tangerine/upgrades/v3.2.0.js 
 ```
+- In each group's `app-config.json`, change `"direction"` to `"languageDirection"`.
+- If using a translation other than English, change in each group's `app-config.json`, change `"languageCode"` to the corresponding language code. Current codes other than `en` for English is `JO_ar` for Jordanian and `KH_km` for Khmer.
 
 ## v3.1.0
 - Features
