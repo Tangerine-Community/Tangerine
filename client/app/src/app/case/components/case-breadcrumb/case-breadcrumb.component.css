@@ -1,7 +1,6 @@
 .breadcrumbs {
     position: fixed;
     top: 0px;
-    left: 0px;
     z-index: 99999;
     color: white;
     height: 65px;
@@ -16,7 +15,7 @@
     z-index: 9999;
     background: #212a3f;
     top: 0px;
-    left: 0px;
     height: 55px;
-    width: 65px;
+    width: 70px;
 }
+
