@@ -41,42 +41,34 @@ export class AppComponent implements OnInit {
     translate: TranslateService
   ) {
     windowRef.nativeWindow.PouchDB = PouchDB;
-    this.checkIfUpdateScriptRequired();
-    if (!localStorage.getItem('languageCode')) return
-    this.freespaceCorrectionOccuring = false;
     this.window = this.windowRef.nativeWindow;
-    this.installed = localStorage.getItem('installed') ? true : false
+    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
+      ? true
+      : false
+    if (!this.installed) return
+    this.checkIfUpdateScriptRequired();
+    this.freespaceCorrectionOccuring = false;
     // Detect if this is the first time the app has loaded.
-    if (!this.installed) {
-      this.http.get('./assets/app-config.json')
-        .toPromise()
-        .then((config:any) => {
-          this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
-          this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-          this.window.localStorage.setItem('installed', true)
-          this.window.location.reload()
-        })
-
-    } else {
-      this.languageCode = this.window.localStorage.getItem('languageCode')
-      this.languageDirection = this.window.localStorage.getItem('languageDirection')
-      // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
-      this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
-      // Set up ngx-translate.
-      translate.setDefaultLang(this.languagePath);
-      translate.use(this.languagePath);
-      // Set required config for use of <t-lang> Web Component.
-      this.window.document.documentElement.lang = this.languageCode; 
-      this.window.document.documentElement.dir = this.languageDirection; 
-      this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
-    }
-
+    this.languageCode = this.window.localStorage.getItem('languageCode')
+    this.languageDirection = this.window.localStorage.getItem('languageDirection')
+    // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
+    this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
+    // Set up ngx-translate.
+    translate.setDefaultLang(this.languagePath);
+    translate.use(this.languagePath);
+    // Set required config for use of <t-lang> Web Component.
+    this.window.document.documentElement.lang = this.languageCode; 
+    this.window.document.documentElement.dir = this.languageDirection; 
+    this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
   }
 
+
   async ngOnInit() {
-    if (!localStorage.getItem('languageCode')) return
     // Bail if the app is not yet installed.
-    if (!this.installed) return
+    if (!this.installed) {
+      this.install()
+      return
+    }
     // Load up the app config.
     this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
     this.window.appConfig = this.appConfig
@@ -100,6 +92,14 @@ export class AppComponent implements OnInit {
       const tangyFormService = new TangyFormService({ databaseName: currentUser });
       tangyFormService.initialize();
     }
+  }
+
+  async install() {
+    const config =<any> await this.http.get('./assets/app-config.json').toPromise()
+    this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
+    this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
+    this.window.localStorage.setItem('installed', true)
+    this.window.location.reload()
   }
 
   async checkStorageUsage() {
