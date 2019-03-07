@@ -99,6 +99,8 @@ import * as _ from 'underscore';
 
 import 'tangy-form-editor/tangy-form-editor.js'
 
+import 'translation-web-component/t-lang.js'
+
 // Fix for the way Angular builds pouchdb https://github.com/pouchdb/pouchdb/issues/7299
 // Also probably fixes other things that try to use node process global.
 //import process from 'process';
