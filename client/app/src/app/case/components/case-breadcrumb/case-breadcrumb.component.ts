@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CaseService } from '../../services/case.service'
+import { t } from 'tangy-form/util/t.js'
 
 class Crumb {
   url:string
@@ -27,7 +28,7 @@ export class CaseBreadcrumbComponent implements OnInit {
         ...this.crumbs,
         <Crumb>{
           url: `/case/${this.caseId}`,
-          label: `Case ${this.caseId.substr(0,6)}`,
+          label: `${t('Case')} ${this.caseId.substr(0,6)}`,
           icon: 'folder'
         }
       ]
@@ -35,14 +36,14 @@ export class CaseBreadcrumbComponent implements OnInit {
     if (this.caseEventId) {
       this.crumbs.push(<Crumb>{
         url: `/case/event/${this.caseId}/${this.caseEventId}`,
-        label: `Event ${this.caseEventId.substr(0,6)}`,
+        label: `${t('Event')} ${this.caseEventId.substr(0,6)}`,
         icon: 'event'
       })
     }
     if (this.eventFormId) {
       this.crumbs.push(<Crumb>{
         url: `/case/event/form/${this.caseId}/${this.caseEventId}/${this.eventFormId}`,
-        label: `Form ${this.eventFormId.substr(0,6)}`,
+        label: `${t('Form')} ${this.eventFormId.substr(0,6)}`,
         icon: 'assignment'
       })
     }
