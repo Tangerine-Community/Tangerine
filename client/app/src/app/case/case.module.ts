@@ -8,11 +8,13 @@ import { NewCaseComponent } from './components/new-case/new-case.component';
 import { CaseRoutingModule } from './case-routing.module';
 import { EventFormComponent } from './components/event-form/event-form.component';
 import { CaseBreadcrumbComponent } from './components/case-breadcrumb/case-breadcrumb.component';
+import { SharedModule } from '../shared/shared.module'
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   imports: [
     CaseRoutingModule,
+    SharedModule,
     CommonModule
   ],
   declarations: [
