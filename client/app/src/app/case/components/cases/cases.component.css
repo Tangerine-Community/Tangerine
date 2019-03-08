@@ -28,6 +28,7 @@ paper-fab {
 
 .new-case-link {
     position: fixed;
+    z-index: 987654;
     bottom: 15px;
     right: 15px;
 }
