@@ -74,10 +74,13 @@ class CaseService {
   }
 
   startEvent(eventDefinitionId:string):CaseEvent {
+    const caseEventDefinition = this.caseDefinition
+      .eventDefinitions
+      .find(eventDefinition => eventDefinition.id === eventDefinitionId)
     const caseEvent = new CaseEvent(
       UUID(),
       false,
-      eventDefinitionId,
+      caseEventDefinition.name,
       eventDefinitionId,
       [],
       Date.now()
