@@ -5,6 +5,11 @@
     "languageDirection": "ltr"
   },
   {
+    "label": "French",
+    "languageCode": "fr",
+    "languageDirection": "ltr"
+  },
+  {
     "label": "Jordanian",
     "languageCode": "JO_ar",
     "languageDirection": "rtl"
