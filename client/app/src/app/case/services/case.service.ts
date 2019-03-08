@@ -153,6 +153,14 @@ class CaseService {
     }
   }
 
+  setVariable(variableName, value) {
+    this.case.variables[variableName] = value
+  }
+
+  getVariable(variableName) {
+    return this.case.variables[variableName]
+  }
+
 }
 
 export { CaseService }
