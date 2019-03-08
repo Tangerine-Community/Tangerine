@@ -8,6 +8,7 @@ class Case {
   caseDefinitionId:string
   label:string
   openedDate:number
+  variables:any = {}
   disabledEventDefinitionIds: Array<string> = []
   events: Array<CaseEvent> = []
   collection:string = 'Case'
@@ -21,6 +22,7 @@ class Case {
     this._rev = data._rev
     this.complete = data.complete
     this.openedDate = data.openedDate
+    this.variables = data.variables ? data.variables : {}
     this.disabledEventDefinitionIds = data.disabledEventDefinitionIds ? data.disabledEventDefinitionIds : []
     this.caseDefinitionId = data.caseDefinitionId
     this.label = data.label
