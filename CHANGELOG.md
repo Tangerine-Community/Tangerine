@@ -2,10 +2,10 @@
 
 ## v3.2.0
 - Features
-  - #1315 Assessor changes language of App
-  - #1362 Assessor starts new Case is immediately forwarded to first form
-  - #1363 Assessor finds Form and Event in Case has been disabled/enabled due to custom logic
-  - Editors that are comfortable writing HTML in their forms can now provide inline content translations using the `<t-lang>` element. See the [translation-web-component documentation](https://github.com/ICTatRTI/translation-web-component) for more info.
+  - Assessor changes language of App [#1315](https://github.com/Tangerine-Community/Tangerine/issues/1315)
+  - Editor provides feedback given data entered earlier in the form [#1384](https://github.com/Tangerine-Community/Tangerine/issues/1384)
+  - Assessor starts new Case is immediately forwarded to first form [#1362](https://github.com/Tangerine-Community/Tangerine/issues/1362)
+  - Assessor finds Form and Event in Case has been disabled/enabled due to custom logic [#1363](https://github.com/Tangerine-Community/Tangerine/issues/1363)
 
 Upgrade instructions:
 ```bash
