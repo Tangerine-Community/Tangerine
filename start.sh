@@ -152,7 +152,7 @@ require_valid_user = true
      -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
      --name $T_COUCHDB_CONTAINER_NAME \
      -p 5984:5984 \
-     couchdb
+     couchdb:2
   RUN_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
     -e T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE \
