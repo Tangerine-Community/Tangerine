@@ -20,7 +20,7 @@
         <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player']" [queryParams]="{formIndex:observation.formIndex, 'responseId':observation._id}">
           <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
         </a>
-        {{observation.formTitle}}
+        <span [innerHTML]="observation.formTitle|unsanitizeHtml"></span>
       </td>
       <td *ngFor="let col of observation.columns">
         {{col.value|json}}
