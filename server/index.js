@@ -43,8 +43,8 @@ const junk = require('junk');
 const cors = require('cors')
 const sep = path.sep;
 const tangyModules = require('./src/modules/index.js')()
-
-setInterval(() => log('heartbeat'), 5*60*1000)
+log.info('heartbeat')
+setInterval(() => log.info('heartbeat'), 5*60*1000)
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
