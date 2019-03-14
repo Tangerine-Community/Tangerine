@@ -4,6 +4,19 @@
   <meta charset="utf-8">
   <title>Tangerine</title>
   <base href="/">
+  <script>
+    var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+    function getChromeVersion () {     
+        var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
+        return raw ? parseInt(raw[2], 10) : false;
+    }
+    if (!isChrome) {
+      alert('Tangerine requires Chrome Web Browser. Please open Google Chrome and try again.')
+    }
+    if (isChrome && (!getChromeVersion() || getChromeVersion() < 70)) {
+      alert('Your Chrome browser needs to be updated. Before using Tangerine, open the Google Play store and update Google Chrome app.')
+    }
+  </script>
 
   <script src="../cordova.js" onload="javascript:window.isCordovaApp = true;"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
