@@ -11,8 +11,6 @@ import * as Redux from 'redux';
 import * as _ from 'underscore';
 (window as any)._ = _;
 
-
-
 //   <!-- Tangy Elements -->
 import 'tangy-form/tangy-form.js'
 import 'tangy-form/input/tangy-box.js'
@@ -34,8 +32,8 @@ import 'tangy-form/input/tangy-qr.js';
 
 // Fix for the way Angular builds pouchdb https://github.com/pouchdb/pouchdb/issues/7299
 // Also probably fixes other things that try to use node process global.
-import process from 'process';
-(window as any).process = process
+//import process from 'process';
+//(window as any).process = process
 
 
 //import '@webcomponents/webcomponentsjs/bundles/webcomponents-sd-ce.js';
