@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../../core/auth/_services/user.service';
+import { UserService } from '../../../shared/_services/user.service';
 import PouchDB from 'pouchdb';
 import { Case } from '../../classes/case.class'
 

@@ -22,8 +22,6 @@ import { CaseManagementModule } from './case-management/case-management.module';
 import { CaseModule } from './case/case.module';
 import { AuthModule } from './core/auth/auth.module';
 import { SyncRecordsModule } from './core/sync-records/sync-records.module';
-import { WindowRef } from './core/window-ref.service';
-import { Loc } from './core/location.service';
 import { UpdateModule } from './core/update/update.module';
 import { SettingsModule } from './core/settings/settings.module';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
@@ -66,8 +64,7 @@ export function HttpClientLoaderFactory(httpClient: HttpClient) {
       }
     })
   ],
-  providers: [WindowRef,
-    Loc],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

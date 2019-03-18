@@ -12,8 +12,8 @@ import * as bcrypt from 'bcryptjs';
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import * as PouchDBUpsert from 'pouchdb-upsert';
-import { TangyFormService } from '../../../tangy-forms/tangy-form-service';
-import { updates } from '../../update/update/updates';
+import { TangyFormService } from '../../tangy-forms/tangy-form-service';
+import { updates } from '../../core/update/update/updates';
 
 @Injectable()
 export class UserService {

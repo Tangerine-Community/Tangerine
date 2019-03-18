@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../auth/_services/user.service';
+import { UserService } from '../../../shared/_services/user.service';
 import { SyncingService } from '../../sync-records/_services/syncing.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
-import { WindowRef } from '../../../core/window-ref.service';
+import { WindowRef } from '../../../shared/_services/window-ref.service';
 declare const cordova: any;
 @Component({
   selector: 'app-export-data',
