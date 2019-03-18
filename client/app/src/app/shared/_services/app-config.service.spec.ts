@@ -1,11 +1,12 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { AppConfigService } from './app-config.service';
+import { SharedModule } from '../shared.module';
 
 describe('AppConfigService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [AppConfigService]
+      imports: [SharedModule]
     });
   });
 
