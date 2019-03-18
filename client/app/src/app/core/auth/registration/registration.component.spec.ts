@@ -2,13 +2,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthModule } from '../auth.module';
 import { RegistrationComponent } from './registration.component';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of } from 'rxjs';
 
 describe('RegistrationComponent', () => {
   let component: RegistrationComponent;
   let fixture: ComponentFixture<RegistrationComponent>;
   const router = { navigate: jasmine.createSpy('navigate') };
-  const snapshot = { queryParams: Observable.of({ returnUrl: 'create-nodes' }) };
+  const snapshot = { queryParams: of({ returnUrl: 'create-nodes' }) };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AuthModule],

@@ -4,9 +4,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import PouchDB from 'pouchdb';
 
-import { AuthenticationService } from '../../core/auth/_services/authentication.service';
-import { UserService } from '../../core/auth/_services/user.service';
-import { Loc } from '../../core/location.service';
+import { AuthenticationService } from '../../shared/_services/authentication.service';
+import { UserService } from '../../shared/_services/user.service';
+import { Loc } from '../../shared/_services/location.service';
 import { AppConfigService } from '../../shared/_services/app-config.service';
 
 function _window(): any {

@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../../../core/auth/_services/user.service';
+import { UserService } from '../../../shared/_services/user.service';
 import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';

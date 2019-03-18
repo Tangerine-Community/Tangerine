@@ -1,6 +1,6 @@
 import {AfterContentInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {UserService} from "../../core/auth/_services/user.service";
+import {UserService} from "../../shared/_services/user.service";
 import {HttpClient} from "@angular/common/http";
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import {ClassFormService} from "../_services/class-form.service";

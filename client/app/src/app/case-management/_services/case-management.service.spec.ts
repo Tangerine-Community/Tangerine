@@ -24,23 +24,17 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 export function HttpClientLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
 }
-import { AuthModule } from '../../core/auth/auth.module';
-import { Loc } from '../../core/location.service';
+import { CaseManagementModule } from '../case-management.module';
 
 describe('CaseManagementService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
-        MatListModule,
-        MatCardModule,
-        MatTableModule,
-        MatSelectModule,
-        MatTabsModule,
-        MatInputModule,
-        RouterModule,
-        AuthModule,
-        HttpClientModule,
-        SharedModule,
+//        RouterModule,
+//        AuthModule,
+//        HttpClientModule,
+//        SharedModule,
+        CaseManagementModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -48,9 +42,7 @@ describe('CaseManagementService', () => {
             deps: [HttpClient]
           }
         })
-      ],
-      declarations: [ObservationsByLocationComponent],
-      providers: [CaseManagementService, Loc]
+      ]
     });
     localStorage.setItem('currentUser', 'test-user')
   });

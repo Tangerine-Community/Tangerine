@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { WindowRef } from '../../window-ref.service';
+import { WindowRef } from '../../../shared/_services/window-ref.service';
 
 @Component({
   selector: 'app-settings',

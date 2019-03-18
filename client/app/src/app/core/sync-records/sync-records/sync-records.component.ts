@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
-import { WindowRef } from '../../../core/window-ref.service';
+import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { SyncingService } from '../_services/syncing.service';
-import { UserService } from '../../auth/_services/user.service';
+import { UserService } from '../../../shared/_services/user.service';
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import PouchDB from 'pouchdb';
 
