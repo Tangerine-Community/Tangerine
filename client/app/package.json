@@ -45,6 +45,7 @@
     "pouchdb": "^6.4.3",
     "pouchdb-find": "^6.4.3",
     "pouchdb-upsert": "^2.2.0",
+    "redux": "^4.0.1",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.2.1",
     "tangy-form": "^3.10.2",

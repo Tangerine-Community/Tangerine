@@ -1,4 +1,4 @@
-import UUID from 'uuid/v4'
+import * as UUID from 'uuid/v4'
 import { CaseEvent } from './case-event.class'
 
 class Case {
