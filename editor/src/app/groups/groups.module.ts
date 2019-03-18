@@ -19,6 +19,7 @@ import { ResponsesComponent } from './responses/responses.component';
 import { LocationListEditorComponent } from './location-list-editor/location-list-editor.component';
 import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
 import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
+import { ImportLocationListComponent } from './import-location-list/import-location-list.component';
 
 
 
@@ -53,7 +54,8 @@ import { ManageLocationListMetadataComponent } from './manage-location-list-meta
     ReleaseDatComponent,
     ResponsesComponent,
     ManageLocationListLevelsComponent,
-    ManageLocationListMetadataComponent
+    ManageLocationListMetadataComponent,
+    ImportLocationListComponent
   ],
   providers: [GroupsService]
 })
