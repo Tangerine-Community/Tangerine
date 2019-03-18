@@ -1,7 +1,7 @@
 import { NgModule, Injectable } from '@angular/core';
 import { Observable } from 'rxjs'
 import { RouterModule, Routes } from '@angular/router';
-import { CreateProfileGuardService } from '../user-profile/create-profile-guard.service';
+import { CreateProfileGuardService } from '../shared/_guards/create-profile-guard.service';
 
 import { LoginGuard } from '../shared/_guards/login-guard.service';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
