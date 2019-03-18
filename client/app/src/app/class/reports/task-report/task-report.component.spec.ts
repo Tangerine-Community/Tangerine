@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TaskReportComponent } from './task-report.component';
+import { ClassModule } from '../../class.module';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 describe('TaskReportComponent', () => {
   let component: TaskReportComponent;
@@ -8,7 +10,7 @@ describe('TaskReportComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TaskReportComponent ]
+      imports:[ClassModule, AppRoutingModule]
     })
     .compileComponents();
   }));
