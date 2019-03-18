@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 import { LoginGuard } from '../shared/_guards/login-guard.service';
-import { CreateProfileGuardService } from '../user-profile/create-profile-guard.service';
+import { CreateProfileGuardService } from '../shared/_guards/create-profile-guard.service';
 import { FormListComponent } from './form-list/form-list.component';
 import { CaseDetailsComponent } from './case-details/case-details.component';
 

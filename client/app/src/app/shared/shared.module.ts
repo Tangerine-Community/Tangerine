@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { AppConfigService } from '../shared/_services/app-config.service';
+import { AppConfigService } from './_services/app-config.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -22,6 +22,7 @@ import { TruncateValuePipe } from './_pipes/truncate-value.pipe';
 import { UnsanitizeHtmlPipe } from './_pipes/unsanitize-html.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginGuard } from './_guards/login-guard.service';
+import { CreateProfileGuardService } from './_guards/create-profile-guard.service';
 
 @NgModule({
   imports: [
@@ -43,7 +44,8 @@ import { LoginGuard } from './_guards/login-guard.service';
     UserService,
     WindowRef,
     Loc,
-    LoginGuard
+    LoginGuard,
+    CreateProfileGuardService
   ],
   declarations: [
     UnsanitizeHtmlPipe,
