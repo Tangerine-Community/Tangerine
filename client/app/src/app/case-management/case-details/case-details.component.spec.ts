@@ -19,14 +19,7 @@ describe('CaseDetailsComponent', () => {
     TestBed.configureTestingModule({
       imports: [ 
         CaseManagementModule,
-        AppRoutingModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpClientLoaderFactory,
-            deps: [HttpClient]
-          }
-        })
+        AppRoutingModule
       ]
 
     })
