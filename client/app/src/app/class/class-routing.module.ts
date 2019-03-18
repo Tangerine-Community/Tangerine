@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import {CreateProfileGuardService} from "../user-profile/create-profile-guard.service";
-import {LoginGuard} from "../core/auth/_guards/login-guard.service";
+import {LoginGuard} from "../shared/_guards/login-guard.service";
 import {DashboardComponent} from "./dashboard/dashboard.component";
 import {ClassFormsPlayerComponent} from "./class-forms-player/class-forms-player.component";
 import {StudentSubtestReportComponent} from "./reports/student-subtest-report/student-subtest-report.component";

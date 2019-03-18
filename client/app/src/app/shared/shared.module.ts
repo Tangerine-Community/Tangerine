@@ -21,6 +21,7 @@ import { TangySvgLogoComponent } from './_components/tangy-svg-logo/tangy-svg-lo
 import { TruncateValuePipe } from './_pipes/truncate-value.pipe';
 import { UnsanitizeHtmlPipe } from './_pipes/unsanitize-html.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LoginGuard } from './_guards/login-guard.service';
 
 @NgModule({
   imports: [
@@ -41,7 +42,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AuthenticationService,
     UserService,
     WindowRef,
-    Loc
+    Loc,
+    LoginGuard
   ],
   declarations: [
     UnsanitizeHtmlPipe,
