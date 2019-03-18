@@ -5,7 +5,7 @@ import { EventForm } from '../classes/event-form.class'
 import { CaseDefinition } from '../classes/case-definition.class';
 import { CaseDefinitionsService } from './case-definitions.service';
 import PouchDB from 'pouchdb';
-import UUID from 'uuid/v4'
+import * as UUID from 'uuid/v4'
 
 class EventInfo {
   canCreateInstance:boolean;
