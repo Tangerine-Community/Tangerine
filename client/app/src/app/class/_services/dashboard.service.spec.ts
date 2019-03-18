@@ -1,11 +1,12 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { DashboardService } from './dashboard.service';
+import { ClassModule } from '../class.module';
 
 describe('DashboardService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [DashboardService]
+      imports: [ ClassModule ]
     });
   });
 

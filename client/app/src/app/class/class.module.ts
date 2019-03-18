@@ -35,6 +35,7 @@ import { TaskReportComponent } from './reports/task-report/task-report.component
 @NgModule({
   imports: [
     CommonModule,
+    SharedModule,
     ClassRoutingModule,
     MatTabsModule,
     MatInputModule,
