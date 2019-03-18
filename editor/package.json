@@ -38,6 +38,7 @@
     "tslib": "^1.9.0",
     "underscore": "^1.9.1",
     "workbox-cli": "^2.1.2",
+    "xlsx": "^0.14.1",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
