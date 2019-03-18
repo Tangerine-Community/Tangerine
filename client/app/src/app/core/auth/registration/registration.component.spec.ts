@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthModule } from '../auth.module';
 import { RegistrationComponent } from './registration.component';
 import { Observable, of } from 'rxjs';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 describe('RegistrationComponent', () => {
   let component: RegistrationComponent;
@@ -11,8 +12,7 @@ describe('RegistrationComponent', () => {
   const snapshot = { queryParams: of({ returnUrl: 'create-nodes' }) };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [AuthModule],
-      providers: [{ provide: ActivatedRoute, useValue: { snapshot } }, { provide: Router, useValue: router }]
+      imports: [AuthModule, AppRoutingModule]
     })
       .compileComponents();
   }));

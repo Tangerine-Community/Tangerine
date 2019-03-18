@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExportDataComponent } from './export-data.component';
+import { ExportDataModule } from '../export-data.module';
+import { SyncRecordsModule } from '../../sync-records/sync-records.module';
 
 describe('ExportDataComponent', () => {
   let component: ExportDataComponent;
@@ -8,7 +10,7 @@ describe('ExportDataComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ExportDataComponent ]
+      imports: [ExportDataModule, SyncRecordsModule]
     })
     .compileComponents();
   }));
