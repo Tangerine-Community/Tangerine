@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EventFormComponent } from './event-form.component';
+import { CaseModule } from '../../case.module';
+import { AppRoutingModule } from 'src/app/app-routing.module';
+
 
 describe('EventFormComponent', () => {
   let component: EventFormComponent;
@@ -8,7 +11,10 @@ describe('EventFormComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EventFormComponent ]
+      imports: [
+        CaseModule,
+        AppRoutingModule
+      ]
     })
     .compileComponents();
   }));

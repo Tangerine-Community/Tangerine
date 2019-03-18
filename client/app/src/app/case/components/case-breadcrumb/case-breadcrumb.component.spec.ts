@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CaseBreadcrumbComponent } from './case-breadcrumb.component';
+import { CaseModule } from '../../case.module';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 describe('CaseBreadcrumbComponent', () => {
   let component: CaseBreadcrumbComponent;
@@ -8,7 +10,10 @@ describe('CaseBreadcrumbComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CaseBreadcrumbComponent ]
+      imports: [
+        CaseModule,
+        AppRoutingModule
+      ]
     })
     .compileComponents();
   }));
