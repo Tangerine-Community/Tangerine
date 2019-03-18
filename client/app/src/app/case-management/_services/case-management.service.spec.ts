@@ -1,12 +1,58 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { CaseManagementService } from './case-management.service';
+import { AppModule } from '../../app.module'
+
+import { CdkTableModule } from '@angular/cdk/table';
+import { CommonModule, JsonPipe } from '@angular/common';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule, MatInputModule, MatListModule, MatTableModule, MatTabsModule, MatSelectModule } from '@angular/material';
+
+import { SharedModule } from '../../shared/shared.module';
+import { CaseManagementService } from '../_services/case-management.service';
+import { CaseManagementRoutingModule } from '../case-management-routing.module';
+import { FormListComponent } from '../form-list/form-list.component';
+import { SchoolsVisitedComponent } from '../schools-visited/schools-visited.component';
+import { CaseDetailsComponent } from '../case-details/case-details.component';
+import { ObservationsByLocationComponent } from '../observations-by-location/observations-by-location.component';
+
+// App module imports
+import { RouterModule, Routes } from '@angular/router';
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+export function HttpClientLoaderFactory(httpClient: HttpClient) {
+  return new TranslateHttpLoader(httpClient, './assets/', '.json');
+}
+import { AuthModule } from '../../core/auth/auth.module';
+import { Loc } from '../../core/location.service';
 
 describe('CaseManagementService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [CaseManagementService]
+      imports: [
+        MatListModule,
+        MatCardModule,
+        MatTableModule,
+        MatSelectModule,
+        MatTabsModule,
+        MatInputModule,
+        RouterModule,
+        AuthModule,
+        HttpClientModule,
+        SharedModule,
+        TranslateModule.forRoot({
+          loader: {
+            provide: TranslateLoader,
+            useFactory: HttpClientLoaderFactory,
+            deps: [HttpClient]
+          }
+        })
+      ],
+      declarations: [ObservationsByLocationComponent],
+      providers: [CaseManagementService, Loc]
     });
+    localStorage.setItem('currentUser', 'test-user')
   });
 
   it('should be created', inject([CaseManagementService], (service: CaseManagementService) => {
