@@ -34,14 +34,7 @@ describe('CaseManagementService', () => {
 //        AuthModule,
 //        HttpClientModule,
 //        SharedModule,
-        CaseManagementModule,
-        TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: HttpClientLoaderFactory,
-            deps: [HttpClient]
-          }
-        })
+        CaseManagementModule
       ]
     });
     localStorage.setItem('currentUser', 'test-user')
