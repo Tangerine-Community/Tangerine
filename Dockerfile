@@ -34,12 +34,18 @@ RUN cd /tangerine/editor && \
     npm install
 
 # Install client
-ADD client/package.json /tangerine/client/package.json
+ADD client/platforms/pwa/package.json /tangerine/client/platforms/pwa/package.json
+ADD client/platforms/pwa/workbox-cli-config.js /tangerine/client/platforms/pwa/workbox-cli-config.js
 ADD client/app/package.json /tangerine/client/app/package.json
 ADD client/wrappers/pwa/package.json /tangerine/client/wrappers/pwa/package.json
 ADD client/wrappers/pwa/bower.json /tangerine/client/wrappers/pwa/bower.json
-ADD client/install.sh /tangerine/client/install.sh
-RUN cd /tangerine/client/ && ./install.sh
+RUN cd /tangerine/client/platforms/pwa && \
+    npm install && \
+    cd /tangerine/client/app && \
+    npm install && \
+    cd /tangerine/client/wrappers/pwa && \
+    npm install && \
+    ./node_modules/.bin/bower install --allow-root
 
 # Build editor 
 ADD editor /tangerine/editor
@@ -47,9 +53,20 @@ RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
 RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
 
 
-# Build client v3.
+# Build client
 ADD client /tangerine/client
-RUN cd /tangerine/client/ && ./build.sh
+RUN cd /tangerine/client/app && \
+    ./node_modules/.bin/ng build --base-href "./" && \
+    cd /tangerine/client/platforms/pwa && \
+    npm install && \
+    cd /tangerine/client/wrappers/pwa && \
+    npm run build && \
+    cp logo.svg build/default/ && \
+    cd /tangerine/client && \
+    cp -r app/dist/tangerine-client builds/apk/www/shell && \
+    cp -r wrappers/pwa/build/default builds/pwa && \
+    mkdir builds/pwa/release-uuid && \
+    cp -r app/dist/tangerine-client builds/pwa/release-uuid/app
 
 # Add the rest of server.
 ADD server /tangerine/server
