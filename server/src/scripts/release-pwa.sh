@@ -28,7 +28,8 @@ fi
 cd /tangerine/client
 
 # Create a temporary PWA folder that we'll move to the secret.
-cp -r builds/pwa .pwa-temporary
+cp -r builds/pwa platforms/pwa/.pwa-temporary
+cd platforms/pwa/
 
 # Generate release UUID and name the service worker after it.
 UUID=$(./node_modules/.bin/uuid)
