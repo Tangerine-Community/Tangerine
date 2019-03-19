@@ -27,7 +27,7 @@ export class SettingsComponent implements OnInit {
       const selectedLanguage = this.translations.find(languageInfo => languageInfo.languageCode === this.form.nativeElement.querySelector('[name=translation]').value)
       localStorage.setItem('languageCode', selectedLanguage.languageCode)
       localStorage.setItem('languageDirection', selectedLanguage.languageDirection)
-      this.window.location.reload()
+      this.window.location = `${this.window.location.origin}${this.window.location.pathname}index.html`
     })
   }
 
