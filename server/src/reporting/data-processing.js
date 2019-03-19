@@ -64,10 +64,7 @@ exports.changeProcessor = (change, sourceDb) => {
 
 const processFormResponse = async (doc, sourceDb) => {
   try {
-    const GROUP_DB = sourceDb;
-    const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-    let flatResponse = await generateFlatResponse(doc, locationList);
-    const hookResponse = await tangyModules.hook('reportingOutputs', {flatResponse, doc, sourceDb})
+    const hookResponse = await tangyModules.hook('reportingOutputs', {doc, sourceDb})
   } catch (error) {
     throw new Error(`Error processing doc ${doc._id} in db ${sourceDb.name}: ${JSON.stringify(error,replaceErrors)}`)
   }
@@ -83,14 +80,6 @@ function replaceErrors(key, value) {
   }
   return value;
 }
-
-/** This function generates headers for csv.
- *
- * @param {object} formData - form response from database
- *
- * @returns {array} generated headers for csv
- */
-
 
 /** This function processes form response for csv.
  *
