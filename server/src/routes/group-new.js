@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
   }
   let groupName = req.body.groupName
   // Copy the content directory for the new group.
-  await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupName}`)
+  await exec(`cp -r /tangerine/client/src/assets  /tangerine/client/content/groups/${groupName}`)
   await insertGroupViews(groupName, DB)
   // Edit the app-config.json.
   try {
