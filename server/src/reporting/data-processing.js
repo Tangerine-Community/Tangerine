@@ -20,16 +20,9 @@ const tangyModules = require('../modules/index.js')()
 
 const CODE_SKIP = '999'
 
-let DB = {}
-if (process.env.T_COUCHDB_ENABLE === 'true') {
-  DB = PouchDB.defaults({
-    prefix: process.env.T_COUCHDB_ENDPOINT
-  });
-} else {
-  DB = PouchDB.defaults({
-    prefix: '/tangerine/db/'
-  });
-}
+let DB = PouchDB.defaults({
+  prefix: process.env.T_COUCHDB_ENDPOINT
+});
 
 // Function to pass to PouchDbChangesFeedWorker.
 exports.changeProcessor = (change, sourceDb) => {
