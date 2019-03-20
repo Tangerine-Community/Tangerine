@@ -9,7 +9,7 @@ const emit = (key, value) => {
 
 export class TangyFormService {
 
-  db:any;
+  db:PouchDB;
   databaseName: String;
 
   constructor(props) {
