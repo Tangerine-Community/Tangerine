@@ -9,4 +9,4 @@ fi
 
 docker build -t tangerine/tangerine:local .
 ./start.sh local 
-docker logs -f $T_CONTAINER_NAME 
+say done 
