@@ -27,6 +27,10 @@ const sleep = (milliseconds) => {
 }
 
 async function go() {
+
+  let randomDate = function (start, end) {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  }
   let numberOfUploadsCompleted = 0
   while (numberOfUploadsCompleted < numberOfUploads) {
     let batchCount = 0
@@ -48,7 +52,16 @@ async function go() {
         }
         doc = Object.assign({}, templateDoc, studentRegistration)
       } else {
-        doc = Object.assign({}, templateDoc, { _id: uuidv1() })
+        let date = randomDate(new Date(2019, 0, 1), new Date())
+        let d = new Date(date),
+          month = d.getMonth() + 1,
+          day = d.getDate(),
+          year = d.getFullYear()
+        let lessonStartDate = [year, month, day].join('-')
+        templateDoc.items[0].inputs[6].value = lessonStartDate
+        doc = Object.assign({}, templateDoc, {
+          _id: uuidv1()
+        })
       }
       let body = pako.deflate(JSON.stringify({ doc }), {to: 'string'})
       bodies.push(body)
