@@ -6,6 +6,7 @@ const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 
+
 module.exports = {
   hooks: {
     clearReportingCache: async function(data) {
@@ -26,6 +27,7 @@ module.exports = {
         // Process the flatResponse
         const logstashDb = new DB(`${sourceDb.name}-logstash`);
         const processedResult = await attachUserProfile(flatResponse, logstashDb)
+        createDateFields(processedResult);
         await pushResponse({
           _id: processedResult._id,
           formId: processedResult.formId,
@@ -60,54 +62,130 @@ const generateFlatResponse = async function (formResponse, locationList) {
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
+      // Simplify the keys by removing  formID.itemId
+      // let firstIdSegment = `${formID}.${item.id}.`
+      let firstIdSegment = ""
       if (input.tagName === 'TANGY-LOCATION') {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
-          flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}`] = group.value;
+          flatFormResponse[`${firstIdSegment}${input.name}.${group.level}`] = group.value;
           locationKeys.push(group.value)
           try {
             const location = getLocationByKeys(locationKeys, locationList)
             for (let keyName in location) {
               if (keyName !== 'children') {
-                flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_${keyName}`] = location[keyName]
+                flatFormResponse[`${firstIdSegment}${input.name}.${group.level}_${keyName}`] = location[keyName]
               }
             }
           } catch(e) {
-            flatFormResponse[`${formID}.${item.id}.${input.name}.${group.level}_label`] = 'orphaned';
+            flatFormResponse[`${firstIdSegment}${input.name}.${group.level}_label`] = 'orphaned';
           }
         }
       } else if (input && typeof input.value === 'string') {
-        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value;
+        flatFormResponse[`${firstIdSegment}${input.name}`] = input.value;
       } else if (input && typeof input.value === 'number') {
-        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value;
+        flatFormResponse[`${firstIdSegment}${input.name}`] = input.value;
       } else if (input && Array.isArray(input.value)) {
         for (let group of input.value) {
-          flatFormResponse[`${formID}.${item.id}.${input.name}.${group.name}`] = group.value;
+          flatFormResponse[`${firstIdSegment}${input.name}.${group.name}`] = group.value;
         }
       } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
         let elementKeys = Object.keys(input.value);
         for (let key of elementKeys) {
-          flatFormResponse[`${formID}.${item.id}.${input.name}.${key}`] = input.value[key];
+          flatFormResponse[`${firstIdSegment}${input.name}.${key}`] = input.value[key];
         };
       }
       if (input.tagName === 'TANGY-TIMED') {
-        flatFormResponse[`${formID}.${item.id}.${input.name}.duration`] = input.duration
-        flatFormResponse[`${formID}.${item.id}.${input.name}.time_remaining`] = input.timeRemaining
+        flatFormResponse[`${firstIdSegment}${input.name}.duration`] = input.duration
+        flatFormResponse[`${firstIdSegment}${input.name}.time_remaining`] = input.timeRemaining
         // Calculate Items Per Minute.
         let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
         let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
         let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
-        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_correct`] = numberOfItemsCorrect
-        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
+        flatFormResponse[`${firstIdSegment}${input.name}.number_of_items_correct`] = numberOfItemsCorrect
+        flatFormResponse[`${firstIdSegment}${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
         let timeSpent = input.duration - input.timeRemaining
-        flatFormResponse[`${formID}.${item.id}.${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
+        flatFormResponse[`${firstIdSegment}${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
+      }
+      if (input.tagName === 'TANGY-GPS') {
+        flatFormResponse[`${firstIdSegment}geoip.location.lat`] = input.value.latitude
+        flatFormResponse[`${firstIdSegment}geoip.location.lon`] = input.value.longitude
       }
     }
   }
   let data = await tangyModules.hook("flatFormReponse", {flatFormResponse, formResponse});
   return data.flatFormResponse;
 };
+
+String.prototype.rjust = function( width, padding ) {
+  padding = padding || " ";
+  padding = padding.substr( 0, 1 );
+  if( this.length < width )
+    return padding.repeat( width - this.length ) + this;
+  else
+    return this;
+}
+
+function createDateFields(processedResult) {
+  let fields = ['lesson_start_date', 'date_start']
+  fields.some(key => {
+    let propertyName = Object.keys(processedResult).find(function (name) {
+      return name.indexOf(key) === 0;
+    });
+    if (typeof processedResult[propertyName] !== 'undefined') {
+      debugger;
+      let done = addDatefields(processedResult[key], processedResult)
+      if (done) {
+        return true;
+      }
+    }
+  })
+}
+
+function addDatefields(val, doc) {
+  let startDateTimeValues = val.split('-')
+  debugger
+  doc['day_of_the_month'] = startDateTimeValues[2].rjust(2,'0')
+  doc['year_value'] = startDateTimeValues[0]
+  if(startDateTimeValues[1].rjust(2,'0') === '01') {
+    doc['month_value'] = 'Jan'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '02') {
+    doc['month_value'] = 'Feb'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '03') {
+    doc['month_value'] = 'Mar'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '04') {
+    doc['month_value'] = 'Apr'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '05') {
+    doc['month_value'] = 'May'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '06') {
+    doc['month_value'] = 'Jun'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '07') {
+    doc['month_value'] = 'Jul'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '08') {
+    doc['month_value'] = 'Aug'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '09') {
+    doc['month_value'] = 'Sep'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '10') {
+    doc['month_value'] = 'Oct'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '11') {
+    doc['month_value'] = 'Nov'
+  }
+  else if(startDateTimeValues[1].rjust(2,'0') === '12') {
+    doc['month_value'] = 'Dec'
+  }
+  return true
+}
 
 async function attachUserProfile(doc, logstashDb) {
   try {
@@ -123,7 +201,6 @@ async function attachUserProfile(doc, logstashDb) {
     // There must not be a user profile yet doc uploaded yet.
     return doc 
   }
-
 }
 
 function pushResponse(doc, db) {

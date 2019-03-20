@@ -71,7 +71,7 @@ cd /tangerine/server/src/scripts
 
 Remember to setup config.sh properly!
 Comment out keepAliveReportingWorker in server/index.js.
-Remember to add `127.0.0.1:9228` as an entry in "Target discovery settings".
+Remember to add `127.0.0.1:9228` as an entry in "Target discovery settings" in chrome://inspect/#devices
 
 You may need to add `debugger` before the line of code you wish to debug. 
 
