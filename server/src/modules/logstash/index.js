@@ -6,7 +6,6 @@ const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 
-
 module.exports = {
   hooks: {
     clearReportingCache: async function(data) {
@@ -220,4 +219,13 @@ function pushResponse(doc, db) {
           .catch(error => reject(`Logstash pushResponse could not save ${doc._id} because Error of ${JSON.stringify(error)}`))
     });
   })
+}
+
+function getLocationByKeys(keys, locationList) {
+  let locationKeys = [...keys]
+  let currentLevel = locationList.locations[locationKeys.shift()]
+  for (let key of locationKeys ) {
+    currentLevel = currentLevel.children[key]
+  }
+  return currentLevel
 }
