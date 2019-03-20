@@ -41,7 +41,6 @@ module.exports = async (req, res) => {
     if (modules.length > 0) {
       appConfig.modules = modules;
     }
-    appConfig.direction = `${process.env.T_LANG_DIRECTION}`
     if (process.env.T_CATEGORIES) {
       let categoriesString = `${process.env.T_CATEGORIES}`
       categoriesString = categoriesString.replace(/'/g, '"');
