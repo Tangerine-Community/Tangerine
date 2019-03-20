@@ -12,18 +12,19 @@
 @import "./tangerine-theme.scss";
 html {
   --document-background-color: #FAFAFA;
-  --primary-color-dark: #3c5b8d;
+  --primary-color-dark: #212a3f;
   --primary-text-color: var(--light-theme-text-color);
   --primary-color: #3c5b8d;
   --accent-color: #f26f10;
   --accent-text-color: #FFF;
   --error-color: var(--paper-red-500);
   --disabled-color: #BBB;
+  --paper-tabs-selection-bar-color: #f26f10;
 }
 
-
 paper-tabs {
-  background: var(--primary-color);
+  text-transform: uppercase;
+  background: var(--primary-color-dark);
   color: #FFF;
 }
 paper-tab a:-webkit-any-link {
@@ -32,6 +33,12 @@ paper-tab a:-webkit-any-link {
   height: 42%;
   text-align: center;
 }
+/*
+paper-tab[aria-selected=true] {
+  background: #f26f10;
+  color: #FFF
+}
+*/
 paper-button {
   background: var(--accent-color);
   color: var(--accent-text-color);
@@ -59,10 +66,7 @@ select{
 button.tangy-froms-margin-left{
    margin-left:3rem
 }
-paper-tab[aria-selected=true] {
-  background: #f26f10;
-  color: #FFF
-}
+
 #icon {
   display: block;
 }

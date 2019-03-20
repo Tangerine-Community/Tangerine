@@ -1,3 +1,9 @@
+
+/* @TODO Why do we need to set display? Otherwise it's hidden. */
+app-case-breadcrumb {
+    display: block;
+}
+
 .subject-header {
     background: #212a3f;
     color: white;
@@ -11,6 +17,7 @@
     position: relative;
     bottom: 5px; 
 }
+
 .subject-header h1 {
     font-size: 3em;
 }
@@ -19,6 +26,13 @@
     margin-left: 10px;
 }
 
+.manifest {
+    display: none;
+    margin: 5px 50px;
+}
+.manifest.ready {
+    display: block;
+}
 .wrapper {
     margin: 15px;
 }

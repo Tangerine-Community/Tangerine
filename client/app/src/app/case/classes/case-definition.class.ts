@@ -3,6 +3,7 @@ import { CaseEventDefinition } from './case-event-definition.class'
 class CaseDefinition {
 
   id:string
+  formId:string
   revision:string
   name:string
   description:string
