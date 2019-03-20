@@ -55,6 +55,7 @@ const generateFlatResponse = async function (formResponse, locationList) {
   let flatFormResponse = {
     _id: formResponse._id,
     formId: formResponse.form.id,
+    formTitle: formResponse.form.title,
     startUnixtime: formResponse.startUnixtime,
     complete: formResponse.complete
   };
@@ -126,14 +127,15 @@ String.prototype.rjust = function( width, padding ) {
     return this;
 }
 
+/**
+ * Loop through date fields and add year, month, and day fields
+ * Old versions of Tusome do not have a date_start field, so we need to loop through them.
+ * @param processedResult
+ */
 function createDateFields(processedResult) {
   let fields = ['lesson_start_date', 'date_start']
   fields.some(key => {
-    let propertyName = Object.keys(processedResult).find(function (name) {
-      return name.indexOf(key) === 0;
-    });
-    if (typeof processedResult[propertyName] !== 'undefined') {
-      debugger;
+    if (typeof processedResult[key] !== 'undefined') {
       let done = addDatefields(processedResult[key], processedResult)
       if (done) {
         return true;
@@ -204,7 +206,6 @@ async function attachUserProfile(doc, logstashDb) {
 
 function pushResponse(doc, db) {
   return new Promise((resolve, reject) => {
-    debugger
     db.get(doc._id)
       .then(oldDoc => {
         // Overrite the _rev property with the _rev in the db and save again.
