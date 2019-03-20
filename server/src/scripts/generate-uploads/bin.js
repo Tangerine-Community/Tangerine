@@ -57,7 +57,7 @@ async function go() {
           month = d.getMonth() + 1,
           day = d.getDate(),
           year = d.getFullYear()
-        let lessonStartDate = [day, month, year].join('-')
+        let lessonStartDate = [year, month, day].join('-')
         templateDoc.items[0].inputs[6].value = lessonStartDate
         doc = Object.assign({}, templateDoc, {
           _id: uuidv1()

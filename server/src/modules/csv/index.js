@@ -142,6 +142,15 @@ const generateFlatResponse = async function (formResponse, locationList) {
   return data.flatFormResponse;
 };
 
+function getLocationByKeys(keys, locationList) {
+  let locationKeys = [...keys]
+  let currentLevel = locationList.locations[locationKeys.shift()]
+  for (let key of locationKeys ) {
+    currentLevel = currentLevel.children[key]
+  }
+  return currentLevel
+}
+
 function saveFormInfo(flatResponse, db) {
   return new Promise(async (resolve, reject) => {
     // Find any new headers and insert them into the headers doc.
