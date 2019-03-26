@@ -219,7 +219,6 @@ export class UserService {
   // A helper method for upgrades to be used when a module has a view to upgrade.
   async updateAllUserViews() {
     console.log('Installing views...')
-    console.log(this._views)
     for (const userDb of this.userDatabases) {
       for (const moduleName in this._views) {
         const ddoc_id = `_design/${moduleName}`
@@ -237,6 +236,7 @@ export class UserService {
           })
         }
       }
+      await userDb.viewCleanup()
     }
   }
 
