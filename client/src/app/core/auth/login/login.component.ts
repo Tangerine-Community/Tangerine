@@ -6,8 +6,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 
-import { UserService } from '../_services/user.service';
-import { AuthenticationService } from './../_services/authentication.service';
+import { UserService } from '../../../shared/_services/user.service';
+import { AuthenticationService } from '../../../shared/_services/authentication.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 
 @Component({

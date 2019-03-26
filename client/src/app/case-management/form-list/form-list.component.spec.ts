@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FormListComponent } from './form-list.component';
+import { CaseManagementModule } from '../case-management.module';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 describe('FormListComponent', () => {
   let component: FormListComponent;
@@ -8,7 +10,10 @@ describe('FormListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormListComponent ]
+      imports: [ 
+        CaseManagementModule,
+        AppRoutingModule
+      ]
     })
     .compileComponents();
   }));

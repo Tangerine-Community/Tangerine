@@ -1,6 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TangyFormsPlayerComponent } from './tangy-forms-player.component';
+import { TangyFormsModule } from '../tangy-forms.module';
+import { CaseManagementModule } from 'src/app/case-management/case-management.module';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 describe('TangyFormsPlayerComponent', () => {
   let component: TangyFormsPlayerComponent;
@@ -8,7 +11,7 @@ describe('TangyFormsPlayerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TangyFormsPlayerComponent ]
+      imports: [TangyFormsModule, CaseManagementModule, AppRoutingModule]
     })
     .compileComponents();
   }));

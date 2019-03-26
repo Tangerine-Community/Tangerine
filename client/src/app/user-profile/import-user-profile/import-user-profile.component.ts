@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UserService } from '../../core/auth/_services/user.service';
+import { UserService } from '../../shared/_services/user.service';
 import { Router } from '@angular/router';
 import PouchDB from 'pouchdb';
 

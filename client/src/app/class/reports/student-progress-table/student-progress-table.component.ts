@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ClassFormService} from "../../_services/class-form.service";
 import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {DashboardService} from "../../_services/dashboard.service";
-import {AuthenticationService} from "../../../core/auth/_services/authentication.service";
+import {AuthenticationService} from "../../../shared/_services/authentication.service";
 import {ClassUtils} from "../../class-utils";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 

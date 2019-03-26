@@ -5,6 +5,15 @@
   <title>Tangerine</title>
   <base href="/">
   <script>
+    // HACK(keanulee): The Redux package assumes `process` exists - mock it here before
+    // the module is loaded.
+    /*
+    window.process = {
+      env: {
+        NODE_ENV: 'production'
+      }
+    };
+    */
     var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
     function getChromeVersion () {     
         var raw = navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);

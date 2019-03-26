@@ -1,5 +1,5 @@
 import { AfterContentInit, OnInit, ElementRef, Component, ViewChild } from '@angular/core';
-import { UserService } from '../../core/auth/_services/user.service';
+import { UserService } from '../../shared/_services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 

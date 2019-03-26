@@ -1,7 +1,7 @@
 import { NgModule, Injectable } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CreateProfileGuardService } from '../user-profile/create-profile-guard.service';
-import { LoginGuard } from '../core/auth/_guards/login-guard.service';
+import { CreateProfileGuardService } from '../shared/_guards/create-profile-guard.service';
+import { LoginGuard } from '../shared/_guards/login-guard.service';
 import { _TRANSLATE } from '../shared/translation-marker';
 import { CasesComponent } from './components/cases/cases.component';
 import { NewCaseComponent } from './components/new-case/new-case.component';

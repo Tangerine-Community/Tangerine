@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {DashboardService} from "../../_services/dashboard.service";
-import {AuthenticationService} from "../../../core/auth/_services/authentication.service";
+import {AuthenticationService} from "../../../shared/_services/authentication.service";
 import {_TRANSLATE} from "../../../shared/translation-marker";
 import {MatTableDataSource} from "@angular/material";
 import {ClassFormService} from "../../_services/class-form.service";
