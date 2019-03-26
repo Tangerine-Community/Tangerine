@@ -6,6 +6,8 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AppConfig } from 'src/app/app-config.class';
 import { User } from './user.model.interface';
+import PouchDBFind from 'pouchdb-find';
+PouchDB.plugin(PouchDBFind)
 
 class StartSyncSessionResponse {
   doc_ids:string
@@ -17,11 +19,10 @@ class SyncDetails {
   localDb:PouchDB
   doc_ids:Array<string>
 }
-
 class ReplicationStatus {
   pulled:number
   pushed:number
-  conflicts:number
+  conflicts:Array<string>
 }
 
 @Injectable({
@@ -39,36 +40,12 @@ export class PecSyncService {
       const syncDetails = await this.setup(username)
       const pullReplicationStatus = await this.replicate(syncDetails.remoteDb, syncDetails.localDb, {doc_ids: syncDetails.doc_ids}) 
       const pushReplicationStatus = await this.replicate(syncDetails.localDb, syncDetails.remoteDb)
+      const conflictsQuery = await syncDetails.localDb.query('conflicts');
       return <ReplicationStatus>{
         pulled: pullReplicationStatus.pulled,
         pushed: pushReplicationStatus.pushed,
-        conflicts: pushReplicationStatus.conflicts + pullReplicationStatus.conflicts
+        conflicts: conflictsQuery.rows.map(row => row.id)
       }
-  }
-
-  syncObservable(username:string):Observable<ReplicationStatus> {
-    return new Observable((observable) => {
-      let currentSyncDetails:SyncDetails
-      let pullReplicationStatus:ReplicationStatus
-      let pushReplicationStatus:ReplicationStatus
-      this.setup(username)
-        .then(syncDetails => {
-          currentSyncDetails = syncDetails
-          return this.replicate(currentSyncDetails.remoteDb, currentSyncDetails.localDb, {doc_ids: currentSyncDetails.doc_ids}) 
-        })
-        .then(replicationStatus => {
-          pullReplicationStatus = replicationStatus
-          return this.replicate(currentSyncDetails.localDb, currentSyncDetails.remoteDb)
-        })
-        .then(replicationStatus => {
-          pushReplicationStatus = replicationStatus
-          observable.next(<ReplicationStatus>{
-            pulled: pullReplicationStatus.pulled,
-            pushed: pushReplicationStatus.pushed,
-            conflicts: pushReplicationStatus.conflicts + pullReplicationStatus.conflicts
-          })
-        })
-    })
   }
 
   async setup(username):Promise<SyncDetails> {
