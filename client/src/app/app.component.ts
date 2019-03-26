@@ -40,13 +40,11 @@ export class AppComponent implements OnInit {
     private router: Router,
     translate: TranslateService
   ) {
-    windowRef.nativeWindow.PouchDB = PouchDB;
     this.window = this.windowRef.nativeWindow;
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
       ? true
       : false
     if (!this.installed) return
-    this.checkIfUpdateScriptRequired();
     this.freespaceCorrectionOccuring = false;
     // Detect if this is the first time the app has loaded.
     this.languageCode = this.window.localStorage.getItem('languageCode')
@@ -60,18 +58,23 @@ export class AppComponent implements OnInit {
     this.window.document.documentElement.lang = this.languageCode; 
     this.window.document.documentElement.dir = this.languageDirection; 
     this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
+    // Make database services available to eval'd code.
+    this.window.userService = this.userService
+    this.window.PouchDB = this.userService.PouchDB
   }
 
 
   async ngOnInit() {
+    // Load up the app config.
+    this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
+    this.window.appConfig = this.appConfig
     // Bail if the app is not yet installed.
     if (!this.installed) {
       this.install()
       return
     }
-    // Load up the app config.
-    this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
-    this.window.appConfig = this.appConfig
+    await this.userService.initialize()
+    this.checkIfUpdateScriptRequired();
     // Set translation for t function used in Web Components.
     const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
@@ -123,7 +126,7 @@ export class AppComponent implements OnInit {
     let storageEstimate = await navigator.storage.estimate()
     let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     while(availableFreeSpace < minimumFreeSpace) {
-      const DB = new PouchDB(this.window.localStorage.getItem('currentUser'))
+      const DB:PouchDB = this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,
@@ -144,15 +147,14 @@ export class AppComponent implements OnInit {
   }
 
   async checkIfUpdateScriptRequired() {
-    const usersDb = new PouchDB('users');
-    const response = await usersDb.allDocs({ include_docs: true });
+    const response = await this.userService.usersDb.allDocs({ include_docs: true });
     const usernames = response
       .rows
       .map(row => row.doc)
       .filter(doc => doc.hasOwnProperty('username'))
       .map(doc => doc.username);
     for (const username of usernames) {
-      const userDb = await new PouchDB(username);
+      const userDb:PouchDB = this.userService.getUserDatabase(username);
       // Use try in case this is an old account where info doc was not created.
       let infoDoc = { _id: '', atUpdateIndex: 0 };
       try {

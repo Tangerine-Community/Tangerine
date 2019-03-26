@@ -60,7 +60,7 @@ export class UpdateComponent implements AfterContentInit {
           if (updates[atUpdateIndex].requiresViewsUpdate) {
             requiresViewsRefresh = true;
           }
-          await updates[atUpdateIndex].script(userDb, appConfig);
+          await updates[atUpdateIndex].script(userDb, appConfig, this.userService);
           this.totalUpdatesApplied++;
           atUpdateIndex++;
         }
