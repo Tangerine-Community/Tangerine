@@ -15,15 +15,14 @@ cache:
   yarn: true
   directories:
     - $HOME/.yarn-cache
-    - client/shell/node_modules
+    - client/node_modules
 before_install:
   - export CHROME_BIN=/usr/bin/google-chrome
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  # Repo for Yarn
   - npm install -g @angular/cli
 install:
-  - cd client/app && npm install
+  - cd client/ && npm install
 script:
   - ng test --watch=false
 notifications:
