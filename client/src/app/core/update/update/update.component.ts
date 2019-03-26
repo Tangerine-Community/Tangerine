@@ -66,8 +66,8 @@ export class UpdateComponent implements AfterContentInit {
         }
         atUpdateIndex--;
         if (requiresViewsRefresh) {
-          const tangyFormService = new TangyFormService(username);
-          await tangyFormService.initialize();
+          await this.userService.updateAllUserViews()
+          await this.userService.indexAllUserViews()
         }
         infoDoc.atUpdateIndex = atUpdateIndex;
         await userDb.put(infoDoc);

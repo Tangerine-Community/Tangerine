@@ -146,10 +146,8 @@ export const updates = [
     }
   },
   {
-    requiresViewsUpdate: false,
+    requiresViewsUpdate: true,
     script: async (userDb, appConfig, userService:UserService) => {
-      await userService.updateAllUserViews()
-      await userService.indexAllUserViews()
       console.log('Updating to v3.3.0...')
     }
   }
