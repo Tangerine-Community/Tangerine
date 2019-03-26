@@ -200,6 +200,7 @@ export class UserService {
 
   // In a Module's constructor, they have the opportunity to use this method to queue views for installation
   // in User databases.
+  // Inspired by https://stackoverflow.com/questions/52263603/angular-add-a-multi-provider-from-lazy-feature-module
   addViews(moduleName, views) {
     this._views[moduleName] = views
   }
