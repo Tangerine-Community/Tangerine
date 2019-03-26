@@ -7,6 +7,9 @@ import { UserService } from './user.service';
 import { AppConfigService } from './app-config.service';
 import { AppConfig } from 'src/app/app-config.class';
 import PouchDB from 'pouchdb'
+import PouchDBFind from 'pouchdb-find';
+PouchDB.plugin(PouchDBFind)
+
 
 const MOCK_REMOTE_DOC_IDS = [
   'doc1',
@@ -97,9 +100,11 @@ describe('PecSyncService', () => {
     const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO)
     await mockRemoteDb.put({_id:"doc1"})
     await mockRemoteDb.put({_id:"doc2"})
+    await mockRemoteDb.put({_id:"doc3"})
+    await mockRemoteDb.put({_id:"doc4"})
     const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_INFO)
-    await mockLocalDb.put({_id:"doc3"})
-    await mockLocalDb.put({_id:"doc4"})
+    await mockLocalDb.put({_id:"doc5"})
+    await mockLocalDb.put({_id:"doc6"})
     pecSyncService.sync(MOCK_LOCAL_DB_INFO).then(async status => {
       expect(status.pulled).toBe(2)
       // @TODO We're not correctly capturing the number of documents that end up being pushed.
@@ -107,8 +112,53 @@ describe('PecSyncService', () => {
       expect(status.conflicts).toBe(0)
       const remoteAllDocs = await mockRemoteDb.allDocs()
       const localAllDocs = await mockLocalDb.allDocs()
-      expect(remoteAllDocs.total_rows).toBe(4)
+      // Note how total docs in databases differ because of priorities.
+      expect(remoteAllDocs.total_rows).toBe(6)
       expect(localAllDocs.total_rows).toBe(4)
+      done()
+    })
+    setTimeout(() => {
+      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}/api/start-sync-session`);
+      expect(req.request.method).toEqual('GET');
+      req.flush({
+        syncUrl: MOCK_REMOTE_DB_INFO,
+        doc_ids: ['doc1', 'doc2'] 
+      });
+    })
+  })
+
+  it('should sync but with conflicts', async (done) => {
+    // Prepopulate the mock remote db.
+    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO)
+    await mockRemoteDb.put({_id:"doc1"})
+    await mockRemoteDb.put({_id:"doc2"})
+    const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_INFO)
+    await mockLocalDb.put({_id:"doc3"})
+    await mockLocalDb.put({_id:"doc4"})
+    await mockRemoteDb.sync(mockLocalDb)
+    const localDoc1 = await mockLocalDb.get('doc1')
+    const remoteDoc1 = await mockRemoteDb.get('doc1')
+    await mockLocalDb.put({...localDoc1, foo: 'local change'})
+    await mockRemoteDb.put({...remoteDoc1, foo: 'remote change'})
+    // @TODO Put this ddoc in the user database service.
+    const ddoc = {
+      _id: '_design/conflicts',
+      views: {
+        conflicts: {
+          map: `function mapFun(doc) {
+            if (doc._conflicts) {
+              emit(true);
+            }
+          }`
+        }
+      }
+    }
+    await mockLocalDb.put(ddoc)
+    pecSyncService.sync(MOCK_LOCAL_DB_INFO).then(async status => {
+      const localAllDocs = await mockLocalDb.allDocs({include_docs: true, conflicts: true})
+      const remoteAllDocs = await mockRemoteDb.allDocs({include_docs: true, conflicts: true})
+      expect(status.pulled).toBe(1)
+      expect(status.conflicts.length).toBe(1)
       done()
     })
     setTimeout(() => {
@@ -120,7 +170,5 @@ describe('PecSyncService', () => {
       });
     })
   })
-
-  it('should sync but with conflicts')
 
 });
