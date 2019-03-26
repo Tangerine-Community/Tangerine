@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { LoginGuard } from '../core/auth/_guards/login-guard.service';
+import { LoginGuard } from '../shared/_guards/login-guard.service';
 import { UserProfileComponent } from './user-profile.component';
 import { ImportUserProfileComponent } from './import-user-profile/import-user-profile.component';
-import { CreateProfileGuardService } from './create-profile-guard.service'
+import { CreateProfileGuardService } from '../shared/_guards/create-profile-guard.service'
 
 const routes = [{
   path: 'manage-user-profile',

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService } from '../../../core/auth/_services/authentication.service';
+import { AuthenticationService } from '../../../shared/_services/authentication.service';
 import { HttpClient } from '@angular/common/http';
 import { CaseService } from '../../services/case.service'
 import { CaseDefinitionsService } from '../../services/case-definitions.service'

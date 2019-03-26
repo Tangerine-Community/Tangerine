@@ -5,8 +5,8 @@ import * as PouchDBUpsert from 'pouchdb-upsert';
 import * as pako from 'pako';
 
 import { AppConfigService } from '../../../shared/_services/app-config.service';
-import { UserService } from '../../auth/_services/user.service';
-import { WindowRef } from '../../window-ref.service';
+import { UserService } from '../../../shared/_services/user.service';
+import { WindowRef } from '../../../shared/_services/window-ref.service';
 
 @Injectable()
 export class SyncingService {

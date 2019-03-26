@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StudentSubtestReportComponent } from './student-subtest-report.component';
+import { ClassModule } from '../../class.module';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 describe('StudentSubtestReportComponent', () => {
   let component: StudentSubtestReportComponent;
@@ -8,7 +10,7 @@ describe('StudentSubtestReportComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ StudentSubtestReportComponent ]
+      imports: [ClassModule, AppRoutingModule]
     })
     .compileComponents();
   }));
@@ -19,7 +21,5 @@ describe('StudentSubtestReportComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should create');
 });

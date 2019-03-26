@@ -4,7 +4,7 @@ import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import { Subject } from 'rxjs';
 
-import { AppConfigService } from '../../../shared/_services/app-config.service';
+import { AppConfigService } from './app-config.service';
 import { UserService } from './user.service';
 
 @Injectable()

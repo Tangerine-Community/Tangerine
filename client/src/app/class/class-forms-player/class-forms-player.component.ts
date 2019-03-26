@@ -1,16 +1,10 @@
 import {AfterContentInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {UserService} from "../../core/auth/_services/user.service";
+import {UserService} from "../../shared/_services/user.service";
 import {HttpClient} from "@angular/common/http";
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import {ClassFormService} from "../_services/class-form.service";
 import {ClassUtils} from "../class-utils.js";
-import 'tangy-form/tangy-form.js';
-
-import 'tangy-form/input/tangy-input.js'
-import 'tangy-form/input/tangy-radio-buttons.js'
-import 'tangy-form/input/tangy-checkboxes.js'
-import 'tangy-form/input/tangy-timed.js'
 import {DashboardService} from "../_services/dashboard.service";
 import {_TRANSLATE} from "../../shared/translation-marker";
 

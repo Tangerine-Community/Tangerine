@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SyncRecordsComponent } from './sync-records.component';
+import { SyncRecordsModule } from '../sync-records.module';
 
 describe('SyncRecordsComponent', () => {
   let component: SyncRecordsComponent;
@@ -8,7 +9,7 @@ describe('SyncRecordsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SyncRecordsComponent ]
+      imports: [SyncRecordsModule]
     })
     .compileComponents();
   }));

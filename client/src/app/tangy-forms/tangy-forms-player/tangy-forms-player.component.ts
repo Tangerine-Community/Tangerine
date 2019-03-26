@@ -3,8 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 import { CaseManagementService } from '../../case-management/_services/case-management.service';
-import { UserService } from '../../core/auth/_services/user.service';
-import { WindowRef } from '../../core/window-ref.service';
+import { UserService } from '../../shared/_services/user.service';
+import { WindowRef } from '../../shared/_services/window-ref.service';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form-service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))

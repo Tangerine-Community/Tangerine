@@ -3,7 +3,7 @@ import {ClassFormService} from "../../_services/class-form.service";
 import {ClassUtils} from "../../class-utils";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DashboardService} from "../../_services/dashboard.service";
-import {AuthenticationService} from "../../../core/auth/_services/authentication.service";
+import {AuthenticationService} from "../../../shared/_services/authentication.service";
 import {StudentResult} from "../student-grouping-report/student-result";
 import {ClassGroupingReport} from "../student-grouping-report/class-grouping-report";
 import {MatTableDataSource} from "@angular/material";

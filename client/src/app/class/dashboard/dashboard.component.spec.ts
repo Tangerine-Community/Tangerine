@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DashboardComponent } from './dashboard.component';
+import { ClassModule } from '../class.module'
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -8,7 +10,7 @@ describe('DashboardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DashboardComponent ]
+      imports: [ClassModule, AppRoutingModule]
     })
     .compileComponents();
   }));
@@ -19,7 +21,5 @@ describe('DashboardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should create');
 });

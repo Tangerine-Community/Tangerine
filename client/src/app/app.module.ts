@@ -15,26 +15,21 @@ import {
 } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CaseManagementModule } from './case-management/case-management.module';
 import { CaseModule } from './case/case.module';
 import { AuthModule } from './core/auth/auth.module';
 import { SyncRecordsModule } from './core/sync-records/sync-records.module';
-import { WindowRef } from './core/window-ref.service';
-import { Loc } from './core/location.service';
 import { UpdateModule } from './core/update/update.module';
 import { SettingsModule } from './core/settings/settings.module';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { ExportDataModule } from './core/export-data/export-data.module';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ClassModule } from "./class/class.module";
 export { AppComponent }
-export function HttpClientLoaderFactory(httpClient: HttpClient) {
-  return new TranslateHttpLoader(httpClient, './assets/', '.json');
-}
+
+
 @NgModule({
   declarations: [
     AppComponent
@@ -57,17 +52,10 @@ export function HttpClientLoaderFactory(httpClient: HttpClient) {
     SyncRecordsModule,
     ExportDataModule,
     AppRoutingModule,
-    SharedModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpClientLoaderFactory,
-        deps: [HttpClient]
-      }
-    })
+    SharedModule
+
   ],
-  providers: [WindowRef,
-    Loc],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

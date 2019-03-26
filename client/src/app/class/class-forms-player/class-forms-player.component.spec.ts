@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ClassFormsPlayerComponent } from './class-forms-player.component';
+import { ClassModule } from '../class.module';
+import { AppRoutingModule } from 'src/app/app-routing.module';
 
 describe('ClassFormsPlayerComponent', () => {
   let component: ClassFormsPlayerComponent;
@@ -8,7 +10,10 @@ describe('ClassFormsPlayerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ClassFormsPlayerComponent ]
+      imports: [
+        ClassModule,
+        AppRoutingModule
+      ]
     })
     .compileComponents();
   }));
@@ -19,7 +24,5 @@ describe('ClassFormsPlayerComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  it('should create');
 });

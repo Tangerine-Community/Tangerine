@@ -1,11 +1,11 @@
 import { Component, AfterContentInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { WindowRef } from '../../window-ref.service';
+import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { TangyFormService } from '../../../tangy-forms/tangy-form-service';
 import { updates } from './updates';
 import PouchDB from 'pouchdb';
-import { UserService } from '../../auth/_services/user.service';
+import { UserService } from '../../../shared/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { TranslateService } from '@ngx-translate/core';
 
