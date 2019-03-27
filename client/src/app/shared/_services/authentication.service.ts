@@ -1,18 +1,13 @@
 import { Injectable } from '@angular/core';
-// import * as bcrypt from 'bcryptjs';
-import PouchDB from 'pouchdb';
-import PouchDBFind from 'pouchdb-find';
 import { Subject } from 'rxjs';
-
 import { AppConfigService } from './app-config.service';
 import { UserService } from './user.service';
 
 @Injectable()
 export class AuthenticationService {
-  DB = new PouchDB('users');
+
   public currentUserLoggedIn$: any;
   private _currentUserLoggedIn: boolean;
-
   public userShouldResetPassword$: any;
   private _userShouldResetPassword: boolean;
 
@@ -25,21 +20,14 @@ export class AuthenticationService {
   }
 
   async login(username: string, password: string) {
-    let isCredentialsValid = false;
-    const userExists = await this.userService.doesUserExist(username);
-    if (userExists) {
-      /**
-       *@TODO if Security policy require password is false, then no need to check password. Just login the user
-       */
-      isCredentialsValid = await this.confirmPassword(username, password);
-      if (isCredentialsValid) {
-        localStorage.setItem('currentUser', username);
-        this._currentUserLoggedIn = true;
-        this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
-      }
+    if (await this.userService.doesUserExist(username) && await this.confirmPassword(username, password)) {
+      localStorage.setItem('currentUser', username);
+      this._currentUserLoggedIn = true;
+      this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+      return true 
+    } else {;
+      return false
     }
-
-    return isCredentialsValid;
   }
 
   async resetPassword(user) {
@@ -59,48 +47,21 @@ export class AuthenticationService {
     }
   }
 
-  async confirmPassword(username, password) {
-    let doesPasswordMatch = false;
-    PouchDB.plugin(PouchDBFind);
-    try {
-      const result = await this.DB.find({ selector: { username } });
-      if (result.docs.length > 0) {
-        // doesPasswordMatch = await bcrypt.compare(password, result.docs[0].password);
-        doesPasswordMatch = password === result.docs[0].password ? true : false;
-        if (doesPasswordMatch) {
-          /**
-           * @TODO we will probably need to save the current timestamp when the user logged in for security policy use
-           * Security policy Example: 1) Expire user after 5 minutes or 2) never
-           * @TODO Refactor for Redux send Action to Current User store. Dont do this until our ngrx stores are backed up by local storage
-           */
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    return doesPasswordMatch;
+  async confirmPassword(username, password):Promise<boolean> {
+    const userAccount = await this.userService.getUserAccount(username)
+    debugger
+    return this.userService.hashValue(password) === userAccount.password
+      ? true
+      : false
   }
 
-  async confirmSecurityQuestion(user) {
-    let doesAnswerMatch = false;
-    PouchDB.plugin(PouchDBFind);
-    try {
-      const result = await this.DB.find({
-        selector: { username: user.username }
-      });
-      if (result.docs.length > 0) {
-        // doesAnswerMatch = result.docs[0].hashSecurityQuestionResponse ?
-        // await bcrypt.compare(user.securityQuestionResponse, result.docs[0].securityQuestionResponse) :
-        // user.securityQuestionResponse === result.docs[0].securityQuestionResponse;
-        doesAnswerMatch =
-          user.securityQuestionResponse ===
-          result.docs[0].securityQuestionResponse;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    return doesAnswerMatch;
+  async confirmSecurityQuestion(user):Promise<boolean> {
+    const userAccount = await this.userService.getUserAccount(user.username)
+    return this.userService.hashValue(user.securityQuestionResponse) === userAccount.securityQuestionResponse
+      ? true
+      : false
   }
+
   logout(): void {
     localStorage.removeItem('currentUser');
     this._currentUserLoggedIn = false;
@@ -114,6 +75,7 @@ export class AuthenticationService {
     return this._currentUserLoggedIn;
 
   }
+
   shouldResetPassword() {
     this._userShouldResetPassword = false;
     this._userShouldResetPassword = !!localStorage.getItem('userShouldResetPassword');
@@ -125,6 +87,7 @@ export class AuthenticationService {
     const appConfig = await this.appConfigService.getAppConfig();
     return appConfig.securityPolicy;
   }
+
   async isNoPasswordMode() {
     const policy = await this.getSecurityPolicy();
     const isNoPasswordMode = await policy.find(p => p === 'noPassword');
@@ -134,6 +97,7 @@ export class AuthenticationService {
   getCurrentUser() {
     return localStorage.getItem('currentUser');
   }
+
   getCurrentUserDBPath() {
     return localStorage.getItem('currentUser');
   }
