@@ -7,7 +7,11 @@ import {filter, map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 // bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71
-import * as bcrypt from 'bcryptjs';
+//import * as bcrypt from 'bcryptjs';
+const bcrypt = {
+  hashSync: (value) => value
+}
+
 
 //import { uuid as Uuid } from 'js-uuid';
 import PouchDB from 'pouchdb';
@@ -16,9 +20,13 @@ import * as PouchDBUpsert from 'pouchdb-upsert';
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
-import { TangyFormService } from '../../tangy-forms/tangy-form-service';
 import { updates } from '../../core/update/update/updates';
 import { AppConfigService } from './app-config.service';
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
+import { UserAccount } from '../_models/user-account.model';
+import { UserSignup } from '../_models/user-signup.model';
+
+const CURRENT_USER = 'currentUser'
 
 export class StartSyncSessionResponse {
   doc_ids:string
@@ -43,7 +51,6 @@ export class UserService {
   userData = {};
   usersDb = new PouchDB('users');
   userDatabases:Array<PouchDB> = []
-  LOGGED_IN_USER_DATABASE_NAME = 'currentUser';
   PouchDB = PouchDB
 
   constructor(
@@ -52,72 +59,51 @@ export class UserService {
   ) { }
 
   async initialize() {
-    for (const user of await this.getAllUsers()) {
-      this.userDatabases.push(PouchDB(user.username))
+    const users = await this.getAllUsers()
+    for (const user of users) {
+      this.userDatabases.push(PouchDB(user._id))
     }
   }
 
-  async createUserDatabase(username) {
+  async createUserDatabase(username):Promise<PouchDB> {
     const userDb = PouchDB(username)
     this.installViews(userDb)
     this.userDatabases.push(userDb)
     return userDb
   }
 
-  async create(payload) {
-    const userUUID = this.getUuid(); 
-    const hashedPassword = await this.hashValue(payload.password);
-    this.userData = payload;
-    this.userData['userUUID'] = userUUID;
-    this.userData['password'] = hashedPassword;
-    this.userData['securityQuestionResponse'] = this.userData['hashSecurityQuestionResponse'] 
-      ? await this.hashValue(payload.securityQuestionResponse)
-      : this.userData['securityQuestionResponse'];
-    try {
-      const postUserdata = await this.usersDb.post({
-        _id: this.userData['username'],
-        ...this.userData
-      });
-      const userDb = await this.createUserDatabase(this.userData['username']);
-      if (postUserdata) {
-        const result = await this.initUserProfile(this.userData['username'], userUUID);
-        // @TODO It might be more appropriate to store the atUpdateIndex in the user's account doc in this.usersDb.
-        await userDb.put({
-          _id: 'info',
-          atUpdateIndex: updates.length - 1
-        });
-        return result;
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  async create(userSignup:UserSignup):Promise<UserAccount> {
+    const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+    const userAccount = new UserAccount(
+      userSignup.username,
+      this.hashValue(userSignup.password),
+      userSignup.securityQuestionResponse,
+      userProfile._id
+    ) 
+    await this.usersDb.post(userAccount)
+    const userDb = await this.createUserDatabase(userAccount._id);
+    await userDb.put(userProfile)
+    // @TODO It might be more appropriate to store the atUpdateIndex in the user's account doc in this.usersDb.
+    await userDb.put({
+      _id: 'info',
+      atUpdateIndex: updates.length - 1
+    })
+    return userAccount
   }
 
-
-  async initUserProfile(userDBPath, profileId) {
-    if (userDBPath) {
-      const userDB = new PouchDB(userDBPath);
-      try {
-        const result = await userDB.put({
-          _id: profileId,
-          collection: 'user-profile'
-        });
-        return result;
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  }
-  async getUserAccount(username?: string) {
-    return await this.usersDb.get(username)
+  async getUserAccount(username?: string):Promise<UserAccount> {
+    return <UserAccount>await this.usersDb.get(username)
   }
 
   async getUserProfile(username?: string) {
-    const userAccount = await this.usersDb.get(username)
+    username = username
+      ? username
+      : localStorage.getItem(CURRENT_USER)
+    const userAccount = <UserAccount>await this.usersDb.get(username)
     const databaseName = username || await this.getUserDatabase()
-    const db = this.getUserDatabase(databaseName)
-    const userProfileDoc = await db.get(userAccount.userUUID)
-    return userProfileDoc
+    const userDb = this.getUserDatabase(databaseName)
+    const userProfile = new TangyFormResponseModel(await userDb.get(userAccount.userUUID))
+    return userProfile
   }
 
   async getUserLocations(username?: string) {
@@ -132,59 +118,31 @@ export class UserService {
     }, [])
   }
 
-  async doesUserExist(username) {
-    let userExists: boolean;
-    if (username) {
-      /**
-       * @TODO We may want to run this on the first time when the app runs.
-       */
-      this.usersDb.createIndex({
-        index: { fields: ['username'] }
-      })
-      .then(data => console.log('Indexing Succesful'))
-      .catch(err => console.error(err));
-
-      try {
-        const result = await this.usersDb.find({ selector: { username } })
-        if (result.docs.length > 0) {
-          userExists = true;
-        } else { userExists = false; }
-      } catch (error) {
-        userExists = true;
-        console.error(error);
-      }
-    } else {
-      userExists = true;
-      return userExists;
+  async doesUserExist(username):Promise<boolean> {
+    try {
+      await this.usersDb.get(username)
+      return true
+    } catch (e) {
+      return false
     }
-    return userExists;
   }
 
   async getAllUsers() {
-    try {
-      const result = await this.usersDb.allDocs({ include_docs: true });
-      const users = [];
-      observableFrom(result.rows).pipe(map(doc => doc),filter(doc => !doc['id'].startsWith('_design')),).subscribe(doc => {
-        users.push({
-          username: doc['doc'].username
-        });
-      });
-      return users;
-    } catch (error) {
-      console.error(error);
-    }
+    return ((await this.usersDb.allDocs({ include_docs: true }))
+      .rows
+      .map(row => row.doc)
+      .filter(doc => !doc['_id'].includes('_design')))
   }
 
   async getUsernames() {
     const response = await this.getAllUsers();
     return response
-      .filter(user => user.hasOwnProperty('username'))
-      .map(user => user.username);
+      .map(user => user._id);
   }
 
 
   async changeUserPassword(user) {
-    const password = await this.hashValue(user.newPassword);
+    const password = this.hashValue(user.newPassword);
     try {
       const result = await this.usersDb.find({ selector: { username: user.username } });
       if (result.docs.length > 0) {
@@ -199,23 +157,23 @@ export class UserService {
     }
   }
 
-  async hashValue(value) {
+  hashValue(value) {
     // Bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71j
     //const salt = bcrypt.genSaltSync(10);
     //return bcrypt.hashSync(value, salt);
-    return value
+    return bcrypt.hashSync(value)
   }
 
   // @TODO Refactor usage of this to use the UserService.db singleton.
   async setUserDatabase(username) {
-    return await localStorage.setItem(this.LOGGED_IN_USER_DATABASE_NAME, username);
+    return await localStorage.setItem(CURRENT_USER, username);
   }
 
   getUserDatabase(username = '') {
     if (username === '') {
       console.warn('Detected deprecated usage of UserService.getUserDatabase().')
       return new Promise((resolve, reject) => {
-        resolve(localStorage.getItem(this.LOGGED_IN_USER_DATABASE_NAME))
+        resolve(localStorage.getItem(CURRENT_USER))
       })
     } else {
       return this.userDatabases.find(userDatabase => userDatabase.name === username)
@@ -226,7 +184,7 @@ export class UserService {
     if (username === '') {
       console.warn('Detected deprecated usage of UserService.removeUserDatabase().')
       return new Promise((resolve, reject) => {
-        localStorage.removeItem(this.LOGGED_IN_USER_DATABASE_NAME);
+        localStorage.removeItem(CURRENT_USER);
         resolve()
       })
     } else {

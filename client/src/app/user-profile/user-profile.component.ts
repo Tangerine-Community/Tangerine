@@ -30,13 +30,14 @@ export class UserProfileComponent implements AfterContentInit {
     const appConfig = await this.appConfigService.getAppConfig();
     const homeUrl = appConfig.homeUrl;
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
-    const userDbName = await this.userService.getUserDatabase();
-    const tangyFormService = new TangyFormService({ databaseName: userDbName });
-    const profileDocs = await tangyFormService.getResponsesByFormId('user-profile');
+    const username = localStorage.getItem('currentUser')
+    const userDb = await this.userService.getUserDatabase(username);
+    const userProfile = await this.userService.getUserProfile(username)
     const container = this.container.nativeElement
     let formHtml =  await this.http.get('./assets/user-profile/form.html', {responseType: 'text'}).toPromise();
     container.innerHTML = formHtml
     let formEl = container.querySelector('tangy-form')
+    formEl.response = userProfile
     formEl.addEventListener('submit', async (event) => {
       event.preventDefault()
       const profileDoc = formEl.store.getState()
@@ -44,16 +45,9 @@ export class UserProfileComponent implements AfterContentInit {
       if (profileDoc.uploadDatetime) {
         profileDoc.uploadDatetime = null
       }
-      await tangyFormService.saveResponse(profileDoc)
+      await userDb.put(profileDoc)
       this.router.navigate([this.returnUrl]);
     })
-    // Put a response in the store by issuing the FORM_OPEN action.
-    if (profileDocs.length > 0) {
-      formEl.response = profileDocs[0]
-
-    } else {
-      formEl.newResponse()
-    }
   }
 
 }
