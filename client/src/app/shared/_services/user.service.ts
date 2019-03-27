@@ -5,6 +5,7 @@ import {filter, map} from 'rxjs/operators';
 
 
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 // bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71
 import * as bcrypt from 'bcryptjs';
 
@@ -17,6 +18,23 @@ PouchDB.plugin(PouchDBUpsert)
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 import { TangyFormService } from '../../tangy-forms/tangy-form-service';
 import { updates } from '../../core/update/update/updates';
+import { AppConfigService } from './app-config.service';
+
+export class StartSyncSessionResponse {
+  doc_ids:string
+  syncUrl:string
+}
+
+export class SyncDetails {
+  remoteDb:PouchDB
+  localDb:PouchDB
+  doc_ids:Array<string>
+}
+export class ReplicationStatus {
+  pulled:number
+  pushed:number
+  conflicts:Array<string>
+}
 
 @Injectable()
 export class UserService {
@@ -28,7 +46,10 @@ export class UserService {
   LOGGED_IN_USER_DATABASE_NAME = 'currentUser';
   PouchDB = PouchDB
 
-  constructor() { }
+  constructor(
+    private appConfigService: AppConfigService,
+    private http: HttpClient
+  ) { }
 
   async initialize() {
     for (const user of await this.getAllUsers()) {
@@ -49,11 +70,14 @@ export class UserService {
     this.userData = payload;
     this.userData['userUUID'] = userUUID;
     this.userData['password'] = hashedPassword;
-    this.userData['securityQuestionResponse'] = this.userData['hashSecurityQuestionResponse'] ?
-      await this.hashValue(payload.securityQuestionResponse) : this.userData['securityQuestionResponse'];
+    this.userData['securityQuestionResponse'] = this.userData['hashSecurityQuestionResponse'] 
+      ? await this.hashValue(payload.securityQuestionResponse)
+      : this.userData['securityQuestionResponse'];
     try {
-      /** @TODO: check if user exists before saving */
-      const postUserdata = await this.usersDb.post(this.userData);
+      const postUserdata = await this.usersDb.post({
+        _id: this.userData['username'],
+        ...this.userData
+      });
       const userDb = await this.createUserDatabase(this.userData['username']);
       if (postUserdata) {
         const result = await this.initUserProfile(this.userData['username'], userUUID);
@@ -84,12 +108,16 @@ export class UserService {
       }
     }
   }
+  async getUserAccount(username?: string) {
+    return await this.usersDb.get(username)
+  }
 
   async getUserProfile(username?: string) {
-    const databaseName = username || await this.getUserDatabase();
-    const tangyFormService = new TangyFormService({ databaseName });
-    const results = await tangyFormService.getResponsesByFormId('user-profile');
-    return results[0];
+    const userAccount = await this.usersDb.get(username)
+    const databaseName = username || await this.getUserDatabase()
+    const db = this.getUserDatabase(databaseName)
+    const userProfileDoc = await db.get(userAccount.userUUID)
+    return userProfileDoc
   }
 
   async getUserLocations(username?: string) {
@@ -194,8 +222,19 @@ export class UserService {
     }
   }
 
-  async removeUserDatabase() {
-    localStorage.removeItem(this.LOGGED_IN_USER_DATABASE_NAME);
+  async remove(username = '') {
+    if (username === '') {
+      console.warn('Detected deprecated usage of UserService.removeUserDatabase().')
+      return new Promise((resolve, reject) => {
+        localStorage.removeItem(this.LOGGED_IN_USER_DATABASE_NAME);
+        resolve()
+      })
+    } else {
+      const userDb = this.userDatabases.find(userDatabase => userDatabase.name === username)
+      await userDb.destroy()
+      const accountDoc = await this.usersDb.get(username)
+      await this.usersDb.remove(accountDoc)
+    }
   }
 
   // In a Module's constructor, they have the opportunity to use this method to queue views for installation
@@ -342,4 +381,43 @@ export class UserService {
     return getUuidV4String()
   }
 
+  async sync(username:string):Promise<ReplicationStatus> {
+      const syncDetails = await this.syncSetup(username)
+      const pullReplicationStatus = await this.replicate(syncDetails.remoteDb, syncDetails.localDb, {doc_ids: syncDetails.doc_ids}) 
+      const pushReplicationStatus = await this.replicate(syncDetails.localDb, syncDetails.remoteDb)
+      const conflictsQuery = await syncDetails.localDb.query('shared/conflicts');
+      return <ReplicationStatus>{
+        pulled: pullReplicationStatus.pulled,
+        pushed: pushReplicationStatus.pushed,
+        conflicts: conflictsQuery.rows.map(row => row.id)
+      }
+  }
+
+  async syncSetup(username):Promise<SyncDetails> {
+    const appConfig = await this.appConfigService.getAppConfig();
+    let profileDoc = await this.getUserProfile(username)
+    let params = new HttpParams()
+    params.set('profileId', profileDoc._id)
+    params.set('groupId', appConfig.groupName)
+    const response = await this.http.get(`${appConfig.serverUrl}/api/start-sync-session`, { params }).toPromise()
+    const localDb = new PouchDB(username);
+    const remoteDb = new PouchDB(response['syncUrl']);
+    const doc_ids:Array<string> = response['doc_ids']
+    return <SyncDetails>{localDb, remoteDb, doc_ids}
+  }
+
+  replicate(sourceDb:PouchDB, targetDb:PouchDB, options = {}):Promise<ReplicationStatus> {
+    return new Promise((resolve, reject) => {
+      sourceDb.replicate.to(targetDb, options).on('complete', function (info) {
+        resolve(<ReplicationStatus>{
+          pulled: info.docs_written,
+          pushed: 0,
+          conflicts: info.doc_write_failures
+        })
+      }).on('error', function (errorMessage) {
+        console.log("boo, something went wrong! error: " + errorMessage)
+        reject(errorMessage)
+      });
+    })
+  }
 }
