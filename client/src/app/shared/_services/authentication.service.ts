@@ -49,7 +49,6 @@ export class AuthenticationService {
 
   async confirmPassword(username, password):Promise<boolean> {
     const userAccount = await this.userService.getUserAccount(username)
-    debugger
     return this.userService.hashValue(password) === userAccount.password
       ? true
       : false
