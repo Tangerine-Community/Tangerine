@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule, MatAutocompleteModule, MatSelectModule, MatChipsModule } from '@angular/material';
+import {
+  MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule,
+  MatAutocompleteModule, MatSelectModule, MatChipsModule, MatGridListModule
+} from '@angular/material';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
 import { GroupsComponent } from './groups.component';
@@ -26,6 +29,7 @@ import { ManageLocationListMetadataComponent } from './manage-location-list-meta
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
+    MatGridListModule,
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
