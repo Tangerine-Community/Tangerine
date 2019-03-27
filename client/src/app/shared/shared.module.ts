@@ -23,6 +23,7 @@ import { UnsanitizeHtmlPipe } from './_pipes/unsanitize-html.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginGuard } from './_guards/login-guard.service';
 import { CreateProfileGuardService } from './_guards/create-profile-guard.service';
+import { SharedQueries } from './shared.queries';
 
 @NgModule({
   imports: [
@@ -58,4 +59,8 @@ import { CreateProfileGuardService } from './_guards/create-profile-guard.servic
     TangySvgLogoComponent,
     TruncateValuePipe, TranslateModule]
 })
-export class SharedModule { }
+export class SharedModule {
+  constructor(private userService: UserService) {
+    userService.addViews('shared', SharedQueries)
+  }
+}
