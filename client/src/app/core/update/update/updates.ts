@@ -149,6 +149,12 @@ export const updates = [
     requiresViewsUpdate: true,
     script: async (userDb, appConfig, userService:UserService) => {
       console.log('Updating to v3.3.0...')
+      // Fix issue where accountDoc.userUUID did not point correctly to the user's profileDoc._id.
+      for(const userDb of userService.userDatabases) {
+        const userProfileId = (await userDb.query('tangy-form/responsesByFormId', {key: 'user-profile'})).rows[0].id
+        const userAccount = await userService.getUserAccount(userDb.name)
+        await userService.usersDb.put({...userAccount, userUUID: userProfileId})
+      }
     }
   }
 ]
