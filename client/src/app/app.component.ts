@@ -151,8 +151,7 @@ export class AppComponent implements OnInit {
     const usernames = response
       .rows
       .map(row => row.doc)
-      .filter(doc => doc.hasOwnProperty('username'))
-      .map(doc => doc.username);
+      .map(doc => doc._id);
     for (const username of usernames) {
       const userDb:PouchDB = this.userService.getUserDatabase(username);
       // Use try in case this is an old account where info doc was not created.
