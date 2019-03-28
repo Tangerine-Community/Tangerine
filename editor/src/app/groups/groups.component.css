@@ -17,3 +17,9 @@ mat-card-title a {
 .tangy-page-title {
   margin-left: 2%;
 }
+mat-card.mat-card {
+  background-color: var(--accent-text-color);
+}
+.tangy-foreground-secondary {
+  color: var(--lighter-accent-color);
+}
