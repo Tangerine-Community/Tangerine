@@ -33,6 +33,8 @@ h1.tangy-main-app-name {
 }
 .mat-sidenav {
   width: 15rem;
+  background-color: var(--tertiary-color);
+  color: var(--accent-text-color);
 }
 
 .toolbar-spacer {
@@ -43,9 +45,21 @@ h1.tangy-main-app-name {
 }
 mat-list-item {
   line-height: 3;
+  display: inline-flex;
 }
 mat-list-item a {
   text-decoration: none;
-  color: var(--tertiary-color);
-  margin-left: 6%;
+  color: var(--accent-text-color);
+  margin-left: 1rem;
+}
+.mat-divider {
+  border-top: var(--accent-text-color) 1px solid;
+}
+.menu-icon {
+  padding-top: 0.8rem;
+  margin-left: 1rem;
+  font-size: 120%;
+}
+mat-toolbar.mat-toolbar {
+  background: var(--accent-text-color);
 }
