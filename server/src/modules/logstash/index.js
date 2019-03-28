@@ -25,7 +25,11 @@ module.exports = {
 
         // Process the flatResponse
         const logstashDb = new DB(`${sourceDb.name}-logstash`);
-        const processedResult = await attachUserProfile(flatResponse, logstashDb)
+        let processedResult = flatResponse
+        // Don't add user-profile to the user-profile
+        if (flatResponse.formId !== 'user-profile') {
+          processedResult = await attachUserProfile(flatResponse, logstashDb)
+        }
         createDateFields(processedResult);
         await pushResponse({
           _id: processedResult._id,
@@ -146,7 +150,6 @@ function createDateFields(processedResult) {
 
 function addDatefields(val, doc) {
   let startDateTimeValues = val.split('-')
-  debugger
   doc['day_of_the_month'] = startDateTimeValues[2].rjust(2,'0')
   doc['year_value'] = startDateTimeValues[0]
   if(startDateTimeValues[1].rjust(2,'0') === '01') {
@@ -194,6 +197,7 @@ async function attachUserProfile(doc, logstashDb) {
     const userProfileIdKey = Object.keys(doc).find(key => key.includes('userProfileId'))
     // Get the user profile.
     const userProfileDoc = await logstashDb.get(doc[userProfileIdKey])
+
     // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
     return Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
       return Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc[key] })

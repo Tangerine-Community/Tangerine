@@ -63,13 +63,20 @@ watch -n 1 "cat /reporting-worker-state.json | node /tangerine/server/reporting/
 
 If you need to clear a reporting cache, don't simply delete the reporting db. Use
 ```
-cd /tangerine/server/src/scripts
-./clear-reporting-cache.js
+reporting-cache-clear
+
+```
+
+If there was a crash, sometimes you need to remove the semaphor:
+
+```
+rm /reporting-worker-running
+
 ```
 
 ## A typical report debugging workflow:
 
-Remember to setup config.sh properly!
+Remember to setup config.sh properly! (Make sure  T_MODULES="['csv','class', 'logstash']")
 Comment out keepAliveReportingWorker in server/index.js.
 Remember to add `127.0.0.1:9228` as an entry in "Target discovery settings" in chrome://inspect/#devices
 
