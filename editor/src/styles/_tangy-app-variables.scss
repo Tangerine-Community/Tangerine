@@ -1,4 +1,73 @@
 @import '~@angular/material/theming';
-$tangerine-app-primary: mat-palette($mat-blue, 700);
-$tangerine-app-accent: mat-palette($mat-deep-orange, 500);
+
+/* For use in src/lib/core/theming/_palette.scss */
+// Generated color palettes at http://mcg.mbitson.com
+$md-tangy-blue: (
+  50: #e8ebf1,
+  100: #c5cedd,
+  200: #9eadc6,
+  300: #778caf,
+  400: #59749e,
+  500: #3c5b8d,
+  600: #365385,
+  700: #2e497a,
+  800: #274070,
+  900: #1a2f5d,
+  A100: #9ab7ff,
+  A200: #6792ff,
+  A400: #346eff,
+  A700: #1a5cff,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #ffffff,
+    A700: #ffffff
+  )
+);
+
+$md-tangy-orange: (
+  50: #fdeee2,
+  100: #fbd4b7,
+  200: #f9b788,
+  300: #f69a58,
+  400: #f48534,
+  500: #f26f10,
+  600: #f0670e,
+  700: #ee5c0c,
+  800: #ec5209,
+  900: #e84005,
+  A100: #ffffff,
+  A200: #ffe4dd,
+  A400: #ffbcaa,
+  A700: #ffa791,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #ffffff,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000
+  )
+);
+
+$tangerine-app-primary: mat-palette($md-tangy-blue, 500);
+$tangerine-app-accent: mat-palette($md-tangy-orange, 500);
 $tangerine-app-warn: mat-palette($mat-red);

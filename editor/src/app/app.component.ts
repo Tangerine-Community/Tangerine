@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
 import { RegistrationService } from './registration/services/registration.service';
-import { WindowRef } from './core/window-ref.service'
+import { WindowRef } from './core/window-ref.service';
+import { MediaMatcher } from '@angular/cdk/layout';
 
 
 @Component({
