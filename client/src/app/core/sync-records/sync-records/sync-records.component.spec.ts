@@ -98,6 +98,7 @@ describe('SyncRecordsComponent', () => {
       expect(syncStatus.complete).toBe(true)
       await userService.remove(MOCK_LOCAL_DB_INFO)
       await mockRemoteDb.destroy()
+      fixture.detectChanges();
       done()
     })
     component.sync()
