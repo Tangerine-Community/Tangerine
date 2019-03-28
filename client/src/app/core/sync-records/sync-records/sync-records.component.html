@@ -4,13 +4,19 @@
     <mat-card-content>
         <p class="mat-headline">{{'Syncing Status Summary'|translate}}</p>
         <span *ngIf="isSyncSuccesful">{{'Sync Successful'|translate}}</span>
+
         <span *ngIf="!isSyncSuccesful&&isSyncSuccesful!==undefined">{{'Sync Unsuccessful. Please Retry'|translate}}</span>
         <br/>
         <br>
-      <div *ngIf="syncProtocol != 'replication'">
+      <div *ngIf="syncProtocol !== 'SYNC_TWO_WAY'">
         <p>{{'Number of responses uploaded'|translate}}: {{docsUploaded}}</p>
         <p>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</p>
         <p>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</p>
+      </div>
+      <div *ngIf="syncProtocol === 'SYNC_TWO_WAY' && isSyncSuccesful === true">
+        {{'Docs pulled'|translate}}: {{twoWaySyncStatus.pulled}} <br>
+        {{'Docs pushed'|translate}}: {{twoWaySyncStatus.pushed}} <br>
+        {{'Docs in conflict'|translate}}: {{twoWaySyncStatus.conflicts}}
       </div>
 
     </mat-card-content>
@@ -20,7 +26,7 @@
 </mat-card>
 <br>
 <br>
-<p class="mat-headline">{{'Syncing Status By User'|translate}}</p>
+<p *ngIf="syncProtocol !== 'SYNC_TWO_WAY'" class="mat-headline">{{'Syncing Status By User'|translate}}</p>
 <mat-accordion>
     <mat-expansion-panel *ngFor="let syncData of allUsersSyncData">
         <mat-expansion-panel-header>

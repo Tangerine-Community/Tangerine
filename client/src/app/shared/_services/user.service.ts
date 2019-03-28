@@ -340,15 +340,15 @@ export class UserService {
   }
 
   async sync(username:string):Promise<ReplicationStatus> {
-      const syncDetails = await this.syncSetup(username)
-      const pullReplicationStatus = await this.replicate(syncDetails.remoteDb, syncDetails.localDb, {doc_ids: syncDetails.doc_ids}) 
-      const pushReplicationStatus = await this.replicate(syncDetails.localDb, syncDetails.remoteDb)
-      const conflictsQuery = await syncDetails.localDb.query('shared/conflicts');
-      return <ReplicationStatus>{
-        pulled: pullReplicationStatus.pulled,
-        pushed: pushReplicationStatus.pushed,
-        conflicts: conflictsQuery.rows.map(row => row.id)
-      }
+    const syncDetails = await this.syncSetup(username)
+    const pullReplicationStatus = await this.replicate(syncDetails.remoteDb, syncDetails.localDb, {doc_ids: syncDetails.doc_ids}) 
+    const pushReplicationStatus = await this.replicate(syncDetails.localDb, syncDetails.remoteDb)
+    const conflictsQuery = await syncDetails.localDb.query('shared/conflicts');
+    return <ReplicationStatus>{
+      pulled: pullReplicationStatus.pulled,
+      pushed: pushReplicationStatus.pushed,
+      conflicts: conflictsQuery.rows.map(row => row.id)
+    }
   }
 
   async syncSetup(username):Promise<SyncDetails> {

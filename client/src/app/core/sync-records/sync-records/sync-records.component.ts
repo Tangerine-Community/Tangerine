@@ -1,10 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { SyncingService } from '../_services/syncing.service';
-import { UserService } from '../../../shared/_services/user.service';
+import { UserService, ReplicationStatus } from '../../../shared/_services/user.service';
 import {AppConfigService} from "../../../shared/_services/app-config.service";
-import PouchDB from 'pouchdb';
+import { SyncProtocol } from 'src/app/shared/_models/app-config.model';
+
+export class SyncStatus {
+  complete:boolean
+  constructor(complete:boolean) {
+    this.complete = complete
+  }
+}
 
 @Component({
   selector: 'app-sync-records',
@@ -12,14 +19,17 @@ import PouchDB from 'pouchdb';
   styleUrls: ['./sync-records.component.css']
 })
 export class SyncRecordsComponent implements OnInit {
+
+  @Output() syncEvent = new EventEmitter<SyncStatus>();
   isSyncSuccesful: boolean = undefined;
   syncStatus = '';
   allUsersSyncData;
   docsNotUploaded: number;
   docsUploaded: number;
   syncPercentageComplete: number;
-  syncProtocol = '';
+  syncProtocol:SyncProtocol = 'SYNC_ONE_WAY';
   contentVersion = '';
+  twoWaySyncStatus:ReplicationStatus
   window: any;
 
   constructor(
@@ -34,7 +44,8 @@ export class SyncRecordsComponent implements OnInit {
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();
     this.syncProtocol = appConfig.syncProtocol
-    if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
+    if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'SYNC_TWO_WAY') {
+
     } else {
       this.getUploadProgress();
     }
@@ -81,21 +92,12 @@ export class SyncRecordsComponent implements OnInit {
     this.syncProtocol = appConfig.syncProtocol
     usernames.map(async username => {
       try {
-        if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
-          const userProfile = await this.userService.getUserProfile(username);
-          const remoteHost = await this.getRemoteHost();
-          const localDB = new PouchDB(username);
-          const remoteDB = new PouchDB(remoteHost);
-          localDB.replicate.to(remoteDB, {push:true}).on('complete', function (info) {
-            console.log("yeah, we're done!" + JSON.stringify(info))
+        if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'SYNC_TWO_WAY') {
+          this.userService.sync(username).then((status) => {
+            this.twoWaySyncStatus = status
             this.isSyncSuccesful = true;
-            let docsRead = info.docs_read
-            let docsWritten = info.docs_written
-            alert("Sync is complete. Docs read: " + docsRead + " Docs uploaded:" + docsWritten)
-          }).on('error', function (err) {
-            // boo, something went wrong!
-            console.log("boo, something went wrong! error: " + err)
-          });
+            this.syncEvent.emit(new SyncStatus(true))
+          })
         } else {
           const result = await this.syncingService.sync(username);
           if (result) {
