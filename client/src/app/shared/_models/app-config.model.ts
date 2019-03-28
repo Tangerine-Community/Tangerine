@@ -1,3 +1,5 @@
+export type SyncProtocol = 'SYNC_ONE_WAY' | 'SYNC_TWO_WAY'
+
 export class AppConfig {
 
   securityPolicy = ["password"]
@@ -16,9 +18,9 @@ export class AppConfig {
   centrallyManagedUserProfile = false
   languageDirection  = "ltr"
   languageCode = "en"
+  syncProtocol:SyncProtocol = 'SYNC_ONE_WAY'
   // @TODO Deprecated...
   uploadUrl = ''
-  syncProtocol = ''
 
   /*
   constructor(data = {}) {

@@ -13,5 +13,6 @@
   "homeUrl": "case-management",
   "centrallyManagedUserProfile": false,
   "languageDirection": "ltr",
-  "languageCode": "en"
+  "languageCode": "en",
+  "sync-protocol": "one-way"
 }
