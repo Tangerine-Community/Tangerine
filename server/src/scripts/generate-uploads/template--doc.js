@@ -100,7 +100,7 @@ exports.doc = {
         },
         {
           "name": "userProfileId",
-          "value": "fb4c070e-9ba1-4278-bfba-e4258065ecb5"
+          "value": "foo123"
         },
         {
           "name": "lesson_start_date",
