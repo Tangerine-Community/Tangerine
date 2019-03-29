@@ -5,10 +5,8 @@ FROM tangerine/docker-tangerine-base-image:v3-node-base-with-wrapper
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-RUN apt update
-
+# Install global node dependencies
 RUN npm install -g nodemon dat
-RUN echo foo
 
 # T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
 ENV T_USER1 user1
