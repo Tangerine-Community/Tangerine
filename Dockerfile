@@ -9,7 +9,10 @@ RUN echo "deb [check-valid-until=no] http://archive.debian.org/debian jessie-bac
 
 RUN sed -i '/deb http:\/\/deb.debian.org\/debian jessie-updates main/d' /etc/apt/sources.list
 
-RUN apt-get -o Acquire::Check-Valid-Until=false update
+#doesnot work for some reason 
+#RUN apt-get -o Acquire::Check-Valid-Until=false update
+
+RUN echo "Acquire::Check-Valid-Until false;" > /etc/apt/apt.conf
 
 RUN apt update
 
