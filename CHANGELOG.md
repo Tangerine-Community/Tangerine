@@ -1,5 +1,25 @@
 # Changelog
 
+## v3.2.0
+- Features
+  - Assessor changes language of App [#1315](https://github.com/Tangerine-Community/Tangerine/issues/1315)
+  - Editor provides feedback given data entered earlier in the form [#1384](https://github.com/Tangerine-Community/Tangerine/issues/1384)
+  - Assessor starts new Case is immediately forwarded to first form [#1362](https://github.com/Tangerine-Community/Tangerine/issues/1362)
+  - Assessor finds Form and Event in Case has been disabled/enabled due to custom logic [#1363](https://github.com/Tangerine-Community/Tangerine/issues/1363)
+  - Assessor confirms participant info using data from another form [#1385](https://github.com/Tangerine-Community/Tangerine/issues/1385)
+  - Server Admin restarts machine to find containers have automatically come back up [#1388](https://github.com/Tangerine-Community/Tangerine/issues/1388)
+  - Server Admin sets up Tangerine outage alarm [#1389](https://github.com/Tangerine-Community/Tangerine/issues/1389)
+
+Upgrade instructions:
+```bash
+git fetch origin
+git checkout v3.2.0
+./start.sh
+docker exec tangerine /tangerine/upgrades/v3.2.0.js 
+```
+- In each group's `app-config.json`, change `"direction"` to `"languageDirection"`.
+- If using a translation other than English, change in each group's `app-config.json`, change `"languageCode"` to the corresponding language code. Current codes other than `en` for English is `JO_ar` for Jordanian and `KH_km` for Khmer.
+
 ## v3.1.0
 - Features
   - Item Editor UX Improvements #810 

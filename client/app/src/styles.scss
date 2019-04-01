@@ -32,11 +32,24 @@ paper-tab a:-webkit-any-link {
   height: 42%;
   text-align: center;
 }
+paper-button {
+  background: var(--accent-color);
+  color: var(--accent-text-color);
+  margin-top: 15px;
+}
 body {
   background: #fafafa;
   margin: 0px;
   padding: 0px;
   overscroll-behavior: contain;
+}
+
+h2.card-header {
+    padding: 16px;
+    margin: 0px;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--paper-card-header-color, #000);
 }
 
 select{

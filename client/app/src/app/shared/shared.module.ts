@@ -10,6 +10,7 @@ import {
 import { TangySvgLogoComponent } from './_components/tangy-svg-logo/tangy-svg-logo.component';
 import { SeamlessWithWindowDirective } from './_directives/seamless-with-window.directive';
 import { TruncateValuePipe } from './_pipes/truncate-value.pipe';
+import { UnsanitizeHtmlPipe } from './_pipes/unsanitize-html.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
@@ -19,11 +20,13 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
   providers: [AppConfigService],
   declarations: [SafeUrlPipe,
+    UnsanitizeHtmlPipe,
     SeamlessWithWindowDirective, TangySvgLogoComponent,
     TruncateValuePipe,
     RedirectToDefaultRouteComponent],
 
   exports: [RedirectToDefaultRouteComponent, SafeUrlPipe,
+    UnsanitizeHtmlPipe,
     SeamlessWithWindowDirective, TangySvgLogoComponent,
     TruncateValuePipe, TranslateModule]
 })

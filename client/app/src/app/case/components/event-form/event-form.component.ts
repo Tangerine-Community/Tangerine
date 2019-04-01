@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { WindowRef } from '../../../core/window-ref.service';
 import { UserService } from '../../../core/auth/_services/user.service';
 import { CaseService } from '../../services/case.service'
 import { EventForm } from '../../classes/event-form.class';
@@ -29,6 +30,7 @@ export class EventFormComponent implements AfterContentInit {
   @ViewChild('container') container: ElementRef;
   constructor(
     private route: ActivatedRoute,
+    private windowRef: WindowRef,
     private router: Router,
     private userService: UserService
   ) { }
@@ -37,6 +39,7 @@ export class EventFormComponent implements AfterContentInit {
     this.route.params.subscribe(async params => {
       this.caseService = new CaseService()
       await this.caseService.load(params.caseId)
+      this.windowRef.nativeWindow.caseService = this.caseService
       this.caseEvent = this
         .caseService
         .case
@@ -72,7 +75,8 @@ export class EventFormComponent implements AfterContentInit {
         this.throttledSaveResponse(response)
       })
       this.tangyFormEl.addEventListener('submit', async _ => {
-        await this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
+        this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
+        await this.caseService.save()
         await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
       })
       this.loaded = true

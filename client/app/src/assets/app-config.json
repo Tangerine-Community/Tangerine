@@ -12,5 +12,6 @@
   "uploadToken": "change_this_token",
   "homeUrl": "case-management",
   "centrallyManagedUserProfile": false,
-  "direction": "ltr"
+  "languageDirection": "ltr",
+  "languageCode": "en"
 }

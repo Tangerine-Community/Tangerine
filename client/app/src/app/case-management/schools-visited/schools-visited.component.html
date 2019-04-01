@@ -13,7 +13,7 @@
     <a class="tangy-foreground-primary" [routerLink]="['/case-details']" [queryParams]="{locationId:location.id}">
       <i class="material-icons mat-18 tangy-location-list-icon">open_in_new</i>
     </a>
-    <span>{{location.location}}</span>
+    <span [innerHTML]="location.location|unsanitizeHtml"></span>
     <span class="tangy-spacer"></span>
     <span>{{location.visits}}</span>
   </mat-list-item>

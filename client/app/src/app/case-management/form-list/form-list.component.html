@@ -9,7 +9,7 @@
           <a class="tangy-foreground-primary" [routerLink]="['/tangy-forms-player/']" [queryParams]={formIndex:formIndex}>
             <i class="material-icons md-24 tangy-location-list-icon">play_circle_filled</i>
           </a>
-          <span>{{form.title}}</span>
+          <span [innerHTML]="form.title|unsanitizeHtml"></span>
         </mat-list-item>
       </mat-list>
 

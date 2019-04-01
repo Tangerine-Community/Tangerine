@@ -29,7 +29,6 @@ import 'tangy-form/input/tangy-eftouch.js';
 import 'tangy-form/input/tangy-photo-capture.js';
 import 'tangy-form/input/tangy-qr.js';
 
-
 // An attempt to fix something...
 //import 'core-js/es7/reflect';
 

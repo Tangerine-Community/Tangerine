@@ -100,7 +100,7 @@ require_valid_user = true
      -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
      -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
      --name $T_COUCHDB_CONTAINER_NAME \
-     couchdb
+     couchdb:2
   COUCHDB_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
     -e T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE \
