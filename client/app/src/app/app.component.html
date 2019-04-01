@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<mat-toolbar dir="{{dir}}" color="primary" class="mat-typography mat-tangy-custom-toolbar">
+<mat-toolbar *ngIf="installed" dir="{{languageDirection}}" color="primary" class="mat-typography mat-tangy-custom-toolbar">
   <span class="home-icon">
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="/home">
       <app-tangy-svg-logo [tangyLogoStyle]="{'height':'45px'}"></app-tangy-svg-logo>
@@ -26,10 +26,10 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
       <span>{{'Manage Profile'|translate}}</span>
     </button>
-    <!-- <button routerLink="/home" mat-menu-item>
+    <button routerLink="settings" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">settings</mat-icon>
-      <span>My Settings</span>
-    </button> -->
+      <span>{{'Settings'|translate}}</span>
+    </button>
     <button routerLink="/sync-records" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>{{'Sync'|translate}}</span>

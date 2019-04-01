@@ -3,19 +3,18 @@
 <div class="subject-header">
   <h1>
     <iron-icon icon="create-new-folder" slot="item-icon"></iron-icon> 
-    Open a Case
+    {{'Open a Case'|translate}}
   </h1>
-  <div secondary>Choose which case type.</div>
+  <div secondary>{{'Choose which case type'|translate}}.</div>
 </div>
 
 <div class="wrapper">
   <div class="case-definition-cards">
-    <paper-card class="case-definition-card" heading="{{caseDefinition.name}}" class="case-definition-card" *ngFor="let caseDefinition of caseDefinitions">
-      <div class="card-content">
-        {{caseDefinition.description}}
-      </div>
+    <paper-card class="case-definition-card" class="case-definition-card" *ngFor="let caseDefinition of caseDefinitions">
+      <h2 class="card-header" [innerHTML]="caseDefinition.name | unsanitizeHtml"></h2>
+      <div class="card-content" [innerHTML]="caseDefinition.description | unsanitizeHtml"></div>
       <div class="card-actions">
-        <paper-button (click)="onCaseDefinitionSelect(caseDefinition.id)">open</paper-button>
+        <paper-button (click)="onCaseDefinitionSelect(caseDefinition.id)">{{'open'|translate}}</paper-button>
       </div>
     </paper-card>
   </div>

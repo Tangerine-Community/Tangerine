@@ -35,3 +35,11 @@ paper-card {
     width: 90%;
     margin-bottom: 15px;
 }
+
+h2{
+    padding: 16px;
+    margin: 0px;
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--paper-card-header-color, #000);
+}

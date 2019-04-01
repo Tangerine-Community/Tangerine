@@ -1,8 +1,19 @@
 <!doctype html>
 <html>
 <script>
-window.location = window.location.href.replace('shell/index.html', 'app/index.html')
+function go() {
+  window.location = window.location.href.replace('shell/index.html', 'app/index.html')
+}
+if (!localStorage.getItem('firstLoad')) {
+  // Give chcp some time to get things set up so when we redirect, the filesystem still exists.
+  // chcp will do our redirect. 
+  //setTimeout(go, 10*1000)
+} else {
+  localStorage.setItem('firstLoad', true)
+  go()
+}
 </script>
 <body>
+Getting set up, please wait...
 </body>
 </html>

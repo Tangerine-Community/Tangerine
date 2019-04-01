@@ -8,13 +8,17 @@ import { CaseService } from '../../services/case.service'
   styleUrls: ['./case.component.css']
 })
 export class CaseComponent implements OnInit, AfterContentInit {
+
   caseService:CaseService;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router
   ) { }
+
   async ngOnInit() {
   }
+
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       const caseService = new CaseService()
@@ -24,7 +28,8 @@ export class CaseComponent implements OnInit, AfterContentInit {
   }
 
   async startEvent(eventDefinitionId) {
-    const caseEvent = await this.caseService.startEvent(eventDefinitionId)
+    const caseEvent = this.caseService.startEvent(eventDefinitionId)
+    await this.caseService.save()
     this.router.navigate(['case', 'event', this.caseService.case._id, caseEvent.id])
   }
 

@@ -73,21 +73,23 @@ class CaseService {
     await this.setCase(await this.db.get(this.case._id))
   }
 
-  async startEvent(eventDefinitionId:string):Promise<CaseEvent> {
+  startEvent(eventDefinitionId:string):CaseEvent {
+    const caseEventDefinition = this.caseDefinition
+      .eventDefinitions
+      .find(eventDefinition => eventDefinition.id === eventDefinitionId)
     const caseEvent = new CaseEvent(
       UUID(),
       false,
-      eventDefinitionId,
+      caseEventDefinition.name,
       eventDefinitionId,
       [],
       Date.now()
     )
     this.case.events.push(caseEvent)
-    await this.save()
     return caseEvent
   }
 
-  async startEventForm(caseEventId, eventFormId):Promise<EventForm> {
+  startEventForm(caseEventId, eventFormId):EventForm {
     const eventForm = new EventForm(UUID(), false, this.case._id, caseEventId, eventFormId)
     this
       .case
@@ -95,11 +97,10 @@ class CaseService {
       .find(caseEvent => caseEvent.id === caseEventId)
       .eventForms
       .push(eventForm)
-    await this.save()
     return eventForm
   }
-  
-  async markEventFormComplete(caseEventId:string, eventFormId:string) {
+
+  markEventFormComplete(caseEventId:string, eventFormId:string) {
     //
     let caseEvent = this
       .case
@@ -146,9 +147,21 @@ class CaseService {
     this
       .case
       .complete = numberOfCaseEventsRequired === numberOfUniqueCompleteCaseEvents ? true : false
-    await this.save()
-
     
+  }
+
+  disableEventDefinition(eventDefinitionId) {
+    if (this.case.disabledEventDefinitionIds.indexOf(eventDefinitionId) === -1) {
+      this.case.disabledEventDefinitionIds.push(eventDefinitionId)
+    }
+  }
+
+  setVariable(variableName, value) {
+    this.case.variables[variableName] = value
+  }
+
+  getVariable(variableName) {
+    return this.case.variables[variableName]
   }
 
 }

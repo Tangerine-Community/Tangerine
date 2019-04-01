@@ -1,4 +1,4 @@
-<paper-tabs selected="0">
+<paper-tabs *ngIf="installed" selected="0">
   <paper-tab>
       {{'LOGIN'|translate}}
   </paper-tab>
@@ -6,7 +6,7 @@
     <a href="#/register">{{'REGISTER'|translate}}</a>
   </paper-tab>
 </paper-tabs>
-<div class="login-app-content">
+<div *ngIf="installed" class="login-app-content">
   <div class="group">
     <form role="form" #login='ngForm' novalidate>
       <h3 class="mat-title">{{'LOGIN'|translate}}</h3>

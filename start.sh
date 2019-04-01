@@ -84,6 +84,7 @@ docker rm $T_CONTAINER_NAME > /dev/null
 
 RUN_OPTIONS="
   --name $T_CONTAINER_NAME \
+  --restart unless-stopped \
   --env \"NODE_ENV=production\" \
   --env \"T_VERSION=$T_TAG\" \
   --env \"T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE\" \
@@ -146,13 +147,14 @@ require_valid_user = true
   [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
   [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
   docker run -d \
+     --restart unless-stopped \
      -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
      -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
      -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
      -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
      --name $T_COUCHDB_CONTAINER_NAME \
      -p 5984:5984 \
-     couchdb
+     couchdb:2
   RUN_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
     -e T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE \
