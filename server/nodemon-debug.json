@@ -1,6 +1,7 @@
 {
   "watch": ["src"],
+  "legacyWatch": true,
   "ext": "ts",
   "ignore": ["src/**/*.spec.ts"],
-  "exec": "node --inspect-brk -r ts-node/register -r tsconfig-paths/register src/main.ts"
+  "exec": "node --poll --inspect-brk -r ts-node/register -r tsconfig-paths/register src/main.ts"
 }

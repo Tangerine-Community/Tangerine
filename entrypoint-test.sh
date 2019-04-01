@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /tangerine/server 
-npm run start:dev
+npm run start:debug
 
 cd /tangerine/editor
 npm run dockerdev
