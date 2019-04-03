@@ -84,9 +84,9 @@ docker rm $T_CONTAINER_NAME > /dev/null
 
 RUN_OPTIONS="
   --name $T_CONTAINER_NAME \
+  --restart unless-stopped \
   --env \"NODE_ENV=production\" \
   --env \"T_VERSION=$T_TAG\" \
-  --env \"T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_ADMIN=$T_ADMIN\" \
   --env \"T_PASS=$T_PASS\" \
@@ -98,8 +98,6 @@ RUN_OPTIONS="
   --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_MODULES=$T_MODULES\" \
-  --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
-  --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
   --env \"T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE\" \
   --env \"T_PAID_MODE=$T_PAID_MODE\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
@@ -113,12 +111,11 @@ RUN_OPTIONS="
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/archives:/archives/ \
-  --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
-if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_LOCAL" = "true" ]; then
+if [ "$T_COUCHDB_LOCAL" = "true" ]; then
   if [ ! -d data/couchdb ]; then
     mkdir data/couchdb
   fi
@@ -146,13 +143,14 @@ require_valid_user = true
   [ "$(docker ps | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker stop $T_COUCHDB_CONTAINER_NAME
   [ "$(docker ps -a | grep $T_COUCHDB_CONTAINER_NAME)" ] && docker rm $T_COUCHDB_CONTAINER_NAME
   docker run -d \
+     --restart unless-stopped \
      -e COUCHDB_USER=$T_COUCHDB_USER_ADMIN_NAME \
      -e COUCHDB_PASSWORD=$T_COUCHDB_USER_ADMIN_PASS \
      -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
      -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
      --name $T_COUCHDB_CONTAINER_NAME \
      -p 5984:5984 \
-     couchdb
+     couchdb:2
   RUN_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
     -e T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE \

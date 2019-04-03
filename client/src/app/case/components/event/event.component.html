@@ -1,0 +1,57 @@
+<div *ngIf="loaded">
+  <app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
+
+  <div class="subject-header">
+    <h1>
+      <iron-icon icon="{{caseEvent.complete ? 'notification:event-available' : 'event'}}" slot="item-icon"></iron-icon> 
+      <span [innerHTML]="caseEvent.name|unsanitizeHtml"></span> 
+      ({{caseEvent.id.substr(0,6)}})
+    </h1>
+    <div secondary>
+      {{'Opened'|translate}}: 
+        {{caseEvent.startDate | date:'medium'}},
+      {{'Status'|translate}}: 
+        <span *ngIf="!caseEvent.complete">{{'Incomplete'|translate}}</span>
+        <span *ngIf="caseEvent.complete">{{'Complete'|translate}}</span> 
+    </div>
+  </div>
+
+  <div class="wrapper">
+    <div class="form-cards" *ngIf="caseService">
+      <paper-card 
+        *ngFor="let eventFormInfo of eventFormsInfo"
+        class="form-card {{eventFormInfo.required === true ? 'required' : ''}}"
+      >
+        <h2 class="card-header" [innerHTML]="eventFormInfo.name|unsanitizeHtml"></h2>
+        <div class="card-content">
+          <span *ngIf="eventFormInfo.eventForms.length === 0">
+            {{'You have not started this form'|translate}}.
+          </span>
+          <div *ngIf="eventFormInfo.eventForms.length > 0" role="listbox">
+            <paper-icon-item 
+              *ngFor="let eventForm of eventFormInfo.eventForms"
+              routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}"
+            >
+              <iron-icon icon="{{eventForm.complete ? 'assignment-turned-in' : 'assignment'}}" slot="item-icon"></iron-icon> 
+              <paper-item-body two-line>
+                <div>
+                  <span [innerHTML]="eventFormInfo.name|unsanitizeHtml"></span> ({{eventForm.id.substr(0,6)}})
+                </div>
+                <div secondary>{{eventFormInfo.startDate | date:'medium'}}</div>
+              </paper-item-body>
+            </paper-icon-item>
+          </div>
+        </div>
+        <div class="card-actions" *ngIf="eventFormInfo.canStart">
+          <paper-button *ngIf="eventFormInfo.eventForms.length > 0" (click)="startEventForm(eventFormInfo.eventFormDefinitionId)">
+            {{'start another'|translate}}
+          </paper-button>
+          <paper-button *ngIf="eventFormInfo.eventForms.length === 0" (click)="startEventForm(eventFormInfo.eventFormDefinitionId)">
+            {{'start form'|translate}}
+          </paper-button>
+        </div>
+
+      </paper-card>
+    </div>
+  </div>
+</div>

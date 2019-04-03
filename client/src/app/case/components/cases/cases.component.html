@@ -1,0 +1,22 @@
+<app-case-breadcrumb></app-case-breadcrumb>
+
+<div class="subject-header">
+  <h1>
+    <iron-icon icon="apps" slot="item-icon"></iron-icon> 
+    {{'Cases'|translate}}
+  </h1>
+  <div secondary>{{numberOfOpenCases}} {{'open cases'|translate}}</div>
+</div>
+
+<div class="wrapper">
+  <paper-fab class="new-case-link" routerLink="/new-case" icon="create-new-folder">{{'new case'|translate}}</paper-fab>
+  <div role="listbox">
+    <paper-icon-item *ngFor="let case of cases" routerLink="/case/{{case._id}}">
+      <iron-icon icon="{{case.complete ? 'notification:folder-special' : 'folder'}}" slot="item-icon"></iron-icon> 
+      <paper-item-body two-line>
+          <div><span [innerHTML]="case.label|unsanitizeHtml"></span> ({{case._id.substr(0,6)}})</div>
+          <div secondary>{{case.openedDate | date:'medium'}}</div>
+      </paper-item-body>
+    </paper-icon-item>
+  </div>
+</div>

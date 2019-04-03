@@ -1,0 +1,21 @@
+.breadcrumbs {
+    position: fixed;
+    top: 0px;
+    z-index: 99999;
+    color: white;
+    height: 65px;
+    padding-top: 21px;
+    margin-right: 80px;
+    padding-left: 22px;
+}
+
+/* Cover the logo and put breadcrumbs over it */
+.logo-cover {
+    position: fixed;
+    z-index: 9999;
+    background: #212a3f;
+    top: 0px;
+    height: 55px;
+    width: 70px;
+}
+

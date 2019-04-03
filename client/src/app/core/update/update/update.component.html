@@ -1,0 +1,11 @@
+<div id="container">
+  <h1>
+    {{message}}
+  </h1>
+  <h1 *ngIf="needsUpdating">
+    {{'Total Updates Applied'|translate}}: {{totalUpdatesApplied}}
+  </h1>
+  <paper-button routerLink="/home" *ngIf="complete" mat-raised-button>
+    {{'continue'|translate}}
+  </paper-button>
+</div>
