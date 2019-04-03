@@ -8,6 +8,14 @@
   - Untimed Grid subtest [#1366](https://github.com/Tangerine-Community/Tangerine/issues/1366)
   - Editor Style Upgrades (April 2019) [#1421](https://github.com/Tangerine-Community/Tangerine/issues/1421)
 
+Upgrade instructions:
+```bash
+git fetch origin
+git checkout v3.3.0
+./start.sh
+docker exec -it tangerine translations-update
+```
+
 ## v3.2.0
 - Features
   - Assessor changes language of App [#1315](https://github.com/Tangerine-Community/Tangerine/issues/1315)
