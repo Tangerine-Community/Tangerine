@@ -1,8 +1,10 @@
-<p *ngIf="!buildPwaIsComplete&&!errorGeneratingPWA">
-  {{'Your PWA is building...'|translate}}
-</p>
-<p *ngIf="errorGeneratingPWA">{{'Could Not Generate PWA'|translate}}</p>
-<p *ngIf="buildPwaIsComplete">
-  {{'View your PWA'|translate}}
-  <a target='_new' href="/releases/{{releaseType}}/pwas/{{groupName}}">{{'here'|translate}}</a>.
-</p>
+<div class="container">
+  <p *ngIf="!buildPwaIsComplete&&!errorGeneratingPWA">
+    {{'Your PWA is building...'|translate}}
+  </p>
+  <p *ngIf="errorGeneratingPWA">{{'Could Not Generate PWA'|translate}}</p>
+  <p *ngIf="buildPwaIsComplete">
+    {{'Success! To install, open the install URL listed below on Google Chrome version 72 or greater. To update an existing install, log into the app on the device and click on the "UPDATE" button in the menu. '|translate}}
+    <paper-input value="{{pwaUrl}}" label="Install URL"></paper-input>
+  </p>
+</div>
