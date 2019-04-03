@@ -66,7 +66,7 @@ docker build -t tangerine/tangerine:local .
 [ "$(docker ps -a | grep $T_CONTAINER_NAME)" ] && docker rm $T_CONTAINER_NAME
 
 COUCHDB_OPTIONS=""
-if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_LOCAL" = "true" ]; then
+if [ "$T_COUCHDB_LOCAL" = "true" ]; then
   if [ ! -d data/couchdb ]; then
     mkdir data/couchdb
   fi
@@ -100,10 +100,9 @@ require_valid_user = true
      -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
      -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
      --name $T_COUCHDB_CONTAINER_NAME \
-     couchdb
+     couchdb:2
   COUCHDB_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
-    -e T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE \
     -e T_COUCHDB_ENDPOINT=\"$T_COUCHDB_ENDPOINT\" \
     -e T_COUCHDB_USER_ADMIN_NAME=$T_COUCHDB_USER_ADMIN_NAME \
     -e T_COUCHDB_USER_ADMIN_PASS=$T_COUCHDB_USER_ADMIN_PASS \
@@ -130,9 +129,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_MODULES=$T_MODULES\" \
-  --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
   --env \"T_LEGACY=$T_LEGACY\" \
-  --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
   --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   --env \"T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
@@ -142,7 +139,6 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   -p 9227:9227 \
   -p 9226:9226 \
   -p 9225:9225 \
-  --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/archives:/archives/ \
@@ -151,27 +147,13 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
-  --volume $(pwd)/server/index.js:/tangerine/server/index.js \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json \
   --volume $(pwd)/server/src:/tangerine/server/src \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting \
-  --volume $(pwd)/server/upgrades:/tangerine/server/upgrades \
   --volume $(pwd)/upgrades:/tangerine/upgrades \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js \
   --volume $(pwd)/scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js \
   --volume $(pwd)/editor/src:/tangerine/editor/src \
-  --volume $(pwd)/client/release-dat.sh:/tangerine/client/release-dat.sh \
-  --volume $(pwd)/client/shell/src:/tangerine/client/shell/src \
-  --volume $(pwd)/client/shell/package.json:/tangerine/client/shell/package.json \
-  --volume $(pwd)/client/ckeditor:/tangerine/client/ckeditor \
-  --volume $(pwd)/client/tangy-forms/src:/tangerine/client/tangy-forms/src \
-  --volume $(pwd)/client/tangy-forms/assets:/tangerine/client/tangy-forms/assets \
-  --volume $(pwd)/client/tangy-forms/index.html:/tangerine/client/tangy-forms/index.html \
-  --volume $(pwd)/client/tangy-forms/editor.html:/tangerine/client/tangy-forms/editor.html \
-  --volume $(pwd)/client/tangy-forms/package.json:/tangerine/client/tangy-forms/package.json \
-  --volume $(pwd)/client/tangy-forms/yarn.lock:/tangerine/client/tangy-forms/yarn.lock \
-  --volume $T_DEV_CONTENT:/tangerine/client/builds/dev/content \
-  --volume $T_DEV_CONTENT:/tangerine/client/content/default \
  tangerine/tangerine:local
  "
 

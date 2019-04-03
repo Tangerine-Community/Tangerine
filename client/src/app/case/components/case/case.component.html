@@ -1,0 +1,66 @@
+<app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id"></app-case-breadcrumb>
+
+<div *ngIf="caseService" class="subject-header">
+  <h1>
+    <iron-icon icon="{{caseService.case.complete ? 'notification:folder-special' : 'folder'}}"></iron-icon> 
+    <span [innerHTML]="caseService.case.label|unsanitizeHtml"></span> 
+    ({{caseService.case._id.substr(0,6)}})
+  </h1>
+  <div secondary>
+    {{'Opened'|translate}}: 
+      {{caseService.case.openedDate | date:'medium'}}, 
+    {{'Status'|translate}}: 
+      <span *ngIf="!caseService.case.complete">{{'Incomplete'|translate}}</span>
+      <span *ngIf="caseService.case.complete">{{'Complete'|translate}}</span> 
+  </div>
+</div>
+
+<div class="wrapper">
+  <div class="event-cards" *ngIf="caseService">
+    <div *ngFor="let eventInfo of caseService.eventsInfo">
+    <paper-card 
+      class="event-card {{eventInfo.required ? 'required' : ''}}" 
+      icon="event"
+      *ngIf="caseService.case.disabledEventDefinitionIds.indexOf(eventInfo.caseEventDefinition.id) === -1"
+    >
+      <h2 class="card-header" [innerHTML]="eventInfo.caseEventDefinition.name|unsanitizeHtml"></h2>
+      <div class="card-content">
+        <span *ngIf="eventInfo.caseEvents.length === 0">
+          {{'You have not started this event'|translate}}.
+        </span>
+        <div *ngIf="eventInfo.caseEvents.length > 0" role="listbox">
+          <paper-icon-item 
+            *ngFor="let caseEvent of eventInfo.caseEvents"
+            routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}"
+          >
+            <iron-icon icon="{{caseEvent.complete ? 'notification:event-available' : 'event'}}" slot="item-icon"></iron-icon> 
+            <paper-item-body two-line>
+              <div><span [innerHTML]="eventInfo.caseEventDefinition.name|unsanitizeHtml"></span> ({{caseEvent.id.substr(0,6)}})</div>
+              <div secondary>
+                {{'Opened'|translate}}: 
+                  {{caseEvent.startDate | date:'medium'}},
+                {{'Status'|translate}}: 
+                  <span *ngIf="!caseEvent.complete">{{'Incomplete'|translate}}</span>
+                  <span *ngIf="caseEvent.complete">{{'Complete'|translate}}</span> 
+              </div>
+            </paper-item-body>
+          </paper-icon-item>
+        </div>
+      </div>
+      <div class="card-actions" *ngIf="eventInfo.canCreate">
+        <paper-button 
+          *ngIf="eventInfo.canCreate && eventInfo.caseEvents.length === 0" 
+          (click)="startEvent(eventInfo.caseEventDefinition.id)">
+          {{'start event'|translate}}
+        </paper-button>
+        <paper-button 
+          *ngIf="eventInfo.canCreate && eventInfo.caseEvents.length > 0" 
+          (click)="startEvent(eventInfo.caseEventDefinition.id)">
+          {{'start another'|translate}}
+        </paper-button>
+      </div>
+
+    </paper-card>
+    </div>
+  </div>
+</div>
