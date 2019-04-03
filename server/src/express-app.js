@@ -9,7 +9,6 @@ var session = require("express-session")
 const PouchSession = require("session-pouchdb-store")
 const bodyParser = require('body-parser');
 const path = require('path')
-const app = express()
 const fs = require('fs-extra')
 const pathExists = require('fs-extra').pathExists
 const fsc = require('fs')
@@ -33,18 +32,17 @@ const clog = require('tangy-log').clog
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 // Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
 var newGroupQueue = []
-const insertGroupViews = require(`./src/insert-group-views.js`)
-const insertGroupReportingViews = require('./src/insert-group-reporting-views')
-const DB = require('./src/db.js')
+const DB = require('./db.js')
 const USERS_DB = new DB('users');
-const requestLogger = require('./middlewares/requestLogger');
 let crypto = require('crypto');
 const junk = require('junk');
 const cors = require('cors')
 const sep = path.sep;
-const tangyModules = require('./src/modules/index.js')()
+const tangyModules = require('./modules/index.js')()
 log.info('heartbeat')
 setInterval(() => log.info('heartbeat'), 5*60*1000)
+
+module.exports = async function expressAppBootstrap(app) {
 
 // Enforce SSL behind Load Balancers.
 if (process.env.T_PROTOCOL == 'https') {
@@ -154,9 +152,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Middleware to protect routes.
-var isAuthenticated = require('./src/middleware/is-authenticated.js')
-var hasUploadToken = require('./src/middleware/has-upload-token.js')
-var isAuthenticatedOrHasUploadToken = require('./src/middleware/is-authenticated-or-has-upload-token.js')
+var isAuthenticated = require('./middleware/is-authenticated.js')
+var hasUploadToken = require('./middleware/has-upload-token.js')
+var isAuthenticatedOrHasUploadToken = require('./middleware/is-authenticated-or-has-upload-token.js')
 
 // Login service.
 app.post('/login',
@@ -177,59 +175,59 @@ app.get('/login/validate/:userName',
 );
 
 // API
-app.get('/api/modules', isAuthenticated, require('./src/routes/modules.js'))
-app.post('/api/:groupId/upload-check', hasUploadToken, require('./src/routes/group-upload-check.js'))
-app.post('/api/:groupId/upload', hasUploadToken, require('./src/routes/group-upload.js'))
-app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses.js'))
-app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./src/routes/group-responses-by-form-id.js'))
+app.get('/api/modules', isAuthenticated, require('./routes/modules.js'))
+app.post('/api/:groupId/upload-check', hasUploadToken, require('./routes/group-upload-check.js'))
+app.post('/api/:groupId/upload', hasUploadToken, require('./routes/group-upload.js'))
+app.get('/api/:groupId/responses/:limit?/:skip?', isAuthenticated, require('./routes/group-responses.js'))
+app.get('/api/:groupId/responsesByFormId/:formId/:limit?/:skip?', isAuthenticated, require('./routes/group-responses-by-form-id.js'))
 // Note that the lack of security middleware here is intentional. User IDs are UUIDs and thus sufficiently hard to guess.
-app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./src/routes/group-responses-by-user-profile-id.js'))
-app.get('/api/:groupId/responsesByUserProfileShortCode/:userProfileShortCode/:limit?/:skip?', require('./src/routes/group-responses-by-user-profile-short-code.js'))
-app.get('/api/:groupId/:docId', isAuthenticatedOrHasUploadToken, require('./src/routes/group-doc-read.js'))
-app.put('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
-app.post('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-write.js'))
-app.delete('/api/:groupId/:docId', isAuthenticated, require('./src/routes/group-doc-delete.js'))
+app.get('/api/:groupId/responsesByUserProfileId/:userProfileId/:limit?/:skip?', require('./routes/group-responses-by-user-profile-id.js'))
+app.get('/api/:groupId/responsesByUserProfileShortCode/:userProfileShortCode/:limit?/:skip?', require('./routes/group-responses-by-user-profile-short-code.js'))
+app.get('/api/:groupId/:docId', isAuthenticatedOrHasUploadToken, require('./routes/group-doc-read.js'))
+app.put('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-write.js'))
+app.post('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-write.js'))
+app.delete('/api/:groupId/:docId', isAuthenticated, require('./routes/group-doc-delete.js'))
 if (process.env.T_LEGACY === "true") {
-  app.post('/upload/:groupId', require('./src/routes/group-upload.js'))
+  app.post('/upload/:groupId', require('./routes/group-upload.js'))
 }
-app.get('/api/csv/:groupId/:formId', isAuthenticated, require('./src/routes/group-csv.js'))
-app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, require('./src/routes/group-csv.js'))
-app.get('/api/usage', require('./src/routes/usage'));
+app.get('/api/csv/:groupId/:formId', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/csv/:groupId/:formId/:year/:month', isAuthenticated, require('./routes/group-csv.js'))
+app.get('/api/usage', require('./routes/usage'));
 // For backwards compatibility for older consumers of this API.
-app.get('/usage', require('./src/routes/usage'));
-app.get('/usage/:startdate', require('./src/routes/usage'));
-app.get('/usage/:startdate/:enddate', require('./src/routes/usage'));
+app.get('/usage', require('./routes/usage'));
+app.get('/usage/:startdate', require('./routes/usage'));
+app.get('/usage/:startdate/:enddate', require('./routes/usage'));
 
 
 // Static assets.
-app.use('/editor', express.static(path.join(__dirname, '../client/tangy-forms/editor')));
-app.use('/', express.static(path.join(__dirname, '../editor/dist/tangerine-editor')));
-app.use('/app/:group/', express.static(path.join(__dirname, '../editor/dist/tangerine-editor')));
+app.use('/editor', express.static('/tangerine/client/tangy-forms/editor'));
+app.use('/', express.static('/tangerine/editor/dist/tangerine-editor'));
+app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
-  let contentPath = '../client/content/groups/' + req.params.group
-  clog("Setting path to " + path.join(__dirname, contentPath))
-  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+  let contentPath = '/tangerine/client/content/groups/' + req.params.group
+  clog("Setting path to " + contentPath)
+  return express.static(contentPath).apply(this, arguments);
 });
 
-app.use('/editor/groups', isAuthenticated, express.static(path.join(__dirname, '../client/content/groups')));
-app.use('/editor/:group/ckeditor/', express.static(path.join(__dirname, '../editor/src/ckeditor/')));
-app.use('/ckeditor', express.static(path.join(__dirname, '../editor/src/ckeditor')));
-app.use('/editor/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
-app.use('/client/content/assets/', express.static(path.join(__dirname, '../client/content/assets/')));
+app.use('/editor/groups', isAuthenticated, express.static('/tangerine/client/content/groups'));
+app.use('/editor/:group/ckeditor/', express.static('/tangerine/editor/src/ckeditor/'));
+app.use('/ckeditor', express.static('/tangerine/editor/src/ckeditor'));
+app.use('/editor/assets/', express.static('/tangerine/client/content/assets/'));
+app.use('/client/content/assets/', express.static('/tangerine/client/content/assets/'));
 app.use('/csv/', express.static('/csv/'));
 
-app.use('/releases/', express.static(path.join(__dirname, '../client/releases')))
-app.use('/client/', express.static(path.join(__dirname, '../client/builds/dev')))
+app.use('/releases/', express.static('/tangerine/client/releases'))
+app.use('/client/', express.static('/tangerine/client/builds/dev'))
 
 app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, next) {
-  let contentPath = '../client/content/assets'
-  clog("Setting path to " + path.join(__dirname, contentPath))
-  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+  let contentPath = '/tangerine/client/content/assets'
+  clog("Setting path to " + contentPath)
+  return express.static(contentPath).apply(this, arguments);
 });
 app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
-  let contentPath = '../client/content/groups/' + req.params.group
-  clog("Setting path to " + path.join(__dirname, contentPath))
-  return express.static(path.join(__dirname, contentPath)).apply(this, arguments);
+  let contentPath = '/tangerine/client/content/groups/' + req.params.group
+  clog("Setting path to " + contentPath)
+  return express.static(contentPath).apply(this, arguments);
 });
 
 const queueNewGroupMiddleware = function (req, res, next) {
@@ -237,7 +235,7 @@ const queueNewGroupMiddleware = function (req, res, next) {
   next()
 }
 
-app.post('/editor/group/new', isAuthenticated, queueNewGroupMiddleware, require('./src/routes/group-new.js'))
+app.post('/editor/group/new', isAuthenticated, queueNewGroupMiddleware, require('./routes/group-new.js'))
 
 app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
@@ -582,12 +580,12 @@ const getDirectories = srcPath => fs.readdirSync(srcPath).filter(file => fs.lsta
  * Listens for the changes feed on each of the group's database
  */
 function allGroups() {
-  const CONTENT_PATH = '../client/content/groups/'
+  const CONTENT_PATH = '/tangerine/client/content/groups/'
   const groups = getDirectories(CONTENT_PATH)
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
 }
 
-const reportingWorker = require('./src/reporting/reporting-worker.js')
+const reportingWorker = require('./reporting/reporting-worker.js')
 async function keepAliveReportingWorker(initialGroups) {
   await reportingWorker.prepare(initialGroups)
   let workerState = await reportingWorker.getWorkerState()
@@ -618,7 +616,7 @@ async function keepAliveReportingWorker(initialGroups) {
 const initialGroups = allGroups()
 keepAliveReportingWorker(initialGroups)
 
-const runPaidWorker = require('./src/paid-worker')
+const runPaidWorker = require('./paid-worker')
 async function keepAlivePaidWorker() {
   let state = {}
   while(true) {
@@ -639,11 +637,6 @@ async function keepAlivePaidWorker() {
 }
 keepAlivePaidWorker()
 
-tangyModules.hook('declareAppRoutes', {app}).then(() => {
-  var server = app.listen('80', function () {
-    var host = server.address().address;
-    var port = server.address().port;
-    log.info(server.address());
-    log.info('Server V3: http://%s:%s', host, port);
-  });
-})
+await tangyModules.hook('declareAppRoutes', {app})
+
+}

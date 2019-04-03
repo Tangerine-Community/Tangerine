@@ -114,7 +114,7 @@ sleep 10
 
 CMD="docker run -it --name $T_CONTAINER_NAME \
   $COUCHDB_OPTIONS \
-  --entrypoint=\"/tangerine/entrypoint-development.sh\" \
+  --entrypoint=\"/tangerine/entrypoint-test.sh\" \
   --env \"NODE_ENV=development\" \
   --env \"T_VERSION=$T_TAG\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
