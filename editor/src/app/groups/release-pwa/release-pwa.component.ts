@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from '../../shared/_services/translation-marker';
+import { WindowRef } from 'src/app/core/window-ref.service';
 
 @Component({
   selector: 'app-release-pwa',
@@ -15,10 +16,13 @@ export class ReleasePwaComponent implements OnInit {
   groupName = '';
   releaseType = '';
   errorGeneratingPWA;
+  pwaUrl
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,
-    private errorHandler: TangyErrorHandler) { }
+    private errorHandler: TangyErrorHandler,
+    private windowRef: WindowRef 
+  ) { }
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
@@ -31,6 +35,8 @@ export class ReleasePwaComponent implements OnInit {
   async releasePWA() {
     try {
       const result: any = await this.groupsService.releasePWA(this.groupName, this.releaseType);
+      this.pwaUrl = `${this.windowRef.nativeWindow.location.origin}/releases/${this.releaseType}/pwas/${this.groupName}`
+
       this.buildPwaIsComplete = result.statusCode === 200;
     } catch (error) {
       this.errorGeneratingPWA = true;
