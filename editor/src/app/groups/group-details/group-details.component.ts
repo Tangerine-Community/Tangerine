@@ -13,6 +13,9 @@ import { HttpParams } from '@angular/common/http';
 export class GroupDetailsComponent implements OnInit {
   forms;
   groupName;
+  groupId;
+  group;
+  groupLabel;
   isSuperAdminUser;
   isGroupAdminUser;
   responses;
@@ -24,8 +27,11 @@ export class GroupDetailsComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe(async params => {
       this.groupName = params.groupName;
+      this.groupId = params.groupName;
+      this.group = await this.groupsService.getGroupInfo(this.groupId)
+      this.groupLabel = this.group.label
     });
     try {
       this.isSuperAdminUser = await this.userService.isCurrentUserSuperAdmin();

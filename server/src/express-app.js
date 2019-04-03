@@ -584,37 +584,6 @@ function allGroups() {
   return groups.map(group => group.trim()).filter(groupName => groupName !== '.git')
 }
 
-const reportingWorker = require('./reporting/reporting-worker.js')
-async function keepAliveReportingWorker(initialGroups) {
-  await reportingWorker.prepare(initialGroups)
-  let workerState = await reportingWorker.getWorkerState()
-  // Keep alive.
-  while (true) {
-    try {
-      workerState = await reportingWorker.getWorkerState()
-      // Add new groups if there are entries in the newGroupQueue array (see /api/group/new route above).
-      while (newGroupQueue.length > 0) {
-        await reportingWorker.addGroup(newGroupQueue.pop())
-      }
-      // Use a child process to limit memory usage.
-      await exec('reporting-worker-batch')
-      workerState = await reportingWorker.prepare(initialGroups)
-      // Sleep if we did not process anything.
-      if (workerState.processed === 0) {
-        await sleep(3*1000)
-      } else {
-        log.info(`Processed ${workerState.processed} changes.`)
-      }
-    } catch (error) {
-      log.error('Reporting process had an error.')
-      console.log(error)
-      await sleep(3*1000)
-    }
-  }
-}
-const initialGroups = allGroups()
-keepAliveReportingWorker(initialGroups)
-
 const runPaidWorker = require('./paid-worker')
 async function keepAlivePaidWorker() {
   let state = {}
