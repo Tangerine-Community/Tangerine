@@ -1,6 +1,25 @@
-.tangy-full-width{
-    width: 95%;
-  }
-span.tangy-foreground-secondary{
-    padding-top: 0.3rem;
+.tangy-full-width {
+  width: 95%;
+}
+span.tangy-foreground-secondary {
+  padding-top: 0.3rem;
+}
+mat-card {
+  width: 70%;
+}
+.group-avatar {
+  font-size: 350%;
+}
+mat-card-title a {
+  text-decoration: none;
+  color: var(--tertiary-color);
+}
+.tangy-page-title {
+  margin-left: 2%;
+}
+mat-card.mat-card {
+  background-color: var(--accent-text-color);
+}
+.tangy-foreground-secondary {
+  color: var(--lighter-accent-color);
 }
