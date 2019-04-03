@@ -36,13 +36,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-
     "@nestjs/common": "^6.0.0",
     "@nestjs/core": "^6.0.0",
     "@nestjs/platform-express": "^6.0.0",
-    "reflect-metadata": "^0.1.12",
-    "rimraf": "^2.6.2",
-    "rxjs": "^6.3.3",
     "axios": "^0.17.1",
     "bcryptjs": "^2.4.3",
     "chalk": "^2.4.1",
@@ -56,7 +52,6 @@
     "express": "^4.16.2",
     "express-http-proxy": "^1.1.0",
     "express-session": "1.15.6",
-    "session-pouchdb-store": "0.2.1",
     "flat": "^4.0.0",
     "fs-extra": "^4.0.3",
     "json2csv": "^3.11.5",
@@ -65,13 +60,18 @@
     "pako": "^1.0.6",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "pouchdb": "^6.4.2",
+    "pouchdb": "^6.4.3",
     "pouchdb-find": "^6.4.3",
+    "pouchdb-upsert": "^2.2.0",
     "pretty": "^2.0.0",
     "read-yaml": "^1.1.0",
+    "reflect-metadata": "^0.1.12",
+    "rimraf": "^2.6.2",
+    "rxjs": "^6.3.3",
     "sanitize-filename": "^1.6.1",
-    "underscore": "^1.8.3",
-    "tangy-log": "^1.0.0"
+    "session-pouchdb-store": "0.2.1",
+    "tangy-log": "^1.0.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "@types/express": "^4.16.0",
