@@ -45,7 +45,7 @@ export class GroupsService {
 
   async createGroup(groupName: string) {
     try {
-      const result = await this.httpClient.post('/editor/group/new', { groupName }).toPromise();
+      const result = await this.httpClient.post('/nest/group/create', { label: groupName }).toPromise();
       return result;
     } catch (error) {
       console.error(error);
