@@ -40,19 +40,12 @@ T_REPLICATE="[]"
 T_MODULES="['csv']"
 # To populate categories in Class:
 #T_CATEGORIES="['one','two','three','four']"
-# This will set the default direction of text flow on new groups.
-T_LANG_DIRECTION="ltr"
 # Wether or not to use legacy parts of the system marked for deprecation. At the moment this is important for older clients that upload to an old route.
 T_LEGACY="false"
-# Override the default new group content with your own custom content folder.
-T_DEV_CONTENT="$(pwd)/client/content/default"
 # Override the docker image version of Tangerine to use. Note you must also check out that version in git.
 T_TAG=""
-
-# @TODO Deprecated? 
-T_SYNC_SERVER="localhost:5984"
+# Enable use of a remote CouchDB 
 T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
-T_COUCHDB_ENABLE="true"
 T_COUCHDB_LOCAL="true"
 
 
