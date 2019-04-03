@@ -20,7 +20,7 @@
                             <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">group_work</i>
                             </div>
                             <mat-card-title>
-                                <a [routerLink]="['/groups/', group.attributes.name]">{{group.attributes.name}}</a>
+                                <a (click)="navigateToGroup(group._id)">{{group.label}}</a>
                             </mat-card-title>
                             <mat-card-subtitle>Forms</mat-card-subtitle>
                         </mat-card-header>
