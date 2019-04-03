@@ -56,27 +56,24 @@ if (process.env.T_PROTOCOL == 'https') {
   });
 }
 
-// COUCHDB endpoint proxy
-if (process.env.T_COUCHDB_ENABLE === 'true') {
-  // proxy for couchdb
-  var proxy = require('express-http-proxy');
-  var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
-    proxyReqPathResolver: function (req, res) {
-      var path = require('url').parse(req.url).path;
-      clog("path:" + path);
-      return path;
-    }
-  });
-  var mountpoint = '/db';
-  app.use(mountpoint, couchProxy);
-  app.use(mountpoint, function (req, res) {
-    if (req.originalUrl === mountpoint) {
-      res.redirect(301, req.originalUrl + '/');
-    } else {
-      couchProxy;
-    }
-  });
-}
+// Proxy for CouchDB
+var proxy = require('express-http-proxy');
+var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
+  proxyReqPathResolver: function (req, res) {
+    var path = require('url').parse(req.url).path;
+    clog("path:" + path);
+    return path;
+  }
+});
+var mountpoint = '/db';
+app.use(mountpoint, couchProxy);
+app.use(mountpoint, function (req, res) {
+  if (req.originalUrl === mountpoint) {
+    res.redirect(301, req.originalUrl + '/');
+  } else {
+    couchProxy;
+  }
+});
 
 // Enable CORS
 app.use(cors({
@@ -104,10 +101,12 @@ passport.use(new LocalStrategy(
     }
   }
 ));
+
 async function findUserByUsername(username) {
   const result = await USERS_DB.find({ selector: { username } });
   return result.docs[0];
 }
+
 async function areCredentialsValid(username, password) {
   try {
     let isValid = false;
@@ -127,6 +126,7 @@ async function areCredentialsValid(username, password) {
     return false;
   }
 }
+
 // This decides what identifying piece of information to put in a cookie for the session.
 passport.serializeUser(function (user, done) {
   done(null, user.name);
@@ -136,7 +136,6 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (id, done) {
   done(null, { name: id });
 });
-
 
 // Use sessions.
 app.use(session({
