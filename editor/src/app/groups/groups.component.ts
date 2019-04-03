@@ -14,6 +14,7 @@ import { _TRANSLATE } from '../shared/_services/translation-marker';
 export class GroupsComponent implements OnInit {
 
   groups;
+  breakpoint;
 
   constructor(
     private groupsService: GroupsService, private errorHandler: TangyErrorHandler) {
@@ -22,8 +23,12 @@ export class GroupsComponent implements OnInit {
 
   async ngOnInit() {
     await this.getData();
-  };
+    this.onResize(window);
+  }
 
+  onResize(target) {
+    this.breakpoint = (target.innerWidth <= 832) ? 1 : 4;
+  }
 
   async getData() {
     try {
