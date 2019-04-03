@@ -2,7 +2,7 @@ import { Controller, Body, All } from '@nestjs/common';
 import { GroupService } from '../../shared/services/group/group.service';
 import { Group } from '../../shared/classes/group';
 
-@Controller('api/group')
+@Controller('nest/group')
 export class GroupController {
 
   constructor(private readonly groupService: GroupService) { }
