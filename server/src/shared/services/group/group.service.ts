@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TangerineConfigService } from '../tangerine-config/tangerine-config.service';
 import { Group } from '../../classes/group';
 import PouchDB from 'pouchdb'
-import UUID from 'uuid/v4'
+import { v4 as UUID } from 'uuid'
 import { BehaviorSubject, Observable } from 'rxjs';
 const DB = require('../../../db')
 const log = require('tangy-log').log
@@ -111,13 +111,13 @@ export class GroupService {
 
   async create(label):Promise<Group> {
     // Instantiate Group Doc, DB, and assets folder.
-    const groupId = UUID()
+    const groupId = `group-${UUID()}`
     const group = <Group>{_id: groupId, label}
     this.groupsDb.put(group)
     const groupDb = new DB(groupId)
     let groupName = label 
     await this.installViews(groupDb)
-    await exec(`cp -r /tangerine/client/app/src/assets  /tangerine/client/content/groups/${groupId}`)
+    await exec(`cp -r /tangerine/client/src/assets  /tangerine/client/content/groups/${groupId}`)
     // Create appConfig.
     let appConfig = <any>{}
     appConfig = <any>JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, "utf8"))
