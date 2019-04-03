@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 
 import { TangyFormsRoutingModule } from './tangy-forms-routing.module';
 import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-player.component';
+import { UserService } from '../shared/_services/user.service';
+import { TangyFormsQueries } from './tangy-forms.queries';
 
 @NgModule({
   imports: [
@@ -13,4 +15,8 @@ import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-play
   ],
   declarations: [TangyFormsPlayerComponent]
 })
-export class TangyFormsModule { }
+export class TangyFormsModule {
+  constructor(private userService: UserService) {
+    userService.addViews('tangy-form', TangyFormsQueries)
+  }
+ }
