@@ -1,4 +1,4 @@
-import { Controller, Body, All } from '@nestjs/common';
+import { Controller, Body, All, Param } from '@nestjs/common';
 import { GroupService } from '../../shared/services/group/group.service';
 import { Group } from '../../shared/classes/group';
 
@@ -12,8 +12,8 @@ export class GroupController {
     return await this.groupService.create(label)
   }
 
-  @All('read')
-  async read(@Body('groupId') groupId) {
+  @All('read/:groupId')
+  async read(@Param('groupId') groupId) {
     return await this.groupService.read(groupId)
   }
 
