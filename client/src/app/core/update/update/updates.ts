@@ -1,3 +1,4 @@
+import { UserService } from "src/app/shared/_services/user.service";
 
 export const updates = [
   {
@@ -142,6 +143,12 @@ export const updates = [
     requiresViewsUpdate: false,
     script: async (userDb, appConfig) => {
       console.log('Updating to v3.2.0...')
+    }
+  },
+  {
+    requiresViewsUpdate: true,
+    script: async (userDb, appConfig, userService:UserService) => {
+      console.log('Updating to v3.3.0...')
     }
   }
 ]
