@@ -87,7 +87,6 @@ RUN_OPTIONS="
   --restart unless-stopped \
   --env \"NODE_ENV=production\" \
   --env \"T_VERSION=$T_TAG\" \
-  --env \"T_COUCHDB_ENABLE=$T_COUCHDB_ENABLE\" \
   --env \"T_PROTOCOL=$T_PROTOCOL\" \
   --env \"T_ADMIN=$T_ADMIN\" \
   --env \"T_PASS=$T_PASS\" \
@@ -99,8 +98,6 @@ RUN_OPTIONS="
   --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_MODULES=$T_MODULES\" \
-  --env \"T_LANG_DIRECTION=$T_LANG_DIRECTION\" \
-  --env \"T_SYNC_SERVER=$T_SYNC_SERVER\" \
   --env \"T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE\" \
   --env \"T_PAID_MODE=$T_PAID_MODE\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
@@ -114,12 +111,11 @@ RUN_OPTIONS="
   --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
   --volume $(pwd)/data/csv:/csv/ \
   --volume $(pwd)/data/archives:/archives/ \
-  --volume $(pwd)/data/db:/tangerine/db/ \
   --volume $(pwd)/data/groups:/tangerine/groups/ \
   --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
 " 
 
-if [ "$T_COUCHDB_ENABLE" = "true" ] && [ "$T_COUCHDB_LOCAL" = "true" ]; then
+if [ "$T_COUCHDB_LOCAL" = "true" ]; then
   if [ ! -d data/couchdb ]; then
     mkdir data/couchdb
   fi
