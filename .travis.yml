@@ -25,8 +25,8 @@ before_install:
 install:
   - cd client/ && npm install && cd ../server && npm install
 script:
-  - npm run test && cd ../client
-  - ng test --watch=false
+  - npm run test 
+  - cd ../client && ng test --watch=false
 notifications:
   webhooks:
     on_success: change
