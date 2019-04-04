@@ -14,7 +14,7 @@ Upgrade instructions:
 git fetch origin
 git checkout v3.3.0
 ./start.sh
-docker exec -it tangerine translations-update
+docker exec -it tangerine /tangerine/server/src/update/v3.3.0.js 
 ```
 
 ## v3.2.0
