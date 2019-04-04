@@ -34,7 +34,7 @@
     "redux": "^4.0.1",
     "rxjs": "~6.3.3",
     "tangy-form": "^3.10.2",
-    "tangy-form-editor": "^5.11.1",
+    "tangy-form-editor": "^5.11.2",
     "translation-web-component": "0.0.3",
     "tslib": "^1.9.0",
     "underscore": "^1.9.1",
