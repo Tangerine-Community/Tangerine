@@ -10,7 +10,7 @@
           <div>
             <p id="group-title-small">{{groupLabel}}</p>
             <span><span class="tangy-page-title">{{'Forms'|translate}}{{'  '}}</span>
-              <a mat-raised-button color="accent" routerLink="/groups/new-group">
+              <a mat-raised-button color="accent" (click)="addForm()">
                 <i class="material-icons">add_circle</i>{{' '}}{{'Create a New Form'|translate}}
               </a>
             </span>

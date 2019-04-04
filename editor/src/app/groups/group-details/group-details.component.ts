@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
@@ -23,6 +23,7 @@ export class GroupDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private groupsService: GroupsService,
     private userService: UserService,
+    private router: Router,
     private http: HttpClient
   ) { }
 
@@ -117,8 +118,7 @@ export class GroupDetailsComponent implements OnInit {
       await this.http.post('/editor/file/save', file).toPromise()
     }
 
-    this.forms = await this.groupsService.getFormsList(this.groupName);
-
+    this.router.navigate(['tangy-form-editor', this.groupName, formId])
 
   }
 
