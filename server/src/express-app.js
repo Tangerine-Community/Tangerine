@@ -234,8 +234,6 @@ const queueNewGroupMiddleware = function (req, res, next) {
   next()
 }
 
-app.post('/editor/group/new', isAuthenticated, queueNewGroupMiddleware, require('./routes/group-new.js'))
-
 app.use('/editor/release-apk/:group/:releaseType', isAuthenticated, async function (req, res, next) {
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)

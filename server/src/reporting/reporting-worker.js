@@ -105,7 +105,12 @@ async function prepare(initialGroups) {
 /*
  * Add a group for the reporting worker to process.
  */
-async function addGroup(groupName) {
+async function addGroup(group) {
+  // Bail if this group already exists
+  let initialWorkerState = await getWorkerState()
+  if (initialWorkerState.databases.find(db => db.name === group._id) || !group._id) {
+    return
+  }
   // Something may have paused the process like clearing cache.
   while (await isPaused()) {
     await sleep(REPORTING_WORKER_PAUSE_LENGTH)
@@ -113,7 +118,7 @@ async function addGroup(groupName) {
   await setWorkingFlag()
   // Now it's safe to get the state.
   let workerState = await getWorkerState()
-  workerState.databases.push({ name: groupName, sequence: 0 })
+  workerState.databases.push({ name: group._id, sequence: 0 })
   await setWorkerState(workerState)
   await unsetWorkingFlag()
   return 

@@ -23,6 +23,8 @@ T_PORT_MAPPING="-p 80:80"
 T_PAID_MODE="site"
 # The number of form responses uploaded that will be marked paid thus end up in the reporting outputs.
 T_PAID_ALLOWANCE="unlimited"
+# Reporting delay determines how quickly uploads will get processed and show up in reporting outputs such as CSV. Time is in milliseconds and default is 5 minutes.
+T_REPORTING_DELAY="300000"
 # When CSV is generated, this determines how many form responses are held in memory during a batch. The higher the number the more memory this process will take but the faster it will complete. 
 T_CSV_BATCH_SIZE=50
 # On client, prevent users from editing their own profile.

@@ -38,12 +38,16 @@ export class AppService {
   }
 
   async keepAliveReportingWorker() {
-    const initialGroups = await this.groupService.listGroups()
+    let groupsList = await this.groupService.listGroups()
     const newGroupQueue = []
     this.groupService.groups$.subscribe({
-      next: (group) => newGroupQueue.push(group)
+      next: (group) => {
+        console.log('Queueing...')
+        console.log(group)
+        newGroupQueue.push(group)
+      }
     })
-    await reportingWorker.prepare(initialGroups)
+    await reportingWorker.prepare(groupsList)
     let workerState = await reportingWorker.getWorkerState()
     // Keep alive.
     while (true) {
@@ -52,11 +56,12 @@ export class AppService {
         // Add new groups if there are entries in the newGroupQueue array.
         while (newGroupQueue.length > 0) {
           await reportingWorker.addGroup(newGroupQueue.pop())
+          groupsList = await this.groupService.listGroups()
         }
         await exec('reporting-worker-batch')
-        workerState = await reportingWorker.prepare(initialGroups)
-        if (workerState.processed === 0) {
-          await sleep(3*1000)
+        workerState = await reportingWorker.getWorkerState()
+        if (workerState.hasOwnProperty('processed') === false || workerState.processed === 0) {
+          await sleep(this.configService.config().reportingDelay)
         } else {
           log.info(`Processed ${workerState.processed} changes.`)
         }

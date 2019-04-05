@@ -126,6 +126,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_REPLICATE=$T_REPLICATE\" \
   --env \"T_PAID_ALLOWANCE=$T_PAID_ALLOWANCE\" \
   --env \"T_PAID_MODE=$T_PAID_MODE\" \
+  --env \"T_REPORTING_DELAY=$T_REPORTING_DELAY\" \
   --env \"T_CSV_BATCH_SIZE=$T_CSV_BATCH_SIZE\" \
   --env \"T_HIDE_PROFILE=$T_HIDE_PROFILE\" \
   --env \"T_MODULES=$T_MODULES\" \
