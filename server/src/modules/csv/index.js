@@ -1,7 +1,7 @@
 const DB = require('../../db.js')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
-const insertGroupReportingViews = require(`../../insert-group-reporting-views.js`)
+const groupReportingViews = require(`./views.js`)
 
 module.exports = {
   hooks: {
@@ -16,6 +16,7 @@ module.exports = {
     },
     reportingOutputs: function(data) {
       return new Promise(async (resolve, reject) => {
+        try {
           const {flatResponse, doc, sourceDb} = data
           // @TODO Rename `-reporting` to `-csv`.
           const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
@@ -25,6 +26,21 @@ module.exports = {
           // Index the view now.
           await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
           resolve(data)
+        } catch(e) { reject(e) }
+      })
+    },
+    groupNew: function(data) {
+      return new Promise(async (resolve, reject) => {
+        const {groupName, appConfig} = data
+        let designDoc = Object.assign({}, groupReportingViews)
+        let groupDb = new DB(`${groupName}-reporting`)
+        try {
+          let status = await groupDb.post(designDoc)
+          log.info(`group reporting views inserted into ${groupName}-reporting`)
+        } catch (error) {
+          log.error(error)
+        }
+        resolve(data)
       })
     }
   }

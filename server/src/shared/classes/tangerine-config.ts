@@ -6,4 +6,5 @@ export interface TangerineConfig {
   dbAdminUsername: string
   dbAdminPassword: string
   uploadToken: string
+  reportingDelay: number
 }

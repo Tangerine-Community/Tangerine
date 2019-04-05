@@ -13,7 +13,8 @@ export class TangerineConfigService {
       dbAdminUsername: process.env.T_ADMIN,
       dbAdminPassword: process.env.T_PASS,
       syncUsername: process.env.T_SYNC_USERNAME,
-      syncPassword: process.env.T_SYNC_PASSWORD
+      syncPassword: process.env.T_SYNC_PASSWORD,
+      reportingDelay: parseInt(process.env.T_REPORTING_DELAY)
     }
   }
 }

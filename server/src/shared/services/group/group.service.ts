@@ -3,7 +3,7 @@ import { TangerineConfigService } from '../tangerine-config/tangerine-config.ser
 import { Group } from '../../classes/group';
 import PouchDB from 'pouchdb'
 import { v4 as UUID } from 'uuid'
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 const DB = require('../../../db')
 const log = require('tangy-log').log
 const fs = require('fs-extra')
@@ -20,8 +20,9 @@ type SyncUrl = string
 export class GroupService {
 
   _views = {}
-  private _groups: BehaviorSubject<Array<Group>> = new BehaviorSubject([])
-  public readonly groups$: Observable<Array<Group>> = this._groups.asObservable();
+  //private _groups: BehaviorSubject<Group> = new BehaviorSubject({})
+  //public readonly groups$: Observable<Group> = this._groups.asObservable();
+  public readonly groups$: Subject<Group> = new Subject();
   groupDatabases:Array<PouchDB> = []
   DB = DB
   groupsDb = new DB('groups');
@@ -151,7 +152,7 @@ export class GroupService {
     }))
     // Stash and emit observable.
     this.groupDatabases.push(groupDb)
-    this._groups.next([...this._groups.getValue(), group])
+    this.groups$.next(group)
     return group
   }
 
