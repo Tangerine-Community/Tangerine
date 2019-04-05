@@ -63,10 +63,14 @@ export class GroupService {
   async installViews(groupDb) {
     log.info(`Installing views for ${groupDb.name}`)
     for (const moduleName in this._views) {
-      await groupDb.put({
-        _id: `_design/${moduleName}`,
-        views: this._views[moduleName]
-      })
+      for (const viewName in this._views[moduleName]) {
+        await groupDb.put({
+          _id: `_design/${moduleName}_${viewName}`,
+          views: {
+            [`${moduleName}_${viewName}`]: this._views[moduleName][viewName]
+          }
+        })
+      }
     }
   }
 
@@ -101,7 +105,7 @@ export class GroupService {
       for (const groupDb of this.groupDatabases) {
         for (const moduleName in this._views) {
           for (const viewName in this._views[moduleName]) {
-            await groupDb.query(`${moduleName}/${viewName}`, {limit: 1})
+            await groupDb.query(`${moduleName}_${viewName}`, {limit: 1})
           }
         }
       }
