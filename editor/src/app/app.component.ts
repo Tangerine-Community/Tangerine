@@ -21,6 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
     history: string[] = [];
     titleToUse: string;
     mobileQuery: MediaQueryList;
+    window:any
 
     private _mobileQueryListener: () => void;
     constructor(
@@ -37,6 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.mobileQuery = media.matchMedia('(max-width: 600px)');
         this._mobileQueryListener = () => changeDetectorRef.detectChanges();
         this.mobileQuery.addListener(this._mobileQueryListener);
+        this.window = this.windowRef.nativeWindow;
     }
 
     async logout() {
@@ -55,6 +57,13 @@ export class AppComponent implements OnInit, OnDestroy {
             this.user_id = localStorage.getItem('user_id');
             if (!isLoggedIn) { this.router.navigate(['login']); }
         });
+
+      fetch('assets/translation.json')
+        .then(response => response.json())
+        .then(json => {
+          console.log("populating window.translation.")
+          this.window.translation = json
+        })
 
         // Remove splash.
         setTimeout(() => {
