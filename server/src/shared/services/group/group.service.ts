@@ -120,6 +120,15 @@ export class GroupService {
     const group = <Group>{_id: groupId, label}
     this.groupsDb.put(group)
     const groupDb = new DB(groupId)
+    let modules = [];
+    let modulesString = process.env.T_MODULES;
+    modulesString = modulesString.replace(/'/g, '"');
+    let moduleEntries = JSON.parse(modulesString)
+    if (moduleEntries.length > 0) {
+      for (let moduleEntry of moduleEntries) {
+        modules.push(moduleEntry);
+      }
+    }
     let groupName = label 
     await this.installViews(groupDb)
     await exec(`cp -r /tangerine/client/src/assets  /tangerine/client/content/groups/${groupId}`)
@@ -134,7 +143,7 @@ export class GroupService {
     appConfig.hideProfile = (process.env.T_HIDE_PROFILE === 'true') ? true : false 
     appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
     appConfig.centrallyManagedUserProfile = (process.env.T_CENTRALLY_MANAGED_USER_PROFILE === 'true') ? true : false
-    appConfig.modules = tangyModules.modules;
+    appConfig.modules = modules;
     appConfig.direction = `${process.env.T_LANG_DIRECTION}`
     if (process.env.T_CATEGORIES) {
       let categoriesString = `${process.env.T_CATEGORIES}`
@@ -142,9 +151,11 @@ export class GroupService {
       let categoriesEntries = JSON.parse(categoriesString)
       appConfig.categories = categoriesEntries;
     }
+    console.log("appConfig modules before hooks: " + JSON.stringify(appConfig.modules));
     // @TODO Remove groupName after modules have switched to groupId.
     const data = await tangyModules.hook('groupNew', {groupName: groupId, groupId, appConfig})
     appConfig = data.appConfig
+    console.log("appConfig modules after hooks: " + JSON.stringify(appConfig.modules));
     await fs.writeFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, JSON.stringify(appConfig))
       .then(status => log.info("Wrote app-config.json"))
       .catch(err => log.error("An error copying app-config: " + err))
@@ -159,6 +170,7 @@ export class GroupService {
     this.groups$.next(group)
     return group
   }
+
 
   async read(groupId:string):Promise<Group> {
     return await this.groupsDb.get(groupId)
