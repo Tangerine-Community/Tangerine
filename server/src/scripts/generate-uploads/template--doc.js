@@ -100,7 +100,25 @@ exports.doc = {
         },
         {
           "name": "userProfileId",
-          "value": "fb4c070e-9ba1-4278-bfba-e4258065ecb5"
+          "value": "foo123"
+        },
+        {
+          "name": "lesson_start_date",
+          "value": "2019-01-01"
+        },
+        {
+          "name": "gps-coordinates",
+          "value": {
+            "latitude": 41.3782071,
+            "longitude": 2.1667055,
+            "accuracy": 30
+          },
+          "required": false,
+          "hideAccuracyDistance": false,
+          "hideAccuracyLevel": false,
+          "hideCoordinates": false,
+          "disabled": true,
+          "invalid": false
         }
       ],
       "open": false,

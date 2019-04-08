@@ -3,9 +3,8 @@ const fs = require('fs-extra')
 
 module.exports = {
   hooks: {
-    flatFormReponse: function(data) {
+    csv_flatFormReponse: function(data) {
       return new Promise((resolve, reject) => {
-          debugger;
           let formResponse = data.formResponse
           let flatFormResponse = data.flatFormResponse
           if (formResponse.metadata && formResponse.metadata.studentRegistrationDoc && formResponse.metadata.studentRegistrationDoc.classId) {
