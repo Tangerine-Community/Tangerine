@@ -98,6 +98,10 @@ const generateFlatResponse = async function (formResponse, locationList) {
         flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value.find(input => input.value == 'on')
           ? input.value.find(input => input.value == 'on').name
           : ''
+      } else if (input.tagName === 'TANGY-RADIO-BUTTON') {
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value
+          ? '1'
+          : '0'
       } else if (input.tagName === 'TANGY-CHECKBOXES') {
         for (let checkboxInput of input.value) {
           flatFormResponse[`${formID}.${item.id}.${input.name}_${checkboxInput.name}`] = checkboxInput.value
