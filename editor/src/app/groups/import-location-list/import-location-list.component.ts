@@ -39,7 +39,6 @@ export class ImportLocationListComponent implements OnInit {
     this.locationList = await this.http.get(`/editor/${this.groupName}/content/location-list.json`).toPromise();
     this.locationListLevels = this.locationList.locationsLevels;
     this.canUserImportFile = this.isLocationListEmpty() && !this.isLocationHierarchiesEmpty();
-    this.canUserImportFile = true;
   }
   isLocationListEmpty() {
     return Object.keys(this.locationList.locations).length === 0 && this.locationList.locations.constructor === Object;
