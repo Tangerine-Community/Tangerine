@@ -37,11 +37,8 @@ export class ImportLocationListComponent implements OnInit {
       this.groupName = params.groupName;
     });
     this.locationList = await this.http.get(`/editor/${this.groupName}/content/location-list.json`).toPromise();
-    // this.locationListLevels = this.locationList.locationsLevels.reduce((acc, val) => acc.concat([val, `${val}_id`]), []);
     this.locationListLevels = this.locationList.locationsLevels;
-    // TODO remove next line
-    // this.canUserImportFile = this.isLocationListEmpty() && !this.isLocationHierarchiesEmpty();
-    this.canUserImportFile = true;
+    this.canUserImportFile = this.isLocationListEmpty() && !this.isLocationHierarchiesEmpty();
   }
   isLocationListEmpty() {
     return Object.keys(this.locationList.locations).length === 0 && this.locationList.locations.constructor === Object;
@@ -89,8 +86,7 @@ export class ImportLocationListComponent implements OnInit {
       }
       this.generateIDs();
       this.transformFromMappings();
-      // TODO uncomment next line
-      // await this.saveLocationList();
+      await this.saveLocationList();
     } catch (error) {
 
     }
@@ -164,24 +160,18 @@ export class ImportLocationListComponent implements OnInit {
         ];
       });
     });
-
-    console.log(Loc.unflatten({ locations, locationsLevels: this.locationList.locationsLevels }));
-    // this.generatedLocationList = Loc.unflatten({ locations, locationsLevels: this.locationList.locationsLevels });
-    // console.log(locations);
+    this.generatedLocationList = Loc.unflatten({ locations, locationsLevels: this.locationList.locationsLevels });
   }
   async saveLocationList() { }
   async saveLocationListToDisk() {
     try {
-      // this.isLoading = true;
       const payload = {
         filePath: this.locationListFileName, groupId: this.groupName,
         fileContents: JSON.stringify(this.generatedLocationList)
       };
       await this.http.post(`/editor/file/save`, payload).toPromise();
-      // this.isLoading = false;
       this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
     } catch (error) {
-      // this.isLoading = false;
       this.errorHandler.handleError('Error Saving Location List File to disk');
     }
   }
