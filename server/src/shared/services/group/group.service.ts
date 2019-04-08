@@ -134,7 +134,7 @@ export class GroupService {
     appConfig.hideProfile = (process.env.T_HIDE_PROFILE === 'true') ? true : false 
     appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
     appConfig.centrallyManagedUserProfile = (process.env.T_CENTRALLY_MANAGED_USER_PROFILE === 'true') ? true : false
-    appConfig.modules = tangyModules.modules;
+    appConfig.modules = tangyModules.enabledModules;
     appConfig.direction = `${process.env.T_LANG_DIRECTION}`
     if (process.env.T_CATEGORIES) {
       let categoriesString = `${process.env.T_CATEGORIES}`
