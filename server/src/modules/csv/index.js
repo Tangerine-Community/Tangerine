@@ -2,7 +2,6 @@ const DB = require('../../db.js')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
 const groupReportingViews = require(`./views.js`)
-const insertGroupReportingViews = require(`../../insert-group-reporting-views.js`)
 const {promisify} = require('util');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
