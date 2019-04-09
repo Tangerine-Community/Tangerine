@@ -141,6 +141,30 @@ const generateFlatResponse = async function (formResponse, locationList) {
         flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
         let timeSpent = input.duration - input.timeRemaining
         flatFormResponse[`${formID}.${item.id}.${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
+      } else if (input.tagName === 'TANGY-UNTIMED-GRID') {
+        let hitLastAttempted = false
+        for (let toggleInput of input.value) {
+          let derivedValue = ''
+          if (hitLastAttempted === true) {
+            // Not attempted.
+            derivedValue = '.'
+          } else if (toggleInput.value === 'on') {
+            // Incorrect.
+            derivedValue = '0'
+          } else {
+            // Correct.
+            derivedValue = '1'
+          }
+          flatFormResponse[`${formID}.${item.id}.${input.name}_${toggleInput.name}`] = derivedValue
+          if (toggleInput.highlighted === true) {
+            hitLastAttempted = true
+          }
+        };
+        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
+        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_correct`] = numberOfItemsCorrect
+        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
       } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
         // Do nothing :).
       } else if (input && typeof input.value === 'string') {
