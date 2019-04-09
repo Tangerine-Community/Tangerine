@@ -45,7 +45,7 @@ export class GroupService {
     return `${config.protocol}://${config.hostName}/db/${groupId}`
   }
 
-  async listGroups():Promise<[Group]> {
+  async listGroups():Promise<Array<Group>> {
     return ((await this.groupsDb.allDocs({ include_docs: true }))
       .rows
       .map(row => row.doc)

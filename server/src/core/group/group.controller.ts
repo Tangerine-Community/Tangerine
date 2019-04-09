@@ -1,11 +1,17 @@
-import { Controller, Body, All, Param } from '@nestjs/common';
+import { Controller, Body, All, Param, Req, Request } from '@nestjs/common';
 import { GroupService } from '../../shared/services/group/group.service';
 import { Group } from '../../shared/classes/group';
+import { TangerineConfigService } from '../../shared/services/tangerine-config/tangerine-config.service';
+import { UserService } from '../../shared/services/user/user.service';
 
 @Controller('nest/group')
 export class GroupController {
 
-  constructor(private readonly groupService: GroupService) { }
+  constructor(
+    private readonly groupService: GroupService,
+    private readonly configService: TangerineConfigService,
+    private readonly userService: UserService
+  ) { }
 
   @All('create')
   async create(@Body('label') label:string):Promise<Group> {
@@ -30,8 +36,17 @@ export class GroupController {
   }
 
   @All('list')
-  async list():Promise<[Group]> {
-    return await this.groupService.listGroups()
+  async list(@Request() request):Promise<Array<Group>> {
+    console.log(request)
+    const groups = await this.groupService.listGroups()
+    if (request.user && request.user.name === this.configService.config().userOneUsername) {
+      return groups
+    } else {
+      const user = await this.userService.getUserByUsername(request.user.name)
+      return groups.filter(group => {
+        return user.groups.reduce((foundMembership, groupMembership) => foundMembership ? true : groupMembership.groupName === group._id, false)
+      })
+    }
   }
 
 }
