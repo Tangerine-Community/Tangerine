@@ -10,6 +10,8 @@
   - Group Names can now have spaces and special characters [#1424](https://github.com/Tangerine-Community/Tangerine/pull/1424)
   - Editor configures Timed Grid to show or hide labels on buttons [#1432](https://github.com/Tangerine-Community/Tangerine/issues/1432)
   - Server Admin tunes the reporting delay between when an upload occurs and it shows up in reporting outputs [#1441](https://github.com/Tangerine-Community/Tangerine/issues/1441)
+  - CSV output for single checkboxes now show up as "0" and "1" as opposed to "" and "on" [#1367](https://github.com/Tangerine-Community/Tangerine/issues/1367)
+  - CSV output for single radiobuttons now show up as "0" and "1" as opposed to "null" and "on" [#1433](https://github.com/Tangerine-Community/Tangerine/issues/1433)
 
 Upgrade instructions:
 ```bash
