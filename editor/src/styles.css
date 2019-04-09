@@ -9,6 +9,7 @@ body {
   --mdc-theme-primary: #3c5b8d !important;
   --mdc-theme-secondary: #f26f10 !important;
   --primary-color-dark: #3c5b8d;
+  --primary-color-lighter: #2d7dd2;
   --primary-text-color: var(--light-theme-text-color);
   --primary-color: #3c5b8d;
   --accent-color: var(--mdc-theme-secondary);
