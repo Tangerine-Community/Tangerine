@@ -108,6 +108,10 @@ const generateFlatResponse = async function (formResponse, locationList) {
             ? "1"
             : "0"
         };
+      } else if (input.tagName === 'TANGY-CHECKBOX') {
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value
+          ? "1"
+          : "0"
       } else if (input.tagName === 'TANGY-TIMED') {
         let hitLastAttempted = false
         for (let toggleInput of input.value) {
