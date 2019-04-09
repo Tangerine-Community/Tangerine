@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.service';
@@ -12,7 +12,9 @@ import { WindowRef } from 'src/app/core/window-ref.service';
 })
 export class ReleasePwaComponent implements OnInit {
 
+  @ViewChild('urlContainer') urlContainer: ElementRef;
   buildPwaIsComplete = false;
+  copySuccess = false;
   groupName = '';
   releaseType = '';
   errorGeneratingPWA;
@@ -44,6 +46,12 @@ export class ReleasePwaComponent implements OnInit {
       console.error(error);
       this.errorHandler.handleError(_TRANSLATE('Could Not Generate PWA'));
     }
+  }
+
+  copyUrl() {
+    this.urlContainer.nativeElement.inputElement.inputElement.select()
+    this.windowRef.nativeWindow.document.execCommand("copy");
+    this.copySuccess = true
   }
 
 }
