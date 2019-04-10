@@ -37,7 +37,6 @@ export class GroupController {
 
   @All('list')
   async list(@Request() request):Promise<Array<Group>> {
-    console.log(request)
     const groups = await this.groupService.listGroups()
     if (request.user && request.user.name === this.configService.config().userOneUsername) {
       return groups
