@@ -4,7 +4,9 @@
   font-weight: 400;
   font-family: Roboto, 'Helvetica Nue', sans-serif;
 }
-
+#logo {
+  margin-bottom: 15px;
+}
 mat-placeholder i {
   margin-right: 0.075em;
 }
