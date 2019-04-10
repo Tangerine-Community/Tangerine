@@ -59,10 +59,6 @@ export class LoginComponent implements OnInit {
     this.showRecoveryInput = !this.showRecoveryInput;
   }
 
-  async onSelectUsername(event) {
-    this.user.username = event.target.value;
-  }
-
   resetPassword() {
     observableFrom(this.authenticationService.resetPassword(this.user)).subscribe(data => {
       if (data) {
