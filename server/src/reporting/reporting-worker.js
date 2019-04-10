@@ -89,8 +89,8 @@ async function prepare(initialGroups) {
   }
   // Populate initial groups if they are not there.
   if (!workerState.databases) workerState.databases = []
-  for (let groupName of initialGroups) {
-    let feed = workerState.databases.find(database => database.name === groupName)
+  for (let group of initialGroups) {
+    let feed = workerState.databases.find(database => database.name === groupName._id)
     if (!feed) workerState.databases.push({ name: groupName, sequence: 0 })
   }
   // Set database connection.
