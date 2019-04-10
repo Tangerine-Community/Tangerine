@@ -111,6 +111,7 @@ async function addGroup(group) {
   if (initialWorkerState.databases.find(db => db.name === group._id) || !group._id) {
     return
   }
+  log.info(`Add group to reporting worker state: ${group._id}`)
   // Something may have paused the process like clearing cache.
   while (await isPaused()) {
     await sleep(REPORTING_WORKER_PAUSE_LENGTH)
