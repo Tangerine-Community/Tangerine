@@ -90,8 +90,8 @@ async function prepare(initialGroups) {
   // Populate initial groups if they are not there.
   if (!workerState.databases) workerState.databases = []
   for (let group of initialGroups) {
-    let feed = workerState.databases.find(database => database.name === groupName._id)
-    if (!feed) workerState.databases.push({ name: groupName, sequence: 0 })
+    let feed = workerState.databases.find(database => database.name === group._id)
+    if (!feed) workerState.databases.push({ name: group._id, sequence: 0 })
   }
   // Set database connection.
   workerState.pouchDbDefaults = { prefix: process.env.T_COUCHDB_ENDPOINT }
