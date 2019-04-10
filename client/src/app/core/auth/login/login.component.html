@@ -1,30 +1,31 @@
-<paper-tabs *ngIf="installed" selected="0">
-  <paper-tab>
-      {{'LOGIN'|translate}}
-  </paper-tab>
-  <paper-tab>
-    <a href="#/register">{{'REGISTER'|translate}}</a>
-  </paper-tab>
-</paper-tabs>
-<div *ngIf="installed" class="login-app-content">
+<div id="header">
+  <img id="logo" src='./logo.png'/>
+  <paper-tabs *ngIf="installed" selected="0">
+    <paper-tab>
+        {{'LOGIN'|translate}}
+    </paper-tab>
+    <paper-tab>
+      <a href="#/register">{{'REGISTER'|translate}}</a>
+    </paper-tab>
+  </paper-tabs>
+</div>
+<div *ngIf="installed" class="login-app-content container">
   <div class="group">
     <form role="form" #login='ngForm' novalidate>
-      <h3 class="mat-title">{{'LOGIN'|translate}}</h3>
-      <br>
-      <br>
-      <select *ngIf="listUsernamesOnLoginScreen" name="usernames" id="usernames" (change)="onSelectUsername($event)">
-        <option value="_">{{'Select your Username'|translate}}</option>
-        <option *ngFor="let username of allUsernames" [value]="username">{{username}}</option>
-      </select>
+      <mat-form-field *ngIf="listUsernamesOnLoginScreen">
+        <mat-label>{{'Select your Username'|translate}}</mat-label>
+        <select matNativeControl [(ngModel)]="user.username" name="user">
+          <option value="" selected></option>
+          <option *ngFor="let username of allUsernames" [value]="username">{{username}}</option>
+        </select>
+      </mat-form-field>
       <mat-form-field *ngIf="!listUsernamesOnLoginScreen">
-        <input matInput type="text" required [(ngModel)]="user.username" id="username" name="username">
+        <input matInput type="text" required [(ngModel)]="enteredPassword" id="username" name="username">
         <mat-placeholder>
           <i class="material-icons app-input-icon">face</i>
           <span>{{'Username'|translate}}</span>
         </mat-placeholder>
       </mat-form-field>
-      <br>
-      <br>
       <mat-form-field *ngIf="!showRecoveryInput">
         <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
         <mat-placeholder>
@@ -40,8 +41,6 @@
             <span>{{securityQuestionText}}</span>
           </mat-placeholder>
         </mat-form-field>
-        <br>
-        <br>
         <mat-form-field>
           <input name="newPassword" matInput [(ngModel)]="user.newPassword" type="password" required>
           <mat-placeholder>
@@ -55,12 +54,10 @@
           </mat-placeholder>
         </mat-form-field>
       </div>
-      <br>
       <span>
         <small>
         </small>
       </span>
-      <br>
 
       <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
 
@@ -70,7 +67,6 @@
 
       <button *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()" mat-raised-button
         color="accent" name="action">{{'CANCEL'|translate}}</button>
-      <br>
       <span id="err">
         <small>{{errorMessage}}</small>
       </span>
