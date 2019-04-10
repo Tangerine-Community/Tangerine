@@ -20,6 +20,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/logo.png",
               "src/assets",
               { "glob": "**/*", "input": "./node_modules/tangy-form-editor/ckeditor/", "output": "./ckeditor/" },
               { "glob": "**/*", "input": "./node_modules/ace-builds/src-noconflict/", "output": "./" }
@@ -91,6 +92,7 @@
             "scripts": [],
             "assets": [
               "src/favicon.ico",
+              "src/logo.png",
               "src/assets"
             ]
           }
