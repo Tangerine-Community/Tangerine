@@ -225,7 +225,6 @@ app.use('/editor/:group/content/assets', isAuthenticated, function (req, res, ne
 });
 app.use('/editor/:group/content', isAuthenticated, function (req, res, next) {
   let contentPath = '/tangerine/client/content/groups/' + req.params.group
-  clog("Setting path to " + contentPath)
   return express.static(contentPath).apply(this, arguments);
 });
 
@@ -249,11 +248,11 @@ app.use('/editor/release-pwa/:group/:releaseType', isAuthenticated, async functi
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
-    await exec(`cd /tangerine/server/src/scripts && \
-        ./release-pwa.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
-  `)
+    const cmd = `release-pwa ${group} /tangerine/client/content/groups/${group} ${releaseType}`
+    
+    log.info(`RELEASING PWA: ${cmd}`)
+    await exec(cmd)
     res.send({ statusCode: 200, data: 'ok' })
   } catch (error) {
     res.send({ statusCode: 500, data: error })
@@ -264,7 +263,6 @@ app.use('/editor/release-dat/:group/:releaseType', isAuthenticated, async functi
   // @TODO Make sure user is member of group.
   const group = sanitize(req.params.group)
   const releaseType = sanitize(req.params.releaseType)
-  clog("in release-pwa, group: " + group + " releaseType: " + releaseType)
   try {
     const status = await exec(`cd /tangerine/server/src/scripts && \
         ./release-dat.sh ${group} /tangerine/client/content/groups/${group} ${releaseType}
@@ -395,8 +393,6 @@ app.post('/editor/file/save', isAuthenticated, async function (req, res) {
 app.delete('/editor/file/save', isAuthenticated, async function (req, res) {
   const filePath = req.query.filePath
   const groupId = req.query.groupId
-  clog(req.params)
-  clog(req.param)
   if (filePath && groupId) {
     const actualFilePath = `/tangerine/client/content/groups/${groupId}/${filePath}`
     await fs.remove(actualFilePath)
@@ -421,8 +417,6 @@ async function getGroupsByUser(username) {
     const files = await readdirPromisified('/tangerine/client/content/groups');
     let filteredFiles = files.filter(junk.not).filter(name => name !== '.git' && name !== 'README.md')
     let groups = [];
-    clog('/groups route lists these dirs: ' + filteredFiles)
-
     groups = filteredFiles.map((groupName) => {
       return {
         attributes: {
