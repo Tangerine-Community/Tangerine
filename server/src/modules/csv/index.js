@@ -8,6 +8,17 @@ const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 const CODE_SKIP = '999'
 
+async function insertGroupReportingViews(groupName) {
+  let designDoc = Object.assign({}, groupReportingViews)
+  let groupDb = new DB(`${groupName}-reporting`)
+  try {
+    let status = await groupDb.post(designDoc)
+    log.info(`group reporting views inserted into ${groupName}-reporting`)
+  } catch (error) {
+    log.error(error)
+  }
+}
+
 module.exports = {
   hooks: {
     clearReportingCache: async function(data) {
@@ -33,20 +44,16 @@ module.exports = {
           await saveFlatFormResponse(flatResponse, REPORTING_DB);
           // Index the view now.
           await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
-        } catch(e) { reject(e) }
+          resolve(data)
+        } catch(e) { 
+          reject(e)
+        }
       })
     },
     groupNew: function(data) {
       return new Promise(async (resolve, reject) => {
         const {groupName, appConfig} = data
-        let designDoc = Object.assign({}, groupReportingViews)
-        let groupDb = new DB(`${groupName}-reporting`)
-        try {
-          let status = await groupDb.post(designDoc)
-          log.info(`group reporting views inserted into ${groupName}-reporting`)
-        } catch (error) {
-          log.error(error)
-        }
+        await insertGroupReportingViews(groupName)
         resolve(data)
       })
     }
