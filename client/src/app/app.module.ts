@@ -27,6 +27,7 @@ import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { UserProfileModule } from './user-profile/user-profile.module';
 import { ExportDataModule } from './core/export-data/export-data.module';
 import { ClassModule } from "./class/class.module";
+import { AboutModule } from './core/about/about.module';
 export { AppComponent }
 
 
@@ -48,6 +49,7 @@ export { AppComponent }
     CaseModule,
     UserProfileModule,
     SettingsModule,
+    AboutModule,
     UpdateModule,
     SyncRecordsModule,
     ExportDataModule,
