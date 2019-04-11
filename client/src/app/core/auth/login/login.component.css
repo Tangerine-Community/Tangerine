@@ -8,6 +8,11 @@
   background: var(--primary-color-dark);
 }
 
+#header-inner, .content-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 #logo {
   max-width: 60%;
   margin: 15px auto 0px;
