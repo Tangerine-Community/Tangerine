@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../_services/authentication.service';
 import { _TRANSLATE } from '../../../../shared/_services/translation-marker';
+import { WindowRef } from 'src/app/core/window-ref.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private windowRef: WindowRef
   ) { }
 
   ngOnInit() {
@@ -27,6 +29,12 @@ export class LoginComponent implements OnInit {
       const data = await this.authenticationService.login(this.user.username, this.user.password);
       if (data) {
         this.router.navigate(['projects']);
+        setTimeout(() => {
+          if (this.windowRef.nativeWindow.location.hash === '#/login') {
+            console.log('force navigation')
+            this.windowRef.nativeWindow.location.hash = ''
+          }
+        }, 3000)
 
       } else {
         this.errorMessage = _TRANSLATE('Login Unsuccesful');

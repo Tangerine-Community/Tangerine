@@ -47,6 +47,7 @@ export class AppComponent implements OnInit, OnDestroy {
     async logout() {
         await this.authenticationService.logout();
         this.router.navigate(['login']);
+        this.window.location.reload()
     }
 
     async ngOnInit() {
