@@ -8,6 +8,9 @@ export class TangerineConfigService {
       uploadToken: process.env.T_UPLOAD_TOKEN,
       hostName: process.env.T_HOST_NAME,
       protocol: process.env.T_PROTOCOL,
+      user1ManagedServerUsers: process.env.T_USER1_MANAGED_SERVER_USERS === 'true'
+        ? true
+        : false,
       userOneUsername: process.env.T_USER1,
       userOnePassword: process.env.T_USER1_PASSWORD,
       dbAdminUsername: process.env.T_ADMIN,
