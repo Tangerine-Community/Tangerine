@@ -15,6 +15,8 @@
   - You can now limit who can add/see sitewide users to only the USER1 account by setting `T_USER1_MANAGED_SERVER_USERS` to `"true"` in `config.sh` [#1381](https://github.com/Tangerine-Community/Tangerine/issues/1381).
 
 Upgrade instructions:
+
+Backup your data folder and then run the following commands.
 ```bash
 git fetch origin
 git checkout v3.3.0
