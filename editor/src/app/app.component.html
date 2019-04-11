@@ -1,6 +1,6 @@
 <div class="tangy-main-container" [class.tangy-main-is-mobile]="mobileQuery.matches">
     <mat-toolbar class="tangy-main-toolbar mat-elevation-z5">
-        <button mat-icon-button (click)="snav.toggle()">
+        <button mat-icon-button (click)="snav.toggle()" *ngIf="loggedIn">
             <mat-icon>menu</mat-icon>
         </button>
         <h1 class="tangy-main-app-name"> Tangerine Editor</h1>
