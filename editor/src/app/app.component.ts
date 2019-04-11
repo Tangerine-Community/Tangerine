@@ -5,6 +5,7 @@ import { AuthenticationService } from './core/auth/_services/authentication.serv
 import { RegistrationService } from './registration/services/registration.service';
 import { WindowRef } from './core/window-ref.service';
 import { MediaMatcher } from '@angular/cdk/layout';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit, OnDestroy {
     validSession: boolean;
     user_id: string = localStorage.getItem('user_id');
     private childValue: string;
+    canManageSitewideUsers = false
 
     history: string[] = [];
     titleToUse: string;
@@ -31,7 +33,8 @@ export class AppComponent implements OnInit, OnDestroy {
         private authenticationService: AuthenticationService,
         translate: TranslateService,
         changeDetectorRef: ChangeDetectorRef,
-        media: MediaMatcher
+        media: MediaMatcher,
+        private http: HttpClient
     ) {
         translate.setDefaultLang('translation');
         translate.use('translation');
@@ -52,9 +55,10 @@ export class AppComponent implements OnInit, OnDestroy {
         await this.ensureLoggedIn();
         setInterval(() => this.ensureLoggedIn(), 60 * 1000);
 
-        this.authenticationService.currentUserLoggedIn$.subscribe(isLoggedIn => {
+        this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
             this.loggedIn = isLoggedIn;
             this.user_id = localStorage.getItem('user_id');
+            this.canManageSitewideUsers = <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
             if (!isLoggedIn) { this.router.navigate(['login']); }
         });
 
