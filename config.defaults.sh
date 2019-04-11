@@ -27,6 +27,8 @@ T_PAID_ALLOWANCE="unlimited"
 T_REPORTING_DELAY="300000"
 # When CSV is generated, this determines how many form responses are held in memory during a batch. The higher the number the more memory this process will take but the faster it will complete. 
 T_CSV_BATCH_SIZE=50
+# Determines wether only user1 can add and see sitewide users or all users can.
+T_USER1_MANAGED_SERVER_USERS="false"
 # On client, prevent users from editing their own profile.
 T_HIDE_PROFILE="false"
 # On device registration, after user creates account, will force user to enter 6 character code that references online account.

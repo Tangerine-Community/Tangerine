@@ -20,7 +20,7 @@
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
-            <mat-nav-list class="tangy-full-width">
+            <mat-nav-list class="tangy-full-width" *ngIf="canManageSitewideUsers">
                 <mat-list-item>
                     <span class=""><i class="material-icons menu-icon">group</i></span>
                     <a matLine routerLink="/manage-users" routerLinkActive="active" *ngIf="loggedIn"
