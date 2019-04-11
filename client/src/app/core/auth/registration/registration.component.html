@@ -1,14 +1,16 @@
 <div id="header">
-  <img id="logo" src='./logo.png'/>
-  <paper-tabs selected="1">
-    <paper-tab routerLink="/login">
-        {{'LOGIN'|translate}}
-    </paper-tab>
-    <paper-tab>{{'REGISTER'|translate}}</paper-tab>
-  </paper-tabs>
+  <div id="header-inner">
+    <img id="logo" src='./logo.png'/>
+    <paper-tabs selected="1">
+      <paper-tab routerLink="/login">
+          {{'LOGIN'|translate}}
+      </paper-tab>
+      <paper-tab>{{'REGISTER'|translate}}</paper-tab>
+    </paper-tabs>
+  </div>
 </div>
 <div class="login-app-content">
-  <div class="group container">
+  <div class="group container content-inner">
     <form role="form" #registration='ngForm' novalidate (submit)="greaseTrap($event)" >
       <mat-form-field>
         <input name="username" type="text" matInput [(ngModel)]="user.username" (blur)="doesUserExist(user.username)" required>

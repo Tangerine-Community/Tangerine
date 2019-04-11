@@ -1,16 +1,18 @@
 <div id="header">
-  <img id="logo" src='./logo.png'/>
-  <paper-tabs *ngIf="installed" selected="0">
-    <paper-tab>
-        {{'LOGIN'|translate}}
-    </paper-tab>
-    <paper-tab routerLink="/register">
-      {{'REGISTER'|translate}}
-    </paper-tab>
-  </paper-tabs>
+  <div id="header-inner">
+    <img id="logo" src='./logo.png'/>
+    <paper-tabs *ngIf="installed" selected="0">
+      <paper-tab>
+          {{'LOGIN'|translate}}
+      </paper-tab>
+      <paper-tab routerLink="/register">
+        {{'REGISTER'|translate}}
+      </paper-tab>
+    </paper-tabs>
+  </div>
 </div>
 <div *ngIf="installed" class="login-app-content container">
-  <div class="group">
+  <div class="group content-inner">
     <form role="form" #login='ngForm' novalidate>
       <mat-form-field *ngIf="listUsernamesOnLoginScreen">
         <mat-label>{{'Select your Username'|translate}}</mat-label>
