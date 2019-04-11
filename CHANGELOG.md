@@ -12,6 +12,7 @@
   - CSV output for single checkboxes now show up as "0" and "1" as opposed to "" and "on" [#1367](https://github.com/Tangerine-Community/Tangerine/issues/1367)
   - CSV output for single radiobuttons now show up as "0" and "1" as opposed to "null" and "on" [#1433](https://github.com/Tangerine-Community/Tangerine/issues/1433)
   - You can now limit who can add/see sitewide users to only the USER1 account by setting `T_USER1_MANAGED_SERVER_USERS` to `"true"` in `config.sh` [#1381](https://github.com/Tangerine-Community/Tangerine/issues/1381).
+  - Client now has an "About" page with details about what Tangerine is [#1465](https://github.com/Tangerine-Community/Tangerine/issues/1465).
 
 Upgrade instructions:
 
