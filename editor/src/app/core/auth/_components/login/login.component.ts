@@ -26,7 +26,8 @@ export class LoginComponent implements OnInit {
     try {
       const data = await this.authenticationService.login(this.user.username, this.user.password);
       if (data) {
-        this.router.navigate([this.returnUrl]);
+        this.router.navigate(['projects']);
+
       } else {
         this.errorMessage = _TRANSLATE('Login Unsuccesful');
       }
