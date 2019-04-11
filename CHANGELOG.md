@@ -4,7 +4,6 @@
 - Features
   - Assessor reviews high level case variables, AKA "Case Manifest" [#1399](https://github.com/Tangerine-Community/Tangerine/issues/1399)
   - Assessor changes language setting to Russian [#1402](https://github.com/Tangerine-Community/Tangerine/issues/1402)
-  - Location import from csv [#1117](https://github.com/Tangerine-Community/Tangerine/issues/1117)
   - Untimed Grid subtest [#1366](https://github.com/Tangerine-Community/Tangerine/issues/1366)
   - Editor Style Upgrades (April 2019) [#1421](https://github.com/Tangerine-Community/Tangerine/issues/1421)
   - Group Names can now have spaces and special characters [#1424](https://github.com/Tangerine-Community/Tangerine/pull/1424)
