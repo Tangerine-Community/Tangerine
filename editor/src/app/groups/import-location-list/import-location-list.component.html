@@ -1,0 +1,80 @@
+<mat-card>
+    <mat-card-title>{{'Import Location List CSV'|translate}}</mat-card-title>
+    <mat-card-content>
+        <div class="tangy-full-width">
+            <input type="file" #file style="display: none" (change)="importLocationListFile($event.target)"
+                accept=".xls,.xlsx,.csv,application/vnd.ms-excel,application/vnd.ms-excel" />
+            <button mat-raised-button color="warn" [disabled]="!canUserImportFile" (click)="file.click()">{{'Import
+                CSV'|translate}}</button>
+            <br />
+
+            <mat-list>
+                <mat-list-item class="tangy-location-list">
+                    <span class="tangy-foreground-primary">{{'Fields'|translate}}</span>
+                    <span class="tangy-spacer"></span>
+                    <span class="tangy-foreground-primary">{{'Mapped to CSV Column'|translate}}</span>
+                </mat-list-item>
+            </mat-list>
+
+            <mat-list role="list" *ngFor="let locationLevel of locationListLevels">
+                <mat-list-item role="listitem">
+                    {{locationLevel}}
+                </mat-list-item>
+                <mat-list-item role="listitem" class="gray-bottom-border">
+                    <span class="text-indent-3 tangy-foreground-secondary ">{{'Label'|translate}}</span>
+                    <span class="tangy-spacer"></span>
+                    <span>
+                        <div *ngIf="CSVHeaders">
+                            <mat-form-field class="tangy-full-width">
+                                <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel]"
+                                    (selectionChange)="onSelectLocationLevelsMapping(locationLevel,$event.value)">
+                                    <mat-option *ngFor="let column of CSVHeaders" [value]="column">
+                                        {{column}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </span>
+                </mat-list-item>
+                <mat-list-item role="listitem" class="gray-bottom-border">
+                    <span class="text-indent-3 tangy-foreground-secondary ">{{'ID'|translate}}</span>
+                    <span class="tangy-spacer"></span>
+                    <span>
+                        <div *ngIf="CSVHeaders">
+                            <mat-form-field class="tangy-full-width">
+                                <mat-select name="mapping" placeholder="" [(ngModel)]="headerModel[locationLevel+'_id']"
+                                    (selectionChange)="onSelectLocationLevelsMapping(locationLevel,$event.value)">
+                                    <mat-option *ngFor="let column of CSVHeaders" [value]="column">
+                                        {{column}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </span>
+                </mat-list-item>
+                <mat-list-item role="listitem" class="gray-bottom-border"
+                    *ngFor="let metadata of locationList.metadata[locationLevel]">
+                    <span class="text-indent-3 tangy-foreground-secondary ">{{metadata.label}}</span>
+                    <span class="tangy-spacer"></span>
+                    <span>
+                        <div *ngIf="CSVHeaders">
+                            <mat-form-field class="tangy-full-width">
+                                <mat-select name="mapping" placeholder=""
+                                    [(ngModel)]="metadataModel[locationLevel+'_'+metadata.variableName]"
+                                    (selectionChange)="onSelectMetadataMapping(locationLevel,metadata.variableName,$event.value)">
+                                    <mat-option *ngFor="let column of CSVHeaders" [value]="column">
+                                        {{column}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </span>
+                    <span></span>
+                </mat-list-item>
+            </mat-list>
+            <br /><br />
+            <button mat-raised-button color="warn" [disabled]="!canUserImportFile" (click)="processLocationListData()">{{'Process
+                CSV'|translate}}</button>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,51 @@
+<div id="header">
+  <div id="header-inner">
+    <img id="logo" src='./logo.png'/>
+    <paper-tabs selected="1">
+      <paper-tab routerLink="/login">
+          {{'LOGIN'|translate}}
+      </paper-tab>
+      <paper-tab>{{'REGISTER'|translate}}</paper-tab>
+    </paper-tabs>
+  </div>
+</div>
+<div class="login-app-content">
+  <div class="group container content-inner">
+    <form role="form" #registration='ngForm' novalidate (submit)="greaseTrap($event)" >
+      <mat-form-field>
+        <input name="username" type="text" matInput [(ngModel)]="user.username" (blur)="doesUserExist(user.username)" required>
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">face</i>{{'Username'|translate}}
+        </mat-placeholder>
+      </mat-form-field>
+      <br>
+      <mat-form-field>
+        <input name="password" matInput [(ngModel)]="user.password" type="password" required>
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">lock_open</i>{{'Password'|translate}}
+        </mat-placeholder>
+      </mat-form-field>
+      <br>
+      <mat-form-field>
+        <input name="confirmPassword" matInput [(ngModel)]="user.confirmPassword" type="password" required>
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">lock_open</i>{{'Confirm Password'|translate}}
+        </mat-placeholder>
+      </mat-form-field>
+      <br>
+      <mat-form-field>
+        <input name="securityQuestionResponse" type="text" matInput [(ngModel)]="user.securityQuestionResponse" required>
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">security</i>{{securityQuestionText}}
+        </mat-placeholder>
+      </mat-form-field>
+      <br>
+      <button [disabled]="disableSubmit" mat-raised-button color="accent" (click)="register()">{{'SUBMIT'|translate}}</button>
+      <br>
+      <br>
+      <span [id]="statusMessage.type">
+        <small>{{statusMessage.message}}</small>
+      </span>
+    </form>
+  </div>
+</div>

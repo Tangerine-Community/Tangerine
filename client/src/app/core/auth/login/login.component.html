@@ -1,0 +1,77 @@
+<div id="header">
+  <div id="header-inner">
+    <img id="logo" src='./logo.png'/>
+    <paper-tabs *ngIf="installed" selected="0">
+      <paper-tab>
+          {{'LOGIN'|translate}}
+      </paper-tab>
+      <paper-tab routerLink="/register">
+        {{'REGISTER'|translate}}
+      </paper-tab>
+    </paper-tabs>
+  </div>
+</div>
+<div *ngIf="installed" class="login-app-content container">
+  <div class="group content-inner">
+    <form role="form" #login='ngForm' novalidate>
+      <mat-form-field *ngIf="listUsernamesOnLoginScreen">
+        <mat-label>{{'Select your Username'|translate}}</mat-label>
+        <select matNativeControl [(ngModel)]="user.username" name="user">
+          <option value="" selected></option>
+          <option *ngFor="let username of allUsernames" [value]="username">{{username}}</option>
+        </select>
+      </mat-form-field>
+      <mat-form-field *ngIf="!listUsernamesOnLoginScreen">
+        <input matInput type="text" required [(ngModel)]="enteredPassword" id="username" name="username">
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">face</i>
+          <span>{{'Username'|translate}}</span>
+        </mat-placeholder>
+      </mat-form-field>
+      <mat-form-field *ngIf="!showRecoveryInput">
+        <input matInput type="password" required [(ngModel)]="user.password" id="password" name="password">
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">lock_open</i>
+          <span>{{'Password'|translate}}</span>
+        </mat-placeholder>
+      </mat-form-field>
+      <div *ngIf="showRecoveryInput">
+        <mat-form-field>
+          <input matInput type="text" required [(ngModel)]="user.securityQuestionResponse" id="securityQuestionResponse" name="securityQuestionResponse">
+          <mat-placeholder>
+            <i class="material-icons app-input-icon">security</i>
+            <span>{{securityQuestionText}}</span>
+          </mat-placeholder>
+        </mat-form-field>
+        <mat-form-field>
+          <input name="newPassword" matInput [(ngModel)]="user.newPassword" type="password" required>
+          <mat-placeholder>
+            <i class="material-icons mat-11 app-input-icon">lock_open</i>{{'New Password'|translate}}
+          </mat-placeholder>
+        </mat-form-field>
+        <mat-form-field>
+          <input name="confirmNewPassword" matInput [(ngModel)]="user.confirmNewPassword" type="password" required>
+          <mat-placeholder>
+            <i class="material-icons mat-11 app-input-icon">lock_open</i>{{'Confirm New Password'|translate}}
+          </mat-placeholder>
+        </mat-form-field>
+      </div>
+      <span>
+        <small>
+        </small>
+      </span>
+
+      <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
+
+      <button *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()" mat-raised-button color="accent">{{'RESET PASSWORD'|translate}}</button>
+      <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
+        color="accent" name="action">{{'SUBMIT'|translate}}</button>
+
+      <button *ngIf="showRecoveryInput" (click)="toggleRecoveryInput()" mat-raised-button
+        color="accent" name="action">{{'CANCEL'|translate}}</button>
+      <span id="err">
+        <small>{{errorMessage}}</small>
+      </span>
+    </form>
+  </div>
+</div>

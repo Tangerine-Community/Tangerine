@@ -1,0 +1,34 @@
+:host {
+  position: relative;
+  top: -64px;
+}
+
+#header {
+  padding-top: 15px;
+  background: var(--primary-color-dark);
+}
+
+#header-inner, .content-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.content-inner {
+  padding-top: 15px;
+}
+
+#logo {
+  max-width: 60%;
+  margin: 15px auto 0px;
+  text-align: center;
+  display: block;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+button {
+  margin-right: 15px;
+  float: right;
+}

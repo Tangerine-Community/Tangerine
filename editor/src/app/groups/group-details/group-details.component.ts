@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
@@ -13,6 +13,9 @@ import { HttpParams } from '@angular/common/http';
 export class GroupDetailsComponent implements OnInit {
   forms;
   groupName;
+  groupId;
+  group;
+  groupLabel;
   isSuperAdminUser;
   isGroupAdminUser;
   responses;
@@ -20,12 +23,16 @@ export class GroupDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private groupsService: GroupsService,
     private userService: UserService,
+    private router: Router,
     private http: HttpClient
   ) { }
 
   async ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe(async params => {
       this.groupName = params.groupName;
+      this.groupId = params.groupName;
+      this.group = await this.groupsService.getGroupInfo(this.groupId)
+      this.groupLabel = this.group.label
     });
     try {
       this.isSuperAdminUser = await this.userService.isCurrentUserSuperAdmin();
@@ -111,8 +118,7 @@ export class GroupDetailsComponent implements OnInit {
       await this.http.post('/editor/file/save', file).toPromise()
     }
 
-    this.forms = await this.groupsService.getFormsList(this.groupName);
-
+    this.router.navigate(['tangy-form-editor', this.groupName, formId])
 
   }
 

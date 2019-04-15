@@ -1,17 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
+html,
+body {
+  height: 100%;
+}
 :root {
-    --document-background-color: #FAFAFA;
-    --mdc-theme-primary: #3c5b8d !important;
-    --mdc-theme-secondary: #f26f10 !important;
-    --primary-color-dark: #3c5b8d;
-    --primary-text-color: var(--light-theme-text-color);
-    --primary-color: #3c5b8d;
-    --accent-color: #f26f10;
-    --accent-text-color: #FFF;
-    --error-color: var(--paper-red-500);
-    --disabled-color: #BBB;
-  }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background: var(--document-background-color) }
-  
+  --document-background-color: #f7f6f6;
+  --mdc-theme-primary: #3c5b8d !important;
+  --mdc-theme-secondary: #f26f10 !important;
+  --primary-color-dark: #3c5b8d;
+  --primary-color-lighter: #2d7dd2;
+  --primary-text-color: var(--light-theme-text-color);
+  --primary-color: #3c5b8d;
+  --accent-color: var(--mdc-theme-secondary);
+  --lighter-accent-color: #ff9522;
+  --accent-text-color: #fff;
+  --error-color: var(--paper-red-500);
+  --success-color: var(--paper-green-500);
+  --disabled-color: #bbb;
+  --tertiary-color: #212121;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: var(--document-background-color);
+}
+
+.container {
+  margin: 15px;
+}

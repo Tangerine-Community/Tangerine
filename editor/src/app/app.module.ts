@@ -18,7 +18,10 @@ import { SupportComponent } from './support/support.component';
 import { WindowRef } from './core/window-ref.service';
 import { TangyFormsModule } from './tangy-forms/tangy-forms.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatButtonModule, MatIconModule, MatCheckboxModule, MatCardModule, MatMenuModule} from '@angular/material';
+import {
+  MatButtonModule, MatIconModule, MatCheckboxModule, MatCardModule, MatMenuModule,
+  MatSidenavModule, MatToolbarModule, MatDividerModule
+} from '@angular/material';
 
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -28,6 +31,9 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [AppComponent, SupportComponent],
   imports: [
+    MatToolbarModule,
+    MatDividerModule,
+    MatSidenavModule,
     MatButtonModule,
     MatCheckboxModule,
     MatCheckboxModule,
