@@ -1,5 +1,5 @@
 import { Controller, Get, Request } from '@nestjs/common';
-import { TangerineConfigService } from 'src/shared/services/tangerine-config/tangerine-config.service';
+import { TangerineConfigService } from '../../shared/services/tangerine-config/tangerine-config.service';
 import { User } from '../../shared/classes/user';
 
 @Controller('user')
