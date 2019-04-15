@@ -32,12 +32,18 @@ RUN cd /tangerine/editor && \
     npm install
 
 # Install client
+ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
+ADD client/pwa-tools/service-worker-generator/workbox-cli-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-cli-config.js
 ADD client/package.json /tangerine/client/package.json
-ADD client/app/package.json /tangerine/client/app/package.json
-ADD client/wrappers/pwa/package.json /tangerine/client/wrappers/pwa/package.json
-ADD client/wrappers/pwa/bower.json /tangerine/client/wrappers/pwa/bower.json
-ADD client/install.sh /tangerine/client/install.sh
-RUN cd /tangerine/client/ && ./install.sh
+ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
+ADD client/pwa-tools/updater-app/bower.json /tangerine/client/pwa-tools/updater-app/bower.json
+RUN cd /tangerine/client/ && \
+    npm install && \
+    cd /tangerine/client/pwa-tools/service-worker-generator && \
+    npm install && \
+    cd /tangerine/client/pwa-tools/updater-app && \
+    npm install && \
+    ./node_modules/.bin/bower install --allow-root
 
 # Build editor 
 ADD editor /tangerine/editor
@@ -45,9 +51,18 @@ RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
 RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
 
 
-# Build client v3.
+# Build client
 ADD client /tangerine/client
-RUN cd /tangerine/client/ && ./build.sh
+RUN cd /tangerine/client && \
+    ./node_modules/.bin/ng build --base-href "./" && \
+    cd /tangerine/client/pwa-tools/updater-app && \
+    npm run build && \
+    cp logo.svg build/default/ && \
+    cd /tangerine/client && \
+    cp -r dist/tangerine-client builds/apk/www/shell && \
+    cp -r pwa-tools/updater-app/build/default builds/pwa && \
+    mkdir builds/pwa/release-uuid && \
+    cp -r dist/tangerine-client builds/pwa/release-uuid/app
 
 # Add the rest of server.
 ADD server /tangerine/server
@@ -68,4 +83,4 @@ RUN mkdir /groups
 RUN echo {} > /paid-worker-state.json
 
 EXPOSE 80
-ENTRYPOINT cd /tangerine/server/ && node index.js 
+ENTRYPOINT cd /tangerine/server/ && npm start 

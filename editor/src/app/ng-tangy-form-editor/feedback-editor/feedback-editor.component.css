@@ -8,10 +8,11 @@
   width: 100%;
 }
 
-form, mat-card-content>*{
+form,
+mat-card-content > * {
   width: 80%;
-  margin: .5em auto;
-  padding: .5em .5em .5em .5em;
+  margin: 0.5em auto;
+  padding: 0.5em 0.5em 0.5em 0.5em;
 }
 
 #form-settings {

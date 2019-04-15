@@ -23,8 +23,12 @@ T_PORT_MAPPING="-p 80:80"
 T_PAID_MODE="site"
 # The number of form responses uploaded that will be marked paid thus end up in the reporting outputs.
 T_PAID_ALLOWANCE="unlimited"
+# Reporting delay determines how quickly uploads will get processed and show up in reporting outputs such as CSV. Time is in milliseconds and default is 5 minutes.
+T_REPORTING_DELAY="300000"
 # When CSV is generated, this determines how many form responses are held in memory during a batch. The higher the number the more memory this process will take but the faster it will complete. 
 T_CSV_BATCH_SIZE=50
+# Determines wether only user1 can add and see sitewide users or all users can.
+T_USER1_MANAGED_SERVER_USERS="false"
 # On client, prevent users from editing their own profile.
 T_HIDE_PROFILE="false"
 # On device registration, after user creates account, will force user to enter 6 character code that references online account.
@@ -40,19 +44,12 @@ T_REPLICATE="[]"
 T_MODULES="['csv']"
 # To populate categories in Class:
 #T_CATEGORIES="['one','two','three','four']"
-# This will set the default direction of text flow on new groups.
-T_LANG_DIRECTION="ltr"
 # Wether or not to use legacy parts of the system marked for deprecation. At the moment this is important for older clients that upload to an old route.
 T_LEGACY="false"
-# Override the default new group content with your own custom content folder.
-T_DEV_CONTENT="$(pwd)/client/content/default"
 # Override the docker image version of Tangerine to use. Note you must also check out that version in git.
 T_TAG=""
-
-# @TODO Deprecated? 
-T_SYNC_SERVER="localhost:5984"
+# Enable use of a remote CouchDB 
 T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
-T_COUCHDB_ENABLE="true"
 T_COUCHDB_LOCAL="true"
 
 

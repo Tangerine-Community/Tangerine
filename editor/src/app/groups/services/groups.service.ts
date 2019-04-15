@@ -18,6 +18,13 @@ export class GroupsService {
     private errorHandler: TangyErrorHandler
   ) { }
 
+  async getGroupInfo(groupId) {
+    return await this
+      .httpClient
+      .get(`/nest/group/read/${groupId}`)
+      .toPromise()
+  }
+
   async getUsersByUsername(username: string) {
     try {
       const data: any = await this.httpClient
@@ -34,8 +41,7 @@ export class GroupsService {
 
   async getAllGroups() {
     try {
-      const data: any = await this.httpClient.get('/groups/').toPromise();
-      return data.filter((group) => group.attributes.name.indexOf('_reporting') === -1);
+      return await this.httpClient.get('/nest/group/list').toPromise();
     } catch (error) {
       if (typeof error.status === 'undefined') {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
@@ -45,7 +51,7 @@ export class GroupsService {
 
   async createGroup(groupName: string) {
     try {
-      const result = await this.httpClient.post('/editor/group/new', { groupName }).toPromise();
+      const result = await this.httpClient.post('/nest/group/create', { label: groupName }).toPromise();
       return result;
     } catch (error) {
       console.error(error);

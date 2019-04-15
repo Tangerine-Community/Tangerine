@@ -1,12 +1,23 @@
 const DB = require('../../db.js')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
-const insertGroupReportingViews = require(`../../insert-group-reporting-views.js`)
+const groupReportingViews = require(`./views.js`)
 const {promisify} = require('util');
 const fs = require('fs');
 const readFile = promisify(fs.readFile);
 const tangyModules = require('../index.js')()
 const CODE_SKIP = '999'
+
+async function insertGroupReportingViews(groupName) {
+  let designDoc = Object.assign({}, groupReportingViews)
+  let groupDb = new DB(`${groupName}-reporting`)
+  try {
+    let status = await groupDb.post(designDoc)
+    log.info(`group reporting views inserted into ${groupName}-reporting`)
+  } catch (error) {
+    log.error(error)
+  }
+}
 
 module.exports = {
   hooks: {
@@ -21,18 +32,28 @@ module.exports = {
     },
     reportingOutputs: function(data) {
       return new Promise(async (resolve, reject) => {
-        const {doc, sourceDb} = data
-        const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
-        let flatResponse = await generateFlatResponse(doc, locationList);
-
-        // Process the flatResponse
-        // @TODO Rename `-reporting` to `-csv`.
-        const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
-        // @TODO Ensure design docs are in the database.
-        await saveFormInfo(flatResponse, REPORTING_DB);
-        await saveFlatFormResponse(flatResponse, REPORTING_DB);
-        // Index the view now.
-        await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+        try {
+          const {doc, sourceDb} = data
+          const locationList = JSON.parse(await readFile(`/tangerine/client/content/groups/${sourceDb.name}/location-list.json`))
+          let flatResponse = await generateFlatResponse(doc, locationList);
+          // Process the flatResponse
+          // @TODO Rename `-reporting` to `-csv`.
+          const REPORTING_DB = new DB(`${sourceDb.name}-reporting`);
+          // @TODO Ensure design docs are in the database.
+          await saveFormInfo(flatResponse, REPORTING_DB);
+          await saveFlatFormResponse(flatResponse, REPORTING_DB);
+          // Index the view now.
+          await REPORTING_DB.query('tangy-reporting/resultsByGroupFormId', {limit: 0})
+          resolve(data)
+        } catch(e) { 
+          reject(e)
+        }
+      })
+    },
+    groupNew: function(data) {
+      return new Promise(async (resolve, reject) => {
+        const {groupName, appConfig} = data
+        await insertGroupReportingViews(groupName)
         resolve(data)
       })
     }
@@ -84,12 +105,20 @@ const generateFlatResponse = async function (formResponse, locationList) {
         flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value.find(input => input.value == 'on')
           ? input.value.find(input => input.value == 'on').name
           : ''
+      } else if (input.tagName === 'TANGY-RADIO-BUTTON') {
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value
+          ? '1'
+          : '0'
       } else if (input.tagName === 'TANGY-CHECKBOXES') {
         for (let checkboxInput of input.value) {
           flatFormResponse[`${formID}.${item.id}.${input.name}_${checkboxInput.name}`] = checkboxInput.value
             ? "1"
             : "0"
         };
+      } else if (input.tagName === 'TANGY-CHECKBOX') {
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = input.value
+          ? "1"
+          : "0"
       } else if (input.tagName === 'TANGY-TIMED') {
         let hitLastAttempted = false
         for (let toggleInput of input.value) {
@@ -119,6 +148,30 @@ const generateFlatResponse = async function (formResponse, locationList) {
         flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
         let timeSpent = input.duration - input.timeRemaining
         flatFormResponse[`${formID}.${item.id}.${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
+      } else if (input.tagName === 'TANGY-UNTIMED-GRID') {
+        let hitLastAttempted = false
+        for (let toggleInput of input.value) {
+          let derivedValue = ''
+          if (hitLastAttempted === true) {
+            // Not attempted.
+            derivedValue = '.'
+          } else if (toggleInput.value === 'on') {
+            // Incorrect.
+            derivedValue = '0'
+          } else {
+            // Correct.
+            derivedValue = '1'
+          }
+          flatFormResponse[`${formID}.${item.id}.${input.name}_${toggleInput.name}`] = derivedValue
+          if (toggleInput.highlighted === true) {
+            hitLastAttempted = true
+          }
+        };
+        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
+        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_correct`] = numberOfItemsCorrect
+        flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
       } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
         // Do nothing :).
       } else if (input && typeof input.value === 'string') {
