@@ -145,7 +145,7 @@ View the app at http://localhost:4200.
 
 If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
 
-```
+```sh
 rm -r node_modules/tangy-form
 ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/app/node_modules/tangy-form
 ```
