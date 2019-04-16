@@ -55,7 +55,6 @@ export class EventFormComponent implements AfterContentInit {
         .caseEventDefinition
         .eventFormDefinitions
         .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
-      const userService = new UserService()
       this.tangyFormService = new TangyFormService({ databaseName: localStorage.getItem('currentUser') });
       if (this.eventForm.formResponseId) {
         this.formResponse = await this.tangyFormService.getResponse(this.eventForm.formResponseId)
