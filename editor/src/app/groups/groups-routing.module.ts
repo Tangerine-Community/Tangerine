@@ -13,6 +13,7 @@ import { ManageLocationListLevelsComponent } from './manage-location-list-levels
 import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
 import { SuperAdminUserGuard } from '../core/auth/_guards/super-admin-user-guard.service';
 import { AdminUserGuard } from '../core/auth/_guards/admin-user-guard.service';
+import { ImportLocationListComponent } from './import-location-list/import-location-list.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects',  component: GroupsComponent },
@@ -23,6 +24,10 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupName', component: GroupDetailsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
+  {
+    path: 'groups/:groupName/import-location-list',
+    component: ImportLocationListComponent, canActivate: [LoginGuard, AdminUserGuard]
+  },
   {
     path: 'groups/:groupName/manage-location-list-metadata/:locationLevel',
     component: ManageLocationListMetadataComponent, canActivate: [LoginGuard]

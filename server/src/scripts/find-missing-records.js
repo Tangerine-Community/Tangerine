@@ -17,7 +17,6 @@ Array.prototype.diff = function (a) {
 
 async function go() {
   const groupNames = await groupsList()
-  debugger;
   // let prodDbs = {}
   // let reportingDbs = {}
   for (let groupName of groupNames) {

@@ -23,7 +23,7 @@ export class CasesComponent implements OnInit {
     this.cases = (await db.allDocs({include_docs: true}))
       .rows
       .map(row => row.doc)
-      .filter(doc => doc.collection === 'Case')
+      .filter(doc => doc.collection === 'TangyFormResponse' && doc.type === 'Case')
     this.numberOfOpenCases = this.cases.filter(caseInstance => caseInstance.complete === false).length
   }
 
