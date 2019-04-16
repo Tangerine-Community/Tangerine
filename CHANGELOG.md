@@ -1,5 +1,29 @@
 # Changelog
 
+## v3.3.0
+- Features
+  - Assessor reviews high level case variables, AKA "Case Manifest" [#1399](https://github.com/Tangerine-Community/Tangerine/issues/1399)
+  - Assessor changes language setting to Russian [#1402](https://github.com/Tangerine-Community/Tangerine/issues/1402)
+  - Untimed Grid subtest [#1366](https://github.com/Tangerine-Community/Tangerine/issues/1366)
+  - Editor Style Upgrades (April 2019) [#1421](https://github.com/Tangerine-Community/Tangerine/issues/1421)
+  - Group Names can now have spaces and special characters [#1424](https://github.com/Tangerine-Community/Tangerine/pull/1424)
+  - Editor configures Timed Grid to show or hide labels on buttons [#1432](https://github.com/Tangerine-Community/Tangerine/issues/1432)
+  - Server Admin tunes the reporting delay between when an upload occurs and it shows up in reporting outputs [#1441](https://github.com/Tangerine-Community/Tangerine/issues/1441)
+  - CSV output for single checkboxes now show up as "0" and "1" as opposed to "" and "on" [#1367](https://github.com/Tangerine-Community/Tangerine/issues/1367)
+  - CSV output for single radiobuttons now show up as "0" and "1" as opposed to "null" and "on" [#1433](https://github.com/Tangerine-Community/Tangerine/issues/1433)
+  - You can now limit who can add/see sitewide users to only the USER1 account by setting `T_USER1_MANAGED_SERVER_USERS` to `"true"` in `config.sh` [#1381](https://github.com/Tangerine-Community/Tangerine/issues/1381).
+  - Client now has an "About" page with details about what Tangerine is [#1465](https://github.com/Tangerine-Community/Tangerine/issues/1465).
+
+Upgrade instructions:
+
+Backup your data folder and then run the following commands.
+```bash
+git fetch origin
+git checkout v3.3.0
+./start.sh
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.3.0.js 
+```
+
 ## v3.2.0
 - Features
   - Assessor changes language of App [#1315](https://github.com/Tangerine-Community/Tangerine/issues/1315)
@@ -9,6 +33,10 @@
   - Assessor confirms participant info using data from another form [#1385](https://github.com/Tangerine-Community/Tangerine/issues/1385)
   - Server Admin restarts machine to find containers have automatically come back up [#1388](https://github.com/Tangerine-Community/Tangerine/issues/1388)
   - Server Admin sets up Tangerine outage alarm [#1389](https://github.com/Tangerine-Community/Tangerine/issues/1389)
+- Developer Notes
+    - Ability to define database views on a per module basis in Client Angular [#1419](https://github.com/Tangerine-Community/Tangerine/pull/1419)
+    - Integrate test harness and TypeScript with server using NestJS [#1413](https://github.com/Tangerine-Community/Tangerine/pull/1413)
+    - Fix client tests, organize shared services and guards into the shared module, move client/app/ to client/ [#1398](https://github.com/Tangerine-Community/Tangerine/pull/1398)
 
 Upgrade instructions:
 ```bash

@@ -12,7 +12,11 @@
 // hue.
 
 // Create the theme object (a Sass map containing all of the palettes).
-$tangerine-app-theme: mat-light-theme($tangerine-app-primary, $tangerine-app-accent, $tangerine-app-warn);
+$tangerine-app-theme: mat-light-theme(
+  $tangerine-app-primary,
+  $tangerine-app-accent,
+  $tangerine-app-warn
+);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component

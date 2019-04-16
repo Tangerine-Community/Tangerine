@@ -245,7 +245,7 @@ export class DashboardService {
           for (const element of childElements) {
             // console.log("element name: " + element.name)
             // Check if there are grid subtests aka tangy-timed in this response
-            if (element.tagName === 'TANGY-TIMED') {
+            if (element.tagName === 'TANGY-TIMED' || element.tagName === 'TANGY-UNTIMED-GRID') {
               for (const answer of answeredQuestions) {
                 let value = answer[element.name]
                 if (typeof value !== 'undefined') {

@@ -1,0 +1,9 @@
+
+input {
+  width: 100%;
+  margin: 15px;
+}
+paper-button {
+  background: var(--accent-color);
+  font-size: 1em;
+}

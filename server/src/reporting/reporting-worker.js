@@ -89,9 +89,9 @@ async function prepare(initialGroups) {
   }
   // Populate initial groups if they are not there.
   if (!workerState.databases) workerState.databases = []
-  for (let groupName of initialGroups) {
-    let feed = workerState.databases.find(database => database.name === groupName)
-    if (!feed) workerState.databases.push({ name: groupName, sequence: 0 })
+  for (let group of initialGroups) {
+    let feed = workerState.databases.find(database => database.name === group._id)
+    if (!feed) workerState.databases.push({ name: group._id, sequence: 0 })
   }
   // Set database connection.
   workerState.pouchDbDefaults = { prefix: process.env.T_COUCHDB_ENDPOINT }
@@ -105,7 +105,13 @@ async function prepare(initialGroups) {
 /*
  * Add a group for the reporting worker to process.
  */
-async function addGroup(groupName) {
+async function addGroup(group) {
+  // Bail if this group already exists
+  let initialWorkerState = await getWorkerState()
+  if (initialWorkerState.databases.find(db => db.name === group._id) || !group._id) {
+    return
+  }
+  log.info(`Add group to reporting worker state: ${group._id}`)
   // Something may have paused the process like clearing cache.
   while (await isPaused()) {
     await sleep(REPORTING_WORKER_PAUSE_LENGTH)
@@ -113,7 +119,7 @@ async function addGroup(groupName) {
   await setWorkingFlag()
   // Now it's safe to get the state.
   let workerState = await getWorkerState()
-  workerState.databases.push({ name: groupName, sequence: 0 })
+  workerState.databases.push({ name: group._id, sequence: 0 })
   await setWorkerState(workerState)
   await unsetWorkingFlag()
   return 

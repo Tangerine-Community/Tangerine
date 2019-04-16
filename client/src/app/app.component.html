@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<mat-toolbar *ngIf="installed" dir="{{languageDirection}}" color="primary" class="mat-typography mat-tangy-custom-toolbar">
+<mat-toolbar *ngIf="installed && showNav" dir="{{languageDirection}}" color="primary" class="mat-typography mat-tangy-custom-toolbar">
   <span class="home-icon">
     <a class="tangy-no-text-decoration tangy-app-name" routerLink="/home">
       <app-tangy-svg-logo [tangyLogoStyle]="{'height':'45px'}"></app-tangy-svg-logo>
@@ -45,6 +45,10 @@
     <button mat-menu-item (click)="updateApp()" *ngIf="!showUpdateAppLink">
       <mat-icon class="material-icons menu-tangy-location-list-icon">cloud_download</mat-icon>
       <span>{{'Check for Update'|translate}}</span>
+    </button>
+    <button routerLink="about" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">info</mat-icon>
+      <span>{{'About'|translate}}</span>
     </button>
     <button mat-menu-item (click)="logout()">
       <mat-icon class="material-icons menu-tangy-location-list-icon">exit_to_app</mat-icon>

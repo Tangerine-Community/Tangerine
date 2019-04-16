@@ -33,12 +33,13 @@
     "rangen": "^1.0.0",
     "redux": "^4.0.1",
     "rxjs": "~6.3.3",
-    "tangy-form": "^3.10.2",
-    "tangy-form-editor": "^5.8.0",
+    "tangy-form": "^3.12.2",
+    "tangy-form-editor": "^5.13.4",
     "translation-web-component": "0.0.3",
     "tslib": "^1.9.0",
     "underscore": "^1.9.1",
     "workbox-cli": "^2.1.2",
+    "xlsx": "^0.14.1",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {

@@ -6,6 +6,7 @@ client/src/media_assets/
 data
 .data
 config.env
+package-lock.json
 
 couchdb.stdout
 

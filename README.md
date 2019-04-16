@@ -1,14 +1,12 @@
 # Tangerine
 
-![Tangerine](http://static1.squarespace.com/static/55c4e56fe4b0852b09fa2f29/t/55c4ec18e4b0f8bc41c735ae/1461960019800/?format=1500w)
-
-[![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine.svg)](https://travis-ci.org/Tangerine-Community/Tangerine)
+![Tangerine](http://static1.squarespace.com/static/55c4e56fe4b0852b09fa2f29/t/5caccebdeef1a1d189644216/1554823454410/?format=110w)
 
 [![Stories in Ready](https://badge.waffle.io/Tangerine-Community/Tangerine.png?label=ready&title=Ready)](https://waffle.io/Tangerine-Community/Tangerine)
 
 [![Join the chat at https://gitter.im/Tangerine-Community/Tangerine](https://badges.gitter.im/Tangerine-Community/Tangerine.svg)](https://gitter.im/Tangerine-Community/Tangerine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Digitize your EGMA and EGRA data collection with Tangerine. Create your Assessments online, conduct them offline with the Tangerine Android App or any device with Google Chrome web browser. All results you collect can be exported as a spreadsheet. When you have updates to forms you can send out an Over the Air update. Tangerine has been used by over 30 organizations to conduct over 1 million assessments and surveys in over 50 countries and in 100 languages.
+Digitize your EGMA and EGRA data collection with Tangerine&trade;. Create your Assessments online, conduct them offline with the Tangerine Android App or any device with Google Chrome web browser. All results you collect can be exported as a spreadsheet. When you have updates to forms you can send out an Over the Air update. Tangerine has been used by over 60 organizations to conduct over 1 million assessments and surveys in over 70 countries and in 100 languages.
 
 
 
@@ -53,21 +51,10 @@ Lastly, to reset caches and free up memory every so often, we recommend restarti
 0 0 * * * docker stop tangerine && docker start tangerine
 ```
 
-## Enable P2P offline sync
-You can release your Tangerine Apps as dat archives and access them using [Beaker Browser](https://beakerbrowser.com/) on Mac, Windows (see afforable $100 Windows tablet https://goo.gl/JgZ5c3), and Linux. The major advantage to releasing your Tangerine app as a dat archive is that it can be synced between devices while offline. If you have Android tablets, you can install [Bunsen Browser](https://play.google.com/store/apps/details?id=org.bunsenbrowser&hl=en_US) however there is currently an [issue with offline sync](https://github.com/bunsenbrowser/bunsen/issues/27). 
-
-To enable dat archives on your server, you will need to install nodejs and run `dat-party` from the host machine inside of a screen session. In the future we hope there will not be this extra step because there are some details to work out around Dat working inside of a Docker Container (https://github.com/datproject/dat/issues/858).
-
-```
-npm install -g dat dat-party
-screen -R dat-party
-cd tangerine/data/client/releases/prod/dat
-dat-party
-```
-Then press `control-a` `control-d` to detach from the "screen session" and leave it running.
-
-
 ## Upgrade
+When you start Tangerine, it creates two containers that need upgrades over time. The `tangerine` container and the `couchdb` container. 
+
+### Tangerine Upgrades
 Monitor https://github.com/Tangerine-Community/Tangerine/releases for new stable releases. Note that a "Pre-release" may not be stable, might corrupt your data, and there will not be an upgrade path for you.
 
 SSH into your server and run the following commands.
@@ -91,6 +78,15 @@ docker exec -it tangerine /tangerine/upgrades/v2.0.0.sh
 ```
 
 Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
+
+### CouchDB Upgrades
+Periodically CouchDB will issue security vulnerability fixes. Subscribe to their blog to be notified of releases (http://blog.couchdb.org) and then run the following commands.
+
+```
+docker pull couchdb
+cd tangerine
+./start.sh
+```
 
 ## Local Content Development
 Install [nodejs](https://nodejs.org/en/) and [git](https://git-scm.com/) on your local machine. Then run the following commands.
@@ -156,4 +152,4 @@ ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
 
 ## Trademark and License
-Tangerine is a registered trademark of [RTI International](https://rti.org). This software is licensed under the [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).
+Tangerine Logo is a registered trademark of [RTI International](https://rti.org). This software is licensed under the [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).

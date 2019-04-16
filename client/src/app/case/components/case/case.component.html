@@ -1,6 +1,6 @@
-<app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id"></app-case-breadcrumb>
+<app-case-breadcrumb *ngIf="ready" [caseId]="caseService.case._id"></app-case-breadcrumb>
 
-<div *ngIf="caseService" class="subject-header">
+<div *ngIf="ready" class="subject-header">
   <h1>
     <iron-icon icon="{{caseService.case.complete ? 'notification:folder-special' : 'folder'}}"></iron-icon> 
     <span [innerHTML]="caseService.case.label|unsanitizeHtml"></span> 
@@ -13,10 +13,23 @@
       <span *ngIf="!caseService.case.complete">{{'Incomplete'|translate}}</span>
       <span *ngIf="caseService.case.complete">{{'Complete'|translate}}</span> 
   </div>
+
+</div>
+<paper-tabs *ngIf="ready" selected="0">
+  <paper-tab (click)="show = 'manifest'">
+    {{'manifest'|translate}}
+  </paper-tab>
+  <paper-tab (click)="show = 'events'">
+    {{'events'|translate}}
+  </paper-tab>
+</paper-tabs>
+
+<div [class.ready]="ready" [hidden]="show !== 'manifest'" class="manifest">
+  <div #caseFormContainer> </div>
 </div>
 
-<div class="wrapper">
-  <div class="event-cards" *ngIf="caseService">
+<div *ngIf="ready" class="wrapper">
+  <div [hidden]="show !== 'events'" class="event-cards" *ngIf="caseService">
     <div *ngFor="let eventInfo of caseService.eventsInfo">
     <paper-card 
       class="event-card {{eventInfo.required ? 'required' : ''}}" 

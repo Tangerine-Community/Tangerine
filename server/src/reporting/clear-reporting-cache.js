@@ -15,25 +15,27 @@ const {
 } = require('./constants')
 
 async function clearReportingCache() {
-  // Pause and then wait for the reporting worker to stop running.
+  console.log('Pausing reporting working...')
   await writeFile(REPORTING_WORKER_PAUSE, '', 'utf-8')
-  // Wait for a batch to finish otherwise it will just pick back up again.
+  console.log('Waiting for current reporting worker to stop...')
   let reportingWorkerRunning = await pathExists(REPORTING_WORKER_RUNNING)
   while (reportingWorkerRunning) {
     reportingWorkerRunning = await pathExists(REPORTING_WORKER_RUNNING)
     if (reportingWorkerRunning) await sleep(1*1000)
   }
-  // Pause the reporting worker.
+  console.log('Clearing reporting caches...')
   const groupNames = await groupsList()
   await tangyModules.hook('clearReportingCache', { groupNames })
   // update worker state
+  console.log('Resetting reporting worker state...')
   const contents = await readFile(REPORTING_WORKER_STATE, 'utf-8')
   const state = JSON.parse(contents)
   const newState = Object.assign({}, state, {
-      databases: state.databases.map(({name, sequence}) => { return {name, sequence: 0}})
+    databases: state.databases.map(({name, sequence}) => { return {name, sequence: 0}})
   })
   await writeFile(REPORTING_WORKER_STATE, JSON.stringify(newState), 'utf-8')
   await unlink(REPORTING_WORKER_PAUSE)
+  console.log('Done!')
   return newState
 }
 

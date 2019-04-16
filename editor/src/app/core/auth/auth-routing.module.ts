@@ -15,12 +15,12 @@ const routes: Routes = [{
 }, {
   path: 'manage-users',
   component: ManageUsersComponent,
-  canActivate: [LoginGuard, AdminUserGuard]
+  canActivate: [LoginGuard]
 },
 {
   path: 'manage-users/new-user',
   component: UserResgistrationComponent,
-  canActivate: [LoginGuard, AdminUserGuard]
+  canActivate: [LoginGuard]
 }];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

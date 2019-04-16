@@ -6,6 +6,7 @@ import { CaseDefinition } from '../classes/case-definition.class';
 import { CaseDefinitionsService } from './case-definitions.service';
 import PouchDB from 'pouchdb';
 import * as UUID from 'uuid/v4'
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form-service';
 
 class EventInfo {
   canCreateInstance:boolean;
@@ -13,7 +14,7 @@ class EventInfo {
   eventDefinition:CaseEventDefinition;
 }
 
-class CaseService {
+class CaseService extends TangyFormService {
 
   _id:string
   _rev:string
@@ -23,8 +24,8 @@ class CaseService {
   caseDefinitionService:CaseDefinitionsService
   eventsInfo:Array<any>
 
-  constructor() {
-    this.db = new PouchDB(localStorage.getItem('currentUser'));
+  constructor(props = {databaseName: localStorage.getItem('currentUser')}) {
+    super(props)
     this.caseDefinitionService = new CaseDefinitionsService()
   }
 
@@ -147,7 +148,6 @@ class CaseService {
     this
       .case
       .complete = numberOfCaseEventsRequired === numberOfUniqueCompleteCaseEvents ? true : false
-    
   }
 
   disableEventDefinition(eventDefinitionId) {
@@ -157,11 +157,18 @@ class CaseService {
   }
 
   setVariable(variableName, value) {
-    this.case.variables[variableName] = value
+    let input = this.case.items[0].inputs.find(input => input.name === variableName)
+    if (input) {
+      input.value = value
+    } else {
+      this.case.items[0].inputs.push({name: variableName, value: value})
+    }
   }
 
   getVariable(variableName) {
-    return this.case.variables[variableName]
+    return this.case.items[0].inputs.find(input => input.name === variableName)
+      ? this.case.items[0].inputs.find(input => input.name === variableName).value
+      : undefined
   }
 
 }

@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule, MatAutocompleteModule, MatSelectModule, MatChipsModule } from '@angular/material';
+import {
+  MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule,
+  MatAutocompleteModule, MatSelectModule, MatChipsModule, MatGridListModule
+} from '@angular/material';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
 import { GroupsComponent } from './groups.component';
@@ -19,6 +22,7 @@ import { ResponsesComponent } from './responses/responses.component';
 import { LocationListEditorComponent } from './location-list-editor/location-list-editor.component';
 import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
 import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
+import { ImportLocationListComponent } from './import-location-list/import-location-list.component';
 
 
 
@@ -26,6 +30,7 @@ import { ManageLocationListMetadataComponent } from './manage-location-list-meta
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
+    MatGridListModule,
     FormsModule,
     ReactiveFormsModule,
     MatInputModule,
@@ -53,7 +58,8 @@ import { ManageLocationListMetadataComponent } from './manage-location-list-meta
     ReleaseDatComponent,
     ResponsesComponent,
     ManageLocationListLevelsComponent,
-    ManageLocationListMetadataComponent
+    ManageLocationListMetadataComponent,
+    ImportLocationListComponent
   ],
   providers: [GroupsService]
 })

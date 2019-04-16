@@ -1,23 +1,46 @@
-.tangy-full-width{
-    width: 90%;
-  }
-span.tangy-foreground-secondary{
-    padding-top: 0.3rem;
+.tangy-full-width {
+  width: 90%;
+}
+span.tangy-foreground-secondary {
+  padding-top: 0.3rem;
 }
 span.form-list-header {
-    font-size: 20px;
-    font-weight: bold;
-    padding-left: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  padding-left: 10px;
 }
 .mat-card-content {
-    padding-top: 1em;
+  padding-top: 1em;
 }
 
 h1.section-title {
   color: var(--accent-color);
-  margin-left: 30px
+  margin-left: 30px;
 }
 
 table.release-table {
   padding: 15px;
+}
+.tangy-content {
+  margin-top: 64px;
+  margin-left: 0%;
+}
+.mat-card-title {
+  color: var(--tertiary-color);
+  font-size: 120%;
+  margin-left: 2.5%;
+}
+.tangy-page-title {
+  margin-left: 1.1%;
+}
+.disabled-button {
+  color: var(--accent-color);
+  opacity: 0.5;
+}
+mat-list-item {
+  font-weight: bold;
+}
+#group-title-small {
+  color: gray;
+  margin-left: 1%;
 }

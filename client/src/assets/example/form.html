@@ -5,14 +5,14 @@
       <tangy-input name="middle_name" label="What is your middle name?"></tangy-input>
       <tangy-input name="last_name" label="What is your last name?"></tangy-input>
       <tangy-radio-buttons name="fruit_selection" label="What is your favorite fruit?">
-        <option name="orange">Orange</option>
-        <option name="banana">Banana</option>
-        <option name="tangerine">Tangerine</option>
+        <option value="orange">Orange</option>
+        <option value="banana">Banana</option>
+        <option value="tangerine">Tangerine</option>
       </tangy-radio-buttons>
       <tangy-select name="fruit_selection_2" label="What is your second favorite fruit?">
-        <option name="orange">Orange</option>
-        <option name="banana">Banana</option>
-        <option name="tangerine">Tangerine</option>
+        <option value="orange">Orange</option>
+        <option value="banana">Banana</option>
+        <option value="tangerine">Tangerine</option>
       </tangy-select>
     </template>
   </tangy-form-item>
@@ -23,9 +23,13 @@
         <option value="afternoon">Afternoon</option>
         <option value="evening">Evening</option>
       </tangy-checkboxes>
-      Where do you eat fruit?
+      <tangy-box name="prompt1">
+        Where do you eat fruit?
+      </tangy-box>
       <tangy-gps name="gps"></tangy-gps>
-      Have the assessee read aloud the following fruits and mark the items they pronounce incorrectly.
+      <tangy-box name="prompt2">
+        Have the assessee read aloud the following fruits and mark the items they pronounce incorrectly.
+      </tangy-box>
       <tangy-timed show-labels required columns="3" duration=20 name="pronounse_fruits">
         <option value="orange">Orange</option>
         <option value="banana">Banana</option>

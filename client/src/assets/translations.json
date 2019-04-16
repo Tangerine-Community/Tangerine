@@ -18,5 +18,10 @@
     "label": "Khmer",
     "languageCode": "KH_km",
     "languageDirection": "ltr"
+  },
+  {
+    "label": "Russian",
+    "languageCode": "ru",
+    "languageDirection": "ltr"
   }
 ]

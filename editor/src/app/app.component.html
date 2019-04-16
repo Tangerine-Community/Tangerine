@@ -1,48 +1,60 @@
+<div class="tangy-main-container" [class.tangy-main-is-mobile]="mobileQuery.matches">
+    <mat-toolbar class="tangy-main-toolbar mat-elevation-z5">
+        <button mat-icon-button (click)="snav.toggle()" *ngIf="loggedIn">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <h1 class="tangy-main-app-name"> Tangerine Editor</h1>
+        <span class="toolbar-spacer"></span>
+        <button mat-button color="accent" *ngIf="loggedIn">
+            <i class="material-icons account-circle">account_circle</i> <span class="text-black">{{user_id}}</span>
+        </button>
+    </mat-toolbar>
 
-<mat-toolbar color="primary" *ngIf="loggedIn">
-    <span>
-        <mat-toolbar-row>
-            <button id="menu-button" mat-button [matMenuTriggerFor]="menu"><mat-icon>more_vert</mat-icon></button>
-            <mat-menu #menu="matMenu">
-                <button routerLink="/projects" routerLinkActive="active" mat-menu-item *ngIf="loggedIn" router-active>
-                    <a class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">group_work</i>{{'Groups'}}
-                    </a>
-                </button>
-                <button routerLink="/manage-users" routerLinkActive="active" mat-menu-item *ngIf="loggedIn" router-active>
-                    <a class="mdl-navigation__link">
-                        <i class="material-icons" role="presentation">account_circle</i>{{'Manage Users'}}
-                    </a>
-                </button>
-                <button routerLink="/support" routerLinkActive="active" mat-menu-item *ngIf="loggedIn" router-active>
-                    <a class="mdl-menu__item">
-                        <i class="material-icons">help</i> {{'Help'}}
-                    </a>
-                </button>
-                <button (click)="logout();" routerLink="/login" routerLinkActive="active" mat-menu-item *ngIf="loggedIn" router-active>
-                    <a class="mdl-menu__item">
-                        <i class="material-icons">exit_to_app</i> {{'Logout'}}
-                    </a>
-                </button>
-                <button routerLink="/login" mat-menu-item *ngIf="!loggedIn">
-                    <a>
-                        <i class="material-icons">exit_to_app</i> {{'Login'}}
-                    </a>
-                </button>
-            </mat-menu>
-        </mat-toolbar-row>
-        <a id="home-link" routerLink="/">
-            Tangerine Editor
-        </a>
-    </span>
-    <span class="example-spacer"></span>
-    <button id="account-badge" mat-menu-item *ngIf="loggedIn">
-        <i class="material-icons account-circle">account_circle</i> {{user_id}}
-    </button>
-</mat-toolbar>
+    <mat-sidenav-container class="tangy-main-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+        <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'push'" fixedInViewport fixedTopGap="64">
+            <mat-nav-list class="tangy-full-width">
+                <mat-list-item>
+                    <span class=""><i class="material-icons menu-icon">group_work</i></span>
+                    <a matLine routerLink="/projects" routerLinkActive="active" *ngIf="loggedIn"
+                        router-active>{{'Groups'|translate}}</a>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-nav-list>
+            <mat-nav-list class="tangy-full-width" *ngIf="canManageSitewideUsers">
+                <mat-list-item>
+                    <span class=""><i class="material-icons menu-icon">group</i></span>
+                    <a matLine routerLink="/manage-users" routerLinkActive="active" *ngIf="loggedIn"
+                        router-active>{{'Manage Users'|translate}}</a>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-nav-list>
+            <mat-nav-list class="tangy-full-width">
+                <mat-list-item>
+                    <span class=""><i class="material-icons menu-icon">help</i></span>
+                    <a matLine routerLink="/support" routerLinkActive="active" *ngIf="loggedIn"
+                        router-active>{{'Help'|translate}}</a>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-nav-list>
+            <mat-nav-list class="tangy-full-width">
+                <mat-list-item>
+                    <span class=""><i class="material-icons menu-icon">exit_to_app</i></span>
+                    <a (click)="logout();" matLine routerLink="/login" routerLinkActive="active" *ngIf="loggedIn"
+                        router-active>{{'Logout'|translate}}</a>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-nav-list>
+            <mat-nav-list class="tangy-full-width">
+                <mat-list-item>
+                    <a matLine routerLink="/login" routerLinkActive="active" *ngIf="!loggedIn"
+                        router-active>{{'Login'|translate}}</a>
+                </mat-list-item>
+                <mat-divider *ngIf="!loggedIn"></mat-divider>
+            </mat-nav-list>
+        </mat-sidenav>
 
-<main class="mdl-layout__content mdl-color--grey-100">
-    <section>
-        <router-outlet></router-outlet>
-    </section>
-</main>
+        <mat-sidenav-content>
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>
