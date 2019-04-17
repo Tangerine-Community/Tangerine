@@ -17,8 +17,11 @@ const MOCK_REMOTE_DOC_IDS = [
   'doc2'
 ]
 
-const MOCK_REMOTE_DB_INFO = 'mock-remote-db'
-const MOCK_LOCAL_DB_INFO = 'mock-local-db'
+const MOCK_REMOTE_DB_INFO_1 = 'MOCK_REMOTE_DB_INFO_1'
+const MOCK_LOCAL_DB_INFO_1 = 'MOCK_LOCAL_DB_INFO_1'
+const MOCK_REMOTE_DB_INFO_2 = 'MOCK_REMOTE_DB_INFO_2'
+const MOCK_LOCAL_DB_INFO_2 = 'MOCK_LOCAL_DB_INFO_2'
+
 const MOCK_SERVER_URL = 'http://localhost'
 
 class MockAppConfigService {
@@ -61,15 +64,6 @@ describe('TwoWaySyncService', () => {
     httpTestingController = TestBed.get(HttpTestingController);
     userService = TestBed.get(UserService);
     twoWaySyncService = TestBed.get(TwoWaySyncService)
-    // Browser cleanup while developing and tests are failing.
-    /*
-    const r = new PouchDB(MOCK_REMOTE_DB_INFO)
-    await r.destroy()
-    const l = new PouchDB(MOCK_LOCAL_DB_INFO)
-    await l.destroy()
-    const u = new PouchDB('users')
-    await u.destroy()
-    */
   })
 
   it('should be created', () => {
@@ -78,17 +72,7 @@ describe('TwoWaySyncService', () => {
   });
 
   it('should sync', async function(done) {
-    await userService.create({
-      username: MOCK_LOCAL_DB_INFO,
-      securityQuestionResponse: '123',
-      password: '123'
-    })
-    // Prepopulate the mock remote db.
-    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO)
-    await mockRemoteDb.put({_id:"doc1", collection: 'FormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc2", collection: 'FormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc3", collection: 'FormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc4", collection: 'FormResponse', form: {id: "example"}})
+    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_1)
     await mockRemoteDb.put({
       _id: '_design/sync_filter-by-form-ids',
       filters: {
@@ -101,10 +85,20 @@ describe('TwoWaySyncService', () => {
         }.toString()
       }
     })
-    const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_INFO)
+    await userService.create({
+      username: MOCK_LOCAL_DB_INFO_1,
+      securityQuestionResponse: '123',
+      password: '123'
+    })
+    // Prepopulate the mock remote db.
+    await mockRemoteDb.put({_id:"doc1", collection: 'FormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc2", collection: 'FormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc3", collection: 'FormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc4", collection: 'FormResponse', form: {id: "example"}})
+    const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_INFO_1)
     await mockLocalDb.put({_id:"doc5", collection: 'FormResponse', form: {id: "example"}})
     await mockLocalDb.put({_id:"doc6", collection: 'FormResponse', form: {id: "example"}})
-    twoWaySyncService.sync(MOCK_LOCAL_DB_INFO).then(async status => {
+    twoWaySyncService.sync(MOCK_LOCAL_DB_INFO_1).then(async status => {
       expect(status.pulled).toBe(4)
       expect(status.pushed).toBe(2)
       expect(status.conflicts.length).toBe(0)
@@ -115,7 +109,7 @@ describe('TwoWaySyncService', () => {
       expect(remoteAllDocs.total_rows).toBe(6+4)
       expect(localAllDocs.total_rows).toBe(4+4)
       */
-      await userService.remove(MOCK_LOCAL_DB_INFO)
+      await userService.remove(MOCK_LOCAL_DB_INFO_1)
       await mockRemoteDb.destroy()
       done()
     })
@@ -123,37 +117,47 @@ describe('TwoWaySyncService', () => {
       const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}/api/start-sync-session`);
       //expect(req.request.method).toEqual('GET');
       req.flush({
-        url: MOCK_REMOTE_DB_INFO,
+        url: MOCK_REMOTE_DB_INFO_1,
         filter: 'sync_filter-by-form-ids',
         query_params: { formIds:'example' }
       });
     }, 1000)
   }, 3000)
-/*
+
   it('should sync but with conflicts', async (done) => {
+    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_2)
+    await mockRemoteDb.put({
+      _id: '_design/sync_filter-by-form-ids',
+      filters: {
+        "sync_filter-by-form-ids": function (doc, req) {
+          var formIds = req.query.formIds.split(',')
+          return doc.collection === 'FormResponse' &&
+            doc.form &&
+            doc.form.id &&
+            formIds.includes(doc.form.id)
+        }.toString()
+      }
+    })
     await userService.create({
-      username: MOCK_LOCAL_DB_INFO,
+      username: MOCK_LOCAL_DB_INFO_2,
       securityQuestionResponse: '123',
       password: '123'
     })
     // Prepopulate the mock remote db.
-    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO)
-    await mockRemoteDb.put({_id:"doc1"})
-    await mockRemoteDb.put({_id:"doc2"})
-    const mockLocalDb = userService.getUserDatabase(MOCK_LOCAL_DB_INFO)
-    await mockLocalDb.put({_id:"doc3"})
-    await mockLocalDb.put({_id:"doc4"})
+    await mockRemoteDb.put({_id:"doc1", collection: 'FormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc2", collection: 'FormResponse', form: {id: "example"}})
+    const mockLocalDb = userService.getUserDatabase(MOCK_LOCAL_DB_INFO_2)
+    await mockLocalDb.put({_id:"doc3", collection: 'FormResponse', form: {id: "example"}})
+    await mockLocalDb.put({_id:"doc4", collection: 'FormResponse', form: {id: "example"}})
     await mockRemoteDb.sync(mockLocalDb)
     const localDoc1 = await mockLocalDb.get('doc1')
     const remoteDoc1 = await mockRemoteDb.get('doc1')
     await mockLocalDb.put({...localDoc1, foo: 'local change'})
     await mockRemoteDb.put({...remoteDoc1, foo: 'remote change'})
-    twoWaySyncService.sync(MOCK_LOCAL_DB_INFO).then(async status => {
-      const localAllDocs = await mockLocalDb.allDocs({include_docs: true, conflicts: true})
-      const remoteAllDocs = await mockRemoteDb.allDocs({include_docs: true, conflicts: true})
+    twoWaySyncService.sync(MOCK_LOCAL_DB_INFO_2).then(async status => {
       expect(status.pulled).toBe(1)
       expect(status.conflicts.length).toBe(1)
-      await userService.remove(MOCK_LOCAL_DB_INFO)
+      await userService.remove(MOCK_LOCAL_DB_INFO_2)
       await mockRemoteDb.destroy()
       done()
     })
@@ -161,10 +165,11 @@ describe('TwoWaySyncService', () => {
       const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}/api/start-sync-session`);
       expect(req.request.method).toEqual('GET');
       req.flush({
-        syncUrl: MOCK_REMOTE_DB_INFO,
-        doc_ids: MOCK_REMOTE_DOC_IDS
+        url: MOCK_REMOTE_DB_INFO_2,
+        filter: 'sync_filter-by-form-ids',
+        query_params: { formIds:'example' }
       });
     }, 1000)
-  })
-*/
+  }, 4000)
+
 });
