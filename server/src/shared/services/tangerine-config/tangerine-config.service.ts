@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TangerineConfig } from 'src/shared/classes/tangerine-config';
+import { TangerineConfig } from '../../classes/tangerine-config';
 
 @Injectable()
 export class TangerineConfigService {
