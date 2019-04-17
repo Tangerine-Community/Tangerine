@@ -23,6 +23,7 @@ import { UnsanitizeHtmlPipe } from './_pipes/unsanitize-html.pipe';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginGuard } from './_guards/login-guard.service';
 import { CreateProfileGuardService } from './_guards/create-profile-guard.service';
+import { DEFAULT_USER_DOCS } from './_tokens/default-user-docs.token';
 
 @NgModule({
   imports: [
@@ -42,6 +43,7 @@ import { CreateProfileGuardService } from './_guards/create-profile-guard.servic
     AppConfigService,
     AuthenticationService,
     UserService,
+    {provide: DEFAULT_USER_DOCS, useValue:{}, multi: true},
     WindowRef,
     Loc,
     LoginGuard,
