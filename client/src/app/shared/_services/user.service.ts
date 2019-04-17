@@ -49,6 +49,10 @@ export class UserService {
     }
   }
 
+  getCurrentUser():string {
+    return localStorage.getItem('currentUser')
+  }
+
   async createUserDatabase(username):Promise<PouchDB> {
     const userDb = PouchDB(username)
     this.installDefaultUserDocs(userDb)
