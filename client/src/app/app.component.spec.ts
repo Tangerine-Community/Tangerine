@@ -13,6 +13,7 @@ import 'hammerjs';
 import { AppModule } from './app.module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { SharedModule } from './shared/shared.module';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -24,7 +25,8 @@ describe('AppComponent', () => {
         BrowserAnimationsModule,
         MatButtonModule, MatCheckboxModule, MatInputModule,
         AppModule,
-        AppRoutingModule
+        AppRoutingModule,
+        SharedModule
       ],
       providers: [{provide: APP_BASE_HREF, useValue: '/'}, WindowRef]
     }).compileComponents();
