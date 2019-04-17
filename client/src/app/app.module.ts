@@ -28,6 +28,7 @@ import { UserProfileModule } from './user-profile/user-profile.module';
 import { ExportDataModule } from './core/export-data/export-data.module';
 import { ClassModule } from "./class/class.module";
 import { AboutModule } from './core/about/about.module';
+import { TwoWaySyncModule } from './two-way-sync/two-way-sync.module';
 export { AppComponent }
 
 
@@ -47,6 +48,7 @@ export { AppComponent }
     CaseManagementModule,
     ClassModule,
     CaseModule,
+    TwoWaySyncModule,
     UserProfileModule,
     SettingsModule,
     AboutModule,
@@ -55,7 +57,6 @@ export { AppComponent }
     ExportDataModule,
     AppRoutingModule,
     SharedModule
-
   ],
   providers: [],
   bootstrap: [AppComponent]
