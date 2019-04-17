@@ -43,7 +43,7 @@ import { DEFAULT_USER_DOCS } from './_tokens/default-user-docs.token';
     AppConfigService,
     AuthenticationService,
     UserService,
-    {provide: DEFAULT_USER_DOCS, useValue:{}, multi: true},
+    {provide: DEFAULT_USER_DOCS, useValue:[], multi: true},
     WindowRef,
     Loc,
     LoginGuard,
