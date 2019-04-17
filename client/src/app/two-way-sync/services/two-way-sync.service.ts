@@ -19,21 +19,25 @@ export class TwoWaySyncService {
 
   sync(username:string):Promise<ReplicationStatus> {
     return new Promise(async (resolve, reject) => {
-      const localDb = new PouchDB(username)
-      const syncSession = await this.syncSessionStart(username)
-      const remoteDb = new PouchDB(syncSession.url)
-      localDb.sync(remoteDb, {filter: syncSession.filter, query_params: syncSession.query_params}).on('complete', async function (info) {
-        const conflictsQuery = await localDb.query('two-way-sync_conflicts');
-        //await this.syncSessionClose(syncSession)
-        resolve(<ReplicationStatus>{
-          pulled: info.pull.docs_written,
-          pushed: info.push.docs_written,
-          conflicts: conflictsQuery.rows.map(row => row.id)
-        })
-      }).on('error', function (errorMessage) {
-        console.log("boo, something went wrong! error: " + errorMessage)
-        reject(errorMessage)
-      });
+      try{
+        const localDb = new PouchDB(username)
+        const syncSession = await this.syncSessionStart(username)
+        const remoteDb = new PouchDB(syncSession.url)
+        localDb.sync(remoteDb, {filter: syncSession.filter, query_params: syncSession.query_params}).on('complete', async function (info) {
+          const conflictsQuery = await localDb.query('two-way-sync_conflicts');
+          //await this.syncSessionClose(syncSession)
+          resolve(<ReplicationStatus>{
+            pulled: info.pull.docs_written,
+            pushed: info.push.docs_written,
+            conflicts: conflictsQuery.rows.map(row => row.id)
+          })
+        }).on('error', function (errorMessage) {
+          console.log("boo, something went wrong! error: " + errorMessage)
+          reject(errorMessage)
+        });
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 

@@ -5,6 +5,8 @@ import { SharedModule } from '../shared/shared.module';
 import { DEFAULT_USER_DOCS } from '../shared/_tokens/default-user-docs.token';
 import { HttpClientModule } from '@angular/common/http';
 import { TwoWaySyncService } from './services/two-way-sync.service';
+import { MatCardModule, MatButtonModule } from '@angular/material';
+import { TwoWaySyncRoutingModule } from './two-way-sync-routing.module';
 const emit = (key, value = '') => {
   return true;
 }
@@ -46,7 +48,10 @@ const emit = (key, value = '') => {
   ],
   imports: [
     CommonModule,
+    TwoWaySyncRoutingModule,
     SharedModule,
+    MatCardModule,
+    MatButtonModule,
     HttpClientModule
   ]
 })
