@@ -24,9 +24,9 @@ export class SyncingService {
     return localStorage.getItem('currentUser');
   }
 
-  async sync(username) {
+  async sync(username, skipByFormId?:Array<string>) {
     await this.pull(username)
-    await this.push(username)
+    await this.push(username, skipByFormId)
     return true
   }
 
@@ -46,7 +46,7 @@ export class SyncingService {
 
   }
 
-  async push(username) {
+  async push(username, skipByFormId:Array<string>) {
     try {
       const userProfile = await this.userService.getUserProfile(username);
       const appConfig = await this.appConfigService.getAppConfig()
@@ -55,23 +55,25 @@ export class SyncingService {
       if (doc_ids && doc_ids.length > 0) {
         for (const doc_id of doc_ids) {
           const doc = await DB.get(doc_id);
-          // Insert the userProfileId as an input.
-          doc['items'][0]['inputs'].push({ name: 'userProfileId', value: userProfile._id });
-          doc['items'][0]['inputs'].push({ name: 'tabletUserName', value: username });
-          // Redact any fields marked as private.
-          doc['items'].forEach(item => {
-            item['inputs'].forEach(input => {
-              if (input.private) {
-                input.value = '';
-              }
+          if (skipByFormId && doc.form && !skipByFormId.includes(doc.form.id)) {
+            // Insert the userProfileId as an input.
+            doc['items'][0]['inputs'].push({ name: 'userProfileId', value: userProfile._id });
+            doc['items'][0]['inputs'].push({ name: 'tabletUserName', value: username });
+            // Redact any fields marked as private.
+            doc['items'].forEach(item => {
+              item['inputs'].forEach(input => {
+                if (input.private) {
+                  input.value = '';
+                }
+              });
             });
-          });
-          const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
-          await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload`, body, {
-            headers: new HttpHeaders({
-              'Authorization': appConfig.uploadToken
-            })
-          }).toPromise();
+            const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
+            await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload`, body, {
+              headers: new HttpHeaders({
+                'Authorization': appConfig.uploadToken
+              })
+            }).toPromise();
+          }
           await this.markDocsAsUploaded([doc_id], username);
         }
       }
