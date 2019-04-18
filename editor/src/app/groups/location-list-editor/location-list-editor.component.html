@@ -6,6 +6,8 @@
   <mat-card-content>
 
     <div class="tangy-full-width">
+        <a routerLink="/groups/{{groupName}}/import-location-list">{{'Import Location List'|translate}}</a>
+        <br/>
       <div>
         <mat-chip-list>
           <mat-chip [color]="breadcrumbs[breadcrumbs.length-1]['label']===breadcrumb.label?'accent':'primary'" selected
