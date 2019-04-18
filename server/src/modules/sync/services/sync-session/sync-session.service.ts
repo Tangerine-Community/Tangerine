@@ -22,40 +22,32 @@ export class SyncSessionService {
     private readonly clientUserService:ClientUserService
   ) { }
   
-  async start(groupId:string, profileId:string):Promise<SyncSession | HttpError> {
-    const groupDb = this.dbService.instantiate(groupId)
+  async start(groupId:string, profileId:string):Promise<SyncSession> {
     try {
+      const groupDb = this.dbService.instantiate(groupId)
       const clientUser = await groupDb.get(profileId) 
-    } catch(e) {
-      return <HttpError>{
-        ok: false,
-        reason: 'Not a valid user'
+      // Create sync user
+      const syncUsername = `syncUser-${UUID()}`
+      const syncPassword = UUID()
+      const config = await this.configService.config()
+      const syncUserDoc = {
+        "_id": `org.couchdb.user:${syncUsername}`,
+        "name": syncUsername,
+        "roles": [`sync-${groupId}`],
+        "type": "user",
+        "password": syncPassword 
       }
-    }
-    // Create sync user
-    const syncUsername = `syncUser-${UUID()}`
-    const syncPassword = UUID()
-    const config = await this.configService.config()
-    const syncUserDoc = {
-      "_id": `org.couchdb.user:${syncUsername}`,
-      "name": syncUsername,
-      "roles": [`sync-${groupId}`],
-      "type": "user",
-      "password": syncPassword 
-    }
-    try {
       await this.http.post(`${config.couchdbEndpoint}/_users`, syncUserDoc).toPromise()
-    } catch(err) {
-      console.log(err)
-    }
-    return <SyncSession>{
-      url: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
-      filter: 'sync_filter-by-form-ids',
-      query_params: {
-        formIds: (await this.groupConfig.read(groupId)).config.sync.formIds.join() 
+      return <SyncSession>{
+        url: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
+        filter: 'sync_filter-by-form-ids',
+        query_params: {
+          formIds: (await this.groupConfig.read(groupId)).config.sync.formIds.join() 
+        }
       }
+    } catch(e) {
+      throw e
     }
-
   }
 
 }
