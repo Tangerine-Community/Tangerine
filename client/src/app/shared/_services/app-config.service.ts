@@ -7,10 +7,8 @@ export class AppConfigService {
   constructor(
     private http: HttpClient
   ) { }
-  async getAppConfig() {
-    const res = <AppConfig>await this.http.get('./assets/app-config.json').toPromise();
-    const appConfig:any = res;
-    return appConfig;
+  async getAppConfig():Promise<AppConfig> {
+    return <AppConfig>await this.http.get('./assets/app-config.json').toPromise();
   }
   public async getDefaultURL() {
     const result:any = await this.getAppConfig();

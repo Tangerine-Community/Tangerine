@@ -16,4 +16,5 @@ export class AppConfig {
   languageDirection  = "ltr"
   languageCode = "en"
   uploadUrl = ''
+  syncProtocol = ''
 } 
