@@ -22,7 +22,7 @@ const MOCK_LOCAL_DB_INFO_1 = 'MOCK_LOCAL_DB_INFO_1'
 const MOCK_REMOTE_DB_INFO_2 = 'MOCK_REMOTE_DB_INFO_2'
 const MOCK_LOCAL_DB_INFO_2 = 'MOCK_LOCAL_DB_INFO_2'
 
-const MOCK_SERVER_URL = 'http://localhost'
+const MOCK_SERVER_URL = 'http://localhost/'
 
 class MockAppConfigService {
   getAppConfig():Promise<AppConfig> {
@@ -85,7 +85,7 @@ describe('TwoWaySyncService', () => {
         }.toString()
       }
     })
-    await userService.create({
+    const userAccount = await userService.create({
       username: MOCK_LOCAL_DB_INFO_1,
       securityQuestionResponse: '123',
       password: '123'
@@ -114,15 +114,15 @@ describe('TwoWaySyncService', () => {
       done()
     })
     setTimeout(() => {
-      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}/sync-session/start/foo/ABC123`);
-      //expect(req.request.method).toEqual('GET');
+      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}sync-session/start/foo/${userAccount.userUUID}`);
+      //expect(req.request.method).toEqual('GET')
       req.flush({
         url: MOCK_REMOTE_DB_INFO_1,
         filter: 'sync_filter-by-form-ids',
         query_params: { formIds:'example' }
       });
     }, 1000)
-  }, 3000)
+  }, 4000)
 
   it('should sync but with conflicts', async (done) => {
     const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_2)
@@ -138,7 +138,7 @@ describe('TwoWaySyncService', () => {
         }.toString()
       }
     })
-    await userService.create({
+    const userAccount = await userService.create({
       username: MOCK_LOCAL_DB_INFO_2,
       securityQuestionResponse: '123',
       password: '123'
@@ -162,7 +162,7 @@ describe('TwoWaySyncService', () => {
       done()
     })
     setTimeout(() => {
-      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}/sync-session/start/foo/ABC123`);
+      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}sync-session/start/foo/${userAccount.userUUID}`);
       expect(req.request.method).toEqual('GET');
       req.flush({
         url: MOCK_REMOTE_DB_INFO_2,

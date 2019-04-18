@@ -56,7 +56,7 @@ describe('TwoWaySyncComponent', () => {
     fixture.detectChanges();
     await component.sync()
     fixture.detectChanges();
-    expect(el.innerText.includes('Sync Successful')).toBeTruthy()
+    expect(el.innerText.includes('Sync successful')).toBeTruthy()
   })
 
   
