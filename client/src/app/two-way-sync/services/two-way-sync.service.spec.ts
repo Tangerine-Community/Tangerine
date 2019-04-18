@@ -78,7 +78,7 @@ describe('TwoWaySyncService', () => {
       filters: {
         "sync_filter-by-form-ids": function (doc, req) {
           var formIds = req.query.formIds.split(',')
-          return doc.collection === 'FormResponse' &&
+          return doc.collection === 'TangyFormResponse' &&
             doc.form &&
             doc.form.id &&
             formIds.includes(doc.form.id)
@@ -91,13 +91,13 @@ describe('TwoWaySyncService', () => {
       password: '123'
     })
     // Prepopulate the mock remote db.
-    await mockRemoteDb.put({_id:"doc1", collection: 'FormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc2", collection: 'FormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc3", collection: 'FormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc4", collection: 'FormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc3", collection: 'TangyFormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example"}})
     const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_INFO_1)
-    await mockLocalDb.put({_id:"doc5", collection: 'FormResponse', form: {id: "example"}})
-    await mockLocalDb.put({_id:"doc6", collection: 'FormResponse', form: {id: "example"}})
+    await mockLocalDb.put({_id:"doc5", collection: 'TangyFormResponse', form: {id: "example"}})
+    await mockLocalDb.put({_id:"doc6", collection: 'TangyFormResponse', form: {id: "example"}})
     twoWaySyncService.sync(MOCK_LOCAL_DB_INFO_1).then(async status => {
       expect(status.pulled).toBe(4)
       expect(status.pushed).toBe(2)
@@ -114,7 +114,7 @@ describe('TwoWaySyncService', () => {
       done()
     })
     setTimeout(() => {
-      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}/api/start-sync-session`);
+      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}/sync-session/start/foo/ABC123`);
       //expect(req.request.method).toEqual('GET');
       req.flush({
         url: MOCK_REMOTE_DB_INFO_1,
@@ -131,7 +131,7 @@ describe('TwoWaySyncService', () => {
       filters: {
         "sync_filter-by-form-ids": function (doc, req) {
           var formIds = req.query.formIds.split(',')
-          return doc.collection === 'FormResponse' &&
+          return doc.collection === 'TangyFormResponse' &&
             doc.form &&
             doc.form.id &&
             formIds.includes(doc.form.id)
@@ -144,11 +144,11 @@ describe('TwoWaySyncService', () => {
       password: '123'
     })
     // Prepopulate the mock remote db.
-    await mockRemoteDb.put({_id:"doc1", collection: 'FormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc2", collection: 'FormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example"}})
     const mockLocalDb = userService.getUserDatabase(MOCK_LOCAL_DB_INFO_2)
-    await mockLocalDb.put({_id:"doc3", collection: 'FormResponse', form: {id: "example"}})
-    await mockLocalDb.put({_id:"doc4", collection: 'FormResponse', form: {id: "example"}})
+    await mockLocalDb.put({_id:"doc3", collection: 'TangyFormResponse', form: {id: "example"}})
+    await mockLocalDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example"}})
     await mockRemoteDb.sync(mockLocalDb)
     const localDoc1 = await mockLocalDb.get('doc1')
     const remoteDoc1 = await mockRemoteDb.get('doc1')
@@ -162,7 +162,7 @@ describe('TwoWaySyncService', () => {
       done()
     })
     setTimeout(() => {
-      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}/api/start-sync-session`);
+      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}/sync-session/start/foo/ABC123`);
       expect(req.request.method).toEqual('GET');
       req.flush({
         url: MOCK_REMOTE_DB_INFO_2,

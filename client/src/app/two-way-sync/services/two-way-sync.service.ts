@@ -44,10 +44,7 @@ export class TwoWaySyncService {
   private async syncSessionStart(username):Promise<TwoWaySyncSession> {
     const appConfig = await this.appConfigService.getAppConfig();
     let profileDoc = await this.userService.getUserProfile(username)
-    let params = new HttpParams()
-    params.set('profileId', profileDoc._id)
-    params.set('groupId', appConfig.groupName)
-    return  <TwoWaySyncSession>await this.http.get(`${appConfig.serverUrl}/api/start-sync-session`, { params }).toPromise()
+    return  <TwoWaySyncSession>await this.http.get(`${appConfig.serverUrl}sync-session/start/${appConfig.groupName}/${profileDoc._id}`).toPromise()
   }
 
   private async syncSessionClose(syncSession:TwoWaySyncSession):Promise<any> {
