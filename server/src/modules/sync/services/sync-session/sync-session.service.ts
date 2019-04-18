@@ -1,10 +1,10 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { SyncSession } from '../../classes/sync-session.class';
-import { TangerineConfigService } from 'src/shared/services/tangerine-config/tangerine-config.service';
+import { TangerineConfigService } from '../../../../shared/services/tangerine-config/tangerine-config.service';
 import * as UUID from 'uuid/v4'
-import { GroupService } from 'src/shared/services/group/group.service';
-import { ClientUserService } from 'src/shared/services/client-user/client-user.service';
-import { DbService } from 'src/shared/services/db/db.service';
+import { GroupService } from '../../../../shared/services/group/group.service';
+import { ClientUserService } from '../../../../shared/services/client-user/client-user.service';
+import { DbService } from '../../../../shared/services/db/db.service';
 
 interface HttpError {
   ok: boolean 
