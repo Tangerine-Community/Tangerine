@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Post } from '@nestjs/common';
 import { SyncSession } from '../../classes/sync-session.class';
 import { SyncSessionService } from '../../services/sync-session/sync-session.service';
+const log = require('tangy-log').log
 
 @Controller('sync-session')
 export class SyncSessionController {
@@ -14,7 +15,7 @@ export class SyncSessionController {
     try {
       return await this.syncSessionService.start(groupId, profileId)
     } catch (err) {
-      return err
+      log.warning(`Error in sync-session/start: ${JSON.stringify(err)}`)
     }
   }
 
