@@ -1,6 +1,7 @@
 import PouchDB from 'pouchdb';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import axios from 'axios'
+import { FormInfo } from './classes/form-info.class';
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
@@ -34,7 +35,7 @@ export class TangyFormService {
   }
 
   async getFormsInfo() {
-    const formsInfo:any = (await axios.get('./assets/forms.json')).data
+    const formsInfo:Array<FormInfo> = (await axios.get('./assets/forms.json')).data
     return formsInfo
   }
 
