@@ -11,6 +11,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { TangyFormsModule } from 'src/app/tangy-forms/tangy-forms.module';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { SyncingService } from 'src/app/core/sync-records/_services/syncing.service';
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form-service';
 
 const MOCK_REMOTE_DOC_IDS = [
   'doc1',
@@ -24,6 +26,15 @@ const MOCK_LOCAL_DB_INFO_2 = 'MOCK_LOCAL_DB_INFO_2'
 
 const MOCK_SERVER_URL = 'http://localhost/'
 
+class MockTangyFormService {
+  async getFormsInfo() {
+    return [
+      {id: 'example1', src: './example1/form.json', title: 'Example 1'},
+      {id: 'example2', src: './example2/form.json', title: 'Example 2'},
+    ]
+  }
+}
+
 class MockAppConfigService {
   getAppConfig():Promise<AppConfig> {
     return new Promise((resolve, reject) => {
@@ -32,6 +43,15 @@ class MockAppConfigService {
         groupName: 'foo'
       })
     })
+  }
+}
+
+class MockSyncService {
+  async sync() {
+    return true
+  }
+  async getUploadQueue() {
+    return [1, 2]
   }
 }
 
@@ -57,6 +77,8 @@ describe('TwoWaySyncService', () => {
       ],
       providers: [
         {provide: AppConfigService, useClass: MockAppConfigService},
+        {provide: SyncingService, useClass: MockSyncService},
+        {provide: TangyFormService, useClass: MockTangyFormService}
       ]
     })
     // Get fresh injected instances.
@@ -90,36 +112,42 @@ describe('TwoWaySyncService', () => {
       securityQuestionResponse: '123',
       password: '123'
     })
-    // Prepopulate the mock remote db.
-    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc3", collection: 'TangyFormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example"}})
+    // User's profile which should always get pulled down. But counted?
+    await mockRemoteDb.put({_id:userAccount.userUUID, collection: 'TangyFormResponse', form: {id: "user-profile"}, someChangeOnServer: true})
+    // Remote docs that should get pulled down.
+    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example1"}})
+    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example1"}})
+    // Remote doc that won't get pulled down.
+    await mockRemoteDb.put({_id:"doc3", collection: 'TangyFormResponse', form: {id: "example2"}})
+    await mockRemoteDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example2"}})
     const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_INFO_1)
-    await mockLocalDb.put({_id:"doc5", collection: 'TangyFormResponse', form: {id: "example"}})
-    await mockLocalDb.put({_id:"doc6", collection: 'TangyFormResponse', form: {id: "example"}})
+    // Local doc that should two-way replicate up.
+    await mockLocalDb.put({_id:"doc5", collection: 'TangyFormResponse', form: {id: "example1"}})
+    await mockLocalDb.put({_id:"doc6", collection: 'TangyFormResponse', form: {id: "example1"}})
+    // Never uploaded doc that will get pushed up.
+    await mockLocalDb.put({_id:"doc7", collection: 'TangyFormResponse', form: {id: "example2"}, lastModified: 1})
+    // Has been uploaded but has been modified since.
+    await mockLocalDb.put({_id:"doc9", collection: 'TangyFormResponse', form: {id: "example2"}, uploadDate: 2, lastModified: 3})
+    // Has been uploaded but has not been modified since.
+    await mockLocalDb.put({_id:"doc8", collection: 'TangyFormResponse', form: {id: "example2"}, uploadDate: 2, lastModified: 1})
     twoWaySyncService.sync(MOCK_LOCAL_DB_INFO_1).then(async status => {
-      expect(status.pulled).toBe(4)
-      expect(status.pushed).toBe(2)
-      expect(status.conflicts.length).toBe(0)
-      /*
-      const remoteAllDocs = await mockRemoteDb.allDocs()
-      const localAllDocs = await mockLocalDb.allDocs()
-      // Note how total docs in databases differ because of priorities. Plus 4 for design docs, an info doc, and a profile doc.
-      expect(remoteAllDocs.total_rows).toBe(6+4)
-      expect(localAllDocs.total_rows).toBe(4+4)
-      */
+      const userDoc = mockLocalDb.get(userAccount.userUUID)
       await userService.remove(MOCK_LOCAL_DB_INFO_1)
       await mockRemoteDb.destroy()
+      expect(status.pulled).toBe(2)
+      expect(status.pushed).toBe(2)
+      expect(status.conflicts.length).toBe(0)
+      // @TODO
+      //expect(userDoc.someChangeOnServer).toBeTruthy
       done()
     })
     setTimeout(() => {
       const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}sync-session/start/foo/${userAccount.userUUID}`);
-      //expect(req.request.method).toEqual('GET')
+      expect(req.request.method).toEqual('GET')
       req.flush({
         url: MOCK_REMOTE_DB_INFO_1,
         filter: 'sync_filter-by-form-ids',
-        query_params: { formIds:'example' }
+        query_params: { formIds:'example1' }
       });
     }, 1000)
   }, 4000)
@@ -144,21 +172,21 @@ describe('TwoWaySyncService', () => {
       password: '123'
     })
     // Prepopulate the mock remote db.
-    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example"}})
-    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example"}})
+    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example1"}})
+    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example1"}})
     const mockLocalDb = userService.getUserDatabase(MOCK_LOCAL_DB_INFO_2)
-    await mockLocalDb.put({_id:"doc3", collection: 'TangyFormResponse', form: {id: "example"}})
-    await mockLocalDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example"}})
+    await mockLocalDb.put({_id:"doc3", collection: 'TangyFormResponse', form: {id: "example1"}})
+    await mockLocalDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example1"}})
     await mockRemoteDb.sync(mockLocalDb)
     const localDoc1 = await mockLocalDb.get('doc1')
     const remoteDoc1 = await mockRemoteDb.get('doc1')
     await mockLocalDb.put({...localDoc1, foo: 'local change'})
     await mockRemoteDb.put({...remoteDoc1, foo: 'remote change'})
     twoWaySyncService.sync(MOCK_LOCAL_DB_INFO_2).then(async status => {
-      expect(status.pulled).toBe(1)
-      expect(status.conflicts.length).toBe(1)
       await userService.remove(MOCK_LOCAL_DB_INFO_2)
       await mockRemoteDb.destroy()
+      expect(status.pulled).toBe(1)
+      expect(status.conflicts.length).toBe(1)
       done()
     })
     setTimeout(() => {
@@ -167,7 +195,7 @@ describe('TwoWaySyncService', () => {
       req.flush({
         url: MOCK_REMOTE_DB_INFO_2,
         filter: 'sync_filter-by-form-ids',
-        query_params: { formIds:'example' }
+        query_params: { formIds:'example1' }
       });
     }, 1000)
   }, 4000)

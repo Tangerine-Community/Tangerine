@@ -12,6 +12,7 @@ const emit = (key, value = '') => {
 }
 
 @NgModule({
+  exports: [TwoWaySyncComponent],
   declarations: [TwoWaySyncComponent],
   providers: [
     {
