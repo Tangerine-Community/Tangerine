@@ -27,9 +27,15 @@ export class ImportUserProfileComponent implements AfterContentInit {
   async onSubmit() {
     this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
     const userDbName = await this.userService.getUserDatabase();
+    const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
     const db = new PouchDB(userDbName)
+    const profileToReplace = await db.get(userAccount.userUUID)
     const shortCode = this.userShortCodeInput.nativeElement.value
     this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupName}/responsesByUserProfileShortCode/${shortCode}`).toPromise()
+    const newUserProfile = this.docs.find(doc => doc.form && doc.form.id === 'user-profile')
+    const usersDb = new PouchDB('users')
+    await usersDb.put({...userAccount, userUUID: newUserProfile._id})
+    await db.remove(profileToReplace)
     this.docs.forEach(doc => delete doc._rev)
     await db.bulkDocs(this.docs);
     this.router.navigate([`/${this.appConfig.homeUrl}`] );
