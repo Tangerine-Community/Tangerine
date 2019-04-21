@@ -150,6 +150,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json \
   --volume $(pwd)/server/src:/tangerine/server/src \
+  --volume $(pwd)/client/src:/tangerine/client/src \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting \
   --volume $(pwd)/upgrades:/tangerine/upgrades \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js \
