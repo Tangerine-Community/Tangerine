@@ -42,7 +42,8 @@ export class SyncSessionService {
         url: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
         filter: 'sync_filter-by-form-ids',
         query_params: {
-          formIds: (await this.groupConfig.read(groupId)).config.sync.formIds.join() 
+          formIds: (await this.groupConfig.read(groupId)).config.sync.formIds.join(),
+          docIds: profileId
         }
       }
     } catch(e) {

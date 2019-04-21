@@ -7,6 +7,8 @@ import { TangyFormsPlayerComponent } from './tangy-forms-player/tangy-forms-play
 import { UserService } from '../shared/_services/user.service';
 import { TangyFormsQueries } from './tangy-forms.queries';
 import { DEFAULT_USER_DOCS } from '../shared/_tokens/default-user-docs.token';
+import { TangyFormService } from './tangy-form-service';
+import { TangyFormsInfoService } from './tangy-forms-info-service';
 
 @NgModule({
   imports: [
@@ -24,7 +26,8 @@ import { DEFAULT_USER_DOCS } from '../shared/_tokens/default-user-docs.token';
         }
       ],
       multi: true
-    }
+    },
+    TangyFormsInfoService
   ],
   declarations: [TangyFormsPlayerComponent]
 })

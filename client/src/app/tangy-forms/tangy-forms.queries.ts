@@ -25,7 +25,7 @@ export const TangyFormsQueries = {
         ||
         (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
       ) {
-        emit(doc._id, true)
+        emit(doc.form.id, true)
       }
     }.toString()
   },
@@ -36,7 +36,7 @@ export const TangyFormsQueries = {
         ||
         (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
       ) {
-        emit(doc._id, true)
+        emit(doc.form.id, true)
       }
     }.toString()
   },
@@ -47,7 +47,7 @@ export const TangyFormsQueries = {
         ||
         (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
       ) {
-        emit(doc._id, true)
+        emit(doc.form.id, true)
       }
     }.toString()
   },
@@ -58,7 +58,7 @@ export const TangyFormsQueries = {
         ||
         (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
       ) {
-        emit(doc._id, true)
+        emit(doc.form.id, true)
       }
     }.toString()
   },

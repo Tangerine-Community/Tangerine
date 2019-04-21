@@ -7,6 +7,7 @@ import { HttpParams, HttpClient, HttpHeaders } from '@angular/common/http';
 import { TwoWaySyncSession } from '../classes/two-way-sync-session.class';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form-service';
 import { SyncingService } from 'src/app/core/sync-records/_services/syncing.service';
+import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,29 +16,31 @@ export class TwoWaySyncService {
 
   constructor(
     private readonly appConfigService:AppConfigService,
-    private readonly tangyFormService:TangyFormService,
     private readonly userService:UserService,
     private readonly http:HttpClient,
     private readonly syncService:SyncingService
   ) { }
 
-  sync(username:string):Promise<ReplicationStatus> {
+  sync(username:string, userProfileId = ''):Promise<ReplicationStatus> {
     return new Promise(async (resolve, reject) => {
       try{
         const config = await this.appConfigService.getAppConfig()
         const localDb = new PouchDB(username)
-        const syncSession = await this.syncSessionStart(username)
+        if (!userProfileId) {
+          let profileDoc = await this.userService.getUserProfile(username)
+          userProfileId = profileDoc._id
+        }
+        const syncSession = <TwoWaySyncSession>await this.http.get(`${config.serverUrl}sync-session/start/${config.groupName}/${userProfileId}`).toPromise()
         const remoteDb = new PouchDB(syncSession.url)
         localDb.sync(remoteDb, {filter: syncSession.filter, query_params: syncSession.query_params}).on('complete', async  (info) => {
           const conflictsQuery = await localDb.query('two-way-sync_conflicts');
-          //await this.syncSessionClose(syncSession)
           const formIdsToNotPush:Array<string> = [...syncSession.query_params.formIds.split(','), 'user-profile']
-          const uploadQueue = await this.syncService.getUploadQueue()
-          await this.syncService.sync(username, formIdsToNotPush)
+          const uploadQueue = await this.syncService.getUploadQueue(username, formIdsToNotPush)
+          await this.syncService.push(username, formIdsToNotPush)
           resolve(<ReplicationStatus>{
             pulled: info.pull.docs_written,
             pushed: info.push.docs_written,
-            totalPushed: uploadQueue.length,
+            forcePushed: uploadQueue.length,
             conflicts: conflictsQuery.rows.map(row => row.id)
           })
         }).on('error', function (errorMessage) {
@@ -50,12 +53,4 @@ export class TwoWaySyncService {
     })
   }
 
-  private async syncSessionStart(username):Promise<TwoWaySyncSession> {
-    const appConfig = await this.appConfigService.getAppConfig();
-    let profileDoc = await this.userService.getUserProfile(username)
-    return  <TwoWaySyncSession>await this.http.get(`${appConfig.serverUrl}sync-session/start/${appConfig.groupName}/${profileDoc._id}`).toPromise()
-  }
-
-  private async syncSessionClose(syncSession:TwoWaySyncSession):Promise<any> {
-  }
 }
