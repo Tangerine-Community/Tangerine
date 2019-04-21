@@ -1,6 +1,6 @@
 export class ReplicationStatus {
   pulled:number
   pushed:number
-  totalPushed:number
+  forcePushed:number
   conflicts:Array<string>
 }

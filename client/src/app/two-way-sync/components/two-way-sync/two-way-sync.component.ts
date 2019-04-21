@@ -33,7 +33,7 @@ export class TwoWaySyncComponent implements OnInit {
     try {
       const replicationStatus = await this.twoWaySyncService.sync(this.userService.getCurrentUser())
       this.pulled = replicationStatus.pulled
-      this.pushed = replicationStatus.pushed
+      this.pushed = replicationStatus.pushed + replicationStatus.forcePushed
       this.conflicts = replicationStatus.conflicts
       this.state = SYNC_STATE_SUCCESS
     } catch (error) {

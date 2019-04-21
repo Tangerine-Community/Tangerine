@@ -17,4 +17,6 @@ export class AppConfig {
   languageCode = "en"
   uploadUrl = ''
   syncProtocol = ''
+  minimumFreeSpace
+  usageCleanupBatchSize
 } 

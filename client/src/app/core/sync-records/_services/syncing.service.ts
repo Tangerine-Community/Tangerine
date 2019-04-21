@@ -7,6 +7,7 @@ import * as pako from 'pako';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { UserService } from '../../../shared/_services/user.service';
 import { WindowRef } from '../../../shared/_services/window-ref.service';
+import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 @Injectable()
 export class SyncingService {
@@ -15,6 +16,7 @@ export class SyncingService {
     private windowRef: WindowRef,
     private appConfigService: AppConfigService,
     private http: HttpClient,
+    private tangyFormsInfoService: TangyFormsInfoService,
     private userService: UserService
   ) {
     this.window = this.windowRef.nativeWindow;
@@ -46,34 +48,33 @@ export class SyncingService {
 
   }
 
-  async push(username, skipByFormId:Array<string>) {
+  async push(username, skipByFormId:Array<string> = []) {
     try {
       const userProfile = await this.userService.getUserProfile(username);
       const appConfig = await this.appConfigService.getAppConfig()
       const DB = new PouchDB(username);
-      const doc_ids = await this.getUploadQueue(username);
+      // ok
+      const doc_ids = await this.getUploadQueue(username, skipByFormId);
       if (doc_ids && doc_ids.length > 0) {
         for (const doc_id of doc_ids) {
           const doc = await DB.get(doc_id);
-          if (skipByFormId && doc.form && !skipByFormId.includes(doc.form.id)) {
-            // Insert the userProfileId as an input.
-            doc['items'][0]['inputs'].push({ name: 'userProfileId', value: userProfile._id });
-            doc['items'][0]['inputs'].push({ name: 'tabletUserName', value: username });
-            // Redact any fields marked as private.
-            doc['items'].forEach(item => {
-              item['inputs'].forEach(input => {
-                if (input.private) {
-                  input.value = '';
-                }
-              });
+          // Insert the userProfileId as an input.
+          doc['items'][0]['inputs'].push({ name: 'userProfileId', value: userProfile._id });
+          doc['items'][0]['inputs'].push({ name: 'tabletUserName', value: username });
+          // Redact any fields marked as private.
+          doc['items'].forEach(item => {
+            item['inputs'].forEach(input => {
+              if (input.private) {
+                input.value = '';
+              }
             });
-            const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
-            await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload`, body, {
-              headers: new HttpHeaders({
-                'Authorization': appConfig.uploadToken
-              })
-            }).toPromise();
-          }
+          });
+          const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
+          await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload`, body, {
+            headers: new HttpHeaders({
+              'Authorization': appConfig.uploadToken
+            })
+          }).toPromise();
           await this.markDocsAsUploaded([doc_id], username);
         }
       }
@@ -83,13 +84,9 @@ export class SyncingService {
     }
   }
 
-  /**
-   *
-   * @param {string} username
-   * @returns {Promise<any>}
-   */
-  async getUploadQueue(username?: string) {
-    const userProfile = await this.userService.getUserProfile(username);
+  async getUploadQueue(username:string = '', skipByFormId:Array<string> = []) {
+    const allFormIds = (await this.tangyFormsInfoService.getFormsInfo()).map(info => info.id)
+    const includeByFormId = allFormIds.filter(id => !skipByFormId.includes(id))
     const userDB = username || await this.getLoggedInUser();
     const DB = new PouchDB(userDB);
     const appConfig = await this.appConfigService.getAppConfig()
@@ -99,8 +96,9 @@ export class SyncingService {
       queryNotUploaded = 'responsesUnLockedAndNotUploaded'
       queryUploaded = 'responsesUnLockedAndUploaded'
     }
-    const results = await DB.query('tangy-form/' + queryNotUploaded);
-    const localNotUploadedDocIds = results.rows.map(row => row.key);
+    const results = await DB.query('tangy-form/' + queryNotUploaded, {keys: includeByFormId});
+    const localNotUploadedDocIds = results.rows.map(row => row.id);
+    return localNotUploadedDocIds
     if (!this.window.navigator.onLine) {
       return localNotUploadedDocIds
     } else {

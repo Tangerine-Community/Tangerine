@@ -15,7 +15,7 @@ export class SyncSessionController {
     try {
       return await this.syncSessionService.start(groupId, profileId)
     } catch (err) {
-      log.warning(`Error in sync-session/start: ${JSON.stringify(err)}`)
+      log.warn(`Error in sync-session/start: ${JSON.stringify(err)}`)
     }
   }
 
