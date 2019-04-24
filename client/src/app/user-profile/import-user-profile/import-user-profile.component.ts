@@ -38,8 +38,12 @@ export class ImportUserProfileComponent implements AfterContentInit {
     const db = new PouchDB(username)
     const usersDb = new PouchDB('users')
     const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
-    const profileToReplace = await db.get(userAccount.userUUID)
-    await db.remove(profileToReplace)
+    try {
+      const profileToReplace = await db.get(userAccount.userUUID)
+      await db.remove(profileToReplace)
+    } catch(e) {
+      // It's ok if this fails. It's probably because they are trying again and the profile has already been deleted.
+    }
     this.state = STATE_SYNCING
     this.appConfig = await this.appConfigService.getAppConfig()
     const shortCode = this.userShortCodeInput.nativeElement.value
