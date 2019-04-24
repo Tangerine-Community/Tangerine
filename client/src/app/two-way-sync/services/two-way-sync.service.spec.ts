@@ -101,13 +101,14 @@ describe('TwoWaySyncService', () => {
       password: '123'
     })
     // User's profile which should always get pulled down. But counted?
-    await mockRemoteDb.put({_id: 'remoteManagedUser', collection: 'TangyFormResponse', form: {id: "user-profile"}, someChangeOnServer: true})
+    await mockRemoteDb.put({_id: 'remoteManagedUser', collection: 'TangyFormResponse', form: {id: "user-profile"}, location: {county: 'a'},  someChangeOnServer: true})
     // Remote docs that should get pulled down.
-    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example1"}})
-    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example1"}})
-    // Remote doc that won't get pulled down.
-    await mockRemoteDb.put({_id:"doc3", collection: 'TangyFormResponse', form: {id: "example2"}})
-    await mockRemoteDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example2"}})
+    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'a', facility: '1'}})
+    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'a', facility: '2'}})
+    // Remote docs that won't get pulled down.
+    await mockRemoteDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example2"}, location: {county: 'b', facility: '3'}})
+    await mockRemoteDb.put({_id:"doc5", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'b', facility: '4'}})
+    // User profile setup.
     const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_INFO_1)
     const localProfile = await mockLocalDb.get(userAccount.userUUID)
     await mockLocalDb.remove(localProfile)
@@ -115,14 +116,10 @@ describe('TwoWaySyncService', () => {
     const usersDb = new PouchDB('users')
     await usersDb.put(userAccount)
     // Local doc that should two-way replicate up.
-    await mockLocalDb.put({_id:"doc5", collection: 'TangyFormResponse', form: {id: "example1"}})
-    await mockLocalDb.put({_id:"doc6", collection: 'TangyFormResponse', form: {id: "example1"}})
-    // Never uploaded doc that will get pushed up.
-    await mockLocalDb.put({_id:"doc7", collection: 'TangyFormResponse', form: {id: "example2"}, lastModified: 1})
-    // Has been uploaded but has been modified since.
-    await mockLocalDb.put({_id:"doc9", collection: 'TangyFormResponse', form: {id: "example2"}, uploadDate: 2, lastModified: 3})
-    // Has been uploaded but has not been modified since.
-    await mockLocalDb.put({_id:"doc8", collection: 'TangyFormResponse', form: {id: "example2"}, uploadDate: 2, lastModified: 1})
+    await mockLocalDb.put({_id:"doc5", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'a', facility: '1'}})
+    await mockLocalDb.put({_id:"doc6", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'a', facility: '1'}})
+    // Doc that will not get synced.
+    await mockLocalDb.put({_id:"doc7", collection: 'TangyFormResponse', form: {id: "example2"}, location: {county: 'a', facility: '1'}})
     twoWaySyncService.sync(MOCK_LOCAL_DB_INFO_1, userAccount.userUUID).then(async status => {
       const userDoc = mockLocalDb.get(userAccount.userUUID)
       await userService.remove(MOCK_LOCAL_DB_INFO_1)
@@ -143,6 +140,7 @@ describe('TwoWaySyncService', () => {
           "selector": {
             "$or": [
               {
+                "location.county": 'a',
                 "form.id": "example1"
               },
               {
