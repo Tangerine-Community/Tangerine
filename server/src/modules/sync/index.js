@@ -9,11 +9,6 @@ module.exports = {
   hooks: {
     groupNew: async function(data) {
       const {groupName, appConfig} = data
-      // Insert the filtered replication doc.
-      let groupDb = new DB(groupName)
-      for (let groupDoc of groupDocs) {
-        await groupDb.put(groupDoc)
-      }
       // Attach a sync role for sync users to use.
       const securityInfo = (await axios.get(`${process.env.T_COUCHDB_ENDPOINT}${groupName}/_security`)).data
       const updatedSecurityInfo = {...securityInfo, ...{

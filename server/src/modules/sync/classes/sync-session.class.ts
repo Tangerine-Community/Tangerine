@@ -1,5 +1,5 @@
 export interface SyncSession {
-  url:string
-  filter:string
-  query_params:object
+  pouchDbSyncUrl:string
+  pouchDbSyncOptions:any
+  formIdsToNotPush:[string]
 }

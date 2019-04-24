@@ -5,6 +5,7 @@ import * as UUID from 'uuid/v4'
 import { GroupService } from '../../../../shared/services/group/group.service';
 import { ClientUserService } from '../../../../shared/services/client-user/client-user.service';
 import { DbService } from '../../../../shared/services/db/db.service';
+const log = require('tangy-log').log
 
 interface HttpError {
   ok: boolean 
@@ -38,13 +39,23 @@ export class SyncSessionService {
         "password": syncPassword 
       }
       await this.http.post(`${config.couchdbEndpoint}/_users`, syncUserDoc).toPromise()
+      const formIds = (await this.groupConfig.read(groupId)).config.sync.formIds
+      log.info(`Created sync session for user ${profileId} in group ${groupId}`)
       return <SyncSession>{
-        url: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
-        filter: 'sync_filter-by-form-ids',
-        query_params: {
-          formIds: (await this.groupConfig.read(groupId)).config.sync.formIds.join(),
-          docIds: profileId
-        }
+        pouchDbSyncUrl: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
+        pouchDbSyncOptions: {
+          selector: {
+            "$or": [
+              ...formIds.map(formId => {
+                return { "form.id": formId }
+              }),
+              {
+                "_id": profileId
+              }
+            ]
+          }
+        },
+        formIdsToNotPush: formIds
       }
     } catch(e) {
       throw e
