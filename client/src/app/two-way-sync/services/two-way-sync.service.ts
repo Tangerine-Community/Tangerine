@@ -21,6 +21,8 @@ export class TwoWaySyncService {
     private readonly syncService:SyncingService
   ) { }
 
+  // userProfileId is required for the first sync if your centrally managed user profile is currently remote to you. 
+  // As soon as it's local, we can look it up and all we need is the username.
   sync(username:string, userProfileId = ''):Promise<ReplicationStatus> {
     return new Promise(async (resolve, reject) => {
       try{
