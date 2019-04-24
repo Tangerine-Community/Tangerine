@@ -1,7 +1,6 @@
 const DB = require('../../db.js')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
-const groupDocs = require(`./group-docs.js`)
 const axios = require('axios')
 const PouchDB = require('pouchdb')
 
