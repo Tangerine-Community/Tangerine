@@ -26,7 +26,8 @@ export class SyncSessionService {
   async start(groupId:string, profileId:string):Promise<SyncSession> {
     try {
       const groupDb = this.dbService.instantiate(groupId)
-      const clientUser = await groupDb.get(profileId) 
+      // @TODO Use this clientUser to limit the selector by location.
+      // const clientUser = await groupDb.get(profileId) 
       // Create sync user
       const syncUsername = `syncUser-${UUID()}`
       const syncPassword = UUID()
