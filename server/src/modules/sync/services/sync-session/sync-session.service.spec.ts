@@ -6,6 +6,7 @@ import { ClientUserService } from '../../../../shared/services/client-user/clien
 import { HttpModule, HttpService } from '@nestjs/common';
 import { TangerineConfigService } from '../../../../shared/services/tangerine-config/tangerine-config.service';
 import { of } from 'rxjs';
+import { DbService } from '../../../../shared/services/db/db.service';
 
 class MockGroupService {
   read(groupId:string) {
@@ -41,11 +42,17 @@ class MockConfigService {
   }
 }
 
-/* TODO: When it's time to work on location filtering we'll need this.
 class MockPouchDB {
+  constructor(userProfileId:string) {
+    
+  }
   get(_id:string) {
     return {
-      _id
+      _id,
+      location: {
+        "county": "a",
+        "facility": "1"
+      }
     }
   }
 }
@@ -54,7 +61,7 @@ class MockDbService {
     return new MockPouchDB(userProfileId)
   }
 }
-*/
+
 describe('SyncSessionService', () => {
   let service: SyncSessionService;
 
@@ -79,6 +86,10 @@ describe('SyncSessionService', () => {
           {
             provide: ClientUserService,
             useClass: MockClientUserService
+          },
+          {
+            provide: DbService,
+            useClass: MockDbService
           }
         ]
       }).compile();
@@ -95,13 +106,16 @@ describe('SyncSessionService', () => {
 
   it('should start a sync session', async () => {
     const response = await service.start('group1', 'profile1')
+    debugger
     const shouldRespondWith = {
       "pouchDbSyncUrl": "https://syncUser-ac15bf36-f9ea-4cbc-8761-48c3ebe968e0:6e99e4a5-15ac-488f-8c15-dd3633a77d72@localhost/db/group1",
       "pouchDbSyncOptions": {
         "selector": {
           "$or": [
             {
-              "form.id": "example"
+              "form.id": "example",
+              "location.county": "a",
+              "location.facility": "1"
             },
             {
               "_id": "profile1"
@@ -116,6 +130,8 @@ describe('SyncSessionService', () => {
     // Can't expect this to be the same, random UUID used in formation of url.
     // expect(response.pouchDbSyncUrl).toBe(shouldRespondWith.pouchDbSyncUrl)
     expect(response.pouchDbSyncOptions.selector['$or'][0]['form.id']).toBe(shouldRespondWith.pouchDbSyncOptions.selector['$or'][0]['form.id'])
+    expect(response.pouchDbSyncOptions.selector['$or'][0]['location.county']).toBe(shouldRespondWith.pouchDbSyncOptions.selector['$or'][0]['location.county'])
+    expect(response.pouchDbSyncOptions.selector['$or'][0]['location.facility']).toBe(shouldRespondWith.pouchDbSyncOptions.selector['$or'][0]['location.facility'])
     expect(response.pouchDbSyncOptions.selector['$or'][1]['_id']).toBe(shouldRespondWith.pouchDbSyncOptions.selector['$or'][1]['_id'])
     expect(response.formIdsToNotPush[0]).toBe(shouldRespondWith.formIdsToNotPush[0])
   })
