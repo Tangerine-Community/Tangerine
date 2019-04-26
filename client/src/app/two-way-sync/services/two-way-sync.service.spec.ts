@@ -47,8 +47,8 @@ class MockAppConfigService {
 }
 
 class MockSyncService {
-  async sync() {
-    return true
+  async push(username:string, formIdsToNotPush:[string]) {
+    return true 
   }
   async getUploadQueue() {
     return [1, 2]
@@ -95,83 +95,76 @@ describe('TwoWaySyncService', () => {
 
   it('should sync', async function(done) {
     const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_1)
-    await mockRemoteDb.put({
-      _id: '_design/sync_filter-by-form-ids',
-      filters: {
-        "sync_filter-by-form-ids": function (doc, req) {
-          var formIds = req.query.formIds.split(',')
-          return doc.collection === 'TangyFormResponse' &&
-            doc.form &&
-            doc.form.id &&
-            formIds.includes(doc.form.id)
-        }.toString()
-      }
-    })
     const userAccount = await userService.create({
       username: MOCK_LOCAL_DB_INFO_1,
       securityQuestionResponse: '123',
       password: '123'
     })
     // User's profile which should always get pulled down. But counted?
-    await mockRemoteDb.put({_id:userAccount.userUUID, collection: 'TangyFormResponse', form: {id: "user-profile"}, someChangeOnServer: true})
+    await mockRemoteDb.put({_id: 'remoteManagedUser', collection: 'TangyFormResponse', form: {id: "user-profile"}, location: {county: 'a'},  someChangeOnServer: true})
     // Remote docs that should get pulled down.
-    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example1"}})
-    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example1"}})
-    // Remote doc that won't get pulled down.
-    await mockRemoteDb.put({_id:"doc3", collection: 'TangyFormResponse', form: {id: "example2"}})
-    await mockRemoteDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example2"}})
+    await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'a', facility: '1'}})
+    await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'a', facility: '2'}})
+    // Remote docs that won't get pulled down.
+    await mockRemoteDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example2"}, location: {county: 'b', facility: '3'}})
+    await mockRemoteDb.put({_id:"doc5", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'b', facility: '4'}})
+    // User profile setup.
     const mockLocalDb = new PouchDB(MOCK_LOCAL_DB_INFO_1)
+    const localProfile = await mockLocalDb.get(userAccount.userUUID)
+    await mockLocalDb.remove(localProfile)
+    userAccount.userUUID = 'remoteManagedUser'
+    const usersDb = new PouchDB('users')
+    await usersDb.put(userAccount)
     // Local doc that should two-way replicate up.
-    await mockLocalDb.put({_id:"doc5", collection: 'TangyFormResponse', form: {id: "example1"}})
-    await mockLocalDb.put({_id:"doc6", collection: 'TangyFormResponse', form: {id: "example1"}})
-    // Never uploaded doc that will get pushed up.
-    await mockLocalDb.put({_id:"doc7", collection: 'TangyFormResponse', form: {id: "example2"}, lastModified: 1})
-    // Has been uploaded but has been modified since.
-    await mockLocalDb.put({_id:"doc9", collection: 'TangyFormResponse', form: {id: "example2"}, uploadDate: 2, lastModified: 3})
-    // Has been uploaded but has not been modified since.
-    await mockLocalDb.put({_id:"doc8", collection: 'TangyFormResponse', form: {id: "example2"}, uploadDate: 2, lastModified: 1})
-    twoWaySyncService.sync(MOCK_LOCAL_DB_INFO_1).then(async status => {
+    await mockLocalDb.put({_id:"doc5", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'a', facility: '1'}})
+    await mockLocalDb.put({_id:"doc6", collection: 'TangyFormResponse', form: {id: "example1"}, location: {county: 'a', facility: '1'}})
+    // Doc that will not get synced.
+    await mockLocalDb.put({_id:"doc7", collection: 'TangyFormResponse', form: {id: "example2"}, location: {county: 'a', facility: '1'}})
+    twoWaySyncService.sync(MOCK_LOCAL_DB_INFO_1, userAccount.userUUID).then(async status => {
       const userDoc = mockLocalDb.get(userAccount.userUUID)
       await userService.remove(MOCK_LOCAL_DB_INFO_1)
       await mockRemoteDb.destroy()
-      expect(status.pulled).toBe(2)
+      // Note: We are only testing the sync aspect of this so example2 docs that would end up in status.forcedPushed are left out
+      // because we mocked that underlying service.
+      expect(status.pulled).toBe(3)
       expect(status.pushed).toBe(2)
       expect(status.conflicts.length).toBe(0)
-      // @TODO
-      //expect(userDoc.someChangeOnServer).toBeTruthy
       done()
     })
     setTimeout(() => {
       const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}sync-session/start/foo/${userAccount.userUUID}`);
       expect(req.request.method).toEqual('GET')
       req.flush({
-        url: MOCK_REMOTE_DB_INFO_1,
-        filter: 'sync_filter-by-form-ids',
-        query_params: { formIds:'example1' }
+        "pouchDbSyncUrl": MOCK_REMOTE_DB_INFO_1,
+        "pouchDbSyncOptions": {
+          "selector": {
+            "$or": [
+              {
+                "location.county": 'a',
+                "form.id": "example1"
+              },
+              {
+                "_id": 'remoteManagedUser'
+              }
+            ]
+          }
+        },
+        "formIdsToNotPush": [
+          "example1"
+        ]
       });
     }, 1000)
   }, 4000)
 
   it('should sync but with conflicts', async (done) => {
     const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_2)
-    await mockRemoteDb.put({
-      _id: '_design/sync_filter-by-form-ids',
-      filters: {
-        "sync_filter-by-form-ids": function (doc, req) {
-          var formIds = req.query.formIds.split(',')
-          return doc.collection === 'TangyFormResponse' &&
-            doc.form &&
-            doc.form.id &&
-            formIds.includes(doc.form.id)
-        }.toString()
-      }
-    })
     const userAccount = await userService.create({
       username: MOCK_LOCAL_DB_INFO_2,
       securityQuestionResponse: '123',
       password: '123'
     })
     // Prepopulate the mock remote db.
+    await mockRemoteDb.put({_id: 'remoteManagedUser', collection: 'TangyFormResponse', form: {id: "user-profile"}, someChangeOnServer: true})
     await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example1"}})
     await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example1"}})
     const mockLocalDb = userService.getUserDatabase(MOCK_LOCAL_DB_INFO_2)
@@ -193,9 +186,22 @@ describe('TwoWaySyncService', () => {
       const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}sync-session/start/foo/${userAccount.userUUID}`);
       expect(req.request.method).toEqual('GET');
       req.flush({
-        url: MOCK_REMOTE_DB_INFO_2,
-        filter: 'sync_filter-by-form-ids',
-        query_params: { formIds:'example1' }
+        "pouchDbSyncUrl": MOCK_REMOTE_DB_INFO_2,
+        "pouchDbSyncOptions": {
+          "selector": {
+            "$or": [
+              {
+                "form.id": "example1"
+              },
+              {
+                "_id": 'remoteManagedUser'
+              }
+            ]
+          }
+        },
+        "formIdsToNotPush": [
+          "example1"
+        ]
       });
     }, 1000)
   }, 4000)

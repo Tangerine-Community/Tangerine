@@ -5,6 +5,7 @@ import * as UUID from 'uuid/v4'
 import { GroupService } from '../../../../shared/services/group/group.service';
 import { ClientUserService } from '../../../../shared/services/client-user/client-user.service';
 import { DbService } from '../../../../shared/services/db/db.service';
+const log = require('tangy-log').log
 
 interface HttpError {
   ok: boolean 
@@ -24,8 +25,7 @@ export class SyncSessionService {
   
   async start(groupId:string, profileId:string):Promise<SyncSession> {
     try {
-      const groupDb = this.dbService.instantiate(groupId)
-      const clientUser = await groupDb.get(profileId) 
+
       // Create sync user
       const syncUsername = `syncUser-${UUID()}`
       const syncPassword = UUID()
@@ -38,13 +38,35 @@ export class SyncSessionService {
         "password": syncPassword 
       }
       await this.http.post(`${config.couchdbEndpoint}/_users`, syncUserDoc).toPromise()
+      // Get the formIds that we'll use to build the sync selector.
+      const formIds = (await this.groupConfig.read(groupId)).config.sync.formIds
+      log.info(`Created sync session for user ${profileId} in group ${groupId}`)
+      // Build the location based part of the sync selector.
+      const groupDb = this.dbService.instantiate(groupId)
+      const userProfile = await groupDb.get(profileId) 
+      const userProfileDefinedSyncLocation = {}
+      for (const locationLevel in userProfile.location) {
+        userProfileDefinedSyncLocation[`location.${locationLevel}`] = userProfile.location[locationLevel]
+      }
+      // Template and return the full sync session.
       return <SyncSession>{
-        url: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
-        filter: 'sync_filter-by-form-ids',
-        query_params: {
-          formIds: (await this.groupConfig.read(groupId)).config.sync.formIds.join(),
-          docIds: profileId
-        }
+        pouchDbSyncUrl: `${config.protocol}://${syncUsername}:${syncPassword}@${config.hostName}/db/${groupId}`,
+        pouchDbSyncOptions: {
+          selector: {
+            "$or": [
+              ...formIds.map(formId => {
+                return { 
+                  "form.id": formId,
+                  ...userProfileDefinedSyncLocation
+                }
+              }),
+              {
+                "_id": profileId
+              }
+            ]
+          }
+        },
+        formIdsToNotPush: formIds
       }
     } catch(e) {
       throw e
