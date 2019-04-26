@@ -92,7 +92,7 @@ export class ImportLocationListComponent implements OnInit {
       }
       this.generateIDs();
       this.transformFromMappings();
-      await this.saveLocationListToDisk();
+      // await this.saveLocationListToDisk();
     } catch (error) {
       console.log(error);
     }
