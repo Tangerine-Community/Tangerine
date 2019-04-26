@@ -21,6 +21,8 @@ export class TwoWaySyncService {
     private readonly syncService:SyncingService
   ) { }
 
+  // userProfileId is required for the first sync if your centrally managed user profile is currently remote to you. 
+  // As soon as it's local, we can look it up and all we need is the username.
   sync(username:string, userProfileId = ''):Promise<ReplicationStatus> {
     return new Promise(async (resolve, reject) => {
       try{
@@ -31,12 +33,11 @@ export class TwoWaySyncService {
           userProfileId = profileDoc._id
         }
         const syncSession = <TwoWaySyncSession>await this.http.get(`${config.serverUrl}sync-session/start/${config.groupName}/${userProfileId}`).toPromise()
-        const remoteDb = new PouchDB(syncSession.url)
-        localDb.sync(remoteDb, {filter: syncSession.filter, query_params: syncSession.query_params}).on('complete', async  (info) => {
+        const remoteDb = new PouchDB(syncSession.pouchDbSyncUrl)
+        localDb.sync(remoteDb, syncSession.pouchDbSyncOptions).on('complete', async  (info) => {
           const conflictsQuery = await localDb.query('two-way-sync_conflicts');
-          const formIdsToNotPush:Array<string> = [...syncSession.query_params.formIds.split(','), 'user-profile']
-          const uploadQueue = await this.syncService.getUploadQueue(username, formIdsToNotPush)
-          await this.syncService.push(username, formIdsToNotPush)
+          const uploadQueue = await this.syncService.getUploadQueue(username, syncSession.formIdsToNotPush)
+          await this.syncService.push(username, syncSession.formIdsToNotPush)
           resolve(<ReplicationStatus>{
             pulled: info.pull.docs_written,
             pushed: info.push.docs_written,

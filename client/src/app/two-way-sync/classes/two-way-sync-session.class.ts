@@ -1,5 +1,5 @@
 export class TwoWaySyncSession {
-  url:string
-  filter:string
-  query_params:any
+  pouchDbSyncUrl:string
+  pouchDbSyncOptions:any
+  formIdsToNotPush:[string]
 }
