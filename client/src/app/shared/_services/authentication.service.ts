@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AppConfigService } from './app-config.service';
 import { UserService } from './user.service';
+import { UserAccount } from '../_classes/user-account.class';
 
 @Injectable()
 export class AuthenticationService {
 
+  public userLoggedIn$:Subject<UserAccount> = new Subject()
+  public userLoggedOut$:Subject<UserAccount> = new Subject()
   public currentUserLoggedIn$: any;
   private _currentUserLoggedIn: boolean;
   public userShouldResetPassword$: any;
@@ -24,6 +27,8 @@ export class AuthenticationService {
       localStorage.setItem('currentUser', username);
       this._currentUserLoggedIn = true;
       this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+      const userAccount = await this.userService.getUserAccount(username)
+      this.userLoggedIn$.next(userAccount)
       return true 
     } else {;
       return false
@@ -41,6 +46,7 @@ export class AuthenticationService {
       localStorage.setItem('currentUser', user.username);
       this._currentUserLoggedIn = true;
       this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+      this.userLoggedIn$.next(user)
       return true;
     } else {
       return false;
@@ -62,9 +68,12 @@ export class AuthenticationService {
   }
 
   logout(): void {
+    const username = localStorage.getItem('currentUser')
     localStorage.removeItem('currentUser');
     this._currentUserLoggedIn = false;
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+    this.userService.getUserAccount(username)
+      .then((userAccount) => this.userLoggedOut$.next(userAccount))
   }
 
   isLoggedIn() {

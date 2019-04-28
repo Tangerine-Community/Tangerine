@@ -24,6 +24,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginGuard } from './_guards/login-guard.service';
 import { CreateProfileGuardService } from './_guards/create-profile-guard.service';
 import { DEFAULT_USER_DOCS } from './_tokens/default-user-docs.token';
+import { SearchService } from './_services/search.service';
 
 @NgModule({
   imports: [
@@ -47,6 +48,7 @@ import { DEFAULT_USER_DOCS } from './_tokens/default-user-docs.token';
     WindowRef,
     Loc,
     LoginGuard,
+    SearchService,
     CreateProfileGuardService
   ],
   declarations: [
