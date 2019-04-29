@@ -7,6 +7,22 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Router } from '@angular/router';
 
+// @TODO Turn this into a service that gets this info from a hook.
+export const FORM_TYPES_INFO = [
+  {
+    id: 'form',
+    newFormResponseLinkTemplate: '/tangy-forms-player/${formId}',
+    resumeFormResponseLinkTemplate: '/tangy-forms-player/${formId}/${response._id}',
+    iconTemplate: '${response && response.complete ? `assignment-turned-in` : `assignment`}'
+  },
+  {
+    id: 'case',
+    newFormResponseLinkTemplate: '/case-new/${formId}',
+    resumeFormResponseLinkTemplate: '/case/${response._id}',
+    iconTemplate: '${response && response.complete ? `folder-special` : `folder`}'
+  }
+]
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -17,6 +33,9 @@ export class SearchComponent implements OnInit {
   @ViewChild('searchBar') searchBar: ElementRef
   @ViewChild('searchResults') searchResults: ElementRef
   onSearch$ = new Subject()
+  didSearch$ = new Subject()
+  searchReady$ = new Subject()
+  navigatingTo$ = new Subject()
   searchDocs:Array<SearchDoc>
   username:string
   formsInfo:Array<FormInfo>
@@ -30,24 +49,9 @@ export class SearchComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    debugger
     this.formsInfo = await this.formsInfoService.getFormsInfo()
     this.username = this.userService.getCurrentUser()
-    // @TODO Turn this into a service that gets this info from a hook.
-    this.formTypesInfo = [
-      {
-        id: 'form',
-        newFormResponseLinkTemplate: '/tangy-forms-player/${formId}',
-        resumeFormResponseLinkTemplate: '/tangy-forms-player/${formId}/${formResponseId}',
-        iconTemplate: '${formResponse && formResponse.complete ? `assignment-turned-in` : `assignment`}'
-      },
-      {
-        id: 'case',
-        newFormResponseLinkTemplate: '/case-new/${formId}',
-        resumeFormResponseLinkTemplate: '/case/${formResponseId}',
-        iconTemplate: '${formResponse && formResponse.complete ? `folder-special` : `folder`}'
-      }
-    ]
+    this.formTypesInfo = FORM_TYPES_INFO 
     this.onSearch$
       .pipe(debounceTime(300))
       .subscribe((searchString:string) => this.onSearch(searchString))
@@ -56,6 +60,7 @@ export class SearchComponent implements OnInit {
       .nativeElement
       .addEventListener('change', event => this.onSearch$.next(event.target.value))
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
+    this.searchReady$.next(true)
   }
 
   async onSearch(searchString) {
@@ -64,25 +69,27 @@ export class SearchComponent implements OnInit {
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     for (const searchDoc of this.searchDocs) {
-      const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
+      const userDb = this.userService.getUserDatabase(this.userService.getCurrentUser())
+      const response = await userDb.get(searchDoc._id)
       const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
-      const formResponseId = searchDoc._id
-      const formId = searchDoc.formId
+      const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
+      const formId = formInfo.id
       searchResultsMarkup += `
-        <paper-icon-item class="search-result" open-link="${eval(`return \`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
-          <iron-icon icon="${eval(`return \`${formTypeInfo.iconTemplate}\``)}" slot="item-icon"></iron-icon> 
+        <paper-icon-item class="search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
+          <iron-icon icon="${eval(`\`${formTypeInfo.iconTemplate}\``)}" slot="item-icon"></iron-icon> 
           <paper-item-body two-line>
             <div>
-              ${eval(`return \`${formInfo.searchSettings.primaryTemplate}\``)}
+              ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : response._id}\``)}
             </div>
             <div secondary>
-              ${eval(`return \`${formInfo.searchSettings.secondaryTemplate}\``)}
+              ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
             </div>
           </paper-item-body>
         </paper-icon-item>
       `
     }
     this.searchResults.nativeElement.innerHTML = searchResultsMarkup
+    this.didSearch$.next(true)
   }
 
   onSearchResultClick(element) {
@@ -93,7 +100,12 @@ export class SearchComponent implements OnInit {
         parentEl = currentEl
       }
     }
-    this.router.navigate(currentEl.getAttribute('open-link').split('\/'))
+    this.goTo(currentEl.getAttribute('open-link'))
+  }
+
+  goTo(url) {
+    this.navigatingTo$.next(url)
+    this.router.navigate(url.split('\/'))
   }
 
 }
