@@ -12,7 +12,7 @@ export class SearchDoc {
   _id: string
   formId: string
   formType: string
-  data: any
+  variables: any
 }
 
 @Injectable({
@@ -59,9 +59,9 @@ export class SearchService {
       _id: doc._id,
       formId: doc.form.id,
       formType: formInfo.type,
-      data: {} 
+      variables: {} 
     }
-    // Populate searchDoc.data.
+    // Populate searchDoc.variables.
     // @TODO This reduce is taken from the TangyFormResponseModel Class in the tangy-form module. At
     // some point we need to figure out why that class is not importing correctly so we can use it
     // directly. This code is at risk of getting out of sync.
@@ -87,7 +87,7 @@ export class SearchService {
       return inputsObject
     }, {})
     for (const variableName of formInfo.searchSettings.variablesToIndex) {
-      searchDoc.data[variableName] = inputsByName[variableName]
+      searchDoc.variables[variableName] = inputsByName[variableName]
     }
     return searchDoc
   }
