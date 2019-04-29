@@ -9,4 +9,6 @@ export interface FormInfo {
 export interface FormSearchSettings {
   shouldIndex:boolean
   variablesToIndex:Array<string>
+  primaryTemplate:string
+  secondaryTemplate:string
 }
