@@ -19,4 +19,5 @@ export class AppConfig {
   syncProtocol = ''
   minimumFreeSpace
   usageCleanupBatchSize
+  barcodeSearchMapFunction:string
 } 
