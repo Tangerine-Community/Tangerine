@@ -12,6 +12,7 @@ export class SearchDoc {
   _id: string
   formId: string
   formType: string
+  lastModified:number
   variables: any
 }
 
@@ -33,32 +34,40 @@ export class SearchService {
   ) { }
 
   async start():Promise<void> {
-    this.formsInfo = await this.formsInfoService.getFormsInfo()
+    if (this.authService.isLoggedIn() === true) {
+      const userAccount = await this.userService.getUserAccount(this.authService.getCurrentUser())
+      this.subscribeToChanges(userAccount)
+    }
     this.authService.userLoggedIn$.subscribe(async (userAccount:UserAccount) => {
-      console.log(userAccount._id)
-      this.userDb = await this.userService.getUserDatabase(userAccount._id)
-      // Refactor to use batch processing, not changes feed which can lead to race conditions.
-      this.userDbSubscription = this.userDb
-        .changes({include_docs:true, since:'now', live:true})
-        .on('change', change => {
-          if (!change.doc.form || !change.doc.form.id) return
-          const formInfo = this.formsInfo.find(formInfo => formInfo.id === change.doc.form.id)
-          if (!formInfo.searchSettings.shouldIndex) return
-          const searchDoc = this.formResponseToSearchDoc(change.doc, formInfo)
-          this.indexDoc(userAccount._id, searchDoc)
-        })
-      this.subscribedToLoggedInUser$.next(true)
+      this.subscribeToChanges(userAccount)
     })
     this.authService.userLoggedOut$.subscribe((userAccount:UserAccount) => {
       this.userDbSubscription.cancel()
     })
   }
 
+  async subscribeToChanges(userAccount:UserAccount) {
+    this.formsInfo = await this.formsInfoService.getFormsInfo()
+    this.userDb = await this.userService.getUserDatabase(userAccount._id)
+    // Refactor to use batch processing, not changes feed which can lead to race conditions.
+    this.userDbSubscription = this.userDb
+      .changes({include_docs:true, since:'now', live:true})
+      .on('change', change => {
+        if (!change.doc.form || !change.doc.form.id) return
+        const formInfo = this.formsInfo.find(formInfo => formInfo.id === change.doc.form.id)
+        if ( !formInfo || !formInfo.searchSettings || !formInfo.searchSettings.shouldIndex) return
+        const searchDoc = this.formResponseToSearchDoc(change.doc, formInfo)
+        this.indexDoc(userAccount._id, searchDoc)
+      })
+    this.subscribedToLoggedInUser$.next(true)
+  }
+
   formResponseToSearchDoc(doc, formInfo:FormInfo):SearchDoc {
     const searchDoc = <SearchDoc>{ 
       _id: doc._id,
       formId: doc.form.id,
-      formType: formInfo.type,
+      formType: formInfo.type ? formInfo.type : 'form',
+      lastModified: Date.now(),
       variables: {} 
     }
     // Populate searchDoc.variables.
@@ -87,7 +96,10 @@ export class SearchService {
       return inputsObject
     }, {})
     for (const variableName of formInfo.searchSettings.variablesToIndex) {
+      // @TODO This only supports text values. If it's an array, should reduce.
       searchDoc.variables[variableName] = inputsByName[variableName]
+        ? inputsByName[variableName].value
+        : ''
     }
     return searchDoc
   }
@@ -115,8 +127,12 @@ export class SearchService {
   async search(username:string, phrase:string):Promise<Array<SearchDoc>> {
     const _indexName = `${username}_search`
     const indexDb = new PouchDB(_indexName)
-    const allDocs = (await indexDb.allDocs({include_docs:true})).rows.map(row => <SearchDoc>row.doc)
-    return allDocs.filter(doc => JSON.stringify(doc).search(phrase) !== -1)
+    const allDocs = (await indexDb.allDocs({include_docs:true})).rows.map(row => <SearchDoc>row.doc).sort(function (a, b) {
+      return b.lastModified - a.lastModified;
+    })
+    return phrase === ''
+      ? allDocs
+      : allDocs.filter(doc => JSON.stringify(doc).search(phrase) !== -1)
   }
 
 }

@@ -45,7 +45,6 @@ export class AppComponent implements OnInit {
     private searchService:SearchService,
     translate: TranslateService
   ) {
-    this.searchService.start()
     this.window = this.windowRef.nativeWindow;
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
       ? true
@@ -73,6 +72,7 @@ export class AppComponent implements OnInit {
   async ngOnInit() {
     // Load up the app config.
     this.appConfig = await this.appConfigService.getAppConfig()
+    this.searchService.start()
     this.window.appConfig = this.appConfig
     // Bail if the app is not yet installed.
     if (!this.installed) {

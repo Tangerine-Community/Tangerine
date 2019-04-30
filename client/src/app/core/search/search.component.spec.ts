@@ -95,7 +95,7 @@ class MockTangyFormsInfoService {
 }
 
 class MockRouter {
-  navigate(url) {
+  navigateByUrl(url) {
     return
   }
 }
