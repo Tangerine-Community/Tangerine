@@ -5,7 +5,6 @@ import { AppConfigService } from './_services/app-config.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { Loc } from './_services/location.service';
 import { WindowRef } from './_services/window-ref.service';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -46,7 +45,6 @@ import { SearchService } from './_services/search.service';
     UserService,
     {provide: DEFAULT_USER_DOCS, useValue:[], multi: true},
     WindowRef,
-    Loc,
     LoginGuard,
     SearchService,
     CreateProfileGuardService
