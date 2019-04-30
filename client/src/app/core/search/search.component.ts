@@ -12,7 +12,7 @@ export const FORM_TYPES_INFO = [
   {
     id: 'form',
     newFormResponseLinkTemplate: '/tangy-forms-player/${formId}',
-    resumeFormResponseLinkTemplate: '/tangy-forms-player/${formId}/${response._id}',
+    resumeFormResponseLinkTemplate: '/tangy-forms-player?formId=${formId}&responseId=${response._id}',
     iconTemplate: '${response && response.complete ? `assignment-turned-in` : `assignment`}'
   },
   {
@@ -61,6 +61,7 @@ export class SearchComponent implements OnInit {
       .addEventListener('change', event => this.onSearch$.next(event.target.value))
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
+    this.onSearch('')
   }
 
   async onSearch(searchString) {
@@ -98,6 +99,8 @@ export class SearchComponent implements OnInit {
     while (!parentEl) {
       if (currentEl.hasAttribute('open-link')) {
         parentEl = currentEl
+      } else {
+        currentEl = currentEl.parentElement
       }
     }
     this.goTo(currentEl.getAttribute('open-link'))
@@ -105,7 +108,7 @@ export class SearchComponent implements OnInit {
 
   goTo(url) {
     this.navigatingTo$.next(url)
-    this.router.navigate(url.split('\/'))
+    this.router.navigateByUrl(url)
   }
 
 }

@@ -29,6 +29,7 @@ import { ExportDataModule } from './core/export-data/export-data.module';
 import { ClassModule } from "./class/class.module";
 import { AboutModule } from './core/about/about.module';
 import { TwoWaySyncModule } from './two-way-sync/two-way-sync.module';
+import { SearchModule } from './core/search/search.module';
 export { AppComponent }
 
 
@@ -47,6 +48,7 @@ export { AppComponent }
     AuthModule,
     CaseManagementModule,
     ClassModule,
+    SearchModule,
     CaseModule,
     TwoWaySyncModule,
     UserProfileModule,
