@@ -43,13 +43,13 @@ describe('SearchBarcodeComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  fit('should start scan', () => {
+  it('should start scan', () => {
     component.startScanning()
     fixture.detectChanges();
     expect(component.state).toBe('STATE_SCANNING')
   })
 
-  fit('should cancel', (done) => {
+  it('should cancel', (done) => {
     component.startScanning()
     fixture.detectChanges()
     component.cancel.addListener('cancel', event => {
@@ -61,7 +61,7 @@ describe('SearchBarcodeComponent', () => {
     }, 300)
   })
 
-  fit('should scan and parse successfully', (done) => {
+  it('should scan and parse successfully', (done) => {
     fixture.nativeElement.querySelector('tangy-qr').value = '{"foo": "bar"}'
     component.change.addListener('change', event => {
       expect(component.value).toBe('bar')
@@ -72,7 +72,7 @@ describe('SearchBarcodeComponent', () => {
     }, 300)
   });
 
-  fit('should scan and parse unsuccessfully', (done) => {
+  it('should scan and parse unsuccessfully', (done) => {
     fixture.nativeElement.querySelector('tangy-qr').value = '{"differentFormat": "bar"}'
     component.error.addListener('error', event => {
       expect(component.state).toEqual('STATE_ERROR')
