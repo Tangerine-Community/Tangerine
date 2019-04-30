@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { _TRANSLATE } from './shared/translation-marker';
 import { AppConfig } from './shared/_classes/app-config.class';
 import { AppConfigService } from './shared/_services/app-config.service';
+import { SearchService } from './shared/_services/search.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -41,8 +42,10 @@ export class AppComponent implements OnInit {
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private router: Router,
+    private searchService:SearchService,
     translate: TranslateService
   ) {
+    this.searchService.start()
     this.window = this.windowRef.nativeWindow;
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
       ? true
