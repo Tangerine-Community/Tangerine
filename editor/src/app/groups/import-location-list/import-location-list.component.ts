@@ -92,7 +92,7 @@ export class ImportLocationListComponent implements OnInit {
       }
       this.generateIDs();
       this.transformFromMappings();
-      // await this.saveLocationListToDisk();
+      await this.saveLocationListToDisk();
     } catch (error) {
       console.log(error);
     }
@@ -131,7 +131,8 @@ export class ImportLocationListComponent implements OnInit {
       }
     });
     // return any rows with isValid set to false
-    return x.find(e => (e && !e.isValid)).flat(2);
+    const arr = [].concat.apply([], x.find(val => val));
+    return arr.find(e => (e && !e.isValid));
   }
 
   generateIDs() {
@@ -186,7 +187,9 @@ export class ImportLocationListComponent implements OnInit {
         ];
       });
     });
-    const flatLocationList = { locations, locationsLevels: this.locationList.locationsLevels, metadata: this.locationList.metadata };
+    const flatLocationList = {
+      locations, locationsLevels: this.locationList.locationsLevels, metadata: this.locationList.metadata
+    };
     this.generatedLocationList = Loc.unflatten(flatLocationList);
   }
   async saveLocationListToDisk() {
