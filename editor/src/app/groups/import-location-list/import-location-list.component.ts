@@ -92,7 +92,7 @@ export class ImportLocationListComponent implements OnInit {
       }
       this.generateIDs();
       this.transformFromMappings();
-      // await this.saveLocationListToDisk();
+      await this.saveLocationListToDisk();
     } catch (error) {
       console.log(error);
     }
@@ -127,11 +127,12 @@ export class ImportLocationListComponent implements OnInit {
           } else { return { isValid: true }; }
         });
       } else {
-        return;
+        return { isValid: true };
       }
     });
     // return any rows with isValid set to false
-    return x.find(e => (e && !e.isValid)).flat(2);
+    const foundInvalid = x.find(e => (e && !e.isValid))
+    return foundInvalid ? foundInvalid : { isValid: true }
   }
 
   generateIDs() {
