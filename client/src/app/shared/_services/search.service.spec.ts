@@ -31,6 +31,9 @@ class MockAuthenticationService {
   isLoggedIn() {
     return true
   }
+  getCurrentUser() {
+    return 'test-user'
+  }
 }
 
 class MockFormsInfoService {
@@ -94,11 +97,9 @@ describe('SearchService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should be index and be searchable', async (done) => {
+  it('should index and be searchable', async (done) => {
     const searchService: SearchService = TestBed.get(SearchService);
     const authenticationService: AuthenticationService = TestBed.get(AuthenticationService);
-    await searchService.start()
-    // TODO: This not getting hit?? Probably not starting correctly.
     searchService.subscribedToLoggedInUser$.subscribe(async () => {
       let userDb = new PouchDB('test-user')
       searchService.didIndex$.subscribe(async () => {
@@ -111,7 +112,7 @@ describe('SearchService', () => {
       })
       await userDb.put(exampleFormResponse)
     })
-    authenticationService.userLoggedIn$.next(<UserAccount>{ _id: 'test-user' })
+    await searchService.start()
   })
 
 });
