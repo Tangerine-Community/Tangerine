@@ -150,7 +150,7 @@ describe('SearchComponent', () => {
       component.didSearch$.subscribe(() => {
         expect(component.searchResults.nativeElement.querySelectorAll('.search-result').length).toEqual(2)
         component.navigatingTo$.subscribe(url => {
-          expect(url).toEqual('/tangy-forms-player/form1/response1')
+          expect(url).toEqual('/tangy-forms-player?formId=form1&responseId=response1')
           done()
         })
         component.searchResults.nativeElement.querySelectorAll('.search-result')[0].click()
