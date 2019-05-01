@@ -15,11 +15,22 @@ class MockUserService {
     return new PouchDB('test-user')
   }
 
+  async getUserAccount(username) {
+    return {
+      _id: 'test-user'
+
+    }
+
+  }
+
 }
 
 class MockAuthenticationService {
   public userLoggedIn$:Subject<UserAccount> = new Subject()
   public userLoggedOut$:Subject<UserAccount> = new Subject()
+  isLoggedIn() {
+    return true
+  }
 }
 
 class MockFormsInfoService {
@@ -87,6 +98,7 @@ describe('SearchService', () => {
     const searchService: SearchService = TestBed.get(SearchService);
     const authenticationService: AuthenticationService = TestBed.get(AuthenticationService);
     await searchService.start()
+    // TODO: This not getting hit?? Probably not starting correctly.
     searchService.subscribedToLoggedInUser$.subscribe(async () => {
       let userDb = new PouchDB('test-user')
       searchService.didIndex$.subscribe(async () => {
