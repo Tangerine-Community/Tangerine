@@ -42,6 +42,7 @@ class MockFormsInfoService {
       {
         id: 'example',
         src: './assets/example/form.html',
+        description: 'test test',
         type: 'form',
         title: 'Example',
         searchSettings: <FormSearchSettings>{

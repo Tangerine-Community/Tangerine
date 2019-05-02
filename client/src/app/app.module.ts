@@ -30,6 +30,7 @@ import { ClassModule } from "./class/class.module";
 import { AboutModule } from './core/about/about.module';
 import { TwoWaySyncModule } from './two-way-sync/two-way-sync.module';
 import { SearchModule } from './core/search/search.module';
+import { NewFormResponseModule } from './core/new-form-response/new-form-response.module';
 export { AppComponent }
 
 
@@ -51,6 +52,7 @@ export { AppComponent }
     SearchModule,
     CaseModule,
     TwoWaySyncModule,
+    NewFormResponseModule,
     UserProfileModule,
     SettingsModule,
     AboutModule,
