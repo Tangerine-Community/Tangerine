@@ -3,6 +3,7 @@ export interface FormInfo {
   src:string
   type:string
   title:string
+  description:string
   searchSettings: FormSearchSettings
 }
 

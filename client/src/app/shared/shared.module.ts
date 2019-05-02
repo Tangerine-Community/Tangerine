@@ -24,6 +24,7 @@ import { LoginGuard } from './_guards/login-guard.service';
 import { CreateProfileGuardService } from './_guards/create-profile-guard.service';
 import { DEFAULT_USER_DOCS } from './_tokens/default-user-docs.token';
 import { SearchService } from './_services/search.service';
+import { FormTypesService } from './_services/form-types.service';
 
 @NgModule({
   imports: [
@@ -47,6 +48,7 @@ import { SearchService } from './_services/search.service';
     WindowRef,
     LoginGuard,
     SearchService,
+    FormTypesService,
     CreateProfileGuardService
   ],
   declarations: [
