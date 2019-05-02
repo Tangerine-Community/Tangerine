@@ -1,5 +1,6 @@
 .wrapper {
-  margin: 15px;
+  margin: 85px 15px 15px;
+
 }
 
 paper-card {
@@ -7,6 +8,7 @@ paper-card {
   margin-bottom: 15px;
   width: 100%;
 }
+
 .card-header {
   margin: 15px;
 }

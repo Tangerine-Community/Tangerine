@@ -1,9 +1,10 @@
-export interface FormInfo {
+export class FormInfo {
   id:string
   src:string
   type:string
   title:string
-  description:string
+  description:string = ''
+  listed = true
   searchSettings: FormSearchSettings
 }
 

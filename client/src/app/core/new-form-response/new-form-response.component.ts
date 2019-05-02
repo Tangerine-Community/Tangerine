@@ -29,7 +29,7 @@ export class NewFormResponseComponent implements OnInit {
 
   async ngOnInit() {
     this.formTypes = this.formTypesService.getFormTypes()
-    this.formsInfo = await this.formsInfoService.getFormsInfo()
+    this.formsInfo = (await this.formsInfoService.getFormsInfo()).filter(formInfo => formInfo.listed)
     // We need to make this variable available to evals using response variable do not throw errors even though they shouldn't because we always check/
     // for the variable. Not sure why it throws here.
     let response = undefined
