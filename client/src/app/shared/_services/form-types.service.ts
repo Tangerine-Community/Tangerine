@@ -10,7 +10,7 @@ const FORM_TYPES_INFO:Array<FormType> = [
   },
   <FormType>{
     id: 'case',
-    newFormResponseLinkTemplate: '/new-case/${formId}',
+    newFormResponseLinkTemplate: '/new-case?formId=${formId}',
     resumeFormResponseLinkTemplate: '/case/${response._id}',
     iconTemplate: '${response && response.complete ? `folder-special` : `folder`}'
   }
