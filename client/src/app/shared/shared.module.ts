@@ -5,7 +5,6 @@ import { AppConfigService } from './_services/app-config.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { Loc } from './_services/location.service';
 import { WindowRef } from './_services/window-ref.service';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -24,6 +23,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LoginGuard } from './_guards/login-guard.service';
 import { CreateProfileGuardService } from './_guards/create-profile-guard.service';
 import { DEFAULT_USER_DOCS } from './_tokens/default-user-docs.token';
+import { SearchService } from './_services/search.service';
+import { FormTypesService } from './_services/form-types.service';
 
 @NgModule({
   imports: [
@@ -45,8 +46,9 @@ import { DEFAULT_USER_DOCS } from './_tokens/default-user-docs.token';
     UserService,
     {provide: DEFAULT_USER_DOCS, useValue:[], multi: true},
     WindowRef,
-    Loc,
     LoginGuard,
+    SearchService,
+    FormTypesService,
     CreateProfileGuardService
   ],
   declarations: [

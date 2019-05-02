@@ -1,0 +1,12 @@
+
+<div class="wrapper">
+  <div class="form-info-cards">
+    <paper-card class="form-info-card" *ngFor="let formInfo of formsInfo">
+      <h2 class="card-header" [innerHTML]="formInfo.title | unsanitizeHtml"></h2>
+      <div class="card-content" [innerHTML]="formInfo.description | unsanitizeHtml"></div>
+      <div class="card-actions">
+        <paper-button (click)="onFormInfoSelect(formInfo.id)">{{'start'|translate}}</paper-button>
+      </div>
+    </paper-card>
+  </div>
+</div>

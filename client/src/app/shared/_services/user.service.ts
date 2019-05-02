@@ -164,6 +164,9 @@ export class UserService {
         resolve(localStorage.getItem(CURRENT_USER))
       })
     } else {
+      if (!this.userDatabases.find(userDatabase => userDatabase.name === username)) {
+        this.userDatabases.push(new PouchDB(username))
+      }
       return this.userDatabases.find(userDatabase => userDatabase.name === username)
     }
   }
