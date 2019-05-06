@@ -5,6 +5,7 @@ import {MatTabChangeEvent} from "@angular/material";
 import {AppConfigService} from "../../shared/_services/app-config.service";
 import {FormMetadata} from "../feedback-editor/form-metadata";
 import {Feedback} from "../feedback-editor/feedback";
+import { FormsInfoService } from 'src/app/shared/_services/forms-info.service';
 
 @Component({
   selector: 'app-ng-tangy-form-editor',
@@ -30,6 +31,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
+    private formsInfoService: FormsInfoService,
     private appConfigService: AppConfigService,
   ) { }
 
@@ -91,31 +93,14 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
   }
 
   async saveForm(formHtml) {
-    let files = []
     let state = this.containerEl.querySelector('tangy-form-editor').store.getState()
-    // Update forms.json.
-    let formsJson = await this.http.get<Array<any>>(`/editor/${this.route.snapshot.paramMap.get('groupName')}/content/forms.json`).toPromise()
-    const updatedFormsJson = formsJson.map(formInfo => {
-      if (formInfo.id !== state.form.id) return Object.assign({}, formInfo)
-      return Object.assign({}, formInfo, {
-        title: state.form.title
-      })
-    })
-    files.push({
-      groupId: this.route.snapshot.paramMap.get('groupName'),
-      filePath:`./forms.json`,
-      fileContents: JSON.stringify(updatedFormsJson)
-    })
-    // Update form.html.
-    files.push({
-      groupId: this.route.snapshot.paramMap.get('groupName'),
-      filePath:`./${state.form.id}/form.html`,
-      fileContents: formHtml 
-    })
+    const formInfo = await this.formsInfoService.getFormInfo(state.form.id)
     // Send to server.
-    for (let file of files) {
-      await this.http.post('/editor/file/save', file).toPromise()
-    }
+    await this.http.post('/editor/file/save', {
+      groupId: this.route.snapshot.paramMap.get('groupName'),
+      filePath: formInfo.src,
+      fileContents: formHtml 
+    }).toPromise()
   }
 
 }
