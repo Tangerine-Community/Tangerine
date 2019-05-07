@@ -18,7 +18,8 @@
     "translations-update": "./src/scripts/translations-update.js",
     "release-dat": "./src/scripts/release-dat.sh",
     "release-apk": "./src/scripts/release-apk.sh",
-    "release-pwa": "./src/scripts/release-pwa.sh"
+    "release-pwa": "./src/scripts/release-pwa.sh",
+    "import-v2-assessment": "./src/scripts/import-v2-assessment.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
