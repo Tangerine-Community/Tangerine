@@ -1,6 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, Output } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
-import { EventEmitter } from 'events';
 
 const STATE_INITIAL = 'STATE_INITIAL'
 const STATE_READY = 'STATE_READY'
@@ -19,8 +18,8 @@ export class SearchBarcodeComponent implements OnInit {
   public change = new EventEmitter()
   @Output('error') 
   public error = new EventEmitter()
-  @Output('cancel')
-  public cancel = new EventEmitter()
+  @Output()
+  cancel = new EventEmitter()
   public value = ''
   public state =  STATE_INITIAL
 
@@ -57,7 +56,7 @@ export class SearchBarcodeComponent implements OnInit {
     try {
       this.value = eval(`(() => {${this.barcodeSearchMapFunction}})()`)
       this.state = STATE_SUCCESS
-      this.change.emit('change')
+      this.change.emit(this.value)
     } catch(e) {
       this.state = STATE_ERROR
       this.error.emit('error')
@@ -66,6 +65,7 @@ export class SearchBarcodeComponent implements OnInit {
   }
 
   private onCancel() {
+    // @TODO We need to implement a way to stop the scanning because it just keeps going.
     this.state = STATE_READY
     this.cancel.emit('cancel')
   }

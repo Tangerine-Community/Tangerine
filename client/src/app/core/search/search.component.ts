@@ -6,6 +6,7 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Router } from '@angular/router';
+import { SearchBarcodeComponent } from './search-barcode/search-barcode.component';
 
 // @TODO Turn this into a service that gets this info from a hook.
 export const FORM_TYPES_INFO = [
@@ -32,6 +33,7 @@ export class SearchComponent implements OnInit {
 
   @ViewChild('searchBar') searchBar: ElementRef
   @ViewChild('searchResults') searchResults: ElementRef
+  @ViewChild('scanner') scanner: SearchBarcodeComponent
   onSearch$ = new Subject()
   didSearch$ = new Subject()
   searchReady$ = new Subject()
@@ -40,6 +42,7 @@ export class SearchComponent implements OnInit {
   username:string
   formsInfo:Array<FormInfo>
   formTypesInfo:Array<any>
+  showScan = false
 
   constructor(
     private searchService: SearchService,
@@ -93,6 +96,11 @@ export class SearchComponent implements OnInit {
     this.didSearch$.next(true)
   }
 
+  scan() {
+    this.showScan = true
+    this.scanner.startScanning()
+  }
+
   onSearchResultClick(element) {
     let parentEl = undefined
     let currentEl = element
@@ -111,4 +119,18 @@ export class SearchComponent implements OnInit {
     this.router.navigateByUrl(url)
   }
 
+  onScanChange(scanSearchString) {
+    this.showScan = false
+    this.onSearch(scanSearchString)
+    this.searchBar.nativeElement.value = scanSearchString
+  }
+
+  onScanError() {
+
+  }
+
+  onScanCancel() {
+    this.showScan = false
+
+  }
 }
