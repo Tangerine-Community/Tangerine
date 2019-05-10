@@ -7,3 +7,19 @@
   bottom: 15px;
   right: 15px;
 }
+
+#scan-button {
+  position: relative;
+  top: 9px;
+}
+
+#scan-screen {
+  position: fixed;
+  text-align: center;
+  z-index: 98765456787654;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background: #FFF;
+}
