@@ -30,7 +30,11 @@ module.exports = {
         if (flatResponse.formId !== 'user-profile') {
           processedResult = await attachUserProfile(flatResponse, logstashDb)
         }
-        createDateFields(processedResult);
+        try {
+          createDateFields(processedResult);
+        } catch (e) {
+          // Do nothing...
+        }
         await pushResponse({
           _id: processedResult._id,
           formId: processedResult.formId,
