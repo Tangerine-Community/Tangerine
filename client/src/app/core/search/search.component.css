@@ -1,6 +1,7 @@
 :host {
   display: block;
 }
+
 #cases-header {
   position: fixed;
   z-index: 987678987678765;
@@ -11,7 +12,7 @@
   background: var(--primary-color-dark);
   color: var(--accent-text-color);
   font-size: 2em;
-  padding-top: 24px;
+  padding-top: 22px;
   padding-left: 15px;
 }
 
@@ -57,6 +58,7 @@
   width:100%;
   background: var(--primary-color);
   color: var(--accent-text-color);
+  z-index:98765432134567654321;
 }
 
 #bottom-nav table {
