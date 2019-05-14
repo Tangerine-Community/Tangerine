@@ -72,7 +72,6 @@ describe('TwoWaySyncService', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
-        SharedModule,
         TwoWaySyncModule
       ],
       providers: [
