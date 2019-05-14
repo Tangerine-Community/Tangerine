@@ -1,15 +1,6 @@
 <div id="cases-header">
   <iron-icon icon="apps"></iron-icon> Cases
 </div>
-<paper-input id="search-bar" name="search-bar" label="Search cases" #searchBar></paper-input>
-   
-<div id="scan-screen" [hidden]="showScan === false">
-  <app-search-barcode (change)="onScanChange($event)" (cancel)="onScanCancel($event)" (error)="onScanError($event)" #scanner></app-search-barcode>
-</div>
-
-<div id="search-results" #searchResults>
-  Loading...
-</div>
 
 <div id="bottom-nav">
   <table>
@@ -24,4 +15,14 @@
       <td (click)="scan()">Scan Code</td>
     </tr>
   </table>
+</div>
+
+<paper-input id="search-bar" name="search-bar" label="Search cases" #searchBar></paper-input>
+   
+<div id="scan-screen" [hidden]="showScan === false">
+  <app-search-barcode (change)="onScanChange($event)" (cancel)="onScanCancel($event)" (error)="onScanError($event)" #scanner></app-search-barcode>
+</div>
+
+<div id="search-results" #searchResults>
+  Loading...
 </div>
