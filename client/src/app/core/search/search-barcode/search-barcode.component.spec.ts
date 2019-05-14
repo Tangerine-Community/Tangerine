@@ -52,7 +52,7 @@ describe('SearchBarcodeComponent', () => {
   it('should cancel', (done) => {
     component.startScanning()
     fixture.detectChanges()
-    component.cancel.addListener('cancel', event => {
+    component.cancel.subscribe(event => {
       expect(component.state).toBe('STATE_READY')
       done()
     })
@@ -63,7 +63,7 @@ describe('SearchBarcodeComponent', () => {
 
   it('should scan and parse successfully', (done) => {
     fixture.nativeElement.querySelector('tangy-qr').value = '{"foo": "bar"}'
-    component.change.addListener('change', event => {
+    component.change.subscribe(event => {
       expect(component.value).toBe('bar')
       done()
     })
@@ -74,7 +74,7 @@ describe('SearchBarcodeComponent', () => {
 
   it('should scan and parse unsuccessfully', (done) => {
     fixture.nativeElement.querySelector('tangy-qr').value = '{"differentFormat": "bar"}'
-    component.error.addListener('error', event => {
+    component.error.subscribe(event => {
       expect(component.state).toEqual('STATE_ERROR')
       done()
     })
