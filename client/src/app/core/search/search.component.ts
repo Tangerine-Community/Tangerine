@@ -61,7 +61,7 @@ export class SearchComponent implements OnInit {
     this
       .searchBar
       .nativeElement
-      .addEventListener('change', event => this.onSearch$.next(event.target.value))
+      .addEventListener('keyup', event => this.onSearch$.next(event.target.value))
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
     this.onSearch('')
@@ -112,6 +112,13 @@ export class SearchComponent implements OnInit {
       }
     }
     this.goTo(currentEl.getAttribute('open-link'))
+  }
+
+  focusOnFind() {
+    this
+      .searchBar
+      .nativeElement
+      .focus()
   }
 
   goTo(url) {
