@@ -1,5 +1,28 @@
-<paper-input name="search-bar" placeholder="Search" #searchBar></paper-input>
+<div id="cases-header">
+  <iron-icon icon="apps"></iron-icon> Cases
+</div>
+
+<div id="bottom-nav">
+  <table>
+    <tr>
+      <td (click)="focusOnFind()"><iron-icon icon="search"></iron-icon></td>
+      <td routerLink="/new-form-response"><iron-icon icon="add"></iron-icon></td>
+      <td (click)="scan()"><iron-icon icon="image:filter-center-focus"></iron-icon></td>
+    </tr>
+    <tr>
+      <td (click)="focusOnFind()">Find Case</td>
+      <td routerLink="/new-form-response">New Case</td>
+      <td (click)="scan()">Scan Code</td>
+    </tr>
+  </table>
+</div>
+
+<paper-input id="search-bar" name="search-bar" label="Search cases" #searchBar></paper-input>
+   
+<div id="scan-screen" [hidden]="showScan === false">
+  <app-search-barcode (change)="onScanChange($event)" (cancel)="onScanCancel($event)" (error)="onScanError($event)" #scanner></app-search-barcode>
+</div>
+
 <div id="search-results" #searchResults>
   Loading...
 </div>
-<paper-fab raised routerLink="/new-form-response" id="new-form-response-button" icon="add"></paper-fab>
