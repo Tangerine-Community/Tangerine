@@ -4,7 +4,7 @@
 
 #cases-header {
   position: fixed;
-  z-index: 987678987678765;
+  z-index: 999;
   top: 0px;
   left: 0px;
   height: 34px;
@@ -39,7 +39,7 @@
 #scan-screen {
   position: fixed;
   text-align: center;
-  z-index: 98765456787654;
+  z-index: 1001;
   top: 0px;
   left: 0px;
   width: 100%;
@@ -58,7 +58,7 @@
   width:100%;
   background: var(--primary-color);
   color: var(--accent-text-color);
-  z-index:98765432134567654321;
+  z-index:999;
 }
 
 #bottom-nav table {
