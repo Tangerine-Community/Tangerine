@@ -40,6 +40,7 @@ class MockFormsInfoService {
         "src":"./assets/example/form.html",
         "id":"example",
         "type": "case",
+        listed: true,
         "description": "Test test",
         "searchSettings": {
           "shouldIndex": true,
@@ -52,6 +53,7 @@ class MockFormsInfoService {
         "id":"form-0.36037678312388",
         "title":"New Form",
         "type": "form",
+        listed: true,
         "description": "Test test",
         "src":"./assets/form-0.36037678312388/form.html",
         "searchSettings": {
