@@ -152,13 +152,14 @@ class MockAppConfigService {
   }
 }
 
-describe('TwoWaySyncService', () => {
+describe('TangyFormService', () => {
 
   let httpClient: HttpClient
   let httpTestingController: HttpTestingController
   let userService: UserService
   let tangyFormService: TangyFormService  
 
+  /*
   beforeEach(async() => { 
     TestBed.configureTestingModule({
       imports: [
@@ -190,4 +191,5 @@ describe('TwoWaySyncService', () => {
     const tangyFormService = new TangyFormService({ databaseName: userAccount._id });
     await tangyFormService.saveResponse(formResponse)
   })
+*/
 });
