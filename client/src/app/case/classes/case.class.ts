@@ -96,7 +96,7 @@ class Case {
       caseEventData.complete,
       caseEventData.name,
       caseEventData.caseEventDefinitionId,
-      caseEventData.estimatedWindowStartDate,
+      caseEventData.estimatedWindowStart,
       caseEventData.estimatedWindowEnd,
       caseEventData.eventForms,
       caseEventData.startDate
