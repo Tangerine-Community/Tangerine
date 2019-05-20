@@ -6,12 +6,17 @@ class CaseEvent {
   name:string;
   caseEventDefinitionId:string; 
   eventForms?:Array<EventForm> = [];
-  startDate:number;
-  constructor(id, complete, name, caseEventDefinitionId, eventForms?, startDate?) {
+  scheduledDate:number
+  startDate:number
+  estimatedWindowStart:number
+  estimatedWindowEnd:number
+  constructor(id, complete, name, caseEventDefinitionId, estimatedWindowStart, estimatedWindowEnd, eventForms?, startDate?) {
     this.id = id
     this.name = name
     this.complete = complete
     this.caseEventDefinitionId = caseEventDefinitionId 
+    this.estimatedWindowEnd = estimatedWindowEnd
+    this.estimatedWindowStart = estimatedWindowStart
     this.eventForms = eventForms
       ? eventForms
       : this.eventForms
