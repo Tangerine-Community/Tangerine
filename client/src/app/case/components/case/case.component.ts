@@ -8,7 +8,7 @@ import { WindowRef } from '../../../shared/_services/window-ref.service';
   templateUrl: './case.component.html',
   styleUrls: ['./case.component.css']
 })
-export class CaseComponent implements OnInit, AfterContentInit {
+export class CaseComponent implements AfterContentInit {
 
   caseService:CaseService;
   @ViewChild('caseFormContainer') caseFormContainer: ElementRef;
@@ -22,36 +22,14 @@ export class CaseComponent implements OnInit, AfterContentInit {
     private router: Router
   ) { }
 
-  async ngOnInit() {
-  }
-
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
-      this.caseService = new CaseService({ databaseName: localStorage.getItem('currentUser') });
+      this.caseService = new CaseService({ databaseName: localStorage.getItem('currentUser'), window: this.windowRef.nativeWindow });
       await this.caseService.load(params.id)
       this.windowRef.nativeWindow.caseService = this.caseService
       const tangyFormMarkup = await this.caseService.getFormMarkup(this.caseService.caseDefinition.formId)
       this.caseFormContainer.nativeElement.innerHTML = tangyFormMarkup
       this.tangyFormEl = this.caseFormContainer.nativeElement.querySelector('tangy-form') 
-      if (!this.caseService.case.status) {
-        this.tangyFormEl.querySelectorAll('tangy-form-item').forEach((item) => {
-          this.caseService.case.items.push(item.getProps())
-        })
-        this.tangyFormEl.response = this.caseService.case
-        this.caseService.case = {...this.caseService.case, ...this.tangyFormEl.response}
-        this.caseService.case.form = this.tangyFormEl.getProps()
-        this.tangyFormEl.querySelectorAll('tangy-form-item')[0].submit()
-        this.caseService.case.items[0].inputs = this.tangyFormEl.querySelectorAll('tangy-form-item')[0].inputs
-        this.caseService.case.status = 'CASE_STATUS_INITIALIZED'
-        await this.caseService.save()
-        if (this.caseService.caseDefinition.startFormOnOpen && this.caseService.caseDefinition.startFormOnOpen.eventFormId) {
-          const caseEvent = this.caseService.startEvent(this.caseService.caseDefinition.startFormOnOpen.eventId)
-          const eventForm = this.caseService.startEventForm(caseEvent.id, this.caseService.caseDefinition.startFormOnOpen.eventFormId) 
-          await this.caseService.save()
-          this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])
-          return
-        }
-      }
       this.tangyFormEl.response = this.caseService.case
       this.tangyFormEl.enableItemReadOnly()
       this.ready = true
@@ -59,8 +37,14 @@ export class CaseComponent implements OnInit, AfterContentInit {
     })
   }
 
-  async startEvent(eventDefinitionId) {
-    const caseEvent = this.caseService.startEvent(eventDefinitionId)
+  async createEvent(eventDefinitionId) {
+    const caseEvent = this.caseService.createEvent(eventDefinitionId)
+    await this.caseService.save()
+    //this.router.navigate(['case', 'event', this.caseService.case._id, caseEvent.id])
+  }
+
+  async createEventAndOpen(eventDefinitionId) {
+    const caseEvent = this.caseService.createEvent(eventDefinitionId)
     await this.caseService.save()
     this.router.navigate(['case', 'event', this.caseService.case._id, caseEvent.id])
   }

@@ -7,6 +7,7 @@ import { CaseDefinitionsService } from './case-definitions.service';
 import PouchDB from 'pouchdb';
 import * as UUID from 'uuid/v4'
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form-service';
+import { WindowRef } from 'src/app/core/window-ref.service';
 
 class EventInfo {
   canCreateInstance:boolean;
@@ -21,21 +22,43 @@ class CaseService extends TangyFormService {
   db:PouchDB
   case:Case
   caseDefinition:CaseDefinition
-  caseDefinitionService:CaseDefinitionsService
+  caseDefinitionsService:CaseDefinitionsService
   eventsInfo:Array<any>
+  window:any
 
-  constructor(props = {databaseName: localStorage.getItem('currentUser')}) {
+  constructor(props = {databaseName: localStorage.getItem('currentUser'), window: undefined}
+  ) {
     super(props)
-    this.caseDefinitionService = new CaseDefinitionsService()
+    this.caseDefinitionsService = new CaseDefinitionsService()
+    this.window = props.window
   }
 
   async create(caseDefinitionId) {
-    const caseInstance = new Case()
-    caseInstance.caseDefinitionId = caseDefinitionId;
-    caseInstance.label = (await this.caseDefinitionService.load())
+    this.caseDefinition = <CaseDefinition>(await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === caseDefinitionId)
-      .name
-    await this.setCase(caseInstance)
+    this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
+    delete this.case._rev
+    const tangyFormContainerEl = this.window.document.createElement('div')
+    tangyFormContainerEl.innerHTML = await this.getFormMarkup(this.caseDefinition.formId)
+    const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') 
+    tangyFormEl.style.display = 'none'
+    this.window.document.body.appendChild(tangyFormContainerEl)
+    this.case.form = tangyFormEl.getProps()
+    this.case.items = []
+    tangyFormEl.querySelectorAll('tangy-form-item').forEach((item) => {
+      this.case.items.push(item.getProps())
+    })
+    tangyFormEl.querySelectorAll('tangy-form-item')[0].submit()
+    this.case.items[0].inputs = tangyFormEl.querySelectorAll('tangy-form-item')[0].inputs
+    tangyFormEl.response = this.case
+    this.case = {...this.case, ...tangyFormEl.response}
+    tangyFormContainerEl.remove()
+    await this.setCase(this.case)
+    this.caseDefinition
+      .eventDefinitions
+      .forEach(eventDefinition => this.createEvent(eventDefinition.id))
+    this.case.caseDefinitionId = caseDefinitionId;
+    this.case.label = this.caseDefinition.name
     await this.save()
   }
 
@@ -74,7 +97,7 @@ class CaseService extends TangyFormService {
     await this.setCase(await this.db.get(this.case._id))
   }
 
-  startEvent(eventDefinitionId:string):CaseEvent {
+  createEvent(eventDefinitionId:string):CaseEvent {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
@@ -83,11 +106,21 @@ class CaseService extends TangyFormService {
       false,
       caseEventDefinition.name,
       eventDefinitionId,
+      Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening - (caseEventDefinition.estimatedTimeWindow/2),
+      Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening + (caseEventDefinition.estimatedTimeWindow/2),
       [],
-      Date.now()
+      0
     )
     this.case.events.push(caseEvent)
     return caseEvent
+  }
+
+  startEvent(eventId) {
+    // ??
+  }
+
+  scheduleEvent(eventDefinitionId, dateTime, eventId?) {
+
   }
 
   startEventForm(caseEventId, eventFormId):EventForm {
