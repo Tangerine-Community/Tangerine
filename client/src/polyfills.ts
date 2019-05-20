@@ -19,6 +19,7 @@ import 'tangy-form/input/tangy-timed.js'
 import 'tangy-form/input/tangy-untimed-grid.js'
 import 'tangy-form/input/tangy-checkbox.js'
 import 'tangy-form/input/tangy-checkboxes.js'
+import 'tangy-form/input/tangy-checkboxes-dynamic.js'
 import 'tangy-form/input/tangy-radio-buttons.js'
 import 'tangy-form/input/tangy-select.js'
 import 'tangy-form/input/tangy-location.js'
@@ -27,6 +28,7 @@ import 'tangy-form/input/tangy-acasi.js';
 import 'tangy-form/input/tangy-eftouch.js';
 import 'tangy-form/input/tangy-photo-capture.js';
 import 'tangy-form/input/tangy-qr.js';
+import 'tangy-form/input/tangy-consent.js';
 
 // An attempt to fix something...
 //import 'core-js/es7/reflect';

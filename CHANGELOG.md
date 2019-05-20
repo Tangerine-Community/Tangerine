@@ -15,6 +15,11 @@ git checkout v3.4.0
 ./start.sh
 ```
 
+## v3.3.1
+This release fixes a feature that made it into v3.3.0 but had a bug and was disabled. This release fixes that bug and makes it available.
+
+- As an Editor user I want to be able to do an initial import of my location structure. [#1117](https://github.com/Tangerine-Community/Tangerine/issues/1117)
+  
 ## v3.3.0
 - Features
   - Assessor reviews high level case variables, AKA "Case Manifest" [#1399](https://github.com/Tangerine-Community/Tangerine/issues/1399)
