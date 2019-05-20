@@ -90,7 +90,7 @@ export class LocationListEditorComponent implements OnInit {
   }
 
   onChildClick(id) {
-    this.openPath([...this.currentPath, ...id]);
+    this.openPath([...this.currentPath, id]);
     this.updateMoveLocationForm();
   }
 
