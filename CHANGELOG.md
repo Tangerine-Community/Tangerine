@@ -1,5 +1,20 @@
 # Changelog
 
+## v3.4.0
+- Experimental features
+  - Two-way Sync. See `docs/feature-two-way-sync.md`.
+  - Clientside search of Forms for Case Management Groups. See `docs/case-management-group.md`.
+
+
+Upgrade instructions:
+
+Backup your data folder and then run the following commands.
+```bash
+git fetch origin
+git checkout v3.4.0
+./start.sh
+```
+
 ## v3.3.0
 - Features
   - Assessor reviews high level case variables, AKA "Case Manifest" [#1399](https://github.com/Tangerine-Community/Tangerine/issues/1399)
