@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@ang
 import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { WindowRef } from '../../../shared/_services/window-ref.service';
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 
 @Component({
   selector: 'app-case',
@@ -10,7 +11,6 @@ import { WindowRef } from '../../../shared/_services/window-ref.service';
 })
 export class CaseComponent implements AfterContentInit {
 
-  caseService:CaseService;
   @ViewChild('caseFormContainer') caseFormContainer: ElementRef;
   tangyFormEl:any
   ready = false
@@ -19,15 +19,16 @@ export class CaseComponent implements AfterContentInit {
   constructor(
     private route: ActivatedRoute,
     private windowRef: WindowRef,
+    private caseService: CaseService,
+    private tangyFormService: TangyFormService,
     private router: Router
   ) { }
 
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
-      this.caseService = new CaseService({ databaseName: localStorage.getItem('currentUser'), window: this.windowRef.nativeWindow });
       await this.caseService.load(params.id)
       this.windowRef.nativeWindow.caseService = this.caseService
-      const tangyFormMarkup = await this.caseService.getFormMarkup(this.caseService.caseDefinition.formId)
+      const tangyFormMarkup = await this.tangyFormService.getFormMarkup(this.caseService.caseDefinition.formId)
       this.caseFormContainer.nativeElement.innerHTML = tangyFormMarkup
       this.tangyFormEl = this.caseFormContainer.nativeElement.querySelector('tangy-form') 
       this.tangyFormEl.response = this.caseService.case
