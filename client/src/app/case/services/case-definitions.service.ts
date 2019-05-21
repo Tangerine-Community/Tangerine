@@ -1,14 +1,23 @@
-import { CaseDefinition } from '../classes/case-definition.class'
-import axios from 'axios';
+import { Injectable } from '@angular/core';
+import { CaseDefinition } from '../classes/case-definition.class';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
 export class CaseDefinitionsService {
+
+  constructor(
+    private http: HttpClient
+  ) { }
+
   async load():Promise<any> {
-    const response = await axios.get('./assets/case-definitions.json');
-    const caseDefinitionReferences = response.data;
-    const caseDefinitions = [];
+    const caseDefinitionReferences = <Array<any>>await this.http.get('./assets/case-definitions.json').toPromise()
+    const caseDefinitions = []
     for (const reference of caseDefinitionReferences) {
-      const response = await axios.get(reference.src)
-      caseDefinitions.push(new CaseDefinition(response.data));
+      caseDefinitions.push(<CaseDefinition>await this.http.get(reference.src).toPromise())
     }
     return caseDefinitions;
   }
+
 }

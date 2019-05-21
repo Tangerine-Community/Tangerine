@@ -6,8 +6,10 @@ import { CaseDefinition } from '../classes/case-definition.class';
 import { CaseDefinitionsService } from './case-definitions.service';
 import PouchDB from 'pouchdb';
 import * as UUID from 'uuid/v4'
-import { TangyFormService } from 'src/app/tangy-forms/tangy-form-service';
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { WindowRef } from 'src/app/core/window-ref.service';
+import { Injectable } from '@angular/core';
+import { UserService } from 'src/app/shared/_services/user.service';
 
 class EventInfo {
   canCreateInstance:boolean;
@@ -15,22 +17,26 @@ class EventInfo {
   eventDefinition:CaseEventDefinition;
 }
 
-class CaseService extends TangyFormService {
+@Injectable({
+  providedIn: 'root'
+})
+class CaseService {
 
   _id:string
   _rev:string
   db:PouchDB
   case:Case
   caseDefinition:CaseDefinition
-  caseDefinitionsService:CaseDefinitionsService
   eventsInfo:Array<any>
   window:any
 
-  constructor(props = {databaseName: localStorage.getItem('currentUser'), window: undefined}
-  ) {
-    super(props)
-    this.caseDefinitionsService = new CaseDefinitionsService()
-    this.window = props.window
+  constructor(
+    private tangyFormService: TangyFormService,
+    private caseDefinitionsService: CaseDefinitionsService,
+    private windowRef:WindowRef,
+    private userService:UserService
+  ) { 
+    this.window = this.windowRef.nativeWindow
   }
 
   async create(caseDefinitionId) {
@@ -39,7 +45,7 @@ class CaseService extends TangyFormService {
     this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
     delete this.case._rev
     const tangyFormContainerEl = this.window.document.createElement('div')
-    tangyFormContainerEl.innerHTML = await this.getFormMarkup(this.caseDefinition.formId)
+    tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId)
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') 
     tangyFormEl.style.display = 'none'
     this.window.document.body.appendChild(tangyFormContainerEl)
@@ -64,8 +70,7 @@ class CaseService extends TangyFormService {
 
   async setCase(caseInstance) {
     this.case = caseInstance
-    const caseDefinitionService = new CaseDefinitionsService();
-    this.caseDefinition = (await caseDefinitionService.load())
+    this.caseDefinition = (await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === this.case.caseDefinitionId)
     this.eventsInfo = this
       .caseDefinition
@@ -89,10 +94,12 @@ class CaseService extends TangyFormService {
   }
 
   async load(id:string) {
+    this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     await this.setCase(new Case(await this.db.get(id)))
   }
 
   async save() {
+    this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     await this.db.put(this.case)
     await this.setCase(await this.db.get(this.case._id))
   }
