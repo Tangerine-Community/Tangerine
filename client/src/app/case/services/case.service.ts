@@ -33,7 +33,7 @@ class CaseService {
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
-    private windowRef:WindowRef,
+    private windowRef: WindowRef,
     private userService:UserService
   ) { 
     this.window = this.windowRef.nativeWindow
@@ -108,16 +108,17 @@ class CaseService {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
-    const caseEvent = new CaseEvent(
-      UUID(),
-      false,
-      caseEventDefinition.name,
-      eventDefinitionId,
-      Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening - (caseEventDefinition.estimatedTimeWindow/2),
-      Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening + (caseEventDefinition.estimatedTimeWindow/2),
-      [],
-      0
-    )
+    const caseEvent = <CaseEvent>{ 
+      id: UUID(),
+      complete: false,
+      name: caseEventDefinition.name,
+      scheduledDate: 0,
+      caseEventDefinitionId: eventDefinitionId,
+      estimatedWindowStart: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening - (caseEventDefinition.estimatedTimeWindow/2),
+      estimatedWindowEnd: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening + (caseEventDefinition.estimatedTimeWindow/2),
+      eventForms: [],
+      startDate: 0
+    }
     this.case.events.push(caseEvent)
     return caseEvent
   }
