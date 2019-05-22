@@ -127,8 +127,11 @@ class CaseService {
     // ??
   }
 
-  scheduleEvent(eventDefinitionId, dateTime, eventId?) {
-
+  async scheduleEvent(eventId, dateTime) {
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId ? { ...event, ...{ scheduledDate: dateTime} } : event
+    })
+    
   }
 
   startEventForm(caseEventId, eventFormId):EventForm {
