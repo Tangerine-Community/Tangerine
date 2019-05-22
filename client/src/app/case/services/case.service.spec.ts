@@ -148,12 +148,12 @@ describe('CaseService', () => {
     })
   });
 
-  fit('should be created', () => {
+  it('should be created', () => {
     const service: CaseService = TestBed.get(CaseService);
     expect(service).toBeTruthy();
   });
 
-  fit('should create a case' , async () => {
+  it('should create a case' , async () => {
     const service: CaseService = TestBed.get(CaseService);
     await service.create('caseDefinition1')
     expect(service).toBeTruthy();
@@ -161,10 +161,11 @@ describe('CaseService', () => {
     expect(typeof service.case.events[0].estimatedWindowEnd === 'number').toBeTruthy()
   })
 
-  it('should schedule an event' /*, async () => {
+  it('should schedule an event', async () => {
     const service: CaseService = TestBed.get(CaseService);
-    await service.scheduleEvent('event1', 12345678)
-    expect(service.case.events.find(sdfksdfjk).scheduledTime, 12345678)
-  }*/)
+    await service.create('caseDefinition1')
+    await service.scheduleEvent(service.case.events[0].id, 12345678)
+    expect(service.case.events[0].scheduledDate).toEqual(12345678)
+  })
 
 });
