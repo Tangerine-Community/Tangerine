@@ -10,7 +10,16 @@ class CaseEvent {
   startDate:number
   estimatedWindowStart:number
   estimatedWindowEnd:number
-  constructor(id, complete, name, caseEventDefinitionId, estimatedWindowStart, estimatedWindowEnd, eventForms?, startDate?) {
+  constructor(
+    id,
+    complete = false,
+    name,
+    caseEventDefinitionId,
+    estimatedWindowStart,
+    estimatedWindowEnd,
+    eventForms?,
+    startDate?
+  ) {
     this.id = id
     this.name = name
     this.complete = complete
