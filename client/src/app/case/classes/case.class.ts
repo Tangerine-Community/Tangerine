@@ -66,6 +66,7 @@ class Case {
   events: Array<CaseEvent> = []
   type:string = 'Case'
   caseFormResponse:TangyFormResponse
+
   constructor(data?:any) {
     if (!data) {
       this._id = UUID()
@@ -91,17 +92,9 @@ class Case {
     this.disabledEventDefinitionIds = data.disabledEventDefinitionIds ? data.disabledEventDefinitionIds : []
     this.caseDefinitionId = data.caseDefinitionId
     this.label = data.label
-    this.events = data.events.map(caseEventData => new CaseEvent(
-      caseEventData.id,
-      caseEventData.complete,
-      caseEventData.name,
-      caseEventData.caseEventDefinitionId,
-      caseEventData.estimatedWindowStart,
-      caseEventData.estimatedWindowEnd,
-      caseEventData.eventForms,
-      caseEventData.startDate
-    ))
+    this.events = data.events.map(caseEventData => <CaseEvent>caseEventData)
   }
+  
 }
 
 export { Case }

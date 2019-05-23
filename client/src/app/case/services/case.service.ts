@@ -112,10 +112,10 @@ class CaseService {
       id: UUID(),
       complete: false,
       name: caseEventDefinition.name,
-      scheduledDate: 0,
+      estimate: true,
       caseEventDefinitionId: eventDefinitionId,
-      estimatedWindowStart: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening - (caseEventDefinition.estimatedTimeWindow/2),
-      estimatedWindowEnd: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening + (caseEventDefinition.estimatedTimeWindow/2),
+      dateStart: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening - (caseEventDefinition.estimatedTimeWindow/2),
+      dateEnd: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening + (caseEventDefinition.estimatedTimeWindow/2),
       eventForms: [],
       startDate: 0
     }
@@ -127,9 +127,11 @@ class CaseService {
     // ??
   }
 
-  async scheduleEvent(eventId, dateTime) {
+  async scheduleEvent(eventId, dateStart:number, dateEnd?:number) {
     this.case.events = this.case.events.map(event => {
-      return event.id === eventId ? { ...event, ...{ scheduledDate: dateTime} } : event
+      return event.id === eventId 
+      ? { ...event, ...{ dateStart, dateEnd: dateEnd ? dateEnd : dateStart, estimate: false} }
+      : event
     })
     
   }

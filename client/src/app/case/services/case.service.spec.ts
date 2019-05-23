@@ -158,14 +158,16 @@ describe('CaseService', () => {
     await service.create('caseDefinition1')
     expect(service).toBeTruthy();
     expect(service.case.events.length).toEqual(4)
-    expect(typeof service.case.events[0].estimatedWindowEnd === 'number').toBeTruthy()
+    expect(typeof service.case.events[0].dateStart === 'number').toBeTruthy()
   })
 
   it('should schedule an event', async () => {
     const service: CaseService = TestBed.get(CaseService);
     await service.create('caseDefinition1')
     await service.scheduleEvent(service.case.events[0].id, 12345678)
-    expect(service.case.events[0].scheduledDate).toEqual(12345678)
+    expect(service.case.events[0].dateStart).toEqual(12345678)
+    expect(service.case.events[0].dateEnd).toEqual(12345678)
+    expect(service.case.events[0].estimate).toEqual(false)
   })
 
 });
