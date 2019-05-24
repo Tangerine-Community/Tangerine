@@ -110,6 +110,7 @@ class CaseService {
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
     const caseEvent = <CaseEvent>{ 
       id: UUID(),
+      caseId: this.case._id,
       complete: false,
       name: caseEventDefinition.name,
       estimate: true,
