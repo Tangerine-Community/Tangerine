@@ -98,13 +98,13 @@ describe('CasesService', () => {
 
   it('should be give events by date', async() => {
     const service:CasesService = TestBed.get(CasesService);
-    const result = await service.getEventsByDate('test', 5, 15, false)
+    const result = await service.getEventsByDate(5, 15, false)
     expect(result.length).toEqual(5)
   })
 
   it('should be give events by date with estimates excluded', async() => {
     const service:CasesService = TestBed.get(CasesService);
-    const result = await service.getEventsByDate('test', 5, 15, true)
+    const result = await service.getEventsByDate(5, 15, true)
     expect(result.length).toEqual(1)
   })
 
