@@ -30,6 +30,8 @@ import 'tangy-form/input/tangy-photo-capture.js';
 import 'tangy-form/input/tangy-qr.js';
 import 'tangy-form/input/tangy-consent.js';
 
+import 'date-carousel/date-carousel.js'
+
 // An attempt to fix something...
 //import 'core-js/es7/reflect';
 
