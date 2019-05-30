@@ -15,6 +15,7 @@ import { TangyFormsModule } from '../tangy-forms/tangy-forms.module';
 import { WindowRef } from '../core/window-ref.service';
 import { CaseEventScheduleListComponent } from './components/case-event-schedule-list/case-event-schedule-list.component';
 import { CasesService } from './services/cases.service';
+import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -37,7 +38,8 @@ import { CasesService } from './services/cases.service';
     NewCaseComponent,
     EventFormComponent,
     CaseBreadcrumbComponent,
-    CaseEventScheduleListComponent
+    CaseEventScheduleListComponent,
+    CaseEventScheduleComponent
   ]
 })
 export class CaseModule { }
