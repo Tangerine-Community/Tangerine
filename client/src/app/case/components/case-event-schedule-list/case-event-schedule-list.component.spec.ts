@@ -116,7 +116,7 @@ describe('CaseEventScheduleListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', (done) => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
