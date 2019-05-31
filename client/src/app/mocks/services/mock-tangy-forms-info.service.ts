@@ -17,7 +17,7 @@ export class MockTangyFormsInfoService {
       <FormInfo>{
         id: 'case1',
         title: 'Case 1',
-        type: 'case',
+        type: 'Case',
         searchSettings: <FormSearchSettings>{
           shouldIndex: true,
           variablesToIndex: ['foo', 'bar'],

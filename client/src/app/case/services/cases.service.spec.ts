@@ -12,7 +12,7 @@ class MockPouchDB {
           doc: {
             _id: 'doc1',
             collection: 'TangyFormResponse',
-            type: 'case',
+            type: 'Case',
             events: [
               // Estimated lower bound overlap.
               {

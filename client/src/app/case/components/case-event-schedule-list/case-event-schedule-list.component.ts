@@ -32,7 +32,7 @@ export class CaseEventScheduleListComponent implements OnInit {
     this.calculateEvents()
   }
 
-  private _mode = CASE_EVENT_SCHEDULE_LIST_MODE_DAILY
+  private _mode = CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY
   @Input()
   set mode(mode:string) {
     this._mode = mode
@@ -90,7 +90,9 @@ export class CaseEventScheduleListComponent implements OnInit {
       const date = new Date(event.dateStart)
       if (daysOfWeekSeen.indexOf(date.getDate()) == -1) {
         daysOfWeekSeen.push(date.getDate())
-        markup += `<h2 class="date">${date.getDate()}<h2>`
+        markup += this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
+          ? `<h2 class="date">${date.getDate()}<h2>`
+          : ``
       }
       const searchDoc = searchDocs.find(searchDoc => searchDoc._id === event.caseId)
       const response = responses.find(response => response._id === event.caseId) 
