@@ -19,7 +19,9 @@ describe('CaseHomeComponent', () => {
     fixture.detectChanges();
   });
 
+  /* No need for this test at the moment. Better fit as an integration test.
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  */
 });
