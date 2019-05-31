@@ -5,11 +5,11 @@
   </paper-listbox>
 </paper-dropdown-menu-->
 
-<select (change)="list.mode = $event.target.value">
+<select (change)="onModeChange($event)">
   <option value="CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY">week</option>
   <option value="CASE_EVENT_SCHEDULE_LIST_MODE_DAILY">day</option>
 </select>
 
-<date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="list.date = $event.datePicked "></date-carousel>
+<date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)"></date-carousel>
 
 <app-case-event-schedule-list #list></app-case-event-schedule-list>

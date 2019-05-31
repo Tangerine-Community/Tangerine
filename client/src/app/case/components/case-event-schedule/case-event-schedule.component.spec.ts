@@ -119,15 +119,21 @@ describe('CaseEventScheduleComponent', () => {
     fixture.detectChanges();
   });
 
-  fit('should create', (done) => {
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  })
+  /*
+  fit('should have events', (done) => {
     expect(component).toBeTruthy();
     component.didSearch$.subscribe((value) => {
       debugger
       //expect(component.listEl.nativeElement.querySelectorAll('.search-result').length).toEqual(3)
       //done()
     })
-    component.date = REFERENCE_TIME
-
+    component.dayModeDate = REFERENCE_TIME
+    component.weekModeDate = REFERENCE_TIME
+    component.updateList()
   }, 987654321);
+  */
 
 });

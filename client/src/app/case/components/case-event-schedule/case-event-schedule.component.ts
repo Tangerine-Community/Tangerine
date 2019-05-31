@@ -15,20 +15,44 @@ export class CaseEventScheduleComponent implements OnInit {
   @ViewChild(CaseEventScheduleListComponent) list:CaseEventScheduleListComponent
 
   @Input()
-  date:number
+  dayModeDate:number
+
+  weekModeDate:number
 
   @Input()
-  mode = CASE_EVENT_SCHEDULE_LIST_MODE_DAILY
+  mode = CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY
 
   constructor() { }
 
   ngOnInit() {
+    this.weekModeDate = moment(moment(new Date()).format('YYYY WW'), 'YYYY WW').unix()*1000
+    this.dayModeDate = moment(moment(new Date()).format('YYYY MM DD'), 'YYYY MM DD').unix()*1000
+    this.updateList()
+  }
+
+  onModeChange(event) {
+    this.mode = event.target.value
+    this.updateList()
+  }
+
+  updateList() {
+    if (this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY) {
+      this.list.mode = this.mode
+      this.list.date = this.weekModeDate
+    } else if (this.mode === CASE_EVENT_SCHEDULE_LIST_MODE_DAILY) {
+      this.list.mode = this.mode
+      this.list.date = this.dayModeDate
+    }
   }
 
   onWeekChange(event) {
-    this.list.date = moment(`${event.target.yearInViewport} ${event.target.weekInViewport}`, 'YYYY WW').unix()*1000
+    this.weekModeDate = moment(`${event.target.yearInViewport} ${event.target.weekInViewport}`, 'YYYY WW').unix()*1000
+    this.updateList()
+  }
 
-    debugger
+  onDayPick(event) {
+    this.dayModeDate = event.target.datePicked 
+    this.updateList()
   }
 
 }
