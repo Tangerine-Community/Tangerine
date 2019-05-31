@@ -9,6 +9,7 @@ import { CaseComponent } from './components/case/case.component';
 import { EventComponent } from './components/event/event.component'
 import { EventFormComponent } from './components/event-form/event-form.component'
 import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
+import { CaseHomeComponent } from './components/case-home/case-home.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,13 @@ const routes: Routes = [
     component: CaseEventScheduleComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
+  {
+    path: 'case-home',
+    component: CaseHomeComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  }
+
+
 ];
 
 @NgModule({

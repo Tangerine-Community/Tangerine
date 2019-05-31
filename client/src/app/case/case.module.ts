@@ -16,6 +16,9 @@ import { WindowRef } from '../core/window-ref.service';
 import { CaseEventScheduleListComponent } from './components/case-event-schedule-list/case-event-schedule-list.component';
 import { CasesService } from './services/cases.service';
 import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
+import { CaseHomeComponent } from './components/case-home/case-home.component';
+import { MatTab, MatTabsModule } from '@angular/material';
+import { SearchModule } from '../core/search/search.module';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -23,6 +26,8 @@ import { CaseEventScheduleComponent } from './components/case-event-schedule/cas
     CaseRoutingModule,
     SharedModule,
     TangyFormsModule,
+    MatTabsModule,
+    SearchModule,
     CommonModule
   ],
   providers: [
@@ -39,7 +44,8 @@ import { CaseEventScheduleComponent } from './components/case-event-schedule/cas
     EventFormComponent,
     CaseBreadcrumbComponent,
     CaseEventScheduleListComponent,
-    CaseEventScheduleComponent
+    CaseEventScheduleComponent,
+    CaseHomeComponent
   ]
 })
 export class CaseModule { }
