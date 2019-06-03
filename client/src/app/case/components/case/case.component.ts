@@ -11,10 +11,11 @@ import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 })
 export class CaseComponent implements AfterContentInit {
 
-  @ViewChild('caseFormContainer') caseFormContainer: ElementRef;
   tangyFormEl:any
   ready = false
   show = 'manifest'
+  templateTitle = ''
+  templateDescription = ''
 
   constructor(
     private route: ActivatedRoute,
@@ -27,12 +28,10 @@ export class CaseComponent implements AfterContentInit {
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.id)
+      const caseService = this.caseService
+      eval(`this.templateTitle = caseService.caseDefinition.templateTitle ? \`${caseService.caseDefinition.templateTitle}\` : ''`)
+      eval(`this.templateDescription = caseService.caseDefinition.templateDescription ? \`${caseService.caseDefinition.templateDescription}\` : ''`)
       this.windowRef.nativeWindow.caseService = this.caseService
-      const tangyFormMarkup = await this.tangyFormService.getFormMarkup(this.caseService.caseDefinition.formId)
-      this.caseFormContainer.nativeElement.innerHTML = tangyFormMarkup
-      this.tangyFormEl = this.caseFormContainer.nativeElement.querySelector('tangy-form') 
-      this.tangyFormEl.response = this.caseService.case
-      this.tangyFormEl.enableItemReadOnly()
       this.ready = true
 
     })
