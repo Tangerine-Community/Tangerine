@@ -135,4 +135,10 @@ export class SearchService {
       : allDocs.filter(doc => JSON.stringify(doc).search(phrase) !== -1)
   }
 
+  async getIndexedDoc(username:string, docId):Promise<SearchDoc> {
+    const _indexName = `${username}_search`
+    const indexDb = new PouchDB(_indexName)
+    return <SearchDoc>await indexDb.get(docId)
+  }
+
 }
