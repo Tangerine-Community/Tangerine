@@ -31,6 +31,10 @@ responses that do not match any of these Form IDs will simply be push only from 
 
 In the Group's `app-config.json` doc, set `"syncProtocol"` to `"two-way"`.
 
+Create a `_users` database in the CouchDB.
+
+Add a Location item to the User Profile with a variable name of `location`. When a user syncs, the value in this location item is used to limit the data pulled down to the device.
+
 
 ## Merge conflicts
 When syncing, there may be cases where two tablets may both modify a form response and then try to sync. This will cause a merge conflict and will be flagged and listed as a merge conflict on the device. Currently the only way to resolve this merge conflict is manually on the server using the Futon database interface. When conflicts are resolved, their resolution will replicate to the tablets on the next sync.
