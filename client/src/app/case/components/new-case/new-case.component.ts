@@ -4,6 +4,7 @@ import { AuthenticationService } from '../../../shared/_services/authentication.
 import { HttpClient } from '@angular/common/http';
 import { CaseService } from '../../services/case.service'
 import { CaseDefinitionsService } from '../../services/case-definitions.service'
+import { WindowRef } from 'src/app/shared/_services/window-ref.service';
 
 @Component({
   selector: 'app-new-case',
@@ -16,17 +17,28 @@ export class NewCaseComponent implements AfterContentInit {
     private router: Router,
     authenticationService: AuthenticationService,
     private http: HttpClient,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private caseService:CaseService,
+    private caseDefinitionsService:CaseDefinitionsService,
+    private windowRef: WindowRef
   ) { }
 
   async ngAfterContentInit() {
     this.activatedRoute.queryParams.subscribe(async params => {
       const formId = params['formId'];
-      const caseService = new CaseService()
-      const caseDefinitionsService = new CaseDefinitionsService();
-      const caseDefinitions = await caseDefinitionsService.load();
-      await caseService.create(caseDefinitions.find(caseDefinition => caseDefinition.formId === formId).id)
-      this.router.navigate(['case', caseService.case._id])
+      const caseDefinitions = await this.caseDefinitionsService.load();
+      await this.caseService.create(caseDefinitions.find(caseDefinition => caseDefinition.formId === formId).id)
+      if (this.caseService.caseDefinition.startFormOnOpen && this.caseService.caseDefinition.startFormOnOpen.eventFormId) {
+        const caseEvent = this.caseService
+          .case
+          .events
+          .find(event => event.caseEventDefinitionId === this.caseService.caseDefinition.startFormOnOpen.eventId)
+        const eventForm = this.caseService.startEventForm(caseEvent.id, this.caseService.caseDefinition.startFormOnOpen.eventFormId) 
+        await this.caseService.save()
+        this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])
+      } else {
+        this.router.navigate(['case', this.caseService.case._id])
+      }
     })
   }
  
