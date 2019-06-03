@@ -4,7 +4,7 @@
 - Experimental features
   - Two-way Sync. See `docs/feature-two-way-sync.md`.
   - Clientside search of Forms for Case Management Groups. See `docs/case-management-group.md`.
-  - Add event time and scheduling to Case Mangement Groups #1518
+  - Add event time and scheduling to Case Mangement Groups [#1518](https://github.com/Tangerine-Community/Tangerine/pull/1510)
   - incremented tangy-form to 3.15.0, tangy-form-editor to 5.16.0
 
 Upgrade instructions:
