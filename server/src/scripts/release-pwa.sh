@@ -27,6 +27,16 @@ fi
 
 cd /tangerine/client
 
+if [ -z "$T_ORIENTATION" ]
+then
+    echo "releasing in the default orientation."
+    sed -i -e "s#T_ORIENTATION#portrait" builds/pwa/manifest.json
+else
+    echo "releasing in the configured orientation: $T_ORIENTATION."
+    # modify the orientation per configuration settings
+    sed -i -e "s#T_ORIENTATION#"$T_ORIENTATION"#g" builds/pwa/manifest.json
+fi
+
 # Create a temporary PWA folder that we'll move to the secret.
 cp -r builds/pwa pwa-tools/service-worker-generator/.pwa-temporary
 cd pwa-tools/service-worker-generator
@@ -41,6 +51,13 @@ cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
 
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
+
+#if [ ! -z "$T_ORIENTATION" ]
+#then
+#    echo "releasing in the configured orientation: $T_ORIENTATION."
+## modify the orientation per configuration settings
+#    sed -i -e "s#orientation#"$T_ORIENTATION"#g" pwa-tools/service-worker-generator/.pwa-temporary/manifest.json
+#fi
 
 # Generate service worker.
 ./node_modules/.bin/workbox generate:sw
