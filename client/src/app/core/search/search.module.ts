@@ -7,6 +7,7 @@ import { SearchBarcodeComponent } from './search-barcode/search-barcode.componen
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  exports: [SearchComponent],
   declarations: [SearchComponent, SearchBarcodeComponent],
   imports: [
     CommonModule,
