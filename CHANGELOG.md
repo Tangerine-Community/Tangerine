@@ -4,7 +4,9 @@
 - Experimental features
   - Two-way Sync. See `docs/feature-two-way-sync.md`.
   - Clientside search of Forms for Case Management Groups. See `docs/case-management-group.md`.
-  - incremented tangy-form to 3.15.0, tangy-form-editor to 5.16.0 to fix [Editing form level HTML requires two Save clicks](https://github.com/Tangerine-Community/Tangerine/issues/1041) and [Add a tangy input inside a tangy box duplicates items](https://github.com/Tangerine-Community/Tangerine/issues/1364)
+  - incremented tangy-form to 3.15.1, tangy-form-editor to 5.17.0 to fix [Editing form level HTML requires two Save clicks](https://github.com/Tangerine-Community/Tangerine/issues/1041)
+  and [Add a tangy input inside a tangy box duplicates items](https://github.com/Tangerine-Community/Tangerine/issues/1364), 
+  and enable [Adjustable letter size for grids](https://github.com/Tangerine-Community/Tangerine/issues/1525)
   - enables [use of T_ORIENTATION for pwa release](https://github.com/Tangerine-Community/Tangerine/issues/1530).
 
 Upgrade instructions:
