@@ -52,13 +52,6 @@ cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
 
-#if [ ! -z "$T_ORIENTATION" ]
-#then
-#    echo "releasing in the configured orientation: $T_ORIENTATION."
-## modify the orientation per configuration settings
-#    sed -i -e "s#orientation#"$T_ORIENTATION"#g" pwa-tools/service-worker-generator/.pwa-temporary/manifest.json
-#fi
-
 # Generate service worker.
 ./node_modules/.bin/workbox generate:sw
 
