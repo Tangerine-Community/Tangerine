@@ -21,7 +21,6 @@ class EventFormDefinitionInfo {
 })
 export class EventComponent implements OnInit, AfterContentInit {
 
-  caseService:CaseService
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
   eventFormsInfo:Array<EventFormDefinitionInfo>
@@ -31,6 +30,7 @@ export class EventComponent implements OnInit, AfterContentInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private caseService: CaseService,
     private userService: UserService
   ) { }
 
@@ -39,7 +39,6 @@ export class EventComponent implements OnInit, AfterContentInit {
 
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
-      this.caseService = new CaseService()
       await this.caseService.load(params.caseId)
       this.caseEvent = this
         .caseService
