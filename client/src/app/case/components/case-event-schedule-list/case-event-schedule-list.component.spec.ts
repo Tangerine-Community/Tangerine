@@ -9,6 +9,9 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import { MockTangyFormsInfoService } from 'src/app/mocks/services/mock-tangy-forms-info.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { subscribeOn } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
+import { BrowserModule } from '@angular/platform-browser';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 class MockPouchDB {
   get(id) {
@@ -86,6 +89,10 @@ describe('CaseEventScheduleListComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
+      imports: [
+        BrowserModule
+      ],
       providers: [
         {
           provide: UserService,
@@ -123,7 +130,7 @@ describe('CaseEventScheduleListComponent', () => {
   it('should show day view', (done) => {
     expect(component).toBeTruthy();
     component.didSearch$.subscribe((value) => {
-      expect(component.listEl.nativeElement.querySelectorAll('.search-result').length).toEqual(3)
+      expect(fixture.nativeElement.querySelectorAll('.search-result').length).toEqual(3)
       done()
     })
     component.date = REFERENCE_TIME
@@ -135,7 +142,9 @@ describe('CaseEventScheduleListComponent', () => {
     component.didSearch$.subscribe((value) => {
       i++
       if (i === 2) {
-        expect(component.listEl.nativeElement.querySelectorAll('.date').length).toEqual(2)
+        fixture.detectChanges()
+        expect(fixture.nativeElement.querySelectorAll('.search-result').length).toEqual(3)
+        expect(component.eventsInfo.length).toEqual(3)
         done()
       }
     })

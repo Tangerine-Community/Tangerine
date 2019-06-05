@@ -1,3 +1,16 @@
-<div #listEl>
-  Loading...
+<div *ngFor="let eventInfo of eventsInfo">
+  <h2  class="date"> 
+    {{eventInfo.date}}
+  </h2>
+  <paper-icon-item  class="search-result" open-link="{{eventInfo.openLink}}">
+    <iron-icon icon="{{eventInfo.icon}}" slot="item-icon"></iron-icon> 
+    <paper-item-body two-line>
+      <div>
+        {{eventInfo.primary}}
+      </div>
+      <div secondary>
+        {{eventInfo.secondary}}
+      </div>
+    </paper-item-body>
+  </paper-icon-item>
 </div>
