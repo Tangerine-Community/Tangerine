@@ -80,14 +80,17 @@ export class UserService {
   }
 
   async getUserAccount(username?: string):Promise<UserAccount> {
-    return <UserAccount>await this.usersDb.get(username)
+    return <UserAccount>(await this.usersDb.allDocs({include_docs: true}))
+      .rows
+      .map(row => row.doc)
+      .find(doc => doc.username === username)
   }
 
   async getUserProfile(username?: string) {
     username = username
       ? username
       : localStorage.getItem(CURRENT_USER)
-    const userAccount = <UserAccount>await this.usersDb.get(username)
+    const userAccount = <UserAccount>await this.getUserAccount(username)
     const databaseName = username || await this.getUserDatabase()
     const userDb = this.getUserDatabase(databaseName)
     const userProfile = new TangyFormResponseModel(await userDb.get(userAccount.userUUID))
@@ -107,12 +110,10 @@ export class UserService {
   }
 
   async doesUserExist(username):Promise<boolean> {
-    try {
-      await this.usersDb.get(username)
-      return true
-    } catch (e) {
-      return false
-    }
+    return (await this.usersDb.allDocs({include_docs:true}))
+      .rows
+      .map(row => row.doc.username)
+      .includes(username)
   }
 
   async getAllUsers() {
@@ -125,7 +126,8 @@ export class UserService {
   async getUsernames() {
     const response = await this.getAllUsers();
     return response
-      .map(user => user._id);
+      .filter(user => user.hasOwnProperty('username'))
+      .map(user => user.username);
   }
 
 
@@ -181,7 +183,7 @@ export class UserService {
     } else {
       const userDb = this.userDatabases.find(userDatabase => userDatabase.name === username)
       await userDb.destroy()
-      const accountDoc = await this.usersDb.get(username)
+      const accountDoc = await this.getUserAccount(username)
       await this.usersDb.remove(accountDoc)
     }
   }
