@@ -64,7 +64,7 @@ class Case {
   variables:any = {}
   disabledEventDefinitionIds: Array<string> = []
   events: Array<CaseEvent> = []
-  type:string = 'Case'
+  type:string = 'case'
   caseFormResponse:TangyFormResponse
 
   constructor(data?:any) {
