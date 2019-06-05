@@ -14,7 +14,8 @@ export const CASE_EVENT_SCHEDULE_LIST_MODE_DAILY = 'CASE_EVENT_SCHEDULE_LIST_MOD
 export const CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY = 'CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY'
 
 class EventInfo {
-  newDate = ''
+  newDateNumber = ''
+  newDateLabel = ''
   openLink = ''
   icon = ''
   primary = ''
@@ -98,8 +99,9 @@ export class CaseEventScheduleListComponent implements OnInit {
       const date = new Date(event.dateStart)
       if (daysOfWeekSeen.indexOf(date.getDate()) == -1) {
         daysOfWeekSeen.push(date.getDate())
-        eventInfo.newDate = this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
-          ? `<h2 class="date">${date.getDate()}<h2>`
+        eventInfo.newDateLabel = moment(date).format('ddd')
+        eventInfo.newDateNumber = this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
+          ? date.getDate().toString()
           : ``
       }
       const searchDoc = searchDocs.find(searchDoc => searchDoc._id === event.caseId)
