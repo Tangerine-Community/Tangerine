@@ -5,10 +5,10 @@
   - Two-way Sync. See `docs/feature-two-way-sync.md`.
   - Clientside search of Forms for Case Management Groups. See `docs/case-management-group.md`.
   - Add event time and scheduling to Case Mangement Groups [#1518](https://github.com/Tangerine-Community/Tangerine/pull/1518)
-  - incremented tangy-form to 3.15.1, tangy-form-editor to 5.17.0 to fix [Editing form level HTML requires two Save clicks](https://github.com/Tangerine-Community/Tangerine/issues/1041)
+- incremented tangy-form to 3.15.1, tangy-form-editor to 5.17.0 to fix [Editing form level HTML requires two Save clicks](https://github.com/Tangerine-Community/Tangerine/issues/1041)
   and [Add a tangy input inside a tangy box duplicates items](https://github.com/Tangerine-Community/Tangerine/issues/1364), 
   and enable [Adjustable letter size for grids](https://github.com/Tangerine-Community/Tangerine/issues/1525)
-  - enables [use of T_ORIENTATION for pwa release](https://github.com/Tangerine-Community/Tangerine/issues/1530).
+- enables [use of T_ORIENTATION for pwa release](https://github.com/Tangerine-Community/Tangerine/issues/1530).
 
 
 Upgrade instructions:
@@ -17,6 +17,9 @@ Backup your data folder and then run the following commands.
 ```bash
 git fetch origin
 git checkout v3.4.0
+```
+Add T_ORIENTATION="landscape" to config.sh to test landscape orientation for PWA's.
+```
 ./start.sh
 ```
 
