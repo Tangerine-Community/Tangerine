@@ -73,8 +73,10 @@ rm config.sh_backup
 # run every script between your prior version to version you have upgraded to. Also always check the release notes for
 # any special instructions
 docker exec -it tangerine ls /tangerine/upgrades
-# Run an upgrade script.
-docker exec -it tangerine /tangerine/upgrades/v2.0.0.sh
+# Run an upgrade script indicated in release instructions.
+docker exec -it tangerine /tangerine/upgrades/<version>.sh
+# Remove the previous version of tangerine you had installed.
+docker rmi tangerine/tangerine:<previous tag>
 ```
 
 Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
