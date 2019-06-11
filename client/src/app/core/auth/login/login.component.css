@@ -28,3 +28,7 @@ button {
   margin-right: 15px;
   float: right;
 }
+
+.red-button {
+  background-color: #ff0000;
+}
