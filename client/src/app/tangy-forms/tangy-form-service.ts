@@ -58,6 +58,7 @@ export class TangyFormService {
   // into the database. Using a getter and setter for property fields, this would be one way to queue.
   async saveResponse(responseDoc) {
     let r
+    responseDoc.lastModified = Date.now()
     if (!responseDoc._id) {
       r = await this.db.post(responseDoc)
     }
