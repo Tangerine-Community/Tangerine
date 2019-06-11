@@ -61,7 +61,7 @@
         </small>
       </span>
 
-      <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action">{{'LOGIN'|translate}}</button>
+      <button *ngIf="!showRecoveryInput" (click)="loginUser()" mat-raised-button color="accent" name="action" class="login-button">{{'LOGIN'|translate}}</button>
 
       <button *ngIf="!showRecoveryInput" (click)="toggleRecoveryInput()" mat-raised-button color="accent">{{'RESET PASSWORD'|translate}}</button>
       <button [disabled]="user.newPassword!==user.confirmNewPassword" *ngIf="showRecoveryInput" (click)="resetPassword()" mat-raised-button
