@@ -29,10 +29,7 @@ export class NewCaseComponent implements AfterContentInit {
       const caseDefinitions = await this.caseDefinitionsService.load();
       await this.caseService.create(caseDefinitions.find(caseDefinition => caseDefinition.formId === formId).id)
       if (this.caseService.caseDefinition.startFormOnOpen && this.caseService.caseDefinition.startFormOnOpen.eventFormId) {
-        const caseEvent = this.caseService
-          .case
-          .events
-          .find(event => event.caseEventDefinitionId === this.caseService.caseDefinition.startFormOnOpen.eventId)
+        const caseEvent = this.caseService.createEvent(this.caseService.caseDefinition.startFormOnOpen.eventId)
         const eventForm = this.caseService.startEventForm(caseEvent.id, this.caseService.caseDefinition.startFormOnOpen.eventFormId) 
         await this.caseService.save()
         this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])

@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
+import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 
 @Component({
   selector: 'app-case',
@@ -11,10 +12,13 @@ import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 })
 export class CaseComponent implements AfterContentInit {
 
-  @ViewChild('caseFormContainer') caseFormContainer: ElementRef;
   tangyFormEl:any
   ready = false
   show = 'manifest'
+  templateTitle = ''
+  templateDescription = ''
+  availableEventTypes:Array<CaseEventDefinition> = []
+  selectedNewEventType = ''
 
   constructor(
     private route: ActivatedRoute,
@@ -27,23 +31,41 @@ export class CaseComponent implements AfterContentInit {
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.id)
+      const caseService = this.caseService
+      eval(`this.templateTitle = caseService.caseDefinition.templateTitle ? \`${caseService.caseDefinition.templateTitle}\` : ''`)
+      eval(`this.templateDescription = caseService.caseDefinition.templateDescription ? \`${caseService.caseDefinition.templateDescription}\` : ''`)
       this.windowRef.nativeWindow.caseService = this.caseService
-      const tangyFormMarkup = await this.tangyFormService.getFormMarkup(this.caseService.caseDefinition.formId)
-      this.caseFormContainer.nativeElement.innerHTML = tangyFormMarkup
-      this.tangyFormEl = this.caseFormContainer.nativeElement.querySelector('tangy-form') 
-      this.tangyFormEl.response = this.caseService.case
-      this.tangyFormEl.enableItemReadOnly()
+      this.calculateAvailableEventTypes()
       this.ready = true
-
     })
+  }
+
+  calculateAvailableEventTypes() {
+    this.availableEventTypes = this.caseService.caseDefinition.eventDefinitions
+      .reduce((availableEventTypes, eventDefinition) => {
+        const eventDefinitionHasEvent = this.caseService.case.events
+          .reduce((eventDefinitionHasEvent, event) => {
+            return eventDefinitionHasEvent || event.caseEventDefinitionId === eventDefinition.id
+          }, false)
+        return eventDefinition.repeatable || !eventDefinitionHasEvent             
+          ? [...availableEventTypes, eventDefinition]
+          : availableEventTypes
+      }, [])
+  }
+
+  onSubmit() {
+    this.createEvent(this.selectedNewEventType)
   }
 
   async createEvent(eventDefinitionId) {
     const caseEvent = this.caseService.createEvent(eventDefinitionId)
+    // @TODO We need a widget on screen to capture start and end datetime for the event.
+    // await this.caseService.scheduleEvent(caseEvent.id, dateStart, dateEnd)
     await this.caseService.save()
-    //this.router.navigate(['case', 'event', this.caseService.case._id, caseEvent.id])
+    this.calculateAvailableEventTypes()
   }
 
+  // @TODO Will we use this?
   async createEventAndOpen(eventDefinitionId) {
     const caseEvent = this.caseService.createEvent(eventDefinitionId)
     await this.caseService.save()
