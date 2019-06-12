@@ -43,6 +43,7 @@
             <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
               <option *ngFor="let availableEventType of availableEventTypes" [value]="availableEventType.id">{{availableEventType.name}}</option>
             </select>
+            <input type="date" name="event-date" [(ngModel)]="inputSelectedDate">
             <button type="submit">create</button>
           </form>
         </div>
