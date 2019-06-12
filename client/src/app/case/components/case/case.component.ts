@@ -33,7 +33,6 @@ export class CaseComponent implements AfterContentInit {
       eval(`this.templateDescription = caseService.caseDefinition.templateDescription ? \`${caseService.caseDefinition.templateDescription}\` : ''`)
       this.windowRef.nativeWindow.caseService = this.caseService
       this.ready = true
-
     })
   }
 
