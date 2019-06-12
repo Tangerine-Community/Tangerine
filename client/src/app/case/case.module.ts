@@ -19,10 +19,12 @@ import { CaseEventScheduleComponent } from './components/case-event-schedule/cas
 import { CaseHomeComponent } from './components/case-home/case-home.component';
 import { MatTab, MatTabsModule } from '@angular/material';
 import { SearchModule } from '../core/search/search.module';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   imports: [
+    FormsModule,
     CaseRoutingModule,
     SharedModule,
     TangyFormsModule,
