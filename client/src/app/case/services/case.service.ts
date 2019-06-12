@@ -60,9 +60,6 @@ class CaseService {
     this.case = {...this.case, ...tangyFormEl.response}
     tangyFormContainerEl.remove()
     await this.setCase(this.case)
-    this.caseDefinition
-      .eventDefinitions
-      .forEach(eventDefinition => this.createEvent(eventDefinition.id))
     this.case.caseDefinitionId = caseDefinitionId;
     this.case.label = this.caseDefinition.name
     await this.save()

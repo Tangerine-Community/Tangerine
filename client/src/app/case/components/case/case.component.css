@@ -50,6 +50,10 @@ app-case-breadcrumb {
     border-left: red solid 4px;
 }
 
+.event.new-event {
+    border-style: dashed;
+}
+
 .event.complete {
     background: #CCC;
 }

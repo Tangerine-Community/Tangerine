@@ -30,5 +30,23 @@
         </paper-item-body>
       </paper-icon-item>
     </div>
+    <paper-icon-item 
+      class="event new-event" 
+    >
+      <iron-icon icon="event" slot="item-icon"></iron-icon> 
+      <paper-item-body two-line>
+        <div>
+          {{'New Event'|translate}}
+        </div>
+        <div secondary>
+          <form (ngSubmit)="onSubmit()" #form="ngForm">
+            <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
+              <option *ngFor="let availableEventType of availableEventTypes" [value]="availableEventType.id">{{availableEventType.name}}</option>
+            </select>
+            <button type="submit">create</button>
+          </form>
+        </div>
+      </paper-item-body>
+    </paper-icon-item>
   </div>
 </div>
