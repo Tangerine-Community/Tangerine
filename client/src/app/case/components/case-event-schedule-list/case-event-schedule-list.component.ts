@@ -13,6 +13,15 @@ import { Subject } from 'rxjs';
 export const CASE_EVENT_SCHEDULE_LIST_MODE_DAILY = 'CASE_EVENT_SCHEDULE_LIST_MODE_DAILY'
 export const CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY = 'CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY'
 
+class EventInfo {
+  newDateNumber = ''
+  newDateLabel = ''
+  openLink = ''
+  icon = ''
+  primary = ''
+  secondary = ''
+}
+
 @Component({
   selector: 'app-case-event-schedule-list',
   templateUrl: './case-event-schedule-list.component.html',
@@ -21,7 +30,7 @@ export const CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY = 'CASE_EVENT_SCHEDULE_LIST_MO
 export class CaseEventScheduleListComponent implements OnInit {
 
   formTypesInfo = FORM_TYPES_INFO
-  @ViewChild('listEl') listEl: ElementRef
+  eventsInfo:Array<EventInfo> = []
   formsInfo:Array<FormInfo>
   didSearch$ = new Subject()
 
@@ -73,7 +82,6 @@ export class CaseEventScheduleListComponent implements OnInit {
 
   async render(events:Array<CaseEvent>) {
     // Get some data together before rendering.
-    this.listEl.nativeElement.innerHTML = "Loading..."
     const userDb = this.userService.getUserDatabase(this.userService.getCurrentUser())
     const searchDocs:Array<SearchDoc> = []
     const responses:Array<TangyFormResponse> = []
@@ -86,12 +94,14 @@ export class CaseEventScheduleListComponent implements OnInit {
     // Render.
     let markup = ``
     let daysOfWeekSeen = []
-    for (const event of events) {
+    this.eventsInfo = events.map(event => {
+      const eventInfo = new EventInfo()
       const date = new Date(event.dateStart)
       if (daysOfWeekSeen.indexOf(date.getDate()) == -1) {
         daysOfWeekSeen.push(date.getDate())
-        markup += this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
-          ? `<h2 class="date">${date.getDate()}<h2>`
+        eventInfo.newDateLabel = moment(date).format('ddd')
+        eventInfo.newDateNumber = this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 
+          ? date.getDate().toString()
           : ``
       }
       const searchDoc = searchDocs.find(searchDoc => searchDoc._id === event.caseId)
@@ -99,21 +109,12 @@ export class CaseEventScheduleListComponent implements OnInit {
       const formTypeInfo = FORM_TYPES_INFO.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
       const formInfo = formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
       const formId = formInfo.id
-      markup += `
-        <paper-icon-item class="search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
-          <iron-icon icon="${eval(`\`${formTypeInfo.iconTemplate}\``)}" slot="item-icon"></iron-icon> 
-          <paper-item-body two-line>
-            <div>
-              ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : response._id}\``)}
-            </div>
-            <div secondary>
-              ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
-            </div>
-          </paper-item-body>
-        </paper-icon-item>
-      `
-    }
-    this.listEl.nativeElement.innerHTML = markup
+      eventInfo.openLink = eval('`' + formTypeInfo.resumeFormResponseLinkTemplate + '`')
+      eventInfo.icon = eval('`' + formTypeInfo.iconTemplate + '`')
+      eventInfo.primary = eval(formInfo.searchSettings.primaryTemplate ? '`' + formInfo.searchSettings.primaryTemplate + '`' : response._id)
+      eventInfo.secondary = eval(formInfo.searchSettings.secondaryTemplate ? '`' + formInfo.searchSettings.secondaryTemplate + '`' : formInfo.title)
+      return eventInfo 
+    })
     this.didSearch$.next(true)
   }
 

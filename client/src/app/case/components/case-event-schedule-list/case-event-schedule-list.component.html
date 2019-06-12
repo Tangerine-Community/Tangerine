@@ -1,3 +1,24 @@
-<div #listEl>
-  Loading...
+<div class="event-info" *ngFor="let eventInfo of eventsInfo">
+  <div *ngIf="eventInfo.newDateNumber" class="new-date"> 
+    <div class="new-date-container">
+      <div class="new-date-number">
+        {{eventInfo.newDateNumber}}
+      </div>
+      <div class="new-date-label">
+        {{eventInfo.newDateLabel}}
+      </div>
+      <iron-icon icon="av:fiber-manual-record" class="new-date-dot"></iron-icon>  
+    </div>
+  </div>
+  <paper-icon-item  class="search-result" open-link="{{eventInfo.openLink}}">
+    <iron-icon icon="{{eventInfo.icon}}" slot="item-icon"></iron-icon> 
+    <paper-item-body two-line>
+      <div>
+        {{eventInfo.primary}}
+      </div>
+      <div secondary>
+        {{eventInfo.secondary}}
+      </div>
+    </paper-item-body>
+  </paper-icon-item>
 </div>
