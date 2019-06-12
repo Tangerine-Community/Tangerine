@@ -4,6 +4,7 @@ import { CaseService } from '../../services/case.service'
 import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
+import moment from 'moment/src/moment';
 
 @Component({
   selector: 'app-case',
@@ -19,6 +20,7 @@ export class CaseComponent implements AfterContentInit {
   templateDescription = ''
   availableEventTypes:Array<CaseEventDefinition> = []
   selectedNewEventType = ''
+  inputSelectedDate = moment().format('YYYY-MM-DD')
 
   constructor(
     private route: ActivatedRoute,
@@ -54,13 +56,14 @@ export class CaseComponent implements AfterContentInit {
   }
 
   onSubmit() {
-    this.createEvent(this.selectedNewEventType)
+    const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
+    this.createEvent(this.selectedNewEventType, newDate)
   }
 
-  async createEvent(eventDefinitionId) {
+  async createEvent(eventDefinitionId, newDate) {
     const caseEvent = this.caseService.createEvent(eventDefinitionId)
     // @TODO We need a widget on screen to capture start and end datetime for the event.
-    // await this.caseService.scheduleEvent(caseEvent.id, dateStart, dateEnd)
+    await this.caseService.scheduleEvent(caseEvent.id, newDate, newDate)
     await this.caseService.save()
     this.calculateAvailableEventTypes()
   }
