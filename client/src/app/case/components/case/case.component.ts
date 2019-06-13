@@ -49,7 +49,7 @@ export class CaseComponent implements AfterContentInit {
           .reduce((eventDefinitionHasEvent, event) => {
             return eventDefinitionHasEvent || event.caseEventDefinitionId === eventDefinition.id
           }, false)
-        return eventDefinition.repeatable || !eventDefinitionHasEvent             
+        return (eventDefinition.repeatable || !eventDefinitionHasEvent) && !this.caseService.case.disabledEventDefinitionIds.includes(eventDefinition.id)
           ? [...availableEventTypes, eventDefinition]
           : availableEventTypes
       }, [])
