@@ -1,4 +1,5 @@
 import { UserService } from "src/app/shared/_services/user.service";
+import PouchDB from 'pouchdb'
 
 export const updates = [
   {
@@ -149,6 +150,25 @@ export const updates = [
     requiresViewsUpdate: true,
     script: async (userDb, appConfig, userService:UserService) => {
       console.log('Updating to v3.3.0...')
+    }
+  },
+  {
+    requiresViewsUpdate: true,
+    script: async (userDb, appConfig, userService:UserService) => {
+      console.log('Updating to v3.4.0...')
+      const usersDb = new PouchDB('users')
+      const userDocs = (await usersDb.allDocs({include_docs: true}))
+        .rows
+        .map(row => row.doc)
+        .filter(doc => doc._id.indexOf('_design') === -1)
+      for (let userDoc of userDocs) {
+        const userDb = new PouchDB(userDoc.username);
+        let validUserProfileDoc = (await userDb.query('tangy-form/responsesByFormId', { key: 'user-profile', include_docs: true })).rows[0].doc
+        let invalidUserProfileDoc = await userDb.get(userDoc.userUUID)
+        await userDb.remove(invalidUserProfileDoc)
+        userDoc.userUUID = validUserProfileDoc._id
+        await usersDb.put(userDoc)
+      }
     }
   }
 ]
