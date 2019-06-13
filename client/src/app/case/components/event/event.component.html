@@ -18,40 +18,34 @@
 
   <div class="wrapper">
     <div class="form-cards" *ngIf="caseService">
-      <paper-card 
-        *ngFor="let eventFormInfo of eventFormsInfo"
-        class="form-card {{eventFormInfo.required === true ? 'required' : ''}}"
+      <paper-icon-item 
+        *ngFor="let eventForm of eventFormsInfo"
+        routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}"
       >
-        <h2 class="card-header" [innerHTML]="eventFormInfo.name|unsanitizeHtml"></h2>
-        <div class="card-content">
-          <span *ngIf="eventFormInfo.eventForms.length === 0">
-            {{'You have not started this form'|translate}}.
-          </span>
-          <div *ngIf="eventFormInfo.eventForms.length > 0" role="listbox">
-            <paper-icon-item 
-              *ngFor="let eventForm of eventFormInfo.eventForms"
-              routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}"
-            >
-              <iron-icon icon="{{eventForm.complete ? 'assignment-turned-in' : 'assignment'}}" slot="item-icon"></iron-icon> 
-              <paper-item-body two-line>
-                <div>
-                  <span [innerHTML]="eventFormInfo.name|unsanitizeHtml"></span> ({{eventForm.id.substr(0,6)}})
-                </div>
-                <div secondary>{{eventFormInfo.startDate | date:'medium'}}</div>
-              </paper-item-body>
-            </paper-icon-item>
+        <iron-icon icon="{{eventForm.complete ? 'assignment-turned-in' : 'assignment'}}" slot="item-icon"></iron-icon> 
+        <paper-item-body two-line>
+          <div>
+            <span [innerHTML]="eventForm.name|unsanitizeHtml"></span> ({{eventForm.id.substr(0,6)}})
           </div>
-        </div>
-        <div class="card-actions" *ngIf="eventFormInfo.canStart">
-          <paper-button *ngIf="eventFormInfo.eventForms.length > 0" (click)="startEventForm(eventFormInfo.eventFormDefinitionId)">
-            {{'start another'|translate}}
-          </paper-button>
-          <paper-button *ngIf="eventFormInfo.eventForms.length === 0" (click)="startEventForm(eventFormInfo.eventFormDefinitionId)">
-            {{'start form'|translate}}
-          </paper-button>
-        </div>
-
-      </paper-card>
+          <div secondary>{{eventForm.startDate | date:'medium'}}</div>
+        </paper-item-body>
+      </paper-icon-item>
+      <paper-icon-item class="event new-event-form" *ngIf="availableEventFormDefinitions.length > 0">
+        <iron-icon icon="form" slot="item-icon"></iron-icon>
+        <paper-item-body two-line>
+          <div>
+            {{'New Form'|translate}}
+          </div>
+          <div secondary>
+            <form (ngSubmit)="onSubmit()" #form="ngForm">
+              <select name="selected-form-definition" [(ngModel)]="selectedNewEventFormDefinition">
+                <option *ngFor="let availableEventFormDefinition of availableEventFormDefinitions" [value]="availableEventFormDefinition.id">{{availableEventFormDefinition.name}}</option>
+              </select>
+              <button type="submit">create</button>
+            </form>
+          </div>
+        </paper-item-body>
+      </paper-icon-item>
     </div>
   </div>
 </div>
