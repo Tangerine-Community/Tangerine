@@ -179,18 +179,25 @@ export const updates = [
           // This is confusing because it takes into account a couple of different inconsistent scenarios. 
           // The most important thing to know is that if it did not have an uploadDatetime, it will now
           // be queued for upload and all docs will end up having a lastModified.
-          if (!doc.uploadDatetime) {
+          if (doc.uploadDatetime && doc.lastModified) {
+            // Do nothing, this is a doc that has been uploaded :).
+          }
+          else if (!doc.uploadDatetime && !doc.lastModified) {
+            // Queue for upload.
             doc = {
               ...doc, 
-              uploadDatetime: doc.lastModified 
-                ? doc.lastModified+1 
-                : Date.now(),
-              lastModified: doc.lastModified
-                ? doc.lastModified
-                : Date.now() - 1
+              uploadDatetime: Date.now(),
+              lastModified: Date.now() + 1
             }
           }
-          if (!doc.lastModified) {
+          else if (!doc.uploadDatetime && doc.lastModified) {
+            // Queue for upload.
+            doc = {
+              ...doc, 
+              uploadDatetime: doc.lastModified - 1 
+            }
+          } 
+          else if (doc.uploadDatetime && !doc.lastModified) {
             // This may result in user profiles being queued for upload again but it's ok.
             doc.lastModified = Date.now()
           }
