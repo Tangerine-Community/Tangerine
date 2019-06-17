@@ -45,7 +45,7 @@ export class UserService {
 
   async initialize() {
     for (const user of await this.getAllUsers()) {
-      this.userDatabases.push(PouchDB(user._id))
+      this.userDatabases.push(PouchDB(user.username))
     }
   }
 
