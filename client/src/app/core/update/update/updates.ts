@@ -154,7 +154,6 @@ export const updates = [
     }
   },
   {
-    requiresViewsUpdate: true,
     script: async (userDb, appConfig, userService:UserService) => {
       console.log('Updating to v3.4.0...')
       const usersDb = new PouchDB('users')
@@ -204,6 +203,8 @@ export const updates = [
           await userDb.put(doc)
         }
       }
+      await userService.updateAllDefaultUserDocs()
+      await userService.indexAllUserViews()
     }
   }
 ]
