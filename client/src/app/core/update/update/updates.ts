@@ -155,6 +155,8 @@ export const updates = [
   },
   {
     script: async (userDb, appConfig, userService:UserService) => {
+      // Prevent this update from running for every user. We handle that in this update.
+      if (localStorage.getItem('ran-update-v3.4.0')) return
       console.log('Updating to v3.4.0...')
       const usersDb = new PouchDB('users')
       const userDocs = (await usersDb.allDocs({include_docs: true}))
@@ -205,6 +207,7 @@ export const updates = [
       }
       await userService.updateAllDefaultUserDocs()
       await userService.indexAllUserViews()
+      localStorage.setItem('ran-update-v3.4.0', 'true')
     }
   }
 ]
