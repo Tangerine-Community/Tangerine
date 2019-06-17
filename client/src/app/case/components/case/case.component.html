@@ -40,11 +40,22 @@
         </div>
         <div secondary>
           <form (ngSubmit)="onSubmit()" #form="ngForm">
-            <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
-              <option *ngFor="let availableEventType of availableEventTypes" [value]="availableEventType.id">{{availableEventType.name}}</option>
-            </select>
-            <input type="date" name="event-date" [(ngModel)]="inputSelectedDate">
-            <button type="submit">create</button>
+            <div>
+              <div class="dropdown-container">
+                <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
+                  <option value="" disabled selected>Choose type...</option>
+                  <option *ngFor="let availableEventType of availableEventTypes" [value]="availableEventType.id">{{availableEventType.name}}</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <div class="dropdown-container">
+                <input type="date" name="event-date" [(ngModel)]="inputSelectedDate">
+              </div>
+            </div>
+            <div class="text-right">
+              <button type="submit">Create</button>
+            </div>
           </form>
         </div>
       </paper-item-body>
