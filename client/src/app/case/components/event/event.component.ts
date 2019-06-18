@@ -5,13 +5,16 @@ import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventForm } from '../../classes/event-form.class';
+import { EventFormDefinition } from '../../classes/event-form-definition.class';
 
-class EventFormDefinitionInfo {
+class EventFormInfo {
+  id:string
+  caseId:string
+  caseEventId:string
   eventFormDefinitionId: string
   name:string
-  canStart:boolean
   required: boolean
-  eventForms:Array<EventForm>
+  eventForm:EventForm
 }
 
 @Component({
@@ -23,9 +26,10 @@ export class EventComponent implements OnInit, AfterContentInit {
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
-  eventFormsInfo:Array<EventFormDefinitionInfo>
+  eventFormsInfo:Array<EventFormInfo>
   loaded = false
-
+  availableEventFormDefinitions:Array<EventFormDefinition> = []
+  selectedNewEventFormDefinition = ''
 
   constructor(
     private route: ActivatedRoute,
@@ -53,22 +57,52 @@ export class EventComponent implements OnInit, AfterContentInit {
       this.eventFormsInfo = this
         .caseEventDefinition
         .eventFormDefinitions
-        .map(eventFormDefinition => {
-          return <EventFormDefinitionInfo>{
-            eventFormDefinitionId: eventFormDefinition.id,
-            name: eventFormDefinition.name,
-            required: eventFormDefinition.required,
-            canStart: this.caseEvent.eventForms.filter(eventForm => eventForm.eventFormDefinitionId === eventFormDefinition.id).length === 0 || eventFormDefinition.repeatable
-              ? true
-              : false,
-            eventForms: this
-              .caseEvent
-              .eventForms
-              .filter(eventFormResponse => eventFormResponse.eventFormDefinitionId === eventFormDefinition.id)
-          }
-        })
+        .reduce((eventFormsInfo, eventFormDefinition) => {
+           return [
+              ...eventFormsInfo,
+              ...this
+                .caseEvent
+                .eventForms
+                .reduce((eventFormsInfoSubset, eventForm) => {
+                  return eventForm.eventFormDefinitionId === eventFormDefinition.id
+                    ? [
+                        ...eventFormsInfoSubset, 
+                        <EventFormInfo>{
+                          id: eventForm.id,
+                          caseId: this.caseService.case._id,
+                          caseEventId: this.caseEvent.id,
+                          eventFormDefinitionId: eventFormDefinition.id,
+                          name: eventFormDefinition.name,
+                          required: eventFormDefinition.required,
+                          eventForm
+                        }
+                      ]
+                    : eventFormsInfoSubset
+                }, [])
+           ]
+          }, [])
+      this.calculateAvailableEventFormDefinitions()
       this.loaded = true
     })
+  }
+
+  calculateAvailableEventFormDefinitions() {
+    this.availableEventFormDefinitions = this.caseEventDefinition.eventFormDefinitions
+      .reduce((availableEventFormDefinitions, eventFormDefinition) => {
+        const eventFormDefinitionHasForm = this.caseEvent.eventForms
+          .reduce((eventFormDefinitionHasForm, form) => {
+            return eventFormDefinitionHasForm || form.eventFormDefinitionId === eventFormDefinition.id
+          }, false)
+        return eventFormDefinition.repeatable || !eventFormDefinitionHasForm             
+          ? [...availableEventFormDefinitions, eventFormDefinition]
+          : availableEventFormDefinitions
+      }, [])
+  }
+
+  onSubmit() {
+    if (this.selectedNewEventFormDefinition) {
+      this.startEventForm(this.selectedNewEventFormDefinition)
+    }
   }
 
   async startEventForm(eventFormDefinitionId:string) {
