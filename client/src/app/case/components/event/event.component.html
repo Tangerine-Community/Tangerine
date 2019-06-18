@@ -1,21 +1,6 @@
 <div *ngIf="loaded">
   <app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
 
-  <div class="subject-header">
-    <h1>
-      <iron-icon icon="{{caseEvent.complete ? 'notification:event-available' : 'event'}}" slot="item-icon"></iron-icon> 
-      <span [innerHTML]="caseEvent.name|unsanitizeHtml"></span> 
-      ({{caseEvent.id.substr(0,6)}})
-    </h1>
-    <div secondary>
-      {{'Opened'|translate}}: 
-        {{caseEvent.startDate | date:'medium'}},
-      {{'Status'|translate}}: 
-        <span *ngIf="!caseEvent.complete">{{'Incomplete'|translate}}</span>
-        <span *ngIf="caseEvent.complete">{{'Complete'|translate}}</span> 
-    </div>
-  </div>
-
   <div class="wrapper">
     <div class="form-cards" *ngIf="caseService">
       <paper-icon-item 
