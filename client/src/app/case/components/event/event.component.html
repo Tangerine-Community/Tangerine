@@ -27,7 +27,7 @@
               <select name="selected-form-definition" [(ngModel)]="selectedNewEventFormDefinition">
                 <option *ngFor="let availableEventFormDefinition of availableEventFormDefinitions" [value]="availableEventFormDefinition.id">{{availableEventFormDefinition.name}}</option>
               </select>
-              <button type="submit">create</button>
+              <paper-button (click)="onSubmit()">Create</paper-button>
             </form>
           </div>
         </paper-item-body>
