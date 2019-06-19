@@ -49,6 +49,16 @@ paper-card {
 .form.complete {
     background: #CCC;
 }
+select {
+    font-family: inherit;
+    background-color: transparent;
+    width: 80%;
+    padding: 4px 0;
+    font-size: 16px;
+    color: #000;
+    border: none;
+    border-bottom: 1px solid #737373;
+}
 
 
 :host {
