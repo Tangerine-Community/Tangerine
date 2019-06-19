@@ -10,55 +10,53 @@
 </div>
 
 <div *ngIf="ready" class="wrapper">
-  <div class="event-cards" *ngIf="caseService">
-    <div *ngFor="let eventInfo of caseService.eventsInfo">
-      <paper-icon-item 
-        class="event {{eventInfo.required ? 'required' : ''}}" 
-        *ngFor="let caseEvent of eventInfo.caseEvents"
-        routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}"
-      >
-        <iron-icon icon="{{caseEvent.complete ? 'notification:event-available' : 'event'}}" slot="item-icon"></iron-icon> 
-        <paper-item-body two-line>
-          <div><span [innerHTML]="eventInfo.caseEventDefinition.name|unsanitizeHtml"></span> ({{caseEvent.id.substr(0,6)}})</div>
-          <div secondary>
-            {{'Opened'|translate}}: 
-              {{caseEvent.startDate | date:'medium'}},
-            {{'Status'|translate}}: 
-              <span *ngIf="!caseEvent.complete">{{'Incomplete'|translate}}</span>
-              <span *ngIf="caseEvent.complete">{{'Complete'|translate}}</span> 
-          </div>
-        </paper-item-body>
-      </paper-icon-item>
-    </div>
+  <div *ngFor="let eventInfo of caseEventsInfo">
     <paper-icon-item 
-      class="event new-event" 
+      class="event {{eventInfo.caseEventDefinition.required ? 'required' : ''}}" 
+      *ngFor="let caseEvent of eventInfo.caseEvents"
+      routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}"
     >
-      <iron-icon icon="event" slot="item-icon"></iron-icon> 
+      <iron-icon icon="{{caseEvent.complete ? 'notification:event-available' : 'event'}}" slot="item-icon"></iron-icon> 
       <paper-item-body two-line>
-        <div>
-          {{'New Event'|translate}}
-        </div>
+        <div><span [innerHTML]="eventInfo.caseEventDefinition.name|unsanitizeHtml"></span> ({{caseEvent.id.substr(0,6)}})</div>
         <div secondary>
-          <form (ngSubmit)="onSubmit()" #form="ngForm">
-            <div>
-              <div class="dropdown-container">
-                <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
-                  <option value="" disabled selected>Choose type...</option>
-                  <option *ngFor="let availableEventType of availableEventTypes" [value]="availableEventType.id">{{availableEventType.name}}</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <div class="dropdown-container">
-                <input type="date" name="event-date" [(ngModel)]="inputSelectedDate">
-              </div>
-            </div>
-            <div class="text-right">
-              <button type="submit">Create</button>
-            </div>
-          </form>
+          {{'Opened'|translate}}: 
+            {{caseEvent.startDate | date:'medium'}},
+          {{'Status'|translate}}: 
+            <span *ngIf="!caseEvent.complete">{{'Incomplete'|translate}}</span>
+            <span *ngIf="caseEvent.complete">{{'Complete'|translate}}</span> 
         </div>
       </paper-item-body>
     </paper-icon-item>
   </div>
+  <paper-icon-item 
+    class="event new-event" 
+  >
+    <iron-icon icon="event" slot="item-icon"></iron-icon> 
+    <paper-item-body two-line>
+      <div>
+        {{'New Event'|translate}}
+      </div>
+      <div secondary>
+        <form (ngSubmit)="onSubmit()" #form="ngForm">
+          <div>
+            <div class="dropdown-container">
+              <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
+                <option value="" disabled selected>Choose type...</option>
+                <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">{{eventInfo.caseEventDefinition.name}}</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <div class="dropdown-container">
+              <input type="date" name="event-date" [(ngModel)]="inputSelectedDate">
+            </div>
+          </div>
+          <div class="text-right">
+            <button type="submit">Create</button>
+          </div>
+        </form>
+      </div>
+    </paper-item-body>
+  </paper-icon-item>
 </div>
