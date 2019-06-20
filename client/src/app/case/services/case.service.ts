@@ -11,11 +11,6 @@ import { WindowRef } from 'src/app/core/window-ref.service';
 import { Injectable } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
 
-class EventInfo {
-  canCreateInstance:boolean;
-  eventInstances:Array<CaseEvent>;
-  eventDefinition:CaseEventDefinition;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +22,6 @@ class CaseService {
   db:PouchDB
   case:Case
   caseDefinition:CaseDefinition
-  eventsInfo:Array<any>
   window:any
 
   constructor(
@@ -69,25 +63,7 @@ class CaseService {
     this.case = caseInstance
     this.caseDefinition = (await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === this.case.caseDefinitionId)
-    this.eventsInfo = this
-      .caseDefinition
-      .eventDefinitions
-      .map(caseEventDefinition => {
-        return {
-          caseEventDefinition,
-          required: caseEventDefinition.required,
-          canCreate: 
-            caseEventDefinition.repeatable 
-            || 
-            this.case.events.reduce((numberOfMatchingEvents, caseEvent) => caseEvent.caseEventDefinitionId === caseEventDefinition.id 
-              ? numberOfMatchingEvents + 1 
-              : numberOfMatchingEvents
-            , 0) === 0
-            ? true 
-            : false,
-          caseEvents: caseInstance.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id)
-        }
-      }) 
+ 
   }
 
   async load(id:string) {

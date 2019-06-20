@@ -130,6 +130,7 @@ describe('CaseEventScheduleListComponent', () => {
   it('should show day view', (done) => {
     expect(component).toBeTruthy();
     component.didSearch$.subscribe((value) => {
+      fixture.detectChanges();
       expect(fixture.nativeElement.querySelectorAll('.search-result').length).toEqual(3)
       done()
     })
