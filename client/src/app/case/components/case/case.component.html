@@ -39,13 +39,11 @@
       </div>
       <div secondary>
         <form (ngSubmit)="onSubmit()" #form="ngForm">
-          <div>
-            <div class="dropdown-container">
-              <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
-                <option value="" disabled selected>Choose type...</option>
-                <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">{{eventInfo.caseEventDefinition.name}}</option>
-              </select>
-            </div>
+          <div class="dropdown-container">
+            <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
+              <option value="" disabled selected>Choose type...</option>
+              <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">{{eventInfo.caseEventDefinition.name}}</option>
+            </select>
           </div>
           <div>
             <div class="dropdown-container">
@@ -53,7 +51,7 @@
             </div>
           </div>
           <div class="text-right">
-            <paper-button (click)="onSubmit()">Create</paper-button>
+              <button type="submit">Create</button>
           </div>
         </form>
       </div>
