@@ -4,12 +4,11 @@
     <paper-item (click)="onDayModeSelect()">day</paper-item>
   </paper-listbox>
 </paper-dropdown-menu-->
-
-<select (change)="onModeChange($event)">
-  <option value="CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY">week</option>
-  <option value="CASE_EVENT_SCHEDULE_LIST_MODE_DAILY">day</option>
-</select>
-
-<date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)"></date-carousel>
-
+<div class="header">
+  <select (change)="onModeChange($event)">
+    <option value="CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY">Week View</option>
+    <option value="CASE_EVENT_SCHEDULE_LIST_MODE_DAILY">Day View</option>
+  </select>
+  <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)"></date-carousel>
+</div>
 <app-case-event-schedule-list #list></app-case-event-schedule-list>
