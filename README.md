@@ -137,8 +137,7 @@ Now open http://localhost/ in your web browser. To debug the node.js server, ins
 Prereqs include node 8+ and `npm install -g @angular/cli`.
 ```
 git clone git@github.com:tangerine-community/tangerine
-cd tangerine
-cd client/app
+cd tangerine/client/
 npm install
 npm start
 ```
