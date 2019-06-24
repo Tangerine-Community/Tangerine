@@ -22,7 +22,7 @@ export class GroupsService {
     return await this
       .httpClient
       .get(`/nest/group/read/${groupId}`)
-      .toPromise()
+      .toPromise();
   }
 
   async getUsersByUsername(username: string) {
@@ -92,7 +92,7 @@ export class GroupsService {
   }
   async getFormsList(groupName: string) {
     try {
-      let result = (await this.httpClient
+      const result = (await this.httpClient
         .get('/editor/groups/' + groupName + '/forms.json')
         .toPromise()) as Forms[];
 
@@ -109,7 +109,7 @@ export class GroupsService {
         }
       );
 
-      return result.map(result => { return {...result, printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${groupName}/${result.id}/print` } });
+      return result.map(result => ({ ...result, printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${groupName}/${result.id}/print` }));
 
     } catch (error) {
       console.error(error);
@@ -119,9 +119,9 @@ export class GroupsService {
     }
   }
 
-  async downloadCSV(groupName: string, formId: string, selectedYear='*', selectedMonth='*') {
+  async downloadCSV(groupName: string, formId: string, selectedYear = '*', selectedMonth = '*') {
     try {
-      if(selectedMonth === '*' || selectedYear === '*') {
+      if (selectedMonth === '*' || selectedYear === '*') {
         const result = await this.httpClient
           .get(`/api/csv/${groupName}/${formId}`)
           .toPromise();
@@ -174,7 +174,7 @@ export class GroupsService {
 
   async apkIsBuilding(groupName: string, releaseType: string) {
     try {
-      const result:any = await this.httpClient.get(`/releases/${releaseType}/apks/${groupName}.json`).toPromise();
+      const result: any = await this.httpClient.get(`/releases/${releaseType}/apks/${groupName}.json`).toPromise();
       return (result.processing === true) ? true : false;
     } catch (error) {
       if (typeof error.status === 'undefined') {
@@ -236,5 +236,96 @@ export class GroupsService {
     } else {
       return this.generateLocationIDs(locations);
     }
+  }
+
+  /**
+   * replace spaces, punctuations, tabs , underscores with dashes (-) and removes any trailing dashes at the end of the string
+   *
+   */
+  normalizeInput(input: string) {
+    return input.toLowerCase().replace(' ', '_').replace(/[^a-z0-9]+|\s+/gmi, '-').replace(/-$/, '');
+  }
+
+  async getCaseDefinitions(groupId: string) {
+    try {
+      return await this.httpClient
+        .get('/editor/groups/' + groupId + '/case-definitions.json')
+        .toPromise() as [];
+
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async getCaseStructure(groupId: string, fileName: string) {
+    try {
+      return await this.httpClient
+        .get(`/editor/groups/${groupId}/${fileName}.json`)
+        .toPromise();
+
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async updateCaseDefinitionRevision(groupId: string, fileName: string) {
+    try {
+      const caseDefinition = await this.httpClient
+        .get(`/editor/groups/${groupId}/${fileName}.json`)
+        .toPromise();
+      if (typeof caseDefinition['revision'] === 'undefined' || caseDefinition['revision'] === '') {
+        return `0-${this.generateUUID()}`;
+      }
+      return `${+caseDefinition['revision'][0] + 1}-${this.generateUUID()}`;
+
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+
+  async saveFileToGroupDirectory(groupId: string, fileContents, filePath) {
+    try {
+      const file = {
+        groupId,
+        filePath,
+        fileContents: JSON.stringify(fileContents, null, 2)// format the JSON doc with 2 spaces
+      };
+      await this.httpClient.post('/editor/file/save', file).toPromise();
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
+  generateUUID(separator?: string) {
+    if (!separator) {
+      separator = '';
+    }
+    const self = {};
+    const lut = [];
+    for (let i = 0; i < 256; i++) {
+      lut[i] = (i < 16 ? '0' : '') + (i).toString(16);
+    }
+    /**
+     * Generates a UUID
+     * @returns {string}
+     */
+    const generate = function (separator) {
+      const d0 = Math.random() * 0xffffffff | 0;
+      const d1 = Math.random() * 0xffffffff | 0;
+      const d2 = Math.random() * 0xffffffff | 0;
+      const d3 = Math.random() * 0xffffffff | 0;
+      return lut[d0 & 0xff] + lut[d0 >> 8 & 0xff] + lut[d0 >> 16 & 0xff] + lut[d0 >> 24 & 0xff] + separator +
+        lut[d1 & 0xff] + lut[d1 >> 8 & 0xff] + separator + lut[d1 >> 16 & 0x0f | 0x40] + lut[d1 >> 24 & 0xff] + separator +
+        lut[d2 & 0x3f | 0x80] + lut[d2 >> 8 & 0xff] + separator + lut[d2 >> 16 & 0xff] + lut[d2 >> 24 & 0xff] +
+        lut[d3 & 0xff] + lut[d3 >> 8 & 0xff] + lut[d3 >> 16 & 0xff] + lut[d3 >> 24 & 0xff];
+    };
+    return generate(separator);
   }
 }
