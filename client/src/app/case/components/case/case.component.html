@@ -20,8 +20,8 @@
       <paper-item-body two-line>
         <div><span [innerHTML]="eventInfo.caseEventDefinition.name|unsanitizeHtml"></span> ({{caseEvent.id.substr(0,6)}})</div>
         <div secondary>
-          {{'Opened'|translate}}: 
-            {{caseEvent.startDate | date:'medium'}},
+          {{'Scheduled'|translate}}: 
+            {{caseEvent.dateStart | date:'medium'}},
           {{'Status'|translate}}: 
             <span *ngIf="!caseEvent.complete">{{'Incomplete'|translate}}</span>
             <span *ngIf="caseEvent.complete">{{'Complete'|translate}}</span> 

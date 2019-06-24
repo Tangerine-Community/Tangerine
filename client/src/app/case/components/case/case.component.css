@@ -22,7 +22,7 @@ app-case-breadcrumb {
     font-size: 3em;
 }
 
-.subject-header div[secondary] {
+.subject-header div[secondary], .subject-header h1 {
     margin-left: 10px;
 }
 
