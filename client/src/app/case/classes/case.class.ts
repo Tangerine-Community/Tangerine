@@ -14,6 +14,7 @@ class Case {
 
   collection = 'TangyFormResponse'
   form = {}
+  location = {}
   items = []
   focusIndex = 0
   nextFocusIndex = 1 
@@ -86,6 +87,7 @@ class Case {
     this.startUnixtime = data.startUnixtime
     this.uploadDatetime = data.uploadDatetime
     this.complete = data.complete 
+    this.location = data.location
     // Specific FormResponse Type properties.
     this.status = data.status
     this.openedDate = data.openedDate
