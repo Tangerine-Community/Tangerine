@@ -5,7 +5,7 @@ import * as moment from 'moment'
 import { FORM_TYPES_INFO } from 'src/app/core/search/search.component';
 import { CaseEvent } from '../../classes/case-event.class';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { TangyForm, TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
+import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import { SearchDoc, SearchService } from 'src/app/shared/_services/search.service';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Subject } from 'rxjs';
