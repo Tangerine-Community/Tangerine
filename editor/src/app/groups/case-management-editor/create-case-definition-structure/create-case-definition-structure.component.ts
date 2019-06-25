@@ -32,6 +32,8 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
     }
   };
   initialForm = { ...this.caseForm };
+  caseDefinitions;
+  caseId;
   constructor(private route: ActivatedRoute,
     private router: Router, private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler) { }
@@ -42,8 +44,8 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
     this.subscription = this.route.queryParams.subscribe(async queryParams => {
       this.caseForm = { ...this.initialForm };
       this.formInActive = true;
-      const path = `./${queryParams['id']}`;
-      await this.getCaseDetail(path);
+      this.caseId = queryParams['id'];
+      await this.getCaseDetail(`./${this.caseId}`);
     });
   }
 
@@ -56,6 +58,12 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
     try {
       this.caseForm = { ...this.caseForm, revision: await this.groupsService.updateCaseDefinitionRevision(this.groupId, this.caseForm.id) };
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseForm, `./${this.caseForm.id}.json`);
+
+      this.caseDefinitions = await this.groupsService.getCaseDefinitions(this.groupId);
+      const caseIndex = this.caseDefinitions.findIndex(e => e['id'] === this.caseId);
+      this.caseDefinitions[caseIndex]['name'] = this.caseForm.name;
+      await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseDefinitions, './case-definitions.json');
+
       this.formInActive = true;
       this.errorHandler.handleError(_TRANSLATE('Case Structure Saved Successfully.'));
     } catch (error) {
