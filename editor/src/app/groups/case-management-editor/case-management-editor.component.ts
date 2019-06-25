@@ -67,9 +67,10 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
   onClickNode(event: Event, currentNodeType, id, caseDetailId, parentId) {
     event.stopPropagation();
     this.currentNodeType = currentNodeType;
+    const selectedTabIndex = this.route.snapshot.queryParamMap.get('selectedTabIndex');
     const formType = 'edit';
     this.router.navigate([], {
-      queryParams: { id, currentNodeType, caseDetailId, parentId, formType },
+      queryParams: { id, currentNodeType, caseDetailId, parentId, formType, selectedTabIndex },
       queryParamsHandling: 'merge'
     });
   }
