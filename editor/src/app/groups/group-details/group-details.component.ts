@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
+import { MatTabChangeEvent } from '@angular/material';
 
 @Component({
   selector: 'app-group-details',
   templateUrl: './group-details.component.html',
   styleUrls: ['./group-details.component.css']
 })
-export class GroupDetailsComponent implements OnInit {
+export class GroupDetailsComponent implements OnInit, AfterViewInit {
   forms;
   groupName;
   groupId;
@@ -19,6 +20,7 @@ export class GroupDetailsComponent implements OnInit {
   isSuperAdminUser;
   isGroupAdminUser;
   responses;
+  selectedTabIndex;
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,
@@ -39,10 +41,24 @@ export class GroupDetailsComponent implements OnInit {
       this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupName);
       this.forms = await this.groupsService.getFormsList(this.groupName);
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   }
 
+  async ngAfterViewInit() {
+    // This is needed to ensure angular binds to selected Tab. The settimeout does the trick
+    setTimeout(() => {
+      this.selectedTabIndex = this.route.snapshot.queryParamMap.get('selectedTabIndex')
+    }, 500);
+  }
+
+  tabChanged(event: MatTabChangeEvent) {
+    this.selectedTabIndex = event.index
+    this.router.navigate([], {
+      queryParams: { selectedTabIndex: this.selectedTabIndex },
+      queryParamsHandling: 'merge'
+    })
+  }
   generateFormId() {
     return 'form-' + Math.random()
   }
