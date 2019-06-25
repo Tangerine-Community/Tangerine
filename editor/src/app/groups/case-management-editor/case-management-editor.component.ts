@@ -36,30 +36,27 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
     for (const c of await this.groupsService.getCaseDefinitions(this.groupId)) {
       const caseDetail = await this.groupsService.getCaseStructure(this.groupId, c['id']);
       const cases = {
-        id: c['id'],
-        name: c['name'],
-        type: 'caseDefinition',
-        children: [{
-          id: caseDetail['id'],
-          name: caseDetail['name'],
-          type: 'caseDefinitionStructure',
-          children: (() => {
-            if (caseDetail['id']) {
-              return caseDetail['eventDefinitions'] && caseDetail['eventDefinitions'].map(eventDefinition => {
-                eventDefinition.type = 'eventDefinition';
-                eventDefinition.caseDetailId = caseDetail['id'];
-                const e = eventDefinition;
-                e['children'] = e['eventFormDefinitions'] && e['eventFormDefinitions'].map(eventFormDefinition => {
-                  eventFormDefinition.type = 'eventFormDefinition';
-                  eventFormDefinition.caseDetailId = caseDetail['id'];
-                  eventFormDefinition.parentId = e.id;
-                  return eventFormDefinition;
-                });
-                return e;
+
+        id: caseDetail['id'],
+        name: caseDetail['name'],
+        type: 'caseDefinitionStructure',
+        children: (() => {
+          if (caseDetail['id']) {
+            return caseDetail['eventDefinitions'] && caseDetail['eventDefinitions'].map(eventDefinition => {
+              eventDefinition.type = 'eventDefinition';
+              eventDefinition.caseDetailId = caseDetail['id'];
+              const e = eventDefinition;
+              e['children'] = e['eventFormDefinitions'] && e['eventFormDefinitions'].map(eventFormDefinition => {
+                eventFormDefinition.type = 'eventFormDefinition';
+                eventFormDefinition.caseDetailId = caseDetail['id'];
+                eventFormDefinition.parentId = e.id;
+                return eventFormDefinition;
               });
-            } return [];
-          })()
-        }]
+              return e;
+            });
+          } return [];
+        })()
+
       };
       data = [...data, cases];
     }
