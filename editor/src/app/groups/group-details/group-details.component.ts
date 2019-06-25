@@ -44,7 +44,7 @@ export class GroupDetailsComponent implements OnInit {
   }
 
   generateFormId() {
-    return 'form-' + Math.random()
+    return 'form-' + this.UUID()
   }
 
   generateUuid() {
