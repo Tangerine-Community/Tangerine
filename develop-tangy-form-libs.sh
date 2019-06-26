@@ -51,7 +51,6 @@ if [ ! -f data/paid-worker-state.json ]; then
   echo '{}' > data/paid-worker-state.json
 fi
 
-
 # Load config.
 
 source ./config.defaults.sh
@@ -155,6 +154,9 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
   --volume $(pwd)/scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
+  --volume $(pwd)/client/node-modules/tangy-form:/tangerine/client/node-modules/tangy-form \
+  --volume $(pwd)/editor/node-modules/tangy-form:/tangerine/editor/node-modules/tangy-form \
+  --volume $(pwd)/editor/node-modules/tangy-form-editor:/tangerine/editor/node-modules/tangy-form-editor \
  tangerine/tangerine:local
  "
 
