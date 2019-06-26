@@ -72,11 +72,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // Remove splash.
         setTimeout(() => {
-            this.windowRef.nativeWindow['splash-container'].classList.add('hide-splash');
-            this.windowRef.nativeWindow['app-root'].classList.add('loaded');
+            if (this.windowRef.nativeWindow['splash-container']) {
+                this.windowRef.nativeWindow['splash-container'].classList.add('hide-splash');
+            }
+            if (this.windowRef.nativeWindow['app-root']) {
+                this.windowRef.nativeWindow['app-root'].classList.add('loaded');
+            }
         }, 2000);
         setTimeout(() => {
-            this.windowRef.nativeWindow['splash-container'].remove();
+            if (this.windowRef.nativeWindow['splash-container']) {
+                this.windowRef.nativeWindow['splash-container'].remove();
+            }
         }, 3000);
 
     }
