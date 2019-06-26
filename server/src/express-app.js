@@ -213,6 +213,7 @@ app.use('/editor/:group/ckeditor/', express.static('/tangerine/editor/src/ckedit
 app.use('/ckeditor', express.static('/tangerine/editor/src/ckeditor'));
 app.use('/editor/assets/', express.static('/tangerine/client/content/assets/'));
 app.use('/client/content/assets/', express.static('/tangerine/client/content/assets/'));
+app.use('/app/assets/', express.static('/tangerine/client/content/assets/'));
 app.use('/csv/', express.static('/csv/'));
 
 app.use('/releases/', express.static('/tangerine/client/releases'))
