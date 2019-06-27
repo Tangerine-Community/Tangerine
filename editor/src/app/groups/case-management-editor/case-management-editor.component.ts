@@ -24,6 +24,7 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
   groupId;
   currentNodeType;
   formType = '';
+  caseDetailId;
   subscription: Subscription;
   constructor(private route: ActivatedRoute, private groupsService: GroupsService, private router: Router) { }
   async ngOnInit() {
@@ -31,6 +32,7 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
     this.currentNodeType = this.route.snapshot.queryParamMap.get('currentNodeType');
     this.subscription = this.route.queryParams.subscribe(async queryParams => {
       this.formType = queryParams['formType'];
+      this.caseDetailId = queryParams['caseDetailId'];
     });
     let data = [];
     for (const c of await this.groupsService.getCaseDefinitions(this.groupId)) {
@@ -40,6 +42,7 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
         id: caseDetail['id'],
         name: caseDetail['name'],
         type: 'caseDefinitionStructure',
+        caseDetailId: caseDetail['id'],
         children: (() => {
           if (caseDetail['id']) {
             return caseDetail['eventDefinitions'] && caseDetail['eventDefinitions'].map(eventDefinition => {
@@ -61,6 +64,22 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
       data = [...data, cases];
     }
     this.dataSource.data = data;
+    this.treeControl.dataNodes = data;
+    if (this.caseDetailId) {
+      for (const [i, v] of this.treeControl.dataNodes.entries()) {
+        if (this.treeControl.dataNodes[i].id === this.caseDetailId) {
+          this.treeControl.expand(this.treeControl.dataNodes[i]);
+          if (this.currentNodeType === 'eventDefinition' || this.currentNodeType === 'eventFormDefinition') {
+            const leafId = this.currentNodeType === 'eventDefinition' ?
+              this.route.snapshot.queryParamMap.get('id') : this.route.snapshot.queryParamMap.get('parentId');
+            const eventDefinitionIndex = this.treeControl.dataNodes[i].children.findIndex(e => e.id === leafId);
+            this.treeControl.expand(this.treeControl.dataNodes[i].children[eventDefinitionIndex]);
+          }
+
+          break;
+        }
+      }
+    }
 
   }
   hasChild = (_: number, node: CaseNode) => !!node.children && node.children.length > 0;
