@@ -211,8 +211,8 @@ async function attachUserProfile(doc, logstashDb) {
     const userProfileDoc = await logstashDb.get(doc[userProfileIdKey])
 
     // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
-    return Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
-      return Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc[key] })
+    return Object.assign({}, doc, Object.keys(userProfileDoc.processedResult).reduce((acc, key) => {
+      return Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc.processedResult[key] })
     }, {}))
   } catch (error) {
     // There must not be a user profile yet doc uploaded yet.
