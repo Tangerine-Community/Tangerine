@@ -16,7 +16,6 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
   styleUrls: ['./event-form.component.css']
 })
 export class EventFormComponent implements AfterContentInit {
-  caseService:CaseService
   caseEvent: CaseEvent
   caseEventDefinition: CaseEventDefinition
   eventForm: EventForm 
@@ -32,12 +31,12 @@ export class EventFormComponent implements AfterContentInit {
     private route: ActivatedRoute,
     private windowRef: WindowRef,
     private router: Router,
+    private caseService: CaseService,
     private userService: UserService
   ) { }
 
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
-      this.caseService = new CaseService()
       await this.caseService.load(params.caseId)
       this.windowRef.nativeWindow.caseService = this.caseService
       this.caseEvent = this
@@ -55,7 +54,6 @@ export class EventFormComponent implements AfterContentInit {
         .caseEventDefinition
         .eventFormDefinitions
         .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
-      const userService = new UserService()
       this.tangyFormService = new TangyFormService({ databaseName: localStorage.getItem('currentUser') });
       if (this.eventForm.formResponseId) {
         this.formResponse = await this.tangyFormService.getResponse(this.eventForm.formResponseId)

@@ -2,7 +2,7 @@
 
 ![Tangerine](http://static1.squarespace.com/static/55c4e56fe4b0852b09fa2f29/t/5caccebdeef1a1d189644216/1554823454410/?format=110w)
 
-[![Stories in Ready](https://badge.waffle.io/Tangerine-Community/Tangerine.png?label=ready&title=Ready)](https://waffle.io/Tangerine-Community/Tangerine)
+[![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine.svg?branch=master)](https://travis-ci.org/Tangerine-Community/Tangerine)
 
 [![Join the chat at https://gitter.im/Tangerine-Community/Tangerine](https://badges.gitter.im/Tangerine-Community/Tangerine.svg)](https://gitter.im/Tangerine-Community/Tangerine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -20,7 +20,7 @@ Digitize your EGMA and EGRA data collection with Tangerine&trade;. Create your A
 ## Technical details 
 A Tangerine Server can either be purchased online at Tangerine Hub or set up on your own server by following the instructions in the README.md file found in the Open Source Tangerine repository on Github. The Tangerine Editor App is deployed using Docker and built with Node.js, Express.js, Angular, Web Components, and CouchDB.  The Tangerine Client app, which the Tangerine Editor App releases, can be released either as a Progressive Web App (PWA), downloadable Android App (APK), or Dat Archive for use on the experimental Beaker/Bunsen Browsers. The Tangerine Client App is built using Angular, Web Components, and PouchDB. All options for releasing are enabled to receive Over The Air (OTA) updates for form content and application updates with the Dat option having experimental support for syncing OTA updates between devices while offline.
 
-Forms in Tangerine are based on the tangy-form suite of Web Components (https://www.webcomponents.org/element/tangy-form). Forms can be edited in the online Tangy Editor App on their Tangerine Server using a WYSIWYG interface or for advanced editors, via basic HTML and Javascript code.
+Forms in Tangerine are based on the tangy-form suite of Web Components (<https://www.webcomponents.org/element/tangy-form>). Forms can be edited in the online Tangy Editor App on their Tangerine Server using a WYSIWYG interface or for advanced editors, via basic HTML and Javascript code.
 
 There is a pluggable reporting module framework built in currently with options to send outputs to CSV, Elastic Search, and Dat Archives. Dashboards are typically built using the "ELK" stack which is short for a combination of technologies known as Elastic Search, Logstash, and Kibana. 
 
@@ -55,7 +55,7 @@ Lastly, to reset caches and free up memory every so often, we recommend restarti
 When you start Tangerine, it creates two containers that need upgrades over time. The `tangerine` container and the `couchdb` container. 
 
 ### Tangerine Upgrades
-Monitor https://github.com/Tangerine-Community/Tangerine/releases for new stable releases. Note that a "Pre-release" may not be stable, might corrupt your data, and there will not be an upgrade path for you.
+Monitor <https://github.com/Tangerine-Community/Tangerine/releases> for new stable releases. Note that a "Pre-release" may not be stable, might corrupt your data, and there will not be an upgrade path for you.
 
 SSH into your server and run the following commands.
 ```
@@ -73,14 +73,16 @@ rm config.sh_backup
 # run every script between your prior version to version you have upgraded to. Also always check the release notes for
 # any special instructions
 docker exec -it tangerine ls /tangerine/upgrades
-# Run an upgrade script.
-docker exec -it tangerine /tangerine/upgrades/v2.0.0.sh
+# Run an upgrade script indicated in release instructions.
+docker exec -it tangerine /tangerine/upgrades/<version>.sh
+# Remove the previous version of tangerine you had installed.
+docker rmi tangerine/tangerine:<previous tag>
 ```
 
 Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
 
 ### CouchDB Upgrades
-Periodically CouchDB will issue security vulnerability fixes. Subscribe to their blog to be notified of releases (http://blog.couchdb.org) and then run the following commands.
+Periodically CouchDB will issue security vulnerability fixes. Subscribe to their blog to be notified of releases (<http://blog.couchdb.org>) and then run the following commands.
 
 ```
 docker pull couchdb
@@ -98,7 +100,7 @@ cd client/app
 npm install
 npm start
 ```
-Then open http://localhost:4200 in your web browser. The content is found in the `tangerine/client/app/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
+Then open <http://localhost:4200> in your web browser. The content is found in the `tangerine/client/app/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
 
 If the process has stopped, you can restart by running...
 
@@ -129,19 +131,18 @@ cp config.defaults.sh config.sh
 ./develop.sh
 ```
 
-Now open http://localhost/ in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
+Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
 
 ### Develop for Client 
 Prereqs include node 8+ and `npm install -g @angular/cli`.
 ```
 git clone git@github.com:tangerine-community/tangerine
-cd tangerine
-cd client/app
+cd tangerine/client/
 npm install
 npm start
 ```
 
-View the app at http://localhost:4200.
+View the app at <http://localhost:4200>.
 
 If you are also developing the form library Tangy Form at the same time, you can symlink that repository into `node_modules` folder. For example...
 

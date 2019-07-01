@@ -1,0 +1,4 @@
+<div class="message error" *ngIf="state === 'STATE_ERROR'" >
+  There was an error capturing the barcode. Make sure it is the correct barcode and try again.
+</div>
+<tangy-qr name="qr" [hidden]="state === 'STATE_ERROR'" hide-output #scanner></tangy-qr>
