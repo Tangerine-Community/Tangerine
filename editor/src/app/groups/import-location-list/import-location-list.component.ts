@@ -127,12 +127,12 @@ export class ImportLocationListComponent implements OnInit {
           } else { return { isValid: true }; }
         });
       } else {
-        return;
+        return { isValid: true };
       }
     });
     // return any rows with isValid set to false
-    const arr = [].concat.apply([], x.find(val => val));
-    return arr.find(e => (e && !e.isValid));
+    const foundInvalid = x.find(e => (e && !e.isValid))
+    return foundInvalid ? foundInvalid : { isValid: true }
   }
 
   generateIDs() {

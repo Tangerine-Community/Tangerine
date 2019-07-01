@@ -1,0 +1,17 @@
+
+.header {
+  padding: 5px;
+  background: var(--primary-color);
+}
+
+select {
+  float: right;
+  width: 130px;
+}
+
+date-carousel {
+  --date-carousel-selected-background: var(--accent-color);
+  --date-carousel-table-color: var(--accent-text-color);
+  --date-carousel-selected-color:var(--accent-text-color);
+  --date-carousel-month-color: var(--accent-text-color);
+}

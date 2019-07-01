@@ -7,6 +7,7 @@ import * as pako from 'pako';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { UserService } from '../../../shared/_services/user.service';
 import { WindowRef } from '../../../shared/_services/window-ref.service';
+import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 @Injectable()
 export class SyncingService {
@@ -15,6 +16,7 @@ export class SyncingService {
     private windowRef: WindowRef,
     private appConfigService: AppConfigService,
     private http: HttpClient,
+    private tangyFormsInfoService: TangyFormsInfoService,
     private userService: UserService
   ) {
     this.window = this.windowRef.nativeWindow;
@@ -24,9 +26,9 @@ export class SyncingService {
     return localStorage.getItem('currentUser');
   }
 
-  async sync(username) {
+  async sync(username, skipByFormId?:Array<string>) {
     await this.pull(username)
-    await this.push(username)
+    await this.push(username, skipByFormId)
     return true
   }
 
@@ -46,12 +48,13 @@ export class SyncingService {
 
   }
 
-  async push(username) {
+  async push(username, skipByFormId:Array<string> = []) {
     try {
       const userProfile = await this.userService.getUserProfile(username);
       const appConfig = await this.appConfigService.getAppConfig()
       const DB = new PouchDB(username);
-      const doc_ids = await this.getUploadQueue(username);
+      // ok
+      const doc_ids = await this.getUploadQueue(username, skipByFormId);
       if (doc_ids && doc_ids.length > 0) {
         for (const doc_id of doc_ids) {
           const doc = await DB.get(doc_id);
@@ -81,13 +84,9 @@ export class SyncingService {
     }
   }
 
-  /**
-   *
-   * @param {string} username
-   * @returns {Promise<any>}
-   */
-  async getUploadQueue(username?: string) {
-    const userProfile = await this.userService.getUserProfile(username);
+  async getUploadQueue(username:string = '', skipByFormId:Array<string> = []) {
+    const allFormIds = (await this.tangyFormsInfoService.getFormsInfo()).map(info => info.id)
+    const includeByFormId = allFormIds.filter(id => !skipByFormId.includes(id))
     const userDB = username || await this.getLoggedInUser();
     const DB = new PouchDB(userDB);
     const appConfig = await this.appConfigService.getAppConfig()
@@ -97,41 +96,13 @@ export class SyncingService {
       queryNotUploaded = 'responsesUnLockedAndNotUploaded'
       queryUploaded = 'responsesUnLockedAndUploaded'
     }
-    const results = await DB.query('tangy-form/' + queryNotUploaded);
-    const localNotUploadedDocIds = results.rows.map(row => row.key);
-    if (!this.window.navigator.onLine) {
-      return localNotUploadedDocIds
-    } else {
-      let localUploaded;
-      localUploaded = await DB.query('tangy-form/' + queryUploaded);
-      // Look for responses marked as uploaded but the server doesn't have.
-      try {
-        const hasKeys = await this.http.post(
-          `${appConfig.serverUrl}api/${appConfig.groupName}/upload-check`,
-          { keys: localUploaded.rows.map(row => row.id) },
-          { headers: new HttpHeaders({ 'Authorization': appConfig.uploadToken })
-          }).toPromise()
-        // Filter out the keys (id's) that are already on the server.
-        let localMissingUploads = localUploaded.rows
-          .filter(row => {
-            let result = hasKeys['indexOf'](row.id) === -1
-            // console.log("row.id: " + row.id + ":" + result)
-            return result
-          })
-          .map(row => row.id);
-        // merge both the array of local non-uploaded ids and missing id's from the server query
-        let uploadQueue = [
-          ...localNotUploadedDocIds,
-          ...localMissingUploads
-        ];
-        return uploadQueue
-      }
-      catch(err) {
-        // Perhaps window.onLine is true but we're having trouble communicating with the server.
-        console.log(err)
-        return localNotUploadedDocIds
-      }
-    }
+    const results = await DB.query('tangy-form/' + queryNotUploaded, {keys: includeByFormId});
+    const localNotUploadedDocIds = results.rows.map(row => row.id);
+    // Also mark the user profile for upload if it has been modifid since last upload.
+    const userProfile = await this.userService.getUserProfile(username || await this.getLoggedInUser())
+    return userProfile.lastModified > userProfile.uploadDatetime 
+      ? [ ...localNotUploadedDocIds, userProfile._id ]
+      : localNotUploadedDocIds
   }
 
   async getDocsUploaded(username?: string) {

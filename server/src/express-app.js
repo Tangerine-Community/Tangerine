@@ -199,7 +199,7 @@ app.get('/usage/:startdate/:enddate', require('./routes/usage'));
 
 
 // Static assets.
-app.use('/editor', express.static('/tangerine/client/tangy-forms/editor'));
+app.use('/client', express.static('/tangerine/client/dev'));
 app.use('/', express.static('/tangerine/editor/dist/tangerine-editor'));
 app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
@@ -209,8 +209,6 @@ app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
 });
 
 app.use('/editor/groups', isAuthenticated, express.static('/tangerine/client/content/groups'));
-app.use('/editor/:group/ckeditor/', express.static('/tangerine/editor/src/ckeditor/'));
-app.use('/ckeditor', express.static('/tangerine/editor/src/ckeditor'));
 app.use('/editor/assets/', express.static('/tangerine/client/content/assets/'));
 app.use('/client/content/assets/', express.static('/tangerine/client/content/assets/'));
 app.use('/csv/', express.static('/csv/'));

@@ -5,8 +5,8 @@ app-case-breadcrumb {
 }
 
 .subject-header {
-    background: #212a3f;
-    color: white;
+    background: var(--primary-color);
+    color: var(--primary-text-color);
     font-size: 1em;
     padding: 15px;
 }
@@ -22,7 +22,7 @@ app-case-breadcrumb {
     font-size: 3em;
 }
 
-.subject-header div[secondary] {
+.subject-header div[secondary], .subject-header h1 {
     margin-left: 10px;
 }
 
@@ -30,37 +30,124 @@ app-case-breadcrumb {
     display: none;
     margin: 5px 50px;
 }
+
 .manifest.ready {
     display: block;
 }
+
 .wrapper {
-    margin: 15px;
-}
-paper-button {
-    background: var(--accent-color);
-    color: white;
-}
-paper-card {
-    text-align: left;
-}
-.event-cards {
-    text-align: center;
-}
-.event-card {
-    width: 90%;
-    margin-bottom: 15px;
-    margin-top: 15px;
+    margin: 0px;
 }
 
-.required::before {
-    content: "*";
-    position: absolute;
-    top: -3px;
-    color: red;
-    left: -9px;
-    font-size: 42px;
+.event {
+    background: #FFF;
+    border-color: #CCC;
+    border-style: solid;
+    border-width: 1px 0px 1px 0px;
+}
+
+.event.required {
+    border-left: red solid 4px;
+}
+
+.event.new-event {
+    border-style: dashed;
+}
+
+.event.complete {
+    background: #CCC;
 }
 
 :host {
     position: relative;
+}
+
+.new-event button[type="submit"] {
+    background-color: #3c5b8d;
+    border: 1px solid #3c5b8d;
+    box-shadow: 0 2px 2px 0 rgba(60, 91, 141, 0.14), 0 3px 1px -2px rgba(60, 91, 141, 0.2), 0 1px 5px 0 rgba(60, 91, 141, 0.12);
+    padding: 5px 10px;
+    font-size: 14px;
+    vertical-align: middle;
+    color: #fff;
+    text-align: center;
+    line-height: 1.2;
+    border-radius: .25rem;
+}
+
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-container:after {
+    position: absolute;
+    top: 0.75em;
+    right: 0.5em;
+    width: 0;
+    height: 0;
+    padding: 0;
+    content: '';
+    border-left: .25em solid transparent;
+    border-right: .25em solid transparent;
+    border-top: 0.375em solid #737373;
+    pointer-events: none;
+}
+.dropdown-container select,
+.dropdown-container input[type="date"] {
+    font-family: inherit;
+    background-color: transparent;
+    width: 100%;
+    padding: 4px 0;
+    font-size: 16px;
+    color: #000;
+    border: none;
+    border-bottom: 1px solid #737373;
+}
+.dropdown-container select {
+    appearance: none;
+}
+.dropdown-container option:disabled {
+    color: rgba(0,0,0, 0.26);
+}
+.dropdown-container input[type="date"] {
+    padding-bottom: 3px;
+}
+.dropdown-container input[type="date"]::-webkit-inner-spin-button {
+    display: none;
+}
+.dropdown-container input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+}
+
+/*
+.new-event form {
+    display: flex;
+    flex-direction: row;
+}
+.new-event .one-third {
+    width: 33%;
+    padding: 0 15px;
+    display: inline-block;
+}
+.new-event .one-third:first-child {
+    padding-left: 0;
+}
+.new-event .one-third:last-child {
+    padding-right: 0;
+}
+*/
+.new-event form {
+    display: flex;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+.new-event form > div, .new-event form > button {
+    flex-basis: 0;
+    flex-grow: 1;
+    max-width: 33%;
+    padding: 0 15px;
+}
+
+.text-right {
+    text-align: right;
 }

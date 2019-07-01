@@ -51,5 +51,7 @@ T_TAG=""
 # Enable use of a remote CouchDB 
 T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
 T_COUCHDB_LOCAL="true"
+# options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
+T_ORIENTATION="any"
 
 
