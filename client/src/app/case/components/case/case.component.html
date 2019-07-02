@@ -18,7 +18,7 @@
     >
       <iron-icon icon="{{caseEvent.complete ? 'notification:event-available' : 'event'}}" slot="item-icon"></iron-icon> 
       <paper-item-body two-line>
-        <div><span [innerHTML]="eventInfo.caseEventDefinition.name|unsanitizeHtml"></span> ({{caseEvent.id.substr(0,6)}})</div>
+        <div><span [innerHTML]="eventInfo.caseEventDefinition.name|unsanitizeHtml"></span> (case.component.html)<!--({{caseEvent.id.substr(0,6)}}) --></div>
         <div secondary>
           {{'Scheduled'|translate}}: 
             {{caseEvent.dateStart | date:'medium'}},

@@ -11,7 +11,7 @@
         <iron-icon icon="{{eventForm.complete ? 'assignment-turned-in' : 'assignment'}}" slot="item-icon"></iron-icon> 
         <paper-item-body two-line>
           <div>
-            <span [innerHTML]="eventForm.name|unsanitizeHtml"></span> ({{eventForm.id.substr(0,6)}})
+            <span [innerHTML]="eventForm.name|unsanitizeHtml"></span> event component <!--({{eventForm.id.substr(0,6)}}) -->
           </div>
           <div secondary>{{eventForm.startDate | date:'medium'}}</div>
         </paper-item-body>
@@ -27,7 +27,7 @@
               <select name="selected-form-definition" [(ngModel)]="selectedNewEventFormDefinition">
                 <option *ngFor="let availableEventFormDefinition of availableEventFormDefinitions" [value]="availableEventFormDefinition.id">{{availableEventFormDefinition.name}}</option>
               </select>
-              <button type="submit">create</button>
+              <button type="submit">Create</button>
             </form>
           </div>
         </paper-item-body>
