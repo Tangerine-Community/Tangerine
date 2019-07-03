@@ -39,11 +39,6 @@ mv .pwa-temporary/release-uuid .pwa-temporary/$UUID
 rm -r .pwa-temporary/$UUID/app/assets
 cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
 
-# Make shared assets easier to reach by url on client
-mkdir .pwa-temporary/$UUID/assets
-cp -r $CONTENT_PATH/assets/images .pwa-temporary/$UUID/assets/images
-cp -r $CONTENT_PATH/assets/sounds .pwa-temporary/$UUID/assets/sounds
-
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
 
