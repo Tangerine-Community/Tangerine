@@ -8,4 +8,4 @@ else
 fi
 
 docker build -t tangerine/tangerine:local .
-./start.sh local 
+./start.sh local
