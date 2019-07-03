@@ -154,9 +154,9 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
   --volume $(pwd)/scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
-  --volume $(pwd)/client/node-modules/tangy-form:/tangerine/client/node-modules/tangy-form \
-  --volume $(pwd)/editor/node-modules/tangy-form:/tangerine/editor/node-modules/tangy-form \
-  --volume $(pwd)/editor/node-modules/tangy-form-editor:/tangerine/editor/node-modules/tangy-form-editor \
+  --volume $(pwd)/client/node_modules/tangy-form:/tangerine/client/node_modules/tangy-form \
+  --volume $(pwd)/editor/node_modules/tangy-form:/tangerine/editor/node_modules/tangy-form \
+  --volume $(pwd)/editor/node_modules/tangy-form-editor:/tangerine/editor/node_modules/tangy-form-editor \
  tangerine/tangerine:local
  "
 
