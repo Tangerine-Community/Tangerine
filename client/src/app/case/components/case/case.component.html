@@ -40,18 +40,18 @@
       <div secondary>
         <form (ngSubmit)="onSubmit()" #form="ngForm">
           <div class="dropdown-container">
-            <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
+            <tangy-select name="selected-event-type" [(ngModel)]="selectedNewEventType">
               <option value="" disabled selected>Choose type...</option>
               <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">{{eventInfo.caseEventDefinition.name}}</option>
-            </select>
+            </tangy-select>
           </div>
           <div>
             <div class="dropdown-container">
-              <input type="date" name="event-date" [(ngModel)]="inputSelectedDate">
+              <tangy-input type="date" name="event-date" inner-label=" " [(ngModel)]="inputSelectedDate"></tangy-input>
             </div>
           </div>
           <div class="text-right">
-              <button type="submit">Create</button>
+              <paper-button (click)="onSubmit()">Create</paper-button>
           </div>
         </form>
       </div>
