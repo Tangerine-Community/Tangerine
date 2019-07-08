@@ -6,6 +6,7 @@ import { CaseEvent } from '../../classes/case-event.class'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventForm } from '../../classes/event-form.class';
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
+import { WindowRef } from 'src/app/core/window-ref.service';
 
 class EventFormInfo {
   id:string
@@ -35,6 +36,7 @@ export class EventComponent implements OnInit, AfterContentInit {
     private route: ActivatedRoute,
     private router: Router,
     private caseService: CaseService,
+    private windowRef: WindowRef,
     private userService: UserService
   ) { }
 
@@ -44,6 +46,7 @@ export class EventComponent implements OnInit, AfterContentInit {
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
+      this.windowRef.nativeWindow.caseService = this.caseService
       this.caseEvent = this
         .caseService
         .case

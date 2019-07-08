@@ -22,8 +22,8 @@ export const TangyFormsQueries = {
     map: function (doc) {
       if (
         (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime)
-        ||
-        (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
+        || 
+        (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime < doc.lastModified)
       ) {
         emit(doc.form.id, true)
       }
@@ -32,9 +32,9 @@ export const TangyFormsQueries = {
   responsesUnLockedAndNotUploaded: {
     map: function (doc) {
       if (
-        (doc.collection === 'TangyFormResponse' && (!doc.uploadDatetime || doc.lastModified > doc.uploadDatetime))
-        ||
-        (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !doc.uploadDatetime)
+        (doc.collection === 'TangyFormResponse' && doc.complete === false && !doc.uploadDatetime)
+        || 
+        (doc.collection === 'TangyFormResponse' && doc.complete === false && doc.uploadDatetime < doc.lastModified)
       ) {
         emit(doc.form.id, true)
       }
@@ -43,9 +43,7 @@ export const TangyFormsQueries = {
   responsesLockedAndUploaded: {
     map: function (doc) {
       if (
-        (doc.collection === 'TangyFormResponse' && doc.complete === true && !!doc.uploadDatetime)
-        ||
-        (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
+        (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime && doc.uploadDatetime > doc.lastModified)
       ) {
         emit(doc.form.id, true)
       }
@@ -54,9 +52,7 @@ export const TangyFormsQueries = {
   responsesUnLockedAndUploaded: {
     map: function (doc) {
       if (
-        (doc.collection === 'TangyFormResponse' && (doc.uploadDatetime || doc.lastModified <= doc.uploadDatetime))
-        ||
-        (doc.collection === 'TangyFormResponse' && doc.form.id === 'user-profile' && !!doc.uploadDatetime)
+        (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime && doc.uploadDatetime > doc.lastModified)
       ) {
         emit(doc.form.id, true)
       }

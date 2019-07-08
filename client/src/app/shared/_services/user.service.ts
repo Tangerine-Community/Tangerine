@@ -45,7 +45,7 @@ export class UserService {
 
   async initialize() {
     for (const user of await this.getAllUsers()) {
-      this.userDatabases.push(PouchDB(user._id))
+      this.userDatabases.push(PouchDB(user.username))
     }
   }
 
@@ -198,131 +198,43 @@ export class UserService {
     }
   }
 
-  /*
   // A helper method for upgrades to be used when a module has a view to upgrade.
   async updateAllDefaultUserDocs() {
     console.log('Installing views...')
     for (const userDb of this.userDatabases) {
-      for (const moduleName in this._views) {
-        const ddoc_id = `_design/${moduleName}`
-        try {
-          const designDoc = await userDb.get(ddoc_id)
-          await userDb.put({
-            _id: ddoc_id,
-            _rev: designDoc._rev,
-            views: this._views[moduleName]
-          })
-        } catch(err) {
-          await userDb.put({
-            _id: ddoc_id,
-            views: this._views[moduleName]
-          })
+      for (const moduleDocs of this.defaultUserDocs) {
+        for (const doc of moduleDocs) {
+          try {
+            const docInDb = await userDb.get(doc._id)
+            await userDb.put({
+              ...doc,
+              _rev: docInDb._rev
+            })
+          } catch(err) {
+            await userDb.put(doc)
+          }
         }
       }
-      await userDb.viewCleanup()
     }
   }
-  */
-/*
+
   // A helper method for upgrades to be used when a module has upgraded a view and now views need indexing.
   async indexAllUserViews() {
     try {
       for (const userDb of this.userDatabases) {
-        for (const moduleName in this._views) {
-          for (const viewName in this._views[moduleName]) {
-            await userDb.query(`${moduleName}/${viewName}`)
+        for (const moduleDocs of this.defaultUserDocs) {
+          for (const doc of moduleDocs) {
+            if (Object.keys(doc.views).length > 0) {
+              for (let viewName of Object.keys(doc.views)) {
+                await userDb.query(`${doc._id.replace('_design/', '')}/${viewName}`)
+              }
+            }
           }
         }
       }
     } catch(err) {
       throw(err)
     }
-  }
-*/
-  // Example from https://gist.github.com/vbfox/1987edc194626c12d9c0dc31da084744
-  getUuid() {
-
-    function getRandomFromMathRandom() {
-      const result = new Array(16);
-
-      let r = 0;
-      for (let i = 0; i < 16; i++) {
-          if ((i & 0x03) === 0) {
-              r = Math.random() * 0x100000000;
-          }
-          result[i] = r >>> ((i & 0x03) << 3) & 0xff;
-      }
-
-      return result as ArrayLike<number>;
-    }
-
-    function getRandomFunction() {
-        // tslint:disable-next-line:no-string-literal
-        const browserCrypto = window.crypto || (window["msCrypto"] as Crypto);
-        if (browserCrypto && browserCrypto.getRandomValues) {
-            // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
-            //
-            // Moderately fast, high quality
-            try {
-            return function getRandomFromCryptoRandom() {
-                const result = new Uint8Array(16);
-                browserCrypto.getRandomValues(result);
-                return result as any;
-            };
-          } catch (e) { /* fallback*/ }
-        }
-
-        // Math.random()-based (RNG)
-        //
-        // If all else fails, use Math.random().  It's fast, but is of unspecified
-        // quality.
-        return getRandomFromMathRandom;
-    }
-
-    const getRandom = getRandomFunction();
-
-    class ByteHexMappings {
-        byteToHex: string[] = [];
-        hexToByte: { [hex: string]: number; } = {};
-        constructor() {
-            for (let i = 0; i < 256; i++) {
-                this.byteToHex[i] = (i + 0x100).toString(16).substr(1);
-                this.hexToByte[this.byteToHex[i]] = i;
-            }
-        }
-    }
-
-    const byteHexMappings = new ByteHexMappings();
-
-    function getUuidV4() {
-        const result = getRandom();
-
-        // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-        result[6] = (result[6] & 0x0f) | 0x40;
-        result[8] = (result[8] & 0x3f) | 0x80;
-
-        return result;
-    }
-
-    function uuidToString(buf: ArrayLike<number>, offset: number = 0) {
-        let i = offset;
-        const bth = byteHexMappings.byteToHex;
-        return  bth[buf[i++]] + bth[buf[i++]] +
-                bth[buf[i++]] + bth[buf[i++]] + "-" +
-                bth[buf[i++]] + bth[buf[i++]] + "-" +
-                bth[buf[i++]] + bth[buf[i++]] + "-" +
-                bth[buf[i++]] + bth[buf[i++]] + "-" +
-                bth[buf[i++]] + bth[buf[i++]] +
-                bth[buf[i++]] + bth[buf[i++]] +
-                bth[buf[i++]] + bth[buf[i++]];
-    }
-
-    function getUuidV4String() {
-        return uuidToString(getUuidV4());
-    }
-
-
-    return getUuidV4String()
   }
 
 }

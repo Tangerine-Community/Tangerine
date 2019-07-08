@@ -43,6 +43,15 @@ export class CaseComponent implements AfterContentInit {
 
   calculateTemplateData() {
     const caseService = this.caseService
+    const getVariable = (variableName) => {
+      const variablesByName = caseService.case.items.reduce((variablesByName,item) => {
+        for (let input of item.inputs) {
+          variablesByName[input.name] = input.value
+        }
+        return variablesByName
+      }, {})
+      return variablesByName[variableName]
+    }
     eval(`this.templateTitle = caseService.caseDefinition.templateTitle ? \`${caseService.caseDefinition.templateTitle}\` : ''`)
     eval(`this.templateDescription = caseService.caseDefinition.templateDescription ? \`${caseService.caseDefinition.templateDescription}\` : ''`)
     this.caseEventsInfo = this
