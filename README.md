@@ -2,7 +2,7 @@
 
 ![Tangerine](http://static1.squarespace.com/static/55c4e56fe4b0852b09fa2f29/t/5caccebdeef1a1d189644216/1554823454410/?format=110w)
 
-[![Stories in Ready](https://badge.waffle.io/Tangerine-Community/Tangerine.png?label=ready&title=Ready)](https://waffle.io/Tangerine-Community/Tangerine)
+[![Build Status](https://travis-ci.org/Tangerine-Community/Tangerine.svg?branch=master)](https://travis-ci.org/Tangerine-Community/Tangerine)
 
 [![Join the chat at https://gitter.im/Tangerine-Community/Tangerine](https://badges.gitter.im/Tangerine-Community/Tangerine.svg)](https://gitter.im/Tangerine-Community/Tangerine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -73,8 +73,10 @@ rm config.sh_backup
 # run every script between your prior version to version you have upgraded to. Also always check the release notes for
 # any special instructions
 docker exec -it tangerine ls /tangerine/upgrades
-# Run an upgrade script.
-docker exec -it tangerine /tangerine/upgrades/v2.0.0.sh
+# Run an upgrade script indicated in release instructions.
+docker exec -it tangerine /tangerine/upgrades/<version>.sh
+# Remove the previous version of tangerine you had installed.
+docker rmi tangerine/tangerine:<previous tag>
 ```
 
 Note that if you have created groups already and you are now updating `T_HOST_NAME` or `T_PROTOCOL` in `config.sh`, you will manually need to edit the `settings` docs in each group. See [issue #114](https://github.com/Tangerine-Community/Tangerine/issues/114) for the status of this. 
@@ -135,8 +137,7 @@ Now open <http://localhost/> in your web browser. To debug the node.js server, i
 Prereqs include node 8+ and `npm install -g @angular/cli`.
 ```
 git clone git@github.com:tangerine-community/tangerine
-cd tangerine
-cd client/app
+cd tangerine/client/
 npm install
 npm start
 ```

@@ -5,7 +5,7 @@ import * as moment from 'moment'
 import { FORM_TYPES_INFO } from 'src/app/core/search/search.component';
 import { CaseEvent } from '../../classes/case-event.class';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { TangyForm, TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
+import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import { SearchDoc, SearchService } from 'src/app/shared/_services/search.service';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Subject } from 'rxjs';
@@ -109,7 +109,7 @@ export class CaseEventScheduleListComponent implements OnInit {
       const formTypeInfo = FORM_TYPES_INFO.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
       const formInfo = formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
       const formId = formInfo.id
-      eventInfo.openLink = eval('`' + formTypeInfo.resumeFormResponseLinkTemplate + '`')
+      eventInfo.openLink = `/case/event/${searchDoc._id}/${event.id}`
       eventInfo.icon = eval('`' + formTypeInfo.iconTemplate + '`')
       eventInfo.primary = eval(formInfo.searchSettings.primaryTemplate ? '`' + formInfo.searchSettings.primaryTemplate + '`' : response._id)
       eventInfo.secondary = eval(formInfo.searchSettings.secondaryTemplate ? '`' + formInfo.searchSettings.secondaryTemplate + '`' : formInfo.title)
