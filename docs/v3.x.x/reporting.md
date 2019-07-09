@@ -3,7 +3,7 @@
 
 Configure your project to use the CSV and Logstash modules:
 ```
-T_MODULES="['csv','class', 'logstash']"
+T_MODULES="['csv', 'logstash']"
 ```
 
 Start the development environment...
@@ -11,7 +11,7 @@ Start the development environment...
 ./develop.sh
 ```
 
-Create a group called `foo` in the GUI. Then open `./server/index.js` and comment out the call to `keepAliveReportingWorker(initialGroups)`. 
+Create a group called `foo` in the GUI. Then open `./server/src/app.service.ts` and comment out the call to `this.keepAliveReportingWorker()`. 
 
 "exec" into the container and note how `foo` has been added to the `/reporting-worker-state.json` file.
 
@@ -67,7 +67,7 @@ reporting-cache-clear
 
 ```
 
-If there was a crash, sometimes you need to remove the semaphor:
+You typically need to remove the semaphore before running reporting-cache-clear, especially if there was a crash
 
 ```
 rm /reporting-worker-running
@@ -76,8 +76,8 @@ rm /reporting-worker-running
 
 ## A typical report debugging workflow:
 
-Remember to setup config.sh properly! (Make sure  T_MODULES="['csv','class', 'logstash']")
-Comment out keepAliveReportingWorker in server/index.js.
+Remember to setup config.sh properly! (Make sure  T_MODULES="['csv','logstash']")
+Comment out keepAliveReportingWorker in /server/src/app.service.ts.
 Remember to add `127.0.0.1:9228` as an entry in "Target discovery settings" in chrome://inspect/#devices
 
 You may need to add `debugger` before the line of code you wish to debug. 

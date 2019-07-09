@@ -8,6 +8,7 @@ import { SyncingService } from './_services/syncing.service';
 import { SyncRecodsRoutingModule } from './sync-records-routing.module';
 import { SyncRecordsComponent } from './sync-records/sync-records.component';
 import { SharedModule } from '../../shared/shared.module';
+import { TwoWaySyncModule } from 'src/app/two-way-sync/two-way-sync.module';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { SharedModule } from '../../shared/shared.module';
     FormsModule,
     ReactiveFormsModule,
     SyncRecodsRoutingModule,
+    TwoWaySyncModule,
     MatButtonModule,
     MatInputModule,
     MatCardModule,
