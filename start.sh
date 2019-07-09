@@ -152,7 +152,7 @@ require_valid_user = true
      -v $(pwd)/data/couchdb/data:/opt/couchdb/data \
      -v $(pwd)/data/couchdb/local.d:/opt/couchdb/etc/local.d \
      --name $T_COUCHDB_CONTAINER_NAME \
-     -p 5984:5984 \
+     $T_COUCHDB_PORT_MAPPING \
      couchdb:2
   RUN_OPTIONS="
     --link $T_COUCHDB_CONTAINER_NAME:couchdb \
@@ -173,7 +173,7 @@ echo "$CMD"
 eval ${CMD}
 
 echo "Installing missing plugin..."
-docker exec tangerine bash -c "cd /tangerine/client/builds/apk/ && cordova --no-telemetry plugin add cordova-plugin-whitelist --save"
+docker exec ${T_CONTAINER_NAME} bash -c "cd /tangerine/client/builds/apk/ && cordova --no-telemetry plugin add cordova-plugin-whitelist --save"
 echo ""
 echo ""
 echo ""
