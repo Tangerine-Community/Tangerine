@@ -7,6 +7,8 @@ class CaseDefinition {
   revision:string
   name:string
   description:string
+  templateTitle:string 
+  templateDescription:string
   eventDefinitions: Array<CaseEventDefinition> = []
   startFormOnOpen: CaseFormPath
 

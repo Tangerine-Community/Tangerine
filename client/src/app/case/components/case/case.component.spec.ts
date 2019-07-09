@@ -1,9 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { CaseComponent } from './case.component';
 import { CaseModule } from '../../case.module';
 import { AppRoutingModule } from 'src/app/app-routing.module';
-
 
 describe('CaseComponent', () => {
   let component: CaseComponent;

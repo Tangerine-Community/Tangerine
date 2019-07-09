@@ -1,10 +1,12 @@
 import { TestBed, inject } from '@angular/core/testing';
 
 import { UserService } from './user.service';
+import { SharedModule } from '../shared.module';
 
 describe('UserService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [SharedModule],
       providers: [UserService]
     });
   });
