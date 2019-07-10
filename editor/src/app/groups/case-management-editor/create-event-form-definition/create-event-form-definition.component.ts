@@ -4,6 +4,7 @@ import { GroupsService } from '../../services/groups.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { Subscription } from 'rxjs';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
   selector: 'app-create-event-form-definition',
@@ -25,7 +26,11 @@ export class CreateEventFormDefinitionComponent implements OnInit, OnDestroy {
   eventDefinitionId;
   caseStructure;
   initialFormState = { ...this.eventFormDefinition };
-  constructor(private route: ActivatedRoute, private groupsService: GroupsService, private errorHandler: TangyErrorHandler) { }
+  constructor(
+    private route: ActivatedRoute,
+    private groupsService: GroupsService,
+    private caseService: CaseManagementEditorService,
+    private errorHandler: TangyErrorHandler) { }
 
   async ngOnInit() {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
@@ -45,6 +50,7 @@ export class CreateEventFormDefinitionComponent implements OnInit, OnDestroy {
       this.caseStructure.eventDefinitions[parentIndex].eventFormDefinitions =
         [...this.caseStructure.eventDefinitions[parentIndex].eventFormDefinitions, this.eventFormDefinition];
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseStructure, `${this.caseDetailId}.json`);
+      this.caseService.sendMessage('reloadTree');
       this.errorHandler.handleError(_TRANSLATE('Event Form Definition Saved Successfully.'));
       this.eventFormDefinition = { ...this.initialFormState };
     } catch (error) {

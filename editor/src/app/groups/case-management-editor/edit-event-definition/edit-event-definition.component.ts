@@ -4,6 +4,7 @@ import { GroupsService } from '../../services/groups.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { Subscription } from 'rxjs';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
   selector: 'app-edit-event-definition',
@@ -28,8 +29,9 @@ export class EditEventDefinitionComponent implements OnInit, OnDestroy {
   caseDetailId;
   constructor(private route: ActivatedRoute,
     private groupsService: GroupsService,
-    private errorHandler: TangyErrorHandler,
-    private router: Router) {
+    private router: Router,
+    private caseService: CaseManagementEditorService,
+    private errorHandler: TangyErrorHandler) {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
   }
 
@@ -50,6 +52,7 @@ export class EditEventDefinitionComponent implements OnInit, OnDestroy {
       this.caseStructure.eventDefinitions[this.caseIndex] = this.eventForm;
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseStructure, `./${this.caseDetailId}.json`);
       this.formInActive = true;
+      this.caseService.sendMessage('reloadTree');
       this.errorHandler.handleError(_TRANSLATE('Event Definition Saved Successfully.'));
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Event Definition not Saved.'));

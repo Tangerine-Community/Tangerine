@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
   selector: 'app-create-event-definition',
@@ -27,6 +28,7 @@ export class CreateEventDefinitionComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,
     private router: Router,
     private groupsService: GroupsService,
+    private caseService: CaseManagementEditorService,
     private errorHandler: TangyErrorHandler) {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
   }
@@ -41,6 +43,7 @@ export class CreateEventDefinitionComponent implements OnInit, OnDestroy {
     try {
       this.caseStructure.eventDefinitions = [...this.caseStructure.eventDefinitions, this.eventForm];
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseStructure, `${this.caseDetailId}.json`);
+      this.caseService.sendMessage('reloadTree');
       this.errorHandler.handleError(_TRANSLATE('Event Definition Saved Successfully.'));
       this.eventForm = { ...this.initialFormState };
     } catch (error) {
