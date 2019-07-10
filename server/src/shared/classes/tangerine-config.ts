@@ -6,6 +6,7 @@ export interface TangerineConfig {
   userOnePassword: string
   dbAdminUsername: string
   dbAdminPassword: string
+  couchdbEndpoint: string
   uploadToken: string
   reportingDelay: number
 }

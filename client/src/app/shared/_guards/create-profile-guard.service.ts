@@ -24,6 +24,8 @@ export class CreateProfileGuardService implements CanActivate {
 
     if (results.rows.length === 0) {
       isProfileComplete = false;
+    } else if(!results.rows[0].doc.items || results.rows[0].doc.items.length === 0) {
+      isProfileComplete = false;
     } else {
       const responseDoc = results.rows[0].doc;
       isProfileComplete = responseDoc.items.find(item => {

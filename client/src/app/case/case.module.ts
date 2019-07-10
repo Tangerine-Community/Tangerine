@@ -9,13 +9,34 @@ import { CaseRoutingModule } from './case-routing.module';
 import { EventFormComponent } from './components/event-form/event-form.component';
 import { CaseBreadcrumbComponent } from './components/case-breadcrumb/case-breadcrumb.component';
 import { SharedModule } from '../shared/shared.module'
+import { CaseDefinitionsService } from './services/case-definitions.service';
+import { CaseService } from './services/case.service';
+import { TangyFormsModule } from '../tangy-forms/tangy-forms.module';
+import { WindowRef } from '../core/window-ref.service';
+import { CaseEventScheduleListComponent } from './components/case-event-schedule-list/case-event-schedule-list.component';
+import { CasesService } from './services/cases.service';
+import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
+import { CaseHomeComponent } from './components/case-home/case-home.component';
+import { MatTab, MatTabsModule } from '@angular/material';
+import { SearchModule } from '../core/search/search.module';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
   imports: [
+    FormsModule,
     CaseRoutingModule,
     SharedModule,
+    TangyFormsModule,
+    MatTabsModule,
+    SearchModule,
     CommonModule
+  ],
+  providers: [
+    WindowRef,
+    CaseDefinitionsService,
+    CaseService,
+    CasesService
   ],
   declarations: [
     EventComponent,
@@ -23,7 +44,10 @@ import { SharedModule } from '../shared/shared.module'
     CaseComponent,
     NewCaseComponent,
     EventFormComponent,
-    CaseBreadcrumbComponent
+    CaseBreadcrumbComponent,
+    CaseEventScheduleListComponent,
+    CaseEventScheduleComponent,
+    CaseHomeComponent
   ]
 })
 export class CaseModule { }

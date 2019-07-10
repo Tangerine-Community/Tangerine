@@ -1,0 +1,29 @@
+
+.event-info {
+  margin-left: 60px;
+  border-left: solid 3px black;
+}
+.new-date {
+  position: relative;
+  height: 30px;
+}
+
+.new-date-container {
+  position: absolute;
+  top: 0px;
+  left: -45px;
+}
+
+.new-date-number {
+}
+
+.new-date-label {
+}
+
+.new-date-dot {
+  position: absolute;
+  top: 12px;
+  left: 31px;
+  z-index: 98765;
+  height: 18px;
+}
