@@ -4,6 +4,7 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { CaseManagementEditorService } from './case-management-editor.service';
 
 interface CaseNode {
   name: string;
@@ -25,15 +26,32 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
   currentNodeType;
   formType = '';
   caseDetailId;
-  subscription: Subscription;
-  constructor(private route: ActivatedRoute, private groupsService: GroupsService, private router: Router) { }
+  paramsSubscription: Subscription;
+  treeSubscription: Subscription;
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private groupsService: GroupsService,
+    private caseService: CaseManagementEditorService
+  ) { }
   async ngOnInit() {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
     this.currentNodeType = this.route.snapshot.queryParamMap.get('currentNodeType');
-    this.subscription = this.route.queryParams.subscribe(async queryParams => {
+    this.paramsSubscription = this.route.queryParams.subscribe(async queryParams => {
       this.formType = queryParams['formType'];
       this.caseDetailId = queryParams['caseDetailId'];
     });
+    this.treeSubscription = this.caseService.getMessage().subscribe(async message => {
+      if (message === 'reloadTree') {
+        await this.getTreeData();
+      }
+    });
+    await this.getTreeData();
+
+  }
+
+  async getTreeData() {
     let data = [];
     for (const c of await this.groupsService.getCaseDefinitions(this.groupId)) {
       const caseDetail = await this.groupsService.getCaseStructure(this.groupId, c['id']);
@@ -65,6 +83,10 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
     }
     this.dataSource.data = data;
     this.treeControl.dataNodes = data;
+    this.expandNodes();
+  }
+
+  expandNodes() {
     if (this.caseDetailId) {
       for (const [i, v] of this.treeControl.dataNodes.entries()) {
         if (this.treeControl.dataNodes[i].id === this.caseDetailId) {
@@ -75,12 +97,10 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
             const eventDefinitionIndex = this.treeControl.dataNodes[i].children.findIndex(e => e.id === leafId);
             this.treeControl.expand(this.treeControl.dataNodes[i].children[eventDefinitionIndex]);
           }
-
           break;
         }
       }
     }
-
   }
   hasChild = (_: number, node: CaseNode) => !!node.children && node.children.length > 0;
   onClickNode(event: Event, currentNodeType, id, caseDetailId, parentId) {
@@ -94,8 +114,10 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
     });
   }
 
+
   ngOnDestroy() {
     this.formType = '';
-    this.subscription.unsubscribe();
+    this.paramsSubscription.unsubscribe();
+    this.treeSubscription.unsubscribe();
   }
 }

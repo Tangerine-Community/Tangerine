@@ -4,6 +4,7 @@ import { GroupsService } from '../../services/groups.service';
 import { Subscription } from 'rxjs';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
   selector: 'app-create-case-definition-structure',
@@ -34,8 +35,11 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
   initialForm = { ...this.caseForm };
   caseDefinitions;
   caseId;
-  constructor(private route: ActivatedRoute,
-    private router: Router, private groupsService: GroupsService,
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private groupsService: GroupsService,
+    private caseService: CaseManagementEditorService,
     private errorHandler: TangyErrorHandler) { }
 
   async ngOnInit() {
@@ -63,8 +67,8 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
       const caseIndex = this.caseDefinitions.findIndex(e => e['id'] === this.caseId);
       this.caseDefinitions[caseIndex]['name'] = this.caseForm.name;
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseDefinitions, './case-definitions.json');
-
       this.formInActive = true;
+      this.caseService.sendMessage('reloadTree');
       this.errorHandler.handleError(_TRANSLATE('Case Structure Saved Successfully.'));
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Case Structure not Saved.'));

@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { Subscription } from 'rxjs';
+import { CaseManagementEditorService } from '../case-management-editor.service';
 
 @Component({
   selector: 'app-edit-case-definition',
@@ -18,7 +19,11 @@ export class EditCaseDefinitionComponent implements OnInit, OnDestroy {
   caseDefinitions;
   subscription: Subscription;
 
-  constructor(private route: ActivatedRoute, private groupsService: GroupsService, private errorHandler: TangyErrorHandler) {
+  constructor(
+    private route: ActivatedRoute,
+    private groupsService: GroupsService,
+    private caseService: CaseManagementEditorService,
+    private errorHandler: TangyErrorHandler) {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
   }
 
@@ -35,6 +40,7 @@ export class EditCaseDefinitionComponent implements OnInit, OnDestroy {
       const caseDefinitionFilePath = './case-definitions.json';
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseDefinitions, caseDefinitionFilePath);
       this.formInActive = true;
+      this.caseService.sendMessage('reloadTree');
       this.errorHandler.handleError(_TRANSLATE('Case Saved Successfully.'));
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could not Save Case.'));
