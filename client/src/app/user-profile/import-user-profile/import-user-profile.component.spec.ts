@@ -2,7 +2,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ImportUserProfileComponent } from './import-user-profile.component';
 import { UserProfileModule } from '../user-profile.module';
-import { AppRoutingModule } from 'src/app/app-routing.module';
+import { AppRoutingModule } from '../../app-routing.module';
+import { SharedModule } from '../../shared/shared.module';
+import { TwoWaySyncModule } from '../../two-way-sync/two-way-sync.module';
+import { SyncRecordsModule } from 'src/app/core/sync-records/sync-records.module';
 
 describe('ImportUserProfileComponent', () => {
   let component: ImportUserProfileComponent;
@@ -10,7 +13,7 @@ describe('ImportUserProfileComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [UserProfileModule, AppRoutingModule]
+      imports: [SharedModule, SyncRecordsModule, TwoWaySyncModule, UserProfileModule, AppRoutingModule]
     })
     .compileComponents();
   }));
@@ -24,4 +27,6 @@ describe('ImportUserProfileComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should show a sync message')
 });

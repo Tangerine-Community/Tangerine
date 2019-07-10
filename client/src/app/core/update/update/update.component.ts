@@ -65,10 +65,6 @@ export class UpdateComponent implements AfterContentInit {
           atUpdateIndex++;
         }
         atUpdateIndex--;
-        if (requiresViewsRefresh) {
-          await this.userService.updateAllUserViews()
-          await this.userService.indexAllUserViews()
-        }
         infoDoc.atUpdateIndex = atUpdateIndex;
         await userDb.put(infoDoc);
       }

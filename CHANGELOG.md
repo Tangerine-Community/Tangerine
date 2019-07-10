@@ -1,5 +1,39 @@
 # Changelog
 
+## v3.4.1
+
+## v3.4.0
+- Experimental features
+  - Two-way Sync. See `docs/feature-two-way-sync.md`.
+  - Clientside search of Forms for Case Management Groups. See `docs/case-management-group.md`.
+  - Add event time and scheduling to Case Mangement Groups [#1518](https://github.com/Tangerine-Community/Tangerine/pull/1518)
+
+- Updated to tangy-form-editor ^5.18.0 for [Change grid variables in CSV starting with variable_0 to variable_1](https://github.com/Tangerine-Community/Tangerine/issues/1537). 
+  - A previous update to tangy-form to 3.15.1, tangy-form-editor to 5.17.0 to fixed [Editing form level HTML requires two Save clicks](https://github.com/Tangerine-Community/Tangerine/issues/1041)
+  and [Add a tangy input inside a tangy box duplicates items](https://github.com/Tangerine-Community/Tangerine/issues/1364), 
+  and enable [Adjustable letter size for grids](https://github.com/Tangerine-Community/Tangerine/issues/1525)
+- enables [use of T_ORIENTATION for pwa release](https://github.com/Tangerine-Community/Tangerine/issues/1530).
+
+
+Upgrade instructions:
+
+Backup your data folder and then run the following commands.
+```bash
+git fetch origin
+git checkout v3.4.0
+```
+
+Add T_ORIENTATION="any" to config.sh to have more flexible orientations for PWA's. The options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
+
+```
+./start.sh
+```
+
+## v3.3.1
+This release fixes a feature that made it into v3.3.0 but had a bug and was disabled. This release fixes that bug and makes it available.
+
+- As an Editor user I want to be able to do an initial import of my location structure. [#1117](https://github.com/Tangerine-Community/Tangerine/issues/1117)
+  
 ## v3.3.0
 - Features
   - Assessor reviews high level case variables, AKA "Case Manifest" [#1399](https://github.com/Tangerine-Community/Tangerine/issues/1399)

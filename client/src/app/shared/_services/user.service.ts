@@ -4,9 +4,18 @@ import {from as observableFrom,  Observable } from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 
 
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 // bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71
-import * as bcrypt from 'bcryptjs';
+//import * as bcrypt from 'bcryptjs';
+const bcrypt = {
+  hashSync: (value) => value
+}
+const CURRENT_USER = 'currentUser'
+import { AppConfigService } from './app-config.service';
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
+import { UserAccount } from '../_classes/user-account.class';
+import { UserSignup } from '../_classes/user-signup.class';
+
 
 //import { uuid as Uuid } from 'js-uuid';
 import PouchDB from 'pouchdb';
@@ -17,18 +26,22 @@ PouchDB.plugin(PouchDBUpsert)
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 import { TangyFormService } from '../../tangy-forms/tangy-form-service';
 import { updates } from '../../core/update/update/updates';
+import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class UserService {
 
-  _views = {}
   userData = {};
   usersDb = new PouchDB('users');
   userDatabases:Array<PouchDB> = []
-  LOGGED_IN_USER_DATABASE_NAME = 'currentUser';
   PouchDB = PouchDB
 
-  constructor() { }
+  constructor(
+    @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
+    private appConfigService: AppConfigService,
+    private http: HttpClient
+  ) { }
 
   async initialize() {
     for (const user of await this.getAllUsers()) {
@@ -36,60 +49,52 @@ export class UserService {
     }
   }
 
-  async createUserDatabase(username) {
+  getCurrentUser():string {
+    return localStorage.getItem('currentUser')
+  }
+
+  async createUserDatabase(username):Promise<PouchDB> {
     const userDb = PouchDB(username)
-    this.installViews(userDb)
+    this.installDefaultUserDocs(userDb)
     this.userDatabases.push(userDb)
     return userDb
   }
 
-  async create(payload) {
-    const userUUID = this.getUuid(); 
-    const hashedPassword = await this.hashValue(payload.password);
-    this.userData = payload;
-    this.userData['userUUID'] = userUUID;
-    this.userData['password'] = hashedPassword;
-    this.userData['securityQuestionResponse'] = this.userData['hashSecurityQuestionResponse'] ?
-      await this.hashValue(payload.securityQuestionResponse) : this.userData['securityQuestionResponse'];
-    try {
-      /** @TODO: check if user exists before saving */
-      const postUserdata = await this.usersDb.post(this.userData);
-      const userDb = await this.createUserDatabase(this.userData['username']);
-      if (postUserdata) {
-        const result = await this.initUserProfile(this.userData['username'], userUUID);
-        // @TODO It might be more appropriate to store the atUpdateIndex in the user's account doc in this.usersDb.
-        await userDb.put({
-          _id: 'info',
-          atUpdateIndex: updates.length - 1
-        });
-        return result;
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  async create(userSignup:UserSignup):Promise<UserAccount> {
+    const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+    const userAccount = new UserAccount(
+      userSignup.username,
+      this.hashValue(userSignup.password),
+      userSignup.securityQuestionResponse,
+      userProfile._id
+    ) 
+    await this.usersDb.post(userAccount)
+    const userDb = await this.createUserDatabase(userAccount._id);
+    await userDb.put(userProfile)
+    // @TODO It might be more appropriate to store the atUpdateIndex in the user's account doc in this.usersDb.
+    await userDb.put({
+      _id: 'info',
+      atUpdateIndex: updates.length - 1
+    })
+    return userAccount
   }
 
-
-  async initUserProfile(userDBPath, profileId) {
-    if (userDBPath) {
-      const userDB = new PouchDB(userDBPath);
-      try {
-        const result = await userDB.put({
-          _id: profileId,
-          collection: 'user-profile'
-        });
-        return result;
-      } catch (error) {
-        console.error(error);
-      }
-    }
+  async getUserAccount(username?: string):Promise<UserAccount> {
+    return <UserAccount>(await this.usersDb.allDocs({include_docs: true}))
+      .rows
+      .map(row => row.doc)
+      .find(doc => doc.username === username)
   }
 
   async getUserProfile(username?: string) {
-    const databaseName = username || await this.getUserDatabase();
-    const tangyFormService = new TangyFormService({ databaseName });
-    const results = await tangyFormService.getResponsesByFormId('user-profile');
-    return results[0];
+    username = username
+      ? username
+      : localStorage.getItem(CURRENT_USER)
+    const userAccount = <UserAccount>await this.getUserAccount(username)
+    const databaseName = username || await this.getUserDatabase()
+    const userDb = this.getUserDatabase(databaseName)
+    const userProfile = new TangyFormResponseModel(await userDb.get(userAccount.userUUID))
+    return userProfile
   }
 
   async getUserLocations(username?: string) {
@@ -104,47 +109,18 @@ export class UserService {
     }, [])
   }
 
-  async doesUserExist(username) {
-    let userExists: boolean;
-    if (username) {
-      /**
-       * @TODO We may want to run this on the first time when the app runs.
-       */
-      this.usersDb.createIndex({
-        index: { fields: ['username'] }
-      })
-      .then(data => console.log('Indexing Succesful'))
-      .catch(err => console.error(err));
-
-      try {
-        const result = await this.usersDb.find({ selector: { username } })
-        if (result.docs.length > 0) {
-          userExists = true;
-        } else { userExists = false; }
-      } catch (error) {
-        userExists = true;
-        console.error(error);
-      }
-    } else {
-      userExists = true;
-      return userExists;
-    }
-    return userExists;
+  async doesUserExist(username):Promise<boolean> {
+    return (await this.usersDb.allDocs({include_docs:true}))
+      .rows
+      .map(row => row.doc.username)
+      .includes(username)
   }
 
   async getAllUsers() {
-    try {
-      const result = await this.usersDb.allDocs({ include_docs: true });
-      const users = [];
-      observableFrom(result.rows).pipe(map(doc => doc),filter(doc => !doc['id'].startsWith('_design')),).subscribe(doc => {
-        users.push({
-          username: doc['doc'].username
-        });
-      });
-      return users;
-    } catch (error) {
-      console.error(error);
-    }
+    return ((await this.usersDb.allDocs({ include_docs: true }))
+      .rows
+      .map(row => row.doc)
+      .filter(doc => !doc['_id'].includes('_design')))
   }
 
   async getUsernames() {
@@ -156,7 +132,7 @@ export class UserService {
 
 
   async changeUserPassword(user) {
-    const password = await this.hashValue(user.newPassword);
+    const password = this.hashValue(user.newPassword);
     try {
       const result = await this.usersDb.find({ selector: { username: user.username } });
       if (result.docs.length > 0) {
@@ -171,73 +147,74 @@ export class UserService {
     }
   }
 
-  async hashValue(value) {
+  hashValue(value) {
     // Bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71j
     //const salt = bcrypt.genSaltSync(10);
     //return bcrypt.hashSync(value, salt);
-    return value
+    return bcrypt.hashSync(value)
   }
 
   // @TODO Refactor usage of this to use the UserService.db singleton.
   async setUserDatabase(username) {
-    return await localStorage.setItem(this.LOGGED_IN_USER_DATABASE_NAME, username);
+    return await localStorage.setItem(CURRENT_USER, username);
   }
 
   getUserDatabase(username = '') {
     if (username === '') {
       console.warn('Detected deprecated usage of UserService.getUserDatabase().')
       return new Promise((resolve, reject) => {
-        resolve(localStorage.getItem(this.LOGGED_IN_USER_DATABASE_NAME))
+        resolve(localStorage.getItem(CURRENT_USER))
       })
     } else {
+      if (!this.userDatabases.find(userDatabase => userDatabase.name === username)) {
+        this.userDatabases.push(new PouchDB(username))
+      }
       return this.userDatabases.find(userDatabase => userDatabase.name === username)
     }
   }
 
-  async removeUserDatabase() {
-    localStorage.removeItem(this.LOGGED_IN_USER_DATABASE_NAME);
-  }
-
-  // In a Module's constructor, they have the opportunity to use this method to queue views for installation
-  // in User databases.
-  // Inspired by https://stackoverflow.com/questions/52263603/angular-add-a-multi-provider-from-lazy-feature-module
-  addViews(moduleName, views) {
-    this._views[moduleName] = views
+  async remove(username = '') {
+    if (username === '') {
+      console.warn('Detected deprecated usage of UserService.removeUserDatabase().')
+      return new Promise((resolve, reject) => {
+        localStorage.removeItem(CURRENT_USER);
+        resolve()
+      })
+    } else {
+      const userDb = this.userDatabases.find(userDatabase => userDatabase.name === username)
+      await userDb.destroy()
+      const accountDoc = await this.getUserAccount(username)
+      await this.usersDb.remove(accountDoc)
+    }
   }
 
   // During account creation, this method is to be used.
-  async installViews(userDb) {
-    console.log('Installing views...')
-    console.log(this._views)
-    for (const moduleName in this._views) {
-      await userDb.put({
-        _id: `_design/${moduleName}`,
-        views: this._views[moduleName]
-      })
+  async installDefaultUserDocs(userDb) {
+    console.log('Installing default user docs...')
+    for (const moduleDocs of this.defaultUserDocs) {
+      for (const doc of moduleDocs) {
+        await userDb.put(doc)
+      }
     }
   }
 
   // A helper method for upgrades to be used when a module has a view to upgrade.
-  async updateAllUserViews() {
+  async updateAllDefaultUserDocs() {
     console.log('Installing views...')
     for (const userDb of this.userDatabases) {
-      for (const moduleName in this._views) {
-        const ddoc_id = `_design/${moduleName}`
-        try {
-          const designDoc = await userDb.get(ddoc_id)
-          await userDb.put({
-            _id: ddoc_id,
-            _rev: designDoc._rev,
-            views: this._views[moduleName]
-          })
-        } catch(err) {
-          await userDb.put({
-            _id: ddoc_id,
-            views: this._views[moduleName]
-          })
+      for (const moduleDocs of this.defaultUserDocs) {
+        for (const doc of moduleDocs) {
+          try {
+            const docInDb = await userDb.get(doc._id)
+            await userDb.put({
+              ...doc,
+              _rev: docInDb._rev
+            })
+          } catch(err) {
+            await userDb.put(doc)
+          }
         }
       }
-      await userDb.viewCleanup()
     }
   }
 
@@ -245,101 +222,19 @@ export class UserService {
   async indexAllUserViews() {
     try {
       for (const userDb of this.userDatabases) {
-        for (const moduleName in this._views) {
-          for (const viewName in this._views[moduleName]) {
-            await userDb.query(`${moduleName}/${viewName}`)
+        for (const moduleDocs of this.defaultUserDocs) {
+          for (const doc of moduleDocs) {
+            if (Object.keys(doc.views).length > 0) {
+              for (let viewName of Object.keys(doc.views)) {
+                await userDb.query(`${doc._id.replace('_design/', '')}/${viewName}`)
+              }
+            }
           }
         }
       }
     } catch(err) {
       throw(err)
     }
-  }
-
-  // Example from https://gist.github.com/vbfox/1987edc194626c12d9c0dc31da084744
-  getUuid() {
-
-    function getRandomFromMathRandom() {
-      const result = new Array(16);
-
-      let r = 0;
-      for (let i = 0; i < 16; i++) {
-          if ((i & 0x03) === 0) {
-              r = Math.random() * 0x100000000;
-          }
-          result[i] = r >>> ((i & 0x03) << 3) & 0xff;
-      }
-
-      return result as ArrayLike<number>;
-    }
-
-    function getRandomFunction() {
-        // tslint:disable-next-line:no-string-literal
-        const browserCrypto = window.crypto || (window["msCrypto"] as Crypto);
-        if (browserCrypto && browserCrypto.getRandomValues) {
-            // WHATWG crypto-based RNG - http://wiki.whatwg.org/wiki/Crypto
-            //
-            // Moderately fast, high quality
-            try {
-            return function getRandomFromCryptoRandom() {
-                const result = new Uint8Array(16);
-                browserCrypto.getRandomValues(result);
-                return result as any;
-            };
-          } catch (e) { /* fallback*/ }
-        }
-
-        // Math.random()-based (RNG)
-        //
-        // If all else fails, use Math.random().  It's fast, but is of unspecified
-        // quality.
-        return getRandomFromMathRandom;
-    }
-
-    const getRandom = getRandomFunction();
-
-    class ByteHexMappings {
-        byteToHex: string[] = [];
-        hexToByte: { [hex: string]: number; } = {};
-        constructor() {
-            for (let i = 0; i < 256; i++) {
-                this.byteToHex[i] = (i + 0x100).toString(16).substr(1);
-                this.hexToByte[this.byteToHex[i]] = i;
-            }
-        }
-    }
-
-    const byteHexMappings = new ByteHexMappings();
-
-    function getUuidV4() {
-        const result = getRandom();
-
-        // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-        result[6] = (result[6] & 0x0f) | 0x40;
-        result[8] = (result[8] & 0x3f) | 0x80;
-
-        return result;
-    }
-
-    function uuidToString(buf: ArrayLike<number>, offset: number = 0) {
-        let i = offset;
-        const bth = byteHexMappings.byteToHex;
-        return  bth[buf[i++]] + bth[buf[i++]] +
-                bth[buf[i++]] + bth[buf[i++]] + "-" +
-                bth[buf[i++]] + bth[buf[i++]] + "-" +
-                bth[buf[i++]] + bth[buf[i++]] + "-" +
-                bth[buf[i++]] + bth[buf[i++]] + "-" +
-                bth[buf[i++]] + bth[buf[i++]] +
-                bth[buf[i++]] + bth[buf[i++]] +
-                bth[buf[i++]] + bth[buf[i++]];
-    }
-
-    function getUuidV4String() {
-        return uuidToString(getUuidV4());
-    }
-
-
-    return getUuidV4String()
   }
 
 }
