@@ -29,7 +29,7 @@ export class CreateEventFormDefinitionComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
-    this.formsList = await this.groupsService.getFormsList(this.groupId);
+    this.formsList = (await this.groupsService.getFormsList(this.groupId)).filter(x => x['type'] === 'form');
     this.subscription = this.route.queryParams.subscribe(async queryParams => {
       this.caseDetailId = queryParams['caseDetailId'];
       this.eventDefinitionId = queryParams['parentId'];
