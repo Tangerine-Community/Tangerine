@@ -21,6 +21,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   isGroupAdminUser;
   responses;
   selectedTabIndex;
+  enabledModules;
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,
@@ -50,6 +51,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.selectedTabIndex = this.route.snapshot.queryParamMap.get('selectedTabIndex')
     }, 500);
+    this.enabledModules = await this.http.get(`/api/modules`).toPromise()
   }
 
   tabChanged(event: MatTabChangeEvent) {
