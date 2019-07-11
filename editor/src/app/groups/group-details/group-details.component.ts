@@ -57,8 +57,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   tabChanged(event: MatTabChangeEvent) {
     this.selectedTabIndex = event.index
     this.router.navigate([], {
-      queryParams: { selectedTabIndex: this.selectedTabIndex },
-      queryParamsHandling: 'merge'
+      queryParams: { selectedTabIndex: this.selectedTabIndex }
     })
   }
   generateFormId() {
