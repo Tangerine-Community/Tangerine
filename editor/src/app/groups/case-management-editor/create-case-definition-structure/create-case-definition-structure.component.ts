@@ -82,11 +82,9 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
     const currentNodeType = 'eventDefinition';
     const formType = 'new';
     const selectedTabIndex = this.route.snapshot.queryParamMap.get('selectedTabIndex');
-    this.router.navigate(['/projects']).then(() => {
-      this.router.navigate([`groups/${this.groupId}`], {
-        queryParams: { currentNodeType, caseDetailId, parentId, formType, selectedTabIndex },
-        queryParamsHandling: 'merge'
-      });
+    this.router.navigate([], {
+      queryParams: { currentNodeType, caseDetailId, parentId, formType, selectedTabIndex },
+      queryParamsHandling: 'merge'
     });
   }
 
