@@ -147,7 +147,7 @@
   <mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Content">
     <app-location-list-editor></app-location-list-editor>
   </mat-tab>
-  <mat-tab *ngIf="isGroupAdminUser" label="{{'Case Management Editor'|translate}}">
+  <mat-tab *ngIf="isGroupAdminUser&&enabledModules.indexOf('case')>-1" label="{{'Case Management Editor'|translate}}">
     <app-case-management-editor></app-case-management-editor>
   </mat-tab>
 
