@@ -37,8 +37,8 @@ export class CaseManagementEditorComponent implements OnInit, OnDestroy {
   ) { }
   async ngOnInit() {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
-    this.currentNodeType = this.route.snapshot.queryParamMap.get('currentNodeType');
     this.paramsSubscription = this.route.queryParams.subscribe(async queryParams => {
+      this.currentNodeType = queryParams['currentNodeType'];
       this.formType = queryParams['formType'];
       this.caseDetailId = queryParams['caseDetailId'];
     });

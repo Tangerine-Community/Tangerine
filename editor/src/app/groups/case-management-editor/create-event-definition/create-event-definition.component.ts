@@ -41,6 +41,7 @@ export class CreateEventDefinitionComponent implements OnInit, OnDestroy {
   }
   async createEventDefinition() {
     try {
+      this.eventForm.id = `${this.groupsService.normalizeInput(this.eventForm.name)}-${this.groupsService.generateID(6)}`;
       this.caseStructure.eventDefinitions = [...this.caseStructure.eventDefinitions, this.eventForm];
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseStructure, `${this.caseDetailId}.json`);
       this.caseService.sendMessage('reloadTree');

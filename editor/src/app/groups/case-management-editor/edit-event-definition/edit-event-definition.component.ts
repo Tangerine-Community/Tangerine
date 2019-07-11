@@ -64,11 +64,9 @@ export class EditEventDefinitionComponent implements OnInit, OnDestroy {
     const currentNodeType = 'eventFormDefinition';
     const selectedTabIndex = this.route.snapshot.queryParamMap.get('selectedTabIndex');
     const formType = 'new';
-    this.router.navigate(['/projects']).then(() => {
-      this.router.navigate([`groups/${this.groupId}`], {
-        queryParams: { currentNodeType, caseDetailId, parentId, formType, selectedTabIndex },
-        queryParamsHandling: 'merge'
-      });
+    this.router.navigate([], {
+      queryParams: { currentNodeType, caseDetailId, parentId, formType, selectedTabIndex },
+      queryParamsHandling: 'merge'
     });
   }
   ngOnDestroy() {
