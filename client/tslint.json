@@ -54,7 +54,7 @@
       "trace"
     ],
     "no-construct": true,
-    "no-debugger": true,
+    "no-debugger": false,
     "no-duplicate-super": true,
     "no-empty": false,
     "no-empty-interface": true,
@@ -89,7 +89,7 @@
     ],
     "radix": true,
     "semicolon": [
-      true,
+      false,
       "always"
     ],
     "triple-equals": [

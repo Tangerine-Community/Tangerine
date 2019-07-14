@@ -20,6 +20,8 @@ import { CaseHomeComponent } from './components/case-home/case-home.component';
 import { MatTab, MatTabsModule } from '@angular/material';
 import { SearchModule } from '../core/search/search.module';
 import { FormsModule } from '@angular/forms';
+import { QueryComponent } from './components/query/query.component';
+import { TestComponent } from './components/test/test.component';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -47,7 +49,9 @@ import { FormsModule } from '@angular/forms';
     CaseBreadcrumbComponent,
     CaseEventScheduleListComponent,
     CaseEventScheduleComponent,
-    CaseHomeComponent
+    CaseHomeComponent,
+    QueryComponent,
+    TestComponent
   ]
 })
 export class CaseModule { }

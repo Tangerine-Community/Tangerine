@@ -1,7 +1,122 @@
 [
-  {
-    "title": "Example Form",
-    "src": "./assets/example/form.html",
-    "id": "example"
-  }
+   {
+
+      "description" : "Description...",
+      "listed" : true,
+      "title" : "Mother Manifest",
+      "id" : "mother-manifest-3a453b",
+      "type" : "case",
+      "src" : "./assets/mother-manifest-3a453b/form.html",
+      "searchSettings" : {
+         "primaryTemplate" : "${event && event.name ? `${event.name}` : `Participant ID: ${searchDoc.variables.participant_id}`}",
+         "shouldIndex" : true,
+         "secondaryTemplate" : "${event && event.name ? `Participant ID: ${searchDoc.variables.participant_id}, ` : ''}Enrollment Date: ${searchDoc.variables.enrollment_date}",
+         "variablesToIndex" : [
+            "participant_id",
+            "enrollment_date"
+         ]
+      }
+   },
+   {
+      "src" : "./assets/woman-enrollment-61e31d/form.html",
+      "id" : "woman-enrollment-61e31d",
+      "title" : "Screening and Enrollment of Pregnant Women",
+      "type" : "form",
+      "listed" : false
+   },
+   {
+      "listed" : false,
+      "src" : "./assets/woman-admin-of-az-or-placebo-9a2f97/form.html",
+      "type" : "form",
+      "title" : "Administration of AZ or placebo for Woman",
+      "id" : "woman-admin-of-az-or-placebo-9a2f97"
+   },
+   {
+      "listed" : false,
+      "id" : "woman-medical-history-b5a83c",
+      "title" : "Medical history for Woman",
+      "type" : "form",
+      "src" : "./assets/woman-medical-history-b5a83c/form.html"
+   },
+   {
+      "type" : "form",
+      "id" : "woman-limited-physical-examination-253935",
+      "title" : "Limited physical examination for Woman",
+      "src" : "./assets/woman-limited-physical-examination-253935/form.html",
+      "listed" : false
+   },
+   {
+      "type" : "form",
+      "id" : "woman-unplanned-visit-67c08b",
+      "title" : "Unplanned Visit for Woman",
+      "src" : "./assets/woman-unplanned-visit-67c08b/form.html",
+      "listed" : false
+   },
+
+   {
+      "type" : "form",
+      "id" : "query-999999",
+      "title" : "Query",
+      "src" : "./assets/query-999999/form.html",
+      "listed" : false
+   },
+   {
+      "description" : "Description...",
+      "listed" : true,
+      "title" : "Infant Manifest",
+      "id" : "infant-manifest-115ebb",
+      "type" : "case",
+      "src" : "./assets/infant-manifest-115ebb/form.html",
+      "searchSettings" : {
+         "primaryTemplate" : "Enrollment ID: ${searchDoc.variables.enrollment_id}",
+         "shouldIndex" : true,
+         "secondaryTemplate" : "Enrollment Date: ${searchDoc.variables.enrollment_date}, ${event ? `Event Type: ${event.name}` : ''}",
+         "variablesToIndex" : [
+            "enrollment_id",
+            "enrollment_date"
+         ]
+      }
+   },
+   {
+      "src" : "./assets/infant-enrollment-4483b1/form.html",
+      "id" : "infant-enrollment-4483b1",
+      "title" : "Enrollment of Infant",
+      "type" : "form",
+      "listed" : false
+   },
+   {
+      "listed" : false,
+      "src" : "./assets/infant-admin-of-az-or-placebo-bfcecf/form.html",
+      "type" : "form",
+      "title" : "Administration of AZ or placebo for Infant",
+      "id" : "infant-admin-of-az-or-placebo-bfcecf"
+   },
+   {
+      "listed" : false,
+      "id" : "infant-medical-history-8f3a53",
+      "title" : "Medical history for Infant",
+      "type" : "form",
+      "src" : "./assets/infant-medical-history-8f3a53/form.html"
+   },
+   {
+      "type" : "form",
+      "id" : "infant-limited-physical-examination-c7b8b8",
+      "title" : "Limited physical examination for Infant",
+      "src" : "./assets/infant-limited-physical-examination-c7b8b8/form.html",
+      "listed" : false
+   },
+   {
+      "type" : "form",
+      "id" : "infant-unplanned-visit-8c23ba",
+      "title" : "Unplanned Visit for Infant",
+      "src" : "./assets/infant-unplanned-visit-8c23ba/form.html",
+      "listed" : false
+   },
+   {
+      "type" : "form",
+      "id" : "visit-information-920d7d",
+      "title" : "Visit Information",
+      "src" : "./assets/visit-information-920d7d/form.html",
+      "listed" : false
+   }
 ]

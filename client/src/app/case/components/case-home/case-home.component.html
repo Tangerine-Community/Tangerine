@@ -6,7 +6,7 @@
   <mat-tab label="SCHEDULE VIEW">
     <app-case-event-schedule></app-case-event-schedule>
   </mat-tab>
-  <mat-tab *ngIf = "showQueries" label="DATA QUERIES">
+  <mat-tab *ngIf = "showQueries" label="DATA QUERIES ({{openQueriesCount}})">
     <app-query></app-query>
   </mat-tab>
 </mat-tab-group>

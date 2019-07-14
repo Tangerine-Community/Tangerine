@@ -1,4 +1,5 @@
 export class AppConfig {
+  showQueries:boolean
   securityPolicy = ["password"]
   columnsOnVisitsTab = []
   securityQuestionText = "What is your year of birth?"
@@ -20,4 +21,5 @@ export class AppConfig {
   minimumFreeSpace
   usageCleanupBatchSize
   barcodeSearchMapFunction:string
+
 } 

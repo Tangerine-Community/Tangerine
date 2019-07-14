@@ -60,7 +60,7 @@ export class EventFormComponent implements AfterContentInit {
       }
       const tangyFormMarkup = await this.tangyFormService.getFormMarkup(this.eventFormDefinition.formId)
       this.container.nativeElement.innerHTML = tangyFormMarkup
-      this.tangyFormEl = this.container.nativeElement.querySelector('tangy-form') 
+      this.tangyFormEl = this.container.nativeElement.querySelector('tangy-form')
       if (this.formResponse) {
         this.tangyFormEl.response = this.formResponse
       } else {

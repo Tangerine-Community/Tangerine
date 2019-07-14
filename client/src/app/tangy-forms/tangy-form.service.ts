@@ -28,6 +28,7 @@ export class TangyFormService {
   async getFormInfo(formId) {
     const formsInfo:any = await this.getFormsInfo()
     return formsInfo.find(formInfo => formInfo.id === formId)
+
   }
 
   async getFormsInfo() {

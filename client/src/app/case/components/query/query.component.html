@@ -1,62 +1,14 @@
 <div class="wrapper">
-    <app-case-breadcrumb *ngIf="caseService && caseService.case && caseService.case._id" [caseId]="caseService.case._id" [caseEventId]="caseEvent.id"></app-case-breadcrumb>
-
-    <div class="form-cards">
-        <paper-icon-item>
-            <iron-icon icon="help-outline" slot="item-icon"></iron-icon> 
-            <paper-item-body two-line>
-                <div>
-                  <span>Pregnancy as indicated on Form 7 disagrees with Form 14.</span> 
-                </div>
-                <div secondary><strong>Case ID:</strong>810001&nbsp;&nbsp;<strong>Event:</strong> 6 Week Follow-up&nbsp;&nbsp;<strong>Form:</strong> Vital Signs&nbsp;&nbsp;<strong>Status:</strong> Open</div>
-              </paper-item-body>
-              <button type="submit">Respond to Query</button>&nbsp;&nbsp;<button type="submit">Open Form</button>
-        </paper-icon-item> 
-        <hr>
-        <paper-icon-item>
-            <iron-icon icon="help-outline" slot="item-icon"></iron-icon> 
-            <paper-item-body two-line>
-                <div>
-                  <span>Pregnancy as indicated on Form 7 disagrees with Form 14.</span> 
-                </div>
-                <div secondary><strong>Case ID:</strong>810002&nbsp;&nbsp;<strong>Event:</strong> 6 Week Follow-up&nbsp;&nbsp;<strong>Form:</strong> Vital Signs&nbsp;&nbsp;<strong>Status:</strong> Open</div>
-              </paper-item-body>
-              <button type="submit">Respond to Query</button>&nbsp;&nbsp;<button type="submit">Open Form</button>
-        </paper-icon-item> 
-        <hr>
-        <div class="form-cards">
-            <paper-icon-item>
-                <iron-icon icon="help-outline" slot="item-icon"></iron-icon> 
-                <paper-item-body two-line>
-                    <div>
-                      <span>The answer to Question 7 on Form 6 indicates that an SAE is required. Please reconcile.</span> 
-                    </div>
-                    <div secondary><strong>Case ID:</strong>810003&nbsp;&nbsp;<strong>Event:</strong> 6 Week Follow-up&nbsp;&nbsp;<strong>Form:</strong> Vital Signs&nbsp;&nbsp;<strong>Status:</strong> Open</div>
-                  </paper-item-body>
-                  <button type="submit">Respond to Query</button>&nbsp;&nbsp;<button type="submit">Open Form</button>
-            </paper-icon-item> 
-            <hr>
-            <paper-icon-item>
-                <iron-icon icon="help-outline" slot="item-icon"></iron-icon> 
-                <paper-item-body two-line>
-                    <div>
-                      <span>Systolic blood pressure is out of range on Form 2.</span> 
-                    </div>
-                    <div secondary><strong>Case ID:</strong>810002&nbsp;&nbsp;<strong>Event:</strong> 6 Week Follow-up&nbsp;&nbsp;<strong>Form:</strong> Vital Signs&nbsp;&nbsp;<strong>Status:</strong> Open</div>
-                  </paper-item-body>
-                  <button type="submit">Respond to Query</button>&nbsp;&nbsp;<button type="submit">Open Form</button>
-            </paper-icon-item> 
-            <hr>
-            <paper-icon-item>
-                <iron-icon icon="reply" slot="item-icon"></iron-icon> 
-                <paper-item-body two-line>
-                    <div>
-                      <span>Systolic blood pressure is out of range on Form 2.</span> 
-                    </div>
-                    <div secondary><strong>Case ID:</strong>810001&nbsp;&nbsp;<strong>Event:</strong> 6 Week Follow-up&nbsp;&nbsp;<strong>Form:</strong> Vital Signs&nbsp;&nbsp;<strong>Status:</strong> Answered</div>
-                  </paper-item-body>
-                  <button type="submit">View Response</button>&nbsp;&nbsp;<button type="submit">Open Form</button>
-            </paper-icon-item> 
-            <hr>
-    </div>
+  <div class="form-cards">
+    <paper-icon-item *ngFor='let query of queries' class="form new-form">
+        <iron-icon icon="{{ query.queryStatus === 'Open' ? 'help-outline' : 'reply' }}" slot="item-icon"></iron-icon> 
+        <paper-item-body two-line>
+            <div>
+              <span>{{ query.queryText }}</span> 
+            </div>
+            <div secondary><strong>Case ID:</strong> {{ query.associatedCaseName }}&nbsp;&nbsp;<strong>Event:</strong> {{ query.associatedEventName }}&nbsp;&nbsp;<strong>Form:</strong> {{ query.associatedFormName }}&nbsp;&nbsp;<strong>Status:</strong> {{ query.queryStatus }}</div>
+          </paper-item-body>
+          <button  routerLink = '{{ query.queryLink }}' type="submit">{{ query.queryStatus === 'Open' ? 'View Query' : 'View Response'}}</button>&nbsp;&nbsp;<button routerLink = '{{ query.associatedFormLink }}' type="submit">Open Form</button>
+    </paper-icon-item> 
+  </div>
 </div>

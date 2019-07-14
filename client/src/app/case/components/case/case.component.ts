@@ -79,6 +79,7 @@ export class CaseComponent implements AfterContentInit {
     await this.caseService.scheduleEvent(caseEvent.id, newDate, newDate)
     await this.caseService.save()
     this.calculateTemplateData()
+    debugger
   }
 
 }

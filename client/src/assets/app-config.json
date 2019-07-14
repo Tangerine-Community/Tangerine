@@ -1,17 +1,27 @@
 {
-  "securityPolicy": ["password"],
-  "columnsOnVisitsTab": [],
-  "securityQuestionText": "What is your year of birth?",
-  "hashSecurityQuestionResponse": false,
-  "hideProfile": false,
-  "registrationRequiresServerUser": false,
-  "listUsernamesOnLoginScreen": true,
-  "serverUrl": "http://localhost/",
-  "uploadUnlockedFormReponses": false,
-  "groupName": "",
-  "uploadToken": "change_this_token",
-  "homeUrl": "case-management",
-  "centrallyManagedUserProfile": false,
-  "languageDirection": "ltr",
-  "languageCode": "en"
+   "syncProtocol" : "two-way",
+   "homeUrl" : "case-home",
+   "registrationRequiresServerUser" : false,
+   "serverUrl" : "https://app.santemali.org/",
+   "modules" : [
+      "csv"
+   ],
+   "showQueries" : true,
+   "uploadUnlockedFormReponses" : false,
+   "securityQuestionText" : "What is your year of birth?",
+   "hideProfile" : true,
+   "groupId" : "group-dcadee4f-0ce0-4e56-87a0-a12d50991ed0",
+   "direction" : "undefined",
+   "columnsOnVisitsTab" : [],
+   "listUsernamesOnLoginScreen" : true,
+   "securityPolicy" : [
+      "password"
+   ],
+   "uploadToken" : "b4e690e5f3e1",
+   "languageCode" : "en",
+   "languageDirection" : "ltr",
+   "centrallyManagedUserProfile" : true,
+   "hashSecurityQuestionResponse" : false,
+   "groupName" : "group-dcadee4f-0ce0-4e56-87a0-a12d50991ed0",
+   "barcodeSearchMapFunction": "if ((JSON.parse(data)).participant_id) { return (JSON.parse(data)).participant_id } else { throw 'Incorrect format'} "
 }

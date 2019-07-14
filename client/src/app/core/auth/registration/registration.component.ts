@@ -68,6 +68,9 @@ export class RegistrationComponent implements OnInit {
             return 
         }
         const userData = Object.assign({}, this.user);
+
+        debugger
+
         if (!this.isUsernameTaken) {
             observableFrom(this.userService.create(userData)).subscribe(data => {
                 this.loginUserAfterRegistration(userData.username, this.user.password);

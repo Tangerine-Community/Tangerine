@@ -1,31 +1,63 @@
-<tangy-form id="user-profile" title="User Profile">
-  <tangy-form-item id="item-1" title="User Profile">
-    <template>
-      <tangy-input 
-        error-message="required" 
-        type="text" 
-        name="first_name" 
-        required 
-        label="First name">
-      </tangy-input>
-      <tangy-input 
-        error-message="required" 
-        type="text" 
-        name="last_name" 
-        required 
-        label="Last name">
-      </tangy-input>
-      <tangy-radio-buttons label="Gender" name="gender" required>
-        <option value="female">Female</option>
-        <option value="male">Male</option>
+
+      <tangy-form id="user-profile" title="User Profile" category=""
+        
+        on-open="
+          
+          
+        
+        "
+        on-change="
+          
+          
+        
+        "
+      >
+        
+          <tangy-form-item id="item-1" 
+            title="User Profile"
+            
+            on-open="
+              
+              
+            
+            "
+            on-change="
+              
+              
+            
+            "
+            category="
+              null
+            "
+          >
+            <template>
+              
+      <tangy-input name="first_name" label="First name" hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-input name="last_name" label="Last name" hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-radio-buttons name="gender" label="Gender" hint-text="" required="">
+       
+       <option value="female">Female</option>
+      
+       <option value="male">Male</option>
+      
       </tangy-radio-buttons>
-      <tangy-input 
-        error-message="required" 
-        type="number" 
-        name="phone" 
-        required 
-        label="Phone number">
-      </tangy-input>
-    </template>
-  </tangy-form-item>
-</tangy-form>
+    
+      <tangy-input name="phone" label="Phone number" hint-text="" type="number" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-location name="location" hint-text="" show-levels="Region,Facility">
+        
+        
+        
+        
+      
+      
+      
+      </tangy-location>
+    
+            </template>
+          </tangy-form-item>
+        
+      </tangy-form>
+    

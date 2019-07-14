@@ -43,7 +43,7 @@ paper-card {
 }
 
 .form.new-form {
-    border-style: dashed;
+    border-style: solid;
 }
 
 .form.complete {

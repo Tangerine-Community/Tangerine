@@ -53,6 +53,14 @@ export class UserService {
     return localStorage.getItem('currentUser')
   }
 
+  getUserDbName(): string {
+    // KW
+    // This is for future expansion
+    // Currently it just returns the user name but
+    // it will be updated to return a configurable db name
+    return localStorage.getItem('currentUser')
+  }
+
   async createUserDatabase(username):Promise<PouchDB> {
     const userDb = PouchDB(username)
     this.installDefaultUserDocs(userDb)
