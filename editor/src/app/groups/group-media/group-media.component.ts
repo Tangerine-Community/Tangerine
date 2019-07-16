@@ -25,13 +25,12 @@ export class GroupMediaComponent implements AfterContentInit {
   }
 
   async onDeleteClick() {
-    const paths = this.listEl.nativeElement.shadowRoot.querySelector('file-list').files.reduce((selection, file) => {
+    const pathsThatAreSelected = this.listEl.nativeElement.shadowRoot.querySelector('file-list').files.reduce((pathsThatAreSelected, file) => {
       return file.selected
-        ? [...selection, file.path]
-        : selection
+        ? [...pathsThatAreSelected, file.path]
+        : pathsThatAreSelected
     }, []) 
-    //await this.http.post('./media-delete', { params: new HttpParams().set('paths', paths) }).toPromise()
-    await this.http.post('./media-delete', { paths }).toPromise()
+    await this.http.post('./media-delete', { paths: pathsThatAreSelected }).toPromise()
     this.listEl.nativeElement.setAttribute('endpoint', './media-list')
   }
 
