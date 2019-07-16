@@ -15,8 +15,10 @@ T_COUCHDB_USER_ADMIN_PASS="password"
 
 # Don't want the default container name of tangerine? Specify that here.
 T_CONTAINER_NAME="tangerine"
-# @TODO Deprecated? I think it's based on the container name above.
+# If it is a hub instance, use "${T_CONTAINER_NAME}-couchdb" ; otherwise, "couchdb"
 T_COUCHDB_CONTAINER_NAME="couchdb"
+# Open port to couchdb. Leave empty if this is a hub deployment.
+T_COUCHDB_PORT_MAPPING=" -p 5984:5984"
 # Open additional ports. You probably don't need to do this.
 T_PORT_MAPPING="-p 80:80"
 # Control wether or not the limit of reporting output is per group or sidewide. The other option is "group" which will make sure allowance applies to the group level.

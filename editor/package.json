@@ -13,12 +13,12 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "~7.1.0",
-    "@angular/cdk": "~7.1.1",
+    "@angular/cdk": "~7.3.7",
     "@angular/common": "~7.1.0",
     "@angular/compiler": "~7.1.0",
     "@angular/core": "~7.1.0",
     "@angular/forms": "~7.1.0",
-    "@angular/material": "^7.1.1",
+    "@angular/material": "^7.3.7",
     "@angular/platform-browser": "~7.1.0",
     "@angular/platform-browser-dynamic": "~7.1.0",
     "@angular/router": "~7.1.0",
@@ -35,7 +35,7 @@
     "rangen": "^1.0.0",
     "redux": "^4.0.1",
     "rxjs": "~6.3.3",
-    "tangy-form": "^3.17.0",
+    "tangy-form": "^3.19.0",
     "tangy-form-editor": "^5.21.0",
     "translation-web-component": "0.0.3",
     "tslib": "^1.9.0",
@@ -66,3 +66,4 @@
     "typescript": "~3.1.6"
   }
 }
+

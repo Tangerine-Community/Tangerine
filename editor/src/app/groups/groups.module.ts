@@ -4,6 +4,7 @@ import {
   MatCardModule, MatListModule, MatInputModule, MatButtonModule, MatTabsModule,
   MatAutocompleteModule, MatSelectModule, MatChipsModule, MatGridListModule
 } from '@angular/material';
+import { MatTreeModule } from '@angular/material/tree';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
 import { GroupsComponent } from './groups.component';
@@ -23,6 +24,14 @@ import { LocationListEditorComponent } from './location-list-editor/location-lis
 import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
 import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
 import { ImportLocationListComponent } from './import-location-list/import-location-list.component';
+import { CaseManagementEditorComponent } from './case-management-editor/case-management-editor.component';
+import { CreateCaseDefinitionComponent } from './case-management-editor/create-case-definition/create-case-definition.component';
+import { CreateCaseDefinitionStructureComponent } from './case-management-editor/create-case-definition-structure/create-case-definition-structure.component';
+import { EditCaseDefinitionComponent } from './case-management-editor/edit-case-definition/edit-case-definition.component';
+import { EditEventDefinitionComponent } from './case-management-editor/edit-event-definition/edit-event-definition.component';
+import { EditEventFormDefinitionComponent } from './case-management-editor/edit-event-form-definition/edit-event-form-definition.component';
+import { CreateEventFormDefinitionComponent } from './case-management-editor/create-event-form-definition/create-event-form-definition.component';
+import { CreateEventDefinitionComponent } from './case-management-editor/create-event-definition/create-event-definition.component';
 import { GroupMediaComponent } from './group-media/group-media.component';
 
 
@@ -43,6 +52,8 @@ import { GroupMediaComponent } from './group-media/group-media.component';
     MatListModule,
     MatTabsModule,
     MatChipsModule,
+    MatTreeModule,
+    MatGridListModule,
     SharedModule
   ],
   declarations: [
@@ -61,7 +72,15 @@ import { GroupMediaComponent } from './group-media/group-media.component';
     ManageLocationListLevelsComponent,
     ManageLocationListMetadataComponent,
     ImportLocationListComponent,
-    GroupMediaComponent
+    GroupMediaComponent,
+    CaseManagementEditorComponent,
+    CreateCaseDefinitionComponent,
+    CreateCaseDefinitionStructureComponent,
+    EditCaseDefinitionComponent,
+    EditEventDefinitionComponent,
+    EditEventFormDefinitionComponent,
+    CreateEventFormDefinitionComponent,
+    CreateEventDefinitionComponent
   ],
   providers: [GroupsService]
 })
