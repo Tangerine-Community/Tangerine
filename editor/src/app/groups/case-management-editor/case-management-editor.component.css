@@ -1,0 +1,47 @@
+.tangy-full-width {
+  width: 95%;
+}
+span.tangy-foreground-secondary {
+  padding-top: 0.3rem;
+}
+mat-card {
+  width: 70%;
+}
+.group-avatar {
+  font-size: 350%;
+}
+mat-card-title a {
+  text-decoration: none;
+  color: var(--tertiary-color);
+}
+.tangy-page-title {
+  margin-left: 2%;
+}
+mat-card.mat-card {
+  background-color: var(--accent-text-color);
+}
+.tangy-foreground-secondary {
+  color: var(--lighter-accent-color);
+}
+.tangy-content {
+  margin-top: 3%;
+}
+
+.case-tree-invisible {
+  display: none;
+}
+
+.mat-tree {
+  background: var(--document-background-color);
+}
+.case-tree ul,
+.case-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+mat-grid-list {
+  min-height: 1000px;
+  height: auto;
+  overflow: auto;
+}
