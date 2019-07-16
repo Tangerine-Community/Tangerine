@@ -44,7 +44,7 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
 
   async ngOnInit() {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
-    this.formsList = (await this.groupsService.getFormsList(this.groupId)).filter(x => x['type'] === 'form');
+    this.formsList = (await this.groupsService.getFormsList(this.groupId)).filter(x => x['type'] === 'case');
     this.subscription = this.route.queryParams.subscribe(async queryParams => {
       this.caseForm = { ...this.initialForm };
       this.formInActive = true;
