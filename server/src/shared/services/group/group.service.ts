@@ -123,6 +123,7 @@ export class GroupService {
     let groupName = label 
     await this.installViews(groupDb)
     await exec(`cp -r /tangerine/client/src/assets  /tangerine/client/content/groups/${groupId}`)
+    await exec(`mkdir /tangerine/client/content/groups/${groupId}/media`)
     // Create appConfig.
     let appConfig = <any>{}
     appConfig = <any>JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, "utf8"))
