@@ -36,7 +36,7 @@
     "redux": "^4.0.1",
     "rxjs": "~6.3.3",
     "tangy-form": "^3.17.0",
-    "tangy-form-editor": "github:tangerine-community/tangy-form-editor#add-media-library-selector",
+    "tangy-form-editor": "^5.21.0",
     "translation-web-component": "0.0.3",
     "tslib": "^1.9.0",
     "underscore": "^1.9.1",

@@ -9,7 +9,7 @@ const sanitize = require('sanitize-filename');
 
 module.exports = async (req, res) => {
   for (let path of req.body.paths) {
-    await exec(`rm /tangerine/client/content/groups/${req.params.group}/media/${sanitize(path).replace(/(\s+)/g, '\\$1')}`)
+    await exec(`rm /tangerine/client/content/groups/${req.params.group}/media/${sanitize(path.replace('./assets/media/', '')).replace(/(\s+)/g, '\\$1')}`)
   }
   res.send()
 }
