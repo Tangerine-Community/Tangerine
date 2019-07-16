@@ -155,4 +155,8 @@
     <app-list-users class="tangy-full-width"></app-list-users>
   </mat-tab>
 
+  <mat-tab *ngIf="isGroupAdminUser" label="{{'Media Library'|translate}}">
+    <app-group-media></app-group-media>
+  </mat-tab>
+
 </mat-tab-group>

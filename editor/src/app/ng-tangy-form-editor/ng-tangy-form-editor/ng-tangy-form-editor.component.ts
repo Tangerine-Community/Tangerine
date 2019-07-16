@@ -58,7 +58,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
     if (!this.print) {
       this.containerEl.innerHTML = `
-        <tangy-form-editor style="margin:15px" categories ='${categories}'>
+        <tangy-form-editor style="margin:15px" categories ='${categories}' files-endpoint="./media-list">
           <template>
             ${formHtml}
           </template>

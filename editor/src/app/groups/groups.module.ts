@@ -32,7 +32,7 @@ import { EditEventDefinitionComponent } from './case-management-editor/edit-even
 import { EditEventFormDefinitionComponent } from './case-management-editor/edit-event-form-definition/edit-event-form-definition.component';
 import { CreateEventFormDefinitionComponent } from './case-management-editor/create-event-form-definition/create-event-form-definition.component';
 import { CreateEventDefinitionComponent } from './case-management-editor/create-event-definition/create-event-definition.component';
-
+import { GroupMediaComponent } from './group-media/group-media.component';
 
 
 
@@ -72,6 +72,7 @@ import { CreateEventDefinitionComponent } from './case-management-editor/create-
     ManageLocationListLevelsComponent,
     ManageLocationListMetadataComponent,
     ImportLocationListComponent,
+    GroupMediaComponent,
     CaseManagementEditorComponent,
     CreateCaseDefinitionComponent,
     CreateCaseDefinitionStructureComponent,
