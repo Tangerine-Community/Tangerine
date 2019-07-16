@@ -187,7 +187,9 @@ export class ImportLocationListComponent implements OnInit {
         ];
       });
     });
-    const flatLocationList = { locations, locationsLevels: this.locationList.locationsLevels, metadata: this.locationList.metadata };
+    const flatLocationList = {
+      locations, locationsLevels: this.locationList.locationsLevels, metadata: this.locationList.metadata
+    };
     this.generatedLocationList = Loc.unflatten(flatLocationList);
   }
   async saveLocationListToDisk() {

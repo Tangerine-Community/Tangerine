@@ -1,0 +1,50 @@
+
+<div class="tangy-full-width">
+    <div [style.float]="'right'">
+      <button mat-raised-button color="accent" (click)="formInActive=false" *ngIf="formInActive">
+        <i class="material-icons">edit</i>{{' '}}{{'Edit Form'|translate}}
+      </button>
+      <button mat-raised-button color="accent" (click)="formInActive=true" *ngIf="!formInActive">
+        <i class="material-icons">close</i>{{' '}}{{'Close Editing'|translate}}
+      </button>
+    </div>
+    <form class="tangy-full-width" novalidate #editEventDefinitionForm="ngForm">
+      <fieldset [disabled]="formInActive">
+      <mat-form-field class="tangy-full-width">
+        <input name="eventName" [(ngModel)]="eventFormDefinition.name" matInput placeholder="{{'Name'|translate}}" required>
+      </mat-form-field>
+      <mat-form-field class="tangy-full-width">
+          <mat-label>{{'Form ID'|translate}} </mat-label>
+        <mat-select [(value)]="eventFormDefinition.formId" [disabled]="formInActive">
+          <mat-option *ngFor="let f of formsList" [value]="f.id">{{f.title}}</mat-option>
+        </mat-select>
+        </mat-form-field>
+        <br>
+        <br>
+  
+      <mat-form-field class="tangy-full-width">
+        <mat-label>{{'Repeatable'|translate}} </mat-label>
+        <mat-select [(value)]="eventFormDefinition.repeatable" [disabled]="formInActive">
+          <mat-option [value]="true">True</mat-option>
+          <mat-option [value]="false">False</mat-option>
+        </mat-select>
+      </mat-form-field>
+        <br>
+        <br>
+      <mat-form-field class="tangy-full-width">
+        <mat-label>{{'Required'|translate}} </mat-label>
+        <mat-select [(value)]="eventFormDefinition.required" [disabled]="formInActive">
+          <mat-option [value]="true">True</mat-option>
+          <mat-option [value]="false">False</mat-option>
+        </mat-select>
+      </mat-form-field>
+        <br>
+        <br>
+  
+      <button type="button" [disabled]="editEventDefinitionForm.invalid||formInActive"
+        mat-raised-button color="warn" (click)="editEventFormDefinition()">{{'Edit Event Form Definition'|translate}}</button>
+        </fieldset>
+      </form>
+    </div>
+  
+  
