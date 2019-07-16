@@ -23,6 +23,7 @@ import { LocationListEditorComponent } from './location-list-editor/location-lis
 import { ManageLocationListLevelsComponent } from './manage-location-list-levels/manage-location-list-levels.component';
 import { ManageLocationListMetadataComponent } from './manage-location-list-metadata/manage-location-list-metadata.component';
 import { ImportLocationListComponent } from './import-location-list/import-location-list.component';
+import { GroupMediaComponent } from './group-media/group-media.component';
 
 
 
@@ -59,7 +60,8 @@ import { ImportLocationListComponent } from './import-location-list/import-locat
     ResponsesComponent,
     ManageLocationListLevelsComponent,
     ManageLocationListMetadataComponent,
-    ImportLocationListComponent
+    ImportLocationListComponent,
+    GroupMediaComponent
   ],
   providers: [GroupsService]
 })
