@@ -30,6 +30,8 @@ const _ = require('underscore')
 const log = require('tangy-log').log
 const clog = require('tangy-log').clog
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+const multer = require('multer')
+const upload = multer({ dest: '/tmp-uploads/' })
 // Place a groupName in this array and between runs of the reporting worker it will be added to the worker's state. 
 var newGroupQueue = []
 const DB = require('./db.js')
@@ -198,10 +200,15 @@ app.get('/usage/:startdate', require('./routes/usage'));
 app.get('/usage/:startdate/:enddate', require('./routes/usage'));
 
 
+
 // Static assets.
 app.use('/client', express.static('/tangerine/client/dev'));
 app.use('/', express.static('/tangerine/editor/dist/tangerine-editor'));
 app.use('/app/:group/', express.static('/tangerine/editor/dist/tangerine-editor'));
+app.use('/app/:group/media-list', require('./routes/group-media-list.js'));
+// @TODO Need isGroupAdmin middleware.
+app.use('/app/:group/media-upload', isAuthenticated, upload.any(), require('./routes/group-media-upload.js'));
+app.use('/app/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
   let contentPath = '/tangerine/client/content/groups/' + req.params.group
   clog("Setting path to " + contentPath)
