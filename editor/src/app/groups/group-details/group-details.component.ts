@@ -80,6 +80,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     formsJson.push({
       id: formId,
       title: formTitle,
+      type: 'form',
       src: `./assets/${formId}/form.html`
     })
 
