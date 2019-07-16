@@ -289,12 +289,12 @@ export class GroupsService {
     }
   }
 
-  async saveFileToGroupDirectory(groupId: string, fileContents, filePath) {
+  async saveFileToGroupDirectory(groupId: string, fileContents, filePath, stringifyContents = true) {
     try {
       const file = {
         groupId,
         filePath,
-        fileContents: JSON.stringify(fileContents, null, 2)// format the JSON doc with 2 spaces
+        fileContents: stringifyContents ? JSON.stringify(fileContents, null, 2) : fileContents // format the JSON doc with 2 spaces if
       };
       await this.httpClient.post('/editor/file/save', file).toPromise();
     } catch (error) {
