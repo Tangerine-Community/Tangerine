@@ -1,0 +1,35 @@
+<div class="tangy-full-width">
+	<form class="tangy-full-width" novalidate #createEventDefinitionForm="ngForm">
+		<fieldset >
+		<mat-form-field class="tangy-full-width">
+			<input name="eventName" [(ngModel)]="eventForm.name" matInput placeholder="{{'Name'|translate}}" required>
+		</mat-form-field>
+		<mat-form-field class="tangy-full-width">
+			<input name="description" [(ngModel)]="eventForm.description" matInput placeholder="{{'Description'|translate}}" required>
+		</mat-form-field>
+
+		<mat-form-field class="tangy-full-width">
+			<mat-label>{{'Repeatable'|translate}} </mat-label>
+			<mat-select [(value)]="eventForm.repeatable" >
+				<mat-option [value]="true">True</mat-option>
+				<mat-option [value]="false">False</mat-option>
+			</mat-select>
+    </mat-form-field>
+			<br>
+			<br>
+		<mat-form-field class="tangy-full-width">
+			<mat-label>{{'Required'|translate}} </mat-label>
+			<mat-select [(value)]="eventForm.required" >
+				<mat-option [value]="true">True</mat-option>
+				<mat-option [value]="false">False</mat-option>
+			</mat-select>
+    </mat-form-field>
+			<br>
+			<br>
+
+		<button type="button" [disabled]="createEventDefinitionForm.invalid"
+			mat-raised-button color="warn" (click)="createEventDefinition()">{{'Create Event Definition'|translate}}</button>
+			</fieldset>
+		</form>
+	</div>
+

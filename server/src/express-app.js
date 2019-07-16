@@ -218,6 +218,7 @@ app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
 app.use('/editor/groups', isAuthenticated, express.static('/tangerine/client/content/groups'));
 app.use('/editor/assets/', express.static('/tangerine/client/content/assets/'));
 app.use('/client/content/assets/', express.static('/tangerine/client/content/assets/'));
+app.use('/app/assets/', express.static('/tangerine/client/content/assets/'));
 app.use('/csv/', express.static('/csv/'));
 
 app.use('/releases/', express.static('/tangerine/client/releases'))

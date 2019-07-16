@@ -1,0 +1,48 @@
+<div class="tangy-full-width" [style.float]="'left'" [style.width]="'100px'">
+	<button mat-raised-button color="accent" (click)="createNewEventFormDefinition()">
+		<i class="material-icons">add</i>{{' '}}{{'Create Event Form Definition'|translate}}
+	</button>
+</div>
+<div class="tangy-full-width">
+	<div [style.float]="'right'">
+		<button mat-raised-button color="accent" (click)="formInActive=false" *ngIf="formInActive">
+			<i class="material-icons">edit</i>{{' '}}{{'Edit Form'|translate}}
+		</button>
+		<button mat-raised-button color="accent" (click)="formInActive=true" *ngIf="!formInActive">
+			<i class="material-icons">close</i>{{' '}}{{'Close Editing'|translate}}
+		</button>
+	</div>
+	<form class="tangy-full-width" novalidate #editEventDefinitionForm="ngForm">
+		<fieldset [disabled]="formInActive">
+		<mat-form-field class="tangy-full-width">
+			<input name="eventName" [(ngModel)]="eventForm.name" matInput placeholder="{{'Name'|translate}}" required>
+		</mat-form-field>
+		<mat-form-field class="tangy-full-width">
+			<input name="description" [(ngModel)]="eventForm.description" matInput placeholder="{{'Description'|translate}}" required>
+		</mat-form-field>
+
+		<mat-form-field class="tangy-full-width">
+			<mat-label>{{'Repeatable'|translate}} </mat-label>
+			<mat-select [(value)]="eventForm.repeatable" [disabled]="formInActive">
+				<mat-option [value]="true">True</mat-option>
+				<mat-option [value]="false">False</mat-option>
+			</mat-select>
+    </mat-form-field>
+			<br>
+			<br>
+		<mat-form-field class="tangy-full-width">
+			<mat-label>{{'Required'|translate}} </mat-label>
+			<mat-select [(value)]="eventForm.required" [disabled]="formInActive">
+				<mat-option [value]="true">True</mat-option>
+				<mat-option [value]="false">False</mat-option>
+			</mat-select>
+    </mat-form-field>
+			<br>
+			<br>
+
+		<button type="button" [disabled]="editEventDefinitionForm.invalid||formInActive"
+			mat-raised-button color="warn" (click)="editEventDefinition()">{{'Edit Event Definition'|translate}}</button>
+			</fieldset>
+		</form>
+	</div>
+

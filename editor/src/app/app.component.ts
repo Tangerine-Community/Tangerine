@@ -69,7 +69,6 @@ export class AppComponent implements OnInit, OnDestroy {
           console.log("populating window.translation.")
           this.window.translation = json
         })
-
     }
 
     async ensureLoggedIn() {
