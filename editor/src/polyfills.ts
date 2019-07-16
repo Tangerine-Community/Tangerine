@@ -98,6 +98,10 @@ import * as _ from 'underscore';
 (window as any)._ = _;
 
 import 'tangy-form-editor/tangy-form-editor.js'
+import 'file-list-component/file-list.js'
+import 'file-list-component/file-list-http.js'
+import 'file-list-component/file-list-select.js'
+import '@vaadin/vaadin-upload/vaadin-upload.js'
 
 
 // Fix for the way Angular builds pouchdb https://github.com/pouchdb/pouchdb/issues/7299
