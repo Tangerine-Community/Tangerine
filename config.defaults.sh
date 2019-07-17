@@ -40,7 +40,7 @@ T_CENTRALLY_MANAGED_USER_PROFILE="false"
 # Add replication entries in this array to start on server boot in 
 # format of `{"from":"localDbName", "to":"remoteDbUrl", "continuous": true}`
 T_REPLICATE="[]"
-# Available modules: csv, logstash, class
+# Available modules: csv, logstash, class, case
 # To enable modules, list them like so: 
 # T_MODULES="['csv','class', 'logstash']"
 T_MODULES="['csv']"
