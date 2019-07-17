@@ -136,6 +136,8 @@ export class GroupService {
     appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
     appConfig.centrallyManagedUserProfile = (process.env.T_CENTRALLY_MANAGED_USER_PROFILE === 'true') ? true : false
     appConfig.modules = tangyModules.enabledModules;
+    // Note, the default 'case-management' route is a misnomer, that's actually the default Tutor landing page.
+    appConfig.homeUrl = tangyModules.includes('case') ? 'case-home' : 'case-management'
     appConfig.direction = `${process.env.T_LANG_DIRECTION}`
     if (process.env.T_CATEGORIES) {
       let categoriesString = `${process.env.T_CATEGORIES}`
