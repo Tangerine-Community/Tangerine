@@ -211,7 +211,6 @@ app.use('/app/:group/media-upload', isAuthenticated, upload.any(), require('./ro
 app.use('/app/:group/media-delete', isAuthenticated, require('./routes/group-media-delete.js'));
 app.use('/app/:group/assets', isAuthenticated, function (req, res, next) {
   let contentPath = '/tangerine/client/content/groups/' + req.params.group
-  clog("Setting path to " + contentPath)
   return express.static(contentPath).apply(this, arguments);
 });
 
