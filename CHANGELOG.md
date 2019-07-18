@@ -1,15 +1,12 @@
 # Changelog
 
 ## v3.4.0
-- New Features
-  - You can now specify the Web App orientation (portrait or landscape) on device [using the `T_ORIENTATION` variable in `config.sh`](https://github.com/Tangerine-Community/Tangerine/issues/1530). Add `T_ORIENTATION="any"` to config.sh to have more flexible orientations for PWA's. The options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
-  - Each group now has a media library tab where they can uplaod images which can then be utilized when inserting the new "Image" item on forms. [#1138](https://github.com/Tangerine-Community/Tangerine/issues/1138)
-  - Case Management .
-    - Add the "case" module to `T_MODULES` in `config.sh` and the default landing page for a group will be the cases search page and new "Case Management Editor" tab will appear in groups for creating and editing Case Definitions. [#1517](https://github.com/Tangerine-Community/Tangerine/issues/1517)
-    - Clientside search of Forms for Case Management Groups allows Cases to be found using the device camera to scan a QR code. See `docs/case-management-group.md`.
-    - Add event time and scheduling to Case Mangement Groups [#1518](https://github.com/Tangerine-Community/Tangerine/pull/1518)
-- Fixes
-  - Logstash Improvements [#1516](https://github.com/Tangerine-Community/Tangerine/issues/1516)
+- __New Features__
+  - __Web App Device Orientation__: You can now specify the Web App orientation (portrait or landscape) on device [using the `T_ORIENTATION` variable in `config.sh`](https://github.com/Tangerine-Community/Tangerine/issues/1530). Add `T_ORIENTATION="any"` to config.sh to have more flexible orientations for PWA's. The options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
+  - __Media Library and Image support for Forms__: Each group now has a media library tab where they can uplaod images which can then be utilized when inserting the new "Image" item on forms. [#1138](https://github.com/Tangerine-Community/Tangerine/issues/1138)
+- __Fixes_
+  - __Critical Sync and data-loss fix__: Some variants of v3.3.x saw cases where data seemed to be lost on the tablet and sync no longer worked. After this release is deployed to the server, release for your groups and instruct all tablets to upgrade. The upgrade process may take many minutes depending on the amount of data stored on the tablet due to a schema update in the database. For an in depth look at what this update does, see [the code here](https://github.com/Tangerine-Community/Tangerine/blob/next/client/src/app/core/update/update/updates.ts#L159). 
+  - __Logstash Improvements__ [#1516](https://github.com/Tangerine-Community/Tangerine/issues/1516)
     - User profiles were in a nested object, now they have been merged to be flat in the logstash output doc. [See example here](https://github.com/Tangerine-Community/Tangerine/pull/1563#issuecomment-506490643).
     - If a form response uses a location element, it will now be extracted out into a top level `"geoip"` property whose value is an object with `"lat"` and `"lon"` properties. [See example here](https://github.com/Tangerine-Community/Tangerine/pull/1563#issuecomment-506490643).
     - When new forms are created in the editor, they will no longer have a `.` character in their ID. This was causing some uneccessary and confusing logic in logstash config files. [See PR here](https://github.com/Tangerine-Community/Tangerine/pull/1560).
@@ -17,10 +14,13 @@
   - Updated to tangy-form-editor ^5.18.0 for [Change grid variables in CSV starting with variable_0 to variable_1](https://github.com/Tangerine-Community/Tangerine/issues/1537). 
   - A previous update to tangy-form to 3.15.1, tangy-form-editor to 5.17.0 to fixed [Editing form level HTML requires two Save clicks](https://github.com/Tangerine-Community/Tangerine/issues/1041)
 - Experiments
-  - Two-way Sync of configured Form Responses given Location. See `docs/feature-two-way-sync.md`.
+  - __Two-way Sync__: Allows for two-way sync of form responses. Can be configured to two way sync form responses for specific forms and also by geographic region defined in the user profile. See `docs/feature-two-way-sync.md`.
   and [Add a tangy input inside a tangy box duplicates items](https://github.com/Tangerine-Community/Tangerine/issues/1364), 
   and enable [Adjustable letter size for grids](https://github.com/Tangerine-Community/Tangerine/issues/1525)
-
+  - __Case Module__
+    - Add the "case" module to `T_MODULES` in `config.sh` and the default landing page for a group will be the cases search page and new "Case Management Editor" tab will appear in groups for creating and editing Case Definitions. [#1517](https://github.com/Tangerine-Community/Tangerine/issues/1517)
+    - Clientside search of Forms for Case Management Groups allows Cases to be found using the device camera to scan a QR code. See `docs/case-management-group.md`.
+    - Add event time and scheduling to Case Mangement Groups [#1518](https://github.com/Tangerine-Community/Tangerine/pull/1518)
 
 Upgrade instructions:
 
