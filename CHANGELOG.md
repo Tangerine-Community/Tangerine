@@ -10,7 +10,7 @@
     - User profiles were in a nested object, now they have been merged to be flat in the logstash output doc. [See example here](https://github.com/Tangerine-Community/Tangerine/pull/1563#issuecomment-506490643).
     - If a form response uses a location element, it will now be extracted out into a top level `"geoip"` property whose value is an object with `"lat"` and `"lon"` properties. [See example here](https://github.com/Tangerine-Community/Tangerine/pull/1563#issuecomment-506490643).
     - When new forms are created in the editor, they will no longer have a `.` character in their ID. This was causing some uneccessary and confusing logic in logstash config files. [See PR here](https://github.com/Tangerine-Community/Tangerine/pull/1560).
-    - A large number of fixes have been made for EFTouch. See recent issues [here](https://github.com/Tangerine-Community/Tangerine/issues?q=is%3Aopen+is%3Aissue+label%3ATAN-EFTOUCH-2018). 
+  - __EFTouch__: A large number of fixes have been made for EFTouch. See recent issues [here](https://github.com/Tangerine-Community/Tangerine/issues?q=is%3Aopen+is%3Aissue+label%3ATAN-EFTOUCH-2018). 
   - Updated to tangy-form-editor ^5.18.0 for [Change grid variables in CSV starting with variable_0 to variable_1](https://github.com/Tangerine-Community/Tangerine/issues/1537). 
   - A previous update to tangy-form to 3.15.1, tangy-form-editor to 5.17.0 to fixed [Editing form level HTML requires two Save clicks](https://github.com/Tangerine-Community/Tangerine/issues/1041)
 - __Beta Features__
