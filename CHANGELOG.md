@@ -4,6 +4,16 @@
 - __New Features__
   - __Configurable Web App Device Orientation__: You can now specify the Web App orientation (portrait, landscape, or any) on device [using the `T_ORIENTATION` variable in `config.sh`](https://github.com/Tangerine-Community/Tangerine/issues/1530). Add `T_ORIENTATION="any"` to config.sh to have more flexible orientations for PWA's. The options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
   - __Media Library and Image support for Forms__: Each group now has a media library tab where they can uplaod images which can then be utilized when inserting the new "Image" item on forms. [#1138](https://github.com/Tangerine-Community/Tangerine/issues/1138)
+   - __New ACASI widget__: The ACASI widget is braodly based on the EFTouch widget, but focused on a more static presentation of images and sounds. [#56](https://github.com/Tangerine-Community/tangy-form-editor/pull/56/commits/4f1d02d93ac0fc4637fb244b535b3411e35f131c)
+   - __Configurable font size in grids__: You may now configure the font size in tangy-timed and tangy-untimed grids using the Option Font Size input. In tangy-form, it is exposed as option-font-size. Example of generated code: `<tangy-timed required columns="3" duration=80 name="class1_term2" option-font-size="5">`
+   - __Auto-stop for tangy-radio-buttons__: Add support for autostop in tangy-radio-buttons [#49](https://github.com/Tangerine-Community/tangy-form/pull/49). In Editor, set the Threshold to the number of incorrect answers: [screenshots](https://github.com/Tangerine-Community/Tangerine/releases/tag/v3.4.0-prerelease-15). Autostop is implemented by using the hideInputsUponThreshhold helper, which takes a tangy-form-item element and compares the number of correct radio button answers to the value in its incorrect-threshold attribute. Example of generated code: `<tangy-form-item id="item1" incorrect-threshold="2">`
+   - __New "correct" attribute for radio button options__: A new "correct" attribute has been added to tangy-list-item to store the correct value. There is a "Correct" checkbox next to each option. Example of generated code: 
+   ```
+   <tangy-radio-buttons name="fruit_selection2" label="What is your favorite fruit?">
+      <option name="tangerine">Tangerine</option>
+      <option name="cherry" correct>Cherry</option>
+    </tangy-radio-buttons>
+    ```
 - __Fixes__
   - __Critical Sync and "data loss" fix__: Some variants of v3.3.x saw cases where data seemed to be lost on the tablet and sync no longer worked. After this release is deployed to the server, release for your groups and instruct all tablets to upgrade. The upgrade process may take many minutes depending on the amount of data stored on the tablet due to a schema update in the database. For an in depth look at what this update does, see [the code here](https://github.com/Tangerine-Community/Tangerine/blob/next/client/src/app/core/update/update/updates.ts#L159). 
   - __Logstash Improvements__ [#1516](https://github.com/Tangerine-Community/Tangerine/issues/1516)
