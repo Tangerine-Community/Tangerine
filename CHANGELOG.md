@@ -2,7 +2,7 @@
 
 ## v3.4.0
 - __New Features__
-  - __Configurable Web App Device Orientation__: You can now specify the Web App orientation (portrait or landscape) on device [using the `T_ORIENTATION` variable in `config.sh`](https://github.com/Tangerine-Community/Tangerine/issues/1530). Add `T_ORIENTATION="any"` to config.sh to have more flexible orientations for PWA's. The options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
+  - __Configurable Web App Device Orientation__: You can now specify the Web App orientation (portrait, landscape, or any) on device [using the `T_ORIENTATION` variable in `config.sh`](https://github.com/Tangerine-Community/Tangerine/issues/1530). Add `T_ORIENTATION="any"` to config.sh to have more flexible orientations for PWA's. The options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
   - __Media Library and Image support for Forms__: Each group now has a media library tab where they can uplaod images which can then be utilized when inserting the new "Image" item on forms. [#1138](https://github.com/Tangerine-Community/Tangerine/issues/1138)
 - __Fixes__
   - __Critical Sync and data-loss fix__: Some variants of v3.3.x saw cases where data seemed to be lost on the tablet and sync no longer worked. After this release is deployed to the server, release for your groups and instruct all tablets to upgrade. The upgrade process may take many minutes depending on the amount of data stored on the tablet due to a schema update in the database. For an in depth look at what this update does, see [the code here](https://github.com/Tangerine-Community/Tangerine/blob/next/client/src/app/core/update/update/updates.ts#L159). 
