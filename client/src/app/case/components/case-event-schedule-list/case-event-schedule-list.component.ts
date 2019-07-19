@@ -87,7 +87,7 @@ export class CaseEventScheduleListComponent implements OnInit {
     const responses:Array<TangyFormResponse> = []
     const caseIds = events.reduce((caseIds, caseEvent) => caseIds.indexOf(caseEvent.caseId) === -1 ? [...caseIds, caseEvent.caseId] : caseIds, [])
     for (const caseId of caseIds) {
-      searchDocs.push(await this.searchService.getIndexedDoc(this.userService.getCurrentUser(), caseId))
+      searchDocs.push(await this.searchService.getIndexedDoc(this.userService.getCurrentUser(), caseId)) //KW
       responses.push(await userDb.get(caseId))
     }
     const formsInfo = await this.formsInfoService.getFormsInfo()

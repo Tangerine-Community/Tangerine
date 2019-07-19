@@ -13,7 +13,7 @@ export class CasesService {
   ) { }
 
   async getEventsByDate (dateStart, dateEnd, excludeEstimates = false):Promise<Array<CaseEvent>> {
-    const userDb = this.userService.getUserDatabase(this.userService.getCurrentUser())
+    const userDb = this.userService.getUserDatabase(this.userService.getCurrentUser());
     const allDocs = await userDb.allDocs({include_docs:true})
 
     return <Array<CaseEvent>>(allDocs)
