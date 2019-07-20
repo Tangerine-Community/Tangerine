@@ -21,5 +21,6 @@ export class AppConfig {
   minimumFreeSpace
   usageCleanupBatchSize
   barcodeSearchMapFunction:string
-
+  databaseLevel:string
+  localDatabaseName:string
 } 

@@ -7,6 +7,8 @@
       "csv"
    ],
    "showQueries" : true,
+   "databaseLevel" : "user",
+   "localDatabaseName" : "sante",
    "uploadUnlockedFormReponses" : false,
    "securityQuestionText" : "What is your year of birth?",
    "hideProfile" : true,

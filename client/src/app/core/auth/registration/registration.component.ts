@@ -69,8 +69,6 @@ export class RegistrationComponent implements OnInit {
         }
         const userData = Object.assign({}, this.user);
 
-        debugger
-
         if (!this.isUsernameTaken) {
             observableFrom(this.userService.create(userData)).subscribe(data => {
                 this.loginUserAfterRegistration(userData.username, this.user.password);
@@ -108,6 +106,7 @@ export class RegistrationComponent implements OnInit {
     loginUserAfterRegistration(username, password) {
         observableFrom(this.authenticationService.login(username, password)).subscribe(data => {
             if (data) {
+                debugger
                 this.router.navigate(['' + '/manage-user-profile']);
             } else { this.statusMessage = this.loginUnsucessfulMessage; }
         }, error => {

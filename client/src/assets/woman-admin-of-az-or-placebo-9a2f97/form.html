@@ -1,0 +1,40 @@
+<tangy-form id="woman-admin-of-az-or-placebo-9a2f97" title="Administration of AZ or placebo for Woman">
+	<tangy-form-item id="section-1" title="Section 1"
+		on-change="
+	
+		const id = getValue('test');
+					if (id >= 100) {
+					const qid = 	caseService.createQuery(
+      { caseId: '14e47d01-0558-47af-be0c-05a1587dd3cb',
+        queryId: '2',
+        associatedCaseId: '14e47d01-0558-47af-be0c-05a1587dd3cb',
+        associatedCaseType: 'Mother',
+        associatedEventId: '2',
+        associatedFormId: '1',
+        associatedEventName: 'Screening and Enrollment',
+        associatedFormName: 'Administration of AZ or placebo for Woman',
+        associatedFormLink: '#',
+        associatedCaseName: '8100009',
+        associatedVariable: 'varname',
+        queryTypeId: '2',
+        queryLink: '#',
+        queryDate: '07-09-2019',
+        queryText: 'The test question required a response of 100 or below.',
+        queryStatus: 'Open',
+        queryResponse: '',
+        queryResponseDate: '' }
+	);
+
+	alert('The test question required a response of 100 or below. Entering a response of 100 or more has generated a data query for later review');	
+			
+					}
+			
+		";
+	
+	>
+		<template>
+			<tangy-input type="text" label="Test question" name="test"></tangy-input>
+			<div id="testMessage"></div>
+		</template>
+	</tangy-form-item>
+</tangy-form>

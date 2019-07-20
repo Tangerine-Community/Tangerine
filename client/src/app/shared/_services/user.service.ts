@@ -28,6 +28,7 @@ import { TangyFormService } from '../../tangy-forms/tangy-form-service';
 import { updates } from '../../core/update/update/updates';
 import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
 import { HttpClient } from '@angular/common/http';
+import { AppConfig } from '../_classes/app-config.class';
 
 @Injectable()
 export class UserService {
@@ -43,9 +44,19 @@ export class UserService {
     private http: HttpClient
   ) { }
 
+  // Updated KW
   async initialize() {
-    for (const user of await this.getAllUsers()) {
-      this.userDatabases.push(PouchDB(user.username))
+    const allUsers = await this.getAllUsers();
+    const appConfig = await this.appConfigService.getAppConfig();
+    const databaseLevel = appConfig.databaseLevel;
+    if (databaseLevel === 'device') {
+      if (allUsers.length > 0) {
+        this.userDatabases.push(PouchDB(appConfig.localDatabaseName));
+      }
+    } else {
+      for (const user of allUsers) {
+        this.userDatabases.push(PouchDB(user.username))
+      }
     }
   }
 
@@ -53,29 +64,35 @@ export class UserService {
     return localStorage.getItem('currentUser')
   }
 
-  getUserDbName(): string {
-    // KW
-    // This is for future expansion
-    // Currently it just returns the user name but
-    // it will be updated to return a configurable db name
-    return localStorage.getItem('currentUser')
+  // Added KW
+  async getDbName(username): Promise<string> {
+    let dbName = username;
+    const appConfig = await this.appConfigService.getAppConfig();
+    const databaseLevel = appConfig.databaseLevel;
+    if (databaseLevel === 'device') {
+      dbName = appConfig.localDatabaseName;
+    }
+    return dbName;
   }
 
-  async createUserDatabase(username):Promise<PouchDB> {
-    const userDb = PouchDB(username)
+  // Updated KW
+  async createUserDatabase(username): Promise<PouchDB> {
+    const dbName = await this.getDbName(username);
+    const userDb = PouchDB(dbName);
     this.installDefaultUserDocs(userDb)
     this.userDatabases.push(userDb)
     return userDb
   }
 
-  async create(userSignup:UserSignup):Promise<UserAccount> {
-    const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+  // Updated KW
+  async create(userSignup: UserSignup): Promise<UserAccount> {
+    const userProfile = new TangyFormResponseModel({form: {id: 'user-profile'}});
     const userAccount = new UserAccount(
       userSignup.username,
       this.hashValue(userSignup.password),
       userSignup.securityQuestionResponse,
       userProfile._id
-    ) 
+    );
     await this.usersDb.post(userAccount)
     const userDb = await this.createUserDatabase(userAccount._id);
     await userDb.put(userProfile)
@@ -84,6 +101,8 @@ export class UserService {
       _id: 'info',
       atUpdateIndex: updates.length - 1
     })
+    const dbDocs = await userDb.allDocs({include_docs: true});
+    const userDocs = await this.usersDb.allDocs({include_docs: true});
     return userAccount
   }
 
@@ -174,6 +193,7 @@ export class UserService {
         resolve(localStorage.getItem(CURRENT_USER))
       })
     } else {
+      
       if (!this.userDatabases.find(userDatabase => userDatabase.name === username)) {
         this.userDatabases.push(new PouchDB(username))
       }

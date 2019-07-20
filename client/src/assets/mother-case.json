@@ -1,0 +1,213 @@
+{
+  "id": "mother-case",
+  "formId": "mother-manifest-3a453b",
+  "name": "Mother Case",
+  "description": "Screening, enrollment and follow-up for pregnant women in the urban and rural cohorts.",
+  "templateTitle": "ID: ${caseService.case._id.substr(0,6)}",
+  "templateDescription": "Participant ID: ${getVariable('participant_id')}",
+  "startFormOnOpen": {
+    "eventId": "event-definition-466788",
+    "eventFormId": "event-form-definition-b56b20"
+  },
+  "eventDefinitions": [
+    {
+      "id": "event-definition-466788",
+      "name": "ANC visit >= 14 weeks gestation (Screening and Enrollment)",
+      "description": "Screen new participant",
+      "repeatable": false,
+      "estimatedTimeFromCaseOpening": 0,
+      "estimatedTimeWindow": 0,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-c58ef3",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-b56b20",
+          "formId": "woman-enrollment-61e31d",
+          "name": "Screening and Enrollment of Pregnant Women",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-574497",
+          "formId": "woman-admin-of-az-or-placebo-9a2f97",
+          "name": "Administration of AZ or placebo for Woman",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-c94289",
+          "formId": "woman-medical-history-b5a83c",
+          "name": "Medical history for Woman",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-a5301b",
+          "formId": "woman-limited-physical-examination-253935",
+          "name": "Limited physical examination for Woman",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-a9a482",
+      "name": "Second ANC Visit",
+      "estimatedTimeFromCaseOpening": 7776000000,
+      "estimatedTimeWindow": 2592000000,
+      "description": "Second visit description...",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-3b2e5e",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-1721e1",
+          "formId": "woman-admin-of-az-or-placebo-9a2f97",
+          "name": "Administration of AZ or placebo for Woman",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-193291",
+          "formId": "woman-medical-history-b5a83c",
+          "name": "Medical history for Woman",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-c9b2fb",
+          "formId": "woman-limited-physical-examination-253935",
+          "name": "Limited physical examination for Woman",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-9be0b2",
+      "name": "Delivery",
+      "description": "Description...",
+      "repeatable": false,
+      "estimatedTimeFromCaseOpening": 15552000000,
+      "estimatedTimeWindow": 2592000000,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-40f98d",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-baeff2",
+          "formId": "woman-admin-of-az-or-placebo-9a2f97",
+          "name": "Administration of AZ or placebo for Woman",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-b42266",
+          "formId": "woman-medical-history-b5a83c",
+          "name": "Medical history for Woman",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-bd241e",
+          "formId": "woman-limited-physical-examination-253935",
+          "name": "Limited physical examination for Woman",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-70ef6b",
+      "name": "DPT-1 EPI visit (~6-8 weeks)",
+      "description": "Description...",
+      "repeatable": false,
+      "required": true,
+      "estimatedTimeFromCaseOpening": 15552000000,
+      "estimatedTimeWindow": 2592000000,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-96e373",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-d496f8",
+          "formId": "woman-medical-history-b5a83c",
+          "name": "Medical history for Woman",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-c4dcfc",
+          "formId": "woman-limited-physical-examination-253935",
+          "name": "Limited physical examination for Woman",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-8346c8",
+      "name": "Unplanned Visit",
+      "description": "Unplanned visit description...",
+      "estimatedTimeFromCaseOpening": 0,
+      "estimatedTimeWindow": 0,
+      "repeatable": true,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-182222",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-64f924",
+          "formId": "woman-unplanned-visit-67c08b",
+          "name": "Unplanned Visit for Woman",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-abcde",
+      "name": "Data Queries",
+      "description": "Data Queries description...",
+      "estimatedTimeFromCaseOpening": 0,
+      "estimatedTimeWindow": 0,
+      "repeatable": false,
+      "required": false,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-68954",
+          "formId": "query-999999",
+          "name": "Query",
+          "required": false,
+          "repeatable": true
+        }
+      ]
+    } 
+  ]
+}

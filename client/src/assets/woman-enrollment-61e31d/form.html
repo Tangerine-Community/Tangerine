@@ -1,0 +1,2165 @@
+
+      <tangy-form id="woman-enrollment-61e31d" title="Screening and Enrollment of Pregnant Women" category="null"
+        
+        on-open="
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        "
+        on-change="
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        "
+        on-submit="
+          
+          
+          
+          
+          
+          
+          
+          
+          debugger
+          if (getValue('participant_id')) {
+	          caseService.setVariable('participant_id', getValue('participant_id'))
+	          caseService.setVariable('enrollment_date', getValue('enrollment_date'))
+	          caseService.setVariable('enrollment_time', getValue('enrollment_time'))
+	          caseService.setVariable('treatment_assignment', getValue('treatment_assignment'))
+	          caseService.setVariable('bin_mother', getValue('bin_mother'))
+	          caseService.setVariable('bin_infant', getValue('bin_infant'))
+	          caseService.setVariable('sub_studies', getValue('sub_studies'))
+            caseService.setVariable('location', inputs.location.value)
+            caseService.case.location = {
+              Region: inputs.location.value.find(levelInfo => levelInfo.level === 'Region').value,
+              Facility: inputs.location.value.find(levelInfo => levelInfo.level === 'Facility').value
+            }
+          }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        "
+      >
+        
+          <tangy-form-item id="form-01-screening-info" 
+            title="Screening Information"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              null
+            
+            "
+          >
+            <template>
+              
+              
+      <tangy-box name="box-1">
+          <p>Complete screening form for all pregnant women (verbal or visual confirmation).</p>
+        </tangy-box>
+    
+      <tangy-input name="screening_id" label="Screening ID:" hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-input name="screening_date" label="Screening Date" hint-text="" type="date"></tangy-input>
+    
+      <tangy-input name="screening_staff" label="Staff member who performed the screening procedures" hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+            
+            </template>
+          </tangy-form-item>
+        
+          <tangy-form-item id="form-01-screening" 
+            title="Screening"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              
+              
+              
+              
+              
+              
+              null
+            
+            
+            
+            
+            
+            
+            
+            "
+          >
+            <template>
+              
+              
+              
+              
+              
+              
+              
+              
+      <tangy-box name="">
+          
+    1. Woman's birth date:
+    </tangy-box>
+    
+      <tangy-select name="woman_birth_date_dd" label="Day:" hint-text="" required="">
+       
+         <option value="99">UNK</option>
+      
+         <option value="01">01</option>
+      
+         <option value="02">02</option>
+      
+         <option value="03">03</option>
+      
+         <option value="04">04</option>
+      
+         <option value="05">05</option>
+      
+         <option value="06">06</option>
+      
+         <option value="07">07</option>
+      
+         <option value="08">08</option>
+      
+         <option value="09">09</option>
+      
+         <option value="10">10</option>
+      
+         <option value="11">11</option>
+      
+         <option value="12">12</option>
+      
+         <option value="13">13</option>
+      
+         <option value="14">14</option>
+      
+         <option value="15">15</option>
+      
+         <option value="16">16</option>
+      
+         <option value="17">17</option>
+      
+         <option value="18">18</option>
+      
+         <option value="19">19</option>
+      
+         <option value="20">20</option>
+      
+         <option value="21">21</option>
+      
+         <option value="22">22</option>
+      
+         <option value="23">23</option>
+      
+         <option value="24">24</option>
+      
+         <option value="25">25</option>
+      
+         <option value="26">26</option>
+      
+         <option value="27">27</option>
+      
+         <option value="28">28</option>
+      
+         <option value="29">29</option>
+      
+         <option value="30">30</option>
+      
+         <option value="31">31</option>
+      
+      </tangy-select>
+    
+      <tangy-select name="woman_birth_date_mm" label="Month:" hint-text="" required="">
+       
+         <option value="99">UNK</option>
+      
+         <option value="01">01</option>
+      
+         <option value="02">02</option>
+      
+         <option value="03">03</option>
+      
+         <option value="04">04</option>
+      
+         <option value="05">05</option>
+      
+         <option value="06">06</option>
+      
+         <option value="07">07</option>
+      
+         <option value="08">08</option>
+      
+         <option value="09">09</option>
+      
+         <option value="10">10</option>
+      
+         <option value="11">11</option>
+      
+         <option value="12">12</option>
+      
+      </tangy-select>
+    
+      <tangy-select name="woman_birth_date_yyyy" label="Year:" hint-text="" required="">
+       
+         <option value="9999">UNK</option>
+      
+         <option value="2019">2019</option>
+      
+         <option value="2020">2020</option>
+      
+         <option value="2021">2021</option>
+      
+         <option value="2022">2022</option>
+      
+         <option value="2023">2023</option>
+      
+      </tangy-select>
+    
+      <tangy-input name="woman_estimated_age" label="Estimated age if year is unknown:" hint-text="" type="text" tangy-if="getValue('woman_birth_date_yyyy') === 'UNK'" allowed-pattern=""></tangy-input>
+    
+      <tangy-select name="woman_martial_status" label="2. What is the woman's marital status?" hint-text="" required="">
+       
+         <option value="1">Married (monogamous)</option>
+      
+         <option value="2">Married (polygamous)</option>
+      
+         <option value="3">Divorced</option>
+      
+         <option value="4">Widowed</option>
+      
+         <option value="5">Single</option>
+      
+      </tangy-select>
+    
+      <tangy-select name="woman_visit_type" label="Type of visit:" hint-text="">
+       
+         <option value="2">Routine ANC-2</option>
+      
+         <option value="3">Routine ANC-3</option>
+      
+         <option value="4">Routine ANC-4</option>
+      
+         <option value="98">Other, specify</option>
+      
+         <option value="99">Unknown</option>
+      
+         <option value="1">Routine ANC-1</option>
+      
+      </tangy-select>
+    
+      <tangy-input name="woman_visit_type_specify" label="Specify: " hint-text="" type="text" tangy-if="getValue('woman_visit_type') === '98'" allowed-pattern="" required=""></tangy-input>
+    
+            
+            
+            
+            
+            
+            
+            
+            </template>
+          </tangy-form-item>
+        
+          <tangy-form-item id="item_01728a8c9a6d4d9baebb72e045f7a1d8" 
+            title="Current Pregnancy Information"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              
+              
+              
+              
+              
+              
+              null
+            
+            
+            
+            
+            
+            
+            
+            "
+          >
+            <template>
+              
+              
+              
+              
+              
+              
+              
+              
+      <tangy-input name="fundal_height_1" label="4a1. Symphysis-fundal height measurement at date of screening (measurement 1)" hint-text="Enter value in cm to 1 decimal place" type="text" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-input name="fundal_height_2" label="4a2. Symphysis-fundal height measurement at date of screening (measurement 2)" hint-text="Enter value in cm to 1 decimal place" type="text" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-radio-buttons name="fundal_height_gt18" label="4b. Is symphysis-fundal height  greater than 18 cm?  " hint-text="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="quickening" label="4c. Has the woman experienced quickening?" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+       <option value="99">Unknown</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="fundal_height_lt37" label="4d. Is symphysis-fundal height  less than 37cm?  " hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+            
+            
+            
+            
+            
+            
+            
+            </template>
+          </tangy-form-item>
+        
+          <tangy-form-item id="item_4f969559aca542b59665c82779625caf" 
+            title="Inclusion Criteria"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              null
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+          >
+            <template>
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+      <tangy-radio-buttons name="incl1" label="6.	Estimated gestational age is MORE THAN 13 weeks (choose yes if 4b or 4c is yes, otherwise choose no)" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="incl2" label="7.  Estimated gestational age is LESS THAN 37 weeks (choose yes if 4d is yes, otherwise choose no)" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="incl3" label="8. Participant understands and can comply with the study procedures, as determined by the study staff" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="incl4" label="9. Participant intends to reside in the study area until her newborn infant is at least 12 months old." hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            </template>
+          </tangy-form-item>
+        
+          <tangy-form-item id="item_d317b1dfb05940088a3df3720fe32df2" 
+            title="Exclusion Criteria"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              null
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+          >
+            <template>
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+      <tangy-radio-buttons name="excl1" label="10.	Does the participant have a known allergy to macrolide antibiotics? (Hives, difficulty breathing, swelling around your face or any other evidence of an allergic reaction after receiving a macrolide antibiotic)" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="excl2" label="11.	Does the participant have a condition that, in the opinion of the investigator, might compromise her well-being, or affect the ability of the participant to comply with study procedures?" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="excl3" label="12.	Is the participant currently being treated with azithromycin for a medical condition? (check yes if there is documentation, if participant reports taking this drug referring to it by name, or participant shows medication bottle)" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            </template>
+          </tangy-form-item>
+        
+          <tangy-form-item id="item_7aa5cb39544a41408a66bb1cf8f0ce20" 
+            title="Study Eligibility"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              null
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+          >
+            <template>
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+      <tangy-radio-buttons name="eligible" label="6.	Is the participant eligible for SANTE? " hint-text="Are responses to all questions 3-6 YES and responses to all questions 7-9 NO?" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-input name="staff_code" label="Staff code of person obtaining consent " hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-input name="staff_name" label="Name of person obtaining consent " hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-input name="eligibility_date" label="Eligibility date" hint-text="" type="date" required=""></tangy-input>
+    
+      <tangy-input name="eligibility_time" label="Eligibility time:" hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            </template>
+          </tangy-form-item>
+        
+          <tangy-form-item id="item_b63626727e544d7bb5ba6433f1ebcbb1" 
+            title="Participant Consent"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              null
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+          >
+            <template>
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+      <tangy-radio-buttons name="age18yn" label="Is the participant 18 years of age or older?" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="consent" label="7b. If yes, has informed consent been obtained from the participant? (Must be yes to continue to enrollment. If yes, skip to question 16.  If no, skip to question 15)" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="agege16" label=" If no, is participant married and 16 years of age or older? " hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="consent16" label=" If yes, has informed consent been obtained from the participant? (Must be yes to continue to enrollment. If yes, skip to question 9.  If no, skip to question 8)" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="consent_parent" label="If no, has informed consent been obtained from the participant’s parent or guardian? (Must be yes to continue to enrollment. If yes, skip to question 16.  If no, skip to question 15)" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-input name="consent_staff_code" label="Staff code of person obtaining consent  " hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-input name="consent_staff_name" label="Name of person obtaining consent  " hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+      <tangy-input name="consent_date" label="Consent date:" hint-text="" type="date" required=""></tangy-input>
+    
+      <tangy-input name="consent_time" label="Consent time:" type="time" hint-text="" required=""></tangy-input>
+    
+      <tangy-consent name="Test" prompt="Yesy">
+        undefined
+      </tangy-consent>
+    
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            </template>
+          </tangy-form-item>
+        
+          <tangy-form-item id="item_c43d86b5743c48ab8648b23d56806bbd" 
+            title="Eligible But Not Enrolled"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              
+              
+              
+              
+              
+              null
+            
+            
+            
+            
+            
+            
+            "
+          >
+            <template>
+              
+              
+              
+              
+              
+              
+              
+      <tangy-box name="not_enrolled_stem">
+          
+        8.	If the participant was eligible, but participant or participant’s guardian did not provide consent, indicate the reasons why. </tangy-box>
+    
+      <tangy-radio-buttons name="time_committment" label="8a. Time commitment:" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="not_like_research" label="8b. Does not like research:" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="parent_not_present" label="8c. No parent/guardian present:" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="risks_to_woman" label="8d. Concern of potential risks to woman:" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="risks_to_fetus" label="8e. Concern of potential risks to fetus:" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="risks_to_Infant" label="8f. Concern of potential risks to infant:" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-radio-buttons name="not_enrolled_other" label="8g. Other:" hint-text="" required="">
+       
+       <option value="1">Yes</option>
+      
+       <option value="2">No</option>
+      
+      </tangy-radio-buttons>
+    
+      <tangy-input name="not_enrolled_specify" label="If Other, specify:" hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
+    
+            
+            
+            
+            
+            
+            
+            </template>
+          </tangy-form-item>
+        
+          <tangy-form-item id="item_fa07ccf5f3874369a0774a2cc345eaa7" 
+            title="Eligible and Enrolled"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+    if (getValue('barcode_data')) {
+    	const barcodeData = JSON.parse(getValue('barcode_data'))
+    	inputs.treatment_assignment.value = barcodeData.treatment_assignment
+    	inputs.participant_id.value = barcodeData.participant_id
+    	inputs.bin_mother.value = barcodeData['bin-mother']
+    	inputs.bin_infant.value = barcodeData['bin-infant']
+    	inputs.sub_studies.value = inputs.sub_studies.value.map(option => {
+		  if (
+		    (barcodeData['sub-studies']['S1'] === true && option.name === 'S1') || 
+		    (barcodeData['sub-studies']['S2'] === true && option.name === 'S2') || 
+		    (barcodeData['sub-studies']['S3'] === true && option.name === 'S3') || 
+		    (barcodeData['sub-studies']['S4'] === true && option.name === 'S4') 
+		  ) {
+		    return {...option, value: 'on'}
+		  } else if (
+		    (barcodeData['sub-studies']['S1'] === false && option.name === 'S1') || 
+		    (barcodeData['sub-studies']['S2'] === false && option.name === 'S2') || 
+		    (barcodeData['sub-studies']['S3'] === false && option.name === 'S3') || 
+		    (barcodeData['sub-studies']['S4'] === false && option.name === 'S4') 
+		  ) {
+		    return {...option, value: ''}
+		  }
+		})
+
+    }          
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              
+              
+              
+              null
+            
+            
+            
+            
+            "
+          >
+            <template>
+              
+              
+              
+              
+              
+      <tangy-qr name="barcode_data">
+        undefined
+      </tangy-qr>
+    
+      <tangy-input name="participant_id" label="Participant ID" hint-text="" type="text" allowed-pattern="" disabled=""></tangy-input>
+    
+      <tangy-select name="treatment_assignment" label="Treatment Assignment" hint-text="" disabled="">
+       
+         <option value="Placebo">Placebo</option>
+      
+         <option value="Experiment">Experiment</option>
+      
+      </tangy-select>
+    
+      <tangy-input name="bin_mother" label="bin-mother" hint-text="" type="text" allowed-pattern="" disabled=""></tangy-input>
+    
+      <tangy-input name="bin_infant" label="bin-infant" hint-text="" type="text" allowed-pattern="" disabled=""></tangy-input>
+    
+      <tangy-checkboxes name="sub_studies" label="Sub Studies" hint-text="">
+       
+        <option value="S1">S1</option>
+      
+        <option value="S2">S2</option>
+      
+        <option value="S3">S3</option>
+      
+        <option value="S4">S4</option>
+      
+      </tangy-checkboxes>
+    
+      <tangy-input name="enrollment_date" label="Enrollment date:" hint-text="" type="date" required=""></tangy-input>
+    
+      <tangy-input name="enrollment_time" label="Enrollment time:" type="time" hint-text="" required=""></tangy-input>
+
+      <tangy-box name="facility_assignment_message">
+        Facility Assignment:
+      </tangy-box>
+
+      <tangy-location name="location" hint-text="" show-levels="Region,Facility">
+      </tangy-location>    
+            
+            
+            </template>
+          </tangy-form-item>
+        
+          <tangy-form-item id="item_d7faaca7b4094ae488aea947042c19a1" 
+            title="Conclusion"
+            
+            on-open="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            on-change="
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            "
+            category="
+              
+              
+              
+              
+              
+              
+              
+              null
+            
+            
+            
+            
+            
+            
+            
+            "
+          >
+            <template>
+              
+              
+              
+              
+              
+              
+              
+              
+      <tangy-box name="final_message">
+          
+        All done. Click submit then proceed to the next event.</tangy-box>
+    
+            
+            
+            
+            
+            
+            
+            
+            </template>
+          </tangy-form-item>
+        
+      </tangy-form>
+    

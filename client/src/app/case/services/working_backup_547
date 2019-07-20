@@ -1,0 +1,52 @@
+import { Injectable } from '@angular/core';
+import { Query } from '../classes/query.class';
+import { UserService } from 'src/app/shared/_services/user.service';
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form-service';
+import { OnInit } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class QueriesService implements OnInit {
+   openQueriesCount: number
+
+  constructor(
+    private userService: UserService
+  ) {}
+
+  async ngOnInit() {
+    
+  }
+
+  async getQueries (): Promise<Array<Query>> {
+    const userDbName = this.userService.getUserDbName();
+    const tangyFormService = new TangyFormService({ databaseName: userDbName });
+    const queryForms = await tangyFormService.getResponsesByFormId('query-999999');
+    const queries = Array<Query>();
+    for (const queryForm of queryForms) {
+      const query = Object.create(Query);
+      queryForm.items[0].inputs.map(q => (query[q.name] = q.value));
+      queries.push(query);
+    }
+    return queries;
+  }
+
+  async getOpenQueriesCount (): Promise<number> {
+    let openQueriesCount = 0;
+    const userDbName = this.userService.getUserDbName();
+    const tangyFormService = new TangyFormService({ databaseName: userDbName });
+    const queryForms = await tangyFormService.getResponsesByFormId('query-999999');
+    const queries = Array<Query>();
+    for (const queryForm of queryForms) {
+      const query = Object.create(Query);
+      queryForm.items[0].inputs.map(q => (query[q.name] = q.value));
+      queries.push(query);
+      if (query.queryStatus === '') {
+        openQueriesCount++;
+      }
+    }
+    return openQueriesCount;
+  }
+
+}
+

@@ -1,0 +1,185 @@
+{
+  "id": "infant-case",
+  "formId": "infant-manifest-115ebb",
+  "name": "Infant Case",
+  "description": "Description...",
+  "startFormOnOpen": {
+    "eventId": "event-definition-321a5a",
+    "eventFormId": "event-form-definition-c7d718"
+  },
+  "eventDefinitions": [
+    {
+      "id": "event-definition-321a5a",
+      "name": "Delivery and Enrollment of Infant",
+      "description": "Description...",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-46083d",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-c7d718",
+          "formId": "infant-enrollment-4483b1",
+          "name": "Enrollment of Infant",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-59a3a8",
+          "formId": "infant-limited-physical-examination-c7b8b8",
+          "name": "Limited physical examination for Infant",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-5ffcb6",
+      "name": "DPT-1 EPI visit (~6-8 weeks) for Infant",
+      "description": "Description...",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-c58ef3",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-f448a4",
+          "formId": "infant-admin-of-az-or-placebo-bfcecf",
+          "name": "Administration of AZ or placebo for Infant",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-e15c39",
+          "formId": "infant-medical-history-8f3a53",
+          "name": "Medical history for Infant",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-6f61cd",
+          "formId": "infant-limited-physical-examination-c7b8b8",
+          "name": "Limited physical examination for Infant",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-df8b9d",
+      "name": "DPT-3 EPI visit (~14-16 weeks)",
+      "description": "Description...",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-c0b029",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-e22ffa",
+          "formId": "infant-admin-of-az-or-placebo-bfcecf",
+          "name": "Administration of AZ or placebo for Infant",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-767560",
+          "formId": "infant-medical-history-8f3a53",
+          "name": "Medical history for Infant",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-ba5a08",
+          "formId": "infant-limited-physical-examination-c7b8b8",
+          "name": "Limited physical examination for Infant",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-d2e41c",
+      "name": "6 months",
+      "description": "Description...",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-081ac7",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-8e8787",
+          "formId": "infant-medical-history-8f3a53",
+          "name": "Medical history for Infant",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-a1e098",
+      "name": "12 months",
+      "description": "Description...",
+      "repeatable": false,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-521746",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-bd2677",
+          "formId": "infant-medical-history-8f3a53",
+          "name": "Medical history for Infant",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    },
+    {
+      "id": "event-definition-457b1a",
+      "name": "Unplanned Visit for Child",
+      "description": "Unplanned visit description...",
+      "repeatable": true,
+      "required": true,
+      "eventFormDefinitions": [
+        {
+          "id": "event-form-definition-b150ce",
+          "formId": "visit-information-920d7d",
+          "name": "Visit Information",
+          "required": true,
+          "repeatable": false
+        },
+        {
+          "id": "event-form-definition-d8409b",
+          "formId": "infant-unplanned-visit-8c23ba",
+          "name": "Unplanned Visit for Infant",
+          "required": true,
+          "repeatable": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+<tangy-form id="query-999999" title="Query">
+	<tangy-form-item id="query-form" title="Complete the form below to enter or respond to data query:">
+		<template>
+
+			<tangy-input type="text" label = "Associated Case Type:" name="associatedCaseType"></tangy-input>
+			<tangy-input type="text" label = "Associated Case Id:" name="associatedCaseId"></tangy-input>
+			<tangy-input type="text" label = "Associated Event Id:" name="associatedEventId"></tangy-input>
+			<tangy-input type="text" label = "Associated Form Id:" name="associatedFormId"></tangy-input>
+			<tangy-input type="text" label="Associated Case:" name="associatedCaseName"></tangy-input>
+			<tangy-input type="text" label="Associated Event:" name="associatedEventName"></tangy-input>
+			<tangy-input type="text" label="Associated Form:" name="associatedFormName"></tangy-input>
+			<tangy-input type="text" label="Associated Form Link:" name="associatedFormLink"></tangy-input>
+			<tangy-input type="text" label="Associated Variable:" name="associatedVariable"></tangy-input>
+
+			<tangy-input type="text" label="Query Id:" name="queryId"></tangy-input>			
+			<tangy-input type="date" label="Query Date:" name="queryDate"></tangy-input>
+			<tangy-input type="text" label="Query Text:" name="queryText"></tangy-input>
+			<tangy-input type="text" label="Query Response:" name="queryResponse"></tangy-input>
+			<tangy-input type="date" label="Response Date:" name="queryResponseDate"></tangy-input>
+
+			<tangy-select name="queryStatus" label="Query Status:" >
+				<option value="None">Select query status</option>	 	
+				<option value="Open">Open</option>	 
+				<option value="Answered">Answered</option>	 
+				<option value="Resolved">Resolved</option>
+				<option value="Closed">Closed</option>							
+			</tangy-select>
+
+			<tangy-input type="text" label="Query Link:" name="queryLink"></tangy-input>
+	
+		</template>
+	</tangy-form-item>
+</tangy-form>
