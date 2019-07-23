@@ -41,6 +41,8 @@ export class SyncRecordsComponent implements OnInit {
     if (this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin') !== -1) {
       this.contentVersion = this.window.location.href.split('/')[this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin')+1]
     }
+    // setInterval(this.getTangyP2PPermissions, 3000);
+    this.getTangyP2PPermissions();
   }
 
   async getUploadProgress() {
@@ -93,4 +95,44 @@ export class SyncRecordsComponent implements OnInit {
     });
   }
 
+  async init() {
+    // window['TangyP2PPlugin'] = {};
+    // let init = function (arg0, success, error) {
+    //   // exec(success, error, 'TangyP2PPlugin', 'init', [arg0]);
+    //   eval(success('boop'))
+    // };
+    // window['TangyP2PPlugin'].init = init;
+    window['TangyP2PPlugin'].init(null, function(message) {
+      console.log("Message: " + message)
+      document.querySelector("#p2p-results").innerHTML += message + '<br/>'
+    }, function(err) {
+      console.log("TangyP2P error:: " + err)
+      document.querySelector("#p2p-results").innerHTML += err + '<br/>'
+    });
+  }
+
+  async startRegistration() {
+    window['TangyP2PPlugin'].startRegistration(null, function(message) {
+      console.log("Message: " + message)
+      document.querySelector("#p2p-results").innerHTML += message + '<br/>'
+    });
+  }
+
+  async discoverPeers() {
+    window['TangyP2PPlugin'].discoverPeers(null, function(message) {
+      console.log("Message: " + message)
+      document.querySelector("#p2p-results").innerHTML += message + '<br/>'
+    });
+  }
+
+  getTangyP2PPermissions() {
+    window['TangyP2PPlugin'].getPermission(null, function(message) {
+      console.log('Message from getTangyP2PPermissions: ' + message)
+    }, function(err) {
+      console.log('TangyP2P error:: ' + err)
+    });
+  }
+
 }
+
+
