@@ -9,6 +9,7 @@ import { SyncRecodsRoutingModule } from './sync-records-routing.module';
 import { SyncRecordsComponent } from './sync-records/sync-records.component';
 import { SharedModule } from '../../shared/shared.module';
 import { TwoWaySyncModule } from 'src/app/two-way-sync/two-way-sync.module';
+import { PeersComponent } from './peers/peers.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,7 @@ import { TwoWaySyncModule } from 'src/app/two-way-sync/two-way-sync.module';
     MatExpansionModule,
     SharedModule
   ],
-  declarations: [SyncRecordsComponent],
+  declarations: [SyncRecordsComponent, PeersComponent],
   providers: [SyncingService, HttpClientModule],
 })
 export class SyncRecordsModule { }
