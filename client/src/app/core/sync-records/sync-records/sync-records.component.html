@@ -14,13 +14,10 @@
           <p>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</p>
           <p>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</p>
         </div>
-        <div>
-          <h2>P2P Sync</h2>
-          <button color="primary" mat-raised-button (click)="init()">{{'Init'|translate}}</button>
-          <button color="primary" mat-raised-button (click)="startRegistration()">{{'Broadcast'|translate}}</button>
-          <button color="primary" mat-raised-button (click)="discoverPeers()">{{'Discover'|translate}}</button>
+        <div id="p2p-peers"><h2>Peers</h2>
+          <app-peers></app-peers>
         </div>
-        <div id="p2p-results" style="overflow:auto;height:200px;"></div>
+        <div id="p2p-results" style="overflow:auto;height:200px;"><h2>P2P Log</h2></div>
 
       </mat-card-content>
       <mat-card-actions>

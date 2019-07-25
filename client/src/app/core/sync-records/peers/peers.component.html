@@ -1,0 +1,11 @@
+<div>
+  <h2>P2P Sync</h2>
+  <button color="primary" mat-raised-button (click)="init()">{{'Init'|translate}}</button>
+  <button color="primary" mat-raised-button (click)="startRegistration()">{{'Broadcast'|translate}}</button>
+  <button color="primary" mat-raised-button (click)="discoverPeers()">{{'Discover'|translate}}</button>
+</div>
+<ul class="peers">
+  <li *ngFor="let peer of peers" (click)="onSelect(peer)">
+    <span class="peerItem">{{peer.safePeerAddress}}</span> {{peer.deviceName}} <span class="peerResults" id="peer_{{peer.safePeerAddress}}"></span>
+  </li>
+</ul>
