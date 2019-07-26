@@ -21,8 +21,8 @@ export class PeersService {
   }
 
   initPeers(): Observable<Peer[]> {
-    // this.peers = PEERS;
     this.peers = [];
+    // this.peers = PEERS;
     return of(this.peers);
   }
 
@@ -32,10 +32,9 @@ export class PeersService {
 
   discoverPeers(): Observable<Peer[]> {
     // testing
-    // const NEWPEERS: Peer[] =  [{deviceName: 'gamma', safePeerAddress: 'gammaSafe', peerAddress: 'gamma.Safe'}];
+    // const NEWPEERS: Peer[] =  [{deviceName: 'gamma', safePeerAddress: 'gammaSafe', deviceAddress: 'gamma.Safe'}, {deviceName: 'hooha', safePeerAddress: 'hoohaSafe', deviceAddress: 'hooha.Safe'}];
     // const peers = JSON.stringify(NEWPEERS);
     // this.addToPeers(peers);
-    // return of(this.peers);
     if (this.window.isCordovaApp) {
       window['TangyP2PPlugin'].discoverPeers(null, (message) => {
         console.log('Message: ' + message);
@@ -50,27 +49,20 @@ export class PeersService {
   }
 
   private addToPeers(peers: string) {
-    const peerDiv = document.querySelector('#p2p-peers')
     try {
       const peersArray = JSON.parse(peers)
       for (let peer of peersArray) {
         console.log(JSON.stringify(peer));
-        // if (!this.peerList.includes(peer['deviceAddress'])) {
-        //   this.peerList.push(peer['deviceAddress'])
-        const peerAddress = peer['deviceAddress'];
-        const safePeerAddress = peerAddress.replace(/:\s*/g, '_')
-        peer.safePeerAddress = safePeerAddress;
-        this.peers.push(peer);
-        //
-        // peerDiv.innerHTML += '<div class="peerItem"><button color="primary" mat-raised-button (click)="transferTo(\''
-        //   + safePeerAddress + '\')">' + peer['deviceName'] + '</button><div class="peerResults" id="peer_'
-        //   + safePeerAddress + '"></div></div>';
-        // }
+        if (this.peers.length === 0 || !this.peers.some(currentPeer => (currentPeer.deviceAddress === peer.deviceAddress))) {
+          const deviceAddress = peer['deviceAddress'];
+          const safePeerAddress = deviceAddress.replace(/:\s*/g, '_')
+          peer.safePeerAddress = safePeerAddress;
+          this.peers.push(peer);
+        }
       }
     } catch (e) {
     }
   }
-
 }
 
 
