@@ -3,6 +3,9 @@ import {Peer} from './peer';
 import {PEERS} from './mock-peers';
 import {PeersService} from './peers.service';
 import {WindowRef} from '../../../shared/_services/window-ref.service';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+
 
 @Component({
   selector: 'app-peers',
@@ -25,9 +28,13 @@ export class PeersComponent implements OnInit {
 
   ngOnInit() {
     // setInterval(this.getTangyP2PPermissions, 3000);
-    this.getTangyP2PPermissions();
-    this.peersService.initPeers()
-      .subscribe(peers => this.peers = peers);
+    this.getTangyP2PPermissions().then(() => {
+      this.init().then(() => {
+        this.peersService.initPeers()
+          .subscribe(peers => this.peers = peers);
+        console.log('ready');
+      });
+    });
   }
 
   async transferTo(deviceAddress) {
@@ -35,8 +42,8 @@ export class PeersComponent implements OnInit {
     if (this.window.isCordovaApp) {
       window['TangyP2PPlugin'].transferTo(deviceAddress, (message) => {
         console.log('Message: ' + message);
-        document.querySelector('#p2p-results').innerHTML += message + '<br/>';
-        document.querySelector('#peer_' + deviceAddress).innerHTML += message + '<br/>';
+        document.querySelector('#p2p-results').innerHTML = message + '<br/>';
+        // document.querySelector('#peer_' + deviceAddress).innerHTML += message + '<br/>';
       });
     }
   }
@@ -92,7 +99,7 @@ export class PeersComponent implements OnInit {
 
 
 
-  getTangyP2PPermissions() {
+  async getTangyP2PPermissions() {
     if (this.window.isCordovaApp) {
       window['TangyP2PPlugin'].getPermission(null, function(message) {
         console.log('Message from getTangyP2PPermissions: ' + message);

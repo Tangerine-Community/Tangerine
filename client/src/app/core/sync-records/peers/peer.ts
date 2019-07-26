@@ -1,5 +1,5 @@
 export class Peer {
-  peerAddress:string;
+  deviceAddress: string;
   safePeerAddress: string;
-  deviceName: string
+  deviceName: string;
 }
