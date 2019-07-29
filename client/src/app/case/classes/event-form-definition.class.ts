@@ -2,6 +2,7 @@ export class EventFormDefinition {
   id:string
   formId:string
   name:string
+  templateListItem:string
   repeatable: boolean
   required:boolean
   constructor(data) {

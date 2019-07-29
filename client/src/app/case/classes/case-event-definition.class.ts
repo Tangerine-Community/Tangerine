@@ -7,6 +7,7 @@ class CaseEventDefinition {
   description:string
   repeatable:boolean
   required:boolean
+  templateListItem:string
   estimatedTimeFromCaseOpening:number
   estimatedTimeWindow:number
   eventFormDefinitions:Array<EventFormDefinition> = []
