@@ -61,7 +61,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     })
   }
   generateFormId() {
-    return 'form-' + Math.random()
+    return 'form-' + this.UUID()
   }
 
   generateUuid() {
