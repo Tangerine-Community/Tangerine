@@ -40,6 +40,7 @@
     "translation-web-component": "0.0.3",
     "tslib": "^1.9.0",
     "underscore": "^1.9.1",
+    "uuid": "^3.3.2",
     "workbox-cli": "^2.1.2",
     "xlsx": "^0.14.1",
     "zone.js": "~0.8.26"
@@ -66,4 +67,3 @@
     "typescript": "~3.1.6"
   }
 }
-
