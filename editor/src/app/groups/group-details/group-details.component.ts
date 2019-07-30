@@ -5,6 +5,7 @@ import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { MatTabChangeEvent } from '@angular/material';
+import uuidv4 from 'uuid/v4'
 
 @Component({
   selector: 'app-group-details',
@@ -61,11 +62,11 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     })
   }
   generateFormId() {
-    return 'form-' + this.UUID()
+    return 'form-' + uuidv4()
   }
 
   generateUuid() {
-    return Math.random()
+    return uuidv4()
 
   }
 
@@ -73,8 +74,8 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   async addForm() {
     let formId = this.generateFormId()
     let formTitle = `New Form`
-    let itemOneId = Math.random()
-    let itemTwoId = Math.random()
+    let itemOneId = uuidv4()
+    let itemTwoId = uuidv4()
 
     let formsJson = await this.http.get<Array<any>>(`/editor/${this.groupName}/content/forms.json`).toPromise()
     formsJson.push({
@@ -96,7 +97,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
         filePath: `./${formId}/form.html`,
         fileContents: `
         <tangy-form id="${formId}" title="${formTitle}">
-          <tangy-form-item id="item_${this.groupsService.generateUUID()}" title="Item 1">
+          <tangy-form-item id="item_${uuidv4()}" title="Item 1">
             <template>
               <tangy-input name="input1" label="First question..."></tangy-input>
             </template>
