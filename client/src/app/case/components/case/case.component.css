@@ -4,6 +4,10 @@ app-case-breadcrumb {
     display: block;
 }
 
+paper-icon-item.event {
+    border-top-width: 0;
+}
+
 .subject-header {
     background: var(--primary-color);
     color: var(--primary-text-color);
@@ -52,7 +56,10 @@ app-case-breadcrumb {
 
 .event.new-event {
     border-style: dashed;
+    border-top-width: 1px;
     margin-top: 1em;
+    padding-top: 14px;
+    padding-bottom: 14px;
 }
 
 .event.complete {
@@ -120,23 +127,6 @@ app-case-breadcrumb {
     opacity: 0;
 }
 
-/*
-.new-event form {
-    display: flex;
-    flex-direction: row;
-}
-.new-event .one-third {
-    width: 33%;
-    padding: 0 15px;
-    display: inline-block;
-}
-.new-event .one-third:first-child {
-    padding-left: 0;
-}
-.new-event .one-third:last-child {
-    padding-right: 0;
-}
-*/
 .new-event form {
     display: flex;
     margin-right: -15px;
@@ -149,6 +139,26 @@ app-case-breadcrumb {
     padding: 0 15px;
 }
 
+paper-icon-item.new-event {
+    --paper-item-body-two-line-min-height: 44px;
+}
+
 .text-right {
     text-align: right;
+    margin-top: -15px;
+}
+
+tangy-select {
+    margin: 0;
+    --tangy-select-container-line-height: 1rem;
+    --tangy-select-line-height: 1rem;
+    --tangy-select-font-size: 14px;
+    --tangy-select-padding-left: 0;
+    --tangy-select-height: 26px;
+    --tangy-select-container-height: 26px;
+    --tangy-select-background-color: transparent;
+}
+tangy-input {
+    margin: 0;
+    margin-top: -35px;
 }
