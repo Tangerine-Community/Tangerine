@@ -39,14 +39,14 @@
       </div>
       <div secondary>
         <form (ngSubmit)="onSubmit()" #form="ngForm">
-          <div class="dropdown-container">
+          <div>
             <tangy-select name="selected-event-type" [(ngModel)]="selectedNewEventType">
               <option value="" disabled selected>Choose type...</option>
               <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">{{eventInfo.caseEventDefinition.name}}</option>
             </tangy-select>
           </div>
           <div>
-            <div class="dropdown-container">
+            <div>
               <tangy-input type="date" name="event-date" inner-label=" " [(ngModel)]="inputSelectedDate"></tangy-input>
             </div>
           </div>
