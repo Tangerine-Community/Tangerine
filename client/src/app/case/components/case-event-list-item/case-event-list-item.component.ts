@@ -16,6 +16,7 @@ export class CaseEventListItemComponent implements OnInit {
   @Input() caseEventDefinition:CaseEventDefinition
   @Input() caseEvent:CaseEvent
   @Input() case:Case
+  defaultTemplateListItemIcon = `\${caseEvent.complete ? 'event_available' : 'event_note'}`
   defaultTemplateListItemPrimary = `
       <span>\${caseEventDefinition.name}</span> (\${caseEvent.id.substr(0,6)})
   `
@@ -23,6 +24,7 @@ export class CaseEventListItemComponent implements OnInit {
     \${TRANSLATE('Scheduled')}: \${formatDate(caseEvent.dateStart,'dddd, MMMM Do YYYY, h:mm:ss a')},
     \${TRANSLATE('Status')}: \${!caseEvent.complete ? TRANSLATE('Incomplete') : TRANSLATE('Complete')}
   `
+  renderedTemplateListItemIcon = ''
   renderedTemplateListItemPrimary = ''
   renderedTemplateListItemSecondary = ''
 
@@ -43,6 +45,7 @@ export class CaseEventListItemComponent implements OnInit {
     const caseInstance = this.case
     const formatDate = (unixTimeInMilliseconds, format) => moment(new Date(unixTimeInMilliseconds)).format(format)
     const TRANSLATE = _TRANSLATE
+    eval(`this.renderedTemplateListItemIcon = this.caseEventDefinition.templateListItemIcon ? \`${this.caseEventDefinition.templateListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``)
     eval(`this.renderedTemplateListItemPrimary = this.caseEventDefinition.templateListItemPrimary ? \`${this.caseEventDefinition.templateListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``)
     eval(`this.renderedTemplateListItemSecondary = this.caseEventDefinition.templateListItemSecondary ? \`${this.caseEventDefinition.templateListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
   }

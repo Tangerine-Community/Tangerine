@@ -2,7 +2,7 @@
   class="event {{caseEventDefinition.required ? 'required' : ''}}" 
   routerLink="/case/event/{{case._id}}/{{caseEvent.id}}"
 >
-  <iron-icon icon="{{caseEvent.complete ? 'notification:event-available' : 'event'}}" slot="item-icon"></iron-icon> 
+  <mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon> 
   <paper-item-body two-line>
     <div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
     <div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
