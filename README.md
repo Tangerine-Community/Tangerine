@@ -24,7 +24,15 @@ Forms in Tangerine are based on the tangy-form suite of Web Components (https://
 
 There is a pluggable reporting module framework built in currently with options to send outputs to CSV, Elastic Search, and Dat Archives. Dashboards are typically built using the "ELK" stack which is short for a combination of technologies known as Elastic Search, Logstash, and Kibana. 
 
-## Installation
+## Supported Devices and Web Browsers
+
+### Editor
+Currently Tangerine Editor is tested using Google Chrome web browser. Other Web Browsers such as Firefox and Edge may work, but may also give you trouble. 
+
+### Tablet
+Currently the most commonly deployed tablet with Tangerine is the [Lenovo Tab 4 8](https://www.lenovo.com/us/en/tablets/android-tablets/tab-4-series/Lenovo-TB-8504/p/ZA2B0009US). Technically any Android tablet with an updated version of Chrome should work but due to the varied nature of Android distributions out there, we cannot guarantee Tangerine will work on all Android tablets.
+
+## Online Server Installation
 We recommend using AWS for hosting have documented detailed [instructions for AWS](docs/install-on-aws.md). Below are general instructions for installing on any machine.
 
 SSH into your machine from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
