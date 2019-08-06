@@ -95,7 +95,7 @@ export class CaseEventScheduleListComponent implements OnInit {
     let markup = ``
     let daysOfWeekSeen = []
     this.eventsInfo = events.map(event => {
-      const eventInfo = new EventInfo()
+      const eventInfo = <EventInfo>{}
       const date = new Date(event.dateStart)
       if (daysOfWeekSeen.indexOf(date.getDate()) == -1) {
         daysOfWeekSeen.push(date.getDate())
