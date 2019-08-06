@@ -11,23 +11,12 @@
 
 <div *ngIf="ready" class="wrapper">
   <div *ngFor="let eventInfo of caseEventsInfo">
-    <paper-icon-item 
-      class="event {{eventInfo.caseEventDefinition.required ? 'required' : ''}}" 
+    <app-case-event-list-item
       *ngFor="let caseEvent of eventInfo.caseEvents"
-      routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}"
-    >
-      <iron-icon icon="{{caseEvent.complete ? 'notification:event-available' : 'event'}}" slot="item-icon"></iron-icon> 
-      <paper-item-body two-line>
-        <div><span [innerHTML]="eventInfo.caseEventDefinition.name|unsanitizeHtml"></span> ({{caseEvent.id.substr(0,6)}})</div>
-        <div secondary>
-          {{'Scheduled'|translate}}: 
-            {{caseEvent.dateStart | date:'medium'}},
-          {{'Status'|translate}}: 
-            <span *ngIf="!caseEvent.complete">{{'Incomplete'|translate}}</span>
-            <span *ngIf="caseEvent.complete">{{'Complete'|translate}}</span> 
-        </div>
-      </paper-item-body>
-    </paper-icon-item>
+      [caseEvent]="caseEvent"
+      [caseEventDefinition]="eventInfo.caseEventDefinition" 
+      [case]="caseService.case">
+    </app-case-event-list-item>
   </div>
   <paper-icon-item 
     class="event new-event" 
