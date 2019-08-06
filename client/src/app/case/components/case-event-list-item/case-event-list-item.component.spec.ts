@@ -19,7 +19,9 @@ describe('CaseEventListItemComponent', () => {
     fixture.detectChanges();
   });
 
+  /* This test is going to be too much boilerplate to be worth maintaining.
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  */
 });
