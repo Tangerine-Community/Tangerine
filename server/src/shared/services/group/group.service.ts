@@ -50,6 +50,17 @@ export class GroupService {
       .rows
       .map(row => row.doc)
       .filter(doc => !doc._id.includes('_design')))
+      .sort((a, b) => {
+        /**
+         * Convert dates to valid JSON to enable us do ASCI comparison with pouchDB
+         * Working with Date Objects fails in some instances
+         * https://github.com/pouchdb/pouchdb/issues/2351
+         */
+        a.created = a.created || new Date('1970').toJSON()
+        b.created = b.created || new Date('1970').toJSON()
+        const comparison = a.created > b.created ? 1 : -1
+        return comparison
+      })
   }
 
   // In a Module's constructor, they have the opportunity to use this method to queue views for installation
@@ -117,7 +128,8 @@ export class GroupService {
   async create(label):Promise<Group> {
     // Instantiate Group Doc, DB, and assets folder.
     const groupId = `group-${UUID()}`
-    const group = <Group>{_id: groupId, label}
+    const created = new Date().toJSON()
+    const group = <Group>{_id: groupId, label, created}
     this.groupsDb.put(group)
     const groupDb = new DB(groupId)
     let groupName = label 
