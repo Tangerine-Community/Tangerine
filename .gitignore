@@ -39,3 +39,7 @@ editor/src/index-dev.html
 .DS_Store
 client/app/src/assets-local/
 client/src/assets-local/
+client/makeApk.sh
+.gradle
+
+scripts/apk-build.sh

@@ -44,6 +44,7 @@
     "plotly.js-dist": "^1.39.3",
     "pouchdb": "^6.4.3",
     "pouchdb-find": "^6.4.3",
+    "pouchdb-replication-stream": "^1.2.9",
     "pouchdb-upsert": "^2.2.0",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.2.1",
