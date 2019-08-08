@@ -1,18 +1,24 @@
 <div class="p2p-sync-header">
   <h2>P2P Sync</h2>
+  <h3 *ngIf ipAddress>{{ipAddress}}:{{port}}</h3>
   <mat-button-toggle-group name="p2p-toggles" aria-label="P2P actions">
-  <mat-button-toggle color="primary" mat-raised-button (click)="init()">{{'Init'|translate}}</mat-button-toggle>
-  <mat-button-toggle color="primary" mat-raised-button (click)="startRegistration()">{{'Broadcast'|translate}}</mat-button-toggle>
-  <mat-button-toggle color="primary" mat-raised-button (click)="discoverPeers()">{{'Discover'|translate}}</mat-button-toggle>
+  <mat-button-toggle color="primary" mat-raised-button (click)="startAdvertising()">{{'Discover Peers'|translate}}</mat-button-toggle>
+  <mat-button-toggle color="primary" mat-raised-button (click)="startDiscovery()">{{'Make Connection'|translate}}</mat-button-toggle>
+  <mat-button-toggle color="primary" mat-raised-button (click)="transferData()">{{'Send Data'|translate}}</mat-button-toggle>
+<!--      <mat-button-toggle color="primary" mat-raised-button (click)="connectP2P()">{{'Connect to peer'|translate}}</mat-button-toggle>-->
   </mat-button-toggle-group>
 </div>
 
-<h3 *ngIf="peers.length > 0">Nearby Devices:</h3>
-<mat-chip-list class="mat-chip-list-stacked" aria-label="Peer selection">
-  <mat-chip *ngFor="let peer of peers" (click)="onSelect(peer)">
-    {{peer.deviceName}}
-  </mat-chip>
-</mat-chip-list>
+<!--<h3 *ngIf="device">This device</h3>-->
+<!--<mat-chip *ngIf="device">-->
+<!--  {{device.deviceName}} : {{device.deviceStatus}}-->
+<!--</mat-chip>-->
+<!--<h3 *ngIf="peers.length > 0">Nearby Devices:</h3>-->
+<!--<mat-chip-list class="mat-chip-list-stacked" aria-label="Peer selection">-->
+<!--  <mat-chip *ngFor="let peer of peers" (click)="onSelect(peer)">-->
+<!--    {{peer.deviceName}} : {{peer.deviceStatus}}-->
+<!--  </mat-chip>-->
+<!--</mat-chip-list>-->
 <h3>P2P Log</h3>
 <div id="p2p-results">
 </div>
