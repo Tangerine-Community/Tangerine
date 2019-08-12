@@ -6,7 +6,8 @@ import {PeersService} from './peers.service';
 import {WindowRef} from '../../../shared/_services/window-ref.service';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
-
+import PouchDB from 'pouchdb';
+import {UserService} from "../../../shared/_services/user.service";
 
 @Component({
   selector: 'app-peers',
@@ -25,7 +26,8 @@ export class PeersComponent implements OnInit {
 
   constructor(
     private peersService: PeersService,
-    private windowRef: WindowRef
+    private readonly userService: UserService,
+  private windowRef: WindowRef
   ) {
     this.window = this.windowRef.nativeWindow;
   }
@@ -41,10 +43,10 @@ export class PeersComponent implements OnInit {
     });
   }
 
-  async onSelect(peer: Peer): Promise<void> {
-    this.selectedPeer = peer;
-    await this.transferTo(peer.safePeerAddress);
-  }
+  // async onSelect(peer: Peer): Promise<void> {
+  //   this.selectedPeer = peer;
+  //   await this.transferTo(peer.safePeerAddress);
+  // }
 
   getPeers(): void {
     this.peersService.getPeers()
@@ -103,8 +105,41 @@ export class PeersComponent implements OnInit {
   async startAdvertising() {
     if (this.window.isCordovaApp) {
       window['TangyP2PPlugin'].startAdvertising(null, function(message) {
-        console.log('Message: ' + message);
-        document.querySelector('#p2p-results').innerHTML += message + '<br/>';
+        try {
+          const messageJson = JSON.parse(message)
+        } catch (e) {
+          console.log('Message: ' + message);
+          document.querySelector('#p2p-results').innerHTML += message + '<br/>';
+        }
+      }, function(err) {
+        console.log('TangyP2P error:: ' + err);
+      });
+    }
+  }
+
+  async listenForTransfer() {
+    if (this.window.isCordovaApp) {
+      window['TangyP2PPlugin'].listenForTransfer(null, (message) => {
+        if (message.startsWith('{"version":')) {
+          PouchDB.plugin(window['PouchReplicationStream'].plugin);
+          PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
+          // const stream = new window['Memorystream'](message);
+          const writeStream =  new window['Memorystream']
+          writeStream.end(message);
+          const username = this.userService.getCurrentUser()
+          const dest = new PouchDB(username);
+          const pluginMessage = 'I loaded data from the peer device.'
+          dest.load(writeStream).then(function () {
+            document.querySelector('#p2p-results').innerHTML += pluginMessage + '<br/>';
+          }).catch(function (err) {
+            message = 'oh no an error: ' + err
+            console.log(message);
+            document.querySelector('#p2p-results').innerHTML += message + '<br/>';
+          });
+        } else {
+          console.log('Message: ' + message);
+          document.querySelector('#p2p-results').innerHTML += message + '<br/>';
+        }
       }, function(err) {
         console.log('TangyP2P error:: ' + err);
       });
@@ -124,12 +159,28 @@ export class PeersComponent implements OnInit {
 
   async transferData() {
     if (this.window.isCordovaApp) {
-      window['TangyP2PPlugin'].transferData(null, function(message) {
-        console.log('Message: ' + message);
-        document.querySelector('#p2p-results').innerHTML += message + '<br/>';
-      }, function(err) {
-        console.log('TangyP2P error:: ' + err);
+      PouchDB.plugin(window['PouchReplicationStream'].plugin);
+      PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
+      let dumpedString = '';
+      const stream = new window['Memorystream']();
+      stream.on('data', function(chunk) {
+        dumpedString += chunk.toString();
       });
+      const username = this.userService.getCurrentUser()
+      const source = new PouchDB(username);
+      source.dump(stream).then(function () {
+        // console.log('Yay, I have a dumpedString: ' + dumpedString);
+        window['TangyP2PPlugin'].transferData(dumpedString, function(message) {
+          console.log('Message: ' + message);
+          document.querySelector('#p2p-results').innerHTML += message + '<br/>';
+        }, function(err) {
+          console.log('TangyP2P error:: ' + err);
+        });
+      }).catch(function (err) {
+        console.log('oh no an error', err);
+      });
+
+
     }
   }
 

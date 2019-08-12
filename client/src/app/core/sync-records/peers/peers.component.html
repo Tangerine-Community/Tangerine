@@ -1,10 +1,17 @@
+
 <div class="p2p-sync-header">
   <h2>P2P Sync</h2>
   <h3 *ngIf ipAddress>{{ipAddress}}:{{port}}</h3>
+  <h3>Send data</h3>
   <mat-button-toggle-group name="p2p-toggles" aria-label="P2P actions">
   <mat-button-toggle color="primary" mat-raised-button (click)="startAdvertising()">{{'Discover Peers'|translate}}</mat-button-toggle>
   <mat-button-toggle color="primary" mat-raised-button (click)="startDiscovery()">{{'Make Connection'|translate}}</mat-button-toggle>
   <mat-button-toggle color="primary" mat-raised-button (click)="transferData()">{{'Send Data'|translate}}</mat-button-toggle>
+<!--      <mat-button-toggle color="primary" mat-raised-button (click)="connectP2P()">{{'Connect to peer'|translate}}</mat-button-toggle>-->
+  </mat-button-toggle-group>
+  <h3>Receive data</h3>
+  <mat-button-toggle-group name="p2p-toggles" aria-label="P2P actions">
+  <mat-button-toggle color="primary" mat-raised-button (click)="listenForTransfer()">{{'Listen for Transfer'|translate}}</mat-button-toggle>
 <!--      <mat-button-toggle color="primary" mat-raised-button (click)="connectP2P()">{{'Connect to peer'|translate}}</mat-button-toggle>-->
   </mat-button-toggle-group>
 </div>
