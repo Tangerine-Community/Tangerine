@@ -1,0 +1,48 @@
+<div class="tangy-full-width tangy-content">
+	<a mat-raised-button color="accent" [routerLink]="['/groups/'+groupId+'/define-case-definition']">
+    <i class="material-icons">add_circle</i>{{' '}}{{'Create a Case Definition'|translate}}
+  </a>
+	<div class="tangy-content-top-margin">
+      <mat-grid-list cols="6" rowHeight="fit">
+          <mat-grid-tile [colspan]="2">
+              <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="case-tree tangy-full-width">
+                  <!-- This is the tree node template for leaf nodes -->
+                  <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
+                    <li class="mat-tree-node" (click)="onClickNode($event,node.type, node.id,node.caseDetailId,node.parentId)">
+                      <!-- use a disabled button to provide padding for tree leaf -->
+                      <button mat-icon-button disabled></button>
+                      {{node.name}}
+                    </li>
+                  </mat-tree-node>
+                  <!-- This is the tree node template for expandable nodes -->
+                  <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
+                    <li (click)="onClickNode($event,node.type, node.id,node.caseDetailId,node.parentId);">
+                      <div class="mat-tree-node">
+                        <button mat-icon-button matTreeNodeToggle
+                                [attr.aria-label]="'toggle ' + node.name">
+                          <i class="mat-icon-rtl-mirror material-icons">
+                            {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                          </i>
+                        </button>
+                        {{node.name}}
+                      </div>
+                      <ul [class.case-tree-invisible]="!treeControl.isExpanded(node)">
+                        <ng-container matTreeNodeOutlet></ng-container>
+                      </ul>
+                    </li>
+                  </mat-nested-tree-node>
+                </mat-tree>
+          </mat-grid-tile>
+          <mat-grid-tile [colspan]="4">
+           <div class="tangy-full-width">
+             <app-edit-case-definition *ngIf="currentNodeType==='caseDefinition'"></app-edit-case-definition>
+            <app-create-case-definition-structure *ngIf="currentNodeType==='caseDefinitionStructure'"></app-create-case-definition-structure>
+            <app-edit-event-definition *ngIf="currentNodeType==='eventDefinition'&&formType==='edit'"></app-edit-event-definition>
+            <app-create-event-definition *ngIf="currentNodeType==='eventDefinition'&&formType==='new'"></app-create-event-definition>
+            <app-edit-event-form-definition *ngIf="currentNodeType==='eventFormDefinition'&&formType==='edit'"></app-edit-event-form-definition>
+            <app-create-event-form-definition *ngIf="currentNodeType==='eventFormDefinition'&&formType==='new'"></app-create-event-form-definition>
+           </div>
+          </mat-grid-tile>
+        </mat-grid-list>
+	</div>
+</div>

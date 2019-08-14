@@ -1,4 +1,6 @@
 import { UserService } from "src/app/shared/_services/user.service";
+import PouchDB from 'pouchdb'
+PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 
 export const updates = [
   {
@@ -149,6 +151,63 @@ export const updates = [
     requiresViewsUpdate: true,
     script: async (userDb, appConfig, userService:UserService) => {
       console.log('Updating to v3.3.0...')
+    }
+  },
+  {
+    script: async (userDb, appConfig, userService:UserService) => {
+      // Prevent this update from running for every user. We handle that in this update.
+      if (localStorage.getItem('ran-update-v3.4.0')) return
+      console.log('Updating to v3.4.0...')
+      const usersDb = new PouchDB('users')
+      const userDocs = (await usersDb.allDocs({include_docs: true}))
+        .rows
+        .map(row => row.doc)
+        .filter(doc => doc._id.indexOf('_design') === -1)
+      for (let userDoc of userDocs) {
+        const userDb = new PouchDB(userDoc.username);
+        // Fix issue where userDoc.userUUID did not point to the actual user's profile document.
+        let validUserProfileDoc = (await userDb.query('tangy-form/responsesByFormId', { key: 'user-profile', include_docs: true })).rows[0].doc
+        let invalidUserProfileDoc = await userDb.get(userDoc.userUUID)
+        await userDb.remove(invalidUserProfileDoc)
+        userDoc.userUUID = validUserProfileDoc._id
+        await usersDb.put(userDoc)
+        // Fix issue where docs did not always have lastModified and uploadDatetime.
+        const allDocs = (await userDb.allDocs({include_docs: true}))
+          .rows
+          .map(row => row.doc)
+          .filter(doc => doc.collection === 'TangyFormResponse')
+        for (let doc of allDocs) {
+          // This is confusing because it takes into account a couple of different inconsistent scenarios. 
+          // The most important thing to know is that if it did not have an uploadDatetime, it will now
+          // be queued for upload and all docs will end up having a lastModified.
+          if (doc.uploadDatetime && doc.lastModified) {
+            // Do nothing, this is a doc that has been uploaded :).
+          }
+          else if (!doc.uploadDatetime && !doc.lastModified) {
+            // Queue for upload.
+            doc = {
+              ...doc, 
+              uploadDatetime: Date.now(),
+              lastModified: Date.now() + 1
+            }
+          }
+          else if (!doc.uploadDatetime && doc.lastModified) {
+            // Queue for upload.
+            doc = {
+              ...doc, 
+              uploadDatetime: doc.lastModified - 1 
+            }
+          } 
+          else if (doc.uploadDatetime && !doc.lastModified) {
+            // This may result in user profiles being queued for upload again but it's ok.
+            doc.lastModified = Date.now()
+          }
+          await userDb.put(doc)
+        }
+      }
+      await userService.updateAllDefaultUserDocs()
+      await userService.indexAllUserViews()
+      localStorage.setItem('ran-update-v3.4.0', 'true')
     }
   }
 ]

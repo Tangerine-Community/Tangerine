@@ -15,8 +15,10 @@ T_COUCHDB_USER_ADMIN_PASS="password"
 
 # Don't want the default container name of tangerine? Specify that here.
 T_CONTAINER_NAME="tangerine"
-# @TODO Deprecated? I think it's based on the container name above.
+# If it is a hub instance, use "${T_CONTAINER_NAME}-couchdb" ; otherwise, "couchdb"
 T_COUCHDB_CONTAINER_NAME="couchdb"
+# Open port to couchdb. Leave empty if this is a hub deployment.
+T_COUCHDB_PORT_MAPPING=" -p 5984:5984"
 # Open additional ports. You probably don't need to do this.
 T_PORT_MAPPING="-p 80:80"
 # Control wether or not the limit of reporting output is per group or sidewide. The other option is "group" which will make sure allowance applies to the group level.
@@ -38,7 +40,7 @@ T_CENTRALLY_MANAGED_USER_PROFILE="false"
 # Add replication entries in this array to start on server boot in 
 # format of `{"from":"localDbName", "to":"remoteDbUrl", "continuous": true}`
 T_REPLICATE="[]"
-# Available modules: csv, logstash, class
+# Available modules: csv, logstash, class, case
 # To enable modules, list them like so: 
 # T_MODULES="['csv','class', 'logstash']"
 T_MODULES="['csv']"
@@ -51,5 +53,7 @@ T_TAG=""
 # Enable use of a remote CouchDB 
 T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS@couchdb:5984/"
 T_COUCHDB_LOCAL="true"
+# options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
+T_ORIENTATION="any"
 
 

@@ -1,68 +1,84 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, AfterContentInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
 import { WindowRef } from '../../../shared/_services/window-ref.service';
+import { CaseEventDefinition } from '../../classes/case-event-definition.class';
+import moment from 'moment/src/moment';
+import { CaseEvent } from '../../classes/case-event.class';
+
+class CaseEventInfo {
+  caseEvents:Array<CaseEvent>;
+  caseEventDefinition:CaseEventDefinition;
+}
 
 @Component({
   selector: 'app-case',
   templateUrl: './case.component.html',
   styleUrls: ['./case.component.css']
 })
-export class CaseComponent implements OnInit, AfterContentInit {
+export class CaseComponent implements AfterContentInit {
 
-  caseService:CaseService;
-  @ViewChild('caseFormContainer') caseFormContainer: ElementRef;
-  tangyFormEl:any
-  ready = false
-  show = 'manifest'
+  private ready = false
+  private templateTitle = ''
+  private templateDescription = ''
+  private caseEventsInfo:Array<CaseEventInfo>
+  private creatableCaseEventsInfo:Array<CaseEventInfo>
+  private selectedNewEventType = ''
+  private inputSelectedDate = moment().format('YYYY-MM-DD')
 
   constructor(
     private route: ActivatedRoute,
     private windowRef: WindowRef,
-    private router: Router
+    private caseService: CaseService
   ) { }
-
-  async ngOnInit() {
-  }
 
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
-      this.caseService = new CaseService({ databaseName: localStorage.getItem('currentUser') });
       await this.caseService.load(params.id)
       this.windowRef.nativeWindow.caseService = this.caseService
-      const tangyFormMarkup = await this.caseService.getFormMarkup(this.caseService.caseDefinition.formId)
-      this.caseFormContainer.nativeElement.innerHTML = tangyFormMarkup
-      this.tangyFormEl = this.caseFormContainer.nativeElement.querySelector('tangy-form') 
-      if (!this.caseService.case.status) {
-        this.tangyFormEl.querySelectorAll('tangy-form-item').forEach((item) => {
-          this.caseService.case.items.push(item.getProps())
-        })
-        this.tangyFormEl.response = this.caseService.case
-        this.caseService.case = {...this.caseService.case, ...this.tangyFormEl.response}
-        this.caseService.case.form = this.tangyFormEl.getProps()
-        this.tangyFormEl.querySelectorAll('tangy-form-item')[0].submit()
-        this.caseService.case.items[0].inputs = this.tangyFormEl.querySelectorAll('tangy-form-item')[0].inputs
-        this.caseService.case.status = 'CASE_STATUS_INITIALIZED'
-        await this.caseService.save()
-        if (this.caseService.caseDefinition.startFormOnOpen && this.caseService.caseDefinition.startFormOnOpen.eventFormId) {
-          const caseEvent = this.caseService.startEvent(this.caseService.caseDefinition.startFormOnOpen.eventId)
-          const eventForm = this.caseService.startEventForm(caseEvent.id, this.caseService.caseDefinition.startFormOnOpen.eventFormId) 
-          await this.caseService.save()
-          this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])
-          return
-        }
-      }
-      this.tangyFormEl.response = this.caseService.case
-      this.tangyFormEl.enableItemReadOnly()
+      this.calculateTemplateData()
       this.ready = true
-
     })
   }
 
-  async startEvent(eventDefinitionId) {
-    const caseEvent = this.caseService.startEvent(eventDefinitionId)
+  calculateTemplateData() {
+    const caseService = this.caseService
+    const getVariable = (variableName) => {
+      const variablesByName = caseService.case.items.reduce((variablesByName,item) => {
+        for (let input of item.inputs) {
+          variablesByName[input.name] = input.value
+        }
+        return variablesByName
+      }, {})
+      return variablesByName[variableName]
+    }
+    eval(`this.templateTitle = caseService.caseDefinition.templateTitle ? \`${caseService.caseDefinition.templateTitle}\` : ''`)
+    eval(`this.templateDescription = caseService.caseDefinition.templateDescription ? \`${caseService.caseDefinition.templateDescription}\` : ''`)
+    this.caseEventsInfo = this
+      .caseService
+      .caseDefinition
+      .eventDefinitions
+      .map(caseEventDefinition => {
+        return {
+          caseEventDefinition,
+          caseEvents: this.caseService.case.events.filter(caseEvent => caseEvent.caseEventDefinitionId === caseEventDefinition.id)
+        }
+      })
+    this.creatableCaseEventsInfo = this.caseEventsInfo
+      .filter(caseEventInfo => {
+        return (caseEventInfo.caseEventDefinition.repeatable === true || caseEventInfo.caseEvents.length === 0) 
+          && undefined === this.caseService.case.disabledEventDefinitionIds.find(eventDefinitionId => eventDefinitionId === caseEventInfo.caseEventDefinition.id) 
+      })
+    this.selectedNewEventType = ''
+    this.inputSelectedDate = moment(new Date()).format('YYYY-MM-DD')
+  }
+
+  async onSubmit() {
+    const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
+    const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
+    await this.caseService.scheduleEvent(caseEvent.id, newDate, newDate)
     await this.caseService.save()
-    this.router.navigate(['case', 'event', this.caseService.case._id, caseEvent.id])
+    this.calculateTemplateData()
   }
 
 }

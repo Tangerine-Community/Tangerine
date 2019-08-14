@@ -1,0 +1,21 @@
+
+<div class="tangy-full-width">
+	<div [style.float]="'right'">
+		<button mat-raised-button color="accent" (click)="formInActive=false" *ngIf="formInActive">
+			<i class="material-icons">edit</i>{{' '}}{{'Edit Form'|translate}}
+		</button>
+		<button mat-raised-button color="accent" (click)="formInActive=true" *ngIf="!formInActive">
+			<i class="material-icons">close</i>{{' '}}{{'Close Editing'|translate}}
+		</button>
+	</div>
+	<form class="tangy-full-width" novalidate #editCaseDefinitionForm="ngForm">
+      <fieldset [disabled]="formInActive">
+		<mat-form-field class="tangy-full-width">
+			<input name="caseName" [(ngModel)]="caseName" matInput placeholder="{{'Case Name'|translate}}" required>
+		</mat-form-field>
+
+		<button type="button" [disabled]="editCaseDefinitionForm.invalid||formInActive"
+			mat-raised-button color="warn" (click)="editCase()">{{'Edit Case Definition'|translate}}</button>
+      </fieldset>
+    </form>
+</div>

@@ -31,34 +31,39 @@ ADD ./editor/package.json /tangerine/editor/package.json
 RUN cd /tangerine/editor && \
     npm install
 
-# Install client
+# Install client.
+ADD client/package.json /tangerine/client/package.json
+RUN cd /tangerine/client/ && \
+    npm install
+
+# Install PWA tools.
 ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
 ADD client/pwa-tools/service-worker-generator/workbox-cli-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-cli-config.js
-ADD client/package.json /tangerine/client/package.json
+RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
+    npm install
 ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
 ADD client/pwa-tools/updater-app/bower.json /tangerine/client/pwa-tools/updater-app/bower.json
-RUN cd /tangerine/client/ && \
-    npm install && \
-    cd /tangerine/client/pwa-tools/service-worker-generator && \
-    npm install && \
-    cd /tangerine/client/pwa-tools/updater-app && \
+RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm install && \
     ./node_modules/.bin/bower install --allow-root
 
-# Build editor 
+# Build editor.
 ADD editor /tangerine/editor
 RUN cd /tangerine/editor && ./node_modules/.bin/ng build --base-href "./"
 RUN cd /tangerine/editor && ./node_modules/.bin/workbox generate:sw 
 
-
-# Build client
+# Build client.
 ADD client /tangerine/client
 RUN cd /tangerine/client && \
-    ./node_modules/.bin/ng build --base-href "./" && \
-    cd /tangerine/client/pwa-tools/updater-app && \
+    ./node_modules/.bin/ng build --base-href "./"
+
+# Build PWA tools.
+RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm run build && \
-    cp logo.svg build/default/ && \
-    cd /tangerine/client && \
+    cp logo.svg build/default/
+
+# Package release sources for APK and PWA.
+RUN cd /tangerine/client && \
     cp -r dist/tangerine-client builds/apk/www/shell && \
     cp -r pwa-tools/updater-app/build/default builds/pwa && \
     mkdir builds/pwa/release-uuid && \

@@ -1,0 +1,24 @@
+<div class="tangy-content-top-margin">
+  <mat-card>
+    <mat-card-title class="tangy-foreground-secondary">
+      {{'Create a Case definition'|translate}}
+    </mat-card-title>
+    <div>
+      <a mat-raised-button color="accent" routerLink="/groups/{{groupId}}">
+        <i class="material-icons">arrow_back</i>{{' '}}{{'Back'|translate}}
+      </a>
+    </div>
+    <mat-card-content>
+      <div class="tangy-full-width">
+          <form class="tangy-full-width" novalidate #newCaseDefinitionForm="ngForm">
+            <mat-form-field class="tangy-full-width">
+              <input name="caseName" [(ngModel)]="caseName" matInput placeholder="{{'Case Name'|translate}}" required>
+            </mat-form-field>
+
+            <button type="button"  [disabled]="newCaseDefinitionForm.invalid"
+              mat-raised-button color="warn" (click)="create();newCaseDefinitionForm.reset()">{{'Create Case Definition'|translate}}</button>
+          </form>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  </div>

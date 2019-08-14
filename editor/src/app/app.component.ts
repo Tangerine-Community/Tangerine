@@ -69,16 +69,6 @@ export class AppComponent implements OnInit, OnDestroy {
           console.log("populating window.translation.")
           this.window.translation = json
         })
-
-        // Remove splash.
-        setTimeout(() => {
-            this.windowRef.nativeWindow['splash-container'].classList.add('hide-splash');
-            this.windowRef.nativeWindow['app-root'].classList.add('loaded');
-        }, 2000);
-        setTimeout(() => {
-            this.windowRef.nativeWindow['splash-container'].remove();
-        }, 3000);
-
     }
 
     async ensureLoggedIn() {

@@ -1,0 +1,46 @@
+<div [style.float]="'left'">
+	<button mat-raised-button color="accent" (click)="createNewEventDefinition()">
+		<i class="material-icons">add</i>{{' '}}{{'Create Event Definition'|translate}}
+	</button>
+</div>
+<div [style.float]="'right'">
+	<button mat-raised-button color="accent" (click)="formInActive=false" *ngIf="formInActive">
+		<i class="material-icons">edit</i>{{' '}}{{'Edit Form'|translate}}
+	</button>
+	<button mat-raised-button color="accent" (click)="formInActive=true" *ngIf="!formInActive">
+		<i class="material-icons">close</i>{{' '}}{{'Close Editing'|translate}}
+	</button>
+</div>
+<form class="tangy-full-width" novalidate #createCaseDefinitionStructure="ngForm">
+	<fieldset [disabled]="formInActive">
+	<mat-form-field class="tangy-full-width">
+		<input name="nameInput" [(ngModel)]="caseForm.name" #nameInput="ngModel" matInput placeholder="{{'Name'|translate}}" required>
+	</mat-form-field>
+	<br>
+	<br>
+	<mat-form-field class="tangy-full-width">
+		<input name="descriptionInput" [(ngModel)]="caseForm.description" #descriptionInput="ngModel" matInput placeholder="{{'Description'|translate}}" required>
+	</mat-form-field>
+	<br>
+	<br>
+	<mat-form-field class="tangy-full-width">
+		<input name="templateTitleInput" [(ngModel)]="caseForm.templateTitle" #templateTitleInput="ngModel" matInput placeholder="{{'Template Title'|translate}}" required>
+	</mat-form-field>
+	<br>
+	<br>
+	<mat-form-field class="tangy-full-width">
+		<input name="templateDescriptionInput" [(ngModel)]="caseForm.templateDescription" #templateDescriptionInput="ngModel" matInput placeholder="{{'Template Description'|translate}}" required>
+	</mat-form-field>
+	<br>
+	<br>
+	<mat-form-field class="tangy-full-width">
+		<mat-label>{{'Form ID'|translate}} </mat-label>
+	<mat-select [(value)]="caseForm.formId" [disabled]="formInActive">
+		<mat-option *ngFor="let f of formsList" [value]="f.id">{{f.title}}</mat-option>
+	</mat-select>
+	</mat-form-field>
+	<br>
+	<br>
+		<button [disabled]="createCaseDefinitionStructure.invalid||formInActive||!caseForm.formId" mat-raised-button color="warn" (click)="saveForm()">{{'Save Case Structure'|translate}}</button>
+</fieldset>
+</form>
