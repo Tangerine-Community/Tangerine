@@ -78,30 +78,12 @@ export class SyncRecordsComponent implements OnInit {
     this.isSyncSuccesful = undefined;
     const usernames = await this.userService.getUsernames();
     const appConfig = await this.appConfigService.getAppConfig();
-    this.syncProtocol = appConfig.syncProtocol
     usernames.map(async username => {
       try {
-        if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
-          const userProfile = await this.userService.getUserProfile(username);
-          const remoteHost = await this.getRemoteHost();
-          const localDB = new PouchDB(username);
-          const remoteDB = new PouchDB(remoteHost);
-          localDB.replicate.to(remoteDB, {push:true}).on('complete', function (info) {
-            console.log("yeah, we're done!" + JSON.stringify(info))
-            this.isSyncSuccesful = true;
-            let docsRead = info.docs_read
-            let docsWritten = info.docs_written
-            alert("Sync is complete. Docs read: " + docsRead + " Docs uploaded:" + docsWritten)
-          }).on('error', function (err) {
-            // boo, something went wrong!
-            console.log("boo, something went wrong! error: " + err)
-          });
-        } else {
-          const result = await this.syncingService.sync(username);
-          if (result) {
-            this.isSyncSuccesful = true;
-            this.getUploadProgress();
-          }
+        const result = await this.syncingService.sync(username);
+        if (result) {
+          this.isSyncSuccesful = true;
+          this.getUploadProgress();
         }
       } catch (error) {
         console.error(error);

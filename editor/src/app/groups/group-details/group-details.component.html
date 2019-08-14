@@ -1,4 +1,5 @@
-<mat-tab-group class="tangy-content">
+<!-- selectedIndexChange is needed to enable two way data binding for selectedIndex to work -->
+<mat-tab-group class="tangy-content" #tabGroup (selectedTabChange)="tabChanged($event)" (selectedIndexChange)="''" [(selectedIndex)]="selectedTabIndex">
 
   <mat-tab label="{{'Forms'|translate}}">
     <mat-card>
@@ -146,9 +147,16 @@
   <mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Content">
     <app-location-list-editor></app-location-list-editor>
   </mat-tab>
+  <mat-tab *ngIf="isGroupAdminUser&&enabledModules.indexOf('case')>-1" label="{{'Case Management Editor'|translate}}">
+    <app-case-management-editor></app-case-management-editor>
+  </mat-tab>
 
   <mat-tab *ngIf="isGroupAdminUser" label="{{'Manage Users'|translate}}">
     <app-list-users class="tangy-full-width"></app-list-users>
+  </mat-tab>
+
+  <mat-tab *ngIf="isGroupAdminUser" label="{{'Media Library'|translate}}">
+    <app-group-media></app-group-media>
   </mat-tab>
 
 </mat-tab-group>

@@ -7,6 +7,8 @@ class CaseEventDefinition {
   description:string
   repeatable:boolean
   required:boolean
+  estimatedTimeFromCaseOpening:number
+  estimatedTimeWindow:number
   eventFormDefinitions:Array<EventFormDefinition> = []
 
   constructor(init:CaseEventDefinition) {

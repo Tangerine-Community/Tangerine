@@ -14,6 +14,7 @@ class Case {
 
   collection = 'TangyFormResponse'
   form = {}
+  location = {}
   items = []
   focusIndex = 0
   nextFocusIndex = 1 
@@ -64,8 +65,9 @@ class Case {
   variables:any = {}
   disabledEventDefinitionIds: Array<string> = []
   events: Array<CaseEvent> = []
-  type:string = 'Case'
+  type:string = 'case'
   caseFormResponse:TangyFormResponse
+
   constructor(data?:any) {
     if (!data) {
       this._id = UUID()
@@ -85,21 +87,16 @@ class Case {
     this.startUnixtime = data.startUnixtime
     this.uploadDatetime = data.uploadDatetime
     this.complete = data.complete 
+    this.location = data.location
     // Specific FormResponse Type properties.
     this.status = data.status
     this.openedDate = data.openedDate
     this.disabledEventDefinitionIds = data.disabledEventDefinitionIds ? data.disabledEventDefinitionIds : []
     this.caseDefinitionId = data.caseDefinitionId
     this.label = data.label
-    this.events = data.events.map(caseEventData => new CaseEvent(
-      caseEventData.id,
-      caseEventData.complete,
-      caseEventData.name,
-      caseEventData.caseEventDefinitionId,
-      caseEventData.eventForms,
-      caseEventData.startDate
-    ))
+    this.events = data.events.map(caseEventData => <CaseEvent>caseEventData)
   }
+  
 }
 
 export { Case }

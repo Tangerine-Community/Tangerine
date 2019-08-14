@@ -6,7 +6,6 @@ import PouchDB from 'pouchdb';
 
 import { AuthenticationService } from '../../shared/_services/authentication.service';
 import { UserService } from '../../shared/_services/user.service';
-import { Loc } from '../../shared/_services/location.service';
 import { AppConfigService } from '../../shared/_services/app-config.service';
 
 function _window(): any {
@@ -16,17 +15,14 @@ function _window(): any {
 @Injectable()
 export class CaseManagementService {
   userDB;
-  loc: Loc;
   userService: UserService;
   monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   constructor(
     authenticationService: AuthenticationService,
-    loc: Loc,
     userService: UserService,
     private http: HttpClient,
     private appConfigService: AppConfigService
   ) {
-    this.loc = loc;
     this.userService = userService;
     this.userDB = new PouchDB
       (authenticationService.getCurrentUserDBPath());

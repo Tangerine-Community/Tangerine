@@ -134,27 +134,29 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   --env \"T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
+  --env \"T_ORIENTATION=$T_ORIENTATION\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
   -p 9227:9227 \
   -p 9226:9226 \
   -p 9225:9225 \
-  --volume $(pwd)/data/groups:/tangerine/groups/ \
-  --volume $(pwd)/data/csv:/csv/ \
-  --volume $(pwd)/data/archives:/archives/ \
-  --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
-  --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json \
-  --volume $(pwd)/data/client/releases:/tangerine/client/releases/ \
-  --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups \
-  --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets \
-  --volume $(pwd)/server/package.json:/tangerine/server/package.json \
-  --volume $(pwd)/server/src:/tangerine/server/src \
-  --volume $(pwd)/server/reporting:/tangerine/server/reporting \
-  --volume $(pwd)/upgrades:/tangerine/upgrades \
-  --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js \
-  --volume $(pwd)/scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js \
-  --volume $(pwd)/editor/src:/tangerine/editor/src \
+  --volume $(pwd)/data/groups:/tangerine/groups/:delegated \
+  --volume $(pwd)/data/csv:/csv/:delegated \
+  --volume $(pwd)/data/archives:/archives/:delegated \
+  --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json:delegated \
+  --volume $(pwd)/data/paid-worker-state.json:/paid-worker-state.json:delegated \
+  --volume $(pwd)/data/client/releases:/tangerine/client/releases/:delegated \
+  --volume $(pwd)/data/client/content/groups:/tangerine/client/content/groups:delegated \
+  --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets:delegated \
+  --volume $(pwd)/server/package.json:/tangerine/server/package.json:delegated \
+  --volume $(pwd)/server/src:/tangerine/server/src:delegated \
+  --volume $(pwd)/client/src:/tangerine/client/src:delegated \
+  --volume $(pwd)/server/reporting:/tangerine/server/reporting:delegated \
+  --volume $(pwd)/upgrades:/tangerine/upgrades:delegated \
+  --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
+  --volume $(pwd)/scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
+  --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
  tangerine/tangerine:local
  "
 

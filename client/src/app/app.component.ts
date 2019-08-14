@@ -10,6 +10,9 @@ import { TangyFormService } from './tangy-forms/tangy-form-service';
 import PouchDB from 'pouchdb';
 import { TranslateService } from '@ngx-translate/core';
 import { _TRANSLATE } from './shared/translation-marker';
+import { AppConfig } from './shared/_classes/app-config.class';
+import { AppConfigService } from './shared/_services/app-config.service';
+import { SearchService } from './shared/_services/search.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -19,10 +22,10 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 })
 export class AppComponent implements OnInit {
 
+  appConfig:AppConfig
   showNav;
   showUpdateAppLink;
   window;
-  appConfig:any;
   installed = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
@@ -36,8 +39,10 @@ export class AppComponent implements OnInit {
     private windowRef: WindowRef,
     private userService: UserService,
     private authenticationService: AuthenticationService,
+    private appConfigService: AppConfigService,
     private http: HttpClient,
     private router: Router,
+    private searchService:SearchService,
     translate: TranslateService
   ) {
     this.window = this.windowRef.nativeWindow;
@@ -66,7 +71,8 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
     // Load up the app config.
-    this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
+    this.appConfig = await this.appConfigService.getAppConfig()
+    this.searchService.start()
     this.window.appConfig = this.appConfig
     // Bail if the app is not yet installed.
     if (!this.installed) {
@@ -151,8 +157,7 @@ export class AppComponent implements OnInit {
     const usernames = response
       .rows
       .map(row => row.doc)
-      .filter(doc => doc.hasOwnProperty('username'))
-      .map(doc => doc.username);
+      .map(doc => doc._id);
     for (const username of usernames) {
       const userDb:PouchDB = this.userService.getUserDatabase(username);
       // Use try in case this is an old account where info doc was not created.

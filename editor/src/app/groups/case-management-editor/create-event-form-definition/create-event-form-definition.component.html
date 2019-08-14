@@ -1,0 +1,40 @@
+
+<div class="tangy-full-width">
+    <form class="tangy-full-width" novalidate #createEventDefinitionForm="ngForm">
+      <mat-form-field class="tangy-full-width">
+        <input name="eventName" [(ngModel)]="eventFormDefinition.name" matInput placeholder="{{'Name'|translate}}" required>
+      </mat-form-field>
+      <mat-form-field class="tangy-full-width">
+          <mat-label>{{'Form ID'|translate}} </mat-label>
+        <mat-select [(value)]="eventFormDefinition.formId">
+          <mat-option *ngFor="let f of formsList" [value]="f.id">{{f.title}}</mat-option>
+        </mat-select>
+        </mat-form-field>
+        <br>
+        <br>
+  
+      <mat-form-field class="tangy-full-width">
+        <mat-label>{{'Repeatable'|translate}} </mat-label>
+        <mat-select [(value)]="eventFormDefinition.repeatable">
+          <mat-option [value]="true">True</mat-option>
+          <mat-option [value]="false">False</mat-option>
+        </mat-select>
+      </mat-form-field>
+        <br>
+        <br>
+      <mat-form-field class="tangy-full-width">
+        <mat-label>{{'Required'|translate}} </mat-label>
+        <mat-select [(value)]="eventFormDefinition.required">
+          <mat-option [value]="true">True</mat-option>
+          <mat-option [value]="false">False</mat-option>
+        </mat-select>
+      </mat-form-field>
+        <br>
+        <br>
+  
+      <button type="button" [disabled]="createEventDefinitionForm.invalid"
+        mat-raised-button color="warn" (click)="createEventFormDefinition()">{{'Create Event Form Definition'|translate}}</button>
+      </form>
+    </div>
+  
+  
