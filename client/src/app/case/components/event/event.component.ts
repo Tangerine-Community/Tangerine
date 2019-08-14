@@ -9,12 +9,7 @@ import { EventFormDefinition } from '../../classes/event-form-definition.class';
 import { WindowRef } from 'src/app/core/window-ref.service';
 
 class EventFormInfo {
-  id:string
-  caseId:string
-  caseEventId:string
-  eventFormDefinitionId: string
-  name:string
-  required: boolean
+  eventFormDefinition:EventFormDefinition
   eventForm:EventForm
 }
 
@@ -71,12 +66,7 @@ export class EventComponent implements OnInit, AfterContentInit {
                     ? [
                         ...eventFormsInfoSubset, 
                         <EventFormInfo>{
-                          id: eventForm.id,
-                          caseId: this.caseService.case._id,
-                          caseEventId: this.caseEvent.id,
-                          eventFormDefinitionId: eventFormDefinition.id,
-                          name: eventFormDefinition.name,
-                          required: eventFormDefinition.required,
+                          eventFormDefinition,
                           eventForm
                         }
                       ]
