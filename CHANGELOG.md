@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.5.0
+- __New Features__
+  - Forms with fullscreen enabled now have a toggle button for the user to enable/disable fullscreen mode. https://github.com/Tangerine-Community/tangy-form/pull/51
+  - An `inputs` object keyed by input name is now available for use in `valid-if` statements. https://github.com/Tangerine-Community/tangy-form/pull/65
+  - A new Partial Date item is available https://github.com/Tangerine-Community/tangy-form/pull/57
+- __Fixes__
+  - Helper functions for timed grids are now safer, will not crash if a grid was skipped and info is not availble. https://github.com/Tangerine-Community/tangy-form/pull/61
+  - Print view for a form had a bug where only the first page was printable. This is now fixed so that all pages may be printed. https://github.com/Tangerine-Community/Tangerine/pull/1605
+
 ## v3.4.0
 - __New Features__
   - __New groups now ordered by creation date__: Creating new groups will now order them by the date the were created in the group list. [#1584](https://github.com/Tangerine-Community/Tangerine/issues/1584)
