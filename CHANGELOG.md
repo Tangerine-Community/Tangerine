@@ -1,7 +1,17 @@
 # Changelog
 
+## v3.5.0
+- __New Features__
+  - Forms with fullscreen enabled now have a toggle button for the user to enable/disable fullscreen mode. https://github.com/Tangerine-Community/tangy-form/pull/51
+  - An `inputs` object keyed by input name is now available for use in `valid-if` statements. https://github.com/Tangerine-Community/tangy-form/pull/65
+  - A new Partial Date item is available https://github.com/Tangerine-Community/tangy-form/pull/57
+- __Fixes__
+  - Helper functions for timed grids are now safer, will not crash if a grid was skipped and info is not availble. https://github.com/Tangerine-Community/tangy-form/pull/61
+  - Print view for a form had a bug where only the first page was printable. This is now fixed so that all pages may be printed. https://github.com/Tangerine-Community/Tangerine/pull/1605
+
 ## v3.4.0
 - __New Features__
+  - __New groups now ordered by creation date__: Creating new groups will now order them by the date the were created in the group list. [#1584](https://github.com/Tangerine-Community/Tangerine/issues/1584)
   - __Configurable Web App Device Orientation__: You can now specify the Web App orientation (portrait, landscape, or any) on device [using the `T_ORIENTATION` variable in `config.sh`](https://github.com/Tangerine-Community/Tangerine/issues/1530). Add `T_ORIENTATION="any"` to config.sh to have more flexible orientations for PWA's. The options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
   - __Media Library and Image support for Forms__: Each group now has a media library tab where they can uplaod images which can then be utilized when inserting the new "Image" item on forms. [#1138](https://github.com/Tangerine-Community/Tangerine/issues/1138)
    - __New ACASI widget__: The ACASI widget is braodly based on the EFTouch widget, but focused on a more static presentation of images and sounds. [#56](https://github.com/Tangerine-Community/tangy-form-editor/pull/56/commits/4f1d02d93ac0fc4637fb244b535b3411e35f131c)
