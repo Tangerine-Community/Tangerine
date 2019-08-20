@@ -183,5 +183,7 @@
 	"Your APK is building...": "Your APK is building...",
 	"Your PWA is building...": "Your PWA is building...",
 	"here": "here",
-	"✓ Yay! You are up to date.": "✓ Yay! You are up to date."
+	"✓ Yay! You are up to date.": "✓ Yay! You are up to date.",
+  "yes, continue": "Yes, continue",
+	"no, stop": "No, stop"
 }
