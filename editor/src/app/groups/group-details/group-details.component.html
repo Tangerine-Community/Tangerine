@@ -31,9 +31,8 @@
                 <i class="material-icons mat-32 tangy-location-list-icon">remove_red_eye</i>
               </a>
             </span>
-
-              <span><a mat-icon-button [routerLink]="['/tangy-form-editor/', groupName, form.id]">
-                <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
+            <span ><a mat-icon-button [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
+                <i [class.disabled-button]="!isGroupAdminUser" class="material-icons mat-32 tangy-location-list-icon">edit</i>
               </a>
             </span>
 
