@@ -141,6 +141,7 @@ const generateFlatResponse = async function (formResponse, locationList) {
         flatFormResponse[`${formID}.${item.id}.${input.name}.duration`] = input.duration
         flatFormResponse[`${formID}.${item.id}.${input.name}.time_remaining`] = input.timeRemaining
         flatFormResponse[`${formID}.${item.id}.${input.name}.gridAutoStopped`] = input.gridAutoStopped
+        flatFormResponse[`${formID}.${item.id}.${input.name}.autoStop`] = input.autoStop
         // Calculate Items Per Minute.
         let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
         let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
@@ -173,6 +174,8 @@ const generateFlatResponse = async function (formResponse, locationList) {
         let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
         flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_correct`] = numberOfItemsCorrect
         flatFormResponse[`${formID}.${item.id}.${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
+        flatFormResponse[`${formID}.${item.id}.${input.name}.gridAutoStopped`] = input.gridAutoStopped
+        flatFormResponse[`${formID}.${item.id}.${input.name}.autoStop`] = input.autoStop
       } else if (input.tagName === 'TANGY-BOX' || input.name === '') {
         // Do nothing :).
       } else if (input && typeof input.value === 'string') {
