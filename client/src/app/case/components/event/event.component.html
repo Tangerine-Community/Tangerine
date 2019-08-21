@@ -5,8 +5,8 @@
     <div class="form-cards" *ngIf="caseService">
       <app-event-form-list-item
         *ngFor="let eventFormInfo of eventFormsInfo"
-        [case]="case"
-        [caseDefinition]="caseDefinition"
+        [case]="caseService.case"
+        [caseDefinition]="caseService.caseDefinition"
         [caseEvent]="caseEvent"
         [caseEventDefinition]="caseEventDefinition"
         [eventForm]="eventFormInfo.eventForm"
