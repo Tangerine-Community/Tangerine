@@ -52,7 +52,7 @@ export const TangyFormsQueries = {
   responsesUnLockedAndUploaded: {
     map: function (doc) {
       if (
-        (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime && doc.uploadDatetime > doc.lastModified)
+        (doc.collection === 'TangyFormResponse' && doc.complete === false && doc.uploadDatetime && doc.uploadDatetime > doc.lastModified)
       ) {
         emit(doc.form.id, true)
       }
