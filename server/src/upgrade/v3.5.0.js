@@ -11,10 +11,10 @@ async function go() {
   try {
     console.log('Updating translations.')
     await exec(`translations-update`)
-    console.log('Updating existing group names that were created before you could have spaces and special characters as a group label.')
     const groupList = await groupsListLegacy()
     for (let groupId of groupList) {
       // Add the custom-sytles.css file to all groups.
+      console.log(`Adding custom-styles.css to ${groupId}`)
       await exec(`touch /tangerine/client/content/groups/${groupId}/custom-styles.css`)
     }
   } catch (error) {
