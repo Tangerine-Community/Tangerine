@@ -8,6 +8,7 @@ import * as moment from 'moment'
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
 import { EventForm } from '../../classes/event-form.class';
 import { CaseDefinition } from '../../classes/case-definition.class';
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 
 
 
@@ -36,10 +37,20 @@ export class EventFormListItemComponent implements OnInit {
   renderedTemplateListItemPrimary = ''
   renderedTemplateListItemSecondary = ''
 
-  constructor() { }
+  constructor(private formService:TangyFormService) { }
 
-  ngOnInit() {
-    const getVariable = (variableName) => {
+  async ngOnInit() {
+    const response = await this.formService.getResponse(this.eventForm.formResponseId)
+    const getValue = (variableName) => {
+      const variablesByName = response.items.reduce((variablesByName,item) => {
+        for (let input of item.inputs) {
+          variablesByName[input.name] = input.value
+        }
+        return variablesByName
+      }, {})
+      return !Array.isArray(variablesByName[variableName]) ? variablesByName[variableName] : variablesByName[variableName].reduce((optionThatIsOn, option) => optionThatIsOn = option.value === 'on' ? option.name : optionThatIsOn, '')
+    }
+    const getCaseVariable = (variableName) => {
       const variablesByName = this.case.items.reduce((variablesByName,item) => {
         for (let input of item.inputs) {
           variablesByName[input.name] = input.value
