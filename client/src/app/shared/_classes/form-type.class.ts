@@ -3,4 +3,5 @@ export class FormType {
   newFormResponseLinkTemplate:string
   resumeFormResponseLinkTemplate:string
   iconTemplate:string
+  icon:string
 }

@@ -1,3 +1,21 @@
 /*
  * Custom Styles
  */
+ html {
+    --document-background-color: #FAFAFA !important;
+    --primary-color-dark: #3c5b8d !important;
+    --primary-text-color: var(--light-theme-text-color) !important;
+    --primary-color: #3c5b8d !important;
+    /*--accent-color: #f26f10;*/
+    --accent-color: #3c5b8d !important;
+    --accent-text-color: #FFF !important;
+    --error-color: var(--paper-red-500) !important;
+    --disabled-color: #BBB !important;
+    --tangy-element-border: 0;
+    /*--tangy-element-margin: 0;*/
+  }
+  h1, h2, h3, h4, h5, p{
+    @apply --paper-font-common-base;
+    color: var(--primary-text-color);
+    margin: 15px 0px 5px 15px;
+  }

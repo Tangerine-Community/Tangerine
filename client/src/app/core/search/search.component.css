@@ -48,7 +48,7 @@
 }
 
 #search-results {
-  margin: 0px 15px;
+  margin: 0px 0px 0px 0px;
 }
 
 #bottom-nav {
@@ -76,3 +76,4 @@
   --iron-icon-fill-color: var(--accent-text-color);
   --iron-icon-stroke-color: var(--accent-text-color);
 }
+

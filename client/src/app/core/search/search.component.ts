@@ -79,7 +79,8 @@ export class SearchComponent implements OnInit {
       const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
       const formId = formInfo.id
       searchResultsMarkup += `
-        <paper-icon-item class="search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
+        <paper-icon-item class="search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}"
+        style="border-bottom: 1px lightgray dashed;">
           <iron-icon icon="${eval(`\`${formTypeInfo.iconTemplate}\``)}" slot="item-icon"></iron-icon> 
           <paper-item-body two-line>
             <div>
@@ -90,6 +91,8 @@ export class SearchComponent implements OnInit {
             </div>
           </paper-item-body>
         </paper-icon-item>
+
+     
       `
     }
     this.searchResults.nativeElement.innerHTML = searchResultsMarkup

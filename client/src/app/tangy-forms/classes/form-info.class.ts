@@ -6,6 +6,7 @@ export class FormInfo {
   description:string = ''
   listed = true
   searchSettings: FormSearchSettings
+  icon:string
 }
 
 export interface FormSearchSettings {
