@@ -30,26 +30,30 @@ export class NewFormResponseComponent implements OnInit {
   async ngOnInit() {
     this.formTypes = this.formTypesService.getFormTypes()
     this.formsInfo = (await this.formsInfoService.getFormsInfo()).filter(formInfo => formInfo.listed)
+    
     // We need to make this variable available to evals using response variable do not throw errors even though they shouldn't because we always check/
     // for the variable. Not sure why it throws here.
     let response = undefined
     // Override titles to prepend icons.
-    this.formsInfo = this.formsInfo.map(formInfo => {
-      return <FormInfo>{
-        ...formInfo,
-        title: `
-          <iron-icon icon="${eval(`\`${this.formTypes.find(formType => formType.id === formInfo.type).iconTemplate}\``)}" slot="item-icon"></iron-icon> 
-          ${formInfo.title}
-        `
-      }
-    })
+    // this.formsInfo = this.formsInfo.map(formInfo => {
+    //   return <FormInfo>{
+    //     ...formInfo,
+    //     title: `
+    //       <iron-icon icon="${eval(`\`${this.formTypes.find(formType => formType.id === formInfo.type).iconTemplate}\``)}" slot="item-icon"></iron-icon> 
+    //       ${formInfo.title}
+    //     `
+    //   }
+    // })
     this.ready.emit('ready')
   }
 
   onFormInfoSelect(formInfoId) {
     const formInfo = this.formsInfo.find(formInfo => formInfo.id === formInfoId)
     const formType = this.formTypes.find(formType => formInfo.type === formType.id)
+    const formIcon = formInfo.icon
     const formId = formInfo.id
+
+
     const url = eval(`\`${formType.newFormResponseLinkTemplate}\``)
     this.navigating.emit('navigating', {url})
     this.router.navigateByUrl(url)
