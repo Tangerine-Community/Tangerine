@@ -17,11 +17,11 @@
 
 .secondary {
     background: var(--primary-color);
-    color: var(--primary-text-color);
+    color: #fff;
     font-size: 1.5em;
     padding: 15px 15px 15px 22px;
 }
 
 .secondary iron-icon {
-    color: var(--primary-text-color) !important;
+    color: #fff !important;
 }

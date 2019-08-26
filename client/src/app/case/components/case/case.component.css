@@ -6,7 +6,7 @@ app-case-breadcrumb {
 
 .subject-header {
     background: var(--primary-color);
-    color: var(--primary-text-color);
+    color: var(--subject-header-color, var(--primary-text-color));
     font-size: 1em;
     padding: 15px;
 }
@@ -144,7 +144,7 @@ app-case-breadcrumb {
 .new-event form > div, .new-event form > button {
     flex-basis: 0;
     flex-grow: 1;
-    max-width: 33%;
+    max-width: 50%;
     padding: 0 15px;
 }
 

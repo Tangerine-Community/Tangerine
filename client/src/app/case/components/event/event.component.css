@@ -38,9 +38,9 @@ paper-card {
     border-width: 1px 0px 1px 0px;
 }
 
-.form.required {
+/*.form.required {
     border-left: red solid 4px;
-}
+}*/
 
 .form.new-form {
     border-style: dashed;
@@ -74,4 +74,19 @@ button[type="submit"] {
 }
 :host {
     position: relative;
+}
+.new-form form {
+    display: flex;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+.new-form form > div, .new-form form > button {
+    flex-basis: 0;
+    flex-grow: 1;
+    max-width: 50%;
+    padding: 0 15px;
+}
+
+.text-right {
+    text-align: right;
 }
