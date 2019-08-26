@@ -312,15 +312,9 @@ div.more {
 
   tangy-form > *, tangy-form {
     font-size: 1.2rem;
-    line-height: 1.2rem;
+    line-height: 1.5rem;
     --paper-input-container-shared-input-style_-_line-height: 1.2rem;
   }
-
-tangy-input::before {
-  font-size: 1.8rem;
-  color: var(--primary-color);
-  top: 4px;
-}
 
 .mat-tab-label {
   width: 50%;
@@ -334,4 +328,12 @@ app-case-event-list-item > paper-icon-item {
 }
 app-event-form-list-item.required > paper-icon-item {
   border-left: 4px solid #ff0000;
+}
+
+paper-icon-item > mwc-icon {
+  color: var(--primary-color);
+}
+
+.subject-header h1 {
+  color: #fff;
 }
