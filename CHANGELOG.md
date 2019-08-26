@@ -25,6 +25,21 @@ git checkout v3.5.0
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.5.0.js 
 ```
 
+If any of your on-change logic looks into a form item's contents using `tangyFormItemEl.shadowRoot.querySelector(...)` or 
+`this.$.content.querySelector(...)`, you must change it. The contents of the form can now be accessed at `tangyFormItemEl.querySelector(...)`. 
+
+Also, the `content` element is no longer available.
+
+For example:
+
+```
+// replace
+var el = this.$.content.querySelector('tangy-input[name=\'classId\']')
+//with 
+var el = this.querySelector('tangy-input[name=\'classId\']')
+```
+
+The advantage of moving this content out of the shadow DOM is that you can now style it directly from your app.
 
 ## v3.4.0
 - __New Features__
