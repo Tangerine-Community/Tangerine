@@ -16,17 +16,22 @@
       >
       </app-event-form-list-item>
       <paper-icon-item class="form new-form" *ngIf="availableEventFormDefinitions.length > 0">
-        <iron-icon icon="form" slot="item-icon"></iron-icon>
+        <iron-icon icon="assignment" slot="item-icon"></iron-icon>
         <paper-item-body two-line>
           <div>
             {{'New Form'|translate}}
           </div>
           <div secondary>
             <form (ngSubmit)="onSubmit()" #form="ngForm">
-              <select name="selected-form-definition" [(ngModel)]="selectedNewEventFormDefinition">
-                <option *ngFor="let availableEventFormDefinition of availableEventFormDefinitions" [value]="availableEventFormDefinition.id">{{availableEventFormDefinition.name}}</option>
-              </select>
-              <button type="submit">create</button>
+              <div>
+                <select name="selected-form-definition" [(ngModel)]="selectedNewEventFormDefinition">
+                  <option value="" disabled selected>Choose type...</option>
+                  <option *ngFor="let availableEventFormDefinition of availableEventFormDefinitions" [value]="availableEventFormDefinition.id">{{availableEventFormDefinition.name}}</option>
+                </select>
+              </div>
+              <div class="text-right">
+                <button type="submit">Create</button>
+              </div>
             </form>
           </div>
         </paper-item-body>
