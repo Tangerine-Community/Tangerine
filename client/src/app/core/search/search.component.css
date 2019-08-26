@@ -22,7 +22,7 @@
 }
 
 #search-bar {
-  background: #3c5b8d;
+  background: var(--search-bar-background, var(--primary-color));
   color: var(--accent-text-color);
   padding: 0px 15px 5px;
   --primary-color: #FFF;
@@ -48,7 +48,8 @@
 }
 
 #search-results {
-  margin: 0px 0px 0px 0px;
+  margin: var(--search-results-margin, 0px 15px);
+  background: var(--search-results-background, transparent);
 }
 
 #bottom-nav {
