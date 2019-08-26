@@ -33,6 +33,7 @@ import { EditEventFormDefinitionComponent } from './case-management-editor/edit-
 import { CreateEventFormDefinitionComponent } from './case-management-editor/create-event-form-definition/create-event-form-definition.component';
 import { CreateEventDefinitionComponent } from './case-management-editor/create-event-definition/create-event-definition.component';
 import { GroupMediaComponent } from './group-media/group-media.component';
+import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-table.component';
 
 
 
@@ -80,7 +81,8 @@ import { GroupMediaComponent } from './group-media/group-media.component';
     EditEventDefinitionComponent,
     EditEventFormDefinitionComponent,
     CreateEventFormDefinitionComponent,
-    CreateEventDefinitionComponent
+    CreateEventDefinitionComponent,
+    PrintFormAsTableComponent
   ],
   providers: [GroupsService]
 })
