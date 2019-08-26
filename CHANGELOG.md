@@ -10,6 +10,10 @@
 - __Fixes__
   - Helper functions for timed grids are now safer, will not crash if a grid was skipped and info is not availble. https://github.com/Tangerine-Community/tangy-form/pull/61
   - Print view for a form had a bug where only the first page was printable. This is now fixed so that all pages may be printed. https://github.com/Tangerine-Community/Tangerine/pull/1605
+  - Fix tangy-select test regression and work on EFTouch transition sound plays only on auto-progress [#137](https://github.com/Tangerine-Community/Tangerine/issues/1371)
+  - API change in tangy-select - use of secondaryLabel is supported but deprecated; Use optionSelectLabel instead. [#1602](https://github.com/Tangerine-Community/Tangerine/issues/1602)
+  - Fix the display of uploaded docs [#1609](https://github.com/Tangerine-Community/Tangerine/pull/1609)
+  - Enable auto-stop for untimed grids [#1522](https://github.com/Tangerine-Community/Tangerine/issues/1522)
 
 __Upgrade instructions:__
 
