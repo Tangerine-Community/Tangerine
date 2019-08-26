@@ -1,6 +1,6 @@
 {
   "name": "tangerine-editor",
-  "version": "1.0.1",
+  "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -35,8 +35,8 @@
     "rangen": "^1.0.0",
     "redux": "^4.0.1",
     "rxjs": "~6.3.3",
-    "tangy-form": "^4.1.1",
-    "tangy-form-editor": "^6.2.1",
+    "tangy-form": "^4.0.0",
+    "tangy-form-editor": "^6.1.0",
     "translation-web-component": "0.0.3",
     "tslib": "^1.9.0",
     "underscore": "^1.9.1",
