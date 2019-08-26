@@ -10,6 +10,12 @@ class CaseEventDefinition {
   templateListItemIcon:string
   templateListItemPrimary:string
   templateListItemSecondary:string
+  templateCaseEventListItemIcon:string
+  templateCaseEventListItemPrimary:string
+  templateCaseEventListItemSecondary:string
+  templateEventFormListItemIcon:string
+  templateEventFormListItemPrimary:string
+  templateEventFormListItemSecondary:string
   estimatedTimeFromCaseOpening:number
   estimatedTimeWindow:number
   eventFormDefinitions:Array<EventFormDefinition> = []
