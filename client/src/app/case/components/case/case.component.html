@@ -35,11 +35,11 @@
               <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">{{eventInfo.caseEventDefinition.name}}</option>
             </select>
           </div>
-          <div>
+          <!--<div>
             <div class="dropdown-container">
               <input type="date" name="event-date" [(ngModel)]="inputSelectedDate">
             </div>
-          </div>
+          </div>-->
           <div class="text-right">
               <button type="submit">Create</button>
           </div>

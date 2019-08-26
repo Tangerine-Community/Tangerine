@@ -20,6 +20,20 @@ html {
   --error-color: var(--paper-red-500);
   --disabled-color: #BBB;
   --paper-tabs-selection-bar-color: #f26f10;
+  --tangy-element-border: 0;
+  --search-bar-background: #5c80ba;
+  --header-background-color: #5c80ba;
+  --search-results-margin: 0;
+  --search-results-background: #fff;
+  --subject-header-color: #fff;
+}
+
+#search-results > paper-icon-item {
+  border-bottom: 1px solid #d6d6d6;
+}
+
+tangy-input {
+  --tangy-element-margin: 0 10px;
 }
 
 .container {
@@ -139,6 +153,10 @@ mat-toolbar{
   position: relative;
   bottom: 2px;
   padding-right: 3px;
+}
+
+#search-bar {
+  background: #5c80ba;
 }
 
 .search-icon{
@@ -293,7 +311,27 @@ div.more {
   }
 
   tangy-form > *, tangy-form {
-    font-size: 1.2em;
-    line-height: 1.2em;
-    --paper-input-container-shared-input-style_-_line-height: 1.2em;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    --paper-input-container-shared-input-style_-_line-height: 1.2rem;
   }
+
+tangy-input::before {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  top: 4px;
+}
+
+.mat-tab-label {
+  width: 50%;
+}
+
+app-case-event-list-itemapp-event-form-list-item > paper-icon-item,
+app-event-form-list-item > paper-icon-item,
+app-case-event-list-item > paper-icon-item {
+  background: #fff;
+  border-bottom: 1px solid #d6d6d6;
+}
+app-event-form-list-item.required > paper-icon-item {
+  border-left: 4px solid #ff0000;
+}

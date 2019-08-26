@@ -1,7 +1,7 @@
 
 .header {
   padding: 5px;
-  background: var(--primary-color);
+  background: var(--header-background-color, var(--primary-color));
 }
 
 select {
