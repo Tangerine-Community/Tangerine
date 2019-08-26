@@ -7,8 +7,14 @@ class CaseDefinition {
   revision:string
   name:string
   description:string
-  templateTitle:string 
-  templateDescription:string
+  templateCaseTitle:string 
+  templateCaseDescription:string 
+  templateCaseEventListItemIcon:string 
+  templateCaseEventListItemPrimary:string 
+  templateCaseEventListItemSecondary:string 
+  templateEventFormListItemIcon:string 
+  templateEventFormListItemPrimary:string 
+  templateEventFormListItemSecondary:string 
   eventDefinitions: Array<CaseEventDefinition> = []
   startFormOnOpen: CaseFormPath
 
