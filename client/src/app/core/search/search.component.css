@@ -66,6 +66,7 @@
   margin: 7px auto;
   width: 100%;
   max-width: 600px;
+  table-layout: fixed;
 }
 
 #bottom-nav td {
