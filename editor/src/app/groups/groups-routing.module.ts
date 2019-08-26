@@ -15,6 +15,7 @@ import { SuperAdminUserGuard } from '../core/auth/_guards/super-admin-user-guard
 import { AdminUserGuard } from '../core/auth/_guards/admin-user-guard.service';
 import { ImportLocationListComponent } from './import-location-list/import-location-list.component';
 import { CreateCaseDefinitionComponent } from './case-management-editor/create-case-definition/create-case-definition.component';
+import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-table.component';
 
 const groupsRoutes: Routes = [
   // { path: 'projects', component: GroupsComponent },
@@ -42,7 +43,8 @@ const groupsRoutes: Routes = [
   {
     path: 'groups/:groupId/define-case-definition', component: CreateCaseDefinitionComponent,
     canActivate: [LoginGuard, SuperAdminUserGuard]
-  }
+  },
+  { path: 'groups/:groupId/printFormAsTable/:formId', component: PrintFormAsTableComponent, canActivate: [LoginGuard] },
 ];
 @NgModule({
   imports: [
