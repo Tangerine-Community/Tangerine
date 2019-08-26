@@ -56,9 +56,9 @@ export class EventFormListItemComponent implements OnInit {
     const eventFormDefinition = this.eventFormDefinition
     const formatDate = (unixTimeInMilliseconds, format) => moment(new Date(unixTimeInMilliseconds)).format(format)
     const TRANSLATE = _TRANSLATE
-    eval(`this.renderedTemplateListItemIcon = this.caseEventDefinition.templateListItemIcon ? \`${this.caseEventDefinition.templateListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``)
-    eval(`this.renderedTemplateListItemPrimary = this.caseEventDefinition.templateListItemPrimary ? \`${this.caseEventDefinition.templateListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``)
-    eval(`this.renderedTemplateListItemSecondary = this.caseEventDefinition.templateListItemSecondary ? \`${this.caseEventDefinition.templateListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
+    eval(`this.renderedTemplateListItemIcon = this.caseDefinition.templateEventFormListItemIcon ? \`${this.caseDefinition.templateEventFormListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``)
+    eval(`this.renderedTemplateListItemPrimary = this.caseDefinition.templateEventFormListItemPrimary ? \`${this.caseDefinition.templateEventFormListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``)
+    eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateEventFormListItemSecondary ? \`${this.caseDefinition.templateEventFormListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
   }
 
 }
