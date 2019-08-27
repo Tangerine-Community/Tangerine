@@ -1,161 +1,171 @@
 <!-- selectedIndexChange is needed to enable two way data binding for selectedIndex to work -->
 <mat-tab-group class="tangy-content" #tabGroup (selectedTabChange)="tabChanged($event)" (selectedIndexChange)="''" [(selectedIndex)]="selectedTabIndex">
 
-  <mat-tab label="{{'Forms'|translate}}">
-    <mat-card>
-      <mat-card-title>
-        {{groupLabel}}{{' '}}{{'Group Details'|translate}}
-      </mat-card-title>
-      <mat-card-content>
-        <div class="tangy-full-width">
-          <div>
-            <p id="group-title-small">{{groupLabel}}</p>
-            <span><span class="tangy-page-title">{{'Forms'|translate}}{{'  '}}</span>
-              <a mat-raised-button color="accent" (click)="addForm()">
-                <i class="material-icons">add_circle</i>{{' '}}{{'Create a New Form'|translate}}
-              </a>
-            </span>
-          </div>
+	<mat-tab label="{{'Forms'|translate}}">
+		<mat-card>
+			<mat-card-title>
+				{{groupLabel}}{{' '}}{{'Group Details'|translate}}
+			</mat-card-title>
+			<mat-card-content>
+				<div class="tangy-full-width">
+					<div>
+						<p id="group-title-small">{{groupLabel}}</p>
+						<span><span class="tangy-page-title">{{'Forms'|translate}}{{'  '}}</span>
+							<a mat-raised-button color="accent" (click)="addForm()">
+								<i class="material-icons">add_circle</i>{{' '}}{{'Create a New Form'|translate}}
+							</a>
+						</span>
+					</div>
 
 
-          <mat-list>
-            <mat-list-item>
-              <mat-divider></mat-divider>
-            </mat-list-item>
-            <mat-list-item *ngFor="let form of forms; let index=index">
-              <span>{{index+1}}</span>
-              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-              <span class="tangy-spacer">{{form.title}}</span>
+					<mat-list>
+						<mat-list-item>
+							<mat-divider></mat-divider>
+						</mat-list-item>
+						<mat-list-item *ngFor="let form of forms; let index=index">
+							<span>{{index+1}}</span>
+							<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+							<span class="tangy-spacer">{{form.title}}</span>
 
-              <span><a mat-icon-button [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
-                <i class="material-icons mat-32 tangy-location-list-icon">remove_red_eye</i>
-              </a>
-            </span>
-            <span ><a mat-icon-button [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
-                <i [class.disabled-button]="!isGroupAdminUser" class="material-icons mat-32 tangy-location-list-icon">edit</i>
-              </a>
-            </span>
+							<span><a mat-icon-button [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
+								<i class="material-icons mat-32 tangy-location-list-icon">remove_red_eye</i>
+							</a>
+						</span>
+						<span ><a mat-icon-button [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
+							<i [class.disabled-button]="!isGroupAdminUser" class="material-icons mat-32 tangy-location-list-icon">edit</i>
+							</a>
+								</span>
+								<span>
+									<mat-select #test>
+										<mat-option>
+											<a mat-icon-button target="_new" [href]="form.printUrl">{{'Print Content'|translate}}</a>
+										</mat-option>
+										<mat-option>
+											<a mat-icon-button target="_new" [href]="groupUrl+'#/groups/'+groupId+'/printFormAsTable/'+form.id">{{'Print Metadata'|translate}}</a>
+										</mat-option>
+									</mat-select>
+								</span>
+						<span>
+							<a mat-icon-button (click)="test.open()">
+								<i class="material-icons mat-32 tangy-location-list-icon">print</i>
+							</a> 
+						</span>
 
-              <span><a mat-icon-button target="_new" href="{{form.printUrl}}">
-                <i class="material-icons mat-32 tangy-location-list-icon">print</i>
-              </a>
-            </span>
+						<span>
+							<button mat-icon-button 
+								[disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+									(click)="deleteForm(groupName, form.id)">
+								<i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser" 
+								class="material-icons mat-32 tangy-location-list-icon">delete</i>
+							</button>
+						</span>
 
-              <span><button mat-icon-button 
-                
-                  [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-                   (click)="deleteForm(groupName, form.id)">
-                  <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser" 
-                  class="material-icons mat-32 tangy-location-list-icon">delete</i>
-                </button>
-              </span>
-
-              <span><a mat-icon-button [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">
-                <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
-              </a>
-            </span>
-              <mat-divider></mat-divider>
-            </mat-list-item>
-          </mat-list>
+						<span><a mat-icon-button [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">
+							<i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
+							</a>
+						</span>
+							<mat-divider></mat-divider>
+						</mat-list-item>
+					</mat-list>
 
 
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </mat-tab>
+				</div>
+			</mat-card-content>
+		</mat-card>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="Responses">
-    <mat-card>
-      <mat-card-title class="tangy-foreground-secondary">
-        Responses
-      </mat-card-title>
-      <mat-card-content>
-        <div class="tangy-full-width">
-          <app-responses [groupName]="groupName"></app-responses>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser" label="Responses">
+		<mat-card>
+			<mat-card-title class="tangy-foreground-secondary">
+				Responses
+			</mat-card-title>
+			<mat-card-content>
+				<div class="tangy-full-width">
+					<app-responses [groupName]="groupName"></app-responses>
+				</div>
+			</mat-card-content>
+		</mat-card>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="{{'Release'|translate}}">
-    <h1 class="section-title">{{'Release'|translate}}</h1>
-    <table class="release-table">
-      <tr>
-        <td style="padding-right: 15px;">
-          <paper-card heading="
+	<mat-tab *ngIf="isGroupAdminUser" label="{{'Release'|translate}}">
+		<h1 class="section-title">{{'Release'|translate}}</h1>
+		<table class="release-table">
+			<tr>
+				<td style="padding-right: 15px;">
+					<paper-card heading="
             Android Installation
           ">
-            <div class="card-content">
-              <p>
-                Use this for offline deployments or those with many forms and assets.
-              </p>
-              <mat-list>
-                <mat-list-item class="tangy-location-list">
-                  <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-apk',groupName,'qa']">
-                      <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
-                    </a>
-                  </span>
-                </mat-list-item>
-                <mat-list-item class="tangy-location-list">
-                  <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-apk',groupName,'prod']">
-                      <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
-                    </a>
-                  </span>
-                </mat-list-item>
-              </mat-list>
-            </div>
-          </paper-card>
-        </td>
-        <td>
-          <paper-card heading="
+						<div class="card-content">
+							<p>
+								Use this for offline deployments or those with many forms and assets.
+							</p>
+							<mat-list>
+								<mat-list-item class="tangy-location-list">
+									<span class="tangy-foreground-secondary">
+										<a [routerLink]="['/group/release-apk',groupName,'qa']">
+											<iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
+										</a>
+									</span>
+								</mat-list-item>
+								<mat-list-item class="tangy-location-list">
+									<span class="tangy-foreground-secondary">
+										<a [routerLink]="['/group/release-apk',groupName,'prod']">
+											<iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
+										</a>
+									</span>
+								</mat-list-item>
+							</mat-list>
+						</div>
+					</paper-card>
+				</td>
+				<td>
+					<paper-card heading="
             Web Browser Installation
           ">
-            <div class="card-content">
-              <p>
-                Use this for smaller deployments where tablets have solid internet connectivity.
-              </p>
-              <mat-list>
-                <mat-list-item class="tangy-location-list">
-                  <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-pwa',groupName,'qa']">
-                      <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
-                    </a>
-                  </span>
-                </mat-list-item>
-                <mat-list-item class="tangy-location-list">
-                  <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-pwa',groupName,'prod']">
-                      <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
-                    </a>
-                  </span>
-                </mat-list-item>
-              </mat-list>
-            </div>
-          </paper-card>
-        </td>
-      </tr>
-    </table>
-  </mat-tab>
+						<div class="card-content">
+							<p>
+								Use this for smaller deployments where tablets have solid internet connectivity.
+							</p>
+							<mat-list>
+								<mat-list-item class="tangy-location-list">
+									<span class="tangy-foreground-secondary">
+										<a [routerLink]="['/group/release-pwa',groupName,'qa']">
+											<iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
+										</a>
+									</span>
+								</mat-list-item>
+								<mat-list-item class="tangy-location-list">
+									<span class="tangy-foreground-secondary">
+										<a [routerLink]="['/group/release-pwa',groupName,'prod']">
+											<iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
+										</a>
+									</span>
+								</mat-list-item>
+							</mat-list>
+						</div>
+					</paper-card>
+				</td>
+			</tr>
+		</table>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Levels">
-    <app-manage-location-list-levels></app-manage-location-list-levels>
-  </mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Levels">
+		<app-manage-location-list-levels></app-manage-location-list-levels>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Content">
-    <app-location-list-editor></app-location-list-editor>
-  </mat-tab>
-  <mat-tab *ngIf="isGroupAdminUser&&enabledModules.indexOf('case')>-1" label="{{'Case Management Editor'|translate}}">
-    <app-case-management-editor></app-case-management-editor>
-  </mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Content">
+		<app-location-list-editor></app-location-list-editor>
+	</mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser&&enabledModules.indexOf('case')>-1" label="{{'Case Management Editor'|translate}}">
+		<app-case-management-editor></app-case-management-editor>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="{{'Manage Users'|translate}}">
-    <app-list-users class="tangy-full-width"></app-list-users>
-  </mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser" label="{{'Manage Users'|translate}}">
+		<app-list-users class="tangy-full-width"></app-list-users>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="{{'Media Library'|translate}}">
-    <app-group-media></app-group-media>
-  </mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser" label="{{'Media Library'|translate}}">
+		<app-group-media></app-group-media>
+	</mat-tab>
 
 </mat-tab-group>

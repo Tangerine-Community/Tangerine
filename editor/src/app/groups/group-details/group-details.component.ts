@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { MatTabChangeEvent } from '@angular/material';
 import uuidv4 from 'uuid/v4'
+import { WindowRef } from 'src/app/core/window-ref.service';
 
 @Component({
   selector: 'app-group-details',
@@ -23,8 +24,10 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   responses;
   selectedTabIndex;
   enabledModules;
+  groupUrl;
   constructor(
     private route: ActivatedRoute,
+    private windowRef: WindowRef,
     private groupsService: GroupsService,
     private userService: UserService,
     private router: Router,
@@ -42,6 +45,8 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
       this.isSuperAdminUser = await this.userService.isCurrentUserSuperAdmin();
       this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupName);
       this.forms = await this.groupsService.getFormsList(this.groupName);
+      this.groupUrl =
+      `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}`;
     } catch (error) {
       console.log(error)
     }
