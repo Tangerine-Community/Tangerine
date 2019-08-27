@@ -44,3 +44,6 @@ mat-list-item {
   color: gray;
   margin-left: 1%;
 }
+mat-select {
+  visibility: hidden;
+}
