@@ -23,7 +23,7 @@ before_install:
   - sh -e /etc/init.d/xvfb start
   - npm install -g @angular/cli
 install:
-  - cd client/ && npm install && cd ../server && npm install
+  - cd client/ && cp -r default-assets src/assets && npm install && cd ../server && npm install
 script:
   - npm run test 
   - cd ../client && ng test --watch=false
