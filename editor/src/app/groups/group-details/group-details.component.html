@@ -28,7 +28,7 @@
               <span class="tangy-spacer">{{form.title}}</span>
 
               <span><a mat-icon-button [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
-                <i class="material-icons mat-32 tangy-location-list-icon">remove_red_eye</i>
+                <i class="material-icons mat-32 tangy-location-list-icon">post_add</i>
               </a>
             </span>
             <span ><a mat-icon-button [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
