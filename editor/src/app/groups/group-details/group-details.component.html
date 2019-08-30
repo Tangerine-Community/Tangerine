@@ -1,4 +1,13 @@
 <!-- selectedIndexChange is needed to enable two way data binding for selectedIndex to work -->
+
+<paper-dialog #copyFormOverlay>
+    <h2>{{'Copy form to'|translate}}:</h2>
+    <p><app-copy-form [formId]="copyFormId" [sourceGroupId]="groupId" (done)="closeCopyFormDialog()"></app-copy-form></p>
+    <div class="buttons">
+      <paper-button dialog-confirm autofocus>cancel</paper-button>
+    </div>
+</paper-dialog>
+
 <mat-tab-group class="tangy-content" #tabGroup (selectedTabChange)="tabChanged($event)" (selectedIndexChange)="''" [(selectedIndex)]="selectedTabIndex">
 
   <mat-tab label="{{'Forms'|translate}}">
@@ -40,6 +49,12 @@
                 <i class="material-icons mat-32 tangy-location-list-icon">print</i>
               </a>
             </span>
+
+              <span>
+                <a mat-icon-button (click)="onCopyFormClick(form.id)">
+                  <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
+                </a>
+              </span>
 
               <span><button mat-icon-button 
                 
