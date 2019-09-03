@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, EventEmitter, Output } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
+import { TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
   selector: 'app-copy-form',
@@ -14,7 +15,11 @@ export class CopyFormComponent implements OnInit {
   @ViewChild('selectElement') selectElement: ElementRef
   groups:Array<any> = []
 
-  constructor(private groupsService:GroupsService) { }
+
+  constructor(
+    private groupsService:GroupsService,
+    private tangerineForms:TangerineFormsService
+  ) { }
 
   async ngOnInit() {
     this.groups = <Array<any>>await this.groupsService.getAllGroups()
@@ -25,8 +30,8 @@ export class CopyFormComponent implements OnInit {
     `
   }
 
-  onSelect() {
-    this.groupsService.copyForm(this.formId, this.sourceGroupId, this.selectElement.nativeElement.value)
+  async onSelect() {
+    await this.tangerineForms.copyForm(this.formId, this.sourceGroupId, this.selectElement.nativeElement.value)
     this.selectElement.nativeElement.value = ''
     this.done.emit()
   }
