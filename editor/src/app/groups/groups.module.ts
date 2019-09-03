@@ -12,6 +12,8 @@ import { NewGroupComponent } from './new-group/new-group.component';
 import { ReleaseApkComponent } from './release-apk/release-apk.component';
 import { ReleasePwaComponent } from './release-pwa/release-pwa.component';
 import { GroupsService } from './services/groups.service';
+import { TangerineFormsService } from './services/tangerine-forms.service';
+import { FilesService } from './services/files.service';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GroupDetailsComponent } from './group-details/group-details.component';
@@ -84,7 +86,7 @@ import { CopyFormComponent } from './copy-form/copy-form.component';
     CreateEventDefinitionComponent,
     CopyFormComponent
   ],
-  providers: [GroupsService],
+  providers: [GroupsService, FilesService, TangerineFormsService ],
   entryComponents: [CopyFormComponent]
 })
 export class GroupsModule { }

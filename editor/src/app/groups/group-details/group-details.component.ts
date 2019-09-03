@@ -9,6 +9,7 @@ import uuidv4 from 'uuid/v4'
 import { ComponentPortal } from '@angular/cdk/portal';
 import { Overlay, GlobalPositionStrategy } from '@angular/cdk/overlay';
 import { CopyFormComponent } from '../copy-form/copy-form.component';
+import { TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
   selector: 'app-group-details',
@@ -33,6 +34,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute,
     private groupsService: GroupsService,
     private userService: UserService,
+    private tangerineForms: TangerineFormsService,
     private router: Router,
     private http: HttpClient
   ) { }
@@ -69,33 +71,20 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   }
 
   async addForm() {
-    const formId = await this.groupsService.addForm(this.groupName)
+    const formId = await this.tangerineForms.createForm(this.groupName, "New Form")
     this.router.navigate(['tangy-form-editor', this.groupName, formId])
   }
 
-  async deleteForm(groupName, formId) {
+  async deleteForm(groupId, formId) {
     let confirmation = confirm('Are you sure you would like to remove this form?')
     if (!confirmation) return
-    let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
-    let newFormsJson = formsJson.filter(formInfo => formInfo.id !== formId)
-
-    await this.http.post('/editor/file/save', {
-      groupId: groupName,
-      filePath: './forms.json',
-      fileContents: JSON.stringify(newFormsJson)
-    }).toPromise()
-
-    await this.http.delete('/editor/file/save', {params: new HttpParams()
-      .set('groupId', groupName)
-      .set('filePath', `./${formId}`)
-    }).toPromise()
-
+    await this.tangerineForms.deleteForm(groupId, formId)
     this.forms = await this.groupsService.getFormsList(this.groupName);
-    
   }
 
-  closeCopyFormDialog() {
+  async closeCopyFormDialog() {
     this.copyFormOverlay.nativeElement.close()
+    this.forms = await this.groupsService.getFormsList(this.groupName);
   }
 
   onCopyFormClick(formId:string) {
