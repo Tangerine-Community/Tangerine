@@ -90,14 +90,5 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   onCopyFormClick(formId:string) {
     this.copyFormId = formId
     this.copyFormOverlay.nativeElement.open()
-    /*
-    const overlayRef = this.overlay.create(
-      {
-        positionStrategy: this.overlay.position().global() 
-      }
-    );
-    const userProfilePortal = new ComponentPortal(CopyFormComponent);
-    overlayRef.attach(userProfilePortal);
-    */
   }
 }
