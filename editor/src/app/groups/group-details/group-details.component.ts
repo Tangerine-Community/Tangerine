@@ -5,10 +5,6 @@ import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { MatTabChangeEvent } from '@angular/material';
-import uuidv4 from 'uuid/v4'
-import { ComponentPortal } from '@angular/cdk/portal';
-import { Overlay, GlobalPositionStrategy } from '@angular/cdk/overlay';
-import { CopyFormComponent } from '../copy-form/copy-form.component';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
@@ -30,7 +26,6 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   copyFormId
   @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
   constructor(
-    private overlay: Overlay,
     private route: ActivatedRoute,
     private groupsService: GroupsService,
     private userService: UserService,
