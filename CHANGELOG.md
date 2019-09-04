@@ -5,9 +5,9 @@
   - Forms with fullscreen enabled now have a toggle button for the user to enable/disable fullscreen mode. Form designers may specify the number of taps in order for fullscreen to disable. https://github.com/Tangerine-Community/tangy-form/pull/51, https://github.com/Tangerine-Community/tangy-form/pull/72, https://github.com/Tangerine-Community/tangy-form-editor/pull/73
   - An `inputs` object keyed by input name is now available for use in `valid-if` statements. https://github.com/Tangerine-Community/tangy-form/pull/65
   - A new Partial Date item is available https://github.com/Tangerine-Community/tangy-form/pull/57
-  - Translations updates.
+  - Translations updates. [#1613](https://github.com/Tangerine-Community/Tangerine/pull/1613)
   - New `custom-styles.css` file which can be added by modifying a group's assets folder. You may define CSS classes and then utilize them in the editor by adding them under each widget's class attribute.
-  - New "Copy form" feature added to to Editor and more descriptive icon for adding a database record [#1627](https://github.com/Tangerine-Community/Tangerine/pull/1627
+  - New "Copy form" feature added to to Editor and more descriptive icon for adding a database record [#1627](https://github.com/Tangerine-Community/Tangerine/pull/1627)
 - __Fixes__
   - Helper functions for timed grids are now safer, will not crash if a grid was skipped and info is not availble. https://github.com/Tangerine-Community/tangy-form/pull/61
   - Print view for a form had a bug where only the first page was printable. This is now fixed so that all pages may be printed. https://github.com/Tangerine-Community/Tangerine/pull/1605
