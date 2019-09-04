@@ -43,6 +43,7 @@
     "uuid": "^3.3.2",
     "workbox-cli": "^2.1.2",
     "xlsx": "^0.14.1",
+    "@polymer/paper-dialog": "^3.0.1",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {
