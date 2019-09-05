@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AppConfigService } from 'src/app/shared/_services/app-config.service';
+import { CaseService } from '../../services/case.service';
 
 @Component({
   selector: 'app-case-home',
@@ -6,10 +8,20 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./case-home.component.css']
 })
 export class CaseHomeComponent implements OnInit {
+  showQueries = true;
+  openQueriesCount = 0;
 
-  constructor() { }
+  constructor(
+    private appConfig: AppConfigService,
+    private caseService: CaseService
 
-  ngOnInit() {
+  ) { }
+
+  async ngOnInit() {
+    const config = await this.appConfig.getAppConfig();
+    this.showQueries = config.showQueries;
+    if (this.showQueries) {
+      this.openQueriesCount = await this.caseService.getOpenQueriesCount();
+     }
   }
-
 }
