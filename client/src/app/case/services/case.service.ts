@@ -10,6 +10,7 @@ import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { WindowRef } from 'src/app/core/window-ref.service';
 import { Injectable } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
+import { Query } from '../../case/classes/query.class';
 import moment from 'moment/src/moment';
 
 @Injectable({
