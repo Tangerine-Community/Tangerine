@@ -1,3 +1,14 @@
-<p>
-  query works!
-</p>
+<div class="wrapper">
+  <div class="form-cards">
+    <paper-icon-item *ngFor='let query of queries' class="form new-form">
+        <iron-icon icon="{{ query.queryStatus === 'Open' ? 'help-outline' : 'reply' }}" slot="item-icon"></iron-icon> 
+        <paper-item-body two-line>
+            <div>
+              <span>{{ query.queryText }}</span> 
+            </div>
+            <div secondary><strong>Case ID:</strong> {{ query.associatedCaseName }}&nbsp;&nbsp;<strong>Event:</strong> {{ query.associatedEventName }}&nbsp;&nbsp;<strong>Form:</strong> {{ query.associatedFormName }}&nbsp;&nbsp;<strong>Status:</strong> {{ query.queryStatus }}</div>
+          </paper-item-body>
+          <button  routerLink = '{{ query.queryLink }}' type="submit">{{ query.queryStatus === 'Open' ? 'View Query' : 'View Response'}}</button>&nbsp;&nbsp;<button routerLink = '{{ query.associatedFormLink }}' type="submit">Open Form</button>
+    </paper-icon-item> 
+  </div>
+</div>
