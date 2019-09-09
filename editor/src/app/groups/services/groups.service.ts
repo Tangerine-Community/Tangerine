@@ -303,6 +303,19 @@ export class GroupsService {
       }
     }
   }
+  async deleteFileFromGroupDirectory(groupId: string, filePath: string) {
+    try {
+      const params = {
+        groupId,
+        filePath
+      };
+      await this.httpClient.delete('/editor/file/save', { params }).toPromise();
+    } catch (error) {
+      if (typeof error.status === 'undefined') {
+        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
+      }
+    }
+  }
   generateUUID(separator?: string) {
     if (!separator) {
       separator = '';

@@ -3,19 +3,18 @@
 
   <div class="wrapper">
     <div class="form-cards" *ngIf="caseService">
-      <paper-icon-item 
-        *ngFor="let eventForm of eventFormsInfo"
-        class="form {{eventForm.required ? 'required' : ''}}" 
-        routerLink="/case/event/form/{{eventForm.caseId}}/{{eventForm.caseEventId}}/{{eventForm.id}}"
+      <app-event-form-list-item
+        *ngFor="let eventFormInfo of eventFormsInfo"
+        [case]="caseService.case"
+        [caseDefinition]="caseService.caseDefinition"
+        [caseEvent]="caseEvent"
+        [caseEventDefinition]="caseEventDefinition"
+        [eventForm]="eventFormInfo.eventForm"
+        [eventFormDefinition]="eventFormInfo.eventFormDefinition"
+        class="form {{eventFormInfo.eventFormDefinition.required ? 'required' : ''}}" 
+        routerLink="/case/event/form/{{eventFormInfo.eventForm.caseId}}/{{eventFormInfo.eventForm.caseEventId}}/{{eventFormInfo.eventForm.id}}"
       >
-        <iron-icon icon="{{eventForm.complete ? 'assignment-turned-in' : 'assignment'}}" slot="item-icon"></iron-icon> 
-        <paper-item-body two-line>
-          <div>
-            <span [innerHTML]="eventForm.name|unsanitizeHtml"></span> ({{eventForm.id.substr(0,6)}})
-          </div>
-          <div secondary>{{eventForm.startDate | date:'medium'}}</div>
-        </paper-item-body>
-      </paper-icon-item>
+      </app-event-form-list-item>
       <paper-icon-item class="form new-form" *ngIf="availableEventFormDefinitions.length > 0">
         <iron-icon icon="form" slot="item-icon"></iron-icon>
         <paper-item-body two-line>

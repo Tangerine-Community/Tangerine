@@ -2,6 +2,7 @@
     <mat-card-title>{{'Import Location List CSV'|translate}}</mat-card-title>
     <mat-card-content>
         <div class="tangy-full-width">
+            <p [style.color]="'red'">Importing Location List will overwrite changes made through the Web Interface</p>
             <input type="file" #file style="display: none" (change)="importLocationListFile($event.target)"
                 accept=".xls,.xlsx,.csv,application/vnd.ms-excel,application/vnd.ms-excel" />
             <button mat-raised-button color="warn" [disabled]="!canUserImportFile" (click)="file.click()">{{'Import
