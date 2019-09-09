@@ -3,8 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../../shared/_services/user.service';
-import {AppConfigService} from "../../../shared/_services/app-config.service";
+import {AppConfigService} from '../../../shared/_services/app-config.service';
 import PouchDB from 'pouchdb';
+import {Peer} from '../peers/peer';
+import {PeersService} from '../peers/peers.service';
 
 @Component({
   selector: 'app-sync-records',
@@ -21,25 +23,27 @@ export class SyncRecordsComponent implements OnInit {
   syncProtocol = '';
   contentVersion = '';
   window: any;
+  peerList = [];
 
   constructor(
     private windowRef: WindowRef,
     private syncingService: SyncingService,
     private userService: UserService,
     private appConfigService: AppConfigService,
+    public peersService: PeersService
   ) {
-    this.window = this.windowRef.nativeWindow;
+    this.window = this.windowRef.nativeWindow; length;
   }
 
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();
-    this.syncProtocol = appConfig.syncProtocol
+    this.syncProtocol = appConfig.syncProtocol;
     if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
     } else {
       this.getUploadProgress();
     }
     if (this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin') !== -1) {
-      this.contentVersion = this.window.location.href.split('/')[this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin')+1]
+      this.contentVersion = this.window.location.href.split('/')[this.window.location.href.split('/').indexOf('cordova-hot-code-push-plugin') + 1];
     }
   }
 
@@ -48,8 +52,8 @@ export class SyncRecordsComponent implements OnInit {
     this.allUsersSyncData = await Promise.all(usernames.map(async username => {
       return await this.calculateUsersUploadProgress(username);
     }));
-    this.docsNotUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsNotUploaded; }, 0);
-    this.docsUploaded = this.allUsersSyncData.reduce((acc, val) => { return acc + val.docsUploaded; }, 0);
+    this.docsNotUploaded = this.allUsersSyncData.reduce((acc, val) => acc + val.docsNotUploaded, 0);
+    this.docsUploaded = this.allUsersSyncData.reduce((acc, val) => acc + val.docsUploaded, 0);
     this.syncPercentageComplete =
       ((this.docsUploaded / (this.docsNotUploaded + this.docsUploaded)) * 100) || 0;
   }
@@ -92,5 +96,6 @@ export class SyncRecordsComponent implements OnInit {
       }
     });
   }
-
 }
+
+
