@@ -1,0 +1,7 @@
+<paper-icon-item>
+  <mwc-icon [innerHTML]="renderedTemplateListItemIcon" slot="item-icon"></mwc-icon> 
+  <paper-item-body two-line>
+    <div [innerHTML]="renderedTemplateListItemPrimary|unsanitizeHtml"></div>
+    <div [innerHTML]="renderedTemplateListItemSecondary|unsanitizeHtml" secondary></div>
+  </paper-item-body>
+</paper-icon-item>

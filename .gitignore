@@ -41,5 +41,5 @@ client/app/src/assets-local/
 client/src/assets-local/
 client/makeApk.sh
 .gradle
-
 scripts/apk-build.sh
+
