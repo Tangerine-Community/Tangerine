@@ -37,9 +37,9 @@ class CaseService {
   ) { 
     this.window = this.windowRef.nativeWindow
 
-    this.queryCaseEventDefinitionId = 'event-definition-abcde';
-    this.queryEventFormDefinitionId = 'event-form-definition-68954';
-    this.queryFormId = 'query-999999';
+    this.queryCaseEventDefinitionId = 'query-event';
+    this.queryEventFormDefinitionId = 'query-event-form';
+    this.queryFormId = 'query-form';
   }
 
   async create(caseDefinitionId) {
@@ -228,14 +228,13 @@ class CaseService {
   async getOpenQueriesCount (): Promise<number> {
     return (await this.getQueries()).length;
   }
+
   async createQuery (
-    { caseId, queryId, associatedCaseId, associatedCaseType, associatedEventId,
-      associatedFormId, associatedEventName, associatedFormName,
-      associatedFormLink, associatedCaseName, associatedVariable,
-      queryTypeId, queryLink, queryDate, queryText, queryStatus,
-      queryResponse, queryResponseDate }
+    { caseId, eventId, formId, variableName, queryDate, queryText }
       ): Promise<string> {
+
     caseId = this.case._id;
+
     let caseEvent = this.case.events
       .find(caseEventInfo => caseEventInfo.caseEventDefinitionId === this.queryCaseEventDefinitionId);
 
@@ -259,6 +258,7 @@ class CaseService {
 
       const tangyFormContainerEl = this.window.document.createElement('div');
       tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
+
       const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
       tangyFormEl.style.display = 'none';
       this.window.document.body.appendChild(tangyFormContainerEl);
@@ -266,29 +266,29 @@ class CaseService {
       tangyFormEl.newResponse();
 
       tangyFormEl.response.items[0].inputs = [
-        { name: 'associatedCaseType', value: associatedCaseType },
-        { name: 'associatedCaseId', value: associatedCaseId },
-        { name: 'associatedEventId', value: associatedEventId },
-        { name: 'associatedFormId', value: associatedFormId },
-        { name: 'associatedCaseName', value: associatedCaseName },
-        { name: 'associatedEventName', value: associatedEventName },
-        { name: 'associatedFormName', value: associatedFormName },
-        { name: 'associatedFormLink', value: associatedFormLink },
-        { name: 'associatedVariable', value: associatedVariable },
-        { name: 'queryId', value: queryId },
-        { name: 'queryTypeId', value: queryTypeId },
+        { name: 'associatedCaseType', value: this.case.label },
+        { name: 'associatedCaseId', value: caseId },
+        { name: 'associatedEventId', value: eventId },
+        { name: 'associatedFormId', value: formId },
+        { name: 'associatedCaseName', value: '' },
+        { name: 'associatedEventName', value: '' },
+        { name: 'associatedFormName', value: '' },
+        { name: 'associatedFormLink', value: '' },
+        { name: 'associatedVariable', value: '' },
+        { name: 'queryId', value: '' },
+        { name: 'queryTypeId', value: '' },
         { name: 'queryDate', value: queryDate },
         { name: 'queryText', value: queryText },
-        { name: 'queryResponse', value: queryResponse },
-        { name: 'queryResponseDate', value: queryResponseDate },
-        { name: 'queryStatus', value: queryStatus },
-        { name: 'queryLink', value: queryLink }
+        { name: 'queryResponse', value: '' },
+        { name: 'queryResponseDate', value: '' },
+        { name: 'queryStatus', value: 'Open' },
+        { name: 'queryLink', value: '' }
       ];
 
       tangyFormEl.store.dispatch({ type: 'FORM_RESPONSE_COMPLETE' });
 
-      this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-      await this.db.put(tangyFormEl.response)
+      this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser());
+      await this.db.put(tangyFormEl.response);
 
       const queryResponseId = tangyFormEl.response._id;
       eventForm.formResponseId = queryResponseId;
@@ -299,4 +299,4 @@ class CaseService {
 
 }
 
-export { CaseService }
+export { CaseService };
