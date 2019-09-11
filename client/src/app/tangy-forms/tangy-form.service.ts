@@ -72,7 +72,7 @@ export class TangyFormService {
   }
 
   async getResponsesByFormId(formId) {
-    let db = this.userService.getUserDatabase()
+    let db = this.userService.getUserDatabase(this.userService.getCurrentUser())
     let r = await db.query('tangy-form/responsesByFormId', { key: formId, include_docs: true })
     return r.rows.map((row) => new TangyFormResponseModel(row.doc))
   }
