@@ -226,7 +226,7 @@ class CaseService {
   }
 
   async createQuery (
-    { caseId, eventId, formId, variableName, queryDate, queryText }
+    { caseId, eventId, formId, formName, formTitle, participantId, variableName, queryType, queryDate, queryText }
       ): Promise<string> {
     caseId = this.case._id;
     let caseEvent = this.case.events
@@ -248,7 +248,10 @@ class CaseService {
       caseEvent = this.case.events.find(c => c.caseEventDefinitionId === this.queryCaseEventDefinitionId);
       const eventForm = caseEvent.eventForms.find(d => d.id === c.id);
 
-      const userDbName = this.userService.getCurrentUser();
+      const referringCaseEvent: CaseEvent = this.case.events.find((event) => event.id === eventId);
+      const referringEventName = referringCaseEvent.name;
+      const formLink = '/case/event/form/' + caseId + '/' + eventId + '/' + formId;
+      const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
       const tangyFormContainerEl = this.window.document.createElement('div');
       tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
@@ -263,27 +266,30 @@ class CaseService {
         { name: 'associatedCaseId', value: caseId },
         { name: 'associatedEventId', value: eventId },
         { name: 'associatedFormId', value: formId },
-        { name: 'associatedCaseName', value: '' },
-        { name: 'associatedEventName', value: '' },
-        { name: 'associatedFormName', value: '' },
-        { name: 'associatedFormLink', value: '' },
-        { name: 'associatedVariable', value: '' },
-        { name: 'queryId', value: '' },
-        { name: 'queryTypeId', value: '' },
+        { name: 'associatedCaseName', value: participantId },
+        { name: 'associatedEventName', value: referringEventName },
+        { name: 'associatedFormName', value: formTitle },
+        { name: 'associatedFormLink', value: formLink },
+        { name: 'associatedVariable', value: variableName },
+        { name: 'queryText', value: queryText },
+        { name: 'queryId', value: 'N/A' },
+        { name: 'queryDate', value: queryDate },
+        { name: 'queryTypeId', value: queryType },
         { name: 'queryResponse', value: '' },
         { name: 'queryResponseDate', value: '' },
         { name: 'queryStatus', value: 'Open' },
-        { name: 'queryLink', value: '' }
+        { name: 'queryLink', value: queryLink }
       ];
 
       tangyFormEl.store.dispatch({ type: 'FORM_RESPONSE_COMPLETE' });
 
-      this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-      await this.db.put(tangyFormEl.response)
+      this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser());
+      await this.db.put(tangyFormEl.response);
 
       const queryResponseId = tangyFormEl.response._id;
       eventForm.formResponseId = queryResponseId;
       await this.save();
+
 
       return queryResponseId;
   }
