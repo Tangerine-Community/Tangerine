@@ -1,4 +1,6 @@
 
+
+
 ## Issues
 
 Please use the following issue template links for filing issues. There are links to create issues using the template. To modify the issue template links, replace the `body` and `title` link attributes in the URL with text that has been encoded using [http://urldecode.org](http://urldecode.org).
@@ -50,3 +52,11 @@ Issue on tablet and/or server:
 
 There is no template for this one but make sure to add the `technical` label. 
 
+
+
+## Release Workflow
+- Maintainer prepares for a new version by creating a Milestone and adding a place for the release in the `CHANGELOG.md` in the `next` branch.
+- Issues are assigned to the Milestone. 
+- When you are assigned an issue, create a branch based on the `next` branch named after the issue number and description, something like `1325-fix-some-bug`. Put the PR in the milestone, link to the corresponding issue from the PR and mark issue as "in progress".
+- When your PR is ready, add notes to the `CHANGELOG.md` file in your branch and request a review.
+- After code review, if code is merged, the Maintainer will tag the next branch with a prerelease tag and mark corresponding issue with "review" tag for QA.
