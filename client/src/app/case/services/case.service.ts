@@ -281,7 +281,7 @@ class CaseService {
         { name: 'queryLink', value: queryLink }
       ];
 
-      tangyFormEl.store.dispatch({ type: 'FORM_RESPONSE_COMPLETE' });
+      //tangyFormEl.store.dispatch({ type: 'FORM_RESPONSE_COMPLETE' });
 
       this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser());
       await this.db.put(tangyFormEl.response);
