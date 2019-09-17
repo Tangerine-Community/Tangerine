@@ -111,8 +111,8 @@ export class CaseEventScheduleListComponent implements OnInit {
       const formId = formInfo.id
       eventInfo.openLink = `/case/event/${searchDoc._id}/${event.id}`
       eventInfo.icon = eval('`' + formTypeInfo.iconTemplate + '`')
-      eventInfo.primary = eval(formInfo.searchSettings.primaryTemplate ? '`' + formInfo.searchSettings.primaryTemplate + '`' : response._id)
-      eventInfo.secondary = eval(formInfo.searchSettings.secondaryTemplate ? '`' + formInfo.searchSettings.secondaryTemplate + '`' : formInfo.title)
+      eventInfo.primary = formInfo.searchSettings.primaryTemplate ? eval('`' + formInfo.searchSettings.primaryTemplate + '`') : response._id
+      eventInfo.secondary = formInfo.searchSettings.secondaryTemplate ? eval('`' + formInfo.searchSettings.secondaryTemplate + '`') : formInfo.title
       return eventInfo 
     })
     this.didSearch$.next(true)

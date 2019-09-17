@@ -1,43 +1,52 @@
 <!-- selectedIndexChange is needed to enable two way data binding for selectedIndex to work -->
+
+<paper-dialog #copyFormOverlay>
+    <h2>{{'Copy form to'|translate}}:</h2>
+    <p><app-copy-form [formId]="copyFormId" [sourceGroupId]="groupId" (done)="closeCopyFormDialog()"></app-copy-form></p>
+    <div class="buttons">
+      <paper-button dialog-confirm autofocus>cancel</paper-button>
+    </div>
+</paper-dialog>
+
 <mat-tab-group class="tangy-content" #tabGroup (selectedTabChange)="tabChanged($event)" (selectedIndexChange)="''" [(selectedIndex)]="selectedTabIndex">
 
-	<mat-tab label="{{'Forms'|translate}}">
-		<mat-card>
-			<mat-card-title>
-				{{groupLabel}}{{' '}}{{'Group Details'|translate}}
-			</mat-card-title>
-			<mat-card-content>
-				<div class="tangy-full-width">
-					<div>
-						<p id="group-title-small">{{groupLabel}}</p>
-						<span><span class="tangy-page-title">{{'Forms'|translate}}{{'  '}}</span>
-							<a mat-raised-button color="accent" (click)="addForm()">
-								<i class="material-icons">add_circle</i>{{' '}}{{'Create a New Form'|translate}}
-							</a>
-						</span>
-					</div>
+  <mat-tab label="{{'Forms'|translate}}">
+    <mat-card>
+      <mat-card-title>
+        {{groupLabel}}{{' '}}{{'Group Details'|translate}}
+      </mat-card-title>
+      <mat-card-content>
+        <div class="tangy-full-width">
+          <div>
+            <p id="group-title-small">{{groupLabel}}</p>
+            <span><span class="tangy-page-title">{{'Forms'|translate}}{{'  '}}</span>
+              <a mat-raised-button color="accent" (click)="addForm()">
+                <i class="material-icons">add_circle</i>{{' '}}{{'Create a New Form'|translate}}
+              </a>
+            </span>
+          </div>
 
 
-					<mat-list>
-						<mat-list-item>
-							<mat-divider></mat-divider>
-						</mat-list-item>
-						<mat-list-item *ngFor="let form of forms; let index=index">
-							<span>{{index+1}}</span>
-							<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-							<span class="tangy-spacer">{{form.title}}</span>
+          <mat-list>
+            <mat-list-item>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+            <mat-list-item *ngFor="let form of forms; let index=index">
+              <span>{{index+1}}</span>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span class="tangy-spacer">{{form.title}}</span>
 
-							<span><a mat-icon-button [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
-								<i class="material-icons mat-32 tangy-location-list-icon">remove_red_eye</i>
-							</a>
-						</span>
-						<span ><a mat-icon-button [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
-							<i [class.disabled-button]="!isGroupAdminUser" class="material-icons mat-32 tangy-location-list-icon">edit</i>
-							</a>
-								</span>
-								<span>
-									<mat-select #test>
-										<mat-option>
+              <span><a mat-icon-button [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
+                <i class="material-icons mat-32 tangy-location-list-icon">add</i>
+              </a>
+            </span>
+            <span ><a mat-icon-button [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
+                <i [class.disabled-button]="!isGroupAdminUser" class="material-icons mat-32 tangy-location-list-icon">edit</i>
+              </a>
+            </span>
+            <span>
+						  <mat-select #test>
+								<mat-option>
 											<a mat-icon-button target="_new" [href]="form.printUrl">{{'Print Content'|translate}}</a>
 										</mat-option>
 										<mat-option>
@@ -51,48 +60,54 @@
 							</a> 
 						</span>
 
-						<span>
-							<button mat-icon-button 
-								[disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-									(click)="deleteForm(groupName, form.id)">
-								<i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser" 
-								class="material-icons mat-32 tangy-location-list-icon">delete</i>
-							</button>
-						</span>
+              <span>
+                <a mat-icon-button (click)="onCopyFormClick(form.id)">
+                  <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
+                </a>
+              </span>
 
-						<span><a mat-icon-button [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">
-							<i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
-							</a>
-						</span>
-							<mat-divider></mat-divider>
-						</mat-list-item>
-					</mat-list>
+              <span><button mat-icon-button 
+                
+                  [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+                   (click)="deleteForm(groupName, form.id)">
+                  <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser" 
+                  class="material-icons mat-32 tangy-location-list-icon">delete</i>
+                </button>
+              </span>
+
+              <span><a mat-icon-button [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">
+                <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
+              </a>
+            </span>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </mat-list>
 
 
-				</div>
-			</mat-card-content>
-		</mat-card>
-	</mat-tab>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
 
-	<mat-tab *ngIf="isGroupAdminUser" label="Responses">
-		<mat-card>
-			<mat-card-title class="tangy-foreground-secondary">
-				Responses
-			</mat-card-title>
-			<mat-card-content>
-				<div class="tangy-full-width">
-					<app-responses [groupName]="groupName"></app-responses>
-				</div>
-			</mat-card-content>
-		</mat-card>
-	</mat-tab>
+  <mat-tab *ngIf="isGroupAdminUser" label="Responses">
+    <mat-card>
+      <mat-card-title class="tangy-foreground-secondary">
+        Responses
+      </mat-card-title>
+      <mat-card-content>
+        <div class="tangy-full-width">
+          <app-responses [groupName]="groupName"></app-responses>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
 
-	<mat-tab *ngIf="isGroupAdminUser" label="{{'Release'|translate}}">
-		<h1 class="section-title">{{'Release'|translate}}</h1>
-		<table class="release-table">
-			<tr>
-				<td style="padding-right: 15px;">
-					<paper-card heading="
+  <mat-tab *ngIf="isGroupAdminUser" label="{{'Release'|translate}}">
+    <h1 class="section-title">{{'Release'|translate}}</h1>
+    <table class="release-table">
+      <tr>
+        <td style="padding-right: 15px;">
+          <paper-card heading="
             Android Installation
           ">
 						<div class="card-content">
