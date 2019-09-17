@@ -14,7 +14,9 @@
           <p>{{'Number of responses not uploaded'|translate}}: {{docsNotUploaded}}</p>
           <p>{{'Percentage uploaded'|translate}}: {{syncPercentageComplete|number:'1.2-2'}}%</p>
         </div>
-
+        <div id="p2p-peers">
+          <app-peers></app-peers>
+        </div>
       </mat-card-content>
       <mat-card-actions>
           <button color="primary" mat-raised-button (click)="sync()">{{'SYNC DATA FOR ALL USERS'|translate}}</button>
