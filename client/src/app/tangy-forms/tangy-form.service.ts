@@ -62,7 +62,7 @@ export class TangyFormService {
   }
 
   async getResponse(responseId) {
-    let db = this.userService.getUserDatabase()
+    let db = this.userService.getUserDatabase(this.userService.getCurrentUser())
     try {
       let doc = await db.get(responseId)
       return doc

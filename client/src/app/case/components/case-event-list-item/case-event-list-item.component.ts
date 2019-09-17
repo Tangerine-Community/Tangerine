@@ -1,18 +1,20 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterContentInit } from '@angular/core';
 import { CaseEvent } from '../../classes/case-event.class';
 import { Case } from '../../classes/case.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { _TRANSLATE } from 'src/app/shared/translation-marker';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment'
+import { CaseDefinition } from '../../classes/case-definition.class';
 
 @Component({
   selector: 'app-case-event-list-item',
   templateUrl: './case-event-list-item.component.html',
   styleUrls: ['./case-event-list-item.component.css']
 })
-export class CaseEventListItemComponent implements OnInit {
+export class CaseEventListItemComponent implements AfterContentInit {
 
+  @Input() caseDefinition:CaseDefinition
   @Input() caseEventDefinition:CaseEventDefinition
   @Input() caseEvent:CaseEvent
   @Input() case:Case
@@ -30,7 +32,7 @@ export class CaseEventListItemComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
+  ngAfterContentInit() {
     const getVariable = (variableName) => {
       const variablesByName = this.case.items.reduce((variablesByName,item) => {
         for (let input of item.inputs) {
@@ -45,9 +47,9 @@ export class CaseEventListItemComponent implements OnInit {
     const caseInstance = this.case
     const formatDate = (unixTimeInMilliseconds, format) => moment(new Date(unixTimeInMilliseconds)).format(format)
     const TRANSLATE = _TRANSLATE
-    eval(`this.renderedTemplateListItemIcon = this.caseEventDefinition.templateListItemIcon ? \`${this.caseEventDefinition.templateListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``)
-    eval(`this.renderedTemplateListItemPrimary = this.caseEventDefinition.templateListItemPrimary ? \`${this.caseEventDefinition.templateListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``)
-    eval(`this.renderedTemplateListItemSecondary = this.caseEventDefinition.templateListItemSecondary ? \`${this.caseEventDefinition.templateListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
+    eval(`this.renderedTemplateListItemIcon = this.caseDefinition.templateCaseEventListItemIcon ? \`${this.caseDefinition.templateCaseEventListItemIcon}\` : \`${this.defaultTemplateListItemIcon}\``)
+    eval(`this.renderedTemplateListItemPrimary = this.caseDefinition.templateCaseEventListItemPrimary ? \`${this.caseDefinition.templateCaseEventListItemPrimary}\` : \`${this.defaultTemplateListItemPrimary}\``)
+    eval(`this.renderedTemplateListItemSecondary = this.caseDefinition.templateCaseEventListItemSecondary ? \`${this.caseDefinition.templateCaseEventListItemSecondary}\` : \`${this.defaultTemplateListItemSecondary}\``)
   }
 
 }
