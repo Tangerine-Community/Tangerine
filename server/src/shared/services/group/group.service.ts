@@ -134,7 +134,7 @@ export class GroupService {
     const groupDb = new DB(groupId)
     let groupName = label 
     await this.installViews(groupDb)
-    await exec(`cp -r /tangerine/client/src/assets  /tangerine/client/content/groups/${groupId}`)
+    await exec(`cp -r /tangerine/client/default-assets  /tangerine/client/content/groups/${groupId}`)
     await exec(`mkdir /tangerine/client/content/groups/${groupId}/media`)
     // Create appConfig.
     let appConfig = <any>{}
