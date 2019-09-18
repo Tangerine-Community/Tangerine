@@ -3,6 +3,7 @@ tanerine-env-vars.sh
 .history
 
 client/src/media_assets/
+client/src/assets
 data
 .data
 config.env
