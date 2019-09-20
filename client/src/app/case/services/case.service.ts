@@ -12,6 +12,7 @@ import { Injectable } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Query } from '../classes/query.class'
 import moment from 'moment/src/moment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,8 @@ class CaseService {
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private windowRef: WindowRef,
-    private userService:UserService
+    private userService:UserService,
+    private http:HttpClient
   ) { 
     this.window = this.windowRef.nativeWindow
     
@@ -290,9 +292,12 @@ class CaseService {
       eventForm.formResponseId = queryResponseId;
       await this.save();
 
-
       return queryResponseId;
   }
+
+     getQuestionMarkup(form: string, question: string): Promise<string> {
+      return this.tangyFormService.getFormMarkup(form);
+    }
 }
 
-export { CaseService }
+export { CaseService };
