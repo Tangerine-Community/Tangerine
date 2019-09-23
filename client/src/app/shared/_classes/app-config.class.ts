@@ -20,4 +20,5 @@ export class AppConfig {
   minimumFreeSpace
   usageCleanupBatchSize
   barcodeSearchMapFunction:string
+  showQueries:boolean
 } 
