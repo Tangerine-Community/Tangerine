@@ -295,9 +295,21 @@ class CaseService {
       return queryResponseId;
   }
 
-     getQuestionMarkup(form: string, question: string): Promise<string> {
-      return this.tangyFormService.getFormMarkup(form);
+  getQuestionMarkup(form: string, question: string): Promise<string> {
+    return this.tangyFormService.getFormMarkup(form);
+  }
+
+  async valueExists(form, variable, value) {
+    const formResponses = await this.tangyFormService.getResponsesByFormId(form);
+    for (let i = 0; i < formResponses.length; i++) {
+      const formVariable = formResponses[i].inputs.find(input => input.name === variable);
+      if (formVariable.value === value) {
+        return true;
+      }
     }
+    return false;
+  }
+
 }
 
 export { CaseService };
