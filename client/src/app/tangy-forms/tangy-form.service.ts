@@ -25,24 +25,6 @@ export class TangyFormService {
     return formMarkup
   }
 
-  // This doesn't quite work.
-  getFormMarkupForQuery(formId) {
-    let returnedMarkup = '';
-    const formsInfoRequest = this.http.get('./assets/forms.json').toPromise().then(
-      (response) => {
-        const formsInfo = <Array<FormInfo>>(response);
-        const formUrl = (formsInfo.find(form => form.id === formId)).src;
-        const formMarkup: any = this.http.get(formUrl, {responseType: 'text'}).toPromise().then(
-          (markup) => {
-            returnedMarkup = markup;
-          }
-        );
-      }
-    );
-    return returnedMarkup;
-  }
-
-
   async getFormInfo(formId) {
     const formsInfo:any = await this.getFormsInfo()
     return formsInfo.find(formInfo => formInfo.id === formId)
