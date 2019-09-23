@@ -37,3 +37,13 @@ body {
 fieldset {
   border: none;
 }
+
+@media print {
+  .tangy-main-container {
+      left : 0px;
+      position:relative !important
+    }
+    mat-toolbar, mat-tab-header {
+      display:none !important;
+    }
+}

@@ -146,6 +146,7 @@ Prereqs include node 8+ and `npm install -g @angular/cli`.
 ```
 git clone git@github.com:tangerine-community/tangerine
 cd tangerine/client/
+cp -r default-assets src/assets
 npm install
 npm start
 ```
