@@ -303,7 +303,7 @@ class CaseService {
     const formResponses = await this.tangyFormService.getResponsesByFormId(form);
     for (let i = 0; i < formResponses.length; i++) {
       const formVariable = formResponses[i].inputs.find(input => input.name === variable);
-      if (formVariable.value === value) {
+      if (formVariable && formVariable.value === value) {
         return true;
       }
     }
