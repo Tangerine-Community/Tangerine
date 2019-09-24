@@ -74,9 +74,14 @@ export class EventFormComponent implements AfterContentInit {
         this.throttledSaveResponse(response)
       })
       this.tangyFormEl.addEventListener('submit', async _ => {
-        this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
-        await this.caseService.save()
-        await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+        // @TODO Here we want to prevent default and lock instead but we don't have lock yet so this is a workaround.
+        setTimeout(async () => {
+          let response = _.target.store.getState()
+          this.throttledSaveResponse(response)
+          this.caseService.markEventFormComplete(this.caseEvent.id, this.eventForm.id)
+          await this.caseService.save()
+          await this.router.navigate(['case', 'event', this.caseService.case._id, this.caseEvent.id])
+        }, 1500)
       })
       this.loaded = true
     })
