@@ -6,6 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { MatTabChangeEvent } from '@angular/material';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 
 @Component({
   selector: 'app-group-details',
@@ -23,13 +25,16 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   responses;
   selectedTabIndex;
   enabledModules;
-  copyFormId
+  copyFormId;
+  archivedForms;
+  activeForms;
   @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,
     private userService: UserService,
     private tangerineForms: TangerineFormsService,
+    private errorHandler: TangyErrorHandler,
     private router: Router,
     private http: HttpClient
   ) { }
@@ -44,18 +49,19 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     try {
       this.isSuperAdminUser = await this.userService.isCurrentUserSuperAdmin();
       this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupName);
-      this.forms = await this.groupsService.getFormsList(this.groupName);
+      await this.getForms();
+
     } catch (error) {
-      console.log(error)
+      this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }
   }
 
   async ngAfterViewInit() {
     // This is needed to ensure angular binds to selected Tab. The settimeout does the trick
     setTimeout(() => {
-      this.selectedTabIndex = this.route.snapshot.queryParamMap.get('selectedTabIndex')
+      this.selectedTabIndex = this.route.snapshot.queryParamMap.get('selectedTabIndex');
     }, 500);
-    this.enabledModules = await this.http.get(`/api/modules`).toPromise()
+    this.enabledModules = await this.http.get(`/api/modules`).toPromise();
   }
 
   tabChanged(event: MatTabChangeEvent) {
@@ -64,26 +70,55 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
       queryParams: { selectedTabIndex: this.selectedTabIndex }
     })
   }
-
+  async getForms() {
+    this.forms = await this.groupsService.getFormsList(this.groupName);
+    this.activeForms = this.forms.filter(form => !form.archived);
+    this.archivedForms = this.forms.filter(form => form.archived);
+  }
   async addForm() {
     const formId = await this.tangerineForms.createForm(this.groupName, "New Form")
     this.router.navigate(['tangy-form-editor', this.groupName, formId])
   }
 
   async deleteForm(groupId, formId) {
-    let confirmation = confirm('Are you sure you would like to remove this form?')
-    if (!confirmation) return
-    await this.tangerineForms.deleteForm(groupId, formId)
-    this.forms = await this.groupsService.getFormsList(this.groupName);
+    const confirmation = confirm(_TRANSLATE('Are you sure you would like to remove this form?'));
+    if (!confirmation) { return; }
+    try {
+      await this.tangerineForms.deleteForm(groupId, formId);
+      this.forms = await this.groupsService.getFormsList(this.groupName);
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could not Delete Form.'));
+    }
   }
 
   async closeCopyFormDialog() {
-    this.copyFormOverlay.nativeElement.close()
+    this.copyFormOverlay.nativeElement.close();
     this.forms = await this.groupsService.getFormsList(this.groupName);
   }
 
-  onCopyFormClick(formId:string) {
-    this.copyFormId = formId
-    this.copyFormOverlay.nativeElement.open()
+  onCopyFormClick(formId: string) {
+    this.copyFormId = formId;
+    this.copyFormOverlay.nativeElement.open();
+  }
+
+  async onArchiveFormClick(groupId: string, formId: string) {
+    const confirmation = confirm(_TRANSLATE('Are you sure you would like to archive this form?'));
+    if (!confirmation) { return; }
+    try {
+      await this.tangerineForms.archiveForm(groupId, formId);
+      await this.getForms();
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could not Archive Form.'));
+    }
+  }
+  async onUnArchiveFormClick(groupId: string, formId: string) {
+    const confirmation = confirm(_TRANSLATE('Are you sure you would like to unarchive this form?'));
+    if (!confirmation) { return; }
+    try {
+      await this.tangerineForms.unArchiveForm(groupId, formId);
+      await this.getForms();
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could not Unarchive Form.'));
+    }
   }
 }

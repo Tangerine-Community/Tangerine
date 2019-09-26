@@ -21,22 +21,22 @@ export class TangerineFormsService {
   async getFormsList(groupId: string) {
     try {
       return <Array<any>>[
-          ...await this.getFormsInfo(groupId),
-          <TangerineFormInfo>{
-            id: 'user-profile',
-            title: 'User Profile',
-            type: 'form',
-            src: './assets/user-profile/form.html'
-          },
-          <TangerineFormInfo>{
-            id: 'reports',
-            title: 'Reports',
-            type: 'form',
-            src: './assets/reports/form.html'
-          }
-        ]
-        .map(formInfo => ({ 
-          ...formInfo, 
+        ...await this.getFormsInfo(groupId),
+        <TangerineFormInfo>{
+          id: 'user-profile',
+          title: 'User Profile',
+          type: 'form',
+          src: './assets/user-profile/form.html'
+        },
+        <TangerineFormInfo>{
+          id: 'reports',
+          title: 'Reports',
+          type: 'form',
+          src: './assets/reports/form.html'
+        }
+      ]
+        .map(formInfo => ({
+          ...formInfo,
           printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${groupId}/${formInfo.id}/print`
         }));
     } catch (error) {
@@ -70,7 +70,7 @@ export class TangerineFormsService {
     const updatedFormsInfo = [...formsInfo, formInfo]
     await this.filesService.save(groupId, `./forms.json`, updatedFormsInfo)
     await this.filesService.save(groupId, `./${formId}/form.html`, formContents === ''
-          ? `
+      ? `
             <tangy-form id="${formInfo.id}" title="${formTitle}">
               <tangy-form-item id="item_${uuidv4()}" title="Item 1">
                 <template>
@@ -79,20 +79,20 @@ export class TangerineFormsService {
               </tangy-form-item>
             </tangy-form>
           `
-          : formContents
+      : formContents
     )
     return formId
   }
 
-  async getForm(groupId, formId):Promise<TangerineForm> {
+  async getForm(groupId, formId): Promise<TangerineForm> {
     const formInfo = (await this.getFormsInfo(groupId)).find(formInfo => formInfo.id === formId)
     return <TangerineForm>{
       ...formInfo,
-      contents: await this.httpClient.get(`/app/${groupId}/${formInfo.src}`, {responseType: 'text'}).toPromise()
+      contents: await this.httpClient.get(`/app/${groupId}/${formInfo.src}`, { responseType: 'text' }).toPromise()
     }
   }
 
-  async saveForm(groupId, form:TangerineForm) {
+  async saveForm(groupId, form: TangerineForm) {
     const formsJson = (await this.getFormsInfo(groupId))
       .map(formInfo => {
         return formInfo.id !== form.id
@@ -109,11 +109,42 @@ export class TangerineFormsService {
   }
 
   async deleteForm(groupId, formId) {
-    const formsInfo = await this.getFormsInfo(groupId)
-    await this.filesService.save(groupId, './forms.json', formsInfo.filter(formInfo => formInfo.id !== formId))
-    await this.filesService.delete(groupId, `./${formId}/form.html`)
+    try {
+      const formsInfo = await this.getFormsInfo(groupId);
+      await this.filesService.save(groupId, './forms.json', formsInfo.filter(formInfo => formInfo.id !== formId));
+      await this.filesService.delete(groupId, `./${formId}/form.html`);
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could not Delete Form.'));
+    }
   }
+  async archiveForm(groupId: string, formId: string) {
+    try {
+      const formsInfo = await this.getFormsInfo(groupId);
+      const formsJSON = formsInfo.map(form => {
+        if (form.id === formId) {
+          return { ...form, archived: true };
+        } else { return form; }
+      });
+      await this.filesService.save(groupId, './forms.json', formsJSON);
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could not Archive Form.'));
+    }
 
+  }
+  async unArchiveForm(groupId: string, formId: string) {
+    try {
+      const formsInfo = await this.getFormsInfo(groupId);
+      const formsJSON = formsInfo.map(form => {
+        if (form.id === formId) {
+          return { ...form, archived: false };
+        } else { return form; }
+      });
+      await this.filesService.save(groupId, './forms.json', formsJSON);
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Could not Unarchive Form.'));
+    }
+
+  }
   async copyForm(formId, sourceGroupId, targetGroupId) {
     console.log(`Copy form ${formId} from ${sourceGroupId} to ${targetGroupId}`)
     // Get form title and contents.
