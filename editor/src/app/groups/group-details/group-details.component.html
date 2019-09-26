@@ -1,14 +1,17 @@
 <!-- selectedIndexChange is needed to enable two way data binding for selectedIndex to work -->
 
 <paper-dialog #copyFormOverlay>
-    <h2>{{'Copy form to'|translate}}:</h2>
-    <p><app-copy-form [formId]="copyFormId" [sourceGroupId]="groupId" (done)="closeCopyFormDialog()"></app-copy-form></p>
-    <div class="buttons">
-      <paper-button dialog-confirm autofocus>cancel</paper-button>
-    </div>
+  <h2>{{'Copy form to'|translate}}:</h2>
+  <p>
+    <app-copy-form [formId]="copyFormId" [sourceGroupId]="groupId" (done)="closeCopyFormDialog()"></app-copy-form>
+  </p>
+  <div class="buttons">
+    <paper-button dialog-confirm autofocus>cancel</paper-button>
+  </div>
 </paper-dialog>
 
-<mat-tab-group class="tangy-content" #tabGroup (selectedTabChange)="tabChanged($event)" (selectedIndexChange)="''" [(selectedIndex)]="selectedTabIndex">
+<mat-tab-group class="tangy-content" #tabGroup (selectedTabChange)="tabChanged($event)" (selectedIndexChange)="''"
+  [(selectedIndex)]="selectedTabIndex">
 
   <mat-tab label="{{'Forms'|translate}}">
     <mat-card>
@@ -26,29 +29,29 @@
             </span>
           </div>
 
-
+          <h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
           <mat-list>
-            <mat-list-item>
-              <mat-divider></mat-divider>
-            </mat-list-item>
-            <mat-list-item *ngFor="let form of forms; let index=index">
+            <mat-list-item *ngFor="let form of activeForms; let index=index">
               <span>{{index+1}}</span>
               <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
               <span class="tangy-spacer">{{form.title}}</span>
 
-              <span><a mat-icon-button [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
-                <i class="material-icons mat-32 tangy-location-list-icon">add</i>
-              </a>
-            </span>
-            <span ><a mat-icon-button [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
-                <i [class.disabled-button]="!isGroupAdminUser" class="material-icons mat-32 tangy-location-list-icon">edit</i>
-              </a>
-            </span>
+              <span><a mat-icon-button [routerLink]="['/tangy-form-player']"
+                  [queryParams]="{formId: form.id, groupName: groupName}">
+                  <i class="material-icons mat-32 tangy-location-list-icon">add</i>
+                </a>
+              </span>
+              <span><a mat-icon-button
+                  [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
+                  <i [class.disabled-button]="!isGroupAdminUser"
+                    class="material-icons mat-32 tangy-location-list-icon">edit</i>
+                </a>
+              </span>
 
               <span><a mat-icon-button target="_new" href="{{form.printUrl}}">
-                <i class="material-icons mat-32 tangy-location-list-icon">print</i>
-              </a>
-            </span>
+                  <i class="material-icons mat-32 tangy-location-list-icon">print</i>
+                </a>
+              </span>
 
               <span>
                 <a mat-icon-button (click)="onCopyFormClick(form.id)">
@@ -56,24 +59,82 @@
                 </a>
               </span>
 
-              <span><button mat-icon-button 
-                
+              <span><button mat-icon-button
                   [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
-                   (click)="deleteForm(groupName, form.id)">
-                  <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser" 
-                  class="material-icons mat-32 tangy-location-list-icon">delete</i>
+                  (click)="deleteForm(groupName, form.id)">
+                  <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+                    class="material-icons mat-32 tangy-location-list-icon">delete</i>
                 </button>
               </span>
 
+              <span>
+                <button mat-icon-button
+                  [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+                  (click)="onArchiveFormClick(groupName, form.id)">
+                  <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+                    class="material-icons mat-32 tangy-location-list-icon">archive</i>
+                </button>
+              </span>
               <span><a mat-icon-button [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">
-                <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
-              </a>
-            </span>
+                  <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
+                </a>
+              </span>
               <mat-divider></mat-divider>
             </mat-list-item>
           </mat-list>
+          <h2 class="tangy-foreground-secondary">{{'Archived Forms'|translate}}</h2>
+          <mat-list>
+            <mat-list-item *ngFor="let form of archivedForms; let index=index">
+              <span>{{index+1}}</span>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span class="tangy-spacer">{{form.title}}</span>
 
+              <span><a mat-icon-button [routerLink]="['/tangy-form-player']"
+                  [queryParams]="{formId: form.id, groupName: groupName}">
+                  <i class="material-icons mat-32 tangy-location-list-icon">add</i>
+                </a>
+              </span>
+              <span><a mat-icon-button
+                  [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
+                  <i [class.disabled-button]="!isGroupAdminUser"
+                    class="material-icons mat-32 tangy-location-list-icon">edit</i>
+                </a>
+              </span>
 
+              <span><a mat-icon-button target="_new" href="{{form.printUrl}}">
+                  <i class="material-icons mat-32 tangy-location-list-icon">print</i>
+                </a>
+              </span>
+
+              <span>
+                <a mat-icon-button (click)="onCopyFormClick(form.id)">
+                  <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
+                </a>
+              </span>
+
+              <span><button mat-icon-button
+                  [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+                  (click)="deleteForm(groupName, form.id)">
+                  <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+                    class="material-icons mat-32 tangy-location-list-icon">delete</i>
+                </button>
+              </span>
+
+              <span>
+                <button mat-icon-button
+                  [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+                  (click)="onUnArchiveFormClick(groupName, form.id)">
+                  <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
+                    class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
+                </button>
+              </span>
+              <span><a mat-icon-button [routerLink]=" '../'+groupName+ '/download-csv/'+form.id ">
+                  <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
+                </a>
+              </span>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </mat-list>
         </div>
       </mat-card-content>
     </mat-card>
