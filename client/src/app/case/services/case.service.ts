@@ -10,7 +10,9 @@ import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { WindowRef } from 'src/app/core/window-ref.service';
 import { Injectable } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
-
+import { Query } from '../classes/query.class'
+import moment from 'moment/src/moment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -23,14 +25,24 @@ class CaseService {
   case:Case
   caseDefinition:CaseDefinition
   window:any
+  
+  queryCaseEventDefinitionId: any
+  queryEventFormDefinitionId: any
+  queryFormId: any
 
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
     private windowRef: WindowRef,
-    private userService:UserService
+    private userService:UserService,
+    private http:HttpClient
   ) { 
     this.window = this.windowRef.nativeWindow
+    
+    this.queryCaseEventDefinitionId = 'query-event';
+    this.queryEventFormDefinitionId = 'query-form-event';
+    this.queryFormId = 'query-form';
+
   }
 
   async create(caseDefinitionId) {
@@ -197,6 +209,107 @@ class CaseService {
       : undefined
   }
 
+  async getQueries (): Promise<Array<Query>> {
+    const userDbName = this.userService.getCurrentUser();
+    const queryForms = await this.tangyFormService.getResponsesByFormId(this.queryFormId);  
+    const queries = Array<Query>();
+    for (const queryForm of queryForms) {
+      const query = Object.create(Query);
+      queryForm.items[0].inputs.map(q => (query[q.name] = q.value));
+      if (query.queryStatus === 'Open') {
+        queries.push(query);
+      }
+    }
+    return queries;
+  }
+
+  async getOpenQueriesCount (): Promise<number> {
+    return (await this.getQueries()).length;
+  }
+
+  async createQuery (
+    { caseId, eventId, formId, formName, formTitle, participantId, variableName, queryType, queryDate, queryText }
+      ): Promise<string> {
+    caseId = this.case._id;
+    let caseEvent = this.case.events
+      .find(caseEventInfo => caseEventInfo.caseEventDefinitionId === this.queryCaseEventDefinitionId);
+
+    if (caseEvent === undefined) {
+        const newDate = moment(new Date(), 'YYYY-MM-DD').unix() * 1000;
+        caseEvent = this.createEvent(this.queryCaseEventDefinitionId);
+        await this.scheduleEvent(caseEvent.id, newDate, newDate);
+        await this.save();
+      } else {
+        caseEvent = this.case.events
+        .find(caseEventInfo => caseEventInfo.caseEventDefinitionId === this.queryCaseEventDefinitionId);
+      }
+
+      const c = this.startEventForm(caseEvent.id, this.queryEventFormDefinitionId);
+      await this.save();
+
+      caseEvent = this.case.events.find(c => c.caseEventDefinitionId === this.queryCaseEventDefinitionId);
+      const eventForm = caseEvent.eventForms.find(d => d.id === c.id);
+
+      const referringCaseEvent: CaseEvent = this.case.events.find((event) => event.id === eventId);
+      const referringEventName = referringCaseEvent.name;
+      const formLink = '/case/event/form/' + caseId + '/' + eventId + '/' + formId;
+      const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
+
+      const tangyFormContainerEl = this.window.document.createElement('div');
+      tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
+      const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
+      tangyFormEl.style.display = 'none';
+      this.window.document.body.appendChild(tangyFormContainerEl);
+
+      tangyFormEl.newResponse();
+
+      tangyFormEl.response.items[0].inputs = [
+        { name: 'associatedCaseType', value: this.case.label },
+        { name: 'associatedCaseId', value: caseId },
+        { name: 'associatedEventId', value: eventId },
+        { name: 'associatedFormId', value: formId },
+        { name: 'associatedCaseName', value: participantId },
+        { name: 'associatedEventName', value: referringEventName },
+        { name: 'associatedFormName', value: formTitle },
+        { name: 'associatedFormLink', value: formLink },
+        { name: 'associatedVariable', value: variableName },
+        { name: 'queryText', value: queryText },
+        { name: 'queryId', value: 'N/A' },
+        { name: 'queryDate', value: queryDate },
+        { name: 'queryTypeId', value: queryType },
+        { name: 'queryResponse', value: '' },
+        { name: 'queryResponseDate', value: '' },
+        { name: 'queryStatus', value: 'Open' },
+        { name: 'queryLink', value: queryLink }
+      ];
+
+      //tangyFormEl.store.dispatch({ type: 'FORM_RESPONSE_COMPLETE' });
+
+      this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser());
+      await this.db.put(tangyFormEl.response);
+
+      const queryResponseId = tangyFormEl.response._id;
+      eventForm.formResponseId = queryResponseId;
+      await this.save();
+
+      return queryResponseId;
+  }
+
+  getQuestionMarkup(form: string, question: string): Promise<string> {
+    return this.tangyFormService.getFormMarkup(form);
+  }
+
+  async valueExists(form, variable, value) {
+    const formResponses = await this.tangyFormService.getResponsesByFormId(form);
+    for (let i = 0; i < formResponses.length; i++) {
+      const formVariable = formResponses[i].inputs.find(input => input.name === variable);
+      if (formVariable && formVariable.value === value) {
+        return true;
+      }
+    }
+    return false;
+  }
+
 }
 
-export { CaseService }
+export { CaseService };

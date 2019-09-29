@@ -1,0 +1,9 @@
+#p2p-results {
+  overflow: auto;
+  height: 200px;
+  border: black;
+  border-style: dashed;
+  padding: 0.5em;
+}
+
+

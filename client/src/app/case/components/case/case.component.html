@@ -14,6 +14,7 @@
     <app-case-event-list-item
       *ngFor="let caseEvent of eventInfo.caseEvents"
       [caseEvent]="caseEvent"
+      [caseDefinition]="caseService.caseDefinition" 
       [caseEventDefinition]="eventInfo.caseEventDefinition" 
       [case]="caseService.case"
       routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">
