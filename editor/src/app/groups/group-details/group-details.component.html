@@ -36,22 +36,29 @@
               <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
               <span class="tangy-spacer">{{form.title}}</span>
 
-              <span><a mat-icon-button [routerLink]="['/tangy-form-player']"
-                  [queryParams]="{formId: form.id, groupName: groupName}">
-                  <i class="material-icons mat-32 tangy-location-list-icon">add</i>
-                </a>
-              </span>
-              <span><a mat-icon-button
-                  [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
-                  <i [class.disabled-button]="!isGroupAdminUser"
-                    class="material-icons mat-32 tangy-location-list-icon">edit</i>
-                </a>
-              </span>
-
-              <span><a mat-icon-button target="_new" href="{{form.printUrl}}">
-                  <i class="material-icons mat-32 tangy-location-list-icon">print</i>
-                </a>
-              </span>
+              <span><a mat-icon-button [routerLink]="['/tangy-form-player']" [queryParams]="{formId: form.id, groupName: groupName}">
+                <i class="material-icons mat-32 tangy-location-list-icon">add</i>
+              </a>
+            </span>
+            <span ><a mat-icon-button [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupName+'/'+form.id:'/groups/'+groupName">
+                <i [class.disabled-button]="!isGroupAdminUser" class="material-icons mat-32 tangy-location-list-icon">edit</i>
+              </a>
+            </span>
+            <span>
+						  <mat-select #test>
+								<mat-option>
+											<a mat-icon-button target="_new" [href]="form.printUrl">{{'Print Content'|translate}}</a>
+										</mat-option>
+										<mat-option>
+											<a mat-icon-button target="_new" [href]="groupUrl+'#/groups/'+groupId+'/printFormAsTable/'+form.id">{{'Print Metadata'|translate}}</a>
+										</mat-option>
+									</mat-select>
+								</span>
+						<span>
+							<a mat-icon-button (click)="test.open()">
+								<i class="material-icons mat-32 tangy-location-list-icon">print</i>
+							</a> 
+						</span>
 
               <span>
                 <a mat-icon-button (click)="onCopyFormClick(form.id)">
@@ -161,77 +168,77 @@
           <paper-card heading="
             Android Installation
           ">
-            <div class="card-content">
-              <p>
-                Use this for offline deployments or those with many forms and assets.
-              </p>
-              <mat-list>
-                <mat-list-item class="tangy-location-list">
-                  <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-apk',groupName,'qa']">
-                      <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
-                    </a>
-                  </span>
-                </mat-list-item>
-                <mat-list-item class="tangy-location-list">
-                  <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-apk',groupName,'prod']">
-                      <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
-                    </a>
-                  </span>
-                </mat-list-item>
-              </mat-list>
-            </div>
-          </paper-card>
-        </td>
-        <td>
-          <paper-card heading="
+						<div class="card-content">
+							<p>
+								Use this for offline deployments or those with many forms and assets.
+							</p>
+							<mat-list>
+								<mat-list-item class="tangy-location-list">
+									<span class="tangy-foreground-secondary">
+										<a [routerLink]="['/group/release-apk',groupName,'qa']">
+											<iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
+										</a>
+									</span>
+								</mat-list-item>
+								<mat-list-item class="tangy-location-list">
+									<span class="tangy-foreground-secondary">
+										<a [routerLink]="['/group/release-apk',groupName,'prod']">
+											<iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
+										</a>
+									</span>
+								</mat-list-item>
+							</mat-list>
+						</div>
+					</paper-card>
+				</td>
+				<td>
+					<paper-card heading="
             Web Browser Installation
           ">
-            <div class="card-content">
-              <p>
-                Use this for smaller deployments where tablets have solid internet connectivity.
-              </p>
-              <mat-list>
-                <mat-list-item class="tangy-location-list">
-                  <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-pwa',groupName,'qa']">
-                      <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
-                    </a>
-                  </span>
-                </mat-list-item>
-                <mat-list-item class="tangy-location-list">
-                  <span class="tangy-foreground-secondary">
-                    <a [routerLink]="['/group/release-pwa',groupName,'prod']">
-                      <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
-                    </a>
-                  </span>
-                </mat-list-item>
-              </mat-list>
-            </div>
-          </paper-card>
-        </td>
-      </tr>
-    </table>
-  </mat-tab>
+						<div class="card-content">
+							<p>
+								Use this for smaller deployments where tablets have solid internet connectivity.
+							</p>
+							<mat-list>
+								<mat-list-item class="tangy-location-list">
+									<span class="tangy-foreground-secondary">
+										<a [routerLink]="['/group/release-pwa',groupName,'qa']">
+											<iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
+										</a>
+									</span>
+								</mat-list-item>
+								<mat-list-item class="tangy-location-list">
+									<span class="tangy-foreground-secondary">
+										<a [routerLink]="['/group/release-pwa',groupName,'prod']">
+											<iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
+										</a>
+									</span>
+								</mat-list-item>
+							</mat-list>
+						</div>
+					</paper-card>
+				</td>
+			</tr>
+		</table>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Levels">
-    <app-manage-location-list-levels></app-manage-location-list-levels>
-  </mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Levels">
+		<app-manage-location-list-levels></app-manage-location-list-levels>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Content">
-    <app-location-list-editor></app-location-list-editor>
-  </mat-tab>
-  <mat-tab *ngIf="isGroupAdminUser&&enabledModules.indexOf('case')>-1" label="{{'Case Management Editor'|translate}}">
-    <app-case-management-editor></app-case-management-editor>
-  </mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser" label="Manage Location List Content">
+		<app-location-list-editor></app-location-list-editor>
+	</mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser&&enabledModules.indexOf('case')>-1" label="{{'Case Management Editor'|translate}}">
+		<app-case-management-editor></app-case-management-editor>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="{{'Manage Users'|translate}}">
-    <app-list-users class="tangy-full-width"></app-list-users>
-  </mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser" label="{{'Manage Users'|translate}}">
+		<app-list-users class="tangy-full-width"></app-list-users>
+	</mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="{{'Media Library'|translate}}">
-    <app-group-media></app-group-media>
-  </mat-tab>
+	<mat-tab *ngIf="isGroupAdminUser" label="{{'Media Library'|translate}}">
+		<app-group-media></app-group-media>
+	</mat-tab>
 
 </mat-tab-group>

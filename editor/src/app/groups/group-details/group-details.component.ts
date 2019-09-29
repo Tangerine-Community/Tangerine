@@ -5,9 +5,12 @@ import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { MatTabChangeEvent } from '@angular/material';
+import uuidv4 from 'uuid/v4'
+import { WindowRef } from 'src/app/core/window-ref.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
+
 
 @Component({
   selector: 'app-group-details',
@@ -28,9 +31,11 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   copyFormId;
   archivedForms;
   activeForms;
+  groupUrl;
   @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
+    private windowRef: WindowRef,
     private groupsService: GroupsService,
     private userService: UserService,
     private tangerineForms: TangerineFormsService,
@@ -50,7 +55,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
       this.isSuperAdminUser = await this.userService.isCurrentUserSuperAdmin();
       this.isGroupAdminUser = await this.userService.isCurrentUserGroupAdmin(this.groupName);
       await this.getForms();
-
+      this.groupUrl = `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}`;
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
     }

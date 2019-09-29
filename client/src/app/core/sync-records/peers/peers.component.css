@@ -1,0 +1,11 @@
+.p2p-sync-header {
+  margin-bottom: 1em;
+}
+.peersList {
+  margin-bottom: 1em;
+}
+#p2p-results {
+  margin-top: 1em;
+  overflow:auto;
+  height:200px;
+}

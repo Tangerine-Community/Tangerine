@@ -66,21 +66,28 @@ export class TangerineFormsService {
       title: formTitle,
       src: `./assets/${formId}/form.html`
     }
+    let safeFormContents = ''
+    if (formContents === '') {
+      safeFormContents = `
+        <tangy-form id="${formInfo.id}" title="${formTitle}">
+          <tangy-form-item id="item_${uuidv4()}" title="Item 1">
+            <template>
+              <tangy-input name="input1" label="First question..."></tangy-input>
+            </template>
+          </tangy-form-item>
+        </tangy-form>
+      `
+    } else {
+      const templateEl = document.createElement('template')
+      templateEl.innerHTML = formContents
+      templateEl.content.querySelector('tangy-form').setAttribute('id', formId)
+      safeFormContents = templateEl.innerHTML
+    }
+          
     const formsInfo = await this.getFormsInfo(groupId)
     const updatedFormsInfo = [...formsInfo, formInfo]
     await this.filesService.save(groupId, `./forms.json`, updatedFormsInfo)
-    await this.filesService.save(groupId, `./${formId}/form.html`, formContents === ''
-      ? `
-            <tangy-form id="${formInfo.id}" title="${formTitle}">
-              <tangy-form-item id="item_${uuidv4()}" title="Item 1">
-                <template>
-                  <tangy-input name="input1" label="First question..."></tangy-input>
-                </template>
-              </tangy-form-item>
-            </tangy-form>
-          `
-      : formContents
-    )
+    await this.filesService.save(groupId, `./${formId}/form.html`, safeFormContents) 
     return formId
   }
 

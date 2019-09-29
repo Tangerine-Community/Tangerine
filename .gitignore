@@ -3,6 +3,7 @@ tanerine-env-vars.sh
 .history
 
 client/src/media_assets/
+client/src/assets
 data
 .data
 config.env
@@ -40,3 +41,6 @@ editor/src/index-dev.html
 client/app/src/assets-local/
 client/src/assets-local/
 .gradle
+client/makeApk.sh
+scripts/apk-build.sh
+
