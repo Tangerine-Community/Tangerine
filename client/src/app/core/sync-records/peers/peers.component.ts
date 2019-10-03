@@ -44,11 +44,6 @@ export class PeersComponent implements OnInit {
     });
   }
 
-  // async onSelect(peer: Peer): Promise<void> {
-  //   this.selectedPeer = peer;
-  //   await this.transferTo(peer.safePeerAddress);
-  // }
-
   getPeers(): void {
     this.peersService.getPeers()
       .subscribe(peers => this.peers = peers);
@@ -57,26 +52,6 @@ export class PeersComponent implements OnInit {
   async init() {
     this.peers = [];
     if (this.window.isCordovaApp) {
-
-      // window['webserver'].onRequest(
-      //   function(request) {
-      //     console.log('O MA GAWD! This is the request: ', request);
-      //
-      //     window['webserver'].sendResponse(
-      //       request.requestId,
-      //       {
-      //         status: 200,
-      //         body: '<html>Hello World out there</html>',
-      //         headers: {
-      //           'Content-Type': 'text/html'
-      //         }
-      //       }
-      //     );
-      //   }
-      // );
-      //
-      // window['webserver'].start();
-      // window.cordova.getAppVersion.getVersionNumber()
       if (window['cordova'].getAppVersion) {
         window['cordova'].getAppVersion.getVersionNumber().then(function (version) {
           document.querySelector('#p2p-results').innerHTML += 'App version: ' + version + '<br/>';
