@@ -11,6 +11,9 @@
 		<button mat-raised-button color="accent" (click)="formInActive=true" *ngIf="!formInActive">
 			<i class="material-icons">close</i>{{' '}}{{'Close Editing'|translate}}
 		</button>
+		<button mat-raised-button color="accent" (click)="deleteEventDefinition()">
+			<i class="material-icons">delete</i>
+		</button>
 	</div>
 	<form class="tangy-full-width" novalidate #editEventDefinitionForm="ngForm">
 		<fieldset [disabled]="formInActive">

@@ -131,5 +131,7 @@
 "You may not mark an item incorrect that is beyond the last item attempted.": " ﻻ ﻲﺟﻭﺯ ﻞﻛ ﻮﻀﻋ ﻉﻼﻣﺓ ﻊﻟﻯ ﻊﻨﺻﺭ ﻎﻳﺭ ﺺﺤﻴﺣ ﻲﺘﻋﺩﻯ ﺎﻠﺒﻧﺩ ﺍﻸﺨﻳﺭ.",
 "You may proceed.": "ﺏﺈﻤﻛﺎﻨﻛ ﺎﻠﻤﺗﺎﺒﻋﺓ.",
 "Item Title": "ﻊﻧﻭﺎﻧ ﺎﻠﻔﻗﺭﺓ ﺃﻭ ﺎﻠﺒﻧﺩ",
-"✓ Yay! You are up to date.": "✓ ﻭﺍﻭ! ﺖﻣ ﺎﻠﺘﺣﺪﻴﺛ."
+"✓ Yay! You are up to date.": "✓ ﻭﺍﻭ! ﺖﻣ ﺎﻠﺘﺣﺪﻴﺛ.",
+	"yes, continue": "نعم",
+	"no, stop": "لا"
 }

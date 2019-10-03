@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
 import { Subscription } from 'rxjs';
 import { CaseManagementEditorService } from '../case-management-editor.service';
@@ -29,6 +29,7 @@ export class EditEventFormDefinitionComponent implements OnInit, OnDestroy {
   eventFormDefinitionId;
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private groupsService: GroupsService,
     private caseService: CaseManagementEditorService,
     private errorHandler: TangyErrorHandler) { }
@@ -51,15 +52,37 @@ export class EditEventFormDefinitionComponent implements OnInit, OnDestroy {
   }
 
   async editEventFormDefinition() {
-    const eventDefinitions = this.caseStructure.eventDefinitions;
-    const parentIndex = eventDefinitions.findIndex(e => e.id === this.eventDefinitionId);
-    const formDefinitions = eventDefinitions[parentIndex].eventFormDefinitions;
-    const index = formDefinitions.findIndex(e => e.id === this.eventFormDefinitionId);
-    this.caseStructure.eventDefinitions[parentIndex].eventFormDefinitions[index] = this.eventFormDefinition;
-    await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseStructure, `${this.caseDetailId}.json`);
-    this.caseService.sendMessage('reloadTree');
-    this.errorHandler.handleError(_TRANSLATE('Event Form Definition Saved Successfully.'));
+    try {
+      const eventDefinitions = this.caseStructure.eventDefinitions;
+      const parentIndex = eventDefinitions.findIndex(e => e.id === this.eventDefinitionId);
+      const formDefinitions = eventDefinitions[parentIndex].eventFormDefinitions;
+      const index = formDefinitions.findIndex(e => e.id === this.eventFormDefinitionId);
+      this.caseStructure.eventDefinitions[parentIndex].eventFormDefinitions[index] = this.eventFormDefinition;
+      await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseStructure, `${this.caseDetailId}.json`);
+      this.caseService.sendMessage('reloadTree');
+      this.errorHandler.handleError(_TRANSLATE('Event Form Definition Saved Successfully.'));
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Event Form Definition not Saved.'));
+    }
   }
+  async deleteEventFormDefinition() {
+    try {
+      const shouldDelete = confirm(`Delete Event Form Definition: ${this.eventFormDefinition.name}?`);
+      if (shouldDelete) {
+        const eventDefinitions = this.caseStructure.eventDefinitions;
+        const parentIndex = eventDefinitions.findIndex(e => e.id === this.eventDefinitionId);
+        this.caseStructure.eventDefinitions[parentIndex].eventFormDefinitions =
+          this.caseStructure.eventDefinitions[parentIndex].eventFormDefinitions.filter(e => e.id !== this.eventFormDefinitionId);
+        await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseStructure, `${this.caseDetailId}.json`);
+        this.caseService.sendMessage('reloadTree');
+        this.errorHandler.handleError(_TRANSLATE('Event Form Definition Deleted Successfully.'));
+        this.router.navigate([], { replaceUrl: true, queryParams: { caseDetailId: this.caseDetailId, id: this.eventDefinitionId } });
+      }
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Event Form Definition not Saved.'));
+    }
+  }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

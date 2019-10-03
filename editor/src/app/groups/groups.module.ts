@@ -12,6 +12,8 @@ import { NewGroupComponent } from './new-group/new-group.component';
 import { ReleaseApkComponent } from './release-apk/release-apk.component';
 import { ReleasePwaComponent } from './release-pwa/release-pwa.component';
 import { GroupsService } from './services/groups.service';
+import { TangerineFormsService } from './services/tangerine-forms.service';
+import { FilesService } from './services/files.service';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GroupDetailsComponent } from './group-details/group-details.component';
@@ -33,6 +35,7 @@ import { EditEventFormDefinitionComponent } from './case-management-editor/edit-
 import { CreateEventFormDefinitionComponent } from './case-management-editor/create-event-form-definition/create-event-form-definition.component';
 import { CreateEventDefinitionComponent } from './case-management-editor/create-event-definition/create-event-definition.component';
 import { GroupMediaComponent } from './group-media/group-media.component';
+import { CopyFormComponent } from './copy-form/copy-form.component';
 
 
 
@@ -80,8 +83,10 @@ import { GroupMediaComponent } from './group-media/group-media.component';
     EditEventDefinitionComponent,
     EditEventFormDefinitionComponent,
     CreateEventFormDefinitionComponent,
-    CreateEventDefinitionComponent
+    CreateEventDefinitionComponent,
+    CopyFormComponent
   ],
-  providers: [GroupsService]
+  providers: [GroupsService, FilesService, TangerineFormsService ],
+  entryComponents: [CopyFormComponent]
 })
 export class GroupsModule { }

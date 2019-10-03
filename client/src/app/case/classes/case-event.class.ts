@@ -9,7 +9,6 @@ class CaseEvent {
   estimate = true
   dateStart:number
   dateEnd:number
-
   constructor() {
 
   }

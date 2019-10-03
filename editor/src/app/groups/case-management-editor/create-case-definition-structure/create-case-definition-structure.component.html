@@ -10,6 +10,9 @@
 	<button mat-raised-button color="accent" (click)="formInActive=true" *ngIf="!formInActive">
 		<i class="material-icons">close</i>{{' '}}{{'Close Editing'|translate}}
 	</button>
+	<button mat-raised-button color="accent" (click)="deleteCaseStructure()">
+			<i class="material-icons">delete</i>
+		</button>
 </div>
 <form class="tangy-full-width" novalidate #createCaseDefinitionStructure="ngForm">
 	<fieldset [disabled]="formInActive">

@@ -59,3 +59,6 @@ table.observations {
     padding: 2px 8px;
     border-radius: 5px;
   }
+  .tangy-location-list-icon {
+    font-size: 3rem;
+  }

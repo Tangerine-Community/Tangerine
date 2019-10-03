@@ -72,7 +72,11 @@ async function batch() {
           if (header.includes('user-profile.') && userProfileDoc) {
             return userProfileDoc[header.replace('user-profile.', '')] ? userProfileDoc[header.replace('user-profile.', '')] : ''
           } else {
-            return doc[header] ? doc[header] : ''
+            if (typeof doc[header]!== 'undefined') {
+              return doc[header]
+            } else {
+              return ""
+            }
           }
         })]
       })

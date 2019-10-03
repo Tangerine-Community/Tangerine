@@ -133,6 +133,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   --env \"T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
+  --env \"T_ORIENTATION=$T_ORIENTATION\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
@@ -149,6 +150,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/data/client/content/assets:/tangerine/client/content/assets:delegated \
   --volume $(pwd)/server/package.json:/tangerine/server/package.json:delegated \
   --volume $(pwd)/server/src:/tangerine/server/src:delegated \
+  --volume $(pwd)/client/src:/tangerine/client/src:delegated \
   --volume $(pwd)/server/reporting:/tangerine/server/reporting:delegated \
   --volume $(pwd)/upgrades:/tangerine/upgrades:delegated \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \

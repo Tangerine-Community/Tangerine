@@ -88,6 +88,22 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
     });
   }
 
+  async deleteCaseStructure() {
+    try {
+      const shouldDelete = confirm(`Delete Case Structure: ${this.caseForm.name}?`);
+      if (shouldDelete) {
+        this.caseDefinitions = await this.groupsService.getCaseDefinitions(this.groupId);
+        this.caseDefinitions = this.caseDefinitions.filter(e => e['id'] !== this.caseId);
+        await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseDefinitions, './case-definitions.json');
+        await this.groupsService.deleteFileFromGroupDirectory(this.groupId, `./${this.caseForm.id}.json`);
+        this.caseService.sendMessage('reloadTree');
+        this.errorHandler.handleError(_TRANSLATE('Case Structure Saved Successfully.'));
+        this.router.navigate([], { replaceUrl: true });
+      }
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Case Structure not Saved.'));
+    }
+  }
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

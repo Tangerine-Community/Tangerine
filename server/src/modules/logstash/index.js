@@ -40,7 +40,11 @@ module.exports = {
           formId: processedResult.formId,
           startDatetime: new Date(processedResult.startUnixtime).toISOString(),
           startUnixtime: processedResult.startUnixtime,
-          processedResult
+          processedResult,
+          'geoip': {
+            'lat': processedResult['geoip.lat'] ? processedResult['geoip.lat'] : '',
+            'lon': processedResult['geoip.lon'] ? processedResult['geoip.lon'] : ''
+          }
         }, logstashDb);
         resolve(data)
       })
@@ -119,6 +123,10 @@ const generateFlatResponse = async function (formResponse, locationList) {
       if (input.tagName === 'TANGY-GPS') {
         flatFormResponse[`${firstIdSegment}geoip.location.lat`] = input.value.latitude
         flatFormResponse[`${firstIdSegment}geoip.location.lon`] = input.value.longitude
+        // Flatter...
+        flatFormResponse[`geoip.lat`] = input.value.latitude
+        flatFormResponse[`geoip.lon`] = input.value.longitude
+
       }
     }
   }
@@ -203,8 +211,8 @@ async function attachUserProfile(doc, logstashDb) {
     const userProfileDoc = await logstashDb.get(doc[userProfileIdKey])
 
     // Return with merged profile into doc but keep keys namespaced by `user-profile.`. 
-    return Object.assign({}, doc, Object.keys(userProfileDoc).reduce((acc, key) => {
-      return Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc[key] })
+    return Object.assign({}, doc, Object.keys(userProfileDoc.processedResult).reduce((acc, key) => {
+      return Object.assign({}, acc, { [`user-profile.${key}`]: userProfileDoc.processedResult[key] })
     }, {}))
   } catch (error) {
     // There must not be a user profile yet doc uploaded yet.

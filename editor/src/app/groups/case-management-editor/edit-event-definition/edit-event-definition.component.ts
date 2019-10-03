@@ -42,7 +42,8 @@ export class EditEventDefinitionComponent implements OnInit, OnDestroy {
       this.caseDetailId = queryParams['caseDetailId'];
       this.eventDefinitionId = queryParams['id'];
       this.caseStructure = await this.groupsService.getCaseStructure(this.groupId, `./${queryParams['caseDetailId']}`);
-      this.caseIndex = this.caseStructure.eventDefinitions.findIndex(e => e.id === this.eventDefinitionId);
+      this.caseIndex = this.caseStructure.eventDefinitions ?
+        this.caseStructure.eventDefinitions.findIndex(e => e.id === this.eventDefinitionId) : -1;
       this.eventForm = { ...this.caseStructure.eventDefinitions[this.caseIndex] };
     });
   }
@@ -54,6 +55,20 @@ export class EditEventDefinitionComponent implements OnInit, OnDestroy {
       this.formInActive = true;
       this.caseService.sendMessage('reloadTree');
       this.errorHandler.handleError(_TRANSLATE('Event Definition Saved Successfully.'));
+    } catch (error) {
+      this.errorHandler.handleError(_TRANSLATE('Event Definition not Saved.'));
+    }
+  }
+  async deleteEventDefinition() {
+    try {
+      const shouldDelete = confirm(`Delete Event Definition: ${this.eventForm.name}?`);
+      if (shouldDelete) {
+        this.caseStructure.eventDefinitions = this.caseStructure.eventDefinitions.filter(e => e.id !== this.eventDefinitionId);
+        await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseStructure, `./${this.caseDetailId}.json`);
+        this.caseService.sendMessage('reloadTree');
+        this.errorHandler.handleError(_TRANSLATE('Event Definition Deleted Successfully.'));
+        this.router.navigate([], { replaceUrl: true, queryParams: { caseDetailId: this.caseDetailId } });
+      }
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Event Definition not Saved.'));
     }

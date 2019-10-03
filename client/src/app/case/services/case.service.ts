@@ -111,7 +111,13 @@ class CaseService {
   }
 
   startEventForm(caseEventId, eventFormId):EventForm {
-    const eventForm = new EventForm(UUID(), false, this.case._id, caseEventId, eventFormId)
+    const eventForm = <EventForm>{
+      id: UUID(), 
+      complete: false, 
+      caseId: this.case._id, 
+      caseEventId, 
+      eventFormDefinitionId: eventFormId
+    }
     this
       .case
       .events
