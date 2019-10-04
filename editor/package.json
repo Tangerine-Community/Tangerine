@@ -1,6 +1,6 @@
 {
   "name": "tangerine-editor",
-  "version": "0.0.0",
+  "version": "1.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -35,14 +35,15 @@
     "rangen": "^1.0.0",
     "redux": "^4.0.1",
     "rxjs": "~6.3.3",
-    "tangy-form": "^3.23.0",
-    "tangy-form-editor": "^5.24.0",
+    "tangy-form": "^4.2.0",
+    "tangy-form-editor": "^6.3.1",
     "translation-web-component": "0.0.3",
     "tslib": "^1.9.0",
     "underscore": "^1.9.1",
     "uuid": "^3.3.2",
     "workbox-cli": "^2.1.2",
     "xlsx": "^0.14.1",
+    "@polymer/paper-dialog": "^3.0.1",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {

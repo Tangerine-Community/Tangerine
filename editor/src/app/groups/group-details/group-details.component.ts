@@ -1,11 +1,11 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
 import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { MatTabChangeEvent } from '@angular/material';
-import uuidv4 from 'uuid/v4'
+import { TangerineFormsService } from '../services/tangerine-forms.service';
 
 @Component({
   selector: 'app-group-details',
@@ -23,10 +23,13 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   responses;
   selectedTabIndex;
   enabledModules;
+  copyFormId
+  @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private groupsService: GroupsService,
     private userService: UserService,
+    private tangerineForms: TangerineFormsService,
     private router: Router,
     private http: HttpClient
   ) { }
@@ -61,78 +64,26 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
       queryParams: { selectedTabIndex: this.selectedTabIndex }
     })
   }
-  generateFormId() {
-    return 'form-' + uuidv4()
-  }
-
-  generateUuid() {
-    return uuidv4()
-
-  }
-
 
   async addForm() {
-    let formId = this.generateFormId()
-    let formTitle = `New Form`
-    let itemOneId = uuidv4()
-    let itemTwoId = uuidv4()
-
-    let formsJson = await this.http.get<Array<any>>(`/editor/${this.groupName}/content/forms.json`).toPromise()
-    formsJson.push({
-      id: formId,
-      title: formTitle,
-      type: 'form',
-      src: `./assets/${formId}/form.html`
-    })
-
-
-    const files = [
-      {
-        groupId: this.groupName,
-        filePath: `./forms.json`,
-        fileContents: JSON.stringify(formsJson) 
-      },
-      {
-        groupId: this.groupName,
-        filePath: `./${formId}/form.html`,
-        fileContents: `
-        <tangy-form id="${formId}" title="${formTitle}">
-          <tangy-form-item id="item_${uuidv4()}" title="Item 1">
-            <template>
-              <tangy-input name="input1" label="First question..."></tangy-input>
-            </template>
-          </tangy-form-item>
-        </tangy-form>
-        ` 
-      }
-    ]
-
-    for (let file of files) {
-      await this.http.post('/editor/file/save', file).toPromise()
-    }
-
+    const formId = await this.tangerineForms.createForm(this.groupName, "New Form")
     this.router.navigate(['tangy-form-editor', this.groupName, formId])
-
   }
 
-  async deleteForm(groupName, formId) {
+  async deleteForm(groupId, formId) {
     let confirmation = confirm('Are you sure you would like to remove this form?')
     if (!confirmation) return
-    let formsJson = await this.http.get<Array<any>>(`/editor/${groupName}/content/forms.json`).toPromise()
-    let newFormsJson = formsJson.filter(formInfo => formInfo.id !== formId)
-
-    await this.http.post('/editor/file/save', {
-      groupId: groupName,
-      filePath: './forms.json',
-      fileContents: JSON.stringify(newFormsJson)
-    }).toPromise()
-
-    await this.http.delete('/editor/file/save', {params: new HttpParams()
-      .set('groupId', groupName)
-      .set('filePath', `./${formId}`)
-    }).toPromise()
-
+    await this.tangerineForms.deleteForm(groupId, formId)
     this.forms = await this.groupsService.getFormsList(this.groupName);
-    
+  }
+
+  async closeCopyFormDialog() {
+    this.copyFormOverlay.nativeElement.close()
+    this.forms = await this.groupsService.getFormsList(this.groupName);
+  }
+
+  onCopyFormClick(formId:string) {
+    this.copyFormId = formId
+    this.copyFormOverlay.nativeElement.open()
   }
 }

@@ -1,5 +1,49 @@
 # Changelog
 
+## v3.5.0
+- __New Features__
+  - Forms with fullscreen enabled now have a toggle button for the user to enable/disable fullscreen mode. Form designers may specify the number of taps in order for fullscreen to disable. https://github.com/Tangerine-Community/tangy-form/pull/51, https://github.com/Tangerine-Community/tangy-form/pull/72, https://github.com/Tangerine-Community/tangy-form-editor/pull/73
+  - An `inputs` object keyed by input name is now available for use in `valid-if` statements. https://github.com/Tangerine-Community/tangy-form/pull/65
+  - A new Partial Date item is available https://github.com/Tangerine-Community/tangy-form/pull/57
+  - Translations updates. [#1613](https://github.com/Tangerine-Community/Tangerine/pull/1613)
+  - New `custom-styles.css` file which can be added by modifying a group's assets folder. You may define CSS classes and then utilize them in the editor by adding them under each widget's class attribute.
+  - New "Copy form" feature added to to Editor and more descriptive icon for adding a database record [#1627](https://github.com/Tangerine-Community/Tangerine/pull/1627)
+- __Fixes__
+  - Helper functions for timed grids are now safer, will not crash if a grid was skipped and info is not availble. https://github.com/Tangerine-Community/tangy-form/pull/61
+  - Print view for a form had a bug where only the first page was printable. This is now fixed so that all pages may be printed. https://github.com/Tangerine-Community/Tangerine/pull/1605
+  - Fix tangy-select test regression and work on EFTouch transition sound plays only on auto-progress [#137](https://github.com/Tangerine-Community/Tangerine/issues/1371)
+  - API change in tangy-select - use of secondaryLabel is supported but deprecated; Use optionSelectLabel instead. [#1602](https://github.com/Tangerine-Community/Tangerine/issues/1602)
+  - Fix the display of uploaded docs [#1609](https://github.com/Tangerine-Community/Tangerine/pull/1609)
+  - Enable auto-stop for untimed grids [#1522](https://github.com/Tangerine-Community/Tangerine/issues/1522)
+  - Increased clickable target for forms list and visits tab [#1628](https://github.com/Tangerine-Community/Tangerine/pull/1628)
+
+  
+__Upgrade instructions:__
+
+Backup your data folder and then run the following commands.
+```bash
+git fetch origin
+git checkout v3.5.0
+./start.sh
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.5.0.js 
+```
+
+If any of your on-change logic looks into a form item's contents using `tangyFormItemEl.shadowRoot.querySelector(...)` or 
+`this.$.content.querySelector(...)`, you must change it. The contents of the form can now be accessed at `tangyFormItemEl.querySelector(...)`. 
+
+Also, the `content` element is no longer available.
+
+For example:
+
+```
+// replace
+var el = this.$.content.querySelector('tangy-input[name=\'classId\']')
+//with 
+var el = this.querySelector('tangy-input[name=\'classId\']')
+```
+
+The advantage of moving this content out of the shadow DOM is that you can now style it directly from your app.
+
 ## v3.4.0
 - __New Features__
   - __New groups now ordered by creation date__: Creating new groups will now order them by the date the were created in the group list. [#1584](https://github.com/Tangerine-Community/Tangerine/issues/1584)
