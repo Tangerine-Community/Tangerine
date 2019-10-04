@@ -1,6 +1,6 @@
 {
   "name": "tangerine-client",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -47,7 +47,7 @@
     "pouchdb-upsert": "^2.2.0",
     "rxjs": "^6.3.3",
     "rxjs-compat": "^6.2.1",
-    "tangy-form": "^3.23.0",
+    "tangy-form": "^4.2.0",
     "translation-web-component": "0.0.3",
     "underscore": "^1.9.1",
     "uuid-browser": "^3.1.0",
@@ -75,3 +75,4 @@
     "tslint": "~5.9.1"
   }
 }
+

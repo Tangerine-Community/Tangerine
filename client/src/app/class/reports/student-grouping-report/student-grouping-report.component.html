@@ -34,7 +34,7 @@
     </div>
    <div id="reportContainer">
      <div id="stats">
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="classGroupReport?.studentsAssessed > 0">
+        <table cdk-table [dataSource]="dataSource" class="mat-elevation-z8" *ngIf="classGroupReport?.studentsAssessed > 0">
           <!-- Student Column -->
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef title="Student"> {{'Student'|translate}} </th>
