@@ -24,7 +24,7 @@ Backup your data folder and then run the following commands.
 ```bash
 git fetch origin
 git checkout v3.5.0
-./start.sh
+./start.sh v3.5.0
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.5.0.js 
 ```
 
