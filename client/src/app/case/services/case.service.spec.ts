@@ -10,6 +10,8 @@ import { CaseDefinition } from '../classes/case-definition.class';
 import { EventFormDefinition } from '../classes/event-form-definition.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import PouchDB from 'pouchdb';
+import { HttpClient } from '@angular/common/http';
+import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 
 class MockCaseDefinitionsService {
   async load() {
@@ -127,8 +129,15 @@ class MockUserService {
 }
 
 describe('CaseService', () => {
+
+  let httpClient: HttpClient
+  let httpTestingController: HttpTestingController 
+
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule
+      ],
       providers: [
         // NOTE: For some reason if this is WindowRef from the shared module, this fails to inject.
         WindowRef,
@@ -146,6 +155,8 @@ describe('CaseService', () => {
         }
       ]
     })
+    httpClient = TestBed.get(HttpClient);
+    httpTestingController = TestBed.get(HttpTestingController);
   });
 
   it('should be created', () => {
