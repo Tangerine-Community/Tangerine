@@ -10,10 +10,10 @@ function formatBytes(a,b){if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","
 module.exports = async (req, res) => {
   const list = await readDir(`/tangerine/client/content/groups/${req.params.group}/media`, {withFileTypes: true})
   const files = []
-  for (let filePath of list) {
+  for (let dirent of list) {
     files.push({
-      path: `./assets/media/${filePath}`,
-      size: formatBytes((await stat(`/tangerine/client/content/groups/${req.params.group}/media/${filePath}`)).size)
+      path: `./assets/media/${dirent.name}`,
+      size: formatBytes((await stat(`/tangerine/client/content/groups/${req.params.group}/media/${dirent.name}`)).size)
     })
   }
   return res.send(files)
