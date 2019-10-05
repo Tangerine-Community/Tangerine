@@ -53,12 +53,16 @@
   
 __Upgrade instructions:__
 
-Backup your data folder and then run the following commands.
+On the server, backup your data folder and then run the following commands.
 ```bash
 git fetch origin
 git checkout v3.6.0
 ./start.sh v3.6.0
 ```
+
+Now you may publish a release to your Devices and run the "Check for Update" on each Device. Note that if you are looking to use the QR Code scanner and you have been using Android Installation, you will need to reinstall the App on Devices and make sure to note the additional permissions installation instructions noted in the README.md file for enabling the App to have Camera Access. If using the Web Browser Installation, there is no need to reinstall the app for Camera access.
+
+
 
 ## v3.5.0
 - __New Features__
