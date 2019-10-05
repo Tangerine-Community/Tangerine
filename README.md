@@ -26,13 +26,15 @@ There is a pluggable reporting module framework built in currently with options 
 
 ## Supported Devices and Web Browsers
 
-### Editor
+### Online Editor for Form Design and Data Download
 Currently Tangerine Editor is tested using Google Chrome web browser. Other Web Browsers such as Firefox and Edge may work, but may also give you trouble. 
 
-### Tablet
+### Offline Tablet for data collection
 Currently the most commonly deployed tablet with Tangerine is the [Lenovo Tab 4 8](https://www.lenovo.com/us/en/tablets/android-tablets/tab-4-series/Lenovo-TB-8504/p/ZA2B0009US). Technically any Android tablet with an updated version of Chrome should work but due to the varied nature of Android distributions out there, we cannot guarantee Tangerine will work on all Android tablets.
 
-## Online Server Installation
+## Installation
+
+### Online Editor for Form Design and Data Download
 We recommend using AWS for hosting have documented detailed [instructions for AWS](docs/install-on-aws.md). Below are general instructions for installing on any machine.
 
 SSH into your machine from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
@@ -59,10 +61,18 @@ Lastly, to reset caches and free up memory every so often, we recommend restarti
 0 0 * * * docker stop tangerine && docker start tangerine
 ```
 
+### Offline Tablet for data collection
+To install on Tablets, proceed to the "Releases" tab in the Online Editor. There you will find two methods for installing on Tablets, Web Browser Installation and Android Installation. Each of these release types have two different channels you can publish to, Test and Live. It is recommended that for every deployment of Tangerine you have at least one designated device subscribed to the Test channel so that you may release to that Device to test Tangerine upgrades and content updates before releasing to the remaining tablets subscribed to the Live channel.
+
+0. On Tablet, open the Play Store app and proceed to upgrade Google Chrome Web Browser.
+0. On Server, generate release in Online Editor.
+0. If using Web Browser Installation, ensure the Tablet is connected to the Internet, open the URL the server gives you in Google Chrome, wait for installation screen to complete, and then tap "Add to homescreen" to add the App to your device. If using Android installation download the "APK" file, transfer to the device and open the file to install.
+0. If using the Android Installation, on the Tablet proceed to the Settings App and open "Apps & notifcations", then "Tangerine", then "Permissions". Ensure that "Camera", "Location", and "Storage" permissions are enabled.
+
 ## Upgrade
 When you start Tangerine, it creates two containers that need upgrades over time. The `tangerine` container and the `couchdb` container. 
 
-### Tangerine Upgrades
+### Server Upgrades
 Monitor <https://github.com/Tangerine-Community/Tangerine/releases> for new stable releases. Note that a "Pre-release" may not be stable, might corrupt your data, and there will not be an upgrade path for you.
 
 SSH into your server and run the following commands.
@@ -76,7 +86,7 @@ cp config.defaults.sh config.sh
 # Migrate settings from config backup to config.sh.
 vim -O config.sh config.sh_backup
 rm config.sh_backup
-./start.sh
+./start.sh <version number>
 # Check for upgrade scripts that need to be run. Note that you can only run scripts that end in .sh and you need to 
 # run every script between your prior version to version you have upgraded to. Also always check the release notes for
 # any special instructions
@@ -97,6 +107,10 @@ docker pull couchdb
 cd tangerine
 ./start.sh
 ```
+
+
+### Tablet Upgrades
+For the app on the tablet, wether you are using the Android Installation method or the Web Browser installation method, the update process is the same. After server upgrades or content changes, return to the "Releases" tab in the online Editor and click "Test Release". When that completes, fetch your designated test tablet. Ensure you have an Internet connection on your designated test tablet, open the app, log in, and from the top right menu select "Check for Update". Follow the prompts to update. If the updates are satisfactory, return to your "Releases" tab online and click "Live Release". Proceed to update your Tablets with the "Live Release" app.
 
 ## Local Content Development
 Install [nodejs](https://nodejs.org/en/) and [git](https://git-scm.com/) on your local machine. Then run the following commands.
