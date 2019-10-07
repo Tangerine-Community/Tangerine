@@ -58,7 +58,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
     if (!this.print) {
       this.containerEl.innerHTML = `
-        <tangy-form-editor style="margin:15px" categories="${categories}" files-endpoint="./media-list">
+        <tangy-form-editor style="margin:15px" categories='${categories}' files-endpoint="./media-list">
           <template>
             ${formHtml}
           </template>
@@ -114,7 +114,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     files.push({
       groupId: this.route.snapshot.paramMap.get('groupName'),
       filePath:`./${state.form.id}/form.html`,
-      fileContents: formHtml 
+      fileContents: formHtml
     })
     // Send to server.
     for (let file of files) {
