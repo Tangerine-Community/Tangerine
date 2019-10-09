@@ -1,3 +1,4 @@
+import { AppConfigService } from './../_services/app-config.service';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { CanActivate } from '@angular/router/src/interfaces';
@@ -10,11 +11,17 @@ export class CreateProfileGuardService implements CanActivate {
   userDatabase;
   DB;
   appConfig;
-  constructor(private router: Router, private userService: UserService, private http: HttpClient) { }
+  constructor(
+    private router: Router, 
+    private userService: UserService, 
+    private http: HttpClient,
+    private appConfigService:AppConfigService
+  ) { }
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     let isProfileComplete = false;
-    this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
+    this.appConfig = await this.appConfigService.getAppConfig() 
+    await this.userService.initialize()
     this.DB = await this.userService.getUserDatabase();
     const results = await this.DB.query('tangy-form/responsesByFormId', {
       key: 'user-profile',

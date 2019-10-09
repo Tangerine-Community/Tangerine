@@ -133,7 +133,7 @@ export class AppComponent implements OnInit {
     let storageEstimate = await navigator.storage.estimate()
     let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     while(availableFreeSpace < minimumFreeSpace) {
-      const DB:PouchDB = this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
+      const DB:PouchDB = await this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,
@@ -160,7 +160,7 @@ export class AppComponent implements OnInit {
       .map(row => row.doc)
       .map(doc => doc._id);
     for (const username of usernames) {
-      const userDb:PouchDB = this.userService.getUserDatabase(username);
+      const userDb:PouchDB = await this.userService.getUserDatabase(username);
       // Use try in case this is an old account where info doc was not created.
       let infoDoc = { _id: '', atUpdateIndex: 0 };
       try {

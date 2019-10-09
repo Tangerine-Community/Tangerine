@@ -26,6 +26,7 @@ export class UserService {
   usersDb = new PouchDB('users');
   userDatabases:Array<UserDatabase> = []
   config: AppConfig
+  _initialized = false
 
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
@@ -34,9 +35,6 @@ export class UserService {
   ) { }
 
   async initialize() {
-    for (const user of await this.getAllUsers()) {
-      this.userDatabases.push(new UserDatabase(user._id, user.userUUID))
-    }
     this.config = await this.appConfigService.getAppConfig()
   }
 
@@ -77,9 +75,6 @@ export class UserService {
       const userAccount = await this.getUserAccount(username)
       if (this.config.sharedUserDatabase === true) {
         return new UserDatabase(username, userAccount.userUUID, true)
-      }
-      if (!this.userDatabases.find(userDatabase => userDatabase.username === username)) {
-        this.userDatabases.push(new UserDatabase(username, userAccount.userUUID))
       }
       return this.userDatabases.find(userDatabase => userDatabase.username === username)
     }
