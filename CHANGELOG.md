@@ -24,6 +24,8 @@
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1682 
     - PR: https://github.com/Tangerine-Community/tangy-form/pull/73
 - __Fixes__
+  - Fix Class tablets that are filling up their disk too fast.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1706 
   - Fix metadata print screen options 
     - PR: https://github.com/Tangerine-Community/Tangerine/pull/1703
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1670, https://github.com/Tangerine-Community/Tangerine/issues/1671
