@@ -2,6 +2,8 @@ import { UserDatabase } from './../_classes/user-database.class';
 import {from as observableFrom,  Observable } from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import { Injectable, Inject } from '@angular/core';
+import PouchDB from 'pouchdb'
+PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 // bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71
 //import * as bcrypt from 'bcryptjs';
 const bcrypt = {
@@ -12,12 +14,6 @@ import { AppConfigService } from './app-config.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { UserAccount } from '../_classes/user-account.class';
 import { UserSignup } from '../_classes/user-signup.class';
-import PouchDB from 'pouchdb';
-import PouchDBFind from 'pouchdb-find';
-import * as PouchDBUpsert from 'pouchdb-upsert';
-PouchDB.plugin(PouchDBFind)
-PouchDB.plugin(PouchDBUpsert)
-PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 import { updates } from '../../core/update/update/updates';
 import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
 import { HttpClient } from '@angular/common/http';
@@ -29,7 +25,6 @@ export class UserService {
   userData = {};
   usersDb = new PouchDB('users');
   userDatabases:Array<UserDatabase> = []
-  PouchDB = PouchDB
   config: AppConfig
 
   constructor(
@@ -58,7 +53,7 @@ export class UserService {
   // User Database 
   //
 
-  async createUserDatabase(username:string, userId:string):Promise<PouchDB> {
+  async createUserDatabase(username:string, userId:string):Promise<UserDatabase> {
     const userDb = new UserDatabase(username, userId)
     this.installDefaultUserDocs(userDb)
     this.userDatabases.push(userDb)
@@ -76,13 +71,13 @@ export class UserService {
   }
 
   async getUserDatabase(username = '') {
-    const userAccount = await this.getUserAccount(username)
-    if (this.config.sharedUserDatabase === true) {
-      return new UserDatabase(username, userAccount.userUUID, true)
-    }
-    if (username === '') {
-      return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'))
+   if (username === '') {
+      return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'), this.config.sharedUserDatabase)
     } else {
+      const userAccount = await this.getUserAccount(username)
+      if (this.config.sharedUserDatabase === true) {
+        return new UserDatabase(username, userAccount.userUUID, true)
+      }
       if (!this.userDatabases.find(userDatabase => userDatabase.username === username)) {
         this.userDatabases.push(new UserDatabase(username, userAccount.userUUID))
       }
@@ -160,7 +155,7 @@ export class UserService {
       userProfile._id
     ) 
     await this.usersDb.post(userAccount)
-    let userDb:PouchDB
+    let userDb:UserDatabase
     if (this.config.sharedUserDatabase === true) {
       userDb = new UserDatabase(userAccount.userUUID, true)
     } else {
