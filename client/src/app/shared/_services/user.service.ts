@@ -41,7 +41,7 @@ export class UserService {
   }
 
   async install() {
-    const sharedUserDatabase = new UserDatabase('install', true)
+    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', true)
     await this.installDefaultUserDocs(sharedUserDatabase)
     await sharedUserDatabase.put({
       _id: 'info',

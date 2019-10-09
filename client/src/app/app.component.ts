@@ -46,6 +46,7 @@ export class AppComponent implements OnInit {
     translate: TranslateService
   ) {
     this.window = this.windowRef.nativeWindow;
+    this.window.PouchDB = PouchDB
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
       ? true
       : false
@@ -65,7 +66,6 @@ export class AppComponent implements OnInit {
     this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
     // Make database services available to eval'd code.
     this.window.userService = this.userService
-    this.window.PouchDB = this.userService.PouchDB
   }
 
 
