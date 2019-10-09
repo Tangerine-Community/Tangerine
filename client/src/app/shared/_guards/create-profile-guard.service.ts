@@ -15,8 +15,7 @@ export class CreateProfileGuardService implements CanActivate {
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     let isProfileComplete = false;
     this.appConfig = await this.http.get('./assets/app-config.json').toPromise()
-    this.userDatabase = await this.userService.getUserDatabase();
-    this.DB = new PouchDB(this.userDatabase);
+    this.DB = await this.userService.getUserDatabase();
     const results = await this.DB.query('tangy-form/responsesByFormId', {
       key: 'user-profile',
       include_docs: true
