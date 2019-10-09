@@ -59,4 +59,9 @@ export class UserDatabase {
   changes(options) {
     return this.db.changes(options)
   }
+
+  allDocs(options) {
+    return this.db.allDocs(options)
+  }
+  
 } 
