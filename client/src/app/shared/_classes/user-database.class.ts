@@ -31,16 +31,16 @@ export class UserDatabase {
   async put(doc) {
     return await this.db.put({
       ...doc,
-      _modifiedBy: this.userId,
-      _modifiedOn: Date.now()
+      tangerineModifiedBy: this.userId,
+      tangerineModifiedOn: Date.now()
     })
   }
 
   async post(doc) {
     return await this.db.post({
       ...doc,
-      _modifiedBy: this.userId,
-      _modifiedOn: Date.now()
+      tangerineModifiedBy: this.userId,
+      tangerineModifiedOn: Date.now()
     })
   }
 
@@ -54,5 +54,9 @@ export class UserDatabase {
 
   async destroy() {
     return await this.db.destroy()
+  }
+
+  changes(options) {
+    return this.db.changes(options)
   }
 } 
