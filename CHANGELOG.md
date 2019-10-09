@@ -47,6 +47,12 @@
   - Fix variable names in Editor to allow for only valid variable names. 2 or more characters, begin with alpha, no spaces, periods, allow _ no dash
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1566, https://github.com/Tangerine-Community/Tangerine/issues/1558, https://github.com/Tangerine-Community/Tangerine/issues/1461
     - PR: https://github.com/Tangerine-Community/tangy-form-editor/pull/77
+  - Fix for Autostop for radio buttons - 
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1519
+    - PR's: 
+      - https://github.com/Tangerine-Community/Tangerine/issues/1590
+      - https://github.com/Tangerine-Community/tangy-form/pull/100
+      - https://github.com/Tangerine-Community/tangy-form/pull/100
 - __Experimental Features__
   - When using the experimental Case module, Editors can now program forms to trigger the creation of a "Data Query" when Data Collectors are entering data. Data queries are then shown later in a "Data Queries" tab where clarification on prior data entered is requested.
     - PR: https://github.com/Tangerine-Community/Tangerine/pull/1661
