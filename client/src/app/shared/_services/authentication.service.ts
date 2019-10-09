@@ -24,10 +24,12 @@ export class AuthenticationService {
 
   async login(username: string, password: string) {
     if (await this.userService.doesUserExist(username) && await this.confirmPassword(username, password)) {
-      localStorage.setItem('currentUser', username);
+      const userAccount = await this.userService.getUserAccount(username)
+      localStorage.setItem('currentUser', userAccount.username);
+      localStorage.setItem('currentUsername', userAccount.username);
+      localStorage.setItem('currentUserId', userAccount.userUUID);
       this._currentUserLoggedIn = true;
       this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
-      const userAccount = await this.userService.getUserAccount(username)
       this.userLoggedIn$.next(userAccount)
       return true 
     } else {;
