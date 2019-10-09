@@ -2,8 +2,6 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import PouchDB from 'pouchdb';
-
 import { AuthenticationService } from '../../shared/_services/authentication.service';
 import { UserService } from '../../shared/_services/user.service';
 import { AppConfigService } from '../../shared/_services/app-config.service';
@@ -14,18 +12,16 @@ function _window(): any {
 
 @Injectable()
 export class CaseManagementService {
-  userDB;
+
   userService: UserService;
   monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
   constructor(
     authenticationService: AuthenticationService,
     userService: UserService,
     private http: HttpClient,
     private appConfigService: AppConfigService
   ) {
-    this.userService = userService;
-    this.userDB = new PouchDB
-      (authenticationService.getCurrentUserDBPath());
   }
   async getMyLocationVisits(month: number, year: number) {
     const res = await this.http.get('./assets/location-list.json').toPromise();
@@ -75,7 +71,8 @@ export class CaseManagementService {
   }
 
   async  getFilterDatesForAllFormResponsesByLocationId(locationId: string) {
-    const result = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
+    const userDb = await this.userService.getUserDatabase()
+    const result = await userDb.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
     const timeLapseFilter = [];
     result.rows.forEach(observation => {
       const date = new Date(observation.doc.startUnixtime);
@@ -103,12 +100,14 @@ export class CaseManagementService {
   }
   async getVisitsByYearMonthLocationId(locationId?: string, include_docs?: boolean) {
     const options = { key: locationId, include_docs };
-    const result = await this.userDB.query('tangy-form/responsesByYearMonthLocationId', options);
+    const userDb = await this.userService.getUserDatabase()
+    const result = await userDb.query('tangy-form/responsesByYearMonthLocationId', options);
     return result.rows;
   }
 
   async getResponsesByLocationId(locationId: string, period?: string) {
-    const result = await this.userDB.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
+    const userDb = await this.userService.getUserDatabase()
+    const result = await userDb.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true });
     const currentDate: Date = new Date();
     const monthYear = period ? period : `${currentDate.getMonth()}-${currentDate.getFullYear()}`;
     const monthYearParts = monthYear.split('-');
