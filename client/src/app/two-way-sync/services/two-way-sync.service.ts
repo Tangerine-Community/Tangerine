@@ -5,7 +5,6 @@ import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { HttpParams, HttpClient, HttpHeaders } from '@angular/common/http';
 import { TwoWaySyncSession } from '../classes/two-way-sync-session.class';
-import { TangyFormService } from 'src/app/tangy-forms/tangy-form-service';
 import { SyncingService } from 'src/app/core/sync-records/_services/syncing.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { UserDatabase } from 'src/app/shared/_classes/user-database.class';

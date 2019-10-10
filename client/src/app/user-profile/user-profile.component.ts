@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 import { UserService } from '../shared/_services/user.service';
-import { TangyFormService } from '../tangy-forms/tangy-form-service';
 import {AppConfigService} from "../shared/_services/app-config.service";
 
 @Component({

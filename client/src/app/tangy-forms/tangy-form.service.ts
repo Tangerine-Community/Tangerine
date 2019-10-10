@@ -1,7 +1,3 @@
-/*
- * This is the successor to tangy-form-service.ts. Same API, more standard Angular Pattern.
- */
-
 import { Injectable } from '@angular/core';
 import { UserService } from '../shared/_services/user.service';
 import { HttpClient } from '@angular/common/http';
