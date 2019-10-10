@@ -5,11 +5,12 @@ import { UserService } from '../../core/auth/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
 import { MatTabChangeEvent } from '@angular/material';
-import uuidv4 from 'uuid/v4'
+import uuidv4 from 'uuid/v4';
 import { WindowRef } from 'src/app/core/window-ref.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   archivedForms;
   activeForms;
   groupUrl;
+  formsJsonURL;
   @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
@@ -48,8 +50,9 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     this.route.params.subscribe(async params => {
       this.groupName = params.groupName;
       this.groupId = params.groupName;
-      this.group = await this.groupsService.getGroupInfo(this.groupId)
-      this.groupLabel = this.group.label
+      this.group = await this.groupsService.getGroupInfo(this.groupId);
+      this.groupLabel = this.group.label;
+      this.formsJsonURL = `./forms.json`;
     });
     try {
       this.isSuperAdminUser = await this.userService.isCurrentUserSuperAdmin();
@@ -70,10 +73,10 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
   }
 
   tabChanged(event: MatTabChangeEvent) {
-    this.selectedTabIndex = event.index
+    this.selectedTabIndex = event.index;
     this.router.navigate([], {
       queryParams: { selectedTabIndex: this.selectedTabIndex }
-    })
+    });
   }
   async getForms() {
     this.forms = await this.groupsService.getFormsList(this.groupName);
@@ -124,6 +127,40 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
       await this.getForms();
     } catch (error) {
       this.errorHandler.handleError(_TRANSLATE('Could not Unarchive Form.'));
+    }
+  }
+  async dropActive(event: CdkDragDrop<string[]>) {
+    if (event.previousIndex <= 1 || event.currentIndex <= 1) { return; }
+    const confirmation = confirm(_TRANSLATE('Change order of forms?'));
+    if (confirmation) {
+      try {
+        moveItemInArray(this.activeForms, event.previousIndex, event.currentIndex);
+        this.activeForms = (this.activeForms.filter(form => form.id !== 'user-profile' && form.id !== 'reports')).map(item => {
+          delete item.printUrl;
+          return item;
+        });
+        await this.groupsService.saveFileToGroupDirectory(this.groupId, [...this.activeForms, ...this.archivedForms], this.formsJsonURL);
+        await this.getForms();
+      } catch (error) {
+        this.errorHandler.handleError(_TRANSLATE('Could not change order of forms.'));
+      }
+    }
+  }
+  async dropArchived(event: CdkDragDrop<string[]>) {
+    if (event.previousIndex <= 1 || event.currentIndex <= 1) { return; }
+    const confirmation = confirm(_TRANSLATE('Change order of forms?'));
+    if (confirmation) {
+      try {
+        moveItemInArray(this.archivedForms, event.previousIndex, event.currentIndex);
+        this.activeForms = (this.activeForms.filter(form => form.id !== 'user-profile' && form.id !== 'reports')).map(item => {
+          delete item.printUrl;
+          return item;
+        });
+        this.groupsService.saveFileToGroupDirectory(this.groupId, [...this.activeForms, ...this.archivedForms], this.formsJsonURL);
+        await this.getForms();
+      } catch (error) {
+        this.errorHandler.handleError(_TRANSLATE('Could not change order of forms.'));
+      }
     }
   }
 }
