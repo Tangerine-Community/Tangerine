@@ -4,6 +4,8 @@ import { AuthModule } from '../auth.module';
 import { RegistrationComponent } from './registration.component';
 import { Observable, of } from 'rxjs';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { WindowRef } from '../../window-ref.service';
 
 describe('RegistrationComponent', () => {
   let component: RegistrationComponent;
@@ -12,7 +14,8 @@ describe('RegistrationComponent', () => {
   const snapshot = { queryParams: of({ returnUrl: 'create-nodes' }) };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [AuthModule, AppRoutingModule]
+      imports: [AuthModule, SharedModule, AppRoutingModule],
+      providers: [WindowRef]
     })
       .compileComponents();
   }));

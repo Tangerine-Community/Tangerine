@@ -24,6 +24,9 @@
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1682 
     - PR: https://github.com/Tangerine-Community/tangy-form/pull/73
 - __Fixes__
+  - Fix metadata print screen options 
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1703
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1670, https://github.com/Tangerine-Community/Tangerine/issues/1671
   - Fix missing camera permission blocking APK installs form using QR or Photo Capture
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1646, https://github.com/Tangerine-Community/Tangerine/issues/1578
   - Fix performance issues caused by needless TangyForm.on-change events from firing when they don't need to.
