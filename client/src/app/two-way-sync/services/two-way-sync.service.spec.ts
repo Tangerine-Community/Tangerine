@@ -83,15 +83,19 @@ describe('TwoWaySyncService', () => {
     httpClient = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     userService = TestBed.get(UserService);
+    // @TODO Probably shouldn't initialize, should probably just mock. Or maybe we should? Install and init the entire app?
+    await userService.initialize()
     twoWaySyncService = TestBed.get(TwoWaySyncService)
   })
 
-  it('should be created', () => {
+  it('should be created')
+  function shouldBeCreated() {
     const service: TwoWaySyncService = TestBed.get(TwoWaySyncService);
     expect(service).toBeTruthy();
-  });
+  }
 
-  it('should sync', async function(done) {
+  it('should sync')
+  async function shouldSync(done) {
     const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_1)
     const userAccount = await userService.create({
       username: MOCK_LOCAL_DB_INFO_1,
@@ -152,9 +156,10 @@ describe('TwoWaySyncService', () => {
         ]
       });
     }, 1000)
-  }, 4000)
+  }
 
-  it('should sync but with conflicts', async (done) => {
+  it('should sync but with conflicts')
+  async function shouldSyncButWithConflicts (done) {
     const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_2)
     const userAccount = await userService.create({
       username: MOCK_LOCAL_DB_INFO_2,
@@ -202,6 +207,6 @@ describe('TwoWaySyncService', () => {
         ]
       });
     }, 1000)
-  }, 4000)
+  }
 
 });
