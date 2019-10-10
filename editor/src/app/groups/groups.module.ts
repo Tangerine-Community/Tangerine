@@ -5,6 +5,7 @@ import {
   MatAutocompleteModule, MatSelectModule, MatChipsModule, MatGridListModule
 } from '@angular/material';
 import { MatTreeModule } from '@angular/material/tree';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
 import { GroupsComponent } from './groups.component';
@@ -46,6 +47,7 @@ import { CopyFormComponent } from './copy-form/copy-form.component';
     CommonModule,
     MatGridListModule,
     FormsModule,
+    DragDropModule,
     ReactiveFormsModule,
     MatInputModule,
     MatAutocompleteModule,
