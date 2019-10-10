@@ -1,3 +1,4 @@
+import { WindowRef } from 'src/app/shared/_services/window-ref.service';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExportDataComponent } from './export-data.component';
@@ -10,7 +11,8 @@ describe('ExportDataComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ExportDataModule, SyncRecordsModule]
+      imports: [ExportDataModule, SyncRecordsModule],
+      providers: [WindowRef]
     })
     .compileComponents();
   }));
