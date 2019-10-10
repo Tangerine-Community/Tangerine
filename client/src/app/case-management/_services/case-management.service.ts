@@ -2,7 +2,6 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AuthenticationService } from '../../shared/_services/authentication.service';
 import { UserService } from '../../shared/_services/user.service';
 import { AppConfigService } from '../../shared/_services/app-config.service';
 
@@ -13,12 +12,10 @@ function _window(): any {
 @Injectable()
 export class CaseManagementService {
 
-  userService: UserService;
   monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   constructor(
-    authenticationService: AuthenticationService,
-    userService: UserService,
+    private userService: UserService,
     private http: HttpClient,
     private appConfigService: AppConfigService
   ) {
