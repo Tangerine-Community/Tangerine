@@ -63,5 +63,13 @@ export class UserDatabase {
   allDocs(options) {
     return this.db.allDocs(options)
   }
+
+  sync(remoteDb, options) {
+    return this.db.sync(remoteDb, options)
+  }
+
+  upsert(docId, callback) {
+    return this.db.upsert(docId, callback)
+  }
   
 } 
