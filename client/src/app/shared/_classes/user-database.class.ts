@@ -71,5 +71,9 @@ export class UserDatabase {
   upsert(docId, callback) {
     return this.db.upsert(docId, callback)
   }
+
+  compact() {
+    return this.db.compact()
+  }
   
 } 

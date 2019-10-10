@@ -8,11 +8,10 @@ import { HttpTestingController, HttpClientTestingModule } from '@angular/common/
 import { UserService } from 'src/app/shared/_services/user.service';
 import { TwoWaySyncModule } from '../two-way-sync.module';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { TangyFormsModule } from 'src/app/tangy-forms/tangy-forms.module';
 import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { SyncingService } from 'src/app/core/sync-records/_services/syncing.service';
-import { TangyFormService } from 'src/app/tangy-forms/tangy-form-service';
+import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 
 const MOCK_REMOTE_DOC_IDS = [
   'doc1',

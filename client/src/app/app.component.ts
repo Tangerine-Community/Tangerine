@@ -6,7 +6,6 @@ import { AuthenticationService } from './shared/_services/authentication.service
 import { UserService } from './shared/_services/user.service';
 import { WindowRef } from './shared/_services/window-ref.service';
 import { updates } from './core/update/update/updates';
-import { TangyFormService } from './tangy-forms/tangy-form-service';
 import PouchDB from 'pouchdb';
 import { TranslateService } from '@ngx-translate/core';
 import { _TRANSLATE } from './shared/translation-marker';
@@ -94,13 +93,6 @@ export class AppComponent implements OnInit {
     this.checkIfUpdateScriptRequired();
     this.checkStorageUsage()
     setInterval(this.checkStorageUsage.bind(this), 60*1000); 
-    // Initialize tangyFormService in case any views need to be updated.
-    // @TODO Is this necessary? 
-    const currentUser = await this.authenticationService.getCurrentUser();
-    if (currentUser) {
-      const tangyFormService = new TangyFormService({ databaseName: currentUser });
-      tangyFormService.initialize();
-    }
   }
 
   async install() {
@@ -133,7 +125,7 @@ export class AppComponent implements OnInit {
     let storageEstimate = await navigator.storage.estimate()
     let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     while(availableFreeSpace < minimumFreeSpace) {
-      const DB:PouchDB = await this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
+      const DB = await this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,
@@ -160,7 +152,7 @@ export class AppComponent implements OnInit {
       .map(row => row.doc)
       .map(doc => doc._id);
     for (const username of usernames) {
-      const userDb:PouchDB = await this.userService.getUserDatabase(username);
+      const userDb = await this.userService.getUserDatabase(username);
       // Use try in case this is an old account where info doc was not created.
       let infoDoc = { _id: '', atUpdateIndex: 0 };
       try {
