@@ -2,6 +2,9 @@
 
 ## v3.6.0
 - __New Features__
+  - Support for changing the order of forms.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1523
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1707
   - Support for archiving a form.
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1526
     - PR: https://github.com/Tangerine-Community/Tangerine/pull/1675
