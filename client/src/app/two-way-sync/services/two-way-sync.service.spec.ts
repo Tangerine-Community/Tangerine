@@ -165,7 +165,7 @@ describe('TwoWaySyncService', () => {
     await mockRemoteDb.put({_id: 'remoteManagedUser', collection: 'TangyFormResponse', form: {id: "user-profile"}, someChangeOnServer: true})
     await mockRemoteDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: "example1"}})
     await mockRemoteDb.put({_id:"doc2", collection: 'TangyFormResponse', form: {id: "example1"}})
-    const mockLocalDb = userService.getUserDatabase(MOCK_LOCAL_DB_INFO_2)
+    const mockLocalDb = await userService.getUserDatabase(MOCK_LOCAL_DB_INFO_2)
     await mockLocalDb.put({_id:"doc3", collection: 'TangyFormResponse', form: {id: "example1"}})
     await mockLocalDb.put({_id:"doc4", collection: 'TangyFormResponse', form: {id: "example1"}})
     await mockRemoteDb.sync(mockLocalDb)

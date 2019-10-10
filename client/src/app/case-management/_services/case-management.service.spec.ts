@@ -25,6 +25,7 @@ export function HttpClientLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
 }
 import { CaseManagementModule } from '../case-management.module';
+import { WindowRef } from 'src/app/core/window-ref.service';
 
 describe('CaseManagementService', () => {
   beforeEach(() => {
@@ -35,7 +36,8 @@ describe('CaseManagementService', () => {
 //        HttpClientModule,
 //        SharedModule,
         CaseManagementModule
-      ]
+      ],
+      providers: [WindowRef]
     });
     localStorage.setItem('currentUser', 'test-user')
   });

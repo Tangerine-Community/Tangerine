@@ -7,6 +7,8 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CaseManagementModule } from '../case-management.module';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import { WindowRef } from 'src/app/shared/_services/window-ref.service';
+import { AppModule } from 'src/app/app.module';
 export function HttpClientLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient, './assets/', '.json');
 }
@@ -19,8 +21,10 @@ describe('CaseDetailsComponent', () => {
     TestBed.configureTestingModule({
       imports: [ 
         CaseManagementModule,
+        AppModule,
         AppRoutingModule
-      ]
+      ],
+      providers: [WindowRef]
 
     })
     .compileComponents();

@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ObservationsByLocationComponent } from './observations-by-location.component';
 import { CaseManagementModule } from '../case-management.module';
 import { AppRoutingModule } from 'src/app/app-routing.module';
+import { AppModule } from 'src/app/app.module';
 
 describe('ObservationsByLocationComponent', () => {
   let component: ObservationsByLocationComponent;
@@ -12,6 +13,7 @@ describe('ObservationsByLocationComponent', () => {
     TestBed.configureTestingModule({
       imports: [ 
         CaseManagementModule,
+        AppModule,
         AppRoutingModule
       ]
     })
