@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import PouchDB from 'pouchdb';
-import {AuthenticationService} from "../../shared/_services/authentication.service";
 import {FormMetadata} from "../form-metadata";
 import {StudentResult} from "../reports/student-grouping-report/student-result";
 import {Feedback} from "../feedback";
@@ -17,11 +16,10 @@ const emit = (key, value) => {
 export class DashboardService {
 
   constructor(
-    authenticationService: AuthenticationService,
     private http: HttpClient
   ) {
     this.userDB = new PouchDB
-    (authenticationService.getCurrentUserDBPath());
+    (localStorage.getItem('currentUser'));
   }
 
   userDB;
