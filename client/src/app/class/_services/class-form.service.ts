@@ -1,5 +1,6 @@
 
 import PouchDB from 'pouchdb';
+PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 
 // A dummy function so TS does not complain about our use of emit in our pouchdb queries.
 const emit = (key, value) => {
