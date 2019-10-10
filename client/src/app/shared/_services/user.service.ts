@@ -70,7 +70,7 @@ export class UserService {
 
   async getUserDatabase(username = '') {
    if (username === '') {
-      return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'), this.config.sharedUserDatabase)
+      return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'), this.config && this.config.sharedUserDatabase ? true : false)
     } else {
       const userAccount = await this.getUserAccount(username)
       if (this.config.sharedUserDatabase === true) {
