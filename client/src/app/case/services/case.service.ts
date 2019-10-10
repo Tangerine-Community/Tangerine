@@ -1,10 +1,10 @@
+import { UserDatabase } from './../../shared/_classes/user-database.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class'
 import { Case } from '../classes/case.class'
 import { CaseEvent } from '../classes/case-event.class'
 import { EventForm } from '../classes/event-form.class'
 import { CaseDefinition } from '../classes/case-definition.class';
 import { CaseDefinitionsService } from './case-definitions.service';
-import PouchDB from 'pouchdb';
 import * as UUID from 'uuid/v4'
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { WindowRef } from 'src/app/core/window-ref.service';
@@ -21,7 +21,7 @@ class CaseService {
 
   _id:string
   _rev:string
-  db:PouchDB
+  db:UserDatabase
   case:Case
   caseDefinition:CaseDefinition
   window:any

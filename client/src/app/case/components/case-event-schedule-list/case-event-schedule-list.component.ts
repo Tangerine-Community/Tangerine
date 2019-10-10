@@ -82,7 +82,7 @@ export class CaseEventScheduleListComponent implements OnInit {
 
   async render(events:Array<CaseEvent>) {
     // Get some data together before rendering.
-    const userDb = this.userService.getUserDatabase(this.userService.getCurrentUser())
+    const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     const searchDocs:Array<SearchDoc> = []
     const responses:Array<TangyFormResponse> = []
     const caseIds = events.reduce((caseIds, caseEvent) => caseIds.indexOf(caseEvent.caseId) === -1 ? [...caseIds, caseEvent.caseId] : caseIds, [])
