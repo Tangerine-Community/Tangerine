@@ -1,4 +1,5 @@
 {
+  "sharedUserDatabase": false,
   "securityPolicy": ["password"],
   "columnsOnVisitsTab": [],
   "securityQuestionText": "What is your year of birth?",
