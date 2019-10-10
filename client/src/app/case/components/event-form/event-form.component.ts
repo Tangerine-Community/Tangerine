@@ -7,7 +7,7 @@ import { EventForm } from '../../classes/event-form.class';
 import { CaseEvent } from '../../classes/case-event.class';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventFormDefinition } from '../../classes/event-form-definition.class';
-import { TangyFormService } from '../../../tangy-forms/tangy-form-service';
+import { TangyFormService } from '../../../tangy-forms/tangy-form.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 @Component({
@@ -20,7 +20,6 @@ export class EventFormComponent implements AfterContentInit {
   caseEventDefinition: CaseEventDefinition
   eventForm: EventForm 
   eventFormDefinition: EventFormDefinition
-  tangyFormService:TangyFormService
   tangyFormEl:any
   throttledSaveLoaded:boolean;
   throttledSaveFiring:boolean;
@@ -33,6 +32,7 @@ export class EventFormComponent implements AfterContentInit {
     private windowRef: WindowRef,
     private router: Router,
     private caseService: CaseService,
+    private tangyFormService: TangyFormService,
     private userService: UserService
   ) { }
 
@@ -55,7 +55,6 @@ export class EventFormComponent implements AfterContentInit {
         .caseEventDefinition
         .eventFormDefinitions
         .find(eventFormDefinition => eventFormDefinition.id === this.eventForm.eventFormDefinitionId)
-      this.tangyFormService = new TangyFormService({ databaseName: localStorage.getItem('currentUser') });
       if (this.eventForm.formResponseId) {
         this.formResponse = await this.tangyFormService.getResponse(this.eventForm.formResponseId)
       }
