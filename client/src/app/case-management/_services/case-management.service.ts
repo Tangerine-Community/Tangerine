@@ -95,6 +95,7 @@ export class CaseManagementService {
       forms.push({
         title: form['title'],
         src: form['src'],
+        archived: form['archived'] ? true : false,
         id: form['id']
       });
     }

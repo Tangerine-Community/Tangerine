@@ -5,6 +5,7 @@ import {
   MatAutocompleteModule, MatSelectModule, MatChipsModule, MatGridListModule
 } from '@angular/material';
 import { MatTreeModule } from '@angular/material/tree';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { GroupComponent } from './group/group.component';
 import { GroupsRoutingModule } from './groups-routing.module';
 import { GroupsComponent } from './groups.component';
@@ -35,6 +36,7 @@ import { EditEventFormDefinitionComponent } from './case-management-editor/edit-
 import { CreateEventFormDefinitionComponent } from './case-management-editor/create-event-form-definition/create-event-form-definition.component';
 import { CreateEventDefinitionComponent } from './case-management-editor/create-event-definition/create-event-definition.component';
 import { GroupMediaComponent } from './group-media/group-media.component';
+import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-table.component';
 import { CopyFormComponent } from './copy-form/copy-form.component';
 
 
@@ -45,6 +47,7 @@ import { CopyFormComponent } from './copy-form/copy-form.component';
     CommonModule,
     MatGridListModule,
     FormsModule,
+    DragDropModule,
     ReactiveFormsModule,
     MatInputModule,
     MatAutocompleteModule,
@@ -84,6 +87,7 @@ import { CopyFormComponent } from './copy-form/copy-form.component';
     EditEventFormDefinitionComponent,
     CreateEventFormDefinitionComponent,
     CreateEventDefinitionComponent,
+    PrintFormAsTableComponent,
     CopyFormComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService ],

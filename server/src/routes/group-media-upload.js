@@ -7,7 +7,6 @@ const stat = util.promisify(require('fs').stat)
 const exec = util.promisify(require('child_process').exec)
 
 module.exports = async (req, res) => {
-  console.log(req.files) 
   for (let file of req.files) {
     await exec(`mv ${file.path} /tangerine/client/content/groups/${req.params.group}/media/${file.originalname.replace(/(\s+)/g, '\\$1')}`)
   }

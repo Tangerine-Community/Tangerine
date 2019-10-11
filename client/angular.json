@@ -28,7 +28,10 @@
               "./node_modules/material-design-icons/iconfont/material-icons.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "./src/app/core/sync-records/peers/memorystream-standalone.js",
+              "./src/app/core/sync-records/peers/pouchdb.replication-stream.min.js"
+            ]
           },
           "configurations": {
             "production": {
