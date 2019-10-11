@@ -13,11 +13,9 @@
   <paper-icon-item  class="search-result" routerLink="{{eventInfo.openLink}}">
     <iron-icon icon="{{eventInfo.icon}}" slot="item-icon"></iron-icon> 
     <paper-item-body two-line>
-      <div>
-        {{eventInfo.primary}}
+      <div [innerHTML]="eventInfo.primary">
       </div>
-      <div secondary>
-        {{eventInfo.secondary}}
+      <div [innerHTML]="eventInfo.secondary" secondary>
       </div>
     </paper-item-body>
   </paper-icon-item>

@@ -142,6 +142,10 @@ const generateFlatResponse = async function (formResponse, locationList) {
         flatFormResponse[`${formID}.${item.id}.${input.name}.time_remaining`] = input.timeRemaining
         flatFormResponse[`${formID}.${item.id}.${input.name}.gridAutoStopped`] = input.gridAutoStopped
         flatFormResponse[`${formID}.${item.id}.${input.name}.autoStop`] = input.autoStop
+        flatFormResponse[`${formID}.${item.id}.${input.name}.item_at_time`]
+          = input.gridVarItemAtTime ? input.gridVarItemAtTime : ''
+        flatFormResponse[`${formID}.${item.id}.${input.name}.time_intermediate_captured`]
+          = input.gridVarTimeIntermediateCaptured ? input.gridVarTimeIntermediateCaptured : ''
         // Calculate Items Per Minute.
         let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
         let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length

@@ -1,5 +1,83 @@
 # Changelog
 
+## v3.6.0
+- __New Features__
+  - Support for changing the order of forms.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1523
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1707
+  - Support for archiving a form.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1526
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1675
+  - Improvements and support on all inputs for `error-text`, `hint-text`, `question-number`, and  content translations.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1655
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/88, https://github.com/Tangerine-Community/tangy-form/pull/86
+  - Add support to `<tangy-qr>` for scanning data matrix codes.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1653
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/87
+  - New "Capture Item at N Seconds" feature for `<tangy-timed>` will prompt Data Collector to mark which item the child last read after a specific amount of time.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1586
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/95
+  - New `goTo('itemID')` helper function to navigate users to a specific item given some item level `on-change` logic.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1652
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/92
+  - New `<tangy-signature>` input for capturing signatures.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1656 
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/90
+  - Visibility of labels and/or icons on item navigation now configurable with `<tangy-form-item hide-nav-icons>` and `<tangy-form-item hide-nav-labels>`. 
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1682 
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/73
+- __Fixes__
+  - Fix Class tablets that are filling up their disk too fast.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1706 
+  - Fix metadata print screen options 
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1703
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1670, https://github.com/Tangerine-Community/Tangerine/issues/1671
+  - Fix missing camera permission blocking APK installs form using QR or Photo Capture
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1646, https://github.com/Tangerine-Community/Tangerine/issues/1578
+  - Fix performance issues caused by needless TangyForm.on-change events from firing when they don't need to.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1656
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/89
+  - Fix data collector reviews completed fullscreen form 
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1629
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/75
+  - `<tangy-eftouch auto-progress>` now distinguishes between going next on the time limit and going next on a number of selections. The API is now `<tangy-eftouch go-next-on-selection=2>` for going next on 2 selection and `<tangy-eftouch go-next-on-time-limit>` for going next on the time limit. 
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1597
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/84
+  - `<tangy-eftouch>` content is now more likely to fit above the fold, not overlap with content above it, be more consistent on smaller screens, and also adapt to screen size changes. 
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1591, https://github.com/Tangerine-Community/Tangerine/issues/1587
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/79
+  - `<tangy-eftouch>` suffered from going to next item twice due to time limit and selection being made at in a close window. This is now fixed. 
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1596
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/76
+  - Fix Partial Date validation and for disabled attribute not reflecting 
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1683
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/71
+  - Fix variable names in Editor to allow for only valid variable names. 2 or more characters, begin with alpha, no spaces, periods, allow _ no dash
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1566, https://github.com/Tangerine-Community/Tangerine/issues/1558, https://github.com/Tangerine-Community/Tangerine/issues/1461
+    - PR: https://github.com/Tangerine-Community/tangy-form-editor/pull/77
+  - Fix for Autostop for radio buttons - 
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1519
+    - PR's: 
+      - https://github.com/Tangerine-Community/Tangerine/issues/1590
+      - https://github.com/Tangerine-Community/tangy-form/pull/100
+      - https://github.com/Tangerine-Community/tangy-form/pull/100
+- __Experimental Features__
+  - When using the experimental Case module, Editors can now program forms to trigger the creation of a "Data Query" when Data Collectors are entering data. Data queries are then shown later in a "Data Queries" tab where clarification on prior data entered is requested.
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1661
+  
+__Upgrade instructions:__
+
+On the server, backup your data folder and then run the following commands.
+```bash
+git fetch origin
+git checkout v3.6.0
+./start.sh v3.6.0
+```
+
+Now you may publish a release to your Devices and run the "Check for Update" on each Device. Note that if you are looking to use the QR Code scanner and you have been using Android Installation, you will need to reinstall the App on Devices and make sure to note the additional permissions installation instructions noted in the README.md file for enabling the App to have Camera Access. If using the Web Browser Installation, there is no need to reinstall the app for Camera access.
+
+
+
 ## v3.5.0
 - __New Features__
   - Forms with fullscreen enabled now have a toggle button for the user to enable/disable fullscreen mode. Form designers may specify the number of taps in order for fullscreen to disable. https://github.com/Tangerine-Community/tangy-form/pull/51, https://github.com/Tangerine-Community/tangy-form/pull/72, https://github.com/Tangerine-Community/tangy-form-editor/pull/73

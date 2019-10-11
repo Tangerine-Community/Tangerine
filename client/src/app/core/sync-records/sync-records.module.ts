@@ -9,6 +9,9 @@ import { SyncRecodsRoutingModule } from './sync-records-routing.module';
 import { SyncRecordsComponent } from './sync-records/sync-records.component';
 import { SharedModule } from '../../shared/shared.module';
 import { TwoWaySyncModule } from 'src/app/two-way-sync/two-way-sync.module';
+import { PeersComponent } from './peers/peers.component';
+import { MatChipsModule } from '@angular/material/chips';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
 @NgModule({
   imports: [
@@ -21,9 +24,11 @@ import { TwoWaySyncModule } from 'src/app/two-way-sync/two-way-sync.module';
     MatInputModule,
     MatCardModule,
     MatExpansionModule,
+    MatChipsModule,
+    MatButtonToggleModule,
     SharedModule
   ],
-  declarations: [SyncRecordsComponent],
+  declarations: [SyncRecordsComponent, PeersComponent],
   providers: [SyncingService, HttpClientModule],
 })
 export class SyncRecordsModule { }
