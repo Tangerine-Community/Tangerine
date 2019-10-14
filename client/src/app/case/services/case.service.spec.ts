@@ -62,6 +62,13 @@ class MockCaseDefinitionsService {
                 "name": "Form 2 (repeatable)",
                 "required": true,
                 "repeatable": true 
+              },
+              <EventFormDefinition>{
+                "id": "event-form-3",
+                "formId": "form3",
+                "name": "Form 3",
+                "required": false,
+                "repeatable": false 
               }
             ]
           },
@@ -178,6 +185,13 @@ describe('CaseService', () => {
     expect(service.case.events[0].dateStart).toEqual(12345678)
     expect(service.case.events[0].dateEnd).toEqual(12345678)
     expect(service.case.events[0].estimate).toEqual(false)
+  })
+
+  it('should create an event with required event forms', async () => {
+    const service: CaseService = TestBed.get(CaseService);
+    await service.create('caseDefinition1')
+    await service.createEvent('event-definition-first-visit', true)
+    expect(service.case.events[0].eventForms.length).toEqual(2)
   })
 
 });
