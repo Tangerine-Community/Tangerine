@@ -251,7 +251,7 @@ docker exec tangerine reporting-cache-clear
 ```
 
 
-## v3.0.0-beta13 (in progress)
+## v3.0.0-beta13
 
 ### Upgrade instructions from v3 betas
 ```bash
