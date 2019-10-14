@@ -15,6 +15,7 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { Query } from '../classes/query.class'
 import moment from 'moment/src/moment';
 import { HttpClient } from '@angular/common/http';
+import { CaseEventPointer } from '../case.queries';
 
 @Injectable({
   providedIn: 'root'
@@ -214,6 +215,30 @@ class CaseService {
     return this.case.items[0].inputs.find(input => input.name === variableName)
       ? this.case.items[0].inputs.find(input => input.name === variableName).value
       : undefined
+  }
+
+  async getCaseEventsByStatus(status = CASE_EVENT_STATUS_IN_PROGRESS) {
+    const cases:Array<Case> = []
+    const caseEvents:Array<CaseEvent> = []
+    const userDb = await this.userService.getUserDatabase()
+    const caseEventPointers:Array<CaseEventPointer> = await userDb.query('caseEventPointersByStatus', {key: status})
+    const uniqueCaseIds = caseEventPointers
+      .reduce((uniqueCaseIds, caseEventPointer) => uniqueCaseIds.includes(caseEventPointer.caseId)
+        ? uniqueCaseIds
+        : [...uniqueCaseIds, caseEventPointer.caseId]
+      , [])
+    for (const caseId of uniqueCaseIds) {
+      cases.push(<Case>await userDb.get(caseId))
+    }
+    for (const caseEventPointer of caseEventPointers) {
+      caseEvents.push(
+        cases
+          .find(caseInstance => caseInstance._id === caseEventPointer.caseId)
+          .events
+          .find(caseEvent => caseEvent.id === caseEventPointer.caseEventId)
+      )
+    }
+    return caseEvents
   }
 
   async getQueries (): Promise<Array<Query>> {
