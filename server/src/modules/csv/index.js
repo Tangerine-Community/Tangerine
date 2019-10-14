@@ -126,8 +126,8 @@ const generateFlatResponse = async function (formResponse, locationList) {
           if (hitLastAttempted === true) {
             // Not attempted.
             derivedValue = '.'
-          } else if (toggleInput.value === 'on') {
-            // Incorrect.
+          } else if (toggleInput.value === 'on' || toggleInput.pressed === true) {
+            // If toggle is 'on' (manually pressed) or pressed is true (row marked), the item is incorrect.
             derivedValue = '0'
           } else {
             // Correct.
