@@ -180,4 +180,7 @@ describe('CaseService', () => {
     expect(service.case.events[0].estimate).toEqual(false)
   })
 
+  it('should relate a case')
+  it('should start an event ')
+
 });
