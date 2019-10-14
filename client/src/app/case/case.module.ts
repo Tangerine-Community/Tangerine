@@ -1,3 +1,5 @@
+import { CaseQueries } from './case.queries';
+import { DEFAULT_USER_DOCS } from './../shared/_tokens/default-user-docs.token';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CaseComponent } from './components/case/case.component';
@@ -37,6 +39,16 @@ import { QueryComponent } from './components/query/query.component';
   ],
   providers: [
     WindowRef,
+    {
+      provide: DEFAULT_USER_DOCS,
+      useValue: [
+        {
+          _id: '_design/tangy-form',
+          views: CaseQueries
+        }
+      ],
+      multi: true
+    },
     CaseDefinitionsService,
     CaseService,
     CasesService
