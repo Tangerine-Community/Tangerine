@@ -75,7 +75,7 @@ export class CaseComponent implements AfterContentInit {
 
   async onSubmit() {
     const newDate = moment(this.inputSelectedDate, 'YYYY-MM-DD').unix()*1000
-    const caseEvent = this.caseService.createEvent(this.selectedNewEventType)
+    const caseEvent = this.caseService.createEvent(this.selectedNewEventType, true)
     await this.caseService.scheduleEvent(caseEvent.id, newDate, newDate)
     await this.caseService.save()
     this.calculateTemplateData()

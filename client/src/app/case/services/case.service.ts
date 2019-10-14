@@ -1,3 +1,4 @@
+import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { UserDatabase } from './../../shared/_classes/user-database.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class'
 import { Case } from '../classes/case.class'
@@ -89,7 +90,7 @@ class CaseService {
     await this.setCase(await this.db.get(this.case._id))
   }
 
-  createEvent(eventDefinitionId:string):CaseEvent {
+  createEvent(eventDefinitionId:string, createRequiredEventForms = false):CaseEvent {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
@@ -106,6 +107,11 @@ class CaseService {
       startDate: 0
     }
     this.case.events.push(caseEvent)
+    if (createRequiredEventForms === true) {
+      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions.filter(eventFormDefinition => eventFormDefinition.required)) {
+        this.startEventForm(caseEvent.id, eventFormDefinition.id)
+      }
+    }
     return caseEvent
   }
 
@@ -122,13 +128,13 @@ class CaseService {
     
   }
 
-  startEventForm(caseEventId, eventFormId):EventForm {
+  startEventForm(caseEventId, eventFormDefinitionId):EventForm {
     const eventForm = <EventForm>{
       id: UUID(), 
       complete: false, 
       caseId: this.case._id, 
       caseEventId, 
-      eventFormDefinitionId: eventFormId
+      eventFormDefinitionId: eventFormDefinitionId
     }
     this
       .case
