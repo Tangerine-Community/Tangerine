@@ -24,6 +24,7 @@ class CaseService {
   db:UserDatabase
   case:Case
   caseDefinition:CaseDefinition
+  relatedCases:Array<Case>
   window:any
   
   queryCaseEventDefinitionId: any
@@ -71,11 +72,16 @@ class CaseService {
     await this.save()
   }
 
-  async setCase(caseInstance) {
+  async setCase(caseInstance:Case) {
     this.case = caseInstance
     this.caseDefinition = (await this.caseDefinitionsService.load())
       .find(caseDefinition => caseDefinition.id === this.case.caseDefinitionId)
- 
+    for (let caseId of caseInstance.relatedCaseIds) {
+      this.relatedCases = [
+        ...this.relatedCases,
+        new Case(await this.db.get(caseId))
+      ]
+    }
   }
 
   async load(id:string) {

@@ -66,7 +66,7 @@ class Case {
   disabledEventDefinitionIds: Array<string> = []
   events: Array<CaseEvent> = []
   type:string = 'case'
-  caseFormResponse:TangyFormResponse
+  relatedCaseIds:Array<string> = []
 
   constructor(data?:any) {
     if (!data) {
