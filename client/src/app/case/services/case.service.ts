@@ -1,3 +1,4 @@
+import { CASE_EVENT_STATUS_REVIEWED, CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { UserDatabase } from './../../shared/_classes/user-database.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class'
@@ -97,7 +98,7 @@ class CaseService {
     const caseEvent = <CaseEvent>{ 
       id: UUID(),
       caseId: this.case._id,
-      complete: false,
+      status: CASE_EVENT_STATUS_IN_PROGRESS,
       name: caseEventDefinition.name,
       estimate: true,
       caseEventDefinitionId: eventDefinitionId,
@@ -177,14 +178,14 @@ class CaseService {
       .case
       .events
       .find(caseEvent => caseEvent.id === caseEventId)
-      .complete = numberOfEventFormsRequired === numberOfUniqueCompleteEventForms ? true : false
+      .status = numberOfEventFormsRequired === numberOfUniqueCompleteEventForms ? CASE_EVENT_STATUS_COMPLETED : CASE_EVENT_STATUS_IN_PROGRESS
     // Check to see if all required Events are complete in Case. If so, mark Case complete.
     let numberOfCaseEventsRequired = this.caseDefinition
       .eventDefinitions
       .reduce((acc, definition) => definition.required ? acc + 1 : acc, 0)
     let numberOfUniqueCompleteCaseEvents = this.case
       .events
-      .reduce((acc, instance) => instance.complete 
+      .reduce((acc, instance) => instance.status === CASE_EVENT_STATUS_COMPLETED
           ? Array.from(new Set([...acc, instance.caseEventDefinitionId])) 
           : acc
         , [])
