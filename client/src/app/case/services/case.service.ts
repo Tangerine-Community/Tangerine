@@ -4,6 +4,7 @@ import { UserDatabase } from './../../shared/_classes/user-database.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class'
 import { Case } from '../classes/case.class'
 import { CaseEvent } from '../classes/case-event.class'
+import { CaseEventInfo } from '../classes/case-event-info.class'
 import { EventForm } from '../classes/event-form.class'
 import { CaseDefinition } from '../classes/case-definition.class';
 import { CaseDefinitionsService } from './case-definitions.service';
@@ -16,6 +17,7 @@ import { Query } from '../classes/query.class'
 import moment from 'moment/src/moment';
 import { HttpClient } from '@angular/common/http';
 import { CaseEventPointer } from '../case.queries';
+import { CASE_QUERIES_EVENT_POINTERS_BY_STATUS } from '../case.queries'
 
 @Injectable({
   providedIn: 'root'
@@ -217,11 +219,14 @@ class CaseService {
       : undefined
   }
 
-  async getCaseEventsByStatus(status = CASE_EVENT_STATUS_IN_PROGRESS) {
+
+  async getCaseEventsByStatus(status = CASE_EVENT_STATUS_IN_PROGRESS):Promise<Array<CaseEvent>> {
     const cases:Array<Case> = []
     const caseEvents:Array<CaseEvent> = []
     const userDb = await this.userService.getUserDatabase()
-    const caseEventPointers:Array<CaseEventPointer> = await userDb.query('caseEventPointersByStatus', {key: status})
+    const caseEventPointers:Array<CaseEventPointer> = (await userDb.query(CASE_QUERIES_EVENT_POINTERS_BY_STATUS, {key: status}))
+      .rows
+      .map(row => row.value)
     const uniqueCaseIds = caseEventPointers
       .reduce((uniqueCaseIds, caseEventPointer) => uniqueCaseIds.includes(caseEventPointer.caseId)
         ? uniqueCaseIds
@@ -239,6 +244,26 @@ class CaseService {
       )
     }
     return caseEvents
+  }
+
+  async getCaseEventInfosByStatus(status = CASE_EVENT_STATUS_IN_PROGRESS):Promise<Array<CaseEventInfo>> {
+    const userDb = await this.userService.getUserDatabase()
+    const caseEvents = await this.getCaseEventsByStatus(status)
+    const caseEventInfos:Array<CaseEventInfo> = []
+    for (const caseEvent of caseEvents) {
+      const caseInstance = <Case>await userDb.get(caseEvent.caseId)
+      const caseDefinition = (await this.caseDefinitionsService.load())
+        .find(caseDefinition => caseDefinition.id === caseInstance.caseDefinitionId)
+      const caseEventDefinition = caseDefinition.eventDefinitions
+        .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+      caseEventInfos.push(<CaseEventInfo>{
+        caseInstance,
+        caseDefinition,
+        caseEvent,
+        caseEventDefinition
+      })
+    }
+    return caseEventInfos
   }
 
   async getQueries (): Promise<Array<Query>> {

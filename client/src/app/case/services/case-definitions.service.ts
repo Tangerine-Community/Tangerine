@@ -11,7 +11,7 @@ export class CaseDefinitionsService {
     private http: HttpClient
   ) { }
 
-  async load():Promise<any> {
+  async load():Promise<Array<CaseDefinition>> {
     const caseDefinitionReferences = <Array<any>>await this.http.get('./assets/case-definitions.json').toPromise()
     const caseDefinitions = []
     for (const reference of caseDefinitionReferences) {
@@ -19,5 +19,4 @@ export class CaseDefinitionsService {
     }
     return caseDefinitions;
   }
-
 }
