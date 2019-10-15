@@ -25,6 +25,7 @@ import { FormsModule } from '@angular/forms';
 import { CaseEventListItemComponent } from './components/case-event-list-item/case-event-list-item.component';
 import { EventFormListItemComponent } from './components/event-form-list-item/event-form-list-item.component';
 import { QueryComponent } from './components/query/query.component';
+import { CaseEventsReviewComponent } from './components/case-events-review/case-events-review.component';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -43,7 +44,7 @@ import { QueryComponent } from './components/query/query.component';
       provide: DEFAULT_USER_DOCS,
       useValue: [
         {
-          _id: '_design/tangy-form',
+          _id: '_design/tangerine-case',
           views: CaseQueries
         }
       ],
@@ -65,7 +66,8 @@ import { QueryComponent } from './components/query/query.component';
     CaseHomeComponent,
     CaseEventListItemComponent,
     EventFormListItemComponent,
-    QueryComponent
+    QueryComponent,
+    CaseEventsReviewComponent
   ]
 })
 export class CaseModule { }
