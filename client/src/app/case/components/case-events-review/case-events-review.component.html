@@ -1,0 +1,8 @@
+<app-case-event-list-item
+  *ngFor="let caseEventInfo of caseEventInfos"
+  [caseEvent]="caseEventInfo.caseEvent"
+  [caseDefinition]="caseEventInfo.caseDefinition" 
+  [caseEventDefinition]="caseEventInfo.caseEventDefinition" 
+  [case]="caseEventInfo.caseInstance"
+  routerLink="caseEventInfo.getRouterPath()">
+</app-case-event-list-item>
