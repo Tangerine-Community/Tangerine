@@ -26,6 +26,7 @@ import { CaseEventListItemComponent } from './components/case-event-list-item/ca
 import { EventFormListItemComponent } from './components/event-form-list-item/event-form-list-item.component';
 import { QueryComponent } from './components/query/query.component';
 import { CaseEventsReviewComponent } from './components/case-events-review/case-events-review.component';
+import { CaseEventsReviewListItemComponent } from './components/case-events-review-list-item/case-events-review-list-item.component';
 
 @NgModule({
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
@@ -67,7 +68,8 @@ import { CaseEventsReviewComponent } from './components/case-events-review/case-
     CaseEventListItemComponent,
     EventFormListItemComponent,
     QueryComponent,
-    CaseEventsReviewComponent
+    CaseEventsReviewComponent,
+    CaseEventsReviewListItemComponent
   ]
 })
 export class CaseModule { }
