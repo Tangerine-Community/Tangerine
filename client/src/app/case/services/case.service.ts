@@ -15,6 +15,7 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { Query } from '../classes/query.class'
 import moment from 'moment/src/moment';
 import { HttpClient } from '@angular/common/http';
+import { CaseParticipant } from '../classes/case-participant.class';
 
 @Injectable({
   providedIn: 'root'
@@ -215,6 +216,21 @@ class CaseService {
       ? this.case.items[0].inputs.find(input => input.name === variableName).value
       : undefined
   }
+
+  async createParticipant(caseRoleId = ''):Promise<CaseParticipant> {
+    const id = UUID()
+    const data = {}
+    const caseParticipant = <CaseParticipant>{
+      id,
+      caseRoleId,
+      data
+    }
+    this.case.participants.push(caseParticipant)
+    await this.save()
+    return caseParticipant
+  }
+
+
 
   async getQueries (): Promise<Array<Query>> {
     const userDbName = this.userService.getCurrentUser();

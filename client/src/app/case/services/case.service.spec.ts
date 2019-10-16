@@ -188,6 +188,20 @@ describe('CaseService', () => {
     expect(service.case.events[0].estimate).toEqual(false)
   })
 
+  it('should create participant', async () => {
+    const service: CaseService = TestBed.get(CaseService);
+    await service.create('caseDefinition1')
+    const caseParticipant = await service.createParticipant('role1')
+    expect(service.case.participants[0].id).toEqual(caseParticipant.id)
+ 
+  })
+
+  it('should assign participant to role (and create forms for existing events?)')
+  it('should create CaseEvent and also create corresponding required EventForms for Participants')
+  it('should remove forms for participant upon unassignment')
+  it('should change CaseEvent.status to "complete" when all required forms are completed for roles other than "reviewer".')
+  it('should change CaseEvent.status to "reviewed" after reviewer role completes required forms in Event.')
+
   it('should create an event with required event forms', async () => {
     const service: CaseService = TestBed.get(CaseService);
     await service.create('caseDefinition1')
