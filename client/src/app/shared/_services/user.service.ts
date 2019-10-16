@@ -154,7 +154,7 @@ export class UserService {
     if (this.config.sharedUserDatabase === true) {
       userDb = new UserDatabase(userAccount.userUUID, true)
     } else {
-      userDb = await this.createUserDatabase(userAccount.userUUID, userAccount.userUUID)
+      userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
       await userDb.put({
         _id: 'info',
         atUpdateIndex: updates.length - 1
