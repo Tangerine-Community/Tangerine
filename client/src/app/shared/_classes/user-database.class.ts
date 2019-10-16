@@ -44,16 +44,16 @@ export class UserDatabase {
     })
   }
 
-  async remove(doc) {
-    return await this.db.remove(doc)
+  remove(doc) {
+    return this.db.remove(doc)
   }
 
-  async query(queryName:string, options = {}) {
-    return await this.db.query(queryName, options)
+  query(queryName:string, options = {}) {
+    return this.db.query(queryName, options)
   }
 
-  async destroy() {
-    return await this.db.destroy()
+  destroy() {
+    return this.db.destroy()
   }
 
   changes(options) {
