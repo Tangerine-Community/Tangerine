@@ -73,10 +73,7 @@ export class UserService {
       return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'), this.config && this.config.sharedUserDatabase ? true : false)
     } else {
       const userAccount = await this.getUserAccount(username)
-      if (this.config.sharedUserDatabase === true) {
-        return new UserDatabase(username, userAccount.userUUID, true)
-      }
-      return this.userDatabases.find(userDatabase => userDatabase.username === username)
+      return new UserDatabase(username, userAccount.userUUID, this.config && this.config.sharedUserDatabase ? true : false)
     }
   }
 
@@ -154,7 +151,7 @@ export class UserService {
     if (this.config.sharedUserDatabase === true) {
       userDb = new UserDatabase(userAccount.userUUID, true)
     } else {
-      userDb = await this.createUserDatabase(userAccount.userUUID, userAccount.userUUID)
+      userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
       await userDb.put({
         _id: 'info',
         atUpdateIndex: updates.length - 1

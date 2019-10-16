@@ -1,3 +1,4 @@
+import { CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { TestBed } from '@angular/core/testing';
 
 import { CaseService } from './case.service';
@@ -192,6 +193,17 @@ describe('CaseService', () => {
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit', true)
     expect(service.case.events[0].eventForms.length).toEqual(2)
+  })
+
+  it('CaseEvent should have status of comleted when all required forms are completed', async () => {
+    const service: CaseService = TestBed.get(CaseService);
+    await service.create('caseDefinition1')
+    const caseEvent = await service.createEvent('event-definition-first-visit', true)
+    expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_IN_PROGRESS)
+    for (let eventForm of service.case.events[0].eventForms) {
+      service.markEventFormComplete(caseEvent.id, eventForm.id)
+    }
+    expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_COMPLETED)
   })
 
 });
