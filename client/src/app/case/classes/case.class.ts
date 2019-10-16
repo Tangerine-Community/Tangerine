@@ -2,6 +2,7 @@ import * as UUID from 'uuid/v4'
 import { CaseEvent } from './case-event.class'
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
+import { CaseParticipant } from './case-participant.class';
 
 class Case {
   _id:string
@@ -62,7 +63,7 @@ class Case {
   label:string
   status:string
   openedDate:number
-  variables:any = {}
+  participants:Array<CaseParticipant> = []
   disabledEventDefinitionIds: Array<string> = []
   events: Array<CaseEvent> = []
   type:string = 'case'
