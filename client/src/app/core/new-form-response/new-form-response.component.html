@@ -14,7 +14,7 @@
         <div secondary>{{"Select the appropriate case type from the options listed below"|translate}}</div>
       </div>
     </div>
-    <div class="icon-list-item" *ngFor="let formInfo of formsInfo">
+    <div class="icon-list-item form-item" *ngFor="let formInfo of formsInfo">
       <mwc-icon slot="item-icon">{{formInfo.caseIcon}}</mwc-icon>
       <div>
         <div [innerHTML]="formInfo.title | unsanitizeHtml"></div>
