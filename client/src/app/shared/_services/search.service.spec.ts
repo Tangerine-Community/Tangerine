@@ -9,6 +9,7 @@ import { Subject } from 'rxjs';
 import { UserAccount } from '../_classes/user-account.class';
 import PouchDB from 'pouchdb';
 import { assertNotNull } from '@angular/compiler/src/output/output_ast';
+import { AppConfigService } from './app-config.service';
 
 class MockUserService {
   getUserDatabase(username:string) {
@@ -35,6 +36,17 @@ class MockAuthenticationService {
     return 'test-user'
   }
 }
+
+class MockAppConfigService {
+  getAppConfig() {
+    return {
+      sharedUserDatabase: false 
+    } 
+  }
+}
+
+
+
 
 class MockFormsInfoService {
   async getFormsInfo():Promise<Array<FormInfo>> {
@@ -90,6 +102,10 @@ describe('SearchService', () => {
       {
         provide: TangyFormsInfoService,
         useClass: MockFormsInfoService
+      },
+      {
+        provide: AppConfigService,
+        useClass: MockAppConfigService
       }
     ]
   }));
