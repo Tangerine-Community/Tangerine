@@ -9,6 +9,58 @@ paper-card {
   width: 100%;
 }
 
+paper-button {
+  margin-top: 0px;
+}
+
 .card-header {
   margin: 15px;
+}
+
+.icon-list-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-family: var(--paper-font-subhead_-_font-family);
+  font-size: var(--paper-font-subhead_-_font-size);
+  font-weight: var(--paper-font-subhead_-_font-weight);
+  line-height: var(--paper-font-subhead_-_line-height);
+  min-height: var(--paper-item-min-height, 48px);
+  padding: 0 16px;
+  border-bottom: gray dashed 1px;
+}
+.icon-list-item > mwc-icon {
+  width: 56px;
+}
+.icon-list-item > div {
+  min-height: var(--paper-item-body-two-line-min-height, 72px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 auto;
+  flex-basis: 0.0000000001px;
+}
+.icon-list-item > div > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.icon-list-item > div > div + div {
+  font-size: var(--paper-font-body1_-_font-size);
+  font-weight: var(--paper-font-body1_-_font-weight);
+  line-height: var(--paper-font-body1_-_line-height);
+  color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
+}
+
+.icon-list-item:hover {
+  background-color: lightgray;
+}
+.icon-list-item.create-new:hover {
+  background-color: transparent;
+}
+
+mwc-icon {
+  color: var(--primary-color);
+  font-size: 36px;
 }
