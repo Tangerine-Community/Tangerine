@@ -29,6 +29,7 @@ export class EventComponent implements OnInit, AfterContentInit {
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
   participantInfos:Array<ParticipantInfo>
+  noRoleEventFormInfos: Array<EventFormInfo>
   loaded = false
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
@@ -58,6 +59,22 @@ export class EventComponent implements OnInit, AfterContentInit {
         .caseDefinition
         .eventDefinitions
         .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
+      const noRoleEventFormDefinitionIds:Array<string> = this.caseEventDefinition.eventFormDefinitions
+        .filter(eventFormDefinition => !eventFormDefinition.forCaseRole)
+        .map(eventFormDefinition => eventFormDefinition.id)
+      this.noRoleEventFormInfos = this
+        .caseEvent
+        .eventForms
+        .filter(eventForm => noRoleEventFormDefinitionIds.includes(eventForm.eventFormDefinitionId))
+        .map(eventForm => {
+          return <EventFormInfo>{
+            eventForm,
+            eventFormDefinition: this
+              .caseEventDefinition
+              .eventFormDefinitions
+              .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
+          }
+        })
       this.participantInfos = this.caseService.case.participants.map(participant => {
         const id = participant.id
         const data = participant.data
