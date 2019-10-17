@@ -60,6 +60,7 @@ export class EventComponent implements OnInit, AfterContentInit {
         .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
       this.participantInfos = this.caseService.case.participants.map(participant => {
         const id = participant.id
+        const data = participant.data
         const role = this.caseService.caseDefinition.caseRoles.find(caseRole => caseRole.id === participant.caseRoleId)
         let renderedListItem:string
         eval(`renderedListItem = \`${role.templateListItem}\``) 
