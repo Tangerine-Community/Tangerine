@@ -1,5 +1,12 @@
 # Changelog
-
+## v3.6.1
+- Fix form routing for archived and active forms.
+  - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1722
+  - PR: https://github.com/Tangerine-Community/Tangerine/pull/1724
+- Fix "Mark entire line as incorrect in grids is not reflected in csv #1713"
+  - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1713
+  - PR: https://github.com/Tangerine-Community/tangy-form/pull/103
+  
 ## v3.6.0
 - __New Features__
   - Support for changing the order of forms.
