@@ -1,8 +1,10 @@
+import { AppConfigService } from './app-config.service';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
 import { UserAccount } from '../_classes/user-account.class';
 import { UserService } from './user.service';
 import PouchDB from 'pouchdb';
+PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { FormInfo, FormSearchSettings } from 'src/app/tangy-forms/classes/form-info.class';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
@@ -29,6 +31,7 @@ export class SearchService {
 
   constructor(
     private readonly authService:AuthenticationService,
+    private readonly configService:AppConfigService,
     private readonly userService:UserService,
     private readonly formsInfoService:TangyFormsInfoService
   ) { }
@@ -105,7 +108,8 @@ export class SearchService {
   }
 
   async indexDoc(username:string, searchDoc:SearchDoc):Promise<void> {
-    const _indexName = `${username}_search`
+    const config = await this.configService.getAppConfig()
+    const _indexName = `${config.sharedUserDatabase ? 'shared' : username}_search`
     const indexDb = new PouchDB(_indexName)
     try {
       const oldSearchDoc = await indexDb.get(searchDoc._id)
@@ -125,7 +129,8 @@ export class SearchService {
   }
 
   async search(username:string, phrase:string):Promise<Array<SearchDoc>> {
-    const _indexName = `${username}_search`
+    const config = await this.configService.getAppConfig()
+    const _indexName = `${config.sharedUserDatabase ? 'shared' : username}_search` 
     const indexDb = new PouchDB(_indexName)
     const allDocs = (await indexDb.allDocs({include_docs:true})).rows.map(row => <SearchDoc>row.doc).sort(function (a, b) {
       return b.lastModified - a.lastModified;
@@ -136,7 +141,8 @@ export class SearchService {
   }
 
   async getIndexedDoc(username:string, docId):Promise<SearchDoc> {
-    const _indexName = `${username}_search`
+    const config = await this.configService.getAppConfig()
+    const _indexName = `${config.sharedUserDatabase ? 'shared' : username}_search`
     const indexDb = new PouchDB(_indexName)
     return <SearchDoc>await indexDb.get(docId)
   }
