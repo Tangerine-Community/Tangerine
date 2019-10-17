@@ -239,7 +239,15 @@ class CaseService {
     return caseParticipant
   }
 
+  async setParticipantData(participantId:string, key:string, value:string) {
+    const index = this.case.participants.findIndex(participant => participant.id === participantId)
+    this.case.participants[index].data[key] = value
+    await this.save()
+  }
 
+  getParticipantData(participantId:string, key:string) {
+    return this.case.participants.find(participant => participant.id === participantId).data[key]
+  }
 
   async getQueries (): Promise<Array<Query>> {
     const userDbName = this.userService.getCurrentUser();
