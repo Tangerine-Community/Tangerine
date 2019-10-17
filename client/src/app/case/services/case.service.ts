@@ -18,6 +18,7 @@ import moment from 'moment/src/moment';
 import { HttpClient } from '@angular/common/http';
 import { CaseEventPointer } from '../case.queries';
 import { CASE_QUERIES_EVENT_POINTERS_BY_STATUS } from '../case.queries'
+import { CaseParticipant } from '../classes/case-participant.class';
 
 @Injectable({
   providedIn: 'root'
@@ -111,9 +112,11 @@ class CaseService {
       startDate: 0
     }
     this.case.events.push(caseEvent)
-    if (createRequiredEventForms === true) {
-      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions.filter(eventFormDefinition => eventFormDefinition.required)) {
-        this.startEventForm(caseEvent.id, eventFormDefinition.id)
+    for (const caseParticipant of this.case.participants) {
+      for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
+        if (caseParticipant.caseRoleId === eventFormDefinition.forCaseRole) {
+          this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+        }
       }
     }
     return caseEvent
@@ -132,11 +135,12 @@ class CaseService {
     
   }
 
-  startEventForm(caseEventId, eventFormDefinitionId):EventForm {
+  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''):EventForm {
     const eventForm = <EventForm>{
       id: UUID(), 
       complete: false, 
       caseId: this.case._id, 
+      participantId,
       caseEventId, 
       eventFormDefinitionId: eventFormDefinitionId
     }
@@ -150,7 +154,6 @@ class CaseService {
   }
 
   markEventFormComplete(caseEventId:string, eventFormId:string) {
-    //
     let caseEvent = this
       .case
       .events
@@ -159,29 +162,25 @@ class CaseService {
       .caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
-    //
     caseEvent
       .eventForms
       .find(eventForm => eventForm.id === eventFormId)
       .complete = true
-    //
-    // Test this by opening case type 1, second event, filling out two of the second form, should be evrnt incomplete, then the first form, shoud be event complete
-    //let eventForms = caseEvent.eventForms.filter(eventForm => eventForm.eventFormDefinitionId === eventDefinition.id)
-    let numberOfEventFormsRequired = eventDefinition
-      .eventFormDefinitions
-      .reduce((acc, eventFormDefinition) => eventFormDefinition.required ? acc + 1 : acc, 0)
-    let numberOfUniqueCompleteEventForms = caseEvent
-      .eventForms
-      .reduce((acc, eventForm) => eventForm.complete 
-          ? Array.from(new Set([...acc, eventForm.eventFormDefinitionId])) 
-          : acc
-        , [])
-        .length
+    const allRequiredFormsComplete = caseEvent.eventForms.reduce((allRequiredFormsComplete, eventForm) => {
+      if (allRequiredFormsComplete === false) {
+        return false
+      } else {
+        const eventFormDefinition = eventDefinition
+          .eventFormDefinitions
+          .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId )
+        return !eventFormDefinition.required || (eventFormDefinition.required && eventForm.complete) ? true : false
+      }
+    }, true)
     this
       .case
       .events
       .find(caseEvent => caseEvent.id === caseEventId)
-      .status = numberOfEventFormsRequired === numberOfUniqueCompleteEventForms ? CASE_EVENT_STATUS_COMPLETED : CASE_EVENT_STATUS_IN_PROGRESS
+      .status = allRequiredFormsComplete ? CASE_EVENT_STATUS_COMPLETED : CASE_EVENT_STATUS_IN_PROGRESS
     // Check to see if all required Events are complete in Case. If so, mark Case complete.
     let numberOfCaseEventsRequired = this.caseDefinition
       .eventDefinitions
@@ -218,7 +217,6 @@ class CaseService {
       ? this.case.items[0].inputs.find(input => input.name === variableName).value
       : undefined
   }
-
 
   async getCaseEventsByStatus(status = CASE_EVENT_STATUS_IN_PROGRESS):Promise<Array<CaseEvent>> {
     const cases:Array<Case> = []
@@ -264,6 +262,40 @@ class CaseService {
       })
     }
     return caseEventInfos
+  }
+
+  async createParticipant(caseRoleId = ''):Promise<CaseParticipant> {
+    const id = UUID()
+    const data = {}
+    const caseParticipant = <CaseParticipant>{
+      id,
+      caseRoleId,
+      data
+    }
+    this.case.participants.push(caseParticipant)
+    for (let caseEvent of this.case.events) {
+      const caseEventDefinition = this
+        .caseDefinition
+        .eventDefinitions
+        .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
+        if (eventFormDefinition.forCaseRole === caseRoleId) {
+          this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+        }
+      }
+    }
+    await this.save()
+    return caseParticipant
+  }
+
+  async setParticipantData(participantId:string, key:string, value:string) {
+    const index = this.case.participants.findIndex(participant => participant.id === participantId)
+    this.case.participants[index].data[key] = value
+    await this.save()
+  }
+
+  getParticipantData(participantId:string, key:string) {
+    return this.case.participants.find(participant => participant.id === participantId).data[key]
   }
 
   async getQueries (): Promise<Array<Query>> {

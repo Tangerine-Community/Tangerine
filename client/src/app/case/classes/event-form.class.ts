@@ -1,5 +1,6 @@
 class EventForm {
   id:string;
+  participantId:string
   complete:boolean = false
   caseId:string; 
   caseEventId:string;

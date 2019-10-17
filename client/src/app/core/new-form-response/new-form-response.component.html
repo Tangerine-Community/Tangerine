@@ -1,12 +1,27 @@
-
 <div class="wrapper">
   <div class="form-info-cards">
-    <paper-card class="form-info-card" *ngFor="let formInfo of formsInfo">
+    <!-- <paper-card class="form-info-card" *ngFor="let formInfo of formsInfo">
       <h2 class="card-header" [innerHTML]="formInfo.title | unsanitizeHtml"></h2>
       <div class="card-content" [innerHTML]="formInfo.description | unsanitizeHtml"></div>
       <div class="card-actions">
         <paper-button (click)="onFormInfoSelect(formInfo.id)">{{'start'|translate}}</paper-button>
       </div>
-    </paper-card>
+    </paper-card> -->
+    <div class="icon-list-item create-new">
+      <mwc-icon slot="item-icon">add</mwc-icon>
+      <div>
+        <div>{{"Create New Case"|translate}}</div>
+        <div secondary>{{"Select the appropriate case type from the options listed below"|translate}}</div>
+      </div>
+    </div>
+    <div class="icon-list-item form-item" *ngFor="let formInfo of formsInfo">
+      <mwc-icon slot="item-icon">{{formInfo.caseIcon}}</mwc-icon>
+      <div>
+        <div [innerHTML]="formInfo.title | unsanitizeHtml"></div>
+        <div [innerHTML]="formInfo.description | unsanitizeHtml" secondary></div>
+
+      </div>
+      <paper-button (click)="onFormInfoSelect(formInfo.id)">{{'Create'|translate}}</paper-button>
+    </div>
   </div>
 </div>
