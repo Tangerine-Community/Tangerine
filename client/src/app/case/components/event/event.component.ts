@@ -1,3 +1,4 @@
+import { EventFormDefinition } from './../../classes/event-form-definition.class';
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../shared/_services/user.service';
@@ -5,12 +6,17 @@ import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventForm } from '../../classes/event-form.class';
-import { EventFormDefinition } from '../../classes/event-form-definition.class';
 import { WindowRef } from 'src/app/core/window-ref.service';
 
-class EventFormInfo {
+interface EventFormInfo {
   eventFormDefinition:EventFormDefinition
   eventForm:EventForm
+}
+
+interface ParticipantInfo {
+  id: string
+  renderedListItem:string
+  eventFormInfos: Array<EventFormInfo>
 }
 
 @Component({
@@ -22,7 +28,7 @@ export class EventComponent implements OnInit, AfterContentInit {
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
-  eventFormsInfo:Array<EventFormInfo>
+  participantInfos:Array<ParticipantInfo>
   loaded = false
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
@@ -52,29 +58,30 @@ export class EventComponent implements OnInit, AfterContentInit {
         .caseDefinition
         .eventDefinitions
         .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
-      this.eventFormsInfo = this
-        .caseEventDefinition
-        .eventFormDefinitions
-        .reduce((eventFormsInfo, eventFormDefinition) => {
-           return [
-              ...eventFormsInfo,
-              ...this
-                .caseEvent
-                .eventForms
-                .reduce((eventFormsInfoSubset, eventForm) => {
-                  return eventForm.eventFormDefinitionId === eventFormDefinition.id
-                    ? [
-                        ...eventFormsInfoSubset, 
-                        <EventFormInfo>{
-                          eventFormDefinition,
-                          eventForm
-                        }
-                      ]
-                    : eventFormsInfoSubset
-                }, [])
-           ]
+      this.participantInfos = this.caseService.case.participants.map(participant => {
+        const id = participant.id
+        const role = this.caseService.caseDefinition.caseRoles.find(caseRole => caseRole.id === participant.caseRoleId)
+        let renderedListItem:string
+        eval(`renderedListItem = \`${role.templateListItem}\``) 
+        return <ParticipantInfo>{
+          id,
+          renderedListItem,
+          eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
+            
+            return eventForm.participantId === participant.id
+              ? [...eventFormInfos, <EventFormInfo>{
+                eventForm,
+                eventFormDefinition: this
+                  .caseEventDefinition
+                  .eventFormDefinitions
+                  .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
+              }]
+              : eventFormInfos
           }, [])
-      this.calculateAvailableEventFormDefinitions()
+        }
+        debugger
+      })
+      //this.calculateAvailableEventFormDefinitions()
       this.loaded = true
     })
   }

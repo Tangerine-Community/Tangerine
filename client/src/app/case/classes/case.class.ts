@@ -95,6 +95,7 @@ class Case {
     this.disabledEventDefinitionIds = data.disabledEventDefinitionIds ? data.disabledEventDefinitionIds : []
     this.caseDefinitionId = data.caseDefinitionId
     this.label = data.label
+    this.participants = data.participants
     this.events = data.events.map(caseEventData => <CaseEvent>caseEventData)
   }
   
