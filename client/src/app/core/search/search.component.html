@@ -5,22 +5,29 @@
 <div id="bottom-nav">
   <table>
     <tr>
-      <td (click)="focusOnFind()"><iron-icon icon="search"></iron-icon></td>
-      <td routerLink="/new-form-response"><iron-icon icon="add"></iron-icon></td>
-      <td (click)="scan()"><iron-icon icon="image:filter-center-focus"></iron-icon></td>
+      <td (click)="focusOnFind()">
+        <iron-icon icon="search"></iron-icon>
+      </td>
+      <td routerLink="/new-form-response">
+        <iron-icon icon="add"></iron-icon>
+      </td>
+      <td (click)="scan()">
+        <iron-icon icon="image:filter-center-focus"></iron-icon>
+      </td>
     </tr>
     <tr>
-      <td (click)="focusOnFind()">Find Case</td>
-      <td routerLink="/new-form-response">New Case</td>
-      <td (click)="scan()">Scan Code</td>
+      <td (click)="focusOnFind()">{{'Find Case'|translate}}</td>
+      <td routerLink="/new-form-response">{{'New Case'|translate}}</td>
+      <td (click)="scan()">{{'Scan Code'|translate}}</td>
     </tr>
   </table>
 </div>
 
-<paper-input id="search-bar" name="search-bar" label="Search cases" #searchBar></paper-input>
-   
+<paper-input id="search-bar" name="search-bar" label="{{'Search cases'|translate}}" #searchBar></paper-input>
+
 <div id="scan-screen" [hidden]="showScan === false">
-  <app-search-barcode (change)="onScanChange($event)" (cancel)="onScanCancel($event)" (error)="onScanError($event)" #scanner></app-search-barcode>
+  <app-search-barcode (change)="onScanChange($event)" (cancel)="onScanCancel($event)" (error)="onScanError($event)"
+    #scanner></app-search-barcode>
 </div>
 
 <div id="search-results" #searchResults>

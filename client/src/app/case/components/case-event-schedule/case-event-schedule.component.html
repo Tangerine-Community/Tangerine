@@ -6,8 +6,8 @@
 </paper-dropdown-menu-->
 <div class="header">
   <select (change)="onModeChange($event)">
-    <option value="CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY">Week View</option>
-    <option value="CASE_EVENT_SCHEDULE_LIST_MODE_DAILY">Day View</option>
+    <option value="CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY">{{'Week View'|translate}}</option>
+    <option value="CASE_EVENT_SCHEDULE_LIST_MODE_DAILY">{{'Day View'|translate}}</option>
   </select>
   <date-carousel (on-week-change)="onWeekChange($event)" (on-day-pick)="onDayPick($event)"></date-carousel>
 </div>
