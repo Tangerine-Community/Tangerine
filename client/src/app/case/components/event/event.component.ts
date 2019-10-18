@@ -85,7 +85,6 @@ export class EventComponent implements OnInit, AfterContentInit {
           id,
           renderedListItem,
           eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
-            
             return eventForm.participantId === participant.id
               ? [...eventFormInfos, <EventFormInfo>{
                 eventForm,
@@ -97,8 +96,8 @@ export class EventComponent implements OnInit, AfterContentInit {
               : eventFormInfos
           }, [])
         }
-        debugger
       })
+      .filter(participantInfo => participantInfo.eventFormInfos.length !== 0)
       //this.calculateAvailableEventFormDefinitions()
       this.loaded = true
     })
