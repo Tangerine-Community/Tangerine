@@ -264,7 +264,7 @@ class CaseService {
     return caseEventInfos
   }
 
-  async createParticipant(caseRoleId = ''):Promise<CaseParticipant> {
+  createParticipant(caseRoleId = ''):CaseParticipant {
     const id = UUID()
     const data = {}
     const caseParticipant = <CaseParticipant>{
@@ -284,14 +284,12 @@ class CaseService {
         }
       }
     }
-    await this.save()
     return caseParticipant
   }
 
-  async setParticipantData(participantId:string, key:string, value:string) {
+  setParticipantData(participantId:string, key:string, value:string) {
     const index = this.case.participants.findIndex(participant => participant.id === participantId)
     this.case.participants[index].data[key] = value
-    await this.save()
   }
 
   getParticipantData(participantId:string, key:string) {
