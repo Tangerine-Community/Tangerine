@@ -1,7 +1,7 @@
 <div class="primary">
-  <iron-icon icon="clear" routerLink="/"></iron-icon> Case ID: {{caseService.case._id.substr(0,6)}}
+  <iron-icon icon="clear" routerLink="/"></iron-icon> {{'Case'|translate}} ID: {{caseService.case._id.substr(0,6)}}
 </div>
 <div class="secondary" *ngIf="secondaryText">
     <iron-icon icon="chevron-left" routerLink="{{secondaryLink}}"></iron-icon>
-    {{secondaryText}}
+    <span [innerHTML]="secondaryText|unsanitizeHtml"></span>
 </div>
