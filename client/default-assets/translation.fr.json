@@ -1,4 +1,10 @@
 {
+  "accept": "acceptez",
+  "clear": "réinitialiser",
+  "scan": "Analyse",
+  "cancel": "Annuler",
+  "Today": "Aujourd'hui",
+  "About": "À propos",
   "next": "prochain",
   "back": "précédent",
   "Day": "Journeé",
@@ -171,6 +177,7 @@
   "Start Time": "Heure de début",
   "Status": "Statut",
   "submit": "soumettre",
+  "Submit": "Soumettre",
   "Summary": "Résumé",
   "summary": "résumé",
   "Support": "Soutien",
