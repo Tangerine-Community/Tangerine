@@ -58,6 +58,12 @@ class CaseService {
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') 
     tangyFormEl.style.display = 'none'
     this.window.document.body.appendChild(tangyFormContainerEl)
+    try {
+      this.case.location = (await this.userService.getUserProfile()).location
+    } catch(error) {
+      console.log("There was error setting the location on the case.")
+      console.log(error)
+    }
     this.case.form = tangyFormEl.getProps()
     this.case.items = []
     tangyFormEl.querySelectorAll('tangy-form-item').forEach((item) => {

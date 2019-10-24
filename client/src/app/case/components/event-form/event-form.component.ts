@@ -113,11 +113,11 @@ export class EventFormComponent implements AfterContentInit {
     try {
       stateDoc = await this.tangyFormService.getResponse(state._id)
     } catch (e) {
-      let r = await this.tangyFormService.saveResponse(state)
+      let r = await this.tangyFormService.saveResponse({...state, location: this.caseService.case.location})
       stateDoc = await this.tangyFormService.getResponse(state._id)
     }
     let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
-    await this.tangyFormService.saveResponse(newStateDoc)
+    await this.tangyFormService.saveResponse({...newStateDoc, location: this.caseService.case.location})
   }
 
 }
