@@ -1,4 +1,7 @@
 # Changelog
+
+## v3.6.2
+
 ## v3.6.1
 - Fix form routing for archived and active forms.
   - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1722
