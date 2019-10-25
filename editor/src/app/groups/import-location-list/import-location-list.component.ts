@@ -184,8 +184,8 @@ export class ImportLocationListComponent implements OnInit {
     const levels = [...this.locationList.locationsLevels].reverse();
     levels.map((level, index) => {
       this.parsedCSVData.map(item => {
-        const id = item[`${level}_id`];
-        const parentId = item[`${levels[index + 1]}_id`];
+        const id = item[this.mappings[`${level}_id`]];
+        const parentId = item[this.mappings[`${levels[index + 1]}_id`]];
         const parent = index + 1 === levels.length ? 'root' : parentId;
         let value = {
           parent,
