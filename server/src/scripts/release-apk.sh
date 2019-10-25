@@ -50,7 +50,7 @@ cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/shell/assets
 cp /tangerine/logo.svg $RELEASE_DIRECTORY/www/
 
 # Stash the Build ID in the release.
-echo $BUILD_ID > $RELEASE_DIRECTORY/www/.tangerine-build-id 
+echo $BUILD_ID > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-id 
 
 cd $RELEASE_DIRECTORY
 
