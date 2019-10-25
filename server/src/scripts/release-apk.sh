@@ -11,6 +11,7 @@ STATUS_FILE="/tangerine/client/releases/$RELEASE_TYPE/apks/$GROUP.json"
 URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www"
 CHCP_URL="$T_PROTOCOL://$T_HOST_NAME/releases/$RELEASE_TYPE/apks/$GROUP/www/chcp.json"
 DATE=`date '+%Y-%m-%d %H:%M:%S'`
+BUILD_ID=`uuid`
 
 echo "RELEASE APK script started $DATE"
 
@@ -48,6 +49,9 @@ rm -rf $RELEASE_DIRECTORY/www/shell/assets
 cp -r $CONTENT_PATH $RELEASE_DIRECTORY/www/shell/assets
 cp /tangerine/logo.svg $RELEASE_DIRECTORY/www/
 
+# Stash the Build ID in the release.
+echo $BUILD_ID > $RELEASE_DIRECTORY/www/.tangerine-build-id 
+
 cd $RELEASE_DIRECTORY
 
 # replace the URL property in config.xml
@@ -67,8 +71,5 @@ cordova build --no-telemetry android
 cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.apk $RELEASE_DIRECTORY/$GROUP.apk
 
 echo '{"processing":false}' > $STATUS_FILE
-echo "Released apk for $GROUP at $RELEASE_DIRECTORY on $DATE"
-
-
-
-
+echo 
+echo "Released apk for $GROUP at $RELEASE_DIRECTORY on $DATE with Build ID of $BUILD_ID"
