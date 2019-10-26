@@ -1,66 +1,114 @@
+.subject-header {
+  background: #212a3f;
+  color: white;
+  font-size: 1em;
+  padding: 15px;
+}
+
+.subject-header iron-icon {
+  width: 72px;
+  height: 72px;
+  position: relative;
+  bottom: 5px; 
+}
+.subject-header h1 {
+  font-size: 3em;
+}
+
+.subject-header div[secondary] {
+  margin-left: 10px;
+}
+
+
 .wrapper {
-  margin: 85px 15px 15px;
-
+  margin: 0px;
 }
-
-paper-card {
-  margin-right: 15px;
-  margin-bottom: 15px;
-  width: 100%;
-}
-
 paper-button {
-  margin-top: 0px;
+  background: var(--accent-color);
+  color: white;
+}
+paper-card {
+  text-align: left;
 }
 
-.card-header {
-  margin: 15px;
+.form {
+  background: #FFF;
+  border-color: #CCC;
+  border-style: solid;
+  border-width: 1px 0px 1px 0px;
 }
 
-.icon-list-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  font-family: var(--paper-font-subhead_-_font-family);
-  font-size: var(--paper-font-subhead_-_font-size);
-  font-weight: var(--paper-font-subhead_-_font-weight);
-  line-height: var(--paper-font-subhead_-_line-height);
-  min-height: var(--paper-item-min-height, 48px);
-  padding: 0 16px;
-  border-bottom: gray dashed 1px;
-}
-.icon-list-item > mwc-icon {
-  width: 56px;
-}
-.icon-list-item > div {
-  min-height: var(--paper-item-body-two-line-min-height, 72px);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  flex: 1 auto;
-  flex-basis: 0.0000000001px;
-}
-.icon-list-item > div > div {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.icon-list-item > div > div + div {
-  font-size: var(--paper-font-body1_-_font-size);
-  font-weight: var(--paper-font-body1_-_font-weight);
-  line-height: var(--paper-font-body1_-_line-height);
-  color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
+.form.required {
+  border-left: red solid 4px;
 }
 
-.icon-list-item:hover {
-  background-color: lightgray;
+.form.new-form {
+  border-style: dashed;
 }
-.icon-list-item.create-new:hover {
+
+.form.complete {
+  background: #CCC;
+}
+select {
+  font-family: inherit;
   background-color: transparent;
+  width: 80%;
+  padding: 4px 0;
+  font-size: 16px;
+  color: #000;
+  border: none;
+  border-bottom: 1px solid #737373;
 }
 
-mwc-icon {
-  color: var(--primary-color);
-  font-size: 36px;
+button[type="submit"] {
+  background-color: #3c5b8d;
+  border: 1px solid #3c5b8d;
+  box-shadow: 0 2px 2px 0 rgba(60, 91, 141, 0.14), 0 3px 1px -2px rgba(60, 91, 141, 0.2), 0 1px 5px 0 rgba(60, 91, 141, 0.12);
+  padding: 5px 10px;
+  font-size: 14px;
+  vertical-align: middle;
+  color: #fff;
+  text-align: center;
+  line-height: 1.2;
+  border-radius: .25rem;
+}
+:host {
+  position: relative;
+}
+
+
+#bottom-nav {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width:100%;
+  background: var(--primary-color);
+  color: var(--accent-text-color);
+  z-index:999;
+}
+
+#bottom-nav table {
+  margin: 7px auto;
+  width: 100%;
+  max-width: 600px;
+}
+
+#bottom-nav td {
+  text-align: center;
+  cursor: pointer;
+}
+
+#bottom-nav iron-icon {
+  --iron-icon-fill-color: var(--accent-text-color);
+  --iron-icon-stroke-color: var(--accent-text-color);
+}
+
+.info-bar {
+  background: #3c5b8d;
+  color: var(--accent-text-color);
+  padding: 0px 15px 5px;
+  --primary-color: #FFF;
+  --primary-text-color: #FFF;
+  --secondary-text-color: #FFF;
+  --default-primary-color: #FFF;
 }
