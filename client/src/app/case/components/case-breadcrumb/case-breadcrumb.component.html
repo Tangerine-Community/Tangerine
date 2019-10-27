@@ -1,5 +1,5 @@
 <div class="primary">
-  <iron-icon icon="clear" routerLink="/"></iron-icon> {{caseService.getVariable('participant_id') ? ('Participant'|translate) : ('Screening'|translate)}} ID: {{caseService.getVariable('participant_id') ? caseService.getVariable('participant_id') : caseService.case._id.substr(0,6)}}
+  <iron-icon icon="clear" routerLink="/"></iron-icon> {{caseService.getVariable('participant_id') ? ('Participant ID'|translate) : ('Screening ID'|translate)}} : {{caseService.getVariable('participant_id') ? caseService.getVariable('participant_id') : caseService.case._id.substr(0,6)}}
 </div>
 <div class="secondary" *ngIf="secondaryText">
     <iron-icon icon="chevron-left" routerLink="{{secondaryLink}}"></iron-icon>
