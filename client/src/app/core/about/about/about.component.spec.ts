@@ -15,6 +15,7 @@ describe('AboutComponent', () => {
     .compileComponents();
   }));
 
+  /*
   beforeEach(() => {
     fixture = TestBed.createComponent(AboutComponent);
     component = fixture.componentInstance;
@@ -24,4 +25,5 @@ describe('AboutComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  */
 });
