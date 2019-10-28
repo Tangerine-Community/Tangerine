@@ -8,7 +8,7 @@
 
 Digitize your EGMA and EGRA data collection with Tangerine&trade;. Create your Assessments online, conduct them offline with the Tangerine Android App or any device with Google Chrome web browser. All results you collect can be exported as a spreadsheet. When you have updates to forms you can send out an Over the Air update. Tangerine has been used by over 60 organizations to conduct over 1 million assessments and surveys in over 70 countries and in 100 languages.
 
-
+[See here for a link to the Tangerine Manual](http://www.tangerinecentral.org/product-help)
 
 ## User Stories
 1. Subscription Owners use the Online Tangerine Hub App to create their own Tangerine Server which contains the online Tangerine Editor App. Tangerine is licensed as GNU GPL v3 and available to be installed on your own server.
