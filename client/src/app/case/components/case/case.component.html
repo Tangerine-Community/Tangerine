@@ -6,10 +6,14 @@
   </h1>
   <div secondary>
     <span [innerHTML]="templateDescription|unsanitizeHtml"></span>
+    <div class="confirm-correct-case-prompt" *ngIf="caseService.openCaseConfirmed === false">
+      <paper-button class="button" (click)="onOpenCaseConfirmButtonClick()">Confirm</paper-button>
+    </div>
   </div>
 </div>
 
 <div *ngIf="ready" class="wrapper">
+  <div class="cover-when-not-confirmed" *ngIf="caseService.openCaseConfirmed === false"></div>
   <div *ngFor="let eventInfo of caseEventsInfo">
     <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" [caseEvent]="caseEvent"
       [caseDefinition]="caseService.caseDefinition" [caseEventDefinition]="eventInfo.caseEventDefinition"

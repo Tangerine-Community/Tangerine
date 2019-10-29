@@ -33,6 +33,8 @@ class CaseService {
   queryEventFormDefinitionId: any
   queryFormId: any
 
+  openCaseConfirmed = false
+
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
