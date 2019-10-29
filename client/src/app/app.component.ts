@@ -201,7 +201,7 @@ export class AppComponent implements OnInit {
         console.log('data: ' + JSON.stringify(data));
         if (error) {
           console.log('error: ' + JSON.stringify(error));
-          alert('No Update: ' + JSON.stringify(error.description));
+          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE(error.description));
         } else {
           console.log('Update is Loaded');
           if (this.window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `CANCEL`. If you are ready to install the update, click `OK`'))) {
