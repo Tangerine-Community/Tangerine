@@ -15,15 +15,34 @@ html {
   --document-background-color: #FAFAFA;
   --primary-color-dark: #212a3f;
   --primary-text-color-overlay: #FFF;
-  --primary-text-color: var(--light-theme-text-color);
+  --primary-text-color: #050505;
   --primary-color: #3c5b8d;
   --accent-color: #f26f10;
   --accent-color-dark: #cc5500;
   --accent-text-color: #FFF;
-  --error-color: var(--paper-red-500);
+  --error-color: #ff0000;
   --disabled-color: #BBB;
   --paper-tabs-selection-bar-color: #f26f10;
 }
+
+/* 
+ * Inverted theme for testing.
+
+html {
+  --document-background-color: #050505;
+  --primary-color-dark: #ded5c0;
+  --primary-text-color-overlay: #000;
+  --primary-text-color: #fafafa;
+  --primary-color: #c3a472;
+  --accent-color: #0d90ef;
+  --accent-color-dark: #33aaff;
+  --accent-text-color: #000;
+  --error-color: #00ffff; 
+  --disabled-color: #444444;
+  --paper-tabs-selection-bar-color: #0d90ef;
+}
+
+*/
 
 .container {
   margin:15px;
@@ -50,8 +69,10 @@ paper-button {
   background: var(--accent-color);
   color: var(--accent-text-color);
 }
+
 body {
   background: var(--document-background-color);
+  color: var(--primary-text-color);
   margin: 0px;
   padding: 0px;
   overscroll-behavior: contain;
