@@ -1,4 +1,17 @@
-
+.confirm-correct-case-prompt {
+    width: 100%;
+}
+.confirm-correct-case-prompt .button {
+    background: var(--accent-color);
+}
+.cover-when-not-confirmed {
+    position: absolute;
+    background: #000;
+    opacity: .5;
+    z-index: 987654321;
+    width: 100%;
+    height: 5000px;
+}
 /* @TODO Why do we need to set display? Otherwise it's hidden. */
 app-case-breadcrumb {
     display: block;
@@ -36,6 +49,7 @@ app-case-breadcrumb {
 }
 
 .wrapper {
+    position: relative;
     margin: 0px;
 }
 
