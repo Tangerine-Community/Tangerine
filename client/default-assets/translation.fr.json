@@ -1,4 +1,5 @@
 {
+  "Failed to download application configuration file": "Échec du téléchargement du fichier de configuration de l'application",
   "accept": "acceptez",
   "clear": "réinitialiser",
   "scan": "Analyse",
@@ -18,7 +19,7 @@
   "June": "Juin",
   "July": "Juillet",
   "August": "Août",
-  "September": "Septemble",
+  "September": "Septembre",
   "October": "Octobre",
   "November": "Novembre",
   "December": "Décembre",
@@ -32,7 +33,6 @@
   "Search cases": "Recherche de cas",
   "Find Case": "Trouver un cas",
   "New Case": "Nouveau cas",
-  "Scan Code": "Scan Code",
   "Create": "Créer",
   "Create New Case": "Créer un nouveau cas",
   "Select the appropriate case type from the options listed below": "Sélectionnez le type de cas approprié parmi les options énumérées ci-dessous",
@@ -222,5 +222,9 @@
   "here": "ici",
   "✓ Yay! You are up to date.": "✓ oui! Vous êtes à jour.",
   "yes, continue": "Oui",
-  "no, stop": "Non"
+  "no, stop": "Non",
+  "Home": "Page D'accueil",
+  "Scan Code": "Scannez le code",
+  "Screening ID": "ID de dépistage",
+  "Participant ID": "ID de participant"
 }
