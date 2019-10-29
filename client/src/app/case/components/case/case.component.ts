@@ -34,7 +34,10 @@ export class CaseComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
-      await this.caseService.load(params.id)
+      if (!this.caseService.case || params.id !== this.caseService.case._id) {
+        await this.caseService.load(params.id)
+        this.caseService.openCaseConfirmed = false
+      }
       this.windowRef.nativeWindow.caseService = this.caseService
       this.calculateTemplateData()
       this.ready = true
@@ -71,6 +74,10 @@ export class CaseComponent implements AfterContentInit {
       })
     this.selectedNewEventType = ''
     this.inputSelectedDate = moment(new Date()).format('YYYY-MM-DD')
+  }
+
+  onOpenCaseConfirmButtonClick() {
+    this.caseService.openCaseConfirmed = true
   }
 
   async onSubmit() {
