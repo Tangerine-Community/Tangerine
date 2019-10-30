@@ -3,7 +3,7 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { CasesService } from '../../services/cases.service';
 import * as moment from 'moment'
 import { FORM_TYPES_INFO } from 'src/app/core/search/search.component';
-import { CaseEvent } from '../../classes/case-event.class';
+import { CaseEvent, CASE_EVENT_STATUS_COMPLETED } from '../../classes/case-event.class';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import { SearchDoc, SearchService } from 'src/app/shared/_services/search.service';
@@ -122,7 +122,7 @@ export class CaseEventScheduleListComponent implements OnInit {
   }
 
    getCaseDefinition(caseEvent:CaseEvent){
-    const defaultTemplateScheduleListItemIcon = `${caseEvent.complete ? 'event_available' : 'event_note'}`
+    const defaultTemplateScheduleListItemIcon = `${caseEvent.status === CASE_EVENT_STATUS_COMPLETED ? 'event_note' : 'event_available'}`
     const defaultTemplateScheduleListItemPrimary = '<span>${caseEventDefinition.name}</span>'
     const defaultTemplateScheduleListItemSecondary = '<span>${caseInstance.label}</span>'
     let templateScheduleListItemIcon, templateScheduleListItemPrimary,templateScheduleListItemSecondary,caseEventDefinition;
