@@ -24,7 +24,7 @@ app-case-breadcrumb {
     background: var(--primary-color);
     color: var(--primary-text-color-overlay);
     font-size: 1em;
-    padding: 15px;
+    padding: 15px 15px 45px 15px;
 }
 
 .subject-header iron-icon {
@@ -35,12 +35,24 @@ app-case-breadcrumb {
 }
 
 .subject-header h1 {
-    font-size: 3em;
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+    margin-top: 15px;
     color: var(--primary-text-color-overlay);
 }
 
 .subject-header div[secondary], .subject-header h1 {
     margin-left: 10px;
+}
+
+.subject-header .description {
+    line-height: 2rem;
+
+}
+
+.subject-header .button {
+    margin: 0px;
 }
 
 .manifest {

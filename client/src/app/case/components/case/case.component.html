@@ -5,7 +5,7 @@
     <span [innerHTML]="templateTitle|unsanitizeHtml"></span>
   </h1>
   <div secondary>
-    <span [innerHTML]="templateDescription|unsanitizeHtml"></span>
+    <span [innerHTML]="templateDescription|unsanitizeHtml" class="description"></span>
     <div class="confirm-correct-case-prompt" *ngIf="caseService.openCaseConfirmed === false">
       <paper-button class="button" (click)="onOpenCaseConfirmButtonClick()">Confirm</paper-button>
     </div>
