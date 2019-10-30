@@ -22,11 +22,7 @@
 }
 
 #search-bar {
-  background: var(--primary-color) !important;
-  color: var(--primary-text-color-overlay) !important;
-  --primary-text-color: var(--primary-text-color-overlay) !important;
-  --secondary-text-color: var(--primary-text-color-overlay) !important;
-  padding: 0px 15px 5px;
+  margin: 0px 25px;
 }
 
 #scan-button {
