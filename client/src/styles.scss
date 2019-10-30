@@ -12,17 +12,34 @@
 @import "./tangerine-theme.scss";
 
 html {
-  --document-background-color: #FAFAFA;
-  --primary-color-dark: #212a3f;
-  --primary-text-color-overlay: #FFF;
+
+  /* Background color of the document */
+  --document-background-color: #FFF;
+  /* Default color for all text. */
   --primary-text-color: #050505;
+
+  /* Primary color for headings, etc. */
   --primary-color: #3c5b8d;
+  /* Another primary color to use when an object is close to something with primary color. */
+  --primary-color-dark: #212a3f;
+  /* Text color to use when text overlays on primary color. */
+  --primary-text-color-overlay: #FFF;
+
+  /* Secondary color for used for bringing attention to something */
   --accent-color: #f26f10;
+  /* Another secondary color to use when an object is close to something with secondary color. */
   --accent-color-dark: #cc5500;
+  /* Text color to use when text overlays on secondary color. */
   --accent-text-color: #FFF;
+
+  /* Tangy Form variables */
   --error-color: #ff0000;
   --disabled-color: #BBB;
+  --tangy-form-item--background-color: #FFF;
+
+  /* Other component overrides */
   --paper-tabs-selection-bar-color: #f26f10;
+
 }
 
 /* 
@@ -40,9 +57,17 @@ html {
   --error-color: #00ffff; 
   --disabled-color: #444444;
   --paper-tabs-selection-bar-color: #0d90ef;
+  --tangy-form-item--background-color: #333;
 }
-
 */
+
+body {
+  background: var(--document-background-color);
+  color: var(--primary-text-color);
+  margin: 0px;
+  padding: 0px;
+  overscroll-behavior: contain;
+}
 
 .container {
   margin:15px;
@@ -59,23 +84,10 @@ paper-tab a:-webkit-any-link {
   height: 42%;
   text-align: center;
 }
-/*
-paper-tab[aria-selected=true] {
-  background: var(--accent-color);
-  color: #FFF
-}
-*/
+
 paper-button {
   background: var(--accent-color);
   color: var(--accent-text-color);
-}
-
-body {
-  background: var(--document-background-color);
-  color: var(--primary-text-color);
-  margin: 0px;
-  padding: 0px;
-  overscroll-behavior: contain;
 }
 
 h2.card-header {
@@ -87,9 +99,10 @@ h2.card-header {
 }
 
 select{
-  font-size: 1.3em;
+  font-size: 1.3rem;
   width: 76%;
 }
+
 button.tangy-froms-margin-left{
    margin-left:3rem
 }
@@ -97,6 +110,7 @@ button.tangy-froms-margin-left{
 #icon {
   display: block;
 }
+
 .tangerine-app-content{
     /* min-height: 100vh; */
     @media screen and (max-width: 600px) {
@@ -106,6 +120,7 @@ button.tangy-froms-margin-left{
       margin-top: 64px;
     }
 }
+
 mat-toolbar{
     background-color: var(--primary-color-dark) !important;
     position: fixed;
@@ -317,7 +332,7 @@ div.more {
   }
 
   tangy-form > *, tangy-form {
-    font-size: 1.2em;
-    line-height: 1.2em;
-    --paper-input-container-shared-input-style_-_line-height: 1.2em;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    --paper-input-container-shared-input-style_-_line-height: 1.2rem;
   }
