@@ -19,7 +19,7 @@ export class CasesService {
       .rows
       .map(row => row.doc)
       .filter(doc => doc.collection === 'TangyFormResponse' && doc.type === 'case')
-      .reduce((acc, caseDoc) => [...acc, ...caseDoc.events], <Array<CaseEvent>>[])
+      .reduce((acc, caseDoc) => [...acc, ...caseDoc.events.map(event=>({...event,caseInstance:caseDoc}))], <Array<CaseEvent>>[])
       .filter(eventInfo => this.doesOverlap(dateStart, dateEnd, eventInfo) && !(excludeEstimates && eventInfo.estimate))
       .sort(function (a, b) {
         return b.dateStart - a.dateStart;
