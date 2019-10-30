@@ -83,6 +83,11 @@ class CaseService {
     await this.setCase(new Case(await this.db.get(id)))
   }
 
+  async getCaseDefinitionByID(id:string) {
+    return <CaseDefinition>await this.http.get(`./assets/${id}.json`)
+      .toPromise()
+  }
+
   async save() {
     this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     await this.db.put(this.case)

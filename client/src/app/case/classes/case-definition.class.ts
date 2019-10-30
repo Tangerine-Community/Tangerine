@@ -17,7 +17,9 @@ class CaseDefinition {
   templateEventFormListItemSecondary:string 
   eventDefinitions: Array<CaseEventDefinition> = []
   startFormOnOpen: CaseFormPath
-
+  templateScheduleListItemIcon:string
+  templateScheduleListItemPrimary:string
+  templateScheduleListItemSecondary:string
   constructor(init:CaseDefinition) {
     Object.assign(this, init);
     /*
