@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 import { UserService } from '../shared/_services/user.service';
-import { TangyFormService } from '../tangy-forms/tangy-form-service';
 import {AppConfigService} from "../shared/_services/app-config.service";
 
 @Component({
@@ -28,11 +27,10 @@ export class UserProfileComponent implements AfterContentInit {
 
   async ngAfterContentInit() {
     const appConfig = await this.appConfigService.getAppConfig();
+    const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
     const homeUrl = appConfig.homeUrl;
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
-    const userDbName = await this.userService.getUserDatabase();
-    const tangyFormService = new TangyFormService({ databaseName: userDbName });
-    const profileDocs = await tangyFormService.getResponsesByFormId('user-profile');
+    const userDb = await this.userService.getUserDatabase();
     const container = this.container.nativeElement
     let formHtml =  await this.http.get('./assets/user-profile/form.html', {responseType: 'text'}).toPromise();
     container.innerHTML = formHtml
@@ -40,14 +38,12 @@ export class UserProfileComponent implements AfterContentInit {
     formEl.addEventListener('submit', async (event) => {
       event.preventDefault()
       const profileDoc = formEl.store.getState()
-      await tangyFormService.saveResponse(profileDoc)
+      await userDb.put(profileDoc)
       this.router.navigate([this.returnUrl]);
     })
-    // Put a response in the store by issuing the FORM_OPEN action.
-    if (profileDocs.length > 0) {
-      formEl.response = profileDocs[0]
-
-    } else {
+    try {
+      formEl.response = await userDb.get(userAccount.userUUID)
+    } catch(e) {
       formEl.newResponse()
     }
   }

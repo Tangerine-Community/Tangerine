@@ -1,7 +1,7 @@
 
 .event-info {
   margin-left: 60px;
-  border-left: solid 3px black;
+  border-left: solid 3px var(--primary-text-color);
 }
 .new-date {
   position: relative;

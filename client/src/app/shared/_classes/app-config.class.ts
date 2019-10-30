@@ -21,4 +21,5 @@ export class AppConfig {
   usageCleanupBatchSize
   barcodeSearchMapFunction:string
   showQueries:boolean
+  sharedUserDatabase = false
 } 

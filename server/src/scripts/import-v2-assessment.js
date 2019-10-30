@@ -39,36 +39,62 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
   const template = `
     <tangy-form id="${assessment._id}" title="${assessment.name}">
       ${assessment.subtests.map(subtest => `
-        <tangy-form-item id="${subtest._id}" title="${subtest.name}">
+        <tangy-form-item id="${subtest._id}" title="${subtest.name.replace(/["']/g, "`")}"
+          on-open="
+	       ${subtest.prototype === 
+			   'datetime' ?`inputs.date_start.value = new Date().toISOString().split('T')[0]
+	        inputs.time_start.value = new Date().toTimeString().substring(0,5) `:`` }
+	        ${subtest.prototype === 'id' ?`function makeid() {
+    var text = '';
+    var possible = 'ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnpqrstuvwxyz0123456789';
+  
+  //change 5 to the desired length of the ID
+    for (var i = 0; i <= 6; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+  }
+  
+  if (inputs.student_id.value == '') 
+     inputs.student_id.value = makeid() `:`` }
+	  ">
           <template>
+	    ${(subtest.enumeratorHelp && subtest.enumeratorHelp !== '') ? `
+		<tangy-box name="header">${subtest.enumeratorHelp}</tangy-box>
+	    `:``} 
+            ${(subtest.studentDialog && subtest.studentDialog !== '') ? `
+                <tangy-box name="header">${subtest.studentDialog}</tangy-box>
+            `:``}
+	    ${(subtest.transitionComment && subtest.transitionComment !== '') ? `
+                <tangy-box name="header">${subtest.transitionComment}</tangy-box>
+            `:``}
             ${subtest.prototype === 'survey' ? `
-              ${subtest.questions.map(question => `
+              ${subtest.questions.sort(function (a,b){return a.order-b.order}).map(question => `
                 ${question.type === 'single' ? `
-                  <tangy-radio-buttons name="${question.name}" label="${question.prompt}" ${question.skippable ? '' : 'required'}>
+                  <tangy-radio-buttons name="${question.name}" label="${question.prompt.replace(/["']/g, "`")}" ${question.skippable ? '' : 'required'}>
                     ${question.options.map(option => `
-                      <option value="${option.value}">${option.label}</option>
+                      <option value="${option.value}">${option.label.replace(/["']/g, "`")}</option>
                     `).join('')}
                   </tangy-radio-buttons>
                 
                 `:``}
                 ${question.type === 'multiple' ? `
-                  <tangy-checkboxes name="${question.name}" label="${question.prompt}" ${question.skippable ? '' : 'required'}>
+                  <tangy-checkboxes name="${question.name}" label="${question.prompt.replace(/["']/g, "`")}" ${question.skippable ? '' : 'required'}>
                     ${question.options.map(option => `
-                      <option value="${option.value}">${option.label}</option>
+                      <option value="${option.value}">${option.label.replace(/["']/g, "`")}</option>
                     `).join('')}
                   </tangy-checkboxes>
                 
                 `:``}
                 ${question.type === 'open' ? `
-                  <tangy-input name="${question.name}" label="${question.prompt}" ${question.skippable ? '' : 'required'}>
+                  <tangy-input name="${question.name.replace(/["']/g, "`")}" label="${question.prompt.replace(/["']/g, "`")}" ${question.skippable ? '' : 'required'}>
                   </tangy-input>               
                 `:``}
 
               `).join('')}
             `:``}
             ${subtest.prototype === 'datetime' ? `
-              <tangy-input type="date" auto-fill></tangy-input>
-              <tangy-input type="time" auto-fill></tangy-input>
+              <tangy-input name="date_start" label="" hint-text="" type="date" required=""></tangy-input>
+	      <tangy-input name="time_start" label="" type="time" hint-text="" required=""></tangy-input>
             `:``}
             ${subtest.prototype === 'grid' ? `
               <tangy-timed name="${subtest.variableName}" auto-stop="${subtest.autostop}" duration="${subtest.timer}" columns="${subtest.columns === 0 ? '3' : subtest.columns}">
@@ -78,13 +104,16 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
               </tangy-timed>
             `:``}
             ${subtest.prototype === 'location' ? `
-              <tangy-location ${subtest.levels ? `levels="${subtest.levels.join(',')}"`: ``} name="${subtest.name}"></tangy-location>
+              <tangy-location ${subtest.levels ? `levels="${subtest.levels.join(',')}"`: ``} name="location"></tangy-location>
             `:``}
             ${subtest.prototype === 'gps' ? `
               <tangy-gps name="${subtest.name}"></tangy-gps>
             `:``}
             ${subtest.prototype === 'consent' ? `
-              <tangy-consent name="${subtest.name}"></tangy-consent>
+              <tangy-consent name="consent"></tangy-consent>
+            `:``}
+	    ${subtest.prototype === 'id' ? `
+              <tangy-input name="student_id" label="" hint-text="" type="text" allowed-pattern="" required=""></tangy-input>
             `:``}
           </template>
         </tangy-form-item>
@@ -108,4 +137,3 @@ async function importV2Assessment(dbUrlWithCredentials, assessmentId, targetGrou
   }
 }
 importV2Assessment(process.argv[2], process.argv[3], process.argv[4])
-

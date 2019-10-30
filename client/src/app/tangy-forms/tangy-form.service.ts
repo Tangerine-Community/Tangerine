@@ -1,7 +1,3 @@
-/*
- * This is the successor to tangy-form-service.ts. Same API, more standard Angular Pattern.
- */
-
 import { Injectable } from '@angular/core';
 import { UserService } from '../shared/_services/user.service';
 import { HttpClient } from '@angular/common/http';
@@ -36,7 +32,7 @@ export class TangyFormService {
   }
 
   async saveForm(formDoc) {
-    let db = this.userService.getUserDatabase()
+    let db = await this.userService.getUserDatabase()
     let r
     if (!formDoc._id) {
       r = await db.post(formDoc)
@@ -50,7 +46,7 @@ export class TangyFormService {
   // Would be nice if this was queue based so if two saves get called at the same time, the differentials are sequentials updated
   // into the database. Using a getter and setter for property fields, this would be one way to queue.
   async saveResponse(responseDoc) {
-    let db = this.userService.getUserDatabase()
+    let db = await this.userService.getUserDatabase()
     let r
     if (!responseDoc._id) {
       r = await db.post(responseDoc)
@@ -62,7 +58,7 @@ export class TangyFormService {
   }
 
   async getResponse(responseId) {
-    let db = this.userService.getUserDatabase(this.userService.getCurrentUser())
+    let db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     try {
       let doc = await db.get(responseId)
       return doc
@@ -72,13 +68,13 @@ export class TangyFormService {
   }
 
   async getResponsesByFormId(formId) {
-    let db = this.userService.getUserDatabase(this.userService.getCurrentUser())
+    let db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     let r = await db.query('tangy-form/responsesByFormId', { key: formId, include_docs: true })
     return r.rows.map((row) => new TangyFormResponseModel(row.doc))
   }
 
   async getResponsesByLocationId(locationId) {
-    let db = this.userService.getUserDatabase()
+    let db = await this.userService.getUserDatabase()
     let r = await db.query('tangy-form/responsesByLocationId', { key: locationId, include_docs: true })
     return r.rows.map((row) => row.doc)
   }

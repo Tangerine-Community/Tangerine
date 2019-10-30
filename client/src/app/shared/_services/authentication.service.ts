@@ -1,3 +1,4 @@
+import { WindowRef } from 'src/app/core/window-ref.service';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AppConfigService } from './app-config.service';
@@ -16,6 +17,7 @@ export class AuthenticationService {
 
   constructor(
     private userService: UserService,
+    private windowRef: WindowRef,
     private appConfigService: AppConfigService
   ) {
     this.currentUserLoggedIn$ = new Subject();
@@ -24,10 +26,14 @@ export class AuthenticationService {
 
   async login(username: string, password: string) {
     if (await this.userService.doesUserExist(username) && await this.confirmPassword(username, password)) {
-      localStorage.setItem('currentUser', username);
+      // Make the user's database available for code in forms to use.
+      this.windowRef.nativeWindow.userDb = await this.userService.getUserDatabase(username)
+      const userAccount = await this.userService.getUserAccount(username)
+      localStorage.setItem('currentUser', userAccount.username);
+      localStorage.setItem('currentUsername', userAccount.username);
+      localStorage.setItem('currentUserId', userAccount.userUUID);
       this._currentUserLoggedIn = true;
       this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
-      const userAccount = await this.userService.getUserAccount(username)
       this.userLoggedIn$.next(userAccount)
       return true 
     } else {;
