@@ -6,7 +6,6 @@ import { AuthenticationService } from './shared/_services/authentication.service
 import { UserService } from './shared/_services/user.service';
 import { WindowRef } from './shared/_services/window-ref.service';
 import { updates } from './core/update/update/updates';
-import { TangyFormService } from './tangy-forms/tangy-form-service';
 import PouchDB from 'pouchdb';
 import { TranslateService } from '@ngx-translate/core';
 import { _TRANSLATE } from './shared/translation-marker';
@@ -46,6 +45,7 @@ export class AppComponent implements OnInit {
     translate: TranslateService
   ) {
     this.window = this.windowRef.nativeWindow;
+    this.window.PouchDB = PouchDB
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
       ? true
       : false
@@ -65,7 +65,6 @@ export class AppComponent implements OnInit {
     this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
     // Make database services available to eval'd code.
     this.window.userService = this.userService
-    this.window.PouchDB = this.userService.PouchDB
   }
 
 
@@ -94,19 +93,13 @@ export class AppComponent implements OnInit {
     this.checkIfUpdateScriptRequired();
     this.checkStorageUsage()
     setInterval(this.checkStorageUsage.bind(this), 60*1000); 
-    // Initialize tangyFormService in case any views need to be updated.
-    // @TODO Is this necessary? 
-    const currentUser = await this.authenticationService.getCurrentUser();
-    if (currentUser) {
-      const tangyFormService = new TangyFormService({ databaseName: currentUser });
-      tangyFormService.initialize();
-    }
   }
 
   async install() {
     const config =<any> await this.http.get('./assets/app-config.json').toPromise()
     this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
     this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
+    await this.userService.install()
     this.window.localStorage.setItem('installed', true)
     this.window.location = `${this.window.location.origin}${this.window.location.pathname}index.html`
   }
@@ -132,7 +125,7 @@ export class AppComponent implements OnInit {
     let storageEstimate = await navigator.storage.estimate()
     let availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     while(availableFreeSpace < minimumFreeSpace) {
-      const DB:PouchDB = this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
+      const DB = await this.userService.getUserDatabase(this.window.localStorage.getItem('currentUser'))
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,
@@ -159,7 +152,7 @@ export class AppComponent implements OnInit {
       .map(row => row.doc)
       .map(doc => doc._id);
     for (const username of usernames) {
-      const userDb:PouchDB = this.userService.getUserDatabase(username);
+      const userDb = await this.userService.getUserDatabase(username);
       // Use try in case this is an old account where info doc was not created.
       let infoDoc = { _id: '', atUpdateIndex: 0 };
       try {
@@ -208,7 +201,7 @@ export class AppComponent implements OnInit {
         console.log('data: ' + JSON.stringify(data));
         if (error) {
           console.log('error: ' + JSON.stringify(error));
-          alert('No Update: ' + JSON.stringify(error.description));
+          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
         } else {
           console.log('Update is Loaded');
           if (this.window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `CANCEL`. If you are ready to install the update, click `OK`'))) {
