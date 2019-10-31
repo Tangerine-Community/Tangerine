@@ -1,7 +1,6 @@
 import { Component, AfterContentInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { updates } from './updates';
 import PouchDB from 'pouchdb';
 import { UserService } from '../../../shared/_services/user.service';
@@ -21,7 +20,6 @@ export class UpdateComponent implements AfterContentInit {
   complete = false;
 
   constructor(
-    private windowRef: WindowRef,
     private router: Router,
     translate: TranslateService,
     private http: HttpClient,
@@ -37,7 +35,6 @@ export class UpdateComponent implements AfterContentInit {
       return
     }
     const appConfig = await this.http.get('./assets/app-config.json').toPromise()
-    const window = this.windowRef.nativeWindow;
     const usernames = await this.userService.getUsernames();
     for (const username of usernames) {
       const userDb = await new PouchDB(username);
@@ -69,7 +66,7 @@ export class UpdateComponent implements AfterContentInit {
       }
     }
     localStorage.setItem('updateJustApplied', 'true')
-    this.windowRef.nativeWindow.location.reload()
+    window.location.reload()
   }
 
 }
