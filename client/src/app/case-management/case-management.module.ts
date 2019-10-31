@@ -11,7 +11,6 @@ import { FormListComponent } from './form-list/form-list.component';
 import { SchoolsVisitedComponent } from './schools-visited/schools-visited.component';
 import { CaseDetailsComponent } from './case-details/case-details.component';
 import { ObservationsByLocationComponent } from './observations-by-location/observations-by-location.component';
-import { WindowRef } from '../shared/_services/window-ref.service';
 
 @NgModule({
   imports: [
@@ -29,6 +28,6 @@ import { WindowRef } from '../shared/_services/window-ref.service';
   ],
   declarations: [FormListComponent, SchoolsVisitedComponent,
     CaseDetailsComponent, ObservationsByLocationComponent],
-  providers: [CaseManagementService, WindowRef]
+  providers: [CaseManagementService]
 })
 export class CaseManagementModule { }

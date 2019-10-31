@@ -4,7 +4,6 @@ import { AuthenticationService } from '../../../shared/_services/authentication.
 import { HttpClient } from '@angular/common/http';
 import { CaseService } from '../../services/case.service'
 import { CaseDefinitionsService } from '../../services/case-definitions.service'
-import { WindowRef } from 'src/app/shared/_services/window-ref.service';
 import { EventForm } from '../../classes/event-form.class';
 
 @Component({
@@ -21,7 +20,6 @@ export class NewCaseComponent implements AfterContentInit {
     private activatedRoute: ActivatedRoute,
     private caseService:CaseService,
     private caseDefinitionsService:CaseDefinitionsService,
-    private windowRef: WindowRef
   ) { }
 
   async ngAfterContentInit() {

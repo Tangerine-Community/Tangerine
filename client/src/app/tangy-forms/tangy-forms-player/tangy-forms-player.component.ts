@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 
 import { CaseManagementService } from '../../case-management/_services/case-management.service';
 import { UserService } from '../../shared/_services/user.service';
-import { WindowRef } from '../../shared/_services/window-ref.service';
 import { _TRANSLATE } from '../../shared/translation-marker';
 import { TangyFormService } from '../tangy-form.service';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
@@ -23,6 +22,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   throttledSaveFiring;
   formId;
   formEl;
+  window:any;
   @ViewChild('container') container: ElementRef;
   constructor(
     private caseManagementService: CaseManagementService,
@@ -30,8 +30,9 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private userService: UserService,
-    private windowRef: WindowRef
-  ) { }
+  ) { 
+    this.window = window
+  }
 
   isDirty() {
     const state = this.formEl.store.getState()
@@ -54,7 +55,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
       } else {
         formInfo = await this.getFormInfoByIndex(this.formIndex);
       }
-      this.windowRef.nativeWindow.tangyLocationFilterBy = (await this.userService.getUserLocations()).join(',')
+      this.window.tangyLocationFilterBy = (await this.userService.getUserLocations()).join(',')
       const userDbName = await this.userService.getUserDatabase();
       const formResponse = await this.service.getResponse(this.responseId);
       const container = this.container.nativeElement

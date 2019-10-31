@@ -31,7 +31,6 @@ import { StudentProgressTableComponent } from './reports/student-progress-table/
 import { CookieService } from "ngx-cookie-service";
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { TaskReportComponent } from './reports/task-report/task-report.component';
-import { WindowRef } from '../shared/_services/window-ref.service';
 
 @NgModule({
   imports: [
@@ -55,7 +54,7 @@ import { WindowRef } from '../shared/_services/window-ref.service';
     MatButtonToggleModule
   ],
   declarations: [DashboardComponent, ClassFormsPlayerComponent, StudentSubtestReportComponent, StudentGroupingReportComponent, PageNotFoundComponent, StudentProgressTableComponent, TaskReportComponent],
-  providers: [DashboardService, WindowRef, CookieService, {
+  providers: [DashboardService, CookieService, {
     provide: MatPaginatorIntl,
     useFactory: (translate) => {
       const service = new MatPaginationIntlService();

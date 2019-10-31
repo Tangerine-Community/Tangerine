@@ -1,4 +1,3 @@
-import { WindowRef } from './../window-ref.service';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NewFormResponseComponent } from './new-form-response.component';
@@ -81,7 +80,6 @@ describe('NewFormResponseComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       providers: [
-        WindowRef,
         {
           provide: FormTypesService,
           useClass: MockFormTypesService 
