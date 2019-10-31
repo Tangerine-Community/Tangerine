@@ -1,14 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Peer} from './peer';
-import {Device} from './device';
-import {PEERS} from './mock-peers';
-import {PeersService} from './peers.service';
 import {WindowRef} from '../../../shared/_services/window-ref.service';
-import {MatChipsModule} from '@angular/material/chips';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import PouchDB from 'pouchdb';
 import {UserService} from '../../../shared/_services/user.service';
-import {Message} from './message';
+import {Endpoint} from './endpoint';
+import {EndpointsService} from './endpoints.service';
+import {MOCK_ENDPOINTS} from './mock-endpoints';
 
 @Component({
   selector: 'app-peers',
@@ -17,66 +13,33 @@ import {Message} from './message';
 })
 export class PeersComponent implements OnInit {
 
-  peer: Peer;
-  selectedPeer: Peer;
-  @Input() peers: Peer[];
+  @Input() endpoints: Endpoint[];
   window: any;
   ipAddress: String;
   port: String;
-  @Input() device: Device;
 
   constructor(
-    private peersService: PeersService,
+    private endpointsService: EndpointsService,
     private readonly userService: UserService,
-  private windowRef: WindowRef
+    private windowRef: WindowRef
   ) {
     this.window = this.windowRef.nativeWindow;
   }
 
-  ngOnInit() {
-    // setInterval(this.getTangyP2PPermissions, 3000);
-    this.getTangyP2PPermissions().then(() => {
-      this.init().then(() => {
-        this.peersService.initPeers()
-          .subscribe(peers => this.peers = peers);
+  async ngOnInit() {
+    this.endpoints = [];
+    await this.getTangyP2PPermissions().then(async () => {
+      await this.init().then(() => {
+        this.endpointsService.initEndpoints()
+          .subscribe(endpoints => this.endpoints = endpoints);
         console.log('ready');
       });
     });
   }
 
-  // async onSelect(peer: Peer): Promise<void> {
-  //   this.selectedPeer = peer;
-  //   await this.transferTo(peer.safePeerAddress);
-  // }
-
-  getPeers(): void {
-    this.peersService.getPeers()
-      .subscribe(peers => this.peers = peers);
-  }
-
   async init() {
-    this.peers = [];
+    this.endpoints = [];
     if (this.window.isCordovaApp) {
-
-      // window['webserver'].onRequest(
-      //   function(request) {
-      //     console.log('O MA GAWD! This is the request: ', request);
-      //
-      //     window['webserver'].sendResponse(
-      //       request.requestId,
-      //       {
-      //         status: 200,
-      //         body: '<html>Hello World out there</html>',
-      //         headers: {
-      //           'Content-Type': 'text/html'
-      //         }
-      //       }
-      //     );
-      //   }
-      // );
-      //
-      // window['webserver'].start();
-      // window.cordova.getAppVersion.getVersionNumber()
       if (window['cordova'].getAppVersion) {
         window['cordova'].getAppVersion.getVersionNumber().then(function (version) {
           document.querySelector('#p2p-results').innerHTML += 'App version: ' + version + '<br/>';
@@ -85,115 +48,133 @@ export class PeersComponent implements OnInit {
     }
   }
 
-
   async getTangyP2PPermissions() {
     if (this.window.isCordovaApp) {
-      window['TangyP2PPlugin'].getPermission(null, function(message) {
-        const objectConstructor = ({}).constructor;
-        if (message.constructor === objectConstructor) {
-          const messageStr = message.message;
-          document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
-        } else {
-          console.log('Message: ' + message);
-          document.querySelector('#p2p-results').innerHTML += message + '<br/>';
-        }
-      }, function(err) {
-        console.log('TangyP2P error:: ' + err);
-      });
+      window['cordova']['plugins']['NearbyConnectionsPlugin'].getPermission(null, function(response) {
+          if (response['messageType'] === 'log') {
+            const logEl = document.querySelector('#p2p-results');
+            logEl.innerHTML = logEl.innerHTML +  '<p>' + response['message'] + '</p>\n';
+          }
+        },
+        function(error) {
+          console.log('error:' + error);
+          const logEl = document.querySelector('#p2p-results');
+          logEl.innerHTML = logEl.innerHTML +  '<p>' + 'error:' + error + '</p>\n';
+        });
     }
   }
 
   async startAdvertising() {
     if (this.window.isCordovaApp) {
-      window['TangyP2PPlugin'].startAdvertising(null, function(message) {
-        const objectConstructor = ({}).constructor;
-        if (message.constructor === objectConstructor) {
-          const messageStr = message.message;
-          document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
-        } else {
-          console.log('Message: ' + message);
-          document.querySelector('#p2p-results').innerHTML += message + '<br/>';
-        }
-      }, function(err) {
-        console.log('TangyP2P error:: ' + err);
-      });
-    }
-  }
+      window['cordova']['plugins']['NearbyConnectionsPlugin'].startAdvertising(null, (response) => {
+          if (response['messageType'] === 'log') {
+            const logEl = document.querySelector('#p2p-results');
+            logEl.innerHTML = logEl.innerHTML +  '<p>' + response['message'] + '</p>\n';
+          } else if (response['messageType'] === 'localEndpointName') {
+            const el = document.querySelector('#localEndpointName');
+            el.innerHTML =  '<p>Device Name: ' + response['message'] + '</p>\n';
+          } else if (response['messageType'] === 'endpoints') {
+            const el = document.querySelector('#endpoints');
+            console.log('endpoints: ' + JSON.stringify(response['object']));
+            const endpoints = response['object'];
+            for (const [key, value] of Object.entries(endpoints)) {
+              console.log(`${key}: ${value}`);
+              // const enpoint: Endpoint = {id: key, endpointName: value};
+              const endpoint = {} as Endpoint;
+              endpoint.id = key;
+              endpoint.endpointName = <String>value;
+              this.endpoints.push(endpoint);
+            }
 
-  async startDiscovery() {
-    if (this.window.isCordovaApp) {
-      window['TangyP2PPlugin'].startDiscovery(null, function(message) {
-        const objectConstructor = ({}).constructor;
-        if (message.constructor === objectConstructor) {
-          const messageStr = message.message;
-          document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
-        } else {
-          console.log('Message: ' + message);
-          document.querySelector('#p2p-results').innerHTML += message + '<br/>';
-        }
-      }, function(err) {
-        console.log('TangyP2P error:: ' + err);
-      });
-    }
-  }
-
-  async transferData() {
-    if (this.window.isCordovaApp) {
-      PouchDB.plugin(window['PouchReplicationStream'].plugin);
-      PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
-      let dumpedString = '';
-      const stream = new window['Memorystream']();
-      stream.on('data', function(chunk) {
-        dumpedString += chunk.toString();
-      });
-      const username = this.userService.getCurrentUser();
-      const source = new PouchDB(username);
-      source.dump(stream).then(function () {
-        // console.log('Yay, I have a dumpedString: ' + dumpedString);
-        window['TangyP2PPlugin'].transferData(dumpedString, function(message) {
-          const objectConstructor = ({}).constructor;
-          if (message.constructor === objectConstructor) {
-            const messageStr = message.message;
-            document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
-          } else {
-            console.log('Message: ' + message);
-            document.querySelector('#p2p-results').innerHTML += message + '<br/>';
-          }
-        }, function(err) {
-          console.log('TangyP2P error:: ' + err);
-        });
-      }).catch(function (err) {
-        console.log('oh no an error', err);
-      });
-    }
-  }
-
-  async listenForTransfer() {
-    if (this.window.isCordovaApp) {
-      window['TangyP2PPlugin'].listenForTransfer(null, (message) => {
-        const objectConstructor = ({}).constructor;
-        // test if it's an object:
-        if (message.constructor === objectConstructor) {
-          const messageStr = message.message;
-          // TODO: JSONObject is available if we need it.
-          // const object = message.object;
-          if (message.messageType === 'payload') {
+          } else if (response.messageType === 'payload') {
+            const messageStr = response.message;
+            // TODO: JSONObject is available if we need it.
+            // const object = response.object;
             PouchDB.plugin(window['PouchReplicationStream'].plugin);
             PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
             const writeStream =  new window['Memorystream'];
             writeStream.end(messageStr);
-            const username = this.userService.getCurrentUser();
-            const dest = new PouchDB(username);
+            const dest = new PouchDB('kittens');
             const pluginMessage = 'I loaded data from the peer device.';
             dest.load(writeStream).then(function () {
               document.querySelector('#p2p-results').innerHTML += pluginMessage + '<br/>';
+              document.querySelector('#transferProgress').innerHTML += pluginMessage + '<br/>';
             }).catch(function (err) {
-              message = 'oh no an error: ' + err;
+              const message = 'oh no an error: ' + err;
               console.log(message);
               document.querySelector('#p2p-results').innerHTML += message + '<br/>';
             });
+          }
+        },
+        function(error) {
+          console.log('error:' + error);
+          const logEl = document.querySelector('#p2p-results');
+          logEl.innerHTML = logEl.innerHTML +  '<p>' + 'error:' + error + '</p>\n';
+        });
+    } else if (!this.window.isCordovaApp) {
+      // testing using a PWA
+      this.endpoints = MOCK_ENDPOINTS;
+    }
+  }
+
+  async connectToEndpoint(id, name) {
+    const idName = id + '_' + name;
+    window['cordova']['plugins']['NearbyConnectionsPlugin'].connectToEndpoint(idName,
+      (response) => {
+        if (response['messageType'] === 'log') {
+          const logEl = document.querySelector('#p2p-results');
+          logEl.innerHTML = logEl.innerHTML +  '<p>' + response['message'] + '</p>\n';
+        } else if (response['messageType'] === 'connected') {
+          const endpoint = response['object'];
+          const endpointName = Object.values(endpoint)[0];
+          console.log('endpoint: ' + JSON.stringify(response['object']) + ' endpointId: ' + endpointName);
+          this.transferData();
+        }
+      },
+      function(error) {
+        console.log('error:' + error);
+        const logEl = document.querySelector('#p2p-results');
+        logEl.innerHTML = logEl.innerHTML +  '<p>' + 'error:' + error + '</p>\n';
+      }
+    );
+  }
+
+  async transferData() {
+    PouchDB.plugin(window['PouchReplicationStream'].plugin);
+    PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
+    let dumpedString = '';
+    const stream = new window['Memorystream']();
+    stream.on('data', function(chunk) {
+      dumpedString += chunk.toString();
+    });
+    const source = new PouchDB('kittens');
+    const doc = {
+      '_id': 'mittens',
+      'name': 'Mittens',
+      'occupation': 'kitten',
+      'age': 3,
+      'hobbies': [
+        'playing with balls of yarn',
+        'chasing laser pointers',
+        'lookin\' hella cute'
+      ]
+    };
+    try {
+      source.put(doc);
+    } catch (e) {
+      console.log('Already have Mittens:' + e);
+    }
+    source.dump(stream).then(function () {
+      // console.log('Yay, I have a dumpedString: ' + dumpedString);
+      window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(dumpedString, function(message) {
+        const objectConstructor = ({}).constructor;
+        if (message.constructor === objectConstructor) {
+          if (message.messageType === 'payloadReceived') {
+            const messageStr = message.message;
+            document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
+            document.querySelector('#transferProgress').innerHTML += messageStr + '<br/>';
           } else {
-            console.log('Message: ' + messageStr);
+            const messageStr = message.message;
             document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
           }
         } else {
@@ -203,6 +184,8 @@ export class PeersComponent implements OnInit {
       }, function(err) {
         console.log('TangyP2P error:: ' + err);
       });
-    }
+    }).catch(function (err) {
+      console.log('oh no an error', err);
+    });
   }
 }

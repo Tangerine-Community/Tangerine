@@ -1,31 +1,29 @@
-
 <div class="p2p-sync-header">
-  <h2>P2P Sync</h2>
-  <h3 *ngIf ipAddress>{{ipAddress}}:{{port}}</h3>
-  <h3>Send data</h3>
-  <mat-button-toggle-group name="p2p-toggles" aria-label="P2P actions">
-  <mat-button-toggle color="primary" mat-raised-button (click)="startAdvertising()">{{'Discover Peers'|translate}}</mat-button-toggle>
-  <mat-button-toggle color="primary" mat-raised-button (click)="startDiscovery()">{{'Make Connection'|translate}}</mat-button-toggle>
-  <mat-button-toggle color="primary" mat-raised-button (click)="transferData()">{{'Send Data'|translate}}</mat-button-toggle>
-<!--      <mat-button-toggle color="primary" mat-raised-button (click)="connectP2P()">{{'Connect to peer'|translate}}</mat-button-toggle>-->
-  </mat-button-toggle-group>
-  <h3>Receive data</h3>
-  <mat-button-toggle-group name="p2p-toggles" aria-label="P2P actions">
-  <mat-button-toggle color="primary" mat-raised-button (click)="listenForTransfer()">{{'Listen for Transfer'|translate}}</mat-button-toggle>
-<!--      <mat-button-toggle color="primary" mat-raised-button (click)="connectP2P()">{{'Connect to peer'|translate}}</mat-button-toggle>-->
-  </mat-button-toggle-group>
-</div>
+  <h1>P2P Sync</h1>
+  <h2>Permissions</h2>
+  <p>Enable necessary permissions</p>
+  <p>
+    <button mat-raised-button color="primary" class="bigText" id="getPermission">Enable Permissions</button>
+  </p>
 
-<!--<h3 *ngIf="device">This device</h3>-->
-<!--<mat-chip *ngIf="device">-->
-<!--  {{device.deviceName}} : {{device.deviceStatus}}-->
-<!--</mat-chip>-->
-<!--<h3 *ngIf="peers.length > 0">Nearby Devices:</h3>-->
-<!--<mat-chip-list class="mat-chip-list-stacked" aria-label="Peer selection">-->
-<!--  <mat-chip *ngFor="let peer of peers" (click)="onSelect(peer)">-->
-<!--    {{peer.deviceName}} : {{peer.deviceStatus}}-->
-<!--  </mat-chip>-->
-<!--</mat-chip-list>-->
-<h3>P2P Log</h3>
-<div id="p2p-results">
+  <div class="bigText" id="localEndpointName"></div>
+
+  <h2>Start Advertising and Discovery</h2>
+  <p>Both the sender and receiver must advertise.</p>
+  <p>
+    <button mat-raised-button color="primary" class="bigText" id="startAdvertising" (click)="startAdvertising()">Discovery</button>
+  </p>
+  <h2>List of available endpoints</h2>
+  <p>Click one of the following endpoints to connect and transfer data.</p>
+  <div id="transferProgress"></div>
+  <mat-chip-list class="mat-chip-list-stacked" aria-label="Endpoint selection">
+    <mat-chip id="endpoints" *ngFor="let endpoint of endpoints" (click)="connectToEndpoint(endpoint.id, endpoint.endpointName)">
+      {{endpoint.endpointName}}
+    </mat-chip>
+  </mat-chip-list>
+
+  <p>&nbsp;</p>
+
+  <h2>Log</h2>
+  <div id="p2p-results"></div>
 </div>

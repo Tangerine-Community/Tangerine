@@ -34,9 +34,13 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>{{'Sync'|translate}}</span>
     </button>
-    <button *ngIf="appConfig.syncProtocol !== 'two-way'" routerLink="/sync-records" mat-menu-item>
+    <button *ngIf="appConfig.syncProtocol === 'two-way'" routerLink="/two-way-sync" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>{{'Sync'|translate}}</span>
+    </button>
+    <button *ngIf="appConfig.p2pSync === 'true'" routerLink="/peers" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
+      <span>{{'P2P'|translate}}</span>
     </button>
     <button routerLink="/export-data" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">import_export</mat-icon>
