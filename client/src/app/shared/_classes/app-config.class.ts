@@ -22,4 +22,5 @@ export class AppConfig {
   barcodeSearchMapFunction:string
   showQueries:boolean
   sharedUserDatabase = false
-} 
+  p2pSync = 'false'
+}

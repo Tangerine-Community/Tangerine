@@ -5,8 +5,6 @@ import { SyncingService } from '../_services/syncing.service';
 import { UserService } from '../../../shared/_services/user.service';
 import {AppConfigService} from '../../../shared/_services/app-config.service';
 import PouchDB from 'pouchdb';
-import {Peer} from '../peers/peer';
-import {PeersService} from '../peers/peers.service';
 
 @Component({
   selector: 'app-sync-records',
@@ -29,10 +27,9 @@ export class SyncRecordsComponent implements OnInit {
     private windowRef: WindowRef,
     private syncingService: SyncingService,
     private userService: UserService,
-    private appConfigService: AppConfigService,
-    public peersService: PeersService
+    private appConfigService: AppConfigService
   ) {
-    this.window = this.windowRef.nativeWindow; length;
+    this.window = this.windowRef.nativeWindow;
   }
 
   async ngOnInit() {
