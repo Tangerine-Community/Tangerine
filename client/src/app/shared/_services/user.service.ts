@@ -47,6 +47,16 @@ export class UserService {
     })
   }
 
+  async uninstall() {
+    const userAccounts = await this.getAllUserAccounts()
+    for (const userAccount of userAccounts) {
+      const userDb = await this.getUserDatabase(userAccount.username)
+      await userDb.destroy()
+    }
+    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', true)
+    await sharedUserDatabase.destroy()
+  }
+
   //
   // User Database 
   //
@@ -186,6 +196,12 @@ export class UserService {
       .rows
       .map(row => row.doc)
       .find(doc => doc.username === username)
+  }
+
+  async getAllUserAccounts():Promise<Array<UserAccount>> {
+    return (await this.usersDb.allDocs({include_docs: true}))
+      .rows
+      .map(row => <UserAccount>row.doc)
   }
 
   async getUserAccountById(userId?: string):Promise<UserAccount> {
