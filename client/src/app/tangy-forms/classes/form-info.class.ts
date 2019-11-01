@@ -5,7 +5,36 @@ export class FormInfo {
   title:string
   description:string = ''
   listed = true
-  searchSettings: FormSearchSettings
+  searchSettings:FormSearchSettings =  <FormSearchSettings>{
+    shouldIndex: true,
+    variablesToIndex: [],
+    primaryTemplate: '',
+    secondaryTemplate: ''
+  }
+  customSyncSettings:CustomSyncSettings = <CustomSyncSettings>{
+    enabled: false,
+    push: false,
+    pull: false,
+    excludeIncomplete:false
+  }
+  couchdbSyncSettings:CouchdbSyncSettings = <CouchdbSyncSettings>{
+    enabled: false,
+    push: false,
+    pull: false,
+    filterByLocation: false
+  }
+}
+
+export interface CouchdbSyncSettings {
+  enabled: boolean
+  filterByLocation:boolean
+}
+
+export interface CustomSyncSettings {
+  enabled: boolean
+  push:boolean
+  pull:boolean
+  excludeIncomplete:boolean
 }
 
 export interface FormSearchSettings {
