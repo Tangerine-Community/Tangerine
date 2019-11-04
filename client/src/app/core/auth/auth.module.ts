@@ -7,7 +7,6 @@ import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { SharedModule } from '../../shared/shared.module';
-import { WindowRef } from 'src/app/shared/_services/window-ref.service';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -21,7 +20,6 @@ import { WindowRef } from 'src/app/shared/_services/window-ref.service';
     AuthRoutingModule,
     SharedModule
   ],
-  providers: [WindowRef],
   declarations: [LoginComponent, RegistrationComponent]
 })
 export class AuthModule { }

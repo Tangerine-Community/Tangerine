@@ -3,12 +3,13 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { CasesService } from '../../services/cases.service';
 import * as moment from 'moment'
 import { FORM_TYPES_INFO } from 'src/app/core/search/search.component';
-import { CaseEvent } from '../../classes/case-event.class';
+import { CaseEvent, CASE_EVENT_STATUS_COMPLETED } from '../../classes/case-event.class';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import { SearchDoc, SearchService } from 'src/app/shared/_services/search.service';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Subject } from 'rxjs';
+import { CaseService } from '../../services/case.service';
 
 export const CASE_EVENT_SCHEDULE_LIST_MODE_DAILY = 'CASE_EVENT_SCHEDULE_LIST_MODE_DAILY'
 export const CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY = 'CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY'
@@ -52,7 +53,8 @@ export class CaseEventScheduleListComponent implements OnInit {
     private casesService:CasesService,
     private userService:UserService,
     private searchService:SearchService,
-    private formsInfoService:TangyFormsInfoService
+    private formsInfoService:TangyFormsInfoService,
+    private caseService:CaseService
   ) { }
 
   async ngOnInit() {
@@ -94,7 +96,7 @@ export class CaseEventScheduleListComponent implements OnInit {
     // Render.
     let markup = ``
     let daysOfWeekSeen = []
-    this.eventsInfo = events.map(event => {
+    this.eventsInfo = events.map( event => {
       const eventInfo = <EventInfo>{}
       const date = new Date(event.dateStart)
       if (daysOfWeekSeen.indexOf(date.getDate()) == -1) {
@@ -113,9 +115,30 @@ export class CaseEventScheduleListComponent implements OnInit {
       eventInfo.icon = eval('`' + formTypeInfo.iconTemplate + '`')
       eventInfo.primary = formInfo.searchSettings.primaryTemplate ? eval('`' + formInfo.searchSettings.primaryTemplate + '`') : response._id
       eventInfo.secondary = formInfo.searchSettings.secondaryTemplate ? eval('`' + formInfo.searchSettings.secondaryTemplate + '`') : formInfo.title
+      this.getCaseDefinition(event).then(data=>eventInfo['caseDefinition']=data)
       return eventInfo 
     })
     this.didSearch$.next(true)
+  }
+
+   getCaseDefinition(caseEvent:CaseEvent){
+    const defaultTemplateScheduleListItemIcon = `${caseEvent.status === CASE_EVENT_STATUS_COMPLETED ? 'event_note' : 'event_available'}`
+    const defaultTemplateScheduleListItemPrimary = '<span>${caseEventDefinition.name}</span>'
+    const defaultTemplateScheduleListItemSecondary = '<span>${caseInstance.label}</span>'
+    let templateScheduleListItemIcon, templateScheduleListItemPrimary,templateScheduleListItemSecondary,caseEventDefinition;
+    const caseInstance = caseEvent['caseInstance']
+    return this.caseService.getCaseDefinitionByID(caseInstance.caseDefinitionId).then(caseDefinition=>{
+      caseEventDefinition= caseDefinition.eventDefinitions.find(({id})=>id === caseEvent['caseEventDefinitionId'])
+      eval(`templateScheduleListItemIcon = caseDefinition.templateScheduleListItemIcon ? \`${caseDefinition.templateScheduleListItemIcon}\` : \`${defaultTemplateScheduleListItemIcon}\``)
+      eval(`templateScheduleListItemPrimary = caseDefinition.templateScheduleListItemPrimary ? \`${caseDefinition.templateScheduleListItemPrimary}\` : \`${defaultTemplateScheduleListItemPrimary}\``)
+      eval(`templateScheduleListItemSecondary = caseDefinition.templateScheduleListItemSecondary ? \`${caseDefinition.templateScheduleListItemSecondary}\` : \`${defaultTemplateScheduleListItemSecondary}\``)
+      return {
+        ...caseDefinition,
+        templateScheduleListItemIcon,
+        templateScheduleListItemPrimary,
+        templateScheduleListItemSecondary
+      }
+    })
   }
 
 }

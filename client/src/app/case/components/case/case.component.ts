@@ -1,7 +1,6 @@
 import { Component, AfterContentInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CaseService } from '../../services/case.service'
-import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import moment from 'moment/src/moment';
 import { CaseEvent } from '../../classes/case-event.class';
@@ -25,17 +24,22 @@ export class CaseComponent implements AfterContentInit {
   private creatableCaseEventsInfo:Array<CaseEventInfo>
   private selectedNewEventType = ''
   private inputSelectedDate = moment().format('YYYY-MM-DD')
+  window:any
 
   constructor(
     private route: ActivatedRoute,
-    private windowRef: WindowRef,
     private caseService: CaseService
-  ) { }
+  ) { 
+    this.window = window
+  }
 
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
-      await this.caseService.load(params.id)
-      this.windowRef.nativeWindow.caseService = this.caseService
+      if (!this.caseService.case || params.id !== this.caseService.case._id) {
+        await this.caseService.load(params.id)
+        this.caseService.openCaseConfirmed = false
+      }
+      this.window.caseService = this.caseService
       this.calculateTemplateData()
       this.ready = true
     })
@@ -71,6 +75,10 @@ export class CaseComponent implements AfterContentInit {
       })
     this.selectedNewEventType = ''
     this.inputSelectedDate = moment(new Date()).format('YYYY-MM-DD')
+  }
+
+  onOpenCaseConfirmButtonClick() {
+    this.caseService.openCaseConfirmed = true
   }
 
   async onSubmit() {

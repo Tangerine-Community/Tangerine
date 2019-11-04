@@ -22,13 +22,7 @@
 }
 
 #search-bar {
-  background: #3c5b8d;
-  color: var(--accent-text-color);
-  padding: 0px 15px 5px;
-  --primary-color: #FFF;
-  --primary-text-color: #FFF;
-  --secondary-text-color: #FFF;
-  --default-primary-color: #FFF;
+  margin: 0px 25px;
 }
 
 #scan-button {

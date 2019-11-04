@@ -1,7 +1,6 @@
 
 .header {
   padding: 5px;
-  background: var(--primary-color);
 }
 
 select {
@@ -11,7 +10,7 @@ select {
 
 date-carousel {
   --date-carousel-selected-background: var(--accent-color);
-  --date-carousel-table-color: var(--accent-text-color);
   --date-carousel-selected-color:var(--accent-text-color);
-  --date-carousel-month-color: var(--accent-text-color);
+  --date-carousel-table-color: var(--primary-text-color);
+  --date-carousel-month-color: var(--primary-text-color);
 }
