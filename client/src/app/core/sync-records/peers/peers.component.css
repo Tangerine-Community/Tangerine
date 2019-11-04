@@ -25,3 +25,6 @@
 mat-chip {
   max-width: 200px;
 }
+.bigText {
+  font-size: x-large;
+}
