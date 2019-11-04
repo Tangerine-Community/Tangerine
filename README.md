@@ -171,7 +171,7 @@ If you are also developing the form library Tangy Form at the same time, you can
 
 ```
 rm -r node_modules/tangy-form
-ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/app/node_modules/tangy-form
+ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/node_modules/tangy-form
 ```
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
 
