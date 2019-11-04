@@ -12,7 +12,6 @@ import { SharedModule } from '../shared/shared.module'
 import { CaseDefinitionsService } from './services/case-definitions.service';
 import { CaseService } from './services/case.service';
 import { TangyFormsModule } from '../tangy-forms/tangy-forms.module';
-import { WindowRef } from '../core/window-ref.service';
 import { CaseEventScheduleListComponent } from './components/case-event-schedule-list/case-event-schedule-list.component';
 import { CasesService } from './services/cases.service';
 import { CaseEventScheduleComponent } from './components/case-event-schedule/case-event-schedule.component';
@@ -36,7 +35,6 @@ import { QueryComponent } from './components/query/query.component';
     CommonModule
   ],
   providers: [
-    WindowRef,
     CaseDefinitionsService,
     CaseService,
     CasesService

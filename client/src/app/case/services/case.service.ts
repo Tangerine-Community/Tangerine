@@ -9,7 +9,6 @@ import { CaseDefinition } from '../classes/case-definition.class';
 import { CaseDefinitionsService } from './case-definitions.service';
 import * as UUID from 'uuid/v4'
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
-import { WindowRef } from 'src/app/core/window-ref.service';
 import { Injectable } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Query } from '../classes/query.class'
@@ -27,7 +26,6 @@ class CaseService {
   db:UserDatabase
   case:Case
   caseDefinition:CaseDefinition
-  window:any
   
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
@@ -38,11 +36,9 @@ class CaseService {
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
-    private windowRef: WindowRef,
     private userService:UserService,
     private http:HttpClient
   ) { 
-    this.window = this.windowRef.nativeWindow
     
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -55,11 +51,11 @@ class CaseService {
       .find(caseDefinition => caseDefinition.id === caseDefinitionId)
     this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
     delete this.case._rev
-    const tangyFormContainerEl = this.window.document.createElement('div')
+    const tangyFormContainerEl:any = document.createElement('div')
     tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId)
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') 
     tangyFormEl.style.display = 'none'
-    this.window.document.body.appendChild(tangyFormContainerEl)
+    document.body.appendChild(tangyFormContainerEl)
     try {
       this.case.location = (await this.userService.getUserProfile()).location
     } catch(error) {
@@ -92,6 +88,11 @@ class CaseService {
   async load(id:string) {
     this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     await this.setCase(new Case(await this.db.get(id)))
+  }
+
+  async getCaseDefinitionByID(id:string) {
+    return <CaseDefinition>await this.http.get(`./assets/${id}.json`)
+      .toPromise()
   }
 
   async save() {
@@ -301,11 +302,11 @@ class CaseService {
       const formLink = '/case/event/form/' + caseId + '/' + eventId + '/' + formId;
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
-      const tangyFormContainerEl = this.window.document.createElement('div');
+      const tangyFormContainerEl:any = document.createElement('div');
       tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
       const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
       tangyFormEl.style.display = 'none';
-      this.window.document.body.appendChild(tangyFormContainerEl);
+      document.body.appendChild(tangyFormContainerEl);
 
       tangyFormEl.newResponse();
 
