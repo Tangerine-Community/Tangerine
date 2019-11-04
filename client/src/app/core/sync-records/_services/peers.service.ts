@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {WindowRef} from '../../../shared/_services/window-ref.service';
 import {Message} from '../peers/message';
 import {Endpoint} from '../peers/endpoint';
 import {MOCK_ENDPOINTS} from '../peers/mock-endpoints';
@@ -11,10 +10,8 @@ import PouchDB from 'pouchdb';
 })
 export class PeersService {
   window: any;
-  constructor(
-    private windowRef: WindowRef
-  ) {
-    this.window = this.windowRef.nativeWindow;
+  constructor() {
+    this.window = window;
   }
 
   getTangyP2PPermissions() {
