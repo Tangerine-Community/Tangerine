@@ -118,16 +118,16 @@ Install [nodejs](https://nodejs.org/en/) and [git](https://git-scm.com/) on your
 git clone https://github.com/tangerine-community/tangerine
 cd tangerine
 git checkout <most recent release version, ie. v3.0.0-rc5>
-cd client/app
+cd client/
 npm install
 npm start
 ```
-Then open <http://localhost:4200> in your web browser. The content is found in the `tangerine/client/app/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
+Then open <http://localhost:4200> in your web browser. The content is found in the `tangerine/client/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
 
 If the process has stopped, you can restart by running...
 
 ```
-cd tangerine/client/app
+cd tangerine/client/
 npm start
 ```
 
@@ -137,7 +137,7 @@ To update to a new version of tangerine, run...
 cd tangerine
 git fetch
 git checkout <new version listed in the releases tab on github>
-cd client/app/
+cd client/
 rm -r node_modules
 npm install
 npm start
@@ -171,7 +171,7 @@ If you are also developing the form library Tangy Form at the same time, you can
 
 ```
 rm -r node_modules/tangy-form
-ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/app/node_modules/tangy-form
+ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/node_modules/tangy-form
 ```
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
 
