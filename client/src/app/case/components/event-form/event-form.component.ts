@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { UserService } from '../../../shared/_services/user.service';
 import { CaseService } from '../../services/case.service'
 import { EventForm } from '../../classes/event-form.class';
@@ -26,20 +25,22 @@ export class EventFormComponent implements AfterContentInit {
   formResponse:any
   loaded = false
   lastResponseSeen:any
+  window:any
   @ViewChild('container') container: ElementRef;
   constructor(
     private route: ActivatedRoute,
-    private windowRef: WindowRef,
     private router: Router,
     private caseService: CaseService,
     private tangyFormService: TangyFormService,
     private userService: UserService
-  ) { }
+  ) { 
+    this.window = window
+  }
 
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
-      this.windowRef.nativeWindow.caseService = this.caseService
+      this.window.caseService = this.caseService
       this.caseEvent = this
         .caseService
         .case
@@ -113,11 +114,11 @@ export class EventFormComponent implements AfterContentInit {
     try {
       stateDoc = await this.tangyFormService.getResponse(state._id)
     } catch (e) {
-      let r = await this.tangyFormService.saveResponse(state)
+      let r = await this.tangyFormService.saveResponse({...state, location: this.caseService.case.location})
       stateDoc = await this.tangyFormService.getResponse(state._id)
     }
     let newStateDoc = Object.assign({}, state, { _rev: stateDoc['_rev'] })
-    await this.tangyFormService.saveResponse(newStateDoc)
+    await this.tangyFormService.saveResponse({...newStateDoc, location: this.caseService.case.location})
   }
 
 }

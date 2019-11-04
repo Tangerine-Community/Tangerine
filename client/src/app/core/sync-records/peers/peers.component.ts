@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {WindowRef} from '../../../shared/_services/window-ref.service';
+import {PeersService} from './peers.service';
 import {UserService} from '../../../shared/_services/user.service';
 import {Endpoint} from './endpoint';
 import {EndpointsService} from './endpoints.service';
@@ -20,10 +20,9 @@ export class PeersComponent implements OnInit {
   constructor(
     private endpointsService: EndpointsService,
     private readonly userService: UserService,
-    private windowRef: WindowRef,
     private peersService: PeersService
   ) {
-    this.window = this.windowRef.nativeWindow;
+    this.window = window;
   }
 
   async ngOnInit() {

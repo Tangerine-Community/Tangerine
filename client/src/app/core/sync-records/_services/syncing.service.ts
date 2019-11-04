@@ -4,20 +4,18 @@ import * as pako from 'pako';
 
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { UserService } from '../../../shared/_services/user.service';
-import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 @Injectable()
 export class SyncingService {
   window;
   constructor(
-    private windowRef: WindowRef,
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private tangyFormsInfoService: TangyFormsInfoService,
     private userService: UserService
   ) {
-    this.window = this.windowRef.nativeWindow;
+    this.window = window;
   }
 
   getLoggedInUser(): string {
