@@ -1,5 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PeersService} from './peers.service';
 import {UserService} from '../../../shared/_services/user.service';
 import {Endpoint} from './endpoint';
 import {EndpointsService} from './endpoints.service';
