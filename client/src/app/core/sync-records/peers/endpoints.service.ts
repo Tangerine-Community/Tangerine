@@ -14,7 +14,7 @@ export class EndpointsService {
   constructor(
     private windowRef: WindowRef
   ) {
-    this.window = this.windowRef.nativeWindow;
+    this.window = window;
   }
 
   initEndpoints(): Observable<Endpoint[]> {
