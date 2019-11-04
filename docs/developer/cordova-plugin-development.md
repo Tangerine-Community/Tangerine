@@ -46,7 +46,7 @@ cp -r dev builds/pwa/release-uuid/app
 
 Then generate the apk.
 
-To check if it worked:
+To check if it worked, you can search for the new code in these files:
 
 ```javascript
 vi builds/apk/www/shell/main.js
