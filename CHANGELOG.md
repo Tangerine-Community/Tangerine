@@ -1,5 +1,57 @@
 # Changelog
 
+## v3.7.0
+- __Fixes__
+  - When uploadUnlockedFormReponses is set to true only incomplete forms are Synced up.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1725
+  - In editor, modifying allowed pattern on text and number inputs does not work.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1770
+  - Fix spacing between checkboxes in client
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1690
+  - Fix click target and style for Case Event Form list
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1681
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1702
+  - Fix Partial Date validation
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1683
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/71
+- __Features__
+  - Improve messaging when an APK update fails to download
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1743
+    - PR: https://github.com/Tangerine-Community/Tangerine/commit/2ede9d3fb9d43dda234bfdcfc4849769b9b08e69
+  - Data Collector sends SMS message from form
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1745
+  - Data Collector views Case Module screens in French
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1711
+  - Data Collector confirms case when opened
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1695
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1741
+  - Improved support for changing color scheme of client app using `custom-styles.css`, possible to have "dark mode".
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1742
+  - Data Collector shares all data on Device with other Users on the same Device.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1712
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1709
+  - Data Collector finds Case Event status has changed to "complete" when all required forms are submitted.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1693
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1719
+  - Data Collector finds all required Event Form instances in a Case Event are created upon opening the Case Event.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1691
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1718
+  - Data Collector registers a Participant in a Case and views Event Forms grouped by Participant
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1692
+    - PR : https://github.com/Tangerine-Community/Tangerine/pull/1723
+
+__Upgrade instructions:__
+On the server, backup your data folder and then run the following commands.
+```bash
+git fetch origin
+git checkout v3.7.0
+./start.sh v3.7.0
+docker exec tangerine translations-update
+```
+
+ 
+
+
 ## v3.6.2
 - Fix import of location list from CSV https://github.com/Tangerine-Community/Tangerine/pull/1732/commits/05e57e8f1bb869dbd52b927d45fc223903e201db
 
