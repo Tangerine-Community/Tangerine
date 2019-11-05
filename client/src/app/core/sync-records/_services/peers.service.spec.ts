@@ -9,7 +9,7 @@ import {MOCK_ENDPOINTS} from "../peers/mock-endpoints";
 let tab1: PouchDB;
 let tab2: PouchDB;
 let tab3: PouchDB;
-
+let currentEndpoint: Endpoint;
 class MockPeersService {
   endpoint: Endpoint;
   getTangyP2PPermissions() {
@@ -17,22 +17,12 @@ class MockPeersService {
   };
 
   async startAdvertising(endpoints: Endpoint[]) {
-    // const messageType = 'endpoints';
-    // if (messageType === 'log') {
-    //   return new Message('log', 'ping', null);
-    // } else if (messageType === 'localEndpointName') {
-    //   return new Message('localEndpointName', '12345', null);
-    // } else if (messageType === 'endpoints') {
     endpoints = MOCK_ENDPOINTS;
     return new Message('endpoints', null, endpoints);
-    // } else if (messageType === 'payload') {
-    //   const pluginMessage = 'I loaded data from the peer device.';
-    //   return new Message('payload', pluginMessage, null);
-    // }
   };
 
   async connectToEndpoint(endpoint): Promise<Message> {
-    this.endpoint = endpoint;
+    currentEndpoint = endpoint;
     const message: Message = await this.transferData();
     return message;
   }
@@ -56,13 +46,13 @@ class MockPeersService {
     } catch (e) {
       console.log('Already have supercat:' + e);
     }
-    source.dump(stream).then(function () {
+    await source.dump(stream).then(async function () {
       // copy data to the destination pouch
       const writeStream =  new window['Memorystream'];
       writeStream.end(dumpedString);
-      const dest = new PouchDB(this.endpoint);
+      const dest = new PouchDB(currentEndpoint.id);
       const pluginMessage = 'I loaded data from the peer device.';
-      dest.load(writeStream).then(function () {
+      await dest.load(writeStream).then(function () {
         message = new Message('payload', pluginMessage, null);
       }).catch(function (err) {
         console.log(err);
