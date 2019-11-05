@@ -34,13 +34,10 @@ export class PeersService {
     if (this.window.isCordovaApp) {
       window['cordova']['plugins']['NearbyConnectionsPlugin'].startAdvertising(null, (response) => {
           if (response['messageType'] === 'log') {
-            const logEl = document.querySelector('#p2p-results');
-            logEl.innerHTML = logEl.innerHTML +  '<p>' + response['message'] + '</p>\n';
+            return new Message('log', response['message'], null);
           } else if (response['messageType'] === 'localEndpointName') {
-            const el = document.querySelector('#localEndpointName');
-            el.innerHTML =  '<p>Device Name: ' + response['message'] + '</p>\n';
+            return new Message('localEndpointName', response['message'], null);
           } else if (response['messageType'] === 'endpoints') {
-            const el = document.querySelector('#endpoints');
             console.log('endpoints: ' + JSON.stringify(response['object']));
             const newEndpoints = response['object'];
             for (const [key, value] of Object.entries(newEndpoints)) {
@@ -59,6 +56,7 @@ export class PeersService {
                 endpoints.push(endpoint);
               }
             }
+            return new Message('endpoints', null, endpoints);
 
           } else if (response.messageType === 'payload') {
             const messageStr = response.message;
@@ -71,50 +69,54 @@ export class PeersService {
             const dest = new PouchDB('kittens');
             const pluginMessage = 'I loaded data from the peer device.';
             dest.load(writeStream).then(function () {
-              document.querySelector('#p2p-results').innerHTML += pluginMessage + '<br/>';
-              document.querySelector('#transferProgress').innerHTML = pluginMessage + '<br/>';
+              return new Message('payload', pluginMessage, null);
             }).catch(function (err) {
-              const message = 'oh no an error: ' + err;
-              console.log(message);
-              document.querySelector('#p2p-results').innerHTML += message + '<br/>';
+              console.log(err);
+              return new Message('error', err, null);
             });
           }
         },
         function(error) {
           console.log('error:' + error);
-          const logEl = document.querySelector('#p2p-results');
-          logEl.innerHTML = logEl.innerHTML +  '<p>' + 'error:' + error + '</p>\n';
+          return new Message('error', error, null);
         });
     } else if (!this.window.isCordovaApp) {
       // testing using a PWA
       endpoints = MOCK_ENDPOINTS;
+      return new Message('endpoints', null, endpoints);
     }
   }
 
-  async connectToEndpoint(endpoint) {
+  async connectToEndpoint(endpoint): Promise<Message> {
+    let message: Message;
     if (this.window.isCordovaApp) {
-      window['cordova']['plugins']['NearbyConnectionsPlugin'].connectToEndpoint(endpoint,
-        (response) => {
+      await window['cordova']['plugins']['NearbyConnectionsPlugin'].connectToEndpoint(endpoint,
+        async (response: Message) => {
           if (response['messageType'] === 'log') {
             const logEl = document.querySelector('#p2p-results');
             logEl.innerHTML = logEl.innerHTML + '<p>' + response['message'] + '</p>\n';
+            message = response;
           } else if (response['messageType'] === 'connected') {
             const ep = response['object'];
             const endpointName = Object.values(ep)[0];
             console.log('endpoint: ' + JSON.stringify(response['object']) + ' endpointId: ' + endpointName);
-            this.transferData();
+            message = await this.transferData();
           }
+          return message;
         },
         function (error) {
           console.log('error:' + error);
           const logEl = document.querySelector('#p2p-results');
           logEl.innerHTML = logEl.innerHTML + '<p>' + 'error:' + error + '</p>\n';
+          message = new Message('error', error, null);
         }
       );
     }
+    return message;
   }
 
   async transferData() {
+    let message: Message;
     PouchDB.plugin(window['PouchReplicationStream'].plugin);
     PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
     let dumpedString = '';
@@ -146,21 +148,29 @@ export class PeersService {
         if (message.constructor === objectConstructor) {
           if (message.messageType === 'payloadReceived') {
             const messageStr = message.message;
-            document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
-            document.querySelector('#transferProgress').innerHTML += messageStr + '<br/>';
+            // document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
+            // document.querySelector('#transferProgress').innerHTML += messageStr + '<br/>';
+            message = new Message('payloadReceived', messageStr, null);
           } else {
             const messageStr = message.message;
-            document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
+            // document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
+            message = new Message('log', messageStr, null);
           }
         } else {
-          console.log('Message: ' + message);
-          document.querySelector('#p2p-results').innerHTML += message + '<br/>';
+          // document.querySelector('#p2p-results').innerHTML += message + '<br/>';
+          message = new Message('log', message, null);
         }
+        return message;
       }, function(err) {
         console.log('TangyP2P error:: ' + err);
+        message = new Message('error', err, null);
+        return message;
       });
     }).catch(function (err) {
       console.log('oh no an error', err);
+      message = new Message('error', err, null);
+      return message;
     });
+    return message;
   }
 }
