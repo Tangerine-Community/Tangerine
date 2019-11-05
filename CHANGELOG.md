@@ -1,6 +1,7 @@
 # Changelog
 
 ## v3.6.2
+- Fix import of location list from CSV https://github.com/Tangerine-Community/Tangerine/pull/1732/commits/05e57e8f1bb869dbd52b927d45fc223903e201db
 
 ## v3.6.1
 - Fix form routing for archived and active forms.
