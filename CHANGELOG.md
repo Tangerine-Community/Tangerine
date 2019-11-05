@@ -20,6 +20,8 @@
     - PR: https://github.com/Tangerine-Community/Tangerine/commit/2ede9d3fb9d43dda234bfdcfc4849769b9b08e69
   - Data Collector sends SMS message from form
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1745
+  - Data Collector views events in schedule with icons, estimated date info, and scheduled date info
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1686
   - Data Collector views Case Module screens in French
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1711
   - Data Collector confirms case when opened
