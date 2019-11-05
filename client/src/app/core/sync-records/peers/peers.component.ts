@@ -3,6 +3,7 @@ import {UserService} from '../../../shared/_services/user.service';
 import {Endpoint} from './endpoint';
 import {EndpointsService} from './endpoints.service';
 import {PeersService} from '../_services/peers.service';
+import {Message} from "./message";
 
 @Component({
   selector: 'app-peers',
@@ -55,15 +56,36 @@ export class PeersComponent implements OnInit {
   }
 
   async startAdvertising() {
-    await this.peersService.startAdvertising(this.endpoints);
+    let message: Message = await this.peersService.startAdvertising(this.endpoints);
+    if (message.messageType === 'log') {
+      const logEl = document.querySelector('#p2p-results');
+      logEl.innerHTML = logEl.innerHTML +  '<p>' + message.message + '</p>\n';
+    } else if (message.messageType === 'localEndpointName') {
+      const el = document.querySelector('#localEndpointName');
+      el.innerHTML =  '<p>Device Name: ' + message.message + '</p>\n';
+    } else if (message.messageType === 'endpoints') {
+      console.log('endpoints: ' + JSON.stringify(message.object));
+      this.endpoints = message.object;
+    } else if (message.messageType === 'payload') {
+      document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+      document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
+    } else if (message.messageType === 'error') {
+      document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+    }
   }
 
   async connectToEndpoint(id, name) {
     const endpoint = id + '_' + name;
-    await this.peersService.connectToEndpoint(endpoint);
+    let message: Message = await this.peersService.connectToEndpoint(endpoint);
+    if (message.messageType === 'payloadReceived') {
+      document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+      document.querySelector('#transferProgress').innerHTML += message.message + '<br/>';
+    } else {
+      document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+    }
   }
 
-  async transferData() {
-    await this.peersService.transferData();
-  }
+  // async transferData() {
+  //   await this.peersService.transferData();
+  // }
 }

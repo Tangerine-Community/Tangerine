@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {WindowRef} from '../../../shared/_services/window-ref.service';
 import {Endpoint} from './endpoint';
 
 @Injectable({
@@ -11,9 +10,7 @@ export class EndpointsService {
   window: any;
   endpoints: Endpoint[];
 
-  constructor(
-    private windowRef: WindowRef
-  ) {
+  constructor() {
     this.window = window;
   }
 
