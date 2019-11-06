@@ -7,7 +7,6 @@ import { CaseDefinitionsService } from './case-definitions.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 // NOTE: For some reason if this is WindowRef from the shared module, this fails to inject.
-import { WindowRef } from 'src/app/core/window-ref.service';
 import { CaseDefinition } from '../classes/case-definition.class';
 import { EventFormDefinition } from '../classes/event-form-definition.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
@@ -173,8 +172,6 @@ describe('CaseService', () => {
         HttpClientTestingModule
       ],
       providers: [
-        // NOTE: For some reason if this is WindowRef from the shared module, this fails to inject.
-        WindowRef,
         { 
           provide: CaseDefinitionsService, 
           useClass: MockCaseDefinitionsService      

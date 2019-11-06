@@ -4,20 +4,18 @@ import * as pako from 'pako';
 
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 import { UserService } from '../../../shared/_services/user.service';
-import { WindowRef } from '../../../shared/_services/window-ref.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 
 @Injectable()
 export class SyncingService {
   window;
   constructor(
-    private windowRef: WindowRef,
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private tangyFormsInfoService: TangyFormsInfoService,
     private userService: UserService
   ) {
-    this.window = this.windowRef.nativeWindow;
+    this.window = window;
   }
 
   getLoggedInUser(): string {
@@ -87,14 +85,19 @@ export class SyncingService {
     const includeByFormId = allFormIds.filter(id => !skipByFormId.includes(id))
     const DB = await this.userService.getUserDatabase(username);
     const appConfig = await this.appConfigService.getAppConfig()
-    let queryNotUploaded = 'responsesLockedAndNotUploaded'
-    let queryUploaded = 'responsesLockedAndUploaded'
-    if (appConfig.uploadUnlockedFormReponses && appConfig.uploadUnlockedFormReponses === true) {
-      queryNotUploaded = 'responsesUnLockedAndNotUploaded'
-      queryUploaded = 'responsesUnLockedAndUploaded'
+    let localNotUploadedDocIds = []
+    if (appConfig.uploadUnlockedFormReponses) {
+      const results = await DB.query('tangy-form/responsesUnLockedAndNotUploaded', {keys: includeByFormId});
+      localNotUploadedDocIds = [
+        ...localNotUploadedDocIds,
+        ...results.rows.map(row => row.id)
+      ]
     }
-    const results = await DB.query('tangy-form/' + queryNotUploaded, {keys: includeByFormId});
-    const localNotUploadedDocIds = results.rows.map(row => row.id);
+    const results = await DB.query('tangy-form/responsesLockedAndNotUploaded', {keys: includeByFormId});
+    localNotUploadedDocIds = [
+      ...localNotUploadedDocIds,
+      ...results.rows.map(row => row.id)
+    ]
     // Also mark the user profile for upload if it has been modifid since last upload.
     const userProfile = await this.userService.getUserProfile(username || await this.getLoggedInUser())
     return userProfile.lastModified > userProfile.uploadDatetime 

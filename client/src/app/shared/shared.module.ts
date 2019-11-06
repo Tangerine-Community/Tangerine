@@ -5,7 +5,6 @@ import { AppConfigService } from './_services/app-config.service';
 import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { WindowRef } from './_services/window-ref.service';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -45,7 +44,6 @@ import { FormTypesService } from './_services/form-types.service';
     AuthenticationService,
     UserService,
     {provide: DEFAULT_USER_DOCS, useValue:[], multi: true},
-    WindowRef,
     LoginGuard,
     SearchService,
     FormTypesService,
