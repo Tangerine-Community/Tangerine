@@ -14,6 +14,11 @@
   - Fix Partial Date validation
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1683
     - PR: https://github.com/Tangerine-Community/tangy-form/pull/71
+  - EF Touch changes
+    - `<tangy-eftouch multi-select go-next-on-selection="2">` should become `<tangy-eftouch multi-select="2" go-next-on-selection>`. This allows for expanding functionality of being able to use multi-select without go-next-on-selection but still limit the number of choices the user can make minus the transition.
+    - `no-corrections` has been deprecated for new `disable-after-selection` attribute. When used with `multi-select`, the number of selections are still limited by the setting on `multi-select`, but changing selection is not allowed.
+    - The `required` attribute when used with `multi-select` will only require just one value selected. If you need form example 2 selections to be valid, you can combine `required-all multi-select="2"`. 
+    - We have an API change where we used to have `TangyEftouch.value.selection` was sometimes a string when not using `multi-select` and then when using `multi-select`, is was an array of strings. Now `TangyEftouch.value.selection` will always be an array of strings.
 - __Features__
   - Improve messaging when an APK update fails to download
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1743
