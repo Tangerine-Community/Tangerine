@@ -3,7 +3,6 @@ import {Peer} from './peer';
 import {Device} from './device';
 import {PEERS} from './mock-peers';
 import {PeersService} from './peers.service';
-import {WindowRef} from '../../../shared/_services/window-ref.service';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import PouchDB from 'pouchdb';
@@ -28,9 +27,8 @@ export class PeersComponent implements OnInit {
   constructor(
     private peersService: PeersService,
     private readonly userService: UserService,
-  private windowRef: WindowRef
   ) {
-    this.window = this.windowRef.nativeWindow;
+    this.window = window;
   }
 
   ngOnInit() {

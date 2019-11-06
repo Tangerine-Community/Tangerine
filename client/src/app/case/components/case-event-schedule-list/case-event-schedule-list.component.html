@@ -10,13 +10,11 @@
       <iron-icon icon="av:fiber-manual-record" class="new-date-dot"></iron-icon>  
     </div>
   </div>
-  <paper-icon-item  class="search-result" routerLink="{{eventInfo.openLink}}">
-    <iron-icon icon="{{eventInfo.icon}}" slot="item-icon"></iron-icon> 
-    <paper-item-body two-line>
-      <div [innerHTML]="eventInfo.primary">
-      </div>
-      <div [innerHTML]="eventInfo.secondary" secondary>
-      </div>
-    </paper-item-body>
-  </paper-icon-item>
+  <div class="icon-list-item">
+    <mwc-icon [innerHTML]="eventInfo?.caseDefinition?.templateScheduleListItemIcon" slot="item-icon"></mwc-icon>
+    <div>
+      <div [innerHTML]="eventInfo?.caseDefinition?.templateScheduleListItemPrimary|unsanitizeHtml"></div>
+      <div [innerHTML]="eventInfo?.caseDefinition?.templateScheduleListItemSecondary|unsanitizeHtml" secondary></div>
+    </div>
+  </div>
 </div>

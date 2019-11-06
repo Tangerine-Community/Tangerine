@@ -4,7 +4,6 @@ import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
 import { AuthenticationService } from './shared/_services/authentication.service';
 import { UserService } from './shared/_services/user.service';
-import { WindowRef } from './shared/_services/window-ref.service';
 import { updates } from './core/update/update/updates';
 import PouchDB from 'pouchdb';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,7 +23,7 @@ export class AppComponent implements OnInit {
   appConfig:AppConfig
   showNav;
   showUpdateAppLink;
-  window;
+  window:any;
   installed = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
@@ -35,7 +34,6 @@ export class AppComponent implements OnInit {
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
 
   constructor(
-    private windowRef: WindowRef,
     private userService: UserService,
     private authenticationService: AuthenticationService,
     private appConfigService: AppConfigService,
@@ -44,7 +42,7 @@ export class AppComponent implements OnInit {
     private searchService:SearchService,
     translate: TranslateService
   ) {
-    this.window = this.windowRef.nativeWindow;
+    this.window = window;
     this.window.PouchDB = PouchDB
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
       ? true
