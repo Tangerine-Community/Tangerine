@@ -1,12 +1,11 @@
 import { HttpClientModule } from '@angular/common/http';
-import { BrowserModule } from '@angular/platform-browser';
 import { UnsanitizeHtmlPipe } from './../../../shared/_pipes/unsanitize-html.pipe';
 import { CASE_EVENT_STATUS_IN_PROGRESS } from './../../classes/case-event.class';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CaseEventScheduleListComponent, CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY } from './case-event-schedule-list.component';
-import { CaseEvent } from '../../classes/case-event.class';
 import { CasesService } from '../../services/cases.service';
+import { CaseEventInfo } from '../../services/case-event-info.class';
 import { SearchService } from 'src/app/shared/_services/search.service';
 import { MockSearchService } from 'src/app/mocks/services/mock-search.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';

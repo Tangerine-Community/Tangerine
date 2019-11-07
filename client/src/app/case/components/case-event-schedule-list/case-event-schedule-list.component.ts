@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { CasesService } from '../../services/cases.service';
 import * as moment from 'moment'
