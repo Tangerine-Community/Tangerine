@@ -34,7 +34,7 @@ Currently the most commonly deployed tablet with Tangerine is the [Lenovo Tab 4 
 
 ## Installation
 
-### Online Editor for Form Design and Data Download
+### Server
 We recommend using AWS for hosting have documented detailed [instructions for AWS](docs/install-on-aws.md). Below are general instructions for installing on any machine.
 
 SSH into your machine from a terminal, [install Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/), and then run the following commands. You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases), note the release number and use it to replace all instances of `<version tag>` in the commands below.
@@ -61,7 +61,7 @@ Lastly, to reset caches and free up memory every so often, we recommend restarti
 0 0 * * * docker stop tangerine && docker start tangerine
 ```
 
-### Offline Tablet for data collection
+### Tablet
 To install on Tablets, proceed to the "Releases" tab in the Online Editor. There you will find two methods for installing on Tablets, Web Browser Installation and Android Installation. Each of these release types have two different channels you can publish to, Test and Live. It is recommended that for every deployment of Tangerine you have at least one designated device subscribed to the Test channel so that you may release to that Device to test Tangerine upgrades and content updates before releasing to the remaining tablets subscribed to the Live channel.
 
 0. On Tablet, open the Play Store app and proceed to upgrade Google Chrome Web Browser.
