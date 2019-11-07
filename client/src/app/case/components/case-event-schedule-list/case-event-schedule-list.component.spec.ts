@@ -143,39 +143,56 @@ class MockCasesService {
         eventForms: [],
         estimate: false,
         dateStart: REFERENCE_TIME,
-        dateEnd: REFERENCE_TIME + (1000*60*60)
-      },
-      <CaseEvent>{
-        id: 'e2',
-        caseId: 'response1',
-        caseEventDefinitionId: 'c1',
-        status: CASE_EVENT_STATUS_IN_PROGRESS,
-        eventForms: [],
-        estimate: false,
-        dateStart: REFERENCE_TIME,
-        dateEnd: REFERENCE_TIME + (1000*60*60)
-      },
-      <CaseEvent>{
-        id: 'e3',
-        caseId: 'response1',
-        caseEventDefinitionId: 'c1',
-        status: CASE_EVENT_STATUS_IN_PROGRESS,
-        eventForms: [],
-        estimate: false,
-        dateStart: REFERENCE_TIME + (1000*60*60*24),
-        dateEnd: REFERENCE_TIME + (1000*60*60*24) + (1000*60*60)
+        dateEnd: REFERENCE_TIME + (1000 * 60 * 60),
+        caseDefinition,
+        caseInstance: {
+          caseDefinitionId: 'c1',
+          type: 'case',
+          label: 'Pregnant Woman',
+          collection: 'TangyFormResponse',
+          events:<any> [
+            {
+              "id": "0ff22322-7734-4cc1-957d-dd25416a9413",
+              "caseId": "ff621529-d26b-42cc-a9a1-254179e75622",
+              "status": "in-progress",
+              "name": "ANC-Enrollment",
+              "estimate": true,
+              "caseEventDefinitionId": "c1",
+              "dateStart": REFERENCE_TIME,
+              "dateEnd": REFERENCE_TIME + (1000 * 60 * 60),
+              "eventForms": [
+                {
+                  "id": "fb64d705-ee99-4a27-bbad-8349a0e8767d",
+                  "complete": false,
+                  "caseId": "ff621529-d26b-42cc-a9a1-254179e75622",
+                  "caseEventId": "0ff22322-7734-4cc1-957d-dd25416a9413",
+                  "eventFormDefinitionId": "event-form-definition-ece26e",
+                  "formResponseId": "487517f7-0bec-4363-b22c-0c20090fe284"
+                },
+                {
+                  "id": "83c502a2-8c82-4ed8-ad05-e8263cd56a0b",
+                  "complete": false,
+                  "caseId": "ff621529-d26b-42cc-a9a1-254179e75622",
+                  "caseEventId": "0ff22322-7734-4cc1-957d-dd25416a9413",
+                  "eventFormDefinitionId": "event-form-definition-574497",
+                  "formResponseId": "3cd53c20-d213-4e8b-bf90-c7091bf95ad6"
+                },
+                
+              ],
+              "startDate": 0
+            }
+          ]
+        }
       }
-    ]
-  }
+]}
 }
-
 describe('CaseEventScheduleListComponent', () => {
   let component: CaseEventScheduleListComponent;
   let fixture: ComponentFixture<CaseEventScheduleListComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
       imports: [
         HttpClientModule
       ],
