@@ -4,10 +4,10 @@
 ## Step 1
 Create a group in the Editor. Note the ID in the URL starting with `group-`.
 
-## Step 1
+## Step 2
 Create a repository on Github for your group's content.
 
-## Step 2
+## Step 3
 SSH into the server and create a "deploy key" the server will use to authenticate to Github with.
 
 ```
