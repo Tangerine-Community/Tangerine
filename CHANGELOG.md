@@ -3,6 +3,7 @@
 ## v3.7.0
 - __Fixes__
   - On `<tangy-timed>` when using auto stop, return the property instead of the instead of the truthfulness of the value which is always false.
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/110
   - When uploadUnlockedFormReponses is set to true only incomplete forms are Synced up.
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1725
   - In editor, modifying allowed pattern on text and number inputs does not work.
