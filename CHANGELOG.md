@@ -1,4 +1,73 @@
 # Changelog
+
+## v3.7.0
+- __Fixes__
+  - When editing forms, they will only save back to the server after clicking the top level "save" button. There is also now messaging around when the save either completes successfully or fails.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1645
+  - On `<tangy-timed>` when using auto stop, return the property instead of the instead of the truthfulness of the value which is always false.
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/110
+  - When uploadUnlockedFormReponses is set to true only incomplete forms are Synced up.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1725
+  - In editor, modifying allowed pattern on text and number inputs does not work.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1770
+  - Fix spacing between checkboxes in client
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1690
+  - Fix click target and style for Case Event Form list
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1681
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1702
+  - Fix Partial Date validation
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1683
+    - PR: https://github.com/Tangerine-Community/tangy-form/pull/71
+  - EF Touch changes
+    - `<tangy-eftouch multi-select go-next-on-selection="2">` should become `<tangy-eftouch multi-select="2" go-next-on-selection>`. This allows for expanding functionality of being able to use multi-select without go-next-on-selection but still limit the number of choices the user can make minus the transition.
+    - `no-corrections` has been deprecated for new `disable-after-selection` attribute. When used with `multi-select`, the number of selections are still limited by the setting on `multi-select`, but changing selection is not allowed.
+    - The `required` attribute when used with `multi-select` will only require just one value selected. If you need form example 2 selections to be valid, you can combine `required-all multi-select="2"`. 
+    - We have an API change where we used to have `TangyEftouch.value.selection` was sometimes a string when not using `multi-select` and then when using `multi-select`, is was an array of strings. Now `TangyEftouch.value.selection` will always be an array of strings.
+- __Features__
+  - When editing forms, the user will be warned of any duplicate variable names that exist in the form.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1793
+  - Improve messaging when an APK update fails to download
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1743
+    - PR: https://github.com/Tangerine-Community/Tangerine/commit/2ede9d3fb9d43dda234bfdcfc4849769b9b08e69
+  - Data Collector sends SMS message from form
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1745
+  - Data Collector views events in schedule with icons, estimated date info, and scheduled date info
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1686
+  - Data Collector views Case Module screens in French
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1711
+  - Data Collector confirms case when opened
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1695
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1741
+  - Improved support for changing color scheme of client app using `custom-styles.css`, possible to have "dark mode".
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1742
+  - Data Collector shares all data on Device with other Users on the same Device.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1712
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1709
+  - Data Collector finds Case Event status has changed to "complete" when all required forms are submitted.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1693
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1719
+  - Data Collector finds all required Event Form instances in a Case Event are created upon opening the Case Event.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1691
+    - PR: https://github.com/Tangerine-Community/Tangerine/pull/1718
+  - Data Collector registers a Participant in a Case and views Event Forms grouped by Participant
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1692
+    - PR : https://github.com/Tangerine-Community/Tangerine/pull/1723
+
+__Upgrade instructions:__
+On the server, backup your data folder and then run the following commands.
+```bash
+git fetch origin
+git checkout v3.7.0
+./start.sh v3.7.0
+docker exec tangerine translations-update
+```
+
+ 
+
+
+## v3.6.2
+- Fix import of location list from CSV https://github.com/Tangerine-Community/Tangerine/pull/1732/commits/05e57e8f1bb869dbd52b927d45fc223903e201db
+
 ## v3.6.1
 - Fix form routing for archived and active forms.
   - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1722

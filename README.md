@@ -34,24 +34,24 @@ Currently the most commonly deployed tablet with Tangerine is the [Lenovo Tab 4 
 
 ## Installation
 
-### Online Editor for Form Design and Data Download
+### Server
 We recommend using AWS for hosting have documented detailed [instructions for AWS](docs/install-on-aws.md). Below are general instructions for installing on any machine.
 
-SSH into your machine from a terminal, [install Docker](https://docs.docker.com/engine/installation/linux/ubuntulinux/), and then run the following commands. You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases).
+SSH into your machine from a terminal, [install Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/), and then run the following commands. You'll need the version of the most recent release. Find that on the releases page [here](https://github.com/Tangerine-Community/Tangerine-server/releases), note the release number and use it to replace all instances of `<version tag>` in the commands below.
 ```
 # Get the software.
 git clone https://github.com/tangerine-community/tangerine.git
 cd tangerine
 # See releases tab on github for versions.
 git checkout <version tag>
-# Create config.sh and edit to match your desired settings. Make sure to set `T_CONTAINER_NAME` to the same as what `<version tag>` in the prior commands.
+# Create config.sh and change all required settings.
 cp config.defaults.sh config.sh
 nano config.sh
 # Start the software.
-./start.sh
+./start.sh <version tag>
 ```
 
-If your server restarts or the container stops, you can later run the `./start.sh` script in the Tangerine folder.
+If your server restarts or the container stops, you can later run the `./start.sh <version tag>` script in the Tangerine folder.
 
 To use SSL, put an SSL enabled Reverse Proxy in front of Tangerine and set the `T_PROTOCOL` variable in `config.sh` to `https` before running `start.sh`. Note that in order to publish Tangerine for data collection using the Web App method (PWA), SSL is required. At RTI we use AWS's Elastic Load Balancer in front of Tangerine because it automatically renews and cycles SSL certificates for us. How to set this up is detailed in our [instructions for AWS](docs/install-on-aws.md).  If your Tangerine install is on a Digital Ocean Droplet, you can use their Load Balancers and configure them for SSL. See [How To Configure SSL Termination on DigitalOcean Load Balancers](https://www.digitalocean.com/community/tutorials/how-to-configure-ssl-termination-on-digitalocean-load-balancers).
 Now visit your Tangerine installation at the IP address or hostname of your installation. In this configuration, the browser talks to the Load Balancer securely on Port 443 while the load balancer communicates with Tangerine Container on port 80 on a private network.
@@ -61,7 +61,7 @@ Lastly, to reset caches and free up memory every so often, we recommend restarti
 0 0 * * * docker stop tangerine && docker start tangerine
 ```
 
-### Offline Tablet for data collection
+### Tablet
 To install on Tablets, proceed to the "Releases" tab in the Online Editor. There you will find two methods for installing on Tablets, Web Browser Installation and Android Installation. Each of these release types have two different channels you can publish to, Test and Live. It is recommended that for every deployment of Tangerine you have at least one designated device subscribed to the Test channel so that you may release to that Device to test Tangerine upgrades and content updates before releasing to the remaining tablets subscribed to the Live channel.
 
 0. On Tablet, open the Play Store app and proceed to upgrade Google Chrome Web Browser.
@@ -118,16 +118,16 @@ Install [nodejs](https://nodejs.org/en/) and [git](https://git-scm.com/) on your
 git clone https://github.com/tangerine-community/tangerine
 cd tangerine
 git checkout <most recent release version, ie. v3.0.0-rc5>
-cd client/app
+cd client/
 npm install
 npm start
 ```
-Then open <http://localhost:4200> in your web browser. The content is found in the `tangerine/client/app/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
+Then open <http://localhost:4200> in your web browser. The content is found in the `tangerine/client/src/assets` directory. You can edit the content there or replace it with your own content repository.  You can find a video tutorial on this process [here](https://www.youtube.com/watch?v=YHpyOaRLWD4&t).
 
 If the process has stopped, you can restart by running...
 
 ```
-cd tangerine/client/app
+cd tangerine/client/
 npm start
 ```
 
@@ -137,7 +137,7 @@ To update to a new version of tangerine, run...
 cd tangerine
 git fetch
 git checkout <new version listed in the releases tab on github>
-cd client/app/
+cd client/
 rm -r node_modules
 npm install
 npm start
@@ -156,7 +156,7 @@ cp config.defaults.sh config.sh
 Now open <http://localhost/> in your web browser. To debug the node.js server, install [NiM](https://chrome.google.com/webstore/detail/nodejs-v8-inspector-manag/gnhhdgbaldcilmgcpfddgdbkhjohddkj), open it through your devtools and connect to port 9229.
 
 ### Develop for Client 
-Prereqs include node 8+ and `npm install -g @angular/cli`.
+Prereqs include node 11 and `npm install -g @angular/cli`. Note that there is currently [an issue where node 12 will not work](https://github.com/Tangerine-Community/Tangerine/issues/1751).
 ```
 git clone git@github.com:tangerine-community/tangerine
 cd tangerine/client/
@@ -171,7 +171,7 @@ If you are also developing the form library Tangy Form at the same time, you can
 
 ```
 rm -r node_modules/tangy-form
-ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/app/node_modules/tangy-form
+ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git/tangerine-community/tangerine/client/node_modules/tangy-form
 ```
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
 
