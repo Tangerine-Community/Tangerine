@@ -123,7 +123,7 @@ describe('NewFormResponseComponent', () => {
         expect(args.url).toBe('/case-new/example')
         done()
       })
-      fixture.elementRef.nativeElement.querySelectorAll('.form-item')[0].querySelector('button').click()
+      fixture.elementRef.nativeElement.querySelectorAll('.form-item')[0].click()
       fixture.detectChanges()
     })
   });
