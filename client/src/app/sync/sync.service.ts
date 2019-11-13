@@ -109,7 +109,7 @@ export class SyncService {
     if (syncMode === SYNC_MODE_ALL || syncMode === SYNC_MODE_COUCHDB) {
       queryKeys = [
         ...queryKeys,
-        formInfos.reduce((queryKeys, formInfo) => {
+        ...formInfos.reduce((queryKeys, formInfo) => {
           if (formInfo.couchdbSyncSettings.enabled) {
             queryKeys.push([true, formInfo.id, true])
             queryKeys.push([true, formInfo.id, false])
@@ -122,7 +122,7 @@ export class SyncService {
     if (syncMode === SYNC_MODE_ALL || syncMode === SYNC_MODE_CUSTOM) {
       queryKeys = [
         ...queryKeys,
-        formInfos.reduce((queryKeys, formInfo) => {
+        ...formInfos.reduce((queryKeys, formInfo) => {
           if (formInfo.customSyncSettings.enabled && formInfo.customSyncSettings.push) {
             if (formInfo.customSyncSettings.excludeIncomplete) {
               queryKeys.push([true, formInfo.id, true])
@@ -135,9 +135,9 @@ export class SyncService {
         }, []) 
       ]
     }
+    window['userDb'] = userDb
     // Call the query and return an array of IDs. 
     const response = await userDb.query('sync-queue', { keys: queryKeys })
-    debugger
     return response
         .rows
         .map(row => row.id)
