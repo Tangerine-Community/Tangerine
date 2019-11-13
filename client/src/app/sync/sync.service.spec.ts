@@ -10,6 +10,7 @@ import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 const TEST_USERNAME = 'test-user'
 const TEST_FORM_ID_1 = 'TEST_FORM_ID_1'
 const TEST_FORM_ID_2 = 'TEST_FORM_ID_2'
+const TEST_FORM_ID_3 = 'TEST_FORM_ID_3'
 
 const TEST_FORM_INFOS_SYNC_CUSTOM = [
   <FormInfo>{
@@ -17,7 +18,8 @@ const TEST_FORM_INFOS_SYNC_CUSTOM = [
     customSyncSettings: {
       enabled: true,
       push: true,
-      pull: false
+      pull: false,
+      excludeIncomplete: true 
     }
   },
   <FormInfo>{
@@ -25,7 +27,17 @@ const TEST_FORM_INFOS_SYNC_CUSTOM = [
     customSyncSettings: {
       enabled: true,
       push: true,
-      pull: false
+      pull: false,
+      excludeIncomplete: true
+    },
+  },
+  <FormInfo>{
+    id: TEST_FORM_ID_3,
+    customSyncSettings: {
+      enabled: false,
+      push: true,
+      pull: false,
+      excludeIncomplete: true
     },
   },
   <FormInfo>{
@@ -33,7 +45,8 @@ const TEST_FORM_INFOS_SYNC_CUSTOM = [
     customSyncSettings: {
       enabled: true,
       push: true,
-      pull: true 
+      pull: true,
+      excludeIncomplete: false
     },
   }
 ]

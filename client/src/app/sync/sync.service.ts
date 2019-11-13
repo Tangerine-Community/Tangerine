@@ -93,32 +93,50 @@ export class SyncService {
     }
   }
 
+  async getDownloadQueue() {
+    // TODO, only for custom protocol I think.
+  }
+
+  /*
+   * Set syncMode to SYNC_MODE_COUCHDB to get upload queue of docs configured to sync using CouchDB replication.
+   * Set syncMode to SYNC_MODE_CUSTOM to get upload queue of docs configured to sync using Custom replication.
+   * Set syncMode to SYNC_MODE_ALL to get upload queue of docs configured to sync using either Custom replication or CouchDB replication.
+   */
   async getUploadQueue(userDb:UserDatabase, formInfos:Array<FormInfo>, syncMode = SYNC_MODE_ALL) {
-    // Generate keys for the toUpload query.
-    const keys = formInfos.reduce((keys, formInfo) => {
-      if (
-        formInfo.couchdbSyncSettings.enabled && 
-        (syncMode === SYNC_MODE_ALL || syncMode === SYNC_MODE_COUCHDB)
-      ) {
-        keys.push([true, formInfo.id, true])
-        keys.push([true, formInfo.id, false])
-      }
-      if (
-        formInfo.customSyncSettings.enabled && 
-        formInfo.customSyncSettings.push && 
-        (syncMode === SYNC_MODE_ALL || syncMode === SYNC_MODE_CUSTOM)
-      ) {
-        if (formInfo.customSyncSettings.excludeIncomplete) {
-          keys.push([true, formInfo.id, true])
-        } else {
-          keys.push([true, formInfo.id, true])
-          keys.push([true, formInfo.id, false])
-        }
-      }
-      return keys
-    }, []) 
+    // Generate keys for the sync-queue query.
+    let queryKeys = []
+    // Generate keys for CouchDB Sync enabled forms.
+    if (syncMode === SYNC_MODE_ALL || syncMode === SYNC_MODE_COUCHDB) {
+      queryKeys = [
+        ...queryKeys,
+        formInfos.reduce((queryKeys, formInfo) => {
+          if (formInfo.couchdbSyncSettings.enabled) {
+            queryKeys.push([true, formInfo.id, true])
+            queryKeys.push([true, formInfo.id, false])
+          }
+          return queryKeys
+        }, [])
+      ]
+    }
+    // Generate keys for Custom Sync enabled forms.
+    if (syncMode === SYNC_MODE_ALL || syncMode === SYNC_MODE_CUSTOM) {
+      queryKeys = [
+        ...queryKeys,
+        formInfos.reduce((queryKeys, formInfo) => {
+          if (formInfo.customSyncSettings.enabled && formInfo.customSyncSettings.push) {
+            if (formInfo.customSyncSettings.excludeIncomplete) {
+              queryKeys.push([true, formInfo.id, true])
+            } else {
+              queryKeys.push([true, formInfo.id, true])
+              queryKeys.push([true, formInfo.id, false])
+            }
+          }
+          return queryKeys
+        }, []) 
+      ]
+    }
     // Call the query and return an array of IDs. 
-    const response = await userDb.query('sync-queue', { keys })
+    const response = await userDb.query('sync-queue', { keys: queryKeys })
     debugger
     return response
         .rows
