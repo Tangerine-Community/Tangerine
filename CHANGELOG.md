@@ -2,6 +2,8 @@
 
 ## v3.7.0
 - __Fixes__
+  - When editing forms, they will only save back to the server after clicking the top level "save" button. There is also now messaging around when the save either completes successfully or fails.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1645
   - On `<tangy-timed>` when using auto stop, return the property instead of the instead of the truthfulness of the value which is always false.
     - PR: https://github.com/Tangerine-Community/tangy-form/pull/110
   - When uploadUnlockedFormReponses is set to true only incomplete forms are Synced up.
@@ -22,6 +24,8 @@
     - The `required` attribute when used with `multi-select` will only require just one value selected. If you need form example 2 selections to be valid, you can combine `required-all multi-select="2"`. 
     - We have an API change where we used to have `TangyEftouch.value.selection` was sometimes a string when not using `multi-select` and then when using `multi-select`, is was an array of strings. Now `TangyEftouch.value.selection` will always be an array of strings.
 - __Features__
+  - When editing forms, the user will be warned of any duplicate variable names that exist in the form.
+    - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1793
   - Improve messaging when an APK update fails to download
     - Issue: https://github.com/Tangerine-Community/Tangerine/issues/1743
     - PR: https://github.com/Tangerine-Community/Tangerine/commit/2ede9d3fb9d43dda234bfdcfc4849769b9b08e69
