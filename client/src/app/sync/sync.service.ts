@@ -7,9 +7,9 @@ import { Injectable } from '@angular/core';
 import { ReplicationStatus } from './classes/replication-status.class';
 import * as pako from 'pako';
 
-const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
-const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
-const SYNC_MODE_ALL = 'SYNC_MODE_ALL'
+export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
+export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
+export const SYNC_MODE_ALL = 'SYNC_MODE_ALL'
 
 @Injectable({
   providedIn: 'root'

@@ -6,7 +6,7 @@ import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { FormInfo, CouchdbSyncSettings } from './../tangy-forms/classes/form-info.class';
 import { TestBed, inject } from '@angular/core/testing';
 
-import { SyncService } from './sync.service';
+import { SyncService, SYNC_MODE_COUCHDB, SYNC_MODE_ALL, SYNC_MODE_CUSTOM } from './sync.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -110,7 +110,6 @@ describe('syncService', () => {
   })
 
   afterEach(async () => {
-    debugger
     await userService.uninstall()
   })
 
@@ -206,6 +205,9 @@ describe('syncService', () => {
       complete: false
     })
     expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).includes('3')).toEqual(true)
+    expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM, SYNC_MODE_ALL)).length).toEqual(2)
+    expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM, SYNC_MODE_COUCHDB)).length).toEqual(1)
+    expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM, SYNC_MODE_CUSTOM)).length).toEqual(1)
   })
 
 });
