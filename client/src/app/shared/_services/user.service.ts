@@ -55,6 +55,7 @@ export class UserService {
     }
     const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', true)
     await sharedUserDatabase.destroy()
+    await this.usersDb.destroy()
   }
 
   //
