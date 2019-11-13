@@ -1,15 +1,17 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { CasesService } from '../../services/cases.service';
 import * as moment from 'moment'
 import { FORM_TYPES_INFO } from 'src/app/core/search/search.component';
-import { CaseEvent, CASE_EVENT_STATUS_COMPLETED } from '../../classes/case-event.class';
+import {  CASE_EVENT_STATUS_COMPLETED } from '../../classes/case-event.class';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import { SearchDoc, SearchService } from 'src/app/shared/_services/search.service';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { Subject } from 'rxjs';
 import { CaseService } from '../../services/case.service';
+import { CaseEventInfo } from '../../services/case-event-info.class';
+import { CaseDefinition } from '../../classes/case-definition.class';
 
 export const CASE_EVENT_SCHEDULE_LIST_MODE_DAILY = 'CASE_EVENT_SCHEDULE_LIST_MODE_DAILY'
 export const CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY = 'CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY'
@@ -21,6 +23,7 @@ class EventInfo {
   icon = ''
   primary = ''
   secondary = ''
+  caseDefinition: CaseDefinition
 }
 
 @Component({
@@ -82,12 +85,12 @@ export class CaseEventScheduleListComponent implements OnInit {
     this.render(events)
   }
 
-  async render(events:Array<CaseEvent>) {
+  async render(events:Array<CaseEventInfo>) {
     // Get some data together before rendering.
     const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     const searchDocs:Array<SearchDoc> = []
     const responses:Array<TangyFormResponse> = []
-    const caseIds = events.reduce((caseIds, caseEvent) => caseIds.indexOf(caseEvent.caseId) === -1 ? [...caseIds, caseEvent.caseId] : caseIds, [])
+    const caseIds = events.reduce((caseIds, caseEventInfo) => caseIds.indexOf(caseEventInfo.caseId) === -1 ? [...caseIds, caseEventInfo.caseId] : caseIds, [])
     for (const caseId of caseIds) {
       searchDocs.push(await this.searchService.getIndexedDoc(this.userService.getCurrentUser(), caseId))
       responses.push(await userDb.get(caseId))
@@ -115,30 +118,31 @@ export class CaseEventScheduleListComponent implements OnInit {
       eventInfo.icon = eval('`' + formTypeInfo.iconTemplate + '`')
       eventInfo.primary = formInfo.searchSettings.primaryTemplate ? eval('`' + formInfo.searchSettings.primaryTemplate + '`') : response._id
       eventInfo.secondary = formInfo.searchSettings.secondaryTemplate ? eval('`' + formInfo.searchSettings.secondaryTemplate + '`') : formInfo.title
-      this.getCaseDefinition(event).then(data=>eventInfo['caseDefinition']=data)
+      eventInfo.caseDefinition = this.getCaseDefinition(event)
       return eventInfo 
     })
     this.didSearch$.next(true)
   }
 
-   getCaseDefinition(caseEvent:CaseEvent){
-    const defaultTemplateScheduleListItemIcon = `${caseEvent.status === CASE_EVENT_STATUS_COMPLETED ? 'event_note' : 'event_available'}`
+    getCaseDefinition(caseEventInfo:CaseEventInfo){
+      if(!caseEventInfo.caseDefinition) return
+    let templateScheduleListItemIcon, templateScheduleListItemPrimary,templateScheduleListItemSecondary,caseEventDefinition;
+    const caseDefinition = caseEventInfo.caseDefinition;
+    caseEventDefinition = caseDefinition.eventDefinitions.find(({id}) => id === caseEventInfo.caseEventDefinitionId)
+    const caseInstance = caseEventInfo.caseInstance;
+    const defaultTemplateScheduleListItemIcon = `${caseEventInfo.status === CASE_EVENT_STATUS_COMPLETED ? 'event_note' : 'event_available'}`
     const defaultTemplateScheduleListItemPrimary = '<span>${caseEventDefinition.name}</span>'
     const defaultTemplateScheduleListItemSecondary = '<span>${caseInstance.label}</span>'
-    let templateScheduleListItemIcon, templateScheduleListItemPrimary,templateScheduleListItemSecondary,caseEventDefinition;
-    const caseInstance = caseEvent['caseInstance']
-    return this.caseService.getCaseDefinitionByID(caseInstance.caseDefinitionId).then(caseDefinition=>{
-      caseEventDefinition= caseDefinition.eventDefinitions.find(({id})=>id === caseEvent['caseEventDefinitionId'])
-      eval(`templateScheduleListItemIcon = caseDefinition.templateScheduleListItemIcon ? \`${caseDefinition.templateScheduleListItemIcon}\` : \`${defaultTemplateScheduleListItemIcon}\``)
-      eval(`templateScheduleListItemPrimary = caseDefinition.templateScheduleListItemPrimary ? \`${caseDefinition.templateScheduleListItemPrimary}\` : \`${defaultTemplateScheduleListItemPrimary}\``)
-      eval(`templateScheduleListItemSecondary = caseDefinition.templateScheduleListItemSecondary ? \`${caseDefinition.templateScheduleListItemSecondary}\` : \`${defaultTemplateScheduleListItemSecondary}\``)
-      return {
-        ...caseDefinition,
-        templateScheduleListItemIcon,
-        templateScheduleListItemPrimary,
-        templateScheduleListItemSecondary
-      }
-    })
+    eval(`templateScheduleListItemIcon = caseDefinition.templateScheduleListItemIcon ? \`${caseDefinition.templateScheduleListItemIcon}\` : \`${defaultTemplateScheduleListItemIcon}\``)
+    eval(`templateScheduleListItemPrimary = caseDefinition.templateScheduleListItemPrimary ? \`${caseDefinition.templateScheduleListItemPrimary}\` : \`${defaultTemplateScheduleListItemPrimary}\``)
+    eval(`templateScheduleListItemSecondary = caseDefinition.templateScheduleListItemSecondary ? \`${caseDefinition.templateScheduleListItemSecondary}\` : \`${defaultTemplateScheduleListItemSecondary}\``)
+    return {
+      ...caseDefinition,
+      templateScheduleListItemIcon,
+      templateScheduleListItemPrimary,
+      templateScheduleListItemSecondary
+    }
+   
   }
 
 }
