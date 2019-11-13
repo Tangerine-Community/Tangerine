@@ -22,9 +22,9 @@ export const SYNC_DOCS = [
         map: function (doc) {
           if (doc.collection === 'TangyFormResponse') {
             let needsUploading = (!doc.uploadDatetime || doc.uploadDatetime < doc.tangerineModifiedOn) ? true : false
-            let formID = doc.formID
+            let formId = doc.form.id
             let isComplete = doc.complete
-            emit([needsUploading, formID, isComplete], true)
+            emit([needsUploading, formId, isComplete], true)
           }
         }.toString()
       }
