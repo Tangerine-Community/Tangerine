@@ -210,4 +210,8 @@ describe('syncService', () => {
     expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM, SYNC_MODE_CUSTOM)).length).toEqual(1)
   })
 
+  it('should couchdb sync and then have a reduced queue')
+  it('should custom sync and then have a reduced queue')
+  it('should all sync and then have a reduced queue')
+
 });
