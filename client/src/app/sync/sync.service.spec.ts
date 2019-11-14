@@ -212,7 +212,7 @@ describe('syncService', () => {
     expect((await syncService.couchdbUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).length).toEqual(1)
   })
 
-  it('should custom sync and then have a reduced queue', async(done) => {
+  it('should custom push and then have a reduced queue', async(done) => {
     const FORM_INFO = [
       <FormInfo>{
         id: TEST_FORM_ID_1,
@@ -250,6 +250,8 @@ describe('syncService', () => {
       req.flush({ status: 'ok' });
     }, 500)
   }, 2000)
+
+  it('should custom pull')
 
   it('should couchdb sync and then have a reduced queue', async(done) => {
     const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_1)
