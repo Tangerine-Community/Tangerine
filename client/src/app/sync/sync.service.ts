@@ -65,84 +65,6 @@ export class SyncService {
       await DB.put(Object.assign({}, userProfileOnServer, {_rev: userProfile._rev}))
   }
   */
-
-  async customPush(userDb:UserDatabase, appConfig:AppConfig, docIds:Array<string>) {
-    try {
-      if (docIds && docIds.length > 0) {
-        for (const doc_id of docIds) {
-          const doc = await userDb.get(doc_id);
-          // Redact any fields marked as private.
-          doc['items'].forEach(item => {
-            item['inputs'].forEach(input => {
-              if (input.private) {
-                input.value = '';
-              }
-            });
-          });
-          const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
-          await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload`, body, {
-            headers: new HttpHeaders({
-              'Authorization': appConfig.uploadToken
-            })
-          }).toPromise();
-        }
-      }
-      return true; // No Items to Sync
-    } catch (error) {
-      throw (error);
-    }
-  }
-
-  async getDownloadQueue() {
-    // TODO, only for custom protocol I think.
-  }
-
-  /*
-   * Set syncMode to SYNC_MODE_COUCHDB to get upload queue of docs configured to sync using CouchDB replication.
-   * Set syncMode to SYNC_MODE_CUSTOM to get upload queue of docs configured to sync using Custom replication.
-   * Set syncMode to SYNC_MODE_ALL to get upload queue of docs configured to sync using either Custom replication or CouchDB replication.
-   */
-  async getUploadQueue(userDb:UserDatabase, formInfos:Array<FormInfo>, syncMode = SYNC_MODE_ALL) {
-    // Generate keys for the sync-queue query.
-    let queryKeys = []
-    // Generate keys for CouchDB Sync enabled forms.
-    if (syncMode === SYNC_MODE_ALL || syncMode === SYNC_MODE_COUCHDB) {
-      queryKeys = [
-        ...queryKeys,
-        ...formInfos.reduce((queryKeys, formInfo) => {
-          if (formInfo.couchdbSyncSettings.enabled) {
-            queryKeys.push([true, formInfo.id, true])
-            queryKeys.push([true, formInfo.id, false])
-          }
-          return queryKeys
-        }, [])
-      ]
-    }
-    // Generate keys for Custom Sync enabled forms.
-    if (syncMode === SYNC_MODE_ALL || syncMode === SYNC_MODE_CUSTOM) {
-      queryKeys = [
-        ...queryKeys,
-        ...formInfos.reduce((queryKeys, formInfo) => {
-          if (formInfo.customSyncSettings.enabled && formInfo.customSyncSettings.push) {
-            if (formInfo.customSyncSettings.excludeIncomplete) {
-              queryKeys.push([true, formInfo.id, true])
-            } else {
-              queryKeys.push([true, formInfo.id, true])
-              queryKeys.push([true, formInfo.id, false])
-            }
-          }
-          return queryKeys
-        }, []) 
-      ]
-    }
-    window['userDb'] = userDb
-    // Call the query and return an array of IDs. 
-    const response = await userDb.query('sync-queue', { keys: queryKeys })
-    return response
-        .rows
-        .map(row => row.id)
-  }
-
   /*
   async getDocsUploaded(username?: string) {
     const DB = await this.userService.getUserDatabase(username);
@@ -162,5 +84,77 @@ export class SyncService {
     }));
   }
   */
+  /*
+   * Custom sync
+   */
+
+  async customPush(userDb:UserDatabase, appConfig:AppConfig, docIds:Array<string>) {
+    try {
+      for (const doc_id of docIds) {
+        const doc = await userDb.get(doc_id);
+        // Redact any fields marked as private.
+        doc['items'].forEach(item => {
+          item['inputs'].forEach(input => {
+            if (input.private) {
+              input.value = '';
+            }
+          });
+        });
+        const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
+        const response = <any>await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload`, body, {
+          headers: new HttpHeaders({
+            'Authorization': appConfig.uploadToken
+          })
+        }).toPromise();
+        if (!response && !response.status && response.status !== 'ok') {
+          throw(new Error('Unable to sync, try again.'))
+        }
+      }
+      return true; // No Items to Sync
+    } catch (error) {
+      throw (error);
+    }
+    // @TODO Mark docs as synced.
+  }
+
+  async customDownloadQueue() {
+    // TODO, only for custom protocol I think.
+  }
+
+  async customUploadQueue(userDb:UserDatabase, formInfos:Array<FormInfo>) {
+    let queryKeys = formInfos.reduce((queryKeys, formInfo) => {
+      if (formInfo.customSyncSettings.enabled && formInfo.customSyncSettings.push) {
+        if (formInfo.customSyncSettings.excludeIncomplete) {
+          queryKeys.push([true, formInfo.id, true])
+        } else {
+          queryKeys.push([true, formInfo.id, true])
+          queryKeys.push([true, formInfo.id, false])
+        }
+      }
+      return queryKeys
+    }, []) 
+    const response = await userDb.query('sync-queue', { keys: queryKeys })
+    return response
+      .rows
+      .map(row => row.id)
+  }
+
+  /*
+   * CouchDB sync
+   */
+
+  async couchdbUploadQueue(userDb:UserDatabase, formInfos:Array<FormInfo>) {
+    const queryKeys = formInfos.reduce((queryKeys, formInfo) => {
+      if (formInfo.couchdbSyncSettings.enabled) {
+        queryKeys.push([true, formInfo.id, true])
+        queryKeys.push([true, formInfo.id, false])
+      }
+      return queryKeys
+    }, [])
+    const response = await userDb.query('sync-queue', { keys: queryKeys })
+    return response
+      .rows
+      .map(row => row.id)
+  }
 
 }
