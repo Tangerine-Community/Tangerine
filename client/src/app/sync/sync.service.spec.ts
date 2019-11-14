@@ -34,13 +34,16 @@ const MOCK_LOCAL_DB_INFO_2 = 'MOCK_LOCAL_DB_INFO_2'
 
 const MOCK_SERVER_URL = 'http://localhost/'
 
+const MOCK_APP_CONFIG = <AppConfig>{
+  serverUrl: MOCK_SERVER_URL,
+  groupName: 'foo',
+  sharedUserDatabase: false
+}
+
 class MockAppConfigService {
   getAppConfig():Promise<AppConfig> {
     return new Promise((resolve, reject) => {
-      resolve(<AppConfig>{
-        serverUrl: MOCK_SERVER_URL,
-        groupName: 'foo'
-      })
+      resolve(MOCK_APP_CONFIG)
     })
   }
 }
@@ -208,9 +211,44 @@ describe('syncService', () => {
     expect((await syncService.couchdbUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).length).toEqual(1)
   })
 
-  it('should custom sync and then have a reduced queue', async() => {
-
-  })
+  it('should custom sync and then have a reduced queue', async(done) => {
+    const FORM_INFO = [
+      <FormInfo>{
+        id: TEST_FORM_ID_1,
+        customSyncSettings: {
+          enabled: true,
+          push: true,
+          pull: false,
+          excludeIncomplete: false 
+        },
+        couchdbSyncSettings: <CouchdbSyncSettings>{
+          enabled: false,
+          filterByLocation: false
+        }
+    
+      }
+    ]
+    const TEST_DOC = {
+      _id: '1',
+      collection: 'TangyFormResponse',
+      form: {
+        id: TEST_FORM_ID_1
+      },
+      items: [],
+      complete: false
+    }
+    await userDb.post(TEST_DOC)
+    expect((await syncService.customUploadQueue(userDb, FORM_INFO)).includes(TEST_DOC._id)).toEqual(true)
+    syncService.customPush(userDb, MOCK_APP_CONFIG, [ TEST_DOC._id ]).then(async() => {
+      expect((await syncService.customUploadQueue(userDb, FORM_INFO)).includes(TEST_DOC._id)).toEqual(false)
+      done()
+    })
+    setTimeout(() => {
+      const req = httpTestingController.expectOne(`${MOCK_APP_CONFIG.serverUrl}api/${MOCK_APP_CONFIG.groupName}/upload`);
+      expect(req.request.method).toEqual('POST')
+      req.flush({ status: 'ok' });
+    }, 500)
+  }, 2000)
 
   it('should couchdb sync and then have a reduced queue')
   

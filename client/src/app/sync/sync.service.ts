@@ -108,6 +108,8 @@ export class SyncService {
         }).toPromise();
         if (!response && !response.status && response.status !== 'ok') {
           throw(new Error('Unable to sync, try again.'))
+        } else {
+          await userDb.synced(doc)
         }
       }
       return true; // No Items to Sync
