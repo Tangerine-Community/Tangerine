@@ -1,3 +1,4 @@
+import PouchDB from 'pouchdb';
 import { AppConfig } from './../shared/_classes/app-config.class';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { UserDatabase } from 'src/app/shared/_classes/user-database.class';
@@ -20,70 +21,7 @@ export class SyncService {
     private http: HttpClient
   ) { }
 
-  /*
-  sync(username:string, userProfileId = ''):Promise<ReplicationStatus> {
-    return new Promise(async (resolve, reject) => {
-      try{
-        const config = await this.appConfigService.getAppConfig()
-        const localDb = await this.userService.getUserDatabase(username)
-        if (!userProfileId) {
-          let profileDoc = await this.userService.getUserProfile(username)
-          userProfileId = profileDoc._id
-        }
-        const syncSession = <TwoWaySyncSession>await this.http.get(`${config.serverUrl}sync-session/start/${config.groupName}/${userProfileId}`).toPromise()
-        const remoteDb = new PouchDB(syncSession.pouchDbSyncUrl)
-        localDb.sync(remoteDb, syncSession.pouchDbSyncOptions).on('complete', async  (info) => {
-          const conflictsQuery = await localDb.query('two-way-sync_conflicts');
-          const uploadQueue = await this.syncService.getUploadQueue(username, syncSession.formIdsToNotPush)
-          await this.syncService.push(username, syncSession.formIdsToNotPush)
-          resolve(<ReplicationStatus>{
-            pulled: info.pull.docs_written,
-            pushed: info.push.docs_written,
-            forcePushed: uploadQueue.length,
-            conflicts: conflictsQuery.rows.map(row => row.id)
-          })
-        }).on('error', function (errorMessage) {
-          console.log("boo, something went wrong! error: " + errorMessage)
-          reject(errorMessage)
-        });
-      } catch (err) {
-        reject(err)
-      }
-    })
-  }
-  */
 
-  /*
-  replicate() {
-
-  }
-  */
-  
-  /*
-  async pull(username) {
-      const DB = await this.userService.getUserDatabase(username);
-      await DB.put(Object.assign({}, userProfileOnServer, {_rev: userProfile._rev}))
-  }
-  */
-  /*
-  async getDocsUploaded(username?: string) {
-    const DB = await this.userService.getUserDatabase(username);
-    const response = await DB.query('tangy-form/uploadInfo', { keys: [ false ] })
-    return response
-      .rows
-      .map(row => row.id)
-  }
-
-  async markDocsAsUploaded(replicatedDocIds, username) {
-    const DB = await this.userService.getUserDatabase(username);
-    return await Promise.all(replicatedDocIds.map(docId => {
-      DB.upsert(docId, (doc) => {
-        doc.uploadDatetime = Date.now();
-        return doc;
-      });
-    }));
-  }
-  */
   /*
    * Custom sync
    */
@@ -157,6 +95,47 @@ export class SyncService {
     return response
       .rows
       .map(row => row.id)
+  }
+
+  couchdbSync(userDb:UserDatabase, appConfig:AppConfig, formInfos:Array<FormInfo>, userProfileId:string):Promise<ReplicationStatus> {
+    return new Promise(async (resolve, reject) => {
+      try{
+        const syncSessionUrl = await this.http.get(`${appConfig.serverUrl}sync-session/start/${appConfig.groupName}/${userProfileId}`, {responseType:'text'}).toPromise()
+        const remoteDb = new PouchDB(syncSessionUrl)
+        const pouchDbSyncOptions ={
+          selector: {
+            "$or": formInfos.reduce(($or, formInfo) => {
+              if (formInfo.couchdbSyncSettings.enabled) {
+                $or.push({ 
+                  "form.id": formInfo.id,
+                  // @TODO Device defined sync location. 
+                })
+              }
+              return $or
+            }, [])
+          }
+        } 
+        // Preemptively mark docs as synced because doing so afterward would create an almost infinite loop of things needing to be synced.
+        const uploadQueue = await this.couchdbUploadQueue(userDb, formInfos)
+        for (let docId of uploadQueue) {
+          const doc = await userDb.get(docId)
+          await userDb.synced(doc) 
+        }
+        userDb.sync(remoteDb, pouchDbSyncOptions).on('complete', async  (info) => {
+          const conflictsQuery = await userDb.query('sync-conflicts');
+          resolve(<ReplicationStatus>{
+            pulled: info.pull.docs_written,
+            pushed: info.push.docs_written,
+            conflicts: conflictsQuery.rows.map(row => row.id)
+          })
+        }).on('error', function (errorMessage) {
+          console.log("boo, something went wrong! error: " + errorMessage)
+          reject(errorMessage)
+        });
+      } catch (err) {
+        reject(err)
+      }
+    })
   }
 
 }

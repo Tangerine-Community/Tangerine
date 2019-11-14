@@ -1,3 +1,4 @@
+import PouchDB from 'pouchdb';
 import { UserDatabase } from './../shared/_classes/user-database.class';
 import { AppConfig } from './../shared/_classes/app-config.class';
 import { SYNC_DOCS } from './sync.docs';
@@ -16,7 +17,7 @@ const TEST_USERNAME = 'test-user'
 const TEST_FORM_ID_1 = 'TEST_FORM_ID_1'
 const TEST_FORM_ID_2 = 'TEST_FORM_ID_2'
 const TEST_FORM_ID_3 = 'TEST_FORM_ID_3'
-
+const MOCK_USER_ID = 'MOCK_USER_ID'
 
 const TEST_FORM_INFOS_SYNC_COUCHDB = [
 
@@ -250,8 +251,69 @@ describe('syncService', () => {
     }, 500)
   }, 2000)
 
-  it('should couchdb sync and then have a reduced queue')
+  it('should couchdb sync and then have a reduced queue', async(done) => {
+    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_1)
+    const FORM_INFOS = [
+      <FormInfo>{
+        id: TEST_FORM_ID_1,
+        customSyncSettings: {
+          enabled: true,
+          push: true,
+          pull: false,
+          excludeIncomplete: false 
+        },
+        couchdbSyncSettings: <CouchdbSyncSettings>{
+          enabled: false,
+          filterByLocation: false
+        }
+      },
+      <FormInfo>{
+        id: TEST_FORM_ID_2,
+        customSyncSettings: {
+          enabled: false,
+          push: false,
+          pull: false,
+          excludeIncomplete: false 
+        },
+        couchdbSyncSettings: <CouchdbSyncSettings>{
+          enabled: true,
+          filterByLocation: false 
+        }
+      }
+    ]
+    const TEST_DOC_1 = {
+      _id: '1',
+      collection: 'TangyFormResponse',
+      form: {
+        id: TEST_FORM_ID_1
+      },
+      items: [],
+      complete: false
+    }
+    const TEST_DOC_2 = {
+      _id: '2',
+      collection: 'TangyFormResponse',
+      form: {
+        id: TEST_FORM_ID_2
+      },
+      items: [],
+      complete: false
+    }
+    await userDb.post(TEST_DOC_1)
+    await userDb.post(TEST_DOC_2)
+    expect((await syncService.couchdbUploadQueue(userDb, FORM_INFOS)).includes(TEST_DOC_2._id)).toEqual(true)
+    expect((await syncService.couchdbUploadQueue(userDb, FORM_INFOS)).length).toEqual(1)
+    syncService.couchdbSync(userDb, MOCK_APP_CONFIG, FORM_INFOS, MOCK_USER_ID).then(async() => {
+      expect((await syncService.couchdbUploadQueue(userDb, FORM_INFOS)).includes(TEST_DOC_2._id)).toEqual(false)
+      expect((await syncService.couchdbUploadQueue(userDb, FORM_INFOS)).length).toEqual(0)
+      expect((await mockRemoteDb.allDocs()).rows.length).toEqual(1)
+      done()
+    })
+    setTimeout(() => {
+      const req = httpTestingController.expectOne(`${MOCK_APP_CONFIG.serverUrl}sync-session/start/${MOCK_APP_CONFIG.groupName}/${MOCK_USER_ID}`);
+      expect(req.request.method).toEqual('GET')
+      req.flush(MOCK_REMOTE_DB_INFO_1);
+    }, 500)
+  }, 2000)
   
-  it('should all sync and then have a reduced queue')
-
 });
