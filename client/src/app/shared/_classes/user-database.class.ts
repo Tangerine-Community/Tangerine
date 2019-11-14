@@ -23,6 +23,13 @@ export class UserDatabase {
       this.db = new PouchDB(username)
     }
   }
+
+  async synced(doc) {
+    return await this.db.put({
+      ...doc,
+      tangerineSyncedOn: Date.now()
+    })
+  }
  
   async get(_id) {
     return await this.db.get(_id)
