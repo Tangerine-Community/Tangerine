@@ -117,7 +117,7 @@ describe('syncService', () => {
     expect(!!syncService).toEqual(true);
   })
 
-  it('should have some forms responses in queue due to custom sync, not others', async () => {
+  it('should have some form responses in queue, not others', async () => {
     const TEST_FORM_INFOS_SYNC_CUSTOM = [
       <FormInfo>{
         id: TEST_FORM_ID_1,
@@ -182,7 +182,7 @@ describe('syncService', () => {
       },
       complete: false
     })
-    expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).includes('1')).toEqual(false)
+    expect((await syncService.customUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).includes('1')).toEqual(false)
     // Should be in queue because TEST_FORM_ID_2 has excludeIncomplete: false  
     await userDb.post({
       _id: '2',
@@ -192,7 +192,7 @@ describe('syncService', () => {
       },
       complete: false
     })
-    expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).includes('2')).toEqual(true)
+    expect((await syncService.customUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).includes('2')).toEqual(true)
     // Should be in queue because it's set to push using couchdb replication.
     await userDb.post({
       _id: '3',
@@ -202,14 +202,18 @@ describe('syncService', () => {
       },
       complete: false
     })
-    expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).includes('3')).toEqual(true)
-    expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM, SYNC_MODE_ALL)).length).toEqual(2)
-    expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM, SYNC_MODE_COUCHDB)).length).toEqual(1)
-    expect((await syncService.getUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM, SYNC_MODE_CUSTOM)).length).toEqual(1)
+    expect((await syncService.couchdbUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).includes('3')).toEqual(true)
+    // Final checks.
+    expect((await syncService.customUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).length).toEqual(1)
+    expect((await syncService.couchdbUploadQueue(userDb, TEST_FORM_INFOS_SYNC_CUSTOM)).length).toEqual(1)
+  })
+
+  it('should custom sync and then have a reduced queue', async() => {
+
   })
 
   it('should couchdb sync and then have a reduced queue')
-  it('should custom sync and then have a reduced queue')
+  
   it('should all sync and then have a reduced queue')
 
 });
