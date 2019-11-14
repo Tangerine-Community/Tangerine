@@ -21,7 +21,7 @@ export const SYNC_DOCS = [
       'sync-queue': {
         map: function (doc) {
           if (doc.collection === 'TangyFormResponse') {
-            let needsUploading = (!doc.uploadDatetime || doc.uploadDatetime < doc.tangerineModifiedOn) ? true : false
+            let needsUploading = (!doc.tangerineSyncedOn || doc.tangerineSyncedOn < doc.tangerineModifiedOn) ? true : false
             let formId = doc.form.id
             let isComplete = doc.complete
             emit([needsUploading, formId, isComplete], true)
