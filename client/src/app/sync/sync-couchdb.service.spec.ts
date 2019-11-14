@@ -1,5 +1,3 @@
-import { SyncCouchdbService } from './sync-couchdb.service';
-import { SyncCustomService } from './sync-custom.service';
 import PouchDB from 'pouchdb';
 import { UserDatabase } from './../shared/_classes/user-database.class';
 import { AppConfig } from './../shared/_classes/app-config.class';
@@ -9,11 +7,12 @@ import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { FormInfo, CouchdbSyncSettings } from './../tangy-forms/classes/form-info.class';
 import { TestBed, inject } from '@angular/core/testing';
 
-import { SyncService, SYNC_MODE_COUCHDB, SYNC_MODE_ALL, SYNC_MODE_CUSTOM } from './sync.service';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
+
+import { SyncCouchdbService } from './sync-couchdb.service';
 
 const TEST_USERNAME = 'test-user'
 const TEST_FORM_ID_1 = 'TEST_FORM_ID_1'
@@ -51,35 +50,11 @@ class MockAppConfigService {
   }
 }
 
-class MockTangyFormService {
-  async getFormsInfo() {
-    return [
-      {id: 'example1', src: './example1/form.json', title: 'Example 1'},
-      {id: 'example2', src: './example2/form.json', title: 'Example 2'},
-    ]
-  }
-}
-
-class MockTangyFormInfoService {
-  async getFormsInfo() {
-    return [
-      <FormInfo>{
-        id: TEST_FORM_ID_1
-      },
-      <FormInfo>{
-        id: TEST_FORM_ID_2
-      }
-    ]
-  }
-}
-
-describe('syncService', () => {
+describe('SyncCouchdbService', () => {
 
   let httpClient: HttpClient
   let httpTestingController: HttpTestingController
   let userService: UserService
-  let syncService: SyncService 
-  let syncCustomService: SyncCustomService 
   let syncCouchdbService: SyncCouchdbService 
   let userDb: UserDatabase
 
@@ -96,19 +71,15 @@ describe('syncService', () => {
           multi: true
         },
         UserService,
-        SyncCustomService,
-        SyncCouchdbService,
-        SyncService
+        SyncCouchdbService 
+ 
       ]
     })
     // Get fresh injected instances.
     httpClient = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     userService = TestBed.get(UserService);
-    syncService = TestBed.get(SyncService)
-    syncCustomService = TestBed.get(SyncCustomService)
     syncCouchdbService = TestBed.get(SyncCouchdbService)
-
     // Initialize to install docs.
     await userService.initialize()
     await userService.install()
@@ -126,27 +97,14 @@ describe('syncService', () => {
   })
 
   it('should be created', () => {
-    expect(!!syncService).toEqual(true);
+    expect(!!syncCouchdbService).toEqual(true);
   })
 
-  it('should have some form responses in queue, not others', async () => {
-    const TEST_FORM_INFOS = [
+  it('should couchdb sync and then have a reduced queue', async(done) => {
+    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_1)
+    const FORM_INFOS = [
       <FormInfo>{
         id: TEST_FORM_ID_1,
-        customSyncSettings: {
-          enabled: true,
-          push: true,
-          pull: false,
-          excludeIncomplete: true 
-        },
-        couchdbSyncSettings: <CouchdbSyncSettings>{
-          enabled: false,
-          filterByLocation: false
-        }
-    
-      },
-      <FormInfo>{
-        id: TEST_FORM_ID_2,
         customSyncSettings: {
           enabled: true,
           push: true,
@@ -159,65 +117,54 @@ describe('syncService', () => {
         }
       },
       <FormInfo>{
-        id: TEST_FORM_ID_3,
+        id: TEST_FORM_ID_2,
         customSyncSettings: {
           enabled: false,
           push: false,
           pull: false,
-          excludeIncomplete: true
+          excludeIncomplete: false 
         },
         couchdbSyncSettings: <CouchdbSyncSettings>{
           enabled: true,
-          filterByLocation: false
-        }
-      },
-      <FormInfo>{
-        id: 'user-profile',
-        customSyncSettings: {
-          enabled: true,
-          push: false,
-          pull: true,
-          excludeIncomplete: false
-        },
-        couchdbSyncSettings: <CouchdbSyncSettings>{
-          enabled: false,
-          filterByLocation: false
+          filterByLocation: false 
         }
       }
     ]
-    // Should not be in queue because TEST_FORM_ID_1 has excludeIncomplete: true  
-    await userDb.post({
+    const TEST_DOC_1 = {
       _id: '1',
       collection: 'TangyFormResponse',
       form: {
         id: TEST_FORM_ID_1
       },
+      items: [],
       complete: false
-    })
-    expect((await syncCustomService.uploadQueue(userDb, TEST_FORM_INFOS)).includes('1')).toEqual(false)
-    // Should be in queue because TEST_FORM_ID_2 has excludeIncomplete: false  
-    await userDb.post({
+    }
+    const TEST_DOC_2 = {
       _id: '2',
       collection: 'TangyFormResponse',
       form: {
         id: TEST_FORM_ID_2
       },
+      items: [],
       complete: false
+    }
+    await userDb.post(TEST_DOC_1)
+    await userDb.post(TEST_DOC_2)
+    expect((await syncCouchdbService.uploadQueue(userDb, FORM_INFOS)).includes(TEST_DOC_2._id)).toEqual(true)
+    expect((await syncCouchdbService.uploadQueue(userDb, FORM_INFOS)).length).toEqual(1)
+    syncCouchdbService.sync(userDb, MOCK_APP_CONFIG, FORM_INFOS, MOCK_USER_ID).then(async() => {
+      expect((await syncCouchdbService.uploadQueue(userDb, FORM_INFOS)).includes(TEST_DOC_2._id)).toEqual(false)
+      expect((await syncCouchdbService.uploadQueue(userDb, FORM_INFOS)).length).toEqual(0)
+      expect((await mockRemoteDb.allDocs()).rows.length).toEqual(1)
+      done()
     })
-    expect((await syncCustomService.uploadQueue(userDb, TEST_FORM_INFOS)).includes('2')).toEqual(true)
-    // Should be in queue because it's set to push using couchdb replication.
-    await userDb.post({
-      _id: '3',
-      collection: 'TangyFormResponse',
-      form: {
-        id: TEST_FORM_ID_3
-      },
-      complete: false
-    })
-    expect((await syncCouchdbService.uploadQueue(userDb, TEST_FORM_INFOS)).includes('3')).toEqual(true)
-    // Final checks.
-    expect((await syncCustomService.uploadQueue(userDb, TEST_FORM_INFOS)).length).toEqual(1)
-    expect((await syncCouchdbService.uploadQueue(userDb, TEST_FORM_INFOS)).length).toEqual(1)
-  })
-  
+    setTimeout(() => {
+      const req = httpTestingController.expectOne(`${MOCK_APP_CONFIG.serverUrl}sync-session/start/${MOCK_APP_CONFIG.groupName}/${MOCK_USER_ID}`);
+      expect(req.request.method).toEqual('GET')
+      req.flush(MOCK_REMOTE_DB_INFO_1);
+    }, 500)
+  }, 2000)
+
+  it('should sync but with conflicts')
+
 });
