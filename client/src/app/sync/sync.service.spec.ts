@@ -113,11 +113,9 @@ describe('syncService', () => {
     await userService.uninstall()
   })
 
-  /*
-  it('should be created', inject([syncService], (service: SyncService) => {
-    expect(service).toBeTruthy();
-  }));
-  */
+  it('should be created', () => {
+    expect(!!syncService).toEqual(true);
+  })
 
   it('should have some forms responses in queue due to custom sync, not others', async () => {
     const TEST_FORM_INFOS_SYNC_CUSTOM = [
