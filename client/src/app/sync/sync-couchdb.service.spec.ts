@@ -29,16 +29,13 @@ const MOCK_REMOTE_DOC_IDS = [
   'doc2'
 ]
 
-const MOCK_REMOTE_DB_INFO_1 = 'MOCK_REMOTE_DB_INFO_1'
-const MOCK_LOCAL_DB_INFO_1 = 'MOCK_LOCAL_DB_INFO_1'
-const MOCK_REMOTE_DB_INFO_2 = 'MOCK_REMOTE_DB_INFO_2'
-const MOCK_LOCAL_DB_INFO_2 = 'MOCK_LOCAL_DB_INFO_2'
-
-const MOCK_SERVER_URL = 'http://localhost/'
+const MOCK_GROUP_NAME = 'MOCK_GROUP_NAME'
+const MOCK_SERVER_URL = 'MOCK_SERVER_URL'
+const MOCK_REMOTE_DB_CONNECT_STRING = 'MOCK_REMOTE_DB_CONNECT_STRING' 
 
 const MOCK_APP_CONFIG = <AppConfig>{
   serverUrl: MOCK_SERVER_URL,
-  groupName: 'foo',
+  groupName: MOCK_GROUP_NAME,
   sharedUserDatabase: false
 }
 
@@ -94,6 +91,8 @@ describe('SyncCouchdbService', () => {
 
   afterEach(async () => {
     await userService.uninstall()
+    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_CONNECT_STRING)
+    await mockRemoteDb.destroy()
   })
 
   it('should be created', () => {
@@ -101,7 +100,7 @@ describe('SyncCouchdbService', () => {
   })
 
   it('should couchdb sync and then have a reduced queue', async(done) => {
-    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_INFO_1)
+    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_CONNECT_STRING)
     const FORM_INFOS = [
       <FormInfo>{
         id: TEST_FORM_ID_1,
@@ -161,10 +160,53 @@ describe('SyncCouchdbService', () => {
     setTimeout(() => {
       const req = httpTestingController.expectOne(`${MOCK_APP_CONFIG.serverUrl}sync-session/start/${MOCK_APP_CONFIG.groupName}/${MOCK_USER_ID}`);
       expect(req.request.method).toEqual('GET')
-      req.flush(MOCK_REMOTE_DB_INFO_1);
+      req.flush(MOCK_REMOTE_DB_CONNECT_STRING);
     }, 500)
   }, 2000)
 
-  it('should sync but with conflicts')
+  it('should sync but with conflicts', async (done) => {
+    // Set up form infos and a mock remote database to sync with.
+    const FORM_INFOS = [
+      <FormInfo>{
+        id: TEST_FORM_ID_1,
+        customSyncSettings: {
+          enabled: false,
+          push: false,
+          pull: false,
+          excludeIncomplete: false 
+        },
+        couchdbSyncSettings: <CouchdbSyncSettings>{
+          enabled: true,
+          filterByLocation: false
+        }
+      }
+    ]
+    const mockRemoteDb = new PouchDB(MOCK_REMOTE_DB_CONNECT_STRING)
+    window['userDb'] = userDb
+    window['mockRemoteDb'] = mockRemoteDb
+    // Prepopulate the a doc then send to remote.
+    await userDb.put({_id:"doc1", collection: 'TangyFormResponse', form: {id: TEST_FORM_ID_1}, items: [], complete: true})
+    await mockRemoteDb.sync(userDb.db)
+    // Get and edit the doc in both places to make a conflict.
+    const localDoc1 = await userDb.get('doc1')
+    await userDb.put({...localDoc1, foo: 'local change'})
+    const remoteDoc1 = await mockRemoteDb.get('doc1')
+    await mockRemoteDb.put({...remoteDoc1, foo: 'remote change'})
+    // Sync.
+    syncCouchdbService.sync(userDb, MOCK_APP_CONFIG, FORM_INFOS, MOCK_USER_ID).then(async status => {
+      expect(status.pulled).toBe(1)
+      expect(status.conflicts.length).toBe(1)
+      done()
+    })
+    setTimeout(() => {
+      const req = httpTestingController.expectOne(`${MOCK_APP_CONFIG.serverUrl}sync-session/start/${MOCK_APP_CONFIG.groupName}/${MOCK_USER_ID}`);
+      expect(req.request.method).toEqual('GET')
+      req.flush(MOCK_REMOTE_DB_CONNECT_STRING);
+    }, 500)
+  }, 987654321)
+
+  it('should automatically resolve merge conflict')
+  it('should sync by location')
+  it('should not count remotely created docs synced down as needing sync...')
 
 });
