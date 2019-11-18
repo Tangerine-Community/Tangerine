@@ -11,7 +11,7 @@ export class UserDatabase {
   userId:string
   username:string
   name:string
-  private db:PouchDB
+  db:PouchDB
 
   constructor(username, userId, shared = false) {
     this.userId = userId
