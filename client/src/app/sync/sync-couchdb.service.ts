@@ -6,6 +6,20 @@ import { UserDatabase } from './../shared/_classes/user-database.class';
 import { Injectable } from '@angular/core';
 import PouchDB from 'pouchdb'
 
+export interface LocationQuery {
+  level:string
+  id:string
+}
+
+export class SyncDetails {
+  serverUrl:string
+  groupId:string
+  deviceId:string
+  deviceToken:string
+  formInfos:Array<FormInfo> = []
+  locationQueries:Array<LocationQuery> = []
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,26 +43,38 @@ export class SyncCouchdbService {
       .map(row => row.id)
   }
 
-  sync(userDb:UserDatabase, appConfig:AppConfig, formInfos:Array<FormInfo>, userProfileId:string):Promise<ReplicationStatus> {
+  // Note that if you run this with no forms configured to CouchDB sync, that will result in no filter query and everything will be synced. Use carefully.
+  sync(userDb:UserDatabase, syncDetails:SyncDetails):Promise<ReplicationStatus> {
     return new Promise(async (resolve, reject) => {
       try{
-        const syncSessionUrl = await this.http.get(`${appConfig.serverUrl}sync-session/start/${appConfig.groupName}/${userProfileId}`, {responseType:'text'}).toPromise()
+        const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
         const remoteDb = new PouchDB(syncSessionUrl)
         const pouchDbSyncOptions ={
           selector: {
-            "$or": formInfos.reduce(($or, formInfo) => {
+            "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
               if (formInfo.couchdbSyncSettings.enabled) {
-                $or.push({ 
-                  "form.id": formInfo.id,
-                  // @TODO Device defined sync location. 
-                })
+                $or = [
+                  ...$or,
+                  ...syncDetails.locationQueries.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+                    ? syncDetails.locationQueries.map(locationQuery => { 
+                        return { 
+                          "form.id": formInfo.id,
+                          [`location.${locationQuery.level}`]: locationQuery.id
+                        }
+                      })
+                    : [
+                        { 
+                          "form.id": formInfo.id
+                        }
+                      ]
+                ]
               }
               return $or
             }, [])
           }
         } 
         // Preemptively mark docs as synced because doing so afterward would create an almost infinite loop of things needing to be synced.
-        const uploadQueue = await this.uploadQueue(userDb, formInfos)
+        const uploadQueue = await this.uploadQueue(userDb, syncDetails.formInfos)
         for (let docId of uploadQueue) {
           const doc = await userDb.get(docId)
           await userDb.synced(doc) 
