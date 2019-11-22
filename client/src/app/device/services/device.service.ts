@@ -1,5 +1,5 @@
 import { Device } from './../classes/device.class';
-import { PouchDB } from 'pouchdb';
+import PouchDB from 'pouchdb';
 import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -17,12 +17,14 @@ class TangerineDeviceDoc {
 })
 export class DeviceService {
 
-  db = new PouchDB(TANGERINE_DEVICE_STORE)
+  db:PouchDB 
 
   constructor(
     private http:HttpClient,
     private appConfigService:AppConfigService
-  ) { }
+  ) { 
+    this.db = new PouchDB(TANGERINE_DEVICE_STORE)
+  }
 
   async install() {
     await this.db.put({
@@ -34,12 +36,12 @@ export class DeviceService {
     await this.db.destroy()
   }
 
-  async register(token):Promise<Device> {
+  async register(id, token):Promise<Device> {
     const appConfig = await this.appConfigService.getAppConfig()
     const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
     const device = <Device>await this
       .http
-      .get(`${appConfig.homeUrl}api/${appConfig.groupName}/devices-by-token/${token}`).toPromise() 
+      .get(`${appConfig.serverUrl}api/device/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
     await this.db.put({
       ...tangerineDeviceDoc,
       device
@@ -56,7 +58,7 @@ export class DeviceService {
     const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
     const device = <Device>await this
       .http
-      .get(`${appConfig.homeUrl}api/${appConfig.groupName}/devices-by-token/${tangerineDeviceDoc.device.token}`).toPromise() 
+      .get(`${appConfig.serverUrl}api/device/info/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}`).toPromise() 
     await this.db.put({
       ...tangerineDeviceDoc,
       device
