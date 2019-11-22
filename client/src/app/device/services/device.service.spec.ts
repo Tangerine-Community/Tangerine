@@ -8,12 +8,13 @@ import { Device } from '../classes/device.class';
 
 const MOCK_GROUP_ID = 'MOCK_GROUP_ID'
 const MOCK_DEVICE_ID = 'MOCK_DEVICE_ID'
-const MOCK_DEVICE_TOKEN = 'MOCK_DEVICE_TOKEN'
+const MOCK_DEVICE_TOKEN_1 = 'MOCK_DEVICE_TOKEN_1'
+const MOCK_DEVICE_TOKEN_2 = 'MOCK_DEVICE_TOKEN_2'
 const MOCK_SERVER_URL = 'MOCK_SERVER_URL'
 
 const MOCK_DEVICE = <Device>{
   _id: MOCK_DEVICE_ID,
-  token: MOCK_DEVICE_TOKEN,
+  token: MOCK_DEVICE_TOKEN_2,
   location: {},
   claimed: true,
   syncLocations: []
@@ -64,19 +65,19 @@ describe('DeviceService', () => {
   });
 
   it('should register, get device info, and then get updated device info', async(done) => {
-    deviceService.register(MOCK_DEVICE_ID, MOCK_DEVICE_TOKEN).then(async responseDevice => {
+    deviceService.register(MOCK_DEVICE_ID, MOCK_DEVICE_TOKEN_1).then(async responseDevice => {
       const device = await deviceService.getDevice()
       expect(device._id).toEqual(responseDevice._id)
+      expect(device.token).toEqual(MOCK_DEVICE_TOKEN_2)
       expect(device._id).toEqual(MOCK_DEVICE_ID)
       deviceService.updateDevice().then(async responseDevice => {
         const device = await deviceService.getDevice()
         expect(device._id).toEqual(responseDevice._id)
-        expect(device._id).toEqual(MOCK_DEVICE_ID)
         expect(device.location.city).toEqual('portland')
         done()
       })
       setTimeout(() => {
-        const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}api/device/info/${MOCK_GROUP_ID}/${MOCK_DEVICE_ID}/${MOCK_DEVICE_TOKEN}`);
+        const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}api/device/info/${MOCK_GROUP_ID}/${MOCK_DEVICE_ID}/${MOCK_DEVICE_TOKEN_2}`);
         expect(req.request.method).toEqual('GET')
         req.flush({
           ...MOCK_DEVICE,
@@ -88,7 +89,7 @@ describe('DeviceService', () => {
       }, 500)
     })
     setTimeout(() => {
-      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}api/device/register/${MOCK_GROUP_ID}/${MOCK_DEVICE_ID}/${MOCK_DEVICE_TOKEN}`);
+      const req = httpTestingController.expectOne(`${MOCK_SERVER_URL}api/device/register/${MOCK_GROUP_ID}/${MOCK_DEVICE_ID}/${MOCK_DEVICE_TOKEN_1}`);
       expect(req.request.method).toEqual('GET')
       req.flush(MOCK_DEVICE);
     }, 500)
