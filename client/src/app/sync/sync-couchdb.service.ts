@@ -29,11 +29,10 @@ export class SyncCouchdbService {
     private http:HttpClient
   ) { }
 
-  async uploadQueue(userDb:UserDatabase, formInfos:Array<FormInfo>) {
-    const queryKeys = formInfos.reduce((queryKeys, formInfo) => {
+  async uploadQueue(userDb:UserDatabase, syncDetails:SyncDetails) {
+    const queryKeys = syncDetails.formInfos.reduce((queryKeys, formInfo) => {
       if (formInfo.couchdbSyncSettings.enabled) {
-        queryKeys.push([true, formInfo.id, true])
-        queryKeys.push([true, formInfo.id, false])
+        queryKeys.push([true, formInfo.id])
       }
       return queryKeys
     }, [])
@@ -44,55 +43,51 @@ export class SyncCouchdbService {
   }
 
   // Note that if you run this with no forms configured to CouchDB sync, that will result in no filter query and everything will be synced. Use carefully.
-  sync(userDb:UserDatabase, syncDetails:SyncDetails):Promise<ReplicationStatus> {
-    return new Promise(async (resolve, reject) => {
-      try{
-        const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
-        const remoteDb = new PouchDB(syncSessionUrl)
-        const pouchDbSyncOptions ={
-          selector: {
-            "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
-              if (formInfo.couchdbSyncSettings.enabled) {
-                $or = [
-                  ...$or,
-                  ...syncDetails.locationQueries.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
-                    ? syncDetails.locationQueries.map(locationQuery => { 
-                        return { 
-                          "form.id": formInfo.id,
-                          [`location.${locationQuery.level}`]: locationQuery.id
-                        }
-                      })
-                    : [
-                        { 
-                          "form.id": formInfo.id
-                        }
-                      ]
-                ]
-              }
-              return $or
-            }, [])
+  async sync(userDb:UserDatabase, syncDetails:SyncDetails):Promise<ReplicationStatus> {
+    const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
+    const remoteDb = new PouchDB(syncSessionUrl)
+    const pouchDbSyncOptions ={
+      selector: {
+        "$or": syncDetails.formInfos.reduce(($or, formInfo) => {
+          if (formInfo.couchdbSyncSettings.enabled) {
+            $or = [
+              ...$or,
+              ...syncDetails.locationQueries.length > 0 && formInfo.couchdbSyncSettings.filterByLocation
+                ? syncDetails.locationQueries.map(locationQuery => { 
+                    return { 
+                      "form.id": formInfo.id,
+                      [`location.${locationQuery.level}`]: locationQuery.id
+                    }
+                  })
+                : [
+                    { 
+                      "form.id": formInfo.id
+                    }
+                  ]
+            ]
           }
-        } 
-        // Preemptively mark docs as synced because doing so afterward would create an almost infinite loop of things needing to be synced.
-        const uploadQueue = await this.uploadQueue(userDb, syncDetails.formInfos)
-        for (let docId of uploadQueue) {
-          const doc = await userDb.get(docId)
-          await userDb.synced(doc) 
-        }
-        userDb.sync(remoteDb, pouchDbSyncOptions).on('complete', async  (info) => {
-          const conflictsQuery = await userDb.query('sync-conflicts');
-          resolve(<ReplicationStatus>{
-            pulled: info.pull.docs_written,
-            pushed: info.push.docs_written,
-            conflicts: conflictsQuery.rows.map(row => row.id)
-          })
-        }).on('error', function (errorMessage) {
-          console.log("boo, something went wrong! error: " + errorMessage)
-          reject(errorMessage)
-        });
-      } catch (err) {
-        reject(err)
+          return $or
+        }, [])
       }
+    } 
+    // Preemptively mark docs as synced because doing so afterward would create an almost infinite loop of things needing to be synced.
+    const uploadQueue = await this.uploadQueue(userDb, syncDetails)
+    for (let docId of uploadQueue) {
+      const doc = await userDb.get(docId)
+      await userDb.synced(doc) 
+    }
+    return await new Promise(async (resolve, reject) => {
+      userDb.sync(remoteDb, pouchDbSyncOptions).on('complete', async  (info) => {
+        const conflictsQuery = await userDb.query('sync-conflicts');
+        resolve(<ReplicationStatus>{
+          pulled: info.pull.docs_written,
+          pushed: info.push.docs_written,
+          conflicts: conflictsQuery.rows.map(row => row.id)
+        })
+      }).on('error', function (errorMessage) {
+        console.log("boo, something went wrong! error: " + errorMessage)
+        reject(errorMessage)
+      });
     })
   }
 }

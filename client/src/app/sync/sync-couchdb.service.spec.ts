@@ -346,6 +346,6 @@ describe('SyncCouchdbService', () => {
     }, 500)
   }, 4000)
 
-  it('should not count remotely created docs synced down as needing sync...')
+  it('should not count remotely created docs synced down as needing sync (missing .tangerineSyncedOn, no need some kind of flag for neverSynced that client can use. This just affects the count of how many docs need syncing, wouldnt actually cause a sync.)...')
   it('should push everything because maybe we changed location of device and there is some info tied to the old location? Or maybe changing location is a database clear kind of thing.')
 });
