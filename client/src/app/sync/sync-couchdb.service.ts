@@ -76,7 +76,7 @@ export class SyncCouchdbService {
       const doc = await userDb.get(docId)
       await userDb.synced(doc) 
     }
-    const replicationStatus = <ReplicationStatus>await new Promise(async (resolve, reject) => {
+    const replicationStatus = <ReplicationStatus>await new Promise((resolve, reject) => {
       userDb.sync(remoteDb, pouchDbSyncOptions).on('complete', async  (info) => {
         const conflictsQuery = await userDb.query('sync-conflicts');
         resolve(<ReplicationStatus>{
