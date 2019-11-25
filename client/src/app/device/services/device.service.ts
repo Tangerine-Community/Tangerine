@@ -41,7 +41,7 @@ export class DeviceService {
     const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
     const device = <Device>await this
       .http
-      .get(`${appConfig.serverUrl}api/device/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
     await this.db.put({
       ...tangerineDeviceDoc,
       device
@@ -50,7 +50,8 @@ export class DeviceService {
   }
 
   async getDevice():Promise<Device> {
-    return (<TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)).device
+    const deviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
+    return deviceDoc.device ? deviceDoc.device : <Device>{_id: 'N/A'}
   }
 
   async updateDevice():Promise<Device> {
@@ -58,7 +59,7 @@ export class DeviceService {
     const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
     const device = <Device>await this
       .http
-      .get(`${appConfig.serverUrl}api/device/info/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device/info/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}`).toPromise() 
     await this.db.put({
       ...tangerineDeviceDoc,
       device
