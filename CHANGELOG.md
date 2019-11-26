@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.6.4
+- Fix usage of `T_CSV_MARK_DISABLED_OR_HIDDEN_WITH` in some cases.
+
 ## v3.6.3
 - Allow disabled or hidden inputs output in CSV to be overridden using CSV_MARK_DISABLED_OR_HIDDEN_WITH in `config.sh`. The default value in `config.defaults.sh` is `"999"` which is what it has been for a few releases. When upgrading, do nothing if you want this to stay the same, otherwise use `"ORIGINAL_VALUE"` if you want to turn off the feature or set to your own custom value such as `"SKIPPED"`.
 
