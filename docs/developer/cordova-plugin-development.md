@@ -20,19 +20,25 @@ cordova build android
 
 After your done the bulk of your Cordova development, you will need to modify the docker-tangerine-base-image to include the new plugin. After updating the base image, don't forget to update the Dockerfile. 
 
-Sometimes you may need to view an update to the plugin bugt you don't want to go to the trouble of updating the base image. CD to /tangerine/client/builds/apk and run the following:
+Sometimes you may need to view an update to the plugin but you don't want to go to the trouble of updating the base image. It is possible to work on the plugin code and then refresh the code in Tangerine. First you will need to share the source code with your docker instance Add the following to develop.sh:
+
+```
+  --volume $(pwd)/../cordova-plugin-nearby-connections:/tangerine/client/cordova-plugin-nearby-connections \
+```
+
+Once your container has started, docker exec into it, CD to /tangerine/client/builds/apk and run the following:
 
 ```javascript
 cordova plugin rm cordova-plugin-nearby-connections
 cordova platform rm android
 cordova platform add android@8
-cordova plugin add cordova-plugin-nearby-connections --save
+cordova plugin add ../../cordova-plugin-nearby-connections --save
 cordova build android
 ```
 
-## Refreshing the APK
+## Updating Angular client code used in the APK
 
-IF you're developing Cordova plugins for Tangerine and make changes to the client code that is displayed in the apk, 
+IF you're developing Cordova plugins for Tangerine and make changes to the Angular client code that is displayed in the apk, 
 you will need to refresh the apk build. First generate a pwa. Then run the following code:
 
 ```javascript
