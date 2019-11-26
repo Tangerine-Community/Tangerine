@@ -48,16 +48,16 @@ export class PeersComponent implements OnInit {
   }
 
   async getTangyP2PPermissions() {
-    const response = this.peersService.getTangyP2PPermissions();
-    if (response['messageType'] === 'log') {
+    const response: Message = await this.peersService.getTangyP2PPermissions();
+    if (typeof response !== 'undefined' && response['messageType'] === 'log') {
       const logEl = document.querySelector('#p2p-results');
       logEl.innerHTML = logEl.innerHTML +  '<p>' + response['message'] + '</p>\n';
     }
   }
 
   async startAdvertising() {
-    let message: Message = await this.peersService.startAdvertising(this.endpoints);
-    if (message.messageType === 'log') {
+    const message: Message = await this.peersService.startAdvertising(this.endpoints);
+    if (typeof message !== 'undefined' && message.messageType === 'log') {
       const logEl = document.querySelector('#p2p-results');
       logEl.innerHTML = logEl.innerHTML +  '<p>' + message.message + '</p>\n';
     } else if (message.messageType === 'localEndpointName') {
@@ -76,7 +76,7 @@ export class PeersComponent implements OnInit {
 
   async connectToEndpoint(id, name) {
     const endpoint = id + '_' + name;
-    let message: Message = await this.peersService.connectToEndpoint(endpoint);
+    const message: Message = await this.peersService.connectToEndpoint(endpoint);
     if (message.messageType === 'payloadReceived') {
       document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
       document.querySelector('#transferProgress').innerHTML += message.message + '<br/>';
@@ -85,7 +85,7 @@ export class PeersComponent implements OnInit {
     }
   }
 
-  // async transferData() {
-  //   await this.peersService.transferData();
+  // async pushData() {
+  //   await this.peersService.pushData();
   // }
 }
