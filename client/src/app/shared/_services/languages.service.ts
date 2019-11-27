@@ -50,8 +50,8 @@ export class LanguagesService {
     localStorage.setItem(USER_HAS_SET_LANGUAGE, userHasSetLanguage ? 'true' : 'false')
   }
 
-  userHasSetLanguage() {
-    localStorage.getItem(USER_HAS_SET_LANGUAGE) === 'true' ? true : false
+  userHasSetLanguage():boolean {
+    return localStorage.getItem(USER_HAS_SET_LANGUAGE) === 'true' ? true : false
   }
 
 }

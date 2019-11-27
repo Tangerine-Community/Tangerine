@@ -1,3 +1,8 @@
-<p>
-  device-sync works!
-</p>
+<div *ngIf="syncInProgress === true">
+  <h2>Syncing...</h2>
+  <paper-progress indeterminate></paper-progress>
+</div>
+<div *ngIf="syncIsComplete === true">
+  <h2>Sync has completed!</h2>
+  <paper-button (click)="onContinueClick()"> continue</paper-button>
+</div>

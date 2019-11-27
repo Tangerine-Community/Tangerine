@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { DeviceLanguageComponent } from './../device-language/device-language.component';
 import { DeviceSyncComponent } from './../device-sync/device-sync.component';
 import { DeviceRegistrationComponent } from './../device-registration/device-registration.component';
@@ -25,7 +26,8 @@ export class DeviceSetupComponent implements OnInit {
   @ViewChild('stepDeviceSync') stepDeviceSync:DeviceSyncComponent
 
   constructor(
-    private languagesService:LanguagesService
+    private languagesService:LanguagesService,
+    private routerService:Router
   ) { }
 
   async ngOnInit() {
@@ -46,10 +48,11 @@ export class DeviceSetupComponent implements OnInit {
     this.stepDeviceRegistration.done$.subscribe((value) => {
       if (value === true) {
         this.step = STEP_SYNC
+        this.stepDeviceSync.sync()
       }
     })
     this.stepDeviceSync.done$.subscribe((value) => {
-
+      this.routerService.navigate([''])
     })
     this.ready$.next(true)
 

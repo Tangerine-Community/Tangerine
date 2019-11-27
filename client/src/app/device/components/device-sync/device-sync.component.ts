@@ -1,3 +1,4 @@
+import { SyncService } from './../../../sync/sync.service';
 import { Subject } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 
@@ -9,10 +10,25 @@ import { Component, OnInit } from '@angular/core';
 export class DeviceSyncComponent implements OnInit {
 
   done$ = new Subject()
+  syncInProgress = false
+  syncIsComplete = false
 
-  constructor() { }
+  constructor(
+    private syncService:SyncService
+  ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+  }
+
+  async sync() {
+    this.syncInProgress = true
+    await this.syncService.sync(true)
+    this.syncInProgress = false
+    this.syncIsComplete = true
+  }
+
+  onContinueClick() {
+    this.done$.next(true)
   }
 
 }

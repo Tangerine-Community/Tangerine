@@ -1,3 +1,5 @@
+import { SyncModule } from './sync/sync.module';
+import { DeviceModule } from './device/device.module';
 import { SharedModule } from './shared/shared.module';
 import 'hammerjs';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -49,9 +51,11 @@ export { AppComponent }
     AuthModule,
     CaseManagementModule,
     ClassModule,
+    DeviceModule,
     SearchModule,
     CaseModule,
     TwoWaySyncModule,
+    SyncModule,
     NewFormResponseModule,
     UserProfileModule,
     SettingsModule,

@@ -3,11 +3,16 @@ export class Device {
   collection = 'Device'
   token:string
   claimed:boolean
-  syncLocations:Array<SyncLocation> = []
-  location:any
+  syncLocations:Array<LocationConfig> = []
+  assignedLocation:LocationConfig
 }
 
-export interface SyncLocation {
+export interface LocationConfig {
+  showLevels: Array<string>
+  value: Array<LocationSelection>
+}
+
+export interface LocationSelection {
   level:string
-  id:string
+  value:string
 }

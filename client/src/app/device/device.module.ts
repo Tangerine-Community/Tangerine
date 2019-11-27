@@ -4,10 +4,11 @@ import { DeviceRegistrationComponent } from './components/device-registration/de
 import { DeviceSetupComponent } from './components/device-setup/device-setup.component';
 import { DeviceRoutingModule } from './device-routing.module';
 import { DeviceService } from './services/device.service';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   declarations: [
     DeviceSetupComponent,
     DeviceRegistrationComponent,
