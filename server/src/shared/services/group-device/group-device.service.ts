@@ -67,12 +67,13 @@ export class GroupDeviceService {
       throw new Error('Trying to register a device already claimed. Unregister the device first.')
     }
     // Reset token on registration.
-    const freshDevice = await groupDevicesDb.put({
+    await groupDevicesDb.put({
       ...device,
       claimed: true,
       token: uuid.v4()
     })
-    return freshDevice
+    return <GroupDevice>await groupDevicesDb.get(deviceId)
+    
   }
 
   async unregister(groupId, deviceId) {
