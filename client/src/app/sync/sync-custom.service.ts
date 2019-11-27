@@ -8,6 +8,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ReplicationStatus } from './classes/replication-status.class';
 import * as pako from 'pako';
 
+export class SyncCustomDetails {
+  serverUrl:string
+  groupId:string
+  deviceId:string
+  deviceToken:string
+  formInfos:Array<FormInfo> = []
+  appConfig:AppConfig
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,6 +25,12 @@ export class SyncCustomService {
   constructor(
     private http: HttpClient
   ) { }
+
+  async sync(userDb:UserDatabase, syncDetails:SyncCustomDetails) {
+    const uploadQueue = await this.uploadQueue(userDb, syncDetails.formInfos)
+    await this.push(userDb, syncDetails.appConfig, uploadQueue)
+    // @TODO pull
+  }
 
   async push(userDb:UserDatabase, appConfig:AppConfig, docIds:Array<string>) {
     try {

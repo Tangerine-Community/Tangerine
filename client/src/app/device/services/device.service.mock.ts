@@ -1,4 +1,4 @@
-import { Device, SyncLocation } from './../classes/device.class';
+import { Device, LocationConfig, LocationSelection } from './../classes/device.class';
 import { PouchDB } from 'pouchdb';
 import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
@@ -34,9 +34,14 @@ const MOCK_DEVICE = <Device>{
   _id: MOCK_DEVICE_ID,
   token: MOCK_DEVICE_TOKEN,
   syncLocations:[
-    <SyncLocation>{
-      level: LOCATION_LEVEL_1,
-      id: LOCATION_1[LOCATION_LEVEL_1]
+    <LocationConfig>{
+      showLevels: [ LOCATION_LEVEL_1 ],
+      value: [ 
+        <LocationSelection>{
+          level: LOCATION_LEVEL_1,
+          value: LOCATION_1[LOCATION_LEVEL_1]
+        }
+      ]
     }
   ]
 }

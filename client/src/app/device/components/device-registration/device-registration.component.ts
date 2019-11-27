@@ -101,8 +101,8 @@ export class DeviceRegistrationComponent implements OnInit {
           <h2>Success!</h2>
           <h2>Before continuing, let's review this info to make sure you registered with the right device info.</h2>
           <tangy-input name="device_id" label="Device ID" value="${device._id}" disabled></tangy-input>
-          <tangy-input name="device_token" label="Token" value="${device.token}" disabled></tangy-input>
-          <tangy-input name="device_location" label="Token" value='${typeof device.location === 'object' ? JSON.stringify(device.location) : ''}' disabled></tangy-input>
+          <tangy-input name="device_token" label="Token" value="${device.token}" hidden></tangy-input>
+          <tangy-location name="device_location" label="Location" value='${JSON.stringify(device.assignedLocation.value)}' show-levels="${device.assignedLocation.showLevels.join(',')}"} disabled></tangy-location>
           <tangy-radio-buttons name="confirmation" label="Does the above info look like the right device info?" required>
             <option value="yes" label="yes">yes</option>
             <option value="no" label="no">no</option> 
