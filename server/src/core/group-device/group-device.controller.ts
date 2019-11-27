@@ -10,10 +10,8 @@ export class GroupDeviceController {
     private readonly groupDeviceService: GroupDeviceService
   ) { }
 
-  // @TODO Check permissions on every route.
-
   @All('create/:groupId')
-  async create(@Param('groupId') groupId:string, @Body('deviceData') deviceData:any):Promise<GroupDevice> {
+  async create(@Param('groupId') groupId:string, @Body() deviceData:any):Promise<GroupDevice> {
     return await this.groupDeviceService.create(groupId, deviceData)
   }
 
@@ -63,7 +61,6 @@ export class GroupDeviceController {
       return 'There was an error.'
     }
   }
-
 
   /* @TODO
   @All('list')

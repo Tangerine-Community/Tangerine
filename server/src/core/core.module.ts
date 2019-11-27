@@ -6,7 +6,11 @@ import { GroupDeviceController } from './group-device/group-device.controller';
 import isAuthenticated = require('../middleware/is-authenticated')
 
 @Module({
-  controllers: [GroupController, UserController, GroupDeviceController],
+  controllers: [
+    GroupController,
+    UserController,
+    GroupDeviceController
+  ],
   imports: [SharedModule]
 })
 export class CoreModule implements NestModule {
