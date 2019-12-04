@@ -48,6 +48,11 @@ export class DeviceService {
     })
     return device
   }
+  
+  async isRegistered() {
+    const device = await this.getDevice()
+    return device._id === 'N/A' ? false : true
+  }
 
   async getDevice():Promise<Device> {
     const deviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
