@@ -1,3 +1,4 @@
+import { UserAccount } from './../_classes/user-account.class';
 import { DeviceService } from './../../device/services/device.service';
 import { UserDatabase } from './../_classes/user-database.class';
 import {from as observableFrom,  Observable } from 'rxjs';
@@ -115,42 +116,52 @@ export class UserService {
     }
   }
 
-  // A helper method for upgrades to be used when a module has a view to upgrade.
-  async updateAllDefaultUserDocs() {
-    console.log('Installing views...')
-    for (const userDb of this.userDatabases) {
-      for (const moduleDocs of this.defaultUserDocs) {
-        for (const doc of moduleDocs) {
-          try {
-            const docInDb = await userDb.get(doc._id)
-            await userDb.put({
-              ...doc,
-              _rev: docInDb._rev
-            })
-          } catch(err) {
-            await userDb.put(doc)
-          }
+  async updateDefaultUserDocs(accountId) {
+    console.log(`Updating default user docs for ${accountId}`)
+    const userDb = await this.getUserDatabase(accountId)
+    for (const moduleDocs of this.defaultUserDocs) {
+      for (const doc of moduleDocs) {
+        try {
+          const docInDb = await userDb.get(doc._id)
+          await userDb.put({
+            ...doc,
+            _rev: docInDb._rev
+          })
+        } catch(err) {
+          await userDb.put(doc)
         }
       }
     }
   }
 
-  // A helper method for upgrades to be used when a module has upgraded a view and now views need indexing.
-  async indexAllUserViews() {
+  async updateAllDefaultUserDocs() {
+    const userAccounts = await this.getAllUserAccounts()
+    for (const userAccount of userAccounts) {
+      await this.updateDefaultUserDocs(userAccount._id)
+    }
+  }
+
+  async indexUserViews(accountId) {
+    const userDb = await this.getUserDatabase(accountId)
     try {
-      for (const userDb of this.userDatabases) {
-        for (const moduleDocs of this.defaultUserDocs) {
-          for (const doc of moduleDocs) {
-            if (Object.keys(doc.views).length > 0) {
-              for (let viewName of Object.keys(doc.views)) {
-                await userDb.query(`${doc._id.replace('_design/', '')}/${viewName}`)
-              }
+      for (const moduleDocs of this.defaultUserDocs) {
+        for (const doc of moduleDocs) {
+          if (Object.keys(doc.views).length > 0) {
+            for (let viewName of Object.keys(doc.views)) {
+              await userDb.query(`${doc._id.replace('_design/', '')}/${viewName}`)
             }
           }
         }
       }
     } catch(err) {
       throw(err)
+    }
+  }
+
+  async indexAllUserViews() {
+    const userAccounts = await this.getAllUserAccounts()
+    for (const userAccount of userAccounts) {
+      await this.indexUserViews(userAccount._id)
     }
   }
 
