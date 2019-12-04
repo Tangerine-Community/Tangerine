@@ -125,29 +125,92 @@ export class PeersService {
   };
 
   async startAdvertising(endpoints: Endpoint[]) {
-    if (this.window.isCordovaApp) {
+    // if (this.window.isCordovaApp) {
       const message: Message = <Message>await new Promise((resolve, reject) => {
-        window['cordova']['plugins']['NearbyConnectionsPlugin'].startAdvertising(null, this.successAdvert, this.errorAdvert);
+        window['cordova']['plugins']['NearbyConnectionsPlugin'].startAdvertising(null, (response: Message, endpoints: Endpoint[]) => {
+          if (response['messageType'] === 'log') {
+            resolve(new Message('log', response['message'], null, null));
+          } else if (response['messageType'] === 'localEndpointName') {
+            resolve(new Message('localEndpointName', response['message'], null, null));
+          } else if (response['messageType'] === 'endpoints') {
+            let endpointList: Endpoint[] = [];
+            console.log('endpoints: ' + JSON.stringify(response['object']));
+            const newEndpoints = response['object'];
+            for (const [key, value] of Object.entries(newEndpoints)) {
+              console.log(`${key}: ${value}`);
+              const endpoint = {} as Endpoint;
+              endpoint.id = key;
+              endpoint.endpointName = <String>value;
+              let isUnique = true;
+              endpointList.forEach((peer: Endpoint) => {
+                if (endpoint.id === peer.id) {
+                  isUnique = false;
+                }
+              })
+              if (isUnique) {
+                endpointList.push(endpoint);
+              }
+            }
+            // console.log('enpoints go here.')
+            // endpointList = MOCK_ENDPOINTS;
+            resolve(new Message('endpoints', null, endpointList, null));
+          } else if (response.messageType === 'payload') {
+            // load the data sent and then send your own.
+            // const messageStr = response.message;
+            // TODO: JSONObject is available if we need it.
+            const payload: Message = <Message>response.object;
+            const databaseDump = payload.object;
+            PouchDB.plugin(window['PouchReplicationStream'].plugin);
+            PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
+            const writeStream = new window['Memorystream'];
+            writeStream.end(databaseDump);
+            const dest = new PouchDB('kittens');
+            dest.load(writeStream).then(async () => {
+              const pluginMessage = 'I loaded data from the peer device. Now I will send you my data.';
+              const db = await this.getDatabase();
+              const dumpedString = await this.dumpData(db)
+              let message: Message;
+              if (this.isMaster) {
+                resolve(new Message('payload', pluginMessage, null, null));
+              } else {
+                try {
+                  console.log('Pushing data to master.')
+                  const payload: Message = new Message('payload', pluginMessage, dumpedString, null);
+                  message = await this.pushData(payload);
+                  resolve(new Message('payload', pluginMessage, null, null));
+                } catch (e) {
+                  reject(message);
+                }
+              }
+            }).catch(function (err) {
+              console.log(err);
+              reject(new Message('error', err, null, null));
+            });
+          }
+          }, function(errorMsg) {
+            console.log('error:' + errorMsg);
+          reject(new Message('error', errorMsg, null, null));
+        });
       }
       );
       return message;
-    } else {
-      // testing or using a PWA; emulating a response from the plugin
-      // endpoints = MOCK_ENDPOINTS;
-      // return new Message('endpoints', null, endpoints);
-      const obj = {
-        message: 'Endpoints',
-        messageType: 'endpoints',
-        object: {
-          'tab1': 'tab1',
-          'tab2': 'tab2',
-          'tab3': 'tab3'
-        }
-      };
-      const response: Message = new Message('endpoints', 'Endpoints', obj, null);
-      const message = this.successAdvert(response, endpoints);
-      return message;
-    }
+    // } else {
+    //   // testing or using a PWA; emulating a response from the plugin
+    //   // endpoints = MOCK_ENDPOINTS;
+    //   // return new Message('endpoints', null, endpoints);
+    //   const obj = {
+    //     message: 'Endpoints',
+    //     messageType: 'endpoints',
+    //     object: {
+    //       'tab1': 'tab1',
+    //       'tab2': 'tab2',
+    //       'tab3': 'tab3'
+    //     }
+    //   };
+    //   const response: Message = new Message('endpoints', 'Endpoints', obj, null);
+    //   const message = this.successAdvert(response, endpoints);
+    //   return message;
+    // }
   }
 
   async connectToEndpoint(endpoint): Promise<Message> {
