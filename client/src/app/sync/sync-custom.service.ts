@@ -28,11 +28,11 @@ export class SyncCustomService {
 
   async sync(userDb:UserDatabase, syncDetails:SyncCustomDetails) {
     const uploadQueue = await this.uploadQueue(userDb, syncDetails.formInfos)
-    await this.push(userDb, syncDetails.appConfig, uploadQueue)
+    await this.push(userDb, syncDetails, uploadQueue)
     // @TODO pull
   }
 
-  async push(userDb:UserDatabase, appConfig:AppConfig, docIds:Array<string>) {
+  async push(userDb:UserDatabase, syncDetails:SyncCustomDetails, docIds:Array<string>) {
     try {
       for (const doc_id of docIds) {
         const doc = await userDb.get(doc_id);
@@ -45,11 +45,7 @@ export class SyncCustomService {
           });
         });
         const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
-        const response = <any>await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload`, body, {
-          headers: new HttpHeaders({
-            'Authorization': appConfig.uploadToken
-          })
-        }).toPromise();
+        const response = <any>await this.http.post(`${syncDetails.serverUrl}sync-custom/push/${syncDetails.groupId}/${doc_id}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, body).toPromise();
         if (!response && !response.status && response.status !== 'ok') {
           throw(new Error('Unable to sync, try again.'))
         } else {

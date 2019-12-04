@@ -33,7 +33,7 @@ export class SyncRecordsComponent implements OnInit {
 
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();
-    this.syncProtocol = appConfig.syncProtocol;
+    this.syncProtocol = appConfig.syncProtocol ? appConfig.syncProtocol : '1'
     if (typeof this.syncProtocol !== 'undefined' && this.syncProtocol === 'replication') {
     } else {
       this.getUploadProgress();

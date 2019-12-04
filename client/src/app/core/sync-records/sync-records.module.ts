@@ -1,3 +1,4 @@
+import { SyncModule } from './../../sync/sync.module';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
@@ -20,6 +21,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     ReactiveFormsModule,
     SyncRecodsRoutingModule,
     TwoWaySyncModule,
+    SyncModule,
     MatButtonModule,
     MatInputModule,
     MatCardModule,
