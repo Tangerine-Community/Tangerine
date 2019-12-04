@@ -43,7 +43,6 @@ export class SyncService {
     } else { 
       userDb = await this.userService.getUserDatabase()
     }
-    debugger
     await this.syncCouchdbService.sync(userDb, <SyncCouchdbDetails>{
       serverUrl: appConfig.serverUrl,
       groupId: appConfig.groupId,
@@ -53,6 +52,7 @@ export class SyncService {
       formInfos
     })
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
+      appConfig: appConfig,
       serverUrl: appConfig.serverUrl,
       groupId: appConfig.groupId,
       deviceId: device._id,
