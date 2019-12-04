@@ -213,6 +213,10 @@ export class UserService {
       .map(row => row.doc)
       .find(doc => doc.username === username)
   }
+  async saveUserAccount(userAccount:UserAccount):Promise<UserAccount> {
+    await this.usersDb.put(userAccount)
+    return await this.usersDb.get(userAccount._id)
+  }
 
   async getAllUserAccounts():Promise<Array<UserAccount>> {
     return (await this.usersDb.allDocs({include_docs: true}))

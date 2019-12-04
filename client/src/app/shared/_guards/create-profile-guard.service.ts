@@ -19,9 +19,9 @@ export class CreateProfileGuardService implements CanActivate {
     if (!userAccount.initialProfileComplete) {
       if (appConfig.associateUserProfileMode === 'remote') {
         this.router.navigate(['/import-user-profile'], { queryParams: { returnUrl: state.url } });
-      } else if (appConfig.associateUserProfileMode === 'local') {
+      } else if (appConfig.associateUserProfileMode === 'local-exists') {
         this.router.navigate(['/associate-user-profile'], { queryParams: { returnUrl: state.url } });
-      } else if (appConfig.associateUserProfileMode === 'custom') {
+      } else if (appConfig.associateUserProfileMode === 'local-new' || !appConfig.associateUserProfileMode) {
         if (state.url.substr(0,20) !== '/manage-user-profile') {
           this.router.navigate(['/manage-user-profile'], { queryParams: { returnUrl: state.url } });
         } else {
