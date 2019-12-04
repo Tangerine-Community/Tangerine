@@ -14,7 +14,6 @@ const bcrypt = {
 const CURRENT_USER = 'currentUser'
 import { AppConfigService } from './app-config.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
-import { UserAccount } from '../_classes/user-account.class';
 import { UserSignup } from '../_classes/user-signup.class';
 import { updates } from '../../core/update/update/updates';
 import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
