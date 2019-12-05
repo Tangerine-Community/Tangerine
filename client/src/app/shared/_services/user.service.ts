@@ -1,3 +1,5 @@
+import { UserAccount } from './../_classes/user-account.class';
+import { DeviceService } from './../../device/services/device.service';
 import { UserDatabase } from './../_classes/user-database.class';
 import {from as observableFrom,  Observable } from 'rxjs';
 import {filter, map} from 'rxjs/operators';
@@ -12,7 +14,6 @@ const bcrypt = {
 const CURRENT_USER = 'currentUser'
 import { AppConfigService } from './app-config.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
-import { UserAccount } from '../_classes/user-account.class';
 import { UserSignup } from '../_classes/user-signup.class';
 import { updates } from '../../core/update/update/updates';
 import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
@@ -30,6 +31,7 @@ export class UserService {
 
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
+    private deviceService: DeviceService,
     private appConfigService: AppConfigService,
     private http: HttpClient
   ) { }
@@ -39,7 +41,7 @@ export class UserService {
   }
 
   async install() {
-    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', true)
+    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', 'install', true)
     await this.installDefaultUserDocs(sharedUserDatabase)
     await sharedUserDatabase.put({
       _id: 'info',
@@ -47,12 +49,24 @@ export class UserService {
     })
   }
 
+  async uninstall() {
+    const userAccounts = await this.getAllUserAccounts()
+    for (const userAccount of userAccounts) {
+      const userDb = await this.getUserDatabase(userAccount.username)
+      await userDb.destroy()
+    }
+    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', 'install', true)
+    await sharedUserDatabase.destroy()
+    await this.usersDb.destroy()
+  }
+
   //
   // User Database 
   //
 
   async createUserDatabase(username:string, userId:string):Promise<UserDatabase> {
-    const userDb = new UserDatabase(username, userId)
+    const device = await this.deviceService.getDevice()
+    const userDb = new UserDatabase(username, userId, device._id)
     this.installDefaultUserDocs(userDb)
     this.userDatabases.push(userDb)
     return userDb
@@ -69,14 +83,24 @@ export class UserService {
   }
 
   async getUserDatabase(username = '') {
+   const device = await this.deviceService.getDevice()
    if (username === '') {
-      return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'), this.config && this.config.sharedUserDatabase ? true : false)
+      return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'), device._id, this.config && this.config.sharedUserDatabase ? true : false)
     } else {
       const userAccount = await this.getUserAccount(username)
-      return new UserDatabase(username, userAccount.userUUID, this.config && this.config.sharedUserDatabase ? true : false)
+      return new UserDatabase(username, userAccount.userUUID, device._id, this.config && this.config.sharedUserDatabase ? true : false)
     }
   }
 
+  getUsersDatabase() {
+    return this.usersDb
+  }
+
+  // Only really need this before there are actual users.
+  async getSharedUserDatabase() {
+    const device = await this.deviceService.getDevice()
+    return new UserDatabase('shared', 'shared', device._id, true)
+  }
   //
   // Database helpers
   //
@@ -91,42 +115,52 @@ export class UserService {
     }
   }
 
-  // A helper method for upgrades to be used when a module has a view to upgrade.
-  async updateAllDefaultUserDocs() {
-    console.log('Installing views...')
-    for (const userDb of this.userDatabases) {
-      for (const moduleDocs of this.defaultUserDocs) {
-        for (const doc of moduleDocs) {
-          try {
-            const docInDb = await userDb.get(doc._id)
-            await userDb.put({
-              ...doc,
-              _rev: docInDb._rev
-            })
-          } catch(err) {
-            await userDb.put(doc)
-          }
+  async updateDefaultUserDocs(accountId) {
+    console.log(`Updating default user docs for ${accountId}`)
+    const userDb = await this.getUserDatabase(accountId)
+    for (const moduleDocs of this.defaultUserDocs) {
+      for (const doc of moduleDocs) {
+        try {
+          const docInDb = await userDb.get(doc._id)
+          await userDb.put({
+            ...doc,
+            _rev: docInDb._rev
+          })
+        } catch(err) {
+          await userDb.put(doc)
         }
       }
     }
   }
 
-  // A helper method for upgrades to be used when a module has upgraded a view and now views need indexing.
-  async indexAllUserViews() {
+  async updateAllDefaultUserDocs() {
+    const userAccounts = await this.getAllUserAccounts()
+    for (const userAccount of userAccounts) {
+      await this.updateDefaultUserDocs(userAccount._id)
+    }
+  }
+
+  async indexUserViews(accountId) {
+    const userDb = await this.getUserDatabase(accountId)
     try {
-      for (const userDb of this.userDatabases) {
-        for (const moduleDocs of this.defaultUserDocs) {
-          for (const doc of moduleDocs) {
-            if (Object.keys(doc.views).length > 0) {
-              for (let viewName of Object.keys(doc.views)) {
-                await userDb.query(`${doc._id.replace('_design/', '')}/${viewName}`)
-              }
+      for (const moduleDocs of this.defaultUserDocs) {
+        for (const doc of moduleDocs) {
+          if (Object.keys(doc.views).length > 0) {
+            for (let viewName of Object.keys(doc.views)) {
+              await userDb.query(`${doc._id.replace('_design/', '')}/${viewName}`)
             }
           }
         }
       }
     } catch(err) {
       throw(err)
+    }
+  }
+
+  async indexAllUserViews() {
+    const userAccounts = await this.getAllUserAccounts()
+    for (const userAccount of userAccounts) {
+      await this.indexUserViews(userAccount._id)
     }
   }
 
@@ -139,17 +173,19 @@ export class UserService {
   }
 
   async create(userSignup:UserSignup):Promise<UserAccount> {
+    const device = await this.deviceService.getDevice()
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
     const userAccount = new UserAccount(
       userSignup.username,
       this.hashValue(userSignup.password),
       userSignup.securityQuestionResponse,
-      userProfile._id
+      userProfile._id,
+      false
     ) 
     await this.usersDb.post(userAccount)
     let userDb:UserDatabase
     if (this.config.sharedUserDatabase === true) {
-      userDb = new UserDatabase(userAccount.userUUID, true)
+      userDb = new UserDatabase(userSignup.username, userAccount.userUUID, device._id, true)
     } else {
       userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
       await userDb.put({
@@ -173,7 +209,7 @@ export class UserService {
         const userDb = this.userDatabases.find(userDatabase => userDatabase.username === username)
         await userDb.destroy()
       } else {
-        const userDb = new UserDatabase(username, '...', true)
+        const userDb = new UserDatabase(username, '...', '...', true)
         // @TODO Query by username and remove all docs for that user.
       }
       const accountDoc = await this.getUserAccount(username)
@@ -186,6 +222,16 @@ export class UserService {
       .rows
       .map(row => row.doc)
       .find(doc => doc.username === username)
+  }
+  async saveUserAccount(userAccount:UserAccount):Promise<UserAccount> {
+    await this.usersDb.put(userAccount)
+    return await this.usersDb.get(userAccount._id)
+  }
+
+  async getAllUserAccounts():Promise<Array<UserAccount>> {
+    return (await this.usersDb.allDocs({include_docs: true}))
+      .rows
+      .map(row => <UserAccount>row.doc)
   }
 
   async getUserAccountById(userId?: string):Promise<UserAccount> {

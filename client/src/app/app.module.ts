@@ -1,3 +1,5 @@
+import { SyncModule } from './sync/sync.module';
+import { DeviceModule } from './device/device.module';
 import { SharedModule } from './shared/shared.module';
 import 'hammerjs';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -28,7 +30,6 @@ import { UserProfileModule } from './user-profile/user-profile.module';
 import { ExportDataModule } from './core/export-data/export-data.module';
 import { ClassModule } from "./class/class.module";
 import { AboutModule } from './core/about/about.module';
-import { TwoWaySyncModule } from './two-way-sync/two-way-sync.module';
 import { SearchModule } from './core/search/search.module';
 import { NewFormResponseModule } from './core/new-form-response/new-form-response.module';
 export { AppComponent }
@@ -49,9 +50,10 @@ export { AppComponent }
     AuthModule,
     CaseManagementModule,
     ClassModule,
+    DeviceModule,
     SearchModule,
     CaseModule,
-    TwoWaySyncModule,
+    SyncModule,
     NewFormResponseModule,
     UserProfileModule,
     SettingsModule,

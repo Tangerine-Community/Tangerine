@@ -4,7 +4,7 @@ import { SearchService } from './search.service';
 import { UserService } from './user.service';
 import { AuthenticationService } from './authentication.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { FormInfo, FormSearchSettings } from 'src/app/tangy-forms/classes/form-info.class';
+import { FormInfo, FormSearchSettings, CouchdbSyncSettings, CustomSyncSettings } from 'src/app/tangy-forms/classes/form-info.class';
 import { Subject } from 'rxjs';
 import { UserAccount } from '../_classes/user-account.class';
 import PouchDB from 'pouchdb';
@@ -61,6 +61,16 @@ class MockFormsInfoService {
         searchSettings: <FormSearchSettings>{
           shouldIndex: true,
           variablesToIndex: ['foo', 'bar']
+        },
+        couchdbSyncSettings: <CouchdbSyncSettings>{
+          enabled:false,
+          filterByLocation:false
+        },
+        customSyncSettings: <CustomSyncSettings>{
+          enabled: false,
+          push: false,
+          pull: false,
+          excludeIncomplete: false
         }
       }
     ]
