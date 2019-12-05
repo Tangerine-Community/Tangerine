@@ -7,6 +7,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { DeviceSetupComponent } from './device-setup.component';
 import { Device } from '../../classes/device.class';
 
+/*
 const MOCK_DEVICE_ID = 'MOCK_DEVICE_ID'
 const MOCK_DEVICE_TOKEN = 'MOCK_DEVICE_TOKEN'
 const MOCK_DEVICE_LOCATION = {
@@ -64,7 +65,6 @@ describe('DeviceSetupComponent', () => {
   it('should flow', (done) => {
     component.testing = true
     component.ready$.subscribe(async () => {
-      /*
       fixture.detectChanges();
       // Pick language.
       const formEl = component.stepLanguageSelect.container.nativeElement.querySelector('tangy-form')
@@ -73,7 +73,6 @@ describe('DeviceSetupComponent', () => {
       const languageInfo = await languagesService.getCurrentLanguage()
       expect(languageInfo.languageCode).toEqual('fr')
       fixture.detectChanges();
-      */
       // Enter device codes.
 
       // Fail manual entry.
@@ -89,3 +88,4 @@ describe('DeviceSetupComponent', () => {
     })
   }, 987654321)
 });
+*/

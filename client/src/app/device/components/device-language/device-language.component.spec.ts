@@ -3,7 +3,7 @@ import { LanguagesService } from './../../../shared/_services/languages.service'
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DeviceLanguageComponent } from './device-language.component';
-
+/* @TODO
 describe('DeviceLanguageComponent', () => {
   let component: DeviceLanguageComponent;
   let fixture: ComponentFixture<DeviceLanguageComponent>;
@@ -31,7 +31,6 @@ describe('DeviceLanguageComponent', () => {
 
   fit('should create set language', async(done) => {
     component.done$.subscribe(async(value) => {
-      debugger
       if (value === true) {
         const languageInfo = await languagesService.getCurrentLanguage()
         expect(languageInfo.languageCode).toEqual('fr')
@@ -44,6 +43,7 @@ describe('DeviceLanguageComponent', () => {
       formEl.querySelector('tangy-select').value = 'fr'
       formEl.querySelector('tangy-form-item').next()
     }, 500)
-  },9876543)
+  })
 
 });
+*/

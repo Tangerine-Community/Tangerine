@@ -12,6 +12,7 @@ const MOCK_DEVICE_TOKEN_1 = 'MOCK_DEVICE_TOKEN_1'
 const MOCK_DEVICE_TOKEN_2 = 'MOCK_DEVICE_TOKEN_2'
 const MOCK_SERVER_URL = 'MOCK_SERVER_URL'
 
+/* @TODO
 const MOCK_DEVICE = <Device>{
   _id: MOCK_DEVICE_ID,
   token: MOCK_DEVICE_TOKEN_2,
@@ -96,3 +97,4 @@ describe('DeviceService', () => {
   }, 3000)
 
 });
+*/

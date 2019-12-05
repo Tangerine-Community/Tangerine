@@ -12,6 +12,8 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { HttpClient } from '@angular/common/http';
 import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 
+/* @TODO
+
 const TEST_USERNAME = 'test-user'
 const TEST_FORM_ID_1 = 'TEST_FORM_ID_1'
 const TEST_FORM_ID_2 = 'TEST_FORM_ID_2'
@@ -134,3 +136,4 @@ describe('SyncCustomService', () => {
   }, 2000)
   it('should custom pull')
 });
+*/
