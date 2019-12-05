@@ -1,0 +1,47 @@
+<div class="container" *ngIf="status === 'STATUS_INITIAL'">
+  <paper-card heading="Sync Manager">
+    <div class="card-content">
+      <paper-progress value="0"></paper-progress>
+      <div class="status">Status: Ready</div>
+    </div>
+    <div class="card-actions">
+      <paper-button (click)="sync()">start</paper-button>
+    </div>
+  </paper-card>
+</div>
+
+<div class="container" *ngIf="status === 'STATUS_IN_PROGRESS'">
+  <paper-card heading="Sync Manager">
+    <div class="card-content">
+      <paper-progress indeterminate></paper-progress>
+      <div class="status">Status: In progress</div>
+    </div>
+    <div class="card-actions">
+      <paper-button disabled>start</paper-button>
+    </div>
+  </paper-card>
+</div>
+
+<div class="container" *ngIf="status === 'STATUS_COMPLETED'">
+  <paper-card heading="Sync Manager">
+    <div class="card-content">
+      <paper-progress value="100"></paper-progress>
+      <div class="status">Status: Complete</div>
+    </div>
+    <div class="card-actions">
+      <paper-button (click)="sync()">start</paper-button>
+    </div>
+  </paper-card>
+</div>
+
+<div class="container" *ngIf="status === 'STATUS_ERROR'">
+  <paper-card heading="Sync Manager">
+    <div class="card-content">
+      <paper-progress value="0"></paper-progress>
+      <div class="status">Status: Error</div>
+    </div>
+    <div class="card-actions">
+      <paper-button (click)="sync()">start</paper-button>
+    </div>
+  </paper-card>
+</div>

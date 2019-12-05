@@ -1,3 +1,4 @@
+import { GroupDeviceService } from './services/group-device/group-device.service';
 import { Module, HttpService } from '@nestjs/common';
 import { GroupService } from './services/group/group.service';
 import { TangerineConfigService } from './services/tangerine-config/tangerine-config.service';
@@ -12,12 +13,14 @@ import { DbService } from './services/db/db.service';
     ClientUserService,
     TangerineConfigService,
     GroupService,
+    GroupDeviceService,
     UserService
   ],
   providers: [
     DbService,
     TangerineConfigService,
     GroupService,
+    GroupDeviceService,
     ClientUserService,
     UserService
   ]
