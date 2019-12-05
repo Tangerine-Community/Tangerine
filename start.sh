@@ -106,7 +106,7 @@ RUN_OPTIONS="
   --env \"T_REGISTRATION_REQUIRES_SERVER_USER=$T_REGISTRATION_REQUIRES_SERVER_USER\" \
   --env \"T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE\" \
   --env \"T_ORIENTATION=$T_ORIENTATION\" \
-
+  --env \"T_CSV_MARK_DISABLED_OR_HIDDEN_WITH=$T_CSV_MARK_DISABLED_OR_HIDDEN_WITH\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \
