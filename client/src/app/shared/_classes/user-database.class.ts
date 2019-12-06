@@ -11,7 +11,7 @@ export class UserDatabase {
   userId:string
   username:string
   name:string
-  private db:PouchDB
+  db: PouchDB
 
   constructor(username, userId, shared = false) {
     this.userId = userId
@@ -23,7 +23,7 @@ export class UserDatabase {
       this.db = new PouchDB(username)
     }
   }
- 
+
   async get(_id) {
     return await this.db.get(_id)
   }
@@ -75,5 +75,5 @@ export class UserDatabase {
   compact() {
     return this.db.compact()
   }
-  
-} 
+
+}

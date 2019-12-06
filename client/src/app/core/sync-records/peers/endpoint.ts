@@ -1,5 +1,6 @@
-export interface Endpoint {
+export class Endpoint {
 
   id: String;
   endpointName: String;
+  status = 0;
 }
