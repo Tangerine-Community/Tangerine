@@ -1,4 +1,4 @@
-<div class="p2p-sync-header">
+<div class="p2p-sync" #p2p>
   <h1>P2P Sync</h1>
   <h2>Permissions</h2>
   <p>Enable necessary permissions</p>
@@ -11,14 +11,14 @@
   <h2>Start Advertising and Discovery</h2>
   <p>Both the sender and receiver must advertise.</p>
   <p>
-    <button mat-raised-button color="primary" class="bigText" id="startAdvertising" (click)="startAdvertising()">Discovery</button>
+    <button mat-raised-button color="primary" class="bigText" id="startAdvertisingBtn" (click)="startAdvertising()">Discovery</button>
   </p>
   <h2>List of available endpoints</h2>
   <p>Click one of the following endpoints to connect and transfer data.</p>
   <div id="transferProgress"></div>
   <mat-chip-list class="mat-chip-list-stacked" aria-label="Endpoint selection">
     <mat-chip id="endpoints" *ngFor="let endpoint of endpoints" (click)="connectToEndpoint(endpoint.id, endpoint.endpointName)">
-      {{endpoint.endpointName}}
+      {{endpoint.endpointName}} : {{endpoint.status}}
     </mat-chip>
   </mat-chip-list>
 

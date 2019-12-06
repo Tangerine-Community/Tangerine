@@ -1,45 +1,44 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import {Message} from '../peers/message';
 import {Endpoint} from '../peers/endpoint';
 import {MOCK_ENDPOINTS} from '../peers/mock-endpoints';
 // @ts-ignore
 import PouchDB from 'pouchdb';
+import {UserService} from '../../../shared/_services/user.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class PeersService {
+export class PeersService implements OnInit {
   window: any;
   isMaster = false;
-  constructor() {
+  el: any  = document.createElement('div');
+  localDatabase: PouchDB;
+
+  constructor(
+    private userService: UserService
+  ) {
     this.window = window;
   }
 
-  async getDatabase() {
-    const db = new PouchDB('kittens');
-    const doc = {
-      '_id': 'mittens',
-      'name': 'Mittens',
-      'occupation': 'kitten',
-      'age': 3,
-      'hobbies': [
-        'playing with balls of yarn',
-        'chasing laser pointers',
-        'lookin\' hella cute'
-      ]
-    };
-    try {
-      db.put(doc).then(() =>  db );
-    } catch (e) {
-      console.log('Already have Mittens:' + e);
-    }
+  async ngOnInit() {
+    this.localDatabase = await this.getLocalDatabase();
+  }
+
+  async getLocalDatabase() {
+    // get the local db this.getUserService.getUserdatabase - has a .db property - can use the sync method
+    PouchDB.plugin(window['PouchReplicationStream'].plugin);
+    PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
+    const dbName = new PouchDB((await this.userService.getUserDatabase()).db.name);
+    const db = new PouchDB(dbName);
+    return db;
   }
 
   sleep(milliseconds) {
     return new Promise((res, rej) => {
       setTimeout(() => {
         res()
-        console.log("done")
+        console.log('done')
       }, milliseconds)
     })
   }
@@ -61,165 +60,103 @@ export class PeersService {
       });
       return message;
   }
-  successAdvert = (response: Message, endpoints: Endpoint[]) => {
-    if (response['messageType'] === 'log') {
-      return new Message('log', response['message'], null, null);
-    } else if (response['messageType'] === 'localEndpointName') {
-      return new Message('localEndpointName', response['message'], null, null);
-    } else if (response['messageType'] === 'endpoints') {
-      console.log('endpoints: ' + JSON.stringify(response['object']));
-      const newEndpoints = response['object'].object;
-      for (const [key, value] of Object.entries(newEndpoints)) {
-        console.log(`${key}: ${value}`);
-        const endpoint = {} as Endpoint;
-        endpoint.id = key;
-        endpoint.endpointName = <String>value;
-        let isUnique = true;
-        endpoints.forEach((peer: Endpoint) => {
-          if (endpoint.id === peer.id) {
-            isUnique = false;
-          }
-        })
-        if (isUnique) {
-          endpoints.push(endpoint);
-        }
-      }
-      return new Message('endpoints', null, endpoints, null);
-    } else if (response.messageType === 'payload') {
-      // load the data sent and then send your own.
-      // const messageStr = response.message;
-      // TODO: JSONObject is available if we need it.
-      const payload: Message = <Message>response.object;
-      const databaseDump = payload.object;
-      PouchDB.plugin(window['PouchReplicationStream'].plugin);
-      PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
-      const writeStream = new window['Memorystream'];
-      writeStream.end(databaseDump);
-      const dest = new PouchDB('kittens');
-      dest.load(writeStream).then(async () => {
-        const pluginMessage = 'I loaded data from the peer device. Now I will send you my data.';
-        const db = await this.getDatabase();
-        const dumpedString = await this.dumpData(db)
-        let message: Message;
-        if (this.isMaster) {
-          return new Message('payload', pluginMessage, null, null);
-        } else {
-          try {
-            console.log('Pushing data to master.')
-            const payload: Message = new Message('payload', pluginMessage, dumpedString, null);
-            message = await this.pushData(payload);
-            return new Message('payload', pluginMessage, null, null);
-          } catch (e) {
-            return message;
-          }
-        }
-      }).catch(function (err) {
-        console.log(err);
-        return new Message('error', err, null, null);
-      });
-    }
-  };
-  errorAdvert = function(errorMsg) {
-    console.log('error:' + errorMsg);
-    return new Message('error', errorMsg, null, null);
-  };
 
-  async startAdvertising(endpoints: Endpoint[]) {
-    // if (this.window.isCordovaApp) {
-      const message: Message = <Message>await new Promise((resolve, reject) => {
-        window['cordova']['plugins']['NearbyConnectionsPlugin'].startAdvertising(null, (response: Message, endpoints: Endpoint[]) => {
-          if (response['messageType'] === 'log') {
-            resolve(new Message('log', response['message'], null, null));
-          } else if (response['messageType'] === 'localEndpointName') {
-            resolve(new Message('localEndpointName', response['message'], null, null));
-          } else if (response['messageType'] === 'endpoints') {
-            let endpointList: Endpoint[] = [];
-            console.log('endpoints: ' + JSON.stringify(response['object']));
-            const newEndpoints = response['object'];
-            for (const [key, value] of Object.entries(newEndpoints)) {
-              console.log(`${key}: ${value}`);
-              const endpoint = {} as Endpoint;
-              endpoint.id = key;
-              endpoint.endpointName = <String>value;
-              let isUnique = true;
-              endpointList.forEach((peer: Endpoint) => {
-                if (endpoint.id === peer.id) {
-                  isUnique = false;
-                }
-              })
-              if (isUnique) {
-                endpointList.push(endpoint);
-              }
+  startAdvertising(endpoints: Endpoint[]) {
+    //   const message: Message = <Message>await new Promise((resolve, reject) => {
+    window['cordova']['plugins']['NearbyConnectionsPlugin'].startAdvertising(null, (response: Message, endpoints: Endpoint[]) => {
+      let message: Message;
+      if (response['messageType'] === 'log') {
+        message =  new Message('log', response['message'], null, null);
+        const event = new CustomEvent('log', { detail: message });
+        this.el.dispatchEvent(event);
+      } else if (response['messageType'] === 'localEndpointName') {
+        message = new Message('localEndpointName', response['message'], null, null);
+        const event = new CustomEvent('localEndpointName', { detail: message });
+        this.el.dispatchEvent(event);
+      } else if (response['messageType'] === 'endpoints') {
+        const endpointList: Endpoint[] = [];
+        console.log('endpoints: ' + JSON.stringify(response['object']));
+        const newEndpoints = response['object'];
+        for (const [key, value] of Object.entries(newEndpoints)) {
+          console.log(`${key}: ${value}`);
+          const endpoint = {} as Endpoint;
+          endpoint.id = key;
+          endpoint.endpointName = <String>value;
+          let isUnique = true;
+          endpointList.forEach((peer: Endpoint) => {
+            if (endpoint.id === peer.id) {
+              isUnique = false;
             }
-            // console.log('enpoints go here.')
-            // endpointList = MOCK_ENDPOINTS;
-            resolve(new Message('endpoints', null, endpointList, null));
-          } else if (response.messageType === 'payload') {
-            // load the data sent and then send your own.
-            // const messageStr = response.message;
-            // TODO: JSONObject is available if we need it.
-            const payload: Message = <Message>response.object;
-            const databaseDump = payload.object;
-            PouchDB.plugin(window['PouchReplicationStream'].plugin);
-            PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
-            const writeStream = new window['Memorystream'];
-            writeStream.end(databaseDump);
-            const dest = new PouchDB('kittens');
-            dest.load(writeStream).then(async () => {
-              const pluginMessage = 'I loaded data from the peer device. Now I will send you my data.';
-              const db = await this.getDatabase();
-              const dumpedString = await this.dumpData(db)
-              let message: Message;
-              if (this.isMaster) {
-                resolve(new Message('payload', pluginMessage, null, null));
-              } else {
-                try {
-                  console.log('Pushing data to master.')
-                  const payload: Message = new Message('payload', pluginMessage, dumpedString, null);
-                  message = await this.pushData(payload);
-                  resolve(new Message('payload', pluginMessage, null, null));
-                } catch (e) {
-                  reject(message);
-                }
-              }
-            }).catch(function (err) {
-              console.log(err);
-              reject(new Message('error', err, null, null));
-            });
+          })
+          if (isUnique) {
+            endpointList.push(endpoint);
           }
-          }, function(errorMsg) {
-            console.log('error:' + errorMsg);
-          reject(new Message('error', errorMsg, null, null));
+        }
+        message = new Message('endpoints', null, endpointList, null);
+        const event = new CustomEvent('endpoints', { detail: message });
+        this.el.dispatchEvent(event);
+      } else if (response.messageType === 'payload') {
+        // load the data sent from the peer and then send your own.
+        // TODO: JSONObject is available if we need it.
+        const payload: Message = <Message>response.object;
+        const databaseDump = payload.object;
+        const writeStream = new window['Memorystream'];
+        writeStream.end(databaseDump);
+        const dest = new PouchDB('tempDb');
+        dest.load(writeStream).then(async () => {
+          // replicate received database to the local db
+          await new Promise((resolve, reject) => {dest.replicate.To(this.localDatabase); })
+          const dumpedString = await this.dumpData(this.localDatabase)
+          let pushDataMessage: Message;
+          if (this.isMaster) {
+            // TODO - should be a confirmation that *some* data was sent - a proof of life
+            // TODO at this point, he can move to another peer.
+            const doneMessage = 'Data has been loaded. You may sync the next device.'
+            message = new Message('done', doneMessage, null, null);
+            const event = new CustomEvent('done', { detail: message });
+            this.el.dispatchEvent(event);
+          } else {
+            try {
+              const pluginMessage = 'I loaded data from the master db into mine. Now I will push my local db to master.';
+              console.log(pluginMessage)
+              const upload: Message = new Message('payload', pluginMessage, dumpedString, null);
+              pushDataMessage = await this.pushData(upload);
+              message = new Message('done', pluginMessage, null, null);
+              const event = new CustomEvent('done', { detail: message });
+              this.el.dispatchEvent(event);
+            } catch (e) {
+              message = pushDataMessage;
+              console.log('Error pushing data: ' + JSON.stringify(message));
+              const event = new CustomEvent('error', { detail: message });
+              this.el.dispatchEvent(event);
+            }
+          }
+        }).catch(function (err) {
+          console.log(err);
+          message = new Message('error', err, null, null);
+          const event = new CustomEvent('error', { detail: message });
+          this.el.dispatchEvent(event);
         });
       }
-      );
-      return message;
-    // } else {
-    //   // testing or using a PWA; emulating a response from the plugin
-    //   // endpoints = MOCK_ENDPOINTS;
-    //   // return new Message('endpoints', null, endpoints);
-    //   const obj = {
-    //     message: 'Endpoints',
-    //     messageType: 'endpoints',
-    //     object: {
-    //       'tab1': 'tab1',
-    //       'tab2': 'tab2',
-    //       'tab3': 'tab3'
-    //     }
-    //   };
-    //   const response: Message = new Message('endpoints', 'Endpoints', obj, null);
-    //   const message = this.successAdvert(response, endpoints);
-    //   return message;
-    // }
+    }, function(errorMsg) {
+        console.log('error from plugin startAdvertising: ' + errorMsg);
+        const message: Message = new Message('error', errorMsg, null, null);
+        // document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+        const event = new CustomEvent('error', { detail: message });
+        this.el.dispatchEvent(event);
+    });
   }
 
-  async connectToEndpoint(endpoint): Promise<Message> {
-    let message: Message;
+  // async connectToEndpoint(endpoint): Promise<Message> {
+  async connectToEndpoint(endpoint) {
     this.isMaster = true;
-    const db = await this.getDatabase();
-    const dumpedString = this.dumpData(db)
-    if (this.window.isCordovaApp) {
-      await window['cordova']['plugins']['NearbyConnectionsPlugin'].connectToEndpoint(endpoint,
+    const dumpedString = this.dumpData(this.localDatabase)
+    const result: Message = await new Promise((resolve, reject) => {
+      let message: Message;
+      this.el.addEventListener('done', () => {
+        resolve(message);
+      });
+      window['cordova']['plugins']['NearbyConnectionsPlugin'].connectToEndpoint(endpoint,
         async (response: Message) => {
           if (response['messageType'] === 'log') {
             const logEl = document.querySelector('#p2p-results');
@@ -233,7 +170,6 @@ export class PeersService {
             const payload: Message = new Message('payload', 'Data from master', dumpedString, null);
             message = await this.pushData(payload);
           }
-          return message;
         },
         function (error) {
           console.log('error:' + error);
@@ -242,30 +178,18 @@ export class PeersService {
           message = new Message('error', error, null, null);
         }
       );
-    }
-    return message;
+    });
+    return result;
   }
 
   async dumpData(db) {
-    let message: Message;
-    PouchDB.plugin(window['PouchReplicationStream'].plugin);
-    PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
+    // PouchDB.plugin(window['PouchReplicationStream'].plugin);
+    // PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
     let dumpedString = '';
     const stream = new window['Memorystream']();
     stream.on('data', function (chunk) {
       dumpedString += chunk.toString();
     });
-
-    //   await db.dump(stream).then(await function () {
-    //     return dumpedString;
-    //   }).catch(function (err) {
-    //     console.log('oh no an error', err);
-    //     message = new Message('error', err, null);
-    //     return message;
-    //   });
-    //   return message;
-    // }
-    // dumpedString = await db.dump(stream);
 
     dumpedString = <string>await new Promise((resolve, reject) => {
       db.dump(stream).then(() => {
@@ -277,7 +201,6 @@ export class PeersService {
   }
 
   async pushData(payload: Message) {
-      // console.log('Yay, I have a dumpedString: ' + dumpedString);
       const result: Message = await window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(payload, function(message) {
         const objectConstructor = ({}).constructor;
         if (message.constructor === objectConstructor) {
