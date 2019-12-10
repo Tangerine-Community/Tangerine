@@ -9,7 +9,7 @@ import {UserService} from '../../../shared/_services/user.service';
 @Injectable({
   providedIn: 'root'
 })
-export class PeersService implements OnInit {
+export class PeersService {
   window: any;
   isMaster = false;
   el: any  = document.createElement('div');
@@ -19,9 +19,10 @@ export class PeersService implements OnInit {
     private userService: UserService
   ) {
     this.window = window;
+    this.init();
   }
 
-  async ngOnInit() {
+  async init() {
     this.localDatabase = await this.getLocalDatabase();
   }
 
@@ -44,8 +45,7 @@ export class PeersService implements OnInit {
   }
 
   async getTangyP2PPermissions() {
-    // await this.sleep(10 * 1000)
-    // return 'OK'
+    if (this.window.isCordovaApp) {
       const message: Message = <Message>await new Promise((resolve, reject) => {
         window['cordova']['plugins']['NearbyConnectionsPlugin'].getPermission(null, function (response: Message) {
             if (typeof response !== 'undefined' && response.messageType === 'log') {
@@ -59,19 +59,33 @@ export class PeersService implements OnInit {
         );
       });
       return message;
+    }
   }
 
   startAdvertising(endpoints: Endpoint[]) {
     //   const message: Message = <Message>await new Promise((resolve, reject) => {
-    window['cordova']['plugins']['NearbyConnectionsPlugin'].startAdvertising(null, (response: Message, endpoints: Endpoint[]) => {
+    if (this.window.isCordovaApp) {
+      window['cordova']['plugins']['NearbyConnectionsPlugin'].startAdvertising(null, this.successAdvertising, this.errorAdvertising);
+    }
+  }
+
+  errorAdvertising = (errorMsg) => {
+      console.log('error from plugin startAdvertising: ' + errorMsg);
+      const message: Message = new Message('error', errorMsg, null, null);
+      // document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+      const event = new CustomEvent('error', {detail: message});
+      this.el.dispatchEvent(event);
+    }
+
+  successAdvertising = (response: Message) => {
       let message: Message;
       if (response['messageType'] === 'log') {
-        message =  new Message('log', response['message'], null, null);
-        const event = new CustomEvent('log', { detail: message });
+        message = new Message('log', response['message'], null, null);
+        const event = new CustomEvent('log', {detail: message});
         this.el.dispatchEvent(event);
       } else if (response['messageType'] === 'localEndpointName') {
         message = new Message('localEndpointName', response['message'], null, null);
-        const event = new CustomEvent('localEndpointName', { detail: message });
+        const event = new CustomEvent('localEndpointName', {detail: message});
         this.el.dispatchEvent(event);
       } else if (response['messageType'] === 'endpoints') {
         const endpointList: Endpoint[] = [];
@@ -93,7 +107,7 @@ export class PeersService implements OnInit {
           }
         }
         message = new Message('endpoints', null, endpointList, null);
-        const event = new CustomEvent('endpoints', { detail: message });
+        const event = new CustomEvent('endpoints', {detail: message});
         this.el.dispatchEvent(event);
       } else if (response.messageType === 'payload') {
         // load the data sent from the peer and then send your own.
@@ -105,7 +119,9 @@ export class PeersService implements OnInit {
         const dest = new PouchDB('tempDb');
         dest.load(writeStream).then(async () => {
           // replicate received database to the local db
-          await new Promise((resolve, reject) => {dest.replicate.To(this.localDatabase); })
+          await new Promise((resolve, reject) => {
+            dest.replicate.to(this.localDatabase);
+          })
           const dumpedString = await this.dumpData(this.localDatabase)
           let pushDataMessage: Message;
           if (this.isMaster) {
@@ -113,7 +129,7 @@ export class PeersService implements OnInit {
             // TODO at this point, he can move to another peer.
             const doneMessage = 'Data has been loaded. You may sync the next device.'
             message = new Message('done', doneMessage, null, null);
-            const event = new CustomEvent('done', { detail: message });
+            const event = new CustomEvent('done', {detail: message});
             this.el.dispatchEvent(event);
           } else {
             try {
@@ -122,35 +138,29 @@ export class PeersService implements OnInit {
               const upload: Message = new Message('payload', pluginMessage, dumpedString, null);
               pushDataMessage = await this.pushData(upload);
               message = new Message('done', pluginMessage, null, null);
-              const event = new CustomEvent('done', { detail: message });
+              const event = new CustomEvent('done', {detail: message});
               this.el.dispatchEvent(event);
             } catch (e) {
               message = pushDataMessage;
               console.log('Error pushing data: ' + JSON.stringify(message));
-              const event = new CustomEvent('error', { detail: message });
+              const event = new CustomEvent('error', {detail: message});
               this.el.dispatchEvent(event);
             }
           }
-        }).catch(function (err) {
+        }).catch((err) => {
           console.log(err);
           message = new Message('error', err, null, null);
-          const event = new CustomEvent('error', { detail: message });
+          const event = new CustomEvent('error', {detail: message});
           this.el.dispatchEvent(event);
         });
       }
-    }, function(errorMsg) {
-        console.log('error from plugin startAdvertising: ' + errorMsg);
-        const message: Message = new Message('error', errorMsg, null, null);
-        // document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
-        const event = new CustomEvent('error', { detail: message });
-        this.el.dispatchEvent(event);
-    });
-  }
+    };
 
-  // async connectToEndpoint(endpoint): Promise<Message> {
+// async connectToEndpoint(endpoint): Promise<Message> {
   async connectToEndpoint(endpoint) {
     this.isMaster = true;
-    const dumpedString = this.dumpData(this.localDatabase)
+    const dumpedString = await this.dumpData(this.localDatabase)
+    if (this.window.isCordovaApp) {
     const result: Message = await new Promise((resolve, reject) => {
       let message: Message;
       this.el.addEventListener('done', () => {
@@ -180,28 +190,29 @@ export class PeersService implements OnInit {
       );
     });
     return result;
+    }
   }
 
-  async dumpData(db) {
-    // PouchDB.plugin(window['PouchReplicationStream'].plugin);
-    // PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
+  async dumpData(db: PouchDB) {
     let dumpedString = '';
     const stream = new window['Memorystream']();
     stream.on('data', function (chunk) {
       dumpedString += chunk.toString();
     });
-
     dumpedString = <string>await new Promise((resolve, reject) => {
       db.dump(stream).then(() => {
-        console.log('dude')
+        console.log('Dump from db complete!')
         resolve(<string>dumpedString);
+        // return dumpedString;
       });
+      // dumpedString = await db.dump(stream);
     })
     return dumpedString;
   }
 
   async pushData(payload: Message) {
-      const result: Message = await window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(payload, function(message) {
+    if (this.window.isCordovaApp) {
+      const result: Message = await window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(payload, function (message) {
         const objectConstructor = ({}).constructor;
         if (message.constructor === objectConstructor) {
           if (message.messageType === 'payloadReceived') {
@@ -219,11 +230,12 @@ export class PeersService implements OnInit {
           message = new Message('log', message, null, null);
         }
         return message;
-      }, function(err) {
+      }, function (err) {
         console.log('TangyP2P error:: ' + err);
         const message: Message = new Message('error', err, null, null);
         return message;
       });
       return result;
+    }
   }
 }
