@@ -53,27 +53,27 @@ export class PeersComponent implements OnInit, AfterContentInit {
     // const startAdvertisingBtnEl = this.p2p.nativeElement.querySelector('#startAdvertisingBtn');
     const startAdvertisingBtnEl = this.peersService.el;
     startAdvertisingBtnEl.addEventListener('log', e => {
-        console.log('wheeee loggg: ' + JSON.stringify(e.detail));
+        console.log('log message: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
         const logEl = document.querySelector('#p2p-results');
         logEl.innerHTML = logEl.innerHTML +  '<p>' + message.message + '</p>\n';
       }
     );
     startAdvertisingBtnEl.addEventListener('localEndpointName', e => {
-        console.log('gosh localEndpointName: ' + JSON.stringify(e.detail));
+        console.log('localEndpointName: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
         const el = document.querySelector('#localEndpointName');
         el.innerHTML =  '<p>Device Name: ' + message.message + '</p>\n';
       }
     );
     startAdvertisingBtnEl.addEventListener('endpoints', e => {
-        console.log('whoot endpoints: ' + JSON.stringify(e.detail));
+        console.log('endpoints: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
         this.endpoints = message.object;
       }
     );
     startAdvertisingBtnEl.addEventListener('payload', e => {
-        console.log('whoot payload: ' + JSON.stringify(e.detail));
+        console.log('payload: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
         document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
         document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
