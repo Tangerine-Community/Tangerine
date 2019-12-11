@@ -101,7 +101,7 @@ class CaseService {
     await this.setCase(await this.db.get(this.case._id))
   }
 
-  createEvent(eventDefinitionId:string, createRequiredEventForms = false):CaseEvent {
+  createEvent(eventDefinitionId:string, createRequiredEventForms = false): CaseEvent {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
