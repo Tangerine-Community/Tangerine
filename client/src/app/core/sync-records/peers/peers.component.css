@@ -28,3 +28,6 @@ mat-chip {
 .bigText {
   font-size: x-large;
 }
+#transferProgress {
+  padding-bottom: 1em;
+}

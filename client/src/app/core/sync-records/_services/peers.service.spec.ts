@@ -170,13 +170,13 @@ class MockPeersService {
     return this.successAdvert(response);
   }
 
-  async connectToEndpoint(endpoint): Promise<Message> {
+  async connectToEndpoint(endpoint) {
     currentEndpoint = endpoint;
     const dumpedString = await this.dumpData(supercat);
     // const message: Message = await this.pushData(dumpedString);
     const payload: Message = new Message('payload', 'Data from master', dumpedString, null);
-    const message: Message = await this.pushData(payload);
-    return message;
+    await this.pushData(payload);
+    // return message;
   }
 
   // async pushData(dumpedString): Promise<Message> {
