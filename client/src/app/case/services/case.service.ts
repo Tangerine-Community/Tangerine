@@ -112,8 +112,11 @@ class CaseService {
       name: caseEventDefinition.name,
       estimate: true,
       caseEventDefinitionId: eventDefinitionId,
-      dateStart: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening - (caseEventDefinition.estimatedTimeWindow/2),
-      dateEnd: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening + (caseEventDefinition.estimatedTimeWindow/2),
+      windowEndDay: undefined,
+      windowStartDay: undefined,
+      estimatedDay: undefined,
+      occurredOnDay: undefined,
+      scheduledDay: undefined,
       eventForms: [],
       startDate: 0
     }
@@ -132,15 +135,42 @@ class CaseService {
     // ??
   }
 
-  async scheduleEvent(eventId, dateStart:number, dateEnd?:number) {
+  // async scheduleEvent(eventId, dateStart:number, dateEnd?:number) {
+  //   this.case.events = this.case.events.map(event => {
+  //     return event.id === eventId 
+  //     ? { ...event, ...{ dateStart, dateEnd: dateEnd ? dateEnd : dateStart, estimate: false} }
+  //     : event
+  //   })
+  // }
+
+  async setEventEstimatedDay(eventId, estimatedDay:number){
     this.case.events = this.case.events.map(event => {
-      return event.id === eventId 
-      ? { ...event, ...{ dateStart, dateEnd: dateEnd ? dateEnd : dateStart, estimate: false} }
+      return event.id === eventId
+      ? { ...event, ...{ estimatedDay} }
       : event
     })
-    
   }
-
+  async setEventScheduledDay(eventId, scheduledDay: number) {
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+      ? { ...event, ...{ scheduledDay} }
+      : event
+    })
+  }
+  async setEventWindow(eventId: string, windowStartDay: number, windowEndDay: number) {
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+      ? { ...event, ...{ windowStartDay, windowEndDay: windowEndDay ? windowEndDay : windowStartDay} }
+      : event
+    })
+  }
+  async setEventOccurredOn(eventId, occurredOnDay: number) {
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+      ? { ...event, ...{ occurredOnDay} }
+      : event
+    })
+  }
   startEventForm(caseEventId, eventFormDefinitionId, participantId = ''):EventForm {
     const eventForm = <EventForm>{
       id: UUID(), 
@@ -284,7 +314,6 @@ class CaseService {
     if (caseEvent === undefined) {
         const newDate = moment(new Date(), 'YYYY-MM-DD').unix() * 1000;
         caseEvent = this.createEvent(this.queryCaseEventDefinitionId);
-        await this.scheduleEvent(caseEvent.id, newDate, newDate);
         await this.save();
       } else {
         caseEvent = this.case.events

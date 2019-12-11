@@ -11,8 +11,12 @@ class CaseEvent {
   status = CASE_EVENT_STATUS_IN_PROGRESS 
   eventForms:Array<EventForm> = []
   estimate = true
-  dateStart:number
-  dateEnd:number
+  estimatedDay:number
+  scheduledDay:number
+  windowStartDay:number
+  windowEndDay:number
+  occurredOnDay:number
+
   name:string
   constructor() {
 
