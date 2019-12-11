@@ -61,6 +61,10 @@ export class GroupDevicesComponent implements OnInit {
     this.mode = MODE_EDIT
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
     this.modeEditContainer.nativeElement.innerHTML = `
+      ${!device.claimed ? `
+        <h2>Registration QR</h2>
+        <div id="qr" style="width: 300px"></div>
+      ` : ''}
       <tangy-form>
         <tangy-form-item id="edit-device" on-change="
         ">
@@ -73,10 +77,6 @@ export class GroupDevicesComponent implements OnInit {
           <tangy-input name="sync_location__value" label="Sync device to location at which location?" value='${JSON.stringify(device.syncLocations[0].value)}'></tangy-input>
         </tangy-form-item>
       </tangy-form>
-      ${!device.claimed ? `
-        <h2>Registration QR</h2>
-        <div id="qr"></div>
-      ` : ''}
     `
     if (!device.claimed) {
       const qr = new qrcode.default(0, 'H')
