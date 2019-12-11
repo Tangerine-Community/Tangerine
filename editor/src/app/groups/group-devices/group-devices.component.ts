@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { GroupDevicesService } from './../services/group-devices.service';
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { GroupDevice } from '../classes/group-device.class';
+import * as qrcode from 'qrcode-generator-es6';
+
 
 interface DeviceInfo {
   _id:string
@@ -62,15 +64,26 @@ export class GroupDevicesComponent implements OnInit {
       <tangy-form>
         <tangy-form-item id="edit-device" on-change="
         ">
-          <tangy-input name="_id" label="ID" value="${device._id}"></tangy-input>
-          <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}"></tangy-checkbox>
+          <tangy-input name="_id" label="ID" value="${device._id}" disabled></tangy-input>
+          <tangy-input name="token" label="Token" value="${device.token}" disabled></tangy-input>
+          <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox>
           <tangy-input name="assigned_location__show_levels" label="Assign device to location at which level?" value='${device.assignedLocation.showLevels.join(',')}'></tangy-input>
           <tangy-input name="assigned_location__value" label="Assign device to location at which location?" value='${JSON.stringify(device.assignedLocation.value)}'></tangy-input>
           <tangy-input name="sync_location__show_levels" label="Sync device to location at which level?" value='${device.syncLocations[0].showLevels.join(',')}'></tangy-input>
           <tangy-input name="sync_location__value" label="Sync device to location at which location?" value='${JSON.stringify(device.syncLocations[0].value)}'></tangy-input>
         </tangy-form-item>
       </tangy-form>
+      ${!device.claimed ? `
+        <h2>Registration QR</h2>
+        <div id="qr"></div>
+      ` : ''}
     `
+    if (!device.claimed) {
+      const qr = new qrcode.default(0, 'H')
+      qr.addData(`{"id":"${device._id}","token":"${device.token}"}`)
+      qr.make()
+      this.modeEditContainer.nativeElement.querySelector('#qr').innerHTML = qr.createSvgTag({cellSize:500, margin:0,cellColor:(c, r) =>''})
+    }
     this.modeEditContainer.nativeElement.querySelector('tangy-form').addEventListener('submit', async (event) => {
       device.assignedLocation.value = JSON.parse(event.target.getValue('assigned_location__value'))
       device.assignedLocation.showLevels = event.target.getValue('assigned_location__show_levels').split(',')
