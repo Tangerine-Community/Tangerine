@@ -116,7 +116,7 @@ export class DeviceRegistrationComponent implements OnInit {
       .querySelector('tangy-form')
     confirmRegistrationFormEl
       .addEventListener('submit', async (event) => {
-        if (event.target.getValue('confirmation')) {
+        if (event.target.getValue('confirmation') && event.target.getValue('confirmation').includes('yes')) {
           this.done$.next(true)
         } else {
           this.gatherInfo("Let's try again.")
