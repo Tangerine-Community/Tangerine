@@ -58,8 +58,11 @@ class MockCasesService {
         status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
-        dateStart: REFERENCE_TIME,
-        dateEnd: REFERENCE_TIME + (1000*60*60)
+        scheduledDay: REFERENCE_TIME,
+        occurredOnDay: REFERENCE_TIME,
+        estimatedDay: REFERENCE_TIME,
+        windowStartDay: REFERENCE_TIME + (1000 * 60 * 60 * 24 * 2) ,
+        windowEndDay: REFERENCE_TIME + (1000 * 60 * 60 * 24 * 2) + (1000 * 60 * 60)
       },
       <CaseEvent>{
         id: 'e2',
@@ -68,8 +71,11 @@ class MockCasesService {
         status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
-        dateStart: REFERENCE_TIME,
-        dateEnd: REFERENCE_TIME + (1000*60*60)
+        scheduledDay: REFERENCE_TIME,
+        occurredOnDay: REFERENCE_TIME,
+        estimatedDay: REFERENCE_TIME,
+        windowStartDay: REFERENCE_TIME + (1000 * 60 * 60 * 24) ,
+        windowEndDay: REFERENCE_TIME + (1000 * 60 * 60 * 24) + (1000 * 60 * 60)
       },
       <CaseEvent>{
         id: 'e3',
@@ -78,8 +84,11 @@ class MockCasesService {
         status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
-        dateStart: REFERENCE_TIME + (1000*60*60*24),
-        dateEnd: REFERENCE_TIME + (1000*60*60*24) + (1000*60*60)
+        scheduledDay: REFERENCE_TIME,
+        occurredOnDay: REFERENCE_TIME,
+        estimatedDay: REFERENCE_TIME,
+        windowStartDay: REFERENCE_TIME + (1000 * 60 * 60 * 24) ,
+        windowEndDay: REFERENCE_TIME + (1000 * 60 * 60 * 24) + (1000 * 60 * 60)
       }
     ]
   }
