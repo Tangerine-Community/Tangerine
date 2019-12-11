@@ -240,6 +240,19 @@
     </mat-card>
   </mat-tab>
 
+  <mat-tab *ngIf="isGroupAdminUser" label="Devices">
+    <mat-card>
+      <mat-card-title class="tangy-foreground-secondary">
+        Devices
+      </mat-card-title>
+      <mat-card-content>
+        <div class="tangy-full-width">
+          <app-group-devices [groupId]="groupId"></app-group-devices>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
+
   <mat-tab *ngIf="isGroupAdminUser" label="{{'Release'|translate}}">
     <h1 class="section-title">{{'Release'|translate}}</h1>
     <table class="release-table">
