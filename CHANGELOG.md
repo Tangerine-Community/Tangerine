@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.6.5
+- Fix timed grid output to exclude item level variables in logstash output https://github.com/Tangerine-Community/Tangerine/pull/1806
+
 ## v3.6.4
 - Fix usage of `T_CSV_MARK_DISABLED_OR_HIDDEN_WITH` in some cases.
 
