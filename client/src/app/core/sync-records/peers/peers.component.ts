@@ -79,6 +79,13 @@ export class PeersComponent implements OnInit, AfterContentInit {
         document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
       }
     );
+    startAdvertisingBtnEl.addEventListener('payloadReceived', e => {
+        console.log('payloadReceived: ' + JSON.stringify(e.detail));
+        const message: Message = e.detail;
+        document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+        document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
+      }
+    );
     startAdvertisingBtnEl.addEventListener('done', e => {
         console.log('Current peer sync complete: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
@@ -127,9 +134,10 @@ export class PeersComponent implements OnInit, AfterContentInit {
     const endpointId = id + '_' + name;
     const message: Message = await this.peersService.connectToEndpoint(endpointId);
     this.endpoints = this.endpoints.map((endpoint) => {
-      return endpoint.id === id ? {...endpoint, status: 1} : endpoint
+      return endpoint.id === id ? {...endpoint, status: 'Sync\'d'} : endpoint
     });
     if (message.messageType === 'payloadReceived') {
+      console.log('connectToEndpoint: payloadReceived');
       document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
       document.querySelector('#transferProgress').innerHTML += message.message + '<br/>';
     } else {

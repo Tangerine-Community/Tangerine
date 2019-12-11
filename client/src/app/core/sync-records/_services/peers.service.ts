@@ -96,6 +96,7 @@ export class PeersService {
           const endpoint = {} as Endpoint;
           endpoint.id = key;
           endpoint.endpointName = <String>value;
+          endpoint.status = 'Pending'
           let isUnique = true;
           endpointList.forEach((peer: Endpoint) => {
             if (endpoint.id === peer.id) {
@@ -119,25 +120,31 @@ export class PeersService {
         const dest = new PouchDB('tempDb');
         dest.load(writeStream).then(async () => {
           // replicate received database to the local db
-          await new Promise((resolve, reject) => {
-            dest.replicate.to(this.localDatabase);
-          })
+          // await new Promise((resolve, reject) => {
+          await dest.replicate.to(this.localDatabase)
+            .on('complete', function () {
+            console.log('replication done! ' );
+          }).on('error', function (err) {
+            console.log('error in replication: ' + err);
+          });
           const dumpedString = await this.dumpData(this.localDatabase)
           let pushDataMessage: Message;
           if (this.isMaster) {
             // TODO - should be a confirmation that *some* data was sent - a proof of life
             // TODO at this point, he can move to another peer.
             const doneMessage = 'Data has been loaded. You may sync the next device.'
+            console.log('done! ' + doneMessage);
             message = new Message('done', doneMessage, null, null);
             const event = new CustomEvent('done', {detail: message});
             this.el.dispatchEvent(event);
           } else {
             try {
-              const pluginMessage = 'I loaded data from the master db into mine. Now I will push my local db to master.';
+              const pluginMessage = 'Pushing local db to master.';
               console.log(pluginMessage)
               const upload: Message = new Message('payload', pluginMessage, dumpedString, null);
               pushDataMessage = await this.pushData(upload);
-              message = new Message('done', pluginMessage, null, null);
+              console.log('pushDataMessage message: ' + pushDataMessage['message']);
+              message = new Message('done', pushDataMessage['message'], null, null);
               const event = new CustomEvent('done', {detail: message});
               this.el.dispatchEvent(event);
             } catch (e) {
@@ -212,14 +219,20 @@ export class PeersService {
 
   async pushData(payload: Message) {
     if (this.window.isCordovaApp) {
-      const result: Message = await window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(payload, function (message) {
+      const result: Message = window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(payload, (message) => {
+        console.log('TangyP2P: Data transferred from peer to master.' );
+        console.log('TangyP2P: message: ' + JSON.stringify(message));
         const objectConstructor = ({}).constructor;
         if (message.constructor === objectConstructor) {
           if (message.messageType === 'payloadReceived') {
             const messageStr = message.message;
+            console.log('payloadReceived: ' + messageStr);
             // document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
             // document.querySelector('#transferProgress').innerHTML += messageStr + '<br/>';
             message = new Message('payloadReceived', messageStr, null, null);
+            console.log('payloadReceived: Preparing to send event to the moon!' );
+            const event = new CustomEvent('done', {detail: message});
+            this.el.dispatchEvent(event);
           } else {
             const messageStr = message.message;
             // document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
@@ -230,7 +243,7 @@ export class PeersService {
           message = new Message('log', message, null, null);
         }
         return message;
-      }, function (err) {
+      }, (err) => {
         console.log('TangyP2P error:: ' + err);
         const message: Message = new Message('error', err, null, null);
         return message;
