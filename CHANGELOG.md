@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.8.0
+
+
+
+Upgrade instructions:
+- `app-config.json` now needs...
+  - "syncProtocol" of "1" or "2".
+  - "associateUserProfileMode" of "local-exists", "local-new", or "remote"
+
 ## v3.7.0
 - __Fixes__
   - When editing forms, they will only save back to the server after clicking the top level "save" button. There is also now messaging around when the save either completes successfully or fails.
