@@ -30,15 +30,16 @@ export class CasesService {
         })], <Array<CaseEventInfo>>[]);
 			return Promise.all(docs).then( data=>data.filter(eventInfo => this.doesOverlap(dateStart, dateEnd, eventInfo) && !(excludeEstimates && eventInfo.estimate))
 			.sort(function (a, b) {
-				return b.dateStart - a.dateStart;
+				return b.estimatedDay - a.estimatedDay;
 			}))
 	}
 
-	private doesOverlap(dateStart, dateEnd, eventInfo):boolean {
+	private doesOverlap(dateStart, dateEnd, eventInfo:CaseEventInfo):boolean {
+		const date = eventInfo.occurredOnDay || eventInfo.scheduledDay || eventInfo.estimatedDay
 		// Return true if lower bound overlap, upper bound overlap, inside bounds, or encompassing bounds.
-		return (eventInfo.dateStart <= dateStart && dateStart <= eventInfo.dateEnd)
-			|| (eventInfo.dateStart <= dateEnd && dateEnd <= eventInfo.dateEnd)
-			|| (eventInfo.dateStart >= dateStart && dateEnd >= eventInfo.dateEnd)
-			|| (eventInfo.dateStart <= dateStart && dateEnd <= eventInfo.dateEnd)
+		return (date <= dateStart && dateStart <= date)
+			|| (date <= dateEnd && dateEnd <= date)
+			|| (date >= dateStart && dateEnd >= date)
+			|| (date <= dateStart && dateEnd <= date)
 	}
 }
