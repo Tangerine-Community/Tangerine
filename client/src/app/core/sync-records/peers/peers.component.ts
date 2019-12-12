@@ -79,16 +79,12 @@ export class PeersComponent implements OnInit, AfterContentInit {
         document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
       }
     );
-    startAdvertisingBtnEl.addEventListener('payloadReceived', e => {
-        console.log('payloadReceived: ' + JSON.stringify(e.detail));
-        const message: Message = e.detail;
-        document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
-        document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
-      }
-    );
     startAdvertisingBtnEl.addEventListener('done', e => {
         console.log('Current peer sync complete: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
+        this.endpoints = this.endpoints.map((endpoint) => {
+          return endpoint.id === message.destination ? {...endpoint, status: message.message} : endpoint
+        });
         document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
         document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
       }
@@ -110,22 +106,6 @@ export class PeersComponent implements OnInit, AfterContentInit {
   }
 
   startAdvertising() {
-    // const message: Message = await this.peersService.startAdvertising(this.endpoints);
-    // if (typeof message !== 'undefined' && message.messageType === 'log') {
-    //   const logEl = document.querySelector('#p2p-results');
-    //   logEl.innerHTML = logEl.innerHTML +  '<p>' + message.message + '</p>\n';
-    // } else if (message.messageType === 'localEndpointName') {
-    //   const el = document.querySelector('#localEndpointName');
-    //   el.innerHTML =  '<p>Device Name: ' + message.message + '</p>\n';
-    // } else if (message.messageType === 'endpoints') {
-    //   console.log('endpoints: ' + JSON.stringify(message.object));
-    //   this.endpoints = message.object;
-    // } else if (message.messageType === 'payload') {
-    //   document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
-    //   document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
-    // } else if (message.messageType === 'error') {
-    //   document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
-    // }
     const startAdvertisingBtnEl = this.peersService.el;
     this.peersService.startAdvertising(this.endpoints);
   }

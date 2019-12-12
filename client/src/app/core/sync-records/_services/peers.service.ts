@@ -14,6 +14,9 @@ export class PeersService {
   isMaster = false;
   el: any  = document.createElement('div');
   localDatabase: PouchDB;
+  currentEndpoint: Endpoint;
+  peer: Endpoint;
+  endpoints: Endpoint[];
 
   constructor(
     private userService: UserService
@@ -71,7 +74,7 @@ export class PeersService {
 
   errorAdvertising = (errorMsg) => {
       console.log('error from plugin startAdvertising: ' + errorMsg);
-      const message: Message = new Message('error', errorMsg, null, null);
+      const message: Message = new Message('error', errorMsg, null, null, null);
       // document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
       const event = new CustomEvent('error', {detail: message});
       this.el.dispatchEvent(event);
@@ -80,13 +83,17 @@ export class PeersService {
   successAdvertising = (response: Message) => {
       let message: Message;
       if (response['messageType'] === 'log') {
-        message = new Message('log', response['message'], null, null);
+        message = new Message('log', response['message'], null, null, null);
         const event = new CustomEvent('log', {detail: message});
         this.el.dispatchEvent(event);
       } else if (response['messageType'] === 'localEndpointName') {
-        message = new Message('localEndpointName', response['message'], null, null);
+        message = new Message('localEndpointName', response['message'], null, null, null);
         const event = new CustomEvent('localEndpointName', {detail: message});
         this.el.dispatchEvent(event);
+      } else if (response['messageType'] === 'peer') {
+        console.log('peer: ' + JSON.stringify(response['object']));
+        const peer = response['object'];
+        this.peer = new Endpoint(peer.id, peer.endpointName, null);
       } else if (response['messageType'] === 'endpoints') {
         const endpointList: Endpoint[] = [];
         console.log('endpoints: ' + JSON.stringify(response['object']));
@@ -107,7 +114,8 @@ export class PeersService {
             endpointList.push(endpoint);
           }
         }
-        message = new Message('endpoints', null, endpointList, null);
+        this.endpoints = endpointList;
+        message = new Message('endpoints', null, endpointList, null, null);
         const event = new CustomEvent('endpoints', {detail: message});
         this.el.dispatchEvent(event);
       } else if (response.messageType === 'payload') {
@@ -132,21 +140,27 @@ export class PeersService {
           if (this.isMaster) {
             // TODO - should be a confirmation that *some* data was sent - a proof of life
             // TODO at this point, he can move to another peer.
-            const doneMessage = 'Data has been loaded. You may sync the next device.'
+            const doneMessage = 'Done! Sync next device.'
             console.log('done! ' + doneMessage);
-            message = new Message('done', doneMessage, null, null);
+            let currentEndpointId;
+            if (this.currentEndpoint) {
+              currentEndpointId = this.currentEndpoint.id;
+            }
+            message = new Message('done', doneMessage, null, currentEndpointId, null);
             const event = new CustomEvent('done', {detail: message});
             this.el.dispatchEvent(event);
           } else {
             try {
               const pluginMessage = 'Pushing local db to master.';
-              console.log(pluginMessage)
-              const upload: Message = new Message('payload', pluginMessage, dumpedString, null);
+              console.log(pluginMessage);
+              const upload: Message = new Message('payload', pluginMessage, dumpedString, null, null);
               pushDataMessage = await this.pushData(upload);
-              console.log('pushDataMessage message: ' + pushDataMessage['message']);
-              message = new Message('done', pushDataMessage['message'], null, null);
-              const event = new CustomEvent('done', {detail: message});
-              this.el.dispatchEvent(event);
+              if (typeof pushDataMessage !== 'undefined') {
+                console.log('pushDataMessage message: ' + pushDataMessage['message']);
+                message = new Message('done', pushDataMessage['message'], null, null, null);
+                const event = new CustomEvent('done', {detail: message});
+                this.el.dispatchEvent(event);
+              }
             } catch (e) {
               message = pushDataMessage;
               console.log('Error pushing data: ' + JSON.stringify(message));
@@ -156,7 +170,7 @@ export class PeersService {
           }
         }).catch((err) => {
           console.log(err);
-          message = new Message('error', err, null, null);
+          message = new Message('error', err, null, null, null);
           const event = new CustomEvent('error', {detail: message});
           this.el.dispatchEvent(event);
         });
@@ -164,16 +178,21 @@ export class PeersService {
     };
 
 // async connectToEndpoint(endpoint): Promise<Message> {
-  async connectToEndpoint(endpoint) {
+  // endpointStr is sent as a string with id and name separated by a '_'
+
+  async connectToEndpoint(endpointStr) {
+    const ep = endpointStr.split('_');
+    const endpoint = new Endpoint(ep[0], ep[1], 'Pending')
+    this.currentEndpoint = endpoint;
     this.isMaster = true;
     const dumpedString = await this.dumpData(this.localDatabase)
     if (this.window.isCordovaApp) {
     const result: Message = await new Promise((resolve, reject) => {
       let message: Message;
-      this.el.addEventListener('done', () => {
-        resolve(message);
-      });
-      window['cordova']['plugins']['NearbyConnectionsPlugin'].connectToEndpoint(endpoint,
+      // this.el.addEventListener('done', () => {
+      //   resolve(message);
+      // });
+      window['cordova']['plugins']['NearbyConnectionsPlugin'].connectToEndpoint(endpointStr,
         async (response: Message) => {
           if (response['messageType'] === 'log') {
             const logEl = document.querySelector('#p2p-results');
@@ -184,7 +203,7 @@ export class PeersService {
             const endpointName = Object.values(ep)[0];
             console.log('pushing data to endpoint: ' + JSON.stringify(response['object']) + ' endpointId: ' + endpointName);
             // const db = await this.getDatabase();
-            const payload: Message = new Message('payload', 'Data from master', dumpedString, null);
+            const payload: Message = new Message('payload', 'Data from master', dumpedString, null, null);
             message = await this.pushData(payload);
           }
         },
@@ -192,7 +211,7 @@ export class PeersService {
           console.log('error:' + error);
           const logEl = document.querySelector('#p2p-results');
           logEl.innerHTML = logEl.innerHTML + '<p>' + 'error:' + error + '</p>\n';
-          message = new Message('error', error, null, null);
+          message = new Message('error', error, null, null, null);
         }
       );
     });
@@ -219,7 +238,7 @@ export class PeersService {
 
   async pushData(payload: Message) {
     if (this.window.isCordovaApp) {
-      const result: Message = window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(payload, (message) => {
+      const result: Message = await window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(payload, (message) => {
         console.log('TangyP2P: Data transferred from peer to master.' );
         console.log('TangyP2P: message: ' + JSON.stringify(message));
         const objectConstructor = ({}).constructor;
@@ -229,23 +248,40 @@ export class PeersService {
             console.log('payloadReceived: ' + messageStr);
             // document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
             // document.querySelector('#transferProgress').innerHTML += messageStr + '<br/>';
-            message = new Message('payloadReceived', messageStr, null, null);
-            console.log('payloadReceived: Preparing to send event to the moon!' );
+            let endpointId;
+            if (typeof this.currentEndpoint !== 'undefined' ) {
+              endpointId = this.currentEndpoint.id;
+              console.log('this.currentEndpoint: ' + endpointId);
+            // } else if (typeof message.originName !== 'undefined' && message.originName !== null) {
+            //   const origin = this.endpoints.find(endpoint => endpoint.endpointName === message.originName);
+            //   if (typeof origin !== 'undefined') {
+            //     endpointId = origin.id;
+            //     console.log('origin.id: ' + endpointId);
+            //   }
+            } else if (typeof this.peer !== 'undefined') {
+              endpointId = this.peer.id;
+              console.log('this.peer.id: ' + endpointId);
+            }
+            message = new Message('payloadReceived', messageStr, null, endpointId, null);
+            console.log('payloadReceived: Preparing to send event; message: ' + JSON.stringify(message));
             const event = new CustomEvent('done', {detail: message});
             this.el.dispatchEvent(event);
+            // when a transfer has been re-sent.
+          } else if (message.messageType === 'payload') {
+            this.successAdvertising(message.object);
           } else {
             const messageStr = message.message;
             // document.querySelector('#p2p-results').innerHTML += messageStr + '<br/>';
-            message = new Message('log', messageStr, null, null);
+            message = new Message('log', messageStr, null, null, null);
           }
         } else {
           // document.querySelector('#p2p-results').innerHTML += message + '<br/>';
-          message = new Message('log', message, null, null);
+          message = new Message('log', message, null, null, null);
         }
         return message;
       }, (err) => {
         console.log('TangyP2P error:: ' + err);
-        const message: Message = new Message('error', err, null, null);
+        const message: Message = new Message('error', err, null, null, null);
         return message;
       });
       return result;

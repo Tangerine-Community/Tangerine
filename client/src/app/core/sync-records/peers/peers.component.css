@@ -23,7 +23,8 @@
   -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);
 }
 mat-chip {
-  max-width: 200px;
+  max-width: 400px;
+  height: 50px;
 }
 .bigText {
   font-size: x-large;
