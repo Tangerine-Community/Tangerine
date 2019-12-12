@@ -71,10 +71,10 @@ export class GroupDevicesComponent implements OnInit {
           <tangy-input name="_id" label="ID" value="${device._id}" disabled></tangy-input>
           <tangy-input name="token" label="Token" value="${device.token}" disabled></tangy-input>
           <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox>
-          <tangy-input name="assigned_location__show_levels" label="Assign device to location at which level?" value='${device.assignedLocation.showLevels.join(',')}'></tangy-input>
-          <tangy-input name="assigned_location__value" label="Assign device to location at which location?" value='${JSON.stringify(device.assignedLocation.value)}'></tangy-input>
-          <tangy-input name="sync_location__show_levels" label="Sync device to location at which level?" value='${device.syncLocations[0].showLevels.join(',')}'></tangy-input>
-          <tangy-input name="sync_location__value" label="Sync device to location at which location?" value='${JSON.stringify(device.syncLocations[0].value)}'></tangy-input>
+          <tangy-input name="assigned_location__show_levels" label="Assign device to location at which level?" value='${device.assignedLocation.showLevels ? device.assignedLocation.showLevels.join(',') : ''}'></tangy-input>
+          <tangy-input name="assigned_location__value" label="Assign device to location at which location?" value='${device.assignedLocation ? JSON.stringify(device.assignedLocation.value) : ''}'></tangy-input>
+          <tangy-input name="sync_location__show_levels" label="Sync device to location at which level?" value='${device.syncLocations[0] && device.syncLocations[0].showLevels ? device.syncLocations[0].showLevels.join(',') : ''}'></tangy-input>
+          <tangy-input name="sync_location__value" label="Sync device to location at which location?" value='${device.syncLocations[0] && device.syncLocations[0].value ? JSON.stringify(device.syncLocations[0].value) : ''}'></tangy-input>
         </tangy-form-item>
       </tangy-form>
     `
