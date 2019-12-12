@@ -3,17 +3,13 @@ export class Message {
   message: string;
   object: any;
   destination: string;
+  originName: string;
 
-  // function Message(messageType, message, object) {
-  //   this.messageType = messageType;
-  //   this.message = message;
-  //   this.object = object;
-  // }
-
-  constructor(messageType: string, message: string, object: any, destination: string) {
+  constructor(messageType: string, message: string, object: any, destination: string, originName: string) {
     this.messageType = messageType;
     this.message = message;
     this.object = object;
     this.destination = destination;
+    this.originName = originName;
   }
 }
