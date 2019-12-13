@@ -10,8 +10,13 @@ export class GroupDeviceController {
     private readonly groupDeviceService: GroupDeviceService
   ) { }
 
+  @All('list/:groupId')
+  async list(@Param('groupId') groupId) {
+    return await this.groupDeviceService.list(groupId)
+  }
+
   @All('create/:groupId')
-  async create(@Param('groupId') groupId:string, @Body() deviceData:any):Promise<GroupDevice> {
+  async create(@Param('groupId') groupId:string, @Body('deviceData') deviceData:any):Promise<GroupDevice> {
     return await this.groupDeviceService.create(groupId, deviceData)
   }
 
@@ -62,18 +67,4 @@ export class GroupDeviceController {
     }
   }
 
-  /* @TODO
-  @All('list')
-  async list(@Request() request):Promise<Array<Group>> {
-    const groups = await this.groupService.listGroups()
-    if (request.user && request.user.name === this.configService.config().userOneUsername) {
-      return groups
-    } else {
-      const user = await this.userService.getUserByUsername(request.user.name)
-      return groups.filter(group => {
-        return user.groups.reduce((foundMembership, groupMembership) => foundMembership ? true : groupMembership.groupName === group._id, false)
-      })
-    }
-  }
-  */
 }

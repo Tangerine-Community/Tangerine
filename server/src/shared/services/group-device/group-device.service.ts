@@ -27,14 +27,24 @@ export class GroupDeviceService {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
     await groupDevicesDb.destroy()
   }
+
+  async list(groupId) {
+    const groupDevicesDb = this.getGroupDevicesDb(groupId)
+    const response  = await groupDevicesDb.allDocs({include_docs:true})
+    debugger
+    return response
+      .rows
+      .map(row => row.doc)
+  }
   
   async create(groupId, deviceData:any):Promise<GroupDevice> {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
-    const device = <GroupDevice>await groupDevicesDb.put({
+    const response = await groupDevicesDb.put({
+      ...new GroupDevice(),
       ...deviceData,
       token: uuid.v4()
     })
-    return device 
+    return <GroupDevice>await groupDevicesDb.get(response.id)
   }
 
   async read(groupId, deviceId) {
@@ -44,14 +54,19 @@ export class GroupDeviceService {
   }
 
   async update(groupId, device) {
-    const groupDevicesDb = this.getGroupDevicesDb(groupId)
-    groupDevicesDb.put({
-      device,
-      ...(await groupDevicesDb.get(device._id))._rev
-    })
-    const freshDevice = <GroupDevice>await groupDevicesDb.get(device._id)
-    return freshDevice
- 
+    try {
+      debugger
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(device._id)
+      await groupDevicesDb.put({
+        ...device,
+        _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(device._id)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   async delete(groupId, deviceId) {

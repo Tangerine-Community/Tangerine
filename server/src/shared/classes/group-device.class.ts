@@ -1,19 +1,22 @@
+const uuidv4 = require('uuid/v4');
+
+
 export class GroupDevice {
-  _id:string
+  _id:string = uuidv4()
   collection = 'Device'
-  token:string
-  claimed:boolean
+  token:string = uuidv4()
+  claimed:boolean = false
   syncLocations:Array<LocationConfig> = []
-  assignedLocation:LocationConfig
+  assignedLocation:LocationConfig = new LocationConfig()
 }
 
-export interface SyncLocation {
+export class SyncLocation {
   level:string
   id:string
 }
 
 // 
-export interface LocationConfig {
+export class LocationConfig {
   showLevels: Array<string>
   value:any
 }
