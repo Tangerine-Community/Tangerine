@@ -33,8 +33,12 @@ export class PeersService {
     // get the local db this.getUserService.getUserdatabase - has a .db property - can use the sync method
     PouchDB.plugin(window['PouchReplicationStream'].plugin);
     PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
-    const dbName = new PouchDB((await this.userService.getUserDatabase()).db.name);
-    const db = new PouchDB(dbName);
+    // const dbName = new PouchDB((await this.userService.getUserDatabase()).db.name);
+    const userDatabase = await this.userService.getUserDatabase();
+    const userDatabaseName = userDatabase.db.name;
+    const username = userDatabaseName.replace('_pouchdb', '');
+    console.log('userDatabaseName: ' + userDatabaseName + ' username: ' + username);
+    const db = new PouchDB(username);
     return db;
   }
 
@@ -118,7 +122,7 @@ export class PeersService {
         message = new Message('endpoints', null, endpointList, null, null);
         const event = new CustomEvent('endpoints', {detail: message});
         this.el.dispatchEvent(event);
-      } else if (response.messageType === 'payload') {
+      } else if (response['messageType'] === 'payload') {
         // load the data sent from the peer and then send your own.
         // TODO: JSONObject is available if we need it.
         const payload: Message = <Message>response.object;
@@ -179,7 +183,6 @@ export class PeersService {
 
 // async connectToEndpoint(endpoint): Promise<Message> {
   // endpointStr is sent as a string with id and name separated by a '_'
-
   async connectToEndpoint(endpointStr) {
     const ep = endpointStr.split('_');
     const endpoint = new Endpoint(ep[0], ep[1], 'Pending')
@@ -189,9 +192,9 @@ export class PeersService {
     if (this.window.isCordovaApp) {
     const result: Message = await new Promise((resolve, reject) => {
       let message: Message;
-      // this.el.addEventListener('done', () => {
-      //   resolve(message);
-      // });
+      this.el.addEventListener('done', () => {
+        resolve(message);
+      });
       window['cordova']['plugins']['NearbyConnectionsPlugin'].connectToEndpoint(endpointStr,
         async (response: Message) => {
           if (response['messageType'] === 'log') {
@@ -239,8 +242,10 @@ export class PeersService {
   async pushData(payload: Message) {
     if (this.window.isCordovaApp) {
       const result: Message = await window['cordova']['plugins']['NearbyConnectionsPlugin'].transferData(payload, (message) => {
-        console.log('TangyP2P: Data transferred from peer to master.' );
-        console.log('TangyP2P: message: ' + JSON.stringify(message));
+        // console.log('TangyP2P: Data transferred from peer to master.' );
+        if (typeof message !== 'undefined') {
+          console.log('pushData: messageType: ' + message.messageType + ' message.message: ' + message.message);
+        }
         const objectConstructor = ({}).constructor;
         if (message.constructor === objectConstructor) {
           if (message.messageType === 'payloadReceived') {
