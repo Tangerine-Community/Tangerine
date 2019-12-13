@@ -67,14 +67,72 @@ export class GroupDevicesComponent implements OnInit {
       ` : ''}
       <tangy-form>
         <tangy-form-item id="edit-device" on-change="
+          const selectedALshowLevels = inputs.assigned_location__show_levels.value.slice(0, inputs.assigned_location__show_levels.value.findIndex(option => option.value === 'on')+1).map(option => option.name).join(',')
+          inputs.assigned_location.setAttribute('show-levels',selectedALshowLevels)
+          const selectedSLshowLevels = inputs.sync_location__show_levels.value.slice(0, inputs.sync_location__show_levels.value.findIndex(option => option.value === 'on')+1).map(option => option.name).join(',')
+          inputs.sync_location.setAttribute('show-levels',selectedSLshowLevels)
         ">
           <tangy-input name="_id" label="ID" value="${device._id}" disabled></tangy-input>
           <tangy-input name="token" label="Token" value="${device.token}" disabled></tangy-input>
           <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox>
-          <tangy-input name="assigned_location__show_levels" label="Assign device to location at which level?" value='${device.assignedLocation.showLevels ? device.assignedLocation.showLevels.join(',') : ''}'></tangy-input>
-          <tangy-input name="assigned_location__value" label="Assign device to location at which location?" value='${device.assignedLocation ? JSON.stringify(device.assignedLocation.value) : ''}'></tangy-input>
-          <tangy-input name="sync_location__show_levels" label="Sync device to location at which level?" value='${device.syncLocations[0] && device.syncLocations[0].showLevels ? device.syncLocations[0].showLevels.join(',') : ''}'></tangy-input>
-          <tangy-input name="sync_location__value" label="Sync device to location at which location?" value='${device.syncLocations[0] && device.syncLocations[0].value ? JSON.stringify(device.syncLocations[0].value) : ''}'></tangy-input>
+          <tangy-radio-buttons 
+            ${device.assignedLocation && device.assignedLocation.showLevels ? `
+              value='${
+                JSON.stringify(
+                  locationList.locationsLevels.map(level => {
+                    return {
+                      name:level,value:level === device.assignedLocation.showLevels.slice(-1)[0] ? 'on' : ''
+                    }
+                  })
+                )
+              }'
+            ` : ''}
+            label="Assign device to location at which level?" 
+            name="assigned_location__show_levels"
+          >
+            ${locationList.locationsLevels.map(level => `
+              <option value="${level}">${level}</option>
+            `).join('')}
+          </tangy-radio-buttons>
+          <tangy-location 
+            name="assigned_location" 
+            label="Assign device to location at which location?" 
+            ${device.assignedLocation && device.assignedLocation.value ? `
+              show-levels='${device.assignedLocation.showLevels.join(',')}' 
+              value='${JSON.stringify(device.assignedLocation.value)}'
+            ` : ''}
+          >
+          </tangy-location>
+          <tangy-radio-buttons 
+            ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
+              value='${
+                JSON.stringify(
+                  locationList.locationsLevels.map(level => {
+                    return {
+                      name:level,value:level === device.syncLocations[0].showLevels.slice(-1)[0] ? 'on' : ''
+                    }
+                  })
+                )
+              }'
+            ` : ''}
+            label="Sync device to location at which level?" 
+            name="sync_location__show_levels"
+          >
+            ${locationList.locationsLevels.map(level => `
+              <option value="${level}">${level}</option>
+            `).join('')}
+          </tangy-radio-buttons>
+          <tangy-location 
+            name="sync_location"
+            label="Sync device to which location?" 
+            ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].value ? `
+              show-levels='${device.syncLocations[0].showLevels.join(',')}'
+              value='${JSON.stringify(device.syncLocations[0].value)}'
+            ` : ''}
+          >
+          </tangy-location>
+
+
         </tangy-form-item>
       </tangy-form>
     `
@@ -85,10 +143,12 @@ export class GroupDevicesComponent implements OnInit {
       this.modeEditContainer.nativeElement.querySelector('#qr').innerHTML = qr.createSvgTag({cellSize:500, margin:0,cellColor:(c, r) =>''})
     }
     this.modeEditContainer.nativeElement.querySelector('tangy-form').addEventListener('submit', async (event) => {
-      device.assignedLocation.value = JSON.parse(event.target.getValue('assigned_location__value'))
-      device.assignedLocation.showLevels = event.target.getValue('assigned_location__show_levels').split(',')
-      device.syncLocations[0].value = JSON.parse(event.target.getValue('sync_location__value'))
-      device.syncLocations[0].showLevels = event.target.getValue('sync_location__show_levels').split(',')
+      device.assignedLocation.value = event.target.inputs.find(input => input.name === 'assigned_location').value
+      device.assignedLocation.showLevels = event.target.inputs.find(input => input.name === 'assigned_location').showLevels.split(',')
+      device.syncLocations[0] = {
+        value: event.target.inputs.find(input => input.name === 'sync_location').value,
+        showLevels: event.target.inputs.find(input => input.name === 'sync_location').showLevels.split(',')
+      }
       await this.groupDevicesService.updateDevice(this.groupId, device)
       this.listDevices()
     })
