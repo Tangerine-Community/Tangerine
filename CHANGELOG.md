@@ -62,6 +62,12 @@ git checkout v3.7.0
 docker exec tangerine translations-update
 ```
 
+## v3.6.5
+- Fix timed grid output to exclude item level variables in logstash output https://github.com/Tangerine-Community/Tangerine/pull/1806
+
+__Upgrade instructions:__
+After the usual upgrade commands, also clear reporting caches with `docker exec -it tangerine reporting-cache-clear`.
+
 ## v3.6.4
 - Fix usage of `T_CSV_MARK_DISABLED_OR_HIDDEN_WITH` in some cases.
 
