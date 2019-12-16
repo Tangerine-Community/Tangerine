@@ -33,8 +33,9 @@ describe('CaseManagementService', () => {
 //        RouterModule,
 //        AuthModule,
 //        HttpClientModule,
-//        SharedModule,
-        CaseManagementModule
+        
+        CaseManagementModule,
+        SharedModule
       ]
     });
     localStorage.setItem('currentUser', 'test-user')

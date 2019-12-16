@@ -65,7 +65,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
         </tangy-form-editor>
       `;
       const tangyFormEditorEl = this.containerEl.querySelector('tangy-form-editor');
-      tangyFormEditorEl.addEventListener('tangy-form-editor-change', event => this.saveForm(event.detail));
+      tangyFormEditorEl.addEventListener('tangy-form-editor-save', event => this.saveForm(event.detail));
     } else {
       this.containerEl.innerHTML = `
         <style>
@@ -117,8 +117,20 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
       fileContents: formHtml
     })
     // Send to server.
+    let errorDetected = false
     for (let file of files) {
-      await this.http.post('/editor/file/save', file).toPromise()
+      try {
+        await this.http.post('/editor/file/save', file).toPromise()
+      } catch (e) {
+        console.log(e)
+        errorDetected = true
+        alert("Your form was not successfully saved. Please try again.")
+      }
+    }
+    if (!errorDetected) {
+      alert("Your form was successfully saved.")
+    } else {
+      alert("Your form was not successfully saved. Please try again.")
     }
   }
 

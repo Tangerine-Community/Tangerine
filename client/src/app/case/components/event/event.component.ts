@@ -1,3 +1,4 @@
+import { EventFormDefinition } from './../../classes/event-form-definition.class';
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../shared/_services/user.service';
@@ -5,12 +6,16 @@ import { CaseService } from '../../services/case.service'
 import { CaseEvent } from '../../classes/case-event.class'
 import { CaseEventDefinition } from '../../classes/case-event-definition.class';
 import { EventForm } from '../../classes/event-form.class';
-import { EventFormDefinition } from '../../classes/event-form-definition.class';
-import { WindowRef } from 'src/app/core/window-ref.service';
 
-class EventFormInfo {
+interface EventFormInfo {
   eventFormDefinition:EventFormDefinition
   eventForm:EventForm
+}
+
+interface ParticipantInfo {
+  id: string
+  renderedListItem:string
+  eventFormInfos: Array<EventFormInfo>
 }
 
 @Component({
@@ -22,18 +27,21 @@ export class EventComponent implements OnInit, AfterContentInit {
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
-  eventFormsInfo:Array<EventFormInfo>
+  participantInfos:Array<ParticipantInfo>
+  noRoleEventFormInfos: Array<EventFormInfo>
   loaded = false
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
+  window:any
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private caseService: CaseService,
-    private windowRef: WindowRef,
     private userService: UserService
-  ) { }
+  ) { 
+    this.window = window
+  }
 
   ngOnInit() {
   }
@@ -41,7 +49,7 @@ export class EventComponent implements OnInit, AfterContentInit {
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
       await this.caseService.load(params.caseId)
-      this.windowRef.nativeWindow.caseService = this.caseService
+      this.window.caseService = this.caseService
       this.caseEvent = this
         .caseService
         .case
@@ -52,29 +60,46 @@ export class EventComponent implements OnInit, AfterContentInit {
         .caseDefinition
         .eventDefinitions
         .find(caseDef => caseDef.id === this.caseEvent.caseEventDefinitionId)
-      this.eventFormsInfo = this
-        .caseEventDefinition
-        .eventFormDefinitions
-        .reduce((eventFormsInfo, eventFormDefinition) => {
-           return [
-              ...eventFormsInfo,
-              ...this
-                .caseEvent
-                .eventForms
-                .reduce((eventFormsInfoSubset, eventForm) => {
-                  return eventForm.eventFormDefinitionId === eventFormDefinition.id
-                    ? [
-                        ...eventFormsInfoSubset, 
-                        <EventFormInfo>{
-                          eventFormDefinition,
-                          eventForm
-                        }
-                      ]
-                    : eventFormsInfoSubset
-                }, [])
-           ]
+      const noRoleEventFormDefinitionIds:Array<string> = this.caseEventDefinition.eventFormDefinitions
+        .filter(eventFormDefinition => !eventFormDefinition.forCaseRole)
+        .map(eventFormDefinition => eventFormDefinition.id)
+      this.noRoleEventFormInfos = this
+        .caseEvent
+        .eventForms
+        .filter(eventForm => noRoleEventFormDefinitionIds.includes(eventForm.eventFormDefinitionId))
+        .map(eventForm => {
+          return <EventFormInfo>{
+            eventForm,
+            eventFormDefinition: this
+              .caseEventDefinition
+              .eventFormDefinitions
+              .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
+          }
+        })
+      this.participantInfos = this.caseService.case.participants.map(participant => {
+        const id = participant.id
+        const data = participant.data
+        const role = this.caseService.caseDefinition.caseRoles.find(caseRole => caseRole.id === participant.caseRoleId)
+        let renderedListItem:string
+        eval(`renderedListItem = \`${role.templateListItem}\``) 
+        return <ParticipantInfo>{
+          id,
+          renderedListItem,
+          eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
+            return eventForm.participantId === participant.id
+              ? [...eventFormInfos, <EventFormInfo>{
+                eventForm,
+                eventFormDefinition: this
+                  .caseEventDefinition
+                  .eventFormDefinitions
+                  .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
+              }]
+              : eventFormInfos
           }, [])
-      this.calculateAvailableEventFormDefinitions()
+        }
+      })
+      .filter(participantInfo => participantInfo.eventFormInfos.length !== 0)
+      //this.calculateAvailableEventFormDefinitions()
       this.loaded = true
     })
   }

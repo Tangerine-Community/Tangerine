@@ -13,21 +13,27 @@ export class AuthenticationService {
   private _currentUserLoggedIn: boolean;
   public userShouldResetPassword$: any;
   private _userShouldResetPassword: boolean;
+  window:any
 
   constructor(
     private userService: UserService,
     private appConfigService: AppConfigService
   ) {
+    this.window = window
     this.currentUserLoggedIn$ = new Subject();
     this.userShouldResetPassword$ = new Subject();
   }
 
   async login(username: string, password: string) {
     if (await this.userService.doesUserExist(username) && await this.confirmPassword(username, password)) {
-      localStorage.setItem('currentUser', username);
+      // Make the user's database available for code in forms to use.
+      this.window.userDb = await this.userService.getUserDatabase(username)
+      const userAccount = await this.userService.getUserAccount(username)
+      localStorage.setItem('currentUser', userAccount.username);
+      localStorage.setItem('currentUsername', userAccount.username);
+      localStorage.setItem('currentUserId', userAccount.userUUID);
       this._currentUserLoggedIn = true;
       this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
-      const userAccount = await this.userService.getUserAccount(username)
       this.userLoggedIn$.next(userAccount)
       return true 
     } else {;

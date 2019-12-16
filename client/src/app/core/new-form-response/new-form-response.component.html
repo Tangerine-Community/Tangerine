@@ -1,12 +1,29 @@
-
 <div class="wrapper">
-  <div class="form-info-cards">
-    <paper-card class="form-info-card" *ngFor="let formInfo of formsInfo">
-      <h2 class="card-header" [innerHTML]="formInfo.title | unsanitizeHtml"></h2>
-      <div class="card-content" [innerHTML]="formInfo.description | unsanitizeHtml"></div>
-      <div class="card-actions">
-        <paper-button (click)="onFormInfoSelect(formInfo.id)">{{'start'|translate}}</paper-button>
-      </div>
-    </paper-card>
+  <div class="secondary">
+    <iron-icon icon="clear" routerLink="/case-home"></iron-icon>
+    <span>&nbsp;&nbsp;{{'Select case type'|translate}}</span>
   </div>
+ <div class="form-cards">
+    <paper-icon-item *ngFor='let formInfo of formsInfo' class="form-item form new-form"
+    (click)="onFormInfoSelect(formInfo.id)">
+      <iron-icon icon="{{ formInfo.icon }}" slot="item-icon"></iron-icon> 
+      <paper-item-body two-line>
+          <div>
+            <span [innerHTML]="formInfo.title|unsanitizeHtml"></span> 
+          </div>
+          <div secondary [innerHTML]="formInfo.description|unsanitizeHtml"></div>
+        </paper-item-body>
+    </paper-icon-item>
+  </div>
+  
+  <div id="bottom-nav">
+      <table>
+        <tr>
+          <td routerLink="/case-home"><iron-icon icon="home"></iron-icon></td>
+        </tr>
+        <tr>
+          <td routerLink="/case-home">{{'Home'|translate}}</td>
+        </tr>
+      </table>
+    </div>
 </div>

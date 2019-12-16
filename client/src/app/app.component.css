@@ -7,8 +7,12 @@ h1 {
   padding-right: 7px;
 }
 
+.hamburger-menu {
+  color: var(--primary-text-color-overlay);
+}
+
 mat-toolbar.mat-tangy-custom-toolbar {
-  background: #212a3f;
+  background: var(--primary-color-dark) !important;
 }
 
 #update-in-progress-inner {

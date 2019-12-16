@@ -1,3 +1,6 @@
+import { SharedModule } from './../../../shared/shared.module';
+import { TranslateModule } from '@ngx-translate/core';
+import { CASE_EVENT_STATUS_IN_PROGRESS } from './../../classes/case-event.class';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CaseEventScheduleComponent } from './case-event-schedule.component';
@@ -52,7 +55,7 @@ class MockCasesService {
         id: 'e1',
         caseId: 'response1',
         caseEventDefinitionId: 'c1',
-        complete: false,
+        status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
         dateStart: REFERENCE_TIME,
@@ -62,7 +65,7 @@ class MockCasesService {
         id: 'e2',
         caseId: 'response1',
         caseEventDefinitionId: 'c1',
-        complete: false,
+        status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
         dateStart: REFERENCE_TIME,
@@ -72,7 +75,7 @@ class MockCasesService {
         id: 'e3',
         caseId: 'response1',
         caseEventDefinitionId: 'c1',
-        complete: false,
+        status: CASE_EVENT_STATUS_IN_PROGRESS,
         eventForms: [],
         estimate: false,
         dateStart: REFERENCE_TIME + (1000*60*60*24),
@@ -87,7 +90,11 @@ describe('CaseEventScheduleComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MatFormFieldModule],
+      imports: [
+        MatFormFieldModule,
+        SharedModule,
+        TranslateModule.forRoot()
+      ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
       declarations: [ CaseEventScheduleComponent, CaseEventScheduleListComponent ],
       providers: [
