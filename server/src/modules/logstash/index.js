@@ -94,6 +94,24 @@ const generateFlatResponse = async function (formResponse, locationList) {
             flatFormResponse[`${firstIdSegment}${input.name}.${group.level}_label`] = 'orphaned';
           }
         }
+      } else if (input.tagName === 'TANGY-GPS') {
+        flatFormResponse[`${firstIdSegment}geoip.location.lat`] = input.value.latitude
+        flatFormResponse[`${firstIdSegment}geoip.location.lon`] = input.value.longitude
+        // Flatter...
+        flatFormResponse[`geoip.lat`] = input.value.latitude
+        flatFormResponse[`geoip.lon`] = input.value.longitude
+
+      } else if (input.tagName === 'TANGY-TIMED') {
+        flatFormResponse[`${firstIdSegment}${input.name}.duration`] = input.duration
+        flatFormResponse[`${firstIdSegment}${input.name}.time_remaining`] = input.timeRemaining
+        // Calculate Items Per Minute.
+        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
+        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
+        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
+        flatFormResponse[`${firstIdSegment}${input.name}.number_of_items_correct`] = numberOfItemsCorrect
+        flatFormResponse[`${firstIdSegment}${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
+        let timeSpent = input.duration - input.timeRemaining
+        flatFormResponse[`${firstIdSegment}${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
       } else if (input && typeof input.value === 'string') {
         flatFormResponse[`${firstIdSegment}${input.name}`] = input.value;
       } else if (input && typeof input.value === 'number') {
@@ -107,26 +125,6 @@ const generateFlatResponse = async function (formResponse, locationList) {
         for (let key of elementKeys) {
           flatFormResponse[`${firstIdSegment}${input.name}.${key}`] = input.value[key];
         };
-      }
-      if (input.tagName === 'TANGY-TIMED') {
-        flatFormResponse[`${firstIdSegment}${input.name}.duration`] = input.duration
-        flatFormResponse[`${firstIdSegment}${input.name}.time_remaining`] = input.timeRemaining
-        // Calculate Items Per Minute.
-        let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
-        let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
-        let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
-        flatFormResponse[`${firstIdSegment}${input.name}.number_of_items_correct`] = numberOfItemsCorrect
-        flatFormResponse[`${firstIdSegment}${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
-        let timeSpent = input.duration - input.timeRemaining
-        flatFormResponse[`${firstIdSegment}${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
-      }
-      if (input.tagName === 'TANGY-GPS') {
-        flatFormResponse[`${firstIdSegment}geoip.location.lat`] = input.value.latitude
-        flatFormResponse[`${firstIdSegment}geoip.location.lon`] = input.value.longitude
-        // Flatter...
-        flatFormResponse[`geoip.lat`] = input.value.latitude
-        flatFormResponse[`geoip.lon`] = input.value.longitude
-
       }
     }
   }
