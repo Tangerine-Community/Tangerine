@@ -163,5 +163,7 @@
 	"here": "here",
 	"✓ Yay! You are up to date.": "✓ ជយោ ! អ្នកពិតជាទាន់សម័យមែន។",
 	"yes, continue": "ត្រូវហើយ។",
-	"no, stop": "ទេ។"
+	"no, stop": "ទេ។",
+  "next" : "បន្ទាប់",
+  "back" : "ថយក្រោយ"
 }
