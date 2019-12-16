@@ -4,6 +4,7 @@ GROUP="$1"
 CONTENT_PATH="$2"
 RELEASE_TYPE="$3"
 RELEASE_DIRECTORY="/tangerine/client/releases/$RELEASE_TYPE/pwas/$GROUP"
+BUILD_ID=`uuid`
 
 echo "RELEASE_DIRECTORY: $RELEASE_DIRECTORY"
 
@@ -48,6 +49,7 @@ mv .pwa-temporary/release-uuid .pwa-temporary/$UUID
 # Install content into PWA.
 rm -r .pwa-temporary/$UUID/app/assets
 cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
+echo $BUILD_ID > .pwa-temporary/$UUID/app/assets/tangerine-build-id
 
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
@@ -60,4 +62,4 @@ echo $UUID > .pwa-temporary/release-uuid.txt
 
 rm -r $RELEASE_DIRECTORY
 mv .pwa-temporary $RELEASE_DIRECTORY
-echo "Release with UUID of $UUID to $RELEASE_DIRECTORY"
+echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID"

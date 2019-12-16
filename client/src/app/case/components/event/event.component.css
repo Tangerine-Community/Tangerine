@@ -1,3 +1,7 @@
+h2 {
+    margin: 30px 0px 25px 20px;
+}
+
 .subject-header {
     background: #212a3f;
     color: white;
@@ -31,11 +35,16 @@ paper-card {
     text-align: left;
 }
 
+app-event-form-list-item {
+    display: flex;
+}
+app-event-form-list-item:focus {
+    outline: none;
+    background-color: rgba(0,0,0,0.12);
+}
 .form {
-    background: #FFF;
-    border-color: #CCC;
-    border-style: solid;
-    border-width: 1px 0px 1px 0px;
+    background: #fff;
+    border-top: 1px solid #ccc;
 }
 
 .form.required {
@@ -43,7 +52,7 @@ paper-card {
 }
 
 .form.new-form {
-    border-style: dashed;
+    border: 1px dashed #ccc;
 }
 
 .form.complete {

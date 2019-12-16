@@ -1,12 +1,12 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v3.0.1
+FROM tangerine/docker-tangerine-base-image:v3.1.0
 
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # Install global node dependencies
-RUN npm install -g nodemon dat
+RUN npm install -g nodemon dat uuid
 
 # T_USER1 is the username of the first user you will log in as. It is also the super user that has all permissions. 
 ENV T_USER1 user1

@@ -38,7 +38,6 @@ export class NewFormResponseComponent implements OnInit {
       return <FormInfo>{
         ...formInfo,
         title: `
-          <iron-icon icon="${eval(`\`${this.formTypes.find(formType => formType.id === formInfo.type).iconTemplate}\``)}" slot="item-icon"></iron-icon> 
           ${formInfo.title}
         `
       }
