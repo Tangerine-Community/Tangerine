@@ -185,5 +185,7 @@
 	"here": "here",
 	"✓ Yay! You are up to date.": "✓ Yay! You are up to date.",
   "yes, continue": "Yes, continue",
-	"no, stop": "No, stop"
+	"no, stop": "No, stop",
+  "next" : "Next",
+  "back" : "Back"
 }
