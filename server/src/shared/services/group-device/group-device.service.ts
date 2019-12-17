@@ -55,7 +55,6 @@ export class GroupDeviceService {
 
   async update(groupId, device) {
     try {
-      debugger
       const groupDevicesDb = this.getGroupDevicesDb(groupId)
       const originalDevice = await groupDevicesDb.get(device._id)
       await groupDevicesDb.put({
@@ -73,6 +72,41 @@ export class GroupDeviceService {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
     const device = await groupDevicesDb.get(deviceId)
     await groupDevicesDb.remove(device)
+  }
+
+  async reset(groupId:string, deviceId:string) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        lastUpdated: undefined,
+        version: undefined,
+        token: uuid(),
+        claimed: false
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async appUpdated(groupId:string, deviceId:string, version:string) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        updatedOn: Date.now(),
+        version,
+        _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   async register(groupId, deviceId) {
