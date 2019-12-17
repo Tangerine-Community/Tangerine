@@ -132,8 +132,8 @@
 "You may proceed.": "ﺏﺈﻤﻛﺎﻨﻛ ﺎﻠﻤﺗﺎﺒﻋﺓ.",
 "Item Title": "ﻊﻧﻭﺎﻧ ﺎﻠﻔﻗﺭﺓ ﺃﻭ ﺎﻠﺒﻧﺩ",
 "✓ Yay! You are up to date.": "✓ ﻭﺍﻭ! ﺖﻣ ﺎﻠﺘﺣﺪﻴﺛ.",
-"yes, continue": "نعم",
-"no, stop": "لا",
-"next" : "التالى",
+	"yes, continue": "نعم",
+	"no, stop": "لا",
+  "next" : "التالى",
 "back" : "الى الخلف"
 }
