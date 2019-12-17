@@ -10,6 +10,10 @@
       <td>Assigned Location</td>
       <td>Sync Locations</td>
       <td>Claimed</td>
+      <td>Last Updated</td>
+      <td>Version</td>
+      <td></td>
+      <td></td>
       <td></td>
     </tr>
     <tr *ngFor="let deviceInfo of deviceInfos">
@@ -17,9 +21,21 @@
       <td>{{deviceInfo.assignedLocation}}</td>
       <td>{{deviceInfo.syncLocations}}</td>
       <td>{{deviceInfo.claimed}}</td>
+      <td>{{deviceInfo.lastUpdated}}</td>
+      <td>{{deviceInfo.version}}</td>
       <td >  
         <a mat-raised-button color="accent" class="back-button" (click)="editDevice(deviceInfo._id)">
           <i class="material-icons">edit</i>{{' '}}{{'edit'|translate}}
+        </a>
+      </td>
+      <td >  
+        <a mat-raised-button color="accent" class="reset-button" (click)="resetDevice(deviceInfo._id)">
+          <i class="material-icons">reload</i>{{' '}}{{'reset'|translate}}
+        </a>
+      </td>
+      <td >  
+        <a mat-raised-button color="accent" class="delete-button" (click)="deleteDevice(deviceInfo._id)">
+          <i class="material-icons">delete</i>{{' '}}{{'delete'|translate}}
         </a>
       </td>
     </tr>

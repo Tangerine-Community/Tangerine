@@ -3,6 +3,8 @@ export class Device {
   collection = 'Device'
   token:string
   claimed:boolean
+  updatedOn:number
+  version:string
   syncLocations:Array<LocationConfig> = []
   assignedLocation:LocationConfig
 }

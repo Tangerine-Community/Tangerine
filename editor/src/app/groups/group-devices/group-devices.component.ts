@@ -1,3 +1,4 @@
+import { Loc } from 'tangy-form/util/loc.js';
 import { HttpClient } from '@angular/common/http';
 import { GroupDevicesService } from './../services/group-devices.service';
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
@@ -39,24 +40,35 @@ export class GroupDevicesComponent implements OnInit {
   async listDevices() {
     this.mode = MODE_LIST
     const devices = await this.groupDevicesService.list(this.groupId)
+    const locationList = await this.httpClient.get('./assets/location-list.json').toPromise()
+    const flatLocationList = Loc.flatten(locationList)
     this.deviceInfos = devices.map(device => {
       return <DeviceInfo>{
         ...device,
-        assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `${value.level}: ${value.value}`).join(', ') : '',
+        assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ') : '',
         syncLocations: device.syncLocations.map(syncLocation => {
-          return syncLocation.value.map(value => `${value.level}: ${value.value}`).join(', ')
+          return syncLocation.value.map(value => `${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
         }).join('; ')
       }
     })
   }
 
-  async addDevice() {
+  async addDevice(deviceId:string) {
     const device = <GroupDevice>await this.groupDevicesService.createDevice(this.groupId)
     this.editDevice(device._id)
-
   }
 
-  async editDevice(deviceId) {
+  async resetDevice(deviceId:string) {
+    const device = await this.groupDevicesService.resetDevice(this.groupId, deviceId)
+    this.listDevices()
+  }
+
+  async deleteDevice(deviceId:string) {
+    const device = await this.groupDevicesService.deleteDevice(this.groupId, deviceId)
+    this.listDevices()
+  }
+
+  async editDevice(deviceId:string) {
     const locationList = <any>await this.httpClient.get('./assets/location-list.json').toPromise()
     this.mode = MODE_EDIT
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
