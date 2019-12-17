@@ -1,3 +1,4 @@
+import { AboutService } from './../../core/about/about.service';
 import { Device } from './../classes/device.class';
 import PouchDB from 'pouchdb';
 import { AppConfigService } from './../../shared/_services/app-config.service';
@@ -21,6 +22,7 @@ export class DeviceService {
 
   constructor(
     private http:HttpClient,
+    private aboutService:AboutService,
     private appConfigService:AppConfigService
   ) { 
     this.db = new PouchDB(TANGERINE_DEVICE_STORE)
@@ -46,6 +48,7 @@ export class DeviceService {
       ...tangerineDeviceDoc,
       device
     })
+    await this.appUpdated()
     return device
   }
   
@@ -70,6 +73,15 @@ export class DeviceService {
       device
     })
     return device
+  }
+
+  async appUpdated():Promise<any> {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
+    const version = this.aboutService.getBuildNumber()
+    const device = <Device>await this
+      .http
+      .get(`${appConfig.serverUrl}group-device/info/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}/${version}`).toPromise() 
   }
 
 

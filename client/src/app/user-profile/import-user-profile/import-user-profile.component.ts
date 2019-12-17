@@ -45,7 +45,7 @@ export class ImportUserProfileComponent implements AfterContentInit {
     this.state = STATE_SYNCING
     this.appConfig = await this.appConfigService.getAppConfig()
     const shortCode = this.userShortCodeInput.nativeElement.value
-    this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupName}/responsesByUserProfileShortCode/${shortCode}`).toPromise()
+    this.docs = await this.http.get(`${this.appConfig.serverUrl}api/${this.appConfig.groupId}/responsesByUserProfileShortCode/${shortCode}`).toPromise()
     const newUserProfile = this.docs.find(doc => doc.form && doc.form.id === 'user-profile')
     await usersDb.put({...userAccount, userUUID: newUserProfile._id, initialProfileComplete: true})
     for (let doc of this.docs) {

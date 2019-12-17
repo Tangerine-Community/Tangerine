@@ -1,3 +1,4 @@
+import { DeviceService } from './../../../device/services/device.service';
 import { AppConfigService } from './../../../shared/_services/app-config.service';
 import { Component, AfterContentInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -7,6 +8,7 @@ import PouchDB from 'pouchdb';
 import { UserService } from '../../../shared/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { TranslateService } from '@ngx-translate/core';
+import { Device } from 'src/app/device/classes/device.class';
 
 @Component({
   selector: 'app-update',
@@ -23,6 +25,7 @@ export class UpdateComponent implements AfterContentInit {
   constructor(
     private router: Router,
     translate: TranslateService,
+    private deviceService:DeviceService,
     private http: HttpClient,
     private appConfigService:AppConfigService,
     private userService: UserService
@@ -46,6 +49,9 @@ export class UpdateComponent implements AfterContentInit {
         const userDb = await new PouchDB(username);
         await this.processUpdatesForUser(userDb, appConfig)
       }
+    }
+    if (appConfig.syncProtocol === '2') {
+      await this.deviceService.appUpdated()
     }
     localStorage.setItem('updateJustApplied', 'true')
     window.location.reload()
