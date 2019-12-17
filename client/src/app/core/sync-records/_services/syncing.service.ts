@@ -33,7 +33,7 @@ export class SyncingService {
     if (appConfig.centrallyManagedUserProfile) {
       // Pull the user profile.
       const userProfile = await this.userService.getUserProfile(username);
-      const userProfileOnServer = await this.http.get(`${appConfig.serverUrl}api/${appConfig.groupName}/${userProfile._id}`, {
+      const userProfileOnServer = await this.http.get(`${appConfig.serverUrl}api/${appConfig.groupId}/${userProfile._id}`, {
         headers: new HttpHeaders({
           'Authorization': appConfig.uploadToken
         })
@@ -66,7 +66,7 @@ export class SyncingService {
             });
           });
           const body = pako.deflate(JSON.stringify({ doc }), { to: 'string' });
-          await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupName}/upload`, body, {
+          await this.http.post(`${appConfig.serverUrl}api/${appConfig.groupId}/upload`, body, {
             headers: new HttpHeaders({
               'Authorization': appConfig.uploadToken
             })

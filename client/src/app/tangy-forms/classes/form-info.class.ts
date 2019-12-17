@@ -19,8 +19,6 @@ export class FormInfo {
   }
   couchdbSyncSettings:CouchdbSyncSettings = <CouchdbSyncSettings>{
     enabled: false,
-    push: false,
-    pull: false,
     filterByLocation: false
   }
 }
