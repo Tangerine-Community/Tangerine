@@ -183,7 +183,7 @@
 	"here": "ici",
 	"✓ Yay! You are up to date.": "✓ oui! Vous êtes à jour.",
 	"yes, continue": "Oui",
-	"no, stop": "Non",
-  "next" : "Suivant",
+	"no, stop": "Non"
+  ,"next" : "Suivant",
   "back" : "Retour"
 }
