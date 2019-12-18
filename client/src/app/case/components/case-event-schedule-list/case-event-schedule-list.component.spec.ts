@@ -43,7 +43,8 @@ class MockUserService {
   }
 }
 
-const REFERENCE_TIME = 1558715176000
+const REFERENCE_TIME = '2019-08-13'
+const REFERENCE_TIME_2 = '2019-12-31'
 
 class MockCasesService {
   
@@ -147,7 +148,7 @@ class MockCasesService {
         occurredOnDay: REFERENCE_TIME,
         estimatedDay: REFERENCE_TIME,
         windowStartDay: REFERENCE_TIME,
-        windowEndDay: REFERENCE_TIME + (1000 * 60 * 60),
+        windowEndDay: REFERENCE_TIME_2,
         caseDefinition,
         caseInstance: {
           caseDefinitionId: 'c1',
@@ -165,7 +166,7 @@ class MockCasesService {
               'occurredOnDay': REFERENCE_TIME,
               'estimatedDay': REFERENCE_TIME,
               'windowStartDay': REFERENCE_TIME,
-              'windowEndDay': REFERENCE_TIME + (1000 * 60 * 60),
+              'windowEndDay': REFERENCE_TIME_2,
               'eventForms': [
                 {
                   'id': 'fb64d705-ee99-4a27-bbad-8349a0e8767d',
@@ -191,7 +192,7 @@ class MockCasesService {
       }
 ]}
 }
-describe("CaseEventScheduleListComponent", () => {
+describe('CaseEventScheduleListComponent', () => {
   let component: CaseEventScheduleListComponent;
   let fixture: ComponentFixture<CaseEventScheduleListComponent>;
 
