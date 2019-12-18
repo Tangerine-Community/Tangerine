@@ -6,6 +6,8 @@ export class GroupDevice {
   token:string = uuidv4()
   claimed:boolean = false
   updatedOn:number = undefined
+  registeredOn:number = undefined
+  syncedOn:number = undefined
   version:string
   assignedLocation: LocationInfo = new LocationInfo()
   syncLocations: Array<LocationInfo> = []

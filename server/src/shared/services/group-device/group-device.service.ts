@@ -31,7 +31,6 @@ export class GroupDeviceService {
   async list(groupId) {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
     const response  = await groupDevicesDb.allDocs({include_docs:true})
-    debugger
     return response
       .rows
       .map(row => row.doc)
@@ -92,7 +91,23 @@ export class GroupDeviceService {
     }
   }
 
-  async appUpdated(groupId:string, deviceId:string, version:string) {
+  async didSync(groupId:string, deviceId:string) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        syncedOn: Date.now(),
+        _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async didUpdate(groupId:string, deviceId:string, version:string) {
     try {
       const groupDevicesDb = this.getGroupDevicesDb(groupId)
       const originalDevice = await groupDevicesDb.get(deviceId)
@@ -119,6 +134,7 @@ export class GroupDeviceService {
     await groupDevicesDb.put({
       ...device,
       claimed: true,
+      registeredOn: Date.now(),
       token: uuid.v4()
     })
     return <GroupDevice>await groupDevicesDb.get(deviceId)

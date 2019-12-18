@@ -51,7 +51,7 @@ export class UpdateComponent implements AfterContentInit {
       }
     }
     if (appConfig.syncProtocol === '2') {
-      await this.deviceService.appUpdated()
+      await this.deviceService.didUpdate()
     }
     localStorage.setItem('updateJustApplied', 'true')
     window.location.reload()
