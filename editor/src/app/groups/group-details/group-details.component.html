@@ -129,7 +129,7 @@
                   <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
                 </a>
               </span>
-              <span>
+              <span *ngIf="enabledModules.includes('sync-protocol-2')">
                 <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
               </span>
               <mat-divider></mat-divider>
@@ -172,6 +172,9 @@
                   <span><a mat-icon-button>
                       <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
                     </a>
+                  </span>
+                  <span *ngIf="enabledModules.includes('sync-protocol-2')">
+                    <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
                   </span>
                 </mat-list-item>
               </mat-list>
@@ -222,6 +225,9 @@
                   <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
                 </a>
               </span>
+              <span *ngIf="enabledModules.includes('sync-protocol-2')">
+                <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
+              </span>
               <mat-divider></mat-divider>
             </mat-list-item>
           </mat-list>
@@ -243,7 +249,7 @@
     </mat-card>
   </mat-tab>
 
-  <mat-tab *ngIf="isGroupAdminUser" label="Devices">
+  <mat-tab *ngIf="isGroupAdminUser && enabledModules.includes('sync-protocol-2')" label="Devices">
     <mat-card>
       <mat-card-title class="tangy-foreground-secondary">
         Devices

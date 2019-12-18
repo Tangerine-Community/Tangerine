@@ -45,9 +45,9 @@ export class GroupDevicesComponent implements OnInit {
     this.deviceInfos = devices.map(device => {
       return <DeviceInfo>{
         ...device,
-        assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ') : '',
+        assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>') : '',
         syncLocations: device.syncLocations.map(syncLocation => {
-          return syncLocation.value.map(value => `${value.level}: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join(', ')
+          return syncLocation.value.map(value => `<b>${value.level}</b>: ${flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
         }).join('; ')
       }
     })

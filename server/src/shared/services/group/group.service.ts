@@ -136,6 +136,9 @@ export class GroupService {
     await this.installViews(groupDb)
     await exec(`cp -r /tangerine/client/default-assets  /tangerine/client/content/groups/${groupId}`)
     await exec(`mkdir /tangerine/client/content/groups/${groupId}/media`)
+    //
+    // app-config.json
+    //
     let appConfig = <any>{}
     appConfig = <any>JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, "utf8"))
     appConfig.groupName = groupName 
@@ -145,9 +148,6 @@ export class GroupService {
       appConfig.syncProtocol = '2'
       appConfig.associatesUserProfileMode = 'local-exists'
       appConfig.sharedUserDatabase = true
-      await fs.writeFile(`/tangerine/client/content/groups/${groupId}/forms.json`, JSON.stringify([]))
-        .then(status => log.info("Wrote forms.json"))
-        .catch(err => log.error("Error writing forms.json: " + err))
       delete appConfig.uploadToken
       delete appConfig.registrationRequiresServerUser
       delete appConfig.centrallyManagedUserProfile
@@ -168,19 +168,90 @@ export class GroupService {
       let categoriesEntries = JSON.parse(categoriesString)
       appConfig.categories = categoriesEntries;
     }
-    // @TODO Remove groupName after modules have switched to groupId.
     const data = await tangyModules.hook('groupNew', {groupName: groupId, groupId, appConfig})
     appConfig = data.appConfig
     await fs.writeFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, JSON.stringify(appConfig))
       .then(status => log.info("Wrote app-config.json"))
       .catch(err => log.error("An error copying app-config: " + err))
-    // Create a blank location-list.
+    //
+    // forms.json
+    //
+    const forms = [
+      {
+        id: 'user-profile',
+        src: './assets/user-profile/form.html',
+        title: 'User Profile',
+        ...tangyModules.enabledModules.includes('case') 
+          ? {
+            searchSettings: {
+              shouldIndex: false,
+              variablesToIndex: [],
+              primaryTemplate: '',
+              secondaryTemplate: ''
+            }
+          }
+          : { }, 
+        ...tangyModules.enabledModules.includes('sync-protocol-2') 
+          ? {
+            customSyncSettings: {
+              enabled: false,
+              push: false,
+              pull: false,
+              excludeIncomplete:false
+            },
+            couchdbSyncSettings: {
+              enabled: true,
+              filterByLocation: true 
+            }
+          }
+          : { } 
+      },
+      ...tangyModules.enabledModules.includes('reports')
+        ? [
+          {
+            id:'reports',
+            src: './reports/form.html',
+            title: 'Reports',
+            ...tangyModules.enabledModules.includes('case') 
+              ? {
+                searchSettings: {
+                  shouldIndex: false,
+                  variablesToIndex: [],
+                  primaryTemplate: '',
+                  secondaryTemplate: ''
+                }
+              }
+              : { }, 
+            ...tangyModules.enabledModules.includes('sync-protocol-2') 
+              ? {
+                customSyncSettings: {
+                  enabled: false,
+                  push: false,
+                  pull: false,
+                  excludeIncomplete:false
+                },
+                couchdbSyncSettings: {
+                  enabled: true,
+                  filterByLocation: true 
+                }
+              }
+            : { } 
+          }
+        ]
+        : []
+    ]
+    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/forms.json`, forms) 
+    //
+    // location-list.json
+    //
     await fs.writeFile(`/tangerine/client/content/groups/${groupId}/location-list.json`, JSON.stringify({
       "locationsLevels": [],
       "locations": {},
       "metadata": {}
     }))
+    //
     // Stash and emit observable.
+    //
     this.groupDatabases.push(groupDb)
     this.groups$.next(group)
     return group

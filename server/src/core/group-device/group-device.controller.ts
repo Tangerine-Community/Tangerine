@@ -43,16 +43,31 @@ export class GroupDeviceController {
     return {} 
   }
 
-  @All('app-updated/:groupId/:deviceId/:token/:version')
-  async appUpdated(@Param('groupId') groupId, @Param('deviceid') deviceId, @Param('token') token, @Param('version') version) {
+  @All('did-sync/:groupId/:deviceId/:token')
+  async didSync(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token) {
     try {
       if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
         return 'Token does not match'
       }
-      const device = await this.groupDeviceService.appUpdated(groupId, deviceId, version)
+      const device = await this.groupDeviceService.didSync(groupId, deviceId)
       return device
     } catch (error) {
-      log.error('Error registering device')
+      log.error('Error syncing device')
+      console.log(error)
+      return 'There was an error.'
+    }
+  }
+
+  @All('did-update/:groupId/:deviceId/:token/:version')
+  async didUpdate(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token, @Param('version') version) {
+    try {
+      if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
+        return 'Token does not match'
+      }
+      const device = await this.groupDeviceService.didUpdate(groupId, deviceId, version)
+      return device
+    } catch (error) {
+      log.error('Error updating device')
       console.log(error)
       return 'There was an error.'
     }

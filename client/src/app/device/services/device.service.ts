@@ -48,7 +48,7 @@ export class DeviceService {
       ...tangerineDeviceDoc,
       device
     })
-    await this.appUpdated()
+    await this.didUpdate()
     return device
   }
   
@@ -75,14 +75,21 @@ export class DeviceService {
     return device
   }
 
-  async appUpdated():Promise<any> {
+  async didUpdate():Promise<any> {
     const appConfig = await this.appConfigService.getAppConfig()
     const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
-    const version = this.aboutService.getBuildNumber()
+    const version = await this.aboutService.getBuildNumber()
     const device = <Device>await this
       .http
-      .get(`${appConfig.serverUrl}group-device/info/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}/${version}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device/did-update/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}/${version}`).toPromise() 
   }
 
-
+  async didSync():Promise<any> {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
+    const version = await this.aboutService.getBuildNumber()
+    const device = <Device>await this
+      .http
+      .get(`${appConfig.serverUrl}group-device/did-sync/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}/${version}`).toPromise() 
+  }
 }

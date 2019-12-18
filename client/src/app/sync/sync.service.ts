@@ -59,6 +59,7 @@ export class SyncService {
       deviceToken: device.token,
       formInfos
     })
+    await this.deviceService.didSync()
   }
 
 }
