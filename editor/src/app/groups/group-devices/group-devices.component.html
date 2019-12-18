@@ -10,16 +10,36 @@
       <td>Assigned Location</td>
       <td>Sync Locations</td>
       <td>Claimed</td>
+      <td>Registered On</td>
+      <td>Last Synced</td>
+      <td>Last Updated</td>
+      <td>Version</td>
+      <td></td>
+      <td></td>
       <td></td>
     </tr>
     <tr *ngFor="let deviceInfo of deviceInfos">
       <td>{{deviceInfo._id}}</td>
-      <td>{{deviceInfo.assignedLocation}}</td>
-      <td>{{deviceInfo.syncLocations}}</td>
+      <td [innerHTML]="deviceInfo.assignedLocation"></td>
+      <td [innerHTML]="deviceInfo.syncLocations"></td>
       <td>{{deviceInfo.claimed}}</td>
+      <td>{{deviceInfo.registeredOn | date:'short'}}</td>
+      <td>{{deviceInfo.syncedOn | date:'short'}}</td>
+      <td>{{deviceInfo.updatedOn | date:'short'}}</td>
+      <td>{{deviceInfo.version}}</td>
       <td >  
         <a mat-raised-button color="accent" class="back-button" (click)="editDevice(deviceInfo._id)">
           <i class="material-icons">edit</i>{{' '}}{{'edit'|translate}}
+        </a>
+      </td>
+      <td >  
+        <a mat-raised-button color="accent" class="reset-button" (click)="resetDevice(deviceInfo._id)">
+          <i class="material-icons">settings_backup_restore</i>{{' '}}{{'reset'|translate}}
+        </a>
+      </td>
+      <td >  
+        <a mat-raised-button color="accent" class="delete-button" (click)="deleteDevice(deviceInfo._id)">
+          <i class="material-icons">delete</i>{{' '}}{{'delete'|translate}}
         </a>
       </td>
     </tr>

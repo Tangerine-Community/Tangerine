@@ -23,6 +23,14 @@ export class GroupDevicesService {
     return <GroupDevice>await this.httpClient.post(`/group-device/update/${groupId}`, {device}).toPromise()
   }
 
+  async deleteDevice(groupId:string, deviceId:string) {
+    return <GroupDevice>await this.httpClient.get(`/group-device/delete/${groupId}/${deviceId}`).toPromise()
+  }
+
+  async resetDevice(groupId:string, deviceId:string) {
+    return <GroupDevice>await this.httpClient.get(`/group-device/reset/${groupId}/${deviceId}`).toPromise()
+  }
+
   async createDevice(groupId) {
     const device = new GroupDevice()
     debugger

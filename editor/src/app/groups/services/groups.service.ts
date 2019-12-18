@@ -5,11 +5,7 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 import { id as generate } from 'rangen';
 import { WindowRef } from '../../core/window-ref.service';
 import { Loc } from 'tangy-form/util/loc.js';
-export interface Forms {
-  id: string;
-  title: string;
-  src: string;
-}
+
 @Injectable()
 export class GroupsService {
   constructor(
@@ -83,34 +79,6 @@ export class GroupsService {
         })
         .toPromise();
       return result;
-    } catch (error) {
-      console.error(error);
-      if (typeof error.status === 'undefined') {
-        this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
-      }
-    }
-  }
-  async getFormsList(groupName: string) {
-    try {
-      const result = (await this.httpClient
-        .get('/editor/groups/' + groupName + '/forms.json')
-        .toPromise()) as Forms[];
-
-      result.unshift(
-        {
-          id: 'user-profile',
-          title: 'User Profile',
-          src: '../content/user-profile/form.html'
-        },
-        {
-          id: 'reports',
-          title: 'Reports',
-          src: '../content/reports/form.html'
-        }
-      );
-
-      return result.map(result => ({ ...result, printUrl: `${this.windowRef.nativeWindow.location.origin}${this.windowRef.nativeWindow.location.pathname}/#/tangy-form-editor/${groupName}/${result.id}/print` }));
-
     } catch (error) {
       console.error(error);
       if (typeof error.status === 'undefined') {

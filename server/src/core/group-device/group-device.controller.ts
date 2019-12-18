@@ -31,10 +31,46 @@ export class GroupDeviceController {
     return freshDevice
   }
 
+  @All('reset/:groupId/:deviceId')
+  async reset(@Param('groupId') groupId, @Param('deviceId') deviceId) {
+    const freshDevice = await this.groupDeviceService.reset(groupId, deviceId)
+    return freshDevice
+  }
+
   @All('delete/:groupId/:deviceId')
   async delete(@Param('groupId') groupId:string, @Param('deviceId') deviceId:string) {
     await this.groupDeviceService.delete(groupId, deviceId)
-    return 'success'
+    return {} 
+  }
+
+  @All('did-sync/:groupId/:deviceId/:token')
+  async didSync(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token) {
+    try {
+      if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
+        return 'Token does not match'
+      }
+      const device = await this.groupDeviceService.didSync(groupId, deviceId)
+      return device
+    } catch (error) {
+      log.error('Error syncing device')
+      console.log(error)
+      return 'There was an error.'
+    }
+  }
+
+  @All('did-update/:groupId/:deviceId/:token/:version')
+  async didUpdate(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token, @Param('version') version) {
+    try {
+      if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
+        return 'Token does not match'
+      }
+      const device = await this.groupDeviceService.didUpdate(groupId, deviceId, version)
+      return device
+    } catch (error) {
+      log.error('Error updating device')
+      console.log(error)
+      return 'There was an error.'
+    }
   }
 
   @All('register/:groupId/:deviceId/:token')

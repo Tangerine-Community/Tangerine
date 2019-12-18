@@ -31,7 +31,6 @@ export class GroupDeviceService {
   async list(groupId) {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
     const response  = await groupDevicesDb.allDocs({include_docs:true})
-    debugger
     return response
       .rows
       .map(row => row.doc)
@@ -55,7 +54,6 @@ export class GroupDeviceService {
 
   async update(groupId, device) {
     try {
-      debugger
       const groupDevicesDb = this.getGroupDevicesDb(groupId)
       const originalDevice = await groupDevicesDb.get(device._id)
       await groupDevicesDb.put({
@@ -75,6 +73,57 @@ export class GroupDeviceService {
     await groupDevicesDb.remove(device)
   }
 
+  async reset(groupId:string, deviceId:string) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        lastUpdated: undefined,
+        version: undefined,
+        token: uuid(),
+        claimed: false
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async didSync(groupId:string, deviceId:string) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        syncedOn: Date.now(),
+        _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async didUpdate(groupId:string, deviceId:string, version:string) {
+    try {
+      const groupDevicesDb = this.getGroupDevicesDb(groupId)
+      const originalDevice = await groupDevicesDb.get(deviceId)
+      await groupDevicesDb.put({
+        ...originalDevice,
+        updatedOn: Date.now(),
+        version,
+        _rev: originalDevice._rev
+      })
+      const freshDevice = <GroupDevice>await groupDevicesDb.get(deviceId)
+      return freshDevice
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   async register(groupId, deviceId) {
     const groupDevicesDb = this.getGroupDevicesDb(groupId)
     const device = <GroupDevice>await groupDevicesDb.get(deviceId)
@@ -85,6 +134,7 @@ export class GroupDeviceService {
     await groupDevicesDb.put({
       ...device,
       claimed: true,
+      registeredOn: Date.now(),
       token: uuid.v4()
     })
     return <GroupDevice>await groupDevicesDb.get(deviceId)
