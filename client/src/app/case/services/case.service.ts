@@ -145,7 +145,7 @@ class CaseService {
 
   async setEventEstimatedDay(eventId, timeInMs: number) {
     const dateString = new Date(timeInMs)
-    const estimatedDay = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
+    const estimatedDay = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
       ? { ...event, ...{ estimatedDay} }
@@ -154,7 +154,7 @@ class CaseService {
   }
   async setEventScheduledDay(eventId, timeInMs: number) {
     const dateString = new Date(timeInMs)
-    const scheduledDay = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
+    const scheduledDay = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
       ? { ...event, ...{ scheduledDay} }
@@ -164,8 +164,8 @@ class CaseService {
   async setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
     const windowStartDateString = new Date(windowStartDayTimeInMs)
     const windowEndDateString = new Date(windowEndDayTimeInMs)
-    const windowStartDay = `${windowStartDateString.getFullYear}-${windowStartDateString.getMonth}-${windowStartDateString.getDate}`
-    const windowEndDay = `${windowEndDateString.getFullYear}-${windowEndDateString.getMonth}-${windowEndDateString.getDate}`
+    const windowStartDay = `${windowStartDateString.getFullYear()}-${windowStartDateString.getMonth()}-${windowStartDateString.getDate()}`
+    const windowEndDay = `${windowEndDateString.getFullYear()}-${windowEndDateString.getMonth()}-${windowEndDateString.getDate()}`
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
       ? { ...event, ...{ windowStartDay, windowEndDay} }
@@ -174,8 +174,8 @@ class CaseService {
   }
   async setEventOccurredOn(eventId, timeInMs: number) {
     const dateString = new Date(timeInMs)
-    const occurredOnDay = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
-    this.case.events = this.case.events.map(event => {
+    const occurredOnDay = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
+    return this.case.events = this.case.events.map(event => {
       return event.id === eventId
       ? { ...event, ...{ occurredOnDay} }
       : event
