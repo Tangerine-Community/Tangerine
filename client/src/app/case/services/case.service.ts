@@ -143,28 +143,38 @@ class CaseService {
   //   })
   // }
 
-  async setEventEstimatedDay(eventId, estimatedDay:number){
+  async setEventEstimatedDay(eventId, timeInMs: number) {
+    const dateString = new Date(timeInMs)
+    const estimatedDay = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
       ? { ...event, ...{ estimatedDay} }
       : event
     })
   }
-  async setEventScheduledDay(eventId, scheduledDay: number) {
+  async setEventScheduledDay(eventId, timeInMs: number) {
+    const dateString = new Date(timeInMs)
+    const scheduledDay = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
       ? { ...event, ...{ scheduledDay} }
       : event
     })
   }
-  async setEventWindow(eventId: string, windowStartDay: number, windowEndDay: number) {
+  async setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
+    const windowStartDateString = new Date(windowStartDayTimeInMs)
+    const windowEndDateString = new Date(windowEndDayTimeInMs)
+    const windowStartDay = `${windowStartDateString.getFullYear}-${windowStartDateString.getMonth}-${windowStartDateString.getDate}`
+    const windowEndDay = `${windowEndDateString.getFullYear}-${windowEndDateString.getMonth}-${windowEndDateString.getDate}`
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
-      ? { ...event, ...{ windowStartDay, windowEndDay: windowEndDay ? windowEndDay : windowStartDay} }
+      ? { ...event, ...{ windowStartDay, windowEndDay} }
       : event
     })
   }
-  async setEventOccurredOn(eventId, occurredOnDay: number) {
+  async setEventOccurredOn(eventId, timeInMs: number) {
+    const dateString = new Date(timeInMs)
+    const occurredOnDay = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
       ? { ...event, ...{ occurredOnDay} }

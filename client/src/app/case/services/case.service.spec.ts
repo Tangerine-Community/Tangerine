@@ -205,30 +205,45 @@ describe('CaseService', () => {
     const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
-    await service.setEventOccurredOn(service.case.events[0].id, 12345678)
-    expect(service.case.events[0].occurredOnDay).toEqual(12345678)
+    const timeInMs = new Date().getTime()
+    const dateString = new Date(timeInMs)
+    const date = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
+    await service.setEventOccurredOn(service.case.events[0].id, timeInMs)
+    expect(service.case.events[0].occurredOnDay).toEqual(date)
   })
   it('should set an event EstimatedDay date', async () => {
     const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
-    await service.setEventEstimatedDay(service.case.events[0].id, 12345678)
-    expect(service.case.events[0].estimatedDay).toEqual(12345678)
+    const timeInMs = new Date().getTime()
+    const dateString = new Date(timeInMs)
+    const date = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
+    await service.setEventEstimatedDay(service.case.events[0].id, timeInMs)
+    expect(service.case.events[0].estimatedDay).toEqual(date)
   })
   it('should set an event ScheduledDay date', async () => {
     const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
-    await service.setEventScheduledDay(service.case.events[0].id, 12345678)
-    expect(service.case.events[0].scheduledDay).toEqual(12345678)
+    const timeInMs = new Date().getTime()
+    const dateString = new Date(timeInMs)
+    const date = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
+    await service.setEventScheduledDay(service.case.events[0].id, timeInMs)
+    expect(service.case.events[0].scheduledDay).toEqual(date)
   })
   it('should set an event Window period', async () => {
     const service: CaseService = TestBed.get(CaseService)
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
-    await service.setEventWindow(service.case.events[0].id, 12345678, 123456787)
-    expect(service.case.events[0].windowStartDay).toEqual(12345678)
-    expect(service.case.events[0].windowEndDay).toEqual(123456787)
+    const windowStartDayTimeInMs = new Date().getTime()
+    const windowEndDayTimeInMs = new Date().getTime()
+    const windowStartDateString = new Date(windowStartDayTimeInMs)
+    const windowEndDateString = new Date(windowEndDayTimeInMs)
+    const windowStartDay = `${windowStartDateString.getFullYear}-${windowStartDateString.getMonth}-${windowStartDateString.getDate}`
+    const windowEndDay = `${windowEndDateString.getFullYear}-${windowEndDateString.getMonth}-${windowEndDateString.getDate}`
+    await service.setEventWindow(service.case.events[0].id, windowStartDayTimeInMs, windowEndDayTimeInMs)
+    expect(service.case.events[0].windowStartDay).toEqual(windowStartDay)
+    expect(service.case.events[0].windowEndDay).toEqual(windowEndDay)
   })
 
   it('should create participant and create forms for existing events', async () => {
