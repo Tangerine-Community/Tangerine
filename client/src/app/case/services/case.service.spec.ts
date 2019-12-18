@@ -207,7 +207,7 @@ describe('CaseService', () => {
     await service.createEvent('event-definition-first-visit')
     const timeInMs = new Date().getTime()
     const dateString = new Date(timeInMs)
-    const date = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
+    const date = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
     await service.setEventOccurredOn(service.case.events[0].id, timeInMs)
     expect(service.case.events[0].occurredOnDay).toEqual(date)
   })
@@ -217,7 +217,7 @@ describe('CaseService', () => {
     await service.createEvent('event-definition-first-visit')
     const timeInMs = new Date().getTime()
     const dateString = new Date(timeInMs)
-    const date = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
+    const date = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
     await service.setEventEstimatedDay(service.case.events[0].id, timeInMs)
     expect(service.case.events[0].estimatedDay).toEqual(date)
   })
@@ -227,7 +227,7 @@ describe('CaseService', () => {
     await service.createEvent('event-definition-first-visit')
     const timeInMs = new Date().getTime()
     const dateString = new Date(timeInMs)
-    const date = `${dateString.getFullYear}-${dateString.getMonth}-${dateString.getDate}`
+    const date = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
     await service.setEventScheduledDay(service.case.events[0].id, timeInMs)
     expect(service.case.events[0].scheduledDay).toEqual(date)
   })
@@ -239,8 +239,8 @@ describe('CaseService', () => {
     const windowEndDayTimeInMs = new Date().getTime()
     const windowStartDateString = new Date(windowStartDayTimeInMs)
     const windowEndDateString = new Date(windowEndDayTimeInMs)
-    const windowStartDay = `${windowStartDateString.getFullYear}-${windowStartDateString.getMonth}-${windowStartDateString.getDate}`
-    const windowEndDay = `${windowEndDateString.getFullYear}-${windowEndDateString.getMonth}-${windowEndDateString.getDate}`
+    const windowStartDay = `${windowStartDateString.getFullYear()}-${windowStartDateString.getMonth()}-${windowStartDateString.getDate()}`
+    const windowEndDay = `${windowEndDateString.getFullYear()}-${windowEndDateString.getMonth()}-${windowEndDateString.getDate()}`
     await service.setEventWindow(service.case.events[0].id, windowStartDayTimeInMs, windowEndDayTimeInMs)
     expect(service.case.events[0].windowStartDay).toEqual(windowStartDay)
     expect(service.case.events[0].windowEndDay).toEqual(windowEndDay)
