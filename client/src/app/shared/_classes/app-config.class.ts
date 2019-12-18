@@ -23,20 +23,6 @@ export class AppConfig {
   barcodeSearchMapFunction:string
   showQueries:boolean
   sharedUserDatabase = false
-  private _groupId:string
-
-  get groupName() {
-    return this._groupId
-  }
-  set groupName(value) {
-    this._groupId = value
-  }
-
-  get groupId() {
-    return this._groupId
-  }
-  set groupId(value) {
-    this._groupId = value
-  }
-
+  groupId:string
+  groupName:string
 } 

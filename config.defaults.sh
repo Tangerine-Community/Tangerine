@@ -42,7 +42,7 @@ T_CENTRALLY_MANAGED_USER_PROFILE="false"
 T_REPLICATE="[]"
 # Available modules: csv, logstash, class, case
 # To enable modules, list them like so: 
-# T_MODULES="['csv','class', 'logstash']"
+# T_MODULES="['csv','class','logstash','sync-protocol-2']"
 T_MODULES="['csv']"
 # To populate categories in Class:
 #T_CATEGORIES="['one','two','three','four']"

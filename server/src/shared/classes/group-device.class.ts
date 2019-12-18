@@ -6,6 +6,8 @@ export class GroupDevice {
   collection = 'Device'
   token:string = uuidv4()
   claimed:boolean = false
+  updatedOn:number
+  version:string
   syncLocations:Array<LocationConfig> = []
   assignedLocation:LocationConfig = new LocationConfig()
 }

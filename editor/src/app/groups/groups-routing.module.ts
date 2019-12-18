@@ -22,9 +22,9 @@ const groupsRoutes: Routes = [
   { path: '', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, SuperAdminUserGuard] },
-  { path: 'groups/:groupName', component: GroupDetailsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard] },
   {
-    path: 'groups/:groupName', component: GroupDetailsComponent, canActivate: [LoginGuard, SuperAdminUserGuard]
+    path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard, SuperAdminUserGuard]
   },
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
