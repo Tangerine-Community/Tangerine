@@ -40,7 +40,7 @@ export class DeviceSetupComponent implements OnInit {
     // Listen to when steps are done.
     this.stepLanguageSelect.done$.subscribe(value => {
       if (!this.testing) {
-        window.location.reload()
+        window.location.href = window.location.href.replace(window.location.hash, 'index.html')
       } else {
         this.step = STEP_DEVICE_REGISTRATION
       }
