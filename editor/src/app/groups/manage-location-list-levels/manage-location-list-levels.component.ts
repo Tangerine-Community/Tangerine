@@ -9,7 +9,7 @@ import { WindowRef } from '../../core/window-ref.service';
   styleUrls: ['./manage-location-list-levels.component.css']
 })
 export class ManageLocationListLevelsComponent implements OnInit {
-  groupName;
+  groupId;
   locationListFileName = 'location-list.json';
   locationsLevels;
   isFormShown = false;
@@ -21,10 +21,10 @@ export class ManageLocationListLevelsComponent implements OnInit {
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
-      this.groupName = params.groupName;
+      this.groupId = params.groupId;
     });
     try {
-      const data: any = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
+      const data: any = await this.http.get(`/editor/${this.groupId}/content/${this.locationListFileName}`).toPromise();
       this.locationsLevels = data.locationsLevels;
       this.locationListData = data;
     } catch (error) {
@@ -43,11 +43,11 @@ export class ManageLocationListLevelsComponent implements OnInit {
       try {
         const payload = {
           filePath: this.locationListFileName,
-          groupId: this.groupName,
+          groupId: this.groupId,
           fileContents: JSON.stringify(this.locationListData)
         };
         await this.http.post(`/editor/file/save`, payload).toPromise();
-        this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
+        this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupId}`);
         this.locationLabel = '';
         this.parentLevel = '';
         this.window.nativeWindow.location.reload();
