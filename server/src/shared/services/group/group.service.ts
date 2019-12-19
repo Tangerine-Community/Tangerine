@@ -240,7 +240,7 @@ export class GroupService {
         ]
         : []
     ]
-    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/forms.json`, forms) 
+    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/forms.json`, JSON.stringify(forms)) 
     //
     // location-list.json
     //
