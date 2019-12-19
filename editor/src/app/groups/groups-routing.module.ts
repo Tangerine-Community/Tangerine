@@ -1,3 +1,4 @@
+import { GroupDashboardComponent } from './group-dashboard/group-dashboard.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginGuard } from '../core/auth/_guards/login-guard.service';
@@ -22,6 +23,7 @@ const groupsRoutes: Routes = [
   { path: '', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, SuperAdminUserGuard] },
+  { path: 'groups/dashboard/:groupId', component: GroupDashboardComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard] },
   {
     path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard, SuperAdminUserGuard]

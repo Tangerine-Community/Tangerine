@@ -146,7 +146,7 @@ export class GroupService {
     appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
     if (tangyModules.enabledModules.includes('sync-protocol-2')) {
       appConfig.syncProtocol = '2'
-      appConfig.associatesUserProfileMode = 'local-exists'
+      appConfig.associateUserProfileMode = 'local-exists'
       appConfig.sharedUserDatabase = true
       delete appConfig.uploadToken
       delete appConfig.registrationRequiresServerUser
