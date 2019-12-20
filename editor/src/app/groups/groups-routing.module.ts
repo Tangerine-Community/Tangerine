@@ -1,3 +1,4 @@
+import { GroupDeployComponent } from './group-deploy/group-deploy.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginGuard } from '../core/auth/_guards/login-guard.service';
@@ -26,6 +27,7 @@ const groupsRoutes: Routes = [
   {
     path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard, SuperAdminUserGuard]
   },
+  { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {

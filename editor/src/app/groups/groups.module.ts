@@ -40,6 +40,7 @@ import { GroupMediaComponent } from './group-media/group-media.component';
 import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-table.component';
 import { CopyFormComponent } from './copy-form/copy-form.component';
 import { GroupDevicesComponent } from './group-devices/group-devices.component';
+import { GroupDeployComponent } from './group-deploy/group-deploy.component';
 
 
 
@@ -91,7 +92,8 @@ import { GroupDevicesComponent } from './group-devices/group-devices.component';
     CreateEventDefinitionComponent,
     PrintFormAsTableComponent,
     CopyFormComponent,
-    GroupDevicesComponent
+    GroupDevicesComponent,
+    GroupDeployComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService ],
   entryComponents: [CopyFormComponent]
