@@ -23,6 +23,7 @@ interface DeviceInfo {
   claimed:boolean
   assignedLocation:string
   syncLocations:string
+  token:string
 }
 
 interface UserField {
@@ -39,13 +40,14 @@ interface UserField {
 export class GroupDeployComponent implements OnInit {
 
   devices:Array<GroupDevice>
-  users:Array<TangyFormResponseModel>
-  deviceInfos:Array<DeviceInfo>
+  users:Array<TangyFormResponseModel> = []
+  deviceInfos:Array<DeviceInfo> = []
   userFields:Array<UserField>
   versionStats:Array<VersionStat>
   flatLocationList
   locationFilter:Array<LocationNode> = []
   tab = 'TAB_USERS'
+  devicesDisplayedColumns = ['id', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'star']
 
   @Input('groupId') groupId:string
   
@@ -157,15 +159,21 @@ export class GroupDeployComponent implements OnInit {
     this.update()
   }
 
+  getDeviceRegistrationCode(deviceId:string) {
+    const device = this.deviceInfos.find(deviceInfo => deviceInfo._id === deviceId)
+    const qr = new qrcode.default(0, 'H')
+    qr.addData(`{"id":"${device._id}","token":"${device.token}"}`)
+    qr.make()
+    window['dialog'].innerHTML = `<div style="width:${Math.round((window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth) *.6)}px" id="qr"></div>`
+    window['dialog'].open()
+    window['dialog'].querySelector('#qr').innerHTML = qr.createSvgTag({cellSize:500, margin:0,cellColor:(c, r) =>''})
+  }
+
   async editDevice(deviceId:string) {
     const locationList = <any>await this.httpClient.get('./assets/location-list.json').toPromise()
-    //this.mode = MODE_EDIT
     const device = await this.groupDevicesService.getDevice(this.groupId, deviceId)
     window['dialog'].innerHTML = `
     <paper-dialog-scrollable>
-      ${!device.claimed ? `
-        <div id="qr" style="width: 300px"></div>
-      ` : ''}
       <tangy-form>
         <tangy-form-item id="edit-device" on-change="
           const selectedALshowLevels = inputs.assigned_location__show_levels.value.slice(0, inputs.assigned_location__show_levels.value.findIndex(option => option.value === 'on')+1).map(option => option.name).join(',')
@@ -232,20 +240,10 @@ export class GroupDeployComponent implements OnInit {
             ` : ''}
           >
           </tangy-location>
-
-
         </tangy-form-item>
       </tangy-form>
     </paper-dialog-scrollable>
     `
-    /*
-    if (!device.claimed) {
-      const qr = new qrcode.default(0, 'H')
-      qr.addData(`{"id":"${device._id}","token":"${device.token}"}`)
-      qr.make()
-      this.modeEditContainer.nativeElement.querySelector('#qr').innerHTML = qr.createSvgTag({cellSize:500, margin:0,cellColor:(c, r) =>''})
-    }
-    */
     window['dialog'].querySelector('tangy-form').addEventListener('submit', async (event) => {
       device.assignedLocation.value = event.target.inputs.find(input => input.name === 'assigned_location').value
       device.assignedLocation.showLevels = event.target.inputs.find(input => input.name === 'assigned_location').showLevels.split(',')
@@ -257,7 +255,7 @@ export class GroupDeployComponent implements OnInit {
       this.update()
       window['dialog'].close()
     })
-    setTimeout(() => window['dialog'].open(), 250)
+    setTimeout(() => window['dialog'].open(), 450)
 
   }
 
