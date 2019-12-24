@@ -33,7 +33,6 @@ export class GroupDevicesService {
 
   async createDevice(groupId) {
     const device = new GroupDevice()
-    debugger
     return <GroupDevice>await this.httpClient.post(`/group-device/create/${groupId}`, {body: {
       deviceData: device
     }}).toPromise()
