@@ -1,3 +1,4 @@
+import { TangyFormService } from './../tangy-forms/tangy-form.service';
 import { GroupDevicesService } from './services/group-devices.service';
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -95,7 +96,7 @@ import { GroupDeployComponent } from './group-deploy/group-deploy.component';
     GroupDevicesComponent,
     GroupDeployComponent
   ],
-  providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService ],
+  providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
   entryComponents: [CopyFormComponent]
 })
 export class GroupsModule { }

@@ -1,3 +1,69 @@
-<p>
-  group-deploy works!
-</p>
+
+<paper-dialog with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" #dialog>
+</paper-dialog>
+
+<tangy-location name="location" #locationEl></tangy-location>
+
+<paper-tab (click)="tab = 'TAB_USERS'">Users</paper-tab>
+<paper-tab (click)="tab = 'TAB_DEVICES'">Devices</paper-tab>
+
+<div *ngIf="tab === 'TAB_USERS'">
+  <table>
+    <tr>
+      <td *ngFor="let field of userFields">
+        {{field.label}}
+      </td>
+    </tr>
+    <tr *ngFor="let user of users">
+      <td *ngFor="let field of userFields">
+        <!--{{user.items[0].inputs.find(input => input.name === field.name).value}}-->
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div *ngIf="tab === 'TAB_DEVICES'">
+  <a mat-raised-button color="accent" class="add-device-button" (click)="addDevice()">
+    <i class="material-icons">add_circle</i>{{' '}}{{'Create a Device'|translate}}
+  </a>
+  <table>
+    <tr class="header">
+      <td>ID</td>
+      <td>Assigned Location</td>
+      <td>Sync Locations</td>
+      <td>Claimed</td>
+      <td>Registered On</td>
+      <td>Last Synced</td>
+      <td>Last Updated</td>
+      <td>Version</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr *ngFor="let deviceInfo of deviceInfos">
+      <td>{{deviceInfo._id}}</td>
+      <td [innerHTML]="deviceInfo.assignedLocation"></td>
+      <td [innerHTML]="deviceInfo.syncLocations"></td>
+      <td>{{deviceInfo.claimed}}</td>
+      <td>{{deviceInfo.registeredOn | date:'short'}}</td>
+      <td>{{deviceInfo.syncedOn | date:'short'}}</td>
+      <td>{{deviceInfo.updatedOn | date:'short'}}</td>
+      <td>{{deviceInfo.version}}</td>
+      <td >  
+        <a mat-raised-button color="accent" class="back-button" (click)="editDevice(deviceInfo._id)">
+          <i class="material-icons">edit</i>{{' '}}{{'edit'|translate}}
+        </a>
+      </td>
+      <td >  
+        <a mat-raised-button color="accent" class="reset-button" (click)="resetDevice(deviceInfo._id)">
+          <i class="material-icons">settings_backup_restore</i>{{' '}}{{'reset'|translate}}
+        </a>
+      </td>
+      <td >  
+        <a mat-raised-button color="accent" class="delete-button" (click)="deleteDevice(deviceInfo._id)">
+          <i class="material-icons">delete</i>{{' '}}{{'delete'|translate}}
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>
