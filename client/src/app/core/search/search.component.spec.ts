@@ -1,3 +1,4 @@
+import { TranslateModule } from '@ngx-translate/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { SearchComponent } from './search.component';
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
@@ -58,6 +59,7 @@ describe('SearchComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [ TranslateModule.forRoot() ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
         {

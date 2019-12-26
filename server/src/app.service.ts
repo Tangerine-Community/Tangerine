@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpService } from '@nestjs/common';
 const DB = require('./db')
 import { TangerineConfigService } from './shared/services/tangerine-config/tangerine-config.service';
 import { GroupService } from './shared/services/group/group.service';
+import { TangerineConfig } from './shared/classes/tangerine-config';
 const reportingWorker = require('./reporting/reporting-worker')
 const log = require('tangy-log').log
 const util = require('util');
@@ -13,14 +14,16 @@ export class AppService {
 
   constructor(
     private readonly groupService:GroupService,
-    private readonly configService: TangerineConfigService
+    private readonly configService: TangerineConfigService,
+    private readonly httpClient:HttpService
   ) { }
 
   installed = false
   appDb = new DB('app')
+  config:TangerineConfig
 
   async start() {
-    const config = this.configService.config()
+    this.config = this.configService.config()
     try {
       await this.appDb.get('installed')
       this.installed = true
@@ -33,8 +36,13 @@ export class AppService {
   }
 
   async install() {
-    this.appDb.put({_id: 'version', value: process.env.TANGERINE_VERSION})
-    this.appDb.put({_id: 'installed', value: true})
+    log.info('Installing...')
+    log.info('Creating _users database...')
+    log.info(`${this.config.couchdbEndpoint}/_users`)
+    await this.httpClient.put(`${this.config.couchdbEndpoint}/_users`).toPromise()
+    await this.appDb.put({_id: 'installed', value: true})
+    await this.appDb.put({_id: 'version', value: process.env.TANGERINE_VERSION})
+    log.info('Installed')
   }
 
   async keepAliveReportingWorker() {

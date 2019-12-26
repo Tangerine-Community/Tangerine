@@ -1,18 +1,20 @@
+import { CASE_EVENT_STATUS_REVIEWED, CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
+import { EventFormDefinition } from './../classes/event-form-definition.class';
+import { UserDatabase } from './../../shared/_classes/user-database.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class'
 import { Case } from '../classes/case.class'
 import { CaseEvent } from '../classes/case-event.class'
 import { EventForm } from '../classes/event-form.class'
 import { CaseDefinition } from '../classes/case-definition.class';
 import { CaseDefinitionsService } from './case-definitions.service';
-import PouchDB from 'pouchdb';
 import * as UUID from 'uuid/v4'
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
-import { WindowRef } from 'src/app/core/window-ref.service';
 import { Injectable } from '@angular/core';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Query } from '../classes/query.class'
 import moment from 'moment/src/moment';
 import { HttpClient } from '@angular/common/http';
+import { CaseParticipant } from '../classes/case-participant.class';
 
 @Injectable({
   providedIn: 'root'
@@ -21,23 +23,22 @@ class CaseService {
 
   _id:string
   _rev:string
-  db:PouchDB
+  db:UserDatabase
   case:Case
   caseDefinition:CaseDefinition
-  window:any
   
   queryCaseEventDefinitionId: any
   queryEventFormDefinitionId: any
   queryFormId: any
 
+  openCaseConfirmed = false
+
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
-    private windowRef: WindowRef,
     private userService:UserService,
     private http:HttpClient
   ) { 
-    this.window = this.windowRef.nativeWindow
     
     this.queryCaseEventDefinitionId = 'query-event';
     this.queryEventFormDefinitionId = 'query-form-event';
@@ -50,11 +51,17 @@ class CaseService {
       .find(caseDefinition => caseDefinition.id === caseDefinitionId)
     this.case = new Case({caseDefinitionId, events: [], _id: UUID()})
     delete this.case._rev
-    const tangyFormContainerEl = this.window.document.createElement('div')
+    const tangyFormContainerEl:any = document.createElement('div')
     tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.caseDefinition.formId)
     const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') 
     tangyFormEl.style.display = 'none'
-    this.window.document.body.appendChild(tangyFormContainerEl)
+    document.body.appendChild(tangyFormContainerEl)
+    try {
+      this.case.location = (await this.userService.getUserProfile()).location
+    } catch(error) {
+      console.log("There was error setting the location on the case.")
+      console.log(error)
+    }
     this.case.form = tangyFormEl.getProps()
     this.case.items = []
     tangyFormEl.querySelectorAll('tangy-form-item').forEach((item) => {
@@ -83,20 +90,25 @@ class CaseService {
     await this.setCase(new Case(await this.db.get(id)))
   }
 
+  async getCaseDefinitionByID(id:string) {
+    return <CaseDefinition>await this.http.get(`./assets/${id}.json`)
+      .toPromise()
+  }
+
   async save() {
     this.db = await this.userService.getUserDatabase(this.userService.getCurrentUser())
     await this.db.put(this.case)
     await this.setCase(await this.db.get(this.case._id))
   }
 
-  createEvent(eventDefinitionId:string):CaseEvent {
+  createEvent(eventDefinitionId:string, createRequiredEventForms = false):CaseEvent {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
     const caseEvent = <CaseEvent>{ 
       id: UUID(),
       caseId: this.case._id,
-      complete: false,
+      status: CASE_EVENT_STATUS_IN_PROGRESS,
       name: caseEventDefinition.name,
       estimate: true,
       caseEventDefinitionId: eventDefinitionId,
@@ -106,6 +118,13 @@ class CaseService {
       startDate: 0
     }
     this.case.events.push(caseEvent)
+    for (const caseParticipant of this.case.participants) {
+      for (const eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
+        if (caseParticipant.caseRoleId === eventFormDefinition.forCaseRole) {
+          this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+        }
+      }
+    }
     return caseEvent
   }
 
@@ -122,13 +141,14 @@ class CaseService {
     
   }
 
-  startEventForm(caseEventId, eventFormId):EventForm {
+  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''):EventForm {
     const eventForm = <EventForm>{
       id: UUID(), 
       complete: false, 
       caseId: this.case._id, 
+      participantId,
       caseEventId, 
-      eventFormDefinitionId: eventFormId
+      eventFormDefinitionId: eventFormDefinitionId
     }
     this
       .case
@@ -140,7 +160,6 @@ class CaseService {
   }
 
   markEventFormComplete(caseEventId:string, eventFormId:string) {
-    //
     let caseEvent = this
       .case
       .events
@@ -149,36 +168,32 @@ class CaseService {
       .caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
-    //
     caseEvent
       .eventForms
       .find(eventForm => eventForm.id === eventFormId)
       .complete = true
-    //
-    // Test this by opening case type 1, second event, filling out two of the second form, should be evrnt incomplete, then the first form, shoud be event complete
-    //let eventForms = caseEvent.eventForms.filter(eventForm => eventForm.eventFormDefinitionId === eventDefinition.id)
-    let numberOfEventFormsRequired = eventDefinition
-      .eventFormDefinitions
-      .reduce((acc, eventFormDefinition) => eventFormDefinition.required ? acc + 1 : acc, 0)
-    let numberOfUniqueCompleteEventForms = caseEvent
-      .eventForms
-      .reduce((acc, eventForm) => eventForm.complete 
-          ? Array.from(new Set([...acc, eventForm.eventFormDefinitionId])) 
-          : acc
-        , [])
-        .length
+    const allRequiredFormsComplete = caseEvent.eventForms.reduce((allRequiredFormsComplete, eventForm) => {
+      if (allRequiredFormsComplete === false) {
+        return false
+      } else {
+        const eventFormDefinition = eventDefinition
+          .eventFormDefinitions
+          .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId )
+        return !eventFormDefinition.required || (eventFormDefinition.required && eventForm.complete) ? true : false
+      }
+    }, true)
     this
       .case
       .events
       .find(caseEvent => caseEvent.id === caseEventId)
-      .complete = numberOfEventFormsRequired === numberOfUniqueCompleteEventForms ? true : false
+      .status = allRequiredFormsComplete ? CASE_EVENT_STATUS_COMPLETED : CASE_EVENT_STATUS_IN_PROGRESS
     // Check to see if all required Events are complete in Case. If so, mark Case complete.
     let numberOfCaseEventsRequired = this.caseDefinition
       .eventDefinitions
       .reduce((acc, definition) => definition.required ? acc + 1 : acc, 0)
     let numberOfUniqueCompleteCaseEvents = this.case
       .events
-      .reduce((acc, instance) => instance.complete 
+      .reduce((acc, instance) => instance.status === CASE_EVENT_STATUS_COMPLETED
           ? Array.from(new Set([...acc, instance.caseEventDefinitionId])) 
           : acc
         , [])
@@ -207,6 +222,38 @@ class CaseService {
     return this.case.items[0].inputs.find(input => input.name === variableName)
       ? this.case.items[0].inputs.find(input => input.name === variableName).value
       : undefined
+  }
+
+  createParticipant(caseRoleId = ''):CaseParticipant {
+    const id = UUID()
+    const data = {}
+    const caseParticipant = <CaseParticipant>{
+      id,
+      caseRoleId,
+      data
+    }
+    this.case.participants.push(caseParticipant)
+    for (let caseEvent of this.case.events) {
+      const caseEventDefinition = this
+        .caseDefinition
+        .eventDefinitions
+        .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
+      for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
+        if (eventFormDefinition.forCaseRole === caseRoleId) {
+          this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
+        }
+      }
+    }
+    return caseParticipant
+  }
+
+  setParticipantData(participantId:string, key:string, value:string) {
+    const index = this.case.participants.findIndex(participant => participant.id === participantId)
+    this.case.participants[index].data[key] = value
+  }
+
+  getParticipantData(participantId:string, key:string) {
+    return this.case.participants.find(participant => participant.id === participantId).data[key]
   }
 
   async getQueries (): Promise<Array<Query>> {
@@ -255,11 +302,11 @@ class CaseService {
       const formLink = '/case/event/form/' + caseId + '/' + eventId + '/' + formId;
       const queryLink = '/case/event/form/' + caseId + '/' + caseEvent.id + '/' + eventForm.id;
 
-      const tangyFormContainerEl = this.window.document.createElement('div');
+      const tangyFormContainerEl:any = document.createElement('div');
       tangyFormContainerEl.innerHTML = await this.tangyFormService.getFormMarkup(this.queryFormId);
       const tangyFormEl = tangyFormContainerEl.querySelector('tangy-form') ;
       tangyFormEl.style.display = 'none';
-      this.window.document.body.appendChild(tangyFormContainerEl);
+      document.body.appendChild(tangyFormContainerEl);
 
       tangyFormEl.newResponse();
 

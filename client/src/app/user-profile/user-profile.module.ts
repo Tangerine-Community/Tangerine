@@ -6,6 +6,7 @@ import { SharedModule } from '../shared/shared.module';
 import { UserProfileRoutingModule } from './user-profile-routing.module';
 import { UserProfileComponent } from './user-profile.component';
 import { ImportUserProfileComponent } from './import-user-profile/import-user-profile.component';
+import { AssociateUserProfileComponent } from './associate-user-profile/associate-user-profile.component';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -17,6 +18,6 @@ import { ImportUserProfileComponent } from './import-user-profile/import-user-pr
     SharedModule
 
   ],
-  declarations: [UserProfileComponent, ImportUserProfileComponent]
+  declarations: [UserProfileComponent, ImportUserProfileComponent, AssociateUserProfileComponent]
 })
 export class UserProfileModule { }

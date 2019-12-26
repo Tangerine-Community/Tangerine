@@ -4,11 +4,12 @@ import { SearchService } from './search.service';
 import { UserService } from './user.service';
 import { AuthenticationService } from './authentication.service';
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
-import { FormInfo, FormSearchSettings } from 'src/app/tangy-forms/classes/form-info.class';
+import { FormInfo, FormSearchSettings, CouchdbSyncSettings, CustomSyncSettings } from 'src/app/tangy-forms/classes/form-info.class';
 import { Subject } from 'rxjs';
 import { UserAccount } from '../_classes/user-account.class';
 import PouchDB from 'pouchdb';
 import { assertNotNull } from '@angular/compiler/src/output/output_ast';
+import { AppConfigService } from './app-config.service';
 
 class MockUserService {
   getUserDatabase(username:string) {
@@ -36,6 +37,17 @@ class MockAuthenticationService {
   }
 }
 
+class MockAppConfigService {
+  getAppConfig() {
+    return {
+      sharedUserDatabase: false 
+    } 
+  }
+}
+
+
+
+
 class MockFormsInfoService {
   async getFormsInfo():Promise<Array<FormInfo>> {
     return [
@@ -49,6 +61,16 @@ class MockFormsInfoService {
         searchSettings: <FormSearchSettings>{
           shouldIndex: true,
           variablesToIndex: ['foo', 'bar']
+        },
+        couchdbSyncSettings: <CouchdbSyncSettings>{
+          enabled:false,
+          filterByLocation:false
+        },
+        customSyncSettings: <CustomSyncSettings>{
+          enabled: false,
+          push: false,
+          pull: false,
+          excludeIncomplete: false
         }
       }
     ]
@@ -90,6 +112,10 @@ describe('SearchService', () => {
       {
         provide: TangyFormsInfoService,
         useClass: MockFormsInfoService
+      },
+      {
+        provide: AppConfigService,
+        useClass: MockAppConfigService
       }
     ]
   }));

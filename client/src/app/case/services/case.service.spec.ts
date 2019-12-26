@@ -1,3 +1,5 @@
+import { CaseRole } from './../classes/case-role.class';
+import { CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { TestBed } from '@angular/core/testing';
 
 import { CaseService } from './case.service';
@@ -5,13 +7,13 @@ import { CaseDefinitionsService } from './case-definitions.service';
 import { TangyFormService } from 'src/app/tangy-forms/tangy-form.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 // NOTE: For some reason if this is WindowRef from the shared module, this fails to inject.
-import { WindowRef } from 'src/app/core/window-ref.service';
 import { CaseDefinition } from '../classes/case-definition.class';
 import { EventFormDefinition } from '../classes/event-form-definition.class';
 import { CaseEventDefinition } from '../classes/case-event-definition.class';
 import PouchDB from 'pouchdb';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
+import { CaseParticipant } from '../classes/case-participant.class';
 
 class MockCaseDefinitionsService {
   async load() {
@@ -21,6 +23,16 @@ class MockCaseDefinitionsService {
         "formId": "caseDefinition1Form",
         "name": "Case Type 1",
         "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "caseRoles": [
+          <CaseRole>{
+            id: 'role1',
+            label: 'Role 1'
+          },
+          <CaseRole>{
+            id: 'role2',
+            label: 'Role 2'
+          }
+        ],
         "eventDefinitions": <Array<CaseEventDefinition>>[
           {
             "id": "event-definition-screening",
@@ -34,7 +46,16 @@ class MockCaseDefinitionsService {
               <EventFormDefinition>{
                 "id": "event-form-1",
                 "formId": "form1",
+                "forCaseRole": "role1",
                 "name": "Form 1",
+                "required": true,
+                "repeatable": false
+              },
+              <EventFormDefinition>{
+                "id": "event-form-2",
+                "formId": "form2",
+                "forCaseRole": "role2",
+                "name": "Form 2",
                 "required": true,
                 "repeatable": false
               }
@@ -52,6 +73,7 @@ class MockCaseDefinitionsService {
               <EventFormDefinition>{
                 "id": "event-form-1",
                 "formId": "form1",
+                "forCaseRole": "role1",
                 "name": "Form 1",
                 "required": true,
                 "repeatable": false
@@ -59,9 +81,18 @@ class MockCaseDefinitionsService {
               <EventFormDefinition>{
                 "id": "event-form-2",
                 "formId": "form2",
+                "forCaseRole": "role1",
                 "name": "Form 2 (repeatable)",
                 "required": true,
                 "repeatable": true 
+              },
+              <EventFormDefinition>{
+                "id": "event-form-3",
+                "formId": "form3",
+                "forCaseRole": "role1",
+                "name": "Form 3",
+                "required": false,
+                "repeatable": false 
               }
             ]
           },
@@ -77,6 +108,7 @@ class MockCaseDefinitionsService {
               <EventFormDefinition>{
                 "id": "event-form-1",
                 "formId": "form1",
+                "forCaseRole": "role1",
                 "name": "Form 1",
                 "required": true,
                 "repeatable": false
@@ -95,6 +127,7 @@ class MockCaseDefinitionsService {
               <EventFormDefinition>{
                 "id": "event-form-1",
                 "formId": "form1",
+                "forCaseRole": "role1",
                 "name": "Form 1",
                 "required": true,
                 "repeatable": false
@@ -139,8 +172,6 @@ describe('CaseService', () => {
         HttpClientTestingModule
       ],
       providers: [
-        // NOTE: For some reason if this is WindowRef from the shared module, this fails to inject.
-        WindowRef,
         { 
           provide: CaseDefinitionsService, 
           useClass: MockCaseDefinitionsService      
@@ -178,6 +209,38 @@ describe('CaseService', () => {
     expect(service.case.events[0].dateStart).toEqual(12345678)
     expect(service.case.events[0].dateEnd).toEqual(12345678)
     expect(service.case.events[0].estimate).toEqual(false)
+  })
+
+  it('should create participant and create forms for existing events', async () => {
+    const service: CaseService = TestBed.get(CaseService);
+    await service.create('caseDefinition1')
+    await service.createEvent('event-definition-screening', true)
+    expect(service.case.events[0].eventForms.length).toEqual(0)
+    const caseParticipant = await service.createParticipant('role1')
+    expect(service.case.participants[0].id).toEqual(caseParticipant.id)
+    expect(service.case.events[0].eventForms.length).toEqual(1)
+  })
+
+  it('should create CaseEvent and also create corresponding required EventForms for Participants', async() => {
+    const service: CaseService = TestBed.get(CaseService);
+    await service.create('caseDefinition1')
+    const caseParticipant = await service.createParticipant('role1')
+    await service.createEvent('event-definition-screening', true)
+    expect(service.case.participants[0].id).toEqual(caseParticipant.id)
+    expect(service.case.events[0].eventForms.length).toEqual(1)
+  })
+
+  it('CaseEvent should have status of comleted when all required forms are completed', async () => {
+    const service: CaseService = TestBed.get(CaseService);
+    await service.create('caseDefinition1')
+    const caseParticipant = await service.createParticipant('role1')
+    const caseParticipant2 = await service.createParticipant('role2')
+    const caseEvent = await service.createEvent('event-definition-screening', true)
+    expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_IN_PROGRESS)
+    for (let eventForm of service.case.events[0].eventForms) {
+      service.markEventFormComplete(caseEvent.id, eventForm.id)
+    }
+    expect(service.case.events[0].status).toEqual(CASE_EVENT_STATUS_COMPLETED)
   })
 
 });

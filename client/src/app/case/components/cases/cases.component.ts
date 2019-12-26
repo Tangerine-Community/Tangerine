@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../shared/_services/user.service';
-import PouchDB from 'pouchdb';
 import { Case } from '../../classes/case.class'
 
 @Component({
@@ -18,8 +17,7 @@ export class CasesComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    const userDbName = await this.userService.getUserDatabase();
-    const db = new PouchDB(userDbName);
+    const db = await this.userService.getUserDatabase();
     this.cases = (await db.allDocs({include_docs: true}))
       .rows
       .map(row => row.doc)
