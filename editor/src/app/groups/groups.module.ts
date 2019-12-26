@@ -1,3 +1,5 @@
+import { MatIconModule, MatMenuModule } from '@angular/material';
+import { MatTableModule } from '@angular/material/table';
 import { TangyFormService } from './../tangy-forms/tangy-form.service';
 import { GroupDevicesService } from './services/group-devices.service';
 import { CommonModule } from '@angular/common';
@@ -62,6 +64,9 @@ import { GroupDeployComponent } from './group-deploy/group-deploy.component';
     MatListModule,
     MatTabsModule,
     MatChipsModule,
+    MatTableModule,
+    MatIconModule,
+    MatMenuModule,
     MatTreeModule,
     MatGridListModule,
     SharedModule
