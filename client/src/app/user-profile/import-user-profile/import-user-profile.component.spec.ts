@@ -4,7 +4,6 @@ import { ImportUserProfileComponent } from './import-user-profile.component';
 import { UserProfileModule } from '../user-profile.module';
 import { AppRoutingModule } from '../../app-routing.module';
 import { SharedModule } from '../../shared/shared.module';
-import { TwoWaySyncModule } from '../../two-way-sync/two-way-sync.module';
 import { SyncRecordsModule } from 'src/app/core/sync-records/sync-records.module';
 
 describe('ImportUserProfileComponent', () => {
@@ -13,7 +12,7 @@ describe('ImportUserProfileComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule, SyncRecordsModule, TwoWaySyncModule, UserProfileModule, AppRoutingModule]
+      imports: [SharedModule, SyncRecordsModule, UserProfileModule, AppRoutingModule]
     })
     .compileComponents();
   }));

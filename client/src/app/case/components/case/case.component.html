@@ -2,28 +2,26 @@
 
 <div *ngIf="ready" class="subject-header">
   <h1>
-    <span [innerHTML]="templateTitle|unsanitizeHtml"></span> 
+    <span [innerHTML]="templateTitle|unsanitizeHtml"></span>
   </h1>
   <div secondary>
-    <span [innerHTML]="templateDescription|unsanitizeHtml"></span> 
+    <span [innerHTML]="templateDescription|unsanitizeHtml" class="description"></span>
+    <div class="confirm-correct-case-prompt" *ngIf="caseService.openCaseConfirmed === false">
+      <paper-button class="button" (click)="onOpenCaseConfirmButtonClick()">Confirm</paper-button>
+    </div>
   </div>
 </div>
 
 <div *ngIf="ready" class="wrapper">
+  <div class="cover-when-not-confirmed" *ngIf="caseService.openCaseConfirmed === false"></div>
   <div *ngFor="let eventInfo of caseEventsInfo">
-    <app-case-event-list-item
-      *ngFor="let caseEvent of eventInfo.caseEvents"
-      [caseEvent]="caseEvent"
-      [caseDefinition]="caseService.caseDefinition" 
-      [caseEventDefinition]="eventInfo.caseEventDefinition" 
-      [case]="caseService.case"
-      routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">
+    <app-case-event-list-item *ngFor="let caseEvent of eventInfo.caseEvents" [caseEvent]="caseEvent"
+      [caseDefinition]="caseService.caseDefinition" [caseEventDefinition]="eventInfo.caseEventDefinition"
+      [case]="caseService.case" routerLink="/case/event/{{caseService.case._id}}/{{caseEvent.id}}">
     </app-case-event-list-item>
   </div>
-  <paper-icon-item 
-    class="event new-event" 
-  >
-    <iron-icon icon="event" slot="item-icon"></iron-icon> 
+  <paper-icon-item class="event new-event">
+    <iron-icon icon="event" slot="item-icon"></iron-icon>
     <paper-item-body two-line>
       <div>
         {{'New Event'|translate}}
@@ -32,8 +30,9 @@
         <form (ngSubmit)="onSubmit()" #form="ngForm">
           <div class="dropdown-container">
             <select name="selected-event-type" [(ngModel)]="selectedNewEventType">
-              <option value="" disabled selected>Choose type...</option>
-              <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">{{eventInfo.caseEventDefinition.name}}</option>
+              <option value="" disabled selected>{{'Choose type...'|translate}}</option>
+              <option *ngFor="let eventInfo of creatableCaseEventsInfo" [value]="eventInfo.caseEventDefinition.id">
+                {{eventInfo.caseEventDefinition.name}}</option>
             </select>
           </div>
           <div>
@@ -42,7 +41,7 @@
             </div>
           </div>
           <div class="text-right">
-              <button type="submit">Create</button>
+            <paper-button (click)="onSubmit()" class="button">{{'Create'|translate}}</paper-button>
           </div>
         </form>
       </div>

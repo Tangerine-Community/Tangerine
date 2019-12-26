@@ -3,7 +3,6 @@ import {PeersComponent} from './peers.component';
 import {Observable, of} from 'rxjs';
 import {PEERS} from './mock-peers';
 import {Peer} from './peer';
-import {WindowRef} from '../../../shared/_services/window-ref.service';
 import {Device} from './device';
 
 
@@ -17,9 +16,8 @@ export class PeersService {
   device: Device;
 
   constructor(
-    private windowRef: WindowRef
   ) {
-    this.window = this.windowRef.nativeWindow;
+    this.window = window;
   }
 
   initPeers(): Observable<Peer[]> {

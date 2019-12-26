@@ -73,7 +73,7 @@ export class SearchComponent implements OnInit {
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     for (const searchDoc of this.searchDocs) {
-      const userDb = this.userService.getUserDatabase(this.userService.getCurrentUser())
+      const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
       const response = await userDb.get(searchDoc._id)
       const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
       const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)

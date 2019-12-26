@@ -1,3 +1,4 @@
+import { CaseRole } from './case-role.class';
 import { CaseEventDefinition } from './case-event-definition.class'
 
 class CaseDefinition {
@@ -6,6 +7,7 @@ class CaseDefinition {
   formId:string
   revision:string
   name:string
+  caseRoles:Array<CaseRole>
   description:string
   templateCaseTitle:string 
   templateCaseDescription:string 
@@ -17,7 +19,9 @@ class CaseDefinition {
   templateEventFormListItemSecondary:string 
   eventDefinitions: Array<CaseEventDefinition> = []
   startFormOnOpen: CaseFormPath
-
+  templateScheduleListItemIcon:string
+  templateScheduleListItemPrimary:string
+  templateScheduleListItemSecondary:string
   constructor(init:CaseDefinition) {
     Object.assign(this, init);
     /*

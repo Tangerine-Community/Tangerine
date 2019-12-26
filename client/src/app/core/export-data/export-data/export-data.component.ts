@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../shared/_services/user.service';
 import { SyncingService } from '../../sync-records/_services/syncing.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
-import { WindowRef } from '../../../shared/_services/window-ref.service';
 declare const cordova: any;
 @Component({
   selector: 'app-export-data',
@@ -11,10 +10,10 @@ declare const cordova: any;
 })
 export class ExportDataComponent implements OnInit {
 
-  window;
+  window:any;
 
-  constructor(private windowRef: WindowRef, private userService: UserService, private syncingService: SyncingService) { 
-    this.window = this.windowRef.nativeWindow;
+  constructor(private userService: UserService, private syncingService: SyncingService) { 
+    this.window = window;
   }
 
   ngOnInit() {

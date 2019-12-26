@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CaseService } from '../../services/case.service'
 import { t } from 'tangy-form/util/t.js'
-import { WindowRef } from 'src/app/shared/_services/window-ref.service';
 
 @Component({
   selector: 'app-case-breadcrumb',
@@ -18,7 +17,6 @@ export class CaseBreadcrumbComponent implements OnInit {
 
   constructor(
     private caseService: CaseService,
-    private windowRef:WindowRef
   ) { }
 
   ngOnInit() {

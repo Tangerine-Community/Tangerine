@@ -136,17 +136,28 @@ export class GroupService {
     await this.installViews(groupDb)
     await exec(`cp -r /tangerine/client/default-assets  /tangerine/client/content/groups/${groupId}`)
     await exec(`mkdir /tangerine/client/content/groups/${groupId}/media`)
-    // Create appConfig.
+    //
+    // app-config.json
+    //
     let appConfig = <any>{}
     appConfig = <any>JSON.parse(await fs.readFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, "utf8"))
-    appConfig.uploadToken = process.env.T_UPLOAD_TOKEN 
-    appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
-    // @TODO Remove this when client has switched from groupName to groupId.
-    appConfig.groupName = groupId 
+    appConfig.groupName = groupName 
     appConfig.groupId = groupId 
+    appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
+    if (tangyModules.enabledModules.includes('sync-protocol-2')) {
+      appConfig.syncProtocol = '2'
+      appConfig.associateUserProfileMode = 'local-exists'
+      appConfig.sharedUserDatabase = true
+      delete appConfig.uploadToken
+      delete appConfig.registrationRequiresServerUser
+      delete appConfig.centrallyManagedUserProfile
+    } else {
+      appConfig.syncProtocol =  '1'
+      appConfig.uploadToken = process.env.T_UPLOAD_TOKEN 
+      appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
+      appConfig.centrallyManagedUserProfile = (process.env.T_CENTRALLY_MANAGED_USER_PROFILE === 'true') ? true : false
+    }
     appConfig.hideProfile = (process.env.T_HIDE_PROFILE === 'true') ? true : false 
-    appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
-    appConfig.centrallyManagedUserProfile = (process.env.T_CENTRALLY_MANAGED_USER_PROFILE === 'true') ? true : false
     appConfig.modules = tangyModules.enabledModules;
     // Note, the default 'case-management' route is a misnomer, that's actually the default Tutor landing page.
     appConfig.homeUrl = tangyModules.enabledModules.includes('case') ? 'case-home' : 'case-management'
@@ -157,19 +168,90 @@ export class GroupService {
       let categoriesEntries = JSON.parse(categoriesString)
       appConfig.categories = categoriesEntries;
     }
-    // @TODO Remove groupName after modules have switched to groupId.
     const data = await tangyModules.hook('groupNew', {groupName: groupId, groupId, appConfig})
     appConfig = data.appConfig
     await fs.writeFile(`/tangerine/client/content/groups/${groupId}/app-config.json`, JSON.stringify(appConfig))
       .then(status => log.info("Wrote app-config.json"))
       .catch(err => log.error("An error copying app-config: " + err))
-    // Create a blank location-list.
+    //
+    // forms.json
+    //
+    const forms = [
+      {
+        id: 'user-profile',
+        src: './assets/user-profile/form.html',
+        title: 'User Profile',
+        ...tangyModules.enabledModules.includes('case') 
+          ? {
+            searchSettings: {
+              shouldIndex: false,
+              variablesToIndex: [],
+              primaryTemplate: '',
+              secondaryTemplate: ''
+            }
+          }
+          : { }, 
+        ...tangyModules.enabledModules.includes('sync-protocol-2') 
+          ? {
+            customSyncSettings: {
+              enabled: false,
+              push: false,
+              pull: false,
+              excludeIncomplete:false
+            },
+            couchdbSyncSettings: {
+              enabled: true,
+              filterByLocation: true 
+            }
+          }
+          : { } 
+      },
+      ...tangyModules.enabledModules.includes('reports')
+        ? [
+          {
+            id:'reports',
+            src: './reports/form.html',
+            title: 'Reports',
+            ...tangyModules.enabledModules.includes('case') 
+              ? {
+                searchSettings: {
+                  shouldIndex: false,
+                  variablesToIndex: [],
+                  primaryTemplate: '',
+                  secondaryTemplate: ''
+                }
+              }
+              : { }, 
+            ...tangyModules.enabledModules.includes('sync-protocol-2') 
+              ? {
+                customSyncSettings: {
+                  enabled: false,
+                  push: false,
+                  pull: false,
+                  excludeIncomplete:false
+                },
+                couchdbSyncSettings: {
+                  enabled: true,
+                  filterByLocation: true 
+                }
+              }
+            : { } 
+          }
+        ]
+        : []
+    ]
+    await fs.writeFile(`/tangerine/client/content/groups/${groupId}/forms.json`, JSON.stringify(forms)) 
+    //
+    // location-list.json
+    //
     await fs.writeFile(`/tangerine/client/content/groups/${groupId}/location-list.json`, JSON.stringify({
       "locationsLevels": [],
       "locations": {},
       "metadata": {}
     }))
+    //
     // Stash and emit observable.
+    //
     this.groupDatabases.push(groupDb)
     this.groups$.next(group)
     return group

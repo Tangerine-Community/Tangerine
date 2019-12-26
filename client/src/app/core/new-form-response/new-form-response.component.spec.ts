@@ -117,12 +117,12 @@ describe('NewFormResponseComponent', () => {
     expect(component).toBeTruthy();
     component.ready.addListener('ready', () => {
       fixture.detectChanges()
-      expect(fixture.elementRef.nativeElement.querySelectorAll('.form-info-card').length).toEqual(2)
+      expect(fixture.elementRef.nativeElement.querySelectorAll('.form-item').length).toEqual(2)
       component.navigating.addListener('navigating', (args) => {
         expect(args.url).toBe('/case-new/example')
         done()
       })
-      fixture.elementRef.nativeElement.querySelectorAll('.form-info-card')[0].querySelector('paper-button').click()
+      fixture.elementRef.nativeElement.querySelectorAll('.form-item')[0].click()
       fixture.detectChanges()
     })
   });

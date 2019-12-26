@@ -1,0 +1,16 @@
+<div [hidden]="step !== 'STEP_LANGUAGE_SELECT'"> 
+  <app-device-language #stepLanguageSelect>
+  </app-device-language>
+</div>
+
+<div [hidden]="step !== 'STEP_DEVICE_REGISTRATION'">
+  <app-device-registration  #stepDeviceRegistration>
+  </app-device-registration>
+</div>
+
+<div [hidden]="step !== 'STEP_SYNC'">
+  <app-device-sync #stepDeviceSync>
+  </app-device-sync>
+</div>
+
+
