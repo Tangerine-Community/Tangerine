@@ -16,6 +16,7 @@
   <h2>List of available endpoints</h2>
   <p>Click one of the following endpoints to connect and transfer data.</p>
   <div id="transferProgress"></div>
+  <div id="progress"></div>
   <mat-chip-list class="mat-chip-list-stacked" aria-label="Endpoint selection">
     <mat-chip id="endpoints" *ngFor="let endpoint of endpoints" (click)="connectToEndpoint(endpoint.id, endpoint.endpointName)">
       {{endpoint.endpointName}} : {{endpoint.status}}
@@ -25,5 +26,6 @@
   <p>&nbsp;</p>
 
   <h2>Log</h2>
+  <div id="p2p-errors"></div>
   <div id="p2p-results"></div>
 </div>

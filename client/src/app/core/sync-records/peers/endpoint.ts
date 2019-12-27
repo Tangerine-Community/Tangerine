@@ -1,9 +1,9 @@
 export class Endpoint {
-  id: String;
-  endpointName: String;
-  status: String = 'Pending';
+  id: string;
+  endpointName: string;
+  status = 'Pending';
 
-  constructor(id: String, endpointName: String, status: String) {
+  constructor(id: string, endpointName: string, status: string) {
     this.id = id;
     this.endpointName = endpointName;
     this.status = status;

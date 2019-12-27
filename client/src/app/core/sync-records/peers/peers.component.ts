@@ -59,6 +59,13 @@ export class PeersComponent implements OnInit, AfterContentInit {
         logEl.innerHTML = logEl.innerHTML +  '<p>' + message.message + '</p>\n';
       }
     );
+    startAdvertisingBtnEl.addEventListener('progress', e => {
+        console.log('progress message: ' + JSON.stringify(e.detail));
+        const message: Message = e.detail;
+        const el = document.querySelector('#progress');
+      el.innerHTML = '<p>' + message.message + '</p>\n';
+      }
+    );
     startAdvertisingBtnEl.addEventListener('localEndpointName', e => {
         console.log('localEndpointName: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
@@ -79,20 +86,40 @@ export class PeersComponent implements OnInit, AfterContentInit {
         document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
       }
     );
+    startAdvertisingBtnEl.addEventListener('progress', e => {
+        console.log('payload: ' + JSON.stringify(e.detail));
+        const message: Message = e.detail;
+        if (typeof message.originName !== 'undefined') {
+          this.endpoints = this.endpoints.map((endpoint) => {
+            return endpoint.id === message.originName ? {...endpoint, status: message.message} : endpoint;
+          });
+        }
+        document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+        document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
+      }
+    );
     startAdvertisingBtnEl.addEventListener('done', e => {
         console.log('Current peer sync complete: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
         this.endpoints = this.endpoints.map((endpoint) => {
-          return endpoint.id === message.destination ? {...endpoint, status: message.message} : endpoint
+          return endpoint.id === message.destination ? {...endpoint, status: message.message} : endpoint;
         });
         document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
         document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
       }
     );
     startAdvertisingBtnEl.addEventListener('error', e => {
-        console.log('stinky error: ' + JSON.stringify(e.detail));
-        const message: Message = e.detail;
-        document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+      const message: Message = e.detail;
+      const el: HTMLElement = document.querySelector('#p2p-errors');
+      el.style.backgroundColor = 'pink';
+      let errorMessage = '';
+      if (typeof message.message !== 'undefined' && typeof message.message['message'] !== 'undefined' ) {
+        errorMessage = message.message['message'];
+      } else {
+        errorMessage = JSON.stringify(message.message);
+      }
+      console.log('error: ' + errorMessage);
+      el.innerHTML += errorMessage + '<br/>';
       }
     );
   }
@@ -111,18 +138,23 @@ export class PeersComponent implements OnInit, AfterContentInit {
   }
 
   async connectToEndpoint(id, name) {
-    const endpointId = id + '_' + name;
+    const endpointId = id + '~' + name;
     const message: Message = await this.peersService.connectToEndpoint(endpointId);
     this.endpoints = this.endpoints.map((endpoint) => {
-      return endpoint.id === id ? {...endpoint, status: 'Sync\'d'} : endpoint
+      return endpoint.id === id ? {...endpoint, status: 'Sync\'d'} : endpoint;
     });
-    if (message.messageType === 'payloadReceived') {
-      console.log('connectToEndpoint: payloadReceived');
-      document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
-      document.querySelector('#transferProgress').innerHTML += message.message + '<br/>';
+    if (typeof message !== 'undefined') {
+      if (message.messageType === 'payloadReceived') {
+        console.log('connectToEndpoint: payloadReceived');
+        document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+        document.querySelector('#transferProgress').innerHTML += message.message + '<br/>';
+      } else {
+        document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+      }
     } else {
-      document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+      document.querySelector('#p2p-results').innerHTML += 'No message upon resolution of connection.' + '<br/>';
     }
+
   }
 
   // async pushData() {
