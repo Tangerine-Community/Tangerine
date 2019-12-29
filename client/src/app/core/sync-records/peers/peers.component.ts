@@ -59,13 +59,14 @@ export class PeersComponent implements OnInit, AfterContentInit {
         logEl.innerHTML = logEl.innerHTML +  '<p>' + message.message + '</p>\n';
       }
     );
-    startAdvertisingBtnEl.addEventListener('progress', e => {
-        console.log('progress message: ' + JSON.stringify(e.detail));
-        const message: Message = e.detail;
-        const el = document.querySelector('#progress');
-      el.innerHTML = '<p>' + message.message + '</p>\n';
-      }
-    );
+    // startAdvertisingBtnEl.addEventListener('progress', e => {
+    //     console.log('progress message: ' + JSON.stringify(e.detail));
+    //     const message: Message = e.detail;
+    //     const el = document.querySelector('#progress');
+    //     el.innerHTML = '<p>' + message.message + '</p>\n';
+    //     document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
+    //   }
+    // );
     startAdvertisingBtnEl.addEventListener('localEndpointName', e => {
         console.log('localEndpointName: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
@@ -94,8 +95,16 @@ export class PeersComponent implements OnInit, AfterContentInit {
             return endpoint.id === message.originName ? {...endpoint, status: message.message} : endpoint;
           });
         }
+        if (typeof message.message !== 'undefined' && message.message.startsWith('onPayloadTransferUpdate')) {
+          const progressObj = message.object;
+          const bytesTransferred = progressObj['bytesTransferred'];
+          const totalBytes = progressObj['totalBytes'];
+          const originName = progressObj['originName'];
+          const progressMessage = bytesTransferred + '/' + totalBytes + ' transferred from ' + originName;
+          document.querySelector('#progress').innerHTML =  '<p>' + progressMessage + '</p>\n';
+        }
         document.querySelector('#p2p-results').innerHTML += message.message + '<br/>';
-        document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
+        // document.querySelector('#transferProgress').innerHTML = message.message + '<br/>';
       }
     );
     startAdvertisingBtnEl.addEventListener('done', e => {
