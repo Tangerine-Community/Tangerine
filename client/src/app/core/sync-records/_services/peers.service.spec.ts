@@ -23,7 +23,11 @@ class MockPeersService {
   endpoint: Endpoint;
   endpoints: Endpoint[] = [];
   messageType: string;
+  isMaster = false;
   el: any  = document.createElement('div');
+  localDatabase: PouchDB;
+  currentEndpoint: Endpoint;
+  peer: Endpoint;
   // peerService: PeersService;
   // constructor(
   //   private peerService: PeersService
@@ -34,30 +38,37 @@ class MockPeersService {
   // constructor(@Inject(PeersService) public realPeerService: PeersService) {}
 
   async getTangyP2PPermissions() {
-    const message: Message = new Message('log', 'OK', null, null);
+    const message: Message = new Message('log', 'OK', null, null, null, null);
     return message;
   }
 
-  successAdvertising = (response: Message) => {
+  successAdvertising = async (response: Message) => {
     let message: Message;
     if (response['messageType'] === 'log') {
-      message = new Message('log', response['message'], null, null);
+      message = new Message('log', response['message'], null, null, null, null);
       const event = new CustomEvent('log', {detail: message});
       this.el.dispatchEvent(event);
+    } else if (response['messageType'] === 'progress') {
+      const event = new CustomEvent('progress', {detail: response});
+      this.el.dispatchEvent(event);
     } else if (response['messageType'] === 'localEndpointName') {
-      message = new Message('localEndpointName', response['message'], null, null);
+      message = new Message('localEndpointName', response['message'], null, null, null, null);
       const event = new CustomEvent('localEndpointName', {detail: message});
       this.el.dispatchEvent(event);
+    } else if (response['messageType'] === 'peer') {
+      console.log('peer: ' + JSON.stringify(response['object']));
+      const peer = response['object'];
+      this.peer = new Endpoint(peer.id, peer.endpointName, null);
     } else if (response['messageType'] === 'endpoints') {
       const endpointList: Endpoint[] = [];
-      // console.log('endpoints: ' + JSON.stringify(response['object']));
-      // TODO: Adding .object only for testing.
-      const newEndpoints = response['object'].object;
+      console.log('endpoints: ' + JSON.stringify(response['object']));
+      const newEndpoints = response['object'];
       for (const [key, value] of Object.entries(newEndpoints)) {
-        // console.log(`${key}: ${value}`);
+        console.log(`${key}: ${value}`);
         const endpoint = {} as Endpoint;
         endpoint.id = key;
-        endpoint.endpointName = <String>value;
+        endpoint.endpointName = <string>value;
+        endpoint.status = 'Pending'
         let isUnique = true;
         endpointList.forEach((peer: Endpoint) => {
           if (endpoint.id === peer.id) {
@@ -68,44 +79,68 @@ class MockPeersService {
           endpointList.push(endpoint);
         }
       }
-      // TODO THIS IS A HACK FOR TESTING
-      this.endpoints = endpointList
-      console.log('endpoints: ' + JSON.stringify(this.endpoints));
-      message = new Message('endpoints', null, endpointList, null);
+      this.endpoints = endpointList;
+      message = new Message('endpoints', null, endpointList, null, null, null);
       const event = new CustomEvent('endpoints', {detail: message});
       this.el.dispatchEvent(event);
-    } else if (response.messageType === 'payload') {
+    } else if (response['messageType'] === 'payload') {
       // load the data sent from the peer and then send your own.
       // TODO: JSONObject is available if we need it.
-      debugger;
-      const payload: Message = <Message>response.object;
-      const databaseDump = payload.object;
+      // const msg: Message = <Message>response.object;
+      const msg = <Message>response.object;
+      const payload = msg.payloadData;
+      // const payload = msg.object;
+      // const databaseDump = atob(base64dump);
+      // const databaseDump = await (new Response(blob)).text();
       const writeStream = new window['Memorystream'];
-      writeStream.end(databaseDump);
-      const dest = new PouchDB('tempDb');
-      dest.load(writeStream).then(async () => {
+      writeStream.end(payload);
+      const tempDb = new PouchDB('tempDb');
+      console.log('Loading data into tempDb');
+      await tempDb.load(writeStream).then(async () => {
         // replicate received database to the local db
-        await new Promise((resolve, reject) => {
-          dest.replicate.to(this.localDatabase);
-        })
-        const dumpedString = await this.dumpData(this.localDatabase)
-        let pushDataMessage: Message;
+        // await new Promise((resolve, reject) => {
+        const localDb = this.localDatabase;
+        console.log('Replicating data to PouchDB: ' + localDb.name);
+        await tempDb.replicate.to(localDb)
+          .on('complete',  () => {
+            const repliMessage  = 'Data downloaded to tablet.'
+            console.log(repliMessage);
+            message = new Message('done', repliMessage, null, null, this.peer.id, null);
+            const event = new CustomEvent('progress', {detail: message});
+            this.el.dispatchEvent(event);
+          }).on('error', function (err) {
+            console.log('error in replication: ' + err);
+          });
         if (this.isMaster) {
           // TODO - should be a confirmation that *some* data was sent - a proof of life
           // TODO at this point, he can move to another peer.
-          const doneMessage = 'Data has been loaded. You may sync the next device.'
-          message = new Message('done', doneMessage, null, null);
+          const doneMessage = 'Done! Sync next device.'
+          console.log('done! ' + doneMessage);
+          let currentEndpointId;
+          if (this.currentEndpoint) {
+            currentEndpointId = this.currentEndpoint.id;
+          }
+          message = new Message('done', doneMessage, null, currentEndpointId, null, null);
           const event = new CustomEvent('done', {detail: message});
           this.el.dispatchEvent(event);
         } else {
+          const dumpedString = await this.dumpData(this.localDatabase)
+          let pushDataMessage: Message;
           try {
-            const pluginMessage = 'I loaded data from the master db into mine. Now I will push my local db to master.';
-            console.log(pluginMessage)
-            const upload: Message = new Message('payload', pluginMessage, dumpedString, null);
-            pushDataMessage = await this.pushData(upload);
-            message = new Message('done', pluginMessage, null, null);
-            const event = new CustomEvent('done', {detail: message});
-            this.el.dispatchEvent(event);
+            const pluginMessage = 'Pushing local db to master.';
+            console.log(pluginMessage);
+            // const base64dumpPeer = btoa(dumpedString);
+            // const blob = new Blob([JSON.stringify(dumpedString, null, 2)], {type : 'application/json'});
+            // const blob = new Blob([dumpedString], {type : 'application/json'});
+            // const upload: Message = new Message('payload', pluginMessage, blob, null, null);
+            const upload: Message = new Message('payload', pluginMessage, null, null, null, null);
+            pushDataMessage = await this.pushData(upload, dumpedString);
+            if (typeof pushDataMessage !== 'undefined') {
+              console.log('pushDataMessage message: ' + pushDataMessage['message']);
+              message = new Message('done', pushDataMessage['message'], null, null, null, null);
+              const event = new CustomEvent('done', {detail: message});
+              this.el.dispatchEvent(event);
+            }
           } catch (e) {
             message = pushDataMessage;
             console.log('Error pushing data: ' + JSON.stringify(message));
@@ -115,7 +150,7 @@ class MockPeersService {
         }
       }).catch((err) => {
         console.log(err);
-        message = new Message('error', err, null, null);
+        message = new Message('error', err, null, null, null, null);
         const event = new CustomEvent('error', {detail: message});
         this.el.dispatchEvent(event);
       });
@@ -160,7 +195,7 @@ class MockPeersService {
           'tab3': 'tab3'
         }
       };
-      response = new Message(this.messageType, 'Endpoints', obj, null);
+      response = new Message(this.messageType, 'Endpoints', obj, null, null, null);
     }
     // else if (this.messageType === 'payload') {
     //   const pluginMessage = 'I loaded data from the peer device. Now I will send you my data.';
@@ -174,74 +209,45 @@ class MockPeersService {
     currentEndpoint = endpoint;
     const dumpedString = await this.dumpData(supercat);
     // const message: Message = await this.pushData(dumpedString);
-    const payload: Message = new Message('payload', 'Data from master', dumpedString, null);
-    await this.pushData(payload);
+    const message: Message = new Message('payload', 'Data from master', dumpedString, null, null, null);
+    await this.pushData(message, dumpedString);
     // return message;
   }
 
   // async pushData(dumpedString): Promise<Message> {
-  async pushData(payload: Message) {
-    let message: Message;
-    const dumpedString = payload.object;
-    // copy data to the destination pouch
-    // const writeStream =  new window['Memorystream'];
-    // writeStream.end(dumpedString);
-    // const dest = new PouchDB(currentEndpoint.id);
-    // const pluginMessage = 'I transferred data to the peer device.';
-    // await dest.load(writeStream).then( () => {
-    //   message = new Message('payload', pluginMessage, null, null);
-    //   const event = new CustomEvent('payload', {detail: message});
-    //   this.el.dispatchEvent(event);
-
-      // TODO: this would have been caught in startAdvertising normally
-      // const payload: Message = <Message>response.object;
-      // const databaseDump = payload.object;
-      const writeStream = new window['Memorystream'];
-      writeStream.end(dumpedString);
-      const temp = new PouchDB('tempDb');
-      const dest = new PouchDB(currentEndpoint.id);
-      temp.load(writeStream).then(async () => {
-        // replicate received database to the local db
-        // await new Promise((resolve, reject) => {
-        //   temp.replicate.to(dest);
-        // })
-        await temp.replicate.to(dest).on('complete', function () {
-          console.log('done! ' );
-        }).on('error', function (err) {
-          console.log('error: ' + err);
-        });
-
-        const dumpedString = await this.dumpData(dest)
-        let pushDataMessage: Message;
-        // if (this.isMaster) {
-          // TODO - should be a confirmation that *some* data was sent - a proof of life
-          // TODO at this point, he can move to another peer.
-          const doneMessage = 'Data has been loaded. You may sync the next device.'
-          message = new Message('done', doneMessage, null, null);
-          const event = new CustomEvent('done', {detail: message});
-          this.el.dispatchEvent(event);
-        // } else {
-        //   try {
-        //     const pluginMessage = 'I loaded data from the master db into mine. Now I will push my local db to master.';
-        //     console.log(pluginMessage)
-        //     const upload: Message = new Message('payload', pluginMessage, dumpedString, null);
-        //     pushDataMessage = await this.pushData(upload);
-        //     message = new Message('done', pluginMessage, null, null);
-        //     const event = new CustomEvent('done', {detail: message});
-        //     this.el.dispatchEvent(event);
-        //   } catch (e) {
-        //     message = pushDataMessage;
-        //     console.log('Error pushing data: ' + JSON.stringify(message));
-        //     const event = new CustomEvent('error', {detail: message});
-        //     this.el.dispatchEvent(event);
-        //   }
-        // }
-      }).catch((err) => {
-        console.log(err);
-        message = new Message('error', err, null, null);
-        const event = new CustomEvent('error', {detail: message});
-        this.el.dispatchEvent(event);
+  async pushData(message: Message, payload: string) {
+    const dumpedString = payload;
+    // TODO: this would have been caught in startAdvertising normally
+    // const payload: Message = <Message>response.object;
+    // const databaseDump = payload.object;
+    const writeStream = new window['Memorystream'];
+    writeStream.end(dumpedString);
+    const temp = new PouchDB('tempDb');
+    const dest = new PouchDB(currentEndpoint.id);
+    const resultMessage = temp.load(writeStream).then(async () => {
+      // replicate received database to the local db
+      await temp.replicate.to(dest).on('complete', function () {
+        console.log('done! ' );
+      }).on('error', function (err) {
+        console.log('error: ' + err);
       });
+
+      const dumpedString = await this.dumpData(dest)
+      let pushDataMessage: Message;
+        // TODO - should be a confirmation that *some* data was sent - a proof of life
+        // TODO at this point, he can move to another peer.
+        const doneMessage = 'Data has been loaded. You may sync the next device.'
+        message = new Message('done', doneMessage, null, null, null, null);
+        const event = new CustomEvent('done', {detail: message});
+        this.el.dispatchEvent(event);
+        return message;
+    }).catch((err) => {
+      console.log(err);
+      message = new Message('error', err, null, null, null, null);
+      const event = new CustomEvent('error', {detail: message});
+      this.el.dispatchEvent(event);
+    });
+    return resultMessage;
   }
 
 }
@@ -392,7 +398,7 @@ describe('PeersService', () => {
 
   it('transfer data to tab1', async() => {
     const service: PeersService = TestBed.get(PeersService);
-    const ep1 = {'id': 'tab1', 'endpointName': 'tab1'},
+    const ep1 = {'id': 'tab1', 'endpointName': 'tab1'};
     // const message: Message = await service.connectToEndpoint(this.endpoints[0]);
     const message: Message = await service.connectToEndpoint(ep1);
     let hasDoc = false;
