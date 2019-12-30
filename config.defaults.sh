@@ -42,7 +42,7 @@ T_CENTRALLY_MANAGED_USER_PROFILE="false"
 T_REPLICATE="[]"
 # Available modules: csv, logstash, class, case
 # To enable modules, list them like so: 
-# T_MODULES="['csv','class', 'logstash']"
+# T_MODULES="['csv','class','logstash','sync-protocol-2']"
 T_MODULES="['csv']"
 # To populate categories in Class:
 #T_CATEGORIES="['one','two','three','four']"
@@ -55,5 +55,7 @@ T_COUCHDB_ENDPOINT="http://$T_COUCHDB_USER_ADMIN_NAME:$T_COUCHDB_USER_ADMIN_PASS
 T_COUCHDB_LOCAL="true"
 # options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
 T_ORIENTATION="any"
+# In CSV output, set cell value to this when something is disabled or hidden. Set to "ORIGINAL_VALUE" if you want the actual value stored.
+T_CSV_MARK_DISABLED_OR_HIDDEN_WITH="999"
 
 

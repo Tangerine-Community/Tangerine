@@ -22,18 +22,18 @@ const groupsRoutes: Routes = [
   { path: '', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, SuperAdminUserGuard] },
-  { path: 'groups/:groupName', component: GroupDetailsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard] },
   {
-    path: 'groups/:groupName', component: GroupDetailsComponent, canActivate: [LoginGuard, SuperAdminUserGuard]
+    path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard, SuperAdminUserGuard]
   },
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {
-    path: 'groups/:groupName/import-location-list',
+    path: 'groups/:groupId/import-location-list',
     component: ImportLocationListComponent, canActivate: [LoginGuard, AdminUserGuard]
   },
   {
-    path: 'groups/:groupName/manage-location-list-metadata/:locationLevel',
+    path: 'groups/:groupId/manage-location-list-metadata/:locationLevel',
     component: ManageLocationListMetadataComponent, canActivate: [LoginGuard]
   },
   { path: 'groups/:groupName/download-csv/:formId', component: DownloadCsvComponent, canActivate: [LoginGuard] },

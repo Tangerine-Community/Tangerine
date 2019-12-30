@@ -1,0 +1,11 @@
+:host {
+  padding: 15px;
+}
+.container {
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.status {
+  margin: 15px 0px 0px;
+}

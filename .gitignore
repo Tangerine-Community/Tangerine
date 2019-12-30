@@ -2,6 +2,7 @@ tanerine-env-vars.sh
 .idea
 .history
 
+tangerine-preview/app/
 client/src/media_assets/
 client/src/assets
 data

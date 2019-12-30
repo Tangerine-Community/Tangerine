@@ -1,3 +1,4 @@
+import { TangerineFormsService } from './../../services/tangerine-forms.service';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
@@ -18,6 +19,7 @@ export class CreateCaseDefinitionComponent implements OnInit {
     router: Router,
     private groupsService: GroupsService,
     private caseService: CaseManagementEditorService,
+    private tangerineFormsService:TangerineFormsService,
     private errorHandler: TangyErrorHandler) { }
 
   ngOnInit() {
@@ -46,7 +48,7 @@ export class CreateCaseDefinitionComponent implements OnInit {
         </tangy-form-item>
       </tangy-form>`;
       const caseFormFilePath = `./${formId}/form.html`;
-      const formsJSON = await this.groupsService.getFormsList(this.groupId);
+      const formsJSON = await this.tangerineFormsService.getFormsInfo(this.groupId);
       const formEntry = {
         id: formId,
         title: caseObject.name,

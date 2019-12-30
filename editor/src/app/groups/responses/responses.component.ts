@@ -1,3 +1,4 @@
+import { TangerineFormsService } from './../services/tangerine-forms.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { HttpClient } from '@angular/common/http';
@@ -22,13 +23,14 @@ export class ResponsesComponent implements OnInit {
 
   constructor(
     private groupsService: GroupsService,
+    private tangerineFormsService:TangerineFormsService,
     private http: HttpClient
   ) {
     this.moment = moment
   }
 
   async ngOnInit() {
-    this.forms = await this.groupsService.getFormsList(this.groupName);
+    this.forms = await this.tangerineFormsService.getFormsInfo(this.groupName);
 
     const modulesEnabled:any = await this.http.get(`/api/modules`).toPromise()
     if (modulesEnabled.indexOf('dat-output') !== -1) {

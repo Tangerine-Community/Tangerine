@@ -1,3 +1,4 @@
+import { GroupDevicesService } from './services/group-devices.service';
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import {
@@ -38,6 +39,7 @@ import { CreateEventDefinitionComponent } from './case-management-editor/create-
 import { GroupMediaComponent } from './group-media/group-media.component';
 import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-table.component';
 import { CopyFormComponent } from './copy-form/copy-form.component';
+import { GroupDevicesComponent } from './group-devices/group-devices.component';
 
 
 
@@ -88,9 +90,10 @@ import { CopyFormComponent } from './copy-form/copy-form.component';
     CreateEventFormDefinitionComponent,
     CreateEventDefinitionComponent,
     PrintFormAsTableComponent,
-    CopyFormComponent
+    CopyFormComponent,
+    GroupDevicesComponent
   ],
-  providers: [GroupsService, FilesService, TangerineFormsService ],
+  providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService ],
   entryComponents: [CopyFormComponent]
 })
 export class GroupsModule { }

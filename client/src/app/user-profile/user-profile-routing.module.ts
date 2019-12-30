@@ -1,3 +1,4 @@
+import { AssociateUserProfileComponent } from './associate-user-profile/associate-user-profile.component';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
@@ -13,6 +14,10 @@ const routes = [{
 }, {
   path: 'import-user-profile',
   component: ImportUserProfileComponent,
+  canActivate: [LoginGuard]
+}, {
+  path: 'associate-user-profile',
+  component: AssociateUserProfileComponent,
   canActivate: [LoginGuard]
 }];
 @NgModule({

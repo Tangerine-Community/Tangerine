@@ -11,12 +11,14 @@ export class UserDatabase {
   userId:string
   username:string
   name:string
-  db: PouchDB
+  deviceId:string
+  db:PouchDB
 
-  constructor(username, userId, shared = false) {
+  constructor(username:string, userId:string, deviceId:string, shared = false) {
     this.userId = userId
     this.username = username
     this.name = username
+    this.deviceId = deviceId
     if (shared) {
       this.db = new PouchDB(SHARED_USER_DATABASE_NAME)
     } else {
@@ -24,6 +26,13 @@ export class UserDatabase {
     }
   }
 
+  async synced(doc) {
+    return await this.db.put({
+      ...doc,
+      tangerineSyncedOn: Date.now()
+    })
+  }
+ 
   async get(_id) {
     return await this.db.get(_id)
   }
@@ -31,7 +40,8 @@ export class UserDatabase {
   async put(doc) {
     return await this.db.put({
       ...doc,
-      tangerineModifiedBy: this.userId,
+      tangerineModifiedByUserId: this.userId,
+      tangerineModifiedByDeviceId: this.deviceId,
       tangerineModifiedOn: Date.now()
     })
   }
@@ -39,7 +49,8 @@ export class UserDatabase {
   async post(doc) {
     return await this.db.post({
       ...doc,
-      tangerineModifiedBy: this.userId,
+      tangerineModifiedByUserId: this.userId,
+      tangerineModifiedByDeviceId: this.deviceId,
       tangerineModifiedOn: Date.now()
     })
   }
@@ -75,5 +86,5 @@ export class UserDatabase {
   compact() {
     return this.db.compact()
   }
-
-}
+  
+} 

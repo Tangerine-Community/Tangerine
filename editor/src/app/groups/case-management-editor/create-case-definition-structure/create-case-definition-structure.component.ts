@@ -1,3 +1,4 @@
+import { TangerineFormsService } from './../../services/tangerine-forms.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../../services/groups.service';
@@ -39,12 +40,13 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
     private route: ActivatedRoute,
     private router: Router,
     private groupsService: GroupsService,
+    private tangerineFormsService:TangerineFormsService,
     private caseService: CaseManagementEditorService,
     private errorHandler: TangyErrorHandler) { }
 
   async ngOnInit() {
     this.groupId = this.route.snapshot.paramMap.get('groupName');
-    this.formsList = (await this.groupsService.getFormsList(this.groupId)).filter(x => x['type'] === 'case');
+    this.formsList = (await this.tangerineFormsService.getFormsInfo(this.groupId)).filter(x => x['type'] === 'case');
     this.subscription = this.route.queryParams.subscribe(async queryParams => {
       this.caseForm = { ...this.initialForm };
       this.formInActive = true;
@@ -62,7 +64,6 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
     try {
       this.caseForm = { ...this.caseForm, revision: await this.groupsService.updateCaseDefinitionRevision(this.groupId, this.caseForm.id) };
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.caseForm, `./${this.caseForm.id}.json`);
-
       this.caseDefinitions = await this.groupsService.getCaseDefinitions(this.groupId);
       const caseIndex = this.caseDefinitions.findIndex(e => e['id'] === this.caseId);
       this.caseDefinitions[caseIndex]['name'] = this.caseForm.name;
