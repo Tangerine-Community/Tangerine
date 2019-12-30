@@ -39,6 +39,9 @@ export class UserProfileComponent implements AfterContentInit {
       event.preventDefault()
       const profileDoc = formEl.store.getState()
       await userDb.put(profileDoc)
+      if (!userAccount.initialProfileComplete) {
+        await this.userService.saveUserAccount({ ...userAccount, initialProfileComplete:true })
+      }
       this.router.navigate([this.returnUrl]);
     })
     try {

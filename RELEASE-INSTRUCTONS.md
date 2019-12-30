@@ -7,3 +7,4 @@
 4. Git tag with the same name as the release number.
 5. Git push the master branch, git push the tag.
 6. Draft a new release on Github of the same tag name using that tag. Use the CHANGELOG notes.
+7. Release preview with `./release-preview.sh <version number>`

@@ -23,7 +23,7 @@ export class LocationListEditorComponent implements OnInit {
   newItemId;
   metadata: any = {};
   showLocationForm = false;
-  groupName = '';
+  groupId = '';
   locationListFileName = 'location-list.json';
   isMoveLocationFormShown = false;
   parentItemsForMoveLocation;
@@ -42,10 +42,10 @@ export class LocationListEditorComponent implements OnInit {
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
-      this.groupName = params.groupName;
+      this.groupId = params.groupId;
     });
     try {
-      const data: any = await this.http.get(`/editor/${this.groupName}/content/${this.locationListFileName}`).toPromise();
+      const data: any = await this.http.get(`/editor/${this.groupId}/content/${this.locationListFileName}`).toPromise();
       const flatLocationList = Loc.flatten(data);
       // TODO Why do we need zoneLevelLocations???
       const zoneLevelLocations = flatLocationList.locations.filter(location => location.level === 'zone');
@@ -145,7 +145,7 @@ export class LocationListEditorComponent implements OnInit {
     const refineToLevel = [...this.locationsLevels].slice(0, this.breadcrumbs.length - 2);
     this.container.nativeElement.innerHTML = `
       <tangy-location show-levels="${refineToLevel.join(',')}" 
-        location-src="/editor/${this.groupName}/content/${this.locationListFileName}">
+        location-src="/editor/${this.groupId}/content/${this.locationListFileName}">
     `;
     this.container.nativeElement.querySelector('tangy-location').
       addEventListener('change', event => this.onTangyLocationChange(event.target.value));
@@ -179,10 +179,10 @@ export class LocationListEditorComponent implements OnInit {
   async saveLocationListToDisk() {
     try {
       this.isLoading = true;
-      const payload = { filePath: this.locationListFileName, groupId: this.groupName, fileContents: JSON.stringify(this.locationList) };
+      const payload = { filePath: this.locationListFileName, groupId: this.groupId, fileContents: JSON.stringify(this.locationList) };
       await this.http.post(`/editor/file/save`, payload).toPromise();
       this.isLoading = false;
-      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
+      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupId}`);
     } catch (error) {
       this.isLoading = false;
       this.errorHandler.handleError('Error Saving Location Lits File to disk');

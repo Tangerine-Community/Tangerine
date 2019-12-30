@@ -1,3 +1,4 @@
+import { DeviceService } from './device/services/device.service';
 import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
@@ -40,6 +41,7 @@ export class AppComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private searchService:SearchService,
+    private deviceService: DeviceService,
     translate: TranslateService
   ) {
     this.window = window;
@@ -98,6 +100,7 @@ export class AppComponent implements OnInit {
     this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
     this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
     await this.userService.install()
+    await this.deviceService.install()
     this.window.localStorage.setItem('installed', true)
     this.window.location = `${this.window.location.origin}${this.window.location.pathname}index.html`
   }
