@@ -6,7 +6,6 @@ if (process.argv[2] === '--help') {
   process.exit()
 }
 
-
 const pako = require('pako')
 const axios = require('axios')
 const uuidv1 = require('uuid/v1');
