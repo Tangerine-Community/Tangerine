@@ -37,7 +37,7 @@ fi
 echo '{"processing":true}' > $STATUS_FILE
 
 if [ -d "$RELEASE_DIRECTORY" ]; then
-  # Clear out the Cordova project in $CORDOVA_DIRECTORY
+  # Clear out the Cordova project in $RELEASE_DIRECTORY
   rm -rf $RELEASE_DIRECTORY
 fi
 
