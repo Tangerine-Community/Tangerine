@@ -50,7 +50,7 @@ cp /reporting-worker-state.json_tmp /reporting-worker-state.json
 If you would like to debug, add the `--inspect-brk=0.0.0.0:9227` option to the `run-worker.js` command.
 
 ```
-cat /reporting-worker-state.json | node --inspect-brk=0.0.0.0:9227 /tangerine/server/reporting/run-worker.js | tee /reporting-worker-state.json_tmp
+cat /reporting-worker-state.json | node --inspect-brk=0.0.0.0:9227 /tangerine/server/src/scripts/reporting-worker-batch.js | tee /reporting-worker-state.json_tmp
 ```
 
 When you run that command, it will wait on the first line of the script for a debugger to connect to it. In Chrome, go to `chrome://inspect`, click `Configure...`, and add `127.0.0.1:9227` as an entry in "Target discovery settings". Now back to the `chrome://inspect` page and you will find under the `Remote Target #127.0.0.1` group, a new target has been discovered called `/tangerine/server/reporting/run-worker.js`. Click `inspect` and now you should be able to set breakpoints and walk through the code. You may not be able to set breakpoints in all files so use "step into" and the `debugger` keyword to get the debugger to the focus you want.
