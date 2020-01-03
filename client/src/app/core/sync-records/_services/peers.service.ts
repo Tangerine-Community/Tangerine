@@ -136,6 +136,7 @@ export class PeersService {
         // const databaseDump = await (new Response(blob)).text();
         const writeStream = new window['Memorystream'];
         writeStream.end(payload);
+        // TODO: delete tempDB when done.
         const tempDb = new PouchDB('tempDb');
         console.log('Loading data into tempDb');
         await tempDb.load(writeStream).then(async () => {
@@ -143,6 +144,8 @@ export class PeersService {
           // await new Promise((resolve, reject) => {
           const localDb = this.localDatabase;
           console.log('Replicating data to PouchDB: ' + localDb.name);
+          // TODO: Probably don't need the .on since we've already got an await.
+          // TODO: This could possible have created two stacks, and commands could happen out of order.
           await tempDb.replicate.to(localDb)
             .on('complete',  () => {
               const repliMessage  = 'Data downloaded to tablet.'
