@@ -25,4 +25,6 @@ export class AppConfig {
   sharedUserDatabase = false
   groupId:string
   groupName:string
+  p2pSync = 'false'
 } 
+
