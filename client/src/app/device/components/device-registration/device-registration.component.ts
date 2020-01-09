@@ -13,12 +13,39 @@ export class DeviceRegistrationComponent implements OnInit {
 
   @ViewChild('container') container: ElementRef
   done$ = new Subject()
+  window: any;
 
   constructor(
-    private deviceService:DeviceService
-  ) { }
+    private deviceService: DeviceService
+  ) {
+    this.window = window;
+  }
 
   ngOnInit() {
+    if (this.window.isCordovaApp) {
+      const permissions = window['cordova']['plugins']['permissions'];
+      const list = [
+        permissions.CAMERA,
+        permissions.READ_EXTERNAL_STORAGE,
+        permissions.WRITE_EXTERNAL_STORAGE
+      ];
+      window['cordova']['plugins']['permissions'].hasPermission(list, success, error);
+      function error() {
+        console.warn('Camera or Storage permission is not turned on');
+      }
+      function success( status ) {
+        if ( !status.hasPermission ) {
+          permissions.requestPermissions(
+            list,
+            function(statusRequest) {
+              if ( !statusRequest.hasPermission ) {
+                error();
+              }
+            },
+            error);
+        }
+      }
+    }
     this.gatherInfo()
   }
 
@@ -39,7 +66,7 @@ export class DeviceRegistrationComponent implements OnInit {
               }
             }
           ">
-      
+
           <tangy-box name="prompt1">
             <h2>Let's get your device set up.</h2>
           </tangy-box>
@@ -47,10 +74,10 @@ export class DeviceRegistrationComponent implements OnInit {
             <option value="yes" label="yes">yes</option>
             <option value="no" label="no">no</option>
           </tangy-radio-buttons>
-      
+
           <tangy-box name="prompt2" show-if="getValue('has_qr').includes('yes')">
             <h2>Great! Use this QR scanner below to scan the code in.</h2>
-          </tangy-box>   
+          </tangy-box>
           <tangy-qr name="qr" show-if="getValue('has_qr').includes('yes')" hide-output error-text="Invalid format detected. Try again." valid-if="
             let isValid
             try {
@@ -66,15 +93,15 @@ export class DeviceRegistrationComponent implements OnInit {
             // Using return is not valid here, but just putting the idValid variable on the last line works. Eval is weird.
             isValid
           "></tangy-qr>
-      
+
           <tangy-box name="prompt3" show-if="getValue('has_qr').includes('no')">
             <h2>That's ok. Enter the device ID and token below.</h2>
-          </tangy-box>   
+          </tangy-box>
           <tangy-input name="device_id" label="Device ID" show-if="getValue('has_qr').includes('no')"></tangy-input>
           <tangy-input name="device_token" label="Token" show-if="getValue('has_qr').includes('no')"></tangy-input>
-      
+
         </tangy-form-item>
-      </tangy-form> 
+      </tangy-form>
     `
     const deviceRegistrationFormEl = this.container
       .nativeElement
@@ -105,7 +132,7 @@ export class DeviceRegistrationComponent implements OnInit {
           <tangy-location name="device_location" label="Location" value='${JSON.stringify(device.assignedLocation.value)}' show-levels="${device.assignedLocation.showLevels.join(',')}"} disabled></tangy-location>
           <tangy-radio-buttons name="confirmation" label="Does the above info look like the right device info?" required>
             <option value="yes" label="yes">yes</option>
-            <option value="no" label="no">no</option> 
+            <option value="no" label="no">no</option>
           </tangy-radio-buttons>
         </tangy-form-item>
       </tangy-form>
