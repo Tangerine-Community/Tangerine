@@ -44,6 +44,8 @@ Let's say you want to show a timer of how long someone has been on a single item
 
 [Run example and see code](https://codepen.io/rjsteinert/pen/abzYqvb)
 
+![stop watch](./tangerine-form-editors-cookbook--stop-watch.gif)
+
 ## Capture the time between two items
 Sometimes we want to know how much time passed between two points in a form. This example captures, the `start_time` variable on the first item, then `end_time` on the last item. Lastly it calculates the length of time.
 
