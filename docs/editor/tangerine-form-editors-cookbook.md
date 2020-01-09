@@ -39,11 +39,11 @@ In the following example when you make a selection of a fruit and then choose on
 [Run example and see code](https://codepen.io/rjsteinert/pen/WNbMveY)
 
 ## Capture and show local date and time
-Sometime we want to show the user the local date and time to ensure their time settings are correct. 
-
-![tangerine-form-editors-cookbook--capture-local-date-and-time](./tangerine-form-editors-cookbook--capture-local-date-and-time.png)
+Sometimes we want to show the user the local date and time to ensure their time settings are correct. 
 
 [Run example](https://tangerine-form-editors-cookbook--capture-local-dat.glitch.me/) - [Open Editor](https://edit--capture-local-date-and-time.glitch.me/) - [View Code](https://glitch.com/edit/#!/tangerine-form-editors-cookbook--capture-local-dat)
+
+![tangerine-form-editors-cookbook--capture-local-date-and-time](./tangerine-form-editors-cookbook--capture-local-date-and-time.png)
 
 ## Show a timer in an item
 Let's say you want to show a timer of how long someone has been on a single item. This calculates the time since item open and displays number of seconds since then in a tangy-box.
