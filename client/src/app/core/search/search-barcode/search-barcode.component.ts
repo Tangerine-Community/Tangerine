@@ -22,7 +22,6 @@ export class SearchBarcodeComponent implements OnInit {
   cancel = new EventEmitter()
   public value = ''
   public state =  STATE_INITIAL
-  window: any;
 
   @ViewChild('scanner')
   private scanner: ElementRef
@@ -30,9 +29,7 @@ export class SearchBarcodeComponent implements OnInit {
 
   constructor(
     private appConfig:AppConfigService
-  ) {
-    this.window = window;
-  }
+  ) { }
 
   async ngOnInit() {
     const appConfig = await this.appConfig.getAppConfig()
