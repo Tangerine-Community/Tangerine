@@ -48,7 +48,7 @@ Let's say you want to show a timer of how long someone has been on a single item
 ## Capture the time between two items
 Sometimes we want to know how much time passed between two points in a form. This example captures, the `start_time` variable on the first item, then `end_time` on the last item. Lastly it calculates the length of time.
 
-[Run example](https://fluorescent-value.glitch.me/) - [View Code](https://glitch.com/edit/#!/fluorescent-value) - [Open Editor](https://delightful-vicuna.glitch.me/)
+[Run example](https://fluorescent-value.glitch.me/) - [Open Editor](https://delightful-vicuna.glitch.me/) - [View Code](https://glitch.com/edit/#!/fluorescent-value)
 
 ![timed items](tangerine-form-editors-cookbook--timed-items.gif)
 
