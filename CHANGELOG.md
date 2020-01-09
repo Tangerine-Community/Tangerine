@@ -12,7 +12,7 @@ Upgrade instructions:
   - `"syncProtocol":"2"` Enables a "Device Setup" process on first boot of the client application. This requires you set up a "Device" record on the server. When setting up a Device record on the server, it will give you a QR code to use to scan from the tablet in order to receive it's device ID and token.
   - `"registrationRequiresServerUser" : true` should be changed to `"associateUserProfileMode": "remote"`.
   - If planning to use ``"syncProtocol":"2"` and a project already uses `"centrallyManagedUserProfile" : true`, remove `"centrallyManagedUserProfile": true` and configure the user profile's custom sync settings to push. 
-- docker-tangerine-base-image at v3.3.0 provides the cordova-plugin-android-permissions, which will present permissiob dialogs as needed. It also provides a bugfix in refreshing discovery and ability to name the peer. 
+- docker-tangerine-base-image at v3.3.0 provides the cordova-plugin-android-permissions, which will present permission dialogs as needed. The list of permissions is in AppComponent checkPermissions(). This release also provides a bugfix in refreshing discovery and ability to name the peer. 
 
 ## v3.7.0
 - __Fixes__
