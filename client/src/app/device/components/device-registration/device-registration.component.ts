@@ -13,13 +13,10 @@ export class DeviceRegistrationComponent implements OnInit {
 
   @ViewChild('container') container: ElementRef
   done$ = new Subject()
-  window: any;
 
   constructor(
     private deviceService: DeviceService
-  ) {
-    this.window = window;
-  }
+  ) { }
 
   ngOnInit() {
     this.gatherInfo()
