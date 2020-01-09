@@ -1,4 +1,4 @@
 # Editor Guide
 
-- [Tangerine Form Editor's Cookbook](tangerine-form-editors-cookbook.md)
+- [Tangerine Form Editor's Cookbook](cookbook.md)
 - [Configuration Guide](configuration.md)
