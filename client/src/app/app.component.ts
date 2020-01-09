@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
   ) {
     this.window = window;
     this.window.PouchDB = PouchDB
-    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
+    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
       ? true
       : false
     if (!this.installed) return
@@ -60,8 +60,8 @@ export class AppComponent implements OnInit {
     translate.setDefaultLang(this.languagePath);
     translate.use(this.languagePath);
     // Set required config for use of <t-lang> Web Component.
-    this.window.document.documentElement.lang = this.languageCode; 
-    this.window.document.documentElement.dir = this.languageDirection; 
+    this.window.document.documentElement.lang = this.languageCode;
+    this.window.document.documentElement.dir = this.languageDirection;
     this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
     // Make database services available to eval'd code.
     this.window.userService = this.userService
@@ -76,7 +76,9 @@ export class AppComponent implements OnInit {
     // Bail if the app is not yet installed.
     if (!this.installed) {
       this.install()
-      return
+      return;
+    } else {
+      this.checkPermissions();
     }
     await this.userService.initialize()
     this.checkIfUpdateScriptRequired();
@@ -92,7 +94,7 @@ export class AppComponent implements OnInit {
     setInterval(this.getGeolocationPosition, 5000);
     this.checkIfUpdateScriptRequired();
     this.checkStorageUsage()
-    setInterval(this.checkStorageUsage.bind(this), 60*1000); 
+    setInterval(this.checkStorageUsage.bind(this), 60*1000);
   }
 
   async install() {
@@ -105,6 +107,38 @@ export class AppComponent implements OnInit {
     this.window.location = `${this.window.location.origin}${this.window.location.pathname}index.html`
   }
 
+  async checkPermissions() {
+    if (this.window.isCordovaApp) {
+      const permissions = window['cordova']['plugins']['permissions'];
+      if (typeof permissions !== 'undefined') {
+        const list = [
+          permissions.ACCESS_COARSE_LOCATION,
+          permissions.ACCESS_FINE_LOCATION,
+          permissions.CAMERA,
+          permissions.READ_EXTERNAL_STORAGE,
+          permissions.WRITE_EXTERNAL_STORAGE
+        ];
+
+        window['cordova']['plugins']['permissions'].hasPermission(list, success, error);
+        function error() {
+          console.warn('Camera or Storage permission is not turned on');
+        }
+        function success( status ) {
+          if ( !status.hasPermission ) {
+            permissions.requestPermissions(
+              list,
+              function(statusRequest) {
+                if ( !statusRequest.hasPermission ) {
+                  error();
+                }
+              },
+              error);
+          }
+        }
+      }
+    }
+  }
+
   async checkStorageUsage() {
     const storageEstimate = await navigator.storage.estimate()
     const availableFreeSpace = storageEstimate.quota - storageEstimate.usage
@@ -112,8 +146,8 @@ export class AppComponent implements OnInit {
       ? this.appConfig.minimumFreeSpace
       : 50*1000*1000
     if (availableFreeSpace < minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
-      const batchSize = this.appConfig.usageCleanupBatchSize 
-        ? this.appConfig.usageCleanupBatchSize 
+      const batchSize = this.appConfig.usageCleanupBatchSize
+        ? this.appConfig.usageCleanupBatchSize
         : 10
       this.freespaceCorrectionOccuring = true
       await this.correctFreeSpace(minimumFreeSpace, batchSize)
@@ -130,7 +164,7 @@ export class AppComponent implements OnInit {
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,
-        include_docs: true 
+        include_docs: true
       });
       for(let row of results.rows) {
         await DB.remove(row.doc)

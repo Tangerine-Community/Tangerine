@@ -22,30 +22,6 @@ export class DeviceRegistrationComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.window.isCordovaApp) {
-      const permissions = window['cordova']['plugins']['permissions'];
-      const list = [
-        permissions.CAMERA,
-        permissions.READ_EXTERNAL_STORAGE,
-        permissions.WRITE_EXTERNAL_STORAGE
-      ];
-      window['cordova']['plugins']['permissions'].hasPermission(list, success, error);
-      function error() {
-        console.warn('Camera or Storage permission is not turned on');
-      }
-      function success( status ) {
-        if ( !status.hasPermission ) {
-          permissions.requestPermissions(
-            list,
-            function(statusRequest) {
-              if ( !statusRequest.hasPermission ) {
-                error();
-              }
-            },
-            error);
-        }
-      }
-    }
     this.gatherInfo()
   }
 
