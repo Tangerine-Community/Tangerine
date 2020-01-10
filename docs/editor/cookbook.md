@@ -13,6 +13,8 @@ In the following example, wether or not you answer yes or no to the question, yo
 
 [Run example](https://skip-sections-based-on-input.glitch.me/) - [Open Editor](https://skip-sections-based-on-input.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/skip-sections-based-on-input)
 
+![skip-sections-based-on-input](skip-sections-based-on-input)
+
 ## Valid by number of decimal points
 In the following example, we validate user input by number of decimal points.
 
