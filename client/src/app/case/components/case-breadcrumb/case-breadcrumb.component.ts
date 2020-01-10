@@ -34,22 +34,25 @@ export class CaseBreadcrumbComponent implements OnInit {
         .caseDefinition
         .eventDefinitions
         .find(caseEventDefinition => caseEventDefinition.id === caseEvent.caseEventDefinitionId)
+      let primaryText = ''
+      let secondaryText = ''
+      let secondaryLink = ''
       if (!this.eventFormId) {
-        this.primaryText = this.caseService.caseDefinition.templateBreadcrumbText
-          ? eval(this.caseService.caseDefinition.templateBreadcrumbText)
-          : `${t('Case')}: ${this.caseService.case._id.substr(0,6)}`
-        this.secondaryText = caseEventDefinition.name
-        this.secondaryLink = `/case/${this.caseService.case._id}`
+        eval(`primaryText = this.caseService.caseDefinition.templateBreadcrumbText ? \`${this.caseService.caseDefinition.templateBreadcrumbText}\` : ''`)
+        secondaryText = caseEventDefinition.name
+        secondaryLink = `/case/${this.caseService.case._id}`
       } else {
-        const participant = this.caseService.case.participants.find(participant => participant.id === eventForm.participantId)
         const eventForm = caseEvent.eventForms.find(eventForm => eventForm.id === this.eventFormId)
         const eventFormDefinition = caseEventDefinition.eventFormDefinitions.find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
-        this.primaryText = this.caseService.caseDefinition.templateBreadcrumbText
-          ? eval(this.caseService.caseDefinition.templateBreadcrumbText)
-          : `${t('Case')}: ${this.caseService.case._id.substr(0,6)}`
-        this.secondaryText = eventFormDefinition.name
-        this.secondaryLink = `/case/event/${this.caseService.case._id}/${caseEvent.id}`
+        const participant = this.caseService.case.participants.find(participant => participant.id === eventForm.participantId)
+        eval(`renderedPrimaryText = this.caseService.caseDefinition.templateBreadcrumbText ? \`${this.caseService.caseDefinition.templateBreadcrumbText}\` : ''`)
+        secondaryText = eventFormDefinition.name
+        secondaryLink = `/case/event/${this.caseService.case._id}/${caseEvent.id}`
       }
+      this.primaryText = primaryText
+      this.secondaryText = secondaryText
+      this.secondaryLink = secondaryLink
+    }
 
     }
   }
