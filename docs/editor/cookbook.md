@@ -30,6 +30,8 @@ In the following example, we validate user input by number of decimal points.
 ## Allowed date range based on today
 [Run example](https://allowed-date-range-based-on-today.glitch.me/) - [Open Editor](https://allowed-date-range-based-on-today.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/allowed-date-range-based-on-today)
 
+![allowed-date-range-based-on-today](allowed-date-range-based-on-today.gif)
+
 ## Flag choice as discrepancy and/or warning and show or hide content depending
 [Run example](https://flag-discrepancy-or-warning-and-hide.glitch.me/) - [Open Editor](https://flag-discrepancy-or-warning-and-hide.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/flag-discrepancy-or-warning-and-hide)
 
