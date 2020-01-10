@@ -73,6 +73,7 @@ export class AppComponent implements OnInit {
     this.appConfig = await this.appConfigService.getAppConfig()
     this.searchService.start()
     this.window.appConfig = this.appConfig
+    this.window.device = await this.deviceService.getDevice()
     // Bail if the app is not yet installed.
     if (!this.installed) {
       this.install()
