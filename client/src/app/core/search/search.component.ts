@@ -79,17 +79,15 @@ export class SearchComponent implements OnInit {
       const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
       const formId = formInfo.id
       searchResultsMarkup += `
-        <paper-icon-item class="search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
-          <iron-icon icon="${eval(`\`${formTypeInfo.iconTemplate}\``)}" slot="item-icon"></iron-icon> 
-          <paper-item-body two-line>
-            <div>
-              ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : response._id}\``)}
-            </div>
-            <div secondary>
-              ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
-            </div>
-          </paper-item-body>
-        </paper-icon-item>
+      <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
+        <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
+        <div>
+          <div> ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : response._id}\``)}</div>
+          <div secondary>
+          ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
+          </div>
+        </div>
+      </div>
       `
     }
     this.searchResults.nativeElement.innerHTML = searchResultsMarkup

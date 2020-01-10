@@ -26,9 +26,16 @@ Sometimes you may need to view an update to the plugin but you don't want to go 
   --volume $(pwd)/../cordova-plugin-nearby-connections:/tangerine/client/cordova-plugin-nearby-connections \
 ```
 
-Once your container has started, docker exec into it, CD to /tangerine/client/builds/apk and run the following:
+Once your container has started, docker exec into it, and run the following:
 
 ```javascript
+cd /tangerine/client/builds/apk
+cordova plugin rm cordova-plugin-nearby-connections
+cordova plugin add ../../cordova-plugin-nearby-connections --save
+```
+Sometimes cordova can have issues with cleaning the build; here's a way to make sure you have the updated code:
+```javascript
+cd /tangerine/client/builds/apk
 cordova plugin rm cordova-plugin-nearby-connections
 cordova platform rm android
 cordova platform add android@8

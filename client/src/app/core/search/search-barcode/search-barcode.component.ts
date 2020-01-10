@@ -14,16 +14,16 @@ const STATE_ERROR = 'STATE_ERROR'
 })
 export class SearchBarcodeComponent implements OnInit {
 
-  @Output('change') 
+  @Output('change')
   public change = new EventEmitter()
-  @Output('error') 
+  @Output('error')
   public error = new EventEmitter()
   @Output()
   cancel = new EventEmitter()
   public value = ''
   public state =  STATE_INITIAL
 
-  @ViewChild('scanner') 
+  @ViewChild('scanner')
   private scanner: ElementRef
   private barcodeSearchMapFunction = 'return data'
 
@@ -69,7 +69,7 @@ export class SearchBarcodeComponent implements OnInit {
     this.state = STATE_READY
     this.cancel.emit('cancel')
   }
-  
+
 
 
 }
