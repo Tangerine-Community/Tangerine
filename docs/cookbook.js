@@ -1,9 +1,11 @@
-var callback = function(){
+var callback = async function(){
   if (window.location.hash === '#edit') {
+    const doc = await(await fetch('index.html')).text()
+    const formMarkup = doc.slice(doc.indexOf('<body>')+6, doc.lastIndexOf('</body>'))
     window.document.body.innerHTML = `
       <tangy-form-editor>
         <template>
-          ${window.document.body.innerHTML}
+          ${formMarkup}
         </template>
       </tangy-form-editor
     `
