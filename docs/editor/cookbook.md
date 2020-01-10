@@ -42,7 +42,7 @@ Sometimes we want to show the user the local date and time to ensure their time 
 ## Show a timer in an item
 Let's say you want to show a timer of how long someone has been on a single item. This calculates the time since item open and displays number of seconds since then in a tangy-box.
 
-[Run example and see code](https://codepen.io/rjsteinert/pen/abzYqvb)
+[Run example](https://show-a-timer-in-an-item.glitch.me/) - [Open Editor](https://show-a-timer-in-an-item.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/show-a-timer-in-an-item)
 
 ![stop watch](./tangerine-form-editors-cookbook--stop-watch.gif)
 
