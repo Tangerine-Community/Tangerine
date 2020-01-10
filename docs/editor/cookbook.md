@@ -11,13 +11,10 @@ In the following example, wether or not you answer yes or no to the question, yo
 
 [Run example](https://skip-sections-based-on-input.glitch.me/) - [Open Editor](https://skip-sections-based-on-input.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/skip-sections-based-on-input)
 
-
-
 ## Valid by number of decimal points
 In the following example, we validate user input by number of decimal points.
 
 [Run example](https://valid-by-number-of-decimal-points.glitch.me/) - [Open Editor](https://valid-by-number-of-decimal-points.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-by-number-of-decimal-points)
-
 
 ## Valid if greater or less than other input
 [Run example](https://valid-if-greater-or-less-than-other-input.glitch.me/) - [Open Editor](https://valid-if-greater-or-less-than-other-input.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-if-greater-or-less-than-other-input)
@@ -26,8 +23,7 @@ In the following example, we validate user input by number of decimal points.
 [Run example](https://allowed-date-range-based-on-today.glitch.me/) - [Open Editor](https://allowed-date-range-based-on-today.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/allowed-date-range-based-on-today)
 
 ## Flag choice as discrepancy and/or warning and show or hide content depending
-[Run example and see code](https://codepen.io/rjsteinert/pen/eYmGGbM)
-
+[Run example](https://flag-discrepancy-or-warning-and-hide.glitch.me/) - [Open Editor](https://flag-discrepancy-or-warning-and-hide.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/flag-discrepancy-or-warning-and-hide)
 
 ## Indicate a mutually exclusive option in a checkboxes group such as "None of the above"
 In the following example when you make a selection of a fruit and then choose one of the mutually exclusive options, your prior selections will be deselected.
@@ -35,7 +31,6 @@ In the following example when you make a selection of a fruit and then choose on
 [Run example](https://mutually-exclusive-checkbox-options.glitch.me/) - [Open Editor](https://mutually-exclusive-checkbox-options.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/mutually-exclusive-checkbox-options?path=index.html)
 
 ![Jan-03-2020 13-48-05](https://user-images.githubusercontent.com/156575/71742567-37efed00-2e30-11ea-999c-9afe2e0b9492.gif)
-
 
 ## Capture and show local date and time
 Sometimes we want to show the user the local date and time to ensure their time settings are correct. 
