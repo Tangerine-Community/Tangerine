@@ -4,7 +4,7 @@ Examples of various recipes for Tangerine Forms collected throughout the years.
 ## Skip a question based on input in another question
 In the following example we ask an additional question about tangerines if the user indicates that they do like tangerines.
 
-[Run example and see code](https://codepen.io/rjsteinert/pen/QWwQwPJ)
+[Run example](https://skip-question-based-on-input.glitch.me/) - [Open Editor](https://skip-question-based-on-input.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/skip-question-based-on-input)
 
 ## Skip sections based on input
 In the following example, wether or not you answer yes or no to the question, you will end up on a different item.
@@ -42,7 +42,7 @@ In the following example when you make a selection of a fruit and then choose on
 ## Capture and show local date and time
 Sometimes we want to show the user the local date and time to ensure their time settings are correct. 
 
-[Run example](https://capture-local-date-and-time.glitch.me/) - [Open Editor](https://capture-local-date-and-time.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/tcapture-local-date-and-time)
+[Run example](https://capture-local-date-and-time.glitch.me/) - [Open Editor](https://capture-local-date-and-time.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/capture-local-date-and-time)
 
 ![tangerine-form-editors-cookbook--capture-local-date-and-time](./tangerine-form-editors-cookbook--capture-local-date-and-time.png)
 
