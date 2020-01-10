@@ -16,12 +16,11 @@ In the following example, wether or not you answer yes or no to the question, yo
 ## Valid by number of decimal points
 In the following example, we validate user input by number of decimal points.
 
-[Run example and see code](https://codepen.io/rjsteinert/pen/bGNWzrr)
+[Run example](https://valid-by-number-of-decimal-points.glitch.me/) - [Open Editor](https:/valid-by-number-of-decimal-points.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-by-number-of-decimal-points)
 
 
 ## Valid if greater or less than other input
-[Run example and see code](https://codepen.io/rjsteinert/pen/jOEGbGK)
-
+[Run example](https://valid-if-greater-or-less-than-other-input.glitch.me/) - [Open Editor](https:/valid-if-greater-or-less-than-other-input.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-if-greater-or-less-than-other-input)
 
 ## Allowed date range based on today
 [Run example and see code](https://codepen.io/rjsteinert/pen/mdyBeLm)
