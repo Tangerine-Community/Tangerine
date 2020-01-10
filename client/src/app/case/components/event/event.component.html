@@ -31,12 +31,10 @@
         routerLink="/case/event/form/{{eventFormInfo.eventForm.caseId}}/{{eventFormInfo.eventForm.caseEventId}}/{{eventFormInfo.eventForm.id}}"
       >
       </app-event-form-list-item>
-      <paper-icon-item class="form new-form" *ngIf="availableEventFormDefinitions.length > 0">
-        <iron-icon icon="form" slot="item-icon"></iron-icon>
-        <paper-item-body two-line>
-          <div>
-            {{'New Form'|translate}}
-          </div>
+      <div class="icon-list-item form new-form" *ngIf="availableEventFormDefinitions.length > 0">
+        <mwc-icon slot="item-icon">form</mwc-icon>
+        <div>
+          <div>{{'New Form'|translate}}</div>
           <div secondary>
             <form (ngSubmit)="onSubmit()" #form="ngForm">
               <select name="selected-form-definition" [(ngModel)]="selectedNewEventFormDefinition">
@@ -45,8 +43,8 @@
               <button type="submit">create</button>
             </form>
           </div>
-        </paper-item-body>
-      </paper-icon-item>
+        </div>
+      </div>
     </div>
   </div>
 </div>
