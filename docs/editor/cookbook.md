@@ -16,7 +16,7 @@ In the following example, wether or not you answer yes or no to the question, yo
 ## Valid by number of decimal points
 In the following example, we validate user input by number of decimal points.
 
-[Run example](https://valid-by-number-of-decimal-points.glitch.me/) - [Open Editor](https:/valid-by-number-of-decimal-points.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-by-number-of-decimal-points)
+[Run example](https://valid-by-number-of-decimal-points.glitch.me/) - [Open Editor](https://valid-by-number-of-decimal-points.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-by-number-of-decimal-points)
 
 
 ## Valid if greater or less than other input
