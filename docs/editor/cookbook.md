@@ -6,7 +6,7 @@ In the following example we ask an additional question about tangerines if the u
 
 [Run example](https://skip-question-based-on-input.glitch.me/) - [Open Editor](https://skip-question-based-on-input.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/skip-question-based-on-input)
 
-![skip-question-based-on-input](./skip-question-based-on-input.png)
+![skip-question-based-on-input](./skip-question-based-on-input.gif)
 
 ## Skip sections based on input
 In the following example, wether or not you answer yes or no to the question, you will end up on a different item.
