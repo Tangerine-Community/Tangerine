@@ -35,6 +35,8 @@ In the following example, we validate user input by number of decimal points.
 ## Flag choice as discrepancy and/or warning and show or hide content depending
 [Run example](https://flag-discrepancy-or-warning-and-hide.glitch.me/) - [Open Editor](https://flag-discrepancy-or-warning-and-hide.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/flag-discrepancy-or-warning-and-hide)
 
+![flag-discrepancy-or-warning-and-hide](flag-discrepancy-or-warning-and-hide.gif)
+
 ## Indicate a mutually exclusive option in a checkboxes group such as "None of the above"
 In the following example when you make a selection of a fruit and then choose one of the mutually exclusive options, your prior selections will be deselected.
 
