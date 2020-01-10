@@ -34,9 +34,10 @@ In the following example, we validate user input by number of decimal points.
 ## Indicate a mutually exclusive option in a checkboxes group such as "None of the above"
 In the following example when you make a selection of a fruit and then choose one of the mutually exclusive options, your prior selections will be deselected.
 
+[Run example](https://mutually-exclusive-checkbox-options.glitch.me/) - [Open Editor](https://mutually-exclusive-checkbox-options.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/mutually-exclusive-checkbox-options?path=index.html)
+
 ![Jan-03-2020 13-48-05](https://user-images.githubusercontent.com/156575/71742567-37efed00-2e30-11ea-999c-9afe2e0b9492.gif)
 
-[Run example and see code](https://codepen.io/rjsteinert/pen/WNbMveY)
 
 ## Capture and show local date and time
 Sometimes we want to show the user the local date and time to ensure their time settings are correct. 
