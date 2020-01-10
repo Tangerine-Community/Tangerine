@@ -41,7 +41,7 @@ In the following example when you make a selection of a fruit and then choose on
 ## Capture and show local date and time
 Sometimes we want to show the user the local date and time to ensure their time settings are correct. 
 
-[Run example](https://tangerine-form-editors-cookbook--capture-local-dat.glitch.me/) - [Open Editor](https://edit--capture-local-date-and-time.glitch.me/) - [View Code](https://glitch.com/edit/#!/tangerine-form-editors-cookbook--capture-local-dat)
+[Run example](https://capture-local-date-and-time.glitch.me/) - [Open Editor](https://capture-local-date-and-time.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/tcapture-local-date-and-time)
 
 ![tangerine-form-editors-cookbook--capture-local-date-and-time](./tangerine-form-editors-cookbook--capture-local-date-and-time.png)
 
