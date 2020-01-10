@@ -58,8 +58,12 @@ export class DeviceService {
   }
 
   async getDevice():Promise<Device> {
-    const deviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
-    return deviceDoc.device ? deviceDoc.device : <Device>{_id: 'N/A'}
+    try {
+      const deviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
+      return deviceDoc.device ? deviceDoc.device : <Device>{_id: 'N/A'}
+    } catch (e) {
+      return new Device()
+    }
   }
 
   async updateDevice():Promise<Device> {
