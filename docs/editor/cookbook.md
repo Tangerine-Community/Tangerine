@@ -9,7 +9,7 @@ In the following example we ask an additional question about tangerines if the u
 ## Skip sections based on input
 In the following example, wether or not you answer yes or no to the question, you will end up on a different item.
 
-[Run example and see code](https://codepen.io/rjsteinert/pen/WNbjPjZ)
+[Run example](https://skip-sections-based-on-input.glitch.me/) - [Open Editor](https://skip-sections-based-on-input.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/skip-sections-based-on-input)
 
 
 
