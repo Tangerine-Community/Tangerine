@@ -20,7 +20,7 @@ In the following example, we validate user input by number of decimal points.
 
 
 ## Valid if greater or less than other input
-[Run example](https://valid-if-greater-or-less-than-other-input.glitch.me/) - [Open Editor](https:/valid-if-greater-or-less-than-other-input.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-if-greater-or-less-than-other-input)
+[Run example](https://valid-if-greater-or-less-than-other-input.glitch.me/) - [Open Editor](https://valid-if-greater-or-less-than-other-input.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/valid-if-greater-or-less-than-other-input)
 
 ## Allowed date range based on today
 [Run example and see code](https://codepen.io/rjsteinert/pen/mdyBeLm)
