@@ -23,38 +23,45 @@ export class CaseBreadcrumbComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.caseEventId) {
-      const caseEvent = this
-        .caseService
-        .case
+    const caseInstance = this.caseService.case
+    const caseEvent = this.caseEventId
+      ? caseInstance
         .events
         .find(caseEvent => caseEvent.id === this.caseEventId)
-      const caseEventDefinition = this
+      : null
+    const caseEventDefinition = this.caseEventId
+      ? this
         .caseService
         .caseDefinition
         .eventDefinitions
         .find(caseEventDefinition => caseEventDefinition.id === caseEvent.caseEventDefinitionId)
-      let primaryText = ''
-      let secondaryText = ''
-      let secondaryLink = ''
-      if (!this.eventFormId) {
-        eval(`primaryText = this.caseService.caseDefinition.templateBreadcrumbText ? \`${this.caseService.caseDefinition.templateBreadcrumbText}\` : ''`)
-        secondaryText = caseEventDefinition.name
-        secondaryLink = `/case/${this.caseService.case._id}`
-      } else {
-        const eventForm = caseEvent.eventForms.find(eventForm => eventForm.id === this.eventFormId)
-        const eventFormDefinition = caseEventDefinition.eventFormDefinitions.find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
-        const participant = this.caseService.case.participants.find(participant => participant.id === eventForm.participantId)
-        eval(`renderedPrimaryText = this.caseService.caseDefinition.templateBreadcrumbText ? \`${this.caseService.caseDefinition.templateBreadcrumbText}\` : ''`)
-        secondaryText = eventFormDefinition.name
-        secondaryLink = `/case/event/${this.caseService.case._id}/${caseEvent.id}`
-      }
-      this.primaryText = primaryText
-      this.secondaryText = secondaryText
-      this.secondaryLink = secondaryLink
-    }
-
-    }
+      : null
+    const eventForm = this.eventFormId
+      ? caseEvent
+        .eventForms
+        .find(eventForm => eventForm.id === this.eventFormId)
+      : null
+    const eventFormDefinition = this.eventFormId
+      ? caseEventDefinition
+        .eventFormDefinitions
+        .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
+      : null
+    const participant = eventForm
+      ? this.caseService.case.participants.find(participant => participant.id === eventForm.participantId)
+      : null
+    this.secondaryText = eventFormDefinition
+      ? eventFormDefinition.name
+      : caseEventDefinition 
+        ? caseEventDefinition.name 
+        : ''
+    this.secondaryLink = eventForm 
+      ? `/case/event/${caseInstance._id}/${caseEvent.id}`
+      : `/case/${caseInstance._id}`
+    eval(`
+      this.primaryText = this.caseService.caseDefinition.templateBreadcrumbText 
+        ? \`${this.caseService.caseDefinition.templateBreadcrumbText}\`
+        : \`Case: ${caseInstance._id.substr(0,6)} \`
+    `)
   }
 
 }
