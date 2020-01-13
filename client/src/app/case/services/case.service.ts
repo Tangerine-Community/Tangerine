@@ -279,7 +279,7 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (eventFormDefinition.forCaseRole === caseRoleId) {
+        if (eventFormDefinition.forCaseRole === caseRoleId && eventFormDefinition.required) {
           this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }

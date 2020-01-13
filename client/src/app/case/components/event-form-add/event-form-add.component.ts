@@ -12,28 +12,20 @@ interface EventFormInfo {
   eventForm:EventForm
 }
 
-interface ParticipantInfo {
-  id: string
-  renderedListItem:string
-  availableEventFormDefinitionsForParticipant: Array<string>
-  newFormLink:string
-  eventFormInfos: Array<EventFormInfo>
-}
-
 @Component({
-  selector: 'app-event',
-  templateUrl: './event.component.html',
-  styleUrls: ['./event.component.css']
+  selector: 'app-event-form-add',
+  templateUrl: './event-form-add.component.html',
+  styleUrls: ['./event-form-add.component.css']
 })
-export class EventComponent implements OnInit, AfterContentInit {
+export class EventFormAddComponent implements AfterContentInit {
 
   caseEvent:CaseEvent
   caseEventDefinition: CaseEventDefinition
-  participantInfos:Array<ParticipantInfo>
   noRoleEventFormInfos: Array<EventFormInfo>
   loaded = false
   availableEventFormDefinitions:Array<EventFormDefinition> = []
   selectedNewEventFormDefinition = ''
+  selectedParticipant = ''
   window:any
 
   constructor(
@@ -45,8 +37,6 @@ export class EventComponent implements OnInit, AfterContentInit {
     this.window = window
   }
 
-  ngOnInit() {
-  }
 
   async ngAfterContentInit() {
     this.route.params.subscribe(async params => {
@@ -78,40 +68,15 @@ export class EventComponent implements OnInit, AfterContentInit {
               .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
           }
         })
-      this.participantInfos = this.caseService.case.participants.map(participant => {
-        const id = participant.id
-        const data = participant.data
-        const role = this.caseService.caseDefinition.caseRoles.find(caseRole => caseRole.id === participant.caseRoleId)
-        let renderedListItem:string
-        eval(`renderedListItem = \`${role.templateListItem}\``) 
-        return <ParticipantInfo>{
-          id,
-          renderedListItem,
-          newFormLink: `/case/event/form-add/${this.caseService.case._id}/${this.caseEvent.id}/${participant.id}`,
-          availableEventFormDefinitionsForParticipant: this.calculateAvailableEventFormDefinitionsForParticipant(participant.id),
-          eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
-            return eventForm.participantId === participant.id
-              ? [...eventFormInfos, <EventFormInfo>{
-                eventForm,
-                eventFormDefinition: this
-                  .caseEventDefinition
-                  .eventFormDefinitions
-                  .find(eventFormDefinition => eventFormDefinition.id === eventForm.eventFormDefinitionId)
-              }]
-              : eventFormInfos
-          }, [])
-        }
-      })
-      .filter(participantInfo => participantInfo.eventFormInfos.length !== 0)
-      // ^ Remove this filter??
-      //this.calculateAvailableEventFormDefinitions()
+      this.selectedParticipant = params.participantId
+      this.calculateAvailableEventFormDefinitionsForParticipant(params.participantId)
       this.loaded = true
     })
   }
 
   calculateAvailableEventFormDefinitionsForParticipant(participantId) {
     const participant = this.caseService.case.participants.find(participant => participant.id === participantId)
-    return this.caseEventDefinition.eventFormDefinitions
+    this.availableEventFormDefinitions = this.caseEventDefinition.eventFormDefinitions
       .filter(eventFormDefinition => eventFormDefinition.forCaseRole === participant.caseRoleId)
       .reduce((availableEventFormDefinitions, eventFormDefinition) => {
         const eventFormDefinitionHasForm = this.caseEvent.eventForms
@@ -123,6 +88,18 @@ export class EventComponent implements OnInit, AfterContentInit {
           ? [...availableEventFormDefinitions, eventFormDefinition]
           : availableEventFormDefinitions
       }, [])
+  }
+
+
+  onFormSelect(formId) {
+    this.startEventForm(formId, this.selectedParticipant)
+  }
+
+  async startEventForm(eventFormDefinitionId:string, participantId:string) {
+    const eventForm = this.caseService.startEventForm(this.caseEvent.id, eventFormDefinitionId, participantId)
+    await this.caseService.save()
+    // Then navigate
+    this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])
   }
 
 }
