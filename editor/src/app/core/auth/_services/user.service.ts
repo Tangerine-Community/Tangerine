@@ -83,7 +83,7 @@ export class UserService {
     try {
       const username = await this.getCurrentUser();
       const admin = await this.isAdmin(username);
-      const isAdmin = admin.filter(a => a.attributes.name === groupName && a.attributes.role === 'admin');
+      const isAdmin = admin && admin.filter(a => a.attributes.name === groupName && a.attributes.role === 'admin');
       return isAdmin && isAdmin.length > 0;
     } catch (error) {
       this.showError(error);
