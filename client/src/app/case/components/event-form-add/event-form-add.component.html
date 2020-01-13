@@ -1,0 +1,14 @@
+<h1>Select form...</h1>
+<div class="form-cards">
+  <div 
+    *ngFor="let form of availableEventFormDefinitions"
+    class="icon-list-item form-item form new-form" 
+    (click)="onFormSelect(form.id)"
+  >
+    <mwc-icon slot="item-icon">assignment</mwc-icon>
+    <div>
+      <div><span [innerHTML]="form.name|unsanitizeHtml"></span></div>
+      <div secondary></div>
+    </div>
+  </div>
+</div>
