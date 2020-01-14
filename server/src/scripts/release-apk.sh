@@ -51,6 +51,7 @@ cp /tangerine/logo.svg $RELEASE_DIRECTORY/www/
 
 # Stash the Build ID in the release.
 echo $BUILD_ID > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-id 
+echo $RELEASE_TYPE > $RELEASE_DIRECTORY/www/shell/assets/tangerine-build-channel
 
 cd $RELEASE_DIRECTORY
 
@@ -72,4 +73,4 @@ cp $RELEASE_DIRECTORY/platforms/android/app/build/outputs/apk/debug/app-debug.ap
 
 echo '{"processing":false}' > $STATUS_FILE
 echo 
-echo "Released apk for $GROUP at $RELEASE_DIRECTORY on $DATE with Build ID of $BUILD_ID"
+echo "Released apk for $GROUP at $RELEASE_DIRECTORY on $DATE with Build ID of $BUILD_ID and release type of $RELEASE_TYPE"
