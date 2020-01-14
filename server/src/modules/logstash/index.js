@@ -71,64 +71,66 @@ const generateFlatResponse = async function (formResponse, locationList) {
     startUnixtime: formResponse.startUnixtime,
     complete: formResponse.complete
   };
+  function set(input, key, value) {
+    flatFormResponse[key] = input.skipped
+      ? process.env.T_REPORTING_MARK_SKIPPED_WITH
+      : (input.hidden || item.disabled) && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE"
+        ? process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH 
+        : value
+  }
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
     for (let input of item.inputs) {
       // Simplify the keys by removing  formID.itemId
       // let firstIdSegment = `${formID}.${item.id}.`
       let firstIdSegment = ""
-      if (input.skipped && process.env.T_REPORTING_MARK_SKIPPED_WITH !== "ORIGINAL_VALUE") {
-        flatFormResponse[`${formID}.${item.id}.${input.name}`] = process.env.T_CSV_MARK_SKIPPED_WITH
-      } else if ((input.hidden || item.disabled) && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE") {
-        // If the input is disabled or hidden, or the the item is disabled, set SKIP code.
-        flatFormResponse[`${formID}.${item.id}.${input.name}`] = process.env.T_CSV_MARK_DISABLED_OR_HIDDEN_WITH
-      } else if (input.tagName === 'TANGY-LOCATION') {
+      if (input.tagName === 'TANGY-LOCATION') {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
-          flatFormResponse[`${firstIdSegment}${input.name}.${group.level}`] = group.value;
+          set(input, `${firstIdSegment}${input.name}.${group.level}`, group.value)
           locationKeys.push(group.value)
           try {
             const location = getLocationByKeys(locationKeys, locationList)
             for (let keyName in location) {
               if (keyName !== 'children') {
-                flatFormResponse[`${firstIdSegment}${input.name}.${group.level}_${keyName}`] = location[keyName]
+                set(input, `${firstIdSegment}${input.name}.${group.level}_${keyName}`, location[keyName])
               }
             }
           } catch(e) {
-            flatFormResponse[`${firstIdSegment}${input.name}.${group.level}_label`] = 'orphaned';
+            set(input, `${firstIdSegment}${input.name}.${group.level}_label`, 'orphaned')
           }
         }
       } else if (input.tagName === 'TANGY-GPS') {
-        flatFormResponse[`${firstIdSegment}geoip.location.lat`] = input.value.latitude
-        flatFormResponse[`${firstIdSegment}geoip.location.lon`] = input.value.longitude
+        set(input, `${firstIdSegment}geoip.location.lat`, input.value.latitude)
+        set(input, `${firstIdSegment}geoip.location.lon`, input.value.longitude)
         // Flatter...
-        flatFormResponse[`geoip.lat`] = input.value.latitude
-        flatFormResponse[`geoip.lon`] = input.value.longitude
+        set(input, `geoip.lat`, input.value.latitude)
+        set(input, `geoip.lon`, input.value.longitude)
 
       } else if (input.tagName === 'TANGY-TIMED') {
-        flatFormResponse[`${firstIdSegment}${input.name}.duration`] = input.duration
-        flatFormResponse[`${firstIdSegment}${input.name}.time_remaining`] = input.timeRemaining
+        set(input, `${firstIdSegment}${input.name}.duration`, input.duration)
+        set(input, `${firstIdSegment}${input.name}.time_remaining`, input.timeRemaining)
         // Calculate Items Per Minute.
         let numberOfItemsAttempted = input.value.findIndex(el => el.highlighted ? true : false) + 1
         let numberOfItemsIncorrect = input.value.filter(el => el.value ? true : false).length
         let numberOfItemsCorrect = numberOfItemsAttempted - numberOfItemsIncorrect
-        flatFormResponse[`${firstIdSegment}${input.name}.number_of_items_correct`] = numberOfItemsCorrect
-        flatFormResponse[`${firstIdSegment}${input.name}.number_of_items_attempted`] = numberOfItemsAttempted
+        set(input, `${firstIdSegment}${input.name}.number_of_items_correct`, numberOfItemsCorrect)
+        set(input, `${firstIdSegment}${input.name}.number_of_items_attempted`, numberOfItemsAttempted)
         let timeSpent = input.duration - input.timeRemaining
-        flatFormResponse[`${firstIdSegment}${input.name}.items_per_minute`] = Math.round(numberOfItemsCorrect / (timeSpent / 60))
+        set(input, `${firstIdSegment}${input.name}.items_per_minute`, Math.round(numberOfItemsCorrect / (timeSpent / 60)))
       } else if (input && typeof input.value === 'string') {
-        flatFormResponse[`${firstIdSegment}${input.name}`] = input.value;
+        set(input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && typeof input.value === 'number') {
-        flatFormResponse[`${firstIdSegment}${input.name}`] = input.value;
+        set(input, `${firstIdSegment}${input.name}`, input.value)
       } else if (input && Array.isArray(input.value)) {
         for (let group of input.value) {
-          flatFormResponse[`${firstIdSegment}${input.name}.${group.name}`] = group.value;
+          set(input, `${firstIdSegment}${input.name}.${group.name}`, group.value)
         }
       } else if ((input && typeof input.value === 'object') && (input && !Array.isArray(input.value)) && (input && input.value !== null)) {
         let elementKeys = Object.keys(input.value);
         for (let key of elementKeys) {
-          flatFormResponse[`${firstIdSegment}${input.name}.${key}`] = input.value[key];
+          set(input, `${firstIdSegment}${input.name}.${key}`, input.value[key])
         };
       }
     }
