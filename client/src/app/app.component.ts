@@ -231,6 +231,7 @@ export class AppComponent implements OnInit {
         } else {
           console.log('Update Instaled');
           this.updateIsRunning = false;
+          this.router.navigate(['update'])
         }
       };
       const updateCallback = (error, data) => {
