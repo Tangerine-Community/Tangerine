@@ -1,4 +1,4 @@
-import { AboutService } from './../about.service';
+import { AppInfo, DeviceService } from './../../../device/services/device.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -8,15 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AboutComponent implements OnInit {
 
-  buildId:string
+  info:AppInfo
+  ready = false
 
   constructor(
-    private aboutService:AboutService
-
+    private deviceService:DeviceService
   ) { }
 
   async ngOnInit() {
-    this.buildId = await this.aboutService.getBuildNumber()
+    this.info = await this.deviceService.getAppInfo()
+    this.ready = true
   }
 
 }
