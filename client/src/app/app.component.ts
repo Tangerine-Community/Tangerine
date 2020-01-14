@@ -22,10 +22,10 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 export class AppComponent implements OnInit {
 
   appConfig:AppConfig
-  showNav;
   showUpdateAppLink;
   window:any;
   installed = false
+  isLoggedIn = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   languageCode:string
@@ -86,9 +86,9 @@ export class AppComponent implements OnInit {
     // Set translation for t function used in Web Components.
     const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
-    this.showNav = this.authenticationService.isLoggedIn();
+    this.isLoggedIn = this.authenticationService.isLoggedIn();
     this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
-      this.showNav = isLoggedIn;
+      this.isLoggedIn = isLoggedIn;
     });
     // Keep GPS chip warm.
     // @TODO Make this configurable. Not all installations use GPS and don't need to waste the battery.
