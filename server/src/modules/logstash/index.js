@@ -77,7 +77,12 @@ const generateFlatResponse = async function (formResponse, locationList) {
       // Simplify the keys by removing  formID.itemId
       // let firstIdSegment = `${formID}.${item.id}.`
       let firstIdSegment = ""
-      if (input.tagName === 'TANGY-LOCATION') {
+      if (input.skipped && process.env.T_REPORTING_MARK_SKIPPED_WITH !== "ORIGINAL_VALUE") {
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = process.env.T_CSV_MARK_SKIPPED_WITH
+      } else if ((input.hidden || item.disabled) && process.env.T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH !== "ORIGINAL_VALUE") {
+        // If the input is disabled or hidden, or the the item is disabled, set SKIP code.
+        flatFormResponse[`${formID}.${item.id}.${input.name}`] = process.env.T_CSV_MARK_DISABLED_OR_HIDDEN_WITH
+      } else if (input.tagName === 'TANGY-LOCATION') {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
         locationKeys = []
         for (let group of input.value) {
