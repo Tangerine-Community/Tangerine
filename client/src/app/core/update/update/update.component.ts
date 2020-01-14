@@ -54,7 +54,7 @@ export class UpdateComponent implements AfterContentInit {
       await this.deviceService.didUpdate()
     }
     localStorage.setItem('updateJustApplied', 'true')
-    window.location.reload()
+    window.location.href = `${window.location.origin}${window.location.pathname}index.html`
   }
 
   async processUpdatesForUser(userDb, appConfig) {
