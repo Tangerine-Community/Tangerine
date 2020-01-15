@@ -66,4 +66,13 @@ Sometimes we want to know how much time passed between two points in a form. Thi
 ![timed items](tangerine-form-editors-cookbook--timed-items.gif)
 
 
+## Hard checks vs. soft checks
+A "hard check" using "valid if" will not allow you to proceed. However a "soft check" using "warn if" will allow you to proceed after confirming.
+
+[Run example](https://soft-checks-vs-hard-checks.glitch.me/) - [Open Editor](https://soft-checks-vs-hard-checks.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/soft-checks-vs-hard-checks)
+
+![soft-checks-vs-hard-checks](./soft-checks-vs-hard-checks.gif)
+
+
+
 
