@@ -7,7 +7,7 @@ var callback = async function(){
         <template>
           ${formMarkup}
         </template>
-      </tangy-form-editor
+      </tangy-form-editor>
     `
   }
 };
