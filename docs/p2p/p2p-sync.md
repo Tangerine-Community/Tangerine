@@ -1,4 +1,5 @@
-# Using P2P Sync in Tangerine client
+# Using P2P Sync for Offline Data Transfer
+
 Use the P2P sync feature to transfer data between two or more tablets without an Internet connection.
 
 In the following example, your tablet will be syncing data from your tablet to two other peers' tablets running Tangerine. The goal is to have the same data on all tablets. At the end of the process, data will be transferred from your tablet to the Internet.
