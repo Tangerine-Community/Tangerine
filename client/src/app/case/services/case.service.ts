@@ -134,60 +134,46 @@ class CaseService {
   startEvent(eventId) {
     // ??
   }
-
-  // async scheduleEvent(eventId, dateStart:number, dateEnd?:number) {
-  //   this.case.events = this.case.events.map(event => {
-  //     return event.id === eventId 
-  //     ? { ...event, ...{ dateStart, dateEnd: dateEnd ? dateEnd : dateStart, estimate: false} }
-  //     : event
-  //   })
-  // }
-
-  async setEventEstimatedDay(eventId, timeInMs: number) {
-    const dateString = new Date(timeInMs)
-    const estimatedDay = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
+  setEventEstimatedDay(eventId, timeInMs: number) {
+    const estimatedDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
-      ? { ...event, ...{ estimatedDay} }
-      : event
+        ? { ...event, ...{ estimatedDay } }
+        : event
     })
   }
-  async setEventScheduledDay(eventId, timeInMs: number) {
-    const dateString = new Date(timeInMs)
-    const scheduledDay = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
+  setEventScheduledDay(eventId, timeInMs: number) {
+    const scheduledDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
-      ? { ...event, ...{ scheduledDay} }
-      : event
+        ? { ...event, ...{ scheduledDay } }
+        : event
     })
   }
-  async setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
-    const windowStartDateString = new Date(windowStartDayTimeInMs)
-    const windowEndDateString = new Date(windowEndDayTimeInMs)
-    const windowStartDay = `${windowStartDateString.getFullYear()}-${windowStartDateString.getMonth()}-${windowStartDateString.getDate()}`
-    const windowEndDay = `${windowEndDateString.getFullYear()}-${windowEndDateString.getMonth()}-${windowEndDateString.getDate()}`
+  setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
+    const windowStartDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
+    const windowEndDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
-      ? { ...event, ...{ windowStartDay, windowEndDay} }
-      : event
+        ? { ...event, ...{ windowStartDay, windowEndDay } }
+        : event
     })
   }
-  async setEventOccurredOn(eventId, timeInMs: number) {
-    const dateString = new Date(timeInMs)
-    const occurredOnDay = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
+  setEventOccurredOn(eventId, timeInMs: number) {
+    const occurredOnDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     return this.case.events = this.case.events.map(event => {
       return event.id === eventId
-      ? { ...event, ...{ occurredOnDay} }
-      : event
+        ? { ...event, ...{ occurredOnDay } }
+        : event
     })
   }
-  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''):EventForm {
+  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     const eventForm = <EventForm>{
-      id: UUID(), 
-      complete: false, 
-      caseId: this.case._id, 
+      id: UUID(),
+      complete: false,
+      caseId: this.case._id,
       participantId,
-      caseEventId, 
+      caseEventId,
       eventFormDefinitionId: eventFormDefinitionId
     }
     this
