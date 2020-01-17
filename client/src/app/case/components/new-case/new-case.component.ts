@@ -27,6 +27,7 @@ export class NewCaseComponent implements AfterContentInit {
       const formId = params['formId'];
       const caseDefinitions = await this.caseDefinitionsService.load();
       await this.caseService.create(caseDefinitions.find(caseDefinition => caseDefinition.formId === formId).id)
+      this.caseService.openCaseConfirmed = true
       let eventForm:EventForm
       if (this.caseService.caseDefinition.startFormOnOpen && this.caseService.caseDefinition.startFormOnOpen.eventFormId) {
         const caseEvent = this.caseService.createEvent(this.caseService.caseDefinition.startFormOnOpen.eventId, true)
