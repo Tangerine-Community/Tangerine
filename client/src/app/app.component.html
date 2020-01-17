@@ -22,7 +22,7 @@
 
   <paper-icon-button icon="more-vert" [matMenuTriggerFor]="appMenu" class="hamburger-menu"></paper-icon-button>
   <mat-menu #appMenu="matMenu">
-    <button *ngIf="window && window.appConfig && !window.appConfig.hideProfile" routerLink="manage-user-profile" mat-menu-item>
+    <button *ngIf="ready && !appConfig.hideProfile" routerLink="manage-user-profile" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
       <span>{{'Manage Profile'|translate}}</span>
     </button>
@@ -34,7 +34,7 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>{{'Sync: Online'|translate}}</span>
     </button>
-    <button *ngIf="appConfig.p2pSync === 'true'" routerLink="/peers" mat-menu-item>
+    <button *ngIf="ready && appConfig.p2pSync === 'true'" routerLink="/peers" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>{{'Sync: P2P'|translate}}</span>
     </button>
