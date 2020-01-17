@@ -48,6 +48,9 @@ export class CaseEventScheduleListComponent implements OnInit {
   private _mode = CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY
   @Input()
   set mode(mode:string) {
+    if (this._mode === mode) {
+      return;
+    }
     this._mode = mode
     this.calculateEvents()
   }
