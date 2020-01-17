@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
   languageDirection:string
   languagePath:string
   translate: TranslateService
+  ready = false
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
 
   constructor(
@@ -96,6 +97,7 @@ export class AppComponent implements OnInit {
     this.checkIfUpdateScriptRequired();
     this.checkStorageUsage()
     setInterval(this.checkStorageUsage.bind(this), 60*1000);
+    this.ready = true
   }
 
   async install() {
