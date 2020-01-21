@@ -3,6 +3,8 @@ import PouchDBFind from 'pouchdb-find';
 import * as PouchDBUpsert from 'pouchdb-upsert';
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
+import PouchDBAdapterCordovaSqlite from 'pouchdb-adapter-cordova-sqlite';
+PouchDB.plugin(PouchDBAdapterCordovaSqlite)
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 const SHARED_USER_DATABASE_NAME = 'shared-user-database'
 
@@ -14,15 +16,16 @@ export class UserDatabase {
   deviceId:string
   db:PouchDB
 
+
   constructor(username:string, userId:string, deviceId:string, shared = false) {
     this.userId = userId
     this.username = username
     this.name = username
     this.deviceId = deviceId
     if (shared) {
-      this.db = new PouchDB(SHARED_USER_DATABASE_NAME)
+      this.db = new PouchDB(SHARED_USER_DATABASE_NAME, {adapter: 'cordova-sqlite'} as any)
     } else {
-      this.db = new PouchDB(username)
+      this.db = new PouchDB(username, {adapter: 'cordova-sqlite'} as any)
     }
   }
 
