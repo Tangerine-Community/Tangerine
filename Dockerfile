@@ -1,5 +1,5 @@
 # Start with docker-tangerine-support, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:v3.3.0
+FROM tangerine/docker-tangerine-base-image:add-sqlite-support--1
 
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
