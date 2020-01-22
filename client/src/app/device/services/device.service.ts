@@ -4,6 +4,10 @@ import PouchDB from 'pouchdb';
 import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+const bcrypt = {
+  hashSync: (value) => value
+}
+
 
 const TANGERINE_DEVICE_STORE = 'TANGERINE_DEVICE_STORE'
 const TANGERINE_DEVICE_DOC = 'TANGERINE_DEVICE_DOC'
@@ -146,4 +150,15 @@ export class DeviceService {
       return 'N/A'
     }
   }
+
+  setPassword(password:string) {
+    localStorage.setItem('tangerine-device-password', bcrypt.hashSync(password))
+  }
+
+  verifyPassword(password:string) {
+    return localStorage.getItem('tangerine-device-password') === bcrypt.hashSync(password)
+      ? true
+      : false
+  }
+
 }

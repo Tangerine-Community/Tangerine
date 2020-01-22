@@ -6,6 +6,7 @@ import { DeviceRoutingModule } from './device-routing.module';
 import { DeviceService } from './services/device.service';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DevicePasswordComponent } from './components/device-password/device-password.component';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -13,7 +14,8 @@ import { CommonModule } from '@angular/common';
     DeviceSetupComponent,
     DeviceRegistrationComponent,
     DeviceLanguageComponent,
-    DeviceSyncComponent
+    DeviceSyncComponent,
+    DevicePasswordComponent
 
 
   ],
