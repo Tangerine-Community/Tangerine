@@ -157,4 +157,8 @@ export class DeviceService {
     return bcrypt.compareSync(password, localStorage.getItem('tangerine-device-password')) 
   }
 
+  passwordIsSet():boolean {
+    return localStorage.getItem('tangerine-device-password') ? true : false
+  }
+
 }

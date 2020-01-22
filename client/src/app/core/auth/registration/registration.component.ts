@@ -1,3 +1,4 @@
+import { DeviceService } from './../../../device/services/device.service';
 
 import {from as observableFrom,  Observable } from 'rxjs';
 
@@ -26,11 +27,14 @@ export class RegistrationComponent implements OnInit {
         securityQuestionResponse: '',
         hashSecurityQuestionResponse: true
     };
+    devicePassword:string
+    requiresDevicePassword = false
     isUsernameTaken: boolean;
     returnUrl: string;
     statusMessage: object;
     disableSubmit = false;
     passwordsDoNotMatchMessage = { type: 'error', message: _TRANSLATE('Passwords do not match') };
+    devicePasswordDoesNotMatchMessage = { type: 'error', message: _TRANSLATE('Device password does not match') };
     userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('Username Unavailable') };
     userNameAvailableMessage = { type: 'success', message: _TRANSLATE('Username Available') };
     loginUnsucessfulMessage = { type: 'error', message: _TRANSLATE('Login Unsuccesful') };
@@ -39,6 +43,7 @@ export class RegistrationComponent implements OnInit {
     constructor(
         private userService: UserService,
         private authenticationService: AuthenticationService,
+        private deviceService:DeviceService,
         private route: ActivatedRoute,
         private router: Router,
         private appConfigService: AppConfigService
@@ -47,6 +52,7 @@ export class RegistrationComponent implements OnInit {
     }
     async ngOnInit() {
         const appConfig = await this.appConfigService.getAppConfig();
+        this.requiresDevicePassword = this.deviceService.passwordIsSet()
         const homeUrl = appConfig.homeUrl;
         this.securityQuestionText = appConfig.securityQuestionText;
         this.user.hashSecurityQuestionResponse = appConfig.hashSecurityQuestionResponse;
@@ -62,6 +68,11 @@ export class RegistrationComponent implements OnInit {
 
     register(): void {
         this.disableSubmit = true
+        if (this.requiresDevicePassword && !this.deviceService.verifyPassword(this.devicePassword)) {
+            this.statusMessage = this.devicePasswordDoesNotMatchMessage 
+            this.disableSubmit = false
+            return
+        }
         if (this.user.password!==this.user.confirmPassword) {
             this.statusMessage = this.passwordsDoNotMatchMessage
             this.disableSubmit = false

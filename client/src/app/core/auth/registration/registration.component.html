@@ -12,6 +12,12 @@
 <div class="login-app-content">
   <div class="group container content-inner">
     <form role="form" #registration='ngForm' novalidate (submit)="greaseTrap($event)" >
+      <mat-form-field *ngIf="requiresDevicePassword === true">
+        <input name="device-password" type="password" matInput [(ngModel)]="devicePassword" required>
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">lock_open</i>{{'Device Password'|translate}}
+        </mat-placeholder>
+      </mat-form-field>
       <mat-form-field>
         <input name="username" type="text" matInput [(ngModel)]="user.username" (blur)="doesUserExist(user.username)" required>
         <mat-placeholder>
