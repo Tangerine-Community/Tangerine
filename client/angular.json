@@ -19,6 +19,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
+              "src/libs/bcrypt.min.js",
               "src/favicon.ico",
               "src/logo.png",
               "src/shell/index.html",
@@ -85,6 +86,7 @@
               "./src/app/core/sync-records/peers/pouchdb.replication-stream.min.js"
             ],
             "assets": [
+              "src/libs/bcrypt.min.js",
               "src/logo.png",
               "src/favicon.ico",
               "src/shell/index.html",
