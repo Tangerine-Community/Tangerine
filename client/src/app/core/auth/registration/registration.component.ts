@@ -21,6 +21,7 @@ import { _TRANSLATE } from '../../../shared/translation-marker';
 export class RegistrationComponent implements OnInit {
 
     user = <User>{
+        key: '',
         username: '',
         password: '',
         confirmPassword: '',
@@ -68,17 +69,20 @@ export class RegistrationComponent implements OnInit {
 
     register(): void {
         this.disableSubmit = true
+        let key = ''
         if (this.requiresDevicePassword && !this.deviceService.verifyPassword(this.devicePassword)) {
             this.statusMessage = this.devicePasswordDoesNotMatchMessage 
             this.disableSubmit = false
             return
+        } else {
+            key = this.devicePassword
         }
         if (this.user.password!==this.user.confirmPassword) {
             this.statusMessage = this.passwordsDoNotMatchMessage
             this.disableSubmit = false
             return 
         }
-        const userData = Object.assign({}, this.user);
+        const userData = Object.assign({}, this.user, {key});
         if (!this.isUsernameTaken) {
             observableFrom(this.userService.create(userData)).subscribe(data => {
                 this.loginUserAfterRegistration(userData.username, this.user.password);

@@ -3,6 +3,7 @@ import { DeviceService } from './../../device/services/device.service';
 import { UserDatabase } from './../_classes/user-database.class';
 import {from as observableFrom,  Observable } from 'rxjs';
 import {filter, map} from 'rxjs/operators';
+import * as crypto from 'crypto-js'
 import { Injectable, Inject } from '@angular/core';
 import PouchDB from 'pouchdb'
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
@@ -175,13 +176,15 @@ export class UserService {
   async create(userSignup:UserSignup):Promise<UserAccount> {
     const device = await this.deviceService.getDevice()
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
-    const userAccount = new UserAccount(
-      userSignup.username,
-      this.hashValue(userSignup.password),
-      userSignup.securityQuestionResponse,
-      userProfile._id,
-      false
-    ) 
+    const keyBox = crypto.AES.encrypt(userSignup.key, userSignup.password).toString();
+    const userAccount = new UserAccount({
+      _id: userSignup.username,
+      keyBox,
+      password: this.hashValue(userSignup.password),
+      securityQuestionResponse: userSignup.securityQuestionResponse,
+      userUUID: userProfile._id,
+      initialProfileComplete: false
+    }) 
     await this.usersDb.post(userAccount)
     let userDb:UserDatabase
     if (this.config.sharedUserDatabase === true) {
@@ -218,10 +221,11 @@ export class UserService {
   }
 
   async getUserAccount(username?: string):Promise<UserAccount> {
-    return <UserAccount>(await this.usersDb.allDocs({include_docs: true}))
+    const userAccountData = <any>(await this.usersDb.allDocs({include_docs: true}))
       .rows
       .map(row => row.doc)
       .find(doc => doc.username === username)
+    return new UserAccount(userAccountData)
   }
   async saveUserAccount(userAccount:UserAccount):Promise<UserAccount> {
     await this.usersDb.put(userAccount)

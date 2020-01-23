@@ -1,4 +1,5 @@
 export class UserSignup {
+  key:string
   username:string
   password:string
   securityQuestionResponse:string
