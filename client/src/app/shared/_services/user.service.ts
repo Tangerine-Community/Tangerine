@@ -179,7 +179,7 @@ export class UserService {
       _id: userSignup.username,
       keyBox,
       password: this.hashValue(userSignup.password),
-      securityQuestionResponse: userSignup.securityQuestionResponse,
+      securityQuestionResponse: this.hashValue(userSignup.securityQuestionResponse),
       userUUID: userProfile._id,
       initialProfileComplete: false
     }) 

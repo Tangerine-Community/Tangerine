@@ -69,7 +69,7 @@ export class AuthenticationService {
 
   async confirmSecurityQuestion(user):Promise<boolean> {
     const userAccount = await this.userService.getUserAccount(user.username)
-    return this.userService.hashValue(user.securityQuestionResponse) === userAccount.securityQuestionResponse
+    return bcrypt.compareSync(user.securityQuestionResponse, userAccount.securityQuestionResponse)
       ? true
       : false
   }
