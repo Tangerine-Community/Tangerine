@@ -9,9 +9,7 @@ import PouchDB from 'pouchdb'
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 // bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71
 //import * as bcrypt from 'bcryptjs';
-const bcrypt = {
-  hashSync: (value) => value
-}
+const bcrypt = window['dcodeIO'].bcrypt 
 const CURRENT_USER = 'currentUser'
 import { AppConfigService } from './app-config.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
@@ -305,10 +303,8 @@ export class UserService {
   }
 
   hashValue(value) {
-    // Bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71j
-    //const salt = bcrypt.genSaltSync(10);
-    //return bcrypt.hashSync(value, salt);
-    return bcrypt.hashSync(value)
+    const salt = bcrypt.genSaltSync(10);
+    return bcrypt.hashSync(value, salt);
   }
 
 }

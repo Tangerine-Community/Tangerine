@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { AppConfigService } from './app-config.service';
 import { UserService } from './user.service';
 import { UserAccount } from '../_classes/user-account.class';
+const bcrypt = window['dcodeIO'].bcrypt 
 
 @Injectable()
 export class AuthenticationService {
@@ -61,7 +62,7 @@ export class AuthenticationService {
 
   async confirmPassword(username, password):Promise<boolean> {
     const userAccount = await this.userService.getUserAccount(username)
-    return this.userService.hashValue(password) === userAccount.password
+    return bcrypt.compareSync(password, userAccount.password)
       ? true
       : false
   }
