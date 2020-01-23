@@ -1,6 +1,7 @@
 import { UserService } from "src/app/shared/_services/user.service";
 import PouchDB from 'pouchdb'
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
+const bcrypt = window['dcodeIO'].bcrypt 
 
 export const updates = [
   {
@@ -218,10 +219,17 @@ export const updates = [
       const usersDb = new PouchDB('users')
       // Update user account docs so they have the new initialProfileComplete flag set to true. 
       // We used to infer wether or not the user profile in various situations, now we set it explicitly.
+
+      const salt = bcrypt.genSaltSync(10);
       const userDocs = (await usersDb.allDocs({include_docs: true}))
         .rows
         .map(row => {
-          return {...row.doc, initialProfileComplete:true}
+          return {
+            ...row.doc,
+            password: bcrypt.hashSync(row.doc.password, salt),
+            securityQuestionResponse: bcrypt.hashSync(row.doc.securityQuestionResponse, salt),
+            initialProfileComplete:true
+          }
         })
       for (let userDoc of userDocs) {
         await usersDb.put(userDoc)
