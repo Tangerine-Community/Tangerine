@@ -42,13 +42,13 @@ export class AuthenticationService {
     }
   }
 
-  async resetPassword(user) {
+  async resetPassword(user, devicePassword) {
     const userExists = await this.userService.doesUserExist(user.username);
     const doesAnswerMatch = await this.confirmSecurityQuestion(user);
     if (
       userExists &&
       doesAnswerMatch &&
-      (await this.userService.changeUserPassword(user))
+      (await this.userService.changeUserPassword(user, devicePassword))
     ) {
       localStorage.setItem('currentUser', user.username);
       this._currentUserLoggedIn = true;
