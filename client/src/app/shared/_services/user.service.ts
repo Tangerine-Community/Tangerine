@@ -3,7 +3,7 @@ import { DeviceService } from './../../device/services/device.service';
 import { UserDatabase } from './../_classes/user-database.class';
 import {from as observableFrom,  Observable } from 'rxjs';
 import {filter, map} from 'rxjs/operators';
-import * as crypto from 'crypto-js'
+import * as CryptoJS from 'crypto-js'
 import { Injectable, Inject } from '@angular/core';
 import PouchDB from 'pouchdb'
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
@@ -174,7 +174,10 @@ export class UserService {
   async create(userSignup:UserSignup):Promise<UserAccount> {
     const device = await this.deviceService.getDevice()
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
-    const keyBox = crypto.AES.encrypt(userSignup.key, userSignup.password).toString();
+    const keyBox = userSignup.key
+      ? CryptoJS.AES.encrypt(userSignup.key, userSignup.password).toString()
+      : CryptoJS.AES.encrypt(userSignup.password, userSignup.password).toString()
+
     const userAccount = new UserAccount({
       _id: userSignup.username,
       keyBox,
@@ -286,20 +289,18 @@ export class UserService {
       .map(user => user.username);
   }
 
-  async changeUserPassword(user) {
-    const password = this.hashValue(user.newPassword);
-    try {
-      const result = await this.usersDb.find({ selector: { username: user.username } });
-      if (result.docs.length > 0) {
-        return await this.usersDb.upsert(result.docs[0]._id, (doc) => {
-          doc.password = password;
-          return doc;
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
+  async changeUserPassword(user, devicePassword = '') {
+    const userDoc = await this.usersDb.get(user.username)
+    const password = this.hashValue(user.newPassword)
+    const keyBox = devicePassword
+        ? CryptoJS.AES.encrypt(user.newPassword, devicePassword).toString()
+        : CryptoJS.AES.encrypt(user.newPassword, user.newPassword).toString()
+    await this.usersDb.put({
+      ...userDoc,
+      password,
+      keyBox
+    })
+    return true
   }
 
   hashValue(value) {

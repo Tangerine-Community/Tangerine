@@ -1,3 +1,4 @@
+import { DeviceService } from './../../../device/services/device.service';
 
 import {from as observableFrom,  Observable } from 'rxjs';
 
@@ -17,6 +18,8 @@ import { _TRANSLATE } from '../../../shared/translation-marker';
 })
 export class LoginComponent implements OnInit {
   errorMessage = '';
+  devicePassword = ''
+  requiresDevicePasswordToRecover
   returnUrl: string; // stores the value of the url to redirect to after login
   user = { username: '', password: '' };
   users = [];
@@ -30,6 +33,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private usersService: UserService,
+    private deviceService:DeviceService,
     private appConfigService: AppConfigService
   ) {
     this.installed = localStorage.getItem('installed') ? true : false
@@ -38,6 +42,7 @@ export class LoginComponent implements OnInit {
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();
     const homeUrl = appConfig.homeUrl;
+    this.requiresDevicePasswordToRecover = this.deviceService.passwordIsSet()
     this.securityQuestionText = appConfig.securityQuestionText;
     this.listUsernamesOnLoginScreen = appConfig.listUsernamesOnLoginScreen;
     if (this.listUsernamesOnLoginScreen) {
@@ -60,7 +65,11 @@ export class LoginComponent implements OnInit {
   }
 
   resetPassword() {
-    observableFrom(this.authenticationService.resetPassword(this.user)).subscribe(data => {
+    if (!this.deviceService.verifyPassword(this.devicePassword)) {
+      this.errorMessage = _TRANSLATE('Device password incorrect.')
+      return
+    }
+    observableFrom(this.authenticationService.resetPassword(this.user, this.devicePassword)).subscribe(data => {
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
@@ -71,6 +80,7 @@ export class LoginComponent implements OnInit {
 
     });
   }
+
   loginUser() {
     observableFrom(this.authenticationService.login(this.user.username, this.user.password)).subscribe(data => {
       if (data) {
