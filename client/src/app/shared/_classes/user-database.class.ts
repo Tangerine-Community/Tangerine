@@ -1,10 +1,15 @@
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
+import cordovaSqlitePlugin from 'pouchdb-adapter-cordova-sqlite';
 import * as PouchDBUpsert from 'pouchdb-upsert';
+import {_TRANSLATE} from "../translation-marker";
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
+PouchDB.plugin(cordovaSqlitePlugin)
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 const SHARED_USER_DATABASE_NAME = 'shared-user-database'
+const ENCRYPTION_KEY = 'test'
+declare const cordova: any;
 
 export class UserDatabase {
 
@@ -13,17 +18,41 @@ export class UserDatabase {
   name:string
   deviceId:string
   db:PouchDB
+  window: any;
 
   constructor(username:string, userId:string, deviceId:string, shared = false) {
     this.userId = userId
     this.username = username
     this.name = username
     this.deviceId = deviceId
-    if (shared) {
-      this.db = new PouchDB(SHARED_USER_DATABASE_NAME)
+    this.window = window;
+
+    if (this.window.isCordovaApp) {
+      document.addEventListener('deviceready', () => {
+        this.window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, (externalDataDirectoryEntry) => {
+          const options = {
+            adapter: 'cordova-sqlite',
+            key: ENCRYPTION_KEY,
+            // location: externalDataDirectoryEntry.toURL(),
+            location: 'default',
+            androidDatabaseImplementation: 2
+          };
+          if (shared) {
+            // this.db = new PouchDB(SHARED_USER_DATABASE_NAME, options)
+            this.db = new PouchDB('external.db', options)
+          } else {
+            this.db = new PouchDB(username, options)
+          }
+        }
+      }, false);
     } else {
-      this.db = new PouchDB(username)
+      if (shared) {
+        this.db = new PouchDB(SHARED_USER_DATABASE_NAME)
+      } else {
+        this.db = new PouchDB(username)
+      }
     }
+
   }
 
   async synced(doc) {
@@ -32,7 +61,7 @@ export class UserDatabase {
       tangerineSyncedOn: Date.now()
     })
   }
- 
+
   async get(_id) {
     return await this.db.get(_id)
   }
@@ -86,5 +115,5 @@ export class UserDatabase {
   compact() {
     return this.db.compact()
   }
-  
-} 
+
+}
