@@ -33,7 +33,6 @@ export class UserDatabase {
           const options = {
             adapter: 'cordova-sqlite',
             key: ENCRYPTION_KEY,
-            // location: externalDataDirectoryEntry.toURL(),
             location: 'default',
             androidDatabaseImplementation: 2
           };
@@ -43,7 +42,7 @@ export class UserDatabase {
           } else {
             this.db = new PouchDB(username, options)
           }
-        }
+        });
       }, false);
     } else {
       if (shared) {
