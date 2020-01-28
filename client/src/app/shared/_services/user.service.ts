@@ -1,14 +1,11 @@
+import { LockerService } from './locker.service';
 import { UserAccount } from './../_classes/user-account.class';
 import { DeviceService } from './../../device/services/device.service';
 import { UserDatabase } from './../_classes/user-database.class';
-import {from as observableFrom,  Observable } from 'rxjs';
-import {filter, map} from 'rxjs/operators';
 import * as CryptoJS from 'crypto-js'
 import { Injectable, Inject } from '@angular/core';
 import PouchDB from 'pouchdb'
 PouchDB.defaults({auto_compaction: true, revs_limit: 1})
-// bcrypt issue https://github.com/dcodeIO/bcrypt.js/issues/71
-//import * as bcrypt from 'bcryptjs';
 const bcrypt = window['dcodeIO'].bcrypt 
 const CURRENT_USER = 'currentUser'
 import { AppConfigService } from './app-config.service';
@@ -16,8 +13,8 @@ import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js'
 import { UserSignup } from '../_classes/user-signup.class';
 import { updates } from '../../core/update/update/updates';
 import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
-import { HttpClient } from '@angular/common/http';
 import { AppConfig } from '../_classes/app-config.class';
+import { LockerContents } from '../_classes/locker-contents.class';
 
 @Injectable()
 export class UserService {
@@ -30,9 +27,9 @@ export class UserService {
 
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
+    private lockerService:LockerService,
     private deviceService: DeviceService,
-    private appConfigService: AppConfigService,
-    private http: HttpClient
+    private appConfigService: AppConfigService
   ) { }
 
   async initialize() {
@@ -172,15 +169,16 @@ export class UserService {
   }
 
   async create(userSignup:UserSignup):Promise<UserAccount> {
+    // Open the admin's locker, copy it, and stash it in the new user's locker.
+    await this.lockerService.openLocker('admin', userSignup.adminPassword)
+    const adminLocker = this.lockerService.getOpenLocker('admin')
+    this.lockerService.closeLocker('admin')
+    const userLockerContents = <LockerContents>{...adminLocker.contents}
+    await this.lockerService.fillLocker(userSignup.username, userSignup.password, userLockerContents)
     const device = await this.deviceService.getDevice()
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
-    const keyBox = userSignup.key
-      ? CryptoJS.AES.encrypt(userSignup.key, userSignup.password).toString()
-      : CryptoJS.AES.encrypt(userSignup.password, userSignup.password).toString()
-
     const userAccount = new UserAccount({
       _id: userSignup.username,
-      keyBox,
       password: this.hashValue(userSignup.password),
       securityQuestionResponse: this.hashValue(userSignup.securityQuestionResponse),
       userUUID: userProfile._id,
