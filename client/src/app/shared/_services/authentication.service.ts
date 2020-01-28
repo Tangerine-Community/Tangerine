@@ -1,3 +1,4 @@
+import { LockerService } from './locker.service';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AppConfigService } from './app-config.service';
@@ -18,6 +19,7 @@ export class AuthenticationService {
 
   constructor(
     private userService: UserService,
+    private lockerService:LockerService,
     private appConfigService: AppConfigService
   ) {
     this.window = window
@@ -27,6 +29,7 @@ export class AuthenticationService {
 
   async login(username: string, password: string) {
     if (await this.userService.doesUserExist(username) && await this.confirmPassword(username, password)) {
+      await this.lockerService.openLocker(username, password)
       // Make the user's database available for code in forms to use.
       this.window.userDb = await this.userService.getUserDatabase(username)
       const userAccount = await this.userService.getUserAccount(username)
@@ -74,8 +77,9 @@ export class AuthenticationService {
       : false
   }
 
-  logout(): void {
+  async logout() {
     const username = localStorage.getItem('currentUser')
+    await this.lockerService.closeLocker(username)
     localStorage.removeItem('currentUser');
     this._currentUserLoggedIn = false;
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
