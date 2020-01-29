@@ -1,3 +1,7 @@
+import { VariableService } from './../../shared/_services/variable.service';
+import { LockerService } from './../../shared/_services/locker.service';
+import { AuthenticationService } from './../../shared/_services/authentication.service';
+import { UserService } from 'src/app/shared/_services/user.service';
 import { Loc } from 'tangy-form/util/loc.js';
 import { Device } from './../classes/device.class';
 import PouchDB from 'pouchdb';
@@ -5,14 +9,6 @@ import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 const bcrypt = window['dcodeIO'].bcrypt 
-
-const TANGERINE_DEVICE_STORE = 'TANGERINE_DEVICE_STORE'
-const TANGERINE_DEVICE_DOC = 'TANGERINE_DEVICE_DOC'
-
-class TangerineDeviceDoc {
-  _id = TANGERINE_DEVICE_DOC
-  device:Device
-}
 
 export interface AppInfo {
   serverUrl:string
@@ -28,82 +24,63 @@ export interface AppInfo {
 })
 export class DeviceService {
 
-  db:PouchDB 
+  username:string
+  password:string
 
   constructor(
     private httpClient:HttpClient,
+    private variableService:VariableService,
+    private userService:UserService,
+    private lockerService:LockerService,
     private appConfigService:AppConfigService
   ) { 
-    this.db = new PouchDB(TANGERINE_DEVICE_STORE)
   }
 
   async install() {
-    await this.db.put({
-      _id: TANGERINE_DEVICE_DOC
-    })
+    // ?
   }
 
-  async uninstall() {
-    await this.db.destroy()
-  }
 
   async register(id, token):Promise<Device> {
     const appConfig = await this.appConfigService.getAppConfig()
-    const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
     const device = <Device>await this
       .httpClient
       .get(`${appConfig.serverUrl}group-device/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
-    await this.db.put({
-      ...tangerineDeviceDoc,
-      device
-    })
+    
+    await this.variableService.set('tangerine-device-is-registered', true)
     await this.didUpdate()
     return device
   }
-  
+
   async isRegistered() {
-    const device = await this.getDevice()
-    return device._id === 'N/A' ? false : true
+    return await this.variableService.get('tangerine-device-is-registered')
   }
 
   async getDevice():Promise<Device> {
     try {
-      const deviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
-      return deviceDoc.device ? deviceDoc.device : <Device>{_id: 'N/A'}
+      const locker = this.lockerService.getOpenLocker(this.userService.getCurrentUser())
+      return locker.contents.device
     } catch (e) {
       return new Device()
     }
   }
 
-  async updateDevice():Promise<Device> {
-    const appConfig = await this.appConfigService.getAppConfig()
-    const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
-    const device = <Device>await this
-      .httpClient
-      .get(`${appConfig.serverUrl}group-device/info/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}`).toPromise() 
-    await this.db.put({
-      ...tangerineDeviceDoc,
-      device
-    })
-    return device
-  }
-
   async didUpdate():Promise<any> {
     const appConfig = await this.appConfigService.getAppConfig()
-    const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
+    const device = await this.getDevice()
     const version = await this.getBuildId()
-    const device = <Device>await this
+    await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device/did-update/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}/${version}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device/did-update/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise() 
   }
 
   async didSync():Promise<any> {
     const appConfig = await this.appConfigService.getAppConfig()
-    const tangerineDeviceDoc = <TangerineDeviceDoc>await this.db.get(TANGERINE_DEVICE_DOC)
+    const device = await this.getDevice()
     const version = await this.getBuildId()
-    const device = <Device>await this
+    await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device/did-sync/${appConfig.groupId}/${tangerineDeviceDoc.device._id}/${tangerineDeviceDoc.device.token}/${version}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise() 
   }
 
   async getAppInfo() {

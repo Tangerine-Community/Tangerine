@@ -104,7 +104,6 @@ export class AppComponent implements OnInit {
     const config =<any> await this.http.get('./assets/app-config.json').toPromise()
     this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
     this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-    await this.userService.install()
     await this.deviceService.install()
     this.window.localStorage.setItem('installed', true)
     this.window.location = `${this.window.location.origin}${this.window.location.pathname}index.html`

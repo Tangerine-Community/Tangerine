@@ -117,7 +117,7 @@ export class DeviceRegistrationComponent implements OnInit {
     confirmRegistrationFormEl
       .addEventListener('submit', async (event) => {
         if (event.target.getValue('confirmation') && event.target.getValue('confirmation').includes('yes')) {
-          this.done$.next(true)
+          this.done$.next(device)
         } else {
           this.gatherInfo("Let's try again.")
         }

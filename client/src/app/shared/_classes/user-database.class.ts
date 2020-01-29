@@ -14,7 +14,7 @@ export class UserDatabase {
   deviceId:string
   db:PouchDB
 
-  constructor(username:string, userId:string, deviceId:string, shared = false) {
+  constructor(username:string, userId:string, key:string, deviceId:string, shared = false) {
     this.userId = userId
     this.username = username
     this.name = username

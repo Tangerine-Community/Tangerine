@@ -12,35 +12,35 @@
 <div class="login-app-content">
   <div class="group container content-inner">
     <form role="form" #registration='ngForm' novalidate (submit)="greaseTrap($event)" >
-      <mat-form-field *ngIf="requiresDevicePassword === true">
-        <input name="device-password" type="password" matInput [(ngModel)]="devicePassword" required>
+      <mat-form-field *ngIf="requiresAdminPassword === true">
+        <input name="admin-password" type="password" matInput [(ngModel)]="userSignup.adminPassword" required>
         <mat-placeholder>
-          <i class="material-icons app-input-icon">lock_open</i>{{'Device Password'|translate}}
+          <i class="material-icons app-input-icon">lock_open</i>{{'Admin Password'|translate}}
         </mat-placeholder>
       </mat-form-field>
       <mat-form-field>
-        <input name="username" type="text" matInput [(ngModel)]="user.username" (blur)="doesUserExist(user.username)" required>
+        <input name="username" type="text" matInput [(ngModel)]="userSignup.username" (blur)="doesUserExist(userSignup.username)" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">face</i>{{'Username'|translate}}
         </mat-placeholder>
       </mat-form-field>
       <br>
       <mat-form-field>
-        <input name="password" matInput [(ngModel)]="user.password" type="password" required>
+        <input name="password" matInput [(ngModel)]="userSignup.password" type="password" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>{{'Password'|translate}}
         </mat-placeholder>
       </mat-form-field>
       <br>
       <mat-form-field>
-        <input name="confirmPassword" matInput [(ngModel)]="user.confirmPassword" type="password" required>
+        <input name="confirmPassword" matInput [(ngModel)]="userSignup.confirmPassword" type="password" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">lock_open</i>{{'Confirm Password'|translate}}
         </mat-placeholder>
       </mat-form-field>
       <br>
       <mat-form-field>
-        <input name="securityQuestionResponse" type="text" matInput [(ngModel)]="user.securityQuestionResponse" required>
+        <input name="securityQuestionResponse" type="text" matInput [(ngModel)]="userSignup.securityQuestionResponse" required>
         <mat-placeholder>
           <i class="material-icons app-input-icon">security</i>{{securityQuestionText}}
         </mat-placeholder>
