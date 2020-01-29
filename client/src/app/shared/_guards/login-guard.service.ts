@@ -23,8 +23,14 @@ export class LoginGuard implements CanActivate {
     //   return true;
     // }
     const appConfig = await this.appConfigService.getAppConfig()
-    if (window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'localhost' && appConfig.associateUserProfileMode === 'local-exists' && !(await this.deviceService.isRegistered())) {
-      this.router.navigate(['device-setup'], { queryParams: { returnUrl: state.url } });
+    if (appConfig.associateUserProfileMode === 'local-exists') {
+      const deviceIsRegistered = await this.deviceService.isRegistered()
+      if (deviceIsRegistered) {
+        this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
+      } else {
+        this.router.navigate(['device-setup'], { queryParams: { returnUrl: state.url } });
+      }
+      
     } else {
       this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
     }

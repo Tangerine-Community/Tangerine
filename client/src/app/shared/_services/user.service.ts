@@ -1,3 +1,4 @@
+import { Device } from 'src/app/device/classes/device.class';
 import { LockerService } from './locker.service';
 import { UserAccount } from './../_classes/user-account.class';
 import { DeviceService } from './../../device/services/device.service';
@@ -28,7 +29,6 @@ export class UserService {
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
     private lockerService:LockerService,
-    private deviceService: DeviceService,
     private appConfigService: AppConfigService
   ) { }
 
@@ -36,8 +36,9 @@ export class UserService {
     this.config = await this.appConfigService.getAppConfig()
   }
 
-  async install() {
-    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', 'install', true)
+  async installSharedUserDatabase() {
+    const device = await this.getDevice()
+    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
     await this.installDefaultUserDocs(sharedUserDatabase)
     await sharedUserDatabase.put({
       _id: 'info',
@@ -46,12 +47,13 @@ export class UserService {
   }
 
   async uninstall() {
+    const device = await this.getDevice()
     const userAccounts = await this.getAllUserAccounts()
     for (const userAccount of userAccounts) {
       const userDb = await this.getUserDatabase(userAccount.username)
       await userDb.destroy()
     }
-    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', 'install', true)
+    const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, 'install', true)
     await sharedUserDatabase.destroy()
     await this.usersDb.destroy()
   }
@@ -61,8 +63,8 @@ export class UserService {
   //
 
   async createUserDatabase(username:string, userId:string):Promise<UserDatabase> {
-    const device = await this.deviceService.getDevice()
-    const userDb = new UserDatabase(username, userId, device._id)
+    const device = await this.getDevice()
+    const userDb = new UserDatabase(username, userId, device.key, device._id)
     this.installDefaultUserDocs(userDb)
     this.userDatabases.push(userDb)
     return userDb
@@ -79,12 +81,12 @@ export class UserService {
   }
 
   async getUserDatabase(username = '') {
-   const device = await this.deviceService.getDevice()
+   const device = await this.getDevice()
    if (username === '') {
-      return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'), device._id, this.config && this.config.sharedUserDatabase ? true : false)
+      return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'), device.key, device._id, this.config && this.config.sharedUserDatabase ? true : false)
     } else {
       const userAccount = await this.getUserAccount(username)
-      return new UserDatabase(username, userAccount.userUUID, device._id, this.config && this.config.sharedUserDatabase ? true : false)
+      return new UserDatabase(username, userAccount.userUUID, device.key, device._id, this.config && this.config.sharedUserDatabase ? true : false)
     }
   }
 
@@ -94,8 +96,8 @@ export class UserService {
 
   // Only really need this before there are actual users.
   async getSharedUserDatabase() {
-    const device = await this.deviceService.getDevice()
-    return new UserDatabase('shared', 'shared', device._id, true)
+    const device = await this.getDevice()
+    return new UserDatabase('shared', 'shared', device.key, device._id, true)
   }
   //
   // Database helpers
@@ -168,6 +170,41 @@ export class UserService {
     return localStorage.getItem('currentUser')
   }
 
+  async createAdmin(password:string, lockerContents:LockerContents):Promise<UserAccount> {
+    // Open the admin's locker, copy it, and stash it in the new user's locker.
+    const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+    const userAccount = new UserAccount({
+      _id: 'admin',
+      password: this.hashValue(password),
+      securityQuestionResponse: this.hashValue(password),
+      userUUID: userProfile._id,
+      initialProfileComplete: true 
+    }) 
+    await this.usersDb.post(userAccount)
+    let userDb:UserDatabase
+    if (this.config.sharedUserDatabase === true) {
+      userDb = new UserDatabase('admin', userAccount.userUUID, lockerContents.device.key, lockerContents.device._id, true)
+    } else {
+      userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
+      await userDb.put({
+        _id: 'info',
+        atUpdateIndex: updates.length - 1
+      })
+    }
+    await userDb.put(userProfile)
+    await this.lockerService.fillLocker('admin', password, lockerContents)
+    return userAccount
+  }
+
+  async getDevice():Promise<Device> {
+    try {
+      const locker = this.lockerService.getOpenLocker(this.getCurrentUser())
+      return locker.contents.device
+    } catch (e) {
+      return new Device()
+    }
+  }
+
   async create(userSignup:UserSignup):Promise<UserAccount> {
     // Open the admin's locker, copy it, and stash it in the new user's locker.
     await this.lockerService.openLocker('admin', userSignup.adminPassword)
@@ -175,7 +212,7 @@ export class UserService {
     this.lockerService.closeLocker('admin')
     const userLockerContents = <LockerContents>{...adminLocker.contents}
     await this.lockerService.fillLocker(userSignup.username, userSignup.password, userLockerContents)
-    const device = await this.deviceService.getDevice()
+    const device = await this.getDevice()
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
     const userAccount = new UserAccount({
       _id: userSignup.username,
@@ -187,7 +224,7 @@ export class UserService {
     await this.usersDb.post(userAccount)
     let userDb:UserDatabase
     if (this.config.sharedUserDatabase === true) {
-      userDb = new UserDatabase(userSignup.username, userAccount.userUUID, device._id, true)
+      userDb = new UserDatabase(userSignup.username, userAccount.userUUID, device.key, device._id, true)
     } else {
       userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
       await userDb.put({
@@ -211,7 +248,7 @@ export class UserService {
         const userDb = this.userDatabases.find(userDatabase => userDatabase.username === username)
         await userDb.destroy()
       } else {
-        const userDb = new UserDatabase(username, '...', '...', true)
+        const userDb = new UserDatabase(username, '...', '...', '...', true)
         // @TODO Query by username and remove all docs for that user.
       }
       const accountDoc = await this.getUserAccount(username)

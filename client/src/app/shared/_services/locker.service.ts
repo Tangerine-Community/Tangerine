@@ -1,8 +1,8 @@
 import { LockerContents } from './../_classes/locker-contents.class';
 import * as CryptoJS from 'crypto-js';
-import { PouchDB } from 'pouchdb';
+import PouchDB from 'pouchdb';
 import { Injectable } from '@angular/core';
-import { Locker } from '../_classes/locker.class';
+import { Locker } from './../_classes/locker.class'
 
 const TANGERINE_OPEN_LOCKERS = 'TANGERINE_OPEN_LOCKERS' 
 
@@ -34,6 +34,7 @@ export class LockerService {
     locker.contents = lockerContents
     await this.db.put({
       ...locker,
+      _id: username,
       contents: CryptoJS.AES.encrypt(JSON.stringify(locker.contents), password).toString()
     })
   }
@@ -60,7 +61,7 @@ export class LockerService {
     const lockerData = await this.db.get(username)
     const locker = <Locker>{
       ...lockerData,
-      contents: JSON.parse(CryptoJS.AES.encrypt(lockerData.contents, password).toString())
+      contents: JSON.parse(CryptoJS.AES.decrypt(lockerData.contents, password).toString(CryptoJS.enc.Utf8))
     }
     const openLockers = this.getOpenLockers()
     openLockers.push(locker)

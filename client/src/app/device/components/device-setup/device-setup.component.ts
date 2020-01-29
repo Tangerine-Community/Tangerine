@@ -1,3 +1,5 @@
+import { AuthenticationService } from './../../../shared/_services/authentication.service';
+import { UserService } from 'src/app/shared/_services/user.service';
 import { DevicePasswordComponent } from './../device-password/device-password.component';
 import { Router } from '@angular/router';
 import { DeviceLanguageComponent } from './../device-language/device-language.component';
@@ -6,6 +8,8 @@ import { DeviceRegistrationComponent } from './../device-registration/device-reg
 import { Observable, Subject } from 'rxjs';
 import { LanguagesService } from './../../../shared/_services/languages.service';
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
+import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
+import { LockerContents } from 'src/app/shared/_classes/locker-contents.class';
 
 const STEP_LANGUAGE_SELECT = 'STEP_LANGUAGE_SELECT'
 const STEP_DEVICE_PASSWORD = 'STEP_DEVICE_PASSWORD'
@@ -30,10 +34,14 @@ export class DeviceSetupComponent implements OnInit {
 
   constructor(
     private languagesService:LanguagesService,
+    private userService:UserService,
+    private authService:AuthenticationService,
     private routerService:Router
   ) { }
 
   async ngOnInit() {
+    let password = ''
+    let deviceDoc = {}
     // Initial step.
     if (!this.languagesService.userHasSetLanguage()) {
       this.step = STEP_LANGUAGE_SELECT
@@ -48,16 +56,22 @@ export class DeviceSetupComponent implements OnInit {
         this.step = STEP_DEVICE_PASSWORD
       }
     })
-    this.stepDevicePassword.done$.subscribe(value => {
+    this.stepDevicePassword.done$.subscribe({next: setPassword => {
+      password = setPassword
       this.step = STEP_DEVICE_REGISTRATION
+    }})
+    this.stepDeviceRegistration.done$.subscribe(async (deviceDoc) => {
+      await this.userService.installSharedUserDatabase()
+      await this.userService.createAdmin(password, <LockerContents>{
+        device: deviceDoc
+      })
+      await this.authService.login('admin', password)
+      this.step = STEP_SYNC
+      this.stepDeviceSync.sync()
     })
-    this.stepDeviceRegistration.done$.subscribe((value) => {
-      if (value === true) {
-        this.step = STEP_SYNC
-        this.stepDeviceSync.sync()
-      }
-    })
-    this.stepDeviceSync.done$.subscribe((value) => {
+    this.stepDeviceSync.done$.subscribe(async (value) => {
+
+      await this.authService.logout()
       this.routerService.navigate([''])
     })
     this.ready$.next(true)

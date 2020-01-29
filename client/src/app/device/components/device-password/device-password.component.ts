@@ -1,6 +1,9 @@
+import { AuthenticationService } from './../../../shared/_services/authentication.service';
+import { UserService } from 'src/app/shared/_services/user.service';
 import { DeviceService } from './../../services/device.service';
 import { Subject } from 'rxjs';
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 
 @Component({
   selector: 'app-device-password',
@@ -10,10 +13,9 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 export class DevicePasswordComponent implements OnInit {
 
   @ViewChild('container') container: ElementRef
-  done$ = new Subject()
+  done$:Subject<string> = new Subject<string>()
 
   constructor(
-    private deviceService:DeviceService
   ) { }
 
   async ngOnInit() {
@@ -34,9 +36,7 @@ export class DevicePasswordComponent implements OnInit {
     languageSelectFormEl
       .addEventListener('submit', async (event) => {
         const password = event.target.getValue('password')
-        this.deviceService.setPassword(password)
-        this.done$.next(true)
-
+        this.done$.next(password)
       })
     languageSelectFormEl.newResponse()
   }

@@ -9,8 +9,8 @@ import { AppConfigService } from '../../../shared/_services/app-config.service';
 
 import { AuthenticationService } from '../../../shared/_services/authentication.service';
 import { UserService } from '../../../shared/_services/user.service';
-import { User } from '../../../shared/_services/user.model.interface';
 import { _TRANSLATE } from '../../../shared/translation-marker';
+import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 
 
 @Component({
@@ -20,16 +20,8 @@ import { _TRANSLATE } from '../../../shared/translation-marker';
 })
 export class RegistrationComponent implements OnInit {
 
-    user = <User>{
-        key: '',
-        username: '',
-        password: '',
-        confirmPassword: '',
-        securityQuestionResponse: '',
-        hashSecurityQuestionResponse: true
-    };
-    devicePassword:string
-    requiresDevicePassword = false
+    userSignup:UserSignup = new UserSignup({})
+    requiresAdminPassword = false
     isUsernameTaken: boolean;
     returnUrl: string;
     statusMessage: object;
@@ -53,10 +45,9 @@ export class RegistrationComponent implements OnInit {
     }
     async ngOnInit() {
         const appConfig = await this.appConfigService.getAppConfig();
-        this.requiresDevicePassword = this.deviceService.passwordIsSet()
+        this.requiresAdminPassword = appConfig.syncProtocol === '2' ? true : false
         const homeUrl = appConfig.homeUrl;
         this.securityQuestionText = appConfig.securityQuestionText;
-        this.user.hashSecurityQuestionResponse = appConfig.hashSecurityQuestionResponse;
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
         const isNoPasswordMode = await this.authenticationService.isNoPasswordMode();
         if (isNoPasswordMode) {
@@ -67,37 +58,35 @@ export class RegistrationComponent implements OnInit {
         }
     }
 
-    register(): void {
+    async register() {
         this.disableSubmit = true
-        let key = ''
-        if (this.requiresDevicePassword && !this.deviceService.verifyPassword(this.devicePassword)) {
+        if (this.requiresAdminPassword && !this.authenticationService.confirmPassword('admin', this.userSignup.adminPassword)) {
             this.statusMessage = this.devicePasswordDoesNotMatchMessage 
             this.disableSubmit = false
             return
-        } else {
-            key = this.devicePassword
-        }
-        if (this.user.password!==this.user.confirmPassword) {
+        } 
+        if (this.userSignup.password!==this.userSignup.confirmPassword) {
             this.statusMessage = this.passwordsDoNotMatchMessage
             this.disableSubmit = false
             return 
         }
-        const userData = Object.assign({}, this.user, {key});
         if (!this.isUsernameTaken) {
-            observableFrom(this.userService.create(userData)).subscribe(data => {
-                this.loginUserAfterRegistration(userData.username, this.user.password);
-            }, error => {
+            try {
+                await this.userService.create(this.userSignup)
+                this.loginUserAfterRegistration(this.userSignup.username, this.userSignup.password);
+            } catch (error) {
                 console.log(error);
                 this.statusMessage = this.couldNotCreateUserMessage;
-            });
+            };
         } else {
             this.statusMessage = this.userNameUnavailableMessage;
             this.disableSubmit = false
         }
 
     }
+
     async doesUserExist(user) {
-      this.user.username = user.replace(/\s/g, ''); // Remove all whitespaces including spaces and tabs
+      this.userSignup.username = user.replace(/\s/g, ''); // Remove all whitespaces including spaces and tabs
       try {
         let data = await this.userService.doesUserExist(user.replace(/\s/g, ''));
         this.isUsernameTaken = data;
@@ -109,7 +98,6 @@ export class RegistrationComponent implements OnInit {
       } catch (error) {
         console.log(error)
       }
-          
     }
 
     // Prevent native `submit` events from POSTing beause this crashes APKs.
@@ -117,14 +105,10 @@ export class RegistrationComponent implements OnInit {
         event.preventDefault()
     }
 
-    loginUserAfterRegistration(username, password) {
-        observableFrom(this.authenticationService.login(username, password)).subscribe(data => {
-            if (data) {
-                this.router.navigate(['' + '/manage-user-profile']);
-            } else { this.statusMessage = this.loginUnsucessfulMessage; }
-        }, error => {
-            this.statusMessage = this.loginUnsucessfulMessage;
-        });
+    async loginUserAfterRegistration(username, password) {
+        await this.authenticationService.login(username, password)
+        this.router.navigate(['' + '/manage-user-profile']);
     }
+
 }
 
