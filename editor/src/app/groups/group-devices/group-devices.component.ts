@@ -86,6 +86,7 @@ export class GroupDevicesComponent implements OnInit {
         ">
           <tangy-input name="_id" label="ID" value="${device._id}" disabled></tangy-input>
           <tangy-input name="token" label="Token" value="${device.token}" disabled></tangy-input>
+          <tangy-input name="key" label="Key" value="${device.key}" disabled></tangy-input>
           <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox>
           <tangy-radio-buttons 
             ${device.assignedLocation && device.assignedLocation.showLevels ? `
