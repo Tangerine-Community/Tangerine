@@ -26,11 +26,15 @@
       <mat-icon class="material-icons menu-tangy-location-list-icon">create</mat-icon>
       <span>{{'Manage Profile'|translate}}</span>
     </button>
+    <button *ngIf="!isLoggedIn" routerLink="" mat-menu-item>
+      <mat-icon class="material-icons menu-tangy-location-list-icon">lock_open</mat-icon>
+      <span>{{'Login / Register'|translate}}</span>
+    </button>
     <button *ngIf="isLoggedIn" routerLink="settings" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">settings</mat-icon>
       <span>{{'Settings'|translate}}</span>
     </button>
-    <button routerLink="/sync-records" mat-menu-item>
+    <button *ngIf="isLoggedIn" routerLink="/sync-records" mat-menu-item>
       <mat-icon class="material-icons menu-tangy-location-list-icon">autorenew</mat-icon>
       <span>{{'Sync: Online'|translate}}</span>
     </button>
