@@ -106,7 +106,7 @@ export class AppComponent implements OnInit {
     this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
     await this.deviceService.install()
     this.window.localStorage.setItem('installed', true)
-    this.window.location = `${this.window.location.origin}${this.window.location.pathname}index.html`
+    window.location.href = window.location.href.replace(window.location.hash, 'index.html')
   }
 
   async checkPermissions() {
