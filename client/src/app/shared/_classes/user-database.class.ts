@@ -10,8 +10,6 @@ PouchDB.plugin(PouchDBUpsert);
 PouchDB.plugin(cordovaSqlitePlugin);
 PouchDB.defaults({auto_compaction: true, revs_limit: 1});
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
-const ENCRYPTION_KEY = 'test';
-declare const cordova: any;
 
 export class UserDatabase {
 
@@ -20,19 +18,17 @@ export class UserDatabase {
   name: string;
   deviceId: string;
   db: PouchDB;
-  window: any;
 
   constructor(username: string, userId: string, key:string, deviceId: string, shared = false) {
     this.userId = userId;
     this.username = username;
     this.name = username;
     this.deviceId = deviceId;
-    this.window = window;
     let options = {};
-    if (this.window.isCordovaApp) {
+    if (window['isCordovaApp'] && key) {
       options = {
         adapter: 'cordova-sqlite',
-        key: ENCRYPTION_KEY,
+        key: key,
         location: 'default',
         androidDatabaseImplementation: 2
       };
