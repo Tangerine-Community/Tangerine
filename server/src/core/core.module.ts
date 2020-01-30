@@ -21,8 +21,6 @@ export class CoreModule implements NestModule {
     consumer
       .apply(isAuthenticated)
       .forRoutes(UserController)
-    consumer
-      .apply(isAuthenticated)
-      .forRoutes(GroupDeviceController)
+      
   }
 }
