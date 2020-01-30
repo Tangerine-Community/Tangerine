@@ -29,7 +29,10 @@ export class AuthenticationService {
 
   async login(username: string, password: string) {
     if (await this.userService.doesUserExist(username) && await this.confirmPassword(username, password)) {
-      await this.lockerService.openLocker(username, password)
+      const appConfig = await this.appConfigService.getAppConfig()
+      if (appConfig.syncProtocol === '2') {
+        await this.lockerService.openLocker(username, password)
+      } 
       // Make the user's database available for code in forms to use.
       this.window.userDb = await this.userService.getUserDatabase(username)
       const userAccount = await this.userService.getUserAccount(username)
