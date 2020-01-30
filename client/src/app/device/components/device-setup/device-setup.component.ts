@@ -25,8 +25,6 @@ export class DeviceSetupComponent implements OnInit {
 
   ready$ = new Subject()
   step:string
-  // Prevent reloads required by changing languagr during testing.
-  testing = false
   @ViewChild('stepLanguageSelect') stepLanguageSelect:DeviceLanguageComponent
   @ViewChild('stepDevicePassword') stepDevicePassword:DevicePasswordComponent
   @ViewChild('stepDeviceRegistration') stepDeviceRegistration:DeviceRegistrationComponent
@@ -48,20 +46,19 @@ export class DeviceSetupComponent implements OnInit {
     } else {
       this.step = STEP_DEVICE_PASSWORD
     }
+
     // Listen to when steps are done.
     this.stepLanguageSelect.done$.subscribe(value => {
-      if (!this.testing) {
-        window.location.href = window.location.href.replace(window.location.hash, 'index.html')
-      } else {
-        this.step = STEP_DEVICE_PASSWORD
-      }
+      window.location.href = window.location.href.replace(window.location.hash, 'index.html')
     })
+
     this.stepDevicePassword.done$.subscribe({next: setPassword => {
       password = setPassword
       this.step = STEP_DEVICE_REGISTRATION
     }})
+
     this.stepDeviceRegistration.done$.subscribe(async (deviceDoc) => {
-      await this.userService.installSharedUserDatabase()
+      await this.userService.installSharedUserDatabase(deviceDoc)
       await this.userService.createAdmin(password, <LockerContents>{
         device: deviceDoc
       })
@@ -69,8 +66,8 @@ export class DeviceSetupComponent implements OnInit {
       this.step = STEP_SYNC
       this.stepDeviceSync.sync()
     })
-    this.stepDeviceSync.done$.subscribe(async (value) => {
 
+    this.stepDeviceSync.done$.subscribe(async (value) => {
       await this.authService.logout()
       this.routerService.navigate([''])
     })

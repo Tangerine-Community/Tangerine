@@ -81,8 +81,13 @@ export class AuthenticationService {
   }
 
   async logout() {
+    const appConfig = await this.appConfigService.getAppConfig()
     const username = localStorage.getItem('currentUser')
-    await this.lockerService.closeLocker(username)
+    if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
+      await this.lockerService.closeLocker(username)
+      const db = window['sqlitePlugin'].openDatabase({name: 'shared-user-database', location: 'default', androidDatabaseImplementation: 2});
+      db.close()
+    }
     localStorage.removeItem('currentUser');
     this._currentUserLoggedIn = false;
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);

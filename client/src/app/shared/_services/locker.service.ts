@@ -74,6 +74,7 @@ export class LockerService {
   }
 
   setOpenLockers(openLockers) {
+    // @Refactor to use in memory.
     localStorage.setItem(TANGERINE_OPEN_LOCKERS, JSON.stringify(openLockers))
   }
   

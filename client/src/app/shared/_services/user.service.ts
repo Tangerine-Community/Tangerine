@@ -36,8 +36,7 @@ export class UserService {
     this.config = await this.appConfigService.getAppConfig()
   }
 
-  async installSharedUserDatabase() {
-    const device = await this.getDevice()
+  async installSharedUserDatabase(device) {
     const sharedUserDatabase = new UserDatabase('shared-user-database', 'install', device.key, device._id, true)
     await this.installDefaultUserDocs(sharedUserDatabase)
     await sharedUserDatabase.put({
@@ -181,16 +180,7 @@ export class UserService {
       initialProfileComplete: true 
     }) 
     await this.usersDb.post(userAccount)
-    let userDb:UserDatabase
-    if (this.config.sharedUserDatabase === true) {
-      userDb = new UserDatabase('admin', userAccount.userUUID, lockerContents.device.key, lockerContents.device._id, true)
-    } else {
-      userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
-      await userDb.put({
-        _id: 'info',
-        atUpdateIndex: updates.length - 1
-      })
-    }
+    let userDb = new UserDatabase('admin', userAccount.userUUID, lockerContents.device.key, lockerContents.device._id, true)
     await userDb.put(userProfile)
     await this.lockerService.fillLocker('admin', password, lockerContents)
     return userAccount

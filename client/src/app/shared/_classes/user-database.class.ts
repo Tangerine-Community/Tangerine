@@ -32,6 +32,7 @@ export class UserDatabase {
         location: 'default',
         androidDatabaseImplementation: 2
       };
+      window['sqlitePlugin'].openDatabase({name: SHARED_USER_DATABASE_NAME, key: key, location: 'default', androidDatabaseImplementation: 2});
     }
     if (shared) {
       this.db = new PouchDB(SHARED_USER_DATABASE_NAME, options);
