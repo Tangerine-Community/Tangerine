@@ -102,6 +102,7 @@ export class GroupDevicesComponent implements OnInit {
             ` : ''}
             label="Assign device to location at which level?" 
             name="assigned_location__show_levels"
+            required
           >
             ${locationList.locationsLevels.map(level => `
               <option value="${level}">${level}</option>
@@ -109,11 +110,13 @@ export class GroupDevicesComponent implements OnInit {
           </tangy-radio-buttons>
           <tangy-location 
             name="assigned_location" 
+            show-if="getValue('assigned_location__show_levels')"
             label="Assign device to location at which location?" 
             ${device.assignedLocation && device.assignedLocation.value ? `
               show-levels='${device.assignedLocation.showLevels.join(',')}' 
               value='${JSON.stringify(device.assignedLocation.value)}'
             ` : ''}
+            required
           >
           </tangy-location>
           <tangy-radio-buttons 
@@ -130,6 +133,7 @@ export class GroupDevicesComponent implements OnInit {
             ` : ''}
             label="Sync device to location at which level?" 
             name="sync_location__show_levels"
+            required
           >
             ${locationList.locationsLevels.map(level => `
               <option value="${level}">${level}</option>
@@ -137,15 +141,15 @@ export class GroupDevicesComponent implements OnInit {
           </tangy-radio-buttons>
           <tangy-location 
             name="sync_location"
+            show-if="getValue('sync_location__show_levels')"
             label="Sync device to which location?" 
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].value ? `
               show-levels='${device.syncLocations[0].showLevels.join(',')}'
               value='${JSON.stringify(device.syncLocations[0].value)}'
             ` : ''}
+            required
           >
           </tangy-location>
-
-
         </tangy-form-item>
       </tangy-form>
     `
