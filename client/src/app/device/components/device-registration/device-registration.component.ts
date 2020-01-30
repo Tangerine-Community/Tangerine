@@ -41,17 +41,17 @@ export class DeviceRegistrationComponent implements OnInit {
           ">
 
           <tangy-box name="prompt1">
-            <h2>Let's get your device set up.</h2>
+            <h2>${_TRANSLATE(`Let's get your device set up.`)}</h2>
           </tangy-box>
-          <tangy-radio-buttons label="Do you have a Device QR code to scan?" name="has_qr">
-            <option value="yes" label="yes">yes</option>
-            <option value="no" label="no">no</option>
+          <tangy-radio-buttons label="${_TRANSLATE(`Do you have a Device QR code to scan?`)}" name="has_qr">
+            <option value="yes" label="yes">${_TRANSLATE(`yes`)}</option>
+            <option value="no" label="no">${_TRANSLATE(`no`)}</option>
           </tangy-radio-buttons>
 
           <tangy-box name="prompt2" show-if="getValue('has_qr').includes('yes')">
-            <h2>Great! Use this QR scanner below to scan the code in.</h2>
+            <h2>${_TRANSLATE(`Great! Use this QR scanner below to scan the code in.`)})</h2>
           </tangy-box>
-          <tangy-qr name="qr" show-if="getValue('has_qr').includes('yes')" hide-output error-text="Invalid format detected. Try again." valid-if="
+          <tangy-qr name="qr" show-if="getValue('has_qr').includes('yes')" hide-output error-text="${_TRANSLATE(`Invalid format detected. Try again.`)}" valid-if="
             let isValid
             try {
               const data = JSON.parse(getValue('qr'))
@@ -68,7 +68,7 @@ export class DeviceRegistrationComponent implements OnInit {
           "></tangy-qr>
 
           <tangy-box name="prompt3" show-if="getValue('has_qr').includes('no')">
-            <h2>That's ok. Enter the device ID and token below.</h2>
+            <h2>${_TRANSLATE(`That's ok. Enter the device ID and token below.`)}</h2>
           </tangy-box>
           <tangy-input name="device_id" label="Device ID" show-if="getValue('has_qr').includes('no')"></tangy-input>
           <tangy-input name="device_token" label="Token" show-if="getValue('has_qr').includes('no')"></tangy-input>
@@ -93,19 +93,19 @@ export class DeviceRegistrationComponent implements OnInit {
     try {
       device = await this.deviceService.register(deviceId, deviceToken)
     } catch (error) {
-      this.gatherInfo('Something went wrong, try again.')
+      this.gatherInfo(_TRANSLATE(`Something went wrong, try again.`))
     }
     this.container.nativeElement.innerHTML = `
       <tangy-form id="confirm-registration">
         <tangy-form-item id="confirm-registration">
-          <h2>Success!</h2>
-          <h2>Before continuing, let's review this info to make sure you registered with the right device info.</h2>
-          <tangy-input name="device_id" label="Device ID" value="${device._id}" disabled></tangy-input>
+          <h2>${_TRANSLATE(`Success!`)}</h2>
+          <h2>${_TRANSLATE(`Before continuing, let's review this info to make sure you registered with the right device info.`)}</h2>
+          <tangy-input name="device_id" label="${_TRANSLATE(`Device ID`)}" value="${device._id}" disabled></tangy-input>
           <tangy-input name="device_token" label="Token" value="${device.token}" hidden></tangy-input>
-          <tangy-location name="device_location" label="Location" value='${JSON.stringify(device.assignedLocation.value)}' show-levels="${device.assignedLocation.showLevels.join(',')}"} disabled></tangy-location>
-          <tangy-radio-buttons name="confirmation" label="Does the above info look like the right device info?" required>
-            <option value="yes" label="yes">yes</option>
-            <option value="no" label="no">no</option>
+          <tangy-location name="device_location" label="${_TRANSLATE(`Location`)}" value='${JSON.stringify(device.assignedLocation.value)}' show-levels="${device.assignedLocation.showLevels.join(',')}"} disabled></tangy-location>
+          <tangy-radio-buttons name="confirmation" label="${_TRANSLATE(`Does the above info look like the right device info?`)}" required>
+            <option value="yes" label="yes">${_TRANSLATE(`yes`)}</option>
+            <option value="no" label="no">${_TRANSLATE(`no`)}</option>
           </tangy-radio-buttons>
         </tangy-form-item>
       </tangy-form>
@@ -119,11 +119,10 @@ export class DeviceRegistrationComponent implements OnInit {
         if (event.target.getValue('confirmation') && event.target.getValue('confirmation').includes('yes')) {
           this.done$.next(device)
         } else {
-          this.gatherInfo("Let's try again.")
+          this.gatherInfo(_TRANSLATE(`Let's try again.`))
         }
       })
     confirmRegistrationFormEl.newResponse()
   }
-
 
 }

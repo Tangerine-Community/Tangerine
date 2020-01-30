@@ -1,3 +1,4 @@
+import { SharedModule } from 'src/app/shared/shared.module';
 import { DeviceSyncComponent } from './components/device-sync/device-sync.component';
 import { DeviceLanguageComponent } from './components/device-language/device-language.component';
 import { DeviceRegistrationComponent } from './components/device-registration/device-registration.component';
@@ -16,11 +17,10 @@ import { DevicePasswordComponent } from './components/device-password/device-pas
     DeviceLanguageComponent,
     DeviceSyncComponent,
     DevicePasswordComponent
-
-
   ],
   imports: [
     CommonModule,
+    SharedModule,
     DeviceRoutingModule 
   ],
   providers: [

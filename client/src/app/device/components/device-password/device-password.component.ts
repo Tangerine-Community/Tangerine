@@ -1,3 +1,4 @@
+import { _TRANSLATE } from '../../../shared/translation-marker';
 import { AuthenticationService } from './../../../shared/_services/authentication.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { DeviceService } from './../../services/device.service';
@@ -18,14 +19,15 @@ export class DevicePasswordComponent implements OnInit {
   constructor(
   ) { }
 
+
   async ngOnInit() {
     this.container.nativeElement.innerHTML = `
       <tangy-form id="device-password">
         <tangy-form-item id="device-password">
           <div style="text-align: center">
-            <h2>Set a password to administer your device.</h2>
+            <h2>${_TRANSLATE('Set a password to administer your device')}.</h2>
           </div>
-          <tangy-input inner-label=" " label="Password" type="password" name="password" required>
+          <tangy-input inner-label=" " label="${_TRANSLATE('Password')}" type="password" name="password" required>
           </tangy-input>
         </tangy-form-item>
       </tangy-form>
