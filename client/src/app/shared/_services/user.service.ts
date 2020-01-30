@@ -206,33 +206,43 @@ export class UserService {
   }
 
   async create(userSignup:UserSignup):Promise<UserAccount> {
-    // Open the admin's locker, copy it, and stash it in the new user's locker.
-    await this.lockerService.openLocker('admin', userSignup.adminPassword)
-    const adminLocker = this.lockerService.getOpenLocker('admin')
-    this.lockerService.closeLocker('admin')
-    const userLockerContents = <LockerContents>{...adminLocker.contents}
-    await this.lockerService.fillLocker(userSignup.username, userSignup.password, userLockerContents)
-    const device = await this.getDevice()
-    const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
-    const userAccount = new UserAccount({
-      _id: userSignup.username,
-      password: this.hashValue(userSignup.password),
-      securityQuestionResponse: this.hashValue(userSignup.securityQuestionResponse),
-      userUUID: userProfile._id,
-      initialProfileComplete: false
-    }) 
-    await this.usersDb.post(userAccount)
-    let userDb:UserDatabase
-    if (this.config.sharedUserDatabase === true) {
-      userDb = new UserDatabase(userSignup.username, userAccount.userUUID, device.key, device._id, true)
+    let userAccount:UserAccount
+    if (this.config.syncProtocol === '2') {
+      // Open the admin's locker, copy it, and stash it in the new user's locker.
+      await this.lockerService.openLocker('admin', userSignup.adminPassword)
+      const adminLocker = this.lockerService.getOpenLocker('admin')
+      this.lockerService.closeLocker('admin')
+      const userLockerContents = <LockerContents>{...adminLocker.contents}
+      await this.lockerService.fillLocker(userSignup.username, userSignup.password, userLockerContents)
+      const device = adminLocker.contents.device
+      const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+      userAccount = new UserAccount({
+        _id: userSignup.username,
+        password: this.hashValue(userSignup.password),
+        securityQuestionResponse: this.hashValue(userSignup.securityQuestionResponse),
+        userUUID: userProfile._id,
+        initialProfileComplete: false
+      }) 
+      await this.usersDb.post(userAccount)
+      const userDb = new UserDatabase(userSignup.username, userAccount.userUUID, device.key, device._id, true)
+      await userDb.put(userProfile)
     } else {
-      userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
+      const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
+      userAccount = new UserAccount({
+        _id: userSignup.username,
+        password: this.hashValue(userSignup.password),
+        securityQuestionResponse: this.hashValue(userSignup.securityQuestionResponse),
+        userUUID: userProfile._id,
+        initialProfileComplete: false
+      }) 
+      await this.usersDb.post(userAccount)
+      const userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
       await userDb.put({
         _id: 'info',
         atUpdateIndex: updates.length - 1
       })
+      await userDb.put(userProfile)
     }
-    await userDb.put(userProfile)
     return userAccount
   }
 
