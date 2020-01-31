@@ -1,3 +1,4 @@
+import { DeviceService } from './../../device/services/device.service';
 import { CASE_EVENT_STATUS_REVIEWED, CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { UserDatabase } from './../../shared/_classes/user-database.class';
@@ -36,6 +37,7 @@ class CaseService {
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
+    private deviceService:DeviceService,
     private userService:UserService,
     private http:HttpClient
   ) { 
@@ -57,7 +59,8 @@ class CaseService {
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
     try {
-      this.case.location = (await this.userService.getUserProfile()).location
+      const device = await this.deviceService.getDevice()
+      this.case.location = device.assignedLocation.value.reduce((location, levelInfo) => { return {...location, [levelInfo.level]: levelInfo.value}}, {})
     } catch(error) {
       console.log("There was error setting the location on the case.")
       console.log(error)
