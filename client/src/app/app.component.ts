@@ -85,9 +85,12 @@ export class AppComponent implements OnInit {
     // Set translation for t function used in Web Components.
     const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
-    this.isLoggedIn = this.userService.isLoggedIn();
-    this.userService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
-      this.isLoggedIn = isLoggedIn;
+    this.isLoggedIn = this.userService.isLoggedIn()
+    this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
+      this.isLoggedIn = true
+    });
+    this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
+      this.isLoggedIn = false
     });
     // Keep GPS chip warm.
     // @TODO Make this configurable. Not all installations use GPS and don't need to waste the battery.
