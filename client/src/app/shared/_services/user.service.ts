@@ -1,4 +1,4 @@
-import { AuthenticationService } from './authentication.service';
+import { Subject } from 'rxjs';
 import { Device } from 'src/app/device/classes/device.class';
 import { LockBoxService } from './lock-box.service';
 import { UserAccount } from './../_classes/user-account.class';
@@ -24,11 +24,17 @@ export class UserService {
   config: AppConfig
   _currentUser = ''
   _initialized = false
+  public userLoggedIn$:Subject<UserAccount> = new Subject()
+  public userLoggedOut$:Subject<UserAccount> = new Subject()
+  public currentUserLoggedIn$: any;
+  private _currentUserLoggedIn: boolean;
+  public userShouldResetPassword$: any;
+  private _userShouldResetPassword: boolean;
+ 
 
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
     private lockBoxService:LockBoxService,
-    private authService:AuthenticationService,
     private appConfigService: AppConfigService
   ) { }
 
@@ -152,10 +158,6 @@ export class UserService {
   //
   // Accounts
   //
-  
-  getCurrentUser():string {
-    return this.authService.getCurrentUser()
-  }
 
   async createAdmin(password:string, lockBoxContents:LockBoxContents):Promise<UserAccount> {
     // Open the admin's lockBox, copy it, and stash it in the new user's lockBox.
@@ -309,6 +311,99 @@ export class UserService {
   hashValue(value) {
     const salt = bcrypt.genSaltSync(10);
     return bcrypt.hashSync(value, salt);
+  }
+
+  async login(username: string, password: string) {
+    if (await this.doesUserExist(username) && await this.confirmPassword(username, password)) {
+      const appConfig = await this.appConfigService.getAppConfig()
+      if (appConfig.syncProtocol === '2') {
+        await this.lockBoxService.openLockBox(username, password)
+      } 
+      // Make the user's database available for code in forms to use.
+      window['userDb'] = await this.getUserDatabase(username)
+      const userAccount = await this.getUserAccount(username)
+      this.setCurrentUser(userAccount.username)
+      this._currentUserLoggedIn = true;
+      this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+      this.userLoggedIn$.next(userAccount)
+      return true 
+    } else {;
+      return false
+    }
+  }
+
+  async resetPassword(user, devicePassword) {
+    const userExists = await this.doesUserExist(user.username);
+    const doesAnswerMatch = await this.confirmSecurityQuestion(user);
+    if (
+      userExists &&
+      doesAnswerMatch &&
+      (await this.changeUserPassword(user, devicePassword))
+    ) {
+      this.login(user.username, user.password)
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async confirmPassword(username, password):Promise<boolean> {
+    const userAccount = await this.getUserAccount(username)
+    return bcrypt.compareSync(password, userAccount.password)
+      ? true
+      : false
+  }
+
+  async confirmSecurityQuestion(user):Promise<boolean> {
+    const userAccount = await this.getUserAccount(user.username)
+    return bcrypt.compareSync(user.securityQuestionResponse, userAccount.securityQuestionResponse)
+      ? true
+      : false
+  }
+
+  async logout() {
+    const appConfig = await this.appConfigService.getAppConfig()
+    const username = this.getCurrentUser()
+    if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
+      await this.lockBoxService.closeLockBox(username)
+      try {
+        const db = window['sqlitePlugin'].openDatabase({name: 'shared-user-database', location: 'default', androidDatabaseImplementation: 2});
+        db.close()
+      } catch(e) {
+      }
+      try {
+        const db = window['sqlitePlugin'].openDatabase({name: 'shared-user-database-index', location: 'default', androidDatabaseImplementation: 2});
+        db.close()
+      } catch(e) {
+      }
+    }
+    this.setCurrentUser('');
+    this._currentUserLoggedIn = false;
+    this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+    this.getUserAccount(username)
+      .then((userAccount) => this.userLoggedOut$.next(userAccount))
+  }
+
+  isLoggedIn() {
+    this._currentUserLoggedIn = false;
+    this._currentUserLoggedIn = !!localStorage.getItem('currentUser');
+    this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
+    return this._currentUserLoggedIn;
+  }
+
+  getCurrentUser():string {
+    return window.location.hostname === 'localhost'
+      ? localStorage.getItem('currentUser')
+      : this._currentUser
+  }
+
+  setCurrentUser(username):string {
+    if (window.location.hostname === 'localhost') {
+      localStorage.setItem('currentUser', username)
+    } else {
+      this._currentUser = username
+    }
+    return username
   }
 
 }

@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AppConfigService } from './_services/app-config.service';
-import { AuthenticationService } from './_services/authentication.service';
 import { UserService } from './_services/user.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 
@@ -43,7 +42,6 @@ import { FormTypesService } from './_services/form-types.service';
   ],
   providers: [
     AppConfigService,
-    AuthenticationService,
     UserService,
     LockBoxService,
     VariableService,

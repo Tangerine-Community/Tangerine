@@ -1,7 +1,5 @@
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AuthenticationService } from '../../../shared/_services/authentication.service';
-import { HttpClient } from '@angular/common/http';
 import { CaseService } from '../../services/case.service'
 import { CaseDefinitionsService } from '../../services/case-definitions.service'
 import { EventForm } from '../../classes/event-form.class';
@@ -15,8 +13,6 @@ export class NewCaseComponent implements AfterContentInit {
 
   constructor(
     private router: Router,
-    authenticationService: AuthenticationService,
-    private http: HttpClient,
     private activatedRoute: ActivatedRoute,
     private caseService:CaseService,
     private caseDefinitionsService:CaseDefinitionsService,

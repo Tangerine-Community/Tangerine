@@ -3,7 +3,6 @@ import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js'
 import { LockBoxService } from './lock-box.service';
 import { AppConfigService } from './app-config.service';
 import { Injectable } from '@angular/core';
-import { AuthenticationService } from './authentication.service';
 import { UserAccount } from '../_classes/user-account.class';
 import { UserService } from './user.service';
 import PouchDB from 'pouchdb';
@@ -34,7 +33,6 @@ export class SearchService {
   didIndex$ = new Subject()
 
   constructor(
-    private readonly authService:AuthenticationService,
     private readonly deviceService:DeviceService,
     private readonly configService:AppConfigService,
     private readonly userService:UserService,
@@ -42,14 +40,14 @@ export class SearchService {
   ) { }
 
   async start():Promise<void> {
-    if (this.authService.isLoggedIn() === true) {
-      const userAccount = await this.userService.getUserAccount(this.authService.getCurrentUser())
+    if (this.userService.isLoggedIn() === true) {
+      const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
       this.subscribeToChanges(userAccount)
     }
-    this.authService.userLoggedIn$.subscribe(async (userAccount:UserAccount) => {
+    this.userService.userLoggedIn$.subscribe(async (userAccount:UserAccount) => {
       this.subscribeToChanges(userAccount)
     })
-    this.authService.userLoggedOut$.subscribe((userAccount:UserAccount) => {
+    this.userService.userLoggedOut$.subscribe((userAccount:UserAccount) => {
       this.userDbSubscription.cancel()
     })
   }

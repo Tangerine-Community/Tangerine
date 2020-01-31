@@ -1,10 +1,6 @@
 import { _TRANSLATE } from '../../../shared/translation-marker';
-import { AuthenticationService } from './../../../shared/_services/authentication.service';
-import { UserService } from 'src/app/shared/_services/user.service';
-import { DeviceService } from './../../services/device.service';
 import { Subject } from 'rxjs';
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
 
 @Component({
   selector: 'app-device-password',

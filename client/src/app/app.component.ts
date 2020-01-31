@@ -3,7 +3,6 @@ import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
-import { AuthenticationService } from './shared/_services/authentication.service';
 import { UserService } from './shared/_services/user.service';
 import { updates } from './core/update/update/updates';
 import PouchDB from 'pouchdb';
@@ -37,7 +36,6 @@ export class AppComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private authenticationService: AuthenticationService,
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private router: Router,
@@ -87,8 +85,8 @@ export class AppComponent implements OnInit {
     // Set translation for t function used in Web Components.
     const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
-    this.isLoggedIn = this.authenticationService.isLoggedIn();
-    this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
+    this.isLoggedIn = this.userService.isLoggedIn();
+    this.userService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
       this.isLoggedIn = isLoggedIn;
     });
     // Keep GPS chip warm.
@@ -207,7 +205,7 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.authenticationService.logout();
+    this.userService.logout();
     this.router.navigate(['login']);
   }
 

@@ -7,7 +7,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 
-import { AuthenticationService } from '../../../shared/_services/authentication.service';
 import { UserService } from '../../../shared/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
@@ -35,7 +34,6 @@ export class RegistrationComponent implements OnInit {
     securityQuestionText: string;
     constructor(
         private userService: UserService,
-        private authenticationService: AuthenticationService,
         private route: ActivatedRoute,
         private router: Router,
         private appConfigService: AppConfigService
@@ -48,14 +46,14 @@ export class RegistrationComponent implements OnInit {
         const homeUrl = appConfig.homeUrl;
         this.securityQuestionText = appConfig.securityQuestionText;
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
-        if (this.authenticationService.isLoggedIn()) {
+        if (this.userService.isLoggedIn()) {
             this.router.navigate([this.returnUrl]);
         }
     }
 
     async register() {
         this.disableSubmit = true
-        if (this.requiresAdminPassword && !this.authenticationService.confirmPassword('admin', this.userSignup.adminPassword)) {
+        if (this.requiresAdminPassword && !this.userService.confirmPassword('admin', this.userSignup.adminPassword)) {
             this.statusMessage = this.devicePasswordDoesNotMatchMessage 
             this.disableSubmit = false
             return
@@ -100,7 +98,7 @@ export class RegistrationComponent implements OnInit {
     }
 
     async loginUserAfterRegistration(username, password) {
-        await this.authenticationService.login(username, password)
+        await this.userService.login(username, password)
         this.router.navigate(['' + '/manage-user-profile']);
     }
 
