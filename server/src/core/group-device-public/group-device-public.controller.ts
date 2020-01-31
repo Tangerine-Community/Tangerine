@@ -39,6 +39,21 @@ export class GroupDevicePublicController {
     }
   }
 
+  @All('read/:groupId/:deviceId/:token')
+  async read(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token) {
+    try {
+      if (!await this.groupDeviceService.tokenDoesMatch(groupId, deviceId, token)) {
+        return 'Token does not match'
+      }
+      const device = await this.groupDeviceService.read(groupId, deviceId)
+      return device
+    } catch (error) {
+      log.error('Error registering device')
+      console.log(error)
+      return 'There was an error.'
+    }
+  }
+
   @All('register/:groupId/:deviceId/:token')
   async register(@Param('groupId') groupId:string, @Param('deviceId') deviceId:string, @Param('token') token:string) {
     try {

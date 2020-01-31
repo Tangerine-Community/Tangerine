@@ -91,7 +91,7 @@ export class DeviceRegistrationComponent implements OnInit {
   async confirmRegistration(deviceId, deviceToken) {
     let device:Device
     try {
-      device = await this.deviceService.register(deviceId, deviceToken)
+      device = await this.deviceService.getRemoteDeviceInfo(deviceId, deviceToken) 
     } catch (error) {
       this.gatherInfo(_TRANSLATE(`Something went wrong, try again.`))
     }

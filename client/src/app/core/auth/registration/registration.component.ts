@@ -36,7 +36,6 @@ export class RegistrationComponent implements OnInit {
     constructor(
         private userService: UserService,
         private authenticationService: AuthenticationService,
-        private deviceService:DeviceService,
         private route: ActivatedRoute,
         private router: Router,
         private appConfigService: AppConfigService
@@ -49,11 +48,7 @@ export class RegistrationComponent implements OnInit {
         const homeUrl = appConfig.homeUrl;
         this.securityQuestionText = appConfig.securityQuestionText;
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
-        const isNoPasswordMode = await this.authenticationService.isNoPasswordMode();
-        if (isNoPasswordMode) {
-
-        }
-        if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
+        if (this.authenticationService.isLoggedIn()) {
             this.router.navigate([this.returnUrl]);
         }
     }
@@ -82,7 +77,6 @@ export class RegistrationComponent implements OnInit {
             this.statusMessage = this.userNameUnavailableMessage;
             this.disableSubmit = false
         }
-
     }
 
     async doesUserExist(user) {

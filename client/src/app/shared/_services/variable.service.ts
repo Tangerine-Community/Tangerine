@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import PouchDB from 'pouchdb'
-PouchDB.defaults({auto_compaction: true, revs_limit: 1})
+import { DB } from '../_factories/db.factory';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VariableService {
 
-  db = new PouchDB('tangerine-variables')
+  db = DB('tangerine-variables')
 
   constructor() { }
 

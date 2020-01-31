@@ -49,12 +49,7 @@ export class LoginComponent implements OnInit {
       this.allUsernames = await this.usersService.getUsernames();
     }
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
-    const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
-    // TODO List users on login page
-    // Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {
-    //   this.users = data;
-    // });
-    if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
+    if (this.authenticationService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);
     }
 
