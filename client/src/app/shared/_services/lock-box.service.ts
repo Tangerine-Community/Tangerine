@@ -4,21 +4,15 @@ import PouchDB from 'pouchdb';
 import { Injectable } from '@angular/core';
 import { LockBox } from './../_classes/lock-box.class'
 
-const TANGERINE_OPEN_LOCKERS = 'TANGERINE_OPEN_LOCKERS' 
-
-
 @Injectable({
   providedIn: 'root'
 })
 export class LockBoxService {
 
   db = new PouchDB('tangerine-lock-boxes')
+  _openLockBoxes = []
 
   constructor() { }
-
-  install() {
-    localStorage.setItem(TANGERINE_OPEN_LOCKERS, '[]')
-  }
 
   async uninstall() {
     await this.db.destroy()
@@ -63,19 +57,17 @@ export class LockBoxService {
       ...lockBoxData,
       contents: JSON.parse(CryptoJS.AES.decrypt(lockBoxData.contents, password).toString(CryptoJS.enc.Utf8))
     }
-    const openLockBoxs = this.getOpenLockBoxes()
-    openLockBoxs.push(lockBox)
-    this.setOpenLockBoxes(openLockBoxs)
+    const openLockBoxes = this.getOpenLockBoxes()
+    openLockBoxes.push(lockBox)
+    this.setOpenLockBoxes(openLockBoxes)
   }
 
   getOpenLockBoxes():Array<LockBox> {
-    const openLockBoxString = localStorage.getItem(TANGERINE_OPEN_LOCKERS)
-    return JSON.parse(openLockBoxString ? openLockBoxString : '[]')
+    return this._openLockBoxes
   }
 
-  setOpenLockBoxes(openLockBoxs) {
-    // @Refactor to use in memory.
-    localStorage.setItem(TANGERINE_OPEN_LOCKERS, JSON.stringify(openLockBoxs))
+  setOpenLockBoxes(openLockBoxes) {
+    this._openLockBoxes = openLockBoxes
   }
   
 }
