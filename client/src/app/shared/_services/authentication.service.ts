@@ -1,4 +1,4 @@
-import { LockerService } from './locker.service';
+import { LockBoxService } from './lock-box.service';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AppConfigService } from './app-config.service';
@@ -19,7 +19,7 @@ export class AuthenticationService {
 
   constructor(
     private userService: UserService,
-    private lockerService:LockerService,
+    private lockBoxService:LockBoxService,
     private appConfigService: AppConfigService
   ) {
     this.window = window
@@ -31,7 +31,7 @@ export class AuthenticationService {
     if (await this.userService.doesUserExist(username) && await this.confirmPassword(username, password)) {
       const appConfig = await this.appConfigService.getAppConfig()
       if (appConfig.syncProtocol === '2') {
-        await this.lockerService.openLocker(username, password)
+        await this.lockBoxService.openLockBox(username, password)
       } 
       // Make the user's database available for code in forms to use.
       this.window.userDb = await this.userService.getUserDatabase(username)
@@ -84,7 +84,7 @@ export class AuthenticationService {
     const appConfig = await this.appConfigService.getAppConfig()
     const username = localStorage.getItem('currentUser')
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
-      await this.lockerService.closeLocker(username)
+      await this.lockBoxService.closeLockBox(username)
       const db = window['sqlitePlugin'].openDatabase({name: 'shared-user-database', location: 'default', androidDatabaseImplementation: 2});
       db.close()
     }

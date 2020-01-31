@@ -1,5 +1,5 @@
 import { VariableService } from './_services/variable.service';
-import { LockerService } from './_services/locker.service';
+import { LockBoxService } from './_services/lock-box.service';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -45,7 +45,7 @@ import { FormTypesService } from './_services/form-types.service';
     AppConfigService,
     AuthenticationService,
     UserService,
-    LockerService,
+    LockBoxService,
     VariableService,
     {provide: DEFAULT_USER_DOCS, useValue:[], multi: true},
     LoginGuard,
