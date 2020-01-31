@@ -23,7 +23,7 @@ export class LoginGuard implements CanActivate {
     //   return true;
     // }
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.associateUserProfileMode === 'local-exists') {
+    if (appConfig.syncProtocol === '2') {
       const deviceIsRegistered = await this.deviceService.isRegistered()
       if (deviceIsRegistered) {
         this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });

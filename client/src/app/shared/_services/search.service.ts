@@ -4,7 +4,6 @@ import { AuthenticationService } from './authentication.service';
 import { UserAccount } from '../_classes/user-account.class';
 import { UserService } from './user.service';
 import PouchDB from 'pouchdb';
-PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-service';
 import { FormInfo, FormSearchSettings } from 'src/app/tangy-forms/classes/form-info.class';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';

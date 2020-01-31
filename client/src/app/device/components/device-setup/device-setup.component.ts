@@ -57,6 +57,7 @@ export class DeviceSetupComponent implements OnInit {
     }})
     // On device registration complete.
     this.stepDeviceRegistration.done$.subscribe(async (deviceDoc) => {
+      await this.deviceService.register(deviceDoc._id, deviceDoc.token)
       await this.userService.installSharedUserDatabase(deviceDoc)
       await this.userService.createAdmin(password, <LockBoxContents>{
         device: deviceDoc

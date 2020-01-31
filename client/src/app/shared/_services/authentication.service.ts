@@ -15,6 +15,7 @@ export class AuthenticationService {
   private _currentUserLoggedIn: boolean;
   public userShouldResetPassword$: any;
   private _userShouldResetPassword: boolean;
+  private _currentUser = ''
   window:any
 
   constructor(
@@ -36,9 +37,7 @@ export class AuthenticationService {
       // Make the user's database available for code in forms to use.
       this.window.userDb = await this.userService.getUserDatabase(username)
       const userAccount = await this.userService.getUserAccount(username)
-      localStorage.setItem('currentUser', userAccount.username);
-      localStorage.setItem('currentUsername', userAccount.username);
-      localStorage.setItem('currentUserId', userAccount.userUUID);
+      this.setCurrentUser(userAccount.username)
       this._currentUserLoggedIn = true;
       this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
       this.userLoggedIn$.next(userAccount)
@@ -56,10 +55,7 @@ export class AuthenticationService {
       doesAnswerMatch &&
       (await this.userService.changeUserPassword(user, devicePassword))
     ) {
-      localStorage.setItem('currentUser', user.username);
-      this._currentUserLoggedIn = true;
-      this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
-      this.userLoggedIn$.next(user)
+      this.login(user.username, user.password)
       return true;
     } else {
       return false;
@@ -82,13 +78,13 @@ export class AuthenticationService {
 
   async logout() {
     const appConfig = await this.appConfigService.getAppConfig()
-    const username = localStorage.getItem('currentUser')
+    const username = this.getCurrentUser()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
       await this.lockBoxService.closeLockBox(username)
       const db = window['sqlitePlugin'].openDatabase({name: 'shared-user-database', location: 'default', androidDatabaseImplementation: 2});
       db.close()
     }
-    localStorage.removeItem('currentUser');
+    this.setCurrentUser('');
     this._currentUserLoggedIn = false;
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
     this.userService.getUserAccount(username)
@@ -100,32 +96,21 @@ export class AuthenticationService {
     this._currentUserLoggedIn = !!localStorage.getItem('currentUser');
     this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
     return this._currentUserLoggedIn;
-
   }
 
-  shouldResetPassword() {
-    this._userShouldResetPassword = false;
-    this._userShouldResetPassword = !!localStorage.getItem('userShouldResetPassword');
-    this.userShouldResetPassword$.next(this._userShouldResetPassword);
-    return this._userShouldResetPassword;
+  getCurrentUser():string {
+    return window.location.hostname === 'localhost'
+      ? localStorage.getItem('currentUser')
+      : this._currentUser
   }
 
-  async getSecurityPolicy() {
-    const appConfig = await this.appConfigService.getAppConfig();
-    return appConfig.securityPolicy;
+  setCurrentUser(username):string {
+    if (window.location.hostname === 'localhost') {
+      localStorage.setItem('currentUser', username)
+    } else {
+      this._currentUser = username
+    }
+    return username
   }
 
-  async isNoPasswordMode() {
-    const policy = await this.getSecurityPolicy();
-    const isNoPasswordMode = await policy.find(p => p === 'noPassword');
-    return isNoPasswordMode === 'noPassword';
-  }
-
-  getCurrentUser() {
-    return localStorage.getItem('currentUser');
-  }
-
-  getCurrentUserDBPath() {
-    return localStorage.getItem('currentUser');
-  }
 }

@@ -1,13 +1,11 @@
+import { AuthenticationService } from './authentication.service';
 import { Device } from 'src/app/device/classes/device.class';
 import { LockBoxService } from './lock-box.service';
 import { UserAccount } from './../_classes/user-account.class';
 import { UserDatabase } from './../_classes/user-database.class';
 import * as CryptoJS from 'crypto-js'
 import { Injectable, Inject } from '@angular/core';
-import PouchDB from 'pouchdb'
-PouchDB.defaults({auto_compaction: true, revs_limit: 1})
 const bcrypt = window['dcodeIO'].bcrypt 
-const CURRENT_USER = 'currentUser'
 import { AppConfigService } from './app-config.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { UserSignup } from '../_classes/user-signup.class';
@@ -15,19 +13,22 @@ import { updates } from '../../core/update/update/updates';
 import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
 import { AppConfig } from '../_classes/app-config.class';
 import { LockBoxContents } from '../_classes/lock-box-contents.class';
+import { DB } from '../_factories/db.factory';
 
 @Injectable()
 export class UserService {
 
   userData = {};
-  usersDb = new PouchDB('users');
+  usersDb = DB('users');
   userDatabases:Array<UserDatabase> = []
   config: AppConfig
+  _currentUser = ''
   _initialized = false
 
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
     private lockBoxService:LockBoxService,
+    private authService:AuthenticationService,
     private appConfigService: AppConfigService
   ) { }
 
@@ -68,23 +69,16 @@ export class UserService {
     return userDb
   }
 
-  async removeUserDatabase(username):Promise<boolean> {
-    return true
-  }
-
-  // @TODO Refactor usage of this to use the UserService.db singleton.
-  // @TODO Still used?
-  async setUserDatabase(username) {
-    return await localStorage.setItem(CURRENT_USER, username)
-  }
-
   async getUserDatabase(username = '') {
-   const device = await this.getDevice()
-   if (username === '') {
-      return new UserDatabase(localStorage.getItem(CURRENT_USER), localStorage.getItem('currentUserId'), device.key, device._id, this.config && this.config.sharedUserDatabase ? true : false)
+    const userAccount = username === ''
+      ? await this.getUserAccount(this.getCurrentUser())
+      : await this.getUserAccount(username)
+    const appConfig = await this.appConfigService.getAppConfig()
+    if (appConfig.syncProtocol === '2') {
+      const device = await this.getDevice()
+      return new UserDatabase(username, userAccount.userUUID, device.key, device._id, true)
     } else {
-      const userAccount = await this.getUserAccount(username)
-      return new UserDatabase(username, userAccount.userUUID, device.key, device._id, this.config && this.config.sharedUserDatabase ? true : false)
+      return new UserDatabase(username, userAccount.userUUID, '', '', false)
     }
   }
 
@@ -92,11 +86,6 @@ export class UserService {
     return this.usersDb
   }
 
-  // Only really need this before there are actual users.
-  async getSharedUserDatabase() {
-    const device = await this.getDevice()
-    return new UserDatabase('shared', 'shared', device.key, device._id, true)
-  }
   //
   // Database helpers
   //
@@ -165,7 +154,7 @@ export class UserService {
   //
   
   getCurrentUser():string {
-    return localStorage.getItem('currentUser')
+    return this.authService.getCurrentUser()
   }
 
   async createAdmin(password:string, lockBoxContents:LockBoxContents):Promise<UserAccount> {
@@ -235,26 +224,6 @@ export class UserService {
     return userAccount
   }
 
-  async remove(username = '') {
-    if (username === '') {
-      console.warn('Detected deprecated usage of UserService.removeUserDatabase().')
-      return new Promise((resolve, reject) => {
-        localStorage.removeItem(CURRENT_USER);
-        resolve()
-      })
-    } else {
-      if (!this.config.sharedUserDatabase) {
-        const userDb = this.userDatabases.find(userDatabase => userDatabase.username === username)
-        await userDb.destroy()
-      } else {
-        const userDb = new UserDatabase(username, '...', '...', '...', true)
-        // @TODO Query by username and remove all docs for that user.
-      }
-      const accountDoc = await this.getUserAccount(username)
-      await this.usersDb.remove(accountDoc)
-    }
-  }
-
   async getUserAccount(username?: string):Promise<UserAccount> {
     const userAccountData = <any>(await this.usersDb.allDocs({include_docs: true}))
       .rows
@@ -283,7 +252,7 @@ export class UserService {
   async getUserProfile(username?: string) {
     username = username
       ? username
-      : localStorage.getItem(CURRENT_USER)
+      : this.getCurrentUser()
     const userAccount = <UserAccount>await this.getUserAccount(username)
     const userDb = await this.getUserDatabase(username)
     const userProfile = new TangyFormResponseModel(await userDb.get(userAccount.userUUID))
