@@ -60,9 +60,9 @@ export class SearchService {
     this.userDb = (await this.userService.getUserDatabase(userAccount._id)).db
     if (appConfig.syncProtocol === '2') {
       const device = await this.deviceService.getDevice()
-      this.indexDb = DB(`${this.userDb.name}-index}`, device.key)
+      this.indexDb = DB(`${this.userDb.name}-index`, device.key)
     } else {
-      this.indexDb = DB(`${this.userDb.name}-index}`)
+      this.indexDb = DB(`${this.userDb.name}-index`)
     }
     // Refactor to use batch processing, not changes feed which can lead to race conditions.
     this.userDbSubscription = this.userDb
