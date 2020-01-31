@@ -26,8 +26,6 @@ export class UserService {
   _initialized = false
   public userLoggedIn$:Subject<UserAccount> = new Subject()
   public userLoggedOut$:Subject<UserAccount> = new Subject()
-  public currentUserLoggedIn$: any;
-  private _currentUserLoggedIn: boolean;
   public userShouldResetPassword$: any;
   private _userShouldResetPassword: boolean;
  
@@ -323,8 +321,6 @@ export class UserService {
       window['userDb'] = await this.getUserDatabase(username)
       const userAccount = await this.getUserAccount(username)
       this.setCurrentUser(userAccount.username)
-      this._currentUserLoggedIn = true;
-      this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
       this.userLoggedIn$.next(userAccount)
       return true 
     } else {;
@@ -378,17 +374,12 @@ export class UserService {
       }
     }
     this.setCurrentUser('');
-    this._currentUserLoggedIn = false;
-    this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
     this.getUserAccount(username)
       .then((userAccount) => this.userLoggedOut$.next(userAccount))
   }
 
   isLoggedIn() {
-    this._currentUserLoggedIn = false;
-    this._currentUserLoggedIn = !!localStorage.getItem('currentUser');
-    this.currentUserLoggedIn$.next(this._currentUserLoggedIn);
-    return this._currentUserLoggedIn;
+    return this.getCurrentUser() ? true : false
   }
 
   getCurrentUser():string {
