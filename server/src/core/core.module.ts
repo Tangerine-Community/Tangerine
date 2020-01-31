@@ -1,3 +1,4 @@
+import { GroupDeviceManageController } from './group-device/group-device-manage.controller';
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { SharedModule } from '../shared/shared.module';
 import { GroupController } from './group/group.controller';
@@ -18,5 +19,8 @@ export class CoreModule implements NestModule {
     consumer
       .apply(isAuthenticated)
       .forRoutes(GroupController);
+    consumer
+      .apply(isAuthenticated)
+      .forRoutes(GroupDeviceManageController);
   }
 }
