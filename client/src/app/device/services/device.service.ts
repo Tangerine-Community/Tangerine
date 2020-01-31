@@ -1,10 +1,8 @@
 import { VariableService } from './../../shared/_services/variable.service';
-import { LockerService } from './../../shared/_services/locker.service';
-import { AuthenticationService } from './../../shared/_services/authentication.service';
+import { LockBoxService } from './../../shared/_services/lock-box.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { Loc } from 'tangy-form/util/loc.js';
 import { Device } from './../classes/device.class';
-import PouchDB from 'pouchdb';
 import { AppConfigService } from './../../shared/_services/app-config.service';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -31,7 +29,7 @@ export class DeviceService {
     private httpClient:HttpClient,
     private variableService:VariableService,
     private userService:UserService,
-    private lockerService:LockerService,
+    private lockerService:LockBoxService,
     private appConfigService:AppConfigService
   ) { 
   }
@@ -58,7 +56,7 @@ export class DeviceService {
 
   async getDevice():Promise<Device> {
     try {
-      const locker = this.lockerService.getOpenLocker(this.userService.getCurrentUser())
+      const locker = this.lockerService.getOpenLockBox(this.userService.getCurrentUser())
       return locker.contents.device
     } catch (e) {
       return new Device()
