@@ -1,3 +1,6 @@
+import { DeviceService } from './../../device/services/device.service';
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
+import { LockBoxService } from './lock-box.service';
 import { AppConfigService } from './app-config.service';
 import { Injectable } from '@angular/core';
 import { AuthenticationService } from './authentication.service';
@@ -8,6 +11,7 @@ import { TangyFormsInfoService } from 'src/app/tangy-forms/tangy-forms-info-serv
 import { FormInfo, FormSearchSettings } from 'src/app/tangy-forms/classes/form-info.class';
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import { Subject } from 'rxjs';
+import { DB } from '../_factories/db.factory';
 
 export class SearchDoc {
   _id: string
@@ -24,12 +28,14 @@ export class SearchService {
 
   userDbSubscription:any
   userDb:PouchDB
+  indexDb:PouchDB
   formsInfo:Array<FormInfo>
   subscribedToLoggedInUser$ = new Subject()
   didIndex$ = new Subject()
 
   constructor(
     private readonly authService:AuthenticationService,
+    private readonly deviceService:DeviceService,
     private readonly configService:AppConfigService,
     private readonly userService:UserService,
     private readonly formsInfoService:TangyFormsInfoService
@@ -49,8 +55,15 @@ export class SearchService {
   }
 
   async subscribeToChanges(userAccount:UserAccount) {
+    const appConfig = await this.configService.getAppConfig()
     this.formsInfo = await this.formsInfoService.getFormsInfo()
-    this.userDb = await this.userService.getUserDatabase(userAccount._id)
+    this.userDb = (await this.userService.getUserDatabase(userAccount._id)).db
+    if (appConfig.syncProtocol === '2') {
+      const device = await this.deviceService.getDevice()
+      this.indexDb = DB(`${this.userDb.name}-index}`, device.key)
+    } else {
+      this.indexDb = DB(`${this.userDb.name}-index}`)
+    }
     // Refactor to use batch processing, not changes feed which can lead to race conditions.
     this.userDbSubscription = this.userDb
       .changes({include_docs:true, since:'now', live:true})
@@ -72,50 +85,23 @@ export class SearchService {
       lastModified: Date.now(),
       variables: {} 
     }
-    // Populate searchDoc.variables.
-    // @TODO This reduce is taken from the TangyFormResponseModel Class in the tangy-form module. At
-    // some point we need to figure out why that class is not importing correctly so we can use it
-    // directly. This code is at risk of getting out of sync.
-    const inputsByName = doc.items.reduce((inputsArray, item) => {
-      item.inputs.forEach(input => {
-        if (input.tagName === 'TANGY-CARDS') {
-          input.value.forEach(card => card.value.forEach(input => inputsArray.push(input)))
-        } else {
-          inputsArray.push(input)
-        }
-      })
-      return inputsArray
-    }, []).reduce((inputsObject, input) => {
-      if (inputsObject.hasOwnProperty(input.name)) {
-        if (Array.isArray(inputsObject[input.name])) {
-          inputsObject[input.name] = inputsObject[input.name].push(input)
-        } else {
-          inputsObject[input.name] = [input, inputsObject[input.name]]
-        }
-      } else {
-        inputsObject[input.name] = input
-      }
-      return inputsObject
-    }, {})
+    const response = new TangyFormResponseModel(doc)
     for (const variableName of formInfo.searchSettings.variablesToIndex) {
       // @TODO This only supports text values. If it's an array, should reduce.
-      searchDoc.variables[variableName] = inputsByName[variableName]
-        ? inputsByName[variableName].value
+      searchDoc.variables[variableName] = response.inputsByName[variableName]
+        ? response.inputsByName[variableName].value
         : ''
     }
     return searchDoc
   }
 
   async indexDoc(username:string, searchDoc:SearchDoc):Promise<void> {
-    const config = await this.configService.getAppConfig()
-    const _indexName = `${config.sharedUserDatabase ? 'shared' : username}_search`
-    const indexDb = new PouchDB(_indexName)
-    try {
-      const oldSearchDoc = await indexDb.get(searchDoc._id)
-      indexDb.put({...searchDoc, ...{_rev: oldSearchDoc._rev}})
+   try {
+      const oldSearchDoc = await this.indexDb.get(searchDoc._id)
+      this.indexDb.put({...searchDoc, ...{_rev: oldSearchDoc._rev}})
     } catch(e) {
       try {
-        indexDb.put(searchDoc)
+        this.indexDb.put(searchDoc)
       } catch(e) {
         // This is likely to happen during sync of a doc with many replications. Note the @TODO about 
         // refactoring out the changes feed subscription.
@@ -128,10 +114,7 @@ export class SearchService {
   }
 
   async search(username:string, phrase:string):Promise<Array<SearchDoc>> {
-    const config = await this.configService.getAppConfig()
-    const _indexName = `${config.sharedUserDatabase ? 'shared' : username}_search` 
-    const indexDb = new PouchDB(_indexName)
-    const allDocs = (await indexDb.allDocs({include_docs:true})).rows.map(row => <SearchDoc>row.doc).sort(function (a, b) {
+    const allDocs = (await this.indexDb.allDocs({include_docs:true})).rows.map(row => <SearchDoc>row.doc).sort(function (a, b) {
       return b.lastModified - a.lastModified;
     })
     return phrase === ''
@@ -140,10 +123,7 @@ export class SearchService {
   }
 
   async getIndexedDoc(username:string, docId):Promise<SearchDoc> {
-    const config = await this.configService.getAppConfig()
-    const _indexName = `${config.sharedUserDatabase ? 'shared' : username}_search`
-    const indexDb = new PouchDB(_indexName)
-    return <SearchDoc>await indexDb.get(docId)
+    return <SearchDoc>await this.indexDb.get(docId)
   }
 
 }
