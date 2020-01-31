@@ -1,5 +1,4 @@
 import { DeviceService } from './../../services/device.service';
-import { AuthenticationService } from './../../../shared/_services/authentication.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { DevicePasswordComponent } from './../device-password/device-password.component';
 import { Router } from '@angular/router';
@@ -35,7 +34,6 @@ export class DeviceSetupComponent implements OnInit {
     private languagesService:LanguagesService,
     private userService:UserService,
     private deviceService:DeviceService,
-    private authService:AuthenticationService,
     private routerService:Router
   ) { }
 
@@ -64,13 +62,13 @@ export class DeviceSetupComponent implements OnInit {
       await this.userService.createAdmin(password, <LockBoxContents>{
         device: deviceDoc
       })
-      await this.authService.login('admin', password)
+      await this.userService.login('admin', password)
       this.step = STEP_SYNC
       this.stepDeviceSync.sync()
     })
     // On device sync.
     this.stepDeviceSync.done$.subscribe(async (value) => {
-      await this.authService.logout()
+      await this.userService.logout()
       this.routerService.navigate([''])
     })
     this.ready$.next(true)

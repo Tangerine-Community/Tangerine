@@ -8,7 +8,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 
 import { UserService } from '../../../shared/_services/user.service';
-import { AuthenticationService } from '../../../shared/_services/authentication.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 
 @Component({
@@ -29,9 +28,9 @@ export class LoginComponent implements OnInit {
   allUsernames;
   listUsernamesOnLoginScreen;
   constructor(
-    private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
+    private userService:UserService,
     private usersService: UserService,
     private deviceService:DeviceService,
     private appConfigService: AppConfigService
@@ -49,7 +48,7 @@ export class LoginComponent implements OnInit {
       this.allUsernames = await this.usersService.getUsernames();
     }
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
-    if (this.authenticationService.isLoggedIn()) {
+    if (this.userService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);
     }
 
@@ -64,7 +63,7 @@ export class LoginComponent implements OnInit {
       this.errorMessage = _TRANSLATE('Device password incorrect.')
       return
     }
-    observableFrom(this.authenticationService.resetPassword(this.user, this.devicePassword)).subscribe(data => {
+    observableFrom(this.userService.resetPassword(this.user, this.devicePassword)).subscribe(data => {
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
@@ -77,7 +76,7 @@ export class LoginComponent implements OnInit {
   }
 
   loginUser() {
-    observableFrom(this.authenticationService.login(this.user.username, this.user.password)).subscribe(data => {
+    observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(data => {
       if (data) {
         this.router.navigate(['' + this.returnUrl]);
       } else {
