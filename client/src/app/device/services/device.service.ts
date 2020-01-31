@@ -45,7 +45,7 @@ export class DeviceService {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = <Device>await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device-public/register/${appConfig.groupId}/${id}/${token}`).toPromise() 
     
     await this.variableService.set('tangerine-device-is-registered', true)
     await this.didUpdate()
@@ -71,7 +71,7 @@ export class DeviceService {
     const version = await this.getBuildId()
     await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device/did-update/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise() 
   }
 
   async didSync():Promise<any> {
@@ -80,7 +80,7 @@ export class DeviceService {
     const version = await this.getBuildId()
     await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device-public/did-sync/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise() 
   }
 
   async getAppInfo() {
