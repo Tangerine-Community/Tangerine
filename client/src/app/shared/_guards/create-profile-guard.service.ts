@@ -27,6 +27,10 @@ export class CreateProfileGuardService implements CanActivate {
       } else {
         navigateUrl = '/manage-user-profile'
       }
+      if (state.url.indexOf(navigateUrl) === 0) {
+        // We are already at that route, prevent infinite loops.
+        return true
+      }
       this.router.navigate([navigateUrl], { queryParams: { returnUrl: state.url } });
     }
   }
