@@ -1,7 +1,6 @@
 import { Device } from 'src/app/device/classes/device.class';
-import { LockerService } from './locker.service';
+import { LockBoxService } from './lock-box.service';
 import { UserAccount } from './../_classes/user-account.class';
-import { DeviceService } from './../../device/services/device.service';
 import { UserDatabase } from './../_classes/user-database.class';
 import * as CryptoJS from 'crypto-js'
 import { Injectable, Inject } from '@angular/core';
@@ -15,7 +14,7 @@ import { UserSignup } from '../_classes/user-signup.class';
 import { updates } from '../../core/update/update/updates';
 import { DEFAULT_USER_DOCS } from '../_tokens/default-user-docs.token';
 import { AppConfig } from '../_classes/app-config.class';
-import { LockerContents } from '../_classes/locker-contents.class';
+import { LockBoxContents } from '../_classes/lock-box-contents.class';
 
 @Injectable()
 export class UserService {
@@ -28,7 +27,7 @@ export class UserService {
 
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
-    private lockerService:LockerService,
+    private lockBoxService:LockBoxService,
     private appConfigService: AppConfigService
   ) { }
 
@@ -169,8 +168,8 @@ export class UserService {
     return localStorage.getItem('currentUser')
   }
 
-  async createAdmin(password:string, lockerContents:LockerContents):Promise<UserAccount> {
-    // Open the admin's locker, copy it, and stash it in the new user's locker.
+  async createAdmin(password:string, lockBoxContents:LockBoxContents):Promise<UserAccount> {
+    // Open the admin's lockBox, copy it, and stash it in the new user's lockBox.
     const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
     const userAccount = new UserAccount({
       _id: 'admin',
@@ -180,16 +179,16 @@ export class UserService {
       initialProfileComplete: true 
     }) 
     await this.usersDb.post(userAccount)
-    let userDb = new UserDatabase('admin', userAccount.userUUID, lockerContents.device.key, lockerContents.device._id, true)
+    let userDb = new UserDatabase('admin', userAccount.userUUID, lockBoxContents.device.key, lockBoxContents.device._id, true)
     await userDb.put(userProfile)
-    await this.lockerService.fillLocker('admin', password, lockerContents)
+    await this.lockBoxService.fillLockBox('admin', password, lockBoxContents)
     return userAccount
   }
 
   async getDevice():Promise<Device> {
     try {
-      const locker = this.lockerService.getOpenLocker(this.getCurrentUser())
-      return locker.contents.device
+      const lockBox = this.lockBoxService.getOpenLockBox(this.getCurrentUser())
+      return lockBox.contents.device
     } catch (e) {
       return new Device()
     }
@@ -198,13 +197,13 @@ export class UserService {
   async create(userSignup:UserSignup):Promise<UserAccount> {
     let userAccount:UserAccount
     if (this.config.syncProtocol === '2') {
-      // Open the admin's locker, copy it, and stash it in the new user's locker.
-      await this.lockerService.openLocker('admin', userSignup.adminPassword)
-      const adminLocker = this.lockerService.getOpenLocker('admin')
-      this.lockerService.closeLocker('admin')
-      const userLockerContents = <LockerContents>{...adminLocker.contents}
-      await this.lockerService.fillLocker(userSignup.username, userSignup.password, userLockerContents)
-      const device = adminLocker.contents.device
+      // Open the admin's lockBox, copy it, and stash it in the new user's lockBox.
+      await this.lockBoxService.openLockBox('admin', userSignup.adminPassword)
+      const adminLockBox = this.lockBoxService.getOpenLockBox('admin')
+      this.lockBoxService.closeLockBox('admin')
+      const userLockBoxContents = <LockBoxContents>{...adminLockBox.contents}
+      await this.lockBoxService.fillLockBox(userSignup.username, userSignup.password, userLockBoxContents)
+      const device = adminLockBox.contents.device
       const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
       userAccount = new UserAccount({
         _id: userSignup.username,
