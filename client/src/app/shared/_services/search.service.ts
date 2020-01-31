@@ -11,6 +11,8 @@ import { FormInfo, FormSearchSettings } from 'src/app/tangy-forms/classes/form-i
 import { TangyFormResponse } from 'src/app/tangy-forms/tangy-form-response.class';
 import { Subject } from 'rxjs';
 import { DB } from '../_factories/db.factory';
+const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
+
 
 export class SearchDoc {
   _id: string
@@ -112,6 +114,15 @@ export class SearchService {
   }
 
   async search(username:string, phrase:string):Promise<Array<SearchDoc>> {
+    // Prevent race conditions when logging in. Components may load and search before our observable listening
+    // for login creates this db.
+    while (!this.indexDb) {
+      await sleep(1000)
+    }
+    return await this._search(username, phrase)
+  }
+
+  async _search(username:string, phrase:string):Promise<Array<SearchDoc>> {
     const allDocs = (await this.indexDb.allDocs({include_docs:true})).rows.map(row => <SearchDoc>row.doc).sort(function (a, b) {
       return b.lastModified - a.lastModified;
     })
