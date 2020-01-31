@@ -9,7 +9,7 @@ import { Observable, Subject } from 'rxjs';
 import { LanguagesService } from './../../../shared/_services/languages.service';
 import { Component, OnInit, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
 import { UserSignup } from 'src/app/shared/_classes/user-signup.class';
-import { LockerContents } from 'src/app/shared/_classes/locker-contents.class';
+import { LockBoxContents } from 'src/app/shared/_classes/lock-box-contents.class';
 
 const STEP_LANGUAGE_SELECT = 'STEP_LANGUAGE_SELECT'
 const STEP_DEVICE_PASSWORD = 'STEP_DEVICE_PASSWORD'
@@ -39,40 +39,38 @@ export class DeviceSetupComponent implements OnInit {
 
   async ngOnInit() {
     let password = ''
-    let deviceDoc = {}
-    // Initial step.
+    // Initial step. First we ask for the language, then the language step reloads page,
+    // that's when language will be set and we go to the next step of setting up a password.
     if (!this.languagesService.userHasSetLanguage()) {
       this.step = STEP_LANGUAGE_SELECT
     } else {
       this.step = STEP_DEVICE_PASSWORD
     }
-
-    // Listen to when steps are done.
+    // On language select done.
     this.stepLanguageSelect.done$.subscribe(value => {
       window.location.href = window.location.href.replace(window.location.hash, 'index.html')
     })
-
+    // On device admin password set.
     this.stepDevicePassword.done$.subscribe({next: setPassword => {
       password = setPassword
       this.step = STEP_DEVICE_REGISTRATION
     }})
-
+    // On device registration complete.
     this.stepDeviceRegistration.done$.subscribe(async (deviceDoc) => {
       await this.userService.installSharedUserDatabase(deviceDoc)
-      await this.userService.createAdmin(password, <LockerContents>{
+      await this.userService.createAdmin(password, <LockBoxContents>{
         device: deviceDoc
       })
       await this.authService.login('admin', password)
       this.step = STEP_SYNC
       this.stepDeviceSync.sync()
     })
-
+    // On device sync.
     this.stepDeviceSync.done$.subscribe(async (value) => {
       await this.authService.logout()
       this.routerService.navigate([''])
     })
     this.ready$.next(true)
-
   }
 
 }
