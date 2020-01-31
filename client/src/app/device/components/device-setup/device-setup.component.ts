@@ -1,3 +1,4 @@
+import { DeviceService } from './../../services/device.service';
 import { AuthenticationService } from './../../../shared/_services/authentication.service';
 import { UserService } from 'src/app/shared/_services/user.service';
 import { DevicePasswordComponent } from './../device-password/device-password.component';
@@ -33,6 +34,7 @@ export class DeviceSetupComponent implements OnInit {
   constructor(
     private languagesService:LanguagesService,
     private userService:UserService,
+    private deviceService:DeviceService,
     private authService:AuthenticationService,
     private routerService:Router
   ) { }

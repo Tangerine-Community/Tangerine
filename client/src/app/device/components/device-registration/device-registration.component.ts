@@ -12,7 +12,7 @@ import { Device } from '../../classes/device.class';
 export class DeviceRegistrationComponent implements OnInit {
 
   @ViewChild('container') container: ElementRef
-  done$ = new Subject()
+  done$:Subject<any> = new Subject()
 
   constructor(
     private deviceService: DeviceService
