@@ -10,7 +10,8 @@ import isAuthenticated = require('../middleware/is-authenticated')
   controllers: [
     GroupController,
     UserController,
-    GroupDeviceController
+    GroupDeviceController,
+    GroupDeviceManageController
   ],
   imports: [SharedModule]
 })
