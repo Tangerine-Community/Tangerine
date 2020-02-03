@@ -76,6 +76,8 @@ const generateFlatResponse = async function (formResponse, locationList) {
     _id: formResponse._id,
     formId: formResponse.form.id,
     startUnixtime: formResponse.startUnixtime,
+    endUnixTime: formResponse.endUnixTime,
+    lastSaveUnixTime: formResponse.lastSaveUnixTime,
     complete: formResponse.complete
   };
   function set(input, key, value) {
