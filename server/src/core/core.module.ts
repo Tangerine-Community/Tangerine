@@ -1,4 +1,4 @@
-import { GroupDevicePublicController } from './group-device-public/group-device-public.controller';
+import { GroupDevicePublicController } from './group-device/group-device-public.controller';
 import { GroupDeviceManageController } from './group-device/group-device-manage.controller';
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { SharedModule } from '../shared/shared.module';
@@ -12,7 +12,7 @@ import isAuthenticated = require('../middleware/is-authenticated')
     GroupController,
     UserController,
     GroupDeviceController,
-    GroupDevicePublicController
+    GroupDevicePublicController,
     GroupDeviceManageController
   ],
   imports: [SharedModule]

@@ -9,6 +9,10 @@ export class GroupDeviceController {
   constructor(
     private readonly groupDeviceService: GroupDeviceService
   ) { }
+  
+  /*
+   * @TODO These are duplicate routes to GroupDevicePublicController. Remove before v3.8.0 release.
+   */
 
   @All('did-sync/:groupId/:deviceId/:token')
   async didSync(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token) {
