@@ -1,8 +1,8 @@
+import { UserService } from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {DashboardService} from "../_services/dashboard.service";
 import {MatTableDataSource, PageEvent} from "@angular/material";
-import {AuthenticationService} from "../../shared/_services/authentication.service";
 import {ClassFormService} from "../_services/class-form.service";
 import {Router} from "@angular/router";
 import {_TRANSLATE} from "../../shared/translation-marker";
@@ -71,14 +71,14 @@ export class DashboardComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private dashboardService: DashboardService,
-    private authenticationService: AuthenticationService,
+    private userService: UserService,
     private router: Router,
     private cookieService: CookieService
   ) { }
 
   async ngOnInit() {
     (<any>window).Tangy = {}
-    const currentUser = await this.authenticationService.getCurrentUser();
+    const currentUser = await this.userService.getCurrentUser();
     if (currentUser) {
       this.classViewService = new ClassFormService({databaseName: currentUser});
       this.classViewService.initialize();

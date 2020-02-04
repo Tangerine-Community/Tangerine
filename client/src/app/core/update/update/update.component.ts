@@ -40,8 +40,9 @@ export class UpdateComponent implements AfterContentInit {
       return
     }
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.sharedUserDatabase) {
-      const db = await this.userService.getSharedUserDatabase()
+    if (appConfig.syncProtocol === '2') {
+      // Just use whichever is the logged in user.
+      const db = await this.userService.getUserDatabase()
       await this.processUpdatesForUser(db, appConfig)
     } else {
       const usernames = await this.userService.getUsernames();

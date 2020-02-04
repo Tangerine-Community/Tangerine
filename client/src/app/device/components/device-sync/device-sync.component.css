@@ -1,0 +1,7 @@
+#container {
+  margin: 90px auto 0px;
+  text-align: center;
+}
+paper-progress {
+  margin: 0px auto 25px;
+}

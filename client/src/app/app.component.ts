@@ -3,7 +3,6 @@ import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
-import { AuthenticationService } from './shared/_services/authentication.service';
 import { UserService } from './shared/_services/user.service';
 import { updates } from './core/update/update/updates';
 import PouchDB from 'pouchdb';
@@ -37,7 +36,6 @@ export class AppComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private authenticationService: AuthenticationService,
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private router: Router,
@@ -87,9 +85,12 @@ export class AppComponent implements OnInit {
     // Set translation for t function used in Web Components.
     const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
-    this.isLoggedIn = this.authenticationService.isLoggedIn();
-    this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
-      this.isLoggedIn = isLoggedIn;
+    this.isLoggedIn = this.userService.isLoggedIn()
+    this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
+      this.isLoggedIn = true
+    });
+    this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
+      this.isLoggedIn = false
     });
     // Keep GPS chip warm.
     // @TODO Make this configurable. Not all installations use GPS and don't need to waste the battery.
@@ -104,10 +105,9 @@ export class AppComponent implements OnInit {
     const config =<any> await this.http.get('./assets/app-config.json').toPromise()
     this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
     this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-    await this.userService.install()
     await this.deviceService.install()
     this.window.localStorage.setItem('installed', true)
-    this.window.location = `${this.window.location.origin}${this.window.location.pathname}index.html`
+    window.location.href = window.location.href.replace(window.location.hash, 'index.html')
   }
 
   async checkPermissions() {
@@ -208,7 +208,7 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.authenticationService.logout();
+    this.userService.logout();
     this.router.navigate(['login']);
   }
 

@@ -1,8 +1,8 @@
+import { UserService } from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {ClassFormService} from "../../_services/class-form.service";
 import {DashboardService} from "../../_services/dashboard.service";
-import {AuthenticationService} from "../../../shared/_services/authentication.service";
 import {ClassUtils} from "../../class-utils";
 import {AppConfigService} from "../../../shared/_services/app-config.service";
 import {StudentResult} from "../student-grouping-report/student-result";
@@ -44,12 +44,12 @@ export class StudentSubtestReportComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private dashboardService: DashboardService,
-    private authenticationService: AuthenticationService,
+    private userService: UserService,
     private appConfigService: AppConfigService
   ) { }
 
   async ngOnInit() {
-    const currentUser = await this.authenticationService.getCurrentUser();
+    const currentUser = await this.userService.getCurrentUser();
     if (currentUser) {
       const classFormService = new ClassFormService({databaseName: currentUser});
       this.classFormService = classFormService
