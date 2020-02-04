@@ -1,17 +1,7 @@
-// @ts-ignore
-import PouchDB from 'pouchdb';
-// @ts-ignore
-import PouchDBFind from 'pouchdb-find';
-import cordovaSqlitePlugin from 'pouchdb-adapter-cordova-sqlite';
-import * as PouchDBUpsert from 'pouchdb-upsert';
 import {_TRANSLATE} from '../translation-marker';
-PouchDB.plugin(PouchDBFind);
-PouchDB.plugin(PouchDBUpsert);
-PouchDB.plugin(cordovaSqlitePlugin);
-PouchDB.defaults({auto_compaction: true, revs_limit: 1});
 const SHARED_USER_DATABASE_NAME = 'shared-user-database';
-const ENCRYPTION_KEY = 'test';
-declare const cordova: any;
+import PouchDB from 'pouchdb';
+import { DB } from '../_factories/db.factory';
 
 export class UserDatabase {
 
@@ -20,28 +10,16 @@ export class UserDatabase {
   name: string;
   deviceId: string;
   db: PouchDB;
-  window: any;
 
-  constructor(username: string, userId: string, deviceId: string, shared = false) {
-    this.userId = userId;
-    this.username = username;
-    this.name = username;
-    this.deviceId = deviceId;
-    this.window = window;
-
-    let options = {};
-    if (this.window.isCordovaApp) {
-      options = {
-        adapter: 'cordova-sqlite',
-        key: ENCRYPTION_KEY,
-        location: 'default',
-        androidDatabaseImplementation: 2
-      };
-    }
+  constructor(username: string, userId: string, key:string = '', deviceId: string, shared = false) {
+    this.userId = userId
+    this.username = username
+    this.name = username
+    this.deviceId = deviceId
     if (shared) {
-      this.db = new PouchDB(SHARED_USER_DATABASE_NAME, options);
+      this.db = DB(SHARED_USER_DATABASE_NAME, key)
     } else {
-      this.db = new PouchDB(username, options);
+      this.db = DB(username, key)
     }
   }
 

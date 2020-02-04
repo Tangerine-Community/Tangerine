@@ -1,3 +1,4 @@
+import { DeviceService } from './../../../device/services/device.service';
 
 import {from as observableFrom,  Observable } from 'rxjs';
 
@@ -7,7 +8,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AppConfigService } from '../../../shared/_services/app-config.service';
 
 import { UserService } from '../../../shared/_services/user.service';
-import { AuthenticationService } from '../../../shared/_services/authentication.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
 
 @Component({
@@ -17,6 +17,8 @@ import { _TRANSLATE } from '../../../shared/translation-marker';
 })
 export class LoginComponent implements OnInit {
   errorMessage = '';
+  devicePassword = ''
+  requiresDevicePasswordToRecover
   returnUrl: string; // stores the value of the url to redirect to after login
   user = { username: '', password: '' };
   users = [];
@@ -26,10 +28,11 @@ export class LoginComponent implements OnInit {
   allUsernames;
   listUsernamesOnLoginScreen;
   constructor(
-    private authenticationService: AuthenticationService,
     private route: ActivatedRoute,
     private router: Router,
+    private userService:UserService,
     private usersService: UserService,
+    private deviceService:DeviceService,
     private appConfigService: AppConfigService
   ) {
     this.installed = localStorage.getItem('installed') ? true : false
@@ -38,18 +41,14 @@ export class LoginComponent implements OnInit {
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();
     const homeUrl = appConfig.homeUrl;
+    this.requiresDevicePasswordToRecover = this.deviceService.passwordIsSet()
     this.securityQuestionText = appConfig.securityQuestionText;
     this.listUsernamesOnLoginScreen = appConfig.listUsernamesOnLoginScreen;
     if (this.listUsernamesOnLoginScreen) {
       this.allUsernames = await this.usersService.getUsernames();
     }
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
-    const isNoPasswordMode = this.authenticationService.isNoPasswordMode();
-    // TODO List users on login page
-    // Observable.fromPromise(this.usersService.getAllUsers()).subscribe(data => {
-    //   this.users = data;
-    // });
-    if (this.authenticationService.isLoggedIn() || isNoPasswordMode) {
+    if (this.userService.isLoggedIn()) {
       this.router.navigate([this.returnUrl]);
     }
 
@@ -60,7 +59,11 @@ export class LoginComponent implements OnInit {
   }
 
   resetPassword() {
-    observableFrom(this.authenticationService.resetPassword(this.user)).subscribe(data => {
+    if (!this.deviceService.verifyPassword(this.devicePassword)) {
+      this.errorMessage = _TRANSLATE('Device password incorrect.')
+      return
+    }
+    observableFrom(this.userService.resetPassword(this.user, this.devicePassword)).subscribe(data => {
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
@@ -71,8 +74,9 @@ export class LoginComponent implements OnInit {
 
     });
   }
+
   loginUser() {
-    observableFrom(this.authenticationService.login(this.user.username, this.user.password)).subscribe(data => {
+    observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(data => {
       if (data) {
         this.router.navigate(['' + this.returnUrl]);
       } else {
