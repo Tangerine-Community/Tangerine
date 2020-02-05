@@ -35,10 +35,30 @@ module.exports = {
         } catch (e) {
           // Do nothing...
         }
+        // debugger;
+        const startUnixtime = processedResult.startUnixtime;
+        let startDatetimeISO = null;
+        try {
+          const startDatetime = new Date(startUnixtime);
+          console.log("converting startUnixtime " + startUnixtime + " to startDatetime: " + startDatetime)
+          if (isValidDate()) {
+            startDatetimeISO = startDatetime.toISOString()
+            console.log("converted startDatetime: " + startDatetime + " to startDatetimeISO: " + startDatetimeISO)
+          } else {
+            console.log("Error converting startDatetime: " + startDatetime + " to startDatetimeISO.")
+          }
+          // mic check
+        } catch (e) {
+          console.log("error converting " + processedResult.startUnixtime + " to startDatetime. Error: " + e)
+          // console.trace()
+          // let err = new Error();
+          // err.stack
+          console.error(e);
+        }
         await pushResponse({
           _id: processedResult._id,
           formId: processedResult.formId,
-          startDatetime: new Date(processedResult.startUnixtime).toISOString(),
+          startDatetime: startDatetimeISO,
           startUnixtime: processedResult.startUnixtime,
           processedResult,
           'geoip': {
@@ -50,6 +70,10 @@ module.exports = {
       })
     }
   }
+}
+
+function isValidDate(d) {
+  return d instanceof Date && !isNaN(d);
 }
 
 /** This function processes form response for csv.

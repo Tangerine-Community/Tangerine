@@ -43,7 +43,10 @@ exports.changeProcessor = (change, sourceDb) => {
             resolve({status: 'ok', seq: change.seq, dbName: sourceDb.name})
         }
       })
-      .catch(error => reject(new Error(error)))
+      .catch(error => {
+        console.log('Error in changeProcessor: ' + JSON.stringify(error))
+        reject(new Error(error))
+      })
   })
 }
 
