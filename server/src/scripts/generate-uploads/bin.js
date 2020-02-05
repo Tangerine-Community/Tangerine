@@ -9,6 +9,7 @@ if (process.argv[2] === '--help') {
 const pako = require('pako')
 const axios = require('axios')
 const uuidv1 = require('uuid/v1');
+const random_name = require('node-random-name');
 const numberOfUploads = parseInt(process.argv[2])
 const groupName = process.argv[3];
 const url = `http://localhost/api/${process.argv[3]}/upload`
@@ -17,10 +18,14 @@ const defaultBatchSize =  numberOfUploads < 100 ? numberOfUploads : 100
 const batchSize = process.argv[5] ? parseInt(process.argv[5]) : defaultBatchSize
 
 const alternativeTemplate = process.argv[6] ? process.argv[6] : ''
-const templateDocfilename = './template-' + alternativeTemplate + '-doc.js'
-const templateDoc = require(templateDocfilename).doc
+let templateDocfilename;
+let templateDoc;
+if (alternativeTemplate !== 'case-mother') {
+  templateDocfilename = './template-' + alternativeTemplate + '-doc.js'
+  templateDoc = require(templateDocfilename).doc
+}
 const userProfileTemplateDoc = require('./template-user-profile-doc.js').doc
-const form01ATemplateDoc = require('./template-case-form01A-doc.js').doc
+const groupPath = '../../../../client/content/groups/' + groupName
 
 const sleep = (milliseconds) => {
   return new Promise((res, rej) => {
@@ -56,20 +61,35 @@ async function go() {
         }
         doc = Object.assign({}, templateDoc, studentRegistration)
       } else if (alternativeTemplate === 'case-mother') {
+        const form01ATemplateDoc = require(groupPath + '/response-templates/template-case-form01A-doc.js').doc
+        const caseMotherTemplateDoc = require(groupPath + '/response-templates/template-case-mother-doc.js').doc
         let participantId = uuidv1()
         let caseId = uuidv1();
         let participant_id = Math.round(Math.random() * 1000000)
+        let firstname = random_name({ first: true, gender: "female" })
+        let surname = random_name({ last: true })
+        let barcode_data =  { "participant_id": participant_id, "treatment_assignment": "Experiment", "bin-mother": "A", "bin-infant": "B", "sub-studies": { "S1": true, "S2": false, "S3": false, "S4": true } }
         let caseMother = {
           _id: caseId,
           "participants": [{
             "id": participantId,
             "caseRoleId": "mother-role",
-            "data": {"firstname": "A", "surname": "Test", "participant_id": participant_id}
+            "data": {
+              "firstname": firstname,
+              "surname": surname,
+              "participant_id": participant_id
+            }
           }],
         }
         console.log("motherId: " + caseId + " participantId: " + participantId + " participant_id: " + participant_id);
-        doc = Object.assign({}, templateDoc, caseMother);
+        doc = Object.assign({}, caseMotherTemplateDoc, caseMother);
+        caseMotherTemplateDoc.items[0].inputs[0].value = participant_id;
+        caseMotherTemplateDoc.items[0].inputs[9].value = firstname;
+        caseMotherTemplateDoc.items[0].inputs[10].value = surname;
+        form01ATemplateDoc.items[10].inputs[1].value = barcode_data;
         form01ATemplateDoc.items[10].inputs[2].value = participant_id;
+        form01ATemplateDoc.items[12].inputs[2].value = surname;
+        form01ATemplateDoc.items[12].inputs[3].value = firstname;
         linkedDoc1 =  Object.assign({}, form01ATemplateDoc, {
           _id: participantId,
           caseId: caseId

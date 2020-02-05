@@ -1,7 +1,7 @@
 # Generate-uploads
 
-This script creates 2 docs for each iteration of the batch, depending on the alternativeTemplate. Default is an example doc 
-and a user-profile doc. 
+This script creates 2 docs for each iteration of the batch, depending on the alternativeTemplate. Default is an example doc and a user-profile doc. 
+If the alternativeTemplate is 'case-mother', the app opens the templates from the response-templates dir in the groupName. 
 
 Usage:
 ```
@@ -12,7 +12,7 @@ npm install
 Inside a docker instance:
 
 ```
-cd /tangerine/server/src/scripts/generate-uploads# 
+cd /tangerine/server/src/scripts/generate-uploads
 ```
 
 Upload test data using the case-mother alternativeTemplate, with a 2 second delay, batch size of 1.
