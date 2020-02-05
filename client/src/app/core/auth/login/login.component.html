@@ -14,6 +14,13 @@
 <div *ngIf="installed" class="login-app-content container">
   <div class="group content-inner">
     <form role="form" #login='ngForm' novalidate>
+      <mat-form-field *ngIf="requiresDevicePasswordToRecover && showRecoveryInput">
+        <input matInput type="password" required [(ngModel)]="devicePassword" id="devicePassword" name="devicePassword">
+        <mat-placeholder>
+          <i class="material-icons app-input-icon">lock_open</i>
+          <span>Device Password</span>
+        </mat-placeholder>
+      </mat-form-field>
       <mat-form-field *ngIf="listUsernamesOnLoginScreen">
         <mat-label>{{'Select your Username'|translate}}</mat-label>
         <select matNativeControl [(ngModel)]="user.username" name="user">

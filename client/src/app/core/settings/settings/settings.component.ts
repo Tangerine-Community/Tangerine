@@ -24,7 +24,7 @@ export class SettingsComponent implements OnInit {
       const selectedLanguage = this.translations.find(languageInfo => languageInfo.languageCode === this.form.nativeElement.querySelector('[name=translation]').value)
       localStorage.setItem('languageCode', selectedLanguage.languageCode)
       localStorage.setItem('languageDirection', selectedLanguage.languageDirection)
-      window.location.href = `${this.window.location.origin}${this.window.location.pathname}index.html`
+      window.location.href = window.location.href.replace(window.location.hash, 'index.html')
     })
   }
 

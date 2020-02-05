@@ -1,3 +1,4 @@
+import { DeviceService } from './../../device/services/device.service';
 import { CASE_EVENT_STATUS_REVIEWED, CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { UserDatabase } from './../../shared/_classes/user-database.class';
@@ -36,6 +37,7 @@ class CaseService {
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
+    private deviceService:DeviceService,
     private userService:UserService,
     private http:HttpClient
   ) { 
@@ -57,7 +59,8 @@ class CaseService {
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
     try {
-      this.case.location = (await this.userService.getUserProfile()).location
+      const device = await this.deviceService.getDevice()
+      this.case.location = device.assignedLocation.value.reduce((location, levelInfo) => { return {...location, [levelInfo.level]: levelInfo.value}}, {})
     } catch(error) {
       console.log("There was error setting the location on the case.")
       console.log(error)
@@ -134,60 +137,46 @@ class CaseService {
   startEvent(eventId) {
     // ??
   }
-
-  // async scheduleEvent(eventId, dateStart:number, dateEnd?:number) {
-  //   this.case.events = this.case.events.map(event => {
-  //     return event.id === eventId 
-  //     ? { ...event, ...{ dateStart, dateEnd: dateEnd ? dateEnd : dateStart, estimate: false} }
-  //     : event
-  //   })
-  // }
-
-  async setEventEstimatedDay(eventId, timeInMs: number) {
-    const dateString = new Date(timeInMs)
-    const estimatedDay = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
+  setEventEstimatedDay(eventId, timeInMs: number) {
+    const estimatedDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
-      ? { ...event, ...{ estimatedDay} }
-      : event
+        ? { ...event, ...{ estimatedDay } }
+        : event
     })
   }
-  async setEventScheduledDay(eventId, timeInMs: number) {
-    const dateString = new Date(timeInMs)
-    const scheduledDay = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
+  setEventScheduledDay(eventId, timeInMs: number) {
+    const scheduledDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
-      ? { ...event, ...{ scheduledDay} }
-      : event
+        ? { ...event, ...{ scheduledDay } }
+        : event
     })
   }
-  async setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
-    const windowStartDateString = new Date(windowStartDayTimeInMs)
-    const windowEndDateString = new Date(windowEndDayTimeInMs)
-    const windowStartDay = `${windowStartDateString.getFullYear()}-${windowStartDateString.getMonth()}-${windowStartDateString.getDate()}`
-    const windowEndDay = `${windowEndDateString.getFullYear()}-${windowEndDateString.getMonth()}-${windowEndDateString.getDate()}`
+  setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
+    const windowStartDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
+    const windowEndDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
       return event.id === eventId
-      ? { ...event, ...{ windowStartDay, windowEndDay} }
-      : event
+        ? { ...event, ...{ windowStartDay, windowEndDay } }
+        : event
     })
   }
-  async setEventOccurredOn(eventId, timeInMs: number) {
-    const dateString = new Date(timeInMs)
-    const occurredOnDay = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
+  setEventOccurredOn(eventId, timeInMs: number) {
+    const occurredOnDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     return this.case.events = this.case.events.map(event => {
       return event.id === eventId
-      ? { ...event, ...{ occurredOnDay} }
-      : event
+        ? { ...event, ...{ occurredOnDay } }
+        : event
     })
   }
-  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''):EventForm {
+  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     const eventForm = <EventForm>{
-      id: UUID(), 
-      complete: false, 
-      caseId: this.case._id, 
+      id: UUID(),
+      complete: false,
+      caseId: this.case._id,
       participantId,
-      caseEventId, 
+      caseEventId,
       eventFormDefinitionId: eventFormDefinitionId
     }
     this
@@ -279,7 +268,7 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (eventFormDefinition.forCaseRole === caseRoleId) {
+        if (eventFormDefinition.forCaseRole === caseRoleId && eventFormDefinition.required) {
           this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }

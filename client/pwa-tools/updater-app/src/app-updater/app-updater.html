@@ -164,6 +164,13 @@
         }, 1500)
       }
 
+      redirectToApplyUpdate() {
+        setTimeout(() => {
+          let currentReleaseUuid = localStorage.getItem('release-uuid')
+          window.location = `${window.location.origin}${window.location.pathname}${currentReleaseUuid}/app/index.html#/update`
+        }, 1500)
+      }
+
       concludeSession() {
         this.$.progress.removeAttribute('indeterminate')
         if (this.firstInstall && /Android/i.test(navigator.userAgent)) {
@@ -175,8 +182,11 @@
           this.message = 'Application has been installed. Bookmark this page.'
         } else {
           this.proceedToReleaseUuid = localStorage.getItem('release-uuid')
-          this.showLinkToProceed = true
-          this.message = 'Updates have been applied. '
+          this.message = 'Updates have been downloaded. Redirecting to update... '
+          setTimeout(() => {
+            this.redirectToApplyUpdate()
+          }, 500)
+
         }
       }
 

@@ -3,7 +3,6 @@ import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
-import { AuthenticationService } from './shared/_services/authentication.service';
 import { UserService } from './shared/_services/user.service';
 import { updates } from './core/update/update/updates';
 import PouchDB from 'pouchdb';
@@ -22,21 +21,21 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
 export class AppComponent implements OnInit {
 
   appConfig:AppConfig
-  showNav;
   showUpdateAppLink;
   window:any;
   installed = false
+  isLoggedIn = false
   freespaceCorrectionOccuring = false;
   updateIsRunning = false;
   languageCode:string
   languageDirection:string
   languagePath:string
   translate: TranslateService
+  ready = false
   @ViewChild(MatSidenav) sidenav: QueryList<MatSidenav>;
 
   constructor(
     private userService: UserService,
-    private authenticationService: AuthenticationService,
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private router: Router,
@@ -46,7 +45,7 @@ export class AppComponent implements OnInit {
   ) {
     this.window = window;
     this.window.PouchDB = PouchDB
-    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode') 
+    this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
       ? true
       : false
     if (!this.installed) return
@@ -60,8 +59,8 @@ export class AppComponent implements OnInit {
     translate.setDefaultLang(this.languagePath);
     translate.use(this.languagePath);
     // Set required config for use of <t-lang> Web Component.
-    this.window.document.documentElement.lang = this.languageCode; 
-    this.window.document.documentElement.dir = this.languageDirection; 
+    this.window.document.documentElement.lang = this.languageCode;
+    this.window.document.documentElement.dir = this.languageDirection;
     this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
     // Make database services available to eval'd code.
     this.window.userService = this.userService
@@ -73,36 +72,74 @@ export class AppComponent implements OnInit {
     this.appConfig = await this.appConfigService.getAppConfig()
     this.searchService.start()
     this.window.appConfig = this.appConfig
+    this.window.device = await this.deviceService.getDevice()
     // Bail if the app is not yet installed.
     if (!this.installed) {
       this.install()
-      return
+      return;
+    } else {
+      this.checkPermissions();
     }
     await this.userService.initialize()
     this.checkIfUpdateScriptRequired();
     // Set translation for t function used in Web Components.
     const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
-    this.showNav = this.authenticationService.isLoggedIn();
-    this.authenticationService.currentUserLoggedIn$.subscribe((isLoggedIn) => {
-      this.showNav = isLoggedIn;
+    this.isLoggedIn = this.userService.isLoggedIn()
+    this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
+      this.isLoggedIn = true
+    });
+    this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
+      this.isLoggedIn = false
     });
     // Keep GPS chip warm.
     // @TODO Make this configurable. Not all installations use GPS and don't need to waste the battery.
     setInterval(this.getGeolocationPosition, 5000);
     this.checkIfUpdateScriptRequired();
     this.checkStorageUsage()
-    setInterval(this.checkStorageUsage.bind(this), 60*1000); 
+    setInterval(this.checkStorageUsage.bind(this), 60*1000);
+    this.ready = true
   }
 
   async install() {
     const config =<any> await this.http.get('./assets/app-config.json').toPromise()
     this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
     this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-    await this.userService.install()
     await this.deviceService.install()
     this.window.localStorage.setItem('installed', true)
-    this.window.location = `${this.window.location.origin}${this.window.location.pathname}index.html`
+    window.location.href = window.location.href.replace(window.location.hash, 'index.html')
+  }
+
+  async checkPermissions() {
+    if (this.window.isCordovaApp) {
+      const permissions = window['cordova']['plugins']['permissions'];
+      if (typeof permissions !== 'undefined') {
+        const list = [
+          permissions.ACCESS_COARSE_LOCATION,
+          permissions.ACCESS_FINE_LOCATION,
+          permissions.CAMERA,
+          permissions.READ_EXTERNAL_STORAGE,
+          permissions.WRITE_EXTERNAL_STORAGE
+        ];
+
+        window['cordova']['plugins']['permissions'].hasPermission(list, success, error);
+        function error() {
+          console.warn('Camera or Storage permission is not turned on');
+        }
+        function success( status ) {
+          if ( !status.hasPermission ) {
+            permissions.requestPermissions(
+              list,
+              function(statusRequest) {
+                if ( !statusRequest.hasPermission ) {
+                  error();
+                }
+              },
+              error);
+          }
+        }
+      }
+    }
   }
 
   async checkStorageUsage() {
@@ -112,8 +149,8 @@ export class AppComponent implements OnInit {
       ? this.appConfig.minimumFreeSpace
       : 50*1000*1000
     if (availableFreeSpace < minimumFreeSpace && this.freespaceCorrectionOccuring === false) {
-      const batchSize = this.appConfig.usageCleanupBatchSize 
-        ? this.appConfig.usageCleanupBatchSize 
+      const batchSize = this.appConfig.usageCleanupBatchSize
+        ? this.appConfig.usageCleanupBatchSize
         : 10
       this.freespaceCorrectionOccuring = true
       await this.correctFreeSpace(minimumFreeSpace, batchSize)
@@ -130,7 +167,7 @@ export class AppComponent implements OnInit {
       const results = await DB.query('tangy-form/responseByUploadDatetime', {
         descending: false,
         limit: batchSize,
-        include_docs: true 
+        include_docs: true
       });
       for(let row of results.rows) {
         await DB.remove(row.doc)
@@ -171,7 +208,7 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.authenticationService.logout();
+    this.userService.logout();
     this.router.navigate(['login']);
   }
 
@@ -196,6 +233,7 @@ export class AppComponent implements OnInit {
         } else {
           console.log('Update Instaled');
           this.updateIsRunning = false;
+          this.router.navigate(['update'])
         }
       };
       const updateCallback = (error, data) => {

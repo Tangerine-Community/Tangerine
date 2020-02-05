@@ -9,39 +9,10 @@ export class GroupDeviceController {
   constructor(
     private readonly groupDeviceService: GroupDeviceService
   ) { }
-
-  @All('list/:groupId')
-  async list(@Param('groupId') groupId) {
-    return await this.groupDeviceService.list(groupId)
-  }
-
-  @All('create/:groupId')
-  async create(@Param('groupId') groupId:string, @Body('deviceData') deviceData:any):Promise<GroupDevice> {
-    return await this.groupDeviceService.create(groupId, deviceData)
-  }
-
-  @All('read/:groupId/:deviceId')
-  async read(@Param('groupId') groupId, @Param('deviceId') deviceId) {
-    return await this.groupDeviceService.read(groupId, deviceId)
-  }
-
-  @All('update/:groupId')
-  async update(@Param('groupId') groupId, @Body('device') device:GroupDevice) {
-    const freshDevice = await this.groupDeviceService.update(groupId, device)
-    return freshDevice
-  }
-
-  @All('reset/:groupId/:deviceId')
-  async reset(@Param('groupId') groupId, @Param('deviceId') deviceId) {
-    const freshDevice = await this.groupDeviceService.reset(groupId, deviceId)
-    return freshDevice
-  }
-
-  @All('delete/:groupId/:deviceId')
-  async delete(@Param('groupId') groupId:string, @Param('deviceId') deviceId:string) {
-    await this.groupDeviceService.delete(groupId, deviceId)
-    return {} 
-  }
+  
+  /*
+   * @TODO These are duplicate routes to GroupDevicePublicController. Remove before v3.8.0 release.
+   */
 
   @All('did-sync/:groupId/:deviceId/:token')
   async didSync(@Param('groupId') groupId, @Param('deviceId') deviceId, @Param('token') token) {
