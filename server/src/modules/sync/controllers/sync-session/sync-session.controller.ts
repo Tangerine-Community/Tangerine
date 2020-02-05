@@ -23,7 +23,7 @@ export class SyncSessionController {
 
       }
     } catch (err) {
-      log.error(`Error in sync-session/start`)
+      log.error(`Error in sync-session/start with groupId: ${groupId} deviceId: ${deviceId} deviceToken: ${deviceToken} `)
       console.log(err)
     }
   }

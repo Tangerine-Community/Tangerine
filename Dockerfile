@@ -1,4 +1,4 @@
-# Start with docker-tangerine-support, which provides the core Tangerine apps.
+# Start with docker-tangerine-base-image, which provides the core Tangerine apps.
 FROM tangerine/docker-tangerine-base-image:add-sqlite-support--1
 
 # Never ask for confirmations
@@ -35,9 +35,6 @@ RUN cd /tangerine/editor && \
 ADD client/package.json /tangerine/client/package.json
 RUN cd /tangerine/client/ && \
     npm install
-
-# Workaround for aggressive proxy server.
-RUN git config --global url."git://".insteadOf https://
 
 # Install PWA tools.
 ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
