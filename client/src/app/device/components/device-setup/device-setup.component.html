@@ -1,6 +1,12 @@
+
 <div [hidden]="step !== 'STEP_LANGUAGE_SELECT'"> 
   <app-device-language #stepLanguageSelect>
   </app-device-language>
+</div>
+
+<div [hidden]="step !== 'STEP_DEVICE_PASSWORD'"> 
+  <app-device-password #stepDevicePassword>
+  </app-device-password>
 </div>
 
 <div [hidden]="step !== 'STEP_DEVICE_REGISTRATION'">

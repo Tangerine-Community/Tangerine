@@ -3,6 +3,7 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { Case } from '../classes/case.class';
 import { CaseEventInfo } from './case-event-info.class';
 import { CaseService } from './case.service';
+import moment from 'moment/src/moment';
 
 @Injectable({
   providedIn: 'root'
@@ -37,11 +38,14 @@ export class CasesService {
   }
 
   private doesOverlap(dateStart, dateEnd, eventInfo: CaseEventInfo): boolean {
-    const date = eventInfo.occurredOnDay || eventInfo.scheduledDay || eventInfo.estimatedDay
-    // Return true if lower bound overlap, upper bound overlap, inside bounds, or encompassing bounds.
-    return (date <= dateStart && dateStart <= date)
-      || (date <= dateEnd && dateEnd <= date)
-      || (date >= dateStart && dateEnd >= date)
-      || (date <= dateStart && dateEnd <= date)
+    // Only show items on schedule view if the following dates are set on the event
+    if (!(eventInfo.scheduledDay || eventInfo.estimatedDay || eventInfo.windowStartDay)){
+      return false;
+    }
+    dateStart = moment(new Date(dateStart)).format('YYYY-MM-DD')
+    dateEnd = moment(new Date(dateEnd)).format('YYYY-MM-DD')
+    console.log({dateStart, dateEnd})
+    return moment(eventInfo.scheduledDay || eventInfo.estimatedDay || eventInfo.windowStartDay).isBetween(dateStart, dateEnd, 'days', '[]')
+    || moment(eventInfo.scheduledDay || eventInfo.estimatedDay ||eventInfo.windowEndDay).isBetween(dateStart, dateEnd, 'days', '[]')
   }
 }

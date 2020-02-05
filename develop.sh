@@ -135,7 +135,8 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --env \"T_CENTRALLY_MANAGED_USER_PROFILE=$T_CENTRALLY_MANAGED_USER_PROFILE\" \
   --env \"T_CATEGORIES=$T_CATEGORIES\" \
   --env \"T_ORIENTATION=$T_ORIENTATION\" \
-  --env \"T_CSV_MARK_DISABLED_OR_HIDDEN_WITH=$T_CSV_MARK_DISABLED_OR_HIDDEN_WITH\" \
+  --env \"T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH=$T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH\" \
+  --env \"T_REPORTING_MARK_SKIPPED_WITH=$T_REPORTING_MARK_SKIPPED_WITH\" \
   $T_PORT_MAPPING \
   -p 9229:9229 \
   -p 9228:9228 \
@@ -158,7 +159,7 @@ CMD="docker run -it --name $T_CONTAINER_NAME \
   --volume $(pwd)/scripts/generate-csv/bin.js:/tangerine/scripts/generate-csv/bin.js:delegated \
   --volume $(pwd)/scripts/generate-csv/batch.js:/tangerine/scripts/generate-csv/batch.js:delegated \
   --volume $(pwd)/editor/src:/tangerine/editor/src:delegated \
-  --volume $(pwd)/../TangyP2PPlugin:/tangerine/client/TangyP2PPlugin \
+  --volume $(pwd)/../cordova-plugin-nearby-connections:/tangerine/client/cordova-plugin-nearby-connections \
 
  tangerine/tangerine:local
  "

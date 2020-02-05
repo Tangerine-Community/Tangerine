@@ -1,3 +1,4 @@
+import { EventFormAddComponent } from './components/event-form-add/event-form-add.component';
 import { NgModule, Injectable } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CreateProfileGuardService } from '../shared/_guards/create-profile-guard.service';
@@ -25,6 +26,11 @@ const routes: Routes = [
   {
     path: 'case/event/:caseId/:eventId',
     component: EventComponent,
+    canActivate: [LoginGuard, CreateProfileGuardService]
+  },
+  {
+    path: 'case/event/form-add/:caseId/:eventId/:participantId',
+    component: EventFormAddComponent,
     canActivate: [LoginGuard, CreateProfileGuardService]
   },
   {

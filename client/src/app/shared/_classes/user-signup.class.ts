@@ -1,11 +1,10 @@
 export class UserSignup {
-  username:string
-  password:string
-  securityQuestionResponse:string
-  constructor(username:string, password:string, securityQuestionResponse:string) {
-    this.username = username
-    this.password = password
-    this.securityQuestionResponse = securityQuestionResponse
+  adminPassword:string = ''
+  username:string = ''
+  password:string = ''
+  confirmPassword:string = ''
+  securityQuestionResponse:string = ''
+  constructor(data) {
+    Object.assign(this, data)
   }
-
 }

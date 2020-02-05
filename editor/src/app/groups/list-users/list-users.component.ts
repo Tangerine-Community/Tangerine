@@ -12,7 +12,7 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
   styleUrls: ['./list-users.component.css']
 })
 export class ListUsersComponent implements OnInit {
-  groupName;
+  groupId;
   users;
   @ViewChild('search') search: ElementRef;
   constructor(
@@ -23,7 +23,7 @@ export class ListUsersComponent implements OnInit {
 
   async ngOnInit() {
     this.route.params.subscribe(params => {
-      this.groupName = params.groupName;
+      this.groupId = params.groupId;
     });
     await this.getUsersByGroup();
     fromEvent(this.search.nativeElement, 'keyup')
@@ -34,12 +34,12 @@ export class ListUsersComponent implements OnInit {
   }
 
   async getUsersByGroupAndUsername(username: string) {
-    this.users = await this.groupsService.getUsersByGroupAndUsername(this.groupName, username);
+    this.users = await this.groupsService.getUsersByGroupAndUsername(this.groupId, username);
   }
 
   async getUsersByGroup() {
     try {
-      this.users = await this.groupsService.getUsersByGroup(this.groupName);
+      this.users = await this.groupsService.getUsersByGroup(this.groupId);
     } catch (error) {
       console.error(error);
     }
@@ -47,9 +47,9 @@ export class ListUsersComponent implements OnInit {
 
   async removeUserFromGroup(username: string) {
     try {
-      const removeUser = confirm(`Remove user: ${username} from Group: ${this.groupName}`);
+      const removeUser = confirm(`Remove user: ${username} from Group: ${this.groupId}`);
       if (removeUser) {
-        const result = await this.groupsService.removeUserFromGroup(this.groupName, username);
+        const result = await this.groupsService.removeUserFromGroup(this.groupId, username);
         this.errorHandler.handleError(_TRANSLATE('User Removed from Group Successfully'));
       }
     } catch (error) {

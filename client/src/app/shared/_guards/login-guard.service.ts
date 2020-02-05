@@ -1,21 +1,20 @@
+import { UserService } from 'src/app/shared/_services/user.service';
 import { DeviceService } from './../../device/services/device.service';
 import { AppConfigService } from './../_services/app-config.service';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 
-import { AuthenticationService } from '../_services/authentication.service';
-
 @Injectable()
 export class LoginGuard implements CanActivate {
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService,
+    private userService: UserService,
     private deviceService:DeviceService,
     private appConfigService:AppConfigService
   ) { }
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (this.authenticationService.isLoggedIn()) {
+    if (this.userService.isLoggedIn()) {
       return true;
     }
     //  else if (!this.authenticationService.isLoggedIn() && this.authenticationService.isNoPasswordMode()) {
@@ -23,8 +22,14 @@ export class LoginGuard implements CanActivate {
     //   return true;
     // }
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.associateUserProfileMode === 'local-exists' && !(await this.deviceService.isRegistered())) {
-      this.router.navigate(['device-setup'], { queryParams: { returnUrl: state.url } });
+    if (appConfig.syncProtocol === '2') {
+      const deviceIsRegistered = await this.deviceService.isRegistered()
+      if (deviceIsRegistered) {
+        this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
+      } else {
+        this.router.navigate(['device-setup'], { queryParams: { returnUrl: state.url } });
+      }
+      
     } else {
       this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
     }

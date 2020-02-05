@@ -14,7 +14,7 @@ import PouchDB from 'pouchdb';
 import { HttpClient } from '@angular/common/http';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { CaseParticipant } from '../classes/case-participant.class';
-
+import moment from 'moment/src/moment';
 class MockCaseDefinitionsService {
   async load() {
     return <Array<CaseDefinition>>[
@@ -206,9 +206,8 @@ describe('CaseService', () => {
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
     const timeInMs = new Date().getTime()
-    const dateString = new Date(timeInMs)
-    const date = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
-    await service.setEventOccurredOn(service.case.events[0].id, timeInMs)
+    const date = moment((new Date(timeInMs))).format('YYYY-MM-DD')
+    service.setEventOccurredOn(service.case.events[0].id, timeInMs)
     expect(service.case.events[0].occurredOnDay).toEqual(date)
   })
   it('should set an event EstimatedDay date', async () => {
@@ -216,9 +215,8 @@ describe('CaseService', () => {
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
     const timeInMs = new Date().getTime()
-    const dateString = new Date(timeInMs)
-    const date = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
-    await service.setEventEstimatedDay(service.case.events[0].id, timeInMs)
+    const date = moment((new Date(timeInMs))).format('YYYY-MM-DD')
+    service.setEventEstimatedDay(service.case.events[0].id, timeInMs)
     expect(service.case.events[0].estimatedDay).toEqual(date)
   })
   it('should set an event ScheduledDay date', async () => {
@@ -226,9 +224,8 @@ describe('CaseService', () => {
     await service.create('caseDefinition1')
     await service.createEvent('event-definition-first-visit')
     const timeInMs = new Date().getTime()
-    const dateString = new Date(timeInMs)
-    const date = `${dateString.getFullYear()}-${dateString.getMonth()}-${dateString.getDate()}`
-    await service.setEventScheduledDay(service.case.events[0].id, timeInMs)
+    const date = moment((new Date(timeInMs))).format('YYYY-MM-DD')
+    service.setEventScheduledDay(service.case.events[0].id, timeInMs)
     expect(service.case.events[0].scheduledDay).toEqual(date)
   })
   it('should set an event Window period', async () => {
@@ -237,11 +234,9 @@ describe('CaseService', () => {
     await service.createEvent('event-definition-first-visit')
     const windowStartDayTimeInMs = new Date().getTime()
     const windowEndDayTimeInMs = new Date().getTime()
-    const windowStartDateString = new Date(windowStartDayTimeInMs)
-    const windowEndDateString = new Date(windowEndDayTimeInMs)
-    const windowStartDay = `${windowStartDateString.getFullYear()}-${windowStartDateString.getMonth()}-${windowStartDateString.getDate()}`
-    const windowEndDay = `${windowEndDateString.getFullYear()}-${windowEndDateString.getMonth()}-${windowEndDateString.getDate()}`
-    await service.setEventWindow(service.case.events[0].id, windowStartDayTimeInMs, windowEndDayTimeInMs)
+    const windowStartDay = moment((new Date(windowStartDayTimeInMs))).format('YYYY-MM-DD')
+    const windowEndDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
+    service.setEventWindow(service.case.events[0].id, windowStartDayTimeInMs, windowEndDayTimeInMs)
     expect(service.case.events[0].windowStartDay).toEqual(windowStartDay)
     expect(service.case.events[0].windowEndDay).toEqual(windowEndDay)
   })

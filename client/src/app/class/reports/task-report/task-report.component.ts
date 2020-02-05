@@ -1,9 +1,9 @@
+import { UserService } from 'src/app/shared/_services/user.service';
 import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
 import {ClassFormService} from "../../_services/class-form.service";
 import {ClassUtils} from "../../class-utils";
 import {ActivatedRoute, Router} from "@angular/router";
 import {DashboardService} from "../../_services/dashboard.service";
-import {AuthenticationService} from "../../../shared/_services/authentication.service";
 import {StudentResult} from "../student-grouping-report/student-result";
 import {ClassGroupingReport} from "../student-grouping-report/class-grouping-report";
 import {MatTableDataSource} from "@angular/material";
@@ -37,11 +37,11 @@ export class TaskReportComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private dashboardService: DashboardService,
-    private authenticationService: AuthenticationService,
+    private userService: UserService,
   ) { }
 
   async ngOnInit() {
-    const currentUser = await this.authenticationService.getCurrentUser();
+    const currentUser = await this.userService.getCurrentUser();
     if (currentUser) {
       const classFormService = new ClassFormService({databaseName: currentUser});
       this.classFormService = classFormService
