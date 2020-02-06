@@ -3,7 +3,6 @@ import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { DeviceService } from './../device/services/device.service';
 import { SyncCustomService, SyncCustomDetails } from './sync-custom.service';
 import { SyncCouchdbService, SyncCouchdbDetails } from './sync-couchdb.service';
-import PouchDB from 'pouchdb';
 import { AppConfig } from './../shared/_classes/app-config.class';
 import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { UserDatabase } from 'src/app/shared/_classes/user-database.class';
@@ -39,7 +38,7 @@ export class SyncService {
     let userDb:UserDatabase
     if (useSharedUser) {
       const device = await this.deviceService.getDevice()
-      userDb = new UserDatabase('shared', 'shared', device._id, true)
+      userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
     } else { 
       userDb = await this.userService.getUserDatabase()
     }

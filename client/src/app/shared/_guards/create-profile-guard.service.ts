@@ -14,22 +14,25 @@ export class CreateProfileGuardService implements CanActivate {
   ) { }
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    const appConfig = await this.appConfigService.getAppConfig() 
     const userAccount = await this.userService.getUserAccount(this.userService.getCurrentUser())
-    if (!userAccount.initialProfileComplete) {
-      if (appConfig.associateUserProfileMode === 'remote') {
-        this.router.navigate(['/import-user-profile'], { queryParams: { returnUrl: state.url } });
-      } else if (appConfig.associateUserProfileMode === 'local-exists') {
-        this.router.navigate(['/associate-user-profile'], { queryParams: { returnUrl: state.url } });
-      } else if (appConfig.associateUserProfileMode === 'local-new' || !appConfig.associateUserProfileMode) {
-        if (state.url.substr(0,20) !== '/manage-user-profile') {
-          this.router.navigate(['/manage-user-profile'], { queryParams: { returnUrl: state.url } });
-        } else {
-          return true;
-        }
+    if (userAccount.initialProfileComplete) {
+      return true
+    } else {
+      const appConfig = await this.appConfigService.getAppConfig() 
+      let navigateUrl = ''
+      if (appConfig.centrallyManagedUserProfile === true && (appConfig.syncProtocol === '1' || !appConfig.syncProtocol)) {
+        navigateUrl = '/import-user-profile'
+      } else if (appConfig.centrallyManagedUserProfile === true && appConfig.syncProtocol === '2') {
+        navigateUrl = '/associate-user-profile'
+      } else {
+        navigateUrl = '/manage-user-profile'
       }
+      if (state.url.indexOf(navigateUrl) === 0) {
+        // We are already at that route, prevent infinite loops.
+        return true
+      }
+      this.router.navigate([navigateUrl], { queryParams: { returnUrl: state.url } });
     }
-    return true;
   }
 
 }

@@ -4,16 +4,13 @@
     <span>&nbsp;&nbsp;{{'Select case type'|translate}}</span>
   </div>
  <div class="form-cards">
-    <paper-icon-item *ngFor='let formInfo of formsInfo' class="form-item form new-form"
-    (click)="onFormInfoSelect(formInfo.id)">
-      <iron-icon icon="{{ formInfo.icon }}" slot="item-icon"></iron-icon> 
-      <paper-item-body two-line>
-          <div>
-            <span [innerHTML]="formInfo.title|unsanitizeHtml"></span> 
-          </div>
-          <div secondary [innerHTML]="formInfo.description|unsanitizeHtml"></div>
-        </paper-item-body>
-    </paper-icon-item>
+    <div *ngFor='let formInfo of formsInfo' class="icon-list-item form-item form new-form" (click)="onFormInfoSelect(formInfo.id)">
+      <mwc-icon slot="item-icon">{{ formInfo.icon }}</mwc-icon>
+      <div>
+        <div><span [innerHTML]="formInfo.title|unsanitizeHtml"></span></div>
+        <div secondary [innerHTML]="formInfo.description|unsanitizeHtml"></div>
+      </div>
+    </div>
   </div>
   
   <div id="bottom-nav">

@@ -2,6 +2,7 @@ export class Device {
   _id:string
   collection = 'Device'
   token:string
+  key:string
   claimed:boolean
   updatedOn:number
   version:string

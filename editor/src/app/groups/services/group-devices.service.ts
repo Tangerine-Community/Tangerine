@@ -12,28 +12,28 @@ export class GroupDevicesService {
   ) { }
 
   async list(groupId:string) {
-    return <Array<GroupDevice>>await this.httpClient.get(`/group-device/list/${groupId}`).toPromise()
+    return <Array<GroupDevice>>await this.httpClient.get(`/group-device-manage/list/${groupId}`).toPromise()
   }
 
   async getDevice(groupId:string, deviceId:string) {
-    return <GroupDevice>await this.httpClient.get(`/group-device/read/${groupId}/${deviceId}`).toPromise()
+    return <GroupDevice>await this.httpClient.get(`/group-device-manage/read/${groupId}/${deviceId}`).toPromise()
   }
 
   async updateDevice(groupId, device) {
-    return <GroupDevice>await this.httpClient.post(`/group-device/update/${groupId}`, {device}).toPromise()
+    return <GroupDevice>await this.httpClient.post(`/group-device-manage/update/${groupId}`, {device}).toPromise()
   }
 
   async deleteDevice(groupId:string, deviceId:string) {
-    return <GroupDevice>await this.httpClient.get(`/group-device/delete/${groupId}/${deviceId}`).toPromise()
+    return <GroupDevice>await this.httpClient.get(`/group-device-manage/delete/${groupId}/${deviceId}`).toPromise()
   }
 
   async resetDevice(groupId:string, deviceId:string) {
-    return <GroupDevice>await this.httpClient.get(`/group-device/reset/${groupId}/${deviceId}`).toPromise()
+    return <GroupDevice>await this.httpClient.get(`/group-device-manage/reset/${groupId}/${deviceId}`).toPromise()
   }
 
   async createDevice(groupId) {
     const device = new GroupDevice()
-    return <GroupDevice>await this.httpClient.post(`/group-device/create/${groupId}`, {body: {
+    return <GroupDevice>await this.httpClient.post(`/group-device-manage/create/${groupId}`, {body: {
       deviceData: device
     }}).toPromise()
   }

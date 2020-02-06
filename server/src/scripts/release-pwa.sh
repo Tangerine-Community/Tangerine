@@ -50,6 +50,7 @@ mv .pwa-temporary/release-uuid .pwa-temporary/$UUID
 rm -r .pwa-temporary/$UUID/app/assets
 cp -r $CONTENT_PATH .pwa-temporary/$UUID/app/assets
 echo $BUILD_ID > .pwa-temporary/$UUID/app/assets/tangerine-build-id
+echo $RELEASE_TYPE > .pwa-temporary/$UUID/app/assets/tangerine-build-channel
 
 # Add logo.
 cp .pwa-temporary/logo.svg .pwa-temporary/$UUID/
@@ -62,4 +63,4 @@ echo $UUID > .pwa-temporary/release-uuid.txt
 
 rm -r $RELEASE_DIRECTORY
 mv .pwa-temporary $RELEASE_DIRECTORY
-echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID"
+echo "Release with UUID of $UUID to $RELEASE_DIRECTORY with Build ID of $BUILD_ID, channel of $RELEASE_TYPE"

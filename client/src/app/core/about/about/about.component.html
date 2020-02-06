@@ -18,7 +18,15 @@
   <p> 
     For questions about Tangerine, contact <a href="mailto:support@tangerinehelp.zendesk.com">support@tangerinehelp.zendesk.com</a>.  
   </p>
-  <p>
-    Build ID: {{buildId}}
-  </p>
 </div>
+<paper-card heading="Device Info" class="info" *ngIf="ready">
+  <div class="card-content">
+    <div class="info-item"><label>Server URL:</label> {{info.serverUrl}}</div>
+    <div class="info-item"><label>Group Name:</label> {{info.groupName}}</div>
+    <div class="info-item"><label>Group ID:</label> {{info.groupId}}</div>
+    <div class="info-item"><label>Build Channel:</label> {{info.buildChannel}}</div>
+    <div class="info-item"><label>Build ID:</label> {{info.buildId}}</div>
+    <div class="info-item"><label>Device ID:</label> {{info.deviceId}}</div>
+    <div class="info-item"><label>Assigned Location:</label> <span [innerHTML]="info.assignedLocation"></span></div>
+  </div>
+</paper-card>

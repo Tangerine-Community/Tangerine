@@ -1,3 +1,4 @@
+import { DeviceService } from './../../device/services/device.service';
 import { CASE_EVENT_STATUS_REVIEWED, CASE_EVENT_STATUS_COMPLETED, CASE_EVENT_STATUS_IN_PROGRESS } from './../classes/case-event.class';
 import { EventFormDefinition } from './../classes/event-form-definition.class';
 import { UserDatabase } from './../../shared/_classes/user-database.class';
@@ -36,6 +37,7 @@ class CaseService {
   constructor(
     private tangyFormService: TangyFormService,
     private caseDefinitionsService: CaseDefinitionsService,
+    private deviceService:DeviceService,
     private userService:UserService,
     private http:HttpClient
   ) { 
@@ -57,7 +59,8 @@ class CaseService {
     tangyFormEl.style.display = 'none'
     document.body.appendChild(tangyFormContainerEl)
     try {
-      this.case.location = (await this.userService.getUserProfile()).location
+      const device = await this.deviceService.getDevice()
+      this.case.location = device.assignedLocation.value.reduce((location, levelInfo) => { return {...location, [levelInfo.level]: levelInfo.value}}, {})
     } catch(error) {
       console.log("There was error setting the location on the case.")
       console.log(error)
@@ -101,7 +104,7 @@ class CaseService {
     await this.setCase(await this.db.get(this.case._id))
   }
 
-  createEvent(eventDefinitionId:string, createRequiredEventForms = false):CaseEvent {
+  createEvent(eventDefinitionId:string, createRequiredEventForms = false): CaseEvent {
     const caseEventDefinition = this.caseDefinition
       .eventDefinitions
       .find(eventDefinition => eventDefinition.id === eventDefinitionId)
@@ -112,8 +115,11 @@ class CaseService {
       name: caseEventDefinition.name,
       estimate: true,
       caseEventDefinitionId: eventDefinitionId,
-      dateStart: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening - (caseEventDefinition.estimatedTimeWindow/2),
-      dateEnd: Date.now() + caseEventDefinition.estimatedTimeFromCaseOpening + (caseEventDefinition.estimatedTimeWindow/2),
+      windowEndDay: undefined,
+      windowStartDay: undefined,
+      estimatedDay: undefined,
+      occurredOnDay: undefined,
+      scheduledDay: undefined,
       eventForms: [],
       startDate: 0
     }
@@ -131,23 +137,46 @@ class CaseService {
   startEvent(eventId) {
     // ??
   }
-
-  async scheduleEvent(eventId, dateStart:number, dateEnd?:number) {
+  setEventEstimatedDay(eventId, timeInMs: number) {
+    const estimatedDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
     this.case.events = this.case.events.map(event => {
-      return event.id === eventId 
-      ? { ...event, ...{ dateStart, dateEnd: dateEnd ? dateEnd : dateStart, estimate: false} }
-      : event
+      return event.id === eventId
+        ? { ...event, ...{ estimatedDay } }
+        : event
     })
-    
   }
-
-  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''):EventForm {
+  setEventScheduledDay(eventId, timeInMs: number) {
+    const scheduledDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+        ? { ...event, ...{ scheduledDay } }
+        : event
+    })
+  }
+  setEventWindow(eventId: string, windowStartDayTimeInMs: number, windowEndDayTimeInMs: number) {
+    const windowStartDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
+    const windowEndDay = moment((new Date(windowEndDayTimeInMs))).format('YYYY-MM-DD')
+    this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+        ? { ...event, ...{ windowStartDay, windowEndDay } }
+        : event
+    })
+  }
+  setEventOccurredOn(eventId, timeInMs: number) {
+    const occurredOnDay = moment((new Date(timeInMs))).format('YYYY-MM-DD')
+    return this.case.events = this.case.events.map(event => {
+      return event.id === eventId
+        ? { ...event, ...{ occurredOnDay } }
+        : event
+    })
+  }
+  startEventForm(caseEventId, eventFormDefinitionId, participantId = ''): EventForm {
     const eventForm = <EventForm>{
-      id: UUID(), 
-      complete: false, 
-      caseId: this.case._id, 
+      id: UUID(),
+      complete: false,
+      caseId: this.case._id,
       participantId,
-      caseEventId, 
+      caseEventId,
       eventFormDefinitionId: eventFormDefinitionId
     }
     this
@@ -239,7 +268,7 @@ class CaseService {
         .eventDefinitions
         .find(eventDefinition => eventDefinition.id === caseEvent.caseEventDefinitionId)
       for (let eventFormDefinition of caseEventDefinition.eventFormDefinitions) {
-        if (eventFormDefinition.forCaseRole === caseRoleId) {
+        if (eventFormDefinition.forCaseRole === caseRoleId && eventFormDefinition.required) {
           this.startEventForm(caseEvent.id, eventFormDefinition.id, caseParticipant.id)
         }
       }
@@ -284,7 +313,6 @@ class CaseService {
     if (caseEvent === undefined) {
         const newDate = moment(new Date(), 'YYYY-MM-DD').unix() * 1000;
         caseEvent = this.createEvent(this.queryCaseEventDefinitionId);
-        await this.scheduleEvent(caseEvent.id, newDate, newDate);
         await this.save();
       } else {
         caseEvent = this.case.events

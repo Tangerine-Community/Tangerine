@@ -48,6 +48,9 @@ export class CaseEventScheduleListComponent implements OnInit {
   private _mode = CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY
   @Input()
   set mode(mode:string) {
+    if (this._mode === mode) {
+      return;
+    }
     this._mode = mode
     this.calculateEvents()
   }
@@ -101,8 +104,9 @@ export class CaseEventScheduleListComponent implements OnInit {
     let daysOfWeekSeen = []
     this.eventsInfo = events.map( event => {
       const eventInfo = <EventInfo>{}
-      const date = new Date(event.dateStart)
-      if (daysOfWeekSeen.indexOf(date.getDate()) == -1) {
+      const searchDate = event.occurredOnDay || event.scheduledDay || event.estimatedDay || event.windowStartDay
+      const date = new Date(searchDate)
+      if (daysOfWeekSeen.indexOf(date.getDate()) === -1) {
         daysOfWeekSeen.push(date.getDate())
         eventInfo.newDateLabel = moment(date).format('ddd')
         eventInfo.newDateNumber = this._mode === CASE_EVENT_SCHEDULE_LIST_MODE_WEEKLY 

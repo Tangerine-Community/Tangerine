@@ -15,6 +15,8 @@ interface EventFormInfo {
 interface ParticipantInfo {
   id: string
   renderedListItem:string
+  availableEventFormDefinitionsForParticipant: Array<string>
+  newFormLink:string
   eventFormInfos: Array<EventFormInfo>
 }
 
@@ -85,6 +87,8 @@ export class EventComponent implements OnInit, AfterContentInit {
         return <ParticipantInfo>{
           id,
           renderedListItem,
+          newFormLink: `/case/event/form-add/${this.caseService.case._id}/${this.caseEvent.id}/${participant.id}`,
+          availableEventFormDefinitionsForParticipant: this.calculateAvailableEventFormDefinitionsForParticipant(participant.id),
           eventFormInfos: this.caseEvent.eventForms.reduce((eventFormInfos, eventForm) => {
             return eventForm.participantId === participant.id
               ? [...eventFormInfos, <EventFormInfo>{
@@ -99,15 +103,19 @@ export class EventComponent implements OnInit, AfterContentInit {
         }
       })
       .filter(participantInfo => participantInfo.eventFormInfos.length !== 0)
+      // ^ Remove this filter??
       //this.calculateAvailableEventFormDefinitions()
       this.loaded = true
     })
   }
 
-  calculateAvailableEventFormDefinitions() {
-    this.availableEventFormDefinitions = this.caseEventDefinition.eventFormDefinitions
+  calculateAvailableEventFormDefinitionsForParticipant(participantId) {
+    const participant = this.caseService.case.participants.find(participant => participant.id === participantId)
+    return this.caseEventDefinition.eventFormDefinitions
+      .filter(eventFormDefinition => eventFormDefinition.forCaseRole === participant.caseRoleId)
       .reduce((availableEventFormDefinitions, eventFormDefinition) => {
         const eventFormDefinitionHasForm = this.caseEvent.eventForms
+          .filter(eventForm => eventForm.participantId === participantId)
           .reduce((eventFormDefinitionHasForm, form) => {
             return eventFormDefinitionHasForm || form.eventFormDefinitionId === eventFormDefinition.id
           }, false)
@@ -115,20 +123,6 @@ export class EventComponent implements OnInit, AfterContentInit {
           ? [...availableEventFormDefinitions, eventFormDefinition]
           : availableEventFormDefinitions
       }, [])
-  }
-
-  onSubmit() {
-    if (this.selectedNewEventFormDefinition) {
-      this.startEventForm(this.selectedNewEventFormDefinition)
-    }
-  }
-
-  async startEventForm(eventFormDefinitionId:string) {
-    // Make this function...
-    const eventForm = this.caseService.startEventForm(this.caseEvent.id, eventFormDefinitionId)
-    await this.caseService.save()
-    // Then navigate
-    this.router.navigate(['case', 'event', 'form', eventForm.caseId, eventForm.caseEventId, eventForm.id])
   }
 
 }
