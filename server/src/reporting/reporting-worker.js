@@ -152,7 +152,7 @@ async function batch() {
             await changeProcessor(change, db)
             processed++
           } catch (error) {
-            log.error(`Error on change sequence ${change.seq} with id ${changes.id} - ${error} ::::: `)
+            log.error(`Error on change sequence ${change.seq} with id ${change.id} - ${error} ::::: `)
           }
         }
         // Even if an error was thrown, continue on with the next sequences.
