@@ -7,7 +7,9 @@ In the following example, your tablet will be syncing data from your tablet to t
 ## Accessing the P2P feature:
 Each peers should select Sync:P2P from the menu.
 
-![sync-p2p-menu](./images/sync-p2p-menu.jpg)
+English Menu | French Menu
+--- | --- 
+![sync-p2p-menu](./images/sync-p2p-menu.jpg) |  ![sync-p2p-menu](./images/sync-p2p-menu-fr.jpg)
 
 ## Discovery
 
@@ -57,7 +59,11 @@ When you synced data from your "master" tablet to the second tablet, it received
 
 It may be useful to confirm that any records created on other tablets has indeed been transferred. 
 
+English:
 ![sync-p2p-home-confirmation](./images/sync-p2p-home-confirmation.jpg)
+
+French: 
+![sync-p2p-home-confirmation](./images/sync-p2p-home-confirmation-fr.jpg)
 
 As mentioned earlier, once the sync process is complete (and you've done it twice), you may conect the "master" to the Internet and transfer data to the server.
 

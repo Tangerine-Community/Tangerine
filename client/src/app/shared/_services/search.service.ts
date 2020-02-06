@@ -78,12 +78,12 @@ export class SearchService {
   }
 
   formResponseToSearchDoc(doc, formInfo:FormInfo):SearchDoc {
-    const searchDoc = <SearchDoc>{ 
+    const searchDoc = <SearchDoc>{
       _id: doc._id,
       formId: doc.form.id,
       formType: formInfo.type ? formInfo.type : 'form',
       lastModified: Date.now(),
-      variables: {} 
+      variables: {}
     }
     const response = new TangyFormResponseModel(doc)
     for (const variableName of formInfo.searchSettings.variablesToIndex) {
@@ -103,7 +103,7 @@ export class SearchService {
       try {
         this.indexDb.put(searchDoc)
       } catch(e) {
-        // This is likely to happen during sync of a doc with many replications. Note the @TODO about 
+        // This is likely to happen during sync of a doc with many replications. Note the @TODO about
         // refactoring out the changes feed subscription.
         console.log("Unable to index search doc:")
         console.log(searchDoc)
@@ -123,7 +123,18 @@ export class SearchService {
   }
 
   async _search(username:string, phrase:string):Promise<Array<SearchDoc>> {
-    const allDocs = (await this.indexDb.allDocs({include_docs:true})).rows.map(row => <SearchDoc>row.doc).sort(function (a, b) {
+    let options;
+    if (phrase === '') {
+       options = {
+        include_docs: true,
+        limit: 25
+      };
+    } else {
+      options = {
+        include_docs: true
+      };
+    }
+    const allDocs = (await this.indexDb.allDocs(options)).rows.map(row => <SearchDoc>row.doc).sort(function (a, b) {
       return b.lastModified - a.lastModified;
     })
     return phrase === ''
