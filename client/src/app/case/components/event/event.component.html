@@ -19,6 +19,17 @@
       *ngFor="let participantInfo of participantInfos"
     >
       <h2 [innerHTML]="participantInfo.renderedListItem|unsanitizeHtml"></h2>
+      <div 
+        *ngIf="participantInfo.availableEventFormDefinitionsForParticipant && participantInfo.availableEventFormDefinitionsForParticipant.length > 0"
+        class="new-form-container"
+      >
+        <paper-fab 
+          class="new-form-button"
+          routerLink="{{participantInfo.newFormLink}}"
+          icon="add"
+        >
+        </paper-fab>
+      </div>
       <app-event-form-list-item
         *ngFor="let eventFormInfo of participantInfo.eventFormInfos"
         [case]="caseService.case"
@@ -31,22 +42,6 @@
         routerLink="/case/event/form/{{eventFormInfo.eventForm.caseId}}/{{eventFormInfo.eventForm.caseEventId}}/{{eventFormInfo.eventForm.id}}"
       >
       </app-event-form-list-item>
-      <paper-icon-item class="form new-form" *ngIf="availableEventFormDefinitions.length > 0">
-        <iron-icon icon="form" slot="item-icon"></iron-icon>
-        <paper-item-body two-line>
-          <div>
-            {{'New Form'|translate}}
-          </div>
-          <div secondary>
-            <form (ngSubmit)="onSubmit()" #form="ngForm">
-              <select name="selected-form-definition" [(ngModel)]="selectedNewEventFormDefinition">
-                <option *ngFor="let availableEventFormDefinition of availableEventFormDefinitions" [value]="availableEventFormDefinition.id">{{availableEventFormDefinition.name}}</option>
-              </select>
-              <button type="submit">create</button>
-            </form>
-          </div>
-        </paper-item-body>
-      </paper-icon-item>
     </div>
   </div>
 </div>

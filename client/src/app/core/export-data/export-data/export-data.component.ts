@@ -12,7 +12,7 @@ export class ExportDataComponent implements OnInit {
 
   window:any;
 
-  constructor(private userService: UserService, private syncingService: SyncingService) { 
+  constructor(private userService: UserService, private syncingService: SyncingService) {
     this.window = window;
   }
 

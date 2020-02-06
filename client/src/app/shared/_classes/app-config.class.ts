@@ -1,12 +1,8 @@
 import { inject } from '@angular/core/testing';
 export class AppConfig {
-  securityPolicy = ["password"]
   columnsOnVisitsTab = []
   securityQuestionText = "What is your year of birth?"
-  hashSecurityQuestionResponse = false
   hideProfile = false
-  // "local" for associating with an existing profile, "remote" for requiring a profile to download, or "manual" for letting users create their own profile.
-  associateUserProfileMode = 'manual' 
   listUsernamesOnLoginScreen = true
   serverUrl = "http://localhost/"
   categories = []
@@ -17,12 +13,13 @@ export class AppConfig {
   languageDirection  = "ltr"
   languageCode = "en"
   uploadUrl = ''
-  syncProtocol = ''
+  syncProtocol = '1'
   minimumFreeSpace
   usageCleanupBatchSize
   barcodeSearchMapFunction:string
   showQueries:boolean
-  sharedUserDatabase = false
   groupId:string
   groupName:string
+  p2pSync = 'false'
 } 
+

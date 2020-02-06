@@ -9,6 +9,7 @@ class CaseDefinition {
   name:string
   caseRoles:Array<CaseRole>
   description:string
+  templateBreadcrumbText:string 
   templateCaseTitle:string 
   templateCaseDescription:string 
   templateCaseEventListItemIcon:string 

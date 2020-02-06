@@ -136,8 +136,6 @@ app-case-breadcrumb {
 .dropdown-container input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
 }
-
-/*
 .new-event form {
     display: flex;
     flex-direction: row;
@@ -153,7 +151,7 @@ app-case-breadcrumb {
 .new-event .one-third:last-child {
     padding-right: 0;
 }
-*/
+
 .new-event {
     position: relative;
 }
