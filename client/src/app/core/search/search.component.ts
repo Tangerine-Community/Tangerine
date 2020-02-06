@@ -13,14 +13,14 @@ export const FORM_TYPES_INFO = [
   {
     id: 'form',
     newFormResponseLinkTemplate: '/tangy-forms-player/${formId}',
-    resumeFormResponseLinkTemplate: '/tangy-forms-player?formId=${formId}&responseId=${response._id}',
-    iconTemplate: '${response && response.complete ? `assignment-turned-in` : `assignment`}'
+    resumeFormResponseLinkTemplate: '/tangy-forms-player?formId=${formId}&responseId=${searchDoc._id}',
+    iconTemplate: '${searchDoc && searchDoc.variables.complete ? `assignment-turned-in` : `assignment`}'
   },
   {
     id: 'case',
     newFormResponseLinkTemplate: '/case-new/${formId}',
-    resumeFormResponseLinkTemplate: '/case/${response._id}',
-    iconTemplate: '${response && response.complete ? `folder-special` : `folder`}'
+    resumeFormResponseLinkTemplate: '/case/${searchDoc._id}',
+    iconTemplate: '${searchDoc && searchDoc.variables.complete ? `folder-special` : `folder`}'
   }
 ]
 
@@ -54,7 +54,7 @@ export class SearchComponent implements OnInit {
   async ngOnInit() {
     this.formsInfo = await this.formsInfoService.getFormsInfo()
     this.username = this.userService.getCurrentUser()
-    this.formTypesInfo = FORM_TYPES_INFO 
+    this.formTypesInfo = FORM_TYPES_INFO
     this.onSearch$
       .pipe(debounceTime(300))
       .subscribe((searchString:string) => this.onSearch(searchString))
@@ -73,8 +73,6 @@ export class SearchComponent implements OnInit {
     this.searchResults.nativeElement.innerHTML = ""
     let searchResultsMarkup = ``
     for (const searchDoc of this.searchDocs) {
-      const userDb = await this.userService.getUserDatabase(this.userService.getCurrentUser())
-      const response = await userDb.get(searchDoc._id)
       const formTypeInfo = this.formTypesInfo.find(formTypeInfo => formTypeInfo.id === searchDoc.formType)
       const formInfo = this.formsInfo.find(formInfo => formInfo.id === searchDoc.formId)
       const formId = formInfo.id
@@ -82,7 +80,7 @@ export class SearchComponent implements OnInit {
       <div class="icon-list-item search-result" open-link="${eval(`\`${formTypeInfo.resumeFormResponseLinkTemplate}\``)}">
         <mwc-icon slot="item-icon">${eval(`\`${formTypeInfo.iconTemplate}\``)}</mwc-icon>
         <div>
-          <div> ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : response._id}\``)}</div>
+          <div> ${eval(`\`${formInfo.searchSettings.primaryTemplate ? formInfo.searchSettings.primaryTemplate : searchDoc._id}\``)}</div>
           <div secondary>
           ${eval(`\`${formInfo.searchSettings.secondaryTemplate ? formInfo.searchSettings.secondaryTemplate : formInfo.title}\``)}
           </div>
