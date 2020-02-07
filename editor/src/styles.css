@@ -3,8 +3,6 @@
 html,
 body {
   height: 100%;
-}
-:root {
   --document-background-color: #f7f6f6;
   --mdc-theme-primary: #3c5b8d !important;
   --mdc-theme-secondary: #f26f10 !important;

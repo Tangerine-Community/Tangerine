@@ -44,6 +44,11 @@ import { PrintFormAsTableComponent } from './print-form-as-table/print-form-as-t
 import { CopyFormComponent } from './copy-form/copy-form.component';
 import { GroupDevicesComponent } from './group-devices/group-devices.component';
 import { GroupDeployComponent } from './group-deploy/group-deploy.component';
+import { GroupAuthorComponent } from './group-author/group-author.component';
+import { GroupDataComponent } from './group-data/group-data.component';
+import { GroupConfigureComponent } from './group-configure/group-configure.component';
+import { GroupFormsComponent } from './group-forms/group-forms.component';
+import { GroupReleasesComponent } from './group-releases/group-releases.component';
 
 
 
@@ -99,7 +104,12 @@ import { GroupDeployComponent } from './group-deploy/group-deploy.component';
     PrintFormAsTableComponent,
     CopyFormComponent,
     GroupDevicesComponent,
-    GroupDeployComponent
+    GroupDeployComponent,
+    GroupAuthorComponent,
+    GroupDataComponent,
+    GroupConfigureComponent,
+    GroupFormsComponent,
+    GroupReleasesComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
   entryComponents: [CopyFormComponent]

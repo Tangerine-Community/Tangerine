@@ -1,0 +1,58 @@
+<table class="release-table">
+  <tr>
+    <td style="padding-right: 15px;">
+      <paper-card heading="
+        Android Installation
+      ">
+        <div class="card-content">
+          <p>
+            Use this for offline deployments or those with many forms and assets.
+          </p>
+          <mat-list>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-secondary">
+                <a [routerLink]="['/group/release-apk',groupId,'qa']">
+                  <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
+                </a>
+              </span>
+            </mat-list-item>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-secondary">
+                <a [routerLink]="['/group/release-apk',groupId,'prod']">
+                  <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
+                </a>
+              </span>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </paper-card>
+    </td>
+    <td>
+      <paper-card heading="
+        Web Browser Installation
+      ">
+        <div class="card-content">
+          <p>
+            Use this for smaller deployments where tablets have solid internet connectivity.
+          </p>
+          <mat-list>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-secondary">
+                <a [routerLink]="['/group/release-pwa',groupId,'qa']">
+                  <iron-icon icon="assignment-late"></iron-icon> {{'Test Release'|translate}}
+                </a>
+              </span>
+            </mat-list-item>
+            <mat-list-item class="tangy-location-list">
+              <span class="tangy-foreground-secondary">
+                <a [routerLink]="['/group/release-pwa',groupId,'prod']">
+                  <iron-icon icon="assignment-turned-in"></iron-icon> {{'Live Release'|translate}}
+                </a>
+              </span>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </paper-card>
+    </td>
+  </tr>
+</table>

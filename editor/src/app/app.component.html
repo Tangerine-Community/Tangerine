@@ -3,10 +3,55 @@
         <button mat-icon-button (click)="snav.toggle()" *ngIf="loggedIn">
             <mat-icon>menu</mat-icon>
         </button>
-        <h1 class="tangy-main-app-name"> Tangerine Editor</h1>
+        <h1 *ngIf="menuService.mode === 'MENU_MODE_TITLE'" class="tangy-main-app-name">
+            {{menuService.menuTitle}}
+        </h1>
+        <h1 *ngIf="menuService.mode === 'MENU_MODE_GROUP'" class="tangy-main-app-name ">
+            {{menuService.groupInfo.name}}
+        </h1>
+        <button 
+            mat-button
+            class="group-menu-item"
+            routerLink="/groups/{{menuService.groupInfo.id}}/deploy"
+            [class.active-group-menu-item]="menuService.groupInfo.section === 'deploy'"
+            [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'deploy'"
+            *ngIf="menuService.mode === 'MENU_MODE_GROUP'"
+        >
+            <i class="material-icons">phonelink_ring</i> Deploy
+        </button>
+        <button 
+            mat-button
+            class="group-menu-item"
+            routerLink="/groups/{{menuService.groupInfo.id}}/author"
+            [class.active-group-menu-item]="menuService.groupInfo.section === 'author'"
+            [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'author'"
+            *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
+        >
+            <i class="material-icons">assignment</i> Author 
+        </button>
+        <button 
+            mat-button
+            class="group-menu-item"
+            routerLink="/groups/{{menuService.groupInfo.id}}/data"
+            [class.active-group-menu-item]="menuService.groupInfo.section === 'data'"
+            [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'data'"
+            *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
+        >
+            <i class="material-icons">list_alt</i> Data 
+        </button>
+        <button 
+            mat-button
+            class="group-menu-item"
+            routerLink="/groups/{{menuService.groupInfo.id}}/configure"
+            [class.active-group-menu-item]="menuService.groupInfo.section === 'configure'"
+            [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'configure'"
+            *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
+        >
+            <i class="material-icons">settings_applications</i> Configure 
+        </button>
         <span class="toolbar-spacer"></span>
         <button mat-button color="accent" *ngIf="loggedIn">
-            <i class="material-icons account-circle">account_circle</i> <span class="text-black">{{user_id}}</span>
+            <i class="material-icons">account_circle</i> <span class="text-black">{{user_id}}</span>
         </button>
     </mat-toolbar>
 

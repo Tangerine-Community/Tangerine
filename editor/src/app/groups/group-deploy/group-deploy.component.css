@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  margin-top: 64px;
+}
+
 paper-fab {
   position: fixed;
   bottom: 25px;
@@ -15,4 +20,7 @@ tangy-location {
   background: var(--lighter-accent-color);
   margin: 0px;
   padding: 80px 20px 5px;
+}
+#location-select-container {
+  display: none;
 }

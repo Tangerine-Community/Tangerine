@@ -9,6 +9,19 @@
   background-color: var(--document-background-color);
 }
 
+.active-group-menu-item {
+  background: var(--mdc-theme-secondary);
+  color: white;
+}
+
+.inactive-group-menu-item {
+  color: black;
+}
+
+/* For some reason, icons randomly take up a bunch of width. Fix them. */
+.group-menu-item i {
+  width: 25px;
+}
 .tangy-main-is-mobile .tangy-main-toolbar {
   position: fixed;
   /* Make sure the toolbar will stay on top of the content as it scrolls past. */
@@ -17,6 +30,7 @@
 
 h1.tangy-main-app-name {
   margin-left: 8px;
+  margin-right: 24px;
 }
 
 .tangy-main-sidenav-container {
@@ -35,6 +49,9 @@ h1.tangy-main-app-name {
   width: 15rem;
   background-color: var(--tertiary-color);
   color: var(--accent-text-color);
+}
+mat-sidenav-container {
+  margin-top: 0px !important;
 }
 
 .toolbar-spacer {
