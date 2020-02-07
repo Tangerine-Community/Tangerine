@@ -1,11 +1,17 @@
 <mat-tab-group>
   <mat-tab label="{{'SEARCH VIEW'|translate}}">
-    <app-search></app-search>
+    <ng-template matTabContent>
+      <app-search></app-search>
+    </ng-template>
   </mat-tab>
   <mat-tab label="{{'SCHEDULE VIEW'|translate}}">
-    <app-case-event-schedule></app-case-event-schedule>
+    <ng-template matTabContent>
+      <app-case-event-schedule></app-case-event-schedule>
+    </ng-template>
   </mat-tab>
   <mat-tab *ngIf="showQueries" label="{{'DATA QUERIES'|translate}} ({{openQueriesCount}})">
-    <app-query></app-query>
+    <ng-template matTabContent>
+      <app-query></app-query>
+    </ng-template>
   </mat-tab>
 </mat-tab-group>
