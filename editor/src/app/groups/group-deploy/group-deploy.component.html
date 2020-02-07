@@ -1,24 +1,17 @@
-<h1 id="group-section-title">Deploy</h1>
+<!--h1 id="group-section-title">Deploy</h1-->
 <div id="location-select-container">
   <tangy-location name="location" #locationEl></tangy-location>
 </div>
-<mat-tab-group #tabGroup (selectedTabChange)="tabChanged($event)" (selectedIndexChange)="''"
-  [(selectedIndex)]="selectedTabIndex">
+<mat-tab-group>
 
   <mat-tab label="Users">
-    <table>
-      <tr>
-        <td *ngFor="let field of userFields">
-          {{field.label}}
-        </td>
-      </tr>
-      <tr *ngFor="let user of users">
-        <td *ngFor="let field of userFields">
-          <!--{{user.items[0].inputs.find(input => input.name === field.name).value}}-->
-        </td>
-      </tr>
-    </table>
+    <app-responses filterBy="user-profile" hideFilterBy=true [groupId]="groupId"></app-responses>
+    <a href="#/tangy-form-player?groupName={{groupId}}&formId=user-profile">
+      <paper-fab  mat-raised-button icon="add" color="accent" class="add-device-button">
+      </paper-fab>
+    </a>
   </mat-tab>
+
 
   <mat-tab label="Devices ({{deviceInfos.length}})">
     <mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
@@ -75,8 +68,10 @@
     <paper-fab mat-raised-button icon="add" color="accent" class="add-device-button" (click)="addDevice()">
     </paper-fab>
   </mat-tab>
-  <mat-tab label="Data">
+  <mat-tab label="Uploads">
+    <app-responses [groupId]="groupId" [excludeForms]="['user-profile']"></app-responses>
   </mat-tab>
   <mat-tab label="Releases">
+    <app-group-releases [groupId]="groupId"></app-group-releases>
   </mat-tab>
 </mat-tab-group>

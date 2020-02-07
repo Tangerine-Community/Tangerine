@@ -1,3 +1,7 @@
+import { GroupDataComponent } from './group-data/group-data.component';
+import { GroupConfigureComponent } from './group-configure/group-configure.component';
+import { GroupAuthorComponent } from './group-author/group-author.component';
+import { GroupComponent } from './group/group.component';
 import { GroupDeployComponent } from './group-deploy/group-deploy.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -23,11 +27,14 @@ const groupsRoutes: Routes = [
   { path: '', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, SuperAdminUserGuard] },
-  { path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId', component: GroupComponent, canActivate: [LoginGuard] },
   {
     path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard, SuperAdminUserGuard]
   },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/author', component: GroupAuthorComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data', component: GroupDataComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {

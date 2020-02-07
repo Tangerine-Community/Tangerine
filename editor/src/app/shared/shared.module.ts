@@ -1,3 +1,4 @@
+import { UnsanitizeHtmlPipe } from './../pipes/unsanitize.pipe';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatSnackBarModule } from '@angular/material';
@@ -10,7 +11,7 @@ import { TangyLoadingComponent } from './_components/tangy-loading/tangy-loading
     CommonModule
   ],
   providers: [AppConfigService],
-  exports: [TranslateModule, MatSnackBarModule, TangyLoadingComponent],
-  declarations: [TangyLoadingComponent]
+  exports: [TranslateModule, MatSnackBarModule, TangyLoadingComponent, UnsanitizeHtmlPipe],
+  declarations: [TangyLoadingComponent, UnsanitizeHtmlPipe]
 })
 export class SharedModule { }

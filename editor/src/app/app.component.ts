@@ -1,3 +1,4 @@
+import { MenuService } from './shared/_services/menu.service';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,6 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private windowRef: WindowRef,
         private router: Router,
         private _registrationService: RegistrationService,
+        private menuService:MenuService,
         private authenticationService: AuthenticationService,
         translate: TranslateService,
         changeDetectorRef: ChangeDetectorRef,

@@ -15,7 +15,7 @@ export class GroupsService {
   ) { }
 
   async getGroupInfo(groupId) {
-    return await this
+    return <any>await this
       .httpClient
       .get(`/nest/group/read/${groupId}`)
       .toPromise();

@@ -1,3 +1,6 @@
+import { GroupsService } from './../services/groups.service';
+import { ActivatedRoute } from '@angular/router';
+import { MenuService } from './../../shared/_services/menu.service';
 import { HttpClient } from '@angular/common/http';
 import { TangyFormService } from './../../tangy-forms/tangy-form.service';
 import { GroupDevicesService } from './../services/group-devices.service';
@@ -31,7 +34,6 @@ interface UserField {
   label:string 
 }
 
-
 @Component({
   selector: 'app-group-deploy',
   templateUrl: './group-deploy.component.html',
@@ -55,16 +57,24 @@ export class GroupDeployComponent implements OnInit {
   @ViewChild('locationEl') locationEl: ElementRef;
 
   constructor(
+    private menuService:MenuService,
+    private route: ActivatedRoute,
     private httpClient:HttpClient,
+    private groupsService:GroupsService,
     private groupDevicesService:GroupDevicesService,
     private tangyFormService:TangyFormService
   ) { }
 
   async ngOnInit() {
-    const locationList = await this.httpClient.get('./assets/location-list.json').toPromise()
-    this.flatLocationList = Loc.flatten(locationList)
-    this.locationEl.nativeElement.addEventListener('change', (event) => this.onLocationSelection(event.target.value))
-    this.update()
+    this.route.params.subscribe(async params => {
+      this.groupId = params.groupId
+      const group = await this.groupsService.getGroupInfo(params.groupId)
+      this.menuService.setGroupMode(group._id, group.label, 'deploy')
+      const locationList = await this.httpClient.get('./assets/location-list.json').toPromise()
+      this.flatLocationList = Loc.flatten(locationList)
+      this.locationEl.nativeElement.addEventListener('change', (event) => this.onLocationSelection(event.target.value))
+      this.update()
+    })
   }
 
   onLocationSelection(value:Array<LocationNode>) {

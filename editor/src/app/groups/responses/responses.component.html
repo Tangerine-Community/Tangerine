@@ -5,7 +5,7 @@
   <br><br>
 </div>
 Filter:
-<select name="form" (change)="filterByForm($event)">
+<select name="form" *ngIf="!hideFilterBy" (change)="filterByForm($event)">
   <option value="*">*</option>
   <option *ngFor="let form of forms" value="{{form.id}}">{{form.id}}</option>
 </select>
