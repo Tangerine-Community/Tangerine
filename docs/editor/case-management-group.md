@@ -59,6 +59,9 @@ File: `case-definition-1.json`
 }
 ```
 
+### Debugging Case Templates
+![debug case templates](debug-case-templates.png)
+
 ## Configuring search
 The case references a Form in the `formId` property of the Case Definition. Make sure there is a form with that corresponding Form ID listed in `forms.json` with additional configuration for search.
 
