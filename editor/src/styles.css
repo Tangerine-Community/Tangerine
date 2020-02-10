@@ -8,7 +8,7 @@ body {
   --mdc-theme-secondary: #f26f10 !important;
   --primary-color-dark: #3c5b8d;
   --primary-color-lighter: #2d7dd2;
-  --primary-text-color: var(--light-theme-text-color);
+  --primary-text-color: #555;
   --primary-color: #3c5b8d;
   --accent-color: var(--mdc-theme-secondary);
   --lighter-accent-color: #ff9522;
@@ -22,7 +22,19 @@ body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
   background: var(--document-background-color);
+  color: var(--primary-text-color);
 }
+
+h1 {
+  margin-left: 15px;
+  color: var(--primary-text-color);
+}
+
+h2 {
+  margin-left: 15px;
+}
+
+
 
 .container {
   margin: 15px;

@@ -24,10 +24,6 @@
         <span [innerHTML]="form.title|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
         <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">add</i>
-          </a>
-        </span>
-        <span><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
           </a>
         </span>
@@ -47,21 +43,12 @@
             <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
           </a>
         </span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
-          </a>
-        </span>
       </mat-list-item>
     </mat-list>
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
 
-    <span><a mat-icon-button [routerLink]="['/tangy-form-player']"
-        [queryParams]="{formId: form.id, groupName: groupId}">
-        <i class="material-icons mat-32 tangy-location-list-icon">add</i>
-      </a>
-    </span>
     <span><a mat-icon-button
         [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupId+'/'+form.id:'/groups/'+groupId">
         <i [class.disabled-button]="!isGroupAdminUser"
@@ -107,13 +94,6 @@
           class="material-icons mat-32 tangy-location-list-icon">archive</i>
       </button>
     </span>
-    <span><a mat-icon-button [routerLink]=" '../'+groupId+ '/download-csv/'+form.id ">
-        <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
-      </a>
-    </span>
-    <span *ngIf="enabledModules.includes('sync-protocol-2')">
-      <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
-    </span>
     <mat-divider></mat-divider>
   </mat-list-item>
 </mat-list>
@@ -127,10 +107,6 @@
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span [innerHTML]="form.title|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">add</i>
-          </a>
-        </span>
         <span><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
           </a>
@@ -151,24 +127,12 @@
             <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
           </a>
         </span>
-        <span><a mat-icon-button>
-            <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
-          </a>
-        </span>
-        <span *ngIf="enabledModules.includes('sync-protocol-2')">
-          <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
-        </span>
       </mat-list-item>
     </mat-list>
     <span>{{index+1}}</span>
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
 
-    <span><a mat-icon-button [routerLink]="['/tangy-form-player']"
-        [queryParams]="{formId: form.id, groupName: groupId}">
-        <i class="material-icons mat-32 tangy-location-list-icon">add</i>
-      </a>
-    </span>
     <span><a mat-icon-button
         [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupId+'/'+form.id:'/groups/'+groupId">
         <i [class.disabled-button]="!isGroupAdminUser"
@@ -203,14 +167,6 @@
           class="material-icons mat-32 tangy-location-list-icon">unarchive</i>
       </button>
     </span>
-    <span><a mat-icon-button [routerLink]=" '../'+groupId+ '/download-csv/'+form.id ">
-        <i class="material-icons mat-32 tangy-location-list-icon">get_app</i>
-      </a>
-    </span>
-    <span *ngIf="enabledModules.includes('sync-protocol-2')">
-      <tangy-checkbox (click)="toggleTwoWaySyncOnForm(groupId, form.id)" value="{{form.couchdbSyncSettings.enabled ? 'on' : ''}}">two-way sync</tangy-checkbox>
-    </span>
-    <mat-divider></mat-divider>
   </mat-list-item>
 </mat-list>
  

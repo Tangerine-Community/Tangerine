@@ -5,6 +5,7 @@
 <mat-tab-group>
 
   <mat-tab label="Users">
+    <h1>Device Users</h1>
     <app-responses filterBy="user-profile" hideFilterBy=true [groupId]="groupId"></app-responses>
     <a href="#/tangy-form-player?groupName={{groupId}}&formId=user-profile">
       <paper-fab  mat-raised-button icon="add" color="accent" class="add-device-button">
@@ -12,8 +13,8 @@
     </a>
   </mat-tab>
 
-
   <mat-tab label="Devices ({{deviceInfos.length}})">
+    <h1>Devices</h1>
     <mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
       <ng-container matColumnDef="id">
         <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
@@ -69,9 +70,11 @@
     </paper-fab>
   </mat-tab>
   <mat-tab label="Uploads">
+    <h1>Uploads</h1>
     <app-responses [groupId]="groupId" [excludeForms]="['user-profile']"></app-responses>
   </mat-tab>
   <mat-tab label="Releases">
+    <h1>Releases</h1>
     <app-group-releases [groupId]="groupId"></app-group-releases>
   </mat-tab>
 </mat-tab-group>

@@ -45,7 +45,7 @@ const groupsRoutes: Routes = [
     path: 'groups/:groupId/manage-location-list-metadata/:locationLevel',
     component: ManageLocationListMetadataComponent, canActivate: [LoginGuard]
   },
-  { path: 'groups/:groupName/download-csv/:formId', component: DownloadCsvComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupName/data/download-csv/:formId', component: DownloadCsvComponent, canActivate: [LoginGuard] },
   { path: 'group/release-apk/:id/:releaseType', component: ReleaseApkComponent, canActivate: [LoginGuard] },
   { path: 'group/release-pwa/:id/:releaseType', component: ReleasePwaComponent, canActivate: [LoginGuard] },
   { path: 'group/release-dat/:id/:releaseType', component: ReleaseDatComponent, canActivate: [LoginGuard] },
