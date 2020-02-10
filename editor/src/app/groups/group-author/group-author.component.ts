@@ -20,7 +20,7 @@ export class GroupAuthorComponent implements OnInit {
   async ngOnInit() {
     this.route.params.subscribe(async params => {
       const group = await this.groupsService.getGroupInfo(params.groupId)
-      this.menuService.setGroupMode(group._id, group.label, 'author')
+      this.menuService.setContext(group.label, 'author', group._id)
     })
   }
 

@@ -57,3 +57,11 @@ fieldset {
       display:none !important;
     }
 }
+
+/*
+ * Hack to make sure the inside of the drawer does not change when it shrinks down.
+ * It's important to have this here. Does not work inside of a component's CSS.
+ */
+.mat-drawer-inner-container {
+  width: 500px !important;
+}

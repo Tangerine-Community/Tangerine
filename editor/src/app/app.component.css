@@ -9,14 +9,17 @@
   background-color: var(--document-background-color);
 }
 
-.active-group-menu-item {
+.active-menu-item {
   background: var(--mdc-theme-secondary);
   color: white;
 }
 
 
-.inactive-group-menu-item {
+.inactive-menu-item {
   color: black;
+}
+.manage-users-list-item {
+  height: 53px;
 }
 
 #sidenav-bottom-group {
@@ -29,7 +32,7 @@
 }
 
 /* For some reason, icons randomly take up a bunch of width. Fix them. */
-.group-menu-item i {
+.menu-item i {
   width: 25px;
 }
 /*
@@ -49,10 +52,11 @@ h1.tangy-main-app-name {
   margin-right: 24px;
 }
 .tangerine-logo img {
-  width: 233px;
-  margin-left: 3px;
-  margin-top: 5px;
-  margin-bottom: 12px;
+  width: 229px;
+  margin-left: 6px;
+  margin-top: 12px;
+  margin-bottom: 14px;
+  margin-right: 5px;
 }
 
 .tangy-main-sidenav-container {
@@ -88,7 +92,7 @@ mat-list-item {
   line-height: 3;
   display: inline-flex;
 }
-mat-list-item:hover:not(.active-group-menu-item) {
+mat-list-item:hover:not(.active-menu-item) {
   cursor: pointer;
   background: #EEE;
 

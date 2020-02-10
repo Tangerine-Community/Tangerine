@@ -69,7 +69,7 @@ export class GroupDeployComponent implements OnInit {
     this.route.params.subscribe(async params => {
       this.groupId = params.groupId
       const group = await this.groupsService.getGroupInfo(params.groupId)
-      this.menuService.setGroupMode(group._id, group.label, 'deploy')
+      this.menuService.setContext(group.label, 'deploy', group._id)
       const locationList = await this.httpClient.get('./assets/location-list.json').toPromise()
       this.flatLocationList = Loc.flatten(locationList)
       this.locationEl.nativeElement.addEventListener('change', (event) => this.onLocationSelection(event.target.value))
