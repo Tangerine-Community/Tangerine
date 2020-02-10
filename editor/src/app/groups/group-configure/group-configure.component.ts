@@ -25,7 +25,7 @@ export class GroupConfigureComponent implements OnInit {
     this.route.params.subscribe(async params => {
       const group = await this.groupsService.getGroupInfo(params.groupId)
       this.appConfig = await this.AppConfigService.getAppConfig(params.groupId)
-      this.menuService.setGroupMode(group._id, group.label, 'configure')
+      this.menuService.setContext(group.label, 'configure', group._id)
     })
   }
 

@@ -20,7 +20,8 @@ export class GroupDataComponent implements OnInit {
   async ngOnInit() {
     this.route.params.subscribe(async params => {
       const group = await this.groupsService.getGroupInfo(params.groupId)
-      this.menuService.setGroupMode(group._id, group.label, 'data')
+      this.menuService.setContext(group.label, 'data', group._id)
+ 
     })
   }
 

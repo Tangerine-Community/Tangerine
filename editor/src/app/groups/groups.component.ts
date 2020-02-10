@@ -27,7 +27,7 @@ export class GroupsComponent implements OnInit {
 
   async ngOnInit() {
     await this.getData();
-    this.menuService.setTitleMode('Groups')
+    this.menuService.setContext('', 'groups', '')
     this.onResize(window);
   }
 

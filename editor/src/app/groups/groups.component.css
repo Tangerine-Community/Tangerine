@@ -1,12 +1,20 @@
 .tangy-full-width {
   width: 95%;
 }
+#content {
+  margin: 15px;
+}
 span.tangy-foreground-secondary {
   padding-top: 0.3rem;
 }
 mat-card {
   width: 70%;
 }
+
+.group-card {
+  cursor: pointer;
+}
+
 .group-avatar {
   font-size: 350%;
 }
@@ -22,4 +30,10 @@ mat-card.mat-card {
 }
 .tangy-foreground-secondary {
   color: var(--lighter-accent-color);
+}
+
+.add-group-button {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
 }
