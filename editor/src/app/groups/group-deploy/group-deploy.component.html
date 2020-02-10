@@ -22,7 +22,9 @@
       </ng-container>
       <ng-container matColumnDef="claimed">
         <mat-header-cell *matHeaderCellDef> Claimed </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.claimed}} </mat-cell>
+        <mat-cell *matCellDef="let element"> 
+          <mwc-icon *ngIf="element.claimed">done</mwc-icon>
+        </mat-cell>
       </ng-container>
       <ng-container matColumnDef="registeredOn">
         <mat-header-cell *matHeaderCellDef> Registered on </mat-header-cell>

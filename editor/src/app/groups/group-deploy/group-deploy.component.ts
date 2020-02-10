@@ -10,6 +10,7 @@ import { TangerineForm } from 'src/app/shared/_classes/tangerine-form.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import { Loc } from 'tangy-form/util/loc.js';
 import * as qrcode from 'qrcode-generator-es6';
+import moment = require('moment');
 
 interface LocationNode {
   level:string
@@ -146,6 +147,9 @@ export class GroupDeployComponent implements OnInit {
       .map(device => {
       return <DeviceInfo>{
         ...device,
+        registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
+        syncedOn: device.syncedOn ? moment(device.syncedOn).format('YYYY-MM-DD hh:mm a') : '',
+        updatedOn: device.updatedOn ? moment(device.updatedOn).format('YYYY-MM-DD hh:mm a') : '',
         assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>') : '',
         syncLocations: device.syncLocations.map(syncLocation => {
           return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
