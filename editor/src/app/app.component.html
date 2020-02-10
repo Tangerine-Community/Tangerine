@@ -1,71 +1,67 @@
 <div class="tangy-main-container" [class.tangy-main-is-mobile]="mobileQuery.matches">
-    <mat-toolbar class="tangy-main-toolbar mat-elevation-z5">
-        <button mat-icon-button (click)="snav.toggle()" *ngIf="loggedIn">
-            <mat-icon>menu</mat-icon>
-        </button>
-        <h1 *ngIf="menuService.mode === 'MENU_MODE_TITLE'" class="tangy-main-app-name">
-            {{menuService.menuTitle}}
-        </h1>
-        <h1 *ngIf="menuService.mode === 'MENU_MODE_GROUP'" class="tangy-main-app-name ">
-            {{menuService.groupInfo.name}}
-        </h1>
-        <button 
-            mat-button
-            class="group-menu-item"
-            routerLink="/groups/{{menuService.groupInfo.id}}/deploy"
-            [class.active-group-menu-item]="menuService.groupInfo.section === 'deploy'"
-            [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'deploy'"
-            *ngIf="menuService.mode === 'MENU_MODE_GROUP'"
-        >
-            <i class="material-icons">phonelink_ring</i> Deploy
-        </button>
-        <button 
-            mat-button
-            class="group-menu-item"
-            routerLink="/groups/{{menuService.groupInfo.id}}/author"
-            [class.active-group-menu-item]="menuService.groupInfo.section === 'author'"
-            [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'author'"
-            *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
-        >
-            <i class="material-icons">assignment</i> Author 
-        </button>
-        <button 
-            mat-button
-            class="group-menu-item"
-            routerLink="/groups/{{menuService.groupInfo.id}}/data"
-            [class.active-group-menu-item]="menuService.groupInfo.section === 'data'"
-            [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'data'"
-            *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
-        >
-            <i class="material-icons">list_alt</i> Data 
-        </button>
-        <button 
-            mat-button
-            class="group-menu-item"
-            routerLink="/groups/{{menuService.groupInfo.id}}/configure"
-            [class.active-group-menu-item]="menuService.groupInfo.section === 'configure'"
-            [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'configure'"
-            *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
-        >
-            <i class="material-icons">settings_applications</i> Configure 
-        </button>
-        <span class="toolbar-spacer"></span>
-        <button mat-button color="accent" *ngIf="loggedIn">
-            <i class="material-icons">account_circle</i> <span class="text-black">{{user_id}}</span>
-        </button>
-    </mat-toolbar>
 
     <mat-sidenav-container class="tangy-main-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
-        <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'push'" fixedInViewport fixedTopGap="64">
+        <mat-sidenav #snav [class.mat-drawer-opened]="snav.opened" [mode]="mobileQuery.matches ? 'over' : 'side'" disableClose>
+            <mat-nav-list class="tangy-full-width tangerine-logo">
+                <mat-list-item routerLink="/">
+                    <img src="/assets/tangerine-logo.png">
+                </mat-list-item>
+            </mat-nav-list>
             <mat-nav-list class="tangy-full-width">
-                <mat-list-item>
-                    <span class=""><i class="material-icons menu-icon">group_work</i></span>
-                    <a matLine routerLink="/projects" routerLinkActive="active" *ngIf="loggedIn"
-                        router-active>{{'Groups'|translate}}</a>
+
+            <mat-nav-list class="tangy-full-width">
+                <mat-list-item
+                    [class.active-group-menu-item]="menuService.groupInfo.section === 'author'"
+                    routerLink="/groups/{{menuService.groupInfo.id}}/author"              
+                    *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
+                >
+                    <span class=""><i class="material-icons menu-icon">create</i></span>
+                    <a 
+                        matLine 
+                   >{{'Author'|translate}}</a>
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
-            <mat-nav-list class="tangy-full-width" *ngIf="canManageSitewideUsers">
+            <mat-nav-list class="tangy-full-width">
+                <mat-list-item
+                    [class.active-group-menu-item]="menuService.groupInfo.section === 'data'"
+                    routerLink="/groups/{{menuService.groupInfo.id}}/data"
+                    *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
+                >
+                    <span class=""><i class="material-icons menu-icon list_alt-icon">list_alt</i></span>
+                    <a
+                        matLine 
+                    >{{'Data'|translate}}</a>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-nav-list>
+            <mat-nav-list class="tangy-full-width">
+                <mat-list-item
+                    [class.active-group-menu-item]="menuService.groupInfo.section === 'configure'"
+                    routerLink="/groups/{{menuService.groupInfo.id}}/configure"              
+                    *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
+                >
+                    <span class=""><i class="material-icons menu-icon">settings_applications</i></span>
+                    <a
+                        matLine 
+                    >{{'Configure'|translate}}</a>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </mat-nav-list>
+            <mat-list-item
+                [class.active-group-menu-item]="menuService.groupInfo.section === 'deploy'"
+                [class.active-group-menu-item]="menuService.groupInfo.section === 'deploy'"
+                routerLink="/groups/{{menuService.groupInfo.id}}/deploy"              
+                *ngIf="menuService.mode === 'MENU_MODE_GROUP'"
+            >
+                <span class=""><i class="material-icons menu-icon">phonelink_ring</i></span>
+                <a 
+                    matLine 
+                >{{'Deploy'|translate}}</a>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            </mat-nav-list>
+            <mat-nav-list class="tangy-full-width" *ngIf="canManageSitewideUsers && menuService.mode !== 'MENU_MODE_GROUP'">
                 <mat-list-item>
                     <span class=""><i class="material-icons menu-icon">group</i></span>
                     <a matLine routerLink="/manage-users" routerLinkActive="active" *ngIf="loggedIn"
@@ -73,32 +69,85 @@
                 </mat-list-item>
                 <mat-divider></mat-divider>
             </mat-nav-list>
-            <mat-nav-list class="tangy-full-width">
-                <mat-list-item>
-                    <span class=""><i class="material-icons menu-icon">help</i></span>
-                    <a matLine routerLink="/support" routerLinkActive="active" *ngIf="loggedIn"
-                        router-active>{{'Help'|translate}}</a>
-                </mat-list-item>
-                <mat-divider></mat-divider>
-            </mat-nav-list>
-            <mat-nav-list class="tangy-full-width">
-                <mat-list-item>
-                    <span class=""><i class="material-icons menu-icon">exit_to_app</i></span>
-                    <a (click)="logout();" matLine routerLink="/login" routerLinkActive="active" *ngIf="loggedIn"
-                        router-active>{{'Logout'|translate}}</a>
-                </mat-list-item>
-                <mat-divider></mat-divider>
-            </mat-nav-list>
-            <mat-nav-list class="tangy-full-width">
-                <mat-list-item>
-                    <a matLine routerLink="/login" routerLinkActive="active" *ngIf="!loggedIn"
-                        router-active>{{'Login'|translate}}</a>
-                </mat-list-item>
-                <mat-divider *ngIf="!loggedIn"></mat-divider>
-            </mat-nav-list>
+            <div id="sidenav-bottom-group">
+                <mat-nav-list class="tangy-full-width">
+                    <mat-list-item>
+                        <span class=""><i class="material-icons menu-icon">help</i></span>
+                        <a matLine routerLink="/support" routerLinkActive="active" *ngIf="loggedIn"
+                            router-active>{{'Help'|translate}}</a>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                </mat-nav-list>
+                <mat-nav-list class="tangy-full-width">
+                    <mat-list-item>
+                        <span class=""><i class="material-icons menu-icon">exit_to_app</i></span>
+                        <a (click)="logout();" matLine routerLink="/login" routerLinkActive="active" *ngIf="loggedIn"
+                            router-active>{{'Logout'|translate}}</a>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                </mat-nav-list>
+            </div>
         </mat-sidenav>
 
-        <mat-sidenav-content>
+
+        <mat-sidenav-content [class.mat-drawer-opened]="snav.opened">
+            <mat-toolbar class="tangy-main-toolbar mat-elevation-z5">
+                <button mat-icon-button (click)="snav.toggle()" *ngIf="loggedIn">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <h1 *ngIf="menuService.mode === 'MENU_MODE_TITLE'" class="tangy-main-app-name">
+                    {{menuService.menuTitle}}
+                </h1>
+                <h1 *ngIf="menuService.mode === 'MENU_MODE_GROUP'" class="tangy-main-app-name ">
+                    {{menuService.groupInfo.name}}
+                </h1>
+                <!--
+                <button 
+                    mat-button
+                    class="group-menu-item"
+                    routerLink="/groups/{{menuService.groupInfo.id}}/deploy"
+                    [class.active-group-menu-item]="menuService.groupInfo.section === 'deploy'"
+                    [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'deploy'"
+                    *ngIf="menuService.mode === 'MENU_MODE_GROUP'"
+                >
+                    <i class="material-icons">phonelink_ring</i> Deploy
+                </button>
+                <button 
+                    mat-button
+                    class="group-menu-item"
+                    routerLink="/groups/{{menuService.groupInfo.id}}/author"
+                    [class.active-group-menu-item]="menuService.groupInfo.section === 'author'"
+                    [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'author'"
+                    *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
+                >
+                    <i class="material-icons">assignment</i> Author 
+                </button>
+                <button 
+                    mat-button
+                    class="group-menu-item"
+                    routerLink="/groups/{{menuService.groupInfo.id}}/data"
+                    [class.active-group-menu-item]="menuService.groupInfo.section === 'data'"
+                    [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'data'"
+                    *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
+                >
+                    <i class="material-icons">list_alt</i> Data 
+                </button>
+                <button 
+                    mat-button
+                    class="group-menu-item"
+                    routerLink="/groups/{{menuService.groupInfo.id}}/configure"
+                    [class.active-group-menu-item]="menuService.groupInfo.section === 'configure'"
+                    [class.inactive-group-menu-item]="menuService.groupInfo.section !== 'configure'"
+                    *ngIf="menuService.mode === 'MENU_MODE_GROUP'" 
+                >
+                    <i class="material-icons">settings_applications</i> Configure 
+                </button>
+            -->
+                <span class="toolbar-spacer"></span>
+                <button mat-button color="accent" *ngIf="loggedIn">
+                    <i class="material-icons">account_circle</i> <span class="text-black">{{user_id}}</span>
+                </button>
+            </mat-toolbar>
             <router-outlet></router-outlet>
         </mat-sidenav-content>
     </mat-sidenav-container>

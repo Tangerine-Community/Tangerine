@@ -88,7 +88,7 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
 
   tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
      if (tabChangeEvent.index === 0) {
-        this.router.navigate(['groups', this.groupName])
+        window.history.back()
       } else if  (tabChangeEvent.index === 1) {
        this.ngAfterContentInit()
      }

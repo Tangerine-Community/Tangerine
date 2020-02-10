@@ -1,3 +1,5 @@
+import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
+import { GroupFormsCsvComponent } from './group-forms-csv/group-forms-csv.component';
 import { MatIconModule, MatMenuModule } from '@angular/material';
 import { MatTableModule } from '@angular/material/table';
 import { TangyFormService } from './../tangy-forms/tangy-form.service';
@@ -109,6 +111,8 @@ import { GroupReleasesComponent } from './group-releases/group-releases.componen
     GroupDataComponent,
     GroupConfigureComponent,
     GroupFormsComponent,
+    GroupFormsCsvComponent,
+    GroupFormsSyncComponent,
     GroupReleasesComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],

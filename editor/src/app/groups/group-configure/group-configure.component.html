@@ -1,14 +1,22 @@
 <mat-tab-group>
 
   <mat-tab label="{{'Location List Levels'|translate}}">
+    <h1>Location List Levels</h1>
     <app-manage-location-list-levels></app-manage-location-list-levels>
   </mat-tab>
 
   <mat-tab label="{{'Location List Content'|translate}}">
+    <h1>Location List Content</h1>
     <app-location-list-editor></app-location-list-editor>
   </mat-tab>
 
+  <mat-tab label="{{'Sync'|translate}}" *ngIf="appConfig && appConfig.syncProtocol && appConfig.syncProtocol === '2'">
+    <h1>Sync Settings</h1>
+    <app-group-forms-sync></app-group-forms-sync>
+  </mat-tab>
+
   <mat-tab label="{{'Security'|translate}}">
+    <h1>Manage Users</h1>
     <app-list-users></app-list-users>
   </mat-tab>
 
