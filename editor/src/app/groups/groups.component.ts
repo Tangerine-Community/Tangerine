@@ -44,6 +44,6 @@ export class GroupsComponent implements OnInit {
   }
 
   navigateToGroup(groupId) {
-    window.location.href = `${window.location.origin}/app/${groupId}/index.html#/groups/${groupId}/deploy`
+    window.location.href = `${window.location.origin}/app/${groupId}/index.html#/groups/${groupId}/author`
   }
 }
