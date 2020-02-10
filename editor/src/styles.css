@@ -65,3 +65,10 @@ fieldset {
 .mat-drawer-inner-container {
   width: 500px !important;
 }
+
+paper-fab.action {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+}
+

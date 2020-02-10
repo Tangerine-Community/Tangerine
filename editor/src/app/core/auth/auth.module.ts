@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatCardModule, MatInputModule, MatListModule, MatSelectModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -14,6 +14,7 @@ import { UserService } from './_services/user.service';
 import { AdminUserGuard } from './_guards/admin-user-guard.service';
 import { SuperAdminUserGuard } from './_guards/super-admin-user-guard.service';
 @NgModule({
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
     MatListModule,
