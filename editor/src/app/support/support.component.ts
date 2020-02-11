@@ -20,9 +20,9 @@ export class SupportComponent implements OnInit {
     this.route.params.subscribe(async params => {
       if (params.groupId) {
         const group = await this.groupsService.getGroupInfo(params.groupId)
-        this.menuService.setContext(group.label, 'help', group._id)
+        this.menuService.setContext(group.label, 'Help', 'help', group._id)
       } else {
-        this.menuService.setContext('Help', 'help')
+        this.menuService.setContext('', 'Help', 'help')
       }
     })
   }

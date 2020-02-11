@@ -15,7 +15,7 @@ export class ManageUsersComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.menuService.setContext('', 'manage-users', '')
+    this.menuService.setContext('', 'Manage Users', 'manage-users', '')
     try {
       this.users = await this.userService.getAllUsers();
     } catch (error) {
