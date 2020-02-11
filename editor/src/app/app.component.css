@@ -51,12 +51,53 @@ h1.tangy-main-app-name {
   margin-left: 8px;
   margin-right: 24px;
 }
-.tangerine-logo img {
-  width: 229px;
-  margin-left: 6px;
+
+/*
+ * Tangerine logo
+ */
+
+.tangerine-logo-closed {
+  width: 40px;
+  margin: 12px 0px 12px 5px;
+}
+
+.tangerine-logo-opened {
+  width: 155px;
+  margin-left: 45px;
   margin-top: 12px;
   margin-bottom: 14px;
   margin-right: 5px;
+  /* Example of a taller logo
+  width: 220px;
+  margin-left: 15px;
+  margin-top: 12px;
+  margin-bottom: 14px;
+  margin-right: 12px;
+  */
+}
+
+mat-sidenav.mat-drawer-opened .tangerine-logo-closed {
+  display:none;
+}
+
+mat-sidenav:not(.mat-drawer-opened) .tangerine-logo-opened {
+  display:none;
+}
+
+/*
+ * Sidenav
+ */
+
+.sidenav-title {
+  color: var(--primary-text-color);
+  margin: 0px 15px 15px;
+  font-size: 1.2rem;
+  text-align: center;
+  width: 200px;
+}
+
+mat-sidenav:not(.mat-drawer-opened) .sidenav-title {
+  display: none;
 }
 
 .tangy-main-sidenav-container {
@@ -110,7 +151,8 @@ mat-list-item a {
   font-size: 120%;
 }
 mat-toolbar.mat-toolbar {
-  background: var(--accent-text-color);
+  background: var(--primary-color);
+  color: var(--accent-text-color);  
 }
 
 mat-sidenav-content:not(.mat-drawer-opened) {
