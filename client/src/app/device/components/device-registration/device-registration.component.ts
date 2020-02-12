@@ -24,7 +24,7 @@ export class DeviceRegistrationComponent implements OnInit {
 
   gatherInfo (message = '') {
     this.container.nativeElement.innerHTML = `
-      ${message ? `<h2 style="align:center">${message}</h2>` : ''}
+      ${message ? `<h2 style="text-align: center; color: red; padding-top: 1em;">${message}</h2>` : ''}
       <tangy-form id="device-registration">
         <tangy-form-item id="device-registration" on-change="
             if (getValue('qr')) {
@@ -91,9 +91,18 @@ export class DeviceRegistrationComponent implements OnInit {
   async confirmRegistration(deviceId, deviceToken) {
     let device:Device
     try {
-      device = await this.deviceService.getRemoteDeviceInfo(deviceId, deviceToken) 
+      device = await this.deviceService.getRemoteDeviceInfo(deviceId, deviceToken)
     } catch (error) {
-      this.gatherInfo(_TRANSLATE(`Something went wrong, try again.`))
+      if (typeof error !== 'undefined') {
+        if ((typeof error.message !== 'undefined') && (error.message.includes('Http failure response'))) {
+          const errorMessage = error.message.slice(0, 50) + '...'
+          this.gatherInfo(_TRANSLATE(`Something went wrong; you may not have Internet access. <br/>Error:  ${errorMessage}`))
+        } else {
+          this.gatherInfo(_TRANSLATE(`Something went wrong, please try again. Error:  ${error.message}`))
+        }
+      } else {
+        this.gatherInfo(_TRANSLATE(`Something went wrong, please try again.`))
+      }
     }
     this.container.nativeElement.innerHTML = `
       <tangy-form id="confirm-registration">

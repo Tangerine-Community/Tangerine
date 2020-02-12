@@ -13,17 +13,26 @@ const STATUS_ERROR = 'STATUS_ERROR'
 })
 export class SyncComponent implements OnInit {
 
-  status = STATUS_INITIAL 
+  status = STATUS_INITIAL
+  syncMessage: any
 
   constructor(
     private syncService:SyncService
   ) { }
 
   ngOnInit() {
+    this.syncMessage = ''
   }
 
   async sync() {
+    this.syncMessage = ''
     this.status = STATUS_IN_PROGRESS
+    this.syncService.syncMessage$.subscribe({
+      next: (progress) => {
+        this.syncMessage =  progress.docs_written + ' docs saved.'
+        console.log('Sync Progress: ' + JSON.stringify(progress))
+      }
+    })
     try {
       await this.syncService.sync()
       this.status = STATUS_COMPLETED
