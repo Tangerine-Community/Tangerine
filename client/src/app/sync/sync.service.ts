@@ -11,6 +11,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReplicationStatus } from './classes/replication-status.class';
 import * as pako from 'pako';
+import {Observable, Subject} from 'rxjs';
+import {Group} from '../../../../server/src/shared/classes/group';
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
 export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
@@ -31,6 +33,15 @@ export class SyncService {
     private tangyFormsInfoService:TangyFormsInfoService
   ) { }
 
+  syncMessage: any = {};
+  public readonly syncMessage$: Subject<any> = new Subject();
+
+  syncProgress(progress) {
+    console.log(JSON.stringify(progress))
+    this.syncMessage$.next(progress)
+    // this.syncMessage = progress
+  }
+
   async sync(useSharedUser = false) {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
@@ -39,17 +50,27 @@ export class SyncService {
     if (useSharedUser) {
       const device = await this.deviceService.getDevice()
       userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
-    } else { 
+    } else {
       userDb = await this.userService.getUserDatabase()
     }
-    await this.syncCouchdbService.sync(userDb, <SyncCouchdbDetails>{
+
+    this.syncCouchdbService.syncMessage$.subscribe({
+      next: (progress) => {
+        // this.syncMessage =  message.docs_written + ' docs saved.'
+        this.syncMessage$.next(progress)
+        // console.log('Sync svc: ' + JSON.stringify(message))
+      }
+    })
+
+    const replicationStatus: ReplicationStatus = await this.syncCouchdbService.sync(userDb, <SyncCouchdbDetails>{
       serverUrl: appConfig.serverUrl,
       groupId: appConfig.groupId,
       deviceId: device._id,
       deviceToken: device.token,
       deviceSyncLocations: device.syncLocations,
       formInfos
-    })
+    }, this.syncProgress.bind(this))
+    // console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
       appConfig: appConfig,
       serverUrl: appConfig.serverUrl,
