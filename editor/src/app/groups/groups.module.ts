@@ -1,3 +1,4 @@
+import { NgTangyFormEditorModule } from './../ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
 import { GroupFormsCsvComponent } from './group-forms-csv/group-forms-csv.component';
 import { MatIconModule, MatMenuModule } from '@angular/material';
@@ -51,6 +52,8 @@ import { GroupDataComponent } from './group-data/group-data.component';
 import { GroupConfigureComponent } from './group-configure/group-configure.component';
 import { GroupFormsComponent } from './group-forms/group-forms.component';
 import { GroupReleasesComponent } from './group-releases/group-releases.component';
+import { GroupFormsEditComponent } from './group-forms-edit/group-forms-edit.component';
+import { GroupLocationListComponent } from './group-location-list/group-location-list.component';
 
 
 
@@ -76,7 +79,8 @@ import { GroupReleasesComponent } from './group-releases/group-releases.componen
     MatMenuModule,
     MatTreeModule,
     MatGridListModule,
-    SharedModule
+    SharedModule,
+    NgTangyFormEditorModule
   ],
   declarations: [
     LocationListEditorComponent,
@@ -113,7 +117,9 @@ import { GroupReleasesComponent } from './group-releases/group-releases.componen
     GroupFormsComponent,
     GroupFormsCsvComponent,
     GroupFormsSyncComponent,
-    GroupReleasesComponent
+    GroupReleasesComponent,
+    GroupFormsEditComponent,
+    GroupLocationListComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
   entryComponents: [CopyFormComponent]

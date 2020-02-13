@@ -1,3 +1,4 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { GroupsService } from './../services/groups.service';
 import { Component, OnInit, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -10,15 +11,17 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class GroupComponent implements OnInit {
 
+  title:string
+  breadcrumbs:Array<Breadcrumb>
+
   constructor(
-    private route: ActivatedRoute,
-    private groupsService: GroupsService,
-    private elementRef: ElementRef
+    private groupsService: GroupsService
   ) {}
 
-  id: string;
-
-  ngOnInit() {
+  async ngOnInit() {
+    const group = await this.groupsService.getGroupInfo(window.location.hash.split('/')[2])
+    this.title = group.label
+    this.breadcrumbs = []
   }
 
 

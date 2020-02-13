@@ -1,11 +1,6 @@
-<div>
-  <a [routerLink]="['/groups/',groupId,'addUser']">{{'+ Add User to Group'|translate}}</a>
-  <br>
-  <br>
-  <mat-form-field class="tangy-full-width">
-    <input type="text" placeholder="Choose User" #search matInput placeholder="{{'Username'|translate}}">
-  </mat-form-field>
-</div>
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
+<paper-fab mat-raised-button icon="add" color="accent" [routerLink]="['/groups/',groupId,'addUser']"></paper-fab>
 
 <mat-list>
   <mat-list-item class="tangy-location-list">

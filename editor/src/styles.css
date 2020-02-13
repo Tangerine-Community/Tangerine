@@ -72,3 +72,11 @@ paper-fab.action {
   right: 25px;
 }
 
+.is-link {
+  cursor: pointer;
+}
+
+mat-card {
+  margin: 15px 15px 15px;
+  background: white;
+}

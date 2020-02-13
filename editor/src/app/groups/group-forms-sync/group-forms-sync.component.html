@@ -1,4 +1,4 @@
-<h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <mat-list class="drag-list" cdkDropList (cdkDropListDropped)="dropActive($event)">
   <mat-list-item class="drag-item" *ngFor="let form of activeForms; let index=index" cdkDrag
     [cdkDragDisabled]="!isGroupAdminUser">

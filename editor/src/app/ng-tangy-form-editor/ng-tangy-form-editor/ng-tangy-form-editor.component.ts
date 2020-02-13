@@ -1,4 +1,4 @@
-import {AfterContentInit, ElementRef, Component, ViewChild, Inject} from '@angular/core';
+import { AfterContentInit, ElementRef, Component, ViewChild, Inject, AfterContentChecked } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {MatTabChangeEvent} from "@angular/material";
@@ -11,7 +11,7 @@ import {Feedback} from "../feedback-editor/feedback";
   templateUrl: './ng-tangy-form-editor.component.html',
   styleUrls: ['./ng-tangy-form-editor.component.css']
 })
-export class NgTangyFormEditorComponent implements AfterContentInit {
+export class NgTangyFormEditorComponent implements AfterContentChecked {
 
   @ViewChild('container') container: ElementRef;
   @ViewChild('header') header: ElementRef;
@@ -33,18 +33,18 @@ export class NgTangyFormEditorComponent implements AfterContentInit {
     private appConfigService: AppConfigService,
   ) { }
 
-  async ngAfterContentInit() {
+  async ngAfterContentChecked() {
 
     this.containerEl = this.container.nativeElement
 
     this.formId = this.route.snapshot.paramMap.get('formId');
-    let groupName = this.route.snapshot.paramMap.get('groupName');
     this.print = !!this.route.snapshot.paramMap.get('print');
-    this.groupName = groupName;
 
-    let formHtml = await this.http.get(`/editor/${groupName}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
     let pathArray = window.location.hash.split( '/' );
     this.groupId = pathArray[2];
+    let groupName = this.groupId;
+    this.groupName = groupName;
+    let formHtml = await this.http.get(`/editor/${this.groupId}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
 
     const appConfig = await this.appConfigService.getAppConfig(groupName);
     const appConfigCategories = appConfig.categories;
