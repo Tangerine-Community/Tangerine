@@ -5,16 +5,14 @@ import { Injectable } from '@angular/core';
 })
 export class MenuService {
 
-  sidenavTitle = ''
-  sectionTitle = ''
-  section:string = ''
+  title = ''
   groupId:string = ''
+  section:string = ''
 
   constructor() { }
 
-  setContext(sidenavTitle = '', sectionTitle = '', section = '', groupId = '') {
-    this.sidenavTitle = sidenavTitle
-    this.sectionTitle = sectionTitle
+  setContext(title = '', groupId = '', section = '',) {
+    this.title = title 
     this.section = section
     this.groupId = groupId
   }

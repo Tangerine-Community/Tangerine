@@ -1,3 +1,4 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { CouchdbSyncSettings, TangerineForm, TangerineFormInfo } from './../../shared/_classes/tangerine-form.class';
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,6 +35,8 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   activeForms;
   groupUrl;
   formsJsonURL;
+  title = "Forms"
+  breadcrumbs:Array<Breadcrumb> = []
   @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
@@ -47,6 +50,12 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   ) { }
 
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: 'Forms',
+        url: 'forms'
+      }
+    ]
     this.route.params.subscribe(async params => {
       this.groupId = params.groupId;
       this.group = await this.groupsService.getGroupInfo(this.groupId);

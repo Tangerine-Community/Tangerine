@@ -1,18 +1,36 @@
-<mat-tab-group>
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<mat-card class="is-link mat-elevation-z3" routerLink="forms">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <i class="material-icons tangy-foreground-secondary group-avatar">assignment</i>
+      </div>
+      <mat-card-title>
+          <a>{{'Forms'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>Create and edit forms.</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
 
-  <mat-tab label="{{'Forms'|translate}}">
-    <h1>Edit Forms</h1>
-    <app-group-forms></app-group-forms>
-  </mat-tab>
+<mat-card class="is-link mat-elevation-z3" routerLink="case-definitions">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">folder</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Case Definitions'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>Define structure of cases.</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
 
-  <mat-tab label="{{'Case Definitions'|translate}}">
-    <h1>Edit Case Definitions</h1>
-    <app-case-management-editor></app-case-management-editor>
-  </mat-tab>
-
-  <mat-tab label="{{'Media Library'|translate}}">
-    <h1>Manage Media Library</h1>
-    <app-group-media></app-group-media>
-  </mat-tab>
-
-</mat-tab-group>
+<mat-card class="is-link mat-elevation-z3" routerLink="media-library">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <i class="material-icons tangy-foreground-secondary group-avatar">perm_media</i>
+      </div>
+      <mat-card-title>
+          <a>{{'Media Library'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>Manage media library available for use in forms.</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>

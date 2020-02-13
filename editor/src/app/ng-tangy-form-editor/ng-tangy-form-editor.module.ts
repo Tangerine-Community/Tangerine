@@ -32,6 +32,9 @@ import {MatCardModule} from '@angular/material/card';
     MatCardModule,
     SharedModule
   ],
+  exports: [
+    NgTangyFormEditorComponent
+  ],
   declarations: [NgTangyFormEditorComponent, FeedbackEditorComponent],
   providers:[FeedbackService, FormMetadata]
 })

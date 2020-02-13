@@ -1,6 +1,6 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from './../services/groups.service';
-import { MenuService } from './../../shared/_services/menu.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -10,19 +10,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GroupDataComponent implements OnInit {
 
+  title = 'Download Data'
+  breadcrumbs:Array<Breadcrumb> = []
+
   constructor(
-    private menuService:MenuService,
-    private groupsService:GroupsService,
-    private route: ActivatedRoute
   ) { }
 
-
   async ngOnInit() {
-    this.route.params.subscribe(async params => {
-      const group = await this.groupsService.getGroupInfo(params.groupId)
-      this.menuService.setContext(group.label, 'Data', 'data', group._id)
- 
-    })
+    this.breadcrumbs = []
   }
 
 }

@@ -1,3 +1,4 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { TangerineFormInfo } from './../../shared/_classes/tangerine-form.class';
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,6 +17,8 @@ import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.
   styleUrls: ['./group-forms-sync.component.css']
 })
 export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
+  title = _TRANSLATE("Sync Settings")
+  breadcrumbs:Array<Breadcrumb> = []
   forms;
   groupId;
   group;
@@ -43,6 +46,12 @@ export class GroupFormsSyncComponent implements OnInit, AfterViewInit {
   ) { }
 
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Sync Settings'),
+        url: `sync`
+      }
+    ]
     this.route.params.subscribe(async params => {
       this.groupId = params.groupId;
       this.group = await this.groupsService.getGroupInfo(this.groupId);

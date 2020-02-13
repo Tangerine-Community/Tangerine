@@ -10,7 +10,8 @@ import { TangerineForm } from 'src/app/shared/_classes/tangerine-form.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import { Loc } from 'tangy-form/util/loc.js';
 import * as qrcode from 'qrcode-generator-es6';
-import moment = require('moment');
+import * as moment from 'moment'
+
 
 interface LocationNode {
   level:string

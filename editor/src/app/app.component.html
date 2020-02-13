@@ -56,9 +56,6 @@
                     <img class="tangerine-logo-opened" src="/assets/tangerine-logo-box.png">
                 </mat-list-item>
             </mat-nav-list>
-            <div class="sidenav-title">
-                    {{menuService.sidenavTitle}}
-            </div>
             <mat-nav-list class="tangy-full-width">
                 <mat-list-item
                     [class.active-menu-item]="menuService.section === 'author'"
@@ -189,7 +186,7 @@
                     <mat-icon>menu</mat-icon>
                 </button>
                 <div class="tangy-main-app-name">
-                    {{menuService.sectionTitle}}
+                    {{menuService.title}}
                 </div>
                 <span class="toolbar-spacer"></span>
                 <button mat-button class="account-button" *ngIf="loggedIn">

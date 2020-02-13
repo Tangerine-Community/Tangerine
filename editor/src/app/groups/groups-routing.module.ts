@@ -1,3 +1,10 @@
+import { ListUsersComponent } from './list-users/list-users.component';
+import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
+import { GroupLocationListComponent } from './group-location-list/group-location-list.component';
+import { GroupFormsEditComponent } from './group-forms-edit/group-forms-edit.component';
+import { GroupMediaComponent } from './group-media/group-media.component';
+import { CaseManagementEditorComponent } from './case-management-editor/case-management-editor.component';
+import { GroupFormsComponent } from './group-forms/group-forms.component';
 import { SupportComponent } from './../support/support.component';
 import { GroupDataComponent } from './group-data/group-data.component';
 import { GroupConfigureComponent } from './group-configure/group-configure.component';
@@ -29,13 +36,17 @@ const groupsRoutes: Routes = [
   { path: 'projects', component: GroupsComponent, canActivate: [LoginGuard] },
   { path: 'groups/new-group', component: NewGroupComponent, canActivate: [LoginGuard, SuperAdminUserGuard] },
   { path: 'groups/:groupId', component: GroupComponent, canActivate: [LoginGuard] },
-  {
-    path: 'groups/:groupId', component: GroupDetailsComponent, canActivate: [LoginGuard, SuperAdminUserGuard]
-  },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/author', component: GroupAuthorComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/author/forms', component: GroupFormsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/author/forms/edit/:formId', component: GroupFormsEditComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/author/case-definitions', component: CaseManagementEditorComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/author/media-library', component: GroupMediaComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data', component: GroupDataComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/sync', component: GroupFormsSyncComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/security', component: ListUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/support', component: SupportComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
