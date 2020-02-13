@@ -1,13 +1,6 @@
 # The Tangerine Form Editor's Cookbook
 Examples of various recipes for Tangerine Forms collected throughout the years. To create your own example, remix the [example](https://glitch.com/edit/#!/remix/tangy-form-example-template) on glitch.com.
 
-## Set selected value in radio buttons
-In the following example we set the value of a `<tangy-radio-buttons>`.
-
-[Run example](https://set-value-of-tangy-radio-buttons.glitch.me/) - [Open Editor](https://set-value-of-tangy-radio-buttons.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/set-value-of-tangy-radio-buttons)
-
-![set-value-of-tangy-radio-buttons](./set-value-of-tangy-radio-buttons.png)
-
 ## Skip a question based on input in another question
 In the following example we ask an additional question about tangerines if the user indicates that they do like tangerines.
 
@@ -81,5 +74,10 @@ A "hard check" using "valid if" will not allow you to proceed. However a "soft c
 ![soft-checks-vs-hard-checks](./soft-checks-vs-hard-checks.gif)
 
 
+## Set selected value in radio buttons
+In the following example we set the value of a `<tangy-radio-buttons>`.
 
+[Run example](https://set-value-of-tangy-radio-buttons.glitch.me/) - [Open Editor](https://set-value-of-tangy-radio-buttons.glitch.me/#edit) - [View Code](https://glitch.com/edit/#!/set-value-of-tangy-radio-buttons)
+
+![set-value-of-tangy-radio-buttons](./set-value-of-tangy-radio-buttons.png)
 
