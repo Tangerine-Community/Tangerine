@@ -37,6 +37,7 @@ RUN cd /tangerine/client/ && \
     npm install
 
 # Install PWA tools.
+RUN git config --global url."git://".insteadOf https://
 ADD client/pwa-tools/service-worker-generator/package.json /tangerine/client/pwa-tools/service-worker-generator/package.json
 ADD client/pwa-tools/service-worker-generator/workbox-cli-config.js /tangerine/client/pwa-tools/service-worker-generator/workbox-cli-config.js
 RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
