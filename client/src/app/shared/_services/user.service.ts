@@ -182,10 +182,11 @@ export class UserService {
   }
 
   async getUserAccount(username?: string):Promise<UserAccount> {
+    // || doc._id === username for backwards compatibility during upgrades from v3.1.0.
     return <UserAccount>(await this.usersDb.allDocs({include_docs: true}))
       .rows
       .map(row => row.doc)
-      .find(doc => doc.username === username)
+      .find(doc => doc.username === username || doc._id === username)
   }
 
   async getUserAccountById(userId?: string):Promise<UserAccount> {

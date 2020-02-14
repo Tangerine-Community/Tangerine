@@ -66,7 +66,7 @@ export class UpdateComponent implements AfterContentInit {
       }
     }
     localStorage.setItem('updateJustApplied', 'true')
-    window.location.reload()
+    window.location.href = window.location.href.replace(window.location.hash, 'index.html') 
   }
 
 }
