@@ -145,10 +145,13 @@ export class AppComponent implements OnInit {
 
   async checkIfUpdateScriptRequired() {
     const response = await this.userService.usersDb.allDocs({ include_docs: true });
+    // Note the use of mapping by doc.username but falling back to doc._id. That's because
+    // an app may be updating from a time when _id was the username.
     const usernames = response
       .rows
       .map(row => row.doc)
-      .map(doc => doc._id);
+      .filter(doc => doc._id.substr(0,7) !== '_design' )
+      .map(doc => doc.username ? doc.username : doc._id);
     for (const username of usernames) {
       const userDb = await this.userService.getUserDatabase(username);
       // Use try in case this is an old account where info doc was not created.
