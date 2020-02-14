@@ -67,17 +67,16 @@ export class AppComponent implements OnInit {
 
 
   async ngOnInit() {
+    // Bail if the app is not yet installed.
+    if (!this.installed) {
+      await this.install()
+    }
+    this.checkIfUpdateScriptRequired();
+    await this.userService.initialize()
     // Load up the app config.
     this.appConfig = await this.appConfigService.getAppConfig()
     this.searchService.start()
     this.window.appConfig = this.appConfig
-    // Bail if the app is not yet installed.
-    if (!this.installed) {
-      this.install()
-      return
-    }
-    await this.userService.initialize()
-    this.checkIfUpdateScriptRequired();
     // Set translation for t function used in Web Components.
     const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
@@ -94,12 +93,17 @@ export class AppComponent implements OnInit {
   }
 
   async install() {
-    const config =<any> await this.http.get('./assets/app-config.json').toPromise()
-    this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
-    this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-    await this.userService.install()
-    this.window.localStorage.setItem('installed', true)
-    this.window.location = `${this.window.location.origin}${this.window.location.pathname}index.html`
+    try {
+      const config =<any> await this.http.get('./assets/app-config.json').toPromise()
+      window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
+      window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
+      await this.userService.install()
+      window.localStorage.setItem('installed', 'true')
+    } catch (e) {
+      console.log('Error detected in install:')
+      console.log(e)
+    }
+    window.location.href = window.location.href.replace(window.location.hash, 'index.html') 
   }
 
   async checkStorageUsage() {
