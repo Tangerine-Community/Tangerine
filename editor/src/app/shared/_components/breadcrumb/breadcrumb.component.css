@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  background: var(--primary-color-lighter);
+  padding: 1px 15px 30px;
+  color: var(--accent-text-color);
+}
+
+#crumbs {
+  margin-left: 15px;
+}
+
+#crumbs a:active, #crumbs a:hover, #crumbs a:visited {
+  color: var(--accent-text-color);
+  text-decoration: none !important;
+}
+
+h1 {
+  color: var(--accent-text-color);
+}
