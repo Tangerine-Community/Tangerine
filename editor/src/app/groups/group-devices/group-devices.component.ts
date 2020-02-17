@@ -57,7 +57,7 @@ export class GroupDevicesComponent implements OnInit {
   flatLocationList
   locationFilter:Array<LocationNode> = []
   tab = 'TAB_USERS'
-  devicesDisplayedColumns = ['id', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'star']
+  devicesDisplayedColumns = ['id', 'location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'star']
 
   @Input('groupId') groupId:string
   @ViewChild('dialog') dialog: ElementRef;
