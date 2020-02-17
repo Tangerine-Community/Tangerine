@@ -6,10 +6,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatInputModule, MatCardModule } from '@angular/material';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { SyncingService } from './_services/syncing.service';
-import { SyncRecodsRoutingModule } from './sync-records-routing.module';
+import { SyncRecordsRoutingModule } from './sync-records-routing.module';
 import { SyncRecordsComponent } from './sync-records/sync-records.component';
 import { SharedModule } from '../../shared/shared.module';
-// import { PeersComponent } from './peers/peers.component';
 import { MatChipsModule } from '@angular/material/chips';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 
@@ -18,7 +17,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    SyncRecodsRoutingModule,
+    SyncRecordsRoutingModule,
     SyncModule,
     MatButtonModule,
     MatInputModule,
@@ -28,11 +27,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     MatButtonToggleModule,
     SharedModule
   ],
-  // declarations: [SyncRecordsComponent, PeersComponent],
   declarations: [SyncRecordsComponent],
   providers: [SyncingService, HttpClientModule],
-  // exports: [
-  //   PeersComponent
-  // ]
 })
 export class SyncRecordsModule { }

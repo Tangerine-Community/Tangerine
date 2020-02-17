@@ -35,7 +35,6 @@ export class SyncService {
   syncProgress(progress) {
     console.log(JSON.stringify(progress))
     this.syncMessage$.next(progress)
-    // this.syncMessage = progress
   }
 
   async sync(useSharedUser = false) {
