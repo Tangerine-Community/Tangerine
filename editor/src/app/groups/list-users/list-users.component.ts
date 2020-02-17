@@ -1,3 +1,4 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
@@ -15,6 +16,8 @@ export class ListUsersComponent implements OnInit {
   groupId;
   users;
   @ViewChild('search') search: ElementRef;
+  title = _TRANSLATE("Security")
+  breadcrumbs:Array<Breadcrumb> = []
   constructor(
     private groupsService: GroupsService,
     private route: ActivatedRoute,
@@ -22,15 +25,16 @@ export class ListUsersComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Security'),
+        url: `security`
+      }
+    ]
     this.route.params.subscribe(params => {
       this.groupId = params.groupId;
     });
     await this.getUsersByGroup();
-    fromEvent(this.search.nativeElement, 'keyup')
-      .pipe(debounceTime(500))
-      .pipe(distinctUntilChanged())
-      .pipe(map(val => val['target'].value.trim()))
-      .subscribe(async val => val ? await this.getUsersByGroupAndUsername(val.trim()) : of([]));
   }
 
   async getUsersByGroupAndUsername(username: string) {

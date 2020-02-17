@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { MenuService } from './shared/_services/menu.service';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { AuthenticationService } from './core/auth/_services/authentication.service';
@@ -6,6 +7,7 @@ import { RegistrationService } from './registration/services/registration.servic
 import { WindowRef } from './core/window-ref.service';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { HttpClient } from '@angular/common/http';
+import { MatSidenav } from '@angular/material';
 
 
 @Component({
@@ -25,11 +27,14 @@ export class AppComponent implements OnInit, OnDestroy {
     mobileQuery: MediaQueryList;
     window:any
 
+    @ViewChild('snav') snav:MatSidenav
+
     private _mobileQueryListener: () => void;
     constructor(
         private windowRef: WindowRef,
         private router: Router,
         private _registrationService: RegistrationService,
+        private menuService:MenuService,
         private authenticationService: AuthenticationService,
         translate: TranslateService,
         changeDetectorRef: ChangeDetectorRef,
@@ -63,12 +68,14 @@ export class AppComponent implements OnInit, OnDestroy {
             if (!isLoggedIn) { this.router.navigate(['login']); }
         });
 
-      fetch('assets/translation.json')
-        .then(response => response.json())
-        .then(json => {
-          console.log("populating window.translation.")
-          this.window.translation = json
-        })
+        this.snav.toggle()
+
+        fetch('assets/translation.json')
+          .then(response => response.json())
+          .then(json => {
+            console.log("populating window.translation.")
+            this.window.translation = json
+          })
     }
 
     async ensureLoggedIn() {

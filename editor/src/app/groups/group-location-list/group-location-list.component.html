@@ -1,0 +1,14 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<mat-tab-group>
+
+  <mat-tab label="{{'Location List Levels'|translate}}">
+    <h1>Location List Levels</h1>
+    <app-manage-location-list-levels></app-manage-location-list-levels>
+  </mat-tab>
+
+  <mat-tab label="{{'Location List Content'|translate}}">
+    <h1>Location List Content</h1>
+    <app-location-list-editor></app-location-list-editor>
+  </mat-tab>
+
+</mat-tab-group>
