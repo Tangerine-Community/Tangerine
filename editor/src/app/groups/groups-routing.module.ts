@@ -1,3 +1,7 @@
+import { GroupReleaseApkLiveComponent } from './group-release-apk-live/group-release-apk-live.component';
+import { GroupReleaseApkTestComponent } from './group-release-apk-test/group-release-apk-test.component';
+import { GroupReleasePwaLiveComponent } from './group-release-pwa-live/group-release-pwa-live.component';
+import { GroupReleasePwaTestComponent } from './group-release-pwa-test/group-release-pwa-test.component';
 import { GroupFormsCsvComponent } from './group-forms-csv/group-forms-csv.component';
 import { GroupUploadsComponent } from './group-uploads/group-uploads.component';
 import { GroupReleasesComponent } from './group-releases/group-releases.component';
@@ -58,6 +62,10 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/devices', component: GroupDevicesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases', component: GroupReleasesComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/releases/release-pwa-test', component: GroupReleasePwaTestComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/releases/release-pwa-live', component: GroupReleasePwaLiveComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/releases/release-apk-test', component: GroupReleaseApkTestComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/deploy/releases/release-apk-live', component: GroupReleaseApkLiveComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/support', component: SupportComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
