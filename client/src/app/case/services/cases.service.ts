@@ -44,7 +44,6 @@ export class CasesService {
     }
     dateStart = moment(new Date(dateStart)).format('YYYY-MM-DD')
     dateEnd = moment(new Date(dateEnd)).format('YYYY-MM-DD')
-    console.log({dateStart, dateEnd})
     return moment(eventInfo.scheduledDay || eventInfo.estimatedDay || eventInfo.windowStartDay).isBetween(dateStart, dateEnd, 'days', '[]')
     || moment(eventInfo.scheduledDay || eventInfo.estimatedDay ||eventInfo.windowEndDay).isBetween(dateStart, dateEnd, 'days', '[]')
   }
