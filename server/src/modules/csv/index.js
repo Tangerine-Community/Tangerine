@@ -87,6 +87,7 @@ const generateFlatResponse = async function (formResponse, locationList) {
   }
   let formID = formResponse.form.id;
   for (let item of formResponse.items) {
+    flatFormResponse[`${item.id}_firstOpenTime`]= item.firstOpenTime? item.firstOpenTime:''
     for (let input of item.inputs) {
       if (input.tagName === 'TANGY-LOCATION') {
         // Populate the ID and Label columns for TANGY-LOCATION levels.
