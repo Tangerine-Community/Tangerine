@@ -8,8 +8,7 @@ import { SyncCustomService } from './sync-custom.service';
 import { SyncComponent } from './components/sync/sync.component';
 import { PeersComponent} from '../core/sync-records/peers/peers.component';
 import {TranslateModule} from '@ngx-translate/core';
-import {MatCardModule, MatIconModule, MatProgressBarModule, MatButtonModule, MatTabsModule} from '@angular/material';
-// import { SyncRecodsRoutingModule } from '../core/sync-records/sync-records-routing.module';
+import {MatCardModule, MatIconModule, MatProgressBarModule, MatButtonModule, MatTabsModule, MatChipsModule} from '@angular/material';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -33,8 +32,8 @@ import {MatCardModule, MatIconModule, MatProgressBarModule, MatButtonModule, Mat
     MatCardModule,
     MatProgressBarModule,
     MatButtonModule,
-    // SyncRecodsRoutingModule,
     MatTabsModule,
+    MatChipsModule,
   ]
 })
 export class SyncModule { }

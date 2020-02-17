@@ -3,16 +3,12 @@ import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { DeviceService } from './../device/services/device.service';
 import { SyncCustomService, SyncCustomDetails } from './sync-custom.service';
 import { SyncCouchdbService, SyncCouchdbDetails } from './sync-couchdb.service';
-import { AppConfig } from './../shared/_classes/app-config.class';
-import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { UserDatabase } from 'src/app/shared/_classes/user-database.class';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReplicationStatus } from './classes/replication-status.class';
-import * as pako from 'pako';
-import {Observable, Subject} from 'rxjs';
-import {Group} from '../../../../server/src/shared/classes/group';
+import {Subject} from 'rxjs';
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
 export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'

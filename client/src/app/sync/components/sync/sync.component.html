@@ -22,7 +22,7 @@
 
         <div class="container" *ngIf="status === 'STATUS_COMPLETED'">
           <button mat-raised-button color="primary" (click)="sync()">Start</button>
-          <mat-progress-bar mode="buffer"></mat-progress-bar>
+          <mat-progress-bar mode="buffer" value="100"></mat-progress-bar>
           <div>{{ syncMessage }}</div>
           <div class="status">Status: Complete</div>
         </div>
