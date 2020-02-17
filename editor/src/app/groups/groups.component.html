@@ -1,32 +1,22 @@
-<!-- <mat-card>
-    <mat-card-title class="tangy-foreground-secondary">
 
-    </mat-card-title>
-    <mat-card-content> -->
-<div class="tangy-full-width tangy-content">
-    <div>
-        <span><span class="tangy-page-title">{{'Manage Groups'|translate}}{{'  '}}</span>
-            <a mat-raised-button color="accent" routerLink="/groups/new-group">
-                <i class="material-icons">add_circle</i>{{' '}}{{'Create a New Group'|translate}}
-            </a>
-        </span>
-    </div>
-    <div class="tangy-content-top-margin">
-        <mat-grid-list [cols]="breakpoint" rowHeight="100" (window:resize)="onResize($event.target)">
-            <mat-grid-tile *ngFor="let group of groups">
-                
-                    <mat-card class="mat-elevation-z3">
-                        <mat-card-header>
-                            <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">group_work</i>
-                            </div>
-                            <mat-card-title>
-                                <a (click)="navigateToGroup(group._id)">{{group.label}}</a>
-                            </mat-card-title>
-                            <mat-card-subtitle>Forms</mat-card-subtitle>
-                        </mat-card-header>
-                    </mat-card>
+<h1>Groups</h1>
+<paper-fab mat-raised-button icon="add" color="accent" class="add-group-button" routerLink="/groups/new-group">
+</paper-fab>
+<div id="content">
+<mat-grid-list [cols]="breakpoint" rowHeight="100" (window:resize)="onResize($event.target)">
+    <mat-grid-tile *ngFor="let group of groups">
+        
+            <mat-card class="mat-elevation-z3 group-card" (click)="navigateToGroup(group._id)">
+                <mat-card-header>
+                    <div mat-card-avatar><i class="material-icons tangy-foreground-secondary group-avatar">group_work</i>
+                    </div>
+                    <mat-card-title>
+                        <a>{{group.label}}</a>
+                    </mat-card-title>
+                    <mat-card-subtitle>Forms</mat-card-subtitle>
+                </mat-card-header>
+            </mat-card>
 
-            </mat-grid-tile>
-        </mat-grid-list>
-    </div>
+    </mat-grid-tile>
+</mat-grid-list>
 </div>

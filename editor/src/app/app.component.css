@@ -9,14 +9,95 @@
   background-color: var(--document-background-color);
 }
 
+.active-menu-item {
+  background: var(--mdc-theme-secondary);
+  color: white;
+}
+
+
+.inactive-menu-item {
+  color: black;
+}
+.manage-users-list-item {
+  height: 53px;
+}
+
+#sidenav-bottom-group {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+}
+.mat-drawer-opened #sidenav-bottom-group {
+  width: 400px;
+}
+
+/* For some reason, icons randomly take up a bunch of width. Fix them. */
+.menu-item i {
+  width: 25px;
+}
+/*
 .tangy-main-is-mobile .tangy-main-toolbar {
   position: fixed;
-  /* Make sure the toolbar will stay on top of the content as it scrolls past. */
+  /* Make sure the toolbar will stay on top of the content as it scrolls past. 
   z-index: 2;
+}
+*/
+
+.list_alt-icon {
+  width: 20px;
 }
 
 h1.tangy-main-app-name {
   margin-left: 8px;
+  margin-right: 24px;
+}
+
+/*
+ * Tangerine logo
+ */
+
+.tangerine-logo-closed {
+  width: 40px;
+  margin: 12px 0px 12px 5px;
+}
+
+.tangerine-logo-opened {
+  width: 155px;
+  margin-left: 45px;
+  margin-top: 12px;
+  margin-bottom: 14px;
+  margin-right: 5px;
+  /* Example of a taller logo
+  width: 220px;
+  margin-left: 15px;
+  margin-top: 12px;
+  margin-bottom: 14px;
+  margin-right: 12px;
+  */
+}
+
+mat-sidenav.mat-drawer-opened .tangerine-logo-closed {
+  display:none;
+}
+
+mat-sidenav:not(.mat-drawer-opened) .tangerine-logo-opened {
+  display:none;
+}
+
+/*
+ * Sidenav
+ */
+
+.sidenav-title {
+  color: var(--primary-text-color);
+  margin: 0px 15px 15px;
+  font-size: 1.2rem;
+  text-align: center;
+  width: 200px;
+}
+
+mat-sidenav:not(.mat-drawer-opened) .sidenav-title {
+  display: none;
 }
 
 .tangy-main-sidenav-container {
@@ -33,8 +114,13 @@ h1.tangy-main-app-name {
 }
 .mat-sidenav {
   width: 15rem;
+  /*
   background-color: var(--tertiary-color);
   color: var(--accent-text-color);
+  */
+}
+mat-sidenav-container {
+  margin-top: 0px !important;
 }
 
 .toolbar-spacer {
@@ -47,9 +133,13 @@ mat-list-item {
   line-height: 3;
   display: inline-flex;
 }
+mat-list-item:hover:not(.active-menu-item) {
+  cursor: pointer;
+  background: #EEE;
+
+}
 mat-list-item a {
   text-decoration: none;
-  color: var(--accent-text-color);
   margin-left: 1rem;
 }
 .mat-divider {
@@ -61,5 +151,21 @@ mat-list-item a {
   font-size: 120%;
 }
 mat-toolbar.mat-toolbar {
-  background: var(--accent-text-color);
+  background: var(--primary-color);
+  color: var(--accent-text-color);  
 }
+
+mat-sidenav-content:not(.mat-drawer-opened) {
+  padding-left: 50px;
+}
+mat-sidenav:not(.mat-drawer-opened) {
+  transform: translate3d(0, 0, 0) !important;
+  visibility: visible !important;
+  width: 50px !important;
+  overflow: hidden;
+}
+
+mat-list-item {
+  width: 100%;
+}
+

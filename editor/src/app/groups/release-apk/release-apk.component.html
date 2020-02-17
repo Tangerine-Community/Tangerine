@@ -1,4 +1,3 @@
-<div class="tangy-content-top-margin">
 <p *ngIf="status==code.STATUS_WAIT">
   {{'Starting your APK release...'|translate}}
 </p>
@@ -13,6 +12,5 @@
 
 <p *ngIf="status==code.STATUS_DONE">
   {{'Download your APK'|translate}}
-  <a target='_new' href="/releases/{{releaseType}}/apks/{{groupName}}/{{groupName}}.apk">{{'here'|translate}}</a>.
+  <a target='_new' href="/releases/{{releaseType}}/apks/{{groupId}}/{{groupId}}.apk">{{'here'|translate}}</a>.
 </p>
-</div>

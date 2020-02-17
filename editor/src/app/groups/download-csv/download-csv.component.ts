@@ -1,3 +1,7 @@
+import { TangerineFormsService } from './../services/tangerine-forms.service';
+import { TangyFormService } from './../../tangy-forms/tangy-form-service';
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Component, OnInit } from '@angular/core';
 import { GroupsService } from '../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
@@ -8,6 +12,10 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./download-csv.component.css']
 })
 export class DownloadCsvComponent implements OnInit {
+
+  title = _TRANSLATE('Donwload CSV')
+  breadcrumbs:Array<Breadcrumb> = []
+ 
   months = [];
   years = [];
   selectedMonth = '*';
@@ -22,17 +30,34 @@ export class DownloadCsvComponent implements OnInit {
   result;
   checkDownloadStatusInterval;
   nothingToDownload = false;
-  constructor(private groupsService: GroupsService, private route: ActivatedRoute) { }
+  constructor(
+    private groupsService: GroupsService,
+    private route: ActivatedRoute,
+    private formsService:TangerineFormsService
+  ) { }
 
   async ngOnInit() {
+
     this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     for (let i = 0; i<10; i++) {
       this.years = [new Date().getFullYear()-i, ...this.years]
     }
     this.years = this.years.reverse()
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe(async params => {
       this.groupName = params['groupName'];
       this.formId = params['formId'];
+      const formInfo = (await this.formsService.getFormsInfo(this.groupName))
+        .find(formInfo => formInfo.id === this.formId)
+      this.breadcrumbs = [
+        <Breadcrumb>{
+          label: _TRANSLATE('Download CSV'),
+          url: 'download-csv'
+        },
+        <Breadcrumb>{
+          label: formInfo.title,
+          url: `download-csv/${formInfo.id}`
+        }
+      ]
     });
   }
 

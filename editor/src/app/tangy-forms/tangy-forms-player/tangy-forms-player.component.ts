@@ -51,6 +51,9 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
         let response = _.target.store.getState()
         this.throttledSaveResponse(response)
       })
+      formEl.addEventListener('submit', _ => {
+        setTimeout(() => window.history.back(), 1000)
+      })
       if (formEl.getAttribute('id') === 'user-profile') {
         formEl.addEventListener('submit', _ => {
           _.preventDefault()

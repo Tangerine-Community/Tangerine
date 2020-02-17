@@ -1,0 +1,6 @@
+.add-form-button {
+  z-index: 987654321;
+  position: fixed;
+  bottom: 15px;
+  right : 15px;
+}
