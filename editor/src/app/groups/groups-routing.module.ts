@@ -1,3 +1,4 @@
+import { GroupFormsCsvComponent } from './group-forms-csv/group-forms-csv.component';
 import { GroupUploadsComponent } from './group-uploads/group-uploads.component';
 import { GroupReleasesComponent } from './group-releases/group-releases.component';
 import { ResponsesComponent } from './responses/responses.component';
@@ -47,6 +48,8 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/author/case-definitions', component: CaseManagementEditorComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/author/media-library', component: GroupMediaComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/data', component: GroupDataComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/uploads', component: GroupUploadsComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/sync', component: GroupFormsSyncComponent, canActivate: [LoginGuard] },
@@ -54,7 +57,6 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/device-users', component: GroupDeviceUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/devices', component: GroupDevicesComponent, canActivate: [LoginGuard] },
-  { path: 'groups/:groupId/deploy/uploads', component: GroupUploadsComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy/releases', component: GroupReleasesComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/support', component: SupportComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },

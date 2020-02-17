@@ -1,3 +1,4 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GroupsService } from '../services/groups.service';
@@ -15,6 +16,10 @@ import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.
   styleUrls: ['./group-forms-csv.component.css']
 })
 export class GroupFormsCsvComponent implements OnInit, AfterViewInit {
+
+  title = _TRANSLATE('Download CSVs')
+  breadcrumbs:Array<Breadcrumb> = []
+
   forms;
   groupId;
   group;
@@ -42,6 +47,12 @@ export class GroupFormsCsvComponent implements OnInit, AfterViewInit {
   ) { }
 
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Download CSVs'),
+        url: 'download-csv'
+      }
+    ]
     this.route.params.subscribe(async params => {
       this.groupId = params.groupId;
       this.group = await this.groupsService.getGroupInfo(this.groupId);
