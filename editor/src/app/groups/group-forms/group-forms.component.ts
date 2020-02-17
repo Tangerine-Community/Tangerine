@@ -21,6 +21,10 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./group-forms.component.css']
 })
 export class GroupFormsComponent implements OnInit, AfterViewInit {
+
+  title = _TRANSLATE('Forms')
+  breadcrumbs:Array<Breadcrumb> = []
+ 
   forms;
   groupId;
   group;
@@ -35,9 +39,7 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   activeForms;
   groupUrl;
   formsJsonURL;
-  title = "Forms"
-  breadcrumbs:Array<Breadcrumb> = []
-  @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
+ @ViewChild('copyFormOverlay') copyFormOverlay: ElementRef;
   constructor(
     private route: ActivatedRoute,
     private windowRef: WindowRef,
@@ -52,7 +54,7 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
   async ngOnInit() {
     this.breadcrumbs = [
       <Breadcrumb>{
-        label: 'Forms',
+        label: _TRANSLATE('Forms'),
         url: 'forms'
       }
     ]

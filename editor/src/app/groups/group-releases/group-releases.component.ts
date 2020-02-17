@@ -1,3 +1,5 @@
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
@@ -7,11 +9,20 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class GroupReleasesComponent implements OnInit {
 
+  title = _TRANSLATE('Releases')
+  breadcrumbs:Array<Breadcrumb> = []
+ 
   @Input() groupId:string
 
   constructor() { }
 
   ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Releases'),
+        url: 'releases'
+      }
+    ]
   }
 
 }

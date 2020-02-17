@@ -33,6 +33,10 @@ export class NgTangyFormEditorComponent implements AfterContentChecked {
     private appConfigService: AppConfigService,
   ) { }
 
+  async ngAfterContentInit() {
+
+  }
+  
   async ngAfterContentChecked() {
 
     this.containerEl = this.container.nativeElement
