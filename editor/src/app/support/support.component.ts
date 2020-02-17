@@ -1,3 +1,4 @@
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { ActivatedRoute } from '@angular/router';
 import { GroupsService } from './../groups/services/groups.service';
 import { MenuService } from './../shared/_services/menu.service';
@@ -20,9 +21,9 @@ export class SupportComponent implements OnInit {
     this.route.params.subscribe(async params => {
       if (params.groupId) {
         const group = await this.groupsService.getGroupInfo(params.groupId)
-        this.menuService.setContext(group.label, 'Help', 'help', group._id)
+        this.menuService.setContext(group.label, group._id, 'help')
       } else {
-        this.menuService.setContext('', 'Help', 'help')
+        this.menuService.setContext(_TRANSLATE('Help'), '', 'help')
       }
     })
   }

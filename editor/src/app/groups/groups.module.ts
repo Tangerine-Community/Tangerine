@@ -54,6 +54,8 @@ import { GroupFormsComponent } from './group-forms/group-forms.component';
 import { GroupReleasesComponent } from './group-releases/group-releases.component';
 import { GroupFormsEditComponent } from './group-forms-edit/group-forms-edit.component';
 import { GroupLocationListComponent } from './group-location-list/group-location-list.component';
+import { GroupDeviceUsersComponent } from './group-device-users/group-device-users.component';
+import { GroupUploadsComponent } from './group-uploads/group-uploads.component';
 
 
 
@@ -119,7 +121,9 @@ import { GroupLocationListComponent } from './group-location-list/group-location
     GroupFormsSyncComponent,
     GroupReleasesComponent,
     GroupFormsEditComponent,
-    GroupLocationListComponent
+    GroupLocationListComponent,
+    GroupDeviceUsersComponent,
+    GroupUploadsComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
   entryComponents: [CopyFormComponent]

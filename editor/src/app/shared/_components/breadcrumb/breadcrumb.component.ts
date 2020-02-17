@@ -34,7 +34,7 @@ export class BreadcrumbComponent {
     if (params[1] === 'groups') {
       const group = await this.groupsService.getGroupInfo(params[2])
       contextUrl = `#/groups/${params[2]}`
-      bakedCrumbs.push(<Crumb>{
+      bakedCrumbs.push(<Breadcrumb>{
         label: group.label,
         url: contextUrl 
       })
@@ -42,7 +42,7 @@ export class BreadcrumbComponent {
     // Group Section.
     if (params[1] === 'groups' && params[3]) {
       contextUrl = `${contextUrl}/${params[3]}`
-      bakedCrumbs.push(<Crumb>{
+      bakedCrumbs.push(<Breadcrumb>{
         label: params[3].charAt(0).toUpperCase() + params[3].slice(1),
         url: contextUrl
       })

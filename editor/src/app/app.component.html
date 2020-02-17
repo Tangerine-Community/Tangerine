@@ -134,7 +134,6 @@
                 <mat-nav-list class="tangy-full-width">
                     <mat-list-item
                         *ngIf="loggedIn && menuService.groupId !== ''"
-                        [class.active-menu-item]="menuService.section === 'groups'"
                         routerLink="/"
                     >
                         <span class=""><i class="material-icons menu-icon">group_work</i></span>

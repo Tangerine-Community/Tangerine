@@ -1,53 +1,61 @@
-<mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
-  <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element._id.substr(0,6)}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="claimed">
-    <mat-header-cell *matHeaderCellDef> Claimed </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.claimed}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="registeredOn">
-    <mat-header-cell *matHeaderCellDef> Registered on </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.registeredOn}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="syncedOn">
-    <mat-header-cell *matHeaderCellDef> Synced on </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.syncedOn}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="updatedOn">
-    <mat-header-cell *matHeaderCellDef> Updated on </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.updatedOn}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="version">
-    <mat-header-cell *matHeaderCellDef> Version </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.version}} </mat-cell>
-  </ng-container>
-  <!-- Star Column -->
-  <ng-container matColumnDef="star" stickyEnd>
-    <th mat-header-cell *matHeaderCellDef></th>
-    <td mat-cell *matCellDef="let element">
-        <button mat-button [matMenuTriggerFor]="menu">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item *ngIf="!element.claimed" (click)="getDeviceRegistrationCode(element._id)">
-            <mat-icon>fingerprint</mat-icon><span>{{'registration code'|translate}}</span>
-          </button>
-          <button mat-menu-item (click)="editDevice(element._id)">
-            <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
-          </button>
-          <button mat-menu-item (click)="resetDevice(element._id)">
-            <mat-icon>settings_backup_restore</mat-icon><span>{{'reset'|translate}}</span>
-          </button>
-          <button mat-menu-item (click)="deleteDevice(element._id)">
-            <mat-icon>delete</mat-icon><span>{{'delete'|translate}}</span>
-          </button>
-        </mat-menu>
-    </td>
-  </ng-container>
-  <mat-header-row *matHeaderRowDef="devicesDisplayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: devicesDisplayedColumns;"></mat-row>
-</mat-table>
-<paper-fab mat-raised-button icon="add" color="accent" class="add-device-button" (click)="addDevice()">
-</paper-fab>
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+
+<!--div id="location-select-container">
+  <tangy-location name="location" #locationEl></tangy-location>
+</div-->
+
+    <mat-table [dataSource]="deviceInfos" class="mat-elevation-z8">
+      <ng-container matColumnDef="id">
+        <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element._id.substr(0,6)}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="claimed">
+        <mat-header-cell *matHeaderCellDef> Claimed </mat-header-cell>
+        <mat-cell *matCellDef="let element"> 
+          <mwc-icon *ngIf="element.claimed">done</mwc-icon>
+        </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="registeredOn">
+        <mat-header-cell *matHeaderCellDef> Registered on </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.registeredOn}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="syncedOn">
+        <mat-header-cell *matHeaderCellDef> Synced on </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.syncedOn}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="updatedOn">
+        <mat-header-cell *matHeaderCellDef> Updated on </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.updatedOn}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="version">
+        <mat-header-cell *matHeaderCellDef> Version </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.version}} </mat-cell>
+      </ng-container>
+      <!-- Star Column -->
+      <ng-container matColumnDef="star" stickyEnd>
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item *ngIf="!element.claimed" (click)="getDeviceRegistrationCode(element._id)">
+                <mat-icon>fingerprint</mat-icon><span>{{'registration code'|translate}}</span>
+              </button>
+              <button mat-menu-item (click)="editDevice(element._id)">
+                <mat-icon>edit</mat-icon><span>{{'edit'|translate}}</span>
+              </button>
+              <button mat-menu-item (click)="resetDevice(element._id)">
+                <mat-icon>settings_backup_restore</mat-icon><span>{{'reset'|translate}}</span>
+              </button>
+              <button mat-menu-item (click)="deleteDevice(element._id)">
+                <mat-icon>delete</mat-icon><span>{{'delete'|translate}}</span>
+              </button>
+            </mat-menu>
+        </td>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="devicesDisplayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: devicesDisplayedColumns;"></mat-row>
+    </mat-table>
+    <paper-fab mat-raised-button icon="add" color="accent" class="action" (click)="addDevice()">
+    </paper-fab>

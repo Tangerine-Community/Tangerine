@@ -1,3 +1,5 @@
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { GroupsService } from './../services/groups.service';
 import { ActivatedRoute } from '@angular/router';
 import { MenuService } from './../../shared/_services/menu.service';
@@ -10,6 +12,8 @@ import { TangerineForm } from 'src/app/shared/_classes/tangerine-form.class';
 import {TangyFormResponseModel} from 'tangy-form/tangy-form-response-model.js'
 import { Loc } from 'tangy-form/util/loc.js';
 import * as qrcode from 'qrcode-generator-es6';
+import * as moment from 'moment'
+
 
 interface LocationNode {
   level:string
@@ -41,6 +45,10 @@ interface UserField {
 })
 export class GroupDevicesComponent implements OnInit {
 
+  title = _TRANSLATE("Devices")
+  breadcrumbs:Array<Breadcrumb> = []
+ 
+
   devices:Array<GroupDevice>
   users:Array<TangyFormResponseModel> = []
   deviceInfos:Array<DeviceInfo> = []
@@ -52,19 +60,33 @@ export class GroupDevicesComponent implements OnInit {
   devicesDisplayedColumns = ['id', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'star']
 
   @Input('groupId') groupId:string
-  
   @ViewChild('dialog') dialog: ElementRef;
   @ViewChild('locationEl') locationEl: ElementRef;
 
   constructor(
+    private menuService:MenuService,
+    private route: ActivatedRoute,
     private httpClient:HttpClient,
-    private groupDevicesService:GroupDevicesService
+    private groupsService:GroupsService,
+    private groupDevicesService:GroupDevicesService,
   ) { }
 
   async ngOnInit() {
-    const locationList = await this.httpClient.get('./assets/location-list.json').toPromise()
-    this.flatLocationList = Loc.flatten(locationList)
-    this.update()
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: 'Devices',
+        url: 'devices'
+      }
+    ]
+    this.route.params.subscribe(async params => {
+      this.groupId = params.groupId
+      const group = await this.groupsService.getGroupInfo(params.groupId)
+      //this.menuService.setContext(group.label, 'Deploy', 'deploy', group._id)
+      const locationList = await this.httpClient.get('./assets/location-list.json').toPromise()
+      this.flatLocationList = Loc.flatten(locationList)
+      //this.locationEl.nativeElement.addEventListener('change', (event) => this.onLocationSelection(event.target.value))
+      this.update()
+    })
   }
 
   onLocationSelection(value:Array<LocationNode>) {
@@ -83,7 +105,46 @@ export class GroupDevicesComponent implements OnInit {
   }
 
   async update() {
+    /*
+    const users = (await this.tangyFormService.getResponseByFormId(this.groupId, 'user-profile'))
+      .filter(device => this.userInLocationFilter(device.assignedLocation))
+    this.userFields = users.reduce((userFields, user) => {
+      return [
+        ...userFields,
+        ...user.items[0].inputs
+          .filter(input => input.type === 'TANGY-INPUT')
+          .map(input => {
+            return {
+              name: input.name,
+              label: input.label
+            }
+          })
+      ]
+      .reduce((userFieldsWithoutDuplicates, userField) => {
+        return !userFieldsWithoutDuplicates.find(checkIt => checkIt.name === userField) 
+          ? [...userFieldsWithoutDuplicates, userField] 
+          : userFields
+      }, [])
+    }, [])
+    */
     const devices = await this.groupDevicesService.list(this.groupId)
+    const countsByVersion = devices
+      .reduce((countsByVersion, device) => {
+        countsByVersion[device.version] = countsByVersion[device.version]
+          ? countsByVersion[device.version]++
+          : 1
+        return countsByVersion
+      }, {})
+    this.versionStats = Object.keys(countsByVersion)
+      .reduce((versionStats, versionId) => {
+        return [
+          ...versionStats,
+          {
+            id: versionId,
+            percentage: countsByVersion[versionId] / devices.length
+          }
+        ]
+      }, [])
     this.deviceInfos = devices
       .filter(device => {
         return this.locationFilter
@@ -97,6 +158,9 @@ export class GroupDevicesComponent implements OnInit {
       .map(device => {
       return <DeviceInfo>{
         ...device,
+        registeredOn: device.registeredOn ? moment(device.registeredOn).format('YYYY-MM-DD hh:mm a') : '',
+        syncedOn: device.syncedOn ? moment(device.syncedOn).format('YYYY-MM-DD hh:mm a') : '',
+        updatedOn: device.updatedOn ? moment(device.updatedOn).format('YYYY-MM-DD hh:mm a') : '',
         assignedLocation: device.assignedLocation.value ? device.assignedLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>') : '',
         syncLocations: device.syncLocations.map(syncLocation => {
           return syncLocation.value.map(value => `<b>${value.level}</b>: ${this.flatLocationList.locations.find(node => node.id === value.value).label}`).join('<br>')
