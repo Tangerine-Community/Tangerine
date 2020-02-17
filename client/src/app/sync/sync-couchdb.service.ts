@@ -48,7 +48,7 @@ export class SyncCouchdbService {
   }
 
   // Note that if you run this with no forms configured to CouchDB sync, that will result in no filter query and everything will be synced. Use carefully.
-  async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails, syncProgress): Promise<ReplicationStatus> {
+  async sync(userDb:UserDatabase, syncDetails:SyncCouchdbDetails): Promise<ReplicationStatus> {
     const syncSessionUrl = await this.http.get(`${syncDetails.serverUrl}sync-session/start/${syncDetails.groupId}/${syncDetails.deviceId}/${syncDetails.deviceToken}`, {responseType:'text'}).toPromise()
     const remoteDb = new PouchDB(syncSessionUrl)
     const pouchDbSyncOptions ={
@@ -95,7 +95,6 @@ export class SyncCouchdbService {
           'docs_written': info.change.docs_written,
           'doc_write_failures': info.change.doc_write_failures
         };
-        // syncProgress(progress)
         this.syncMessage$.next(progress)
       }).on('paused', function (err) {
         console.log('Sync paused; error: ' + JSON.stringify(err))

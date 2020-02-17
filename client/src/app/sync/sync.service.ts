@@ -32,11 +32,6 @@ export class SyncService {
   syncMessage: any = {};
   public readonly syncMessage$: Subject<any> = new Subject();
 
-  syncProgress(progress) {
-    console.log(JSON.stringify(progress))
-    this.syncMessage$.next(progress)
-  }
-
   async sync(useSharedUser = false) {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
@@ -64,7 +59,7 @@ export class SyncService {
       deviceToken: device.token,
       deviceSyncLocations: device.syncLocations,
       formInfos
-    }, this.syncProgress.bind(this))
+    })
     // console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
       appConfig: appConfig,
