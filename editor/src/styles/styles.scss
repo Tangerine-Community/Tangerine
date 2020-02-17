@@ -186,8 +186,13 @@ div.more {
   text-transform: uppercase;
 }
 mat-card.mat-card {
-  background-color: var(--document-background-color);
+  background-color: white;
 }
+mat-card {
+  margin: 15px 15px 15px;
+  background: white;
+}
+
 form,
 mat-card-content > * {
   width: 220px;

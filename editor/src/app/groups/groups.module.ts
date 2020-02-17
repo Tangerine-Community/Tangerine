@@ -56,6 +56,10 @@ import { GroupFormsEditComponent } from './group-forms-edit/group-forms-edit.com
 import { GroupLocationListComponent } from './group-location-list/group-location-list.component';
 import { GroupDeviceUsersComponent } from './group-device-users/group-device-users.component';
 import { GroupUploadsComponent } from './group-uploads/group-uploads.component';
+import { GroupReleaseApkTestComponent } from './group-release-apk-test/group-release-apk-test.component';
+import { GroupReleaseApkLiveComponent } from './group-release-apk-live/group-release-apk-live.component';
+import { GroupReleasePwaTestComponent } from './group-release-pwa-test/group-release-pwa-test.component';
+import { GroupReleasePwaLiveComponent } from './group-release-pwa-live/group-release-pwa-live.component';
 
 
 
@@ -123,7 +127,11 @@ import { GroupUploadsComponent } from './group-uploads/group-uploads.component';
     GroupFormsEditComponent,
     GroupLocationListComponent,
     GroupDeviceUsersComponent,
-    GroupUploadsComponent
+    GroupUploadsComponent,
+    GroupReleaseApkTestComponent,
+    GroupReleaseApkLiveComponent,
+    GroupReleasePwaTestComponent,
+    GroupReleasePwaLiveComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
   entryComponents: [CopyFormComponent]
