@@ -1,5 +1,5 @@
 import { SyncService } from './../../sync.service';
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 const STATUS_INITIAL = 'STATUS_INITIAL'
 const STATUS_IN_PROGRESS = 'STATUS_IN_PROGRESS'
@@ -17,10 +17,10 @@ export class SyncComponent implements OnInit {
   syncMessage: any
 
   constructor(
-    private syncService:SyncService
+    private syncService: SyncService,
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.syncMessage = ''
   }
 
