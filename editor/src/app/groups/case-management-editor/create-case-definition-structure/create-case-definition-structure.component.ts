@@ -45,7 +45,7 @@ export class CreateCaseDefinitionStructureComponent implements OnInit, OnDestroy
     private errorHandler: TangyErrorHandler) { }
 
   async ngOnInit() {
-    this.groupId = this.route.snapshot.paramMap.get('groupName');
+    this.groupId = this.route.snapshot.paramMap.get('groupId');
     this.formsList = (await this.tangerineFormsService.getFormsInfo(this.groupId)).filter(x => x['type'] === 'case');
     this.subscription = this.route.queryParams.subscribe(async queryParams => {
       this.caseForm = { ...this.initialForm };

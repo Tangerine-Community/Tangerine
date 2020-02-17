@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+paper-fab {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+}
+
+#location-select-container {
+  background: var(--lighter-accent-color);
+}
+tangy-location {
+  margin: 0px 0px -45px 15px;
+}
+#group-section-title {
+  color: white;
+  background: var(--lighter-accent-color);
+  margin: 0px;
+  padding: 80px 20px 5px;
+}
+#location-select-container {
+  display: none;
+}

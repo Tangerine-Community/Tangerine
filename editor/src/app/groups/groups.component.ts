@@ -1,3 +1,4 @@
+import { MenuService } from './../shared/_services/menu.service';
 import { Component, OnInit } from '@angular/core';
 import { GroupsService } from './services/groups.service';
 import { TruncatePipe } from '../pipes/truncate';
@@ -17,6 +18,7 @@ export class GroupsComponent implements OnInit {
   breakpoint;
 
   constructor(
+    private menuService:MenuService,
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
     ) {
@@ -25,6 +27,7 @@ export class GroupsComponent implements OnInit {
 
   async ngOnInit() {
     await this.getData();
+    this.menuService.setContext(_TRANSLATE('Groups'), '', 'groups')
     this.onResize(window);
   }
 

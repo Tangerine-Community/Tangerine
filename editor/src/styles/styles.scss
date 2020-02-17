@@ -17,6 +17,7 @@ button.tangy-froms-margin-left {
   /* min-height: 100vh; */
   margin-top: 64px;
 }
+/*
 mat-toolbar {
   position: fixed;
   top: 0;
@@ -24,6 +25,7 @@ mat-toolbar {
   left: 0;
   z-index: 2;
 }
+*/
 
 .tangy-spacer {
   flex: 1 1 auto;
@@ -151,20 +153,19 @@ div.more {
 }
 
 .mat-tab-labels {
-  background-color: var(--lighter-accent-color);
-  color: var(--accent-text-color);
+  background-color: white;
+  color: var(--primary-text-color);
   font-weight: 700;
 }
 .mat-tab-label,
 .mat-tab-link {
-  color: var(--accent-text-color) !important;
+  color: var(--primary-text-color) !important;
   font-weight: 700 !important;
 }
 
 .mat-tab-label-active {
-  background-color: var(--lighter-accent-color);
   opacity: 1 !important;
-  color: var(--accent-text-color);
+  color: var(--primary-text-color);
   font-weight: 700;
 }
 .mat-tab-group.mat-primary .mat-ink-bar,
@@ -174,15 +175,24 @@ div.more {
 }
 
 .mat-tab-header {
+  padding-top: 3px;
   margin-left: -10px;
   margin-right: -10px;
+  background: white;
+  padding-left: 31px;
+
 }
 .mat-tab-label-content {
   text-transform: uppercase;
 }
 mat-card.mat-card {
-  background-color: var(--document-background-color);
+  background-color: white;
 }
+mat-card {
+  margin: 15px 15px 15px;
+  background: white;
+}
+
 form,
 mat-card-content > * {
   width: 220px;

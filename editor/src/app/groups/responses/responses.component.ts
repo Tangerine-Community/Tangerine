@@ -11,15 +11,16 @@ import * as moment from 'moment'
 })
 export class ResponsesComponent implements OnInit {
 
-  @Input() groupName = '';
+  @Input() groupId = '';
+  @Input() filterBy:string = '*'
+  @Input() excludeForms:Array<string> = []
+  @Input() hideFilterBy = false
+
   moment;
   responses;
   skip = 0;
   limit = 30;
-  filter = '*';
   forms = [];
-  datUrl = 'Loading...';
-  datOutputsModuleEnabled = false;
 
   constructor(
     private groupsService: GroupsService,
@@ -30,39 +31,35 @@ export class ResponsesComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.forms = await this.tangerineFormsService.getFormsInfo(this.groupName);
-
-    const modulesEnabled:any = await this.http.get(`/api/modules`).toPromise()
-    if (modulesEnabled.indexOf('dat-output') !== -1) {
-      this.datOutputsModuleEnabled = true;
-      this.http.get(`/app/${this.groupName}/dat-output-url`)
-        .toPromise()
-        .then((response: any) => {
-          this.datUrl = response.datUrl
-        });
-      }
+    this.forms = (await this.tangerineFormsService.getFormsInfo(this.groupId))
+      .filter(formInfo => !this.excludeForms.includes(formInfo.id) )
     await this.getResponses()
   }
 
   async getResponses() {
-    if (this.filter === '*') {
-      let responses = <any>await this.http.get(`/api/${this.groupName}/responses/${this.limit}/${this.skip}`).toPromise()
-      this.responses = responses.map(response => Object.assign({}, response, {userProfileId: response.items[0].inputs.reduce((userProfileId, input) => input.name === 'userProfileId' ? input.value : userProfileId, 'anonymous')}))
+    let responses = []
+    if (this.filterBy === '*') {
+      responses = <Array<any>>await this.http.get(`/api/${this.groupId}/responses/${this.limit}/${this.skip}`).toPromise()
     } else {
-      let responses = <any>await this.http.get(`/api/${this.groupName}/responsesByFormId/${this.filter}/${this.limit}/${this.skip}`).toPromise()
-      this.responses = responses.map(response => Object.assign({}, response, {userProfileId: response.items[0].inputs.reduce((userProfileId, input) => input.name === 'userProfileId' ? input.value : userProfileId, 'anonymous')}))
+      responses = <Array<any>>await this.http.get(`/api/${this.groupId}/responsesByFormId/${this.filterBy}/${this.limit}/${this.skip}`).toPromise()
     }
+    this.responses = responses.map(response => {
+      return {
+        ...response,
+        userProfileId: response.tangerineModifiedBy ? response.tangerineModifiedBy : 'anonymous'
+      }
+    })
   }
 
   async filterByForm(event) {
-    this.filter = event.target['value'];
+    this.filterBy = event.target['value'];
     this.skip = 0;
     this.getResponses();
   }
 
   async deleteResponse(id) {
     if(confirm('Are you sure you want to delete this form response?')) {
-      await this.http.delete(`/api/${this.groupName}/${id}`).toPromise()
+      await this.http.delete(`/api/${this.groupId}/${id}`).toPromise()
       this.getResponses()
     }
   }
@@ -76,8 +73,5 @@ export class ResponsesComponent implements OnInit {
     this.skip = this.skip - this.limit
     this.getResponses();
   }
-
-
-
 
 }

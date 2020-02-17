@@ -1,0 +1,36 @@
+<app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+<mat-card class="is-link mat-elevation-z3" routerLink="devices">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <i class="material-icons tangy-foreground-secondary group-avatar">stay_current_portrait</i>
+      </div>
+      <mat-card-title>
+          <a>{{'Devices'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{"Manage devices using this group's app"|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
+<mat-card class="is-link mat-elevation-z3" routerLink="device-users">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <mwc-icon class="tangy-foreground-secondary">people</mwc-icon>
+      </div>
+      <mat-card-title>
+          <a>{{'Device Users'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Manage people using devices.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>
+
+<mat-card class="is-link mat-elevation-z3" routerLink="releases">
+  <mat-card-header>
+      <div mat-card-avatar>
+        <i class="material-icons tangy-foreground-secondary group-avatar">system_update</i>
+      </div>
+      <mat-card-title>
+          <a>{{'Releases'|translate}}</a>
+      </mat-card-title>
+      <mat-card-subtitle>{{'Release updates to devices.'|translate}}</mat-card-subtitle>
+  </mat-card-header>
+</mat-card>

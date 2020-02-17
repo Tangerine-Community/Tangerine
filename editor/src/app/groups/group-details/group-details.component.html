@@ -13,6 +13,19 @@
 <mat-tab-group class="tangy-content" #tabGroup (selectedTabChange)="tabChanged($event)" (selectedIndexChange)="''"
   [(selectedIndex)]="selectedTabIndex">
 
+  <mat-tab *ngIf="isGroupAdminUser && enabledModules.includes('sync-protocol-2')" label="Devices">
+    <mat-card>
+      <mat-card-title class="tangy-foreground-secondary">
+        Deploy
+      </mat-card-title>
+      <mat-card-content>
+        <div class="tangy-full-width">
+          <app-group-deploy [groupId]="groupId"></app-group-deploy>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </mat-tab>
+
   <mat-tab label="{{'Forms'|translate}}">
     <mat-card>
       <mat-card-title>
