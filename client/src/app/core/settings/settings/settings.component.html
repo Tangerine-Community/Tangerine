@@ -1,10 +1,25 @@
-<h1>{{'Settings'|translate}}</h1>
-<form id="settings-form" #form>
-  <label for="translation">{{'Language'|translate}}: </label>
-  <select name="translation">
-    <option *ngFor="let languageInfo of translations" [selected]="languageInfo.languageCode === languageCode" value="{{languageInfo.languageCode}}">
-      {{languageInfo.label|translate}}
-    </option>
-  </select> 
-  <paper-button type="submit">{{'submit'|translate}}</paper-button>
-</form>
+<mat-tab-group>
+  <mat-tab label="{{'Settings'|translate}}">
+    <ng-template matTabContent>
+      <div class="container">
+        <h1>{{'Settings'|translate}}</h1>
+        <p> {{'Please choose your language: '|translate}}</p>
+        <form id="settings-form" #form>
+<!--          <label for="translation">{{'Language'|translate}}: </label>-->
+<!--          <select name="translation" id="translation">-->
+<!--            <option *ngFor="let languageInfo of translations" [selected]="languageInfo.languageCode === languageCode" value="{{languageInfo.languageCode}}">-->
+<!--              {{languageInfo.label|translate}}-->
+<!--            </option>-->
+<!--          </select>-->
+          <mat-form-field appearance="fill">
+            <mat-label>{{'Language'|translate}}</mat-label>
+            <mat-select name="translation" id="translation">
+              <mat-option *ngFor="let languageInfo of translations" [selected]="languageInfo.languageCode === languageCode" value="{{languageInfo.languageCode}}">{{languageInfo.label|translate}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit">{{'submit'|translate}}</button>
+        </form>
+      </div>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

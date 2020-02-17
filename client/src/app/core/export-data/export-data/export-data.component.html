@@ -1,4 +1,42 @@
-<br>
-<br>
-<br>
-<button color="primary" mat-raised-button (click)="exportAllRecords()">{{'EXPORT DATA FOR ALL USERS'|translate}}</button>
+<mat-tab-group>
+  <mat-tab label="{{'Export Backup'|translate}}">
+    <ng-template matTabContent>
+      <div class="container">
+        <mat-card>
+          <div class="mat-card-header-text">
+            Export Backup
+          </div>
+          <mat-card-content class="card-content">
+            <p>Export Data creates a backup of all of your records and saves it to your device.</p>
+          </mat-card-content>
+          <mat-card-actions class="card-actions">
+            <button color="primary" mat-raised-button (click)="exportAllRecords()">{{'EXPORT DATA FOR ALL USERS'|translate}}</button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </ng-template>
+  </mat-tab>
+
+<!--  <mat-tab label="{{'Copy Database'|translate}}">-->
+<!--    <ng-template matTabContent>-->
+<!--      <div class="container">-->
+<!--        <mat-card>-->
+<!--          <div class="mat-card-header-text">-->
+<!--            Copy Database-->
+<!--          </div>-->
+<!--          <mat-card-content class="card-content">-->
+<!--            <p>This feature copies the database to a location on the device that is accessible to the user.</p>-->
+<!--          </mat-card-content>-->
+<!--          <mat-card-actions class="card-actions">-->
+<!--            <button color="primary" mat-raised-button (click)="copyDatabase()">{{'COPY DATABASE'|translate}}</button>-->
+<!--          </mat-card-actions>-->
+<!--        </mat-card>-->
+<!--      </div>-->
+<!--    </ng-template>-->
+<!--  </mat-tab>-->
+
+</mat-tab-group>
+
+
+
+

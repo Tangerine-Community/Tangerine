@@ -1,49 +1,51 @@
-<div class="container" *ngIf="status === 'STATUS_INITIAL'">
-  <paper-card heading="Sync Manager">
-    <div class="card-content">
-      <paper-progress value="0"></paper-progress>
-      <div class="status">Status: Ready</div>
-    </div>
-    <div class="card-actions">
-      <paper-button (click)="sync()">start</paper-button>
-    </div>
-  </paper-card>
-</div>
+<mat-tab-group>
+  <mat-tab label="{{'Online Sync'|translate}}">
+    <ng-template matTabContent>
+      <div>
+        <h1>Online Sync</h1>
+        <p>Online Sync is used when there is a reliable Internet connection. If you have no Internet connection, use the P2P tab above to transfer records between nearby devices.</p>
+        <h2>Online Sync</h2>
+        <p>Press the Start button below to transfer records to the server.</p>
 
-<div class="container" *ngIf="status === 'STATUS_IN_PROGRESS'">
-  <paper-card heading="Sync Manager">
-    <div class="card-content">
-      <paper-progress indeterminate></paper-progress>
-      <div>{{ syncMessage }}</div>
-      <div class="status">Status: In progress</div>
-    </div>
-    <div class="card-actions">
-      <paper-button disabled>start</paper-button>
-    </div>
-  </paper-card>
-</div>
+        <div class="container" *ngIf="status === 'STATUS_INITIAL'">
+          <button mat-raised-button color="primary" (click)="sync()">Start</button>
+          <mat-progress-bar value="0"></mat-progress-bar>
+          <div class="status">Status: Ready</div>
+        </div>
 
-<div class="container" *ngIf="status === 'STATUS_COMPLETED'">
-  <paper-card heading="Sync Manager">
-    <div class="card-content">
-      <paper-progress value="100"></paper-progress>
-      <div>{{ syncMessage }}</div>
-      <div class="status">Status: Complete</div>
-    </div>
-    <div class="card-actions">
-      <paper-button (click)="sync()">start</paper-button>
-    </div>
-  </paper-card>
-</div>
+        <div class="container" *ngIf="status === 'STATUS_IN_PROGRESS'">
+          <button mat-raised-button color="primary" disabled>Start</button>
+          <mat-progress-bar mode="buffer"></mat-progress-bar>
+          <div>{{ syncMessage }}</div>
+          <div class="status">Status: In progress</div>
+        </div>
 
-<div class="container" *ngIf="status === 'STATUS_ERROR'">
-  <paper-card heading="Sync Manager">
-    <div class="card-content">
-      <paper-progress value="0"></paper-progress>
-      <div class="status">Status: Error</div>
-    </div>
-    <div class="card-actions">
-      <paper-button (click)="sync()">start</paper-button>
-    </div>
-  </paper-card>
-</div>
+        <div class="container" *ngIf="status === 'STATUS_COMPLETED'">
+          <button mat-raised-button color="primary" (click)="sync()">Start</button>
+          <mat-progress-bar mode="buffer"></mat-progress-bar>
+          <div>{{ syncMessage }}</div>
+          <div class="status">Status: Complete</div>
+        </div>
+
+        <div class="container" *ngIf="status === 'STATUS_ERROR'">
+          <button mat-raised-button color="primary" (click)="sync()">Start</button>
+          <mat-progress-bar mode="buffer" color="warn"></mat-progress-bar>
+          <div>{{ syncMessage }}</div>
+          <div class="status">Status: Error</div>
+        </div>
+
+      </div>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="{{'P2P Sync'|translate}}">
+    <ng-template matTabContent>
+      <app-peers></app-peers>
+    </ng-template>
+  </mat-tab>
+
+</mat-tab-group>
+
+
+
+
