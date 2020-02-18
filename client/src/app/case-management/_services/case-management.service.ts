@@ -1,3 +1,4 @@
+import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 
 
 import { Injectable } from '@angular/core';
@@ -82,18 +83,8 @@ export class CaseManagementService {
   }
 
   async getFormList() {
-    const forms = [];
-    const formList:any = await this.http.get('./assets/forms.json')
+    return <Array<FormInfo>>await this.http.get('./assets/forms.json')
       .toPromise()
-    for (const form of formList) {
-      forms.push({
-        title: form['title'],
-        src: form['src'],
-        archived: form['archived'] ? true : false,
-        id: form['id']
-      });
-    }
-    return forms;
   }
   async getVisitsByYearMonthLocationId(locationId?: string, include_docs?: boolean) {
     const options = { key: locationId, include_docs };
