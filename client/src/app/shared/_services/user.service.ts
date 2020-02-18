@@ -5,7 +5,6 @@ import { UserAccount } from './../_classes/user-account.class';
 import { UserDatabase } from './../_classes/user-database.class';
 import * as CryptoJS from 'crypto-js'
 import { Injectable, Inject } from '@angular/core';
-const bcrypt = window['dcodeIO'].bcrypt 
 import { AppConfigService } from './app-config.service';
 import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model.js';
 import { UserSignup } from '../_classes/user-signup.class';
@@ -28,13 +27,17 @@ export class UserService {
   public userLoggedOut$:Subject<UserAccount> = new Subject()
   public userShouldResetPassword$: any;
   private _userShouldResetPassword: boolean;
- 
+  window:any;
+  bcrypt = window['dcodeIO'].bcrypt
+
 
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
     private lockBoxService:LockBoxService,
     private appConfigService: AppConfigService
-  ) { }
+  ) {
+    this.window = window;
+  }
 
   async initialize() {
     this.config = await this.appConfigService.getAppConfig()
@@ -62,7 +65,7 @@ export class UserService {
   }
 
   //
-  // User Database 
+  // User Database
   //
 
   async createUserDatabase(username:string, userId:string):Promise<UserDatabase> {
@@ -165,8 +168,8 @@ export class UserService {
       password: this.hashValue(password),
       securityQuestionResponse: this.hashValue(password),
       userUUID: userProfile._id,
-      initialProfileComplete: true 
-    }) 
+      initialProfileComplete: true
+    })
     await this.usersDb.post(userAccount)
     let userDb = new UserDatabase('admin', userAccount.userUUID, lockBoxContents.device.key, lockBoxContents.device._id, true)
     await userDb.put(userProfile)
@@ -200,7 +203,7 @@ export class UserService {
         securityQuestionResponse: this.hashValue(userSignup.securityQuestionResponse),
         userUUID: userProfile._id,
         initialProfileComplete: false
-      }) 
+      })
       await this.usersDb.post(userAccount)
       const userDb = new UserDatabase(userSignup.username, userAccount.userUUID, device.key, device._id, true)
       await userDb.put(userProfile)
@@ -212,7 +215,7 @@ export class UserService {
         securityQuestionResponse: this.hashValue(userSignup.securityQuestionResponse),
         userUUID: userProfile._id,
         initialProfileComplete: false
-      }) 
+      })
       await this.usersDb.post(userAccount)
       const userDb = await this.createUserDatabase(userAccount.username, userAccount.userUUID)
       await userDb.put({
@@ -262,7 +265,7 @@ export class UserService {
   async getUserLocations(username?: string) {
     const userProfile = username ? await this.getUserProfile(username) : await this.getUserProfile();
     return userProfile.inputs.reduce((locationIds, input) => {
-      if (input.tagName === 'TANGY-LOCATION' && input.value && input.value.length > 0) { 
+      if (input.tagName === 'TANGY-LOCATION' && input.value && input.value.length > 0) {
         // Collect a unique list of the last entries selected.
         return Array.from(new Set([...locationIds, input.value[input.value.length-1].value]).values())
       } else {
@@ -307,8 +310,8 @@ export class UserService {
   }
 
   hashValue(value) {
-    const salt = bcrypt.genSaltSync(10);
-    return bcrypt.hashSync(value, salt);
+    const salt = this.bcrypt.genSaltSync(10);
+    return this.bcrypt.hashSync(value, salt);
   }
 
   async login(username: string, password: string) {
@@ -316,13 +319,13 @@ export class UserService {
       const appConfig = await this.appConfigService.getAppConfig()
       if (appConfig.syncProtocol === '2') {
         await this.lockBoxService.openLockBox(username, password)
-      } 
+      }
       // Make the user's database available for code in forms to use.
       window['userDb'] = await this.getUserDatabase(username)
       const userAccount = await this.getUserAccount(username)
       this.setCurrentUser(userAccount.username)
       this.userLoggedIn$.next(userAccount)
-      return true 
+      return true
     } else {;
       return false
     }
@@ -345,14 +348,14 @@ export class UserService {
 
   async confirmPassword(username, password):Promise<boolean> {
     const userAccount = await this.getUserAccount(username)
-    return bcrypt.compareSync(password, userAccount.password)
+    return this.bcrypt.compareSync(password, userAccount.password)
       ? true
       : false
   }
 
   async confirmSecurityQuestion(user):Promise<boolean> {
     const userAccount = await this.getUserAccount(user.username)
-    return bcrypt.compareSync(user.securityQuestionResponse, userAccount.securityQuestionResponse)
+    return this.bcrypt.compareSync(user.securityQuestionResponse, userAccount.securityQuestionResponse)
       ? true
       : false
   }

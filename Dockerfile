@@ -1,5 +1,5 @@
 # Start with docker-tangerine-base-image, which provides the core Tangerine apps.
-FROM tangerine/docker-tangerine-base-image:add-sqlite-support--1
+FROM tangerine/docker-tangerine-base-image:v3.4.0
 
 # Never ask for confirmations
 ENV DEBIAN_FRONTEND noninteractive
@@ -43,7 +43,7 @@ RUN cd /tangerine/client/pwa-tools/service-worker-generator && \
     npm install
 ADD client/pwa-tools/updater-app/package.json /tangerine/client/pwa-tools/updater-app/package.json
 ADD client/pwa-tools/updater-app/bower.json /tangerine/client/pwa-tools/updater-app/bower.json
-#RUN git config --global url."git://".insteadOf https://
+RUN git config --global url."git://".insteadOf https://
 RUN cd /tangerine/client/pwa-tools/updater-app && \
     npm install && \
     ./node_modules/.bin/bower install --allow-root

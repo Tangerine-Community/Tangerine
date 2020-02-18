@@ -1,5 +1,9 @@
-:host {
-  display: block;
-  padding: 15px;
+/*:host {*/
+/*  display: block;*/
+/*  padding: 15px;*/
+/*}*/
+
+button {
+  margin-left: 1em;
 }
 

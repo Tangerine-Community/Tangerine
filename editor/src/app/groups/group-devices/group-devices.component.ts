@@ -35,7 +35,7 @@ interface DeviceInfo {
 
 interface UserField {
   name:string
-  label:string 
+  label:string
 }
 
 @Component({
@@ -47,7 +47,7 @@ export class GroupDevicesComponent implements OnInit {
 
   title = _TRANSLATE("Devices")
   breadcrumbs:Array<Breadcrumb> = []
- 
+
 
   devices:Array<GroupDevice>
   users:Array<TangyFormResponseModel> = []
@@ -57,7 +57,7 @@ export class GroupDevicesComponent implements OnInit {
   flatLocationList
   locationFilter:Array<LocationNode> = []
   tab = 'TAB_USERS'
-  devicesDisplayedColumns = ['id', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'star']
+  devicesDisplayedColumns = ['id', 'location', 'claimed', 'registeredOn', 'syncedOn', 'updatedOn', 'version', 'star']
 
   @Input('groupId') groupId:string
   @ViewChild('dialog') dialog: ElementRef;
@@ -121,8 +121,8 @@ export class GroupDevicesComponent implements OnInit {
           })
       ]
       .reduce((userFieldsWithoutDuplicates, userField) => {
-        return !userFieldsWithoutDuplicates.find(checkIt => checkIt.name === userField) 
-          ? [...userFieldsWithoutDuplicates, userField] 
+        return !userFieldsWithoutDuplicates.find(checkIt => checkIt.name === userField)
+          ? [...userFieldsWithoutDuplicates, userField]
           : userFields
       }, [])
     }, [])
@@ -146,6 +146,9 @@ export class GroupDevicesComponent implements OnInit {
         ]
       }, [])
     this.deviceInfos = devices
+      .sort(function (a, b) {
+        return !a.registeredOn ? -1 : !b.registeredOn ? 1 : b.registeredOn - a.registeredOn;
+      })
       .filter(device => {
         return this.locationFilter
           .filter(node => !!node.value)
@@ -209,7 +212,7 @@ export class GroupDevicesComponent implements OnInit {
           <tangy-input name="_id" label="ID" value="${device._id}" disabled></tangy-input>
           <tangy-input name="token" label="Token" value="${device.token}" disabled></tangy-input>
           <tangy-checkbox name="claimed" label="Claimed" value="${device.claimed ? 'on' : ''}" disabled></tangy-checkbox>
-          <tangy-radio-buttons 
+          <tangy-radio-buttons
             ${device.assignedLocation && device.assignedLocation.showLevels ? `
               value='${
                 JSON.stringify(
@@ -221,23 +224,23 @@ export class GroupDevicesComponent implements OnInit {
                 )
               }'
             ` : ''}
-            label="Assign device to location at which level?" 
+            label="Assign device to location at which level?"
             name="assigned_location__show_levels"
           >
             ${locationList.locationsLevels.map(level => `
               <option value="${level}">${level}</option>
             `).join('')}
           </tangy-radio-buttons>
-          <tangy-location 
-            name="assigned_location" 
-            label="Assign device to location at which location?" 
+          <tangy-location
+            name="assigned_location"
+            label="Assign device to location at which location?"
             ${device.assignedLocation && device.assignedLocation.value ? `
-              show-levels='${device.assignedLocation.showLevels.join(',')}' 
+              show-levels='${device.assignedLocation.showLevels.join(',')}'
               value='${JSON.stringify(device.assignedLocation.value)}'
             ` : ''}
           >
           </tangy-location>
-          <tangy-radio-buttons 
+          <tangy-radio-buttons
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].showLevels ? `
               value='${
                 JSON.stringify(
@@ -249,16 +252,16 @@ export class GroupDevicesComponent implements OnInit {
                 )
               }'
             ` : ''}
-            label="Sync device to location at which level?" 
+            label="Sync device to location at which level?"
             name="sync_location__show_levels"
           >
             ${locationList.locationsLevels.map(level => `
               <option value="${level}">${level}</option>
             `).join('')}
           </tangy-radio-buttons>
-          <tangy-location 
+          <tangy-location
             name="sync_location"
-            label="Sync device to which location?" 
+            label="Sync device to which location?"
             ${device.syncLocations && device.syncLocations[0] && device.syncLocations[0].value ? `
               show-levels='${device.syncLocations[0].showLevels.join(',')}'
               value='${JSON.stringify(device.syncLocations[0].value)}'

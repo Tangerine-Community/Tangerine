@@ -65,7 +65,8 @@ var couchProxy = proxy(process.env.T_COUCHDB_ENDPOINT, {
     var path = require('url').parse(req.url).path;
     clog("path:" + path);
     return path;
-  }
+  },
+  limit: '1gb'
 });
 var mountpoint = '/db';
 app.use(mountpoint, couchProxy);
