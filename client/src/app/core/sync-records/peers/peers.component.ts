@@ -71,7 +71,7 @@ export class PeersComponent implements OnInit, AfterContentInit {
         console.log('localEndpointName: ' + JSON.stringify(e.detail));
         const message: Message = e.detail;
         const el = document.querySelector('#localEndpointName');
-        el.innerHTML =  '<p>Device Name: ' + message.message + '</p>\n';
+        el.innerHTML =  '<p>This Device\'s Name: ' + message.message + '</p>\n';
       }
     );
     startAdvertisingBtnEl.addEventListener('endpoints', e => {

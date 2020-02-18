@@ -42,7 +42,7 @@ html {
 
 }
 
-/* 
+/*
  * Inverted theme for testing.
 
 html {
@@ -54,7 +54,7 @@ html {
   --accent-color: #0d90ef;
   --accent-color-dark: #33aaff;
   --accent-text-color: #000;
-  --error-color: #00ffff; 
+  --error-color: #00ffff;
   --disabled-color: #444444;
   --paper-tabs-selection-bar-color: #0d90ef;
   --tangy-form-item--background-color: #333;
@@ -269,7 +269,6 @@ div.more {
 
 .mat-tab-header {
   margin-left: -10px;
-  margin-right: -10px;
 }
 
   form.portrait {
@@ -370,8 +369,8 @@ div.more {
     font-weight: var(--paper-font-body1_-_font-weight);
     line-height: var(--paper-font-body1_-_line-height);
     color: var(--paper-item-body-secondary-color, var(--secondary-text-color));
-  } 
-  
+  }
+
   .icon-list-item>mwc-icon{
     color: var(--primary-color) !important;
   }

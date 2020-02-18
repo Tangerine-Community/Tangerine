@@ -175,5 +175,12 @@ ln -s /Users/rjsteinert/Git/tangerine-community/tangy-form /Users/rjsteinert/Git
 ```
 It's nice that the Angular webpack dev server will reload your browser when making changes in the symlinked tangy-form folder.
 
+If you are developing PWA's and want to test locally, or if you are testing APK's and want to update the content easily while doing local development (because the APK's basically act as a container for the PWA's), use [ngrok](https://ngrok.com/) to create an https tunnel to your local code. Be sure to modify T_HOST_NAME and T_PROTOCOL in config.sh.
+
+```
+T_HOST_NAME='123random.ngrok.io'
+T_PROTOCOL="https"
+```
+
 ## Trademark and License
 Tangerine Logo is a registered trademark of [RTI International](https://rti.org). This software is licensed under the [GPLv3 License](https://www.gnu.org/licenses/gpl-3.0.en.html).

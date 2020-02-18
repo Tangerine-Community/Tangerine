@@ -1,7 +1,30 @@
 # Changelog
 
 ## v3.8.0
-- docker-tangerine-base-image at v3.3.0 provides the cordova-plugin-android-permissions, which will present permission dialogs as needed. The list of permissions is in AppComponent checkPermissions(). This release also provides a bugfix in refreshing discovery and ability to name the peer. 
+- __Fixes__
+  - Lazy loading tabs in Case Home - this helps resolve some of the slowness in loading Case Home. Also disabled animations on tabs to remove jankiness.
+  - Improved error feedback when registering a new device
+  - Increased upload limit to couchProxy to fix sync error. Fixes #1873 Sync fails with "request entity too large" server error
+  - Re-enabled git config in Dockerfile - still having git networking error even when off corp network. 
+
+- __Features__
+  - Improvements to Case Home search - limit docs to 25 when no phrase is entered: #1871. Added rule to delay search in Case Home until at least two characters have been entered. Search results now sorted by date record updated.
+  - Minor tweaks to the menu (now there is a single "Sync" item) and added tab bars to some pages for consistency.
+  - Combined Sync feature: The P2P Sync feature is now available as the second tab on the Sync feature page. Improved text for P2P Sync. Added progress text when online syncing (displays how many new docs written)
+  
+- __Developer Updates__
+  - Updated docker-tangerine-base-image to v3.4.0
+  - New load testing doc.
+  - Added random name generation to the script that generates new cases - useful for load testing and checking how well search listing works. If using the 'case-mother' switch, record templates are pulled from your group.
+
+Upgrade instructions:
+- `app-config.json` now needs...
+  - "syncProtocol" of "1" or "2".
+  - "associateUserProfileMode" of "local-exists", "local-new", or "remote"
+  - If using `"syncProtocol" : "2"`, you no longer need `"uploadToken"`. Each device will have its own token received in Device Setup.
+  - `"syncProtocol":"2"` Enables a "Device Setup" process on first boot of the client application. This requires you set up a "Device" record on the server. When setting up a Device record on the server, it will give you a QR code to use to scan from the tablet in order to receive it's device ID and token.
+  - `"registrationRequiresServerUser" : true` should be changed to `"associateUserProfileMode": "remote"`.
+  - If planning to use ``"syncProtocol":"2"` and a project already uses `"centrallyManagedUserProfile" : true`, remove `"centrallyManagedUserProfile": true` and configure the user profile's custom sync settings to push. 
 
 
 ## v3.7.0
