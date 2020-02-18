@@ -2,13 +2,12 @@
   <mat-tab label="{{'Settings'|translate}}">
     <ng-template matTabContent>
       <div class="container">
-        <h1>{{'Settings'|translate}}</h1>
         <p> {{'Please choose your language: '|translate}}</p>
         <form id="settings-form" #form>
           <mat-form-field appearance="fill">
             <mat-label>{{'Language'|translate}}</mat-label>
-            <mat-select name="translation" id="translation">
-              <mat-option *ngFor="let languageInfo of translations" [selected]="languageInfo.languageCode === languageCode" value="{{languageInfo.languageCode}}">{{languageInfo.label|translate}}</mat-option>
+            <mat-select name="translation" id="translation" [(value)]="selected">
+              <mat-option *ngFor="let languageInfo of translations" value="{{languageInfo.languageCode}}">{{languageInfo.label|translate}}</mat-option>
             </mat-select>
           </mat-form-field>
           <button mat-raised-button color="primary" type="submit">{{'submit'|translate}}</button>
