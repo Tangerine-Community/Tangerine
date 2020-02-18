@@ -5,7 +5,7 @@ module.exports = function (config) {
   config.set({
     // START Added from https://github.com/jasmine/jasmine/issues/1413#issuecomment-334247097
     captureTimeout: 210000,
-    browserDisconnectTolerance: 3, 
+    browserDisconnectTolerance: 3,
     browserDisconnectTimeout : 210000,
     browserNoActivityTimeout : 210000,
     // END
@@ -26,6 +26,7 @@ module.exports = function (config) {
       reports: ['html', 'lcovonly'],
       fixWebpackSourcePaths: true
     },
+    files: ["libs/bcrypt.min.js"],
     reporters: ['progress', 'kjhtml'],
     port: 9876,
     colors: true,
