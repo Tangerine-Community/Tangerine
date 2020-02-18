@@ -1,8 +1,21 @@
 # Changelog
 
 ## v3.8.0
+- __Fixes__
+  - Lazy loading tabs in Case Home - this helps resolve some of the slowness in loading Case Home. Also disabled animations on tabs to remove jankiness.
+  - Improved error feedback when registering a new device
+  - Increased upload limit to couchProxy to fix sync error. Fixes #1873 Sync fails with "request entity too large" server error
+  - Re-enabled git config in Dockerfile - still having git networking error even when off corp network. 
 
-
+- __Features__
+  - Improvements to Case Home search - limit docs to 25 when no phrase is entered: #1871. Added rule to delay search in Case Home until at least two characters have been entered. Search results now sorted by date record updated.
+  - Minor tweaks to the menu (now there is a single "Sync" item) and added tab bars to some pages for consistency.
+  - Combined Sync feature: The P2P Sync feature is now available as the second tab on the Sync feature page. Improved text for P2P Sync. Added progress text when online syncing (displays how many new docs written)
+  
+- __Developer Updates__
+  - Updated docker-tangerine-base-image to v3.4.0
+  - New load testing doc.
+  - Added random name generation to the script that generates new cases - useful for load testing and checking how well search listing works. If using the 'case-mother' switch, record templates are pulled from your group.
 
 Upgrade instructions:
 - `app-config.json` now needs...
