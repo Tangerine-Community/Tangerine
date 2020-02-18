@@ -23,13 +23,6 @@ export class ExportDataComponent implements OnInit {
   async exportAllRecords() {
     const appConfig = await this.appConfigService.getAppConfig()
     if (window['isCordovaApp'] && appConfig.syncProtocol === '2') {
-      // close the database
-      const db = await this.userService.getUserDatabase();
-      db.db.close(function() {
-        console.log('database is closed');
-      }, function(error) {
-        console.log('ERROR closing database: ' + error);
-      });
       // copy the database
       console.log('copying the db over to the user accesisble fs')
       // tslint:disable-next-line:max-line-length
