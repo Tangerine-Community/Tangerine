@@ -12,6 +12,7 @@ export class DeviceSyncComponent implements OnInit {
   done$ = new Subject()
   syncInProgress = false
   syncIsComplete = false
+  syncMessage: any
 
   constructor(
     private syncService:SyncService
@@ -22,6 +23,12 @@ export class DeviceSyncComponent implements OnInit {
 
   async sync() {
     this.syncInProgress = true
+    this.syncService.syncMessage$.subscribe({
+      next: (progress) => {
+        this.syncMessage =  progress.docs_written + ' docs saved.'
+        console.log('Sync Progress: ' + JSON.stringify(progress))
+      }
+    })
     await this.syncService.sync(true)
     this.syncInProgress = false
     this.syncIsComplete = true

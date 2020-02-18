@@ -49,7 +49,8 @@ export class SearchComponent implements OnInit {
     private userService: UserService,
     private formsInfoService: TangyFormsInfoService,
     private router: Router
-  ) { }
+  ) {
+  }
 
   async ngOnInit() {
     this.formsInfo = await this.formsInfoService.getFormsInfo()
@@ -57,11 +58,21 @@ export class SearchComponent implements OnInit {
     this.formTypesInfo = FORM_TYPES_INFO
     this.onSearch$
       .pipe(debounceTime(300))
-      .subscribe((searchString:string) => this.onSearch(searchString))
+      .subscribe((searchString:string) => {
+        this.searchResults.nativeElement.innerHTML = 'Searching...'
+        this.onSearch(searchString)
+      })
     this
       .searchBar
       .nativeElement
-      .addEventListener('keyup', event => this.onSearch$.next(event.target.value))
+      .addEventListener('keyup', event => {
+        const searchString = event.target.value
+        if (searchString.length > 2) {
+          this.onSearch$.next(event.target.value)
+        } else {
+          this.searchResults.nativeElement.innerHTML = 'Enter more than two characters...'
+        }
+      })
     this.searchResults.nativeElement.addEventListener('click', (event) => this.onSearchResultClick(event.target))
     this.searchReady$.next(true)
     this.onSearch('')
@@ -123,9 +134,9 @@ export class SearchComponent implements OnInit {
   }
 
   onScanChange(scanSearchString) {
-    this.showScan = false
-    this.onSearch(scanSearchString)
-    this.searchBar.nativeElement.value = scanSearchString
+      this.showScan = false
+      this.onSearch(scanSearchString)
+      this.searchBar.nativeElement.value = scanSearchString
   }
 
   onScanError() {

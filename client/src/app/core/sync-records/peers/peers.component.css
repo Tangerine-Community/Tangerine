@@ -27,7 +27,7 @@ mat-chip {
   height: 50px;
 }
 .bigText {
-  font-size: x-large;
+  font-size: large;
 }
 #transferProgress {
   padding-bottom: 1em;
