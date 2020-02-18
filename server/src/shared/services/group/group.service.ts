@@ -183,6 +183,7 @@ export class GroupService {
         id: 'user-profile',
         src: './assets/user-profile/form.html',
         title: 'User Profile',
+        listed: false,
         ...tangyModules.enabledModules.includes('case') 
           ? {
             searchSettings: {
