@@ -1,12 +1,14 @@
 # Developer Guide Contents
 
-- [developer-guide.md](developer-guide.md)
 - [i18n-translation.md](i18n-translation.md)
 - [modules.md](modules.md)
 
 ## Debugging
 - [debugging-reporting.md](debugging-reporting.md)
 - [debugging_node_apps.md](debugging_node_apps.md)
+
+## Load Testing
+- [Load Testing](load-testing.md)
 
 ## Developing Cordova Plugins
 - [cordova-plugin-development.md](cordova-plugin-development.md)

@@ -3,14 +3,12 @@ import { AppConfigService } from 'src/app/shared/_services/app-config.service';
 import { DeviceService } from './../device/services/device.service';
 import { SyncCustomService, SyncCustomDetails } from './sync-custom.service';
 import { SyncCouchdbService, SyncCouchdbDetails } from './sync-couchdb.service';
-import { AppConfig } from './../shared/_classes/app-config.class';
-import { FormInfo } from 'src/app/tangy-forms/classes/form-info.class';
 import { UserDatabase } from 'src/app/shared/_classes/user-database.class';
 import { UserService } from 'src/app/shared/_services/user.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReplicationStatus } from './classes/replication-status.class';
-import * as pako from 'pako';
+import {Subject} from 'rxjs';
 
 export const SYNC_MODE_CUSTOM = 'SYNC_MODE_CUSTOM'
 export const SYNC_MODE_COUCHDB = 'SYNC_MODE_COUCHDB'
@@ -31,6 +29,9 @@ export class SyncService {
     private tangyFormsInfoService:TangyFormsInfoService
   ) { }
 
+  syncMessage: any = {};
+  public readonly syncMessage$: Subject<any> = new Subject();
+
   async sync(useSharedUser = false) {
     const appConfig = await this.appConfigService.getAppConfig()
     const device = await this.deviceService.getDevice()
@@ -39,10 +40,19 @@ export class SyncService {
     if (useSharedUser) {
       const device = await this.deviceService.getDevice()
       userDb = new UserDatabase('shared', 'shared', device.key, device._id, true)
-    } else { 
+    } else {
       userDb = await this.userService.getUserDatabase()
     }
-    await this.syncCouchdbService.sync(userDb, <SyncCouchdbDetails>{
+
+    this.syncCouchdbService.syncMessage$.subscribe({
+      next: (progress) => {
+        // this.syncMessage =  message.docs_written + ' docs saved.'
+        this.syncMessage$.next(progress)
+        // console.log('Sync svc: ' + JSON.stringify(message))
+      }
+    })
+
+    const replicationStatus: ReplicationStatus = await this.syncCouchdbService.sync(userDb, <SyncCouchdbDetails>{
       serverUrl: appConfig.serverUrl,
       groupId: appConfig.groupId,
       deviceId: device._id,
@@ -50,6 +60,7 @@ export class SyncService {
       deviceSyncLocations: device.syncLocations,
       formInfos
     })
+    // console.log('this.syncMessage: ' + JSON.stringify(this.syncMessage))
     await this.syncCustomService.sync(userDb, <SyncCustomDetails>{
       appConfig: appConfig,
       serverUrl: appConfig.serverUrl,

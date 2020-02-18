@@ -83,6 +83,7 @@ export class SearchService {
       formId: doc.form.id,
       formType: formInfo.type ? formInfo.type : 'form',
       lastModified: Date.now(),
+      tangerineModifiedOn: new Date(doc.tangerineModifiedOn).getTime(),
       variables: {}
     }
     const response = new TangyFormResponseModel(doc)
@@ -135,7 +136,7 @@ export class SearchService {
       };
     }
     const allDocs = (await this.indexDb.allDocs(options)).rows.map(row => <SearchDoc>row.doc).sort(function (a, b) {
-      return b.lastModified - a.lastModified;
+      return b.tangerineModifiedOn - a.tangerineModifiedOn;
     })
     return phrase === ''
       ? allDocs
