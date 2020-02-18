@@ -20,7 +20,7 @@ export class FormListComponent implements OnInit {
   }
   async getFormList() {
     try {
-      this.formList = (await this.caseManagementService.getFormList()).filter(form => !form.archived);
+      this.formList = (await this.caseManagementService.getFormList()).filter(form => !form.archived && form.listed !== false);
     } catch (error) {
       console.error(error);
     }

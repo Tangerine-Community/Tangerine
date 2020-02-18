@@ -5,6 +5,7 @@ export class FormInfo {
   title:string
   description:string = ''
   listed = true
+  archived = false
   searchSettings:FormSearchSettings =  <FormSearchSettings>{
     shouldIndex: true,
     variablesToIndex: [],
