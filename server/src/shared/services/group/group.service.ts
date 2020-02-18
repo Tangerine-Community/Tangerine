@@ -146,16 +146,18 @@ export class GroupService {
     appConfig.serverUrl = `${process.env.T_PROTOCOL}://${process.env.T_HOST_NAME}/`
     if (tangyModules.enabledModules.includes('sync-protocol-2')) {
       appConfig.syncProtocol = '2'
-      appConfig.associateUserProfileMode = 'local-exists'
-      appConfig.sharedUserDatabase = true
       delete appConfig.uploadToken
       delete appConfig.registrationRequiresServerUser
       delete appConfig.centrallyManagedUserProfile
     } else {
       appConfig.syncProtocol =  '1'
       appConfig.uploadToken = process.env.T_UPLOAD_TOKEN 
-      appConfig.registrationRequiresServerUser = (process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true') ? true : false
-      appConfig.centrallyManagedUserProfile = (process.env.T_CENTRALLY_MANAGED_USER_PROFILE === 'true') ? true : false
+      appConfig.registrationRequiresServerUser = process.env.T_REGISTRATION_REQUIRES_SERVER_USER === 'true'
+        ? true
+        : false
+      appConfig.centrallyManagedUserProfile = process.env.T_CENTRALLY_MANAGED_USER_PROFILE === 'true'
+        ? true
+        : false
     }
     appConfig.hideProfile = (process.env.T_HIDE_PROFILE === 'true') ? true : false 
     appConfig.modules = tangyModules.enabledModules;
