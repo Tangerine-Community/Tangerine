@@ -209,12 +209,13 @@ export class GroupService {
           }
           : { } 
       },
-      ...tangyModules.enabledModules.includes('reports')
+      ...(!tangyModules.enabledModules.includes('case') && !tangyModules.enabledModules.includes('class'))
         ? [
           {
             id:'reports',
             src: './reports/form.html',
             title: 'Reports',
+            listed: false,
             ...tangyModules.enabledModules.includes('case') 
               ? {
                 searchSettings: {
