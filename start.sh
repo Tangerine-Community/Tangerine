@@ -108,6 +108,7 @@ RUN_OPTIONS="
   --env \"T_ORIENTATION=$T_ORIENTATION\" \
   --env \"T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH=$T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH\" \
   --env \"T_REPORTING_MARK_SKIPPED_WITH=$T_REPORTING_MARK_SKIPPED_WITH\" \
+  --env \"T_HIDE_SKIP_IF=$T_HIDE_SKIP_IF\" \
   $T_PORT_MAPPING \
   --volume $(pwd)/data/dat-output:/dat-output/ \
   --volume $(pwd)/data/reporting-worker-state.json:/reporting-worker-state.json \

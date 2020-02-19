@@ -56,8 +56,9 @@ T_COUCHDB_LOCAL="true"
 # options for T_ORIENTATION are at https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation
 T_ORIENTATION="any"
 # In CSV output, set cell value to this when something is disabled or hidden. Set to "ORIGINAL_VALUE" if you want the actual value stored.
-T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH="ORIGINAL_VALUE"
+T_REPORTING_MARK_DISABLED_OR_HIDDEN_WITH="999"
+# Set to false if you would like to use the skip-if functionality in editor. You would want to use skip-if as opposed to show-if if your form developers are stashing values in hidden fields.
+T_HIDE_SKIP_IF="true"
 # In CSV output, set cell value to this when something is skipped. Set to "ORIGINAL_VALUE" if you want the actual value stored.
 T_REPORTING_MARK_SKIPPED_WITH="SKIPPED"
-
 
