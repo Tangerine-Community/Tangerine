@@ -85,6 +85,8 @@ export class UpdateComponent implements AfterContentInit {
       infoDoc.atUpdateIndex = atUpdateIndex;
       await userDb.put(infoDoc);
     }
+    localStorage.setItem('updateJustApplied', 'true')
+    window.location.href = window.location.href.replace(window.location.hash, 'index.html') 
   }
 
 }

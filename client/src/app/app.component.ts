@@ -76,12 +76,15 @@ export class AppComponent implements OnInit {
     // Bail if the app is not yet installed.
     if (!this.installed) {
       this.install()
-      return;
     } else {
       this.checkPermissions();
     }
-    await this.userService.initialize()
     this.checkIfUpdateScriptRequired();
+    await this.userService.initialize()
+    // Load up the app config.
+    this.appConfig = await this.appConfigService.getAppConfig()
+    this.searchService.start()
+    this.window.appConfig = this.appConfig
     // Set translation for t function used in Web Components.
     const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
     this.window.translation = translation
@@ -102,11 +105,15 @@ export class AppComponent implements OnInit {
   }
 
   async install() {
-    const config =<any> await this.http.get('./assets/app-config.json').toPromise()
-    this.window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
-    this.window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
-    await this.deviceService.install()
-    this.window.localStorage.setItem('installed', true)
+    try {
+      const config =<any> await this.http.get('./assets/app-config.json').toPromise()
+      window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
+      window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
+      window.localStorage.setItem('installed', 'true')
+    } catch (e) {
+      console.log('Error detected in install:')
+      console.log(e)
+    }
     window.location.href = window.location.href.replace(window.location.hash, 'index.html')
   }
 
@@ -185,10 +192,13 @@ export class AppComponent implements OnInit {
 
   async checkIfUpdateScriptRequired() {
     const response = await this.userService.usersDb.allDocs({ include_docs: true });
+    // Note the use of mapping by doc.username but falling back to doc._id. That's because
+    // an app may be updating from a time when _id was the username.
     const usernames = response
       .rows
       .map(row => row.doc)
-      .map(doc => doc._id);
+      .filter(doc => doc._id.substr(0,7) !== '_design' )
+      .map(doc => doc.username ? doc.username : doc._id);
     for (const username of usernames) {
       const userDb = await this.userService.getUserDatabase(username);
       // Use try in case this is an old account where info doc was not created.
