@@ -83,9 +83,9 @@ export class UserService {
     const appConfig = await this.appConfigService.getAppConfig()
     if (appConfig.syncProtocol === '2') {
       const device = await this.getDevice()
-      return new UserDatabase(username, userAccount.userUUID, device.key, device._id, true)
+      return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true)
     } else {
-      return new UserDatabase(username, userAccount.userUUID, '', '', false)
+      return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false)
     }
   }
 
