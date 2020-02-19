@@ -187,5 +187,7 @@
   "✓ Yay! You are up to date.": "✓ Yay! You are up to date.",
   "yes, continue": "Yes, continue",
   "no, stop": "No, stop",
-  "SEARCH VIEW": "SEARCH VIEW"
+  "SEARCH VIEW": "SEARCH VIEW",
+   "next" : "Next",
+"back" : "Back"
 }
