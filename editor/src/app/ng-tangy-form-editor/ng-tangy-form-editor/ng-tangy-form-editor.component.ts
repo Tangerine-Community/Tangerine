@@ -1,3 +1,4 @@
+import { ServerConfigService } from './../../shared/_services/server-config.service';
 import { AfterContentInit, OnInit, ElementRef, Component, ViewChild, Inject, AfterContentChecked } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -31,6 +32,7 @@ export class NgTangyFormEditorComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private appConfigService: AppConfigService,
+    private serverConfigService:ServerConfigService
   ) { }
 
   async ngOnInit() {
@@ -46,6 +48,7 @@ export class NgTangyFormEditorComponent implements OnInit {
     this.groupName = groupName;
     let formHtml = await this.http.get(`/editor/${this.groupId}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
 
+    const serverConfig = await this.serverConfigService.getServerConfig()
     const appConfig = await this.appConfigService.getAppConfig(groupName);
     const appConfigCategories = appConfig.categories;
     const appConfigModules = appConfig.modules;
@@ -58,7 +61,7 @@ export class NgTangyFormEditorComponent implements OnInit {
     // Categories is an string of an array: categories ='["one","two","three","four"]'>
     if (!this.print) {
       this.containerEl.innerHTML = `
-        <tangy-form-editor style="margin:15px" categories='${categories}' files-endpoint="./media-list">
+        <tangy-form-editor style="margin:15px" categories='${categories}' files-endpoint="./media-list" ${serverConfig.hideSkipIf ? 'hide-skip-if':''}>
           <template>
             ${formHtml}
           </template>

@@ -1,3 +1,4 @@
+import { ServerConfigService } from './_services/server-config.service';
 import { UnsanitizeHtmlPipe } from './../pipes/unsanitize.pipe';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
@@ -11,7 +12,7 @@ import { BreadcrumbComponent } from './_components/breadcrumb/breadcrumb.compone
   imports: [
     CommonModule
   ],
-  providers: [AppConfigService],
+  providers: [AppConfigService, ServerConfigService],
   exports: [TranslateModule, MatSnackBarModule, TangyLoadingComponent, BreadcrumbComponent, UnsanitizeHtmlPipe],
   declarations: [TangyLoadingComponent, UnsanitizeHtmlPipe, BreadcrumbComponent]
 })
