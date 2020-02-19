@@ -14,26 +14,7 @@ receive any form responses from the server because the server only has form resp
 
 ## Configuration
 
-In the `groups` database, find the doc for the Group you want to configure two-way sync for and add the following to the
-doc replacing `form-1` and `form-2` with the IDs of the forms you would like to be included for a two-way sync. Note, form
-responses that do not match any of these Form IDs will simply be push only from devices, but never pulled down.
-
-```
-  "config": {
-    "sync": {
-      "formIds": [
-        "form-1",
-        "form-2"
-      ]
-    }
-  }
-```
-
-In the Group's `app-config.json` doc, set `"syncProtocol"` to `"two-way"`.
-
-Create a `_users` database in the CouchDB.
-
-Add a Location item to the User Profile with a variable name of `location`. When a user syncs, the value in this location item is used to limit the data pulled down to the device.
+@TODO
 
 
 ## Merge conflicts
