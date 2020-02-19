@@ -1,4 +1,4 @@
-import { AfterContentInit, ElementRef, Component, ViewChild, Inject, AfterContentChecked } from '@angular/core';
+import { AfterContentInit, OnInit, ElementRef, Component, ViewChild, Inject, AfterContentChecked } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {MatTabChangeEvent} from "@angular/material";
@@ -11,12 +11,12 @@ import {Feedback} from "../feedback-editor/feedback";
   templateUrl: './ng-tangy-form-editor.component.html',
   styleUrls: ['./ng-tangy-form-editor.component.css']
 })
-export class NgTangyFormEditorComponent implements AfterContentChecked {
+export class NgTangyFormEditorComponent implements OnInit {
 
   @ViewChild('container') container: ElementRef;
   @ViewChild('header') header: ElementRef;
   containerEl: any;
-  selectedIndex = 1;
+  selectedIndex = 0;
   print = false;
   groupId;
   formId;
@@ -33,11 +33,7 @@ export class NgTangyFormEditorComponent implements AfterContentChecked {
     private appConfigService: AppConfigService,
   ) { }
 
-  async ngAfterContentInit() {
-
-  }
-  
-  async ngAfterContentChecked() {
+  async ngOnInit() {
 
     this.containerEl = this.container.nativeElement
 
@@ -90,19 +86,11 @@ export class NgTangyFormEditorComponent implements AfterContentChecked {
     }
   }
 
-  tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
-     if (tabChangeEvent.index === 0) {
-        window.history.back()
-      } else if  (tabChangeEvent.index === 1) {
-       this.ngAfterContentInit()
-     }
-  }
-
   async saveForm(formHtml) {
     let files = []
     let state = this.containerEl.querySelector('tangy-form-editor').store.getState()
     // Update forms.json.
-    let formsJson = await this.http.get<Array<any>>(`/editor/${this.route.snapshot.paramMap.get('groupName')}/content/forms.json`).toPromise()
+    let formsJson = await this.http.get<Array<any>>(`/editor/${this.groupId}/content/forms.json`).toPromise()
     const updatedFormsJson = formsJson.map(formInfo => {
       if (formInfo.id !== state.form.id) return Object.assign({}, formInfo)
       return Object.assign({}, formInfo, {
@@ -110,13 +98,13 @@ export class NgTangyFormEditorComponent implements AfterContentChecked {
       })
     })
     files.push({
-      groupId: this.route.snapshot.paramMap.get('groupName'),
+      groupId: this.groupId,
       filePath:`./forms.json`,
       fileContents: JSON.stringify(updatedFormsJson)
     })
     // Update form.html.
     files.push({
-      groupId: this.route.snapshot.paramMap.get('groupName'),
+      groupId: this.groupId,
       filePath:`./${state.form.id}/form.html`,
       fileContents: formHtml
     })
