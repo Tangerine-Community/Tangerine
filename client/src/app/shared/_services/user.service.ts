@@ -228,12 +228,14 @@ export class UserService {
   }
 
   async getUserAccount(username?: string):Promise<UserAccount> {
-    const userAccountData = <any>(await this.usersDb.allDocs({include_docs: true}))
+    // || doc._id === username for backwards compatibility during upgrades from v3.1.0.
+    const doc = (await this.usersDb.allDocs({include_docs: true}))
       .rows
       .map(row => row.doc)
-      .find(doc => doc.username === username)
-    return new UserAccount(userAccountData)
+      .find(doc => doc.username === username || doc._id === username)
+    return new UserAccount(doc)
   }
+
   async saveUserAccount(userAccount:UserAccount):Promise<UserAccount> {
     await this.usersDb.put(userAccount)
     return await this.usersDb.get(userAccount._id)
