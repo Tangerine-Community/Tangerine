@@ -1,4 +1,5 @@
 export interface TangerineConfig {
+  enabledModules:Array<string>
   hostName: string
   protocol: string 
   user1ManagedServerUsers: boolean
@@ -9,4 +10,5 @@ export interface TangerineConfig {
   couchdbEndpoint: string
   uploadToken: string
   reportingDelay: number
+  hideSkipIf: boolean
 }
