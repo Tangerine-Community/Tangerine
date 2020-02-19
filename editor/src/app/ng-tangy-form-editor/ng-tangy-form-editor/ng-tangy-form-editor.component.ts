@@ -109,13 +109,20 @@ export class NgTangyFormEditorComponent implements OnInit {
       fileContents: formHtml
     })
     // Send to server.
+    let errorDetected = false
     for (let file of files) {
       try {
         await this.http.post('/editor/file/save', file).toPromise()
-        alert("Your form was successfully saved.")
       } catch (e) {
+        console.log(e)
+        errorDetected = true
         alert("Your form was not successfully saved. Please try again.")
       }
+    }
+    if (!errorDetected) {
+      alert("Your form was successfully saved.")
+    } else {
+      alert("Your form was not successfully saved. Please try again.")
     }
   }
 
