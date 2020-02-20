@@ -154,7 +154,9 @@ export class GroupDeviceService {
   }
 
   async tokenDoesMatch(groupId, deviceId, token):Promise<boolean> {
-    return true
+    const groupDevicesDb = this.getGroupDevicesDb(groupId)
+    const device = <GroupDevice>await groupDevicesDb.get(deviceId)
+    return device.token === token ? true : false
   }
 
   private getGroupDevicesDb(groupId) {
