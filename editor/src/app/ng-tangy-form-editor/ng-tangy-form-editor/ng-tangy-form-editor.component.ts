@@ -68,7 +68,7 @@ export class NgTangyFormEditorComponent implements OnInit {
         </tangy-form-editor>
       `;
       const tangyFormEditorEl = this.containerEl.querySelector('tangy-form-editor');
-      tangyFormEditorEl.addEventListener('tangy-form-editor-save', event => this.saveForm(event.detail));
+      tangyFormEditorEl.store.subscribe(_ => this.saveForm(tangyFormEditorEl.formHtml));
     } else {
       this.containerEl.innerHTML = `
         <style>
@@ -119,13 +119,13 @@ export class NgTangyFormEditorComponent implements OnInit {
       } catch (e) {
         console.log(e)
         errorDetected = true
-        alert("Your form was not successfully saved. Please try again.")
+        //alert("Your form was not successfully saved. Please try again.")
       }
     }
     if (!errorDetected) {
-      alert("Your form was successfully saved.")
+      //alert("Your form was successfully saved.")
     } else {
-      alert("Your form was not successfully saved. Please try again.")
+      //alert("Your form was not successfully saved. Please try again.")
     }
   }
 
