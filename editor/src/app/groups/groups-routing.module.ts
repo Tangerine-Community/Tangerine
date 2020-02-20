@@ -59,6 +59,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupId/data/download-csv', component: GroupFormsCsvComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure', component: GroupConfigureComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/location-list', component: GroupLocationListComponent, canActivate: [LoginGuard] },
+  { path: 'groups/:groupId/configure/location-list/manage-location-list-metadata/:locationLevel', component: ManageLocationListMetadataComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/sync', component: GroupFormsSyncComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/configure/security', component: ListUsersComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupId/deploy', component: GroupDeployComponent, canActivate: [LoginGuard] },
@@ -74,7 +75,7 @@ const groupsRoutes: Routes = [
   { path: 'groups/:groupName/addUser', component: AddUserComponent, canActivate: [LoginGuard] },
   { path: 'groups/:groupName/manage-location-list-levels', component: ManageLocationListLevelsComponent, canActivate: [LoginGuard] },
   {
-    path: 'groups/:groupId/import-location-list',
+    path: 'groups/:groupId/configure/location-list/import-location-list',
     component: ImportLocationListComponent, canActivate: [LoginGuard, AdminUserGuard]
   },
   {

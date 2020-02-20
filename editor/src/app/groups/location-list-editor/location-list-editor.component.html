@@ -1,25 +1,23 @@
-
-<a routerLink="/groups/{{groupName}}/import-location-list">{{'Import Location List'|translate}}</a>
-<br/>
-<div>
-  <mat-chip-list>
-    <mat-chip [color]="breadcrumbs[breadcrumbs.length-1]['label']===breadcrumb.label?'accent':'primary'" selected
-      *ngFor="let breadcrumb of breadcrumbs" (click)="onClickBreadcrumb(breadcrumb.id)">{{breadcrumb.label}}</mat-chip>
-  </mat-chip-list>
+<div class="header">
+  <div>
+    <mat-chip-list>
+      <mat-chip [color]="breadcrumbs[breadcrumbs.length-1]['label']===breadcrumb.label?'accent':'primary'" selected
+        *ngFor="let breadcrumb of breadcrumbs" (click)="onClickBreadcrumb(breadcrumb.id)">{{breadcrumb.label}}</mat-chip>
+    </mat-chip-list>
+  </div>
+  <div class="button-row">
+    <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&!showLocationForm"
+      mat-raised-button (click)="showLocationForm=!showLocationForm">ADD
+      {{locationsLevels[breadcrumbs.length-1]}} to
+      {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
+    <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&showLocationForm"
+      mat-raised-button (click)="hideLocationForm()">Hide Editing Form</button>
+    <button *ngIf="breadcrumbs.length>2&&!isMoveLocationFormShown" mat-raised-button (click)="showMoveLocationForm()">MOVE
+      {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
+    <button *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" mat-raised-button (click)="hideLocationForm()">HIDE
+      FORM</button>
+  </div>
 </div>
-<div class="button-row">
-  <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&!showLocationForm"
-    mat-raised-button (click)="showLocationForm=!showLocationForm">ADD
-    {{locationsLevels[breadcrumbs.length-1]}} to
-    {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-  <button *ngIf="locationsLevelsLength+1!==breadcrumbs.length&&breadcrumbs.length>=1&&showLocationForm"
-    mat-raised-button (click)="hideLocationForm()">Hide Editing Form</button>
-  <button *ngIf="breadcrumbs.length>2&&!isMoveLocationFormShown" mat-raised-button (click)="showMoveLocationForm()">MOVE
-    {{breadcrumbs[breadcrumbs.length-1]['label']}}</button>
-  <button *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" mat-raised-button (click)="hideLocationForm()">HIDE
-    FORM</button>
-</div>
-<br />
 <span *ngIf="breadcrumbs.length>2&&isMoveLocationFormShown" class="tangy-foreground-primary">{{'Move'|translate}}
   {{breadcrumbs[breadcrumbs.length-1]['label']}}
 
