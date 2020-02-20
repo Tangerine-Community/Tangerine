@@ -57,9 +57,12 @@ export class DeviceSetupComponent implements OnInit {
     }})
     // On device registration complete.
     this.stepDeviceRegistration.done$.subscribe(async (deviceDoc) => {
-      await this.deviceService.register(deviceDoc._id, deviceDoc.token)
+      const device = await this.deviceService.register(deviceDoc._id, deviceDoc.token)
+      // Note that device.token has been reset so important to use the device record
+      // that register returned.
+      await this.deviceService.didUpdate(device._id, device.token)
       await this.userService.createAdmin(password, <LockBoxContents>{
-        device: deviceDoc
+        device 
       })
       await this.userService.login('admin', password)
       this.step = STEP_SYNC
