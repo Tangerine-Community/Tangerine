@@ -233,6 +233,7 @@ export class ImportLocationListComponent implements OnInit {
     try {
       await this.groupsService.saveFileToGroupDirectory(this.groupId, this.generatedLocationList, this.locationListFileName);
       this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupId}`);
+      window.location.reload()
     } catch (error) {
       this.errorHandler.handleError('Error Saving Location List File to disk');
     }
