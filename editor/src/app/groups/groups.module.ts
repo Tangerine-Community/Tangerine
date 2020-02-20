@@ -1,3 +1,4 @@
+import { TangyFormsModule } from './../tangy-forms/tangy-forms.module';
 import { NgTangyFormEditorModule } from './../ng-tangy-form-editor/ng-tangy-form-editor.module';
 import { GroupFormsSyncComponent } from './group-forms-sync/group-forms-sync.component';
 import { GroupFormsCsvComponent } from './group-forms-csv/group-forms-csv.component';
@@ -60,6 +61,8 @@ import { GroupReleaseApkTestComponent } from './group-release-apk-test/group-rel
 import { GroupReleaseApkLiveComponent } from './group-release-apk-live/group-release-apk-live.component';
 import { GroupReleasePwaTestComponent } from './group-release-pwa-test/group-release-pwa-test.component';
 import { GroupReleasePwaLiveComponent } from './group-release-pwa-live/group-release-pwa-live.component';
+import { GroupUploadsViewComponent } from './group-uploads-view/group-uploads-view.component';
+import { GroupDeviceUserComponent } from './group-device-user/group-device-user.component';
 
 
 
@@ -85,6 +88,7 @@ import { GroupReleasePwaLiveComponent } from './group-release-pwa-live/group-rel
     MatMenuModule,
     MatTreeModule,
     MatGridListModule,
+    TangyFormsModule,
     SharedModule,
     NgTangyFormEditorModule
   ],
@@ -131,7 +135,9 @@ import { GroupReleasePwaLiveComponent } from './group-release-pwa-live/group-rel
     GroupReleaseApkTestComponent,
     GroupReleaseApkLiveComponent,
     GroupReleasePwaTestComponent,
-    GroupReleasePwaLiveComponent
+    GroupReleasePwaLiveComponent,
+    GroupUploadsViewComponent,
+    GroupDeviceUserComponent
   ],
   providers: [GroupsService, FilesService, TangerineFormsService, GroupDevicesService, TangyFormService ],
   entryComponents: [CopyFormComponent]
