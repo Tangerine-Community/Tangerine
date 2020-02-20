@@ -54,7 +54,6 @@ export class DeviceService {
     
     await this.variableService.set('tangerine-device-is-registered', true)
     await this.userService.installSharedUserDatabase(device)
-    await this.didUpdate()
     return device
   }
 
@@ -71,13 +70,17 @@ export class DeviceService {
     }
   }
 
-  async didUpdate():Promise<any> {
+  async didUpdate(deviceId = '', deviceToken = ''):Promise<any> {
     const appConfig = await this.appConfigService.getAppConfig()
-    const device = await this.getDevice()
     const version = await this.getBuildId()
+    if (!deviceId || !deviceToken) {
+      const device = await this.getDevice()
+      deviceId = device._id
+      deviceToken = device.token
+    }
     await this
       .httpClient
-      .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${device._id}/${device.token}/${version}`).toPromise() 
+      .get(`${appConfig.serverUrl}group-device-public/did-update/${appConfig.groupId}/${deviceId}/${deviceToken}/${version}`).toPromise() 
   }
 
   async didSync():Promise<any> {
