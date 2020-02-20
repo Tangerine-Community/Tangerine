@@ -1,3 +1,5 @@
+import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
+import { Breadcrumb } from './../../shared/_components/breadcrumb/breadcrumb.component';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -19,10 +21,14 @@ export class ImportLocationListComponent implements OnInit {
     private errorHandler: TangyErrorHandler,
     private groupsService: GroupsService
   ) { }
+
+  title = _TRANSLATE("Location List Import")
+  breadcrumbs:Array<Breadcrumb> = []
+
   parsedCSVData: AOA = [[1, 2], [3, 4]];
   canUserImportFile: boolean;
   locationList: any;
-  groupName = '';
+  groupId = '';
   locationListLevels = [];
   CSVHeaders;
   headerModel = {};
@@ -33,10 +39,20 @@ export class ImportLocationListComponent implements OnInit {
   locationListFileName = './location-list.json';
   generatedLocationList: any;
   async ngOnInit() {
+    this.breadcrumbs = [
+      <Breadcrumb>{
+        label: _TRANSLATE('Location List'),
+        url: `location-list`
+      },
+      <Breadcrumb>{
+        label: _TRANSLATE('Location List Import'),
+        url: `location-list/import-location-list`
+      }
+    ]
     this.route.params.subscribe(params => {
-      this.groupName = params.groupName;
+      this.groupId = params.groupId;
     });
-    this.locationList = await this.http.get(`/editor/${this.groupName}/content/location-list.json`).toPromise();
+    this.locationList = await this.http.get(`/editor/${this.groupId}/content/location-list.json`).toPromise();
     this.locationListLevels = this.locationList.locationsLevels;
     this.canUserImportFile = !this.isLocationHierarchiesEmpty();
     // TODO this is a workaround for https://github.com/Tangerine-Community/Tangerine/issues/1576
@@ -215,8 +231,8 @@ export class ImportLocationListComponent implements OnInit {
   }
   async saveLocationListToDisk() {
     try {
-      await this.groupsService.saveFileToGroupDirectory(this.groupName, this.generatedLocationList, this.locationListFileName);
-      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupName}`);
+      await this.groupsService.saveFileToGroupDirectory(this.groupId, this.generatedLocationList, this.locationListFileName);
+      this.errorHandler.handleError(`Successfully saved Location list for Group: ${this.groupId}`);
     } catch (error) {
       this.errorHandler.handleError('Error Saving Location List File to disk');
     }
