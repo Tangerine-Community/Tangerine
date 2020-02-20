@@ -8,6 +8,7 @@
   - Re-enabled git config in Dockerfile - still having git networking error even when off corp network. 
 
 - __Features__
+  - Sync Protocol 2: Enables a "Device Setup" process on first boot of the client application. This requires you set up a "Device" record on the server. When setting up a Device record on the server, it will give you a QR code to use to scan from the tablet in order to receive it's device ID and token.
   - Improvements to Case Home search - limit docs to 25 when no phrase is entered: #1871. Added rule to delay search in Case Home until at least two characters have been entered. Search results now sorted by date record updated.
   - Minor tweaks to the menu (now there is a single "Sync" item) and added tab bars to some pages for consistency.
   - Combined Sync feature: The P2P Sync feature is now available as the second tab on the Sync feature page. Improved text for P2P Sync. Added progress text when online syncing (displays how many new docs written)
@@ -17,12 +18,16 @@
   - New load testing doc.
   - Added random name generation to the script that generates new cases - useful for load testing and checking how well search listing works. If using the 'case-mother' switch, record templates are pulled from your group.
 
-Upgrade instructions:
-- `app-config.json` now needs...
-  - "syncProtocol" of "1" or "2".
-  - If using `"syncProtocol" : "2"`, you no longer need `"uploadToken"`. Each device will have its own token received in Device Setup.
-  - `"syncProtocol":"2"` Enables a "Device Setup" process on first boot of the client application. This requires you set up a "Device" record on the server. When setting up a Device record on the server, it will give you a QR code to use to scan from the tablet in order to receive it's device ID and token.
+__Upgrade instructions:__
 
+On the server, backup your data folder and then run the following commands.
+
+```bash
+git fetch origin
+git checkout v3.8.0
+./start.sh v3.8.0
+docker exec -it tangerine /tangerine/server/src/upgrade/v3.8.0.js
+```
 
 ## v3.7.0
 - __Fixes__
