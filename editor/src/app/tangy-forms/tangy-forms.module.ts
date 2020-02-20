@@ -7,6 +7,7 @@ import {MatTabsModule} from "@angular/material";
 import {SharedModule} from "../shared/shared.module";
 
 @NgModule({
+  exports: [TangyFormsPlayerComponent],
   imports: [
     CommonModule,
     MatTabsModule,
