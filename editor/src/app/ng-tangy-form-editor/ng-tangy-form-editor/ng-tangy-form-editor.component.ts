@@ -51,8 +51,8 @@ export class NgTangyFormEditorComponent implements OnInit {
     const serverConfig = await this.serverConfigService.getServerConfig()
     const appConfig = await this.appConfigService.getAppConfig(groupName);
     const appConfigCategories = appConfig.categories;
-    const appConfigModules = appConfig.modules;
-    if (appConfigModules && appConfigModules.includes('class')) {
+    const enabledModules = serverConfig.enabledModules;
+    if (enabledModules && !!(enabledModules.find(module=>module==='class'))) {
       this.hasClassModule = true;
     }
     const categories = JSON.stringify(appConfigCategories);

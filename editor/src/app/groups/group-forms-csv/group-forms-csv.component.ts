@@ -8,6 +8,7 @@ import { WindowRef } from 'src/app/core/window-ref.service';
 import { TangerineFormsService } from '../services/tangerine-forms.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
+import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class GroupFormsCsvComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private tangerineForms: TangerineFormsService,
     private errorHandler: TangyErrorHandler,
+    private serverConfig: ServerConfigService,
     private router: Router,
     private http: HttpClient
   ) { }
@@ -71,7 +73,8 @@ export class GroupFormsCsvComponent implements OnInit, AfterViewInit {
 
   async ngAfterViewInit() {
     // This is needed to ensure angular binds to selected Tab. The settimeout does the trick
-    this.enabledModules = await this.http.get(`/api/modules`).toPromise();
+    const config = await this.serverConfig.getServerConfig()
+    this.enabledModules = config.enabledModules;
   }
 
   async getForms() {
