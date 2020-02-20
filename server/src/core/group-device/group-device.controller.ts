@@ -1,6 +1,5 @@
-import { GroupDevice } from './../../shared/classes/group-device.class';
 import { GroupDeviceService } from './../../shared/services/group-device/group-device.service';
-import { Controller, All, Param, Body } from '@nestjs/common';
+import { Controller, All, Param } from '@nestjs/common';
 const log = require('tangy-log').log
 
 @Controller('group-device')
