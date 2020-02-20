@@ -1,6 +1,4 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 <app-responses filterBy="user-profile" hideFilterBy=true [groupId]="groupId"></app-responses>
-<a href="#/tangy-form-player?groupName={{groupId}}&formId=user-profile">
-  <paper-fab  mat-raised-button icon="add" color="accent" class="action">
-  </paper-fab>
-</a>
+<paper-fab (click)="newDeviceUser()" mat-raised-button icon="add" color="accent" class="action">
+</paper-fab>
