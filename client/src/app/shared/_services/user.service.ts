@@ -399,6 +399,7 @@ export class UserService {
     } else {
       this._currentUser = username
     }
+    window['currentUser'] = username
     return username
   }
 
