@@ -11,7 +11,7 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="case-definitions">
+<mat-card *ngIf="isCaseModuleEnabled" class="is-link mat-elevation-z3" routerLink="case-definitions">
   <mat-card-header>
       <div mat-card-avatar>
         <mwc-icon class="tangy-foreground-secondary">folder</mwc-icon>
