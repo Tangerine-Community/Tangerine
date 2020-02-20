@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterContentInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterContentInit, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {MatTabChangeEvent} from "@angular/material";
@@ -6,6 +6,7 @@ import {MatTabChangeEvent} from "@angular/material";
 import { UserService } from '../../core/auth/_services/user.service';
 import { WindowRef } from '../../core/window-ref.service';
 import { TangyFormService } from '../tangy-form-service';
+import { TangyFormResponseModel } from 'tangy-form/tangy-form-response-model';
 const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true), milliseconds))
 
 
@@ -14,60 +15,55 @@ const sleep = (milliseconds) => new Promise((res) => setTimeout(() => res(true),
   templateUrl: './tangy-forms-player.component.html',
   styleUrls: ['./tangy-forms-player.component.css']
 })
-export class TangyFormsPlayerComponent implements AfterContentInit {
-  formId;
-  responseId;
+export class TangyFormsPlayerComponent implements OnInit {
+
   throttledSaveLoaded;
   throttledSaveFiring;
-  selectedIndex = 1;
-  groupName;
+  groupId;
+  @Input() preventSave = false
+
   @ViewChild('container') container: ElementRef;
+
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private http: HttpClient,
-    private windowRef: WindowRef
   ) { }
 
-  async ngAfterContentInit() {
-    this.route.queryParams.subscribe(async params => {
-      let formInfo; let formItemHtml;
-      this.formId = params['formId'];
-      this.groupName = params['groupName']
-      this.responseId = params['responseId'];
-      //const formResponse = await tangyFormService.getResponse(this.responseId);
-      const formResponse = {}
+  async ngOnInit() {
+    this.route.params.subscribe(async params => {
+      this.groupId = params['groupId']
+        ? params['groupId']
+        : params['groupName']
+      const responseId = params['responseId'];
+      const response = <TangyFormResponseModel>await this.http.get(`/api/${this.groupId}/${responseId}`).toPromise()
+      const formId = response.form.id
       const container = this.container.nativeElement
-      let formHtml = await this.http.get(`/editor/${this.groupName}/content/${this.formId}/form.html`, {responseType: 'text'}).toPromise()
+      let formHtml = await this.http.get(`/editor/${this.groupId}/content/${formId}/form.html`, {responseType: 'text'}).toPromise()
       container.innerHTML = formHtml
       let formEl = container.querySelector('tangy-form')
-      if (this.responseId) {
-        formEl.response = await this.http.get(`/api/${this.groupName}/${this.responseId}`).toPromise()
+      if (responseId) {
+        formEl.response = response 
       } else {
         formEl.newResponse()
       }
-      // Listen up, save in the db.
-      formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
-        let response = _.target.store.getState()
-        this.throttledSaveResponse(response)
-      })
-      formEl.addEventListener('submit', _ => {
-        setTimeout(() => window.history.back(), 1000)
-      })
-      if (formEl.getAttribute('id') === 'user-profile') {
-        formEl.addEventListener('submit', _ => {
-          _.preventDefault()
+      // Save in the db if the form response is not complete, otherwise no point in generating new response revisions.
+      if (!response.complete) {
+        formEl.addEventListener('TANGY_FORM_UPDATE', _ => {
           let response = _.target.store.getState()
           this.throttledSaveResponse(response)
         })
+        formEl.addEventListener('submit', _ => {
+          setTimeout(() => window.history.back(), 1000)
+        })
+        if (formEl.getAttribute('id') === 'user-profile') {
+          formEl.addEventListener('submit', _ => {
+            _.preventDefault()
+            let response = _.target.store.getState()
+            this.throttledSaveResponse(response)
+          })
+        }
       }
     });
-  }
-
-  tabChanged = async (tabChangeEvent: MatTabChangeEvent): Promise<void> => {
-    if (tabChangeEvent.index === 0) {
-      this.router.navigate(['groups', this.groupName])
-    }
   }
 
   // Prevent parallel saves which leads to race conditions. Only save the first and then last state of the store.
@@ -88,7 +84,7 @@ export class TangyFormsPlayerComponent implements AfterContentInit {
   }
 
   async saveResponse(state) {
-    await this.http.post(`/api/${this.groupName}/${state._id}`, state).toPromise()
+    await this.http.post(`/api/${this.groupId}/${state._id}`, state).toPromise()
   }
 
 

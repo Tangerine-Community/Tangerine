@@ -19,7 +19,7 @@
     <td>{{response.form?.id}}</td>
     <td>{{(response.userProfileId) ? response.userProfileId : 'anonymous'}}</td>
     <td>
-      <a [routerLink]="['/tangy-form-player']" [queryParams]="{formId: response.form?.id, groupName: groupId, responseId: response._id}">
+      <a routerLink="{{response._id}}">
         <paper-button raised>
           view
         </paper-button>
