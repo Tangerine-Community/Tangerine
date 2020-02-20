@@ -12,6 +12,7 @@ import { TangerineFormsService } from '../services/tangerine-forms.service';
 import { _TRANSLATE } from 'src/app/shared/_services/translation-marker';
 import { TangyErrorHandler } from 'src/app/shared/_services/tangy-error-handler.service';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ServerConfigService } from 'src/app/shared/_services/server-config.service';
 
 
 @Component({
@@ -42,6 +43,7 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private tangerineForms: TangerineFormsService,
     private errorHandler: TangyErrorHandler,
+    private serverConfig: ServerConfigService,
     private router: Router,
     private http: HttpClient
   ) { }
@@ -68,7 +70,8 @@ export class GroupDetailsComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.selectedTabIndex = this.route.snapshot.queryParamMap.get('selectedTabIndex');
     }, 500);
-    this.enabledModules = await this.http.get(`/api/modules`).toPromise();
+    const config = await this.serverConfig.getServerConfig()
+    this.enabledModules = config.enabledModules;
   }
 
   tabChanged(event: MatTabChangeEvent) {

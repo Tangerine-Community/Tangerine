@@ -12,7 +12,7 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="sync">
+<mat-card *ngIf="syncProtocol2Enabled" class="is-link mat-elevation-z3" routerLink="sync">
   <mat-card-header>
       <div mat-card-avatar>
         <mwc-icon class="tangy-foreground-secondary">sync</mwc-icon>
