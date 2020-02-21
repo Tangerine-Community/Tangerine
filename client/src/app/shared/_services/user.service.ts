@@ -76,7 +76,10 @@ export class UserService {
     return userDb
   }
 
-  async getUserDatabase(username = '') {
+  async getUserDatabase(username = ''):Promise<UserDatabase> {
+    if (username === '' && !this.isLoggedIn()) {
+      throw new Error('UserService.getUserDatabase was called but no one is logged in.')
+    }
     const userAccount = username === ''
       ? await this.getUserAccount(this.getCurrentUser())
       : await this.getUserAccount(username)
@@ -211,6 +214,7 @@ export class UserService {
       const userProfile = new TangyFormResponseModel({form:{id:'user-profile'}})
       userAccount = new UserAccount({
         _id: userSignup.username,
+        username: userSignup.username,
         password: this.hashValue(userSignup.password),
         securityQuestionResponse: this.hashValue(userSignup.securityQuestionResponse),
         userUUID: userProfile._id,
@@ -394,6 +398,10 @@ export class UserService {
   }
 
   setCurrentUser(username):string {
+    // Note: Unless developing locally, we store user session information in memory so we don't for example put the
+    // contents of the lockbox in an unencrypted form on disk in localStorage/etc. Putting currentUser in memory
+    // guarantees that if we reload the user will be logged out as opposed to being logged in but not having access
+    // to the lockbox contents, thus not actually having access to the database.
     if (window.location.hostname === 'localhost') {
       localStorage.setItem('currentUser', username)
     } else {

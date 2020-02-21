@@ -219,7 +219,6 @@ export const updates = [
       const usersDb = new PouchDB('users')
       // Update user account docs so they have the new initialProfileComplete flag set to true. 
       // We used to infer wether or not the user profile in various situations, now we set it explicitly.
-
       const salt = bcrypt.genSaltSync(10);
       const userDocs = (await usersDb.allDocs({include_docs: true}))
         .rows

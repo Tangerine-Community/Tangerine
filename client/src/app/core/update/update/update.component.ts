@@ -1,3 +1,5 @@
+import { Subject } from 'rxjs';
+import { UpdateService } from './../../../shared/_services/update.service';
 import { DeviceService } from './../../../device/services/device.service';
 import { AppConfigService } from './../../../shared/_services/app-config.service';
 import { Component, AfterContentInit } from '@angular/core';
@@ -23,70 +25,35 @@ export class UpdateComponent implements AfterContentInit {
   complete = false;
 
   constructor(
-    private router: Router,
-    translate: TranslateService,
     private deviceService:DeviceService,
-    private http: HttpClient,
+    private updateService:UpdateService,
     private appConfigService:AppConfigService,
     private userService: UserService
   ) { }
 
   async ngAfterContentInit() {
-    if (localStorage.getItem('updateJustApplied')) {
-      console.log("update has been applied")
-      localStorage.setItem('updateJustApplied', '')
-      this.message = _TRANSLATE('✓ Yay! You are up to date.')
-      this.complete = true
-      return
-    }
+    this.updateService.status$.subscribe({next: message => {
+      this.message = message
+    }})
     const appConfig = await this.appConfigService.getAppConfig()
-    if (appConfig.syncProtocol === '2') {
-      // Just use whichever is the logged in user.
-      const db = await this.userService.getUserDatabase()
-      await this.processUpdatesForUser(db, appConfig)
-    } else {
-      const usernames = await this.userService.getUsernames();
-      for (const username of usernames) {
-        const userDb = await new PouchDB(username);
-        await this.processUpdatesForUser(userDb, appConfig)
+    if (await this.appConfigService.syncProtocol2Enabled() && !await this.updateService.sp2_updateRequired()) {
+      this.message = _TRANSLATE('✓ Yay! You are up to date.')
+    } else if (await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp2_updateRequired()) {
+      if (!this.userService.getCurrentUser()) {
+        this.message = _TRANSLATE('The update has been downloaded. Please log in to complete the update.')
+      } else {
+        await this.updateService.sp2_processUpdates()
+        await this.deviceService.didUpdate()
+        this.message = _TRANSLATE('✓ Yay! You are up to date.')
       }
+    } else if (appConfig.syncProtocol !== '2' && this.updateService.sp1_updateRequired()) {
+      await this.updateService.sp1_processUpdates()
+      this.message = _TRANSLATE('✓ Yay! You are up to date.')
+    } else {
+      this.message = _TRANSLATE('✓ Yay! You are up to date.')
     }
-    if (appConfig.syncProtocol === '2') {
-      await this.deviceService.didUpdate()
-    }
-    localStorage.setItem('updateJustApplied', 'true')
-    window.location.href = `${window.location.origin}${window.location.pathname}index.html`
+    this.complete = true
   }
 
-  async processUpdatesForUser(userDb, appConfig) {
-    // Use try in case this is an old account where info doc was not created.
-    let infoDoc = { _id: '', atUpdateIndex: 0 };
-    try {
-      infoDoc = await userDb.get('info');
-    } catch (e) {
-      await userDb.put({ _id: 'info', atUpdateIndex: 0 });
-      infoDoc = await userDb.get('info');
-    }
-    let atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
-    const lastUpdateIndex = updates.length - 1;
-    if (lastUpdateIndex !== atUpdateIndex) {
-      this.needsUpdating = true;
-      this.message = _TRANSLATE('Applying Updates...');
-      let requiresViewsRefresh = false;
-      while (lastUpdateIndex >= atUpdateIndex) {
-        if (updates[atUpdateIndex].requiresViewsUpdate) {
-          requiresViewsRefresh = true;
-        }
-        await updates[atUpdateIndex].script(userDb, appConfig, this.userService);
-        this.totalUpdatesApplied++;
-        atUpdateIndex++;
-      }
-      atUpdateIndex--;
-      infoDoc.atUpdateIndex = atUpdateIndex;
-      await userDb.put(infoDoc);
-    }
-    localStorage.setItem('updateJustApplied', 'true')
-    window.location.href = window.location.href.replace(window.location.hash, 'index.html') 
-  }
 
 }

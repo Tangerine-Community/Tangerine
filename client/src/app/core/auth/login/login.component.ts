@@ -1,3 +1,4 @@
+import { UpdateService } from './../../../shared/_services/update.service';
 import { DeviceService } from './../../../device/services/device.service';
 
 import {from as observableFrom,  Observable } from 'rxjs';
@@ -33,6 +34,7 @@ export class LoginComponent implements OnInit {
     private userService:UserService,
     private usersService: UserService,
     private deviceService:DeviceService,
+    private updateService:UpdateService,
     private appConfigService: AppConfigService
   ) {
     this.installed = localStorage.getItem('installed') ? true : false
@@ -76,9 +78,13 @@ export class LoginComponent implements OnInit {
   }
 
   loginUser() {
-    observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(data => {
+    observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(async data => {
       if (data) {
-        this.router.navigate(['' + this.returnUrl]);
+        if (await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp2_updateRequired()) {
+          this.router.navigate(['/update']);
+        } else {
+          this.router.navigate(['' + this.returnUrl]);
+        }
       } else {
         this.errorMessage = _TRANSLATE('Login Unsuccesful');
       }
