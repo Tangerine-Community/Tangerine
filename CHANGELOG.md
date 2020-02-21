@@ -29,6 +29,9 @@ git checkout v3.8.0
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.8.0.js
 ```
 
+Repalce all ocurrences of **localStorage.currentUser** with **window.currentUser**
+
+
 ## v3.7.0
 - __Fixes__
   - When editing forms, they will only save back to the server after clicking the top level "save" button. There is also now messaging around when the save either completes successfully or fails.
@@ -90,8 +93,6 @@ git checkout v3.7.0
 ./start.sh v3.7.0
 docker exec tangerine translations-update
 ```
-
-Repalce all ocurrences of **localStorage.currentUser** with **window.currentUser**
 
 ## v3.6.5
 - Fix timed grid output to exclude item level variables in logstash output https://github.com/Tangerine-Community/Tangerine/pull/1806
