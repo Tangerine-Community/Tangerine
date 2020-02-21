@@ -84,7 +84,7 @@ export class UpdateService {
         if (updates[atUpdateIndex+1].requiresViewsUpdate) {
           requiresViewsRefresh = true;
         }
-        await updates[atUpdateIndex].script(userDb, appConfig, this.userService);
+        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService);
         totalUpdatesApplied++;
         atUpdateIndex++;
         if (requiresViewsRefresh) {
