@@ -21,5 +21,7 @@ export class AppConfig {
   groupId:string
   groupName:string
   p2pSync = 'false'
-} 
+  passwordPolicy:string
+  passwordRecipe:string
+}
 
