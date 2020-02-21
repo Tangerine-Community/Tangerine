@@ -26,12 +26,16 @@ export class RegistrationComponent implements OnInit {
     statusMessage: object;
     disableSubmit = false;
     passwordsDoNotMatchMessage = { type: 'error', message: _TRANSLATE('Passwords do not match') };
+    passwordIsNotStrong = { type: 'error', message: _TRANSLATE('Password is not strong enough.') };
     devicePasswordDoesNotMatchMessage = { type: 'error', message: _TRANSLATE('Device password does not match') };
     userNameUnavailableMessage = { type: 'error', message: _TRANSLATE('Username Unavailable') };
     userNameAvailableMessage = { type: 'success', message: _TRANSLATE('Username Available') };
     loginUnsucessfulMessage = { type: 'error', message: _TRANSLATE('Login Unsuccesful') };
     couldNotCreateUserMessage = { type: 'error', message: _TRANSLATE('Could Not Create User') };
+    incorrectAdminPassword = { type: 'error', message: _TRANSLATE('Incorrect Admin Password') };
     securityQuestionText: string;
+    passwordPolicy: string
+    passwordRecipe: string
     constructor(
         private userService: UserService,
         private route: ActivatedRoute,
@@ -45,6 +49,9 @@ export class RegistrationComponent implements OnInit {
         this.requiresAdminPassword = appConfig.syncProtocol === '2' ? true : false
         const homeUrl = appConfig.homeUrl;
         this.securityQuestionText = appConfig.securityQuestionText;
+        this.passwordPolicy = appConfig.passwordPolicy;
+        this.passwordRecipe = appConfig.passwordRecipe;
+        this.passwordIsNotStrong.message = this.passwordIsNotStrong.message + ' ' + this.passwordRecipe
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || homeUrl;
         if (this.userService.isLoggedIn()) {
             this.router.navigate([this.returnUrl]);
@@ -54,14 +61,21 @@ export class RegistrationComponent implements OnInit {
     async register() {
         this.disableSubmit = true
         if (this.requiresAdminPassword && !this.userService.confirmPassword('admin', this.userSignup.adminPassword)) {
-            this.statusMessage = this.devicePasswordDoesNotMatchMessage 
+            this.statusMessage = this.devicePasswordDoesNotMatchMessage
             this.disableSubmit = false
             return
-        } 
+        }
         if (this.userSignup.password!==this.userSignup.confirmPassword) {
             this.statusMessage = this.passwordsDoNotMatchMessage
             this.disableSubmit = false
-            return 
+            return
+        }
+      // const policy = new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})');
+        const policy = new RegExp(this.passwordPolicy)
+        if (!policy.test(this.userSignup.password)) {
+          this.statusMessage = this.passwordIsNotStrong
+          this.disableSubmit = false
+          return
         }
         if (!this.isUsernameTaken) {
             try {
@@ -69,7 +83,12 @@ export class RegistrationComponent implements OnInit {
                 this.loginUserAfterRegistration(this.userSignup.username, this.userSignup.password);
             } catch (error) {
                 console.log(error);
-                this.statusMessage = this.couldNotCreateUserMessage;
+                if (error.message === 'Malformed UTF-8 data') {
+                  this.statusMessage = this.incorrectAdminPassword;
+                } else {
+                  this.statusMessage = this.couldNotCreateUserMessage;
+                }
+                this.disableSubmit = false
             };
         } else {
             this.statusMessage = this.userNameUnavailableMessage;

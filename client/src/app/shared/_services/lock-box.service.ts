@@ -53,9 +53,11 @@ export class LockBoxService {
 
   async openLockBox(username, password) {
     const lockBoxData = await this.db.get(username)
+    const lockBoxContentsDescrypted = CryptoJS.AES.decrypt(lockBoxData.contents, password)
+    const codepage = CryptoJS.enc.Utf8
     const lockBox = <LockBox>{
       ...lockBoxData,
-      contents: JSON.parse(CryptoJS.AES.decrypt(lockBoxData.contents, password).toString(CryptoJS.enc.Utf8))
+      contents: JSON.parse(lockBoxContentsDescrypted.toString(codepage))
     }
     const openLockBoxes = this.getOpenLockBoxes()
     openLockBoxes.push(lockBox)
@@ -69,5 +71,5 @@ export class LockBoxService {
   setOpenLockBoxes(openLockBoxes) {
     this._openLockBoxes = openLockBoxes
   }
-  
+
 }
