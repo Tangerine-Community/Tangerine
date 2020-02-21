@@ -32,6 +32,7 @@ export class RegistrationComponent implements OnInit {
     userNameAvailableMessage = { type: 'success', message: _TRANSLATE('Username Available') };
     loginUnsucessfulMessage = { type: 'error', message: _TRANSLATE('Login Unsuccesful') };
     couldNotCreateUserMessage = { type: 'error', message: _TRANSLATE('Could Not Create User') };
+    incorrectAdminPassword = { type: 'error', message: _TRANSLATE('Incorrect Admin Password') };
     securityQuestionText: string;
     passwordPolicy: string
     passwordRecipe: string
@@ -82,7 +83,11 @@ export class RegistrationComponent implements OnInit {
                 this.loginUserAfterRegistration(this.userSignup.username, this.userSignup.password);
             } catch (error) {
                 console.log(error);
-                this.statusMessage = this.couldNotCreateUserMessage;
+                if (error.message === 'Malformed UTF-8 data') {
+                  this.statusMessage = this.incorrectAdminPassword;
+                } else {
+                  this.statusMessage = this.couldNotCreateUserMessage;
+                }
                 this.disableSubmit = false
             };
         } else {
