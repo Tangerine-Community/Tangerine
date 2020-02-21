@@ -4,7 +4,6 @@ import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
 import * as cordovaSqlitePlugin from 'pouchdb-adapter-cordova-sqlite';
 import * as PouchDBUpsert from 'pouchdb-upsert';
-import {_TRANSLATE} from '../translation-marker';
 PouchDB.plugin(PouchDBFind);
 PouchDB.plugin(PouchDBUpsert);
 PouchDB.plugin(cordovaSqlitePlugin);
@@ -12,7 +11,7 @@ PouchDB.defaults({auto_compaction: true, revs_limit: 1});
 
 export function DB(name, key = ''):PouchDB {
   let options = <any>{};
-  if (window['isCordovaApp']) {
+  if (window['isCordovaApp'] && window['sqlitePlugin']) {
     options = {
       adapter: 'cordova-sqlite',
       location: 'default',
