@@ -76,7 +76,7 @@ export class AppComponent implements OnInit {
     this.window.device = await this.deviceService.getDevice()
     // Bail if the app is not yet installed.
     if (!this.installed) {
-      this.install()
+      await this.install()
     } else {
       this.checkPermissions();
     }
