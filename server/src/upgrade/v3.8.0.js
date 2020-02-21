@@ -17,7 +17,6 @@ async function go() {
       let forms = await fs.readJson(`/tangerine/client/content/groups/${groupId}/forms.json`)
       try {
         forms = [
-          ...forms,
           ...!forms.find(form => form.id === 'user-profile')
             ? [
                 {
@@ -37,7 +36,8 @@ async function go() {
                   src: 'reports/form.html',
                 }
               ]
-            : []
+            : [],
+          ...forms
         ]
         await fs.writeJson(`/tangerine/client/content/groups/${groupId}/forms.json`, forms)
       } catch (e) {
