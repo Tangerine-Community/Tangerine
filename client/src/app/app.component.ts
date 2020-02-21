@@ -1,10 +1,10 @@
+import { UpdateService } from './shared/_services/update.service';
 import { DeviceService } from './device/services/device.service';
 import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
 import { Router } from '@angular/router';
 import { UserService } from './shared/_services/user.service';
-import { updates } from './core/update/update/updates';
 import PouchDB from 'pouchdb';
 import { TranslateService } from '@ngx-translate/core';
 import { _TRANSLATE } from './shared/translation-marker';
@@ -39,6 +39,7 @@ export class AppComponent implements OnInit {
     private appConfigService: AppConfigService,
     private http: HttpClient,
     private router: Router,
+    private updateService:UpdateService,
     private searchService:SearchService,
     private deviceService: DeviceService,
     translate: TranslateService
@@ -79,7 +80,6 @@ export class AppComponent implements OnInit {
     } else {
       this.checkPermissions();
     }
-    this.checkIfUpdateScriptRequired();
     await this.userService.initialize()
     // Load up the app config.
     this.appConfig = await this.appConfigService.getAppConfig()
@@ -98,15 +98,18 @@ export class AppComponent implements OnInit {
     // Keep GPS chip warm.
     // @TODO Make this configurable. Not all installations use GPS and don't need to waste the battery.
     setInterval(this.getGeolocationPosition, 5000);
-    this.checkIfUpdateScriptRequired();
     this.checkStorageUsage()
     setInterval(this.checkStorageUsage.bind(this), 60*1000);
     this.ready = true
+    if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
+      this.router.navigate(['/update'])
+    }
   }
 
   async install() {
     try {
       const config =<any> await this.http.get('./assets/app-config.json').toPromise()
+      this.updateService.install()
       window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
       window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
       window.localStorage.setItem('installed', 'true')
@@ -188,33 +191,6 @@ export class AppComponent implements OnInit {
       availableFreeSpace = storageEstimate.quota - storageEstimate.usage
     }
     console.log('Finished making freespace...')
-  }
-
-  async checkIfUpdateScriptRequired() {
-    const response = await this.userService.usersDb.allDocs({ include_docs: true });
-    // Note the use of mapping by doc.username but falling back to doc._id. That's because
-    // an app may be updating from a time when _id was the username.
-    const usernames = response
-      .rows
-      .map(row => row.doc)
-      .filter(doc => doc._id.substr(0,7) !== '_design' )
-      .map(doc => doc.username ? doc.username : doc._id);
-    for (const username of usernames) {
-      const userDb = await this.userService.getUserDatabase(username);
-      // Use try in case this is an old account where info doc was not created.
-      let infoDoc = { _id: '', atUpdateIndex: 0 };
-      try {
-        infoDoc = await userDb.get('info');
-      } catch (e) {
-        await userDb.put({ _id: 'info', atUpdateIndex: 0 });
-        infoDoc = await userDb.get('info');
-      }
-      const atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
-      const lastUpdateIndex = updates.length - 1;
-      if (lastUpdateIndex !== atUpdateIndex) {
-        this.router.navigate(['/update']);
-      }
-    }
   }
 
   logout() {
