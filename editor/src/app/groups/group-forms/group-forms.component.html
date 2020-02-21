@@ -22,7 +22,7 @@
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span [innerHTML]="form.title|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
-        <span><a mat-icon-button>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
           </a>
         </span>
@@ -30,15 +30,15 @@
             <i class="material-icons mat-32 tangy-location-list-icon">print</i>
           </a>
         </span>
-        <span><a mat-icon-button>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
           </a>
         </span>
-        <span><a mat-icon-button>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
           </a>
         </span>
-        <span><a mat-icon-button>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
           </a>
         </span>
@@ -70,13 +70,13 @@
       </a>
     </span>
 
-    <span>
+    <span *ngIf="isGroupAdminUser">
       <a mat-icon-button (click)="onCopyFormClick(form.id)">
         <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
       </a>
     </span>
 
-    <span><button mat-icon-button
+    <span *ngIf="isGroupAdminUser"><button mat-icon-button
         [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
         (click)="deleteForm(groupId, form.id)">
         <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
@@ -84,7 +84,7 @@
       </button>
     </span>
 
-    <span>
+    <span *ngIf="isGroupAdminUser">
       <button mat-icon-button
         [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
         (click)="onArchiveFormClick(groupId, form.id)">
@@ -105,7 +105,7 @@
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span [innerHTML]="form.title|unsanitizeHtml"></span>
         <span class="tangy-spacer-drag"></span>
-        <span><a mat-icon-button>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">edit</i>
           </a>
         </span>
@@ -113,15 +113,15 @@
             <i class="material-icons mat-32 tangy-location-list-icon">print</i>
           </a>
         </span>
-        <span><a mat-icon-button>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
           </a>
         </span>
-        <span><a mat-icon-button>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">delete</i>
           </a>
         </span>
-        <span><a mat-icon-button>
+        <span *ngIf="isGroupAdminUser"><a mat-icon-button>
             <i class="material-icons mat-32 tangy-location-list-icon">archive</i>
           </a>
         </span>
@@ -131,25 +131,25 @@
     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
     <span class="tangy-spacer" [innerHTML]="form.title|unsanitizeHtml"></span>
 
-    <span><a mat-icon-button
+    <span *ngIf="isGroupAdminUser"><a mat-icon-button
         [routerLink]="isGroupAdminUser?'/tangy-form-editor/'+groupId+'/'+form.id:'/groups/'+groupId">
         <i [class.disabled-button]="!isGroupAdminUser"
           class="material-icons mat-32 tangy-location-list-icon">edit</i>
       </a>
     </span>
 
-    <span><a mat-icon-button target="_new" href="{{form.printUrl}}">
+    <span *ngIf="isGroupAdminUser"><a mat-icon-button target="_new" href="{{form.printUrl}}">
         <i class="material-icons mat-32 tangy-location-list-icon">print</i>
       </a>
     </span>
 
-    <span>
+    <span *ngIf="isGroupAdminUser">
       <a mat-icon-button (click)="onCopyFormClick(form.id)">
         <i class="material-icons mat-32 tangy-location-list-icon">flip_to_front</i>
       </a>
     </span>
 
-    <span><button mat-icon-button
+    <span *ngIf="isGroupAdminUser"><button mat-icon-button
         [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
         (click)="deleteForm(groupId, form.id)">
         <i [class.disabled-button]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
@@ -157,7 +157,7 @@
       </button>
     </span>
 
-    <span>
+    <span *ngIf="isGroupAdminUser">
       <button mat-icon-button
         [disabled]="form.id === 'user-profile' || form.id === 'reports'||!isGroupAdminUser"
         (click)="onUnArchiveFormClick(groupId, form.id)">

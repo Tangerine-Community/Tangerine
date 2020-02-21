@@ -23,7 +23,7 @@
   </mat-card-header>
 </mat-card>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="media-library">
+<mat-card *ngIf="isGroupAdminUser" class="is-link mat-elevation-z3" routerLink="media-library">
   <mat-card-header>
       <div mat-card-avatar>
         <i class="material-icons tangy-foreground-secondary group-avatar">perm_media</i>
