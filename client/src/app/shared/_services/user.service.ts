@@ -302,18 +302,37 @@ export class UserService {
       .map(user => user.username);
   }
 
-  async changeUserPassword(user, devicePassword = '') {
-    const userDoc = await this.usersDb.get(user.username)
-    const password = this.hashValue(user.newPassword)
-    const keyBox = devicePassword
-        ? CryptoJS.AES.encrypt(user.newPassword, devicePassword).toString()
-        : CryptoJS.AES.encrypt(user.newPassword, user.newPassword).toString()
-    await this.usersDb.put({
-      ...userDoc,
-      password,
-      keyBox
-    })
-    return true
+  async changeUserPassword(user, adminPassword) {
+    if (this.config.syncProtocol === '2') {
+      await this.lockBoxService.openLockBox('admin', adminPassword)
+      let adminLockBox
+      try {
+        adminLockBox = this.lockBoxService.getOpenLockBox('admin');
+      } catch (e) {
+        throw new Error(e)
+      }
+      this.lockBoxService.closeLockBox('admin')
+      const userLockBoxContents = <LockBoxContents>{...adminLockBox.contents}
+      await this.lockBoxService.fillLockBox(user.username, user.password, userLockBoxContents)
+      const userAccount = await this.getUserAccount(user.username)
+      userAccount.password = this.hashValue(user.password)
+      await this.saveUserAccount(<UserAccount>{ ...userAccount, initialProfileComplete:true })
+      return true;
+    } else {
+      const password = this.hashValue(user.newPassword);
+      try {
+        const result = await this.usersDb.find({ selector: { username: user.username } });
+        if (result.docs.length > 0) {
+          return await this.usersDb.upsert(result.docs[0]._id, (doc) => {
+            doc.password = password;
+            return doc;
+          });
+        }
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    }
   }
 
   hashValue(value) {
@@ -338,13 +357,13 @@ export class UserService {
     }
   }
 
-  async resetPassword(user, devicePassword) {
+  async resetPassword(user, adminPassword) {
     const userExists = await this.doesUserExist(user.username);
     const doesAnswerMatch = await this.confirmSecurityQuestion(user);
     if (
       userExists &&
       doesAnswerMatch &&
-      (await this.changeUserPassword(user, devicePassword))
+      (await this.changeUserPassword(user, adminPassword))
     ) {
       this.login(user.username, user.password)
       return true;
