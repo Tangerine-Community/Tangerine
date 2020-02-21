@@ -191,7 +191,12 @@ export class UserService {
     if (this.config.syncProtocol === '2') {
       // Open the admin's lockBox, copy it, and stash it in the new user's lockBox.
       await this.lockBoxService.openLockBox('admin', userSignup.adminPassword)
-      const adminLockBox = this.lockBoxService.getOpenLockBox('admin')
+      let adminLockBox
+      try {
+        adminLockBox = this.lockBoxService.getOpenLockBox('admin');
+      } catch (e) {
+        throw new Error(e)
+      }
       this.lockBoxService.closeLockBox('admin')
       const userLockBoxContents = <LockBoxContents>{...adminLockBox.contents}
       await this.lockBoxService.fillLockBox(userSignup.username, userSignup.password, userLockBoxContents)

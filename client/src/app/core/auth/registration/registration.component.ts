@@ -83,6 +83,7 @@ export class RegistrationComponent implements OnInit {
             } catch (error) {
                 console.log(error);
                 this.statusMessage = this.couldNotCreateUserMessage;
+                this.disableSubmit = false
             };
         } else {
             this.statusMessage = this.userNameUnavailableMessage;
