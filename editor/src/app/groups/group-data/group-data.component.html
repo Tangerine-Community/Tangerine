@@ -1,6 +1,6 @@
 <app-breadcrumb [title]="title" [breadcrumbs]="breadcrumbs"></app-breadcrumb>
 
-<mat-card class="is-link mat-elevation-z3" routerLink="uploads">
+<mat-card *ngIf="isGroupAdminUser" class="is-link mat-elevation-z3" routerLink="uploads">
   <mat-card-header>
       <div mat-card-avatar>
         <mwc-icon class="tangy-foreground-secondary">cloud_upload</mwc-icon>
