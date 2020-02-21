@@ -91,6 +91,8 @@ git checkout v3.7.0
 docker exec tangerine translations-update
 ```
 
+Repalce all ocurrences of **localStorage.currentUser** with **window.currentUser**
+
 ## v3.6.5
 - Fix timed grid output to exclude item level variables in logstash output https://github.com/Tangerine-Community/Tangerine/pull/1806
 
