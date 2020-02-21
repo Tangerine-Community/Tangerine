@@ -103,7 +103,7 @@ export class GroupFormsComponent implements OnInit, AfterViewInit {
 
   async addForm() {
     const formId = await this.tangerineForms.createForm(this.groupId, "New Form")
-    this.router.navigate(['tangy-form-editor', this.groupId, formId])
+    this.router.navigate(['edit', formId], {relativeTo: this.route})
   }
 
   async deleteForm(groupId, formId) {
