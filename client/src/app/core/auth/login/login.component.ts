@@ -18,16 +18,19 @@ import { _TRANSLATE } from '../../../shared/translation-marker';
 })
 export class LoginComponent implements OnInit {
   errorMessage = '';
-  devicePassword = ''
+  adminPassword = ''
   requiresDevicePasswordToRecover
   returnUrl: string; // stores the value of the url to redirect to after login
-  user = { username: '', password: '' };
+  user = { username: '', password: '', newPassword: '' };
   users = [];
   installed = false
   showRecoveryInput = false;
   securityQuestionText;
   allUsernames;
   listUsernamesOnLoginScreen;
+  requiresAdminPassword = false
+  passwordPolicy: string
+  passwordRecipe: string
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -43,9 +46,12 @@ export class LoginComponent implements OnInit {
   async ngOnInit() {
     const appConfig = await this.appConfigService.getAppConfig();
     const homeUrl = appConfig.homeUrl;
+    this.requiresAdminPassword = appConfig.syncProtocol === '2' ? true : false
     this.requiresDevicePasswordToRecover = this.deviceService.passwordIsSet()
     this.securityQuestionText = appConfig.securityQuestionText;
     this.listUsernamesOnLoginScreen = appConfig.listUsernamesOnLoginScreen;
+    this.passwordPolicy = appConfig.passwordPolicy;
+    this.passwordRecipe = appConfig.passwordRecipe;
     if (this.listUsernamesOnLoginScreen) {
       this.allUsernames = await this.usersService.getUsernames();
     }
@@ -60,12 +66,19 @@ export class LoginComponent implements OnInit {
     this.showRecoveryInput = !this.showRecoveryInput;
   }
 
-  resetPassword() {
-    if (!this.deviceService.verifyPassword(this.devicePassword)) {
-      this.errorMessage = _TRANSLATE('Device password incorrect.')
+  async resetPassword() {
+    this.errorMessage = ''
+    if (!await this.userService.confirmPassword('admin', this.adminPassword)) {
+      this.errorMessage = _TRANSLATE('Admin password incorrect.')
       return
     }
-    observableFrom(this.userService.resetPassword(this.user, this.devicePassword)).subscribe(data => {
+    const policy = new RegExp(this.passwordPolicy)
+    if (!policy.test(this.user.newPassword)) {
+      this.errorMessage = _TRANSLATE('Password is not strong enough.') + ' ' + this.passwordRecipe
+      return
+    }
+    this.user.password = this.user.newPassword
+    observableFrom(this.userService.resetPassword(this.user, this.adminPassword)).subscribe(data => {
       if (data) {
         this.router.navigate([this.returnUrl]);
       } else {
@@ -77,6 +90,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  // we need to have error msg for admin pass failure
   loginUser() {
     observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(async data => {
       if (data) {
