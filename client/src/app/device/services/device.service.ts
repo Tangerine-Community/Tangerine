@@ -29,7 +29,7 @@ export class DeviceService {
     private httpClient:HttpClient,
     private variableService:VariableService,
     private userService:UserService,
-    private lockerService:LockBoxService,
+    private lockBoxService:LockBoxService,
     private appConfigService:AppConfigService
   ) { 
   }
@@ -63,7 +63,7 @@ export class DeviceService {
 
   async getDevice():Promise<Device> {
     try {
-      const locker = this.lockerService.getOpenLockBox(this.userService.getCurrentUser())
+      const locker = this.lockBoxService.getOpenLockBox(this.userService.getCurrentUser())
       return locker.contents.device
     } catch (e) {
       return new Device()
