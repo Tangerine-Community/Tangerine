@@ -1,3 +1,4 @@
+import { VariableService } from './../../../shared/_services/variable.service';
 import { UpdateService } from './../../../shared/_services/update.service';
 import { DeviceService } from './../../../device/services/device.service';
 
@@ -10,6 +11,7 @@ import { AppConfigService } from '../../../shared/_services/app-config.service';
 
 import { UserService } from '../../../shared/_services/user.service';
 import { _TRANSLATE } from '../../../shared/translation-marker';
+import { VARIABLE_FINISH_UPDATE_ON_LOGIN } from '../../update/update/update.component';
 
 @Component({
   selector: 'app-login',
@@ -37,7 +39,7 @@ export class LoginComponent implements OnInit {
     private userService:UserService,
     private usersService: UserService,
     private deviceService:DeviceService,
-    private updateService:UpdateService,
+    private variableService:VariableService,
     private appConfigService: AppConfigService
   ) {
     this.installed = localStorage.getItem('installed') ? true : false
@@ -94,7 +96,7 @@ export class LoginComponent implements OnInit {
   loginUser() {
     observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(async data => {
       if (data) {
-        if (await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp2_updateRequired()) {
+        if (await this.appConfigService.syncProtocol2Enabled() && await this.variableService.get(VARIABLE_FINISH_UPDATE_ON_LOGIN)) {
           this.router.navigate(['/update']);
         } else {
           this.router.navigate(['' + this.returnUrl]);
