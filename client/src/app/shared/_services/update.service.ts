@@ -6,6 +6,9 @@ import { UserService } from 'src/app/shared/_services/user.service';
 import { Injectable } from '@angular/core';
 import { updates } from '../../core/update/update/updates';
 
+const VAR_CURRENT_UPDATE_INDEX = 'VAR_CURRENT_UPDATE_INDEX'
+export const VAR_UPDATE_IS_RUNNING = 'VAR_UPDATE_IS_RUNNING'
+
 @Injectable({
   providedIn: 'root'
 })
@@ -39,16 +42,16 @@ export class UpdateService {
     for (const username of usernames) {
       const userDb = await this.userService.getUserDatabase(username);
       // Use try in case this is an old account where info doc was not created.
-      let infoDoc = { _id: '', atUpdateIndex: 0 };
+      let infoDoc = { _id: '', currentUpdateIndex: 0 };
       try {
         infoDoc = await userDb.get('info');
       } catch (e) {
-        await userDb.put({ _id: 'info', atUpdateIndex: 0 });
+        await userDb.put({ _id: 'info', currentUpdateIndex: 0 });
         infoDoc = await userDb.get('info');
       }
-      const atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
-      const lastUpdateIndex = updates.length - 1;
-      if (lastUpdateIndex !== atUpdateIndex) {
+      const currentUpdateIndex = infoDoc.hasOwnProperty('currentUpdateIndex') ? infoDoc.currentUpdateIndex : 0;
+      const finalUpdateIndex = updates.length - 1;
+      if (finalUpdateIndex !== currentUpdateIndex) {
         return true
       } else {
         return false
@@ -67,32 +70,32 @@ export class UpdateService {
 
   async sp1_processUpdatesForUser(userDb, appConfig) {
     // Use try in case this is an old account where info doc was not created.
-    let infoDoc = { _id: '', atUpdateIndex: 0 };
+    let infoDoc = { _id: '', currentUpdateIndex: 0 };
     try {
       infoDoc = await userDb.get('info');
     } catch (e) {
-      await userDb.put({ _id: 'info', atUpdateIndex: 0 });
+      await userDb.put({ _id: 'info', currentUpdateIndex: 0 });
       infoDoc = await userDb.get('info');
     }
     let totalUpdatesApplied = 0
-    let atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
-    const lastUpdateIndex = updates.length - 1;
-    if (lastUpdateIndex !== atUpdateIndex) {
+    let currentUpdateIndex = infoDoc.hasOwnProperty('currentUpdateIndex') ? infoDoc.currentUpdateIndex : 0;
+    const finalUpdateIndex = updates.length - 1;
+    if (finalUpdateIndex !== currentUpdateIndex) {
       let requiresViewsRefresh = false;
-      while (lastUpdateIndex !== atUpdateIndex) {
+      while (finalUpdateIndex !== currentUpdateIndex) {
         this.status$.next(_TRANSLATE(`Applying Update: ${totalUpdatesApplied+1}`))
-        if (updates[atUpdateIndex+1].requiresViewsUpdate) {
+        if (updates[currentUpdateIndex+1].requiresViewsUpdate) {
           requiresViewsRefresh = true;
         }
-        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService);
+        await updates[currentUpdateIndex+1].script(userDb, appConfig, this.userService);
         totalUpdatesApplied++;
-        atUpdateIndex++;
+        currentUpdateIndex++;
         if (requiresViewsRefresh) {
           await this.userService.updateAllDefaultUserDocs()
         }
       }
-      atUpdateIndex--;
-      infoDoc.atUpdateIndex = atUpdateIndex;
+      currentUpdateIndex--;
+      infoDoc.currentUpdateIndex = currentUpdateIndex;
       await userDb.put(infoDoc);
     }
   }
@@ -108,41 +111,32 @@ export class UpdateService {
   }
 
   async sp2_processUpdates() {
+
     const username = await this.userService.getCurrentUser();
     const appConfig = await this.appConfigService.getAppConfig()
     const userDb = await this.userService.getUserDatabase(username);
-    let totalUpdatesApplied = 0
-    let atUpdateIndex = await this.getCurrentUpdateIndex() 
-    const lastUpdateIndex = updates.length - 1;
-    if (lastUpdateIndex !== atUpdateIndex) {
-      let requiresViewsRefresh = false;
-      // We shouldn't hit the second condition here, but just in case.
-      while (lastUpdateIndex !== atUpdateIndex || lastUpdateIndex < atUpdateIndex) {
-        this.status$.next(_TRANSLATE(`Applying Update: ${totalUpdatesApplied+1}`))
-        if (updates[atUpdateIndex+1].requiresViewsUpdate) {
-          requiresViewsRefresh = true;
-        }
-        await updates[atUpdateIndex].script(userDb, appConfig, this.userService);
-        totalUpdatesApplied++;
-        atUpdateIndex++;
+    let currentUpdateIndex = await this.getCurrentUpdateIndex() 
+    const finalUpdateIndex = updates.length - 1;
+    let requiresViewsRefresh = false;
+
+    if (finalUpdateIndex !== currentUpdateIndex) {
+      while (currentUpdateIndex < finalUpdateIndex) {
+        this.status$.next(_TRANSLATE(`Applying Update: ${currentUpdateIndex+1}`))
+        if (updates[currentUpdateIndex+1].requiresViewsUpdate) requiresViewsRefresh = true;
+        await updates[currentUpdateIndex+1].script(userDb, appConfig, this.userService);
+        currentUpdateIndex++;
+        await this.setCurrentUpdateIndex(currentUpdateIndex)
       }
-      if (lastUpdateIndex < atUpdateIndex) console.warn('Somehow the current update index is greater that the total updates.')
-      await this.setCurrentUpdateIndex(atUpdateIndex)
     }
+
   }
 
   async getCurrentUpdateIndex() {
-    return <number>await this.variableService.get('currentUpdateIndex')
+    return <number>await this.variableService.get(VAR_CURRENT_UPDATE_INDEX)
   }
 
   async setCurrentUpdateIndex(index) {
-    await this.variableService.set('currentUpdateIndex', index)
+    await this.variableService.set(VAR_CURRENT_UPDATE_INDEX, index)
   }
-  
-  /*
-   *
-   */
-
-
 
 }

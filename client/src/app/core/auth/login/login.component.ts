@@ -1,5 +1,5 @@
 import { VariableService } from './../../../shared/_services/variable.service';
-import { UpdateService } from './../../../shared/_services/update.service';
+import { UpdateService, VAR_UPDATE_IS_RUNNING } from './../../../shared/_services/update.service';
 import { DeviceService } from './../../../device/services/device.service';
 
 import {from as observableFrom,  Observable } from 'rxjs';
@@ -96,7 +96,7 @@ export class LoginComponent implements OnInit {
   loginUser() {
     observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(async data => {
       if (data) {
-        if (await this.appConfigService.syncProtocol2Enabled() && await this.variableService.get(VARIABLE_FINISH_UPDATE_ON_LOGIN)) {
+        if (this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
           this.router.navigate(['/update']);
         } else {
           this.router.navigate(['' + this.returnUrl]);

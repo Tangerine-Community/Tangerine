@@ -1,4 +1,5 @@
-import { UpdateService } from './shared/_services/update.service';
+import { VariableService } from './shared/_services/variable.service';
+import { UpdateService, VAR_UPDATE_IS_RUNNING } from './shared/_services/update.service';
 import { DeviceService } from './device/services/device.service';
 import { Component, OnInit, QueryList, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -42,6 +43,7 @@ export class AppComponent implements OnInit {
     private updateService:UpdateService,
     private searchService:SearchService,
     private deviceService: DeviceService,
+    private variableService:VariableService,
     translate: TranslateService
   ) {
     this.window = window;
@@ -101,7 +103,7 @@ export class AppComponent implements OnInit {
     this.checkStorageUsage()
     setInterval(this.checkStorageUsage.bind(this), 60*1000);
     this.ready = true
-    if (!await this.appConfigService.syncProtocol2Enabled() && await this.updateService.sp1_updateRequired()) {
+    if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
       this.router.navigate(['/update'])
     }
   }
@@ -208,45 +210,48 @@ export class AppComponent implements OnInit {
     }
   }
 
-  updateApp() {
+  async updateApp() {
+    if (!confirm(_TRANSLATE('Would you like to update? We recommend syncing data before you do.'))) {
+      return
+    }
+    await this.variableService.set(VAR_UPDATE_IS_RUNNING, true)
     if (this.window.isCordovaApp) {
+      this.updateIsRunning = true;
       console.log('Running from APK');
-      const installationCallback = (error) => {
+      const installationCallback = async (error) => {
         if (error) {
           console.log('Failed to install the update with error code:' + error.code);
           console.log(error.description);
+          await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
           this.updateIsRunning = false;
+          alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
         } else {
-          console.log('Update Instaled');
-          this.updateIsRunning = false;
-          this.router.navigate(['update'])
+          console.log('APK update downloaded. Reloading for new code...');
+          // No need to set in memory semaphore to false, app will reload.
+          // this.updateIsRunning = false;
+          // CHCP seems to handle the reload.
         }
       };
-      const updateCallback = (error, data) => {
+      const updateCallback = async (error, data) => {
         console.log('data: ' + JSON.stringify(data));
         if (error) {
           console.log('error: ' + JSON.stringify(error));
+          await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
+          this.updateIsRunning = false;
           alert(_TRANSLATE('No Update') + ': ' + _TRANSLATE('Unable to check for update. Make sure you are connected to the Internet and try again.'));
         } else {
-          console.log('Update is Loaded');
-          if (this.window.confirm(_TRANSLATE('An update is available. Be sure to first sync your data before installing the update. If you have not done this, click `CANCEL`. If you are ready to install the update, click `OK`'))) {
-            this.updateIsRunning = true;
-            console.log('Installing Update');
-            this.window.chcp.installUpdate(installationCallback);
-          } else {
-            console.log('Cancelled install; did not install update.');
-            this.updateIsRunning = false;
-          }
+          console.log('Update has downloaded');
+          console.log('Installing update');
+          this.window.chcp.installUpdate(installationCallback);
         }
       };
-      alert(_TRANSLATE('The app will now check for an application update and attempt to download. Please stay connected to the Internet during this process. Tap OK to proceed.'))
       this.window.chcp.fetchUpdate(updateCallback);
     } else {
+      // Forward to PWA Updater App.
       const currentPath = this.window.location.pathname;
       const storedReleaseUuid = localStorage.getItem('release-uuid');
       this.window.location.href = (currentPath.replace(`${storedReleaseUuid}\/app\/`, ''));
     }
-
   }
 
   getGeolocationPosition() {
