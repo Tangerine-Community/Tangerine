@@ -1,6 +1,6 @@
 import { VariableService } from './../../../shared/_services/variable.service';
 import { Subject } from 'rxjs';
-import { UpdateService } from './../../../shared/_services/update.service';
+import { UpdateService, VAR_UPDATE_IS_RUNNING } from './../../../shared/_services/update.service';
 import { DeviceService } from './../../../device/services/device.service';
 import { AppConfigService } from './../../../shared/_services/app-config.service';
 import { Component, AfterContentInit } from '@angular/core';
@@ -39,23 +39,26 @@ export class UpdateComponent implements AfterContentInit {
     this.updateService.status$.subscribe({next: message => {
       this.message = message
     }})
-    if (await this.appConfigService.syncProtocol2Enabled()) {
+    if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
       if (!this.userService.isLoggedIn()) {
-        this.variableService.set(VARIABLE_FINISH_UPDATE_ON_LOGIN, true)
         this.message = _TRANSLATE('The update has been downloaded. Please log in to complete the update.')
       } else {
-        if (await this.updateService.sp2_updateRequired()) {
+        if (
+          !await this.appConfigService.syncProtocol2Enabled &&
+          await this.updateService.sp1_updateRequired()
+        ) {
+          await this.updateService.sp1_processUpdates()
+        }
+        if (
+          await this.appConfigService.syncProtocol2Enabled && 
+          await this.updateService.sp2_updateRequired()
+        ) {
           await this.updateService.sp2_processUpdates()
-        } 
-        await this.deviceService.didUpdate()
-        this.variableService.set(VARIABLE_FINISH_UPDATE_ON_LOGIN, false)
+          await this.deviceService.didUpdate()
+        }
+        this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
         this.message = _TRANSLATE('✓ Yay! You are up to date.')
       }
-    } else {
-      if (this.updateService.sp1_updateRequired()) {
-        await this.updateService.sp1_processUpdates()
-      }
-      this.message = _TRANSLATE('✓ Yay! You are up to date.')
     }
     this.complete = true
   }

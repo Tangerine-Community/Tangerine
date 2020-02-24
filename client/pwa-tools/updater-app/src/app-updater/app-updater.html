@@ -116,7 +116,8 @@
               this.updateServiceWorker()
             }
             else if (this.storedReleaseUuid !== this.foundReleaseUuid) {
-              let confirmation = confirm("Would you like to update?")
+              // Always go for now...
+              let confirmation = true 
               if (confirmation) {
                 this.message = 'Updating...'
                 this.updateServiceWorker()
