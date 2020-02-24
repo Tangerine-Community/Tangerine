@@ -54,8 +54,8 @@ export class UpdateComponent implements AfterContentInit {
           await this.updateService.sp2_updateRequired()
         ) {
           await this.updateService.sp2_processUpdates()
-          await this.deviceService.didUpdate()
         }
+        await this.deviceService.didUpdate()
         this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
         this.message = _TRANSLATE('✓ Yay! You are up to date.')
       }
