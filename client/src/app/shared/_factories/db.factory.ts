@@ -7,6 +7,8 @@ import * as PouchDBUpsert from 'pouchdb-upsert';
 PouchDB.plugin(PouchDBFind);
 PouchDB.plugin(PouchDBUpsert);
 PouchDB.plugin(cordovaSqlitePlugin);
+PouchDB.plugin(window['PouchReplicationStream'].plugin);
+PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
 PouchDB.defaults({auto_compaction: true, revs_limit: 1});
 
 export function DB(name, key = ''):PouchDB {

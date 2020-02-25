@@ -30,16 +30,11 @@ export class PeersService {
   }
 
   async getLocalDatabase() {
-    // get the local db this.getUserService.getUserdatabase - has a .db property - can use the sync method
-    PouchDB.plugin(window['PouchReplicationStream'].plugin);
-    PouchDB.adapter('writableStream', window['PouchReplicationStream'].adapters.writableStream);
-    // const dbName = new PouchDB((await this.userService.getUserDatabase()).db.name);
     const userDatabase = await this.userService.getUserDatabase();
     const userDatabaseName = userDatabase.db.name;
     const username = userDatabaseName.replace('_pouchdb', '');
     console.log('userDatabaseName: ' + userDatabaseName + ' username: ' + username);
-    const db = new PouchDB(username);
-    return db;
+    return userDatabase.db;
   }
 
   sleep(milliseconds) {
