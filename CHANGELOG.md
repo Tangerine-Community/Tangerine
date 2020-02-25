@@ -1,5 +1,19 @@
 # Changelog
 
+## v3.7.1
+- Fix translations update script.
+- Fix client update process when upgrading from v3.1.0.
+
+__Upgrade instructions:__
+On the server, backup your data folder and then run the following commands.
+```bash
+git fetch origin
+git checkout v3.7.1
+./start.sh v3.7.1
+docker exec tangerine translations-update
+```
+
+
 ## v3.7.0
 - __Fixes__
   - When editing forms, they will only save back to the server after clicking the top level "save" button. There is also now messaging around when the save either completes successfully or fails.
