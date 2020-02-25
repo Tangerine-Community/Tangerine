@@ -8,3 +8,7 @@ span.tangy-foreground-secondary{
 a.faux-anchor{
 cursor: pointer;
 }
+
+form {
+  margin: 15px;
+}
