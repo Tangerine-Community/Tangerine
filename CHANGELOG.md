@@ -5,6 +5,9 @@
 ### All Tangerine installs
 The following are features and fixes that are coming to all Tangerine installs. With this release comes an improved Editor UI experience, a faster device setup process, new form features, and much more.
 
+![group page](screenshots/group-page.png)
+![form editing](screenshots/form-editing.png)
+
 - Editor User browses Group UI by nested categories (as opposed to flat list) #1880
 - Device Administrator is prompted to authorize permissions on first app load [#1896](https://github.com/Tangerine-Community/Tangerine/issues/1896)
 - Data Collector defines password according to policy #1867
@@ -15,6 +18,9 @@ The following are features and fixes that are coming to all Tangerine installs. 
 
 ### Sync Protocol 2 Module
 Sync Protocol 2 is a new module that can be enabled on a Tangerine installation that adds Device management, 2 ways sync, and much more.
+
+![device management](screenshots/device-management.png)
+![sync settings](screenshots/sync-settings.png)
 
 - Data Collector generates encrypted backup of Device [#1909](https://github.com/Tangerine-Community/Tangerine/issues/1909)
 - Data Collector conducts a two-way sync with server only getting data from server relevant to their location #1755
