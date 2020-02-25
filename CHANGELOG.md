@@ -6,7 +6,7 @@ v3.8.0 is a big and exciting release! To accomodate the long list of changes, we
 ### General 
 The following are features and fixes that are coming to all Tangerine installs. With this release comes an improved Editor UI experience, a faster device setup process, new form features, and much more.
 
-| Group tabs are now in 4 sections          | Breadcrumbs allows you to navigated quickly   |
+| Group tabs are now in 4 sections          | Breadcrumbs allows you to navigate back up deeply nested areas   |
 | ----------------------------------------- | --------------------------------------------- |
 | ![group page](screenshots/group-page.png) | ![form editing](screenshots/form-editing.png) |
 
