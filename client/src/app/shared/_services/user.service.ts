@@ -369,7 +369,7 @@ export class UserService {
       doesAnswerMatch &&
       (await this.changeUserPassword(user, adminPassword))
     ) {
-      this.login(user.username, user.password)
+      await this.login(user.username, user.password)
       return true;
     } else {
       return false;

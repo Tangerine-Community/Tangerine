@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
 
   async resetPassword() {
     this.errorMessage = ''
-    if (!await this.userService.confirmPassword('admin', this.adminPassword)) {
+    if (await this.appConfigService.syncProtocol2Enabled() && !await this.userService.confirmPassword('admin', this.adminPassword)) {
       this.errorMessage = _TRANSLATE('Admin password incorrect.')
       return
     }
