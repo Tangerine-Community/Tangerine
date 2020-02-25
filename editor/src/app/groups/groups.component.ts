@@ -4,6 +4,7 @@ import { GroupsService } from './services/groups.service';
 import { TruncatePipe } from '../pipes/truncate';
 import { TangyErrorHandler } from '../shared/_services/tangy-error-handler.service';
 import { _TRANSLATE } from '../shared/_services/translation-marker';
+import { UserService } from '../core/auth/_services/user.service';
 // import {RegistrationService} from '../registration/services/registration.service';
 // import { AuthService } from '../auth.service';
 
@@ -16,11 +17,13 @@ export class GroupsComponent implements OnInit {
 
   groups;
   breakpoint;
+  isAdminUser = false
 
   constructor(
     private menuService:MenuService,
     private groupsService: GroupsService,
     private errorHandler: TangyErrorHandler,
+    private userService:UserService
     ) {
   }
 
@@ -29,6 +32,7 @@ export class GroupsComponent implements OnInit {
     await this.getData();
     this.menuService.setContext(_TRANSLATE('Groups'), '', 'groups')
     this.onResize(window);
+    this.isAdminUser = await this.userService.isCurrentUserAdmin()
   }
 
   onResize(target) {
