@@ -44,6 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
         translate.setDefaultLang('translation');
         translate.use('translation');
         this.mobileQuery = media.matchMedia('(max-width: 600px)');
+        this.mobileQuery.addEventListener('change', (event => this.snav.opened = !event.matches))
         this._mobileQueryListener = () => changeDetectorRef.detectChanges();
         this.mobileQuery.addListener(this._mobileQueryListener);
         this.window = this.windowRef.nativeWindow;
@@ -67,9 +68,6 @@ export class AppComponent implements OnInit, OnDestroy {
             this.canManageSitewideUsers = <boolean>await this.http.get('/user/permission/can-manage-sitewide-users').toPromise()
             if (!isLoggedIn) { this.router.navigate(['login']); }
         });
-
-        this.snav.toggle()
-
         fetch('assets/translation.json')
           .then(response => response.json())
           .then(json => {
