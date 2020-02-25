@@ -21,8 +21,13 @@ The following are features and fixes that are coming to all Tangerine installs. 
 ### Sync Protocol 2 Module
 Sync Protocol 2 is a new module that can be enabled on a Tangerine installation that adds Device management, 2 ways sync, and much more.
 
-![device management](screenshots/device-management.png)
-![sync settings](screenshots/sync-settings.png)
+
+| Manage which devices have access to sync, when they last synced, when they last updated and which version | Define which form responses are synced up and back down to tablets   |
+| ----------------------------------------- | --------------------------------------------- |
+| ![device management](screenshots/device-management.png) | ![sync settings](screenshots/sync-settings.png) |
+    
+
+
 
 - Data Collector generates encrypted backup of Device [#1909](https://github.com/Tangerine-Community/Tangerine/issues/1909)
 - Data Collector conducts a two-way sync with server only getting data from server relevant to their location #1755
