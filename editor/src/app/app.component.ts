@@ -8,6 +8,7 @@ import { WindowRef } from './core/window-ref.service';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { HttpClient } from '@angular/common/http';
 import { MatSidenav } from '@angular/material';
+import { UserService } from './core/auth/_services/user.service';
 
 
 @Component({
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit, OnDestroy {
     user_id: string = localStorage.getItem('user_id');
     private childValue: string;
     canManageSitewideUsers = false
+    isGroupAdmin = false
 
     history: string[] = [];
     titleToUse: string;
@@ -34,6 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
         private windowRef: WindowRef,
         private router: Router,
         private _registrationService: RegistrationService,
+        private userService:UserService,
         private menuService:MenuService,
         private authenticationService: AuthenticationService,
         translate: TranslateService,
@@ -56,11 +59,10 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-
         // Ensure user is logged in every 60 seconds.
         await this.ensureLoggedIn();
         setInterval(() => this.ensureLoggedIn(), 60 * 1000);
-
+        this.isGroupAdmin = await this.userService.isCurrentUserAdmin()
         this.authenticationService.currentUserLoggedIn$.subscribe(async isLoggedIn => {
             this.loggedIn = isLoggedIn;
             this.user_id = localStorage.getItem('user_id');
@@ -82,6 +84,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.loggedIn = await this.authenticationService.isLoggedIn();
         if (this.loggedIn && await this.authenticationService.validateSession() === false) {
             console.log('found invalid session');
+            this.isGroupAdmin = false
+            this.canManageSitewideUsers = false
             this.logout();
         }
     }
