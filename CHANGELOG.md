@@ -1,14 +1,14 @@
 # Changelog
 
 ## v3.8.0
+v3.8.0 is a big and exciting release! To accomodate the long list of changes, we split up this round of release notes into sections: General, Sync Protocol 2 Module, and Case Module, and Developer notes.
 
-### All Tangerine installs
+### General 
 The following are features and fixes that are coming to all Tangerine installs. With this release comes an improved Editor UI experience, a faster device setup process, new form features, and much more.
 
 | Group tabs are now in 4 sections          | Breadcrumbs allows you to navigated quickly   |
 | ----------------------------------------- | --------------------------------------------- |
 | ![group page](screenshots/group-page.png) | ![form editing](screenshots/form-editing.png) |
-    
 
 - Editor User browses Group UI by nested categories (as opposed to flat list) [#1880](https://github.com/Tangerine-Community/Tangerine/issues/1880)
 - Device Administrator is prompted to authorize permissions on first app load [#1896](https://github.com/Tangerine-Community/Tangerine/issues/1896)
@@ -19,8 +19,7 @@ The following are features and fixes that are coming to all Tangerine installs. 
 - Minor tweaks to the menu (now there is a single "Sync" item) and added tab bars to some pages for consistency.
 
 ### Sync Protocol 2 Module
-Sync Protocol 2 is a new module that can be enabled on a Tangerine installation that adds Device management, 2 ways sync, and much more.
-
+Sync Protocol 2 is a new module that can be enabled on a Tangerine installation that adds Device management, the ability for form responses to sync to the server and back down to tablets, the ablity for two tablets to sync form responses with each other offline, and much more.
 
 | Manage which devices have access to sync, when they last synced, when they last updated and which version | Define which form responses are synced up and back down to tablets   |
 | ------------------------------------------------------- | ----------------------------------------------- |
@@ -31,6 +30,7 @@ Sync Protocol 2 is a new module that can be enabled on a Tangerine installation 
 - Data Collector conducts a two-way sync with server only getting data from server relevant to their location [#1755](https://github.com/Tangerine-Community/Tangerine/issues/1755)
   - Device sync by Location: Sync Protocol 2: Enables a "Device Setup" process on first boot of the client application. This requires you set up a "Device" record on the server. When setting up a Device record on the server, it will give you a QR code to use to scan from the tablet in order to receive it's device ID and token.
 - Data Collector syncs to server with large dataset [#1757](https://github.com/Tangerine-Community/Tangerine/issues/1755)
+- Data collector synchronizes data between devices using an Offline P2P mechanism [#279](https://github.com/Tangerine-Community/Tangerine/issues/279)
 - Editor User configures two-way sync for form responses from specific forms [#1753](https://github.com/Tangerine-Community/Tangerine/issues/1753)
 - Editor revokes access to syncing with server for a lost Device [#1894](https://github.com/Tangerine-Community/Tangerine/issues/1894)
 
