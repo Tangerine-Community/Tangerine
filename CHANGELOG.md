@@ -1,25 +1,43 @@
 # Changelog
 
 ## v3.8.0
-- __Fixes__
-  - Lazy loading tabs in Case Home - this helps resolve some of the slowness in loading Case Home. Also disabled animations on tabs to remove jankiness.
-  - Improved error feedback when registering a new device
-  - Increased upload limit to couchProxy to fix sync error. Fixes #1873 Sync fails with "request entity too large" server error
-  - Re-enabled git config in Dockerfile - still having git networking error even when off corp network. 
 
-- __Features__
-  - Sync Protocol 2: Enables a "Device Setup" process on first boot of the client application. This requires you set up a "Device" record on the server. When setting up a Device record on the server, it will give you a QR code to use to scan from the tablet in order to receive it's device ID and token.
+### All Tangerine installs
+The following are features and fixes that are coming to all Tangerine installs. With this release comes an improved Editor UI experience, a faster device setup process, new form features, and much more.
+
+- Editor User browses Group UI by nested categories (as opposed to flat list) #1880
+- Device Administrator is prompted to authorize permissions on first app load [#1896](https://github.com/Tangerine-Community/Tangerine/issues/1896)
+- Data Collector defines password according to policy #1867
+- Data Collector views device info such as Device ID, Assigned Location, Server URL, Group Name, and Release Channel. #1834
+- Data Collector in checkboxes chooses "none of the above", then other options are unselected #1822
+- Editor distinguishes between inputs that are hidden and skipped #1800
+- Minor tweaks to the menu (now there is a single "Sync" item) and added tab bars to some pages for consistency.
+
+### Sync Protocol 2 Module
+Sync Protocol 2 is a new module that can be enabled on a Tangerine installation that adds Device management, 2 ways sync, and much more.
+
+- Data Collector generates encrypted backup of Device [#1909](https://github.com/Tangerine-Community/Tangerine/issues/1909)
+- Data Collector conducts a two-way sync with server only getting data from server relevant to their location #1755
+  - Device sync by Location: Sync Protocol 2: Enables a "Device Setup" process on first boot of the client application. This requires you set up a "Device" record on the server. When setting up a Device record on the server, it will give you a QR code to use to scan from the tablet in order to receive it's device ID and token.
+- Data Collector syncs to server with large dataset #1757
+- Editor User configures two-way sync for form responses from specific forms #1753
+- Editor revokes access to syncing with server for a lost Device [#1894]()
+
+### Case Module
+- Data Collector views Case Events in Schedule with Estimated Day, Scheduled Day, Window, and Occurred On Dates(16 hrs) #1737
+- Data Collector creates (another) instance of a repeatable form for a specific participant in a specific event(8hrs) #1786
+- Data Collector views which Participant they are filling out a form for #1820
+- Data Collector searches for a Case in a large dataset #1893
   - Improvements to Case Home search - limit docs to 25 when no phrase is entered: #1871. Added rule to delay search in Case Home until at least two characters have been entered. Search results now sorted by date record updated.
-  - Minor tweaks to the menu (now there is a single "Sync" item) and added tab bars to some pages for consistency.
-  - Combined Sync feature: The P2P Sync feature is now available as the second tab on the Sync feature page. Improved text for P2P Sync. Added progress text when online syncing (displays how many new docs written)
+- Lazy loading tabs in Case Home - this helps resolve some of the slowness in loading Case Home. Also disabled animations on tabs to remove jankiness.
   
-- __Developer Updates__
-  - Updated docker-tangerine-base-image to v3.4.0
-  - New load testing doc.
-  - Added random name generation to the script that generates new cases - useful for load testing and checking how well search listing works. If using the 'case-mother' switch, record templates are pulled from your group.
+### Developer Updates
+- Re-enabled git config in Dockerfile - still having git networking error even when off corp network. 
+- Updated docker-tangerine-base-image to v3.4.0
+- New load testing doc.
+- Added random name generation to the script that generates new cases - useful for load testing and checking how well search listing works. If using the 'case-mother' switch, record templates are pulled from your group.
 
-__Upgrade instructions:__
-
+### Upgrade instructions
 On the server, backup your data folder and then run the following commands.
 
 ```bash
@@ -29,7 +47,7 @@ git checkout v3.8.0
 docker exec -it tangerine /tangerine/server/src/upgrade/v3.8.0.js
 ```
 
-Repalce all ocurrences of **localStorage.currentUser** with **window.currentUser**
+Replace all ocurrences of `localStorage.getItem('currentUser')` with `window.currentUser`.
 
 
 ## v3.7.0
