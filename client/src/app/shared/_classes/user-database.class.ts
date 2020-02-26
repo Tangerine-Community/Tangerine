@@ -39,7 +39,9 @@ export class UserDatabase {
       ...doc,
       tangerineModifiedByUserId: this.userId,
       tangerineModifiedByDeviceId: this.deviceId,
-      tangerineModifiedOn: Date.now()
+      tangerineModifiedOn: Date.now(),
+      // Backwards compatibility for sync protocol 1. 
+      lastModified: Date.now()
     });
   }
 
@@ -48,7 +50,9 @@ export class UserDatabase {
       ...doc,
       tangerineModifiedByUserId: this.userId,
       tangerineModifiedByDeviceId: this.deviceId,
-      tangerineModifiedOn: Date.now()
+      tangerineModifiedOn: Date.now(),
+      // Backwards compatibility for sync protocol 1. 
+      lastModified: Date.now()
     });
   }
 
