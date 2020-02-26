@@ -100,7 +100,7 @@ export class SyncingService {
     ]
     // Also mark the user profile for upload if it has been modifid since last upload.
     const userProfile = await this.userService.getUserProfile(username || await this.getLoggedInUser())
-    return userProfile.lastModified > userProfile.uploadDatetime 
+    return userProfile['tangerineModifiedOn'] > userProfile.uploadDatetime 
       ? [ ...localNotUploadedDocIds, userProfile._id ]
       : localNotUploadedDocIds
   }
