@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.7.2
+- More fixes for upgrade process from v3.1.0.
+
 ## v3.7.1
 - Fix translations update script.
 - Fix client update process when upgrading from v3.1.0.
