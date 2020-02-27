@@ -94,7 +94,9 @@ export class UserService {
   // A helper method for upgrades to be used when a module has a view to upgrade.
   async updateAllDefaultUserDocs() {
     console.log('Installing views...')
-    for (const userDb of this.userDatabases) {
+    const users = await this.getAllUsers()
+    for (const user of users) {
+      const userDb = await this.getUserDatabase(user.username) 
       for (const moduleDocs of this.defaultUserDocs) {
         for (const doc of moduleDocs) {
           try {
