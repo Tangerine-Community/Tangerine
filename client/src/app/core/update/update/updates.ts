@@ -171,6 +171,9 @@ export const updates = [
         await userDb.remove(invalidUserProfileDoc)
         userDoc.userUUID = validUserProfileDoc._id
         await usersDb.put(userDoc)
+        /*
+         * This update is too heavy for some tablets.
+
         // Fix issue where docs did not always have lastModified and uploadDatetime.
         const allDocs = (await userDb.allDocs({include_docs: true}))
           .rows
@@ -204,6 +207,7 @@ export const updates = [
           }
           await userDb.put(doc)
         }
+        */
       }
       // Doing this later.
       //await userService.updateAllDefaultUserDocs()
