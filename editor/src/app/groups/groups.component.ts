@@ -32,7 +32,7 @@ export class GroupsComponent implements OnInit {
 
 
   async ngOnInit() {
-    this.breakpoint = (window.innerWidth <= 832) ? 1 : 2;
+    this.breakpoint = (window.innerWidth <= 832) ? 1 : 3;
     await this.getData();
     this.menuService.setContext(_TRANSLATE('Groups'), '', 'groups')
     this.onResize(window);
@@ -40,7 +40,7 @@ export class GroupsComponent implements OnInit {
   }
 
   onResize(target) {
-    this.breakpoint = (target.innerWidth <= 832) ? 1 : 2;
+    this.breakpoint = (target.innerWidth <= 832) ? 1 : 3;
   }
 
   async getData() {
