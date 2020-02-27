@@ -32,7 +32,9 @@ export class UserDatabase {
     return await this.db.put({
       ...doc,
       tangerineModifiedBy: this.userId,
-      tangerineModifiedOn: Date.now()
+      tangerineModifiedOn: Date.now(),
+      // Backwards compatible for SP1.
+      modifiedOn: Date.now()
     })
   }
 
@@ -40,7 +42,9 @@ export class UserDatabase {
     return await this.db.post({
       ...doc,
       tangerineModifiedBy: this.userId,
-      tangerineModifiedOn: Date.now()
+      tangerineModifiedOn: Date.now(),
+      // Backwards compatible for SP1.
+      modifiedOn: Date.now()
     })
   }
 
