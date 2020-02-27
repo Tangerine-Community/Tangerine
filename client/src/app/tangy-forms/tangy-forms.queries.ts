@@ -20,31 +20,21 @@ export const TangyFormsQueries = {
   },
   responsesLockedAndNotUploaded: {
     map: function (doc) {
-      if (
-        (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime)
-        || 
-        (doc.collection === 'TangyFormResponse' && doc.complete === true && ((doc.uploadDatetime < doc.lastModified) || (doc.uploadDatetime < doc.tangerineModifiedOn)))
-      ) {
+      if (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime) {
         emit(doc.form.id, true)
       }
     }.toString()
   },
   responsesUnLockedAndNotUploaded: {
     map: function (doc) {
-      if (
-        (doc.collection === 'TangyFormResponse' && doc.complete === false && !doc.uploadDatetime)
-        || 
-        (doc.collection === 'TangyFormResponse' && doc.complete === false && ((doc.uploadDatetime < doc.lastModified) || (doc.uploadDatetime < doc.tangerineModifiedOn)))
-      ) {
+      if (doc.collection === 'TangyFormResponse' && doc.complete === false && !doc.uploadDatetime) {
         emit(doc.form.id, true)
       }
     }.toString()
   },
   responsesLockedAndUploaded: {
     map: function (doc) {
-      if (
-        (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime && ((doc.uploadDatetime > doc.lastModified) || (doc.uploadDatetime > doc.tangerineModifiedOn)))
-      ) {
+      if (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime) {
         emit(doc.form.id, true)
       }
     }.toString()
