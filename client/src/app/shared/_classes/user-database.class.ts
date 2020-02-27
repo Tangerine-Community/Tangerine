@@ -34,7 +34,7 @@ export class UserDatabase {
       tangerineModifiedBy: this.userId,
       tangerineModifiedOn: Date.now(),
       // Backwards compatible for SP1.
-      modifiedOn: Date.now()
+      lastModified: Date.now()
     })
   }
 
@@ -44,7 +44,7 @@ export class UserDatabase {
       tangerineModifiedBy: this.userId,
       tangerineModifiedOn: Date.now(),
       // Backwards compatible for SP1.
-      modifiedOn: Date.now()
+      lastModified: Date.now()
     })
   }
 

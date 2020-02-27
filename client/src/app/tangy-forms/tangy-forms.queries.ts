@@ -23,7 +23,7 @@ export const TangyFormsQueries = {
       if (
         (doc.collection === 'TangyFormResponse' && doc.complete === true && !doc.uploadDatetime)
         || 
-        (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime < doc.lastModified)
+        (doc.collection === 'TangyFormResponse' && doc.complete === true && ((doc.uploadDatetime < doc.lastModified) || (doc.uploadDatetime < doc.tangerineModifiedOn)))
       ) {
         emit(doc.form.id, true)
       }
@@ -34,7 +34,7 @@ export const TangyFormsQueries = {
       if (
         (doc.collection === 'TangyFormResponse' && doc.complete === false && !doc.uploadDatetime)
         || 
-        (doc.collection === 'TangyFormResponse' && doc.complete === false && doc.uploadDatetime < doc.lastModified)
+        (doc.collection === 'TangyFormResponse' && doc.complete === false && ((doc.uploadDatetime < doc.lastModified) || (doc.uploadDatetime < doc.tangerineModifiedOn)))
       ) {
         emit(doc.form.id, true)
       }
@@ -43,7 +43,7 @@ export const TangyFormsQueries = {
   responsesLockedAndUploaded: {
     map: function (doc) {
       if (
-        (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime && doc.uploadDatetime > doc.lastModified)
+        (doc.collection === 'TangyFormResponse' && doc.complete === true && doc.uploadDatetime && ((doc.uploadDatetime > doc.lastModified) || (doc.uploadDatetime > doc.tangerineModifiedOn)))
       ) {
         emit(doc.form.id, true)
       }
@@ -52,7 +52,7 @@ export const TangyFormsQueries = {
   responsesUnLockedAndUploaded: {
     map: function (doc) {
       if (
-        (doc.collection === 'TangyFormResponse' && doc.complete === false && doc.uploadDatetime && doc.uploadDatetime > doc.lastModified)
+        (doc.collection === 'TangyFormResponse' && doc.complete === false && doc.uploadDatetime && ((doc.uploadDatetime > doc.lastModified) || (doc.uploadDatetime > doc.tangerineModifiedOn)))
       ) {
         emit(doc.form.id, true)
       }
