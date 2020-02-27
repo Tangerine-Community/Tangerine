@@ -116,7 +116,9 @@ export class UserService {
   // A helper method for upgrades to be used when a module has upgraded a view and now views need indexing.
   async indexAllUserViews() {
     try {
-      for (const userDb of this.userDatabases) {
+      const users = await this.getAllUsers()
+      for (const user of users) {
+        const userDb = await this.getUserDatabase(user.username) 
         for (const moduleDocs of this.defaultUserDocs) {
           for (const doc of moduleDocs) {
             if (Object.keys(doc.views).length > 0) {
@@ -128,6 +130,7 @@ export class UserService {
         }
       }
     } catch(err) {
+      alert('An error occurred updating the database.')
       throw(err)
     }
   }

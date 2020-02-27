@@ -209,5 +209,15 @@ export const updates = [
       await userService.indexAllUserViews()
       localStorage.setItem('ran-update-v3.4.0', 'true')
     }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService:UserService) => {
+      if (localStorage.getItem('ran-update-v3.7.2')) return
+      console.log('Updating to v3.7.2...')
+      await userService.updateAllDefaultUserDocs()
+      await userService.indexAllUserViews()
+      localStorage.setItem('ran-update-v3.7.2', 'true')
+    }
   }
 ]
