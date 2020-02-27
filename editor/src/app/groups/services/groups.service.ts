@@ -143,14 +143,14 @@ export class GroupsService {
   async apkIsBuilding(groupName: string, releaseType: string) {
     try {
       const result: any = await this.httpClient.get(`/releases/${releaseType}/apks/${groupName}.json`).toPromise();
-      return (result.processing === true) ? true : false;
+      // return (result.processing === true) ? true : false;
+      return result;
     } catch (error) {
       if (typeof error.status === 'undefined') {
         this.errorHandler.handleError(_TRANSLATE('Could Not Contact Server.'));
       }
     }
   }
-
 
   async releaseAPK(groupName: string, releaseType: string) {
     try {
