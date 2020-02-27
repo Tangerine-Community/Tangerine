@@ -70,32 +70,32 @@ export class UpdateService {
 
   async sp1_processUpdatesForUser(userDb, appConfig) {
     // Use try in case this is an old account where info doc was not created.
-    let infoDoc = { _id: '', currentUpdateIndex: 0 };
+    let infoDoc = { _id: '', atUpdateIndex: 0 };
     try {
       infoDoc = await userDb.get('info');
     } catch (e) {
-      await userDb.put({ _id: 'info', currentUpdateIndex: 0 });
+      await userDb.put({ _id: 'info', atUpdateIndex: 0 });
       infoDoc = await userDb.get('info');
     }
     let totalUpdatesApplied = 0
-    let currentUpdateIndex = infoDoc.hasOwnProperty('currentUpdateIndex') ? infoDoc.currentUpdateIndex : 0;
+    let atUpdateIndex = infoDoc.hasOwnProperty('atUpdateIndex') ? infoDoc.atUpdateIndex : 0;
     const finalUpdateIndex = updates.length - 1;
-    if (finalUpdateIndex !== currentUpdateIndex) {
+    if (finalUpdateIndex !== atUpdateIndex) {
       let requiresViewsRefresh = false;
-      while (finalUpdateIndex !== currentUpdateIndex) {
+      while (finalUpdateIndex !== atUpdateIndex) {
         this.status$.next(_TRANSLATE(`Applying Update: ${totalUpdatesApplied+1}`))
-        if (updates[currentUpdateIndex+1].requiresViewsUpdate) {
+        if (updates[atUpdateIndex+1].requiresViewsUpdate) {
           requiresViewsRefresh = true;
         }
-        await updates[currentUpdateIndex+1].script(userDb, appConfig, this.userService);
+        await updates[atUpdateIndex+1].script(userDb, appConfig, this.userService);
         totalUpdatesApplied++;
-        currentUpdateIndex++;
+        atUpdateIndex++;
         if (requiresViewsRefresh) {
           await this.userService.updateAllDefaultUserDocs()
         }
       }
-      currentUpdateIndex--;
-      infoDoc.currentUpdateIndex = currentUpdateIndex;
+      atUpdateIndex--;
+      infoDoc.atUpdateIndex = atUpdateIndex;
       await userDb.put(infoDoc);
     }
   }
