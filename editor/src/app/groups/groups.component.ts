@@ -7,6 +7,7 @@ import { _TRANSLATE } from '../shared/_services/translation-marker';
 import { UserService } from '../core/auth/_services/user.service';
 // import {RegistrationService} from '../registration/services/registration.service';
 // import { AuthService } from '../auth.service';
+import * as moment from 'moment'
 
 @Component({
   // selector: 'app-groups',
@@ -18,6 +19,7 @@ export class GroupsComponent implements OnInit {
   groups;
   breakpoint;
   isAdminUser = false
+  moment;
 
   constructor(
     private menuService:MenuService,
@@ -25,10 +27,12 @@ export class GroupsComponent implements OnInit {
     private errorHandler: TangyErrorHandler,
     private userService:UserService
     ) {
+    this.moment = moment
   }
 
 
   async ngOnInit() {
+    this.breakpoint = (window.innerWidth <= 832) ? 1 : 2;
     await this.getData();
     this.menuService.setContext(_TRANSLATE('Groups'), '', 'groups')
     this.onResize(window);
@@ -36,7 +40,7 @@ export class GroupsComponent implements OnInit {
   }
 
   onResize(target) {
-    this.breakpoint = (target.innerWidth <= 832) ? 1 : 4;
+    this.breakpoint = (target.innerWidth <= 832) ? 1 : 2;
   }
 
   async getData() {
