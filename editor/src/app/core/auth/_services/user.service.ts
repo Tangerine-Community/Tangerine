@@ -60,10 +60,13 @@ export class UserService {
       return false;
     }
   }
+  // Note that user1 is always assumed to be an admin.
+  // returns false or the list of groups a user is an admin to
+  // If user1, returns an empty list
   async isAdmin(username: string) {
     try {
       const data: any = await this.httpClient.get(`/users/isAdminUser/${username}`).toPromise();
-      return data.data; // returns false or the list of groups a user is an admin to
+      return (username === 'user1' && data.data === false) ? [] : data.data;
     } catch (error) {
       this.showError(error);
       return false;
