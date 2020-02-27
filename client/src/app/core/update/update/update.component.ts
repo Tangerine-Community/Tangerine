@@ -44,19 +44,21 @@ export class UpdateComponent implements AfterContentInit {
         this.message = _TRANSLATE('The update has been downloaded. Please log in to complete the update.')
       } else {
         if (
-          !await this.appConfigService.syncProtocol2Enabled &&
+          !await this.appConfigService.syncProtocol2Enabled() &&
           await this.updateService.sp1_updateRequired()
         ) {
           await this.updateService.sp1_processUpdates()
         }
         if (
-          await this.appConfigService.syncProtocol2Enabled && 
+          await this.appConfigService.syncProtocol2Enabled() && 
           await this.updateService.sp2_updateRequired()
         ) {
           await this.updateService.sp2_processUpdates()
         }
-        await this.deviceService.didUpdate()
-        this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
+        if (await this.appConfigService.syncProtocol2Enabled()) {
+          await this.deviceService.didUpdate()
+        }
+        await this.variableService.set(VAR_UPDATE_IS_RUNNING, false)
         this.message = _TRANSLATE('✓ Yay! You are up to date.')
       }
     }

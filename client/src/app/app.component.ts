@@ -51,45 +51,47 @@ export class AppComponent implements OnInit {
     this.installed = localStorage.getItem('installed') && localStorage.getItem('languageCode')
       ? true
       : false
-    if (!this.installed) return
-    this.freespaceCorrectionOccuring = false;
-    // Detect if this is the first time the app has loaded.
-    this.languageCode = this.window.localStorage.getItem('languageCode')
-    this.languageDirection = this.window.localStorage.getItem('languageDirection')
-    // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
-    this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
-    // Set up ngx-translate.
-    translate.setDefaultLang(this.languagePath);
-    translate.use(this.languagePath);
-    // Set required config for use of <t-lang> Web Component.
-    this.window.document.documentElement.lang = this.languageCode;
-    this.window.document.documentElement.dir = this.languageDirection;
-    this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
-    // Make database services available to eval'd code.
-    this.window.userService = this.userService
+    if (this.installed) {
+      this.freespaceCorrectionOccuring = false;
+      // Detect if this is the first time the app has loaded.
+      this.languageCode = this.window.localStorage.getItem('languageCode')
+      this.languageDirection = this.window.localStorage.getItem('languageDirection')
+      // Clients upgraded from < 3.2.0 will have a languageCode of LEGACY and their translation file named without a languageCode.
+      this.languagePath = this.languageCode === 'LEGACY' ? 'translation' : `translation.${this.languageCode}`
+      // Set up ngx-translate.
+      translate.setDefaultLang(this.languagePath);
+      translate.use(this.languagePath);
+      // Set required config for use of <t-lang> Web Component.
+      this.window.document.documentElement.lang = this.languageCode;
+      this.window.document.documentElement.dir = this.languageDirection;
+      this.window.document.body.dispatchEvent(new CustomEvent('lang-change'));
+      // Make database services available to eval'd code.
+      this.window.userService = this.userService
+    }
   }
 
 
   async ngOnInit() {
-    // Load up the app config.
-    this.appConfig = await this.appConfigService.getAppConfig()
-    this.searchService.start()
-    this.window.appConfig = this.appConfig
-    this.window.device = await this.deviceService.getDevice()
-    // Bail if the app is not yet installed.
+ 
+    // Installation check.
     if (!this.installed) {
       await this.install()
+      return
     } else {
       this.checkPermissions();
     }
+  
+    // Initialize services.
     await this.userService.initialize()
-    // Load up the app config.
+    await this.searchService.start()
+   
+    // Get globally exposed config.
     this.appConfig = await this.appConfigService.getAppConfig()
-    this.searchService.start()
     this.window.appConfig = this.appConfig
-    // Set translation for t function used in Web Components.
-    const translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise();
-    this.window.translation = translation
+    this.window.device = await this.deviceService.getDevice()
+    this.window.translation = await this.http.get(`./assets/${this.languagePath}.json`).toPromise()
+    
+    // Set up log in status.
     this.isLoggedIn = this.userService.isLoggedIn()
     this.userService.userLoggedIn$.subscribe((isLoggedIn) => {
       this.isLoggedIn = true
@@ -97,21 +99,24 @@ export class AppComponent implements OnInit {
     this.userService.userLoggedOut$.subscribe((isLoggedIn) => {
       this.isLoggedIn = false
     });
+
     // Keep GPS chip warm.
-    // @TODO Make this configurable. Not all installations use GPS and don't need to waste the battery.
     setInterval(this.getGeolocationPosition, 5000);
     this.checkStorageUsage()
     setInterval(this.checkStorageUsage.bind(this), 60*1000);
     this.ready = true
+
+    // Lastly, navigate to update page if an update is running.
     if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
       this.router.navigate(['/update'])
     }
+
   }
 
   async install() {
     try {
       const config =<any> await this.http.get('./assets/app-config.json').toPromise()
-      this.updateService.install()
+      await this.updateService.install()
       window.localStorage.setItem('languageCode', config.languageCode ? config.languageCode : 'en')
       window.localStorage.setItem('languageDirection', config.languageDirection ? config.languageDirection : 'ltr')
       window.localStorage.setItem('installed', 'true')

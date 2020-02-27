@@ -96,7 +96,7 @@ export class LoginComponent implements OnInit {
   loginUser() {
     observableFrom(this.userService.login(this.user.username, this.user.password)).subscribe(async data => {
       if (data) {
-        if (this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
+        if (await this.variableService.get(VAR_UPDATE_IS_RUNNING)) {
           this.router.navigate(['/update']);
         } else {
           this.router.navigate(['' + this.returnUrl]);
