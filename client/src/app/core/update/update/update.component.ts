@@ -27,6 +27,7 @@ export class UpdateComponent implements AfterContentInit {
   ) { }
 
   async ngAfterContentInit() {
+    debugger
     if (localStorage.getItem('updateJustApplied')) {
       console.log("update has been applied")
       localStorage.setItem('updateJustApplied', '')
