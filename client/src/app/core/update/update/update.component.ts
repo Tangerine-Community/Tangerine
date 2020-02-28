@@ -36,6 +36,7 @@ export class UpdateComponent implements AfterContentInit {
   ) { }
 
   async ngAfterContentInit() {
+    debugger
     this.updateService.status$.subscribe({next: message => {
       this.message = message
     }})

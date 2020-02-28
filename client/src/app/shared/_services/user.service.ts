@@ -148,6 +148,7 @@ export class UserService {
         }
       }
     } catch(err) {
+      alert('An error occurred updating the database.')
       throw(err)
     }
   }
