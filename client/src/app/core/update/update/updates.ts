@@ -136,7 +136,7 @@ export const updates = [
     }
   },
   {
-    requiresViewsUpdate: true,
+    requiresViewsUpdate: false,
     script: async (userDb) => {
       console.log('Updating to v3.1.0...')
       await userDb.compact()
@@ -149,7 +149,7 @@ export const updates = [
     }
   },
   {
-    requiresViewsUpdate: true,
+    requiresViewsUpdate: false,
     script: async (userDb, appConfig, userService:UserService) => {
       console.log('Updating to v3.3.0...')
     }
@@ -172,6 +172,9 @@ export const updates = [
         await userDb.remove(invalidUserProfileDoc)
         userDoc.userUUID = validUserProfileDoc._id
         await usersDb.put(userDoc)
+        /*
+         * This update is too heavy for some tablets.
+
         // Fix issue where docs did not always have lastModified and uploadDatetime.
         const allDocs = (await userDb.allDocs({include_docs: true}))
           .rows
@@ -205,10 +208,31 @@ export const updates = [
           }
           await userDb.put(doc)
         }
+        */
       }
-      await userService.updateAllDefaultUserDocs()
-      await userService.indexAllUserViews()
+      // Doing this later.
+      //await userService.updateAllDefaultUserDocs()
+      // Doing this later.
+      //await userService.indexAllUserViews()
       localStorage.setItem('ran-update-v3.4.0', 'true')
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService:UserService) => {
+      // Do nothing because we likely will be doing it in the next update.
+    }
+  },
+  {
+    requiresViewsUpdate: false,
+    script: async (userDb, appConfig, userService:UserService) => {
+      if (localStorage.getItem('ran-update-v3.7.5')) return
+      console.log('Updating to v3.7.5...')
+      // skip, covered in future updates.
+      //await userService.updateAllDefaultUserDocs()
+      // skip, covered in future updates.
+      //await userService.indexAllUserViews()
+      localStorage.setItem('ran-update-v3.7.5', 'true')
     }
   },
   {

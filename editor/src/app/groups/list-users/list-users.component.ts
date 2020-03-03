@@ -15,6 +15,7 @@ import { TangyErrorHandler } from '../../shared/_services/tangy-error-handler.se
 export class ListUsersComponent implements OnInit {
   groupId;
   users;
+  usersDisplayedColumns = ['username', 'email', 'actions']
   @ViewChild('search') search: ElementRef;
   title = _TRANSLATE("Security")
   breadcrumbs:Array<Breadcrumb> = []

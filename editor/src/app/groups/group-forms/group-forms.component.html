@@ -9,7 +9,7 @@
   </div>
 </paper-dialog>
 
-<paper-fab mat-raised-button icon="add" color="accent" class="add-form-button" (click)="addForm()">
+<paper-fab *ngIf="isGroupAdminUser" mat-raised-button icon="add" color="accent" class="action" (click)="addForm()">
 </paper-fab>
 
 <h2 class="tangy-foreground-secondary">{{'Active Forms'|translate}}</h2>
@@ -55,10 +55,10 @@
     </span>
     <span>
       <mat-select #test>
-        <mat-option>
+        <mat-option style="width:160px;">
           <a mat-icon-button target="_new" [href]="form.printUrl">{{'Print Content'|translate}}</a>
         </mat-option>
-        <mat-option>
+        <mat-option style="width:160px; ">
           <a mat-icon-button target="_new"
             [href]="groupUrl+'#/groups/'+groupId+'/printFormAsTable/'+form.id">{{'Print Metadata'|translate}}</a>
         </mat-option>
@@ -167,4 +167,3 @@
     </span>
   </mat-list-item>
 </mat-list>
- 

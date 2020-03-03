@@ -47,6 +47,9 @@ mat-toolbar {
 .tangy-app-name {
   color: var(--document-background-color);
 }
+mat-list {
+  margin-bottom: 100px;
+}
 .tangy-unstyled-list {
   list-style-type: none;
   padding: 0;
