@@ -35,7 +35,7 @@ export class UserService {
   constructor(
     @Inject(DEFAULT_USER_DOCS) private readonly defaultUserDocs:[any],
     private lockBoxService:LockBoxService,
-    private deviceService:DeviceService,
+    //private deviceService:DeviceService,
     private appConfigService: AppConfigService
   ) {
     this.window = window;
@@ -86,10 +86,11 @@ export class UserService {
       ? await this.getUserAccount(this.getCurrentUser())
       : await this.getUserAccount(username)
     const appConfig = await this.appConfigService.getAppConfig()
-    const deviceInfo = await this.deviceService.getAppInfo()
+    //const deviceInfo = await this.deviceService.getAppInfo()
     if (appConfig.syncProtocol === '2') {
       const device = await this.getDevice()
-      return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId)
+      //return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true, deviceInfo.buildId, deviceInfo.buildChannel, deviceInfo.groupId)
+      return new UserDatabase(userAccount.username, userAccount.userUUID, device.key, device._id, true)
     } else {
       return new UserDatabase(userAccount.username, userAccount.userUUID, '', '', false)
     }
